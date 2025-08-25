@@ -544,8 +544,13 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
           }
           if (this.settingBlacklisted.includes(setting) || setting.includes("BUTTON_")) {
             success = false;
-          } else if (this.optionCursors[cursor]) {
-            success = this.setOptionCursor(cursor, this.optionCursors[cursor] - 1, true);
+          } else {
+            // Cycle to the rightmost position when at the leftmost, otherwise move left
+            success = this.setOptionCursor(
+              cursor,
+              this.optionCursors[cursor] ? this.optionCursors[cursor] - 1 : this.optionValueLabels[cursor].length - 1,
+              true,
+            );
           }
           break;
         case Button.RIGHT: // Move selection right within the current option set.
@@ -554,8 +559,15 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
           }
           if (this.settingBlacklisted.includes(setting) || setting.includes("BUTTON_")) {
             success = false;
-          } else if (this.optionCursors[cursor] < this.optionValueLabels[cursor].length - 1) {
-            success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
+          } else {
+            // Cycle to the leftmost position when at the rightmost, otherwise move right
+            success = this.setOptionCursor(
+              cursor,
+              this.optionCursors[cursor] < this.optionValueLabels[cursor].length - 1
+                ? this.optionCursors[cursor] + 1
+                : 0,
+              true,
+            );
           }
           break;
         case Button.CYCLE_FORM:
