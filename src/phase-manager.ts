@@ -221,7 +221,13 @@ const PHASES = Object.freeze({
 export type PhaseConstructorMap = typeof PHASES;
 
 /** Phases pushed at the end of each {@linkcode TurnStartPhase} */
-const turnEndPhases: PhaseString[] = ["WeatherEffectPhase", "BerryPhase", "CheckStatusEffectPhase", "TurnEndPhase"];
+const turnEndPhases: PhaseString[] = [
+  "WeatherEffectPhase",
+  "BerryPhase",
+  "CheckStatusEffectPhase",
+  "PositionalTagPhase",
+  "TurnEndPhase",
+];
 
 /**
  * PhaseManager is responsible for managing the phases in the battle scene

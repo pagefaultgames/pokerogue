@@ -22,6 +22,7 @@ const nonDynamicPokemonPhases: PhaseString[] = [
   "FaintPhase",
   "DamageAnimPhase",
   "VictoryPhase",
+  "PokemonHealPhase",
 ];
 
 /**

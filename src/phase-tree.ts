@@ -134,6 +134,22 @@ export class PhaseTree {
   }
 
   /**
+   * Finds a particular {@linkcode Phase} in the Tree by searching in pop order
+   * @param phaseType - The {@linkcode PhaseString | type} of phase to search for
+   * @param phaseFilter - A {@linkcode PhaseConditionFunc} to specify conditions for the phase
+   * @returns The matching {@linkcode Phase}, or `undefined` if none exists
+   */
+  public findAll<P extends PhaseString>(phaseType: P, phaseFilter?: PhaseConditionFunc<P>): PhaseMap[P][] {
+    const phases: PhaseMap[P][] = [];
+    for (let i = this.levels.length - 1; i >= 0; i--) {
+      const level = this.levels[i];
+      const levelPhases = level.filter(p => p.is(phaseType) && (!phaseFilter || phaseFilter(p))) as PhaseMap[P][];
+      phases.push(...levelPhases);
+    }
+    return phases;
+  }
+
+  /**
    * Clears the Tree
    * @param leaveFirstLevel - If `true`, leaves the top level of the tree intact
    *
