@@ -9,6 +9,10 @@
     {
       "tagName": "@linkcode",
       "syntaxKind": "inline"
+    },
+    {
+      "tagName": "@module",
+      "syntaxKind": "modifier"
     }
   ]
 }

@@ -148,9 +148,9 @@ export class EggHatchPhase extends Phase {
 
       this.eggHatchOverlay = globalScene.add.rectangle(
         0,
-        -globalScene.game.canvas.height / 6,
-        globalScene.game.canvas.width / 6,
-        globalScene.game.canvas.height / 6,
+        -globalScene.scaledCanvas.height,
+        globalScene.scaledCanvas.width,
+        globalScene.scaledCanvas.height,
         0xffffff,
       );
       this.eggHatchOverlay.setOrigin(0, 0);

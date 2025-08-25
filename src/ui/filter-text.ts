@@ -1,9 +1,10 @@
 import { globalScene } from "#app/global-scene";
+import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { UiTheme } from "#enums/ui-theme";
 import type { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import type { StarterContainer } from "#ui/starter-container";
-import { addTextObject, getTextColor, TextStyle } from "#ui/text";
+import { addTextObject, getTextColor } from "#ui/text";
 import type { UI } from "#ui/ui";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import i18next from "i18next";
@@ -61,7 +62,7 @@ export class FilterText extends Phaser.GameObjects.Container {
     this.dialogueMessageBox = addWindow(
       -this.textPadding,
       0,
-      globalScene.game.canvas.width / 6 + this.textPadding * 2,
+      globalScene.scaledCanvas.width + this.textPadding * 2,
       49,
       false,
       false,

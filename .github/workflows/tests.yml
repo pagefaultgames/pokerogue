@@ -5,12 +5,17 @@ on:
     branches:
       - main
       - beta
+      - release
+      - 'hotfix*'
   pull_request:
     branches:
       - main
       - beta
+      - release
+      - 'hotfix*'
   merge_group:
     types: [checks_requested]
+  workflow_dispatch:
 
 jobs:
   check-path-change-filter:

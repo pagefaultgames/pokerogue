@@ -10,8 +10,8 @@ import { PlayerPokemon } from "#field/pokemon";
 import type { CustomModifierSettings } from "#modifiers/modifier-type";
 import { ModifierTypeOption } from "#modifiers/modifier-type";
 import { SelectModifierPhase } from "#phases/select-modifier-phase";
-import { GameManager } from "#test/testUtils/gameManager";
-import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
+import { GameManager } from "#test/test-utils/game-manager";
+import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { shiftCharCodes } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
@@ -241,7 +241,7 @@ describe("SelectModifierPhase", () => {
     const selectModifierPhase = new SelectModifierPhase(0, undefined, customModifiers);
     scene.phaseManager.unshiftPhase(selectModifierPhase);
     game.move.select(MoveId.SPLASH);
-    await game.phaseInterceptor.run(SelectModifierPhase);
+    await game.phaseInterceptor.to("SelectModifierPhase");
 
     expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
     const modifierSelectHandler = scene.ui.handlers.find(
@@ -265,7 +265,7 @@ describe("SelectModifierPhase", () => {
     const selectModifierPhase = new SelectModifierPhase(0, undefined, customModifiers);
     scene.phaseManager.unshiftPhase(selectModifierPhase);
     game.move.select(MoveId.SPLASH);
-    await game.phaseInterceptor.run(SelectModifierPhase);
+    await game.phaseInterceptor.to("SelectModifierPhase");
 
     expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
     const modifierSelectHandler = scene.ui.handlers.find(

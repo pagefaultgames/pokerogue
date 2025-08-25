@@ -6,7 +6,6 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import { PokemonMove } from "#moves/pokemon-move";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import { FightOrFlightEncounter } from "#mystery-encounters/fight-or-flight-encounter";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
@@ -18,8 +17,8 @@ import {
   runSelectMysteryEncounterOption,
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/mystery-encounter/encounter-test-utils";
-import { GameManager } from "#test/testUtils/gameManager";
-import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
+import { GameManager } from "#test/test-utils/game-manager";
+import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -122,9 +121,9 @@ describe("Fight or Flight - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to(SelectModifierPhase, false);
+      await game.phaseInterceptor.to("SelectModifierPhase", false);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      await game.phaseInterceptor.to("SelectModifierPhase");
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
 
       const modifierSelectHandler = scene.ui.handlers.find(
@@ -143,7 +142,7 @@ describe("Fight or Flight - Mystery Encounter", () => {
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.2.label`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.2.disabled_tooltip`,
+        disabledButtonTooltip: `${namespace}:option.2.disabledTooltip`,
         selected: [
           {
             text: `${namespace}:option.2.selected`,
@@ -155,7 +154,7 @@ describe("Fight or Flight - Mystery Encounter", () => {
     it("should NOT be selectable if the player doesn't have a Stealing move", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIGHT_OR_FLIGHT, defaultParty);
       scene.getPlayerParty().forEach(p => (p.moveset = []));
-      await game.phaseInterceptor.to(MysteryEncounterPhase, false);
+      await game.phaseInterceptor.to("MysteryEncounterPhase", false);
 
       const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
@@ -178,13 +177,13 @@ describe("Fight or Flight - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIGHT_OR_FLIGHT, defaultParty);
 
       // Mock moveset
-      scene.getPlayerParty()[0].moveset = [new PokemonMove(MoveId.KNOCK_OFF)];
+      game.move.changeMoveset(game.field.getPlayerPokemon(), MoveId.KNOCK_OFF);
       const item = game.scene.currentBattle.mysteryEncounter!.misc;
 
       await runMysteryEncounterToEnd(game, 2);
-      await game.phaseInterceptor.to(SelectModifierPhase, false);
+      await game.phaseInterceptor.to("SelectModifierPhase", false);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      await game.phaseInterceptor.to("SelectModifierPhase");
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
 
       const modifierSelectHandler = scene.ui.handlers.find(

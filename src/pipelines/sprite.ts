@@ -5,8 +5,8 @@ import { Pokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
 import { variantColorCache } from "#sprites/variant";
 import { rgbHexToRgba } from "#utils/common";
-import spriteFragShader from "./glsl/spriteFragShader.frag?raw";
-import spriteVertShader from "./glsl/spriteShader.vert?raw";
+import spriteFragShader from "./glsl/sprite-frag-shader.frag?raw";
+import spriteVertShader from "./glsl/sprite-shader.vert?raw";
 
 export class SpritePipeline extends FieldSpritePipeline {
   private _tone: number[];

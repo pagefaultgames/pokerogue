@@ -1,13 +1,17 @@
+import { loggedInUser } from "#app/account";
 import { globalScene } from "#app/global-scene";
 import { speciesStarterCosts } from "#balance/starters";
 import { Button } from "#enums/buttons";
 import { DexAttr } from "#enums/dex-attr";
+import { PlayerGender } from "#enums/player-gender";
+import { TextStyle } from "#enums/text-style";
 import { UiTheme } from "#enums/ui-theme";
 import type { GameData } from "#system/game-data";
-import { addTextObject, TextStyle } from "#ui/text";
+import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
-import { formatFancyLargeNumber, getPlayTimeString, toReadableString } from "#utils/common";
+import { formatFancyLargeNumber, getPlayTimeString } from "#utils/common";
+import { toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import Phaser from "phaser";
 
@@ -44,10 +48,17 @@ const displayStats: DisplayStats = {
       return `${starterCount} (${Math.floor((starterCount / Object.keys(speciesStarterCosts).length) * 1000) / 10}%)`;
     },
   },
+  dexEncountered: {
+    label_key: "speciesEncountered",
+    sourceFunc: gameData => {
+      const seenCount = gameData.getSpeciesCount(d => !!d.seenCount);
+      return `${seenCount} (${Math.floor((seenCount / Object.keys(gameData.dexData).length) * 1000) / 10}%)`;
+    },
+  },
   dexSeen: {
     label_key: "speciesSeen",
     sourceFunc: gameData => {
-      const seenCount = gameData.getSpeciesCount(d => !!d.seenAttr);
+      const seenCount = gameData.getSpeciesCount(d => !!d.seenAttr || !!d.caughtAttr);
       return `${seenCount} (${Math.floor((seenCount / Object.keys(gameData.dexData).length) * 1000) / 10}%)`;
     },
   },
@@ -225,6 +236,9 @@ export class GameStatsUiHandler extends UiHandler {
   private arrowUp: Phaser.GameObjects.Sprite;
   private arrowDown: Phaser.GameObjects.Sprite;
 
+  /** Logged in username */
+  private headerText: Phaser.GameObjects.Text;
+
   /** Whether the UI is single column mode */
   private get singleCol(): boolean {
     const resolvedLang = i18next.resolvedLanguage ?? "en";
@@ -294,6 +308,23 @@ export class GameStatsUiHandler extends UiHandler {
     return GameStatsUiHandler.ROWS_PER_PAGE * this.columnCount;
   }
 
+  /**
+   * Returns the username of logged in user. If the username is hidden, the trainer name based on gender will be displayed.
+   * @returns The username of logged in user
+   */
+  private getUsername(): string {
+    const usernameReplacement =
+      globalScene.gameData.gender === PlayerGender.FEMALE
+        ? i18next.t("trainerNames:playerF")
+        : i18next.t("trainerNames:playerM");
+
+    const displayName = !globalScene.hideUsername
+      ? (loggedInUser?.username ?? i18next.t("common:guest"))
+      : usernameReplacement;
+
+    return i18next.t("gameStatsUiHandler:stats", { username: displayName });
+  }
+
   // #endregion Columnar-specific properties
 
   setup() {
@@ -314,11 +345,11 @@ export class GameStatsUiHandler extends UiHandler {
 
     const headerBg = addWindow(0, 0, sWidth - 2, 24).setOrigin(0);
 
-    const headerText = addTextObject(0, 0, i18next.t("gameStatsUiHandler:stats"), TextStyle.HEADER_LABEL)
+    this.headerText = addTextObject(0, 0, this.getUsername(), TextStyle.HEADER_LABEL)
       .setOrigin(0)
       .setPositionRelative(headerBg, 8, 4);
 
-    this.gameStatsContainer.add([headerBg, headerText]);
+    this.gameStatsContainer.add([headerBg, this.headerText]);
 
     const colWidth = this.colWidth;
 
@@ -366,6 +397,10 @@ export class GameStatsUiHandler extends UiHandler {
 
   show(args: any[]): boolean {
     super.show(args);
+
+    // show updated username on every render
+    this.headerText.setText(this.getUsername());
+
     this.gameStatsContainer.setActive(true).setVisible(true);
 
     this.arrowUp.setActive(true).play("prompt").setVisible(false);
@@ -501,11 +536,9 @@ export function initStatsKeys() {
         sourceFunc: gameData => gameData.gameStats[key].toString(),
       };
     }
-    if (!(displayStats[key] as DisplayStat).label_key) {
+    if (!displayStats[key].label_key) {
       const splittableKey = key.replace(/([a-z]{2,})([A-Z]{1}(?:[^A-Z]|$))/g, "$1_$2");
-      (displayStats[key] as DisplayStat).label_key = toReadableString(
-        `${splittableKey[0].toUpperCase()}${splittableKey.slice(1)}`,
-      );
+      displayStats[key].label_key = toTitleCase(splittableKey);
     }
   }
 }

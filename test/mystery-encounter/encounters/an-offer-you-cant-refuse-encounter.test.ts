@@ -7,15 +7,14 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { ShinyRateBoosterModifier } from "#modifiers/modifier";
-import { PokemonMove } from "#moves/pokemon-move";
 import { AnOfferYouCantRefuseEncounter } from "#mystery-encounters/an-offer-you-cant-refuse-encounter";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { HUMAN_TRANSITABLE_BIOMES } from "#mystery-encounters/mystery-encounters";
 import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
-import { GameManager } from "#test/testUtils/gameManager";
-import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
+import { GameManager } from "#test/test-utils/game-manager";
+import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -66,7 +65,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
     expect(AnOfferYouCantRefuseEncounter.dialogue).toBeDefined();
     expect(AnOfferYouCantRefuseEncounter.dialogue.intro).toStrictEqual([
       { text: `${namespace}:intro` },
-      { speaker: `${namespace}:speaker`, text: `${namespace}:intro_dialogue` },
+      { speaker: `${namespace}:speaker`, text: `${namespace}:introDialogue` },
     ]);
     expect(AnOfferYouCantRefuseEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
     expect(AnOfferYouCantRefuseEncounter.dialogue.encounterOptionsDialogue?.description).toBe(
@@ -180,7 +179,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.2.label`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.2.tooltip_disabled`,
+        disabledButtonTooltip: `${namespace}:option.2.tooltipDisabled`,
         selected: [
           {
             speaker: `${namespace}:speaker`,
@@ -207,9 +206,8 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
     it("should award EXP to a pokemon with a move in EXTORTION_MOVES", async () => {
       game.override.ability(AbilityId.SYNCHRONIZE); // Not an extortion ability, so we can test extortion move
       await game.runToMysteryEncounter(MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, [SpeciesId.ABRA]);
-      const party = scene.getPlayerParty();
-      const abra = party.find(pkm => pkm.species.speciesId === SpeciesId.ABRA)!;
-      abra.moveset = [new PokemonMove(MoveId.BEAT_UP)];
+      const abra = game.field.getPlayerPokemon();
+      game.move.changeMoveset(abra, MoveId.BEAT_UP);
       const expBefore = abra.exp;
 
       await runMysteryEncounterToEnd(game, 2);

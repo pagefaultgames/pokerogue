@@ -10,12 +10,13 @@ import { getNatureName, getNatureStatMultiplier } from "#data/nature";
 import { getPokeballAtlasKey } from "#data/pokeball";
 import { getTypeRgb } from "#data/type";
 import { Button } from "#enums/buttons";
-import { MoveCategory } from "#enums/MoveCategory";
+import { MoveCategory } from "#enums/move-category";
 import { Nature } from "#enums/nature";
 import { PlayerGender } from "#enums/player-gender";
 import { PokemonType } from "#enums/pokemon-type";
 import { getStatKey, PERMANENT_STATS, Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
+import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
 import { modifierSortFunc, PokemonHeldItemModifier } from "#modifiers/modifier";
@@ -24,7 +25,7 @@ import type { PokemonMove } from "#moves/pokemon-move";
 import type { Variant } from "#sprites/variant";
 import { getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
-import { addBBCodeTextObject, addTextObject, getBBCodeFrag, TextStyle } from "#ui/text";
+import { addBBCodeTextObject, addTextObject, getBBCodeFrag } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import {
   fixedInt,
@@ -34,9 +35,9 @@ import {
   isNullOrUndefined,
   padInt,
   rgbHexToRgba,
-  toReadableString,
 } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
+import { toCamelCase, toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 
@@ -354,18 +355,13 @@ export class SummaryUiHandler extends UiHandler {
     } catch (err: unknown) {
       console.error(`Failed to play animation for ${spriteKey}`, err);
     }
-    this.pokemonSprite.setPipelineData("teraColor", getTypeRgb(this.pokemon.getTeraType()));
-    this.pokemonSprite.setPipelineData("isTerastallized", this.pokemon.isTerastallized);
-    this.pokemonSprite.setPipelineData("ignoreTimeTint", true);
-    this.pokemonSprite.setPipelineData("spriteKey", this.pokemon.getSpriteKey());
-    this.pokemonSprite.setPipelineData(
-      "shiny",
-      this.pokemon.summonData.illusion?.basePokemon.shiny ?? this.pokemon.shiny,
-    );
-    this.pokemonSprite.setPipelineData(
-      "variant",
-      this.pokemon.summonData.illusion?.basePokemon.variant ?? this.pokemon.variant,
-    );
+    this.pokemonSprite
+      .setPipelineData("teraColor", getTypeRgb(this.pokemon.getTeraType()))
+      .setPipelineData("isTerastallized", this.pokemon.isTerastallized)
+      .setPipelineData("ignoreTimeTint", true)
+      .setPipelineData("spriteKey", this.pokemon.getSpriteKey())
+      .setPipelineData("shiny", this.pokemon.shiny)
+      .setPipelineData("variant", this.pokemon.variant);
     ["spriteColors", "fusionSpriteColors"].map(k => {
       delete this.pokemonSprite.pipelineData[`${k}Base`];
       if (this.pokemon?.summonData.speciesForm) {
@@ -434,20 +430,21 @@ export class SummaryUiHandler extends UiHandler {
     this.friendshipShadow.setCrop(0, 0, 16, 16 - 16 * ((this.pokemon?.friendship || 0) / 255));
 
     const doubleShiny = this.pokemon.isDoubleShiny(false);
-    const baseVariant = this.pokemon.getBaseVariant(doubleShiny);
+    const bigIconVariant = doubleShiny ? this.pokemon.getBaseVariant(doubleShiny) : this.pokemon.getVariant();
 
     this.shinyIcon.setPositionRelative(
       this.nameText,
       this.nameText.displayWidth + (this.splicedIcon.visible ? this.splicedIcon.displayWidth + 1 : 0) + 1,
       3,
     );
-    this.shinyIcon.setTexture(`shiny_star${doubleShiny ? "_1" : ""}`);
-    this.shinyIcon.setVisible(this.pokemon.isShiny(false));
-    this.shinyIcon.setTint(getVariantTint(baseVariant));
+    this.shinyIcon
+      .setTexture(`shiny_star${doubleShiny ? "_1" : ""}`)
+      .setVisible(this.pokemon.isShiny(false))
+      .setTint(getVariantTint(bigIconVariant));
     if (this.shinyIcon.visible) {
       let shinyDescriptor = "";
-      if (doubleShiny || baseVariant) {
-        shinyDescriptor = " (" + getShinyDescriptor(baseVariant);
+      if (doubleShiny || bigIconVariant) {
+        shinyDescriptor = " (" + getShinyDescriptor(bigIconVariant);
         if (doubleShiny) {
           shinyDescriptor += "/" + getShinyDescriptor(this.pokemon.fusionVariant);
         }
@@ -463,9 +460,7 @@ export class SummaryUiHandler extends UiHandler {
     this.fusionShinyIcon.setPosition(this.shinyIcon.x, this.shinyIcon.y);
     this.fusionShinyIcon.setVisible(doubleShiny);
     if (isFusion) {
-      this.fusionShinyIcon.setTint(
-        getVariantTint(this.pokemon.summonData.illusion?.basePokemon.fusionVariant ?? this.pokemon.fusionVariant),
-      );
+      this.fusionShinyIcon.setTint(getVariantTint(this.pokemon.fusionVariant));
     }
 
     this.pokeball.setFrame(getPokeballAtlasKey(this.pokemon.pokeball));
@@ -810,24 +805,34 @@ export class SummaryUiHandler extends UiHandler {
       case Page.PROFILE: {
         const profileContainer = globalScene.add.container(0, -pageBg.height);
         pageContainer.add(profileContainer);
+        const otColor =
+          globalScene.gameData.gender === PlayerGender.FEMALE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE;
+        const usernameReplacement =
+          globalScene.gameData.gender === PlayerGender.FEMALE
+            ? i18next.t("trainerNames:playerF")
+            : i18next.t("trainerNames:playerM");
 
         // TODO: should add field for original trainer name to Pokemon object, to support gift/traded Pokemon from MEs
         const trainerText = addBBCodeTextObject(
           7,
           12,
-          `${i18next.t("pokemonSummary:ot")}/${getBBCodeFrag(loggedInUser?.username || i18next.t("pokemonSummary:unknown"), globalScene.gameData.gender === PlayerGender.FEMALE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE)}`,
+          `${i18next.t("pokemonSummary:ot")}/${getBBCodeFrag(
+            !globalScene.hideUsername
+              ? loggedInUser?.username || i18next.t("pokemonSummary:unknown")
+              : usernameReplacement,
+            otColor,
+          )}`,
           TextStyle.SUMMARY_ALT,
-        );
-        trainerText.setOrigin(0, 0);
+        ).setOrigin(0);
         profileContainer.add(trainerText);
 
+        const idToDisplay = globalScene.hideUsername ? "*****" : globalScene.gameData.trainerId.toString();
         const trainerIdText = addTextObject(
           141,
           12,
-          `${i18next.t("pokemonSummary:idNo")}${globalScene.gameData.trainerId.toString()}`,
+          `${i18next.t("pokemonSummary:idNo")}${idToDisplay}`,
           TextStyle.SUMMARY_ALT,
-        );
-        trainerIdText.setOrigin(0, 0);
+        ).setOrigin(0);
         profileContainer.add(trainerIdText);
 
         const typeLabel = addTextObject(7, 28, `${i18next.t("pokemonSummary:type")}/`, TextStyle.WINDOW_ALT);
@@ -875,7 +880,7 @@ export class SummaryUiHandler extends UiHandler {
           !isNullOrUndefined(this.pokemon)
         ) {
           const teraIcon = globalScene.add.sprite(123, 26, "button_tera");
-          teraIcon.setName("terrastallize-icon");
+          teraIcon.setName("terastallize-icon");
           teraIcon.setFrame(PokemonType[this.pokemon.getTeraType()].toLowerCase());
           profileContainer.add(teraIcon);
         }
@@ -958,8 +963,8 @@ export class SummaryUiHandler extends UiHandler {
         this.passiveContainer?.descriptionText?.setVisible(false);
 
         const closeFragment = getBBCodeFrag("", TextStyle.WINDOW_ALT);
-        const rawNature = toReadableString(Nature[this.pokemon?.getNature()!]); // TODO: is this bang correct?
-        const nature = `${getBBCodeFrag(toReadableString(getNatureName(this.pokemon?.getNature()!)), TextStyle.SUMMARY_RED)}${closeFragment}`; // TODO: is this bang correct?
+        const rawNature = toCamelCase(Nature[this.pokemon?.getNature()!]); // TODO: is this bang correct?
+        const nature = `${getBBCodeFrag(toTitleCase(getNatureName(this.pokemon?.getNature()!)), TextStyle.SUMMARY_RED)}${closeFragment}`; // TODO: is this bang correct?
 
         const memoString = i18next.t("pokemonSummary:memoString", {
           metFragment: i18next.t(

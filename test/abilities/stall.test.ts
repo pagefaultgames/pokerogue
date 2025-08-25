@@ -1,7 +1,7 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -39,7 +39,7 @@ describe("Abilities - Stall", () => {
   it("Pokemon with Stall should move last in its priority bracket regardless of speed", async () => {
     await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.QUICK_ATTACK);
 
@@ -52,7 +52,7 @@ describe("Abilities - Stall", () => {
   it("Pokemon with Stall will go first if a move that is in a higher priority bracket than the opponent's move is used", async () => {
     await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.TACKLE);
 
@@ -66,7 +66,7 @@ describe("Abilities - Stall", () => {
     game.override.ability(AbilityId.STALL);
     await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.TACKLE);
 

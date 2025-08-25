@@ -1,13 +1,14 @@
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
+import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
-import { NavigationManager } from "#ui/navigationMenu";
-import { addTextObject, TextStyle } from "#ui/text";
+import { NavigationManager } from "#ui/navigation-menu";
+import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import i18next from "i18next";
 
-type CancelFn = (succes?: boolean) => boolean;
+type CancelFn = (success?: boolean) => boolean;
 
 /**
  * Abstract class for handling UI elements related to button bindings.
@@ -72,8 +73,8 @@ export abstract class AbstractBindingUiHandler extends UiHandler {
 
     // Setup backgrounds and text objects for UI.
     this.titleBg = addWindow(
-      globalScene.game.canvas.width / 6 - this.getWindowWidth(),
-      -(globalScene.game.canvas.height / 6) + 28 + 21,
+      globalScene.scaledCanvas.width - this.getWindowWidth(),
+      -globalScene.scaledCanvas.height + 28 + 21,
       this.getWindowWidth(),
       24,
     );
@@ -81,8 +82,8 @@ export abstract class AbstractBindingUiHandler extends UiHandler {
     this.optionSelectContainer.add(this.titleBg);
 
     this.actionBg = addWindow(
-      globalScene.game.canvas.width / 6 - this.getWindowWidth(),
-      -(globalScene.game.canvas.height / 6) + this.getWindowHeight() + 28 + 21 + 21,
+      globalScene.scaledCanvas.width - this.getWindowWidth(),
+      -globalScene.scaledCanvas.height + this.getWindowHeight() + 28 + 21 + 21,
       this.getWindowWidth(),
       24,
     );
@@ -101,8 +102,8 @@ export abstract class AbstractBindingUiHandler extends UiHandler {
     this.optionSelectContainer.add(this.timerText);
 
     this.optionSelectBg = addWindow(
-      globalScene.game.canvas.width / 6 - this.getWindowWidth(),
-      -(globalScene.game.canvas.height / 6) + this.getWindowHeight() + 28,
+      globalScene.scaledCanvas.width - this.getWindowWidth(),
+      -globalScene.scaledCanvas.height + this.getWindowHeight() + 28,
       this.getWindowWidth(),
       this.getWindowHeight(),
     );

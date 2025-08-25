@@ -5,8 +5,8 @@ import { GameModes } from "#enums/game-modes";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import { GameManager } from "#test/testUtils/gameManager";
-import type { MockClock } from "#test/testUtils/mocks/mockClock";
+import { GameManager } from "#test/test-utils/game-manager";
+import type { MockClock } from "#test/test-utils/mocks/mock-clock";
 import type { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

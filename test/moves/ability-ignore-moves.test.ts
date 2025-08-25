@@ -2,7 +2,7 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -77,7 +77,7 @@ describe("Moves - Ability-Ignoring Moves", () => {
     await game.toEndOfTurn();
 
     expect(enemy.isFainted()).toBe(false);
-    expect(game.scene.getPlayerPokemon()?.getLastXMoves()[0].move).toBe(MoveId.SUNSTEEL_STRIKE);
+    expect(game.field.getPlayerPokemon().getLastXMoves()[0].move).toBe(MoveId.SUNSTEEL_STRIKE);
   });
 
   // TODO: Verify this behavior on cart

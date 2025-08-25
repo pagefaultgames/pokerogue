@@ -5,7 +5,7 @@ import { Stat } from "#enums/stat";
 import type { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
 import { DamageAnimPhase } from "#phases/damage-anim-phase";
 import { TurnEndPhase } from "#phases/turn-end-phase";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -42,8 +42,8 @@ describe("Moves - Fissure", () => {
 
     await game.classicMode.startBattle();
 
-    partyPokemon = game.scene.getPlayerParty()[0];
-    enemyPokemon = game.scene.getEnemyPokemon()!;
+    partyPokemon = game.field.getPlayerPokemon();
+    enemyPokemon = game.field.getEnemyPokemon();
   });
 
   it("ignores damage modification from abilities, for example FUR_COAT", async () => {

@@ -1,9 +1,10 @@
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { getStatKey, PERMANENT_STATS } from "#enums/stat";
+import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { MessageUiHandler } from "#ui/message-ui-handler";
-import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "#ui/text";
+import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
@@ -93,7 +94,7 @@ export class BattleMessageUiHandler extends MessageUiHandler {
 
     this.levelUpStatsContainer = levelUpStatsContainer;
 
-    const levelUpStatsLabelsContent = addTextObject(globalScene.game.canvas.width / 6 - 73, -94, "", TextStyle.WINDOW, {
+    const levelUpStatsLabelsContent = addTextObject(globalScene.scaledCanvas.width - 73, -94, "", TextStyle.WINDOW, {
       maxLines: 6,
     });
     let levelUpStatsLabelText = "";
@@ -105,7 +106,7 @@ export class BattleMessageUiHandler extends MessageUiHandler {
     levelUpStatsLabelsContent.x -= levelUpStatsLabelsContent.displayWidth;
 
     const levelUpStatsBg = addWindow(
-      globalScene.game.canvas.width / 6,
+      globalScene.scaledCanvas.width,
       -100,
       80 + levelUpStatsLabelsContent.displayWidth,
       100,
@@ -116,7 +117,7 @@ export class BattleMessageUiHandler extends MessageUiHandler {
     levelUpStatsContainer.add(levelUpStatsLabelsContent);
 
     const levelUpStatsIncrContent = addTextObject(
-      globalScene.game.canvas.width / 6 - 50,
+      globalScene.scaledCanvas.width - 50,
       -94,
       "+\n+\n+\n+\n+\n+",
       TextStyle.WINDOW,
@@ -127,7 +128,7 @@ export class BattleMessageUiHandler extends MessageUiHandler {
     this.levelUpStatsIncrContent = levelUpStatsIncrContent;
 
     const levelUpStatsValuesContent = addBBCodeTextObject(
-      globalScene.game.canvas.width / 6 - 7,
+      globalScene.scaledCanvas.width - 7,
       -94,
       "",
       TextStyle.WINDOW,

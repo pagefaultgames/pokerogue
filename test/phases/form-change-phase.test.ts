@@ -4,7 +4,7 @@ import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { generateModifierType } from "#mystery-encounters/encounter-phase-utils";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -38,7 +38,7 @@ describe("Form Change Phase", () => {
     await game.classicMode.startBattle([SpeciesId.ZACIAN]);
 
     // Before the form change: Should be Hero form
-    const zacian = game.scene.getPlayerParty()[0];
+    const zacian = game.field.getPlayerPokemon();
     expect(zacian.getFormKey()).toBe("hero-of-many-battles");
     expect(zacian.getTypes()).toStrictEqual([PokemonType.FAIRY]);
     expect(zacian.calculateBaseStats()).toStrictEqual([92, 120, 115, 80, 115, 138]);

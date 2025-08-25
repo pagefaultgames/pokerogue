@@ -13,8 +13,8 @@ import {
   runMysteryEncounterToEnd,
   runSelectMysteryEncounterOption,
 } from "#test/mystery-encounter/encounter-test-utils";
-import { GameManager } from "#test/testUtils/gameManager";
-import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
+import { GameManager } from "#test/test-utils/game-manager";
+import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -99,9 +99,9 @@ describe("Lost at Sea - Mystery Encounter", () => {
       expect(option1.dialogue).toBeDefined();
       expect(option1.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.1.label`,
-        disabledButtonLabel: `${namespace}:option.1.label_disabled`,
+        disabledButtonLabel: `${namespace}:option.1.labelDisabled`,
         buttonTooltip: `${namespace}:option.1.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.1.tooltip_disabled`,
+        disabledButtonTooltip: `${namespace}:option.1.tooltipDisabled`,
         selected: [
           {
             text: `${namespace}:option.1.selected`,
@@ -162,9 +162,9 @@ describe("Lost at Sea - Mystery Encounter", () => {
       expect(option2.dialogue).toBeDefined();
       expect(option2.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.2.label`,
-        disabledButtonLabel: `${namespace}:option.2.label_disabled`,
+        disabledButtonLabel: `${namespace}:option.2.labelDisabled`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.2.tooltip_disabled`,
+        disabledButtonTooltip: `${namespace}:option.2.tooltipDisabled`,
         selected: [
           {
             text: `${namespace}:option.2.selected`,

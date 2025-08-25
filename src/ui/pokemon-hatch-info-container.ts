@@ -5,13 +5,14 @@ import { allMoves } from "#data/data-lists";
 import { getEggTierForSpecies } from "#data/egg";
 import type { EggHatchData } from "#data/egg-hatch-data";
 import { Gender } from "#data/gender";
-import { getPokemonSpeciesForm } from "#data/pokemon-species";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
+import { TextStyle } from "#enums/text-style";
 import type { PlayerPokemon } from "#field/pokemon";
 import { PokemonInfoContainer } from "#ui/pokemon-info-container";
-import { addTextObject, TextStyle } from "#ui/text";
+import { addTextObject } from "#ui/text";
 import { padInt, rgbHexToRgba } from "#utils/common";
+import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { argbFromRgba } from "@material/material-color-utilities";
 
 /**

@@ -5,10 +5,14 @@ on:
     branches:
       - main
       - beta
+      - release
+      - 'hotfix*'
   pull_request:
     branches:
       - main
       - beta
+      - release
+      - 'hotfix*'
   merge_group:
     types: [checks_requested]
 
@@ -42,3 +46,6 @@ jobs:
 
       - name: Check dependencies with depcruise
         run: pnpm depcruise
+      
+      - name: Lint with ls-lint
+        run: pnpm ls-lint

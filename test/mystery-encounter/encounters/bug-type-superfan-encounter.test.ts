@@ -20,8 +20,8 @@ import {
   runSelectMysteryEncounterOption,
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/mystery-encounter/encounter-test-utils";
-import { GameManager } from "#test/testUtils/gameManager";
-import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
+import { GameManager } from "#test/test-utils/game-manager";
+import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -181,7 +181,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       },
       {
         speaker: `${namespace}:speaker`,
-        text: `${namespace}:intro_dialogue`,
+        text: `${namespace}:introDialogue`,
       },
     ]);
     expect(BugTypeSuperfanEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
@@ -253,7 +253,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should start battle against the Bug-Type Superfan with wave 70 party template", async () => {
-      game.override.startingWave(61);
+      game.override.startingWave(63);
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
@@ -268,7 +268,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should start battle against the Bug-Type Superfan with wave 100 party template", async () => {
-      game.override.startingWave(81);
+      game.override.startingWave(83);
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
@@ -284,7 +284,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should start battle against the Bug-Type Superfan with wave 120 party template", async () => {
-      game.override.startingWave(111);
+      game.override.startingWave(113);
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
@@ -302,7 +302,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should start battle against the Bug-Type Superfan with wave 140 party template", async () => {
-      game.override.startingWave(131);
+      game.override.startingWave(133);
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
@@ -320,7 +320,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should start battle against the Bug-Type Superfan with wave 160 party template", async () => {
-      game.override.startingWave(151);
+      game.override.startingWave(153);
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
@@ -338,7 +338,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should start battle against the Bug-Type Superfan with wave 180 party template", async () => {
-      game.override.startingWave(171);
+      game.override.startingWave(173);
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
@@ -368,9 +368,9 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterRewardsPhase.name);
       game.phaseInterceptor["prompts"] = []; // Clear out prompt handlers
       game.onNextPrompt("MysteryEncounterRewardsPhase", UiMode.OPTION_SELECT, () => {
-        game.phaseInterceptor.superEndPhase();
+        game.endPhase();
       });
-      await game.phaseInterceptor.run(MysteryEncounterRewardsPhase);
+      await game.phaseInterceptor.to("MysteryEncounterRewardsPhase");
 
       expect(selectOptionSpy).toHaveBeenCalledTimes(1);
       const optionData = selectOptionSpy.mock.calls[0][0];
@@ -389,13 +389,13 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.2.label`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.2.disabled_tooltip`,
+        disabledButtonTooltip: `${namespace}:option.2.disabledTooltip`,
       });
     });
 
     it("should NOT be selectable if the player doesn't have any Bug types", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [SpeciesId.ABRA]);
-      await game.phaseInterceptor.to(MysteryEncounterPhase, false);
+      await game.phaseInterceptor.to("MysteryEncounterPhase", false);
 
       const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
@@ -417,7 +417,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 2);
 
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
@@ -436,7 +436,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 2);
 
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
@@ -458,7 +458,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 2);
 
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
@@ -482,7 +482,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 2);
 
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
@@ -513,24 +513,24 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
+        disabledButtonTooltip: `${namespace}:option.3.disabledTooltip`,
         selected: [
           {
             text: `${namespace}:option.3.selected`,
           },
           {
             speaker: `${namespace}:speaker`,
-            text: `${namespace}:option.3.selected_dialogue`,
+            text: `${namespace}:option.3.selectedDialogue`,
           },
         ],
-        secondOptionPrompt: `${namespace}:option.3.select_prompt`,
+        secondOptionPrompt: `${namespace}:option.3.selectPrompt`,
       });
     });
 
     it("should NOT be selectable if the player doesn't have any Bug items", async () => {
       game.scene.modifiers = [];
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, defaultParty);
-      await game.phaseInterceptor.to(MysteryEncounterPhase, false);
+      await game.phaseInterceptor.to("MysteryEncounterPhase", false);
 
       game.scene.modifiers = [];
       const encounterPhase = scene.phaseManager.getCurrentPhase();
@@ -558,7 +558,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
 
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(

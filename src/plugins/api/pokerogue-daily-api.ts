@@ -1,5 +1,5 @@
 import { ApiBase } from "#api/api-base";
-import type { GetDailyRankingsPageCountRequest, GetDailyRankingsRequest } from "#types/PokerogueDailyApi";
+import type { GetDailyRankingsPageCountRequest, GetDailyRankingsRequest } from "#types/api/pokerogue-daily-api";
 import type { RankingEntry } from "#ui/daily-run-scoreboard";
 
 /**

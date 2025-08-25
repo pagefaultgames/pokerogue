@@ -3,7 +3,7 @@ import { Command } from "#enums/command";
 import { SpeciesId } from "#enums/species-id";
 import { AttemptRunPhase } from "#phases/attempt-run-phase";
 import type { CommandPhase } from "#phases/command-phase";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

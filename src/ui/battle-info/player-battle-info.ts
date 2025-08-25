@@ -21,7 +21,7 @@ export class PlayerBattleInfo extends BattleInfo {
   override constructTypeIcons(): void {
     this.type1Icon = globalScene.add.sprite(-139, -17, "pbinfo_player_type1").setName("icon_type_1").setOrigin(0);
     this.type2Icon = globalScene.add.sprite(-139, -1, "pbinfo_player_type2").setName("icon_type_2").setOrigin(0);
-    this.type3Icon = globalScene.add.sprite(-154, -17, "pbinfo_player_type3").setName("icon_type_3").setOrigin(0);
+    this.type3Icon = globalScene.add.sprite(-154, -17, "pbinfo_player_type").setName("icon_type_3").setOrigin(0);
     this.add([this.type1Icon, this.type2Icon, this.type3Icon]);
   }
 
@@ -39,7 +39,7 @@ export class PlayerBattleInfo extends BattleInfo {
         statOverflow: 1,
       },
     };
-    super(Math.floor(globalScene.game.canvas.width / 6) - 10, -72, true, posParams);
+    super(Math.floor(globalScene.scaledCanvas.width) - 10, -72, true, posParams);
 
     this.hpNumbersContainer = globalScene.add.container(-15, 10).setName("container_hp");
 
@@ -198,11 +198,11 @@ export class PlayerBattleInfo extends BattleInfo {
     this.lastLevelCapped = isLevelCapped;
 
     if (this.lastExp !== pokemon.exp || this.lastLevel !== pokemon.level) {
-      const durationMultipler = Math.max(
+      const durationMultiplier = Math.max(
         Phaser.Tweens.Builders.GetEaseFunction("Cubic.easeIn")(1 - Math.min(pokemon.level - this.lastLevel, 10) / 10),
         0.1,
       );
-      await this.updatePokemonExp(pokemon, false, durationMultipler);
+      await this.updatePokemonExp(pokemon, false, durationMultiplier);
     } else if (isLevelCapped !== oldLevelCapped) {
       this.setLevel(pokemon.level);
     }

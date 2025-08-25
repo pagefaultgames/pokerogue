@@ -25,7 +25,7 @@ import { getNatureName } from "#data/nature";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
 import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
-import { getPokemonSpeciesForm, normalForm } from "#data/pokemon-species";
+import { normalForm } from "#data/pokemon-species";
 import { AbilityAttr } from "#enums/ability-attr";
 import type { AbilityId } from "#enums/ability-id";
 import { BiomeId } from "#enums/biome-id";
@@ -38,6 +38,7 @@ import type { Nature } from "#enums/nature";
 import { Passive as PassiveAttr } from "#enums/passive";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
+import { TextStyle } from "#enums/text-style";
 import { TimeOfDay } from "#enums/time-of-day";
 import { UiMode } from "#enums/ui-mode";
 import type { Variant } from "#sprites/variant";
@@ -45,24 +46,18 @@ import { getVariantIcon, getVariantTint } from "#sprites/variant";
 import type { StarterAttributes } from "#system/game-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
-import type { OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
+import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { BaseStatsOverlay } from "#ui/base-stats-overlay";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { PokedexInfoOverlay } from "#ui/pokedex-info-overlay";
 import { StatsContainer } from "#ui/stats-container";
-import { addBBCodeTextObject, addTextObject, getTextColor, getTextStyleOptions, TextStyle } from "#ui/text";
+import { addBBCodeTextObject, addTextObject, getTextColor, getTextStyleOptions } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
-import {
-  BooleanHolder,
-  getLocalizedSpriteKey,
-  isNullOrUndefined,
-  padInt,
-  rgbHexToRgba,
-  toReadableString,
-} from "#utils/common";
+import { BooleanHolder, getLocalizedSpriteKey, isNullOrUndefined, padInt, rgbHexToRgba } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { toCamelCase, toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
@@ -304,15 +299,15 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang)) ?? "en";
     const textSettings = languageSettings[langSettingKey];
 
-    this.starterSelectContainer = globalScene.add.container(0, -globalScene.game.canvas.height / 6);
+    this.starterSelectContainer = globalScene.add.container(0, -globalScene.scaledCanvas.height);
     this.starterSelectContainer.setVisible(false);
     ui.add(this.starterSelectContainer);
 
     const bgColor = globalScene.add.rectangle(
       0,
       0,
-      globalScene.game.canvas.width / 6,
-      globalScene.game.canvas.height / 6,
+      globalScene.scaledCanvas.width,
+      globalScene.scaledCanvas.height,
       0x006860,
     );
     bgColor.setOrigin(0, 0);
@@ -607,7 +602,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     this.filterInstructionsContainer.setVisible(true);
     this.starterSelectContainer.add(this.filterInstructionsContainer);
 
-    this.starterSelectMessageBoxContainer = globalScene.add.container(0, globalScene.game.canvas.height / 6);
+    this.starterSelectMessageBoxContainer = globalScene.add.container(0, globalScene.scaledCanvas.height);
     this.starterSelectMessageBoxContainer.setVisible(false);
     this.starterSelectContainer.add(this.starterSelectMessageBoxContainer);
 
@@ -634,7 +629,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     this.menuContainer = globalScene.add.container(-130, 0);
     this.menuContainer.setName("menu");
     this.menuContainer.setInteractive(
-      new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6),
+      new Phaser.Geom.Rectangle(0, 0, globalScene.scaledCanvas.width, globalScene.scaledCanvas.height),
       Phaser.Geom.Rectangle.Contains,
     );
 
@@ -645,7 +640,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     this.optionSelectText = addBBCodeTextObject(
       0,
       0,
-      this.menuOptions.map(o => `${i18next.t(`pokedexUiHandler:${MenuOptions[o]}`)}`).join("\n"),
+      this.menuOptions.map(o => `${i18next.t(`pokedexUiHandler:${toCamelCase(`menu${MenuOptions[o]}`)}`)}`).join("\n"),
       TextStyle.WINDOW,
       { maxLines: this.menuOptions.length, lineSpacing: 12 },
     );
@@ -664,10 +659,10 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
     this.scale = getTextStyleOptions(TextStyle.WINDOW, globalScene.uiTheme).scale;
     this.menuBg = addWindow(
-      globalScene.game.canvas.width / 6 - 83,
+      globalScene.scaledCanvas.width - 83,
       0,
       this.optionSelectText.displayWidth + 19 + 24 * this.scale,
-      globalScene.game.canvas.height / 6 - 2,
+      globalScene.scaledCanvas.height - 2,
     );
     this.menuBg.setOrigin(0, 0);
 
@@ -687,19 +682,16 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     this.menuContainer.bringToTop(this.baseStatsOverlay);
 
     // add the info overlay last to be the top most ui element and prevent the IVs from overlaying this
-    const overlayScale = 1;
     this.moveInfoOverlay = new MoveInfoOverlay({
-      scale: overlayScale,
       top: true,
       x: 1,
-      y: globalScene.game.canvas.height / 6 - MoveInfoOverlay.getHeight(overlayScale) - 29,
+      y: globalScene.scaledCanvas.height - MoveInfoOverlay.getHeight() - 29,
     });
     this.starterSelectContainer.add(this.moveInfoOverlay);
 
     this.infoOverlay = new PokedexInfoOverlay({
-      scale: overlayScale,
       x: 1,
-      y: globalScene.game.canvas.height / 6 - PokedexInfoOverlay.getHeight(overlayScale) - 29,
+      y: globalScene.scaledCanvas.height - PokedexInfoOverlay.getHeight() - 29,
     });
     this.starterSelectContainer.add(this.infoOverlay);
 
@@ -765,7 +757,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
     return this.menuOptions
       .map(o => {
-        const label = `${i18next.t(`pokedexUiHandler:${MenuOptions[o]}`)}`;
+        const label = i18next.t(`pokedexUiHandler:${toCamelCase(`menu${MenuOptions[o]}`)}`);
         const isDark =
           !isSeen ||
           (!isStarterCaught && (o === MenuOptions.TOGGLE_IVS || o === MenuOptions.NATURES)) ||
@@ -1108,7 +1100,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       this.starterSelectMessageBoxContainer.setY(0);
       this.message.setY(4);
     } else {
-      this.starterSelectMessageBoxContainer.setY(globalScene.game.canvas.height / 6);
+      this.starterSelectMessageBoxContainer.setY(globalScene.scaledCanvas.height);
       this.starterSelectMessageBox.setOrigin(0, 1);
       this.message.setY(singleLine ? -22 : -37);
     }
@@ -1525,13 +1517,13 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                   this.biomes.map(b => {
                     options.push({
                       label:
-                        i18next.t(`biome:${BiomeId[b.biome].toUpperCase()}`) +
+                        i18next.t(`biome:${toCamelCase(BiomeId[b.biome])}`) +
                         " - " +
-                        i18next.t(`biome:${BiomePoolTier[b.tier].toUpperCase()}`) +
+                        i18next.t(`biome:${toCamelCase(BiomePoolTier[b.tier])}`) +
                         (b.tod.length === 1 && b.tod[0] === -1
                           ? ""
                           : " (" +
-                            b.tod.map(tod => i18next.t(`biome:${TimeOfDay[tod].toUpperCase()}`)).join(", ") +
+                            b.tod.map(tod => i18next.t(`biome:${toCamelCase(TimeOfDay[tod])}`)).join(", ") +
                             ")"),
                       handler: () => false,
                     });
@@ -1546,13 +1538,13 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                     this.preBiomes.map(b => {
                       options.push({
                         label:
-                          i18next.t(`biome:${BiomeId[b.biome].toUpperCase()}`) +
+                          i18next.t(`biome:${toCamelCase(BiomeId[b.biome])}`) +
                           " - " +
-                          i18next.t(`biome:${BiomePoolTier[b.tier].toUpperCase()}`) +
+                          i18next.t(`biome:${toCamelCase(BiomePoolTier[b.tier])}`) +
                           (b.tod.length === 1 && b.tod[0] === -1
                             ? ""
                             : " (" +
-                              b.tod.map(tod => i18next.t(`biome:${TimeOfDay[tod].toUpperCase()}`)).join(", ") +
+                              b.tod.map(tod => i18next.t(`biome:${toCamelCase(TimeOfDay[tod])}`)).join(", ") +
                               ")"),
                         handler: () => false,
                       });
@@ -1785,7 +1777,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
               this.blockInput = true;
               ui.setMode(UiMode.POKEDEX_PAGE, "refresh").then(() => {
                 ui.showText(i18next.t("pokedexUiHandler:showNature"), null, () => {
-                  const natures = globalScene.gameData.getNaturesForAttr(this.speciesStarterDexEntry?.natureAttr);
+                  const starterDexEntry =
+                    globalScene.gameData.dexData[this.getStarterSpeciesId(this.species.speciesId)];
+                  const natures = globalScene.gameData.getNaturesForAttr(starterDexEntry.natureAttr);
                   ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
                     options: natures
                       .map((n: Nature, _i: number) => {
@@ -2619,8 +2613,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
       // Setting growth rate text
       if (isFormCaught) {
-        let growthReadable = toReadableString(GrowthRate[species.growthRate]);
-        const growthAux = growthReadable.replace(" ", "_");
+        let growthReadable = toTitleCase(GrowthRate[species.growthRate]);
+        const growthAux = toCamelCase(growthReadable);
         if (i18next.exists("growth:" + growthAux)) {
           growthReadable = i18next.t(("growth:" + growthAux) as any);
         }
@@ -2837,7 +2831,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
     this.statsContainer.setVisible(true);
 
-    this.statsContainer.updateIvs(this.speciesStarterDexEntry.ivs);
+    const ivs = globalScene.gameData.dexData[this.getStarterSpeciesId(this.species.speciesId)].ivs;
+    this.statsContainer.updateIvs(ivs);
   }
 
   clearText() {

@@ -7,7 +7,7 @@ import { BerryPhase } from "#phases/berry-phase";
 import { CommandPhase } from "#phases/command-phase";
 import { MoveEndPhase } from "#phases/move-end-phase";
 import { TurnEndPhase } from "#phases/turn-end-phase";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -42,9 +42,9 @@ describe("Moves - Astonish", () => {
   test("move effect should cancel the target's move on the turn it applies", async () => {
     await game.classicMode.startBattle([SpeciesId.MEOWSCARADA]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.ASTONISH);
 

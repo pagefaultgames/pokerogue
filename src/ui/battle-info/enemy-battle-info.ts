@@ -1,10 +1,11 @@
 import { globalScene } from "#app/global-scene";
 import { Stat } from "#enums/stat";
+import { TextStyle } from "#enums/text-style";
 import type { EnemyPokemon } from "#field/pokemon";
 import { BattleFlyout } from "#ui/battle-flyout";
 import type { BattleInfoParamList } from "#ui/battle-info";
 import { BattleInfo } from "#ui/battle-info";
-import { addTextObject, TextStyle } from "#ui/text";
+import { addTextObject } from "#ui/text";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
@@ -35,7 +36,7 @@ export class EnemyBattleInfo extends BattleInfo {
   override constructTypeIcons(): void {
     this.type1Icon = globalScene.add.sprite(-15, -15.5, "pbinfo_enemy_type1").setName("icon_type_1").setOrigin(0);
     this.type2Icon = globalScene.add.sprite(-15, -2.5, "pbinfo_enemy_type2").setName("icon_type_2").setOrigin(0);
-    this.type3Icon = globalScene.add.sprite(0, 15.5, "pbinfo_enemy_type3").setName("icon_type_3").setOrigin(0);
+    this.type3Icon = globalScene.add.sprite(0, -15.5, "pbinfo_enemy_type").setName("icon_type_3").setOrigin(0);
     this.add([this.type1Icon, this.type2Icon, this.type3Icon]);
   }
 

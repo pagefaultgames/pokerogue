@@ -11,6 +11,7 @@ import { AttemptCapturePhase } from "#phases/attempt-capture-phase";
 import { AttemptRunPhase } from "#phases/attempt-run-phase";
 import { BattleEndPhase } from "#phases/battle-end-phase";
 import { BerryPhase } from "#phases/berry-phase";
+import { CheckInterludePhase } from "#phases/check-interlude-phase";
 import { CheckStatusEffectPhase } from "#phases/check-status-effect-phase";
 import { CheckSwitchPhase } from "#phases/check-switch-phase";
 import { CommandPhase } from "#phases/command-phase";
@@ -63,6 +64,7 @@ import { PartyHealPhase } from "#phases/party-heal-phase";
 import { PokemonAnimPhase } from "#phases/pokemon-anim-phase";
 import { PokemonHealPhase } from "#phases/pokemon-heal-phase";
 import { PokemonTransformPhase } from "#phases/pokemon-transform-phase";
+import { PositionalTagPhase } from "#phases/positional-tag-phase";
 import { PostGameOverPhase } from "#phases/post-game-over-phase";
 import { PostSummonPhase } from "#phases/post-summon-phase";
 import { PostTurnStatusEffectPhase } from "#phases/post-turn-status-effect-phase";
@@ -123,6 +125,7 @@ const PHASES = Object.freeze({
   AttemptRunPhase,
   BattleEndPhase,
   BerryPhase,
+  CheckInterludePhase,
   CheckStatusEffectPhase,
   CheckSwitchPhase,
   CommandPhase,
@@ -173,6 +176,7 @@ const PHASES = Object.freeze({
   PokemonAnimPhase,
   PokemonHealPhase,
   PokemonTransformPhase,
+  PositionalTagPhase,
   PostGameOverPhase,
   PostSummonPhase,
   PostTurnStatusEffectPhase,
@@ -235,6 +239,21 @@ export class PhaseManager {
   /** The phase put on standby if {@linkcode overridePhase} is called */
   private standbyPhase: Phase | null = null;
 
+  /**
+   * Clear all previously set phases, then add a new {@linkcode TitlePhase} to transition to the title screen.
+   * @param addLogin - Whether to add a new {@linkcode LoginPhase} before the {@linkcode TitlePhase}
+   * (but reset everything else).
+   * Default `false`
+   */
+  public toTitleScreen(addLogin = false): void {
+    this.clearAllPhases();
+
+    if (addLogin) {
+      this.unshiftNew("LoginPhase");
+    }
+    this.unshiftNew("TitlePhase");
+  }
+
   /* Phase Functions */
   getCurrentPhase(): Phase | null {
     return this.currentPhase;
@@ -288,7 +307,6 @@ export class PhaseManager {
   clearAllPhases(): void {
     this.clearPhaseQueue();
     this.dynamicQueueManager.clearQueues();
-    this.currentPhase = null;
     this.standbyPhase = null;
   }
 
@@ -540,8 +558,9 @@ export class PhaseManager {
   }
 
   /**
-   * Finds the first {@linkcode MovePhase} meeting the condition and forces it last
+   * Finds the first {@linkcode MovePhase} meeting the condition and changes its move
    * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function
+   * @param move - The {@linkcode PokemonMove | move} to use in replacement
    */
   public forceMoveLast(phaseCondition: PhaseConditionFunc<"MovePhase">): void {
     this.dynamicQueueManager.setMoveTimingModifier(phaseCondition, MovePhaseTimingModifier.LAST);
@@ -570,5 +589,18 @@ export class PhaseManager {
     turnEndPhases.forEach(p => {
       this.phaseQueue.pushPhase(this.create(p));
     });
+  }
+
+  /** Prevents end of turn effects from triggering when transitioning to a new biome on a X0 wave */
+  public onInterlude(): void {
+    const phasesToRemove: PhaseString[] = ["WeatherEffectPhase", "BerryPhase", "CheckStatusEffectPhase"];
+    for (const phaseType of phasesToRemove) {
+      this.phaseQueue.removeAll(phaseType);
+    }
+
+    const turnEndPhase = this.phaseQueue.find("TurnEndPhase");
+    if (turnEndPhase) {
+      turnEndPhase.upcomingInterlude = true;
+    }
   }
 }

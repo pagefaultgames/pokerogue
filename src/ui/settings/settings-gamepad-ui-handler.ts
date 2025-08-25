@@ -1,10 +1,11 @@
 import { globalScene } from "#app/global-scene";
 import type { InterfaceConfig } from "#app/inputs-controller";
 import { Device } from "#enums/devices";
+import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
-import pad_dualshock from "#inputs/pad_dualshock";
-import pad_unlicensedSNES from "#inputs/pad_unlicensedSNES";
-import pad_xbox360 from "#inputs/pad_xbox360";
+import pad_dualshock from "#inputs/pad-dualshock";
+import pad_unlicensedSNES from "#inputs/pad-unlicensed-snes";
+import pad_xbox360 from "#inputs/pad-xbox360";
 import {
   SettingGamepad,
   setSettingGamepad,
@@ -13,7 +14,7 @@ import {
   settingGamepadOptions,
 } from "#system/settings-gamepad";
 import { AbstractControlSettingsUiHandler } from "#ui/abstract-control-settings-ui-handler";
-import { addTextObject, TextStyle } from "#ui/text";
+import { addTextObject } from "#ui/text";
 import { truncateString } from "#utils/common";
 import i18next from "i18next";
 

@@ -8,7 +8,7 @@ import { SpeciesId } from "#enums/species-id";
 import type { Pokemon } from "#field/pokemon";
 import type { Move } from "#moves/move";
 import { TurnEndPhase } from "#phases/turn-end-phase";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import { NumberHolder } from "#utils/common";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -19,7 +19,7 @@ describe("Moves - Reflect", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
   const singleBattleMultiplier = 0.5;
-  const doubleBattleMultiplier = 2732 / 4096;
+  const doubleBattleMultiplier = 2 / 3;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -52,8 +52,8 @@ describe("Moves - Reflect", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
     const mockedDmg = getMockedMoveDamage(
-      game.scene.getEnemyPokemon()!,
-      game.scene.getPlayerPokemon()!,
+      game.field.getEnemyPokemon(),
+      game.field.getPlayerPokemon(),
       allMoves[moveToUse],
     );
 
@@ -71,8 +71,8 @@ describe("Moves - Reflect", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
     const mockedDmg = getMockedMoveDamage(
-      game.scene.getEnemyPokemon()!,
-      game.scene.getPlayerPokemon()!,
+      game.field.getEnemyPokemon(),
+      game.field.getPlayerPokemon(),
       allMoves[moveToUse],
     );
 
@@ -88,8 +88,8 @@ describe("Moves - Reflect", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     const mockedDmg = getMockedMoveDamage(
-      game.scene.getEnemyPokemon()!,
-      game.scene.getPlayerPokemon()!,
+      game.field.getEnemyPokemon(),
+      game.field.getPlayerPokemon(),
       allMoves[moveToUse],
     );
 
@@ -105,8 +105,8 @@ describe("Moves - Reflect", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     const mockedDmg = getMockedMoveDamage(
-      game.scene.getEnemyPokemon()!,
-      game.scene.getPlayerPokemon()!,
+      game.field.getEnemyPokemon(),
+      game.field.getPlayerPokemon(),
       allMoves[moveToUse],
     );
 
@@ -122,8 +122,8 @@ describe("Moves - Reflect", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     const mockedDmg = getMockedMoveDamage(
-      game.scene.getEnemyPokemon()!,
-      game.scene.getPlayerPokemon()!,
+      game.field.getEnemyPokemon(),
+      game.field.getPlayerPokemon(),
       allMoves[moveToUse],
     );
     expect(mockedDmg).toBe(allMoves[moveToUse].power);

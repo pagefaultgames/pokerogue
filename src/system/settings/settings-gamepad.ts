@@ -144,7 +144,7 @@ export function setSettingGamepad(setting: SettingGamepad, value: number): boole
                 handler: () => changeGamepadHandler(g),
               })),
               {
-                label: i18next.t("settings:cancelContollerChoice"),
+                label: i18next.t("settings:cancelControllerChoice"),
                 handler: cancelHandler,
               },
             ],

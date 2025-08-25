@@ -16,8 +16,8 @@ import {
   runMysteryEncounterToEnd,
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/mystery-encounter/encounter-test-utils";
-import { GameManager } from "#test/testUtils/gameManager";
-import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
+import { GameManager } from "#test/test-utils/game-manager";
+import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -68,7 +68,7 @@ describe("Weird Dream - Mystery Encounter", () => {
       },
       {
         speaker: `${namespace}:speaker`,
-        text: `${namespace}:intro_dialogue`,
+        text: `${namespace}:introDialogue`,
       },
     ]);
     expect(WeirdDreamEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
@@ -112,11 +112,11 @@ describe("Weird Dream - Mystery Encounter", () => {
     it("should transform the new party into new species, 2 at +90/+110, the rest at +40/50 BST", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.WEIRD_DREAM, defaultParty);
 
-      const pokemonPrior = scene.getPlayerParty().map(pokemon => pokemon);
+      const pokemonPrior = scene.getPlayerParty().slice();
       const bstsPrior = pokemonPrior.map(species => species.getSpeciesForm().getBaseStatTotal());
 
       await runMysteryEncounterToEnd(game, 1);
-      await game.phaseInterceptor.to(SelectModifierPhase, false);
+      await game.phaseInterceptor.to("SelectModifierPhase", false);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
 
       const pokemonAfter = scene.getPlayerParty();
@@ -139,20 +139,21 @@ describe("Weird Dream - Mystery Encounter", () => {
     it("should have 1 Memory Mushroom, 5 Rogue Balls, and 3 Mints in rewards", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.WEIRD_DREAM, defaultParty);
       await runMysteryEncounterToEnd(game, 1);
-      await game.phaseInterceptor.to(SelectModifierPhase, false);
+      await game.phaseInterceptor.to("SelectModifierPhase", false);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
         h => h instanceof ModifierSelectUiHandler,
       ) as ModifierSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(5);
+      expect(modifierSelectHandler.options.length).toEqual(6);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toEqual("MEMORY_MUSHROOM");
       expect(modifierSelectHandler.options[1].modifierTypeOption.type.id).toEqual("ROGUE_BALL");
       expect(modifierSelectHandler.options[2].modifierTypeOption.type.id).toEqual("MINT");
       expect(modifierSelectHandler.options[3].modifierTypeOption.type.id).toEqual("MINT");
-      expect(modifierSelectHandler.options[3].modifierTypeOption.type.id).toEqual("MINT");
+      expect(modifierSelectHandler.options[4].modifierTypeOption.type.id).toEqual("MINT");
+      expect(modifierSelectHandler.options[5].modifierTypeOption.type.id).toEqual("MINT");
     });
 
     it("should leave encounter without battle", async () => {
@@ -195,9 +196,9 @@ describe("Weird Dream - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.WEIRD_DREAM, defaultParty);
       await runMysteryEncounterToEnd(game, 2, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to(SelectModifierPhase, false);
+      await game.phaseInterceptor.to("SelectModifierPhase", false);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(

@@ -2,8 +2,7 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { DamageAnimPhase } from "#phases/damage-anim-phase";
-import { TurnEndPhase } from "#phases/turn-end-phase";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -40,7 +39,7 @@ describe("Items - Leftovers", () => {
     // Make sure leftovers are there
     expect(game.scene.modifiers[0].type.id).toBe("LEFTOVERS");
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     // We should have full hp
     expect(leadPokemon.isFullHp()).toBe(true);
@@ -54,7 +53,7 @@ describe("Items - Leftovers", () => {
     const leadHpAfterDamage = leadPokemon.hp;
 
     // Check if leftovers heal us
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("PokemonHealPhase");
     expect(leadPokemon.hp).toBeGreaterThan(leadHpAfterDamage);
   });
 });

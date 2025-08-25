@@ -2,8 +2,9 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import type { MovePhase } from "#phases/move-phase";
-import { GameManager } from "#test/testUtils/gameManager";
+import { MovePhase } from "#phases/move-phase";
+import type { TurnStartPhase } from "#phases/turn-start-phase";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -34,9 +35,9 @@ describe("Battle order", () => {
   it("opponent faster than player 50 vs 150", async () => {
     await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     const playerStartHp = playerPokemon.hp;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     const enemyStartHp = enemyPokemon.hp;
 
     vi.spyOn(playerPokemon, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 50]); // set playerPokemon's speed to 50
@@ -51,9 +52,9 @@ describe("Battle order", () => {
   it("Player faster than opponent 150 vs 50", async () => {
     await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     const playerStartHp = playerPokemon.hp;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     const enemyStartHp = enemyPokemon.hp;
     vi.spyOn(playerPokemon, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 150]); // set playerPokemon's speed to 150
     vi.spyOn(enemyPokemon, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 50]); // set enemyPokemon's speed to 50

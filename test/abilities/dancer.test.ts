@@ -5,7 +5,7 @@ import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import type { MovePhase } from "#phases/move-phase";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -127,7 +127,7 @@ describe("Abilities - Dancer", () => {
     game.override.battleStyle("double").moveset(MoveId.SPLASH).enemyMoveset([MoveId.SWORDS_DANCE, MoveId.FAKE_OUT]);
     await game.classicMode.startBattle([SpeciesId.ORICORIO]);
 
-    const oricorio = game.scene.getPlayerPokemon()!;
+    const oricorio = game.field.getPlayerPokemon();
     expect(oricorio).toBeDefined();
 
     // get faked out and copy swords dance

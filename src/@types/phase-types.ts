@@ -1,6 +1,7 @@
 import type { Pokemon } from "#app/field/pokemon";
 import type { Phase } from "#app/phase";
 import type { PhaseConstructorMap } from "#app/phase-manager";
+import type { ObjectValues } from "#types/type-helpers";
 
 // Intentionally export the types of everything in phase-manager, as this file is meant to be
 // the centralized place for type definitions for the phase system.
@@ -19,7 +20,7 @@ export type PhaseMap = {
 /**
  * Union type of all phase constructors.
  */
-export type PhaseClass = PhaseConstructorMap[keyof PhaseConstructorMap];
+export type PhaseClass = ObjectValues<PhaseConstructorMap>;
 
 /**
  * Union type of all phase names as strings.

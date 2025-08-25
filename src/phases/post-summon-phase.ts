@@ -1,7 +1,7 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import type { PhaseString } from "#app/@types/phase-types";
 import { globalScene } from "#app/global-scene";
-import { ArenaTrapTag } from "#data/arena-tag";
+import { EntryHazardTag } from "#data/arena-tag";
 import { MysteryEncounterPostSummonTag } from "#data/battler-tags";
 import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -26,7 +26,7 @@ export class PostSummonPhase extends PokemonPhase {
     if (pokemon.status?.effect === StatusEffect.TOXIC) {
       pokemon.status.toxicTurnCount = 0;
     }
-    globalScene.arena.applyTags(ArenaTrapTag, false, pokemon);
+    globalScene.arena.applyTags(EntryHazardTag, false, pokemon);
 
     // If this is mystery encounter and has post summon phase tag, apply post summon effects
     if (

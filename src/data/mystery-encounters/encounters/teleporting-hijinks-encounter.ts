@@ -59,7 +59,7 @@ export const TeleportingHijinksEncounter: MysteryEncounter = MysteryEncounterBui
 )
   .withEncounterTier(MysteryEncounterTier.COMMON)
   .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
-  .withSceneRequirement(new WaveModulusRequirement([1, 2, 3], 10)) // Must be in first 3 waves after boss wave
+  .withSceneRequirement(new WaveModulusRequirement([2, 3, 4], 10)) // Must be in first 3 waves after boss wave
   .withSceneRequirement(new MoneyRequirement(0, MONEY_COST_MULTIPLIER)) // Must be able to pay teleport cost
   .withAutoHideIntroVisuals(false)
   .withCatchAllowed(true)
@@ -122,7 +122,7 @@ export const TeleportingHijinksEncounter: MysteryEncounter = MysteryEncounterBui
       .withDialogue({
         buttonLabel: `${namespace}:option.2.label`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.2.disabled_tooltip`,
+        disabledButtonTooltip: `${namespace}:option.2.disabledTooltip`,
         selected: [
           {
             text: `${namespace}:option.2.selected`,
@@ -227,7 +227,7 @@ async function doBiomeTransitionDialogueAndBattleInit() {
         isBoss: true,
         tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
         mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-          queueEncounterMessage(`${namespace}:boss_enraged`);
+          queueEncounterMessage(`${namespace}:bossEnraged`);
           globalScene.phaseManager.unshiftNew(
             "StatStageChangePhase",
             pokemon.getBattlerIndex(),

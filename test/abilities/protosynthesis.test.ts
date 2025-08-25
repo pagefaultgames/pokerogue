@@ -4,7 +4,7 @@ import { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -42,10 +42,10 @@ describe("Abilities - Protosynthesis", () => {
       .startingLevel(100)
       .enemyLevel(100);
     await game.classicMode.startBattle([SpeciesId.MEW]);
-    const mew = game.scene.getPlayerPokemon()!;
+    const mew = game.field.getPlayerPokemon();
     // Nature of starting mon is randomized. We need to fix it to a neutral nature for the automated test.
     mew.setNature(Nature.HARDY);
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     const def_before_boost = mew.getEffectiveStat(
       Stat.DEF,
       undefined,

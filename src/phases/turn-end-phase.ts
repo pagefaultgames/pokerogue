@@ -18,6 +18,8 @@ import i18next from "i18next";
 
 export class TurnEndPhase extends FieldPhase {
   public readonly phaseName = "TurnEndPhase";
+  public upcomingInterlude = false;
+
   start() {
     super.start();
 
@@ -60,9 +62,11 @@ export class TurnEndPhase extends FieldPhase {
       pokemon.tempSummonData.waveTurnCount++;
     };
 
-    this.executeForAll(handlePokemon);
+    if (!this.upcomingInterlude) {
+      this.executeForAll(handlePokemon);
 
-    globalScene.arena.lapseTags();
+      globalScene.arena.lapseTags();
+    }
 
     if (globalScene.arena.weather && !globalScene.arena.weather.lapse()) {
       globalScene.arena.trySetWeather(WeatherType.NONE);

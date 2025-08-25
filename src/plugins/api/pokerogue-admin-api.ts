@@ -6,7 +6,7 @@ import type {
   SearchAccountResponse,
   UnlinkAccountFromDiscordIdRequest,
   UnlinkAccountFromGoogledIdRequest,
-} from "#types/PokerogueAdminApi";
+} from "#types/api/pokerogue-admin-api";
 
 export class PokerogueAdminApi extends ApiBase {
   public readonly ERR_USERNAME_NOT_FOUND: string = "Username not found!";
