@@ -35,6 +35,7 @@ describe("Abilities - Dancer", () => {
     await game.classicMode.startBattle([SpeciesId.ORICORIO, SpeciesId.FEEBAS]);
 
     const [oricorio, feebas] = game.scene.getPlayerField();
+    const [magikarp1] = game.scene.getEnemyField();
     game.move.changeMoveset(oricorio, [MoveId.SWORDS_DANCE, MoveId.VICTORY_DANCE, MoveId.SPLASH]);
     game.move.changeMoveset(feebas, [MoveId.SWORDS_DANCE, MoveId.SPLASH]);
 
@@ -44,8 +45,9 @@ describe("Abilities - Dancer", () => {
     await game.phaseInterceptor.to("MovePhase"); // feebas uses swords dance
     await game.phaseInterceptor.to("MovePhase", false); // oricorio copies swords dance
 
+    // Dancer order will be Magikarp, Oricorio, Magikarp based on set turn order
     let currentPhase = game.scene.phaseManager.getCurrentPhase() as MovePhase;
-    expect(currentPhase.pokemon).toBe(oricorio);
+    expect(currentPhase.pokemon).toBe(magikarp1);
     expect(currentPhase.move.moveId).toBe(MoveId.SWORDS_DANCE);
 
     await game.phaseInterceptor.to("MoveEndPhase"); // end oricorio's move

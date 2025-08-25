@@ -4077,15 +4077,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     damage = Math.min(damage, this.hp);
     this.hp = this.hp - damage;
     if (this.isFainted() && !ignoreFaintPhase) {
-      /**
-       * When adding the FaintPhase, want to toggle future unshiftPhase() and queueMessage() calls
-       * to appear before the FaintPhase (as FaintPhase will potentially end the encounter and add Phases such as
-       * GameOverPhase, VictoryPhase, etc.. that will interfere with anything else that happens during this MoveEffectPhase)
-       *
-       * Once the MoveEffectPhase is over (and calls it's .end() function, shiftPhase() will reset the PhaseQueueSplice via clearPhaseQueueSplice() )
-       */
-      globalScene.phaseManager.setPhaseQueueSplice();
-      globalScene.phaseManager.unshiftNew("FaintPhase", this.getBattlerIndex(), preventEndure);
+      globalScene.phaseManager.unshiftNewDeferred("FaintPhase", this.getBattlerIndex(), preventEndure);
       this.destroySubstitute();
       this.lapseTag(BattlerTagType.COMMANDED);
     }

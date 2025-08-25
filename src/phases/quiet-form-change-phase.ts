@@ -9,7 +9,6 @@ import { BattleSpec } from "#enums/battle-spec";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import type { Pokemon } from "#field/pokemon";
 import { BattlePhase } from "#phases/battle-phase";
-import type { MovePhase } from "#phases/move-phase";
 
 export class QuietFormChangePhase extends BattlePhase {
   public readonly phaseName = "QuietFormChangePhase";
@@ -170,12 +169,7 @@ export class QuietFormChangePhase extends BattlePhase {
       this.pokemon.initBattleInfo();
       this.pokemon.cry();
 
-      const movePhase = globalScene.phaseManager.findPhase(
-        p => p.is("MovePhase") && p.pokemon === this.pokemon,
-      ) as MovePhase;
-      if (movePhase) {
-        movePhase.cancel();
-      }
+      globalScene.phaseManager.cancelMove(p => p.pokemon === this.pokemon);
     }
     if (this.formChange.trigger instanceof SpeciesFormChangeTeraTrigger) {
       const params = { pokemon: this.pokemon };
