@@ -1,7 +1,7 @@
 /**
  * @module
  * A big file storing colors used in logging.
- * Is minified by Vite during production runs to avoid overhead.
+ * Minified by Terser during production builds, so has no overhead.
  */
 
 // Colors used in prod
