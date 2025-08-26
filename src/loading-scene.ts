@@ -145,9 +145,6 @@ export class LoadingScene extends SceneBase {
     this.loadImage("summary_moves_effect", "ui");
     this.loadImage("summary_moves_overlay_row", "ui");
     this.loadAtlas("summary_moves_cursor", "ui");
-    //for (let t = 1; t <= 3; t++) {
-    //  this.loadImage(`summary_tabs_${t}`, "ui");
-    //}
 
     this.loadImage("scroll_bar", "ui");
     this.loadImage("scroll_bar_handle", "ui");
@@ -227,115 +224,91 @@ export class LoadingScene extends SceneBase {
 
     this.loadAtlas("pb", "");
     this.loadAtlas("items", "");
-    this.loadAtlas("types", "");
 
     // Get current lang and load the types atlas for it. English will only load types while all other languages will load types and types_<lang>
-    const lang = i18next.resolvedLanguage;
-    if (lang !== "en" && hasAllLocalizedSprites(lang)) {
-      this.loadAtlas(`statuses_${lang}`, "");
-      this.loadAtlas(`types_${lang}`, "");
-      for (let t = 1; t <= 3; t++) {
-        this.loadImage(`summary_tabs_${t}_${lang}`, "ui", `text_images/${lang}/summary/summary_tabs_${t}_${lang}.png`);
-      }
+    const lang = i18next.resolvedLanguage ?? "en";
+    const keySuffix = lang !== "en" && hasAllLocalizedSprites(lang) ? `_${lang}` : "";
+
+    this.loadAtlas(`statuses${keySuffix}`, "");
+    this.loadAtlas(`types${keySuffix}`, "");
+    for (let t = 1; t <= 3; t++) {
       this.loadImage(
-        `summary_dexnb_label_${lang}`,
+        `summary_tabs_${t}${keySuffix}`,
         "ui",
-        `text_images/${lang}/summary/summary_dexnb_label_${lang}.png`,
-      ); // Pixel text 'No'
-      this.loadImage(
-        `summary_dexnb_label_overlay_shiny_${lang}`,
-        "ui",
-        `text_images/${lang}/summary/summary_dexnb_label_overlay_shiny_${lang}.png`,
-      ); // Pixel text 'No' shiny
-      this.loadImage(
-        `summary_profile_profile_title_${lang}`,
-        "ui",
-        `text_images/${lang}/summary/summary_profile_profile_title_${lang}.png`,
-      ); // Pixel text 'PROFIL'
-      this.loadImage(
-        `summary_profile_ability_${lang}`,
-        "ui",
-        `text_images/${lang}/summary/summary_profile_ability_${lang}.png`,
-      ); // Pixel text 'ABILITY'
-      this.loadImage(
-        `summary_profile_passive_${lang}`,
-        "ui",
-        `text_images/${lang}/summary/summary_profile_passive_${lang}.png`,
-      ); // Pixel text 'PASSIVE'
-      this.loadImage(
-        `summary_profile_memo_title_${lang}`,
-        "ui",
-        `text_images/${lang}/summary/summary_profile_memo_title_${lang}.png`,
-      ); // Pixel text 'TRAINER MEMO'
-      this.loadImage(
-        `summary_stats_item_title_${lang}`,
-        "ui",
-        `text_images/${lang}/summary/summary_stats_item_title_${lang}.png`,
-      ); // Pixel text 'ITEM'
-      this.loadImage(
-        `summary_stats_stats_title_${lang}`,
-        "ui",
-        `text_images/${lang}/summary/summary_stats_stats_title_${lang}.png`,
-      ); // Pixel text 'STATS'
-      this.loadImage(
-        `summary_stats_exp_title_${lang}`,
-        "ui",
-        `text_images/${lang}/summary/summary_stats_exp_title_${lang}.png`,
-      ); // Pixel text 'EXP.'
-      this.loadImage(
-        `summary_stats_expbar_title_${lang}`,
-        "ui",
-        `text_images/${lang}/summary/summary_stats_expbar_title_${lang}.png`,
-      ); // Pixel mini text 'EXP'
-      this.loadImage(
-        `summary_moves_moves_title_${lang}`,
-        "ui",
-        `text_images/${lang}/summary/summary_moves_moves_title_${lang}.png`,
-      ); // Pixel text 'MOVES'
-      this.loadImage(
-        `summary_moves_descriptions_title_${lang}`,
-        "ui",
-        `text_images/${lang}/summary/summary_moves_descriptions_title_${lang}.png`,
-      ); // Pixel text 'DESCRIPTIONS'
-      this.loadImage(
-        `summary_moves_overlay_pp_${lang}`,
-        "ui",
-        `text_images/${lang}/summary/summary_moves_overlay_pp_${lang}.png`,
-      ); // Pixel text 'PP'
-      this.loadImage(
-        `summary_moves_effect_title_${lang}`,
-        "ui",
-        `text_images/${lang}/summary/summary_moves_effect_title_${lang}.png`,
-      ); // Pixel text 'EFFECT'
-    } else {
-      this.loadAtlas("statuses", "");
-      this.loadAtlas("types", "");
-      for (let t = 1; t <= 3; t++) {
-        this.loadImage(`summary_tabs_${t}`, "ui", `text_images/en/summary/summary_tabs_${t}.png`);
-      }
-      this.loadImage("summary_dexnb_label", "ui", "text_images/en/summary/summary_dexnb_label.png");
-      this.loadImage(
-        "summary_dexnb_label_overlay_shiny",
-        "ui",
-        "text_images/en/summary/summary_dexnb_label_overlay_shiny.png",
+        `text_images/${lang}/summary/summary_tabs_${t}${keySuffix}.png`,
       );
-      this.loadImage("summary_profile_profile_title", "ui", "text_images/en/summary/summary_profile_profile_title.png");
-      this.loadImage("summary_profile_ability", "ui", "text_images/en/summary/summary_profile_ability.png");
-      this.loadImage("summary_profile_passive", "ui", "text_images/en/summary/summary_profile_passive.png");
-      this.loadImage("summary_profile_memo_title", "ui", "text_images/en/summary/summary_profile_memo_title.png");
-      this.loadImage("summary_stats_item_title", "ui", "text_images/en/summary/summary_stats_item_title.png");
-      this.loadImage("summary_stats_stats_title", "ui", "text_images/en/summary/summary_stats_stats_title.png");
-      this.loadImage("summary_stats_exp_title", "ui", "text_images/en/summary/summary_stats_exp_title.png");
-      this.loadImage("summary_stats_expbar_title", "ui", "text_images/en/summary/summary_stats_expbar_title.png");
-      this.loadImage("summary_moves_moves_title", "ui", "text_images/en/summary/summary_moves_moves_title.png");
-      this.loadImage(
-        "summary_moves_descriptions_title",
-        "ui",
-        "text_images/en/summary/summary_moves_descriptions_title.png",
-      );
-      this.loadImage("summary_moves_overlay_pp", "ui", "text_images/en/summary/summary_moves_overlay_pp.png");
-      this.loadImage("summary_moves_effect_title", "ui", "text_images/en/summary/summary_moves_effect_title.png");
     }
+    this.loadImage(
+      `summary_dexnb_label${keySuffix}`,
+      "ui",
+      `text_images/${lang}/summary/summary_dexnb_label${keySuffix}.png`,
+    ); // Pixel text 'No'
+    this.loadImage(
+      `summary_dexnb_label_overlay_shiny${keySuffix}`,
+      "ui",
+      `text_images/${lang}/summary/summary_dexnb_label_overlay_shiny${keySuffix}.png`,
+    ); // Pixel text 'No' shiny
+    this.loadImage(
+      `summary_profile_profile_title${keySuffix}`,
+      "ui",
+      `text_images/${lang}/summary/summary_profile_profile_title${keySuffix}.png`,
+    ); // Pixel text 'PROFILE'
+    this.loadImage(
+      `summary_profile_ability${keySuffix}`,
+      "ui",
+      `text_images/${lang}/summary/summary_profile_ability${keySuffix}.png`,
+    ); // Pixel text 'ABILITY'
+    this.loadImage(
+      `summary_profile_passive${keySuffix}`,
+      "ui",
+      `text_images/${lang}/summary/summary_profile_passive${keySuffix}.png`,
+    ); // Pixel text 'PASSIVE'
+    this.loadImage(
+      `summary_profile_memo_title${keySuffix}`,
+      "ui",
+      `text_images/${lang}/summary/summary_profile_memo_title${keySuffix}.png`,
+    ); // Pixel text 'TRAINER MEMO'
+    this.loadImage(
+      `summary_stats_item_title${keySuffix}`,
+      "ui",
+      `text_images/${lang}/summary/summary_stats_item_title${keySuffix}.png`,
+    ); // Pixel text 'ITEM'
+    this.loadImage(
+      `summary_stats_stats_title${keySuffix}`,
+      "ui",
+      `text_images/${lang}/summary/summary_stats_stats_title${keySuffix}.png`,
+    ); // Pixel text 'STATS'
+    this.loadImage(
+      `summary_stats_exp_title${keySuffix}`,
+      "ui",
+      `text_images/${lang}/summary/summary_stats_exp_title${keySuffix}.png`,
+    ); // Pixel text 'EXP.'
+    this.loadImage(
+      `summary_stats_expbar_title${keySuffix}`,
+      "ui",
+      `text_images/${lang}/summary/summary_stats_expbar_title${keySuffix}.png`,
+    ); // Pixel mini text 'EXP'
+    this.loadImage(
+      `summary_moves_moves_title${keySuffix}`,
+      "ui",
+      `text_images/${lang}/summary/summary_moves_moves_title${keySuffix}.png`,
+    ); // Pixel text 'MOVES'
+    this.loadImage(
+      `summary_moves_descriptions_title${keySuffix}`,
+      "ui",
+      `text_images/${lang}/summary/summary_moves_descriptions_title${keySuffix}.png`,
+    ); // Pixel text 'DESCRIPTIONS'
+    this.loadImage(
+      `summary_moves_overlay_pp${keySuffix}`,
+      "ui",
+      `text_images/${lang}/summary/summary_moves_overlay_pp${keySuffix}.png`,
+    ); // Pixel text 'PP'
+    this.loadImage(
+      `summary_moves_effect_title${keySuffix}`,
+      "ui",
+      `text_images/${lang}/summary/summary_moves_effect_title${keySuffix}.png`,
+    ); // Pixel text 'EFFECT'
+
     if (timedEventManager.activeEventHasBanner()) {
       const availableLangs = timedEventManager.getEventBannerLangs();
       if (lang && availableLangs.includes(lang)) {
@@ -345,7 +318,6 @@ export class LoadingScene extends SceneBase {
       }
     }
 
-    this.loadAtlas("statuses", "");
     this.loadAtlas("categories", "");
 
     this.loadAtlas("egg", "egg");
