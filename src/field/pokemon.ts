@@ -3230,6 +3230,18 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         rand -= stabMovePool[index++][1];
       }
       this.moveset.push(new PokemonMove(stabMovePool[index][0]));
+    } else {
+      // If there are no damaging STAB moves, just force a random damaging move
+      const attackMovePool = baseWeights.filter(m => allMoves[m[0]].category !== MoveCategory.STATUS);
+      if (attackMovePool.length) {
+        const totalWeight = attackMovePool.reduce((v, m) => v + m[1], 0);
+        let rand = randSeedInt(totalWeight);
+        let index = 0;
+        while (rand > attackMovePool[index][1]) {
+          rand -= attackMovePool[index++][1];
+        }
+        this.moveset.push(new PokemonMove(attackMovePool[index][0], 0, 0));
+      }
     }
 
     while (baseWeights.length > this.moveset.length && this.moveset.length < 4) {

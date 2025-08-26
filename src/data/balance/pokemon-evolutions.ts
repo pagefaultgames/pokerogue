@@ -77,7 +77,8 @@ export enum EvolutionItem {
   LEADERS_CREST
 }
 
-type TyrogueMove = MoveId.LOW_SWEEP | MoveId.MACH_PUNCH | MoveId.RAPID_SPIN;
+const tyrogueMoves = [MoveId.LOW_SWEEP, MoveId.MACH_PUNCH, MoveId.RAPID_SPIN] as const;
+type TyrogueMove = typeof tyrogueMoves[number];
 
 /**
  * Pokemon Evolution tuple type consisting of:
@@ -192,7 +193,7 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.WEATHER:
           return cond.weather.includes(globalScene.arena.getWeatherType());
         case EvoCondKey.TYROGUE:
-          return pokemon.getMoveset(true).find(m => m.moveId as TyrogueMove)?.moveId === cond.move;
+          return pokemon.getMoveset(true).find(m => (tyrogueMoves as readonly MoveId[]) .includes(m.moveId))?.moveId === cond.move;
         case EvoCondKey.NATURE:
           return cond.nature.includes(pokemon.getNature());
         case EvoCondKey.RANDOM_FORM: {
