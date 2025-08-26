@@ -287,9 +287,6 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
       2.5,
     );
     this.splicedIcon.setVisible(pokemon.isFusion(true));
-    if (!this.splicedIcon.visible) {
-      return;
-    }
     this.splicedIcon
       .on("pointerover", () =>
         globalScene.ui.showTooltip(
@@ -323,6 +320,10 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
       .setVisible(pokemon.isShiny())
       .setTint(getVariantTint(baseVariant));
 
+    this.shinyIcon
+      .on("pointerover", () => globalScene.ui.showTooltip("", i18next.t("common:shinyOnHover") + shinyDescriptor))
+      .on("pointerout", () => globalScene.ui.hideTooltip());
+
     if (!this.shinyIcon.visible) {
       return;
     }
@@ -335,10 +336,6 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
       }
       shinyDescriptor += ")";
     }
-
-    this.shinyIcon
-      .on("pointerover", () => globalScene.ui.showTooltip("", i18next.t("common:shinyOnHover") + shinyDescriptor))
-      .on("pointerout", () => globalScene.ui.hideTooltip());
   }
 
   initInfo(pokemon: Pokemon) {
