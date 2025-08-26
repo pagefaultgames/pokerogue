@@ -84,19 +84,12 @@ export class GameOverPhase extends BattlePhase {
                 globalScene.phaseManager.pushNew("EncounterPhase", true);
 
                 const availablePartyMembers = globalScene.getPokemonAllowedInBattle().length;
-
-                globalScene.phaseManager.pushNew("SummonPhase", 0);
-                if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-                  globalScene.phaseManager.pushNew("SummonPhase", 1);
-                }
-                if (
+                const checkSwitch =
                   globalScene.currentBattle.waveIndex > 1 &&
-                  globalScene.currentBattle.battleType !== BattleType.TRAINER
-                ) {
-                  globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
-                  if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-                    globalScene.phaseManager.pushNew("CheckSwitchPhase", 1, globalScene.currentBattle.double);
-                  }
+                  globalScene.currentBattle.battleType !== BattleType.TRAINER;
+                globalScene.phaseManager.pushNew("SummonPhase", 0, true, false, checkSwitch);
+                if (globalScene.currentBattle.double && availablePartyMembers > 1) {
+                  globalScene.phaseManager.pushNew("SummonPhase", 1, true, false, checkSwitch);
                 }
 
                 globalScene.ui.fadeIn(1250);

@@ -22,7 +22,8 @@ export class PostSummonPhase extends PokemonPhase {
     super.start();
 
     const pokemon = this.getPokemon();
-
+    console.log("Ran PSP for:");
+    console.log(pokemon.name);
     if (pokemon.status?.effect === StatusEffect.TOXIC) {
       pokemon.status.toxicTurnCount = 0;
     }

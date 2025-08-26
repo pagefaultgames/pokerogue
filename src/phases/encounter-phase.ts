@@ -574,16 +574,21 @@ export class EncounterPhase extends BattlePhase {
 
     if (!this.loaded) {
       const availablePartyMembers = globalScene.getPokemonAllowedInBattle();
+      const minPartySize = globalScene.currentBattle.double ? 2 : 1;
+      const checkSwitch =
+        globalScene.currentBattle.battleType !== BattleType.TRAINER &&
+        (globalScene.currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily) &&
+        availablePartyMembers.length > minPartySize;
 
       if (!availablePartyMembers[0].isOnField()) {
-        globalScene.phaseManager.pushNew("SummonPhase", 0);
+        globalScene.phaseManager.pushNew("SummonPhase", 0, true, false, checkSwitch);
       }
 
       if (globalScene.currentBattle.double) {
         if (availablePartyMembers.length > 1) {
           globalScene.phaseManager.pushNew("ToggleDoublePositionPhase", true);
           if (!availablePartyMembers[1].isOnField()) {
-            globalScene.phaseManager.pushNew("SummonPhase", 1);
+            globalScene.phaseManager.pushNew("SummonPhase", 1, true, false, checkSwitch);
           }
         }
       } else {
@@ -591,19 +596,6 @@ export class EncounterPhase extends BattlePhase {
           globalScene.phaseManager.pushNew("ReturnPhase", 1);
         }
         globalScene.phaseManager.pushNew("ToggleDoublePositionPhase", false);
-      }
-
-      if (
-        globalScene.currentBattle.battleType !== BattleType.TRAINER &&
-        (globalScene.currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily)
-      ) {
-        const minPartySize = globalScene.currentBattle.double ? 2 : 1;
-        if (availablePartyMembers.length > minPartySize) {
-          globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
-          if (globalScene.currentBattle.double) {
-            globalScene.phaseManager.pushNew("CheckSwitchPhase", 1, globalScene.currentBattle.double);
-          }
-        }
       }
     }
     handleTutorial(Tutorial.Access_Menu).then(() => super.end());

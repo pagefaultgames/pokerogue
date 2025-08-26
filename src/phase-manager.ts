@@ -518,7 +518,7 @@ export class PhaseManager {
       ![BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType) &&
       !this.phaseQueue.exists("SummonPhase")
     ) {
-      globalScene.getEnemyField().map(p => this.unshiftPhase(new PostSummonPhase(p.getBattlerIndex())));
+      globalScene.getEnemyField().map(p => this.pushPhase(new PostSummonPhase(p.getBattlerIndex(), "SummonPhase")));
     }
   }
 

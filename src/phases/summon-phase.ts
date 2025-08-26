@@ -17,11 +17,13 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   // The union type is needed to keep typescript happy as these phases extend from SummonPhase
   public readonly phaseName: "SummonPhase" | "SummonMissingPhase" | "SwitchSummonPhase" | "ReturnPhase" = "SummonPhase";
   private loaded: boolean;
+  private checkSwitch: boolean;
 
-  constructor(fieldIndex: number, player = true, loaded = false) {
+  constructor(fieldIndex: number, player = true, loaded = false, checkSwitch = false) {
     super(fieldIndex, player);
 
     this.loaded = loaded;
+    this.checkSwitch = checkSwitch;
   }
 
   start() {
@@ -286,9 +288,18 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       this.queuePostSummon();
     }
   }
-  c;
+
   queuePostSummon(): void {
-    globalScene.phaseManager.pushNew("PostSummonPhase", this.getPokemon().getBattlerIndex(), this.phaseName);
+    if (this.checkSwitch) {
+      globalScene.phaseManager.pushNew(
+        "CheckSwitchPhase",
+        this.getPokemon().getFieldIndex(),
+        globalScene.currentBattle.double,
+      );
+    } else {
+      globalScene.phaseManager.pushNew("PostSummonPhase", this.getPokemon().getBattlerIndex(), this.phaseName);
+    }
+
     globalScene.phaseManager.tryAddEnemyPostSummonPhases();
   }
 
