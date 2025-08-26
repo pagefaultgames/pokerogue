@@ -185,8 +185,9 @@ export class PhaseTree {
    * @param phaseType - The {@linkcode PhaseString | type} of phase to search for
    */
   public removeAll(phaseType: PhaseString): void {
-    for (let level of this.levels) {
-      level = level.filter(phase => !phase.is(phaseType));
+    for (let i = 0; i < this.levels.length; i++) {
+      const level = this.levels[i].filter(phase => !phase.is(phaseType));
+      this.levels[i] = level;
     }
   }
 
