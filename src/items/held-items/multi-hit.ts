@@ -2,8 +2,8 @@ import { allMoves } from "#data/data-lists";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import type { Pokemon } from "#field/pokemon";
 import { HeldItem } from "#items/held-item";
-import type { MultiHitParams } from "#items/held-item-parameter";
-import { isNullOrUndefined, type NumberHolder } from "#utils/common";
+import type { HeldItemEffectParamMap, MultiHitCountParams, MultiHitDamageParams } from "#items/held-item-parameter";
+import type { NumberHolder } from "#utils/common";
 import i18next from "i18next";
 
 /**
@@ -12,8 +12,10 @@ import i18next from "i18next";
  * @extends PokemonHeldItemModifier
  * @see {@linkcode apply}
  */
-export class MultiHitHeldItem extends HeldItem<[typeof HeldItemEffect.MULTI_HIT]> {
-  public readonly effects = [HeldItemEffect.MULTI_HIT] as const;
+export class MultiHitHeldItem extends HeldItem<
+  [typeof HeldItemEffect.MULTI_HIT_COUNT, typeof HeldItemEffect.MULTI_HIT_DAMAGE]
+> {
+  public readonly effects = [HeldItemEffect.MULTI_HIT_COUNT, HeldItemEffect.MULTI_HIT_DAMAGE] as const;
 
   get description(): string {
     return i18next.t("modifierType:ModifierType.PokemonMultiHitModifierType.description");
@@ -23,10 +25,8 @@ export class MultiHitHeldItem extends HeldItem<[typeof HeldItemEffect.MULTI_HIT]
    * For each stack, converts 25 percent of attack damage into an additional strike.
    * @returns Whether the item applies its effects to move
    */
-  apply(
-    _effect: typeof HeldItemEffect.MULTI_HIT,
-    { pokemon, count, moveId, damageMultiplier }: MultiHitParams,
-  ): boolean {
+  apply<E extends this["effects"][number]>(effect: E, param: HeldItemEffectParamMap[E]) {
+    const { moveId, pokemon } = param;
     const move = allMoves[moveId];
     /*
      * The move must meet Parental Bond's restrictions for this item
@@ -41,14 +41,14 @@ export class MultiHitHeldItem extends HeldItem<[typeof HeldItemEffect.MULTI_HIT]
       return false;
     }
 
-    if (!isNullOrUndefined(count)) {
+    if (effect === HeldItemEffect.MULTI_HIT_COUNT) {
+      const { count } = param as MultiHitCountParams;
       return this.applyHitCountBoost(pokemon, count);
     }
-    if (!isNullOrUndefined(damageMultiplier)) {
+    if (effect === HeldItemEffect.MULTI_HIT_DAMAGE) {
+      const { damageMultiplier } = param as MultiHitDamageParams;
       return this.applyDamageModifier(pokemon, damageMultiplier);
     }
-
-    return false;
   }
 
   /** Adds strikes to a move equal to the number of stacked Multi-Lenses */

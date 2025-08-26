@@ -125,15 +125,22 @@ export interface ItemStealParams {
   target?: Pokemon;
 }
 
-export interface MultiHitParams {
+export interface MultiHitDamageParams {
+  /** The pokemon with the item */
+  pokemon: Pokemon;
+  /** The move being used */
+  moveId: MoveId;
+  /** Holder for the damage multiplier applied to a strike of the move */
+  damageMultiplier: NumberHolder;
+}
+
+export interface MultiHitCountParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
   /** The move being used */
   moveId: MoveId;
   /** Holder for the move's hit count for the turn */
-  count?: NumberHolder;
-  /** Holder for the damage multiplier applied to a strike of the move */
-  damageMultiplier?: NumberHolder;
+  count: NumberHolder;
 }
 
 export interface NatureWeightBoostParams {
@@ -184,7 +191,8 @@ export type HeldItemEffectParamMap = {
   [HeldItemEffect.FRIENDSHIP_BOOSTER]: FriendshipBoostParams;
   [HeldItemEffect.NATURE_WEIGHT_BOOSTER]: NatureWeightBoostParams;
   [HeldItemEffect.ACCURACY_BOOSTER]: AccuracyBoostParams;
-  [HeldItemEffect.MULTI_HIT]: MultiHitParams;
+  [HeldItemEffect.MULTI_HIT_COUNT]: MultiHitCountParams;
+  [HeldItemEffect.MULTI_HIT_DAMAGE]: MultiHitDamageParams;
   [HeldItemEffect.DAMAGE_MONEY_REWARD]: DamageMoneyRewardParams;
   [HeldItemEffect.BATON]: BatonParams;
   [HeldItemEffect.CONTACT_ITEM_STEAL_CHANCE]: ItemStealParams;
