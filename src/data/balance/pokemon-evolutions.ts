@@ -78,7 +78,7 @@ export enum EvolutionItem {
 }
 
 const tyrogueMoves = [MoveId.LOW_SWEEP, MoveId.MACH_PUNCH, MoveId.RAPID_SPIN] as const;
-type TyrogueMove = MoveId.LOW_SWEEP | MoveId.MACH_PUNCH | MoveId.RAPID_SPIN;
+type TyrogueMove = tyrogueMoves[number];
 
 /**
  * Pokemon Evolution tuple type consisting of:
