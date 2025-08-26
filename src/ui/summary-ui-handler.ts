@@ -1208,8 +1208,8 @@ export class SummaryUiHandler extends UiHandler {
             newMoveTypeIcon.setOrigin(0, 1);
             this.extraMoveRowContainer.add(newMoveTypeIcon);
           }
-          const ppOverlay = globalScene.add.image(163, -1, getLocalizedSpriteKey("summary_moves_overlay_pp")); // Pixel text 'PP'
-          ppOverlay.setOrigin(0, 1);
+          const ppOverlay = globalScene.add.image(172, -5, getLocalizedSpriteKey("summary_moves_overlay_pp")); // Pixel text 'PP'
+          ppOverlay.setOrigin(1, 0.5);
           this.extraMoveRowContainer.add(ppOverlay);
 
           const pp = padInt(this.newMove?.pp!, 2, "  "); // TODO: is this bang correct?
@@ -1239,8 +1239,8 @@ export class SummaryUiHandler extends UiHandler {
           moveText.setOrigin(0, 1);
           moveRowContainer.add(moveText);
 
-          const ppOverlay = globalScene.add.image(163, -1, getLocalizedSpriteKey("summary_moves_overlay_pp")); // Pixel text 'PP'
-          ppOverlay.setOrigin(0, 1);
+          const ppOverlay = globalScene.add.image(172, -5, getLocalizedSpriteKey("summary_moves_overlay_pp")); // Pixel text 'PP'
+          ppOverlay.setOrigin(1, 0.5);
           moveRowContainer.add(ppOverlay);
 
           const ppText = addTextObject(173, 1, "--/--", TextStyle.WINDOW);
