@@ -33,10 +33,7 @@ export class ResetNegativeStatStageHeldItem extends ConsumableHeldItem<
    * stat stage back to 0.
    * @returns `true` if any stat stages were reset, false otherwise
    */
-  apply(
-    _effect: typeof HeldItemEffect.RESET_NEGATIVE_STAT_STAGE,
-    { pokemon, isPlayer }: ResetNegativeStatStageParams,
-  ): boolean {
+  apply(_effect: typeof HeldItemEffect.RESET_NEGATIVE_STAT_STAGE, { pokemon }: ResetNegativeStatStageParams): boolean {
     let statRestored = false;
 
     for (const s of BATTLE_STATS) {

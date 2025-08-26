@@ -143,12 +143,7 @@ export interface NatureWeightBoostParams {
   multiplier: NumberHolder;
 }
 
-export interface ResetNegativeStatStageParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-  /** Whether the move was used by a player pokemon */
-  isPlayer: boolean;
-}
+export type ResetNegativeStatStageParams = DefaultHeldItemParams;
 
 export interface StatBoostParams {
   /** The pokemon with the item */
