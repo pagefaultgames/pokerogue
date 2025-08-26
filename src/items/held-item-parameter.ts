@@ -5,6 +5,11 @@ import type { Stat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
 import type { BooleanHolder, NumberHolder } from "#utils/common";
 
+export interface DefaultHeldItemParams {
+  /** The pokemon with the item */
+  pokemon: Pokemon;
+}
+
 export interface AccuracyBoostParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
@@ -43,15 +48,9 @@ export interface BaseStatTotalParams {
   baseStats: number[];
 }
 
-export interface BatonParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-}
+export type BatonParams = DefaultHeldItemParams;
 
-export interface BerryParams {
-  /** The pokemon with the berry */
-  pokemon: Pokemon;
-}
+export type BerryParams = DefaultHeldItemParams;
 
 export interface BypassSpeedChanceParams {
   /** The pokemon with the item */
@@ -74,10 +73,7 @@ export interface DamageMoneyRewardParams {
   damage: number;
 }
 
-export interface EvoTrackerParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-}
+export type EvoTrackerParams = DefaultHeldItemParams;
 
 export interface ExpBoostParams {
   /** The pokemon with the item */
@@ -107,10 +103,7 @@ export interface FriendshipBoostParams {
   friendship: NumberHolder;
 }
 
-export interface HitHealParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-}
+export type HitHealParams = DefaultHeldItemParams;
 
 export interface IncrementingStatParams {
   /** The pokemon with the item */
@@ -122,10 +115,7 @@ export interface IncrementingStatParams {
   statHolder: NumberHolder;
 }
 
-export interface InstantReviveParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-}
+export type InstantReviveParams = DefaultHeldItemParams;
 
 export interface ItemStealParams {
   /** The pokemon with the item */
@@ -163,25 +153,22 @@ export interface ResetNegativeStatStageParams {
 export interface StatBoostParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
+  /** The statistic to boost */
   stat: Stat;
+  /** The value to change */
   statValue: NumberHolder;
 }
 
 export interface SurviveChanceParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
+  /** The chance of survival */
   surviveDamage: BooleanHolder;
 }
 
-export interface TurnEndHealParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-}
+export type TurnEndHealParams = DefaultHeldItemParams;
 
-export interface TurnEndStatusParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-}
+export type TurnEndStatusParams = DefaultHeldItemParams;
 
 export type HeldItemEffectParamMap = {
   [HeldItemEffect.ATTACK_TYPE_BOOST]: AttackTypeBoostParams;
@@ -212,7 +199,7 @@ export type HeldItemEffectParamMap = {
   [HeldItemEffect.INCREMENTING_STAT]: IncrementingStatParams;
   [HeldItemEffect.EVO_TRACKER]: EvoTrackerParams;
 };
-/** 
+/**
  * Dummy, Typescript-only constant to ensure that all {@linkcode HeldItemEffect}s have an entry in {@linkcode HeldItemEffectParamMap}.
  * If any are missing, Typescript will throw an error on this line.
  * @remarks
