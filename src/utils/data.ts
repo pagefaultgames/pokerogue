@@ -64,7 +64,7 @@ const StarterPrefers_DEFAULT: string = "{}";
 let StarterPrefers_private_latest: string = StarterPrefers_DEFAULT;
 
 export interface StarterPreferences {
-  [key: number]: StarterAttributes;
+  [key: number]: StarterAttributes | undefined;
 }
 // called on starter selection show once
 
@@ -74,10 +74,27 @@ export function loadStarterPreferences(): StarterPreferences {
       localStorage.getItem(`starterPrefs_${loggedInUser?.username}`) || StarterPrefers_DEFAULT),
   );
 }
-// called on starter selection clear, always
+
+/**
+ * Check if an object has no properties of its own (its shape is `{}`)
+ * @param obj - Object to check
+ * @returns - Whether the object is bare
+ */
+export function isBareObject(obj: object): boolean {
+  for (const _ in obj) {
+    return false;
+  }
+  return true;
+}
 
 export function saveStarterPreferences(prefs: StarterPreferences): void {
-  const pStr: string = JSON.stringify(prefs);
+  // Fastest way to check if an object has any properties (does no allocation)
+  if (isBareObject(prefs)) {
+    console.warn("Refusing to save empty starter preferences");
+    return;
+  }
+  // no reason to store `{}` (for starters not customized)
+  const pStr: string = JSON.stringify(prefs, (_, value) => (isBareObject(value) ? undefined : value));
   if (pStr !== StarterPrefers_private_latest) {
     // something changed, store the update
     localStorage.setItem(`starterPrefs_${loggedInUser?.username}`, pStr);
