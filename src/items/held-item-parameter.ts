@@ -212,4 +212,10 @@ export type HeldItemEffectParamMap = {
   [HeldItemEffect.INCREMENTING_STAT]: IncrementingStatParams;
   [HeldItemEffect.EVO_TRACKER]: EvoTrackerParams;
 };
+/** 
+ * Dummy, Typescript-only constant to ensure that all {@linkcode HeldItemEffect}s have an entry in {@linkcode HeldItemEffectParamMap}.
+ * If any are missing, Typescript will throw an error on this line.
+ * @remarks
+ * ⚠️ Does not exist at runtime, so it must not be used!
+ */
 declare const EnsureAllEffectsAreMapped: HeldItemEffectParamMap[HeldItemEffect] & never;

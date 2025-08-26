@@ -120,9 +120,12 @@ export abstract class HeldItemBase {
 /** Tuple type containing >1 `HeldItemEffect`s */
 export type EffectTuple = Readonly<[HeldItemEffect, ...HeldItemEffect[]]>;
 
+/**
+ * Abstract class for all non-cosmetic held items (i.e. ones that can have their effects applied).
+ */
 export abstract class HeldItem<T extends EffectTuple> extends HeldItemBase {
   /**
-   * A readonly tuple containing {@linkcode HeldItemEffect | effects} that this class can apply.
+   * A readonly tuple containing all {@linkcode HeldItemEffect | effects} that this class can apply.
    * @privateRemarks
    * Please sort entries in ascending numerical order (for my sanity and yours)
    */
@@ -138,6 +141,7 @@ export abstract class HeldItem<T extends EffectTuple> extends HeldItemBase {
   shouldApply<E extends this["effects"][number]>(_effect: E, _args: HeldItemEffectParamMap[E]): boolean {
     return true;
   }
+
   /**
    * Apply the given item's effects.
    * Called if and only if {@linkcode shouldApply} returns `true`
