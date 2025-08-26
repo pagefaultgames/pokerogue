@@ -141,7 +141,8 @@ export class TitleUiHandler extends OptionSelectUiHandler {
         }),
       );
 
-      this.appVersionText.setText("v" + version);
+      const betaText = import.meta.env.DEV ? " (Beta)" : "";
+      this.appVersionText.setText("v" + version + betaText);
 
       const ui = this.getUi();
 
