@@ -1828,9 +1828,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       // The persistent starter data to apply e.g. candy upgrades
       const persistentStarterData = globalScene.gameData.starterData[this.lastSpecies.speciesId];
       // The sanitized starter preferences
-      let starterAttributes = this.starterPreferences[this.lastSpecies.speciesId];
+      let starterAttributes = this.starterPreferences[this.lastSpecies.speciesId] ?? {};
       // The original starter preferences
-      const originalStarterAttributes = this.originalStarterPreferences[this.lastSpecies.speciesId];
+      const originalStarterAttributes = this.originalStarterPreferences[this.lastSpecies.speciesId] ?? {};
 
       // this gets the correct pokemon cursor depending on whether you're in the starter screen or the party icons
       if (!this.starterIconsCursorObj.visible) {
@@ -3408,8 +3408,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       if (species) {
         const defaultDexAttr = this.getCurrentDexProps(species.speciesId);
         const defaultProps = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+        // Bang is correct due to the `?` before variant
         const variant = this.starterPreferences[species.speciesId]?.variant
-          ? (this.starterPreferences[species.speciesId].variant as Variant)
+          ? (this.starterPreferences[species.speciesId]!.variant as Variant)
           : defaultProps.variant;
         const tint = getVariantTint(variant);
         this.pokemonShinyIcon.setFrame(getVariantIcon(variant)).setTint(tint);
