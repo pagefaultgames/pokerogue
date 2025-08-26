@@ -235,114 +235,106 @@ export class LoadingScene extends SceneBase {
       this.loadAtlas(`statuses_${lang}`, "");
       this.loadAtlas(`types_${lang}`, "");
       for (let t = 1; t <= 3; t++) {
-        this.loadImage(
-          `summary_tabs_${t}_${lang}`,
-          "ui",
-          `ui_text_images/${lang}/summary/summary_tabs_${t}_${lang}.png`,
-        );
+        this.loadImage(`summary_tabs_${t}_${lang}`, "ui", `text_images/${lang}/summary/summary_tabs_${t}_${lang}.png`);
       }
       this.loadImage(
         `summary_dexnb_label_${lang}`,
         "ui",
-        `ui_text_images/${lang}/summary/summary_dexnb_label_${lang}.png`,
+        `text_images/${lang}/summary/summary_dexnb_label_${lang}.png`,
       ); // Pixel text 'No'
       this.loadImage(
         `summary_dexnb_label_overlay_shiny_${lang}`,
         "ui",
-        `ui_text_images/${lang}/summary/summary_dexnb_label_overlay_shiny_${lang}.png`,
+        `text_images/${lang}/summary/summary_dexnb_label_overlay_shiny_${lang}.png`,
       ); // Pixel text 'No' shiny
       this.loadImage(
         `summary_profile_profile_title_${lang}`,
         "ui",
-        `ui_text_images/${lang}/summary/summary_profile_profile_title_${lang}.png`,
+        `text_images/${lang}/summary/summary_profile_profile_title_${lang}.png`,
       ); // Pixel text 'PROFIL'
       this.loadImage(
         `summary_profile_ability_${lang}`,
         "ui",
-        `ui_text_images/${lang}/summary/summary_profile_ability_${lang}.png`,
+        `text_images/${lang}/summary/summary_profile_ability_${lang}.png`,
       ); // Pixel text 'ABILITY'
       this.loadImage(
         `summary_profile_passive_${lang}`,
         "ui",
-        `ui_text_images/${lang}/summary/summary_profile_passive_${lang}.png`,
+        `text_images/${lang}/summary/summary_profile_passive_${lang}.png`,
       ); // Pixel text 'PASSIVE'
       this.loadImage(
         `summary_profile_memo_title_${lang}`,
         "ui",
-        `ui_text_images/${lang}/summary/summary_profile_memo_title_${lang}.png`,
+        `text_images/${lang}/summary/summary_profile_memo_title_${lang}.png`,
       ); // Pixel text 'TRAINER MEMO'
       this.loadImage(
         `summary_stats_item_title_${lang}`,
         "ui",
-        `ui_text_images/${lang}/summary/summary_stats_item_title_${lang}.png`,
+        `text_images/${lang}/summary/summary_stats_item_title_${lang}.png`,
       ); // Pixel text 'ITEM'
       this.loadImage(
         `summary_stats_stats_title_${lang}`,
         "ui",
-        `ui_text_images/${lang}/summary/summary_stats_stats_title_${lang}.png`,
+        `text_images/${lang}/summary/summary_stats_stats_title_${lang}.png`,
       ); // Pixel text 'STATS'
       this.loadImage(
         `summary_stats_exp_title_${lang}`,
         "ui",
-        `ui_text_images/${lang}/summary/summary_stats_exp_title_${lang}.png`,
+        `text_images/${lang}/summary/summary_stats_exp_title_${lang}.png`,
       ); // Pixel text 'EXP.'
       this.loadImage(
         `summary_stats_expbar_title_${lang}`,
         "ui",
-        `ui_text_images/${lang}/summary/summary_stats_expbar_title_${lang}.png`,
+        `text_images/${lang}/summary/summary_stats_expbar_title_${lang}.png`,
       ); // Pixel mini text 'EXP'
       this.loadImage(
         `summary_moves_moves_title_${lang}`,
         "ui",
-        `ui_text_images/${lang}/summary/summary_moves_moves_title_${lang}.png`,
+        `text_images/${lang}/summary/summary_moves_moves_title_${lang}.png`,
       ); // Pixel text 'MOVES'
       this.loadImage(
         `summary_moves_descriptions_title_${lang}`,
         "ui",
-        `ui_text_images/${lang}/summary/summary_moves_descriptions_title_${lang}.png`,
+        `text_images/${lang}/summary/summary_moves_descriptions_title_${lang}.png`,
       ); // Pixel text 'DESCRIPTIONS'
       this.loadImage(
         `summary_moves_overlay_pp_${lang}`,
         "ui",
-        `ui_text_images/${lang}/summary/summary_moves_overlay_pp_${lang}.png`,
+        `text_images/${lang}/summary/summary_moves_overlay_pp_${lang}.png`,
       ); // Pixel text 'PP'
       this.loadImage(
         `summary_moves_effect_title_${lang}`,
         "ui",
-        `ui_text_images/${lang}/summary/summary_moves_effect_title_${lang}.png`,
+        `text_images/${lang}/summary/summary_moves_effect_title_${lang}.png`,
       ); // Pixel text 'EFFECT'
     } else {
       this.loadAtlas("statuses", "");
       this.loadAtlas("types", "");
       for (let t = 1; t <= 3; t++) {
-        this.loadImage(`summary_tabs_${t}`, "ui", `ui_text_images/en/summary/summary_tabs_${t}.png`);
+        this.loadImage(`summary_tabs_${t}`, "ui", `text_images/en/summary/summary_tabs_${t}.png`);
       }
-      this.loadImage("summary_dexnb_label", "ui", "ui_text_images/en/summary/summary_dexnb_label.png");
+      this.loadImage("summary_dexnb_label", "ui", "text_images/en/summary/summary_dexnb_label.png");
       this.loadImage(
         "summary_dexnb_label_overlay_shiny",
         "ui",
-        "ui_text_images/en/summary/summary_dexnb_label_overlay_shiny.png",
+        "text_images/en/summary/summary_dexnb_label_overlay_shiny.png",
       );
-      this.loadImage(
-        "summary_profile_profile_title",
-        "ui",
-        "ui_text_images/en/summary/summary_profile_profile_title.png",
-      );
-      this.loadImage("summary_profile_ability", "ui", "ui_text_images/en/summary/summary_profile_ability.png");
-      this.loadImage("summary_profile_passive", "ui", "ui_text_images/en/summary/summary_profile_passive.png");
-      this.loadImage("summary_profile_memo_title", "ui", "ui_text_images/en/summary/summary_profile_memo_title.png");
-      this.loadImage("summary_stats_item_title", "ui", "ui_text_images/en/summary/summary_stats_item_title.png");
-      this.loadImage("summary_stats_stats_title", "ui", "ui_text_images/en/summary/summary_stats_stats_title.png");
-      this.loadImage("summary_stats_exp_title", "ui", "ui_text_images/en/summary/summary_stats_exp_title.png");
-      this.loadImage("summary_stats_expbar_title", "ui", "ui_text_images/en/summary/summary_stats_expbar_title.png");
-      this.loadImage("summary_moves_moves_title", "ui", "ui_text_images/en/summary/summary_moves_moves_title.png");
+      this.loadImage("summary_profile_profile_title", "ui", "text_images/en/summary/summary_profile_profile_title.png");
+      this.loadImage("summary_profile_ability", "ui", "text_images/en/summary/summary_profile_ability.png");
+      this.loadImage("summary_profile_passive", "ui", "text_images/en/summary/summary_profile_passive.png");
+      this.loadImage("summary_profile_memo_title", "ui", "text_images/en/summary/summary_profile_memo_title.png");
+      this.loadImage("summary_stats_item_title", "ui", "text_images/en/summary/summary_stats_item_title.png");
+      this.loadImage("summary_stats_stats_title", "ui", "text_images/en/summary/summary_stats_stats_title.png");
+      this.loadImage("summary_stats_exp_title", "ui", "text_images/en/summary/summary_stats_exp_title.png");
+      this.loadImage("summary_stats_expbar_title", "ui", "text_images/en/summary/summary_stats_expbar_title.png");
+      this.loadImage("summary_moves_moves_title", "ui", "text_images/en/summary/summary_moves_moves_title.png");
       this.loadImage(
         "summary_moves_descriptions_title",
         "ui",
-        "ui_text_images/en/summary/summary_moves_descriptions_title.png",
+        "text_images/en/summary/summary_moves_descriptions_title.png",
       );
-      this.loadImage("summary_moves_overlay_pp", "ui", "ui_text_images/en/summary/summary_moves_overlay_pp.png");
-      this.loadImage("summary_moves_effect_title", "ui", "ui_text_images/en/summary/summary_moves_effect_title.png");
+      this.loadImage("summary_moves_overlay_pp", "ui", "text_images/en/summary/summary_moves_overlay_pp.png");
+      this.loadImage("summary_moves_effect_title", "ui", "text_images/en/summary/summary_moves_effect_title.png");
     }
     if (timedEventManager.activeEventHasBanner()) {
       const availableLangs = timedEventManager.getEventBannerLangs();
