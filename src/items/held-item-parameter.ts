@@ -125,15 +125,6 @@ export interface ItemStealParams {
   target?: Pokemon;
 }
 
-export interface MultiHitDamageParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-  /** The move being used */
-  moveId: MoveId;
-  /** Holder for the damage multiplier applied to a strike of the move */
-  damageMultiplier: NumberHolder;
-}
-
 export interface MultiHitCountParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
@@ -141,6 +132,15 @@ export interface MultiHitCountParams {
   moveId: MoveId;
   /** Holder for the move's hit count for the turn */
   count: NumberHolder;
+}
+
+export interface MultiHitDamageParams {
+  /** The pokemon with the item */
+  pokemon: Pokemon;
+  /** The move being used */
+  moveId: MoveId;
+  /** Holder for the damage multiplier applied to a strike of the move */
+  damageMultiplier: NumberHolder;
 }
 
 export interface NatureWeightBoostParams {
