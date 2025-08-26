@@ -1,4 +1,5 @@
 import { pokerogueApi } from "#api/pokerogue-api";
+import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
 import { BiomeId } from "#enums/biome-id";
 import { Challenges } from "#enums/challenges";
@@ -295,5 +296,76 @@ describe("Throwing balls at trainers", () => {
   it("throwing ball at a trainer in the end biome", async () => {
     game.override.startingWave(195).startingBiome(BiomeId.END);
     await runPokeballTest(game, PokeballType.MASTER_BALL, "battle:noPokeballTrainer");
+  });
+});
+
+describe("Throwing balls at bosses after weakening them", () => {
+  let phaserGame: Phaser.Game;
+  let game: GameManager;
+
+  beforeAll(() => {
+    phaserGame = new Phaser.Game({
+      type: Phaser.HEADLESS,
+    });
+  });
+
+  afterEach(() => {
+    game.phaseInterceptor.restoreOg();
+  });
+
+  beforeEach(() => {
+    game = new GameManager(phaserGame);
+    game.override
+      .battleType(BattleType.WILD)
+      .moveset([MoveId.SLASH])
+      .enemyMoveset([MoveId.SPLASH])
+      .enemyHeldItems([])
+      .enemySpecies(SpeciesId.CATERPIE)
+      .startingLevel(99999)
+      .startingWave(170);
+  });
+
+  it("weakening and catching a single boss", async () => {
+    game.override.battleStyle("single").enemyAbility(AbilityId.STURDY);
+
+    await game.classicMode.startBattle([SpeciesId.KARTANA]);
+
+    const partyLength = game.scene.getPlayerParty().length;
+
+    const ball = PokeballType.ROGUE_BALL;
+    game.scene.pokeballCounts[ball] = 1;
+
+    game.move.select(MoveId.SLASH);
+    await game.toNextTurn();
+
+    game.doThrowPokeball(ball);
+    await game.toEndOfTurn();
+
+    expect(game.scene.getPlayerParty()).toHaveLength(partyLength + 1);
+  });
+
+  it("weakening and catching a boss in a double battle", async () => {
+    game.override.battleStyle("double").enemyAbility(AbilityId.STURDY);
+
+    await game.classicMode.startBattle([SpeciesId.KARTANA]);
+
+    const partyLength = game.scene.getPlayerParty().length;
+
+    const ball = PokeballType.ROGUE_BALL;
+    game.scene.pokeballCounts[ball] = 1;
+
+    game.move.select(MoveId.SLASH);
+    await game.toNextTurn();
+
+    game.move.select(MoveId.SLASH);
+    await game.toNextTurn();
+
+    game.move.select(MoveId.SLASH);
+    await game.toNextTurn();
+
+    game.doThrowPokeball(ball);
+    await game.toEndOfTurn();
+
+    expect(game.scene.getPlayerParty()).toHaveLength(partyLength + 1);
   });
 });
