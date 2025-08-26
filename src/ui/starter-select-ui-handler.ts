@@ -72,7 +72,7 @@ import {
   rgbHexToRgba,
 } from "#utils/common";
 import type { StarterPreferences } from "#utils/data";
-import { loadStarterPreferences, saveStarterPreferences } from "#utils/data";
+import { deepCopy, loadStarterPreferences, saveStarterPreferences } from "#utils/data";
 import { getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
@@ -1148,7 +1148,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.starterSelectContainer.setVisible(true);
 
       this.starterPreferences = loadStarterPreferences();
-      this.originalStarterPreferences = loadStarterPreferences();
+      // Deep copy the JSON (avoid re-loading from disk)
+      this.originalStarterPreferences = deepCopy(this.starterPreferences);
 
       this.allSpecies.forEach((species, s) => {
         const icon = this.starterContainers[s].icon;
@@ -1212,6 +1213,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     preferences: StarterPreferences,
     ignoreChallenge = false,
   ): StarterAttributes {
+    // if preferences for the species is undefined, set it to an empty object
+    preferences[species.speciesId] ??= {};
     const starterAttributes = preferences[species.speciesId];
     const { dexEntry, starterDataEntry: starterData } = this.getSpeciesData(species.speciesId, !ignoreChallenge);
 
@@ -1828,9 +1831,15 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       // The persistent starter data to apply e.g. candy upgrades
       const persistentStarterData = globalScene.gameData.starterData[this.lastSpecies.speciesId];
       // The sanitized starter preferences
-      let starterAttributes = this.starterPreferences[this.lastSpecies.speciesId] ?? {};
-      // The original starter preferences
-      const originalStarterAttributes = this.originalStarterPreferences[this.lastSpecies.speciesId] ?? {};
+      if (this.starterPreferences[this.lastSpecies.speciesId] === undefined) {
+        this.starterPreferences[this.lastSpecies.speciesId] = {};
+      }
+      if (this.originalStarterPreferences[this.lastSpecies.speciesId] === undefined) {
+        this.originalStarterPreferences[this.lastSpecies.speciesId] = {};
+      }
+      // Bangs are safe here due to the above check
+      const starterAttributes = this.starterPreferences[this.lastSpecies.speciesId]!;
+      const originalStarterAttributes = this.originalStarterPreferences[this.lastSpecies.speciesId]!;
 
       // this gets the correct pokemon cursor depending on whether you're in the starter screen or the party icons
       if (!this.starterIconsCursorObj.visible) {
@@ -2050,10 +2059,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                         const option: OptionSelectItem = {
                           label: getNatureName(n, true, true, true, globalScene.uiTheme),
                           handler: () => {
-                            // update default nature in starter save data
-                            if (!starterAttributes) {
-                              starterAttributes = this.starterPreferences[this.lastSpecies.speciesId] = {};
-                            }
                             starterAttributes.nature = n;
                             originalStarterAttributes.nature = starterAttributes.nature;
                             this.clearText();
@@ -3635,15 +3640,19 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
         if (starterIndex > -1) {
           props = globalScene.gameData.getSpeciesDexAttrProps(species, this.starterAttr[starterIndex]);
-          this.setSpeciesDetails(species, {
-            shiny: props.shiny,
-            formIndex: props.formIndex,
-            female: props.female,
-            variant: props.variant,
-            abilityIndex: this.starterAbilityIndexes[starterIndex],
-            natureIndex: this.starterNatures[starterIndex],
-            teraType: this.starterTeras[starterIndex],
-          });
+          this.setSpeciesDetails(
+            species,
+            {
+              shiny: props.shiny,
+              formIndex: props.formIndex,
+              female: props.female,
+              variant: props.variant,
+              abilityIndex: this.starterAbilityIndexes[starterIndex],
+              natureIndex: this.starterNatures[starterIndex],
+              teraType: this.starterTeras[starterIndex],
+            },
+            false,
+          );
         } else {
           const defaultAbilityIndex =
             starterAttributes?.ability ?? globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
@@ -3660,15 +3669,19 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           props.formIndex = starterAttributes?.form ?? props.formIndex;
           props.female = starterAttributes?.female ?? props.female;
 
-          this.setSpeciesDetails(species, {
-            shiny: props.shiny,
-            formIndex: props.formIndex,
-            female: props.female,
-            variant: props.variant,
-            abilityIndex: defaultAbilityIndex,
-            natureIndex: defaultNature,
-            teraType: starterAttributes?.tera,
-          });
+          this.setSpeciesDetails(
+            species,
+            {
+              shiny: props.shiny,
+              formIndex: props.formIndex,
+              female: props.female,
+              variant: props.variant,
+              abilityIndex: defaultAbilityIndex,
+              natureIndex: defaultNature,
+              teraType: starterAttributes?.tera,
+            },
+            false,
+          );
         }
 
         if (!isNullOrUndefined(props.formIndex)) {
@@ -3705,15 +3718,19 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         const defaultNature = globalScene.gameData.getSpeciesDefaultNature(species);
         const props = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
 
-        this.setSpeciesDetails(species, {
-          shiny: props.shiny,
-          formIndex: props.formIndex,
-          female: props.female,
-          variant: props.variant,
-          abilityIndex: defaultAbilityIndex,
-          natureIndex: defaultNature,
-          forSeen: true,
-        });
+        this.setSpeciesDetails(
+          species,
+          {
+            shiny: props.shiny,
+            formIndex: props.formIndex,
+            female: props.female,
+            variant: props.variant,
+            abilityIndex: defaultAbilityIndex,
+            natureIndex: defaultNature,
+            forSeen: true,
+          },
+          false,
+        );
         this.pokemonSprite.setTint(0x808080);
       }
     } else {
@@ -3735,15 +3752,19 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonFormText.setVisible(false);
       this.teraIcon.setVisible(false);
 
-      this.setSpeciesDetails(species!, {
-        // TODO: is this bang correct?
-        shiny: false,
-        formIndex: 0,
-        female: false,
-        variant: 0,
-        abilityIndex: 0,
-        natureIndex: 0,
-      });
+      this.setSpeciesDetails(
+        species!,
+        {
+          // TODO: is this bang correct?
+          shiny: false,
+          formIndex: 0,
+          female: false,
+          variant: 0,
+          abilityIndex: 0,
+          natureIndex: 0,
+        },
+        false,
+      );
       this.pokemonSprite.clearTint();
     }
   }
@@ -3765,7 +3786,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     return { dexEntry: { ...copiedDexEntry }, starterDataEntry: { ...copiedStarterDataEntry } };
   }
 
-  setSpeciesDetails(species: PokemonSpecies, options: SpeciesDetails = {}): void {
+  setSpeciesDetails(species: PokemonSpecies, options: SpeciesDetails = {}, save = true): void {
     let { shiny, formIndex, female, variant, abilityIndex, natureIndex, teraType } = options;
     const forSeen: boolean = options.forSeen ?? false;
     const oldProps = species ? globalScene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor) : null;
@@ -4177,7 +4198,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     this.updateInstructions();
 
-    saveStarterPreferences(this.originalStarterPreferences);
+    if (save) {
+      saveStarterPreferences(this.originalStarterPreferences);
+    }
   }
 
   setTypeIcons(type1: PokemonType | null, type2: PokemonType | null): void {
