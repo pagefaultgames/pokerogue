@@ -78,7 +78,7 @@ export function loadStarterPreferences(): StarterPreferences {
 /**
  * Check if an object has no properties of its own (its shape is `{}`)
  * @param obj - Object to check
- * @returns - Whether the object bare
+ * @returns - Whether the object is bare
  */
 export function isBareObject(obj: object): boolean {
   for (const _ in obj) {
