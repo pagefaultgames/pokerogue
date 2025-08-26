@@ -77,7 +77,7 @@ export enum EvolutionItem {
   LEADERS_CREST
 }
 
-const tyrogueMoves = [MoveId.LOW_SWEEP, MoveId.MACH_PUNCH, MoveId.RAPID_SPIN];
+const tyrogueMoves = [MoveId.LOW_SWEEP, MoveId.MACH_PUNCH, MoveId.RAPID_SPIN] as const;
 type TyrogueMove = MoveId.LOW_SWEEP | MoveId.MACH_PUNCH | MoveId.RAPID_SPIN;
 
 /**
