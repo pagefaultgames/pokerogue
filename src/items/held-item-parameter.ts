@@ -37,7 +37,7 @@ export interface BaseStatBoosterParams {
 export interface BaseStatFlatParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
-  /** The amount of exp to gain */
+  /** The base stats of the {@linkcode pokemon} */
   baseStats: number[];
 }
 
