@@ -26,11 +26,11 @@ vi.mock("i18next", async importOriginal => {
   const { http, HttpResponse } = await import("msw");
 
   // Pre-load all locale files using Vite's import.meta.glob for better static analysis
-  const localeFiles = import.meta.glob('../public/locales/en/**/*.json', { eager: true });
+  const localeFiles = import.meta.glob("../public/locales/en/**/*.json", { eager: true });
   const localeMap = new Map<string, any>();
-  
+
   for (const [path, module] of Object.entries(localeFiles)) {
-    const filename = path.replace('../public/locales/en/', '');
+    const filename = path.replace("../public/locales/en/", "");
     localeMap.set(filename, module);
   }
 
