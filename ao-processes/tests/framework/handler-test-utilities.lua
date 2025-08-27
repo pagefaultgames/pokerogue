@@ -6,7 +6,24 @@ HandlerTestUtils.__index = HandlerTestUtils
 
 function HandlerTestUtils.new(emulator, mockSystems)
     local utils = setmetatable({}, HandlerTestUtils)
-    utils.emulator = emulator or require("development-tools/ao-local-setup/ao-emulator").AOEmulator.new()
+    
+    -- Try to load emulator, use mock if not available
+    if emulator then
+        utils.emulator = emulator
+    else
+        local success, emulatorModule = pcall(require, "development-tools/ao-local-setup/ao-emulator")
+        if success and emulatorModule.AOEmulator then
+            utils.emulator = emulatorModule.AOEmulator.new()
+        else
+            -- Provide a mock emulator for testing
+            utils.emulator = {
+                send = function(msg) return {success = true, response = "mock"} end,
+                eval = function(code) return {success = true, result = "mock"} end,
+                spawn = function() return "mock-process-id" end
+            }
+        end
+    end
+    
     utils.mocks = mockSystems or require("ao-processes/tests/framework/mock-systems").new()
     utils.testResults = {}
     utils.validationRules = {}

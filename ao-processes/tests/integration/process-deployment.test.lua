@@ -101,6 +101,26 @@ function runTest(testName, testFunc)
     end
 end
 
+-- Helper function to load main.lua with path resolution
+local function loadMainProcess()
+    local mainPaths = {
+        "ao-processes/main.lua",         -- GitHub Actions path (from repo root)
+        "../../../main.lua",             -- Local development path
+        "../../main.lua",                -- Alternative local path
+    }
+    
+    for _, path in ipairs(mainPaths) do
+        local file = io.open(path, "r")
+        if file then
+            file:close()
+            dofile(path)
+            return true
+        end
+    end
+    
+    error("Could not locate main.lua. Tried paths: " .. table.concat(mainPaths, ", "))
+end
+
 -- Initialize test environment
 local capturedOutput = setupMockAO()
 
@@ -108,9 +128,7 @@ local capturedOutput = setupMockAO()
 
 function tests.testProcessDeployment()
     -- Test process can be initialized
-    local success = pcall(function()
-        dofile("ao-processes/main.lua")
-    end)
+    local success = pcall(loadMainProcess)
     
     assert(success, "Process should deploy successfully")
     
@@ -124,7 +142,7 @@ end
 
 function tests.testHandlerRegistration()
     -- Load the main process to ensure handlers are registered
-    dofile("ao-processes/main.lua")
+    loadMainProcess()
     
     -- Verify handlers are registered during initialization
     local handlers = Handlers.list()
@@ -143,7 +161,7 @@ end
 
 function tests.testProcessInfoHandler()
     -- Ensure handlers are loaded
-    dofile("ao-processes/main.lua")
+    loadMainProcess()
     
     -- Create test message for process info
     local responseReceived = false
@@ -176,7 +194,7 @@ end
 
 function tests.testHandlerDiscovery()
     -- Ensure handlers are loaded
-    dofile("ao-processes/main.lua")
+    loadMainProcess()
     
     -- Create test message for handler discovery
     local responseReceived = false
@@ -242,7 +260,7 @@ end
 
 function tests.testMessageRouting()
     -- Ensure handlers are loaded
-    dofile("ao-processes/main.lua")
+    loadMainProcess()
     
     -- Test that messages are routed to correct handlers
     local infoHandlerCalled = false
@@ -321,7 +339,7 @@ function tests.testProcessInitializationSequence()
     end
     
     -- Load process to capture initialization output
-    dofile("ao-processes/main.lua")
+    loadMainProcess()
     
     -- Verify that all components were initialized in correct order
     -- Check captured output from process startup
@@ -348,7 +366,7 @@ end
 
 function tests.testConcurrentMessageHandling()
     -- Ensure handlers are loaded
-    dofile("ao-processes/main.lua")
+    loadMainProcess()
     
     -- Test that multiple messages can be handled without interference
     local responses = {}
