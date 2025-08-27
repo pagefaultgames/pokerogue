@@ -1659,6 +1659,8 @@ export class PartyUiHandler extends MessageUiHandler {
           .find(plm => plm[1] === move);
       } else if (option === PartyOption.ALL) {
         optionName = i18next.t("partyUiHandler:all");
+        // add the number of items to the `all` option
+        optionName += ` (${this.getTransferrableItemsFromPokemon(pokemon).length})`;
       } else {
         const itemModifiers = this.getItemModifiers(pokemon);
         const itemModifier = itemModifiers[option];
