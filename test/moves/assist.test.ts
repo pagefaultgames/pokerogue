@@ -54,8 +54,8 @@ describe("Move - Assist", () => {
     game.move.select(MoveId.ASSIST, BattlerIndex.PLAYER_2);
     await game.toEndOfTurn();
 
-    expect(feebas).toHaveUsedMove({ move: MoveId.TORCH_SONG, useMode: MoveUseMode.VIRTUAL });
-    expect(shuckle).toHaveUsedMove({ move: MoveId.WOOD_HAMMER, useMode: MoveUseMode.VIRTUAL });
+    expect(feebas).toHaveUsedMove({ move: MoveId.TORCH_SONG, useMode: MoveUseMode.FOLLOW_UP });
+    expect(shuckle).toHaveUsedMove({ move: MoveId.WOOD_HAMMER, useMode: MoveUseMode.FOLLOW_UP });
     expect(feebas).toHaveStatStage(Stat.SPATK, 1); // Stat raised from Assist --> Torch Song
     expect(shuckle).not.toHaveFullHp(); // recoil dmg taken from Assist --> Wood Hammer
 
