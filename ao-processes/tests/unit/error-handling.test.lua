@@ -55,7 +55,26 @@ end
 setupMockAO()
 
 -- Load the error handler module
-local ErrorHandler = dofile("../../handlers/error-handler.lua")
+-- Handle different path resolution contexts (local vs GitHub Actions)
+local errorHandlerPaths = {
+    "../../handlers/error-handler.lua",         -- Local development path
+    "../../../handlers/error-handler.lua",     -- GitHub Actions path
+    "./ao-processes/handlers/error-handler.lua", -- Alternative CI path
+}
+
+local ErrorHandler = nil
+for _, path in ipairs(errorHandlerPaths) do
+    local file = io.open(path, "r")
+    if file then
+        file:close()
+        ErrorHandler = dofile(path)
+        break
+    end
+end
+
+if not ErrorHandler then
+    error("Could not locate error-handler.lua. Tried paths: " .. table.concat(errorHandlerPaths, ", "))
+end
 
 -- Test Cases
 

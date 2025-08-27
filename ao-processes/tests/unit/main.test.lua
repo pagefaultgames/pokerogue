@@ -68,7 +68,28 @@ end
 setupMockAO()
 
 -- Load the main module for testing
-dofile("../../main.lua")
+-- Handle different path resolution contexts (local vs GitHub Actions)
+local mainPaths = {
+    "../../main.lua",           -- Local development path
+    "../../../main.lua",        -- GitHub Actions path
+    "./ao-processes/main.lua",  -- Alternative CI path
+}
+
+local mainLoaded = false
+for _, path in ipairs(mainPaths) do
+    local file = io.open(path, "r")
+    if file then
+        file:close()
+        dofile(path)
+        mainLoaded = true
+        print("Loaded main.lua from: " .. path)
+        break
+    end
+end
+
+if not mainLoaded then
+    error("Could not locate main.lua. Tried paths: " .. table.concat(mainPaths, ", "))
+end
 
 -- Test Cases
 

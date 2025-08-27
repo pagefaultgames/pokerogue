@@ -65,7 +65,26 @@ end
 setupMockAO()
 
 -- Load the admin handler module
-local AdminHandler = dofile("../../handlers/admin-handler.lua")
+-- Handle different path resolution contexts (local vs GitHub Actions)
+local adminHandlerPaths = {
+    "../../handlers/admin-handler.lua",         -- Local development path
+    "../../../handlers/admin-handler.lua",     -- GitHub Actions path
+    "./ao-processes/handlers/admin-handler.lua", -- Alternative CI path
+}
+
+local AdminHandler = nil
+for _, path in ipairs(adminHandlerPaths) do
+    local file = io.open(path, "r")
+    if file then
+        file:close()
+        AdminHandler = dofile(path)
+        break
+    end
+end
+
+if not AdminHandler then
+    error("Could not locate admin-handler.lua. Tried paths: " .. table.concat(adminHandlerPaths, ", "))
+end
 
 -- Test Cases
 
