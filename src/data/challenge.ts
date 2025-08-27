@@ -764,7 +764,7 @@ export class SingleTypeChallenge extends Challenge {
   }
 
   getValue(overrideValue: number = this.value): string {
-    return i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[overrideValue - 1]})`);
+    return i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[overrideValue - 1])}`);
   }
 
   getDescription(overrideValue: number = this.value): string {
