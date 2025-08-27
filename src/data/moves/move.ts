@@ -7154,7 +7154,7 @@ export class RandomMoveAttr extends CallMoveAttrWithBanlist {
 export class RandomMovesetMoveAttr extends RandomMoveAttr {
   /**
    * The previously-selected {@linkcode MoveId} for this attribute, or `MoveId.NONE` if none could be found. \
-   * Reset to `MoveId.NONE` after a successful use.
+   * Reset to `MoveId.NONE` after move use (successful or not).
    * @defaultValue `MoveId.NONE`
    */
   private selectedMove: MoveId = MoveId.NONE;
@@ -7188,10 +7188,7 @@ export class RandomMovesetMoveAttr extends RandomMoveAttr {
     // Assist & Sleep Talk consider duplicate moves for their selection (hence why we use an array instead of a set)
     const moveset = allies.flatMap(p => p.moveset);
     const eligibleMoves = moveset.filter(m => this.isMoveAllowed(m.moveId));
-    if (eligibleMoves.length === 0) {
-      return MoveId.NONE;
-    }
-    this.selectedMove = eligibleMoves[user.randBattleSeedInt(eligibleMoves.length)].moveId;
+    this.selectedMove = eligibleMoves[user.randBattleSeedInt(eligibleMoves.length)]?.moveId ?? MoveId.NONE;
     return this.selectedMove;
   }
 
