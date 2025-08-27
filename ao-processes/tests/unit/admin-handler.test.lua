@@ -65,7 +65,7 @@ end
 setupMockAO()
 
 -- Load the admin handler module
-local AdminHandler = dofile("ao-processes/handlers/admin-handler.lua")
+local AdminHandler = dofile("../../handlers/admin-handler.lua")
 
 -- Test Cases
 

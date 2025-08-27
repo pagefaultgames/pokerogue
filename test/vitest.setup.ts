@@ -36,7 +36,7 @@ vi.mock("i18next", async importOriginal => {
 
   global.server = setupServer(
     http.get("/locales/en/*", async req => {
-      const filename = req.params[0];
+      const filename = req.params[0] as string;
 
       try {
         const json = localeMap.get(filename);

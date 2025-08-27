@@ -55,7 +55,7 @@ end
 setupMockAO()
 
 -- Load the error handler module
-local ErrorHandler = dofile("ao-processes/handlers/error-handler.lua")
+local ErrorHandler = dofile("../../handlers/error-handler.lua")
 
 -- Test Cases
 

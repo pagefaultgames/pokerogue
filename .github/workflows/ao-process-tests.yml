@@ -45,7 +45,7 @@ on:
         type: string
 
 env:
-  LUA_VERSION: '5.4'
+  LUA_VERSION: '5.3'
   NODE_VERSION: '18'
   TEST_TIMEOUT: '1800' # 30 minutes
   ARTIFACT_RETENTION_DAYS: '30'

@@ -27,3 +27,6 @@ ignore:
    - public
    - dist
    - .devcontainer
+   - .bmad-2d-phaser-game-dev
+   - .bmad-core
+   - .claude

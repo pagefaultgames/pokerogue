@@ -68,7 +68,7 @@ end
 setupMockAO()
 
 -- Load the main module for testing
-dofile("ao-processes/main.lua")
+dofile("../../main.lua")
 
 -- Test Cases
 
