@@ -6940,12 +6940,15 @@ export abstract class CallMoveAttr extends OverrideMoveEffectAttr {
     const moveTargets = getMoveTargets(user, copiedMove.id, replaceMoveTarget);
 
     // Spread moves and ones with only 1 valid target will use their normal targeting.
-    // If not, target the Mirror Move recipient or else a random enemy in our target list
-    const targets = moveTargets.multiple || moveTargets.targets.length === 1
-      ? moveTargets.targets
-      : [this.selfTarget
-        ? target.getBattlerIndex()
-        : moveTargets.targets[user.randBattleSeedInt(moveTargets.targets.length)]];
+    // If not, target the Mirror Move recipient (if targeted) or a random enemy in our target list
+    const targets =
+      moveTargets.multiple || moveTargets.targets.length === 1
+        ? moveTargets.targets
+        : [
+            this.selfTarget
+              ? moveTargets.targets[user.randBattleSeedInt(moveTargets.targets.length)]
+              : target.getBattlerIndex(),
+          ];
 
     globalScene.phaseManager.unshiftNew("LoadMoveAnimPhase", copiedMove.id);
     globalScene.phaseManager.unshiftNew("MovePhase", user, targets, new PokemonMove(copiedMove.id), MoveUseMode.FOLLOW_UP);
@@ -6975,6 +6978,9 @@ export class NaturePowerAttr extends CallMoveAttr {
   /**
    * Helper function to retrieve the correct move for the current terrain and biome.
    * Made into a separate function for brevity.
+   * @param terrain - The arena's current {@linkcode TerrainType}
+   * @param biome - The arena's current {@linkcode BiomeId}
+   * @returns The {@linkcode MoveId} that will be used
    */
   private getMoveIdForTerrain(terrain: TerrainType, biome: BiomeId): MoveId {
     switch (terrain) {
@@ -7063,7 +7069,7 @@ export class NaturePowerAttr extends CallMoveAttr {
       default:
         // Fallback for no match
         biome satisfies never;
-        console.warn(`NaturePowerAttr lacks defined move to use for current biome ${toTitleCase(BiomeId[biome])}; consider adding an appropriate move to the attribute's selection table.`)
+        console.warn(`NaturePowerAttr lacks defined move to use for current biome ${toTitleCase(BiomeId[biome])}!\nConsider adding an appropriate move to the attribute's selection table.`)
         return MoveId.TRI_ATTACK;
     }
   }
@@ -7074,11 +7080,11 @@ export class NaturePowerAttr extends CallMoveAttr {
  */
 abstract class CallMoveAttrWithBanlist extends CallMoveAttr {
   /**
-   * A {@linkcode ReadonlySet} containing all moves that this {@linkcode MoveAttr} cannot copy,
-   * in addition to unimplemented moves and {@linkcode MoveId.NONE}.
-   * The move should fail if the chosen move is inside this banlist.
+   * A {@linkcode ReadonlySet} containing all {@linkcode MoveId | moves} that this attribute cannot copy,
+   * in addition to unimplemented moves and `linkcode MoveId.NONE`
+   * Subclasses should exclude all moves inside this banlist.
    */
-  protected readonly invalidMoves: ReadonlySet<MoveId>
+  private readonly invalidMoves: ReadonlySet<MoveId>;
 
   constructor(
     invalidMoves: ReadonlySet<MoveId>,
@@ -7089,7 +7095,7 @@ abstract class CallMoveAttrWithBanlist extends CallMoveAttr {
   }
 
   /**
-   * Check whether a {@linkcode MoveId} is selectable for this attribute, based on its currnet banlist.
+   * Check whether a {@linkcode MoveId} is selectable by this attribute, based on its currnet banlist.
    * Moves that are unimplemented or {@linkcode MoveId.NONE} are always disallowed, as are ones barred by a challenge.
    * @param move - The {@linkcode MoveId} to check
    * @returns Whether `move` can be called successfully.
@@ -7109,14 +7115,14 @@ abstract class CallMoveAttrWithBanlist extends CallMoveAttr {
 export class CopyMoveAttr extends CallMoveAttrWithBanlist {
   protected override getMove(_user: Pokemon, target: Pokemon): MoveId {
     // If `selfTarget` is `true`, return the last successful move used by anyone on-field.
-    // Otherwise, select the last move used by the target specifically.
+    // Otherwise, select the last move executed by the target, failing if none were used yet.
     return this.selfTarget
       ? globalScene.currentBattle.lastMove
-      : target.getLastXMoves()[0]?.move ?? MoveId.NONE
+      : target.getLastNonVirtualMove(false, false)?.move ?? MoveId.NONE
   }
 
-  getCondition(): MoveConditionFunc {
-    return (_user, target, _move) => {
+  override getCondition(): MoveConditionFunc {
+    return (_user, target) => {
       const chosenMove = this.getMove(_user, target);
       return this.isMoveAllowed(chosenMove);
     };
@@ -7132,13 +7138,8 @@ export class RandomMoveAttr extends CallMoveAttrWithBanlist {
     super(invalidMoves, true);
   }
 
-  /**
-   * Pick a random move to execute, barring unimplemented moves and ones
-   * in this move's {@linkcode invalidMetronomeMoves | exclusion list}.
-   * @param user - The {@linkcode Pokemon} using the move
-   * @returns The {@linkcode MoveId} that will be called.
-   */
   protected override getMove(user: Pokemon): MoveId {
+    // TODO: Cache the eligible move list rather than manually filtering a 1000-length array
     const moveIds = getEnumValues(MoveId).filter(m => this.isMoveAllowed(m));
     return moveIds[user.randBattleSeedInt(moveIds.length)];
   }
@@ -7153,28 +7154,22 @@ export class RandomMoveAttr extends CallMoveAttrWithBanlist {
 export class RandomMovesetMoveAttr extends RandomMoveAttr {
   /**
    * The previously-selected {@linkcode MoveId} for this attribute, or `MoveId.NONE` if none could be found. \
-   * Reset to {@linkcode MoveId.NONE} after a successful use.
+   * Reset to `MoveId.NONE` after a successful use.
    * @defaultValue `MoveId.NONE`
    */
   private selectedMove: MoveId = MoveId.NONE;
   /**
    * Whether to consider moves from the user's other party members (`true`)
    * or the user's own moveset (`false`).
-   * @defaultValue `false`.
+     * @defaultValue `false`
    */
   private includeParty = false;
+
   constructor(invalidMoves: ReadonlySet<MoveId>, includeParty = false) {
     super(invalidMoves);
     this.includeParty = includeParty
   }
 
-  /**
-   * Select a random move from either the user's or its party members' movesets,
-   * or return an already-selected one if one exists.
-   *
-   * @param user - The {@linkcode Pokemon} using the move
-   * @returns The {@linkcode MoveId} that will be called.
-   */
   protected override getMove(user: Pokemon): MoveId {
     // If we already have a selected move from the condition function,
     // re-use and reset it rather than generating another random move
@@ -7185,9 +7180,10 @@ export class RandomMovesetMoveAttr extends RandomMoveAttr {
     }
 
     // `includeParty` will be true for Assist, false for Sleep Talk
-    const allies: Pokemon[] = this.includeParty
-      ? (user.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty()).filter(p => p !== user)
-      : [ user ];
+    const allies: Pokemon[] = 
+      this.includeParty
+        ? (user.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty()).filter(p => p !== user)
+        : [ user ];
 
     // Assist & Sleep Talk consider duplicate moves for their selection (hence why we use an array instead of a set)
     const moveset = allies.flatMap(p => p.moveset);
