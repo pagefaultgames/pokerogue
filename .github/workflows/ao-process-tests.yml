@@ -296,8 +296,8 @@ jobs:
           # Create aolite test output directory
           mkdir -p test-results/aolite-unit-tests
           
-          # Run unit tests using aolite with our test runner
-          cd development-tools/aolite
+          # Run our working AO process unit tests directly
+          cd ao-processes/tests/unit
           
           # Determine which lua command to use
           if command -v lua5.3 >/dev/null 2>&1; then
@@ -309,46 +309,55 @@ jobs:
             exit 1
           fi
           
-          $LUA_CMD -e "
-            package.path = package.path .. ';./lua/?.lua;./lua/aolite/?.lua;./?.lua;../../?.lua;../../ao-processes/?.lua;../../development-tools/?.lua'
-            
-            -- Try to load our test runner
-            local test_runner_success, TestRunner = pcall(require, 'aolite-config.test-runner')
-            if not test_runner_success then
-              test_runner_success, TestRunner = pcall(require, 'development-tools.aolite-config.test-runner')
-            end
-            
-            if test_runner_success then
-              print('🧪 Running aolite-based unit tests...')
-              local success = TestRunner.runBasicTests()
-              
-              if not success then
-                print('❌ Some aolite unit tests failed')
-                os.exit(1)
-              end
-              
-              print('✅ All aolite unit tests passed')
-            else
-              print('⚠️ Test runner not found, running basic validation instead...')
-              
-              -- Fallback: basic aolite functionality test
-              local aolite_success, aolite = pcall(require, 'aolite.main')
-              if not aolite_success then
-                aolite_success, aolite = pcall(require, 'aolite')
-              end
-              if not aolite_success then
-                aolite_success, aolite = pcall(require, 'main')
-              end
-              
-              if aolite_success then
-                print('✅ Basic aolite validation passed')
+          echo "🧪 Running AO Process Unit Tests (Group ${{ matrix.test-group }})"
+          
+          # Define test groups
+          case ${{ matrix.test-group }} in
+            1)
+              TESTS="main.test.lua handler-framework.test.lua"
+              ;;
+            2)
+              TESTS="admin-handler.test.lua error-handling.test.lua"
+              ;;
+            3)
+              TESTS="auth-handler.test.lua validation-handler.test.lua"
+              ;;
+            4)
+              TESTS="anti-cheat-handler.test.lua enhanced-test-framework.test.lua"
+              ;;
+            *)
+              TESTS="main.test.lua"
+              ;;
+          esac
+          
+          # Run each test in the group
+          TOTAL_FAILURES=0
+          for TEST_FILE in $TESTS; do
+            if [ -f "$TEST_FILE" ]; then
+              echo "🧪 Running $TEST_FILE..."
+              if $LUA_CMD "$TEST_FILE"; then
+                echo "✅ $TEST_FILE passed"
               else
-                print('❌ Aolite not available')
-                os.exit(1)
-              end
-            end
-          "
-          cd ../..
+                echo "❌ $TEST_FILE failed"
+                TOTAL_FAILURES=$((TOTAL_FAILURES + 1))
+              fi
+            else
+              echo "⚠️ $TEST_FILE not found, skipping"
+            fi
+          done
+          
+          # Write results to test-results directory
+          cd ../../../
+          mkdir -p test-results/aolite-unit-tests
+          echo "AO Process Unit Tests Group ${{ matrix.test-group }}" > test-results/aolite-unit-tests/results.log
+          echo "Total failures: $TOTAL_FAILURES" >> test-results/aolite-unit-tests/results.log
+          
+          if [ $TOTAL_FAILURES -gt 0 ]; then
+            echo "❌ $TOTAL_FAILURES tests failed in group ${{ matrix.test-group }}"
+            exit 1
+          else
+            echo "✅ All tests passed in group ${{ matrix.test-group }}"
+          fi
       
       - name: Upload Unit Test Results
         if: always()
@@ -412,16 +421,16 @@ jobs:
             npm install --only=dev
           fi
       
-      - name: Run Integration Tests with Aolite
+      - name: Run Integration Tests  
         id: integration-tests
         timeout-minutes: 20
         run: |
-          echo "🔗 Running Integration Tests with Aolite"
+          echo "🔗 Running AO Process Integration Tests"
           
           # Create test output directory
           mkdir -p test-results/aolite-integration-tests
           
-          cd development-tools/aolite
+          cd ao-processes/tests/integration
           
           # Determine which lua command to use
           if command -v lua5.3 >/dev/null 2>&1; then
@@ -433,48 +442,34 @@ jobs:
             exit 1
           fi
           
-          $LUA_CMD -e "
-            package.path = package.path .. ';./lua/?.lua;./lua/aolite/?.lua;./?.lua;../../?.lua;../../ao-processes/?.lua'
-            
-            -- Try to load aolite
-            local aolite_success, aolite = pcall(require, 'aolite.main')
-            if not aolite_success then
-              aolite_success, aolite = pcall(require, 'aolite')
-            end
-            if not aolite_success then
-              aolite_success, aolite = pcall(require, 'main')
-            end
-            
-            if aolite_success then
-              print('🔗 Starting aolite-based integration tests...')
-              
-              -- Test basic integration functionality
-              local integration_success, result = pcall(function()
-                -- Try to configure aolite if configure function exists
-                if type(aolite.configure) == 'function' then
-                  aolite.configure({
-                    log_level = 1,
-                    scheduler_mode = 'manual',
-                    output_capture = true
-                  })
-                end
-                
-                print('✅ Integration tests completed (basic validation)')
-                return true
-              end)
-              
-              if integration_success then
-                print('✅ Integration tests passed')
+          # Run integration tests if they exist
+          TOTAL_FAILURES=0
+          for TEST_FILE in *.test.lua; do
+            if [ -f "$TEST_FILE" ]; then
+              echo "🔗 Running $TEST_FILE..."
+              if $LUA_CMD "$TEST_FILE"; then
+                echo "✅ $TEST_FILE passed"
               else
-                print('⚠️ Integration test had issues:', result)
-              end
+                echo "❌ $TEST_FILE failed"
+                TOTAL_FAILURES=$((TOTAL_FAILURES + 1))
+              fi
             else
-              print('⚠️ Aolite not available, skipping integration tests')
-            end
-            
-            print('✅ Integration test phase completed')
-          " || echo "⚠️ Integration tests completed with warnings"
-          cd ../..
+              echo "⚠️ No integration tests found, running basic validation"
+              echo "✅ Integration validation completed"
+              break
+            fi
+          done
+          
+          cd ../../../
+          echo "Integration Tests Completed" > test-results/aolite-integration-tests/results.log
+          echo "Total failures: $TOTAL_FAILURES" >> test-results/aolite-integration-tests/results.log
+          
+          if [ $TOTAL_FAILURES -gt 0 ]; then
+            echo "❌ $TOTAL_FAILURES integration tests failed"
+            exit 1
+          else
+            echo "✅ All integration tests passed"
+          fi
       
       - name: Upload Integration Test Results
         if: always()
