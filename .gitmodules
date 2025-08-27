@@ -1,3 +1,6 @@
 [submodule "public/locales"]
 	path = public/locales
 	url = https://github.com/pagefaultgames/pokerogue-locales
+[submodule "development-tools/aolite"]
+	path = development-tools/aolite
+	url = https://github.com/perplex-labs/aolite.git

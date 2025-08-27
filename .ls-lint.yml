@@ -30,3 +30,4 @@ ignore:
    - .bmad-2d-phaser-game-dev
    - .bmad-core
    - .claude
+   - development-tools/aolite

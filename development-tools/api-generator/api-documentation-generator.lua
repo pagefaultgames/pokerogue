@@ -339,7 +339,7 @@ function APIDocumentationGenerator.extractConstantsInfo(file_info)
                 type = "table",
                 description = "Type effectiveness lookup table",
                 values = { "Nested table with effectiveness multipliers" },
-                example = [[local effectiveness = TYPE_EFFECTIVENESS[attacking_type][defending_type]]]
+                example = [[local effectiveness = TYPE_EFFECTIVENESS[attacking_type][defending_type]]
             }
         }
     end

@@ -27,6 +27,7 @@
       "!**/node_modules/**/*",
       "!**/.vscode/**/*",
       "!**/typedoc/**/*",
+      "!**/development-tools/aolite/**/*",
       // TODO: lint css and html?
       "!**/*.css",
       "!**/*.html",
