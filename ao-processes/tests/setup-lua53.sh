@@ -56,6 +56,12 @@ if [ "$LUA_CMD" != "lua5.3" ] && [ ! -f "./lua5.3" ]; then
 fi
 
 echo "✅ Lua 5.3 environment ready!"
+
+# Set up Lua path for module loading from ao-processes directory
+export LUA_PATH="../?.lua;../?/init.lua;../data/?.lua;../data/?/init.lua;./?.lua;./?/init.lua;;"
+export LUA_PATH
+
+echo "✅ Lua path configured for project modules"
 echo ""
 echo "To run tests:"
 echo "  $LUA_CMD main.test.lua"

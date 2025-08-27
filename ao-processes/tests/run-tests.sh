@@ -14,6 +14,46 @@ source ./setup-lua53.sh || {
     exit 1
 }
 
+# Test ability system components first
+echo "🔬 Testing Ability System Components..."
+echo "======================================"
+
+# Set correct Lua path for ability system tests
+export LUA_PATH="../?.lua;../?/init.lua;../data/?.lua;../data/?/init.lua;./?.lua;./?/init.lua;;"
+
+# Test AbilityDatabase
+echo "🧪 Testing AbilityDatabase..."
+$LUA_CMD -e "
+local AbilityDatabase = require('data.abilities.ability-database')
+AbilityDatabase.init()
+assert(AbilityDatabase.getAbilityCount() >= 46, 'Should have at least 46 abilities')
+assert(AbilityDatabase.getAbility(1), 'Should load first ability')
+print('✅ AbilityDatabase: ' .. AbilityDatabase.getAbilityCount() .. ' abilities loaded')
+" || { echo "❌ AbilityDatabase test failed"; exit 1; }
+
+# Test AbilityIndexes
+echo "🧪 Testing AbilityIndexes..."
+$LUA_CMD -e "
+local AbilityIndexes = require('data.abilities.ability-indexes')
+local AbilityDatabase = require('data.abilities.ability-database')
+AbilityDatabase.init()
+AbilityIndexes.init()
+assert(AbilityIndexes.getAbilityById(1), 'Should get ability by ID')
+print('✅ AbilityIndexes: Fast lookup system working')
+" || { echo "❌ AbilityIndexes test failed"; exit 1; }
+
+# Test PassiveAbilities
+echo "🧪 Testing PassiveAbilities..."
+$LUA_CMD -e "
+local PassiveAbilities = require('data.abilities.passive-abilities')
+PassiveAbilities.init()
+local categories = PassiveAbilities.getCategories()
+assert(type(categories) == 'table' and #categories > 0, 'Should have passive categories')
+print('✅ PassiveAbilities: ' .. #categories .. ' categories loaded')
+" || { echo "❌ PassiveAbilities test failed"; exit 1; }
+
+echo "======================================"
+
 # Change to unit test directory
 cd unit
 
