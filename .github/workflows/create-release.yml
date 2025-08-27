@@ -50,8 +50,9 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
       - name: Create release branch
         run: git checkout -b release
-      # In order to be able to open a PR into beta, we need the branch to have at least one change.
-      - name: Overwrite RELEASE file
+
+      # In order to be able to open a PR into beta, we need the branch to have at least one commit.
+      - name: Create empty release commit
         run: |
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
