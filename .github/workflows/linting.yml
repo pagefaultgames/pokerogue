@@ -19,6 +19,7 @@ on:
 jobs:
   run-linters:
     name: Run linters
+    timeout-minutes: 10
     runs-on: ubuntu-latest
 
     steps:

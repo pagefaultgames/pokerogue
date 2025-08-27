@@ -19,6 +19,7 @@ on:
 
 jobs:
   check-path-change-filter:
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     permissions:
       pull-requests: read

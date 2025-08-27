@@ -20,6 +20,7 @@ jobs:
   pages:
     name: Github Pages
     if: github.repository == 'pagefaultgames/pokerogue'
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     env:
       api-dir: ./
