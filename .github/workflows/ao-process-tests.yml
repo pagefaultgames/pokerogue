@@ -88,7 +88,7 @@ jobs:
         id: setup-lua
         uses: leafo/gh-actions-lua@v10
         with:
-          luaVersion: ${{ env.LUA_VERSION }}
+          luaVersion: "5.3"
       
       - name: Set Lua Version Output
         id: set-lua-version
@@ -145,11 +145,17 @@ jobs:
           # Test basic aolite loading
           echo "🧪 Testing aolite loading..."
           
-          # Determine which lua command to use
-          if command -v lua5.3 >/dev/null 2>&1; then
-            LUA_CMD="lua5.3"
-          elif command -v lua >/dev/null 2>&1; then
+          # Determine which lua command to use and verify version
+          if command -v lua >/dev/null 2>&1; then
             LUA_CMD="lua"
+            LUA_VERSION_CHECK=$(lua -v 2>&1 | head -1)
+            echo "Found lua command: $LUA_VERSION_CHECK"
+            if [[ ! "$LUA_VERSION_CHECK" =~ "Lua 5.3" ]]; then
+              echo "⚠️ Warning: Expected Lua 5.3 but found: $LUA_VERSION_CHECK"
+            fi
+          elif command -v lua5.3 >/dev/null 2>&1; then
+            LUA_CMD="lua5.3"
+            echo "Found lua5.3 command"
           else
             echo "❌ No Lua interpreter found"
             exit 1
@@ -299,11 +305,17 @@ jobs:
           # Run our working AO process unit tests directly
           cd ao-processes/tests/unit
           
-          # Determine which lua command to use
-          if command -v lua5.3 >/dev/null 2>&1; then
-            LUA_CMD="lua5.3"
-          elif command -v lua >/dev/null 2>&1; then
+          # Determine which lua command to use and verify version
+          if command -v lua >/dev/null 2>&1; then
             LUA_CMD="lua"
+            LUA_VERSION_CHECK=$(lua -v 2>&1 | head -1)
+            echo "Found lua command: $LUA_VERSION_CHECK"
+            if [[ ! "$LUA_VERSION_CHECK" =~ "Lua 5.3" ]]; then
+              echo "⚠️ Warning: Expected Lua 5.3 but found: $LUA_VERSION_CHECK"
+            fi
+          elif command -v lua5.3 >/dev/null 2>&1; then
+            LUA_CMD="lua5.3"
+            echo "Found lua5.3 command"
           else
             echo "❌ No Lua interpreter found"
             exit 1
@@ -332,9 +344,11 @@ jobs:
           
           # Run each test in the group
           TOTAL_FAILURES=0
+          TESTS_RUN=0
           for TEST_FILE in $TESTS; do
             if [ -f "$TEST_FILE" ]; then
               echo "🧪 Running $TEST_FILE..."
+              TESTS_RUN=$((TESTS_RUN + 1))
               if $LUA_CMD "$TEST_FILE"; then
                 echo "✅ $TEST_FILE passed"
               else
@@ -345,6 +359,23 @@ jobs:
               echo "⚠️ $TEST_FILE not found, skipping"
             fi
           done
+          
+          # If no tests were found, try running any available test files
+          if [ $TESTS_RUN -eq 0 ]; then
+            echo "⚠️ No specified tests found, running available tests..."
+            for TEST_FILE in *.test.lua; do
+              if [ -f "$TEST_FILE" ]; then
+                echo "🧪 Running $TEST_FILE..."
+                if $LUA_CMD "$TEST_FILE"; then
+                  echo "✅ $TEST_FILE passed"
+                else
+                  echo "❌ $TEST_FILE failed"
+                  TOTAL_FAILURES=$((TOTAL_FAILURES + 1))
+                fi
+                break  # Run at least one test to validate setup
+              fi
+            done
+          fi
           
           # Write results to test-results directory
           cd ../../../
@@ -432,11 +463,17 @@ jobs:
           
           cd ao-processes/tests/integration
           
-          # Determine which lua command to use
-          if command -v lua5.3 >/dev/null 2>&1; then
-            LUA_CMD="lua5.3"
-          elif command -v lua >/dev/null 2>&1; then
+          # Determine which lua command to use and verify version
+          if command -v lua >/dev/null 2>&1; then
             LUA_CMD="lua"
+            LUA_VERSION_CHECK=$(lua -v 2>&1 | head -1)
+            echo "Found lua command: $LUA_VERSION_CHECK"
+            if [[ ! "$LUA_VERSION_CHECK" =~ "Lua 5.3" ]]; then
+              echo "⚠️ Warning: Expected Lua 5.3 but found: $LUA_VERSION_CHECK"
+            fi
+          elif command -v lua5.3 >/dev/null 2>&1; then
+            LUA_CMD="lua5.3"
+            echo "Found lua5.3 command"
           else
             echo "❌ No Lua interpreter found"
             exit 1
@@ -529,11 +566,17 @@ jobs:
         run: |
           echo "⚖️ Running Parity Tests: ${{ matrix.parity-suite }}"
           
-          # Determine which lua command to use
-          if command -v lua5.3 >/dev/null 2>&1; then
-            LUA_CMD="lua5.3"
-          elif command -v lua >/dev/null 2>&1; then
+          # Determine which lua command to use and verify version
+          if command -v lua >/dev/null 2>&1; then
             LUA_CMD="lua"
+            LUA_VERSION_CHECK=$(lua -v 2>&1 | head -1)
+            echo "Found lua command: $LUA_VERSION_CHECK"
+            if [[ ! "$LUA_VERSION_CHECK" =~ "Lua 5.3" ]]; then
+              echo "⚠️ Warning: Expected Lua 5.3 but found: $LUA_VERSION_CHECK"
+            fi
+          elif command -v lua5.3 >/dev/null 2>&1; then
+            LUA_CMD="lua5.3"
+            echo "Found lua5.3 command"
           else
             echo "❌ No Lua interpreter found"
             exit 1
@@ -642,11 +685,17 @@ jobs:
         run: |
           echo "🏃 Running Performance Tests and Benchmarks"
           
-          # Determine which lua command to use
-          if command -v lua5.3 >/dev/null 2>&1; then
-            LUA_CMD="lua5.3"
-          elif command -v lua >/dev/null 2>&1; then
+          # Determine which lua command to use and verify version
+          if command -v lua >/dev/null 2>&1; then
             LUA_CMD="lua"
+            LUA_VERSION_CHECK=$(lua -v 2>&1 | head -1)
+            echo "Found lua command: $LUA_VERSION_CHECK"
+            if [[ ! "$LUA_VERSION_CHECK" =~ "Lua 5.3" ]]; then
+              echo "⚠️ Warning: Expected Lua 5.3 but found: $LUA_VERSION_CHECK"
+            fi
+          elif command -v lua5.3 >/dev/null 2>&1; then
+            LUA_CMD="lua5.3"
+            echo "Found lua5.3 command"
           else
             echo "❌ No Lua interpreter found"
             exit 1

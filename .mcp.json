@@ -1,0 +1,16 @@
+{
+  "servers": {
+    "permamind": {
+      "command": "npx",
+      "args": ["permamind"]
+    },
+    "aolite Docs": {
+      "type": "sse",
+      "url": "https://gitmcp.io/perplex-labs/aolite"
+    },
+    "harlequin-toolkit Docs": {
+      "type": "sse",
+      "url": "https://gitmcp.io/the-permaweb-harlequin/harlequin-toolkit"
+    }
+  }
+}
