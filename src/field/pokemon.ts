@@ -3774,7 +3774,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     applyMoveAttrs("FixedDamageAttr", source, this, move, fixedDamage);
     if (fixedDamage.value) {
       const multiLensMultiplier = new NumberHolder(1);
-      applyHeldItems(HeldItemEffect.MULTI_HIT, {
+      applyHeldItems(HeldItemEffect.MULTI_HIT_DAMAGE, {
         pokemon: source,
         moveId: move.id,
         damageMultiplier: multiLensMultiplier,
@@ -3822,7 +3822,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     /** Multiplier for moves enhanced by Multi-Lens and/or Parental Bond */
     const multiStrikeEnhancementMultiplier = new NumberHolder(1);
-    applyHeldItems(HeldItemEffect.MULTI_HIT, {
+    applyHeldItems(HeldItemEffect.MULTI_HIT_DAMAGE, {
       pokemon: source,
       moveId: move.id,
       damageMultiplier: multiStrikeEnhancementMultiplier,

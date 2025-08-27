@@ -1,21 +1,16 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import type { Pokemon } from "#field/pokemon";
 import { HeldItem } from "#items/held-item";
+import type { TurnEndHealParams } from "#items/held-item-parameter";
 import { PokemonHealPhase } from "#phases/pokemon-heal-phase";
 import { toDmgValue } from "#utils/common";
 import i18next from "i18next";
 
-export interface TurnEndHealParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-}
+export class TurnEndHealHeldItem extends HeldItem<[typeof HeldItemEffect.TURN_END_HEAL]> {
+  public readonly effects = [HeldItemEffect.TURN_END_HEAL] as const;
 
-export class TurnEndHealHeldItem extends HeldItem {
-  public effects: HeldItemEffect[] = [HeldItemEffect.TURN_END_HEAL];
-
-  apply({ pokemon }: TurnEndHealParams): boolean {
+  apply(_effect: typeof HeldItemEffect.TURN_END_HEAL, { pokemon }: TurnEndHealParams): boolean {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     if (pokemon.isFullHp()) {
       return false;

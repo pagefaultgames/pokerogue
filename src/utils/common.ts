@@ -570,3 +570,27 @@ export function pickWeightedIndex(weights: number[]): number | undefined {
 
   return undefined; // TODO: Change to something more appropriate
 }
+
+/** 
+ * Type helper to check if a given item is in a tuple, returning `true` or `false` as appropriate.
+ * @typeParam T - The tuple to check
+ * @param X - The item whose inclusion is being checked
+ */
+type InArray<T, X> = T extends readonly [X, ...infer _Rest]
+  ? true
+  : T extends readonly [X]
+    ? true
+    : T extends readonly [infer _, ...infer Rest]
+      ? InArray<Rest, X>
+      : false;
+
+/** 
+ * Type helper to allow only unique elements in a tuple (effectively converting it to a Set).
+ * Within it, any duplicate elements will be flagged and converted to an error message.
+ * @typeParam T - The tuple to render unique
+ */
+export type UniqueArray<T> = T extends readonly [infer X, ...infer Rest]
+  ? InArray<Rest, X> extends true
+    ? ["Encountered value with duplicates:", X]
+    : readonly [X, ...UniqueArray<Rest>]
+  : T;

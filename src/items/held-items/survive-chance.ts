@@ -1,16 +1,9 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import type { Pokemon } from "#field/pokemon";
 import { HeldItem } from "#items/held-item";
-import type { BooleanHolder } from "#utils/common";
+import type { SurviveChanceParams } from "#items/held-item-parameter";
 import i18next from "i18next";
-
-export interface SurviveChanceParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-  surviveDamage: BooleanHolder;
-}
 
 /**
  * Modifier used for held items, namely Toxic Orb and Flame Orb, that apply a
@@ -18,8 +11,8 @@ export interface SurviveChanceParams {
  * @extends PokemonHeldItemModifier
  * @see {@linkcode apply}
  */
-export class SurviveChanceHeldItem extends HeldItem {
-  public effects: HeldItemEffect[] = [HeldItemEffect.SURVIVE_CHANCE];
+export class SurviveChanceHeldItem extends HeldItem<[typeof HeldItemEffect.SURVIVE_CHANCE]> {
+  public readonly effects = [HeldItemEffect.SURVIVE_CHANCE] as const;
 
   /**
    * Checks if the {@linkcode SurviveDamageModifier} should be applied
@@ -35,7 +28,7 @@ export class SurviveChanceHeldItem extends HeldItem {
    * Applies {@linkcode SurviveDamageModifier}
    * @returns `true` if the survive damage has been applied
    */
-  apply({ pokemon, surviveDamage }: SurviveChanceParams): boolean {
+  apply(_effect: typeof HeldItemEffect.SURVIVE_CHANCE, { pokemon, surviveDamage }: SurviveChanceParams): boolean {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     if (!surviveDamage.value && pokemon.randBattleSeedInt(10) < stackCount) {
       surviveDamage.value = true;

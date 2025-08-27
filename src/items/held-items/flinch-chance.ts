@@ -1,15 +1,7 @@
 import { HeldItemEffect } from "#enums/held-item-effect";
 import type { HeldItemId } from "#enums/held-item-id";
-import type { Pokemon } from "#field/pokemon";
 import { HeldItem } from "#items/held-item";
-import type { BooleanHolder } from "#utils/common";
-
-export interface FlinchChanceParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-  /** Holds whether the attack will cause a flinch */
-  flinched: BooleanHolder;
-}
+import type { FlinchChanceParams } from "#items/held-item-parameter";
 
 /**
  * Modifier used for held items, namely Toxic Orb and Flame Orb, that apply a
@@ -17,8 +9,8 @@ export interface FlinchChanceParams {
  * @extends PokemonHeldItemModifier
  * @see {@linkcode apply}
  */
-export class FlinchChanceHeldItem extends HeldItem {
-  public effects: HeldItemEffect[] = [HeldItemEffect.FLINCH_CHANCE];
+export class FlinchChanceHeldItem extends HeldItem<[typeof HeldItemEffect.FLINCH_CHANCE]> {
+  public readonly effects = [HeldItemEffect.FLINCH_CHANCE] as const;
   private chance: number;
 
   constructor(type: HeldItemId, maxStackCount: number, chance: number) {
@@ -41,7 +33,7 @@ export class FlinchChanceHeldItem extends HeldItem {
    * Applies {@linkcode FlinchChanceModifier} to randomly flinch targets hit.
    * @returns `true` if {@linkcode FlinchChanceModifier} was applied successfully
    */
-  apply({ pokemon, flinched }: FlinchChanceParams): boolean {
+  apply(_effect: typeof HeldItemEffect.FLINCH_CHANCE, { pokemon, flinched }: FlinchChanceParams): boolean {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     // The check for pokemon.summonData is to ensure that a crash doesn't occur when a Pokemon with King's Rock procs a flinch
     // TODO: Since summonData is always defined now, we can probably remove this

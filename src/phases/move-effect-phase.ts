@@ -281,7 +281,7 @@ export class MoveEffectPhase extends PokemonPhase {
       // If Parental Bond is applicable, add another hit
       applyAbAttrs("AddSecondStrikeAbAttr", { pokemon: user, move, hitCount });
       // If Multi-Lens is applicable, add hits equal to the number of held Multi-Lenses
-      applyHeldItems(HeldItemEffect.MULTI_HIT, { pokemon: user, moveId: move.id, count: hitCount });
+      applyHeldItems(HeldItemEffect.MULTI_HIT_COUNT, { pokemon: user, moveId: move.id, count: hitCount });
       // Set the user's relevant turnData fields to reflect the final hit count
       user.turnData.hitCount = hitCount.value;
       user.turnData.hitsLeft = hitCount.value;

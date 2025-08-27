@@ -5,14 +5,7 @@ import type { SpeciesId } from "#enums/species-id";
 import type { Stat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
 import { HeldItem } from "#items/held-item";
-import type { NumberHolder } from "#utils/common";
-
-export interface StatBoostParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-  stat: Stat;
-  statValue: NumberHolder;
-}
+import type { StatBoostParams } from "#items/held-item-parameter";
 
 /**
  * Modifier used for held items that Applies {@linkcode Stat} boost(s)
@@ -20,8 +13,8 @@ export interface StatBoostParams {
  * @extends PokemonHeldItemModifier
  * @see {@linkcode apply}
  */
-export class StatBoostHeldItem extends HeldItem {
-  public effects: HeldItemEffect[] = [HeldItemEffect.STAT_BOOST];
+export class StatBoostHeldItem extends HeldItem<[typeof HeldItemEffect.STAT_BOOST]> {
+  public readonly effects = [HeldItemEffect.STAT_BOOST] as const;
   /** The stats that the held item boosts */
   protected stats: Stat[];
   /** The multiplier used to increase the relevant stat(s) */
@@ -51,7 +44,7 @@ export class StatBoostHeldItem extends HeldItem {
    * @returns `true` if the stat boost applies successfully, false otherwise
    * @see shouldApply
    */
-  apply({ statValue }: StatBoostParams): boolean {
+  apply(_effect: typeof HeldItemEffect.STAT_BOOST, { statValue }: StatBoostParams): boolean {
     statValue.value *= this.multiplier;
     return true;
   }
@@ -89,7 +82,7 @@ export class EvolutionStatBoostHeldItem extends StatBoostHeldItem {
    * @returns `true` if the stat boost applies successfully, false otherwise
    * @see shouldApply
    */
-  override apply(params: StatBoostParams): boolean {
+  override apply(effect: typeof HeldItemEffect.STAT_BOOST, params: StatBoostParams): boolean {
     const pokemon = params.pokemon;
     const isUnevolved = pokemon.getSpeciesForm(true).speciesId in pokemonEvolutions;
 
@@ -100,7 +93,7 @@ export class EvolutionStatBoostHeldItem extends StatBoostHeldItem {
     }
     if (isUnevolved && !pokemon.isMax()) {
       // Full boost applied if holder is unfused and unevolved or, if fused, both parts of fusion are unevolved
-      return super.apply(params);
+      return super.apply(effect, params);
     }
 
     return false;
@@ -161,14 +154,14 @@ export class SpeciesStatBoostHeldItem extends StatBoostHeldItem {
   //    );
   //  }
 
-  apply(params: StatBoostParams): boolean {
+  apply(effect: typeof HeldItemEffect.STAT_BOOST, params: StatBoostParams): boolean {
     const pokemon = params.pokemon;
     const fitsSpecies =
       this.species.includes(pokemon.getSpeciesForm(true).speciesId) ||
       (pokemon.isFusion() && this.species.includes(pokemon.getFusionSpeciesForm(true).speciesId));
 
     if (fitsSpecies) {
-      return super.apply(params);
+      return super.apply(effect, params);
     }
 
     return false;

@@ -1,6 +1,6 @@
 import { allHeldItems } from "#data/data-lists";
+import type { FormChangeItemId } from "#enums/form-change-item-id";
 import {
-  type FormChangeItemId,
   HeldItemCategoryId,
   type HeldItemId,
   isCategoryId,
@@ -194,7 +194,10 @@ export class HeldItemManager {
   }
 
   getFormChangeItems(): FormChangeItemId[] {
-    return this.filterRequestedItems([HeldItemCategoryId.FORM_CHANGE, HeldItemCategoryId.RARE_FORM_CHANGE], false);
+    return this.filterRequestedItems(
+      [HeldItemCategoryId.FORM_CHANGE, HeldItemCategoryId.RARE_FORM_CHANGE],
+      false,
+    ) as FormChangeItemId[];
   }
 
   toggleActive(id: FormChangeItemId) {

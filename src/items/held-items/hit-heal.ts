@@ -1,19 +1,14 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import type { Pokemon } from "#field/pokemon";
 import { HeldItem } from "#items/held-item";
+import type { HitHealParams } from "#items/held-item-parameter";
 import { PokemonHealPhase } from "#phases/pokemon-heal-phase";
 import { toDmgValue } from "#utils/common";
 import i18next from "i18next";
 
-export interface HitHealParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-}
-
-export class HitHealHeldItem extends HeldItem {
-  public effects: HeldItemEffect[] = [HeldItemEffect.TURN_END_HEAL];
+export class HitHealHeldItem extends HeldItem<[typeof HeldItemEffect.HIT_HEAL]> {
+  public readonly effects = [HeldItemEffect.HIT_HEAL] as const;
 
   get name(): string {
     return i18next.t("modifierType:ModifierType.SHELL_BELL.name");
@@ -31,7 +26,7 @@ export class HitHealHeldItem extends HeldItem {
    * Applies {@linkcode HitHealModifier}
    * @returns `true` if the {@linkcode Pokemon} was healed
    */
-  apply({ pokemon }: HitHealParams): boolean {
+  apply(_effect: typeof HeldItemEffect.HIT_HEAL, { pokemon }: HitHealParams): boolean {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     if (pokemon.turnData.totalDamageDealt > 0 && !pokemon.isFullHp()) {
       // TODO: this shouldn't be undefined AFAIK

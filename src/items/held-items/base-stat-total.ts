@@ -1,21 +1,14 @@
 import { HeldItemEffect } from "#enums/held-item-effect";
 import type { HeldItemId } from "#enums/held-item-id";
-import type { Pokemon } from "#field/pokemon";
 import { HeldItem } from "#items/held-item";
+import type { BaseStatTotalParams } from "#items/held-item-parameter";
 import i18next from "i18next";
-
-export interface BaseStatTotalParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-  /** Array of the pokemon's base stat; modified in place after item application */
-  baseStats: number[];
-}
 
 /**
  * Currently used by Shuckle Juice item
  */
-export class BaseStatTotalHeldItem extends HeldItem {
-  public effects: HeldItemEffect[] = [HeldItemEffect.BASE_STAT_TOTAL];
+export class BaseStatTotalHeldItem extends HeldItem<[typeof HeldItemEffect.BASE_STAT_TOTAL]> {
+  public readonly effects = [HeldItemEffect.BASE_STAT_TOTAL] as const;
   public isTransferable = false;
   public statModifier: number;
 
@@ -57,7 +50,7 @@ export class BaseStatTotalHeldItem extends HeldItem {
    * @param baseStats the base stats of the {@linkcode Pokemon}
    * @returns always `true`
    */
-  apply({ baseStats }: BaseStatTotalParams): true {
+  apply(_effect: typeof HeldItemEffect.BASE_STAT_TOTAL, { baseStats }: BaseStatTotalParams): true {
     // Modifies the passed in baseStats[] array
     baseStats.forEach((v, i) => {
       // HP is affected by half as much as other stats
