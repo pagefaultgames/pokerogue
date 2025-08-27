@@ -153,7 +153,6 @@ export abstract class HeldItem<T extends EffectTuple> extends HeldItemBase {
 }
 
 export abstract class ConsumableHeldItem<T extends EffectTuple> extends HeldItem<T> {
-  // Sometimes berries are not eaten, some stuff may not proc unburden...
   consume(pokemon: Pokemon, remove = true, unburden = true): void {
     if (remove) {
       pokemon.heldItemManager.remove(this.type, 1);
