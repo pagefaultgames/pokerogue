@@ -65,6 +65,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Full history for trend analysis
+          submodules: recursive # Include aolite submodule
       
       - name: Check AO Process Readiness
         id: check-ao-ready
@@ -109,23 +110,17 @@ jobs:
             lua-deps-${{ runner.os }}-${{ env.LUA_VERSION }}-
             lua-deps-${{ runner.os }}-
       
-      - name: Install Aolite and Dependencies
+      - name: Setup Aolite from Submodule
         run: |
-          echo "📦 Installing aolite for AO process testing..."
+          echo "📦 Setting up aolite from git submodule..."
           
-          # Ensure development-tools directory exists
-          mkdir -p development-tools
-          
-          # Clone aolite with submodules into development tools
-          git clone --recursive https://github.com/perplex-labs/aolite.git development-tools/aolite
-          
-          # Check if clone was successful
+          # Verify aolite submodule is available
           if [ ! -d "development-tools/aolite" ]; then
-            echo "❌ Failed to clone aolite repository"
+            echo "❌ Aolite submodule not found - ensure submodules were checked out"
             exit 1
           fi
           
-          echo "✅ Aolite repository cloned successfully"
+          echo "✅ Aolite submodule available"
           
           # List contents to debug
           echo "📂 Aolite directory contents:"
@@ -275,6 +270,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          submodules: recursive # Include aolite submodule
       
       - name: Setup Lua
         uses: leafo/gh-actions-lua@v10
@@ -729,6 +726,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          submodules: recursive # Include aolite submodule
       
       - name: Download All Artifacts
         uses: actions/download-artifact@v4
