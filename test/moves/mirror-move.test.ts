@@ -31,35 +31,34 @@ describe("Moves - Mirror Move", () => {
       .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should use the last move that the target used against it", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
 
     game.move.use(MoveId.MIRROR_MOVE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.use(MoveId.MIRROR_MOVE, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2);
     await game.move.forceEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER_2);
     await game.move.forceEnemyMove(MoveId.SWORDS_DANCE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER]);
-    await game.toNextTurn();
+    await game.toEndOfTurn();
 
     // Feebas copied enemy tackle against it;
-    // player 2 copied enemy swords dance and used it on itself
-    const [feebas, magikarp] = game.scene.getPlayerField();
-    expect(feebas.getLastXMoves()[0]).toMatchObject({
+    // milotic copied enemy swords dance and used it on itself
+    const [feebas, milotic] = game.scene.getPlayerField();
+    expect(feebas).toHaveUsedMove({
       move: MoveId.TACKLE,
       targets: [BattlerIndex.ENEMY],
       useMode: MoveUseMode.FOLLOW_UP,
     });
-    expect(game.field.getEnemyPokemon().isFullHp()).toBe(false);
-    expect(magikarp.getLastXMoves()[0]).toMatchObject({
+    expect(game.field.getEnemyPokemon()).not.toHaveFullHp();
+    expect(milotic).toHaveUsedMove({
       move: MoveId.SWORDS_DANCE,
       targets: [BattlerIndex.PLAYER_2],
       useMode: MoveUseMode.FOLLOW_UP,
     });
-    expect(magikarp.getStatStage(Stat.ATK)).toBe(2);
+    expect(milotic).toHaveStatStage(Stat.ATK, 2);
   });
 
   it("should apply secondary effects of the called move", async () => {
@@ -68,9 +67,9 @@ describe("Moves - Mirror Move", () => {
     game.move.use(MoveId.MIRROR_MOVE);
     await game.move.forceEnemyMove(MoveId.ACID_SPRAY);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.toNextTurn();
+    await game.toEndOfTurn();
 
-    expect(game.field.getEnemyPokemon().getStatStage(Stat.SPDEF)).toBe(-2);
+    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.SPDEF, -2);
   });
 
   it("should fail if the target has not used any moves", async () => {
@@ -78,8 +77,8 @@ describe("Moves - Mirror Move", () => {
 
     game.move.use(MoveId.MIRROR_MOVE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.toNextTurn();
+    await game.toEndOfTurn();
 
-    expect(game.field.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(game.field.getPlayerPokemon()).toHaveUsedMove({move: MoveId.MIRROR_MOVE, result: MoveResult.FAIL});
   });
 });
