@@ -334,7 +334,7 @@ export class MoveHelper extends GameManagerHelper {
    * Triggers during the next upcoming {@linkcode MoveEffectPhase} that Metronome is used.
    * @param move - The move to force Metronome to call
    * @param once - If `true`, mocks the return value exactly once; default `false`
-   * @returns The spy that for Metronome that was mocked (Usually unneeded).
+   * @returns The spy for Metronome that was mocked (Usually unneeded).
    * @remarks
    * This will bypass all effects that would otherwise prevent the move from being used.
    * @example
@@ -344,9 +344,10 @@ export class MoveHelper extends GameManagerHelper {
    * ```
    */
   public forceMetronomeMove(move: MoveId, once = false): MockInstance {
-    const spy = vi.spyOn(allMoves[MoveId.METRONOME].getAttrs("RandomMoveAttr")[0] as any, "getMove") as MockInstance<
-      (typeof RandomMoveAttr.prototype)["getMove"]
-    >;
+    const spy = vi.spyOn(
+      allMoves[MoveId.METRONOME].getAttrs("RandomMoveAttr")[0] as RandomMoveAttr & { getMove: RandomMoveAttr["getMove"] }
+      "getMove",
+    );
     if (once) {
       spy.mockReturnValueOnce(move);
     } else {
