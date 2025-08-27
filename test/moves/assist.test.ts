@@ -9,7 +9,7 @@ import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-describe("Moves - Assist", () => {
+describe("Move - Assist", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -54,8 +54,8 @@ describe("Moves - Assist", () => {
     game.move.select(MoveId.ASSIST, BattlerIndex.PLAYER_2);
     await game.toEndOfTurn();
 
-    expect(feebas.getLastXMoves()[0].move).toBe(MoveId.TORCH_SONG);
-    expect(shuckle.getLastXMoves()[0].move).toBe(MoveId.WOOD_HAMMER);
+    expect(feebas).toHaveUsedMove({ move: MoveId.TORCH_SONG, useMode: MoveUseMode.VIRTUAL });
+    expect(shuckle).toHaveUsedMove({ move: MoveId.WOOD_HAMMER, useMode: MoveUseMode.VIRTUAL });
     expect(feebas).toHaveStatStage(Stat.SPATK, 1); // Stat raised from Assist --> Torch Song
     expect(shuckle).not.toHaveFullHp(); // recoil dmg taken from Assist --> Wood Hammer
 
@@ -74,7 +74,7 @@ describe("Moves - Assist", () => {
 
     expect(feebas).toHaveUsedMove({
       move: MoveId.HYPER_BEAM,
-      useMode: MoveUseMode.INDIRECT,
+      useMode: MoveUseMode.FOLLOW_UP,
       result: MoveResult.SUCCESS,
     });
   });
