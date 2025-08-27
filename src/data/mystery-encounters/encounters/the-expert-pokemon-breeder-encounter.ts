@@ -3,6 +3,7 @@ import { speciesStarterCosts } from "#balance/starters";
 import type { IEggOptions } from "#data/egg";
 import { getPokeballTintColor } from "#data/pokeball";
 import { BiomeId } from "#enums/biome-id";
+import { Challenges } from "#enums/challenges";
 import { EggSourceType } from "#enums/egg-source-types";
 import { EggTier } from "#enums/egg-type";
 import { HeldItemId } from "#enums/held-item-id";
@@ -130,6 +131,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
   MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER,
 )
   .withEncounterTier(MysteryEncounterTier.ULTRA)
+  .withDisallowedChallenges(Challenges.HARDCORE)
   .withSceneWaveRangeRequirement(25, 180)
   .withScenePartySizeRequirement(4, 6, true) // Must have at least 4 legal pokemon in party
   .withIntroSpriteConfigs([]) // These are set in onInit()

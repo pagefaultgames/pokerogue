@@ -124,7 +124,7 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
         doGarbageDig();
       })
       .withOptionPhase(async () => {
-        // Gain 2 Leftovers and 1 Shell Bell
+        // Gain 1 Leftovers and 1 Shell Bell
         await transitionMysteryEncounterIntroVisuals();
         await tryApplyDigRewardItems();
 
@@ -204,7 +204,7 @@ async function tryApplyDigRewardItems() {
   await showEncounterText(
     i18next.t("battle:rewardGainCount", {
       modifierName: allHeldItems[HeldItemId.LEFTOVERS].name,
-      count: 2,
+      count: 1,
     }),
     null,
     undefined,

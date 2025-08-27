@@ -336,7 +336,6 @@ export class BattleScene extends SceneBase {
       experimental = this.experimentalSprites;
     }
     const variant = atlasPath.includes("variant/") || /_[0-3]$/.test(atlasPath);
-    const shiny = atlasPath.includes("shiny/");
     if (experimental) {
       experimental = hasExpSprite(key);
     }
@@ -346,7 +345,7 @@ export class BattleScene extends SceneBase {
     this.load.atlas(
       key,
       `images/pokemon/${variant ? "variant/" : ""}${experimental ? "exp/" : ""}${atlasPath}.png`,
-      `images/pokemon/${experimental ? "exp/" : ""}${shiny || variant ? atlasPath.replace("shiny/", "").replace(/_[0-3]$/, "") : atlasPath}.json`,
+      `images/pokemon/${variant ? "variant/" : ""}${experimental ? "exp/" : ""}${atlasPath}.json`,
     );
   }
 
@@ -3387,15 +3386,8 @@ export class BattleScene extends SceneBase {
           ) {
             return false;
           }
-          if (this.gameMode.modeId === GameModes.CHALLENGE) {
-            const disallowedChallenges = encounterCandidate.disallowedChallenges;
-            if (
-              disallowedChallenges &&
-              disallowedChallenges.length > 0 &&
-              this.gameMode.challenges.some(challenge => disallowedChallenges.includes(challenge.id))
-            ) {
-              return false;
-            }
+          if (encounterCandidate.disallowedChallenges?.some(challenge => this.gameMode.hasChallenge(challenge))) {
+            return false;
           }
           if (!encounterCandidate.meetsRequirements()) {
             return false;

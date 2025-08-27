@@ -3,7 +3,6 @@ import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { DamageAnimPhase } from "#phases/damage-anim-phase";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -55,7 +54,7 @@ describe("Items - Leftovers", () => {
     const leadHpAfterDamage = leadPokemon.hp;
 
     // Check if leftovers heal us
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("PokemonHealPhase");
     expect(leadPokemon.hp).toBeGreaterThan(leadHpAfterDamage);
   });
 });

@@ -94,9 +94,9 @@ describe("check if every variant's sprite are correctly set", () => {
           const data = JSON.parse(raw);
           for (const key of Object.keys(data)) {
             if (mlist[name][key] !== 1) {
-              // if 2, check if png there
-              const urlSpritePngFile = `${dirpath}${name}_${Number.parseInt(key, 10) + 1}.png`;
-              const spriteFileExists = fs.existsSync(urlSpritePngFile);
+              // if 2, check if json there
+              const urlSpriteJsonFile = `${dirpath}${name}_${Number.parseInt(key, 10) + 1}.json`;
+              const spriteFileExists = fs.existsSync(urlSpriteJsonFile);
               if (!spriteFileExists) {
                 errors.push(
                   `[${name}] [${mlist[name]}] - the value should be 1 for the index ${key} - ${trimmedFilePath}`,
@@ -127,7 +127,13 @@ describe("check if every variant's sprite are correctly set", () => {
           }
         } else if (elm === 2) {
           url = `${key}_${Number.parseInt(index, 10) + 1}.png`;
-          const filePath = `${dirPath}${url}`;
+          let filePath = `${dirPath}${url}`;
+          if (!fs.existsSync(filePath)) {
+            errors.push(filePath);
+          }
+
+          url = `${key}_${Number.parseInt(index, 10) + 1}.json`;
+          filePath = `${dirPath}${url}`;
           if (!fs.existsSync(filePath)) {
             errors.push(filePath);
           }

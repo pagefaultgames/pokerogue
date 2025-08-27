@@ -229,7 +229,7 @@ function initGreatRewardPool() {
     { id: RewardId.DIRE_HIT, weight: 4 },
     { id: RewardId.SUPER_LURE, weight: lureWeightFunc(TrainerItemId.SUPER_LURE, 4) },
     { id: RewardId.NUGGET, weight: skipInLastClassicWaveOrDefault(5) },
-    { id: RewardId.SPECIES_STAT_BOOSTER, weight: 4 },
+    { id: RewardId.SPECIES_STAT_BOOSTER, weight: 2 },
     {
       id: RewardId.EVOLUTION_ITEM,
       weight: () => {

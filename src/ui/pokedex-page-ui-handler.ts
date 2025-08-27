@@ -1777,7 +1777,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
               this.blockInput = true;
               ui.setMode(UiMode.POKEDEX_PAGE, "refresh").then(() => {
                 ui.showText(i18next.t("pokedexUiHandler:showNature"), null, () => {
-                  const natures = globalScene.gameData.getNaturesForAttr(this.speciesStarterDexEntry?.natureAttr);
+                  const starterDexEntry =
+                    globalScene.gameData.dexData[this.getStarterSpeciesId(this.species.speciesId)];
+                  const natures = globalScene.gameData.getNaturesForAttr(starterDexEntry.natureAttr);
                   ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
                     options: natures
                       .map((n: Nature, _i: number) => {
@@ -2829,7 +2831,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
     this.statsContainer.setVisible(true);
 
-    this.statsContainer.updateIvs(this.speciesStarterDexEntry.ivs);
+    const ivs = globalScene.gameData.dexData[this.getStarterSpeciesId(this.species.speciesId)].ivs;
+    this.statsContainer.updateIvs(ivs);
   }
 
   clearText() {

@@ -5,16 +5,21 @@ on:
     branches:
       - main
       - beta
+      - release
+      - 'hotfix*'
   pull_request:
     branches:
       - main
       - beta
+      - release
+      - 'hotfix*'
   merge_group:
     types: [checks_requested]
   workflow_dispatch:
 
 jobs:
   check-path-change-filter:
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     permissions:
       pull-requests: read

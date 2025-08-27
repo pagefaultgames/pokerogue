@@ -1,3 +1,4 @@
+import { defaultStarterSpecies } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { speciesStarterCosts } from "#balance/starters";
 import { allHeldItems, allMoves } from "#data/data-lists";
@@ -76,7 +77,8 @@ export enum EvolutionItem {
   LEADERS_CREST
 }
 
-type TyrogueMove = MoveId.LOW_SWEEP | MoveId.MACH_PUNCH | MoveId.RAPID_SPIN;
+const tyrogueMoves = [MoveId.LOW_SWEEP, MoveId.MACH_PUNCH, MoveId.RAPID_SPIN] as const;
+type TyrogueMove = typeof tyrogueMoves[number];
 
 /**
  * Pokemon Evolution tuple type consisting of:
@@ -188,7 +190,7 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.WEATHER:
           return cond.weather.includes(globalScene.arena.getWeatherType());
         case EvoCondKey.TYROGUE:
-          return pokemon.getMoveset(true).find(m => m.moveId as TyrogueMove)?.moveId === cond.move;
+          return pokemon.getMoveset(true).find(m => (tyrogueMoves as readonly MoveId[]) .includes(m.moveId))?.moveId === cond.move;
         case EvoCondKey.NATURE:
           return cond.nature.includes(pokemon.getNature());
         case EvoCondKey.RANDOM_FORM: {
@@ -649,7 +651,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [SpeciesId.KIRLIA]: [
     new SpeciesEvolution(SpeciesId.GARDEVOIR, 30, null, null),
-    new SpeciesEvolution(SpeciesId.GALLADE, 1, EvolutionItem.DAWN_STONE, {key: EvoCondKey.GENDER, gender: Gender.MALE})
+    new SpeciesEvolution(SpeciesId.GALLADE, 1, EvolutionItem.DAWN_STONE, {key: EvoCondKey.GENDER, gender: Gender.MALE}, SpeciesWildEvolutionDelay.LONG),
   ],
   [SpeciesId.SURSKIT]: [
     new SpeciesEvolution(SpeciesId.MASQUERAIN, 22, null, null)
@@ -738,7 +740,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [SpeciesId.SNORUNT]: [
     new SpeciesEvolution(SpeciesId.GLALIE, 42, null, null),
-    new SpeciesEvolution(SpeciesId.FROSLASS, 1, EvolutionItem.DAWN_STONE, {key: EvoCondKey.GENDER, gender: Gender.FEMALE})
+    new SpeciesEvolution(SpeciesId.FROSLASS, 1, EvolutionItem.DAWN_STONE, {key: EvoCondKey.GENDER, gender: Gender.FEMALE}, SpeciesWildEvolutionDelay.LONG),
   ],
   [SpeciesId.SPHEAL]: [
     new SpeciesEvolution(SpeciesId.SEALEO, 32, null, null)
@@ -1879,6 +1881,15 @@ export function initPokemonPrevolutions(): void {
 
 // TODO: This may cause funny business for double starters such as Pichu/Pikachu
 export const pokemonStarters: PokemonPrevolutions = {};
+
+/**
+ * The default species and all their evolutions
+ */
+export const defaultStarterSpeciesAndEvolutions: SpeciesId[] = defaultStarterSpecies.flatMap(id => {
+  const stage2ids = pokemonEvolutions[id]?.map(e => e.speciesId) ?? [];
+  const stage3ids = stage2ids.flatMap(s2id => pokemonEvolutions[s2id]?.map(e => e.speciesId) ?? []);
+  return [id, ...stage2ids, ...stage3ids];
+});
 
 export function initPokemonStarters(): void {
   const starterKeys = Object.keys(pokemonPrevolutions);

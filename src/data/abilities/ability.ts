@@ -970,6 +970,8 @@ export class MoveImmunityStatStageChangeAbAttr extends MoveImmunityAbAttr {
 export interface PostMoveInteractionAbAttrParams extends AugmentMoveInteractionAbAttrParams {
   /** Stores the hit result of the move used in the interaction */
   readonly hitResult: HitResult;
+  /** The amount of damage dealt in the interaction */
+  readonly damage: number;
 }
 
 export class PostDefendAbAttr extends AbAttr {
@@ -1079,20 +1081,16 @@ export class PostDefendHpGatedStatStageChangeAbAttr extends PostDefendAbAttr {
     this.selfTarget = selfTarget;
   }
 
-  override canApply({ pokemon, opponent: attacker, move }: PostMoveInteractionAbAttrParams): boolean {
+  override canApply({ pokemon, opponent: attacker, move, damage }: PostMoveInteractionAbAttrParams): boolean {
     const hpGateFlat: number = Math.ceil(pokemon.getMaxHp() * this.hpGate);
-    const lastAttackReceived = pokemon.turnData.attacksReceived[pokemon.turnData.attacksReceived.length - 1];
-    const damageReceived = lastAttackReceived?.damage || 0;
-    return (
-      this.condition(pokemon, attacker, move) && pokemon.hp <= hpGateFlat && pokemon.hp + damageReceived > hpGateFlat
-    );
+    return this.condition(pokemon, attacker, move) && pokemon.hp <= hpGateFlat && pokemon.hp + damage > hpGateFlat;
   }
 
-  override apply({ simulated, pokemon, opponent: attacker }: PostMoveInteractionAbAttrParams): void {
+  override apply({ simulated, pokemon, opponent }: PostMoveInteractionAbAttrParams): void {
     if (!simulated) {
       globalScene.phaseManager.unshiftNew(
         "StatStageChangePhase",
-        (this.selfTarget ? pokemon : attacker).getBattlerIndex(),
+        (this.selfTarget ? pokemon : opponent).getBattlerIndex(),
         true,
         this.stats,
         this.stages,
@@ -1263,17 +1261,17 @@ export class PostDefendContactApplyTagChanceAbAttr extends PostDefendAbAttr {
     this.turnCount = turnCount;
   }
 
-  override canApply({ move, pokemon, opponent: attacker }: PostMoveInteractionAbAttrParams): boolean {
+  override canApply({ move, pokemon, opponent }: PostMoveInteractionAbAttrParams): boolean {
     return (
-      move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon }) &&
+      move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: opponent, target: pokemon }) &&
       pokemon.randBattleSeedInt(100) < this.chance &&
-      attacker.canAddTag(this.tagType)
+      opponent.canAddTag(this.tagType)
     );
   }
 
-  override apply({ simulated, opponent: attacker, move }: PostMoveInteractionAbAttrParams): void {
+  override apply({ pokemon, simulated, opponent, move }: PostMoveInteractionAbAttrParams): void {
     if (!simulated) {
-      attacker.addTag(this.tagType, this.turnCount, move.id, attacker.id);
+      opponent.addTag(this.tagType, this.turnCount, move.id, pokemon.id);
     }
   }
 }
@@ -1758,7 +1756,7 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
  * Parameters for abilities that modify the hit count and damage of a move
  */
 export interface AddSecondStrikeAbAttrParams extends Omit<AugmentMoveInteractionAbAttrParams, "opponent"> {
-  /** Holder for the number of hits. May be modified by ability application  */
+  /** Holder for the number of hits. May be modified by ability application */
   hitCount?: NumberHolder;
   /** Holder for the damage multiplier _of the current hit_ */
   multiplier?: NumberHolder;
@@ -3000,41 +2998,44 @@ export class PostSummonFormChangeAbAttr extends PostSummonAbAttr {
   }
 }
 
-/** Attempts to copy a pokemon's ability */
+/**
+ * Attempts to copy a pokemon's ability
+ *
+ * @remarks
+ * Hardcodes idiosyncrasies specific to trace, so should not be used for other abilities
+ * that might copy abilities in the future
+ * @sealed
+ */
 export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
   private target: Pokemon;
   private targetAbilityName: string;
 
-  override canApply({ pokemon }: AbAttrBaseParams): boolean {
-    const targets = pokemon.getOpponents();
+  override canApply({ pokemon, simulated }: AbAttrBaseParams): boolean {
+    const targets = pokemon
+      .getOpponents()
+      .filter(t => t.getAbility().isCopiable || t.getAbility().id === AbilityId.WONDER_GUARD);
     if (!targets.length) {
       return false;
     }
 
     let target: Pokemon;
-    if (targets.length > 1) {
-      globalScene.executeWithSeedOffset(() => (target = randSeedItem(targets)), globalScene.currentBattle.waveIndex);
+    // simulated call always chooses first target so as to not advance RNG
+    if (targets.length > 1 && !simulated) {
+      target = targets[randSeedInt(targets.length)];
     } else {
       target = targets[0];
     }
 
-    if (
-      !target!.getAbility().isCopiable &&
-      // Wonder Guard is normally uncopiable so has the attribute, but Trace specifically can copy it
-      !(pokemon.hasAbility(AbilityId.TRACE) && target!.getAbility().id === AbilityId.WONDER_GUARD)
-    ) {
-      return false;
-    }
-
-    this.target = target!;
-    this.targetAbilityName = allAbilities[target!.getAbility().id].name;
+    this.target = target;
+    this.targetAbilityName = allAbilities[target.getAbility().id].name;
     return true;
   }
 
   override apply({ pokemon, simulated }: AbAttrBaseParams): void {
-    if (!simulated) {
-      pokemon.setTempAbility(this.target!.getAbility());
-      setAbilityRevealed(this.target!);
+    // Protect against this somehow being called before canApply by ensuring target is defined
+    if (!simulated && this.target) {
+      pokemon.setTempAbility(this.target.getAbility());
+      setAbilityRevealed(this.target);
       pokemon.updateInfo();
     }
   }
@@ -5798,7 +5799,7 @@ export class NoFusionAbilityAbAttr extends AbAttr {
 export interface IgnoreTypeImmunityAbAttrParams extends AbAttrBaseParams {
   /** The type of the move being used */
   readonly moveType: PokemonType;
-  /** The type being checked for  */
+  /** The type being checked for */
   readonly defenderType: PokemonType;
   /** Holds whether the type immunity should be bypassed */
   cancelled: BooleanHolder;
