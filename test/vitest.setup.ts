@@ -25,14 +25,27 @@ vi.mock("i18next", async importOriginal => {
   const { setupServer } = await import("msw/node");
   const { http, HttpResponse } = await import("msw");
 
+  // Pre-load all locale files using Vite's import.meta.glob for better static analysis
+  const localeFiles = import.meta.glob('../public/locales/en/**/*.json', { eager: true });
+  const localeMap = new Map<string, any>();
+  
+  for (const [path, module] of Object.entries(localeFiles)) {
+    const filename = path.replace('../public/locales/en/', '');
+    localeMap.set(filename, module);
+  }
+
   global.server = setupServer(
     http.get("/locales/en/*", async req => {
       const filename = req.params[0];
 
       try {
-        const json = await import(`../public/locales/en/${req.params[0]}`);
-        console.log("Loaded locale", filename);
-        return HttpResponse.json(json);
+        const json = localeMap.get(filename);
+        if (json) {
+          console.log("Loaded locale", filename);
+          return HttpResponse.json(json);
+        }
+        console.log(`Locale file ${filename} not found in pre-loaded map`);
+        return HttpResponse.json({});
       } catch (err) {
         console.log(`Failed to load locale ${filename}!`, err);
         return HttpResponse.json({});
