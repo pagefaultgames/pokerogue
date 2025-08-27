@@ -608,16 +608,24 @@ export class PartyUiHandler extends MessageUiHandler {
           if (matchesModifier) {
             // if matchingModifier exists then the item exists on the new pokemon
             ableToTransferText = i18next.t("partyUiHandler:notAble"); // start with not able
+            /**
+             * The amount of items that can be transferred in the `All` option
+             */
+            let ableAmount = 0;
             for (const modifier of matchingModifiers) {
               if (!modifier || modifier.getMaxStackCount() !== modifier.stackCount) {
-                // if the modifier doesn't exist, or the stack count isn't at max, then we can transfer at least 1 item
+                // if the modifier doesn't exist, or the stack count isn't at max, then we can transfer at least 1 stack
                 ableToTransferText = i18next.t("partyUiHandler:able");
-                break;
+                ableAmount++;
               }
             }
+            // only show the amount if an item can be transferred and there are multiple items
+            ableToTransferText += ableAmount && matchingModifiers.length > 1 ? ` (${ableAmount})` : "";
           } else {
             // if no item matches, that means the pokemon doesn't have any of the item, and we need to show "Able"
             ableToTransferText = i18next.t("partyUiHandler:able");
+            // only show the amount if there are multiple items
+            ableToTransferText += matchingModifiers.length > 1 ? ` (${matchingModifiers.length})` : "";
           }
         } else {
           // this else relates to the transfer pokemon. We set the text to be blank so there's no "Able"/"Not able" text
