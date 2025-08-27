@@ -50,14 +50,14 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
       - name: Create release branch
         run: git checkout -b release
-      # In order to be able to open a PR into beta, we need the branch to have at least one change.
-      - name: Overwrite RELEASE file
+
+      # In order to be able to open a PR into beta, we need the branch to have at least one commit.
+      - name: Create empty release commit
         run: |
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          echo "Release v${{ github.event.inputs.versionName }}" > RELEASE
-          git add RELEASE
-          git commit -m "Stage release v${{ github.event.inputs.versionName }}"
+          git commit --allow-empty -m "Stage release for version v${{ github.events.inputs.versionName }}"
+
       - name: Push new branch
         run: git push origin release
       # The repository variable is used by the deploy-beta workflow to determine whether to deploy from beta or release.
