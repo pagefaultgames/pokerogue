@@ -345,7 +345,7 @@ export class MoveHelper extends GameManagerHelper {
    */
   public forceMetronomeMove(move: MoveId, once = false): MockInstance {
     const spy = vi.spyOn(
-      allMoves[MoveId.METRONOME].getAttrs("RandomMoveAttr")[0] as RandomMoveAttr & { getMove: RandomMoveAttr["getMove"] }
+      allMoves[MoveId.METRONOME].getAttrs("RandomMoveAttr")[0] as RandomMoveAttr & { getMove: RandomMoveAttr["getMove"] },
       "getMove",
     );
     if (once) {
