@@ -1,11 +1,34 @@
 -- Unit Tests for Enhanced Test Framework Components
 -- Tests all new framework components for Task 2
 
--- Load test framework
-local TestFramework = require("ao-processes/tests/framework/test-framework-enhanced")
-local MockSystems = require("ao-processes/tests/framework/mock-systems")
-local HandlerTestUtils = require("ao-processes/tests/framework/handler-test-utilities")
-local CoverageReporter = require("ao-processes/tests/framework/coverage-reporter")
+-- Load shared test helpers with path resolution
+local TestHelpers = nil
+local testHelpersPaths = {
+    "../test-helpers.lua",           -- Local development path
+    "../../test-helpers.lua",        -- Alternative path  
+    "./ao-processes/tests/test-helpers.lua", -- GitHub Actions path
+}
+
+for _, path in ipairs(testHelpersPaths) do
+    local file = io.open(path, "r")
+    if file then
+        file:close()
+        TestHelpers = dofile(path)
+        break
+    end
+end
+
+if not TestHelpers then
+    error("Could not load test-helpers.lua. Tried paths: " .. table.concat(testHelpersPaths, ", "))
+end
+
+TestHelpers.setupPackagePath()
+
+-- Load test framework using safe require
+local TestFramework = TestHelpers.safeRequire("ao-processes/tests/framework/test-framework-enhanced")
+local MockSystems = TestHelpers.safeRequire("ao-processes/tests/framework/mock-systems") 
+local HandlerTestUtils = TestHelpers.safeRequire("ao-processes/tests/framework/handler-test-utilities")
+local CoverageReporter = TestHelpers.safeRequire("ao-processes/tests/framework/coverage-reporter")
 
 -- Test framework setup
 local function assertEquals(expected, actual, message)
@@ -144,9 +167,10 @@ end
 local function testHandlerTestUtilities()
     print("Testing handler test utilities...")
     
-    -- Create emulator and utilities
-    local AOEmulator = require("development-tools/ao-local-setup/ao-emulator").AOEmulator
-    local emulator = AOEmulator.new({processId = "test-handler-utils"})
+    -- Create emulator and utilities (using mock emulator if real one not available)  
+    local AOEmulatorModule = TestHelpers.requireWithMock("development-tools/ao-local-setup/ao-emulator")
+    local emulator = AOEmulatorModule.AOEmulator.new({processId = "test-handler-utils"})
+    
     local mocks = MockSystems.new()
     local utils = HandlerTestUtils.new(emulator, mocks)
     
