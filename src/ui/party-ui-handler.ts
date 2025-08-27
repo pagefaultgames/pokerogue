@@ -562,6 +562,9 @@ export class PartyUiHandler extends MessageUiHandler {
   private processModifierTransferModeInput(pokemon: PlayerPokemon) {
     const ui = this.getUi();
     const option = this.options[this.optionsCursor];
+    const allItems = this.getTransferrableItemsFromPokemon(pokemon);
+    // get the index of the "All" option.
+    const allCursorIndex = allItems.length;
 
     if (this.transferMode && option === PartyOption.TRANSFER) {
       return this.processTransferOption();
@@ -573,30 +576,47 @@ export class PartyUiHandler extends MessageUiHandler {
 
       let ableToTransferText: string;
       for (let p = 0; p < globalScene.getPlayerParty().length; p++) {
-        // this for look goes through each of the party pokemon
+        // this for loop goes through each of the party pokemon
         const newPokemon = globalScene.getPlayerParty()[p];
         // this next bit checks to see if the the selected item from the original transfer pokemon exists on the new pokemon `p`
         // this returns `undefined` if the new pokemon doesn't have the item at all, otherwise it returns the `pokemonHeldItemModifier` for that item
-        const matchingModifier = globalScene.findModifier(
-          m =>
-            m.is("PokemonHeldItemModifier") &&
-            m.pokemonId === newPokemon.id &&
-            m.matchType(this.getTransferrableItemsFromPokemon(pokemon)[this.transferOptionCursor]),
-        ) as PokemonHeldItemModifier;
+        const matchingModifiers: (PokemonHeldItemModifier | undefined)[] = [];
+        if (this.transferOptionCursor === allCursorIndex) {
+          // if "All" is selected, check all items
+          for (let i = 0; i < allItems.length; i++) {
+            matchingModifiers.push(
+              globalScene.findModifier(
+                m => m.is("PokemonHeldItemModifier") && m.pokemonId === newPokemon.id && m.matchType(allItems[i]),
+              ) as PokemonHeldItemModifier,
+            );
+          }
+        } else {
+          // otherwise only check the selected item
+          matchingModifiers.push(
+            globalScene.findModifier(
+              m =>
+                m.is("PokemonHeldItemModifier") &&
+                m.pokemonId === newPokemon.id &&
+                m.matchType(allItems[this.transferOptionCursor]),
+            ) as PokemonHeldItemModifier,
+          );
+        }
+        const matchesModifier = matchingModifiers.some(m => m !== undefined); // checks if any items match
         const partySlot = this.partySlots.filter(m => m.getPokemon() === newPokemon)[0]; // this gets pokemon [p] for us
         if (p !== this.transferCursor) {
           // this skips adding the able/not able labels on the pokemon doing the transfer
-          if (matchingModifier) {
+          if (matchesModifier) {
             // if matchingModifier exists then the item exists on the new pokemon
-            if (matchingModifier.getMaxStackCount() === matchingModifier.stackCount) {
-              // checks to see if the stack of items is at max stack; if so, set the description label to "Not able"
-              ableToTransferText = i18next.t("partyUiHandler:notAble");
-            } else {
-              // if the pokemon isn't at max stack, make the label "Able"
-              ableToTransferText = i18next.t("partyUiHandler:able");
+            ableToTransferText = i18next.t("partyUiHandler:notAble"); // start with not able
+            for (const modifier of matchingModifiers) {
+              if (!modifier || modifier.getMaxStackCount() !== modifier.stackCount) {
+                // if the modifier doesn't exist, or the stack count isn't at max, then we can transfer at least 1 item
+                ableToTransferText = i18next.t("partyUiHandler:able");
+                break;
+              }
             }
           } else {
-            // if matchingModifier doesn't exist, that means the pokemon doesn't have any of the item, and we need to show "Able"
+            // if no item matches, that means the pokemon doesn't have any of the item, and we need to show "Able"
             ableToTransferText = i18next.t("partyUiHandler:able");
           }
         } else {
