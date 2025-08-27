@@ -414,16 +414,25 @@ jobs:
               body: `${emoji} Unit Tests Group ${testGroup}: ${status}`
             });
 
-  # Job 3: Integration Tests (DISABLED - Foundation still being built)
+  # Job 3: Integration Tests (RE-ENABLED - Aolite submodule ready)
   integration-tests:
     name: Integration Tests
     runs-on: ubuntu-latest
     needs: [setup, unit-tests]
-    if: false  # Disabled until AO foundation is complete
+    if: >
+      always() && 
+      needs.setup.outputs.ao-ready == 'true' &&
+      needs.unit-tests.result == 'success' &&
+      (github.event.inputs.test_level == 'integration' || 
+       github.event.inputs.test_level == 'full' ||
+       github.event.inputs.test_level == '' ||
+       github.event_name != 'workflow_dispatch')
     
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          submodules: recursive # Include aolite submodule
       
       - name: Setup Lua
         uses: leafo/gh-actions-lua@v10
@@ -446,10 +455,18 @@ jobs:
         id: integration-tests
         timeout-minutes: 20
         run: |
-          echo "🔗 Running AO Process Integration Tests"
+          echo "🔗 Running AO Process Integration Tests with Aolite"
           
           # Create test output directory
           mkdir -p test-results/aolite-integration-tests
+          
+          # Verify aolite is available
+          if [ ! -d "development-tools/aolite" ]; then
+            echo "❌ Aolite submodule not found"
+            exit 1
+          fi
+          
+          echo "✅ Aolite submodule verified"
           
           cd ao-processes/tests/integration
           
@@ -720,7 +737,7 @@ jobs:
   aggregate-results:
     name: Aggregate Test Results
     runs-on: ubuntu-latest
-    needs: [setup, unit-tests]  # Only unit tests for now
+    needs: [setup, unit-tests, integration-tests]  # Include integration tests
     if: always()
     
     steps:
@@ -773,21 +790,22 @@ jobs:
             print('=== Test Suite Execution Summary ===')
             print('Jobs completed:')
             print('  Unit Tests: ${{ needs.unit-tests.result }}')
-            print('  Integration Tests: DISABLED (foundation phase)')
+            print('  Integration Tests: ${{ needs.integration-tests.result }}')
             print('  Parity Tests: DISABLED (no reference implementation)')
             print('  Performance Tests: DISABLED (premature)')
             print('')
             
             local overall_success = true
             if '${{ needs.unit-tests.result }}' ~= 'success' then overall_success = false end
+            if '${{ needs.integration-tests.result }}' == 'failure' then overall_success = false end
             
             if overall_success then
               print('🎉 Overall Status: SUCCESS')
-              print('✅ AO Process Foundation Tests Passing!')
-              print('📋 Next: Complete foundation before enabling integration/parity tests')
+              print('✅ AO Process Foundation and Integration Tests Passing!')
+              print('🔗 Aolite integration verified and working')
             else
               print('❌ Overall Status: FAILED')
-              print('⚠️ Unit test failures detected. Fix before proceeding.')
+              print('⚠️ Test failures detected. Review results before proceeding.')
               os.exit(1)
             end
           "
@@ -808,25 +826,27 @@ jobs:
           | Test Type | Status | 
           |-----------|--------|
           | Unit Tests | ${{ needs.unit-tests.result }} |
-          | Integration Tests | DISABLED (foundation phase) |
+          | Integration Tests | ${{ needs.integration-tests.result }} |
           | Parity Tests | DISABLED (no reference impl) |
           | Performance Tests | DISABLED (premature) |
           
           ## Artifacts Generated
           - Unit test results and logs
+          - Integration test results with aolite verification
           - Framework validation reports
-          - Test coverage information
+          - AO process integration reports
           
-          ## Current Focus: Foundation Phase
-          - Building core AO process functionality
-          - Establishing handler framework
-          - Creating test infrastructure
+          ## Current Focus: Epic 2 - Integration Ready
+          - ✅ AO process foundation established
+          - ✅ Aolite integration working
+          - ✅ Real integration testing enabled
+          - 🔄 Building Pokemon data system
           
-          ## Next Steps (When Foundation Complete)
-          - Enable integration tests with real aolite setup
-          - Implement parity testing against TypeScript reference
-          - Add performance benchmarking
-          - Set up deployment pipeline
+          ## Next Steps
+          - Implement Pokemon species management system
+          - Add battle mechanics AO processes  
+          - Enable parity testing when TypeScript reference ready
+          - Add performance benchmarking for production readiness
           EOF
       
       - name: Upload Final Results
@@ -844,12 +864,13 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const overallSuccess = '${{ needs.unit-tests.result }}' === 'success';
+            const overallSuccess = '${{ needs.unit-tests.result }}' === 'success' && 
+                                 '${{ needs.integration-tests.result }}' !== 'failure';
             
             const state = overallSuccess ? 'success' : 'failure';
             const description = overallSuccess ? 
-              'AO process foundation tests passed - unit tests OK' : 
-              'AO process unit tests failed - check results';
+              'AO process tests passed - unit and integration tests OK' : 
+              'AO process tests failed - check results';
             
             await github.rest.repos.createCommitStatus({
               owner: context.repo.owner,
@@ -858,7 +879,7 @@ jobs:
               state: state,
               target_url: `${context.payload.repository.html_url}/actions/runs/${context.runId}`,
               description: description,
-              context: 'AO Process Foundation Tests'
+              context: 'AO Process Test Suite'
             });
 
   # Job 7: Notify on Failure (only for main branch)
