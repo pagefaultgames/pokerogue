@@ -152,9 +152,17 @@ export abstract class HeldItem<T extends EffectTuple> extends HeldItemBase {
   abstract apply<E extends this["effects"][number]>(effect: E, param: HeldItemEffectParamMap[E]): void;
 }
 
+/** Abstract class for all `HeldItem`s that can be consumed during battle. */
 export abstract class ConsumableHeldItem<T extends EffectTuple> extends HeldItem<T> {
   // Sometimes berries are not eaten, some stuff may not proc unburden...
-  consume(pokemon: Pokemon, remove = true, unburden = true): void {
+  /**
+   * Consume this item and apply relevant effects.
+   * Should be overridden by any subclasses with their own on-consume effects.
+   * @param pokemon - The {@linkcode Pokemon} consuming the item
+   * @param remove - Whether to remove the item during consumption; default `true`
+   * @param unburden - Whether to trigger item loss abilities (i.e. Unburden)  when consuming the item; default `true`
+   */
+  public consume(pokemon: Pokemon, remove = true, unburden = true): void {
     if (remove) {
       pokemon.heldItemManager.remove(this.type, 1);
       // TODO: Turn this into updateItemBar or something
