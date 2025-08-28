@@ -3,14 +3,13 @@ import { Button } from "#enums/buttons";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import type { Pokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
 import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { type PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("UI - Transfer Items", () => {
+describe("UI - Item Manage Button", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -40,11 +39,14 @@ describe("UI - Transfer Items", () => {
     await game.classicMode.startBattle([SpeciesId.RAYQUAZA, SpeciesId.RAYQUAZA, SpeciesId.RAYQUAZA]);
 
     game.move.use(MoveId.DRAGON_CLAW);
-
-    await game.phaseInterceptor.to("SelectModifierPhase");
   });
 
+  it("foo", () => {
+    expect(1).toBe(1);
+  });
   it("manage button exists in the proper screen", async () => {
+    await game.phaseInterceptor.to("SelectModifierPhase");
+
     let handlerLength: Phaser.GameObjects.GameObject[] | undefined;
 
     await new Promise<void>(resolve => {
@@ -76,6 +78,7 @@ describe("UI - Transfer Items", () => {
   });
 
   it("manage button doesn't exist in the other screens", async () => {
+    await game.phaseInterceptor.to("SelectModifierPhase");
     let handlerLength: Phaser.GameObjects.GameObject[] | undefined;
 
     await new Promise<void>(resolve => {
@@ -108,7 +111,8 @@ describe("UI - Transfer Items", () => {
 
   // Test that the manage button actually discards items, needs proofreading
   it("should discard items when button is selected", async () => {
-    let pokemon: Pokemon | undefined;
+    await game.phaseInterceptor.to("SelectModifierPhase");
+    const pokemon = game.field.getPlayerPokemon();
 
     await new Promise<void>(resolve => {
       game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, async () => {
@@ -128,17 +132,13 @@ describe("UI - Transfer Items", () => {
         handler.processInput(Button.ACTION);
         handler.setCursor(0);
         handler.processInput(Button.ACTION);
-        pokemon = game.field.getPlayerPokemon();
 
         resolve();
       });
     });
 
-    expect(pokemon).toBeDefined();
-    if (pokemon) {
-      expect(pokemon.getHeldItems()).toHaveLength(3);
-      expect(pokemon.getHeldItems().map(h => h.stackCount)).toEqual([1, 2, 2]);
-    }
+    expect(pokemon.getHeldItems()).toHaveLength(3);
+    expect(pokemon.getHeldItems().map(h => h.stackCount)).toEqual([1, 2, 2]);
 
     await new Promise<void>(resolve => {
       game.onNextPrompt("SelectModifierPhase", UiMode.PARTY, async () => {
@@ -154,26 +154,19 @@ describe("UI - Transfer Items", () => {
         await new Promise(r => setTimeout(r, 100));
         const handler = game.scene.ui.getHandler() as PartyUiHandler;
         handler.processInput(Button.ACTION);
-
-        pokemon = game.field.getPlayerPokemon();
 
         handler.processInput(Button.CANCEL);
         resolve();
       });
     });
 
-    expect(pokemon).toBeDefined();
-    if (pokemon) {
-      // Sitrus berry was discarded, leaving 2 stacks of 2 berries behind
-      expect(pokemon.getHeldItems()).toHaveLength(2);
-      expect(pokemon.getHeldItems().map(h => h.stackCount)).toEqual([2, 2]);
-    }
+    // Sitrus berry was discarded, leaving 2 stacks of 2 berries behind
+    expect(pokemon.getHeldItems()).toHaveLength(2);
+    expect(pokemon.getHeldItems().map(h => h.stackCount)).toEqual([2, 2]);
   });
 
   // TODO: This test breaks when running all tests on github. Fix this once hotfix period is over.
   it.todo("should not allow changing to discard mode when transfering items", async () => {
-    let handler: PartyUiHandler | undefined;
-
     const { resolve, promise } = Promise.withResolvers<void>();
 
     game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, async () => {
@@ -187,7 +180,7 @@ describe("UI - Transfer Items", () => {
 
     game.onNextPrompt("SelectModifierPhase", UiMode.PARTY, async () => {
       await new Promise(r => setTimeout(r, 100));
-      handler = game.scene.ui.getHandler() as PartyUiHandler;
+      const handler = game.scene.ui.getHandler() as PartyUiHandler;
 
       handler.setCursor(0);
       handler.processInput(Button.ACTION);
@@ -199,21 +192,21 @@ describe("UI - Transfer Items", () => {
     });
 
     await promise;
-    expect(handler).toBeDefined();
-    if (handler) {
-      const partyMode = handler["partyUiMode"];
-      expect(partyMode).toBe(PartyUiMode.MODIFIER_TRANSFER);
 
-      handler.setCursor(7);
-      handler.processInput(Button.ACTION);
-      // Should not change mode to discard
-      expect(handler["partyUiMode"]).toBe(PartyUiMode.MODIFIER_TRANSFER);
+    const handler = game.scene.ui.getHandler() as PartyUiHandler;
 
-      handler.processInput(Button.CANCEL);
-      handler.setCursor(7);
-      handler.processInput(Button.ACTION);
-      // Should change mode to discard
-      expect(handler["partyUiMode"]).toBe(PartyUiMode.DISCARD);
-    }
+    const partyMode = handler["partyUiMode"];
+    expect(partyMode).toBe(PartyUiMode.MODIFIER_TRANSFER);
+
+    handler.setCursor(7);
+    handler.processInput(Button.ACTION);
+    // Should not change mode to discard
+    expect(handler["partyUiMode"]).toBe(PartyUiMode.MODIFIER_TRANSFER);
+
+    handler.processInput(Button.CANCEL);
+    handler.setCursor(7);
+    handler.processInput(Button.ACTION);
+    // Should change mode to discard
+    expect(handler["partyUiMode"]).toBe(PartyUiMode.DISCARD);
   });
 });

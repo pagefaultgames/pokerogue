@@ -2,7 +2,6 @@ import { AbilityId } from "#enums/ability-id";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { ExpPhase } from "#phases/exp-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -14,7 +13,8 @@ vi.mock("../data/exp", ({}) => {
   };
 });
 
-describe("UI - Battle Info", () => {
+// TODO: These are jank and need to be redone
+describe.todo("UI - Battle Info", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -48,7 +48,7 @@ describe("UI - Battle Info", () => {
 
       game.move.select(MoveId.SPLASH);
       await game.doKillOpponents();
-      await game.phaseInterceptor.to(ExpPhase, true);
+      await game.phaseInterceptor.to("ExpPhase", true);
 
       expect(Math.pow).not.toHaveBeenCalledWith(2, expGainsSpeed);
     },

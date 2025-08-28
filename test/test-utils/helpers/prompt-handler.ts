@@ -2,9 +2,11 @@ import type { AwaitableUiHandler } from "#app/ui/awaitable-ui-handler";
 import { UiMode } from "#enums/ui-mode";
 import type { GameManager } from "#test/test-utils/game-manager";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
+import { getEnumStr } from "#test/test-utils/string-utils";
 import type { PhaseString } from "#types/phase-types";
+import type { UI } from "#ui/ui";
 import chalk from "chalk";
-import { type MockInstance, vi } from "vitest";
+import { vi } from "vitest";
 
 interface UIPrompt {
   /** The {@linkcode PhaseString | name} of the Phase during which to execute the callback. */
@@ -56,12 +58,14 @@ export class PromptHandler extends GameManagerHelper {
 
   constructor(game: GameManager) {
     super(game);
+
     this.originalSetModeInternal = this.game.scene.ui["setModeInternal"];
     // `any` assertion needed as we are mocking private property
-    (
-      vi.spyOn(this.game.scene.ui as any, "setModeInternal") as MockInstance<
-        (typeof this.game.scene.ui)["setModeInternal"]
-      >
+    vi.spyOn(
+      this.game.scene.ui as unknown as {
+        setModeInternal: UI["setModeInternal"];
+      },
+      "setModeInternal",
     ).mockImplementation((...args) => this.setMode(args));
 
     // Set an interval to repeatedly check the current prompt.
@@ -79,10 +83,8 @@ export class PromptHandler extends GameManagerHelper {
   private setMode(args: Parameters<typeof this.originalSetModeInternal>) {
     const mode = args[0];
 
-    this.doLog(`UI mode changed to ${UiMode[mode]} (=${mode})!`);
-    const ret = this.originalSetModeInternal.apply(this.game.scene.ui, args) as ReturnType<
-      typeof this.originalSetModeInternal
-    >;
+    this.doLog(`UI mode changed to ${getEnumStr(UiMode, mode)}!`);
+    const ret = this.originalSetModeInternal.apply(this.game.scene.ui, args);
 
     const currentPhase = this.game.scene.phaseManager.getCurrentPhase()?.phaseName!;
     if (endBySetMode.includes(currentPhase)) {
@@ -93,7 +95,6 @@ export class PromptHandler extends GameManagerHelper {
 
   /**
    * Method to perform prompt handling every so often.
-   * @param uiMode - The {@linkcode UiMode} being set
    */
   private doPromptCheck(): void {
     if (this.prompts.length === 0) {
@@ -154,10 +155,10 @@ export class PromptHandler extends GameManagerHelper {
   }
 
   /**
-   * Wrapper function to add green coloration to phase logs.
+   * Wrapper function to add coloration to phase logs.
    * @param args - Arguments to original logging function.
    */
   private doLog(...args: unknown[]): void {
-    console.log(chalk.hex("#ffa500")(...args));
+    console.log(chalk.hex("#008B8B")(...args));
   }
 }
