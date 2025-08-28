@@ -432,8 +432,15 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     const bgColor = globalScene.add.rectangle(0, 0, sWidth, sHeight, 0x006860).setOrigin(0);
 
+    const starterDexNoLabel = globalScene.add
+      .image(6, 14, getLocalizedSpriteKey("summary_dexnb_label"))
+      .setOrigin(0, 1); // Pixel text 'No'
+
     const starterSelectBg = globalScene.add.image(0, 0, "starter_select_bg").setOrigin(0);
-    this.shinyOverlay = globalScene.add.image(6, 6, "summary_overlay_shiny").setOrigin(0).setVisible(false);
+    this.shinyOverlay = globalScene.add
+      .image(6, 111, getLocalizedSpriteKey("summary_dexnb_label_overlay_shiny"))
+      .setOrigin(0, 1)
+      .setVisible(false); // Pixel text 'No' shiny
 
     const starterContainerWindow = addWindow(speciesContainerX, filterBarHeight + 1, 175, 161);
     const starterContainerBg = globalScene.add
@@ -1070,6 +1077,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add([
       bgColor,
       starterSelectBg,
+      starterDexNoLabel,
       this.shinyOverlay,
       starterContainerBg,
       addWindow(
