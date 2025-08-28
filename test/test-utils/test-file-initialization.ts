@@ -42,8 +42,6 @@ function initTestFile(): void {
  * @todo Investigate why this resets on new test suite start
  */
 function setupStubs(): void {
-  console.log(console instanceof MockConsole);
-  console.log(Phaser.GameObjects.Image instanceof MockImage);
   Object.defineProperties(global, {
     localStorage: {
       value: mockLocalStorage(),

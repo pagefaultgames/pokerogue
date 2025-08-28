@@ -60,4 +60,8 @@ describe("Moves - Tackle", () => {
     expect(hpLost).toBeGreaterThan(0);
     expect(hpLost).toBeLessThan(4);
   });
+
+  it("test failing test to see CI output", () => {
+    expect(1).toBe(2);
+  });
 });

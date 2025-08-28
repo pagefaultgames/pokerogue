@@ -13,6 +13,7 @@ export default defineProject(({ mode }) => ({
     sequence: {
       sequencer: MySequencer,
     },
+    includeTaskLocation: true,
     environment: "jsdom" as const,
     environmentOptions: {
       jsdom: {

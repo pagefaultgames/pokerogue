@@ -18,8 +18,8 @@ const blacklist = [
   "Phaser v", // Phaser version text
   "Seed:", // Stuff about wave seed (we should really stop logging this shit)
   "Wave Seed:", // Stuff about wave seed (we should really stop logging this shit)
-];
-const whitelist = ["Start Phase"];
+] as const;
+const whitelist = ["Start Phase"] as const;
 
 /**
  * The {@linkcode MockConsole} is a wrapper around the global {@linkcode console} object.
@@ -29,7 +29,11 @@ export class MockConsole extends Console {
   /**
    * A list of warnings that are queued to be displayed after all tests in the same file are finished.
    */
-  private static queuedWarnings: unknown[][] = [];
+  private static readonly queuedWarnings: unknown[][] = [];
+
+  constructor() {
+    super(stdout, stderr, false);
+  }
 
   /**
    * Queue a warning to be printed after all tests in the same file are finished.
@@ -39,18 +43,14 @@ export class MockConsole extends Console {
     MockConsole.queuedWarnings.push(data);
   }
 
-  constructor() {
-    super(stdout, stderr, false);
-  }
-
   /**
-   * Print all post-test warnings that have been queued, and then clears the queue.
+   * Print and reset all post-test warnings.
    */
-  public static printPostTestWarnings() {
+  public static printPostTestWarnings(): void {
     for (const data of MockConsole.queuedWarnings) {
       console.warn(...data);
     }
-    MockConsole.queuedWarnings = [];
+    MockConsole.queuedWarnings.splice(0);
   }
 
   /**
