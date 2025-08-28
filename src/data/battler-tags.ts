@@ -737,6 +737,10 @@ export class FlinchedTag extends BattlerTag {
   }
 }
 
+/**
+ * Tag to cancel the target's action when knocked out of a flying move by Smack Down or Gravity.
+ */
+// TODO: This is not a very good way to cancel a semi invulnerable turn
 export class InterruptedTag extends BattlerTag {
   public override readonly tagType = BattlerTagType.INTERRUPTED;
   constructor(sourceMove: MoveId) {
@@ -775,8 +779,9 @@ export class ConfusedTag extends SerializableBattlerTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
-    const blockedByTerrain = pokemon.isGrounded() && globalScene.arena.terrain?.terrainType === TerrainType.MISTY;
+    const blockedByTerrain = pokemon.isGrounded() && globalScene.arena.getTerrainType() === TerrainType.MISTY;
     if (blockedByTerrain) {
+      // TODO: this should not trigger if the current move is an attacking move
       pokemon.queueStatusImmuneMessage(false, TerrainType.MISTY);
       return false;
     }

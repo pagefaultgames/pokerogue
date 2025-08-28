@@ -1,4 +1,5 @@
 import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 
 /** Set of moves that cannot be called by {@linkcode MoveId.METRONOME | Metronome}. */
 export const invalidMetronomeMoves: ReadonlySet<MoveId> = new Set([
@@ -280,3 +281,19 @@ export const invalidEncoreMoves: ReadonlySet<MoveId> = new Set([
   MoveId.SLEEP_TALK,
   MoveId.ENCORE,
 ]);
+
+/**
+ * Set of all {@linkcode SpeciesId}s that are barred from use by {@linkcode MoveId.TELEKINESIS}.
+ *
+ * (Not included here is Gengar, which is only forbidden in its Mega form.)
+ */
+export const invalidTelekinesisSpecies: ReadonlySet<SpeciesId> = new Set([
+  SpeciesId.DIGLETT,
+  SpeciesId.DUGTRIO,
+  SpeciesId.ALOLA_DIGLETT,
+  SpeciesId.ALOLA_DUGTRIO,
+  SpeciesId.SANDYGAST,
+  SpeciesId.PALOSSAND,
+  SpeciesId.WIGLETT,
+  SpeciesId.WUGTRIO,
+] as const);
