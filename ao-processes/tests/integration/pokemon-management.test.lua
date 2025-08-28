@@ -190,6 +190,11 @@ function PokemonManagementIntegrationTests.testStateHandlerIntegration()
 end
 
 function PokemonManagementIntegrationTests.testQueryHandlerIntegration()
+    -- Clean state before test
+    PokemonManager.clearAllStorage()
+    PokemonStorage.clear()
+    PlayerIndex.clearAll()
+    
     local playerId = PokemonManagementIntegrationTests.testPlayerId
     
     -- Create test Pokemon
@@ -210,7 +215,7 @@ function PokemonManagementIntegrationTests.testQueryHandlerIntegration()
         }
     }
     
-    local instanceResult = QueryHandler.handleQuery(instanceMsg)
+    local instanceResult = QueryHandler.QueryHandler.handleQuery(instanceMsg)
     TestFramework.assert(instanceResult.success, "Should query Pokemon instance successfully")
     TestFramework.assert(instanceResult.pokemon.id == pokemon.id, "Should return correct Pokemon")
     TestFramework.assert(instanceResult.displayInfo ~= nil, "Should include display info when requested")
@@ -221,7 +226,7 @@ function PokemonManagementIntegrationTests.testQueryHandlerIntegration()
         From = playerId
     }
     
-    local partyResult = QueryHandler.handleQuery(partyMsg)
+    local partyResult = QueryHandler.QueryHandler.handleQuery(partyMsg)
     TestFramework.assert(partyResult.success, "Should query party successfully")
     TestFramework.assert(#partyResult.party > 0, "Should return party Pokemon")
     TestFramework.assert(partyResult.party[1].id == pokemon.id, "Should include created Pokemon in party")
@@ -232,7 +237,7 @@ function PokemonManagementIntegrationTests.testQueryHandlerIntegration()
         From = playerId
     }
     
-    local statsResult = QueryHandler.handleQuery(statsMsg)
+    local statsResult = QueryHandler.QueryHandler.handleQuery(statsMsg)
     TestFramework.assert(statsResult.success, "Should query collection stats successfully")
     TestFramework.assert(statsResult.playerStats.totalPokemon > 0, "Should show Pokemon in collection")
     
@@ -242,6 +247,11 @@ end
 -- Storage System Integration Tests
 
 function PokemonManagementIntegrationTests.testStorageSystemIntegration()
+    -- Clean state before test
+    PokemonManager.clearAllStorage()
+    PokemonStorage.clear()
+    PlayerIndex.clearAll()
+    
     local playerId = PokemonManagementIntegrationTests.testPlayerId
     
     -- Create multiple Pokemon to test storage
@@ -293,6 +303,11 @@ end
 -- Multi-Pokemon Battle Scenario
 
 function PokemonManagementIntegrationTests.testMultiPokemonBattleScenario()
+    -- Clean state before test
+    PokemonManager.clearAllStorage()
+    PokemonStorage.clear()
+    PlayerIndex.clearAll()
+    
     local playerId = PokemonManagementIntegrationTests.testPlayerId
     local battleId = "multi-pokemon-battle-001"
     
@@ -480,6 +495,11 @@ end
 -- System Recovery and Error Handling
 
 function PokemonManagementIntegrationTests.testSystemRecoveryAndErrorHandling()
+    -- Clean state before test
+    PokemonManager.clearAllStorage()
+    PokemonStorage.clear()
+    PlayerIndex.clearAll()
+    
     local playerId = PokemonManagementIntegrationTests.testPlayerId
     
     -- Test recovery from invalid operations

@@ -37,12 +37,34 @@ function PokemonStorage.store(pokemon)
         return false, "Invalid Pokemon data: missing ID"
     end
     
+    if type(pokemon.id) ~= "string" then
+        return false, "Invalid Pokemon data: ID must be a string"
+    end
+    
     if not pokemon.playerId then
         return false, "Invalid Pokemon data: missing player ID"
     end
     
+    if type(pokemon.playerId) ~= "string" then
+        return false, "Invalid Pokemon data: player ID must be a string"
+    end
+    
     if not pokemon.speciesId then
         return false, "Invalid Pokemon data: missing species ID"
+    end
+    
+    if type(pokemon.speciesId) ~= "number" then
+        return false, "Invalid Pokemon data: species ID must be a number"
+    end
+    
+    -- Validate level if present
+    if pokemon.level and (type(pokemon.level) ~= "number" or pokemon.level < 1 or pokemon.level > 100) then
+        return false, "Invalid Pokemon data: level must be a number between 1 and 100"
+    end
+    
+    -- Validate stats if present
+    if pokemon.stats and type(pokemon.stats) ~= "table" then
+        return false, "Invalid Pokemon data: stats must be a table"
     end
     
     local pokemonId = pokemon.id

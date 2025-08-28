@@ -429,7 +429,8 @@ end
 Enums.Gender = {
     GENDERLESS = 0,
     MALE = 1,
-    FEMALE = 2
+    FEMALE = 2,
+    UNKNOWN = -1
 }
 
 return Enums
