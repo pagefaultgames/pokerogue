@@ -30,7 +30,7 @@ describe("Moves - Mirror Move", () => {
       .battleStyle("single")
       .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
-      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH);
   });
 
   it("should use the last move that the target used against it", async () => {
@@ -79,6 +79,6 @@ describe("Moves - Mirror Move", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
-    expect(game.field.getPlayerPokemon()).toHaveUsedMove({move: MoveId.MIRROR_MOVE, result: MoveResult.FAIL});
+    expect(game.field.getPlayerPokemon()).toHaveUsedMove({ move: MoveId.MIRROR_MOVE, result: MoveResult.FAIL });
   });
 });
