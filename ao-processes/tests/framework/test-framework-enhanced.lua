@@ -478,7 +478,13 @@ function TestFramework.createTestSuite(name, config)
     return suite
 end
 
-function TestFramework.addTest(suite, testName, testFunc)
+function TestFramework.addTestToSuite(suite, testName, testFunc)
+    if not suite then
+        error("Suite is nil - make sure to create suite with createTestSuite first")
+    end
+    if not suite.tests then
+        error("Suite.tests is nil - suite may not have been created properly")
+    end
     table.insert(suite.tests, {
         name = testName,
         func = testFunc
@@ -491,7 +497,7 @@ function TestFramework.assert(condition, message)
     end
 end
 
-function TestFramework.runTestSuite(suite)
+function TestFramework.executeTestSuite(suite)
     print("🧪 Running Test Suite: " .. suite.name)
     print("=" .. string.rep("=", #suite.name + 22))
     

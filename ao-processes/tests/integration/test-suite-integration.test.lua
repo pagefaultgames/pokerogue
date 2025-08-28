@@ -79,7 +79,7 @@ function test_suite.teardown()
 end
 
 -- Test 1: Basic Test Runner Integration
-TestFramework.addTest(test_suite, "test_advanced_test_runner_integration", function()
+TestFramework.addTestToSuite(test_suite, "test_advanced_test_runner_integration", function()
     print("  🧪 Testing advanced test runner integration...")
     
     -- Test that the advanced test runner can discover and execute tests
@@ -106,7 +106,7 @@ TestFramework.addTest(test_suite, "test_advanced_test_runner_integration", funct
 end)
 
 -- Test 2: Test Scheduler Integration
-TestFramework.addTest(test_suite, "test_scheduler_integration", function()
+TestFramework.addTestToSuite(test_suite, "test_scheduler_integration", function()
     print("  📅 Testing test scheduler integration...")
     
     -- Create a test schedule
@@ -143,7 +143,7 @@ TestFramework.addTest(test_suite, "test_scheduler_integration", function()
 end)
 
 -- Test 3: Result Aggregator Integration
-TestFramework.addTest(test_suite, "test_result_aggregator_integration", function()
+TestFramework.addTestToSuite(test_suite, "test_result_aggregator_integration", function()
     print("  📊 Testing result aggregator integration...")
     
     -- Start an aggregation session
@@ -194,7 +194,7 @@ TestFramework.addTest(test_suite, "test_result_aggregator_integration", function
 end)
 
 -- Test 4: End-to-End Test Execution Flow
-TestFramework.addTest(test_suite, "test_end_to_end_execution_flow", function()
+TestFramework.addTestToSuite(test_suite, "test_end_to_end_execution_flow", function()
     print("  🔄 Testing end-to-end test execution flow...")
     
     -- Start a new aggregation session
@@ -249,7 +249,7 @@ TestFramework.addTest(test_suite, "test_end_to_end_execution_flow", function()
 end)
 
 -- Test 5: Component Configuration and Status
-TestFramework.addTest(test_suite, "test_component_configuration", function()
+TestFramework.addTestToSuite(test_suite, "test_component_configuration", function()
     print("  ⚙️ Testing component configuration and status...")
     
     -- Test Advanced Test Runner configuration
@@ -277,7 +277,7 @@ TestFramework.addTest(test_suite, "test_component_configuration", function()
 end)
 
 -- Test 6: Error Handling and Recovery
-TestFramework.addTest(test_suite, "test_error_handling", function()
+TestFramework.addTestToSuite(test_suite, "test_error_handling", function()
     print("  🚨 Testing error handling and recovery...")
     
     -- Test invalid session operations
@@ -304,7 +304,7 @@ TestFramework.addTest(test_suite, "test_error_handling", function()
 end)
 
 -- Test 7: Performance and Scalability
-TestFramework.addTest(test_suite, "test_performance_scalability", function()
+TestFramework.addTestToSuite(test_suite, "test_performance_scalability", function()
     print("  ⚡ Testing performance and scalability...")
     
     local start_time = os.clock()
@@ -359,7 +359,7 @@ TestFramework.addTest(test_suite, "test_performance_scalability", function()
 end)
 
 -- Test 8: Report Generation Integration
-TestFramework.addTest(test_suite, "test_report_generation", function()
+TestFramework.addTestToSuite(test_suite, "test_report_generation", function()
     print("  📄 Testing report generation integration...")
     
     -- Start session and add comprehensive test data
@@ -410,7 +410,7 @@ local function run_integration_tests()
     print("🧪 Starting Automated Test Suite Integration Tests")
     print("==================================================")
     
-    local results = TestFramework.runTestSuite(test_suite)
+    local results = TestFramework.executeTestSuite(test_suite)
     
     print("\n📊 Integration Test Results Summary:")
     print("===================================")
