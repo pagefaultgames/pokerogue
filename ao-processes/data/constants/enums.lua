@@ -316,7 +316,9 @@ Enums.AbilityId = {
     PURE_POWER = 74,
     SHELL_ARMOR = 75,
     AIR_LOCK = 76,
-    SOLAR_POWER = 77
+    SOLAR_POWER = 77,
+    SIMPLE = 78,
+    CONTRARY = 79
     
     -- Note: Full ability list would continue with all abilities through modern generations
 }

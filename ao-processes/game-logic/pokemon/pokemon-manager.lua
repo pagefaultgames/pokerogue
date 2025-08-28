@@ -18,6 +18,7 @@ local SpeciesDatabase = require("data.species.species-database")
 local AbilityDatabase = require("data.abilities.ability-database")
 local NatureModifiers = require("data.constants.nature-modifiers")
 local Enums = require("data.constants.enums")
+local CryptoRNG = require("game-logic.rng.crypto-rng")
 
 -- Constants
 local POKEMON_ID_PREFIX = "PKM"
@@ -171,7 +172,7 @@ function PokemonManager.createPokemon(speciesId, level, playerId, options)
     end
     
     -- Validate or default nature
-    local nature = options.nature or math.random(0, 24) -- Random nature if not specified (valid range 0-24)
+    local nature = options.nature or CryptoRNG.globalRandomInt(0, 24) -- Random nature if not specified (valid range 0-24)
     if not NatureModifiers.natureExists(nature) then
         return nil, "Invalid nature ID: " .. nature
     end
@@ -186,7 +187,7 @@ function PokemonManager.createPokemon(speciesId, level, playerId, options)
     end
     
     -- Determine gender (simplified - actual implementation would use species gender ratio)
-    local gender = options.gender or (math.random() < 0.5 and Enums.Gender.MALE or Enums.Gender.FEMALE)
+    local gender = options.gender or (CryptoRNG.globalRandom() < 0.5 and Enums.Gender.MALE or Enums.Gender.FEMALE)
     
     -- Determine shiny status
     local isShiny = options.isShiny ~= nil and options.isShiny or StatCalculator.calculateShinyFromIVs(ivs)

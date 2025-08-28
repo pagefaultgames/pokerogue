@@ -12,6 +12,9 @@ All multipliers match TypeScript implementation exactly for behavioral parity.
 
 local NatureModifiers = {}
 
+-- Import dependencies for RNG
+local CryptoRNG = require("game-logic.rng.crypto-rng")
+
 -- Nature stat effect constants
 local NATURE_INCREASE = 1.1
 local NATURE_DECREASE = 0.9
@@ -319,13 +322,12 @@ end
 -- Get random nature ID for Pokemon generation
 -- @param seed: Optional seed for deterministic nature generation (for battle replay)
 function NatureModifiers.getRandomNatureId(seed)
-    -- TODO: Replace with AO crypto module when available for deterministic battles
     if seed then
-        math.randomseed(seed)
+        CryptoRNG.initGlobalRNG(seed)
     end
     
     local ids = NatureModifiers.getAllNatureIds()
-    return ids[math.random(#ids)]
+    return ids[CryptoRNG.globalRandomInt(1, #ids)]
 end
 
 return NatureModifiers

@@ -16,6 +16,7 @@ local StatCalculator = {}
 -- Import dependencies
 local NatureModifiers = require("data.constants.nature-modifiers")
 local Enums = require("data.constants.enums")
+local CryptoRNG = require("game-logic.rng.crypto-rng")
 
 -- Constants for stat calculations (matching TypeScript Math.floor/Math.ceil behavior)
 local MAX_IV = 31
@@ -30,19 +31,18 @@ local SHINY_ODDS_DIVISOR = 4096  -- 1/4096 chance for shiny
 -- @param seed: Optional seed for deterministic IV generation (for battle replay)
 -- @return: Table with IVs for all 6 stats (0-31 range)
 function StatCalculator.generateRandomIVs(seed)
-    -- TODO: Replace with AO crypto module when available for deterministic battles
-    -- For now using math.random but should use ao.randomInt() in production
+    -- Initialize global RNG with seed for deterministic generation
     if seed then
-        math.randomseed(seed)
+        CryptoRNG.initGlobalRNG(seed)
     end
     
     return {
-        hp = math.random(MIN_IV, MAX_IV),
-        attack = math.random(MIN_IV, MAX_IV),
-        defense = math.random(MIN_IV, MAX_IV),
-        spAttack = math.random(MIN_IV, MAX_IV),
-        spDefense = math.random(MIN_IV, MAX_IV),
-        speed = math.random(MIN_IV, MAX_IV)
+        hp = CryptoRNG.globalRandomInt(MIN_IV, MAX_IV),
+        attack = CryptoRNG.globalRandomInt(MIN_IV, MAX_IV),
+        defense = CryptoRNG.globalRandomInt(MIN_IV, MAX_IV),
+        spAttack = CryptoRNG.globalRandomInt(MIN_IV, MAX_IV),
+        spDefense = CryptoRNG.globalRandomInt(MIN_IV, MAX_IV),
+        speed = CryptoRNG.globalRandomInt(MIN_IV, MAX_IV)
     }
 end
 
@@ -284,19 +284,18 @@ function StatCalculator.generateChildIVs(parent1IVs, parent2IVs, seed)
     local childIVs = {}
     local stats = {"hp", "attack", "defense", "spAttack", "spDefense", "speed"}
     
-    -- TODO: Replace with AO crypto module when available for deterministic battles
     if seed then
-        math.randomseed(seed)
+        CryptoRNG.initGlobalRNG(seed)
     end
     
     for _, stat in ipairs(stats) do
         -- 50% chance to inherit from each parent, with some random variation
-        if math.random() < 0.5 then
+        if CryptoRNG.globalRandom() < 0.5 then
             -- Inherit from parent 1 with slight variation
-            childIVs[stat] = math.min(MAX_IV, math.max(MIN_IV, parent1IVs[stat] + math.random(-2, 2)))
+            childIVs[stat] = math.min(MAX_IV, math.max(MIN_IV, parent1IVs[stat] + CryptoRNG.globalRandomInt(-2, 2)))
         else
             -- Inherit from parent 2 with slight variation  
-            childIVs[stat] = math.min(MAX_IV, math.max(MIN_IV, parent2IVs[stat] + math.random(-2, 2)))
+            childIVs[stat] = math.min(MAX_IV, math.max(MIN_IV, parent2IVs[stat] + CryptoRNG.globalRandomInt(-2, 2)))
         end
     end
     

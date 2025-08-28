@@ -16,6 +16,7 @@ local CustomizationManager = {}
 local StatCalculator = require("game-logic.pokemon.stat-calculator")
 local SpeciesDatabase = require("data.species.species-database")
 local Enums = require("data.constants.enums")
+local CryptoRNG = require("game-logic.rng.crypto-rng")
 
 -- Constants for validation
 local MAX_NICKNAME_LENGTH = 12
@@ -165,7 +166,7 @@ function CustomizationManager.determineGender(speciesId, personalityValue)
     end
     
     -- Use personality value for gender determination
-    personalityValue = personalityValue or math.random(0, 65535)
+    personalityValue = personalityValue or CryptoRNG.random(0, 65535)
     local genderThreshold = genderRatio * 32  -- Convert 8ths to 256ths
     
     -- Determine gender based on personality value
@@ -181,13 +182,12 @@ end
 -- @param seed: Optional seed for deterministic generation
 -- @return: 16-bit personality value
 function CustomizationManager.generatePersonalityValue(seed)
-    -- TODO: Replace with AO crypto module for deterministic generation
-    -- For now using math.random but should use ao.randomInt() in production
+    -- Use AO crypto module for deterministic generation
     if seed then
-        math.randomseed(seed)
+        CryptoRNG.initGlobalRNG(tostring(seed))
     end
     
-    return math.random(0, 65535)
+    return CryptoRNG.random(0, 65535)
 end
 
 -- Get gender display string
@@ -231,7 +231,7 @@ function CustomizationManager.calculateShinyStatus(pokemon, method)
     -- Adjust for different methods (simplified)
     if method ~= "standard" and not isShiny then
         -- Additional roll for special methods
-        local extraRoll = math.random(1, shinyOdds)
+        local extraRoll = CryptoRNG.random(1, shinyOdds)
         isShiny = extraRoll == 1
     end
     
@@ -572,7 +572,7 @@ function CustomizationManager.generateCustomizationData(speciesId, options)
             shinyOdds = SHINY_ODDS_SHINY_CHARM
         end
         
-        isShiny = math.random(1, shinyOdds) == 1
+        isShiny = CryptoRNG.random(1, shinyOdds) == 1
     end
     
     -- Set variant

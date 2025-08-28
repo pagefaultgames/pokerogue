@@ -4,6 +4,9 @@
 
 local AbilityEffects = {}
 
+-- Import required modules
+local CryptoRNG = require("game-logic.rng.crypto-rng")
+
 -- Ability trigger types (matching TypeScript AbAttr system)
 AbilityEffects.TriggerTypes = {
     POST_SUMMON = "POST_SUMMON",           -- When Pokemon enters battle
@@ -248,7 +251,7 @@ function AbilityEffects.applyFlinchChance(pokemon, effect, battleContext)
     end
     
     -- Use battle RNG for consistency with TypeScript implementation
-    local random = battleContext.battle and battleContext.battle.randSeedFloat() or math.random()
+    local random = battleContext.battle and battleContext.battle.randSeedFloat() or CryptoRNG.random()
     
     if random < effect.chance and battleContext.target then
         battleContext.target.addTag("FLINCHED")

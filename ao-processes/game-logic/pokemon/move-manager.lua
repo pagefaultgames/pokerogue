@@ -14,6 +14,9 @@ local MoveManager = {}
 
 -- Import dependencies
 local SpeciesDatabase = require("data.species.species-database")
+local TMDatabase = require("data.moves.tm-database")
+local EggMoves = require("data.moves.egg-moves")
+local TutorMoves = require("data.moves.tutor-moves")
 local Enums = require("data.constants.enums")
 
 -- Constants
@@ -269,6 +272,18 @@ function MoveManager.learnMove(pokemon, moveId, learnMethod, options)
         newMove.slot = options.replaceSlot
         pokemon.moveset[options.replaceSlot] = newMove
         
+        -- Add replaced move to forgotten moves for move reminder
+        if not pokemon.forgottenMoves then
+            pokemon.forgottenMoves = {}
+        end
+        
+        table.insert(pokemon.forgottenMoves, {
+            id = oldMove.id,
+            forgottenAt = os.time(),
+            originalLearnLevel = oldMove.learnedAt,
+            learnMethod = oldMove.learnMethod
+        })
+        
         return pokemon, {
             success = true,
             reason = "replaced",
@@ -484,6 +499,303 @@ function MoveManager.getForgottenMoves(pokemon)
     end
     
     return pokemon.forgottenMoves
+end
+
+-- Move Relearning Functions
+
+-- Relearn a previously forgotten move
+-- @param pokemon: Pokemon instance
+-- @param moveId: Move ID to relearn
+-- @param options: Additional options (cost payment, slot preference, etc.)
+-- @return: Updated Pokemon, relearn result
+function MoveManager.relearnMove(pokemon, moveId, options)
+    if not pokemon or not moveId then
+        return pokemon, {
+            success = false,
+            reason = "invalid_params",
+            message = "Pokemon and move ID required"
+        }
+    end
+    
+    options = options or {}
+    
+    -- Check if Pokemon has forgotten moves
+    if not pokemon.forgottenMoves then
+        pokemon.forgottenMoves = {}
+    end
+    
+    -- Find the forgotten move
+    local forgottenMoveIndex = nil
+    local forgottenMoveData = nil
+    
+    for i, forgottenMove in ipairs(pokemon.forgottenMoves) do
+        if forgottenMove.id == moveId then
+            forgottenMoveIndex = i
+            forgottenMoveData = forgottenMove
+            break
+        end
+    end
+    
+    if not forgottenMoveData then
+        return pokemon, {
+            success = false,
+            reason = "not_forgotten",
+            message = "Pokemon has never known this move"
+        }
+    end
+    
+    -- Check if Pokemon already knows this move
+    if MoveManager.hasMove(pokemon, moveId) then
+        return pokemon, {
+            success = false,
+            reason = "already_known",
+            message = "Pokemon already knows this move"
+        }
+    end
+    
+    -- Calculate relearning cost (if applicable)
+    local cost = MoveManager.calculateRelearnCost(pokemon, moveId, forgottenMoveData)
+    
+    -- Check if player can afford the cost
+    if cost > 0 and options.playerMoney and options.playerMoney < cost then
+        return pokemon, {
+            success = false,
+            reason = "insufficient_funds",
+            cost = cost,
+            message = "Insufficient funds to relearn this move (Cost: " .. cost .. ")"
+        }
+    end
+    
+    -- Attempt to learn the move
+    local updatedPokemon, learnResult = MoveManager.learnMove(
+        pokemon, 
+        moveId, 
+        LearnMethods.REMINDER,
+        {
+            replaceSlot = options.replaceSlot,
+            force = true -- Allow relearning regardless of level restrictions
+        }
+    )
+    
+    if learnResult.success then
+        -- Remove from forgotten moves list
+        table.remove(updatedPokemon.forgottenMoves, forgottenMoveIndex)
+        
+        -- Record the relearning
+        learnResult.relearned = true
+        learnResult.originalLearnLevel = forgottenMoveData.originalLearnLevel
+        learnResult.originalLearnMethod = forgottenMoveData.learnMethod
+        learnResult.cost = cost
+        learnResult.message = pokemon.name .. " remembered " .. (learnResult.move and learnResult.move.name or "the move") .. "!"
+        
+        -- Deduct cost if applicable
+        if cost > 0 and options.playerMoney then
+            learnResult.newBalance = options.playerMoney - cost
+        end
+    end
+    
+    return updatedPokemon, learnResult
+end
+
+-- Calculate cost for relearning a move
+-- @param pokemon: Pokemon instance
+-- @param moveId: Move ID to relearn
+-- @param forgottenMoveData: Data about the forgotten move
+-- @return: Cost in currency units
+function MoveManager.calculateRelearnCost(pokemon, moveId, forgottenMoveData)
+    -- Base cost calculation
+    local baseCost = 0
+    
+    -- Factor in Pokemon level
+    local levelFactor = math.floor(pokemon.level / 10)
+    baseCost = baseCost + (levelFactor * 100)
+    
+    -- Factor in original learn method
+    if forgottenMoveData.learnMethod == LearnMethods.TM then
+        baseCost = baseCost + 500
+    elseif forgottenMoveData.learnMethod == LearnMethods.TUTOR then
+        baseCost = baseCost + 1000
+    elseif forgottenMoveData.learnMethod == LearnMethods.EGG then
+        baseCost = baseCost + 750
+    else
+        baseCost = baseCost + 200 -- Level/start moves
+    end
+    
+    -- Factor in how long ago the move was forgotten
+    if forgottenMoveData.forgottenAt then
+        local timeAgo = os.time() - forgottenMoveData.forgottenAt
+        local daysSince = math.floor(timeAgo / (24 * 3600))
+        local timePenalty = math.min(daysSince * 50, 1000) -- Cap at 1000
+        baseCost = baseCost + timePenalty
+    end
+    
+    return baseCost
+end
+
+-- Get all moves that can be relearned
+-- @param pokemon: Pokemon instance
+-- @param includeKnown: Whether to include moves the Pokemon currently knows
+-- @return: Array of relearnable moves with cost information
+function MoveManager.getRellearnableMoves(pokemon, includeKnown)
+    if not pokemon then
+        return {}
+    end
+    
+    includeKnown = includeKnown or false
+    local relearnableMoves = {}
+    
+    -- Get forgotten moves
+    local forgottenMoves = MoveManager.getForgottenMoves(pokemon)
+    for _, forgottenMove in ipairs(forgottenMoves) do
+        -- Skip if Pokemon already knows the move (unless includeKnown is true)
+        if includeKnown or not MoveManager.hasMove(pokemon, forgottenMove.id) then
+            local cost = MoveManager.calculateRelearnCost(pokemon, forgottenMove.id, forgottenMove)
+            
+            table.insert(relearnableMoves, {
+                moveId = forgottenMove.id,
+                originalLearnLevel = forgottenMove.originalLearnLevel,
+                learnMethod = forgottenMove.learnMethod,
+                forgottenAt = forgottenMove.forgottenAt,
+                cost = cost,
+                alreadyKnown = MoveManager.hasMove(pokemon, forgottenMove.id)
+            })
+        end
+    end
+    
+    -- Sort by cost (lowest first)
+    table.sort(relearnableMoves, function(a, b) return a.cost < b.cost end)
+    
+    return relearnableMoves
+end
+
+-- Validate forgotten moves data structure
+-- @param pokemon: Pokemon instance
+-- @return: Boolean indicating if forgotten moves data is valid, array of errors
+function MoveManager.validateForgottenMoves(pokemon)
+    if not pokemon then
+        return false, {"Pokemon instance required"}
+    end
+    
+    local errors = {}
+    
+    if pokemon.forgottenMoves then
+        if type(pokemon.forgottenMoves) ~= "table" then
+            table.insert(errors, "forgottenMoves must be array")
+        else
+            for i, forgottenMove in ipairs(pokemon.forgottenMoves) do
+                if type(forgottenMove) ~= "table" then
+                    table.insert(errors, "Forgotten move " .. i .. " must be table")
+                else
+                    -- Check required fields
+                    if not forgottenMove.id or type(forgottenMove.id) ~= "number" then
+                        table.insert(errors, "Forgotten move " .. i .. " must have valid ID")
+                    end
+                    
+                    if forgottenMove.originalLearnLevel and type(forgottenMove.originalLearnLevel) ~= "number" then
+                        table.insert(errors, "Forgotten move " .. i .. " originalLearnLevel must be number")
+                    end
+                    
+                    if forgottenMove.learnMethod and type(forgottenMove.learnMethod) ~= "string" then
+                        table.insert(errors, "Forgotten move " .. i .. " learnMethod must be string")
+                    end
+                    
+                    if forgottenMove.forgottenAt and type(forgottenMove.forgottenAt) ~= "number" then
+                        table.insert(errors, "Forgotten move " .. i .. " forgottenAt must be number")
+                    end
+                end
+            end
+        end
+    end
+    
+    return #errors == 0, errors
+end
+
+-- Clear forgotten moves older than a certain age (cleanup utility)
+-- @param pokemon: Pokemon instance
+-- @param maxAgeDays: Maximum age in days to keep forgotten moves
+-- @return: Updated Pokemon, number of moves removed
+function MoveManager.cleanupForgottenMoves(pokemon, maxAgeDays)
+    if not pokemon or not pokemon.forgottenMoves then
+        return pokemon, 0
+    end
+    
+    maxAgeDays = maxAgeDays or 365 -- Default to 1 year
+    local currentTime = os.time()
+    local maxAge = maxAgeDays * 24 * 3600 -- Convert to seconds
+    
+    local removed = 0
+    local i = 1
+    
+    while i <= #pokemon.forgottenMoves do
+        local forgottenMove = pokemon.forgottenMoves[i]
+        if forgottenMove.forgottenAt and (currentTime - forgottenMove.forgottenAt) > maxAge then
+            table.remove(pokemon.forgottenMoves, i)
+            removed = removed + 1
+        else
+            i = i + 1
+        end
+    end
+    
+    return pokemon, removed
+end
+
+-- Get move relearning statistics for a Pokemon
+-- @param pokemon: Pokemon instance
+-- @return: Table with relearning statistics
+function MoveManager.getRelearnStats(pokemon)
+    if not pokemon then
+        return {
+            totalForgotten = 0,
+            relearnable = 0,
+            averageCost = 0,
+            oldestForgotten = nil,
+            newestForgotten = nil
+        }
+    end
+    
+    local stats = {
+        totalForgotten = 0,
+        relearnable = 0,
+        averageCost = 0,
+        oldestForgotten = nil,
+        newestForgotten = nil
+    }
+    
+    local forgottenMoves = MoveManager.getForgottenMoves(pokemon)
+    stats.totalForgotten = #forgottenMoves
+    
+    if stats.totalForgotten == 0 then
+        return stats
+    end
+    
+    local totalCost = 0
+    local oldestTime = math.huge
+    local newestTime = 0
+    
+    for _, forgottenMove in ipairs(forgottenMoves) do
+        -- Check if relearnable (not already known)
+        if not MoveManager.hasMove(pokemon, forgottenMove.id) then
+            stats.relearnable = stats.relearnable + 1
+            local cost = MoveManager.calculateRelearnCost(pokemon, forgottenMove.id, forgottenMove)
+            totalCost = totalCost + cost
+        end
+        
+        -- Track oldest and newest
+        if forgottenMove.forgottenAt then
+            if forgottenMove.forgottenAt < oldestTime then
+                oldestTime = forgottenMove.forgottenAt
+                stats.oldestForgotten = forgottenMove
+            end
+            if forgottenMove.forgottenAt > newestTime then
+                newestTime = forgottenMove.forgottenAt
+                stats.newestForgotten = forgottenMove
+            end
+        end
+    end
+    
+    stats.averageCost = stats.relearnable > 0 and (totalCost / stats.relearnable) or 0
+    
+    return stats
 end
 
 -- Get all possible moves for a species (level + TM + tutor, etc.)
@@ -726,6 +1038,565 @@ function MoveManager.validateMoveset(pokemon)
     end
     
     return #errors == 0, errors
+end
+
+-- TM/TR Learning Functions
+
+-- Learn a move from TM
+-- @param pokemon: Pokemon instance
+-- @param tmNumber: TM number (1-100+)
+-- @param inventory: Player's inventory (for TM validation)
+-- @param options: Additional options (force, slot preference, etc.)
+-- @return: Updated Pokemon and inventory, learn result info
+function MoveManager.learnFromTM(pokemon, tmNumber, inventory, options)
+    if not pokemon or not tmNumber then
+        return pokemon, inventory, {
+            success = false,
+            reason = "invalid_params",
+            message = "Pokemon and TM number required"
+        }
+    end
+    
+    TMDatabase.init() -- Ensure TM database is loaded
+    options = options or {}
+    
+    -- Validate TM exists and is obtainable
+    local tmData = TMDatabase.getTM(tmNumber)
+    if not tmData then
+        return pokemon, inventory, {
+            success = false,
+            reason = "tm_not_found",
+            message = "TM " .. tmNumber .. " does not exist"
+        }
+    end
+    
+    if not tmData.obtainable then
+        return pokemon, inventory, {
+            success = false,
+            reason = "tm_not_obtainable",
+            message = "TM " .. tmNumber .. " is not currently obtainable"
+        }
+    end
+    
+    -- Check if player has the TM in inventory
+    if not inventory or not inventory.tms or not inventory.tms[tmNumber] or inventory.tms[tmNumber] < 1 then
+        return pokemon, inventory, {
+            success = false,
+            reason = "tm_not_in_inventory",
+            message = "You don't have TM " .. tmNumber .. " in your inventory"
+        }
+    end
+    
+    -- Check species compatibility
+    local moveId = tmData.moveId
+    if not SpeciesDatabase.isTMCompatible(pokemon.speciesId, moveId) then
+        return pokemon, inventory, {
+            success = false,
+            reason = "incompatible",
+            message = pokemon.name .. " cannot learn " .. tmData.name .. " from TM"
+        }
+    end
+    
+    -- Attempt to learn the move
+    local updatedPokemon, learnResult = MoveManager.learnMove(pokemon, moveId, LearnMethods.TM, options)
+    
+    if learnResult.success then
+        -- TMs are reusable, so don't consume from inventory
+        learnResult.tmUsed = tmNumber
+        learnResult.tmName = tmData.name
+        learnResult.message = pokemon.name .. " learned " .. tmData.name .. " from TM" .. tmNumber .. "!"
+    end
+    
+    return updatedPokemon, inventory, learnResult
+end
+
+-- Learn a move from TR
+-- @param pokemon: Pokemon instance
+-- @param trNumber: TR number (1-100+)
+-- @param inventory: Player's inventory (for TR validation and consumption)
+-- @param options: Additional options (force, slot preference, etc.)
+-- @return: Updated Pokemon and inventory, learn result info
+function MoveManager.learnFromTR(pokemon, trNumber, inventory, options)
+    if not pokemon or not trNumber then
+        return pokemon, inventory, {
+            success = false,
+            reason = "invalid_params",
+            message = "Pokemon and TR number required"
+        }
+    end
+    
+    TMDatabase.init() -- Ensure TM database is loaded
+    options = options or {}
+    
+    -- Validate TR exists and is obtainable
+    local trData = TMDatabase.getTR(trNumber)
+    if not trData then
+        return pokemon, inventory, {
+            success = false,
+            reason = "tr_not_found",
+            message = "TR " .. trNumber .. " does not exist"
+        }
+    end
+    
+    if not trData.obtainable then
+        return pokemon, inventory, {
+            success = false,
+            reason = "tr_not_obtainable",
+            message = "TR " .. trNumber .. " is not currently obtainable"
+        }
+    end
+    
+    -- Check if player has the TR in inventory
+    if not inventory or not inventory.trs or not inventory.trs[trNumber] or inventory.trs[trNumber] < 1 then
+        return pokemon, inventory, {
+            success = false,
+            reason = "tr_not_in_inventory",
+            message = "You don't have TR " .. trNumber .. " in your inventory"
+        }
+    end
+    
+    -- Check species compatibility
+    local moveId = trData.moveId
+    if not SpeciesDatabase.isTRCompatible(pokemon.speciesId, moveId) then
+        return pokemon, inventory, {
+            success = false,
+            reason = "incompatible",
+            message = pokemon.name .. " cannot learn " .. trData.name .. " from TR"
+        }
+    end
+    
+    -- Attempt to learn the move
+    local updatedPokemon, learnResult = MoveManager.learnMove(pokemon, moveId, LearnMethods.TUTOR, options)
+    
+    if learnResult.success then
+        -- TRs are single-use, so consume from inventory
+        if not inventory.trs then inventory.trs = {} end
+        inventory.trs[trNumber] = (inventory.trs[trNumber] or 0) - 1
+        if inventory.trs[trNumber] <= 0 then
+            inventory.trs[trNumber] = nil
+        end
+        
+        learnResult.trUsed = trNumber
+        learnResult.trName = trData.name
+        learnResult.trConsumed = true
+        learnResult.message = pokemon.name .. " learned " .. trData.name .. " from TR" .. trNumber .. "! The TR was consumed."
+    end
+    
+    return updatedPokemon, inventory, learnResult
+end
+
+-- Check if Pokemon can learn a move from TM/TR
+-- @param pokemon: Pokemon instance
+-- @param machineNumber: TM/TR number
+-- @param machineType: "tm" or "tr"
+-- @return: Boolean indicating compatibility, reason if not compatible
+function MoveManager.canLearnFromMachine(pokemon, machineNumber, machineType)
+    if not pokemon or not machineNumber or not machineType then
+        return false, "invalid_parameters"
+    end
+    
+    TMDatabase.init()
+    local machineData
+    local moveId
+    
+    if machineType == "tm" then
+        machineData = TMDatabase.getTM(machineNumber)
+        if machineData then
+            moveId = machineData.moveId
+            return SpeciesDatabase.isTMCompatible(pokemon.speciesId, moveId), "tm_compatibility"
+        end
+    elseif machineType == "tr" then
+        machineData = TMDatabase.getTR(machineNumber)
+        if machineData then
+            moveId = machineData.moveId
+            return SpeciesDatabase.isTRCompatible(pokemon.speciesId, moveId), "tr_compatibility"
+        end
+    end
+    
+    return false, "machine_not_found"
+end
+
+-- Get all TMs/TRs that a Pokemon can learn
+-- @param pokemon: Pokemon instance
+-- @param machineType: "tm", "tr", or "both"
+-- @return: Table with learnable machines {tm: [...], tr: [...]}
+function MoveManager.getLearnableMachines(pokemon, machineType)
+    if not pokemon then
+        return {tm = {}, tr = {}}
+    end
+    
+    TMDatabase.init()
+    SpeciesDatabase.init()
+    machineType = machineType or "both"
+    
+    local result = {tm = {}, tr = {}}
+    local speciesData = SpeciesDatabase.getSpecies(pokemon.speciesId)
+    if not speciesData then
+        return result
+    end
+    
+    -- Get learnable TMs
+    if machineType == "tm" or machineType == "both" then
+        if speciesData.tmMoves then
+            for _, moveId in ipairs(speciesData.tmMoves) do
+                local tmNumbers = TMDatabase.getTMsForMove(moveId)
+                for _, tmNumber in ipairs(tmNumbers) do
+                    local tmData = TMDatabase.getTM(tmNumber)
+                    if tmData and tmData.obtainable then
+                        table.insert(result.tm, {
+                            number = tmNumber,
+                            moveId = moveId,
+                            name = tmData.name,
+                            description = tmData.description,
+                            cost = tmData.cost
+                        })
+                    end
+                end
+            end
+        end
+    end
+    
+    -- Get learnable TRs
+    if machineType == "tr" or machineType == "both" then
+        if speciesData.trMoves then
+            for _, moveId in ipairs(speciesData.trMoves) do
+                local trNumbers = TMDatabase.getTRsForMove(moveId)
+                for _, trNumber in ipairs(trNumbers) do
+                    local trData = TMDatabase.getTR(trNumber)
+                    if trData and trData.obtainable then
+                        table.insert(result.tr, {
+                            number = trNumber,
+                            moveId = moveId,
+                            name = trData.name,
+                            description = trData.description,
+                            cost = trData.cost
+                        })
+                    end
+                end
+            end
+        end
+    end
+    
+    -- Sort by machine number
+    table.sort(result.tm, function(a, b) return a.number < b.number end)
+    table.sort(result.tr, function(a, b) return a.number < b.number end)
+    
+    return result
+end
+
+-- Validate TM/TR inventory structure
+-- @param inventory: Inventory object
+-- @return: Boolean indicating if inventory is valid, array of errors
+function MoveManager.validateTMTRInventory(inventory)
+    if not inventory then
+        return false, {"Inventory is required"}
+    end
+    
+    local errors = {}
+    
+    -- Check TM inventory structure
+    if inventory.tms then
+        if type(inventory.tms) ~= "table" then
+            table.insert(errors, "TM inventory must be table")
+        else
+            for tmNumber, count in pairs(inventory.tms) do
+                if type(tmNumber) ~= "number" or tmNumber < 1 then
+                    table.insert(errors, "Invalid TM number: " .. tostring(tmNumber))
+                end
+                if type(count) ~= "number" or count < 0 then
+                    table.insert(errors, "Invalid TM count for TM " .. tmNumber .. ": " .. tostring(count))
+                end
+            end
+        end
+    end
+    
+    -- Check TR inventory structure  
+    if inventory.trs then
+        if type(inventory.trs) ~= "table" then
+            table.insert(errors, "TR inventory must be table")
+        else
+            for trNumber, count in pairs(inventory.trs) do
+                if type(trNumber) ~= "number" or trNumber < 1 then
+                    table.insert(errors, "Invalid TR number: " .. tostring(trNumber))
+                end
+                if type(count) ~= "number" or count < 0 then
+                    table.insert(errors, "Invalid TR count for TR " .. trNumber .. ": " .. tostring(count))
+                end
+            end
+        end
+    end
+    
+    return #errors == 0, errors
+end
+
+-- Egg Move Functions
+
+-- Process egg move inheritance during breeding
+-- @param motherPokemon: Mother Pokemon instance
+-- @param fatherPokemon: Father Pokemon instance
+-- @return: Array of inherited egg moves
+function MoveManager.processEggMoveInheritance(motherPokemon, fatherPokemon)
+    if not motherPokemon or not fatherPokemon then
+        return {}
+    end
+    
+    -- Get parent species and moves
+    local motherSpeciesId = motherPokemon.speciesId
+    local fatherSpeciesId = fatherPokemon.speciesId
+    local motherMoves = motherPokemon.moves or {}
+    local fatherMoves = fatherPokemon.moves or {}
+    
+    -- Use egg moves database to process inheritance
+    return EggMoves.processEggMoveInheritance(motherSpeciesId, fatherSpeciesId, motherMoves, fatherMoves)
+end
+
+-- Get possible egg moves for a species
+-- @param speciesId: Species ID
+-- @return: Array of move IDs that can be inherited as egg moves
+function MoveManager.getEggMovesForSpecies(speciesId)
+    if not speciesId then
+        return {}
+    end
+    
+    return EggMoves.getEggMovesForSpecies(speciesId)
+end
+
+-- Validate if a move can be inherited as an egg move
+-- @param motherSpeciesId: Mother's species ID
+-- @param fatherSpeciesId: Father's species ID  
+-- @param moveId: Move ID to validate
+-- @return: Boolean success, string error message
+function MoveManager.validateEggMoveInheritance(motherSpeciesId, fatherSpeciesId, moveId)
+    if not motherSpeciesId or not fatherSpeciesId or not moveId then
+        return false, "Missing required parameters for egg move validation"
+    end
+    
+    return EggMoves.validateEggMoveInheritance(motherSpeciesId, fatherSpeciesId, moveId)
+end
+
+-- Add egg moves to a newly hatched Pokemon
+-- @param pokemon: Pokemon instance (newly hatched)
+-- @param inheritedMoves: Array of inherited egg moves from processEggMoveInheritance
+-- @return: Boolean success, string error message
+function MoveManager.addEggMovesToPokemon(pokemon, inheritedMoves)
+    if not pokemon then
+        return false, "Pokemon is required"
+    end
+    
+    if not inheritedMoves or #inheritedMoves == 0 then
+        return true, "No egg moves to add"
+    end
+    
+    local errors = {}
+    local movesAdded = 0
+    
+    for _, eggMove in ipairs(inheritedMoves) do
+        if movesAdded >= EggMoves.breedingRequirements.maxEggMovesPerPokemon then
+            break
+        end
+        
+        -- Check if Pokemon has room for more moves
+        if #(pokemon.moves or {}) >= MAX_MOVES then
+            table.insert(errors, "Pokemon already has maximum moves")
+            break
+        end
+        
+        -- Add the egg move
+        local success, error = MoveManager.teachMove(pokemon, eggMove.moveId, 1, LearnMethods.EGG)
+        if success then
+            movesAdded = movesAdded + 1
+        else
+            table.insert(errors, "Failed to add egg move " .. eggMove.moveId .. ": " .. (error or "Unknown error"))
+        end
+    end
+    
+    if #errors > 0 then
+        return false, table.concat(errors, "; ")
+    end
+    
+    return true, "Successfully added " .. movesAdded .. " egg moves"
+end
+
+-- Get breeding compatibility for egg moves
+-- @param speciesId: Species ID to check compatibility for
+-- @return: Table with compatible parent species and egg group info
+function MoveManager.getEggMoveCompatibility(speciesId)
+    if not speciesId then
+        return {}
+    end
+    
+    return {
+        compatibleParents = EggMoves.getCompatibleParentsForSpecies(speciesId),
+        eggMoves = EggMoves.getEggMovesForSpecies(speciesId)
+    }
+end
+
+-- Move Tutor Functions
+
+-- Get available tutor moves for a Pokemon species
+-- @param speciesId: Species ID
+-- @param tutorId: Optional specific tutor ID
+-- @return: Array of available moves with cost information
+function MoveManager.getAvailableTutorMoves(speciesId, tutorId)
+    if not speciesId then
+        return {}
+    end
+    
+    return TutorMoves.getAvailableMovesForSpecies(speciesId, tutorId)
+end
+
+-- Validate if a Pokemon can learn a move from a tutor
+-- @param pokemon: Pokemon instance
+-- @param tutorId: Tutor ID
+-- @param moveId: Move ID to learn
+-- @param playerResources: Player's resources (battle points, coins, etc.)
+-- @return: Boolean success, string error message
+function MoveManager.validateTutorLearning(pokemon, tutorId, moveId, playerResources)
+    if not pokemon or not tutorId or not moveId then
+        return false, "Missing required parameters"
+    end
+    
+    -- Check species compatibility
+    local canLearn, reason = TutorMoves.canLearnFromTutor(pokemon.speciesId, tutorId, moveId)
+    if not canLearn then
+        return false, reason
+    end
+    
+    -- Check if Pokemon already knows the move
+    if MoveManager.hasMove(pokemon, moveId) then
+        return false, "Pokemon already knows this move"
+    end
+    
+    -- Check level requirements
+    local levelReq = TutorMoves.requirements.levelRequirements[tutorId]
+    if levelReq and pokemon.level < levelReq then
+        return false, "Pokemon must be at least level " .. levelReq
+    end
+    
+    -- Check player resources
+    local hasResources, resourceReason = TutorMoves.validatePlayerResources(tutorId, moveId, playerResources)
+    if not hasResources then
+        return false, resourceReason
+    end
+    
+    return true, "Pokemon can learn move from tutor"
+end
+
+-- Learn a move from a tutor
+-- @param pokemon: Pokemon instance
+-- @param tutorId: Tutor ID
+-- @param moveId: Move ID to learn
+-- @param playerResources: Player's current resources
+-- @return: Boolean success, table updated resources, string message
+function MoveManager.learnMoveFromTutor(pokemon, tutorId, moveId, playerResources)
+    if not pokemon or not tutorId or not moveId or not playerResources then
+        return false, {}, "Missing required parameters"
+    end
+    
+    -- Validate the learning attempt
+    local canLearn, reason = MoveManager.validateTutorLearning(pokemon, tutorId, moveId, playerResources)
+    if not canLearn then
+        return false, playerResources, reason
+    end
+    
+    -- Process the transaction
+    local success, updatedResources, transactionMessage = TutorMoves.processTutorLearning(tutorId, moveId, playerResources)
+    if not success then
+        return false, playerResources, transactionMessage
+    end
+    
+    -- Check if Pokemon has room for the move
+    if #(pokemon.moves or {}) >= MAX_MOVES then
+        -- Need to replace a move - this should be handled by the calling code
+        return false, updatedResources, "Pokemon has maximum moves - choose a move to replace"
+    end
+    
+    -- Teach the move
+    local teachSuccess, teachError = MoveManager.teachMove(pokemon, moveId, pokemon.level, LearnMethods.TUTOR)
+    if not teachSuccess then
+        -- Refund the transaction since teaching failed
+        return false, playerResources, "Failed to teach move: " .. (teachError or "Unknown error")
+    end
+    
+    return true, updatedResources, "Successfully learned move from tutor"
+end
+
+-- Learn a move from tutor with move replacement
+-- @param pokemon: Pokemon instance
+-- @param tutorId: Tutor ID
+-- @param moveId: Move ID to learn
+-- @param replaceSlot: Move slot to replace (1-4)
+-- @param playerResources: Player's current resources
+-- @return: Boolean success, table updated resources, string message
+function MoveManager.learnMoveFromTutorWithReplacement(pokemon, tutorId, moveId, replaceSlot, playerResources)
+    if not pokemon or not tutorId or not moveId or not replaceSlot or not playerResources then
+        return false, {}, "Missing required parameters"
+    end
+    
+    -- Validate the learning attempt (excluding move count check)
+    local canLearn, reason = TutorMoves.canLearnFromTutor(pokemon.speciesId, tutorId, moveId)
+    if not canLearn then
+        return false, playerResources, reason
+    end
+    
+    -- Check if Pokemon already knows the move
+    if MoveManager.hasMove(pokemon, moveId) then
+        return false, playerResources, "Pokemon already knows this move"
+    end
+    
+    -- Check level requirements
+    local levelReq = TutorMoves.requirements.levelRequirements[tutorId]
+    if levelReq and pokemon.level < levelReq then
+        return false, playerResources, "Pokemon must be at least level " .. levelReq
+    end
+    
+    -- Check player resources
+    local hasResources, resourceReason = TutorMoves.validatePlayerResources(tutorId, moveId, playerResources)
+    if not hasResources then
+        return false, playerResources, resourceReason
+    end
+    
+    -- Validate replace slot
+    if replaceSlot < 1 or replaceSlot > MAX_MOVES then
+        return false, playerResources, "Invalid move slot: " .. replaceSlot
+    end
+    
+    if not pokemon.moves or not pokemon.moves[replaceSlot] then
+        return false, playerResources, "No move to replace in slot " .. replaceSlot
+    end
+    
+    -- Process the transaction
+    local success, updatedResources, transactionMessage = TutorMoves.processTutorLearning(tutorId, moveId, playerResources)
+    if not success then
+        return false, playerResources, transactionMessage
+    end
+    
+    -- Replace the move
+    local replaceSuccess, replaceError = MoveManager.replaceMove(pokemon, replaceSlot, moveId, LearnMethods.TUTOR)
+    if not replaceSuccess then
+        -- Refund the transaction since replacement failed
+        return false, playerResources, "Failed to replace move: " .. (replaceError or "Unknown error")
+    end
+    
+    return true, updatedResources, "Successfully learned move from tutor and replaced move in slot " .. replaceSlot
+end
+
+-- Get all available tutors
+-- @return: Array of tutor information
+function MoveManager.getAllTutors()
+    return TutorMoves.getAllTutors()
+end
+
+-- Get tutor move cost
+-- @param tutorId: Tutor ID
+-- @param moveId: Move ID
+-- @return: Number cost
+function MoveManager.getTutorMoveCost(tutorId, moveId)
+    if not tutorId or not moveId then
+        return 0
+    end
+    
+    return TutorMoves.getMoveCost(tutorId, moveId)
 end
 
 -- Get move constants for external use

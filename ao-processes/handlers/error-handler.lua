@@ -3,6 +3,9 @@
 
 local ErrorHandler = {}
 
+-- Import required modules
+local CryptoRNG = require("game-logic.rng.crypto-rng")
+
 -- Error Type Constants
 ErrorHandler.ERROR_TYPES = {
     VALIDATION = "VALIDATION_ERROR",
@@ -84,8 +87,8 @@ end
 
 -- Generate unique correlation ID for error tracking
 function ErrorHandler.generateCorrelationId()
-    local timestamp = os.time() * 1000 + math.random(0, 999)
-    local randomSuffix = math.random(10000, 99999)
+    local timestamp = os.time() * 1000 + CryptoRNG.random(0, 999)
+    local randomSuffix = CryptoRNG.random(10000, 99999)
     return "err_" .. timestamp .. "_" .. randomSuffix
 end
 

@@ -26,6 +26,12 @@ local PokemonStorage = require("data.pokemon-instances.pokemon-storage")
 local PlayerIndex = require("data.pokemon-instances.player-index")
 local CustomizationManager = require("game-logic.pokemon.customization-manager")
 
+-- Import move learning modules
+local MoveManager = require("game-logic.pokemon.move-manager")
+local TMDatabase = require("data.moves.tm-database")
+local EggMoves = require("data.moves.egg-moves")
+local TutorMoves = require("data.moves.tutor-moves")
+
 -- Query message handlers
 local queryHandlers = {}
 
@@ -1697,6 +1703,249 @@ queryHandlers["query-moves-by-flags"] = function(msg)
         count = #matchingMoves,
         limit = limit
     }
+end
+
+-- Move Learning Query Handlers
+
+-- Query learnable moves for a species
+queryHandlers["query-learnable-moves"] = function(msg)
+    local speciesId = msg.Data and tonumber(msg.Data.speciesId)
+    local method = msg.Data and msg.Data.method -- "level", "tm", "tr", "tutor", "egg", or "all"
+    local level = msg.Data and tonumber(msg.Data.level)
+    
+    if not speciesId then
+        return {
+            success = false,
+            error = "Missing speciesId parameter"
+        }
+    end
+    
+    local learnableMoves = {}
+    method = method or "all"
+    
+    -- Level-up moves
+    if method == "level" or method == "all" then
+        local levelMoves = MoveManager.getMovesLearnableAtLevel(speciesId, level or 100)
+        for _, moveData in ipairs(levelMoves) do
+            table.insert(learnableMoves, {
+                moveId = moveData.moveId,
+                learnLevel = moveData.level,
+                method = "level"
+            })
+        end
+    end
+    
+    -- TM moves
+    if method == "tm" or method == "all" then
+        local tmMoves = MoveManager.getCompatibleTMs(speciesId)
+        for _, tmData in ipairs(tmMoves) do
+            table.insert(learnableMoves, {
+                moveId = tmData.moveId,
+                tmNumber = tmData.tmNumber,
+                method = "tm"
+            })
+        end
+    end
+    
+    -- TR moves  
+    if method == "tr" or method == "all" then
+        local trMoves = MoveManager.getCompatibleTRs(speciesId)
+        for _, trData in ipairs(trMoves) do
+            table.insert(learnableMoves, {
+                moveId = trData.moveId,
+                trNumber = trData.trNumber,
+                method = "tr"
+            })
+        end
+    end
+    
+    -- Tutor moves
+    if method == "tutor" or method == "all" then
+        local tutorMoves = MoveManager.getAvailableTutorMoves(speciesId)
+        for _, tutorData in ipairs(tutorMoves) do
+            table.insert(learnableMoves, {
+                moveId = tutorData.moveId,
+                tutorId = tutorData.tutorId,
+                cost = tutorData.cost,
+                currency = tutorData.currency,
+                method = "tutor"
+            })
+        end
+    end
+    
+    -- Egg moves
+    if method == "egg" or method == "all" then
+        local eggMoves = MoveManager.getEggMovesForSpecies(speciesId)
+        for _, moveId in ipairs(eggMoves) do
+            table.insert(learnableMoves, {
+                moveId = moveId,
+                method = "egg"
+            })
+        end
+    end
+    
+    return {
+        success = true,
+        speciesId = speciesId,
+        method = method,
+        moves = learnableMoves,
+        count = #learnableMoves
+    }
+end
+
+-- Query TM/TR compatibility for a species
+queryHandlers["query-tm-tr-compatibility"] = function(msg)
+    local speciesId = msg.Data and tonumber(msg.Data.speciesId)
+    local machineType = msg.Data and msg.Data.machineType -- "tm", "tr", or "both"
+    
+    if not speciesId then
+        return {
+            success = false,
+            error = "Missing speciesId parameter"
+        }
+    end
+    
+    machineType = machineType or "both"
+    local compatibility = {}
+    
+    if machineType == "tm" or machineType == "both" then
+        compatibility.tms = MoveManager.getCompatibleTMs(speciesId)
+    end
+    
+    if machineType == "tr" or machineType == "both" then  
+        compatibility.trs = MoveManager.getCompatibleTRs(speciesId)
+    end
+    
+    return {
+        success = true,
+        speciesId = speciesId,
+        machineType = machineType,
+        compatibility = compatibility
+    }
+end
+
+-- Query forgotten moves for relearning
+queryHandlers["query-forgotten-moves"] = function(msg)
+    local pokemonId = msg.Data and msg.Data.pokemonId
+    local playerId = msg.Data and msg.Data.playerId
+    
+    if not pokemonId or not playerId then
+        return {
+            success = false,
+            error = "Missing pokemonId or playerId parameter"
+        }
+    end
+    
+    -- Get Pokemon instance from storage
+    local pokemon = PokemonStorage.getPokemon(playerId, pokemonId)
+    if not pokemon then
+        return {
+            success = false,
+            error = "Pokemon not found"
+        }
+    end
+    
+    local forgottenMoves = MoveManager.getForgottenMoves(pokemon)
+    local relearnableMoves = {}
+    
+    for _, forgottenMove in ipairs(forgottenMoves) do
+        local cost = MoveManager.calculateRelearnCost(pokemon, forgottenMove.id, forgottenMove)
+        table.insert(relearnableMoves, {
+            moveId = forgottenMove.id,
+            name = forgottenMove.name,
+            learnMethod = forgottenMove.learnMethod,
+            forgottenAt = forgottenMove.forgottenAt,
+            relearnCost = cost
+        })
+    end
+    
+    return {
+        success = true,
+        pokemonId = pokemonId,
+        forgottenMoves = relearnableMoves,
+        count = #relearnableMoves
+    }
+end
+
+-- Query egg move compatibility for breeding
+queryHandlers["query-egg-move-compatibility"] = function(msg) 
+    local speciesId = msg.Data and tonumber(msg.Data.speciesId)
+    
+    if not speciesId then
+        return {
+            success = false,
+            error = "Missing speciesId parameter"
+        }
+    end
+    
+    local compatibility = MoveManager.getEggMoveCompatibility(speciesId)
+    
+    return {
+        success = true,
+        speciesId = speciesId,
+        eggMoves = compatibility.eggMoves or {},
+        compatibleParents = compatibility.compatibleParents or {},
+        eggMoveCount = #(compatibility.eggMoves or {})
+    }
+end
+
+-- Query available tutors and their moves
+queryHandlers["query-tutor-moves"] = function(msg)
+    local tutorId = msg.Data and msg.Data.tutorId
+    local speciesId = msg.Data and tonumber(msg.Data.speciesId)
+    
+    if tutorId then
+        -- Query specific tutor
+        local tutor = TutorMoves.tutors[tutorId]
+        if not tutor then
+            return {
+                success = false,
+                error = "Tutor not found: " .. tostring(tutorId)
+            }
+        end
+        
+        local moves = {}
+        if speciesId then
+            -- Get moves available for specific species from this tutor
+            local availableMoves = TutorMoves.getAvailableMovesForSpecies(speciesId, tutorId)
+            for _, moveId in ipairs(availableMoves) do
+                local cost = TutorMoves.getMoveCost(tutorId, moveId)
+                table.insert(moves, {
+                    moveId = moveId,
+                    cost = cost
+                })
+            end
+        else
+            -- Get all moves from this tutor
+            for _, moveData in ipairs(tutor.moves) do
+                table.insert(moves, {
+                    moveId = moveData.moveId,
+                    cost = moveData.cost
+                })
+            end
+        end
+        
+        return {
+            success = true,
+            tutor = {
+                id = tutor.id,
+                name = tutor.name,
+                location = tutor.location,
+                currency = tutor.currency
+            },
+            moves = moves,
+            moveCount = #moves
+        }
+    else
+        -- Query all tutors
+        local tutors = MoveManager.getAllTutors()
+        
+        return {
+            success = true,
+            tutors = tutors,
+            tutorCount = #tutors
+        }
+    end
 end
 
 -- Main query handler dispatcher

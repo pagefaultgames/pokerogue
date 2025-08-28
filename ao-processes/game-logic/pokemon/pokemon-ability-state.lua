@@ -8,6 +8,7 @@ local PokemonAbilityState = {}
 local AbilityDatabase = require("data.abilities.ability-database")
 local AbilityIndexes = require("data.abilities.ability-indexes")
 local SpeciesDatabase = require("data.species.species-database")
+local CryptoRNG = require("game-logic.rng.crypto-rng")
 
 -- Ability slot enumeration (matching TypeScript AbilityAttr)
 PokemonAbilityState.AbilitySlot = {
@@ -375,14 +376,14 @@ function PokemonAbilityState.calculateInheritedAbility(offspring, parent1, paren
         for _, inheritance in ipairs(inheritableAbilities) do
             if inheritance.slot == PokemonAbilityState.AbilitySlot.ABILITY_HIDDEN then
                 -- Hidden abilities have special inheritance rules (typically lower chance)
-                if math.random() < 0.6 then -- 60% chance to inherit hidden ability
+                if CryptoRNG.random() < 0.6 then -- 60% chance to inherit hidden ability
                     return inheritance
                 end
             end
         end
         
         -- Otherwise, random selection from compatible abilities
-        return inheritableAbilities[math.random(#inheritableAbilities)]
+        return inheritableAbilities[CryptoRNG.random(1, #inheritableAbilities)]
     end
     
     -- Fallback to species default
