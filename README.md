@@ -60,38 +60,38 @@ We're currently migrating all game mechanics from TypeScript/Phaser to AO Lua ha
 #### Player Progression
 - ✅ Trainer level system
 - ✅ Experience gain distribution
-- ✅ Money/currency management
-- ✅ Achievement system
-- ✅ Unlock progression tracking
-- ✅ Statistics tracking
-- ✅ Hall of Fame records
+- [ ] Money/currency management
+- [ ] Achievement system
+- [ ] Unlock progression tracking
+- [ ] Statistics tracking
+- [ ] Hall of Fame records
 
 #### Inventory & Items
-- ✅ Item database and effects
-- ✅ Bag organization system
-- ✅ Item usage mechanics
-- ✅ Shop system and pricing
-- ✅ Consumable item effects
-- ✅ Held item mechanics
+- [ ] Item database and effects
+- [ ] Bag organization system
+- [ ] Item usage mechanics
+- [ ] Shop system and pricing
+- [ ] Consumable item effects
+- [ ] Held item mechanics
 - ✅ TM/TR system
-- ✅ Berry system
+- [ ] Berry system
 
 #### World & Exploration
-- ✅ Biome generation system
-- ✅ Wave progression mechanics
-- ✅ Boss encounter system
+- [ ] Biome generation system
+- [ ] Wave progression mechanics
+- [ ] Boss encounter system
 - ✅ Wild encounter rates
-- ✅ Trainer battle system
-- ✅ Environmental effects
+- [ ] Trainer battle system
+- [ ] Environmental effects
 - ✅ Weather system impact
-- ✅ Arena/location effects
+- [ ] Arena/location effects
 
 #### Save System
-- ✅ Complete game state serialization
-- ✅ Save file integrity validation
-- ✅ Cross-session data persistence
-- ✅ Settings and preferences
-- ✅ Progress checkpoint system
+- [ ] Complete game state serialization
+- [ ] Save file integrity validation
+- [ ] Cross-session data persistence
+- [ ] Settings and preferences
+- [ ] Progress checkpoint system
 
 ### UI/UX Systems
 
