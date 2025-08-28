@@ -27,7 +27,7 @@ import type { DexEntry } from "#types/dex-data";
 import { type BooleanHolder, isBetween, type NumberHolder, randSeedItem } from "#utils/common";
 import { deepCopy } from "#utils/data";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
-import { toCamelCase, toSnakeCase } from "#utils/strings";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 /** A constant for the default max cost of the starting party before a run */
@@ -764,7 +764,7 @@ export class SingleTypeChallenge extends Challenge {
   }
 
   getValue(overrideValue: number = this.value): string {
-    return toSnakeCase(PokemonType[overrideValue - 1]);
+    return i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[overrideValue - 1])}`);
   }
 
   getDescription(overrideValue: number = this.value): string {
