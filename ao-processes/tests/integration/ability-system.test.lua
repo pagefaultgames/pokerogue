@@ -21,14 +21,14 @@ local function assertNotNil(value, message)
     end
 end
 
--- Import all ability system modules
-local AbilityDatabase = require("ao-processes.data.abilities.ability-database")
-local AbilityEffects = require("ao-processes.data.abilities.ability-effects")
-local AbilityIndexes = require("ao-processes.data.abilities.ability-indexes")
-local AbilityProcessor = require("ao-processes.game-logic.battle.ability-processor")
-local PokemonAbilityState = require("ao-processes.game-logic.pokemon.pokemon-ability-state")
-local PassiveAbilities = require("ao-processes.data.abilities.passive-abilities")
-local StateHandler = require("ao-processes.handlers.state-handler")
+-- Import all ability system modules with proper paths
+local AbilityDatabase = require("data.abilities.ability-database")
+local AbilityEffects = require("data.abilities.ability-effects")
+local AbilityIndexes = require("data.abilities.ability-indexes")
+local AbilityProcessor = require("game-logic.battle.ability-processor")
+local PokemonAbilityState = require("game-logic.pokemon.pokemon-ability-state")
+local PassiveAbilities = require("data.abilities.passive-abilities")
+local StateHandler = require("handlers.state-handler")
 
 -- Integration test suite
 local AbilitySystemIntegrationTests = {}
