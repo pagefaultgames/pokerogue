@@ -167,12 +167,14 @@ end
 local function testHandlerTestUtilities()
     print("Testing handler test utilities...")
     
-    -- Create emulator and utilities (using mock emulator if real one not available)  
-    local AOEmulatorModule = TestHelpers.requireWithMock("development-tools/ao-local-setup/ao-emulator")
-    local emulator = AOEmulatorModule.AOEmulator.new({processId = "test-handler-utils"})
+    -- Create simplified mock systems for testing
+    local mockEmulator = {
+        processId = "test-handler-utils",
+        send = function(msg) return {success = true} end
+    }
     
     local mocks = MockSystems.new()
-    local utils = HandlerTestUtils.new(emulator, mocks)
+    local utils = HandlerTestUtils.new(mockEmulator, mocks)
     
     assertNotNil(utils, "Handler test utils should be created")
     assertNotNil(utils.emulator, "Utils should have emulator")

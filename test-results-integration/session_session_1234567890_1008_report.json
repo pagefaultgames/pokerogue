@@ -1,0 +1,12 @@
+{
+  "session_id": "session_1234567890_1008",
+  "session_name": "Report Generation Test",
+  "environment": "testing",
+  "status": "completed",
+  "total_tests": 30,
+  "passed_tests": 23,
+  "failed_tests": 5,
+  "pass_rate": 0.767,
+  "total_duration": 0.0,
+  "test_quality_score": 88.9
+}
