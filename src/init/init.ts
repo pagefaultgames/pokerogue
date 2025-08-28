@@ -4,7 +4,6 @@ import { initEggMoves } from "#balance/egg-moves";
 import { initPokemonPrevolutions, initPokemonStarters } from "#balance/pokemon-evolutions";
 import { initSpecies } from "#balance/pokemon-species";
 import { initChallenges } from "#data/challenge";
-import { allMoves } from "#data/data-lists";
 import { initTrainerTypeDialogue } from "#data/dialogue";
 import { initPokemonForms } from "#data/pokemon-forms";
 import { initModifierPools } from "#modifiers/init-modifier-pools";
