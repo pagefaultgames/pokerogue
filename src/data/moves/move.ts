@@ -8891,7 +8891,7 @@ export function initMoves() {
     new SelfStatusMove(MoveId.METRONOME, PokemonType.NORMAL, -1, 10, -1, 0, 1)
       .attr(RandomMoveAttr, invalidMetronomeMoves),
     new StatusMove(MoveId.MIRROR_MOVE, PokemonType.FLYING, -1, 20, -1, 0, 1)
-      .attr(CopyMoveAttr, invalidMirrorMoveMoves, true),
+      .attr(CopyMoveAttr, invalidMirrorMoveMoves, false),
     new AttackMove(MoveId.SELF_DESTRUCT, PokemonType.NORMAL, MoveCategory.PHYSICAL, 200, 100, 5, -1, 0, 1)
       .attr(SacrificialAttr)
       .makesContact(false)
