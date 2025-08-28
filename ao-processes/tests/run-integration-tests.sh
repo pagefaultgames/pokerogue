@@ -37,29 +37,27 @@ echo "🧪 Testing full integration test structure..."
 if [ -f "../framework/test-framework-enhanced.lua" ]; then
     echo "✅ Enhanced test framework found"
     
-    # Try to run a minimal version of the full integration test
+    # Try to run the full pokemon management integration test
     cd ..
-    LUA_PATH="../?.lua;../?/init.lua;../data/?.lua;../data/?/init.lua;./?.lua;./?/init.lua;;" lua5.3 -e "
-    local success, TestFramework = pcall(require, 'framework.test-framework-enhanced')
-    if success then
-        print('✅ Test framework can be loaded')
-        
-        -- Test basic framework functionality
-        local framework = TestFramework.new()
-        if framework then
-            print('✅ Test framework can be instantiated')
-        else
-            error('Failed to create test framework instance')
-        end
-    else
-        error('Failed to load test framework: ' .. TestFramework)
-    end
-    "
+    echo "🔗 Running pokemon-management.test.lua..."
+    
+    LUA_PATH="../?.lua;../?/init.lua;../data/?.lua;../data/?/init.lua;../game-logic/?.lua;../game-logic/?/init.lua;../handlers/?.lua;../handlers/?/init.lua;./?.lua;./?/init.lua;;" lua5.3 integration/pokemon-management.test.lua
     
     if [ $? -eq 0 ]; then
-        echo "✅ Full integration test structure validated"
+        echo "✅ pokemon-management.test.lua passed"
     else
-        echo "⚠️ Full integration test needs framework adjustments"
+        echo "❌ pokemon-management.test.lua failed"
+        echo "   Falling back to basic framework validation..."
+        
+        # Fallback test - just validate framework loading
+        LUA_PATH="../?.lua;../?/init.lua;../data/?.lua;../data/?/init.lua;./?.lua;./?/init.lua;;" lua5.3 -e "
+        local success, TestFramework = pcall(require, 'framework.test-framework-enhanced')
+        if success then
+            print('✅ Test framework can be loaded')
+        else
+            error('Failed to load test framework: ' .. TestFramework)
+        end
+        "
     fi
     
 else
