@@ -13,6 +13,7 @@ This file contains information and commands for Claude to help with development 
 - Lint: `npm run lint`
 - Type check: `npm run typecheck`
 - Start development server: `npm run start`
+- Update progress checklist: `./scripts/update-progress-checklist.sh`
 
 ## MCP Servers Available
 The following MCP servers are configured and available through the Model Context Protocol:
@@ -155,3 +156,9 @@ The following MCP servers are configured and available through the Model Context
 - This is a Phaser-based Pokemon battle game
 - Uses TypeScript
 - MCP servers provide additional capabilities for memory management and documentation access
+
+## Automated README Updates
+The project includes automated README Migration Parity Checklist updates:
+- `scripts/update-progress-checklist.sh` - Scans completed stories and updates checklist
+- `.git/hooks/pre-push` - Automatically runs checklist update before pushes
+- Checklist items are marked ✅ when corresponding stories show "Done" or "PASS" status
