@@ -668,6 +668,6 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   private log(...params: any[]) {
-    console.log(chalk.hex(OVERRIDES_COLOR)("Overrides:", ...params));
+    console.log(chalk.hex(OVERRIDES_COLOR)(...params));
   }
 }

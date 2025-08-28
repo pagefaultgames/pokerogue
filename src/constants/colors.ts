@@ -12,6 +12,7 @@ export const MOVE_COLOR = "RebeccaPurple" as const;
 export const NEW_TURN_COLOR = "#ffad00ff" as const;
 export const UI_MSG_COLOR = "#009dffff" as const;
 export const OVERRIDES_COLOR = "#b0b01eff" as const;
+export const SETTINGS_COLOR = "#1ab596ff" as const;
 
 // Mock console log stuff
 export const TRACE_COLOR = "#b700ff" as const;

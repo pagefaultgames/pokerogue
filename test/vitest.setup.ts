@@ -1,27 +1,14 @@
 import "vitest-canvas-mock";
-import { initializeGame } from "#app/init/init";
 import { MockConsole } from "#test/test-utils/mocks/mock-console/mock-console";
 import { initTests } from "#test/test-utils/test-file-initialization";
 import chalk from "chalk";
 import { afterAll, beforeAll, vi } from "vitest";
 
-/** Set the timezone to UTC for tests. */
-
-/** Mock the override import to always return default values, ignoring any custom overrides. */
-vi.mock("#app/overrides", async importOriginal => {
-  const { defaultOverrides } = await importOriginal<typeof import("#app/overrides")>();
-
-  return {
-    default: defaultOverrides,
-    defaultOverrides,
-  } satisfies typeof import("#app/overrides");
-});
-
 //#region Mocking
 
-/** Mock the override import to always return default values, ignoring any custom overrides. */
-vi.mock("#app/overrides", async importOriginal => {
-  const { defaultOverrides } = await importOriginal<typeof import("#app/overrides")>();
+// Mock the override import to always return default values, ignoring any custom overrides.
+vi.mock(import("#app/overrides"), async importOriginal => {
+  const { defaultOverrides } = await importOriginal();
 
   return {
     default: defaultOverrides,
@@ -37,7 +24,7 @@ vi.mock("#app/overrides", async importOriginal => {
  * This is necessary because how our code is structured.
  * Do NOT try to put any of this code into external functions, it won't work as it's elevated during runtime.
  */
-vi.mock("i18next", async importOriginal => {
+vi.mock(import("i18next"), async importOriginal => {
   console.log("Mocking i18next");
   const { setupServer } = await import("msw/node");
   const { http, HttpResponse } = await import("msw");
@@ -68,18 +55,7 @@ vi.mock("i18next", async importOriginal => {
   return await importOriginal();
 });
 
-/** Ensure that i18n is initialized on all calls. */
-// TODO: Initialize i18n directly on import instead of initializing it during importing of trainer code
-vi.mock("#app/plugins/i18n", async importOriginal => {
-  const importedStuff = await importOriginal<typeof import("#app/plugins/i18n")>();
-  const { initI18n } = importedStuff;
-  await initI18n();
-  return importedStuff;
-});
-
 global.testFailed = false;
-
-initializeGame();
 
 beforeAll(() => {
   initTests();
