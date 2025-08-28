@@ -168,24 +168,22 @@ export class TitlePhase extends Phase {
     globalScene.ui.setMode(UiMode.TITLE, config);
   }
 
-  loadSaveSlot(slotId: number): void {
+  async loadSaveSlot(slotId: number): Promise<void> {
     globalScene.sessionSlotId = slotId > -1 || !loggedInUser ? slotId : loggedInUser.lastSessionSlot;
     globalScene.ui.setMode(UiMode.MESSAGE);
     globalScene.ui.resetModeChain();
-    globalScene.gameData
-      .loadSession(slotId, slotId === -1 ? this.lastSessionData : undefined)
-      .then((success: boolean) => {
-        if (success) {
-          this.loaded = true;
-          globalScene.ui.showText(i18next.t("menu:sessionSuccess"), null, () => this.end());
-        } else {
-          this.end();
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        globalScene.ui.showText(i18next.t("menu:failedToLoadSession"), null);
-      });
+    try {
+      const success = await globalScene.gameData.loadSession(slotId, slotId === -1 ? this.lastSessionData : undefined);
+      if (success) {
+        this.loaded = true;
+        globalScene.ui.showText(i18next.t("menu:sessionSuccess"), null, () => this.end());
+      } else {
+        this.end();
+      }
+    } catch (err) {
+      console.error(err);
+      globalScene.ui.showText(i18next.t("menu:failedToLoadSession"), null);
+    }
   }
 
   initDailyRun(): void {
