@@ -10,7 +10,66 @@ Test Coverage:
 - Storage system integrity and performance
 --]]
 
--- Import test framework
+-- Setup module paths for standalone execution
+local function setupLuaPath()
+    local originalPath = package.path
+    
+    -- Try multiple path setups for different execution contexts
+    local pathConfigs = {
+        -- From integration/ directory
+        {
+            "../framework/?.lua",
+            "../framework/?/init.lua",
+            "../../?.lua",
+            "../../?/init.lua", 
+            "../../data/?.lua",
+            "../../data/?/init.lua",
+            "../../game-logic/?.lua", 
+            "../../game-logic/?/init.lua",
+            "../../handlers/?.lua",
+            "../../handlers/?/init.lua",
+            "../?.lua",
+            "../?/init.lua"
+        },
+        -- From tests/ directory  
+        {
+            "./framework/?.lua",
+            "./framework/?/init.lua",
+            "../?.lua",
+            "../?/init.lua",
+            "../data/?.lua", 
+            "../data/?/init.lua",
+            "../game-logic/?.lua",
+            "../game-logic/?/init.lua", 
+            "../handlers/?.lua",
+            "../handlers/?/init.lua",
+            "./?.lua",
+            "./?/init.lua"
+        }
+    }
+    
+    -- Try each configuration
+    for _, paths in ipairs(pathConfigs) do
+        package.path = table.concat(paths, ";") .. ";" .. originalPath
+        
+        -- Test if we can find the test framework
+        local success = pcall(function() 
+            return require("framework.test-framework-enhanced") 
+        end)
+        
+        if success then
+            return -- Found working path configuration
+        end
+    end
+    
+    -- Restore original path if nothing worked
+    package.path = originalPath
+end
+
+-- Setup paths before requiring modules
+setupLuaPath()
+
+-- Import test framework  
 local TestFramework = require("framework.test-framework-enhanced")
 
 -- Import all Pokemon management modules
