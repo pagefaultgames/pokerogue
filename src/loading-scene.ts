@@ -164,6 +164,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("select_gen_cursor", "ui");
     this.loadImage("select_gen_cursor_highlight", "ui");
 
+    // todo: add custom icon for language change in login screen
     this.loadImage("saving_icon", "ui");
     this.loadImage("discord", "ui");
     this.loadImage("google", "ui");
