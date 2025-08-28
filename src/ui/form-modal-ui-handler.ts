@@ -136,6 +136,11 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       this.submitAction = config.buttonActions.length ? config.buttonActions[0] : null;
       this.cancelAction = config.buttonActions[1] ?? null;
 
+      // Auto focus the first input field after a short delay, to prevent accidental inputs
+      setTimeout(() => {
+        this.inputs[0].setFocus();
+      }, 50);
+
       // #region: Override button pointerDown
       // Override the pointerDown event for the buttonBgs to call the `submitAction` and `cancelAction`
       // properties that we set above, allowing their behavior to change after this method terminates
