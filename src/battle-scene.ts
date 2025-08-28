@@ -1347,8 +1347,8 @@ export class BattleScene extends SceneBase {
 
         // Forcing a double battle on wave 1 causes a bug, where only one enemy is sent out, making it impossible to complete the fight without a reload
         const overrideVariant =
-          (Overrides.RANDOM_TRAINER_OVERRIDE?.trainerVariant === TrainerVariant.DOUBLE && !hasDouble) ||
-          newWaveIndex <= 1
+          Overrides.RANDOM_TRAINER_OVERRIDE?.trainerVariant === TrainerVariant.DOUBLE &&
+          (!hasDouble || newWaveIndex <= 1)
             ? TrainerVariant.DEFAULT
             : Overrides.RANDOM_TRAINER_OVERRIDE?.trainerVariant;
 
