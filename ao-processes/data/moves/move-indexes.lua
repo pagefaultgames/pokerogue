@@ -379,4 +379,22 @@ function MoveIndexes.getIndexStats()
     }
 end
 
+-- Initialize move indexes using the MoveDatabase
+-- @return: Boolean indicating success
+function MoveIndexes.init()
+    local MoveDatabase = require("data.moves.move-database")
+    
+    -- Ensure MoveDatabase is initialized
+    if not MoveDatabase.moves or not next(MoveDatabase.moves) then
+        print("Warning: MoveDatabase not initialized, initializing now...")
+        MoveDatabase.init()
+    end
+    
+    -- Build all indexes from the move database
+    MoveIndexes.buildIndexes(MoveDatabase)
+    
+    print("MoveIndexes initialized with " .. MoveIndexes.getTotalIndexedMoves() .. " indexed moves")
+    return true
+end
+
 return MoveIndexes

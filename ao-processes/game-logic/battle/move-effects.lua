@@ -2024,4 +2024,321 @@ function MoveEffects.getEffectDescription(effect)
     return table.concat(descriptions, ", ")
 end
 
+-- Execute move with damage calculation integration
+-- @param battleState: Current battle state
+-- @param attacker: Pokemon using the move
+-- @param moveData: Move data from database
+-- @param target: Target Pokemon (optional for some moves)
+-- @return: Move execution result with damage and effects
+function MoveEffects.executeMove(battleState, attacker, moveData, target)
+    local result = {
+        success = false,
+        damage = 0,
+        effectiveness = 1.0,
+        critical_hit = false,
+        missed = false,
+        failed = false,
+        no_effect = false,
+        effects = {},
+        status_effects = {},
+        messages = {}
+    }
+    
+    -- Input validation
+    if not attacker or not moveData then
+        result.failed = true
+        result.messages = {"Move execution failed: Invalid parameters"}
+        return result
+    end
+    
+    -- Load damage calculator for damage moves
+    local DamageCalculator = require("game-logic.battle.damage-calculator")
+    
+    -- Check if move affects the user or needs a target
+    local actualTarget = target
+    if not target and moveData.target ~= Enums.MoveTarget.USER then
+        -- For moves that need a target but none provided, use default target logic
+        if battleState.activePokemon then
+            if attacker == battleState.activePokemon.player then
+                actualTarget = battleState.activePokemon.enemy
+            else
+                actualTarget = battleState.activePokemon.player
+            end
+        end
+    end
+    
+    -- Check accuracy for moves that can miss
+    if moveData.accuracy and moveData.accuracy < 100 then
+        local accuracyRoll = BattleRNG.randomInt(1, 100)
+        if accuracyRoll > moveData.accuracy then
+            result.missed = true
+            result.success = true  -- Move executed but missed
+            result.messages = {"The attack missed!"}
+            return result
+        end
+    end
+    
+    result.success = true
+    
+    -- Handle damage calculation for offensive moves
+    if moveData.category ~= Enums.MoveCategory.STATUS and moveData.power and moveData.power > 0 and actualTarget then
+        local damageParams = {
+            attacker = attacker,
+            defender = actualTarget,
+            moveData = moveData,
+            battleState = battleState
+        }
+        
+        local damageResult = DamageCalculator.calculateDamage(damageParams)
+        
+        result.damage = damageResult.damage
+        result.effectiveness = damageResult.typeEffectiveness
+        result.critical_hit = damageResult.criticalHit
+        result.stab = damageResult.stab
+        
+        -- Check for no effect
+        if result.effectiveness == 0 then
+            result.no_effect = true
+            result.damage = 0
+            result.messages = {"It had no effect!"}
+            return result
+        end
+        
+        -- Apply damage to target
+        if actualTarget and result.damage > 0 then
+            actualTarget.currentHP = math.max(0, actualTarget.currentHP - result.damage)
+            if actualTarget.currentHP <= 0 then
+                actualTarget.fainted = true
+                table.insert(result.effects, {
+                    type = "faint",
+                    target = actualTarget,
+                    pokemon_id = actualTarget.id
+                })
+            end
+        end
+    end
+    
+    -- Apply status effects from move
+    if moveData.status_chance and moveData.status_effect and actualTarget then
+        local statusRoll = BattleRNG.randomInt(1, 100)
+        if statusRoll <= moveData.status_chance then
+            local statusApplied = MoveEffects.applyStatusEffect(
+                battleState.battleId,
+                actualTarget.id,
+                moveData.status_effect,
+                "move",
+                attacker,
+                actualTarget
+            )
+            
+            if statusApplied then
+                table.insert(result.status_effects, {
+                    target = actualTarget,
+                    status = moveData.status_effect,
+                    applied = true
+                })
+            end
+        end
+    end
+    
+    -- Apply stat changes from move
+    if moveData.stat_changes then
+        local statTarget = actualTarget
+        if moveData.target == Enums.MoveTarget.USER then
+            statTarget = attacker
+        end
+        
+        if statTarget and statTarget.battleData and statTarget.battleData.statStages then
+            for stat, change in pairs(moveData.stat_changes) do
+                local statChangeResult = MoveEffects.applyStatStageChange(
+                    battleState.battleId,
+                    statTarget.id,
+                    stat,
+                    change,
+                    "move",
+                    statTarget,
+                    statTarget.battleData.statStages
+                )
+                
+                if statChangeResult then
+                    statTarget.battleData.statStages[stat] = (statTarget.battleData.statStages[stat] or 0) + change
+                    table.insert(result.effects, {
+                        type = "stat_change",
+                        target = statTarget,
+                        stat = stat,
+                        change = change
+                    })
+                end
+            end
+        end
+    end
+    
+    -- Handle healing moves
+    if moveData.healing and moveData.target == Enums.MoveTarget.USER then
+        local healingAmount = 0
+        if type(moveData.healing) == "string" then
+            -- Percentage healing (e.g., "1/2" for half HP)
+            local numerator, denominator = moveData.healing:match("(%d+)/(%d+)")
+            if numerator and denominator then
+                healingAmount = math.floor((attacker.stats.hp * tonumber(numerator)) / tonumber(denominator))
+            elseif moveData.healing == "full" then
+                healingAmount = attacker.stats.hp - attacker.currentHP
+            end
+        elseif type(moveData.healing) == "number" then
+            healingAmount = moveData.healing
+        end
+        
+        if healingAmount > 0 then
+            local oldHP = attacker.currentHP
+            attacker.currentHP = math.min(attacker.stats.hp, attacker.currentHP + healingAmount)
+            local actualHealing = attacker.currentHP - oldHP
+            
+            if actualHealing > 0 then
+                table.insert(result.effects, {
+                    type = "healing",
+                    target = attacker,
+                    amount = actualHealing
+                })
+            end
+        end
+    end
+    
+    -- Handle multi-hit moves
+    if moveData.multi_hit and actualTarget and result.damage > 0 then
+        local hitCount = 1
+        if moveData.multi_hit == "2-5" then
+            hitCount = BattleRNG.multiHitCount(2, 5)
+        elseif type(moveData.multi_hit) == "number" then
+            hitCount = moveData.multi_hit
+        end
+        
+        if hitCount > 1 then
+            local totalDamage = result.damage
+            for hit = 2, hitCount do
+                if actualTarget.currentHP <= 0 then
+                    break  -- Stop if target faints
+                end
+                
+                -- Recalculate damage for each hit (for consistency with variance)
+                local hitDamageResult = DamageCalculator.calculateDamage({
+                    attacker = attacker,
+                    defender = actualTarget,
+                    moveData = moveData,
+                    battleState = battleState
+                })
+                
+                actualTarget.currentHP = math.max(0, actualTarget.currentHP - hitDamageResult.damage)
+                totalDamage = totalDamage + hitDamageResult.damage
+                
+                if actualTarget.currentHP <= 0 then
+                    actualTarget.fainted = true
+                    break
+                end
+            end
+            
+            result.damage = totalDamage
+            result.hit_count = hitCount
+        end
+    end
+    
+    -- Handle recoil damage
+    if moveData.recoil and result.damage > 0 then
+        local recoilAmount = 0
+        if type(moveData.recoil) == "string" then
+            local numerator, denominator = moveData.recoil:match("(%d+)/(%d+)")
+            if numerator and denominator then
+                recoilAmount = math.floor((result.damage * tonumber(numerator)) / tonumber(denominator))
+            end
+        elseif type(moveData.recoil) == "number" then
+            recoilAmount = moveData.recoil
+        end
+        
+        if recoilAmount > 0 then
+            attacker.currentHP = math.max(0, attacker.currentHP - recoilAmount)
+            table.insert(result.effects, {
+                type = "recoil",
+                target = attacker,
+                amount = recoilAmount
+            })
+            
+            if attacker.currentHP <= 0 then
+                attacker.fainted = true
+                table.insert(result.effects, {
+                    type = "faint",
+                    target = attacker,
+                    pokemon_id = attacker.id
+                })
+            end
+        end
+    end
+    
+    return result
+end
+
+-- Compatibility function for test suite - alias for executeMove
+function MoveEffects.processMovEffects(moveData, attacker, targets, battleState)
+    if not moveData or not attacker or not targets then
+        return {
+            success = false,
+            statusEffects = {},
+            messages = {"Invalid parameters for processMovEffects"}
+        }
+    end
+
+    local target = targets[1] -- Use first target
+    local result = MoveEffects.executeMove(battleState, attacker, moveData, target)
+
+    -- Convert to expected format for test compatibility
+    return {
+        success = result.success,
+        statusEffects = result.status_effects or {},
+        effects = result.effects or {},
+        weatherChanged = false,
+        terrainChanged = false,
+        messages = result.messages or {}
+    }
+end
+
+-- Compatibility function for test suite - calculate multi-hit count
+function MoveEffects.calculateMultiHitCount(moveData)
+    if not moveData or not moveData.effects or not moveData.effects.multi_hit then
+        return 1
+    end
+
+    local hitType = moveData.effects.multi_hit
+    if type(hitType) == "table" then
+        -- Handle {2, 5} format
+        local min = hitType[1] or 2
+        local max = hitType[2] or 5
+
+        -- Use distribution: 35%, 35%, 15%, 15% for 2, 3, 4, 5 hits
+        local rand = BattleRNG.randomInt(1, 100)
+        if rand <= 35 then
+            return min
+        elseif rand <= 70 then
+            return min + 1
+        elseif rand <= 85 then
+            return max - 1
+        else
+            return max
+        end
+    elseif type(hitType) == "number" then
+        return hitType
+    elseif hitType == true then
+        -- Default multi-hit is 2-5
+        local rand = BattleRNG.randomInt(1, 100)
+        if rand <= 35 then
+            return 2
+        elseif rand <= 70 then
+            return 3
+        elseif rand <= 85 then
+            return 4
+        else
+            return 5
+        end
+    end
+
+    return 1
+end
+
 return MoveEffects
