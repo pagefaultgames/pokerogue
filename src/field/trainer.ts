@@ -13,7 +13,6 @@ import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import type { EnemyPokemon } from "#field/pokemon";
 import type { PersistentModifier } from "#modifiers/modifier";
-import { getIsInitialized, initI18n } from "#plugins/i18n";
 import type { TrainerConfig } from "#trainers/trainer-config";
 import { trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, type TrainerPartyTemplate } from "#trainers/trainer-party-template";
@@ -176,11 +175,6 @@ export class Trainer extends Phaser.GameObjects.Container {
     if (this.name) {
       // If the title should be included.
       if (includeTitle) {
-        // Check if the internationalization (i18n) system is initialized.
-        if (!getIsInitialized()) {
-          // Initialize the i18n system if it is not already initialized.
-          initI18n();
-        }
         // Get the localized trainer class name from the i18n file and set it as the title.
         // This is used for trainer class names, not titles like "Elite Four, Champion, etc."
         title = i18next.t(`trainerClasses:${toCamelCase(name)}`);
