@@ -38,6 +38,8 @@ jobs:
     name: Run Tests
     needs: check-path-change-filter
     strategy:
+      # don't stop upon 1 shard failing
+      fail-fast: false
       matrix:
         shard: [1, 2, 3, 4, 5]
     uses: ./.github/workflows/test-shard-template.yml
