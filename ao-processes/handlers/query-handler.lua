@@ -5,13 +5,19 @@
 local QueryHandler = {}
 
 -- Import required modules
-local SpeciesDatabase = require('data.species.species-database').SpeciesDatabase
-local EvolutionChains = require('data.species.evolution-chains').EvolutionChains
-local TypeChart = require('data.constants.type-chart').TypeChart
+local SpeciesDatabase = require('data.species.species-database')
+local EvolutionChains = require('data.species.evolution-chains')
+local TypeChart = require('data.constants.type-chart')
 local AbilityDatabase = require('data.abilities.ability-database')
 local AbilityIndexes = require('data.abilities.ability-indexes')
 local AbilityEffects = require('data.abilities.ability-effects')
 local PassiveAbilities = require('data.abilities.passive-abilities')
+
+-- Import Pokemon instance management modules
+local PokemonManager = require("game-logic.pokemon.pokemon-manager")
+local PokemonStorage = require("data.pokemon-instances.pokemon-storage")
+local PlayerIndex = require("data.pokemon-instances.player-index")
+local CustomizationManager = require("game-logic.pokemon.customization-manager")
 
 -- Query message handlers
 local queryHandlers = {}
@@ -700,6 +706,380 @@ queryHandlers["query-ability-search"] = function(msg)
         searchType = searchType,
         results = results,
         count = #results
+    }
+end
+
+-- Pokemon Instance Query Handlers
+
+-- Query individual Pokemon instance
+queryHandlers["query-pokemon-instance"] = function(msg)
+    local pokemonId = msg.Data and msg.Data.pokemonId
+    local playerId = msg.From or (msg.Data and msg.Data.playerId)
+    local includeDetails = msg.Data and msg.Data.includeDetails or false
+    
+    if not pokemonId then
+        return {
+            success = false,
+            error = "Missing pokemonId parameter"
+        }
+    end
+    
+    local pokemon, error = PokemonManager.getPokemonWithOwnership(pokemonId, playerId)
+    if not pokemon then
+        return {
+            success = false,
+            error = error or "Pokemon not found or access denied"
+        }
+    end
+    
+    local result = {
+        success = true,
+        pokemon = pokemon
+    }
+    
+    -- Add detailed information if requested
+    if includeDetails then
+        result.displayInfo = CustomizationManager.getPokemonDisplayInfo(pokemon)
+        result.customizationStats = CustomizationManager.getCustomizationStats(pokemon)
+        
+        -- Add species information
+        SpeciesDatabase.init()
+        local speciesData = SpeciesDatabase.getSpecies(pokemon.speciesId)
+        if speciesData then
+            result.speciesInfo = {
+                name = speciesData.name,
+                types = speciesData.types,
+                baseStats = speciesData.baseStats
+            }
+        end
+    end
+    
+    return result
+end
+
+-- Query player's Pokemon collection
+queryHandlers["query-player-pokemon"] = function(msg)
+    local playerId = msg.From or (msg.Data and msg.Data.playerId)
+    local filters = msg.Data and msg.Data.filters or {}
+    local includeLocation = msg.Data and msg.Data.includeLocation or false
+    local limit = msg.Data and msg.Data.limit or 50
+    local offset = msg.Data and msg.Data.offset or 0
+    
+    if not playerId then
+        return {
+            success = false,
+            error = "Missing playerId parameter"
+        }
+    end
+    
+    -- Get Pokemon using storage system with filters
+    local searchFilters = {
+        playerId = playerId,
+        limit = limit + offset  -- Get extra to handle offset
+    }
+    
+    -- Copy additional filters
+    if filters.speciesId then searchFilters.speciesId = filters.speciesId end
+    if filters.minLevel then searchFilters.minLevel = filters.minLevel end
+    if filters.maxLevel then searchFilters.maxLevel = filters.maxLevel end
+    if filters.isShiny ~= nil then searchFilters.isShiny = filters.isShiny end
+    if filters.nature then searchFilters.nature = filters.nature end
+    if filters.hasNickname ~= nil then searchFilters.hasNickname = filters.hasNickname end
+    
+    local allPokemon = PokemonStorage.search(searchFilters)
+    
+    -- Apply offset and limit
+    local pokemon = {}
+    for i = offset + 1, math.min(offset + limit, #allPokemon) do
+        if allPokemon[i] then
+            table.insert(pokemon, allPokemon[i])
+        end
+    end
+    
+    -- Add location information if requested
+    if includeLocation then
+        for _, pkmn in ipairs(pokemon) do
+            local location = PlayerIndex.findPokemonLocation(playerId, pkmn.id)
+            if location then
+                pkmn._location = location
+            end
+        end
+    end
+    
+    return {
+        success = true,
+        pokemon = pokemon,
+        totalCount = #allPokemon,
+        returnedCount = #pokemon,
+        offset = offset,
+        limit = limit,
+        filters = filters
+    }
+end
+
+-- Query player's party Pokemon
+queryHandlers["query-party-pokemon"] = function(msg)
+    local playerId = msg.From or (msg.Data and msg.Data.playerId)
+    
+    if not playerId then
+        return {
+            success = false,
+            error = "Missing playerId parameter"
+        }
+    end
+    
+    local partyPokemon = PlayerIndex.getParty(playerId)
+    
+    return {
+        success = true,
+        party = partyPokemon,
+        count = #partyPokemon,
+        maxSize = 6
+    }
+end
+
+-- Query player's PC box Pokemon
+queryHandlers["query-box-pokemon"] = function(msg)
+    local playerId = msg.From or (msg.Data and msg.Data.playerId)
+    local boxNumber = msg.Data and msg.Data.boxNumber or 1
+    
+    if not playerId then
+        return {
+            success = false,
+            error = "Missing playerId parameter"
+        }
+    end
+    
+    local boxPokemon = PlayerIndex.getBox(playerId, boxNumber)
+    
+    return {
+        success = true,
+        boxNumber = boxNumber,
+        pokemon = boxPokemon,
+        count = #boxPokemon,
+        maxSize = 30
+    }
+end
+
+-- Query Pokemon battle data
+queryHandlers["query-pokemon-battle-data"] = function(msg)
+    local pokemonId = msg.Data and msg.Data.pokemonId
+    local playerId = msg.From or (msg.Data and msg.Data.playerId)
+    
+    if not pokemonId then
+        return {
+            success = false,
+            error = "Missing pokemonId parameter"
+        }
+    end
+    
+    local pokemon, error = PokemonManager.getPokemonWithOwnership(pokemonId, playerId)
+    if not pokemon then
+        return {
+            success = false,
+            error = error or "Pokemon not found or access denied"
+        }
+    end
+    
+    -- Extract battle-relevant data
+    local battleData = {
+        id = pokemon.id,
+        speciesId = pokemon.speciesId,
+        level = pokemon.level,
+        stats = pokemon.stats,
+        nature = pokemon.nature,
+        gender = pokemon.gender,
+        isShiny = pokemon.isShiny,
+        statusEffect = pokemon.statusEffect,
+        heldItem = pokemon.heldItem,
+        moveset = pokemon.moveset or {},
+        battleData = pokemon.battleData or {}
+    }
+    
+    return {
+        success = true,
+        pokemonId = pokemonId,
+        battleData = battleData
+    }
+end
+
+-- Query Pokemon history and progression
+queryHandlers["query-pokemon-history"] = function(msg)
+    local pokemonId = msg.Data and msg.Data.pokemonId
+    local playerId = msg.From or (msg.Data and msg.Data.playerId)
+    local historyType = msg.Data and msg.Data.historyType or "all"
+    local timeRange = msg.Data and msg.Data.timeRange  -- Optional time range in seconds
+    
+    if not pokemonId then
+        return {
+            success = false,
+            error = "Missing pokemonId parameter"
+        }
+    end
+    
+    local pokemon, error = PokemonManager.getPokemonWithOwnership(pokemonId, playerId)
+    if not pokemon then
+        return {
+            success = false,
+            error = error or "Pokemon not found or access denied"
+        }
+    end
+    
+    local result = {
+        success = true,
+        pokemonId = pokemonId
+    }
+    
+    if historyType == "all" or historyType == "battles" then
+        result.battleHistory = pokemon.battleHistory or {}
+        
+        -- Get battle statistics
+        local ExperienceSystem = require("game-logic.progression.experience-system")
+        result.battleStats = ExperienceSystem.getBattleStats(pokemon, timeRange)
+    end
+    
+    if historyType == "all" or historyType == "friendship" then
+        result.friendshipHistory = pokemon.friendshipHistory or {}
+        result.currentFriendship = pokemon.friendship or 70
+        
+        local ExperienceSystem = require("game-logic.progression.experience-system")
+        result.friendshipLevel = ExperienceSystem.getFriendshipLevel(pokemon.friendship or 70)
+    end
+    
+    if historyType == "all" or historyType == "moves" then
+        result.forgottenMoves = pokemon.forgottenMoves or {}
+        result.currentMoves = pokemon.moveset or {}
+        
+        local MoveManager = require("game-logic.pokemon.move-manager")
+        result.movesetStats = MoveManager.getMovesetStats(pokemon)
+    end
+    
+    if historyType == "all" or historyType == "general" then
+        result.createdAt = pokemon.createdAt
+        result.lastBattleAt = pokemon.lastBattleAt
+        result.originalTrainer = pokemon.originalTrainer
+    end
+    
+    return result
+end
+
+-- Query player collection statistics
+queryHandlers["query-player-collection-stats"] = function(msg)
+    local playerId = msg.From or (msg.Data and msg.Data.playerId)
+    
+    if not playerId then
+        return {
+            success = false,
+            error = "Missing playerId parameter"
+        }
+    end
+    
+    local playerStats = PlayerIndex.getPlayerStats(playerId)
+    local storageStats = PokemonStorage.getStats()
+    
+    -- Get additional statistics
+    local allPlayerPokemon = PlayerIndex.getAllPokemon(playerId)
+    local shinyCount = 0
+    local speciesCount = {}
+    
+    for _, pokemon in ipairs(allPlayerPokemon) do
+        if pokemon.isShiny then
+            shinyCount = shinyCount + 1
+        end
+        
+        speciesCount[pokemon.speciesId] = (speciesCount[pokemon.speciesId] or 0) + 1
+    end
+    
+    local uniqueSpecies = 0
+    for _ in pairs(speciesCount) do
+        uniqueSpecies = uniqueSpecies + 1
+    end
+    
+    return {
+        success = true,
+        playerId = playerId,
+        playerStats = playerStats,
+        shinyCount = shinyCount,
+        uniqueSpecies = uniqueSpecies,
+        speciesCount = speciesCount,
+        globalStats = {
+            totalPokemonInSystem = storageStats.totalPokemon,
+            totalPlayers = storageStats.playersWithPokemon
+        }
+    }
+end
+
+-- Query Pokemon by search criteria
+queryHandlers["query-pokemon-search"] = function(msg)
+    local searchTerm = msg.Data and msg.Data.searchTerm
+    local searchType = msg.Data and msg.Data.searchType or "all"
+    local playerId = msg.From or (msg.Data and msg.Data.playerId)
+    local limit = msg.Data and msg.Data.limit or 20
+    
+    if not searchTerm then
+        return {
+            success = false,
+            error = "Missing searchTerm parameter"
+        }
+    end
+    
+    local results = {}
+    
+    if searchType == "all" or searchType == "nickname" then
+        -- Search by nickname
+        local filters = {
+            playerId = playerId,
+            hasNickname = true,
+            limit = limit * 2  -- Get extra for filtering
+        }
+        
+        local pokemonWithNicknames = PokemonStorage.search(filters)
+        
+        for _, pokemon in ipairs(pokemonWithNicknames) do
+            if pokemon.nickname and string.lower(pokemon.nickname):find(string.lower(searchTerm)) then
+                table.insert(results, {
+                    pokemon = pokemon,
+                    matchType = "nickname",
+                    matchValue = pokemon.nickname
+                })
+            end
+        end
+    end
+    
+    if searchType == "all" or searchType == "species" then
+        -- Search by species name (would need species database integration)
+        SpeciesDatabase.init()
+        local allPlayerPokemon = PlayerIndex.getAllPokemon(playerId)
+        
+        for _, pokemon in ipairs(allPlayerPokemon) do
+            local speciesData = SpeciesDatabase.getSpecies(pokemon.speciesId)
+            if speciesData and speciesData.name and 
+               string.lower(speciesData.name):find(string.lower(searchTerm)) then
+                table.insert(results, {
+                    pokemon = pokemon,
+                    matchType = "species",
+                    matchValue = speciesData.name
+                })
+            end
+        end
+    end
+    
+    -- Limit results
+    if #results > limit then
+        local limitedResults = {}
+        for i = 1, limit do
+            table.insert(limitedResults, results[i])
+        end
+        results = limitedResults
+    end
+    
+    return {
+        success = true,
+        searchTerm = searchTerm,
+        searchType = searchType,
+        results = results,
+        count = #results,
+        playerId = playerId
     }
 end
 

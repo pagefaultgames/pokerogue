@@ -9,6 +9,14 @@ local PokemonAbilityState = require("game-logic.pokemon.pokemon-ability-state")
 local AbilityDatabase = require("data.abilities.ability-database")
 local AbilityIndexes = require("data.abilities.ability-indexes")
 
+-- Import Pokemon instance management modules
+local PokemonManager = require("game-logic.pokemon.pokemon-manager")
+local ExperienceSystem = require("game-logic.progression.experience-system")
+local MoveManager = require("game-logic.pokemon.move-manager")
+local CustomizationManager = require("game-logic.pokemon.customization-manager")
+local PokemonStorage = require("data.pokemon-instances.pokemon-storage")
+local PlayerIndex = require("data.pokemon-instances.player-index")
+
 -- State message handlers
 local stateHandlers = {}
 
@@ -376,6 +384,408 @@ stateHandlers["can-have-ability"] = function(msg)
         abilityName = abilityData and abilityData.name or "Unknown",
         slot = canHave and slotOrReason or nil,
         reason = not canHave and slotOrReason or nil
+    }
+end
+
+-- Pokemon Instance Management Handlers
+
+-- Create new Pokemon instance
+stateHandlers["create-pokemon"] = function(msg)
+    local speciesId = msg.Data and msg.Data.speciesId
+    local level = msg.Data and msg.Data.level
+    local playerId = msg.From or (msg.Data and msg.Data.playerId)
+    local options = msg.Data and msg.Data.options or {}
+    
+    if not speciesId or not level or not playerId then
+        return {
+            success = false,
+            error = "Missing required parameters: speciesId, level, and playerId"
+        }
+    end
+    
+    local pokemon, error = PokemonManager.createPokemon(speciesId, level, playerId, options)
+    
+    if not pokemon then
+        return {
+            success = false,
+            error = error or "Failed to create Pokemon"
+        }
+    end
+    
+    -- Initialize moveset
+    pokemon = MoveManager.initializeMoveset(pokemon)
+    
+    -- Store in storage system
+    local stored, storeError = PokemonStorage.store(pokemon)
+    if not stored then
+        return {
+            success = false,
+            error = "Failed to store Pokemon: " .. (storeError or "unknown error")
+        }
+    end
+    
+    -- Add to player's collection
+    PlayerIndex.initializePlayer(playerId)
+    PlayerIndex.addToParty(playerId, pokemon.id)
+    
+    return {
+        success = true,
+        pokemon = pokemon,
+        message = "Pokemon created successfully"
+    }
+end
+
+-- Get Pokemon instance by ID
+stateHandlers["get-pokemon"] = function(msg)
+    local pokemonId = msg.Data and msg.Data.pokemonId
+    local playerId = msg.From or (msg.Data and msg.Data.playerId)
+    
+    if not pokemonId then
+        return {
+            success = false,
+            error = "Missing pokemonId"
+        }
+    end
+    
+    local pokemon, error = PokemonManager.getPokemonWithOwnership(pokemonId, playerId)
+    
+    if not pokemon then
+        return {
+            success = false,
+            error = error or "Pokemon not found or access denied"
+        }
+    end
+    
+    return {
+        success = true,
+        pokemon = pokemon
+    }
+end
+
+-- Update Pokemon stats (level, experience, etc.)
+stateHandlers["update-pokemon-stats"] = function(msg)
+    local pokemonId = msg.Data and msg.Data.pokemonId
+    local modifications = msg.Data and msg.Data.modifications
+    local playerId = msg.From or (msg.Data and msg.Data.playerId)
+    
+    if not pokemonId or not modifications or not playerId then
+        return {
+            success = false,
+            error = "Missing required parameters: pokemonId, modifications, and playerId"
+        }
+    end
+    
+    local pokemon, error = PokemonManager.updatePokemonStats(pokemonId, modifications, playerId)
+    
+    if not pokemon then
+        return {
+            success = false,
+            error = error or "Failed to update Pokemon stats"
+        }
+    end
+    
+    -- Update storage
+    PokemonStorage.update(pokemonId, pokemon)
+    
+    return {
+        success = true,
+        pokemon = pokemon,
+        message = "Pokemon stats updated successfully"
+    }
+end
+
+-- Gain experience and handle level ups
+stateHandlers["gain-experience"] = function(msg)
+    local pokemonId = msg.Data and msg.Data.pokemonId
+    local expGained = msg.Data and msg.Data.expGained
+    local battleContext = msg.Data and msg.Data.battleContext
+    local playerId = msg.From or (msg.Data and msg.Data.playerId)
+    
+    if not pokemonId or not expGained or not playerId then
+        return {
+            success = false,
+            error = "Missing required parameters: pokemonId, expGained, and playerId"
+        }
+    end
+    
+    local pokemon, error = PokemonManager.getPokemonWithOwnership(pokemonId, playerId)
+    if not pokemon then
+        return {
+            success = false,
+            error = error or "Pokemon not found or access denied"
+        }
+    end
+    
+    local updatedPokemon, levelUpData = ExperienceSystem.gainExperience(pokemon, expGained, battleContext)
+    
+    if not updatedPokemon then
+        return {
+            success = false,
+            error = "Failed to apply experience gain"
+        }
+    end
+    
+    -- Process level up moves if leveled up
+    local movesLearned = {}
+    if levelUpData and levelUpData.levelsGained > 0 then
+        updatedPokemon, movesLearned = MoveManager.processLevelUpMoves(updatedPokemon, updatedPokemon.level)
+    end
+    
+    -- Update storage
+    PokemonStorage.update(pokemonId, updatedPokemon)
+    
+    return {
+        success = true,
+        pokemon = updatedPokemon,
+        levelUpData = levelUpData,
+        movesLearned = movesLearned,
+        message = levelUpData and "Pokemon leveled up!" or "Experience gained"
+    }
+end
+
+-- Set Pokemon nickname
+stateHandlers["set-nickname"] = function(msg)
+    local pokemonId = msg.Data and msg.Data.pokemonId
+    local nickname = msg.Data and msg.Data.nickname
+    local playerId = msg.From or (msg.Data and msg.Data.playerId)
+    
+    if not pokemonId or not playerId then
+        return {
+            success = false,
+            error = "Missing required parameters: pokemonId and playerId"
+        }
+    end
+    
+    local pokemon, error = PokemonManager.getPokemonWithOwnership(pokemonId, playerId)
+    if not pokemon then
+        return {
+            success = false,
+            error = error or "Pokemon not found or access denied"
+        }
+    end
+    
+    local updatedPokemon, result = CustomizationManager.setNickname(pokemon, nickname, playerId)
+    
+    if not result.success then
+        return {
+            success = false,
+            error = result.message
+        }
+    end
+    
+    -- Update storage
+    PokemonStorage.update(pokemonId, updatedPokemon)
+    
+    return {
+        success = true,
+        pokemon = updatedPokemon,
+        oldNickname = result.oldNickname,
+        newNickname = result.newNickname,
+        message = result.message
+    }
+end
+
+-- Learn new move
+stateHandlers["learn-move"] = function(msg)
+    local pokemonId = msg.Data and msg.Data.pokemonId
+    local moveId = msg.Data and msg.Data.moveId
+    local learnMethod = msg.Data and msg.Data.learnMethod or "level"
+    local options = msg.Data and msg.Data.options or {}
+    local playerId = msg.From or (msg.Data and msg.Data.playerId)
+    
+    if not pokemonId or not moveId or not playerId then
+        return {
+            success = false,
+            error = "Missing required parameters: pokemonId, moveId, and playerId"
+        }
+    end
+    
+    local pokemon, error = PokemonManager.getPokemonWithOwnership(pokemonId, playerId)
+    if not pokemon then
+        return {
+            success = false,
+            error = error or "Pokemon not found or access denied"
+        }
+    end
+    
+    local updatedPokemon, result = MoveManager.learnMove(pokemon, moveId, learnMethod, options)
+    
+    if not updatedPokemon then
+        return {
+            success = false,
+            error = "Failed to learn move"
+        }
+    end
+    
+    -- Update storage
+    PokemonStorage.update(pokemonId, updatedPokemon)
+    
+    return {
+        success = result.success,
+        pokemon = updatedPokemon,
+        result = result,
+        message = result.message
+    }
+end
+
+-- Forget move
+stateHandlers["forget-move"] = function(msg)
+    local pokemonId = msg.Data and msg.Data.pokemonId
+    local moveSlot = msg.Data and msg.Data.moveSlot
+    local playerId = msg.From or (msg.Data and msg.Data.playerId)
+    
+    if not pokemonId or not moveSlot or not playerId then
+        return {
+            success = false,
+            error = "Missing required parameters: pokemonId, moveSlot, and playerId"
+        }
+    end
+    
+    local pokemon, error = PokemonManager.getPokemonWithOwnership(pokemonId, playerId)
+    if not pokemon then
+        return {
+            success = false,
+            error = error or "Pokemon not found or access denied"
+        }
+    end
+    
+    local updatedPokemon, result = MoveManager.forgetMove(pokemon, moveSlot)
+    
+    if not result.success then
+        return {
+            success = false,
+            error = result.message
+        }
+    end
+    
+    -- Update storage
+    PokemonStorage.update(pokemonId, updatedPokemon)
+    
+    return {
+        success = true,
+        pokemon = updatedPokemon,
+        forgottenMove = result.forgottenMove,
+        message = result.message
+    }
+end
+
+-- Use move in battle
+stateHandlers["use-move"] = function(msg)
+    local pokemonId = msg.Data and msg.Data.pokemonId
+    local moveSlot = msg.Data and msg.Data.moveSlot
+    local playerId = msg.From or (msg.Data and msg.Data.playerId)
+    
+    if not pokemonId or not moveSlot or not playerId then
+        return {
+            success = false,
+            error = "Missing required parameters: pokemonId, moveSlot, and playerId"
+        }
+    end
+    
+    local pokemon, error = PokemonManager.getPokemonWithOwnership(pokemonId, playerId)
+    if not pokemon then
+        return {
+            success = false,
+            error = error or "Pokemon not found or access denied"
+        }
+    end
+    
+    local updatedPokemon, result = MoveManager.useMove(pokemon, moveSlot)
+    
+    if not result.success then
+        return {
+            success = false,
+            error = result.message
+        }
+    end
+    
+    -- Update storage
+    PokemonStorage.update(pokemonId, updatedPokemon)
+    
+    return {
+        success = true,
+        pokemon = updatedPokemon,
+        move = result.move,
+        ppRemaining = result.ppRemaining,
+        message = result.message
+    }
+end
+
+-- Restore Pokemon PP
+stateHandlers["restore-pp"] = function(msg)
+    local pokemonId = msg.Data and msg.Data.pokemonId
+    local moveSlot = msg.Data and msg.Data.moveSlot  -- Optional, nil for all moves
+    local amount = msg.Data and msg.Data.amount      -- Optional, nil for full restore
+    local playerId = msg.From or (msg.Data and msg.Data.playerId)
+    
+    if not pokemonId or not playerId then
+        return {
+            success = false,
+            error = "Missing required parameters: pokemonId and playerId"
+        }
+    end
+    
+    local pokemon, error = PokemonManager.getPokemonWithOwnership(pokemonId, playerId)
+    if not pokemon then
+        return {
+            success = false,
+            error = error or "Pokemon not found or access denied"
+        }
+    end
+    
+    local updatedPokemon = MoveManager.restorePP(pokemon, moveSlot, amount)
+    
+    -- Update storage
+    PokemonStorage.update(pokemonId, updatedPokemon)
+    
+    return {
+        success = true,
+        pokemon = updatedPokemon,
+        message = "PP restored successfully"
+    }
+end
+
+-- Transfer Pokemon ownership
+stateHandlers["transfer-pokemon"] = function(msg)
+    local pokemonId = msg.Data and msg.Data.pokemonId
+    local toPlayerId = msg.Data and msg.Data.toPlayerId
+    local fromPlayerId = msg.From or (msg.Data and msg.Data.fromPlayerId)
+    
+    if not pokemonId or not toPlayerId or not fromPlayerId then
+        return {
+            success = false,
+            error = "Missing required parameters: pokemonId, toPlayerId, and fromPlayerId"
+        }
+    end
+    
+    local success, error = PokemonManager.transferOwnership(pokemonId, fromPlayerId, toPlayerId)
+    
+    if not success then
+        return {
+            success = false,
+            error = error or "Failed to transfer Pokemon ownership"
+        }
+    end
+    
+    -- Update player indexes
+    local pokemon = PokemonStorage.get(pokemonId)
+    if pokemon then
+        -- Remove from old player's collections
+        PlayerIndex.removeFromParty(fromPlayerId, pokemonId)
+        PlayerIndex.removeFromBox(fromPlayerId, pokemonId)
+        PlayerIndex.removeFromDaycare(fromPlayerId, pokemonId)
+        
+        -- Initialize new player and add to their collection
+        PlayerIndex.initializePlayer(toPlayerId)
+        PlayerIndex.addToParty(toPlayerId, pokemonId)
+    end
+    
+    return {
+        success = true,
+        pokemonId = pokemonId,
+        fromPlayer = fromPlayerId,
+        toPlayer = toPlayerId,
+        message = "Pokemon transferred successfully"
     }
 end
 
