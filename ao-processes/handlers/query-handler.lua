@@ -13,6 +13,13 @@ local AbilityIndexes = require('data.abilities.ability-indexes')
 local AbilityEffects = require('data.abilities.ability-effects')
 local PassiveAbilities = require('data.abilities.passive-abilities')
 
+-- Import move system modules
+local MoveDatabase = require('data.moves.move-database')
+local MoveIndexes = require('data.moves.move-indexes')
+local MoveEffects = require('game-logic.battle.move-effects')
+local PriorityCalculator = require('game-logic.battle.priority-calculator')
+local CriticalHitCalculator = require('game-logic.battle.critical-hit-calculator')
+
 -- Import Pokemon instance management modules
 local PokemonManager = require("game-logic.pokemon.pokemon-manager")
 local PokemonStorage = require("data.pokemon-instances.pokemon-storage")
@@ -1080,6 +1087,615 @@ queryHandlers["query-pokemon-search"] = function(msg)
         results = results,
         count = #results,
         playerId = playerId
+    }
+end
+
+-- Move Database Query Handlers
+
+-- Query individual move data
+queryHandlers["query-move-data"] = function(msg)
+    local moveId = msg.Data and msg.Data.moveId
+    local includeEffects = msg.Data and msg.Data.includeEffects or false
+    
+    if not moveId then
+        return {
+            success = false,
+            error = "Missing moveId parameter"
+        }
+    end
+    
+    -- Ensure move database is initialized
+    MoveDatabase.init()
+    
+    local move = MoveDatabase.moves[tonumber(moveId)]
+    if not move then
+        return {
+            success = false,
+            error = "Move not found: " .. tostring(moveId)
+        }
+    end
+    
+    local result = {
+        success = true,
+        moveId = move.id,
+        name = move.name,
+        type = move.type,
+        category = move.category,
+        power = move.power,
+        accuracy = move.accuracy,
+        pp = move.pp,
+        target = move.target,
+        priority = move.priority,
+        flags = move.flags
+    }
+    
+    if includeEffects and move.effects then
+        result.effects = move.effects
+        result.effectDescription = MoveEffects.getEffectDescription(move.effects)
+    end
+    
+    return result
+end
+
+-- Query moves by type
+queryHandlers["query-moves-by-type"] = function(msg)
+    local moveType = msg.Data and msg.Data.type
+    local includeStats = msg.Data and msg.Data.includeStats or false
+    local limit = msg.Data and msg.Data.limit or 50
+    
+    if not moveType then
+        return {
+            success = false,
+            error = "Missing type parameter"
+        }
+    end
+    
+    MoveDatabase.init()
+    MoveIndexes.init()
+    
+    local moves = MoveIndexes.getMovesByType(tonumber(moveType))
+    
+    -- Apply limit
+    if #moves > limit then
+        local limitedMoves = {}
+        for i = 1, limit do
+            table.insert(limitedMoves, moves[i])
+        end
+        moves = limitedMoves
+    end
+    
+    -- Add stats if requested
+    if includeStats then
+        local totalMoves = MoveIndexes.getMoveCountByType(tonumber(moveType))
+        return {
+            success = true,
+            type = tonumber(moveType),
+            moves = moves,
+            count = #moves,
+            totalCount = totalMoves,
+            limit = limit
+        }
+    end
+    
+    return {
+        success = true,
+        type = tonumber(moveType),
+        moves = moves,
+        count = #moves
+    }
+end
+
+-- Query moves by category
+queryHandlers["query-moves-by-category"] = function(msg)
+    local category = msg.Data and msg.Data.category
+    local includeTypeBreakdown = msg.Data and msg.Data.includeTypeBreakdown or false
+    local limit = msg.Data and msg.Data.limit or 100
+    
+    if not category then
+        return {
+            success = false,
+            error = "Missing category parameter"
+        }
+    end
+    
+    MoveDatabase.init()
+    MoveIndexes.init()
+    
+    local moves = MoveIndexes.getMovesByCategory(tonumber(category))
+    
+    -- Apply limit
+    if #moves > limit then
+        local limitedMoves = {}
+        for i = 1, limit do
+            table.insert(limitedMoves, moves[i])
+        end
+        moves = limitedMoves
+    end
+    
+    local result = {
+        success = true,
+        category = tonumber(category),
+        categoryName = category == 0 and "Physical" or (category == 1 and "Special" or "Status"),
+        moves = moves,
+        count = #moves
+    }
+    
+    if includeTypeBreakdown then
+        local typeBreakdown = {}
+        for _, move in ipairs(moves) do
+            local moveType = move.type
+            typeBreakdown[moveType] = (typeBreakdown[moveType] or 0) + 1
+        end
+        result.typeBreakdown = typeBreakdown
+    end
+    
+    return result
+end
+
+-- Query moves by power range
+queryHandlers["query-moves-by-power"] = function(msg)
+    local minPower = msg.Data and msg.Data.minPower or 0
+    local maxPower = msg.Data and msg.Data.maxPower or 250
+    local category = msg.Data and msg.Data.category -- Optional category filter
+    local limit = msg.Data and msg.Data.limit or 100
+    
+    MoveDatabase.init()
+    MoveIndexes.init()
+    
+    local moves = MoveIndexes.getMovesByPowerRange(minPower, maxPower)
+    
+    -- Apply category filter if specified
+    if category then
+        local filteredMoves = {}
+        for _, move in ipairs(moves) do
+            if move.category == tonumber(category) then
+                table.insert(filteredMoves, move)
+            end
+        end
+        moves = filteredMoves
+    end
+    
+    -- Apply limit
+    if #moves > limit then
+        local limitedMoves = {}
+        for i = 1, limit do
+            table.insert(limitedMoves, moves[i])
+        end
+        moves = limitedMoves
+    end
+    
+    return {
+        success = true,
+        minPower = minPower,
+        maxPower = maxPower,
+        category = category,
+        moves = moves,
+        count = #moves,
+        limit = limit
+    }
+end
+
+-- Query move effects and mechanics
+queryHandlers["query-move-effects"] = function(msg)
+    local moveId = msg.Data and msg.Data.moveId
+    local effectType = msg.Data and msg.Data.effectType -- Optional filter
+    
+    if not moveId then
+        return {
+            success = false,
+            error = "Missing moveId parameter"
+        }
+    end
+    
+    MoveDatabase.init()
+    local move = MoveDatabase.moves[tonumber(moveId)]
+    
+    if not move then
+        return {
+            success = false,
+            error = "Move not found: " .. tostring(moveId)
+        }
+    end
+    
+    local result = {
+        success = true,
+        moveId = tonumber(moveId),
+        moveName = move.name,
+        effects = move.effects or {},
+        hasEffects = move.effects and next(move.effects) ~= nil
+    }
+    
+    if move.effects then
+        result.effectDescription = MoveEffects.getEffectDescription(move.effects)
+        
+        -- Validate effects
+        local isValid, errorMsg = MoveEffects.validateEffect(move.effects)
+        result.effectsValid = isValid
+        if not isValid then
+            result.validationError = errorMsg
+        end
+        
+        -- Filter by effect type if specified
+        if effectType then
+            local hasEffectType = false
+            if effectType == "status" and (move.effects.burn_chance or move.effects.poison_chance or 
+                                        move.effects.paralysis_chance or move.effects.freeze_chance or 
+                                        move.effects.sleep_chance) then
+                hasEffectType = true
+            elseif effectType == "stat_change" and move.effects.stat_change then
+                hasEffectType = true
+            elseif effectType == "healing" and (move.effects.heal_percentage or move.effects.heal_amount) then
+                hasEffectType = true
+            elseif effectType == "recoil" and move.effects.recoil_percentage then
+                hasEffectType = true
+            elseif effectType == "multi_hit" and move.effects.multi_hit then
+                hasEffectType = true
+            elseif effectType == "weather" and move.effects.weather then
+                hasEffectType = true
+            elseif effectType == "terrain" and move.effects.terrain then
+                hasEffectType = true
+            end
+            
+            result.matchesEffectType = hasEffectType
+            result.requestedEffectType = effectType
+        end
+    end
+    
+    return result
+end
+
+-- Query move priority information
+queryHandlers["query-move-priority"] = function(msg)
+    local moveId = msg.Data and msg.Data.moveId
+    local priorityRange = msg.Data and msg.Data.priorityRange -- Optional: get all moves in priority range
+    
+    if moveId then
+        -- Query specific move priority
+        MoveDatabase.init()
+        local move = MoveDatabase.moves[tonumber(moveId)]
+        
+        if not move then
+            return {
+                success = false,
+                error = "Move not found: " .. tostring(moveId)
+            }
+        end
+        
+        PriorityCalculator.init()
+        local priority = PriorityCalculator.getMovePriority(tonumber(moveId))
+        
+        return {
+            success = true,
+            moveId = tonumber(moveId),
+            moveName = move.name,
+            priority = priority,
+            priorityDescription = priority > 0 and "Increased priority" or (priority < 0 and "Decreased priority" or "Normal priority")
+        }
+    elseif priorityRange then
+        -- Query all moves with specific priority
+        MoveDatabase.init()
+        MoveIndexes.init()
+        
+        local moves = MoveIndexes.getMovesByPriority(tonumber(priorityRange))
+        
+        return {
+            success = true,
+            priorityRange = tonumber(priorityRange),
+            moves = moves,
+            count = #moves
+        }
+    else
+        return {
+            success = false,
+            error = "Must specify either moveId or priorityRange parameter"
+        }
+    end
+end
+
+-- Query critical hit information
+queryHandlers["query-move-critical-hit"] = function(msg)
+    local moveId = msg.Data and msg.Data.moveId
+    local pokemonData = msg.Data and msg.Data.pokemonData -- Optional Pokemon data for detailed calculation
+    
+    if not moveId then
+        return {
+            success = false,
+            error = "Missing moveId parameter"
+        }
+    end
+    
+    MoveDatabase.init()
+    local move = MoveDatabase.moves[tonumber(moveId)]
+    
+    if not move then
+        return {
+            success = false,
+            error = "Move not found: " .. tostring(moveId)
+        }
+    end
+    
+    CriticalHitCalculator.init()
+    
+    local result = {
+        success = true,
+        moveId = tonumber(moveId),
+        moveName = move.name,
+        canCriticalHit = CriticalHitCalculator.canMoveCriticalHit(tonumber(moveId), nil)
+    }
+    
+    if pokemonData then
+        -- Detailed critical hit calculation with Pokemon data
+        local critBreakdown = CriticalHitCalculator.getCriticalHitBreakdown(
+            pokemonData, tonumber(moveId), nil, nil
+        )
+        result.criticalHitBreakdown = critBreakdown
+        result.finalRate = critBreakdown.final_rate
+        result.finalStage = critBreakdown.final_stage
+    else
+        -- Basic move critical hit info
+        result.baseHighCrit = move.effects and move.effects.high_crit or false
+    end
+    
+    return result
+end
+
+-- Query move compatibility with Pokemon
+queryHandlers["query-move-compatibility"] = function(msg)
+    local moveId = msg.Data and msg.Data.moveId
+    local speciesId = msg.Data and msg.Data.speciesId
+    local pokemonId = msg.Data and msg.Data.pokemonId
+    local playerId = msg.From or (msg.Data and msg.Data.playerId)
+    
+    if not moveId then
+        return {
+            success = false,
+            error = "Missing moveId parameter"
+        }
+    end
+    
+    if not speciesId and not pokemonId then
+        return {
+            success = false,
+            error = "Must specify either speciesId or pokemonId parameter"
+        }
+    end
+    
+    MoveDatabase.init()
+    local move = MoveDatabase.moves[tonumber(moveId)]
+    
+    if not move then
+        return {
+            success = false,
+            error = "Move not found: " .. tostring(moveId)
+        }
+    end
+    
+    local result = {
+        success = true,
+        moveId = tonumber(moveId),
+        moveName = move.name
+    }
+    
+    if pokemonId then
+        -- Check specific Pokemon instance compatibility
+        local pokemon, error = PokemonManager.getPokemonWithOwnership(pokemonId, playerId)
+        if not pokemon then
+            return {
+                success = false,
+                error = error or "Pokemon not found or access denied"
+            }
+        end
+        
+        result.pokemonId = pokemonId
+        result.speciesId = pokemon.speciesId
+        
+        -- Check if Pokemon can learn the move (would integrate with move learning system)
+        local MoveManager = require("game-logic.pokemon.move-manager")
+        local canLearn, method = MoveManager.canLearnMove(pokemon, tonumber(moveId))
+        
+        result.canLearn = canLearn
+        result.learnMethod = method
+        result.currentlyKnows = MoveManager.knowsMove(pokemon, tonumber(moveId))
+    else
+        -- Check species compatibility
+        SpeciesDatabase.init()
+        local species = SpeciesDatabase.getSpecies(tonumber(speciesId))
+        
+        if not species then
+            return {
+                success = false,
+                error = "Species not found: " .. tostring(speciesId)
+            }
+        end
+        
+        result.speciesId = tonumber(speciesId)
+        result.speciesName = species.name
+        
+        -- Check species learnset compatibility
+        local canLearnByLevel = false
+        local canLearnByTM = false
+        local learnLevel = nil
+        
+        if species.learnset then
+            for level, moves in pairs(species.learnset) do
+                for _, learnableMove in ipairs(moves) do
+                    if learnableMove == tonumber(moveId) then
+                        canLearnByLevel = true
+                        learnLevel = tonumber(level)
+                        break
+                    end
+                end
+                if canLearnByLevel then break end
+            end
+        end
+        
+        -- Check TM/TR compatibility (placeholder - would integrate with TM system)
+        canLearnByTM = false -- TODO: Implement TM compatibility check
+        
+        result.canLearnByLevel = canLearnByLevel
+        result.canLearnByTM = canLearnByTM
+        result.learnLevel = learnLevel
+        result.anyCompatibility = canLearnByLevel or canLearnByTM
+    end
+    
+    return result
+end
+
+-- Query move database statistics
+queryHandlers["query-move-database-stats"] = function(msg)
+    MoveDatabase.init()
+    MoveIndexes.init()
+    
+    local stats = {
+        totalMoves = MoveDatabase.getMoveCount(),
+        movesByCategory = {
+            physical = 0,
+            special = 0,
+            status = 0
+        },
+        movesByType = {},
+        powerDistribution = {
+            noPower = 0,      -- Status moves (power = 0)
+            lowPower = 0,     -- 1-60 power
+            mediumPower = 0,  -- 61-95 power
+            highPower = 0,    -- 96-120 power
+            veryHighPower = 0 -- 121+ power
+        },
+        priorityDistribution = {}
+    }
+    
+    -- Analyze all moves
+    for moveId, move in pairs(MoveDatabase.moves) do
+        -- Category distribution
+        if move.category == 0 then
+            stats.movesByCategory.physical = stats.movesByCategory.physical + 1
+        elseif move.category == 1 then
+            stats.movesByCategory.special = stats.movesByCategory.special + 1
+        elseif move.category == 2 then
+            stats.movesByCategory.status = stats.movesByCategory.status + 1
+        end
+        
+        -- Type distribution
+        local moveType = move.type
+        stats.movesByType[moveType] = (stats.movesByType[moveType] or 0) + 1
+        
+        -- Power distribution
+        local power = move.power or 0
+        if power == 0 then
+            stats.powerDistribution.noPower = stats.powerDistribution.noPower + 1
+        elseif power <= 60 then
+            stats.powerDistribution.lowPower = stats.powerDistribution.lowPower + 1
+        elseif power <= 95 then
+            stats.powerDistribution.mediumPower = stats.powerDistribution.mediumPower + 1
+        elseif power <= 120 then
+            stats.powerDistribution.highPower = stats.powerDistribution.highPower + 1
+        else
+            stats.powerDistribution.veryHighPower = stats.powerDistribution.veryHighPower + 1
+        end
+        
+        -- Priority distribution
+        local priority = move.priority or 0
+        stats.priorityDistribution[priority] = (stats.priorityDistribution[priority] or 0) + 1
+    end
+    
+    return {
+        success = true,
+        databaseStats = stats,
+        timestamp = os.time()
+    }
+end
+
+-- Query moves with specific flags
+queryHandlers["query-moves-by-flags"] = function(msg)
+    local flags = msg.Data and msg.Data.flags
+    local matchType = msg.Data and msg.Data.matchType or "any" -- "any" or "all"
+    local limit = msg.Data and msg.Data.limit or 50
+    
+    if not flags or type(flags) ~= "table" or #flags == 0 then
+        return {
+            success = false,
+            error = "Missing flags parameter (must be non-empty table)"
+        }
+    end
+    
+    MoveDatabase.init()
+    MoveIndexes.init()
+    
+    local matchingMoves = {}
+    
+    -- Search through all moves
+    for moveId, move in pairs(MoveDatabase.moves) do
+        local moveFlags = move.flags or {}
+        local matches = false
+        
+        if matchType == "any" then
+            -- Check if move has any of the requested flags
+            for _, requestedFlag in ipairs(flags) do
+                for _, moveFlag in ipairs(moveFlags) do
+                    if moveFlag == requestedFlag then
+                        matches = true
+                        break
+                    end
+                end
+                if matches then break end
+            end
+        else -- matchType == "all"
+            -- Check if move has all of the requested flags
+            matches = true
+            for _, requestedFlag in ipairs(flags) do
+                local hasFlag = false
+                for _, moveFlag in ipairs(moveFlags) do
+                    if moveFlag == requestedFlag then
+                        hasFlag = true
+                        break
+                    end
+                end
+                if not hasFlag then
+                    matches = false
+                    break
+                end
+            end
+        end
+        
+        if matches then
+            table.insert(matchingMoves, {
+                id = move.id,
+                name = move.name,
+                type = move.type,
+                category = move.category,
+                power = move.power,
+                flags = move.flags,
+                matchedFlags = {}
+            })
+            
+            -- Record which flags matched
+            local lastMove = matchingMoves[#matchingMoves]
+            for _, requestedFlag in ipairs(flags) do
+                for _, moveFlag in ipairs(move.flags or {}) do
+                    if moveFlag == requestedFlag then
+                        table.insert(lastMove.matchedFlags, requestedFlag)
+                    end
+                end
+            end
+        end
+    end
+    
+    -- Apply limit
+    if #matchingMoves > limit then
+        local limitedMoves = {}
+        for i = 1, limit do
+            table.insert(limitedMoves, matchingMoves[i])
+        end
+        matchingMoves = limitedMoves
+    end
+    
+    return {
+        success = true,
+        requestedFlags = flags,
+        matchType = matchType,
+        moves = matchingMoves,
+        count = #matchingMoves,
+        limit = limit
     }
 end
 

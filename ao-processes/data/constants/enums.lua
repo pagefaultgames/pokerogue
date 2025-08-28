@@ -328,6 +328,84 @@ Enums.MoveCategory = {
     STATUS = 2
 }
 
+-- Move Target Enumeration (matching TypeScript MoveTarget enum)
+Enums.MoveTarget = {
+    USER = 0,
+    OTHER = 1,
+    ALL_OTHERS = 2,
+    NEAR_OTHER = 3,
+    ALL_NEAR_OTHERS = 4,
+    NEAR_ENEMY = 5,
+    ALL_NEAR_ENEMIES = 6,
+    RANDOM_NEAR_ENEMY = 7,
+    ALL_ENEMIES = 8,
+    ATTACKER = 9,
+    NEAR_ALLY = 10,
+    ALLY = 11,
+    USER_OR_NEAR_ALLY = 12,
+    USER_AND_ALLIES = 13,
+    ALL = 14,
+    USER_SIDE = 15,
+    ENEMY_SIDE = 16,
+    BOTH_SIDES = 17,
+    PARTY = 18,
+    CURSE = 19
+}
+
+-- Move Flags Enumeration (matching TypeScript MoveFlags enum)
+-- Represented as bitmask values for flag combinations
+Enums.MoveFlags = {
+    NONE = 0,
+    MAKES_CONTACT = 1, -- 1 << 0
+    IGNORE_PROTECT = 2, -- 1 << 1
+    SOUND_BASED = 4, -- 1 << 2
+    HIDE_USER = 8, -- 1 << 3
+    HIDE_TARGET = 16, -- 1 << 4
+    BITING_MOVE = 32, -- 1 << 5
+    PULSE_MOVE = 64, -- 1 << 6
+    PUNCHING_MOVE = 128, -- 1 << 7
+    SLICING_MOVE = 256, -- 1 << 8
+    RECKLESS_MOVE = 512, -- 1 << 9
+    BALLBOMB_MOVE = 1024, -- 1 << 10
+    POWDER_MOVE = 2048, -- 1 << 11
+    DANCE_MOVE = 4096, -- 1 << 12
+    WIND_MOVE = 8192, -- 1 << 13
+    TRIAGE_MOVE = 16384, -- 1 << 14
+    IGNORE_ABILITIES = 32768, -- 1 << 15
+    CHECK_ALL_HITS = 65536, -- 1 << 16
+    IGNORE_SUBSTITUTE = 131072, -- 1 << 17
+    REDIRECT_COUNTER = 262144, -- 1 << 18
+    REFLECTABLE = 524288 -- 1 << 19
+}
+
+-- Move ID Enumeration (starting with foundational moves)
+-- Full implementation would include all 957 moves from TypeScript MoveId enum
+Enums.MoveId = {
+    NONE = 0,
+    POUND = 1,
+    KARATE_CHOP = 2,
+    DOUBLE_SLAP = 3,
+    COMET_PUNCH = 4,
+    MEGA_PUNCH = 5,
+    PAY_DAY = 6,
+    FIRE_PUNCH = 7,
+    ICE_PUNCH = 8,
+    THUNDER_PUNCH = 9,
+    SCRATCH = 10,
+    VISE_GRIP = 11,
+    GUILLOTINE = 12,
+    RAZOR_WIND = 13,
+    SWORDS_DANCE = 14,
+    CUT = 15,
+    GUST = 16,
+    WING_ATTACK = 17,
+    WHIRLWIND = 18,
+    FLY = 19,
+    BIND = 20
+    -- Note: Full implementation would include all moves up to ~957
+    -- This foundation provides structure for complete move system integration
+}
+
 -- Nature Enumeration (for stat calculations)
 Enums.Nature = {
     HARDY = 0,
@@ -432,5 +510,99 @@ Enums.Gender = {
     FEMALE = 2,
     UNKNOWN = -1
 }
+
+-- Move-related utility functions
+
+-- Get move target name from target ID
+-- @param targetId: Target ID number
+-- @return: Target name string or "UNKNOWN"
+function Enums.getMoveTargetName(targetId)
+    for targetName, id in pairs(Enums.MoveTarget) do
+        if id == targetId then
+            return targetName
+        end
+    end
+    return "UNKNOWN"
+end
+
+-- Get move category name from category ID
+-- @param categoryId: Category ID number (0=Physical, 1=Special, 2=Status)
+-- @return: Category name string or "UNKNOWN"
+function Enums.getMoveCategoryName(categoryId)
+    for categoryName, id in pairs(Enums.MoveCategory) do
+        if id == categoryId then
+            return categoryName
+        end
+    end
+    return "UNKNOWN"
+end
+
+-- Check if a move flag is set in a flags bitmask
+-- @param flags: Bitmask of move flags
+-- @param flag: Flag to check for
+-- @return: Boolean indicating if flag is set
+function Enums.hasMoveFlag(flags, flag)
+    return (flags & flag) == flag
+end
+
+-- Get move name from move ID
+-- @param moveId: Move ID number
+-- @return: Move name string or "UNKNOWN"
+function Enums.getMoveName(moveId)
+    for moveName, id in pairs(Enums.MoveId) do
+        if id == moveId then
+            return moveName
+        end
+    end
+    return "UNKNOWN"
+end
+
+-- Get move ID from move name
+-- @param moveName: Move name string
+-- @return: Move ID number or nil if not found
+function Enums.getMoveId(moveName)
+    return Enums.MoveId[string.upper(moveName)]
+end
+
+-- Check if a move target is valid
+-- @param targetId: Target ID to validate
+-- @return: Boolean indicating if target exists
+function Enums.isValidMoveTarget(targetId)
+    for _, id in pairs(Enums.MoveTarget) do
+        if id == targetId then
+            return true
+        end
+    end
+    return false
+end
+
+-- Check if a move category is valid
+-- @param categoryId: Category ID to validate
+-- @return: Boolean indicating if category exists
+function Enums.isValidMoveCategory(categoryId)
+    return categoryId >= 0 and categoryId <= 2
+end
+
+-- Get all valid move target IDs
+-- @return: Array of all valid target IDs
+function Enums.getAllMoveTargetIds()
+    local targets = {}
+    for _, targetId in pairs(Enums.MoveTarget) do
+        table.insert(targets, targetId)
+    end
+    table.sort(targets)
+    return targets
+end
+
+-- Get all valid move category IDs
+-- @return: Array of all valid category IDs
+function Enums.getAllMoveCategoryIds()
+    local categories = {}
+    for _, categoryId in pairs(Enums.MoveCategory) do
+        table.insert(categories, categoryId)
+    end
+    table.sort(categories)
+    return categories
+end
 
 return Enums
