@@ -565,4 +565,101 @@ function TestFramework.executeTestSuite(suite)
     return results
 end
 
+-- TestSuite compatibility layer for existing tests
+TestFramework.TestSuite = {}
+TestFramework.TestSuite.__index = TestFramework.TestSuite
+
+function TestFramework.TestSuite:new(name, config)
+    local suite = setmetatable({}, TestFramework.TestSuite)
+    suite.name = name or "Unnamed Test Suite"
+    suite.description = (config and config.description) or ""
+    suite.timeout = (config and config.timeout) or 10000
+    suite.tests = {}
+    suite._setUp = nil
+    suite._tearDown = nil
+    return suite
+end
+
+function TestFramework.TestSuite:addTest(testName, testFunc)
+    table.insert(self.tests, {
+        name = testName,
+        func = testFunc
+    })
+end
+
+function TestFramework.TestSuite:setSetUp(setupFunc)
+    self._setUp = setupFunc
+end
+
+function TestFramework.TestSuite:setTearDown(tearDownFunc)
+    self._tearDown = tearDownFunc
+end
+
+function TestFramework.TestSuite:run()
+    local results = {
+        totalTests = #self.tests,
+        totalPassed = 0,
+        totalFailed = 0,
+        details = {}
+    }
+    
+    print("🧪 Running Test Suite: " .. self.name)
+    print("=" .. string.rep("=", #self.name + 22))
+    
+    local start_time = os.clock()
+    
+    -- Run setup if provided
+    if self._setUp then
+        local success, error_msg = pcall(self._setUp)
+        if not success then
+            print("❌ Setup failed: " .. error_msg)
+            results.setupFailed = true
+        end
+    end
+    
+    -- Run tests
+    for _, test in ipairs(self.tests) do
+        local test_start = os.clock()
+        local success, error_msg = pcall(test.func)
+        local test_duration = os.clock() - test_start
+        
+        if success then
+            results.totalPassed = results.totalPassed + 1
+            print("  ✅ " .. test.name .. " (" .. string.format("%.3fs", test_duration) .. ")")
+        else
+            results.totalFailed = results.totalFailed + 1
+            print("  ❌ " .. test.name .. " - " .. tostring(error_msg))
+            table.insert(results.details, {
+                testName = test.name,
+                error = error_msg,
+                passed = false
+            })
+        end
+    end
+    
+    -- Run teardown if provided  
+    if self._tearDown then
+        local success, error_msg = pcall(self._tearDown)
+        if not success then
+            print("❌ Teardown failed: " .. error_msg)
+        end
+    end
+    
+    local total_time = os.clock() - start_time
+    results.executionTime = total_time * 1000 -- Convert to milliseconds
+    
+    print("")
+    print("📊 Test Results:")
+    print(string.format("   Tests: %d/%d passed", results.totalPassed, results.totalTests))
+    print(string.format("   Time: %.3fs", total_time))
+    
+    if results.totalPassed == results.totalTests then
+        print("✅ All tests passed!")
+    else
+        print(string.format("❌ %d tests failed", results.totalFailed))
+    end
+    
+    return results
+end
+
 return TestFramework

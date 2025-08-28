@@ -11,7 +11,7 @@ Test Coverage:
 --]]
 
 -- Import test framework
-local TestFramework = require("tests.framework.test-framework-enhanced")
+local TestFramework = require("framework.test-framework-enhanced")
 
 -- Import all Pokemon management modules
 local PokemonManager = require("game-logic.pokemon.pokemon-manager")
@@ -548,6 +548,19 @@ function PokemonManagementIntegrationTests.runAllTests()
     
     local results = testSuite:run()
     return results
+end
+
+-- Run tests if this file is executed directly
+if not pcall(debug.getlocal, 4, 1) then
+    local results = PokemonManagementIntegrationTests.runAllTests()
+    if results and results.totalPassed and results.totalTests then
+        print(string.format("Integration Tests: %d/%d passed", results.totalPassed, results.totalTests))
+        if results.totalPassed == results.totalTests then
+            os.exit(0)
+        else
+            os.exit(1)
+        end
+    end
 end
 
 return PokemonManagementIntegrationTests

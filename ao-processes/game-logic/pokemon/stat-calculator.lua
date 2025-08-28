@@ -156,18 +156,32 @@ function StatCalculator.calculateAllStats(baseStats, ivs, level, natureId)
     -- Get nature modifiers
     local natureMultipliers = NatureModifiers.getAllModifiers(natureId)
     
+    -- Convert indexed baseStats array to named fields if needed
+    -- Species database provides [1,2,3,4,5,6] but we need {hp, attack, defense, spAttack, spDefense, speed}
+    local normalizedBaseStats = baseStats
+    if baseStats[1] and not baseStats.hp then
+        normalizedBaseStats = {
+            hp = baseStats[1],
+            attack = baseStats[2],
+            defense = baseStats[3],
+            spAttack = baseStats[4],
+            spDefense = baseStats[5],
+            speed = baseStats[6]
+        }
+    end
+    
     -- Calculate stats
     local stats = {}
     
     -- HP calculation (no nature modifier)
-    stats.hp = StatCalculator.calculateHPStat(baseStats.hp, ivs.hp, level)
+    stats.hp = StatCalculator.calculateHPStat(normalizedBaseStats.hp, ivs.hp, level)
     
     -- Other stats with nature modifiers
-    stats.attack = StatCalculator.calculateStat(baseStats.attack, ivs.attack, level, natureMultipliers[2])
-    stats.defense = StatCalculator.calculateStat(baseStats.defense, ivs.defense, level, natureMultipliers[3])
-    stats.spAttack = StatCalculator.calculateStat(baseStats.spAttack, ivs.spAttack, level, natureMultipliers[4])
-    stats.spDefense = StatCalculator.calculateStat(baseStats.spDefense, ivs.spDefense, level, natureMultipliers[5])
-    stats.speed = StatCalculator.calculateStat(baseStats.speed, ivs.speed, level, natureMultipliers[6])
+    stats.attack = StatCalculator.calculateStat(normalizedBaseStats.attack, ivs.attack, level, natureMultipliers[2])
+    stats.defense = StatCalculator.calculateStat(normalizedBaseStats.defense, ivs.defense, level, natureMultipliers[3])
+    stats.spAttack = StatCalculator.calculateStat(normalizedBaseStats.spAttack, ivs.spAttack, level, natureMultipliers[4])
+    stats.spDefense = StatCalculator.calculateStat(normalizedBaseStats.spDefense, ivs.spDefense, level, natureMultipliers[5])
+    stats.speed = StatCalculator.calculateStat(normalizedBaseStats.speed, ivs.speed, level, natureMultipliers[6])
     
     return stats
 end

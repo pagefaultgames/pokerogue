@@ -171,7 +171,7 @@ function PokemonManager.createPokemon(speciesId, level, playerId, options)
     end
     
     -- Validate or default nature
-    local nature = options.nature or math.random(1, 25) -- Random nature if not specified
+    local nature = options.nature or math.random(0, 24) -- Random nature if not specified (valid range 0-24)
     if not NatureModifiers.natureExists(nature) then
         return nil, "Invalid nature ID: " .. nature
     end
