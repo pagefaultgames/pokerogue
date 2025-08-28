@@ -67,12 +67,12 @@ We're currently migrating all game mechanics from TypeScript/Phaser to AO Lua ha
 - [ ] Hall of Fame records
 
 #### Inventory & Items
-- [ ] Item database and effects
+- ✅ Item database and effects
 - [ ] Bag organization system
 - [ ] Item usage mechanics
 - [ ] Shop system and pricing
-- [ ] Consumable item effects
-- [ ] Held item mechanics
+- ✅ Consumable item effects
+- ✅ Held item mechanics
 - ✅ TM/TR system
 - [ ] Berry system
 
@@ -82,7 +82,7 @@ We're currently migrating all game mechanics from TypeScript/Phaser to AO Lua ha
 - [ ] Boss encounter system
 - ✅ Wild encounter rates
 - [ ] Trainer battle system
-- [ ] Environmental effects
+- ✅ Environmental effects
 - ✅ Weather system impact
 - [ ] Arena/location effects
 
