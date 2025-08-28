@@ -3,7 +3,7 @@
 -- Validates test scheduling, execution, aggregation, and reporting systems
 
 -- Load test framework
-local enhanced_test_framework = require("ao-processes.tests.framework.enhanced-test-framework")
+local enhanced_test_framework = require("ao-processes.tests.framework.test-framework-enhanced")
 local TestFramework = enhanced_test_framework
 
 -- Load system components

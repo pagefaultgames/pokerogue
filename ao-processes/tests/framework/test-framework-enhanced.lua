@@ -463,4 +463,100 @@ function TestFramework:runAll(filter)
     end
 end
 
+-- Static convenience functions for compatibility
+function TestFramework.createTestSuite(name, config)
+    local suite = {
+        name = name,
+        description = config.description or "",
+        timeout = config.timeout or 10000,
+        setup_timeout = config.setup_timeout or 5000,
+        teardown_timeout = config.teardown_timeout or 5000,
+        tests = {},
+        setup = config.setup,
+        teardown = config.teardown
+    }
+    return suite
+end
+
+function TestFramework.addTest(suite, testName, testFunc)
+    table.insert(suite.tests, {
+        name = testName,
+        func = testFunc
+    })
+end
+
+function TestFramework.assert(condition, message)
+    if not condition then
+        error(message or "Assertion failed")
+    end
+end
+
+function TestFramework.runTestSuite(suite)
+    print("🧪 Running Test Suite: " .. suite.name)
+    print("=" .. string.rep("=", #suite.name + 22))
+    
+    local results = {
+        total_tests = 0,
+        passed_tests = 0,
+        failed_tests = 0,
+        skipped_tests = 0,
+        execution_time = 0,
+        overall_success = true,
+        pass_rate = 0,
+        fail_rate = 0,
+        failed_test_details = {}
+    }
+    
+    local start_time = os.clock()
+    
+    -- Run setup if provided
+    if suite.setup then
+        local success, error_msg = pcall(suite.setup)
+        if not success then
+            print("❌ Setup failed: " .. error_msg)
+            results.overall_success = false
+        end
+    end
+    
+    -- Run tests
+    for _, test in ipairs(suite.tests) do
+        results.total_tests = results.total_tests + 1
+        
+        local test_start = os.clock()
+        local success, error_msg = pcall(test.func)
+        local test_duration = os.clock() - test_start
+        
+        if success then
+            results.passed_tests = results.passed_tests + 1
+            print("  ✅ " .. test.name .. " (" .. string.format("%.3fs", test_duration) .. ")")
+        else
+            results.failed_tests = results.failed_tests + 1
+            results.overall_success = false
+            print("  ❌ " .. test.name .. " - " .. error_msg)
+            table.insert(results.failed_test_details, {
+                test_name = test.name,
+                error_message = error_msg
+            })
+        end
+    end
+    
+    -- Run teardown if provided
+    if suite.teardown then
+        local success, error_msg = pcall(suite.teardown)
+        if not success then
+            print("❌ Teardown failed: " .. error_msg)
+        end
+    end
+    
+    local total_time = os.clock() - start_time
+    results.execution_time = total_time * 1000 -- Convert to milliseconds
+    
+    if results.total_tests > 0 then
+        results.pass_rate = results.passed_tests / results.total_tests
+        results.fail_rate = results.failed_tests / results.total_tests
+    end
+    
+    return results
+end
+
 return TestFramework
