@@ -1,58 +1,16 @@
 -- Unit Tests for Error Handling Framework
 
--- Mock AO environment for testing
-local function setupMockAO()
-    -- Mock json global
-    json = {
-        encode = function(data)
-            if type(data) == "table" then
-                return "{\"encoded\":\"json\"}"
-            end
-            return tostring(data)
-        end
-    }
-    
-    -- Mock os functions
-    os.time = function() return 1234567890 end
-    os.date = function(fmt, timestamp)
-        if timestamp then
-            return "2025-08-27 10:00:00"
-        else
-            return "2025-08-27 10:00:00"
-        end
-    end
-    
-    -- Mock math.random
-    local randomCounter = 0
-    math.random = function(min, max)
-        randomCounter = randomCounter + 1
-        if min and max then
-            return min + (randomCounter % (max - min + 1))
-        else
-            return randomCounter % 1000
-        end
-    end
-end
+-- Load test helper
+local TestHelper = require("test-helper")
 
--- Test Framework
-local tests = {}
-local testResults = { passed = 0, failed = 0, errors = {} }
-
-function runTest(testName, testFunc)
-    local success, result = pcall(testFunc)
-    if success and result then
-        testResults.passed = testResults.passed + 1
-        print("✓ " .. testName)
-    else
-        testResults.failed = testResults.failed + 1
-        local errorMsg = result and tostring(result) or "Test failed"
-        table.insert(testResults.errors, testName .. ": " .. errorMsg)
-        print("✗ " .. testName .. " - " .. errorMsg)
-    end
-end
+-- Setup test framework
+local framework = TestHelper.createTestFramework()
+local tests = framework.tests
+local testResults = framework.testResults
+local runTest = framework.runTest
 
 -- Initialize test environment
-setupMockAO()
+TestHelper.setupTestEnvironment()
 
 -- Load the error handler module
 -- Handle different path resolution contexts (local vs GitHub Actions)
@@ -325,6 +283,9 @@ if #testResults.errors > 0 then
         print("  " .. error)
     end
 end
+
+-- Cleanup test environment
+TestHelper.cleanupTestEnvironment()
 
 -- Return test success status
 return testResults.failed == 0
