@@ -583,11 +583,11 @@ export class PartyUiHandler extends MessageUiHandler {
         const matchingModifiers: (PokemonHeldItemModifier | undefined)[] = [];
         if (this.transferOptionCursor === allCursorIndex) {
           // if "All" is selected, check all items
-          for (let i = 0; i < allItems.length; i++) {
+          for (const item of allItems) {
             matchingModifiers.push(
               globalScene.findModifier(
-                m => m.is("PokemonHeldItemModifier") && m.pokemonId === newPokemon.id && m.matchType(allItems[i]),
-              ) as PokemonHeldItemModifier,
+                m => m.is("PokemonHeldItemModifier") && m.pokemonId === newPokemon.id && m.matchType(item),
+              ) as PokemonHeldItemModifier | undefined,
             );
           }
         } else {
@@ -598,14 +598,14 @@ export class PartyUiHandler extends MessageUiHandler {
                 m.is("PokemonHeldItemModifier") &&
                 m.pokemonId === newPokemon.id &&
                 m.matchType(allItems[this.transferOptionCursor]),
-            ) as PokemonHeldItemModifier,
+            ) as PokemonHeldItemModifier | undefined,
           );
         }
-        const matchesModifier = matchingModifiers.some(m => m !== undefined); // checks if any items match
+        const hasMatchingModifier = matchingModifiers.some(m => m !== undefined); // checks if any items match
         const partySlot = this.partySlots.filter(m => m.getPokemon() === newPokemon)[0]; // this gets pokemon [p] for us
         if (p !== this.transferCursor) {
           // this skips adding the able/not able labels on the pokemon doing the transfer
-          if (matchesModifier) {
+          if (hasMatchingModifier) {
             // if matchingModifier exists then the item exists on the new pokemon
             ableToTransferText = i18next.t("partyUiHandler:notAble"); // start with not able
             /**
@@ -613,7 +613,7 @@ export class PartyUiHandler extends MessageUiHandler {
              */
             let ableAmount = 0;
             for (const modifier of matchingModifiers) {
-              if (!modifier || modifier.getMaxStackCount() !== modifier.stackCount) {
+              if (!modifier || modifier.getCountUnderMax() > 0) {
                 // if the modifier doesn't exist, or the stack count isn't at max, then we can transfer at least 1 stack
                 ableToTransferText = i18next.t("partyUiHandler:able");
                 ableAmount++;
