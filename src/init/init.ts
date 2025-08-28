@@ -17,9 +17,6 @@ import { initStatsKeys } from "#ui/game-stats-ui-handler";
 
 /** Initialize the game. */
 export function initializeGame() {
-  if (allMoves.length > 0) {
-    return;
-  }
   initModifierTypes();
   initModifierPools();
   initAchievements();
