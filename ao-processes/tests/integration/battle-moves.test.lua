@@ -3,8 +3,64 @@
 -- Tests full move execution lifecycle from selection to effect resolution
 -- Validates TypeScript parity and comprehensive battle integration
 
--- Load test framework and all dependencies
-local TestFramework = require("tests.framework.test-framework-enhanced")
+-- Setup module paths for standalone execution
+local function setupLuaPath()
+    local originalPath = package.path
+    
+    -- Try multiple path setups for different execution contexts
+    local pathConfigs = {
+        -- From integration/ directory
+        {
+            "../framework/?.lua",
+            "../framework/?/init.lua",
+            "../../?.lua",
+            "../../?/init.lua", 
+            "../../data/?.lua",
+            "../../data/?/init.lua",
+            "../../game-logic/?.lua", 
+            "../../game-logic/?/init.lua",
+            "../../handlers/?.lua",
+            "../../handlers/?/init.lua",
+            "../?.lua",
+            "../?/init.lua"
+        }
+    }
+    
+    -- Try each path configuration
+    for _, paths in ipairs(pathConfigs) do
+        local newPath = originalPath
+        for _, path in ipairs(paths) do
+            newPath = newPath .. ";" .. path
+        end
+        package.path = newPath
+        
+        -- Test if we can load the test framework
+        local success, testFramework = pcall(require, "framework.test-framework-enhanced")
+        if success then
+            return testFramework
+        end
+    end
+    
+    -- Fallback: restore original path and create simple framework
+    package.path = originalPath
+    print("Warning: Could not load enhanced test framework, using simple framework")
+    return {
+        createTestSuite = function() return {} end,
+        runTest = function(name, func) 
+            local success, result = pcall(func)
+            if success then
+                print("✅ " .. name)
+                return true
+            else
+                print("❌ " .. name .. " - " .. tostring(result))
+                return false
+            end
+        end
+    }
+end
+
+-- Setup paths and load test framework
+local TestFramework = setupLuaPath()
 
 -- Battle system components
 local MoveDatabase = require("data.moves.move-database")
@@ -76,7 +132,7 @@ local function createBattlePokemon(id, species, level, moves, stats)
 end
 
 function BattleMovesIntegrationTests.runAllTests()
-    local testSuite = TestFramework.createTestSuite("BattleMoves Integration")
+    local testSuite = TestFramework.TestSuite:new("Battle Moves Integration Tests")
     
     -- Test complete system initialization
     testSuite:addTest("Complete System Initialization", function()
@@ -520,6 +576,21 @@ function BattleMovesIntegrationTests.runAllTests()
     end)
     
     return testSuite:run()
+end
+
+-- Run the tests if this file is executed directly
+if arg and arg[0] and string.match(arg[0], "battle%-moves%.test%.lua$") then
+    print("🧪 Running Battle Moves Integration Tests")
+    print("========================================")
+    
+    local result = BattleMovesIntegrationTests.runAllTests()
+    if result then
+        print("✅ All battle moves integration tests passed!")
+        os.exit(0)
+    else
+        print("❌ Some battle moves integration tests failed!")
+        os.exit(1)
+    end
 end
 
 return BattleMovesIntegrationTests
