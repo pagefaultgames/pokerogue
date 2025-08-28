@@ -430,6 +430,172 @@ function ExperienceSystem.applyBattleFriendship(pokemon, battleOutcome, battleTy
     return ExperienceSystem.updateFriendship(pokemon, friendshipGain, reason)
 end
 
+-- Battle Experience Distribution for Victory/Defeat
+
+-- Distribute experience among participating Pokemon after battle conclusion
+-- @param battleState: Battle state with participation tracking data
+-- @param battleResult: Battle result from victory/defeat system
+-- @return: Experience distribution results table
+function ExperienceSystem.distributeBattleExperience(battleState, battleResult)
+    if not battleState or not battleResult then
+        return {success = false, error = "Invalid parameters for experience distribution"}
+    end
+    
+    -- Only distribute experience for victory or escape (participation rewards)
+    if not (battleResult.result == "victory" or battleResult.result == "escape") then
+        return {success = true, distributions = {}, message = "No experience for " .. battleResult.result}
+    end
+    
+    local distributions = {}
+    local participationData = battleState.participationData or {}
+    
+    -- Process each participating Pokemon
+    for pokemonId, participation in pairs(participationData) do
+        if participation.side == "player" and participation.participated then
+            -- Find the actual Pokemon instance
+            local pokemon = nil
+            for _, p in ipairs(battleState.playerParty) do
+                if p.id == pokemonId then
+                    pokemon = p
+                    break
+                end
+            end
+            
+            if pokemon then
+                local expDistribution = ExperienceSystem.calculateParticipationExperience(
+                    pokemon, 
+                    participation, 
+                    battleState, 
+                    battleResult
+                )
+                
+                if expDistribution.expGained > 0 then
+                    -- Apply the experience gain
+                    local updatedPokemon, levelUpData = ExperienceSystem.gainExperience(
+                        pokemon,
+                        expDistribution.expGained,
+                        {
+                            battleId = battleState.battleId,
+                            battleType = battleState.battleType or "WILD",
+                            battleResult = battleResult.result
+                        }
+                    )
+                    
+                    -- Apply friendship gain for battle participation
+                    updatedPokemon = ExperienceSystem.applyBattleFriendship(
+                        updatedPokemon, 
+                        battleResult.result == "victory" and "WIN" or "LOSS", 
+                        battleState.battleType
+                    )
+                    
+                    -- Record the distribution
+                    table.insert(distributions, {
+                        pokemonId = pokemonId,
+                        pokemonName = pokemon.name,
+                        expGained = expDistribution.expGained,
+                        participationFactor = expDistribution.participationFactor,
+                        levelUpData = levelUpData,
+                        friendshipGained = true,
+                        pokemon = updatedPokemon
+                    })
+                end
+            end
+        end
+    end
+    
+    return {
+        success = true,
+        distributions = distributions,
+        totalDistributions = #distributions,
+        battleResult = battleResult.result,
+        battleId = battleState.battleId
+    }
+end
+
+-- Calculate experience for individual Pokemon based on participation
+-- @param pokemon: Pokemon instance
+-- @param participation: Participation data from battle
+-- @param battleState: Complete battle state
+-- @param battleResult: Battle conclusion result
+-- @return: Experience calculation details
+function ExperienceSystem.calculateParticipationExperience(pokemon, participation, battleState, battleResult)
+    if not pokemon or not participation then
+        return {expGained = 0, participationFactor = 0}
+    end
+    
+    local totalExpGained = 0
+    local participationFactor = 0
+    
+    -- Calculate base experience from each defeated enemy Pokemon
+    for _, enemyPokemon in ipairs(battleState.enemyParty or {}) do
+        if enemyPokemon.fainted then
+            local baseExp = ExperienceSystem.calculateBattleExp(
+                enemyPokemon,
+                pokemon,
+                battleState.battleType or "WILD",
+                {
+                    participated = participation.participated,
+                    killingBlow = participation.totalDamageDealt > 0,
+                    isTraded = pokemon.isTraded or false,
+                    hasLuckyEgg = pokemon.heldItem == "LUCKY_EGG"
+                }
+            )
+            
+            -- Apply participation multiplier based on involvement
+            local participationMultiplier = ExperienceSystem.calculateParticipationMultiplier(participation)
+            
+            totalExpGained = totalExpGained + math.floor(baseExp * participationMultiplier)
+            participationFactor = math.max(participationFactor, participationMultiplier)
+        end
+    end
+    
+    -- Victory bonus for meaningful participation
+    if battleResult.result == "victory" and participation.participated then
+        local victoryBonus = math.floor(totalExpGained * 0.1)  -- 10% victory bonus
+        totalExpGained = totalExpGained + victoryBonus
+    end
+    
+    return {
+        expGained = totalExpGained,
+        participationFactor = participationFactor,
+        battleType = battleState.battleType
+    }
+end
+
+-- Calculate participation multiplier based on battle involvement
+-- @param participation: Participation tracking data
+-- @return: Multiplier factor (0.0 to 1.0)
+function ExperienceSystem.calculateParticipationMultiplier(participation)
+    if not participation.participated then
+        return 0.0
+    end
+    
+    local multiplier = 0.5  -- Base participation reward
+    
+    -- Bonus for being active at battle end (not switched out)
+    if participation.activeAtBattleEnd then
+        multiplier = multiplier + 0.3
+    end
+    
+    -- Bonus for dealing damage
+    if participation.totalDamageDealt > 0 then
+        multiplier = multiplier + 0.2
+    end
+    
+    -- Bonus for using moves (active participation)
+    if participation.totalMoveCount > 0 then
+        multiplier = multiplier + 0.1
+    end
+    
+    -- Penalty for minimal participation (switched in/out quickly)
+    if participation.turnsActive < 2 and not participation.activeAtBattleEnd then
+        multiplier = multiplier * 0.7
+    end
+    
+    -- Cap multiplier at 1.0 (full experience)
+    return math.min(1.0, multiplier)
+end
+
 -- Battle Participation Tracking
 
 -- Record battle participation for a Pokemon

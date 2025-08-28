@@ -56,6 +56,37 @@ if check_story_completion "docs/stories/3.3.story.md"; then
     update_checklist_item "Environmental effects"
 fi
 
+# Check Story 4.1 - Turn-Based Battle Engine
+if check_story_completion "docs/stories/4.1.story.md"; then
+    echo "✅ Story 4.1 completed - updating battle engine items"
+    update_checklist_item "Turn-based battle mechanics"
+    update_checklist_item "Battle state persistence"
+fi
+
+# Check Story 4.2 - Damage Calculation System  
+if check_story_completion "docs/stories/4.2.story.md"; then
+    echo "✅ Story 4.2 completed - updating damage calculation items"
+    update_checklist_item "Damage calculation algorithms"
+    update_checklist_item "Type effectiveness matrix"
+    update_checklist_item "Critical hit calculation"
+fi
+
+# Check Story 4.3 - Battle State & Switching System
+if check_story_completion "docs/stories/4.3.story.md"; then
+    echo "✅ Story 4.3 completed - updating switching system items"
+    update_checklist_item "Battle state persistence"
+    update_checklist_item "Multi-target move handling"
+fi
+
+# Check Story 4.4 - Battle Victory & Defeat Conditions
+if check_story_completion "docs/stories/4.4.story.md"; then
+    echo "✅ Story 4.4 completed - updating victory/defeat system items"
+    update_checklist_item "Battle victory conditions and rewards"
+    update_checklist_item "Experience point distribution"
+    update_checklist_item "Money and item reward system"
+    update_checklist_item "Battle statistics tracking"
+fi
+
 # Check if Epic 3 is fully completed by checking all 3 stories
 epic3_complete=true
 for story in "3.1" "3.2" "3.3"; do
@@ -90,6 +121,31 @@ if $epic3_complete; then
     # Update world exploration items
     update_checklist_item "Environmental effects"
     update_checklist_item "Weather system impact"
+fi
+
+# Check if Epic 4 is fully completed by checking all stories
+epic4_complete=true
+for story in "4.1" "4.2" "4.3" "4.4"; do
+    if ! check_story_completion "docs/stories/$story.story.md"; then
+        epic4_complete=false
+        break
+    fi
+done
+
+if $epic4_complete; then
+    echo "🎉 Epic 4 fully completed - updating core battle system items"
+    
+    # Update all Epic 4 battle system items
+    update_checklist_item "Turn-based battle mechanics"
+    update_checklist_item "Damage calculation algorithms"  
+    update_checklist_item "Type effectiveness matrix"
+    update_checklist_item "Critical hit calculation"
+    update_checklist_item "Accuracy/evasion mechanics"
+    update_checklist_item "Battle state persistence"
+    update_checklist_item "Battle victory conditions and rewards"
+    update_checklist_item "Experience point distribution"
+    update_checklist_item "Money and item reward system"
+    update_checklist_item "Battle statistics tracking"
 fi
 
 # Check for any additional completed systems by scanning for QA PASS gates
