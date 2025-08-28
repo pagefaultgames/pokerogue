@@ -312,7 +312,11 @@ export type BattleStyle = "double" | "single" | "even-doubles" | "odd-doubles";
 export type RandomTrainerOverride = {
   /** The Type of trainer to force */
   trainerType: Exclude<TrainerType, TrainerType.UNKNOWN>;
-  /** The variant of trainer to force (DEFAULT, FEMALE, or DOUBLE if available) */
+  /** 
+   * The {@linkcode TrainerVariant} to force.
+   * @remarks
+   * `TrainerVariant.DOUBLE` cannot be forced on the first wave of a game due to issues with trainer party generation.
+   */
   trainerVariant?: TrainerVariant;
 };
 
