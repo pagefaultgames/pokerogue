@@ -267,14 +267,22 @@ function DamageCalculator.calculateDamage(params)
     end
     
     -- Determine which stats to use based on move category
-    local attackStat = moveData.category == Enums.MoveCategory.PHYSICAL and attacker.stats.atk or attacker.stats.spatk
-    local defenseStat = moveData.category == Enums.MoveCategory.PHYSICAL and defender.stats.def or defender.stats.spdef
+    local attackStat = moveData.category == Enums.MoveCategory.PHYSICAL and 
+        (attacker.stats.attack or attacker.stats.atk) or 
+        (attacker.stats.spAttack or attacker.stats.spatk)
+    local defenseStat = moveData.category == Enums.MoveCategory.PHYSICAL and 
+        (defender.stats.defense or defender.stats.def) or 
+        (defender.stats.spDefense or defender.stats.spdef)
     
     -- Apply stat stage modifications
     local attackStages = (attacker.battleData and attacker.battleData.statStages) and 
-        (moveData.category == Enums.MoveCategory.PHYSICAL and attacker.battleData.statStages.atk or attacker.battleData.statStages.spatk) or 0
+        (moveData.category == Enums.MoveCategory.PHYSICAL and 
+         (attacker.battleData.statStages.attack or attacker.battleData.statStages.atk) or 
+         (attacker.battleData.statStages.spAttack or attacker.battleData.statStages.spatk)) or 0
     local defenseStages = (defender.battleData and defender.battleData.statStages) and
-        (moveData.category == Enums.MoveCategory.PHYSICAL and defender.battleData.statStages.def or defender.battleData.statStages.spdef) or 0
+        (moveData.category == Enums.MoveCategory.PHYSICAL and 
+         (defender.battleData.statStages.defense or defender.battleData.statStages.def) or 
+         (defender.battleData.statStages.spDefense or defender.battleData.statStages.spdef)) or 0
     
     local effectiveAttack = getEffectiveStat(attackStat, attackStages)
     local effectiveDefense = getEffectiveStat(defenseStat, defenseStages)

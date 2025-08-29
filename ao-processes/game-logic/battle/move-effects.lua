@@ -2142,14 +2142,17 @@ function MoveEffects.executeMove(battleState, attacker, moveData, target)
     end
     
     -- Apply stat changes from move
-    if moveData.stat_changes then
+    local statChanges = moveData.stat_changes or (moveData.effects and moveData.effects.stat_change)
+    if statChanges then
         local statTarget = actualTarget
-        if moveData.target == Enums.MoveTarget.USER then
+        -- Check for explicit stat change target or fallback to move target
+        local statChangeTarget = (moveData.effects and moveData.effects.stat_change_target) or moveData.stat_change_target
+        if moveData.target == Enums.MoveTarget.USER or statChangeTarget == "self" then
             statTarget = attacker
         end
         
         if statTarget and statTarget.battleData and statTarget.battleData.statStages then
-            for stat, change in pairs(moveData.stat_changes) do
+            for stat, change in pairs(statChanges) do
                 local statChangeResult = MoveEffects.applyStatStageChange(
                     battleState.battleId,
                     statTarget.id,
@@ -2272,6 +2275,48 @@ function MoveEffects.executeMove(battleState, attacker, moveData, target)
         end
     end
     
+    -- Handle weather effects from move
+    if moveData.effects and moveData.effects.weather and battleState then
+        local weatherType = moveData.effects.weather.type or moveData.effects.weather
+        local turns = moveData.effects.weather.turns or 5
+        
+        if not battleState.weather then
+            battleState.weather = {}
+        end
+        
+        battleState.weather.weatherType = weatherType
+        battleState.weather.turnsLeft = turns
+        
+        table.insert(result.effects, {
+            type = "weather_change",
+            weatherType = weatherType,
+            turns = turns
+        })
+        
+        result.weatherChanged = true
+    end
+    
+    -- Handle terrain effects from move  
+    if moveData.effects and moveData.effects.terrain and battleState then
+        local terrainType = moveData.effects.terrain.type or moveData.effects.terrain
+        local turns = moveData.effects.terrain.turns or 5
+        
+        if not battleState.terrain then
+            battleState.terrain = {}
+        end
+        
+        battleState.terrain.terrainType = terrainType
+        battleState.terrain.turnsLeft = turns
+        
+        table.insert(result.effects, {
+            type = "terrain_change",
+            terrainType = terrainType,
+            turns = turns
+        })
+        
+        result.terrainChanged = true
+    end
+    
     return result
 end
 
@@ -2289,14 +2334,30 @@ function MoveEffects.processMovEffects(moveData, attacker, targets, battleState)
     local result = MoveEffects.executeMove(battleState, attacker, moveData, target)
 
     -- Convert to expected format for test compatibility
-    return {
+    local compatResult = {
         success = result.success,
         statusEffects = result.status_effects or {},
         effects = result.effects or {},
-        weatherChanged = false,
-        terrainChanged = false,
+        weatherChanged = result.weatherChanged or false,
+        terrainChanged = result.terrainChanged or false,
         messages = result.messages or {}
     }
+    
+    -- Extract stat changes for backward compatibility
+    compatResult.statChanges = {}
+    if result.effects then
+        for _, effect in ipairs(result.effects) do
+            if effect.type == "stat_change" then
+                table.insert(compatResult.statChanges, {
+                    stat = effect.stat,
+                    stages = effect.change,
+                    target = effect.target
+                })
+            end
+        end
+    end
+    
+    return compatResult
 end
 
 -- Compatibility function for test suite - calculate multi-hit count
