@@ -16,21 +16,14 @@ import { NumberHolder } from "#utils/common";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-describe("check some Achievement related stuff", () => {
-  it("should check Achievement creation", () => {
-    const ach = new MoneyAchv("", "Achievement", 1000, null!, 100);
-    expect(ach.name).toBe("Achievement");
-  });
-});
-
 describe("Achv", () => {
   let achv: Achv;
 
   beforeEach(() => {
-    achv = new Achv("", "Test Achievement", "This is a test achievement", "test_icon", 10);
+    achv = new Achv("", "This is a test achievement", "test_icon", 10);
   });
 
-  it("should have the correct name", () => {
+  it("should have the correct description", () => {
     expect(achv.getDescription()).toBe("This is a test achievement");
   });
 
@@ -53,11 +46,11 @@ describe("Achv", () => {
   });
 
   it("should return the correct tier based on the score", () => {
-    const achv1 = new Achv("", "Test Achievement 1", "Test Description", "test_icon", 10);
-    const achv2 = new Achv("", "Test Achievement 2", "Test Description", "test_icon", 25);
-    const achv3 = new Achv("", "Test Achievement 3", "Test Description", "test_icon", 50);
-    const achv4 = new Achv("", "Test Achievement 4", "Test Description", "test_icon", 75);
-    const achv5 = new Achv("", "Test Achievement 5", "Test Description", "test_icon", 100);
+    const achv1 = new Achv("", "Test Description", "test_icon", 10);
+    const achv2 = new Achv("", "Test Description", "test_icon", 25);
+    const achv3 = new Achv("", "Test Description", "test_icon", 50);
+    const achv4 = new Achv("", "Test Description", "test_icon", 75);
+    const achv5 = new Achv("", "Test Description", "test_icon", 100);
 
     expect(achv1.getTier()).toBe(AchvTier.COMMON);
     expect(achv2.getTier()).toBe(AchvTier.GREAT);
@@ -67,11 +60,11 @@ describe("Achv", () => {
   });
 
   it("should validate the achievement based on the condition function", () => {
-    const conditionFunc = vi.fn((args: any[]) => args[0] === 10);
-    const achv = new Achv("", "Test Achievement", "Test Description", "test_icon", 10, conditionFunc);
+    const conditionFunc = vi.fn(args => args[0] === 10);
+    const achv2 = new Achv("", "Test Description", "test_icon", 10, conditionFunc);
 
-    expect(achv.validate([5])).toBe(false);
-    expect(achv.validate([10])).toBe(true);
+    expect(achv2.validate([5])).toBe(false);
+    expect(achv2.validate([10])).toBe(true);
     expect(conditionFunc).toHaveBeenCalledTimes(2);
   });
 });
@@ -97,13 +90,13 @@ describe("MoneyAchv", () => {
   });
 
   it("should create an instance of MoneyAchv", () => {
-    const moneyAchv = new MoneyAchv("", "Test Money Achievement", 10000, "money_icon", 10);
+    const moneyAchv = new MoneyAchv("", 10000, "money_icon", 10);
     expect(moneyAchv).toBeInstanceOf(MoneyAchv);
     expect(moneyAchv instanceof Achv).toBe(true);
   });
 
   it("should validate the achievement based on the money amount", () => {
-    const moneyAchv = new MoneyAchv("", "Test Money Achievement", 10000, "money_icon", 10);
+    const moneyAchv = new MoneyAchv("", 10000, "money_icon", 10);
     scene.money = 5000;
 
     expect(moneyAchv.validate([])).toBe(false);
@@ -134,13 +127,13 @@ describe("RibbonAchv", () => {
   });
 
   it("should create an instance of RibbonAchv", () => {
-    const ribbonAchv = new RibbonAchv("", "Test Ribbon Achievement", 10, "ribbon_icon", 10);
+    const ribbonAchv = new RibbonAchv("", 10, "ribbon_icon", 10);
     expect(ribbonAchv).toBeInstanceOf(RibbonAchv);
     expect(ribbonAchv instanceof Achv).toBe(true);
   });
 
   it("should validate the achievement based on the ribbon amount", () => {
-    const ribbonAchv = new RibbonAchv("", "Test Ribbon Achievement", 10, "ribbon_icon", 10);
+    const ribbonAchv = new RibbonAchv("", 10, "ribbon_icon", 10);
     scene.gameData.gameStats.ribbonsOwned = 5;
 
     expect(ribbonAchv.validate([])).toBe(false);
@@ -152,13 +145,13 @@ describe("RibbonAchv", () => {
 
 describe("DamageAchv", () => {
   it("should create an instance of DamageAchv", () => {
-    const damageAchv = new DamageAchv("", "Test Damage Achievement", 250, "damage_icon", 10);
+    const damageAchv = new DamageAchv("", 250, "damage_icon", 10);
     expect(damageAchv).toBeInstanceOf(DamageAchv);
     expect(damageAchv instanceof Achv).toBe(true);
   });
 
   it("should validate the achievement based on the damage amount", () => {
-    const damageAchv = new DamageAchv("", "Test Damage Achievement", 250, "damage_icon", 10);
+    const damageAchv = new DamageAchv("", 250, "damage_icon", 10);
     const numberHolder = new NumberHolder(200);
 
     expect(damageAchv.validate([numberHolder])).toBe(false);
@@ -170,13 +163,13 @@ describe("DamageAchv", () => {
 
 describe("HealAchv", () => {
   it("should create an instance of HealAchv", () => {
-    const healAchv = new HealAchv("", "Test Heal Achievement", 250, "heal_icon", 10);
+    const healAchv = new HealAchv("", 250, "heal_icon", 10);
     expect(healAchv).toBeInstanceOf(HealAchv);
     expect(healAchv instanceof Achv).toBe(true);
   });
 
   it("should validate the achievement based on the heal amount", () => {
-    const healAchv = new HealAchv("", "Test Heal Achievement", 250, "heal_icon", 10);
+    const healAchv = new HealAchv("", 250, "heal_icon", 10);
     const numberHolder = new NumberHolder(200);
 
     expect(healAchv.validate([numberHolder])).toBe(false);
@@ -188,13 +181,13 @@ describe("HealAchv", () => {
 
 describe("LevelAchv", () => {
   it("should create an instance of LevelAchv", () => {
-    const levelAchv = new LevelAchv("", "Test Level Achievement", 100, "level_icon", 10);
+    const levelAchv = new LevelAchv("", 100, "level_icon", 10);
     expect(levelAchv).toBeInstanceOf(LevelAchv);
     expect(levelAchv instanceof Achv).toBe(true);
   });
 
   it("should validate the achievement based on the level", () => {
-    const levelAchv = new LevelAchv("", "Test Level Achievement", 100, "level_icon", 10);
+    const levelAchv = new LevelAchv("", 100, "level_icon", 10);
     const integerHolder = new NumberHolder(50);
 
     expect(levelAchv.validate([integerHolder])).toBe(false);
@@ -206,27 +199,13 @@ describe("LevelAchv", () => {
 
 describe("ModifierAchv", () => {
   it("should create an instance of ModifierAchv", () => {
-    const modifierAchv = new ModifierAchv(
-      "",
-      "Test Modifier Achievement",
-      "Test Description",
-      "modifier_icon",
-      10,
-      () => true,
-    );
+    const modifierAchv = new ModifierAchv("", "Test Description", "modifier_icon", 10, () => true);
     expect(modifierAchv).toBeInstanceOf(ModifierAchv);
     expect(modifierAchv instanceof Achv).toBe(true);
   });
 
   it("should validate the achievement based on the modifier function", () => {
-    const modifierAchv = new ModifierAchv(
-      "",
-      "Test Modifier Achievement",
-      "Test Description",
-      "modifier_icon",
-      10,
-      () => true,
-    );
+    const modifierAchv = new ModifierAchv("", "Test Description", "modifier_icon", 10, () => true);
     const modifier = new TurnHeldItemTransferModifier(null!, 3, 1);
 
     expect(modifierAchv.validate([modifier])).toBe(true);

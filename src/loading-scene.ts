@@ -99,7 +99,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("type_tera", "ui");
     this.loadAtlas("type_bgs", "ui");
     this.loadAtlas("button_tera", "ui");
-    this.loadImage("mystery_egg", "ui");
+    this.loadImage("common_egg", "ui");
     this.loadImage("normal_memory", "ui");
 
     this.loadImage("dawn_icon_fg", "ui");

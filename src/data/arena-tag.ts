@@ -1165,7 +1165,6 @@ export class TrickRoomTag extends RoomArenaTag {
    * Reverses Speed-based turn order for all Pokemon on the field
    * @param speedReversed a {@linkcode BooleanHolder} used to flag if Speed-based
    * turn order should be reversed.
-   * @returns `true` if turn order is successfully reversed; `false` otherwise
    */
   override apply(speedReversed: BooleanHolder): void {
     speedReversed.value = !speedReversed.value;

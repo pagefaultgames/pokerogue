@@ -1058,8 +1058,7 @@ export class SeedTag extends SerializableBattlerTag {
     // Check which opponent to restore HP to
     const source = pokemon.getOpponents().find(o => o.getBattlerIndex() === this.sourceIndex);
     if (!source) {
-      console.warn(`Failed to get source Pokemon for SeedTag lapse; id: ${this.sourceId}`);
-      return false;
+      return true;
     }
 
     const cancelled = new BooleanHolder(false);
@@ -2331,10 +2330,10 @@ export class CritBoostTag extends SerializableBattlerTag {
     super.onAdd(pokemon);
 
     // Dragon cheer adds +2 crit stages if the pokemon is a Dragon type when the tag is added
-    if (this.tagType === BattlerTagType.DRAGON_CHEER && pokemon.getTypes(true).includes(PokemonType.DRAGON)) {
-      (this as Mutable<this>).critStages = 2;
-    } else {
+    if (this.tagType === BattlerTagType.DRAGON_CHEER && !pokemon.getTypes(true, true).includes(PokemonType.DRAGON)) {
       (this as Mutable<this>).critStages = 1;
+    } else {
+      (this as Mutable<this>).critStages = 2;
     }
 
     globalScene.phaseManager.queueMessage(
