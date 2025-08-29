@@ -58,7 +58,17 @@ fi
 echo "✅ Lua 5.3 environment ready!"
 
 # Set up Lua path for module loading from ao-processes directory
-export LUA_PATH="../?.lua;../?/init.lua;../data/?.lua;../data/?/init.lua;./?.lua;./?/init.lua;;"
+# Support both local and CI environments
+if [ -d "../data" ]; then
+    # Local development structure
+    export LUA_PATH="../?.lua;../?/init.lua;../data/?.lua;../data/?/init.lua;./?.lua;./?/init.lua;;"
+elif [ -d "../../ao-processes/data" ]; then
+    # CI structure
+    export LUA_PATH="../../ao-processes/?.lua;../../ao-processes/?/init.lua;../../ao-processes/data/?.lua;../../ao-processes/data/?/init.lua;./?.lua;./?/init.lua;;"
+else
+    # Fallback generic path
+    export LUA_PATH="./?.lua;./?/init.lua;../../?.lua;../../?/init.lua;;"
+fi
 export LUA_PATH
 
 echo "✅ Lua path configured for project modules"
