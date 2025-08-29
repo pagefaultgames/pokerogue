@@ -801,4 +801,9 @@ function Enums.getAllMoveCategoryIds()
     return categories
 end
 
+-- Legacy enum aliases for compatibility
+Enums.Type = Enums.PokemonType
+Enums.Ability = Enums.AbilityId
+Enums.Move = Enums.MoveId
+
 return Enums

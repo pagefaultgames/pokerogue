@@ -20,6 +20,12 @@ local RewardCalculator = require("game-logic.battle.reward-calculator")
 local BattleStatistics = require("game-logic.battle.battle-statistics")
 local BattleCleanup = require("game-logic.battle.battle-cleanup")
 
+-- Status effect system dependencies
+local StatusEffects = require("game-logic.pokemon.status-effects")
+local StatusInteractions = require("game-logic.pokemon.status-interactions")
+local StatusHealing = require("game-logic.pokemon.status-healing")
+local StatusImmunities = require("game-logic.pokemon.status-immunities")
+
 -- Battle session storage (in-memory for this implementation)
 local BattleSessions = {}
 
@@ -155,6 +161,52 @@ Handlers.add(
     Handlers.utils.hasMatchingTag("Action", "ESCAPE_BATTLE"),
     function(msg)
         local response = escapeBattle(msg)
+        Handlers.utils.reply(response)(msg)
+    end
+)
+
+-- Status Effect Handlers
+Handlers.add(
+    "APPLY_STATUS_EFFECT",
+    Handlers.utils.hasMatchingTag("Action", "APPLY_STATUS_EFFECT"),
+    function(msg)
+        local response = applyStatusEffect(msg)
+        Handlers.utils.reply(response)(msg)
+    end
+)
+
+Handlers.add(
+    "HEAL_STATUS_EFFECT",
+    Handlers.utils.hasMatchingTag("Action", "HEAL_STATUS_EFFECT"),
+    function(msg)
+        local response = healStatusEffect(msg)
+        Handlers.utils.reply(response)(msg)
+    end
+)
+
+Handlers.add(
+    "CHECK_STATUS_IMMUNITY",
+    Handlers.utils.hasMatchingTag("Action", "CHECK_STATUS_IMMUNITY"),
+    function(msg)
+        local response = checkStatusImmunity(msg)
+        Handlers.utils.reply(response)(msg)
+    end
+)
+
+Handlers.add(
+    "PROCESS_END_OF_TURN_STATUS_EFFECTS",
+    Handlers.utils.hasMatchingTag("Action", "PROCESS_END_OF_TURN_STATUS_EFFECTS"),
+    function(msg)
+        local response = processEndOfTurnStatusEffects(msg)
+        Handlers.utils.reply(response)(msg)
+    end
+)
+
+Handlers.add(
+    "GET_STATUS_INFO",
+    Handlers.utils.hasMatchingTag("Action", "GET_STATUS_INFO"),
+    function(msg)
+        local response = getStatusInfo(msg)
         Handlers.utils.reply(response)(msg)
     end
 )
@@ -1155,4 +1207,370 @@ local function getBattleHandlerStats()
     end
     
     return stats
+end
+
+-- Apply status effect to Pokemon
+-- @param msg: AO message with status application request
+-- @return: Status application response
+local function applyStatusEffect(msg)
+    local startTime = os.clock()
+    
+    -- Parse message data
+    local success, data = pcall(json.decode, msg.Data or "{}")
+    if not success then
+        return ErrorHandler.createErrorResponse("INVALID_JSON", "Failed to parse status application request", msg.Id)
+    end
+    
+    -- Validate required parameters
+    local validation = ValidationHandler.validateRequired(data, {
+        "battleId", "pokemonId", "statusType"
+    })
+    if not validation.valid then
+        return ErrorHandler.createErrorResponse("VALIDATION_ERROR", validation.error, msg.Id)
+    end
+    
+    -- Get battle session
+    local session = BattleSessions[data.battleId]
+    if not session then
+        return ErrorHandler.createErrorResponse("BATTLE_NOT_FOUND", "Battle session not found", msg.Id)
+    end
+    
+    -- Find target Pokemon
+    local pokemon = TurnProcessor.findPokemon(session.battleState, data.pokemonId, data.playerId)
+    if not pokemon then
+        return ErrorHandler.createErrorResponse("POKEMON_NOT_FOUND", "Pokemon not found", msg.Id)
+    end
+    
+    -- Check status immunity
+    local immunityCheck = StatusImmunities.checkStatusImmunity(pokemon, data.statusType, session.battleState)
+    if immunityCheck.immune then
+        return {
+            success = false,
+            action = "APPLY_STATUS_EFFECT",
+            battleId = data.battleId,
+            message = "Status effect blocked by immunity",
+            data = {
+                pokemon_id = data.pokemonId,
+                attempted_status = data.statusType,
+                immunity_type = immunityCheck.immunityType,
+                immunity_source = immunityCheck.immunitySource,
+                immunity_message = immunityCheck.message
+            },
+            timestamp = os.time(),
+            processing_time_ms = (os.clock() - startTime) * 1000,
+            message_id = msg.Id
+        }
+    end
+    
+    -- Validate status interactions
+    local interactionValidation = StatusInteractions.validateStatusApplication(pokemon, data.statusType, data.forceReplace)
+    if not interactionValidation.valid then
+        return {
+            success = false,
+            action = "APPLY_STATUS_EFFECT",
+            battleId = data.battleId,
+            message = "Status application blocked by interaction rules",
+            data = {
+                pokemon_id = data.pokemonId,
+                attempted_status = data.statusType,
+                current_status = pokemon.statusEffect,
+                interaction_error = interactionValidation.error
+            },
+            timestamp = os.time(),
+            processing_time_ms = (os.clock() - startTime) * 1000,
+            message_id = msg.Id
+        }
+    end
+    
+    -- Apply status effect
+    local applicationResult = StatusEffects.applyStatusEffect(pokemon, data.statusType, data.duration, session.battleState)
+    
+    -- Check for auto-healing berries
+    local autoHealResult = nil
+    if applicationResult.success then
+        autoHealResult = StatusHealing.executeAutoBerryHealing(pokemon, data.statusType)
+    end
+    
+    local processingTime = (os.clock() - startTime) * 1000
+    
+    return {
+        success = applicationResult.success,
+        action = "APPLY_STATUS_EFFECT",
+        battleId = data.battleId,
+        message = applicationResult.success and "Status effect applied successfully" or "Status application failed",
+        data = {
+            pokemon_id = data.pokemonId,
+            status_applied = data.statusType,
+            application_result = applicationResult,
+            auto_heal_result = autoHealResult,
+            interaction_result = interactionValidation
+        },
+        timestamp = os.time(),
+        processing_time_ms = processingTime,
+        message_id = msg.Id
+    }
+end
+
+-- Heal status effect from Pokemon
+-- @param msg: AO message with status healing request
+-- @return: Status healing response
+local function healStatusEffect(msg)
+    local startTime = os.clock()
+    
+    -- Parse message data
+    local success, data = pcall(json.decode, msg.Data or "{}")
+    if not success then
+        return ErrorHandler.createErrorResponse("INVALID_JSON", "Failed to parse status healing request", msg.Id)
+    end
+    
+    -- Validate required parameters
+    local validation = ValidationHandler.validateRequired(data, {
+        "battleId", "pokemonId", "healingMethod"
+    })
+    if not validation.valid then
+        return ErrorHandler.createErrorResponse("VALIDATION_ERROR", validation.error, msg.Id)
+    end
+    
+    -- Get battle session
+    local session = BattleSessions[data.battleId]
+    if not session then
+        return ErrorHandler.createErrorResponse("BATTLE_NOT_FOUND", "Battle session not found", msg.Id)
+    end
+    
+    -- Find target Pokemon
+    local pokemon = TurnProcessor.findPokemon(session.battleState, data.pokemonId, data.playerId)
+    if not pokemon then
+        return ErrorHandler.createErrorResponse("POKEMON_NOT_FOUND", "Pokemon not found", msg.Id)
+    end
+    
+    local healingResult = nil
+    
+    -- Execute healing based on method
+    if data.healingMethod == StatusHealing.HealingMethod.MOVE then
+        if not data.moveId then
+            return ErrorHandler.createErrorResponse("MISSING_PARAMETER", "Move ID required for move-based healing", msg.Id)
+        end
+        healingResult = StatusHealing.executeMoveBased(session.battleState, pokemon, data.moveId, data.targetPokemon)
+        
+    elseif data.healingMethod == StatusHealing.HealingMethod.ITEM then
+        if not data.itemId then
+            return ErrorHandler.createErrorResponse("MISSING_PARAMETER", "Item ID required for item-based healing", msg.Id)
+        end
+        healingResult = StatusHealing.executeItemBased(session.battleState, pokemon, data.itemId, data.targetPokemon, data.inventory)
+        
+    elseif data.healingMethod == StatusHealing.HealingMethod.ABILITY then
+        if not data.abilityId or not data.trigger then
+            return ErrorHandler.createErrorResponse("MISSING_PARAMETER", "Ability ID and trigger required for ability-based healing", msg.Id)
+        end
+        healingResult = StatusHealing.executeAbilityBased(session.battleState, pokemon, data.abilityId, data.trigger, data.statusBeingApplied)
+        
+    else
+        return ErrorHandler.createErrorResponse("INVALID_METHOD", "Unknown healing method", msg.Id)
+    end
+    
+    local processingTime = (os.clock() - startTime) * 1000
+    
+    return {
+        success = healingResult.success,
+        action = "HEAL_STATUS_EFFECT", 
+        battleId = data.battleId,
+        message = healingResult.success and "Status healing executed successfully" or "Status healing failed",
+        data = {
+            pokemon_id = data.pokemonId,
+            healing_method = data.healingMethod,
+            healing_result = healingResult
+        },
+        timestamp = os.time(),
+        processing_time_ms = processingTime,
+        message_id = msg.Id
+    }
+end
+
+-- Check status immunity for Pokemon
+-- @param msg: AO message with immunity check request
+-- @return: Immunity check response
+local function checkStatusImmunity(msg)
+    local startTime = os.clock()
+    
+    -- Parse message data
+    local success, data = pcall(json.decode, msg.Data or "{}")
+    if not success then
+        return ErrorHandler.createErrorResponse("INVALID_JSON", "Failed to parse immunity check request", msg.Id)
+    end
+    
+    -- Validate required parameters
+    local validation = ValidationHandler.validateRequired(data, {
+        "battleId", "pokemonId", "statusType"
+    })
+    if not validation.valid then
+        return ErrorHandler.createErrorResponse("VALIDATION_ERROR", validation.error, msg.Id)
+    end
+    
+    -- Get battle session
+    local session = BattleSessions[data.battleId]
+    if not session then
+        return ErrorHandler.createErrorResponse("BATTLE_NOT_FOUND", "Battle session not found", msg.Id)
+    end
+    
+    -- Find target Pokemon
+    local pokemon = TurnProcessor.findPokemon(session.battleState, data.pokemonId, data.playerId)
+    if not pokemon then
+        return ErrorHandler.createErrorResponse("POKEMON_NOT_FOUND", "Pokemon not found", msg.Id)
+    end
+    
+    -- Check immunity
+    local immunityCheck = StatusImmunities.checkStatusImmunity(pokemon, data.statusType, session.battleState)
+    
+    local processingTime = (os.clock() - startTime) * 1000
+    
+    return {
+        success = true,
+        action = "CHECK_STATUS_IMMUNITY",
+        battleId = data.battleId,
+        message = immunityCheck.immune and "Pokemon is immune to status effect" or "Pokemon is not immune to status effect",
+        data = {
+            pokemon_id = data.pokemonId,
+            status_type = data.statusType,
+            immune = immunityCheck.immune,
+            immunity_check = immunityCheck
+        },
+        timestamp = os.time(),
+        processing_time_ms = processingTime,
+        message_id = msg.Id
+    }
+end
+
+-- Process end-of-turn status effects for all Pokemon in battle
+-- @param msg: AO message with end-of-turn processing request
+-- @return: End-of-turn status processing response
+local function processEndOfTurnStatusEffects(msg)
+    local startTime = os.clock()
+    
+    -- Parse message data
+    local success, data = pcall(json.decode, msg.Data or "{}")
+    if not success then
+        return ErrorHandler.createErrorResponse("INVALID_JSON", "Failed to parse end-of-turn processing request", msg.Id)
+    end
+    
+    -- Validate required parameters
+    local validation = ValidationHandler.validateRequired(data, {"battleId"})
+    if not validation.valid then
+        return ErrorHandler.createErrorResponse("VALIDATION_ERROR", validation.error, msg.Id)
+    end
+    
+    -- Get battle session
+    local session = BattleSessions[data.battleId]
+    if not session then
+        return ErrorHandler.createErrorResponse("BATTLE_NOT_FOUND", "Battle session not found", msg.Id)
+    end
+    
+    local result = {
+        playerPartyEffects = {},
+        enemyPartyEffects = {},
+        totalDamage = 0,
+        statusChanges = {}
+    }
+    
+    -- Process status effects for player party
+    for i, pokemon in ipairs(session.battleState.playerParty) do
+        if pokemon.currentHP > 0 then
+            local statusResult = StatusEffects.processEndOfTurnEffects(pokemon, session.battleState)
+            if statusResult and (#statusResult.effects > 0 or #statusResult.messages > 0) then
+                result.playerPartyEffects[pokemon.id] = statusResult
+                result.totalDamage = result.totalDamage + (statusResult.damageDealt or 0)
+                if statusResult.statusChanged then
+                    table.insert(result.statusChanges, {
+                        pokemon_id = pokemon.id,
+                        party = "player",
+                        change = "status_cleared"
+                    })
+                end
+            end
+        end
+    end
+    
+    -- Process status effects for enemy party
+    for i, pokemon in ipairs(session.battleState.enemyParty) do
+        if pokemon.currentHP > 0 then
+            local statusResult = StatusEffects.processEndOfTurnEffects(pokemon, session.battleState)
+            if statusResult and (#statusResult.effects > 0 or #statusResult.messages > 0) then
+                result.enemyPartyEffects[pokemon.id] = statusResult
+                result.totalDamage = result.totalDamage + (statusResult.damageDealt or 0)
+                if statusResult.statusChanged then
+                    table.insert(result.statusChanges, {
+                        pokemon_id = pokemon.id,
+                        party = "enemy",
+                        change = "status_cleared"
+                    })
+                end
+            end
+        end
+    end
+    
+    local processingTime = (os.clock() - startTime) * 1000
+    
+    return {
+        success = true,
+        action = "PROCESS_END_OF_TURN_STATUS_EFFECTS",
+        battleId = data.battleId,
+        message = "End-of-turn status effects processed successfully",
+        data = result,
+        timestamp = os.time(),
+        processing_time_ms = processingTime,
+        message_id = msg.Id
+    }
+end
+
+-- Get comprehensive status information for Pokemon
+-- @param msg: AO message with status info request
+-- @return: Status information response
+local function getStatusInfo(msg)
+    local startTime = os.clock()
+    
+    -- Parse message data
+    local success, data = pcall(json.decode, msg.Data or "{}")
+    if not success then
+        return ErrorHandler.createErrorResponse("INVALID_JSON", "Failed to parse status info request", msg.Id)
+    end
+    
+    -- Validate required parameters
+    local validation = ValidationHandler.validateRequired(data, {"battleId", "pokemonId"})
+    if not validation.valid then
+        return ErrorHandler.createErrorResponse("VALIDATION_ERROR", validation.error, msg.Id)
+    end
+    
+    -- Get battle session
+    local session = BattleSessions[data.battleId]
+    if not session then
+        return ErrorHandler.createErrorResponse("BATTLE_NOT_FOUND", "Battle session not found", msg.Id)
+    end
+    
+    -- Find target Pokemon
+    local pokemon = TurnProcessor.findPokemon(session.battleState, data.pokemonId, data.playerId)
+    if not pokemon then
+        return ErrorHandler.createErrorResponse("POKEMON_NOT_FOUND", "Pokemon not found", msg.Id)
+    end
+    
+    -- Gather comprehensive status information
+    local statusInfo = {
+        currentStatus = StatusEffects.getStatusEffectInfo(pokemon),
+        immunities = StatusImmunities.getPokemonImmunityInfo(pokemon, session.battleState),
+        healingOptions = StatusHealing.getHealingOptions(pokemon, session.battleState, data.inventory)
+    }
+    
+    local processingTime = (os.clock() - startTime) * 1000
+    
+    return {
+        success = true,
+        action = "GET_STATUS_INFO",
+        battleId = data.battleId,
+        message = "Status information retrieved successfully",
+        data = {
+            pokemon_id = data.pokemonId,
+            status_info = statusInfo
+        },
+        timestamp = os.time(),
+        processing_time_ms = processingTime,
+        message_id = msg.Id
+    }
 end
