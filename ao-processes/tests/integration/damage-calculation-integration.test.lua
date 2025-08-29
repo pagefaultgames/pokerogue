@@ -2,6 +2,52 @@
 -- Tests damage calculation within complete battle message processing workflows
 -- Validates damage effects on Pokemon HP and battle state persistence
 
+-- Setup module paths for standalone execution
+local function setupLuaPath()
+    local originalPath = package.path
+    
+    -- Try multiple path setups for different execution contexts
+    local pathConfigs = {
+        -- From integration/ directory
+        {
+            "../framework/?.lua",
+            "../framework/?/init.lua",
+            "../../?.lua",
+            "../../?/init.lua", 
+            "../../data/?.lua",
+            "../../data/?/init.lua",
+            "../../game-logic/?.lua", 
+            "../../game-logic/?/init.lua",
+            "../../handlers/?.lua",
+            "../../handlers/?/init.lua",
+            "../?.lua",
+            "../?/init.lua"
+        }
+    }
+    
+    -- Try each path configuration
+    for _, paths in ipairs(pathConfigs) do
+        local newPath = originalPath
+        for _, path in ipairs(paths) do
+            newPath = newPath .. ";" .. path
+        end
+        package.path = newPath
+        
+        -- Test if we can load a test module
+        local success = pcall(require, "game-logic.battle.damage-calculator")
+        if success then
+            return true
+        end
+    end
+    
+    -- Restore original path if no success
+    package.path = originalPath
+    return false
+end
+
+-- Setup paths
+setupLuaPath()
+
 local DamageCalculator = require("game-logic.battle.damage-calculator")
 local TurnProcessor = require("game-logic.battle.turn-processor")
 local BattleRNG = require("game-logic.rng.battle-rng")
