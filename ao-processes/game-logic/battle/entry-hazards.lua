@@ -431,13 +431,13 @@ function EntryHazards.calculateStealthRockEffectiveness(pokemon)
     local secondaryType = pokemon.species.type2
     
     -- Calculate effectiveness against Rock-type moves
-    if primaryType and TypeChart.getEffectiveness then
-        local primaryEff = TypeChart.getEffectiveness(Enums.PokemonType.ROCK, primaryType)
+    if primaryType and TypeChart.getTypeDamageMultiplier then
+        local primaryEff = TypeChart.getTypeDamageMultiplier(Enums.PokemonType.ROCK, primaryType)
         effectiveness = effectiveness * primaryEff
     end
     
-    if secondaryType and TypeChart.getEffectiveness then
-        local secondaryEff = TypeChart.getEffectiveness(Enums.PokemonType.ROCK, secondaryType)
+    if secondaryType and TypeChart.getTypeDamageMultiplier then
+        local secondaryEff = TypeChart.getTypeDamageMultiplier(Enums.PokemonType.ROCK, secondaryType)
         effectiveness = effectiveness * secondaryEff
     end
     
@@ -465,26 +465,22 @@ function EntryHazards.checkHazardImmunity(pokemon, hazardType, config)
         return result
     end
     
-    -- Ground-based hazard immunity
-    if config.affectedByFlying or config.affectedByLevitate then
-        -- Flying type immunity
-        if EntryHazards.hasType(pokemon, Enums.PokemonType.FLYING) then
-            result.immune = true
-            return result
-        end
-        
-        -- Levitate ability immunity
-        if pokemon.ability == Enums.AbilityId.LEVITATE then
-            result.immune = true
-            return result
-        end
-        
-        -- Air Balloon item immunity
-        if pokemon.item == Enums.ItemId.AIR_BALLOON then
-            result.immune = true
-            table.insert(result.messages, pokemon.name .. " floats in the air with its Air Balloon!")
-            return result
-        end
+    -- Ground-based hazard immunity (only for hazards affected by Flying/Levitate)
+    if config.affectedByFlying and EntryHazards.hasType(pokemon, Enums.PokemonType.FLYING) then
+        result.immune = true
+        return result
+    end
+    
+    if config.affectedByLevitate and pokemon.ability == Enums.AbilityId.LEVITATE then
+        result.immune = true
+        return result
+    end
+    
+    -- Air Balloon item immunity (affects same hazards as Levitate)
+    if config.affectedByLevitate and pokemon.item == Enums.ItemId.AIR_BALLOON then
+        result.immune = true
+        table.insert(result.messages, pokemon.name .. " floats in the air with its Air Balloon!")
+        return result
     end
     
     -- Toxic Spikes specific immunities

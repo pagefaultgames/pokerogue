@@ -236,7 +236,7 @@ function SwitchInEffects.getEntryHazardEffects(battleState, pokemon, position)
     end
     
     -- Spikes
-    if hazards.spikes > 0 then
+    if hazards.spikes and hazards.spikes > 0 then
         table.insert(effects, {
             type = SwitchInEffects.EffectType.ENTRY_HAZARDS,
             hazardType = "SPIKES",
@@ -247,7 +247,7 @@ function SwitchInEffects.getEntryHazardEffects(battleState, pokemon, position)
     end
     
     -- Toxic Spikes
-    if hazards.toxicSpikes > 0 then
+    if hazards.toxicSpikes and hazards.toxicSpikes > 0 then
         table.insert(effects, {
             type = SwitchInEffects.EffectType.ENTRY_HAZARDS,
             hazardType = "TOXIC_SPIKES",
@@ -357,7 +357,29 @@ end
 -- @return: Entry hazard processing result
 function SwitchInEffects.processEntryHazardEffect(battleState, pokemon, effect)
     -- Delegate to comprehensive EntryHazards module
-    return EntryHazards.processHazardEffects(battleState, pokemon)
+    local hazardResult = EntryHazards.processHazardEffects(battleState, pokemon)
+    
+    if not hazardResult or not hazardResult.success then
+        return nil
+    end
+    
+    -- Convert EntryHazards result format to SwitchInEffects format
+    local result = {
+        type = "entry_hazards",
+        pokemon = pokemon.id,
+        damage = hazardResult.damageTaken or 0,
+        messages = hazardResult.messages or {},
+        statusChange = nil,
+        statStageChanges = hazardResult.statChanges or {},
+        hazardEffects = hazardResult.effects or {}
+    }
+    
+    -- Add status changes if any
+    if hazardResult.statusChanges and #hazardResult.statusChanges > 0 then
+        result.statusChange = hazardResult.statusChanges[1] -- Take the first status change
+    end
+    
+    return result
 end
 
 -- Process ability activation effects

@@ -137,7 +137,7 @@ function TestSetup.createStandardPokemon(options)
     local types = options.types or {0}  -- Normal type default
     local level = options.level or 50
     local hp = options.hp or 150
-    local ability = options.ability or nil
+    local ability = options.ability or 1 -- Default to ability ID 1 (not Magic Guard)
     local moves = options.moves or {}
     
     return {
@@ -171,6 +171,17 @@ function TestSetup.createStandardPokemon(options)
         statusTurns = nil,
         fainted = false
     }
+end
+
+-- Wrapper for positional arguments (for backwards compatibility with existing tests)
+function TestSetup.createStandardPokemonPositional(name, species, level, types, moves)
+    return TestSetup.createStandardPokemon({
+        name = name,
+        species = species,
+        level = level,
+        types = types,
+        moves = moves
+    })
 end
 
 -- Test Enums for integration tests

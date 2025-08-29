@@ -2123,8 +2123,8 @@ function MoveEffects.executeMove(battleState, attacker, moveData, target)
         end
     end
     
-    -- Check accuracy for moves that can miss
-    if moveData.accuracy and moveData.accuracy < 100 then
+    -- Check accuracy for moves that can miss (negative accuracy means never misses)
+    if moveData.accuracy and moveData.accuracy >= 0 and moveData.accuracy < 100 then
         local accuracyRoll = BattleRNG.randomInt(1, 100)
         if accuracyRoll > moveData.accuracy then
             result.missed = true
@@ -2213,12 +2213,16 @@ function MoveEffects.executeMove(battleState, attacker, moveData, target)
         local statTarget = actualTarget
         -- Check for explicit stat change target or fallback to move target
         local statChangeTarget = (moveData.effects and moveData.effects.stat_change_target) or moveData.stat_change_target
-        if moveData.target == Enums.MoveTarget.USER or statChangeTarget == "self" then
+        if moveData.target == Enums.MoveTarget.USER or statChangeTarget == "self" or statChanges.user then
             statTarget = attacker
         end
         
         if statTarget and statTarget.battleData and statTarget.battleData.statStages then
             for stat, change in pairs(statChanges) do
+                -- Skip metadata fields like 'user', 'target', etc.
+                if stat == "user" or stat == "target" or type(change) ~= "number" then
+                    goto continue
+                end
                 local statChangeResult = MoveEffects.applyStatStageChange(
                     battleState.battleId,
                     statTarget.id,
@@ -2256,6 +2260,7 @@ function MoveEffects.executeMove(battleState, attacker, moveData, target)
                         change = change
                     })
                 end
+                ::continue::
             end
         end
     end

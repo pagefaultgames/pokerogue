@@ -18,7 +18,16 @@ local mockBattleState = nil
 
 -- Use standardized test utilities
 local createCompleteBattleState = TestSetup.createStandardBattleState
-local createBattlePokemon = TestSetup.createStandardPokemon
+-- Wrapper that handles both positional and options calling patterns
+local function createBattlePokemon(nameOrOptions, species, level, types, moves)
+    if type(nameOrOptions) == "table" then
+        -- Called with options object
+        return TestSetup.createStandardPokemon(nameOrOptions)
+    else
+        -- Called with positional arguments
+        return TestSetup.createStandardPokemonPositional(nameOrOptions, species, level, types, moves)
+    end
+end
 local TestEnums = TestSetup.TestEnums
 
 -- Test runner utilities
