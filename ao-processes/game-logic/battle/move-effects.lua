@@ -23,6 +23,38 @@ MoveEffects.StatusEffect = {
 -- Alias for test compatibility
 MoveEffects.STATUS_EFFECTS = MoveEffects.StatusEffect
 
+-- Apply status effect function for test compatibility
+function MoveEffects.applyStatusEffect(target, statusEffect, battleEnv, source)
+    -- Debug: print received parameters
+    print("DEBUG applyStatusEffect called with:", target and target.id or "nil", statusEffect, type(statusEffect))
+    
+    -- Check type immunity
+    if target.types then
+        for _, typeId in ipairs(target.types) do
+            -- Fire types are immune to burn
+            if typeId == 9 and statusEffect == MoveEffects.StatusEffect.BURN then
+                return false, "Fire types are immune to burn status"
+            end
+            -- Electric types are immune to paralysis
+            if typeId == 12 and statusEffect == MoveEffects.StatusEffect.PARALYSIS then
+                return false, "Electric types are immune to paralysis"
+            end
+            -- Ice types are immune to freeze
+            if typeId == 15 and statusEffect == MoveEffects.StatusEffect.FREEZE then
+                return false, "Ice types are immune to freeze"
+            end
+            -- Poison types are immune to poison
+            if (typeId == 3 or typeId == 4) and statusEffect == MoveEffects.StatusEffect.POISON then
+                return false, "Poison types are immune to poison"
+            end
+        end
+    end
+    
+    -- Apply status effect if not immune
+    target.status = statusEffect
+    return true, "Status effect applied successfully"
+end
+
 -- Status effect durations and properties
 MoveEffects.StatusEffectData = {
     [MoveEffects.StatusEffect.POISON] = {
@@ -2178,6 +2210,24 @@ function MoveEffects.executeMove(battleState, attacker, moveData, target)
                 
                 if statChangeResult then
                     statTarget.battleData.statStages[stat] = (statTarget.battleData.statStages[stat] or 0) + change
+                    
+                    -- Also update battleStats array for test compatibility
+                    if statTarget.battleStats then
+                        local statIndex = nil
+                        if stat == "attack" then statIndex = 0
+                        elseif stat == "defense" then statIndex = 1
+                        elseif stat == "spAttack" then statIndex = 2
+                        elseif stat == "spDefense" then statIndex = 3
+                        elseif stat == "speed" then statIndex = 4
+                        elseif stat == "accuracy" then statIndex = 5
+                        elseif stat == "evasion" then statIndex = 6
+                        end
+                        
+                        if statIndex then
+                            statTarget.battleStats[statIndex] = (statTarget.battleStats[statIndex] or 0) + change
+                        end
+                    end
+                    
                     table.insert(result.effects, {
                         type = "stat_change",
                         target = statTarget,

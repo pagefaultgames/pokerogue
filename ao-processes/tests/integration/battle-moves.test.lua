@@ -136,6 +136,17 @@ local function createBattlePokemon(id, species, level, moves, stats)
             [5] = 0, -- ACC
             [6] = 0  -- EVA
         },
+        battleData = {
+            statStages = {
+                attack = 0,
+                defense = 0,
+                spAttack = 0,
+                spDefense = 0,
+                speed = 0,
+                accuracy = 0,
+                evasion = 0
+            }
+        },
         side = 0
     }
 end
