@@ -20,6 +20,9 @@ MoveEffects.StatusEffect = {
     TOXIC = 7
 }
 
+-- Alias for test compatibility
+MoveEffects.STATUS_EFFECTS = MoveEffects.StatusEffect
+
 -- Status effect durations and properties
 MoveEffects.StatusEffectData = {
     [MoveEffects.StatusEffect.POISON] = {
@@ -2106,14 +2109,24 @@ function MoveEffects.executeMove(battleState, attacker, moveData, target)
         
         -- Apply damage to target
         if actualTarget and result.damage > 0 then
-            actualTarget.currentHP = math.max(0, actualTarget.currentHP - result.damage)
-            if actualTarget.currentHP <= 0 then
-                actualTarget.fainted = true
-                table.insert(result.effects, {
-                    type = "faint",
-                    target = actualTarget,
-                    pokemon_id = actualTarget.id
-                })
+            -- Support both currentHP and hp field names for compatibility
+            local currentHP = actualTarget.currentHP or actualTarget.hp
+            if currentHP then
+                local newHP = math.max(0, currentHP - result.damage)
+                if actualTarget.currentHP then
+                    actualTarget.currentHP = newHP
+                else
+                    actualTarget.hp = newHP
+                end
+                
+                if newHP <= 0 then
+                    actualTarget.fainted = true
+                    table.insert(result.effects, {
+                        type = "faint",
+                        target = actualTarget,
+                        pokemon_id = actualTarget.id
+                    })
+                end
             end
         end
     end
@@ -2185,23 +2198,37 @@ function MoveEffects.executeMove(battleState, attacker, moveData, target)
             if numerator and denominator then
                 healingAmount = math.floor((attacker.stats.hp * tonumber(numerator)) / tonumber(denominator))
             elseif moveData.healing == "full" then
-                healingAmount = attacker.stats.hp - attacker.currentHP
+                local currentHP = attacker.currentHP or attacker.hp
+                local maxHP = attacker.stats.hp or attacker.stats.maxHp or attacker.maxHp
+                healingAmount = maxHP - currentHP
             end
         elseif type(moveData.healing) == "number" then
             healingAmount = moveData.healing
         end
         
         if healingAmount > 0 then
-            local oldHP = attacker.currentHP
-            attacker.currentHP = math.min(attacker.stats.hp, attacker.currentHP + healingAmount)
-            local actualHealing = attacker.currentHP - oldHP
-            
-            if actualHealing > 0 then
-                table.insert(result.effects, {
-                    type = "healing",
-                    target = attacker,
-                    amount = actualHealing
-                })
+            -- Support both currentHP and hp field names for compatibility
+            local currentHP = attacker.currentHP or attacker.hp
+            local maxHP = attacker.stats.hp or attacker.stats.maxHp or attacker.maxHp
+            if currentHP and maxHP then
+                local oldHP = currentHP
+                local newHP = math.min(maxHP, currentHP + healingAmount)
+                
+                if attacker.currentHP then
+                    attacker.currentHP = newHP
+                else
+                    attacker.hp = newHP
+                end
+                
+                local actualHealing = newHP - oldHP
+                
+                if actualHealing > 0 then
+                    table.insert(result.effects, {
+                        type = "healing",
+                        target = attacker,
+                        amount = actualHealing
+                    })
+                end
             end
         end
     end
@@ -2257,20 +2284,30 @@ function MoveEffects.executeMove(battleState, attacker, moveData, target)
         end
         
         if recoilAmount > 0 then
-            attacker.currentHP = math.max(0, attacker.currentHP - recoilAmount)
-            table.insert(result.effects, {
-                type = "recoil",
-                target = attacker,
-                amount = recoilAmount
-            })
-            
-            if attacker.currentHP <= 0 then
-                attacker.fainted = true
+            -- Support both currentHP and hp field names for compatibility
+            local currentHP = attacker.currentHP or attacker.hp
+            if currentHP then
+                local newHP = math.max(0, currentHP - recoilAmount)
+                if attacker.currentHP then
+                    attacker.currentHP = newHP
+                else
+                    attacker.hp = newHP
+                end
+                
                 table.insert(result.effects, {
-                    type = "faint",
+                    type = "recoil",
                     target = attacker,
-                    pokemon_id = attacker.id
+                    amount = recoilAmount
                 })
+                
+                if newHP <= 0 then
+                    attacker.fainted = true
+                    table.insert(result.effects, {
+                        type = "faint",
+                        target = attacker,
+                        pokemon_id = attacker.id
+                    })
+                end
             end
         end
     end
