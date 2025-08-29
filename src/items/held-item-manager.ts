@@ -14,18 +14,17 @@ import {
   type HeldItemSpecs,
   isHeldItemSpecs,
 } from "#items/held-item-data-types";
-import { getTypedKeys } from "#utils/common";
 
 export class HeldItemManager {
   // TODO: There should be a way of making these private...
   public heldItems: HeldItemDataMap;
 
   constructor() {
-    this.heldItems = {};
+    this.heldItems = new Map();
   }
 
   getItemSpecs(id: HeldItemId): HeldItemSpecs | undefined {
-    const item = this.heldItems[id];
+    const item = this.heldItems.get(id);
     if (item) {
       const itemSpecs: HeldItemSpecs = {
         ...item,
@@ -38,7 +37,7 @@ export class HeldItemManager {
 
   generateHeldItemConfiguration(restrictedIds?: HeldItemId[]): HeldItemConfiguration {
     const config: HeldItemConfiguration = [];
-    for (const [id, item] of this.getHeldItemEntries()) {
+    for (const [id, item] of this.heldItems.entries()) {
       // TODO: `in` breaks with arrays
       if (item && (!restrictedIds || id in restrictedIds)) {
         const specs: HeldItemSpecs = { ...item, id };
@@ -50,7 +49,7 @@ export class HeldItemManager {
 
   generateSaveData(): HeldItemSaveData {
     const saveData: HeldItemSaveData = [];
-    for (const [id, item] of this.getHeldItemEntries()) {
+    for (const [id, item] of this.heldItems.entries()) {
       if (item) {
         const specs: HeldItemSpecs = { ...item, id };
         saveData.push(specs);
@@ -60,11 +59,7 @@ export class HeldItemManager {
   }
 
   getHeldItems(): HeldItemId[] {
-    return getTypedKeys(this.heldItems);
-  }
-
-  private getHeldItemEntries(): [HeldItemId, HeldItemSpecs][] {
-    return Object.entries(this.heldItems) as unknown as [HeldItemId, HeldItemSpecs][];
+    return Array.from(this.heldItems.keys());
   }
 
   getTransferableHeldItems(): HeldItemId[] {
@@ -83,7 +78,7 @@ export class HeldItemManager {
     if (isCategoryId(itemType)) {
       return this.getHeldItems().some(id => isItemInCategory(id, itemType as HeldItemCategoryId));
     }
-    return itemType in this.heldItems;
+    return this.heldItems.has(itemType as HeldItemId);
   }
 
   hasTransferableItem(itemType: HeldItemId | HeldItemCategoryId): boolean {
@@ -92,35 +87,35 @@ export class HeldItemManager {
         id => isItemInCategory(id, itemType as HeldItemCategoryId) && allHeldItems[id].isTransferable,
       );
     }
-    return itemType in this.heldItems && allHeldItems[itemType].isTransferable;
+    return this.heldItems.has(itemType as HeldItemId) && allHeldItems[itemType as HeldItemId].isTransferable;
   }
 
   // TODO: Consider renaming?
   getStack(itemType: HeldItemId): number {
-    const item = this.heldItems[itemType];
+    const item = this.heldItems.get(itemType);
     return item?.stack ?? 0;
   }
 
   // Use for tests if necessary to go over stack limit
   // TODO: Do we need this? We can just use overrides
   setStack(itemType: HeldItemId, stack: number): void {
-    const item = this.heldItems[itemType];
+    const item = this.heldItems.get(itemType);
     if (item) {
       item.stack = stack;
     }
   }
 
   isMaxStack(itemType: HeldItemId): boolean {
-    const item = this.heldItems[itemType];
+    const item = this.heldItems.get(itemType);
     return item ? item.stack >= allHeldItems[itemType].getMaxStackCount() : false;
   }
 
   overrideItems(newItems: HeldItemDataMap) {
     this.heldItems = newItems;
     // The following is to allow randomly generated item configs to have stack 0
-    for (const [item, properties] of this.getHeldItemEntries()) {
+    for (const [item, properties] of this.heldItems.entries()) {
       if (!properties || properties.stack <= 0) {
-        delete this.heldItems[item];
+        this.heldItems.delete(item);
       }
     }
   }
@@ -131,7 +126,7 @@ export class HeldItemManager {
     }
 
     const maxStack = allHeldItems[itemType].getMaxStackCount();
-    const item = this.heldItems[itemType];
+    const item = this.heldItems.get(itemType);
 
     if (item) {
       // TODO: We may want an error message of some kind instead
@@ -140,53 +135,56 @@ export class HeldItemManager {
         return true;
       }
     } else {
-      this.heldItems[itemType] = { stack: Math.min(addStack, maxStack) };
+      this.heldItems.set(itemType, { stack: Math.min(addStack, maxStack) });
       return true;
     }
+
     return false;
   }
 
   addItemWithSpecs(itemSpecs: HeldItemSpecs): boolean {
     const id = itemSpecs.id;
     const maxStack = allHeldItems[id].getMaxStackCount();
-    const item = this.heldItems[id];
+    const existing = this.heldItems.get(id);
 
-    const tempStack = item?.stack ?? 0;
+    const tempStack = existing?.stack ?? 0;
 
-    this.heldItems[id] = itemSpecs;
-    this.heldItems[id].stack = Math.min(itemSpecs.stack + tempStack, maxStack);
+    this.heldItems.set(id, {
+      ...itemSpecs,
+      stack: Math.min(itemSpecs.stack + tempStack, maxStack),
+    });
 
     return true;
   }
 
   remove(itemType: HeldItemId, removeStack = 1, all = false) {
-    const item = this.heldItems[itemType];
+    const item = this.heldItems.get(itemType);
 
     if (item) {
       item.stack -= removeStack;
 
       if (all || item.stack <= 0) {
-        // TODO: Delete is bad for performance
-        delete this.heldItems[itemType];
+        this.heldItems.delete(itemType);
       }
     }
   }
 
   filterRequestedItems(requestedItems: (HeldItemCategoryId | HeldItemId)[], transferableOnly = true, exclude = false) {
     const currentItems = transferableOnly ? this.getTransferableHeldItems() : this.getHeldItems();
+
     return currentItems.filter(it => !exclude && isItemInRequested(it, requestedItems));
   }
 
   getHeldItemCount(): number {
     let total = 0;
-    for (const properties of Object.values(this.heldItems)) {
-      total += properties?.stack ?? 0;
+    for (const specs of this.heldItems.values()) {
+      total += specs?.stack ?? 0;
     }
     return total;
   }
 
   hasActiveFormChangeItem(id: FormChangeItemId): boolean {
-    const item = this.heldItems[id];
+    const item = this.heldItems.get(id);
     if (item) {
       return !!item.active;
     }
@@ -201,13 +199,13 @@ export class HeldItemManager {
   }
 
   toggleActive(id: FormChangeItemId) {
-    const item = this.heldItems[id];
+    const item = this.heldItems.get(id);
     if (item) {
       item.active = !item?.active;
     }
   }
 
   clearItems() {
-    this.heldItems = {};
+    this.heldItems.clear();
   }
 }
