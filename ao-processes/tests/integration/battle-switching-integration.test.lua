@@ -3,6 +3,70 @@
 -- Validates switching effects on battle progression and Pokemon participation
 -- Tests multi-turn switching scenarios with state persistence
 
+-- Setup module paths for standalone execution
+local function setupLuaPath()
+    local originalPath = package.path
+    
+    -- Try multiple path setups for different execution contexts
+    local pathConfigs = {
+        -- From integration/ directory
+        {
+            "../framework/?.lua",
+            "../framework/?/init.lua",
+            "../../?.lua",
+            "../../?/init.lua", 
+            "../../data/?.lua",
+            "../../data/?/init.lua",
+            "../../game-logic/?.lua", 
+            "../../game-logic/?/init.lua",
+            "../../handlers/?.lua",
+            "../../handlers/?/init.lua",
+            "../?.lua",
+            "../?/init.lua"
+        }
+    }
+    
+    -- Try each path configuration
+    for _, paths in ipairs(pathConfigs) do
+        local newPath = originalPath
+        for _, path in ipairs(paths) do
+            newPath = newPath .. ";" .. path
+        end
+        package.path = newPath
+        
+        -- Test if we can load the test framework
+        local success, testFramework = pcall(require, "framework.test-framework-enhanced")
+        if success then
+            return testFramework
+        end
+    end
+    
+    -- Fallback: restore original path and create simple framework
+    package.path = originalPath
+    print("Warning: Could not load enhanced test framework, using simple framework")
+    return {
+        createTestSuite = function() return {} end,
+        runTest = function(name, func) 
+            local success, result = pcall(func)
+            if success then
+                print("✅ " .. name)
+                return true
+            else
+                print("❌ " .. name .. " - " .. tostring(result))
+                return false
+            end
+        end,
+        assert = function(condition, message)
+            if not condition then
+                error(message or "Assertion failed")
+            end
+        end
+    }
+end
+
+-- Setup paths and load test framework
+local TestFramework = setupLuaPath()
+
 local BattleStateManager = require("game-logic.battle.battle-state-manager")
 local PokemonSwitchSystem = require("game-logic.battle.pokemon-switch-system")
 local SwitchInEffects = require("game-logic.battle.switch-in-effects")
