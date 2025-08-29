@@ -8,6 +8,7 @@ local SwitchInEffects = {}
 -- Load dependencies
 local BattleStateManager = require("game-logic.battle.battle-state-manager")
 local BattleRNG = require("game-logic.rng.battle-rng")
+local EntryHazards = require("game-logic.battle.entry-hazards")
 
 -- Optional dependencies  
 local BattleMessages = nil
@@ -355,79 +356,8 @@ end
 -- @param effect: Entry hazard effect
 -- @return: Entry hazard processing result
 function SwitchInEffects.processEntryHazardEffect(battleState, pokemon, effect)
-    local result = {
-        type = effect.hazardType,
-        pokemon = pokemon.id,
-        messages = {},
-        damage = 0,
-        statusChange = nil
-    }
-    
-    -- Check for immunity (Flying type, Levitate ability, Magic Guard)
-    local immune = SwitchInEffects.checkEntryHazardImmunity(pokemon, effect)
-    if immune.immune then
-        result.messages = immune.messages or {}
-        return result
-    end
-    
-    if effect.hazardType == "STEALTH_ROCK" then
-        -- Calculate Stealth Rock damage with type effectiveness
-        local baseDamage = pokemon.maxHP / 8
-        local typeEffectiveness = SwitchInEffects.getStealthRockEffectiveness(pokemon)
-        local damage = math.max(1, math.floor(baseDamage * typeEffectiveness))
-        
-        pokemon.currentHP = math.max(0, pokemon.currentHP - damage)
-        result.damage = damage
-        result.messages = {
-            "Pointed stones dug into " .. pokemon.name .. "!",
-            pokemon.name .. " lost " .. damage .. " HP!"
-        }
-        
-    elseif effect.hazardType == "SPIKES" then
-        if not effect.data.blockedByFlying or not SwitchInEffects.isGrounded(pokemon) then
-            local damage = math.max(1, math.floor(pokemon.maxHP * effect.layers / 8))
-            pokemon.currentHP = math.max(0, pokemon.currentHP - damage)
-            result.damage = damage
-            result.messages = {
-                pokemon.name .. " was hurt by the spikes!",
-                pokemon.name .. " lost " .. damage .. " HP!"
-            }
-        end
-        
-    elseif effect.hazardType == "TOXIC_SPIKES" then
-        -- Check if Pokemon absorbs Toxic Spikes (Poison types)
-        if SwitchInEffects.isPoisonType(pokemon) and effect.data.absorbedByPoison then
-            -- Remove one layer of Toxic Spikes
-            local side = pokemon.battleData.side
-            if battleState.battleConditions.entryHazards[side] then
-                battleState.battleConditions.entryHazards[side].toxicSpikes = 
-                    math.max(0, battleState.battleConditions.entryHazards[side].toxicSpikes - 1)
-            end
-            result.messages = {pokemon.name .. " absorbed the Toxic Spikes!"}
-        else
-            -- Apply poison status
-            if not effect.data.blockedByFlying or not SwitchInEffects.isGrounded(pokemon) then
-                local poisonType = effect.layers >= 2 and "badly_poison" or "poison"
-                if not pokemon.status then
-                    pokemon.status = poisonType
-                    pokemon.statusTurns = poisonType == "badly_poison" and 1 or nil
-                    result.statusChange = {status = poisonType, applied = true}
-                    result.messages = {pokemon.name .. " was " .. (poisonType == "badly_poison" and "badly " or "") .. "poisoned!"}
-                end
-            end
-        end
-        
-    elseif effect.hazardType == "STICKY_WEB" then
-        if not effect.data.blockedByFlying or not SwitchInEffects.isGrounded(pokemon) then
-            if pokemon.battleData.statStages then
-                pokemon.battleData.statStages.spe = math.max(-6, pokemon.battleData.statStages.spe - 1)
-                result.statStageChanges = {spe = -1}
-                result.messages = {pokemon.name .. " was caught in a Sticky Web!"}
-            end
-        end
-    end
-    
-    return result
+    -- Delegate to comprehensive EntryHazards module
+    return EntryHazards.processHazardEffects(battleState, pokemon)
 end
 
 -- Process ability activation effects

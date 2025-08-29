@@ -25,6 +25,10 @@ local WeatherAbilities = require("game-logic.battle.weather-abilities")
 local TerrainEffects = require("game-logic.battle.terrain-effects")
 local TerrainAbilities = require("game-logic.battle.terrain-abilities")
 
+-- Entry hazards system dependencies
+local EntryHazards = require("game-logic.battle.entry-hazards")
+local SwitchInEffects = require("game-logic.battle.switch-in-effects")
+
 -- Turn phase enumeration
 TurnProcessor.TurnPhase = {
     COMMAND_SELECTION = 1,

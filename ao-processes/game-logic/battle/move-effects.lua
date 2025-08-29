@@ -2425,6 +2425,170 @@ function MoveEffects.executeMove(battleState, attacker, moveData, target)
         result.terrainChanged = true
     end
     
+    -- Handle entry hazard effects from move
+    local EntryHazards = require("game-logic.battle.entry-hazards")
+    if moveData.effects and battleState then
+        local hazardSet = false
+        local hazardMessages = {}
+        
+        -- Determine target side (opposite side from attacker)
+        local targetSide = "enemy"
+        if attacker.battleData and attacker.battleData.side then
+            targetSide = attacker.battleData.side == "player" and "enemy" or "player"
+        end
+        
+        -- Stealth Rock
+        if moveData.effects.stealth_rock then
+            local hazardResult = EntryHazards.setHazard(battleState, EntryHazards.HazardType.STEALTH_ROCK, targetSide)
+            if hazardResult.success and hazardResult.layersAdded > 0 then
+                hazardSet = true
+                for _, message in ipairs(hazardResult.messages) do
+                    table.insert(hazardMessages, message)
+                end
+                table.insert(result.effects, {
+                    type = "entry_hazard",
+                    hazardType = "stealth_rock",
+                    targetSide = targetSide,
+                    layersAdded = hazardResult.layersAdded
+                })
+            else
+                table.insert(hazardMessages, "But it failed!")
+            end
+        end
+        
+        -- Spikes
+        if moveData.effects.spikes then
+            local hazardResult = EntryHazards.setHazard(battleState, EntryHazards.HazardType.SPIKES, targetSide)
+            if hazardResult.success and hazardResult.layersAdded > 0 then
+                hazardSet = true
+                for _, message in ipairs(hazardResult.messages) do
+                    table.insert(hazardMessages, message)
+                end
+                table.insert(result.effects, {
+                    type = "entry_hazard",
+                    hazardType = "spikes",
+                    targetSide = targetSide,
+                    layersAdded = hazardResult.layersAdded
+                })
+            else
+                table.insert(hazardMessages, "But it failed!")
+            end
+        end
+        
+        -- Toxic Spikes
+        if moveData.effects.toxic_spikes then
+            local hazardResult = EntryHazards.setHazard(battleState, EntryHazards.HazardType.TOXIC_SPIKES, targetSide)
+            if hazardResult.success and hazardResult.layersAdded > 0 then
+                hazardSet = true
+                for _, message in ipairs(hazardResult.messages) do
+                    table.insert(hazardMessages, message)
+                end
+                table.insert(result.effects, {
+                    type = "entry_hazard",
+                    hazardType = "toxic_spikes",
+                    targetSide = targetSide,
+                    layersAdded = hazardResult.layersAdded
+                })
+            else
+                table.insert(hazardMessages, "But it failed!")
+            end
+        end
+        
+        -- Sticky Web
+        if moveData.effects.sticky_web then
+            local hazardResult = EntryHazards.setHazard(battleState, EntryHazards.HazardType.STICKY_WEB, targetSide)
+            if hazardResult.success and hazardResult.layersAdded > 0 then
+                hazardSet = true
+                for _, message in ipairs(hazardResult.messages) do
+                    table.insert(hazardMessages, message)
+                end
+                table.insert(result.effects, {
+                    type = "entry_hazard",
+                    hazardType = "sticky_web",
+                    targetSide = targetSide,
+                    layersAdded = hazardResult.layersAdded
+                })
+            else
+                table.insert(hazardMessages, "But it failed!")
+            end
+        end
+        
+        -- Add hazard messages to result
+        if hazardSet and #hazardMessages > 0 then
+            for _, message in ipairs(hazardMessages) do
+                table.insert(result.messages, message)
+            end
+        end
+        
+        -- Handle hazard removal effects
+        local hazardRemoved = false
+        local removalMessages = {}
+        
+        -- Rapid Spin - removes hazards from user's side
+        if moveData.effects.rapid_spin then
+            local userSide = "player"
+            if attacker.battleData and attacker.battleData.side then
+                userSide = attacker.battleData.side
+            end
+            
+            local removalResult = EntryHazards.removeHazards(battleState, userSide)
+            if removalResult.success and #removalResult.removed > 0 then
+                hazardRemoved = true
+                for _, message in ipairs(removalResult.messages) do
+                    table.insert(removalMessages, message)
+                end
+                table.insert(result.effects, {
+                    type = "hazard_removal",
+                    removalType = "rapid_spin",
+                    targetSide = userSide,
+                    hazardsRemoved = removalResult.removed
+                })
+            end
+        end
+        
+        -- Defog - removes hazards from both sides (like in battle-conditions.lua Story 5.4)
+        if moveData.effects.defog then
+            -- Remove from both sides
+            local userSide = "player"
+            if attacker.battleData and attacker.battleData.side then
+                userSide = attacker.battleData.side
+            end
+            local opponentSide = userSide == "player" and "enemy" or "player"
+            
+            local userRemoval = EntryHazards.removeHazards(battleState, userSide)
+            local opponentRemoval = EntryHazards.removeHazards(battleState, opponentSide)
+            
+            local totalRemoved = {}
+            if userRemoval.success then
+                for _, hazard in ipairs(userRemoval.removed) do
+                    table.insert(totalRemoved, hazard)
+                end
+            end
+            if opponentRemoval.success then
+                for _, hazard in ipairs(opponentRemoval.removed) do
+                    table.insert(totalRemoved, hazard)
+                end
+            end
+            
+            if #totalRemoved > 0 then
+                hazardRemoved = true
+                table.insert(removalMessages, "The wind cleared away entry hazards!")
+                table.insert(result.effects, {
+                    type = "hazard_removal",
+                    removalType = "defog",
+                    hazardsRemoved = totalRemoved
+                })
+            end
+        end
+        
+        -- Add removal messages to result
+        if hazardRemoved and #removalMessages > 0 then
+            for _, message in ipairs(removalMessages) do
+                table.insert(result.messages, message)
+            end
+        end
+    end
+    
     return result
 end
 

@@ -35,6 +35,10 @@ local BattleConditions = require("game-logic.battle.battle-conditions")
 local TerrainEffects = require("game-logic.battle.terrain-effects")
 local TerrainAbilities = require("game-logic.battle.terrain-abilities")
 
+-- Entry hazards system dependencies  
+local EntryHazards = require("game-logic.battle.entry-hazards")
+local SwitchInEffects = require("game-logic.battle.switch-in-effects")
+
 -- Battle session storage (in-memory for this implementation)
 local BattleSessions = {}
 
