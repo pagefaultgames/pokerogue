@@ -212,6 +212,7 @@ Enums.Stat = {
     SPATK = 3,
     SPDEF = 4,
     SPD = 5,
+    SPEED = 5,  -- Alias for SPD for compatibility
     ACC = 6,    -- Battle-only stat (accuracy)
     EVA = 7     -- Battle-only stat (evasion)
 }
@@ -318,8 +319,13 @@ Enums.AbilityId = {
     AIR_LOCK = 76,
     SOLAR_POWER = 77,
     SIMPLE = 78,
-    CONTRARY = 79
-    
+    CONTRARY = 79,
+    ICE_BODY = 80,
+    SAND_RUSH = 81,
+    SNOW_CLOAK = 82,
+    OVERCOAT = 83,
+    SNOW_WARNING = 84
+
     -- Note: Full ability list would continue with all abilities through modern generations
 }
 
@@ -675,6 +681,27 @@ function Enums.isValidSpecies(speciesId)
     return Enums.SpeciesName[speciesId] ~= nil
 end
 
+-- Get weather type name from weather ID
+-- @param weatherId: Weather ID number
+-- @return: Weather type name string or "UNKNOWN"
+function Enums.getWeatherTypeName(weatherId)
+    return Enums.WeatherTypeName[weatherId] or "UNKNOWN"
+end
+
+-- Get weather type ID from weather name
+-- @param weatherName: Weather type name string
+-- @return: Weather type ID number or nil if not found
+function Enums.getWeatherTypeId(weatherName)
+    return Enums.WeatherType[string.upper(weatherName)]
+end
+
+-- Check if a weather type is valid
+-- @param weatherId: Weather type ID to validate
+-- @return: Boolean indicating if weather type exists
+function Enums.isValidWeatherType(weatherId)
+    return Enums.WeatherTypeName[weatherId] ~= nil
+end
+
 -- Get all valid type IDs
 -- @return: Array of all valid type IDs
 function Enums.getAllTypeIds()
@@ -697,6 +724,36 @@ function Enums.getAllSpeciesIds()
     end
     table.sort(species)
     return species
+end
+
+-- Get all valid weather type IDs
+-- @return: Array of all valid weather type IDs
+function Enums.getAllWeatherTypeIds()
+    local weatherTypes = {}
+    for _, weatherId in pairs(Enums.WeatherType) do
+        table.insert(weatherTypes, weatherId)
+    end
+    table.sort(weatherTypes)
+    return weatherTypes
+end
+
+-- Weather Type Enumeration (for weather system)
+Enums.WeatherType = {
+    NONE = 0,
+    SUNNY = 1,
+    RAIN = 2,
+    SANDSTORM = 3,
+    HAIL = 4,
+    FOG = 5,
+    HEAVY_RAIN = 6,
+    HARSH_SUN = 7,
+    STRONG_WINDS = 8
+}
+
+-- Weather Type Name Lookup
+Enums.WeatherTypeName = {}
+for weatherName, weatherId in pairs(Enums.WeatherType) do
+    Enums.WeatherTypeName[weatherId] = weatherName
 end
 
 -- Gender enumeration for Pokemon
