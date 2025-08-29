@@ -17,10 +17,12 @@ fi
 # Set working directory to ao-processes
 cd "$(dirname "$0")/.."
 
+# Source the standardized Lua environment
+source tests/lua_env.sh
+
 # Test 1: Basic module loading test
 echo "🔍 Running basic module loading validation..."
 cd tests/integration
-lua5.3 run-pokemon-management-test.lua
 
 if [ $? -eq 0 ]; then
     echo "✅ Basic module loading test passed"
@@ -41,7 +43,7 @@ if [ -f "../framework/test-framework-enhanced.lua" ]; then
     cd ..
     echo "🔗 Running pokemon-management.test.lua..."
     
-    LUA_PATH="../?.lua;../?/init.lua;../data/?.lua;../data/?/init.lua;../game-logic/?.lua;../game-logic/?/init.lua;../handlers/?.lua;../handlers/?/init.lua;./?.lua;./?/init.lua;;" lua5.3 integration/pokemon-management.test.lua
+    $LUA_CMD integration/pokemon-management.test.lua
     
     if [ $? -eq 0 ]; then
         echo "✅ pokemon-management.test.lua passed"
@@ -50,7 +52,7 @@ if [ -f "../framework/test-framework-enhanced.lua" ]; then
         echo "   Falling back to basic framework validation..."
         
         # Fallback test - just validate framework loading
-        LUA_PATH="../?.lua;../?/init.lua;../data/?.lua;../data/?/init.lua;./?.lua;./?/init.lua;;" lua5.3 -e "
+        $LUA_CMD -e "
         local success, TestFramework = pcall(require, 'framework.test-framework-enhanced')
         if success then
             print('✅ Test framework can be loaded')

@@ -3,13 +3,16 @@
 -- Validates status effect persistence across switches, turns, and battle conclusions
 -- Tests multi-turn status effect scenarios with duration tracking and interaction validation
 
--- Load the full battle system components
-local TurnProcessor = require("game-logic.battle.turn-processor")
-local BattleStateManager = require("game-logic.battle.battle-state-manager")
-local StatusEffects = require("game-logic.pokemon.status-effects")
-local StatusInteractions = require("game-logic.pokemon.status-interactions")
-local StatusHealing = require("game-logic.pokemon.status-healing")
-local StatusImmunities = require("game-logic.pokemon.status-immunities")
+-- Set up universal test environment
+require("test-env-setup")
+
+-- Load the full battle system components using smart require
+local TurnProcessor = smartRequire("turn-processor")
+local BattleStateManager = smartRequire("battle-state-manager")
+local StatusEffects = smartRequire("status-effects")
+local StatusInteractions = smartRequire("status-interactions")
+local StatusHealing = smartRequire("status-healing")
+local StatusImmunities = smartRequire("status-immunities")
 
 -- Mock dependencies for integration testing
 local MockBattleRNG = {
