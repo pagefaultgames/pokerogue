@@ -57,6 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       lua-version: ${{ steps.set-lua-version.outputs.lua-version }}
+      lua-cmd: ${{ steps.set-lua-cmd.outputs.lua-cmd }}
       test-strategy: ${{ steps.determine-strategy.outputs.strategy }}
       ao-ready: ${{ steps.check-ao-ready.outputs.ready }}
     
@@ -66,6 +67,12 @@ jobs:
         with:
           fetch-depth: 0 # Full history for trend analysis
           submodules: recursive # Include aolite submodule
+          
+      - name: Initialize Submodules
+        run: |
+          git submodule init
+          git submodule update --recursive
+          echo "✅ Submodules initialized and updated"
       
       - name: Check AO Process Readiness
         id: check-ao-ready
@@ -95,6 +102,30 @@ jobs:
         id: set-lua-version
         run: |
           echo "lua-version=${{ env.LUA_VERSION }}" >> $GITHUB_OUTPUT
+          
+      - name: Determine and Set Lua Command
+        id: set-lua-cmd
+        run: |
+          # Determine which lua command to use and verify version - prioritize lua5.3
+          if command -v lua5.3 >/dev/null 2>&1; then
+            LUA_CMD="lua5.3"
+            echo "Found lua5.3 command"
+            echo "LUA_CMD=lua5.3" >> $GITHUB_ENV
+          elif command -v lua >/dev/null 2>&1; then
+            LUA_CMD="lua"
+            LUA_VERSION_CHECK=$(lua -v 2>&1 | head -1)
+            echo "Found lua command: $LUA_VERSION_CHECK"
+            if [[ ! "$LUA_VERSION_CHECK" =~ "Lua 5.3" ]]; then
+              echo "⚠️ Warning: Expected Lua 5.3 but found: $LUA_VERSION_CHECK"
+            fi
+            echo "LUA_CMD=lua" >> $GITHUB_ENV
+          else
+            echo "❌ No Lua interpreter found"
+            exit 1
+          fi
+          
+          echo "lua-cmd=$LUA_CMD" >> $GITHUB_OUTPUT
+          echo "✅ Lua command determined: $LUA_CMD"
       
       - name: Setup LuaRocks
         uses: leafo/gh-actions-luarocks@v4
@@ -152,22 +183,7 @@ jobs:
           
           # Test basic aolite loading
           echo "🧪 Testing aolite loading..."
-          
-          # Determine which lua command to use and verify version
-          if command -v lua >/dev/null 2>&1; then
-            LUA_CMD="lua"
-            LUA_VERSION_CHECK=$(lua -v 2>&1 | head -1)
-            echo "Found lua command: $LUA_VERSION_CHECK"
-            if [[ ! "$LUA_VERSION_CHECK" =~ "Lua 5.3" ]]; then
-              echo "⚠️ Warning: Expected Lua 5.3 but found: $LUA_VERSION_CHECK"
-            fi
-          elif command -v lua5.3 >/dev/null 2>&1; then
-            LUA_CMD="lua5.3"
-            echo "Found lua5.3 command"
-          else
-            echo "❌ No Lua interpreter found"
-            exit 1
-          fi
+          echo "🔧 Using Lua command: $LUA_CMD"
           
           $LUA_CMD -e "
             -- Try to load aolite from lua/ directory
@@ -204,18 +220,7 @@ jobs:
       - name: Validate Test Environment
         run: |
           echo "🔍 Validating aolite test environment..."
-          
-          # Check which lua command is available
-          if command -v lua5.3 >/dev/null 2>&1; then
-            LUA_CMD="lua5.3"
-          elif command -v lua >/dev/null 2>&1; then
-            LUA_CMD="lua"
-          else
-            echo "❌ No Lua interpreter found"
-            exit 1
-          fi
-          
-          echo "Using Lua command: $LUA_CMD"
+          echo "🔧 Using Lua command: $LUA_CMD"
           $LUA_CMD -v
           echo "✅ Lua environment ready"
           
@@ -299,6 +304,10 @@ jobs:
         uses: leafo/gh-actions-lua@v10
         with:
           luaVersion: ${{ needs.setup.outputs.lua-version }}
+          
+      - name: Set Environment Variables
+        run: |
+          echo "LUA_CMD=${{ needs.setup.outputs.lua-cmd }}" >> $GITHUB_ENV
       
       - name: Restore Dependencies Cache
         uses: actions/cache@v4
@@ -324,21 +333,8 @@ jobs:
           # Run our working AO process unit tests directly
           cd ao-processes/tests/unit
           
-          # Determine which lua command to use and verify version
-          if command -v lua >/dev/null 2>&1; then
-            LUA_CMD="lua"
-            LUA_VERSION_CHECK=$(lua -v 2>&1 | head -1)
-            echo "Found lua command: $LUA_VERSION_CHECK"
-            if [[ ! "$LUA_VERSION_CHECK" =~ "Lua 5.3" ]]; then
-              echo "⚠️ Warning: Expected Lua 5.3 but found: $LUA_VERSION_CHECK"
-            fi
-          elif command -v lua5.3 >/dev/null 2>&1; then
-            LUA_CMD="lua5.3"
-            echo "Found lua5.3 command"
-          else
-            echo "❌ No Lua interpreter found"
-            exit 1
-          fi
+          # Use Lua command from environment (determined in setup job)
+          echo "🔧 Using Lua command: $LUA_CMD"
           
           echo "🧪 Running AO Process Unit Tests (Group ${{ matrix.test-group }})"
           
@@ -460,6 +456,10 @@ jobs:
         uses: leafo/gh-actions-lua@v10
         with:
           luaVersion: ${{ needs.setup.outputs.lua-version }}
+          
+      - name: Set Environment Variables
+        run: |
+          echo "LUA_CMD=${{ needs.setup.outputs.lua-cmd }}" >> $GITHUB_ENV
       
       - name: Setup Node.js (for TypeScript comparison)
         uses: actions/setup-node@v4
@@ -495,21 +495,8 @@ jobs:
           
           cd ao-processes/tests/integration
           
-          # Determine which lua command to use and verify version
-          if command -v lua >/dev/null 2>&1; then
-            LUA_CMD="lua"
-            LUA_VERSION_CHECK=$(lua -v 2>&1 | head -1)
-            echo "Found lua command: $LUA_VERSION_CHECK"
-            if [[ ! "$LUA_VERSION_CHECK" =~ "Lua 5.3" ]]; then
-              echo "⚠️ Warning: Expected Lua 5.3 but found: $LUA_VERSION_CHECK"
-            fi
-          elif command -v lua5.3 >/dev/null 2>&1; then
-            LUA_CMD="lua5.3"
-            echo "Found lua5.3 command"
-          else
-            echo "❌ No Lua interpreter found"
-            exit 1
-          fi
+          # Use Lua command from environment (determined in setup job)
+          echo "🔧 Using Lua command: $LUA_CMD"
           
           # Run integration tests if they exist
           TOTAL_FAILURES=0
@@ -590,21 +577,26 @@ jobs:
         run: |
           echo "⚖️ Running Parity Tests: ${{ matrix.parity-suite }}"
           
-          # Determine which lua command to use and verify version
-          if command -v lua >/dev/null 2>&1; then
+          # Determine which lua command to use and verify version - prioritize lua5.3
+          if command -v lua5.3 >/dev/null 2>&1; then
+            LUA_CMD="lua5.3"
+            echo "Found lua5.3 command"
+            echo "LUA_CMD=lua5.3" >> $GITHUB_ENV
+          elif command -v lua >/dev/null 2>&1; then
             LUA_CMD="lua"
             LUA_VERSION_CHECK=$(lua -v 2>&1 | head -1)
             echo "Found lua command: $LUA_VERSION_CHECK"
             if [[ ! "$LUA_VERSION_CHECK" =~ "Lua 5.3" ]]; then
               echo "⚠️ Warning: Expected Lua 5.3 but found: $LUA_VERSION_CHECK"
             fi
-          elif command -v lua5.3 >/dev/null 2>&1; then
-            LUA_CMD="lua5.3"
-            echo "Found lua5.3 command"
+            echo "LUA_CMD=lua" >> $GITHUB_ENV
           else
             echo "❌ No Lua interpreter found"
             exit 1
           fi
+          
+          # Export for current step
+          export LUA_CMD
           
           $LUA_CMD -e "
             package.path = package.path .. ';./?.lua;./ao-processes/?.lua;./parity-testing/?.lua'
@@ -642,7 +634,7 @@ jobs:
         run: |
           echo "📊 Generating comprehensive parity report..."
           
-          lua -e "
+          $LUA_CMD -e "
             package.path = package.path .. ';./?.lua;./parity-testing/?.lua'
             local ParityReporter = require('parity-testing.reports.parity-reporter')
             
@@ -703,21 +695,26 @@ jobs:
         run: |
           echo "🏃 Running Performance Tests and Benchmarks"
           
-          # Determine which lua command to use and verify version
-          if command -v lua >/dev/null 2>&1; then
+          # Determine which lua command to use and verify version - prioritize lua5.3
+          if command -v lua5.3 >/dev/null 2>&1; then
+            LUA_CMD="lua5.3"
+            echo "Found lua5.3 command"
+            echo "LUA_CMD=lua5.3" >> $GITHUB_ENV
+          elif command -v lua >/dev/null 2>&1; then
             LUA_CMD="lua"
             LUA_VERSION_CHECK=$(lua -v 2>&1 | head -1)
             echo "Found lua command: $LUA_VERSION_CHECK"
             if [[ ! "$LUA_VERSION_CHECK" =~ "Lua 5.3" ]]; then
               echo "⚠️ Warning: Expected Lua 5.3 but found: $LUA_VERSION_CHECK"
             fi
-          elif command -v lua5.3 >/dev/null 2>&1; then
-            LUA_CMD="lua5.3"
-            echo "Found lua5.3 command"
+            echo "LUA_CMD=lua" >> $GITHUB_ENV
           else
             echo "❌ No Lua interpreter found"
             exit 1
           fi
+          
+          # Export for current step
+          export LUA_CMD
           
           $LUA_CMD -e "
             package.path = package.path .. ';./?.lua;./ao-processes/?.lua;./parity-testing/?.lua'
@@ -780,6 +777,10 @@ jobs:
         uses: leafo/gh-actions-lua@v10
         with:
           luaVersion: ${{ needs.setup.outputs.lua-version }}
+          
+      - name: Set Environment Variables
+        run: |
+          echo "LUA_CMD=${{ needs.setup.outputs.lua-cmd }}" >> $GITHUB_ENV
       
       - name: Aggregate Test Results
         run: |
@@ -788,14 +789,9 @@ jobs:
           # Count total artifacts and test results
           find ./all-test-results -name "*.log" -o -name "*.json" -o -name "*.html" | wc -l
           
-          # Generate summary
-          # Determine which lua command to use
-          if command -v lua5.3 >/dev/null 2>&1; then
-            LUA_CMD="lua5.3"
-          elif command -v lua >/dev/null 2>&1; then
-            LUA_CMD="lua"
-          else
-            echo "❌ No Lua interpreter found, using shell summary instead"
+          # Generate summary using Lua command from environment
+          if [ -z "$LUA_CMD" ]; then
+            echo "❌ No Lua command available, using shell summary instead"
             echo "=== Test Suite Execution Summary ==="
             echo "Jobs completed:"
             echo "  Unit Tests: ${{ needs.unit-tests.result }}"
@@ -810,6 +806,8 @@ jobs:
             echo "✅ Overall Status: SUCCESS"
             exit 0
           fi
+          
+          echo "🔧 Using Lua command: $LUA_CMD"
           
           $LUA_CMD -e "
             print('=== Test Suite Execution Summary ===')
