@@ -11,8 +11,8 @@ Test Coverage:
 --]]
 
 -- Import test framework
-local TestFramework = require("tests.framework.test-framework-enhanced")
-local TestUtilities = require("tests.framework.handler-test-utilities")
+local TestFramework = require("framework.test-framework-enhanced")
+local TestUtilities = require("framework.handler-test-utilities")
 
 -- Import modules under test
 local PokemonManager = require("game-logic.pokemon.pokemon-manager")

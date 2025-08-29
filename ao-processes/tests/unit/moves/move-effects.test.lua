@@ -4,7 +4,7 @@
 -- Ensures TypeScript parity and proper battle integration
 
 -- Load test framework and dependencies
-local TestFramework = require("tests.framework.test-framework-enhanced")
+local TestFramework = require("framework.test-framework-enhanced")
 local MoveEffects = require("game-logic.battle.move-effects")
 local MoveDatabase = require("data.moves.move-database")
 

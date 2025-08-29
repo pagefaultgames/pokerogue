@@ -3,7 +3,7 @@
 -- Tests move data validation, lookup performance, and integration compatibility
 
 -- Load test framework and dependencies
-local TestFramework = require("tests.framework.test-framework-enhanced")
+local TestFramework = require("framework.test-framework-enhanced")
 local MoveDatabase = require("data.moves.move-database")
 local MoveIndexes = require("data.moves.move-indexes")
 local Enums = require("data.constants.enums")

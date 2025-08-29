@@ -2,9 +2,11 @@
 -- Tests weather-related ability activations, stat modifications, and interactions
 -- Tests Solar Power, Rain Dish, Ice Body, Sand Rush, Swift Swim, Chlorophyll
 
+-- Set up universal test environment  
+require("test-env-setup")
+
 -- Load testing framework
-package.path = "../?.lua;../?/init.lua;../data/?.lua;../data/?/init.lua;./?.lua;./?/init.lua;;" .. package.path
-local TestFramework = require("tests.test-framework")
+local TestFramework = require("framework.test-framework-enhanced")
 local WeatherAbilities = require("game-logic.battle.weather-abilities")
 local BattleConditions = require("game-logic.battle.battle-conditions")
 local Enums = require("data.constants.enums")

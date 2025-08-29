@@ -4,7 +4,7 @@
 -- Ensures TypeScript parity for exact critical hit mechanics
 
 -- Load test framework and dependencies
-local TestFramework = require("tests.framework.test-framework-enhanced")
+local TestFramework = require("framework.test-framework-enhanced")
 local CriticalHitCalculator = require("game-logic.battle.critical-hit-calculator")
 local MoveDatabase = require("data.moves.move-database")
 

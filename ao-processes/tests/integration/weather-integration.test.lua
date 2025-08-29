@@ -2,9 +2,11 @@
 -- Tests complete weather workflows within battle message processing system
 -- Tests weather persistence across turns and battle conclusions
 
+-- Set up universal test environment
+require("test-env-setup")
+
 -- Load testing framework
-package.path = "../?.lua;../?/init.lua;../data/?.lua;../data/?/init.lua;./?.lua;./?/init.lua;;" .. package.path
-local TestFramework = require("tests.test-framework")
+local TestFramework = require("framework.test-framework-enhanced")
 local WeatherEffects = require("game-logic.battle.weather-effects")
 local WeatherAbilities = require("game-logic.battle.weather-abilities")
 local TurnProcessor = require("game-logic.battle.turn-processor")
