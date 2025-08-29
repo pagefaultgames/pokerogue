@@ -583,7 +583,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
       }
 
       const reward = options[this.cursor].rewardOption.type;
-      reward && ui.showText(reward.getDescription());
+      reward && ui.showText(reward.description);
       if (isTmReward(reward)) {
         // prepare the move overlay to be shown with the toggle
         this.moveInfoOverlay.show(allMoves[reward.moveId]);
@@ -810,7 +810,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
     this.add(this.itemContainer);
 
     const getItem = () => {
-      const item = globalScene.add.sprite(0, 0, "items", this.rewardOption.type?.getIcon());
+      const item = globalScene.add.sprite(0, 0, "items", this.rewardOption.type.iconName);
       return item;
     };
 

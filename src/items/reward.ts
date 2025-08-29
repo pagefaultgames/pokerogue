@@ -116,11 +116,11 @@ export abstract class Reward {
   }
 
   // TODO: These should be getters
-  getDescription(): string {
+  get description(): string {
     return i18next.t(`${this.localeKey}.description`);
   }
 
-  getIcon(): string {
+  get iconName(): string {
     return this.iconImage;
   }
 
@@ -170,7 +170,7 @@ export class AddPokeballReward extends Reward {
     });
   }
 
-  getDescription(): string {
+  get description(): string {
     return i18next.t("modifierType:ModifierType.AddPokeballModifierType.description", {
       modifierCount: this.count,
       pokeballName: getPokeballName(this.pokeballType),
@@ -215,7 +215,7 @@ export class AddVoucherReward extends Reward {
     });
   }
 
-  getDescription(): string {
+  get description(): string {
     return i18next.t("modifierType:ModifierType.AddVoucherConsumableType.description", {
       modifierCount: this.count,
       voucherTypeName: getVoucherTypeName(this.voucherType),
@@ -253,7 +253,7 @@ export class AddMoneyReward extends Reward {
     this.id = id;
   }
 
-  getDescription(): string {
+  get description(): string {
     const moneyAmount = new NumberHolder(globalScene.getWaveMoneyAmount(this.moneyMultiplier));
     globalScene.applyPlayerItems(TrainerItemEffect.MONEY_MULTIPLIER, { numberHolder: moneyAmount });
     const formattedMoney = formatMoney(globalScene.moneyFormat, moneyAmount.value);
@@ -355,11 +355,11 @@ export class HeldItemReward extends PokemonReward {
     return allHeldItems[this.itemId].name;
   }
 
-  getDescription(): string {
+  get description(): string {
     return allHeldItems[this.itemId].description;
   }
 
-  getIcon(): string {
+  get iconName(): string {
     return allHeldItems[this.itemId].iconName;
   }
 
@@ -380,11 +380,11 @@ export class TrainerItemReward extends Reward {
     return allTrainerItems[this.itemId].name;
   }
 
-  getDescription(): string {
+  get description(): string {
     return allTrainerItems[this.itemId].description;
   }
 
-  getIcon(): string {
+  get iconName(): string {
     return allTrainerItems[this.itemId].iconName;
   }
 
@@ -428,7 +428,7 @@ export class ChangeTeraTypeReward extends PokemonReward {
     });
   }
 
-  getDescription(): string {
+  get description(): string {
     return i18next.t("modifierType:ModifierType.ChangeTeraTypeModifierType.description", {
       teraType: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.teraType])}`),
     });
@@ -535,7 +535,7 @@ export class PokemonHpRestoreReward extends PokemonReward {
     this.id = id;
   }
 
-  getDescription(): string {
+  get description(): string {
     return this.restorePoints
       ? i18next.t("modifierType:ModifierType.PokemonHpRestoreModifierType.description", {
           restorePoints: this.restorePoints,
@@ -580,7 +580,7 @@ export class PokemonReviveReward extends PokemonHpRestoreReward {
     };
   }
 
-  getDescription(): string {
+  get description(): string {
     return i18next.t("modifierType:ModifierType.PokemonReviveModifierType.description", {
       restorePercent: this.restorePercent,
     });
@@ -617,7 +617,7 @@ export class PokemonStatusHealReward extends PokemonReward {
     this.id = RewardId.FULL_HEAL;
   }
 
-  getDescription(): string {
+  get description(): string {
     return i18next.t("modifierType:ModifierType.PokemonStatusHealModifierType.description");
   }
 
@@ -671,7 +671,7 @@ export class PokemonPpRestoreReward extends PokemonMoveReward {
     this.restorePoints = restorePoints;
   }
 
-  getDescription(): string {
+  get description(): string {
     return this.restorePoints > -1
       ? i18next.t("modifierType:ModifierType.PokemonPpRestoreModifierType.description", {
           restorePoints: this.restorePoints,
@@ -715,7 +715,7 @@ export class PokemonAllMovePpRestoreReward extends PokemonReward {
     this.id = id;
   }
 
-  getDescription(): string {
+  get description(): string {
     return this.restorePoints > -1
       ? i18next.t("modifierType:ModifierType.PokemonAllMovePpRestoreModifierType.description", {
           restorePoints: this.restorePoints,
@@ -762,7 +762,7 @@ export class PokemonPpUpReward extends PokemonMoveReward {
     this.upPoints = upPoints;
   }
 
-  getDescription(): string {
+  get description(): string {
     return i18next.t("modifierType:ModifierType.PokemonPpUpModifierType.description", { upPoints: this.upPoints });
   }
 
@@ -812,7 +812,7 @@ export class PokemonNatureChangeReward extends PokemonReward {
     });
   }
 
-  getDescription(): string {
+  get description(): string {
     return i18next.t("modifierType:ModifierType.PokemonNatureChangeModifierType.description", {
       natureName: getNatureName(this.nature, true, true, true),
     });
@@ -959,7 +959,7 @@ export class PokemonLevelIncrementReward extends PokemonReward {
     this.id = RewardId.RARE_CANDY;
   }
 
-  getDescription(): string {
+  get description(): string {
     let levels = 1;
     const candyJarStack = globalScene.trainerItems.getStack(TrainerItemId.CANDY_JAR);
     levels += candyJarStack;
@@ -980,7 +980,7 @@ export class PokemonLevelIncrementReward extends PokemonReward {
 export class AllPokemonLevelIncrementReward extends Reward {
   id = RewardId.RARER_CANDY;
 
-  getDescription(): string {
+  get description(): string {
     let levels = 1;
     const candyJarStack = globalScene.trainerItems.getStack(TrainerItemId.CANDY_JAR);
     levels += candyJarStack;
@@ -1039,7 +1039,7 @@ export class TmReward extends PokemonReward {
     });
   }
 
-  getDescription(): string {
+  get description(): string {
     return i18next.t(
       globalScene.enableMoveInfo
         ? "modifierType:ModifierType.TmModifierTypeWithInfo.description"
@@ -1099,7 +1099,7 @@ export class EvolutionItemReward extends PokemonReward {
     return i18next.t(`modifierType:EvolutionItem.${EvolutionItem[this.evolutionItem]}`);
   }
 
-  getDescription(): string {
+  get description(): string {
     return i18next.t("modifierType:ModifierType.EvolutionItemModifierType.description");
   }
 
@@ -1168,7 +1168,7 @@ export class FormChangeItemReward extends PokemonReward {
     return allHeldItems[this.formChangeItem].name;
   }
 
-  getDescription(): string {
+  get description(): string {
     return allHeldItems[this.formChangeItem].description;
   }
 
@@ -1200,7 +1200,7 @@ export class FusePokemonReward extends PokemonReward {
     this.id = RewardId.DNA_SPLICERS;
   }
 
-  getDescription(): string {
+  get description(): string {
     return i18next.t("modifierType:ModifierType.FusePokemonModifierType.description");
   }
 
