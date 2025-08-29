@@ -804,7 +804,7 @@ export class BattleScene extends SceneBase {
    * @returns An array of {@linkcode Pokemon}, as described above.
    */
   public getField(activeOnly = false): Pokemon[] {
-    const ret = new Array(4).fill(null);
+    const ret: Pokemon[] = new Array(4).fill(null);
     const playerField = this.getPlayerField();
     const enemyField = this.getEnemyField();
     ret.splice(0, playerField.length, ...playerField);
