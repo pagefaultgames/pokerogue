@@ -4224,7 +4224,7 @@ const anticipationCondition: AbAttrCondition = (pokemon: Pokemon) =>
         pokemon.getAttackTypeEffectiveness(move.type, {
           source: opponent,
           ignoreStrongWinds: true,
-          move: move,
+          move,
         }),
       );
 
