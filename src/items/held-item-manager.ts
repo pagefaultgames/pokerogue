@@ -37,7 +37,7 @@ export class HeldItemManager {
 
   generateHeldItemConfiguration(restrictedIds?: HeldItemId[]): HeldItemConfiguration {
     const config: HeldItemConfiguration = [];
-    for (const [id, item] of this.heldItems.entries()) {
+    for (const [id, item] of this.heldItems) {
       // TODO: `in` breaks with arrays
       if (item && (!restrictedIds || id in restrictedIds)) {
         const specs: HeldItemSpecs = { ...item, id };
@@ -49,7 +49,7 @@ export class HeldItemManager {
 
   generateSaveData(): HeldItemSaveData {
     const saveData: HeldItemSaveData = [];
-    for (const [id, item] of this.heldItems.entries()) {
+    for (const [id, item] of this.heldItems) {
       if (item) {
         const specs: HeldItemSpecs = { ...item, id };
         saveData.push(specs);
@@ -78,7 +78,7 @@ export class HeldItemManager {
     if (isCategoryId(itemType)) {
       return this.getHeldItems().some(id => isItemInCategory(id, itemType as HeldItemCategoryId));
     }
-    return this.heldItems.has(itemType as HeldItemId);
+    return this.heldItems.has(itemType);
   }
 
   hasTransferableItem(itemType: HeldItemId | HeldItemCategoryId): boolean {
@@ -113,7 +113,7 @@ export class HeldItemManager {
   overrideItems(newItems: HeldItemDataMap) {
     this.heldItems = newItems;
     // The following is to allow randomly generated item configs to have stack 0
-    for (const [item, properties] of this.heldItems.entries()) {
+    for (const [item, properties] of this.heldItems) {
       if (!properties || properties.stack <= 0) {
         this.heldItems.delete(item);
       }
