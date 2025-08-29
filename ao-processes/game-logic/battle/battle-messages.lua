@@ -100,13 +100,13 @@ local MessageTemplates = {
 -- Stat name mappings for message generation
 local StatNames = {
     [Enums.Stat.HP] = "HP",
-    [Enums.Stat.ATTACK] = "Attack",
-    [Enums.Stat.DEFENSE] = "Defense",
-    [Enums.Stat.SPECIAL_ATTACK] = "Sp. Atk",
-    [Enums.Stat.SPECIAL_DEFENSE] = "Sp. Def",
-    [Enums.Stat.SPEED] = "Speed",
-    [Enums.Stat.ACCURACY] = "accuracy",
-    [Enums.Stat.EVASION] = "evasiveness"
+    [Enums.Stat.ATK] = "Attack",
+    [Enums.Stat.DEF] = "Defense",
+    [Enums.Stat.SPATK] = "Sp. Atk",
+    [Enums.Stat.SPDEF] = "Sp. Def",
+    [Enums.Stat.SPD] = "Speed",
+    [Enums.Stat.ACC] = "accuracy",
+    [Enums.Stat.EVA] = "evasiveness"
 }
 
 -- Initialize message system

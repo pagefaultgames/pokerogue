@@ -73,8 +73,10 @@ function PriorityCalculator.calculateEffectiveSpeed(pokemon, battleConditions)
     
     -- Apply stat stage modifiers
     local speedStage = 0
-    if pokemon.battleStats and pokemon.battleStats.speed then
-        speedStage = pokemon.battleStats.speed
+    if pokemon.battleStats and pokemon.battleStats[4] then
+        speedStage = pokemon.battleStats[4]  -- Index 4 is speed in battleStats array
+    elseif pokemon.battleData and pokemon.battleData.statStages and pokemon.battleData.statStages.speed then
+        speedStage = pokemon.battleData.statStages.speed
     end
     
     -- Stat stage multipliers (matching TypeScript implementation exactly)
@@ -111,16 +113,59 @@ function PriorityCalculator.calculateEffectiveSpeed(pokemon, battleConditions)
         -- Other field effects can be added here
     end
     
-    -- Apply ability modifiers (placeholder for future ability integration)
+    -- Apply ability modifiers for speed-affecting abilities
     if pokemon.ability then
-        -- Speed-affecting abilities will be integrated here
-        -- Examples: Speed Boost, Chlorophyll, Swift Swim, etc.
+        -- Weather-based speed abilities
+        if battleConditions and battleConditions.weather then
+            if pokemon.ability == Enums.AbilityId.CHLOROPHYLL and 
+               (battleConditions.weather == 1 or battleConditions.weather == 8) then -- SUNNY or HARSH_SUN
+                effectiveSpeed = math.floor(effectiveSpeed * 2.0)
+            elseif pokemon.ability == Enums.AbilityId.SWIFT_SWIM and 
+                   (battleConditions.weather == 2 or battleConditions.weather == 7) then -- RAIN or HEAVY_RAIN
+                effectiveSpeed = math.floor(effectiveSpeed * 2.0)
+            elseif pokemon.ability == Enums.AbilityId.SAND_RUSH and 
+                   battleConditions.weather == 3 then -- SANDSTORM
+                effectiveSpeed = math.floor(effectiveSpeed * 2.0)
+            elseif pokemon.ability == Enums.AbilityId.SLUSH_RUSH and 
+                   (battleConditions.weather == 4 or battleConditions.weather == 5) then -- HAIL or SNOW
+                effectiveSpeed = math.floor(effectiveSpeed * 2.0)
+            end
+        end
+        
+        -- Other speed-affecting abilities
+        if pokemon.ability == Enums.AbilityId.SPEED_BOOST then
+            -- Speed Boost increases speed each turn (implemented in ability system)
+            -- The stat stage increase is already applied via battleStats
+        elseif pokemon.ability == Enums.AbilityId.QUICK_FEET and pokemon.status then
+            -- Quick Feet increases speed when statused (but not paralyzed effect)
+            effectiveSpeed = math.floor(effectiveSpeed * 1.5)
+        elseif pokemon.ability == Enums.AbilityId.UNBURDEN and pokemon.itemConsumed then
+            -- Unburden doubles speed when item is consumed
+            effectiveSpeed = math.floor(effectiveSpeed * 2.0)
+        end
     end
     
-    -- Apply item modifiers (placeholder for future item integration)
+    -- Apply item modifiers for speed-affecting items
     if pokemon.heldItem then
-        -- Speed-affecting items will be integrated here
-        -- Examples: Choice Scarf, Iron Ball, Power items, etc.
+        -- Choice Scarf boosts speed by 50%
+        if pokemon.heldItem == Enums.ItemId.CHOICE_SCARF then
+            effectiveSpeed = math.floor(effectiveSpeed * 1.5)
+        -- Iron Ball halves speed and grounds Pokemon
+        elseif pokemon.heldItem == Enums.ItemId.IRON_BALL then
+            effectiveSpeed = math.floor(effectiveSpeed * 0.5)
+        -- Quick Powder doubles speed for Ditto
+        elseif pokemon.heldItem == Enums.ItemId.QUICK_POWDER and 
+               pokemon.species == Enums.SpeciesId.DITTO then
+            effectiveSpeed = math.floor(effectiveSpeed * 2.0)
+        -- Power items reduce speed
+        elseif pokemon.heldItem == Enums.ItemId.POWER_WEIGHT or
+               pokemon.heldItem == Enums.ItemId.POWER_BRACER or
+               pokemon.heldItem == Enums.ItemId.POWER_BELT or
+               pokemon.heldItem == Enums.ItemId.POWER_LENS or
+               pokemon.heldItem == Enums.ItemId.POWER_BAND or
+               pokemon.heldItem == Enums.ItemId.POWER_ANKLET then
+            effectiveSpeed = math.max(1, effectiveSpeed - 50) -- Reduce speed by 50 (minimum 1)
+        end
     end
     
     return effectiveSpeed

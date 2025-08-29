@@ -118,8 +118,8 @@ local function createBattlePokemon(id, species, level, moves, stats)
         stats = stats or {
             attack = 110,
             defense = 90,
-            specialAttack = 100,
-            specialDefense = 95,
+            spAttack = 100,
+            spDefense = 95,
             speed = 120
         },
         types = {12}, -- Electric type for Pikachu
@@ -504,8 +504,12 @@ function BattleMovesIntegrationTests.runAllTests()
         local battleEnv = createBattleEnvironment()
         
         -- Create two Pokemon for a simple battle
-        local pikachu = createBattlePokemon("player_pikachu", "pikachu", 50, {85, 9}, {speed = 90})
-        local charmander = createBattlePokemon("ai_charmander", "charmander", 50, {52, 7}, {speed = 65})
+        local pikachu = createBattlePokemon("player_pikachu", "pikachu", 50, {85, 9}, {
+            attack = 110, defense = 90, spAttack = 100, spDefense = 95, speed = 90
+        })
+        local charmander = createBattlePokemon("ai_charmander", "charmander", 50, {52, 7}, {
+            attack = 82, defense = 78, spAttack = 60, spDefense = 65, speed = 65
+        })
         
         -- Simulate a battle turn
         print("=== Battle Scenario Simulation ===")

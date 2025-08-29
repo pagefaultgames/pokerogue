@@ -174,7 +174,7 @@ MoveEffects.TerrainType = {
 -- @param pokemonData: Pokemon data for immunity checking
 -- @param battleState: Current battle state for terrain/field effects
 -- @return: Boolean indicating success and effect details
-function MoveEffects.applyStatusEffect(battleId, targetId, statusEffect, duration, source, pokemonData, battleState)
+function MoveEffects.applyStatusEffectBattle(battleId, targetId, statusEffect, duration, source, pokemonData, battleState)
     -- Input validation
     if not battleId or not targetId or not statusEffect then
         return false, "Invalid parameters for status effect application"
@@ -398,7 +398,21 @@ function MoveEffects.applyStatStageChange(battleId, targetId, stat, stages, sour
         return false, "Stat stage change out of range (-6 to +6): " .. stages
     end
     
-    if not MoveEffects.StatStages[stat] then
+    -- Check if stat is valid (either numeric index or string name)
+    local validStats = {"attack", "defense", "spAttack", "spDefense", "speed", "accuracy", "evasion"}
+    local isValidStat = false
+    if type(stat) == "number" and MoveEffects.StatStages[stat] then
+        isValidStat = true
+    elseif type(stat) == "string" then
+        for _, validStat in ipairs(validStats) do
+            if stat == validStat then
+                isValidStat = true
+                break
+            end
+        end
+    end
+    
+    if not isValidStat then
         return false, "Invalid stat for stage change: " .. tostring(stat)
     end
     
@@ -441,7 +455,10 @@ function MoveEffects.applyStatStageChange(battleId, targetId, stat, stages, sour
     
     -- Check if change actually occurred
     if actualChange == 0 then
-        local statName = MoveEffects.StatStages[stat]
+        local statName = stat
+        if type(stat) == "number" then
+            statName = MoveEffects.StatStages[stat] or tostring(stat)
+        end
         if currentStage == 6 and finalStages > 0 then
             return false, statName .. " cannot be raised further"
         elseif currentStage == -6 and finalStages < 0 then
@@ -450,7 +467,11 @@ function MoveEffects.applyStatStageChange(battleId, targetId, stat, stages, sour
         return false, "No stat change occurred"
     end
     
-    local statName = MoveEffects.StatStages[stat]
+    -- Get stat name for display
+    local statName = stat
+    if type(stat) == "number" then
+        statName = MoveEffects.StatStages[stat] or tostring(stat)
+    end
     local multiplier = MoveEffects.StatStageMultipliers[newStage]
     
     local result = {
@@ -2167,7 +2188,7 @@ function MoveEffects.executeMove(battleState, attacker, moveData, target)
     if moveData.status_chance and moveData.status_effect and actualTarget then
         local statusRoll = BattleRNG.randomInt(1, 100)
         if statusRoll <= moveData.status_chance then
-            local statusApplied = MoveEffects.applyStatusEffect(
+            local statusApplied = MoveEffects.applyStatusEffectBattle(
                 battleState.battleId,
                 actualTarget.id,
                 moveData.status_effect,

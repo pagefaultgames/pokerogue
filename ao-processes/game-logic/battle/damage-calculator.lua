@@ -274,6 +274,18 @@ function DamageCalculator.calculateDamage(params)
         (defender.stats.defense or defender.stats.def) or 
         (defender.stats.spDefense or defender.stats.spdef)
     
+    -- Validate stats exist
+    if not attackStat then
+        error(string.format("Missing attack stat for %s move - attacker stats: %s", 
+            moveData.category == Enums.MoveCategory.PHYSICAL and "physical" or "special",
+            attacker.stats and "present" or "nil"))
+    end
+    if not defenseStat then
+        error(string.format("Missing defense stat for %s move - defender stats: %s", 
+            moveData.category == Enums.MoveCategory.PHYSICAL and "physical" or "special",
+            defender.stats and "present" or "nil"))
+    end
+    
     -- Apply stat stage modifications
     local attackStages = (attacker.battleData and attacker.battleData.statStages) and 
         (moveData.category == Enums.MoveCategory.PHYSICAL and 
