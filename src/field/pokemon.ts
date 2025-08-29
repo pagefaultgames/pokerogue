@@ -6916,7 +6916,7 @@ export class EnemyPokemon extends Pokemon {
       const leftoverStats = EFFECTIVE_STATS.filter((s: EffectiveStat) => this.getStatStage(s) < 6);
       const statWeights = leftoverStats.map((s: EffectiveStat) => this.getStat(s, false));
 
-      let boostedStat: EffectiveStat;
+      let boostedStat: EffectiveStat | undefined;
       const statThresholds: number[] = [];
       let totalWeight = 0;
 
@@ -6934,6 +6934,11 @@ export class EnemyPokemon extends Pokemon {
         }
       }
 
+      if (boostedStat === undefined) {
+        this.bossSegmentIndex--;
+        return;
+      }
+
       let stages = 1;
 
       // increase the boost if the boss has at least 3 segments and we passed last shield
@@ -6949,7 +6954,7 @@ export class EnemyPokemon extends Pokemon {
         "StatStageChangePhase",
         this.getBattlerIndex(),
         true,
-        [boostedStat!],
+        [boostedStat],
         stages,
         true,
         true,
