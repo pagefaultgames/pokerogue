@@ -470,4 +470,1866 @@ function BattleConditions.doesTerrainPreventStatus(statusEffect, terrainType, po
     return false
 end
 
+-- Process combined terrain and weather effects at end of turn
+-- @param battleId: Battle instance identifier
+-- @param weatherType: Current weather type
+-- @param terrainType: Current terrain type
+-- @param pokemonList: List of Pokemon to process
+-- @return: Combined effects results
+function BattleConditions.processCombinedEnvironmentalEffects(battleId, weatherType, terrainType, pokemonList)
+    local results = {
+        weather_damage = {},
+        terrain_healing = {},
+        combined_effects = {}
+    }
+    
+    -- Process weather damage first
+    local weatherDamage = BattleConditions.processWeatherDamage(battleId, weatherType, pokemonList)
+    results.weather_damage = weatherDamage
+    
+    -- Process terrain healing second
+    local terrainHealing = BattleConditions.processTerrainHealing(battleId, terrainType, pokemonList)
+    results.terrain_healing = terrainHealing
+    
+    -- Check for conflicts and precedence
+    for _, pokemon in ipairs(pokemonList) do
+        local pokemonId = pokemon.id
+        local weatherEffect = nil
+        local terrainEffect = nil
+        
+        -- Find weather effect for this Pokemon
+        for _, effect in ipairs(weatherDamage) do
+            if effect.pokemon_id == pokemonId then
+                weatherEffect = effect
+                break
+            end
+        end
+        
+        -- Find terrain effect for this Pokemon
+        for _, effect in ipairs(terrainHealing) do
+            if effect.pokemon_id == pokemonId then
+                terrainEffect = effect
+                break
+            end
+        end
+        
+        -- Handle combined effects (terrain healing vs weather damage)
+        if weatherEffect and terrainEffect then
+            local netEffect = terrainEffect.healing - weatherEffect.damage
+            table.insert(results.combined_effects, {
+                pokemon_id = pokemonId,
+                weather_damage = weatherEffect.damage,
+                terrain_healing = terrainEffect.healing,
+                net_effect = netEffect,
+                effect_type = netEffect > 0 and "heal" or "damage",
+                final_amount = math.abs(netEffect)
+            })
+        end
+    end
+    
+    return results
+end
+
+-- Check terrain-weather interaction conflicts
+-- @param weatherType: Current weather type
+-- @param terrainType: Current terrain type
+-- @return: Interaction information
+function BattleConditions.getTerrainWeatherInteractions(weatherType, terrainType)
+    local interactions = {
+        conflicts = {},
+        synergies = {},
+        precedence_rules = {}
+    }
+    
+    -- Terrain and weather can coexist, but some effects may interact
+    if weatherType ~= BattleConditions.WeatherType.NONE and terrainType ~= BattleConditions.TerrainType.NONE then
+        -- Grassy Terrain healing vs weather damage
+        if terrainType == BattleConditions.TerrainType.GRASSY then
+            if weatherType == BattleConditions.WeatherType.SANDSTORM or weatherType == BattleConditions.WeatherType.HAIL then
+                table.insert(interactions.conflicts, {
+                    type = "healing_vs_damage",
+                    description = "Grassy Terrain healing competes with weather damage",
+                    resolution = "Both effects apply, net result calculated"
+                })
+            end
+        end
+        
+        -- Electric Terrain with weather interactions (no direct conflicts)
+        if terrainType == BattleConditions.TerrainType.ELECTRIC then
+            table.insert(interactions.synergies, {
+                type = "electric_weather_neutral",
+                description = "Electric Terrain and weather effects are independent"
+            })
+        end
+    end
+    
+    return interactions
+end
+
+-- Get combined environmental move power modifier
+-- @param moveType: Type of the move
+-- @param moveData: Move data including name and properties
+-- @param weatherType: Current weather type
+-- @param terrainType: Current terrain type
+-- @param attackerGrounded: Whether attacker is grounded
+-- @return: Combined power multiplier
+function BattleConditions.getCombinedEnvironmentalMovePowerModifier(moveType, moveData, weatherType, terrainType, attackerGrounded)
+    local weatherModifier = BattleConditions.getWeatherMovePowerModifier(moveType, weatherType)
+    local terrainModifier = BattleConditions.getTerrainMovePowerModifier(moveType, terrainType, attackerGrounded)
+    
+    -- Weather and terrain modifiers multiply (they don't stack additively)
+    local combinedModifier = weatherModifier * terrainModifier
+    
+    -- Special case: Grassy Terrain reduces power of ground-based moves
+    local terrainData = BattleConditions.TerrainData[terrainType]
+    if terrainData and terrainData.move_power_reduction and moveData.name then
+        local moveName = string.lower(moveData.name)
+        if terrainData.move_power_reduction[moveName] then
+            combinedModifier = combinedModifier * terrainData.move_power_reduction[moveName]
+        end
+    end
+    
+    return combinedModifier
+end
+
+-- Check if environmental conditions block a move
+-- @param moveData: Move data including type and properties
+-- @param weatherType: Current weather type
+-- @param terrainType: Current terrain type
+-- @param targetGrounded: Whether target is grounded
+-- @return: Boolean indicating if move is blocked, reason string
+function BattleConditions.doEnvironmentalConditionsBlockMove(moveData, weatherType, terrainType, targetGrounded)
+    -- Check weather blocks first
+    if BattleConditions.doesWeatherBlockMove(moveData.type, weatherType) then
+        local weatherData = BattleConditions.WeatherData[weatherType]
+        return true, "Move blocked by " .. (weatherData and weatherData.name or "weather")
+    end
+    
+    -- Check terrain blocks second
+    if BattleConditions.doesTerrainBlockMove(moveData, terrainType, targetGrounded) then
+        local terrainData = BattleConditions.TerrainData[terrainType]
+        return true, "Move blocked by " .. (terrainData and terrainData.name or "terrain")
+    end
+    
+    return false, nil
+end
+
+-- Get environmental condition priority for field effect removal
+-- @param weatherType: Current weather type
+-- @param terrainType: Current terrain type
+-- @return: Priority information for moves like Defog
+function BattleConditions.getEnvironmentalRemovalPriority(weatherType, terrainType)
+    local priorities = {}
+    
+    -- Weather removal priority (some weather is harder to remove)
+    if weatherType ~= BattleConditions.WeatherType.NONE then
+        local weatherData = BattleConditions.WeatherData[weatherType]
+        local priority = (weatherData and weatherData.default_duration == -1) and "high" or "normal"
+        table.insert(priorities, {
+            condition = "weather",
+            type = weatherType,
+            priority = priority,
+            name = weatherData and weatherData.name or "Unknown Weather"
+        })
+    end
+    
+    -- Terrain removal priority
+    if terrainType ~= BattleConditions.TerrainType.NONE then
+        local terrainData = BattleConditions.TerrainData[terrainType]
+        table.insert(priorities, {
+            condition = "terrain",
+            type = terrainType,
+            priority = "normal",
+            name = terrainData and terrainData.name or "Unknown Terrain"
+        })
+    end
+    
+    return priorities
+end
+
+-- Environmental Effect Precedence System
+-- Complex interactions between weather, terrain, status effects, and abilities
+-- Implements proper game-accurate precedence rules for environmental effects
+
+-- Environmental effect processing order constants
+BattleConditions.EffectPrecedence = {
+    ABILITY_SUPPRESSION = 1,
+    WEATHER_EFFECTS = 2,
+    TERRAIN_EFFECTS = 3,
+    STATUS_EFFECTS = 4,
+    ENVIRONMENTAL_DAMAGE = 5,
+    ENVIRONMENTAL_HEALING = 6
+}
+
+-- Environmental interaction types
+BattleConditions.InteractionType = {
+    SUPPRESSION = "suppression",
+    STACKING = "stacking", 
+    REPLACEMENT = "replacement",
+    PRECEDENCE = "precedence"
+}
+
+-- Process all environmental effects with proper precedence
+-- @param battleId: Battle instance identifier
+-- @param pokemonList: List of all active Pokemon
+-- @param weatherType: Current weather type
+-- @param terrainType: Current terrain type
+-- @param activeAbilities: List of active abilities that may suppress effects
+-- @return: Processed environmental effects with proper precedence resolution
+function BattleConditions.processEnvironmentalEffectPrecedence(battleId, pokemonList, weatherType, terrainType, activeAbilities)
+    local results = {
+        suppressed_effects = {},
+        active_effects = {},
+        interaction_log = {},
+        final_effects = {}
+    }
+    
+    -- Step 1: Check ability suppression (highest precedence)
+    local weatherSuppressed, suppressingAbility = BattleConditions.checkAbilityWeatherSuppression(pokemonList, weatherType)
+    
+    if weatherSuppressed then
+        table.insert(results.suppressed_effects, {
+            effect_type = "weather",
+            weather_type = weatherType,
+            suppressed_by = suppressingAbility,
+            precedence_level = BattleConditions.EffectPrecedence.ABILITY_SUPPRESSION
+        })
+        weatherType = BattleConditions.WeatherType.NONE -- Suppress weather for processing
+    end
+    
+    -- Step 2: Process weather effects (if not suppressed)
+    if weatherType ~= BattleConditions.WeatherType.NONE then
+        local weatherEffects = BattleConditions.processWeatherEffectsWithPrecedence(battleId, pokemonList, weatherType)
+        for _, effect in ipairs(weatherEffects) do
+            effect.precedence_level = BattleConditions.EffectPrecedence.WEATHER_EFFECTS
+            table.insert(results.active_effects, effect)
+        end
+    end
+    
+    -- Step 3: Process terrain effects (terrain takes precedence over weather for grounded Pokemon)
+    if terrainType ~= BattleConditions.TerrainType.NONE then
+        local terrainEffects = BattleConditions.processTerrainEffectsWithPrecedence(battleId, pokemonList, terrainType, weatherType)
+        for _, effect in ipairs(terrainEffects) do
+            effect.precedence_level = BattleConditions.EffectPrecedence.TERRAIN_EFFECTS
+            table.insert(results.active_effects, effect)
+        end
+    end
+    
+    -- Step 4: Resolve conflicts and apply precedence rules
+    local finalEffects = BattleConditions.resolveEnvironmentalPrecedence(results.active_effects, pokemonList)
+    results.final_effects = finalEffects
+    
+    -- Step 5: Log interactions for debugging and notifications
+    results.interaction_log = BattleConditions.generateInteractionLog(results.suppressed_effects, results.active_effects, finalEffects)
+    
+    return results
+end
+
+-- Check if any abilities suppress weather effects
+-- @param pokemonList: List of active Pokemon
+-- @param weatherType: Current weather type
+-- @return: Boolean if suppressed, suppressing ability name
+function BattleConditions.checkAbilityWeatherSuppression(pokemonList, weatherType)
+    local WeatherAbilities = require("game-logic.battle.weather-abilities")
+    return WeatherAbilities.isWeatherSuppressed(pokemonList, weatherType)
+end
+
+-- Process weather effects with precedence tracking
+-- @param battleId: Battle instance identifier
+-- @param pokemonList: List of Pokemon to process
+-- @param weatherType: Current weather type
+-- @return: Weather effects with precedence information
+function BattleConditions.processWeatherEffectsWithPrecedence(battleId, pokemonList, weatherType)
+    local effects = {}
+    
+    -- Process weather damage
+    local weatherDamage = BattleConditions.processWeatherDamage(battleId, weatherType, pokemonList)
+    for _, damage in ipairs(weatherDamage) do
+        table.insert(effects, {
+            effect_type = "weather_damage",
+            pokemon_id = damage.pokemon_id,
+            damage = damage.damage,
+            weather = damage.weather,
+            timing = "end_of_turn",
+            priority = 3 -- Weather damage has medium priority
+        })
+    end
+    
+    -- Process weather-related ability effects
+    local WeatherAbilities = require("game-logic.battle.weather-abilities")
+    local abilityEffects = WeatherAbilities.processEndOfTurnAbilityEffects(pokemonList, weatherType)
+    for _, effect in ipairs(abilityEffects) do
+        table.insert(effects, {
+            effect_type = "weather_ability",
+            pokemon_id = effect.pokemon_id,
+            ability_name = effect.ability_name,
+            healing = effect.healing,
+            damage = effect.damage,
+            source = effect.source,
+            timing = "end_of_turn",
+            priority = 2 -- Ability effects have higher priority than weather damage
+        })
+    end
+    
+    return effects
+end
+
+-- Process terrain effects with precedence tracking
+-- @param battleId: Battle instance identifier
+-- @param pokemonList: List of Pokemon to process
+-- @param terrainType: Current terrain type
+-- @param weatherType: Current weather type (for interaction checks)
+-- @return: Terrain effects with precedence information
+function BattleConditions.processTerrainEffectsWithPrecedence(battleId, pokemonList, terrainType, weatherType)
+    local effects = {}
+    
+    -- Process terrain healing
+    local terrainHealing = BattleConditions.processTerrainHealing(battleId, terrainType, pokemonList)
+    for _, healing in ipairs(terrainHealing) do
+        table.insert(effects, {
+            effect_type = "terrain_healing",
+            pokemon_id = healing.pokemon_id,
+            healing = healing.healing,
+            terrain = healing.terrain,
+            timing = "end_of_turn",
+            priority = 1, -- Terrain healing has highest priority
+            grounded_only = true
+        })
+    end
+    
+    return effects
+end
+
+-- Resolve environmental effect precedence conflicts
+-- @param activeEffects: List of all active environmental effects
+-- @param pokemonList: List of Pokemon for context
+-- @return: Final effects after precedence resolution
+function BattleConditions.resolveEnvironmentalPrecedence(activeEffects, pokemonList)
+    local finalEffects = {}
+    local pokemonEffectMap = {} -- Group effects by Pokemon
+    
+    -- Group effects by Pokemon ID
+    for _, effect in ipairs(activeEffects) do
+        local pokemonId = effect.pokemon_id
+        if not pokemonEffectMap[pokemonId] then
+            pokemonEffectMap[pokemonId] = {}
+        end
+        table.insert(pokemonEffectMap[pokemonId], effect)
+    end
+    
+    -- Resolve conflicts for each Pokemon
+    for pokemonId, effects in pairs(pokemonEffectMap) do
+        local resolvedEffect = BattleConditions.resolvePokemonEffectConflicts(effects, pokemonId, pokemonList)
+        if resolvedEffect then
+            table.insert(finalEffects, resolvedEffect)
+        end
+    end
+    
+    return finalEffects
+end
+
+-- Resolve effect conflicts for a single Pokemon
+-- @param effects: List of effects affecting this Pokemon
+-- @param pokemonId: Pokemon ID for context
+-- @param pokemonList: Full Pokemon list for lookups
+-- @return: Final resolved effect or nil
+function BattleConditions.resolvePokemonEffectConflicts(effects, pokemonId, pokemonList)
+    if #effects == 0 then
+        return nil
+    end
+    
+    if #effects == 1 then
+        return effects[1]
+    end
+    
+    -- Sort by priority (higher priority = lower number)
+    table.sort(effects, function(a, b) return (a.priority or 999) < (b.priority or 999) end)
+    
+    -- Check if Pokemon is grounded for terrain effects
+    local pokemon = BattleConditions.findPokemonById(pokemonId, pokemonList)
+    local isGrounded = pokemon and BattleConditions.isPokemonGrounded(pokemon)
+    
+    local totalHealing = 0
+    local totalDamage = 0
+    local sources = {}
+    
+    -- Process effects in priority order
+    for _, effect in ipairs(effects) do
+        -- Terrain effects only apply to grounded Pokemon
+        if effect.grounded_only and not isGrounded then
+            goto continue
+        end
+        
+        if effect.healing then
+            totalHealing = totalHealing + effect.healing
+            table.insert(sources, effect.effect_type .. ":" .. (effect.ability_name or effect.terrain or effect.weather or "unknown"))
+        end
+        
+        if effect.damage then
+            totalDamage = totalDamage + effect.damage
+            table.insert(sources, effect.effect_type .. ":" .. (effect.ability_name or effect.terrain or effect.weather or "unknown"))
+        end
+        
+        ::continue::
+    end
+    
+    -- Calculate net effect
+    local netAmount = totalHealing - totalDamage
+    
+    if netAmount == 0 then
+        return nil -- No net effect
+    end
+    
+    return {
+        effect_type = netAmount > 0 and "net_healing" or "net_damage",
+        pokemon_id = pokemonId,
+        healing = netAmount > 0 and netAmount or 0,
+        damage = netAmount < 0 and math.abs(netAmount) or 0,
+        net_amount = netAmount,
+        sources = sources,
+        timing = "end_of_turn",
+        resolved_conflicts = #effects > 1
+    }
+end
+
+-- Find Pokemon by ID in pokemon list
+-- @param pokemonId: Pokemon ID to find
+-- @param pokemonList: List of Pokemon to search
+-- @return: Pokemon data or nil
+function BattleConditions.findPokemonById(pokemonId, pokemonList)
+    for _, pokemon in ipairs(pokemonList) do
+        if pokemon.id == pokemonId then
+            return pokemon
+        end
+    end
+    return nil
+end
+
+-- Generate interaction log for debugging and notifications
+-- @param suppressedEffects: List of suppressed effects
+-- @param activeEffects: List of active effects
+-- @param finalEffects: List of final resolved effects
+-- @return: Detailed interaction log
+function BattleConditions.generateInteractionLog(suppressedEffects, activeEffects, finalEffects)
+    local log = {
+        timestamp = os.time(),
+        suppression_count = #suppressedEffects,
+        active_count = #activeEffects,
+        final_count = #finalEffects,
+        interactions = {}
+    }
+    
+    -- Log suppressions
+    for _, suppressed in ipairs(suppressedEffects) do
+        table.insert(log.interactions, {
+            type = "suppression",
+            description = suppressed.effect_type .. " suppressed by " .. suppressed.suppressed_by,
+            precedence_level = suppressed.precedence_level
+        })
+    end
+    
+    -- Log conflicts resolved
+    for _, final in ipairs(finalEffects) do
+        if final.resolved_conflicts then
+            table.insert(log.interactions, {
+                type = "conflict_resolution",
+                description = "Multiple effects resolved for Pokemon " .. final.pokemon_id,
+                sources = final.sources,
+                net_effect = final.net_amount
+            })
+        end
+    end
+    
+    return log
+end
+
+-- Check environmental effect stacking compatibility
+-- @param weatherType: Current weather type
+-- @param terrainType: Current terrain type
+-- @return: Stacking information and compatibility
+function BattleConditions.checkEnvironmentalEffectStacking(weatherType, terrainType)
+    local stacking = {
+        compatible = true,
+        conflicts = {},
+        synergies = {},
+        precedence_notes = {}
+    }
+    
+    -- Weather and terrain generally stack, but with specific rules
+    if weatherType ~= BattleConditions.WeatherType.NONE and terrainType ~= BattleConditions.TerrainType.NONE then
+        stacking.compatible = true
+        table.insert(stacking.precedence_notes, "Terrain effects take precedence over weather for grounded Pokemon")
+        
+        -- Check for specific interactions
+        if terrainType == BattleConditions.TerrainType.GRASSY then
+            if weatherType == BattleConditions.WeatherType.SANDSTORM or weatherType == BattleConditions.WeatherType.HAIL then
+                table.insert(stacking.conflicts, {
+                    description = "Grassy Terrain healing vs weather damage",
+                    resolution = "Both effects apply, net healing/damage calculated"
+                })
+            end
+        end
+    end
+    
+    return stacking
+end
+
+-- Move-Environment Interaction System
+-- Complex interactions between moves and environmental conditions
+-- Implements Hurricane, Solar Beam, Thunder, and other environment-dependent moves
+
+-- Weather-dependent move modifications
+BattleConditions.WeatherMoveData = {
+    ["hurricane"] = {
+        weather_effects = {
+            [BattleConditions.WeatherType.RAIN] = {
+                accuracy_override = 100, -- Never misses in rain
+                description = "Hurricane never misses in rain"
+            },
+            [BattleConditions.WeatherType.HARSH_SUN] = {
+                accuracy_modifier = 0.5, -- 50% accuracy in harsh sun
+                description = "Hurricane has reduced accuracy in harsh sun"
+            }
+        },
+        base_accuracy = 70
+    },
+    ["thunder"] = {
+        weather_effects = {
+            [BattleConditions.WeatherType.RAIN] = {
+                accuracy_override = 100, -- Never misses in rain
+                description = "Thunder never misses in rain"
+            },
+            [BattleConditions.WeatherType.SUNNY] = {
+                accuracy_modifier = 0.5, -- 50% accuracy in sun
+                description = "Thunder has reduced accuracy in sun"
+            },
+            [BattleConditions.WeatherType.HARSH_SUN] = {
+                accuracy_modifier = 0.5,
+                description = "Thunder has reduced accuracy in harsh sun"
+            }
+        },
+        base_accuracy = 70
+    },
+    ["solar_beam"] = {
+        weather_effects = {
+            [BattleConditions.WeatherType.SUNNY] = {
+                charge_skip = true, -- Instant charging in sun
+                description = "Solar Beam charges instantly in sun"
+            },
+            [BattleConditions.WeatherType.HARSH_SUN] = {
+                charge_skip = true,
+                power_boost = 1.0, -- No power reduction
+                description = "Solar Beam charges instantly with full power in harsh sun"
+            },
+            [BattleConditions.WeatherType.RAIN] = {
+                power_modifier = 0.5, -- Half power in rain
+                description = "Solar Beam has reduced power in rain"
+            },
+            [BattleConditions.WeatherType.SANDSTORM] = {
+                power_modifier = 0.5,
+                description = "Solar Beam has reduced power in sandstorm"
+            },
+            [BattleConditions.WeatherType.HAIL] = {
+                power_modifier = 0.5,
+                description = "Solar Beam has reduced power in hail"
+            }
+        },
+        base_power = 120,
+        requires_charging = true
+    },
+    ["blizzard"] = {
+        weather_effects = {
+            [BattleConditions.WeatherType.HAIL] = {
+                accuracy_override = 100, -- Never misses in hail
+                description = "Blizzard never misses in hail"
+            }
+        },
+        base_accuracy = 70
+    },
+    ["moonlight"] = {
+        weather_effects = {
+            [BattleConditions.WeatherType.SUNNY] = {
+                healing_fraction = "2/3", -- 2/3 HP in sun
+                description = "Moonlight restores more HP in sun"
+            },
+            [BattleConditions.WeatherType.RAIN] = {
+                healing_fraction = "1/4", -- 1/4 HP in rain
+                description = "Moonlight restores less HP in rain"
+            },
+            [BattleConditions.WeatherType.SANDSTORM] = {
+                healing_fraction = "1/4",
+                description = "Moonlight restores less HP in sandstorm"
+            },
+            [BattleConditions.WeatherType.HAIL] = {
+                healing_fraction = "1/4",
+                description = "Moonlight restores less HP in hail"
+            }
+        },
+        base_healing = "1/2" -- Normal conditions
+    },
+    ["synthesis"] = {
+        weather_effects = {
+            [BattleConditions.WeatherType.SUNNY] = {
+                healing_fraction = "2/3",
+                description = "Synthesis restores more HP in sun"
+            },
+            [BattleConditions.WeatherType.RAIN] = {
+                healing_fraction = "1/4",
+                description = "Synthesis restores less HP in rain"
+            },
+            [BattleConditions.WeatherType.SANDSTORM] = {
+                healing_fraction = "1/4",
+                description = "Synthesis restores less HP in sandstorm"
+            },
+            [BattleConditions.WeatherType.HAIL] = {
+                healing_fraction = "1/4",
+                description = "Synthesis restores less HP in hail"
+            }
+        },
+        base_healing = "1/2"
+    },
+    ["morning_sun"] = {
+        weather_effects = {
+            [BattleConditions.WeatherType.SUNNY] = {
+                healing_fraction = "2/3",
+                description = "Morning Sun restores more HP in sun"
+            },
+            [BattleConditions.WeatherType.RAIN] = {
+                healing_fraction = "1/4",
+                description = "Morning Sun restores less HP in rain"
+            },
+            [BattleConditions.WeatherType.SANDSTORM] = {
+                healing_fraction = "1/4",
+                description = "Morning Sun restores less HP in sandstorm"
+            },
+            [BattleConditions.WeatherType.HAIL] = {
+                healing_fraction = "1/4",
+                description = "Morning Sun restores less HP in hail"
+            }
+        },
+        base_healing = "1/2"
+    }
+}
+
+-- Get weather-dependent move accuracy modification
+-- @param moveName: Name of the move (lowercase)
+-- @param weatherType: Current weather type
+-- @param baseAccuracy: Base accuracy of the move
+-- @return: Modified accuracy, whether it's an override
+function BattleConditions.getWeatherMoveAccuracyModifier(moveName, weatherType, baseAccuracy)
+    local moveData = BattleConditions.WeatherMoveData[string.lower(moveName)]
+    if not moveData or not moveData.weather_effects then
+        return baseAccuracy, false
+    end
+    
+    local weatherEffect = moveData.weather_effects[weatherType]
+    if not weatherEffect then
+        return baseAccuracy, false
+    end
+    
+    if weatherEffect.accuracy_override then
+        return weatherEffect.accuracy_override, true
+    elseif weatherEffect.accuracy_modifier then
+        return math.floor(baseAccuracy * weatherEffect.accuracy_modifier), false
+    end
+    
+    return baseAccuracy, false
+end
+
+-- Get weather-dependent move power modification
+-- @param moveName: Name of the move (lowercase)
+-- @param weatherType: Current weather type
+-- @param basePower: Base power of the move
+-- @return: Modified power, description of effect
+function BattleConditions.getWeatherMovePowerModifier(moveName, weatherType, basePower)
+    local moveData = BattleConditions.WeatherMoveData[string.lower(moveName)]
+    if not moveData or not moveData.weather_effects then
+        return basePower, nil
+    end
+    
+    local weatherEffect = moveData.weather_effects[weatherType]
+    if not weatherEffect then
+        return basePower, nil
+    end
+    
+    if weatherEffect.power_modifier then
+        local modifiedPower = math.floor(basePower * weatherEffect.power_modifier)
+        return modifiedPower, weatherEffect.description
+    elseif weatherEffect.power_boost then
+        return basePower, weatherEffect.description -- No modification, just description
+    end
+    
+    return basePower, weatherEffect.description
+end
+
+-- Check if move requires charging and can skip charge phase
+-- @param moveName: Name of the move (lowercase)
+-- @param weatherType: Current weather type
+-- @return: Should skip charge phase, description
+function BattleConditions.canSkipChargePhase(moveName, weatherType)
+    local moveData = BattleConditions.WeatherMoveData[string.lower(moveName)]
+    if not moveData or not moveData.requires_charging or not moveData.weather_effects then
+        return false, nil
+    end
+    
+    local weatherEffect = moveData.weather_effects[weatherType]
+    if weatherEffect and weatherEffect.charge_skip then
+        return true, weatherEffect.description
+    end
+    
+    return false, nil
+end
+
+-- Get weather-dependent healing amount for moves
+-- @param moveName: Name of the move (lowercase)
+-- @param weatherType: Current weather type
+-- @param maxHP: Pokemon's maximum HP
+-- @return: Healing amount, description
+function BattleConditions.getWeatherMoveHealingAmount(moveName, weatherType, maxHP)
+    local moveData = BattleConditions.WeatherMoveData[string.lower(moveName)]
+    if not moveData then
+        return 0, nil
+    end
+    
+    local healingFraction = moveData.base_healing
+    local description = "Standard healing"
+    
+    -- Check for weather-specific healing
+    if moveData.weather_effects and moveData.weather_effects[weatherType] then
+        local weatherEffect = moveData.weather_effects[weatherType]
+        if weatherEffect.healing_fraction then
+            healingFraction = weatherEffect.healing_fraction
+            description = weatherEffect.description
+        end
+    end
+    
+    -- Convert fraction to actual healing amount
+    local healingAmount = 0
+    if healingFraction == "1/2" then
+        healingAmount = math.floor(maxHP / 2)
+    elseif healingFraction == "2/3" then
+        healingAmount = math.floor(maxHP * 2 / 3)
+    elseif healingFraction == "1/4" then
+        healingAmount = math.floor(maxHP / 4)
+    elseif healingFraction == "3/4" then
+        healingAmount = math.floor(maxHP * 3 / 4)
+    end
+    
+    return math.max(1, healingAmount), description
+end
+
+-- Check terrain effects on move power and blocking
+-- @param moveName: Name of the move (lowercase)
+-- @param moveData: Complete move data including type and priority
+-- @param terrainType: Current terrain type
+-- @param attackerGrounded: Whether attacker is grounded
+-- @param targetGrounded: Whether target is grounded
+-- @return: Power modifier, blocked status, description
+function BattleConditions.getTerrainMoveInteraction(moveName, moveData, terrainType, attackerGrounded, targetGrounded)
+    local powerModifier = 1.0
+    local blocked = false
+    local description = nil
+    
+    local terrainData = BattleConditions.TerrainData[terrainType]
+    if not terrainData then
+        return powerModifier, blocked, description
+    end
+    
+    -- Check power boost for grounded attackers
+    if attackerGrounded and terrainData.power_boost and moveData.type then
+        local boost = terrainData.power_boost[moveData.type]
+        if boost then
+            powerModifier = boost
+            description = terrainData.name .. " boosts " .. moveData.type .. " move power"
+        end
+    end
+    
+    -- Check move blocking effects
+    if targetGrounded then
+        -- Dragon move immunity in Misty Terrain
+        if terrainData.dragon_move_immunity and moveData.type == Enums.PokemonType.DRAGON then
+            blocked = true
+            description = terrainData.name .. " blocks Dragon-type moves"
+        end
+        
+        -- Priority move blocking in Psychic Terrain
+        if terrainData.priority_move_immunity and moveData.priority and moveData.priority > 0 then
+            blocked = true
+            description = terrainData.name .. " blocks priority moves"
+        end
+    end
+    
+    -- Check move power reduction (Grassy Terrain reducing ground moves)
+    if terrainData.move_power_reduction and moveName then
+        local reduction = terrainData.move_power_reduction[string.lower(moveName)]
+        if reduction then
+            powerModifier = powerModifier * reduction
+            description = (description and (description .. ", ") or "") .. terrainData.name .. " reduces " .. moveName .. " power"
+        end
+    end
+    
+    return powerModifier, blocked, description
+end
+
+-- Process complete move-environment interaction
+-- @param moveName: Name of the move
+-- @param moveData: Complete move data
+-- @param weatherType: Current weather type
+-- @param terrainType: Current terrain type
+-- @param attackerGrounded: Whether attacker is grounded
+-- @param targetGrounded: Whether target is grounded
+-- @param attackerMaxHP: Attacker's max HP (for healing moves)
+-- @return: Complete interaction results
+function BattleConditions.processMovePveEnvironmentInteraction(moveName, moveData, weatherType, terrainType, attackerGrounded, targetGrounded, attackerMaxHP)
+    local results = {
+        accuracy_modified = false,
+        power_modified = false,
+        blocked = false,
+        healing_modified = false,
+        charge_skipped = false,
+        effects = {}
+    }
+    
+    local lowerMoveName = string.lower(moveName)
+    
+    -- Weather-based accuracy modifications
+    local modifiedAccuracy, isOverride = BattleConditions.getWeatherMoveAccuracyModifier(lowerMoveName, weatherType, moveData.accuracy or 100)
+    if modifiedAccuracy ~= (moveData.accuracy or 100) then
+        results.accuracy_modified = true
+        results.final_accuracy = modifiedAccuracy
+        results.accuracy_override = isOverride
+        table.insert(results.effects, {
+            type = "accuracy_change",
+            source = "weather",
+            value = modifiedAccuracy,
+            is_override = isOverride
+        })
+    end
+    
+    -- Weather-based power modifications
+    local modifiedPower, powerDescription = BattleConditions.getWeatherMovePowerModifier(lowerMoveName, weatherType, moveData.power or 0)
+    if modifiedPower ~= (moveData.power or 0) then
+        results.power_modified = true
+        results.final_power = modifiedPower
+        table.insert(results.effects, {
+            type = "power_change",
+            source = "weather",
+            value = modifiedPower,
+            description = powerDescription
+        })
+    end
+    
+    -- Terrain-based interactions
+    local terrainPowerModifier, terrainBlocked, terrainDescription = BattleConditions.getTerrainMoveInteraction(lowerMoveName, moveData, terrainType, attackerGrounded, targetGrounded)
+    
+    if terrainBlocked then
+        results.blocked = true
+        table.insert(results.effects, {
+            type = "move_blocked",
+            source = "terrain",
+            description = terrainDescription
+        })
+    elseif terrainPowerModifier ~= 1.0 then
+        results.power_modified = true
+        local currentPower = results.final_power or moveData.power or 0
+        results.final_power = math.floor(currentPower * terrainPowerModifier)
+        table.insert(results.effects, {
+            type = "power_change",
+            source = "terrain",
+            modifier = terrainPowerModifier,
+            description = terrainDescription
+        })
+    end
+    
+    -- Charge phase skipping
+    local canSkipCharge, chargeDescription = BattleConditions.canSkipChargePhase(lowerMoveName, weatherType)
+    if canSkipCharge then
+        results.charge_skipped = true
+        table.insert(results.effects, {
+            type = "charge_skipped",
+            source = "weather",
+            description = chargeDescription
+        })
+    end
+    
+    -- Healing move modifications
+    if attackerMaxHP and attackerMaxHP > 0 then
+        local healingAmount, healingDescription = BattleConditions.getWeatherMoveHealingAmount(lowerMoveName, weatherType, attackerMaxHP)
+        if healingAmount > 0 then
+            results.healing_modified = true
+            results.healing_amount = healingAmount
+            table.insert(results.effects, {
+                type = "healing_change",
+                source = "weather",
+                amount = healingAmount,
+                description = healingDescription
+            })
+        end
+    end
+    
+    return results
+end
+
+-- Environmental Healing System
+-- Comprehensive environmental healing with ability interactions and precedence
+
+-- Process all environmental healing effects with proper precedence
+-- @param battleId: Battle instance identifier
+-- @param pokemonList: List of Pokemon to process
+-- @param weatherType: Current weather type
+-- @param terrainType: Current terrain type
+-- @return: Complete healing results with precedence resolution
+function BattleConditions.processEnvironmentalHealing(battleId, pokemonList, weatherType, terrainType)
+    local healingResults = {
+        total_healers = 0,
+        healing_effects = {},
+        ability_healing = {},
+        terrain_healing = {},
+        precedence_resolved = {}
+    }
+    
+    -- Process ability-based healing (Rain Dish, Ice Body, Dry Skin)
+    local WeatherAbilities = require("game-logic.battle.weather-abilities")
+    local abilityHealing = WeatherAbilities.processEndOfTurnAbilityEffects(pokemonList, weatherType)
+    
+    for _, healing in ipairs(abilityHealing) do
+        if healing.effect_type == "healing" then
+            table.insert(healingResults.ability_healing, healing)
+            table.insert(healingResults.healing_effects, {
+                pokemon_id = healing.pokemon_id,
+                source = "ability",
+                ability_name = healing.ability_name,
+                healing = healing.healing,
+                priority = 1 -- Ability healing has highest priority
+            })
+        end
+    end
+    
+    -- Process terrain-based healing (Grassy Terrain)
+    local terrainHealing = BattleConditions.processTerrainHealing(battleId, terrainType, pokemonList)
+    for _, healing in ipairs(terrainHealing) do
+        table.insert(healingResults.terrain_healing, healing)
+        table.insert(healingResults.healing_effects, {
+            pokemon_id = healing.pokemon_id,
+            source = "terrain",
+            terrain_name = healing.terrain,
+            healing = healing.healing,
+            priority = 2 -- Terrain healing has second priority
+        })
+    end
+    
+    -- Resolve healing precedence and stacking
+    local finalHealing = BattleConditions.resolveHealingPrecedence(healingResults.healing_effects, pokemonList)
+    healingResults.precedence_resolved = finalHealing
+    healingResults.total_healers = #finalHealing
+    
+    return healingResults
+end
+
+-- Resolve healing precedence for Pokemon with multiple healing sources
+-- @param healingEffects: List of all healing effects
+-- @param pokemonList: List of Pokemon for context
+-- @return: Final healing amounts after precedence resolution
+function BattleConditions.resolveHealingPrecedence(healingEffects, pokemonList)
+    local pokemonHealingMap = {}
+    local finalHealing = {}
+    
+    -- Group healing effects by Pokemon
+    for _, effect in ipairs(healingEffects) do
+        local pokemonId = effect.pokemon_id
+        if not pokemonHealingMap[pokemonId] then
+            pokemonHealingMap[pokemonId] = {}
+        end
+        table.insert(pokemonHealingMap[pokemonId], effect)
+    end
+    
+    -- Resolve healing for each Pokemon
+    for pokemonId, effects in pairs(pokemonHealingMap) do
+        local pokemon = BattleConditions.findPokemonById(pokemonId, pokemonList)
+        if pokemon then
+            local totalHealing = 0
+            local sources = {}
+            
+            -- Sort by priority (lower number = higher priority)
+            table.sort(effects, function(a, b) return a.priority < b.priority end)
+            
+            for _, effect in ipairs(effects) do
+                -- Check if Pokemon is grounded for terrain effects
+                if effect.source == "terrain" and not BattleConditions.isPokemonGrounded(pokemon) then
+                    goto continue
+                end
+                
+                totalHealing = totalHealing + effect.healing
+                table.insert(sources, effect.source .. ":" .. (effect.ability_name or effect.terrain_name or "unknown"))
+                
+                ::continue::
+            end
+            
+            if totalHealing > 0 then
+                -- Cap healing at missing HP
+                local maxHP = pokemon.maxHP or pokemon.stats[Enums.Stat.HP] or 100
+                local currentHP = pokemon.currentHP or maxHP
+                local actualHealing = math.min(totalHealing, maxHP - currentHP)
+                
+                if actualHealing > 0 then
+                    table.insert(finalHealing, {
+                        pokemon_id = pokemonId,
+                        pokemon_name = pokemon.name or "Unknown Pokemon",
+                        total_healing = actualHealing,
+                        raw_healing = totalHealing,
+                        sources = sources,
+                        multiple_sources = #effects > 1
+                    })
+                end
+            end
+        end
+    end
+    
+    return finalHealing
+end
+
+-- Environmental Damage Precedence System
+-- Proper ordering and calculation of environmental damage effects
+
+-- Process all environmental damage effects with proper precedence
+-- @param battleId: Battle instance identifier
+-- @param pokemonList: List of Pokemon to process
+-- @param weatherType: Current weather type
+-- @param terrainType: Current terrain type
+-- @return: Complete damage results with precedence resolution
+function BattleConditions.processEnvironmentalDamage(battleId, pokemonList, weatherType, terrainType)
+    local damageResults = {
+        total_damaged = 0,
+        damage_effects = {},
+        weather_damage = {},
+        ability_damage = {},
+        precedence_resolved = {}
+    }
+    
+    -- Process weather damage (sandstorm, hail)
+    local weatherDamage = BattleConditions.processWeatherDamage(battleId, weatherType, pokemonList)
+    for _, damage in ipairs(weatherDamage) do
+        table.insert(damageResults.weather_damage, damage)
+        table.insert(damageResults.damage_effects, {
+            pokemon_id = damage.pokemon_id,
+            source = "weather",
+            weather_name = damage.weather,
+            damage = damage.damage,
+            priority = 3 -- Weather damage has lower priority
+        })
+    end
+    
+    -- Process ability-based damage (Solar Power, Dry Skin in sun)
+    local WeatherAbilities = require("game-logic.battle.weather-abilities")
+    local abilityEffects = WeatherAbilities.processEndOfTurnAbilityEffects(pokemonList, weatherType)
+    
+    for _, effect in ipairs(abilityEffects) do
+        if effect.effect_type == "damage" then
+            table.insert(damageResults.ability_damage, effect)
+            table.insert(damageResults.damage_effects, {
+                pokemon_id = effect.pokemon_id,
+                source = "ability",
+                ability_name = effect.ability_name,
+                damage = effect.damage,
+                priority = 2 -- Ability damage has higher priority than weather
+            })
+        end
+    end
+    
+    -- Resolve damage precedence
+    local finalDamage = BattleConditions.resolveDamagePrecedence(damageResults.damage_effects, pokemonList)
+    damageResults.precedence_resolved = finalDamage
+    damageResults.total_damaged = #finalDamage
+    
+    return damageResults
+end
+
+-- Resolve damage precedence for Pokemon with multiple damage sources
+-- @param damageEffects: List of all damage effects
+-- @param pokemonList: List of Pokemon for context
+-- @return: Final damage amounts after precedence resolution
+function BattleConditions.resolveDamagePrecedence(damageEffects, pokemonList)
+    local pokemonDamageMap = {}
+    local finalDamage = {}
+    
+    -- Group damage effects by Pokemon
+    for _, effect in ipairs(damageEffects) do
+        local pokemonId = effect.pokemon_id
+        if not pokemonDamageMap[pokemonId] then
+            pokemonDamageMap[pokemonId] = {}
+        end
+        table.insert(pokemonDamageMap[pokemonId], effect)
+    end
+    
+    -- Resolve damage for each Pokemon
+    for pokemonId, effects in pairs(pokemonDamageMap) do
+        local pokemon = BattleConditions.findPokemonById(pokemonId, pokemonList)
+        if pokemon then
+            local totalDamage = 0
+            local sources = {}
+            
+            -- Sort by priority (lower number = higher priority)
+            table.sort(effects, function(a, b) return a.priority < b.priority end)
+            
+            for _, effect in ipairs(effects) do
+                totalDamage = totalDamage + effect.damage
+                table.insert(sources, effect.source .. ":" .. (effect.ability_name or effect.weather_name or "unknown"))
+            end
+            
+            if totalDamage > 0 then
+                -- Cap damage at current HP - 1 (can't faint from environmental damage)
+                local currentHP = pokemon.currentHP or pokemon.maxHP or 100
+                local actualDamage = math.min(totalDamage, math.max(1, currentHP - 1))
+                
+                table.insert(finalDamage, {
+                    pokemon_id = pokemonId,
+                    pokemon_name = pokemon.name or "Unknown Pokemon",
+                    total_damage = actualDamage,
+                    raw_damage = totalDamage,
+                    sources = sources,
+                    multiple_sources = #effects > 1
+                })
+            end
+        end
+    end
+    
+    return finalDamage
+end
+
+-- Process complete environmental healing and damage with proper timing
+-- @param battleId: Battle instance identifier
+-- @param pokemonList: List of Pokemon to process
+-- @param weatherType: Current weather type
+-- @param terrainType: Current terrain type
+-- @return: Complete results with proper precedence timing
+function BattleConditions.processCompleteEnvironmentalEffects(battleId, pokemonList, weatherType, terrainType)
+    local results = {
+        timing_order = {},
+        healing_results = {},
+        damage_results = {},
+        net_effects = {},
+        summary = {
+            total_healed = 0,
+            total_damaged = 0,
+            net_healers = 0,
+            net_damaged = 0
+        }
+    }
+    
+    -- Step 1: Process healing first (higher priority)
+    local healingResults = BattleConditions.processEnvironmentalHealing(battleId, pokemonList, weatherType, terrainType)
+    results.healing_results = healingResults
+    table.insert(results.timing_order, {phase = "healing", count = healingResults.total_healers})
+    
+    -- Step 2: Process damage second (lower priority)
+    local damageResults = BattleConditions.processEnvironmentalDamage(battleId, pokemonList, weatherType, terrainType)
+    results.damage_results = damageResults
+    table.insert(results.timing_order, {phase = "damage", count = damageResults.total_damaged})
+    
+    -- Step 3: Calculate net effects per Pokemon
+    local pokemonNetEffects = {}
+    
+    -- Add healing effects
+    for _, healing in ipairs(healingResults.precedence_resolved) do
+        local pokemonId = healing.pokemon_id
+        if not pokemonNetEffects[pokemonId] then
+            pokemonNetEffects[pokemonId] = {pokemon_id = pokemonId, pokemon_name = healing.pokemon_name, net_hp_change = 0, effects = {}}
+        end
+        pokemonNetEffects[pokemonId].net_hp_change = pokemonNetEffects[pokemonId].net_hp_change + healing.total_healing
+        table.insert(pokemonNetEffects[pokemonId].effects, {type = "healing", amount = healing.total_healing, sources = healing.sources})
+    end
+    
+    -- Subtract damage effects
+    for _, damage in ipairs(damageResults.precedence_resolved) do
+        local pokemonId = damage.pokemon_id
+        if not pokemonNetEffects[pokemonId] then
+            pokemonNetEffects[pokemonId] = {pokemon_id = pokemonId, pokemon_name = damage.pokemon_name, net_hp_change = 0, effects = {}}
+        end
+        pokemonNetEffects[pokemonId].net_hp_change = pokemonNetEffects[pokemonId].net_hp_change - damage.total_damage
+        table.insert(pokemonNetEffects[pokemonId].effects, {type = "damage", amount = damage.total_damage, sources = damage.sources})
+    end
+    
+    -- Convert to array and calculate summary
+    for pokemonId, netEffect in pairs(pokemonNetEffects) do
+        table.insert(results.net_effects, netEffect)
+        
+        if netEffect.net_hp_change > 0 then
+            results.summary.net_healers = results.summary.net_healers + 1
+            results.summary.total_healed = results.summary.total_healed + netEffect.net_hp_change
+        elseif netEffect.net_hp_change < 0 then
+            results.summary.net_damaged = results.summary.net_damaged + 1
+            results.summary.total_damaged = results.summary.total_damaged + math.abs(netEffect.net_hp_change)
+        end
+    end
+    
+    return results
+end
+
+-- Field Effect Removal System
+-- Implementation of Defog and other field effect removal moves
+
+-- Field effect removal move data
+BattleConditions.FieldRemovalMoves = {
+    ["defog"] = {
+        name = "Defog",
+        removes = {
+            weather = {"all"}, -- Removes all weather except permanent weather
+            terrain = {"all"}, -- Removes all terrain
+            entry_hazards = {"all"}, -- Would remove entry hazards (future implementation)
+            field_effects = {} -- Other field effects
+        },
+        resistance = {
+            -- Permanent weather (generated by Primal abilities) has higher resistance
+            weather_resistance = {"HARSH_SUN", "HEAVY_RAIN", "STRONG_WINDS"}
+        },
+        success_rate = 100 -- Defog always succeeds
+    },
+    ["rapid_spin"] = {
+        name = "Rapid Spin",
+        removes = {
+            weather = {}, -- Does not remove weather
+            terrain = {}, -- Does not remove terrain
+            entry_hazards = {"user_side"}, -- Only removes hazards on user's side
+            field_effects = {}
+        },
+        success_rate = 100
+    },
+    ["haze"] = {
+        name = "Haze",
+        removes = {
+            weather = {}, -- Does not remove weather/terrain
+            terrain = {},
+            entry_hazards = {},
+            field_effects = {"stat_changes"} -- Removes all stat changes
+        },
+        success_rate = 100
+    }
+}
+
+-- Process field effect removal move
+-- @param moveName: Name of the removal move
+-- @param currentWeather: Current weather type and data
+-- @param currentTerrain: Current terrain type and data
+-- @param moveUser: Pokemon using the move
+-- @param battleState: Current battle state
+-- @return: Removal results and updated field conditions
+function BattleConditions.processFieldEffectRemoval(moveName, currentWeather, currentTerrain, moveUser, battleState)
+    local moveData = BattleConditions.FieldRemovalMoves[string.lower(moveName)]
+    if not moveData then
+        return {
+            success = false,
+            reason = "Move does not remove field effects",
+            removed_effects = {}
+        }
+    end
+    
+    local results = {
+        success = true,
+        move_name = moveData.name,
+        removed_effects = {},
+        failed_removals = {},
+        new_weather = currentWeather,
+        new_terrain = currentTerrain,
+        removal_messages = {}
+    }
+    
+    -- Process weather removal
+    if moveData.removes.weather and #moveData.removes.weather > 0 then
+        local weatherRemoval = BattleConditions.processWeatherRemoval(moveData, currentWeather, moveUser)
+        if weatherRemoval.removed then
+            results.new_weather = {
+                type = BattleConditions.WeatherType.NONE,
+                duration = 0,
+                source = "none"
+            }
+            table.insert(results.removed_effects, {
+                type = "weather",
+                previous = currentWeather,
+                reason = "Removed by " .. moveData.name
+            })
+            table.insert(results.removal_messages, weatherRemoval.message)
+        else
+            table.insert(results.failed_removals, {
+                type = "weather",
+                reason = weatherRemoval.reason
+            })
+        end
+    end
+    
+    -- Process terrain removal
+    if moveData.removes.terrain and #moveData.removes.terrain > 0 then
+        local terrainRemoval = BattleConditions.processTerrainRemoval(moveData, currentTerrain, moveUser)
+        if terrainRemoval.removed then
+            results.new_terrain = {
+                type = BattleConditions.TerrainType.NONE,
+                duration = 0,
+                source = "none"
+            }
+            table.insert(results.removed_effects, {
+                type = "terrain",
+                previous = currentTerrain,
+                reason = "Removed by " .. moveData.name
+            })
+            table.insert(results.removal_messages, terrainRemoval.message)
+        else
+            table.insert(results.failed_removals, {
+                type = "terrain",
+                reason = terrainRemoval.reason
+            })
+        end
+    end
+    
+    -- Process other field effects (future expansion)
+    if moveData.removes.field_effects and #moveData.removes.field_effects > 0 then
+        for _, effectType in ipairs(moveData.removes.field_effects) do
+            if effectType == "stat_changes" then
+                table.insert(results.removed_effects, {
+                    type = "stat_changes",
+                    reason = "All stat changes removed by " .. moveData.name
+                })
+                table.insert(results.removal_messages, "All stat changes were removed!")
+            end
+        end
+    end
+    
+    return results
+end
+
+-- Process weather removal with resistance checks
+-- @param moveData: Move data for the removal move
+-- @param currentWeather: Current weather state
+-- @param moveUser: Pokemon using the removal move
+-- @return: Weather removal result
+function BattleConditions.processWeatherRemoval(moveData, currentWeather, moveUser)
+    if not currentWeather or currentWeather.type == BattleConditions.WeatherType.NONE then
+        return {
+            removed = false,
+            reason = "No weather to remove",
+            message = "There is no weather to clear!"
+        }
+    end
+    
+    -- Check if weather type has resistance
+    if moveData.resistance and moveData.resistance.weather_resistance then
+        local weatherName = BattleConditions.WeatherTypeName[currentWeather.type] or "UNKNOWN"
+        for _, resistantWeather in ipairs(moveData.resistance.weather_resistance) do
+            if weatherName == resistantWeather then
+                return {
+                    removed = false,
+                    reason = "Weather is too strong to be removed",
+                    message = "The " .. (BattleConditions.WeatherData[currentWeather.type] and BattleConditions.WeatherData[currentWeather.type].name or "weather") .. " is too strong to be blown away!"
+                }
+            end
+        end
+    end
+    
+    -- Check if it's ability-generated weather with remaining duration
+    if currentWeather.source == "ability" and currentWeather.duration > 1 then
+        -- Reduce duration instead of removing completely
+        return {
+            removed = false,
+            duration_reduced = true,
+            new_duration = math.max(1, currentWeather.duration - 2),
+            reason = "Ability-generated weather partially resisted",
+            message = "The weather weakened but persists!"
+        }
+    end
+    
+    -- Weather can be removed
+    local weatherData = BattleConditions.WeatherData[currentWeather.type]
+    local weatherName = weatherData and weatherData.name or "weather"
+    
+    return {
+        removed = true,
+        message = "The " .. weatherName .. " was blown away!"
+    }
+end
+
+-- Process terrain removal with resistance checks
+-- @param moveData: Move data for the removal move
+-- @param currentTerrain: Current terrain state
+-- @param moveUser: Pokemon using the removal move
+-- @return: Terrain removal result
+function BattleConditions.processTerrainRemoval(moveData, currentTerrain, moveUser)
+    if not currentTerrain or currentTerrain.type == BattleConditions.TerrainType.NONE then
+        return {
+            removed = false,
+            reason = "No terrain to remove",
+            message = "There is no terrain to clear!"
+        }
+    end
+    
+    -- Check if it's ability-generated terrain with remaining duration
+    if currentTerrain.source == "ability" and currentTerrain.duration > 1 then
+        return {
+            removed = false,
+            duration_reduced = true,
+            new_duration = math.max(1, currentTerrain.duration - 1),
+            reason = "Ability-generated terrain partially resisted",
+            message = "The terrain weakened but persists!"
+        }
+    end
+    
+    -- Terrain can be removed
+    local terrainData = BattleConditions.TerrainData[currentTerrain.type]
+    local terrainName = terrainData and terrainData.name or "terrain"
+    
+    return {
+        removed = true,
+        message = "The " .. terrainName .. " disappeared!"
+    }
+end
+
+-- Check if field effects can be removed by move
+-- @param moveName: Name of the move to check
+-- @param fieldConditions: Current field conditions to check
+-- @return: Information about what can be removed
+function BattleConditions.checkRemovalPotential(moveName, fieldConditions)
+    local moveData = BattleConditions.FieldRemovalMoves[string.lower(moveName)]
+    if not moveData then
+        return {
+            can_remove = false,
+            reason = "Move does not remove field effects",
+            removable_effects = {}
+        }
+    end
+    
+    local removableEffects = {}
+    
+    -- Check weather removal potential
+    if moveData.removes.weather and #moveData.removes.weather > 0 and fieldConditions.weather then
+        if fieldConditions.weather.type ~= BattleConditions.WeatherType.NONE then
+            local canRemove = true
+            local reason = "Can remove weather"
+            
+            -- Check resistance
+            if moveData.resistance and moveData.resistance.weather_resistance then
+                local weatherName = BattleConditions.WeatherTypeName[fieldConditions.weather.type] or "UNKNOWN"
+                for _, resistantWeather in ipairs(moveData.resistance.weather_resistance) do
+                    if weatherName == resistantWeather then
+                        canRemove = false
+                        reason = "Weather has resistance"
+                        break
+                    end
+                end
+            end
+            
+            table.insert(removableEffects, {
+                type = "weather",
+                can_remove = canRemove,
+                reason = reason,
+                current_weather = fieldConditions.weather
+            })
+        end
+    end
+    
+    -- Check terrain removal potential
+    if moveData.removes.terrain and #moveData.removes.terrain > 0 and fieldConditions.terrain then
+        if fieldConditions.terrain.type ~= BattleConditions.TerrainType.NONE then
+            table.insert(removableEffects, {
+                type = "terrain",
+                can_remove = true,
+                reason = "Can remove terrain",
+                current_terrain = fieldConditions.terrain
+            })
+        end
+    end
+    
+    return {
+        can_remove = #removableEffects > 0,
+        move_name = moveData.name,
+        removable_effects = removableEffects
+    }
+end
+
+-- Get list of all available field removal moves
+-- @return: List of field removal moves and their capabilities
+function BattleConditions.getFieldRemovalMoves()
+    local moves = {}
+    
+    for moveName, moveData in pairs(BattleConditions.FieldRemovalMoves) do
+        table.insert(moves, {
+            name = moveName,
+            display_name = moveData.name,
+            removes_weather = #(moveData.removes.weather or {}) > 0,
+            removes_terrain = #(moveData.removes.terrain or {}) > 0,
+            removes_hazards = #(moveData.removes.entry_hazards or {}) > 0,
+            removes_field_effects = #(moveData.removes.field_effects or {}) > 0,
+            success_rate = moveData.success_rate
+        })
+    end
+    
+    return moves
+end
+
+-- Environmental Effect Notification System
+-- Comprehensive messaging system for environmental effects with proper timing
+
+-- Notification types and priorities
+BattleConditions.NotificationType = {
+    WEATHER_CHANGE = "weather_change",
+    TERRAIN_CHANGE = "terrain_change",
+    ABILITY_ACTIVATION = "ability_activation",
+    ENVIRONMENTAL_DAMAGE = "environmental_damage",
+    ENVIRONMENTAL_HEALING = "environmental_healing",
+    MOVE_INTERACTION = "move_interaction",
+    EFFECT_SUPPRESSION = "effect_suppression",
+    FIELD_REMOVAL = "field_removal"
+}
+
+BattleConditions.NotificationPriority = {
+    IMMEDIATE = 1,
+    HIGH = 2,
+    MEDIUM = 3,
+    LOW = 4
+}
+
+-- Generate comprehensive environmental effect notifications
+-- @param environmentalResults: Results from environmental processing
+-- @param battleTurn: Current battle turn
+-- @param timing: When notifications should be shown ("start_turn", "end_turn", etc.)
+-- @return: Formatted notifications ready for display
+function BattleConditions.generateEnvironmentalNotifications(environmentalResults, battleTurn, timing)
+    local notifications = {
+        turn = battleTurn,
+        timing = timing,
+        messages = {},
+        priority_groups = {
+            immediate = {},
+            high = {},
+            medium = {},
+            low = {}
+        }
+    }
+    
+    -- Process weather change notifications
+    if environmentalResults.weather_changes then
+        for _, change in ipairs(environmentalResults.weather_changes) do
+            local notification = BattleConditions.createWeatherChangeNotification(change)
+            BattleConditions.addNotificationToPriorityGroup(notifications, notification)
+        end
+    end
+    
+    -- Process terrain change notifications
+    if environmentalResults.terrain_changes then
+        for _, change in ipairs(environmentalResults.terrain_changes) do
+            local notification = BattleConditions.createTerrainChangeNotification(change)
+            BattleConditions.addNotificationToPriorityGroup(notifications, notification)
+        end
+    end
+    
+    -- Process ability activation notifications
+    if environmentalResults.ability_activations then
+        for _, activation in ipairs(environmentalResults.ability_activations) do
+            local notification = BattleConditions.createAbilityActivationNotification(activation)
+            BattleConditions.addNotificationToPriorityGroup(notifications, notification)
+        end
+    end
+    
+    -- Process environmental healing notifications
+    if environmentalResults.healing_results and environmentalResults.healing_results.precedence_resolved then
+        for _, healing in ipairs(environmentalResults.healing_results.precedence_resolved) do
+            local notification = BattleConditions.createHealingNotification(healing)
+            BattleConditions.addNotificationToPriorityGroup(notifications, notification)
+        end
+    end
+    
+    -- Process environmental damage notifications
+    if environmentalResults.damage_results and environmentalResults.damage_results.precedence_resolved then
+        for _, damage in ipairs(environmentalResults.damage_results.precedence_resolved) do
+            local notification = BattleConditions.createDamageNotification(damage)
+            BattleConditions.addNotificationToPriorityGroup(notifications, notification)
+        end
+    end
+    
+    -- Process move interaction notifications
+    if environmentalResults.move_interactions then
+        for _, interaction in ipairs(environmentalResults.move_interactions) do
+            local notification = BattleConditions.createMoveInteractionNotification(interaction)
+            BattleConditions.addNotificationToPriorityGroup(notifications, notification)
+        end
+    end
+    
+    -- Process suppression notifications
+    if environmentalResults.suppression_changes then
+        for _, suppression in ipairs(environmentalResults.suppression_changes) do
+            local notification = BattleConditions.createSuppressionNotification(suppression)
+            BattleConditions.addNotificationToPriorityGroup(notifications, notification)
+        end
+    end
+    
+    -- Process field removal notifications
+    if environmentalResults.field_removals then
+        for _, removal in ipairs(environmentalResults.field_removals) do
+            local notification = BattleConditions.createFieldRemovalNotification(removal)
+            BattleConditions.addNotificationToPriorityGroup(notifications, notification)
+        end
+    end
+    
+    -- Compile final message list in priority order
+    local finalMessages = {}
+    
+    -- Add messages by priority
+    for _, msg in ipairs(notifications.priority_groups.immediate) do
+        table.insert(finalMessages, msg)
+    end
+    for _, msg in ipairs(notifications.priority_groups.high) do
+        table.insert(finalMessages, msg)
+    end
+    for _, msg in ipairs(notifications.priority_groups.medium) do
+        table.insert(finalMessages, msg)
+    end
+    for _, msg in ipairs(notifications.priority_groups.low) do
+        table.insert(finalMessages, msg)
+    end
+    
+    notifications.messages = finalMessages
+    
+    return notifications
+end
+
+-- Create weather change notification
+-- @param weatherChange: Weather change data
+-- @return: Formatted notification
+function BattleConditions.createWeatherChangeNotification(weatherChange)
+    local weatherData = BattleConditions.WeatherData[weatherChange.new_weather]
+    local weatherName = weatherData and weatherData.name or "Unknown Weather"
+    
+    local message = ""
+    if weatherChange.new_weather == BattleConditions.WeatherType.NONE then
+        message = "The weather cleared up!"
+    else
+        if weatherChange.source == "ability" then
+            message = weatherChange.pokemon_name .. "'s " .. (weatherChange.ability_name or "ability") .. " made it " .. string.lower(weatherName) .. "!"
+        elseif weatherChange.source == "move" then
+            message = weatherChange.pokemon_name .. " used " .. (weatherChange.move_name or "a move") .. "! It became " .. string.lower(weatherName) .. "!"
+        else
+            message = "It became " .. string.lower(weatherName) .. "!"
+        end
+    end
+    
+    return {
+        type = BattleConditions.NotificationType.WEATHER_CHANGE,
+        priority = BattleConditions.NotificationPriority.HIGH,
+        message = message,
+        weather_type = weatherChange.new_weather,
+        source = weatherChange.source
+    }
+end
+
+-- Create terrain change notification
+-- @param terrainChange: Terrain change data
+-- @return: Formatted notification
+function BattleConditions.createTerrainChangeNotification(terrainChange)
+    local terrainData = BattleConditions.TerrainData[terrainChange.new_terrain]
+    local terrainName = terrainData and terrainData.name or "Unknown Terrain"
+    
+    local message = ""
+    if terrainChange.new_terrain == BattleConditions.TerrainType.NONE then
+        message = "The terrain returned to normal!"
+    else
+        if terrainChange.source == "ability" then
+            message = terrainChange.pokemon_name .. "'s " .. (terrainChange.ability_name or "ability") .. " created " .. terrainName .. "!"
+        elseif terrainChange.source == "move" then
+            message = terrainChange.pokemon_name .. " used " .. (terrainChange.move_name or "a move") .. "! The battlefield became " .. terrainName .. "!"
+        else
+            message = "The battlefield became " .. terrainName .. "!"
+        end
+    end
+    
+    return {
+        type = BattleConditions.NotificationType.TERRAIN_CHANGE,
+        priority = BattleConditions.NotificationPriority.HIGH,
+        message = message,
+        terrain_type = terrainChange.new_terrain,
+        source = terrainChange.source
+    }
+end
+
+-- Create ability activation notification
+-- @param activation: Ability activation data
+-- @return: Formatted notification
+function BattleConditions.createAbilityActivationNotification(activation)
+    local message = activation.pokemon_name .. "'s " .. activation.ability_name .. " activated!"
+    
+    if activation.effect_description then
+        message = message .. " " .. activation.effect_description
+    end
+    
+    return {
+        type = BattleConditions.NotificationType.ABILITY_ACTIVATION,
+        priority = BattleConditions.NotificationPriority.MEDIUM,
+        message = message,
+        ability_name = activation.ability_name,
+        pokemon_name = activation.pokemon_name
+    }
+end
+
+-- Create environmental healing notification
+-- @param healing: Healing effect data
+-- @return: Formatted notification
+function BattleConditions.createHealingNotification(healing)
+    local message = healing.pokemon_name .. " restored " .. healing.total_healing .. " HP"
+    
+    if healing.multiple_sources then
+        message = message .. " from multiple environmental effects!"
+    else
+        local sourceDesc = table.concat(healing.sources, ", ")
+        message = message .. " from " .. sourceDesc .. "!"
+    end
+    
+    return {
+        type = BattleConditions.NotificationType.ENVIRONMENTAL_HEALING,
+        priority = BattleConditions.NotificationPriority.MEDIUM,
+        message = message,
+        healing_amount = healing.total_healing,
+        pokemon_name = healing.pokemon_name
+    }
+end
+
+-- Create environmental damage notification
+-- @param damage: Damage effect data
+-- @return: Formatted notification
+function BattleConditions.createDamageNotification(damage)
+    local message = damage.pokemon_name .. " took " .. damage.total_damage .. " damage"
+    
+    if damage.multiple_sources then
+        message = message .. " from multiple environmental effects!"
+    else
+        local sourceDesc = table.concat(damage.sources, ", ")
+        message = message .. " from " .. sourceDesc .. "!"
+    end
+    
+    return {
+        type = BattleConditions.NotificationType.ENVIRONMENTAL_DAMAGE,
+        priority = BattleConditions.NotificationPriority.MEDIUM,
+        message = message,
+        damage_amount = damage.total_damage,
+        pokemon_name = damage.pokemon_name
+    }
+end
+
+-- Create move interaction notification
+-- @param interaction: Move interaction data
+-- @return: Formatted notification
+function BattleConditions.createMoveInteractionNotification(interaction)
+    local message = ""
+    
+    if interaction.blocked then
+        message = interaction.move_name .. " was blocked by environmental conditions!"
+    elseif interaction.power_modified then
+        if interaction.final_power > interaction.original_power then
+            message = interaction.move_name .. "'s power was boosted by environmental conditions!"
+        else
+            message = interaction.move_name .. "'s power was reduced by environmental conditions!"
+        end
+    elseif interaction.accuracy_modified then
+        if interaction.accuracy_override then
+            message = interaction.move_name .. " can't miss due to environmental conditions!"
+        else
+            message = interaction.move_name .. "'s accuracy was affected by environmental conditions!"
+        end
+    end
+    
+    return {
+        type = BattleConditions.NotificationType.MOVE_INTERACTION,
+        priority = BattleConditions.NotificationPriority.HIGH,
+        message = message,
+        move_name = interaction.move_name,
+        interaction_type = interaction.interaction_type
+    }
+end
+
+-- Create suppression notification
+-- @param suppression: Effect suppression data
+-- @return: Formatted notification
+function BattleConditions.createSuppressionNotification(suppression)
+    local message = ""
+    
+    if suppression.suppression_started then
+        message = suppression.pokemon_name .. "'s " .. suppression.ability_name .. " suppressed the effects of weather!"
+    elseif suppression.suppression_ended then
+        message = "The weather effects returned as " .. suppression.pokemon_name .. " left the battle!"
+    end
+    
+    return {
+        type = BattleConditions.NotificationType.EFFECT_SUPPRESSION,
+        priority = BattleConditions.NotificationPriority.HIGH,
+        message = message,
+        ability_name = suppression.ability_name,
+        pokemon_name = suppression.pokemon_name
+    }
+end
+
+-- Create field removal notification
+-- @param removal: Field removal data
+-- @return: Formatted notification
+function BattleConditions.createFieldRemovalNotification(removal)
+    local messages = {}
+    
+    for _, effect in ipairs(removal.removed_effects) do
+        if effect.type == "weather" then
+            table.insert(messages, "The weather cleared up!")
+        elseif effect.type == "terrain" then
+            table.insert(messages, "The terrain returned to normal!")
+        end
+    end
+    
+    local combinedMessage = table.concat(messages, " ")
+    if combinedMessage == "" then
+        combinedMessage = removal.move_name .. " was used!"
+    end
+    
+    return {
+        type = BattleConditions.NotificationType.FIELD_REMOVAL,
+        priority = BattleConditions.NotificationPriority.HIGH,
+        message = combinedMessage,
+        move_name = removal.move_name,
+        removed_count = #removal.removed_effects
+    }
+end
+
+-- Add notification to appropriate priority group
+-- @param notifications: Notification collection
+-- @param notification: Individual notification to add
+function BattleConditions.addNotificationToPriorityGroup(notifications, notification)
+    if notification.priority == BattleConditions.NotificationPriority.IMMEDIATE then
+        table.insert(notifications.priority_groups.immediate, notification)
+    elseif notification.priority == BattleConditions.NotificationPriority.HIGH then
+        table.insert(notifications.priority_groups.high, notification)
+    elseif notification.priority == BattleConditions.NotificationPriority.MEDIUM then
+        table.insert(notifications.priority_groups.medium, notification)
+    else
+        table.insert(notifications.priority_groups.low, notification)
+    end
+end
+
+-- Format notifications for battle message system
+-- @param notifications: Generated notifications
+-- @param messageFormat: Format type ("simple", "detailed", "json")
+-- @return: Formatted message data
+function BattleConditions.formatNotificationsForBattle(notifications, messageFormat)
+    messageFormat = messageFormat or "simple"
+    
+    if messageFormat == "simple" then
+        local messages = {}
+        for _, notification in ipairs(notifications.messages) do
+            table.insert(messages, notification.message)
+        end
+        return messages
+    elseif messageFormat == "detailed" then
+        return {
+            turn = notifications.turn,
+            timing = notifications.timing,
+            message_count = #notifications.messages,
+            messages = notifications.messages
+        }
+    elseif messageFormat == "json" then
+        -- Would return JSON-formatted string in actual implementation
+        return notifications
+    end
+    
+    return notifications.messages
+end
+
 return BattleConditions

@@ -21,6 +21,10 @@ local StatusImmunities = require("game-logic.pokemon.status-immunities")
 local WeatherEffects = require("game-logic.battle.weather-effects")
 local WeatherAbilities = require("game-logic.battle.weather-abilities")
 
+-- Terrain system dependencies
+local TerrainEffects = require("game-logic.battle.terrain-effects")
+local TerrainAbilities = require("game-logic.battle.terrain-abilities")
+
 -- Turn phase enumeration
 TurnProcessor.TurnPhase = {
     COMMAND_SELECTION = 1,
@@ -97,6 +101,9 @@ function TurnProcessor.initializeBattle(battleId, battleSeed, playerParty, enemy
             duration = 0,
             source = "none"
         },
+        
+        -- Terrain state using new terrain system
+        terrain = TerrainEffects.initializeTerrainState(battleId),
         turnCommands = {},
         battleResult = nil,
         multiTurnData = {}
@@ -132,6 +139,16 @@ function TurnProcessor.initializeBattle(battleId, battleSeed, playerParty, enemy
                 pokemon_name = weatherChange.pokemon_name
             }
             -- Only first weather-setting ability activates
+            break
+        end
+    end
+    
+    -- Activate terrain-setting abilities (same speed order as weather abilities)
+    for _, pokemon in ipairs(allStartingPokemon) do
+        local updatedTerrain, activationMessage = TerrainAbilities.processTerrainSurgeAbility(pokemon, battleState.terrain)
+        if activationMessage then
+            battleState.terrain = updatedTerrain
+            -- Only first terrain-setting ability activates
             break
         end
     end
@@ -408,6 +425,41 @@ function TurnProcessor.executeMoveAction(battleState, action)
         table.insert(result.messages, action.pokemon.name .. "'s stats were affected by the weather!")
     end
     
+    -- Apply terrain effects to move
+    if battleState.terrain then
+        local attackerGrounded = TerrainEffects.isPokemonGrounded(action.pokemon)
+        local terrainModifier = TerrainEffects.getTerrainMovePowerModifier(modifiedMove, battleState.terrain, attackerGrounded)
+        
+        -- Apply terrain power modifier
+        if terrainModifier ~= 1.0 then
+            modifiedMove.power = (modifiedMove.power or 0) * terrainModifier
+            modifiedMove.terrain_modifier = terrainModifier
+            result.terrain_boost = true
+            table.insert(result.messages, "The terrain boosted " .. action.pokemon.name .. "'s move!")
+        end
+        
+        -- Check if terrain blocks the move (priority moves in Psychic Terrain)
+        local targetGrounded = action.target and TerrainEffects.isPokemonGrounded(action.target) or false
+        local terrainBlocked, terrainBlockReason = TerrainEffects.doesTerrainBlockMove(modifiedMove, battleState.terrain, targetGrounded)
+        if terrainBlocked then
+            result.error = "Move blocked by terrain: " .. terrainBlockReason
+            result.messages = {terrainBlockReason}
+            return result
+        end
+        
+        -- Apply terrain-based stat modifications for abilities like Surge Surfer
+        for statType, _ in pairs(Enums.Stat) do
+            local terrainStatMod = TerrainAbilities.getTerrainAbilityStatModifier(action.pokemon, battleState.terrain, statType)
+            if terrainStatMod ~= 1.0 then
+                if not result.terrain_stat_modifications then
+                    result.terrain_stat_modifications = {}
+                end
+                result.terrain_stat_modifications[statType] = terrainStatMod
+                table.insert(result.messages, action.pokemon.name .. "'s " .. statType .. " was boosted by the terrain!")
+            end
+        end
+    end
+    
     result.success = true
     result.messages = {action.pokemon.name .. " used " .. (modifiedMove.name or move.name) .. "!"}
     
@@ -635,33 +687,54 @@ function TurnProcessor.processEndOfTurnEffects(battleState)
         end
     end
     
-    -- Process terrain effects
-    if battleState.battleConditions.terrain ~= BattleConditions.TerrainType.NONE then
+    -- Process comprehensive terrain effects using TerrainEffects system
+    if battleState.terrain and battleState.terrain.current_terrain ~= TerrainEffects.TerrainType.NONE then
         local allPokemon = {}
-        for _, pokemon in ipairs(battleState.playerParty) do
+        for _, pokemon in ipairs(battleState.playerParty or {}) do
             if pokemon.currentHP > 0 then
                 table.insert(allPokemon, pokemon)
             end
         end
-        for _, pokemon in ipairs(battleState.enemyParty) do
+        for _, pokemon in ipairs(battleState.enemyParty or {}) do
             if pokemon.currentHP > 0 then
                 table.insert(allPokemon, pokemon)
             end
         end
         
-        local terrainHealing = BattleConditions.processTerrainHealing(
-            battleState.battleId,
-            battleState.battleConditions.terrain,
-            allPokemon
-        )
-        result.terrain_effects = terrainHealing
+        -- Process terrain healing effects
+        local terrainHealingResults = TerrainEffects.processTerrainHealing(battleState.terrain, allPokemon)
         
-        -- Update terrain duration
-        local newDuration, expired = BattleConditions.updateDuration("terrain", battleState.battleConditions.terrainDuration)
-        battleState.battleConditions.terrainDuration = newDuration
+        -- Apply healing results to Pokemon
+        for _, healingResult in ipairs(terrainHealingResults) do
+            local pokemon = TurnProcessor.findPokemon(battleState, healingResult.pokemon_id)
+            if pokemon then
+                pokemon.currentHP = healingResult.new_hp
+            end
+        end
+        
+        -- Process terrain ability effects
+        for _, pokemon in ipairs(allPokemon) do
+            local abilityEffects = TerrainAbilities.processEndOfTurnTerrainAbilities(pokemon, battleState.terrain)
+            for _, effect in ipairs(abilityEffects) do
+                -- Process any end-of-turn terrain ability effects here
+            end
+        end
+        
+        result.terrain_effects = {
+            healing_results = terrainHealingResults,
+            terrain_type = battleState.terrain.current_terrain
+        }
+        
+        -- Update terrain duration using TerrainEffects system
+        local updatedTerrain, expired = TerrainEffects.updateTerrainDuration(battleState.terrain)
+        battleState.terrain = updatedTerrain
         if expired then
-            battleState.battleConditions.terrain = BattleConditions.TerrainType.NONE
-            table.insert(result.duration_updates, {type = "terrain", expired = true})
+            table.insert(result.duration_updates, {
+                type = "terrain",
+                expired = true,
+                previous_terrain = result.terrain_effects.terrain_type,
+                message = "The terrain returned to normal!"
+            })
         end
     end
     

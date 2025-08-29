@@ -91,17 +91,28 @@ WeatherAbilities.WeatherAbilityData = {
         name = "Cloud Nine",
         weather_conditions = "all", -- Suppresses all weather
         effects = {
-            weather_suppression = true
+            weather_suppression = true,
+            suppression_scope = "all_pokemon"
         },
-        activation_timing = {"weather_check"}
+        activation_timing = {"weather_check", "field_entry"}
     },
     [Enums.AbilityId.AIR_LOCK] = {
         name = "Air Lock",
         weather_conditions = "all", -- Suppresses all weather  
         effects = {
-            weather_suppression = true
+            weather_suppression = true,
+            suppression_scope = "all_pokemon"
         },
-        activation_timing = {"weather_check"}
+        activation_timing = {"weather_check", "field_entry"}
+    },
+    [Enums.AbilityId.DRY_SKIN] = {
+        name = "Dry Skin",
+        weather_conditions = {Enums.WeatherType.RAIN, Enums.WeatherType.SUNNY},
+        effects = {
+            end_turn_healing = {fraction = "1/8", weather = Enums.WeatherType.RAIN},
+            end_turn_damage = {fraction = "1/8", weather = Enums.WeatherType.SUNNY}
+        },
+        activation_timing = {"end_of_turn"}
     }
 }
 
@@ -190,44 +201,62 @@ function WeatherAbilities.processEndOfTurnAbilityEffects(pokemonList, weatherTyp
                 local maxHP = pokemon.maxHP or pokemon.stats[Enums.Stat.HP] or 100
                 local healingAmount = 0
                 
-                if effects.end_turn_healing.fraction == "1/16" then
-                    healingAmount = math.max(1, math.floor(maxHP / 16))
-                elseif effects.end_turn_healing.fraction == "1/8" then
-                    healingAmount = math.max(1, math.floor(maxHP / 8))
+                -- Check if healing is conditional on specific weather
+                local shouldHeal = true
+                if effects.end_turn_healing.weather then
+                    shouldHeal = (weatherType == effects.end_turn_healing.weather)
                 end
                 
-                if healingAmount > 0 and pokemon.currentHP < maxHP then
-                    table.insert(results, {
-                        pokemon_id = pokemon.id or "unknown",
-                        pokemon_name = pokemon.name or "Unknown Pokemon",
-                        ability_name = abilityData.name,
-                        effect_type = "healing",
-                        healing = healingAmount,
-                        source = "weather_ability"
-                    })
+                if shouldHeal then
+                    if effects.end_turn_healing.fraction == "1/16" then
+                        healingAmount = math.max(1, math.floor(maxHP / 16))
+                    elseif effects.end_turn_healing.fraction == "1/8" then
+                        healingAmount = math.max(1, math.floor(maxHP / 8))
+                    end
+                    
+                    if healingAmount > 0 and pokemon.currentHP < maxHP then
+                        table.insert(results, {
+                            pokemon_id = pokemon.id or "unknown",
+                            pokemon_name = pokemon.name or "Unknown Pokemon",
+                            ability_name = abilityData.name,
+                            effect_type = "healing",
+                            healing = healingAmount,
+                            source = "weather_ability",
+                            weather = effects.end_turn_healing.weather
+                        })
+                    end
                 end
             end
             
-            -- Process damage effects (Solar Power)
+            -- Process damage effects (Solar Power, Dry Skin in sun)
             if effects.end_turn_damage then
                 local maxHP = pokemon.maxHP or pokemon.stats[Enums.Stat.HP] or 100
                 local damageAmount = 0
                 
-                if effects.end_turn_damage.fraction == "1/8" then
-                    damageAmount = math.max(1, math.floor(maxHP / 8))
-                elseif effects.end_turn_damage.fraction == "1/16" then
-                    damageAmount = math.max(1, math.floor(maxHP / 16))
+                -- Check if damage is conditional on specific weather
+                local shouldDamage = true
+                if effects.end_turn_damage.weather then
+                    shouldDamage = (weatherType == effects.end_turn_damage.weather)
                 end
                 
-                if damageAmount > 0 then
-                    table.insert(results, {
-                        pokemon_id = pokemon.id or "unknown",
-                        pokemon_name = pokemon.name or "Unknown Pokemon",
-                        ability_name = abilityData.name,
-                        effect_type = "damage",
-                        damage = damageAmount,
-                        source = "weather_ability"
-                    })
+                if shouldDamage then
+                    if effects.end_turn_damage.fraction == "1/8" then
+                        damageAmount = math.max(1, math.floor(maxHP / 8))
+                    elseif effects.end_turn_damage.fraction == "1/16" then
+                        damageAmount = math.max(1, math.floor(maxHP / 16))
+                    end
+                    
+                    if damageAmount > 0 then
+                        table.insert(results, {
+                            pokemon_id = pokemon.id or "unknown",
+                            pokemon_name = pokemon.name or "Unknown Pokemon",
+                            ability_name = abilityData.name,
+                            effect_type = "damage",
+                            damage = damageAmount,
+                            source = "weather_ability",
+                            weather = effects.end_turn_damage.weather
+                        })
+                    end
                 end
             end
         end
@@ -257,17 +286,73 @@ end
 -- Check if weather effects are suppressed due to abilities (Cloud Nine, Air Lock)
 -- @param pokemonList: List of active Pokemon to check for suppression abilities
 -- @param weatherType: Current weather type
--- @return: Boolean indicating if weather is suppressed, suppressing ability name
+-- @return: Boolean indicating if weather is suppressed, suppressing ability name, suppressing Pokemon
 function WeatherAbilities.isWeatherSuppressed(pokemonList, weatherType)
     for _, pokemon in ipairs(pokemonList) do
         local shouldActivate, abilityData = WeatherAbilities.shouldAbilityActivate(pokemon, weatherType, "weather_check")
         
         if shouldActivate and abilityData and abilityData.effects and abilityData.effects.weather_suppression then
-            return true, abilityData.name
+            return true, abilityData.name, pokemon
         end
     end
     
-    return false, nil
+    return false, nil, nil
+end
+
+-- Enhanced weather suppression system with state tracking
+-- @param pokemonList: List of active Pokemon
+-- @param weatherType: Current weather type
+-- @param battleState: Battle state for tracking suppression
+-- @return: Suppression details with state management
+function WeatherAbilities.processWeatherSuppression(pokemonList, weatherType, battleState)
+    local suppressed, suppressingAbility, suppressingPokemon = WeatherAbilities.isWeatherSuppressed(pokemonList, weatherType)
+    
+    local result = {
+        suppressed = suppressed,
+        suppressing_ability = suppressingAbility,
+        suppressing_pokemon = suppressingPokemon and suppressingPokemon.id or nil,
+        previous_suppression = battleState and battleState.weather_suppression or nil,
+        suppression_changed = false
+    }
+    
+    -- Check if suppression state changed
+    if battleState then
+        local previousSuppressed = battleState.weather_suppression and battleState.weather_suppression.active or false
+        result.suppression_changed = (suppressed ~= previousSuppressed)
+        
+        -- Update battle state
+        battleState.weather_suppression = {
+            active = suppressed,
+            ability = suppressingAbility,
+            pokemon_id = suppressingPokemon and suppressingPokemon.id or nil,
+            previous_weather = not suppressed and weatherType or nil
+        }
+    end
+    
+    return result
+end
+
+-- Restore weather when suppression ends (Pokemon switches out)
+-- @param battleState: Battle state with suppression tracking
+-- @param switchedPokemonId: ID of Pokemon that switched out
+-- @return: Weather restoration information
+function WeatherAbilities.checkWeatherRestorationOnSwitch(battleState, switchedPokemonId)
+    if not battleState or not battleState.weather_suppression then
+        return nil
+    end
+    
+    local suppression = battleState.weather_suppression
+    
+    -- If the suppressing Pokemon switched out, restore weather
+    if suppression.active and suppression.pokemon_id == switchedPokemonId then
+        return {
+            should_restore = true,
+            restored_weather = suppression.previous_weather or BattleConditions.WeatherType.NONE,
+            reason = "Suppressing Pokemon switched out"
+        }
+    end
+    
+    return nil
 end
 
 -- Get accuracy/evasion modifications from weather abilities

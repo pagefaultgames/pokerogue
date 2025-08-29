@@ -324,7 +324,16 @@ Enums.AbilityId = {
     SAND_RUSH = 81,
     SNOW_CLOAK = 82,
     OVERCOAT = 83,
-    SNOW_WARNING = 84
+    SNOW_WARNING = 84,
+    DRY_SKIN = 85, -- Weather healing/damage ability
+    
+    -- Terrain-related abilities (adding to support terrain system)
+    ELECTRIC_SURGE = 226, -- Sets Electric Terrain on switch-in
+    GRASSY_SURGE = 229, -- Sets Grassy Terrain on switch-in
+    MISTY_SURGE = 228, -- Sets Misty Terrain on switch-in
+    PSYCHIC_SURGE = 227, -- Sets Psychic Terrain on switch-in
+    SURGE_SURFER = 207, -- Speed doubles in Electric Terrain
+    GRASS_PELT = 179 -- Defense is raised in Grassy Terrain
 
     -- Note: Full ability list would continue with all abilities through modern generations
 }
@@ -857,6 +866,14 @@ function Enums.getAllMoveCategoryIds()
     table.sort(categories)
     return categories
 end
+
+-- Item ID Enumeration (basic items for terrain system)
+Enums.ItemId = {
+    NONE = 0,
+    AIR_BALLOON = 541, -- Makes Pokemon not grounded until hit
+    IRON_BALL = 278, -- Forces Pokemon to be grounded (nullifies Flying/Levitate)
+    TERRAIN_EXTENDER = 879 -- Extends terrain duration from 5 to 8 turns
+}
 
 -- Legacy enum aliases for compatibility
 Enums.Type = Enums.PokemonType
