@@ -1,6 +1,7 @@
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { PositionalTagType } from "#enums/positional-tag-type";
 import { SpeciesId } from "#enums/species-id";
@@ -134,7 +135,7 @@ describe("Moves - Heal Block", () => {
   });
 
   it("should stop healing from items", async () => {
-    game.override.startingHeldItems([{ name: "LEFTOVERS" }]);
+    game.override.startingHeldItems([{ entry: HeldItemId.LEFTOVERS }]);
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 

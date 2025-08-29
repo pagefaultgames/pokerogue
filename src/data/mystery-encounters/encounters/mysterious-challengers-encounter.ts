@@ -1,10 +1,10 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { modifierTypes } from "#data/data-lists";
-import { ModifierTier } from "#enums/modifier-tier";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
+import { RewardId } from "#enums/reward-id";
+import { RarityTier } from "#enums/reward-tier";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import { initBattleWithEnemyConfig, setEncounterRewards } from "#mystery-encounters/encounter-phase-utils";
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
@@ -147,7 +147,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter = MysteryEncounter
       const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
       setEncounterRewards({
-        guaranteedModifierTypeFuncs: [modifierTypes.TM_COMMON, modifierTypes.TM_GREAT, modifierTypes.MEMORY_MUSHROOM],
+        guaranteedRewardSpecs: [RewardId.TM_COMMON, RewardId.TM_GREAT, RewardId.MEMORY_MUSHROOM],
         fillRemaining: true,
       });
 
@@ -175,7 +175,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter = MysteryEncounter
       const config: EnemyPartyConfig = encounter.enemyPartyConfigs[1];
 
       setEncounterRewards({
-        guaranteedModifierTiers: [ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.GREAT, ModifierTier.GREAT],
+        guaranteedRarityTiers: [RarityTier.ULTRA, RarityTier.ULTRA, RarityTier.GREAT, RarityTier.GREAT],
         fillRemaining: true,
       });
 
@@ -206,7 +206,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter = MysteryEncounter
       encounter.expMultiplier = 0.9;
 
       setEncounterRewards({
-        guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.GREAT],
+        guaranteedRarityTiers: [RarityTier.ROGUE, RarityTier.ROGUE, RarityTier.ULTRA, RarityTier.GREAT],
         fillRemaining: true,
       });
 

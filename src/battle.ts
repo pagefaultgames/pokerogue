@@ -5,6 +5,7 @@ import { BattleSpec } from "#enums/battle-spec";
 import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
 import type { Command } from "#enums/command";
+import type { HeldItemId } from "#enums/held-item-id";
 import type { MoveId } from "#enums/move-id";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -15,8 +16,8 @@ import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
-import { MoneyMultiplierModifier, type PokemonHeldItemModifier } from "#modifiers/modifier";
-import type { CustomModifierSettings } from "#modifiers/modifier-type";
+import type { CustomRewardSettings } from "#items/reward-pool-utils";
+import { TrainerItemEffect } from "#items/trainer-item";
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import i18next from "#plugins/i18n";
 import { MusicPreference } from "#system/settings";
@@ -68,7 +69,7 @@ export class Battle {
   public turnCommands: TurnCommands;
   public playerParticipantIds: Set<number> = new Set<number>();
   public battleScore = 0;
-  public postBattleLoot: PokemonHeldItemModifier[] = [];
+  public postBattleLoot: HeldItemId[] = [];
   public escapeAttempts = 0;
   public lastMove: MoveId;
   public battleSeed: string = randomString(16, true);
@@ -173,24 +174,12 @@ export class Battle {
   }
 
   addPostBattleLoot(enemyPokemon: EnemyPokemon): void {
-    this.postBattleLoot.push(
-      ...globalScene
-        .findModifiers(
-          m => m.is("PokemonHeldItemModifier") && m.pokemonId === enemyPokemon.id && m.isTransferable,
-          false,
-        )
-        .map(i => {
-          const ret = i as PokemonHeldItemModifier;
-          //@ts-expect-error - this is awful to fix/change
-          ret.pokemonId = null;
-          return ret;
-        }),
-    );
+    this.postBattleLoot.push(...enemyPokemon.getHeldItems());
   }
 
   pickUpScatteredMoney(): void {
     const moneyAmount = new NumberHolder(globalScene.currentBattle.moneyScattered);
-    globalScene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
+    globalScene.applyPlayerItems(TrainerItemEffect.MONEY_MULTIPLIER, { numberHolder: moneyAmount });
 
     if (globalScene.arena.getTag(ArenaTagType.HAPPY_HOUR)) {
       moneyAmount.value *= 2;
@@ -491,7 +480,7 @@ export class FixedBattleConfig {
   public getTrainer: GetTrainerFunc;
   public getEnemyParty: GetEnemyPartyFunc;
   public seedOffsetWaveIndex: number;
-  public customModifierRewardSettings?: CustomModifierSettings;
+  public customRewardSettings?: CustomRewardSettings;
 
   setBattleType(battleType: BattleType): FixedBattleConfig {
     this.battleType = battleType;
@@ -518,8 +507,8 @@ export class FixedBattleConfig {
     return this;
   }
 
-  setCustomModifierRewards(customModifierRewardSettings: CustomModifierSettings) {
-    this.customModifierRewardSettings = customModifierRewardSettings;
+  setCustomRewards(customRewardSettings: CustomRewardSettings) {
+    this.customRewardSettings = customRewardSettings;
     return this;
   }
 }

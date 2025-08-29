@@ -1,6 +1,7 @@
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
@@ -141,9 +142,7 @@ describe("Moves - Tera Blast", () => {
   });
 
   it("does not change its move category from stat changes due to held items", async () => {
-    game.override
-      .startingHeldItems([{ name: "SPECIES_STAT_BOOSTER", type: "THICK_CLUB" }])
-      .starterSpecies(SpeciesId.CUBONE);
+    game.override.startingHeldItems([{ entry: HeldItemId.THICK_CLUB }]).starterSpecies(SpeciesId.CUBONE);
     await game.classicMode.startBattle();
 
     const playerPokemon = game.field.getPlayerPokemon();

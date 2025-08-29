@@ -8,9 +8,10 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PlayerGender } from "#enums/player-gender";
 import { PokeballType } from "#enums/pokeball";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type { EnemyPokemon } from "#field/pokemon";
-import { HiddenAbilityRateBoosterModifier, IvScannerModifier } from "#modifiers/modifier";
+import { TrainerItemEffect } from "#items/trainer-item";
 import { getEncounterText, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import {
   initSubsequentOptionSelect,
@@ -297,7 +298,9 @@ async function summonSafariPokemon() {
         const hiddenIndex = pokemon.species.ability2 ? 2 : 1;
         if (pokemon.abilityIndex < hiddenIndex) {
           const hiddenAbilityChance = new NumberHolder(256);
-          globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
+          globalScene.applyPlayerItems(TrainerItemEffect.HIDDEN_ABILITY_CHANCE_BOOSTER, {
+            numberHolder: hiddenAbilityChance,
+          });
 
           const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
 
@@ -332,8 +335,7 @@ async function summonSafariPokemon() {
   // shows up and the IV scanner breaks. For now, we place the IV scanner code
   // separately so that at least the IV scanner works.
 
-  const ivScannerModifier = globalScene.findModifier(m => m instanceof IvScannerModifier);
-  if (ivScannerModifier) {
+  if (globalScene.trainerItems.hasItem(TrainerItemId.IV_SCANNER)) {
     globalScene.phaseManager.pushNew("ScanIvsPhase", pokemon.getBattlerIndex());
   }
 }

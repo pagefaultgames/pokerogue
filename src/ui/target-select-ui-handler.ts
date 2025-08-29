@@ -5,10 +5,10 @@ import { Button } from "#enums/buttons";
 import type { MoveId } from "#enums/move-id";
 import { UiMode } from "#enums/ui-mode";
 import type { Pokemon } from "#field/pokemon";
-import type { ModifierBar } from "#modifiers/modifier";
 import { getMoveTargets } from "#moves/move-utils";
 import { UiHandler } from "#ui/ui-handler";
 import { fixedInt, isNullOrUndefined } from "#utils/common";
+import type { ItemBar } from "./item-bar-ui";
 
 export type TargetSelectCallback = (targets: BattlerIndex[]) => void;
 
@@ -23,7 +23,7 @@ export class TargetSelectUiHandler extends UiHandler {
   private targets: BattlerIndex[];
   private targetsHighlighted: Pokemon[];
   private targetFlashTween: Phaser.Tweens.Tween | null;
-  private enemyModifiers: ModifierBar;
+  private enemyModifiers: ItemBar;
   private targetBattleInfoMoveTween: Phaser.Tweens.Tween[] = [];
 
   constructor() {
@@ -54,7 +54,7 @@ export class TargetSelectUiHandler extends UiHandler {
       return false;
     }
 
-    this.enemyModifiers = globalScene.getModifierBar(true);
+    this.enemyModifiers = globalScene.getItemBar(true);
 
     if (this.fieldIndex === BattlerIndex.PLAYER) {
       this.resetCursor(this.cursor0, user);

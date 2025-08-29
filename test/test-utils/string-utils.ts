@@ -73,8 +73,9 @@ export function getEnumStr<E extends EnumOrObject>(
 
 /**
  * Convert an array of enums or `const object`s into a readable string version.
- * @param obj - The {@linkcode EnumOrObject} to source reverse mappings from
+ * @param obj - The {@linkcode NormalEnum} to source reverse mappings from
  * @param enums - An array of {@linkcode obj}'s values
+ * @param transformValues - An optional function used to transform `obj`'s values into strings.
  * @returns The stringified representation of `enums`.
  * @example
  * ```ts
@@ -86,12 +87,16 @@ export function getEnumStr<E extends EnumOrObject>(
  * console.log(stringifyEnumArray(fakeEnum, [fakeEnum.ONE, fakeEnum.TWO, fakeEnum.THREE])); // Output: "[ONE, TWO, THREE] (=[1, 2, 3])"
  * ```
  */
-export function stringifyEnumArray<E extends EnumOrObject>(obj: E, enums: E[keyof E][]): string {
+export function stringifyEnumArray<E extends EnumOrObject>(
+  obj: E,
+  enums: ObjectValues<E>[],
+  transformValues?: (val: (typeof enums)[number]) => string,
+): string {
   if (obj.length === 0) {
     return "[]";
   }
 
-  const vals = enums.slice();
+  const vals = transformValues ? enums.map(transformValues) : enums;
   /** An array of string names */
   let names: string[];
 

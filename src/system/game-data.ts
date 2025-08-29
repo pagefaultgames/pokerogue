@@ -30,15 +30,13 @@ import { Nature } from "#enums/nature";
 import { PlayerGender } from "#enums/player-gender";
 import type { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
-import { StatusEffect } from "#enums/status-effect";
 import { TrainerVariant } from "#enums/trainer-variant";
 import { UiMode } from "#enums/ui-mode";
 import { Unlockables } from "#enums/unlockables";
 import { WeatherType } from "#enums/weather-type";
 import { TagAddedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#events/arena";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
-// biome-ignore lint/performance/noNamespaceImport: Something weird is going on here and I don't want to touch it
-import * as Modifier from "#modifiers/modifier";
+import type { TrainerItemConfiguration, TrainerItemSaveData } from "#items/trainer-item-data-types";
 import { MysteryEncounterSaveData } from "#mystery-encounters/mystery-encounter-save-data";
 import type { Variant } from "#sprites/variant";
 import { achvs } from "#system/achv";
@@ -46,7 +44,6 @@ import { ArenaData, type SerializedArenaData } from "#system/arena-data";
 import { ChallengeData } from "#system/challenge-data";
 import { EggData } from "#system/egg-data";
 import { GameStats } from "#system/game-stats";
-import { ModifierData as PersistentModifierData } from "#system/modifier-data";
 import { PokemonData } from "#system/pokemon-data";
 import { RibbonData } from "#system/ribbons/ribbon-data";
 import { resetSettings, SettingKeys, setSetting } from "#system/settings";
@@ -118,8 +115,8 @@ export interface SessionSaveData {
   gameMode: GameModes;
   party: PokemonData[];
   enemyParty: PokemonData[];
-  modifiers: PersistentModifierData[];
-  enemyModifiers: PersistentModifierData[];
+  trainerItems: TrainerItemSaveData;
+  enemyTrainerItems: TrainerItemSaveData;
   arena: ArenaData;
   pokeballCounts: PokeballCounts;
   money: number;
@@ -924,8 +921,8 @@ export class GameData {
       gameMode: globalScene.gameMode.modeId,
       party: globalScene.getPlayerParty().map(p => new PokemonData(p)),
       enemyParty: globalScene.getEnemyParty().map(p => new PokemonData(p)),
-      modifiers: globalScene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
-      enemyModifiers: globalScene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
+      trainerItems: globalScene.trainerItems.generateSaveData(),
+      enemyTrainerItems: globalScene.enemyTrainerItems.generateSaveData(),
       arena: new ArenaData(globalScene.arena),
       pokeballCounts: globalScene.pokeballCounts,
       money: Math.floor(globalScene.money),
@@ -953,6 +950,7 @@ export class GameData {
       }
       const handleSessionData = async (sessionDataStr: string) => {
         try {
+          console.log(sessionDataStr);
           const sessionData = this.parseSessionData(sessionDataStr);
           resolve(sessionData);
         } catch (err) {
@@ -1146,32 +1144,20 @@ export class GameData {
             }
           }
 
+          globalScene.trainerItems.clearItems();
+          globalScene.assignTrainerItemsFromSaveData(sessionData.trainerItems, true);
+
           globalScene.arena.positionalTagManager.tags = sessionData.arena.positionalTags.map(tag =>
             loadPositionalTag(tag),
           );
 
-          if (globalScene.modifiers.length) {
-            console.warn("Existing modifiers not cleared on session load, deleting...");
-            globalScene.modifiers = [];
-          }
-          for (const modifierData of sessionData.modifiers) {
-            const modifier = modifierData.toModifier(Modifier[modifierData.className]);
-            if (modifier) {
-              globalScene.addModifier(modifier, true);
-            }
-          }
-          globalScene.updateModifiers(true);
-
-          for (const enemyModifierData of sessionData.enemyModifiers) {
-            const modifier = enemyModifierData.toModifier(Modifier[enemyModifierData.className]);
-            if (modifier) {
-              globalScene.addEnemyModifier(modifier, true);
-            }
-          }
-
-          globalScene.updateModifiers(false);
+          globalScene.enemyTrainerItems.clearItems();
+          globalScene.assignTrainerItemsFromSaveData(sessionData.enemyTrainerItems, false);
 
           Promise.all(loadPokemonAssets).then(() => resolve(true));
+
+          globalScene.updateItems(true);
+          globalScene.updateItems(false);
         };
         if (sessionData) {
           initSessionFromData(sessionData);
@@ -1316,25 +1302,12 @@ export class GameData {
         case "trainer":
           return v ? new TrainerData(v) : null;
 
-        case "modifiers":
-        case "enemyModifiers": {
-          const ret: PersistentModifierData[] = [];
+        // TODO: Figure out what to do with this
+        case "trainerItems":
+        case "enemyTrainerItems": {
+          const ret: TrainerItemConfiguration = [];
           for (const md of v ?? []) {
-            if (md?.className === "ExpBalanceModifier") {
-              // Temporarily limit EXP Balance until it gets reworked
-              md.stackCount = Math.min(md.stackCount, 4);
-            }
-
-            if (
-              md instanceof Modifier.EnemyAttackStatusEffectChanceModifier &&
-              (md.effect === StatusEffect.FREEZE || md.effect === StatusEffect.SLEEP)
-            ) {
-              // Discard any old "sleep/freeze chance tokens".
-              // TODO: make this migrate script
-              continue;
-            }
-
-            ret.push(new PersistentModifierData(md, k === "modifiers"));
+            ret.push(md);
           }
           return ret;
         }
@@ -1375,6 +1348,17 @@ export class GameData {
         if (sync) {
           globalScene.ui.savingIcon.show();
         }
+        if (useCachedSession) {
+          console.log("REPARSING!");
+          console.log(
+            decrypt(
+              localStorage.getItem(
+                `sessionData${globalScene.sessionSlotId ? globalScene.sessionSlotId : ""}_${loggedInUser?.username}`,
+              )!,
+              bypassLogin,
+            ),
+          );
+        }
         const sessionData = useCachedSession
           ? this.parseSessionData(
               decrypt(
@@ -1410,6 +1394,7 @@ export class GameData {
           `sessionData${globalScene.sessionSlotId ? globalScene.sessionSlotId : ""}_${loggedInUser?.username}`,
           encrypt(JSON.stringify(sessionData), bypassLogin),
         );
+        console.log(JSON.stringify(sessionData));
 
         console.debug("Session data saved!");
 

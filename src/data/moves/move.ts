@@ -22,7 +22,7 @@ import {
   TypeBoostTag,
 } from "#data/battler-tags";
 import { getBerryEffectFunc } from "#data/berry";
-import { allAbilities, allMoves } from "#data/data-lists";
+import { allAbilities, allHeldItems, allMoves } from "#data/data-lists";
 import { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-change-triggers";
 import { DelayedAttackTag } from "#data/positional-tags/positional-tag";
 import {
@@ -42,8 +42,8 @@ import { BiomeId } from "#enums/biome-id";
 import { ChallengeType } from "#enums/challenge-type";
 import { Command } from "#enums/command";
 import { FieldPosition } from "#enums/field-position";
+import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
 import { HitResult } from "#enums/hit-result";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { ChargeAnim } from "#enums/move-anims-common";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
@@ -68,14 +68,10 @@ import { SwitchType } from "#enums/switch-type";
 import { WeatherType } from "#enums/weather-type";
 import { MoveUsedEvent } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
-import {
-  AttackTypeBoosterModifier,
-  BerryModifier,
-  PokemonHeldItemModifier,
-  PokemonMoveAccuracyBoosterModifier,
-  PokemonMultiHitModifier,
-  PreserveBerryModifier,
-} from "#modifiers/modifier";
+import { applyHeldItems } from "#items/all-held-items";
+import { BerryHeldItem, berryTypeToHeldItem } from "#items/berry";
+import { HeldItemEffect } from "#enums/held-item-effect";
+import { TrainerItemEffect } from "#items/trainer-item";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSketchMoves, invalidSleepTalkMoves } from "#moves/invalid-moves";
 import { frenzyMissFunc, getMoveTargets } from "#moves/move-utils";
@@ -785,7 +781,7 @@ export abstract class Move implements Localizable {
     const isOhko = this.hasAttr("OneHitKOAccuracyAttr");
 
     if (!isOhko) {
-      globalScene.applyModifiers(PokemonMoveAccuracyBoosterModifier, user.isPlayer(), user, moveAccuracy);
+      applyHeldItems(HeldItemEffect.ACCURACY_BOOSTER, { pokemon: user, moveAccuracy: moveAccuracy });
     }
 
     if (globalScene.arena.weather?.weatherType === WeatherType.FOG) {
@@ -839,9 +835,15 @@ export abstract class Move implements Localizable {
     }
 
     // Non-priority, single-hit moves of the user's Tera Type are always a bare minimum of 60 power
-
     const sourceTeraType = source.getTeraType();
-    if (source.isTerastallized && sourceTeraType === this.type && power.value < 60 && this.priority <= 0 && !this.hasAttr("MultiHitAttr") && !globalScene.findModifier(m => m instanceof PokemonMultiHitModifier && m.pokemonId === source.id)) {
+    if (
+      source.isTerastallized
+      && sourceTeraType === this.type
+      && power.value < 60
+      && this.priority <= 0
+      && !this.hasAttr("MultiHitAttr")
+      && !source.heldItemManager.hasItem(HeldItemId.MULTI_LENS)
+    ) {
       power.value = 60;
     }
 
@@ -871,7 +873,11 @@ export abstract class Move implements Localizable {
 
     if (!this.hasAttr("TypelessAttr")) {
       globalScene.arena.applyTags(WeakenMoveTypeTag, simulated, typeChangeHolder.value, power);
-      globalScene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, typeChangeHolder.value, power);
+      applyHeldItems(HeldItemEffect.ATTACK_TYPE_BOOST, {
+        pokemon: source,
+        moveType: typeChangeHolder.value,
+        movePower: power,
+      });
     }
 
     if (source.getTag(HelpingHandTag)) {
@@ -934,7 +940,7 @@ export abstract class Move implements Localizable {
    * Returns `true` if this move can be given additional strikes
    * by enhancing effects.
    * Currently used for {@link https://bulbapedia.bulbagarden.net/wiki/Parental_Bond_(Ability) | Parental Bond}
-   * and {@linkcode PokemonMultiHitModifier | Multi-Lens}.
+   * and {@linkcode MultiHitHeldItem | Multi-Lens}.
    * @param user The {@linkcode Pokemon} using the move
    * @param restrictSpread `true` if the enhancing effect
    * should not affect multi-target moves (default `false`)
@@ -1587,7 +1593,7 @@ export class TargetHalfHpDamageAttr extends FixedDamageAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     // first, determine if the hit is coming from multi lens or not
-    const lensCount = user.getHeldItems().find(i => i instanceof PokemonMultiHitModifier)?.getStackCount() ?? 0;
+    const lensCount = user.heldItemManager.getStack(HeldItemId.MULTI_LENS);
     if (lensCount <= 0) {
       // no multi lenses; we can just halve the target's hp and call it a day
       (args[0] as NumberHolder).value = toDmgValue(target.hp / 2);
@@ -2724,35 +2730,33 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
       return false;
     }
 
-    const heldItems = this.getTargetHeldItems(target).filter((i) => i.isTransferable);
+    const heldItems = target.heldItemManager.getTransferableHeldItems();
     if (!heldItems.length) {
       return false;
     }
 
-    const poolType = target.isPlayer() ? ModifierPoolType.PLAYER : target.hasTrainer() ? ModifierPoolType.TRAINER : ModifierPoolType.WILD;
-    const highestItemTier = heldItems.map((m) => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier!, highestTier), 0); // TODO: is the bang after tier correct?
-    const tierHeldItems = heldItems.filter((m) => m.type.getOrInferTier(poolType) === highestItemTier);
-    const stolenItem = tierHeldItems[user.randBattleSeedInt(tierHeldItems.length)];
-    if (!globalScene.tryTransferHeldItemModifier(stolenItem, user, false)) {
+    const stolenItem = heldItems[user.randBattleSeedInt(heldItems.length)];
+
+    if (!globalScene.tryTransferHeldItem(stolenItem, target, user, false)) {
       return false;
     }
 
-    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:stoleItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: stolenItem.type.name }));
+    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:stoleItem",
+      { pokemonName: getPokemonNameWithAffix(user),
+        targetName: getPokemonNameWithAffix(target),
+        itemName: allHeldItems[stolenItem].name
+      }
+    ));
     return true;
   }
 
-  getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
-    return globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier
-      && m.pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier[];
-  }
-
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    const heldItems = this.getTargetHeldItems(target);
+    const heldItems = target.heldItemManager.getTransferableHeldItems();
     return heldItems.length ? 5 : 0;
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    const heldItems = this.getTargetHeldItems(target);
+    const heldItems = target.heldItemManager.getTransferableHeldItems();
     return heldItems.length ? -5 : 0;
   }
 }
@@ -2798,10 +2802,10 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
 
     // Considers entire transferrable item pool by default (Knock Off).
     // Otherwise only consider berries (Incinerate).
-    let heldItems = this.getTargetHeldItems(target).filter(i => i.isTransferable);
+    let heldItems = target.heldItemManager.getTransferableHeldItems();
 
     if (this.berriesOnly) {
-      heldItems = heldItems.filter(m => m instanceof BerryModifier && m.pokemonId === target.id, target.isPlayer());
+      heldItems = heldItems.filter(m => m in Object.values(berryTypeToHeldItem));
     }
 
     if (!heldItems.length) {
@@ -2812,29 +2816,26 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
 
     // Decrease item amount and update icon
     target.loseHeldItem(removedItem);
-    globalScene.updateModifiers(target.isPlayer());
+    globalScene.updateItems(target.isPlayer());
 
     if (this.berriesOnly) {
-      globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:incineratedItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: removedItem.type.name }));
+      globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:incineratedItem",
+        { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: allHeldItems[removedItem].name }));
     } else {
-      globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:knockedOffItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: removedItem.type.name }));
+      globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:knockedOffItem",
+        { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: allHeldItems[removedItem].name }));
     }
 
     return true;
   }
 
-  getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
-    return globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier
-      && m.pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier[];
-  }
-
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    const heldItems = this.getTargetHeldItems(target);
+    const heldItems = target.getHeldItems();
     return heldItems.length ? 5 : 0;
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    const heldItems = this.getTargetHeldItems(target);
+    const heldItems = target.getHeldItems();
     return heldItems.length ? -5 : 0;
   }
 }
@@ -2843,7 +2844,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
  * Attribute that causes targets of the move to eat a berry. Used for Teatime, Stuff Cheeks
  */
 export class EatBerryAttr extends MoveEffectAttr {
-  protected chosenBerry: BerryModifier;
+  protected chosenBerry: HeldItemId;
   constructor(selfTarget: boolean) {
     super(selfTarget);
   }
@@ -2872,9 +2873,9 @@ export class EatBerryAttr extends MoveEffectAttr {
     this.chosenBerry = heldBerries[user.randBattleSeedInt(heldBerries.length)];
     const preserve = new BooleanHolder(false);
     // check for berry pouch preservation
-    globalScene.applyModifiers(PreserveBerryModifier, pokemon.isPlayer(), pokemon, preserve);
+    globalScene.applyPlayerItems(TrainerItemEffect.PRESERVE_BERRY, {pokemon: pokemon, doPreserve: preserve});
     if (!preserve.value) {
-      this.reduceBerryModifier(pokemon);
+      this.reduceBerryItem(pokemon);
     }
 
     // Don't update harvest for berries preserved via Berry pouch (no item dupes lol)
@@ -2883,16 +2884,15 @@ export class EatBerryAttr extends MoveEffectAttr {
     return true;
   }
 
-  getTargetHeldBerries(target: Pokemon): BerryModifier[] {
-    return globalScene.findModifiers(m => m instanceof BerryModifier
-      && (m as BerryModifier).pokemonId === target.id, target.isPlayer()) as BerryModifier[];
+  getTargetHeldBerries(target: Pokemon): HeldItemId[] {
+    return target.getHeldItems().filter(m => isItemInCategory(m, HeldItemCategoryId.BERRY));
   }
 
-  reduceBerryModifier(target: Pokemon) {
+  reduceBerryItem(target: Pokemon) {
     if (this.chosenBerry) {
       target.loseHeldItem(this.chosenBerry);
     }
-    globalScene.updateModifiers(target.isPlayer());
+    globalScene.updateItems(target.isPlayer());
   }
 
 
@@ -2906,10 +2906,10 @@ export class EatBerryAttr extends MoveEffectAttr {
    */
    protected eatBerry(consumer: Pokemon, berryOwner: Pokemon = consumer, updateHarvest = consumer === berryOwner) {
      // consumer eats berry, owner triggers unburden and similar effects
-    getBerryEffectFunc(this.chosenBerry.berryType)(consumer);
+    getBerryEffectFunc((allHeldItems[this.chosenBerry] as BerryHeldItem).berryType)(consumer);
     applyAbAttrs("PostItemLostAbAttr", {pokemon: berryOwner});
     applyAbAttrs("HealFromBerryUseAbAttr", {pokemon: consumer});
-    consumer.recordEatenBerry(this.chosenBerry.berryType, updateHarvest);
+    consumer.recordEatenBerry((allHeldItems[this.chosenBerry] as BerryHeldItem).berryType, updateHarvest);
   }
 }
 
@@ -2948,9 +2948,9 @@ export class StealEatBerryAttr extends EatBerryAttr {
     // pick a random berry and eat it
     this.chosenBerry = heldBerries[user.randBattleSeedInt(heldBerries.length)];
     applyAbAttrs("PostItemLostAbAttr", {pokemon: target});
-    const message = i18next.t("battle:stealEatBerry", { pokemonName: user.name, targetName: target.name, berryName: this.chosenBerry.type.name });
+    const message = i18next.t("battle:stealEatBerry", { pokemonName: user.name, targetName: target.name, berryName: allHeldItems[this.chosenBerry].name });
     globalScene.phaseManager.queueMessage(message);
-    this.reduceBerryModifier(target);
+    this.reduceBerryItem(target);
     this.eatBerry(user, target);
 
     return true;
@@ -6553,9 +6553,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         }
       }
 
-      // clear out enemy held item modifiers of the switch out target
-      globalScene.clearEnemyHeldItemModifiers(switchOutTarget);
-
       if (!allyPokemon?.isActive(true) && switchOutTarget.hp) {
           globalScene.phaseManager.pushNew("BattleEndPhase", false);
 
@@ -8158,14 +8155,14 @@ const failIfLastInPartyCondition: MoveConditionFunc = (user: Pokemon, target: Po
 
 const failIfGhostTypeCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => !target.isOfType(PokemonType.GHOST);
 
-const failIfNoTargetHeldItemsCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => target.getHeldItems().filter(i => i.isTransferable)?.length > 0;
+const failIfNoTargetHeldItemsCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => target.heldItemManager.getTransferableHeldItems().length > 0;
 
 const attackedByItemMessageFunc = (user: Pokemon, target: Pokemon, move: Move) => {
-  const heldItems = target.getHeldItems().filter(i => i.isTransferable);
+  const heldItems = target.heldItemManager.getTransferableHeldItems();
   if (heldItems.length === 0) {
     return "";
   }
-  const itemName = heldItems[0]?.type?.name ?? "item";
+  const itemName = allHeldItems[heldItems[0]].name ?? "item";
   const message: string = i18next.t("moveTriggers:attackedByItem", { pokemonName: getPokemonNameWithAffix(target), itemName: itemName });
   return message;
 };
@@ -9465,7 +9462,7 @@ export function initMoves() {
       .condition((user, target, move) => !target.status && !target.isSafeguarded(user))
       .reflectable(),
     new AttackMove(MoveId.KNOCK_OFF, PokemonType.DARK, MoveCategory.PHYSICAL, 65, 100, 20, -1, 0, 3)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => target.getHeldItems().filter(i => i.isTransferable).length > 0 ? 1.5 : 1)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => target.heldItemManager.getTransferableHeldItems().length > 0 ? 1.5 : 1)
       .attr(RemoveHeldItemAttr, false)
       .edgeCase(),
       // Should not be able to remove held item if user faints due to Rough Skin, Iron Barbs, etc.
@@ -10185,7 +10182,7 @@ export function initMoves() {
       .condition((user, target, move) => !target.turnData.acted)
       .attr(ForceLastAttr),
     new AttackMove(MoveId.ACROBATICS, PokemonType.FLYING, MoveCategory.PHYSICAL, 55, 100, 15, -1, 0, 5)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => Math.max(1, 2 - 0.2 * user.getHeldItems().filter(i => i.isTransferable).reduce((v, m) => v + m.stackCount, 0))),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => Math.max(1, 2 - 0.2 * user.heldItemManager.getTransferableHeldItems().reduce((v, m) => v + user.heldItemManager.getStack(m), 0))),
     new StatusMove(MoveId.REFLECT_TYPE, PokemonType.NORMAL, -1, 15, -1, 0, 5)
       .ignoresSubstitute()
       .attr(CopyTypeAttr),
@@ -10940,7 +10937,7 @@ export function initMoves() {
       .attr(EatBerryAttr, true)
       .attr(StatStageChangeAttr, [ Stat.DEF ], 2, true)
       .condition((user) => {
-        const userBerries = globalScene.findModifiers(m => m instanceof BerryModifier, user.isPlayer());
+        const userBerries = user.getHeldItems().filter(m => isItemInCategory(m, HeldItemCategoryId.BERRY));
         return userBerries.length > 0;
       })
       .edgeCase(), // Stuff Cheeks should not be selectable when the user does not have a berry, see wiki

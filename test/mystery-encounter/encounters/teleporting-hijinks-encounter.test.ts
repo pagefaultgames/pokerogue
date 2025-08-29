@@ -10,7 +10,7 @@ import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { TeleportingHijinksEncounter } from "#mystery-encounters/teleporting-hijinks-encounter";
 import { CommandPhase } from "#phases/command-phase";
 import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
-import { SelectModifierPhase } from "#phases/select-modifier-phase";
+import { SelectRewardPhase } from "#phases/select-reward-phase";
 import {
   runMysteryEncounterToEnd,
   runSelectMysteryEncounterOption,
@@ -18,7 +18,7 @@ import {
 } from "#test/mystery-encounter/encounter-test-utils";
 import { GameManager } from "#test/test-utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
-import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import i18next from "i18next";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -295,26 +295,26 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
       expect(enemyField[0].isBoss()).toBe(true);
     });
 
-    it("should have Magnet and Metal Coat in rewards after battle", async () => {
+    it("should have Magnet and Metal Coat in allRewards after battle", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, defaultParty);
       await runMysteryEncounterToEnd(game, 3, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to("SelectModifierPhase", false);
-      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.to("SelectModifierPhase");
+      await game.phaseInterceptor.to("SelectRewardPhase", false);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
+      await game.phaseInterceptor.to("SelectRewardPhase");
 
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
+      expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+      const rewardSelectHandler = scene.ui.handlers.find(
+        h => h instanceof RewardSelectUiHandler,
+      ) as RewardSelectUiHandler;
       expect(
-        modifierSelectHandler.options.some(
-          opt => opt.modifierTypeOption.type.name === i18next.t("modifierType:AttackTypeBoosterItem.metal_coat"),
+        rewardSelectHandler.options.some(
+          opt => opt.rewardOption.type.name === i18next.t("modifierType:AttackTypeBoosterItem.metal_coat"),
         ),
       ).toBe(true);
       expect(
-        modifierSelectHandler.options.some(
-          opt => opt.modifierTypeOption.type.name === i18next.t("modifierType:AttackTypeBoosterItem.magnet"),
+        rewardSelectHandler.options.some(
+          opt => opt.rewardOption.type.name === i18next.t("modifierType:AttackTypeBoosterItem.magnet"),
         ),
       ).toBe(true);
     });

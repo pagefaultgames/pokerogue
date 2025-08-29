@@ -6,9 +6,9 @@ import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { SwitchType } from "#enums/switch-type";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { UiMode } from "#enums/ui-mode";
-import { IvScannerModifier } from "#modifiers/modifier";
 import { getEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { OptionSelectSettings } from "#mystery-encounters/encounter-phase-utils";
 import { transitionMysteryEncounterIntroVisuals } from "#mystery-encounters/encounter-phase-utils";
@@ -413,8 +413,7 @@ export class MysteryEncounterBattlePhase extends Phase {
     // PostSummon and ShinySparkle phases are handled by SummonPhase
 
     if (encounterMode !== MysteryEncounterMode.TRAINER_BATTLE) {
-      const ivScannerModifier = globalScene.findModifier(m => m instanceof IvScannerModifier);
-      if (ivScannerModifier) {
+      if (globalScene.trainerItems.hasItem(TrainerItemId.IV_SCANNER)) {
         enemyField.map(p => globalScene.phaseManager.pushNew("ScanIvsPhase", p.getBattlerIndex()));
       }
     }
@@ -539,7 +538,7 @@ export class MysteryEncounterRewardsPhase extends Phase {
   }
 
   /**
-   * Queues encounter EXP and rewards phases, {@linkcode PostMysteryEncounterPhase}, and ends phase
+   * Queues encounter EXP and reward phases, {@linkcode PostMysteryEncounterPhase}, and ends phase
    */
   doEncounterRewardsAndContinue() {
     const encounter = globalScene.currentBattle.mysteryEncounter!;
@@ -551,8 +550,8 @@ export class MysteryEncounterRewardsPhase extends Phase {
     if (encounter.doEncounterRewards) {
       encounter.doEncounterRewards();
     } else if (this.addHealPhase) {
-      globalScene.phaseManager.tryRemovePhase(p => p.is("SelectModifierPhase"));
-      globalScene.phaseManager.unshiftNew("SelectModifierPhase", 0, undefined, {
+      globalScene.phaseManager.tryRemovePhase(p => p.is("SelectRewardPhase"));
+      globalScene.phaseManager.unshiftNew("SelectRewardPhase", 0, undefined, {
         fillRemaining: false,
         rerollMultiplier: -1,
       });
