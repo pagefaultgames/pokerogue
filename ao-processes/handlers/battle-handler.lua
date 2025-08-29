@@ -26,6 +26,11 @@ local StatusInteractions = require("game-logic.pokemon.status-interactions")
 local StatusHealing = require("game-logic.pokemon.status-healing")
 local StatusImmunities = require("game-logic.pokemon.status-immunities")
 
+-- Weather system dependencies
+local WeatherEffects = require("game-logic.battle.weather-effects")
+local WeatherAbilities = require("game-logic.battle.weather-abilities")
+local BattleConditions = require("game-logic.battle.battle-conditions")
+
 -- Battle session storage (in-memory for this implementation)
 local BattleSessions = {}
 
@@ -207,6 +212,61 @@ Handlers.add(
     Handlers.utils.hasMatchingTag("Action", "GET_STATUS_INFO"),
     function(msg)
         local response = getStatusInfo(msg)
+        Handlers.utils.reply(response)(msg)
+    end
+)
+
+-- Weather Effect Handlers
+Handlers.add(
+    "SET_WEATHER",
+    Handlers.utils.hasMatchingTag("Action", "SET_WEATHER"),
+    function(msg)
+        local response = setWeather(msg)
+        Handlers.utils.reply(response)(msg)
+    end
+)
+
+Handlers.add(
+    "GET_WEATHER_INFO",
+    Handlers.utils.hasMatchingTag("Action", "GET_WEATHER_INFO"),
+    function(msg)
+        local response = getWeatherInfo(msg)
+        Handlers.utils.reply(response)(msg)
+    end
+)
+
+Handlers.add(
+    "PROCESS_WEATHER_EFFECTS",
+    Handlers.utils.hasMatchingTag("Action", "PROCESS_WEATHER_EFFECTS"),
+    function(msg)
+        local response = processWeatherEffects(msg)
+        Handlers.utils.reply(response)(msg)
+    end
+)
+
+Handlers.add(
+    "CHECK_WEATHER_ABILITY_ACTIVATION",
+    Handlers.utils.hasMatchingTag("Action", "CHECK_WEATHER_ABILITY_ACTIVATION"),
+    function(msg)
+        local response = checkWeatherAbilityActivation(msg)
+        Handlers.utils.reply(response)(msg)
+    end
+)
+
+Handlers.add(
+    "MODIFY_MOVE_FOR_WEATHER",
+    Handlers.utils.hasMatchingTag("Action", "MODIFY_MOVE_FOR_WEATHER"),
+    function(msg)
+        local response = modifyMoveForWeather(msg)
+        Handlers.utils.reply(response)(msg)
+    end
+)
+
+Handlers.add(
+    "CLEAR_WEATHER",
+    Handlers.utils.hasMatchingTag("Action", "CLEAR_WEATHER"),
+    function(msg)
+        local response = clearWeather(msg)
         Handlers.utils.reply(response)(msg)
     end
 )
@@ -1568,6 +1628,345 @@ local function getStatusInfo(msg)
         data = {
             pokemon_id = data.pokemonId,
             status_info = statusInfo
+        },
+        timestamp = os.time(),
+        processing_time_ms = processingTime,
+        message_id = msg.Id
+    }
+end
+
+-- Weather Handler Implementations
+
+-- Set weather for a battle
+-- @param msg: AO message with weather setting data
+-- @return: Weather setting response
+local function setWeather(msg)
+    local startTime = os.clock()
+    
+    -- Parse message data
+    local success, data = pcall(json.decode, msg.Data or "{}")
+    if not success then
+        return ErrorHandler.createErrorResponse("INVALID_JSON", "Failed to parse weather setting data", msg.Id)
+    end
+    
+    -- Validate required parameters
+    local validation = ValidationHandler.validateRequired(data, {"battleId", "weatherType"})
+    if not validation.valid then
+        return ErrorHandler.createErrorResponse("VALIDATION_ERROR", validation.error, msg.Id)
+    end
+    
+    -- Get battle session
+    local session = BattleSessions[data.battleId]
+    if not session then
+        return ErrorHandler.createErrorResponse("BATTLE_NOT_FOUND", "Battle session not found", msg.Id)
+    end
+    
+    -- Set weather
+    local weatherSuccess, weatherResult = WeatherEffects.setWeather(
+        data.battleId,
+        data.weatherType,
+        data.duration,
+        data.source or "manual",
+        data.sourceAbility
+    )
+    
+    if not weatherSuccess then
+        return ErrorHandler.createErrorResponse("WEATHER_SET_FAILED", weatherResult or "Failed to set weather", msg.Id)
+    end
+    
+    -- Update battle state weather
+    session.battleState.weather = {
+        type = weatherResult.weather_type,
+        duration = weatherResult.duration,
+        source = weatherResult.source
+    }
+    
+    local processingTime = (os.clock() - startTime) * 1000
+    
+    return {
+        success = true,
+        action = "SET_WEATHER",
+        battleId = data.battleId,
+        message = "Weather set successfully",
+        data = {
+            weather_result = weatherResult
+        },
+        timestamp = os.time(),
+        processing_time_ms = processingTime,
+        message_id = msg.Id
+    }
+end
+
+-- Get current weather information for a battle
+-- @param msg: AO message with weather info request
+-- @return: Weather information response
+local function getWeatherInfo(msg)
+    local startTime = os.clock()
+    
+    -- Parse message data
+    local success, data = pcall(json.decode, msg.Data or "{}")
+    if not success then
+        return ErrorHandler.createErrorResponse("INVALID_JSON", "Failed to parse weather info request", msg.Id)
+    end
+    
+    -- Validate required parameters
+    local validation = ValidationHandler.validateRequired(data, {"battleId"})
+    if not validation.valid then
+        return ErrorHandler.createErrorResponse("VALIDATION_ERROR", validation.error, msg.Id)
+    end
+    
+    -- Get battle session
+    local session = BattleSessions[data.battleId]
+    if not session then
+        return ErrorHandler.createErrorResponse("BATTLE_NOT_FOUND", "Battle session not found", msg.Id)
+    end
+    
+    -- Get all active Pokemon for weather effect analysis
+    local allPokemon = {}
+    if session.battleState.playerParty then
+        for _, pokemon in ipairs(session.battleState.playerParty) do
+            if pokemon and pokemon.currentHP > 0 then
+                table.insert(allPokemon, pokemon)
+            end
+        end
+    end
+    if session.battleState.enemyParty then
+        for _, pokemon in ipairs(session.battleState.enemyParty) do
+            if pokemon and pokemon.currentHP > 0 then
+                table.insert(allPokemon, pokemon)
+            end
+        end
+    end
+    
+    -- Get comprehensive weather information
+    local currentWeather = session.battleState.weather and session.battleState.weather.type or BattleConditions.WeatherType.NONE
+    local weatherSummary = WeatherEffects.getWeatherEffectsSummary(currentWeather, allPokemon)
+    
+    local processingTime = (os.clock() - startTime) * 1000
+    
+    return {
+        success = true,
+        action = "GET_WEATHER_INFO",
+        battleId = data.battleId,
+        message = "Weather information retrieved successfully",
+        data = {
+            weather_summary = weatherSummary
+        },
+        timestamp = os.time(),
+        processing_time_ms = processingTime,
+        message_id = msg.Id
+    }
+end
+
+-- Process end-of-turn weather effects for a battle
+-- @param msg: AO message with weather processing request
+-- @return: Weather effects processing response
+local function processWeatherEffects(msg)
+    local startTime = os.clock()
+    
+    -- Parse message data
+    local success, data = pcall(json.decode, msg.Data or "{}")
+    if not success then
+        return ErrorHandler.createErrorResponse("INVALID_JSON", "Failed to parse weather effects request", msg.Id)
+    end
+    
+    -- Validate required parameters
+    local validation = ValidationHandler.validateRequired(data, {"battleId"})
+    if not validation.valid then
+        return ErrorHandler.createErrorResponse("VALIDATION_ERROR", validation.error, msg.Id)
+    end
+    
+    -- Get battle session
+    local session = BattleSessions[data.battleId]
+    if not session then
+        return ErrorHandler.createErrorResponse("BATTLE_NOT_FOUND", "Battle session not found", msg.Id)
+    end
+    
+    -- Process weather effects
+    local weatherResults = WeatherEffects.processEndOfTurnWeatherEffects(data.battleId, session.battleState)
+    
+    -- Apply damage and healing results to Pokemon
+    for _, damageResult in ipairs(weatherResults.damage_results) do
+        local pokemon = TurnProcessor.findPokemon(session.battleState, damageResult.pokemon_id)
+        if pokemon then
+            pokemon.currentHP = math.max(0, pokemon.currentHP - damageResult.damage)
+        end
+    end
+    
+    for _, healingResult in ipairs(weatherResults.healing_results) do
+        local pokemon = TurnProcessor.findPokemon(session.battleState, healingResult.pokemon_id)
+        if pokemon then
+            local maxHP = pokemon.maxHP or pokemon.stats[1] or 100
+            pokemon.currentHP = math.min(maxHP, pokemon.currentHP + healingResult.healing)
+        end
+    end
+    
+    -- Update weather duration
+    if session.battleState.weather then
+        local updatedWeather, expired = WeatherEffects.updateWeatherDuration(session.battleState.weather)
+        session.battleState.weather = updatedWeather
+        weatherResults.weather_expired = expired
+    end
+    
+    local processingTime = (os.clock() - startTime) * 1000
+    
+    return {
+        success = true,
+        action = "PROCESS_WEATHER_EFFECTS",
+        battleId = data.battleId,
+        message = "Weather effects processed successfully",
+        data = {
+            weather_results = weatherResults
+        },
+        timestamp = os.time(),
+        processing_time_ms = processingTime,
+        message_id = msg.Id
+    }
+end
+
+-- Check for weather ability activation
+-- @param msg: AO message with weather ability check request
+-- @return: Weather ability activation response
+local function checkWeatherAbilityActivation(msg)
+    local startTime = os.clock()
+    
+    -- Parse message data
+    local success, data = pcall(json.decode, msg.Data or "{}")
+    if not success then
+        return ErrorHandler.createErrorResponse("INVALID_JSON", "Failed to parse weather ability request", msg.Id)
+    end
+    
+    -- Validate required parameters
+    local validation = ValidationHandler.validateRequired(data, {"battleId", "pokemonId"})
+    if not validation.valid then
+        return ErrorHandler.createErrorResponse("VALIDATION_ERROR", validation.error, msg.Id)
+    end
+    
+    -- Get battle session
+    local session = BattleSessions[data.battleId]
+    if not session then
+        return ErrorHandler.createErrorResponse("BATTLE_NOT_FOUND", "Battle session not found", msg.Id)
+    end
+    
+    -- Find target Pokemon
+    local pokemon = TurnProcessor.findPokemon(session.battleState, data.pokemonId)
+    if not pokemon then
+        return ErrorHandler.createErrorResponse("POKEMON_NOT_FOUND", "Pokemon not found", msg.Id)
+    end
+    
+    -- Check for weather-setting ability activation
+    local weatherChange = WeatherAbilities.activateWeatherSettingAbility(pokemon, data.battleId)
+    
+    local processingTime = (os.clock() - startTime) * 1000
+    
+    return {
+        success = true,
+        action = "CHECK_WEATHER_ABILITY_ACTIVATION",
+        battleId = data.battleId,
+        message = "Weather ability activation checked",
+        data = {
+            pokemon_id = data.pokemonId,
+            weather_change = weatherChange
+        },
+        timestamp = os.time(),
+        processing_time_ms = processingTime,
+        message_id = msg.Id
+    }
+end
+
+-- Modify move data based on current weather
+-- @param msg: AO message with move modification request
+-- @return: Move modification response
+local function modifyMoveForWeather(msg)
+    local startTime = os.clock()
+    
+    -- Parse message data
+    local success, data = pcall(json.decode, msg.Data or "{}")
+    if not success then
+        return ErrorHandler.createErrorResponse("INVALID_JSON", "Failed to parse move modification request", msg.Id)
+    end
+    
+    -- Validate required parameters
+    local validation = ValidationHandler.validateRequired(data, {"battleId", "moveData"})
+    if not validation.valid then
+        return ErrorHandler.createErrorResponse("VALIDATION_ERROR", validation.error, msg.Id)
+    end
+    
+    -- Get battle session
+    local session = BattleSessions[data.battleId]
+    if not session then
+        return ErrorHandler.createErrorResponse("BATTLE_NOT_FOUND", "Battle session not found", msg.Id)
+    end
+    
+    -- Get current weather
+    local currentWeather = session.battleState.weather and session.battleState.weather.type or BattleConditions.WeatherType.NONE
+    
+    -- Modify move for weather
+    local modifiedMove = WeatherEffects.processWeatherMoveInteractions(data.moveData, currentWeather)
+    
+    local processingTime = (os.clock() - startTime) * 1000
+    
+    return {
+        success = true,
+        action = "MODIFY_MOVE_FOR_WEATHER",
+        battleId = data.battleId,
+        message = "Move modified for weather successfully",
+        data = {
+            original_move = data.moveData,
+            modified_move = modifiedMove
+        },
+        timestamp = os.time(),
+        processing_time_ms = processingTime,
+        message_id = msg.Id
+    }
+end
+
+-- Clear weather from a battle
+-- @param msg: AO message with weather clearing request
+-- @return: Weather clearing response
+local function clearWeather(msg)
+    local startTime = os.clock()
+    
+    -- Parse message data
+    local success, data = pcall(json.decode, msg.Data or "{}")
+    if not success then
+        return ErrorHandler.createErrorResponse("INVALID_JSON", "Failed to parse weather clearing request", msg.Id)
+    end
+    
+    -- Validate required parameters
+    local validation = ValidationHandler.validateRequired(data, {"battleId"})
+    if not validation.valid then
+        return ErrorHandler.createErrorResponse("VALIDATION_ERROR", validation.error, msg.Id)
+    end
+    
+    -- Get battle session
+    local session = BattleSessions[data.battleId]
+    if not session then
+        return ErrorHandler.createErrorResponse("BATTLE_NOT_FOUND", "Battle session not found", msg.Id)
+    end
+    
+    -- Clear weather
+    local currentWeather = session.battleState.weather
+    local clearedWeather, cleared = WeatherEffects.removeWeatherEffects(
+        data.battleId,
+        currentWeather,
+        data.source or "manual"
+    )
+    
+    if cleared then
+        session.battleState.weather = clearedWeather
+    end
+    
+    local processingTime = (os.clock() - startTime) * 1000
+    
+    return {
+        success = true,
+        action = "CLEAR_WEATHER",
+        battleId = data.battleId,
+        message = cleared and "Weather cleared successfully" or "Weather was not cleared",
+        data = {
+            weather_cleared = cleared,
+            new_weather = clearedWeather
         },
         timestamp = os.time(),
         processing_time_ms = processingTime,
