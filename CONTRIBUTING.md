@@ -86,9 +86,36 @@ Again, if you have unanswered questions please feel free to ask!
 
 ## 🧪 Testing Your Changes
 
-You've just made a change - how can you check if it works? You have two areas to hit:
+You've just made a change - how can you check if it works? You have several areas to test:
 
-### 1 - Manual Testing
+### 1 - AO Process Integration Testing (For AO Migration Work)
+
+> If you're working on AO process migration or Lua handlers, use the standardized integration testing framework to prevent setupLuaPath issues.
+
+**CRITICAL**: Always use the standardized template for new integration tests:
+
+```bash
+# Copy the template for new integration tests  
+cp ao-processes/tests/integration/integration-test-template.lua ao-processes/tests/integration/your-feature-integration.test.lua
+
+# Use the standardized setup in your test
+local TestSetup = require("test-setup")
+local TestFramework = TestSetup.setupLuaPath()
+TestSetup.initializeTestEnvironment()
+```
+
+Run AO process tests:
+```bash
+cd ao-processes/tests
+./run-tests.sh              # Run all unit tests
+./run-integration-tests.sh  # Run integration tests
+```
+
+**Why this matters**: Integration tests for new stories consistently failed with module path errors when pushed to GitHub. The standardized setup eliminates these recurring issues.
+
+For complete guidelines, see [`ao-processes/tests/integration/README-INTEGRATION-TESTS.md`](ao-processes/tests/integration/README-INTEGRATION-TESTS.md).
+
+### 2 - Manual Testing
 
 > This will likely be your first stop. After making a change, you'll want to spin the game up and make sure everything is as you expect. To do this, you will need a way to manipulate the game to produce the situation you're looking to test.
 
@@ -106,7 +133,7 @@ Read through `src/overrides.ts` file to find the override that fits your needs -
 If the situation you're trying to test can't be created using existing overrides (or with the [Dev Save](#-development-save-file)), reach out in **#dev-corner**.
 You can get help testing your specific changes, and you might have found a new override that needs to be created!
 
-### 2 - Automatic Testing
+### 3 - Automatic Testing
 
 > PokéRogue uses [Vitest](https://vitest.dev/) for automatic testing. Checking out the existing tests in the [test](./test/) folder is a great way to understand how this works, and to get familiar with the project as a whole.
 

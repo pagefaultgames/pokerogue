@@ -80,7 +80,11 @@ local function createTestPokemon(id, name, hp, fainted)
     return {
         id = id,
         name = name or "TestMon",
-        species = 1,
+        species = {
+            id = 1,
+            type1 = 0,  -- Normal type
+            type2 = nil
+        },
         level = 50,
         stats = {hp = hp or 100, attack = 100, defense = 100, spatk = 100, spdef = 100, speed = 100},
         currentHP = fainted and 0 or (hp or 100),

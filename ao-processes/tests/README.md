@@ -88,5 +88,55 @@ Some tests require framework modules. Ensure your Lua path includes the project 
 export LUA_PATH="./?.lua;./?/init.lua;$LUA_PATH"
 ```
 
+## Integration Tests
+
+Integration tests are located in the `integration/` directory and test complete workflows across multiple modules.
+
+### Creating New Integration Tests
+
+**IMPORTANT**: Always use the standardized template to avoid recurring setupLuaPath issues:
+
+1. **Copy the template**:
+   ```bash
+   cp integration/integration-test-template.lua integration/your-feature-integration.test.lua
+   ```
+
+2. **Use standardized setup** (REQUIRED):
+   ```lua
+   -- Use standardized test setup (REQUIRED)
+   local TestSetup = require("test-setup")
+   local TestFramework = TestSetup.setupLuaPath()
+   TestSetup.initializeTestEnvironment()
+   ```
+
+3. **Use standardized factories**:
+   ```lua
+   -- Create Pokemon correctly
+   local pokemon = TestSetup.createStandardPokemon({
+       name = "Charizard", 
+       species = 6,
+       types = {TestSetup.TestEnums.PokemonType.FIRE, TestSetup.TestEnums.PokemonType.FLYING},
+       side = "enemy",
+       hp = 150
+   })
+   
+   -- Create battle state
+   local battleState = TestSetup.createStandardBattleState()
+   ```
+
+4. **Reference the integration test guide**:
+   See `integration/README-INTEGRATION-TESTS.md` for complete guidelines and troubleshooting.
+
+### Running Integration Tests
+
+```bash
+# Run all integration tests
+./run-integration-tests.sh
+
+# Run specific integration test
+cd integration
+lua5.3 your-feature-integration.test.lua
+```
+
 ### GitHub Actions Cache Errors
 Occasional cache service failures are GitHub infrastructure issues. The workflow handles these gracefully with fallback to clean builds.

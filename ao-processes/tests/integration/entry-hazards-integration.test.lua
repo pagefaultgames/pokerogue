@@ -2,113 +2,24 @@
 -- End-to-end testing of entry hazards within complete battle workflows
 -- Tests battle message processing, turn resolution, and state persistence
 
+-- Use standardized test setup
+local TestSetup = require("test-setup")
+local TestFramework = TestSetup.setupLuaPath()
+TestSetup.initializeTestEnvironment()
+
 -- Test setup and utilities
 local EntryHazards = require("game-logic.battle.entry-hazards")
 local SwitchInEffects = require("game-logic.battle.switch-in-effects")
 local MoveEffects = require("game-logic.battle.move-effects")
+local CryptoRNG = require("game-logic.rng.crypto-rng")
 
 -- Mock test environment
 local mockBattleState = nil
 
--- Test utilities
-local function createCompleteBattleState()
-    return {
-        battleId = "integration-test",
-        turn = 1,
-        phase = 1,
-        turnOrder = {},
-        currentAction = nil,
-        pendingActions = {},
-        interruptQueue = {},
-        battleSeed = "test-seed-123",
-        playerParty = {},
-        enemyParty = {},
-        battleConditions = {
-            entryHazards = {
-                player = {},
-                enemy = {}
-            },
-            weather = {
-                type = 0,
-                duration = 0
-            },
-            terrain = {
-                type = 0, 
-                duration = 0
-            }
-        },
-        battleEvents = {},
-        activePokemon = {
-            player = nil,
-            enemy = nil
-        }
-    }
-end
-
-local function createBattlePokemon(name, species, level, types, ability, moves)
-    return {
-        id = name:lower() .. "-" .. math.random(1000, 9999),
-        name = name,
-        species = {
-            id = species,
-            type1 = types[1],
-            type2 = types[2]
-        },
-        level = level or 50,
-        ability = ability,
-        moves = moves or {},
-        stats = {
-            hp = 150,
-            attack = 100,
-            defense = 100, 
-            spAttack = 100,
-            spDefense = 100,
-            speed = 100
-        },
-        maxHP = 150,
-        currentHP = 150,
-        battleData = {
-            side = "player",
-            statStages = {
-                atk = 0, def = 0, spa = 0, spd = 0, spe = 0, acc = 0, eva = 0
-            }
-        },
-        status = nil,
-        statusTurns = nil,
-        fainted = false
-    }
-end
-
--- Mock Enums for integration
-local TestEnums = {
-    PokemonType = {
-        NORMAL = 0, FIGHTING = 1, FLYING = 2, POISON = 3, GROUND = 4,
-        ROCK = 5, BUG = 6, GHOST = 7, STEEL = 8, FIRE = 9,
-        WATER = 10, GRASS = 11, ELECTRIC = 12, PSYCHIC = 13, ICE = 14,
-        DRAGON = 15, DARK = 16, FAIRY = 17
-    },
-    AbilityId = {
-        LEVITATE = 26,
-        MAGIC_GUARD = 98
-    },
-    MoveId = {
-        STEALTH_ROCK = 277,
-        SPIKES = 191,
-        TOXIC_SPIKES = 390,
-        RAPID_SPIN = 229,
-        DEFOG = 432
-    },
-    MoveCategory = {
-        PHYSICAL = 0,
-        SPECIAL = 1,
-        STATUS = 2
-    },
-    MoveTarget = {
-        SELECTED = 0,
-        USER = 8,
-        ALL_OPPONENTS = 10
-    }
-}
+-- Use standardized test utilities
+local createCompleteBattleState = TestSetup.createStandardBattleState
+local createBattlePokemon = TestSetup.createStandardPokemon
+local TestEnums = TestSetup.TestEnums
 
 -- Test runner utilities
 local tests = {}
@@ -135,6 +46,9 @@ local function runIntegrationTest(testName, testFunc)
     -- Set up fresh battle state for each test
     mockBattleState = createCompleteBattleState()
     
+    -- Initialize RNG for each test
+    CryptoRNG.initBattleRNG("test-seed-" .. testName)
+    
     local success, error = pcall(testFunc)
     if success then
         passCount = passCount + 1
@@ -153,9 +67,20 @@ function tests.testStealthRockBattleWorkflow()
     package.loaded["data.constants.enums"] = TestEnums
     
     -- Create test Pokemon
-    local forretress = createBattlePokemon("Forretress", 205, 50, {TestEnums.PokemonType.BUG, TestEnums.PokemonType.STEEL}, nil)
-    local charizard = createBattlePokemon("Charizard", 6, 50, {TestEnums.PokemonType.FIRE, TestEnums.PokemonType.FLYING}, nil)
-    charizard.battleData.side = "enemy"
+    local forretress = createBattlePokemon({
+        name = "Forretress",
+        species = 205,
+        level = 50,
+        types = {TestEnums.PokemonType.BUG, TestEnums.PokemonType.STEEL},
+        side = "player"
+    })
+    local charizard = createBattlePokemon({
+        name = "Charizard", 
+        species = 6,
+        level = 50,
+        types = {TestEnums.PokemonType.FIRE, TestEnums.PokemonType.FLYING},
+        side = "enemy"
+    })
     
     -- Step 1: Forretress uses Stealth Rock
     local stealthRockMove = {
@@ -501,6 +426,11 @@ function runAllIntegrationTests()
         print("💥 Some integration tests failed!")
         return false
     end
+end
+
+-- Run tests if executed directly
+if not package.loaded["test-runner"] then
+    runAllIntegrationTests()
 end
 
 -- Export for external test runners

@@ -189,6 +189,27 @@ return BattleScenarios
 
 ## Integration Testing
 
+### Standardized Integration Test Setup
+
+**PROBLEM SOLVED**: Integration tests for new stories were consistently failing with module path errors and species field access issues when pushed to GitHub. This was due to inconsistent test setup patterns across different test files.
+
+**SOLUTION**: All integration tests MUST use the standardized setup to prevent recurring setupLuaPath issues:
+
+```lua
+-- Use standardized test setup (REQUIRED for all new tests)
+local TestSetup = require("test-setup")
+local TestFramework = TestSetup.setupLuaPath()
+TestSetup.initializeTestEnvironment()
+
+-- Load required modules
+local YourModule = require("game-logic.battle.your-module")
+
+-- Use standardized test utilities
+local createBattleState = TestSetup.createStandardBattleState
+local createPokemon = TestSetup.createStandardPokemon
+local TestEnums = TestSetup.TestEnums
+```
+
 ### Cross-Process Communication
 
 ```lua
