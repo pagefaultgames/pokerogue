@@ -1,7 +1,6 @@
 // biome-ignore lint/correctness/noUnusedImports: TSDoc
 import type CustomDefaultReporter from "#test/test-utils/reporters/custom-default-reporter";
 import { basename, join, relative } from "path";
-import { getTestName } from "@vitest/runner/utils";
 import chalk from "chalk";
 import type { RunnerTask, RunnerTaskResult, RunnerTestCase } from "vitest";
 
@@ -44,7 +43,7 @@ export function logTestEnd(task: RunnerTestCase): void {
   const durationStr = getDurationPrefix(task.result);
   const resultStr = getResultStr(task.result);
   console.log(`${chalk.dim("> ")}${chalk.black.bgHex(VITEST_PINK_COLOR)(" Test finished! ")}
-    Name: ${chalk.hex(TEST_NAME_COLOR)(task.name)}
+    Name: ${chalk.hex(TEST_NAME_COLOR)(getTestName(task))}
     Result: ${resultStr}${durationStr}
     File: ${chalk.hex("#d29b0eff")(
       getPathFromTest(task.file.filepath) + (task.location ? `:${task.location.line}:${task.location.column}` : ""),
@@ -75,12 +74,34 @@ function getResultStr(result: RunnerTaskResult | undefined): string {
   return resultStr;
 }
 
+/**
+ * Get the text to be displayed for a test's duration.
+ * @param result - The {@linkcode RunnerTaskResult} of the finished test
+ * @returns An appropriately colored suffix for the start time.
+ * Will return an empty string if `result.startTime` is `undefined`
+ */
 function getDurationPrefix(result?: RunnerTaskResult): string {
-  const dur = result?.duration;
-  if (!dur) {
+  const startTime = result?.startTime;
+  if (!startTime) {
     return "";
   }
+  const duration = Math.round(Date.now() - startTime);
+
   // TODO: Figure out a way to access the current vitest config from a hook
-  const color = dur > 20_000 ? chalk.yellow : chalk.green;
-  return ` ${chalk.dim("in")} ${color(Math.round(dur))}${chalk.dim("ms")}`;
+  const color = duration > 10_000 ? chalk.yellow : chalk.green;
+  return ` ${chalk.dim("in")} ${color(duration)}${chalk.dim("ms")}`;
+}
+
+// Function copied from vitest source to avoid having to import `@vitest/runner/utils` for 1 function
+function getTestName(task: RunnerTask, separator = " > "): string {
+  const names = [task.name];
+  let current: RunnerTask | undefined = task;
+
+  while ((current = current?.suite)) {
+    if (current?.name) {
+      names.unshift(current.name);
+    }
+  }
+
+  return names.join(separator);
 }

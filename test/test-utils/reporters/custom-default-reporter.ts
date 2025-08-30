@@ -6,7 +6,7 @@ import type { TestState } from "vitest/node";
 import { DefaultReporter } from "vitest/reporters";
 
 /**
- * Custom Vitest reporter to strip the log names from the output.
+ * Custom Vitest reporter to strip the current file names from the output.
  */
 export default class CustomDefaultReporter extends DefaultReporter {
   public override onUserConsoleLog(log: UserConsoleLog, taskState?: TestState): void {
@@ -22,7 +22,7 @@ export default class CustomDefaultReporter extends DefaultReporter {
 
     const task = log.taskId ? this.ctx.state.idMap.get(log.taskId) : undefined;
 
-    write(log.content);
+    write(log.content); // this is about the only changed line
 
     // Code for stack trace, ripped directly out of Vitest source code.
     // I wish they had a helper function to do this so we didn't have to import `@vitest/utils`, but oh well...

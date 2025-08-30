@@ -11,7 +11,10 @@ export default defineConfig(({ mode }) => ({
     env: {
       TZ: "UTC",
     },
-    testTimeout: 20000,
+    testTimeout: 20_000,
+    slowTestThreshold: 10_000,
+    // TODO: Consider enabling
+    // expect: {requireAssertions: true},
     setupFiles: ["./test/font-face.setup.ts", "./test/vitest.setup.ts", "./test/matchers.setup.ts"],
     sequence: {
       sequencer: MySequencer,
