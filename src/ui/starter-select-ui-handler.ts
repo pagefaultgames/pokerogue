@@ -280,7 +280,6 @@ interface SpeciesDetails {
 export class StarterSelectUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
   private starterSelectScrollBar: ScrollBar;
-  private filterBarContainer: Phaser.GameObjects.Container;
   private filterBar: FilterBar;
   private shinyOverlay: Phaser.GameObjects.Image;
   private starterContainers: StarterContainer[] = [];
@@ -426,9 +425,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
   setup() {
     const ui = this.getUi();
-    const currentLanguage = i18next.resolvedLanguage ?? "en";
-    const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang)) ?? "en";
-    const textSettings = languageSettings[langSettingKey];
+    const textSettings = this.getCurrentTextSettings();
     /** Scaled canvas height */
     const sHeight = globalScene.scaledCanvas.height;
     /** Scaled canvas width */
@@ -448,156 +445,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       .setOrigin(0);
 
     // Create and initialise filter bar
-    this.filterBarContainer = globalScene.add.container(0, 0);
-    this.filterBar = new FilterBar(Math.min(speciesContainerX, teamWindowX), 1, 210, filterBarHeight);
-
-    // gen filter
-    const genOptions: DropDownOption[] = Array.from(
-      { length: 9 },
-      (_, i) => new DropDownOption(i + 1, new DropDownLabel(i18next.t(`starterSelectUiHandler:gen${i + 1}`))),
-    );
-    const genDropDown: DropDown = new DropDown(0, 0, genOptions, this.updateStarters, DropDownType.HYBRID);
-    this.filterBar.addFilter(DropDownColumn.GEN, i18next.t("filterBar:genFilter"), genDropDown);
-
-    // type filter
-    const typeKeys = Object.keys(PokemonType).filter(v => Number.isNaN(Number(v)));
-    const typeOptions: DropDownOption[] = [];
-    typeKeys.forEach((type, index) => {
-      if (index === 0 || index === 19) {
-        return;
-      }
-      const typeSprite = globalScene.add.sprite(0, 0, getLocalizedSpriteKey("types"));
-      typeSprite.setScale(0.5);
-      typeSprite.setFrame(type.toLowerCase());
-      typeOptions.push(new DropDownOption(index, new DropDownLabel("", typeSprite)));
-    });
-    this.filterBar.addFilter(
-      DropDownColumn.TYPES,
-      i18next.t("filterBar:typeFilter"),
-      new DropDown(0, 0, typeOptions, this.updateStarters, DropDownType.HYBRID, 0.5),
-    );
-
-    // caught filter
-    const shiny1Sprite = globalScene.add
-      .sprite(0, 0, "shiny_icons")
-      .setOrigin(0.15, 0.2)
-      .setScale(0.6)
-      .setFrame(getVariantIcon(0))
-      .setTint(getVariantTint(0));
-    const shiny2Sprite = globalScene.add
-      .sprite(0, 0, "shiny_icons")
-      .setOrigin(0.15, 0.2)
-      .setScale(0.6)
-      .setFrame(getVariantIcon(1))
-      .setTint(getVariantTint(1));
-    const shiny3Sprite = globalScene.add
-      .sprite(0, 0, "shiny_icons")
-      .setOrigin(0.15, 0.2)
-      .setScale(0.6)
-      .setFrame(getVariantIcon(2))
-      .setTint(getVariantTint(2));
-
-    const caughtOptions = [
-      new DropDownOption("SHINY3", new DropDownLabel("", shiny3Sprite)),
-      new DropDownOption("SHINY2", new DropDownLabel("", shiny2Sprite)),
-      new DropDownOption("SHINY", new DropDownLabel("", shiny1Sprite)),
-      new DropDownOption("NORMAL", new DropDownLabel(i18next.t("filterBar:normal"))),
-      new DropDownOption("UNCAUGHT", new DropDownLabel(i18next.t("filterBar:uncaught"))),
-    ];
-
-    this.filterBar.addFilter(
-      DropDownColumn.CAUGHT,
-      i18next.t("filterBar:caughtFilter"),
-      new DropDown(0, 0, caughtOptions, this.updateStarters, DropDownType.HYBRID),
-    );
-
-    // unlocks filter
-    const passiveLabels = [
-      new DropDownLabel(i18next.t("filterBar:passive"), undefined, DropDownState.OFF),
-      new DropDownLabel(i18next.t("filterBar:passiveUnlocked"), undefined, DropDownState.ON),
-      new DropDownLabel(i18next.t("filterBar:passiveUnlockable"), undefined, DropDownState.UNLOCKABLE),
-      new DropDownLabel(i18next.t("filterBar:passiveLocked"), undefined, DropDownState.EXCLUDE),
-    ];
-
-    const costReductionLabels = [
-      new DropDownLabel(i18next.t("filterBar:costReduction"), undefined, DropDownState.OFF),
-      new DropDownLabel(i18next.t("filterBar:costReductionUnlocked"), undefined, DropDownState.ON),
-      new DropDownLabel(i18next.t("filterBar:costReductionUnlockedOne"), undefined, DropDownState.ONE),
-      new DropDownLabel(i18next.t("filterBar:costReductionUnlockedTwo"), undefined, DropDownState.TWO),
-      new DropDownLabel(i18next.t("filterBar:costReductionUnlockable"), undefined, DropDownState.UNLOCKABLE),
-      new DropDownLabel(i18next.t("filterBar:costReductionLocked"), undefined, DropDownState.EXCLUDE),
-    ];
-
-    const unlocksOptions = [
-      new DropDownOption("PASSIVE", passiveLabels),
-      new DropDownOption("COST_REDUCTION", costReductionLabels),
-    ];
-
-    this.filterBar.addFilter(
-      DropDownColumn.UNLOCKS,
-      i18next.t("filterBar:unlocksFilter"),
-      new DropDown(0, 0, unlocksOptions, this.updateStarters, DropDownType.RADIAL),
-    );
-
-    // misc filter
-    const favoriteLabels = [
-      new DropDownLabel(i18next.t("filterBar:favorite"), undefined, DropDownState.OFF),
-      new DropDownLabel(i18next.t("filterBar:isFavorite"), undefined, DropDownState.ON),
-      new DropDownLabel(i18next.t("filterBar:notFavorite"), undefined, DropDownState.EXCLUDE),
-    ];
-    const winLabels = [
-      new DropDownLabel(i18next.t("filterBar:ribbon"), undefined, DropDownState.OFF),
-      new DropDownLabel(i18next.t("filterBar:hasWon"), undefined, DropDownState.ON),
-      new DropDownLabel(i18next.t("filterBar:hasNotWon"), undefined, DropDownState.EXCLUDE),
-    ];
-    const hiddenAbilityLabels = [
-      new DropDownLabel(i18next.t("filterBar:hiddenAbility"), undefined, DropDownState.OFF),
-      new DropDownLabel(i18next.t("filterBar:hasHiddenAbility"), undefined, DropDownState.ON),
-      new DropDownLabel(i18next.t("filterBar:noHiddenAbility"), undefined, DropDownState.EXCLUDE),
-    ];
-    const eggLabels = [
-      new DropDownLabel(i18next.t("filterBar:egg"), undefined, DropDownState.OFF),
-      new DropDownLabel(i18next.t("filterBar:eggPurchasable"), undefined, DropDownState.ON),
-    ];
-    const pokerusLabels = [
-      new DropDownLabel(i18next.t("filterBar:pokerus"), undefined, DropDownState.OFF),
-      new DropDownLabel(i18next.t("filterBar:hasPokerus"), undefined, DropDownState.ON),
-    ];
-    const miscOptions = [
-      new DropDownOption("FAVORITE", favoriteLabels),
-      new DropDownOption("WIN", winLabels),
-      new DropDownOption("HIDDEN_ABILITY", hiddenAbilityLabels),
-      new DropDownOption("EGG", eggLabels),
-      new DropDownOption("POKERUS", pokerusLabels),
-    ];
-    this.filterBar.addFilter(
-      DropDownColumn.MISC,
-      i18next.t("filterBar:miscFilter"),
-      new DropDown(0, 0, miscOptions, this.updateStarters, DropDownType.RADIAL),
-    );
-
-    // sort filter
-    const sortOptions = [
-      new DropDownOption(
-        SortCriteria.NUMBER,
-        new DropDownLabel(i18next.t("filterBar:sortByNumber"), undefined, DropDownState.ON),
-      ),
-      new DropDownOption(SortCriteria.COST, new DropDownLabel(i18next.t("filterBar:sortByCost"))),
-      new DropDownOption(SortCriteria.CANDY, new DropDownLabel(i18next.t("filterBar:sortByCandies"))),
-      new DropDownOption(SortCriteria.IV, new DropDownLabel(i18next.t("filterBar:sortByIVs"))),
-      new DropDownOption(SortCriteria.NAME, new DropDownLabel(i18next.t("filterBar:sortByName"))),
-      new DropDownOption(SortCriteria.CAUGHT, new DropDownLabel(i18next.t("filterBar:sortByNumCaught"))),
-      new DropDownOption(SortCriteria.HATCHED, new DropDownLabel(i18next.t("filterBar:sortByNumHatched"))),
-    ];
-    this.filterBar.addFilter(
-      DropDownColumn.SORT,
-      i18next.t("filterBar:sortFilter"),
-      new DropDown(0, 0, sortOptions, this.updateStarters, DropDownType.SINGLE),
-    );
-    this.filterBarContainer.add(this.filterBar);
-
-    // Offset the generation filter dropdown to avoid covering the filtered pokemon
-    this.filterBar.offsetHybridFilters();
+    this.filterBar = this.setupFilterBar();
 
     if (!globalScene.uiTheme) {
       starterContainerWindow.setVisible(false);
@@ -921,112 +769,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     this.teraIcon = globalScene.add.sprite(85, 63, "button_tera").setName("terastallize-icon").setFrame("fire");
 
-    // The font size should be set per language
-    const instructionTextSize = textSettings.instructionTextSize;
+    this.setupInstructionButtons();
 
     this.instructionsContainer = globalScene.add.container(4, 156).setVisible(true);
-
-    const iRowX = this.instructionRowX;
-    const iRowY = this.instructionRowY;
-    const iRowTextX = iRowX + this.instructionRowTextOffset;
-
-    // instruction rows that will be pushed into the container dynamically based on need
-    // creating new sprites since they will be added to the scene later
-    this.shinyIconElement = new Phaser.GameObjects.Sprite(globalScene, iRowX, iRowY, "keyboard", "R.png")
-      .setName("sprite-shiny-icon-element")
-      .setScale(0.675)
-      .setOrigin(0);
-    this.shinyLabel = addTextObject(
-      iRowTextX,
-      iRowY,
-      i18next.t("starterSelectUiHandler:cycleShiny"),
-      TextStyle.INSTRUCTIONS_TEXT,
-      {
-        fontSize: instructionTextSize,
-      },
-    ).setName("text-shiny-label");
-
-    this.formIconElement = new Phaser.GameObjects.Sprite(globalScene, iRowX, iRowY, "keyboard", "F.png")
-      .setName("sprite-form-icon-element")
-      .setScale(0.675)
-      .setOrigin(0);
-    this.formLabel = addTextObject(
-      iRowTextX,
-      iRowY,
-      i18next.t("starterSelectUiHandler:cycleForm"),
-      TextStyle.INSTRUCTIONS_TEXT,
-      {
-        fontSize: instructionTextSize,
-      },
-    ).setName("text-form-label");
-
-    this.genderIconElement = new Phaser.GameObjects.Sprite(globalScene, iRowX, iRowY, "keyboard", "G.png")
-      .setName("sprite-gender-icon-element")
-      .setScale(0.675)
-      .setOrigin(0);
-    this.genderLabel = addTextObject(
-      iRowTextX,
-      iRowY,
-      i18next.t("starterSelectUiHandler:cycleGender"),
-      TextStyle.INSTRUCTIONS_TEXT,
-      { fontSize: instructionTextSize },
-    ).setName("text-gender-label");
-
-    this.abilityIconElement = new Phaser.GameObjects.Sprite(globalScene, iRowX, iRowY, "keyboard", "E.png")
-      .setName("sprite-ability-icon-element")
-      .setScale(0.675)
-      .setOrigin(0);
-    this.abilityLabel = addTextObject(
-      iRowTextX,
-      iRowY,
-      i18next.t("starterSelectUiHandler:cycleAbility"),
-      TextStyle.INSTRUCTIONS_TEXT,
-      { fontSize: instructionTextSize },
-    ).setName("text-ability-label");
-
-    this.natureIconElement = new Phaser.GameObjects.Sprite(globalScene, iRowX, iRowY, "keyboard", "N.png")
-      .setName("sprite-nature-icon-element")
-      .setScale(0.675)
-      .setOrigin(0);
-    this.natureLabel = addTextObject(
-      iRowTextX,
-      iRowY,
-      i18next.t("starterSelectUiHandler:cycleNature"),
-      TextStyle.INSTRUCTIONS_TEXT,
-      { fontSize: instructionTextSize },
-    ).setName("text-nature-label");
-
-    this.teraIconElement = new Phaser.GameObjects.Sprite(globalScene, iRowX, iRowY, "keyboard", "V.png")
-      .setName("sprite-tera-icon-element")
-      .setScale(0.675)
-      .setOrigin(0);
-    this.teraLabel = addTextObject(
-      iRowTextX,
-      iRowY,
-      i18next.t("starterSelectUiHandler:cycleTera"),
-      TextStyle.INSTRUCTIONS_TEXT,
-      {
-        fontSize: instructionTextSize,
-      },
-    ).setName("text-tera-label");
-
-    this.goFilterIconElement = new Phaser.GameObjects.Sprite(
-      globalScene,
-      this.filterInstructionRowX,
-      this.filterInstructionRowY,
-      "keyboard",
-      "C.png",
-    )
-      .setName("sprite-goFilter-icon-element")
-      .setScale(0.675)
-      .setOrigin(0);
-    this.goFilterLabel = addTextObject(
-      this.filterInstructionRowX + this.instructionRowTextOffset,
-      this.filterInstructionRowY,
-      i18next.t("starterSelectUiHandler:goFilter"),
-      TextStyle.INSTRUCTIONS_TEXT,
-      { fontSize: instructionTextSize },
-    ).setName("text-goFilter-label");
 
     /** TODO: Uncomment this and update `this.hideInstructions` once our testing infra supports mocks of `Phaser.GameObject.Group` */
     /*
@@ -1129,7 +874,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.moveInfoOverlay,
       // Filter bar sits above everything, except the tutorial overlay and message box.
       // Do not put anything below this unless it must appear below the filter bar.
-      this.filterBarContainer,
+      this.filterBar,
     ]);
 
     this.initTutorialOverlay(this.starterSelectContainer);
@@ -1140,6 +885,274 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     );
 
     this.updateInstructions();
+  }
+
+  getCurrentTextSettings(): LanguageSetting {
+    const currentLanguage = i18next.resolvedLanguage ?? "en";
+    const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang)) ?? "en";
+    const textSettings = languageSettings[langSettingKey];
+    return textSettings;
+  }
+
+  setupFilterBar(): FilterBar {
+    const filterBar = new FilterBar(Math.min(speciesContainerX, teamWindowX), 1, 210, filterBarHeight);
+
+    // gen filter
+    const genOptions: DropDownOption[] = Array.from(
+      { length: 9 },
+      (_, i) => new DropDownOption(i + 1, new DropDownLabel(i18next.t(`starterSelectUiHandler:gen${i + 1}`))),
+    );
+    const genDropDown: DropDown = new DropDown(0, 0, genOptions, this.updateStarters, DropDownType.HYBRID);
+    filterBar.addFilter(DropDownColumn.GEN, i18next.t("filterBar:genFilter"), genDropDown);
+
+    // type filter
+    const typeKeys = Object.keys(PokemonType).filter(v => Number.isNaN(Number(v)));
+    const typeOptions: DropDownOption[] = [];
+    typeKeys.forEach((type, index) => {
+      if (index === 0 || index === 19) {
+        return;
+      }
+      const typeSprite = globalScene.add.sprite(0, 0, getLocalizedSpriteKey("types"));
+      typeSprite.setScale(0.5);
+      typeSprite.setFrame(type.toLowerCase());
+      typeOptions.push(new DropDownOption(index, new DropDownLabel("", typeSprite)));
+    });
+    filterBar.addFilter(
+      DropDownColumn.TYPES,
+      i18next.t("filterBar:typeFilter"),
+      new DropDown(0, 0, typeOptions, this.updateStarters, DropDownType.HYBRID, 0.5),
+    );
+
+    // caught filter
+    const shiny1Sprite = globalScene.add
+      .sprite(0, 0, "shiny_icons")
+      .setOrigin(0.15, 0.2)
+      .setScale(0.6)
+      .setFrame(getVariantIcon(0))
+      .setTint(getVariantTint(0));
+    const shiny2Sprite = globalScene.add
+      .sprite(0, 0, "shiny_icons")
+      .setOrigin(0.15, 0.2)
+      .setScale(0.6)
+      .setFrame(getVariantIcon(1))
+      .setTint(getVariantTint(1));
+    const shiny3Sprite = globalScene.add
+      .sprite(0, 0, "shiny_icons")
+      .setOrigin(0.15, 0.2)
+      .setScale(0.6)
+      .setFrame(getVariantIcon(2))
+      .setTint(getVariantTint(2));
+
+    const caughtOptions = [
+      new DropDownOption("SHINY3", new DropDownLabel("", shiny3Sprite)),
+      new DropDownOption("SHINY2", new DropDownLabel("", shiny2Sprite)),
+      new DropDownOption("SHINY", new DropDownLabel("", shiny1Sprite)),
+      new DropDownOption("NORMAL", new DropDownLabel(i18next.t("filterBar:normal"))),
+      new DropDownOption("UNCAUGHT", new DropDownLabel(i18next.t("filterBar:uncaught"))),
+    ];
+
+    filterBar.addFilter(
+      DropDownColumn.CAUGHT,
+      i18next.t("filterBar:caughtFilter"),
+      new DropDown(0, 0, caughtOptions, this.updateStarters, DropDownType.HYBRID),
+    );
+
+    // unlocks filter
+    const passiveLabels = [
+      new DropDownLabel(i18next.t("filterBar:passive"), undefined, DropDownState.OFF),
+      new DropDownLabel(i18next.t("filterBar:passiveUnlocked"), undefined, DropDownState.ON),
+      new DropDownLabel(i18next.t("filterBar:passiveUnlockable"), undefined, DropDownState.UNLOCKABLE),
+      new DropDownLabel(i18next.t("filterBar:passiveLocked"), undefined, DropDownState.EXCLUDE),
+    ];
+
+    const costReductionLabels = [
+      new DropDownLabel(i18next.t("filterBar:costReduction"), undefined, DropDownState.OFF),
+      new DropDownLabel(i18next.t("filterBar:costReductionUnlocked"), undefined, DropDownState.ON),
+      new DropDownLabel(i18next.t("filterBar:costReductionUnlockedOne"), undefined, DropDownState.ONE),
+      new DropDownLabel(i18next.t("filterBar:costReductionUnlockedTwo"), undefined, DropDownState.TWO),
+      new DropDownLabel(i18next.t("filterBar:costReductionUnlockable"), undefined, DropDownState.UNLOCKABLE),
+      new DropDownLabel(i18next.t("filterBar:costReductionLocked"), undefined, DropDownState.EXCLUDE),
+    ];
+
+    const unlocksOptions = [
+      new DropDownOption("PASSIVE", passiveLabels),
+      new DropDownOption("COST_REDUCTION", costReductionLabels),
+    ];
+
+    filterBar.addFilter(
+      DropDownColumn.UNLOCKS,
+      i18next.t("filterBar:unlocksFilter"),
+      new DropDown(0, 0, unlocksOptions, this.updateStarters, DropDownType.RADIAL),
+    );
+
+    // misc filter
+    const favoriteLabels = [
+      new DropDownLabel(i18next.t("filterBar:favorite"), undefined, DropDownState.OFF),
+      new DropDownLabel(i18next.t("filterBar:isFavorite"), undefined, DropDownState.ON),
+      new DropDownLabel(i18next.t("filterBar:notFavorite"), undefined, DropDownState.EXCLUDE),
+    ];
+    const winLabels = [
+      new DropDownLabel(i18next.t("filterBar:ribbon"), undefined, DropDownState.OFF),
+      new DropDownLabel(i18next.t("filterBar:hasWon"), undefined, DropDownState.ON),
+      new DropDownLabel(i18next.t("filterBar:hasNotWon"), undefined, DropDownState.EXCLUDE),
+    ];
+    const hiddenAbilityLabels = [
+      new DropDownLabel(i18next.t("filterBar:hiddenAbility"), undefined, DropDownState.OFF),
+      new DropDownLabel(i18next.t("filterBar:hasHiddenAbility"), undefined, DropDownState.ON),
+      new DropDownLabel(i18next.t("filterBar:noHiddenAbility"), undefined, DropDownState.EXCLUDE),
+    ];
+    const eggLabels = [
+      new DropDownLabel(i18next.t("filterBar:egg"), undefined, DropDownState.OFF),
+      new DropDownLabel(i18next.t("filterBar:eggPurchasable"), undefined, DropDownState.ON),
+    ];
+    const pokerusLabels = [
+      new DropDownLabel(i18next.t("filterBar:pokerus"), undefined, DropDownState.OFF),
+      new DropDownLabel(i18next.t("filterBar:hasPokerus"), undefined, DropDownState.ON),
+    ];
+    const miscOptions = [
+      new DropDownOption("FAVORITE", favoriteLabels),
+      new DropDownOption("WIN", winLabels),
+      new DropDownOption("HIDDEN_ABILITY", hiddenAbilityLabels),
+      new DropDownOption("EGG", eggLabels),
+      new DropDownOption("POKERUS", pokerusLabels),
+    ];
+    filterBar.addFilter(
+      DropDownColumn.MISC,
+      i18next.t("filterBar:miscFilter"),
+      new DropDown(0, 0, miscOptions, this.updateStarters, DropDownType.RADIAL),
+    );
+
+    // sort filter
+    const sortOptions = [
+      new DropDownOption(
+        SortCriteria.NUMBER,
+        new DropDownLabel(i18next.t("filterBar:sortByNumber"), undefined, DropDownState.ON),
+      ),
+      new DropDownOption(SortCriteria.COST, new DropDownLabel(i18next.t("filterBar:sortByCost"))),
+      new DropDownOption(SortCriteria.CANDY, new DropDownLabel(i18next.t("filterBar:sortByCandies"))),
+      new DropDownOption(SortCriteria.IV, new DropDownLabel(i18next.t("filterBar:sortByIVs"))),
+      new DropDownOption(SortCriteria.NAME, new DropDownLabel(i18next.t("filterBar:sortByName"))),
+      new DropDownOption(SortCriteria.CAUGHT, new DropDownLabel(i18next.t("filterBar:sortByNumCaught"))),
+      new DropDownOption(SortCriteria.HATCHED, new DropDownLabel(i18next.t("filterBar:sortByNumHatched"))),
+    ];
+    filterBar.addFilter(
+      DropDownColumn.SORT,
+      i18next.t("filterBar:sortFilter"),
+      new DropDown(0, 0, sortOptions, this.updateStarters, DropDownType.SINGLE),
+    );
+
+    // Offset the generation filter dropdown to avoid covering the filtered pokemon
+    filterBar.offsetHybridFilters();
+
+    return filterBar;
+  }
+
+  setupInstructionButtons(): void {
+    // The font size should be set per language
+    const textSettings = this.getCurrentTextSettings();
+    const instructionTextSize = textSettings.instructionTextSize;
+
+    const iRowX = this.instructionRowX;
+    const iRowY = this.instructionRowY;
+    const iRowTextX = iRowX + this.instructionRowTextOffset;
+
+    // instruction rows that will be pushed into the container dynamically based on need
+    // creating new sprites since they will be added to the scene later
+    this.shinyIconElement = new Phaser.GameObjects.Sprite(globalScene, iRowX, iRowY, "keyboard", "R.png")
+      .setName("sprite-shiny-icon-element")
+      .setScale(0.675)
+      .setOrigin(0);
+    this.shinyLabel = addTextObject(
+      iRowTextX,
+      iRowY,
+      i18next.t("starterSelectUiHandler:cycleShiny"),
+      TextStyle.INSTRUCTIONS_TEXT,
+      {
+        fontSize: instructionTextSize,
+      },
+    ).setName("text-shiny-label");
+
+    this.formIconElement = new Phaser.GameObjects.Sprite(globalScene, iRowX, iRowY, "keyboard", "F.png")
+      .setName("sprite-form-icon-element")
+      .setScale(0.675)
+      .setOrigin(0);
+    this.formLabel = addTextObject(
+      iRowTextX,
+      iRowY,
+      i18next.t("starterSelectUiHandler:cycleForm"),
+      TextStyle.INSTRUCTIONS_TEXT,
+      {
+        fontSize: instructionTextSize,
+      },
+    ).setName("text-form-label");
+
+    this.genderIconElement = new Phaser.GameObjects.Sprite(globalScene, iRowX, iRowY, "keyboard", "G.png")
+      .setName("sprite-gender-icon-element")
+      .setScale(0.675)
+      .setOrigin(0);
+    this.genderLabel = addTextObject(
+      iRowTextX,
+      iRowY,
+      i18next.t("starterSelectUiHandler:cycleGender"),
+      TextStyle.INSTRUCTIONS_TEXT,
+      { fontSize: instructionTextSize },
+    ).setName("text-gender-label");
+
+    this.abilityIconElement = new Phaser.GameObjects.Sprite(globalScene, iRowX, iRowY, "keyboard", "E.png")
+      .setName("sprite-ability-icon-element")
+      .setScale(0.675)
+      .setOrigin(0);
+    this.abilityLabel = addTextObject(
+      iRowTextX,
+      iRowY,
+      i18next.t("starterSelectUiHandler:cycleAbility"),
+      TextStyle.INSTRUCTIONS_TEXT,
+      { fontSize: instructionTextSize },
+    ).setName("text-ability-label");
+
+    this.natureIconElement = new Phaser.GameObjects.Sprite(globalScene, iRowX, iRowY, "keyboard", "N.png")
+      .setName("sprite-nature-icon-element")
+      .setScale(0.675)
+      .setOrigin(0);
+    this.natureLabel = addTextObject(
+      iRowTextX,
+      iRowY,
+      i18next.t("starterSelectUiHandler:cycleNature"),
+      TextStyle.INSTRUCTIONS_TEXT,
+      { fontSize: instructionTextSize },
+    ).setName("text-nature-label");
+
+    this.teraIconElement = new Phaser.GameObjects.Sprite(globalScene, iRowX, iRowY, "keyboard", "V.png")
+      .setName("sprite-tera-icon-element")
+      .setScale(0.675)
+      .setOrigin(0);
+    this.teraLabel = addTextObject(
+      iRowTextX,
+      iRowY,
+      i18next.t("starterSelectUiHandler:cycleTera"),
+      TextStyle.INSTRUCTIONS_TEXT,
+      {
+        fontSize: instructionTextSize,
+      },
+    ).setName("text-tera-label");
+
+    this.goFilterIconElement = new Phaser.GameObjects.Sprite(
+      globalScene,
+      this.filterInstructionRowX,
+      this.filterInstructionRowY,
+      "keyboard",
+      "C.png",
+    )
+      .setName("sprite-goFilter-icon-element")
+      .setScale(0.675)
+      .setOrigin(0);
+    this.goFilterLabel = addTextObject(
+      this.filterInstructionRowX + this.instructionRowTextOffset,
+      this.filterInstructionRowY,
+      i18next.t("starterSelectUiHandler:goFilter"),
+      TextStyle.INSTRUCTIONS_TEXT,
+      { fontSize: instructionTextSize },
+    ).setName("text-goFilter-label");
   }
 
   show(args: any[]): boolean {
