@@ -110,16 +110,6 @@ export class HeldItemManager {
     return item ? item.stack >= allHeldItems[itemType].getMaxStackCount() : false;
   }
 
-  overrideItems(newItems: HeldItemDataMap) {
-    this.heldItems = newItems;
-    // The following is to allow randomly generated item configs to have stack 0
-    for (const [item, properties] of this.heldItems) {
-      if (!properties || properties.stack <= 0) {
-        this.heldItems.delete(item);
-      }
-    }
-  }
-
   add(itemType: HeldItemId | HeldItemSpecs, addStack = 1): boolean {
     if (isHeldItemSpecs(itemType)) {
       return this.addItemWithSpecs(itemType);
