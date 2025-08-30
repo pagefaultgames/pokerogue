@@ -1,9 +1,7 @@
 import { DEBUG_COLOR, NEW_TURN_COLOR, TRACE_COLOR, UI_MSG_COLOR } from "#app/constants/colors";
 import { inferColorFormat } from "#test/test-utils/mocks/mock-console/infer-color";
 import { coerceArray } from "#utils/common";
-import { Console } from "node:console";
-import { stderr, stdout } from "node:process";
-import util from "node:util";
+import { type InspectOptions, inspect } from "node:util";
 import chalk, { type ChalkInstance } from "chalk";
 
 // Tell chalk we support truecolor
@@ -21,19 +19,24 @@ const blacklist = [
 ] as const;
 const whitelist = ["Start Phase"] as const;
 
+const inspectOptions: InspectOptions = { sorted: true, breakLength: 120, numericSeparator: true };
+
 /**
  * The {@linkcode MockConsole} is a wrapper around the global {@linkcode console} object.
  * It automatically colors text and such.
  */
-export class MockConsole extends Console {
+export class MockConsole implements Omit<Console, "Console"> {
   /**
    * A list of warnings that are queued to be displayed after all tests in the same file are finished.
    */
   private static readonly queuedWarnings: unknown[][] = [];
+  /**
+   * The original `Console` object, preserved to avoid overwriting
+   * Vitest's native `console.log` wrapping.
+   */
+  private console = console;
 
-  constructor() {
-    super(stdout, stderr, false);
-  }
+  //#region Static Properties
 
   /**
    * Queue a warning to be printed after all tests in the same file are finished.
@@ -53,6 +56,10 @@ export class MockConsole extends Console {
     MockConsole.queuedWarnings.splice(0);
   }
 
+  //#endregion Private Properties
+
+  //#region Utilities
+
   /**
    * Check whether a given set of data is in the blacklist to be barred from logging.
    * @param data - The data being logged
@@ -63,13 +70,41 @@ export class MockConsole extends Console {
     return !whitelist.some(b => dataStr.includes(b)) && blacklist.some(b => dataStr.includes(b));
   }
 
+  /**
+   * Returns a human-readable string representation of `data`.
+   */
+  private getStr(data: unknown): string {
+    return inspect(data, inspectOptions);
+  }
+
+  /**
+   * Stringify the given data in a manner fit for logging.
+   * @param color - A Chalk instance or other transformation function used to transform the output,
+   * or `undefined` to not transform it at all.
+   * @param data - The data that the format should be applied to.
+   * @returns A stringified copy of `data` with {@linkcode color} applied to each individual argument.
+   * @todo Do we need to apply color to each entry or just run it through `util.format`?
+   */
+  private format(color: ((s: unknown) => unknown) | undefined, data: unknown | unknown[]): unknown[] {
+    data = coerceArray(data);
+    color ??= a => a;
+    return (data as unknown[]).map(a => color(typeof a === "function" || typeof a === "object" ? this.getStr(a) : a));
+  }
+
+  //#endregion Utilities
+
+  //#region Custom wrappers
+  public info(...data: unknown[]) {
+    return this.log(...data);
+  }
+
   public trace(...data: unknown[]) {
     if (this.checkBlacklist(data)) {
       return;
     }
 
     // TODO: Figure out how to add color to the full trace text
-    super.trace(...this.format(chalk.hex(TRACE_COLOR), data));
+    this.console.trace(...this.format(chalk.hex(TRACE_COLOR), data));
   }
 
   public debug(...data: unknown[]) {
@@ -77,7 +112,7 @@ export class MockConsole extends Console {
       return;
     }
 
-    super.debug(...this.format(chalk.hex(DEBUG_COLOR), data));
+    this.console.debug(...this.format(chalk.hex(DEBUG_COLOR), data));
   }
 
   public log(...data: unknown[]): void {
@@ -99,7 +134,7 @@ export class MockConsole extends Console {
       formatter = chalk.hex(NEW_TURN_COLOR);
     }
 
-    super.log(...this.format(formatter, data));
+    this.console.log(...this.format(formatter, data));
   }
 
   public warn(...data: unknown[]) {
@@ -107,7 +142,7 @@ export class MockConsole extends Console {
       return;
     }
 
-    super.warn(...this.format(chalk.yellow, data));
+    this.console.warn(...this.format(chalk.yellow, data));
   }
 
   public error(...data: unknown[]) {
@@ -115,27 +150,62 @@ export class MockConsole extends Console {
       return;
     }
 
-    super.error(...this.format(chalk.redBright, data));
+    this.console.error(...this.format(chalk.redBright, data));
   }
 
-  /**
-   * Returns a human-readable string representation of `data`.
-   */
-  private getStr(data: unknown) {
-    return util.inspect(data, { sorted: true, breakLength: 120 });
-  }
+  //#endregion Custom Wrappers
 
-  /**
-   * Stringify the given data in a manner fit for logging.
-   * @param color - A Chalk instance or other transformation function used to transform the output,
-   * or `undefined` to not transform it at all.
-   * @param data - The data that the format should be applied to.
-   * @returns A stringified copy of `data` with {@linkcode color} applied to each individual argument.
-   * @todo Do we need to apply color to each entry or just run it through `util.format`?
-   */
-  private format(color: ((s: unknown) => unknown) | undefined, data: unknown | unknown[]): unknown[] {
-    data = coerceArray(data);
-    color ??= a => a;
-    return (data as unknown[]).map(a => color(typeof a === "function" || typeof a === "object" ? this.getStr(a) : a));
+  //#region Copy-pasted Console code
+  // TODO: Progressively add proper coloration and support for all these methods
+  public dir(...args: Parameters<(typeof console)["dir"]>): ReturnType<(typeof console)["dir"]> {
+    return this.console.dir(...args);
   }
+  public dirxml(...args: Parameters<(typeof console)["dirxml"]>): ReturnType<(typeof console)["dirxml"]> {
+    return this.console.dirxml(...args);
+  }
+  public table(...args: Parameters<(typeof console)["table"]>): ReturnType<(typeof console)["table"]> {
+    return this.console.table(...args);
+  }
+  public group(...args: Parameters<(typeof console)["group"]>): ReturnType<(typeof console)["group"]> {
+    return this.console.group(...args);
+  }
+  public groupCollapsed(
+    ...args: Parameters<(typeof console)["groupCollapsed"]>
+  ): ReturnType<(typeof console)["groupCollapsed"]> {
+    return this.console.groupCollapsed(...args);
+  }
+  public groupEnd(...args: Parameters<(typeof console)["groupEnd"]>): ReturnType<(typeof console)["groupEnd"]> {
+    return this.console.groupEnd(...args);
+  }
+  public clear(...args: Parameters<(typeof console)["clear"]>): ReturnType<(typeof console)["clear"]> {
+    return this.console.clear(...args);
+  }
+  public count(...args: Parameters<(typeof console)["count"]>): ReturnType<(typeof console)["count"]> {
+    return this.console.count(...args);
+  }
+  public countReset(...args: Parameters<(typeof console)["countReset"]>): ReturnType<(typeof console)["countReset"]> {
+    return this.console.countReset(...args);
+  }
+  public assert(...args: Parameters<(typeof console)["assert"]>): ReturnType<(typeof console)["assert"]> {
+    return this.console.assert(...args);
+  }
+  public profile(...args: Parameters<(typeof console)["profile"]>): ReturnType<(typeof console)["profile"]> {
+    return this.console.profile(...args);
+  }
+  public profileEnd(...args: Parameters<(typeof console)["profileEnd"]>): ReturnType<(typeof console)["profileEnd"]> {
+    return this.console.profileEnd(...args);
+  }
+  public time(...args: Parameters<(typeof console)["time"]>): ReturnType<(typeof console)["time"]> {
+    return this.console.time(...args);
+  }
+  public timeLog(...args: Parameters<(typeof console)["timeLog"]>): ReturnType<(typeof console)["timeLog"]> {
+    return this.console.timeLog(...args);
+  }
+  public timeEnd(...args: Parameters<(typeof console)["timeEnd"]>): ReturnType<(typeof console)["timeEnd"]> {
+    return this.console.timeEnd(...args);
+  }
+  public timeStamp(...args: Parameters<(typeof console)["timeStamp"]>): ReturnType<(typeof console)["timeStamp"]> {
+    return this.console.timeStamp(...args);
+  }
+  //#endregion Copy-pasted Console code
 }
