@@ -31,6 +31,7 @@ export class EvolutionPhase extends Phase {
   private evolutionBgm: AnySound;
   private evolutionHandler: EvolutionSceneHandler;
 
+  /** Container for all assets used by the scene. When the scene is cleared, the children within this are destroyed. */
   protected evolutionContainer: Phaser.GameObjects.Container;
   protected evolutionBaseBg: Phaser.GameObjects.Image;
   protected evolutionBg: Phaser.GameObjects.Video;
@@ -522,6 +523,7 @@ export class EvolutionPhase extends Phase {
             return;
           }
           if (i === lastCycle) {
+            this.pokemonTintSprite.setVisible(false).setActive(false);
             this.pokemonEvoTintSprite.setScale(1);
           }
         },
