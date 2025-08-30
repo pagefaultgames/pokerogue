@@ -349,6 +349,15 @@ export function getTextStyleOptions(
           styleOptions.fontSize = defaultFontSize - 42;
           styleOptions.padding = { top: 4 };
           break;
+        case "ko":
+          styleOptions.fontSize = defaultFontSize - 38;
+          styleOptions.padding = { top: 4, left: 6 };
+          break;
+        case "zh-CN":
+        case "zh-TW":
+          styleOptions.fontSize = defaultFontSize - 42;
+          styleOptions.padding = { top: 5, left: 14 };
+          break;
         default:
           styleOptions.fontSize = defaultFontSize - 30;
           styleOptions.padding = { left: 12 };
