@@ -420,6 +420,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   private allowTera: boolean;
   private pokemonPermanentInfoContainer: GameObjects.Container;
   private pokemonPreferencesContainer: GameObjects.Container;
+  private partyColumn: GameObjects.Container;
 
   constructor() {
     super(UiMode.STARTER_SELECT);
@@ -441,17 +442,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const starterSelectBg = globalScene.add.image(0, 0, "starter_select_bg").setOrigin(0);
     this.shinyOverlay = globalScene.add.image(6, 6, "summary_overlay_shiny").setOrigin(0).setVisible(false);
 
-    const starterContainerWindow = addWindow(speciesContainerX, filterBarHeight + 1, 175, 161);
     const starterContainerBg = globalScene.add
       .image(speciesContainerX + 1, filterBarHeight + 2, "starter_container_bg")
       .setOrigin(0);
 
     // Create and initialise filter bar
     this.filterBar = this.setupFilterBar();
-
-    if (!globalScene.uiTheme) {
-      starterContainerWindow.setVisible(false);
-    }
 
     this.iconAnimHandler = new PokemonIconAnimHandler();
     this.iconAnimHandler.setup();
@@ -474,6 +470,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       { fontSize: "56px" },
     ).setOrigin(0);
 
+    this.partyColumn = this.setupPartyColumn();
+
     this.pokemonMoveContainers = [];
     this.pokemonMoveBgs = [];
     this.pokemonMoveLabels = [];
@@ -482,40 +480,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonEggMoveBgs = [];
     this.pokemonEggMoveLabels = [];
 
-    this.valueLimitLabel = addTextObject(teamWindowX + 17, 150, "0/10", TextStyle.STARTER_VALUE_LIMIT).setOrigin(
-      0.5,
-      0,
-    );
-
-    const startLabel = addTextObject(
-      teamWindowX + 17,
-      162,
-      i18next.t("common:start"),
-      TextStyle.TOOLTIP_CONTENT,
-    ).setOrigin(0.5, 0);
-
-    this.startCursorObj = globalScene.add
-      .nineslice(teamWindowX + 4, 160, "select_cursor", undefined, 26, 15, 6, 6, 6, 6)
-      .setVisible(false)
-      .setOrigin(0);
-
-    const randomSelectLabel = addTextObject(
-      teamWindowX + 17,
-      23,
-      i18next.t("starterSelectUiHandler:randomize"),
-      TextStyle.TOOLTIP_CONTENT,
-    ).setOrigin(0.5, 0);
-
-    this.randomCursorObj = globalScene.add
-      .nineslice(teamWindowX + 4, 21, "select_cursor", undefined, 26, 15, 6, 6, 6, 6)
-      .setVisible(false)
-      .setOrigin(0);
-
     const starterSpecies: SpeciesId[] = [];
 
     const starterBoxContainer = globalScene.add.container(speciesContainerX + 6, 9); //115
 
-    this.starterSelectScrollBar = new ScrollBar(161, 12, 5, starterContainerWindow.height - 6, 9);
+    this.starterSelectScrollBar = new ScrollBar(161, 12, 5, 155, 9);
 
     starterBoxContainer.add(this.starterSelectScrollBar);
 
@@ -538,11 +507,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     this.cursorObj = globalScene.add.image(0, 0, "select_cursor").setOrigin(0);
-    this.starterIconsCursorObj = globalScene.add
-      .image(289, 64, "select_gen_cursor")
-      .setName("starter-icons-cursor")
-      .setVisible(false)
-      .setOrigin(0);
 
     starterBoxContainer.add(this.cursorObj);
 
@@ -560,17 +524,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.iconAnimHandler.addOrUpdate(starterContainer.icon, PokemonIconAnimMode.NONE);
       this.starterContainers.push(starterContainer);
       starterBoxContainer.add(starterContainer);
-    }
-
-    this.starterIcons = [];
-    for (let i = 0; i < 6; i++) {
-      const icon = globalScene.add
-        .sprite(teamWindowX + 7, calcStarterIconY(i), "pokemon_icons_0")
-        .setScale(0.5)
-        .setOrigin(0)
-        .setFrame("unknown");
-      this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.PASSIVE);
-      this.starterIcons.push(icon);
     }
 
     this.pokemonPreferencesContainer = this.setupPokemonPreferencesContainer();
@@ -688,28 +641,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       starterSelectBg,
       this.shinyOverlay,
       starterContainerBg,
-      addWindow(
-        teamWindowX,
-        teamWindowY - randomSelectionWindowHeight,
-        teamWindowWidth,
-        randomSelectionWindowHeight,
-        true,
-      ),
-      addWindow(teamWindowX, teamWindowY, teamWindowWidth, teamWindowHeight),
-      addWindow(teamWindowX, teamWindowY + teamWindowHeight, teamWindowWidth, teamWindowWidth, true),
-      starterContainerWindow,
+      this.partyColumn,
       this.pokemonSprite,
       this.pokemonNumberText,
       this.pokemonNameText,
       this.pokemonUncaughtText,
-      this.valueLimitLabel,
-      startLabel,
-      this.startCursorObj,
-      randomSelectLabel,
-      this.randomCursorObj,
-      this.starterIconsCursorObj,
       starterBoxContainer,
-      ...this.starterIcons,
       this.pokemonPreferencesContainer,
       this.pokemonPermanentInfoContainer,
       this.pokemonMovesContainer,
@@ -892,6 +829,84 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     filterBar.offsetHybridFilters();
 
     return filterBar;
+  }
+
+  setupPartyColumn(): GameObjects.Container {
+    const partyColumn = globalScene.add.container(0, 0);
+
+    const starterContainerWindow = addWindow(speciesContainerX, filterBarHeight + 1, 175, 161);
+
+    if (!globalScene.uiTheme) {
+      starterContainerWindow.setVisible(false);
+    }
+
+    this.valueLimitLabel = addTextObject(teamWindowX + 17, 150, "0/10", TextStyle.STARTER_VALUE_LIMIT).setOrigin(
+      0.5,
+      0,
+    );
+
+    const startLabel = addTextObject(
+      teamWindowX + 17,
+      162,
+      i18next.t("common:start"),
+      TextStyle.TOOLTIP_CONTENT,
+    ).setOrigin(0.5, 0);
+
+    this.startCursorObj = globalScene.add
+      .nineslice(teamWindowX + 4, 160, "select_cursor", undefined, 26, 15, 6, 6, 6, 6)
+      .setVisible(false)
+      .setOrigin(0);
+
+    const randomSelectLabel = addTextObject(
+      teamWindowX + 17,
+      23,
+      i18next.t("starterSelectUiHandler:randomize"),
+      TextStyle.TOOLTIP_CONTENT,
+    ).setOrigin(0.5, 0);
+
+    this.randomCursorObj = globalScene.add
+      .nineslice(teamWindowX + 4, 21, "select_cursor", undefined, 26, 15, 6, 6, 6, 6)
+      .setVisible(false)
+      .setOrigin(0);
+
+    this.starterIconsCursorObj = globalScene.add
+      .image(289, 64, "select_gen_cursor")
+      .setName("starter-icons-cursor")
+      .setVisible(false)
+      .setOrigin(0);
+
+    this.starterIcons = [];
+    for (let i = 0; i < 6; i++) {
+      const icon = globalScene.add
+        .sprite(teamWindowX + 7, calcStarterIconY(i), "pokemon_icons_0")
+        .setScale(0.5)
+        .setOrigin(0)
+        .setFrame("unknown");
+      this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.PASSIVE);
+      this.starterIcons.push(icon);
+    }
+
+    partyColumn.add([
+      addWindow(
+        teamWindowX,
+        teamWindowY - randomSelectionWindowHeight,
+        teamWindowWidth,
+        randomSelectionWindowHeight,
+        true,
+      ),
+      addWindow(teamWindowX, teamWindowY, teamWindowWidth, teamWindowHeight),
+      addWindow(teamWindowX, teamWindowY + teamWindowHeight, teamWindowWidth, teamWindowWidth, true),
+      starterContainerWindow,
+      this.valueLimitLabel,
+      startLabel,
+      this.startCursorObj,
+      randomSelectLabel,
+      this.randomCursorObj,
+      this.starterIconsCursorObj,
+      ...this.starterIcons,
+    ]);
+
+    return partyColumn;
   }
 
   setupInstructionButtons(): void {
