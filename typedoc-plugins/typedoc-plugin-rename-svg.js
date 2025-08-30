@@ -3,6 +3,7 @@
 import { PageKind, Renderer } from "typedoc";
 
 /**
+ * @module
  * Typedoc plugin to run post-processing on the `index.html` file and replace the coverage SVG
  * for Beta with the newly generated file for the current branch.
  */
