@@ -63,6 +63,9 @@ importers:
       '@vitest/expect':
         specifier: ^3.2.4
         version: 3.2.4
+      '@vitest/utils':
+        specifier: ^3.2.4
+        version: 3.2.4
       chalk:
         specifier: ^5.4.1
         version: 5.4.1

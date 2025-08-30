@@ -1,9 +1,8 @@
 import "vitest-canvas-mock";
 import { MockConsole } from "#test/test-utils/mocks/mock-console/mock-console";
-import { logTestEnd } from "#test/test-utils/mocks/mock-console/test-logging";
 import { initTests } from "#test/test-utils/test-file-initialization";
 import chalk from "chalk";
-import { afterAll, afterEach, beforeAll, vi } from "vitest";
+import { afterAll, beforeAll, vi } from "vitest";
 
 //#region Mocking
 
@@ -60,10 +59,6 @@ global.testFailed = false;
 
 beforeAll(() => {
   initTests();
-});
-
-afterEach(context => {
-  logTestEnd(context);
 });
 
 afterAll(() => {

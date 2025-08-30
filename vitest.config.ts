@@ -1,10 +1,13 @@
-import { defineProject } from "vitest/config";
+import { defineConfig } from "vitest/config";
 import { BaseSequencer, type TestSpecification } from "vitest/node";
 import { defaultConfig } from "./vite.config";
 
-export default defineProject(({ mode }) => ({
+export default defineConfig(({ mode }) => ({
   ...defaultConfig,
   test: {
+    reporters: process.env.GITHUB_ACTIONS
+      ? ["github-actions", "./test/test-utils/reporters/custom-default-reporter.ts"]
+      : ["./test/test-utils/reporters/custom-default-reporter.ts"],
     env: {
       TZ: "UTC",
     },
