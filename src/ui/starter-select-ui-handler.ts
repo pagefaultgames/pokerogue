@@ -418,6 +418,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
   protected blockInput = false;
   private allowTera: boolean;
+  private pokemonPermanentInfoContainer: GameObjects.Container;
+  private pokemonPreferencesContainer: GameObjects.Container;
 
   constructor() {
     super(UiMode.STARTER_SELECT);
@@ -425,7 +427,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
   setup() {
     const ui = this.getUi();
-    const textSettings = this.getCurrentTextSettings();
+
     /** Scaled canvas height */
     const sHeight = globalScene.scaledCanvas.height;
     /** Scaled canvas width */
@@ -464,22 +466,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     this.pokemonNameText = addTextObject(6, 112, "", TextStyle.SUMMARY).setOrigin(0);
 
-    this.pokemonGrowthRateLabelText = addTextObject(
-      8,
-      106,
-      i18next.t("starterSelectUiHandler:growthRate"),
-      TextStyle.SUMMARY_ALT,
-      { fontSize: "36px" },
-    )
-      .setOrigin(0)
-      .setVisible(false);
-
-    this.pokemonGrowthRateText = addTextObject(34, 106, "", TextStyle.GROWTH_RATE_TYPE, { fontSize: "36px" }).setOrigin(
-      0,
-    );
-
-    this.pokemonGenderText = addTextObject(96, 112, "", TextStyle.SUMMARY_ALT).setOrigin(0);
-
     this.pokemonUncaughtText = addTextObject(
       6,
       127,
@@ -487,71 +473,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       TextStyle.SUMMARY_ALT,
       { fontSize: "56px" },
     ).setOrigin(0);
-
-    // The position should be set per language
-    const starterInfoXPos = textSettings?.starterInfoXPos || 31;
-    const starterInfoYOffset = textSettings?.starterInfoYOffset || 0;
-
-    // The font size should be set per language
-    const starterInfoTextSize = textSettings?.starterInfoTextSize || 56;
-
-    this.pokemonAbilityLabelText = addTextObject(
-      6,
-      127 + starterInfoYOffset,
-      i18next.t("starterSelectUiHandler:ability"),
-      TextStyle.SUMMARY_ALT,
-      { fontSize: starterInfoTextSize },
-    )
-      .setOrigin(0)
-      .setVisible(false);
-
-    this.pokemonAbilityText = addTextObject(starterInfoXPos, 127 + starterInfoYOffset, "", TextStyle.SUMMARY_ALT, {
-      fontSize: starterInfoTextSize,
-    })
-      .setOrigin(0)
-      .setInteractive(new Phaser.Geom.Rectangle(0, 0, 250, 55), Phaser.Geom.Rectangle.Contains);
-
-    this.pokemonPassiveLabelText = addTextObject(
-      6,
-      136 + starterInfoYOffset,
-      i18next.t("starterSelectUiHandler:passive"),
-      TextStyle.SUMMARY_ALT,
-      { fontSize: starterInfoTextSize },
-    )
-      .setOrigin(0)
-      .setVisible(false);
-
-    this.pokemonPassiveText = addTextObject(starterInfoXPos, 136 + starterInfoYOffset, "", TextStyle.SUMMARY_ALT, {
-      fontSize: starterInfoTextSize,
-    })
-      .setOrigin(0)
-      .setInteractive(new Phaser.Geom.Rectangle(0, 0, 250, 55), Phaser.Geom.Rectangle.Contains);
-
-    this.pokemonPassiveDisabledIcon = globalScene.add
-      .sprite(starterInfoXPos, 137 + starterInfoYOffset, "icon_stop")
-      .setOrigin(0, 0.5)
-      .setScale(0.35)
-      .setVisible(false);
-
-    this.pokemonPassiveLockedIcon = globalScene.add
-      .sprite(starterInfoXPos, 137 + starterInfoYOffset, "icon_lock")
-      .setOrigin(0, 0.5)
-      .setScale(0.42, 0.38)
-      .setVisible(false);
-
-    this.pokemonNatureLabelText = addTextObject(
-      6,
-      145 + starterInfoYOffset,
-      i18next.t("starterSelectUiHandler:nature"),
-      TextStyle.SUMMARY_ALT,
-      { fontSize: starterInfoTextSize },
-    )
-      .setOrigin(0)
-      .setVisible(false);
-
-    this.pokemonNatureText = addBBCodeTextObject(starterInfoXPos, 145 + starterInfoYOffset, "", TextStyle.SUMMARY_ALT, {
-      fontSize: starterInfoTextSize,
-    }).setOrigin(0);
 
     this.pokemonMoveContainers = [];
     this.pokemonMoveBgs = [];
@@ -652,63 +573,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.starterIcons.push(icon);
     }
 
-    this.type1Icon = globalScene.add.sprite(8, 98, getLocalizedSpriteKey("types")).setScale(0.5).setOrigin(0);
+    this.pokemonPreferencesContainer = this.setupPokemonPreferencesContainer();
 
-    this.type2Icon = globalScene.add.sprite(26, 98, getLocalizedSpriteKey("types")).setScale(0.5).setOrigin(0);
-
-    this.pokemonLuckLabelText = addTextObject(8, 89, i18next.t("common:luckIndicator"), TextStyle.WINDOW_ALT, {
-      fontSize: "56px",
-    }).setOrigin(0);
-
-    this.pokemonLuckText = addTextObject(
-      8 + this.pokemonLuckLabelText.displayWidth + 2,
-      89,
-      "0",
-      TextStyle.LUCK_VALUE,
-      { fontSize: "56px" },
-    ).setOrigin(0);
-
-    // Candy icon and count
-    this.pokemonCandyContainer = globalScene.add
-      .container(4.5, 18)
-      .setInteractive(new Phaser.Geom.Rectangle(0, 0, 30, 20), Phaser.Geom.Rectangle.Contains);
-    this.pokemonCandyIcon = globalScene.add.sprite(0, 0, "candy").setScale(0.5).setOrigin(0);
-    this.pokemonCandyOverlayIcon = globalScene.add.sprite(0, 0, "candy_overlay").setScale(0.5).setOrigin(0);
-    this.pokemonCandyDarknessOverlay = globalScene.add
-      .sprite(0, 0, "candy")
-      .setScale(0.5)
-      .setOrigin(0)
-      .setTint(0x000000)
-      .setAlpha(0.5);
-
-    this.pokemonCandyCountText = addTextObject(9.5, 0, "x0", TextStyle.WINDOW_ALT, { fontSize: "56px" }).setOrigin(0);
-    this.pokemonCandyContainer.add([
-      this.pokemonCandyIcon,
-      this.pokemonCandyOverlayIcon,
-      this.pokemonCandyDarknessOverlay,
-      this.pokemonCandyCountText,
-    ]);
-
-    this.pokemonFormText = addTextObject(6, 42, "Form", TextStyle.WINDOW_ALT, {
-      fontSize: "42px",
-    }).setOrigin(0);
-
-    this.pokemonCaughtHatchedContainer = globalScene.add.container(2, 25).setScale(0.5);
-
-    const pokemonCaughtIcon = globalScene.add.sprite(1, 0, "items", "pb").setOrigin(0).setScale(0.75);
-
-    this.pokemonCaughtCountText = addTextObject(24, 4, "0", TextStyle.SUMMARY_ALT).setOrigin(0);
-    this.pokemonHatchedIcon = globalScene.add.sprite(1, 14, "egg_icons").setOrigin(0.15, 0.2).setScale(0.8);
-    this.pokemonShinyIcon = globalScene.add.sprite(14, 76, "shiny_icons").setOrigin(0.15, 0.2).setScale(1);
-    this.pokemonHatchedCountText = addTextObject(24, 19, "0", TextStyle.SUMMARY_ALT).setOrigin(0);
-    this.pokemonMovesContainer = globalScene.add.container(102, 16).setScale(0.375);
-    this.pokemonCaughtHatchedContainer.add([
-      pokemonCaughtIcon,
-      this.pokemonCaughtCountText,
-      this.pokemonHatchedIcon,
-      this.pokemonShinyIcon,
-      this.pokemonHatchedCountText,
-    ]);
+    this.pokemonPermanentInfoContainer = this.setupPokemonPermanentInfoContainer();
 
     for (let m = 0; m < 4; m++) {
       const moveContainer = globalScene.add.container(0, 14 * m);
@@ -767,10 +634,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonEggMovesContainer.add(eggMoveContainer);
     }
 
-    this.teraIcon = globalScene.add.sprite(85, 63, "button_tera").setName("terastallize-icon").setFrame("fire");
-
     this.setupInstructionButtons();
-
     this.instructionsContainer = globalScene.add.container(4, 156).setVisible(true);
 
     /** TODO: Uncomment this and update `this.hideInstructions` once our testing infra supports mocks of `Phaser.GameObject.Group` */
@@ -837,18 +701,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonSprite,
       this.pokemonNumberText,
       this.pokemonNameText,
-      this.pokemonGrowthRateLabelText,
-      this.pokemonGrowthRateText,
-      this.pokemonGenderText,
       this.pokemonUncaughtText,
-      this.pokemonAbilityLabelText,
-      this.pokemonAbilityText,
-      this.pokemonPassiveLabelText,
-      this.pokemonPassiveText,
-      this.pokemonPassiveDisabledIcon,
-      this.pokemonPassiveLockedIcon,
-      this.pokemonNatureLabelText,
-      this.pokemonNatureText,
       this.valueLimitLabel,
       startLabel,
       this.startCursorObj,
@@ -857,16 +710,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.starterIconsCursorObj,
       starterBoxContainer,
       ...this.starterIcons,
-      this.type1Icon,
-      this.type2Icon,
-      this.pokemonLuckLabelText,
-      this.pokemonLuckText,
-      this.pokemonCandyContainer,
-      this.pokemonFormText,
-      this.pokemonCaughtHatchedContainer,
+      this.pokemonPreferencesContainer,
+      this.pokemonPermanentInfoContainer,
       this.pokemonMovesContainer,
       this.pokemonEggMovesContainer,
-      this.teraIcon,
       this.instructionsContainer,
       this.filterInstructionsContainer,
       this.starterSelectMessageBoxContainer,
@@ -1153,6 +1000,186 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       TextStyle.INSTRUCTIONS_TEXT,
       { fontSize: instructionTextSize },
     ).setName("text-goFilter-label");
+  }
+
+  setupPokemonPreferencesContainer(): GameObjects.Container {
+    const pokemonPreferencesContainer = globalScene.add.container(0, 0);
+
+    const textSettings = this.getCurrentTextSettings();
+
+    // The position should be set per language
+    const starterInfoXPos = textSettings?.starterInfoXPos || 31;
+    const starterInfoYOffset = textSettings?.starterInfoYOffset || 0;
+
+    // The font size should be set per language
+    const starterInfoTextSize = textSettings?.starterInfoTextSize || 56;
+
+    this.pokemonGenderText = addTextObject(96, 112, "", TextStyle.SUMMARY_ALT).setOrigin(0);
+
+    this.pokemonFormText = addTextObject(6, 42, "Form", TextStyle.WINDOW_ALT, {
+      fontSize: "42px",
+    }).setOrigin(0);
+
+    this.pokemonAbilityLabelText = addTextObject(
+      6,
+      127 + starterInfoYOffset,
+      i18next.t("starterSelectUiHandler:ability"),
+      TextStyle.SUMMARY_ALT,
+      { fontSize: starterInfoTextSize },
+    )
+      .setOrigin(0)
+      .setVisible(false);
+
+    this.pokemonAbilityText = addTextObject(starterInfoXPos, 127 + starterInfoYOffset, "", TextStyle.SUMMARY_ALT, {
+      fontSize: starterInfoTextSize,
+    })
+      .setOrigin(0)
+      .setInteractive(new Phaser.Geom.Rectangle(0, 0, 250, 55), Phaser.Geom.Rectangle.Contains);
+
+    this.pokemonPassiveLabelText = addTextObject(
+      6,
+      136 + starterInfoYOffset,
+      i18next.t("starterSelectUiHandler:passive"),
+      TextStyle.SUMMARY_ALT,
+      { fontSize: starterInfoTextSize },
+    )
+      .setOrigin(0)
+      .setVisible(false);
+
+    this.pokemonPassiveText = addTextObject(starterInfoXPos, 136 + starterInfoYOffset, "", TextStyle.SUMMARY_ALT, {
+      fontSize: starterInfoTextSize,
+    })
+      .setOrigin(0)
+      .setInteractive(new Phaser.Geom.Rectangle(0, 0, 250, 55), Phaser.Geom.Rectangle.Contains);
+
+    this.pokemonPassiveDisabledIcon = globalScene.add
+      .sprite(starterInfoXPos, 137 + starterInfoYOffset, "icon_stop")
+      .setOrigin(0, 0.5)
+      .setScale(0.35)
+      .setVisible(false);
+
+    this.pokemonPassiveLockedIcon = globalScene.add
+      .sprite(starterInfoXPos, 137 + starterInfoYOffset, "icon_lock")
+      .setOrigin(0, 0.5)
+      .setScale(0.42, 0.38)
+      .setVisible(false);
+
+    this.pokemonNatureLabelText = addTextObject(
+      6,
+      145 + starterInfoYOffset,
+      i18next.t("starterSelectUiHandler:nature"),
+      TextStyle.SUMMARY_ALT,
+      { fontSize: starterInfoTextSize },
+    )
+      .setOrigin(0)
+      .setVisible(false);
+
+    this.pokemonNatureText = addBBCodeTextObject(starterInfoXPos, 145 + starterInfoYOffset, "", TextStyle.SUMMARY_ALT, {
+      fontSize: starterInfoTextSize,
+    }).setOrigin(0);
+
+    this.pokemonShinyIcon = globalScene.add.sprite(12, 0, "shiny_icons").setScale(0.5);
+
+    this.teraIcon = globalScene.add.sprite(85, 63, "button_tera").setName("terastallize-icon").setFrame("fire");
+
+    pokemonPreferencesContainer.add([
+      this.pokemonGenderText,
+      this.pokemonFormText,
+      this.pokemonAbilityLabelText,
+      this.pokemonAbilityText,
+      this.pokemonPassiveLabelText,
+      this.pokemonPassiveText,
+      this.pokemonPassiveDisabledIcon,
+      this.pokemonPassiveLockedIcon,
+      this.pokemonNatureLabelText,
+      this.pokemonNatureText,
+      this.pokemonShinyIcon,
+      this.teraIcon,
+    ]);
+
+    return pokemonPreferencesContainer;
+  }
+
+  setupPokemonPermanentInfoContainer(): GameObjects.Container {
+    const pokemonPermanentInfoContainer = globalScene.add.container(0, 0);
+
+    this.type1Icon = globalScene.add.sprite(8, 98, getLocalizedSpriteKey("types")).setScale(0.5).setOrigin(0);
+    this.type2Icon = globalScene.add.sprite(26, 98, getLocalizedSpriteKey("types")).setScale(0.5).setOrigin(0);
+
+    this.pokemonGrowthRateLabelText = addTextObject(
+      8,
+      106,
+      i18next.t("starterSelectUiHandler:growthRate"),
+      TextStyle.SUMMARY_ALT,
+      { fontSize: "36px" },
+    )
+      .setOrigin(0)
+      .setVisible(false);
+
+    this.pokemonGrowthRateText = addTextObject(34, 106, "", TextStyle.GROWTH_RATE_TYPE, { fontSize: "36px" }).setOrigin(
+      0,
+    );
+
+    this.pokemonLuckLabelText = addTextObject(8, 89, i18next.t("common:luckIndicator"), TextStyle.WINDOW_ALT, {
+      fontSize: "56px",
+    }).setOrigin(0);
+
+    this.pokemonLuckText = addTextObject(
+      8 + this.pokemonLuckLabelText.displayWidth + 2,
+      89,
+      "0",
+      TextStyle.LUCK_VALUE,
+      { fontSize: "56px" },
+    ).setOrigin(0);
+
+    // Candy icon and count
+    this.pokemonCandyContainer = globalScene.add
+      .container(4.5, 18)
+      .setInteractive(new Phaser.Geom.Rectangle(0, 0, 30, 20), Phaser.Geom.Rectangle.Contains);
+    this.pokemonCandyIcon = globalScene.add.sprite(0, 0, "candy").setScale(0.5).setOrigin(0);
+    this.pokemonCandyOverlayIcon = globalScene.add.sprite(0, 0, "candy_overlay").setScale(0.5).setOrigin(0);
+    this.pokemonCandyDarknessOverlay = globalScene.add
+      .sprite(0, 0, "candy")
+      .setScale(0.5)
+      .setOrigin(0)
+      .setTint(0x000000)
+      .setAlpha(0.5);
+
+    this.pokemonCandyCountText = addTextObject(9.5, 0, "x0", TextStyle.WINDOW_ALT, { fontSize: "56px" }).setOrigin(0);
+    this.pokemonCandyContainer.add([
+      this.pokemonCandyIcon,
+      this.pokemonCandyOverlayIcon,
+      this.pokemonCandyDarknessOverlay,
+      this.pokemonCandyCountText,
+    ]);
+
+    this.pokemonCaughtHatchedContainer = globalScene.add.container(2, 25).setScale(0.5);
+
+    const pokemonCaughtIcon = globalScene.add.sprite(1, 0, "items", "pb").setOrigin(0).setScale(0.75);
+
+    this.pokemonCaughtCountText = addTextObject(24, 4, "0", TextStyle.SUMMARY_ALT).setOrigin(0);
+    this.pokemonHatchedIcon = globalScene.add.sprite(1, 14, "egg_icons").setOrigin(0.15, 0.2).setScale(0.8);
+    this.pokemonHatchedCountText = addTextObject(24, 19, "0", TextStyle.SUMMARY_ALT).setOrigin(0);
+    this.pokemonMovesContainer = globalScene.add.container(102, 16).setScale(0.375);
+    this.pokemonCaughtHatchedContainer.add([
+      pokemonCaughtIcon,
+      this.pokemonCaughtCountText,
+      this.pokemonHatchedIcon,
+      this.pokemonHatchedCountText,
+    ]);
+
+    pokemonPermanentInfoContainer.add([
+      this.type1Icon,
+      this.type2Icon,
+      this.pokemonGrowthRateLabelText,
+      this.pokemonGrowthRateText,
+      this.pokemonLuckLabelText,
+      this.pokemonLuckText,
+      this.pokemonCandyContainer,
+      this.pokemonCaughtHatchedContainer,
+    ]);
+
+    return pokemonPermanentInfoContainer;
   }
 
   show(args: any[]): boolean {
@@ -3576,6 +3603,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.setNameAndNumber(species);
       const colorScheme = starterColors[species.speciesId];
 
+      this.pokemonPermanentInfoContainer.setVisible(true);
+
       const luck = globalScene.gameData.getDexAttrLuck(this.speciesStarterDexEntry.caughtAttr);
       this.pokemonLuckText
         .setVisible(!!luck)
@@ -3616,14 +3645,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
       if (pokemonPrevolutions.hasOwnProperty(species.speciesId)) {
         this.pokemonCaughtHatchedContainer.setY(16);
-        this.pokemonShinyIcon.setY(135).setFrame(getVariantIcon(variant));
+        this.pokemonShinyIcon.setY(104).setFrame(getVariantIcon(variant));
         [this.pokemonCandyContainer, this.pokemonHatchedIcon, this.pokemonHatchedCountText].map(c =>
           c.setVisible(false),
         );
         this.pokemonFormText.setY(25);
       } else {
         this.pokemonCaughtHatchedContainer.setY(25);
-        this.pokemonShinyIcon.setY(117);
+        this.pokemonShinyIcon.setY(86);
         this.pokemonCandyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
         this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
         this.pokemonCandyCountText.setText(`×${globalScene.gameData.starterData[species.speciesId].candyCount}`);
@@ -3767,22 +3796,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonNameText.setText(species ? "???" : "");
     }
 
-    this.pokemonGrowthRateText.setText("");
-    this.pokemonGrowthRateLabelText.setVisible(false);
-    this.type1Icon.setVisible(false);
-    this.type2Icon.setVisible(false);
-    this.pokemonLuckLabelText.setVisible(false);
-    this.pokemonLuckText.setVisible(false);
-    this.pokemonShinyIcon.setVisible(false);
+    this.pokemonSprite.setVisible(!!species);
     this.pokemonUncaughtText.setVisible(!!species);
-    this.pokemonAbilityLabelText.setVisible(false);
-    this.pokemonPassiveLabelText.setVisible(false);
-    this.pokemonNatureLabelText.setVisible(false);
-    this.pokemonCaughtHatchedContainer.setVisible(false);
-    this.pokemonCandyContainer.setVisible(false);
-    this.pokemonFormText.setVisible(false);
-    this.teraIcon.setVisible(false);
 
+    this.pokemonPermanentInfoContainer.setVisible(false);
     this.setNoSpeciesDetails();
   }
 
@@ -3811,12 +3828,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     globalScene.ui.hideTooltip();
 
-    this.pokemonSprite.setVisible(false);
-    this.pokemonPassiveLabelText.setVisible(false);
-    this.pokemonPassiveText.setVisible(false);
-    this.pokemonPassiveDisabledIcon.setVisible(false);
-    this.pokemonPassiveLockedIcon.setVisible(false);
-    this.teraIcon.setVisible(false);
+    this.pokemonPreferencesContainer.setVisible(false);
 
     if (this.assetLoadCancelled) {
       this.assetLoadCancelled.value = true;
@@ -3830,12 +3842,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonNumberText
       .setColor(this.getTextColor(TextStyle.SUMMARY))
       .setShadowColor(this.getTextColor(TextStyle.SUMMARY, true));
-    this.pokemonGenderText.setText("");
-    this.pokemonAbilityText.setText("");
-    this.pokemonPassiveText.setText("");
-    this.pokemonNatureText.setText("");
-    this.teraIcon.setVisible(false);
-    this.setTypeIcons(null, null);
 
     for (let m = 0; m < 4; m++) {
       this.pokemonMoveContainers[m].setVisible(false);
@@ -3940,6 +3946,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.speciesStarterMoves = [];
 
     if (species) {
+      this.pokemonPreferencesContainer.setVisible(true);
+
       const { dexEntry, starterDataEntry } = this.getSpeciesData(species.speciesId);
       const caughtAttr = dexEntry.caughtAttr || BigInt(0);
       const abilityAttr = starterDataEntry.abilityAttr;
