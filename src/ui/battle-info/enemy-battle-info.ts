@@ -180,7 +180,6 @@ export class EnemyBattleInfo extends BattleInfo {
         this.ownedIcon,
         this.championRibbon,
         this.statusIndicator,
-        this.levelContainer,
         this.statValuesContainer,
       ].map(e => (e.x += 48 * (boss ? -1 : 1)));
       this.hpBar.x += 38 * (boss ? -1 : 1);
