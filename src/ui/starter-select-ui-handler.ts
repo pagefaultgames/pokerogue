@@ -3856,16 +3856,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     let { shiny, formIndex, female, variant, abilityIndex, natureIndex, teraType } = options;
 
     // Storing old cursor values...
-    const oldProps = species ? globalScene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor) : null;
+    const oldProps = globalScene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor);
     const oldAbilityIndex =
       this.abilityCursor > -1 ? this.abilityCursor : globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
     let oldNatureIndex = -1;
-    if (species) {
-      const { dexEntry } = this.getSpeciesData(species.speciesId);
-      oldNatureIndex =
-        this.natureCursor > -1 ? this.natureCursor : globalScene.gameData.getSpeciesDefaultNature(species, dexEntry);
-    }
-    const oldTeraType = this.teraCursor > -1 ? this.teraCursor : species ? species.type1 : PokemonType.UNKNOWN;
+    const { dexEntry } = this.getSpeciesData(species.speciesId);
+    oldNatureIndex =
+      this.natureCursor > -1 ? this.natureCursor : globalScene.gameData.getSpeciesDefaultNature(species, dexEntry);
+    const oldTeraType = this.teraCursor > -1 ? this.teraCursor : species.type1;
 
     // Before we reset them to null values
     this.dexAttrCursor = 0n;
@@ -3876,14 +3874,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     // We will only update the sprite if there is a change to form, shiny/variant
     // or gender for species with gender sprite differences
     const shouldUpdateSprite =
-      (species?.genderDiffs && !isNullOrUndefined(female)) ||
+      (species.genderDiffs && !isNullOrUndefined(female)) ||
       !isNullOrUndefined(formIndex) ||
       !isNullOrUndefined(shiny) ||
       !isNullOrUndefined(variant);
 
     this.updateCandyTooltip();
 
-    if (species?.forms?.find(f => f.formKey === "female")) {
+    if (species.forms?.find(f => f.formKey === "female")) {
       if (female !== undefined) {
         formIndex = female ? 1 : 0;
       } else if (formIndex !== undefined) {
@@ -3891,28 +3889,26 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       }
     }
 
-    if (species) {
-      this.dexAttrCursor |= (shiny !== undefined ? !shiny : !(shiny = oldProps?.shiny))
-        ? DexAttr.NON_SHINY
-        : DexAttr.SHINY;
-      this.dexAttrCursor |= (female !== undefined ? !female : !(female = oldProps?.female))
-        ? DexAttr.MALE
-        : DexAttr.FEMALE;
-      this.dexAttrCursor |= (variant !== undefined ? !variant : !(variant = oldProps?.variant))
-        ? DexAttr.DEFAULT_VARIANT
-        : variant === 1
-          ? DexAttr.VARIANT_2
-          : DexAttr.VARIANT_3;
-      this.dexAttrCursor |= globalScene.gameData.getFormAttr(
-        formIndex !== undefined ? formIndex : (formIndex = oldProps!.formIndex),
-      ); // TODO: is this bang correct?
-      this.abilityCursor = abilityIndex !== undefined ? abilityIndex : (abilityIndex = oldAbilityIndex);
-      this.natureCursor = natureIndex !== undefined ? natureIndex : (natureIndex = oldNatureIndex);
-      this.teraCursor = !isNullOrUndefined(teraType) ? teraType : (teraType = oldTeraType);
-      const [isInParty, partyIndex]: [boolean, number] = this.isInParty(species); // we use this to firstly check if the pokemon is in the party, and if so, to get the party index in order to update the icon image
-      if (isInParty) {
-        this.updatePartyIcon(species, partyIndex);
-      }
+    this.dexAttrCursor |= (shiny !== undefined ? !shiny : !(shiny = oldProps?.shiny))
+      ? DexAttr.NON_SHINY
+      : DexAttr.SHINY;
+    this.dexAttrCursor |= (female !== undefined ? !female : !(female = oldProps?.female))
+      ? DexAttr.MALE
+      : DexAttr.FEMALE;
+    this.dexAttrCursor |= (variant !== undefined ? !variant : !(variant = oldProps?.variant))
+      ? DexAttr.DEFAULT_VARIANT
+      : variant === 1
+        ? DexAttr.VARIANT_2
+        : DexAttr.VARIANT_3;
+    this.dexAttrCursor |= globalScene.gameData.getFormAttr(
+      formIndex !== undefined ? formIndex : (formIndex = oldProps!.formIndex),
+    ); // TODO: is this bang correct?
+    this.abilityCursor = abilityIndex !== undefined ? abilityIndex : (abilityIndex = oldAbilityIndex);
+    this.natureCursor = natureIndex !== undefined ? natureIndex : (natureIndex = oldNatureIndex);
+    this.teraCursor = !isNullOrUndefined(teraType) ? teraType : (teraType = oldTeraType);
+    const [isInParty, partyIndex]: [boolean, number] = this.isInParty(species); // we use this to firstly check if the pokemon is in the party, and if so, to get the party index in order to update the icon image
+    if (isInParty) {
+      this.updatePartyIcon(species, partyIndex);
     }
 
     this.pokemonSprite.setVisible(false);
@@ -3926,109 +3922,101 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.starterMoveset = null;
     this.speciesStarterMoves = [];
 
-    if (species) {
-      this.pokemonPreferencesContainer.setVisible(true);
+    this.pokemonPreferencesContainer.setVisible(true);
 
-      const { dexEntry } = this.getSpeciesData(species.speciesId);
+    this.shinyOverlay.setVisible(shiny ?? false); // TODO: is false the correct default?
+    this.pokemonNumberText.setColor(
+      this.getTextColor(shiny ? TextStyle.SUMMARY_DEX_NUM_GOLD : TextStyle.SUMMARY_DEX_NUM, false),
+    );
+    this.pokemonNumberText.setShadowColor(
+      this.getTextColor(shiny ? TextStyle.SUMMARY_DEX_NUM_GOLD : TextStyle.SUMMARY_DEX_NUM, true),
+    );
 
-      this.shinyOverlay.setVisible(shiny ?? false); // TODO: is false the correct default?
-      this.pokemonNumberText.setColor(
-        this.getTextColor(shiny ? TextStyle.SUMMARY_DEX_NUM_GOLD : TextStyle.SUMMARY_DEX_NUM, false),
-      );
-      this.pokemonNumberText.setShadowColor(
-        this.getTextColor(shiny ? TextStyle.SUMMARY_DEX_NUM_GOLD : TextStyle.SUMMARY_DEX_NUM, true),
-      );
+    const starterIndex = this.starterSpecies.indexOf(species);
 
-      if (dexEntry.caughtAttr) {
-        const starterIndex = this.starterSpecies.indexOf(species);
-
-        if (starterIndex > -1) {
-          this.starterAttr[starterIndex] = this.dexAttrCursor;
-          this.starterAbilityIndexes[starterIndex] = this.abilityCursor;
-          this.starterNatures[starterIndex] = this.natureCursor;
-          this.starterTeras[starterIndex] = this.teraCursor;
-        }
-
-        const assetLoadCancelled = new BooleanHolder(false);
-        this.assetLoadCancelled = assetLoadCancelled;
-
-        female ??= false;
-        if (shouldUpdateSprite) {
-          this.updateSprite(species, female, formIndex, shiny, variant);
-        } else {
-          this.pokemonSprite.setVisible(!this.statsMode);
-        }
-
-        const currentContainer = this.starterContainers.find(p => p.species.speciesId === species.speciesId);
-        if (currentContainer) {
-          const starterSprite = currentContainer.icon as Phaser.GameObjects.Sprite;
-          starterSprite.setTexture(
-            species.getIconAtlasKey(formIndex, shiny, variant),
-            species.getIconId(female, formIndex, shiny, variant),
-          );
-          currentContainer.checkIconId(female, formIndex, shiny, variant);
-        }
-
-        this.updateCanCycle(species.speciesId, formIndex);
-      }
-
-      if (dexEntry.caughtAttr && species.malePercent !== null) {
-        const gender = !female ? Gender.MALE : Gender.FEMALE;
-        this.pokemonGenderText
-          .setText(getGenderSymbol(gender))
-          .setColor(getGenderColor(gender))
-          .setShadowColor(getGenderColor(gender, true));
-      } else {
-        this.pokemonGenderText.setText("");
-      }
-
-      if (dexEntry.caughtAttr) {
-        let ability: Ability;
-        if (this.lastSpecies.forms?.length > 1) {
-          ability = allAbilities[this.lastSpecies.forms[formIndex ?? 0].getAbility(abilityIndex!)];
-        } else {
-          ability = allAbilities[this.lastSpecies.getAbility(abilityIndex!)]; // TODO: is this bang correct?
-        }
-
-        const isHidden = abilityIndex === (this.lastSpecies.ability2 ? 2 : 1);
-        this.pokemonAbilityText
-          .setText(ability.name)
-          .setColor(this.getTextColor(!isHidden ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GOLD))
-          .setShadowColor(this.getTextColor(!isHidden ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GOLD, true));
-
-        if (this.pokemonAbilityText.visible) {
-          if (this.activeTooltip === "ABILITY") {
-            globalScene.ui.editTooltip(`${ability.name}`, `${ability.description}`);
-          }
-
-          this.pokemonAbilityText.on("pointerover", () => {
-            globalScene.ui.showTooltip(`${ability.name}`, `${ability.description}`, true);
-            this.activeTooltip = "ABILITY";
-          });
-          this.pokemonAbilityText.on("pointerout", () => {
-            globalScene.ui.hideTooltip();
-            this.activeTooltip = undefined;
-          });
-        }
-
-        this.updatePassiveDisplay(species.speciesId, formIndex);
-
-        this.pokemonNatureText.setText(
-          getNatureName(natureIndex as unknown as Nature, true, true, false, globalScene.uiTheme),
-        );
-
-        const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex!); // TODO: is the bang correct?
-        const formText = species.getFormNameToDisplay(formIndex);
-        this.pokemonFormText.setText(formText);
-
-        this.setTypeIcons(speciesForm.type1, speciesForm.type2);
-
-        this.teraIcon.setFrame(PokemonType[this.teraCursor].toLowerCase());
-        this.teraIcon.setVisible(!this.statsMode && this.allowTera);
-
-        this.updateSpeciesMoves(species.speciesId, formIndex);
-      }
+    if (starterIndex > -1) {
+      this.starterAttr[starterIndex] = this.dexAttrCursor;
+      this.starterAbilityIndexes[starterIndex] = this.abilityCursor;
+      this.starterNatures[starterIndex] = this.natureCursor;
+      this.starterTeras[starterIndex] = this.teraCursor;
     }
+
+    const assetLoadCancelled = new BooleanHolder(false);
+    this.assetLoadCancelled = assetLoadCancelled;
+
+    female ??= false;
+    if (shouldUpdateSprite) {
+      this.updateSprite(species, female, formIndex, shiny, variant);
+    } else {
+      this.pokemonSprite.setVisible(!this.statsMode);
+    }
+
+    const currentContainer = this.starterContainers.find(p => p.species.speciesId === species.speciesId);
+    if (currentContainer) {
+      const starterSprite = currentContainer.icon as Phaser.GameObjects.Sprite;
+      starterSprite.setTexture(
+        species.getIconAtlasKey(formIndex, shiny, variant),
+        species.getIconId(female, formIndex, shiny, variant),
+      );
+      currentContainer.checkIconId(female, formIndex, shiny, variant);
+    }
+
+    this.updateCanCycle(species.speciesId, formIndex);
+
+    if (species.malePercent !== null) {
+      const gender = !female ? Gender.MALE : Gender.FEMALE;
+      this.pokemonGenderText
+        .setText(getGenderSymbol(gender))
+        .setColor(getGenderColor(gender))
+        .setShadowColor(getGenderColor(gender, true));
+    } else {
+      this.pokemonGenderText.setText("");
+    }
+
+    let ability: Ability;
+    if (this.lastSpecies.forms?.length > 1) {
+      ability = allAbilities[this.lastSpecies.forms[formIndex ?? 0].getAbility(abilityIndex!)];
+    } else {
+      ability = allAbilities[this.lastSpecies.getAbility(abilityIndex!)]; // TODO: is this bang correct?
+    }
+
+    const isHidden = abilityIndex === (this.lastSpecies.ability2 ? 2 : 1);
+    this.pokemonAbilityText
+      .setText(ability.name)
+      .setColor(this.getTextColor(!isHidden ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GOLD))
+      .setShadowColor(this.getTextColor(!isHidden ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GOLD, true));
+
+    if (this.pokemonAbilityText.visible) {
+      if (this.activeTooltip === "ABILITY") {
+        globalScene.ui.editTooltip(`${ability.name}`, `${ability.description}`);
+      }
+
+      this.pokemonAbilityText.on("pointerover", () => {
+        globalScene.ui.showTooltip(`${ability.name}`, `${ability.description}`, true);
+        this.activeTooltip = "ABILITY";
+      });
+      this.pokemonAbilityText.on("pointerout", () => {
+        globalScene.ui.hideTooltip();
+        this.activeTooltip = undefined;
+      });
+    }
+
+    this.updatePassiveDisplay(species.speciesId, formIndex);
+
+    this.pokemonNatureText.setText(
+      getNatureName(natureIndex as unknown as Nature, true, true, false, globalScene.uiTheme),
+    );
+
+    const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex!); // TODO: is the bang correct?
+    const formText = species.getFormNameToDisplay(formIndex);
+    this.pokemonFormText.setText(formText);
+
+    this.setTypeIcons(speciesForm.type1, speciesForm.type2);
+
+    this.teraIcon.setFrame(PokemonType[this.teraCursor].toLowerCase());
+    this.teraIcon.setVisible(!this.statsMode && this.allowTera);
+
+    this.updateSpeciesMoves(species.speciesId, formIndex);
 
     this.pokemonAdditionalMoveCountLabel
       .setText(`(+${Math.max(this.speciesStarterMoves.length - 4, 0)})`)
