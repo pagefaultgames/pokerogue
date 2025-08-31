@@ -4118,53 +4118,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           getNatureName(natureIndex as unknown as Nature, true, true, false, globalScene.uiTheme),
         );
 
-        let levelMoves: LevelMoves;
-        if (
-          pokemonFormLevelMoves.hasOwnProperty(species.speciesId) &&
-          formIndex &&
-          pokemonFormLevelMoves[species.speciesId].hasOwnProperty(formIndex)
-        ) {
-          levelMoves = pokemonFormLevelMoves[species.speciesId][formIndex];
-        } else {
-          levelMoves = pokemonSpeciesLevelMoves[species.speciesId];
-        }
-        this.speciesStarterMoves.push(...levelMoves.filter(lm => lm[0] > 0 && lm[0] <= 5).map(lm => lm[1]));
-        if (speciesEggMoves.hasOwnProperty(species.speciesId)) {
-          for (let em = 0; em < 4; em++) {
-            if (starterDataEntry.eggMoves & (1 << em)) {
-              this.speciesStarterMoves.push(speciesEggMoves[species.speciesId][em]);
-            }
-          }
-        }
-
-        const speciesMoveData = starterDataEntry.moveset;
-        const moveData: StarterMoveset | null = speciesMoveData
-          ? Array.isArray(speciesMoveData)
-            ? speciesMoveData
-            : speciesMoveData[formIndex!] // TODO: is this bang correct?
-          : null;
-        const availableStarterMoves = this.speciesStarterMoves.concat(
-          speciesEggMoves.hasOwnProperty(species.speciesId)
-            ? speciesEggMoves[species.speciesId].filter((_: any, em: number) => starterDataEntry.eggMoves & (1 << em))
-            : [],
-        );
-        this.starterMoveset = (moveData || (this.speciesStarterMoves.slice(0, 4) as StarterMoveset)).filter(m =>
-          availableStarterMoves.find(sm => sm === m),
-        ) as StarterMoveset;
-        // Consolidate move data if it contains an incompatible move
-        if (this.starterMoveset.length < 4 && this.starterMoveset.length < availableStarterMoves.length) {
-          this.starterMoveset.push(
-            ...availableStarterMoves
-              .filter(sm => this.starterMoveset?.indexOf(sm) === -1)
-              .slice(0, 4 - this.starterMoveset.length),
-          );
-        }
-
-        // Remove duplicate moves
-        this.starterMoveset = this.starterMoveset.filter((move, i) => {
-          return this.starterMoveset?.indexOf(move) === i;
-        }) as StarterMoveset;
-
         const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex!); // TODO: is the bang correct?
         const formText = species.getFormNameToDisplay(formIndex);
         this.pokemonFormText.setText(formText);
@@ -4173,37 +4126,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
         this.teraIcon.setFrame(PokemonType[this.teraCursor].toLowerCase());
         this.teraIcon.setVisible(!this.statsMode && this.allowTera);
+
+        this.updateSpeciesMoves(species.speciesId, formIndex);
       }
     }
-
-    if (!this.starterMoveset) {
-      this.starterMoveset = this.speciesStarterMoves.slice(0, 4) as StarterMoveset;
-    }
-
-    for (let m = 0; m < 4; m++) {
-      const move = m < this.starterMoveset.length ? allMoves[this.starterMoveset[m]] : null;
-      this.pokemonMoveBgs[m].setFrame(PokemonType[move ? move.type : PokemonType.UNKNOWN].toString().toLowerCase());
-      this.pokemonMoveLabels[m].setText(move ? move.name : "-");
-      this.pokemonMoveContainers[m].setVisible(!!move);
-    }
-
-    const hasEggMoves = species && speciesEggMoves.hasOwnProperty(species.speciesId);
-    let eggMoves = 0;
-    if (species) {
-      const { starterDataEntry } = this.getSpeciesData(this.lastSpecies.speciesId);
-      eggMoves = starterDataEntry.eggMoves;
-    }
-
-    for (let em = 0; em < 4; em++) {
-      const eggMove = hasEggMoves ? allMoves[speciesEggMoves[species.speciesId][em]] : null;
-      const eggMoveUnlocked = eggMove && eggMoves & (1 << em);
-      this.pokemonEggMoveBgs[em].setFrame(
-        PokemonType[eggMove ? eggMove.type : PokemonType.UNKNOWN].toString().toLowerCase(),
-      );
-      this.pokemonEggMoveLabels[em].setText(eggMove && eggMoveUnlocked ? eggMove.name : "???");
-    }
-
-    this.pokemonEggMovesContainer.setVisible(!!this.speciesStarterDexEntry?.caughtAttr && hasEggMoves);
 
     this.pokemonAdditionalMoveCountLabel
       .setText(`(+${Math.max(this.speciesStarterMoves.length - 4, 0)})`)
@@ -4216,6 +4142,83 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     if (save) {
       saveStarterPreferences(this.originalStarterPreferences);
     }
+  }
+
+  updateSpeciesMoves(speciesId: SpeciesId, formIndex = 0) {
+    const { starterDataEntry } = this.getSpeciesData(speciesId);
+
+    let levelMoves: LevelMoves;
+    if (
+      pokemonFormLevelMoves.hasOwnProperty(speciesId) &&
+      formIndex &&
+      pokemonFormLevelMoves[speciesId].hasOwnProperty(formIndex)
+    ) {
+      levelMoves = pokemonFormLevelMoves[speciesId][formIndex];
+    } else {
+      levelMoves = pokemonSpeciesLevelMoves[speciesId];
+    }
+    this.speciesStarterMoves.push(...levelMoves.filter(lm => lm[0] > 0 && lm[0] <= 5).map(lm => lm[1]));
+    if (speciesEggMoves.hasOwnProperty(speciesId)) {
+      for (let em = 0; em < 4; em++) {
+        if (starterDataEntry.eggMoves & (1 << em)) {
+          this.speciesStarterMoves.push(speciesEggMoves[speciesId][em]);
+        }
+      }
+    }
+
+    const speciesMoveData = starterDataEntry.moveset;
+    const moveData: StarterMoveset | null = speciesMoveData
+      ? Array.isArray(speciesMoveData)
+        ? speciesMoveData
+        : speciesMoveData[formIndex!] // TODO: is this bang correct?
+      : null;
+    const availableStarterMoves = this.speciesStarterMoves.concat(
+      speciesEggMoves.hasOwnProperty(speciesId)
+        ? speciesEggMoves[speciesId].filter((_: any, em: number) => starterDataEntry.eggMoves & (1 << em))
+        : [],
+    );
+    this.starterMoveset = (moveData || (this.speciesStarterMoves.slice(0, 4) as StarterMoveset)).filter(m =>
+      availableStarterMoves.find(sm => sm === m),
+    ) as StarterMoveset;
+    // Consolidate move data if it contains an incompatible move
+    if (this.starterMoveset.length < 4 && this.starterMoveset.length < availableStarterMoves.length) {
+      this.starterMoveset.push(
+        ...availableStarterMoves
+          .filter(sm => this.starterMoveset?.indexOf(sm) === -1)
+          .slice(0, 4 - this.starterMoveset.length),
+      );
+    }
+
+    // Remove duplicate moves
+    this.starterMoveset = this.starterMoveset.filter((move, i) => {
+      return this.starterMoveset?.indexOf(move) === i;
+    }) as StarterMoveset;
+
+    if (!this.starterMoveset) {
+      this.starterMoveset = this.speciesStarterMoves.slice(0, 4) as StarterMoveset;
+    }
+
+    for (let m = 0; m < 4; m++) {
+      const move = m < this.starterMoveset.length ? allMoves[this.starterMoveset[m]] : null;
+      this.pokemonMoveBgs[m].setFrame(PokemonType[move ? move.type : PokemonType.UNKNOWN].toString().toLowerCase());
+      this.pokemonMoveLabels[m].setText(move ? move.name : "-");
+      this.pokemonMoveContainers[m].setVisible(!!move);
+    }
+
+    const hasEggMoves = speciesEggMoves.hasOwnProperty(speciesId);
+    let eggMoves = 0;
+    eggMoves = starterDataEntry.eggMoves;
+
+    for (let em = 0; em < 4; em++) {
+      const eggMove = hasEggMoves ? allMoves[speciesEggMoves[speciesId][em]] : null;
+      const eggMoveUnlocked = eggMove && eggMoves & (1 << em);
+      this.pokemonEggMoveBgs[em].setFrame(
+        PokemonType[eggMove ? eggMove.type : PokemonType.UNKNOWN].toString().toLowerCase(),
+      );
+      this.pokemonEggMoveLabels[em].setText(eggMove && eggMoveUnlocked ? eggMove.name : "???");
+    }
+
+    this.pokemonEggMovesContainer.setVisible(!!this.speciesStarterDexEntry?.caughtAttr && hasEggMoves);
   }
 
   updateSprite(
