@@ -3943,8 +3943,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonPreferencesContainer.setVisible(true);
 
       const { dexEntry, starterDataEntry } = this.getSpeciesData(species.speciesId);
-      const caughtAttr = dexEntry.caughtAttr || BigInt(0);
-      const abilityAttr = starterDataEntry.abilityAttr;
 
       this.shinyOverlay.setVisible(shiny ?? false); // TODO: is false the correct default?
       this.pokemonNumberText.setColor(
@@ -3984,44 +3982,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           currentContainer.checkIconId(female, formIndex, shiny, variant);
         }
 
-        const isNonShinyCaught = !!(caughtAttr & DexAttr.NON_SHINY);
-        const isShinyCaught = !!(caughtAttr & DexAttr.SHINY);
-
-        const caughtVariants = [DexAttr.DEFAULT_VARIANT, DexAttr.VARIANT_2, DexAttr.VARIANT_3].filter(
-          v => caughtAttr & v,
-        );
-        this.canCycleShiny = (isNonShinyCaught && isShinyCaught) || (isShinyCaught && caughtVariants.length > 1);
-
-        const isMaleCaught = !!(caughtAttr & DexAttr.MALE);
-        const isFemaleCaught = !!(caughtAttr & DexAttr.FEMALE);
-        this.canCycleGender = isMaleCaught && isFemaleCaught;
-
-        const hasAbility1 = abilityAttr & AbilityAttr.ABILITY_1;
-        let hasAbility2 = abilityAttr & AbilityAttr.ABILITY_2;
-        const hasHiddenAbility = abilityAttr & AbilityAttr.ABILITY_HIDDEN;
-
-        /*
-         * Check for Pokemon with a single ability (at some point it was possible to catch them with their ability 2 attribute)
-         * This prevents cycling between ability 1 and 2 if they are both unlocked and the same
-         * but we still need to account for the possibility ability 1 was never unlocked and fallback on ability 2 in this case
-         */
-        if (hasAbility1 && hasAbility2 && species.ability1 === species.ability2) {
-          hasAbility2 = 0;
-        }
-
-        this.canCycleAbility = [hasAbility1, hasAbility2, hasHiddenAbility].filter(a => a).length > 1;
-
-        this.canCycleForm =
-          species.forms
-            .filter(f => f.isStarterSelectable || !pokemonFormChanges[species.speciesId]?.find(fc => fc.formKey))
-            .map((_, f) => dexEntry.caughtAttr & globalScene.gameData.getFormAttr(f))
-            .filter(f => f).length > 1;
-        this.canCycleNature = globalScene.gameData.getNaturesForAttr(dexEntry.natureAttr).length > 1;
-        this.canCycleTera =
-          !this.statsMode &&
-          this.allowTera &&
-          !isNullOrUndefined(getPokemonSpeciesForm(species.speciesId, formIndex ?? 0).type2) &&
-          !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
+        this.updateCanCycle(species.speciesId, formIndex);
       }
 
       if (dexEntry.caughtAttr && species.malePercent !== null) {
@@ -4142,6 +4103,52 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     if (save) {
       saveStarterPreferences(this.originalStarterPreferences);
     }
+  }
+
+  updateCanCycle(speciesId: SpeciesId, formIndex = 0) {
+    const { dexEntry, starterDataEntry } = this.getSpeciesData(speciesId);
+    const caughtAttr = dexEntry.caughtAttr || BigInt(0);
+    const abilityAttr = starterDataEntry.abilityAttr;
+    const species = getPokemonSpecies(speciesId);
+
+    const isNonShinyCaught = !!(caughtAttr & DexAttr.NON_SHINY);
+    const isShinyCaught = !!(caughtAttr & DexAttr.SHINY);
+
+    const caughtVariants = [DexAttr.DEFAULT_VARIANT, DexAttr.VARIANT_2, DexAttr.VARIANT_3].filter(v => caughtAttr & v);
+    this.canCycleShiny = (isNonShinyCaught && isShinyCaught) || (isShinyCaught && caughtVariants.length > 1);
+
+    const isMaleCaught = !!(caughtAttr & DexAttr.MALE);
+    const isFemaleCaught = !!(caughtAttr & DexAttr.FEMALE);
+    this.canCycleGender = isMaleCaught && isFemaleCaught;
+
+    const hasAbility1 = abilityAttr & AbilityAttr.ABILITY_1;
+    let hasAbility2 = abilityAttr & AbilityAttr.ABILITY_2;
+    const hasHiddenAbility = abilityAttr & AbilityAttr.ABILITY_HIDDEN;
+
+    /*
+     * Check for Pokemon with a single ability (at some point it was possible to catch them with their ability 2 attribute)
+     * This prevents cycling between ability 1 and 2 if they are both unlocked and the same
+     * but we still need to account for the possibility ability 1 was never unlocked and fallback on ability 2 in this case
+     */
+    if (hasAbility1 && hasAbility2 && species.ability1 === species.ability2) {
+      hasAbility2 = 0;
+    }
+
+    this.canCycleAbility = [hasAbility1, hasAbility2, hasHiddenAbility].filter(a => a).length > 1;
+
+    this.canCycleForm =
+      species.forms
+        .filter(f => f.isStarterSelectable || !pokemonFormChanges[species.speciesId]?.find(fc => fc.formKey))
+        .map((_, f) => dexEntry.caughtAttr & globalScene.gameData.getFormAttr(f))
+        .filter(f => f).length > 1;
+
+    this.canCycleNature = globalScene.gameData.getNaturesForAttr(dexEntry.natureAttr).length > 1;
+
+    this.canCycleTera =
+      !this.statsMode &&
+      this.allowTera &&
+      !isNullOrUndefined(getPokemonSpeciesForm(species.speciesId, formIndex).type2) &&
+      !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
   }
 
   updateSpeciesMoves(speciesId: SpeciesId, formIndex = 0) {
