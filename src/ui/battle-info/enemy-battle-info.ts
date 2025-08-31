@@ -185,6 +185,7 @@ export class EnemyBattleInfo extends BattleInfo {
       this.hpBar.x += 38 * (boss ? -1 : 1);
       this.hpBar.y += 2 * (this.boss ? -1 : 1);
       this.hpBar.setTexture(`overlay_hp${boss ? "_boss" : ""}`);
+      this.levelContainer.x += 2 * (boss ? -1 : 1);
       this.box.setTexture(this.getTextureName());
       this.statsBox.setTexture(`${this.getTextureName()}_stats`);
     }
