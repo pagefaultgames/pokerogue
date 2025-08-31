@@ -253,7 +253,6 @@ interface SpeciesDetails {
   variant?: Variant;
   abilityIndex?: number;
   natureIndex?: number;
-  forSeen?: boolean; // default = false
   teraType?: PokemonType;
 }
 
@@ -2900,7 +2899,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       starterDataEntry.moveset = updatedMoveset;
     }
     this.hasSwappedMoves = true;
-    this.setSpeciesDetails(this.lastSpecies, { forSeen: false });
+    this.setSpeciesDetails(this.lastSpecies, {});
     this.updateSelectedStarterMoveset(speciesId);
   }
 
@@ -3856,9 +3855,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     // Here we pass some options to override everything else
     let { shiny, formIndex, female, variant, abilityIndex, natureIndex, teraType } = options;
 
-    // Check whether we are setting details for a seen but not caught species
-    const forSeen: boolean = options.forSeen ?? false;
-
     // Storing old cursor values...
     const oldProps = species ? globalScene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor) : null;
     const oldAbilityIndex =
@@ -3880,7 +3876,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     // We will only update the sprite if there is a change to form, shiny/variant
     // or gender for species with gender sprite differences
     const shouldUpdateSprite =
-      forSeen ||
       (species?.genderDiffs && !isNullOrUndefined(female)) ||
       !isNullOrUndefined(formIndex) ||
       !isNullOrUndefined(shiny) ||
@@ -3959,7 +3954,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.getTextColor(shiny ? TextStyle.SUMMARY_DEX_NUM_GOLD : TextStyle.SUMMARY_DEX_NUM, true),
       );
 
-      if (forSeen ? this.speciesStarterDexEntry?.seenAttr : this.speciesStarterDexEntry?.caughtAttr) {
+      if (dexEntry.caughtAttr) {
         const starterIndex = this.starterSpecies.indexOf(species);
 
         if (starterIndex > -1) {
