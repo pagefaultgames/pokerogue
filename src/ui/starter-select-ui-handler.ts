@@ -3881,6 +3881,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     this.updateCandyTooltip();
 
+    // Ensuring that gender and form are consistent
     if (species.forms?.find(f => f.formKey === "female")) {
       if (female !== undefined) {
         formIndex = female ? 1 : 0;
@@ -3889,6 +3890,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       }
     }
 
+    // Update cursors
     this.dexAttrCursor |= (shiny !== undefined ? !shiny : !(shiny = oldProps?.shiny))
       ? DexAttr.NON_SHINY
       : DexAttr.SHINY;
@@ -3906,6 +3908,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.abilityCursor = abilityIndex !== undefined ? abilityIndex : (abilityIndex = oldAbilityIndex);
     this.natureCursor = natureIndex !== undefined ? natureIndex : (natureIndex = oldNatureIndex);
     this.teraCursor = !isNullOrUndefined(teraType) ? teraType : (teraType = oldTeraType);
+
     const [isInParty, partyIndex]: [boolean, number] = this.isInParty(species); // we use this to firstly check if the pokemon is in the party, and if so, to get the party index in order to update the icon image
     if (isInParty) {
       this.updatePartyIcon(species, partyIndex);
@@ -3918,9 +3921,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.assetLoadCancelled.value = true;
       this.assetLoadCancelled = null;
     }
-
-    this.starterMoveset = null;
-    this.speciesStarterMoves = [];
 
     this.pokemonPreferencesContainer.setVisible(true);
 
@@ -3944,6 +3944,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const assetLoadCancelled = new BooleanHolder(false);
     this.assetLoadCancelled = assetLoadCancelled;
 
+    // TODO: should this line be here, or in .updateSprite?
     female ??= false;
     if (shouldUpdateSprite) {
       this.updateSprite(species, female, formIndex, shiny, variant);
@@ -3951,6 +3952,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonSprite.setVisible(!this.statsMode);
     }
 
+    // Update the starter container (is this it?)
     const currentContainer = this.starterContainers.find(p => p.species.speciesId === species.speciesId);
     if (currentContainer) {
       const starterSprite = currentContainer.icon as Phaser.GameObjects.Sprite;
@@ -3963,6 +3965,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     this.updateCanCycle(species.speciesId, formIndex);
 
+    // Set the gender text
     if (species.malePercent !== null) {
       const gender = !female ? Gender.MALE : Gender.FEMALE;
       this.pokemonGenderText
@@ -3973,6 +3976,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonGenderText.setText("");
     }
 
+    // Update ability text
     let ability: Ability;
     if (this.lastSpecies.forms?.length > 1) {
       ability = allAbilities[this.lastSpecies.forms[formIndex ?? 0].getAbility(abilityIndex!)];
@@ -4003,10 +4007,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     this.updatePassiveDisplay(species.speciesId, formIndex);
 
+    // Update nature text
     this.pokemonNatureText.setText(
       getNatureName(natureIndex as unknown as Nature, true, true, false, globalScene.uiTheme),
     );
 
+    // Update form text
     const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex!); // TODO: is the bang correct?
     const formText = species.getFormNameToDisplay(formIndex);
     this.pokemonFormText.setText(formText);
@@ -4152,6 +4158,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
   updateSpeciesMoves(speciesId: SpeciesId, formIndex = 0) {
     const { starterDataEntry } = this.getSpeciesData(speciesId);
+
+    this.starterMoveset = null;
+    this.speciesStarterMoves = [];
 
     let levelMoves: LevelMoves;
     if (
