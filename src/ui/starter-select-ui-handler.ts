@@ -398,6 +398,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   protected blockInput = false;
   private allowTera: boolean;
   private pokemonPermanentInfoContainer: GameObjects.Container;
+  private pokemonStatisticsContainer: GameObjects.Container;
   private pokemonPreferencesContainer: GameObjects.Container;
   private partyColumn: GameObjects.Container;
   private oldCursor = -1;
@@ -507,8 +508,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     this.pokemonPreferencesContainer = this.setupPokemonPreferencesContainer();
-
     this.pokemonPermanentInfoContainer = this.setupPokemonPermanentInfoContainer();
+    this.pokemonStatisticsContainer = this.setupPokemonStatisticsContainer();
 
     for (let m = 0; m < 4; m++) {
       const moveContainer = globalScene.add.container(0, 14 * m);
@@ -629,6 +630,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       starterBoxContainer,
       this.pokemonPreferencesContainer,
       this.pokemonPermanentInfoContainer,
+      this.pokemonStatisticsContainer,
       this.pokemonMovesContainer,
       this.pokemonEggMovesContainer,
       this.instructionsContainer,
@@ -1127,6 +1129,21 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       { fontSize: "56px" },
     ).setOrigin(0);
 
+    pokemonPermanentInfoContainer.add([
+      this.type1Icon,
+      this.type2Icon,
+      this.pokemonGrowthRateLabelText,
+      this.pokemonGrowthRateText,
+      this.pokemonLuckLabelText,
+      this.pokemonLuckText,
+    ]);
+
+    return pokemonPermanentInfoContainer;
+  }
+
+  setupPokemonStatisticsContainer(): GameObjects.Container {
+    const pokemonStatisticsContainer = globalScene.add.container(0, 0);
+
     // Candy icon and count
     this.pokemonCandyContainer = globalScene.add
       .container(4.5, 18)
@@ -1163,18 +1180,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonHatchedCountText,
     ]);
 
-    pokemonPermanentInfoContainer.add([
-      this.type1Icon,
-      this.type2Icon,
-      this.pokemonGrowthRateLabelText,
-      this.pokemonGrowthRateText,
-      this.pokemonLuckLabelText,
-      this.pokemonLuckText,
-      this.pokemonCandyContainer,
-      this.pokemonCaughtHatchedContainer,
-    ]);
+    pokemonStatisticsContainer.add([this.pokemonCandyContainer, this.pokemonCaughtHatchedContainer]);
 
-    return pokemonPermanentInfoContainer;
+    return pokemonStatisticsContainer;
   }
 
   show(args: any[]): boolean {
@@ -3586,6 +3594,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       const colorScheme = starterColors[species.speciesId];
 
       this.pokemonPermanentInfoContainer.setVisible(true);
+      this.pokemonStatisticsContainer.setVisible(true);
 
       const luck = globalScene.gameData.getDexAttrLuck(this.speciesStarterDexEntry.caughtAttr);
       this.pokemonLuckText
@@ -3789,6 +3798,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonUncaughtText.setVisible(!!species);
 
     this.pokemonPermanentInfoContainer.setVisible(false);
+    this.pokemonStatisticsContainer.setVisible(false);
     this.setNoSpeciesDetails();
   }
 
