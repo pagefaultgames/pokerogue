@@ -115,6 +115,9 @@ export class EnemyBattleInfo extends BattleInfo {
       globalScene.gameData.starterData[pokemon.species.getRootSpeciesId()].classicWinCount > 0 &&
       globalScene.gameData.starterData[pokemon.species.getRootSpeciesId(true)].classicWinCount > 0
     ) {
+      // move the ribbon to the left if there is no owned icon
+      const championRibbonX = this.ownedIcon.visible ? 8 : 0;
+      this.championRibbon.setPositionRelative(this.nameText, championRibbonX, 11.75);
       this.championRibbon.setVisible(true);
     }
 
