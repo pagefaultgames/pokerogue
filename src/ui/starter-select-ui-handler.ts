@@ -3881,16 +3881,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       !isNullOrUndefined(shiny) ||
       !isNullOrUndefined(variant);
 
-    const isFreshStartChallenge = globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
-
-    if (this.activeTooltip === "CANDY") {
-      if (this.lastSpecies && this.pokemonCandyContainer.visible) {
-        const { currentFriendship, friendshipCap } = this.getFriendship(this.lastSpecies.speciesId);
-        globalScene.ui.editTooltip("", `${currentFriendship}/${friendshipCap}`);
-      } else {
-        globalScene.ui.hideTooltip();
-      }
-    }
+    this.updateCandyTooltip();
 
     if (species?.forms?.find(f => f.formKey === "female")) {
       if (female !== undefined) {
@@ -3925,10 +3916,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     this.pokemonSprite.setVisible(false);
-    this.pokemonPassiveLabelText.setVisible(false);
-    this.pokemonPassiveText.setVisible(false);
-    this.pokemonPassiveDisabledIcon.setVisible(false);
-    this.pokemonPassiveLockedIcon.setVisible(false);
     this.teraIcon.setVisible(false);
 
     if (this.assetLoadCancelled) {
@@ -3942,7 +3929,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     if (species) {
       this.pokemonPreferencesContainer.setVisible(true);
 
-      const { dexEntry, starterDataEntry } = this.getSpeciesData(species.speciesId);
+      const { dexEntry } = this.getSpeciesData(species.speciesId);
 
       this.shinyOverlay.setVisible(shiny ?? false); // TODO: is false the correct default?
       this.pokemonNumberText.setColor(
@@ -4009,9 +3996,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           .setColor(this.getTextColor(!isHidden ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GOLD))
           .setShadowColor(this.getTextColor(!isHidden ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GOLD, true));
 
-        const passiveAttr = starterDataEntry.passiveAttr;
-        const passiveAbility = allAbilities[this.lastSpecies.getPassiveAbility(formIndex)];
-
         if (this.pokemonAbilityText.visible) {
           if (this.activeTooltip === "ABILITY") {
             globalScene.ui.editTooltip(`${ability.name}`, `${ability.description}`);
@@ -4027,53 +4011,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           });
         }
 
-        if (passiveAbility) {
-          const isUnlocked = !!(passiveAttr & PassiveAttr.UNLOCKED);
-          const isEnabled = !!(passiveAttr & PassiveAttr.ENABLED);
-
-          const textStyle = isUnlocked && isEnabled ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GRAY;
-          const textAlpha = isUnlocked && isEnabled ? 1 : 0.5;
-
-          this.pokemonPassiveLabelText
-            .setVisible(!isFreshStartChallenge)
-            .setColor(this.getTextColor(TextStyle.SUMMARY_ALT))
-            .setShadowColor(this.getTextColor(TextStyle.SUMMARY_ALT, true));
-          this.pokemonPassiveText
-            .setVisible(!isFreshStartChallenge)
-            .setText(passiveAbility.name)
-            .setColor(this.getTextColor(textStyle))
-            .setAlpha(textAlpha)
-            .setShadowColor(this.getTextColor(textStyle, true));
-
-          if (this.activeTooltip === "PASSIVE") {
-            globalScene.ui.editTooltip(`${passiveAbility.name}`, `${passiveAbility.description}`);
-          }
-
-          if (this.pokemonPassiveText.visible) {
-            this.pokemonPassiveText.on("pointerover", () => {
-              globalScene.ui.showTooltip(`${passiveAbility.name}`, `${passiveAbility.description}`, true);
-              this.activeTooltip = "PASSIVE";
-            });
-            this.pokemonPassiveText.on("pointerout", () => {
-              globalScene.ui.hideTooltip();
-              this.activeTooltip = undefined;
-            });
-          }
-
-          const iconPosition = {
-            x: this.pokemonPassiveText.x + this.pokemonPassiveText.displayWidth + 1,
-            y: this.pokemonPassiveText.y + this.pokemonPassiveText.displayHeight / 2,
-          };
-          this.pokemonPassiveDisabledIcon
-            .setVisible(isUnlocked && !isEnabled && !isFreshStartChallenge)
-            .setPosition(iconPosition.x, iconPosition.y);
-          this.pokemonPassiveLockedIcon
-            .setVisible(!isUnlocked && !isFreshStartChallenge)
-            .setPosition(iconPosition.x, iconPosition.y);
-        } else if (this.activeTooltip === "PASSIVE") {
-          // No passive and passive tooltip is active > hide it
-          globalScene.ui.hideTooltip();
-        }
+        this.updatePassiveDisplay(species.speciesId, formIndex);
 
         this.pokemonNatureText.setText(
           getNatureName(natureIndex as unknown as Nature, true, true, false, globalScene.uiTheme),
@@ -4102,6 +4040,79 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     if (save) {
       saveStarterPreferences(this.originalStarterPreferences);
+    }
+  }
+
+  updateCandyTooltip() {
+    if (this.activeTooltip === "CANDY") {
+      if (this.lastSpecies && this.pokemonCandyContainer.visible) {
+        const { currentFriendship, friendshipCap } = this.getFriendship(this.lastSpecies.speciesId);
+        globalScene.ui.editTooltip("", `${currentFriendship}/${friendshipCap}`);
+      } else {
+        globalScene.ui.hideTooltip();
+      }
+    }
+  }
+
+  updatePassiveDisplay(speciesId: SpeciesId, formIndex = 0) {
+    this.pokemonPassiveLabelText.setVisible(false);
+    this.pokemonPassiveText.setVisible(false);
+    this.pokemonPassiveDisabledIcon.setVisible(false);
+    this.pokemonPassiveLockedIcon.setVisible(false);
+
+    const isFreshStartChallenge = globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
+
+    const { starterDataEntry } = this.getSpeciesData(speciesId);
+
+    const passiveAttr = starterDataEntry.passiveAttr;
+    const passiveAbility = allAbilities[this.lastSpecies.getPassiveAbility(formIndex)];
+
+    if (passiveAbility) {
+      const isUnlocked = !!(passiveAttr & PassiveAttr.UNLOCKED);
+      const isEnabled = !!(passiveAttr & PassiveAttr.ENABLED);
+
+      const textStyle = isUnlocked && isEnabled ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GRAY;
+      const textAlpha = isUnlocked && isEnabled ? 1 : 0.5;
+
+      this.pokemonPassiveLabelText
+        .setVisible(!isFreshStartChallenge)
+        .setColor(this.getTextColor(TextStyle.SUMMARY_ALT))
+        .setShadowColor(this.getTextColor(TextStyle.SUMMARY_ALT, true));
+      this.pokemonPassiveText
+        .setVisible(!isFreshStartChallenge)
+        .setText(passiveAbility.name)
+        .setColor(this.getTextColor(textStyle))
+        .setAlpha(textAlpha)
+        .setShadowColor(this.getTextColor(textStyle, true));
+
+      if (this.activeTooltip === "PASSIVE") {
+        globalScene.ui.editTooltip(`${passiveAbility.name}`, `${passiveAbility.description}`);
+      }
+
+      if (this.pokemonPassiveText.visible) {
+        this.pokemonPassiveText.on("pointerover", () => {
+          globalScene.ui.showTooltip(`${passiveAbility.name}`, `${passiveAbility.description}`, true);
+          this.activeTooltip = "PASSIVE";
+        });
+        this.pokemonPassiveText.on("pointerout", () => {
+          globalScene.ui.hideTooltip();
+          this.activeTooltip = undefined;
+        });
+      }
+
+      const iconPosition = {
+        x: this.pokemonPassiveText.x + this.pokemonPassiveText.displayWidth + 1,
+        y: this.pokemonPassiveText.y + this.pokemonPassiveText.displayHeight / 2,
+      };
+      this.pokemonPassiveDisabledIcon
+        .setVisible(isUnlocked && !isEnabled && !isFreshStartChallenge)
+        .setPosition(iconPosition.x, iconPosition.y);
+      this.pokemonPassiveLockedIcon
+        .setVisible(!isUnlocked && !isFreshStartChallenge)
+        .setPosition(iconPosition.x, iconPosition.y);
+    } else if (this.activeTooltip === "PASSIVE") {
+      // No passive and passive tooltip is active > hide it
+      globalScene.ui.hideTooltip();
     }
   }
 
