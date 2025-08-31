@@ -69182,7 +69182,7 @@ export const tmPoolTiers: TmPoolTiers = {
   [MoveId.ICE_SPINNER]: ModifierTier.GREAT,
   [MoveId.SNOWSCAPE]: ModifierTier.COMMON,
   [MoveId.POUNCE]: ModifierTier.COMMON,
-  [MoveId.TRAILBLAZE]: ModifierTier.COMMON,
+  [MoveId.TRAILBLAZE]: ModifierTier.GREAT,
   [MoveId.CHILLING_WATER]: ModifierTier.COMMON,
   [MoveId.HARD_PRESS]: ModifierTier.GREAT,
   [MoveId.DRAGON_CHEER]: ModifierTier.COMMON,
