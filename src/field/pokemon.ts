@@ -3070,14 +3070,17 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       if (this.level < levelMove[0]) {
         break;
       }
-      let weight = levelMove[0];
+      let weight = levelMove[0] + 20;
       // Evolution Moves
-      if (weight === EVOLVE_MOVE) {
-        weight = 50;
+      if (levelMove[0] === EVOLVE_MOVE) {
+        weight = 70;
       }
       // Assume level 1 moves with 80+ BP are "move reminder" moves and bump their weight. Trainers use actual relearn moves.
-      if ((weight === 1 && allMoves[levelMove[1]].power >= 80) || (weight === RELEARN_MOVE && this.hasTrainer())) {
-        weight = 40;
+      if (
+        (levelMove[0] === 1 && allMoves[levelMove[1]].power >= 80) ||
+        (levelMove[0] === RELEARN_MOVE && this.hasTrainer())
+      ) {
+        weight = 60;
       }
       if (!movePool.some(m => m[0] === levelMove[1]) && !allMoves[levelMove[1]].name.endsWith(" (N)")) {
         movePool.push([levelMove[1], weight]);
@@ -3107,11 +3110,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         }
         if (compatible && !movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)")) {
           if (tmPoolTiers[moveId] === ModifierTier.COMMON && this.level >= 15) {
-            movePool.push([moveId, 4]);
+            movePool.push([moveId, 24]);
           } else if (tmPoolTiers[moveId] === ModifierTier.GREAT && this.level >= 30) {
-            movePool.push([moveId, 8]);
+            movePool.push([moveId, 28]);
           } else if (tmPoolTiers[moveId] === ModifierTier.ULTRA && this.level >= 50) {
-            movePool.push([moveId, 14]);
+            movePool.push([moveId, 34]);
           }
         }
       }
@@ -3121,7 +3124,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         for (let i = 0; i < 3; i++) {
           const moveId = speciesEggMoves[this.species.getRootSpeciesId()][i];
           if (!movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)")) {
-            movePool.push([moveId, 40]);
+            movePool.push([moveId, 60]);
           }
         }
         const moveId = speciesEggMoves[this.species.getRootSpeciesId()][3];
@@ -3132,13 +3135,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
           !allMoves[moveId].name.endsWith(" (N)") &&
           !this.isBoss()
         ) {
-          movePool.push([moveId, 30]);
+          movePool.push([moveId, 50]);
         }
         if (this.fusionSpecies) {
           for (let i = 0; i < 3; i++) {
             const moveId = speciesEggMoves[this.fusionSpecies.getRootSpeciesId()][i];
             if (!movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)")) {
-              movePool.push([moveId, 40]);
+              movePool.push([moveId, 60]);
             }
           }
           const moveId = speciesEggMoves[this.fusionSpecies.getRootSpeciesId()][3];
@@ -3149,7 +3152,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
             !allMoves[moveId].name.endsWith(" (N)") &&
             !this.isBoss()
           ) {
-            movePool.push([moveId, 30]);
+            movePool.push([moveId, 50]);
           }
         }
       }
@@ -3230,6 +3233,18 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         rand -= stabMovePool[index++][1];
       }
       this.moveset.push(new PokemonMove(stabMovePool[index][0]));
+    } else {
+      // If there are no damaging STAB moves, just force a random damaging move
+      const attackMovePool = baseWeights.filter(m => allMoves[m[0]].category !== MoveCategory.STATUS);
+      if (attackMovePool.length) {
+        const totalWeight = attackMovePool.reduce((v, m) => v + m[1], 0);
+        let rand = randSeedInt(totalWeight);
+        let index = 0;
+        while (rand > attackMovePool[index][1]) {
+          rand -= attackMovePool[index++][1];
+        }
+        this.moveset.push(new PokemonMove(attackMovePool[index][0], 0, 0));
+      }
     }
 
     while (baseWeights.length > this.moveset.length && this.moveset.length < 4) {

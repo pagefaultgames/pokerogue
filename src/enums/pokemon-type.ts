@@ -20,3 +20,6 @@ export enum PokemonType {
   FAIRY,
   STELLAR
 }
+
+/** The largest legal value for a {@linkcode PokemonType} (includes Stellar) */
+export const MAX_POKEMON_TYPE = PokemonType.STELLAR;
