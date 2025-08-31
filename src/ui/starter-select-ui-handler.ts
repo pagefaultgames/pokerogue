@@ -72,7 +72,7 @@ import {
   rgbHexToRgba,
 } from "#utils/common";
 import type { AllStarterPreferences } from "#utils/data";
-import { loadStarterPreferences, saveStarterPreferences } from "#utils/data";
+import { deepCopy, loadStarterPreferences, saveStarterPreferences } from "#utils/data";
 import { getPokemonSpecies, getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
@@ -1190,7 +1190,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.starterSelectContainer.setVisible(true);
 
       this.starterPreferences = loadStarterPreferences();
-      this.originalStarterPreferences = loadStarterPreferences();
+      // Deep copy the JSON (avoid re-loading from disk)
+      this.originalStarterPreferences = deepCopy(this.starterPreferences);
 
       this.allStarterSpecies.forEach(species => {
         // Initialize the StarterPreferences for this species
@@ -1249,6 +1250,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     preferences: AllStarterPreferences,
     ignoreChallenge = false,
   ): StarterPreferences {
+    // if preferences for the species is undefined, set it to an empty object
+    preferences[species.speciesId] ??= {};
     const starterPreferences = preferences[species.speciesId];
     const { dexEntry, starterDataEntry: starterData } = this.getSpeciesData(species.speciesId, !ignoreChallenge);
 
@@ -2081,7 +2084,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     // The persistent starter data to apply e.g. candy upgrades
     const persistentStarterData = globalScene.gameData.starterData[this.lastSpecies.speciesId];
     // The sanitized starter preferences
-    let starterPreferences = this.starterPreferences[this.lastSpecies.speciesId];
+    const starterPreferences = this.starterPreferences[this.lastSpecies.speciesId];
     // The original starter preferences
     const originalStarterPreferences = this.originalStarterPreferences[this.lastSpecies.speciesId];
 
@@ -2293,10 +2296,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                   const option: OptionSelectItem = {
                     label: getNatureName(n, true, true, true, globalScene.uiTheme),
                     handler: () => {
-                      // update default nature in starter save data
-                      if (!starterPreferences) {
-                        starterPreferences = this.starterPreferences[this.lastSpecies.speciesId] = {};
-                      }
                       starterPreferences.nature = n;
                       originalStarterPreferences.nature = starterPreferences.nature;
                       this.clearText();
@@ -3442,8 +3441,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         /**
         const defaultDexAttr = this.getCurrentDexProps(species.speciesId);
         const defaultProps = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+        // Bang is correct due to the `?` before variant
         const variant = this.starterPreferences[species.speciesId]?.variant
-          ? (this.starterPreferences[species.speciesId].variant as Variant)
+          ? (this.starterPreferences[species.speciesId]!.variant as Variant)
           : defaultProps.variant;
         const tint = getVariantTint(variant);
         this.pokemonShinyIcon.setFrame(getVariantIcon(variant)).setTint(tint);
@@ -3666,15 +3666,19 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
       if (starterIndex > -1) {
         props = globalScene.gameData.getSpeciesDexAttrProps(species, this.starterAttr[starterIndex]);
-        this.setSpeciesDetails(species, {
-          shiny: props.shiny,
-          formIndex: props.formIndex,
-          female: props.female,
-          variant: props.variant,
-          abilityIndex: this.starterAbilityIndexes[starterIndex],
-          natureIndex: this.starterNatures[starterIndex],
-          teraType: this.starterTeras[starterIndex],
-        });
+        this.setSpeciesDetails(
+            species,
+            {
+            shiny: props.shiny,
+            formIndex: props.formIndex,
+            female: props.female,
+            variant: props.variant,
+            abilityIndex: this.starterAbilityIndexes[starterIndex],
+            natureIndex: this.starterNatures[starterIndex],
+            teraType: this.starterTeras[starterIndex],
+          },
+            false,
+          );
       } else {
         const defaultAbilityIndex =
           starterPreferences?.ability ?? globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
@@ -3691,15 +3695,19 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         props.formIndex = starterPreferences?.form ?? props.formIndex;
         props.female = starterPreferences?.female ?? props.female;
 
-        this.setSpeciesDetails(species, {
-          shiny: props.shiny,
-          formIndex: props.formIndex,
-          female: props.female,
-          variant: props.variant,
-          abilityIndex: defaultAbilityIndex,
-          natureIndex: defaultNature,
-          teraType: starterPreferences?.tera,
-        });
+        this.setSpeciesDetails(
+            species,
+            {
+            shiny: props.shiny,
+            formIndex: props.formIndex,
+            female: props.female,
+            variant: props.variant,
+            abilityIndex: defaultAbilityIndex,
+            natureIndex: defaultNature,
+            teraType: starterPreferences?.tera,
+          },
+            false,
+          );
       }
 
       if (!isNullOrUndefined(props.formIndex)) {
@@ -3834,7 +3842,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.updateInstructions();
   }
 
-  setSpeciesDetails(species: PokemonSpecies, options: SpeciesDetails = {}): void {
+  setSpeciesDetails(species: PokemonSpecies, options: SpeciesDetails = {}, save = true): void {
     // Here we pass some options to override everything else
     let { shiny, formIndex, female, variant, abilityIndex, natureIndex, teraType } = options;
 
@@ -4200,7 +4208,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     this.updateInstructions();
 
-    saveStarterPreferences(this.originalStarterPreferences);
+    if (save) {
+      saveStarterPreferences(this.originalStarterPreferences);
+    }
   }
 
   updateSprite(

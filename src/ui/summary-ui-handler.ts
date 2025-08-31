@@ -430,20 +430,21 @@ export class SummaryUiHandler extends UiHandler {
     this.friendshipShadow.setCrop(0, 0, 16, 16 - 16 * ((this.pokemon?.friendship || 0) / 255));
 
     const doubleShiny = this.pokemon.isDoubleShiny(false);
-    const baseVariant = this.pokemon.getBaseVariant(doubleShiny);
+    const bigIconVariant = doubleShiny ? this.pokemon.getBaseVariant(doubleShiny) : this.pokemon.getVariant();
 
     this.shinyIcon.setPositionRelative(
       this.nameText,
       this.nameText.displayWidth + (this.splicedIcon.visible ? this.splicedIcon.displayWidth + 1 : 0) + 1,
       3,
     );
-    this.shinyIcon.setTexture(`shiny_star${doubleShiny ? "_1" : ""}`);
-    this.shinyIcon.setVisible(this.pokemon.isShiny(false));
-    this.shinyIcon.setTint(getVariantTint(baseVariant));
+    this.shinyIcon
+      .setTexture(`shiny_star${doubleShiny ? "_1" : ""}`)
+      .setVisible(this.pokemon.isShiny(false))
+      .setTint(getVariantTint(bigIconVariant));
     if (this.shinyIcon.visible) {
       let shinyDescriptor = "";
-      if (doubleShiny || baseVariant) {
-        shinyDescriptor = " (" + getShinyDescriptor(baseVariant);
+      if (doubleShiny || bigIconVariant) {
+        shinyDescriptor = " (" + getShinyDescriptor(bigIconVariant);
         if (doubleShiny) {
           shinyDescriptor += "/" + getShinyDescriptor(this.pokemon.fusionVariant);
         }

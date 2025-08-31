@@ -1515,6 +1515,7 @@ export class GameData {
             switch (dataType) {
               case GameDataType.SYSTEM: {
                 dataStr = this.convertSystemDataStr(dataStr);
+                dataStr = dataStr.replace(/"playTime":\d+/, `"playTime":${this.gameStats.playTime + 60}`);
                 const systemData = this.parseSystemData(dataStr);
                 valid = !!systemData.dexData && !!systemData.timestamp;
                 break;

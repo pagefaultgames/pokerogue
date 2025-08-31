@@ -20,6 +20,7 @@ jobs:
   pages:
     name: Github Pages
     if: github.repository == 'pagefaultgames/pokerogue'
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     env:
       api-dir: ./
@@ -69,7 +70,7 @@ jobs:
           pnpm exec typedoc --out /tmp/docs --githubPages false --entryPoints ./src/
 
       - name: Commit & Push docs
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' && (github.ref_name == 'beta' || github.ref_name == 'main')
         run: |
           cd pokerogue_gh
           git config user.email "github-actions[bot]@users.noreply.github.com"
