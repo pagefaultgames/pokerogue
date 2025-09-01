@@ -263,7 +263,7 @@ export class PhaseManager {
 
   /**
    * Return the currently running {@linkcode Phase}.
-   * @returns The Phase currently in the process of running.
+   * @returns The `Phase` currently in the process of running.
    */
   getCurrentPhase(): Phase {
     return this.currentPhase;
@@ -386,7 +386,7 @@ export class PhaseManager {
     }
 
     // Bang is justified as `populatePhaseQueue` ensures we always have _something_ in the queue at all times
-    this.currentPhase = this.phaseQueue.shift();
+    this.currentPhase = this.phaseQueue.shift()!;
 
     this.startCurrentPhase();
   }
