@@ -1058,8 +1058,7 @@ export class SeedTag extends SerializableBattlerTag {
     // Check which opponent to restore HP to
     const source = pokemon.getOpponents().find(o => o.getBattlerIndex() === this.sourceIndex);
     if (!source) {
-      console.warn(`Failed to get source Pokemon for SeedTag lapse; id: ${this.sourceId}`);
-      return false;
+      return true;
     }
 
     const cancelled = new BooleanHolder(false);

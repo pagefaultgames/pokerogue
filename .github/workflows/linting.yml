@@ -6,17 +6,20 @@ on:
       - main
       - beta
       - release
+      - 'hotfix*'
   pull_request:
     branches:
       - main
       - beta
       - release
+      - 'hotfix*'
   merge_group:
     types: [checks_requested]
 
 jobs:
   run-linters:
     name: Run all linters
+    timeout-minutes: 10
     runs-on: ubuntu-latest
 
     steps:
