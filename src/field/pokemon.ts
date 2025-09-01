@@ -4565,6 +4565,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         try {
           SoundFade.fadeOut(scene, cry, fixedInt(Math.ceil(duration * 0.2)));
           fusionCry = this.getFusionSpeciesForm(undefined, true).cry({
+            // Typescript's type checker doesn't handle using and assigning to the same variable in one line correctly.
             seek: Math.max(fusionCry!.totalDuration * 0.4, 0),
             ...soundConfig,
           });
