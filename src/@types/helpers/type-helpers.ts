@@ -11,7 +11,7 @@ import type { AbAttr } from "#abilities/ability";
  *
  * ⚠️ Should never be used with `extends`, as this will nullify the exactness of the type.
  *
- * As an example, used to ensure that the parameters of {@linkcode AbAttr.canApply} and {@linkcode AbAttr.getTriggerMessage} 
+ * As an example, used to ensure that the parameters of {@linkcode AbAttr.canApply} and {@linkcode AbAttr.getTriggerMessage}
  * are compatible with the type of its {@linkcode AbAttr.apply | apply} method.
  *
  * @typeParam T - The type to match exactly
@@ -110,7 +110,7 @@ export type CoerceNullPropertiesToUndefined<T extends object> = {
  */
 export type AtLeastOne<T extends object> = Partial<T> & ObjectValues<{ [K in keyof T]: Pick<Required<T>, K> }>;
 
-/** 
+/**
  * Type helper that adds a brand to a type, used for nominal typing.
  *
  * @remarks
