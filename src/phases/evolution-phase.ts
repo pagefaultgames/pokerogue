@@ -28,7 +28,7 @@ export class EvolutionPhase extends Phase {
 
   private evolution: SpeciesFormEvolution | null;
   private fusionSpeciesEvolved: boolean; // Whether the evolution is of the fused species
-  private evolutionBgm: AnySound;
+  private evolutionBgm: AnySound | null;
   private evolutionHandler: EvolutionSceneHandler;
 
   /** Container for all assets used by the scene. When the scene is cleared, the children within this are destroyed. */
@@ -298,7 +298,9 @@ export class EvolutionPhase extends Phase {
         this.evolutionBg.setVisible(false);
       },
     });
-    SoundFade.fadeOut(globalScene, this.evolutionBgm, 100);
+    if (this.evolutionBgm) {
+      SoundFade.fadeOut(globalScene, this.evolutionBgm, 100);
+    }
   }
 
   /**
@@ -378,7 +380,9 @@ export class EvolutionPhase extends Phase {
    * Fadeout evolution music, play the cry, show the evolution completed text, and end the phase
    */
   private onEvolutionComplete(evolvedPokemon: Pokemon) {
-    SoundFade.fadeOut(globalScene, this.evolutionBgm, 100);
+    if (this.evolutionBgm) {
+      SoundFade.fadeOut(globalScene, this.evolutionBgm, 100);
+    }
     globalScene.time.delayedCall(250, () => {
       this.pokemon.cry();
       globalScene.time.delayedCall(1250, () => {
