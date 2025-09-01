@@ -10,8 +10,13 @@ import { DefaultReporter } from "vitest/reporters";
  */
 export default class CustomDefaultReporter extends DefaultReporter {
   public override onUserConsoleLog(log: UserConsoleLog, taskState?: TestState): void {
-    // This code is more or less copied verbatim from Vitest source, with minor tweaks to use
+    // This code is more or less copied verbatim from `vitest/reporters` source, with minor tweaks to use
     // dependencies we actually _have_ (i.e. chalk) rather than ones we don't (i.e. tinyrainbow).
+
+    // SPDX-SnippetBegin
+    // SPDX-SnippetCopyrightText: 2021 VoidZero Inc. and Vitest contributors
+    // SPDX-License-Identifier: MIT
+
     if (!super.shouldLog(log, taskState)) {
       return;
     }
@@ -22,14 +27,14 @@ export default class CustomDefaultReporter extends DefaultReporter {
 
     const task = log.taskId ? this.ctx.state.idMap.get(log.taskId) : undefined;
 
-    write(log.content); // this is about the only changed line
+    write(log.content); // this is about the only changed line (that and us skipping a newline)
 
-    // Code for stack trace, ripped directly out of Vitest source code.
-    // I wish they had a helper function to do this so we didn't have to import `@vitest/utils`, but oh well...
     if (!log.origin) {
       return;
     }
 
+    // Code for stack trace, ripped directly out of Vitest source code.
+    // I wish they had a helper function to do this so we didn't have to import `@vitest/utils`, but oh well...
     // browser logs don't have an extra end of line at the end like Node.js does
     if (log.browser) {
       write("\n");
@@ -51,5 +56,7 @@ export default class CustomDefaultReporter extends DefaultReporter {
 
       write(color(` ${chalk.dim(">")} ${positions}\n`));
     }
+
+    // SPDX-SnippetEnd
   }
 }

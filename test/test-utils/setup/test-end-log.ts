@@ -93,8 +93,12 @@ function getDurationPrefix(result?: RunnerTaskResult): string {
 }
 
 // Function copied from vitest source to avoid having to import `@vitest/runner/utils` for 1 function
+
+// SPDX-SnippetBegin
+// SPDX-SnippetCopyrightText: 2021 VoidZero Inc. and Vitest contributors
+// SPDX-License-Identifier: MIT
 function getTestName(task: RunnerTask, separator = " > "): string {
-  const names = [task.name];
+  const names: string[] = [task.name];
   let current: RunnerTask | undefined = task;
 
   while ((current = current?.suite)) {
@@ -105,3 +109,5 @@ function getTestName(task: RunnerTask, separator = " > "): string {
 
   return names.join(separator);
 }
+
+// SPDX-SnippetEnd
