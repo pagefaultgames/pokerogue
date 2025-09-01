@@ -4555,7 +4555,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     let duration = cry.totalDuration * 1000;
     if (this.fusionSpecies && this.getSpeciesForm(undefined, true) !== this.getFusionSpeciesForm(undefined, true)) {
-      let fusionCry = this.getFusionSpeciesForm(undefined, true).cry(soundConfig, true);
+      const fusionCry = this.getFusionSpeciesForm(undefined, true).cry(soundConfig, true);
       if (!fusionCry) {
         return cry;
       }
@@ -4564,15 +4564,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       scene.time.delayedCall(fixedInt(Math.ceil(duration * 0.4)), () => {
         try {
           SoundFade.fadeOut(scene, cry, fixedInt(Math.ceil(duration * 0.2)));
-          fusionCry = this.getFusionSpeciesForm(undefined, true).cry({
-            // Typescript's type checker doesn't handle using and assigning to the same variable in one line correctly.
-            seek: Math.max(fusionCry!.totalDuration * 0.4, 0),
+          const fusionCryInner = this.getFusionSpeciesForm(undefined, true).cry({
+            seek: Math.max(fusionCry.totalDuration * 0.4, 0),
             ...soundConfig,
           });
-          if (fusionCry) {
+          if (fusionCryInner) {
             SoundFade.fadeIn(
               scene,
-              fusionCry,
+              fusionCryInner,
               fixedInt(Math.ceil(duration * 0.2)),
               scene.masterVolume * scene.fieldVolume,
               0,
@@ -4721,6 +4720,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         if (i === transitionIndex && fusionCryKey) {
           SoundFade.fadeOut(globalScene, cry, fixedInt(Math.ceil((duration / rate) * 0.2)));
           fusionCry = globalScene.playSound(fusionCryKey, {
+            // TODO: This bang is correct as this callback can only be called once, but
+            // this whole block with conditionally reassigning fusionCry needs a second lock.
             seek: Math.max(fusionCry!.totalDuration * 0.4, 0),
             rate: rate,
           });
