@@ -795,7 +795,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
       return Gender.GENDERLESS;
     }
 
-    if (randSeedFloat() <= this.malePercent) {
+    if (randSeedFloat() * 100 <= this.malePercent) {
       return Gender.MALE;
     }
     return Gender.FEMALE;

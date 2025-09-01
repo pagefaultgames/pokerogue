@@ -175,4 +175,27 @@ describe("Evolution", () => {
       expect(fourForm.evoFormKey).toBe("four"); // meanwhile, according to the pokemon-forms, the evoFormKey for a 4 family maushold is "four"
     }
   });
+
+  it("tyrogue should evolve if move is not in first slot", async () => {
+    game.override
+      .moveset([MoveId.TACKLE, MoveId.RAPID_SPIN, MoveId.LOW_KICK])
+      .enemySpecies(SpeciesId.GOLEM)
+      .enemyMoveset(MoveId.SPLASH)
+      .startingWave(41)
+      .startingLevel(19)
+      .enemyLevel(30);
+
+    await game.classicMode.startBattle([SpeciesId.TYROGUE]);
+
+    const tyrogue = game.field.getPlayerPokemon();
+
+    const golem = game.field.getEnemyPokemon();
+    golem.hp = 1;
+    expect(golem.hp).toBe(1);
+
+    game.move.select(MoveId.TACKLE);
+    await game.phaseInterceptor.to("EndEvolutionPhase");
+
+    expect(tyrogue.species.speciesId).toBe(SpeciesId.HITMONTOP);
+  });
 });

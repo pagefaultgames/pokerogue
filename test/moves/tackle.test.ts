@@ -1,8 +1,6 @@
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { EnemyCommandPhase } from "#phases/enemy-command-phase";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -41,7 +39,7 @@ describe("Moves - Tackle", () => {
     await game.classicMode.startBattle([SpeciesId.MIGHTYENA]);
     const hpOpponent = game.scene.currentBattle.enemyParty[0].hp;
     game.move.select(moveToUse);
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
+    await game.toEndOfTurn();
     const hpLost = hpOpponent - game.scene.currentBattle.enemyParty[0].hp;
     expect(hpLost).toBe(0);
   });
@@ -55,7 +53,7 @@ describe("Moves - Tackle", () => {
     const hpOpponent = game.scene.currentBattle.enemyParty[0].hp;
 
     game.move.select(moveToUse);
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
+    await game.toEndOfTurn();
     const hpLost = hpOpponent - game.scene.currentBattle.enemyParty[0].hp;
     expect(hpLost).toBeGreaterThan(0);
     expect(hpLost).toBeLessThan(4);

@@ -273,8 +273,8 @@ export class MovePhase extends BattlePhase {
       globalScene.phaseManager.queueMessage(
         getStatusEffectHealText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)),
       );
-      this.pokemon.resetStatus();
-      this.pokemon.updateInfo();
+      // cannot use `asPhase=true` as it will cause status to be reset _after_ move condition checks fire
+      this.pokemon.resetStatus(false, false, false, false);
     }
   }
 

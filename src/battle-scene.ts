@@ -1476,10 +1476,7 @@ export class BattleScene extends SceneBase {
           pokemon.resetBattleAndWaveData();
           pokemon.resetTera();
           applyAbAttrs("PostBattleInitAbAttr", { pokemon });
-          if (
-            pokemon.hasSpecies(SpeciesId.TERAPAGOS) ||
-            (this.gameMode.isClassic && this.currentBattle.waveIndex > 180 && this.currentBattle.waveIndex <= 190)
-          ) {
+          if (pokemon.hasSpecies(SpeciesId.TERAPAGOS)) {
             this.arena.playerTerasUsed = 0;
           }
         }
@@ -3684,15 +3681,8 @@ export class BattleScene extends SceneBase {
           ) {
             return false;
           }
-          if (this.gameMode.modeId === GameModes.CHALLENGE) {
-            const disallowedChallenges = encounterCandidate.disallowedChallenges;
-            if (
-              disallowedChallenges &&
-              disallowedChallenges.length > 0 &&
-              this.gameMode.challenges.some(challenge => disallowedChallenges.includes(challenge.id))
-            ) {
-              return false;
-            }
+          if (encounterCandidate.disallowedChallenges?.some(challenge => this.gameMode.hasChallenge(challenge))) {
+            return false;
           }
           if (!encounterCandidate.meetsRequirements()) {
             return false;
