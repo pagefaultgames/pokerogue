@@ -93,7 +93,6 @@ import { getEnumValues } from "#utils/enums";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import { applyChallenges } from "#utils/challenge-utils";
-import type { AbstractConstructor } from "#types/type-helpers";
 
 /**
  * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.
@@ -1056,11 +1055,16 @@ export class SelfStatusMove extends Move {
   }
 }
 
-type SubMove = AbstractConstructor<Move>
+// TODO: Figure out how to improve the signature of this so that
+// the `ChargeMove` function knows that the argument `Base` is a specific subclass of move that cannot
+// be abstract.
+// Right now, I only know how to do this by using the type conjunction (the & operators)
+type SubMove = new (...args: any[]) => Move & {
+  is<K extends keyof MoveClassMap>(moveKind: K): this is MoveClassMap[K];
+};
 
 function ChargeMove<TBase extends SubMove>(Base: TBase, nameAppend: string) {
-  // NB: This cannot be made into a oneline return
-  abstract class Charging extends Base {
+  return class extends Base {
     /** The animation to play during the move's charging phase */
     public readonly chargeAnim: ChargeAnim = ChargeAnim[`${MoveId[this.id]}_CHARGING`];
     /** The message to show during the move's charging phase */
@@ -1137,7 +1141,6 @@ function ChargeMove<TBase extends SubMove>(Base: TBase, nameAppend: string) {
       return this;
     }
   };
-  return Charging;
 }
 
 export class ChargingAttackMove extends ChargeMove(AttackMove, "ChargingAttackMove") {}
