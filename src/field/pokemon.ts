@@ -454,7 +454,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   getNameToRender(useIllusion = true) {
     const illusion = this.summonData.illusion;
     const name = useIllusion ? (illusion?.name ?? this.name) : this.name;
-    const nickname: string | undefined = useIllusion ? illusion?.nickname : this.nickname;
+    const nickname: string | undefined = useIllusion ? (illusion?.nickname ?? this.nickname) : this.nickname;
     try {
       if (nickname) {
         return decodeURIComponent(escape(atob(nickname))); // TODO: Remove `atob` and `escape`... eventually...
@@ -1768,7 +1768,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns Whether this Pokemon is currently fused with another species.
    */
   isFusion(useIllusion = false): boolean {
-    return useIllusion ? !!this.summonData.illusion?.fusionSpecies : !!this.fusionSpecies;
+    return !!(useIllusion ? (this.summonData.illusion?.fusionSpecies ?? this.fusionSpecies) : this.fusionSpecies);
   }
 
   /**
@@ -2221,8 +2221,16 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.hasPassive() && (!canApply || this.canApplyAbility(true)) && this.getPassiveAbility().hasAttr(attrType);
   }
 
-  public getAbilityPriorities(): [number, number] {
-    return [this.getAbility().postSummonPriority, this.getPassiveAbility().postSummonPriority];
+  /**
+   * Return the ability priorities of the pokemon's ability and, if enabled, its passive ability
+   * @returns A tuple containing the ability priorities of the pokemon
+   */
+  public getAbilityPriorities(): [number] | [activePriority: number, passivePriority: number] {
+    const abilityPriority = this.getAbility().postSummonPriority;
+    if (this.hasPassive()) {
+      return [abilityPriority, this.getPassiveAbility().postSummonPriority];
+    }
+    return [abilityPriority];
   }
 
   /**
@@ -3062,14 +3070,17 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       if (this.level < levelMove[0]) {
         break;
       }
-      let weight = levelMove[0];
+      let weight = levelMove[0] + 20;
       // Evolution Moves
-      if (weight === EVOLVE_MOVE) {
-        weight = 50;
+      if (levelMove[0] === EVOLVE_MOVE) {
+        weight = 70;
       }
       // Assume level 1 moves with 80+ BP are "move reminder" moves and bump their weight. Trainers use actual relearn moves.
-      if ((weight === 1 && allMoves[levelMove[1]].power >= 80) || (weight === RELEARN_MOVE && this.hasTrainer())) {
-        weight = 40;
+      if (
+        (levelMove[0] === 1 && allMoves[levelMove[1]].power >= 80) ||
+        (levelMove[0] === RELEARN_MOVE && this.hasTrainer())
+      ) {
+        weight = 60;
       }
       if (!movePool.some(m => m[0] === levelMove[1]) && !allMoves[levelMove[1]].name.endsWith(" (N)")) {
         movePool.push([levelMove[1], weight]);
@@ -3099,11 +3110,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         }
         if (compatible && !movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)")) {
           if (tmPoolTiers[moveId] === ModifierTier.COMMON && this.level >= 15) {
-            movePool.push([moveId, 4]);
+            movePool.push([moveId, 24]);
           } else if (tmPoolTiers[moveId] === ModifierTier.GREAT && this.level >= 30) {
-            movePool.push([moveId, 8]);
+            movePool.push([moveId, 28]);
           } else if (tmPoolTiers[moveId] === ModifierTier.ULTRA && this.level >= 50) {
-            movePool.push([moveId, 14]);
+            movePool.push([moveId, 34]);
           }
         }
       }
@@ -3113,7 +3124,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         for (let i = 0; i < 3; i++) {
           const moveId = speciesEggMoves[this.species.getRootSpeciesId()][i];
           if (!movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)")) {
-            movePool.push([moveId, 40]);
+            movePool.push([moveId, 60]);
           }
         }
         const moveId = speciesEggMoves[this.species.getRootSpeciesId()][3];
@@ -3124,13 +3135,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
           !allMoves[moveId].name.endsWith(" (N)") &&
           !this.isBoss()
         ) {
-          movePool.push([moveId, 30]);
+          movePool.push([moveId, 50]);
         }
         if (this.fusionSpecies) {
           for (let i = 0; i < 3; i++) {
             const moveId = speciesEggMoves[this.fusionSpecies.getRootSpeciesId()][i];
             if (!movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)")) {
-              movePool.push([moveId, 40]);
+              movePool.push([moveId, 60]);
             }
           }
           const moveId = speciesEggMoves[this.fusionSpecies.getRootSpeciesId()][3];
@@ -3141,7 +3152,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
             !allMoves[moveId].name.endsWith(" (N)") &&
             !this.isBoss()
           ) {
-            movePool.push([moveId, 30]);
+            movePool.push([moveId, 50]);
           }
         }
       }
@@ -3222,6 +3233,18 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         rand -= stabMovePool[index++][1];
       }
       this.moveset.push(new PokemonMove(stabMovePool[index][0]));
+    } else {
+      // If there are no damaging STAB moves, just force a random damaging move
+      const attackMovePool = baseWeights.filter(m => allMoves[m[0]].category !== MoveCategory.STATUS);
+      if (attackMovePool.length) {
+        const totalWeight = attackMovePool.reduce((v, m) => v + m[1], 0);
+        let rand = randSeedInt(totalWeight);
+        let index = 0;
+        while (rand > attackMovePool[index][1]) {
+          rand -= attackMovePool[index++][1];
+        }
+        this.moveset.push(new PokemonMove(attackMovePool[index][0], 0, 0));
+      }
     }
 
     while (baseWeights.length > this.moveset.length && this.moveset.length < 4) {
@@ -4790,7 +4813,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (effect !== StatusEffect.FAINT) {
       // Status-overriding moves (i.e. Rest) fail if their respective status already exists;
       // all other moves fail if the target already has _any_ status
-      if (overrideStatus ? this.status?.effect === effect : this.status) {
+      if (overrideStatus ? this.status?.effect === effect : this.status || this.turnData.pendingStatus) {
         this.queueStatusImmuneMessage(quiet, overrideStatus ? "overlap" : "other"); // having different status displays generic fail message
         return false;
       }
@@ -4942,6 +4965,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     if (overrideStatus) {
       this.resetStatus(false);
+    } else {
+      this.turnData.pendingStatus = effect;
     }
 
     globalScene.phaseManager.unshiftNew(
@@ -4961,6 +4986,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Set this Pokemon's {@linkcode status | non-volatile status condition} to the specified effect.
    * @param effect - The {@linkcode StatusEffect} to set
    * @remarks
+   * Clears this pokemon's `pendingStatus` in its {@linkcode Pokemon.turnData | turnData}.
+   *
    * ⚠️ This method does **not** check for feasibility; that is the responsibility of the caller.
    */
   doSetStatus(effect: Exclude<StatusEffect, StatusEffect.SLEEP>): void;
@@ -4969,6 +4996,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param effect - {@linkcode StatusEffect.SLEEP}
    * @param sleepTurnsRemaining - The number of turns to inflict sleep for; defaults to a random number between 2 and 4
    * @remarks
+   * Clears this pokemon's `pendingStatus` in its {@linkcode Pokemon#turnData}.
+   *
    * ⚠️ This method does **not** check for feasibility; that is the responsibility of the caller.
    */
   doSetStatus(effect: StatusEffect.SLEEP, sleepTurnsRemaining?: number): void;
@@ -4978,6 +5007,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param sleepTurnsRemaining - The number of turns to inflict sleep for; defaults to a random number between 2 and 4
    * and is unused for all non-sleep Statuses
    * @remarks
+   * Clears this pokemon's `pendingStatus` in its {@linkcode Pokemon#turnData}.
+   *
    * ⚠️ This method does **not** check for feasibility; that is the responsibility of the caller.
    */
   doSetStatus(effect: StatusEffect, sleepTurnsRemaining?: number): void;
@@ -4987,6 +5018,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param sleepTurnsRemaining - The number of turns to inflict sleep for; defaults to a random number between 2 and 4
    * and is unused for all non-sleep Statuses
    * @remarks
+   * Clears this pokemon's `pendingStatus` in its {@linkcode Pokemon#turnData}.
+   *
    * ⚠️ This method does **not** check for feasibility; that is the responsibility of the caller.
    * @todo Make this and all related fields private and change tests to use a field-based helper or similar
    */
@@ -4994,6 +5027,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     effect: StatusEffect,
     sleepTurnsRemaining = effect !== StatusEffect.SLEEP ? 0 : this.randBattleSeedIntRange(2, 4),
   ): void {
+    // Reset any pending status
+    this.turnData.pendingStatus = StatusEffect.NONE;
     switch (effect) {
       case StatusEffect.POISON:
       case StatusEffect.TOXIC:
