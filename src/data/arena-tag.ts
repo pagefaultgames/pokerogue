@@ -937,7 +937,7 @@ class StealthRockTag extends DamagingTrapTag {
 
   protected override getTriggerMessage(pokemon: Pokemon): string {
     return i18next.t("arenaTag:stealthRockActivateTrap", {
-      pokemonName: getPokemonNameWithAffix(pokemon),
+      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
     });
   }
 
@@ -1205,7 +1205,7 @@ export class TrickRoomTag extends RoomArenaTag {
 
     globalScene.phaseManager.queueMessage(
       i18next.t("arenaTag:trickRoomOnAdd", {
-        moveName: this.getMoveName(),
+        pokemonNameWithAffix: getPokemonNameWithAffix(source),
       }),
     );
   }
