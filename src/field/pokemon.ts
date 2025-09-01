@@ -4547,28 +4547,36 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     });
   }
 
-  cry(soundConfig?: Phaser.Types.Sound.SoundConfig, sceneOverride?: BattleScene): AnySound {
+  cry(soundConfig?: Phaser.Types.Sound.SoundConfig, sceneOverride?: BattleScene): AnySound | null {
     const scene = sceneOverride ?? globalScene; // TODO: is `sceneOverride` needed?
     const cry = this.getSpeciesForm(undefined, true).cry(soundConfig);
+    if (!cry) {
+      return cry;
+    }
     let duration = cry.totalDuration * 1000;
     if (this.fusionSpecies && this.getSpeciesForm(undefined, true) !== this.getFusionSpeciesForm(undefined, true)) {
       let fusionCry = this.getFusionSpeciesForm(undefined, true).cry(soundConfig, true);
+      if (!fusionCry) {
+        return cry;
+      }
       duration = Math.min(duration, fusionCry.totalDuration * 1000);
       fusionCry.destroy();
       scene.time.delayedCall(fixedInt(Math.ceil(duration * 0.4)), () => {
         try {
           SoundFade.fadeOut(scene, cry, fixedInt(Math.ceil(duration * 0.2)));
           fusionCry = this.getFusionSpeciesForm(undefined, true).cry({
-            seek: Math.max(fusionCry.totalDuration * 0.4, 0),
+            seek: Math.max(fusionCry!.totalDuration * 0.4, 0),
             ...soundConfig,
           });
-          SoundFade.fadeIn(
-            scene,
-            fusionCry,
-            fixedInt(Math.ceil(duration * 0.2)),
-            scene.masterVolume * scene.fieldVolume,
-            0,
-          );
+          if (fusionCry) {
+            SoundFade.fadeIn(
+              scene,
+              fusionCry,
+              fixedInt(Math.ceil(duration * 0.2)),
+              scene.masterVolume * scene.fieldVolume,
+              0,
+            );
+          }
         } catch (err) {
           console.error(err);
         }
@@ -4596,14 +4604,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         crySoundConfig.rate = 0.7;
       }
     }
-    const cry = globalScene.playSound(key, crySoundConfig) as AnySound;
+    const cry = globalScene.playSound(key, crySoundConfig);
     if (!cry || globalScene.fieldVolume === 0) {
       callback();
       return;
     }
     const sprite = this.getSprite();
     const tintSprite = this.getTintSprite();
-    const delay = Math.max(globalScene.sound.get(key).totalDuration * 50, 25);
+    const delay = Math.max(cry.totalDuration * 50, 25);
 
     let frameProgress = 0;
     let frameThreshold: number;
@@ -4656,20 +4664,20 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const key = this.species.getCryKey(this.formIndex);
     let i = 0;
     let rate = 0.85;
-    const cry = globalScene.playSound(key, { rate: rate }) as AnySound;
+    const cry = globalScene.playSound(key, { rate: rate });
     const sprite = this.getSprite();
     const tintSprite = this.getTintSprite();
-    let duration = cry.totalDuration * 1000;
 
     const fusionCryKey = this.fusionSpecies!.getCryKey(this.fusionFormIndex);
     let fusionCry = globalScene.playSound(fusionCryKey, {
       rate: rate,
-    }) as AnySound;
+    });
     if (!cry || !fusionCry || globalScene.fieldVolume === 0) {
       callback();
       return;
     }
     fusionCry.stop();
+    let duration = cry.totalDuration * 1000;
     duration = Math.min(duration, fusionCry.totalDuration * 1000);
     fusionCry.destroy();
     const delay = Math.max(duration * 0.05, 25);
@@ -4712,16 +4720,18 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         if (i === transitionIndex && fusionCryKey) {
           SoundFade.fadeOut(globalScene, cry, fixedInt(Math.ceil((duration / rate) * 0.2)));
           fusionCry = globalScene.playSound(fusionCryKey, {
-            seek: Math.max(fusionCry.totalDuration * 0.4, 0),
+            seek: Math.max(fusionCry!.totalDuration * 0.4, 0),
             rate: rate,
           });
-          SoundFade.fadeIn(
-            globalScene,
-            fusionCry,
-            fixedInt(Math.ceil((duration / rate) * 0.2)),
-            globalScene.masterVolume * globalScene.fieldVolume,
-            0,
-          );
+          if (fusionCry) {
+            SoundFade.fadeIn(
+              globalScene,
+              fusionCry,
+              fixedInt(Math.ceil((duration / rate) * 0.2)),
+              globalScene.masterVolume * globalScene.fieldVolume,
+              0,
+            );
+          }
         }
         rate *= 0.99;
         if (cry && !cry.pendingRemove) {
