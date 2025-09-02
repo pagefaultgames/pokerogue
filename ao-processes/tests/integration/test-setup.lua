@@ -186,6 +186,10 @@ end
 
 -- Create a test battle state for integration tests
 function TestSetup.createTestBattle()
+    -- Initialize RNG for battle tests
+    local CryptoRNG = require("game-logic.rng.crypto-rng")
+    CryptoRNG.initBattleRNG(12345) -- Use fixed seed for consistent tests
+    
     return {
         battleId = "test-battle-" .. math.random(1000, 9999),
         turn = 1,
@@ -218,7 +222,12 @@ function TestSetup.createTestPokemon(level, species)
         species = species,
         level = level,
         types = {9}, -- FIRE type - use numeric value to avoid circular dependency
-        moves = {1, 2, 3, 4} -- Default moves
+        moves = {
+            {id = 1, name = "Pound", type = 0, category = 0, power = 40, accuracy = 100, pp = 35, maxPP = 35},
+            {id = 2, name = "Tackle", type = 0, category = 0, power = 40, accuracy = 100, pp = 35, maxPP = 35},
+            {id = 3, name = "Scratch", type = 0, category = 0, power = 40, accuracy = 100, pp = 35, maxPP = 35},
+            {id = 4, name = "Quick Attack", type = 0, category = 0, power = 40, accuracy = 100, pp = 30, maxPP = 30}
+        }
     })
     
     -- Add battle-specific fields
@@ -226,6 +235,22 @@ function TestSetup.createTestPokemon(level, species)
     pokemon.side = "player" -- Default side
     
     return pokemon
+end
+
+-- Initialize test framework globals that tests might expect
+function TestSetup.initializeTestGlobals()
+    -- Add TestFramework global if it doesn't exist
+    if not _G.TestFramework then
+        _G.TestFramework = {
+            addTest = function(name, func) end,
+            runTests = function() end,
+            assert = function(condition, message)
+                if not condition then
+                    error(message or "Assertion failed")
+                end
+            end
+        }
+    end
 end
 
 -- Test Enums for integration tests

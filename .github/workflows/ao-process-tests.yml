@@ -612,6 +612,17 @@ jobs:
                   print('⚠️ Could not pre-load battle-handler, test may handle this gracefully')
                 end
                 
+                -- Initialize any additional test globals
+                local init_success = pcall(function()
+                  local TestSetup = require('test-setup')
+                  if TestSetup.initializeTestGlobals then
+                    TestSetup.initializeTestGlobals()
+                  end
+                end)
+                if init_success then
+                  print('✅ Test globals initialized')
+                end
+                
                 -- Load and run the test file
                 print('🧪 Executing test file:', '$TEST_FILE')
                 local test_success, test_error = pcall(function()
