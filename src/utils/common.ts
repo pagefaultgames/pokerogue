@@ -276,25 +276,11 @@ export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>):
 }
 
 export const sessionIdKey = "pokerogue_sessionId";
-// Check if the current hostname is 'localhost' or an IP address, and ensure a port is specified
-export const isLocal =
-  ((window.location.hostname === "localhost" || /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/.test(window.location.hostname)) &&
-    window.location.port !== "") ||
-  window.location.hostname === "";
 
-/**
- * @deprecated Refer to [pokerogue-api.ts](./plugins/api/pokerogue-api.ts) instead
- */
-export const localServerUrl =
-  import.meta.env.VITE_SERVER_URL ?? `http://${window.location.hostname}:${window.location.port + 1}`;
+/** `true` when run via `pnpm start:dev` (which runs `vite --mode development`) */
+export const isLocal = import.meta.env.MODE === "development";
 
-/**
- * Set the server URL based on whether it's local or not
- *
- * @deprecated Refer to [pokerogue-api.ts](./plugins/api/pokerogue-api.ts) instead
- */
-export const apiUrl = localServerUrl ?? "https://api.pokerogue.net";
-// used to disable api calls when isLocal is true and a server is not found
+/** Used to disable api calls when isLocal is true and a server is not found */
 export let isLocalServerConnected = true;
 
 /**
@@ -302,7 +288,7 @@ export let isLocalServerConnected = true;
  * with a GET request to verify if a server is running,
  * sets isLocalServerConnected based on results
  */
-export async function localPing() {
+export async function localPing(): Promise<void> {
   if (isLocal) {
     const titleStats = await pokerogueApi.getGameTitleStats();
     isLocalServerConnected = !!titleStats;
