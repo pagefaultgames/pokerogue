@@ -373,7 +373,18 @@ function MoveDatabase.init()
         
         -- Entry Hazard Removal Moves
         {229, "Rapid Spin", TYPES.NORMAL, CATEGORIES.PHYSICAL, 50, 100, 40, TARGETS.SELECTED, 0, {MOVE_FLAGS.CONTACT}, {rapid_spin = true, stat_change = {speed = 1, user = true}}},
-        {432, "Defog", TYPES.FLYING, CATEGORIES.STATUS, 0, -1, 15, TARGETS.SELECTED, 0, {}, {defog = true, stat_change = {evasion = -1}}}
+        {432, "Defog", TYPES.FLYING, CATEGORIES.STATUS, 0, -1, 15, TARGETS.SELECTED, 0, {}, {defog = true, stat_change = {evasion = -1}}},
+        
+        -- Field Condition Moves
+        {433, "Trick Room", TYPES.PSYCHIC, CATEGORIES.STATUS, 0, -1, 5, TARGETS.ALL, -7, {}, {field_condition = 1}},
+        {472, "Wonder Room", TYPES.PSYCHIC, CATEGORIES.STATUS, 0, -1, 10, TARGETS.ALL, 0, {}, {field_condition = 2}},
+        {478, "Magic Room", TYPES.PSYCHIC, CATEGORIES.STATUS, 0, -1, 10, TARGETS.ALL, 0, {}, {field_condition = 3}},
+        
+        -- Side Effect Moves
+        {440, "Safeguard", TYPES.NORMAL, CATEGORIES.STATUS, 0, -1, 25, TARGETS.USER_SIDE, 0, {}, {safeguard = true}},
+        {562, "Brick Break", TYPES.FIGHTING, CATEGORIES.PHYSICAL, 75, 100, 15, TARGETS.SELECTED, 0, {MOVE_FLAGS.CONTACT}, {remove_screens = true}},
+        {1390, "Aurora Veil", TYPES.ICE, CATEGORIES.STATUS, 0, -1, 20, TARGETS.USER_SIDE, 0, {}, {aurora_veil = true, weather_condition = "hail_or_snow"}},
+        {1414, "Psychic Fangs", TYPES.PSYCHIC, CATEGORIES.PHYSICAL, 85, 100, 10, TARGETS.SELECTED, 0, {MOVE_FLAGS.CONTACT, MOVE_FLAGS.BITE}, {remove_screens = true}}
     }
     
     -- Process all move definitions

@@ -431,6 +431,95 @@ function DamageCalculatorTests.testUtilityFunctions()
 end
 
 -- Test Runner
+-- Test side effect damage reduction
+function DamageCalculatorTests.testSideEffectDamageReduction()
+    local SideEffects = require("game-logic.battle.side-effects")
+    local battleState = {turn = 1}
+    
+    -- Set up Light Screen for player
+    SideEffects.setLightScreen(battleState, "player")
+    
+    local attacker = createMockPokemon(50, {attack = 100, spAttack = 100}, {Enums.PokemonType.NORMAL}, "enemy")
+    local defender = createMockPokemon(50, {defense = 80, spDefense = 80}, {Enums.PokemonType.NORMAL}, "player")
+    
+    -- Set side attributes explicitly
+    attacker.side = "enemy"
+    defender.side = "player"
+    
+    -- Test Special move damage reduction
+    local specialMove = {
+        name = "Psychic",
+        type = Enums.PokemonType.PSYCHIC,
+        category = Enums.MoveCategory.SPECIAL,
+        power = 90
+    }
+    
+    local result = DamageCalculator.calculateDamage({
+        attacker = attacker,
+        defender = defender,
+        moveData = specialMove,
+        battleState = battleState
+    })
+    
+    -- Damage should be reduced by Light Screen
+    assert(result.damage > 0, "Should deal damage")
+    
+    -- Test without Light Screen for comparison
+    local battleStateNoScreen = {turn = 1}
+    local resultNoScreen = DamageCalculator.calculateDamage({
+        attacker = attacker,
+        defender = defender,
+        moveData = specialMove,
+        battleState = battleStateNoScreen,
+        options = {criticalHitForced = false}  -- Disable random variance for comparison
+    })
+    
+    assert(result.damage < resultNoScreen.damage, "Light Screen should reduce damage")
+end
+
+-- Test side effect singles vs doubles format
+function DamageCalculatorTests.testSideEffectSinglesVsDoubles()
+    local SideEffects = require("game-logic.battle.side-effects")
+    
+    -- Test reduction percentages directly
+    local baseDamage = 100
+    
+    -- Singles format (50% reduction)
+    local singlesReduction = SideEffects.applyDamageReduction(baseDamage, Enums.MoveCategory.SPECIAL, "enemy", "player", 
+        {sideEffects = {player = {LIGHT_SCREEN = {type = "LIGHT_SCREEN", duration = 5}}}}, false)
+    assert(singlesReduction == 50, "Singles should reduce damage to 50%")
+    
+    -- Doubles format (33% reduction, so 67% remaining)
+    local doublesReduction = SideEffects.applyDamageReduction(baseDamage, Enums.MoveCategory.SPECIAL, "enemy", "player",
+        {sideEffects = {player = {LIGHT_SCREEN = {type = "LIGHT_SCREEN", duration = 5}}}}, true)
+    assert(doublesReduction == 67, "Doubles should reduce damage to 67%")
+end
+
+-- Test side effect combinations
+function DamageCalculatorTests.testSideEffectCombinations()
+    local SideEffects = require("game-logic.battle.side-effects")
+    local battleState = {turn = 1, weather = "HAIL"}
+    
+    -- Test Aurora Veil covers both physical and special
+    SideEffects.setAuroraVeil(battleState, "player")
+    
+    local physicalReduction = SideEffects.applyDamageReduction(100, Enums.MoveCategory.PHYSICAL, "enemy", "player", battleState, false)
+    local specialReduction = SideEffects.applyDamageReduction(100, Enums.MoveCategory.SPECIAL, "enemy", "player", battleState, false)
+    
+    assert(physicalReduction == 50, "Aurora Veil should reduce Physical damage")
+    assert(specialReduction == 50, "Aurora Veil should reduce Special damage")
+    
+    -- Test that Light Screen + Reflect don't stack with Aurora Veil
+    SideEffects.setLightScreen(battleState, "player")
+    SideEffects.setReflect(battleState, "player")
+    
+    local combinedPhysical = SideEffects.applyDamageReduction(100, Enums.MoveCategory.PHYSICAL, "enemy", "player", battleState, false)
+    local combinedSpecial = SideEffects.applyDamageReduction(100, Enums.MoveCategory.SPECIAL, "enemy", "player", battleState, false)
+    
+    assert(combinedPhysical == 50, "Multiple screen effects should not stack")
+    assert(combinedSpecial == 50, "Multiple screen effects should not stack")
+end
+
 function DamageCalculatorTests.runAllTests()
     local tests = {
         "testBaseDamageFormula",
@@ -447,7 +536,10 @@ function DamageCalculatorTests.runAllTests()
         "testDualTypeEffectiveness",
         "testDamagePreview",
         "testParameterValidation",
-        "testUtilityFunctions"
+        "testUtilityFunctions",
+        "testSideEffectDamageReduction",
+        "testSideEffectSinglesVsDoubles",
+        "testSideEffectCombinations"
     }
     
     local passed = 0

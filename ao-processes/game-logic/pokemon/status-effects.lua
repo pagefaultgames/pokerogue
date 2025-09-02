@@ -58,6 +58,21 @@ function StatusEffects.applyStatusEffect(pokemon, statusType, duration, battleSt
         return {success = false, error = "Invalid Pokemon"}
     end
     
+    -- Check for Safeguard protection
+    if battleState then
+        local SideEffects = require("game-logic.battle.side-effects")
+        local targetSide = pokemon.side or "player"
+        
+        if SideEffects.preventStatusCondition(battleState, targetSide, statusType) then
+            return {
+                success = false,
+                error = "Status condition prevented by Safeguard",
+                blocked = true,
+                safeguard_blocked = true
+            }
+        end
+    end
+    
     -- Check if Pokemon already has a status effect
     if pokemon.statusEffect then
         return {

@@ -218,6 +218,33 @@ local function applyItemEffects(damage, attacker, defender, moveData, battleStat
     return damage
 end
 
+-- Apply side effect damage reduction (Light Screen, Reflect, Aurora Veil)
+-- @param damage: Current damage
+-- @param moveData: Move data
+-- @param attackingSide: Side performing the attack
+-- @param defendingSide: Side receiving the attack
+-- @param battleState: Current battle state
+-- @return: Damage after side effect reductions
+local function applySideEffectReductions(damage, moveData, attackingSide, defendingSide, battleState)
+    if not damage or damage <= 0 or not moveData or not battleState then
+        return damage
+    end
+    
+    -- Only apply to damaging moves
+    if moveData.category == Enums.MoveCategory.STATUS then
+        return damage
+    end
+    
+    local SideEffects = require("game-logic.battle.side-effects")
+    
+    -- Determine if this is a doubles battle format
+    local isDoublesFormat = battleState.battleFormat == "doubles" or 
+                           (battleState.playerParty and #battleState.playerParty > 1 and battleState.activePlayerPokemon and #battleState.activePlayerPokemon > 1)
+    
+    -- Apply side effect damage reduction
+    return SideEffects.applyDamageReduction(damage, moveData.category, attackingSide, defendingSide, battleState, isDoublesFormat)
+end
+
 -- Main damage calculation function
 -- @param params: Table containing all damage calculation parameters
 --   - attacker: Pokemon using the move
@@ -331,6 +358,12 @@ function DamageCalculator.calculateDamage(params)
     
     -- Apply item effects  
     currentDamage = applyItemEffects(currentDamage, attacker, defender, moveData, battleState)
+    
+    -- Apply side effect damage reductions (Light Screen, Reflect, Aurora Veil)
+    -- Need to determine attacking and defending sides
+    local attackingSide = attacker.side or "player"
+    local defendingSide = defender.side or "enemy"
+    currentDamage = applySideEffectReductions(currentDamage, moveData, attackingSide, defendingSide, battleState)
     
     -- Apply random damage variance (final step)
     local finalDamage = applyDamageVariance(currentDamage)

@@ -388,7 +388,7 @@ end
 -- @param pokemonData: Pokemon data for ability checks
 -- @param currentStages: Current stat stages table
 -- @return: Boolean indicating success and change details
-function MoveEffects.applyStatStageChange(battleId, targetId, stat, stages, source, pokemonData, currentStages)
+function MoveEffects.applyStatStageChange(battleId, targetId, stat, stages, source, pokemonData, currentStages, battleState)
     -- Input validation
     if not battleId or not targetId or not stat or not stages then
         return false, "Invalid parameters for stat stage change"
@@ -396,6 +396,17 @@ function MoveEffects.applyStatStageChange(battleId, targetId, stat, stages, sour
     
     if stages < -6 or stages > 6 then
         return false, "Stat stage change out of range (-6 to +6): " .. stages
+    end
+    
+    -- Check for Mist protection against stat reductions
+    if stages < 0 and battleState and pokemonData then
+        local SideEffects = require("game-logic.battle.side-effects")
+        local targetSide = pokemonData.side or "player"
+        local statChanges = {[stat] = stages}
+        
+        if SideEffects.preventStatReduction(battleState, targetSide, statChanges) then
+            return false, "Stat reduction prevented by Mist", true  -- Third param indicates blocked by Mist
+        end
     end
     
     -- Check if stat is valid (either numeric index or string name)
@@ -2844,6 +2855,116 @@ function MoveEffects.processMagicRoomEffect(battleState, pokemon)
     }
     
     return MoveEffects.processFieldConditionMove(battleState, magicRoomMoveData, pokemon)
+end
+
+-- Process side effect moves (Light Screen, Reflect, Aurora Veil, Safeguard, Mist)
+-- @param battleState: Current battle state
+-- @param moveData: Move data containing side effect information
+-- @param pokemon: Pokemon using the move
+-- @return: Boolean indicating success and effect result
+function MoveEffects.processSideEffectMove(battleState, moveData, pokemon)
+    local SideEffects = require("game-logic.battle.side-effects")
+    
+    if not battleState or not moveData or not pokemon then
+        return false, "Missing required parameters for side effect move"
+    end
+    
+    -- Determine which side the Pokemon belongs to
+    local side = pokemon.side or "player"  -- Default to player if not specified
+    
+    local success = false
+    local effectName = ""
+    
+    -- Process Light Screen
+    if moveData.effects and moveData.effects.light_screen then
+        success = SideEffects.setLightScreen(battleState, side)
+        effectName = "Light Screen"
+    end
+    
+    -- Process Reflect
+    if moveData.effects and moveData.effects.reflect then
+        success = SideEffects.setReflect(battleState, side)
+        effectName = "Reflect"
+    end
+    
+    -- Process Aurora Veil (requires hail/snow weather)
+    if moveData.effects and moveData.effects.aurora_veil then
+        local success_result, message = SideEffects.setAuroraVeil(battleState, side)
+        success = success_result
+        effectName = "Aurora Veil"
+        if not success and message then
+            return false, message
+        end
+    end
+    
+    -- Process Safeguard
+    if moveData.effects and moveData.effects.safeguard then
+        success = SideEffects.setSafeguard(battleState, side)
+        effectName = "Safeguard"
+    end
+    
+    -- Process Mist
+    if moveData.effects and moveData.effects.mist then
+        success = SideEffects.setMist(battleState, side)
+        effectName = "Mist"
+    end
+    
+    if success then
+        return true, string.format("%s activated for %s's team!", effectName, side)
+    else
+        return false, string.format("Failed to activate %s", effectName)
+    end
+end
+
+-- Process screen-breaking moves (Brick Break, Psychic Fangs)
+-- @param battleState: Current battle state
+-- @param moveData: Move data containing screen removal information
+-- @param pokemon: Pokemon using the move
+-- @param targetSide: Side to remove screens from
+-- @return: Boolean indicating success and removed effects
+function MoveEffects.processScreenBreakingMove(battleState, moveData, pokemon, targetSide)
+    local SideEffects = require("game-logic.battle.side-effects")
+    
+    if not battleState or not moveData or not pokemon or not targetSide then
+        return false, "Missing required parameters for screen breaking move"
+    end
+    
+    -- Check if move breaks screens
+    if not moveData.effects or not moveData.effects.remove_screens then
+        return false, "Move does not break screens"
+    end
+    
+    -- Determine if move removes Aurora Veil (Psychic Fangs only)
+    local removeAuroraVeil = (moveData.id == 1414)  -- Psychic Fangs ID
+    
+    local removedEffects = SideEffects.removeScreens(battleState, targetSide, removeAuroraVeil)
+    
+    if #removedEffects > 0 then
+        local effectNames = {}
+        for _, effectType in ipairs(removedEffects) do
+            table.insert(effectNames, SideEffects.getEffectName(effectType))
+        end
+        
+        return true, string.format("Removed %s from %s's team!", table.concat(effectNames, ", "), targetSide)
+    else
+        return false, "No screens to remove"
+    end
+end
+
+-- Check if move has side effect components
+-- @param moveData: Move data to check
+-- @return: Boolean indicating if move has side effects
+function MoveEffects.hasSideEffects(moveData)
+    if not moveData or not moveData.effects then
+        return false
+    end
+    
+    return moveData.effects.light_screen or 
+           moveData.effects.reflect or 
+           moveData.effects.aurora_veil or 
+           moveData.effects.safeguard or 
+           moveData.effects.mist or
+           moveData.effects.remove_screens
 end
 
 return MoveEffects

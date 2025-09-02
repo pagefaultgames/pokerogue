@@ -29,6 +29,9 @@ local TerrainAbilities = require("game-logic.battle.terrain-abilities")
 local EntryHazards = require("game-logic.battle.entry-hazards")
 local SwitchInEffects = require("game-logic.battle.switch-in-effects")
 
+-- Field conditions system dependencies
+local FieldConditions = require("game-logic.battle.field-conditions")
+
 -- Turn phase enumeration
 TurnProcessor.TurnPhase = {
     COMMAND_SELECTION = 1,
@@ -108,6 +111,10 @@ function TurnProcessor.initializeBattle(battleId, battleSeed, playerParty, enemy
         
         -- Terrain state using new terrain system
         terrain = TerrainEffects.initializeTerrainState(battleId),
+        
+        -- Field conditions state
+        fieldConditions = {},
+        
         turnCommands = {},
         battleResult = nil,
         multiTurnData = {}
@@ -250,8 +257,10 @@ function TurnProcessor.processBattleTurn(battleState)
         return nil, "No valid actions to process"
     end
     
-    -- Calculate turn order with priority and speed
-    battleState.turnOrder = PriorityCalculator.calculateTurnOrder(turnActions, battleState.battleConditions)
+    -- Calculate turn order with priority and speed (including field conditions)
+    local completeConditions = battleState.battleConditions or {}
+    completeConditions.fieldConditions = battleState.fieldConditions
+    battleState.turnOrder = PriorityCalculator.calculateTurnOrder(turnActions, completeConditions)
     battleState.pendingActions = {}
     for _, action in ipairs(battleState.turnOrder) do
         table.insert(battleState.pendingActions, action)
@@ -489,6 +498,25 @@ function TurnProcessor.executeMoveAction(battleState, action)
             result.missed = effectResult.missed or false
             result.failed = effectResult.failed or false
             result.no_effect = effectResult.no_effect or false
+            
+            -- Process side effect moves (Light Screen, Reflect, Aurora Veil, Safeguard, Mist)
+            if moveEffectsSystem.hasSideEffects and moveEffectsSystem.hasSideEffects(moveToExecute) then
+                local sideEffectSuccess, sideEffectMessage = moveEffectsSystem.processSideEffectMove(battleState, moveToExecute, action.pokemon)
+                if sideEffectSuccess then
+                    table.insert(result.messages, sideEffectMessage)
+                    result.side_effect_applied = true
+                end
+            end
+            
+            -- Process screen-breaking moves (Brick Break, Psychic Fangs)
+            if moveToExecute.effects and moveToExecute.effects.remove_screens and action.target then
+                local targetSide = action.target.side or "enemy"
+                local screenBreakSuccess, screenBreakMessage = moveEffectsSystem.processScreenBreakingMove(battleState, moveToExecute, action.pokemon, targetSide)
+                if screenBreakSuccess then
+                    table.insert(result.messages, screenBreakMessage)
+                    result.screens_broken = true
+                end
+            end
             
             -- Generate battle messages for the move action
             local moveMessages = battleMessages.generateMoveMessage(action.pokemon, move, action.target, effectResult)
@@ -760,6 +788,54 @@ function TurnProcessor.processEndOfTurnEffects(battleState)
     
     -- Update multi-turn move durations
     TurnProcessor.updateMultiTurnDurations(battleState)
+    
+    -- Update field condition durations
+    if battleState.fieldConditions then
+        local updatedConditions, expiredConditions = BattleConditions.updateFieldConditionDurations(battleState.fieldConditions)
+        battleState.fieldConditions = updatedConditions
+        
+        -- Add expired field condition information to result
+        result.field_condition_updates = {
+            expired_conditions = expiredConditions,
+            active_conditions = {}
+        }
+        
+        -- Add active field condition summary
+        for conditionType, conditionData in pairs(updatedConditions) do
+            table.insert(result.field_condition_updates.active_conditions, {
+                type = conditionType,
+                name = conditionData.field_effect_name or "Unknown Field Condition",
+                duration = conditionData.duration,
+                turns_remaining = conditionData.duration
+            })
+        end
+    end
+    
+    -- Update side effect durations
+    local expiredSideEffects = BattleConditions.processSideEffectTurnEnd(battleState)
+    
+    -- Add expired side effect information to result
+    result.side_effect_updates = {
+        expired_effects = expiredSideEffects,
+        active_effects = {}
+    }
+    
+    -- Add active side effect summary
+    if battleState.sideEffects then
+        for side, sideEffects in pairs(battleState.sideEffects) do
+            for effectType, effectData in pairs(sideEffects) do
+                if effectData.duration > 0 then
+                    table.insert(result.side_effect_updates.active_effects, {
+                        side = side,
+                        type = effectType,
+                        name = effectType:gsub("_", " "):gsub("(%l)(%w*)", function(a,b) return string.upper(a)..b end),
+                        duration = effectData.duration,
+                        turns_remaining = effectData.duration
+                    })
+                end
+            end
+        end
+    end
     
     return result
 end
