@@ -22,6 +22,7 @@ local tests = {
     {file = "tests/unit/battle/side-effects.test.lua", name = "Side Effects Unit Tests"},
     {file = "tests/unit/battle/field-conditions-aolite.test.lua", name = "Field Conditions Unit Tests (Aolite)"},
     {file = "tests/integration/aolite-integration.test.lua", name = "Aolite Integration Tests"},
+    {file = "tests/integration/side-effects-integration-aolite.test.lua", name = "Side Effects Integration Tests (Aolite)"},
     {file = "tests/integration/field-conditions-integration-aolite.test.lua", name = "Field Conditions Integration Tests (Aolite)"}
 }
 

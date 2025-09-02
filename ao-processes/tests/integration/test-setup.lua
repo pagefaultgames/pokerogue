@@ -188,7 +188,7 @@ end
 function TestSetup.createTestBattle()
     -- Initialize RNG for battle tests
     local CryptoRNG = require("game-logic.rng.crypto-rng")
-    CryptoRNG.initBattleRNG(12345) -- Use fixed seed for consistent tests
+    CryptoRNG.initBattleRNG("test-seed-12345") -- Use fixed string seed for consistent tests
     
     return {
         battleId = "test-battle-" .. math.random(1000, 9999),
