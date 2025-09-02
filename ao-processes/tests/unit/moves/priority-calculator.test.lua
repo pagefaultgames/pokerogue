@@ -313,6 +313,69 @@ function PriorityCalculatorTests.runAllTests()
         end
     end)
     
+    -- Test Trick Room field condition integration
+    testSuite:addTest("Trick Room Priority Reversal", function()
+        local fastPokemon = createMockPokemon("fast", 150)
+        local slowPokemon = createMockPokemon("slow", 50)
+        
+        -- Create actions with same move priority
+        local actions = {
+            PriorityCalculator.createTurnAction("move", fastPokemon, 1, nil),
+            PriorityCalculator.createTurnAction("move", slowPokemon, 1, nil)
+        }
+        
+        -- Test normal priority (fast goes first)
+        local normalConditions = createMockBattleConditions(0) -- No Trick Room
+        local normalOrder = PriorityCalculator.calculateTurnOrder(actions, normalConditions)
+        TestFramework.assert(normalOrder[1].pokemon.id == "fast", "Fast Pokemon should go first normally")
+        TestFramework.assert(normalOrder[2].pokemon.id == "slow", "Slow Pokemon should go second normally")
+        
+        -- Test Trick Room priority (slow goes first)
+        local trickRoomConditions = createMockBattleConditions(3) -- Trick Room active
+        trickRoomConditions.fieldConditions = {
+            [1] = {duration = 3, priority_reversal = true} -- TRICK_ROOM = 1
+        }
+        local trickRoomOrder = PriorityCalculator.calculateTurnOrder(actions, trickRoomConditions)
+        TestFramework.assert(trickRoomOrder[1].pokemon.id == "slow", "Slow Pokemon should go first in Trick Room")
+        TestFramework.assert(trickRoomOrder[2].pokemon.id == "fast", "Fast Pokemon should go second in Trick Room")
+    end)
+    
+    -- Test field condition priority effects checking
+    testSuite:addTest("Field Condition Priority Effects", function()
+        local battleConditions = {
+            fieldConditions = {
+                [1] = {duration = 2, priority_reversal = true} -- TRICK_ROOM
+            }
+        }
+        
+        local affectsPriority, effects = PriorityCalculator.checkFieldConditionPriorityEffects(battleConditions)
+        TestFramework.assert(affectsPriority == true, "Field conditions should affect priority")
+        TestFramework.assert(#effects == 1, "Should have one priority effect")
+        TestFramework.assert(effects[1].type == "trick_room", "Effect should be Trick Room")
+        TestFramework.assert(effects[1].effect == "speed_reversal", "Effect should be speed reversal")
+    end)
+    
+    -- Test field condition action application
+    testSuite:addTest("Field Condition Action Application", function()
+        local action = {
+            type = "move",
+            pokemon = createMockPokemon("test", 100),
+            effectiveSpeed = 100,
+            priority = 0
+        }
+        
+        local battleConditions = {
+            fieldConditions = {
+                [1] = {duration = 4, priority_reversal = true} -- TRICK_ROOM
+            }
+        }
+        
+        local modifiedAction = PriorityCalculator.applyFieldConditionEffects(action, battleConditions)
+        TestFramework.assert(modifiedAction.trick_room_active == true, "Action should be marked as Trick Room affected")
+        TestFramework.assert(modifiedAction.field_condition_priority == true, "Action should have field condition priority flag")
+        TestFramework.assert(modifiedAction.original_speed == 100, "Original speed should be preserved")
+    end)
+    
     -- Integration test with move database
     testSuite:addTest("Move Database Priority Integration", function()
         MoveDatabase.init()
@@ -321,6 +384,7 @@ function PriorityCalculatorTests.runAllTests()
         -- Test various moves with different priorities
         local moves = {
             {id = 1, name = "Pound", expectedPriority = 0},
+            {id = 433, name = "Trick Room", expectedPriority = -7}, -- Field condition move
             -- Add more moves with known priorities when available in database
         }
         

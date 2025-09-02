@@ -7,6 +7,7 @@ local BattleConditions = {}
 -- Load dependencies
 local Enums = require("data.constants.enums")
 local BattleRNG = require("game-logic.rng.battle-rng")
+local PositionalMechanics = require("game-logic.battle.positional-mechanics")
 
 -- Weather types and data (matching TypeScript implementation)
 BattleConditions.WeatherType = {
@@ -2864,6 +2865,458 @@ function BattleConditions.initializeSideEffects(battleState)
     SideEffects.initializeSideEffects(battleState, "enemy")
     
     return true
+end
+
+-- Positional Tag Effects System
+-- Handle position-specific effects that track duration and application per battlefield position
+
+-- Positional tag types
+BattleConditions.PositionalTagType = {
+    SUBSTITUTE_POSITION = "substitute_position", -- Position-specific substitutes
+    POSITION_BARRIER = "position_barrier", -- Position-specific barriers
+    POSITION_CURSE = "position_curse", -- Position-specific curses
+    POSITION_TRAP = "position_trap", -- Position-specific traps
+    CUSTOM_POSITION_EFFECT = "custom_position_effect" -- Custom positional effects
+}
+
+-- Initialize positional tag effects for battle
+-- @param battleState: Current battle state
+-- @return: Success boolean
+function BattleConditions.initializePositionalTags(battleState)
+    if not battleState then
+        return false
+    end
+    
+    -- Initialize positional tag tracking
+    if not battleState.positionalTags then
+        battleState.positionalTags = {
+            player = {},
+            enemy = {}
+        }
+    end
+    
+    -- Initialize position-specific storage based on battle format
+    local formatInfo = PositionalMechanics.getBattleFormatInfo(battleState)
+    
+    for side = 1, 2 do
+        local sideName = side == 1 and "player" or "enemy"
+        
+        for position = 1, formatInfo.max_active_per_side do
+            if not battleState.positionalTags[sideName][position] then
+                battleState.positionalTags[sideName][position] = {}
+            end
+        end
+    end
+    
+    return true
+end
+
+-- Apply positional tag effect to specific position
+-- @param battleState: Current battle state
+-- @param side: "player" or "enemy"
+-- @param position: Position index (1 for left/single, 2 for right)
+-- @param tagType: Type of positional tag
+-- @param duration: Effect duration in turns
+-- @param effectData: Additional effect data
+-- @return: Success boolean and result message
+function BattleConditions.applyPositionalTag(battleState, side, position, tagType, duration, effectData)
+    if not battleState or not battleState.positionalTags then
+        return false, "Positional tags not initialized"
+    end
+    
+    if side ~= "player" and side ~= "enemy" then
+        return false, "Invalid side specified"
+    end
+    
+    -- Validate position for battle format
+    local formatInfo = PositionalMechanics.getBattleFormatInfo(battleState)
+    if position < 1 or position > formatInfo.max_active_per_side then
+        return false, "Invalid position for current battle format"
+    end
+    
+    -- Ensure position storage exists
+    if not battleState.positionalTags[side][position] then
+        battleState.positionalTags[side][position] = {}
+    end
+    
+    -- Apply the positional tag
+    local tagData = {
+        tag_type = tagType,
+        duration = duration or 0,
+        turns_remaining = duration or 0,
+        effect_data = effectData or {},
+        applied_turn = battleState.turn or 0,
+        is_active = true
+    }
+    
+    battleState.positionalTags[side][position][tagType] = tagData
+    
+    return true, string.format("Positional tag %s applied to %s position %d", tagType, side, position)
+end
+
+-- Remove positional tag effect from position
+-- @param battleState: Current battle state
+-- @param side: "player" or "enemy"
+-- @param position: Position index
+-- @param tagType: Type of tag to remove
+-- @return: Success boolean and result message
+function BattleConditions.removePositionalTag(battleState, side, position, tagType)
+    if not battleState or not battleState.positionalTags then
+        return false, "Positional tags not initialized"
+    end
+    
+    if not battleState.positionalTags[side] or not battleState.positionalTags[side][position] then
+        return false, "Position not found"
+    end
+    
+    local positionTags = battleState.positionalTags[side][position]
+    if positionTags[tagType] then
+        positionTags[tagType] = nil
+        return true, string.format("Positional tag %s removed from %s position %d", tagType, side, position)
+    end
+    
+    return false, "Tag not found at position"
+end
+
+-- Get positional tag effects for specific position
+-- @param battleState: Current battle state
+-- @param side: "player" or "enemy"
+-- @param position: Position index
+-- @return: Table of active positional tags
+function BattleConditions.getPositionalTags(battleState, side, position)
+    if not battleState or not battleState.positionalTags then
+        return {}
+    end
+    
+    if not battleState.positionalTags[side] or not battleState.positionalTags[side][position] then
+        return {}
+    end
+    
+    local activeTags = {}
+    for tagType, tagData in pairs(battleState.positionalTags[side][position]) do
+        if tagData.is_active and tagData.turns_remaining > 0 then
+            activeTags[tagType] = tagData
+        end
+    end
+    
+    return activeTags
+end
+
+-- Check if specific positional tag is active at position
+-- @param battleState: Current battle state
+-- @param side: "player" or "enemy"
+-- @param position: Position index
+-- @param tagType: Type of tag to check
+-- @return: Boolean indicating if tag is active
+function BattleConditions.hasPositionalTag(battleState, side, position, tagType)
+    local tags = BattleConditions.getPositionalTags(battleState, side, position)
+    return tags[tagType] ~= nil
+end
+
+-- Update positional tag duration and remove expired tags
+-- @param battleState: Current battle state
+-- @return: Table of expired tags by side and position
+function BattleConditions.updatePositionalTagDurations(battleState)
+    if not battleState or not battleState.positionalTags then
+        return {}
+    end
+    
+    local expiredTags = {
+        player = {},
+        enemy = {}
+    }
+    
+    for sideName, sideData in pairs(battleState.positionalTags) do
+        expiredTags[sideName] = {}
+        
+        for position, positionTags in pairs(sideData) do
+            expiredTags[sideName][position] = {}
+            
+            for tagType, tagData in pairs(positionTags) do
+                if tagData.is_active then
+                    -- Decrease duration
+                    tagData.turns_remaining = tagData.turns_remaining - 1
+                    
+                    -- Check if tag expired
+                    if tagData.turns_remaining <= 0 then
+                        tagData.is_active = false
+                        table.insert(expiredTags[sideName][position], {
+                            tag_type = tagType,
+                            expired_on_turn = battleState.turn or 0,
+                            final_effect_data = tagData.effect_data
+                        })
+                    end
+                end
+            end
+        end
+    end
+    
+    return expiredTags
+end
+
+-- Process end-of-turn positional tag effects
+-- @param battleState: Current battle state
+-- @return: Results of positional tag processing
+function BattleConditions.processPositionalTagTurnEnd(battleState)
+    if not battleState or not battleState.positionalTags then
+        return {
+            tags_processed = 0,
+            effects_applied = {},
+            tags_expired = {}
+        }
+    end
+    
+    local results = {
+        tags_processed = 0,
+        effects_applied = {},
+        tags_expired = {}
+    }
+    
+    -- Update durations and collect expired tags
+    local expiredTags = BattleConditions.updatePositionalTagDurations(battleState)
+    results.tags_expired = expiredTags
+    
+    -- Process active positional tag effects
+    for sideName, sideData in pairs(battleState.positionalTags) do
+        for position, positionTags in pairs(sideData) do
+            for tagType, tagData in pairs(positionTags) do
+                if tagData.is_active then
+                    results.tags_processed = results.tags_processed + 1
+                    
+                    -- Process tag-specific effects
+                    local effectResult = BattleConditions.processPositionalTagEffect(
+                        battleState, sideName, position, tagType, tagData
+                    )
+                    
+                    if effectResult.effect_applied then
+                        table.insert(results.effects_applied, {
+                            side = sideName,
+                            position = position,
+                            tag_type = tagType,
+                            effect_result = effectResult
+                        })
+                    end
+                end
+            end
+        end
+    end
+    
+    return results
+end
+
+-- Process individual positional tag effect
+-- @param battleState: Current battle state
+-- @param side: Side of the position
+-- @param position: Position index
+-- @param tagType: Type of tag
+-- @param tagData: Tag data
+-- @return: Effect processing result
+function BattleConditions.processPositionalTagEffect(battleState, side, position, tagType, tagData)
+    local result = {
+        effect_applied = false,
+        effect_message = "",
+        damage_dealt = 0,
+        healing_applied = 0,
+        status_changes = {}
+    }
+    
+    -- Get Pokemon at position
+    local pokemon = PositionalMechanics.getPokemonAtPosition(battleState, side, position)
+    if not pokemon or pokemon.fainted then
+        return result
+    end
+    
+    -- Process based on tag type
+    if tagType == BattleConditions.PositionalTagType.SUBSTITUTE_POSITION then
+        -- Process substitute at specific position
+        result = BattleConditions.processPositionalSubstitute(battleState, pokemon, tagData)
+        
+    elseif tagType == BattleConditions.PositionalTagType.POSITION_BARRIER then
+        -- Process position-specific barrier
+        result = BattleConditions.processPositionalBarrier(battleState, pokemon, tagData)
+        
+    elseif tagType == BattleConditions.PositionalTagType.POSITION_CURSE then
+        -- Process position-specific curse damage
+        result = BattleConditions.processPositionalCurse(battleState, pokemon, tagData)
+        
+    elseif tagType == BattleConditions.PositionalTagType.POSITION_TRAP then
+        -- Process position-specific trap effects
+        result = BattleConditions.processPositionalTrap(battleState, pokemon, tagData)
+        
+    elseif tagType == BattleConditions.PositionalTagType.CUSTOM_POSITION_EFFECT then
+        -- Process custom positional effects
+        result = BattleConditions.processCustomPositionalEffect(battleState, pokemon, tagData)
+    end
+    
+    return result
+end
+
+-- Process position-specific substitute effects
+-- @param battleState: Battle state
+-- @param pokemon: Pokemon at position
+-- @param tagData: Substitute tag data
+-- @return: Processing result
+function BattleConditions.processPositionalSubstitute(battleState, pokemon, tagData)
+    -- Substitute persists until broken or Pokemon switches
+    return {
+        effect_applied = true,
+        effect_message = string.format("%s's substitute is active", pokemon.name or "Pokemon"),
+        damage_dealt = 0,
+        healing_applied = 0,
+        status_changes = {}
+    }
+end
+
+-- Process position-specific barrier effects
+-- @param battleState: Battle state
+-- @param pokemon: Pokemon at position
+-- @param tagData: Barrier tag data
+-- @return: Processing result
+function BattleConditions.processPositionalBarrier(battleState, pokemon, tagData)
+    -- Barrier reduces incoming damage for Pokemon at this position
+    return {
+        effect_applied = true,
+        effect_message = string.format("%s is protected by a positional barrier", pokemon.name or "Pokemon"),
+        damage_dealt = 0,
+        healing_applied = 0,
+        status_changes = {},
+        damage_reduction = tagData.effect_data.damage_reduction or 0.5
+    }
+end
+
+-- Process position-specific curse effects
+-- @param battleState: Battle state
+-- @param pokemon: Pokemon at position
+-- @param tagData: Curse tag data
+-- @return: Processing result
+function BattleConditions.processPositionalCurse(battleState, pokemon, tagData)
+    -- Curse deals damage each turn to Pokemon at this position
+    local curseDamage = math.floor((pokemon.maxHP or pokemon.stats.hp or 100) / 4) -- 25% max HP
+    local actualDamage = math.min(curseDamage, pokemon.currentHP)
+    
+    pokemon.currentHP = math.max(0, pokemon.currentHP - actualDamage)
+    
+    return {
+        effect_applied = true,
+        effect_message = string.format("%s is hurt by the positional curse!", pokemon.name or "Pokemon"),
+        damage_dealt = actualDamage,
+        healing_applied = 0,
+        status_changes = {}
+    }
+end
+
+-- Process position-specific trap effects
+-- @param battleState: Battle state
+-- @param pokemon: Pokemon at position
+-- @param tagData: Trap tag data
+-- @return: Processing result
+function BattleConditions.processPositionalTrap(battleState, pokemon, tagData)
+    -- Trap triggers when Pokemon tries to move or use certain moves
+    return {
+        effect_applied = true,
+        effect_message = string.format("%s is trapped in position!", pokemon.name or "Pokemon"),
+        damage_dealt = 0,
+        healing_applied = 0,
+        status_changes = {},
+        movement_blocked = true
+    }
+end
+
+-- Process custom positional effects
+-- @param battleState: Battle state
+-- @param pokemon: Pokemon at position
+-- @param tagData: Custom effect tag data
+-- @return: Processing result
+function BattleConditions.processCustomPositionalEffect(battleState, pokemon, tagData)
+    -- Process custom effects based on effect_data
+    local effectData = tagData.effect_data or {}
+    
+    local result = {
+        effect_applied = false,
+        effect_message = "",
+        damage_dealt = 0,
+        healing_applied = 0,
+        status_changes = {}
+    }
+    
+    -- Apply custom damage
+    if effectData.damage_per_turn then
+        local damage = effectData.damage_per_turn
+        local actualDamage = math.min(damage, pokemon.currentHP)
+        pokemon.currentHP = math.max(0, pokemon.currentHP - actualDamage)
+        result.damage_dealt = actualDamage
+        result.effect_applied = true
+    end
+    
+    -- Apply custom healing
+    if effectData.healing_per_turn then
+        local maxHP = pokemon.maxHP or pokemon.stats.hp or 100
+        local healing = math.min(effectData.healing_per_turn, maxHP - pokemon.currentHP)
+        pokemon.currentHP = pokemon.currentHP + healing
+        result.healing_applied = healing
+        result.effect_applied = true
+    end
+    
+    -- Apply custom message
+    if effectData.message then
+        result.effect_message = string.format(effectData.message, pokemon.name or "Pokemon")
+        result.effect_applied = true
+    end
+    
+    return result
+end
+
+-- Get all active positional tags for battle summary
+-- @param battleState: Current battle state
+-- @return: Summary of all active positional tags
+function BattleConditions.getPositionalTagsSummary(battleState)
+    if not battleState or not battleState.positionalTags then
+        return {
+            total_active_tags = 0,
+            tags_by_side = {}
+        }
+    end
+    
+    local summary = {
+        total_active_tags = 0,
+        tags_by_side = {}
+    }
+    
+    for sideName, sideData in pairs(battleState.positionalTags) do
+        summary.tags_by_side[sideName] = {}
+        
+        for position, positionTags in pairs(sideData) do
+            local activeTags = BattleConditions.getPositionalTags(battleState, sideName, position)
+            if next(activeTags) then -- Has active tags
+                summary.tags_by_side[sideName][position] = {}
+                for tagType, tagData in pairs(activeTags) do
+                    summary.total_active_tags = summary.total_active_tags + 1
+                    table.insert(summary.tags_by_side[sideName][position], {
+                        tag_type = tagType,
+                        turns_remaining = tagData.turns_remaining,
+                        effect_description = BattleConditions.getPositionalTagDescription(tagType)
+                    })
+                end
+            end
+        end
+    end
+    
+    return summary
+end
+
+-- Get description for positional tag type
+-- @param tagType: Type of positional tag
+-- @return: Human-readable description
+function BattleConditions.getPositionalTagDescription(tagType)
+    local descriptions = {
+        [BattleConditions.PositionalTagType.SUBSTITUTE_POSITION] = "Position-specific substitute protecting from damage",
+        [BattleConditions.PositionalTagType.POSITION_BARRIER] = "Barrier reducing damage to this position",
+        [BattleConditions.PositionalTagType.POSITION_CURSE] = "Curse dealing damage each turn at this position",
+        [BattleConditions.PositionalTagType.POSITION_TRAP] = "Trap preventing movement from this position",
+        [BattleConditions.PositionalTagType.CUSTOM_POSITION_EFFECT] = "Custom positional effect"
+    }
+    
+    return descriptions[tagType] or "Unknown positional effect"
 end
 
 return BattleConditions

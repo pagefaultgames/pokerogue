@@ -17,6 +17,7 @@ local StatCalculator = {}
 local NatureModifiers = require("data.constants.nature-modifiers")
 local Enums = require("data.constants.enums")
 local CryptoRNG = require("game-logic.rng.crypto-rng")
+local PositionalMechanics = require("game-logic.battle.positional-mechanics")
 
 -- Constants for stat calculations (matching TypeScript Math.floor/Math.ceil behavior)
 local MAX_IV = 31
@@ -253,6 +254,106 @@ function StatCalculator.applyStatStages(baseStat, stages)
     return math.floor(baseStat * multiplier)
 end
 
+-- Apply field condition stat modifications
+-- @param pokemon: Pokemon data with calculated stats
+-- @param fieldConditions: Current field conditions
+-- @return: Pokemon stats modified by field conditions
+function StatCalculator.applyFieldConditionStatModifications(pokemon, fieldConditions)
+    if not pokemon or not pokemon.stats or not fieldConditions then
+        return pokemon
+    end
+    
+    local FieldConditions = require("game-logic.battle.field-conditions")
+    local modifiedStats = {}
+    
+    -- Copy all stats
+    for stat, value in pairs(pokemon.stats) do
+        modifiedStats[stat] = value
+    end
+    
+    -- Check for Wonder Room (swaps Defense and Special Defense)
+    for conditionType, conditionData in pairs(fieldConditions) do
+        if conditionType == FieldConditions.FieldEffectType.WONDER_ROOM and 
+           conditionData.duration and conditionData.duration > 0 then
+            
+            -- Swap Defense and Special Defense stats
+            local originalDef = modifiedStats.defense or modifiedStats.def or 0
+            local originalSpDef = modifiedStats.spDefense or modifiedStats.spdef or 0
+            
+            -- Perform the swap with both naming conventions
+            modifiedStats.defense = originalSpDef
+            modifiedStats.spDefense = originalDef
+            modifiedStats.def = originalSpDef  -- Compatibility
+            modifiedStats.spdef = originalDef  -- Compatibility
+            
+            break -- Only one Wonder Room can be active
+        end
+    end
+    
+    -- Create modified Pokemon copy
+    local modifiedPokemon = {}
+    for k, v in pairs(pokemon) do
+        modifiedPokemon[k] = v
+    end
+    modifiedPokemon.stats = modifiedStats
+    modifiedPokemon.wonder_room_active = true  -- Mark for debugging
+    
+    return modifiedPokemon
+end
+
+-- Check if stat is swapped by field conditions
+-- @param statName: Name of the stat to check
+-- @param fieldConditions: Current field conditions
+-- @return: Original stat name that should be used, boolean indicating if swapped
+function StatCalculator.getFieldConditionStatMapping(statName, fieldConditions)
+    if not statName or not fieldConditions then
+        return statName, false
+    end
+    
+    local FieldConditions = require("game-logic.battle.field-conditions")
+    
+    -- Check for Wonder Room
+    for conditionType, conditionData in pairs(fieldConditions) do
+        if conditionType == FieldConditions.FieldEffectType.WONDER_ROOM and 
+           conditionData.duration and conditionData.duration > 0 then
+            
+            -- Map swapped stats
+            if statName == "defense" or statName == "def" then
+                return "spDefense", true  -- Defense becomes Special Defense
+            elseif statName == "spDefense" or statName == "spdef" then
+                return "defense", true   -- Special Defense becomes Defense
+            end
+            
+            break
+        end
+    end
+    
+    return statName, false
+end
+
+-- Calculate effective stat for damage calculation with field conditions
+-- @param pokemon: Pokemon data
+-- @param statName: Name of stat to calculate
+-- @param fieldConditions: Current field conditions
+-- @param stages: Stat stage modifications
+-- @return: Effective stat value considering field conditions
+function StatCalculator.calculateEffectiveStatWithFieldConditions(pokemon, statName, fieldConditions, stages)
+    if not pokemon or not pokemon.stats then
+        return 0
+    end
+    
+    -- Get field condition mapping
+    local effectiveStatName, isSwapped = StatCalculator.getFieldConditionStatMapping(statName, fieldConditions)
+    
+    -- Get base stat (after any swapping)
+    local baseStat = pokemon.stats[effectiveStatName] or 0
+    
+    -- Apply stage modifications
+    local finalStat = StatCalculator.applyStatStages(baseStat, stages or 0)
+    
+    return finalStat, isSwapped
+end
+
 -- Recalculate stats after level change or evolution
 -- @param pokemon: Pokemon data table with baseStats, ivs, level, natureId
 -- @return: Updated stats table
@@ -330,6 +431,282 @@ end
 function StatCalculator.validateStatCalculation(expected, actual, tolerance)
     tolerance = tolerance or 0
     return math.abs(expected - actual) <= tolerance
+end
+
+-- Positional Abilities System
+-- Handle Plus/Minus and other position-dependent abilities
+
+-- Positional abilities that require adjacency
+StatCalculator.PositionalAbilities = {
+    PLUS = "Plus",
+    MINUS = "Minus",
+    -- Add other positional abilities as needed
+}
+
+-- Check if ability is positional (requires adjacency)
+-- @param abilityName: Name of the ability
+-- @return: Boolean indicating if ability is positional
+function StatCalculator.isPositionalAbility(abilityName)
+    if not abilityName then
+        return false
+    end
+    
+    for _, positionalAbility in pairs(StatCalculator.PositionalAbilities) do
+        if abilityName == positionalAbility then
+            return true
+        end
+    end
+    
+    return false
+end
+
+-- Check if Pokemon has Plus or Minus ability and should receive bonus
+-- @param pokemon: Pokemon to check
+-- @param battleState: Current battle state
+-- @return: Boolean indicating if positional ability bonus applies
+function StatCalculator.checkPositionalAbilityActivation(pokemon, battleState)
+    if not pokemon or not pokemon.ability or not battleState then
+        return false
+    end
+    
+    local abilityName = pokemon.ability
+    
+    -- Must have Plus or Minus ability
+    if abilityName ~= StatCalculator.PositionalAbilities.PLUS and 
+       abilityName ~= StatCalculator.PositionalAbilities.MINUS then
+        return false
+    end
+    
+    -- Must be in double battle format
+    if not PositionalMechanics.supportsPositionalMechanics(battleState) then
+        return false
+    end
+    
+    -- Check adjacent allies for complementary abilities
+    local adjacentAllies = PositionalMechanics.getAdjacentAllies(battleState, pokemon)
+    
+    for _, ally in ipairs(adjacentAllies) do
+        if ally and ally.ability then
+            -- Plus and Minus activate when adjacent to each other
+            if (abilityName == StatCalculator.PositionalAbilities.PLUS and 
+                ally.ability == StatCalculator.PositionalAbilities.MINUS) or
+               (abilityName == StatCalculator.PositionalAbilities.MINUS and 
+                ally.ability == StatCalculator.PositionalAbilities.PLUS) then
+                return true
+            end
+        end
+    end
+    
+    return false
+end
+
+-- Calculate stat modifier from positional abilities
+-- @param pokemon: Pokemon with the positional ability
+-- @param statType: Type of stat ("spAttack" or "spatk" for Plus/Minus)
+-- @param battleState: Current battle state
+-- @return: Stat modifier (1.0 = no change, 1.5 = +50% boost)
+function StatCalculator.getPositionalAbilityStatModifier(pokemon, statType, battleState)
+    if not pokemon or not statType or not battleState then
+        return 1.0
+    end
+    
+    -- Check if positional ability should activate
+    if not StatCalculator.checkPositionalAbilityActivation(pokemon, battleState) then
+        return 1.0
+    end
+    
+    local abilityName = pokemon.ability
+    
+    -- Plus and Minus boost Special Attack by 50%
+    if (abilityName == StatCalculator.PositionalAbilities.PLUS or
+        abilityName == StatCalculator.PositionalAbilities.MINUS) and
+       (statType == "spAttack" or statType == "spatk") then
+        return 1.5 -- +50% boost
+    end
+    
+    -- Add other positional ability stat modifications here
+    
+    return 1.0
+end
+
+-- Apply positional ability effects to Pokemon stats during battle
+-- @param pokemon: Pokemon to apply effects to
+-- @param battleState: Current battle state
+-- @return: Modified stat values or original stats if no changes
+function StatCalculator.applyPositionalAbilityEffects(pokemon, battleState)
+    if not pokemon or not pokemon.stats or not battleState then
+        return pokemon.stats
+    end
+    
+    -- Check if any positional abilities are active
+    if not StatCalculator.checkPositionalAbilityActivation(pokemon, battleState) then
+        return pokemon.stats
+    end
+    
+    -- Create modified stats table
+    local modifiedStats = {}
+    for statName, statValue in pairs(pokemon.stats) do
+        modifiedStats[statName] = statValue
+    end
+    
+    -- Apply Plus/Minus special attack boost
+    local spAttackModifier = StatCalculator.getPositionalAbilityStatModifier(pokemon, "spAttack", battleState)
+    if spAttackModifier ~= 1.0 then
+        local spAttackStat = modifiedStats.spAttack or modifiedStats.spatk
+        if spAttackStat then
+            local boostedValue = math.floor(spAttackStat * spAttackModifier)
+            modifiedStats.spAttack = boostedValue
+            if modifiedStats.spatk then
+                modifiedStats.spatk = boostedValue
+            end
+        end
+    end
+    
+    return modifiedStats
+end
+
+-- Get positional ability status information
+-- @param pokemon: Pokemon to check
+-- @param battleState: Current battle state
+-- @return: Information about positional ability status
+function StatCalculator.getPositionalAbilityInfo(pokemon, battleState)
+    if not pokemon then
+        return {
+            has_positional_ability = false,
+            ability_name = nil,
+            is_active = false,
+            boost_applied = false,
+            adjacent_allies = 0
+        }
+    end
+    
+    local abilityName = pokemon.ability
+    local hasPositionalAbility = StatCalculator.isPositionalAbility(abilityName)
+    local isActive = false
+    local boostApplied = false
+    local adjacentAllies = {}
+    
+    if hasPositionalAbility and battleState then
+        isActive = StatCalculator.checkPositionalAbilityActivation(pokemon, battleState)
+        if isActive then
+            boostApplied = StatCalculator.getPositionalAbilityStatModifier(pokemon, "spAttack", battleState) ~= 1.0
+        end
+        adjacentAllies = PositionalMechanics.getAdjacentAllies(battleState, pokemon)
+    end
+    
+    return {
+        has_positional_ability = hasPositionalAbility,
+        ability_name = abilityName,
+        is_active = isActive,
+        boost_applied = boostApplied,
+        adjacent_allies = #adjacentAllies,
+        ally_abilities = {}
+    }
+end
+
+-- Check for positional ability interactions between Pokemon
+-- @param pokemon1: First Pokemon
+-- @param pokemon2: Second Pokemon  
+-- @return: Information about their positional ability interaction
+function StatCalculator.checkPositionalAbilityInteraction(pokemon1, pokemon2)
+    if not pokemon1 or not pokemon2 then
+        return {
+            interaction_exists = false,
+            interaction_type = nil,
+            both_benefit = false
+        }
+    end
+    
+    local ability1 = pokemon1.ability
+    local ability2 = pokemon2.ability
+    
+    -- Plus/Minus interaction
+    if (ability1 == StatCalculator.PositionalAbilities.PLUS and 
+        ability2 == StatCalculator.PositionalAbilities.MINUS) or
+       (ability1 == StatCalculator.PositionalAbilities.MINUS and 
+        ability2 == StatCalculator.PositionalAbilities.PLUS) then
+        return {
+            interaction_exists = true,
+            interaction_type = "Plus/Minus",
+            both_benefit = true,
+            stat_boost = "Special Attack +50%"
+        }
+    end
+    
+    return {
+        interaction_exists = false,
+        interaction_type = nil,
+        both_benefit = false
+    }
+end
+
+-- Update Pokemon battle data with positional ability effects
+-- @param pokemon: Pokemon to update
+-- @param battleState: Current battle state
+-- @return: Success boolean and update details
+function StatCalculator.updatePositionalAbilityBattleData(pokemon, battleState)
+    if not pokemon or not battleState then
+        return false, "Missing required parameters"
+    end
+    
+    -- Initialize battle data if not present
+    if not pokemon.battleData then
+        pokemon.battleData = {}
+    end
+    
+    -- Store original stats if not already stored
+    if not pokemon.battleData.originalStats then
+        pokemon.battleData.originalStats = {}
+        for statName, statValue in pairs(pokemon.stats) do
+            pokemon.battleData.originalStats[statName] = statValue
+        end
+    end
+    
+    -- Apply positional ability effects
+    local modifiedStats = StatCalculator.applyPositionalAbilityEffects(pokemon, battleState)
+    
+    -- Check if stats were actually modified
+    local statsChanged = false
+    for statName, statValue in pairs(modifiedStats) do
+        if pokemon.stats[statName] ~= statValue then
+            statsChanged = true
+            break
+        end
+    end
+    
+    if statsChanged then
+        -- Update current stats with positional ability modifications
+        pokemon.stats = modifiedStats
+        
+        -- Store positional ability info in battle data
+        pokemon.battleData.positionalAbilityInfo = StatCalculator.getPositionalAbilityInfo(pokemon, battleState)
+        pokemon.battleData.positionalAbilityActive = true
+        
+        return true, "Positional ability effects applied"
+    else
+        pokemon.battleData.positionalAbilityActive = false
+        return true, "No positional ability effects to apply"
+    end
+end
+
+-- Reset positional ability effects (when Pokemon switches out or battle ends)
+-- @param pokemon: Pokemon to reset
+-- @return: Success boolean and reset details
+function StatCalculator.resetPositionalAbilityEffects(pokemon)
+    if not pokemon or not pokemon.battleData then
+        return false, "No battle data to reset"
+    end
+    
+    -- Restore original stats if they were modified
+    if pokemon.battleData.originalStats and pokemon.battleData.positionalAbilityActive then
+        pokemon.stats = pokemon.battleData.originalStats
+        pokemon.battleData.positionalAbilityActive = false
+        pokemon.battleData.positionalAbilityInfo = nil
+        
+        return true, "Positional ability effects reset"
+    end
+    
+    return true, "No positional ability effects to reset"
 end
 
 return StatCalculator

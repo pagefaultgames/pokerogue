@@ -7,6 +7,7 @@ local MoveEffects = {}
 -- Load dependencies
 local Enums = require("data.constants.enums")
 local BattleRNG = require("game-logic.rng.battle-rng")
+local PositionalMechanics = require("game-logic.battle.positional-mechanics")
 
 -- Status effect definitions (matching TypeScript StatusEffect enum)
 MoveEffects.StatusEffect = {
@@ -2965,6 +2966,302 @@ function MoveEffects.hasSideEffects(moveData)
            moveData.effects.safeguard or 
            moveData.effects.mist or
            moveData.effects.remove_screens
+end
+
+-- Position Swapping Move Effects
+-- Handles Ally Switch and other position-changing moves
+
+-- Execute Ally Switch move effect
+-- @param battleState: Current battle state
+-- @param user: Pokemon using Ally Switch
+-- @param moveData: Move data for Ally Switch
+-- @return: Result of position swap
+function MoveEffects.executeAllySwitch(battleState, user, moveData)
+    if not battleState or not user then
+        return {
+            success = false,
+            message = "Missing required parameters",
+            effect_applied = false
+        }
+    end
+    
+    -- Check if this is a double battle format
+    local formatInfo = PositionalMechanics.getBattleFormatInfo(battleState)
+    if formatInfo.format ~= PositionalMechanics.BattleFormat.DOUBLE then
+        return {
+            success = false,
+            message = "Ally Switch can only be used in double battles",
+            effect_applied = false
+        }
+    end
+    
+    -- Find ally to switch with
+    local adjacentAllies = PositionalMechanics.getAdjacentAllies(battleState, user)
+    if #adjacentAllies == 0 then
+        return {
+            success = false,
+            message = "No ally available to switch positions with",
+            effect_applied = false
+        }
+    end
+    
+    -- Get the ally (should only be one in doubles)
+    local ally = adjacentAllies[1]
+    
+    -- Perform position swap
+    local swapSuccess, swapMessage = PositionalMechanics.swapPokemonPositions(battleState, user, ally)
+    
+    if swapSuccess then
+        return {
+            success = true,
+            message = string.format("%s switched positions with %s!", 
+                user.name or "User Pokemon", ally.name or "Ally Pokemon"),
+            effect_applied = true,
+            swap_details = {
+                user_id = user.id,
+                ally_id = ally.id,
+                user_new_position = user.battleData.position,
+                ally_new_position = ally.battleData.position
+            }
+        }
+    else
+        return {
+            success = false,
+            message = "Position swap failed: " .. swapMessage,
+            effect_applied = false
+        }
+    end
+end
+
+-- Check if move is a position-swapping move
+-- @param moveData: Move data to check
+-- @return: Boolean indicating if move swaps positions
+function MoveEffects.isPositionSwappingMove(moveData)
+    if not moveData then
+        return false
+    end
+    
+    -- Check by move ID (Ally Switch is move ID 502 in most Pokemon games)
+    if moveData.id == 502 or moveData.name == "Ally Switch" then
+        return true
+    end
+    
+    -- Check by move effect flag
+    if moveData.effects and moveData.effects.ally_switch then
+        return true
+    end
+    
+    -- Check by move category or special flags
+    if moveData.isPositionSwapMove or moveData.swapsPositions then
+        return true
+    end
+    
+    return false
+end
+
+-- Apply position-dependent move effects
+-- @param battleState: Current battle state
+-- @param user: Pokemon using the move
+-- @param targets: Array of target Pokemon
+-- @param moveData: Move data
+-- @return: Result of position-dependent effect
+function MoveEffects.applyPositionDependentEffects(battleState, user, targets, moveData)
+    if not battleState or not user or not moveData then
+        return {
+            success = false,
+            message = "Missing required parameters",
+            effects_applied = {}
+        }
+    end
+    
+    local results = {
+        success = true,
+        message = "Position-dependent effects processed",
+        effects_applied = {}
+    }
+    
+    -- Handle Ally Switch
+    if MoveEffects.isPositionSwappingMove(moveData) then
+        local allySwapResult = MoveEffects.executeAllySwitch(battleState, user, moveData)
+        table.insert(results.effects_applied, {
+            effect_type = "position_swap",
+            result = allySwapResult
+        })
+        
+        if not allySwapResult.success then
+            results.success = false
+            results.message = allySwapResult.message
+        end
+    end
+    
+    -- Handle other position-dependent moves
+    if moveData.effects then
+        -- Position-based targeting effects
+        if moveData.effects.position_targeting then
+            local targetingResult = MoveEffects.processPositionTargeting(battleState, user, targets, moveData)
+            table.insert(results.effects_applied, {
+                effect_type = "position_targeting",
+                result = targetingResult
+            })
+        end
+        
+        -- Position-based power modifications
+        if moveData.effects.position_power_modifier then
+            local powerResult = MoveEffects.processPositionPowerModifier(battleState, user, targets, moveData)
+            table.insert(results.effects_applied, {
+                effect_type = "position_power",
+                result = powerResult
+            })
+        end
+    end
+    
+    return results
+end
+
+-- Process position-based targeting for moves
+-- @param battleState: Current battle state
+-- @param user: Pokemon using the move
+-- @param targets: Array of target Pokemon
+-- @param moveData: Move data
+-- @return: Targeting processing result
+function MoveEffects.processPositionTargeting(battleState, user, targets, moveData)
+    -- This handles special position-based targeting mechanics
+    -- For moves that target specific positions rather than specific Pokemon
+    
+    local formatInfo = PositionalMechanics.getBattleFormatInfo(battleState)
+    
+    if formatInfo.format ~= PositionalMechanics.BattleFormat.DOUBLE then
+        return {
+            success = false,
+            message = "Position-based targeting requires double battle format"
+        }
+    end
+    
+    -- Process targeting based on position rules
+    local processedTargets = {}
+    
+    for _, target in ipairs(targets) do
+        local targetPosition = target.battleData and target.battleData.position
+        
+        if targetPosition then
+            table.insert(processedTargets, {
+                pokemon_id = target.id,
+                position = targetPosition,
+                targeting_valid = true
+            })
+        end
+    end
+    
+    return {
+        success = true,
+        message = "Position targeting processed successfully",
+        processed_targets = processedTargets
+    }
+end
+
+-- Process position-based power modifiers
+-- @param battleState: Current battle state
+-- @param user: Pokemon using the move
+-- @param targets: Array of target Pokemon
+-- @param moveData: Move data
+-- @return: Power modifier processing result
+function MoveEffects.processPositionPowerModifier(battleState, user, targets, moveData)
+    -- Handle moves that have different power based on position
+    -- For example, some moves hit harder when targeting certain positions
+    
+    local modifiers = {}
+    
+    for _, target in ipairs(targets) do
+        local targetPosition = target.battleData and target.battleData.position
+        local userPosition = user.battleData and user.battleData.position
+        
+        local powerModifier = 1.0
+        
+        -- Apply position-based power modifications
+        if moveData.effects.position_power_modifier then
+            local modifierData = moveData.effects.position_power_modifier
+            
+            if modifierData.same_side_bonus and userPosition == targetPosition then
+                powerModifier = powerModifier * (modifierData.same_side_bonus or 1.2)
+            end
+            
+            if modifierData.opposite_side_bonus and userPosition ~= targetPosition then
+                powerModifier = powerModifier * (modifierData.opposite_side_bonus or 1.2)
+            end
+        end
+        
+        table.insert(modifiers, {
+            target_id = target.id,
+            position = targetPosition,
+            power_modifier = powerModifier
+        })
+    end
+    
+    return {
+        success = true,
+        message = "Position power modifiers calculated",
+        modifiers = modifiers
+    }
+end
+
+-- Get position swap priority
+-- Position-swapping moves typically have high priority in doubles battles
+-- @param moveData: Move data
+-- @return: Priority value for position swapping moves
+function MoveEffects.getPositionSwapPriority(moveData)
+    if MoveEffects.isPositionSwappingMove(moveData) then
+        -- Ally Switch typically has +2 priority
+        return moveData.priority or 2
+    end
+    
+    return moveData.priority or 0
+end
+
+-- Validate position swap move usage
+-- @param battleState: Current battle state
+-- @param user: Pokemon attempting to use the move
+-- @param moveData: Position swapping move data
+-- @return: Validation result
+function MoveEffects.validatePositionSwapUsage(battleState, user, moveData)
+    if not battleState or not user or not moveData then
+        return {
+            valid = false,
+            reason = "Missing required parameters"
+        }
+    end
+    
+    -- Must be in double battle format
+    local formatInfo = PositionalMechanics.getBattleFormatInfo(battleState)
+    if formatInfo.format ~= PositionalMechanics.BattleFormat.DOUBLE then
+        return {
+            valid = false,
+            reason = "Position swapping moves require double battle format"
+        }
+    end
+    
+    -- Must have an ally to swap with
+    local adjacentAllies = PositionalMechanics.getAdjacentAllies(battleState, user)
+    if #adjacentAllies == 0 then
+        return {
+            valid = false,
+            reason = "No ally available to swap positions with"
+        }
+    end
+    
+    -- Ally must not be fainted
+    local ally = adjacentAllies[1]
+    if ally.fainted then
+        return {
+            valid = false,
+            reason = "Cannot swap positions with fainted ally"
+        }
+    end
+    
+    return {
+        valid = true,
+        reason = "Position swap is valid",
+        ally = ally
+    }
 end
 
 return MoveEffects

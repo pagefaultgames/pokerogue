@@ -271,6 +271,16 @@ function PriorityCalculator.compareActions(actionA, actionB, battleConditions)
     local trickRoom = false
     if battleConditions and battleConditions.trickRoom and battleConditions.trickRoom > 0 then
         trickRoom = true
+    elseif battleConditions and battleConditions.fieldConditions then
+        -- Check field conditions for Trick Room
+        local FieldConditions = require("game-logic.battle.field-conditions")
+        for conditionType, conditionData in pairs(battleConditions.fieldConditions) do
+            if conditionType == FieldConditions.FieldEffectType.TRICK_ROOM and 
+               conditionData.duration and conditionData.duration > 0 then
+                trickRoom = true
+                break
+            end
+        end
     end
     
     if speedA ~= speedB then
@@ -400,6 +410,73 @@ function PriorityCalculator.getPriorityBreakdown(action, battleConditions)
     end
     
     return breakdown
+end
+
+-- Apply field condition effects to action priority
+-- @param action: Action to modify
+-- @param battleConditions: Current battle conditions including field conditions
+-- @return: Modified action with field condition effects applied
+function PriorityCalculator.applyFieldConditionEffects(action, battleConditions)
+    if not action or not battleConditions or not battleConditions.fieldConditions then
+        return action
+    end
+    
+    local FieldConditions = require("game-logic.battle.field-conditions")
+    local modifiedAction = {}
+    
+    -- Copy action properties
+    for k, v in pairs(action) do
+        modifiedAction[k] = v
+    end
+    
+    -- Apply Trick Room effects if active
+    for conditionType, conditionData in pairs(battleConditions.fieldConditions) do
+        if conditionType == FieldConditions.FieldEffectType.TRICK_ROOM and 
+           conditionData.duration and conditionData.duration > 0 then
+            
+            -- Mark action as affected by Trick Room
+            modifiedAction.trick_room_active = true
+            modifiedAction.field_condition_priority = true
+            
+            -- Store original speed for debugging
+            if not modifiedAction.original_speed then
+                modifiedAction.original_speed = modifiedAction.effectiveSpeed or 0
+            end
+            
+            break
+        end
+    end
+    
+    return modifiedAction
+end
+
+-- Check if field conditions affect priority calculation
+-- @param battleConditions: Current battle conditions
+-- @return: Boolean indicating if field conditions affect priority, list of active effects
+function PriorityCalculator.checkFieldConditionPriorityEffects(battleConditions)
+    if not battleConditions or not battleConditions.fieldConditions then
+        return false, {}
+    end
+    
+    local affectsPriority = false
+    local activeEffects = {}
+    
+    local FieldConditions = require("game-logic.battle.field-conditions")
+    
+    for conditionType, conditionData in pairs(battleConditions.fieldConditions) do
+        if conditionData.duration and conditionData.duration > 0 then
+            if conditionType == FieldConditions.FieldEffectType.TRICK_ROOM then
+                affectsPriority = true
+                table.insert(activeEffects, {
+                    type = "trick_room",
+                    effect = "speed_reversal",
+                    duration = conditionData.duration
+                })
+            end
+        end
+    end
+    
+    return affectsPriority, activeEffects
 end
 
 return PriorityCalculator

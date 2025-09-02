@@ -15,6 +15,7 @@ local ExperienceSystem = {}
 -- Import dependencies
 local StatCalculator = require("game-logic.pokemon.stat-calculator")
 local SpeciesDatabase = require("data.species.species-database")
+local EvolutionSystem = require("game-logic.pokemon.evolution-system")
 
 -- Experience group formulas (matching Pokemon games)
 local ExperienceFormulas = {
@@ -67,6 +68,23 @@ local FRIENDSHIP_LEVEL_GAIN = 2    -- Friendship gained per level up
 local FRIENDSHIP_BATTLE_WIN = 3    -- Friendship gained for winning battle
 local FRIENDSHIP_BATTLE_LOSS = 1   -- Friendship gained for participating in battle
 
+-- Level cap progression based on game advancement
+local LEVEL_CAPS = {
+    [0] = 10,   -- Initial cap (first gym)
+    [1] = 15,   -- After first gym badge
+    [2] = 20,   -- After second gym badge
+    [3] = 25,   -- After third gym badge
+    [4] = 30,   -- After fourth gym badge
+    [5] = 35,   -- After fifth gym badge
+    [6] = 40,   -- After sixth gym badge
+    [7] = 45,   -- After seventh gym badge
+    [8] = 50,   -- After eighth gym badge
+    [9] = 60,   -- Elite Four
+    [10] = 70,  -- Champion
+    [11] = 80,  -- Post-game content
+    [12] = 100  -- Final endgame cap
+}
+
 -- Experience calculation from battle participation
 local BASE_EXP_YIELD = {
     ["WILD"] = 1.0,      -- Wild Pokemon battles
@@ -75,6 +93,95 @@ local BASE_EXP_YIELD = {
     ["ELITE"] = 2.5,     -- Elite Four battles
     ["CHAMPION"] = 3.0   -- Champion battles
 }
+
+-- Level Cap Functions
+
+-- Get current level cap based on game progression
+-- @param playerProgression: Player progression data (badges, completion status)
+-- @return: Current level cap for Pokemon
+function ExperienceSystem.getCurrentLevelCap(playerProgression)
+    if not playerProgression then
+        return LEVEL_CAPS[0] -- Default to initial cap
+    end
+    
+    local badges = playerProgression.badges or 0
+    local eliteFourDefeated = playerProgression.eliteFourDefeated or false
+    local championDefeated = playerProgression.championDefeated or false
+    local postgameProgress = playerProgression.postgameProgress or 0
+    
+    -- Determine progression level
+    if postgameProgress >= 2 then
+        return LEVEL_CAPS[12] -- Final endgame
+    elseif postgameProgress >= 1 then
+        return LEVEL_CAPS[11] -- Post-game content
+    elseif championDefeated then
+        return LEVEL_CAPS[10] -- Champion defeated
+    elseif eliteFourDefeated then
+        return LEVEL_CAPS[9]  -- Elite Four defeated
+    else
+        return LEVEL_CAPS[badges] or LEVEL_CAPS[0] -- Badge-based progression
+    end
+end
+
+-- Check if level is within cap limits
+-- @param level: Level to check
+-- @param playerProgression: Player progression data
+-- @return: Boolean indicating if level is allowed, actual cap
+function ExperienceSystem.isLevelWithinCap(level, playerProgression)
+    local currentCap = ExperienceSystem.getCurrentLevelCap(playerProgression)
+    return level <= currentCap, currentCap
+end
+
+-- Enforce level cap on experience gain
+-- @param pokemon: Pokemon receiving experience
+-- @param expGained: Experience to be gained
+-- @param playerProgression: Player progression data
+-- @return: Adjusted experience amount and cap info
+function ExperienceSystem.enforceLevelCap(pokemon, expGained, playerProgression)
+    if not pokemon or not expGained or expGained <= 0 then
+        return 0, {capReached = false, levelCap = 100}
+    end
+    
+    local currentCap = ExperienceSystem.getCurrentLevelCap(playerProgression)
+    
+    -- If Pokemon is already at cap, no experience gain
+    if pokemon.level >= currentCap then
+        return 0, {
+            capReached = true,
+            levelCap = currentCap,
+            currentLevel = pokemon.level,
+            message = "Pokemon has reached the level cap of " .. currentCap
+        }
+    end
+    
+    -- Get species data for growth rate
+    local speciesData = SpeciesDatabase.getSpecies(pokemon.speciesId)
+    if not speciesData then
+        return expGained, {capReached = false, levelCap = currentCap}
+    end
+    
+    local growthRate = speciesData.growthRate or "MEDIUM_FAST"
+    local currentExp = pokemon.exp or 0
+    
+    -- Calculate maximum experience allowed at current cap
+    local maxExpAtCap = ExperienceSystem.getExpForLevel(currentCap, growthRate)
+    
+    -- If current exp + gained exp would exceed cap, adjust
+    if currentExp + expGained > maxExpAtCap then
+        local adjustedExpGain = maxExpAtCap - currentExp
+        adjustedExpGain = math.max(0, adjustedExpGain) -- Ensure non-negative
+        
+        return adjustedExpGain, {
+            capReached = true,
+            levelCap = currentCap,
+            originalExpGain = expGained,
+            adjustedExpGain = adjustedExpGain,
+            message = "Experience capped at level " .. currentCap
+        }
+    end
+    
+    return expGained, {capReached = false, levelCap = currentCap}
+end
 
 -- Level and Experience Functions
 
@@ -251,13 +358,29 @@ end
 -- @param pokemon: Pokemon instance to update
 -- @param expGained: Amount of experience to add
 -- @param battleContext: Context information about the battle
+-- @param playerProgression: Player progression data for level cap enforcement
 -- @return: Updated Pokemon with level progression results
-function ExperienceSystem.gainExperience(pokemon, expGained, battleContext)
+function ExperienceSystem.gainExperience(pokemon, expGained, battleContext, playerProgression)
     if not pokemon or not expGained or expGained <= 0 then
         return pokemon, nil
     end
     
     battleContext = battleContext or {}
+    
+    -- Enforce level cap
+    local adjustedExpGain, capInfo = ExperienceSystem.enforceLevelCap(pokemon, expGained, playerProgression)
+    if adjustedExpGain <= 0 then
+        -- Pokemon at level cap, return with cap information
+        return pokemon, {
+            expGained = 0,
+            levelUpOccurred = false,
+            levelCapReached = true,
+            levelCapInfo = capInfo
+        }
+    end
+    
+    -- Use adjusted experience gain
+    expGained = adjustedExpGain
     
     -- Get species data for growth rate
     SpeciesDatabase.init()
@@ -309,6 +432,32 @@ function ExperienceSystem.gainExperience(pokemon, expGained, battleContext)
         -- Update friendship for level gain
         ExperienceSystem.updateFriendship(pokemon, FRIENDSHIP_LEVEL_GAIN * (newLevel - oldLevel))
         
+        -- Check for evolution after level up
+        local evolutionResult = nil
+        local evolvedPokemon, evolutionData = EvolutionSystem.checkLevelEvolution(pokemon)
+        if evolutionData and evolutionData.evolved then
+            pokemon = evolvedPokemon
+            evolutionResult = evolutionData
+            
+            -- If Pokemon evolved, recalculate stats with new base stats
+            if pokemon.baseStats then
+                local evolvedStats, evolveError = StatCalculator.calculateAllStats(
+                    pokemon.baseStats,
+                    pokemon.ivs,
+                    newLevel,
+                    pokemon.nature
+                )
+                
+                if evolvedStats then
+                    -- Preserve HP ratio through evolution
+                    local hpRatio = pokemon.stats.hp / pokemon.stats.maxHp
+                    pokemon.stats = evolvedStats
+                    pokemon.stats.hp = math.floor(pokemon.stats.maxHp * hpRatio)
+                    pokemon.stats.hp = math.min(pokemon.stats.hp, pokemon.stats.maxHp)
+                end
+            end
+        end
+        
         -- Prepare level up data
         levelUpData = {
             oldLevel = oldLevel,
@@ -316,7 +465,9 @@ function ExperienceSystem.gainExperience(pokemon, expGained, battleContext)
             levelsGained = newLevel - oldLevel,
             expGained = expGained,
             totalExp = pokemon.exp,
-            statsIncreased = newStats and true or false
+            statsIncreased = newStats and true or false,
+            evolution = evolutionResult,
+            levelCapInfo = capInfo
         }
     end
     
@@ -743,6 +894,233 @@ function ExperienceSystem.getLevelMilestones(growthRate)
     end
     
     return milestones
+end
+
+-- Experience Notification System
+
+-- Create experience gain notification message
+-- @param pokemon: Pokemon that gained experience
+-- @param expGained: Amount of experience gained
+-- @param levelUpData: Level up information (if applicable)
+-- @return: JSON-formatted notification message
+function ExperienceSystem.createExperienceNotification(pokemon, expGained, levelUpData)
+    if not pokemon then
+        return {
+            success = false,
+            error = "Pokemon data required for notification"
+        }
+    end
+    
+    local speciesData = SpeciesDatabase.getSpecies(pokemon.speciesId)
+    local growthRate = speciesData and speciesData.growthRate or "MEDIUM_FAST"
+    
+    -- Get experience progress information
+    local progressInfo = ExperienceSystem.getLevelProgress(pokemon.exp, growthRate)
+    
+    local notification = {
+        success = true,
+        type = "EXPERIENCE_GAINED",
+        pokemon = {
+            id = pokemon.id,
+            name = pokemon.name or pokemon.species,
+            speciesId = pokemon.speciesId,
+            level = pokemon.level
+        },
+        experience = {
+            gained = expGained,
+            total = pokemon.exp,
+            currentLevelExp = progressInfo.currentLevelExp,
+            nextLevelExp = progressInfo.nextLevelExp,
+            expInLevel = progressInfo.expInLevel,
+            expToNextLevel = progressInfo.expToNextLevel,
+            progressPercent = math.floor(progressInfo.progressPercent or 0)
+        },
+        timestamp = os.time()
+    }
+    
+    -- Add level up information if applicable
+    if levelUpData and levelUpData.newLevel and levelUpData.newLevel > levelUpData.oldLevel then
+        notification.type = "LEVEL_UP"
+        notification.levelUp = {
+            oldLevel = levelUpData.oldLevel,
+            newLevel = levelUpData.newLevel,
+            levelsGained = levelUpData.levelsGained,
+            statsIncreased = levelUpData.statsIncreased or false
+        }
+        
+        -- Include stat changes if available
+        if pokemon.stats and levelUpData.statsIncreased then
+            notification.levelUp.newStats = {
+                hp = pokemon.stats.maxHp or pokemon.stats.hp,
+                attack = pokemon.stats.attack,
+                defense = pokemon.stats.defense,
+                spAttack = pokemon.stats.spAttack,
+                spDefense = pokemon.stats.spDefense,
+                speed = pokemon.stats.speed
+            }
+        end
+        
+        -- Include evolution information if applicable
+        if levelUpData.evolution and levelUpData.evolution.evolved then
+            notification.evolution = {
+                occurred = true,
+                fromSpeciesId = levelUpData.evolution.fromSpeciesId,
+                toSpeciesId = levelUpData.evolution.toSpeciesId,
+                trigger = levelUpData.evolution.trigger,
+                level = levelUpData.evolution.level
+            }
+        end
+        
+        -- Include level cap information if applicable
+        if levelUpData.levelCapInfo and levelUpData.levelCapInfo.capReached then
+            notification.levelCap = {
+                reached = true,
+                cap = levelUpData.levelCapInfo.levelCap,
+                message = levelUpData.levelCapInfo.message
+            }
+        end
+    end
+    
+    return notification
+end
+
+-- Create experience distribution summary for multiple Pokemon
+-- @param distributions: Array of experience distribution results
+-- @return: JSON-formatted summary message
+function ExperienceSystem.createExperienceDistributionSummary(distributions)
+    if not distributions or #distributions == 0 then
+        return {
+            success = false,
+            message = "No experience distributions to report"
+        }
+    end
+    
+    local summary = {
+        success = true,
+        type = "EXPERIENCE_DISTRIBUTION",
+        distributionCount = #distributions,
+        distributions = {},
+        totalExpGained = 0,
+        levelUpsOccurred = 0,
+        evolutionsOccurred = 0,
+        timestamp = os.time()
+    }
+    
+    for _, distribution in ipairs(distributions) do
+        if distribution.expGained and distribution.expGained > 0 then
+            local distributionInfo = {
+                pokemonId = distribution.pokemonId,
+                pokemonName = distribution.pokemonName,
+                expGained = distribution.expGained,
+                participationFactor = distribution.participationFactor or 1.0
+            }
+            
+            -- Add level up information
+            if distribution.levelUpData then
+                distributionInfo.levelUp = {
+                    occurred = true,
+                    oldLevel = distribution.levelUpData.oldLevel,
+                    newLevel = distribution.levelUpData.newLevel,
+                    levelsGained = distribution.levelUpData.levelsGained
+                }
+                summary.levelUpsOccurred = summary.levelUpsOccurred + 1
+                
+                -- Add evolution information
+                if distribution.levelUpData.evolution and distribution.levelUpData.evolution.evolved then
+                    distributionInfo.evolution = {
+                        occurred = true,
+                        toSpeciesId = distribution.levelUpData.evolution.toSpeciesId
+                    }
+                    summary.evolutionsOccurred = summary.evolutionsOccurred + 1
+                end
+            end
+            
+            table.insert(summary.distributions, distributionInfo)
+            summary.totalExpGained = summary.totalExpGained + distribution.expGained
+        end
+    end
+    
+    return summary
+end
+
+-- Create level cap notification message
+-- @param pokemon: Pokemon affected by level cap
+-- @param capInfo: Level cap information
+-- @return: JSON-formatted level cap message
+function ExperienceSystem.createLevelCapNotification(pokemon, capInfo)
+    if not pokemon or not capInfo then
+        return {
+            success = false,
+            error = "Pokemon and cap information required"
+        }
+    end
+    
+    return {
+        success = true,
+        type = "LEVEL_CAP_REACHED",
+        pokemon = {
+            id = pokemon.id,
+            name = pokemon.name or pokemon.species,
+            level = pokemon.level
+        },
+        levelCap = {
+            current = capInfo.levelCap,
+            message = capInfo.message or "Level cap reached",
+            canGainMore = false
+        },
+        message = pokemon.name .. " has reached the level cap of " .. capInfo.levelCap,
+        timestamp = os.time()
+    }
+end
+
+-- Format experience notification for human display
+-- @param notification: Notification data from createExperienceNotification
+-- @return: Human-readable text message
+function ExperienceSystem.formatNotificationForDisplay(notification)
+    if not notification or not notification.success then
+        return "Error: Invalid notification data"
+    end
+    
+    local pokemon = notification.pokemon
+    local exp = notification.experience
+    local message = ""
+    
+    if notification.type == "LEVEL_UP" then
+        local levelUp = notification.levelUp
+        message = pokemon.name .. " leveled up from " .. levelUp.oldLevel .. " to " .. levelUp.newLevel .. "!"
+        
+        if notification.evolution and notification.evolution.occurred then
+            message = message .. "\n" .. pokemon.name .. " is evolving!"
+        end
+        
+        if notification.levelCap and notification.levelCap.reached then
+            message = message .. "\n" .. notification.levelCap.message
+        end
+        
+    elseif notification.type == "EXPERIENCE_GAINED" then
+        message = pokemon.name .. " gained " .. exp.gained .. " experience points!"
+        
+        if exp.expToNextLevel > 0 then
+            message = message .. "\n" .. exp.expToNextLevel .. " EXP needed for next level."
+        end
+    end
+    
+    return message
+end
+
+-- Get experience notification preferences (for future UI customization)
+-- @param pokemon: Pokemon data
+-- @return: Notification preference settings
+function ExperienceSystem.getNotificationPreferences(pokemon)
+    return {
+        showExpGain = true,
+        showLevelUp = true,
+        showStatChanges = true,
+        showEvolution = true,
+        showLevelCap = true,
+        showProgress = true,
+        format = "detailed" -- or "compact"
+    }
 end
 
 return ExperienceSystem

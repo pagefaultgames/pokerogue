@@ -14,6 +14,7 @@ This file contains information and commands for Claude to help with development 
 - Type check: `npm run typecheck`
 - Start development server: `npm run start`
 - Update progress checklist: `./scripts/update-progress-checklist.sh`
+- Test AO processes: `./scripts/test-ao-processes.sh`
 
 ## MCP Servers Available
 The following MCP servers are configured and available through the Model Context Protocol:
