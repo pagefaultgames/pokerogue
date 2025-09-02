@@ -115,6 +115,9 @@ export class EnemyBattleInfo extends BattleInfo {
       globalScene.gameData.starterData[pokemon.species.getRootSpeciesId()].classicWinCount > 0 &&
       globalScene.gameData.starterData[pokemon.species.getRootSpeciesId(true)].classicWinCount > 0
     ) {
+      // move the ribbon to the left if there is no owned icon
+      const championRibbonX = this.ownedIcon.visible ? 8 : 0;
+      this.championRibbon.setPositionRelative(this.nameText, championRibbonX, 11.75);
       this.championRibbon.setVisible(true);
     }
 
@@ -180,12 +183,12 @@ export class EnemyBattleInfo extends BattleInfo {
         this.ownedIcon,
         this.championRibbon,
         this.statusIndicator,
-        this.levelContainer,
         this.statValuesContainer,
       ].map(e => (e.x += 48 * (boss ? -1 : 1)));
       this.hpBar.x += 38 * (boss ? -1 : 1);
       this.hpBar.y += 2 * (this.boss ? -1 : 1);
       this.hpBar.setTexture(`overlay_hp${boss ? "_boss" : ""}`);
+      this.levelContainer.x += 2 * (boss ? -1 : 1);
       this.box.setTexture(this.getTextureName());
       this.statsBox.setTexture(`${this.getTextureName()}_stats`);
     }
