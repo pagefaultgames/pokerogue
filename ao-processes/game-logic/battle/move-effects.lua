@@ -2430,6 +2430,41 @@ function MoveEffects.executeMove(battleState, attacker, moveData, target)
         result.terrainChanged = true
     end
     
+    -- Handle field condition effects from move
+    if moveData.effects and moveData.effects.field_condition and battleState then
+        local fieldConditionType = moveData.effects.field_condition
+        
+        -- Check if field condition is already active
+        local shouldFail, failReason = MoveEffects.shouldFieldConditionMoveFail(battleState, fieldConditionType)
+        if shouldFail then
+            result.failed = true
+            result.messages = {failReason}
+            return result
+        end
+        
+        -- Apply field condition effect
+        local fieldSuccess, fieldResult = MoveEffects.processFieldConditionMove(battleState, moveData, attacker)
+        if fieldSuccess then
+            table.insert(result.effects, {
+                type = "field_condition",
+                field_condition_type = fieldConditionType,
+                field_condition_name = fieldResult.field_effect_name,
+                duration = fieldResult.duration
+            })
+            
+            table.insert(result.messages, fieldResult.message)
+            if fieldResult.description then
+                table.insert(result.messages, fieldResult.description)
+            end
+            
+            result.fieldConditionChanged = true
+        else
+            result.failed = true
+            result.messages = {fieldResult}
+            return result
+        end
+    end
+    
     -- Handle entry hazard effects from move
     local EntryHazards = require("game-logic.battle.entry-hazards")
     if moveData.effects and battleState then
@@ -2677,6 +2712,138 @@ function MoveEffects.calculateMultiHitCount(moveData)
     end
 
     return 1
+end
+
+-- Field Condition Move Processing Functions
+-- Added to complete field condition system integration
+
+-- Check if field condition move should fail
+-- @param battleState: Current battle state
+-- @param fieldConditionType: Type of field condition to check
+-- @return: Boolean indicating if move should fail, reason if applicable
+function MoveEffects.shouldFieldConditionMoveFail(battleState, fieldConditionType)
+    if not battleState or not fieldConditionType then
+        return true, "Invalid parameters for field condition check"
+    end
+    
+    -- Load field conditions module
+    local FieldConditions = require("game-logic.battle.field-conditions")
+    
+    -- Check if field condition is already active
+    if battleState.fieldConditions and battleState.fieldConditions[fieldConditionType] then
+        local conditionData = battleState.fieldConditions[fieldConditionType]
+        if conditionData.duration and conditionData.duration > 0 then
+            local fieldData = FieldConditions.FieldEffectData[fieldConditionType]
+            local conditionName = fieldData and fieldData.name or "Field condition"
+            return true, conditionName .. " is already active!"
+        end
+    end
+    
+    return false, nil
+end
+
+-- Process field condition move effect
+-- @param battleState: Current battle state
+-- @param moveData: Move data including field condition type
+-- @param attacker: Pokemon using the move
+-- @return: Boolean indicating success and field condition result
+function MoveEffects.processFieldConditionMove(battleState, moveData, attacker)
+    if not battleState or not moveData or not attacker then
+        return false, "Invalid parameters for field condition move"
+    end
+    
+    local fieldConditionType = moveData.effects and moveData.effects.field_condition
+    if not fieldConditionType then
+        return false, "No field condition type specified in move"
+    end
+    
+    -- Load field conditions module
+    local FieldConditions = require("game-logic.battle.field-conditions")
+    
+    -- Set the field condition
+    local success, result = FieldConditions.setFieldEffect(
+        battleState.battleId,
+        fieldConditionType,
+        5, -- Default duration
+        "move",
+        attacker.id or attacker.name
+    )
+    
+    if not success then
+        return false, result -- Error message
+    end
+    
+    -- Initialize field conditions table if needed
+    if not battleState.fieldConditions then
+        battleState.fieldConditions = {}
+    end
+    
+    -- Store field condition in battle state
+    battleState.fieldConditions[fieldConditionType] = result
+    
+    -- Set compatibility fields for existing systems
+    if fieldConditionType == FieldConditions.FieldEffectType.TRICK_ROOM then
+        battleState.trickRoom = result.duration
+    elseif fieldConditionType == FieldConditions.FieldEffectType.WONDER_ROOM then
+        battleState.wonderRoom = result.duration
+    elseif fieldConditionType == FieldConditions.FieldEffectType.MAGIC_ROOM then
+        battleState.magicRoom = result.duration
+    end
+    
+    -- Prepare result for move execution
+    result.message = result.field_effect_name .. " was activated!"
+    result.description = FieldConditions.FieldEffectData[fieldConditionType] and 
+                        FieldConditions.FieldEffectData[fieldConditionType].description
+    
+    return true, result
+end
+
+-- Process Trick Room effect for move integration
+-- @param battleState: Current battle state
+-- @param pokemon: Pokemon using Trick Room
+-- @return: Boolean indicating success and effect result
+function MoveEffects.processTrickRoomEffect(battleState, pokemon)
+    local FieldConditions = require("game-logic.battle.field-conditions")
+    
+    local trickRoomMoveData = {
+        effects = {
+            field_condition = FieldConditions.FieldEffectType.TRICK_ROOM
+        }
+    }
+    
+    return MoveEffects.processFieldConditionMove(battleState, trickRoomMoveData, pokemon)
+end
+
+-- Process Wonder Room effect for move integration
+-- @param battleState: Current battle state
+-- @param pokemon: Pokemon using Wonder Room
+-- @return: Boolean indicating success and effect result
+function MoveEffects.processWonderRoomEffect(battleState, pokemon)
+    local FieldConditions = require("game-logic.battle.field-conditions")
+    
+    local wonderRoomMoveData = {
+        effects = {
+            field_condition = FieldConditions.FieldEffectType.WONDER_ROOM
+        }
+    }
+    
+    return MoveEffects.processFieldConditionMove(battleState, wonderRoomMoveData, pokemon)
+end
+
+-- Process Magic Room effect for move integration  
+-- @param battleState: Current battle state
+-- @param pokemon: Pokemon using Magic Room
+-- @return: Boolean indicating success and effect result
+function MoveEffects.processMagicRoomEffect(battleState, pokemon)
+    local FieldConditions = require("game-logic.battle.field-conditions")
+    
+    local magicRoomMoveData = {
+        effects = {
+            field_condition = FieldConditions.FieldEffectType.MAGIC_ROOM
+        }
+    }
+    
+    return MoveEffects.processFieldConditionMove(battleState, magicRoomMoveData, pokemon)
 end
 
 return MoveEffects
