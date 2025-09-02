@@ -3,7 +3,7 @@
 -- Validates multi-turn scenarios, screen breaking, and team-wide application
 
 -- Load test framework and setup
-package.path = package.path .. ";./tests/integration/?.lua;./tests/?.lua;./?.lua"
+package.path = package.path .. ";./tests/integration/?.lua;./tests/?.lua;./?.lua;../?.lua;../handlers/?.lua;../game-logic/?.lua;../game-logic/?/init.lua"
 local TestSetup = require("tests/integration/test-setup")
 
 -- Load systems under test
