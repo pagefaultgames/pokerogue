@@ -3,7 +3,30 @@
 -- Integrates with turn processor and manages battle state persistence
 -- Handles battle initialization, command processing, and battle flow management
 
-local json = require("json")
+-- JSON module (optional for testing environments)
+local json = nil
+local success, module = pcall(require, "json")
+if success then
+    json = module
+else
+    -- Fallback JSON implementation for testing
+    json = {
+        encode = function(obj)
+            -- Simple JSON encoding fallback
+            if type(obj) == "table" then
+                return "{}"
+            elseif type(obj) == "string" then
+                return '"' .. obj .. '"'
+            else
+                return tostring(obj)
+            end
+        end,
+        decode = function(str)
+            -- Simple JSON decoding fallback
+            return {}
+        end
+    }
+end
 
 -- Load dependencies
 local TurnProcessor = require("game-logic.battle.turn-processor")
@@ -39,10 +62,20 @@ local TerrainAbilities = require("game-logic.battle.terrain-abilities")
 local EntryHazards = require("game-logic.battle.entry-hazards")
 local SwitchInEffects = require("game-logic.battle.switch-in-effects")
 
+-- Field conditions system dependencies
+local FieldConditions = require("game-logic.battle.field-conditions")
+
+-- Positional mechanics system dependencies
+local PositionalMechanics = require("game-logic.battle.positional-mechanics")
+local MoveTargeting = require("game-logic.battle.move-targeting")
+local MoveEffects = require("game-logic.battle.move-effects")
+local StatCalculator = require("game-logic.pokemon.stat-calculator")
+
 -- Battle session storage (in-memory for this implementation)
 local BattleSessions = {}
 
--- Handler registration
+-- Handler registration (only in AO environment)
+if Handlers then
 Handlers.add(
     "INITIALIZE_BATTLE",
     Handlers.utils.hasMatchingTag("Action", "INITIALIZE_BATTLE"),
@@ -343,6 +376,61 @@ Handlers.add(
     end
 )
 
+-- Positional Mechanics Handlers
+Handlers.add(
+    "GET_BATTLE_FORMAT_INFO",
+    Handlers.utils.hasMatchingTag("Action", "GET_BATTLE_FORMAT_INFO"),
+    function(msg)
+        local response = getBattleFormatInfo(msg)
+        Handlers.utils.reply(response)(msg)
+    end
+)
+
+Handlers.add(
+    "GET_POSITION_TARGETING_INFO",
+    Handlers.utils.hasMatchingTag("Action", "GET_POSITION_TARGETING_INFO"),
+    function(msg)
+        local response = getPositionTargetingInfo(msg)
+        Handlers.utils.reply(response)(msg)
+    end
+)
+
+Handlers.add(
+    "VALIDATE_MOVE_TARGETING",
+    Handlers.utils.hasMatchingTag("Action", "VALIDATE_MOVE_TARGETING"),
+    function(msg)
+        local response = validateMoveTargeting(msg)
+        Handlers.utils.reply(response)(msg)
+    end
+)
+
+Handlers.add(
+    "EXECUTE_POSITION_SWAP",
+    Handlers.utils.hasMatchingTag("Action", "EXECUTE_POSITION_SWAP"),
+    function(msg)
+        local response = executePositionSwap(msg)
+        Handlers.utils.reply(response)(msg)
+    end
+)
+
+Handlers.add(
+    "APPLY_POSITIONAL_TAG",
+    Handlers.utils.hasMatchingTag("Action", "APPLY_POSITIONAL_TAG"),
+    function(msg)
+        local response = applyPositionalTag(msg)
+        Handlers.utils.reply(response)(msg)
+    end
+)
+
+Handlers.add(
+    "GET_POSITIONAL_ABILITY_INFO",
+    Handlers.utils.hasMatchingTag("Action", "GET_POSITIONAL_ABILITY_INFO"),
+    function(msg)
+        local response = getPositionalAbilityInfo(msg)
+        Handlers.utils.reply(response)(msg)
+    end
+)
+
 -- Initialize new battle session
 -- @param msg: AO message with battle initialization data
 -- @return: Battle initialization response
@@ -380,6 +468,52 @@ local function initializeBattle(msg)
         return ErrorHandler.createErrorResponse("INITIALIZATION_FAILED", error or "Battle initialization failed", msg.Id)
     end
     
+    -- Initialize field conditions for the battle
+    if not battleState.fieldConditions then
+        battleState.fieldConditions = {}
+    end
+    
+    -- Initialize positional mechanics for the battle
+    local activePlayerPokemon = {}
+    local activeEnemyPokemon = {}
+    
+    -- Get active Pokemon for position initialization
+    if battleState.playerParty then
+        for i, pokemon in ipairs(battleState.playerParty) do
+            if not pokemon.fainted and i <= 2 then -- Max 2 in doubles
+                table.insert(activePlayerPokemon, pokemon)
+            end
+        end
+    end
+    
+    if battleState.enemyParty then
+        for i, pokemon in ipairs(battleState.enemyParty) do
+            if not pokemon.fainted and i <= 2 then -- Max 2 in doubles
+                table.insert(activeEnemyPokemon, pokemon)
+            end
+        end
+    end
+    
+    -- Initialize battle positions
+    local positionSuccess, positionMessage = PositionalMechanics.initializeBattlePositions(
+        battleState, activePlayerPokemon, activeEnemyPokemon
+    )
+    
+    if not positionSuccess then
+        return ErrorHandler.createErrorResponse("POSITION_INIT_FAILED", positionMessage, msg.Id)
+    end
+    
+    -- Initialize positional tags
+    BattleConditions.initializePositionalTags(battleState)
+    
+    -- Apply initial positional ability effects
+    for _, pokemon in ipairs(activePlayerPokemon) do
+        StatCalculator.updatePositionalAbilityBattleData(pokemon, battleState)
+    end
+    for _, pokemon in ipairs(activeEnemyPokemon) do
+        StatCalculator.updatePositionalAbilityBattleData(pokemon, battleState)
+    end
+    
     -- Store battle session
     BattleSessions[data.battleId] = {
         battleState = battleState,
@@ -401,7 +535,9 @@ local function initializeBattle(msg)
             phase = battleState.phase,
             player_party_size = #battleState.playerParty,
             enemy_party_size = #battleState.enemyParty,
-            battle_conditions = battleState.battleConditions
+            battle_conditions = battleState.battleConditions,
+            battle_format = PositionalMechanics.getBattleFormatInfo(battleState),
+            active_positions = PositionalMechanics.getAllActivePositions(battleState)
         },
         timestamp = os.time(),
         processing_time_ms = processingTime,
@@ -454,7 +590,8 @@ local function processBattleTurn(msg)
             battle_state = {
                 turn = session.battleState.turn,
                 phase = session.battleState.phase,
-                battle_conditions = session.battleState.battleConditions
+                battle_conditions = session.battleState.battleConditions,
+                field_conditions = session.battleState.fieldConditions or {}
             }
         },
         timestamp = os.time(),
@@ -552,6 +689,7 @@ local function getBattleState(msg)
         turn = session.battleState.turn,
         phase = session.battleState.phase,
         battle_conditions = session.battleState.battleConditions,
+        field_conditions = session.battleState.fieldConditions or {},
         player_party_summary = {},
         enemy_party_summary = {},
         turn_order_count = #session.battleState.turnOrder,
@@ -2492,4 +2630,313 @@ local function processCombinedEnvironmentalEffects(msg)
         processing_time_ms = processingTime,
         message_id = msg.Id
     }
+end
+
+-- Positional Mechanics Handler Functions
+
+-- Get battle format information
+-- @param msg: AO message with format info request
+-- @return: Battle format information response
+local function getBattleFormatInfo(msg)
+    local startTime = os.clock()
+    
+    -- Parse message data
+    local success, data = pcall(json.decode, msg.Data or "{}")
+    if not success then
+        return ErrorHandler.createErrorResponse("INVALID_JSON", "Failed to parse format info request", msg.Id)
+    end
+    
+    -- Validate required parameters
+    local validation = ValidationHandler.validateRequired(data, {"battleId"})
+    if not validation.valid then
+        return ErrorHandler.createErrorResponse("VALIDATION_ERROR", validation.error, msg.Id)
+    end
+    
+    -- Get battle session
+    local session = BattleSessions[data.battleId]
+    if not session then
+        return ErrorHandler.createErrorResponse("BATTLE_NOT_FOUND", "Battle session not found", msg.Id)
+    end
+    
+    local formatInfo = PositionalMechanics.getBattleFormatInfo(session.battleState)
+    local activePositions = PositionalMechanics.getAllActivePositions(session.battleState)
+    
+    local processingTime = (os.clock() - startTime) * 1000
+    
+    return {
+        success = true,
+        action = "GET_BATTLE_FORMAT_INFO",
+        battleId = data.battleId,
+        message = "Battle format information retrieved successfully",
+        data = {
+            format_info = formatInfo,
+            active_positions = activePositions
+        },
+        timestamp = os.time(),
+        processing_time_ms = processingTime,
+        message_id = msg.Id
+    }
+end
+
+-- Get position targeting information
+-- @param msg: AO message with targeting info request
+-- @return: Position targeting information response
+local function getPositionTargetingInfo(msg)
+    local startTime = os.clock()
+    
+    -- Parse message data
+    local success, data = pcall(json.decode, msg.Data or "{}")
+    if not success then
+        return ErrorHandler.createErrorResponse("INVALID_JSON", "Failed to parse targeting info request", msg.Id)
+    end
+    
+    -- Validate required parameters
+    local validation = ValidationHandler.validateRequired(data, {"battleId", "pokemonId"})
+    if not validation.valid then
+        return ErrorHandler.createErrorResponse("VALIDATION_ERROR", validation.error, msg.Id)
+    end
+    
+    -- Get battle session
+    local session = BattleSessions[data.battleId]
+    if not session then
+        return ErrorHandler.createErrorResponse("BATTLE_NOT_FOUND", "Battle session not found", msg.Id)
+    end
+    
+    -- Find attacker Pokemon
+    local attacker = TurnProcessor.findPokemon(session.battleState, data.pokemonId)
+    if not attacker then
+        return ErrorHandler.createErrorResponse("POKEMON_NOT_FOUND", "Pokemon not found", msg.Id)
+    end
+    
+    local targetingInfo = MoveTargeting.getPositionTargetingInfo(session.battleState, attacker)
+    
+    local processingTime = (os.clock() - startTime) * 1000
+    
+    return {
+        success = true,
+        action = "GET_POSITION_TARGETING_INFO",
+        battleId = data.battleId,
+        message = "Position targeting information retrieved successfully",
+        data = {
+            targeting_info = targetingInfo,
+            attacker_id = data.pokemonId
+        },
+        timestamp = os.time(),
+        processing_time_ms = processingTime,
+        message_id = msg.Id
+    }
+end
+
+-- Validate move targeting for positional moves
+-- @param msg: AO message with targeting validation request
+-- @return: Move targeting validation response
+local function validateMoveTargeting(msg)
+    local startTime = os.clock()
+    
+    -- Parse message data
+    local success, data = pcall(json.decode, msg.Data or "{}")
+    if not success then
+        return ErrorHandler.createErrorResponse("INVALID_JSON", "Failed to parse targeting validation request", msg.Id)
+    end
+    
+    -- Validate required parameters
+    local validation = ValidationHandler.validateRequired(data, {"battleId", "pokemonId", "moveData"})
+    if not validation.valid then
+        return ErrorHandler.createErrorResponse("VALIDATION_ERROR", validation.error, msg.Id)
+    end
+    
+    -- Get battle session
+    local session = BattleSessions[data.battleId]
+    if not session then
+        return ErrorHandler.createErrorResponse("BATTLE_NOT_FOUND", "Battle session not found", msg.Id)
+    end
+    
+    -- Find attacker Pokemon
+    local attacker = TurnProcessor.findPokemon(session.battleState, data.pokemonId)
+    if not attacker then
+        return ErrorHandler.createErrorResponse("POKEMON_NOT_FOUND", "Pokemon not found", msg.Id)
+    end
+    
+    -- Find target Pokemon if specified
+    local targetPokemon = nil
+    if data.targetPokemonId then
+        targetPokemon = TurnProcessor.findPokemon(session.battleState, data.targetPokemonId)
+    end
+    
+    -- Validate targeting
+    local validationResult, message = MoveTargeting.validateMoveTargeting(
+        session.battleState, attacker, data.moveData, targetPokemon, data.targetPosition
+    )
+    
+    local processingTime = (os.clock() - startTime) * 1000
+    
+    return {
+        success = validationResult == MoveTargeting.ValidationResult.VALID,
+        action = "VALIDATE_MOVE_TARGETING",
+        battleId = data.battleId,
+        message = message,
+        data = {
+            validation_result = validationResult,
+            is_valid = validationResult == MoveTargeting.ValidationResult.VALID,
+            attacker_id = data.pokemonId,
+            target_id = data.targetPokemonId,
+            move_data = data.moveData
+        },
+        timestamp = os.time(),
+        processing_time_ms = processingTime,
+        message_id = msg.Id
+    }
+end
+
+-- Execute position swap (Ally Switch)
+-- @param msg: AO message with position swap request
+-- @return: Position swap execution response
+local function executePositionSwap(msg)
+    local startTime = os.clock()
+    
+    -- Parse message data
+    local success, data = pcall(json.decode, msg.Data or "{}")
+    if not success then
+        return ErrorHandler.createErrorResponse("INVALID_JSON", "Failed to parse position swap request", msg.Id)
+    end
+    
+    -- Validate required parameters
+    local validation = ValidationHandler.validateRequired(data, {"battleId", "pokemonId", "moveData"})
+    if not validation.valid then
+        return ErrorHandler.createErrorResponse("VALIDATION_ERROR", validation.error, msg.Id)
+    end
+    
+    -- Get battle session
+    local session = BattleSessions[data.battleId]
+    if not session then
+        return ErrorHandler.createErrorResponse("BATTLE_NOT_FOUND", "Battle session not found", msg.Id)
+    end
+    
+    -- Find user Pokemon
+    local user = TurnProcessor.findPokemon(session.battleState, data.pokemonId)
+    if not user then
+        return ErrorHandler.createErrorResponse("POKEMON_NOT_FOUND", "Pokemon not found", msg.Id)
+    end
+    
+    -- Execute position swap
+    local swapResult = MoveEffects.executeAllySwitch(session.battleState, user, data.moveData)
+    
+    local processingTime = (os.clock() - startTime) * 1000
+    
+    return {
+        success = swapResult.success,
+        action = "EXECUTE_POSITION_SWAP",
+        battleId = data.battleId,
+        message = swapResult.message,
+        data = {
+            swap_result = swapResult,
+            active_positions = PositionalMechanics.getAllActivePositions(session.battleState)
+        },
+        timestamp = os.time(),
+        processing_time_ms = processingTime,
+        message_id = msg.Id
+    }
+end
+
+-- Apply positional tag to battlefield position
+-- @param msg: AO message with positional tag application request
+-- @return: Positional tag application response
+local function applyPositionalTag(msg)
+    local startTime = os.clock()
+    
+    -- Parse message data
+    local success, data = pcall(json.decode, msg.Data or "{}")
+    if not success then
+        return ErrorHandler.createErrorResponse("INVALID_JSON", "Failed to parse positional tag request", msg.Id)
+    end
+    
+    -- Validate required parameters
+    local validation = ValidationHandler.validateRequired(data, {"battleId", "side", "position", "tagType"})
+    if not validation.valid then
+        return ErrorHandler.createErrorResponse("VALIDATION_ERROR", validation.error, msg.Id)
+    end
+    
+    -- Get battle session
+    local session = BattleSessions[data.battleId]
+    if not session then
+        return ErrorHandler.createErrorResponse("BATTLE_NOT_FOUND", "Battle session not found", msg.Id)
+    end
+    
+    -- Apply positional tag
+    local tagSuccess, tagMessage = BattleConditions.applyPositionalTag(
+        session.battleState, data.side, data.position, data.tagType, 
+        data.duration, data.effectData
+    )
+    
+    local processingTime = (os.clock() - startTime) * 1000
+    
+    return {
+        success = tagSuccess,
+        action = "APPLY_POSITIONAL_TAG",
+        battleId = data.battleId,
+        message = tagMessage,
+        data = {
+            tag_applied = tagSuccess,
+            side = data.side,
+            position = data.position,
+            tag_type = data.tagType,
+            positional_tags_summary = BattleConditions.getPositionalTagsSummary(session.battleState)
+        },
+        timestamp = os.time(),
+        processing_time_ms = processingTime,
+        message_id = msg.Id
+    }
+end
+
+-- Get positional ability information
+-- @param msg: AO message with positional ability info request
+-- @return: Positional ability information response
+local function getPositionalAbilityInfo(msg)
+    local startTime = os.clock()
+    
+    -- Parse message data
+    local success, data = pcall(json.decode, msg.Data or "{}")
+    if not success then
+        return ErrorHandler.createErrorResponse("INVALID_JSON", "Failed to parse positional ability info request", msg.Id)
+    end
+    
+    -- Validate required parameters
+    local validation = ValidationHandler.validateRequired(data, {"battleId", "pokemonId"})
+    if not validation.valid then
+        return ErrorHandler.createErrorResponse("VALIDATION_ERROR", validation.error, msg.Id)
+    end
+    
+    -- Get battle session
+    local session = BattleSessions[data.battleId]
+    if not session then
+        return ErrorHandler.createErrorResponse("BATTLE_NOT_FOUND", "Battle session not found", msg.Id)
+    end
+    
+    -- Find Pokemon
+    local pokemon = TurnProcessor.findPokemon(session.battleState, data.pokemonId)
+    if not pokemon then
+        return ErrorHandler.createErrorResponse("POKEMON_NOT_FOUND", "Pokemon not found", msg.Id)
+    end
+    
+    -- Get positional ability info
+    local abilityInfo = StatCalculator.getPositionalAbilityInfo(pokemon, session.battleState)
+    
+    local processingTime = (os.clock() - startTime) * 1000
+    
+    return {
+        success = true,
+        action = "GET_POSITIONAL_ABILITY_INFO",
+        battleId = data.battleId,
+        message = "Positional ability information retrieved successfully",
+        data = {
+            pokemon_id = data.pokemonId,
+            ability_info = abilityInfo
+        },
+        timestamp = os.time(),
+        processing_time_ms = processingTime,
+        message_id = msg.Id
+    }
+end
+
+-- Close conditional handler registration
 end

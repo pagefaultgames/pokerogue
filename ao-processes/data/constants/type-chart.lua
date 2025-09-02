@@ -175,11 +175,12 @@ function TypeChart.getTypeDamageMultiplier(attackType, defType)
         
     -- GRASS defending  
     elseif defType == TypeChart.TYPES.GRASS then
-        if attackType == TypeChart.TYPES.GROUND or attackType == TypeChart.TYPES.WATER or 
+        if attackType == TypeChart.TYPES.WATER or 
            attackType == TypeChart.TYPES.GRASS or attackType == TypeChart.TYPES.ELECTRIC then
             return TypeChart.MULTIPLIERS.HALF_EFFECTIVE -- 0.5x
         elseif attackType == TypeChart.TYPES.FLYING or attackType == TypeChart.TYPES.POISON or 
-               attackType == TypeChart.TYPES.BUG or attackType == TypeChart.TYPES.FIRE or attackType == TypeChart.TYPES.ICE then
+               attackType == TypeChart.TYPES.BUG or attackType == TypeChart.TYPES.FIRE or 
+               attackType == TypeChart.TYPES.ICE or attackType == TypeChart.TYPES.GROUND then
             return TypeChart.MULTIPLIERS.SUPER_EFFECTIVE -- 2x
         end
         

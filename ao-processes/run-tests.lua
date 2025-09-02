@@ -21,9 +21,13 @@ end
 local tests = {
     {file = "tests/unit/battle/side-effects.test.lua", name = "Side Effects Unit Tests"},
     {file = "tests/unit/battle/field-conditions-aolite.test.lua", name = "Field Conditions Unit Tests (Aolite)"},
+    {file = "tests/unit/battle/positional-mechanics.test.lua", name = "Positional Mechanics Unit Tests"},
+    {file = "tests/unit/battle/move-targeting.test.lua", name = "Move Targeting Unit Tests"},
+    {file = "tests/unit/battle/damage-calculator.test.lua", name = "Damage Calculator Unit Tests (Extended)"},
     {file = "tests/integration/aolite-integration.test.lua", name = "Aolite Integration Tests"},
     {file = "tests/integration/side-effects-integration-aolite.test.lua", name = "Side Effects Integration Tests (Aolite)"},
-    {file = "tests/integration/field-conditions-integration-aolite.test.lua", name = "Field Conditions Integration Tests (Aolite)"}
+    {file = "tests/integration/field-conditions-integration-aolite.test.lua", name = "Field Conditions Integration Tests (Aolite)"},
+    {file = "tests/integration/positional-integration.test.lua", name = "Positional Integration Tests"}
 }
 
 print("AO Process Test Runner")
