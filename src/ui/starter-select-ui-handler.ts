@@ -1,4 +1,3 @@
-import type { Ability } from "#abilities/ability";
 import { PLAYER_PARTY_MAX_SIZE, VALUE_REDUCTION_MAX } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
@@ -15,10 +14,8 @@ import {
   POKERUS_STARTER_COUNT,
   speciesStarterCosts,
 } from "#balance/starters";
-import { allAbilities, allMoves, allSpecies } from "#data/data-lists";
-import { Egg, getEggTierForSpecies } from "#data/egg";
-import { GrowthRate, getGrowthRateColor } from "#data/exp";
-import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
+import { allMoves, allSpecies } from "#data/data-lists";
+import { Egg } from "#data/egg";
 import { getNatureName } from "#data/nature";
 import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -36,7 +33,7 @@ import type { MoveId } from "#enums/move-id";
 import type { Nature } from "#enums/nature";
 import { Passive as PassiveAttr } from "#enums/passive";
 import { PokemonType } from "#enums/pokemon-type";
-import { SpeciesId } from "#enums/species-id";
+import type { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { CandyUpgradeNotificationChangedEvent } from "#events/battle-scene";
@@ -60,7 +57,6 @@ import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";
 import {
-  BooleanHolder,
   fixedInt,
   getLocalizedSpriteKey,
   isNullOrUndefined,
@@ -71,12 +67,11 @@ import {
 import type { AllStarterPreferences } from "#utils/data";
 import { deepCopy, loadStarterPreferences, saveStarterPreferences } from "#utils/data";
 import { getPokemonSpecies, getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
-import { toCamelCase, toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
 import {
-  getFriendship,
+  getDexAttrFromPreferences,
   getSpeciesData,
   getStarterSelectTextSettings,
   isPassiveAvailable,
@@ -85,6 +80,7 @@ import {
   isUpgradeAnimationEnabled,
   isUpgradeIconEnabled,
   isValueReductionAvailable,
+  type SpeciesDetails,
 } from "./starter-select-ui-utils";
 import { StarterSummary } from "./starter-summary";
 
@@ -158,27 +154,15 @@ function findClosestStarterIndex(y: number, teamSize = 6): number {
   return closestStarterIndex;
 }
 
-interface SpeciesDetails {
-  shiny?: boolean;
-  formIndex?: number;
-  female?: boolean;
-  variant?: Variant;
-  abilityIndex?: number;
-  natureIndex?: number;
-  teraType?: PokemonType;
-}
-
 export class StarterSelectUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
   private starterSelectScrollBar: ScrollBar;
   private filterBar: FilterBar;
-  private shinyOverlay: Phaser.GameObjects.Image;
   private starterContainers: StarterContainer[] = [];
   private filteredStarterIds: SpeciesId[] = [];
 
   private starterSummary: StarterSummary;
 
-  private activeTooltip: "ABILITY" | "PASSIVE" | "CANDY" | undefined;
   private instructionsContainer: Phaser.GameObjects.Container;
   private filterInstructionsContainer: Phaser.GameObjects.Container;
   private shinyIconElement: Phaser.GameObjects.Sprite;
@@ -219,7 +203,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
   private allStarterSpecies: PokemonSpecies[] = [];
   private lastSpecies: PokemonSpecies;
-  private speciesLoaded: Map<SpeciesId, boolean> = new Map<SpeciesId, boolean>();
   public starterSpecies: PokemonSpecies[] = [];
   private pokerusSpecies: PokemonSpecies[] = [];
   private starterAttr: bigint[] = [];
@@ -288,7 +271,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const bgColor = globalScene.add.rectangle(0, 0, sWidth, sHeight, 0x006860).setOrigin(0);
 
     const starterSelectBg = globalScene.add.image(0, 0, "starter_select_bg").setOrigin(0);
-    this.shinyOverlay = globalScene.add.image(6, 6, "summary_overlay_shiny").setOrigin(0).setVisible(false);
 
     const starterContainerBg = globalScene.add
       .image(speciesContainerX + 1, filterBarHeight + 2, "starter_container_bg")
@@ -335,7 +317,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       if (!speciesStarterCosts.hasOwnProperty(species.speciesId) || !species.isObtainable()) {
         continue;
       }
-      this.speciesLoaded.set(species.speciesId, false);
       this.allStarterSpecies.push(species);
     }
 
@@ -398,7 +379,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add([
       bgColor,
       starterSelectBg,
-      this.shinyOverlay,
       starterContainerBg,
       this.partyColumn,
       starterBoxContainer,
@@ -1306,7 +1286,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           const starterCost = globalScene.gameData.getSpeciesStarterValue(species.speciesId);
           const isValidForChallenge = checkStarterValidForChallenge(
             species,
-            globalScene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId)),
+            globalScene.gameData.getSpeciesDexAttrProps(
+              species,
+              getDexAttrFromPreferences(species.speciesId, this.starterPreferences[species.speciesId]),
+            ),
             this.isPartyValid(),
           );
           const isCaught = getSpeciesData(species.speciesId).dexEntry.caughtAttr;
@@ -1321,7 +1304,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         const randomSpecies = getPokemonSpecies(randomStarterId);
         // Set species and prepare attributes
         this.setSpecies(randomSpecies);
-        const dexAttr = this.getCurrentDexProps(randomSpecies.speciesId);
+        const dexAttr = getDexAttrFromPreferences(
+          randomSpecies.speciesId,
+          this.starterPreferences[randomSpecies.speciesId],
+        );
         const props = globalScene.gameData.getSpeciesDexAttrProps(randomSpecies, dexAttr);
         const abilityIndex = this.abilityCursor;
         const nature = this.natureCursor as unknown as Nature;
@@ -1332,7 +1318,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         // Load assets and add to party
         speciesForm.loadAssets(props.female, props.formIndex, props.shiny, props.variant, true).then(() => {
           if (this.tryUpdateValue(starterCost, true)) {
-            this.addToParty(randomSpecies, dexAttr, abilityIndex, nature, moveset, teraType, true);
+            this.addToParty(randomSpecies, dexAttr, abilityIndex, nature, moveset, teraType);
             this.getUi().playSelect();
           }
         });
@@ -1381,7 +1367,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     const props = globalScene.gameData.getSpeciesDexAttrProps(
       this.lastSpecies,
-      this.getCurrentDexProps(this.lastSpecies.speciesId),
+      getDexAttrFromPreferences(this.lastSpecies.speciesId, this.starterPreferences[this.lastSpecies.speciesId]),
     );
 
     // The temporary, duplicated starter data to show info
@@ -1397,7 +1383,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             // If not shiny, we change to shiny and get the proper default variant
             const newProps = globalScene.gameData.getSpeciesDexAttrProps(
               this.lastSpecies,
-              this.getCurrentDexProps(this.lastSpecies.speciesId),
+              getDexAttrFromPreferences(
+                this.lastSpecies.speciesId,
+                this.starterPreferences[this.lastSpecies.speciesId],
+              ),
             );
             const newVariant = starterPreferences.variant ? (starterPreferences.variant as Variant) : newProps.variant;
             starterPreferences.shiny = true;
@@ -1411,8 +1400,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
             globalScene.playSound("se/sparkle");
             // Cycle tint based on current sprite tint
-            const tint = getVariantTint(newVariant);
-            this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant)).setTint(tint).setVisible(true);
+            this.starterSummary.setShinyIcon(true, newVariant);
           } else {
             // If shiny, we update the variant
             let newVariant = props.variant;
@@ -1445,7 +1433,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 shiny: false,
                 variant: 0,
               });
-              this.pokemonShinyIcon.setVisible(false);
+              this.starterSummary.setShinyIcon(false);
               success = true;
             } else {
               // If going to a higher variant, or only shiny forms are caught, go to next variant
@@ -1453,8 +1441,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 variant: newVariant as Variant,
               });
               // Cycle tint based on current sprite tint
-              const tint = getVariantTint(newVariant as Variant);
-              this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant as Variant)).setTint(tint);
+              this.starterSummary.setShinyIcon(true, newVariant as Variant);
               success = true;
             }
           }
@@ -1521,13 +1508,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           } while (newAbilityIndex !== this.abilityCursor);
           starterPreferences.ability = newAbilityIndex; // store the selected ability
           originalStarterPreferences.ability = newAbilityIndex;
-
-          const { visible: tooltipVisible } = globalScene.ui.getTooltip();
-
-          if (tooltipVisible && this.activeTooltip === "ABILITY") {
-            const newAbility = allAbilities[this.lastSpecies.getAbility(newAbilityIndex)];
-            globalScene.ui.editTooltip(`${newAbility.name}`, `${newAbility.description}`);
-          }
 
           this.setSpeciesDetails(this.lastSpecies, {
             abilityIndex: newAbilityIndex,
@@ -1663,7 +1643,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.lastSpecies,
       globalScene.gameData.getSpeciesDexAttrProps(
         this.lastSpecies,
-        this.getCurrentDexProps(this.lastSpecies.speciesId),
+        getDexAttrFromPreferences(this.lastSpecies.speciesId, this.starterPreferences[this.lastSpecies.speciesId]),
       ),
       isPartyValid,
     );
@@ -2373,7 +2353,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     nature: Nature,
     moveset: StarterMoveset,
     teraType: PokemonType,
-    randomSelection = false,
   ) {
     const props = globalScene.gameData.getSpeciesDexAttrProps(species, dexAttr);
     this.starterIcons[this.starterSpecies.length].setTexture(
@@ -2397,14 +2376,15 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.starterNatures.push(nature);
     this.starterTeras.push(teraType);
     this.starterMovesets.push(moveset);
-    if (this.speciesLoaded.get(species.speciesId) || randomSelection) {
-      getPokemonSpeciesForm(species.speciesId, props.formIndex).cry();
-    }
+    getPokemonSpeciesForm(species.speciesId, props.formIndex).cry();
     this.updateInstructions();
   }
 
   updatePartyIcon(species: PokemonSpecies, index: number) {
-    const props = globalScene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId));
+    const props = globalScene.gameData.getSpeciesDexAttrProps(
+      species,
+      getDexAttrFromPreferences(species.speciesId, this.starterPreferences[species.speciesId]),
+    );
     this.starterIcons[index].setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant));
     this.starterIcons[index].setFrame(species.getIconId(props.female, props.formIndex, props.shiny, props.variant));
     this.checkIconId(this.starterIcons[index], species, props.female, props.formIndex, props.shiny, props.variant);
@@ -2895,7 +2875,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         const speciesId = this.filteredStarterIds[offset_i];
         const species = getPokemonSpecies(speciesId);
         const { dexEntry, starterDataEntry } = getSpeciesData(species.speciesId);
-        const props = globalScene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId));
+        const props = globalScene.gameData.getSpeciesDexAttrProps(
+          species,
+          getDexAttrFromPreferences(species.speciesId, this.starterPreferences[species.speciesId]),
+        );
 
         container.setSpecies(species, props);
 
@@ -2992,17 +2975,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       const species = this.starterContainers[cursor]?.species; // TODO: why is there a "?"
 
       if (species) {
-        // TODO: check if this is needed
-        /**
-        const defaultDexAttr = this.getCurrentDexProps(species.speciesId);
-        const defaultProps = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
-        // Bang is correct due to the `?` before variant
-        const variant = this.starterPreferences[species.speciesId]?.variant
-          ? (this.starterPreferences[species.speciesId]!.variant as Variant)
-          : defaultProps.variant;
-        const tint = getVariantTint(variant);
-        this.pokemonShinyIcon.setFrame(getVariantIcon(variant)).setTint(tint);
-         */
         this.setSpecies(species);
         this.updateInstructions();
       } else {
@@ -3053,37 +3025,18 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.natureCursor = 0;
     this.teraCursor = PokemonType.UNKNOWN;
 
-    if (globalScene.ui.getTooltip().visible) {
-      globalScene.ui.hideTooltip();
-    }
-
-    this.pokemonAbilityText.off("pointerover");
-    this.pokemonPassiveText.off("pointerover");
-
-    if (this.statsMode) {
-      this.statsContainer.setVisible(false);
-    }
-
     if (this.lastSpecies) {
       this.stopIconAnimation(this.oldCursor);
     }
-
-    // TODO: check if we need to set lastSpecies to null or some other value here
-
-    this.cleanStarterSprite();
   }
 
   setSpecies(species: PokemonSpecies) {
-    // First, we load from the dex entry to get defaults
     const { dexEntry } = getSpeciesData(species.speciesId);
     this.speciesStarterDexEntry = dexEntry;
-    this.dexAttrCursor = this.getCurrentDexProps(species.speciesId);
+    this.dexAttrCursor = getDexAttrFromPreferences(species.speciesId, this.starterPreferences[species.speciesId]);
     this.abilityCursor = globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
     this.natureCursor = globalScene.gameData.getSpeciesDefaultNature(species, dexEntry);
     this.teraCursor = species.type1;
-
-    this.pokemonAbilityText.off("pointerover");
-    this.pokemonPassiveText.off("pointerover");
 
     // Then, we override with preferences, if they exist
     const starterPreferences = this.starterPreferences[species.speciesId];
@@ -3097,180 +3050,60 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.teraCursor = starterPreferences.tera;
     }
 
-    // Hiding ivs container if the species is not caught
-    if (this.statsMode) {
-      if (this.speciesStarterDexEntry?.caughtAttr) {
-        this.statsContainer.setVisible(true);
-        this.showStats();
-      } else {
-        this.statsContainer.setVisible(false);
-      }
-    }
-
     if (this.lastSpecies) {
       this.stopIconAnimation(this.oldCursor);
     }
 
     this.lastSpecies = species;
 
+    this.starterSummary.setSpecies(species, starterPreferences ?? {});
+
     if (this.speciesStarterDexEntry?.caughtAttr) {
-      this.setNameAndNumber(species);
-
-      const colorScheme = starterColors[species.speciesId];
-
-      this.pokemonUncaughtText.setVisible(false);
-      this.pokemonPermanentInfoContainer.setVisible(true);
-      this.pokemonStatisticsContainer.setVisible(true);
-
-      const luck = globalScene.gameData.getDexAttrLuck(this.speciesStarterDexEntry.caughtAttr);
-      this.pokemonLuckText
-        .setVisible(!!luck)
-        .setText(luck.toString())
-        .setTint(getVariantTint(Math.min(luck - 1, 2) as Variant));
-      this.pokemonLuckLabelText.setVisible(this.pokemonLuckText.visible);
-
-      //Growth translate
-      let growthReadable = toTitleCase(GrowthRate[species.growthRate]);
-      const growthAux = toCamelCase(growthReadable);
-      if (i18next.exists("growth:" + growthAux)) {
-        growthReadable = i18next.t(("growth:" + growthAux) as any);
-      }
-      this.pokemonGrowthRateText
-        .setText(growthReadable)
-        .setColor(getGrowthRateColor(species.growthRate))
-        .setShadowColor(getGrowthRateColor(species.growthRate, true));
-      this.pokemonCaughtCountText.setText(`${this.speciesStarterDexEntry.caughtCount}`);
-      if (species.speciesId === SpeciesId.MANAPHY || species.speciesId === SpeciesId.PHIONE) {
-        this.pokemonHatchedIcon.setFrame("manaphy");
-      } else {
-        this.pokemonHatchedIcon.setFrame(getEggTierForSpecies(species));
-      }
-      this.pokemonHatchedCountText.setText(`${this.speciesStarterDexEntry.hatchedCount}`);
-
-      const defaultDexAttr = this.getCurrentDexProps(species.speciesId);
-      const defaultProps = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
-      const variant = defaultProps.variant;
-      const tint = getVariantTint(variant);
-      this.pokemonShinyIcon.setFrame(getVariantIcon(variant)).setTint(tint).setVisible(defaultProps.shiny);
-
-      if (pokemonPrevolutions.hasOwnProperty(species.speciesId)) {
-        this.pokemonCaughtHatchedContainer.setVisible(false);
-        this.pokemonShinyIcon.setY(104).setFrame(getVariantIcon(variant));
-        this.pokemonFormText.setY(25);
-      } else {
-        this.pokemonCaughtHatchedContainer.setVisible(true);
-        this.pokemonShinyIcon.setY(86);
-        this.pokemonCandyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
-        this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
-        this.pokemonCandyCountText.setText(`×${globalScene.gameData.starterData[species.speciesId].candyCount}`);
-        this.pokemonFormText.setY(42);
-        this.pokemonHatchedIcon.setVisible(true);
-        this.pokemonHatchedCountText.setVisible(true);
-
-        const { currentFriendship, friendshipCap } = getFriendship(this.lastSpecies.speciesId);
-        const candyCropY = 16 - 16 * (currentFriendship / friendshipCap);
-        this.pokemonCandyDarknessOverlay.setCrop(0, 0, 16, candyCropY);
-
-        this.pokemonCandyContainer
-          .setVisible(true)
-          .on("pointerover", () => {
-            globalScene.ui.showTooltip("", `${currentFriendship}/${friendshipCap}`, true);
-            this.activeTooltip = "CANDY";
-          })
-          .on("pointerout", () => {
-            globalScene.ui.hideTooltip();
-            this.activeTooltip = undefined;
-          });
-      }
+      const defaultDexAttr = getDexAttrFromPreferences(species.speciesId, this.starterPreferences[species.speciesId]);
 
       this.startIconAnimation(this.cursor);
 
-      const starterIndex = this.starterSpecies.indexOf(species);
-
       let props: DexAttrProps;
 
-      if (starterIndex > -1) {
-        props = globalScene.gameData.getSpeciesDexAttrProps(species, this.starterAttr[starterIndex]);
-        this.setSpeciesDetails(
-          species,
-          {
-            shiny: props.shiny,
-            formIndex: props.formIndex,
-            female: props.female,
-            variant: props.variant,
-            abilityIndex: this.starterAbilityIndexes[starterIndex],
-            natureIndex: this.starterNatures[starterIndex],
-            teraType: this.starterTeras[starterIndex],
-          },
-          false,
-        );
-      } else {
-        const defaultAbilityIndex =
-          starterPreferences?.ability ?? globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
-        const defaultNature =
-          starterPreferences?.nature || globalScene.gameData.getSpeciesDefaultNature(species, dexEntry);
-        props = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
-        if (starterPreferences?.variant && !Number.isNaN(starterPreferences.variant)) {
-          if (props.shiny) {
-            props.variant = starterPreferences.variant as Variant;
-          }
+      const defaultAbilityIndex =
+        starterPreferences?.ability ?? globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
+      const defaultNature =
+        starterPreferences?.nature || globalScene.gameData.getSpeciesDefaultNature(species, dexEntry);
+      props = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+      if (starterPreferences?.variant && !Number.isNaN(starterPreferences.variant)) {
+        if (props.shiny) {
+          props.variant = starterPreferences.variant as Variant;
         }
-        props.formIndex = starterPreferences?.form ?? props.formIndex;
-        props.female = starterPreferences?.female ?? props.female;
-
-        this.setSpeciesDetails(
-          species,
-          {
-            shiny: props.shiny,
-            formIndex: props.formIndex,
-            female: props.female,
-            variant: props.variant,
-            abilityIndex: defaultAbilityIndex,
-            natureIndex: defaultNature,
-            teraType: starterPreferences?.tera,
-          },
-          false,
-        );
       }
+      props.formIndex = starterPreferences?.form ?? props.formIndex;
+      props.female = starterPreferences?.female ?? props.female;
+
+      this.setSpeciesDetails(
+        species,
+        {
+          shiny: props.shiny,
+          formIndex: props.formIndex,
+          female: props.female,
+          variant: props.variant,
+          abilityIndex: defaultAbilityIndex,
+          natureIndex: defaultNature,
+          teraType: starterPreferences?.tera,
+        },
+        false,
+      );
 
       if (!isNullOrUndefined(props.formIndex)) {
         // If switching forms while the pokemon is in the team, update its moveset
         this.updateSelectedStarterMoveset(species.speciesId);
       }
 
-      const speciesForm = getPokemonSpeciesForm(species.speciesId, props.formIndex);
-      this.setTypeIcons(speciesForm.type1, speciesForm.type2);
-
-      this.pokemonSprite.clearTint();
       if (this.pokerusSpecies.includes(species)) {
         handleTutorial(Tutorial.Pokerus);
       }
     } else if (this.speciesStarterDexEntry?.seenAttr) {
-      this.cleanStarterSprite(species, true);
-
-      const props = globalScene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId));
-
-      const formIndex = props.formIndex;
-      const female = props.female;
-      const shiny = props.shiny;
-      const variant = props.variant;
-
-      this.updateSprite(species, female, formIndex, shiny, variant);
-      this.pokemonSprite.setVisible(true);
-      this.pokemonSprite.setTint(0x808080);
+      this.setNoSpeciesDetails();
     } else {
-      this.cleanStarterSprite(species);
-
-      const props = globalScene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId));
-
-      const formIndex = props.formIndex;
-      const female = props.female;
-      const shiny = props.shiny;
-      const variant = props.variant;
-
-      this.updateSprite(species, female, formIndex, shiny, variant);
-      this.pokemonSprite.setVisible(true);
-      this.pokemonSprite.setTint(0x000000);
+      this.setNoSpeciesDetails();
     }
   }
 
@@ -3291,7 +3124,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const container = this.starterContainers[cursor];
     if (container) {
       const lastSpeciesIcon = container.icon;
-      const dexAttr = this.getCurrentDexProps(container.species.speciesId);
+      const dexAttr = getDexAttrFromPreferences(
+        container.species.speciesId,
+        this.starterPreferences[container.species.speciesId],
+      );
       const props = globalScene.gameData.getSpeciesDexAttrProps(container.species, dexAttr);
       this.checkIconId(lastSpeciesIcon, container.species, props.female, props.formIndex, props.shiny, props.variant);
       this.iconAnimHandler.addOrUpdate(lastSpeciesIcon, PokemonIconAnimMode.NONE);
@@ -3309,17 +3145,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.starterMoveset = null;
     this.speciesStarterMoves = [];
 
-    this.shinyOverlay.setVisible(false);
-    this.pokemonNumberText
-      .setColor(this.getTextColor(TextStyle.SUMMARY))
-      .setShadowColor(this.getTextColor(TextStyle.SUMMARY, true));
-
     this.tryUpdateValue();
     this.updateInstructions();
   }
 
   setSpeciesDetails(species: PokemonSpecies, options: SpeciesDetails = {}, save = true): void {
     // Here we pass some options to override everything else
+    this.starterSummary.setSpeciesDetails(species, options);
+
     let { shiny, formIndex, female, variant, abilityIndex, natureIndex, teraType } = options;
 
     // Storing old cursor values...
@@ -3337,16 +3170,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.abilityCursor = -1;
     this.natureCursor = -1;
     this.teraCursor = PokemonType.UNKNOWN;
-
-    // We will only update the sprite if there is a change to form, shiny/variant
-    // or gender for species with gender sprite differences
-    const shouldUpdateSprite =
-      (species.genderDiffs && !isNullOrUndefined(female)) ||
-      !isNullOrUndefined(formIndex) ||
-      !isNullOrUndefined(shiny) ||
-      !isNullOrUndefined(variant);
-
-    this.updateCandyTooltip();
 
     // Ensuring that gender and form are consistent
     if (species.forms?.find(f => f.formKey === "female")) {
@@ -3381,24 +3204,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.updatePartyIcon(species, partyIndex);
     }
 
-    this.pokemonSprite.setVisible(false);
-    this.teraIcon.setVisible(false);
-
-    if (this.assetLoadCancelled) {
-      this.assetLoadCancelled.value = true;
-      this.assetLoadCancelled = null;
-    }
-
-    this.pokemonPreferencesContainer.setVisible(true);
-
-    this.shinyOverlay.setVisible(shiny ?? false); // TODO: is false the correct default?
-    this.pokemonNumberText.setColor(
-      this.getTextColor(shiny ? TextStyle.SUMMARY_DEX_NUM_GOLD : TextStyle.SUMMARY_DEX_NUM, false),
-    );
-    this.pokemonNumberText.setShadowColor(
-      this.getTextColor(shiny ? TextStyle.SUMMARY_DEX_NUM_GOLD : TextStyle.SUMMARY_DEX_NUM, true),
-    );
-
     const starterIndex = this.starterSpecies.indexOf(species);
 
     if (starterIndex > -1) {
@@ -3408,16 +3213,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.starterTeras[starterIndex] = this.teraCursor;
     }
 
-    const assetLoadCancelled = new BooleanHolder(false);
-    this.assetLoadCancelled = assetLoadCancelled;
-
-    // TODO: should this line be here, or in .updateSprite?
     female ??= false;
-    if (shouldUpdateSprite) {
-      this.updateSprite(species, female, formIndex, shiny, variant);
-    } else {
-      this.pokemonSprite.setVisible(!this.statsMode);
-    }
 
     // Update the starter container (is this it?)
     const currentContainer = this.starterContainers.find(p => p.species.speciesId === species.speciesId);
@@ -3432,68 +3228,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     this.updateCanCycle(species.speciesId, formIndex);
 
-    // Set the gender text
-    if (species.malePercent !== null) {
-      const gender = !female ? Gender.MALE : Gender.FEMALE;
-      this.pokemonGenderText
-        .setText(getGenderSymbol(gender))
-        .setColor(getGenderColor(gender))
-        .setShadowColor(getGenderColor(gender, true));
-    } else {
-      this.pokemonGenderText.setText("");
-    }
-
-    // Update ability text
-    let ability: Ability;
-    if (this.lastSpecies.forms?.length > 1) {
-      ability = allAbilities[this.lastSpecies.forms[formIndex ?? 0].getAbility(abilityIndex!)];
-    } else {
-      ability = allAbilities[this.lastSpecies.getAbility(abilityIndex!)]; // TODO: is this bang correct?
-    }
-
-    const isHidden = abilityIndex === (this.lastSpecies.ability2 ? 2 : 1);
-    this.pokemonAbilityText
-      .setText(ability.name)
-      .setColor(this.getTextColor(!isHidden ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GOLD))
-      .setShadowColor(this.getTextColor(!isHidden ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GOLD, true));
-
-    if (this.pokemonAbilityText.visible) {
-      if (this.activeTooltip === "ABILITY") {
-        globalScene.ui.editTooltip(`${ability.name}`, `${ability.description}`);
-      }
-
-      this.pokemonAbilityText.on("pointerover", () => {
-        globalScene.ui.showTooltip(`${ability.name}`, `${ability.description}`, true);
-        this.activeTooltip = "ABILITY";
-      });
-      this.pokemonAbilityText.on("pointerout", () => {
-        globalScene.ui.hideTooltip();
-        this.activeTooltip = undefined;
-      });
-    }
-
-    this.updatePassiveDisplay(species.speciesId, formIndex);
-
-    // Update nature text
-    this.pokemonNatureText.setText(
-      getNatureName(natureIndex as unknown as Nature, true, true, false, globalScene.uiTheme),
-    );
-
-    // Update form text
-    const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex!); // TODO: is the bang correct?
-    const formText = species.getFormNameToDisplay(formIndex);
-    this.pokemonFormText.setText(formText);
-
-    this.setTypeIcons(speciesForm.type1, speciesForm.type2);
-
-    this.teraIcon.setFrame(PokemonType[this.teraCursor].toLowerCase());
-    this.teraIcon.setVisible(!this.statsMode && this.allowTera);
-
     this.updateSpeciesMoves(species.speciesId, formIndex);
-
-    this.pokemonAdditionalMoveCountLabel
-      .setText(`(+${Math.max(this.speciesStarterMoves.length - 4, 0)})`)
-      .setVisible(this.speciesStarterMoves.length > 4);
 
     this.tryUpdateValue();
 
@@ -3501,79 +3236,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     if (save) {
       saveStarterPreferences(this.originalStarterPreferences);
-    }
-  }
-
-  updateCandyTooltip() {
-    if (this.activeTooltip === "CANDY") {
-      if (this.lastSpecies && this.pokemonCandyContainer.visible) {
-        const { currentFriendship, friendshipCap } = getFriendship(this.lastSpecies.speciesId);
-        globalScene.ui.editTooltip("", `${currentFriendship}/${friendshipCap}`);
-      } else {
-        globalScene.ui.hideTooltip();
-      }
-    }
-  }
-
-  updatePassiveDisplay(speciesId: SpeciesId, formIndex = 0) {
-    this.pokemonPassiveLabelText.setVisible(false);
-    this.pokemonPassiveText.setVisible(false);
-    this.pokemonPassiveDisabledIcon.setVisible(false);
-    this.pokemonPassiveLockedIcon.setVisible(false);
-
-    const isFreshStartChallenge = globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
-
-    const { starterDataEntry } = getSpeciesData(speciesId);
-
-    const passiveAttr = starterDataEntry.passiveAttr;
-    const passiveAbility = allAbilities[this.lastSpecies.getPassiveAbility(formIndex)];
-
-    if (passiveAbility) {
-      const isUnlocked = !!(passiveAttr & PassiveAttr.UNLOCKED);
-      const isEnabled = !!(passiveAttr & PassiveAttr.ENABLED);
-
-      const textStyle = isUnlocked && isEnabled ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GRAY;
-      const textAlpha = isUnlocked && isEnabled ? 1 : 0.5;
-
-      this.pokemonPassiveLabelText
-        .setVisible(!isFreshStartChallenge)
-        .setColor(this.getTextColor(TextStyle.SUMMARY_ALT))
-        .setShadowColor(this.getTextColor(TextStyle.SUMMARY_ALT, true));
-      this.pokemonPassiveText
-        .setVisible(!isFreshStartChallenge)
-        .setText(passiveAbility.name)
-        .setColor(this.getTextColor(textStyle))
-        .setAlpha(textAlpha)
-        .setShadowColor(this.getTextColor(textStyle, true));
-
-      if (this.activeTooltip === "PASSIVE") {
-        globalScene.ui.editTooltip(`${passiveAbility.name}`, `${passiveAbility.description}`);
-      }
-
-      if (this.pokemonPassiveText.visible) {
-        this.pokemonPassiveText.on("pointerover", () => {
-          globalScene.ui.showTooltip(`${passiveAbility.name}`, `${passiveAbility.description}`, true);
-          this.activeTooltip = "PASSIVE";
-        });
-        this.pokemonPassiveText.on("pointerout", () => {
-          globalScene.ui.hideTooltip();
-          this.activeTooltip = undefined;
-        });
-      }
-
-      const iconPosition = {
-        x: this.pokemonPassiveText.x + this.pokemonPassiveText.displayWidth + 1,
-        y: this.pokemonPassiveText.y + this.pokemonPassiveText.displayHeight / 2,
-      };
-      this.pokemonPassiveDisabledIcon
-        .setVisible(isUnlocked && !isEnabled && !isFreshStartChallenge)
-        .setPosition(iconPosition.x, iconPosition.y);
-      this.pokemonPassiveLockedIcon
-        .setVisible(!isUnlocked && !isFreshStartChallenge)
-        .setPosition(iconPosition.x, iconPosition.y);
-    } else if (this.activeTooltip === "PASSIVE") {
-      // No passive and passive tooltip is active > hide it
-      globalScene.ui.hideTooltip();
     }
   }
 
@@ -3679,28 +3341,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     if (!this.starterMoveset) {
       this.starterMoveset = this.speciesStarterMoves.slice(0, 4) as StarterMoveset;
     }
-
-    for (let m = 0; m < 4; m++) {
-      const move = m < this.starterMoveset.length ? allMoves[this.starterMoveset[m]] : null;
-      this.pokemonMoveBgs[m].setFrame(PokemonType[move ? move.type : PokemonType.UNKNOWN].toString().toLowerCase());
-      this.pokemonMoveLabels[m].setText(move ? move.name : "-");
-      this.pokemonMoveContainers[m].setVisible(!!move);
-    }
-
-    const hasEggMoves = speciesEggMoves.hasOwnProperty(speciesId);
-    let eggMoves = 0;
-    eggMoves = starterDataEntry.eggMoves;
-
-    for (let em = 0; em < 4; em++) {
-      const eggMove = hasEggMoves ? allMoves[speciesEggMoves[speciesId][em]] : null;
-      const eggMoveUnlocked = eggMove && eggMoves & (1 << em);
-      this.pokemonEggMoveBgs[em].setFrame(
-        PokemonType[eggMove ? eggMove.type : PokemonType.UNKNOWN].toString().toLowerCase(),
-      );
-      this.pokemonEggMoveLabels[em].setText(eggMove && eggMoveUnlocked ? eggMove.name : "???");
-    }
-
-    this.pokemonEggMovesContainer.setVisible(!!this.speciesStarterDexEntry?.caughtAttr && hasEggMoves);
+    this.starterSummary.updateMoveset(this.starterMoveset, this.speciesStarterMoves.length);
+    this.starterSummary.updateEggMoves(starterDataEntry.eggMoves);
   }
 
   popStarter(index: number): void {
@@ -3713,7 +3355,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     for (let s = 0; s < this.starterSpecies.length; s++) {
       const species = this.starterSpecies[s];
-      const currentDexAttr = this.getCurrentDexProps(species.speciesId);
+      const currentDexAttr = getDexAttrFromPreferences(species.speciesId, this.starterPreferences[species.speciesId]);
       const props = globalScene.gameData.getSpeciesDexAttrProps(species, currentDexAttr);
       this.starterIcons[s]
         .setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant))
@@ -3812,7 +3454,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       const species = this.starterContainers[this.cursor].species;
       const isNewPokemonValid = checkStarterValidForChallenge(
         species,
-        globalScene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId)),
+        globalScene.gameData.getSpeciesDexAttrProps(
+          species,
+          getDexAttrFromPreferences(species.speciesId, this.starterPreferences[species.speciesId]),
+        ),
         false,
       );
       isPartyValid ||= isNewPokemonValid;
@@ -3843,7 +3488,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.allStarterSpecies[s],
         globalScene.gameData.getSpeciesDexAttrProps(
           this.allStarterSpecies[s],
-          this.getCurrentDexProps(this.allStarterSpecies[s].speciesId),
+          getDexAttrFromPreferences(
+            this.allStarterSpecies[s].speciesId,
+            this.starterPreferences[this.allStarterSpecies[s].speciesId],
+          ),
         ),
         isPartyValid,
       );
@@ -3985,7 +3633,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       const species = this.starterSpecies[s];
       const isValidForChallenge = checkStarterValidForChallenge(
         species,
-        globalScene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId)),
+        globalScene.gameData.getSpeciesDexAttrProps(
+          species,
+          getDexAttrFromPreferences(species.speciesId, this.starterPreferences[species.speciesId]),
+        ),
         false,
       );
       canStart ||= isValidForChallenge;
@@ -3993,86 +3644,21 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     return canStart;
   }
 
-  /**
-   * Creates a temporary dex attr props that will be used to check whether a pokemon is valid for a challenge
-   * and to display the correct shiny, variant, and form based on the AllStarterPreferences
-   *
-   * @param speciesId the id of the species to get props for
-   * @returns the dex props
-   */
-  getCurrentDexProps(speciesId: number): bigint {
-    let props = 0n;
-    const { dexEntry } = getSpeciesData(speciesId);
-    const caughtAttr = dexEntry.caughtAttr;
-
-    /*  this checks the gender of the pokemon; this works by checking a) that the starter preferences for the species exist, and if so, is it female. If so, it'll add DexAttr.FEMALE to our temp props
-     *  It then checks b) if the caughtAttr for the pokemon is female and NOT male - this means that the ONLY gender we've gotten is female, and we need to add DexAttr.FEMALE to our temp props
-     *  If neither of these pass, we add DexAttr.MALE to our temp props
-     */
-    if (
-      this.starterPreferences[speciesId]?.female ||
-      ((caughtAttr & DexAttr.FEMALE) > 0n && (caughtAttr & DexAttr.MALE) === 0n)
-    ) {
-      props += DexAttr.FEMALE;
-    } else {
-      props += DexAttr.MALE;
-    }
-    /* This part is very similar to above, but instead of for gender, it checks for shiny within starter preferences.
-     * If they're not there, it enables shiny state by default if any shiny was caught
-     */
-    if (
-      this.starterPreferences[speciesId]?.shiny ||
-      ((caughtAttr & DexAttr.SHINY) > 0n && this.starterPreferences[speciesId]?.shiny !== false)
-    ) {
-      props += DexAttr.SHINY;
-      if (this.starterPreferences[speciesId]?.variant !== undefined) {
-        props += BigInt(Math.pow(2, this.starterPreferences[speciesId]?.variant)) * DexAttr.DEFAULT_VARIANT;
-      } else {
-        /*  This calculates the correct variant if there's no starter preferences for it.
-         *  This gets the highest tier variant that you've caught and adds it to the temp props
-         */
-        if ((caughtAttr & DexAttr.VARIANT_3) > 0) {
-          props += DexAttr.VARIANT_3;
-        } else if ((caughtAttr & DexAttr.VARIANT_2) > 0) {
-          props += DexAttr.VARIANT_2;
-        } else {
-          props += DexAttr.DEFAULT_VARIANT;
-        }
-      }
-    } else {
-      props += DexAttr.NON_SHINY;
-      props += DexAttr.DEFAULT_VARIANT; // we add the default variant here because non shiny versions are listed as default variant
-    }
-    if (this.starterPreferences[speciesId]?.form) {
-      // this checks for the form of the pokemon
-      props += BigInt(Math.pow(2, this.starterPreferences[speciesId]?.form)) * DexAttr.DEFAULT_FORM;
-    } else {
-      // Get the first unlocked form
-      props += globalScene.gameData.getFormAttr(globalScene.gameData.getFormIndex(caughtAttr));
-    }
-
-    return props;
-  }
-
   toggleStatsMode(on?: boolean): void {
     if (on === undefined) {
       on = !this.statsMode;
     }
     if (on) {
-      this.showStats();
       this.statsMode = true;
-      this.pokemonSprite.setVisible(false);
-      this.teraIcon.setVisible(false);
+      this.starterSummary.showIvs();
       this.canCycleTera = false;
       this.updateInstructions();
     } else {
       this.statsMode = false;
-      this.statsContainer.setVisible(false);
-      this.pokemonSprite.setVisible(!!this.speciesStarterDexEntry?.caughtAttr);
-      this.teraIcon.setVisible(this.allowTera);
+      this.starterSummary.hideIvs(!!this.speciesStarterDexEntry?.caughtAttr);
       const props = globalScene.gameData.getSpeciesDexAttrProps(
         this.lastSpecies,
-        this.getCurrentDexProps(this.lastSpecies.speciesId),
+        getDexAttrFromPreferences(this.lastSpecies.speciesId, this.starterPreferences[this.lastSpecies.speciesId]),
       );
       const formIndex = props.formIndex;
       this.canCycleTera =
@@ -4117,8 +3703,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.cursor = -1;
     this.oldCursor = -1;
     this.hideInstructions();
-    this.activeTooltip = undefined;
-    globalScene.ui.hideTooltip();
+
+    this.starterSummary.clear();
 
     this.starterSelectContainer.setVisible(false);
     this.blockInput = false;

@@ -11,11 +11,23 @@ import type { PokemonSpecies } from "#data/pokemon-species";
 import { ChallengeType } from "#enums/challenge-type";
 import { DexAttr } from "#enums/dex-attr";
 import { Passive } from "#enums/passive";
+import type { PokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
-import type { StarterDataEntry } from "#system/game-data";
+import type { Variant } from "#sprites/variant";
+import type { StarterDataEntry, StarterPreferences } from "#system/game-data";
 import type { DexEntry } from "#types/dex-data";
 import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";
 import i18next from "i18next";
+
+export interface SpeciesDetails {
+  shiny?: boolean;
+  formIndex?: number;
+  female?: boolean;
+  variant?: Variant;
+  abilityIndex?: number;
+  natureIndex?: number;
+  teraType?: PokemonType;
+}
 
 /**
  * Determines if a passive upgrade is available for the given species ID
@@ -232,4 +244,65 @@ export function getFriendship(speciesId: number) {
   const friendshipCap = getStarterValueFriendshipCap(speciesStarterCosts[speciesId]);
 
   return { currentFriendship, friendshipCap };
+}
+
+/**
+ * Creates a temporary dex attr props that will be used to check whether a pokemon is valid for a challenge
+ * and to display the correct shiny, variant, and form based on the AllStarterPreferences
+ *
+ * @param speciesId the id of the species to get props for
+ * @returns the dex props
+ */
+export function getDexAttrFromPreferences(speciesId: number, starterPreferences: StarterPreferences = {}): bigint {
+  let props = 0n;
+  const { dexEntry } = getSpeciesData(speciesId);
+  const caughtAttr = dexEntry.caughtAttr;
+
+  /*  this checks the gender of the pokemon; this works by checking a) that the starter preferences for the species exist, and if so, is it female. If so, it'll add DexAttr.FEMALE to our temp props
+   *  It then checks b) if the caughtAttr for the pokemon is female and NOT male - this means that the ONLY gender we've gotten is female, and we need to add DexAttr.FEMALE to our temp props
+   *  If neither of these pass, we add DexAttr.MALE to our temp props
+   */
+  if (
+    starterPreferences[speciesId]?.female ||
+    ((caughtAttr & DexAttr.FEMALE) > 0n && (caughtAttr & DexAttr.MALE) === 0n)
+  ) {
+    props += DexAttr.FEMALE;
+  } else {
+    props += DexAttr.MALE;
+  }
+  /* This part is very similar to above, but instead of for gender, it checks for shiny within starter preferences.
+   * If they're not there, it enables shiny state by default if any shiny was caught
+   */
+  if (
+    starterPreferences[speciesId]?.shiny ||
+    ((caughtAttr & DexAttr.SHINY) > 0n && starterPreferences[speciesId]?.shiny !== false)
+  ) {
+    props += DexAttr.SHINY;
+    if (starterPreferences[speciesId]?.variant !== undefined) {
+      props += BigInt(Math.pow(2, starterPreferences[speciesId]?.variant)) * DexAttr.DEFAULT_VARIANT;
+    } else {
+      /*  This calculates the correct variant if there's no starter preferences for it.
+       *  This gets the highest tier variant that you've caught and adds it to the temp props
+       */
+      if ((caughtAttr & DexAttr.VARIANT_3) > 0) {
+        props += DexAttr.VARIANT_3;
+      } else if ((caughtAttr & DexAttr.VARIANT_2) > 0) {
+        props += DexAttr.VARIANT_2;
+      } else {
+        props += DexAttr.DEFAULT_VARIANT;
+      }
+    }
+  } else {
+    props += DexAttr.NON_SHINY;
+    props += DexAttr.DEFAULT_VARIANT; // we add the default variant here because non shiny versions are listed as default variant
+  }
+  if (starterPreferences[speciesId]?.form) {
+    // this checks for the form of the pokemon
+    props += BigInt(Math.pow(2, starterPreferences[speciesId]?.form)) * DexAttr.DEFAULT_FORM;
+  } else {
+    // Get the first unlocked form
+    props += globalScene.gameData.getFormAttr(globalScene.gameData.getFormIndex(caughtAttr));
+  }
+
+  return props;
 }

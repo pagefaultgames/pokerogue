@@ -2083,6 +2083,20 @@ export class GameData {
     return ret;
   }
 
+  getSpeciesDefaultDexAttrProps(): DexAttrProps {
+    const shiny = false;
+    const female = false;
+    const variant = 0;
+    const formIndex = 0;
+
+    return {
+      shiny,
+      female,
+      variant,
+      formIndex,
+    };
+  }
+
   getSpeciesDexAttrProps(_species: PokemonSpecies, dexAttr: bigint): DexAttrProps {
     const shiny = !(dexAttr & DexAttr.NON_SHINY);
     const female = !(dexAttr & DexAttr.MALE);
