@@ -1,0 +1,23 @@
+# SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+# SPDX-FileContributor: SirzBenjie
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
+version = 1
+
+
+[[annotations]]
+path = [
+    "workflows/**/*.yml",
+    "ISSUE_TEMPLATE/**/*.yml",
+    "FUNDING.yml",
+    "CODEOWNERS",
+]
+SPDX-FileCopyrightText = "2024-2025 Pagefault Games"
+SPDX-License-Identifier = "AGPL-3.0-only"
+
+# All markdown files are CC-BY-NC-SA-4.0
+[[annotations]]
+path = "**/*.md"
+SPDX-FileCopyrightText = "2024-2025 Pagefault Games"
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
