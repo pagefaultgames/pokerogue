@@ -184,6 +184,50 @@ function TestSetup.createStandardPokemonPositional(name, species, level, types, 
     })
 end
 
+-- Create a test battle state for integration tests
+function TestSetup.createTestBattle()
+    return {
+        battleId = "test-battle-" .. math.random(1000, 9999),
+        turn = 1,
+        phase = "command",
+        playerParty = {
+            TestSetup.createTestPokemon(50, "Charizard")
+        },
+        enemyParty = {
+            TestSetup.createTestPokemon(50, "Blastoise")
+        },
+        battleConditions = {},
+        sideEffects = {
+            player = {},
+            enemy = {}
+        },
+        activePokemon = {
+            player = 0,
+            enemy = 0
+        },
+        turnOrder = {},
+        weather = nil,
+        terrain = nil
+    }
+end
+
+-- Create a test Pokemon for integration tests
+function TestSetup.createTestPokemon(level, species)
+    local pokemon = TestSetup.createStandardPokemon({
+        name = species,
+        species = species,
+        level = level,
+        types = {9}, -- FIRE type - use numeric value to avoid circular dependency
+        moves = {1, 2, 3, 4} -- Default moves
+    })
+    
+    -- Add battle-specific fields
+    pokemon.id = math.random(1000, 9999)
+    pokemon.side = "player" -- Default side
+    
+    return pokemon
+end
+
 -- Test Enums for integration tests
 TestSetup.TestEnums = {
     PokemonType = {
