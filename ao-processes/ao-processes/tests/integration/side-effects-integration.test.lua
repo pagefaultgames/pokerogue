@@ -4,7 +4,7 @@
 
 -- Load test framework and setup
 package.path = package.path .. ";./tests/integration/?.lua;./tests/?.lua;./?.lua;../../ao-processes/?.lua;../../ao-processes/handlers/?.lua;../../ao-processes/game-logic/?.lua;../../ao-processes/game-logic/?/init.lua"
-local TestSetup = require("tests/integration/test-setup")
+local TestSetup = require("test-setup")
 
 -- Load systems under test
 local BattleHandler = require("handlers.battle-handler")
