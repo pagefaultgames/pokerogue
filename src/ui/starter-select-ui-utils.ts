@@ -86,3 +86,19 @@ export function isStarterValidForChallenge(species: PokemonSpecies) {
 
   return allFormsValid;
 }
+
+/**
+ * Determines if 'Icon' based upgrade notifications should be shown
+ * @returns true if upgrade notifications are enabled and set to display an 'Icon'
+ */
+export function isUpgradeIconEnabled(): boolean {
+  return globalScene.candyUpgradeNotification !== 0 && globalScene.candyUpgradeDisplay === 0;
+}
+
+/**
+ * Determines if 'Animation' based upgrade notifications should be shown
+ * @returns true if upgrade notifications are enabled and set to display an 'Animation'
+ */
+export function isUpgradeAnimationEnabled(): boolean {
+  return globalScene.candyUpgradeNotification !== 0 && globalScene.candyUpgradeDisplay === 1;
+}

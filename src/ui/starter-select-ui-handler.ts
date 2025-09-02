@@ -83,6 +83,8 @@ import {
   isPassiveAvailable,
   isSameSpeciesEggAvailable,
   isStarterValidForChallenge,
+  isUpgradeAnimationEnabled,
+  isUpgradeIconEnabled,
   isValueReductionAvailable,
 } from "./starter-select-ui-utils";
 
@@ -1022,9 +1024,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       i18next.t("starterSelectUiHandler:ability"),
       TextStyle.SUMMARY_ALT,
       { fontSize: starterInfoTextSize },
-    )
-      .setOrigin(0)
-      .setVisible(false);
+    ).setOrigin(0);
 
     this.pokemonAbilityText = addTextObject(starterInfoXPos, 127 + starterInfoYOffset, "", TextStyle.SUMMARY_ALT, {
       fontSize: starterInfoTextSize,
@@ -1038,9 +1038,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       i18next.t("starterSelectUiHandler:passive"),
       TextStyle.SUMMARY_ALT,
       { fontSize: starterInfoTextSize },
-    )
-      .setOrigin(0)
-      .setVisible(false);
+    ).setOrigin(0);
 
     this.pokemonPassiveText = addTextObject(starterInfoXPos, 136 + starterInfoYOffset, "", TextStyle.SUMMARY_ALT, {
       fontSize: starterInfoTextSize,
@@ -1066,9 +1064,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       i18next.t("starterSelectUiHandler:nature"),
       TextStyle.SUMMARY_ALT,
       { fontSize: starterInfoTextSize },
-    )
-      .setOrigin(0)
-      .setVisible(false);
+    ).setOrigin(0);
 
     this.pokemonNatureText = addBBCodeTextObject(starterInfoXPos, 145 + starterInfoYOffset, "", TextStyle.SUMMARY_ALT, {
       fontSize: starterInfoTextSize,
@@ -1108,9 +1104,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       i18next.t("starterSelectUiHandler:growthRate"),
       TextStyle.SUMMARY_ALT,
       { fontSize: "36px" },
-    )
-      .setOrigin(0)
-      .setVisible(false);
+    ).setOrigin(0);
 
     this.pokemonGrowthRateText = addTextObject(34, 106, "", TextStyle.GROWTH_RATE_TYPE, { fontSize: "36px" }).setOrigin(
       0,
@@ -1408,21 +1402,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   /**
-   * Determines if 'Icon' based upgrade notifications should be shown
-   * @returns true if upgrade notifications are enabled and set to display an 'Icon'
-   */
-  isUpgradeIconEnabled(): boolean {
-    return globalScene.candyUpgradeNotification !== 0 && globalScene.candyUpgradeDisplay === 0;
-  }
-  /**
-   * Determines if 'Animation' based upgrade notifications should be shown
-   * @returns true if upgrade notifications are enabled and set to display an 'Animation'
-   */
-  isUpgradeAnimationEnabled(): boolean {
-    return globalScene.candyUpgradeNotification !== 0 && globalScene.candyUpgradeDisplay === 1;
-  }
-
-  /**
    * Sets a bounce animation if enabled and the Pokemon has an upgrade
    * @param icon {@linkcode Phaser.GameObjects.GameObject} to animate
    * @param species {@linkcode PokemonSpecies} of the icon used to check for upgrades
@@ -1514,10 +1493,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
    * @param starterContainer the container for the Pokemon to update
    */
   updateCandyUpgradeDisplay(starterContainer: StarterContainer) {
-    if (this.isUpgradeIconEnabled()) {
+    if (isUpgradeIconEnabled()) {
       this.setUpgradeIcon(starterContainer);
     }
-    if (this.isUpgradeAnimationEnabled()) {
+    if (isUpgradeAnimationEnabled()) {
       this.setUpgradeAnimation(starterContainer.icon, this.lastSpecies, true);
     }
   }
@@ -3590,8 +3569,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     if (this.speciesStarterDexEntry?.caughtAttr) {
       this.setNameAndNumber(species);
+
       const colorScheme = starterColors[species.speciesId];
 
+      this.pokemonUncaughtText.setVisible(false);
       this.pokemonPermanentInfoContainer.setVisible(true);
       this.pokemonStatisticsContainer.setVisible(true);
 
@@ -3612,11 +3593,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         .setText(growthReadable)
         .setColor(getGrowthRateColor(species.growthRate))
         .setShadowColor(getGrowthRateColor(species.growthRate, true));
-      this.pokemonGrowthRateLabelText.setVisible(true);
-      this.pokemonUncaughtText.setVisible(false);
-      this.pokemonAbilityLabelText.setVisible(true);
-      this.pokemonPassiveLabelText.setVisible(true);
-      this.pokemonNatureLabelText.setVisible(true);
       this.pokemonCaughtCountText.setText(`${this.speciesStarterDexEntry.caughtCount}`);
       if (species.speciesId === SpeciesId.MANAPHY || species.speciesId === SpeciesId.PHIONE) {
         this.pokemonHatchedIcon.setFrame("manaphy");
@@ -3630,18 +3606,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       const variant = defaultProps.variant;
       const tint = getVariantTint(variant);
       this.pokemonShinyIcon.setFrame(getVariantIcon(variant)).setTint(tint).setVisible(defaultProps.shiny);
-      this.pokemonCaughtHatchedContainer.setVisible(true);
-      this.pokemonFormText.setVisible(true);
 
       if (pokemonPrevolutions.hasOwnProperty(species.speciesId)) {
-        this.pokemonCaughtHatchedContainer.setY(16);
+        this.pokemonCaughtHatchedContainer.setVisible(false);
         this.pokemonShinyIcon.setY(104).setFrame(getVariantIcon(variant));
-        [this.pokemonCandyContainer, this.pokemonHatchedIcon, this.pokemonHatchedCountText].map(c =>
-          c.setVisible(false),
-        );
         this.pokemonFormText.setY(25);
       } else {
-        this.pokemonCaughtHatchedContainer.setY(25);
+        this.pokemonCaughtHatchedContainer.setVisible(true);
         this.pokemonShinyIcon.setY(86);
         this.pokemonCandyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
         this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
@@ -3690,8 +3661,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       } else {
         const defaultAbilityIndex =
           starterPreferences?.ability ?? globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
-        // load default nature from stater save data, if set
-        const { dexEntry } = this.getSpeciesData(species.speciesId);
         const defaultNature =
           starterPreferences?.nature || globalScene.gameData.getSpeciesDefaultNature(species, dexEntry);
         props = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
@@ -3762,7 +3731,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   startIconAnimation(cursor: number) {
     const container = this.starterContainers[cursor];
     const icon = container.icon;
-    if (this.isUpgradeAnimationEnabled()) {
+    if (isUpgradeAnimationEnabled()) {
       globalScene.tweens.getTweensOf(icon).forEach(tween => tween.pause());
       // Reset the position of the icon
       icon.x = -2;
