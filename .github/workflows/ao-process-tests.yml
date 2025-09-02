@@ -561,6 +561,10 @@ jobs:
                 -- Set up package path for test modules
                 package.path = package.path .. ';../../ao-processes/?.lua;../../ao-processes/handlers/?.lua;../../ao-processes/game-logic/?.lua;../../ao-processes/tests/integration/?.lua;../../ao-processes/tests/framework/?.lua;../../ao-processes/framework/?.lua'
                 
+                -- Set working directory context for tests that need to find files
+                _G.INTEGRATION_TEST_ROOT = '../../'
+                _G.AO_PROCESSES_ROOT = '../../ao-processes/'
+                
                 -- Debug package path setup
                 print('📦 Package path configured:', package.path)
                 
@@ -573,6 +577,15 @@ jobs:
                   else
                     print('⚠️ Module failed to load:', module_name, 'Error:', mod_result)
                   end
+                end
+                
+                -- Pre-load any modules that might be required during file load
+                -- This prevents Handlers global errors during require statements
+                local preload_success = pcall(function()
+                  require('handlers.battle-handler')
+                end)
+                if not preload_success then
+                  print('⚠️ Could not pre-load battle-handler, test may handle this gracefully')
                 end
                 
                 -- Load and run the test file
