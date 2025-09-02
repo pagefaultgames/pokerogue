@@ -537,6 +537,13 @@ jobs:
                   _module = 'test-integration'
                 }
                 
+                -- Create Handlers global for battle-handler compatibility
+                _G.Handlers = {
+                  add = function(name, func) end,
+                  remove = function(name) end,
+                  utils = {}
+                }
+                
                 -- Add json module (try to load or create stub)
                 local json_success, json_module = pcall(require, 'json')
                 if not json_success then
@@ -552,7 +559,7 @@ jobs:
                 end
                 
                 -- Set up package path for test modules
-                package.path = package.path .. ';../../ao-processes/?.lua;../../ao-processes/handlers/?.lua;../../ao-processes/game-logic/?.lua;../../ao-processes/tests/integration/?.lua'
+                package.path = package.path .. ';../../ao-processes/?.lua;../../ao-processes/handlers/?.lua;../../ao-processes/game-logic/?.lua;../../ao-processes/tests/integration/?.lua;../../ao-processes/tests/framework/?.lua;../../ao-processes/framework/?.lua'
                 
                 -- Debug package path setup
                 print('📦 Package path configured:', package.path)
