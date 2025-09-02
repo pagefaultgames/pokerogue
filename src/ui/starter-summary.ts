@@ -102,8 +102,11 @@ export class StarterSummary extends Phaser.GameObjects.Container {
       tone: [0.0, 0.0, 0.0, 0.0],
       ignoreTimeTint: true,
     });
-
-    this.shinyOverlay = globalScene.add.image(6, 6, "summary_overlay_shiny").setOrigin(0).setVisible(false);
+    
+    this.shinyOverlay = globalScene.add
+      .image(6, 111, getLocalizedSpriteKey("summary_dexnb_label_overlay_shiny"))
+      .setOrigin(0, 1)
+      .setVisible(false); // Pixel text 'No' shiny
 
     this.pokemonNumberText = addTextObject(17, 1, "0000", TextStyle.SUMMARY_DEX_NUM).setOrigin(0);
 

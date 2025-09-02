@@ -175,6 +175,7 @@ enum MenuOptions {
 export class PokedexPageUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
   private shinyOverlay: Phaser.GameObjects.Image;
+  private starterDexNoLabel: Phaser.GameObjects.Image;
   private pokemonNumberText: Phaser.GameObjects.Text;
   private pokemonSprite: Phaser.GameObjects.Sprite;
   private pokemonNameText: Phaser.GameObjects.Text;
@@ -324,8 +325,12 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     });
     this.starterSelectContainer.add(this.pokemonSprite);
 
-    this.shinyOverlay = globalScene.add.image(6, 6, "summary_overlay_shiny");
-    this.shinyOverlay.setOrigin(0, 0);
+    this.starterDexNoLabel = globalScene.add.image(6, 14, getLocalizedSpriteKey("summary_dexnb_label")); // Pixel text 'No'
+    this.starterDexNoLabel.setOrigin(0, 1);
+    this.starterSelectContainer.add(this.starterDexNoLabel);
+
+    this.shinyOverlay = globalScene.add.image(6, 111, getLocalizedSpriteKey("summary_dexnb_label_overlay_shiny")); // Pixel text 'No' shiny
+    this.shinyOverlay.setOrigin(0, 1);
     this.shinyOverlay.setVisible(false);
     this.starterSelectContainer.add(this.shinyOverlay);
 
