@@ -613,6 +613,20 @@ export class PartyUiHandler extends MessageUiHandler {
       ui.playSelect();
       return true;
     }
+
+    if (option === PartyOption.SUMMARY) {
+      return this.processSummaryOption(pokemon);
+    }
+    if (option === PartyOption.POKEDEX) {
+      return this.processPokedexOption(pokemon);
+    }
+    if (option === PartyOption.UNPAUSE_EVOLUTION) {
+      return this.processUnpauseEvolutionOption(pokemon);
+    }
+    if (option === PartyOption.RENAME) {
+      return this.processRenameOption(pokemon);
+    }
+
     return false;
   }
 

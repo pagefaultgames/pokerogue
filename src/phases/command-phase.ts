@@ -456,7 +456,7 @@ export class CommandPhase extends FieldPhase {
 
     const numBallTypes = 5;
     if (cursor < numBallTypes) {
-      const targetPokemon = globalScene.getEnemyPokemon();
+      const targetPokemon = globalScene.getEnemyPokemon(false);
       if (
         targetPokemon?.isBoss() &&
         targetPokemon?.bossSegmentIndex >= 1 &&
