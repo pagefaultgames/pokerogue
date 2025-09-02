@@ -21,6 +21,7 @@ build
 *.code-workspace
 .vscode/*
 !.vscode/extensions.json
+!.vscode/spdx.code-snippets
 .idea
 .DS_Store
 *.suo
