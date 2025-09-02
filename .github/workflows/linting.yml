@@ -63,6 +63,16 @@ jobs:
         run: pnpm typecheck:scripts
         id: typecheck-scripts
         continue-on-error: true
+      
+      
+      # NOTE: This step *must* run last, as it deletes files in `public/`
+      # Files in public/ do not yet have full licensing information, so remove them before checking for reuse compliance
+      - name: Prepare for reuse compliance
+        run: rm -rf public/*
+      - name: Check for reuse compliance
+        uses: fsfe/reuse-action@v5
+        id: reuse
+        continue-on-error: true
 
       - name: Evaluate for Errors
         env:
@@ -70,6 +80,7 @@ jobs:
           DEPCRUISE_OUTCOME: ${{ steps.depcruise.outcome }}
           TYPECHECK_OUTCOME: ${{ steps.typecheck.outcome }}
           TYPECHECK_SCRIPTS_OUTCOME: ${{ steps.typecheck-scripts.outcome }}
+          REUSE_LINT_OUTCOME: ${{ steps.reuse.outcome }}
         run: |
             # Check for Errors
 
@@ -97,13 +108,17 @@ jobs:
             print_result "Depcruise" "$DEPCRUISE_OUTCOME"
             print_result "Typecheck" "$TYPECHECK_OUTCOME"
             print_result "Typecheck scripts" "$TYPECHECK_SCRIPTS_OUTCOME"
+            print_result "Reuse Compliance" "$REUSE_LINT_OUTCOME"
 
             if [[ "$BIOME_LINT_OUTCOME" != "success" || \
               "$DEPCRUISE_OUTCOME" != "success" || \
               "$TYPECHECK_OUTCOME" != "success" || \
-              "$TYPECHECK_SCRIPTS_OUTCOME" != "success" ]]; then
+              "$TYPECHECK_SCRIPTS_OUTCOME" != "success" || \
+              "$REUSE_LINT_OUTCOME" != "success" ]]; then
               printf "$(red "❌ One or more checks failed!")\n" >&2
               exit 1
             fi
 
             printf "$(green "✅ All checks passed!")\n"
+
+    
