@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 // #region Split string code
 // Regexps involved with splitting words in various case formats.
 // Sourced from https://www.npmjs.com/package/change-case (with slight tweaking here and there)

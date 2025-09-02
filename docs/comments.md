@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+
+SPDX-License-Identifier: CC-BY-NC-SA-4.0
+-->
+
 # Commenting code
 
 People spend more time reading code than writing it (sometimes substantially more so). As such, comments and documentation are **vital** for any large codebase like this.

@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+# SPDX-FileContributor: SirzBenjie
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
 """
 Validates the contents of the variant's masterlist file and identifies
 any mismatched entries for the sprite of the same key between front, back, exp, exp back, and female.
