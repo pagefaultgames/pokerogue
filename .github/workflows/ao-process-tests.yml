@@ -541,7 +541,13 @@ jobs:
                 _G.Handlers = {
                   add = function(name, func) end,
                   remove = function(name) end,
-                  utils = {}
+                  utils = {
+                    hasMatchingTag = function(msg, pattern) 
+                      return msg and msg.Tags and msg.Tags[pattern] ~= nil
+                    end,
+                    reply = function(msg) return msg or {} end,
+                    continue = function(msg) return msg or {} end
+                  }
                 }
                 
                 -- Add json module (try to load or create stub)
@@ -559,11 +565,29 @@ jobs:
                 end
                 
                 -- Set up package path for test modules
-                package.path = package.path .. ';../../ao-processes/?.lua;../../ao-processes/handlers/?.lua;../../ao-processes/game-logic/?.lua;../../ao-processes/tests/integration/?.lua;../../ao-processes/tests/framework/?.lua;../../ao-processes/framework/?.lua'
+                package.path = package.path .. ';../../ao-processes/?.lua;../../ao-processes/handlers/?.lua;../../ao-processes/game-logic/?.lua;../../ao-processes/tests/integration/?.lua;../../ao-processes/tests/?.lua'
                 
                 -- Set working directory context for tests that need to find files
                 _G.INTEGRATION_TEST_ROOT = '../../'
                 _G.AO_PROCESSES_ROOT = '../../ao-processes/'
+                
+                -- Create a helper function for main.lua path resolution
+                _G.findMainLua = function()
+                  local paths = {
+                    '../../ao-processes/main.lua',  -- Correct path from aolite directory
+                    'ao-processes/main.lua',        -- Original GitHub Actions path
+                    '../../../main.lua',            -- Local development path
+                    '../../main.lua'                -- Alternative local path
+                  }
+                  for _, path in ipairs(paths) do
+                    local file = io.open(path, 'r')
+                    if file then
+                      file:close()
+                      return path
+                    end
+                  end
+                  return nil
+                end
                 
                 -- Debug package path setup
                 print('📦 Package path configured:', package.path)
