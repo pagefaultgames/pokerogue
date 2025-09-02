@@ -19,9 +19,10 @@ end
 
 -- Test configuration
 local tests = {
-    {file = "tests/unit/battle/side-effects.test.lua", name = "Side Effects Unit Tests"}
-    -- Note: Integration tests require complex dependencies and are currently not executable
-    -- in production environment. Unit tests provide comprehensive coverage.
+    {file = "tests/unit/battle/side-effects.test.lua", name = "Side Effects Unit Tests"},
+    {file = "tests/unit/battle/field-conditions-aolite.test.lua", name = "Field Conditions Unit Tests (Aolite)"},
+    {file = "tests/integration/aolite-integration.test.lua", name = "Aolite Integration Tests"},
+    {file = "tests/integration/field-conditions-integration-aolite.test.lua", name = "Field Conditions Integration Tests (Aolite)"}
 }
 
 print("AO Process Test Runner")
