@@ -329,7 +329,7 @@ TestFramework.test("Complete Sell Item Workflow", function()
     resetTestData()
     
     local playerId = "test_player_2"
-    local waveIndex = 10
+    local waveIndex = 11 -- Use non-boss wave (waves divisible by 10 are boss waves)
     local itemId = "ETHER" -- PP restore item available at early waves
     local quantity = 3
     
@@ -403,8 +403,8 @@ TestFramework.test("Economic System Integration", function()
     local validTransaction, validMsg = EconomicSystem.validateTransaction(playerId, totalCost, "purchase")
     TestFramework.assertTrue(validTransaction, "Transaction should be valid with sufficient funds")
     
-    -- Test with insufficient funds (assuming mock inventory has 5000 starting money)
-    local largeCost = 1000000 -- Above the MAX_SINGLE_TRANSACTION limit
+    -- Test with excessive transaction amount (above MAX_SINGLE_TRANSACTION limit of 1,000,000)
+    local largeCost = 1000001 -- Above the MAX_SINGLE_TRANSACTION limit
     validTransaction, validMsg = EconomicSystem.validateTransaction(playerId, largeCost, "purchase")
     TestFramework.assertFalse(validTransaction, "Transaction should be invalid with excessive amount")
     
