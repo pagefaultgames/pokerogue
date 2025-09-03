@@ -4453,10 +4453,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           () => {
             const startRun = () => {
               globalScene.money = globalScene.gameMode.getStartingMoney();
+              const starters = this.starters.slice(0);
               ui.setMode(UiMode.STARTER_SELECT);
               const originalStarterSelectCallback = this.starterSelectCallback;
               this.starterSelectCallback = null;
-              originalStarterSelectCallback?.(this.starters);
+              originalStarterSelectCallback?.(starters);
             };
             startRun();
           },
@@ -4486,9 +4487,15 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     let canStart = false;
     for (let s = 0; s < this.starterSpecies.length; s++) {
       const species = this.starterSpecies[s];
+      const starter = this.starters[s];
       const isValidForChallenge = checkStarterValidForChallenge(
         species,
-        globalScene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId)),
+        {
+          formIndex: starter.formIndex,
+          shiny: starter.shiny,
+          variant: starter.variant,
+          female: starter.female ?? false,
+        },
         false,
       );
       canStart ||= isValidForChallenge;
