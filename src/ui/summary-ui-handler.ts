@@ -25,7 +25,7 @@ import type { PokemonMove } from "#moves/pokemon-move";
 import type { Variant } from "#sprites/variant";
 import { getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
-import { addBBCodeTextObject, addTextObject, getBBCodeFrag } from "#ui/text";
+import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import {
   fixedInt,
@@ -361,9 +361,9 @@ export class SummaryUiHandler extends UiHandler {
     this.candyOverlay.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
 
     this.numberText.setText(padInt(this.pokemon.species.speciesId, 4));
-    this.numberText.setColor(this.getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD));
+    this.numberText.setColor(getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD));
     this.numberText.setShadowColor(
-      this.getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD, true),
+      getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD, true),
     );
     const spriteKey = this.pokemon.getSpriteKey(true);
     try {
