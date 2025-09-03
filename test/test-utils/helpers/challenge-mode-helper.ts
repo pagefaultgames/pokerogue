@@ -34,7 +34,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
    * @param gameMode - Optional game mode to set.
    * @returns A promise that resolves when the summon phase is reached.
    */
-  async runToSummon(species: SpeciesId[] = []) {
+  async runToSummon(speciesIds?: SpeciesId[]) {
     await this.game.runToTitle();
 
     if (this.game.override.disableShinies) {
@@ -43,7 +43,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
 
     this.game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       this.game.scene.gameMode.challenges = this.challenges;
-      const starters = generateStarters(this.game.scene, species);
+      const starters = generateStarters(this.game.scene, speciesIds);
       const selectStarterPhase = new SelectStarterPhase();
       this.game.scene.phaseManager.pushPhase(new EncounterPhase(false));
       selectStarterPhase.initBattle(starters);

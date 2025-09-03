@@ -32,7 +32,7 @@ export class ClassicModeHelper extends GameManagerHelper {
    */
   async runToSummon(): Promise<void>;
   async runToSummon(species: SpeciesId[] | undefined): Promise<void>;
-  async runToSummon(species: SpeciesId[] = []): Promise<void> {
+  async runToSummon(speciesIds?: SpeciesId[]): Promise<void> {
     await this.game.runToTitle();
 
     if (this.game.override.disableShinies) {
@@ -47,7 +47,7 @@ export class ClassicModeHelper extends GameManagerHelper {
 
     this.game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       this.game.scene.gameMode = getGameMode(GameModes.CLASSIC);
-      const starters = generateStarters(this.game.scene, species);
+      const starters = generateStarters(this.game.scene, speciesIds);
       const selectStarterPhase = new SelectStarterPhase();
       this.game.scene.phaseManager.pushPhase(new EncounterPhase(false));
       selectStarterPhase.initBattle(starters);

@@ -32,7 +32,7 @@ export function holdOn(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export function generateStarters(scene: BattleScene, speciesIds: SpeciesId[]): Starter[] {
+export function generateStarters(scene: BattleScene, speciesIds?: SpeciesId[]): Starter[] {
   const seed = "test";
   const starters = getTestRunStarters(seed, speciesIds);
   const startingLevel = scene.gameMode.getStartingLevel();
@@ -61,7 +61,7 @@ export function generateStarters(scene: BattleScene, speciesIds: SpeciesId[]): S
   return starters;
 }
 
-function getTestRunStarters(seed: string, speciesIds: SpeciesId[]): Starter[] {
+function getTestRunStarters(seed: string, speciesIds?: SpeciesId[]): Starter[] {
   if (!speciesIds || !speciesIds.length) {
     return getDailyRunStarters(seed);
   }
@@ -91,8 +91,8 @@ function getTestRunStarters(seed: string, speciesIds: SpeciesId[]): Starter[] {
 /**
  * Useful for populating party, wave index, etc. without having to spin up and run through an entire EncounterPhase
  */
-export function initSceneWithoutEncounterPhase(scene: BattleScene, species: SpeciesId[]): void {
-  const starters = generateStarters(scene, species);
+export function initSceneWithoutEncounterPhase(scene: BattleScene, speciesIds?: SpeciesId[]): void {
+  const starters = generateStarters(scene, speciesIds);
   starters.forEach(starter => {
     const starterFormIndex = starter.formIndex;
     const starterGender = Gender.MALE;
