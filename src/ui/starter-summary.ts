@@ -79,17 +79,23 @@ export class StarterSummary extends Phaser.GameObjects.Container {
   private pokemonPassiveLockedIcon: Phaser.GameObjects.Sprite;
   private teraIcon: Phaser.GameObjects.Sprite;
 
+  // Whether the tera type icon should be displayed
   private allowTera: boolean;
 
+  // Container for ivs, whether they should be shown
   private statsContainer: StatsContainer;
   private statsMode = false;
 
   private assetLoadCancelled: BooleanHolder | null;
 
+  // Which of the tooltips is displayed (on mouse hover)
   private activeTooltip: "ABILITY" | "PASSIVE" | "CANDY" | undefined;
 
+  // Container for type, growth rate, luck
   private pokemonPermanentInfoContainer: GameObjects.Container;
+  // Container for numbers of caught pokémon, eggs
   private pokemonStatisticsContainer: GameObjects.Container;
+  // Container for everything that's a preference (abilities, nature, form...)
   private pokemonPreferencesContainer: GameObjects.Container;
 
   private speciesId: SpeciesId;
@@ -102,7 +108,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
       tone: [0.0, 0.0, 0.0, 0.0],
       ignoreTimeTint: true,
     });
-    
+
     this.shinyOverlay = globalScene.add
       .image(6, 111, getLocalizedSpriteKey("summary_dexnb_label_overlay_shiny"))
       .setOrigin(0, 1)
@@ -589,10 +595,10 @@ export class StarterSummary extends Phaser.GameObjects.Container {
 
     this.pokemonPermanentInfoContainer.setVisible(false);
     this.pokemonStatisticsContainer.setVisible(false);
-    this.setNoSpeciesDetails();
+    this.resetSpeciesDetails();
   }
 
-  setNoSpeciesDetails() {
+  resetSpeciesDetails() {
     globalScene.ui.hideTooltip();
 
     this.pokemonPreferencesContainer.setVisible(false);

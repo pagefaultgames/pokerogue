@@ -3106,9 +3106,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         handleTutorial(Tutorial.Pokerus);
       }
     } else if (this.speciesStarterDexEntry?.seenAttr) {
-      this.setNoSpeciesDetails();
+      this.resetSpeciesDetails();
     } else {
-      this.setNoSpeciesDetails();
+      this.resetSpeciesDetails();
     }
   }
 
@@ -3141,7 +3141,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
   }
 
-  setNoSpeciesDetails() {
+  resetSpeciesDetails() {
     this.dexAttrCursor = 0n;
     this.abilityCursor = -1;
     this.natureCursor = -1;
