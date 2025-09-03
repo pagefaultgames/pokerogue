@@ -354,8 +354,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   private lastSpecies: PokemonSpecies;
   private speciesLoaded: Map<SpeciesId, boolean> = new Map<SpeciesId, boolean>();
 
-  private starters: Starter[];
-
+  private starters: Starter[] = [];
   public starterSpecies: PokemonSpecies[] = [];
   private pokerusSpecies: PokemonSpecies[] = [];
   private speciesStarterDexEntry: DexEntry | null;
