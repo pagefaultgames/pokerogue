@@ -6,7 +6,7 @@ import { PokemonSpecies } from "#data/pokemon-species";
 import { BiomeId } from "#enums/biome-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { SpeciesId } from "#enums/species-id";
-import type { Starter } from "#ui/starter-select-ui-handler";
+import type { Starter } from "#system/game-data";
 import { isNullOrUndefined, randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
@@ -67,8 +67,11 @@ function getDailyRunStarter(starterSpeciesForm: PokemonSpeciesForm, startingLeve
   const formIndex = starterSpeciesForm instanceof PokemonSpecies ? undefined : starterSpeciesForm.formIndex;
   const pokemon = globalScene.addPlayerPokemon(starterSpecies, startingLevel, undefined, formIndex);
   const starter: Starter = {
-    species: starterSpecies,
-    dexAttr: pokemon.getDexAttr(),
+    speciesId: starterSpecies.speciesId,
+    shiny: pokemon.shiny,
+    variant: pokemon.variant,
+    formIndex: pokemon.formIndex,
+    ivs: pokemon.ivs,
     abilityIndex: pokemon.abilityIndex,
     passive: false,
     nature: pokemon.getNature(),

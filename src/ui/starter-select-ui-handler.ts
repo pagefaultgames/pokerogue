@@ -46,7 +46,7 @@ import { BattleSceneEventType } from "#events/battle-scene";
 import type { Variant } from "#sprites/variant";
 import { getVariantIcon, getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
-import type { DexAttrProps, StarterAttributes, StarterDataEntry, StarterMoveset } from "#system/game-data";
+import type { DexAttrProps, Starter, StarterAttributes, StarterDataEntry, StarterMoveset } from "#system/game-data";
 import { RibbonData } from "#system/ribbons/ribbon-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
@@ -82,18 +82,6 @@ import type { GameObjects } from "phaser";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
-
-export interface Starter {
-  species: PokemonSpecies;
-  dexAttr: bigint;
-  abilityIndex: number;
-  passive: boolean;
-  nature: Nature;
-  moveset?: StarterMoveset;
-  pokerus: boolean;
-  nickname?: string;
-  teraType?: PokemonType;
-}
 
 interface LanguageSetting {
   starterInfoTextSize: string;

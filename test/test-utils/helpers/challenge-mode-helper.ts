@@ -8,7 +8,7 @@ import { CommandPhase } from "#phases/command-phase";
 import { EncounterPhase } from "#phases/encounter-phase";
 import { SelectStarterPhase } from "#phases/select-starter-phase";
 import { TurnInitPhase } from "#phases/turn-init-phase";
-import { generateStarter } from "#test/test-utils/game-manager-utils";
+import { generateStarters } from "#test/test-utils/game-manager-utils";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
 import { copyChallenge } from "data/challenge";
 
@@ -43,7 +43,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
 
     this.game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       this.game.scene.gameMode.challenges = this.challenges;
-      const starters = generateStarter(this.game.scene, species);
+      const starters = generateStarters(this.game.scene, species);
       const selectStarterPhase = new SelectStarterPhase();
       this.game.scene.phaseManager.pushPhase(new EncounterPhase(false));
       selectStarterPhase.initBattle(starters);
