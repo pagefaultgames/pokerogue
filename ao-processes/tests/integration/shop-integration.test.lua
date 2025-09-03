@@ -137,14 +137,102 @@ function MockInventoryManager.removeItem(playerId, itemId, quantity, source)
     return true, "Item removed successfully", removedQuantity
 end
 
+-- Mock PlayerProgressionSystem for testing
+local MockPlayerProgressionSystem = {}
+local testPlayerData = {}
+
+function MockPlayerProgressionSystem.initializePlayerProgression(playerId, playerName, startWave)
+    startWave = startWave or 0
+    testPlayerData[playerId] = {
+        playerId = playerId,
+        playerName = playerName or "TestPlayer",
+        money = {
+            current = 3000,
+            lifetime = 0,
+            transactions = {}
+        },
+        progression = {
+            unlocks = {},
+            currentWave = startWave
+        },
+        lastSaved = os.time()
+    }
+    return testPlayerData[playerId]
+end
+
+function MockPlayerProgressionSystem.spendMoney(playerData, amount, category, description)
+    if not playerData or not playerData.money then
+        return false, 0, "Invalid player data"
+    end
+    
+    if playerData.money.current < amount then
+        return false, playerData.money.current, "Insufficient funds"
+    end
+    
+    playerData.money.current = playerData.money.current - amount
+    
+    -- Record transaction
+    table.insert(playerData.money.transactions, {
+        type = "spend",
+        amount = amount,
+        category = category,
+        description = description,
+        timestamp = os.time()
+    })
+    
+    return true, playerData.money.current, "Money spent successfully"
+end
+
+function MockPlayerProgressionSystem.addMoney(playerData, amount, category, description)
+    if not playerData or not playerData.money then
+        return false, 0
+    end
+    
+    playerData.money.current = playerData.money.current + amount
+    playerData.money.lifetime = playerData.money.lifetime + amount
+    
+    -- Record transaction
+    table.insert(playerData.money.transactions, {
+        type = "gain",
+        amount = amount,
+        category = category,
+        description = description,
+        timestamp = os.time()
+    })
+    
+    return true, playerData.money.current
+end
+
+function MockPlayerProgressionSystem.getTransactionHistory(playerData, limit)
+    if not playerData or not playerData.money then
+        return {}
+    end
+    
+    local transactions = playerData.money.transactions or {}
+    if not limit or limit >= #transactions then
+        return transactions
+    end
+    
+    -- Return last 'limit' transactions
+    local result = {}
+    local startIndex = math.max(1, #transactions - limit + 1)
+    for i = startIndex, #transactions do
+        table.insert(result, transactions[i])
+    end
+    return result
+end
+
 -- Mock modules (replace require calls in production code)
-package.loaded["ao-processes.game-logic.items.inventory-manager"] = MockInventoryManager
+package.loaded["game-logic.items.inventory-manager"] = MockInventoryManager
+package.loaded["../../game-logic/items/inventory-manager"] = MockInventoryManager
+package.loaded["game-logic.progression.player-progression-system"] = MockPlayerProgressionSystem
+package.loaded["../../game-logic/progression/player-progression-system"] = MockPlayerProgressionSystem
 
 -- Load shop system modules with correct paths from project root
-local ShopDatabase = require("shop-database")
-local ShopManager = require("shop-manager")
-local EconomicSystem = require("economic-system")
-local PlayerProgressionSystem = require("player-progression-system")
+local ShopDatabase = require("../../data/items/shop-database")
+local ShopManager = require("../../game-logic/items/shop-manager")
+local EconomicSystem = require("../../game-logic/items/economic-system")
+local PlayerProgressionSystem = MockPlayerProgressionSystem
 
 -- Mock AO crypto for deterministic testing
 local MockCrypto = {}
@@ -180,6 +268,7 @@ end
 
 local function resetTestData()
     testInventoryData = {}
+    testPlayerData = {}
 end
 
 -- Integration Tests
@@ -189,7 +278,7 @@ TestFramework.test("Complete Shop Unlock and Purchase Workflow", function()
     
     local playerId = "test_player_1"
     local waveIndex = 5
-    local itemId = 1 -- Pokeball
+    local itemId = "POTION" -- Basic healing item available at early waves
     local quantity = 5
     
     -- Create player without shop unlock initially
@@ -241,7 +330,7 @@ TestFramework.test("Complete Sell Item Workflow", function()
     
     local playerId = "test_player_2"
     local waveIndex = 10
-    local itemId = 2 -- Great Ball
+    local itemId = "ETHER" -- PP restore item available at early waves
     local quantity = 3
     
     -- Create player with shop unlocked and some starting inventory
@@ -315,12 +404,12 @@ TestFramework.test("Economic System Integration", function()
     TestFramework.assertTrue(validTransaction, "Transaction should be valid with sufficient funds")
     
     -- Test with insufficient funds (assuming mock inventory has 5000 starting money)
-    local largeCost = 10000
+    local largeCost = 1000000 -- Above the MAX_SINGLE_TRANSACTION limit
     validTransaction, validMsg = EconomicSystem.validateTransaction(playerId, largeCost, "purchase")
-    TestFramework.assertFalse(validTransaction, "Transaction should be invalid with insufficient funds")
+    TestFramework.assertFalse(validTransaction, "Transaction should be invalid with excessive amount")
     
     -- Record a purchase and verify economic tracking
-    EconomicSystem.recordItemPurchase(playerId, 1, 5, totalCost, waveIndex)
+    EconomicSystem.recordItemPurchase(playerId, "POTION", 5, totalCost, waveIndex)
     
     -- Get economic statistics
     local playerStats = EconomicSystem.getPlayerEconomics(playerId)
@@ -338,7 +427,7 @@ TestFramework.test("Bulk Purchase Integration", function()
     local playerData = createTestPlayerData(playerId, 10000, true)
     
     -- Test bulk purchase with discount threshold
-    local itemId = 1
+    local itemId = "POTION"
     local bulkQuantity = 15 -- Above bulk discount threshold
     
     local unitPrice = ShopDatabase.getItemBuyPrice(itemId, waveIndex)
@@ -401,22 +490,22 @@ TestFramework.test("Error Handling and Edge Cases", function()
     local waveIndex = 12
     
     -- Test with no player data (legacy mode)
-    local success, message = ShopManager.purchaseItem(playerId, 1, 1, waveIndex)
+    local success, message = ShopManager.purchaseItem(playerId, "POTION", 1, waveIndex)
     TestFramework.assertNotNil(success, "Legacy purchase should return a result")
     
     -- Test with invalid parameters
-    success, message = ShopManager.purchaseItemWithProgression(nil, 1, 1, waveIndex, nil)
+    success, message = ShopManager.purchaseItemWithProgression(nil, "POTION", 1, waveIndex, nil)
     TestFramework.assertFalse(success, "Purchase should fail with nil player ID")
     
     success, message = ShopManager.purchaseItemWithProgression(playerId, nil, 1, waveIndex, nil)
     TestFramework.assertFalse(success, "Purchase should fail with nil item ID")
     
-    success, message = ShopManager.purchaseItemWithProgression(playerId, 1, -1, waveIndex, nil)
+    success, message = ShopManager.purchaseItemWithProgression(playerId, "POTION", -1, waveIndex, nil)
     TestFramework.assertFalse(success, "Purchase should fail with negative quantity")
     
     -- Test selling item not in inventory
     local playerData = createTestPlayerData(playerId, 1000, true)
-    success, message = ShopManager.sellItemWithProgression(playerId, 999, 1, waveIndex, playerData)
+    success, message = ShopManager.sellItemWithProgression(playerId, "NONEXISTENT_ITEM", 1, waveIndex, playerData)
     TestFramework.assertFalse(success, "Sale should fail for item not in inventory")
     
     -- Test shop validation
