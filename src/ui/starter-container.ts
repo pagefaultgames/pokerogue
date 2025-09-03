@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { TextStyle } from "#enums/text-style";
+import type { DexAttrProps } from "#system/game-data";
 import { addTextObject } from "#ui/text";
 
 export class StarterContainer extends Phaser.GameObjects.Container {
@@ -19,10 +20,9 @@ export class StarterContainer extends Phaser.GameObjects.Container {
   constructor(species: PokemonSpecies) {
     super(globalScene, 0, 0);
 
-    this.species = species;
-
     const defaultDexAttr = globalScene.gameData.getSpeciesDefaultDexAttr(species, false, true);
     const defaultProps = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+    this.setSpecies(species, defaultProps);
 
     // starter passive bg
     const starterPassiveBg = globalScene.add.image(2, 5, "passive_bg");
@@ -31,21 +31,6 @@ export class StarterContainer extends Phaser.GameObjects.Container {
     starterPassiveBg.setVisible(false);
     this.add(starterPassiveBg);
     this.starterPassiveBgs = starterPassiveBg;
-
-    // icon
-    this.icon = globalScene.add.sprite(
-      -2,
-      2,
-      species.getIconAtlasKey(defaultProps.formIndex, defaultProps.shiny, defaultProps.variant),
-    );
-    this.icon.setScale(0.5);
-    this.icon.setOrigin(0, 0);
-    this.icon.setFrame(
-      species.getIconId(defaultProps.female, defaultProps.formIndex, defaultProps.shiny, defaultProps.variant),
-    );
-    this.checkIconId(defaultProps.female, defaultProps.formIndex, defaultProps.shiny, defaultProps.variant);
-    this.icon.setTint(0);
-    this.add(this.icon);
 
     // shiny icons
     for (let i = 0; i < 3; i++) {
@@ -106,6 +91,38 @@ export class StarterContainer extends Phaser.GameObjects.Container {
     candyUpgradeOverlayIcon.setVisible(false);
     this.add(candyUpgradeOverlayIcon);
     this.candyUpgradeOverlayIcon = candyUpgradeOverlayIcon;
+  }
+
+  setSpecies(species: PokemonSpecies, props: DexAttrProps) {
+    this.species = species;
+
+    const { shiny, formIndex, female, variant } = props;
+
+    if (this.icon) {
+      this.remove(this.icon);
+      this.icon.destroy(); // Properly removes the sprite from memory
+    }
+
+    // icon
+    this.icon = globalScene.add.sprite(-2, 2, species.getIconAtlasKey(formIndex, shiny, variant));
+    this.icon.setScale(0.5);
+    this.icon.setOrigin(0, 0);
+    this.icon.setFrame(species.getIconId(female, formIndex, shiny, variant));
+    this.checkIconId(female, formIndex, shiny, variant);
+    this.icon.setTint(0);
+    this.add(this.icon);
+
+    [
+      this.hiddenAbilityIcon,
+      this.favoriteIcon,
+      this.classicWinIcon,
+      this.candyUpgradeIcon,
+      this.candyUpgradeOverlayIcon,
+    ].forEach(icon => {
+      if (icon) {
+        this.bringToTop(icon);
+      }
+    });
   }
 
   checkIconId(female, formIndex, shiny, variant) {

@@ -107,3 +107,8 @@ export const FAKE_TITLE_LOGO_CHANCE = 10000;
  * Using rare candies will never increase friendship beyond this value.
  */
 export const RARE_CANDY_FRIENDSHIP_CAP = 200;
+
+/**
+ * The maximum number of cost reduction upgrades that can be bought with candy.
+ */
+export const VALUE_REDUCTION_MAX = 2;
