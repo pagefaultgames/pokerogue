@@ -103,22 +103,84 @@ end
 
 -- Helper function to load main.lua with path resolution
 local function loadMainProcess()
-    local mainPaths = {
-        "ao-processes/main.lua",         -- GitHub Actions path (from repo root)
-        "../../../main.lua",             -- Local development path
-        "../../main.lua",                -- Alternative local path
-    }
+    -- Debug environment detection
+    local function detectEnvironment()
+        local env_vars = {
+            GITHUB_ACTIONS = os.getenv("GITHUB_ACTIONS"),
+            PWD = os.getenv("PWD") or "",
+            RUNNER_OS = os.getenv("RUNNER_OS"),
+        }
+        
+        -- Debug output for troubleshooting
+        if env_vars.GITHUB_ACTIONS then
+            print("DEBUG: GitHub Actions environment detected")
+            print("DEBUG: PWD = " .. env_vars.PWD)
+        end
+        
+        -- Check for GitHub Actions specific environment
+        if env_vars.GITHUB_ACTIONS then
+            return "github_actions"
+        end
+        -- Check if we're in the aolite development-tools directory (GitHub Actions context)
+        if env_vars.PWD:match("development%-tools/aolite") then
+            print("DEBUG: Aolite context detected from PWD")
+            return "aolite_context"
+        end
+        -- Default to local development
+        return "local"
+    end
     
-    for _, path in ipairs(mainPaths) do
-        local file = io.open(path, "r")
-        if file then
-            file:close()
-            dofile(path)
+    local env = detectEnvironment()
+    local mainPaths = {}
+    
+    -- First check if _G.findMainLua helper exists (set by GitHub Actions workflow)
+    if _G.findMainLua then
+        print("DEBUG: Using _G.findMainLua helper from GitHub Actions workflow")
+        local helperPath = _G.findMainLua()
+        if helperPath then
+            print("DEBUG: Found main.lua via helper at: " .. helperPath)
+            dofile(helperPath)
             return true
+        else
+            print("DEBUG: _G.findMainLua helper returned nil")
         end
     end
     
-    error("Could not locate main.lua. Tried paths: " .. table.concat(mainPaths, ", "))
+    -- Set up paths based on environment
+    if env == "github_actions" or env == "aolite_context" then
+        -- GitHub Actions runs from development-tools/aolite directory
+        mainPaths = {
+            "../../ao-processes/main.lua",   -- From aolite directory to ao-processes
+            "../../../ao-processes/main.lua", -- Alternative nested path
+            "ao-processes/main.lua",         -- Original GitHub Actions path (from repo root)
+            "../ao-processes/main.lua",      -- One level up from aolite
+        }
+    else
+        -- Local development paths (from repo root or test directory)
+        mainPaths = {
+            "ao-processes/main.lua",         -- From repo root
+            "../../../main.lua",             -- From tests/integration directory
+            "../../main.lua",                -- From tests directory
+            "main.lua",                      -- From ao-processes directory
+        }
+    end
+    
+    -- Try each path in order with debugging
+    print("DEBUG: Trying paths for environment: " .. env)
+    for i, path in ipairs(mainPaths) do
+        print("DEBUG: Attempting path " .. i .. ": " .. path)
+        local file = io.open(path, "r")
+        if file then
+            file:close()
+            print("DEBUG: Successfully found main.lua at: " .. path)
+            dofile(path)
+            return true
+        else
+            print("DEBUG: Path not found: " .. path)
+        end
+    end
+    
+    error("Could not locate main.lua. Environment: " .. env .. ", Tried paths: " .. table.concat(mainPaths, ", "))
 end
 
 -- Initialize test environment
@@ -311,6 +373,9 @@ function tests.testMessageRouting()
 end
 
 function tests.testProcessMetadataCompliance()
+    -- Ensure handlers are loaded first
+    loadMainProcess()
+    
     -- Test AO protocol compliance
     local infoMsg = {
         From = "compliance-test",
@@ -323,6 +388,7 @@ function tests.testProcessMetadataCompliance()
     }
     
     local handler = Handlers.list()["admin-info"]
+    assert(handler ~= nil, "Admin info handler should exist after loading main process")
     handler.handler(infoMsg)
     
     -- Verify process capabilities are defined
