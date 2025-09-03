@@ -81,6 +81,8 @@ import { StarterSummary } from "./starter-summary";
 
 const COLUMNS = 9;
 const ROWS = 9;
+const STARTER_ICONS_CURSOR_X_OFFSET = -3;
+const STARTER_ICONS_CURSOR_Y_OFFSET = 1;
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -184,8 +186,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   private moveInfoOverlay: MoveInfoOverlay;
 
   private statsMode: boolean;
-  private starterIconsCursorXOffset = -3;
-  private starterIconsCursorYOffset = 1;
   private starterIconsCursorIndex: number;
   private filterMode: boolean;
   private dexAttrCursor = 0n;
@@ -207,6 +207,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   private starterMovesets: StarterMoveset[] = [];
   private speciesStarterDexEntry: DexEntry | null;
   private speciesStarterMoves: MoveId[];
+
   private canCycleShiny: boolean;
   private canCycleForm: boolean;
   private canCycleGender: boolean;
@@ -2817,14 +2818,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.updateScroll();
   };
 
-  override destroy(): void {
-    // Without this the reference gets hung up and no startercontainers get GCd
-    this.starterContainers = [];
-    /* TODO: Uncomment this once our testing infra supports mocks of `Phaser.GameObject.Group`
-    this.instructionElemGroup.destroy(true);
-    */
-  }
-
   updateScroll = () => {
     const onScreenFirstIndex = this.scrollCursor * COLUMNS;
 
@@ -2969,8 +2962,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   moveStarterIconsCursor(index: number): void {
     this.starterIconsCursorObj.setPositionRelative(
       this.starterIcons[index],
-      this.starterIconsCursorXOffset,
-      this.starterIconsCursorYOffset,
+      STARTER_ICONS_CURSOR_X_OFFSET,
+      STARTER_ICONS_CURSOR_Y_OFFSET,
     );
     if (this.starterSpecies.length > 0) {
       this.starterIconsCursorObj.setVisible(true);
@@ -2995,6 +2988,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
   setSpecies(species: PokemonSpecies) {
     const { dexEntry } = getSpeciesData(species.speciesId);
+    // This stuff is probably redundant.
     this.speciesStarterDexEntry = dexEntry;
     this.dexAttrCursor = getDexAttrFromPreferences(species.speciesId, this.starterPreferences[species.speciesId]);
     this.abilityCursor = globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
@@ -3467,42 +3461,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     return true;
   }
 
-  /**
-   * Attempt to back out of the starter selection screen into the appropriate parent modal
-   */
-  tryExit(): void {
-    this.blockInput = true;
-    const ui = this.getUi();
-
-    const cancel = () => {
-      ui.setMode(UiMode.STARTER_SELECT);
-      this.clearText();
-      this.blockInput = false;
-    };
-    ui.showText(i18next.t("starterSelectUiHandler:confirmExit"), null, () => {
-      ui.setModeWithoutClear(
-        UiMode.CONFIRM,
-        () => {
-          ui.setMode(UiMode.STARTER_SELECT);
-          // Non-challenge modes go directly back to title, while challenge modes go to the selection screen.
-          if (!globalScene.gameMode.isChallenge) {
-            globalScene.phaseManager.toTitleScreen();
-          } else {
-            globalScene.phaseManager.clearPhaseQueue();
-            globalScene.phaseManager.pushNew("SelectChallengePhase");
-            globalScene.phaseManager.pushNew("EncounterPhase");
-          }
-          this.clearText();
-          globalScene.phaseManager.getCurrentPhase()?.end();
-        },
-        cancel,
-        null,
-        null,
-        19,
-      );
-    });
-  }
-
   tryStart(manualTrigger = false): boolean {
     if (!this.starterSpecies.length) {
       return false;
@@ -3638,6 +3596,42 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.goFilterLabel.setVisible(false);
   }
 
+  /**
+   * Attempt to back out of the starter selection screen into the appropriate parent modal
+   */
+  tryExit(): void {
+    this.blockInput = true;
+    const ui = this.getUi();
+
+    const cancel = () => {
+      ui.setMode(UiMode.STARTER_SELECT);
+      this.clearText();
+      this.blockInput = false;
+    };
+    ui.showText(i18next.t("starterSelectUiHandler:confirmExit"), null, () => {
+      ui.setModeWithoutClear(
+        UiMode.CONFIRM,
+        () => {
+          ui.setMode(UiMode.STARTER_SELECT);
+          // Non-challenge modes go directly back to title, while challenge modes go to the selection screen.
+          if (!globalScene.gameMode.isChallenge) {
+            globalScene.phaseManager.toTitleScreen();
+          } else {
+            globalScene.phaseManager.clearPhaseQueue();
+            globalScene.phaseManager.pushNew("SelectChallengePhase");
+            globalScene.phaseManager.pushNew("EncounterPhase");
+          }
+          this.clearText();
+          globalScene.phaseManager.getCurrentPhase()?.end();
+        },
+        cancel,
+        null,
+        null,
+        19,
+      );
+    });
+  }
+
   clear(): void {
     super.clear();
 
@@ -3688,5 +3682,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   clearStarterPreferences() {
     this.starterPreferences = {};
     this.originalStarterPreferences = {};
+  }
+
+  override destroy(): void {
+    // Without this the reference gets hung up and no startercontainers get GCd
+    this.starterContainers = [];
+    /* TODO: Uncomment this once our testing infra supports mocks of `Phaser.GameObject.Group`
+    this.instructionElemGroup.destroy(true);
+    */
   }
 }
