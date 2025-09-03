@@ -62,7 +62,7 @@ export function generateStarters(scene: BattleScene, speciesIds: SpeciesId[]): S
 }
 
 function getTestRunStarters(seed: string, speciesIds: SpeciesId[]): Starter[] {
-  if (!speciesIds) {
+  if (!speciesIds || !speciesIds.length) {
     return getDailyRunStarters(seed);
   }
   const starters: Starter[] = [];
