@@ -10,13 +10,15 @@ import {
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { ChallengeType } from "#enums/challenge-type";
 import { DexAttr } from "#enums/dex-attr";
+import { GameModes } from "#enums/game-modes";
 import { Passive } from "#enums/passive";
 import type { PokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
 import type { Variant } from "#sprites/variant";
-import type { StarterDataEntry, StarterPreferences } from "#system/game-data";
+import type { DexAttrProps, StarterDataEntry, StarterPreferences } from "#system/game-data";
 import type { DexEntry } from "#types/dex-data";
 import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";
+import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
 
 export interface SpeciesDetails {
@@ -305,4 +307,30 @@ export function getDexAttrFromPreferences(speciesId: number, starterPreferences:
   }
 
   return props;
+}
+
+export function getSpeciesPropsFromPreferences(
+  species: PokemonSpecies,
+  starterPreferences: StarterPreferences = {},
+): DexAttrProps {
+  return globalScene.gameData.getSpeciesDexAttrProps(
+    species,
+    getDexAttrFromPreferences(species.speciesId, starterPreferences),
+  );
+}
+
+export function getRunValueLimit(): number {
+  const valueLimit = new NumberHolder(0);
+  switch (globalScene.gameMode.modeId) {
+    case GameModes.ENDLESS:
+    case GameModes.SPLICED_ENDLESS:
+      valueLimit.value = 15;
+      break;
+    default:
+      valueLimit.value = 10;
+  }
+
+  applyChallenges(ChallengeType.STARTER_POINTS, valueLimit);
+
+  return valueLimit.value;
 }
