@@ -4,7 +4,7 @@ import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
 import type { ModalConfig } from "#ui/modal-ui-handler";
 import { ModalUiHandler } from "#ui/modal-ui-handler";
-import { addTextInputObject, addTextObject } from "#ui/text";
+import { addTextInputObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import { fixedInt } from "#utils/common";
 import type InputText from "phaser3-rex-plugins/plugins/inputtext";
@@ -78,8 +78,8 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
         wordWrap: { width: 850 },
       },
     );
-    this.errorMessage.setColor(this.getTextColor(TextStyle.SUMMARY_PINK));
-    this.errorMessage.setShadowColor(this.getTextColor(TextStyle.SUMMARY_PINK, true));
+    this.errorMessage.setColor(getTextColor(TextStyle.SUMMARY_PINK));
+    this.errorMessage.setShadowColor(getTextColor(TextStyle.SUMMARY_PINK, true));
     this.errorMessage.setVisible(false);
     this.modalContainer.add(this.errorMessage);
   }
