@@ -662,7 +662,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       i18next.t("pokedexUiHandler:showEvolutions"),
     ];
 
-    this.scale = getTextStyleOptions(TextStyle.WINDOW, globalScene.uiTheme).scale;
+    this.scale = getTextStyleOptions(TextStyle.WINDOW).scale;
     this.menuBg = addWindow(
       globalScene.scaledCanvas.width - 83,
       0,
@@ -767,16 +767,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
           !isSeen ||
           (!isStarterCaught && (o === MenuOptions.TOGGLE_IVS || o === MenuOptions.NATURES)) ||
           (this.tmMoves.length < 1 && o === MenuOptions.TM_MOVES);
-        const color = getTextColor(
-          isDark ? TextStyle.SHADOW_TEXT : TextStyle.SETTINGS_VALUE,
-          false,
-          globalScene.uiTheme,
-        );
-        const shadow = getTextColor(
-          isDark ? TextStyle.SHADOW_TEXT : TextStyle.SETTINGS_VALUE,
-          true,
-          globalScene.uiTheme,
-        );
+        const color = getTextColor(isDark ? TextStyle.SHADOW_TEXT : TextStyle.SETTINGS_VALUE, false);
+        const shadow = getTextColor(isDark ? TextStyle.SHADOW_TEXT : TextStyle.SETTINGS_VALUE, true);
         return `[shadow=${shadow}][color=${color}]${label}[/color][/shadow]`;
       })
       .join("\n");
@@ -1789,7 +1781,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                     options: natures
                       .map((n: Nature, _i: number) => {
                         const option: OptionSelectItem = {
-                          label: getNatureName(n, true, true, true, globalScene.uiTheme),
+                          label: getNatureName(n, true, true, true),
                           handler: () => {
                             return false;
                           },
@@ -2483,10 +2475,10 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
       this.shinyOverlay.setVisible(shiny ?? false); // TODO: is false the correct default?
       this.pokemonNumberText.setColor(
-        this.getTextColor(shiny ? TextStyle.SUMMARY_DEX_NUM_GOLD : TextStyle.SUMMARY_DEX_NUM, false),
+        getTextColor(shiny ? TextStyle.SUMMARY_DEX_NUM_GOLD : TextStyle.SUMMARY_DEX_NUM, false),
       );
       this.pokemonNumberText.setShadowColor(
-        this.getTextColor(shiny ? TextStyle.SUMMARY_DEX_NUM_GOLD : TextStyle.SUMMARY_DEX_NUM, true),
+        getTextColor(shiny ? TextStyle.SUMMARY_DEX_NUM_GOLD : TextStyle.SUMMARY_DEX_NUM, true),
       );
 
       const assetLoadCancelled = new BooleanHolder(false);
@@ -2694,8 +2686,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       }
     } else {
       this.shinyOverlay.setVisible(false);
-      this.pokemonNumberText.setColor(this.getTextColor(TextStyle.SUMMARY));
-      this.pokemonNumberText.setShadowColor(this.getTextColor(TextStyle.SUMMARY, true));
+      this.pokemonNumberText.setColor(getTextColor(TextStyle.SUMMARY));
+      this.pokemonNumberText.setShadowColor(getTextColor(TextStyle.SUMMARY, true));
       this.pokemonGenderText.setText("");
       this.setTypeIcons(null, null);
     }
