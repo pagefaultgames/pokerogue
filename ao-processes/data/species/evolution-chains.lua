@@ -71,6 +71,250 @@ local evolutionData = {
             trigger = EvolutionTrigger.LEVEL,
             level = 36
         }
+    },
+    
+    -- Stone evolutions examples
+    [25] = { -- Pikachu
+        {
+            toSpeciesId = 26, -- Raichu  
+            trigger = EvolutionTrigger.STONE,
+            stone = 7, -- THUNDER_STONE
+            item = 7
+        }
+    },
+    [133] = { -- Eevee
+        {
+            toSpeciesId = 134, -- Vaporeon
+            trigger = EvolutionTrigger.STONE,
+            stone = 6, -- WATER_STONE
+            item = 6
+        },
+        {
+            toSpeciesId = 135, -- Jolteon
+            trigger = EvolutionTrigger.STONE,
+            stone = 7, -- THUNDER_STONE
+            item = 7
+        },
+        {
+            toSpeciesId = 136, -- Flareon
+            trigger = EvolutionTrigger.STONE,
+            stone = 5, -- FIRE_STONE
+            item = 5
+        },
+        {
+            toSpeciesId = 196, -- Espeon
+            trigger = EvolutionTrigger.FRIENDSHIP_DAY,
+            friendshipLevel = 220
+        },
+        {
+            toSpeciesId = 197, -- Umbreon
+            trigger = EvolutionTrigger.FRIENDSHIP_NIGHT,
+            friendshipLevel = 220
+        },
+        {
+            toSpeciesId = 470, -- Leafeon
+            trigger = EvolutionTrigger.STONE,
+            stone = 4, -- LEAF_STONE
+            item = 4
+        },
+        {
+            toSpeciesId = 471, -- Glaceon
+            trigger = EvolutionTrigger.STONE,
+            stone = 8, -- ICE_STONE
+            item = 8
+        },
+        {
+            toSpeciesId = 700, -- Sylveon
+            trigger = EvolutionTrigger.SPECIAL,
+            friendshipLevel = 220,
+            conditions = {
+                moveType = "FAIRY"
+            }
+        }
+    },
+    [37] = { -- Vulpix
+        {
+            toSpeciesId = 38, -- Ninetales
+            trigger = EvolutionTrigger.STONE,
+            stone = 5, -- FIRE_STONE
+            item = 5
+        }
+    },
+    [44] = { -- Gloom
+        {
+            toSpeciesId = 45, -- Vileplume
+            trigger = EvolutionTrigger.STONE,
+            stone = 4, -- LEAF_STONE
+            item = 4
+        },
+        {
+            toSpeciesId = 182, -- Bellossom
+            trigger = EvolutionTrigger.STONE,
+            stone = 2, -- SUN_STONE
+            item = 2
+        }
+    },
+    
+    -- Trade evolutions examples
+    [64] = { -- Kadabra
+        {
+            toSpeciesId = 65, -- Alakazam
+            trigger = EvolutionTrigger.TRADE
+        }
+    },
+    [67] = { -- Machoke
+        {
+            toSpeciesId = 68, -- Machamp
+            trigger = EvolutionTrigger.TRADE
+        }
+    },
+    [75] = { -- Graveler
+        {
+            toSpeciesId = 76, -- Golem
+            trigger = EvolutionTrigger.TRADE
+        }
+    },
+    [93] = { -- Haunter
+        {
+            toSpeciesId = 94, -- Gengar
+            trigger = EvolutionTrigger.TRADE
+        }
+    },
+    
+    -- Trade with item examples
+    [61] = { -- Poliwhirl
+        {
+            toSpeciesId = 62, -- Poliwrath
+            trigger = EvolutionTrigger.STONE,
+            stone = 6, -- WATER_STONE
+            item = 6
+        },
+        {
+            toSpeciesId = 186, -- Politoed
+            trigger = EvolutionTrigger.TRADE_ITEM,
+            heldItem = 1, -- LINKING_CORD equivalent
+            item = 1
+        }
+    },
+    [117] = { -- Seadra
+        {
+            toSpeciesId = 230, -- Kingdra
+            trigger = EvolutionTrigger.TRADE_ITEM,
+            heldItem = 19, -- DRAGON_SCALE
+            item = 19
+        }
+    },
+    [137] = { -- Porygon
+        {
+            toSpeciesId = 233, -- Porygon2
+            trigger = EvolutionTrigger.TRADE_ITEM,
+            heldItem = 17, -- UPGRADE
+            item = 17
+        }
+    },
+    [233] = { -- Porygon2
+        {
+            toSpeciesId = 474, -- Porygon-Z
+            trigger = EvolutionTrigger.TRADE_ITEM,
+            heldItem = 18, -- DUBIOUS_DISC
+            item = 18
+        }
+    },
+    
+    -- Friendship evolutions
+    [172] = { -- Pichu
+        {
+            toSpeciesId = 25, -- Pikachu
+            trigger = EvolutionTrigger.FRIENDSHIP,
+            friendshipLevel = 220
+        }
+    },
+    [174] = { -- Igglybuff
+        {
+            toSpeciesId = 39, -- Jigglypuff
+            trigger = EvolutionTrigger.FRIENDSHIP,
+            friendshipLevel = 220
+        }
+    },
+    [175] = { -- Togepi
+        {
+            toSpeciesId = 176, -- Togetic
+            trigger = EvolutionTrigger.FRIENDSHIP,
+            friendshipLevel = 220
+        }
+    },
+    [176] = { -- Togetic
+        {
+            toSpeciesId = 468, -- Togekiss
+            trigger = EvolutionTrigger.STONE,
+            stone = 11, -- SHINY_STONE
+            item = 11
+        }
+    },
+    
+    -- Level with stat requirements (Tyrogue)
+    [236] = { -- Tyrogue
+        {
+            toSpeciesId = 106, -- Hitmonlee
+            trigger = EvolutionTrigger.LEVEL_ATK_LT_DEF,
+            level = 20
+        },
+        {
+            toSpeciesId = 107, -- Hitmonchan
+            trigger = EvolutionTrigger.LEVEL_ATK_GT_DEF,
+            level = 20
+        },
+        {
+            toSpeciesId = 237, -- Hitmontop
+            trigger = EvolutionTrigger.LEVEL_ATK_EQ_DEF,
+            level = 20
+        }
+    },
+    
+    -- Gender-based evolutions
+    [280] = { -- Ralts
+        {
+            toSpeciesId = 281, -- Kirlia
+            trigger = EvolutionTrigger.LEVEL,
+            level = 20
+        }
+    },
+    [281] = { -- Kirlia
+        {
+            toSpeciesId = 282, -- Gardevoir
+            trigger = EvolutionTrigger.LEVEL,
+            level = 30
+        },
+        {
+            toSpeciesId = 475, -- Gallade
+            trigger = EvolutionTrigger.STONE,
+            stone = 10, -- DAWN_STONE
+            item = 10,
+            gender = "MALE"
+        }
+    },
+    
+    -- Move-based evolution example
+    [446] = { -- Munchlax
+        {
+            toSpeciesId = 143, -- Snorlax
+            trigger = EvolutionTrigger.FRIENDSHIP,
+            friendshipLevel = 220
+        }
+    },
+    
+    -- Special location/time evolutions would go here
+    -- These require more complex conditions that combine multiple factors
+    
+    -- Level + move requirement example
+    [458] = { -- Mantyke
+        {
+            toSpeciesId = 226, -- Mantine
+            trigger = EvolutionTrigger.LEVEL_MOVE,
+            level = 1,
+            moveId = 1, -- Specific move requirement
+            otherPokemonRequired = 223 -- Remoraid in party
+        }
     }
 }
 
@@ -110,6 +354,37 @@ end
 function EvolutionChains.canEvolve(speciesId)
     local evolutions = EvolutionChains.getEvolutionData(speciesId)
     return #evolutions > 0
+end
+
+-- Initialize evolution chains (placeholder for any setup needed)
+function EvolutionChains.init()
+    -- No initialization required for this implementation
+    return true
+end
+
+-- Get evolutions for species (matches what evolution system expects)
+function EvolutionChains.getEvolutionsForSpecies(speciesId)
+    return EvolutionChains.getEvolutionData(speciesId)
+end
+
+-- Get full evolution chain for species
+function EvolutionChains.getFullEvolutionChain(speciesId)
+    return EvolutionChains.getEvolutionChain(speciesId)
+end
+
+-- Get pre-evolutions for species (reverse lookup)
+function EvolutionChains.getPreEvolutionsForSpecies(speciesId)
+    local preEvolutions = {}
+    
+    for fromId, evolutions in pairs(evolutionData) do
+        for _, evolution in ipairs(evolutions) do
+            if evolution.toSpeciesId == speciesId then
+                table.insert(preEvolutions, fromId)
+            end
+        end
+    end
+    
+    return preEvolutions
 end
 
 -- Get evolution chain for a species (all forms in the line)

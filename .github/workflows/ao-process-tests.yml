@@ -565,7 +565,7 @@ jobs:
                 end
                 
                 -- Set up package path for test modules
-                package.path = package.path .. ';../../ao-processes/?.lua;../../ao-processes/handlers/?.lua;../../ao-processes/game-logic/?.lua;../../ao-processes/tests/integration/?.lua;../../ao-processes/tests/?.lua'
+                package.path = package.path .. ';../../ao-processes/?.lua;../../ao-processes/handlers/?.lua;../../ao-processes/game-logic/?.lua;../../ao-processes/data/?.lua;../../ao-processes/tests/integration/?.lua;../../ao-processes/tests/?.lua'
                 
                 -- Set working directory context for tests that need to find files
                 _G.INTEGRATION_TEST_ROOT = '../../'

@@ -21,7 +21,7 @@ Usage:
 local InventoryManager = {}
 
 -- Dependencies
-local ItemDatabase = require('ao-processes.data.items.item-database')
+local ItemDatabase = require('data.items.item-database')
 
 -- Inventory constants
 local INVENTORY_CONSTANTS = {

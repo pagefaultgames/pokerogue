@@ -19,7 +19,7 @@ Usage:
 local ItemEffectsProcessor = {}
 
 -- Dependencies
-local ItemDatabase = require('ao-processes.data.items.item-database')
+local ItemDatabase = require('data.items.item-database')
 -- Use global crypto module as per coding standards - no fallback to math.random
 local crypto = _G.crypto
 if not crypto then

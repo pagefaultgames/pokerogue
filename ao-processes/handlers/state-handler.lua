@@ -20,7 +20,17 @@ local PlayerIndex = require("data.pokemon-instances.player-index")
 
 -- Import Item System modules
 local ItemDatabase = require("data.items.item-database")
-local ItemEffectsProcessor = require("game-logic.items.item-effects-processor")
+-- Load ItemEffectsProcessor conditionally (requires AO crypto module)
+local ItemEffectsProcessor
+local success, processor = pcall(require, "game-logic.items.item-effects-processor")
+if success then
+    ItemEffectsProcessor = processor
+else
+    -- Fallback for test environments without AO crypto module
+    ItemEffectsProcessor = {
+        processItemEffect = function() return false, "ItemEffectsProcessor not available in test environment" end
+    }
+end
 local InventoryManager = require("game-logic.items.inventory-manager")
 local HeldItemManager = require("game-logic.items.held-item-manager")
 local HeldItemEffects = require("game-logic.items.held-item-effects")
