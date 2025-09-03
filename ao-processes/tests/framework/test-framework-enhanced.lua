@@ -465,6 +465,7 @@ end
 
 -- Static convenience functions for compatibility
 function TestFramework.createTestSuite(name, config)
+    config = config or {}  -- Ensure config is not nil
     local suite = {
         name = name,
         description = config.description or "",
