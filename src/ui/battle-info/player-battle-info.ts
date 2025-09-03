@@ -5,6 +5,7 @@ import { Stat } from "#enums/stat";
 import type { PlayerPokemon } from "#field/pokemon";
 import type { BattleInfoParamList } from "#ui/battle-info";
 import { BattleInfo } from "#ui/battle-info";
+import { getLocalizedSpriteKey } from "#utils/common";
 
 export class PlayerBattleInfo extends BattleInfo {
   protected player: true = true;
@@ -46,6 +47,12 @@ export class PlayerBattleInfo extends BattleInfo {
     // hp number container must be beneath the stat container for overlay to display properly
     this.addAt(this.hpNumbersContainer, this.getIndex(this.statsContainer));
 
+    const expBarLabel = globalScene.add
+      .image(-91, 20, getLocalizedSpriteKey("overlay_exp_label"))
+      .setName("overlay_exp_label")
+      .setOrigin(1, 1);
+    this.add(expBarLabel);
+
     const expBar = globalScene.add.image(-98, 18, "overlay_exp").setName("overlay_exp").setOrigin(0);
     this.add(expBar);
 
@@ -60,6 +67,7 @@ export class PlayerBattleInfo extends BattleInfo {
 
     expBar.setMask(expMask);
 
+    this.expBarLabel = expBarLabel;
     this.expBar = expBar;
     this.expMaskRect = expMaskRect;
   }
@@ -108,7 +116,7 @@ export class PlayerBattleInfo extends BattleInfo {
     this.statValuesContainer.x += 2 * (mini ? 1 : -1);
     this.statValuesContainer.y += -7 * (mini ? 1 : -1);
 
-    const toggledElements = [this.hpNumbersContainer, this.expBar];
+    const toggledElements = [this.hpNumbersContainer, this.expBarLabel, this.expBar];
     toggledElements.forEach(el => el.setVisible(!mini));
   }
 

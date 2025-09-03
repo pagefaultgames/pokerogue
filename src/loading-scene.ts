@@ -61,7 +61,6 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("pbinfo_enemy_type1", "ui");
     this.loadAtlas("pbinfo_enemy_type2", "ui");
     this.loadAtlas("pbinfo_stat_numbers", "ui");
-    //this.loadImage("overlay_lv", "ui");
     this.loadAtlas("numbers", "ui");
     this.loadAtlas("numbers_red", "ui");
     this.loadAtlas("overlay_hp", "ui");
@@ -310,6 +309,17 @@ export class LoadingScene extends SceneBase {
 
     this.loadAtlas(`pbinfo_stat${keySuffix}`, "ui", `text_images/${lang}/pbinfo/pbinfo_stat${keySuffix}`); // Pixel text for in-battle stats info tab
     this.loadImage(`overlay_lv${keySuffix}`, "ui", `text_images/${lang}/pbinfo/overlay_lv${keySuffix}.png`); // Pixel text in-battle 'Lv.'
+    this.loadImage(`overlay_hp_label${keySuffix}`, "ui", `text_images/${lang}/pbinfo/overlay_hp_label${keySuffix}.png`); // Pixel text in-battle 'HP'
+    this.loadImage(
+      `overlay_hp_label_boss${keySuffix}`,
+      "ui",
+      `text_images/${lang}/pbinfo/overlay_hp_label_boss${keySuffix}.png`,
+    ); // Pixel text in-battle 'BOSS'
+    this.loadImage(
+      `overlay_exp_label${keySuffix}`,
+      "ui",
+      `text_images/${lang}/pbinfo/overlay_exp_label${keySuffix}.png`,
+    ); // Pixel text in-battle 'EXP'
 
     if (timedEventManager.activeEventHasBanner()) {
       const availableLangs = timedEventManager.getEventBannerLangs();
