@@ -9,7 +9,8 @@ PROCESS_CAPABILITIES = {
     "battle-resolution",
     "pokemon-management", 
     "game-state",
-    "admin-operations"
+    "admin-operations",
+    "berry-system"
 }
 
 -- Handler Registry

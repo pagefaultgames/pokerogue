@@ -7,6 +7,10 @@ local Enums = require("data.constants.enums")
 local BattleRNG = require("game-logic.rng.battle-rng")
 local MoveTargeting = require("game-logic.battle.move-targeting")
 
+-- Berry system integration
+local BerryActivationManager = require("game-logic.items.berry-activation-manager")
+local BerryEffectsProcessor = require("game-logic.items.berry-effects-processor")
+
 local DamageCalculator = {}
 
 -- Damage calculation constants (matching TypeScript implementation)

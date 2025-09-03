@@ -22,6 +22,7 @@ local InventoryManager = {}
 
 -- Dependencies
 local ItemDatabase = require('data.items.item-database')
+local BerryDatabase = require('data.items.berry-database')
 
 -- Inventory constants
 local INVENTORY_CONSTANTS = {
@@ -38,7 +39,9 @@ local TransactionType = {
     GIVE = "give",
     RECEIVE = "receive",
     SELL = "sell",
-    BUY = "buy"
+    BUY = "buy",
+    BERRY_CONSUME = "berry_consume",
+    BERRY_RECYCLE = "berry_recycle"
 }
 
 -- Manager state
@@ -569,6 +572,174 @@ function InventoryManager.deserializeInventory(playerId, saveData)
     end
     
     return true, "Inventory loaded successfully"
+end
+
+-- Berry-specific inventory functions
+
+--[[
+Track berry consumption for recycling purposes
+@param playerId Player identifier
+@param berryId Berry that was consumed
+@param pokemonId Pokemon that consumed the berry
+@param battleId Battle where consumption occurred
+@return Boolean success, error message
+--]]
+function InventoryManager.trackBerryConsumption(playerId, berryId, pokemonId, battleId)
+    InventoryManager.init()
+    
+    if not playerId or not berryId then
+        return false, "Invalid parameters for berry consumption tracking"
+    end
+    
+    -- Validate berry exists
+    local berry = BerryDatabase.getBerry(berryId)
+    if not berry then
+        return false, "Berry not found in database: " .. berryId
+    end
+    
+    -- Log consumption transaction
+    local transaction = {
+        type = TransactionType.BERRY_CONSUME,
+        itemId = berryId,
+        quantity = 1,
+        pokemonId = pokemonId,
+        battleId = battleId,
+        timestamp = os.time(),
+        metadata = {
+            berry_name = berry.name,
+            effect_type = berry.effect.type,
+            consumable = berry.consumable
+        }
+    }
+    
+    InventoryManager.logTransaction(playerId, transaction)
+    
+    return true, "Berry consumption tracked successfully"
+end
+
+--[[
+Track berry recycling when berries are restored
+@param playerId Player identifier
+@param berryId Berry that was recycled
+@param pokemonId Pokemon that received recycled berry
+@param recycleMethod How berry was recycled (move/ability)
+@return Boolean success, error message
+--]]
+function InventoryManager.trackBerryRecycling(playerId, berryId, pokemonId, recycleMethod)
+    InventoryManager.init()
+    
+    if not playerId or not berryId then
+        return false, "Invalid parameters for berry recycling tracking"
+    end
+    
+    -- Validate berry exists
+    local berry = BerryDatabase.getBerry(berryId)
+    if not berry then
+        return false, "Berry not found in database: " .. berryId
+    end
+    
+    -- Log recycling transaction
+    local transaction = {
+        type = TransactionType.BERRY_RECYCLE,
+        itemId = berryId,
+        quantity = 1,
+        pokemonId = pokemonId,
+        timestamp = os.time(),
+        metadata = {
+            berry_name = berry.name,
+            recycle_method = recycleMethod,
+            effect_type = berry.effect.type
+        }
+    }
+    
+    InventoryManager.logTransaction(playerId, transaction)
+    
+    return true, "Berry recycling tracked successfully"
+end
+
+--[[
+Get berry inventory statistics
+@param playerId Player identifier
+@return Berry statistics table
+--]]
+function InventoryManager.getBerryStats(playerId)
+    InventoryManager.init()
+    
+    local inventory = playerInventories[playerId]
+    if not inventory then
+        return {
+            totalBerries = 0,
+            berryTypes = 0,
+            berryCategories = {}
+        }
+    end
+    
+    local stats = {
+        totalBerries = 0,
+        berryTypes = 0,
+        berryCategories = {}
+    }
+    
+    for itemId, inventoryData in pairs(inventory.items) do
+        if BerryDatabase.isBerry(itemId) then
+            local berry = BerryDatabase.getBerry(itemId)
+            if berry then
+                stats.totalBerries = stats.totalBerries + inventoryData.quantity
+                stats.berryTypes = stats.berryTypes + 1
+                
+                local category = berry.category
+                if not stats.berryCategories[category] then
+                    stats.berryCategories[category] = {
+                        count = 0,
+                        berries = {}
+                    }
+                end
+                
+                stats.berryCategories[category].count = stats.berryCategories[category].count + inventoryData.quantity
+                table.insert(stats.berryCategories[category].berries, {
+                    id = itemId,
+                    name = berry.name,
+                    quantity = inventoryData.quantity
+                })
+            end
+        end
+    end
+    
+    return stats
+end
+
+--[[
+Get berries available for a specific activation condition
+@param playerId Player identifier
+@param activationCondition Berry activation condition to filter by
+@return List of matching berries
+--]]
+function InventoryManager.getBerriesByActivation(playerId, activationCondition)
+    InventoryManager.init()
+    
+    local inventory = playerInventories[playerId]
+    if not inventory then
+        return {}
+    end
+    
+    local matchingBerries = {}
+    
+    for itemId, inventoryData in pairs(inventory.items) do
+        if BerryDatabase.isBerry(itemId) then
+            local berry = BerryDatabase.getBerry(itemId)
+            if berry and berry.activationCondition == activationCondition then
+                table.insert(matchingBerries, {
+                    id = itemId,
+                    name = berry.name,
+                    quantity = inventoryData.quantity,
+                    effect = berry.effect,
+                    consumable = berry.consumable
+                })
+            end
+        end
+    end
+    
+    return matchingBerries
 end
 
 -- Export constants

@@ -36,6 +36,9 @@ local ParticipationTracker = require("game-logic.battle.participation-tracker")
 local ValidationHandler = require("handlers.validation-handler")
 local ErrorHandler = require("handlers.error-handler")
 
+-- Berry system integration
+local BerryActivationManager = require("game-logic.items.berry-activation-manager")
+
 -- Victory/Defeat system dependencies
 local VictoryDefeatSystem = require("game-logic.battle.victory-defeat-system")
 local ExperienceSystem = require("game-logic.progression.experience-system")

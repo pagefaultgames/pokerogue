@@ -11,6 +11,10 @@ local BattleConditions = require("game-logic.battle.battle-conditions")
 local BattleRNG = require("game-logic.rng.battle-rng")
 local Enums = require("data.constants.enums")
 
+-- Berry system integration
+local BerryActivationManager = require("game-logic.items.berry-activation-manager")
+local BerryEffectsProcessor = require("game-logic.items.berry-effects-processor")
+
 -- Status effects system dependencies
 local StatusEffects = require("game-logic.pokemon.status-effects")
 local StatusInteractions = require("game-logic.pokemon.status-interactions")
@@ -248,6 +252,9 @@ function TurnProcessor.processBattleTurn(battleState)
         return nil, "Invalid battle state or phase"
     end
     
+    -- Initialize berry activation state for this battle
+    BerryActivationManager.initializeBattleState(battleState.battleId)
+    
     -- Transition to action execution phase
     battleState.phase = TurnProcessor.TurnPhase.ACTION_EXECUTION
     
@@ -295,6 +302,19 @@ function TurnProcessor.processBattleTurn(battleState)
             battleState.phase = TurnProcessor.TurnPhase.BATTLE_END
             turnResult.battle_end = battleEnd
             return turnResult, nil
+        end
+    end
+    
+    -- Process berry activations at end of turn
+    local berryActivations = BerryActivationManager.processActivationQueue(battleState.battleId, battleState.battleSeed)
+    if berryActivations.success and #berryActivations.activations > 0 then
+        turnResult.berry_activations = berryActivations.activations
+        
+        -- Apply berry effects to Pokemon
+        for _, activation in ipairs(berryActivations.activations) do
+            if activation.updatedPokemon then
+                TurnProcessor.updatePokemonInBattle(battleState, activation.pokemonId, activation.updatedPokemon)
+            end
         end
     end
     
@@ -904,6 +924,38 @@ function TurnProcessor.checkFaintedPokemon(battleState)
     end
     
     return fainted
+end
+
+-- Update Pokemon data in battle state
+-- @param battleState: Current battle state
+-- @param pokemonId: Pokemon ID to update
+-- @param updatedPokemon: Updated Pokemon data
+function TurnProcessor.updatePokemonInBattle(battleState, pokemonId, updatedPokemon)
+    if not battleState or not pokemonId or not updatedPokemon then
+        return false
+    end
+    
+    -- Update in player party
+    if battleState.playerParty then
+        for i, pokemon in ipairs(battleState.playerParty) do
+            if pokemon.id == pokemonId then
+                battleState.playerParty[i] = updatedPokemon
+                return true
+            end
+        end
+    end
+    
+    -- Update in enemy party
+    if battleState.enemyParty then
+        for i, pokemon in ipairs(battleState.enemyParty) do
+            if pokemon.id == pokemonId then
+                battleState.enemyParty[i] = updatedPokemon
+                return true
+            end
+        end
+    end
+    
+    return false
 end
 
 -- Check battle end conditions
