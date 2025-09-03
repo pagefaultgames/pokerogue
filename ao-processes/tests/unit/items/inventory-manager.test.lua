@@ -3,8 +3,8 @@ Inventory Manager Unit Tests
 Tests for ao-processes/game-logic/items/inventory-manager.lua
 --]]
 
-local InventoryManager = require('ao-processes.game-logic.items.inventory-manager')
-local ItemDatabase = require('ao-processes.data.items.item-database')
+local InventoryManager = require('../../../game-logic/items/inventory-manager')
+local ItemDatabase = require('../../../data/items/item-database')
 
 -- Test framework setup
 local function assert(condition, message)

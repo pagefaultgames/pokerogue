@@ -21,8 +21,8 @@ Usage:
 local InventoryManager = {}
 
 -- Dependencies
-local ItemDatabase = require('data.items.item-database')
-local BerryDatabase = require('data.items.berry-database')
+local ItemDatabase = require('../../data/items/item-database')
+local BerryDatabase = require('../../data/items/berry-database')
 
 -- Inventory constants
 local INVENTORY_CONSTANTS = {

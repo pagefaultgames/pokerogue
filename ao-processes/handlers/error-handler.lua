@@ -6,6 +6,29 @@ local ErrorHandler = {}
 -- Import required modules
 local CryptoRNG = require("game-logic.rng.crypto-rng")
 
+-- JSON module (optional for testing environments)
+local json = nil
+local success, module = pcall(require, "json")
+if success then
+    json = module
+else
+    -- Fallback JSON implementation for testing
+    json = {
+        encode = function(obj)
+            if type(obj) == "table" then
+                return "{}"
+            elseif type(obj) == "string" then
+                return '"' .. obj .. '"'
+            else
+                return tostring(obj)
+            end
+        end,
+        decode = function(str)
+            return {}
+        end
+    }
+end
+
 -- Error Type Constants
 ErrorHandler.ERROR_TYPES = {
     VALIDATION = "VALIDATION_ERROR",
@@ -271,6 +294,19 @@ function ErrorHandler.resetErrorStats()
         errors_by_type = {},
         errors_by_handler = {},
         last_error_time = 0
+    }
+end
+
+-- Create error response for AO messages (commonly used function)
+function ErrorHandler.createErrorResponse(errorCode, message, messageId)
+    return {
+        success = false,
+        error = {
+            code = errorCode,
+            message = message,
+            messageId = messageId,
+            timestamp = os.time()
+        }
     }
 end
 
