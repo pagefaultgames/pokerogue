@@ -709,4 +709,229 @@ function StatCalculator.resetPositionalAbilityEffects(pokemon)
     return true, "No positional ability effects to reset"
 end
 
+-- Held Item Integration Functions
+
+-- Apply held item stat modifiers to Pokemon stats
+-- @param pokemon: Pokemon data with held item and stats
+-- @return: Pokemon with held item stat modifiers applied
+function StatCalculator.applyHeldItemModifiers(pokemon)
+    if not pokemon or not pokemon.heldItem or not pokemon.stats then
+        return pokemon
+    end
+    
+    local HeldItemEffects = require("game-logic.items.held-item-effects")
+    return HeldItemEffects.applyStatModifiers(pokemon)
+end
+
+-- Get effective stat considering both positional abilities and held items
+-- @param pokemon: Pokemon data
+-- @param statName: Name of stat to calculate
+-- @param fieldConditions: Current field conditions
+-- @param battleState: Current battle state
+-- @param stages: Stat stage modifications
+-- @return: Effective stat value considering all modifiers
+function StatCalculator.calculateEffectiveStatWithAllModifiers(pokemon, statName, fieldConditions, battleState, stages)
+    if not pokemon or not pokemon.stats then
+        return 0
+    end
+    
+    -- Start with base stat
+    local baseStat = pokemon.stats[statName] or 0
+    
+    -- Apply field condition modifications first
+    local fieldModifiedStat, isSwapped = StatCalculator.calculateEffectiveStatWithFieldConditions(
+        pokemon, statName, fieldConditions, 0 -- Don't apply stages yet
+    )
+    
+    -- Apply positional ability modifications
+    local positionalModifiedStats = StatCalculator.applyPositionalAbilityEffects(pokemon, battleState)
+    local positionalStat = positionalModifiedStats[statName] or fieldModifiedStat
+    
+    -- Apply held item modifications
+    local heldItemModifiedPokemon = StatCalculator.applyHeldItemModifiers({
+        stats = {[statName] = positionalStat},
+        heldItem = pokemon.heldItem
+    })
+    local heldItemStat = heldItemModifiedPokemon.stats[statName] or positionalStat
+    
+    -- Finally apply stage modifications
+    local finalStat = StatCalculator.applyStatStages(heldItemStat, stages or 0)
+    
+    return finalStat, isSwapped
+end
+
+-- Recalculate all Pokemon stats including held item modifiers
+-- @param pokemon: Pokemon data with baseStats, ivs, level, natureId, heldItem
+-- @return: Updated stats table with all modifiers applied
+function StatCalculator.recalculateStatsWithHeldItems(pokemon)
+    if not pokemon.baseStats or not pokemon.ivs or not pokemon.level or not pokemon.natureId then
+        return nil, "Missing required Pokemon data for stat recalculation"
+    end
+    
+    -- Calculate base stats first
+    local baseStats, error = StatCalculator.calculateAllStats(
+        pokemon.baseStats, 
+        pokemon.ivs, 
+        pokemon.level, 
+        pokemon.natureId
+    )
+    
+    if not baseStats then
+        return nil, error
+    end
+    
+    -- Apply held item modifiers if present
+    if pokemon.heldItem then
+        local pokemonWithStats = {
+            stats = baseStats,
+            heldItem = pokemon.heldItem
+        }
+        
+        local modifiedPokemon = StatCalculator.applyHeldItemModifiers(pokemonWithStats)
+        return modifiedPokemon.stats
+    end
+    
+    return baseStats
+end
+
+-- Check if Pokemon stats are affected by held item
+-- @param pokemon: Pokemon data with held item
+-- @return: Boolean indicating if held item affects stats, list of affected stats
+function StatCalculator.hasHeldItemStatModifiers(pokemon)
+    if not pokemon or not pokemon.heldItem then
+        return false, {}
+    end
+    
+    local HeldItemEffects = require("game-logic.items.held-item-effects")
+    local affectedStats = {}
+    
+    local statNames = {"hp", "attack", "defense", "spAttack", "spDefense", "speed"}
+    for _, statName in ipairs(statNames) do
+        local modifier = HeldItemEffects.getStatModifier(pokemon.heldItem, statName, pokemon)
+        if modifier ~= 1.0 then
+            table.insert(affectedStats, {
+                stat = statName,
+                multiplier = modifier
+            })
+        end
+    end
+    
+    return #affectedStats > 0, affectedStats
+end
+
+-- Update Pokemon with held item stat modifications for battle
+-- @param pokemon: Pokemon to update
+-- @return: Success boolean and update details
+function StatCalculator.updateHeldItemBattleData(pokemon)
+    if not pokemon then
+        return false, "Missing required parameters"
+    end
+    
+    -- Initialize battle data if not present
+    if not pokemon.battleData then
+        pokemon.battleData = {}
+    end
+    
+    -- Store original stats if not already stored
+    if not pokemon.battleData.originalStats then
+        pokemon.battleData.originalStats = {}
+        for statName, statValue in pairs(pokemon.stats) do
+            pokemon.battleData.originalStats[statName] = statValue
+        end
+    end
+    
+    -- Check if held item affects stats
+    local hasModifiers, affectedStats = StatCalculator.hasHeldItemStatModifiers(pokemon)
+    
+    if hasModifiers then
+        -- Apply held item stat modifiers
+        local modifiedPokemon = StatCalculator.applyHeldItemModifiers(pokemon)
+        
+        -- Update current stats with held item modifications
+        pokemon.stats = modifiedPokemon.stats
+        pokemon.battleData.heldItemModifiers = affectedStats
+        pokemon.battleData.heldItemActive = true
+        
+        return true, "Held item stat modifiers applied"
+    else
+        pokemon.battleData.heldItemActive = false
+        return true, "No held item stat modifiers to apply"
+    end
+end
+
+-- Reset held item stat effects (when Pokemon switches out or loses held item)
+-- @param pokemon: Pokemon to reset
+-- @return: Success boolean and reset details
+function StatCalculator.resetHeldItemEffects(pokemon)
+    if not pokemon or not pokemon.battleData then
+        return false, "No battle data to reset"
+    end
+    
+    -- Restore original stats if they were modified by held item
+    if pokemon.battleData.originalStats and pokemon.battleData.heldItemActive then
+        pokemon.stats = pokemon.battleData.originalStats
+        pokemon.battleData.heldItemActive = false
+        pokemon.battleData.heldItemModifiers = nil
+        
+        return true, "Held item effects reset"
+    end
+    
+    return true, "No held item effects to reset"
+end
+
+-- Get comprehensive stat modifier information for Pokemon
+-- @param pokemon: Pokemon to analyze
+-- @param battleState: Current battle state
+-- @param fieldConditions: Current field conditions
+-- @return: Detailed stat modifier information
+function StatCalculator.getStatModifierInfo(pokemon, battleState, fieldConditions)
+    if not pokemon then
+        return {
+            has_modifiers = false,
+            modifiers = {}
+        }
+    end
+    
+    local modifiers = {
+        positional_ability = StatCalculator.getPositionalAbilityInfo(pokemon, battleState),
+        held_item = {},
+        field_conditions = {}
+    }
+    
+    -- Get held item modifiers
+    if pokemon.heldItem then
+        local hasHeldItemModifiers, heldItemStats = StatCalculator.hasHeldItemStatModifiers(pokemon)
+        modifiers.held_item = {
+            active = hasHeldItemModifiers,
+            item_id = pokemon.heldItem,
+            affected_stats = heldItemStats
+        }
+    end
+    
+    -- Get field condition effects (Wonder Room, etc.)
+    if fieldConditions then
+        local statNames = {"defense", "spDefense"}
+        for _, statName in ipairs(statNames) do
+            local mappedStat, isSwapped = StatCalculator.getFieldConditionStatMapping(statName, fieldConditions)
+            if isSwapped then
+                table.insert(modifiers.field_conditions, {
+                    original_stat = statName,
+                    effective_stat = mappedStat,
+                    swapped = true
+                })
+            end
+        end
+    end
+    
+    -- Determine if any modifiers are active
+    local hasModifiers = modifiers.positional_ability.is_active or 
+                        modifiers.held_item.active or 
+                        #modifiers.field_conditions > 0
+    
+    return {
+        has_modifiers = hasModifiers,
+        modifiers = modifiers
+    }
+end
+
 return StatCalculator

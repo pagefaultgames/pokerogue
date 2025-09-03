@@ -12,13 +12,24 @@ local AbilityIndexes = require("data.abilities.ability-indexes")
 -- Import Pokemon instance management modules
 local PokemonManager = require("game-logic.pokemon.pokemon-manager")
 local ExperienceSystem = require("game-logic.progression.experience-system")
+local PlayerProgressionSystem = require("game-logic.progression.player-progression-system")
 local MoveManager = require("game-logic.pokemon.move-manager")
 local CustomizationManager = require("game-logic.pokemon.customization-manager")
 local PokemonStorage = require("data.pokemon-instances.pokemon-storage")
 local PlayerIndex = require("data.pokemon-instances.player-index")
 
+-- Import Item System modules
+local ItemDatabase = require("data.items.item-database")
+local ItemEffectsProcessor = require("game-logic.items.item-effects-processor")
+local InventoryManager = require("game-logic.items.inventory-manager")
+local HeldItemManager = require("game-logic.items.held-item-manager")
+local HeldItemEffects = require("game-logic.items.held-item-effects")
+
 -- State message handlers
 local stateHandlers = {}
+
+-- Item system handlers
+local itemHandlers = {}
 
 -- Initialize Pokemon with abilities
 stateHandlers["initialize-pokemon-ability"] = function(msg)
@@ -384,6 +395,232 @@ stateHandlers["can-have-ability"] = function(msg)
         abilityName = abilityData and abilityData.name or "Unknown",
         slot = canHave and slotOrReason or nil,
         reason = not canHave and slotOrReason or nil
+    }
+end
+
+-- Item System Handlers
+
+-- Use item on Pokemon
+itemHandlers["use-item"] = function(msg)
+    local playerId = msg.Data and msg.Data.playerId
+    local pokemonId = msg.Data and msg.Data.pokemonId
+    local itemId = msg.Data and msg.Data.itemId
+    local quantity = msg.Data and msg.Data.quantity or 1
+    local context = msg.Data and msg.Data.context or "overworld"
+    
+    if not playerId or not pokemonId or not itemId then
+        return {
+            success = false,
+            error = "Missing playerId, pokemonId, or itemId"
+        }
+    end
+    
+    -- Check if player has the item
+    if not InventoryManager.hasItem(playerId, itemId, quantity) then
+        return {
+            success = false,
+            error = "Player does not have sufficient quantity of item"
+        }
+    end
+    
+    -- Get Pokemon instance
+    local pokemon = PokemonStorage.getPokemon(pokemonId)
+    if not pokemon then
+        return {
+            success = false,
+            error = "Pokemon not found: " .. pokemonId
+        }
+    end
+    
+    -- Process item effect
+    local effectResult, effectData, message = ItemEffectsProcessor.processItemEffect(
+        pokemon, itemId, context, msg.Data.battleState, quantity
+    )
+    
+    if effectResult == ItemEffectsProcessor.EffectResult.SUCCESS then
+        -- Remove consumable items from inventory
+        if ItemDatabase.isConsumable(itemId) then
+            InventoryManager.useItem(playerId, itemId, quantity, "Used on " .. (pokemon.name or "Pokemon"))
+        end
+        
+        -- Save Pokemon changes
+        PokemonStorage.updatePokemon(pokemonId, pokemon)
+        
+        return {
+            success = true,
+            effectResult = effectResult,
+            effectData = effectData,
+            message = message,
+            pokemon = pokemon
+        }
+    else
+        return {
+            success = false,
+            effectResult = effectResult,
+            message = message
+        }
+    end
+end
+
+-- Add item to player inventory
+itemHandlers["add-item"] = function(msg)
+    local playerId = msg.Data and msg.Data.playerId
+    local itemId = msg.Data and msg.Data.itemId
+    local quantity = msg.Data and msg.Data.quantity or 1
+    local reason = msg.Data and msg.Data.reason
+    
+    if not playerId or not itemId then
+        return {
+            success = false,
+            error = "Missing playerId or itemId"
+        }
+    end
+    
+    local success, message, finalQuantity = InventoryManager.addItem(playerId, itemId, quantity, reason)
+    
+    return {
+        success = success,
+        message = message,
+        finalQuantity = finalQuantity,
+        itemId = itemId
+    }
+end
+
+-- Remove item from player inventory
+itemHandlers["remove-item"] = function(msg)
+    local playerId = msg.Data and msg.Data.playerId
+    local itemId = msg.Data and msg.Data.itemId
+    local quantity = msg.Data and msg.Data.quantity or 1
+    local reason = msg.Data and msg.Data.reason
+    
+    if not playerId or not itemId then
+        return {
+            success = false,
+            error = "Missing playerId or itemId"
+        }
+    end
+    
+    local success, message, remaining = InventoryManager.removeItem(playerId, itemId, quantity, reason)
+    
+    return {
+        success = success,
+        message = message,
+        remainingQuantity = remaining,
+        itemId = itemId
+    }
+end
+
+-- Get player inventory
+itemHandlers["get-inventory"] = function(msg)
+    local playerId = msg.Data and msg.Data.playerId
+    local category = msg.Data and msg.Data.category
+    
+    if not playerId then
+        return {
+            success = false,
+            error = "Missing playerId"
+        }
+    end
+    
+    if category then
+        local items = InventoryManager.getItemsByCategory(playerId, category)
+        return {
+            success = true,
+            items = items,
+            category = category
+        }
+    else
+        local inventory = InventoryManager.getInventory(playerId)
+        return {
+            success = true,
+            inventory = inventory
+        }
+    end
+end
+
+-- Get item information
+itemHandlers["get-item-info"] = function(msg)
+    local itemId = msg.Data and msg.Data.itemId
+    
+    if not itemId then
+        return {
+            success = false,
+            error = "Missing itemId"
+        }
+    end
+    
+    local itemData = ItemDatabase.getItem(itemId)
+    if not itemData then
+        return {
+            success = false,
+            error = "Item not found: " .. itemId
+        }
+    end
+    
+    return {
+        success = true,
+        itemData = itemData
+    }
+end
+
+-- Validate item usage
+itemHandlers["validate-item-usage"] = function(msg)
+    local playerId = msg.Data and msg.Data.playerId
+    local pokemonId = msg.Data and msg.Data.pokemonId
+    local itemId = msg.Data and msg.Data.itemId
+    local context = msg.Data and msg.Data.context or "overworld"
+    
+    if not playerId or not pokemonId or not itemId then
+        return {
+            success = false,
+            error = "Missing playerId, pokemonId, or itemId"
+        }
+    end
+    
+    -- Check inventory
+    if not InventoryManager.hasItem(playerId, itemId, 1) then
+        return {
+            success = true,
+            canUse = false,
+            reason = "Item not in inventory"
+        }
+    end
+    
+    -- Get Pokemon instance
+    local pokemon = PokemonStorage.getPokemon(pokemonId)
+    if not pokemon then
+        return {
+            success = false,
+            error = "Pokemon not found: " .. pokemonId
+        }
+    end
+    
+    -- Validate usage
+    local canUse, reason = ItemEffectsProcessor.validateItemUsage(pokemon, itemId, context)
+    
+    return {
+        success = true,
+        canUse = canUse,
+        reason = reason
+    }
+end
+
+-- Get inventory statistics
+itemHandlers["get-inventory-stats"] = function(msg)
+    local playerId = msg.Data and msg.Data.playerId
+    
+    if not playerId then
+        return {
+            success = false,
+            error = "Missing playerId"
+        }
+    end
+    
+    local stats = InventoryManager.getInventoryStats(playerId)
+    
+    return {
+        success = true,
+        stats = stats
     }
 end
 
@@ -800,7 +1037,7 @@ function StateHandler.handle(msg)
         }
     end
     
-    local handler = stateHandlers[action]
+    local handler = stateHandlers[action] or itemHandlers[action]
     if not handler then
         return {
             success = false,
@@ -811,6 +1048,9 @@ function StateHandler.handle(msg)
     -- Initialize dependencies
     AbilityDatabase.init()
     AbilityIndexes.init()
+    ItemDatabase.init()
+    ItemEffectsProcessor.init()
+    InventoryManager.init()
     
     -- Execute handler
     local success, result = pcall(handler, msg)
@@ -829,6 +1069,9 @@ end
 function StateHandler.getAvailableActions()
     local actions = {}
     for action in pairs(stateHandlers) do
+        table.insert(actions, action)
+    end
+    for action in pairs(itemHandlers) do
         table.insert(actions, action)
     end
     table.sort(actions)
@@ -850,6 +1093,223 @@ function StateHandler.validateMessage(msg)
     end
     
     return true
+end
+
+-- Held item management handlers
+
+-- Assign held item to Pokemon
+stateHandlers["assign-held-item"] = function(msg)
+    local pokemonId = msg.Data and msg.Data.pokemonId
+    local itemId = msg.Data and msg.Data.itemId
+    local playerId = msg.From or (msg.Data and msg.Data.playerId)
+    
+    if not pokemonId or not itemId or not playerId then
+        return {
+            success = false,
+            error = "Missing required parameters: pokemonId, itemId, and playerId"
+        }
+    end
+    
+    local success, result = HeldItemManager.assignHeldItem(pokemonId, itemId, playerId)
+    
+    if not success then
+        return {
+            success = false,
+            error = result
+        }
+    end
+    
+    return {
+        success = true,
+        result = result
+    }
+end
+
+-- Unequip held item from Pokemon
+stateHandlers["unequip-held-item"] = function(msg)
+    local pokemonId = msg.Data and msg.Data.pokemonId
+    local playerId = msg.From or (msg.Data and msg.Data.playerId)
+    
+    if not pokemonId or not playerId then
+        return {
+            success = false,
+            error = "Missing required parameters: pokemonId and playerId"
+        }
+    end
+    
+    local success, result = HeldItemManager.unequipHeldItem(pokemonId, playerId)
+    
+    if not success then
+        return {
+            success = false,
+            error = result
+        }
+    end
+    
+    return {
+        success = true,
+        result = result
+    }
+end
+
+-- Swap held items between Pokemon
+stateHandlers["swap-held-items"] = function(msg)
+    local pokemonId1 = msg.Data and msg.Data.pokemonId1
+    local pokemonId2 = msg.Data and msg.Data.pokemonId2
+    local playerId = msg.From or (msg.Data and msg.Data.playerId)
+    
+    if not pokemonId1 or not pokemonId2 or not playerId then
+        return {
+            success = false,
+            error = "Missing required parameters: pokemonId1, pokemonId2, and playerId"
+        }
+    end
+    
+    local success, result = HeldItemManager.swapHeldItems(pokemonId1, pokemonId2, playerId)
+    
+    if not success then
+        return {
+            success = false,
+            error = result
+        }
+    end
+    
+    return {
+        success = true,
+        result = result
+    }
+end
+
+-- Swap held item between Pokemon and inventory
+stateHandlers["swap-pokemon-inventory-held-item"] = function(msg)
+    local pokemonId = msg.Data and msg.Data.pokemonId
+    local itemId = msg.Data and msg.Data.itemId -- Can be nil to just unequip
+    local playerId = msg.From or (msg.Data and msg.Data.playerId)
+    
+    if not pokemonId or not playerId then
+        return {
+            success = false,
+            error = "Missing required parameters: pokemonId and playerId"
+        }
+    end
+    
+    local success, result = HeldItemManager.swapPokemonInventoryHeldItem(pokemonId, itemId, playerId)
+    
+    if not success then
+        return {
+            success = false,
+            error = result
+        }
+    end
+    
+    return {
+        success = true,
+        result = result
+    }
+end
+
+-- Get Pokemon held item information
+stateHandlers["get-pokemon-held-item"] = function(msg)
+    local pokemonId = msg.Data and msg.Data.pokemonId
+    
+    if not pokemonId then
+        return {
+            success = false,
+            error = "Missing required parameter: pokemonId"
+        }
+    end
+    
+    local success, result = HeldItemManager.getHeldItemInfo(pokemonId)
+    
+    if not success then
+        return {
+            success = false,
+            error = result
+        }
+    end
+    
+    return {
+        success = true,
+        heldItemInfo = result
+    }
+end
+
+-- Get all Pokemon with held items for player
+stateHandlers["get-player-pokemon-held-items"] = function(msg)
+    local playerId = msg.From or (msg.Data and msg.Data.playerId)
+    
+    if not playerId then
+        return {
+            success = false,
+            error = "Missing required parameter: playerId"
+        }
+    end
+    
+    local success, result = HeldItemManager.getPokemonWithHeldItems(playerId)
+    
+    if not success then
+        return {
+            success = false,
+            error = result
+        }
+    end
+    
+    return {
+        success = true,
+        pokemonWithHeldItems = result
+    }
+end
+
+-- Validate held item consistency for player
+stateHandlers["validate-held-item-consistency"] = function(msg)
+    local playerId = msg.From or (msg.Data and msg.Data.playerId)
+    
+    if not playerId then
+        return {
+            success = false,
+            error = "Missing required parameter: playerId"
+        }
+    end
+    
+    local success, result = HeldItemManager.validatePlayerHeldItemConsistency(playerId)
+    
+    if not success then
+        return {
+            success = false,
+            error = result
+        }
+    end
+    
+    return {
+        success = true,
+        validation = result
+    }
+end
+
+-- Get held item statistics
+stateHandlers["get-held-item-statistics"] = function(msg)
+    local playerId = msg.From or (msg.Data and msg.Data.playerId)
+    
+    if not playerId then
+        return {
+            success = false,
+            error = "Missing required parameter: playerId"
+        }
+    end
+    
+    local success, result = HeldItemManager.getHeldItemStatistics(playerId)
+    
+    if not success then
+        return {
+            success = false,
+            error = result
+        }
+    end
+    
+    return {
+        success = true,
+        statistics = result
+    }
 end
 
 return StateHandler
