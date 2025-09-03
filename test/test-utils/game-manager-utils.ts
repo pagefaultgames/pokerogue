@@ -49,7 +49,7 @@ export function generateStarters(scene: BattleScene, speciesId: SpeciesId[]): St
       starterGender,
       starter.shiny,
       starter.variant,
-      undefined,
+      starter.ivs,
       starter.nature,
     );
     const moveset: MoveId[] = [];
@@ -96,7 +96,6 @@ export function initSceneWithoutEncounterPhase(scene: BattleScene, species: Spec
   starters.forEach(starter => {
     const starterFormIndex = starter.formIndex;
     const starterGender = Gender.MALE;
-    const starterIvs = starter.ivs;
     const starterPokemon = scene.addPlayerPokemon(
       getPokemonSpecies(starter.speciesId),
       scene.gameMode.getStartingLevel(),
@@ -105,7 +104,7 @@ export function initSceneWithoutEncounterPhase(scene: BattleScene, species: Spec
       starterGender,
       starter.shiny,
       starter.variant,
-      starterIvs,
+      starter.ivs,
       starter.nature,
     );
     starter.moveset && starterPokemon.tryPopulateMoveset(starter.moveset);

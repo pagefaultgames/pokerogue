@@ -228,7 +228,7 @@ export class TitlePhase extends Phase {
             starterGender,
             starter.shiny,
             starter.variant,
-            undefined,
+            starter.ivs,
             starter.nature,
           );
           starterPokemon.setVisible(false);
