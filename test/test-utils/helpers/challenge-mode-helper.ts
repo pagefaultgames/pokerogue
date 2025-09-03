@@ -34,7 +34,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
    * @param gameMode - Optional game mode to set.
    * @returns A promise that resolves when the summon phase is reached.
    */
-  async runToSummon(species?: SpeciesId[]) {
+  async runToSummon(species: SpeciesId[] = []) {
     await this.game.runToTitle();
 
     if (this.game.override.disableShinies) {

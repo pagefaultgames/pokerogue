@@ -32,7 +32,7 @@ export class ClassicModeHelper extends GameManagerHelper {
    */
   async runToSummon(): Promise<void>;
   async runToSummon(species: SpeciesId[] | undefined): Promise<void>;
-  async runToSummon(species?: SpeciesId[]): Promise<void> {
+  async runToSummon(species: SpeciesId[] = []): Promise<void> {
     await this.game.runToTitle();
 
     if (this.game.override.disableShinies) {

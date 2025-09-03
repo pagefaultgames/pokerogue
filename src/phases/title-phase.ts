@@ -19,6 +19,7 @@ import { vouchers } from "#system/voucher";
 import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { SaveSlotUiMode } from "#ui/save-slot-select-ui-handler";
 import { isLocal, isLocalServerConnected, isNullOrUndefined } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 export class TitlePhase extends Phase {
@@ -215,22 +216,18 @@ export class TitlePhase extends Phase {
         const party = globalScene.getPlayerParty();
         const loadPokemonAssets: Promise<void>[] = [];
         for (const starter of starters) {
-          const starterProps = globalScene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
-          const starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
+          const species = getPokemonSpecies(starter.speciesId);
+          const starterFormIndex = starter.formIndex;
           const starterGender =
-            starter.species.malePercent !== null
-              ? !starterProps.female
-                ? Gender.MALE
-                : Gender.FEMALE
-              : Gender.GENDERLESS;
+            species.malePercent !== null ? (!starter.female ? Gender.MALE : Gender.FEMALE) : Gender.GENDERLESS;
           const starterPokemon = globalScene.addPlayerPokemon(
-            starter.species,
+            species,
             startingLevel,
             starter.abilityIndex,
             starterFormIndex,
             starterGender,
-            starterProps.shiny,
-            starterProps.variant,
+            starter.shiny,
+            starter.variant,
             undefined,
             starter.nature,
           );
