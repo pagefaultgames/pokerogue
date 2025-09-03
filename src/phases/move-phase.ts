@@ -24,6 +24,7 @@ import { applyMoveAttrs } from "#moves/apply-attrs";
 import { frenzyMissFunc } from "#moves/move-utils";
 import type { PokemonMove } from "#moves/pokemon-move";
 import { BattlePhase } from "#phases/battle-phase";
+import type { TurnMove } from "#types/turn-move";
 import { NumberHolder } from "#utils/common";
 import { enumValueToKey } from "#utils/enums";
 import i18next from "i18next";
@@ -40,6 +41,13 @@ export class MovePhase extends BattlePhase {
   protected failed = false;
   /** Whether the current move should fail and retain PP. */
   protected cancelled = false;
+
+  /** The move history entry object that is pushed to the pokemon's move history
+   *
+   * @remarks
+   * Can be edited _after_ being pushed to the history to adjust the result, targets, etc, for this move phase.
+   */
+  protected moveHistoryEntry: TurnMove;
 
   public get pokemon(): Pokemon {
     return this._pokemon;
@@ -82,6 +90,11 @@ export class MovePhase extends BattlePhase {
     this.move = move;
     this.useMode = useMode;
     this.forcedLast = forcedLast;
+    this.moveHistoryEntry = {
+      move: MoveId.NONE,
+      targets,
+      useMode,
+    };
   }
 
   /**
@@ -410,13 +423,9 @@ export class MovePhase extends BattlePhase {
     if (showText) {
       this.showMoveText();
     }
-
-    this.pokemon.pushMoveHistory({
-      move: this.move.moveId,
-      targets: this.targets,
-      result: MoveResult.FAIL,
-      useMode: this.useMode,
-    });
+    const moveHistoryEntry = this.moveHistoryEntry;
+    moveHistoryEntry.result = MoveResult.FAIL;
+    this.pokemon.pushMoveHistory(moveHistoryEntry);
 
     // Use move-specific failure messages if present before checking terrain/weather blockage
     // and falling back to the classic "But it failed!".
@@ -630,12 +639,9 @@ export class MovePhase extends BattlePhase {
       frenzyMissFunc(this.pokemon, this.move.getMove());
     }
 
-    this.pokemon.pushMoveHistory({
-      move: MoveId.NONE,
-      result: MoveResult.FAIL,
-      targets: this.targets,
-      useMode: this.useMode,
-    });
+    const moveHistoryEntry = this.moveHistoryEntry;
+    moveHistoryEntry.result = MoveResult.FAIL;
+    this.pokemon.pushMoveHistory(moveHistoryEntry);
 
     this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
     this.pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
@@ -649,13 +655,16 @@ export class MovePhase extends BattlePhase {
    * Displays the move's usage text to the player as applicable for the move being used.
    */
   public showMoveText(): void {
+    const moveId = this.move.moveId;
     if (
-      this.move.moveId === MoveId.NONE ||
+      moveId === MoveId.NONE ||
       this.pokemon.getTag(BattlerTagType.RECHARGING) ||
       this.pokemon.getTag(BattlerTagType.INTERRUPTED)
     ) {
       return;
     }
+    // Showing move text always adjusts the move history entry's move id
+    this.moveHistoryEntry.move = moveId;
 
     // TODO: This should be done by the move...
     globalScene.phaseManager.queueMessage(
@@ -668,7 +677,7 @@ export class MovePhase extends BattlePhase {
 
     // Moves with pre-use messages (Magnitude, Chilly Reception, Fickle Beam, etc.) always display their messages even on failure
     // TODO: This assumes single target for message funcs - is this sustainable?
-    applyMoveAttrs("PreMoveMessageAttr", this.pokemon, this.pokemon.getOpponents(false)[0], this.move.getMove());
+    applyMoveAttrs("PreMoveMessageAttr", this.pokemon, this.getActiveTargetPokemon()[0], this.move.getMove());
   }
 
   /**

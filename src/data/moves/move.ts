@@ -8164,6 +8164,9 @@ const failIfGhostTypeCondition: MoveConditionFunc = (user: Pokemon, target: Poke
 const failIfNoTargetHeldItemsCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => target.getHeldItems().filter(i => i.isTransferable)?.length > 0;
 
 const attackedByItemMessageFunc = (user: Pokemon, target: Pokemon, move: Move) => {
+  if (isNullOrUndefined(target)) { // Fix bug when used against targets that have both fainted
+    return "";
+  }
   const heldItems = target.getHeldItems().filter(i => i.isTransferable);
   if (heldItems.length === 0) {
     return "";
