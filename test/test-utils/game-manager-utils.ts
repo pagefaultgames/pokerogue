@@ -32,12 +32,12 @@ export function holdOn(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export function generateStarters(scene: BattleScene, speciesId: SpeciesId[]): Starter[] {
+export function generateStarters(scene: BattleScene, speciesIds: SpeciesId[]): Starter[] {
   const seed = "test";
-  const starters = getTestRunStarters(seed, speciesId);
+  const starters = getTestRunStarters(seed, speciesIds);
   const startingLevel = scene.gameMode.getStartingLevel();
   for (const starter of starters) {
-    const species = getPokemonSpecies(speciesId);
+    const species = getPokemonSpecies(starter.speciesId);
     const starterFormIndex = starter.formIndex;
     const starterGender =
       species.malePercent !== null ? (!starter.female ? Gender.MALE : Gender.FEMALE) : Gender.GENDERLESS;
