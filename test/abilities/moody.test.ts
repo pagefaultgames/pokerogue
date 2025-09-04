@@ -84,4 +84,42 @@ describe("Abilities - Moody", () => {
     expect(decreasedStat).toBeTruthy();
     expect(decreasedStat.length).toBe(1);
   });
+
+  it("should only try to increase a stat stage by 1 if the stat stage is not at 6", async () => {
+    await game.classicMode.startBattle();
+
+    const playerPokemon = game.field.getPlayerPokemon();
+
+    // Set all stat stages to 6
+    vi.spyOn(playerPokemon.summonData, "statStages", "get").mockReturnValue(new Array(BATTLE_STATS.length).fill(6));
+
+    // Set one of the stat stages to -6
+    const raisedStat = EFFECTIVE_STATS[playerPokemon.randBattleSeedInt(EFFECTIVE_STATS.length)];
+    playerPokemon.setStatStage(raisedStat, -6);
+
+    game.move.select(MoveId.SPLASH);
+    await game.toNextTurn();
+
+    // Should increase only the stat that is not at stage 6
+    expect(playerPokemon.getStatStage(raisedStat)).toBe(-4);
+  });
+
+  it("should only try to decrease a stat stage by 1 if the stat stage is not at -6", async () => {
+    await game.classicMode.startBattle();
+
+    const playerPokemon = game.field.getPlayerPokemon();
+
+    // Set all stat stages to -6
+    vi.spyOn(playerPokemon.summonData, "statStages", "get").mockReturnValue(new Array(BATTLE_STATS.length).fill(-6));
+
+    // Set one of the stat stages to 6
+    const raisedStat = EFFECTIVE_STATS[playerPokemon.randBattleSeedInt(EFFECTIVE_STATS.length)];
+    playerPokemon.setStatStage(raisedStat, 6);
+
+    game.move.select(MoveId.SPLASH);
+    await game.toNextTurn();
+
+    // Should decrease only the stat that is not at stage -6
+    expect(playerPokemon.getStatStage(raisedStat)).toBe(5);
+  });
 });
