@@ -3,7 +3,7 @@ import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
 import { NavigationManager } from "#ui/navigation-menu";
-import { addTextObject } from "#ui/text";
+import { addTextObject, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import i18next from "i18next";
@@ -222,16 +222,16 @@ export abstract class AbstractBindingUiHandler extends UiHandler {
   setCursor(cursor: number): boolean {
     this.cursor = cursor;
     if (cursor === 1) {
-      this.actionLabel.setColor(this.getTextColor(TextStyle.SETTINGS_SELECTED));
-      this.actionLabel.setShadowColor(this.getTextColor(TextStyle.SETTINGS_SELECTED, true));
-      this.cancelLabel.setColor(this.getTextColor(TextStyle.WINDOW));
-      this.cancelLabel.setShadowColor(this.getTextColor(TextStyle.WINDOW, true));
+      this.actionLabel.setColor(getTextColor(TextStyle.SETTINGS_SELECTED));
+      this.actionLabel.setShadowColor(getTextColor(TextStyle.SETTINGS_SELECTED, true));
+      this.cancelLabel.setColor(getTextColor(TextStyle.WINDOW));
+      this.cancelLabel.setShadowColor(getTextColor(TextStyle.WINDOW, true));
       return true;
     }
-    this.actionLabel.setColor(this.getTextColor(TextStyle.WINDOW));
-    this.actionLabel.setShadowColor(this.getTextColor(TextStyle.WINDOW, true));
-    this.cancelLabel.setColor(this.getTextColor(TextStyle.SETTINGS_SELECTED));
-    this.cancelLabel.setShadowColor(this.getTextColor(TextStyle.SETTINGS_SELECTED, true));
+    this.actionLabel.setColor(getTextColor(TextStyle.WINDOW));
+    this.actionLabel.setShadowColor(getTextColor(TextStyle.WINDOW, true));
+    this.cancelLabel.setColor(getTextColor(TextStyle.SETTINGS_SELECTED));
+    this.cancelLabel.setShadowColor(getTextColor(TextStyle.SETTINGS_SELECTED, true));
     return true;
   }
 

@@ -1,10 +1,11 @@
 {
   "name": "pokemon-rogue-battle",
   "private": true,
-  "version": "1.10.4",
+  "version": "1.10.6",
   "type": "module",
   "scripts": {
-    "start": "vite",
+    "start:prod": "vite --mode production",
+    "start:beta": "vite --mode beta",
     "start:dev": "vite --mode development",
     "build": "vite build",
     "build:beta": "vite build --mode beta",
