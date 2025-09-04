@@ -25,13 +25,13 @@ Thank you to all the wonderful people that have contributed to the PokéRogue pr
 
 # License
 
-This repository seeksto be REUSE compliant, so copyright and any licensing information is stored either in the file, or in an associated `REUSE.toml` file.
+This repository seeks to be REUSE compliant, so copyright and any licensing information is stored either in the file, or in an associated `REUSE.toml` file.
 
 Using the [REUSE helper tool](https://github.com/fsfe/reuse-tool), you can run `reuse spdx` to get a full bill of materials.
 
 - All source code belonging to the project, unless otherwise noted, is licensed under [AGPL-v3.0-only](LICENSES/AGPL-3.0-only.txt)
 - All documentation (any markdown files), including this readme, as well as any documentation comments explicitly documenting source code, are also licensed under [CC-BY-NC-SA-4.0](LICENSES/CC-BY-NC-SA-4.0.txt)
-- Auto-generated files produced by external tools or files of insigifnicand originality are not copyrighted and are licensed under [CC0-1.0](LICENSES/CC0-1.0.txt)
+- Auto-generated files produced by external tools or files of insigifnicant originality are not copyrighted and are licensed under [CC0-1.0](LICENSES/CC0-1.0.txt)
 - To the extent that the assets we provide are [licensable and applicable](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en#ref-exception-or-limitation), they are licensed under [CC-BY-NC-SA-4.0](LICENSES/CC-BY-NC-SA-4.0.txt) unless otherwise noted. Exceptions can be found in associated REUSE.toml files. ⚠️ Files in `public/` that are not explicitly licensed, as per the REUSE.toml, should be considered to have _no_ licensing / copyright information.
 
 The full license information for each file can be found by utilizing REUSE's tooling, such as via `reuse spdx`.
