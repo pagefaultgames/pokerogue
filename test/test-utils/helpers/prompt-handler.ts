@@ -77,14 +77,18 @@ export class PromptHandler extends GameManagerHelper {
    * Helper method to wrap UI mode changing.
    * @param args - Arguments being passed to the original method
    * @returns The original return value.
+   * @todo Make this wait for the actual UI mode setting
    */
-  private async setMode(args: Parameters<typeof this.originalSetModeInternal>) {
+  private setMode(
+    args: Parameters<typeof this.originalSetModeInternal>,
+  ): ReturnType<typeof this.originalSetModeInternal> {
     const mode = args[0];
 
     this.doLog(
       `UI mode changed from ${getEnumStr(UiMode, this.game.scene.ui.getMode())} to ${getEnumStr(UiMode, mode)}!`,
     );
-    const ret = await this.originalSetModeInternal.apply(this.game.scene.ui, args);
+    // TODO: Add `await` to this
+    const ret = this.originalSetModeInternal.apply(this.game.scene.ui, args);
 
     const currentPhase = this.game.scene.phaseManager.getCurrentPhase()?.phaseName!;
     if (endBySetMode.includes(currentPhase)) {
