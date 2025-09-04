@@ -10,6 +10,7 @@ import { getLocalizedSpriteKey } from "#utils/common";
 export class PlayerBattleInfo extends BattleInfo {
   protected player: true = true;
   protected hpNumbersContainer: Phaser.GameObjects.Container;
+  protected expBarLabel: Phaser.GameObjects.Image;
 
   override get statOrder(): Stat[] {
     return [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.ACC, Stat.EVA, Stat.SPD];
