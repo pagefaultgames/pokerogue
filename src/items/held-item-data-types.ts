@@ -49,7 +49,7 @@ export function isHeldItemCategoryEntry(entry: any): entry is HeldItemCategoryEn
 }
 
 type HeldItemPoolEntry = {
-  entry: HeldItemId | HeldItemCategoryId | HeldItemCategoryEntry | HeldItemSpecs;
+  entry: HeldItemId | HeldItemCategoryId | HeldItemCategoryEntry | HeldItemSpecs | HeldItemPool;
   weight: number | HeldItemWeightFunc;
 };
 

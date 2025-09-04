@@ -262,6 +262,10 @@ function getNewHeldItemFromPool(pool: HeldItemPool, pokemon: Pokemon, party?: Po
     return entry as HeldItemId;
   }
 
+  if (isHeldItemPool(entry)) {
+    return getNewHeldItemFromPool(entry, pokemon, party) as HeldItemId;
+  }
+
   if (isHeldItemCategoryEntry(entry)) {
     return getNewHeldItemFromCategory(entry.id, party ?? pokemon, entry?.customWeights, pokemon) as HeldItemId;
   }
