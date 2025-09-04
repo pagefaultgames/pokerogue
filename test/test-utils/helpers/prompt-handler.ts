@@ -62,9 +62,7 @@ export class PromptHandler extends GameManagerHelper {
     this.originalSetModeInternal = this.game.scene.ui["setModeInternal"];
     // `any` assertion needed as we are mocking private property
     vi.spyOn(
-      this.game.scene.ui as unknown as {
-        setModeInternal: UI["setModeInternal"];
-      },
+      this.game.scene.ui as UI & Pick<{ setModeInternal: UI["setModeInternal"] }, "setModeInternal">,
       "setModeInternal",
     ).mockImplementation((...args) => this.setMode(args));
 
@@ -83,7 +81,9 @@ export class PromptHandler extends GameManagerHelper {
   private setMode(args: Parameters<typeof this.originalSetModeInternal>) {
     const mode = args[0];
 
-    this.doLog(`UI mode changed to ${getEnumStr(UiMode, mode)}!`);
+    this.doLog(
+      `UI mode changed from ${getEnumStr(UiMode, this.game.scene.ui.getMode())} to ${getEnumStr(UiMode, mode)}!`,
+    );
     const ret = this.originalSetModeInternal.apply(this.game.scene.ui, args);
 
     const currentPhase = this.game.scene.phaseManager.getCurrentPhase()?.phaseName!;
@@ -156,8 +156,9 @@ export class PromptHandler extends GameManagerHelper {
 
   /**
    * Wrapper function to add coloration to phase logs.
-   * @param args - Arguments to original logging function.
+   * @param args - Arguments to original logging function
    */
+  // TODO: Move this to colors.ts & change color after mock console PR
   private doLog(...args: unknown[]): void {
     console.log(chalk.hex("#008B8B")(...args));
   }

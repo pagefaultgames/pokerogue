@@ -360,7 +360,11 @@ export class BattleScene extends SceneBase {
     );
   }
 
-  async preload() {
+  /**
+   * Load game assets necessary for the scene to run.
+   * Called by Phaser on new game start.
+   */
+  public async preload(): Promise<void> {
     if (DEBUG_RNG) {
       const originalRealInRange = Phaser.Math.RND.realInRange;
       Phaser.Math.RND.realInRange = function (min: number, max: number): number {
@@ -395,7 +399,7 @@ export class BattleScene extends SceneBase {
    * Create game objects with loaded assets.
    * Called by Phaser on new game start.
    */
-  create(): void {
+  public create(): void {
     this.scene.remove(LoadingScene.KEY);
     initGameSpeed.apply(this);
     this.inputController = new InputsController();
@@ -1264,6 +1268,7 @@ export class BattleScene extends SceneBase {
           this.uiContainer.remove(this.ui, true);
           this.uiContainer.destroy();
           this.children.removeAll(true);
+          // TODO: Do we even need this?
           this.game.domContainer.innerHTML = "";
           // TODO: `launchBattle` calls `reset(false, false, true)`
           this.launchBattle();

@@ -117,8 +117,14 @@ export class GameManager {
     global.fetch = vi.fn(MockFetch) as any;
   }
 
-  /** Reset a prior `BattleScene` instance to the proper initial state. */
+  /**
+   * Reset a prior `BattleScene` instance to the proper initial state.
+   * @todo Review why our UI doesn't reset between runs and why we need to do it manually
+   */
   private resetScene(): void {
+    // NB: We can't pass `clearScene=true` to `reset` as it will only launch the battle after a fadeout tween
+    // (along with initializing a bunch of sprites we don't really care about)
+
     this.scene.reset(false, true);
     (this.scene.ui.handlers[UiMode.STARTER_SELECT] as StarterSelectUiHandler).clearStarterPreferences();
 
@@ -131,7 +137,7 @@ export class GameManager {
   /**
    * Initialize various default overrides for starting tests, typically to alleviate randomness.
    */
-  // TODO: This should not be here
+  // TODO: Move this to overrides-helper.ts
   private initDefaultOverrides(): void {
     // Disables Mystery Encounters on all tests (can be overridden at test level)
     this.override.mysteryEncounterChance(0);
