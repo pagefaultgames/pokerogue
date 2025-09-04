@@ -54,7 +54,7 @@ describe("Ability - Truant", () => {
 
     expect(player.getLastXMoves(1)[0]).toEqual(expect.objectContaining({ move: MoveId.NONE, result: MoveResult.FAIL }));
     expect(enemy.hp).toBe(enemy.getMaxHp());
-    expect(game.textInterceptor.logs).toContain(
+    expect(game).toHaveShownMessage(
       i18next.t("battlerTags:truantLapse", {
         pokemonNameWithAffix: getPokemonNameWithAffix(player),
       }),
