@@ -6,6 +6,7 @@ import { modifierTypes } from "#data/data-lists";
 import { getCharVariantFromDialogue } from "#data/dialogue";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { BattleType } from "#enums/battle-type";
+import { BattlerIndex } from "#enums/battler-index";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
 import { UiMode } from "#enums/ui-mode";
@@ -80,21 +81,34 @@ export class GameOverPhase extends BattlePhase {
             globalScene.ui.fadeOut(1250).then(() => {
               globalScene.reset();
               globalScene.phaseManager.clearPhaseQueue();
-              globalScene.gameData.loadSession(globalScene.sessionSlotId).then(() => {
-                globalScene.phaseManager.pushNew("EncounterPhase", true);
+              globalScene.gameData.loadSession(globalScene.sessionSlotId);
+              globalScene.phaseManager.pushNew("EncounterPhase", true);
 
-                const availablePartyMembers = globalScene.getPokemonAllowedInBattle().length;
-                const checkSwitch =
-                  globalScene.currentBattle.waveIndex > 1
-                  && globalScene.currentBattle.battleType !== BattleType.TRAINER;
-                globalScene.phaseManager.pushNew("SummonPhase", 0, true, false, checkSwitch);
-                if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-                  globalScene.phaseManager.pushNew("SummonPhase", 1, true, false, checkSwitch);
-                }
-
-                globalScene.ui.fadeIn(1250);
-                this.end();
+              const availablePartyMembers = globalScene.getPokemonAllowedInBattle().length;
+              globalScene.phaseManager.pushNew("SummonPhase", BattlerIndex.PLAYER, {
+                loaded: true,
+                delayPostSummon: true,
               });
+              if (globalScene.currentBattle.double && availablePartyMembers > 1) {
+                globalScene.phaseManager.pushNew("SummonPhase", BattlerIndex.PLAYER, {
+                  loaded: true,
+                  delayPostSummon: true,
+                });
+              }
+
+              // TODO: Should this also check `!gameMode.isDaily` like in `TitlePhase.end()`?
+              const checkSwitch =
+                globalScene.currentBattle.waveIndex > 1
+                && globalScene.currentBattle.battleType !== BattleType.TRAINER;
+            if (checkSwitch) {
+              globalScene.phaseManager.pushNew("CheckSwitchPhase", BattlerIndex.PLAYER, globalScene.currentBattle.double);
+              if (globalScene.currentBattle.double && availablePartyMembers > 1) {
+                globalScene.phaseManager.pushNew("CheckSwitchPhase", BattlerIndex.PLAYER_2, globalScene.currentBattle.double);
+              }
+            }
+
+            globalScene.ui.fadeIn(1250);
+            this.end();
             });
           },
           () => this.handleGameOver(),

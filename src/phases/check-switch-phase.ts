@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BattleStyle } from "#enums/battle-style";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { PartyOption, PartyUiMode } from "#ui/party-ui-handler";
 import { SwitchType } from "#enums/switch-type";
 import { UiMode } from "#enums/ui-mode";
 import { BattlePhase } from "#phases/battle-phase";
@@ -23,19 +24,21 @@ export class CheckSwitchPhase extends BattlePhase {
     super.start();
 
     const pokemon = globalScene.getPlayerField()[this.fieldIndex];
+    const { field, phaseManager, ui } = globalScene;
 
     // End this phase early...
 
     // ...if the user is playing in Set Mode
     if (globalScene.battleStyle === BattleStyle.SET) {
-      this.end(true);
+      this.end();
       return;
     }
 
     // ...if the checked Pokemon is somehow not on the field
-    if (globalScene.field.getAll().indexOf(pokemon) === -1) {
-      globalScene.phaseManager.unshiftNew("SummonMissingPhase", this.fieldIndex);
-      return super.end();
+    if (field.getAll().indexOf(pokemon) === -1) {
+      phaseManager.unshiftNew("SummonPhase", pokemon.getBattlerIndex(), { delayPostSummon: true });
+      this.end();
+      return;
     }
 
     // ...if there are no other allowed Pokemon in the player's party to switch with
@@ -59,7 +62,7 @@ export class CheckSwitchPhase extends BattlePhase {
       return;
     }
 
-    globalScene.ui.showText(
+    ui.showText(
       i18next.t("battle:switchQuestion", {
         pokemonName: this.useName ? getPokemonNameWithAffix(pokemon) : i18next.t("battle:pokemon"),
       }),
@@ -67,24 +70,35 @@ export class CheckSwitchPhase extends BattlePhase {
       () => {
         globalScene.ui.setMode(
           UiMode.CONFIRM,
-          () => {
-            globalScene.ui.setMode(UiMode.MESSAGE);
-            globalScene.phaseManager.unshiftNew("SwitchPhase", SwitchType.INITIAL_SWITCH, this.fieldIndex, false, true);
-            this.end();
-          },
-          () => {
-            globalScene.ui.setMode(UiMode.MESSAGE);
-            this.end(true);
-          },
+          () => this.onConfirm(),
+          () => this.onCancel(),
         );
       },
     );
   }
 
-  public override end(queuePostSummon = false): void {
-    if (queuePostSummon) {
-      globalScene.phaseManager.unshiftNew("PostSummonPhase", this.fieldIndex);
+  private onConfirm(): void {
+    globalScene.ui.setMode(UiMode.PARTY, PartyUiMode.SWITCH, this.fieldIndex, (cursor: number, option: PartyOption) =>
+      this.onPartyModeSelection(cursor, option),
+    );
+  }
+
+  private onCancel(): void {
+    globalScene.ui.setMode(UiMode.MESSAGE).then(() => super.end());
+  }
+
+  private async onPartyModeSelection(cursor: number, option: PartyOption): void {
+    // Hitting "cancel" re-starts the prompt
+    if (option === PartyOption.CANCEL) {
+      await globalScene.ui.setMode(UiMode.MESSAGE)
+      this.start();
+      return;
     }
-    super.end();
+
+    globalScene.phaseManager.unshiftNew("RecallPhase", this.fieldIndex, SwitchType.INITIAL_SWITCH);
+    globalScene.phaseManager.unshiftNew("SwitchPhase", this.fieldIndex, SwitchType.INITIAL_SWITCH, cursor);
+
+    await globalScene.ui.setMode(UiMode.MESSAGE)
+    this.end();
   }
 }

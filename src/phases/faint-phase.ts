@@ -19,6 +19,29 @@ import { PokemonMove } from "#moves/pokemon-move";
 import { PokemonPhase } from "#phases/pokemon-phase";
 import i18next from "i18next";
 
+/**
+ * Handles the effects of a pokemon fainting:
+ * - Triggers the effects of Destiny Bond and Grudge
+ * - Triggers Reviver Seed
+ * - Handles final boss transformation to phase 2 and defeat
+ * - Increments the Last Respects / Supreme Overload counters
+ * - Displays the "pokemon fainted" message
+ * - Triggers form changes
+ * - Applies {@linkcode PostFaintAbAttr}s
+ * - Applies {@linkcode PostKnockOutAbAttr}s
+ * - Applies {@linkcode PostVictoryAbAttr}s
+ * - If the fainted pokemon was the player's:
+ *   - If the player's last valid pokemon just fainted then unshift a {@linkcode GameOverPhase},
+ *     otherwise push a {@linkcode SwitchPhase} or {@linkcode ToggleDoublePositionPhase} as needed.
+ * - If the fainted pokemon was the AI's:
+ *   - Unshift a {@linkcode PostKnockoutPhase}, then if this is a trainer battle and the AI
+ *     has unfainted pokemon in reserve, push a {@linkcode SwitchPhase}
+ * - Redirect moves off of fainted targets in doubles (TODO: handle this in {@linkcode MovePhase}?)
+ * - Play the pokemon's faint cry
+ * - Handle friendship loss for player pokemon
+ * - Lapse {@linkcode BattlerTagLapseType.FAINT} tags
+ * - Clear {@linkcode BattlerTag}s from the fainted pokemon
+ */
 export class FaintPhase extends PokemonPhase {
   public readonly phaseName = "FaintPhase";
   /**
@@ -168,7 +191,7 @@ export class FaintPhase extends PokemonPhase {
          * If previous conditions weren't met, and the player has at least 1 legal Pokemon off the field,
          * push a phase that prompts the player to summon a Pokemon from their party.
          */
-        globalScene.phaseManager.pushNew("SwitchPhase", SwitchType.SWITCH, this.fieldIndex, true, false);
+        globalScene.phaseManager.pushNew("SwitchPhase", this.fieldIndex, SwitchType.MODAL_SWITCH);
       }
     } else {
       globalScene.phaseManager.unshiftNew("VictoryPhase", this.battlerIndex);
@@ -179,7 +202,7 @@ export class FaintPhase extends PokemonPhase {
             .filter(p => p.isActive() && !p.isOnField() && p.trainerSlot === (pokemon as EnemyPokemon).trainerSlot)
             .length > 0;
         if (hasReservePartyMember) {
-          globalScene.phaseManager.pushNew("SwitchSummonPhase", SwitchType.SWITCH, this.fieldIndex, -1, false, false);
+          globalScene.phaseManager.pushNew("SwitchPhase", this.battlerIndex, SwitchType.MODAL_SWITCH);
         }
       }
     }

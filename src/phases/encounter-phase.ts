@@ -429,9 +429,11 @@ export class EncounterPhase extends BattlePhase {
         const doTrainerSummon = () => {
           this.hideEnemyTrainer();
           const availablePartyMembers = globalScene.getEnemyParty().filter(p => !p.isFainted()).length;
-          globalScene.phaseManager.unshiftNew("SummonPhase", 0, false);
+          globalScene.phaseManager.unshiftNew("SummonPhase", BattlerIndex.ENEMY, { delayPostSummon: true });
           if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-            globalScene.phaseManager.unshiftNew("SummonPhase", 1, false);
+            globalScene.phaseManager.unshiftNew("SummonPhase", BattlerIndex.ENEMY_2, {
+              delayPostSummon: true,
+            });
           }
           this.end();
         };
@@ -580,25 +582,25 @@ export class EncounterPhase extends BattlePhase {
         && (currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily)
         && availablePartyMembers.length > minPartySize;
 
-      const phaseManager = globalScene.phaseManager;
-      if (!availablePartyMembers[0].isOnField()) {
-        phaseManager.pushNew("SummonPhase", 0, true, false, checkSwitch);
-      }
+      const {double, battleType, waveIndex} = globalScene.currentBattle
 
-      if (currentBattle.double) {
-        if (availablePartyMembers.length > 1) {
-          phaseManager.pushNew("ToggleDoublePositionPhase", true);
-          if (!availablePartyMembers[1].isOnField()) {
-            phaseManager.pushNew("SummonPhase", 1, true, false, checkSwitch);
-          }
-        }
-      } else {
-        if (availablePartyMembers.length > 1 && availablePartyMembers[1].isOnField()) {
-          globalScene.phaseManager.pushNew("ReturnPhase", 1);
-        }
-        phaseManager.pushNew("ToggleDoublePositionPhase", false);
+      const availablePartyMembers = globalScene.getPokemonAllowedInBattle().length;
+      const minPartySize = double ? 2 : 1;
+      const checkSwitch =
+        battleType !== BattleType.TRAINER
+        && (waveIndex > 1 || !globalScene.gameMode.isDaily)
+        && availablePartyMembers > minPartySize;
+
+      globalScene.phaseManager.pushNew("SummonPhase", BattlerIndex.PLAYER, { loaded: true });
+      if (double && availablePartyMembers > 1) {
+        globalScene.phaseManager.pushNew("SummonPhase", BattlerIndex.PLAYER_2, { loaded: true });
       }
-    }
+      if (checkSwitch) {
+        globalScene.phaseManager.pushNew("CheckSwitchPhase", BattlerIndex.PLAYER_2, double);
+        if (double) {
+          globalScene.phaseManager.pushNew("CheckSwitchPhase", BattlerIndex.PLAYER, double);
+        }
+      }
     handleTutorial(Tutorial.Access_Menu).then(() => super.end());
   }
 

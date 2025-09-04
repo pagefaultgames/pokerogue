@@ -40,6 +40,7 @@ import { getTypeRgb } from "#data/type";
 import { BattleSpec } from "#enums/battle-spec";
 import { BattleStyle } from "#enums/battle-style";
 import { BattleType } from "#enums/battle-type";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
 import { EaseType } from "#enums/ease-type";
@@ -1460,7 +1461,7 @@ export class BattleScene extends SceneBase {
 
         playerField.forEach((pokemon, p) => {
           if (pokemon.isOnField()) {
-            this.phaseManager.pushNew("ReturnPhase", p);
+            this.phaseManager.pushNew("RecallPhase", p);
           }
         });
 
@@ -3337,6 +3338,7 @@ export class BattleScene extends SceneBase {
    * Initialized the 2nd phase of the final boss (e.g. form-change for Eternatus)
    * @param pokemon The (enemy) pokemon
    */
+  // TODO: Refactor this please
   initFinalBossPhaseTwo(pokemon: Pokemon): void {
     if (pokemon.isEnemy() && pokemon.isBoss() && !pokemon.formIndex && pokemon.bossSegmentIndex < 1) {
       this.fadeOutBgm(fixedInt(2000), false);
@@ -3354,11 +3356,12 @@ export class BattleScene extends SceneBase {
           this.setFieldScale(0.75);
           this.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
           this.currentBattle.double = true;
-          const availablePartyMembers = this.getPlayerParty().filter(p => p.isAllowedInBattle());
+          const availablePartyMembers = this.getPokemonAllowedInBattle();
           if (availablePartyMembers.length > 1) {
+            // Add the 2nd player to the field
             this.phaseManager.pushNew("ToggleDoublePositionPhase", true);
             if (!availablePartyMembers[1].isOnField()) {
-              this.phaseManager.pushNew("SummonPhase", 1);
+              this.phaseManager.pushNew("SummonPhase", BattlerIndex.PLAYER_2, { delayPostSummon: true });
             }
           }
 

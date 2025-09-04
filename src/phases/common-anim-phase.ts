@@ -12,7 +12,18 @@ export class CommonAnimPhase extends PokemonPhase {
   private targetIndex?: BattlerIndex;
 
   constructor(battlerIndex?: BattlerIndex, targetIndex?: BattlerIndex, anim: CommonAnim | null = null) {
-    super(battlerIndex);
+    // TODO: refactor `PokemonPhase` and/or this phase - both are absolutely inane
+    battlerIndex =
+      battlerIndex
+      ?? globalScene
+        .getField()
+        .find(p => p?.isActive())
+        ?.getBattlerIndex();
+    if (battlerIndex === undefined) {
+      console.warn("There are no Pokemon on the field!"); // TODO: figure out a suitable fallback behavior
+    }
+
+    super(battlerIndex!);
 
     this.anim = anim;
     this.targetIndex = targetIndex;

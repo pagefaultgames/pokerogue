@@ -45,7 +45,7 @@ describe("Abilities - Wimp Out", () => {
   function confirmSwitch(): void {
     const [pokemon1, pokemon2] = game.scene.getPlayerParty();
 
-    expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
+    expect(game.phaseInterceptor.log).toContain("SwitchPhase");
 
     expect(pokemon1.species.speciesId).not.toBe(SpeciesId.WIMPOD);
 
@@ -57,7 +57,7 @@ describe("Abilities - Wimp Out", () => {
   function confirmNoSwitch(): void {
     const [pokemon1, pokemon2] = game.scene.getPlayerParty();
 
-    expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
+    expect(game.phaseInterceptor.log).not.toContain("SwitchPhase");
 
     expect(pokemon2.species.speciesId).not.toBe(SpeciesId.WIMPOD);
 
@@ -116,7 +116,7 @@ describe("Abilities - Wimp Out", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
+    expect(game.phaseInterceptor.log).toContain("SwitchPhase");
     expect(game.field.getPlayerPokemon().getTag(BattlerTagType.TRAPPED)).toBeUndefined();
     expect(game.scene.getPlayerParty()[1].getTag(BattlerTagType.TRAPPED)).toBeUndefined();
     confirmSwitch();
@@ -153,7 +153,7 @@ describe("Abilities - Wimp Out", () => {
 
     game.move.select(MoveId.SPLASH);
     game.doSelectPartyPokemon(1);
-    await game.phaseInterceptor.to("SwitchSummonPhase", false);
+    await game.phaseInterceptor.to("SwitchPhase", false);
 
     expect(wimpod.waveData.abilitiesApplied).not.toContain(AbilityId.WIMP_OUT);
 
@@ -218,7 +218,7 @@ describe("Abilities - Wimp Out", () => {
 
       expect(game.scene.getPlayerParty()[1]).toBe(wimpod);
       expect(wimpod.hp).toBeGreaterThan(toDmgValue(wimpod.getMaxHp() / 2));
-      expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
+      expect(game.phaseInterceptor.log).toContain("SwitchPhase");
       expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.TYRUNT);
     },
   );
@@ -337,7 +337,7 @@ describe("Abilities - Wimp Out", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(game.field.getPlayerPokemon().getHpRatio()).toEqual(0.51);
-    expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
+    expect(game.phaseInterceptor.log).not.toContain("SwitchPhase");
     expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.WIMPOD);
   });
 
