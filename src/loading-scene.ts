@@ -123,7 +123,6 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("party_slot_main", "ui");
     this.loadAtlas("party_slot_main_short", "ui");
     this.loadAtlas("party_slot", "ui");
-    this.loadImage("party_slot_overlay_lv", "ui");
     this.loadImage("party_slot_hp_bar", "ui");
     this.loadAtlas("party_slot_hp_overlay", "ui");
     this.loadAtlas("party_pb", "ui");
@@ -307,19 +306,33 @@ export class LoadingScene extends SceneBase {
       `text_images/${lang}/summary/summary_moves_effect_title${keySuffix}.png`,
     ); // Pixel text 'EFFECT'
 
-    this.loadAtlas(`pbinfo_stat${keySuffix}`, "ui", `text_images/${lang}/pbinfo/pbinfo_stat${keySuffix}`); // Pixel text for in-battle stats info tab
-    this.loadImage(`overlay_lv${keySuffix}`, "ui", `text_images/${lang}/pbinfo/overlay_lv${keySuffix}.png`); // Pixel text in-battle 'Lv.'
-    this.loadImage(`overlay_hp_label${keySuffix}`, "ui", `text_images/${lang}/pbinfo/overlay_hp_label${keySuffix}.png`); // Pixel text in-battle 'HP'
+    this.loadAtlas(`pbinfo_stat${keySuffix}`, "ui", `text_images/${lang}/battle_ui/pbinfo_stat${keySuffix}`); // Pixel text for in-battle stats info tab
+    this.loadImage(`overlay_lv${keySuffix}`, "ui", `text_images/${lang}/battle_ui/overlay_lv${keySuffix}.png`); // Pixel text in-battle 'Lv.'
+    this.loadImage(
+      `overlay_hp_label${keySuffix}`,
+      "ui",
+      `text_images/${lang}/battle_ui/overlay_hp_label${keySuffix}.png`,
+    ); // Pixel text in-battle 'HP'
     this.loadImage(
       `overlay_hp_label_boss${keySuffix}`,
       "ui",
-      `text_images/${lang}/pbinfo/overlay_hp_label_boss${keySuffix}.png`,
+      `text_images/${lang}/battle_ui/overlay_hp_label_boss${keySuffix}.png`,
     ); // Pixel text in-battle 'BOSS'
     this.loadImage(
       `overlay_exp_label${keySuffix}`,
       "ui",
-      `text_images/${lang}/pbinfo/overlay_exp_label${keySuffix}.png`,
+      `text_images/${lang}/battle_ui/overlay_exp_label${keySuffix}.png`,
     ); // Pixel text in-battle 'EXP'
+    this.loadImage(
+      `party_slot_overlay_lv${keySuffix}`,
+      "ui",
+      `text_images/${lang}/party_ui/party_slot_overlay_lv${keySuffix}.png`,
+    ); // Pixel text party 'Lv.'
+    this.loadImage(
+      `party_slot_overlay_hp${keySuffix}`,
+      "ui",
+      `text_images/${lang}/party_ui/party_slot_overlay_hp${keySuffix}.png`,
+    ); // Pixel text party 'HP'
 
     if (timedEventManager.activeEventHasBanner()) {
       const availableLangs = timedEventManager.getEventBannerLangs();

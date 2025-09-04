@@ -603,6 +603,7 @@ export class PartyUiHandler extends MessageUiHandler {
           // this else relates to the transfer pokemon. We set the text to be blank so there's no "Able"/"Not able" text
           ableToTransferText = "";
         }
+        partySlot.slotHpLabel.setVisible(false);
         partySlot.slotHpBar.setVisible(false);
         partySlot.slotHpOverlay.setVisible(false);
         partySlot.slotHpText.setVisible(false);
@@ -1708,6 +1709,7 @@ export class PartyUiHandler extends MessageUiHandler {
     this.partySlots[this.transferCursor].setTransfer(false);
     for (let i = 0; i < this.partySlots.length; i++) {
       this.partySlots[i].slotDescriptionLabel.setVisible(false);
+      this.partySlots[i].slotHpLabel.setVisible(true);
       this.partySlots[i].slotHpBar.setVisible(true);
       this.partySlots[i].slotHpOverlay.setVisible(true);
       this.partySlots[i].slotHpText.setVisible(true);
@@ -1860,6 +1862,7 @@ class PartySlot extends Phaser.GameObjects.Container {
   private slotBg: Phaser.GameObjects.Image;
   private slotPb: Phaser.GameObjects.Sprite;
   public slotName: Phaser.GameObjects.Text;
+  public slotHpLabel: Phaser.GameObjects.Image;
   public slotHpBar: Phaser.GameObjects.Image;
   public slotHpOverlay: Phaser.GameObjects.Sprite;
   public slotHpText: Phaser.GameObjects.Text;
@@ -2012,7 +2015,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     this.slotName.setOrigin(0);
 
     const slotLevelLabel = globalScene.add
-      .image(0, 0, "party_slot_overlay_lv")
+      .image(0, 0, getLocalizedSpriteKey("party_slot_overlay_lv"))
       .setPositionRelative(this.slotBg, levelLabelPosition.x, levelLabelPosition.y)
       .setOrigin(0);
 
@@ -2074,6 +2077,12 @@ class PartySlot extends Phaser.GameObjects.Container {
       }
     }
 
+    this.slotHpLabel = globalScene.add
+      .image(0, 0, getLocalizedSpriteKey("party_slot_overlay_hp"))
+      .setOrigin(1, 0)
+      .setVisible(false)
+      .setPositionRelative(this.slotBg, hpBarPosition.x + 15, hpBarPosition.y);
+
     this.slotHpBar = globalScene.add
       .image(0, 0, "party_slot_hp_bar")
       .setOrigin(0)
@@ -2103,14 +2112,22 @@ class PartySlot extends Phaser.GameObjects.Container {
       .setVisible(false)
       .setPositionRelative(this.slotBg, descriptionLabelPosition.x, descriptionLabelPosition.y);
 
-    slotInfoContainer.add([this.slotHpBar, this.slotHpOverlay, this.slotHpText, this.slotDescriptionLabel]);
+    slotInfoContainer.add([
+      this.slotHpLabel,
+      this.slotHpBar,
+      this.slotHpOverlay,
+      this.slotHpText,
+      this.slotDescriptionLabel,
+    ]);
 
     if (partyUiMode !== PartyUiMode.TM_MODIFIER) {
       this.slotDescriptionLabel.setVisible(false);
+      this.slotHpLabel.setVisible(true);
       this.slotHpBar.setVisible(true);
       this.slotHpOverlay.setVisible(true);
       this.slotHpText.setVisible(true);
     } else {
+      this.slotHpLabel.setVisible(false);
       this.slotHpBar.setVisible(false);
       this.slotHpOverlay.setVisible(false);
       this.slotHpText.setVisible(false);
