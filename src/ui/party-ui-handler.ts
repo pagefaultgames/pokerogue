@@ -556,6 +556,9 @@ export class PartyUiHandler extends MessageUiHandler {
   private processItemTransferModeInput(pokemon: PlayerPokemon) {
     const ui = this.getUi();
     const option = this.options[this.optionsCursor];
+    const allItems = pokemon.heldItemManager.getTransferableHeldItems();
+    // get the index of the "All" option.
+    const allCursorIndex = allItems.length;
 
     if (this.transferMode && option === PartyOption.TRANSFER) {
       return this.processTransferOption();
@@ -567,27 +570,49 @@ export class PartyUiHandler extends MessageUiHandler {
 
       let ableToTransferText: string;
       for (let p = 0; p < globalScene.getPlayerParty().length; p++) {
-        // this for look goes through each of the party pokemon
+        // this for loop goes through each of the party pokemon
         const newPokemon = globalScene.getPlayerParty()[p];
         // this next bit checks to see if the the selected item from the original transfer pokemon exists on the new pokemon `p`
-        const transferItem = pokemon.heldItemManager.getTransferableHeldItems()[this.transferOptionCursor];
-        const matchingItem = newPokemon.heldItemManager.hasItem(transferItem);
-
+        // this returns `undefined` if the new pokemon doesn't have the item at all, otherwise it returns the `pokemonHeldItemModifier` for that item
+        const matchingItems: HeldItemId[] = [];
+        if (this.transferOptionCursor === allCursorIndex) {
+          // if "All" is selected, check all items
+          for (const item of allItems) {
+            if (newPokemon.heldItemManager.hasItem(item)) {
+              matchingItems.push(item);
+            }
+          }
+        } else {
+          // otherwise only check the selected item
+          if (newPokemon.heldItemManager.hasItem(allItems[this.transferOptionCursor])) {
+              matchingItems.push(allItems[this.transferOptionCursor]);
+            }
+        }
+        const hasMatchingItem = matchingItems.length > 0; // checks if any items match
         const partySlot = this.partySlots.filter(m => m.getPokemon() === newPokemon)[0]; // this gets pokemon [p] for us
         if (p !== this.transferCursor) {
           // this skips adding the able/not able labels on the pokemon doing the transfer
-          if (matchingItem) {
-            // if matchingItem exists then the item exists on the new pokemon
-            if (newPokemon.heldItemManager.isMaxStack(transferItem)) {
-              // checks to see if the stack of items is at max stack; if so, set the description label to "Not able"
-              ableToTransferText = i18next.t("partyUiHandler:notAble");
-            } else {
-              // if the pokemon isn't at max stack, make the label "Able"
-              ableToTransferText = i18next.t("partyUiHandler:able");
+          if (hasMatchingItem) {
+            // if matchingModifier exists then the item exists on the new pokemon
+            ableToTransferText = i18next.t("partyUiHandler:notAble"); // start with not able
+            /**
+             * The amount of items that can be transferred in the `All` option
+             */
+            let ableAmount = 0;
+            for (const item of matchingItems) {
+              if (!newPokemon.heldItemManager.isMaxStack(item)) {
+                // if the modifier doesn't exist, or the stack count isn't at max, then we can transfer at least 1 stack
+                ableToTransferText = i18next.t("partyUiHandler:able");
+                ableAmount++;
+              }
             }
+            // only show the amount if an item can be transferred and there are multiple items
+            ableToTransferText += ableAmount && matchingItems.length > 1 ? ` (${ableAmount})` : "";
           } else {
-            // if matchingItem doesn't exist, that means the pokemon doesn't have any of the item, and we need to show "Able"
+            // if no item matches, that means the pokemon doesn't have any of the item, and we need to show "Able"
             ableToTransferText = i18next.t("partyUiHandler:able");
+            // only show the amount if there are multiple items
+            ableToTransferText += matchingItems.length > 1 ? ` (${matchingItems.length})` : "";
           }
         } else {
           // this else relates to the transfer pokemon. We set the text to be blank so there's no "Able"/"Not able" text
@@ -603,6 +628,20 @@ export class PartyUiHandler extends MessageUiHandler {
       ui.playSelect();
       return true;
     }
+
+    if (option === PartyOption.SUMMARY) {
+      return this.processSummaryOption(pokemon);
+    }
+    if (option === PartyOption.POKEDEX) {
+      return this.processPokedexOption(pokemon);
+    }
+    if (option === PartyOption.UNPAUSE_EVOLUTION) {
+      return this.processUnpauseEvolutionOption(pokemon);
+    }
+    if (option === PartyOption.RENAME) {
+      return this.processRenameOption(pokemon);
+    }
+
     return false;
   }
 
@@ -1505,16 +1544,16 @@ export class PartyUiHandler extends MessageUiHandler {
     const pokemon = globalScene.getPlayerParty()[this.cursor];
 
     switch (this.partyUiMode) {
-      case PartyUiMode.MODIFIER_TRANSFER:
+      case PartyUiMode.ITEM_TRANSFER:
         if (!this.transferMode) {
-          this.updateOptionsWithModifierTransferMode(pokemon);
+          this.updateOptionsWithItemTransferMode(pokemon);
         } else {
           this.options.push(PartyOption.TRANSFER);
           this.addCommonOptions(pokemon);
         }
         break;
       case PartyUiMode.DISCARD:
-        this.updateOptionsWithModifierTransferMode(pokemon);
+        this.updateOptionsWithItemTransferMode(pokemon);
         break;
       case PartyUiMode.SWITCH:
         this.options.push(PartyOption.RELEASE);
@@ -1599,6 +1638,8 @@ export class PartyUiHandler extends MessageUiHandler {
           .find(plm => plm[1] === move);
       } else if (option === PartyOption.ALL) {
         optionName = i18next.t("partyUiHandler:all");
+        // add the number of items to the `all` option
+        optionName += ` (${pokemon.heldItemManager.getTransferableHeldItems().length})`;
       } else {
         const items = pokemon.getHeldItems();
         const item = items[option];
