@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { allSpecies, modifierTypes } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import type { PokemonSpecies } from "#data/pokemon-species";
+import { AbilityId } from "#enums/ability-id";
 import { Challenges } from "#enums/challenges";
 import { ModifierTier } from "#enums/modifier-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -10,8 +11,9 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { PlayerGender } from "#enums/player-gender";
-import { PokemonType } from "#enums/pokemon-type";
+import { MAX_POKEMON_TYPE, PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
+import { StatusEffect } from "#enums/status-effect";
 import { TrainerType } from "#enums/trainer-type";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { PokemonHeldItemModifier } from "#modifiers/modifier";
@@ -219,6 +221,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         await showEncounterText(`${namespace}:option.1.dreamComplete`);
 
         await doNewTeamPostProcess(transformations);
+        globalScene.phaseManager.unshiftNew("PartyHealPhase", true);
         setEncounterRewards({
           guaranteedModifierTypeFuncs: [
             modifierTypes.MEMORY_MUSHROOM,
@@ -230,7 +233,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
           ],
           fillRemaining: false,
         });
-        leaveEncounterWithoutBattle(true);
+        leaveEncounterWithoutBattle(false);
       })
       .build(),
   )
@@ -431,6 +434,8 @@ function getTeamTransformations(): PokemonTransformation[] {
       newAbilityIndex,
       undefined,
     );
+
+    transformation.newPokemon.teraType = randSeedInt(MAX_POKEMON_TYPE);
   }
 
   return pokemonTransformations;
@@ -440,6 +445,8 @@ async function doNewTeamPostProcess(transformations: PokemonTransformation[]) {
   let atLeastOneNewStarter = false;
   for (const transformation of transformations) {
     const previousPokemon = transformation.previousPokemon;
+    const oldHpRatio = previousPokemon.getHpRatio(true);
+    const oldStatus = previousPokemon.status;
     const newPokemon = transformation.newPokemon;
     const speciesRootForm = newPokemon.species.getRootSpeciesId();
 
@@ -462,6 +469,19 @@ async function doNewTeamPostProcess(transformations: PokemonTransformation[]) {
     }
 
     newPokemon.calculateStats();
+    if (oldHpRatio > 0) {
+      newPokemon.hp = Math.ceil(oldHpRatio * newPokemon.getMaxHp());
+      // Assume that the `status` instance can always safely be transferred to the new pokemon
+      // This is the case (as of version 1.10.4)
+      // Safeguard against COMATOSE here
+      if (!newPokemon.hasAbility(AbilityId.COMATOSE, false, true)) {
+        newPokemon.status = oldStatus;
+      }
+    } else {
+      newPokemon.hp = 0;
+      newPokemon.doSetStatus(StatusEffect.FAINT);
+    }
+
     await newPokemon.updateInfo();
   }
 

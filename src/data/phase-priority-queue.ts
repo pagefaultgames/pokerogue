@@ -44,6 +44,34 @@ export abstract class PhasePriorityQueue {
   public clear(): void {
     this.queue.splice(0, this.queue.length);
   }
+
+  /**
+   * Attempt to remove one or more Phases from the current queue.
+   * @param phaseFilter - The function to select phases for removal
+   * @param removeCount - The maximum number of phases to remove, or `all` to remove all matching phases;
+   * default `1`
+   * @returns The number of successfully removed phases
+   * @todo Remove this eventually once the patchwork bug this is used for is fixed
+   */
+  public tryRemovePhase(phaseFilter: (phase: Phase) => boolean, removeCount: number | "all" = 1): number {
+    if (removeCount === "all") {
+      removeCount = this.queue.length;
+    } else if (removeCount < 1) {
+      return 0;
+    }
+    let numRemoved = 0;
+
+    do {
+      const phaseIndex = this.queue.findIndex(phaseFilter);
+      if (phaseIndex === -1) {
+        break;
+      }
+      this.queue.splice(phaseIndex, 1);
+      numRemoved++;
+    } while (numRemoved < removeCount && this.queue.length > 0);
+
+    return numRemoved;
+  }
 }
 
 /**

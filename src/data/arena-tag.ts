@@ -937,7 +937,7 @@ class StealthRockTag extends DamagingTrapTag {
 
   protected override getTriggerMessage(pokemon: Pokemon): string {
     return i18next.t("arenaTag:stealthRockActivateTrap", {
-      pokemonName: getPokemonNameWithAffix(pokemon),
+      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
     });
   }
 

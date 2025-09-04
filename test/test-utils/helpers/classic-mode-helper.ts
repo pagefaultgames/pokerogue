@@ -1,6 +1,7 @@
 import { getGameMode } from "#app/game-mode";
 import overrides from "#app/overrides";
 import { BattleStyle } from "#enums/battle-style";
+import { Button } from "#enums/buttons";
 import { GameModes } from "#enums/game-modes";
 import { Nature } from "#enums/nature";
 import type { SpeciesId } from "#enums/species-id";
@@ -99,5 +100,34 @@ export class ClassicModeHelper extends GameManagerHelper {
 
     await this.game.phaseInterceptor.to(CommandPhase);
     console.log("==================[New Turn]==================");
+  }
+
+  /**
+   * Queue inputs to switch at the start of the next battle, and then start it.
+   * @param pokemonIndex - The 0-indexed position of the party pokemon to switch to.
+   * Should never be called with 0 as that will select the currently active pokemon and freeze
+   * @returns A Promise that resolves once the battle has been started and the switch prompt resolved
+   * @todo Make this work for double battles
+   * @example
+   * ```ts
+   * await game.classicMode.runToSummon([SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA])
+   * await game.startBattleWithSwitch(1);
+   * ```
+   */
+  public async startBattleWithSwitch(pokemonIndex: number): Promise<void> {
+    this.game.scene.battleStyle = BattleStyle.SWITCH;
+    this.game.onNextPrompt(
+      "CheckSwitchPhase",
+      UiMode.CONFIRM,
+      () => {
+        this.game.scene.ui.getHandler().setCursor(0);
+        this.game.scene.ui.getHandler().processInput(Button.ACTION);
+      },
+      () => this.game.isCurrentPhase("CommandPhase") || this.game.isCurrentPhase("TurnInitPhase"),
+    );
+    this.game.doSelectPartyPokemon(pokemonIndex);
+
+    await this.game.phaseInterceptor.to("CommandPhase");
+    console.log("==================[New Battle (Initial Switch)]==================");
   }
 }
