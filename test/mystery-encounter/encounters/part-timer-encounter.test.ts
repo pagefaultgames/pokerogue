@@ -103,6 +103,7 @@ describe("Part-Timer - Mystery Encounter", () => {
       // Override party levels to 50 so stats can be fully reflective
       scene.getPlayerParty().forEach(p => {
         p.level = 50;
+        p.ivs = [0, 0, 0, 0, 0, 0];
         p.calculateStats();
       });
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1 });
