@@ -57,5 +57,4 @@ jobs:
         run: rm -rf public/*
       - name: Check for reuse compliance
         uses: fsfe/reuse-action@v5
-
     
