@@ -380,12 +380,27 @@ export class PhaseManager {
 
     this.currentPhase = this.phaseQueue.shift() ?? null;
 
-    if (this.currentPhase) {
-      console.log(`%cStart Phase ${this.currentPhase.constructor.name}`, "color:green;");
-      this.currentPhase.start();
-    }
+    this.startCurrentPhase();
   }
 
+  /**
+   * Helper method to start and log the current phase.
+   *
+   * @remarks
+   * This is disabled during tests by `phase-interceptor.ts` to allow for pausing execution at specific phases.
+   * As such, **do not remove or split this method** as it will break integration tests.
+   */
+  private startCurrentPhase(): void {
+    // TODO: Remove once signature is updated to no longer contain `null`
+    if (!this.currentPhase) {
+      console.warn("Trying to start null phase!");
+      return;
+    }
+    console.log(`%cStart Phase ${this.currentPhase.phaseName}`, "color:green;");
+    this.currentPhase.start();
+  }
+
+  // TODO: Review if we can remove this
   overridePhase(phase: Phase): boolean {
     if (this.standbyPhase) {
       return false;
@@ -393,8 +408,7 @@ export class PhaseManager {
 
     this.standbyPhase = this.currentPhase;
     this.currentPhase = phase;
-    console.log(`%cStart Phase ${phase.constructor.name}`, "color:green;");
-    phase.start();
+    this.startCurrentPhase();
 
     return true;
   }

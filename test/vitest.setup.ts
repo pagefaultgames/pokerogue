@@ -1,6 +1,7 @@
 import "vitest-canvas-mock";
+import { PromptHandler } from "#test/test-utils/helpers/prompt-handler";
 import { initTests } from "#test/test-utils/test-file-initialization";
-import { afterAll, beforeAll, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, vi } from "vitest";
 
 /** Set the timezone to UTC for tests. */
 
@@ -48,8 +49,6 @@ vi.mock("i18next", async importOriginal => {
   return await importOriginal();
 });
 
-global.testFailed = false;
-
 beforeAll(() => {
   initTests();
 });
@@ -57,4 +56,9 @@ beforeAll(() => {
 afterAll(() => {
   global.server.close();
   console.log("Closing i18n MSW server!");
+});
+
+afterEach(() => {
+  clearInterval(PromptHandler.runInterval);
+  PromptHandler.runInterval = undefined;
 });

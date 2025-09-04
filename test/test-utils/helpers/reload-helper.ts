@@ -38,11 +38,7 @@ export class ReloadHelper extends GameManagerHelper {
     scene.phaseManager.clearPhaseQueue();
 
     // Set the last saved session to the desired session data
-    vi.spyOn(scene.gameData, "getSession").mockReturnValue(
-      new Promise((resolve, _reject) => {
-        resolve(this.sessionData);
-      }),
-    );
+    vi.spyOn(scene.gameData, "getSession").mockReturnValue(Promise.resolve(this.sessionData));
     scene.phaseManager.unshiftPhase(titlePhase);
     this.game.endPhase(); // End the currently ongoing battle
 
@@ -56,8 +52,7 @@ export class ReloadHelper extends GameManagerHelper {
       );
       this.game.scene.modifiers = [];
     }
-    titlePhase.loadSaveSlot(-1); // Load the desired session data
-    this.game.phaseInterceptor.shiftPhase(); // Loading the save slot also ended TitlePhase, clean it up
+    await titlePhase.loadSaveSlot(-1); // Load the desired session data
 
     // Run through prompts for switching Pokemon, copied from classicModeHelper.ts
     if (this.game.scene.battleStyle === BattleStyle.SWITCH) {

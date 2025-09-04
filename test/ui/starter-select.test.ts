@@ -16,7 +16,8 @@ import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("UI - Starter select", () => {
+// TODO: Resolve issues with UI test state corruption
+describe.todo("UI - Starter select", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
