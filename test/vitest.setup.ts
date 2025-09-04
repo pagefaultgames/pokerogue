@@ -51,18 +51,6 @@ vi.mock("i18next", async importOriginal => {
 
 beforeAll(() => {
   initTests();
-
-  process
-    .on("uncaughtException", err => {
-      clearInterval(PromptHandler.runInterval);
-      PromptHandler.runInterval = undefined;
-      throw err;
-    })
-    .on("unhandledRejection", err => {
-      clearInterval(PromptHandler.runInterval);
-      PromptHandler.runInterval = undefined;
-      throw err;
-    });
 });
 
 afterAll(() => {
