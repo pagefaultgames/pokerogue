@@ -5,6 +5,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TextStyle } from "#enums/text-style";
+import { UiTheme } from "#enums/ui-theme";
 import type { Pokemon } from "#field/pokemon";
 import { getVariantTint } from "#sprites/variant";
 import { addTextObject } from "#ui/text";
@@ -265,7 +266,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     this.add(this.hpBar);
 
     this.levelNumbersContainer = globalScene.add
-      .container(9.5, globalScene.uiTheme ? 0 : -0.5)
+      .container(9.5, globalScene.uiTheme === UiTheme.LEGACY ? 0 : -0.5)
       .setName("container_level");
     this.levelContainer.add(this.levelNumbersContainer);
 

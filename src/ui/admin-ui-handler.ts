@@ -7,6 +7,7 @@ import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
 import type { ModalConfig } from "#ui/modal-ui-handler";
 import { toTitleCase } from "#utils/strings";
+import { getTextColor } from "./text";
 
 type AdminUiHandlerService = "discord" | "google";
 type AdminUiHandlerServiceMode = "Link" | "Unlink";
@@ -129,11 +130,11 @@ export class AdminUiHandler extends FormModalUiHandler {
 
     this.errorMessage.setPosition(10, (hasTitle ? 31 : 5) + 20 * (fields.length - 1) + 16 + this.getButtonTopMargin()); // sets the position of the message dynamically
     if (isMessageError) {
-      this.errorMessage.setColor(this.getTextColor(TextStyle.SUMMARY_PINK));
-      this.errorMessage.setShadowColor(this.getTextColor(TextStyle.SUMMARY_PINK, true));
+      this.errorMessage.setColor(getTextColor(TextStyle.SUMMARY_PINK));
+      this.errorMessage.setShadowColor(getTextColor(TextStyle.SUMMARY_PINK, true));
     } else {
-      this.errorMessage.setColor(this.getTextColor(TextStyle.SUMMARY_GREEN));
-      this.errorMessage.setShadowColor(this.getTextColor(TextStyle.SUMMARY_GREEN, true));
+      this.errorMessage.setColor(getTextColor(TextStyle.SUMMARY_GREEN));
+      this.errorMessage.setShadowColor(getTextColor(TextStyle.SUMMARY_GREEN, true));
     }
 
     if (super.show(args)) {

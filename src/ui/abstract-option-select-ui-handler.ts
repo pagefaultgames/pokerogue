@@ -81,7 +81,7 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     this.optionSelectIcons = [];
 
-    this.scale = getTextStyleOptions(TextStyle.WINDOW, globalScene.uiTheme).scale;
+    this.scale = getTextStyleOptions(TextStyle.WINDOW).scale;
 
     this.setCursor(0);
   }
@@ -124,8 +124,8 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
       optionsForWidth
         .map(o =>
           o.item
-            ? `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, globalScene.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, globalScene.uiTheme)}]    ${o.label}[/color][/shadow]`
-            : `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, globalScene.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, globalScene.uiTheme)}]${o.label}[/color][/shadow]`,
+            ? `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false)}]    ${o.label}[/color][/shadow]`
+            : `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false)}]${o.label}[/color][/shadow]`,
         )
         .join("\n"),
       TextStyle.WINDOW,
@@ -149,8 +149,8 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
     this.textContent = optionsWithScroll
       .map(o =>
         o.item
-          ? `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, globalScene.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, globalScene.uiTheme)}]    ${o.label}[/color][/shadow]`
-          : `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, globalScene.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, globalScene.uiTheme)}]${o.label}[/color][/shadow]`,
+          ? `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false)}]    ${o.label}[/color][/shadow]`
+          : `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false)}]${o.label}[/color][/shadow]`,
       )
       .join("\n");
     this.optionSelectText.setText(this.textContent);
