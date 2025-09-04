@@ -219,7 +219,7 @@ export class TitlePhase extends Phase {
           const species = getPokemonSpecies(starter.speciesId);
           const starterFormIndex = starter.formIndex;
           const starterGender =
-            species.malePercent !== null ? (!starter.female ? Gender.MALE : Gender.FEMALE) : Gender.GENDERLESS;
+            species.malePercent !== null ? (starter.female ? Gender.FEMALE : Gender.MALE) : Gender.GENDERLESS;
           const starterPokemon = globalScene.addPlayerPokemon(
             species,
             startingLevel,
