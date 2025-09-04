@@ -5,4 +5,5 @@ export enum PokeballType {
   ROGUE_BALL,
   MASTER_BALL,
   LUXURY_BALL,
+  PREMIER_BALL
 }
