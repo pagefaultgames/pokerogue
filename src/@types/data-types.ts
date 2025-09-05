@@ -17,7 +17,6 @@ import type { PokemonData } from "#system/pokemon-data";
 import type { TrainerData } from "#system/trainer-data";
 import type { DexData } from "./dex-data";
 
-// TODO: Move all these exported interfaces to @types
 export interface SystemSaveData {
   trainerId: number;
   secretId: number;
