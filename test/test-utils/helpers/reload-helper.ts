@@ -3,9 +3,9 @@ import { UiMode } from "#enums/ui-mode";
 import { CommandPhase } from "#phases/command-phase";
 import { TitlePhase } from "#phases/title-phase";
 import { TurnInitPhase } from "#phases/turn-init-phase";
-import type { SessionSaveData } from "#system/game-data";
 import type { GameManager } from "#test/test-utils/game-manager";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
+import type { SessionSaveData } from "#types/data-types";
 import { vi } from "vitest";
 
 /**

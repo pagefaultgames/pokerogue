@@ -1,4 +1,4 @@
-import type { SystemSaveData } from "#system/game-data";
+import type { SystemSaveData } from "./data-types";
 
 export interface SystemSaveMigrator {
   version: string;

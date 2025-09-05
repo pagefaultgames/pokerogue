@@ -6,8 +6,8 @@ import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 // biome-ignore lint/performance/noNamespaceImport: See `src/system/game-data.ts`
 import * as Modifier from "#modifiers/modifier";
-import type { SessionSaveData } from "#system/game-data";
 import type { PokemonData } from "#system/pokemon-data";
+import type { SessionSaveData } from "#types/data-types";
 import type { OptionSelectConfig } from "#ui/abstract-option-select-ui-handler";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { RunDisplayMode } from "#ui/run-info-ui-handler";

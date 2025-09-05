@@ -6,7 +6,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { TextStyle } from "#enums/text-style";
 import type { Pokemon } from "#field/pokemon";
 import { getVariantTint } from "#sprites/variant";
-import type { StarterDataEntry } from "#system/game-data";
+import type { StarterDataEntry } from "#types/data-types";
 import type { DexEntry } from "#types/dex-data";
 import { ConfirmUiHandler } from "#ui/confirm-ui-handler";
 import { StatsContainer } from "#ui/stats-container";

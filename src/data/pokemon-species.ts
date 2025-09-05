@@ -26,7 +26,7 @@ import { loadPokemonVariantAssets } from "#sprites/pokemon-sprite";
 import { hasExpSprite } from "#sprites/sprite-utils";
 import type { Variant, VariantSet } from "#sprites/variant";
 import { populateVariantColorCache, variantColorCache, variantData } from "#sprites/variant";
-import type { StarterMoveset } from "#system/game-data";
+import type { StarterMoveset } from "#types/data-types";
 import type { Localizable } from "#types/locales";
 import { isNullOrUndefined, randSeedFloat, randSeedGauss, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";

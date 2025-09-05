@@ -10,7 +10,7 @@ import type { MoveSourceType } from "#enums/move-source-type";
 import type { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
-import type { DexAttrProps, StarterDataEntry } from "#system/game-data";
+import type { DexAttrProps, StarterDataEntry } from "#types/data-types";
 import type { DexEntry } from "#types/dex-data";
 import { BooleanHolder, type NumberHolder } from "./common";
 import { getPokemonSpecies } from "./pokemon-utils";

@@ -3,8 +3,8 @@ import * as account from "#app/account";
 import * as bypassLoginModule from "#app/global-vars/bypass-login";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import type { SessionSaveData } from "#system/game-data";
 import { GameManager } from "#test/test-utils/game-manager";
+import type { SessionSaveData } from "#types/data-types";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

@@ -1,6 +1,6 @@
 import { loggedInUser } from "#app/account";
 import { saveKey } from "#app/constants";
-import type { StarterAttributes } from "#system/game-data";
+import type { StarterAttributes } from "#types/data-types";
 import { AES, enc } from "crypto-js";
 
 /**
