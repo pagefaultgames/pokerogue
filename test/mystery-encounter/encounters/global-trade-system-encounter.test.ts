@@ -13,7 +13,6 @@ import { generateModifierType } from "#mystery-encounters/encounter-phase-utils"
 import { GlobalTradeSystemEncounter } from "#mystery-encounters/global-trade-system-encounter";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { CIVILIZATION_ENCOUNTER_BIOMES } from "#mystery-encounters/mystery-encounters";
-import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
 import { GameManager } from "#test/test-utils/game-manager";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
@@ -226,7 +225,7 @@ describe("Global Trade System - Mystery Encounter", () => {
       await scene.updateModifiers(true);
 
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
-      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
+      expect(game).toBeAtPhase("SelectModifierPhase");
       await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);

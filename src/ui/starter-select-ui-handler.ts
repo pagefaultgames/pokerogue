@@ -40,6 +40,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
+import { UiTheme } from "#enums/ui-theme";
 import type { CandyUpgradeNotificationChangedEvent } from "#events/battle-scene";
 import { BattleSceneEventType } from "#events/battle-scene";
 import type { Variant } from "#sprites/variant";
@@ -58,7 +59,7 @@ import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/pokemon-icon-an
 import { ScrollBar } from "#ui/scroll-bar";
 import { StarterContainer } from "#ui/starter-container";
 import { StatsContainer } from "#ui/stats-container";
-import { addBBCodeTextObject, addTextObject } from "#ui/text";
+import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";
 import {
@@ -339,7 +340,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   private teraLabel: Phaser.GameObjects.Text;
   private goFilterLabel: Phaser.GameObjects.Text;
   /** Group holding the UI elements appearing in the instructionsContainer */
-  /* TODO: Uncomment this once our testing infra supports mocks of `Phaser.GameObject.Group` 
+  /* TODO: Uncomment this once our testing infra supports mocks of `Phaser.GameObject.Group`
   private instructionElemGroup: Phaser.GameObjects.Group;
   */
 
@@ -432,8 +433,15 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     const bgColor = globalScene.add.rectangle(0, 0, sWidth, sHeight, 0x006860).setOrigin(0);
 
+    const starterDexNoLabel = globalScene.add
+      .image(6, 14, getLocalizedSpriteKey("summary_dexnb_label"))
+      .setOrigin(0, 1); // Pixel text 'No'
+
     const starterSelectBg = globalScene.add.image(0, 0, "starter_select_bg").setOrigin(0);
-    this.shinyOverlay = globalScene.add.image(6, 6, "summary_overlay_shiny").setOrigin(0).setVisible(false);
+    this.shinyOverlay = globalScene.add
+      .image(6, 111, getLocalizedSpriteKey("summary_dexnb_label_overlay_shiny"))
+      .setOrigin(0, 1)
+      .setVisible(false); // Pixel text 'No' shiny
 
     const starterContainerWindow = addWindow(speciesContainerX, filterBarHeight + 1, 175, 161);
     const starterContainerBg = globalScene.add
@@ -592,7 +600,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     // Offset the generation filter dropdown to avoid covering the filtered pokemon
     this.filterBar.offsetHybridFilters();
 
-    if (!globalScene.uiTheme) {
+    if (globalScene.uiTheme === UiTheme.DEFAULT) {
       starterContainerWindow.setVisible(false);
     }
 
@@ -1070,6 +1078,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add([
       bgColor,
       starterSelectBg,
+      starterDexNoLabel,
       this.shinyOverlay,
       starterContainerBg,
       addWindow(
@@ -2057,7 +2066,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                     options: natures
                       .map((n: Nature, _i: number) => {
                         const option: OptionSelectItem = {
-                          label: getNatureName(n, true, true, true, globalScene.uiTheme),
+                          label: getNatureName(n, true, true, true),
                           handler: () => {
                             starterAttributes.nature = n;
                             originalStarterAttributes.nature = starterAttributes.nature;
@@ -3901,10 +3910,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
       this.shinyOverlay.setVisible(shiny ?? false); // TODO: is false the correct default?
       this.pokemonNumberText.setColor(
-        this.getTextColor(shiny ? TextStyle.SUMMARY_DEX_NUM_GOLD : TextStyle.SUMMARY_DEX_NUM, false),
+        getTextColor(shiny ? TextStyle.SUMMARY_DEX_NUM_GOLD : TextStyle.SUMMARY_DEX_NUM, false),
       );
       this.pokemonNumberText.setShadowColor(
-        this.getTextColor(shiny ? TextStyle.SUMMARY_DEX_NUM_GOLD : TextStyle.SUMMARY_DEX_NUM, true),
+        getTextColor(shiny ? TextStyle.SUMMARY_DEX_NUM_GOLD : TextStyle.SUMMARY_DEX_NUM, true),
       );
 
       if (forSeen ? this.speciesStarterDexEntry?.seenAttr : this.speciesStarterDexEntry?.caughtAttr) {
@@ -4013,8 +4022,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         const isHidden = abilityIndex === (this.lastSpecies.ability2 ? 2 : 1);
         this.pokemonAbilityText
           .setText(ability.name)
-          .setColor(this.getTextColor(!isHidden ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GOLD))
-          .setShadowColor(this.getTextColor(!isHidden ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GOLD, true));
+          .setColor(getTextColor(!isHidden ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GOLD))
+          .setShadowColor(getTextColor(!isHidden ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GOLD, true));
 
         const passiveAttr = starterDataEntry.passiveAttr;
         const passiveAbility = allAbilities[this.lastSpecies.getPassiveAbility(formIndex)];
@@ -4043,14 +4052,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
           this.pokemonPassiveLabelText
             .setVisible(!isFreshStartChallenge)
-            .setColor(this.getTextColor(TextStyle.SUMMARY_ALT))
-            .setShadowColor(this.getTextColor(TextStyle.SUMMARY_ALT, true));
+            .setColor(getTextColor(TextStyle.SUMMARY_ALT))
+            .setShadowColor(getTextColor(TextStyle.SUMMARY_ALT, true));
           this.pokemonPassiveText
             .setVisible(!isFreshStartChallenge)
             .setText(passiveAbility.name)
-            .setColor(this.getTextColor(textStyle))
+            .setColor(getTextColor(textStyle))
             .setAlpha(textAlpha)
-            .setShadowColor(this.getTextColor(textStyle, true));
+            .setShadowColor(getTextColor(textStyle, true));
 
           if (this.activeTooltip === "PASSIVE") {
             globalScene.ui.editTooltip(`${passiveAbility.name}`, `${passiveAbility.description}`);
@@ -4082,9 +4091,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           globalScene.ui.hideTooltip();
         }
 
-        this.pokemonNatureText.setText(
-          getNatureName(natureIndex as unknown as Nature, true, true, false, globalScene.uiTheme),
-        );
+        this.pokemonNatureText.setText(getNatureName(natureIndex as unknown as Nature, true, true, false));
 
         let levelMoves: LevelMoves;
         if (
@@ -4151,8 +4158,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     } else {
       this.shinyOverlay.setVisible(false);
       this.pokemonNumberText
-        .setColor(this.getTextColor(TextStyle.SUMMARY))
-        .setShadowColor(this.getTextColor(TextStyle.SUMMARY, true));
+        .setColor(getTextColor(TextStyle.SUMMARY))
+        .setShadowColor(getTextColor(TextStyle.SUMMARY, true));
       this.pokemonGenderText.setText("");
       this.pokemonAbilityText.setText("");
       this.pokemonPassiveText.setText("");
@@ -4294,7 +4301,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         textStyle = TextStyle.SUMMARY_GOLD;
         break;
     }
-    starter.label.setColor(this.getTextColor(textStyle)).setShadowColor(this.getTextColor(textStyle, true));
+    starter.label.setColor(getTextColor(textStyle)).setShadowColor(getTextColor(textStyle, true));
   }
 
   tryUpdateValue(add?: number, addingToParty?: boolean): boolean {
@@ -4314,8 +4321,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
     this.valueLimitLabel
       .setText(`${newValueStr}/${valueLimit}`)
-      .setColor(this.getTextColor(!overLimit ? TextStyle.TOOLTIP_CONTENT : TextStyle.SUMMARY_PINK))
-      .setShadowColor(this.getTextColor(!overLimit ? TextStyle.TOOLTIP_CONTENT : TextStyle.SUMMARY_PINK, true));
+      .setColor(getTextColor(!overLimit ? TextStyle.TOOLTIP_CONTENT : TextStyle.SUMMARY_PINK))
+      .setShadowColor(getTextColor(!overLimit ? TextStyle.TOOLTIP_CONTENT : TextStyle.SUMMARY_PINK, true));
     if (overLimit) {
       globalScene.time.delayedCall(fixedInt(500), () => this.tryUpdateValue());
       return false;
@@ -4412,7 +4419,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             globalScene.phaseManager.pushNew("EncounterPhase");
           }
           this.clearText();
-          globalScene.phaseManager.getCurrentPhase()?.end();
+          globalScene.phaseManager.getCurrentPhase().end();
         },
         cancel,
         null,

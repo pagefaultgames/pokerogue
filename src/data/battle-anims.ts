@@ -291,9 +291,17 @@ class AnimTimedSoundEvent extends AnimTimedEvent {
       } catch (err) {
         console.error(err);
       }
-      return Math.ceil((globalScene.sound.get(`battle_anims/${this.resourceName}`).totalDuration * 1000) / 33.33);
+      const sound = globalScene.sound.get(`battle_anims/${this.resourceName}`);
+      if (!sound) {
+        return 0;
+      }
+      return Math.ceil((sound.totalDuration * 1000) / 33.33);
     }
-    return Math.ceil((battleAnim.user!.cry(soundConfig).totalDuration * 1000) / 33.33); // TODO: is the bang behind user correct?
+    const cry = battleAnim.user!.cry(soundConfig); // TODO: is the bang behind user correct?
+    if (!cry) {
+      return 0;
+    }
+    return Math.ceil((cry.totalDuration * 1000) / 33.33);
   }
 
   getEventType(): string {
