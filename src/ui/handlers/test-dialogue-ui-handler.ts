@@ -100,9 +100,7 @@ export class TestDialogueUiHandler extends FormModalUiHandler {
 
       let options: OptionSelectItem[] = [];
       const splitArr = inputObject.text.split(" ");
-      const filteredKeys = this.keys.filter(command =>
-        command.toLowerCase().includes(splitArr[splitArr.length - 1].toLowerCase()),
-      );
+      const filteredKeys = this.keys.filter(command => command.toLowerCase().includes(splitArr.at(-1)!.toLowerCase()));
       if (inputObject.text !== "" && filteredKeys.length > 0) {
         // if performance is required, you could reduce the number of total results by changing the slice below to not have all ~8000 inputs going
         options = filteredKeys.slice(0).map(value => {

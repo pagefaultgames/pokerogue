@@ -38,7 +38,10 @@ export class SwitchPhase extends BattlePhase {
     super.start();
 
     // Skip modal switch if impossible (no remaining party members that aren't in battle)
-    if (this.isModal && !globalScene.getPlayerParty().filter(p => p.isAllowedInBattle() && !p.isActive(true)).length) {
+    if (
+      this.isModal
+      && globalScene.getPlayerParty().filter(p => p.isAllowedInBattle() && !p.isActive(true)).length === 0
+    ) {
       return super.end();
     }
 

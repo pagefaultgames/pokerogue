@@ -595,7 +595,7 @@ export class UI extends Phaser.GameObjects.Container {
 
   revertMode(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      if (!this?.modeChain?.length) {
+      if (this?.modeChain?.length === 0) {
         return resolve(false);
       }
 
@@ -627,7 +627,7 @@ export class UI extends Phaser.GameObjects.Container {
 
   revertModes(): Promise<void> {
     return new Promise<void>(resolve => {
-      if (!this?.modeChain?.length) {
+      if (this?.modeChain?.length === 0) {
         return resolve();
       }
       this.revertMode().then(success => executeIf(success, this.revertModes).then(() => resolve()));

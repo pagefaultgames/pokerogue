@@ -3213,7 +3213,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
   override apply(pokemon: Pokemon, target?: Pokemon, ..._args: unknown[]): boolean {
     const opponents = this.getTargets(pokemon, target);
 
-    if (!opponents.length) {
+    if (opponents.length === 0) {
       return false;
     }
 
@@ -3231,7 +3231,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
     ) as PokemonHeldItemModifier[];
 
     for (let i = 0; i < transferredItemCount; i++) {
-      if (!itemModifiers.length) {
+      if (itemModifiers.length === 0) {
         break;
       }
       const randItemIndex = pokemon.randBattleSeedInt(itemModifiers.length);
@@ -3246,7 +3246,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
       globalScene.phaseManager.queueMessage(this.getTransferMessage(pokemon, targetPokemon, mt));
     }
 
-    return !!transferredModifierTypes.length;
+    return transferredModifierTypes.length > 0;
   }
 
   abstract getTransferredItemCount(): number;

@@ -112,7 +112,7 @@ export class FaintPhase extends PokemonPhase {
     pokemon.resetTera();
 
     // TODO: this can be simplified by just checking whether lastAttack is defined
-    if (pokemon.turnData.attacksReceived?.length) {
+    if (pokemon.turnData.attacksReceived?.length > 0) {
       const lastAttack = pokemon.turnData.attacksReceived[0];
       applyAbAttrs("PostFaintAbAttr", {
         pokemon,
@@ -131,14 +131,14 @@ export class FaintPhase extends PokemonPhase {
     for (const p of alivePlayField) {
       applyAbAttrs("PostKnockOutAbAttr", { pokemon: p, victim: pokemon });
     }
-    if (pokemon.turnData.attacksReceived?.length) {
+    if (pokemon.turnData.attacksReceived?.length > 0) {
       const defeatSource = this.source;
 
       if (defeatSource?.isOnField()) {
         applyAbAttrs("PostVictoryAbAttr", { pokemon: defeatSource });
         const pvmove = allMoves[pokemon.turnData.attacksReceived[0].move];
         const pvattrs = pvmove.getAttrs("PostVictoryStatStageChangeAttr");
-        if (pvattrs.length) {
+        if (pvattrs.length > 0) {
           for (const pvattr of pvattrs) {
             pvattr.applyPostVictory(defeatSource, defeatSource, pvmove);
           }
@@ -151,7 +151,7 @@ export class FaintPhase extends PokemonPhase {
       const legalPlayerPokemon = globalScene.getPokemonAllowedInBattle();
       /** The total number of legal player Pokemon that aren't currently on the field */
       const legalPlayerPartyPokemon = legalPlayerPokemon.filter(p => !p.isActive(true));
-      if (!legalPlayerPokemon.length) {
+      if (legalPlayerPokemon.length === 0) {
         /** If the player doesn't have any legal Pokemon, end the game */
         globalScene.phaseManager.unshiftNew("GameOverPhase");
       } else if (
@@ -174,10 +174,11 @@ export class FaintPhase extends PokemonPhase {
     } else {
       globalScene.phaseManager.unshiftNew("VictoryPhase", this.battlerIndex);
       if ([BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType)) {
-        const hasReservePartyMember = !!globalScene
-          .getEnemyParty()
-          .filter(p => p.isActive() && !p.isOnField() && p.trainerSlot === (pokemon as EnemyPokemon).trainerSlot)
-          .length;
+        const hasReservePartyMember =
+          globalScene
+            .getEnemyParty()
+            .filter(p => p.isActive() && !p.isOnField() && p.trainerSlot === (pokemon as EnemyPokemon).trainerSlot)
+            .length > 0;
         if (hasReservePartyMember) {
           globalScene.phaseManager.pushNew("SwitchSummonPhase", SwitchType.SWITCH, this.fieldIndex, -1, false, false);
         }

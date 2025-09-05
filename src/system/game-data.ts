@@ -1169,7 +1169,7 @@ export class GameData {
           loadPositionalTag(tag),
         );
 
-        if (globalScene.modifiers.length) {
+        if (globalScene.modifiers.length > 0) {
           console.warn("Existing modifiers not cleared on session load, deleting...");
           globalScene.modifiers = [];
         }
@@ -1491,8 +1491,9 @@ export class GameData {
           });
         }
 
+        // TODO: this is a really shit way of checking JSON validity
         promise.then(response => {
-          if (typeof response === "number" || !response?.length || response[0] !== "{") {
+          if (typeof response !== "string" || response.length === 0 || response.charAt(0) !== "{") {
             console.error(response);
             resolve(false);
             return;

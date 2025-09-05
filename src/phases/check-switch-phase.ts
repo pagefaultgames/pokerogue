@@ -39,10 +39,10 @@ export class CheckSwitchPhase extends BattlePhase {
 
     // ...if there are no other allowed Pokemon in the player's party to switch with
     if (
-      !globalScene
+      globalScene
         .getPlayerParty()
         .slice(1)
-        .filter(p => p.isActive()).length
+        .filter(p => p.isActive()).length === 0
     ) {
       return super.end();
     }

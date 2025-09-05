@@ -649,7 +649,7 @@ export class PokedexUiHandler extends MessageUiHandler {
     this.pokerusSpecies = getPokerusStarters();
 
     // When calling with "refresh", we do not reset the cursor and filters
-    if (args.length >= 1 && args[0] === "refresh") {
+    if (args.length > 0 && args[0] === "refresh") {
       return false;
     }
 
@@ -811,7 +811,7 @@ export class PokedexUiHandler extends MessageUiHandler {
       this.message.setY(singleLine ? -22 : -37);
     }
 
-    this.starterSelectMessageBoxContainer.setVisible(!!text?.length);
+    this.starterSelectMessageBoxContainer.setVisible(text?.length > 0);
   }
 
   isSeen(species: PokemonSpecies, dexEntry: DexEntry, seenFilter?: boolean): boolean {

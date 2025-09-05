@@ -28,7 +28,7 @@ import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, getLocalizedSpriteKey, randInt } from "#utils/common";
-import { toCamelCase, toTitleCase } from "#utils/strings";
+import { toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
@@ -342,7 +342,7 @@ export class PartyUiHandler extends MessageUiHandler {
   }
 
   show(args: any[]): boolean {
-    if (!args.length || this.active) {
+    if (args.length === 0 || this.active) {
       return false;
     }
 
@@ -1397,7 +1397,7 @@ export class PartyUiHandler extends MessageUiHandler {
     for (let m = 0; m < learnableMoves.length; m++) {
       this.options.push(m);
     }
-    if (learnableMoves?.length) {
+    if (learnableMoves?.length > 0) {
       // show the move overlay with info for the first move
       this.moveInfoOverlay.show(allMoves[learnableMoves[0]]);
     }
@@ -1462,7 +1462,7 @@ export class PartyUiHandler extends MessageUiHandler {
   updateOptions(): void {
     const pokemon = globalScene.getPlayerParty()[this.cursor];
 
-    if (this.options.length) {
+    if (this.options.length > 0) {
       this.options.splice(0, this.options.length);
       this.optionsContainer.removeAll(true);
       this.eraseOptionsCursor();
@@ -1608,14 +1608,12 @@ export class PartyUiHandler extends MessageUiHandler {
 
     this.optionsContainer.add(this.optionsBg);
 
-    const optionStartIndex = 0;
-    const optionEndIndex = this.options.length;
-
     let widestOptionWidth = 0;
     const optionTexts: BBCodeText[] = [];
 
-    for (let o = optionStartIndex; o < optionEndIndex; o++) {
-      const option = this.options[this.options.length - (o + 1)];
+    // TODO: Refactor this iteration to not be fucking bizarre
+    for (let o = 0; o < this.options.length; o++) {
+      const option = this.options.at(-(o + 1))!;
       let altText = false;
       let optionName: string;
       if (option === PartyOption.SCROLL_UP) {

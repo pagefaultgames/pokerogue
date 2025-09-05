@@ -203,7 +203,7 @@ export class EnemyBattleInfo extends BattleInfo {
   }
 
   updateBossSegmentDividers(pokemon: EnemyPokemon): void {
-    while (this.hpBarSegmentDividers.length) {
+    while (this.hpBarSegmentDividers.length > 0) {
       this.hpBarSegmentDividers.pop()?.destroy();
     }
 

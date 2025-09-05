@@ -222,7 +222,7 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
   showPrompt(callback?: Function | null, callbackDelay?: number | null) {
     const wrappedTextLines = this.message.runWordWrap(this.message.text).split(/\n/g);
     const textLinesCount = wrappedTextLines.length;
-    const lastTextLine = wrappedTextLines[wrappedTextLines.length - 1];
+    const lastTextLine = wrappedTextLines.at(-1) ?? "";
     const lastLineTest = globalScene.add.text(0, 0, lastTextLine, {
       font: "96px emerald",
     });

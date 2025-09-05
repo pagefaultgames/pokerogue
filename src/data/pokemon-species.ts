@@ -425,7 +425,7 @@ export abstract class PokemonSpeciesForm {
     }
     let ret = speciesId.toString();
     const forms = getPokemonSpecies(speciesId).forms;
-    if (forms.length) {
+    if (forms.length > 0) {
       if (formIndex !== undefined && formIndex >= forms.length) {
         console.warn(
           `Attempted accessing form with index ${formIndex} of species ${getPokemonSpecies(speciesId).getName()} with only ${forms.length || 0} forms`,
@@ -758,7 +758,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
   }
 
   getName(formIndex?: number): string {
-    if (formIndex !== undefined && this.forms.length) {
+    if (formIndex !== undefined && this.forms.length > 0) {
       const form = this.forms[formIndex];
       let key: string | null;
       switch (form.formKey) {
@@ -947,7 +947,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
   ): SpeciesId {
     const prevolutionLevels = this.getPrevolutionLevels();
 
-    if (prevolutionLevels.length) {
+    if (prevolutionLevels.length > 0) {
       for (let pl = prevolutionLevels.length - 1; pl >= 0; pl--) {
         const prevolutionLevel = prevolutionLevels[pl];
         if (level < prevolutionLevel[1]) {
@@ -1096,7 +1096,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
       for (const e of pokemonEvolutions[p]) {
         if (
           e.speciesId === this.speciesId
-          && (!this.forms.length || !e.evoFormKey || e.evoFormKey === this.forms[this.formIndex].formKey)
+          && (this.forms.length === 0 || !e.evoFormKey || e.evoFormKey === this.forms[this.formIndex].formKey)
           && prevolutionLevels.every(pe => pe[0] !== Number.parseInt(p))
         ) {
           const speciesId = Number.parseInt(p) as SpeciesId;
@@ -1144,9 +1144,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
         ]); // TODO: are those bangs correct?
       }
       const lastPrevolutionLevel = ret[prevolutionLevels.length - 1][1];
-      const evolution = pokemonEvolutions[prevolutionLevels[prevolutionLevels.length - 1][0]].find(
-        e => e.speciesId === this.speciesId,
-      );
+      const evolution = pokemonEvolutions[prevolutionLevels.at(-1)![0]].find(e => e.speciesId === this.speciesId);
       ret.push([
         this.speciesId,
         Math.min(
@@ -1200,13 +1198,13 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
   }
 
   getFormSpriteKey(formIndex?: number) {
-    if (this.forms.length && formIndex !== undefined && formIndex >= this.forms.length) {
+    if (this.forms.length > 0 && formIndex !== undefined && formIndex >= this.forms.length) {
       console.warn(
         `Attempted accessing form with index ${formIndex} of species ${this.getName()} with only ${this.forms.length || 0} forms`,
       );
       formIndex = Math.min(formIndex, this.forms.length - 1);
     }
-    return this.forms?.length ? this.forms[formIndex || 0].getFormSpriteKey() : "";
+    return this.forms?.length > 0 ? this.forms[formIndex || 0].getFormSpriteKey() : "";
   }
 
   /**

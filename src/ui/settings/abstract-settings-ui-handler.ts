@@ -516,7 +516,7 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
     prompt?: boolean,
     promptDelay?: number,
   ) {
-    this.messageBoxContainer.setVisible(!!text?.length);
+    this.messageBoxContainer.setVisible(text?.length > 0);
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 }

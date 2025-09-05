@@ -361,26 +361,20 @@ export class PhaseManager {
     if (this.phaseQueuePrependSpliceIndex > -1) {
       this.clearPhaseQueueSplice();
     }
-    this.phaseQueue.unshift(...this.phaseQueuePrepend);
-    this.phaseQueuePrepend.splice(0);
-
     const unactivatedConditionalPhases: [() => boolean, Phase][] = [];
-    // Check if there are any conditional phases queued
-    for (const [condition, phase] of this.conditionalQueue) {
-      // Evaluate the condition associated with the phase
-      if (condition()) {
-        // If the condition is met, add the phase to the phase queue
-        this.pushPhase(phase);
-      } else {
-        // If the condition is not met, re-add the phase back to the end of the conditional queue
-        unactivatedConditionalPhases.push([condition, phase]);
+    if (this.phaseQueuePrepend.length > 0) {
+      while (this.phaseQueuePrepend.length > 0) {
+        const poppedPhase = this.phaseQueuePrepend.pop();
+        if (poppedPhase) {
+          this.phaseQueue.unshift(poppedPhase);
+        }
       }
     }
 
     this.conditionalQueue = unactivatedConditionalPhases;
 
     // If no phases are left, unshift phases to start a new turn.
-    if (!this.phaseQueue.length) {
+    if (this.phaseQueue.length === 0) {
       this.populatePhaseQueue();
       // Clear the conditionalQueue if there are no phases left in the phaseQueue
       this.conditionalQueue = [];
@@ -623,7 +617,7 @@ export class PhaseManager {
    * Moves everything from nextCommandPhaseQueue to phaseQueue (keeping order)
    */
   private populatePhaseQueue(): void {
-    if (this.nextCommandPhaseQueue.length) {
+    if (this.nextCommandPhaseQueue.length > 0) {
       this.phaseQueue.push(...this.nextCommandPhaseQueue);
       this.nextCommandPhaseQueue.splice(0, this.nextCommandPhaseQueue.length);
     }

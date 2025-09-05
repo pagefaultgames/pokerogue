@@ -36,7 +36,7 @@ export class RenameRunFormUiHandler extends FormModalUiHandler {
     if (!super.show(args)) {
       return false;
     }
-    if (this.inputs?.length) {
+    if (this.inputs?.length > 0) {
       this.inputs.forEach(input => {
         input.text = "";
       });

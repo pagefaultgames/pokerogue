@@ -344,7 +344,7 @@ export class MoveEffectPhase extends PokemonPhase {
       return;
     }
 
-    if (this.queuedPhases.length) {
+    if (this.queuedPhases.length > 0) {
       globalScene.phaseManager.appendToPhase(this.queuedPhases, "MoveEndPhase");
     }
     const moveType = user.getMoveType(this.move, true);
@@ -475,7 +475,7 @@ export class MoveEffectPhase extends PokemonPhase {
       ![MoveTarget.ENEMY_SIDE, MoveTarget.BOTH_SIDES].includes(this.move.moveTarget)
       && (bypassIgnoreProtect.value || !this.move.doesFlagEffectApply({ flag: MoveFlags.IGNORE_PROTECT, user, target }))
       && (hasConditionalProtectApplied.value
-        || (!target.findTags(t => t instanceof DamageProtectedTag).length
+        || (target.findTags(t => t instanceof DamageProtectedTag).length === 0
           && target.findTags(t => t instanceof ProtectedTag).some(t => target.lapseTag(t.tagType)))
         || (this.move.category !== MoveCategory.STATUS
           && target.findTags(t => t instanceof DamageProtectedTag).some(t => target.lapseTag(t.tagType))))
@@ -999,7 +999,7 @@ export class MoveEffectPhase extends PokemonPhase {
     this.triggerMoveEffects(MoveEffectTrigger.POST_APPLY, user, target, firstTarget, false);
     this.applyHeldItemFlinchCheck(user, target, dealsDamage);
     this.applyOnGetHitAbEffects(user, target, hitResult, damage, wasCritical);
-    applyAbAttrs("PostAttackAbAttr", { pokemon: user, opponent: target, move: this.move, hitResult, damage: damage });
+    applyAbAttrs("PostAttackAbAttr", { pokemon: user, opponent: target, move: this.move, hitResult, damage });
 
     // We assume only enemy Pokemon are able to have the EnemyAttackStatusEffectChanceModifier from tokens
     if (!user.isPlayer() && this.move.is("AttackMove")) {

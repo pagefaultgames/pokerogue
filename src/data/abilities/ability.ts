@@ -1089,9 +1089,13 @@ export class PostDefendHpGatedStatStageChangeAbAttr extends PostDefendAbAttr {
     this.selfTarget = selfTarget;
   }
 
-  override canApply({ pokemon, opponent: attacker, move, damage }: PostMoveInteractionAbAttrParams): boolean {
+  override canApply({ pokemon, opponent: attacker, move }: PostMoveInteractionAbAttrParams): boolean {
     const hpGateFlat: number = Math.ceil(pokemon.getMaxHp() * this.hpGate);
-    return this.condition(pokemon, attacker, move) && pokemon.hp <= hpGateFlat && pokemon.hp + damage > hpGateFlat;
+    const lastAttackReceived = pokemon.turnData.attacksReceived.at(-1);
+    const damageReceived = lastAttackReceived?.damage ?? 0;
+    return (
+      this.condition(pokemon, attacker, move) && pokemon.hp <= hpGateFlat && pokemon.hp + damageReceived > hpGateFlat
+    );
   }
 
   override apply({ simulated, pokemon, opponent }: PostMoveInteractionAbAttrParams): void {
@@ -2152,7 +2156,7 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
       && (!this.stealCondition || this.stealCondition(pokemon, opponent, move))
     ) {
       const heldItems = this.getTargetHeldItems(opponent).filter(i => i.isTransferable);
-      if (heldItems.length) {
+      if (heldItems.length > 0) {
         // Ensure that the stolen item in testing is the same as when the effect is applied
         this.stolenItem = heldItems[pokemon.randBattleSeedInt(heldItems.length)];
         if (globalScene.canTransferHeldItemModifier(this.stolenItem, pokemon)) {
@@ -2288,7 +2292,7 @@ export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
   override canApply({ simulated, pokemon, opponent, move, hitResult }: PostMoveInteractionAbAttrParams): boolean {
     if (!simulated && hitResult < HitResult.NO_EFFECT && (!this.condition || this.condition(pokemon, opponent, move))) {
       const heldItems = this.getTargetHeldItems(opponent).filter(i => i.isTransferable);
-      if (heldItems.length) {
+      if (heldItems.length > 0) {
         this.stolenItem = heldItems[pokemon.randBattleSeedInt(heldItems.length)];
         if (globalScene.canTransferHeldItemModifier(this.stolenItem, pokemon)) {
           return true;
@@ -2966,7 +2970,7 @@ export class PostSummonHealStatusAbAttr extends PostSummonRemoveEffectAbAttr {
 
   public override canApply({ pokemon }: AbAttrBaseParams): boolean {
     const status = pokemon.status?.effect;
-    return !isNullOrUndefined(status) && (this.immuneEffects.length < 1 || this.immuneEffects.includes(status));
+    return !isNullOrUndefined(status) && (this.immuneEffects.length === 0 || this.immuneEffects.includes(status));
   }
 
   public override apply({ pokemon }: AbAttrBaseParams): void {
@@ -3023,7 +3027,7 @@ export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
     const targets = pokemon
       .getOpponents()
       .filter(t => t.getAbility().isCopiable || t.getAbility().id === AbilityId.WONDER_GUARD);
-    if (!targets.length) {
+    if (targets.length === 0) {
       return false;
     }
 
@@ -3679,7 +3683,7 @@ export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
   }
 
   override getTriggerMessage({ pokemon, effect }: PreSetStatusAbAttrParams, abilityName: string): string {
-    return this.immuneEffects.length
+    return this.immuneEffects.length > 0
       ? i18next.t("abilityTriggers:statusEffectImmunityWithName", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
           abilityName,
@@ -4112,7 +4116,7 @@ export class BlockWeatherDamageAttr extends PreWeatherDamageAbAttr {
       return false;
     }
     const weatherType = weather.weatherType;
-    return !this.weatherTypes.length || this.weatherTypes.includes(weatherType);
+    return this.weatherTypes.length === 0 || this.weatherTypes.includes(weatherType);
   }
 
   override apply({ cancelled }: PreWeatherEffectAbAttrParams): void {
@@ -4654,7 +4658,7 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
 
     this.berriesUnderCap = pokemon.battleData.berriesEaten.filter(bt => !cappedBerries.has(bt));
 
-    if (!this.berriesUnderCap.length) {
+    if (this.berriesUnderCap.length === 0) {
       return false;
     }
 
@@ -4720,7 +4724,7 @@ export class CudChewConsumeBerryAbAttr extends AbAttr {
    * @returns `true` if the pokemon ate anything last turn
    */
   override canApply({ pokemon }: AbAttrBaseParams): boolean {
-    return !!pokemon.summonData.berriesEatenLast.length;
+    return pokemon.summonData.berriesEatenLast.length > 0;
   }
 
   override apply({ pokemon }: AbAttrBaseParams): void {
@@ -5321,7 +5325,7 @@ export class PostBattleLootAbAttr extends PostBattleAbAttr {
 
   override canApply({ simulated, victory, pokemon }: PostBattleAbAttrParams): boolean {
     const postBattleLoot = globalScene.currentBattle.postBattleLoot;
-    if (!simulated && postBattleLoot.length && victory) {
+    if (!simulated && postBattleLoot.length > 0 && victory) {
       this.randItem = randSeedItem(postBattleLoot);
       return globalScene.canTransferHeldItemModifier(this.randItem, pokemon, 1);
     }
@@ -6149,7 +6153,7 @@ export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
   override apply({ pokemon }: AbAttrBaseParams): void {
     const currentTerrain = globalScene.arena.getTerrainType();
     const typeChange: PokemonType[] = this.determineTypeChange(pokemon, currentTerrain);
-    if (typeChange.length !== 0) {
+    if (typeChange.length > 0) {
       if (pokemon.summonData.addedType && typeChange.includes(pokemon.summonData.addedType)) {
         pokemon.summonData.addedType = null;
       }
@@ -6219,7 +6223,7 @@ class ForceSwitchOutHelper {
      * - If the Pokémon is still alive (hp > 0), and if so, it leaves the field and a new SwitchPhase is initiated.
      */
     if (switchOutTarget.isPlayer()) {
-      if (globalScene.getPlayerParty().filter(p => p.isAllowedInBattle() && !p.isOnField()).length < 1) {
+      if (globalScene.getPlayerParty().filter(p => p.isAllowedInBattle() && !p.isOnField()).length === 0) {
         return false;
       }
 
@@ -6240,7 +6244,7 @@ class ForceSwitchOutHelper {
        * If yes, the Pokémon leaves the field and a new SwitchSummonPhase is initiated.
        */
     } else if (globalScene.currentBattle.battleType !== BattleType.WILD) {
-      if (globalScene.getEnemyParty().filter(p => p.isAllowedInBattle() && !p.isOnField()).length < 1) {
+      if (globalScene.getEnemyParty().filter(p => p.isAllowedInBattle() && !p.isOnField()).length === 0) {
         return false;
       }
       if (switchOutTarget.hp > 0) {
@@ -6417,22 +6421,18 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
 
   // TODO: Refactor to use more early returns
   public override canApply({ pokemon, source, damage }: PostDamageAbAttrParams): boolean {
-    const moveHistory = pokemon.getMoveHistory();
     // Will not activate when the Pokémon's HP is lowered by cutting its own HP
     const forbiddenAttackingMoves = [MoveId.BELLY_DRUM, MoveId.SUBSTITUTE, MoveId.CURSE, MoveId.PAIN_SPLIT];
-    if (moveHistory.length > 0) {
-      const lastMoveUsed = moveHistory[moveHistory.length - 1];
-      if (forbiddenAttackingMoves.includes(lastMoveUsed.move)) {
-        return false;
-      }
+    const lastMoveUsed = pokemon.getLastXMoves()[0];
+    if (forbiddenAttackingMoves.includes(lastMoveUsed?.move)) {
+      return false;
     }
 
     // Dragon Tail and Circle Throw switch out Pokémon before the Ability activates.
     const forbiddenDefendingMoves = [MoveId.DRAGON_TAIL, MoveId.CIRCLE_THROW];
     if (source) {
-      const enemyMoveHistory = source.getMoveHistory();
-      if (enemyMoveHistory.length > 0) {
-        const enemyLastMoveUsed = enemyMoveHistory[enemyMoveHistory.length - 1];
+      const enemyLastMoveUsed = source.getLastXMoves()[0];
+      if (enemyLastMoveUsed) {
         // Will not activate if the Pokémon's HP falls below half while it is in the air during Sky Drop.
         if (
           forbiddenDefendingMoves.includes(enemyLastMoveUsed.move)

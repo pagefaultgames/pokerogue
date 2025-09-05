@@ -67,6 +67,12 @@
         "useJsonImportAttributes": "off" // "Import attributes are only supported when the '--module' option is set to 'esnext', 'node18', 'nodenext', or 'preserve'. ts(2823)"
       },
       "style": {
+        "useExplicitLengthCheck": {
+          "level": "error",
+          "fix": "safe",
+          "options": {}
+        },
+        "useAtIndex": "error",
         "noNegationElse": {
           "level": "info", // TODO: Promote to error eventually
           "fix": "unsafe", // duplicates else blocks
@@ -207,7 +213,8 @@
           "level": "warn", // TODO: Change to "error"... eventually...
           "options": { "max": 4 } // A lot of stuff has a few params, but
         },
-        "noShadow": "warn" // TODO: refactor and make "error"
+        "noShadow": "warn", // TODO: refactor and make "error"
+        "noNonNullAssertedOptionalChain": "warn" // TODO: refactor and make "error"
       }
     }
   },

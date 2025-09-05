@@ -50,7 +50,7 @@ export class TargetSelectUiHandler extends UiHandler {
     this.targets = moveTargets.targets;
     this.isMultipleTargets = moveTargets.multiple ?? false;
 
-    if (!this.targets.length) {
+    if (this.targets.length === 0) {
       return false;
     }
 
@@ -165,7 +165,7 @@ export class TargetSelectUiHandler extends UiHandler {
       },
     });
 
-    if (this.targetBattleInfoMoveTween.length >= 1) {
+    if (this.targetBattleInfoMoveTween.length > 0) {
       this.targetBattleInfoMoveTween.filter(t => t !== undefined).forEach(tween => tween.stop());
       for (const pokemon of multipleTargets) {
         pokemon.getBattleInfo().resetY();
@@ -200,7 +200,7 @@ export class TargetSelectUiHandler extends UiHandler {
       this.highlightItems(pokemon.id, 1);
     }
 
-    if (this.targetBattleInfoMoveTween.length >= 1) {
+    if (this.targetBattleInfoMoveTween.length > 0) {
       this.targetBattleInfoMoveTween.filter(t => t !== undefined).forEach(tween => tween.stop());
       this.targetBattleInfoMoveTween = [];
     }

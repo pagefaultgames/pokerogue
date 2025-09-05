@@ -360,7 +360,7 @@ class AnimTimedUpdateBgEvent extends AnimTimedBgEvent {
     if (this.opacity !== undefined) {
       tweenProps["alpha"] = (this.opacity || 0) / 255;
     }
-    if (Object.keys(tweenProps).length) {
+    if (Object.keys(tweenProps).length > 0) {
       globalScene.tweens.add({
         targets: moveAnim.bgSprite,
         duration: getFrameMs(this.duration * 3),
@@ -625,7 +625,7 @@ function loadAnimAssets(anims: AnimConfig[], startLoad?: boolean): Promise<void>
     const backgrounds = new Set<string>();
     const sounds = new Set<string>();
     for (const a of anims) {
-      if (!a.frames?.length) {
+      if (a.frames?.length === 0) {
         continue;
       }
       const animSounds = a.getSoundResourceNames();

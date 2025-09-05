@@ -893,7 +893,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getFormKey(): string {
-    if (!this.species.forms.length || this.species.forms.length <= this.formIndex) {
+    if (this.species.forms.length === 0 || this.species.forms.length <= this.formIndex) {
       return "";
     }
     return this.species.forms[this.formIndex].formKey;
@@ -903,7 +903,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.fusionSpecies) {
       return null;
     }
-    if (!this.fusionSpecies.forms.length || this.fusionSpecies.forms.length <= this.fusionFormIndex) {
+    if (this.fusionSpecies.forms.length === 0 || this.fusionSpecies.forms.length <= this.fusionFormIndex) {
       return "";
     }
     return this.fusionSpecies.forms[this.fusionFormIndex].formKey;
@@ -1105,7 +1105,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!ignoreOverride && this.summonData.fusionSpeciesForm) {
       return this.summonData.fusionSpeciesForm;
     }
-    if (!fusionSpecies?.forms?.length || fusionFormIndex >= fusionSpecies?.forms.length) {
+    if (fusionSpecies?.forms?.length === 0 || fusionFormIndex >= fusionSpecies?.forms.length) {
       return fusionSpecies;
     }
     return fusionSpecies?.forms[fusionFormIndex];
@@ -1896,7 +1896,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         }
       }
     }
-    if (!types.length || !includeTeraType) {
+    if (types.length === 0 || !includeTeraType) {
       if (
         !ignoreOverride
         && this.summonData.types
@@ -1967,7 +1967,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     // become UNKNOWN if no types are present
-    if (!types.length) {
+    if (types.length === 0) {
       types.push(PokemonType.UNKNOWN);
     }
 
@@ -3066,8 +3066,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       // Assume level 1 moves with 80+ BP are "move reminder" moves and bump their weight. Trainers use actual relearn moves.
       if (
-        (levelMove[0] === 1 && allMoves[levelMove[1]].power >= 80) ||
-        (levelMove[0] === RELEARN_MOVE && this.hasTrainer())
+        (levelMove[0] === 1 && allMoves[levelMove[1]].power >= 80)
+        || (levelMove[0] === RELEARN_MOVE && this.hasTrainer())
       ) {
         weight = 60;
       }
@@ -3214,7 +3214,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       m => allMoves[m[0]].category !== MoveCategory.STATUS && this.isOfType(allMoves[m[0]].type),
     );
 
-    if (stabMovePool.length) {
+    if (stabMovePool.length > 0) {
       const totalWeight = stabMovePool.reduce((v, m) => v + m[1], 0);
       let rand = randSeedInt(totalWeight);
       let index = 0;
@@ -3225,7 +3225,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     } else {
       // If there are no damaging STAB moves, just force a random damaging move
       const attackMovePool = baseWeights.filter(m => allMoves[m[0]].category !== MoveCategory.STATUS);
-      if (attackMovePool.length) {
+      if (attackMovePool.length > 0) {
         const totalWeight = attackMovePool.reduce((v, m) => v + m[1], 0);
         let rand = randSeedInt(totalWeight);
         let index = 0;
@@ -5579,7 +5579,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         keys = Array.from(paletteColors.keys()).sort((a: number, b: number) =>
           paletteColors.get(a)! < paletteColors.get(b)! ? 1 : -1,
         );
-      } while (mappedColors.size);
+      } while (mappedColors.size > 0);
 
       return keys.map(c => Object.values(rgbaFromArgb(c)));
     });
@@ -6495,7 +6495,7 @@ export class EnemyPokemon extends Pokemon {
     // Filter out any moves this Pokemon cannot use
     let movePool = this.getMoveset().filter(m => m.isUsable(this));
     // If no moves are left, use Struggle. Otherwise, continue with move selection
-    if (movePool.length) {
+    if (movePool.length > 0) {
       // If there's only 1 move in the move pool, use it.
       if (movePool.length === 1) {
         return {
@@ -6740,7 +6740,7 @@ export class EnemyPokemon extends Pokemon {
       return scoreA < scoreB ? 1 : scoreA > scoreB ? -1 : 0;
     });
 
-    if (!sortedBenefitScores.length) {
+    if (sortedBenefitScores.length === 0) {
       // Set target to BattlerIndex.ATTACKER when using a counter move
       // This is the same as when the player does so
       if (move.hasAttr("CounterDamageAttr")) {
@@ -6751,7 +6751,7 @@ export class EnemyPokemon extends Pokemon {
     }
 
     let targetWeights = sortedBenefitScores.map(s => s[1]);
-    const lowestWeight = targetWeights[targetWeights.length - 1];
+    const lowestWeight = targetWeights.at(-1) ?? 0;
 
     // If the lowest target weight (i.e. benefit score) is negative, add abs(lowestWeight) to all target weights
     if (lowestWeight < 1) {

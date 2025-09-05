@@ -602,7 +602,7 @@ export function selectPokemonForOption(
           };
 
           // Do hover over the starting selection option
-          if (fullOptions[0].onHover) {
+          if (fullOptions[0]?.onHover) {
             fullOptions[0].onHover();
           }
           globalScene.ui.setModeWithoutClear(UiMode.OPTION_SELECT, config, null, true);
@@ -648,7 +648,9 @@ export function selectOptionThenPokemon(
         showEncounterText(optionSelectPromptKey);
       }
       // Do hover over the starting selection option
-      fullOptions[0]?.onHover();
+      if (fullOptions[0]?.onHover) {
+        fullOptions[0].onHover();
+      }
       globalScene.ui.setMode(UiMode.OPTION_SELECT, config);
     };
 

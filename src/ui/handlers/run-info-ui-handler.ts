@@ -178,7 +178,7 @@ export class RunInfoUiHandler extends UiHandler {
     const headerBg = addWindow(0, 0, globalScene.scaledCanvas.width - 2, 24);
     headerBg.setOrigin(0, 0);
     this.runContainer.add(headerBg);
-    if (this.runInfo.modifiers.length !== 0) {
+    if (this.runInfo.modifiers.length > 0) {
       const headerBgCoords = headerBg.getTopRight();
       const abilityButtonContainer = globalScene.add.container(0, 0);
       const abilityButtonText = addTextObject(8, 0, i18next.t("runHistory:viewHeldItems"), TextStyle.WINDOW, {
@@ -648,7 +648,7 @@ export class RunInfoUiHandler extends UiHandler {
 
     // Player Held Items
     // A max of 20 items can be displayed. A + sign will be added if the run's held items pushes past this maximum to show the user that there are more.
-    if (this.runInfo.modifiers.length) {
+    if (this.runInfo.modifiers.length > 0) {
       let visibleModifierIndex = 0;
 
       const modifierIconsContainer = globalScene.add.container(
@@ -895,7 +895,7 @@ export class RunInfoUiHandler extends UiHandler {
         this.runInfo.gameMode === GameModes.SPLICED_ENDLESS || this.runInfo.gameMode === GameModes.ENDLESS ? 0.25 : 0.5;
       const heldItemsContainer = globalScene.add.container(-82, 2);
       const heldItemsList: Modifier.PokemonHeldItemModifier[] = [];
-      if (this.runInfo.modifiers.length) {
+      if (this.runInfo.modifiers.length > 0) {
         for (const m of this.runInfo.modifiers) {
           const modifier = m.toModifier(this.modifiersModule[m.className]);
           if (modifier instanceof Modifier.PokemonHeldItemModifier && modifier.pokemonId === pokemon.id) {
@@ -1152,7 +1152,7 @@ export class RunInfoUiHandler extends UiHandler {
         }
         break;
       case Button.CYCLE_ABILITY:
-        if (this.runInfo.modifiers.length !== 0 && this.pageMode === RunInfoUiMode.MAIN) {
+        if (this.runInfo.modifiers.length > 0 && this.pageMode === RunInfoUiMode.MAIN) {
           if (this.partyVisibility) {
             this.showParty(false);
           } else {

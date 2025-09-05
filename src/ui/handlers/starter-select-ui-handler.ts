@@ -1157,7 +1157,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     this.allowTera = globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id);
 
-    if (args.length >= 1 && args[0] instanceof Function) {
+    if (args.length > 0 && args[0] instanceof Function) {
       super.show(args);
       this.starterSelectCallback = args[0] as StarterSelectCallback;
 
@@ -1377,7 +1377,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.message.setY(singleLine ? -22 : -37);
     }
 
-    this.starterSelectMessageBoxContainer.setVisible(!!text?.length);
+    this.starterSelectMessageBoxContainer.setVisible(text?.length > 0);
   }
 
   /**
@@ -1613,7 +1613,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       } else if (this.statsMode) {
         this.toggleStatsMode(false);
         success = true;
-      } else if (this.starterSpecies.length) {
+      } else if (this.starterSpecies.length > 0) {
         this.popStarter(this.starterSpecies.length - 1);
         success = true;
         this.updateInstructions();
@@ -4429,7 +4429,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   tryStart(manualTrigger = false): boolean {
-    if (!this.starterSpecies.length) {
+    if (this.starterSpecies.length === 0) {
       return false;
     }
 
@@ -4651,7 +4651,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectContainer.setVisible(false);
     this.blockInput = false;
 
-    while (this.starterSpecies.length) {
+    while (this.starterSpecies.length > 0) {
       this.popStarter(this.starterSpecies.length - 1);
     }
 

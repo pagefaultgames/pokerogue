@@ -79,7 +79,7 @@ export class UnavailableModalUiHandler extends ModalUiHandler {
   }
 
   show(args: any[]): boolean {
-    if (args.length >= 1 && args[0] instanceof Function) {
+    if (args.length > 0 && args[0] instanceof Function) {
       const config: ModalConfig = {
         buttonActions: [],
       };

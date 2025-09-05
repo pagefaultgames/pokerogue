@@ -179,7 +179,8 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.player = args[0];
 
     const partyHasHeldItem =
-      this.player && !!globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.isTransferable).length;
+      this.player
+      && globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.isTransferable).length > 0;
     const canLockRarities = !!globalScene.findModifier(m => m instanceof LockModifierTiersModifier);
 
     this.transferButtonContainer.setVisible(false);
@@ -537,8 +538,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.modifierContainer.add(this.cursorObj);
     }
 
-    const options =
-      this.rowCursor === 1 ? this.options : this.shopOptionsRows[this.shopOptionsRows.length - (this.rowCursor - 1)];
+    const options = this.rowCursor === 1 ? this.options : this.shopOptionsRows.at(-(this.rowCursor - 1))!;
 
     this.cursorObj.setScale(this.rowCursor === 1 ? 2 : this.rowCursor >= 2 ? 1.5 : 1);
 
@@ -653,7 +653,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
       case 1:
         return this.options.length;
       default:
-        return this.shopOptionsRows[this.shopOptionsRows.length - (rowCursor - 1)].length;
+        return this.shopOptionsRows.at(-(rowCursor - 1))!.length;
     }
   }
 
@@ -743,7 +743,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
           duration: 250,
           ease: "Cubic.easeIn",
           onComplete: () => {
-            if (!this.options.length) {
+            if (this.options.length === 0) {
               container.setVisible(false);
             } else {
               container.setAlpha(1);

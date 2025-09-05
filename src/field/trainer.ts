@@ -467,7 +467,7 @@ export class Trainer extends Phaser.GameObjects.Container {
                 ? TrainerPoolTier.SUPER_RARE
                 : TrainerPoolTier.ULTRA_RARE;
       console.log(TrainerPoolTier[tier]);
-      while (!this.config.speciesPools.hasOwnProperty(tier) || !this.config.speciesPools[tier].length) {
+      while (!this.config.speciesPools.hasOwnProperty(tier) || this.config.speciesPools[tier].length === 0) {
         console.log(
           `Downgraded trainer Pokemon rarity tier from ${TrainerPoolTier[tier]} to ${TrainerPoolTier[tier - 1]}`,
         );

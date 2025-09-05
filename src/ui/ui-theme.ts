@@ -152,9 +152,9 @@ export function addUiThemeOverrides(): void {
   ): Phaser.GameObjects.Image {
     let legacy = false;
     if (
-      typeof texture === "string" &&
-      globalScene.uiTheme === UiTheme.LEGACY &&
-      legacyCompatibleImages.includes(texture)
+      typeof texture === "string"
+      && globalScene.uiTheme === UiTheme.LEGACY
+      && legacyCompatibleImages.includes(texture)
     ) {
       legacy = true;
       texture += "_legacy";
@@ -179,9 +179,9 @@ export function addUiThemeOverrides(): void {
   ): Phaser.GameObjects.Sprite {
     let legacy = false;
     if (
-      typeof texture === "string" &&
-      globalScene.uiTheme === UiTheme.LEGACY &&
-      legacyCompatibleImages.includes(texture)
+      typeof texture === "string"
+      && globalScene.uiTheme === UiTheme.LEGACY
+      && legacyCompatibleImages.includes(texture)
     ) {
       legacy = true;
       texture += "_legacy";
@@ -212,9 +212,9 @@ export function addUiThemeOverrides(): void {
   ): Phaser.GameObjects.NineSlice {
     let legacy = false;
     if (
-      typeof texture === "string" &&
-      globalScene.uiTheme === UiTheme.LEGACY &&
-      legacyCompatibleImages.includes(texture)
+      typeof texture === "string"
+      && globalScene.uiTheme === UiTheme.LEGACY
+      && legacyCompatibleImages.includes(texture)
     ) {
       legacy = true;
       texture += "_legacy";

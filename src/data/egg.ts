@@ -462,7 +462,7 @@ export class Egg {
       const lockedPool = speciesPool.filter(
         s => !globalScene.gameData.dexData[s].caughtAttr && !globalScene.gameData.eggs.some(e => e.species === s),
       );
-      if (lockedPool.length) {
+      if (lockedPool.length > 0) {
         // Skip this if everything is unlocked
         speciesPool = lockedPool;
       }

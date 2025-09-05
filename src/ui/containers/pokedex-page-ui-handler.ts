@@ -711,7 +711,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       globalScene.phaseManager.getCurrentPhase().phaseName,
     );
 
-    if (args.length >= 1 && args[0] === "refresh") {
+    if (args.length > 0 && args[0] === "refresh") {
       return false;
     }
     this.species = args[0];
@@ -762,9 +762,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       .map(o => {
         const label = i18next.t(`pokedexUiHandler:${toCamelCase(`menu${MenuOptions[o]}`)}`);
         const isDark =
-          !isSeen ||
-          (!isStarterCaught && (o === MenuOptions.TOGGLE_IVS || o === MenuOptions.NATURES)) ||
-          (this.tmMoves.length < 1 && o === MenuOptions.TM_MOVES);
+          !isSeen
+          || (!isStarterCaught && (o === MenuOptions.TOGGLE_IVS || o === MenuOptions.NATURES))
+          || (this.tmMoves.length === 0 && o === MenuOptions.TM_MOVES);
         const color = getTextColor(isDark ? TextStyle.SHADOW_TEXT : TextStyle.SETTINGS_VALUE, false);
         const shadow = getTextColor(isDark ? TextStyle.SHADOW_TEXT : TextStyle.SETTINGS_VALUE, true);
         return `[shadow=${shadow}][color=${color}]${label}[/color][/shadow]`;
@@ -986,7 +986,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     const formIndex = otherFormIndex !== undefined ? otherFormIndex : this.formIndex;
     const caughtAttr = this.isCaught(species);
 
-    if (caughtAttr && (!species.forms.length || species.forms.length === 1)) {
+    if (caughtAttr && (species.forms.length === 0 || species.forms.length === 1)) {
       return true;
     }
 
@@ -1094,7 +1094,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       this.message.setY(singleLine ? -22 : -37);
     }
 
-    this.starterSelectMessageBoxContainer.setVisible(!!text?.length);
+    this.starterSelectMessageBoxContainer.setVisible(text?.length > 0);
   }
 
   /**
@@ -1350,7 +1350,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
           case MenuOptions.TM_MOVES:
             if (!isSeen) {
               error = true;
-            } else if (this.tmMoves.length < 1) {
+            } else if (this.tmMoves.length === 0) {
               ui.showText(i18next.t("pokedexUiHandler:noTmMoves"));
               error = true;
             } else {
