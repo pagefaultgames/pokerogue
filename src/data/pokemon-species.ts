@@ -593,14 +593,14 @@ export abstract class PokemonSpeciesForm {
     });
   }
 
-  cry(soundConfig?: Phaser.Types.Sound.SoundConfig, ignorePlay?: boolean): AnySound {
+  cry(soundConfig?: Phaser.Types.Sound.SoundConfig, ignorePlay?: boolean): AnySound | null {
     const cryKey = this.getCryKey(this.formIndex);
     let cry: AnySound | null = globalScene.sound.get(cryKey) as AnySound;
     if (cry?.pendingRemove) {
       cry = null;
     }
     cry = globalScene.playSound(cry ?? cryKey, soundConfig);
-    if (ignorePlay) {
+    if (cry && ignorePlay) {
       cry.stop();
     }
     return cry;
@@ -778,7 +778,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
       }
 
       if (key) {
-        return i18next.t(`battlePokemonForm:${key}`, {
+        return i18next.t(`battlePokemonForm:${toCamelCase(key)}`, {
           pokemonName: this.name,
         });
       }
@@ -795,7 +795,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
       return Gender.GENDERLESS;
     }
 
-    if (randSeedFloat() <= this.malePercent) {
+    if (randSeedFloat() * 100 <= this.malePercent) {
       return Gender.MALE;
     }
     return Gender.FEMALE;
@@ -810,7 +810,9 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
       return this.name; // Other special cases could be put here too
     }
     // Everything beyond this point essentially follows the pattern of FORMNAME_SPECIES
-    return i18next.t(`pokemonForm:appendForm.${SpeciesId[this.speciesId].split("_")[0]}`, { pokemonName: this.name });
+    return i18next.t(`pokemonForm:appendForm.${toCamelCase(SpeciesId[this.speciesId].split("_")[0])}`, {
+      pokemonName: this.name,
+    });
   }
 
   /**
@@ -827,7 +829,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
 
     const region = this.getRegion();
     if (this.speciesId === SpeciesId.ARCEUS) {
-      ret = i18next.t(`pokemonInfo:Type.${formText.toUpperCase()}`);
+      ret = i18next.t(`pokemonInfo:type.${toCamelCase(formText)}`);
     } else if (
       [
         SpeciesFormKey.MEGA,
@@ -841,8 +843,8 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
       ].includes(formKey as SpeciesFormKey)
     ) {
       return append
-        ? i18next.t(`battlePokemonForm:${formKey}`, { pokemonName: this.name })
-        : i18next.t(`pokemonForm:battleForm.${formKey}`);
+        ? i18next.t(`battlePokemonForm:${toCamelCase(formKey)}`, { pokemonName: this.name })
+        : i18next.t(`pokemonForm:battleForm.${toCamelCase(formKey)}`);
     } else if (
       region === Region.NORMAL ||
       (this.speciesId === SpeciesId.GALAR_DARMANITAN && formIndex > 0) ||
@@ -868,10 +870,10 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
       return i18next.t("pokemonForm:ursalunaBloodmoon");
     } else {
       // Only regional forms should be left at this point
-      return i18next.t(`pokemonForm:regionalForm.${Region[region]}`);
+      return i18next.t(`pokemonForm:regionalForm.${toCamelCase(Region[region])}`);
     }
     return append
-      ? i18next.t("pokemonForm:appendForm.GENERIC", {
+      ? i18next.t("pokemonForm:appendForm.generic", {
           pokemonName: this.name,
           formName: ret,
         })
@@ -879,8 +881,8 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
   }
 
   localize(): void {
-    this.name = i18next.t(`pokemon:${SpeciesId[this.speciesId].toLowerCase()}`);
-    this.category = i18next.t(`pokemonCategory:${SpeciesId[this.speciesId].toLowerCase()}_category`);
+    this.name = i18next.t(`pokemon:${toCamelCase(SpeciesId[this.speciesId])}`);
+    this.category = i18next.t(`pokemonCategory:${toCamelCase(SpeciesId[this.speciesId])}Category`);
   }
 
   getWildSpeciesForLevel(level: number, allowEvolving: boolean, isBoss: boolean, gameMode: GameMode): SpeciesId {

@@ -170,7 +170,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
 
   setup() {
     this.gachaCursor = 0;
-    this.scale = getTextStyleOptions(TextStyle.WINDOW, globalScene.uiTheme).scale;
+    this.scale = getTextStyleOptions(TextStyle.WINDOW).scale;
 
     const ui = this.getUi();
 
@@ -743,7 +743,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
 
     if (!freePulls && globalScene.gameData.eggs.length + pulls > 99) {
       errorKey = "egg:tooManyEggs";
-    } else if (!freePulls && !globalScene.gameData.voucherCounts[voucherType]) {
+    } else if (!freePulls && globalScene.gameData.voucherCounts[voucherType] < vouchersConsumed) {
       errorKey = "egg:notEnoughVouchers";
     }
 

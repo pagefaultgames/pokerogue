@@ -134,7 +134,7 @@ describe("Abilities - Disguise", () => {
     });
     await game.classicMode.startBattle([SpeciesId.FURRET, SpeciesId.MIMIKYU]);
 
-    const mimikyu = game.scene.getPlayerParty()[1]!;
+    const mimikyu = game.scene.getPlayerParty()[1];
     expect(mimikyu.formIndex).toBe(bustedForm);
 
     game.move.select(MoveId.SPLASH);
@@ -196,7 +196,7 @@ describe("Abilities - Disguise", () => {
     game.move.select(MoveId.SHADOW_SNEAK);
     await game.toNextWave();
 
-    expect(game.scene.phaseManager.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
+    expect(game).toBeAtPhase("CommandPhase");
     expect(game.scene.currentBattle.waveIndex).toBe(2);
   });
 

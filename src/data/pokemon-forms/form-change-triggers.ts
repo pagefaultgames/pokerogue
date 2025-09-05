@@ -30,7 +30,7 @@ export abstract class SpeciesFormChangeTrigger {
 export class SpeciesFormChangeManualTrigger extends SpeciesFormChangeTrigger {}
 
 export class SpeciesFormChangeAbilityTrigger extends SpeciesFormChangeTrigger {
-  public description: string = i18next.t("pokemonEvolutions:Forms.ability");
+  public description: string = i18next.t("pokemonEvolutions:forms.ability");
 }
 
 export class SpeciesFormChangeCompoundTrigger {
@@ -69,10 +69,10 @@ export class SpeciesFormChangeItemTrigger extends SpeciesFormChangeTrigger {
     this.item = item;
     this.active = active;
     this.description = this.active
-      ? i18next.t("pokemonEvolutions:Forms.item", {
+      ? i18next.t("pokemonEvolutions:forms.item", {
           item: i18next.t(`modifierType:FormChangeItem.${FormChangeItem[this.item]}`),
         })
-      : i18next.t("pokemonEvolutions:Forms.deactivateItem", {
+      : i18next.t("pokemonEvolutions:forms.deactivateItem", {
           item: i18next.t(`modifierType:FormChangeItem.${FormChangeItem[this.item]}`),
         });
   }
@@ -97,7 +97,7 @@ export class SpeciesFormChangeTimeOfDayTrigger extends SpeciesFormChangeTrigger 
   constructor(...timesOfDay: TimeOfDay[]) {
     super();
     this.timesOfDay = timesOfDay;
-    this.description = i18next.t("pokemonEvolutions:Forms.timeOfDay");
+    this.description = i18next.t("pokemonEvolutions:orms.timeOfDay");
   }
 
   canChange(_pokemon: Pokemon): boolean {
@@ -111,8 +111,8 @@ export class SpeciesFormChangeActiveTrigger extends SpeciesFormChangeTrigger {
     super();
     this.active = active;
     this.description = this.active
-      ? i18next.t("pokemonEvolutions:Forms.enter")
-      : i18next.t("pokemonEvolutions:Forms.leave");
+      ? i18next.t("pokemonEvolutions:forms.enter")
+      : i18next.t("pokemonEvolutions:forms.leave");
   }
 
   canChange(pokemon: Pokemon): boolean {
@@ -128,7 +128,7 @@ export class SpeciesFormChangeStatusEffectTrigger extends SpeciesFormChangeTrigg
     super();
     this.statusEffects = coerceArray(statusEffects);
     this.invert = invert;
-    // this.description = i18next.t("pokemonEvolutions:Forms.statusEffect");
+    // this.description = i18next.t("pokemonEvolutions:forms.statusEffect");
   }
 
   canChange(pokemon: Pokemon): boolean {
@@ -146,10 +146,10 @@ export class SpeciesFormChangeMoveLearnedTrigger extends SpeciesFormChangeTrigge
     this.known = known;
     const moveKey = toCamelCase(MoveId[this.move]);
     this.description = known
-      ? i18next.t("pokemonEvolutions:Forms.moveLearned", {
+      ? i18next.t("pokemonEvolutions:forms.moveLearned", {
           move: i18next.t(`move:${moveKey}.name`),
         })
-      : i18next.t("pokemonEvolutions:Forms.moveForgotten", {
+      : i18next.t("pokemonEvolutions:forms.moveForgotten", {
           move: i18next.t(`move:${moveKey}.name`),
         });
   }
@@ -171,7 +171,7 @@ export abstract class SpeciesFormChangeMoveTrigger extends SpeciesFormChangeTrig
 }
 
 export class SpeciesFormChangePreMoveTrigger extends SpeciesFormChangeMoveTrigger {
-  description = i18next.t("pokemonEvolutions:Forms.preMove");
+  description = i18next.t("pokemonEvolutions:forms.preMove");
   canChange(pokemon: Pokemon): boolean {
     const command = globalScene.currentBattle.turnCommands[pokemon.getBattlerIndex()];
     return !!command?.move && this.movePredicate(command.move.move) === this.used;
@@ -179,7 +179,7 @@ export class SpeciesFormChangePreMoveTrigger extends SpeciesFormChangeMoveTrigge
 }
 
 export class SpeciesFormChangePostMoveTrigger extends SpeciesFormChangeMoveTrigger {
-  description = i18next.t("pokemonEvolutions:Forms.postMove");
+  description = i18next.t("pokemonEvolutions:forms.postMove");
   canChange(pokemon: Pokemon): boolean {
     return (
       pokemon.summonData && !!pokemon.getLastXMoves(1).filter(m => this.movePredicate(m.move)).length === this.used
@@ -244,7 +244,7 @@ export class SpeciesFormChangeWeatherTrigger extends SpeciesFormChangeTrigger {
     super();
     this.ability = ability;
     this.weathers = weathers;
-    this.description = i18next.t("pokemonEvolutions:Forms.weather");
+    this.description = i18next.t("pokemonEvolutions:forms.weather");
   }
 
   /**
@@ -282,7 +282,7 @@ export class SpeciesFormChangeRevertWeatherFormTrigger extends SpeciesFormChange
     super();
     this.ability = ability;
     this.weathers = weathers;
-    this.description = i18next.t("pokemonEvolutions:Forms.weatherRevert");
+    this.description = i18next.t("pokemonEvolutions:forms.weatherRevert");
   }
 
   /**

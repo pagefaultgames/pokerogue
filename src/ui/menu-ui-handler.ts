@@ -17,6 +17,7 @@ import { addWindow, WindowVariant } from "#ui/ui-theme";
 import { fixedInt, isLocal, sessionIdKey } from "#utils/common";
 import { getCookie } from "#utils/cookies";
 import { getEnumValues } from "#utils/enums";
+import { toCamelCase } from "#utils/strings";
 import { isBeta } from "#utils/utility-vars";
 import i18next from "i18next";
 
@@ -125,7 +126,7 @@ export class MenuUiHandler extends MessageUiHandler {
     const ui = this.getUi();
     this.excludedMenus = () => [
       {
-        condition: !!globalScene.phaseManager.getCurrentPhase()?.is("SelectModifierPhase"),
+        condition: globalScene.phaseManager.getCurrentPhase().is("SelectModifierPhase"),
         options: [MenuOptions.EGG_GACHA],
       },
       { condition: bypassLogin, options: [MenuOptions.LOG_OUT] },
@@ -138,13 +139,13 @@ export class MenuUiHandler extends MessageUiHandler {
     this.optionSelectText = addTextObject(
       0,
       0,
-      this.menuOptions.map(o => `${i18next.t(`menuUiHandler:${MenuOptions[o]}`)}`).join("\n"),
+      this.menuOptions.map(o => `${i18next.t(`menuUiHandler:${toCamelCase(MenuOptions[o])}`)}`).join("\n"),
       TextStyle.WINDOW,
       { maxLines: this.menuOptions.length },
     );
     this.optionSelectText.setLineSpacing(12);
 
-    this.scale = getTextStyleOptions(TextStyle.WINDOW, globalScene.uiTheme).scale;
+    this.scale = getTextStyleOptions(TextStyle.WINDOW).scale;
     this.menuBg = addWindow(
       globalScene.scaledCanvas.width - (this.optionSelectText.displayWidth + 25),
       0,

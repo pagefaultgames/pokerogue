@@ -237,7 +237,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
           const config = globalScene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0];
           config.pokemonConfigs![0].tags = [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON];
           config.pokemonConfigs![0].mysteryEncounterBattleEffects = (pokemon: Pokemon) => {
-            queueEncounterMessage(`${namespace}:option.2.boss_enraged`);
+            queueEncounterMessage(`${namespace}:option.2.bossEnraged`);
             globalScene.phaseManager.unshiftNew(
               "StatStageChangePhase",
               pokemon.getBattlerIndex(),
@@ -254,7 +254,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
             undefined,
             doBerryRewards,
           );
-          await showEncounterText(`${namespace}:option.2.selected_bad`);
+          await showEncounterText(`${namespace}:option.2.selectedBad`);
           await initBattleWithEnemyConfig(config);
           return;
         }
