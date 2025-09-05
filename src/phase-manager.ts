@@ -261,10 +261,7 @@ export class PhaseManager {
 
   /* Phase Functions */
 
-  /**
-   * Return the currently running {@linkcode Phase}.
-   * @returns The `Phase` currently in the process of running.
-   */
+  /** @returns The currently running {@linkcode Phase}. */
   getCurrentPhase(): Phase {
     return this.currentPhase;
   }
