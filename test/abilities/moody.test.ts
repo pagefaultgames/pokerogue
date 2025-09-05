@@ -119,7 +119,6 @@ describe("Abilities - Moody", () => {
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
-    // Should decrease only the stat that is not at stage -6
-    expect(playerPokemon.getStatStage(raisedStat)).toBe(5);
+    expect(playerPokemon.getStatStage(raisedStat), "should decrease only the stat that is not at stage -6").toBe(5);
   });
 });
