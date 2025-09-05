@@ -272,7 +272,7 @@ export class BattleScene extends SceneBase {
   public currentBattle: Battle;
   public pokeballCounts: PokeballCounts;
   public lastPokeballType: PokeballType = PokeballType.POKEBALL;
-  public lastPokeballMultiplier: number = 1;
+  public premierPokeballMultiplier: number = 1;
   public money: number;
   public pokemonInfoContainer: PokemonInfoContainer;
   private party: PlayerPokemon[];
@@ -1151,7 +1151,7 @@ export class BattleScene extends SceneBase {
     this.score = 0;
     this.money = 0;
     this.lastPokeballType = PokeballType.POKEBALL;
-    this.lastPokeballMultiplier = 1;
+    this.premierPokeballMultiplier = 1;
 
     this.lockModifierTiers = false;
 

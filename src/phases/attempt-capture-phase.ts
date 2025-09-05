@@ -58,10 +58,12 @@ export class AttemptCapturePhase extends PokemonPhase {
     globalScene.pokeballCounts[this.pokeballType]--;
     if (globalScene.lastPokeballType != this.pokeballType){
       globalScene.lastPokeballType = this.pokeballType;
-      globalScene.lastPokeballMultiplier = 1
+      globalScene.premierPokeballMultiplier = 1
     }else if (globalScene.lastPokeballType == PokeballType.PREMIER_BALL && PokeballType.PREMIER_BALL == this.pokeballType){
-      if (globalScene.lastPokeballMultiplier < 4){
-        globalScene.lastPokeballMultiplier += 0.5
+      if (globalScene.premierPokeballMultiplier < 5){
+        globalScene.premierPokeballMultiplier += 0.5
+      }else{
+        globalScene.premierPokeballMultiplier = 5
       }
     }
 
@@ -71,6 +73,7 @@ export class AttemptCapturePhase extends PokemonPhase {
     const _2h = 2 * pokemon.hp;
     const catchRate = pokemon.species.catchRate;
     const pokeballMultiplier = getPokeballCatchMultiplier(this.pokeballType);
+    console.log(pokeballMultiplier);
     const statusMultiplier = pokemon.status ? getStatusEffectCatchRateMultiplier(pokemon.status.effect) : 1;
     const modifiedCatchRate = Math.round((((_3m - _2h) * catchRate * pokeballMultiplier) / _3m) * statusMultiplier);
     const shakeProbability = Math.round(65536 / Math.pow(255 / modifiedCatchRate, 0.1875)); // Formula taken from gen 6

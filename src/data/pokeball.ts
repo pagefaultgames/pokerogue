@@ -97,9 +97,9 @@ export function getPokeballCatchMultiplier(type: PokeballType): number {
     case PokeballType.QUICK_BALL:
       return globalScene.currentBattle.turn == 1 ? 5 : 1;
     case PokeballType.TIMER_BALL:
-      return globalScene.currentBattle.turn > 10 ? 4 : 1 + (globalScene.currentBattle.turn * 0.3);
+      return globalScene.currentBattle.turn > 11 ? 4 : 1 + ((globalScene.currentBattle.turn-1) * 0.3);
     case PokeballType.PREMIER_BALL:
-      return 3;
+      return globalScene.premierPokeballMultiplier;
     case PokeballType.REPEAT_BALL:
       if (globalScene.getEnemyPokemon()){
         return globalScene.gameData.dexData[globalScene.getEnemyPokemon().species.speciesId].caughtAttr ? 3.5 : 1;
