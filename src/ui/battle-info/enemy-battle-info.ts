@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { Stat } from "#enums/stat";
 import { TextStyle } from "#enums/text-style";
+import { UiTheme } from "#enums/ui-theme";
 import type { EnemyPokemon } from "#field/pokemon";
 import { BattleFlyout } from "#ui/battle-flyout";
 import type { BattleInfoParamList } from "#ui/battle-info";
@@ -203,7 +204,7 @@ export class EnemyBattleInfo extends BattleInfo {
     }
 
     if (this.boss && this.bossSegments > 1) {
-      const uiTheme = globalScene.uiTheme;
+      const isLegacyUiTheme = globalScene.uiTheme === UiTheme.LEGACY;
       const maxHp = pokemon.getMaxHp();
       for (let s = 1; s < this.bossSegments; s++) {
         const dividerX = (Math.round((maxHp / this.bossSegments) * s) / maxHp) * this.hpBar.width;
@@ -211,14 +212,14 @@ export class EnemyBattleInfo extends BattleInfo {
           0,
           0,
           1,
-          this.hpBar.height - (uiTheme ? 0 : 1),
+          this.hpBar.height - (isLegacyUiTheme ? 0 : 1),
           pokemon.bossSegmentIndex >= s ? 0xffffff : 0x404040,
         );
         divider.setOrigin(0.5, 0).setName("hpBar_divider_" + s.toString());
         this.add(divider);
         this.moveBelow(divider as Phaser.GameObjects.GameObject, this.statsContainer);
 
-        divider.setPositionRelative(this.hpBar, dividerX, uiTheme ? 0 : 1);
+        divider.setPositionRelative(this.hpBar, dividerX, isLegacyUiTheme ? 0 : 1);
         this.hpBarSegmentDividers.push(divider);
       }
     }
