@@ -47,7 +47,7 @@ jobs:
         with:
           version: 10
 
-      - name: Setup Node 22.14.1
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version-file: "pokerogue_docs/.nvmrc"
@@ -80,5 +80,5 @@ jobs:
           rm -rf $GITHUB_REF_NAME/*
           cp -r /tmp/docs/. $GITHUB_REF_NAME
           git add $GITHUB_REF_NAME
-          git commit --allow-empty -m "[skip ci] Deploy docs"
+          git commit -m "[skip ci] Deploy docs"
           git push
