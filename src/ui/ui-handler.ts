@@ -1,8 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import type { Button } from "#enums/buttons";
-import type { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
-import { getTextColor } from "#ui/text";
 
 /**
  * A basic abstract class to act as a holder and processor for UI elements.
@@ -31,10 +29,6 @@ export abstract class UiHandler {
 
   getUi() {
     return globalScene.ui;
-  }
-
-  getTextColor(style: TextStyle, shadow = false): string {
-    return getTextColor(style, shadow, globalScene.uiTheme);
   }
 
   getCursor(): number {
