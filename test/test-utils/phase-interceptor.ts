@@ -1,6 +1,7 @@
 import type { BattleScene } from "#app/battle-scene";
 import { Phase } from "#app/phase";
 import { UiMode } from "#enums/ui-mode";
+import { AttemptCapturePhase } from "#phases/attempt-capture-phase";
 import { AttemptRunPhase } from "#phases/attempt-run-phase";
 import { BattleEndPhase } from "#phases/battle-end-phase";
 import { BerryPhase } from "#phases/berry-phase";
@@ -183,6 +184,7 @@ export class PhaseInterceptor {
     PostGameOverPhase,
     RevivalBlessingPhase,
     PokemonHealPhase,
+    AttemptCapturePhase,
   ];
 
   private endBySetMode = [
