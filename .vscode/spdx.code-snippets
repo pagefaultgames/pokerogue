@@ -6,7 +6,7 @@
  */
 {
 	// REUSE-IgnoreStart
-	"Add SPDX header (/* comments )": {
+	"Add SPDX header (/* */ comments )": {
 		"scope": "javascript,typescript,css,glsl,jsonc",
 		"prefix": "SPDX",
 		"body": [
