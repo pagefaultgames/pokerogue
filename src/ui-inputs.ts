@@ -13,7 +13,7 @@ import { SettingsGamepadUiHandler } from "#ui/settings-gamepad-ui-handler";
 import { SettingsKeyboardUiHandler } from "#ui/settings-keyboard-ui-handler";
 import { SettingsUiHandler } from "#ui/settings-ui-handler";
 import { StarterSelectUiHandler } from "#ui/starter-select-ui-handler";
-import type Phaser from "phaser";
+import Phaser from "phaser";
 
 type ActionKeys = Record<Button, () => void>;
 
@@ -224,25 +224,26 @@ export class UiInputs {
 
   buttonSpeedChange(up = true): void {
     const settingGameSpeed = settingIndex(SettingKeys.Game_Speed);
+    const settingOptions = Setting[settingGameSpeed].options;
+    let currentSetting = settingOptions.findIndex(item => item.value === globalScene.gameSpeed.toString());
+    // if current setting is -1, then the current game speed is not a valid option, so default to index 5 (3x)
+    if (currentSetting === -1) {
+      currentSetting = 5;
+    }
+    let direction: number;
     if (up && globalScene.gameSpeed < 5) {
-      globalScene.gameData.saveSetting(
-        SettingKeys.Game_Speed,
-        Setting[settingGameSpeed].options.findIndex(item => item.label === `${globalScene.gameSpeed}x`) + 1,
-      );
-      if (globalScene.ui?.getMode() === UiMode.SETTINGS) {
-        (globalScene.ui.getHandler() as SettingsUiHandler).show([]);
-      }
+      direction = 1;
     } else if (!up && globalScene.gameSpeed > 1) {
-      globalScene.gameData.saveSetting(
-        SettingKeys.Game_Speed,
-        Math.max(
-          Setting[settingGameSpeed].options.findIndex(item => item.label === `${globalScene.gameSpeed}x`) - 1,
-          0,
-        ),
-      );
-      if (globalScene.ui?.getMode() === UiMode.SETTINGS) {
-        (globalScene.ui.getHandler() as SettingsUiHandler).show([]);
-      }
+      direction = -1;
+    } else {
+      return;
+    }
+    globalScene.gameData.saveSetting(
+      SettingKeys.Game_Speed,
+      Phaser.Math.Clamp(currentSetting + direction, 0, settingOptions.length - 1),
+    );
+    if (globalScene.ui?.getMode() === UiMode.SETTINGS) {
+      (globalScene.ui.getHandler() as SettingsUiHandler).show([]);
     }
   }
 }

@@ -177,7 +177,7 @@ export class SelectModifierPhase extends BattlePhase {
         this.openModifierMenu(modifierType, cost, modifierSelectCallback);
       }
     } else {
-      this.applyModifier(modifierType.newModifier()!);
+      this.applyModifier(modifierType.newModifier()!, cost);
     }
     return cost === -1;
   }

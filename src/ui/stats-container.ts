@@ -113,7 +113,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
           (ivs[ivChartStatIndexes[i]] / 31) * ivChartSize * ivChartStatCoordMultipliers[ivChartStatIndexes[i]][1],
         ]);
       const lastIvChartData = this.statsIvsCache || defaultIvChartData;
-      const perfectIVColor: string = getTextColor(TextStyle.SUMMARY_GOLD, false, globalScene.uiTheme);
+      const perfectIVColor: string = getTextColor(TextStyle.SUMMARY_GOLD, false);
       this.statsIvsCache = ivChartData.slice(0);
 
       this.ivStatValueTexts.map((t: BBCodeText, i: number) => {
@@ -127,7 +127,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
         }
         if (this.showDiff && originalIvs) {
           if (originalIvs[i] < ivs[i]) {
-            label += ` ([color=${getTextColor(TextStyle.SUMMARY_BLUE, false, globalScene.uiTheme)}][shadow=${getTextColor(TextStyle.SUMMARY_BLUE, true, globalScene.uiTheme)}]+${ivs[i] - originalIvs[i]}[/shadow][/color])`;
+            label += ` ([color=${getTextColor(TextStyle.SUMMARY_BLUE, false)}][shadow=${getTextColor(TextStyle.SUMMARY_BLUE, true)}]+${ivs[i] - originalIvs[i]}[/shadow][/color])`;
           } else {
             label += " (-)";
           }

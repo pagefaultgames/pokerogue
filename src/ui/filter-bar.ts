@@ -97,9 +97,9 @@ export class FilterBar extends Phaser.GameObjects.Container {
   updateFilterLabels(): void {
     for (let i = 0; i < this.numFilters; i++) {
       if (this.dropDowns[i].hasDefaultValues()) {
-        this.labels[i].setColor(getTextColor(TextStyle.TOOLTIP_CONTENT, false, globalScene.uiTheme));
+        this.labels[i].setColor(getTextColor(TextStyle.TOOLTIP_CONTENT, false));
       } else {
-        this.labels[i].setColor(getTextColor(TextStyle.STATS_LABEL, false, globalScene.uiTheme));
+        this.labels[i].setColor(getTextColor(TextStyle.STATS_LABEL, false));
       }
     }
   }

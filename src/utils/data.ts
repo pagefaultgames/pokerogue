@@ -8,7 +8,7 @@ import { AES, enc } from "crypto-js";
  * @param values - The object to be deep copied.
  * @returns A new object that is a deep copy of the input.
  */
-export function deepCopy(values: object): object {
+export function deepCopy<T extends object>(values: T): T {
   // Convert the object to a JSON string and parse it back to an object to perform a deep copy
   return JSON.parse(JSON.stringify(values));
 }
@@ -58,13 +58,28 @@ export function decrypt(data: string, bypassLogin: boolean): string {
   return AES.decrypt(data, saveKey).toString(enc.Utf8);
 }
 
+/**
+ * Check if an object has no properties of its own (its shape is `{}`). An empty array is considered a bare object.
+ * @param obj - Object to check
+ * @returns - Whether the object is bare
+ */
+export function isBareObject(obj: any): boolean {
+  if (typeof obj !== "object") {
+    return false;
+  }
+  for (const _ in obj) {
+    return false;
+  }
+  return true;
+}
+
 // the latest data saved/loaded for the Starter Preferences. Required to reduce read/writes. Initialize as "{}", since this is the default value and no data needs to be stored if present.
 // if they ever add private static variables, move this into StarterPrefs
 const StarterPrefers_DEFAULT: string = "{}";
 let StarterPrefers_private_latest: string = StarterPrefers_DEFAULT;
 
 export interface StarterPreferences {
-  [key: number]: StarterAttributes;
+  [key: number]: StarterAttributes | undefined;
 }
 // called on starter selection show once
 
@@ -74,11 +89,17 @@ export function loadStarterPreferences(): StarterPreferences {
       localStorage.getItem(`starterPrefs_${loggedInUser?.username}`) || StarterPrefers_DEFAULT),
   );
 }
-// called on starter selection clear, always
 
 export function saveStarterPreferences(prefs: StarterPreferences): void {
-  const pStr: string = JSON.stringify(prefs);
+  // Fastest way to check if an object has any properties (does no allocation)
+  if (isBareObject(prefs)) {
+    console.warn("Refusing to save empty starter preferences");
+    return;
+  }
+  // no reason to store `{}` (for starters not customized)
+  const pStr: string = JSON.stringify(prefs, (_, value) => (isBareObject(value) ? undefined : value));
   if (pStr !== StarterPrefers_private_latest) {
+    console.log("%cSaving starter preferences", "color: blue");
     // something changed, store the update
     localStorage.setItem(`starterPrefs_${loggedInUser?.username}`, pStr);
     // update the latest prefs

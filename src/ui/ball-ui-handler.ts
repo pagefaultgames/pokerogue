@@ -26,7 +26,7 @@ export class BallUiHandler extends UiHandler {
   setup() {
     const ui = this.getUi();
 
-    this.scale = getTextStyleOptions(TextStyle.WINDOW, globalScene.uiTheme).scale;
+    this.scale = getTextStyleOptions(TextStyle.WINDOW).scale;
 
     let optionsTextContent = "";
 

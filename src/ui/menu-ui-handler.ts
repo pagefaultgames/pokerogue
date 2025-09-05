@@ -145,7 +145,7 @@ export class MenuUiHandler extends MessageUiHandler {
     );
     this.optionSelectText.setLineSpacing(12);
 
-    this.scale = getTextStyleOptions(TextStyle.WINDOW, globalScene.uiTheme).scale;
+    this.scale = getTextStyleOptions(TextStyle.WINDOW).scale;
     this.menuBg = addWindow(
       globalScene.scaledCanvas.width - (this.optionSelectText.displayWidth + 25),
       0,

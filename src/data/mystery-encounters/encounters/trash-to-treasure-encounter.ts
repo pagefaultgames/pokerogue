@@ -249,7 +249,7 @@ async function tryApplyDigRewardItems() {
   await showEncounterText(
     i18next.t("battle:rewardGainCount", {
       modifierName: leftovers.name,
-      count: 2,
+      count: 1,
     }),
     null,
     undefined,
