@@ -144,7 +144,7 @@ export class EggSummaryUiHandler extends MessageUiHandler {
    */
   show(args: EggHatchData[][]): boolean {
     super.show(args);
-    if (args.length >= 1) {
+    if (args.length > 0) {
       // sort the egg hatch data by egg tier then by species number (then by order hatched)
       this.eggHatchData = args[0].sort(function sortHatchData(a: EggHatchData, b: EggHatchData) {
         const speciesA = a.pokemon.species;

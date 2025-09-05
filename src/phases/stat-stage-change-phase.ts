@@ -245,7 +245,7 @@ export class StatStageChangePhase extends PokemonPhase {
       handleTutorial(Tutorial.Stat_Change).then(() => super.end());
     };
 
-    if (relLevels.filter(l => l).length && globalScene.moveAnimations) {
+    if (relLevels.filter(l => l).length > 0 && globalScene.moveAnimations) {
       pokemon.enableMask();
       const pokemonMaskSprite = pokemon.maskSprite;
 
@@ -365,7 +365,8 @@ export class StatStageChangePhase extends PokemonPhase {
                 .map(s => i18next.t(getStatKey(s)))
                 .join(
                   ", ",
-                )}${relStageStats.length > 2 ? "," : ""} ${i18next.t("battle:statsAnd")} ${i18next.t(getStatKey(relStageStats[relStageStats.length - 1]))}`;
+                  // Bang is justified as we explicitly check for the existence of 2+ args
+                )}${relStageStats.length > 2 ? "," : ""} ${i18next.t("battle:statsAnd")} ${i18next.t(getStatKey(relStageStats.at(-1)!))}`;
         messages.push(
           i18next.t(getStatStageChangeDescriptionKey(Math.abs(Number.parseInt(rl)), stages >= 1), {
             pokemonNameWithAffix: getPokemonNameWithAffix(this.getPokemon()),

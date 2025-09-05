@@ -25,7 +25,7 @@ export class TurnInitPhase extends FieldPhase {
 
         const allowedPokemon = globalScene.getPokemonAllowedInBattle();
 
-        if (!allowedPokemon.length) {
+        if (allowedPokemon.length === 0) {
           // If there are no longer any legal pokemon in the party, game over.
           globalScene.phaseManager.clearPhaseQueue();
           globalScene.phaseManager.unshiftNew("GameOverPhase");

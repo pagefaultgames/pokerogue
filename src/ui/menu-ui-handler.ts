@@ -578,7 +578,7 @@ export class MenuUiHandler extends MessageUiHandler {
           success = true;
           break;
         case MenuOptions.EGG_LIST:
-          if (globalScene.gameData.eggs.length) {
+          if (globalScene.gameData.eggs.length > 0) {
             ui.revertMode();
             ui.setOverlayMode(UiMode.EGG_LIST);
             success = true;

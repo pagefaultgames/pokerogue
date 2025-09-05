@@ -68,7 +68,7 @@ export class CommandUiHandler extends UiHandler {
   show(args: any[]): boolean {
     super.show(args);
 
-    this.fieldIndex = args.length ? (args[0] as number) : 0;
+    this.fieldIndex = args.length > 0 ? (args[0] as number) : 0;
 
     this.commandsContainer.setVisible(true);
 
@@ -198,7 +198,7 @@ export class CommandUiHandler extends UiHandler {
   }
 
   canTera(): boolean {
-    const hasTeraMod = !!globalScene.getModifiers(TerastallizeAccessModifier).length;
+    const hasTeraMod = globalScene.getModifiers(TerastallizeAccessModifier).length > 0;
     const activePokemon = globalScene.getField()[this.fieldIndex];
     const isBlockedForm =
       activePokemon.isMega() || activePokemon.isMax() || activePokemon.hasSpecies(SpeciesId.NECROZMA, "ultra");

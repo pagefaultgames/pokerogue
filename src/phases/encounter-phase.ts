@@ -442,28 +442,27 @@ export class EncounterPhase extends BattlePhase {
         }
       };
 
-      const encounterMessages = globalScene.currentBattle.trainer?.getEncounterMessages();
+      const encounterMessages = trainer?.getEncounterMessages() ?? [];
 
-      if (!encounterMessages?.length) {
+      if (encounterMessages.length === 0) {
         doSummon();
       } else {
-        let message: string;
+        let message = "";
         globalScene.executeWithSeedOffset(
           () => (message = randSeedItem(encounterMessages)),
           globalScene.currentBattle.waveIndex,
         );
-        message = message!; // tell TS compiler it's defined now
         const showDialogueAndSummon = () => {
           globalScene.ui.showDialogue(message, trainer?.getName(TrainerSlot.NONE, true), null, () => {
             globalScene.charSprite.hide().then(() => globalScene.hideFieldOverlay(250).then(() => doSummon()));
           });
         };
-        if (globalScene.currentBattle.trainer?.config.hasCharSprite && !globalScene.ui.shouldSkipDialogue(message)) {
+        if (trainer?.config.hasCharSprite && !globalScene.ui.shouldSkipDialogue(message)) {
           globalScene
             .showFieldOverlay(500)
             .then(() =>
               globalScene.charSprite
-                .showCharacter(trainer?.getKey()!, getCharVariantFromDialogue(encounterMessages[0]))
+                .showCharacter(trainer.getKey()!, getCharVariantFromDialogue(encounterMessages[0]))
                 .then(() => showDialogueAndSummon()),
             ); // TODO: is this bang correct?
         } else {
@@ -571,7 +570,7 @@ export class EncounterPhase extends BattlePhase {
           globalScene.phaseManager.create("PostSummonPhase", p.getBattlerIndex()),
           () => {
             // if there is not a player party, we can't continue
-            if (!globalScene.getPlayerParty().length) {
+            if (globalScene.getPlayerParty().length === 0) {
               return false;
             }
             // how many player pokemon are on the field ?

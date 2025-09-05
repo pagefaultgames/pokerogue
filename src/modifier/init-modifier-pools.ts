@@ -102,7 +102,7 @@ function initCommonModifierPool() {
               && p
                 .getMoveset()
                 .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
-                .length,
+                .length > 0,
           ).length,
           3,
         );
@@ -121,7 +121,7 @@ function initCommonModifierPool() {
               && p
                 .getMoveset()
                 .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
-                .length,
+                .length > 0,
           ).length,
           3,
         );
@@ -249,7 +249,7 @@ function initGreatModifierPool() {
               && p
                 .getMoveset()
                 .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
-                .length,
+                .length > 0,
           ).length,
           3,
         );
@@ -268,7 +268,7 @@ function initGreatModifierPool() {
               && p
                 .getMoveset()
                 .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
-                .length,
+                .length > 0,
           ).length,
           3,
         );

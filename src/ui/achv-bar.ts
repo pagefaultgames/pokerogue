@@ -142,7 +142,7 @@ export class AchvBar extends Phaser.GameObjects.Container {
       onComplete: () => {
         this.shown = false;
         this.setVisible(false);
-        if (this.queue.length) {
+        if (this.queue.length > 0) {
           const shifted = this.queue.shift();
           shifted && this.showAchv(shifted);
         }

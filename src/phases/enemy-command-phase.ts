@@ -54,13 +54,13 @@ export class EnemyCommandPhase extends FieldPhase {
      * member's matchup score is 3x the active enemy's score (or 2x for "boss" trainers),
      * the enemy will switch to that Pokemon.
      */
-    if (trainer && !enemyPokemon.getMoveQueue().length) {
+    if (trainer && enemyPokemon.getMoveQueue().length === 0) {
       const opponents = enemyPokemon.getOpponents();
 
       if (!enemyPokemon.isTrapped()) {
         const partyMemberScores = trainer.getPartyMemberMatchupScores(enemyPokemon.trainerSlot, true);
 
-        if (partyMemberScores.length) {
+        if (partyMemberScores.length > 0) {
           const matchupScores = opponents.map(opp => enemyPokemon.getMatchupScore(opp));
           const matchupScore = matchupScores.reduce((total, score) => (total += score), 0) / matchupScores.length;
 

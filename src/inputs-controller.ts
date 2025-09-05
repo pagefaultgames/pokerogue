@@ -585,7 +585,7 @@ export class InputsController {
 
   resetConfigs(): void {
     this.configs = new Map();
-    if (this.getGamepadsName()?.length) {
+    if (this.getGamepadsName()?.length > 0) {
       this.setupGamepad(this.selectedDevice[Device.GAMEPAD]);
     }
     this.setupKeyboard();

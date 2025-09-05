@@ -337,7 +337,7 @@ export class CommandPhase extends FieldPhase {
     } else if (
       turnCommand.move
       && playerPokemon.getTag(BattlerTagType.CHARGING)
-      && playerPokemon.getMoveQueue().length >= 1
+      && playerPokemon.getMoveQueue().length > 0
     ) {
       turnCommand.move.targets = playerPokemon.getMoveQueue()[0].targets;
     } else {

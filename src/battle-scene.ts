@@ -1557,7 +1557,7 @@ export class BattleScene extends SceneBase {
   }
 
   getSpeciesFormIndex(species: PokemonSpecies, gender?: Gender, nature?: Nature, ignoreArena?: boolean): number {
-    if (!species.forms?.length) {
+    if (species.forms?.length === 0) {
       return 0;
     }
 
@@ -2727,12 +2727,10 @@ export class BattleScene extends SceneBase {
           this.removeModifier(rm, true);
         }
       }
-      if (!ignoreUpdate) {
+      if (ignoreUpdate) {
         this.updateModifiers(false, instant);
-        resolve();
-      } else {
-        resolve();
       }
+      resolve();
     });
   }
 
@@ -3121,7 +3119,7 @@ export class BattleScene extends SceneBase {
     this.executeWithSeedOffset(
       () => {
         const shuffleModifiers = mods => {
-          if (mods.length < 1) {
+          if (mods.length === 0) {
             return mods;
           }
           const rand = randSeedInt(mods.length);
@@ -3544,8 +3542,7 @@ export class BattleScene extends SceneBase {
       const successRate = Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE ?? favoredEncounterRate;
 
       // MEs can only spawn 3 or more waves after the previous ME, barring overrides
-      const canSpawn =
-        encounteredEvents.length === 0 || waveIndex - encounteredEvents[encounteredEvents.length - 1].waveIndex > 3;
+      const canSpawn = encounteredEvents.length === 0 || waveIndex - encounteredEvents.at(-1)!.waveIndex > 3;
 
       if (canSpawn || Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE !== null) {
         let roll = MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT;
@@ -3648,11 +3645,7 @@ export class BattleScene extends SceneBase {
     }
 
     let availableEncounters: MysteryEncounter[] = [];
-    const previousEncounter =
-      this.mysteryEncounterSaveData.encounteredEvents.length > 0
-        ? this.mysteryEncounterSaveData.encounteredEvents[this.mysteryEncounterSaveData.encounteredEvents.length - 1]
-            .type
-        : null;
+    const previousEncounter = this.mysteryEncounterSaveData.encounteredEvents.at(-1)?.type ?? null; // TODO: This being `null` is a bit weird
     const disabledEncounters = this.eventManager.getEventMysteryEncountersDisabled();
     const biomeMysteryEncounters =
       mysteryEncountersByBiome.get(this.arena.biomeType)?.filter(enc => !disabledEncounters.includes(enc)) ?? [];

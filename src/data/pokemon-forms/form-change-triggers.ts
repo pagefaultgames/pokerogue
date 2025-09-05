@@ -155,7 +155,7 @@ export class SpeciesFormChangeMoveLearnedTrigger extends SpeciesFormChangeTrigge
   }
 
   canChange(pokemon: Pokemon): boolean {
-    return !!pokemon.moveset.filter(m => m.moveId === this.move).length === this.known;
+    return pokemon.moveset.filter(m => m.moveId === this.move).length > 0 === this.known;
   }
 }
 
@@ -182,7 +182,7 @@ export class SpeciesFormChangePostMoveTrigger extends SpeciesFormChangeMoveTrigg
   description = i18next.t("pokemonEvolutions:forms.postMove");
   canChange(pokemon: Pokemon): boolean {
     return (
-      pokemon.summonData && !!pokemon.getLastXMoves(1).filter(m => this.movePredicate(m.move)).length === this.used
+      pokemon.summonData && pokemon.getLastXMoves(1).filter(m => this.movePredicate(m.move)).length > 0 === this.used
     );
   }
 }

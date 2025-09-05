@@ -368,7 +368,7 @@ export function checkStarterValidForChallenge(species: PokemonSpecies, props: De
   }
   // We check the validity of every evolution and form change, and require that at least one is valid
   const speciesToCheck = [species.speciesId];
-  while (speciesToCheck.length) {
+  while (speciesToCheck.length > 0) {
     const checking = speciesToCheck.pop();
     // Linter complains if we don't handle this
     if (!checking) {

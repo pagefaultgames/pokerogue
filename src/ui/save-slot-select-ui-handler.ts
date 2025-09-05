@@ -357,7 +357,7 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
       this.message.setY(-37);
     }
 
-    this.saveSlotSelectMessageBoxContainer.setVisible(!!text?.length);
+    this.saveSlotSelectMessageBoxContainer.setVisible(text?.length > 0);
   }
 
   /**
