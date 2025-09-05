@@ -19,6 +19,19 @@ export function getPokeballAtlasKey(type: PokeballType): string {
       return "mb";
     case PokeballType.LUXURY_BALL:
       return "lb";
+    case PokeballType.QUICK_BALL:
+      return "qb";
+    case PokeballType.TIMER_BALL:
+      return "tb";
+    case PokeballType.PREMIER_BALL:
+      return "preb";
+    case PokeballType.REPEAT_BALL:
+      return "repb";
+    case PokeballType.SAFARI_BALL:
+      return "sb";
+    default: 
+      console.error("Missing ball atlas key");
+      return "pb";
   }
 }
 
@@ -43,6 +56,25 @@ export function getPokeballName(type: PokeballType): string {
     case PokeballType.LUXURY_BALL:
       ret = i18next.t("pokeball:luxuryBall");
       break;
+    case PokeballType.QUICK_BALL:
+      ret = i18next.t("pokeball:quickBall");
+      break;
+    case PokeballType.TIMER_BALL:
+      ret = i18next.t("pokeball:timerBall");
+      break;
+    case PokeballType.PREMIER_BALL:
+      ret = i18next.t("pokeball:premierBall");
+      break;
+    case PokeballType.REPEAT_BALL:
+      ret = i18next.t("pokeball:repeatBall");
+      break;
+    case PokeballType.SAFARI_BALL:
+      ret = i18next.t("pokeball:safariBall");
+      break;
+
+    default:
+      console.error("Missing ball language translation description");
+      ret = i18next.t("pokeball:pokeBall");
   }
   return ret;
 }
@@ -61,6 +93,24 @@ export function getPokeballCatchMultiplier(type: PokeballType): number {
       return -1;
     case PokeballType.LUXURY_BALL:
       return 1;
+
+    case PokeballType.QUICK_BALL:
+      return globalScene.currentBattle.turn == 1 ? 5 : 1;
+    case PokeballType.TIMER_BALL:
+      return globalScene.currentBattle.turn > 10 ? 4 : 1 + (globalScene.currentBattle.turn * 0.3);
+    case PokeballType.PREMIER_BALL:
+      return 3;
+    case PokeballType.REPEAT_BALL:
+      if (globalScene.getEnemyPokemon()){
+        return globalScene.gameData.dexData[globalScene.getEnemyPokemon().species.speciesId].caughtAttr ? 3.5 : 1;
+      }
+      return 1
+    case PokeballType.SAFARI_BALL:
+      return 1.5
+    
+    default:
+      console.error("Missing ball catch multiplier");
+      return 1;
   }
 }
 
@@ -78,6 +128,21 @@ export function getPokeballTintColor(type: PokeballType): number {
       return 0xa441bd;
     case PokeballType.LUXURY_BALL:
       return 0xffde6a;
+    case PokeballType.QUICK_BALL:
+      return 0xd52929;
+    case PokeballType.TIMER_BALL:
+      return 0xd52929;
+    case PokeballType.PREMIER_BALL:
+      return 0xd52929;
+    case PokeballType.REPEAT_BALL:
+      return 0xd52929;
+    case PokeballType.TIMER_BALL:
+      return 0xd52929;
+    case PokeballType.SAFARI_BALL:
+      return 0xd52929;
+    default: 
+      console.error("Missing ball tint color");
+      return 0xd52929;
   }
 }
 

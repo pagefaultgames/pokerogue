@@ -105,6 +105,11 @@ class DefaultOverrides {
       [PokeballType.ULTRA_BALL]: 0,
       [PokeballType.ROGUE_BALL]: 0,
       [PokeballType.MASTER_BALL]: 0,
+      [PokeballType.LUXURY_BALL]: 0,
+      [PokeballType.QUICK_BALL]: 0,
+      [PokeballType.TIMER_BALL]: 0,
+      [PokeballType.PREMIER_BALL]: 0,
+      [PokeballType.REPEAT_BALL]: 0,
     },
   };
   /** Forces an item to be UNLOCKED */

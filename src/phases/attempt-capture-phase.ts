@@ -13,7 +13,7 @@ import {
 import { getStatusEffectCatchRateMultiplier } from "#data/status-effect";
 import { BattlerIndex } from "#enums/battler-index";
 import { ChallengeType } from "#enums/challenge-type";
-import type { PokeballType } from "#enums/pokeball";
+import { PokeballType } from "#enums/pokeball";
 import { StatusEffect } from "#enums/status-effect";
 import { UiMode } from "#enums/ui-mode";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "#field/anims";
@@ -56,6 +56,14 @@ export class AttemptCapturePhase extends PokemonPhase {
     }
 
     globalScene.pokeballCounts[this.pokeballType]--;
+    if (globalScene.lastPokeballType != this.pokeballType){
+      globalScene.lastPokeballType = this.pokeballType;
+      globalScene.lastPokeballMultiplier = 1
+    }else if (globalScene.lastPokeballType == PokeballType.PREMIER_BALL && PokeballType.PREMIER_BALL == this.pokeballType){
+      if (globalScene.lastPokeballMultiplier < 4){
+        globalScene.lastPokeballMultiplier += 0.5
+      }
+    }
 
     this.originalY = pokemon.y;
 

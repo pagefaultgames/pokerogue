@@ -1837,6 +1837,11 @@ const modifierTypeInitObj = Object.freeze({
   ULTRA_BALL: () => new AddPokeballModifierType("ub", PokeballType.ULTRA_BALL, 5),
   ROGUE_BALL: () => new AddPokeballModifierType("rb", PokeballType.ROGUE_BALL, 5),
   MASTER_BALL: () => new AddPokeballModifierType("mb", PokeballType.MASTER_BALL, 1),
+  LUXURY_BALL: () => new AddPokeballModifierType("lb", PokeballType.LUXURY_BALL, 5),
+  QUICK_BALL: () => new AddPokeballModifierType("qb", PokeballType.QUICK_BALL, 3),
+  TIMER_BALL: () => new AddPokeballModifierType("tb", PokeballType.TIMER_BALL, 5),
+  PREMIER_BALL: () => new AddPokeballModifierType("preb", PokeballType.PREMIER_BALL, 5),
+  REPEAT_BALL: () => new AddPokeballModifierType("repb", PokeballType.REPEAT_BALL, 3),
 
   RARE_CANDY: () => new PokemonLevelIncrementModifierType("modifierType:ModifierType.RARE_CANDY", "rare_candy"),
   RARER_CANDY: () => new AllPokemonLevelIncrementModifierType("modifierType:ModifierType.RARER_CANDY", "rarer_candy"),
