@@ -5803,26 +5803,17 @@ export class LeechSeedAttr extends AddBattlerTagAttr {
 }
 
 /**
- * Attribute to add the {@linkcode BattlerTagType.IGNORE_FLYING | IGNORE_FLYING} battler tag to the target
+ * Attribute to add the {@linkcode BattlerTagType.IGNORE_FLYING | IGNORE_FLYING} BattlerTag to the target
  * and remove any prior sources of ungroundedness.
  *
- * Does nothing if the target was not already ungrounded.
+ * Used by {@linkcode MoveId.SMACK_DOWN} and {@linkcode MoveId.THOUSAND_ARROWS},
+ * and does nothing if the target was not already ungrounded.
  */
 export class FallDownAttr extends AddBattlerTagAttr {
   constructor() {
     super(BattlerTagType.IGNORE_FLYING, false, false, 0, 0, true);
   }
 
-  /**
-   * Add `GroundedTag` to the target, remove all prior sources of ungroundedness
-   * and display a message.
-   * @param user - The {@linkcode Pokemon} using the move
-   * @param target - The {@linkcode Pokemon} targeted by the move
-   * @param move - The {@linkcode Move} invoking this effect
-   * @param args n/a
-   * @returns Whether the target was successfully brought down to earth.
-   *
-   */
   apply(user: Pokemon, target: Pokemon, move: Move, _args: any[]): boolean {
     // Smack down and similar only add their tag if the target is already ungrounded,
     // barring any prior semi-invulnerability.
@@ -5830,9 +5821,13 @@ export class FallDownAttr extends AddBattlerTagAttr {
       return false;
     }
 
+    if (!super.apply(user, target, move, _args)) {
+      return false;
+    }
+
     // Remove the target's prior sources of ungroundedness.
-    // NB: These effects cannot simply be part of the tag's `onAdd` effect as Ingrain also adds the tag
-    // but does not remove Telekinesis' accuracy boost
+    // NB: These effects cannot simply be part of the tag's `onAdd` effect as Ingrain
+    // also forcibly grounds the user without removing Telekinesis' accuracy boost
     target.removeTag(BattlerTagType.FLOATING);
     target.removeTag(BattlerTagType.TELEKINESIS);
     if (target.getTag(BattlerTagType.FLYING)) {
@@ -5842,7 +5837,7 @@ export class FallDownAttr extends AddBattlerTagAttr {
     }
 
     globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:fallDown", { targetPokemonName: getPokemonNameWithAffix(target) }));
-    return super.apply(user, target, move, _args);
+    return true;
   }
 }
 

@@ -2284,13 +2284,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Return whether this Pokemon is currently on the ground.
    *
-   * To be considered grounded, a Pokemon must either:
-   * * Be {@linkcode GroundedTag | forcibly grounded} from an effect like Smack Down or Ingrain
+   * To be considered grounded, a Pokemon must fulfill any of the following criteria:
+   * * Be {@linkcode BattlerTagType.IGNORE_FLYING | forcibly grounded} from an effect like Smack Down or Ingrain
    * * Be under the effects of {@linkcode ArenaTagType.GRAVITY | harsh gravity}
-   * * **Not** be all of the following things:
+   * * **Not** be any of the following things:
    *   * {@linkcode PokemonType.FLYING | Flying-type}
    *   * {@linkcode AbilityId.LEVITATE | Levitating}
-   *   * {@linkcode BattlerTagType.FLOATING | Floating} from Magnet Rise or Telekinesis.
+   *   * {@linkcode BattlerTagType.FLOATING | Floating} from Magnet Rise or Telekinesis
    *   * {@linkcode SemiInvulnerableTag | Semi-invulnerable} with `ignoreSemiInvulnerable` set to `false`
    * @param ignoreSemiInvulnerable - Whether to ignore the target's semi-invulnerable state when determining groundedness;
    default `false`

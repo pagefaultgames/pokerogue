@@ -43,7 +43,7 @@ describe("Terrain -", () => {
       .passiveAbility(AbilityId.NO_GUARD);
   });
 
-  // TODO: Terrain boosts currently apply to damage dealt, not base power
+  // TODO: Terrain boosts currently apply directly to damage dealt, not base power
   describe.todo.each<{ name: string; type: PokemonType; terrain: TerrainType; move: MoveId }>([
     { name: "Electric", type: PokemonType.ELECTRIC, terrain: TerrainType.ELECTRIC, move: MoveId.THUNDERBOLT },
     { name: "Psychic", type: PokemonType.PSYCHIC, terrain: TerrainType.PSYCHIC, move: MoveId.PSYCHIC },

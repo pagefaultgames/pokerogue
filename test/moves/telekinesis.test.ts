@@ -71,39 +71,41 @@ describe("Move - Telekinesis", () => {
     species: s,
     name: getEnumStr(SpeciesId, s, { casing: "Title" }),
   }));
-  it.each(invalidSpecies)("should fail if used on a $name, but can be baton passable onto one", async ({ species }) => {
-    await game.classicMode.startBattle([species, SpeciesId.FEEBAS]);
+  it.each(invalidSpecies)(
+    "should fail if used on a $name, but can still be baton passed onto one",
+    async ({ species }) => {
+      await game.classicMode.startBattle([species, SpeciesId.FEEBAS]);
 
-    const invalidMon = game.field.getPlayerPokemon();
-    expect(invalidMon.species.speciesId).toBe(species);
+      const [invalidMon, feebas] = game.scene.getPlayerParty();
+      expect(invalidMon.species.speciesId).toBe(species);
 
-    game.move.use(MoveId.TELEPORT);
-    game.doSelectPartyPokemon(1);
-    await game.move.forceEnemyMove(MoveId.TELEKINESIS);
-    await game.toNextTurn();
+      game.move.use(MoveId.TELEPORT);
+      game.doSelectPartyPokemon(1);
+      await game.move.forceEnemyMove(MoveId.TELEKINESIS);
+      await game.toNextTurn();
 
-    // Adding tags directly did not work
-    const enemy = game.field.getEnemyPokemon();
-    expect(enemy).toHaveUsedMove({ move: MoveId.TELEKINESIS, result: MoveResult.FAIL });
+      // Adding tags directly did not work
+      const enemy = game.field.getEnemyPokemon();
+      expect(enemy).toHaveUsedMove({ move: MoveId.TELEKINESIS, result: MoveResult.FAIL });
 
-    expect(invalidMon.isOnField()).toBe(false);
+      expect(invalidMon.isOnField()).toBe(false);
 
-    game.move.use(MoveId.BATON_PASS);
-    game.doSelectPartyPokemon(1);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.phaseInterceptor.to("MoveEndPhase");
+      game.move.use(MoveId.BATON_PASS);
+      game.doSelectPartyPokemon(1);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.phaseInterceptor.to("MoveEndPhase");
 
-    const feebas = game.field.getPlayerPokemon();
-    expect(feebas).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
-    expect(feebas).toHaveBattlerTag(BattlerTagType.FLOATING);
+      expect(feebas).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
+      expect(feebas).toHaveBattlerTag(BattlerTagType.FLOATING);
 
-    await game.toEndOfTurn();
+      await game.toEndOfTurn();
 
-    // Should have recieved tags successfully
-    expect(invalidMon.isOnField()).toBe(true);
-    expect(invalidMon).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
-    expect(invalidMon).toHaveBattlerTag(BattlerTagType.FLOATING);
-  });
+      // Should have received tags successfully
+      expect(invalidMon.isOnField()).toBe(true);
+      expect(invalidMon).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
+      expect(invalidMon).toHaveBattlerTag(BattlerTagType.FLOATING);
+    },
+  );
 
   it("should still affect enemies transformed into invalid Pokemon", async () => {
     game.override.enemyAbility(AbilityId.IMPOSTER);
@@ -151,7 +153,7 @@ describe("Move - Telekinesis", () => {
     game.override.starterForms({ [SpeciesId.GENGAR]: 1 });
     await game.classicMode.startBattle([SpeciesId.GENGAR, SpeciesId.FEEBAS]);
 
-    const gengar = game.field.getPlayerPokemon();
+    const [gengar, feebas] = game.scene.getPlayerParty();
 
     game.move.use(MoveId.TELEPORT);
     game.doSelectPartyPokemon(1);
@@ -169,13 +171,12 @@ describe("Move - Telekinesis", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    const feebas = game.field.getPlayerPokemon();
     expect(feebas).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
     expect(feebas).toHaveBattlerTag(BattlerTagType.FLOATING);
 
     await game.toEndOfTurn();
 
-    // Should have recieved tags successfully
+    // Should have not received tags
     expect(gengar.isOnField()).toBe(true);
     expect(gengar).not.toHaveBattlerTag(BattlerTagType.TELEKINESIS);
     expect(gengar).not.toHaveBattlerTag(BattlerTagType.FLOATING);

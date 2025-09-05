@@ -40,17 +40,17 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
     { name: "Smack Down", move: MoveId.SMACK_DOWN },
     { name: "Thousand Arrows", move: MoveId.THOUSAND_ARROWS },
   ])("$name should hit and ground ungrounded targets", async ({ move }) => {
-    game.override.enemySpecies(SpeciesId.TORNADUS);
+    game.override.enemySpecies(SpeciesId.ROOKIDEE);
     await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
 
-    const enemy = game.field.getEnemyPokemon();
-    expect(enemy.isGrounded()).toBe(false);
+    const rookidee = game.field.getEnemyPokemon();
+    expect(rookidee.isGrounded()).toBe(false);
 
     game.move.use(move);
     await game.toEndOfTurn();
 
-    expect(enemy).toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
-    expect(enemy.isGrounded()).toBe(true);
+    expect(rookidee).toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
+    expect(rookidee.isGrounded()).toBe(true);
   });
 
   it("should affect targets with Levitate", async () => {
@@ -86,17 +86,22 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
 
   // NB: This test might sound useless, but semi-invulnerable pokemon are technically considered "ungrounded"
   // by most things
-  it("should not ground semi-invulnerable targets hit via No Guard unless otherwise ungrounded", async () => {
+  it("should not consider semi-invulnerability as a valid source of ungroundedness", async () => {
     game.override.ability(AbilityId.NO_GUARD);
     await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
 
     game.move.use(MoveId.THOUSAND_ARROWS);
     await game.move.forceEnemyMove(MoveId.DIG);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.phaseInterceptor.to("MoveEndPhase");
+
+    // Eelektross should be grounded solely due to using Dig,
+    const eelektross = game.field.getEnemyPokemon();
+    expect(eelektross.isGrounded()).toBe(false);
+    expect(eelektross.isGrounded(true)).toBe(true);
     await game.toEndOfTurn();
 
     // Eelektross took damage but was not forcibly grounded
-    const eelektross = game.field.getEnemyPokemon();
     expect(eelektross.isGrounded()).toBe(true);
     expect(eelektross).not.toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
     expect(eelektross).not.toHaveFullHp();
@@ -112,23 +117,23 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
       hitSpy = vi.spyOn(MoveEffectPhase.prototype, "hitCheck");
     });
 
-    it("should deal a fixed 1x damage when hitting ungrounded Flying-types", async () => {
+    it("should have 1x type effectiveness when hitting ungrounded Flying-types", async () => {
       await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
       const archeops = game.field.getEnemyPokemon();
 
+      // first turn: 1x
       game.move.use(MoveId.THOUSAND_ARROWS);
       await game.toEndOfTurn();
 
-      // first turn: 1x
       expect(archeops).not.toHaveFullHp();
       expect(archeops.isGrounded()).toBe(true);
       expect(hitSpy).toHaveLastReturnedWith([expect.anything(), 1]);
 
+      // 2nd turn: 2x
       game.move.use(MoveId.THOUSAND_ARROWS);
       await game.toEndOfTurn();
 
-      // 2nd turn: 2x
       expect(hitSpy).toHaveLastReturnedWith([expect.anything(), 2]);
     });
 
