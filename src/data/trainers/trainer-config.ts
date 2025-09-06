@@ -165,9 +165,6 @@ export class TrainerConfig {
       // Give the rival a localized name
       // This is only the male name, because the female name is handled in a different function (setHasGenders)
       name = i18next.t("trainerNames:rival");
-      if (!name) {
-        throw new Error("skibidi sigma");
-      }
     }
 
     this.name = name;
