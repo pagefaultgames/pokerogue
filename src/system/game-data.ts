@@ -62,7 +62,7 @@ import {
 import { VoucherType, vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { DexData, DexEntry } from "#types/dex-data";
-import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
+import { RUN_HISTORY_LIMIT } from "#ui/handlers/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { executeIf, fixedInt, isLocal, NumberHolder, randInt, randSeedItem } from "#utils/common";
 import { decrypt, encrypt } from "#utils/data";

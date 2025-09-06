@@ -8,7 +8,7 @@ import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { EvolutionPhase } from "#phases/evolution-phase";
 import { achvs } from "#system/achv";
-import type { PartyUiHandler } from "#ui/party-ui-handler";
+import type { PartyUiHandler } from "#ui/handlers/party-ui-handler";
 import { fixedInt } from "#utils/common";
 
 export class FormChangePhase extends EvolutionPhase {
