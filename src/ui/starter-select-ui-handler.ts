@@ -1619,6 +1619,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       if (!this.filterMode) {
         this.startCursorObj.setVisible(false);
         this.starterIconsCursorObj.setVisible(false);
+        this.randomCursorObj.setVisible(false);
         this.setSpecies(null);
         this.filterBarCursor = 0;
         this.setFilterMode(true);
