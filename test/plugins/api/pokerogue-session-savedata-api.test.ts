@@ -9,7 +9,7 @@ import type {
   NewClearSessionSavedataRequest,
   UpdateSessionSavedataRequest,
 } from "#types/api/pokerogue-session-save-data-api";
-import type { SessionSaveData } from "#types/data-types";
+import type { SessionSaveData } from "#types/save-data";
 import { HttpResponse, http } from "msw";
 import type { SetupServerApi } from "msw/node";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

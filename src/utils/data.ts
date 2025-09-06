@@ -1,6 +1,6 @@
 import { loggedInUser } from "#app/account";
 import { saveKey } from "#app/constants";
-import type { StarterAttributes } from "#types/data-types";
+import type { StarterAttributes } from "#types/save-data";
 import { AES, enc } from "crypto-js";
 
 /**

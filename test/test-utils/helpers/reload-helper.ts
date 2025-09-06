@@ -5,7 +5,7 @@ import { TitlePhase } from "#phases/title-phase";
 import { TurnInitPhase } from "#phases/turn-init-phase";
 import type { GameManager } from "#test/test-utils/game-manager";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
-import type { SessionSaveData } from "#types/data-types";
+import type { SessionSaveData } from "#types/save-data";
 import { vi } from "vitest";
 
 /**

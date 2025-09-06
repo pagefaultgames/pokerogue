@@ -4,7 +4,7 @@ import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { GameManager } from "#test/test-utils/game-manager";
-import type { SessionSaveData } from "#types/data-types";
+import type { SessionSaveData } from "#types/save-data";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

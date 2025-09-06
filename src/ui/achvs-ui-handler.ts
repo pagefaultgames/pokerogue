@@ -7,7 +7,7 @@ import type { Achv } from "#system/achv";
 import { achvs, getAchievementDescription } from "#system/achv";
 import type { Voucher } from "#system/voucher";
 import { getVoucherTypeIcon, getVoucherTypeName, vouchers } from "#system/voucher";
-import type { AchvUnlocks, VoucherUnlocks } from "#types/data-types";
+import type { AchvUnlocks, VoucherUnlocks } from "#types/save-data";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { ScrollBar } from "#ui/scroll-bar";
 import { addTextObject } from "#ui/text";

@@ -1,4 +1,4 @@
-import type { SystemSaveData } from "#types/data-types";
+import type { SystemSaveData } from "#types/save-data";
 
 export interface GetSystemSavedataRequest {
   clientSessionId: string;

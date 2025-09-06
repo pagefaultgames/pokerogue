@@ -22,7 +22,7 @@ import { RibbonData, type RibbonFlag } from "#system/ribbons/ribbon-data";
 import { awardRibbonsToSpeciesLine } from "#system/ribbons/ribbon-methods";
 import { TrainerData } from "#system/trainer-data";
 import { trainerConfigs } from "#trainers/trainer-config";
-import type { SessionSaveData } from "#types/data-types";
+import type { SessionSaveData } from "#types/save-data";
 import { checkSpeciesValidForChallenge, isNuzlockeChallenge } from "#utils/challenge-utils";
 import { isLocal, isLocalServerConnected } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";

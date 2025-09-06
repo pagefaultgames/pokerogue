@@ -58,6 +58,7 @@ import {
 } from "#system/version-migration/version-converter";
 import { VoucherType, vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-config";
+import type { DexData, DexEntry } from "#types/dex-data";
 import type {
   AchvUnlocks,
   DexAttrProps,
@@ -70,8 +71,7 @@ import type {
   Unlocks,
   VoucherCounts,
   VoucherUnlocks,
-} from "#types/data-types";
-import type { DexData, DexEntry } from "#types/dex-data";
+} from "#types/save-data";
 import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { executeIf, fixedInt, isLocal, NumberHolder, randInt, randSeedItem } from "#utils/common";

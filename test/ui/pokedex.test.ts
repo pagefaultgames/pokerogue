@@ -7,7 +7,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/test-utils/game-manager";
-import type { StarterAttributes } from "#types/data-types";
+import type { StarterAttributes } from "#types/save-data";
 import { FilterTextRow } from "#ui/filter-text";
 import { PokedexPageUiHandler } from "#ui/pokedex-page-ui-handler";
 import { PokedexUiHandler } from "#ui/pokedex-ui-handler";

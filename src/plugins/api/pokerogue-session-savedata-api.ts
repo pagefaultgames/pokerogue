@@ -7,7 +7,7 @@ import type {
   NewClearSessionSavedataRequest,
   UpdateSessionSavedataRequest,
 } from "#types/api/pokerogue-session-save-data-api";
-import type { SessionSaveData } from "#types/data-types";
+import type { SessionSaveData } from "#types/save-data";
 
 /**
  * A wrapper for PokéRogue session savedata API requests.

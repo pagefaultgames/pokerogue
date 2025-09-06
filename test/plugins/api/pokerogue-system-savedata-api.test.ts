@@ -7,7 +7,7 @@ import type {
   VerifySystemSavedataRequest,
   VerifySystemSavedataResponse,
 } from "#types/api/pokerogue-system-save-data-api";
-import type { SystemSaveData } from "#types/data-types";
+import type { SystemSaveData } from "#types/save-data";
 import { HttpResponse, http } from "msw";
 import type { SetupServerApi } from "msw/node";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
