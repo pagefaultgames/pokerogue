@@ -25,7 +25,7 @@ jobs:
     env:
       docs-dir: ./pokerogue_docs
       # Only push docs when running on pushes to main/beta
-      DRY_RUN: ${{github.event_name == 'push' && (github.ref_name == 'beta' || github.ref_name == 'main')}}
+      DRY_RUN: ${{github.event_name != 'push' || (github.ref_name != 'beta' && github.ref_name != 'main')}}
 
     strategy:
       fail-fast: false
@@ -47,7 +47,7 @@ jobs:
         with:
           version: 10
 
-      - name: Setup Node 22.14.1
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version-file: "pokerogue_docs/.nvmrc"
@@ -79,5 +79,6 @@ jobs:
           mkdir -p $GITHUB_REF_NAME
           rm -rf $GITHUB_REF_NAME/*
           cp -r /tmp/docs/. $GITHUB_REF_NAME
-          git commit --allow-empty -am "[skip ci] Deploy docs"
+          git add $GITHUB_REF_NAME
+          git commit -m "[skip ci] Deploy docs"
           git push
