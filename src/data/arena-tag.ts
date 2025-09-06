@@ -23,7 +23,7 @@ import type { Arena } from "#field/arena";
 import type { Pokemon } from "#field/pokemon";
 import type {
   ArenaScreenTagType,
-  ArenaTagTypeData,
+  ArenaTagData,
   EntryHazardTagType,
   RoomArenaTagType,
   SerializableArenaTagType,
@@ -471,7 +471,7 @@ const QuickGuardConditionFunc: ProtectConditionFunc = (_arena, moveId) => {
   const move = allMoves[moveId];
   const effectPhase = globalScene.phaseManager.getCurrentPhase();
 
-  if (effectPhase?.is("MoveEffectPhase")) {
+  if (effectPhase.is("MoveEffectPhase")) {
     const attacker = effectPhase.getUserPokemon();
     if (attacker) {
       return move.getPriority(attacker) > 0;
@@ -937,7 +937,7 @@ class StealthRockTag extends DamagingTrapTag {
 
   protected override getTriggerMessage(pokemon: Pokemon): string {
     return i18next.t("arenaTag:stealthRockActivateTrap", {
-      pokemonName: getPokemonNameWithAffix(pokemon),
+      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
     });
   }
 
@@ -1663,7 +1663,7 @@ export function getArenaTag(
  * @param source - An arena tag
  * @returns The valid arena tag
  */
-export function loadArenaTag(source: ArenaTag | ArenaTagTypeData | { tagType: ArenaTagType.NONE }): ArenaTag {
+export function loadArenaTag(source: ArenaTag | ArenaTagData | { tagType: ArenaTagType.NONE }): ArenaTag {
   if (source.tagType === ArenaTagType.NONE) {
     return new NoneTag();
   }

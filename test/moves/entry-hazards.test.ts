@@ -200,7 +200,7 @@ describe("Moves - Entry Hazards", () => {
       expect(enemy).toHaveTakenDamage(enemy.getMaxHp() * 0.125 * multi);
       expect(game.textInterceptor.logs).toContain(
         i18next.t("arenaTag:stealthRockActivateTrap", {
-          pokemonName: getPokemonNameWithAffix(enemy),
+          pokemonNameWithAffix: getPokemonNameWithAffix(enemy),
         }),
       );
     });

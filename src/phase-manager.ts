@@ -236,7 +236,7 @@ export class PhaseManager {
   /** Parallel array to {@linkcode dynamicPhaseQueues} - matches phase types to their queues */
   private dynamicPhaseTypes: Constructor<Phase>[];
 
-  private currentPhase: Phase | null = null;
+  private currentPhase: Phase;
   private standbyPhase: Phase | null = null;
 
   constructor() {
@@ -260,7 +260,9 @@ export class PhaseManager {
   }
 
   /* Phase Functions */
-  getCurrentPhase(): Phase | null {
+
+  /** @returns The currently running {@linkcode Phase}. */
+  getCurrentPhase(): Phase {
     return this.currentPhase;
   }
 
@@ -355,44 +357,43 @@ export class PhaseManager {
     if (this.phaseQueuePrependSpliceIndex > -1) {
       this.clearPhaseQueueSplice();
     }
-    if (this.phaseQueuePrepend.length) {
-      while (this.phaseQueuePrepend.length) {
-        const poppedPhase = this.phaseQueuePrepend.pop();
-        if (poppedPhase) {
-          this.phaseQueue.unshift(poppedPhase);
-        }
+    this.phaseQueue.unshift(...this.phaseQueuePrepend);
+    this.phaseQueuePrepend.splice(0);
+
+    const unactivatedConditionalPhases: [() => boolean, Phase][] = [];
+    // Check if there are any conditional phases queued
+    for (const [condition, phase] of this.conditionalQueue) {
+      // Evaluate the condition associated with the phase
+      if (condition()) {
+        // If the condition is met, add the phase to the phase queue
+        this.pushPhase(phase);
+      } else {
+        // If the condition is not met, re-add the phase back to the end of the conditional queue
+        unactivatedConditionalPhases.push([condition, phase]);
       }
     }
+
+    this.conditionalQueue = unactivatedConditionalPhases;
+
+    // If no phases are left, unshift phases to start a new turn.
     if (!this.phaseQueue.length) {
       this.populatePhaseQueue();
       // Clear the conditionalQueue if there are no phases left in the phaseQueue
       this.conditionalQueue = [];
     }
 
-    this.currentPhase = this.phaseQueue.shift() ?? null;
+    // Bang is justified as `populatePhaseQueue` ensures we always have _something_ in the queue at all times
+    this.currentPhase = this.phaseQueue.shift()!;
 
-    const unactivatedConditionalPhases: [() => boolean, Phase][] = [];
-    // Check if there are any conditional phases queued
-    while (this.conditionalQueue?.length) {
-      // Retrieve the first conditional phase from the queue
-      const conditionalPhase = this.conditionalQueue.shift();
-      // Evaluate the condition associated with the phase
-      if (conditionalPhase?.[0]()) {
-        // If the condition is met, add the phase to the phase queue
-        this.pushPhase(conditionalPhase[1]);
-      } else if (conditionalPhase) {
-        // If the condition is not met, re-add the phase back to the front of the conditional queue
-        unactivatedConditionalPhases.push(conditionalPhase);
-      } else {
-        console.warn("condition phase is undefined/null!", conditionalPhase);
-      }
-    }
-    this.conditionalQueue.push(...unactivatedConditionalPhases);
+    this.startCurrentPhase();
+  }
 
-    if (this.currentPhase) {
-      console.log(`%cStart Phase ${this.currentPhase.constructor.name}`, "color:green;");
-      this.currentPhase.start();
-    }
+  /**
+   * Helper method to start and log the current phase.
+   */
+  private startCurrentPhase(): void {
+    console.log(`%cStart Phase ${this.currentPhase.phaseName}`, "color:green;");
+    this.currentPhase.start();
   }
 
   overridePhase(phase: Phase): boolean {
@@ -402,8 +403,7 @@ export class PhaseManager {
 
     this.standbyPhase = this.currentPhase;
     this.currentPhase = phase;
-    console.log(`%cStart Phase ${phase.constructor.name}`, "color:green;");
-    phase.start();
+    this.startCurrentPhase();
 
     return true;
   }
@@ -518,6 +518,25 @@ export class PhaseManager {
 
     this.pushPhase(new ActivatePriorityQueuePhase(type));
     this.dynamicPhaseQueues[type].push(phase);
+  }
+
+  /**
+   * Attempt to remove one or more Phases from the given DynamicPhaseQueue, removing the equivalent amount of {@linkcode ActivatePriorityQueuePhase}s from the queue.
+   * @param type - The {@linkcode DynamicPhaseType} to check
+   * @param phaseFilter - The function to select phases for removal
+   * @param removeCount - The maximum number of phases to remove, or `all` to remove all matching phases;
+   * default `1`
+   * @todo Remove this eventually once the patchwork bug this is used for is fixed
+   */
+  public tryRemoveDynamicPhase(
+    type: DynamicPhaseType,
+    phaseFilter: (phase: Phase) => boolean,
+    removeCount: number | "all" = 1,
+  ): void {
+    const numRemoved = this.dynamicPhaseQueues[type].tryRemovePhase(phaseFilter, removeCount);
+    for (let x = 0; x < numRemoved; x++) {
+      this.tryRemovePhase(p => p.is("ActivatePriorityQueuePhase"));
+    }
   }
 
   /**
