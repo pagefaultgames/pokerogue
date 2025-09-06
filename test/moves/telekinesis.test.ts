@@ -1,15 +1,16 @@
-import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
+import { invalidTelekinesisSpecies } from "#moves/invalid-moves";
 import { GameManager } from "#test/test-utils/game-manager";
+import { getEnumStr } from "#test/test-utils/string-utils";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("Moves - Telekinesis", () => {
+describe("Move - Telekinesis", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -26,114 +27,158 @@ describe("Moves - Telekinesis", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([MoveId.TELEKINESIS, MoveId.TACKLE, MoveId.MUD_SHOT, MoveId.SMACK_DOWN])
       .battleStyle("single")
       .enemySpecies(SpeciesId.SNORLAX)
       .enemyLevel(60)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset([MoveId.SPLASH]);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
-  it("Telekinesis makes the affected vulnerable to most attacking moves regardless of accuracy", async () => {
+  it("should cause opposing non-OHKO moves to always hit the target", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const enemyOpponent = game.field.getEnemyPokemon();
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
-    game.move.select(MoveId.TELEKINESIS);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemyOpponent.getTag(BattlerTagType.TELEKINESIS)).toBeDefined();
-    expect(enemyOpponent.getTag(BattlerTagType.FLOATING)).toBeDefined();
-
+    game.move.use(MoveId.TELEKINESIS);
     await game.toNextTurn();
-    vi.spyOn(allMoves[MoveId.TACKLE], "accuracy", "get").mockReturnValue(0);
-    game.move.select(MoveId.TACKLE);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemyOpponent.isFullHp()).toBe(false);
+
+    expect(enemy).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
+    expect(enemy).toHaveBattlerTag(BattlerTagType.FLOATING);
+
+    game.move.use(MoveId.TACKLE);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.move.forceMiss();
+    await game.toEndOfTurn();
+
+    expect(enemy).not.toHaveFullHp();
+    expect(player).toHaveUsedMove({ move: MoveId.TACKLE, result: MoveResult.SUCCESS });
   });
 
-  it("Telekinesis makes the affected airborne and immune to most Ground-moves", async () => {
+  it("should forcibly unground the target", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const enemyOpponent = game.field.getEnemyPokemon();
+    const enemy = game.field.getEnemyPokemon();
+    expect(enemy.isGrounded()).toBe(true);
 
-    game.move.select(MoveId.TELEKINESIS);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemyOpponent.getTag(BattlerTagType.TELEKINESIS)).toBeDefined();
-    expect(enemyOpponent.getTag(BattlerTagType.FLOATING)).toBeDefined();
-
+    game.move.use(MoveId.TELEKINESIS);
     await game.toNextTurn();
-    vi.spyOn(allMoves[MoveId.MUD_SHOT], "accuracy", "get").mockReturnValue(100);
-    game.move.select(MoveId.MUD_SHOT);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemyOpponent.isFullHp()).toBe(true);
+
+    expect(enemy.isGrounded()).toBe(false);
   });
 
-  it("Telekinesis can still affect Pokemon that have been transformed into invalid Pokemon", async () => {
-    game.override.enemyMoveset(MoveId.TRANSFORM);
+  const invalidSpecies = [...invalidTelekinesisSpecies].map(s => ({
+    species: s,
+    name: getEnumStr(SpeciesId, s, { casing: "Title" }),
+  }));
+  it.each(invalidSpecies)(
+    "should fail if used on a $name, but can still be baton passed onto one",
+    async ({ species }) => {
+      await game.classicMode.startBattle([species, SpeciesId.FEEBAS]);
+
+      const [invalidMon, feebas] = game.scene.getPlayerParty();
+      expect(invalidMon.species.speciesId).toBe(species);
+
+      game.move.use(MoveId.TELEPORT);
+      game.doSelectPartyPokemon(1);
+      await game.move.forceEnemyMove(MoveId.TELEKINESIS);
+      await game.toNextTurn();
+
+      // Adding tags directly did not work
+      const enemy = game.field.getEnemyPokemon();
+      expect(enemy).toHaveUsedMove({ move: MoveId.TELEKINESIS, result: MoveResult.FAIL });
+
+      expect(invalidMon.isOnField()).toBe(false);
+
+      game.move.use(MoveId.BATON_PASS);
+      game.doSelectPartyPokemon(1);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.phaseInterceptor.to("MoveEndPhase");
+
+      expect(feebas).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
+      expect(feebas).toHaveBattlerTag(BattlerTagType.FLOATING);
+
+      await game.toEndOfTurn();
+
+      // Should have received tags successfully
+      expect(invalidMon.isOnField()).toBe(true);
+      expect(invalidMon).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
+      expect(invalidMon).toHaveBattlerTag(BattlerTagType.FLOATING);
+    },
+  );
+
+  it("should still affect enemies transformed into invalid Pokemon", async () => {
+    game.override.enemyAbility(AbilityId.IMPOSTER);
     await game.classicMode.startBattle([SpeciesId.DIGLETT]);
 
-    const enemyOpponent = game.field.getEnemyPokemon();
+    const enemy = game.field.getEnemyPokemon();
+    expect(enemy.summonData.speciesForm?.speciesId).toBe(SpeciesId.DIGLETT);
 
-    game.move.select(MoveId.TELEKINESIS);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemyOpponent.getTag(BattlerTagType.TELEKINESIS)).toBeDefined();
-    expect(enemyOpponent.getTag(BattlerTagType.FLOATING)).toBeDefined();
-    expect(enemyOpponent.summonData.speciesForm?.speciesId).toBe(SpeciesId.DIGLETT);
+    game.move.use(MoveId.TELEKINESIS);
+    await game.toEndOfTurn();
+
+    expect(enemy).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
+    expect(enemy).toHaveBattlerTag(BattlerTagType.FLOATING);
+
+    const feebas = game.field.getPlayerPokemon();
+    expect(feebas).toHaveUsedMove({ move: MoveId.TELEKINESIS, result: MoveResult.FAIL });
   });
 
-  it("Moves like Smack Down and 1000 Arrows remove all effects of Telekinesis from the target Pokemon", async () => {
+  // TODO: Move to ingrain's test file
+  it("should become grounded when Ingrain is used, but not remove the guaranteed hit effect", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const enemyOpponent = game.field.getEnemyPokemon();
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
-    game.move.select(MoveId.TELEKINESIS);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemyOpponent.getTag(BattlerTagType.TELEKINESIS)).toBeDefined();
-    expect(enemyOpponent.getTag(BattlerTagType.FLOATING)).toBeDefined();
-
+    game.move.use(MoveId.TELEKINESIS);
     await game.toNextTurn();
-    game.move.select(MoveId.SMACK_DOWN);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemyOpponent.getTag(BattlerTagType.TELEKINESIS)).toBeUndefined();
-    expect(enemyOpponent.getTag(BattlerTagType.FLOATING)).toBeUndefined();
+
+    game.move.use(MoveId.MUD_SHOT);
+    await game.move.forceEnemyMove(MoveId.INGRAIN);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.phaseInterceptor.to("MoveEndPhase");
+    await game.move.forceMiss();
+    await game.toEndOfTurn();
+
+    expect(enemy).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
+    expect(enemy).toHaveBattlerTag(BattlerTagType.INGRAIN);
+    expect(enemy).toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
+    expect(enemy).not.toHaveBattlerTag(BattlerTagType.FLOATING);
+    expect(enemy.isGrounded()).toBe(true);
+    expect(player).toHaveUsedMove({ move: MoveId.MUD_SHOT, result: MoveResult.SUCCESS });
   });
 
-  it("Ingrain will remove the floating effect of Telekinesis, but not the 100% hit", async () => {
-    game.override.enemyMoveset([MoveId.SPLASH, MoveId.INGRAIN]);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+  it("should fail if used against a Mega Gengar, and cannot be Baton Passed onto one", async () => {
+    game.override.starterForms({ [SpeciesId.GENGAR]: 1 });
+    await game.classicMode.startBattle([SpeciesId.GENGAR, SpeciesId.FEEBAS]);
 
-    const playerPokemon = game.field.getPlayerPokemon();
-    const enemyOpponent = game.field.getEnemyPokemon();
+    const [gengar, feebas] = game.scene.getPlayerParty();
 
-    game.move.select(MoveId.TELEKINESIS);
-    await game.move.selectEnemyMove(MoveId.SPLASH);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemyOpponent.getTag(BattlerTagType.TELEKINESIS)).toBeDefined();
-    expect(enemyOpponent.getTag(BattlerTagType.FLOATING)).toBeDefined();
-
+    game.move.use(MoveId.TELEPORT);
+    game.doSelectPartyPokemon(1);
+    await game.move.forceEnemyMove(MoveId.TELEKINESIS);
     await game.toNextTurn();
-    vi.spyOn(allMoves[MoveId.MUD_SHOT], "accuracy", "get").mockReturnValue(0);
-    game.move.select(MoveId.MUD_SHOT);
-    await game.move.selectEnemyMove(MoveId.INGRAIN);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(enemyOpponent.getTag(BattlerTagType.TELEKINESIS)).toBeDefined();
-    expect(enemyOpponent.getTag(BattlerTagType.INGRAIN)).toBeDefined();
-    expect(enemyOpponent.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
-    expect(enemyOpponent.getTag(BattlerTagType.FLOATING)).toBeUndefined();
-    expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-  });
 
-  it("should not be baton passed onto a mega gengar", async () => {
-    game.override
-      .moveset([MoveId.BATON_PASS])
-      .enemyMoveset([MoveId.TELEKINESIS])
-      .starterForms({ [SpeciesId.GENGAR]: 1 });
+    // Adding tags directly did not work
+    const enemy = game.field.getEnemyPokemon();
+    expect(enemy).toHaveUsedMove({ move: MoveId.TELEKINESIS, result: MoveResult.FAIL });
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.GENGAR]);
-    game.move.select(MoveId.BATON_PASS);
+    expect(gengar.isOnField()).toBe(false);
+
+    game.move.use(MoveId.BATON_PASS);
     game.doSelectPartyPokemon(1);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.phaseInterceptor.to("BerryPhase");
-    expect(game.field.getPlayerPokemon().getTag(BattlerTagType.TELEKINESIS)).toBeUndefined();
+    await game.phaseInterceptor.to("MoveEndPhase");
+
+    expect(feebas).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
+    expect(feebas).toHaveBattlerTag(BattlerTagType.FLOATING);
+
+    await game.toEndOfTurn();
+
+    // Should have not received tags
+    expect(gengar.isOnField()).toBe(true);
+    expect(gengar).not.toHaveBattlerTag(BattlerTagType.TELEKINESIS);
+    expect(gengar).not.toHaveBattlerTag(BattlerTagType.FLOATING);
   });
 });

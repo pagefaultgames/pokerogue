@@ -48,6 +48,7 @@ export enum BattlerTagType {
   ALWAYS_CRIT = "ALWAYS_CRIT",
   IGNORE_ACCURACY = "IGNORE_ACCURACY",
   BYPASS_SLEEP = "BYPASS_SLEEP",
+  // TODO: Rename this to "Smacked Down" or "Forcibly Grounded"
   IGNORE_FLYING = "IGNORE_FLYING",
   SALT_CURED = "SALT_CURED",
   CURSED = "CURSED",
