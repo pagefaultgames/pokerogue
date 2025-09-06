@@ -2,7 +2,7 @@ import { HeldItemEffect } from "#enums/held-item-effect";
 import type { HeldItemId } from "#enums/held-item-id";
 import type { SpeciesId } from "#enums/species-id";
 import { HeldItem } from "#items/held-item";
-import type { CritBoostParams } from "#items/held-item-parameter";
+import type { CritBoostParams } from "#types/held-item-parameter";
 
 /**
  * Modifier used for held items that apply critical-hit stage boost(s).

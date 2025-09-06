@@ -13,7 +13,7 @@ import {
   type HeldItemSaveData,
   type HeldItemSpecs,
   isHeldItemSpecs,
-} from "#items/held-item-data-types";
+} from "#types/held-item-data-types";
 
 export class HeldItemManager {
   // TODO: There should be a way of making these private...

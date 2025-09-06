@@ -1,7 +1,7 @@
 import { HeldItemEffect } from "#enums/held-item-effect";
 import type { HeldItemId } from "#enums/held-item-id";
 import { HeldItem } from "#items/held-item";
-import type { AccuracyBoostParams } from "#items/held-item-parameter";
+import type { AccuracyBoostParams } from "#types/held-item-parameter";
 
 /**
  * @sealed

@@ -2,8 +2,8 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItem } from "#items/held-item";
-import type { TurnEndHealParams } from "#items/held-item-parameter";
 import { PokemonHealPhase } from "#phases/pokemon-heal-phase";
+import type { TurnEndHealParams } from "#types/held-item-parameter";
 import { toDmgValue } from "#utils/common";
 import i18next from "i18next";
 

@@ -3,9 +3,9 @@ import { globalScene } from "#app/global-scene";
 import type { HeldItemEffect } from "#enums/held-item-effect";
 import { type HeldItemId, HeldItemNames } from "#enums/held-item-id";
 import type { Pokemon } from "#field/pokemon";
+import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
 import type { UniqueArray } from "#utils/common";
 import i18next from "i18next";
-import type { HeldItemEffectParamMap } from "./held-item-parameter";
 
 export abstract class HeldItemBase {
   public type: HeldItemId;

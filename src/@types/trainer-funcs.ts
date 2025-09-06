@@ -1,9 +1,9 @@
 import type { PartyMemberStrength } from "#enums/party-member-strength";
 import type { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon } from "#field/pokemon";
-import type { TrainerItemConfiguration } from "#items/trainer-item-data-types";
 import type { TrainerConfig } from "#trainers/trainer-config";
 import type { TrainerPartyTemplate } from "#trainers/trainer-party-template";
+import type { TrainerItemConfiguration } from "./trainer-item-data-types";
 
 export type PartyTemplateFunc = () => TrainerPartyTemplate;
 export type PartyMemberFunc = (level: number, strength: PartyMemberStrength) => EnemyPokemon;

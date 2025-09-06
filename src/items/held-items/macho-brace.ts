@@ -1,7 +1,7 @@
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { Stat } from "#enums/stat";
 import { HeldItem } from "#items/held-item";
-import type { StatBoostParams } from "#items/held-item-parameter";
+import type { StatBoostParams } from "#types/held-item-parameter";
 import i18next from "i18next";
 
 /**

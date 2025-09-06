@@ -11,7 +11,6 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokeballType } from "#enums/pokeball";
 import { Stat } from "#enums/stat";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
-import type { HeldItemSpecs } from "#items/held-item-data-types";
 import { getPartyBerries } from "#items/item-utility";
 import { PokemonMove } from "#moves/pokemon-move";
 import { queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
@@ -34,6 +33,7 @@ import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encou
 import { HeldItemRequirement, MoveRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { CHARMING_MOVES } from "#mystery-encounters/requirement-groups";
 import { PokemonData } from "#system/pokemon-data";
+import type { HeldItemSpecs } from "#types/held-item-data-types";
 import { isNullOrUndefined, pickWeightedIndex, randSeedInt } from "#utils/common";
 
 /** the i18n namespace for the encounter */

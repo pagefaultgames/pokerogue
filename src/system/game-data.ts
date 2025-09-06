@@ -36,7 +36,6 @@ import { Unlockables } from "#enums/unlockables";
 import { WeatherType } from "#enums/weather-type";
 import { TagAddedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#events/arena";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
-import type { TrainerItemConfiguration, TrainerItemSaveData } from "#items/trainer-item-data-types";
 import { MysteryEncounterSaveData } from "#mystery-encounters/mystery-encounter-save-data";
 import type { Variant } from "#sprites/variant";
 import { achvs } from "#system/achv";
@@ -59,6 +58,7 @@ import {
 import { VoucherType, vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { DexData, DexEntry } from "#types/dex-data";
+import type { TrainerItemConfiguration, TrainerItemSaveData } from "#types/trainer-item-data-types";
 import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { executeIf, fixedInt, isLocal, NumberHolder, randInt, randSeedItem } from "#utils/common";

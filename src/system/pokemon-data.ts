@@ -11,10 +11,10 @@ import type { PokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { EnemyPokemon, Pokemon } from "#field/pokemon";
-import type { HeldItemSaveData } from "#items/held-item-data-types";
 import { saveDataToConfig } from "#items/held-item-pool";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { Variant } from "#sprites/variant";
+import type { HeldItemSaveData } from "#types/held-item-data-types";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 export class PokemonData {

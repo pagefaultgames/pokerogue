@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItem } from "#items/held-item";
-import type { SurviveChanceParams } from "#items/held-item-parameter";
+import type { SurviveChanceParams } from "#types/held-item-parameter";
 import i18next from "i18next";
 
 /**

@@ -2,7 +2,7 @@ import { allMoves } from "#data/data-lists";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import type { Pokemon } from "#field/pokemon";
 import { HeldItem } from "#items/held-item";
-import type { HeldItemEffectParamMap, MultiHitCountParams, MultiHitDamageParams } from "#items/held-item-parameter";
+import type { HeldItemEffectParamMap, MultiHitCountParams, MultiHitDamageParams } from "#types/held-item-parameter";
 import type { NumberHolder } from "#utils/common";
 import i18next from "i18next";
 

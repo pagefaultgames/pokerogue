@@ -6,7 +6,7 @@ import {
   type TrainerItemDataMap,
   type TrainerItemSaveData,
   type TrainerItemSpecs,
-} from "#items/trainer-item-data-types";
+} from "#types/trainer-item-data-types";
 import { getTypedEntries, getTypedKeys } from "#utils/common";
 
 export class TrainerItemManager {

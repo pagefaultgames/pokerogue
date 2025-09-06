@@ -7,7 +7,7 @@ import { RarityTier } from "#enums/reward-tier";
 import { PERMANENT_STATS } from "#enums/stat";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { attackTypeToHeldItem } from "#items/attack-type-booster";
-import { permanentStatToHeldItem } from "#items/base-stat-booster";
+import { permanentStatToHeldItem } from "#items/base-stat-multiply";
 import { berryTypeToHeldItem } from "#items/berry";
 import {
   type HeldItemConfiguration,
@@ -19,7 +19,7 @@ import {
   isHeldItemCategoryEntry,
   isHeldItemPool,
   isHeldItemSpecs,
-} from "#items/held-item-data-types";
+} from "#types/held-item-data-types";
 import { coerceArray, isNullOrUndefined, pickWeightedIndex, randSeedInt } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 

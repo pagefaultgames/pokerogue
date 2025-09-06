@@ -7,13 +7,13 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { PokemonType } from "#enums/pokemon-type";
 import { RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
-import type { HeldItemConfiguration } from "#items/held-item-data-types";
 import type { EnemyPartyConfig, EnemyPokemonConfig } from "#mystery-encounters/encounter-phase-utils";
 import { initBattleWithEnemyConfig, leaveEncounterWithoutBattle } from "#mystery-encounters/encounter-phase-utils";
 import { getRandomPlayerPokemon, getRandomSpeciesByStarterCost } from "#mystery-encounters/encounter-pokemon-utils";
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
+import type { HeldItemConfiguration } from "#types/held-item-data-types";
 import { isNullOrUndefined, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 

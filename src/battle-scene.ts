@@ -79,19 +79,11 @@ import { PokemonSpriteSparkleHandler } from "#field/pokemon-sprite-sparkle-handl
 import { Trainer } from "#field/trainer";
 import { applyHeldItems } from "#items/all-held-items";
 import { applyTrainerItems } from "#items/all-trainer-items";
-import type { HeldItemConfiguration } from "#items/held-item-data-types";
 import { assignEnemyHeldItemsForWave, assignItemsFromConfiguration } from "#items/held-item-pool";
 import type { MatchExact, Reward } from "#items/reward";
-import type { EnemyAttackStatusEffectChanceTrainerItem } from "#items/trainer-item";
-import {
-  isTrainerItemPool,
-  isTrainerItemSpecs,
-  type TrainerItemConfiguration,
-  type TrainerItemSaveData,
-} from "#items/trainer-item-data-types";
 import { TrainerItemManager } from "#items/trainer-item-manager";
-import type { TrainerItemEffectParamMap } from "#items/trainer-item-parameter";
 import { getNewTrainerItemFromPool } from "#items/trainer-item-pool";
+import type { EnemyAttackStatusEffectChanceTrainerItem } from "#items/trainer-items/enemy-tokens";
 import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterSaveData } from "#mystery-encounters/mystery-encounter-save-data";
 import { allMysteryEncounters, mysteryEncountersByBiome } from "#mystery-encounters/mystery-encounters";
@@ -110,7 +102,15 @@ import type { TrainerData } from "#system/trainer-data";
 import type { Voucher } from "#system/voucher";
 import { vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-config";
+import type { HeldItemConfiguration } from "#types/held-item-data-types";
 import type { Localizable } from "#types/locales";
+import {
+  isTrainerItemPool,
+  isTrainerItemSpecs,
+  type TrainerItemConfiguration,
+  type TrainerItemSaveData,
+} from "#types/trainer-item-data-types";
+import type { TrainerItemEffectParamMap } from "#types/trainer-item-parameter";
 import { AbilityBar } from "#ui/ability-bar";
 import { ArenaFlyout } from "#ui/arena-flyout";
 import { CandyBar } from "#ui/candy-bar";

@@ -5,14 +5,6 @@ import type { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import {
   CriticalCatchChanceBoosterTrainerItem,
-  DoubleBattleChanceBoosterTrainerItem,
-  EnemyAttackStatusEffectChanceTrainerItem,
-  EnemyDamageBoosterTrainerItem,
-  EnemyDamageReducerTrainerItem,
-  EnemyEndureChanceTrainerItem,
-  EnemyFusionChanceTrainerItem,
-  EnemyStatusEffectHealChanceTrainerItem,
-  EnemyTurnHealTrainerItem,
   ExpBoosterTrainerItem,
   ExtraRewardTrainerItem,
   HealingBoosterTrainerItem,
@@ -22,14 +14,26 @@ import {
   MoneyMultiplierTrainerItem,
   PreserveBerryTrainerItem,
   ShinyRateBoosterTrainerItem,
+  TrainerItem,
+} from "#items/trainer-item";
+import type { TrainerItemEffectParamMap } from "#types/trainer-item-parameter";
+import type { TrainerItemManager } from "./trainer-item-manager";
+import {
+  EnemyAttackStatusEffectChanceTrainerItem,
+  EnemyDamageBoosterTrainerItem,
+  EnemyDamageReducerTrainerItem,
+  EnemyEndureChanceTrainerItem,
+  EnemyFusionChanceTrainerItem,
+  EnemyStatusEffectHealChanceTrainerItem,
+  EnemyTurnHealTrainerItem,
+} from "./trainer-items/enemy-tokens";
+import { DoubleBattleChanceBoosterTrainerItem } from "./trainer-items/lure";
+import {
   TempAccuracyBoosterTrainerItem,
   TempCritBoosterTrainerItem,
   TempStatStageBoosterTrainerItem,
-  TrainerItem,
   tempStatToTrainerItem,
-} from "#items/trainer-item";
-import type { TrainerItemManager } from "./trainer-item-manager";
-import type { TrainerItemEffectParamMap } from "./trainer-item-parameter";
+} from "./trainer-items/x-items";
 
 export function initTrainerItems() {
   allTrainerItems[TrainerItemId.MAP] = new TrainerItem(TrainerItemId.MAP, 1);

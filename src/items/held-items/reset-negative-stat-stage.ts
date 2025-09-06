@@ -3,7 +3,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { BATTLE_STATS } from "#enums/stat";
 import { ConsumableHeldItem } from "#items/held-item";
-import type { ResetNegativeStatStageParams } from "#items/held-item-parameter";
+import type { ResetNegativeStatStageParams } from "#types/held-item-parameter";
 import i18next from "i18next";
 
 /**

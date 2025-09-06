@@ -1,6 +1,6 @@
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItem } from "#items/held-item";
-import type { FriendshipBoostParams } from "#items/held-item-parameter";
+import type { FriendshipBoostParams } from "#types/held-item-parameter";
 import i18next from "i18next";
 
 export class FriendshipBoosterHeldItem extends HeldItem<[typeof HeldItemEffect.FRIENDSHIP_BOOSTER]> {

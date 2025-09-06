@@ -1,7 +1,7 @@
 import { HeldItemEffect } from "#enums/held-item-effect";
 import type { HeldItemId } from "#enums/held-item-id";
 import { HeldItem } from "#items/held-item";
-import type { ExpBoostParams } from "#items/held-item-parameter";
+import type { ExpBoostParams } from "#types/held-item-parameter";
 import i18next from "i18next";
 
 export class ExpBoosterHeldItem extends HeldItem<[typeof HeldItemEffect.EXP_BOOSTER]> {

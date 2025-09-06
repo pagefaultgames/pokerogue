@@ -21,10 +21,10 @@ import { TrainerType } from "#enums/trainer-type";
 import { Unlockables } from "#enums/unlockables";
 import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
-import { HeldItemConfiguration } from "#items/held-item-data-types";
-import { TrainerItemConfiguration } from "#items/trainer-item-data-types";
 import { Variant } from "#sprites/variant";
+import { HeldItemConfiguration } from "#types/held-item-data-types";
 import { RewardSpecs } from "#types/rewards";
+import { TrainerItemConfiguration } from "#types/trainer-item-data-types";
 
 /**
  * This comment block exists to prevent IDEs from automatically removing unused imports

@@ -3,7 +3,7 @@ import { allHeldItems, allTrainerItems } from "#data/data-lists";
 import { HeldItemCategoryId, type HeldItemId, isItemInCategory } from "#enums/held-item-id";
 import type { TrainerItemId } from "#enums/trainer-item-id";
 import type { Pokemon } from "#field/pokemon";
-import type { PokemonItemMap } from "./held-item-data-types";
+import type { PokemonItemMap } from "#types/held-item-data-types";
 
 export const trainerItemSortFunc = (a: TrainerItemId, b: TrainerItemId): number => {
   const itemNameMatch = allTrainerItems[a].name.localeCompare(allTrainerItems[b].name);

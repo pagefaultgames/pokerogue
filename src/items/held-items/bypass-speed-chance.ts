@@ -3,7 +3,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { Command } from "#enums/command";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItem } from "#items/held-item";
-import type { BypassSpeedChanceParams } from "#items/held-item-parameter";
+import type { BypassSpeedChanceParams } from "#types/held-item-parameter";
 import i18next from "i18next";
 
 /**

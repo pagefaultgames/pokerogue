@@ -19,7 +19,6 @@ import { StatusEffect } from "#enums/status-effect";
 import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { TrainerType } from "#enums/trainer-type";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
-import type { HeldItemConfiguration } from "#items/held-item-data-types";
 import { PokemonMove } from "#moves/pokemon-move";
 import { showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig, EnemyPokemonConfig } from "#mystery-encounters/encounter-phase-utils";
@@ -40,6 +39,7 @@ import { achvs } from "#system/achv";
 import { PokemonData } from "#system/pokemon-data";
 import { trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyTemplate } from "#trainers/trainer-party-template";
+import type { HeldItemConfiguration } from "#types/held-item-data-types";
 import { isNullOrUndefined, NumberHolder, randSeedInt, randSeedShuffle } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 

@@ -5,7 +5,7 @@ import type { SpeciesId } from "#enums/species-id";
 import type { Stat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
 import { HeldItem } from "#items/held-item";
-import type { StatBoostParams } from "#items/held-item-parameter";
+import type { StatBoostParams } from "#types/held-item-parameter";
 
 /**
  * Modifier used for held items that Applies {@linkcode Stat} boost(s)

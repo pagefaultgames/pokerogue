@@ -1,6 +1,6 @@
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItem } from "#items/held-item";
-import type { FieldEffectParams } from "#items/held-item-parameter";
+import type { FieldEffectParams } from "#types/held-item-parameter";
 
 /**
  * Modifier used for held items, namely Mystical Rock, that extend the

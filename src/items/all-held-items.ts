@@ -33,8 +33,8 @@ import { EvolutionStatBoostHeldItem, SpeciesStatBoostHeldItem } from "#items/sta
 import { SurviveChanceHeldItem } from "#items/survive-chance";
 import { TurnEndHealHeldItem } from "#items/turn-end-heal";
 import { TurnEndStatusHeldItem } from "#items/turn-end-status";
+import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
 import { getEnumValues } from "#utils/enums";
-import type { HeldItemEffectParamMap } from "./held-item-parameter";
 
 export function initHeldItems() {
   for (const berry of getEnumValues(BerryType)) {

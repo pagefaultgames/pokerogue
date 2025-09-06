@@ -3,7 +3,7 @@ import type { HeldItemId } from "#enums/held-item-id";
 import { Stat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
 import { HeldItem } from "#items/held-item";
-import type { BaseStatParams } from "#items/held-item-parameter";
+import type { BaseStatParams } from "#types/held-item-parameter";
 import i18next from "i18next";
 
 /**

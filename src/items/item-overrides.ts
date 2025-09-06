@@ -1,9 +1,9 @@
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import type { Pokemon } from "#field/pokemon";
-import type { HeldItemConfiguration } from "#items/held-item-data-types";
 import { assignItemsFromConfiguration } from "#items/held-item-pool";
-import type { TrainerItemConfiguration } from "#items/trainer-item-data-types";
+import type { HeldItemConfiguration } from "#types/held-item-data-types";
+import type { TrainerItemConfiguration } from "#types/trainer-item-data-types";
 
 /**
  * Uses either `MODIFIER_OVERRIDE` in overrides.ts to set {@linkcode PersistentModifier}s for either:

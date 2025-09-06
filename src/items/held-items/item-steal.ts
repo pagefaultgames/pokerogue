@@ -5,7 +5,7 @@ import { HeldItemEffect } from "#enums/held-item-effect";
 import type { HeldItemId } from "#enums/held-item-id";
 import { Pokemon } from "#field/pokemon";
 import { type EffectTuple, HeldItem } from "#items/held-item";
-import type { ItemStealParams } from "#items/held-item-parameter";
+import type { ItemStealParams } from "#types/held-item-parameter";
 import { coerceArray, randSeedFloat } from "#utils/common";
 import i18next from "i18next";
 

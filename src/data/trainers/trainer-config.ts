@@ -20,7 +20,6 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import type { EnemyPokemon } from "#field/pokemon";
-import type { HeldItemConfiguration } from "#items/held-item-data-types";
 import { PokemonMove } from "#moves/pokemon-move";
 import { getIsInitialized, initI18n } from "#plugins/i18n";
 import type { EvilTeam } from "#trainers/evil-admin-trainer-pools";
@@ -33,6 +32,7 @@ import {
   TrainerPartyTemplate,
   trainerPartyTemplates,
 } from "#trainers/trainer-party-template";
+import type { HeldItemConfiguration } from "#types/held-item-data-types";
 import type { SilentReward } from "#types/rewards";
 import type {
   GenAIFunc,

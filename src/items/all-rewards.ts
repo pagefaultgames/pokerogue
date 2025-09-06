@@ -3,40 +3,33 @@ import { RewardId } from "#enums/reward-id";
 import { RarityTier } from "#enums/reward-tier";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { VoucherType } from "#system/voucher";
+import { EmptyReward, type Reward, type RewardGenerator } from "./reward";
+import { EvolutionItemRewardGenerator } from "./rewards/evolution-item";
+import { FormChangeItemRewardGenerator } from "./rewards/form-change";
+import { FusePokemonReward } from "./rewards/fuse";
 import {
-  AddMoneyReward,
-  AddPokeballReward,
-  AddVoucherReward,
-  AllPokemonFullReviveReward,
-  AllPokemonLevelIncrementReward,
   AttackTypeBoosterRewardGenerator,
   BaseStatBoosterRewardGenerator,
   BerryRewardGenerator,
-  EvolutionItemRewardGenerator,
-  FormChangeItemRewardGenerator,
-  FusePokemonReward,
-  LapsingTrainerItemReward,
-  MintRewardGenerator,
-  NoneReward,
-  PokemonAllMovePpRestoreReward,
-  PokemonHpRestoreReward,
-  PokemonLevelIncrementReward,
-  PokemonPpRestoreReward,
-  PokemonPpUpReward,
-  PokemonReviveReward,
-  PokemonStatusHealReward,
-  RememberMoveReward,
-  type Reward,
-  type RewardGenerator,
-  SpeciesStatBoosterRewardGenerator,
-  TempStatStageBoosterRewardGenerator,
-  TeraTypeRewardGenerator,
-  TmRewardGenerator,
-} from "./reward";
+} from "./rewards/held-item-reward";
+import { AllPokemonLevelIncrementReward, PokemonLevelIncrementReward } from "./rewards/level-increment";
+import { AddMoneyReward } from "./rewards/money";
+import { MintRewardGenerator } from "./rewards/nature-change";
+import { AddPokeballReward } from "./rewards/pokeball";
+import { PokemonAllMovePpRestoreReward, PokemonPpRestoreReward } from "./rewards/pp-restore";
+import { PokemonPpUpReward } from "./rewards/pp-up";
+import { RememberMoveReward } from "./rewards/remember-move";
+import { AllPokemonFullReviveReward, PokemonHpRestoreReward, PokemonReviveReward } from "./rewards/restore";
+import { SpeciesStatBoosterRewardGenerator } from "./rewards/species-stat-booster";
+import { PokemonStatusHealReward } from "./rewards/status-heal";
+import { TeraTypeRewardGenerator } from "./rewards/tera-type";
+import { TmRewardGenerator } from "./rewards/tm";
+import { LapsingTrainerItemReward, TempStatStageBoosterRewardGenerator } from "./rewards/trainer-item-reward";
+import { AddVoucherReward } from "./rewards/voucher";
 
 // TODO: Move to `reward-utils.ts` and un-exportt
 export const allRewards = {
-  [RewardId.NONE]: new NoneReward(),
+  [RewardId.NONE]: new EmptyReward(),
 
   // Pokeball rewards
   [RewardId.POKEBALL]: new AddPokeballReward("pb", PokeballType.POKEBALL, 5, RewardId.POKEBALL),

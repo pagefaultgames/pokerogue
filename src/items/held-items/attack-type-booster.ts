@@ -2,7 +2,7 @@ import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId, HeldItemNames } from "#enums/held-item-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { HeldItem } from "#items/held-item";
-import type { AttackTypeBoostParams } from "#items/held-item-parameter";
+import type { AttackTypeBoostParams } from "#types/held-item-parameter";
 import i18next from "i18next";
 
 interface AttackTypeToHeldItemMap {

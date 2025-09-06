@@ -2,7 +2,7 @@ import { HeldItemEffect } from "#enums/held-item-effect";
 import type { HeldItemId } from "#enums/held-item-id";
 import type { StatusEffect } from "#enums/status-effect";
 import { HeldItem } from "#items/held-item";
-import type { TurnEndStatusParams } from "#items/held-item-parameter";
+import type { TurnEndStatusParams } from "#types/held-item-parameter";
 
 /**
  * Modifier used for held items, namely Toxic Orb and Flame Orb, that apply a
