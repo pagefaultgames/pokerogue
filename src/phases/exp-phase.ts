@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { TrainerItemEffect } from "#items/trainer-item";
+import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { PlayerPartyMemberPokemonPhase } from "#phases/player-party-member-pokemon-phase";
 import { NumberHolder } from "#utils/common";
 import i18next from "i18next";

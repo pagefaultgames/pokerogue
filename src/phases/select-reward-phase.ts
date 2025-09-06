@@ -3,6 +3,7 @@ import Overrides from "#app/overrides";
 import type { MoveId } from "#enums/move-id";
 import { RewardPoolType } from "#enums/reward-pool-type";
 import type { RarityTier } from "#enums/reward-tier";
+import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { UiMode } from "#enums/ui-mode";
 import type {
   PokemonMoveRecallRewardParams,
@@ -19,7 +20,6 @@ import {
   getRewardPoolForType,
 } from "#items/reward-pool-utils";
 import { getPlayerShopRewardOptionsForWave, isMoveReward, isRememberMoveReward, isTmReward } from "#items/reward-utils";
-import { TrainerItemEffect } from "#items/trainer-item";
 import { BattlePhase } from "#phases/battle-phase";
 import { PartyOption, PartyUiHandler, PartyUiMode, type PokemonMoveSelectFilter } from "#ui/party-ui-handler";
 import { type RewardSelectUiHandler, SHOP_OPTIONS_ROW_LIMIT } from "#ui/reward-select-ui-handler";

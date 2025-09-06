@@ -1,6 +1,7 @@
 import { allTrainerItems } from "#data/data-lists";
 import { Stat, type TempBattleStat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
+import type { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import {
   CriticalCatchChanceBoosterTrainerItem,
@@ -27,6 +28,8 @@ import {
   TrainerItem,
   tempStatToTrainerItem,
 } from "#items/trainer-item";
+import type { TrainerItemManager } from "./trainer-item-manager";
+import type { TrainerItemEffectParamMap } from "./trainer-item-parameter";
 
 export function initTrainerItems() {
   allTrainerItems[TrainerItemId.MAP] = new TrainerItem(TrainerItemId.MAP, 1);
@@ -111,4 +114,18 @@ export function initTrainerItems() {
     TrainerItemId.ENEMY_FUSED_CHANCE,
     10,
   );
+}
+
+export function applyTrainerItems<T extends TrainerItemEffect>(
+  effect: T,
+  manager: TrainerItemManager,
+  params: TrainerItemEffectParamMap[T],
+) {
+  if (manager) {
+    for (const item of Object.keys(manager.trainerItems)) {
+      if (allTrainerItems[item].effects.includes(effect)) {
+        allTrainerItems[item].apply(manager, params);
+      }
+    }
+  }
 }

@@ -1,14 +1,25 @@
-import { allTrainerItems } from "#data/data-lists";
-import {
-  type BooleanHolderParams,
-  type NumberHolderParams,
-  type PokemonParams,
-  type PreserveBerryParams,
-  TrainerItemEffect,
-} from "#items/trainer-item";
-import type { TrainerItemManager } from "#items/trainer-item-manager";
+import { TrainerItemEffect } from "#enums/trainer-item-effect";
+import type { Pokemon } from "#field/pokemon";
+import type { BooleanHolder, NumberHolder } from "#utils/common";
 
-export type ApplyTrainerItemsParams = {
+export interface NumberHolderParams {
+  numberHolder: NumberHolder;
+}
+
+export interface BooleanHolderParams {
+  booleanHolder: BooleanHolder;
+}
+
+export interface PokemonParams {
+  pokemon: Pokemon;
+}
+
+export interface PreserveBerryParams {
+  pokemon: Pokemon;
+  doPreserve: BooleanHolder;
+}
+
+export type TrainerItemEffectParamMap = {
   [TrainerItemEffect.LEVEL_INCREMENT_BOOSTER]: NumberHolderParams;
   [TrainerItemEffect.PRESERVE_BERRY]: PreserveBerryParams;
   [TrainerItemEffect.HEALING_BOOSTER]: NumberHolderParams;
@@ -31,17 +42,3 @@ export type ApplyTrainerItemsParams = {
   [TrainerItemEffect.ENEMY_ENDURE_CHANCE]: PokemonParams;
   [TrainerItemEffect.ENEMY_FUSED_CHANCE]: BooleanHolderParams;
 };
-
-export function applyTrainerItems<T extends TrainerItemEffect>(
-  effect: T,
-  manager: TrainerItemManager,
-  params: ApplyTrainerItemsParams[T],
-) {
-  if (manager) {
-    for (const item of Object.keys(manager.trainerItems)) {
-      if (allTrainerItems[item].effects.includes(effect)) {
-        allTrainerItems[item].apply(manager, params);
-      }
-    }
-  }
-}

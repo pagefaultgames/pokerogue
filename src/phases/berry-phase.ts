@@ -35,7 +35,10 @@ export class BerryPhase extends FieldPhase {
    */
   eatBerries(pokemon: Pokemon): void {
     const hasUsableBerry = pokemon.getHeldItems().some(m => {
-      return isItemInCategory(m, HeldItemCategoryId.BERRY) && (allHeldItems[m] as BerryHeldItem).shouldApply(pokemon);
+      return (
+        isItemInCategory(m, HeldItemCategoryId.BERRY) &&
+        (allHeldItems[m] as BerryHeldItem).shouldApply(HeldItemEffect.BERRY, { pokemon: pokemon })
+      );
     });
 
     if (!hasUsableBerry) {

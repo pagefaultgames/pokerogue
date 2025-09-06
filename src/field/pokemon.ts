@@ -106,6 +106,7 @@ import {
 } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { SwitchType } from "#enums/switch-type";
+import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import type { TrainerSlot } from "#enums/trainer-slot";
 import { UiMode } from "#enums/ui-mode";
 import { WeatherType } from "#enums/weather-type";
@@ -114,7 +115,6 @@ import { applyHeldItems } from "#items/all-held-items";
 import type { HeldItemConfiguration } from "#items/held-item-data-types";
 import { HeldItemManager } from "#items/held-item-manager";
 import { assignItemsFromConfiguration } from "#items/held-item-pool";
-import { TrainerItemEffect } from "#items/trainer-item";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import type { Move } from "#moves/move";
 import { getMoveTargets } from "#moves/move-utils";

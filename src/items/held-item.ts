@@ -174,5 +174,6 @@ export abstract class ConsumableHeldItem<T extends EffectTuple> extends HeldItem
 }
 
 /** Abstract class for all items that are purely cosmetic.
- * Currently coincides with the {@linkcode HeldItemBase} class. */
+ * Currently coincides with the {@linkcode HeldItemBase} class.
+ * Might become concrete later on if we want cosmetic items without a subclass. */
 export abstract class CosmeticHeldItem extends HeldItemBase {}

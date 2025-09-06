@@ -3,10 +3,10 @@ import { getBerryEffectDescription, getBerryEffectFunc, getBerryName, getBerryPr
 import { BerryType } from "#enums/berry-type";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId } from "#enums/held-item-id";
+import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { BerryUsedEvent } from "#events/battle-scene";
 import { ConsumableHeldItem } from "#items/held-item";
 import type { BerryParams } from "#items/held-item-parameter";
-import { TrainerItemEffect } from "#items/trainer-item";
 import type { ObjectValues } from "#types/type-helpers";
 import { BooleanHolder } from "#utils/common";
 

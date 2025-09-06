@@ -15,6 +15,7 @@ import type { PokeballType } from "#enums/pokeball";
 import { RewardPoolType } from "#enums/reward-pool-type";
 import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
+import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { doShinySparkleAnim } from "#field/anims";
@@ -24,7 +25,6 @@ import { getHeldItemTier } from "#items/held-item-default-tiers";
 import type { RewardOption } from "#items/reward";
 import { generatePlayerRewardOptions, generateRewardPoolWeights, getRewardPoolForType } from "#items/reward-pool-utils";
 import { isTmReward } from "#items/reward-utils";
-import { TrainerItemEffect } from "#items/trainer-item";
 import { PokemonMove } from "#moves/pokemon-move";
 import { getEncounterText, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import {

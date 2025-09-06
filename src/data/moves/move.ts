@@ -71,7 +71,6 @@ import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import { applyHeldItems } from "#items/all-held-items";
 import { BerryHeldItem, berryTypeToHeldItem } from "#items/berry";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import { TrainerItemEffect } from "#items/trainer-item";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSketchMoves, invalidSleepTalkMoves } from "#moves/invalid-moves";
 import { frenzyMissFunc, getMoveTargets } from "#moves/move-utils";
@@ -90,6 +89,7 @@ import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import { applyChallenges } from "#utils/challenge-utils";
 import type { AbstractConstructor } from "#types/type-helpers";
+import { TrainerItemEffect } from "#enums/trainer-item-effect";
 
 /**
  * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.

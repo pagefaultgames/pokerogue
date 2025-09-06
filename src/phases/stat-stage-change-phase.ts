@@ -233,7 +233,7 @@ export class StatStageChangePhase extends PokemonPhase {
       );
       if (!existingPhase?.is("StatStageChangePhase")) {
         // Apply White Herb if needed
-        applyHeldItems(HeldItemEffect.RESET_NEGATIVE_STAT_STAGE, { pokemon: pokemon, isPlayer: this.player });
+        applyHeldItems(HeldItemEffect.RESET_NEGATIVE_STAT_STAGE, { pokemon: pokemon });
       }
 
       pokemon.updateInfo();

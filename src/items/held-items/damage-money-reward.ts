@@ -1,8 +1,8 @@
 import { globalScene } from "#app/global-scene";
 import { HeldItemEffect } from "#enums/held-item-effect";
+import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { HeldItem } from "#items/held-item";
 import type { DamageMoneyRewardParams } from "#items/held-item-parameter";
-import { TrainerItemEffect } from "#items/trainer-item";
 import { NumberHolder } from "#utils/common";
 
 export class DamageMoneyRewardHeldItem extends HeldItem<[typeof HeldItemEffect.DAMAGE_MONEY_REWARD]> {

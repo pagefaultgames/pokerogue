@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { ArenaTagType } from "#enums/arena-tag-type";
-import { TrainerItemEffect } from "#items/trainer-item";
+import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { BattlePhase } from "#phases/battle-phase";
 import { NumberHolder } from "#utils/common";
 import i18next from "i18next";

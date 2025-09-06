@@ -25,6 +25,7 @@ import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import type { PermanentStat, TempBattleStat } from "#enums/stat";
 import { Stat, TEMP_BATTLE_STATS } from "#enums/stat";
+import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { attackTypeToHeldItem } from "#items/attack-type-booster";
@@ -32,7 +33,7 @@ import { permanentStatToHeldItem, statBoostItems } from "#items/base-stat-booste
 import { berryTypeToHeldItem } from "#items/berry";
 import { getNewAttackTypeBoosterHeldItem, getNewBerryHeldItem, getNewVitaminHeldItem } from "#items/held-item-pool";
 import type { SpeciesStatBoosterItemId, SpeciesStatBoostHeldItem } from "#items/stat-booster";
-import { TrainerItemEffect, tempStatToTrainerItem } from "#items/trainer-item";
+import { tempStatToTrainerItem } from "#items/trainer-item";
 import type { PokemonMove } from "#moves/pokemon-move";
 import { getVoucherTypeIcon, getVoucherTypeName, type VoucherType } from "#system/voucher";
 import type { Exact } from "#types/type-helpers";

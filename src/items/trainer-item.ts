@@ -5,53 +5,18 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { getStatKey, Stat, type TempBattleStat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TextStyle } from "#enums/text-style";
+import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { TrainerItemId, TrainerItemNames } from "#enums/trainer-item-id";
-import type { Pokemon } from "#field/pokemon";
 import type { TrainerItemManager } from "#items/trainer-item-manager";
 import { addTextObject } from "#ui/text";
-import { type BooleanHolder, hslToHex, type NumberHolder, randSeedFloat, toDmgValue } from "#utils/common";
+import { hslToHex, randSeedFloat, toDmgValue } from "#utils/common";
 import i18next from "i18next";
-
-export const TrainerItemEffect = {
-  LEVEL_INCREMENT_BOOSTER: 1,
-  PRESERVE_BERRY: 2,
-  HEALING_BOOSTER: 3,
-  EXP_BOOSTER: 4,
-  MONEY_MULTIPLIER: 5,
-  HIDDEN_ABILITY_CHANCE_BOOSTER: 6,
-  SHINY_RATE_BOOSTER: 7,
-  CRITICAL_CATCH_CHANCE_BOOSTER: 8,
-  EXTRA_REWARD: 9,
-
-  HEAL_SHOP_COST: 10,
-  DOUBLE_BATTLE_CHANCE_BOOSTER: 11,
-
-  TEMP_STAT_STAGE_BOOSTER: 12,
-  TEMP_ACCURACY_BOOSTER: 13,
-  TEMP_CRIT_BOOSTER: 14,
-
-  ENEMY_DAMAGE_BOOSTER: 15,
-  ENEMY_DAMAGE_REDUCER: 16,
-  ENEMY_HEAL: 17,
-  ENEMY_ATTACK_STATUS_CHANCE: 18,
-  ENEMY_STATUS_HEAL_CHANCE: 19,
-  ENEMY_ENDURE_CHANCE: 20,
-  ENEMY_FUSED_CHANCE: 21,
-} as const;
-
-export type TrainerItemEffect = (typeof TrainerItemEffect)[keyof typeof TrainerItemEffect];
-
-export interface NumberHolderParams {
-  numberHolder: NumberHolder;
-}
-
-export interface BooleanHolderParams {
-  booleanHolder: BooleanHolder;
-}
-
-export interface PokemonParams {
-  pokemon: Pokemon;
-}
+import type {
+  BooleanHolderParams,
+  NumberHolderParams,
+  PokemonParams,
+  PreserveBerryParams,
+} from "./trainer-item-parameter";
 
 export class TrainerItem {
   //  public pokemonId: number;
@@ -130,11 +95,6 @@ export class LevelIncrementBoosterTrainerItem extends TrainerItem {
 }
 
 // Berry Pouch
-export interface PreserveBerryParams {
-  pokemon: Pokemon;
-  doPreserve: BooleanHolder;
-}
-
 export class PreserveBerryTrainerItem extends TrainerItem {
   public effects: TrainerItemEffect[] = [TrainerItemEffect.PRESERVE_BERRY];
 
@@ -491,7 +451,7 @@ export class EnemyAttackStatusEffectChanceTrainerItem extends TrainerItem {
     const chance = this.getChance();
 
     if (randSeedFloat() <= chance * stack) {
-      return enemyPokemon.trySetStatus(this.effect, true);
+      return enemyPokemon.trySetStatus(this.effect);
     }
 
     return false;

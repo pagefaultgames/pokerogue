@@ -4,11 +4,11 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { TerrainType } from "#data/terrain";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { HeldItemEffect } from "#enums/held-item-effect";
+import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { WeatherType } from "#enums/weather-type";
 import { TurnEndEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
 import { applyHeldItems } from "#items/all-held-items";
-import { TrainerItemEffect } from "#items/trainer-item";
 import { FieldPhase } from "#phases/field-phase";
 import i18next from "i18next";
 

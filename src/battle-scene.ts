@@ -64,6 +64,7 @@ import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { TextStyle } from "#enums/text-style";
+import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import type { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
@@ -77,11 +78,11 @@ import { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
 import { PokemonSpriteSparkleHandler } from "#field/pokemon-sprite-sparkle-handler";
 import { Trainer } from "#field/trainer";
 import { applyHeldItems } from "#items/all-held-items";
-import { type ApplyTrainerItemsParams, applyTrainerItems } from "#items/apply-trainer-items";
+import { applyTrainerItems } from "#items/all-trainer-items";
 import type { HeldItemConfiguration } from "#items/held-item-data-types";
 import { assignEnemyHeldItemsForWave, assignItemsFromConfiguration } from "#items/held-item-pool";
 import type { MatchExact, Reward } from "#items/reward";
-import { type EnemyAttackStatusEffectChanceTrainerItem, TrainerItemEffect } from "#items/trainer-item";
+import type { EnemyAttackStatusEffectChanceTrainerItem } from "#items/trainer-item";
 import {
   isTrainerItemPool,
   isTrainerItemSpecs,
@@ -89,6 +90,7 @@ import {
   type TrainerItemSaveData,
 } from "#items/trainer-item-data-types";
 import { TrainerItemManager } from "#items/trainer-item-manager";
+import type { TrainerItemEffectParamMap } from "#items/trainer-item-parameter";
 import { getNewTrainerItemFromPool } from "#items/trainer-item-pool";
 import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterSaveData } from "#mystery-encounters/mystery-encounter-save-data";
@@ -2608,7 +2610,7 @@ export class BattleScene extends SceneBase {
     return Math.floor(moneyValue / 10) * 10;
   }
 
-  applyPlayerItems<T extends TrainerItemEffect>(effect: T, params: ApplyTrainerItemsParams[T]) {
+  applyPlayerItems<T extends TrainerItemEffect>(effect: T, params: TrainerItemEffectParamMap[T]) {
     applyTrainerItems(effect, this.trainerItems, params);
   }
 
