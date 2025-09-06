@@ -48,7 +48,7 @@ export type InferKeys<O extends object, V> = V extends ObjectValues<O>
   : never;
 
 /**
- * Utility type to obtain the values of a given object. \
+ * Utility type to obtain a union of the values of a given object. \
  * Functions similar to `keyof E`, except producing the values instead of the keys.
  * @typeParam E - The type of the object
  * @remarks

@@ -188,7 +188,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
           // Return the options for nature selection
           return getEnumValues(Nature).map((nature: Nature) => {
             const option: OptionSelectItem = {
-              label: getNatureName(nature, true, true, true, globalScene.uiTheme),
+              label: getNatureName(nature, true, true, true),
               handler: () => {
                 // Pokemon and second option selected
                 encounter.setDialogueToken("nature", getNatureName(nature));
