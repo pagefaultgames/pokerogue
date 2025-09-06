@@ -93,6 +93,7 @@ import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import { applyChallenges } from "#utils/challenge-utils";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
+import type { AbstractConstructor } from "#types/type-helpers";
 
 /**
  * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.
@@ -1059,16 +1060,11 @@ export class SelfStatusMove extends Move {
   }
 }
 
-// TODO: Figure out how to improve the signature of this so that
-// the `ChargeMove` function knows that the argument `Base` is a specific subclass of move that cannot
-// be abstract.
-// Right now, I only know how to do this by using the type conjunction (the & operators)
-type SubMove = new (...args: any[]) => Move & {
-  is<K extends keyof MoveClassMap>(moveKind: K): this is MoveClassMap[K];
-};
+type SubMove = AbstractConstructor<Move>
 
 function ChargeMove<TBase extends SubMove>(Base: TBase, nameAppend: string) {
-  return class extends Base {
+  // NB: This cannot be made into a oneline return
+  abstract class Charging extends Base {
     /** The animation to play during the move's charging phase */
     public readonly chargeAnim: ChargeAnim = ChargeAnim[`${MoveId[this.id]}_CHARGING`];
     /** The message to show during the move's charging phase */
@@ -1145,6 +1141,7 @@ function ChargeMove<TBase extends SubMove>(Base: TBase, nameAppend: string) {
       return this;
     }
   };
+  return Charging;
 }
 
 export class ChargingAttackMove extends ChargeMove(AttackMove, "ChargingAttackMove") {}
@@ -6829,12 +6826,15 @@ export class CopyBiomeTypeAttr extends MoveEffectAttr {
   }
 }
 
+/** 
+ * Attribute to override the target's current types to the given type.
+ * Used by {@linkcode MoveId.SOAK} and {@linkcode MoveId.MAGIC_POWDER}.
+ */
 export class ChangeTypeAttr extends MoveEffectAttr {
   private type: PokemonType;
 
   constructor(type: PokemonType) {
     super(false);
-
     this.type = type;
   }
 
@@ -6842,7 +6842,7 @@ export class ChangeTypeAttr extends MoveEffectAttr {
     target.summonData.types = [ this.type ];
     target.updateInfo();
 
-    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:transformedIntoType", { pokemonName: getPokemonNameWithAffix(target), typeName: i18next.t(`pokemonInfo:Type.${PokemonType[this.type]}`) }));
+    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:transformedIntoType", { pokemonName: getPokemonNameWithAffix(target), typeName: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.type])}`) }));
 
     return true;
   }
@@ -8837,7 +8837,9 @@ export function initMoves() {
       .attr(AddArenaTagAttr, ArenaTagType.REFLECT, 5, true)
       .target(MoveTarget.USER_SIDE),
     new SelfStatusMove(MoveId.FOCUS_ENERGY, PokemonType.NORMAL, -1, 30, -1, 0, 1)
-      .attr(AddBattlerTagAttr, BattlerTagType.CRIT_BOOST, true, true),
+      .attr(AddBattlerTagAttr, BattlerTagType.CRIT_BOOST, true, true)
+      // TODO: Remove once dragon cheer & focus energy are merged into 1 tag
+      .condition((_user, target) => !target.getTag(BattlerTagType.DRAGON_CHEER)),
     new AttackMove(MoveId.BIDE, PokemonType.NORMAL, MoveCategory.PHYSICAL, -1, -1, 10, -1, 1, 1)
       .target(MoveTarget.USER)
       .unimplemented(),
@@ -9364,7 +9366,9 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.HELPING_HAND)
       .ignoresSubstitute()
       .target(MoveTarget.NEAR_ALLY)
-      .condition(failIfSingleBattle),
+      .condition(failIfSingleBattle)
+      // should stack multiplicatively if used multiple times in 1 turn
+      .edgeCase(),
     new StatusMove(MoveId.TRICK, PokemonType.PSYCHIC, 100, 10, -1, 0, 3)
       .unimplemented(),
     new StatusMove(MoveId.ROLE_PLAY, PokemonType.PSYCHIC, -1, 10, -1, 0, 3)
@@ -11533,6 +11537,8 @@ export function initMoves() {
       .attr(OpponentHighHpPowerAttr, 100),
     new StatusMove(MoveId.DRAGON_CHEER, PokemonType.DRAGON, -1, 15, -1, 0, 9)
       .attr(AddBattlerTagAttr, BattlerTagType.DRAGON_CHEER, false, true)
+      // TODO: Remove once dragon cheer & focus energy are merged into 1 tag
+      .condition((_user, target) => !target.getTag(BattlerTagType.CRIT_BOOST))
       .target(MoveTarget.NEAR_ALLY),
     new AttackMove(MoveId.ALLURING_VOICE, PokemonType.FAIRY, MoveCategory.SPECIAL, 80, 100, 10, 100, 0, 9)
       .attr(AddBattlerTagIfBoostedAttr, BattlerTagType.CONFUSED)

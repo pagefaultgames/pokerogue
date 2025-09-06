@@ -241,7 +241,7 @@ export class PhaseManager {
   public dynamicQueueManager = new DynamicQueueManager();
 
   /** The currently-running phase */
-  private currentPhase: Phase | null = null;
+  private currentPhase: Phase;
   /** The phase put on standby if {@linkcode overridePhase} is called */
   private standbyPhase: Phase | null = null;
 
@@ -261,7 +261,9 @@ export class PhaseManager {
   }
 
   /* Phase Functions */
-  getCurrentPhase(): Phase | null {
+
+  /** @returns The currently running {@linkcode Phase}. */
+  getCurrentPhase(): Phase {
     return this.currentPhase;
   }
 
@@ -327,20 +329,20 @@ export class PhaseManager {
       return;
     }
 
-    this.currentPhase = this.phaseQueue.getNextPhase() ?? null;
+    let nextPhase = this.phaseQueue.getNextPhase() ?? null;
 
-    if (this.currentPhase?.is("DynamicPhaseMarker")) {
-      this.currentPhase = this.dynamicQueueManager.popNextPhase(this.currentPhase.phaseType) ?? null;
+    if (nextPhase?.is("DynamicPhaseMarker")) {
+      nextPhase = this.dynamicQueueManager.popNextPhase(nextPhase.phaseType) ?? null;
     }
 
-    if (this.currentPhase === null) {
+    if (nextPhase === null) {
       this.turnStart();
     }
 
-    if (this.currentPhase) {
-      console.log(`%cStart Phase ${this.currentPhase.constructor.name}`, "color:green;");
-      this.currentPhase.start();
-    }
+    this.currentPhase = nextPhase!;
+
+    console.log(`%cStart Phase ${this.currentPhase.constructor.name}`, "color:green;");
+    this.currentPhase.start();
   }
 
   /**
@@ -357,8 +359,7 @@ export class PhaseManager {
 
     this.standbyPhase = this.currentPhase;
     this.currentPhase = phase;
-    console.log(`%cStart Phase ${phase.constructor.name}`, "color:green;");
-    phase.start();
+    this.startCurrentPhase();
 
     return true;
   }

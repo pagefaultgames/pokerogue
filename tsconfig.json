@@ -59,5 +59,12 @@
     "outDir": "./build",
     "noEmit": true
   },
-  "exclude": ["node_modules", "dist", "vite.config.ts", "vitest.config.ts", "vitest.workspace.ts"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "vite.config.ts",
+    "vitest.config.ts",
+    "vitest.workspace.ts",
+    "public/service-worker.js"
+  ]
 }

@@ -13,7 +13,7 @@ import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import type { PokemonMove } from "#moves/pokemon-move";
 import type { CommandPhase } from "#phases/command-phase";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
-import { addTextObject } from "#ui/text";
+import { addTextObject, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { fixedInt, getLocalizedSpriteKey, padInt } from "#utils/common";
 import i18next from "i18next";
@@ -284,7 +284,7 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
     const ppColorStyle = FightUiHandler.ppRatioToColor(pp / maxPP);
 
     // Changes the text color and shadow according to the determined TextStyle
-    this.ppText.setColor(this.getTextColor(ppColorStyle, false)).setShadowColor(this.getTextColor(ppColorStyle, true));
+    this.ppText.setColor(getTextColor(ppColorStyle, false)).setShadowColor(getTextColor(ppColorStyle, true));
     this.moveInfoOverlay.show(pokemonMove.getMove());
 
     pokemon.getOpponents().forEach(opponent => {
