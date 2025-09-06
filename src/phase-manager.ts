@@ -340,8 +340,13 @@ export class PhaseManager {
     }
 
     this.currentPhase = nextPhase!;
-
-    console.log(`%cStart Phase ${this.currentPhase.constructor.name}`, "color:green;");
+    this.startCurrentPhase();
+  }
+  /**
+   * Helper method to start and log the current phase.
+   */
+  private startCurrentPhase(): void {
+    console.log(`%cStart Phase ${this.currentPhase.phaseName}`, "color:green;");
     this.currentPhase.start();
   }
 
