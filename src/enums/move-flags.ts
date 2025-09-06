@@ -49,6 +49,6 @@ export enum MoveFlags {
   IGNORE_SUBSTITUTE = 1 << 17,
   /** Indicates a move is able to be reflected by {@linkcode AbilityId.MAGIC_BOUNCE} and {@linkcode MoveId.MAGIC_COAT} */
   REFLECTABLE = 1 << 18,
-  /** Indicates a move that fails when {@link https://bulbapedia.bulbagarden.net/wiki/Gravity_(move) | Gravity} is in effect */
+  /** Indicates a move should fail when {@link https://bulbapedia.bulbagarden.net/wiki/Gravity_(move) | Gravity} is in effect */
   GRAVITY = 1 << 19,
 }
