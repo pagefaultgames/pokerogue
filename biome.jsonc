@@ -19,12 +19,12 @@
     // and having to verify whether each individual file is ignored
     "includes": [
       "**",
-      "!**/dist/**",
-      "!**/coverage/**",
-      "!**/public/**",
-      "!**/.github/**",
-      "!**/node_modules/**",
-      "!**/typedoc/**",
+      "!**/dist",
+      "!**/coverage",
+      "!**/public",
+      "!**/.github",
+      "!**/node_modules",
+      "!**/typedoc",
       // TODO: lint css and html?
       "!**/*.css",
       "!**/*.html",
@@ -163,8 +163,6 @@
         "useNumericSeparators": "off" // TODO: Consider enabling?
       },
       "suspicious": {
-        // TODO: Remove line once Biome's folder ignores are fixed to actually work without trailing globstars
-        "useBiomeIgnoreFolder": "off",
         "useErrorMessage": "error",
         "noEvolvingTypes": "warn", // TODO: Review and enable ASAP - this is VERY VERY BAD
         "useNumberToFixedDigitsArgument": "error",
