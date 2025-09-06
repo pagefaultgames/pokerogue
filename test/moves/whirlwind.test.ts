@@ -10,6 +10,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { TrainerType } from "#enums/trainer-type";
+import { TrainerVariant } from "#enums/trainer-variant";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -193,7 +194,7 @@ describe("Moves - Whirlwind", () => {
       .battleType(BattleType.TRAINER)
       .randomTrainer({
         trainerType: TrainerType.BREEDER,
-        alwaysDouble: true,
+        trainerVariant: TrainerVariant.DOUBLE,
       })
       .enemyMoveset([MoveId.SPLASH, MoveId.LUNAR_DANCE])
       .moveset([MoveId.WHIRLWIND, MoveId.SPLASH]);
