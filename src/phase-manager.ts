@@ -223,9 +223,9 @@ export type PhaseConstructorMap = typeof PHASES;
 /** Phases pushed at the end of each {@linkcode TurnStartPhase} */
 const turnEndPhases: PhaseString[] = [
   "WeatherEffectPhase",
+  "PositionalTagPhase",
   "BerryPhase",
   "CheckStatusEffectPhase",
-  "PositionalTagPhase",
   "TurnEndPhase",
 ];
 
