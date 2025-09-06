@@ -29,6 +29,7 @@ import type { TurnMove } from "#types/turn-move";
 import type { AtLeastOne } from "#types/type-helpers";
 import type { toDmgValue } from "utils/common";
 import type { expect } from "vitest";
+import { expectedHeldItemType } from "#test/test-utils/matchers/to-have-held-item";
 import { toHaveBattlerTagOptions } from "#test/test-utils/matchers/to-have-battler-tag";
 
 declare module "vitest" {
@@ -186,6 +187,14 @@ declare module "vitest" {
      * or does not contain exactly one copy of `moveId`, this will fail the test.
      */
     toHaveUsedPP(moveId: MoveId, ppUsed: number | "all"): void;
+
+    /**
+     * Check whether a {@linkcode Pokemon} has a given held item.
+     * @param received - The object to check. Should be a {@linkcode Pokemon}.
+     * @param expectedItem - A {@linkcode HeldItemId} or {@linkcode HeldItemCategoryId} to check, or a partially filled
+     * {@linkcode HeldItemSpecs} containing the desired values
+     */
+    toHaveHeldItem(expected: expectedHeldItemType): void;
 
     // #endregion Pokemon Matchers
   }

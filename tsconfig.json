@@ -30,7 +30,7 @@
       "#events/*": ["./events/*.ts"],
       "#field/*": ["./field/*.ts"],
       "#inputs/*": ["./configs/inputs/*.ts"],
-      "#modifiers/*": ["./modifier/*.ts"],
+      "#items/*": ["./items/held-items/*.ts", "./items/*.ts"],
       "#moves/*": ["./data/moves/*.ts"],
       "#mystery-encounters/*": [
         "./data/mystery-encounters/utils/*.ts",
@@ -54,6 +54,7 @@
       "#utils/*": ["./utils/*.ts"],
       "#data/*": ["./data/pokemon-forms/*.ts", "./data/pokemon/*.ts", "./data/*.ts"],
       "#test/*": ["../test/*.ts"],
+      "#test/test-utils/*": ["../test/test-utils/utils/*.ts", "../test/test-utils/*.ts"],
       "#app/*": ["*.ts"]
     },
     "outDir": "./build",

@@ -5,7 +5,6 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BiomePoolTier, biomeLinks } from "#balance/biomes";
 import { initMoveAnim, loadMoveAnimAssets } from "#data/battle-anims";
-import { modifierTypes } from "#data/data-lists";
 import type { IEggOptions } from "#data/egg";
 import { Egg } from "#data/egg";
 import type { Gender } from "#data/gender";
@@ -14,11 +13,9 @@ import type { CustomPokemonData } from "#data/pokemon-data";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { Status } from "#data/status-effect";
 import type { AiType } from "#enums/ai-type";
-import { BattleType } from "#enums/battle-type";
 import type { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
 import { FieldPosition } from "#enums/field-position";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
 import type { MoveId } from "#enums/move-id";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import type { Nature } from "#enums/nature";
@@ -31,13 +28,8 @@ import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { EnemyPokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
-import type { CustomModifierSettings, ModifierType } from "#modifiers/modifier-type";
-import {
-  getPartyLuckValue,
-  ModifierTypeGenerator,
-  ModifierTypeOption,
-  regenerateModifierPoolThresholds,
-} from "#modifiers/modifier-type";
+import type { HeldItemConfiguration } from "#items/held-item-data-types";
+import type { CustomRewardSettings } from "#items/reward-pool-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import { showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { MysteryEncounterOption } from "#mystery-encounters/mystery-encounter-option";
@@ -45,11 +37,11 @@ import type { Variant } from "#sprites/variant";
 import type { PokemonData } from "#system/pokemon-data";
 import type { TrainerConfig } from "#trainers/trainer-config";
 import { trainerConfigs } from "#trainers/trainer-config";
-import type { HeldModifierConfig } from "#types/held-modifier-config";
 import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import type { PartyOption, PokemonSelectFilter } from "#ui/party-ui-handler";
 import { PartyUiMode } from "#ui/party-ui-handler";
 import { coerceArray, isNullOrUndefined, randomString, randSeedInt, randSeedItem } from "#utils/common";
+import { getPartyLuckValue } from "#utils/party";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
@@ -101,7 +93,7 @@ export interface EnemyPokemonConfig {
   /** Can set just the status, or pass a timer on the status turns */
   status?: StatusEffect | [StatusEffect, number];
   mysteryEncounterBattleEffects?: (pokemon: Pokemon) => void;
-  modifierConfigs?: HeldModifierConfig[];
+  heldItemConfig?: HeldItemConfiguration;
   tags?: BattlerTagType[];
   dataSource?: PokemonData;
   tera?: PokemonType;
@@ -199,6 +191,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
 
   battle.enemyLevels.forEach((level, e) => {
     let enemySpecies: PokemonSpecies | undefined;
+    let heldItemConfig: HeldItemConfiguration = [];
     let dataSource: PokemonData | undefined;
     let isBoss = false;
     if (!loaded) {
@@ -210,12 +203,14 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
           dataSource = config.dataSource;
           enemySpecies = config.species;
           isBoss = config.isBoss;
+          heldItemConfig = config.heldItemConfig ?? [];
           battle.enemyParty[e] = globalScene.addEnemyPokemon(
             enemySpecies,
             level,
             TrainerSlot.TRAINER,
             isBoss,
             false,
+            heldItemConfig,
             dataSource,
           );
         } else {
@@ -225,6 +220,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
         if (partyConfig?.pokemonConfigs && e < partyConfig.pokemonConfigs.length) {
           const config = partyConfig.pokemonConfigs[e];
           level = config.level ? config.level : level;
+          heldItemConfig = config.heldItemConfig ?? [];
           dataSource = config.dataSource;
           enemySpecies = config.species;
           isBoss = config.isBoss;
@@ -241,6 +237,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
           TrainerSlot.NONE,
           isBoss,
           false,
+          heldItemConfig,
           dataSource,
         );
       }
@@ -427,16 +424,6 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
       enemyPokemon_2.x += 300;
     }
   });
-  if (!loaded) {
-    regenerateModifierPoolThresholds(
-      globalScene.getEnemyField(),
-      battle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD,
-    );
-    const customModifierTypes = partyConfig?.pokemonConfigs
-      ?.filter(config => config?.modifierConfigs)
-      .map(config => config.modifierConfigs!);
-    globalScene.generateEnemyModifiers(customModifierTypes);
-  }
 }
 
 /**
@@ -483,45 +470,6 @@ export function updatePlayerMoney(changeValue: number, playSound = true, showMes
       );
     }
   }
-}
-
-/**
- * Converts modifier bullshit to an actual item
- * @param modifier
- * @param pregenArgs Can specify BerryType for berries, TM for TMs, AttackBoostType for item, etc.
- */
-export function generateModifierType(modifier: () => ModifierType, pregenArgs?: any[]): ModifierType | null {
-  const modifierId = Object.keys(modifierTypes).find(k => modifierTypes[k] === modifier);
-  if (!modifierId) {
-    return null;
-  }
-
-  let result: ModifierType = modifierTypes[modifierId]();
-
-  // Populates item id and tier (order matters)
-  result = result
-    .withIdFromFunc(modifierTypes[modifierId])
-    .withTierFromPool(ModifierPoolType.PLAYER, globalScene.getPlayerParty());
-
-  return result instanceof ModifierTypeGenerator
-    ? result.generateType(globalScene.getPlayerParty(), pregenArgs)
-    : result;
-}
-
-/**
- * Converts modifier bullshit to an actual item
- * @param modifier
- * @param pregenArgs - can specify BerryType for berries, TM for TMs, AttackBoostType for item, etc.
- */
-export function generateModifierTypeOption(
-  modifier: () => ModifierType,
-  pregenArgs?: any[],
-): ModifierTypeOption | null {
-  const result = generateModifierType(modifier, pregenArgs);
-  if (result) {
-    return new ModifierTypeOption(result, 0);
-  }
-  return result;
 }
 
 /**
@@ -738,12 +686,12 @@ export function selectOptionThenPokemon(
 /**
  * Will initialize reward phases to follow the mystery encounter
  * Can have shop displayed or skipped
- * @param customShopRewards - adds a shop phase with the specified rewards / reward tiers
+ * @param customShopRewards - adds a shop phase with the specified reward tiers
  * @param eggRewards
  * @param preRewardsCallback - can execute an arbitrary callback before the new phases if necessary (useful for updating items/party/injecting new phases before {@linkcode MysteryEncounterRewardsPhase})
  */
 export function setEncounterRewards(
-  customShopRewards?: CustomModifierSettings,
+  customShopRewards?: CustomRewardSettings,
   eggRewards?: IEggOptions[],
   preRewardsCallback?: Function,
 ) {
@@ -753,7 +701,7 @@ export function setEncounterRewards(
     }
 
     if (customShopRewards) {
-      globalScene.phaseManager.unshiftNew("SelectModifierPhase", 0, undefined, customShopRewards);
+      globalScene.phaseManager.unshiftNew("SelectRewardPhase", 0, undefined, customShopRewards);
     } else {
       globalScene.phaseManager.tryRemovePhase(p => p.is("MysteryEncounterRewardsPhase"));
     }

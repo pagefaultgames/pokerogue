@@ -3,6 +3,7 @@ import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { MoveEffectPhase } from "#phases/move-effect-phase";
@@ -61,7 +62,7 @@ describe("Moves - Ceaseless Edge", () => {
   });
 
   test("move should hit twice with multi lens and apply two layers of spikes", async () => {
-    game.override.startingHeldItems([{ name: "MULTI_LENS" }]);
+    game.override.startingHeldItems([{ entry: HeldItemId.MULTI_LENS }]);
     await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
 
     const enemyPokemon = game.field.getEnemyPokemon();
@@ -83,7 +84,7 @@ describe("Moves - Ceaseless Edge", () => {
   });
 
   test("trainer - move should hit twice, apply two layers of spikes, force switch opponent - opponent takes damage", async () => {
-    game.override.startingHeldItems([{ name: "MULTI_LENS" }]).startingWave(25);
+    game.override.startingHeldItems([{ entry: HeldItemId.MULTI_LENS }]).startingWave(25);
 
     await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
 

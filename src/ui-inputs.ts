@@ -185,7 +185,7 @@ export class UiInputs {
       }
       case UiMode.TITLE:
       case UiMode.COMMAND:
-      case UiMode.MODIFIER_SELECT:
+      case UiMode.REWARD_SELECT:
       case UiMode.MYSTERY_ENCOUNTER:
         globalScene.ui.setOverlayMode(UiMode.MENU);
         break;

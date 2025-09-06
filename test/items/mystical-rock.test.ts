@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { AbilityId } from "#enums/ability-id";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
@@ -28,7 +29,7 @@ describe("Items - Mystical Rock", () => {
       .enemyMoveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.BALL_FETCH)
       .moveset([MoveId.SUNNY_DAY, MoveId.GRASSY_TERRAIN])
-      .startingHeldItems([{ name: "MYSTICAL_ROCK", count: 2 }])
+      .startingHeldItems([{ entry: HeldItemId.MYSTICAL_ROCK, count: 2 }])
       .battleStyle("single");
   });
 
