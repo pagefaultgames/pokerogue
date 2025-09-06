@@ -1552,7 +1552,7 @@ export class BattleScene extends SceneBase {
         scale,
         x: (defaultWidth - scaledWidth) / 2,
         y: defaultHeight - scaledHeight,
-        duration: !instant ? fixedInt(Math.abs(this.field.scale - scale) * 200) : 0,
+        duration: instant ? 0 : fixedInt(Math.abs(this.field.scale - scale) * 200),
         ease: "Sine.easeInOut",
         onComplete: () => resolve(),
       });
