@@ -1,4 +1,6 @@
 import "vitest-canvas-mock";
+import "#plugins/i18n"; // Initializes i18n on import
+
 import { initTests } from "#test/test-utils/test-file-initialization";
 import { afterAll, beforeAll, vi } from "vitest";
 
