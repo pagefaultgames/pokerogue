@@ -173,5 +173,6 @@ export abstract class ConsumableHeldItem<T extends EffectTuple> extends HeldItem
   }
 }
 
-/** Abstract class for all `HeldItem`s that can be consumed during battle. */
+/** Abstract class for all items that are purely cosmetic.
+ * Currently coincides with the {@linkcode HeldItemBase} class. */
 export abstract class CosmeticHeldItem extends HeldItemBase {}
