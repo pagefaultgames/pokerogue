@@ -489,7 +489,7 @@ export abstract class Move implements Localizable {
     conditionSeq = 4,
   ): this {
     if (typeof restriction === "function") {
-      this.restrictions.push(new MoveRestriction(restriction));
+      this.restrictions.push(new MoveRestriction(restriction, i18nkey));
       if (alsoCondition) {
         let conditionArray: MoveCondition[];
         switch (conditionSeq) {
@@ -501,7 +501,7 @@ export abstract class Move implements Localizable {
             break;
           default:
             conditionArray = this.conditions;
-        }
+      }
 
         conditionArray.push(new MoveCondition((user, _, move) => !restriction(user, move)));
       }
