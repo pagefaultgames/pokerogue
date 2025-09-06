@@ -117,7 +117,6 @@ export class CommandUiHandler extends UiHandler {
     let success = false;
 
     const cursor = this.getCursor();
-
     if (button === Button.CANCEL || button === Button.ACTION) {
       if (button === Button.ACTION) {
         switch (cursor) {
@@ -187,6 +186,18 @@ export class CommandUiHandler extends UiHandler {
             this.toggleTeraButton();
           }
           break;
+        case Button.CYCLE_SHINY:
+          const commandPhase = globalScene.phaseManager.getCurrentPhase() as CommandPhase;
+          if (globalScene.pokeballCounts[globalScene.lastPokeballType]) {
+            if (commandPhase.handleCommand(Command.BALL, globalScene.lastPokeballType)) {
+              globalScene.ui.setMode(UiMode.COMMAND, commandPhase.getFieldIndex());
+              globalScene.ui.setMode(UiMode.MESSAGE);
+              success = true;
+            }
+          } else {
+            ui.playError();
+          }
+          break
       }
     }
 

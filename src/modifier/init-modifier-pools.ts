@@ -145,6 +145,8 @@ function initCommonModifierPool() {
 function initGreatModifierPool() {
   modifierPool[ModifierTier.GREAT] = [
     new WeightedModifierType(modifierTypes.GREAT_BALL, () => (hasMaximumBalls(PokeballType.GREAT_BALL) ? 0 : 6), 6),
+    new WeightedModifierType(modifierTypes.PREMIER_BALL, () => (hasMaximumBalls(PokeballType.PREMIER_BALL) ? 0 : 6), 6),
+    new WeightedModifierType(modifierTypes.LUXURY_BALL, () => (hasMaximumBalls(PokeballType.LUXURY_BALL) ? 0 : 6), 6),
     new WeightedModifierType(modifierTypes.PP_UP, 2),
     new WeightedModifierType(
       modifierTypes.FULL_HEAL,
@@ -348,6 +350,8 @@ function initGreatModifierPool() {
 function initUltraModifierPool() {
   modifierPool[ModifierTier.ULTRA] = [
     new WeightedModifierType(modifierTypes.ULTRA_BALL, () => (hasMaximumBalls(PokeballType.ULTRA_BALL) ? 0 : 15), 15),
+    new WeightedModifierType(modifierTypes.REPEAT_BALL, () => (hasMaximumBalls(PokeballType.REPEAT_BALL) ? 0 : 15), 15),
+    new WeightedModifierType(modifierTypes.TIMER_BALL, () => (hasMaximumBalls(PokeballType.TIMER_BALL) ? 0 : 15), 15),
     new WeightedModifierType(modifierTypes.MAX_LURE, lureWeightFunc(30, 4)),
     new WeightedModifierType(modifierTypes.BIG_NUGGET, skipInLastClassicWaveOrDefault(12)),
     new WeightedModifierType(modifierTypes.PP_MAX, 3),
@@ -572,6 +576,7 @@ function initUltraModifierPool() {
 function initRogueModifierPool() {
   modifierPool[ModifierTier.ROGUE] = [
     new WeightedModifierType(modifierTypes.ROGUE_BALL, () => (hasMaximumBalls(PokeballType.ROGUE_BALL) ? 0 : 16), 16),
+    new WeightedModifierType(modifierTypes.QUICK_BALL, () => (hasMaximumBalls(PokeballType.QUICK_BALL) ? 0 : 16), 16),
     new WeightedModifierType(modifierTypes.RELIC_GOLD, skipInLastClassicWaveOrDefault(2)),
     new WeightedModifierType(modifierTypes.LEFTOVERS, 3),
     new WeightedModifierType(modifierTypes.SHELL_BELL, 3),

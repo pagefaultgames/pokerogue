@@ -5957,8 +5957,7 @@ export class PlayerPokemon extends Pokemon {
     const amount = new NumberHolder(friendship);
     globalScene.applyModifier(PokemonFriendshipBoosterModifier, true, this, amount);
     friendship = amount.value;
-
-    const newFriendship = this.friendship + friendship;
+    const newFriendship = this.friendship + (this.pokeball === PokeballType.LUXURY_BALL ? friendship * 2 : friendship);
     // If capped is true, only adjust friendship if the new friendship is less than or equal to 200.
     if (!capped || newFriendship <= RARE_CANDY_FRIENDSHIP_CAP) {
       this.friendship = Math.min(newFriendship, 255);

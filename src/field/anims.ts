@@ -20,6 +20,28 @@ export function addPokeballOpenParticles(x: number, y: number, pokeballType: Pok
     case PokeballType.MASTER_BALL:
       doMbOpenParticles(x, y);
       break;
+    case PokeballType.LUXURY_BALL:
+      doMbOpenParticles(x, y);
+      break;
+    case PokeballType.QUICK_BALL:
+      doMbOpenParticles(x, y);
+      break;
+    case PokeballType.TIMER_BALL:
+      doMbOpenParticles(x, y);
+      break;
+    case PokeballType.PREMIER_BALL:
+      doMbOpenParticles(x, y);
+      break;
+    case PokeballType.REPEAT_BALL:
+      doMbOpenParticles(x, y);
+      break;
+    case PokeballType.SAFARI_BALL:
+      doMbOpenParticles(x, y);
+      break;
+    default:
+      doDefaultPbOpenParticles(x, y, 48);
+      console.log("Missing pokeball animation.")
+      break;
   }
 }
 

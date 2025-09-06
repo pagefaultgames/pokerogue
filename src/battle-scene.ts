@@ -271,6 +271,8 @@ export class BattleScene extends SceneBase {
   public lastEnemyTrainer: Trainer | null;
   public currentBattle: Battle;
   public pokeballCounts: PokeballCounts;
+  public lastPokeballType: PokeballType = PokeballType.POKEBALL;
+  public premierPokeballMultiplier: number = 1;
   public money: number;
   public pokemonInfoContainer: PokemonInfoContainer;
   private party: PlayerPokemon[];
@@ -1148,12 +1150,14 @@ export class BattleScene extends SceneBase {
 
     this.score = 0;
     this.money = 0;
+    this.lastPokeballType = PokeballType.POKEBALL;
+    this.premierPokeballMultiplier = 1;
 
     this.lockModifierTiers = false;
 
     this.pokeballCounts = Object.fromEntries(
       getEnumValues(PokeballType)
-        .filter(p => p <= PokeballType.MASTER_BALL)
+        .filter(p => p <= PokeballType.REPEAT_BALL)
         .map(t => [t, 0]),
     );
     this.pokeballCounts[PokeballType.POKEBALL] += 5;

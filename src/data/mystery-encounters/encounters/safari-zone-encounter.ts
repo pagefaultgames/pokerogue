@@ -22,7 +22,7 @@ import {
   doPlayerFlee,
   doPokemonFlee,
   getRandomSpeciesByStarterCost,
-  trainerThrowPokeball,
+  trainerThrowSafariball,
 } from "#mystery-encounters/encounter-pokemon-utils";
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
@@ -349,7 +349,7 @@ function throwPokeball(pokemon: EnemyPokemon): Promise<boolean> {
   const pokeballMultiplier = 1.5;
   const catchRate = Math.round(baseCatchRate * pokeballMultiplier * safariModifier);
   const ballTwitchRate = Math.round(1048560 / Math.sqrt(Math.sqrt(16711680 / catchRate)));
-  return trainerThrowPokeball(pokemon, PokeballType.POKEBALL, ballTwitchRate);
+  return trainerThrowSafariball(pokemon, PokeballType.SAFARI_BALL, ballTwitchRate);
 }
 
 async function throwBait(pokemon: EnemyPokemon): Promise<boolean> {
