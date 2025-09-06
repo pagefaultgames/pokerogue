@@ -340,7 +340,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   private teraLabel: Phaser.GameObjects.Text;
   private goFilterLabel: Phaser.GameObjects.Text;
   /** Group holding the UI elements appearing in the instructionsContainer */
-  /* TODO: Uncomment this once our testing infra supports mocks of `Phaser.GameObject.Group` 
+  /* TODO: Uncomment this once our testing infra supports mocks of `Phaser.GameObject.Group`
   private instructionElemGroup: Phaser.GameObjects.Group;
   */
 
@@ -4420,7 +4420,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             globalScene.phaseManager.pushNew("EncounterPhase");
           }
           this.clearText();
-          globalScene.phaseManager.getCurrentPhase()?.end();
+          globalScene.phaseManager.getCurrentPhase().end();
         },
         cancel,
         null,
