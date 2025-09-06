@@ -525,7 +525,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
       }
       const eggSprite = globalScene.add.sprite(127, 75, "egg", `egg_${eggs[i].getKey()}`).setScale(0.5);
       gachaContainer.addAt(eggSprite, 2);
-      // biome-ignore lint/nursery/noAwaitInLoop: The point of this loop is to play the animations, one after another
+      // biome-ignore lint/performance/noAwaitInLoops: The point of this loop is to play the animations, one after another
       await this.doPullAnim(eggSprite, i).finally(() => gachaContainer.remove(eggSprite, true));
     }
 

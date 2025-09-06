@@ -372,12 +372,12 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
    */
   private getMoveColor(pokemon: Pokemon, pokemonMove: PokemonMove): string | undefined {
     if (!globalScene.typeHints) {
-      return undefined;
+      return;
     }
 
     const opponents = pokemon.getOpponents();
     if (opponents.length <= 0) {
-      return undefined;
+      return;
     }
 
     const moveColors = opponents
@@ -394,7 +394,7 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
       .sort((a, b) => b - a)
       .map(effectiveness => {
         if (pokemonMove.getMove().category === MoveCategory.STATUS && effectiveness !== 0) {
-          return undefined;
+          return;
         }
         return getTypeDamageMultiplierColor(effectiveness ?? 0, "offense");
       });

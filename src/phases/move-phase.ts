@@ -91,9 +91,9 @@ export class MovePhase extends BattlePhase {
    */
   public canMove(ignoreDisableTags = false): boolean {
     return (
-      this.pokemon.isActive(true) &&
-      this.move.isUsable(this.pokemon, isIgnorePP(this.useMode), ignoreDisableTags) &&
-      this.targets.length > 0
+      this.pokemon.isActive(true)
+      && this.move.isUsable(this.pokemon, isIgnorePP(this.useMode), ignoreDisableTags)
+      && this.targets.length > 0
     );
   }
 
@@ -181,8 +181,8 @@ export class MovePhase extends BattlePhase {
     const moveQueue = this.pokemon.getMoveQueue();
 
     if (
-      (targets.length === 0 && !this.move.getMove().hasAttr("AddArenaTrapTagAttr")) ||
-      (moveQueue.length > 0 && moveQueue[0].move === MoveId.NONE)
+      (targets.length === 0 && !this.move.getMove().hasAttr("AddArenaTrapTagAttr"))
+      || (moveQueue.length > 0 && moveQueue[0].move === MoveId.NONE)
     ) {
       this.showMoveText();
       this.showFailedText();
@@ -204,8 +204,8 @@ export class MovePhase extends BattlePhase {
     }
 
     if (
-      this.useMode === MoveUseMode.INDIRECT &&
-      [StatusEffect.SLEEP, StatusEffect.FREEZE].includes(this.pokemon.status.effect)
+      this.useMode === MoveUseMode.INDIRECT
+      && [StatusEffect.SLEEP, StatusEffect.FREEZE].includes(this.pokemon.status.effect)
     ) {
       // Dancer thaws out or wakes up a frozen/sleeping user prior to use
       this.pokemon.resetStatus(false);
@@ -222,8 +222,8 @@ export class MovePhase extends BattlePhase {
     switch (this.pokemon.status.effect) {
       case StatusEffect.PARALYSIS:
         activated =
-          (this.pokemon.randBattleSeedInt(4) === 0 || Overrides.STATUS_ACTIVATION_OVERRIDE === true) &&
-          Overrides.STATUS_ACTIVATION_OVERRIDE !== false;
+          (this.pokemon.randBattleSeedInt(4) === 0 || Overrides.STATUS_ACTIVATION_OVERRIDE === true)
+          && Overrides.STATUS_ACTIVATION_OVERRIDE !== false;
         break;
       case StatusEffect.SLEEP: {
         applyMoveAttrs("BypassSleepAttr", this.pokemon, null, this.move.getMove());
@@ -244,9 +244,9 @@ export class MovePhase extends BattlePhase {
             .getMove()
             .findAttr(
               attr => attr.is("HealStatusEffectAttr") && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE),
-            ) ||
-          (!this.pokemon.randBattleSeedInt(5) && Overrides.STATUS_ACTIVATION_OVERRIDE !== true) ||
-          Overrides.STATUS_ACTIVATION_OVERRIDE === false;
+            )
+          || (!this.pokemon.randBattleSeedInt(5) && Overrides.STATUS_ACTIVATION_OVERRIDE !== true)
+          || Overrides.STATUS_ACTIVATION_OVERRIDE === false;
 
         activated = !healed;
         break;
@@ -397,8 +397,8 @@ export class MovePhase extends BattlePhase {
     // even on failure, as will all moves blocked by terrain.
     // TODO: Verify if this also applies to primal weather failures
     if (
-      failedDueToTerrain ||
-      [MoveId.ROAR, MoveId.WHIRLWIND, MoveId.TRICK_OR_TREAT, MoveId.FORESTS_CURSE].includes(this.move.moveId)
+      failedDueToTerrain
+      || [MoveId.ROAR, MoveId.WHIRLWIND, MoveId.TRICK_OR_TREAT, MoveId.FORESTS_CURSE].includes(this.move.moveId)
     ) {
       applyAbAttrs("PokemonTypeChangeAbAttr", {
         pokemon: this.pokemon,
@@ -421,8 +421,8 @@ export class MovePhase extends BattlePhase {
     // Use move-specific failure messages if present before checking terrain/weather blockage
     // and falling back to the classic "But it failed!".
     const failureMessage =
-      move.getFailedText(this.pokemon, targets[0], move) ||
-      (failedDueToTerrain
+      move.getFailedText(this.pokemon, targets[0], move)
+      || (failedDueToTerrain
         ? getTerrainBlockMessage(targets[0], globalScene.arena.getTerrainType())
         : failedDueToWeather
           ? getWeatherBlockMessage(globalScene.arena.getWeatherType())
@@ -528,9 +528,9 @@ export class MovePhase extends BattlePhase {
       // TODO: don't hardcode this interaction.
       // Handle interaction between the rage powder center-of-attention tag and moves used by grass types/overcoat-havers (which are immune to RP's redirect)
       if (
-        redirectTag &&
-        (!redirectTag.powder ||
-          (!this.pokemon.isOfType(PokemonType.GRASS) && !this.pokemon.hasAbility(AbilityId.OVERCOAT)))
+        redirectTag
+        && (!redirectTag.powder
+          || (!this.pokemon.isOfType(PokemonType.GRASS) && !this.pokemon.hasAbility(AbilityId.OVERCOAT)))
       ) {
         redirectTarget.value = p.getBattlerIndex();
         redirectedByAbility = false;
@@ -591,9 +591,9 @@ export class MovePhase extends BattlePhase {
     // account for metal burst and comeuppance hitting remaining targets in double battles
     // counterattack will redirect to remaining ally if original attacker faints
     if (
-      globalScene.currentBattle.double &&
-      this.move.getMove().hasFlag(MoveFlags.REDIRECT_COUNTER) &&
-      globalScene.getField()[this.targets[0]].hp === 0
+      globalScene.currentBattle.double
+      && this.move.getMove().hasFlag(MoveFlags.REDIRECT_COUNTER)
+      && globalScene.getField()[this.targets[0]].hp === 0
     ) {
       const opposingField = this.pokemon.isPlayer() ? globalScene.getEnemyField() : globalScene.getPlayerField();
       this.targets[0] = opposingField.find(p => p.hp > 0)?.getBattlerIndex() ?? BattlerIndex.ATTACKER;
@@ -650,9 +650,9 @@ export class MovePhase extends BattlePhase {
    */
   public showMoveText(): void {
     if (
-      this.move.moveId === MoveId.NONE ||
-      this.pokemon.getTag(BattlerTagType.RECHARGING) ||
-      this.pokemon.getTag(BattlerTagType.INTERRUPTED)
+      this.move.moveId === MoveId.NONE
+      || this.pokemon.getTag(BattlerTagType.RECHARGING)
+      || this.pokemon.getTag(BattlerTagType.INTERRUPTED)
     ) {
       return;
     }

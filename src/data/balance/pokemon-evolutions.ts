@@ -136,7 +136,7 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.FRIENDSHIP:
           return i18next.t("pokemonEvolutions:friendship");
         case EvoCondKey.TIME:
-          return i18next.t(`pokemonEvolutions:timeOfDay.${toCamelCase(TimeOfDay[cond.time[cond.time.length - 1]])}`); // For Day and Night evos, the key we want goes last
+          return i18next.t(`pokemonEvolutions:timeOfDay.${toCamelCase(TimeOfDay[cond.time.at(-1)!])}`); // For Day and Night evos, the key we want goes last
         case EvoCondKey.MOVE_TYPE:
           return i18next.t("pokemonEvolutions:moveType", {type: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[cond.pkmnType])}`)});
         case EvoCondKey.PARTY_TYPE:

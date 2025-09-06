@@ -50,7 +50,7 @@ export class TargetSelectUiHandler extends UiHandler {
     this.targets = moveTargets.targets;
     this.isMultipleTargets = moveTargets.multiple ?? false;
 
-    if (!this.targets.length) {
+    if (this.targets.length === 0) {
       return false;
     }
 
@@ -70,11 +70,12 @@ export class TargetSelectUiHandler extends UiHandler {
    * @param user the Pokemon using the move
    */
   resetCursor(cursorN: number, user: Pokemon): void {
-    if (!isNullOrUndefined(cursorN)) {
-      if ([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2].includes(cursorN) || user.tempSummonData.waveTurnCount === 1) {
-        // Reset cursor on the first turn of a fight or if an ally was targeted last turn
-        cursorN = -1;
-      }
+    if (
+      !isNullOrUndefined(cursorN)
+      && ([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2].includes(cursorN) || user.tempSummonData.waveTurnCount === 1)
+    ) {
+      // Reset cursor on the first turn of a fight or if an ally was targeted last turn
+      cursorN = -1;
     }
     this.setCursor(this.targets.includes(cursorN) ? cursorN : this.targets[0]);
   }
@@ -92,10 +93,11 @@ export class TargetSelectUiHandler extends UiHandler {
         if (isNullOrUndefined(this.cursor0) || this.cursor0 !== this.cursor) {
           this.cursor0 = this.cursor;
         }
-      } else if (this.fieldIndex === BattlerIndex.PLAYER_2) {
-        if (isNullOrUndefined(this.cursor1) || this.cursor1 !== this.cursor) {
-          this.cursor1 = this.cursor;
-        }
+      } else if (
+        this.fieldIndex === BattlerIndex.PLAYER_2
+        && (isNullOrUndefined(this.cursor1) || this.cursor1 !== this.cursor)
+      ) {
+        this.cursor1 = this.cursor;
       }
     } else if (this.isMultipleTargets) {
       success = false;
@@ -163,7 +165,7 @@ export class TargetSelectUiHandler extends UiHandler {
       },
     });
 
-    if (this.targetBattleInfoMoveTween.length >= 1) {
+    if (this.targetBattleInfoMoveTween.length > 0) {
       this.targetBattleInfoMoveTween.filter(t => t !== undefined).forEach(tween => tween.stop());
       for (const pokemon of multipleTargets) {
         pokemon.getBattleInfo().resetY();
@@ -198,7 +200,7 @@ export class TargetSelectUiHandler extends UiHandler {
       this.highlightItems(pokemon.id, 1);
     }
 
-    if (this.targetBattleInfoMoveTween.length >= 1) {
+    if (this.targetBattleInfoMoveTween.length > 0) {
       this.targetBattleInfoMoveTween.filter(t => t !== undefined).forEach(tween => tween.stop());
       this.targetBattleInfoMoveTween = [];
     }

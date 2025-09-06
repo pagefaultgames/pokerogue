@@ -3,5 +3,5 @@ export enum Command {
   BALL,
   POKEMON,
   RUN,
-  TERA
+  TERA,
 }

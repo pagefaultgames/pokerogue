@@ -97,7 +97,7 @@ export abstract class ModalUiHandler extends UiHandler {
   }
 
   show(args: any[]): boolean {
-    if (args.length >= 1 && "buttonActions" in args[0]) {
+    if (args.length > 0 && "buttonActions" in args[0]) {
       super.show(args);
       if (args[0].hasOwnProperty("fadeOut") && typeof args[0].fadeOut === "function") {
         const [marginTop, marginRight, marginBottom, marginLeft] = this.getMargin();

@@ -41,8 +41,6 @@ const GLOBAL_SCALE = 6;
 export class MoveInfoOverlay extends Phaser.GameObjects.Container implements InfoToggle {
   public active = false;
 
-  private move: Move;
-
   private desc: Phaser.GameObjects.Text;
   private descScroll: Phaser.Tweens.Tween | null = null;
 
@@ -177,7 +175,6 @@ export class MoveInfoOverlay extends Phaser.GameObjects.Container implements Inf
     if (!globalScene.enableMoveInfo) {
       return false; // move infos have been disabled // TODO:: is `false` correct? i used to be `undeefined`
     }
-    this.move = move;
     this.pow.setText(move.power >= 0 ? move.power.toString() : "---");
     this.acc.setText(move.accuracy >= 0 ? move.accuracy.toString() : "---");
     this.pp.setText(move.pp >= 0 ? move.pp.toString() : "---");

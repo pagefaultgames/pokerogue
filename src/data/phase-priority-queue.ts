@@ -86,8 +86,8 @@ export class PostSummonPhasePriorityQueue extends PhasePriorityQueue {
     this.queue.sort((phaseA: PostSummonPhase, phaseB: PostSummonPhase) => {
       if (phaseA.getPriority() === phaseB.getPriority()) {
         return (
-          (phaseB.getPokemon().getEffectiveStat(Stat.SPD) - phaseA.getPokemon().getEffectiveStat(Stat.SPD)) *
-          (isTrickRoom() ? -1 : 1)
+          (phaseB.getPokemon().getEffectiveStat(Stat.SPD) - phaseA.getPokemon().getEffectiveStat(Stat.SPD))
+          * (isTrickRoom() ? -1 : 1)
         );
       }
 

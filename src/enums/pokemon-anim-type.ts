@@ -22,5 +22,5 @@ export enum PokemonAnimType {
    * Dondozo "spits out" Tatsugiri, moving Tatsugiri back to its original
    * field position.
    */
-  COMMANDER_REMOVE
+  COMMANDER_REMOVE,
 }
