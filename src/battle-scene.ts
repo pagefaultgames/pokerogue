@@ -1478,6 +1478,7 @@ export class BattleScene extends SceneBase {
           pokemon.resetBattleAndWaveData();
           pokemon.resetTera();
           applyAbAttrs("PostBattleInitAbAttr", { pokemon });
+          // Terapagos resets tera on each fight
           if (pokemon.hasSpecies(SpeciesId.TERAPAGOS)) {
             this.arena.playerTerasUsed = 0;
           }
@@ -1564,8 +1565,8 @@ export class BattleScene extends SceneBase {
     }
 
     const isEggPhase =
-      this.phaseManager.getCurrentPhase().is("EggLapsePhase") ||
-      this.phaseManager.getCurrentPhase().is("EggHatchPhase");
+      this.phaseManager.getCurrentPhase().is("EggLapsePhase")
+      || this.phaseManager.getCurrentPhase().is("EggHatchPhase");
 
     if (
       // Give trainers with specialty types an appropriately-typed form for Wormadam, Rotom, Arceus, Oricorio, Silvally, or Paldean Tauros.
