@@ -138,22 +138,6 @@ export class SpeciesStatBoostHeldItem extends StatBoostHeldItem {
     this.species = species;
   }
 
-  /**
-   * Checks if the incoming stat is listed in {@linkcode stats} and if the holder's {@linkcode SpeciesId}
-   * (or its fused species) is listed in {@linkcode species}.
-   * @param pokemon {@linkcode Pokemon} that holds the item
-   * @param stat {@linkcode Stat} being checked at the time
-   * @param statValue {@linkcode NumberHolder} that holds the resulting value of the stat
-   * @returns `true` if the stat could be boosted, false otherwise
-   */
-  //  override shouldApply(pokemon: Pokemon, stat: Stat, statValue: NumberHolder): boolean {
-  //    return (
-  //      super.shouldApply(pokemon, stat, statValue) &&
-  //      (this.species.includes(pokemon.getSpeciesForm(true).speciesId) ||
-  //        (pokemon.isFusion() && this.species.includes(pokemon.getFusionSpeciesForm(true).speciesId)))
-  //    );
-  //  }
-
   apply(effect: typeof HeldItemEffect.STAT_BOOST, params: StatBoostParams): boolean {
     const pokemon = params.pokemon;
     const fitsSpecies =

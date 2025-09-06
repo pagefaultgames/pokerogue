@@ -950,7 +950,6 @@ export class GameData {
       }
       const handleSessionData = async (sessionDataStr: string) => {
         try {
-          console.log(sessionDataStr);
           const sessionData = this.parseSessionData(sessionDataStr);
           resolve(sessionData);
         } catch (err) {
@@ -1348,17 +1347,6 @@ export class GameData {
         if (sync) {
           globalScene.ui.savingIcon.show();
         }
-        if (useCachedSession) {
-          console.log("REPARSING!");
-          console.log(
-            decrypt(
-              localStorage.getItem(
-                `sessionData${globalScene.sessionSlotId ? globalScene.sessionSlotId : ""}_${loggedInUser?.username}`,
-              )!,
-              bypassLogin,
-            ),
-          );
-        }
         const sessionData = useCachedSession
           ? this.parseSessionData(
               decrypt(
@@ -1394,7 +1382,6 @@ export class GameData {
           `sessionData${globalScene.sessionSlotId ? globalScene.sessionSlotId : ""}_${loggedInUser?.username}`,
           encrypt(JSON.stringify(sessionData), bypassLogin),
         );
-        console.log(JSON.stringify(sessionData));
 
         console.debug("Session data saved!");
 
