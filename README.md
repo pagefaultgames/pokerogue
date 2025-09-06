@@ -1,6 +1,6 @@
 <picture><img src="./public/images/logo.png" width="300" alt="PokéRogue"></picture>
 
-![Discord Static Badge](https://img.shields.io/badge/Community_Discord-blurple?style=flat&logo=discord&logoSize=auto&labelColor=white&color=5865F2&link=https://discord.gg/pokerogue)
+[![Discord Static Badge](https://img.shields.io/badge/Community_Discord-blurple?style=flat&logo=discord&logoSize=auto&labelColor=white&color=5865F2)](https://discord.gg/pokerogue)
 [![Docs Coverage Static Badge](https://pagefaultgames.github.io/pokerogue/beta/coverage.svg)](https://pagefaultgames.github.io/pokerogue/beta)
 [![Testing Badge](https://github.com/pagefaultgames/pokerogue/actions/workflows/tests.yml/badge.svg)](https://github.com/pagefaultgames/pokerogue/actions/workflows/tests.yml)
 [![License: GNU AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
