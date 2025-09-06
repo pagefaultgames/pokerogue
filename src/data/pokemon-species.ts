@@ -593,14 +593,14 @@ export abstract class PokemonSpeciesForm {
     });
   }
 
-  cry(soundConfig?: Phaser.Types.Sound.SoundConfig, ignorePlay?: boolean): AnySound {
+  cry(soundConfig?: Phaser.Types.Sound.SoundConfig, ignorePlay?: boolean): AnySound | null {
     const cryKey = this.getCryKey(this.formIndex);
     let cry: AnySound | null = globalScene.sound.get(cryKey) as AnySound;
     if (cry?.pendingRemove) {
       cry = null;
     }
     cry = globalScene.playSound(cry ?? cryKey, soundConfig);
-    if (ignorePlay) {
+    if (cry && ignorePlay) {
       cry.stop();
     }
     return cry;
@@ -795,7 +795,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
       return Gender.GENDERLESS;
     }
 
-    if (randSeedFloat() <= this.malePercent) {
+    if (randSeedFloat() * 100 <= this.malePercent) {
       return Gender.MALE;
     }
     return Gender.FEMALE;

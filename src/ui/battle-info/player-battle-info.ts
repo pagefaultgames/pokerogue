@@ -5,10 +5,12 @@ import { Stat } from "#enums/stat";
 import type { PlayerPokemon } from "#field/pokemon";
 import type { BattleInfoParamList } from "#ui/battle-info";
 import { BattleInfo } from "#ui/battle-info";
+import { getLocalizedSpriteKey } from "#utils/common";
 
 export class PlayerBattleInfo extends BattleInfo {
   protected player: true = true;
   protected hpNumbersContainer: Phaser.GameObjects.Container;
+  protected expBarLabel: Phaser.GameObjects.Image;
 
   override get statOrder(): Stat[] {
     return [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.ACC, Stat.EVA, Stat.SPD];
@@ -21,7 +23,7 @@ export class PlayerBattleInfo extends BattleInfo {
   override constructTypeIcons(): void {
     this.type1Icon = globalScene.add.sprite(-139, -17, "pbinfo_player_type1").setName("icon_type_1").setOrigin(0);
     this.type2Icon = globalScene.add.sprite(-139, -1, "pbinfo_player_type2").setName("icon_type_2").setOrigin(0);
-    this.type3Icon = globalScene.add.sprite(-154, -17, "pbinfo_player_type3").setName("icon_type_3").setOrigin(0);
+    this.type3Icon = globalScene.add.sprite(-154, -17, "pbinfo_player_type").setName("icon_type_3").setOrigin(0);
     this.add([this.type1Icon, this.type2Icon, this.type3Icon]);
   }
 
@@ -46,6 +48,12 @@ export class PlayerBattleInfo extends BattleInfo {
     // hp number container must be beneath the stat container for overlay to display properly
     this.addAt(this.hpNumbersContainer, this.getIndex(this.statsContainer));
 
+    const expBarLabel = globalScene.add
+      .image(-91, 20, getLocalizedSpriteKey("overlay_exp_label"))
+      .setName("overlay_exp_label")
+      .setOrigin(1, 1);
+    this.add(expBarLabel);
+
     const expBar = globalScene.add.image(-98, 18, "overlay_exp").setName("overlay_exp").setOrigin(0);
     this.add(expBar);
 
@@ -60,6 +68,7 @@ export class PlayerBattleInfo extends BattleInfo {
 
     expBar.setMask(expMask);
 
+    this.expBarLabel = expBarLabel;
     this.expBar = expBar;
     this.expMaskRect = expMaskRect;
   }
@@ -108,7 +117,7 @@ export class PlayerBattleInfo extends BattleInfo {
     this.statValuesContainer.x += 2 * (mini ? 1 : -1);
     this.statValuesContainer.y += -7 * (mini ? 1 : -1);
 
-    const toggledElements = [this.hpNumbersContainer, this.expBar];
+    const toggledElements = [this.hpNumbersContainer, this.expBarLabel, this.expBar];
     toggledElements.forEach(el => el.setVisible(!mini));
   }
 
