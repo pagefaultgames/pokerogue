@@ -1,5 +1,4 @@
 import { pokerogueApi } from "#api/pokerogue-api";
-import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
 import { BiomeId } from "#enums/biome-id";
 import { Challenges } from "#enums/challenges";
@@ -355,7 +354,7 @@ describe("Throwing balls at bosses after weakening them", () => {
 
     // Kill 1 boss, knock other down to critical hp
     game.move.use(MoveId.FALSE_SWIPE);
-    await game.doKillPokemon(game.field.getEnemyField()[1)
+    await game.killPokemon(game.scene.getEnemyField()[1]);
     game.doThrowPokeball(ball);
     await game.toEndOfTurn();
 
