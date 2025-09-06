@@ -986,6 +986,10 @@ export function setSetting(setting: string, value: number): boolean {
                 handler: () => changeLocaleHandler("tl"),
               },
               {
+                label: "עברית",
+                handler: () => changeLocaleHandler("he")
+              },
+              {
                 label: i18next.t("settings:back"),
                 handler: () => cancelHandler(),
               },
