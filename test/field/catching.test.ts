@@ -319,6 +319,7 @@ describe("Throwing balls at bosses after weakening them", () => {
       .battleType(BattleType.WILD)
       .enemyMoveset(MoveId.SPLASH)
       .enemySpecies(SpeciesId.CATERPIE)
+      .battleStyle("single")
       .startingLevel(99999)
       .startingWave(170);
   });
@@ -344,8 +345,7 @@ describe("Throwing balls at bosses after weakening them", () => {
   });
 
   it("weakening and catching a boss in a double battle", async () => {
-    game.override.battleStyle("double").enemyAbility(AbilityId.STURDY);
-
+    game.override.battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.KARTANA]);
 
     const partyLength = game.scene.getPlayerParty().length;
@@ -353,15 +353,9 @@ describe("Throwing balls at bosses after weakening them", () => {
     const ball = PokeballType.ROGUE_BALL;
     game.scene.pokeballCounts[ball] = 1;
 
-    game.move.select(MoveId.SLASH);
-    await game.toNextTurn();
-
-    game.move.select(MoveId.SLASH);
-    await game.toNextTurn();
-
-    game.move.select(MoveId.SLASH);
-    await game.toNextTurn();
-
+    // Kill 1 boss, knock other down to critical hp
+    game.move.use(MoveId.FALSE_SWIPE);
+    await game.doKillPokemon(game.field.getEnemyField()[1)
     game.doThrowPokeball(ball);
     await game.toEndOfTurn();
 
