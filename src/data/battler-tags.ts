@@ -34,7 +34,7 @@ import type { StatStageChangeCallback } from "#phases/stat-stage-change-phase";
 import i18next from "#plugins/i18n";
 import type {
   AbilityBattlerTagType,
-  BattlerTagTypeData,
+  BattlerTagData,
   ContactSetStatusProtectedTagType,
   ContactStatStageChangeProtectedTagType,
   CritStageBoostTagType,
@@ -3843,7 +3843,7 @@ export function getBattlerTag(
  * @param source - An object containing the data necessary to reconstruct the BattlerTag.
  * @returns The valid battler tag
  */
-export function loadBattlerTag(source: BattlerTag | BattlerTagTypeData): BattlerTag {
+export function loadBattlerTag(source: BattlerTag | BattlerTagData): BattlerTag {
   // TODO: Remove this bang by fixing the signature of `getBattlerTag`
   // to allow undefined sourceIds and sourceMoves (with appropriate fallback for tags that require it)
   const tag = getBattlerTag(source.tagType, source.turnCount, source.sourceMove!, source.sourceId!);

@@ -23,7 +23,7 @@ import type { Arena } from "#field/arena";
 import type { Pokemon } from "#field/pokemon";
 import type {
   ArenaScreenTagType,
-  ArenaTagTypeData,
+  ArenaTagData,
   EntryHazardTagType,
   RoomArenaTagType,
   SerializableArenaTagType,
@@ -1663,7 +1663,7 @@ export function getArenaTag(
  * @param source - An arena tag
  * @returns The valid arena tag
  */
-export function loadArenaTag(source: ArenaTag | ArenaTagTypeData | { tagType: ArenaTagType.NONE }): ArenaTag {
+export function loadArenaTag(source: ArenaTag | ArenaTagData | { tagType: ArenaTagType.NONE }): ArenaTag {
   if (source.tagType === ArenaTagType.NONE) {
     return new NoneTag();
   }
