@@ -212,7 +212,7 @@ describe("Transforming Effects", () => {
       await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.toNextWave();
 
-      expect(game.scene.phaseManager.getCurrentPhase()?.phaseName).toBe("CommandPhase");
+      expect(game).toBeAtPhase("CommandPhase");
       expect(game.scene.currentBattle.waveIndex).toBe(2);
 
       await game.reload.reloadSession();
@@ -242,7 +242,7 @@ describe("Transforming Effects", () => {
       await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.toNextWave();
 
-      expect(game.scene.phaseManager.getCurrentPhase()?.phaseName).toBe("CommandPhase");
+      expect(game).toBeAtPhase("CommandPhase");
       expect(game.scene.currentBattle.waveIndex).toBe(2);
 
       expect(player.getSpeciesForm().speciesId).toBe(enemy.getSpeciesForm().speciesId);

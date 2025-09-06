@@ -133,10 +133,6 @@ export function randSeedItem<T>(items: T[] | readonly T[]): T {
   return items.length === 1 ? items[0] : Phaser.Math.RND.pick(items as T[]);
 }
 
-export function randSeedWeightedItem<T>(items: T[]): T {
-  return items.length === 1 ? items[0] : Phaser.Math.RND.weightedPick(items);
-}
-
 /**
  * Shuffle a list using the seeded rng. Utilises the Fisher-Yates algorithm.
  * @param {Array} items An array of items.

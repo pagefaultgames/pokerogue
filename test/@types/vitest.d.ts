@@ -1,8 +1,10 @@
 import "vitest";
 
-import type { TerrainType } from "#app/data/terrain";
+import type { Phase } from "#app/phase";
 import type Overrides from "#app/overrides";
 import type { ArenaTag } from "#data/arena-tag";
+import type { TerrainType } from "#data/terrain";
+import type { BattlerTag } from "#data/battler-tags";
 import type { PositionalTag } from "#data/positional-tags/positional-tag";
 import type { AbilityId } from "#enums/ability-id";
 import type { ArenaTagSide } from "#enums/arena-tag-side";
@@ -22,11 +24,13 @@ import type { toHaveEffectiveStatOptions } from "#test/test-utils/matchers/to-ha
 import type { toHavePositionalTagOptions } from "#test/test-utils/matchers/to-have-positional-tag";
 import type { expectedStatusType } from "#test/test-utils/matchers/to-have-status-effect";
 import type { toHaveTypesOptions } from "#test/test-utils/matchers/to-have-types";
+import type { PhaseString } from "#types/phase-types";
 import type { TurnMove } from "#types/turn-move";
 import type { AtLeastOne } from "#types/type-helpers";
 import type { toDmgValue } from "utils/common";
 import type { expect } from "vitest";
 import { expectedHeldItemType } from "#test/test-utils/matchers/to-have-held-item";
+import { toHaveBattlerTagOptions } from "#test/test-utils/matchers/to-have-battler-tag";
 
 declare module "vitest" {
   interface Assertion<T> {
@@ -40,6 +44,12 @@ declare module "vitest" {
      * @see {@linkcode expect.arrayContaining}
      */
     toEqualArrayUnsorted(expected: T[]): void;
+
+    /**
+     * Check if the currently-running {@linkcode Phase} is of the given type.
+     * @param expectedPhase - The expected {@linkcode PhaseString}
+     */
+    toBeAtPhase(expectedPhase: PhaseString): void;
 
     // #region Arena Matchers
 
@@ -126,10 +136,15 @@ declare module "vitest" {
     toHaveStatStage(stat: BattleStat, expectedStage: number): void;
 
     /**
-     * Check whether a {@linkcode Pokemon} has a specific {@linkcode BattlerTagType}.
-     * @param expectedBattlerTagType - The expected {@linkcode BattlerTagType}
+     * Check whether a {@linkcode Pokemon} has the given {@linkcode BattlerTag}.
+     * @param expectedTag - A partially-filled {@linkcode BattlerTag} containing the desired properties
      */
-    toHaveBattlerTag(expectedBattlerTagType: BattlerTagType): void;
+    toHaveBattlerTag<B extends BattlerTagType>(expectedTag: toHaveBattlerTagOptions<B>): void;
+    /**
+     * Check whether a {@linkcode Pokemon} has the given {@linkcode BattlerTag}.
+     * @param expectedType - The expected {@linkcode BattlerTagType}
+     */
+    toHaveBattlerTag(expectedType: BattlerTagType): void;
 
     /**
      * Check whether a {@linkcode Pokemon} has applied a specific {@linkcode AbilityId}.

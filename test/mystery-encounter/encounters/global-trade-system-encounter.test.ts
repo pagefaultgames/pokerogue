@@ -11,7 +11,6 @@ import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils"
 import { GlobalTradeSystemEncounter } from "#mystery-encounters/global-trade-system-encounter";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { CIVILIZATION_ENCOUNTER_BIOMES } from "#mystery-encounters/mystery-encounters";
-import { SelectRewardPhase } from "#phases/select-reward-phase";
 import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
 import { GameManager } from "#test/test-utils/game-manager";
 import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
@@ -220,7 +219,7 @@ describe("Global Trade System - Mystery Encounter", () => {
       await scene.updateItems(true);
 
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
-      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
+      expect(game).toBeAtPhase("SelectRewardPhase");
       await game.phaseInterceptor.to("SelectRewardPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);

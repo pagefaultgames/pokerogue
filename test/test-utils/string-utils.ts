@@ -188,5 +188,5 @@ export function getOnelineDiffStr(this: MatcherState, obj: unknown): string {
   return this.utils
     .stringify(obj, undefined, { maxLength: 35, indent: 0, printBasicPrototype: false })
     .replace(/\n/g, " ") // Replace newlines with spaces
-    .replace(/,(\s*)}$/g, "$1}"); // Trim trailing commas
+    .replace(/,(\s*)\}$/g, "$1}"); // Trim trailing commas
 }
