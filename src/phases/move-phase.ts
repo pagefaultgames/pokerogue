@@ -536,11 +536,11 @@ export class MovePhase extends PokemonPhase {
     // Check if the move will heal
     const move = this.move.getMove();
     if (
-      move.findAttr(attr => attr.selfTarget && attr.is("HealStatusEffectAttr") && attr.isOfEffect(StatusEffect.FREEZE))
+      move.findAttr(
+        attr => attr.selfTarget && attr.is("HealStatusEffectAttr") && attr.isOfEffect(StatusEffect.FREEZE),
+      ) &&
+      (move.id !== MoveId.BURN_UP || this.pokemon.isOfType(PokemonType.FIRE, true, true))
     ) {
-      // On cartridge, burn up will not cure if it would fail
-      if (move.id === MoveId.BURN_UP && !this.pokemon.isOfType(PokemonType.FIRE)) {
-      }
       this.thaw = true;
       return false;
     }
@@ -634,7 +634,7 @@ export class MovePhase extends PokemonPhase {
     const move = this.move.getMove();
     const user = this.pokemon;
     const target = this.getActiveTargetPokemon()[0];
-    return !!move.getAttrs("PreUseInterruptAttr").some(attr => {
+    return move.getAttrs("PreUseInterruptAttr").some(attr => {
       attr.apply(user, target, move);
       if (this.cancelled) {
         return true;
@@ -723,8 +723,8 @@ export class MovePhase extends PokemonPhase {
       return;
     }
     /*
-    At this point, delayed moves (future sight, wish, doom desire) are issued, and if they occur, are
-    Then, combined pledge moves are checked for. Interestingly, the "wasMoveEffective" flag is set to false if the delay occurs
+    At this point, delayed moves (future sight, wish, doom desire) are issued, and, if they occur, the move animations are played.
+    Then, combined pledge moves are checked for. Interestingly, the "wasMoveEffective" flag is set to false if the combined technique
     In either case, the phase should end here without proceeding
     */
 
