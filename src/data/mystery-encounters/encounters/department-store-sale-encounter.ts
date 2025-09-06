@@ -96,7 +96,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
         if (roll === 0) {
           rewards.push(RewardId.PP_UP);
         } else {
-          rewards.push(RewardId.BASE_STAT_BOOSTER);
+          rewards.push(RewardId.VITAMIN);
         }
         i++;
       }

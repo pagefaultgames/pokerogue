@@ -11,7 +11,7 @@ export const HeldItemEffect = {
   EXP_BOOSTER: 5,
   // Should we actually distinguish different berry effects?
   BERRY: 6,
-  BASE_STAT_BOOSTER: 7,
+  BASE_STAT_MULTIPLY: 7,
   INSTANT_REVIVE: 8,
   STAT_BOOST: 9,
   CRIT_BOOST: 10,
@@ -30,10 +30,8 @@ export const HeldItemEffect = {
   TURN_END_ITEM_STEAL: 23,
   CONTACT_ITEM_STEAL_CHANCE: 24,
   EVO_TRACKER: 40,
-  BASE_STAT_TOTAL: 50,
-  BASE_STAT_FLAT: 51,
-  INCREMENTING_STAT: 52,
-  COSMETIC: 99,
+  BASE_STAT_ADD: 50,
+  MACHO_BRACE: 51,
 } as const;
 
 export type HeldItemEffect = ObjectValues<typeof HeldItemEffect>;

@@ -257,7 +257,7 @@ function initGreatRewardPool() {
       },
       maxWeight: 4,
     },
-    { id: RewardId.BASE_STAT_BOOSTER, weight: 3 },
+    { id: RewardId.VITAMIN, weight: 3 },
     {
       id: RewardId.TERA_SHARD,
       weight: (party: Pokemon[]) =>

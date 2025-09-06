@@ -169,7 +169,7 @@ export const allRewards = {
   [RewardId.SPECIES_STAT_BOOSTER]: new SpeciesStatBoosterRewardGenerator(false),
   [RewardId.RARE_SPECIES_STAT_BOOSTER]: new SpeciesStatBoosterRewardGenerator(true),
 
-  [RewardId.BASE_STAT_BOOSTER]: new BaseStatBoosterRewardGenerator(),
+  [RewardId.VITAMIN]: new BaseStatBoosterRewardGenerator(),
 
   [RewardId.ATTACK_TYPE_BOOSTER]: new AttackTypeBoosterRewardGenerator(),
 

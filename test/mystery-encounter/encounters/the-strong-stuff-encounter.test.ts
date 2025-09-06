@@ -148,7 +148,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
 
       const bstsAfter = scene.getPlayerParty().map(p => {
         const baseStats = p.getSpeciesForm().baseStats.slice(0);
-        applyHeldItems(HeldItemEffect.BASE_STAT_TOTAL, { pokemon: p, baseStats: baseStats });
+        applyHeldItems(HeldItemEffect.BASE_STAT_ADD, { pokemon: p, baseStats: baseStats });
         return baseStats.reduce((a, b) => a + b);
       });
 

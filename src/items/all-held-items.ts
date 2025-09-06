@@ -9,9 +9,8 @@ import { type PermanentStat, Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { AccuracyBoosterHeldItem } from "#items/accuracy-booster";
 import { AttackTypeBoosterHeldItem, attackTypeToHeldItem } from "#items/attack-type-booster";
-import { BaseStatBoosterHeldItem, permanentStatToHeldItem } from "#items/base-stat-booster";
-import { BaseStatFlatHeldItem } from "#items/base-stat-flat";
-import { BaseStatTotalHeldItem } from "#items/base-stat-total";
+import { OldGateauHeldItem, ShuckleJuiceHeldItem } from "#items/base-stat-add";
+import { BaseStatMultiplyHeldItem, permanentStatToHeldItem } from "#items/base-stat-multiply";
 import { BatonHeldItem } from "#items/baton";
 import { BerryHeldItem, berryTypeToHeldItem } from "#items/berry";
 import { BypassSpeedChanceHeldItem } from "#items/bypass-speed-chance";
@@ -24,13 +23,13 @@ import { FlinchChanceHeldItem } from "#items/flinch-chance";
 import { FormChangeHeldItem } from "#items/form-change-item";
 import { FriendshipBoosterHeldItem } from "#items/friendship-booster";
 import { HitHealHeldItem } from "#items/hit-heal";
-import { IncrementingStatHeldItem } from "#items/incrementing-stat";
 import { InstantReviveHeldItem } from "#items/instant-revive";
 import { ContactItemStealChanceHeldItem, TurnEndItemStealHeldItem } from "#items/item-steal";
+import { MachoBraceHeldItem } from "#items/macho-brace";
 import { MultiHitHeldItem } from "#items/multi-hit";
 import { NatureWeightBoosterHeldItem } from "#items/nature-weight-booster";
 import { ResetNegativeStatStageHeldItem } from "#items/reset-negative-stat-stage";
-import { EvolutionStatBoostHeldItem, SpeciesStatBoostHeldItem } from "#items/stat-booster";
+import { EvolutionStatBoostHeldItem, SpeciesStatBoostHeldItem } from "#items/stat-boost";
 import { SurviveChanceHeldItem } from "#items/survive-chance";
 import { TurnEndHealHeldItem } from "#items/turn-end-heal";
 import { TurnEndStatusHeldItem } from "#items/turn-end-status";
@@ -121,25 +120,25 @@ export function initHeldItems() {
   // vitamins
   for (const [statKey, heldItemType] of Object.entries(permanentStatToHeldItem)) {
     const stat = Number(statKey) as PermanentStat;
-    allHeldItems[heldItemType] = new BaseStatBoosterHeldItem(heldItemType, 30, stat)
+    allHeldItems[heldItemType] = new BaseStatMultiplyHeldItem(heldItemType, 30, stat)
       .unstealable()
       .untransferable()
       .unsuppressable();
   }
 
-  allHeldItems[HeldItemId.SHUCKLE_JUICE_GOOD] = new BaseStatTotalHeldItem(HeldItemId.SHUCKLE_JUICE_GOOD, 1, 10)
+  allHeldItems[HeldItemId.SHUCKLE_JUICE_GOOD] = new ShuckleJuiceHeldItem(HeldItemId.SHUCKLE_JUICE_GOOD, 1, 10)
     .unstealable()
     .untransferable()
     .unsuppressable();
-  allHeldItems[HeldItemId.SHUCKLE_JUICE_BAD] = new BaseStatTotalHeldItem(HeldItemId.SHUCKLE_JUICE_BAD, 1, -15)
+  allHeldItems[HeldItemId.SHUCKLE_JUICE_BAD] = new ShuckleJuiceHeldItem(HeldItemId.SHUCKLE_JUICE_BAD, 1, -15)
     .unstealable()
     .untransferable()
     .unsuppressable();
-  allHeldItems[HeldItemId.OLD_GATEAU] = new BaseStatFlatHeldItem(HeldItemId.OLD_GATEAU, 1)
+  allHeldItems[HeldItemId.OLD_GATEAU] = new OldGateauHeldItem(HeldItemId.OLD_GATEAU, 1)
     .unstealable()
     .untransferable()
     .unsuppressable();
-  allHeldItems[HeldItemId.MACHO_BRACE] = new IncrementingStatHeldItem(HeldItemId.MACHO_BRACE, 50)
+  allHeldItems[HeldItemId.MACHO_BRACE] = new MachoBraceHeldItem(HeldItemId.MACHO_BRACE, 50)
     .unstealable()
     .untransferable()
     .unsuppressable();

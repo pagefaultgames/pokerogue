@@ -44,8 +44,8 @@ export class StatBoostHeldItem extends HeldItem<[typeof HeldItemEffect.STAT_BOOS
    * @returns `true` if the stat boost applies successfully, false otherwise
    * @see shouldApply
    */
-  apply(_effect: typeof HeldItemEffect.STAT_BOOST, { statValue }: StatBoostParams): boolean {
-    statValue.value *= this.multiplier;
+  apply(_effect: typeof HeldItemEffect.STAT_BOOST, { statHolder }: StatBoostParams): boolean {
+    statHolder.value *= this.multiplier;
     return true;
   }
 
@@ -88,7 +88,7 @@ export class EvolutionStatBoostHeldItem extends StatBoostHeldItem {
 
     if (pokemon.isFusion() && pokemon.getFusionSpeciesForm(true).speciesId in pokemonEvolutions !== isUnevolved) {
       // Half boost applied if pokemon is fused and either part of fusion is fully evolved
-      params.statValue.value *= 1 + (this.multiplier - 1) / 2;
+      params.statHolder.value *= 1 + (this.multiplier - 1) / 2;
       return true;
     }
     if (isUnevolved && !pokemon.isMax()) {

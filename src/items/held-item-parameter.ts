@@ -27,21 +27,7 @@ export interface AttackTypeBoostParams {
   movePower: NumberHolder;
 }
 
-export interface BaseStatBoosterParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-  /** The base stats of the {@linkcode pokemon} */
-  baseStats: number[];
-}
-
-export interface BaseStatFlatParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-  /** The base stats of the {@linkcode pokemon} */
-  baseStats: number[];
-}
-
-export interface BaseStatTotalParams {
+export interface BaseStatParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
   /** Array of the pokemon's base stat; modified in place after item application */
@@ -105,16 +91,6 @@ export interface FriendshipBoostParams {
 
 export type HitHealParams = DefaultHeldItemParams;
 
-export interface IncrementingStatParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-  /** The stat whose value is being impacted */
-  stat: Stat;
-  /** Holds the stat's value, which may be modified after item application */
-  // TODO: https://github.com/pagefaultgames/pokerogue/pull/5656#discussion_r2135612276
-  statHolder: NumberHolder;
-}
-
 export type InstantReviveParams = DefaultHeldItemParams;
 
 export interface ItemStealParams {
@@ -155,10 +131,10 @@ export type ResetNegativeStatStageParams = DefaultHeldItemParams;
 export interface StatBoostParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
-  /** The statistic to boost */
+  /** The stat whose value is being impacted */
   stat: Stat;
-  /** The value to change */
-  statValue: NumberHolder;
+  /** Holds the stat's value, which may be modified after item application */
+  statHolder: NumberHolder;
 }
 
 export interface SurviveChanceParams {
@@ -179,7 +155,7 @@ export type HeldItemEffectParamMap = {
   [HeldItemEffect.RESET_NEGATIVE_STAT_STAGE]: ResetNegativeStatStageParams;
   [HeldItemEffect.EXP_BOOSTER]: ExpBoostParams;
   [HeldItemEffect.BERRY]: BerryParams;
-  [HeldItemEffect.BASE_STAT_BOOSTER]: BaseStatBoosterParams;
+  [HeldItemEffect.BASE_STAT_MULTIPLY]: BaseStatParams;
   [HeldItemEffect.INSTANT_REVIVE]: InstantReviveParams;
   [HeldItemEffect.STAT_BOOST]: StatBoostParams;
   [HeldItemEffect.CRIT_BOOST]: CritBoostParams;
@@ -197,11 +173,9 @@ export type HeldItemEffectParamMap = {
   [HeldItemEffect.BATON]: BatonParams;
   [HeldItemEffect.CONTACT_ITEM_STEAL_CHANCE]: ItemStealParams;
   [HeldItemEffect.TURN_END_ITEM_STEAL]: ItemStealParams;
-  [HeldItemEffect.BASE_STAT_TOTAL]: BaseStatTotalParams;
-  [HeldItemEffect.BASE_STAT_FLAT]: BaseStatFlatParams;
-  [HeldItemEffect.INCREMENTING_STAT]: IncrementingStatParams;
+  [HeldItemEffect.BASE_STAT_ADD]: BaseStatParams;
+  [HeldItemEffect.MACHO_BRACE]: StatBoostParams;
   [HeldItemEffect.EVO_TRACKER]: EvoTrackerParams;
-  [HeldItemEffect.COSMETIC]: DefaultHeldItemParams;
 };
 /**
  * Dummy, Typescript-only constant to ensure that all {@linkcode HeldItemEffect}s have an entry in {@linkcode HeldItemEffectParamMap}.

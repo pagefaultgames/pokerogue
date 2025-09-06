@@ -53,7 +53,7 @@ export const rewardRarities = {
 
   [RewardId.SPECIES_STAT_BOOSTER]: RarityTier.GREAT,
   [RewardId.RARE_SPECIES_STAT_BOOSTER]: RarityTier.ULTRA,
-  [RewardId.BASE_STAT_BOOSTER]: RarityTier.GREAT,
+  [RewardId.VITAMIN]: RarityTier.GREAT,
   [RewardId.ATTACK_TYPE_BOOSTER]: RarityTier.ULTRA,
   [RewardId.BERRY]: RarityTier.COMMON,
 

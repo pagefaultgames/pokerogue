@@ -2,7 +2,7 @@ import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId } from "#enums/held-item-id";
 import { getStatKey, type PermanentStat, Stat } from "#enums/stat";
 import { HeldItem } from "#items/held-item";
-import type { BaseStatBoosterParams } from "#items/held-item-parameter";
+import type { BaseStatParams } from "#items/held-item-parameter";
 import i18next from "i18next";
 
 type PermanentStatToHeldItemMap = {
@@ -27,8 +27,8 @@ export const statBoostItems: Record<PermanentStat, string> = {
   [Stat.SPD]: "carbos",
 };
 
-export class BaseStatBoosterHeldItem extends HeldItem<[typeof HeldItemEffect.BASE_STAT_BOOSTER]> {
-  public readonly effects = [HeldItemEffect.BASE_STAT_BOOSTER] as const;
+export class BaseStatMultiplyHeldItem extends HeldItem<[typeof HeldItemEffect.BASE_STAT_MULTIPLY]> {
+  public readonly effects = [HeldItemEffect.BASE_STAT_MULTIPLY] as const;
   public stat: PermanentStat;
 
   constructor(type: HeldItemId, maxStackCount: number, stat: PermanentStat) {
@@ -63,7 +63,7 @@ export class BaseStatBoosterHeldItem extends HeldItem<[typeof HeldItemEffect.BAS
   /**
    * Applies the {@linkcode BaseStatModifier} to the specified {@linkcode Pokemon}.
    */
-  apply(_effect: typeof HeldItemEffect.BASE_STAT_BOOSTER, { pokemon, baseStats }: BaseStatBoosterParams): boolean {
+  apply(_effect: typeof HeldItemEffect.BASE_STAT_MULTIPLY, { pokemon, baseStats }: BaseStatParams): boolean {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     baseStats[this.stat] = Math.floor(baseStats[this.stat] * (1 + stackCount * 0.1));
     return true;
