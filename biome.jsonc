@@ -46,6 +46,7 @@
       }
     }
   },
+  // TODO: Remove unneeded `options` blocks once biome cares
   "linter": {
     "enabled": true,
     "rules": {
