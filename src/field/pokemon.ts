@@ -3220,7 +3220,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       Math.ceil(Math.pow(m[1], weightMultiplier) * 100),
     ]);
 
-    const STAB_BLACKLIST = [
+    const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
       MoveId.SHELL_TRAP,
       MoveId.FUTURE_SIGHT,
       MoveId.UPPER_HAND,
@@ -3260,14 +3260,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       MoveId.EXPLOSION,
       MoveId.MISTY_EXPLOSION,
       MoveId.SELF_DESTRUCT,
-    ];
+    ]);
 
     // All Pokemon force a STAB move first
     const stabMovePool = baseWeights.filter(
       m =>
         allMoves[m[0]].category !== MoveCategory.STATUS &&
         this.isOfType(allMoves[m[0]].type) &&
-        !STAB_BLACKLIST.includes(m[0]),
+        !STAB_BLACKLIST.has(m[0]),
     );
 
     if (stabMovePool.length) {
@@ -3281,7 +3281,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     } else {
       // If there are no damaging STAB moves, just force a random damaging move
       const attackMovePool = baseWeights.filter(
-        m => allMoves[m[0]].category !== MoveCategory.STATUS && !STAB_BLACKLIST.includes(m[0]),
+        m => allMoves[m[0]].category !== MoveCategory.STATUS && !STAB_BLACKLIST.has(m[0]),
       );
       if (attackMovePool.length) {
         const totalWeight = attackMovePool.reduce((v, m) => v + m[1], 0);
@@ -3320,7 +3320,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
               ret = Math.ceil(
                 (m[1] /
                   Math.max(Math.pow(4, this.moveset.filter(mo => (mo.getMove().power ?? 0) > 1).length) / 8, 0.5)) *
-                  (this.isOfType(allMoves[m[0]].type) && !STAB_BLACKLIST.includes(m[0]) ? 20 : 1),
+                  (this.isOfType(allMoves[m[0]].type) && !STAB_BLACKLIST.has(m[0]) ? 20 : 1),
               );
             } else {
               ret = m[1];
