@@ -7,6 +7,7 @@ import { doubleBattleDialogue } from "#data/double-battle-dialogue";
 import { Gender } from "#data/gender";
 import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { PokeballType } from "#enums/pokeball";
@@ -19,6 +20,7 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import type { EnemyPokemon } from "#field/pokemon";
+import type { HeldItemConfiguration } from "#items/held-item-data-types";
 import { PokemonMove } from "#moves/pokemon-move";
 import { getIsInitialized, initI18n } from "#plugins/i18n";
 import type { EvilTeam } from "#trainers/evil-admin-trainer-pools";
@@ -956,6 +958,7 @@ export function getRandomPartyMemberFunc(
   trainerSlot: TrainerSlot = TrainerSlot.TRAINER,
   ignoreEvolution = false,
   postProcess?: (enemyPokemon: EnemyPokemon) => void,
+  heldItemConfig?: HeldItemConfiguration,
 ) {
   return (level: number, strength: PartyMemberStrength) => {
     let species = randSeedItem(speciesPool);
@@ -973,7 +976,7 @@ export function getRandomPartyMemberFunc(
       trainerSlot,
       undefined,
       false,
-      undefined,
+      heldItemConfig,
       undefined,
       postProcess,
     );
@@ -3831,15 +3834,21 @@ export const trainerConfigs: TrainerConfigs = {
     .setDoubleTitle("champion_double")
     .setPartyMemberFunc(
       0,
-      getRandomPartyMemberFunc([SpeciesId.PIKACHU], TrainerSlot.TRAINER, true, p => {
-        p.formIndex = 1; // Partner Pikachu
-        p.gender = Gender.MALE;
-        p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.VOLT_TACKLE)) {
-          // Check if Volt Tackle is in the moveset, if not, replace the first move with Volt Tackle.
-          p.moveset[0] = new PokemonMove(MoveId.VOLT_TACKLE);
-        }
-      }),
+      getRandomPartyMemberFunc(
+        [SpeciesId.PIKACHU],
+        TrainerSlot.TRAINER,
+        true,
+        p => {
+          p.formIndex = 1; // Partner Pikachu
+          p.gender = Gender.MALE;
+          p.generateAndPopulateMoveset();
+          if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.VOLT_TACKLE)) {
+            // Check if Volt Tackle is in the moveset, if not, replace the first move with Volt Tackle.
+            p.moveset[0] = new PokemonMove(MoveId.VOLT_TACKLE);
+          }
+        },
+        [{ entry: HeldItemId.LIGHT_BALL, count: 1 }],
+      ),
     )
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.MEGANIUM, SpeciesId.TYPHLOSION, SpeciesId.FERALIGATR]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.ESPEON, SpeciesId.UMBREON, SpeciesId.SYLVEON]))
