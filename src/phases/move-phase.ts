@@ -18,7 +18,7 @@ import { MoveResult } from "#enums/move-result";
 import { isIgnorePP, isIgnoreStatus, isReflected, isVirtual, MoveUseMode } from "#enums/move-use-mode";
 import { PokemonType } from "#enums/pokemon-type";
 import { StatusEffect } from "#enums/status-effect";
-import { MoveUsedEvent } from "#events/battle-scene";
+import { MovesetChangedEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import { frenzyMissFunc } from "#moves/move-utils";
@@ -317,7 +317,7 @@ export class MovePhase extends BattlePhase {
       // "commit" to using the move, deducting PP.
       const ppUsed = 1 + this.getPpIncreaseFromPressure(targets);
       this.move.usePp(ppUsed);
-      globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon.id, move, this.move.ppUsed));
+      globalScene.eventTarget.dispatchEvent(new MovesetChangedEvent(this.pokemon.id, this.move));
     }
 
     /**
@@ -620,10 +620,10 @@ export class MovePhase extends BattlePhase {
     }
 
     if (this.failed) {
-      // TODO: should this consider struggle?
+      // TODO: should this consider struggle and pressure?
       const ppUsed = isIgnorePP(this.useMode) ? 0 : 1;
       this.move.usePp(ppUsed);
-      globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), ppUsed));
+      globalScene.eventTarget.dispatchEvent(new MovesetChangedEvent(this.pokemon.id, this.move));
     }
 
     if (this.cancelled && this.pokemon.summonData.tags.some(t => t.tagType === BattlerTagType.FRENZY)) {
