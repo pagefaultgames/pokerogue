@@ -3246,6 +3246,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       MoveId.BEAT_UP,
       MoveId.PSYWAVE,
       MoveId.FIRST_IMPRESSION,
+      MoveId.EXPLOSION,
+      MoveId.MISTY_EXPLOSION,
+      MoveId.SELF_DESTRUCT,
     ];
 
     // All Pokemon force a STAB move first
