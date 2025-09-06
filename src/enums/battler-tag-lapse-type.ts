@@ -49,10 +49,10 @@ export enum BattlerTagLapseType {
   /**
    * The tag has some other custom activation or removal condition.
    * @remarks
-   * Tags can use this lapse type to prevent them from being automatically lapsed during automatic lapse instances,
-   * such as before a move is used or at the end of a turn. Note that a tag's lapse method can still make use of
-   * these lapse types, which can be invoked via the `lapseTag` method on {@linkcode Pokemon} with the tag and
-   * lapse type.
+   * Tags can use this lapse type to prevent them from automatically lapsing during automatic lapse instances,
+   * such as before a move is used or at the end of a turn. 
+   * Such tags will only trigger upon being specifically lapsed with the tag and lapse type via
+   * {@linkcode Pokemon.lapseTag}.
    * */
   CUSTOM,
 }
