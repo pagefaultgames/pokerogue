@@ -22,7 +22,7 @@ export function load(app) {
         // Replace the SVG to the beta documentation site with the current ref name
         .replace(
           /^<a href="(.*?)\/beta(.*?)"><img src=".*coverage.svg"/m, // formatting
-          `<a href="$1/${process.env.REF_NAME}$2"><"coverage.svg"`,
+          `<a href="$1/${process.env.REF_NAME}$2"><img src="coverage.svg"`,
         );
     }
   });
