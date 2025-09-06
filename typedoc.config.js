@@ -1,6 +1,6 @@
 import { globSync } from "node:fs";
 
-const dryRun = !!process.env.DRY_RUN.match(/true/gi);
+const dryRun = !!process.env.DRY_RUN?.match(/true/gi);
 
 /**
  * @type {Partial<import("typedoc").TypeDocOptions>}
