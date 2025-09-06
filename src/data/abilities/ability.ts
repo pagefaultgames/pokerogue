@@ -4815,7 +4815,7 @@ export class MoodyAbAttr extends PostTurnAbAttr {
     if (!simulated) {
       if (canRaise.length > 0) {
         const raisedStat = canRaise[pokemon.randBattleSeedInt(canRaise.length)];
-        canLower = canRaise.filter(s => s !== raisedStat);
+        canLower = canLower.filter(s => s !== raisedStat);
         globalScene.phaseManager.unshiftNew("StatStageChangePhase", pokemon.getBattlerIndex(), true, [raisedStat], 2);
       }
       if (canLower.length > 0) {
