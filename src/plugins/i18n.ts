@@ -294,7 +294,7 @@ await i18next
       detection: {
         lookupLocalStorage: "prLang",
       },
-      debug: Number(import.meta.env.VITE_I18N_DEBUG) === 1,
+      debug: import.meta.env.VITE_I18N_DEBUG === "1",
       interpolation: {
         escapeValue: false,
       },
