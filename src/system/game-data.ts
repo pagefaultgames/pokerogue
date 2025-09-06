@@ -178,6 +178,22 @@ export interface StarterAttributes {
   tera?: PokemonType;
 }
 
+export interface Starter {
+  speciesId: SpeciesId;
+  shiny: boolean;
+  variant: Variant;
+  formIndex: number;
+  female?: boolean;
+  abilityIndex: number;
+  passive: boolean;
+  nature: Nature;
+  moveset?: StarterMoveset;
+  pokerus: boolean;
+  nickname?: string;
+  teraType?: PokemonType;
+  ivs: number[];
+}
+
 export interface DexAttrProps {
   shiny: boolean;
   female: boolean;
