@@ -77,7 +77,7 @@ jobs:
           cd pokerogue_gh
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
-          mv -f /tmp/docs/* $GITHUB_REF_NAME
+          mv -f /tmp/docs $GITHUB_REF_NAME
           git add $GITHUB_REF_NAME
           git commit -m "[skip ci] Deploy docs"
           git push
