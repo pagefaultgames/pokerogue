@@ -19,7 +19,6 @@ import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
 import type { MoveTargetSet } from "#moves/move";
 import { getMoveTargets } from "#moves/move-utils";
-import type { PokemonMove } from "#moves/pokemon-move";
 import { FieldPhase } from "#phases/field-phase";
 import type { TurnMove } from "#types/turn-move";
 import i18next from "i18next";
