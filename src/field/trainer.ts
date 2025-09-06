@@ -17,7 +17,7 @@ import { getIsInitialized, initI18n } from "#plugins/i18n";
 import type { TrainerConfig } from "#trainers/trainer-config";
 import { trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, type TrainerPartyTemplate } from "#trainers/trainer-party-template";
-import { randSeedInt, randSeedItem, randSeedWeightedItem } from "#utils/common";
+import { randSeedInt, randSeedItem } from "#utils/common";
 import { getRandomLocaleEntry } from "#utils/i18n";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
@@ -61,9 +61,7 @@ export class Trainer extends Phaser.GameObjects.Container {
 
     this.variant = variant;
     this.partyTemplateIndex = Math.min(
-      partyTemplateIndex !== undefined
-        ? partyTemplateIndex
-        : randSeedWeightedItem(this.config.partyTemplates.map((_, i) => i)),
+      partyTemplateIndex !== undefined ? partyTemplateIndex : randSeedItem(this.config.partyTemplates.map((_, i) => i)),
       this.config.partyTemplates.length - 1,
     );
     // TODO: Rework this and add actual error handling for missing names

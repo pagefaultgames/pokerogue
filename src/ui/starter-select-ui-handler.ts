@@ -1619,6 +1619,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       if (!this.filterMode) {
         this.startCursorObj.setVisible(false);
         this.starterIconsCursorObj.setVisible(false);
+        this.randomCursorObj.setVisible(false);
         this.setSpecies(null);
         this.filterBarCursor = 0;
         this.setFilterMode(true);
@@ -4410,7 +4411,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             globalScene.phaseManager.pushNew("EncounterPhase");
           }
           this.clearText();
-          globalScene.phaseManager.getCurrentPhase()?.end();
+          globalScene.phaseManager.getCurrentPhase().end();
         },
         cancel,
         null,
