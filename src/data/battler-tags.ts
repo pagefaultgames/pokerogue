@@ -228,26 +228,27 @@ interface GenericSerializableBattlerTag<T extends BattlerTagType> extends Serial
  * Descendants can override {@linkcode isMoveRestricted} to restrict moves that
  * match a condition. A restricted move gets cancelled before it is used.
  * Players and enemies should not be allowed to select restricted moves.
+ * @todo Require descendant subclasses to inherit a `PRE_MOVE` lapse type
  */
 export abstract class MoveRestrictionBattlerTag extends SerializableBattlerTag {
   public declare readonly tagType: MoveRestrictionBattlerTagType;
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    if (lapseType === BattlerTagLapseType.PRE_MOVE) {
-      // Cancel the affected pokemon's selected move
-      const phase = globalScene.phaseManager.getCurrentPhase() as MovePhase;
-      const move = phase.move;
-
-      if (this.isMoveRestricted(move.moveId, pokemon)) {
-        if (this.interruptedText(pokemon, move.moveId)) {
-          globalScene.phaseManager.queueMessage(this.interruptedText(pokemon, move.moveId));
-        }
-        phase.cancel();
-      }
-
-      return true;
+    if (lapseType !== BattlerTagLapseType.PRE_MOVE) {
+      return super.lapse(pokemon, lapseType);
     }
 
-    return super.lapse(pokemon, lapseType);
+    // Cancel the affected pokemon's selected move
+    const phase = globalScene.phaseManager.getCurrentPhase() as MovePhase;
+    const move = phase.move;
+
+    if (this.isMoveRestricted(move.moveId, pokemon)) {
+      if (this.interruptedText(pokemon, move.moveId)) {
+        globalScene.phaseManager.queueMessage(this.interruptedText(pokemon, move.moveId));
+      }
+      phase.cancel();
+    }
+
+    return true;
   }
 
   /**
