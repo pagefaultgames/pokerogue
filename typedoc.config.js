@@ -1,5 +1,7 @@
 import { globSync } from "node:fs";
 
+const dryRun = !!process.env.DRY_RUN?.match(/true/gi);
+
 /**
  * @type {Partial<import("typedoc").TypeDocOptions>}
  */
@@ -28,7 +30,7 @@ const config = {
     ...globSync("./typedoc-plugins/**/*.js").map(plugin => "./" + plugin),
   ],
   // Avoid emitting docs for branches other than main/beta
-  emit: process.env.DRY_RUN ? "none" : "docs",
+  emit: dryRun ? "none" : "docs",
   out: process.env.CI ? "/tmp/docs" : "./typedoc",
   name: "PokéRogue",
   readme: "./README.md",
@@ -44,7 +46,7 @@ const config = {
 };
 
 // If generating docs for main/beta, check the ref name and add an appropriate navigation header
-if (!process.env.DRY_RUN && process.env.REF_NAME) {
+if (!dryRun && process.env.REF_NAME) {
   const otherRefName = process.env.REF_NAME === "main" ? "beta" : "main";
   config.navigationLinks = {
     ...config.navigationLinks,
