@@ -161,7 +161,7 @@ export function applyHeldItems<T extends HeldItemEffect>(effect: T, params: Held
     // TODO: Make this use `getHeldItems` and make `heldItems` array private
     for (const item of pokemon.heldItemManager.getHeldItems()) {
       if (allHeldItems[item].effects.includes(effect)) {
-        allHeldItems[item].apply(params);
+        allHeldItems[item].apply(effect, params);
       }
     }
   }

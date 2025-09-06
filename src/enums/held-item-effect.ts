@@ -33,6 +33,7 @@ export const HeldItemEffect = {
   BASE_STAT_TOTAL: 50,
   BASE_STAT_FLAT: 51,
   INCREMENTING_STAT: 52,
+  COSMETIC: 99,
 } as const;
 
 export type HeldItemEffect = ObjectValues<typeof HeldItemEffect>;

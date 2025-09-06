@@ -7,7 +7,13 @@ import type { UniqueArray } from "#utils/common";
 import i18next from "i18next";
 import type { HeldItemEffectParamMap } from "./held-item-parameter";
 
-export abstract class HeldItemBase {
+/** Tuple type containing >1 `HeldItemEffect`s */
+export type EffectTuple = Readonly<[HeldItemEffect, ...HeldItemEffect[]]>;
+
+/**
+ * Abstract class for all non-cosmetic held items (i.e. ones that can have their effects applied).
+ */
+export abstract class HeldItem<T extends EffectTuple> {
   public type: HeldItemId;
   public readonly maxStackCount: number;
   public isTransferable = true;
@@ -115,15 +121,7 @@ export abstract class HeldItemBase {
     this.isSuppressable = false;
     return this;
   }
-}
 
-/** Tuple type containing >1 `HeldItemEffect`s */
-export type EffectTuple = Readonly<[HeldItemEffect, ...HeldItemEffect[]]>;
-
-/**
- * Abstract class for all non-cosmetic held items (i.e. ones that can have their effects applied).
- */
-export abstract class HeldItem<T extends EffectTuple> extends HeldItemBase {
   /**
    * A readonly tuple containing all {@linkcode HeldItemEffect | effects} that this class can apply.
    * @privateRemarks
@@ -171,4 +169,10 @@ export abstract class ConsumableHeldItem<T extends EffectTuple> extends HeldItem
       applyAbAttrs("PostItemLostAbAttr", { pokemon: pokemon });
     }
   }
+}
+
+/** Abstract class for all `HeldItem`s that can be consumed during battle. */
+export abstract class CosmeticHeldItem extends HeldItem<[typeof HeldItemEffect.COSMETIC]> {
+  effects: readonly [typeof HeldItemEffect.COSMETIC];
+  apply() {}
 }

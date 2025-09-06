@@ -201,6 +201,7 @@ export type HeldItemEffectParamMap = {
   [HeldItemEffect.BASE_STAT_FLAT]: BaseStatFlatParams;
   [HeldItemEffect.INCREMENTING_STAT]: IncrementingStatParams;
   [HeldItemEffect.EVO_TRACKER]: EvoTrackerParams;
+  [HeldItemEffect.COSMETIC]: DefaultHeldItemParams;
 };
 /**
  * Dummy, Typescript-only constant to ensure that all {@linkcode HeldItemEffect}s have an entry in {@linkcode HeldItemEffectParamMap}.
