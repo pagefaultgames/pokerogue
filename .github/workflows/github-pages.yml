@@ -71,8 +71,8 @@ jobs:
         run: pnpm typedoc
 
       - name: Commit & Push docs
-        # env stores "true" as a string instead of a boolean (hence why an explicit check is required)
-        if: ${{ env.DRY_RUN == 'true'}}
+        # env vars are stored as strings instead of booleans (hence why an explicit check is required)
+        if: ${{ env.DRY_RUN == 'false'}}
         run: |
           cd pokerogue_gh
           git config user.email "github-actions[bot]@users.noreply.github.com"
