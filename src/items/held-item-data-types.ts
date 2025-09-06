@@ -21,9 +21,7 @@ export type HeldItemData = {
   active?: boolean;
 };
 
-export type HeldItemDataMap = {
-  [key in HeldItemId]?: HeldItemData;
-};
+export type HeldItemDataMap = Map<HeldItemId, HeldItemData>;
 
 export type HeldItemSpecs = HeldItemData & {
   id: HeldItemId;
