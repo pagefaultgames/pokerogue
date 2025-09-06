@@ -33,7 +33,7 @@ describe("Moves - Gigaton Hammer", () => {
   });
 
   it("can't be used two turns in a row", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const enemy1 = game.field.getEnemyPokemon();
 
@@ -46,17 +46,17 @@ describe("Moves - Gigaton Hammer", () => {
     await game.doKillOpponents();
     await game.toNextWave();
 
+    // Attempting to use Gigaton Hammer again should result in struggle
     game.move.select(MoveId.GIGATON_HAMMER);
     await game.toNextTurn();
 
-    const enemy2 = game.field.getEnemyPokemon();
-
-    expect(enemy2.hp).toBe(enemy2.getMaxHp());
+    const player = game.field.getPlayerPokemon();
+    expect(player.getLastXMoves()[0]?.move).toBe(MoveId.STRUGGLE);
   });
 
   it("can be used again if recalled and sent back out", async () => {
     game.override.startingWave(4);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const enemy1 = game.field.getEnemyPokemon();
 
