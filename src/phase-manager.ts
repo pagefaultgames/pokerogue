@@ -337,9 +337,10 @@ export class PhaseManager {
 
     if (nextPhase === null) {
       this.turnStart();
+    } else {
+      this.currentPhase = nextPhase!;
     }
 
-    this.currentPhase = nextPhase!;
     this.startCurrentPhase();
   }
   /**
