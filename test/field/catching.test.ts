@@ -317,17 +317,13 @@ describe("Throwing balls at bosses after weakening them", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleType(BattleType.WILD)
-      .moveset([MoveId.SLASH])
-      .enemyMoveset([MoveId.SPLASH])
-      .enemyHeldItems([])
+      .enemyMoveset(MoveId.SPLASH)
       .enemySpecies(SpeciesId.CATERPIE)
       .startingLevel(99999)
       .startingWave(170);
   });
 
   it("weakening and catching a single boss", async () => {
-    game.override.battleStyle("single").enemyAbility(AbilityId.STURDY);
-
     await game.classicMode.startBattle([SpeciesId.KARTANA]);
 
     const partyLength = game.scene.getPlayerParty().length;
@@ -335,8 +331,11 @@ describe("Throwing balls at bosses after weakening them", () => {
     const ball = PokeballType.ROGUE_BALL;
     game.scene.pokeballCounts[ball] = 1;
 
-    game.move.select(MoveId.SLASH);
+    game.move.use(MoveId.FALSE_SWIPE);
     await game.toNextTurn();
+
+    const enemy = game.field.getEnemyPokemon();
+    expect(enemy.bossSegmentIndex).toBe(0); // last bar
 
     game.doThrowPokeball(ball);
     await game.toEndOfTurn();
