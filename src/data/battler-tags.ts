@@ -510,7 +510,7 @@ export class RechargingTag extends SerializableBattlerTag {
         }),
       );
       const currentPhase = globalScene.phaseManager.getCurrentPhase();
-      if (currentPhase?.is("MovePhase")) {
+      if (currentPhase.is("MovePhase")) {
         currentPhase.cancel();
       }
       pokemon.getMoveQueue().shift();
@@ -711,7 +711,7 @@ export class FlinchedTag extends BattlerTag {
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.PRE_MOVE) {
       const currentPhase = globalScene.phaseManager.getCurrentPhase();
-      if (currentPhase?.is("MovePhase")) {
+      if (currentPhase.is("MovePhase")) {
         currentPhase.cancel();
       }
       globalScene.phaseManager.queueMessage(
@@ -755,7 +755,7 @@ export class InterruptedTag extends BattlerTag {
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     const currentPhase = globalScene.phaseManager.getCurrentPhase();
-    if (currentPhase?.is("MovePhase")) {
+    if (currentPhase.is("MovePhase")) {
       currentPhase.cancel();
     }
     return super.lapse(pokemon, lapseType);
@@ -849,7 +849,7 @@ export class ConfusedTag extends SerializableBattlerTag {
       phaseManager.queueMessage(i18next.t("battlerTags:confusedLapseHurtItself"));
       pokemon.damageAndUpdate(damage, { result: HitResult.CONFUSION });
       const currentPhase = phaseManager.getCurrentPhase();
-      if (currentPhase?.is("MovePhase") && currentPhase.pokemon === pokemon) {
+      if (currentPhase.is("MovePhase") && currentPhase.pokemon === pokemon) {
         currentPhase.cancel();
       }
     }
@@ -991,7 +991,7 @@ export class InfatuatedTag extends SerializableBattlerTag {
         }),
       );
       const currentPhase = phaseManager.getCurrentPhase();
-      if (currentPhase?.is("MovePhase")) {
+      if (currentPhase.is("MovePhase")) {
         currentPhase.cancel();
       }
     }
@@ -1145,7 +1145,7 @@ export class PowderTag extends BattlerTag {
     }
     const currentPhase = globalScene.phaseManager.getCurrentPhase();
 
-    if (!currentPhase?.is("MovePhase")) {
+    if (!currentPhase.is("MovePhase")) {
       return true;
     }
 
@@ -1757,7 +1757,7 @@ export class ProtectedTag extends BattlerTag {
 
       // Stop multi-hit moves early
       const effectPhase = globalScene.phaseManager.getCurrentPhase();
-      if (effectPhase?.is("MoveEffectPhase")) {
+      if (effectPhase.is("MoveEffectPhase")) {
         effectPhase.stopMultiHit(pokemon);
       }
       return true;
@@ -2771,7 +2771,7 @@ export class GulpMissileTag extends SerializableBattlerTag {
     }
 
     const moveEffectPhase = globalScene.phaseManager.getCurrentPhase();
-    if (moveEffectPhase?.is("MoveEffectPhase")) {
+    if (moveEffectPhase.is("MoveEffectPhase")) {
       const attacker = moveEffectPhase.getUserPokemon();
 
       if (!attacker) {
@@ -3145,7 +3145,7 @@ export class SubstituteTag extends SerializableBattlerTag {
   /** If the Substitute redirects damage, queue a message to indicate it. */
   onHit(pokemon: Pokemon): void {
     const moveEffectPhase = globalScene.phaseManager.getCurrentPhase();
-    if (moveEffectPhase?.is("MoveEffectPhase")) {
+    if (moveEffectPhase.is("MoveEffectPhase")) {
       const attacker = moveEffectPhase.getUserPokemon();
       if (!attacker) {
         return;
@@ -3893,7 +3893,7 @@ export function loadBattlerTag(source: BattlerTag | BattlerTagData): BattlerTag 
  */
 function getMoveEffectPhaseData(_pokemon: Pokemon): { phase: MoveEffectPhase; attacker: Pokemon; move: Move } | null {
   const phase = globalScene.phaseManager.getCurrentPhase();
-  if (phase?.is("MoveEffectPhase")) {
+  if (phase.is("MoveEffectPhase")) {
     return {
       phase,
       attacker: phase.getPokemon(),

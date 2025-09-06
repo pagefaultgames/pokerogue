@@ -1658,7 +1658,7 @@ export class PreUseInterruptAttr extends MoveAttr {
    */
   override apply(user: Pokemon, target: Pokemon, move: Move): boolean {
     const currentPhase = globalScene.phaseManager.getCurrentPhase();
-    if (!currentPhase?.is("MovePhase") || !this.conditionFunc(user, target, move)) {
+    if (!currentPhase.is("MovePhase") || !this.conditionFunc(user, target, move)) {
       return false;
     }
     currentPhase.cancel();
@@ -2219,8 +2219,9 @@ export class HealAttr extends MoveEffectAttr {
     if (healedPokemon.isFullHp()) {
       // Ensure the fail message isn't displayed when checking the move conditions outside of the move execution
       // TOOD: Fix this in PR#6276
-      if (globalScene.phaseManager.getCurrentPhase()?.is("MovePhase")) {
-        globalScene.phaseManager.queueMessage(i18next.t("battle:hpIsFull", {
+      const phaseManager = globalScene.phaseManager;
+      if (phaseManager.getCurrentPhase().is("MovePhase")) {
+        phaseManager.queueMessage(i18next.t("battle:hpIsFull", {
           pokemonName: getPokemonNameWithAffix(healedPokemon),
         }))
       }
