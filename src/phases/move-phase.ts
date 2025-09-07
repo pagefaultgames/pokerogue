@@ -1,4 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import { MOVE_COLOR } from "#app/constants/colors";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
@@ -118,7 +119,10 @@ export class MovePhase extends BattlePhase {
   public start(): void {
     super.start();
 
-    console.log(MoveId[this.move.moveId], enumValueToKey(MoveUseMode, this.useMode));
+    console.log(
+      `%cMove: ${MoveId[this.move.moveId]}\nUse Mode: ${enumValueToKey(MoveUseMode, this.useMode)}`,
+      `color:${MOVE_COLOR}`,
+    );
 
     // Check if move is unusable (e.g. running out of PP due to a mid-turn Spite
     // or the user no longer being on field), ending the phase early if not.
@@ -269,8 +273,8 @@ export class MovePhase extends BattlePhase {
       globalScene.phaseManager.queueMessage(
         getStatusEffectHealText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)),
       );
-      this.pokemon.resetStatus();
-      this.pokemon.updateInfo();
+      // cannot use `asPhase=true` as it will cause status to be reset _after_ move condition checks fire
+      this.pokemon.resetStatus(false, false, false, false);
     }
   }
 

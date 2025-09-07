@@ -21,6 +21,7 @@ jobs:
   test:
     # We can't use dynmically named jobs until https://github.com/orgs/community/discussions/13261 is implemented
     name: Shard
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     if: ${{ !inputs.skip }}
     steps:

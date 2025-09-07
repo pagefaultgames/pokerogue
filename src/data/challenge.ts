@@ -1,11 +1,13 @@
 import type { FixedBattleConfig } from "#app/battle";
 import { getRandomTrainerFunc } from "#app/battle";
-import { defaultStarterSpecies } from "#app/constants";
+import { defaultStarterSpeciesAndEvolutions } from "#balance/pokemon-evolutions";
 import { speciesStarterCosts } from "#balance/starters";
 import type { PokemonSpecies } from "#data/pokemon-species";
+import { AbilityAttr } from "#enums/ability-attr";
 import { BattleType } from "#enums/battle-type";
 import { Challenges } from "#enums/challenges";
 import { TypeColor, TypeShadow } from "#enums/color";
+import { DexAttr } from "#enums/dex-attr";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import { ModifierTier } from "#enums/modifier-tier";
 import { MoveId } from "#enums/move-id";
@@ -19,12 +21,13 @@ import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
 import { PokemonMove } from "#moves/pokemon-move";
-import type { DexAttrProps, GameData } from "#system/game-data";
+import type { DexAttrProps, GameData, StarterDataEntry } from "#system/game-data";
 import { RibbonData, type RibbonFlag } from "#system/ribbons/ribbon-data";
+import type { DexEntry } from "#types/dex-data";
 import { type BooleanHolder, isBetween, type NumberHolder, randSeedItem } from "#utils/common";
 import { deepCopy } from "#utils/data";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
-import { toCamelCase, toSnakeCase } from "#utils/strings";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 /** A constant for the default max cost of the starting party before a run */
@@ -234,6 +237,15 @@ export abstract class Challenge {
    * @returns {@link boolean} Whether this function did anything.
    */
   applyStarterCost(_species: SpeciesId, _cost: NumberHolder): boolean {
+    return false;
+  }
+
+  /**
+   * An apply function for STARTER_SELECT_MODIFY challenges. Derived classes should alter this.
+   * @param _pokemon {@link Pokemon} The starter pokemon to modify.
+   * @returns {@link boolean} Whether this function did anything.
+   */
+  applyStarterSelectModify(_speciesId: SpeciesId, _dexEntry: DexEntry, _starterDataEntry: StarterDataEntry): boolean {
     return false;
   }
 
@@ -752,7 +764,7 @@ export class SingleTypeChallenge extends Challenge {
   }
 
   getValue(overrideValue: number = this.value): string {
-    return toSnakeCase(PokemonType[overrideValue - 1]);
+    return i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[overrideValue - 1])}`);
   }
 
   getDescription(overrideValue: number = this.value): string {
@@ -785,7 +797,7 @@ export class FreshStartChallenge extends Challenge {
   }
 
   applyStarterChoice(pokemon: PokemonSpecies, valid: BooleanHolder): boolean {
-    if (this.value === 1 && !defaultStarterSpecies.includes(pokemon.speciesId)) {
+    if (this.value === 1 && !defaultStarterSpeciesAndEvolutions.includes(pokemon.speciesId)) {
       valid.value = false;
       return true;
     }
@@ -797,10 +809,61 @@ export class FreshStartChallenge extends Challenge {
     return true;
   }
 
+  applyStarterSelectModify(speciesId: SpeciesId, dexEntry: DexEntry, starterDataEntry: StarterDataEntry): boolean {
+    // Remove all egg moves
+    starterDataEntry.eggMoves = 0;
+
+    // Remove hidden and passive ability
+    const defaultAbilities = AbilityAttr.ABILITY_1 | AbilityAttr.ABILITY_2;
+    starterDataEntry.abilityAttr &= defaultAbilities;
+    starterDataEntry.passiveAttr = 0;
+
+    // Remove cost reduction
+    starterDataEntry.valueReduction = 0;
+
+    // Remove natures except for the default ones
+    const neutralNaturesAttr =
+      (1 << (Nature.HARDY + 1)) |
+      (1 << (Nature.DOCILE + 1)) |
+      (1 << (Nature.SERIOUS + 1)) |
+      (1 << (Nature.BASHFUL + 1)) |
+      (1 << (Nature.QUIRKY + 1));
+    dexEntry.natureAttr &= neutralNaturesAttr;
+
+    // Cap all ivs at 15
+    for (let i = 0; i < 6; i++) {
+      dexEntry.ivs[i] = Math.min(dexEntry.ivs[i], 15);
+    }
+
+    // Removes shiny and variants
+    dexEntry.caughtAttr &= ~DexAttr.SHINY;
+    dexEntry.caughtAttr &= ~(DexAttr.VARIANT_2 | DexAttr.VARIANT_3);
+
+    // Remove unlocked forms for specific species
+    if (speciesId === SpeciesId.ZYGARDE) {
+      // Sets ability from power construct to aura break
+      const formMask = (DexAttr.DEFAULT_FORM << 2n) - 1n;
+      dexEntry.caughtAttr &= formMask;
+    } else if (
+      [
+        SpeciesId.PIKACHU,
+        SpeciesId.EEVEE,
+        SpeciesId.PICHU,
+        SpeciesId.ROTOM,
+        SpeciesId.MELOETTA,
+        SpeciesId.FROAKIE,
+      ].includes(speciesId)
+    ) {
+      const formMask = (DexAttr.DEFAULT_FORM << 1n) - 1n; // These mons are set to form 0 because they're meant to be unlocks or mid-run form changes
+      dexEntry.caughtAttr &= formMask;
+    }
+
+    return true;
+  }
+
   applyStarterModify(pokemon: Pokemon): boolean {
     pokemon.abilityIndex = pokemon.abilityIndex % 2; // Always base ability, if you set it to hidden it wraps to first ability
     pokemon.passive = false; // Passive isn't unlocked
-    pokemon.nature = Nature.HARDY; // Neutral nature
     let validMoves = pokemon.species
       .getLevelMoves()
       .filter(m => isBetween(m[0], 1, 5))
@@ -827,12 +890,14 @@ export class FreshStartChallenge extends Challenge {
         SpeciesId.ROTOM,
         SpeciesId.MELOETTA,
         SpeciesId.FROAKIE,
-        SpeciesId.ROCKRUFF,
       ].includes(pokemon.species.speciesId)
     ) {
       pokemon.formIndex = 0; // These mons are set to form 0 because they're meant to be unlocks or mid-run form changes
     }
-    pokemon.ivs = [15, 15, 15, 15, 15, 15]; // Default IVs of 15 for all stats (Updated to 15 from 10 in 1.2.0)
+    // Cap all ivs at 15
+    for (let i = 0; i < 6; i++) {
+      pokemon.ivs[i] = Math.min(pokemon.ivs[i], 15);
+    }
     pokemon.teraType = pokemon.species.type1; // Always primary tera type
     return true;
   }

@@ -336,7 +336,7 @@ describe("Abilities - Wimp Out", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(game.scene.getPlayerParty()[0].getHpRatio()).toEqual(0.51);
+    expect(game.field.getPlayerPokemon().getHpRatio()).toEqual(0.51);
     expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
     expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.WIMPOD);
   });
@@ -344,8 +344,7 @@ describe("Abilities - Wimp Out", () => {
   it("Wimp Out activating should not cancel a double battle", async () => {
     game.override.battleStyle("double").enemyAbility(AbilityId.WIMP_OUT).enemyMoveset([MoveId.SPLASH]).enemyLevel(1);
     await game.classicMode.startBattle([SpeciesId.WIMPOD, SpeciesId.TYRUNT]);
-    const enemyLeadPokemon = game.scene.getEnemyParty()[0];
-    const enemySecPokemon = game.scene.getEnemyParty()[1];
+    const [enemyLeadPokemon, enemySecPokemon] = game.scene.getEnemyParty();
 
     game.move.select(MoveId.FALSE_SWIPE, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, 1);

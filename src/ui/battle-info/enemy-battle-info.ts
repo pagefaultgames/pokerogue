@@ -1,12 +1,14 @@
 import { globalScene } from "#app/global-scene";
 import { Stat } from "#enums/stat";
 import { TextStyle } from "#enums/text-style";
+import { UiTheme } from "#enums/ui-theme";
 import type { EnemyPokemon } from "#field/pokemon";
 import { BattleFlyout } from "#ui/battle-flyout";
 import type { BattleInfoParamList } from "#ui/battle-info";
 import { BattleInfo } from "#ui/battle-info";
 import { addTextObject } from "#ui/text";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
+import { getLocalizedSpriteKey } from "#utils/common";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
 
@@ -36,7 +38,7 @@ export class EnemyBattleInfo extends BattleInfo {
   override constructTypeIcons(): void {
     this.type1Icon = globalScene.add.sprite(-15, -15.5, "pbinfo_enemy_type1").setName("icon_type_1").setOrigin(0);
     this.type2Icon = globalScene.add.sprite(-15, -2.5, "pbinfo_enemy_type2").setName("icon_type_2").setOrigin(0);
-    this.type3Icon = globalScene.add.sprite(0, 15.5, "pbinfo_enemy_type3").setName("icon_type_3").setOrigin(0);
+    this.type3Icon = globalScene.add.sprite(0, -15.5, "pbinfo_enemy_type").setName("icon_type_3").setOrigin(0);
     this.add([this.type1Icon, this.type2Icon, this.type3Icon]);
   }
 
@@ -115,6 +117,9 @@ export class EnemyBattleInfo extends BattleInfo {
       globalScene.gameData.starterData[pokemon.species.getRootSpeciesId()].classicWinCount > 0 &&
       globalScene.gameData.starterData[pokemon.species.getRootSpeciesId(true)].classicWinCount > 0
     ) {
+      // move the ribbon to the left if there is no owned icon
+      const championRibbonX = this.ownedIcon.visible ? 8 : 0;
+      this.championRibbon.setPositionRelative(this.nameText, championRibbonX, 11.75);
       this.championRibbon.setVisible(true);
     }
 
@@ -180,12 +185,15 @@ export class EnemyBattleInfo extends BattleInfo {
         this.ownedIcon,
         this.championRibbon,
         this.statusIndicator,
-        this.levelContainer,
         this.statValuesContainer,
       ].map(e => (e.x += 48 * (boss ? -1 : 1)));
       this.hpBar.x += 38 * (boss ? -1 : 1);
       this.hpBar.y += 2 * (this.boss ? -1 : 1);
       this.hpBar.setTexture(`overlay_hp${boss ? "_boss" : ""}`);
+      this.hpLabel.x += 38 * (boss ? -1 : 1);
+      this.hpLabel.y += 1 * (this.boss ? -1 : 1);
+      this.hpLabel.setTexture(getLocalizedSpriteKey(`overlay_hp_label${boss ? "_boss" : ""}`));
+      this.levelContainer.x += 2 * (boss ? -1 : 1);
       this.box.setTexture(this.getTextureName());
       this.statsBox.setTexture(`${this.getTextureName()}_stats`);
     }
@@ -200,7 +208,7 @@ export class EnemyBattleInfo extends BattleInfo {
     }
 
     if (this.boss && this.bossSegments > 1) {
-      const uiTheme = globalScene.uiTheme;
+      const isLegacyUiTheme = globalScene.uiTheme === UiTheme.LEGACY;
       const maxHp = pokemon.getMaxHp();
       for (let s = 1; s < this.bossSegments; s++) {
         const dividerX = (Math.round((maxHp / this.bossSegments) * s) / maxHp) * this.hpBar.width;
@@ -208,14 +216,14 @@ export class EnemyBattleInfo extends BattleInfo {
           0,
           0,
           1,
-          this.hpBar.height - (uiTheme ? 0 : 1),
+          this.hpBar.height - (isLegacyUiTheme ? 0 : 1),
           pokemon.bossSegmentIndex >= s ? 0xffffff : 0x404040,
         );
         divider.setOrigin(0.5, 0).setName("hpBar_divider_" + s.toString());
         this.add(divider);
         this.moveBelow(divider as Phaser.GameObjects.GameObject, this.statsContainer);
 
-        divider.setPositionRelative(this.hpBar, dividerX, uiTheme ? 0 : 1);
+        divider.setPositionRelative(this.hpBar, dividerX, isLegacyUiTheme ? 0 : 1);
         this.hpBarSegmentDividers.push(divider);
       }
     }

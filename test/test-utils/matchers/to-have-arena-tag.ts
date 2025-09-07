@@ -1,16 +1,26 @@
 import type { ArenaTag, ArenaTagTypeMap } from "#data/arena-tag";
-import type { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import type { ArenaTagType } from "#enums/arena-tag-type";
 import type { OneOther } from "#test/@types/test-helpers";
 // biome-ignore lint/correctness/noUnusedImports: TSDoc
 import type { GameManager } from "#test/test-utils/game-manager";
 import { getOnelineDiffStr } from "#test/test-utils/string-utils";
 import { isGameManagerInstance, receivedStr } from "#test/test-utils/test-utils";
+import type { ArenaTagDataMap, SerializableArenaTagType } from "#types/arena-tags";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
-// intersection required to preserve T for inferences
-export type toHaveArenaTagOptions<T extends ArenaTagType> = OneOther<ArenaTagTypeMap[T], "tagType" | "side"> & {
-  tagType: T;
+/**
+ * Options type for {@linkcode toHaveArenaTag}.
+ * @typeParam A - The {@linkcode ArenaTagType} being checked
+ * @remarks
+ * If A corresponds to a serializable `ArenaTag`, only properties allowed to be serialized
+ * (i.e. can change across instances) will be present and able to be checked.
+ */
+export type toHaveArenaTagOptions<A extends ArenaTagType> = OneOther<
+  A extends SerializableArenaTagType ? ArenaTagDataMap[A] : ArenaTagTypeMap[A],
+  "tagType" | "side"
+> & {
+  tagType: A;
 };
 
 /**
@@ -22,11 +32,11 @@ export type toHaveArenaTagOptions<T extends ArenaTagType> = OneOther<ArenaTagTyp
  * {@linkcode ArenaTagSide.BOTH} to check both sides
  * @returns The result of the matching
  */
-export function toHaveArenaTag<T extends ArenaTagType>(
+export function toHaveArenaTag<A extends ArenaTagType>(
   this: MatcherState,
   received: unknown,
-  expectedTag: T | toHaveArenaTagOptions<T>,
-  side?: ArenaTagSide,
+  expectedTag: A | toHaveArenaTagOptions<A>,
+  side: ArenaTagSide = ArenaTagSide.BOTH,
 ): SyncExpectationResult {
   if (!isGameManagerInstance(received)) {
     return {
@@ -46,22 +56,27 @@ export function toHaveArenaTag<T extends ArenaTagType>(
   // Bangs are ok as we enforce safety via overloads
   // @ts-expect-error - Typescript is being stupid as tag type and side will always exist
   const etag: Partial<ArenaTag> & { tagType: T; side: ArenaTagSide } =
-    typeof expectedTag === "object" ? expectedTag : { tagType: expectedTag, side: side! };
+    typeof expectedTag === "object" ? expectedTag : { tagType: expectedTag, side };
 
+  // If checking only tag type/side OR no tags were found, break out early.
   // We need to get all tags for the case of checking properties of a tag present on both sides of the arena
   const tags = received.scene.arena.findTagsOnSide(t => t.tagType === etag.tagType, etag.side);
-  if (tags.length === 0) {
+  if (typeof expectedTag !== "object" || tags.length === 0) {
+    const pass = tags.length > 0;
     return {
-      pass: false,
-      message: () => `Expected the Arena to have a tag of type ${etag.tagType}, but it didn't!`,
-      expected: etag.tagType,
-      actual: received.scene.arena.tags.map(t => t.tagType),
+      pass,
+      message: () =>
+        pass
+          ? `Expected the Arena to NOT have a tag of type ${etag.tagType}, but it did!`
+          : `Expected the Arena to have a tag of type ${etag.tagType}, but it didn't!`,
+      expected: etag,
+      actual: received.scene.arena.tags.map(t => ({ tagType: t.tagType, side: t.side })),
     };
   }
 
   // Pass if any of the matching tags meet our criteria
   const pass = tags.some(tag =>
-    this.equals(tag, expectedTag, [...this.customTesters, this.utils.subsetEquality, this.utils.iterableEquality]),
+    this.equals(tag, etag, [...this.customTesters, this.utils.subsetEquality, this.utils.iterableEquality]),
   );
 
   const expectedStr = getOnelineDiffStr.call(this, expectedTag);
