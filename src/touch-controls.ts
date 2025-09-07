@@ -61,12 +61,12 @@ export class TouchControl {
    * event, removes the keydown state, and removes the 'active' class from the node and the last touched element.
    */
   bindKey(node: HTMLElement, key: string) {
-    node.addEventListener("touchstart", event => {
+    node.addEventListener("pointerdown", event => {
       event.preventDefault();
       this.touchButtonDown(node, key);
     });
 
-    node.addEventListener("touchend", event => {
+    node.addEventListener("pointerup", event => {
       event.preventDefault();
       this.touchButtonUp(node, key, event.target?.["id"]);
     });
