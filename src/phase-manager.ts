@@ -236,7 +236,7 @@ export class PhaseManager {
   /** Parallel array to {@linkcode dynamicPhaseQueues} - matches phase types to their queues */
   private dynamicPhaseTypes: Constructor<Phase>[];
 
-  private currentPhase: Phase | null = null;
+  private currentPhase: Phase;
   private standbyPhase: Phase | null = null;
 
   constructor() {
@@ -260,7 +260,9 @@ export class PhaseManager {
   }
 
   /* Phase Functions */
-  getCurrentPhase(): Phase | null {
+
+  /** @returns The currently running {@linkcode Phase}. */
+  getCurrentPhase(): Phase {
     return this.currentPhase;
   }
 
@@ -370,15 +372,18 @@ export class PhaseManager {
         unactivatedConditionalPhases.push([condition, phase]);
       }
     }
+
     this.conditionalQueue = unactivatedConditionalPhases;
 
+    // If no phases are left, unshift phases to start a new turn.
     if (!this.phaseQueue.length) {
       this.populatePhaseQueue();
       // Clear the conditionalQueue if there are no phases left in the phaseQueue
       this.conditionalQueue = [];
     }
 
-    this.currentPhase = this.phaseQueue.shift() ?? null;
+    // Bang is justified as `populatePhaseQueue` ensures we always have _something_ in the queue at all times
+    this.currentPhase = this.phaseQueue.shift()!;
 
     this.startCurrentPhase();
   }
@@ -391,12 +396,7 @@ export class PhaseManager {
    * As such, **do not remove or split this method** as it will break integration tests.
    */
   private startCurrentPhase(): void {
-    // TODO: Remove once signature is updated to no longer contain `null`
-    if (!this.currentPhase) {
-      console.warn("Trying to start null phase!");
-      return;
-    }
-    console.log(`%cStart Phase ${this.currentPhase.phaseName}`, "color:green;");
+    console.log(`%cStart Phase ${this.currentPhase.phaseName}`, `color:${PHASE_START_COLOR};`);
     this.currentPhase.start();
   }
 

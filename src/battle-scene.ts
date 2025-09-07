@@ -1574,9 +1574,9 @@ export class BattleScene extends SceneBase {
       return 0;
     }
 
-    const isEggPhase: boolean = ["EggLapsePhase", "EggHatchPhase"].includes(
-      this.phaseManager.getCurrentPhase()?.phaseName ?? "",
-    );
+    const isEggPhase =
+      this.phaseManager.getCurrentPhase().is("EggLapsePhase") ||
+      this.phaseManager.getCurrentPhase().is("EggHatchPhase");
 
     if (
       // Give trainers with specialty types an appropriately-typed form for Wormadam, Rotom, Arceus, Oricorio, Silvally, or Paldean Tauros.

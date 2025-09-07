@@ -1,3 +1,4 @@
+import { SETTINGS_COLOR } from "#app/constants/colors";
 import { BattleStyle } from "#enums/battle-style";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { ExpNotification } from "#enums/exp-notification";
@@ -5,7 +6,7 @@ import { PlayerGender } from "#enums/player-gender";
 import type { GameManager } from "#test/test-utils/game-manager";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
 import chalk from "chalk";
-import { getEnumStr } from "../string-utils";
+import { getEnumStr } from "#test/test-utils/string-utils";
 
 /**
  * Helper to handle settings for tests
@@ -72,6 +73,6 @@ export class SettingsHelper extends GameManagerHelper {
   }
 
   private log(...params: any[]) {
-    console.log(chalk.hex("#FFAFFA")(params));
+    console.log(chalk.hex(SETTINGS_COLOR)(...params));
   }
 }

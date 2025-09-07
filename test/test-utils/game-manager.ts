@@ -166,7 +166,7 @@ export class GameManager {
    * @see {@linkcode PhaseInterceptor.shiftPhase} Function to skip the next upcoming phase
    */
   endPhase() {
-    this.scene.phaseManager.getCurrentPhase()?.end();
+    this.scene.phaseManager.getCurrentPhase().end();
   }
 
   /**
@@ -409,6 +409,7 @@ export class GameManager {
    * Checks if the current phase matches the target phase.
    * @param phaseTarget - The target phase.
    * @returns Whether the current phase matches the target phase
+   * @todo Remove `phaseClass` from signature
    */
   isCurrentPhase(phaseTarget: PhaseString): boolean;
   /**
@@ -420,7 +421,7 @@ export class GameManager {
   isCurrentPhase(phaseTarget: PhaseClass): boolean;
   isCurrentPhase(phaseTarget: PhaseString | PhaseClass): boolean {
     const targetName = typeof phaseTarget === "string" ? phaseTarget : (phaseTarget.name as PhaseString);
-    return this.scene.phaseManager.getCurrentPhase()?.is(targetName) ?? false;
+    return this.scene.phaseManager.getCurrentPhase().is(targetName);
   }
 
   /**

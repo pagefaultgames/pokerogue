@@ -11,9 +11,10 @@ import { inspect } from "util";
 import chalk from "chalk";
 import { vi } from "vitest";
 import { getEnumStr } from "./string-utils";
+import { PHASE_INTERCEPTOR_COLOR, PHASE_START_COLOR } from "#app/constants/colors";
 
 /**
- * A Set containing phase names that will not be shown in the console when started.
+ * A {@linkcode ReadonlySet} containing phase names that will not be shown in the console when started.
  *
  * Used to reduce console noise from very repetitive phases.
  */
@@ -86,8 +87,7 @@ export class PhaseInterceptor {
 
     const pm = this.scene.phaseManager;
 
-    // TODO: remove bangs once signature is updated
-    let currentPhase = pm.getCurrentPhase()!;
+    let currentPhase = pm.getCurrentPhase();
 
     let didLog = false;
 
@@ -106,7 +106,7 @@ export class PhaseInterceptor {
           return false;
         }
 
-        currentPhase = pm.getCurrentPhase()!;
+        currentPhase = pm.getCurrentPhase();
         if (currentPhase.is(this.target)) {
           return true;
         }
@@ -158,7 +158,7 @@ export class PhaseInterceptor {
    * This should not be called by anything other than {@linkcode PromptHandler}.
    */
   public checkMode(): void {
-    const currentPhase = this.scene.phaseManager.getCurrentPhase()!;
+    const currentPhase = this.scene.phaseManager.getCurrentPhase();
     if (!currentPhase.is(this.target) || this.state === "interrupted") {
       // Wrong phase / already interrupted = do nothing
       return;
@@ -205,7 +205,7 @@ export class PhaseInterceptor {
    */
   private logPhase(phaseName: PhaseString) {
     if (!blacklistedPhaseNames.has(phaseName)) {
-      console.log(`%cStart Phase: ${phaseName}`, "color:green");
+      console.log(`%cStart Phase: ${phaseName}`, `color:${PHASE_START_COLOR}`);
     }
     this.log.push(phaseName);
   }
@@ -222,6 +222,6 @@ export class PhaseInterceptor {
    * @param args - Arguments to original logging function
    */
   private doLog(...args: unknown[]): void {
-    console.log(chalk.hex("#ff7f50")(...args));
+    console.log(chalk.hex(PHASE_INTERCEPTOR_COLOR)(...args));
   }
 }

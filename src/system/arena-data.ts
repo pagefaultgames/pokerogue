@@ -5,14 +5,14 @@ import { Terrain } from "#data/terrain";
 import { Weather } from "#data/weather";
 import type { BiomeId } from "#enums/biome-id";
 import { Arena } from "#field/arena";
-import type { ArenaTagTypeData } from "#types/arena-tags";
+import type { ArenaTagData } from "#types/arena-tags";
 import type { NonFunctionProperties } from "#types/type-helpers";
 
 export interface SerializedArenaData {
   biome: BiomeId;
   weather: NonFunctionProperties<Weather> | null;
   terrain: NonFunctionProperties<Terrain> | null;
-  tags?: ArenaTagTypeData[];
+  tags?: ArenaTagData[];
   positionalTags: SerializedPositionalTag[];
   playerTerasUsed?: number;
 }
@@ -31,7 +31,7 @@ export class ArenaData {
     // is not yet an instance of `ArenaTag`
     this.tags =
       source.tags
-        ?.map((t: ArenaTag | ArenaTagTypeData) => loadArenaTag(t))
+        ?.map((t: ArenaTag | ArenaTagData) => loadArenaTag(t))
         ?.filter((tag): tag is SerializableArenaTag => tag instanceof SerializableArenaTag) ?? [];
 
     this.playerTerasUsed = source.playerTerasUsed ?? 0;

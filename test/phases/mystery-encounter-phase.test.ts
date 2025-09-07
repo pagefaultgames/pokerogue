@@ -3,7 +3,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import { MysteryEncounterOptionSelectedPhase, MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
+import { MysteryEncounterOptionSelectedPhase } from "#phases/mystery-encounter-phases";
 import { GameManager } from "#test/test-utils/game-manager";
 import type { MessageUiHandler } from "#ui/message-ui-handler";
 import type { MysteryEncounterUiHandler } from "#ui/mystery-encounter-ui-handler";
@@ -38,7 +38,7 @@ describe("Mystery Encounter Phases", () => {
       ]);
 
       await game.phaseInterceptor.to("MysteryEncounterPhase", false);
-      expect(game.scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(game).toBeAtPhase("MysteryEncounterPhase");
     });
 
     it("Runs MysteryEncounterPhase", async () => {
@@ -84,8 +84,8 @@ describe("Mystery Encounter Phases", () => {
 
       // Waitfor required so that option select messages and preOptionPhase logic are handled
       await vi.waitFor(() =>
-        expect(game.scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(
-          MysteryEncounterOptionSelectedPhase.name,
+        expect(game).toBeAtPhase(
+          "MysteryEncounterOptionSelectedPhase",
         ),
       );
       expect(ui.getMode()).toBe(UiMode.MESSAGE);

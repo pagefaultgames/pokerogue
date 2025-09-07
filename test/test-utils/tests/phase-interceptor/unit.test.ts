@@ -72,8 +72,8 @@ describe("Utils - Phase Interceptor - Unit", () => {
       .map(p => p.phaseName);
   }
 
-  function getCurrentPhaseName(): string {
-    return game.scene.phaseManager.getCurrentPhase()?.phaseName ?? "no phase";
+  function expectAtPhase(phaseName: string) {
+    expect(game).toBeAtPhase(phaseName as PhaseString)
   }
 
   /** Wrapper function to make TS not complain about incompatible argument typing on `PhaseString`. */
@@ -85,7 +85,7 @@ describe("Utils - Phase Interceptor - Unit", () => {
     it("should start the specified phase and resolve after it ends", async () => {
       await to("applePhase");
 
-      expect(getCurrentPhaseName()).toBe("bananaPhase");
+      expectAtPhase("bananaPhase");
       expect(getQueuedPhases()).toEqual(["coconutPhase", "bananaPhase", "coconutPhase"]);
       expect(game.phaseInterceptor.log).toEqual(["applePhase"]);
     });
@@ -93,14 +93,14 @@ describe("Utils - Phase Interceptor - Unit", () => {
     it("should run to the specified phase without starting/logging", async () => {
       await to("applePhase", false);
 
-      expect(getCurrentPhaseName()).toBe("applePhase");
+      expectAtPhase("applePhase");
       expect(getQueuedPhases()).toEqual(["bananaPhase", "coconutPhase", "bananaPhase", "coconutPhase"]);
       expect(game.phaseInterceptor.log).toEqual([]);
 
       await to("applePhase", false);
 
       // should not do anything
-      expect(getCurrentPhaseName()).toBe("applePhase");
+      expectAtPhase("applePhase");
       expect(getQueuedPhases()).toEqual(["bananaPhase", "coconutPhase", "bananaPhase", "coconutPhase"]);
       expect(game.phaseInterceptor.log).toEqual([]);
     });
@@ -108,7 +108,7 @@ describe("Utils - Phase Interceptor - Unit", () => {
     it("should run all phases between start and the first instance of target", async () => {
       await to("coconutPhase");
 
-      expect(getCurrentPhaseName()).toBe("bananaPhase");
+      expectAtPhase("bananaPhase");
       expect(getQueuedPhases()).toEqual(["coconutPhase"]);
       expect(game.phaseInterceptor.log).toEqual(["applePhase", "bananaPhase", "coconutPhase"]);
     });
@@ -117,7 +117,7 @@ describe("Utils - Phase Interceptor - Unit", () => {
       setPhases(unshifterPhase, coconutPhase); // adds applePhase, bananaPhase and coconutPhase to queue
       await to("bananaPhase");
 
-      expect(getCurrentPhaseName()).toBe("coconutPhase");
+      expectAtPhase("coconutPhase");
       expect(getQueuedPhases()).toEqual(["coconutPhase"]);
       expect(game.phaseInterceptor.log).toEqual(["unshifterPhase", "applePhase", "bananaPhase"]);
     });
@@ -141,10 +141,11 @@ describe("Utils - Phase Interceptor - Unit", () => {
 
       game.phaseInterceptor.shiftPhase();
 
-      expect(getCurrentPhaseName()).toBe("bananaPhase");
+      expectAtPhase("bananaPhase");
       expect(getQueuedPhases()).toEqual(["coconutPhase", "bananaPhase", "coconutPhase"]);
       expect(startSpy).not.toHaveBeenCalled();
       expect(game.phaseInterceptor.log).toEqual([]);
     });
+
   });
 });
