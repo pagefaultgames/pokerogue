@@ -38,7 +38,7 @@ describe("Moves - Friend Guard", () => {
     const [player1, player2] = game.scene.getPlayerField();
     const spy = vi.spyOn(player1, "getAttackDamage");
 
-    const enemy1 = game.scene.getEnemyField()[0];
+    const enemy1 = game.field.getEnemyPokemon();
     const baseDmg = player1.getBaseDamage({
       source: enemy1,
       move: allMoves[MoveId.TACKLE],
@@ -55,7 +55,7 @@ describe("Moves - Friend Guard", () => {
     // Making sure the test is controlled; turn 1 damage is equal to base damage (after rounding)
     expect(spy).toHaveLastReturnedWith(
       expect.objectContaining({
-        damage: expect.closeTo(baseDmg),
+        damage: Math.floor(baseDmg),
       }),
     );
 
@@ -69,7 +69,7 @@ describe("Moves - Friend Guard", () => {
 
     // Get the last return value from `getAttackDamage`
     // With the ally's Friend Guard, damage should have been reduced from base damage by 25%
-    expect(spy).toHaveLastReturnedWith(expect.objectContaining({ damage: expect.closeTo(baseDmg * 0.75) }));
+    expect(spy).toHaveLastReturnedWith(expect.objectContaining({ damage: Math.floor(baseDmg * 0.75) }));
   });
 
   it("should NOT reduce damage to pokemon with friend guard", async () => {
