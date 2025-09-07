@@ -139,9 +139,6 @@ export interface SessionSaveData {
    * Counts the amount of pokemon fainted in your party during the current arena encounter.
    */
   playerFaints: number;
-
-  /** The slot number the session was last saved in */
-  slotId: number;
 }
 
 interface Unlocks {
@@ -954,7 +951,6 @@ export class GameData {
       mysteryEncounterType: globalScene.currentBattle.mysteryEncounter?.encounterType ?? -1,
       mysteryEncounterSaveData: globalScene.mysteryEncounterSaveData,
       playerFaints: globalScene.arena.playerFaints,
-      slotId: globalScene.sessionSlotId,
     } as SessionSaveData;
   }
 
@@ -967,7 +963,6 @@ export class GameData {
     const handleSessionData = async (sessionDataStr: string) => {
       try {
         const sessionData = this.parseSessionData(sessionDataStr);
-        sessionData.slotId = slotId;
         resolve(sessionData);
       } catch (err) {
         reject(err);
@@ -1058,8 +1053,6 @@ export class GameData {
             console.debug("Attempt to log session data failed:", err);
           }
         }
-        // overwrite slot ID if somehow not set.
-        fromSession.slotId = slotId;
 
         globalScene.gameMode = getGameMode(fromSession.gameMode || GameModes.CLASSIC);
         if (fromSession.challenges) {
@@ -1296,13 +1289,6 @@ export class GameData {
       result = [true, true];
     } else {
       const sessionData = this.getSessionSaveData();
-      if (sessionData.slotId !== slotId) {
-        console.warn(
-          `Tried to clear session at slot ${slotId}, but current session is at slot ${sessionData.slotId}. Overriding to ${sessionData.slotId}.`,
-        );
-        // Nullish coalescing is here in case of sessionData from before we added slotId
-        slotId = sessionData.slotId ?? slotId;
-      }
       const { trainerId } = this;
       const jsonResponse = await pokerogueApi.savedata.session.clear(
         { slot: slotId, trainerId, clientSessionId },
@@ -1428,8 +1414,7 @@ export class GameData {
         const request = {
           system: systemData,
           session: sessionData,
-          // Nullish coalescing is set here in case there is somehow sessionData that was loaded but has no slotID (due to transition)
-          sessionSlotId: sessionData.slotId ?? globalScene.sessionSlotId,
+          sessionSlotId: globalScene.sessionSlotId,
           clientSessionId: clientSessionId,
         };
 
@@ -1557,7 +1542,6 @@ export class GameData {
               }
               case GameDataType.SESSION: {
                 const sessionData = this.parseSessionData(dataStr);
-                sessionData.slotId = slotId;
                 valid = !!sessionData.party && !!sessionData.enemyParty && !!sessionData.timestamp;
                 break;
               }
