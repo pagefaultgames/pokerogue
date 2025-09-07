@@ -6,11 +6,21 @@ import type { OneOther } from "#test/@types/test-helpers";
 import type { GameManager } from "#test/test-utils/game-manager";
 import { getOnelineDiffStr } from "#test/test-utils/string-utils";
 import { isGameManagerInstance, receivedStr } from "#test/test-utils/test-utils";
+import type { ArenaTagDataMap, SerializableArenaTagType } from "#types/arena-tags";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
-// intersection required to preserve T for inferences
-export type toHaveArenaTagOptions<T extends ArenaTagType> = OneOther<ArenaTagTypeMap[T], "tagType" | "side"> & {
-  tagType: T;
+/**
+ * Options type for {@linkcode toHaveArenaTag}.
+ * @typeParam A - The {@linkcode ArenaTagType} being checked
+ * @remarks
+ * If A corresponds to a serializable `ArenaTag`, only properties allowed to be serialized
+ * (i.e. can change across instances) will be present and able to be checked.
+ */
+export type toHaveArenaTagOptions<A extends ArenaTagType> = OneOther<
+  A extends SerializableArenaTagType ? ArenaTagDataMap[A] : ArenaTagTypeMap[A],
+  "tagType" | "side"
+> & {
+  tagType: A;
 };
 
 /**
@@ -22,10 +32,10 @@ export type toHaveArenaTagOptions<T extends ArenaTagType> = OneOther<ArenaTagTyp
  * {@linkcode ArenaTagSide.BOTH} to check both sides
  * @returns The result of the matching
  */
-export function toHaveArenaTag<T extends ArenaTagType>(
+export function toHaveArenaTag<A extends ArenaTagType>(
   this: MatcherState,
   received: unknown,
-  expectedTag: T | toHaveArenaTagOptions<T>,
+  expectedTag: A | toHaveArenaTagOptions<A>,
   side: ArenaTagSide = ArenaTagSide.BOTH,
 ): SyncExpectationResult {
   if (!isGameManagerInstance(received)) {

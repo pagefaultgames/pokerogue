@@ -90,6 +90,15 @@ importers:
       typedoc:
         specifier: ^0.28.8
         version: 0.28.8(typescript@5.8.3)
+      typedoc-github-theme:
+        specifier: ^0.3.1
+        version: 0.3.1(typedoc@0.28.8(typescript@5.8.3))
+      typedoc-plugin-coverage:
+        specifier: ^4.0.1
+        version: 4.0.1(typedoc@0.28.8(typescript@5.8.3))
+      typedoc-plugin-mdn-links:
+        specifier: ^5.0.9
+        version: 5.0.9(typedoc@0.28.8(typescript@5.8.3))
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
@@ -1791,6 +1800,23 @@ packages:
   type-fest@4.41.0:
     resolution: {integrity: sha512-TeTSQ6H5YHvpqVwBRcnLDCBnDOHWYu7IvGbHT6N8AOymcr9PJGjc1GTtiWZTYg0NCgYwvnYWEkVChQAr9bjfwA==}
     engines: {node: '>=16'}
+
+  typedoc-github-theme@0.3.1:
+    resolution: {integrity: sha512-j6PmkAGmf/MGCzYjQcUH6jS9djPsNl/IoTXooxC+MoeMkBhbmPyKJlpR6Lw12BLoe2OYpYA2J1KMktUJXp/8Sw==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      typedoc: ~0.28.0
+
+  typedoc-plugin-coverage@4.0.1:
+    resolution: {integrity: sha512-P1QBR5GJSfW3fDrpz4Vkd8z8lzWaBYjaHebRLk0u2Uga0oSFlPaqrCyiHzItBXxZX28aMlNlZwrUnsLgUgqA7g==}
+    engines: {node: '>= 18'}
+    peerDependencies:
+      typedoc: 0.28.x
+
+  typedoc-plugin-mdn-links@5.0.9:
+    resolution: {integrity: sha512-kXssRKBhUd0JeHzFmxWVsGWVFR9WXafe70Y8Ed+MYH2Nu2647cqfGQN1OBKgvXpmAT8MTpACmUIQ7GnQnh1/iw==}
+    peerDependencies:
+      typedoc: 0.27.x || 0.28.x
 
   typedoc@0.28.8:
     resolution: {integrity: sha512-16GfLopc8icHfdvqZDqdGBoS2AieIRP2rpf9mU+MgN+gGLyEQvAO0QgOa6NJ5QNmQi0LFrDY9in4F2fUNKgJKA==}
@@ -3636,6 +3662,18 @@ snapshots:
   type-fest@0.21.3: {}
 
   type-fest@4.41.0: {}
+
+  typedoc-github-theme@0.3.1(typedoc@0.28.8(typescript@5.8.3)):
+    dependencies:
+      typedoc: 0.28.8(typescript@5.8.3)
+
+  typedoc-plugin-coverage@4.0.1(typedoc@0.28.8(typescript@5.8.3)):
+    dependencies:
+      typedoc: 0.28.8(typescript@5.8.3)
+
+  typedoc-plugin-mdn-links@5.0.9(typedoc@0.28.8(typescript@5.8.3)):
+    dependencies:
+      typedoc: 0.28.8(typescript@5.8.3)
 
   typedoc@0.28.8(typescript@5.8.3):
     dependencies:

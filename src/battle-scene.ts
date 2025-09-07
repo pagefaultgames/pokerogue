@@ -1561,9 +1561,9 @@ export class BattleScene extends SceneBase {
       return 0;
     }
 
-    const isEggPhase: boolean = ["EggLapsePhase", "EggHatchPhase"].includes(
-      this.phaseManager.getCurrentPhase()?.phaseName ?? "",
-    );
+    const isEggPhase =
+      this.phaseManager.getCurrentPhase().is("EggLapsePhase") ||
+      this.phaseManager.getCurrentPhase().is("EggHatchPhase");
 
     if (
       // Give trainers with specialty types an appropriately-typed form for Wormadam, Rotom, Arceus, Oricorio, Silvally, or Paldean Tauros.
@@ -2315,7 +2315,7 @@ export class BattleScene extends SceneBase {
     });
   }
 
-  playSound(sound: string | AnySound, config?: object): AnySound {
+  playSound(sound: string | AnySound, config?: object): AnySound | null {
     const key = typeof sound === "string" ? sound : sound.key;
     config = config ?? {};
     try {
@@ -2351,16 +2351,19 @@ export class BattleScene extends SceneBase {
       this.sound.play(key, config);
       return this.sound.get(key) as AnySound;
     } catch {
-      console.log(`${key} not found`);
-      return sound as AnySound;
+      console.warn(`${key} not found`);
+      return null;
     }
   }
 
-  playSoundWithoutBgm(soundName: string, pauseDuration?: number): AnySound {
+  playSoundWithoutBgm(soundName: string, pauseDuration?: number): AnySound | null {
     this.bgmCache.add(soundName);
     const resumeBgm = this.pauseBgm();
     this.playSound(soundName);
-    const sound = this.sound.get(soundName) as AnySound;
+    const sound = this.sound.get(soundName);
+    if (!sound) {
+      return sound;
+    }
     if (this.bgmResumeTimer) {
       this.bgmResumeTimer.destroy();
     }
@@ -2370,7 +2373,7 @@ export class BattleScene extends SceneBase {
         this.bgmResumeTimer = null;
       });
     }
-    return sound;
+    return sound as AnySound;
   }
 
   /** The loop point of any given battle, mystery encounter, or title track, read as seconds and milliseconds. */

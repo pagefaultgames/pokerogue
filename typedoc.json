@@ -1,7 +1,0 @@
-{
-  "entryPoints": ["./src"],
-  "entryPointStrategy": "expand",
-  "exclude": ["**/*+.test.ts", "test/test-utils/helpers", "test/test-utils/setup"],
-  "out": "typedoc",
-  "highlightLanguages": ["javascript", "json", "jsonc", "json5", "tsx", "typescript", "markdown"]
-}
