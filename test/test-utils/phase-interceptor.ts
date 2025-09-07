@@ -1,5 +1,6 @@
 import type { PhaseManager, PhaseString } from "#app/@types/phase-types";
 import type { BattleScene } from "#app/battle-scene";
+import { PHASE_INTERCEPTOR_COLOR, PHASE_START_COLOR } from "#app/constants/colors";
 import type { Phase } from "#app/phase";
 import type { Constructor } from "#app/utils/common";
 import { UiMode } from "#enums/ui-mode";
@@ -11,7 +12,6 @@ import { inspect } from "util";
 import chalk from "chalk";
 import { vi } from "vitest";
 import { getEnumStr } from "./string-utils";
-import { PHASE_INTERCEPTOR_COLOR, PHASE_START_COLOR } from "#app/constants/colors";
 
 /**
  * A {@linkcode ReadonlySet} containing phase names that will not be shown in the console when started.
@@ -47,22 +47,35 @@ export class PhaseInterceptor {
    * - `running`: The interceptor is currently running a phase.
    * - `interrupted`: The interceptor has been interrupted by a UI prompt and is waiting for the caller to end it.
    * - `idling`: The interceptor is not currently running a phase and is ready to start a new one.
+   * @defaultValue `idling`
    */
   private state: StateType = "idling";
-
+  /** The current target that is being ran to. */
   private target: PhaseString;
+  /**
+   * Whether to respect {@linkcode blacklistedPhaseNames} during logging.
+   * @defaultValue `true`
+   */
+  private respectBlacklist = true;
 
   /**
-   * Constructor to initialize the scene and properties, and to start the phase handling.
+   * Initialize a new PhaseInterceptor.
    * @param scene - The scene to be managed
+   * @todo This should take a GameManager instance once multi scene stuff becomes a reality
+   * @remarks
+   * This overrides {@linkcode PhaseManager.startCurrentPhase} to toggle the interceptor's state
+   * instead of immediately starting the next phase.
    */
   constructor(scene: BattleScene) {
     this.scene = scene;
-    // Mock the private startCurrentPhase method to toggle `isRunning` rather than actually starting anything
     vi.spyOn(
-      this.scene.phaseManager as unknown as typeof PhaseManager & {
-        startCurrentPhase: PhaseManager["startCurrentPhase"];
-      },
+      this.scene.phaseManager as PhaseManager &
+        Pick<
+          {
+            startCurrentPhase: PhaseManager["startCurrentPhase"];
+          },
+          "startCurrentPhase"
+        >,
       "startCurrentPhase",
     ).mockImplementation(() => {
       this.state = "idling";
@@ -88,7 +101,6 @@ export class PhaseInterceptor {
     const pm = this.scene.phaseManager;
 
     let currentPhase = pm.getCurrentPhase();
-
     let didLog = false;
 
     // NB: This has to use an interval to wait for UI prompts to activate
@@ -176,14 +188,14 @@ export class PhaseInterceptor {
    * To end ones already in the process of running, use {@linkcode GameManager.endPhase}.
    * @example
    * await game.phaseInterceptor.to("LoginPhase", false);
-   * game.phaseInterceptor.shiftPhase();
+   * game.phaseInterceptor.shiftPhase(); // skips LoginPhase without starting it
    */
   public shiftPhase(): void {
-    const phaseName = this.scene.phaseManager.getCurrentPhase()!.phaseName;
+    const phaseName = this.scene.phaseManager.getCurrentPhase().phaseName;
     if (this.state !== "idling") {
-      throw new Error(`shiftPhase attempted to skip phase ${phaseName} mid-execution!`);
+      throw new Error(`PhaseInterceptor.shiftPhase attempted to skip phase ${phaseName} mid-execution!`);
     }
-    this.doLog(`Skipping current phase ${phaseName}`);
+    this.doLog(`Skipping current phase: ${phaseName}`);
     this.scene.phaseManager.shiftPhase();
   }
 
@@ -201,10 +213,10 @@ export class PhaseInterceptor {
   /**
    * Method to log the start of a phase.
    * Called in place of {@linkcode PhaseManager.startCurrentPhase} to allow for manual intervention.
-   * @param phaseName - The name of the phase to log.
+   * @param phaseName - The name of the phase to log
    */
-  private logPhase(phaseName: PhaseString) {
-    if (!blacklistedPhaseNames.has(phaseName)) {
+  private logPhase(phaseName: PhaseString): void {
+    if (this.respectBlacklist && !blacklistedPhaseNames.has(phaseName)) {
       console.log(`%cStart Phase: ${phaseName}`, `color:${PHASE_START_COLOR}`);
     }
     this.log.push(phaseName);
@@ -215,6 +227,16 @@ export class PhaseInterceptor {
    */
   public clearLogs(): void {
     this.log = [];
+  }
+
+  /**
+   * Toggle the Interceptor's logging blacklist, enabling or disabling logging all phases in
+   * {@linkcode blacklistedPhaseNames}.
+   * @param state - Whether the blacklist should work; default `false` (disable)
+   */
+  public toggleBlacklist(state = false): void {
+    this.respectBlacklist = state;
+    this.doLog(`Phase blacklist logging ${state ? "disabled" : "enabled"}!`);
   }
 
   /**
