@@ -175,11 +175,17 @@
       }
     },
 
-    // Overrides to prevent unused import removal inside `overrides.ts` and enums files (for TSDoc linkcodes),
+    // Overrides to prevent unused import removal inside `overrides.ts`, enums & `.d.ts` files (for TSDoc linkcodes),
     // as well as inside script boilerplate files.
     {
       // TODO: Rename existing boilerplates in the folder and remove this last alias
-      "includes": ["**/src/overrides.ts", "**/src/enums/**/*", "scripts/**/*.boilerplate.ts", "**/boilerplates/*.ts"],
+      "includes": [
+        "**/src/overrides.ts",
+        "**/src/enums/**/*",
+        "**/*.d.ts",
+        "scripts/**/*.boilerplate.ts",
+        "**/boilerplates/*.ts"
+      ],
       "linter": {
         "rules": {
           "correctness": {
