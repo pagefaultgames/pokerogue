@@ -11,7 +11,7 @@ import { initMoves } from "#moves/move";
 import { initMysteryEncounters } from "#mystery-encounters/mystery-encounters";
 import { initAchievements } from "#system/achv";
 import { initVouchers } from "#system/voucher";
-import { initStatsKeys } from "#ui/game-stats-ui-handler";
+import { initStatsKeys } from "#ui/handlers/game-stats-ui-handler";
 
 /** Initialize the game. */
 export function initializeGame() {
