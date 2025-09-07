@@ -5,6 +5,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TextStyle } from "#enums/text-style";
+import { UiTheme } from "#enums/ui-theme";
 import type { Pokemon } from "#field/pokemon";
 import { getVariantTint } from "#sprites/variant";
 import { addTextObject } from "#ui/text";
@@ -71,6 +72,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
   protected splicedIcon: Phaser.GameObjects.Sprite;
   protected statusIndicator: Phaser.GameObjects.Sprite;
   protected levelContainer: Phaser.GameObjects.Container;
+  protected hpLabel: Phaser.GameObjects.Image;
   protected hpBar: Phaser.GameObjects.Image;
   protected levelNumbersContainer: Phaser.GameObjects.Container;
   protected type1Icon: Phaser.GameObjects.Sprite;
@@ -177,7 +179,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
       }
 
       const statLabel = globalScene.add
-        .sprite(statX, statY, "pbinfo_stat", Stat[s])
+        .sprite(statX, statY, getLocalizedSpriteKey("pbinfo_stat"), Stat[s])
         .setName("icon_stat_label_" + i.toString())
         .setOrigin(0);
       statLabels.push(statLabel);
@@ -258,14 +260,19 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
       .setName("container_level");
     this.add(this.levelContainer);
 
-    const levelOverlay = globalScene.add.image(0, 0, "overlay_lv");
+    const levelOverlay = globalScene.add.image(5.5, 0, getLocalizedSpriteKey("overlay_lv")).setOrigin(1, 0.5);
     this.levelContainer.add(levelOverlay);
 
     this.hpBar = globalScene.add.image(posParams.hpBarX, posParams.hpBarY, "overlay_hp").setName("hp_bar").setOrigin(0);
     this.add(this.hpBar);
 
+    this.hpLabel = globalScene.add
+      .image(posParams.hpBarX - 1, posParams.hpBarY - 3, getLocalizedSpriteKey("overlay_hp_label"))
+      .setOrigin(1, 0);
+    this.add(this.hpLabel);
+
     this.levelNumbersContainer = globalScene.add
-      .container(9.5, globalScene.uiTheme ? 0 : -0.5)
+      .container(9.5, globalScene.uiTheme === UiTheme.LEGACY ? 0 : -0.5)
       .setName("container_level");
     this.levelContainer.add(this.levelNumbersContainer);
 

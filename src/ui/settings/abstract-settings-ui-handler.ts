@@ -8,7 +8,7 @@ import type { InputsIcons } from "#ui/abstract-control-settings-ui-handler";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { NavigationManager, NavigationMenu } from "#ui/navigation-menu";
 import { ScrollBar } from "#ui/scroll-bar";
-import { addTextObject } from "#ui/text";
+import { addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import i18next from "i18next";
 
@@ -318,16 +318,20 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
           }
           break;
         case Button.LEFT:
-          if (this.optionCursors[cursor]) {
-            // Moves the option cursor left, if possible.
-            success = this.setOptionCursor(cursor, this.optionCursors[cursor] - 1, true);
-          }
+          // Cycle to the rightmost position when at the leftmost, otherwise move left
+          success = this.setOptionCursor(
+            cursor,
+            Phaser.Math.Wrap(this.optionCursors[cursor] - 1, 0, this.optionValueLabels[cursor].length),
+            true,
+          );
           break;
         case Button.RIGHT:
-          // Moves the option cursor right, if possible.
-          if (this.optionCursors[cursor] < this.optionValueLabels[cursor].length - 1) {
-            success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
-          }
+          // Cycle to the leftmost position when at the rightmost, otherwise move right
+          success = this.setOptionCursor(
+            cursor,
+            Phaser.Math.Wrap(this.optionCursors[cursor] + 1, 0, this.optionValueLabels[cursor].length),
+            true,
+          );
           break;
         case Button.CYCLE_FORM:
         case Button.CYCLE_SHINY:
@@ -403,14 +407,14 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
     const lastCursor = this.optionCursors[settingIndex];
 
     const lastValueLabel = this.optionValueLabels[settingIndex][lastCursor];
-    lastValueLabel.setColor(this.getTextColor(TextStyle.SETTINGS_VALUE));
-    lastValueLabel.setShadowColor(this.getTextColor(TextStyle.SETTINGS_VALUE, true));
+    lastValueLabel.setColor(getTextColor(TextStyle.SETTINGS_VALUE));
+    lastValueLabel.setShadowColor(getTextColor(TextStyle.SETTINGS_VALUE, true));
 
     this.optionCursors[settingIndex] = cursor;
 
     const newValueLabel = this.optionValueLabels[settingIndex][cursor];
-    newValueLabel.setColor(this.getTextColor(TextStyle.SETTINGS_SELECTED));
-    newValueLabel.setShadowColor(this.getTextColor(TextStyle.SETTINGS_SELECTED, true));
+    newValueLabel.setColor(getTextColor(TextStyle.SETTINGS_SELECTED));
+    newValueLabel.setShadowColor(getTextColor(TextStyle.SETTINGS_SELECTED, true));
 
     if (save) {
       const saveSetting = () => {

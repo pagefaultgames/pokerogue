@@ -562,6 +562,9 @@ export class PartyUiHandler extends MessageUiHandler {
   private processModifierTransferModeInput(pokemon: PlayerPokemon) {
     const ui = this.getUi();
     const option = this.options[this.optionsCursor];
+    const allItems = this.getTransferrableItemsFromPokemon(pokemon);
+    // get the index of the "All" option.
+    const allCursorIndex = allItems.length;
 
     if (this.transferMode && option === PartyOption.TRANSFER) {
       return this.processTransferOption();
@@ -573,36 +576,62 @@ export class PartyUiHandler extends MessageUiHandler {
 
       let ableToTransferText: string;
       for (let p = 0; p < globalScene.getPlayerParty().length; p++) {
-        // this for look goes through each of the party pokemon
+        // this for loop goes through each of the party pokemon
         const newPokemon = globalScene.getPlayerParty()[p];
         // this next bit checks to see if the the selected item from the original transfer pokemon exists on the new pokemon `p`
         // this returns `undefined` if the new pokemon doesn't have the item at all, otherwise it returns the `pokemonHeldItemModifier` for that item
-        const matchingModifier = globalScene.findModifier(
-          m =>
-            m.is("PokemonHeldItemModifier") &&
-            m.pokemonId === newPokemon.id &&
-            m.matchType(this.getTransferrableItemsFromPokemon(pokemon)[this.transferOptionCursor]),
-        ) as PokemonHeldItemModifier;
+        const matchingModifiers: (PokemonHeldItemModifier | undefined)[] = [];
+        if (this.transferOptionCursor === allCursorIndex) {
+          // if "All" is selected, check all items
+          for (const item of allItems) {
+            matchingModifiers.push(
+              globalScene.findModifier(
+                m => m.is("PokemonHeldItemModifier") && m.pokemonId === newPokemon.id && m.matchType(item),
+              ) as PokemonHeldItemModifier | undefined,
+            );
+          }
+        } else {
+          // otherwise only check the selected item
+          matchingModifiers.push(
+            globalScene.findModifier(
+              m =>
+                m.is("PokemonHeldItemModifier") &&
+                m.pokemonId === newPokemon.id &&
+                m.matchType(allItems[this.transferOptionCursor]),
+            ) as PokemonHeldItemModifier | undefined,
+          );
+        }
+        const hasMatchingModifier = matchingModifiers.some(m => m !== undefined); // checks if any items match
         const partySlot = this.partySlots.filter(m => m.getPokemon() === newPokemon)[0]; // this gets pokemon [p] for us
         if (p !== this.transferCursor) {
           // this skips adding the able/not able labels on the pokemon doing the transfer
-          if (matchingModifier) {
+          if (hasMatchingModifier) {
             // if matchingModifier exists then the item exists on the new pokemon
-            if (matchingModifier.getMaxStackCount() === matchingModifier.stackCount) {
-              // checks to see if the stack of items is at max stack; if so, set the description label to "Not able"
-              ableToTransferText = i18next.t("partyUiHandler:notAble");
-            } else {
-              // if the pokemon isn't at max stack, make the label "Able"
-              ableToTransferText = i18next.t("partyUiHandler:able");
+            ableToTransferText = i18next.t("partyUiHandler:notAble"); // start with not able
+            /**
+             * The amount of items that can be transferred in the `All` option
+             */
+            let ableAmount = 0;
+            for (const modifier of matchingModifiers) {
+              if (!modifier || modifier.getCountUnderMax() > 0) {
+                // if the modifier doesn't exist, or the stack count isn't at max, then we can transfer at least 1 stack
+                ableToTransferText = i18next.t("partyUiHandler:able");
+                ableAmount++;
+              }
             }
+            // only show the amount if an item can be transferred and there are multiple items
+            ableToTransferText += ableAmount && matchingModifiers.length > 1 ? ` (${ableAmount})` : "";
           } else {
-            // if matchingModifier doesn't exist, that means the pokemon doesn't have any of the item, and we need to show "Able"
+            // if no item matches, that means the pokemon doesn't have any of the item, and we need to show "Able"
             ableToTransferText = i18next.t("partyUiHandler:able");
+            // only show the amount if there are multiple items
+            ableToTransferText += matchingModifiers.length > 1 ? ` (${matchingModifiers.length})` : "";
           }
         } else {
           // this else relates to the transfer pokemon. We set the text to be blank so there's no "Able"/"Not able" text
           ableToTransferText = "";
         }
+        partySlot.slotHpLabel.setVisible(false);
         partySlot.slotHpBar.setVisible(false);
         partySlot.slotHpOverlay.setVisible(false);
         partySlot.slotHpText.setVisible(false);
@@ -613,6 +642,20 @@ export class PartyUiHandler extends MessageUiHandler {
       ui.playSelect();
       return true;
     }
+
+    if (option === PartyOption.SUMMARY) {
+      return this.processSummaryOption(pokemon);
+    }
+    if (option === PartyOption.POKEDEX) {
+      return this.processPokedexOption(pokemon);
+    }
+    if (option === PartyOption.UNPAUSE_EVOLUTION) {
+      return this.processUnpauseEvolutionOption(pokemon);
+    }
+    if (option === PartyOption.RENAME) {
+      return this.processRenameOption(pokemon);
+    }
+
     return false;
   }
 
@@ -820,7 +863,7 @@ export class PartyUiHandler extends MessageUiHandler {
     // TODO: This risks hitting the other options (.MOVE_i and ALL) so does it? Do we need an extra check?
     if (
       option >= PartyOption.FORM_CHANGE_ITEM &&
-      globalScene.phaseManager.getCurrentPhase()?.is("SelectModifierPhase") &&
+      globalScene.phaseManager.getCurrentPhase().is("SelectModifierPhase") &&
       this.partyUiMode === PartyUiMode.CHECK
     ) {
       const formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
@@ -1514,7 +1557,7 @@ export class PartyUiHandler extends MessageUiHandler {
         break;
       case PartyUiMode.CHECK:
         this.addCommonOptions(pokemon);
-        if (globalScene.phaseManager.getCurrentPhase()?.is("SelectModifierPhase")) {
+        if (globalScene.phaseManager.getCurrentPhase().is("SelectModifierPhase")) {
           const formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
           for (let i = 0; i < formChangeItemModifiers.length; i++) {
             this.options.push(PartyOption.FORM_CHANGE_ITEM + i);
@@ -1631,6 +1674,8 @@ export class PartyUiHandler extends MessageUiHandler {
           .find(plm => plm[1] === move);
       } else if (option === PartyOption.ALL) {
         optionName = i18next.t("partyUiHandler:all");
+        // add the number of items to the `all` option
+        optionName += ` (${this.getTransferrableItemsFromPokemon(pokemon).length})`;
       } else {
         const itemModifiers = this.getItemModifiers(pokemon);
         const itemModifier = itemModifiers[option];
@@ -1694,6 +1739,7 @@ export class PartyUiHandler extends MessageUiHandler {
     this.partySlots[this.transferCursor].setTransfer(false);
     for (let i = 0; i < this.partySlots.length; i++) {
       this.partySlots[i].slotDescriptionLabel.setVisible(false);
+      this.partySlots[i].slotHpLabel.setVisible(true);
       this.partySlots[i].slotHpBar.setVisible(true);
       this.partySlots[i].slotHpOverlay.setVisible(true);
       this.partySlots[i].slotHpText.setVisible(true);
@@ -1846,6 +1892,7 @@ class PartySlot extends Phaser.GameObjects.Container {
   private slotBg: Phaser.GameObjects.Image;
   private slotPb: Phaser.GameObjects.Sprite;
   public slotName: Phaser.GameObjects.Text;
+  public slotHpLabel: Phaser.GameObjects.Image;
   public slotHpBar: Phaser.GameObjects.Image;
   public slotHpOverlay: Phaser.GameObjects.Sprite;
   public slotHpText: Phaser.GameObjects.Text;
@@ -1998,7 +2045,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     this.slotName.setOrigin(0);
 
     const slotLevelLabel = globalScene.add
-      .image(0, 0, "party_slot_overlay_lv")
+      .image(0, 0, getLocalizedSpriteKey("party_slot_overlay_lv"))
       .setPositionRelative(this.slotBg, levelLabelPosition.x, levelLabelPosition.y)
       .setOrigin(0);
 
@@ -2060,6 +2107,12 @@ class PartySlot extends Phaser.GameObjects.Container {
       }
     }
 
+    this.slotHpLabel = globalScene.add
+      .image(0, 0, getLocalizedSpriteKey("party_slot_overlay_hp"))
+      .setOrigin(1, 0)
+      .setVisible(false)
+      .setPositionRelative(this.slotBg, hpBarPosition.x + 15, hpBarPosition.y);
+
     this.slotHpBar = globalScene.add
       .image(0, 0, "party_slot_hp_bar")
       .setOrigin(0)
@@ -2089,14 +2142,22 @@ class PartySlot extends Phaser.GameObjects.Container {
       .setVisible(false)
       .setPositionRelative(this.slotBg, descriptionLabelPosition.x, descriptionLabelPosition.y);
 
-    slotInfoContainer.add([this.slotHpBar, this.slotHpOverlay, this.slotHpText, this.slotDescriptionLabel]);
+    slotInfoContainer.add([
+      this.slotHpLabel,
+      this.slotHpBar,
+      this.slotHpOverlay,
+      this.slotHpText,
+      this.slotDescriptionLabel,
+    ]);
 
     if (partyUiMode !== PartyUiMode.TM_MODIFIER) {
       this.slotDescriptionLabel.setVisible(false);
+      this.slotHpLabel.setVisible(true);
       this.slotHpBar.setVisible(true);
       this.slotHpOverlay.setVisible(true);
       this.slotHpText.setVisible(true);
     } else {
+      this.slotHpLabel.setVisible(false);
       this.slotHpBar.setVisible(false);
       this.slotHpOverlay.setVisible(false);
       this.slotHpText.setVisible(false);
