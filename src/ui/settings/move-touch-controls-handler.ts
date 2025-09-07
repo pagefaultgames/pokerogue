@@ -374,10 +374,10 @@ export class MoveTouchControlsHandler {
     // Remove event listeners
     const { pointerdown, pointermove, pointerup } = this.configurationEventListeners;
     this.getControlGroupElements().forEach((element, index) =>
-      element.removeEventListener("touchstart", pointerdown[index]),
+      element.removeEventListener("pointerdown", pointerdown[index]),
     );
-    pointermove.forEach(listener => window.removeEventListener("touchmove", listener));
-    pointerup.forEach(listener => window.removeEventListener("touchend", listener));
+    pointermove.forEach(listener => window.removeEventListener("pointermove", listener));
+    pointerup.forEach(listener => window.removeEventListener("pointerup", listener));
 
     // Remove configuration toolbar
     const toolbar = document.querySelector("#touchControls #configToolbar");
