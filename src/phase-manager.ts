@@ -361,13 +361,19 @@ export class PhaseManager {
     if (this.phaseQueuePrependSpliceIndex > -1) {
       this.clearPhaseQueueSplice();
     }
+    this.phaseQueue.unshift(...this.phaseQueuePrepend);
+    this.phaseQueuePrepend.splice(0);
+
     const unactivatedConditionalPhases: [() => boolean, Phase][] = [];
-    if (this.phaseQueuePrepend.length > 0) {
-      while (this.phaseQueuePrepend.length > 0) {
-        const poppedPhase = this.phaseQueuePrepend.pop();
-        if (poppedPhase) {
-          this.phaseQueue.unshift(poppedPhase);
-        }
+    // Check if there are any conditional phases queued
+    for (const [condition, phase] of this.conditionalQueue) {
+      // Evaluate the condition associated with the phase
+      if (condition()) {
+        // If the condition is met, add the phase to the phase queue
+        this.pushPhase(phase);
+      } else {
+        // If the condition is not met, re-add the phase back to the end of the conditional queue
+        unactivatedConditionalPhases.push([condition, phase]);
       }
     }
 

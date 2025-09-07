@@ -2730,7 +2730,7 @@ export class BattleScene extends SceneBase {
           this.removeModifier(rm, true);
         }
       }
-      if (ignoreUpdate) {
+      if (!ignoreUpdate) {
         this.updateModifiers(false, instant);
       }
       resolve();

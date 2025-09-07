@@ -20,17 +20,15 @@ export class ScanIvsPhase extends PokemonPhase {
 
     const pokemon = this.getPokemon();
 
-    let statsContainer: Phaser.GameObjects.Sprite[] = [];
-    let statsContainerLabels: Phaser.GameObjects.Sprite[] = [];
     for (const enemy of globalScene.getEnemyField()) {
       const enemyIvs = enemy.ivs;
       // we are using getRootSpeciesId() here because we want to check against the baby form, not the mid form if it exists
       const currentIvs = globalScene.gameData.dexData[enemy.species.getRootSpeciesId()].ivs;
-      statsContainer = enemy.getBattleInfo().getStatsValueContainer().list as Phaser.GameObjects.Sprite[];
-      statsContainerLabels = statsContainer.filter(m => m.name.indexOf("icon_stat_label") >= 0);
+      const statsContainer = enemy.getBattleInfo().getStatsValueContainer().list as Phaser.GameObjects.Sprite[];
+      const statsContainerLabels = statsContainer.filter(m => m.name.includes("icon_stat_label"));
       for (const statContainer of statsContainerLabels) {
-        const ivStat = Stat[statContainer.frame.name];
-        if (enemyIvs[ivStat] > currentIvs[ivStat] && PERMANENT_STATS.indexOf(Number(ivStat)) >= 0) {
+        const ivStat = Stat[statContainer.frame.name] as Stat;
+        if (enemyIvs[ivStat] > currentIvs[ivStat] && PERMANENT_STATS.includes(Number(ivStat))) {
           const hexColour =
             enemyIvs[ivStat] === 31
               ? getTextColor(TextStyle.PERFECT_IV, false)
@@ -46,6 +44,7 @@ export class ScanIvsPhase extends PokemonPhase {
       this.end();
       return;
     }
+
     globalScene.ui.showText(
       i18next.t("battle:ivScannerUseQuestion", {
         pokemonName: getPokemonNameWithAffix(pokemon),

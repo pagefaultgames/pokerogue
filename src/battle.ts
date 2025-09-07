@@ -241,7 +241,7 @@ export class Battle {
       || this.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE
     ) {
       if (!this.started && this.trainer?.config.encounterBgm && this.trainer.getEncounterMessages().length > 0) {
-        return `encounter_${this.trainer?.getEncounterBgm()}`;
+        return `encounter_${this.trainer.getEncounterBgm()}`;
       }
       if (globalScene.musicPreference === MusicPreference.GENFIVE) {
         return this.trainer?.getBattleBgm() ?? null;
