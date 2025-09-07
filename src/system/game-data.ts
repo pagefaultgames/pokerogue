@@ -68,6 +68,7 @@ import { executeIf, fixedInt, isLocal, NumberHolder, randInt, randSeedItem } fro
 import { decrypt, encrypt } from "#utils/data";
 import { getEnumKeys } from "#utils/enums";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { isBeta } from "#utils/utility-vars";
 import { AES, enc } from "crypto-js";
 import i18next from "i18next";
 
@@ -422,7 +423,9 @@ export class GameData {
         }
       }
 
-      console.debug(systemData);
+      if (isLocal || isBeta) {
+        console.debug(JSON.parse(JSON.stringify(systemData)));
+      }
 
       localStorage.setItem(`data_${loggedInUser?.username}`, encrypt(systemDataStr, bypassLogin));
 
@@ -1038,7 +1041,9 @@ export class GameData {
     const { promise, resolve, reject } = Promise.withResolvers<boolean>();
     try {
       const initSessionFromData = (fromSession: SessionSaveData) => {
-        console.debug(fromSession);
+        if (isLocal || isBeta) {
+          console.debug(JSON.parse(JSON.stringify(fromSession)));
+        }
         // overwrite slot ID if somehow not set.
         fromSession.slotId = slotId;
 
@@ -1185,9 +1190,6 @@ export class GameData {
       } else {
         this.getSession(slotId)
           .then(data => {
-            if (data) {
-              initSessionFromData(data);
-            }
             return data && initSessionFromData(data);
           })
           .catch(err => {
