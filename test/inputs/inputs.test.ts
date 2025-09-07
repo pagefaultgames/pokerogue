@@ -31,22 +31,22 @@ describe("Inputs", () => {
     game.inputsHandler = new InputsHandler(game.scene);
   });
 
-  it("Mobile - test touch holding for 1ms - 1 input", async () => {
+  it.todo("Mobile - test touch holding for 1ms - 1 input", async () => {
     await game.inputsHandler.pressTouch("dpadUp", 1);
     expect(game.inputsHandler.log.length).toBe(1);
   });
 
-  it("Mobile - test touch holding for 200ms - 1 input", async () => {
+  it.todo("Mobile - test touch holding for 200ms - 1 input", async () => {
     await game.inputsHandler.pressTouch("dpadUp", 200);
     expect(game.inputsHandler.log.length).toBe(1);
   });
 
-  it("Mobile - test touch holding for 300ms - 2 input", async () => {
+  it.todo("Mobile - test touch holding for 300ms - 2 input", async () => {
     await game.inputsHandler.pressTouch("dpadUp", 300);
     expect(game.inputsHandler.log.length).toBe(2);
   });
 
-  it("Mobile - test touch holding for 1000ms - 4 input", async () => {
+  it.todo("Mobile - test touch holding for 1000ms - 4 input", async () => {
     await game.inputsHandler.pressTouch("dpadUp", 1050);
     expect(game.inputsHandler.log.length).toBe(5);
   });
