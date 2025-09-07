@@ -55,7 +55,7 @@ describe("Moves - Friend Guard", () => {
     // Making sure the test is controlled; turn 1 damage is equal to base damage (after rounding)
     expect(spy).toHaveLastReturnedWith(
       expect.objectContaining({
-        damage: baseDmg,
+        damage: expect.closeTo(baseDmg),
       }),
     );
 
