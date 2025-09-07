@@ -16,7 +16,7 @@ which takes as input the _global_ coordinates of scrolling text object. This is 
 
 const BORDER = 8;
 
-export default class ScrollingText extends Phaser.GameObjects.Container {
+export class ScrollingText extends Phaser.GameObjects.Container {
   private descBg: Phaser.GameObjects.NineSlice;
   public text: BBCodeText;
   private descScroll: Phaser.Tweens.Tween | null = null;
