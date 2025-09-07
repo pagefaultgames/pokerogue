@@ -2,7 +2,8 @@ import { globalScene } from "#app/global-scene";
 import { fixedInt } from "#app/utils/common";
 import type { TextStyle } from "#enums/text-style";
 import i18next from "i18next";
-import { addTextObject } from "./text";
+import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
+import { addBBCodeTextObject } from "./text";
 import { addWindow } from "./ui-theme";
 
 /*
@@ -14,16 +15,16 @@ which takes as input the _global_ coordinates of scrolling text object. This is 
  */
 
 const BORDER = 8;
-const SCALE_PROPERTY = 96 / 72 / 14.83;
 
 export default class ScrollingText extends Phaser.GameObjects.Container {
   private descBg: Phaser.GameObjects.NineSlice;
-  public text: Phaser.GameObjects.Text;
+  public text: BBCodeText;
   private descScroll: Phaser.Tweens.Tween | null = null;
   private maxLineCount: number;
 
   private offsetX: number;
   private offsetY: number;
+  maskHeight: number;
 
   constructor(
     scene: Phaser.Scene,
@@ -35,6 +36,7 @@ export default class ScrollingText extends Phaser.GameObjects.Container {
     content: string,
     style: TextStyle,
     hasBackground = false,
+    extraStyleOptions: Phaser.Types.GameObjects.Text.TextStyle = {},
   ) {
     super(scene, x, y);
 
@@ -50,10 +52,11 @@ export default class ScrollingText extends Phaser.GameObjects.Container {
     // Adding the text element
     const wrapWidth = (width - (this.offsetX - 2) * 2) * 6;
 
-    this.text = addTextObject(this.offsetX, this.offsetY, content, style, {
+    this.text = addBBCodeTextObject(this.offsetX, this.offsetY, content, style, {
       wordWrap: {
         width: wrapWidth,
       },
+      ...extraStyleOptions,
     });
     this.maxLineCount = maxLineCount;
     // TODO: change this based on which text is being used, etc
@@ -67,7 +70,8 @@ export default class ScrollingText extends Phaser.GameObjects.Container {
     const globalMaskY = globalY + this.offsetY;
 
     const visibleWidth = this.descBg.width - (this.offsetX - 2) * 2;
-    const visibleHeight = this.descBg.height - this.offsetY * 2;
+    this.maskHeight = (this.text.style.lineHeight / 6) * this.maxLineCount;
+    const visibleHeight = this.maskHeight;
 
     const maskGraphics = scene.make.graphics({ x: 0, y: 0 });
     maskGraphics.fillRect(globalMaskX, globalMaskY, visibleWidth, visibleHeight);
@@ -88,17 +92,19 @@ export default class ScrollingText extends Phaser.GameObjects.Container {
 
     // determine if we need to add new scrolling effects
     // TODO: The scale property may need to be adjusted based on the height of the font
-    const lineCount = Math.floor(this.text.displayHeight * SCALE_PROPERTY);
+    const displayHeight = this.text.displayHeight;
+    const scrollAmount = displayHeight - this.maskHeight;
+    const lineHeight = this.text.style.lineHeight / 6;
 
-    if (lineCount > this.maxLineCount) {
+    if (scrollAmount) {
       // generate scrolling effects
       this.descScroll = globalScene.tweens.add({
         targets: this.text,
         delay: fixedInt(2000),
         loop: -1,
         hold: fixedInt(2000),
-        duration: fixedInt((lineCount - this.maxLineCount) * 2000),
-        y: `-=${(lineCount - this.maxLineCount) / SCALE_PROPERTY}`,
+        duration: fixedInt((scrollAmount / lineHeight) * 2000),
+        y: `-=${scrollAmount}`,
       });
     }
   }

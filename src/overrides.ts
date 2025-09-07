@@ -44,7 +44,11 @@ import { Variant } from "#sprites/variant";
  * }
  * ```
  */
-const overrides = {} satisfies Partial<InstanceType<OverridesType>>;
+const overrides = {
+  MYSTERY_ENCOUNTER_OVERRIDE: MysteryEncounterType.SHADY_VITAMIN_DEALER,
+  MYSTERY_ENCOUNTER_RATE_OVERRIDE: 255,
+  STARTING_WAVE_OVERRIDE: 32,
+} satisfies Partial<InstanceType<OverridesType>>;
 
 /**
  * If you need to add Overrides values for local testing do that inside {@linkcode overrides}

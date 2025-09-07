@@ -16,6 +16,7 @@ import { addWindow, WindowVariant } from "#ui/ui-theme";
 import { fixedInt, isNullOrUndefined } from "#utils/common";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
+import ScrollingText from "./scrolling-text";
 
 export class MysteryEncounterUiHandler extends UiHandler {
   private cursorContainer: Phaser.GameObjects.Container;
@@ -46,6 +47,8 @@ export class MysteryEncounterUiHandler extends UiHandler {
   protected viewPartyXPosition = 0;
 
   protected blockInput = true;
+  desc: ScrollingText;
+  tooltipDesc: ScrollingText;
 
   constructor() {
     super(UiMode.MYSTERY_ENCOUNTER);
@@ -503,41 +506,21 @@ export class MysteryEncounterUiHandler extends UiHandler {
     const ballType = getPokeballAtlasKey(index);
     this.rarityBall.setTexture("pb", ballType);
 
-    const descriptionTextObject = addBBCodeTextObject(6, 25, descriptionText ?? "", TextStyle.TOOLTIP_CONTENT, {
-      wordWrap: { width: 830 },
-    });
-
-    // Sets up the mask that hides the description text to give an illusion of scrolling
-    const descriptionTextMaskRect = globalScene.make.graphics({});
-    descriptionTextMaskRect.setScale(6);
-    descriptionTextMaskRect.fillStyle(0xffffff);
-    descriptionTextMaskRect.beginPath();
-    descriptionTextMaskRect.fillRect(6, 53, 206, 57);
-
-    const abilityDescriptionTextMask = descriptionTextMaskRect.createGeometryMask();
-
-    descriptionTextObject.setMask(abilityDescriptionTextMask);
-
-    const descriptionLineCount = Math.floor(descriptionTextObject.displayHeight / 9.2);
-
-    if (this.descriptionScrollTween) {
-      this.descriptionScrollTween.remove();
-      this.descriptionScrollTween = undefined;
-    }
-
-    // Animates the description text moving upwards
-    if (descriptionLineCount > 6) {
-      this.descriptionScrollTween = globalScene.tweens.add({
-        targets: descriptionTextObject,
-        delay: fixedInt(2000),
-        loop: -1,
-        hold: fixedInt(2000),
-        duration: fixedInt((descriptionLineCount - 6) * 2000),
-        y: `-=${10 * (descriptionLineCount - 6)}`,
-      });
-    }
-
-    this.descriptionContainer.add(descriptionTextObject);
+    // prepare the description box
+    this.desc = new ScrollingText(
+      globalScene,
+      6,
+      22,
+      830 / 6,
+      62,
+      6, // maxLineCount
+      descriptionText ?? "", // initial content
+      TextStyle.TOOLTIP_CONTENT,
+      false,
+    );
+    this.desc.createMask(globalScene, 6, 50);
+    this.descriptionContainer.add(this.desc);
+    this.desc.activate();
 
     const queryTextObject = addBBCodeTextObject(0, 0, queryText ?? "", TextStyle.TOOLTIP_CONTENT, {
       wordWrap: { width: 830 },
@@ -612,42 +595,25 @@ export class MysteryEncounterUiHandler extends UiHandler {
     }
 
     if (text) {
-      const tooltipTextObject = addBBCodeTextObject(6, 7, text, TextStyle.TOOLTIP_CONTENT, {
-        wordWrap: { width: 600 },
-        fontSize: "72px",
-        padding: { top: 8 },
-        lineSpacing: 1.25,
-      });
-      this.tooltipContainer.add(tooltipTextObject);
-
-      // Sets up the mask that hides the description text to give an illusion of scrolling
-      const tooltipTextMaskRect = globalScene.make.graphics({});
-      tooltipTextMaskRect.setScale(6);
-      tooltipTextMaskRect.fillStyle(0xffffff);
-      tooltipTextMaskRect.beginPath();
-      tooltipTextMaskRect.fillRect(this.tooltipContainer.x, this.tooltipContainer.y + 188.5, 150, 32);
-
-      const textMask = tooltipTextMaskRect.createGeometryMask();
-      tooltipTextObject.setMask(textMask);
-
-      const tooltipLineCount = Math.floor(tooltipTextObject.displayHeight / 10.2);
-
-      if (this.tooltipScrollTween) {
-        this.tooltipScrollTween.remove();
-        this.tooltipScrollTween = undefined;
-      }
-
-      // Animates the tooltip text moving upwards
-      if (tooltipLineCount > 3) {
-        this.tooltipScrollTween = globalScene.tweens.add({
-          targets: tooltipTextObject,
-          delay: fixedInt(1200),
-          loop: -1,
-          hold: fixedInt(1200),
-          duration: fixedInt((tooltipLineCount - 3) * 1200),
-          y: `-=${11.2 * (tooltipLineCount - 3)}`,
-        });
-      }
+      this.tooltipDesc = new ScrollingText(
+        globalScene,
+        6,
+        5,
+        96,
+        32,
+        3, // maxLineCount
+        text ?? "", // initial content
+        TextStyle.TOOLTIP_CONTENT,
+        false,
+        {
+          fontSize: "72px",
+          padding: { top: 8 },
+          lineSpacing: 1.25,
+        },
+      );
+      this.tooltipDesc.createMask(globalScene, this.tooltipContainer.x, this.tooltipContainer.y + 188.5);
+      this.tooltipContainer.add(this.tooltipDesc);
+      this.tooltipDesc.activate();
     }
 
     // Dex progress indicator
