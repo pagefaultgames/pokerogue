@@ -401,7 +401,6 @@ export abstract class AbAttr {
  *
  * @remarks
  * Abilities that have simple cancel interactions (e.g. {@linkcode BlockRecoilDamageAttr}) can extend this class to reuse the `canApply` and `apply` logic
- * Classes can
  */
 abstract class CancelInteractionAbAttr extends AbAttr {
   override canApply({ cancelled }: AbAttrParamsWithCancel): boolean {
