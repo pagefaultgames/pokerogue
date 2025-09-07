@@ -34,6 +34,7 @@
     "@types/node": "^22.16.5",
     "@vitest/coverage-istanbul": "^3.2.4",
     "@vitest/expect": "^3.2.4",
+    "@vitest/utils": "^3.2.4",
     "chalk": "^5.4.1",
     "dependency-cruiser": "^16.10.4",
     "inquirer": "^12.8.2",
