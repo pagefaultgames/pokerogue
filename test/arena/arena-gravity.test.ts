@@ -27,7 +27,7 @@ describe("Arena - Gravity", () => {
       .battleStyle("single")
       .ability(AbilityId.UNNERVE)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemySpecies(SpeciesId.FLETCHLING)
       .enemyLevel(5);
   });
 
@@ -41,7 +41,7 @@ describe("Arena - Gravity", () => {
     await game.move.forceEnemyMove(MoveId.TACKLE);
     await game.toEndOfTurn();
 
-    expect(game.scene.arena.getTag(ArenaTagType.GRAVITY)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.GRAVITY);
     expect(accSpy).toHaveLastReturnedWith(allMoves[MoveId.TACKLE].accuracy * 1.67);
   });
 
@@ -62,11 +62,12 @@ describe("Arena - Gravity", () => {
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
+    expect(enemy.isGrounded()).toBe(false);
 
     game.move.use(MoveId.GRAVITY);
     await game.toNextTurn();
 
-    expect(game.scene.arena.getTag(ArenaTagType.GRAVITY)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.GRAVITY);
     expect(player.isGrounded()).toBe(true);
     expect(enemy.isGrounded()).toBe(true);
   });

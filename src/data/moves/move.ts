@@ -77,7 +77,15 @@ import {
   PreserveBerryModifier,
 } from "#modifiers/modifier";
 import { applyMoveAttrs } from "#moves/apply-attrs";
-import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSketchMoves, invalidSleepTalkMoves, invalidTelekinesisSpecies } from "#moves/invalid-moves";
+import {
+  invalidAssistMoves,
+  invalidCopycatMoves,
+  invalidMetronomeMoves,
+  invalidMirrorMoveMoves,
+  invalidSketchMoves,
+  invalidSleepTalkMoves,
+  invalidTelekinesisSpecies,
+} from "#moves/invalid-moves";
 import { frenzyMissFunc, getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import { MoveEndPhase } from "#phases/move-end-phase";
@@ -10083,13 +10091,15 @@ export function initMoves() {
     new StatusMove(MoveId.TELEKINESIS, PokemonType.PSYCHIC, -1, 15, -1, 0, 5)
       .attr(AddBattlerTagAttr, BattlerTagType.TELEKINESIS, false, true, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.FLOATING, false, true, 3)
-      .condition((_user, target, _move) => !(
+      .condition((_user, target) => !(
         invalidTelekinesisSpecies.has(target.species.speciesId)
         || (target.species.speciesId === SpeciesId.GENGAR && target.getFormKey() === SpeciesFormKey.MEGA)
       ))
       .condition(failOnGravityCondition)
       .condition(failOnGroundedCondition)
-      .reflectable(),
+      .reflectable()
+      // Still preserves FLOATING tag when Baton Passed onto a Mega Gengar
+      .edgeCase(),
     new StatusMove(MoveId.MAGIC_ROOM, PokemonType.PSYCHIC, -1, 10, -1, 0, 5)
       .ignoresProtect()
       .target(MoveTarget.BOTH_SIDES)

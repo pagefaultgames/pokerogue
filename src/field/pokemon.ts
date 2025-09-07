@@ -2284,7 +2284,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Return whether this Pokemon is currently on the ground.
    *
-   * To be considered grounded, a Pokemon must fulfill any of the following criteria:
+   * To be considered grounded, a Pokemon must either:
    * * Be {@linkcode BattlerTagType.IGNORE_FLYING | forcibly grounded} from an effect like Smack Down or Ingrain
    * * Be under the effects of {@linkcode ArenaTagType.GRAVITY | harsh gravity}
    * * **Not** be any of the following things:
@@ -4376,10 +4376,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Transferring stat changes and Tags
-   * @param source {@linkcode Pokemon} the pokemon whose stats/Tags are to be passed on from, ie: the Pokemon using Baton Pass
+   * Transfer stat changes and volatile status effects upon a Pokemon switching in via Baton Pass.
+   * Should be called prior to the recipient's summon data being reset.
+   * @param source - The {@linkcode Pokemon} using Baton Pass to source the effects from.
    */
-  transferSummon(source: Pokemon): void {
+  public transferSummon(source: Pokemon): void {
     // Copy all stat stages
     for (const s of BATTLE_STATS) {
       const sourceStage = source.getStatStage(s);
@@ -4389,12 +4390,20 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       this.setStatStage(s, sourceStage);
     }
 
+    // Edge case: avoid transferring either of Telekinesis' effects when passing to Mega Gengar
+    // TODO: Rather than handling this logic in the core baton pass logic, move it to an
+    // overriddable helper function on the BattlerTag instance
+    const isMegaGengarReceivingTelekinesis =
+      this.species.speciesId === SpeciesId.GENGAR &&
+      this.getFormKey() === SpeciesFormKey.MEGA &&
+      !!source.getTag(BattlerTagType.TELEKINESIS);
+
+    // Copy all transferrable BattlerTags
     for (const tag of source.summonData.tags) {
       if (
         !tag.isBatonPassable ||
-        (tag.tagType === BattlerTagType.TELEKINESIS &&
-          this.species.speciesId === SpeciesId.GENGAR &&
-          this.getFormKey() === "mega")
+        (isMegaGengarReceivingTelekinesis &&
+          (tag.tagType === BattlerTagType.TELEKINESIS || tag.tagType === BattlerTagType.FLOATING))
       ) {
         continue;
       }

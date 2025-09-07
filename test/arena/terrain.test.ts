@@ -181,7 +181,7 @@ describe("Terrain -", () => {
         await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
         await game.toNextTurn();
 
-        expect(enemy.getLastXMoves()[0].move).toBe(MoveId.FLY);
+        expect(enemy).toHaveUsedMove(MoveId.FLY);
         expect(powerSpy).toHaveLastReturnedWith(basePower);
       },
     );
@@ -201,11 +201,11 @@ describe("Terrain -", () => {
 
       const pidgeot = game.field.getPlayerPokemon();
       const shuckle = game.field.getEnemyPokemon();
-      expect(pidgeot.status?.effect).toBe(StatusEffect.SLEEP);
-      expect(shuckle.status?.effect).toBeUndefined();
+      expect(pidgeot).toHaveStatusEffect(StatusEffect.SLEEP);
+      expect(shuckle).toHaveStatusEffect(StatusEffect.NONE);
       // TODO: These don't work due to how move failures are propagated
-      // expect(pidgeot.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-      // expect(shuckle.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+      // expect(pidgeot).toHaveUsedMove({ move: MoveId.SPORE, result: MoveResult.FAIL });
+      // expect(shuckle).toHaveUsedMove({ move: MoveId.SPORE, result: MoveResult.SUCCESS });
 
       expect(game.textInterceptor.logs).toContain(
         i18next.t("terrain:defaultBlockMessage", {
@@ -227,9 +227,9 @@ describe("Terrain -", () => {
       await game.toEndOfTurn();
 
       const blissey = game.field.getPlayerPokemon();
-      expect(shuckle.status?.effect).toBeUndefined();
+      expect(shuckle).toHaveStatusEffect(StatusEffect.NONE);
       expect(statusSpy).toHaveLastReturnedWith(false);
-      expect(blissey.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+      expect(blissey).toHaveUsedMove({ move: MoveId.RELIC_SONG, result: MoveResult.SUCCESS });
 
       expect(game.textInterceptor.logs).not.toContain(
         i18next.t("terrain:defaultBlockMessage", {
@@ -256,8 +256,8 @@ describe("Terrain -", () => {
       const shuckle = game.field.getEnemyPokemon();
 
       // blissey is grounded & protected, shuckle isn't
-      expect(blissey.status?.effect).toBeUndefined();
-      expect(shuckle.status?.effect).toBe(StatusEffect.TOXIC);
+      expect(blissey).toHaveStatusEffect(StatusEffect.NONE);
+      expect(shuckle).toHaveStatusEffect(StatusEffect.TOXIC);
       // TODO: These don't work due to how move failures are propagated
       // expect(blissey.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
       // expect(shuckle.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
@@ -313,8 +313,8 @@ describe("Terrain -", () => {
       // Blissey was grounded and protected from effect, but still took damage
       expect(blissey).not.toHaveFullHp();
       expect(blissey).not.toHaveBattlerTag(BattlerTagType.CONFUSED);
-      expect(blissey.status?.effect).toBe(StatusEffect.NONE);
-      expect(shuckle).toHaveUsedMove({ result: MoveResult.SUCCESS });
+      expect(blissey).toHaveStatusEffect(StatusEffect.NONE);
+      expect(shuckle).toHaveUsedMove({ move, result: MoveResult.SUCCESS });
 
       expect(game.textInterceptor.logs).not.toContain(
         i18next.t("terrain:mistyBlockMessage", {
@@ -381,7 +381,7 @@ describe("Terrain -", () => {
         category: "Enemy-targeting spread",
         move: MoveId.DARK_VOID,
         effect: () => {
-          expect(game.field.getEnemyPokemon().status?.effect).toBe(StatusEffect.SLEEP);
+          expect(game.field.getEnemyPokemon()).toHaveStatusEffect(StatusEffect.SLEEP);
         },
       },
     ])("should not block $category moves that become priority", async ({ move, effect }) => {

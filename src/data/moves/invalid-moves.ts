@@ -283,9 +283,12 @@ export const invalidEncoreMoves: ReadonlySet<MoveId> = new Set([
 ]);
 
 /**
- * Set of all {@linkcode SpeciesId}s that are barred from use by {@linkcode MoveId.TELEKINESIS}.
+ * Set of all {@linkcode SpeciesId}s that {@linkcode MoveId.TELEKINESIS} cannot directly affect.
+ * They can still receive the effect from Baton Passing, however.
  *
- * (Not included here is Gengar, which is only forbidden in its Mega form.)
+ * @remarks
+ * Not included here is Gengar, which is only forbidden in its Mega form and which
+ * _cannot_ receive either of Telekinesis' effects via Baton Pass.
  */
 export const invalidTelekinesisSpecies: ReadonlySet<SpeciesId> = new Set([
   SpeciesId.DIGLETT,
@@ -296,4 +299,4 @@ export const invalidTelekinesisSpecies: ReadonlySet<SpeciesId> = new Set([
   SpeciesId.PALOSSAND,
   SpeciesId.WIGLETT,
   SpeciesId.WUGTRIO,
-] as const);
+]);
