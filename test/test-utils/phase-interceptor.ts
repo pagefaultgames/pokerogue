@@ -232,7 +232,7 @@ export class PhaseInterceptor {
   /**
    * Toggle the Interceptor's logging blacklist, enabling or disabling logging all phases in
    * {@linkcode blacklistedPhaseNames}.
-   * @param state - Whether the blacklist should work; default `false` (disable)
+   * @param state - Whether the blacklist should be enabled; default `false` (disable)
    */
   public toggleBlacklist(state = false): void {
     this.respectBlacklist = state;
