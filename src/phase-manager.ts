@@ -392,7 +392,7 @@ export class PhaseManager {
    * Helper method to start and log the current phase.
    */
   private startCurrentPhase(): void {
-    console.log(`%cStart Phase ${this.currentPhase.phaseName}`, "color:green;");
+    console.log(`%cStart Phase ${this.currentPhase.phaseName}`, "color:${PHASE_START_COLOR};");
     this.currentPhase.start();
   }
 

@@ -3,6 +3,7 @@ import type { NewArenaEvent } from "#events/battle-scene";
 
 /** biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
 
+import { OVERRIDES_COLOR } from "#app/constants/colors";
 import { TerrainType } from "#app/data/terrain";
 import type { BattleStyle, RandomTrainerOverride } from "#app/overrides";
 import Overrides from "#app/overrides";
@@ -22,6 +23,7 @@ import type { Variant } from "#sprites/variant";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
 import { getEnumStr } from "#test/test-utils/string-utils";
 import { coerceArray, shiftCharCodes } from "#utils/common";
+import chalk from "chalk";
 import { vi } from "vitest";
 
 /**
@@ -681,6 +683,6 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   private log(...params: any[]) {
-    console.log("Overrides:", ...params);
+    console.log(chalk.hex(OVERRIDES_COLOR)(...params));
   }
 }
