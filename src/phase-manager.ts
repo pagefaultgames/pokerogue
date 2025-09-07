@@ -1,3 +1,4 @@
+import { PHASE_START_COLOR } from "#app/constants/colors";
 import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
 import { type PhasePriorityQueue, PostSummonPhasePriorityQueue } from "#data/phase-priority-queue";
@@ -392,7 +393,7 @@ export class PhaseManager {
    * Helper method to start and log the current phase.
    */
   private startCurrentPhase(): void {
-    console.log(`%cStart Phase ${this.currentPhase.phaseName}`, "color:green;");
+    console.log(`%cStart Phase ${this.currentPhase.phaseName}`, `color:${PHASE_START_COLOR};`);
     this.currentPhase.start();
   }
 
