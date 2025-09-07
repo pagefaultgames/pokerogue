@@ -3015,13 +3015,15 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     return valueLimit.value;
   }
 
-  updateStarters(): void {
+  updateStarters = () => {
     this.scrollCursor = 0;
     this.filteredStarterContainers = [];
     this.validStarterContainers = [];
-    for (const obj of [...this.pokerusCursorObjs, ...this.starterCursorObjs]) {
-      obj.setVisible(false);
-    }
+
+    // biome-ignore-start lint/suspicious/useIterableCallbackReturn: benign
+    this.pokerusCursorObjs.forEach(cursor => cursor.setVisible(false));
+    this.starterCursorObjs.forEach(cursor => cursor.setVisible(false));
+    // biome-ignore-end lint/suspicious/useIterableCallbackReturn: benign
 
     this.filterBar.updateFilterLabels();
 
@@ -3302,7 +3304,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     });
 
     this.updateScroll();
-  }
+  };
 
   override destroy(): void {
     // Without this the reference gets hung up and no startercontainers get GCd
