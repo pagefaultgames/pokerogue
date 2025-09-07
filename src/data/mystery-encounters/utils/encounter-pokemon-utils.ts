@@ -439,7 +439,7 @@ export async function applyModifierTypeToPlayerPokemon(
  * @param pokeballType
  * @param ballTwitchRate - can pass custom ball catch rates (for special events, like safari)
  */
-export function trainerThrowPokeball(
+export function trainerThrowSafariball(
   pokemon: EnemyPokemon,
   pokeballType: PokeballType,
   ballTwitchRate?: number,

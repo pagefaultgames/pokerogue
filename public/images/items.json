@@ -8618,6 +8618,132 @@
 						"w": 16,
 						"h": 16
 					}
+				},
+				{
+					"filename": "repb",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 8,
+						"y": 8,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 204,
+						"y": 423,
+						"w": 20,
+						"h": 20
+					}
+				},
+				{
+					"filename": "tb",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 8,
+						"y": 8,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 224,
+						"y": 423,
+						"w": 20,
+						"h": 20
+					}
+				},
+				{
+					"filename": "sb",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 8,
+						"y": 8,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 244,
+						"y": 423,
+						"w": 20,
+						"h": 20
+					}
+				},
+				{
+					"filename": "qb",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 8,
+						"y": 8,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 264,
+						"y": 423,
+						"w": 20,
+						"h": 20
+					}
+				},
+				{
+					"filename": "preb",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 8,
+						"y": 8,
+						"w": 16,
+						"h": 16
+					},
+					"frame": {
+						"x": 284,
+						"y": 425,
+						"w": 20,
+						"h": 18
+					}
+				},
+				{
+					"filename": "lb",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 8,
+						"y": 8,
+						"w": 20,
+						"h": 20
+					},
+					"frame": {
+						"x": 304,
+						"y": 425,
+						"w": 20,
+						"h": 18
+					}
 				}
 			]
 		}

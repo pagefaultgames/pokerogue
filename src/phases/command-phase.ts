@@ -454,7 +454,7 @@ export class CommandPhase extends FieldPhase {
     const isChallengeActive = globalScene.gameMode.hasAnyChallenges();
     const isFinalBoss = globalScene.gameMode.isBattleClassicFinalBoss(globalScene.currentBattle.waveIndex);
 
-    const numBallTypes = 5;
+    const numBallTypes = 10;
     if (cursor < numBallTypes) {
       const targetPokemon = globalScene.getEnemyPokemon(false);
       if (
@@ -467,13 +467,13 @@ export class CommandPhase extends FieldPhase {
         // The message is customized for the final boss.
         if (
           isFinalBoss &&
-          (cursor < PokeballType.MASTER_BALL || (cursor === PokeballType.MASTER_BALL && isChallengeActive))
+          (cursor !== PokeballType.MASTER_BALL || (cursor === PokeballType.MASTER_BALL && isChallengeActive))
         ) {
           this.queueShowText("battle:noPokeballForceFinalBossCatchable");
           return false;
         }
         // When facing any other boss, Master Ball can always be used, and we use the standard message.
-        if (cursor < PokeballType.MASTER_BALL) {
+        if (cursor !== PokeballType.MASTER_BALL) {
           this.queueShowText("battle:noPokeballStrong");
           return false;
         }
