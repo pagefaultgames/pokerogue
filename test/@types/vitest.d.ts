@@ -23,7 +23,7 @@ import type { TurnMove } from "#types/turn-move";
 import type { AtLeastOne } from "#types/type-helpers";
 import type { toDmgValue } from "#utils/common";
 import type { expect } from "vitest";
-import { toHaveBattlerTagOptions } from "#test/test-utils/matchers/to-have-battler-tag";
+import type { toHaveBattlerTagOptions } from "#test/test-utils/matchers/to-have-battler-tag";
 
 declare module "vitest" {
   interface Assertion<T> {
