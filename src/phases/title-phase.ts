@@ -177,6 +177,9 @@ export class TitlePhase extends Phase {
       .then((success: boolean) => {
         if (success) {
           this.loaded = true;
+          if (loggedInUser) {
+            loggedInUser.lastSessionSlot = slotId;
+          }
           globalScene.ui.showText(i18next.t("menu:sessionSuccess"), null, () => this.end());
         } else {
           this.end();
