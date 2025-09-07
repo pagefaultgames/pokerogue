@@ -91,7 +91,6 @@ export default class ScrollingText extends Phaser.GameObjects.Container {
     }
 
     // determine if we need to add new scrolling effects
-    // TODO: The scale property may need to be adjusted based on the height of the font
     const displayHeight = this.text.displayHeight;
     const scrollAmount = displayHeight - this.maskHeight;
     const lineHeight = this.text.style.lineHeight / 6;
