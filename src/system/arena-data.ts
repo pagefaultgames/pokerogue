@@ -15,6 +15,7 @@ export interface SerializedArenaData {
   tags?: ArenaTagData[];
   positionalTags: SerializedPositionalTag[];
   playerTerasUsed?: number;
+  playerFaints?: number;
 }
 
 export class ArenaData {
@@ -24,6 +25,7 @@ export class ArenaData {
   public tags: ArenaTag[];
   public positionalTags: SerializedPositionalTag[] = [];
   public playerTerasUsed: number;
+  public playerFaints: number;
 
   constructor(source: Arena | SerializedArenaData) {
     // Exclude any unserializable tags from the serialized data (such as ones only lasting 1 turn).
@@ -43,6 +45,7 @@ export class ArenaData {
       // The assertion here is ok - we ensure that all tags are inside the `posTagConstructorMap` map,
       // and that all `PositionalTags` will become their respective interfaces when serialized and de-serialized.
       this.positionalTags = (source.positionalTagManager.tags as unknown as SerializedPositionalTag[]) ?? [];
+      this.playerFaints = source.playerFaints;
       return;
     }
 
@@ -50,5 +53,6 @@ export class ArenaData {
     this.weather = source.weather ? new Weather(source.weather.weatherType, source.weather.turnsLeft) : null;
     this.terrain = source.terrain ? new Terrain(source.terrain.terrainType, source.terrain.turnsLeft) : null;
     this.positionalTags = source.positionalTags ?? [];
+    this.playerFaints = source.playerFaints ?? 0;
   }
 }
