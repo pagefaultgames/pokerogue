@@ -1,7 +1,7 @@
 import type { InfoToggle } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
-import ScrollingText from "#ui/scrolling-text";
+import { ScrollingText } from "#ui/scrolling-text";
 import { fixedInt } from "#utils/common";
 
 export interface PokedexInfoOverlaySettings {

@@ -10,7 +10,7 @@ import type { OptionSelectSettings } from "#mystery-encounters/encounter-phase-u
 import type { MysteryEncounterOption } from "#mystery-encounters/mystery-encounter-option";
 import type { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
 import { PartyUiMode } from "#ui/party-ui-handler";
-import ScrollingText from "#ui/scrolling-text";
+import { ScrollingText } from "#ui/scrolling-text";
 import { addBBCodeTextObject, getBBCodeFrag } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
