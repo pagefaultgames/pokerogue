@@ -424,7 +424,13 @@ export class GameData {
       }
 
       if (isLocal || isBeta) {
-        console.debug(JSON.parse(JSON.stringify(systemData)));
+        try {
+          console.debug(
+            this.parseSystemData(JSON.stringify(systemData, (_, v: any) => (typeof v === "bigint" ? v.toString() : v))),
+          );
+        } catch (err) {
+          console.debug("Attempt to log system data failed:", err);
+        }
       }
 
       localStorage.setItem(`data_${loggedInUser?.username}`, encrypt(systemDataStr, bypassLogin));
@@ -1042,7 +1048,15 @@ export class GameData {
     try {
       const initSessionFromData = (fromSession: SessionSaveData) => {
         if (isLocal || isBeta) {
-          console.debug(JSON.parse(JSON.stringify(fromSession)));
+          try {
+            console.debug(
+              this.parseSessionData(
+                JSON.stringify(fromSession, (_, v: any) => (typeof v === "bigint" ? v.toString() : v)),
+              ),
+            );
+          } catch (err) {
+            console.debug("Attempt to log session data failed:", err);
+          }
         }
         // overwrite slot ID if somehow not set.
         fromSession.slotId = slotId;
