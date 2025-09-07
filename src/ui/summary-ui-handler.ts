@@ -25,6 +25,7 @@ import type { PokemonMove } from "#moves/pokemon-move";
 import type { Variant } from "#sprites/variant";
 import { getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
+import ScrollingText from "#ui/scrolling-text";
 import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import {
@@ -40,7 +41,6 @@ import { getEnumValues } from "#utils/enums";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
-import ScrollingText from "./scrolling-text";
 
 enum Page {
   PROFILE,

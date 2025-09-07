@@ -10,13 +10,13 @@ import type { OptionSelectSettings } from "#mystery-encounters/encounter-phase-u
 import type { MysteryEncounterOption } from "#mystery-encounters/mystery-encounter-option";
 import type { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
 import { PartyUiMode } from "#ui/party-ui-handler";
+import ScrollingText from "#ui/scrolling-text";
 import { addBBCodeTextObject, getBBCodeFrag } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import { fixedInt, isNullOrUndefined } from "#utils/common";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import ScrollingText from "./scrolling-text";
 
 export class MysteryEncounterUiHandler extends UiHandler {
   private cursorContainer: Phaser.GameObjects.Container;

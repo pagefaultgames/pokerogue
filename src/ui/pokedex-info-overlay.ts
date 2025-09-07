@@ -1,8 +1,8 @@
 import type { InfoToggle } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
+import ScrollingText from "#ui/scrolling-text";
 import { fixedInt } from "#utils/common";
-import ScrollingText from "./scrolling-text";
 
 export interface PokedexInfoOverlaySettings {
   delayVisibility?: boolean; // if true, showing the overlay will only set it to active and populate the fields and the handler using this field has to manually call setVisible later.
