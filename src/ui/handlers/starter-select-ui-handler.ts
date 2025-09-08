@@ -53,16 +53,6 @@ import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-handler";
 import { ScrollBar } from "#ui/scroll-bar";
 import { StarterContainer } from "#ui/starter-container";
-import { addTextObject, getTextColor } from "#ui/text";
-import { addWindow } from "#ui/ui-theme";
-import { checkStarterValidForChallenge } from "#utils/challenge-utils";
-import { fixedInt, getLocalizedSpriteKey, isNullOrUndefined, randIntRange, rgbHexToRgba } from "#utils/common";
-import type { AllStarterPreferences } from "#utils/data";
-import { deepCopy, loadStarterPreferences, saveStarterPreferences } from "#utils/data";
-import { getPokemonSpecies, getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
-import { argbFromRgba } from "@material/material-color-utilities";
-import i18next from "i18next";
-import type { GameObjects } from "phaser";
 import {
   getDexAttrFromPreferences,
   getRunValueLimit,
@@ -76,8 +66,18 @@ import {
   isUpgradeIconEnabled,
   isValueReductionAvailable,
   type SpeciesDetails,
-} from "./starter-select-ui-utils";
-import { StarterSummary } from "./starter-summary";
+} from "#ui/starter-select-ui-utils";
+import { StarterSummary } from "#ui/starter-summary";
+import { addTextObject, getTextColor } from "#ui/text";
+import { addWindow } from "#ui/ui-theme";
+import { checkStarterValidForChallenge } from "#utils/challenge-utils";
+import { fixedInt, getLocalizedSpriteKey, isNullOrUndefined, randIntRange, rgbHexToRgba } from "#utils/common";
+import type { AllStarterPreferences } from "#utils/data";
+import { deepCopy, loadStarterPreferences, saveStarterPreferences } from "#utils/data";
+import { getPokemonSpecies, getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
+import { argbFromRgba } from "@material/material-color-utilities";
+import i18next from "i18next";
+import type { GameObjects } from "phaser";
 
 const COLUMNS = 9;
 const ROWS = 9;
