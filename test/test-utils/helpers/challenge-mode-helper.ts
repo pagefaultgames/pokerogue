@@ -1,5 +1,6 @@
 import overrides from "#app/overrides";
 import type { Challenge } from "#data/challenge";
+import { copyChallenge } from "#data/challenge";
 import { BattleStyle } from "#enums/battle-style";
 import type { Challenges } from "#enums/challenges";
 import type { SpeciesId } from "#enums/species-id";
@@ -10,7 +11,6 @@ import { SelectStarterPhase } from "#phases/select-starter-phase";
 import { TurnInitPhase } from "#phases/turn-init-phase";
 import { generateStarters } from "#test/test-utils/game-manager-utils";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
-import { copyChallenge } from "data/challenge";
 
 /**
  * Helper to handle Challenge mode specifics

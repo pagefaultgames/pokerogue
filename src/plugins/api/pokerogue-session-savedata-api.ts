@@ -82,6 +82,7 @@ export class PokerogueSessionSavedataApi extends ApiBase {
     try {
       const urlSearchParams = this.toUrlSearchParams(params);
       const response = await this.doGet(`/savedata/session/delete?${urlSearchParams}`);
+      console.debug("%cSending a request to delete session in slot %d", "color: blue", params.slot);
 
       if (response.ok) {
         return null;

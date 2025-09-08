@@ -50,15 +50,22 @@ import type { Starter, StarterAttributes, StarterDataEntry, StarterMoveset } fro
 import { RibbonData } from "#system/ribbons/ribbon-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
-import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
-import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
-import { FilterBar } from "#ui/filter-bar";
-import { MessageUiHandler } from "#ui/message-ui-handler";
-import { MoveInfoOverlay } from "#ui/move-info-overlay";
-import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-handler";
-import { ScrollBar } from "#ui/scroll-bar";
-import { StarterContainer } from "#ui/starter-container";
-import { StatsContainer } from "#ui/stats-container";
+import {
+  DropDown,
+  DropDownLabel,
+  DropDownOption,
+  DropDownState,
+  DropDownType,
+  SortCriteria,
+} from "#ui/containers/dropdown";
+import { FilterBar } from "#ui/containers/filter-bar";
+import { MoveInfoOverlay } from "#ui/containers/move-info-overlay";
+import { ScrollBar } from "#ui/containers/scroll-bar";
+import { StarterContainer } from "#ui/containers/starter-container";
+import { StatsContainer } from "#ui/containers/stats-container";
+import type { OptionSelectItem } from "#ui/handlers/abstract-option-select-ui-handler";
+import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
+import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/handlers/pokemon-icon-anim-handler";
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";
@@ -1605,6 +1612,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       if (!this.filterMode) {
         this.startCursorObj.setVisible(false);
         this.starterIconsCursorObj.setVisible(false);
+        this.randomCursorObj.setVisible(false);
         this.setSpecies(null);
         this.filterBarCursor = 0;
         this.setFilterMode(true);
