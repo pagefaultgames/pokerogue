@@ -106,8 +106,8 @@ describe("UI - Pokedex", () => {
     const speciesSet = new Set<SpeciesId>();
     for (const pkmn of allSpecies) {
       if (
-        [pkmn.ability1, pkmn.ability2, pkmn.getPassiveAbility(), pkmn.abilityHidden].includes(ability) ||
-        pkmn.forms.some(form =>
+        [pkmn.ability1, pkmn.ability2, pkmn.getPassiveAbility(), pkmn.abilityHidden].includes(ability)
+        || pkmn.forms.some(form =>
           [form.ability1, form.ability2, form.abilityHidden, form.getPassiveAbility()].includes(ability),
         )
       ) {

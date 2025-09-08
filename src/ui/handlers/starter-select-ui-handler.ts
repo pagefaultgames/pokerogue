@@ -125,7 +125,7 @@ function calcStarterContainerPosition(index: number): { x: number; y: number } {
   const x = (index % 9) * 18;
   const y = yOffset + Math.floor(index / 9) * height;
 
-  return { x: x, y: y };
+  return { x, y };
 }
 
 /**
@@ -755,7 +755,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     this.allowTera = globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id);
 
-    if (args.length >= 1 && args[0] instanceof Function) {
+    if (args.length > 0 && args[0] instanceof Function) {
       super.show(args);
       this.starterSelectCallback = args[0] as StarterSelectCallback;
 
@@ -842,20 +842,21 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         hasShiny && caughtAttr & DexAttr.VARIANT_3,
       ];
       if (
-        Number.isNaN(starterPreferences.variant) ||
-        starterPreferences.variant < 0 ||
-        !unlockedVariants[starterPreferences.variant]
+        Number.isNaN(starterPreferences.variant)
+        || starterPreferences.variant < 0
+        || !unlockedVariants[starterPreferences.variant]
       ) {
         // variant value is invalid or requested variant wasn't unlocked, purging setting
         starterPreferences.variant = undefined;
       }
     }
 
-    if (starterPreferences.female !== undefined) {
-      if (!(starterPreferences.female ? caughtAttr & DexAttr.FEMALE : caughtAttr & DexAttr.MALE)) {
-        // requested gender wasn't unlocked, purging setting
-        starterPreferences.female = undefined;
-      }
+    if (
+      starterPreferences.female !== undefined
+      && !(starterPreferences.female ? caughtAttr & DexAttr.FEMALE : caughtAttr & DexAttr.MALE)
+    ) {
+      // requested gender wasn't unlocked, purging setting
+      starterPreferences.female = undefined;
     }
 
     if (starterPreferences.abilityIndex !== undefined) {
@@ -879,9 +880,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     const selectedForm = starterPreferences.formIndex;
     if (
-      selectedForm !== undefined &&
-      (!species.forms[selectedForm]?.isStarterSelectable ||
-        !(caughtAttr & globalScene.gameData.getFormAttr(selectedForm)))
+      selectedForm !== undefined
+      && (!species.forms[selectedForm]?.isStarterSelectable
+        || !(caughtAttr & globalScene.gameData.getFormAttr(selectedForm)))
     ) {
       // requested form wasn't unlocked/isn't a starter form, purging setting
       starterPreferences.formIndex = undefined;
@@ -959,7 +960,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.message.setY(singleLine ? -22 : -37);
     }
 
-    this.starterSelectMessageBoxContainer.setVisible(!!text?.length);
+    this.starterSelectMessageBoxContainer.setVisible(text?.length > 0);
   }
 
   /**
@@ -1003,9 +1004,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     };
 
     if (
-      isPassiveAvailable(species.speciesId) ||
-      (globalScene.candyUpgradeNotification === 2 &&
-        (isValueReductionAvailable(species.speciesId) || isSameSpeciesEggAvailable(species.speciesId)))
+      isPassiveAvailable(species.speciesId)
+      || (globalScene.candyUpgradeNotification === 2
+        && (isValueReductionAvailable(species.speciesId) || isSameSpeciesEggAvailable(species.speciesId)))
     ) {
       const chain = globalScene.tweens.chain(tweenChain);
       if (!startPaused) {
@@ -1022,9 +1023,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const slotVisible = !!species?.speciesId;
 
     if (
-      !species ||
-      globalScene.candyUpgradeNotification === 0 ||
-      species.speciesId !== species.getRootSpeciesId(false)
+      !species
+      || globalScene.candyUpgradeNotification === 0
+      || species.speciesId !== species.getRootSpeciesId(false)
     ) {
       starter.candyUpgradeIcon.setVisible(false);
       starter.candyUpgradeOverlayIcon.setVisible(false);
@@ -2594,7 +2595,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
   updateStarters = () => {
     this.scrollCursor = 0;
-    this.filteredStarterIds = [];
 
     this.filterBar.updateFilterLabels();
 
@@ -2718,7 +2718,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
       // HA Filter
       const speciesHasHiddenAbility =
-        species.abilityHidden !== species.ability1 && species.abilityHidden !== AbilityId.NONE;
+        species.abilityHidden !== species.ability1
+        && species.abilityHidden !== AbilityId.NONE;
       const hasHA = starterData.abilityAttr & AbilityAttr.ABILITY_HIDDEN;
       const fitsHA = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
         if (misc.val === "HIDDEN_ABILITY" && misc.state === DropDownState.ON) {
@@ -2760,16 +2761,16 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       });
 
       if (
-        fitsGen &&
-        fitsType &&
-        fitsCaught &&
-        fitsPassive &&
-        fitsCostReduction &&
-        fitsFavorite &&
-        fitsWin &&
-        fitsHA &&
-        fitsEgg &&
-        fitsPokerus
+        fitsGen
+        && fitsType
+        && fitsCaught
+        && fitsPassive
+        && fitsCostReduction
+        && fitsFavorite
+        && fitsWin
+        && fitsHA
+        && fitsEgg
+        && fitsPokerus
       ) {
         this.filteredStarterIds.push(species.speciesId);
       }
@@ -3204,10 +3205,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.canCycleNature = globalScene.gameData.getNaturesForAttr(dexEntry.natureAttr).length > 1;
 
     this.canCycleTera =
-      !this.statsMode &&
-      this.allowTera &&
-      !isNullOrUndefined(getPokemonSpeciesForm(species.speciesId, formIndex).type2) &&
-      !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
+      !this.statsMode
+      && this.allowTera
+      && !isNullOrUndefined(getPokemonSpeciesForm(species.speciesId, formIndex).type2)
+      && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
   }
 
   updateSpeciesMoves(speciesId: SpeciesId, formIndex = 0) {
@@ -3218,9 +3219,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     let levelMoves: LevelMoves;
     if (
-      pokemonFormLevelMoves.hasOwnProperty(speciesId) &&
-      formIndex &&
-      pokemonFormLevelMoves[speciesId].hasOwnProperty(formIndex)
+      pokemonFormLevelMoves.hasOwnProperty(speciesId)
+      && formIndex
+      && pokemonFormLevelMoves[speciesId].hasOwnProperty(formIndex)
     ) {
       levelMoves = pokemonFormLevelMoves[speciesId][formIndex];
     } else {
@@ -3439,7 +3440,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   tryStart(manualTrigger = false): boolean {
-    if (!this.starterSpecies.length) {
+    if (this.starterSpecies.length === 0) {
       return false;
     }
 
@@ -3505,13 +3506,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     return true;
   }
 
-  /* This block checks to see if your party is valid
+  /**
+   *  This block checks to see if your party is valid
    * It checks each pokemon against the challenge - noting that due to monotype challenges it needs to check the pokemon while ignoring their evolutions/form change items
    */
   isPartyValid(): boolean {
     let canStart = false;
-    for (let s = 0; s < this.starterSpecies.length; s++) {
-      const species = this.starterSpecies[s];
+    for (const species of this.starterSpecies) {
       const isValidForChallenge = checkStarterValidForChallenge(
         species,
         this.getSpeciesPropsFromPreferences(species),
@@ -3537,10 +3538,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       const props = this.getSpeciesPropsFromPreferences(this.lastSpecies);
       const formIndex = props.formIndex;
       this.canCycleTera =
-        !this.statsMode &&
-        this.allowTera &&
-        !isNullOrUndefined(getPokemonSpeciesForm(this.lastSpecies.speciesId, formIndex ?? 0).type2) &&
-        !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
+        !this.statsMode
+        && this.allowTera
+        && !isNullOrUndefined(getPokemonSpeciesForm(this.lastSpecies.speciesId, formIndex ?? 0).type2)
+        && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
       this.updateInstructions();
     }
   }
@@ -3624,7 +3625,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectContainer.setVisible(false);
     this.blockInput = false;
 
-    while (this.starterSpecies.length) {
+    while (this.starterSpecies.length > 0) {
       this.popStarter(this.starterSpecies.length - 1);
     }
 

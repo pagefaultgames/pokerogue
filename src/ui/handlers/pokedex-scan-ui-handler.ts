@@ -108,8 +108,8 @@ export class PokedexScanUiHandler extends FormModalUiHandler {
 
     input.on("keydown", (inputObject, evt: KeyboardEvent) => {
       if (
-        ["escape", "space"].some(v => v === evt.key.toLowerCase() || v === evt.code.toLowerCase()) &&
-        ui.getMode() === UiMode.AUTO_COMPLETE
+        ["escape", "space"].some(v => v === evt.key.toLowerCase() || v === evt.code.toLowerCase())
+        && ui.getMode() === UiMode.AUTO_COMPLETE
       ) {
         // Delete autocomplete list and recovery focus.
         inputObject.on("blur", () => inputObject.node.focus(), { once: true });
@@ -144,7 +144,7 @@ export class PokedexScanUiHandler extends FormModalUiHandler {
 
       if (options.length > 0) {
         const modalOpts = {
-          options: options,
+          options,
           maxOptions: 5,
           modalContainer: this.modalContainer,
         };
