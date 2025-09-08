@@ -25,15 +25,15 @@ import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import { StatsContainer } from "./containers/stats-container";
+import { addBBCodeTextObject, addTextObject, getTextColor } from "../text";
 import {
   getDexAttrFromPreferences,
   getFriendship,
   getSpeciesData,
   getStarterSelectTextSettings,
   type SpeciesDetails,
-} from "./starter-select-ui-utils";
-import { addBBCodeTextObject, addTextObject, getTextColor } from "./text";
+} from "../utils/starter-select-ui-utils";
+import { StatsContainer } from "./stats-container";
 
 export class StarterSummary extends Phaser.GameObjects.Container {
   private pokemonSprite: Phaser.GameObjects.Sprite;

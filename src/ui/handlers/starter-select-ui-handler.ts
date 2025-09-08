@@ -57,9 +57,12 @@ import { FilterBar } from "#ui/containers/filter-bar";
 import { MoveInfoOverlay } from "#ui/containers/move-info-overlay";
 import { ScrollBar } from "#ui/containers/scroll-bar";
 import { StarterContainer } from "#ui/containers/starter-container";
+import { StarterSummary } from "#ui/containers/starter-summary";
 import type { OptionSelectItem } from "#ui/handlers/abstract-option-select-ui-handler";
 import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
 import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/handlers/pokemon-icon-anim-handler";
+import { addTextObject, getTextColor } from "#ui/text";
+import { addWindow } from "#ui/ui-theme";
 import {
   getDexAttrFromPreferences,
   getRunValueLimit,
@@ -73,10 +76,7 @@ import {
   isUpgradeIconEnabled,
   isValueReductionAvailable,
   type SpeciesDetails,
-} from "#ui/starter-select-ui-utils";
-import { StarterSummary } from "#ui/starter-summary";
-import { addTextObject, getTextColor } from "#ui/text";
-import { addWindow } from "#ui/ui-theme";
+} from "#ui/utils/starter-select-ui-utils";
 import { checkStarterValidForChallenge } from "#utils/challenge-utils";
 import { fixedInt, getLocalizedSpriteKey, isNullOrUndefined, randIntRange, rgbHexToRgba } from "#utils/common";
 import type { AllStarterPreferences } from "#utils/data";

@@ -50,7 +50,11 @@ import { getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils"
 import { toCamelCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
-import { isPassiveAvailable, isSameSpeciesEggAvailable, isValueReductionAvailable } from "../starter-select-ui-utils";
+import {
+  isPassiveAvailable,
+  isSameSpeciesEggAvailable,
+  isValueReductionAvailable,
+} from "../utils/starter-select-ui-utils";
 
 interface LanguageSetting {
   starterInfoTextSize: string;

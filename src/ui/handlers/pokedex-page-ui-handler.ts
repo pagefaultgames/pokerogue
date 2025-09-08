@@ -62,7 +62,11 @@ import { toCamelCase, toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
-import { isPassiveAvailable, isSameSpeciesEggAvailable, isValueReductionAvailable } from "../starter-select-ui-utils";
+import {
+  isPassiveAvailable,
+  isSameSpeciesEggAvailable,
+  isValueReductionAvailable,
+} from "../utils/starter-select-ui-utils";
 
 interface LanguageSetting {
   starterInfoTextSize: string;
