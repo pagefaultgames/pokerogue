@@ -2823,6 +2823,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     });
 
     this.updateScroll();
+    this.tryUpdateValue();
   };
 
   updateScroll = () => {
