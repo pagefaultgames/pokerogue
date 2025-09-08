@@ -1,10 +1,10 @@
 import { globalScene } from "#app/global-scene";
 import { fixedInt } from "#app/utils/common";
 import type { TextStyle } from "#enums/text-style";
+import { addBBCodeTextObject } from "#ui/text";
+import { addWindow } from "#ui/ui-theme";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import { addBBCodeTextObject } from "./text";
-import { addWindow } from "./ui-theme";
 
 /*
 This takes various coordinates:

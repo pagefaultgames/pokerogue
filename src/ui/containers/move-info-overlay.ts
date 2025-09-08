@@ -4,7 +4,7 @@ import { MoveCategory } from "#enums/move-category";
 import { PokemonType } from "#enums/pokemon-type";
 import { TextStyle } from "#enums/text-style";
 import type { Move } from "#moves/move";
-import { ScrollingText } from "#ui/scrolling-text";
+import { ScrollingText } from "#ui/containers/scrolling-text";
 import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt, getLocalizedSpriteKey } from "#utils/common";
