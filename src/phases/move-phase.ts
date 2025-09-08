@@ -3,7 +3,6 @@ import type { Move, PreUseInterruptAttr } from "#types/move-types";
 // biome-ignore-end lint/correctness/noUnusedImports: Used in a tsdoc comment
 
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
-import { MOVE_COLOR } from "#app/constants/colors";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
@@ -31,6 +30,7 @@ import { applyMoveAttrs } from "#moves/apply-attrs";
 import { frenzyMissFunc } from "#moves/move-utils";
 import type { PokemonMove } from "#moves/pokemon-move";
 import { BattlePhase } from "#phases/battle-phase";
+import type { TurnMove } from "#types/turn-move";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, NumberHolder } from "#utils/common";
 import { enumValueToKey } from "#utils/enums";
@@ -43,7 +43,7 @@ export class MovePhase extends BattlePhase {
   protected _targets: BattlerIndex[];
   public readonly useMode: MoveUseMode; // Made public for quash
   /** Whether the current move is forced last (used for Quash). */
-  protected forcedLast: boolean;
+  protected readonly forcedLast: boolean;
   /** Whether the current move should fail but still use PP. */
   protected failed = false;
   /** Whether the current move should fail and retain PP. */
@@ -51,6 +51,13 @@ export class MovePhase extends BattlePhase {
 
   /** Flag set to `true` during {@linkcode checkFreeze} that indicates that the pokemon will thaw if it passes the failure conditions */
   private declare thaw?: boolean;
+
+  /** The move history entry object that is pushed to the pokemon's move history
+   *
+   * @remarks
+   * Can be edited _after_ being pushed to the history to adjust the result, targets, etc, for this move phase.
+   */
+  protected readonly moveHistoryEntry: TurnMove;
 
   public get pokemon(): Pokemon {
     return this._pokemon;
@@ -102,12 +109,14 @@ export class MovePhase extends BattlePhase {
 
   /** Signifies the current move should fail but still use PP */
   public fail(): void {
+    this.moveHistoryEntry.result = MoveResult.FAIL;
     this.failed = true;
   }
 
   /** Signifies the current move should cancel and retain PP */
   public cancel(): void {
     this.cancelled = true;
+    this.moveHistoryEntry.result = MoveResult.FAIL;
   }
 
   /**
@@ -147,22 +156,22 @@ export class MovePhase extends BattlePhase {
   protected firstFailureCheck(): boolean {
     // A big if statement will handle the checks (that each have side effects!) in the correct order
     return (
-      this.checkSleep() ||
-      this.checkFreeze() ||
-      this.checkPP() ||
-      this.checkValidity() ||
-      this.checkTagCancel(BattlerTagType.TRUANT) ||
-      this.checkPreUseInterrupt() ||
-      this.checkTagCancel(BattlerTagType.FLINCHED) ||
-      this.checkTagCancel(BattlerTagType.DISABLED) ||
-      this.checkTagCancel(BattlerTagType.HEAL_BLOCK) ||
-      this.checkTagCancel(BattlerTagType.THROAT_CHOPPED) ||
-      this.checkGravity() ||
-      this.checkTagCancel(BattlerTagType.TAUNT) ||
-      this.checkTagCancel(BattlerTagType.IMPRISON) ||
-      this.checkTagCancel(BattlerTagType.CONFUSED) ||
-      this.checkPara() ||
-      this.checkTagCancel(BattlerTagType.INFATUATED)
+      this.checkSleep()
+      || this.checkFreeze()
+      || this.checkPP()
+      || this.checkValidity()
+      || this.checkTagCancel(BattlerTagType.TRUANT)
+      || this.checkPreUseInterrupt()
+      || this.checkTagCancel(BattlerTagType.FLINCHED)
+      || this.checkTagCancel(BattlerTagType.DISABLED)
+      || this.checkTagCancel(BattlerTagType.HEAL_BLOCK)
+      || this.checkTagCancel(BattlerTagType.THROAT_CHOPPED)
+      || this.checkGravity()
+      || this.checkTagCancel(BattlerTagType.TAUNT)
+      || this.checkTagCancel(BattlerTagType.IMPRISON)
+      || this.checkTagCancel(BattlerTagType.CONFUSED)
+      || this.checkPara()
+      || this.checkTagCancel(BattlerTagType.INFATUATED)
     );
   }
 
@@ -180,9 +189,9 @@ export class MovePhase extends BattlePhase {
    */
   protected followUpMoveFirstFailureCheck(): boolean {
     return (
-      this.checkTagCancel(BattlerTagType.HEAL_BLOCK) ||
-      this.checkTagCancel(BattlerTagType.THROAT_CHOPPED) ||
-      this.checkGravity()
+      this.checkTagCancel(BattlerTagType.HEAL_BLOCK)
+      || this.checkTagCancel(BattlerTagType.THROAT_CHOPPED)
+      || this.checkGravity()
     );
   }
 
@@ -428,11 +437,12 @@ export class MovePhase extends BattlePhase {
     const moveQueue = this.pokemon.getMoveQueue();
 
     if (
-      (targets.length === 0 && !this.move.getMove().hasAttr("AddArenaTrapTagAttr")) ||
-      (moveQueue.length > 0 && moveQueue[0].move === MoveId.NONE)
+      (targets.length === 0 && !this.move.getMove().hasAttr("AddArenaTrapTagAttr"))
+      || (moveQueue.length > 0 && moveQueue[0].move === MoveId.NONE)
     ) {
       this.showFailedText();
       this.fail();
+      this.pokemon.pushMoveHistory(this.moveHistoryEntry);
       return true;
     }
     this.pokemon.lapseTags(BattlerTagLapseType.MOVE);
@@ -545,20 +555,18 @@ export class MovePhase extends BattlePhase {
     // Check if the move will heal
     const move = this.move.getMove();
     if (
-      move.findAttr(
-        attr => attr.selfTarget && attr.is("HealStatusEffectAttr") && attr.isOfEffect(StatusEffect.FREEZE),
-      ) &&
-      (move.id !== MoveId.BURN_UP || this.pokemon.isOfType(PokemonType.FIRE, true, true))
+      move.findAttr(attr => attr.selfTarget && attr.is("HealStatusEffectAttr") && attr.isOfEffect(StatusEffect.FREEZE))
+      && (move.id !== MoveId.BURN_UP || this.pokemon.isOfType(PokemonType.FIRE, true, true))
     ) {
       this.thaw = true;
       return false;
     }
     if (
-      Overrides.STATUS_ACTIVATION_OVERRIDE === false ||
-      this.move
+      Overrides.STATUS_ACTIVATION_OVERRIDE === false
+      || this.move
         .getMove()
-        .findAttr(attr => attr.selfTarget && attr.is("HealStatusEffectAttr") && attr.isOfEffect(StatusEffect.FREEZE)) ||
-      (!this.pokemon.randBattleSeedInt(5) && Overrides.STATUS_ACTIVATION_OVERRIDE !== true)
+        .findAttr(attr => attr.selfTarget && attr.is("HealStatusEffectAttr") && attr.isOfEffect(StatusEffect.FREEZE))
+      || (!this.pokemon.randBattleSeedInt(5) && Overrides.STATUS_ACTIVATION_OVERRIDE !== true)
     ) {
       this.cureStatus(StatusEffect.FREEZE);
       return false;
@@ -615,10 +623,9 @@ export class MovePhase extends BattlePhase {
 
       return true;
     } else if (
-      this.pokemon.isPlayer() &&
-      applyChallenges(ChallengeType.POKEMON_MOVE, moveId, usability) &&
-      // check the value inside of usability after calling applyChallenges
-      !usability.value
+      this.pokemon.isPlayer()
+      && applyChallenges(ChallengeType.POKEMON_MOVE, moveId, usability) // check the value inside of usability after calling applyChallenges
+      && !usability.value
     ) {
       failedText = i18next.t("battle:moveCannotUseChallenge", { moveName });
     } else {
@@ -692,8 +699,8 @@ export class MovePhase extends BattlePhase {
       return false;
     }
     const proc =
-      (this.pokemon.randBattleSeedInt(4) === 0 || Overrides.STATUS_ACTIVATION_OVERRIDE === true) &&
-      Overrides.STATUS_ACTIVATION_OVERRIDE !== false;
+      (this.pokemon.randBattleSeedInt(4) === 0 || Overrides.STATUS_ACTIVATION_OVERRIDE === true)
+      && Overrides.STATUS_ACTIVATION_OVERRIDE !== false;
     if (!proc) {
       return false;
     }
@@ -733,8 +740,8 @@ export class MovePhase extends BattlePhase {
     }
     /*
     At this point, delayed moves (future sight, wish, doom desire) are issued, and, if they occur, the move animations are played.
-    Then, combined pledge moves are checked for. Interestingly, the "wasMoveEffective" flag is set to false if the combined technique 
-    In either case, the phase should end here without proceeding 
+    Then, combined pledge moves are checked for. Interestingly, the "wasMoveEffective" flag is set to false if the combined technique
+    In either case, the phase should end here without proceeding
     */
 
     const move = this.move.getMove();
@@ -786,7 +793,7 @@ export class MovePhase extends BattlePhase {
     const dancerModes: MoveUseMode[] = [MoveUseMode.INDIRECT, MoveUseMode.REFLECTED] as const;
     if (this.move.getMove().hasFlag(MoveFlags.DANCE_MOVE) && !dancerModes.includes(this.useMode)) {
       globalScene.getField(true).forEach(pokemon => {
-        applyAbAttrs("PostMoveUsedAbAttr", { pokemon, move: this.move, source: user, targets: targets });
+        applyAbAttrs("PostMoveUsedAbAttr", { pokemon, move: this.move, source: user, targets });
       });
     }
   }
@@ -824,6 +831,7 @@ export class MovePhase extends BattlePhase {
       result: MoveResult.FAIL,
       useMode: this.useMode,
     });
+    console.log("==========PUSHING MOVE HISTORY WITH FAIL FOR %s=============", MoveId[this.move.moveId]);
 
     // Use move-specific failure messages if present before checking terrain/weather blockage
     // and falling back to the classic "But it failed!".

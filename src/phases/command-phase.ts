@@ -121,9 +121,9 @@ export class CommandPhase extends FieldPhase {
     for (const queuedMove of moveQueue) {
       const movesetQueuedMove = moveset.find(m => m.moveId === queuedMove.move);
       if (
-        queuedMove.move !== MoveId.NONE &&
-        !isVirtual(queuedMove.useMode) &&
-        !movesetQueuedMove?.isUsable(playerPokemon, isIgnorePP(queuedMove.useMode), true)
+        queuedMove.move !== MoveId.NONE
+        && !isVirtual(queuedMove.useMode)
+        && !movesetQueuedMove?.isUsable(playerPokemon, isIgnorePP(queuedMove.useMode), true)
       ) {
         entriesToDelete++;
       } else {

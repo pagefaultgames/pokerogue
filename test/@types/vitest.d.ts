@@ -1,7 +1,7 @@
 import "vitest";
 
-import type { Phase } from "#app/phase";
 import type Overrides from "#app/overrides";
+import type { Phase } from "#app/phase";
 import type { ArenaTag } from "#data/arena-tag";
 import type { TerrainType } from "#data/terrain";
 import type { AbilityId } from "#enums/ability-id";
@@ -13,7 +13,9 @@ import type { PokemonType } from "#enums/pokemon-type";
 import type { PositionalTagType } from "#enums/positional-tag-type";
 import type { BattleStat, EffectiveStat } from "#enums/stat";
 import type { WeatherType } from "#enums/weather-type";
+import type { Pokemon } from "#field/pokemon";
 import type { toHaveArenaTagOptions } from "#test/test-utils/matchers/to-have-arena-tag";
+import type { toHaveBattlerTagOptions } from "#test/test-utils/matchers/to-have-battler-tag";
 import type { toHaveEffectiveStatOptions } from "#test/test-utils/matchers/to-have-effective-stat";
 import type { toHavePositionalTagOptions } from "#test/test-utils/matchers/to-have-positional-tag";
 import type { expectedStatusType } from "#test/test-utils/matchers/to-have-status-effect";
@@ -23,7 +25,6 @@ import type { TurnMove } from "#types/turn-move";
 import type { AtLeastOne } from "#types/type-helpers";
 import type { toDmgValue } from "#utils/common";
 import type { expect } from "vitest";
-import type { toHaveBattlerTagOptions } from "#test/test-utils/matchers/to-have-battler-tag";
 
 declare module "vitest" {
   interface Assertion<T> {
