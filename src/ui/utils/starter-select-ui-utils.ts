@@ -18,7 +18,7 @@ import type { Variant } from "#sprites/variant";
 import type { DexAttrProps, StarterDataEntry, StarterPreferences } from "#system/game-data";
 import type { DexEntry } from "#types/dex-data";
 import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";
-import { NumberHolder } from "#utils/common";
+import { isNullOrUndefined, NumberHolder } from "#utils/common";
 import i18next from "i18next";
 
 export interface SpeciesDetails {
@@ -281,17 +281,12 @@ export function getDexAttrFromPreferences(speciesId: number, starterPreferences:
     props += DexAttr.SHINY;
     if (starterPreferences[speciesId]?.variant !== undefined) {
       props += BigInt(Math.pow(2, starterPreferences[speciesId]?.variant)) * DexAttr.DEFAULT_VARIANT;
+    } else if ((caughtAttr & DexAttr.VARIANT_3) > 0) {
+      props += DexAttr.VARIANT_3;
+    } else if ((caughtAttr & DexAttr.VARIANT_2) > 0) {
+      props += DexAttr.VARIANT_2;
     } else {
-      /*  This calculates the correct variant if there's no starter preferences for it.
-       *  This gets the highest tier variant that you've caught and adds it to the temp props
-       */
-      if ((caughtAttr & DexAttr.VARIANT_3) > 0) {
-        props += DexAttr.VARIANT_3;
-      } else if ((caughtAttr & DexAttr.VARIANT_2) > 0) {
-        props += DexAttr.VARIANT_2;
-      } else {
-        props += DexAttr.DEFAULT_VARIANT;
-      }
+      props += DexAttr.DEFAULT_VARIANT;
     }
   } else {
     props += DexAttr.NON_SHINY;
@@ -312,11 +307,12 @@ export function getSpeciesPropsFromPreferences(
   species: PokemonSpecies,
   starterPreferences: StarterPreferences = {},
 ): DexAttrProps {
+  const defaults = globalScene.gameData.getSpeciesDefaultDexAttrProps(species);
   return {
-    shiny: !!starterPreferences.shiny,
-    variant: (starterPreferences.variant as Variant) ?? 0,
-    female: starterPreferences.female ?? species.malePercent === 0,
-    formIndex: starterPreferences.formIndex ?? 0,
+    shiny: isNullOrUndefined(starterPreferences.shiny) ? defaults.shiny : starterPreferences.shiny,
+    variant: isNullOrUndefined(starterPreferences.variant) ? defaults.variant : (starterPreferences.variant as Variant),
+    female: starterPreferences.female ?? defaults.female,
+    formIndex: starterPreferences.formIndex ?? defaults.formIndex,
   };
 }
 

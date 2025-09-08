@@ -514,8 +514,6 @@ export class StarterSummary extends Phaser.GameObjects.Container {
       this.pokemonHatchedCountText.setText(`${dexEntry.hatchedCount}`);
 
       const defaultDexAttr = getDexAttrFromPreferences(species.speciesId, starterPreferences);
-      const defaultProps = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
-      this.setShinyIcon(defaultProps.shiny, defaultProps.variant);
 
       if (pokemonPrevolutions.hasOwnProperty(species.speciesId)) {
         this.pokemonCaughtHatchedContainer.setVisible(false);
@@ -652,6 +650,8 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     this.pokemonNumberText.setShadowColor(
       getTextColor(shiny ? TextStyle.SUMMARY_DEX_NUM_GOLD : TextStyle.SUMMARY_DEX_NUM, true),
     );
+
+    this.setShinyIcon(shiny, variant);
 
     const assetLoadCancelled = new BooleanHolder(false);
     this.assetLoadCancelled = assetLoadCancelled;

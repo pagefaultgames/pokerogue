@@ -2106,10 +2106,18 @@ export class GameData {
   }
 
   getSpeciesDefaultDexAttrProps(species: PokemonSpecies): DexAttrProps {
-    const shiny = false;
+    const dexAttr = this.dexData[species.speciesId].caughtAttr;
+    // Default shiny is true if caught
+    const shiny = !!(dexAttr & DexAttr.SHINY);
     // Default is female only for species where malePercent is not null but 0
     const female = species.malePercent === 0;
-    const variant = 0;
+    // Default is the highest variant
+    let variant: Variant = 0;
+    if (dexAttr & DexAttr.VARIANT_3) {
+      variant = 2;
+    } else if (dexAttr & DexAttr.VARIANT_2) {
+      variant = 1;
+    }
     const formIndex = 0;
 
     return {

@@ -1381,14 +1381,15 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     switch (button) {
       case Button.CYCLE_SHINY:
         if (this.canCycleShiny) {
+          console.log(starterPreferences);
           if (starterPreferences.shiny === false) {
             // If not shiny, we change to shiny and get the proper default variant
-            const newVariant = starterPreferences.variant ? (starterPreferences.variant as Variant) : props.variant;
+            const newVariant = (starterPreferences.variant as Variant) ?? props.variant;
             this.setShinyAndVariant(speciesId, true, newVariant);
             globalScene.playSound("se/sparkle");
           } else {
             // If shiny, we update the variant
-            let newVariant = props.variant;
+            let newVariant = starterPreferences.variant ?? props.variant;
             do {
               newVariant = (newVariant + 1) % 3;
               if (newVariant === 0) {
@@ -1416,6 +1417,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
               success = true;
             }
           }
+          console.log("AFTER", starterPreferences);
         }
         break;
       case Button.CYCLE_FORM:
@@ -1491,9 +1493,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         break;
     }
 
-    if (success) {
-      this.setSpeciesDetails(this.lastSpecies);
-    }
+    this.setSpeciesDetails(this.lastSpecies);
 
     return success;
   }
