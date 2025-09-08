@@ -230,6 +230,7 @@ export class EggHatchPhase extends Phase {
     } else {
       globalScene.time.delayedCall(250, () => globalScene.setModifiersVisible(true));
     }
+    this.pokemon?.destroy();
     super.end();
   }
 

@@ -106,10 +106,6 @@ export class PokedexScanUiHandler extends FormModalUiHandler {
 
     this.reduceKeys();
 
-    setTimeout(() => {
-      input.setFocus(); // Focus after a short delay to avoid unwanted input
-    }, 50);
-
     input.on("keydown", (inputObject, evt: KeyboardEvent) => {
       if (
         ["escape", "space"].some(v => v === evt.key.toLowerCase() || v === evt.code.toLowerCase()) &&

@@ -396,7 +396,23 @@ export abstract class AbAttr {
   }
 }
 
-export class BlockRecoilDamageAttr extends AbAttr {
+/**
+ * Abstract class for ability attributes that simply cancel an interaction
+ *
+ * @remarks
+ * Abilities that have simple cancel interactions (e.g. {@linkcode BlockRecoilDamageAttr}) can extend this class to reuse the `canApply` and `apply` logic
+ */
+abstract class CancelInteractionAbAttr extends AbAttr {
+  override canApply({ cancelled }: AbAttrParamsWithCancel): boolean {
+    return !cancelled.value;
+  }
+
+  override apply({ cancelled }: AbAttrParamsWithCancel): void {
+    cancelled.value = true;
+  }
+}
+
+export class BlockRecoilDamageAttr extends CancelInteractionAbAttr {
   private declare readonly _: never;
   constructor() {
     super(false);
@@ -592,11 +608,7 @@ export class PreDefendFullHpEndureAbAttr extends PreDefendAbAttr {
   }
 }
 
-export class BlockItemTheftAbAttr extends AbAttr {
-  override apply({ cancelled }: AbAttrParamsWithCancel): void {
-    cancelled.value = true;
-  }
-
+export class BlockItemTheftAbAttr extends CancelInteractionAbAttr {
   getTriggerMessage({ pokemon }: AbAttrBaseParams, abilityName: string) {
     return i18next.t("abilityTriggers:blockItemTheft", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
@@ -869,8 +881,9 @@ export interface FieldPriorityMoveImmunityAbAttrParams extends AugmentMoveIntera
 }
 
 export class FieldPriorityMoveImmunityAbAttr extends PreDefendAbAttr {
-  override canApply({ move, opponent: attacker }: FieldPriorityMoveImmunityAbAttrParams): boolean {
+  override canApply({ move, opponent: attacker, cancelled }: FieldPriorityMoveImmunityAbAttrParams): boolean {
     return (
+      !cancelled.value &&
       !(move.moveTarget === MoveTarget.USER || move.moveTarget === MoveTarget.NEAR_ALLY) &&
       move.getPriority(attacker) > 0 &&
       !move.isMultiTarget()
@@ -897,10 +910,8 @@ export class MoveImmunityAbAttr extends PreDefendAbAttr {
     this.immuneCondition = immuneCondition;
   }
 
-  override canApply({ pokemon, opponent: attacker, move }: MoveImmunityAbAttrParams): boolean {
-    // TODO: Investigate whether this method should be checking against `cancelled`, specifically
-    // if not checking this results in multiple flyouts showing when multiple abilities block the move.
-    return this.immuneCondition(pokemon, attacker, move);
+  override canApply({ pokemon, opponent: attacker, move, cancelled }: MoveImmunityAbAttrParams): boolean {
+    return !cancelled.value && this.immuneCondition(pokemon, attacker, move);
   }
 
   override apply({ cancelled }: MoveImmunityAbAttrParams): void {
@@ -1591,12 +1602,7 @@ export interface FieldPreventExplosiveMovesAbAttrParams extends AbAttrBaseParams
   cancelled: BooleanHolder;
 }
 
-export class FieldPreventExplosiveMovesAbAttr extends AbAttr {
-  // TODO: investigate whether we need to check against `cancelled` in a `canApply` method
-  override apply({ cancelled }: FieldPreventExplosiveMovesAbAttrParams): void {
-    cancelled.value = true;
-  }
-}
+export class FieldPreventExplosiveMovesAbAttr extends CancelInteractionAbAttr {}
 
 export interface FieldMultiplyStatAbAttrParams extends AbAttrBaseParams {
   /** The kind of stat that is being checked for modification */
@@ -2535,13 +2541,9 @@ export class IgnoreOpponentStatStagesAbAttr extends AbAttr {
  * Abilities with this attribute prevent the user from being affected by Intimidate.
  * @sealed
  */
-export class IntimidateImmunityAbAttr extends AbAttr {
+export class IntimidateImmunityAbAttr extends CancelInteractionAbAttr {
   constructor() {
     super(false);
-  }
-
-  override apply({ cancelled }: AbAttrParamsWithCancel): void {
-    cancelled.value = true;
   }
 
   getTriggerMessage({ pokemon }: AbAttrParamsWithCancel, abilityName: string, ..._args: any[]): string {
@@ -3577,8 +3579,8 @@ export class ProtectStatAbAttr extends PreStatStageChangeAbAttr {
     this.protectedStat = protectedStat;
   }
 
-  override canApply({ stat }: PreStatStageChangeAbAttrParams): boolean {
-    return isNullOrUndefined(this.protectedStat) || stat === this.protectedStat;
+  override canApply({ stat, cancelled }: PreStatStageChangeAbAttrParams): boolean {
+    return !cancelled.value && (isNullOrUndefined(this.protectedStat) || stat === this.protectedStat);
   }
 
   /**
@@ -3669,8 +3671,11 @@ export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
     this.immuneEffects = immuneEffects;
   }
 
-  override canApply({ effect }: PreSetStatusAbAttrParams): boolean {
-    return (this.immuneEffects.length === 0 && effect !== StatusEffect.FAINT) || this.immuneEffects.includes(effect);
+  override canApply({ effect, cancelled }: PreSetStatusAbAttrParams): boolean {
+    return (
+      !cancelled.value &&
+      ((this.immuneEffects.length === 0 && effect !== StatusEffect.FAINT) || this.immuneEffects.includes(effect))
+    );
   }
 
   /**
@@ -3720,7 +3725,8 @@ export interface UserFieldStatusEffectImmunityAbAttrParams extends AbAttrBasePar
 /**
  * Provides immunity to status effects to the user's field.
  */
-export class UserFieldStatusEffectImmunityAbAttr extends AbAttr {
+export class UserFieldStatusEffectImmunityAbAttr extends CancelInteractionAbAttr {
+  private declare readonly _: never;
   protected immuneEffects: StatusEffect[];
 
   /**
@@ -3740,12 +3746,8 @@ export class UserFieldStatusEffectImmunityAbAttr extends AbAttr {
     );
   }
 
-  /**
-   * Set the `cancelled` value to true, indicating that the status effect is prevented.
-   */
-  override apply({ cancelled }: UserFieldStatusEffectImmunityAbAttrParams): void {
-    cancelled.value = true;
-  }
+  // declare here to allow typescript to allow us to override `canApply` method without adjusting params
+  declare apply: (params: UserFieldStatusEffectImmunityAbAttrParams) => void;
 }
 
 /**
@@ -3776,14 +3778,7 @@ export class ConditionalUserFieldStatusEffectImmunityAbAttr extends UserFieldSta
    * @returns Whether the ability can be applied to cancel the status effect.
    */
   override canApply(params: UserFieldStatusEffectImmunityAbAttrParams): boolean {
-    return this.condition(params.target, params.source) && super.canApply(params);
-  }
-
-  /**
-   * Set the `cancelled` value to true, indicating that the status effect is prevented.
-   */
-  override apply({ cancelled }: UserFieldStatusEffectImmunityAbAttrParams): void {
-    cancelled.value = true;
+    return !params.cancelled.value && this.condition(params.target, params.source) && super.canApply(params);
   }
 }
 
@@ -4019,20 +4014,16 @@ export class ConditionalCritAbAttr extends AbAttr {
   }
 }
 
-export class BlockNonDirectDamageAbAttr extends AbAttr {
+export class BlockNonDirectDamageAbAttr extends CancelInteractionAbAttr {
   constructor() {
     super(false);
-  }
-
-  override apply({ cancelled }: AbAttrParamsWithCancel): void {
-    cancelled.value = true;
   }
 }
 
 /**
  * This attribute will block any status damage that you put in the parameter.
  */
-export class BlockStatusDamageAbAttr extends AbAttr {
+export class BlockStatusDamageAbAttr extends CancelInteractionAbAttr {
   private effects: StatusEffect[];
 
   /**
@@ -4044,20 +4035,12 @@ export class BlockStatusDamageAbAttr extends AbAttr {
     this.effects = effects;
   }
 
-  override canApply({ pokemon }: AbAttrParamsWithCancel): boolean {
-    return !!pokemon.status?.effect && this.effects.includes(pokemon.status.effect);
-  }
-
-  override apply({ cancelled }: AbAttrParamsWithCancel): void {
-    cancelled.value = true;
+  override canApply({ pokemon, cancelled }: AbAttrParamsWithCancel): boolean {
+    return !cancelled.value && !!pokemon.status?.effect && this.effects.includes(pokemon.status.effect);
   }
 }
 
-export class BlockOneHitKOAbAttr extends AbAttr {
-  override apply({ cancelled }: AbAttrParamsWithCancel): void {
-    cancelled.value = true;
-  }
-}
+export class BlockOneHitKOAbAttr extends CancelInteractionAbAttr {}
 
 export interface ChangeMovePriorityAbAttrParams extends AbAttrBaseParams {
   /** The move being used */
@@ -4131,8 +4114,8 @@ export class BlockWeatherDamageAttr extends PreWeatherDamageAbAttr {
     this.weatherTypes = weatherTypes;
   }
 
-  override canApply({ weather }: PreWeatherEffectAbAttrParams): boolean {
-    if (!weather) {
+  override canApply({ weather, cancelled }: PreWeatherEffectAbAttrParams): boolean {
+    if (!weather || cancelled.value) {
       return false;
     }
     const weatherType = weather.weatherType;
@@ -4153,8 +4136,8 @@ export class SuppressWeatherEffectAbAttr extends PreWeatherEffectAbAttr {
     this.affectsImmutable = affectsImmutable;
   }
 
-  override canApply({ weather }: PreWeatherEffectAbAttrParams): boolean {
-    if (!weather) {
+  override canApply({ weather, cancelled }: PreWeatherEffectAbAttrParams): boolean {
+    if (!weather || cancelled.value) {
       return false;
     }
     return this.affectsImmutable || weather.isImmutable();
@@ -5151,14 +5134,10 @@ export class StatStageChangeCopyAbAttr extends AbAttr {
   }
 }
 
-export class BypassBurnDamageReductionAbAttr extends AbAttr {
+export class BypassBurnDamageReductionAbAttr extends CancelInteractionAbAttr {
   private declare readonly _: never;
   constructor() {
     super(false);
-  }
-
-  override apply({ cancelled }: AbAttrParamsWithCancel): void {
-    cancelled.value = true;
   }
 }
 
@@ -5199,14 +5178,7 @@ export class DoubleBerryEffectAbAttr extends AbAttr {
  * Attribute to prevent opposing berry use while on the field.
  * Used by {@linkcode AbilityId.UNNERVE}, {@linkcode AbilityId.AS_ONE_GLASTRIER} and {@linkcode AbilityId.AS_ONE_SPECTRIER}
  */
-export class PreventBerryUseAbAttr extends AbAttr {
-  /**
-   * Prevent use of opposing berries.
-   */
-  override apply({ cancelled }: AbAttrParamsWithCancel): void {
-    cancelled.value = true;
-  }
-}
+export class PreventBerryUseAbAttr extends CancelInteractionAbAttr {}
 
 /**
  * A Pokemon with this ability heals by a percentage of their maximum hp after eating a berry
@@ -5664,11 +5636,7 @@ export class IncreasePpAbAttr extends AbAttr {
 }
 
 /** @sealed */
-export class ForceSwitchOutImmunityAbAttr extends AbAttr {
-  override apply({ cancelled }: AbAttrParamsWithCancel): void {
-    cancelled.value = true;
-  }
-}
+export class ForceSwitchOutImmunityAbAttr extends CancelInteractionAbAttr {}
 
 export interface ReduceBerryUseThresholdAbAttrParams extends AbAttrBaseParams {
   /** Holds the hp ratio for the berry to proc, which may be modified by ability application */
@@ -5747,8 +5715,8 @@ export class MoveAbilityBypassAbAttr extends AbAttr {
     this.moveIgnoreFunc = moveIgnoreFunc || ((_pokemon, _move) => true);
   }
 
-  override canApply({ pokemon, move }: MoveAbilityBypassAbAttrParams): boolean {
-    return this.moveIgnoreFunc(pokemon, move);
+  override canApply({ pokemon, move, cancelled }: MoveAbilityBypassAbAttrParams): boolean {
+    return !cancelled.value && this.moveIgnoreFunc(pokemon, move);
   }
 
   override apply({ cancelled }: MoveAbilityBypassAbAttrParams): void {
@@ -5842,8 +5810,8 @@ export class IgnoreTypeImmunityAbAttr extends AbAttr {
     this.allowedMoveTypes = allowedMoveTypes;
   }
 
-  override canApply({ moveType, defenderType }: IgnoreTypeImmunityAbAttrParams): boolean {
-    return this.defenderType === defenderType && this.allowedMoveTypes.includes(moveType);
+  override canApply({ moveType, defenderType, cancelled }: IgnoreTypeImmunityAbAttrParams): boolean {
+    return !cancelled.value && this.defenderType === defenderType && this.allowedMoveTypes.includes(moveType);
   }
 
   override apply({ cancelled }: IgnoreTypeImmunityAbAttrParams): void {

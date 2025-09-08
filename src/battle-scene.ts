@@ -863,6 +863,8 @@ export class BattleScene extends SceneBase {
    * @param pokemonId - The ID whose Pokemon will be retrieved.
    * @returns The {@linkcode Pokemon} associated with the given id.
    * Returns `null` if the ID is `undefined` or not present in either party.
+   * @todo Change the `null` to `undefined` and update callers' signatures -
+   * this is weird and causes a lot of random jank
    */
   getPokemonById(pokemonId: number | undefined): Pokemon | null {
     if (isNullOrUndefined(pokemonId)) {
