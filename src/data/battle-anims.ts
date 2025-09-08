@@ -835,7 +835,7 @@ export abstract class BattleAnim {
   // biome-ignore lint/complexity/noBannedTypes: callback is used liberally
   play(onSubstitute?: boolean, callback?: Function) {
     const isOppAnim = this.isOppAnim();
-    const user = !isOppAnim ? this.user! : this.target!; // TODO: are those bangs correct?
+    const user = !isOppAnim ? this.user! : this.target!; // TODO: These bangs are LITERALLY not correct at all
     const target = !isOppAnim ? this.target! : this.user!;
 
     if (!target?.isOnField() && !this.playRegardlessOfIssues) {
