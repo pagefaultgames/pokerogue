@@ -49,9 +49,9 @@ export class SelectStarterPhase extends Phase {
       const species = getPokemonSpecies(starter.speciesId);
       let starterFormIndex = starter.formIndex;
       if (
-        starter.speciesId in Overrides.STARTER_FORM_OVERRIDES &&
-        !isNullOrUndefined(Overrides.STARTER_FORM_OVERRIDES[starter.speciesId]) &&
-        species.forms[Overrides.STARTER_FORM_OVERRIDES[starter.speciesId]!]
+        starter.speciesId in Overrides.STARTER_FORM_OVERRIDES
+        && !isNullOrUndefined(Overrides.STARTER_FORM_OVERRIDES[starter.speciesId])
+        && species.forms[Overrides.STARTER_FORM_OVERRIDES[starter.speciesId]!]
       ) {
         starterFormIndex = Overrides.STARTER_FORM_OVERRIDES[starter.speciesId]!;
       }

@@ -306,10 +306,10 @@ export class GameManager {
         handler.processInput(Button.ACTION);
       },
       () =>
-        this.isCurrentPhase(CommandPhase) ||
-        this.isCurrentPhase(MovePhase) ||
-        this.isCurrentPhase(TurnStartPhase) ||
-        this.isCurrentPhase(TurnEndPhase),
+        this.isCurrentPhase(CommandPhase)
+        || this.isCurrentPhase(MovePhase)
+        || this.isCurrentPhase(TurnStartPhase)
+        || this.isCurrentPhase(TurnEndPhase),
     );
   }
 
@@ -331,9 +331,9 @@ export class GameManager {
         handler.processInput(Button.CANCEL);
       },
       () =>
-        this.isCurrentPhase(CommandPhase) ||
-        this.isCurrentPhase(NewBattlePhase) ||
-        this.isCurrentPhase(CheckSwitchPhase),
+        this.isCurrentPhase(CommandPhase)
+        || this.isCurrentPhase(NewBattlePhase)
+        || this.isCurrentPhase(CheckSwitchPhase),
       true,
     );
 
@@ -345,9 +345,9 @@ export class GameManager {
         handler.processInput(Button.ACTION);
       },
       () =>
-        this.isCurrentPhase(CommandPhase) ||
-        this.isCurrentPhase(NewBattlePhase) ||
-        this.isCurrentPhase(CheckSwitchPhase),
+        this.isCurrentPhase(CommandPhase)
+        || this.isCurrentPhase(NewBattlePhase)
+        || this.isCurrentPhase(CheckSwitchPhase),
     );
   }
 

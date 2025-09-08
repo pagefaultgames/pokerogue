@@ -23,13 +23,11 @@ export function getCookie(cName: string): string {
   }
   const name = `${cName}=`;
   const ca = document.cookie.split(";");
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) === " ") {
-      c = c.substring(1);
-    }
-    if (c.indexOf(name) === 0) {
-      return c.substring(name.length, c.length);
+  // Check all cookies in the document and see if any of them match, grabbing the first one whose value lines up
+  for (const c of ca) {
+    const cTrimmed = c.trim();
+    if (cTrimmed.startsWith(name)) {
+      return c.slice(name.length, c.length);
     }
   }
   return "";

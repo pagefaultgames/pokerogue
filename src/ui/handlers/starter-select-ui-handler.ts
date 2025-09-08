@@ -202,7 +202,7 @@ function calcStarterPosition(index: number, scrollCursor = 0): { x: number; y: n
   const x = (index % 9) * 18;
   const y = yOffset + (Math.floor(index / 9) - scrollCursor) * height;
 
-  return { x: x, y: y };
+  return { x, y };
 }
 
 /**
@@ -1143,7 +1143,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     this.allowTera = globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id);
 
-    if (args.length >= 1 && args[0] instanceof Function) {
+    if (args.length > 0 && args[0] instanceof Function) {
       super.show(args);
       this.starterSelectCallback = args[0] as StarterSelectCallback;
 
@@ -1245,20 +1245,21 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         hasShiny && caughtAttr & DexAttr.VARIANT_3,
       ];
       if (
-        Number.isNaN(starterAttributes.variant) ||
-        starterAttributes.variant < 0 ||
-        !unlockedVariants[starterAttributes.variant]
+        Number.isNaN(starterAttributes.variant)
+        || starterAttributes.variant < 0
+        || !unlockedVariants[starterAttributes.variant]
       ) {
         // variant value is invalid or requested variant wasn't unlocked, purging setting
         starterAttributes.variant = undefined;
       }
     }
 
-    if (starterAttributes.female !== undefined) {
-      if (!(starterAttributes.female ? caughtAttr & DexAttr.FEMALE : caughtAttr & DexAttr.MALE)) {
-        // requested gender wasn't unlocked, purging setting
-        starterAttributes.female = undefined;
-      }
+    if (
+      starterAttributes.female !== undefined
+      && !(starterAttributes.female ? caughtAttr & DexAttr.FEMALE : caughtAttr & DexAttr.MALE)
+    ) {
+      // requested gender wasn't unlocked, purging setting
+      starterAttributes.female = undefined;
     }
 
     if (starterAttributes.ability !== undefined) {
@@ -1282,9 +1283,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     const selectedForm = starterAttributes.form;
     if (
-      selectedForm !== undefined &&
-      (!species.forms[selectedForm]?.isStarterSelectable ||
-        !(caughtAttr & globalScene.gameData.getFormAttr(selectedForm)))
+      selectedForm !== undefined
+      && (!species.forms[selectedForm]?.isStarterSelectable
+        || !(caughtAttr & globalScene.gameData.getFormAttr(selectedForm)))
     ) {
       // requested form wasn't unlocked/isn't a starter form, purging setting
       starterAttributes.form = undefined;
@@ -1362,7 +1363,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.message.setY(singleLine ? -22 : -37);
     }
 
-    this.starterSelectMessageBoxContainer.setVisible(!!text?.length);
+    this.starterSelectMessageBoxContainer.setVisible(text?.length > 0);
   }
 
   /**
@@ -1390,8 +1391,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const starterData = globalScene.gameData.starterData[speciesId];
 
     return (
-      starterData.candyCount >= getPassiveCandyCount(speciesStarterCosts[speciesId]) &&
-      !(starterData.passiveAttr & PassiveAttr.UNLOCKED)
+      starterData.candyCount >= getPassiveCandyCount(speciesStarterCosts[speciesId])
+      && !(starterData.passiveAttr & PassiveAttr.UNLOCKED)
     );
   }
 
@@ -1405,9 +1406,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const starterData = globalScene.gameData.starterData[speciesId];
 
     return (
-      starterData.candyCount >=
-        getValueReductionCandyCounts(speciesStarterCosts[speciesId])[starterData.valueReduction] &&
-      starterData.valueReduction < valueReductionMax
+      starterData.candyCount >= getValueReductionCandyCounts(speciesStarterCosts[speciesId])[starterData.valueReduction]
+      && starterData.valueReduction < valueReductionMax
     );
   }
 
@@ -1464,9 +1464,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     };
 
     if (
-      this.isPassiveAvailable(species.speciesId) ||
-      (globalScene.candyUpgradeNotification === 2 &&
-        (this.isValueReductionAvailable(species.speciesId) || this.isSameSpeciesEggAvailable(species.speciesId)))
+      this.isPassiveAvailable(species.speciesId)
+      || (globalScene.candyUpgradeNotification === 2
+        && (this.isValueReductionAvailable(species.speciesId) || this.isSameSpeciesEggAvailable(species.speciesId)))
     ) {
       const chain = globalScene.tweens.chain(tweenChain);
       if (!startPaused) {
@@ -1483,9 +1483,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const slotVisible = !!species?.speciesId;
 
     if (
-      !species ||
-      globalScene.candyUpgradeNotification === 0 ||
-      species.speciesId !== species.getRootSpeciesId(false)
+      !species
+      || globalScene.candyUpgradeNotification === 0
+      || species.speciesId !== species.getRootSpeciesId(false)
     ) {
       starter.candyUpgradeIcon.setVisible(false);
       starter.candyUpgradeOverlayIcon.setVisible(false);
@@ -1586,8 +1586,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.filterBar.toggleDropDown(this.filterBarCursor);
         success = true;
       } else if (
-        this.filterMode &&
-        !this.filterBar.getFilter(this.filterBar.getColumn(this.filterBarCursor)).hasDefaultValues()
+        this.filterMode
+        && !this.filterBar.getFilter(this.filterBar.getColumn(this.filterBarCursor)).hasDefaultValues()
       ) {
         if (this.filterBar.getColumn(this.filterBarCursor) === DropDownColumn.CAUGHT) {
           this.resetCaughtDropdown();
@@ -1599,7 +1599,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       } else if (this.statsMode) {
         this.toggleStatsMode(false);
         success = true;
-      } else if (this.starterSpecies.length) {
+      } else if (this.starterSpecies.length > 0) {
         this.popStarter(this.starterSpecies.length - 1);
         success = true;
         this.updateInstructions();
@@ -1884,10 +1884,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             );
           const newCost = globalScene.gameData.getSpeciesStarterValue(this.lastSpecies.speciesId);
           if (
-            !isDupe &&
-            isValidForChallenge &&
-            currentPartyValue + newCost <= this.getValueLimit() &&
-            this.starterSpecies.length < PLAYER_PARTY_MAX_SIZE
+            !isDupe
+            && isValidForChallenge
+            && currentPartyValue + newCost <= this.getValueLimit()
+            && this.starterSpecies.length < PLAYER_PARTY_MAX_SIZE
           ) {
             options = [
               {
@@ -2324,7 +2324,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
               },
             });
             ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
-              options: options,
+              options,
               yOffset: 47,
             });
           };
@@ -2371,7 +2371,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             },
           });
           ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
-            options: options,
+            options,
             yOffset: 47,
           });
           success = true;
@@ -2421,11 +2421,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                       // TODO: is this bang correct?
                       break;
                     }
-                  } else {
-                    if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.VARIANT_3) {
-                      // TODO: is this bang correct?
-                      break;
-                    }
+                  } else if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.VARIANT_3) {
+                    // TODO: is this bang correct?
+                    break;
                   }
                 } while (newVariant !== props.variant);
                 starterAttributes.variant = newVariant; // store the selected variant
@@ -2460,8 +2458,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
               do {
                 newFormIndex = (newFormIndex + 1) % formCount;
                 if (
-                  this.lastSpecies.forms[newFormIndex].isStarterSelectable &&
-                  this.speciesStarterDexEntry!.caughtAttr! & globalScene.gameData.getFormAttr(newFormIndex)
+                  this.lastSpecies.forms[newFormIndex].isStarterSelectable
+                  && this.speciesStarterDexEntry!.caughtAttr! & globalScene.gameData.getFormAttr(newFormIndex)
                 ) {
                   // TODO: are those bangs correct?
                   break;
@@ -2506,10 +2504,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                     newAbilityIndex = (newAbilityIndex + 1) % abilityCount;
                   }
                   break;
-                } else {
-                  if (abilityAttr & AbilityAttr.ABILITY_HIDDEN) {
-                    break;
-                  }
+                } else if (abilityAttr & AbilityAttr.ABILITY_HIDDEN) {
+                  break;
                 }
               } while (newAbilityIndex !== this.abilityCursor);
               starterAttributes.ability = newAbilityIndex; // store the selected ability
@@ -3024,10 +3020,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.filteredStarterContainers = [];
     this.validStarterContainers = [];
 
-    // biome-ignore-start lint/nursery/useIterableCallbackReturn: benign
+    // biome-ignore-start lint/suspicious/useIterableCallbackReturn: benign
     this.pokerusCursorObjs.forEach(cursor => cursor.setVisible(false));
     this.starterCursorObjs.forEach(cursor => cursor.setVisible(false));
-    // biome-ignore-end lint/nursery/useIterableCallbackReturn: benign
+    // biome-ignore-end lint/suspicious/useIterableCallbackReturn: benign
 
     this.filterBar.updateFilterLabels();
 
@@ -3074,8 +3070,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     // this updates icons for previously saved pokemon
-    for (let i = 0; i < this.validStarterContainers.length; i++) {
-      const currentFilteredContainer = this.validStarterContainers[i];
+    for (const currentFilteredContainer of this.validStarterContainers) {
       const starterSprite = currentFilteredContainer.icon as Phaser.GameObjects.Sprite;
 
       const currentDexAttr = this.getCurrentDexProps(currentFilteredContainer.species.speciesId);
@@ -3207,8 +3202,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
       // HA Filter
       const speciesHasHiddenAbility =
-        container.species.abilityHidden !== container.species.ability1 &&
-        container.species.abilityHidden !== AbilityId.NONE;
+        container.species.abilityHidden !== container.species.ability1
+        && container.species.abilityHidden !== AbilityId.NONE;
       const hasHA = starterData.abilityAttr & AbilityAttr.ABILITY_HIDDEN;
       const fitsHA = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
         if (misc.val === "HIDDEN_ABILITY" && misc.state === DropDownState.ON) {
@@ -3250,16 +3245,16 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       });
 
       if (
-        fitsGen &&
-        fitsType &&
-        fitsCaught &&
-        fitsPassive &&
-        fitsCostReduction &&
-        fitsFavorite &&
-        fitsWin &&
-        fitsHA &&
-        fitsEgg &&
-        fitsPokerus
+        fitsGen
+        && fitsType
+        && fitsCaught
+        && fitsPassive
+        && fitsCostReduction
+        && fitsFavorite
+        && fitsWin
+        && fitsHA
+        && fitsEgg
+        && fitsPokerus
       ) {
         this.filteredStarterContainers.push(container);
       }
@@ -3283,26 +3278,26 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         }
         case SortCriteria.IV: {
           const avgIVsA =
-            globalScene.gameData.dexData[a.species.speciesId].ivs.reduce((a, b) => a + b, 0) /
-            globalScene.gameData.dexData[a.species.speciesId].ivs.length;
+            globalScene.gameData.dexData[a.species.speciesId].ivs.reduce((a, b) => a + b, 0)
+            / globalScene.gameData.dexData[a.species.speciesId].ivs.length;
           const avgIVsB =
-            globalScene.gameData.dexData[b.species.speciesId].ivs.reduce((a, b) => a + b, 0) /
-            globalScene.gameData.dexData[b.species.speciesId].ivs.length;
+            globalScene.gameData.dexData[b.species.speciesId].ivs.reduce((a, b) => a + b, 0)
+            / globalScene.gameData.dexData[b.species.speciesId].ivs.length;
           return (avgIVsA - avgIVsB) * -sort.dir;
         }
         case SortCriteria.NAME:
           return a.species.name.localeCompare(b.species.name) * -sort.dir;
         case SortCriteria.CAUGHT:
           return (
-            (globalScene.gameData.dexData[a.species.speciesId].caughtCount -
-              globalScene.gameData.dexData[b.species.speciesId].caughtCount) *
-            -sort.dir
+            (globalScene.gameData.dexData[a.species.speciesId].caughtCount
+              - globalScene.gameData.dexData[b.species.speciesId].caughtCount)
+            * -sort.dir
           );
         case SortCriteria.HATCHED:
           return (
-            (globalScene.gameData.dexData[a.species.speciesId].hatchedCount -
-              globalScene.gameData.dexData[b.species.speciesId].hatchedCount) *
-            -sort.dir
+            (globalScene.gameData.dexData[a.species.speciesId].hatchedCount
+              - globalScene.gameData.dexData[b.species.speciesId].hatchedCount)
+            * -sort.dir
           );
       }
       return 0;
@@ -3677,10 +3672,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           const { dexEntry } = this.getSpeciesData(species.speciesId);
           const defaultNature =
             starterAttributes?.nature || globalScene.gameData.getSpeciesDefaultNature(species, dexEntry);
-          if (starterAttributes?.variant && !Number.isNaN(starterAttributes.variant)) {
-            if (props.shiny) {
-              props.variant = starterAttributes.variant as Variant;
-            }
+          if (starterAttributes?.variant && !Number.isNaN(starterAttributes.variant) && props.shiny) {
+            props.variant = starterAttributes.variant as Variant;
           }
           props.formIndex = starterAttributes?.form ?? props.formIndex;
           props.female = starterAttributes?.female ?? props.female;
@@ -3822,10 +3815,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     // We will only update the sprite if there is a change to form, shiny/variant
     // or gender for species with gender sprite differences
     const shouldUpdateSprite =
-      (species?.genderDiffs && !isNullOrUndefined(female)) ||
-      !isNullOrUndefined(formIndex) ||
-      !isNullOrUndefined(shiny) ||
-      !isNullOrUndefined(variant);
+      (species?.genderDiffs && !isNullOrUndefined(female))
+      || !isNullOrUndefined(formIndex)
+      || !isNullOrUndefined(shiny)
+      || !isNullOrUndefined(variant);
 
     const isFreshStartChallenge = globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
 
@@ -4007,10 +4000,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             .filter(f => f).length > 1;
         this.canCycleNature = globalScene.gameData.getNaturesForAttr(dexEntry.natureAttr).length > 1;
         this.canCycleTera =
-          !this.statsMode &&
-          this.allowTera &&
-          !isNullOrUndefined(getPokemonSpeciesForm(species.speciesId, formIndex ?? 0).type2) &&
-          !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
+          !this.statsMode
+          && this.allowTera
+          && !isNullOrUndefined(getPokemonSpeciesForm(species.speciesId, formIndex ?? 0).type2)
+          && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
       }
 
       if (dexEntry.caughtAttr && species.malePercent !== null) {
@@ -4107,9 +4100,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
         let levelMoves: LevelMoves;
         if (
-          pokemonFormLevelMoves.hasOwnProperty(species.speciesId) &&
-          formIndex &&
-          pokemonFormLevelMoves[species.speciesId].hasOwnProperty(formIndex)
+          pokemonFormLevelMoves.hasOwnProperty(species.speciesId)
+          && formIndex
+          && pokemonFormLevelMoves[species.speciesId].hasOwnProperty(formIndex)
         ) {
           levelMoves = pokemonFormLevelMoves[species.speciesId][formIndex];
         } else {
@@ -4438,7 +4431,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   tryStart(manualTrigger = false): boolean {
-    if (!this.starterSpecies.length) {
+    if (this.starterSpecies.length === 0) {
       return false;
     }
 
@@ -4488,7 +4481,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     return true;
   }
 
-  /* This block checks to see if your party is valid
+  /**
+   *  This block checks to see if your party is valid
    * It checks each pokemon against the challenge - noting that due to monotype challenges it needs to check the pokemon while ignoring their evolutions/form change items
    */
   isPartyValid(): boolean {
@@ -4528,8 +4522,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
      *  If neither of these pass, we add DexAttr.MALE to our temp props
      */
     if (
-      this.starterPreferences[speciesId]?.female ||
-      ((caughtAttr & DexAttr.FEMALE) > 0n && (caughtAttr & DexAttr.MALE) === 0n)
+      this.starterPreferences[speciesId]?.female
+      || ((caughtAttr & DexAttr.FEMALE) > 0n && (caughtAttr & DexAttr.MALE) === 0n)
     ) {
       props += DexAttr.FEMALE;
     } else {
@@ -4539,23 +4533,21 @@ export class StarterSelectUiHandler extends MessageUiHandler {
      * If they're not there, it enables shiny state by default if any shiny was caught
      */
     if (
-      this.starterPreferences[speciesId]?.shiny ||
-      ((caughtAttr & DexAttr.SHINY) > 0n && this.starterPreferences[speciesId]?.shiny !== false)
+      this.starterPreferences[speciesId]?.shiny
+      || ((caughtAttr & DexAttr.SHINY) > 0n && this.starterPreferences[speciesId]?.shiny !== false)
     ) {
       props += DexAttr.SHINY;
       if (this.starterPreferences[speciesId]?.variant !== undefined) {
         props += BigInt(Math.pow(2, this.starterPreferences[speciesId]?.variant)) * DexAttr.DEFAULT_VARIANT;
-      } else {
+      } else if ((caughtAttr & DexAttr.VARIANT_3) > 0) {
         /*  This calculates the correct variant if there's no starter preferences for it.
          *  This gets the highest tier variant that you've caught and adds it to the temp props
          */
-        if ((caughtAttr & DexAttr.VARIANT_3) > 0) {
-          props += DexAttr.VARIANT_3;
-        } else if ((caughtAttr & DexAttr.VARIANT_2) > 0) {
-          props += DexAttr.VARIANT_2;
-        } else {
-          props += DexAttr.DEFAULT_VARIANT;
-        }
+        props += DexAttr.VARIANT_3;
+      } else if ((caughtAttr & DexAttr.VARIANT_2) > 0) {
+        props += DexAttr.VARIANT_2;
+      } else {
+        props += DexAttr.DEFAULT_VARIANT;
       }
     } else {
       props += DexAttr.NON_SHINY;
@@ -4596,10 +4588,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       );
       const formIndex = props.formIndex;
       this.canCycleTera =
-        !this.statsMode &&
-        this.allowTera &&
-        !isNullOrUndefined(getPokemonSpeciesForm(this.lastSpecies.speciesId, formIndex ?? 0).type2) &&
-        !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
+        !this.statsMode
+        && this.allowTera
+        && !isNullOrUndefined(getPokemonSpeciesForm(this.lastSpecies.speciesId, formIndex ?? 0).type2)
+        && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
       this.updateInstructions();
     }
   }
@@ -4652,7 +4644,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectContainer.setVisible(false);
     this.blockInput = false;
 
-    while (this.starterSpecies.length) {
+    while (this.starterSpecies.length > 0) {
       this.popStarter(this.starterSpecies.length - 1);
     }
 

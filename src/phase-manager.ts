@@ -103,10 +103,13 @@ import { WeatherEffectPhase } from "#phases/weather-effect-phase";
 import type { PhaseMap, PhaseString } from "#types/phase-types";
 import { type Constructor, coerceArray } from "#utils/common";
 
-/*
+/**
+ * @module
  * Manager for phases used by battle scene.
  *
- * *This file must not be imported or used directly. The manager is exclusively used by the battle scene and is not intended for external use.*
+ * @remarks
+ * **This file must not be imported or used directly.**
+ * The manager is exclusively used by the Battle Scene and is NOT intended for external use.
  */
 
 /**
@@ -377,7 +380,7 @@ export class PhaseManager {
     this.conditionalQueue = unactivatedConditionalPhases;
 
     // If no phases are left, unshift phases to start a new turn.
-    if (!this.phaseQueue.length) {
+    if (this.phaseQueue.length === 0) {
       this.populatePhaseQueue();
       // Clear the conditionalQueue if there are no phases left in the phaseQueue
       this.conditionalQueue = [];
@@ -620,7 +623,7 @@ export class PhaseManager {
    * Moves everything from nextCommandPhaseQueue to phaseQueue (keeping order)
    */
   private populatePhaseQueue(): void {
-    if (this.nextCommandPhaseQueue.length) {
+    if (this.nextCommandPhaseQueue.length > 0) {
       this.phaseQueue.push(...this.nextCommandPhaseQueue);
       this.nextCommandPhaseQueue.splice(0, this.nextCommandPhaseQueue.length);
     }
