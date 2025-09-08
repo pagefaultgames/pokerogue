@@ -186,7 +186,7 @@ export class SpeciesEvolutionCondition {
             m.getStackCount() + pokemon.getPersistentTreasureCount() >= cond.value
           );
         case EvoCondKey.GENDER:
-          return  cond.gender === (forFusion ? pokemon.fusionGender : pokemon.gender);
+          return cond.gender === (forFusion ? pokemon.fusionGender : pokemon.gender);
         case EvoCondKey.SHEDINJA: // Shedinja cannot be evolved into directly
           return false;
         case EvoCondKey.BIOME:
