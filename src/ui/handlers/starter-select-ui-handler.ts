@@ -2598,11 +2598,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.scrollCursor = 0;
     this.filteredStarterIds = [];
 
-    // biome-ignore-start lint/nursery/useIterableCallbackReturn: benign
-    this.pokerusCursorObjs.forEach(cursor => cursor.setVisible(false));
-    this.starterCursorObjs.forEach(cursor => cursor.setVisible(false));
-    // biome-ignore-end lint/nursery/useIterableCallbackReturn: benign
-
     this.filterBar.updateFilterLabels();
 
     // filter
@@ -2830,6 +2825,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     this.starterSelectScrollBar.setScrollCursor(this.scrollCursor);
 
+    // biome-ignore-start lint/nursery/useIterableCallbackReturn: benign
+    this.pokerusCursorObjs.forEach(cursor => cursor.setVisible(false));
+    this.starterCursorObjs.forEach(cursor => cursor.setVisible(false));
+    // biome-ignore-end lint/nursery/useIterableCallbackReturn: benign
+
     let pokerusCursorIndex = 0;
     this.starterContainers.forEach((container, i) => {
       const offset_i = i + onScreenFirstIndex;
@@ -2863,14 +2863,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         }
 
         if (this.pokerusSpecies.includes(container.species)) {
-          this.pokerusCursorObjs[pokerusCursorIndex].setPosition(container.x - 1, container.y + 1).setVisible(false);
+          this.pokerusCursorObjs[pokerusCursorIndex].setPosition(container.x - 1, container.y + 1).setVisible(true);
           pokerusCursorIndex++;
         }
 
         if (this.starterSpecies.includes(container.species)) {
           this.starterCursorObjs[this.starterSpecies.indexOf(container.species)]
             .setPosition(container.x - 1, container.y + 1)
-            .setVisible(false);
+            .setVisible(true);
         }
 
         this.updateStarterValueLabel(container);
