@@ -1124,7 +1124,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         } else if (this.statsMode) {
           this.toggleStatsMode(false);
           success = true;
-        } else if (this.starterSpecies.length) {
+        } else if (this.starterSpecies.length > 0) {
           this.popStarter(this.starterSpecies.length - 1);
           success = true;
           this.updateInstructions();
@@ -1401,11 +1401,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                   // TODO: is this bang correct?
                   break;
                 }
-              } else {
-                if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.VARIANT_3) {
-                  // TODO: is this bang correct?
-                  break;
-                }
+              } else if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.VARIANT_3) {
+                // TODO: is this bang correct?
+                break;
               }
             } while (newVariant !== props.variant);
             this.setShinyAndVariant(speciesId, true, newVariant);
@@ -1427,8 +1425,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           do {
             newFormIndex = (newFormIndex + 1) % formCount;
             if (
-              this.lastSpecies.forms[newFormIndex].isStarterSelectable &&
-              this.speciesStarterDexEntry!.caughtAttr! & globalScene.gameData.getFormAttr(newFormIndex)
+              this.lastSpecies.forms[newFormIndex].isStarterSelectable
+              && this.speciesStarterDexEntry!.caughtAttr! & globalScene.gameData.getFormAttr(newFormIndex)
             ) {
               // TODO: are those bangs correct?
               break;
@@ -1462,10 +1460,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 newAbilityIndex = (newAbilityIndex + 1) % abilityCount;
               }
               break;
-            } else {
-              if (abilityAttr & AbilityAttr.ABILITY_HIDDEN) {
-                break;
-              }
+            } else if (abilityAttr & AbilityAttr.ABILITY_HIDDEN) {
+              break;
             }
           } while (newAbilityIndex !== this.abilityCursor);
           this.setNewAbilityIndex(speciesId, newAbilityIndex);
@@ -1651,10 +1647,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       );
     const newCost = globalScene.gameData.getSpeciesStarterValue(this.lastSpecies.speciesId);
     if (
-      !isDupe &&
-      isValidForChallenge &&
-      currentPartyValue + newCost <= getRunValueLimit() &&
-      this.starterSpecies.length < PLAYER_PARTY_MAX_SIZE
+      !isDupe
+      && isValidForChallenge
+      && currentPartyValue + newCost <= getRunValueLimit()
+      && this.starterSpecies.length < PLAYER_PARTY_MAX_SIZE
     ) {
       options = [
         {
@@ -2084,7 +2080,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         },
       });
       ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
-        options: options,
+        options,
         yOffset: 47,
       });
     };
@@ -2131,7 +2127,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       },
     });
     ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
-      options: options,
+      options,
       yOffset: 47,
     });
   }
@@ -2165,7 +2161,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       if (this.statsMode) {
         this.toggleStatsMode(false);
         success = true;
-      } else if (this.starterSpecies.length) {
+      } else if (this.starterSpecies.length > 0) {
         this.popStarter(this.starterSpecies.length - 1);
         success = true;
         this.updateInstructions();
@@ -2190,128 +2186,120 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       [success, error] = this.processStartCursorInput(button);
     } else if (this.randomCursorObj.visible) {
       [success, error] = this.processRandomCursorInput(button);
+    } else if (button === Button.ACTION) {
+      if (!this.speciesStarterDexEntry?.caughtAttr) {
+        error = true;
+      } else if (this.starterSpecies.length <= 6) {
+        // checks to see if the party has 6 or fewer pokemon
+        this.openPokemonMenu();
+        success = true;
+      }
     } else {
-      if (button === Button.ACTION) {
-        if (!this.speciesStarterDexEntry?.caughtAttr) {
-          error = true;
-        } else if (this.starterSpecies.length <= 6) {
-          // checks to see if the party has 6 or fewer pokemon
-          this.openPokemonMenu();
-          success = true;
-        }
-      } else {
-        if (
-          [
-            Button.CYCLE_SHINY,
-            Button.CYCLE_FORM,
-            Button.CYCLE_GENDER,
-            Button.CYCLE_ABILITY,
-            Button.CYCLE_NATURE,
-            Button.CYCLE_TERA,
-          ].includes(button)
-        ) {
-          success = this.processCycleButtonsInput(button);
-        }
+      if (
+        [
+          Button.CYCLE_SHINY,
+          Button.CYCLE_FORM,
+          Button.CYCLE_GENDER,
+          Button.CYCLE_ABILITY,
+          Button.CYCLE_NATURE,
+          Button.CYCLE_TERA,
+        ].includes(button)
+      ) {
+        success = this.processCycleButtonsInput(button);
+      }
 
-        switch (button) {
-          case Button.UP:
-            if (currentRow > 0) {
-              if (this.scrollCursor > 0 && currentRow - this.scrollCursor === 0) {
-                this.scrollCursor--;
-                this.updateScroll();
-                success = this.setCursor(this.cursor);
-              } else {
-                success = this.setCursor(this.cursor - 9);
-              }
-            } else {
-              this.filterBarCursor = this.filterBar.getNearestFilter(this.starterContainers[this.cursor]);
-              this.setFilterMode(true);
-              success = true;
-            }
-            break;
-          case Button.DOWN:
-            if (currentRow < numOfRows - 1 && this.cursor + 9 < this.filteredStarterIds.length) {
-              // not last row
-              if (currentRow - this.scrollCursor === 8) {
-                // last row of visible starters
-                this.scrollCursor++;
-                this.updateScroll();
-                success = this.setCursor(this.cursor);
-              } else {
-                success = this.setCursor(this.cursor + 9);
-              }
-            } else if (numOfRows > 1) {
-              // DOWN from last row of Pokemon > Wrap around to first row
-              this.scrollCursor = 0;
+      switch (button) {
+        case Button.UP:
+          if (currentRow > 0) {
+            if (this.scrollCursor > 0 && currentRow - this.scrollCursor === 0) {
+              this.scrollCursor--;
               this.updateScroll();
-              success = this.setCursor(this.cursor % 9);
+              success = this.setCursor(this.cursor);
             } else {
-              // DOWN from single row of Pokemon > Go to filters
-              this.filterBarCursor = this.filterBar.getNearestFilter(this.starterContainers[this.cursor]);
-              this.setFilterMode(true);
-              success = true;
+              success = this.setCursor(this.cursor - 9);
             }
-            break;
-          case Button.LEFT:
-            if (this.cursor % 9 !== 0) {
-              success = this.setCursor(this.cursor - 1);
+          } else {
+            this.filterBarCursor = this.filterBar.getNearestFilter(this.starterContainers[this.cursor]);
+            this.setFilterMode(true);
+            success = true;
+          }
+          break;
+        case Button.DOWN:
+          if (currentRow < numOfRows - 1 && this.cursor + 9 < this.filteredStarterIds.length) {
+            // not last row
+            if (currentRow - this.scrollCursor === 8) {
+              // last row of visible starters
+              this.scrollCursor++;
+              this.updateScroll();
+              success = this.setCursor(this.cursor);
             } else {
-              // LEFT from filtered Pokemon, on the left edge
-              if (onScreenCurrentRow === 0) {
-                // from the first row of starters we go to the random selection
-                this.cursorObj.setVisible(false);
-                this.showRandomCursor();
-              } else if (this.starterSpecies.length === 0) {
-                // no starter in team and not on first row > wrap around to the last column
-                success = this.setCursor(this.cursor + Math.min(8, onScreenLastIndex - this.cursor));
-              } else if (onScreenCurrentRow < 7) {
-                // at least one pokemon in team > for the first 7 rows, go to closest starter
-                this.cursorObj.setVisible(false);
-                this.starterIconsCursorIndex = findClosestStarterIndex(
-                  this.cursorObj.y - 1,
-                  this.starterSpecies.length,
-                );
-                this.moveStarterIconsCursor(this.starterIconsCursorIndex);
-              } else {
-                // at least one pokemon in team > from the bottom 2 rows, go to start run button
-                this.cursorObj.setVisible(false);
-                this.setNoSpecies();
-                this.startCursorObj.setVisible(true);
-              }
-              success = true;
+              success = this.setCursor(this.cursor + 9);
             }
-            break;
-          case Button.RIGHT:
-            // is not right edge
-            if (this.cursor % 9 < (currentRow < numOfRows - 1 ? 8 : (numberOfStarters - 1) % 9)) {
-              success = this.setCursor(this.cursor + 1);
+          } else if (numOfRows > 1) {
+            // DOWN from last row of Pokemon > Wrap around to first row
+            this.scrollCursor = 0;
+            this.updateScroll();
+            success = this.setCursor(this.cursor % 9);
+          } else {
+            // DOWN from single row of Pokemon > Go to filters
+            this.filterBarCursor = this.filterBar.getNearestFilter(this.starterContainers[this.cursor]);
+            this.setFilterMode(true);
+            success = true;
+          }
+          break;
+        case Button.LEFT:
+          if (this.cursor % 9 !== 0) {
+            success = this.setCursor(this.cursor - 1);
+          } else {
+            // LEFT from filtered Pokemon, on the left edge
+            if (onScreenCurrentRow === 0) {
+              // from the first row of starters we go to the random selection
+              this.cursorObj.setVisible(false);
+              this.showRandomCursor();
+            } else if (this.starterSpecies.length === 0) {
+              // no starter in team and not on first row > wrap around to the last column
+              success = this.setCursor(this.cursor + Math.min(8, onScreenLastIndex - this.cursor));
+            } else if (onScreenCurrentRow < 7) {
+              // at least one pokemon in team > for the first 7 rows, go to closest starter
+              this.cursorObj.setVisible(false);
+              this.starterIconsCursorIndex = findClosestStarterIndex(this.cursorObj.y - 1, this.starterSpecies.length);
+              this.moveStarterIconsCursor(this.starterIconsCursorIndex);
             } else {
-              // RIGHT from filtered Pokemon, on the right edge
-              if (onScreenCurrentRow === 0) {
-                // from the first row of starters we go to the random selection
-                this.cursorObj.setVisible(false);
-                this.showRandomCursor();
-              } else if (this.starterSpecies.length === 0) {
-                // no selected starter in team > wrap around to the first column
-                success = this.setCursor(this.cursor - Math.min(8, this.cursor % 9));
-              } else if (onScreenCurrentRow < 7) {
-                // at least one pokemon in team > for the first 7 rows, go to closest starter
-                this.cursorObj.setVisible(false);
-                this.starterIconsCursorIndex = findClosestStarterIndex(
-                  this.cursorObj.y - 1,
-                  this.starterSpecies.length,
-                );
-                this.moveStarterIconsCursor(this.starterIconsCursorIndex);
-              } else {
-                // at least one pokemon in team > from the bottom 2 rows, go to start run button
-                this.cursorObj.setVisible(false);
-                this.setNoSpecies();
-                this.startCursorObj.setVisible(true);
-              }
-              success = true;
+              // at least one pokemon in team > from the bottom 2 rows, go to start run button
+              this.cursorObj.setVisible(false);
+              this.setNoSpecies();
+              this.startCursorObj.setVisible(true);
             }
-            break;
-        }
+            success = true;
+          }
+          break;
+        case Button.RIGHT:
+          // is not right edge
+          if (this.cursor % 9 < (currentRow < numOfRows - 1 ? 8 : (numberOfStarters - 1) % 9)) {
+            success = this.setCursor(this.cursor + 1);
+          } else {
+            // RIGHT from filtered Pokemon, on the right edge
+            if (onScreenCurrentRow === 0) {
+              // from the first row of starters we go to the random selection
+              this.cursorObj.setVisible(false);
+              this.showRandomCursor();
+            } else if (this.starterSpecies.length === 0) {
+              // no selected starter in team > wrap around to the first column
+              success = this.setCursor(this.cursor - Math.min(8, this.cursor % 9));
+            } else if (onScreenCurrentRow < 7) {
+              // at least one pokemon in team > for the first 7 rows, go to closest starter
+              this.cursorObj.setVisible(false);
+              this.starterIconsCursorIndex = findClosestStarterIndex(this.cursorObj.y - 1, this.starterSpecies.length);
+              this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+            } else {
+              // at least one pokemon in team > from the bottom 2 rows, go to start run button
+              this.cursorObj.setVisible(false);
+              this.setNoSpecies();
+              this.startCursorObj.setVisible(true);
+            }
+            success = true;
+          }
+          break;
       }
     }
 
@@ -2598,6 +2586,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     this.filterBar.updateFilterLabels();
 
+    this.filteredStarterIds = [];
+
     // filter
     this.allStarterSpecies.forEach(species => {
       // Exclude starters which are not valid for the challenge
@@ -2718,8 +2708,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
       // HA Filter
       const speciesHasHiddenAbility =
-        species.abilityHidden !== species.ability1
-        && species.abilityHidden !== AbilityId.NONE;
+        species.abilityHidden !== species.ability1 && species.abilityHidden !== AbilityId.NONE;
       const hasHA = starterData.abilityAttr & AbilityAttr.ABILITY_HIDDEN;
       const fitsHA = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
         if (misc.val === "HIDDEN_ABILITY" && misc.state === DropDownState.ON) {
@@ -2787,8 +2776,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           return (a - b) * -sort.dir;
         case SortCriteria.COST:
           return (
-            (globalScene.gameData.getSpeciesStarterValue(a) - globalScene.gameData.getSpeciesStarterValue(b)) *
-            -sort.dir
+            (globalScene.gameData.getSpeciesStarterValue(a) - globalScene.gameData.getSpeciesStarterValue(b))
+            * -sort.dir
           );
         case SortCriteria.CANDY: {
           const candyCountA = globalScene.gameData.starterData[a].candyCount;
@@ -2825,10 +2814,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     this.starterSelectScrollBar.setScrollCursor(this.scrollCursor);
 
-    // biome-ignore-start lint/nursery/useIterableCallbackReturn: benign
     this.pokerusCursorObjs.forEach(cursor => cursor.setVisible(false));
     this.starterCursorObjs.forEach(cursor => cursor.setVisible(false));
-    // biome-ignore-end lint/nursery/useIterableCallbackReturn: benign
 
     let pokerusCursorIndex = 0;
     this.starterContainers.forEach((container, i) => {

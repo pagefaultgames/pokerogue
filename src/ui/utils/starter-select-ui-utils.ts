@@ -41,8 +41,8 @@ export function isPassiveAvailable(speciesId: number): boolean {
   const starterData = globalScene.gameData.starterData[speciesId];
 
   return (
-    starterData.candyCount >= getPassiveCandyCount(speciesStarterCosts[speciesId]) &&
-    !(starterData.passiveAttr & Passive.UNLOCKED)
+    starterData.candyCount >= getPassiveCandyCount(speciesStarterCosts[speciesId])
+    && !(starterData.passiveAttr & Passive.UNLOCKED)
   );
 }
 
@@ -56,9 +56,8 @@ export function isValueReductionAvailable(speciesId: number): boolean {
   const starterData = globalScene.gameData.starterData[speciesId];
 
   return (
-    starterData.candyCount >=
-      getValueReductionCandyCounts(speciesStarterCosts[speciesId])[starterData.valueReduction] &&
-    starterData.valueReduction < VALUE_REDUCTION_MAX
+    starterData.candyCount >= getValueReductionCandyCounts(speciesStarterCosts[speciesId])[starterData.valueReduction]
+    && starterData.valueReduction < VALUE_REDUCTION_MAX
   );
 }
 
@@ -265,8 +264,8 @@ export function getDexAttrFromPreferences(speciesId: number, starterPreferences:
    *  If neither of these pass, we add DexAttr.MALE to our temp props
    */
   if (
-    starterPreferences[speciesId]?.female ||
-    ((caughtAttr & DexAttr.FEMALE) > 0n && (caughtAttr & DexAttr.MALE) === 0n)
+    starterPreferences[speciesId]?.female
+    || ((caughtAttr & DexAttr.FEMALE) > 0n && (caughtAttr & DexAttr.MALE) === 0n)
   ) {
     props += DexAttr.FEMALE;
   } else {
@@ -276,8 +275,8 @@ export function getDexAttrFromPreferences(speciesId: number, starterPreferences:
    * If they're not there, it enables shiny state by default if any shiny was caught
    */
   if (
-    starterPreferences[speciesId]?.shiny ||
-    ((caughtAttr & DexAttr.SHINY) > 0n && starterPreferences[speciesId]?.shiny !== false)
+    starterPreferences[speciesId]?.shiny
+    || ((caughtAttr & DexAttr.SHINY) > 0n && starterPreferences[speciesId]?.shiny !== false)
   ) {
     props += DexAttr.SHINY;
     if (starterPreferences[speciesId]?.variant !== undefined) {
@@ -333,9 +332,9 @@ export function getSpeciesDetailsFromPreferences(species: PokemonSpecies, starte
     formIndex: props.formIndex,
     female: props.female,
     variant: props.variant,
-    abilityIndex: abilityIndex,
+    abilityIndex,
     natureIndex: nature,
-    teraType: teraType,
+    teraType,
   };
 }
 
