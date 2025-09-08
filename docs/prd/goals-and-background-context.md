@@ -1,22 +1,21 @@
 # Goals and Background Context
 
 ## Goals
-Based on your Project Brief, here are the key desired outcomes this PRD will deliver:
-
-• **Complete AO-Native Game Engine Migration** - Achieve 100% functional parity with current PokéRogue on AO processes with zero game mechanics lost
-• **Establish Permanent Save System** - Eliminate save corruption and enable cross-device gameplay through AO process persistence  
-• **Enable Autonomous Agent Integration** - Create first UI-agnostic roguelike where AI agents can participate as first-class players
-• **Demonstrate AO Gaming Feasibility** - Prove complex game logic can operate effectively on AO protocol at scale
-• **Build Decentralized Gaming Foundation** - Remove centralized server dependencies while maintaining player experience
-• **Create Open Source Reference** - Establish reproducible workflow for AO game development that other projects can adopt
+- Transform PokéRogue into a high-performance, cache-optimized game engine using Entity-Component-System architecture
+- Achieve 10x performance improvements through SIMD vectorization and data-oriented design patterns
+- Create the world's first decentralized roguelike optimized for autonomous agent participation on Arweave AO
+- Establish a greenfield foundation that eliminates all legacy architectural technical debt
+- Enable massive scalability through cache-efficient component processing and parallel system execution
+- Demonstrate cutting-edge ECS patterns that can serve as reference architecture for future games
 
 ## Background Context
 
-This PRD addresses the fundamental limitation that PokéRogue, as a browser-dependent centralized game, excludes the growing ecosystem of autonomous AI agents from participation. The current architecture creates fragile save systems (15-20% of players lose progress), requires centralized servers, and prevents the emerging market of 500+ AO agent developers from building gaming integrations.
+PokéRogue represents a revolutionary leap from traditional object-oriented game architecture to a pure Entity-Component-System implementation optimized for the Arweave AO protocol. This greenfield approach eliminates the constraints of legacy migration, enabling the implementation of cutting-edge performance optimizations including SIMD vectorization, cache-friendly memory layouts, and data-oriented design patterns.
 
-The migration strategy leverages AO's turn-based message-passing architecture to solve these problems through a three-phase approach: first migrating game mechanics to AO handlers for permanent storage and reliability, then integrating the existing UI through AOConnect, and finally enabling AI agents to participate alongside human players in a truly decentralized PVPVE environment.
+The ECS HyperBeam architecture addresses fundamental performance bottlenecks in traditional game engines by treating data and behavior as separate concerns, allowing for unprecedented optimization opportunities. This approach enables the game to process thousands of entities simultaneously while maintaining real-time responsiveness, positioning PokéRogue as the first truly performance-optimized decentralized game.
 
 ## Change Log
+
 | Date | Version | Description | Author |
-|------|---------|-------------|--------|
-| 2025-08-26 | 1.0 | Initial PRD creation based on Project Brief | John (PM Agent) |
+|------|---------|-------------|---------|
+| 2025-09-08 | 1.0.0 | Initial ECS HyperBeam PRD for greenfield architecture | Product Manager |

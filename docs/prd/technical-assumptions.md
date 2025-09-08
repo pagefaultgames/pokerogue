@@ -1,54 +1,45 @@
 # Technical Assumptions
 
 ## Repository Structure: Monorepo
-Single repository approach with organized directories maintaining clean separation:
-- `/typescript/` - Existing PokéRogue TypeScript/Phaser codebase
-- `/lua/` - AO process Lua handler implementations
-- `/bridge/` - AOConnect integration layer for Phase 2
-- `/tests/` - Parity testing between TypeScript and Lua implementations
-- No shared code folders - each implementation remains completely independent
-- Unified repository enables coordinated development while maintaining codebase isolation
+Single repository approach for coordinated HyperBeam migration:
+- `/devices/` - Rust WASM device implementations (battle, stats, evolution, etc.)
+- `/shared/` - Shared Rust types and traits across devices  
+- `/hyperbeam-process/` - HyperBeam process configuration and state management
+- `/arweave-data/` - Pokemon species, moves, and items data for external storage
+- `/typescript-reference/` - Current implementation for parity testing
 
 ## Service Architecture
-**Phase 1: Single Comprehensive AO Process**
-- All game logic consolidated into one AO process for MVP simplicity
-- Handler specialization within single process (battle, state, queries)
-- Internal message routing for different game operations
-- Architecture designed for potential multi-process expansion in later phases
+**Single HyperBeam Process + Distributed WASM Devices**
+- HyperBeam process maintains ECS world state (entities, components, player sessions)
+- Rust WASM devices handle game logic (battle resolution, stat calculation, evolution)  
+- External Arweave storage provides Pokemon species, moves, and items data
+- Device routing and message orchestration managed by HyperBeam
+- 95% bundle size reduction through external data references
 
-**Rationale:** Single process reduces deployment complexity and ensures atomic game state management while proving AO feasibility for complex games.
+**Rationale:** HyperBeam-native architecture eliminates multi-process complexity while enabling modular Rust device development for type-safe game logic.
 
-## Testing Requirements: Full Testing Pyramid
-**Critical Requirement:** Comprehensive testing to ensure zero functionality loss during migration
-- **Parity Testing:** Automated comparison of TypeScript vs Lua battle outcomes
-- **Integration Testing:** AOConnect bridge functionality and message handling
-- **Load Testing:** AO process performance under concurrent game load
-- **End-to-End Testing:** Complete game runs from start to champion victory
-- **Agent Integration Testing:** Autonomous agent message protocol validation
+## Testing Requirements: Migration Parity Validation
+**Critical Requirement:** 100% functional parity with existing TypeScript implementation
+- **Parity Testing:** Automated comparison of TypeScript vs Rust device outcomes for identical inputs
+- **Device Testing:** Unit testing of individual Rust WASM devices with TypeScript reference validation
+- **Integration Testing:** HyperBeam process coordination with device routing and external data fetching
+- **End-to-End Testing:** Complete game scenarios comparing TypeScript vs HyperBeam implementations
 
 ## Additional Technical Assumptions and Requests
 
-**Core Language and Framework:**
-- **Backend:** Lua 5.3 for AO process handler implementation using AO's native `Handlers.add()` pattern
-- **Frontend Bridge:** Continue using existing Phaser.js with TypeScript, integrated via `@permaweb/aoconnect`
-- **Message Protocol:** AO's native message-passing system for all game interactions
+**Core Architecture:**
+- **HyperBeam Process:** Single ECS world state manager with HTTP server and device routing
+- **Rust WASM Devices:** Stateless, type-safe computational units for game logic (~pokemon-stats@1.0, ~battle-engine@1.0, etc.)
+- **External Data Storage:** Arweave transactions for Pokemon species, moves, and items databases (2MB+ data moved external)
+- **Device Communication:** HyperBeam message routing to appropriate devices based on action type
 
-**Development Environment:**
-- **Local AO Emulation:** Required for development and testing workflow
-- **Handler Debugging:** AO process logging and message trace analysis capabilities
-- **Cross-Platform Development:** Support for contributors on different operating systems
-
-**Data Management:**
-- **State Persistence:** Automatic through AO process storage on Arweave (no additional database required)
-- **Message Serialization:** JSON format for complex game objects and state transfers
-- **Deterministic RNG:** Reproducible random number generation for consistent gameplay across process instances
+**Migration Approach:**
+- **TypeScript Reference:** Preserve existing implementation for parity validation
+- **Rust Device Logic:** Migrate battle calculations, stat computations, evolution logic to type-safe Rust
+- **External Data Migration:** Move static game data to Arweave for bundle size optimization
+- **State Synchronization:** ECS entity state managed by HyperBeam with device-computed updates
 
 **Performance Requirements:**
-- **Handler Optimization:** Lua code optimized for AO runtime constraints
-- **Message Efficiency:** Minimize message size and frequency for optimal network performance
-- **State Query Optimization:** Efficient game state retrieval for UI synchronization
-
-**AO Protocol Compliance:**
-- **Documentation Protocol:** Mandatory `Info` handler and discoverable handler specifications
-- **Handler Discoverability:** All game operations must be queryable through AO documentation protocol
-- **Process Metadata:** Version tracking and capability information for agent integration
+- **Bundle Size:** <500KB HyperBeam process through external data references  
+- **Parity Validation:** Zero functional differences between TypeScript and Rust implementations
+- **Response Time:** Battle turns complete within existing game performance expectations

@@ -1,9 +1,7 @@
 # Next Steps
 
-## UX Expert Prompt
-"Create comprehensive UI/UX specifications for PokéRogue's AO migration based on this PRD, focusing on AOConnect integration patterns that maintain existing player experience while enabling agent spectating and cross-device continuity."
+## Architect Prompt
+Please review this HyperBeam migration PRD and create the detailed technical architecture for migrating PokéRogue to HyperBeam AO processes with Rust WASM devices, ensuring 100% functional parity with the existing TypeScript implementation while achieving <500KB bundle size through external data storage.
 
-## Architect Prompt  
-"Design the technical architecture for migrating PokéRogue to AO protocol using this PRD, starting with Epic 1's AO process foundation and security patterns, ensuring all 27 game systems can be implemented with zero functionality loss and full autonomous agent support."
-
----
+## Development Team Prompt  
+Begin Epic 1 implementation by establishing the HyperBeam process foundation, ECS world state management, and automated parity testing framework against the preserved TypeScript reference implementation.
