@@ -24,9 +24,9 @@ import {
   TmModifierType,
 } from "#modifiers/modifier-type";
 import { BattlePhase } from "#phases/battle-phase";
-import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
-import { SHOP_OPTIONS_ROW_LIMIT } from "#ui/modifier-select-ui-handler";
-import { PartyOption, PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import type { ModifierSelectUiHandler } from "#ui/handlers/modifier-select-ui-handler";
+import { SHOP_OPTIONS_ROW_LIMIT } from "#ui/handlers/modifier-select-ui-handler";
+import { PartyOption, PartyUiHandler, PartyUiMode } from "#ui/handlers/party-ui-handler";
 import { isNullOrUndefined, NumberHolder } from "#utils/common";
 import i18next from "i18next";
 

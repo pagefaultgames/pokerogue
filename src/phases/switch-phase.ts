@@ -3,7 +3,7 @@ import { DynamicPhaseType } from "#enums/dynamic-phase-type";
 import { SwitchType } from "#enums/switch-type";
 import { UiMode } from "#enums/ui-mode";
 import { BattlePhase } from "#phases/battle-phase";
-import { PartyOption, PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import { PartyOption, PartyUiHandler, PartyUiMode } from "#ui/handlers/party-ui-handler";
 
 /**
  * Opens the party selector UI and transitions into a {@linkcode SwitchSummonPhase}
