@@ -249,6 +249,26 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
   }
 
   /**
+   * Submethod of {@linkcode processInput} to handle left/right input for changing option values
+   *
+   * @remarks
+   * If the cursor is positioned on a boundary option, will apply clamping / wrapping as appropriate
+   * @param cursor - Current cursor position in the settings menu
+   * @param dir - Direction to pan when scrolling, -1 for left, 1 for right
+   * @returns `true` if the action associated with the button was successfully processed, `false` otherwise.
+   */
+  private processLeftRightInput(cursor: number, dir: -1 | 1): boolean {
+    let boundaryAction = Phaser.Math.Wrap;
+    let upperBound = this.optionValueLabels[cursor].length;
+    if (this.settings[cursor]?.clamp) {
+      boundaryAction = Phaser.Math.Clamp;
+      // clamping is right inclusive; wrapping isn't
+      upperBound -= 1;
+    }
+    return this.setOptionCursor(cursor, boundaryAction(this.optionCursors[cursor] + dir, 0, upperBound), true);
+  }
+
+  /**
    * Processes input from a specified button.
    * This method handles navigation through a UI menu, including movement through menu items
    * and handling special actions like cancellation. Each button press may adjust the cursor
@@ -269,8 +289,6 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
       // Reverts UI to its previous state on cancel.
       globalScene.ui.revertMode();
     } else {
-      /** Direction to pan when scrolling, -1 for left, 1 for right */
-      let dir: -1 | 1 = 1;
       const cursor = this.cursor + this.scrollCursor;
       switch (button) {
         case Button.UP:
@@ -306,20 +324,12 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
             success = successA && successB; // Indicates a successful cursor and scroll adjustment.
           }
           break;
-        // biome-ignore lint/suspicious/noFallthroughSwitchClause: intentional
         case Button.LEFT:
-          dir = -1;
-        case Button.RIGHT: {
-          let boundaryAction = Phaser.Math.Wrap;
-          let upperBound = this.optionValueLabels[cursor].length;
-          if (this.settings[cursor]?.clamp) {
-            boundaryAction = Phaser.Math.Clamp;
-            // clamping is right inclusive; wrapping isn't
-            upperBound -= 1;
-          }
-          success = this.setOptionCursor(cursor, boundaryAction(this.optionCursors[cursor] + dir, 0, upperBound), true);
+          success = this.processLeftRightInput(cursor, -1);
           break;
-        }
+        case Button.RIGHT:
+          success = this.processLeftRightInput(cursor, 1);
+          break;
         case Button.CYCLE_FORM:
         case Button.CYCLE_SHINY:
           success = this.navigationContainer.navigate(button);
