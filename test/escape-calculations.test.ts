@@ -7,6 +7,7 @@ import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
+// TODO: These tests are stupid and need to be redone
 describe("Escape chance calculations", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;

@@ -38,7 +38,7 @@ describe("Moves - Friend Guard", () => {
     const [player1, player2] = game.scene.getPlayerField();
     const spy = vi.spyOn(player1, "getAttackDamage");
 
-    const enemy1 = game.scene.getEnemyField()[0];
+    const enemy1 = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.SPLASH);
     game.move.select(MoveId.SPLASH, 1);

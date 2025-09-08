@@ -160,11 +160,7 @@ describe("Moves - Destiny Bond", () => {
     game.override.moveset([MoveId.DESTINY_BOND, MoveId.CRUNCH]).battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.SHEDINJA, SpeciesId.BULBASAUR, SpeciesId.SQUIRTLE]);
 
-    const enemyPokemon0 = game.scene.getEnemyField()[0];
-    const enemyPokemon1 = game.scene.getEnemyField()[1];
-    const playerPokemon0 = game.scene.getPlayerField()[0];
-    const playerPokemon1 = game.scene.getPlayerField()[1];
-
+    const [enemyPokemon0, enemyPokemon1, playerPokemon0, playerPokemon1] = game.scene.getField();
     // Shedinja uses Destiny Bond, then ally Bulbasaur KO's Shedinja with Crunch
     game.move.select(MoveId.DESTINY_BOND, 0);
     game.move.select(MoveId.CRUNCH, 1, BattlerIndex.PLAYER);
