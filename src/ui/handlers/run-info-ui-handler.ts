@@ -706,8 +706,7 @@ export class RunInfoUiHandler extends UiHandler {
             typeTextColor
             + typeShadowColor
             + i18next.t(`pokemonInfo:type.${toCamelCase(typeRule)}`)!
-            + "[/color]"
-            + "[/shadow]";
+            + "[/color][/shadow]";
           rules.push(typeText);
           break;
         }

@@ -782,9 +782,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     let formKey = this.species?.forms.length > 0 ? this.species.forms[this.formIndex].formKey : "";
     this.isFormGender = formKey === "male" || formKey === "female";
     if (
-      this.isFormGender &&
-      ((this.savedStarterAttributes.female === true && formKey === "male") ||
-        (this.savedStarterAttributes.female === false && formKey === "female"))
+      this.isFormGender
+      && ((this.savedStarterAttributes.female === true && formKey === "male")
+        || (this.savedStarterAttributes.female === false && formKey === "female"))
     ) {
       this.formIndex = (this.formIndex + 1) % 2;
       formKey = this.species.forms[this.formIndex].formKey;
@@ -803,9 +803,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
       // If this form has a specific set of moves, we get them.
       this.levelMoves =
-        formIndex > 0 &&
-        pokemonFormLevelMoves.hasOwnProperty(species.speciesId) &&
-        pokemonFormLevelMoves[species.speciesId].hasOwnProperty(formIndex)
+        formIndex > 0
+        && pokemonFormLevelMoves.hasOwnProperty(species.speciesId)
+        && pokemonFormLevelMoves[species.speciesId].hasOwnProperty(formIndex)
           ? pokemonFormLevelMoves[species.speciesId][formIndex]
           : pokemonSpeciesLevelMoves[species.speciesId];
       this.ability1 = form.ability1;
@@ -879,13 +879,13 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         : [];
       this.prevolutions = preEvolutions.filter(
         e =>
-          e.speciesId === species.speciesId &&
-          (((e.evoFormKey === "" || e.evoFormKey === null) && // This takes care of Cosplay Pikachu (Pichu is not shown)
-            (preSpecies.forms.some(form => form.formKey === species.forms[formIndex]?.formKey) || // This takes care of Gholdengo
-              (preSpecies.forms.length > 0 && species.forms.length === 0) || // This takes care of everything else
-              (preSpecies.forms.length === 0 &&
-                (species.forms.length === 0 || species.forms[formIndex]?.formKey === "")))) || // This takes care of Burmy, Shellos etc
-            e.evoFormKey === species.forms[formIndex]?.formKey),
+          e.speciesId === species.speciesId
+          && (((e.evoFormKey === "" || e.evoFormKey === null) // This takes care of Cosplay Pikachu (Pichu is not shown)
+            && (preSpecies.forms.some(form => form.formKey === species.forms[formIndex]?.formKey) // This takes care of Gholdengo
+              || (preSpecies.forms.length > 0 && species.forms.length === 0) // This takes care of everything else
+              || (preSpecies.forms.length === 0
+                && (species.forms.length === 0 || species.forms[formIndex]?.formKey === "")))) // This takes care of Burmy, Shellos etc
+            || e.evoFormKey === species.forms[formIndex]?.formKey),
       );
     }
 
@@ -1037,9 +1037,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       !!(hasShiny && caughtAttr & DexAttr.VARIANT_3),
     ];
     if (
-      starterAttributes.variant === undefined ||
-      Number.isNaN(starterAttributes.variant) ||
-      starterAttributes.variant < 0
+      starterAttributes.variant === undefined
+      || Number.isNaN(starterAttributes.variant)
+      || starterAttributes.variant < 0
     ) {
       starterAttributes.variant = 0;
     } else if (!this.unlockedVariants[starterAttributes.variant]) {
@@ -1055,8 +1055,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
     if (starterAttributes.female !== undefined) {
       if (
-        (starterAttributes.female && !(caughtAttr & DexAttr.FEMALE)) ||
-        (!starterAttributes.female && !(caughtAttr & DexAttr.MALE))
+        (starterAttributes.female && !(caughtAttr & DexAttr.FEMALE))
+        || (!starterAttributes.female && !(caughtAttr & DexAttr.MALE))
       ) {
         starterAttributes.female = !starterAttributes.female;
       }
@@ -1575,9 +1575,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 const options: any[] = [];
 
                 if (
-                  (!this.prevolutions || this.prevolutions?.length === 0) &&
-                  (!this.evolutions || this.evolutions?.length === 0) &&
-                  (!this.battleForms || this.battleForms?.length === 0)
+                  (!this.prevolutions || this.prevolutions?.length === 0)
+                  && (!this.evolutions || this.evolutions?.length === 0)
+                  && (!this.battleForms || this.battleForms?.length === 0)
                 ) {
                   ui.showText(i18next.t("pokedexUiHandler:noEvolutions"));
                   ui.playError();
@@ -2292,8 +2292,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     const starterData = globalScene.gameData.starterData[this.starterId];
 
     return (
-      starterData.candyCount >= getPassiveCandyCount(speciesStarterCosts[this.starterId]) &&
-      !(starterData.passiveAttr & PassiveAttr.UNLOCKED)
+      starterData.candyCount >= getPassiveCandyCount(speciesStarterCosts[this.starterId])
+      && !(starterData.passiveAttr & PassiveAttr.UNLOCKED)
     );
   }
 
@@ -2306,9 +2306,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     const starterData = globalScene.gameData.starterData[this.starterId];
 
     return (
-      starterData.candyCount >=
-        getValueReductionCandyCounts(speciesStarterCosts[this.starterId])[starterData.valueReduction] &&
-      starterData.valueReduction < valueReductionMax
+      starterData.candyCount
+        >= getValueReductionCandyCounts(speciesStarterCosts[this.starterId])[starterData.valueReduction]
+      && starterData.valueReduction < valueReductionMax
     );
   }
 
@@ -2424,11 +2424,11 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     // We will only update the sprite if there is a change to form, shiny/variant
     // or gender for species with gender sprite differences
     const shouldUpdateSprite =
-      (species?.genderDiffs && !isNullOrUndefined(female)) ||
-      !isNullOrUndefined(formIndex) ||
-      !isNullOrUndefined(shiny) ||
-      !isNullOrUndefined(variant) ||
-      forceUpdate;
+      (species?.genderDiffs && !isNullOrUndefined(female))
+      || !isNullOrUndefined(formIndex)
+      || !isNullOrUndefined(shiny)
+      || !isNullOrUndefined(variant)
+      || forceUpdate;
 
     if (this.activeTooltip === "CANDY") {
       if (this.species && this.pokemonCandyContainer.visible) {
@@ -2740,9 +2740,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     let props = 0n;
     const species = allSpecies.find(sp => sp.speciesId === speciesId);
     const caughtAttr =
-      globalScene.gameData.dexData[speciesId].caughtAttr &
-      globalScene.gameData.dexData[this.getStarterSpeciesId(speciesId)].caughtAttr &
-      (species?.getFullUnlocksData() ?? 0n);
+      globalScene.gameData.dexData[speciesId].caughtAttr
+      & globalScene.gameData.dexData[this.getStarterSpeciesId(speciesId)].caughtAttr
+      & (species?.getFullUnlocksData() ?? 0n);
 
     /*  this checks the gender of the pokemon; this works by checking a) that the starter preferences for the species exist, and if so, is it female. If so, it'll add DexAttr.FEMALE to our temp props
      *  It then checks b) if the caughtAttr for the pokemon is female and NOT male - this means that the ONLY gender we've gotten is female, and we need to add DexAttr.FEMALE to our temp props
@@ -2757,8 +2757,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
      * If they're not there, it enables shiny state by default if any shiny was caught
      */
     if (
-      this.starterAttributes?.shiny ||
-      ((caughtAttr & DexAttr.SHINY) > 0n && this.starterAttributes?.shiny !== false)
+      this.starterAttributes?.shiny
+      || ((caughtAttr & DexAttr.SHINY) > 0n && this.starterAttributes?.shiny !== false)
     ) {
       props += DexAttr.SHINY;
       if (this.starterAttributes?.variant !== undefined) {
