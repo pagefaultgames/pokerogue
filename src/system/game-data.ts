@@ -167,7 +167,7 @@ export interface StarterMoveData {
   [key: number]: StarterMoveset | StarterFormMoveData;
 }
 
-export interface StarterAttributes {
+export interface StarterPreferences {
   nature?: number;
   ability?: number;
   variant?: number;
@@ -2102,6 +2102,20 @@ export class GameData {
     ret |= attr & DexAttr.MALE || !(attr & DexAttr.FEMALE) ? DexAttr.MALE : DexAttr.FEMALE;
     ret |= this.getFormAttr(this.getFormIndex(attr));
     return ret;
+  }
+
+  getSpeciesDefaultDexAttrProps(): DexAttrProps {
+    const shiny = false;
+    const female = false;
+    const variant = 0;
+    const formIndex = 0;
+
+    return {
+      shiny,
+      female,
+      variant,
+      formIndex,
+    };
   }
 
   getSpeciesDexAttrProps(_species: PokemonSpecies, dexAttr: bigint): DexAttrProps {

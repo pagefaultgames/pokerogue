@@ -3,7 +3,7 @@ import type { InputsController } from "#app/inputs-controller";
 import { Button } from "#enums/buttons";
 import { UiMode } from "#enums/ui-mode";
 import { Setting, SettingKeys, settingIndex } from "#system/settings";
-import { PokedexPageUiHandler } from "#ui/containers/pokedex-page-ui-handler";
+import { PokedexPageUiHandler } from "#ui/handlers/pokedex-page-ui-handler";
 import type { MessageUiHandler } from "#ui/handlers/message-ui-handler";
 import { PokedexUiHandler } from "#ui/handlers/pokedex-ui-handler";
 import { RunInfoUiHandler } from "#ui/handlers/run-info-ui-handler";
