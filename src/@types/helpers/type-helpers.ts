@@ -36,15 +36,18 @@ export type Mutable<T> = {
 
 /**
  * Type helper to obtain the keys associated with a given value inside an object.
+ * Acts similar to {@linkcode Pick}, except checking the object's values instead of its keys.
  * @typeParam O - The type of the object
- * @typeParam V - The type of one of O's values
+ * @typeParam V - The type of one of O's values.
  */
-export type InferKeys<O extends object, V extends ObjectValues<O>> = {
-  [K in keyof O]: O[K] extends V ? K : never;
-}[keyof O];
+export type InferKeys<O extends object, V> = V extends ObjectValues<O>
+  ? {
+      [K in keyof O]: O[K] extends V ? K : never;
+    }[keyof O]
+  : never;
 
 /**
- * Utility type to obtain the values of a given object. \
+ * Utility type to obtain a union of the values of a given object. \
  * Functions similar to `keyof E`, except producing the values instead of the keys.
  * @remarks
  * This can be used to convert an `enum` interface produced by `typeof Enum` into the union type representing its members.

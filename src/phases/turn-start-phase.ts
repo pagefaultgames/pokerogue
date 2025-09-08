@@ -20,6 +20,7 @@ export class TurnStartPhase extends FieldPhase {
    * Helper method to retrieve the current speed order of the combattants.
    * It also checks for Trick Room and reverses the array if it is present.
    * @returns The {@linkcode BattlerIndex}es of all on-field Pokemon, sorted in speed order.
+   * @todo Make this private
    */
   getSpeedOrder(): BattlerIndex[] {
     const playerField = globalScene.getPlayerField().filter(p => p.isActive());
@@ -71,7 +72,7 @@ export class TurnStartPhase extends FieldPhase {
       applyAbAttrs("PreventBypassSpeedChanceAbAttr", {
         pokemon: p,
         bypass: bypassSpeed,
-        canCheckHeldItems: canCheckHeldItems,
+        canCheckHeldItems,
       });
       if (canCheckHeldItems.value) {
         globalScene.applyModifiers(BypassSpeedChanceModifier, p.isPlayer(), p, bypassSpeed);
@@ -178,12 +179,11 @@ export class TurnStartPhase extends FieldPhase {
     // https://www.smogon.com/forums/threads/sword-shield-battle-mechanics-research.3655528/page-64#post-9244179
 
     phaseManager.pushNew("WeatherEffectPhase");
+    phaseManager.pushNew("PositionalTagPhase");
     phaseManager.pushNew("BerryPhase");
 
-    /** Add a new phase to check who should be taking status damage */
     phaseManager.pushNew("CheckStatusEffectPhase", moveOrder);
 
-    phaseManager.pushNew("PositionalTagPhase");
     phaseManager.pushNew("TurnEndPhase");
 
     /*
@@ -226,8 +226,8 @@ export class TurnStartPhase extends FieldPhase {
 
     // TODO: This seems somewhat dubious
     const move =
-      pokemon.getMoveset().find(m => m.moveId === queuedMove.move && m.ppUsed < m.getMovePp()) ??
-      new PokemonMove(queuedMove.move);
+      pokemon.getMoveset().find(m => m.moveId === queuedMove.move && m.ppUsed < m.getMovePp())
+      ?? new PokemonMove(queuedMove.move);
 
     if (move.getMove().hasAttr("MoveHeaderAttr")) {
       globalScene.phaseManager.unshiftNew("MoveHeaderPhase", pokemon, move);

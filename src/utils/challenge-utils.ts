@@ -1,3 +1,5 @@
+// biome-ignore-all lint/style/useUnifiedTypeSignatures: Rule does not allow stuff with JSDoc comments
+
 import type { FixedBattleConfig } from "#app/battle";
 import { globalScene } from "#app/global-scene";
 import { pokemonEvolutions } from "#balance/pokemon-evolutions";
@@ -10,7 +12,8 @@ import type { MoveSourceType } from "#enums/move-source-type";
 import type { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
-import type { DexAttrProps } from "#system/game-data";
+import type { DexAttrProps, StarterDataEntry } from "#system/game-data";
+import type { DexEntry } from "#types/dex-data";
 import { BooleanHolder, type NumberHolder } from "./common";
 import { getPokemonSpecies } from "./pokemon-utils";
 
@@ -46,6 +49,20 @@ export function applyChallenges(
   challengeType: ChallengeType.STARTER_COST,
   species: SpeciesId,
   cost: NumberHolder,
+): boolean;
+/**
+ * Apply all challenges that modify selectable starter data.
+ * @param challengeType {@link ChallengeType} ChallengeType.STARTER_SELECT_MODIFY
+ * @param speciesId {@link SpeciesId} The speciesId of the pokemon
+ * @param dexEntry {@link DexEntry} The pokedex data associated to the pokemon.
+ * @param starterDataEntry {@link StarterDataEntry} The starter data associated to the pokemon.
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.STARTER_SELECT_MODIFY,
+  speciesId: SpeciesId,
+  dexEntry: DexEntry,
+  starterDataEntry: StarterDataEntry,
 ): boolean;
 /**
  * Apply all challenges that modify a starter after selection.
@@ -269,6 +286,9 @@ export function applyChallenges(challengeType: ChallengeType, ...args: any[]): b
         case ChallengeType.STARTER_COST:
           ret ||= c.applyStarterCost(args[0], args[1]);
           break;
+        case ChallengeType.STARTER_SELECT_MODIFY:
+          ret ||= c.applyStarterSelectModify(args[0], args[1], args[2]);
+          break;
         case ChallengeType.STARTER_MODIFY:
           ret ||= c.applyStarterModify(args[0]);
           break;
@@ -348,7 +368,7 @@ export function checkStarterValidForChallenge(species: PokemonSpecies, props: De
   }
   // We check the validity of every evolution and form change, and require that at least one is valid
   const speciesToCheck = [species.speciesId];
-  while (speciesToCheck.length) {
+  while (speciesToCheck.length > 0) {
     const checking = speciesToCheck.pop();
     // Linter complains if we don't handle this
     if (!checking) {

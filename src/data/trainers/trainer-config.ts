@@ -140,8 +140,8 @@ export class TrainerConfig {
     this.victoryBgm = "victory_trainer";
     this.partyTemplates = [trainerPartyTemplates.TWO_AVG];
     this.speciesFilter = species =>
-      (allowLegendaries || (!species.legendary && !species.subLegendary && !species.mythical)) &&
-      !species.isTrainerForbidden();
+      (allowLegendaries || (!species.legendary && !species.subLegendary && !species.mythical))
+      && !species.isTrainerForbidden();
   }
 
   getKey(): string {
@@ -816,8 +816,8 @@ export class TrainerConfig {
       if (this.nameFemale) {
         // Check if the variant is either female or this is for the partner in a double battle
         if (
-          variant === TrainerVariant.FEMALE ||
-          (variant === TrainerVariant.DOUBLE && trainerSlot === TrainerSlot.TRAINER_PARTNER)
+          variant === TrainerVariant.FEMALE
+          || (variant === TrainerVariant.DOUBLE && trainerSlot === TrainerSlot.TRAINER_PARTNER)
         ) {
           return this.nameFemale;
         }
@@ -1088,8 +1088,8 @@ export const trainerConfigs: TrainerConfigs = {
       s =>
         [s.ability1, s.ability2, s.abilityHidden].some(
           a =>
-            !!a &&
-            [
+            !!a
+            && [
               AbilityId.WHITE_SMOKE,
               AbilityId.GLUTTONY,
               AbilityId.HONEY_GATHER,
@@ -1102,8 +1102,8 @@ export const trainerConfigs: TrainerConfigs = {
               AbilityId.SUPERSWEET_SYRUP,
               AbilityId.HOSPITALITY,
             ].includes(a),
-        ) ||
-        s
+        )
+        || s
           .getLevelMoves()
           .some(plm =>
             [MoveId.SOFT_BOILED, MoveId.SPORE, MoveId.MILK_DRINK, MoveId.OVERHEAT, MoveId.TEATIME].includes(plm[1]),
@@ -1346,11 +1346,12 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.RARE]: [
         SpeciesId.YANMA,
         SpeciesId.NINJASK,
-        SpeciesId.WHIRLIPEDE,
+        SpeciesId.VENIPEDE,
         SpeciesId.EMOLGA,
         SpeciesId.SKIDDO,
+        SpeciesId.ROLYCOLY,
       ],
-      [TrainerPoolTier.SUPER_RARE]: [SpeciesId.ACCELGOR, SpeciesId.DREEPY],
+      [TrainerPoolTier.SUPER_RARE]: [SpeciesId.SHELMET, SpeciesId.DREEPY],
     }),
   [TrainerType.DANCER]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.55)
@@ -1396,7 +1397,6 @@ export const trainerConfigs: TrainerConfigs = {
       trainerPartyTemplates.ONE_AVG,
       trainerPartyTemplates.THREE_WEAK_SAME,
       trainerPartyTemplates.ONE_STRONG,
-      trainerPartyTemplates.SIX_WEAKER,
     )
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [
@@ -1510,7 +1510,6 @@ export const trainerConfigs: TrainerConfigs = {
     .setMoneyMultiplier(1.1)
     .setEncounterBgm(TrainerType.POKEFAN)
     .setPartyTemplates(
-      trainerPartyTemplates.FOUR_WEAKER,
       trainerPartyTemplates.THREE_WEAK,
       trainerPartyTemplates.TWO_WEAK_ONE_AVG,
       trainerPartyTemplates.TWO_AVG,
@@ -1550,7 +1549,7 @@ export const trainerConfigs: TrainerConfigs = {
       ],
       [TrainerPoolTier.UNCOMMON]: [SpeciesId.HOUNDOUR, SpeciesId.ROCKRUFF, SpeciesId.MASCHIFF],
       [TrainerPoolTier.RARE]: [SpeciesId.JOLTEON, SpeciesId.RIOLU],
-      [TrainerPoolTier.SUPER_RARE]: [],
+      [TrainerPoolTier.SUPER_RARE]: [SpeciesId.SLAKOTH],
       [TrainerPoolTier.ULTRA_RARE]: [SpeciesId.ENTEI, SpeciesId.SUICUNE, SpeciesId.RAIKOU],
     }),
   [TrainerType.PARASOL_LADY]: new TrainerConfig(++t)
@@ -1567,8 +1566,8 @@ export const trainerConfigs: TrainerConfigs = {
       s =>
         [s.ability1, s.ability2, s.abilityHidden].some(
           a =>
-            !!a &&
-            [
+            !!a
+            && [
               AbilityId.DRIZZLE,
               AbilityId.SWIFT_SWIM,
               AbilityId.HYDRATION,
@@ -1595,13 +1594,10 @@ export const trainerConfigs: TrainerConfigs = {
     .setHasDouble("Pokéfan Family")
     .setEncounterBgm(TrainerType.POKEFAN)
     .setPartyTemplates(
-      trainerPartyTemplates.SIX_WEAKER,
       trainerPartyTemplates.FOUR_WEAK,
       trainerPartyTemplates.TWO_AVG,
       trainerPartyTemplates.ONE_STRONG,
-      trainerPartyTemplates.FOUR_WEAK_SAME,
       trainerPartyTemplates.FIVE_WEAK,
-      trainerPartyTemplates.SIX_WEAKER_SAME,
     )
     .setSpeciesFilter(s => tmSpecies[MoveId.HELPING_HAND].indexOf(s.speciesId) > -1),
   [TrainerType.PRESCHOOLER]: new TrainerConfig(++t)
@@ -1609,12 +1605,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.YOUNGSTER)
     .setHasGenders("Preschooler Female", "lass")
     .setHasDouble("Preschoolers")
-    .setPartyTemplates(
-      trainerPartyTemplates.THREE_WEAK,
-      trainerPartyTemplates.FOUR_WEAKER,
-      trainerPartyTemplates.TWO_WEAK_SAME_ONE_AVG,
-      trainerPartyTemplates.FIVE_WEAKER,
-    )
+    .setPartyTemplates(trainerPartyTemplates.THREE_WEAK, trainerPartyTemplates.TWO_WEAK_SAME_ONE_AVG)
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [
         SpeciesId.CATERPIE,
@@ -1748,11 +1739,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setHasGenders("Lady")
     .setHasDouble("Rich Kids")
     .setEncounterBgm(TrainerType.RICH)
-    .setPartyTemplates(
-      trainerPartyTemplates.FOUR_WEAKER,
-      trainerPartyTemplates.THREE_WEAK_SAME,
-      trainerPartyTemplates.TWO_WEAK_SAME_ONE_AVG,
-    )
+    .setPartyTemplates(trainerPartyTemplates.THREE_WEAK_SAME, trainerPartyTemplates.TWO_WEAK_SAME_ONE_AVG)
     .setSpeciesFilter(s => s.baseTotal <= 460),
   [TrainerType.ROUGHNECK]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.4)
@@ -1866,6 +1853,7 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.METAPOD,
         SpeciesId.LEDYBA,
         SpeciesId.CLEFFA,
+        SpeciesId.MAREEP,
         SpeciesId.WOOPER,
         SpeciesId.TEDDIURSA,
         SpeciesId.REMORAID,
@@ -1877,6 +1865,7 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.BONSLY,
         SpeciesId.PETILIL,
         SpeciesId.SPRITZEE,
+        SpeciesId.BOUNSWEET,
         SpeciesId.MILCERY,
         SpeciesId.PICHU,
       ]),
@@ -1888,6 +1877,7 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.KAKUNA,
           SpeciesId.SPINARAK,
           SpeciesId.IGGLYBUFF,
+          SpeciesId.MAREEP,
           SpeciesId.PALDEA_WOOPER,
           SpeciesId.PHANPY,
           SpeciesId.MANTYKE,
@@ -1899,6 +1889,7 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.MIME_JR,
           SpeciesId.COTTONEE,
           SpeciesId.SWIRLIX,
+          SpeciesId.FOMANTIS,
           SpeciesId.FIDOUGH,
           SpeciesId.EEVEE,
         ],
@@ -3836,7 +3827,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
       }),
     )
-    .setInstantTera(2), // Tera Fire Arcanine, Tera Grass Exeggutor, Tera Water Gyarados
+    .setInstantTera(1), // Tera Fire Arcanine, Tera Grass Exeggutor, Tera Water Gyarados
   [TrainerType.RED]: new TrainerConfig(++t)
     .initForChampion(true)
     .setBattleBgm("battle_johto_champion")
@@ -4025,19 +4016,14 @@ export const trainerConfigs: TrainerConfigs = {
     .setBattleBgm("battle_sinnoh_champion")
     .setMixedBattleBgm("battle_sinnoh_champion")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.SPIRITOMB]))
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.MILOTIC, SpeciesId.ROSERADE, SpeciesId.HISUI_ARCANINE]))
     .setPartyMemberFunc(
-      1,
-      getRandomPartyMemberFunc(
-        [SpeciesId.MILOTIC, SpeciesId.ROSERADE, SpeciesId.HISUI_ARCANINE],
-        TrainerSlot.TRAINER,
-        true,
-        p => {
-          p.generateAndPopulateMoveset();
-          p.teraType = p.species.type1;
-        },
-      ),
+      2,
+      getRandomPartyMemberFunc([SpeciesId.TOGEKISS], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+        p.teraType = p.species.type1;
+      }),
     )
-    .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.TOGEKISS]))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.LUCARIO]))
     .setPartyMemberFunc(
       4,
@@ -4056,7 +4042,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
       }),
     )
-    .setInstantTera(1), // Tera Water Milotic / Grass Roserade / Fire Hisuian Arcanine
+    .setInstantTera(2), // Tera Fairy Togekiss
   [TrainerType.ALDER]: new TrainerConfig(++t)
     .initForChampion(true)
     .setHasDouble("alder_iris_double")
@@ -4656,9 +4642,9 @@ export const trainerConfigs: TrainerConfigs = {
       2,
       getSpeciesFilterRandomPartyMemberFunc(
         (species: PokemonSpecies) =>
-          !pokemonEvolutions.hasOwnProperty(species.speciesId) &&
-          !pokemonPrevolutions.hasOwnProperty(species.speciesId) &&
-          species.baseTotal >= 450,
+          !pokemonEvolutions.hasOwnProperty(species.speciesId)
+          && !pokemonPrevolutions.hasOwnProperty(species.speciesId)
+          && species.baseTotal >= 450,
       ),
     ),
   [TrainerType.RIVAL_3]: new TrainerConfig(++t)
@@ -4731,9 +4717,9 @@ export const trainerConfigs: TrainerConfigs = {
       2,
       getSpeciesFilterRandomPartyMemberFunc(
         (species: PokemonSpecies) =>
-          !pokemonEvolutions.hasOwnProperty(species.speciesId) &&
-          !pokemonPrevolutions.hasOwnProperty(species.speciesId) &&
-          species.baseTotal >= 450,
+          !pokemonEvolutions.hasOwnProperty(species.speciesId)
+          && !pokemonPrevolutions.hasOwnProperty(species.speciesId)
+          && species.baseTotal >= 450,
       ),
     )
     .setSpeciesFilter(species => species.baseTotal >= 540),
@@ -4812,9 +4798,9 @@ export const trainerConfigs: TrainerConfigs = {
       2,
       getSpeciesFilterRandomPartyMemberFunc(
         (species: PokemonSpecies) =>
-          !pokemonEvolutions.hasOwnProperty(species.speciesId) &&
-          !pokemonPrevolutions.hasOwnProperty(species.speciesId) &&
-          species.baseTotal >= 450,
+          !pokemonEvolutions.hasOwnProperty(species.speciesId)
+          && !pokemonPrevolutions.hasOwnProperty(species.speciesId)
+          && species.baseTotal >= 450,
       ),
     )
     .setSpeciesFilter(species => species.baseTotal >= 540)
@@ -4894,9 +4880,9 @@ export const trainerConfigs: TrainerConfigs = {
       2,
       getSpeciesFilterRandomPartyMemberFunc(
         (species: PokemonSpecies) =>
-          !pokemonEvolutions.hasOwnProperty(species.speciesId) &&
-          !pokemonPrevolutions.hasOwnProperty(species.speciesId) &&
-          species.baseTotal >= 450,
+          !pokemonEvolutions.hasOwnProperty(species.speciesId)
+          && !pokemonPrevolutions.hasOwnProperty(species.speciesId)
+          && species.baseTotal >= 450,
       ),
     )
     .setSpeciesFilter(species => species.baseTotal >= 540)
@@ -4990,9 +4976,9 @@ export const trainerConfigs: TrainerConfigs = {
       2,
       getSpeciesFilterRandomPartyMemberFunc(
         (species: PokemonSpecies) =>
-          !pokemonEvolutions.hasOwnProperty(species.speciesId) &&
-          !pokemonPrevolutions.hasOwnProperty(species.speciesId) &&
-          species.baseTotal >= 450,
+          !pokemonEvolutions.hasOwnProperty(species.speciesId)
+          && !pokemonPrevolutions.hasOwnProperty(species.speciesId)
+          && species.baseTotal >= 450,
       ),
     )
     .setSpeciesFilter(species => species.baseTotal >= 540)
@@ -5809,7 +5795,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.generateName();
       }),
     )
-    .setInstantTera(3), // Tera Fairy Sylveon
+    .setInstantTera(4), // Tera Fairy Sylveon
   [TrainerType.PENNY_2]: new TrainerConfig(++t)
     .setName("Cassiopeia")
     .initForEvilTeamLeader("Star Boss", [], true)

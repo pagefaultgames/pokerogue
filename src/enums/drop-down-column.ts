@@ -5,5 +5,5 @@ export enum DropDownColumn {
   CAUGHT,
   UNLOCKS,
   MISC,
-  SORT
+  SORT,
 }

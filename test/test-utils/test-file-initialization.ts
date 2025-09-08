@@ -3,7 +3,7 @@ import { initializeGame } from "#app/init/init";
 import { initI18n } from "#plugins/i18n";
 import { blobToString } from "#test/test-utils/game-manager-utils";
 import { manageListeners } from "#test/test-utils/listeners-manager";
-import { MockConsoleLog } from "#test/test-utils/mocks/mock-console-log";
+import { MockConsole } from "#test/test-utils/mocks/mock-console/mock-console";
 import { mockContext } from "#test/test-utils/mocks/mock-context-canvas";
 import { mockLocalStorage } from "#test/test-utils/mocks/mock-local-storage";
 import { MockImage } from "#test/test-utils/mocks/mocks-container/mock-image";
@@ -38,14 +38,22 @@ function initTestFile(): void {
 /**
  * Setup various stubs for testing.
  * @todo Move this into a dedicated stub file instead of running it once per test instance
+ * @todo review these to see which are actually necessary
  * @todo Investigate why this resets on new test suite start
  */
 function setupStubs(): void {
-  Object.defineProperty(window, "localStorage", {
-    value: mockLocalStorage(),
-  });
-  Object.defineProperty(window, "console", {
-    value: new MockConsoleLog(false),
+  Object.defineProperties(global, {
+    localStorage: {
+      value: mockLocalStorage(),
+    },
+    console: {
+      value: new MockConsole(),
+    },
+    matchMedia: {
+      value: () => ({
+        matches: false,
+      }),
+    },
   });
   Object.defineProperty(document, "fonts", {
     writable: true,
@@ -68,11 +76,6 @@ function setupStubs(): void {
   };
   navigator.getGamepads = () => [];
   setCookie(SESSION_ID_COOKIE_NAME, "fake_token");
-
-  window.matchMedia = () =>
-    ({
-      matches: false,
-    }) as any;
 
   /**
    * Sets this object's position relative to another object with a given offset
