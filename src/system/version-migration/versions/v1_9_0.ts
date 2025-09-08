@@ -22,9 +22,9 @@ const migratePartyData: SessionSaveMigrator = {
       pkmnData.summonData.moveset &&= pkmnData.summonData.moveset.filter(m => !!m).map(m => PokemonMove.loadMove(m));
 
       if (
-        pkmnData.customPokemonData &&
-        "hitsRecCount" in pkmnData.customPokemonData &&
-        typeof pkmnData.customPokemonData["hitsRecCount"] === "number"
+        pkmnData.customPokemonData
+        && "hitsRecCount" in pkmnData.customPokemonData
+        && typeof pkmnData.customPokemonData["hitsRecCount"] === "number"
       ) {
         // transfer old hit count stat to battleData.
         pkmnData.battleData.hitCount = pkmnData.customPokemonData["hitsRecCount"];
