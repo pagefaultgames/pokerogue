@@ -1,0 +1,7 @@
+# ECS Processes Directory
+This directory contains AO process implementations for the ECS architecture.
+
+## Structure:
+- game-engine/: Core ECS game process
+- persistence/: Entity persistence and state management
+- monitoring/: System health and performance monitoring

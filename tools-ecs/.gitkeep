@@ -1,0 +1,7 @@
+# ECS Development Tools Directory  
+This directory contains development tools for the ECS HyperBeam architecture.
+
+## Structure:
+- inspector/: Entity and component debugging tools
+- profiler/: Performance analysis and optimization tools
+- builder/: Component and system authoring tools

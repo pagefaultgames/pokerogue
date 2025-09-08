@@ -1,0 +1,51 @@
+{
+  "timestamp": "2025-09-05T20:54:26.415Z",
+  "totalDeploymentTime": 282226,
+  "processCount": 6,
+  "successful": 0,
+  "failed": 0,
+  "processes": {
+    "coordinator": {
+      "processName": "coordinator",
+      "processId": "TP9oGe2eoVezJwdsX2BM-G5rfsaIoeGMlmIopBd5ybM",
+      "status": "UNHEALTHY",
+      "deploymentTime": 3827,
+      "timestamp": "2025-09-05T20:49:48.015Z"
+    },
+    "admin": {
+      "processName": "admin",
+      "processId": "O7AOPI__kXGhgxV-pKbJrDYF5WCmXRPcsj3b0FV6AdE",
+      "status": "UNHEALTHY",
+      "deploymentTime": 4278,
+      "timestamp": "2025-09-05T20:49:55.295Z"
+    },
+    "security": {
+      "processName": "security",
+      "processId": "74I9f0JlCSFRe65y34WSYtPTOXIdDUsdCuDcgpkOsXY",
+      "status": "UNHEALTHY",
+      "deploymentTime": 5501,
+      "timestamp": "2025-09-05T20:50:04.731Z"
+    },
+    "battle": {
+      "processName": "battle",
+      "processId": "9_WB2yREOQOYlRHWAN19pSGAovSBYl_1nel0Jae4l2w",
+      "status": "UNHEALTHY",
+      "deploymentTime": 9017,
+      "timestamp": "2025-09-05T20:50:17.572Z"
+    },
+    "pokemon": {
+      "processName": "pokemon",
+      "processId": "hshqeGII_sVxPDY_n9T6aXRDfc--7diychjOV7SzhgM",
+      "status": "UNHEALTHY",
+      "deploymentTime": 6209,
+      "timestamp": "2025-09-05T20:50:27.617Z"
+    },
+    "economy": {
+      "processName": "economy",
+      "processId": "VUCGiON7MbeSHs3cFz1rUeC_BRLn6bWhTOij_bkzoqM",
+      "status": "UNHEALTHY",
+      "deploymentTime": 233543,
+      "timestamp": "2025-09-05T20:54:25.206Z"
+    }
+  }
+}

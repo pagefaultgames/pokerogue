@@ -1,0 +1,52 @@
+Bundle Bloat Analysis Report
+Generated: Mon Sep  8 12:59:01 EDT 2025
+=========================================
+
+Bundle Size Summary:
+-------------------
+admin-process.lua:   296171 bytes,     8266 lines
+battle-process-core.lua:  1036683 bytes,    28426 lines
+battle-process-data.lua:       94 bytes,        3 lines
+battle-process.lua:  1036589 bytes,    28423 lines
+coordinator-process.lua:   197057 bytes,     5649 lines
+economy-process.lua:   431713 bytes,    13262 lines
+pokemon-process-core.lua:   735246 bytes,    20523 lines
+pokemon-process-data.lua:       95 bytes,        3 lines
+pokemon-process.lua:   735151 bytes,    20520 lines
+security-process.lua:   264857 bytes,     7218 lines
+Total: 10 files, 4733656 bytes
+
+Duplicate Module Analysis:
+-------------------------
+=== admin-process.lua ===
+Top duplicate modules:
+  — game-logic.process-coordination.message-correlator
+  — game-logic.process-coordination.process-authenticator
+  — game-logic.process-coordination.message-router
+  — admin.components.alert-manager
+  — admin.components.log-aggregator
+  — game-logic.rng.crypto-rng
+  — game-logic.process-coordination.performance-monitor
+  — admin.components.performance-aggregator
+  — admin.components.maintenance-coordinator
+  — admin.components.health-monitor
+ðŸ“ˆ Duplication Impact: 42 duplicate inclusions
+
+=== battle-process-core.lua ===
+Top duplicate modules:
+  — game-logic.rng.battle-rng
+  — game-logic.battle.field-conditions
+  — game-logic.battle.side-effects
+  — game-logic.battle.weather-abilities
+  — battle.components.battle-state-manager
+  — game-logic.battle.battle-conditions
+  — battle.components.concurrent-battle-manager
+  — game-logic.pokemon.status-effects
+  — game-logic.items.berry-effects-processor
+  — data.battle.weather-data
+ðŸ“ˆ Duplication Impact: 81 duplicate inclusions
+
+=== battle-process-data.lua ===
+Top duplicate modules:
+Size Optimization Recommendations:
+==================================

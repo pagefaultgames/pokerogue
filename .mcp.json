@@ -11,6 +11,10 @@
     "harlequin-toolkit Docs": {
       "type": "sse",
       "url": "https://gitmcp.io/the-permaweb-harlequin/harlequin-toolkit"
+    },
+    "aos-local Docs": {
+      "type": "sse",
+      "url": "https://gitmcp.io/twilson63/aos-local"
     }
   }
 }

@@ -3,18 +3,23 @@
 This file contains information and commands for Claude to help with development tasks.
 
 ## Project Information
-- Project: PokéRogue
+- Project: PokéRogue ECS HyperBeam
+- Architecture: Greenfield Entity-Component-System
 - Main branch: beta
-- Current branch: beta
+- Current branch: epic34
 
 ## Development Commands
+### ECS Development
+- Build ECS: `npm run build:ecs`
+- Test ECS: `npm run test:ecs`
+- Start ECS dev: `npm run dev:ecs`
+- ECS lint: `npm run lint:ecs`
+
+### Legacy Commands (Archived)
 - Build: `npm run build`
 - Test: `npm test`
 - Lint: `npm run lint`
 - Type check: `npm run typecheck`
-- Start development server: `npm run start`
-- Update progress checklist: `./scripts/update-progress-checklist.sh`
-- Test AO processes: `./scripts/test-ao-processes.sh`
 
 ## MCP Servers Available
 The following MCP servers are configured and available through the Model Context Protocol:
@@ -154,8 +159,11 @@ The following MCP servers are configured and available through the Model Context
 - **Decentralized Development**: Use harlequin-toolkit docs for building on the Permaweb
 
 ## Notes
-- This is a Phaser-based Pokemon battle game
-- Uses TypeScript
+- **Project Status**: Greenfield ECS HyperBeam architecture
+- **Architecture**: Entity-Component-System with data-oriented design
+- **Performance**: SIMD vectorization and cache optimization targets
+- **Platform**: Arweave AO with decentralized persistence
+- **Legacy Archive**: Previous implementation archived in `archive/` directory
 - MCP servers provide additional capabilities for memory management and documentation access
 
 ## Automated README Updates

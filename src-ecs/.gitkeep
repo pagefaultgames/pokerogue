@@ -1,0 +1,10 @@
+# ECS Source Directory
+This directory contains the core ECS HyperBeam architecture implementation.
+
+## Structure:
+- core/: ECS foundation (entities, components, systems)
+- components/: Game-specific components
+- systems/: Game logic systems
+- entities/: Entity templates and factories
+- events/: ECS event system
+- utils/: ECS utilities and helpers

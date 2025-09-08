@@ -1,72 +1,56 @@
-# PokéRogue AO Migration - Complete Architecture Document
+# PokéRogue ECS HyperBeam Architecture
 
-## Introduction
+## Overview
 
-This document outlines the overall project architecture for **PokéRogue AO Migration**, including backend systems, shared services, and non-UI specific concerns. Its primary goal is to serve as the guiding architectural blueprint for AI-driven development, ensuring consistency and adherence to chosen patterns and technologies.
-
-**Relationship to Frontend Architecture:**
-Phase 2 of this project will include a significant user interface through AOConnect integration with the existing Phaser.js frontend. A separate Frontend Architecture Document will detail the frontend-specific design and MUST be used in conjunction with this document. Core technology stack choices documented herein (see "Tech Stack") are definitive for the entire project, including any frontend components.
-
-### Starter Template or Existing Project
-
-**Finding: Existing Codebase Migration Project**
-
-This project is **not** using a starter template but rather migrating an **existing sophisticated codebase**:
-
-- **Source:** Current PokéRogue v1.10.4 with ~200+ TypeScript files implementing complex roguelike mechanics
-- **Architecture:** Phaser.js game engine with extensive battle systems, creature management, and progression mechanics  
-- **Constraints:** Must achieve **100% functional parity** with existing TypeScript implementation
-- **Migration Approach:** TypeScript-to-Lua conversion for all game logic while preserving exact behavior
-
-**Existing Project Analysis:**
-- **Technology Stack:** TypeScript, Phaser.js, Vite build system, Vitest testing
-- **Game Complexity:** Battle system, status effects, type effectiveness, move mechanics, progression systems
-- **Data Models:** Pokemon species/forms, moves, abilities, trainers, biomes, items, save systems
-- **Architecture Patterns:** Phase-based game loop, event-driven systems, state management
-- **Limitation:** No manual setup required - existing codebase provides complete reference implementation
-
-This significantly impacts our architectural decisions as we must ensure exact behavioral parity rather than greenfield design flexibility.
+PokéRogue implements a greenfield Entity-Component-System (ECS) architecture optimized for high-performance game processing on the Arweave AO platform. The HyperBeam engine leverages data-oriented design patterns, SIMD vectorization, and cache-optimized memory layouts to achieve unprecedented performance in decentralized gaming.
 
 ### Change Log
 
 | Date | Version | Description | Author |
 |------|---------|-------------|---------|
 | 2025-01-26 | 1.0.0 | Initial architecture document | Architect Agent |
+| 2025-01-26 | 2.0.0 | **MAJOR ARCHITECTURE REVISION**: HyperBEAM + Rust WASM Devices | Architect Agent |
+| 2025-09-08 | 3.0.0 | **GREENFIELD ECS HYPERBEAM ARCHITECTURE**: Complete project reset | Product Owner |
 
 ## High Level Architecture
 
 ### Technical Summary
 
-The PokéRogue AO migration employs a **monolithic single-process architecture** running entirely on AO handlers, transforming the existing object-oriented TypeScript codebase into a functional message-driven Lua system. The architecture prioritizes **100% behavioral parity** with the current implementation while enabling autonomous agent participation through AO's message-passing protocol. Core architectural patterns include handler-based game state management, deterministic battle resolution through seeded RNG systems, and comprehensive state persistence via AO process memory, directly supporting the PRD's goal of creating the world's first fully UI-agnostic roguelike where AI agents battle as first-class citizens.
+The PokéRogue AO migration employs a **HyperBEAM-native ECS architecture** with Rust WASM devices, transforming the existing object-oriented TypeScript codebase into a distributed Entity-Component-System running on the AO network. The architecture prioritizes **100% behavioral parity** with the current implementation while achieving **95% bundle size reduction** through external data references and enabling autonomous agent participation through rich device-based interfaces. Core architectural patterns include HyperBEAM process state management, Rust WASM device-based game logic, deterministic battle resolution through seeded RNG systems, and external data storage via Arweave references, directly supporting the PRD's goal of creating the world's first fully UI-agnostic roguelike where AI agents battle as first-class citizens.
 
 ### High Level Overview
 
-**Architectural Style:** **AO-Native Monolithic Handler System**
-- Single comprehensive AO process containing all game logic as specialized Lua handlers
-- Message-driven architecture replacing object-oriented event systems
-- Functional programming patterns replacing class inheritance hierarchies
+**Architectural Style:** **HyperBEAM Entity-Component-System with Rust WASM Devices**
+- Single HyperBEAM process managing ECS world state with external data references
+- Rust WASM devices implementing game logic as stateless, type-safe computational units
+- Entity-Component-System architecture replacing object-oriented patterns
+- External data storage on Arweave eliminating bundle size constraints
 
 **Repository Structure:** **Monorepo** (from PRD Technical Assumptions)
-- `/ao-processes/` - Lua handlers and AO process logic  
+- `/devices/` - Rust WASM device implementations (battle, stats, evolution, etc.)
+- `/shared/` - Shared Rust types and traits across devices
+- `/hyperbeam-process/` - HyperBEAM process configuration and state management
+- `/arweave-data/` - Pokemon species, moves, and items data for external storage
 - `/typescript-reference/` - Current implementation for parity testing
-- `/shared-schemas/` - JSON message formats and type definitions
 
-**Service Architecture:** **Single Process with Handler Specialization**
-- All game mechanics consolidated in one AO process for reference integrity
-- Specialized handlers for: battles, state queries, progression, inventory management
-- Future multi-process expansion supported through message protocol design
+**Service Architecture:** **Single HyperBEAM Process + Distributed WASM Devices**
+- HyperBEAM process maintains ECS world state (entities, components, player sessions)
+- Rust WASM devices handle game logic (battle resolution, stat calculation, evolution)
+- External Arweave storage provides Pokemon species, moves, and items data
+- Device routing and message orchestration managed by HyperBEAM
 
-**Primary Data Flow:** **Player → AO Messages → Handler → State Update → Response**
-1. Players/agents send battle commands via AO messages
-2. Specialized handlers process game logic (battle resolution, state changes)
-3. Process state updates atomically
-4. Responses sent back with battle results and updated state
+**Primary Data Flow:** **Player → HTTP → HyperBEAM Process → Device Router → WASM Device + Arweave Data → Response**
+1. Players/agents send HTTP requests to HyperBEAM process
+2. Process routes messages to appropriate Rust WASM devices based on action
+3. Devices fetch external data from Arweave and execute game logic
+4. Process applies state updates and sends responses back via HTTP
 
 **Key Architectural Decisions:**
-- **Functional Over OOP:** Lua tables with behavior functions replace TypeScript classes
-- **Message-Driven:** AO messages replace Phaser.js event system
-- **Atomic State:** AO process memory ensures consistent game state
-- **Deterministic Logic:** Battle seed system preserved for exact behavior matching
+- **ECS Over OOP:** Entity-Component-System architecture with external data references
+- **WASM Devices:** Rust-compiled devices for type-safe, performant game logic
+- **External Data:** Arweave storage eliminates bundle bloat (95% size reduction)
+- **HyperBEAM Native:** Single process with device routing vs. multi-process complexity
+- **Agent-First:** Rich query interfaces designed for autonomous agent participation
 
 ### High Level Project Diagram
 
@@ -74,75 +58,90 @@ The PokéRogue AO migration employs a **monolithic single-process architecture**
 graph TB
     subgraph "Player Interfaces"
         P1[Human Players<br/>Phase 2: AOConnect UI]
-        P2[AI Agents<br/>Phase 3: Direct AO Messages]
+        P2[AI Agents<br/>Phase 3: HTTP API]
     end
     
-    subgraph "AO Process: PokéRogue Game Engine"
-        H1[Battle Handler<br/>Turn resolution, damage calc]
-        H2[State Handler<br/>Save/load, progression]
-        H3[Query Handler<br/>Game state requests]
-        H4[Admin Handler<br/>Process info, discovery]
-        
-        STATE[(Game State<br/>Players, Pokemon, Progress)]
+    subgraph "HyperBEAM Process: Pokemon ECS World (~200KB)"
+        HTTP[HTTP Server<br/>~relay@1.0 device]
+        PROC[Process State<br/>ECS World + Sessions]
+        ROUTER[Message Router<br/>Device orchestration]
     end
     
-    subgraph "External Systems"
-        AR[Arweave<br/>Permanent Storage]
-        TEST[Test Suite<br/>Parity Validation]
+    subgraph "Rust WASM Devices (Stateless Logic)"
+        D1[~pokemon-stats@1.0<br/>Stats calculation]
+        D2[~battle-engine@1.0<br/>Damage + effects]
+        D3[~evolution-system@1.0<br/>Evolution logic]
+        D4[~query-handler@1.0<br/>Agent queries]
+        D5[~arweave-species@1.0<br/>Species data fetching]
     end
     
-    P1 --> H1
-    P1 --> H2
-    P1 --> H3
-    P2 --> H1
-    P2 --> H2
-    P2 --> H3
+    subgraph "External Data Storage (Arweave)"
+        AR1[Species Database<br/>900+ Pokemon (~2MB)]
+        AR2[Moves Database<br/>800+ moves (~1.5MB)]
+        AR3[Items Database<br/>All items (~800KB)]
+        AR4[Type Chart<br/>Effectiveness data]
+    end
     
-    H1 --> STATE
-    H2 --> STATE
-    H3 --> STATE
-    H4 --> STATE
+    P1 --> HTTP
+    P2 --> HTTP
+    HTTP --> ROUTER
+    ROUTER --> PROC
     
-    STATE --> AR
-    TEST --> H1
-    TEST --> H2
+    ROUTER --> D1
+    ROUTER --> D2 
+    ROUTER --> D3
+    ROUTER --> D4
+    ROUTER --> D5
+    
+    D1 --> AR1
+    D2 --> AR1
+    D2 --> AR2
+    D3 --> AR1
+    D4 --> AR1
+    D5 --> AR1
+    D5 --> AR2
+    D5 --> AR3
+    D5 --> AR4
 ```
 
 ### Architectural and Design Patterns
 
-- **AO Message-Handler Pattern:** All game interactions through `Handlers.add()` with specialized message types - _Rationale:_ Replaces OOP method calls with functional message processing, enabling agent participation
+- **Entity-Component-System (ECS) Pattern:** Entities as lightweight IDs, Components as data tables, Systems as Rust WASM devices - _Rationale:_ Perfect separation of state and logic, enabling external data references and modular device development
 
-- **Functional State Management:** Game state as Lua tables with pure transformation functions - _Rationale:_ Eliminates class inheritance complexity while maintaining state consistency  
+- **HyperBEAM Device Routing:** HTTP requests routed to appropriate Rust WASM devices based on action type - _Rationale:_ Single process coordination with specialized device logic, eliminating multi-process complexity
 
-- **Deterministic Battle Resolution:** Seeded RNG system using battle-specific seeds for reproducible outcomes - _Rationale:_ Ensures exact parity with TypeScript implementation and enables battle replay/verification
+- **External Data References:** Pokemon species, moves, and items stored on Arweave with transaction ID references - _Rationale:_ 95% bundle size reduction while maintaining unlimited data capability
 
-- **Handler Specialization Pattern:** Single process with domain-specific handlers (Battle, State, Query) - _Rationale:_ Maintains reference integrity while organizing complex game logic
+- **Rust WASM Device Pattern:** Stateless, type-safe computational units compiled to WebAssembly - _Rationale:_ Performance, safety, and maintainability for complex Pokemon battle calculations
 
-- **Atomic State Transactions:** All game state changes processed as complete units - _Rationale:_ Prevents partial state corruption and ensures consistent game progression
+- **Deterministic Battle Resolution:** Seeded RNG system preserved across device calls for reproducible outcomes - _Rationale:_ Ensures exact parity with TypeScript implementation and enables battle replay/verification
 
-- **Message Protocol Abstraction:** JSON message schemas defining player/agent communication - _Rationale:_ Enables both human (Phase 2) and agent (Phase 3) interaction without architecture changes
+- **Cached External Data Access:** Frequently accessed Arweave data cached within devices for performance - _Rationale:_ Balances external data benefits with real-time battle requirements
+
+- **Agent-First Query Interfaces:** Rich, granular query capabilities designed for autonomous agents - _Rationale:_ Enables AI agents to make informed decisions with full game state visibility
 
 ## Tech Stack
 
 ### Cloud Infrastructure
-- **Provider:** Arweave Network (AO Protocol)
-- **Key Services:** AO Process hosting, Arweave permanent storage, AOConnect for Phase 2 integration
+- **Provider:** Arweave Network (AO Protocol + HyperBEAM)
+- **Key Services:** HyperBEAM process hosting, Arweave external data storage, AOConnect for Phase 2 integration
 - **Deployment Regions:** Global (decentralized AO network)
 
 ### Technology Stack Table
 
 | Category | Technology | Version | Purpose | Rationale |
 |----------|------------|---------|---------|-----------|
-| **Backend Language** | Lua | 5.3 | AO process runtime | Required by AO protocol, mature ecosystem |
-| **AO Framework** | Native AO Handlers | Latest | Message processing | Direct AO integration, optimal performance |
-| **RNG System** | AO Crypto Module | Latest | Deterministic randomness | Cryptographically secure, seedable for parity |
-| **Message Protocol** | JSON | - | Player/agent communication | AOConnect compatible, human readable |
-| **Message Validation** | Custom Lua schemas | - | Protocol validation | Type safety and error handling |
-| **State Management** | In-process Lua tables | - | Game state storage | Fast access, clear migration path |
-| **Data Storage** | Embedded Lua structures | - | Pokemon/move/item data | Self-contained, no external dependencies |
-| **Development Tools** | AO local emulation + parity tests | - | Development environment | Comprehensive validation approach |
-| **Testing Framework** | Custom Lua test harness | - | Automated validation | TypeScript comparison capability |
-| **Process Documentation** | AO Info handler | - | Agent discovery | Compliance with AO documentation protocol |
+| **Process Runtime** | HyperBEAM | Latest | Device orchestration + HTTP interface | Advanced AO implementation with device routing |
+| **Device Language** | Rust | 1.70+ | WASM device implementation | Type safety, performance, rich ecosystem |
+| **Compilation Target** | WebAssembly (WASM) | Latest | Cross-platform device execution | Fast, secure, sandboxed execution |
+| **ECS State Management** | HyperBEAM Process Memory | - | Entity-Component storage | Lightweight state with external data refs |
+| **External Data Storage** | Arweave Transactions | - | Pokemon/move/item databases | Permanent, decentralized, unlimited capacity |
+| **Data Access** | HyperBEAM Arweave Integration | Latest | External data fetching + caching | Built-in gateway client with performance optimization |
+| **Message Protocol** | JSON over HTTP | - | Player/agent communication | RESTful interface, AOConnect compatible |
+| **RNG System** | Rust + Battle Seeds | - | Deterministic randomness | Cryptographically secure, cross-device consistency |
+| **Development Tools** | Cargo + wasm-pack | Latest | Rust WASM toolchain | Industry standard Rust development |
+| **Testing Framework** | Rust + WASM testing | Latest | Device unit + integration tests | Type-safe testing with TypeScript parity validation |
+| **Agent Discovery** | HyperBEAM Info Protocol | Latest | Process + device discovery | Native AO documentation compliance |
 
 ## Data Models
 
@@ -505,7 +504,7 @@ pokerogue-ao-migration/
 │   └── reports/                          # Generated parity reports
 │
 ├── development-tools/                     # Development Infrastructure
-│   ├── ao-local-setup/                  # Local AO development environment
+│   ├── aos-local-setup/                 # Local AO development environment using aos-local
 │   ├── data-migration/                   # TypeScript to Lua data conversion
 │   └── debugging/                        # Development debugging tools
 │
@@ -533,10 +532,10 @@ pokerogue-ao-migration/
 #### Local Development Environment
 
 ```bash
-# Setup local AO emulation
-ao-emulator init --config .ao/local-config.json
-ao-emulator start --port 8080 &
-ao deploy --source ao-processes/main.lua --local
+# Setup local AO development using aos-local
+aos-local init --config .ao/local-config.json
+aos-local start --port 8080 &
+aos deploy --source ao-processes/main.lua --local
 ```
 
 #### Production Environment (AO Mainnet)
@@ -679,9 +678,9 @@ end
 
 #### End-to-End Tests
 
-**Framework:** Complete game scenario testing with full AO message simulation
+**Framework:** Complete game scenario testing with full AO message simulation using aos-local
 **Scope:** Multi-turn battles, Pokemon evolution, save/load cycles, agent interaction
-**Environment:** Local AO emulation with full process simulation
+**Environment:** Local AO development environment with aos-local process simulation
 
 ### Continuous Testing
 

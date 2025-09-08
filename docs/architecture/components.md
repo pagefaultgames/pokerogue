@@ -1,91 +1,197 @@
 # Components
 
-## Battle Resolution Handler
+## Overview
 
-**Responsibility:** Complete battle turn processing including damage calculation, status effects, stat modifications, and deterministic outcome resolution
+In the HyperBEAM + Rust WASM architecture, "components" refer to the individual Rust WASM devices that implement specific Pokemon game mechanics. Each device is a stateless, type-safe computational unit that processes messages and returns results.
 
-**Key Interfaces:**
-- `processBattleTurn(battleCommand)` - Main battle logic entry point
-- `calculateDamage(attacker, defender, move)` - Damage calculation with type effectiveness
-- `applyStatusEffects(pokemon, effects)` - Status condition application and resolution
-- `validateBattleState(battleId, expectedHash)` - Battle state consistency verification
+## Core WASM Devices
 
-**Dependencies:** 
-- Pokemon stat calculation system (from enhanced data models)
-- Move database for power, accuracy, and effect definitions
-- Type effectiveness matrix for damage multipliers
-- RNG system using AO crypto module for deterministic randomness
+### Pokemon Stats Device (~pokemon-stats@1.0)
 
-**Technology Stack:** Lua handlers with JSON message processing, AO crypto RNG for battle seeds
-
-## Pokemon State Manager
-
-**Responsibility:** Pokemon creation, stat calculation, evolution, and state persistence with mathematical precision matching TypeScript implementation
+**Responsibility:** Pokemon stat calculation with exact formula parity to TypeScript implementation
 
 **Key Interfaces:**
-- `createPokemon(speciesId, level, ivs, nature)` - Pokemon instantiation with stat calculation
-- `recalculateStats(pokemonId)` - Stat recalculation with modifier application
-- `applyStatModifiers(pokemon, modifiers)` - Precise modifier application in correct order
-- `evolvePokemon(pokemonId, evolutionId)` - Evolution processing with stat recalculation
+- `calculate_stats(pokemon_data, species_tx_id)` - Complete stat calculation from base stats through final stats
+- `apply_nature_modifiers(base_stats, nature)` - Nature-based stat modifications (1.1x/0.9x)
+- `calculate_iv_ev_contribution(level, ivs, evs)` - Individual/Effort Value contributions
+- `validate_stat_ranges(calculated_stats)` - Stat boundary validation
 
 **Dependencies:**
-- Species database for base stats and evolution trees
-- Nature system for stat multipliers (exact 0.9/1.1 values)
-- Modifier system for vitamins, items, and ability effects
-- Experience calculation for level progression
+- External Arweave species data (base stats, growth rates)
+- Nature modifier lookup tables
+- Stat calculation formulas (exact TypeScript parity)
+- Level-based calculation curves
 
-**Technology Stack:** In-process Lua tables with embedded species data, custom stat calculation matching TypeScript formulas
+**Technology Stack:** Rust + WASM, serde for JSON, HyperBEAM Arweave integration
 
-## Game State Coordinator
+### Battle Engine Device (~battle-engine@1.0)
 
-**Responsibility:** Player progression, save/load operations, cross-session state consistency, and game flow management
-
-**Key Interfaces:**
-- `saveGameState(playerId, gameData)` - Complete game state serialization
-- `loadGameState(playerId)` - Game state restoration with validation
-- `updateProgression(playerId, progressData)` - Wave advancement and unlock tracking  
-- `validateStateIntegrity(playerId)` - Save data corruption prevention
-
-**Dependencies:**
-- Player data models for progression tracking
-- Pokemon state for party and PC management
-- Item inventory for resource tracking
-- Battle history for statistics
-
-**Technology Stack:** AO process memory with JSON serialization, state validation checksums
-
-## Query Response Handler
-
-**Responsibility:** State queries for agents and UI systems, battle information retrieval, and process discovery for autonomous agents
+**Responsibility:** Complete battle turn processing including damage calculation, type effectiveness, and move effects
 
 **Key Interfaces:**
-- `queryBattleState(battleId, queryType)` - Current battle information for decision making
-- `queryPlayerState(playerId, stateType)` - Player progression and Pokemon data
-- `queryProcessInfo()` - AO documentation protocol compliance for agent discovery
-- `queryAvailableActions(battleId, playerId)` - Valid command options for current battle state
+- `execute_move(attacker, defender, move_data, battle_conditions)` - Main battle logic entry point
+- `calculate_damage(attacker_stats, defender_stats, move)` - Precise Pokemon damage formula
+- `apply_type_effectiveness(move_type, defender_types)` - Type multiplier calculation
+- `process_status_effects(pokemon, active_effects)` - Status condition resolution
+- `determine_move_priority(move_data, pokemon_speed)` - Turn order calculation
 
 **Dependencies:**
-- Battle state data for current turn information
-- Player state for party and progression queries
-- Move database for available action validation
-- Process metadata for agent discovery
+- Pokemon stat data from Stats Device
+- External Arweave move definitions (power, accuracy, effects)
+- Type effectiveness chart from external storage
+- Battle RNG system for critical hits and accuracy
+- Status effect duration tracking
 
-**Technology Stack:** Native AO handlers with JSON responses, AO documentation protocol compliance
+**Technology Stack:** Rust + WASM, battle formula implementations, deterministic RNG
 
-## Process Administration Handler
+### Evolution System Device (~evolution-system@1.0)
 
-**Responsibility:** AO documentation protocol compliance, process information, handler discovery, and agent integration support
+**Responsibility:** Pokemon evolution trigger detection and species transformation logic
 
 **Key Interfaces:**
-- `getProcessInfo()` - Process metadata and capabilities
-- `discoverHandlers()` - Available message handlers for agents
-- `getMessageSchemas()` - JSON schemas for agent development
-- `validateMessageFormat(messageType, data)` - Input validation for all handlers
+- `check_evolution_triggers(pokemon, battle_context)` - Evolution condition evaluation
+- `apply_evolution(pokemon_id, target_species)` - Species transformation processing
+- `calculate_evolved_stats(old_stats, new_base_stats, level)` - Stat recalculation post-evolution
+- `validate_evolution_conditions(pokemon, evolution_data)` - Evolution requirement checking
 
 **Dependencies:**
-- Process configuration and version information
-- Handler registry for discovery
-- Message schema definitions
-- Validation logic for all message types
+- Pokemon instance data (level, friendship, held items)
+- External Arweave evolution chain data
+- Battle context for trade/battle-triggered evolutions
+- Time-of-day data for time-dependent evolutions
 
-**Technology Stack:** AO Info handler compliance, JSON schema validation, process documentation
+**Technology Stack:** Rust + WASM, conditional logic trees, external data integration
+
+### Arweave Data Access Device (~arweave-data@1.0)
+
+**Responsibility:** External data fetching, caching, and formatting from Arweave storage
+
+**Key Interfaces:**
+- `get_species_data(species_tx_id)` - Pokemon species data retrieval with caching
+- `get_move_data(move_tx_id)` - Move definition fetching with performance optimization
+- `get_item_data(item_tx_id)` - Item effect data access
+- `batch_fetch_data(transaction_ids)` - Multi-item data retrieval optimization
+- `invalidate_cache(data_type)` - Cache management for data updates
+
+**Dependencies:**
+- HyperBEAM Arweave gateway integration
+- Local caching system for performance
+- Transaction ID resolution
+- Data validation and parsing
+
+**Technology Stack:** Rust + WASM, HTTP client integration, memory-based caching
+
+### Query Handler Device (~query-handler@1.0)
+
+**Responsibility:** Agent-friendly data formatting and aggregation for autonomous players
+
+**Key Interfaces:**
+- `format_pokemon_data(pokemon_ids, detail_level)` - Pokemon data formatting for agents
+- `get_battle_state(battle_id, perspective)` - Battle state from specific player perspective
+- `list_available_actions(pokemon_id, battle_context)` - Valid action enumeration
+- `aggregate_game_statistics(player_id, stat_types)` - Player progression summaries
+- `format_decision_data(battle_state)` - Agent decision-making data structures
+
+**Dependencies:**
+- ECS world state from HyperBEAM process
+- External reference data for enrichment
+- Battle context for action validation
+- Agent-optimized data structures
+
+**Technology Stack:** Rust + WASM, JSON formatting, data aggregation algorithms
+
+## Device Integration Patterns
+
+### Message Protocol
+
+All devices follow a standard message protocol:
+
+```rust
+#[derive(Serialize, Deserialize)]
+pub struct DeviceMessage {
+    pub action: String,           // "calculate_stats", "execute_move", etc.
+    pub entity_id: String,        // Pokemon/Battle/Player ID
+    pub data: serde_json::Value,  // Action-specific data
+    pub context: MessageContext,  // Battle state, external refs
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct DeviceResponse {
+    pub success: bool,
+    pub entity_id: String,
+    pub data: serde_json::Value,
+    pub state_updates: Vec<StateUpdate>,
+    pub error: Option<String>,
+}
+```
+
+### External Data Integration
+
+Devices access external Arweave data through standardized patterns:
+
+```rust
+// Species data access pattern
+let species_data = arweave_client
+    .get_transaction_data(&pokemon.species_tx_id)
+    .await?;
+let species: PokemonSpecies = serde_json::from_str(&species_data)?;
+
+// Move data access with caching
+let move_data = device_cache
+    .get_or_fetch("moves", &move_tx_id, || {
+        arweave_client.get_transaction_data(&move_tx_id)
+    })
+    .await?;
+```
+
+### State Update Propagation
+
+Devices return state updates that are applied by the HyperBEAM process:
+
+```rust
+// Device calculates new stats
+let new_stats = calculate_final_stats(&species, &pokemon);
+
+// Return state update for process to apply
+DeviceResponse {
+    success: true,
+    entity_id: pokemon.id,
+    state_updates: vec![
+        StateUpdate {
+            entity_id: pokemon.id,
+            component_type: "Stats".to_string(),
+            new_value: serde_json::to_value(new_stats)?,
+        }
+    ],
+    data: serde_json::to_value(calculation_result)?,
+    error: None,
+}
+```
+
+## Device Development Guidelines
+
+### Performance Optimization
+- Implement aggressive caching for frequently accessed external data
+- Use batch operations for multiple data fetches
+- Optimize WASM binary size through dead code elimination
+- Profile device execution time to maintain real-time battle performance
+
+### Type Safety
+- Leverage Rust's type system to prevent calculation errors
+- Use strong typing for Pokemon stats, move effects, and game states
+- Implement comprehensive error handling with specific error types
+- Validate all external data inputs before processing
+
+### Testing Strategy
+- Unit tests for all device functions in Rust
+- Integration tests for cross-device communication
+- WASM execution tests for compiled binary validation
+- Parity tests comparing outputs with TypeScript reference implementation
+
+### Deterministic Behavior
+- Use seeded RNG systems for reproducible battle outcomes
+- Ensure identical calculation results across device calls
+- Maintain consistency with original TypeScript implementation
+- Document all random number generation points for testing
+
+This component architecture achieves **type-safe Pokemon mechanics** while maintaining **95% bundle size reduction** through external data references and **modular device development** for easy testing and maintenance.

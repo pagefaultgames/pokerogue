@@ -45,7 +45,8 @@
     "vite": "^7.0.6",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4",
-    "vitest-canvas-mock": "^0.3.3"
+    "vitest-canvas-mock": "^0.3.3",
+    "@permaweb/loco": "^0.0.20"
   },
   "dependencies": {
     "@material/material-color-utilities": "^0.2.7",

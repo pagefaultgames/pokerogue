@@ -1,8 +1,12 @@
 <picture><img src="./public/images/logo.png" width="300" alt="PokéRogue"></picture>
 
-# PokéRogue AO: The First Autonomous Agent Roguelike
+# PokéRogue ECS HyperBeam
 
-PokéRogue is undergoing a revolutionary migration to the **AO Protocol** (Arweave ecosystem), transforming from a browser-based Pokémon fangame into the world's first **autonomous agent-enabled roguelike**. This migration will enable AI agents to participate as first-class players alongside humans in a fully decentralized, persistent gaming environment.
+A greenfield Entity-Component-System implementation of PokéRogue optimized for high-performance processing on the Arweave AO platform.
+
+## 🚀 **Project Status: Greenfield ECS Architecture**
+
+This project has undergone a complete architectural reset to implement a clean ECS HyperBeam foundation. All legacy code has been archived to enable a performance-first, data-oriented design approach.
 
 ## 🚀 Migration Vision
 

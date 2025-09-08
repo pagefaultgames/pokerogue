@@ -1,0 +1,45 @@
+{
+    "build_date": "2025-09-05T21:51:29Z",
+    "architecture": "multi-process",
+    "processes": [
+        {
+            "name": "coordinator",
+            "file": "coordinator-process.lua",
+            "size_bytes":   197057,
+            "status": "built"
+        },
+        {
+            "name": "battle",
+            "file": "battle-process.lua",
+            "size_bytes":  1045439,
+            "status": "built"
+        },
+        {
+            "name": "pokemon",
+            "file": "pokemon-process.lua",
+            "size_bytes":   741088,
+            "status": "built"
+        },
+        {
+            "name": "economy",
+            "file": "economy-process.lua",
+            "size_bytes":   431713,
+            "status": "built"
+        },
+        {
+            "name": "security",
+            "file": "security-process.lua",
+            "size_bytes":   264857,
+            "status": "built"
+        },
+        {
+            "name": "admin",
+            "file": "admin-process.lua",
+            "size_bytes":   296171,
+            "status": "built"
+        }
+    ],
+    "total_processes": 6,
+    "successful_builds": 6,
+    "failed_builds": 0
+}
