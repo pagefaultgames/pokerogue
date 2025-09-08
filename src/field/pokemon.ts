@@ -147,8 +147,8 @@ import type { IllusionData } from "#types/illusion-data";
 import type { TurnMove } from "#types/turn-move";
 import { BattleInfo } from "#ui/battle-info";
 import { EnemyBattleInfo } from "#ui/enemy-battle-info";
-import type { PartyOption } from "#ui/party-ui-handler";
-import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import type { PartyOption } from "#ui/handlers/party-ui-handler";
+import { PartyUiHandler, PartyUiMode } from "#ui/handlers/party-ui-handler";
 import { PlayerBattleInfo } from "#ui/player-battle-info";
 import { applyChallenges } from "#utils/challenge-utils";
 import {
@@ -1252,7 +1252,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     // During the Pokemon's MoveEffect phase, the offset is removed to put the Pokemon "in focus"
     const currentPhase = globalScene.phaseManager.getCurrentPhase();
-    return !(currentPhase?.is("MoveEffectPhase") && currentPhase.getPokemon() === this);
+    return !(currentPhase.is("MoveEffectPhase") && currentPhase.getPokemon() === this);
   }
 
   /** If this Pokemon has a Substitute on the field, removes its sprite from the field. */
@@ -1650,19 +1650,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getHpRatio(precise = false): number {
     return precise ? this.hp / this.getMaxHp() : Math.round((this.hp / this.getMaxHp()) * 100) / 100;
-  }
-
-  generateGender(): void {
-    if (this.species.malePercent === null) {
-      this.gender = Gender.GENDERLESS;
-    } else {
-      const genderChance = (this.id % 256) * 0.390625;
-      if (genderChance < this.species.malePercent) {
-        this.gender = Gender.MALE;
-      } else {
-        this.gender = Gender.FEMALE;
-      }
-    }
   }
 
   /**
@@ -3083,14 +3070,17 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       if (this.level < levelMove[0]) {
         break;
       }
-      let weight = levelMove[0];
+      let weight = levelMove[0] + 20;
       // Evolution Moves
-      if (weight === EVOLVE_MOVE) {
-        weight = 50;
+      if (levelMove[0] === EVOLVE_MOVE) {
+        weight = 70;
       }
       // Assume level 1 moves with 80+ BP are "move reminder" moves and bump their weight. Trainers use actual relearn moves.
-      if ((weight === 1 && allMoves[levelMove[1]].power >= 80) || (weight === RELEARN_MOVE && this.hasTrainer())) {
-        weight = 40;
+      if (
+        (levelMove[0] === 1 && allMoves[levelMove[1]].power >= 80) ||
+        (levelMove[0] === RELEARN_MOVE && this.hasTrainer())
+      ) {
+        weight = 60;
       }
       if (!movePool.some(m => m[0] === levelMove[1]) && !allMoves[levelMove[1]].name.endsWith(" (N)")) {
         movePool.push([levelMove[1], weight]);
@@ -3120,11 +3110,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         }
         if (compatible && !movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)")) {
           if (tmPoolTiers[moveId] === ModifierTier.COMMON && this.level >= 15) {
-            movePool.push([moveId, 4]);
+            movePool.push([moveId, 24]);
           } else if (tmPoolTiers[moveId] === ModifierTier.GREAT && this.level >= 30) {
-            movePool.push([moveId, 8]);
+            movePool.push([moveId, 28]);
           } else if (tmPoolTiers[moveId] === ModifierTier.ULTRA && this.level >= 50) {
-            movePool.push([moveId, 14]);
+            movePool.push([moveId, 34]);
           }
         }
       }
@@ -3134,7 +3124,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         for (let i = 0; i < 3; i++) {
           const moveId = speciesEggMoves[this.species.getRootSpeciesId()][i];
           if (!movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)")) {
-            movePool.push([moveId, 40]);
+            movePool.push([moveId, 60]);
           }
         }
         const moveId = speciesEggMoves[this.species.getRootSpeciesId()][3];
@@ -3145,13 +3135,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
           !allMoves[moveId].name.endsWith(" (N)") &&
           !this.isBoss()
         ) {
-          movePool.push([moveId, 30]);
+          movePool.push([moveId, 50]);
         }
         if (this.fusionSpecies) {
           for (let i = 0; i < 3; i++) {
             const moveId = speciesEggMoves[this.fusionSpecies.getRootSpeciesId()][i];
             if (!movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)")) {
-              movePool.push([moveId, 40]);
+              movePool.push([moveId, 60]);
             }
           }
           const moveId = speciesEggMoves[this.fusionSpecies.getRootSpeciesId()][3];
@@ -3162,7 +3152,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
             !allMoves[moveId].name.endsWith(" (N)") &&
             !this.isBoss()
           ) {
-            movePool.push([moveId, 30]);
+            movePool.push([moveId, 50]);
           }
         }
       }
@@ -4979,7 +4969,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
      */
     if (effect === StatusEffect.SLEEP || effect === StatusEffect.FREEZE) {
       const currentPhase = globalScene.phaseManager.getCurrentPhase();
-      if (currentPhase?.is("MoveEffectPhase") && currentPhase.getUserPokemon() === this) {
+      if (currentPhase.is("MoveEffectPhase") && currentPhase.getUserPokemon() === this) {
         this.turnData.hitCount = 1;
         this.turnData.hitsLeft = 1;
       }

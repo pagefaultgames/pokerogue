@@ -6,7 +6,7 @@ import { PokemonSpecies } from "#data/pokemon-species";
 import { BiomeId } from "#enums/biome-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { SpeciesId } from "#enums/species-id";
-import type { Starter } from "#ui/starter-select-ui-handler";
+import type { Starter } from "#ui/handlers/starter-select-ui-handler";
 import { isNullOrUndefined, randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
