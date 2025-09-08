@@ -34,7 +34,7 @@ describe("Mystery Encounters", () => {
     ]);
 
     await game.phaseInterceptor.to(MysteryEncounterPhase, false);
-    expect(game.scene.phaseManager.getCurrentPhase()!.constructor.name).toBe(MysteryEncounterPhase.name);
+    expect(game).toBeAtPhase("MysteryEncounterPhase");
   });
 
   it("Encounters should not run on X1 waves", async () => {

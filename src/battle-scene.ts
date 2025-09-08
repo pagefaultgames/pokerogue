@@ -121,13 +121,13 @@ import { vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import type { Localizable } from "#types/locales";
-import { AbilityBar } from "#ui/ability-bar";
-import { ArenaFlyout } from "#ui/arena-flyout";
-import { CandyBar } from "#ui/candy-bar";
-import { CharSprite } from "#ui/char-sprite";
-import { PartyExpBar } from "#ui/party-exp-bar";
-import { PokeballTray } from "#ui/pokeball-tray";
-import { PokemonInfoContainer } from "#ui/pokemon-info-container";
+import { AbilityBar } from "#ui/containers/ability-bar";
+import { ArenaFlyout } from "#ui/containers/arena-flyout";
+import { CandyBar } from "#ui/containers/candy-bar";
+import { CharSprite } from "#ui/containers/char-sprite";
+import { PartyExpBar } from "#ui/containers/party-exp-bar";
+import { PokeballTray } from "#ui/containers/pokeball-tray";
+import { PokemonInfoContainer } from "#ui/containers/pokemon-info-container";
 import { addTextObject, getTextColor } from "#ui/text";
 import { UI } from "#ui/ui";
 import { addUiThemeOverrides } from "#ui/ui-theme";
@@ -863,6 +863,8 @@ export class BattleScene extends SceneBase {
    * @param pokemonId - The ID whose Pokemon will be retrieved.
    * @returns The {@linkcode Pokemon} associated with the given id.
    * Returns `null` if the ID is `undefined` or not present in either party.
+   * @todo Change the `null` to `undefined` and update callers' signatures -
+   * this is weird and causes a lot of random jank
    */
   getPokemonById(pokemonId: number | undefined): Pokemon | null {
     if (isNullOrUndefined(pokemonId)) {
@@ -1561,9 +1563,9 @@ export class BattleScene extends SceneBase {
       return 0;
     }
 
-    const isEggPhase: boolean = ["EggLapsePhase", "EggHatchPhase"].includes(
-      this.phaseManager.getCurrentPhase()?.phaseName ?? "",
-    );
+    const isEggPhase =
+      this.phaseManager.getCurrentPhase().is("EggLapsePhase") ||
+      this.phaseManager.getCurrentPhase().is("EggHatchPhase");
 
     if (
       // Give trainers with specialty types an appropriately-typed form for Wormadam, Rotom, Arceus, Oricorio, Silvally, or Paldean Tauros.

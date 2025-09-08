@@ -147,8 +147,8 @@ import type { IllusionData } from "#types/illusion-data";
 import type { TurnMove } from "#types/turn-move";
 import { BattleInfo } from "#ui/battle-info";
 import { EnemyBattleInfo } from "#ui/enemy-battle-info";
-import type { PartyOption } from "#ui/party-ui-handler";
-import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import type { PartyOption } from "#ui/handlers/party-ui-handler";
+import { PartyUiHandler, PartyUiMode } from "#ui/handlers/party-ui-handler";
 import { PlayerBattleInfo } from "#ui/player-battle-info";
 import { applyChallenges } from "#utils/challenge-utils";
 import {
@@ -1252,7 +1252,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     // During the Pokemon's MoveEffect phase, the offset is removed to put the Pokemon "in focus"
     const currentPhase = globalScene.phaseManager.getCurrentPhase();
-    return !(currentPhase?.is("MoveEffectPhase") && currentPhase.getPokemon() === this);
+    return !(currentPhase.is("MoveEffectPhase") && currentPhase.getPokemon() === this);
   }
 
   /** If this Pokemon has a Substitute on the field, removes its sprite from the field. */
@@ -4969,7 +4969,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
      */
     if (effect === StatusEffect.SLEEP || effect === StatusEffect.FREEZE) {
       const currentPhase = globalScene.phaseManager.getCurrentPhase();
-      if (currentPhase?.is("MoveEffectPhase") && currentPhase.getUserPokemon() === this) {
+      if (currentPhase.is("MoveEffectPhase") && currentPhase.getUserPokemon() === this) {
         this.turnData.hitCount = 1;
         this.turnData.hitsLeft = 1;
       }
@@ -6580,6 +6580,7 @@ export class EnemyPokemon extends Pokemon {
                     ignoreAllyAbility: !p.getAlly()?.waveData.abilityRevealed,
                     ignoreSourceAllyAbility: false,
                     isCritical,
+                    simulated: true,
                   }).damage >= p.hp
                 );
               })

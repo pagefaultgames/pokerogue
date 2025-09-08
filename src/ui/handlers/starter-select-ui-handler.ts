@@ -45,14 +45,11 @@ import type { DexAttrProps, StarterMoveset, StarterPreferences } from "#system/g
 import { RibbonData } from "#system/ribbons/ribbon-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
-import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import { DropDownOption, DropDownLabel, DropDown, DropDownType, DropDownState, SortCriteria } from "#ui/containers/dropdown";
+import { FilterBar } from "#ui/containers/filter-bar";
+import { ScrollBar } from "#ui/containers/scroll-bar";
 import { StarterContainer } from "#ui/containers/starter-container";
-import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
-import { FilterBar } from "#ui/filter-bar";
-import { MessageUiHandler } from "#ui/message-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
-import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-handler";
-import { ScrollBar } from "#ui/scroll-bar";
 import {
   getDexAttrFromPreferences,
   getRunValueLimit,
@@ -78,6 +75,9 @@ import { getPokemonSpecies, getPokemonSpeciesForm, getPokerusStarters } from "#u
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
+import { OptionSelectItem } from "#ui/handlers/abstract-option-select-ui-handler";
+import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
+import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/handlers/pokemon-icon-anim-handler";
 
 const COLUMNS = 9;
 const ROWS = 9;
@@ -177,7 +177,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   private teraLabel: Phaser.GameObjects.Text;
   private goFilterLabel: Phaser.GameObjects.Text;
   /** Group holding the UI elements appearing in the instructionsContainer */
-  /* TODO: Uncomment this once our testing infra supports mocks of `Phaser.GameObject.Group` 
+  /* TODO: Uncomment this once our testing infra supports mocks of `Phaser.GameObject.Group`
   private instructionElemGroup: Phaser.GameObjects.Group;
   */
 

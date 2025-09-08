@@ -8,7 +8,7 @@ import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import type { StarterPreferences } from "#system/game-data";
 import { GameManager } from "#test/test-utils/game-manager";
-import { FilterTextRow } from "#ui/filter-text";
+import { FilterTextRow } from "#ui/containers/filter-text";
 import { PokedexPageUiHandler } from "#ui/handlers/pokedex-page-ui-handler";
 import { PokedexUiHandler } from "#ui/handlers/pokedex-ui-handler";
 import { getPokemonSpecies } from "#utils/pokemon-utils";

@@ -12,7 +12,7 @@ import { ModifierTypeOption } from "#modifiers/modifier-type";
 import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
-import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import { ModifierSelectUiHandler } from "#ui/handlers/modifier-select-ui-handler";
 import { shiftCharCodes } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import Phaser from "phaser";

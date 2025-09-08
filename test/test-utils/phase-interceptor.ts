@@ -1,6 +1,7 @@
 import type { BattleScene } from "#app/battle-scene";
 import { Phase } from "#app/phase";
 import { UiMode } from "#enums/ui-mode";
+import { AttemptCapturePhase } from "#phases/attempt-capture-phase";
 import { AttemptRunPhase } from "#phases/attempt-run-phase";
 import { BattleEndPhase } from "#phases/battle-end-phase";
 import { BerryPhase } from "#phases/berry-phase";
@@ -66,7 +67,7 @@ import { UnlockPhase } from "#phases/unlock-phase";
 import { VictoryPhase } from "#phases/victory-phase";
 import { ErrorInterceptor } from "#test/test-utils/error-interceptor";
 import type { PhaseClass, PhaseString } from "#types/phase-types";
-import type { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
+import type { AwaitableUiHandler } from "#ui/handlers/awaitable-ui-handler";
 import { UI } from "#ui/ui";
 
 export interface PromptHandler {
@@ -183,6 +184,7 @@ export class PhaseInterceptor {
     PostGameOverPhase,
     RevivalBlessingPhase,
     PokemonHealPhase,
+    AttemptCapturePhase,
   ];
 
   private endBySetMode = [
@@ -384,7 +386,7 @@ export class PhaseInterceptor {
         const actionForNextPrompt = this.prompts[0];
         const expireFn = actionForNextPrompt.expireFn?.();
         const currentMode = this.scene.ui.getMode();
-        const currentPhase = this.scene.phaseManager.getCurrentPhase()?.constructor.name;
+        const currentPhase = this.scene.phaseManager.getCurrentPhase().phaseName;
         const currentHandler = this.scene.ui.getHandler();
         if (expireFn) {
           this.prompts.shift();
