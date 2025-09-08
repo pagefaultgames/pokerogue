@@ -858,7 +858,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       }
     }
 
-    if (starterPreferences.ability !== undefined) {
+    if (starterPreferences.abilityIndex !== undefined) {
       const speciesHasSingleAbility = species.ability2 === species.ability1;
       const abilityAttr = starterData.abilityAttr;
       const hasAbility1 = abilityAttr & AbilityAttr.ABILITY_1;
@@ -871,20 +871,20 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         speciesHasSingleAbility ? hasAbility2 && !hasAbility1 : hasAbility2,
         hasHiddenAbility,
       ];
-      if (!unlockedAbilities[starterPreferences.ability]) {
+      if (!unlockedAbilities[starterPreferences.abilityIndex]) {
         // requested ability wasn't unlocked, purging setting
-        starterPreferences.ability = undefined;
+        starterPreferences.abilityIndex = undefined;
       }
     }
 
-    const selectedForm = starterPreferences.form;
+    const selectedForm = starterPreferences.formIndex;
     if (
       selectedForm !== undefined &&
       (!species.forms[selectedForm]?.isStarterSelectable ||
         !(caughtAttr & globalScene.gameData.getFormAttr(selectedForm)))
     ) {
       // requested form wasn't unlocked/isn't a starter form, purging setting
-      starterPreferences.form = undefined;
+      starterPreferences.formIndex = undefined;
     }
 
     if (starterPreferences.nature !== undefined) {
@@ -1457,8 +1457,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
               break;
             }
           } while (newFormIndex !== props.formIndex);
-          starterPreferences.form = newFormIndex; // store the selected form
-          originalStarterPreferences.form = newFormIndex;
+          starterPreferences.formIndex = newFormIndex; // store the selected form
+          originalStarterPreferences.formIndex = newFormIndex;
           starterPreferences.tera = this.lastSpecies.forms[newFormIndex].type1;
           originalStarterPreferences.tera = starterPreferences.tera;
           this.setSpeciesDetails(this.lastSpecies, {
@@ -1502,8 +1502,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
               }
             }
           } while (newAbilityIndex !== this.abilityCursor);
-          starterPreferences.ability = newAbilityIndex; // store the selected ability
-          originalStarterPreferences.ability = newAbilityIndex;
+          starterPreferences.abilityIndex = newAbilityIndex; // store the selected ability
+          originalStarterPreferences.abilityIndex = newAbilityIndex;
 
           this.setSpeciesDetails(this.lastSpecies, {
             abilityIndex: newAbilityIndex,
@@ -1527,7 +1527,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         break;
       case Button.CYCLE_TERA:
         if (this.canCycleTera) {
-          const speciesForm = getPokemonSpeciesForm(this.lastSpecies.speciesId, starterPreferences.form ?? 0);
+          const speciesForm = getPokemonSpeciesForm(this.lastSpecies.speciesId, starterPreferences.formIndex ?? 0);
           if (speciesForm.type1 === this.teraCursor && !isNullOrUndefined(speciesForm.type2)) {
             starterPreferences.tera = speciesForm.type2;
             originalStarterPreferences.tera = starterPreferences.tera;
@@ -2097,7 +2097,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           const attributes = {
             shiny: starterPreferences.shiny,
             variant: starterPreferences.variant,
-            form: starterPreferences.form,
+            form: starterPreferences.formIndex,
             female: starterPreferences.female,
           };
           ui.setOverlayMode(UiMode.POKEDEX_PAGE, this.lastSpecies, attributes, null, null, () => {
@@ -3007,8 +3007,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     if (starterPreferences?.nature) {
       this.natureCursor = starterPreferences.nature;
     }
-    if (starterPreferences?.ability && !Number.isNaN(starterPreferences.ability)) {
-      this.abilityCursor = starterPreferences.ability;
+    if (starterPreferences?.abilityIndex && !Number.isNaN(starterPreferences.abilityIndex)) {
+      this.abilityCursor = starterPreferences.abilityIndex;
     }
     if (starterPreferences?.tera) {
       this.teraCursor = starterPreferences.tera;
@@ -3027,7 +3027,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
       const props = this.getSpeciesPropsFromPreferences(species);
 
-      const ability = starterPreferences?.ability ?? globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
+      const ability =
+        starterPreferences?.abilityIndex ?? globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
       const nature = starterPreferences?.nature || globalScene.gameData.getSpeciesDefaultNature(species, dexEntry);
 
       // TODO: are these checks necessary? getSpeciesPropsFromPreferences should have already done this.
@@ -3036,7 +3037,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           props.variant = starterPreferences.variant as Variant;
         }
       }
-      props.formIndex = starterPreferences?.form ?? props.formIndex;
+      props.formIndex = starterPreferences?.formIndex ?? props.formIndex;
       props.female = starterPreferences?.female ?? props.female;
 
       this.setSpeciesDetails(

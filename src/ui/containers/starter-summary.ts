@@ -548,7 +548,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
       }
 
       const props = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
-      props.formIndex = starterPreferences?.form ?? props.formIndex;
+      props.formIndex = starterPreferences?.formIndex ?? props.formIndex;
       const speciesForm = getPokemonSpeciesForm(species.speciesId, props.formIndex);
       this.setTypeIcons(speciesForm.type1, speciesForm.type2);
 

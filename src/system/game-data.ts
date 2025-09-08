@@ -169,9 +169,9 @@ export interface StarterMoveData {
 
 export interface StarterPreferences {
   nature?: number;
-  ability?: number;
+  abilityIndex?: number;
   variant?: number;
-  form?: number;
+  formIndex?: number;
   female?: boolean;
   shiny?: boolean;
   favorite?: boolean;

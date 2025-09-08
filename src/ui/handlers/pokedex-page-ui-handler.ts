@@ -727,7 +727,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       variant: 0,
       form: 0,
     };
-    this.formIndex = this.savedStarterPreferences.form ?? 0;
+    this.formIndex = this.savedStarterPreferences.formIndex ?? 0;
     this.filteredIndices = args[2] ?? null;
     this.starterSetup();
 
@@ -1632,8 +1632,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                               : "";
                           const matchingForm = newSpecies?.forms.find(form => form.formKey === newFormKey);
                           const newFormIndex = matchingForm ? matchingForm.formIndex : 0;
-                          this.starterPreferences.form = newFormIndex;
-                          this.savedStarterPreferences.form = newFormIndex;
+                          this.starterPreferences.formIndex = newFormIndex;
+                          this.savedStarterPreferences.formIndex = newFormIndex;
                           this.moveInfoOverlay.clear();
                           this.clearText();
                           ui.setMode(UiMode.POKEDEX_PAGE, newSpecies, this.savedStarterPreferences);
@@ -1674,8 +1674,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                         handler: () => {
                           this.previousSpecies.push(this.species);
                           this.previousStarterPreferences.push({ ...this.savedStarterPreferences });
-                          this.starterPreferences.form = newFormIndex;
-                          this.savedStarterPreferences.form = newFormIndex;
+                          this.starterPreferences.formIndex = newFormIndex;
+                          this.savedStarterPreferences.formIndex = newFormIndex;
                           this.moveInfoOverlay.clear();
                           this.clearText();
                           ui.setMode(UiMode.POKEDEX_PAGE, evoSpecies, this.savedStarterPreferences);
@@ -1718,8 +1718,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                             this.previousStarterPreferences.push({ ...this.savedStarterPreferences });
                             const newSpecies = this.species;
                             const newFormIndex = this.species.forms.find(f => f.formKey === bf.formKey)?.formIndex;
-                            this.starterPreferences.form = newFormIndex;
-                            this.savedStarterPreferences.form = newFormIndex;
+                            this.starterPreferences.formIndex = newFormIndex;
+                            this.savedStarterPreferences.formIndex = newFormIndex;
                             this.moveInfoOverlay.clear();
                             this.clearText();
                             ui.setMode(
@@ -1879,8 +1879,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                   break;
                 }
               } while (newFormIndex !== props.formIndex || this.species.forms[newFormIndex].isUnobtainable);
-              starterPreferences.form = newFormIndex; // store the selected form
-              this.savedStarterPreferences.form = starterPreferences.form;
+              starterPreferences.formIndex = newFormIndex; // store the selected form
+              this.savedStarterPreferences.formIndex = starterPreferences.formIndex;
               this.formIndex = newFormIndex;
               // Some forms are tied to the gender and should change accordingly
               let newFemale = props.female;
@@ -1906,8 +1906,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
               if (this.isFormGender) {
                 newFormIndex = this.formIndex === 0 ? 1 : 0;
               }
-              starterPreferences.form = newFormIndex; // store the selected form
-              this.savedStarterPreferences.form = starterPreferences.form;
+              starterPreferences.formIndex = newFormIndex; // store the selected form
+              this.savedStarterPreferences.formIndex = starterPreferences.formIndex;
               this.formIndex = newFormIndex;
               this.starterSetup();
               this.setSpeciesDetails(this.species, {
@@ -2107,8 +2107,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 form => form.formKey === this.species?.forms[this.formIndex]?.formKey,
               );
               const newFormIndex = matchingForm ? matchingForm.formIndex : 0;
-              this.starterPreferences.form = newFormIndex;
-              this.savedStarterPreferences.form = newFormIndex;
+              this.starterPreferences.formIndex = newFormIndex;
+              this.savedStarterPreferences.formIndex = newFormIndex;
               this.moveInfoOverlay.clear();
               this.clearText();
               ui.setModeForceTransition(
@@ -2146,8 +2146,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 form => form.formKey === this.species?.forms[this.formIndex]?.formKey,
               );
               const newFormIndex = matchingForm ? matchingForm.formIndex : 0;
-              this.starterPreferences.form = newFormIndex;
-              this.savedStarterPreferences.form = newFormIndex;
+              this.starterPreferences.formIndex = newFormIndex;
+              this.savedStarterPreferences.formIndex = newFormIndex;
               this.moveInfoOverlay.clear();
               this.clearText();
               ui.setModeForceTransition(
@@ -2336,12 +2336,12 @@ export class PokedexPageUiHandler extends MessageUiHandler {
             props.variant = starterPreferences.variant as Variant;
           }
         }
-        props.form = starterPreferences?.form ?? props.form;
+        props.formIndex = starterPreferences?.formIndex ?? props.formIndex;
         props.female = starterPreferences?.female ?? props.female;
 
         this.setSpeciesDetails(species, {
           shiny: props.shiny,
-          formIndex: props.form,
+          formIndex: props.formIndex,
           female: props.female,
           variant: props.variant ?? 0,
         });
@@ -2443,7 +2443,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         variant = oldProps?.variant ?? 0;
       }
       if (formIndex === undefined) {
-        formIndex = oldProps?.form ?? 0;
+        formIndex = oldProps?.formIndex ?? 0;
       }
     }
 
@@ -2463,8 +2463,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         if (shiny === undefined || shiny !== props.shiny) {
           shiny = props.shiny;
         }
-        if (formIndex === undefined || formIndex !== props.form) {
-          formIndex = props.form;
+        if (formIndex === undefined || formIndex !== props.formIndex) {
+          formIndex = props.formIndex;
         }
         if (female === undefined || female !== props.female) {
           female = props.female;
@@ -2763,9 +2763,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       props += DexAttr.NON_SHINY;
       props += DexAttr.DEFAULT_VARIANT; // we add the default variant here because non shiny versions are listed as default variant
     }
-    if (this.starterPreferences?.form) {
+    if (this.starterPreferences?.formIndex) {
       // this checks for the form of the pokemon
-      props += BigInt(Math.pow(2, this.starterPreferences?.form)) * DexAttr.DEFAULT_FORM;
+      props += BigInt(Math.pow(2, this.starterPreferences?.formIndex)) * DexAttr.DEFAULT_FORM;
     } else {
       // Get the first unlocked form
       props += globalScene.gameData.getFormAttr(globalScene.gameData.getFormIndex(caughtAttr));

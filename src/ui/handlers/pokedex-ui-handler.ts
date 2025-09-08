@@ -732,7 +732,7 @@ export class PokedexUiHandler extends MessageUiHandler {
       }
     }
 
-    if (starterPreferences.ability !== undefined) {
+    if (starterPreferences.abilityIndex !== undefined) {
       const speciesHasSingleAbility = species.ability2 === species.ability1;
       const abilityAttr = starterData.abilityAttr;
       const hasAbility1 = abilityAttr & AbilityAttr.ABILITY_1;
@@ -745,20 +745,20 @@ export class PokedexUiHandler extends MessageUiHandler {
         speciesHasSingleAbility ? hasAbility2 && !hasAbility1 : hasAbility2,
         hasHiddenAbility,
       ];
-      if (!unlockedAbilities[starterPreferences.ability]) {
+      if (!unlockedAbilities[starterPreferences.abilityIndex]) {
         // requested ability wasn't unlocked, purging setting
-        starterPreferences.ability = undefined;
+        starterPreferences.abilityIndex = undefined;
       }
     }
 
-    const selectedForm = starterPreferences.form;
+    const selectedForm = starterPreferences.formIndex;
     if (
       selectedForm !== undefined &&
       (!species.forms[selectedForm]?.isStarterSelectable ||
         !(caughtAttr & globalScene.gameData.getFormAttr(selectedForm)))
     ) {
       // requested form wasn't unlocked/isn't a starter form, purging setting
-      starterPreferences.form = undefined;
+      starterPreferences.formIndex = undefined;
     }
 
     if (starterPreferences.nature !== undefined) {
@@ -2357,9 +2357,9 @@ export class PokedexUiHandler extends MessageUiHandler {
       props += DexAttr.NON_SHINY;
       props += DexAttr.DEFAULT_VARIANT; // we add the default variant here because non shiny versions are listed as default variant
     }
-    if (this.starterPreferences[speciesId]?.form) {
+    if (this.starterPreferences[speciesId]?.formIndex) {
       // this checks for the form of the pokemon
-      props += BigInt(Math.pow(2, this.starterPreferences[speciesId]?.form)) * DexAttr.DEFAULT_FORM;
+      props += BigInt(Math.pow(2, this.starterPreferences[speciesId]?.formIndex)) * DexAttr.DEFAULT_FORM;
     } else {
       // Get the first unlocked form
       props += globalScene.gameData.getFormAttr(globalScene.gameData.getFormIndex(caughtAttr));
