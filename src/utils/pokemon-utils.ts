@@ -142,7 +142,7 @@ export function areAllies(a: BattlerIndex, b: BattlerIndex): boolean {
     return false;
   }
   return (
-    (a === BattlerIndex.PLAYER || a === BattlerIndex.PLAYER_2) ===
-    (b === BattlerIndex.PLAYER || b === BattlerIndex.PLAYER_2)
+    (a === BattlerIndex.PLAYER || a === BattlerIndex.PLAYER_2)
+    === (b === BattlerIndex.PLAYER || b === BattlerIndex.PLAYER_2)
   );
 }

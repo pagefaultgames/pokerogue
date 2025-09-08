@@ -128,9 +128,9 @@ export const failIfTargetNotAttackingCondition = new MoveCondition((_user, targe
     return false;
   }
   return (
-    turnCommand.command === Command.FIGHT &&
-    !target.turnData.acted &&
-    allMoves[turnCommand.move.move].category !== MoveCategory.STATUS
+    turnCommand.command === Command.FIGHT
+    && !target.turnData.acted
+    && allMoves[turnCommand.move.move].category !== MoveCategory.STATUS
   );
 });
 
@@ -145,8 +145,8 @@ export const failAgainstFinalBossCondition = new MoveCondition((_user, target) =
   const gameMode = globalScene.gameMode;
   const currentWave = globalScene.currentBattle.waveIndex;
   return !(
-    target.isEnemy() &&
-    (gameMode.isBattleClassicFinalBoss(currentWave) || gameMode.isEndlessMinorBoss(currentWave))
+    target.isEnemy()
+    && (gameMode.isBattleClassicFinalBoss(currentWave) || gameMode.isEndlessMinorBoss(currentWave))
   );
 });
 
@@ -159,11 +159,11 @@ export const failAgainstFinalBossCondition = new MoveCondition((_user, target) =
 export const upperHandCondition = new MoveCondition((_user, target) => {
   const targetCommand = globalScene.currentBattle.turnCommands[target.getBattlerIndex()];
   return (
-    targetCommand?.command === Command.FIGHT &&
-    !target.turnData.acted &&
-    !!targetCommand.move?.move &&
-    allMoves[targetCommand.move.move].category !== MoveCategory.STATUS &&
-    allMoves[targetCommand.move.move].getPriority(target) > 0
+    targetCommand?.command === Command.FIGHT
+    && !target.turnData.acted
+    && !!targetCommand.move?.move
+    && allMoves[targetCommand.move.move].category !== MoveCategory.STATUS
+    && allMoves[targetCommand.move.move].getPriority(target) > 0
   );
 });
 
@@ -180,7 +180,7 @@ export const upperHandCondition = new MoveCondition((_user, target) => {
  */
 export const lastResortCondition = new MoveCondition((user, _target, move) => {
   const otherMovesInMoveset = new Set<MoveId>(user.getMoveset().map(m => m.moveId));
-  if (!otherMovesInMoveset.delete(move.id) || !otherMovesInMoveset.size) {
+  if (!otherMovesInMoveset.delete(move.id) || otherMovesInMoveset.size === 0) {
     return false; // Last resort fails if used when not in user's moveset or no other moves exist
   }
 

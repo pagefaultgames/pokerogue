@@ -21,7 +21,7 @@ export enum BattlerTagLapseType {
    * Note tags with this lapse type will lapse immediately after the first failure check sequence,
    * regardless of whether the move was successful or not, but is skipped if the move is a
    * {@linkcode MoveUseMode.FOLLOW_UP | follow-up} move.
-   * 
+   *
    * To only lapse the tag between the first and second failure check sequences, use
    * {@linkcode BattlerTagLapseType.MOVE} instead.
    */
@@ -50,10 +50,10 @@ export enum BattlerTagLapseType {
    * The tag has some other custom activation or removal condition.
    * @remarks
    * Tags can use this lapse type to prevent them from automatically lapsing during automatic lapse instances,
-   * such as before a move is used or at the end of a turn. 
+   * such as before a move is used or at the end of a turn.
    * Such tags will only trigger upon being specifically lapsed with the tag and lapse type via
    * {@linkcode Pokemon.lapseTag}.
-   * */
+   */
   CUSTOM,
 }
 

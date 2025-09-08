@@ -51,10 +51,7 @@ import { MoveEffectTrigger } from "#enums/move-effect-trigger";
 import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
-import { MoveId } from "#enums/move-id";
-import { MoveResult } from "#enums/move-result";
 import { MoveTarget } from "#enums/move-target";
-import { isVirtual, MoveUseMode } from "#enums/move-use-mode";
 import { isVirtual, MoveUseMode } from "#enums/move-use-mode";
 import { MultiHitType } from "#enums/multi-hit-type";
 import { PokemonType } from "#enums/pokemon-type";
@@ -92,7 +89,7 @@ import type { ChargingMove, MoveAttrMap, MoveAttrString, MoveClassMap, MoveKindS
 import type { TurnMove } from "#types/turn-move";
 import type { AbstractConstructor } from "#types/type-helpers";
 import { applyChallenges } from "#utils/challenge-utils";
-import { BooleanHolder, coerceArray, type Constructor, isNullOrUndefined, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
+import { BooleanHolder, coerceArray, type Constructor, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { areAllies } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
@@ -172,14 +169,9 @@ export abstract class Move implements Localizable {
    * @see {@link https://www.smogon.com/forums/threads/sword-shield-battle-mechanics-research.3655528/page-54#post-8548957}
    */
   private conditionsSeq3: MoveCondition[] = [];
-<<<<<<< HEAD
-  /** Conditions that must be false for a move to be able to be selected.
-   *
-=======
   /**
    * Conditions that must be false for a move to be able to be selected.
-   * 
->>>>>>> 02f941b3a05 (PR review changes)
+   *
    * @remarks Different from {@linkcode conditions}, which is checked when the move is invoked
    */
   private restrictions: MoveRestriction[] = [];

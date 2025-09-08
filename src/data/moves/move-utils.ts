@@ -148,9 +148,9 @@ export function getCounterAttackTarget(user: Pokemon, damageCategory?: MoveDamag
     const moveCategory = allMoves[attackRecord.move].category;
     const sourceBattlerIndex = attackRecord.sourceBattlerIndex;
     if (
-      moveCategory !== MoveCategory.STATUS &&
-      !areAllies(sourceBattlerIndex, user.getBattlerIndex()) &&
-      (damageCategory === undefined || moveCategory === damageCategory)
+      moveCategory !== MoveCategory.STATUS
+      && !areAllies(sourceBattlerIndex, user.getBattlerIndex())
+      && (damageCategory === undefined || moveCategory === damageCategory)
     ) {
       return sourceBattlerIndex;
     }
