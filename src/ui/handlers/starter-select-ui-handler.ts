@@ -2760,13 +2760,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       variant: props.variant,
       formIndex: props.formIndex,
       female: props.female,
-      abilityIndex: abilityIndex,
+      abilityIndex,
       passive: !(starterDataEntry.passiveAttr ^ (PassiveAttr.ENABLED | PassiveAttr.UNLOCKED)),
-      nature: nature,
-      moveset: moveset,
+      nature,
+      moveset,
       pokerus: this.pokerusSpecies.includes(species),
       nickname: this.starterPreferences[species.speciesId]?.nickname,
-      teraType: teraType,
+      teraType,
       ivs: dexEntry.ivs,
     };
 

@@ -62,7 +62,7 @@ export function generateStarters(scene: BattleScene, speciesIds?: SpeciesId[]): 
 }
 
 function getTestRunStarters(seed: string, speciesIds?: SpeciesId[]): Starter[] {
-  if (!speciesIds || !speciesIds.length) {
+  if (!speciesIds || speciesIds.length === 0) {
     return getDailyRunStarters(seed);
   }
   const starters: Starter[] = [];
@@ -73,7 +73,7 @@ function getTestRunStarters(seed: string, speciesIds?: SpeciesId[]): Starter[] {
     const starterSpecies = getPokemonSpecies(starterSpeciesForm.speciesId);
     const pokemon = new PlayerPokemon(starterSpecies, startingLevel, undefined, 0);
     const starter: Starter = {
-      speciesId: speciesId,
+      speciesId,
       shiny: pokemon.shiny,
       variant: pokemon.variant,
       formIndex: pokemon.formIndex,
