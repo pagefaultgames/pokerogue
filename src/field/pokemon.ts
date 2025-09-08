@@ -6527,8 +6527,8 @@ export class EnemyPokemon extends Pokemon {
               move.category !== MoveCategory.STATUS
               && moveTargets.some(p => {
                 const doesNotFail =
-                  move.applyConditions(this, p, -1) ||
-                  [MoveId.SUCKER_PUNCH, MoveId.UPPER_HAND, MoveId.THUNDERCLAP].includes(move.id);
+                  move.applyConditions(this, p, -1)
+                  || [MoveId.SUCKER_PUNCH, MoveId.UPPER_HAND, MoveId.THUNDERCLAP].includes(move.id);
                 return (
                   doesNotFail
                   && p.getAttackDamage({
@@ -6588,8 +6588,8 @@ export class EnemyPokemon extends Pokemon {
                * target score to -20
                */
               if (
-                (move.name.endsWith(" (N)") || !move.applyConditions(this, target, -1)) &&
-                ![MoveId.SUCKER_PUNCH, MoveId.UPPER_HAND, MoveId.THUNDERCLAP].includes(move.id)
+                (move.name.endsWith(" (N)") || !move.applyConditions(this, target, -1))
+                && ![MoveId.SUCKER_PUNCH, MoveId.UPPER_HAND, MoveId.THUNDERCLAP].includes(move.id)
               ) {
                 targetScore = -20;
               } else if (move.is("AttackMove")) {
