@@ -84,8 +84,7 @@ export class LoginFormUiHandler extends FormModalUiHandler {
       scale: 0.75,
     });
 
-    this.changeLanguageImage = this.buildInteractableImage("settings_icon", "change-language-icon", {
-      // todo: replace with custom icon
+    this.changeLanguageImage = this.buildInteractableImage("language_icon", "change-language-icon", {
       x: 40,
       scale: 0.5,
     });
