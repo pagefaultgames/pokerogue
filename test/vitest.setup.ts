@@ -62,14 +62,12 @@ beforeAll(() => {
   initTests();
 });
 
-// biome-ignore-start lint/style/noDoneCallback: thinks this is jest done callback
 beforeEach(context => {
   logTestStart(context.task);
 });
 afterEach(context => {
   logTestEnd(context.task);
 });
-// biome-ignore-end lint/style/noDoneCallback: thinks this is jest done callback
 
 afterAll(() => {
   global.server.close();
