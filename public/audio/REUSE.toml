@@ -233,3 +233,10 @@ SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
 path = ["bgm/wasteland.mp3"]
 SPDX-FileCopyrightText = "Leavannite"
 SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
+
+
+# Audio assets known to come from pokemon reborn
+[[annotations]]
+path = ["battle_anims/PRSFX-*.wav"]
+SPDX-FileCopyrightText = "The Pokemon Reborn Team"
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
