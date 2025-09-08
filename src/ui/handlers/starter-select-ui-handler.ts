@@ -3422,7 +3422,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const remainValue = valueLimit - newValue;
     for (let s = 0; s < this.starterContainers.length; s++) {
       /** Cost of pokemon species */
-      const speciesStarterValue = globalScene.gameData.getSpeciesStarterValue(this.allStarterSpecies[s].speciesId);
+      const speciesStarterValue = globalScene.gameData.getSpeciesStarterValue(
+        this.starterContainers[s].species.speciesId,
+      );
       /** {@linkcode Phaser.GameObjects.Sprite} object of Pokémon for setting the alpha value */
       const speciesSprite = this.starterContainers[s].icon;
 
