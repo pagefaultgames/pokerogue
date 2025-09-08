@@ -405,8 +405,8 @@ export class SummaryUiHandler extends UiHandler {
     }
 
     if (
-      globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].classicWinCount > 0 &&
-      globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId(true)].classicWinCount > 0
+      globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].classicWinCount > 0
+      && globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId(true)].classicWinCount > 0
     ) {
       this.championRibbon.setVisible(true);
     } else {
@@ -532,33 +532,31 @@ export class SummaryUiHandler extends UiHandler {
         if (this.pokemon && this.moveCursor < this.pokemon.moveset.length) {
           if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
             this.moveSelectFunction?.(this.moveCursor);
+          } else if (this.selectedMoveIndex === -1) {
+            this.selectedMoveIndex = this.moveCursor;
+            this.setCursor(this.moveCursor);
           } else {
-            if (this.selectedMoveIndex === -1) {
-              this.selectedMoveIndex = this.moveCursor;
-              this.setCursor(this.moveCursor);
-            } else {
-              if (this.selectedMoveIndex !== this.moveCursor) {
-                const tempMove = this.pokemon?.moveset[this.selectedMoveIndex];
-                this.pokemon.moveset[this.selectedMoveIndex] = this.pokemon.moveset[this.moveCursor];
-                this.pokemon.moveset[this.moveCursor] = tempMove;
+            if (this.selectedMoveIndex !== this.moveCursor) {
+              const tempMove = this.pokemon?.moveset[this.selectedMoveIndex];
+              this.pokemon.moveset[this.selectedMoveIndex] = this.pokemon.moveset[this.moveCursor];
+              this.pokemon.moveset[this.moveCursor] = tempMove;
 
-                const selectedMoveRow = this.moveRowsContainer.getAt(
-                  this.selectedMoveIndex,
-                ) as Phaser.GameObjects.Container;
-                const switchMoveRow = this.moveRowsContainer.getAt(this.moveCursor) as Phaser.GameObjects.Container;
+              const selectedMoveRow = this.moveRowsContainer.getAt(
+                this.selectedMoveIndex,
+              ) as Phaser.GameObjects.Container;
+              const switchMoveRow = this.moveRowsContainer.getAt(this.moveCursor) as Phaser.GameObjects.Container;
 
-                this.moveRowsContainer.moveTo(selectedMoveRow, this.moveCursor);
-                this.moveRowsContainer.moveTo(switchMoveRow, this.selectedMoveIndex);
+              this.moveRowsContainer.moveTo(selectedMoveRow, this.moveCursor);
+              this.moveRowsContainer.moveTo(switchMoveRow, this.selectedMoveIndex);
 
-                selectedMoveRow.setY(this.moveCursor * 16);
-                switchMoveRow.setY(this.selectedMoveIndex * 16);
-              }
+              selectedMoveRow.setY(this.moveCursor * 16);
+              switchMoveRow.setY(this.selectedMoveIndex * 16);
+            }
 
-              this.selectedMoveIndex = -1;
-              if (this.selectedMoveCursorObj) {
-                this.selectedMoveCursorObj.destroy();
-                this.selectedMoveCursorObj = null;
-              }
+            this.selectedMoveIndex = -1;
+            if (this.selectedMoveCursorObj) {
+              this.selectedMoveCursorObj.destroy();
+              this.selectedMoveCursorObj = null;
             }
           }
           success = true;
@@ -592,78 +590,76 @@ export class SummaryUiHandler extends UiHandler {
             break;
         }
       }
-    } else {
-      if (button === Button.ACTION) {
-        if (this.cursor === Page.MOVES) {
-          this.showMoveSelect();
-          success = true;
-        } else if (this.cursor === Page.PROFILE && this.pokemon?.hasPassive()) {
-          // if we're on the PROFILE page and this pokemon has a passive unlocked..
-          // Since abilities are displayed by default, all we need to do is toggle visibility on all elements to show passives
-          this.abilityContainer.nameText?.setVisible(!this.abilityContainer.descriptionText?.visible);
-          this.abilityContainer.descriptionText?.setVisible(!this.abilityContainer.descriptionText.visible);
-          this.abilityContainer.labelImage.setVisible(!this.abilityContainer.labelImage.visible);
-
-          this.passiveContainer.nameText?.setVisible(!this.passiveContainer.descriptionText?.visible);
-          this.passiveContainer.descriptionText?.setVisible(!this.passiveContainer.descriptionText.visible);
-          this.passiveContainer.labelImage.setVisible(!this.passiveContainer.labelImage.visible);
-        } else if (this.cursor === Page.STATS) {
-          //Show IVs
-          this.permStatsContainer.setVisible(!this.permStatsContainer.visible);
-          this.ivContainer.setVisible(!this.ivContainer.visible);
-        }
-      } else if (button === Button.CANCEL) {
-        if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
-          this.hideMoveSelect();
-        } else {
-          if (this.selectCallback instanceof Function) {
-            const selectCallback = this.selectCallback;
-            this.selectCallback = null;
-            selectCallback();
-          }
-
-          if (!fromPartyMode) {
-            ui.setMode(UiMode.MESSAGE);
-          } else {
-            ui.setMode(UiMode.PARTY);
-          }
-        }
+    } else if (button === Button.ACTION) {
+      if (this.cursor === Page.MOVES) {
+        this.showMoveSelect();
         success = true;
+      } else if (this.cursor === Page.PROFILE && this.pokemon?.hasPassive()) {
+        // if we're on the PROFILE page and this pokemon has a passive unlocked..
+        // Since abilities are displayed by default, all we need to do is toggle visibility on all elements to show passives
+        this.abilityContainer.nameText?.setVisible(!this.abilityContainer.descriptionText?.visible);
+        this.abilityContainer.descriptionText?.setVisible(!this.abilityContainer.descriptionText.visible);
+        this.abilityContainer.labelImage.setVisible(!this.abilityContainer.labelImage.visible);
+
+        this.passiveContainer.nameText?.setVisible(!this.passiveContainer.descriptionText?.visible);
+        this.passiveContainer.descriptionText?.setVisible(!this.passiveContainer.descriptionText.visible);
+        this.passiveContainer.labelImage.setVisible(!this.passiveContainer.labelImage.visible);
+      } else if (this.cursor === Page.STATS) {
+        //Show IVs
+        this.permStatsContainer.setVisible(!this.permStatsContainer.visible);
+        this.ivContainer.setVisible(!this.ivContainer.visible);
+      }
+    } else if (button === Button.CANCEL) {
+      if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
+        this.hideMoveSelect();
       } else {
-        const pages = getEnumValues(Page);
-        switch (button) {
-          case Button.UP:
-          case Button.DOWN: {
-            if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
-              break;
-            }
-            if (!fromPartyMode) {
-              break;
-            }
-            const isDown = button === Button.DOWN;
-            const party = globalScene.getPlayerParty();
-            const partyMemberIndex = this.pokemon ? party.indexOf(this.pokemon) : -1;
-            if ((isDown && partyMemberIndex < party.length - 1) || (!isDown && partyMemberIndex)) {
-              const page = this.cursor;
-              this.clear();
-              this.show([party[partyMemberIndex + (isDown ? 1 : -1)], this.summaryUiMode, page]);
-            }
+        if (this.selectCallback instanceof Function) {
+          const selectCallback = this.selectCallback;
+          this.selectCallback = null;
+          selectCallback();
+        }
+
+        if (!fromPartyMode) {
+          ui.setMode(UiMode.MESSAGE);
+        } else {
+          ui.setMode(UiMode.PARTY);
+        }
+      }
+      success = true;
+    } else {
+      const pages = getEnumValues(Page);
+      switch (button) {
+        case Button.UP:
+        case Button.DOWN: {
+          if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
             break;
           }
-          case Button.LEFT:
-            if (this.cursor) {
-              success = this.setCursor(this.cursor - 1);
-            }
+          if (!fromPartyMode) {
             break;
-          case Button.RIGHT:
-            if (this.cursor < pages.length - 1) {
-              success = this.setCursor(this.cursor + 1);
-              if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE && this.cursor === Page.MOVES) {
-                this.moveSelect = true;
-              }
-            }
-            break;
+          }
+          const isDown = button === Button.DOWN;
+          const party = globalScene.getPlayerParty();
+          const partyMemberIndex = this.pokemon ? party.indexOf(this.pokemon) : -1;
+          if ((isDown && partyMemberIndex < party.length - 1) || (!isDown && partyMemberIndex)) {
+            const page = this.cursor;
+            this.clear();
+            this.show([party[partyMemberIndex + (isDown ? 1 : -1)], this.summaryUiMode, page]);
+          }
+          break;
         }
+        case Button.LEFT:
+          if (this.cursor) {
+            success = this.setCursor(this.cursor - 1);
+          }
+          break;
+        case Button.RIGHT:
+          if (this.cursor < pages.length - 1) {
+            success = this.setCursor(this.cursor + 1);
+            if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE && this.cursor === Page.MOVES) {
+              this.moveSelect = true;
+            }
+          }
+          break;
       }
     }
 
@@ -900,8 +896,8 @@ export class SummaryUiHandler extends UiHandler {
         }
 
         if (
-          globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id) &&
-          !isNullOrUndefined(this.pokemon)
+          globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id)
+          && !isNullOrUndefined(this.pokemon)
         ) {
           const teraIcon = globalScene.add.sprite(123, 26, "button_tera");
           teraIcon.setName("terastallize-icon");
@@ -1007,7 +1003,7 @@ export class SummaryUiHandler extends UiHandler {
               wave: `${getBBCodeFrag(this.pokemon?.metWave ? this.pokemon.metWave.toString()! : i18next.t("pokemonSummary:unknownTrainer"), TextStyle.SUMMARY_RED)}${closeFragment}`,
             },
           ),
-          natureFragment: i18next.t(`pokemonSummary:natureFragment.${rawNature}`, { nature: nature }),
+          natureFragment: i18next.t(`pokemonSummary:natureFragment.${rawNature}`, { nature }),
         });
 
         const memoText = addBBCodeTextObject(7, 113, String(memoString), TextStyle.WINDOW_ALT);

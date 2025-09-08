@@ -514,8 +514,6 @@ export class StarterSummary extends Phaser.GameObjects.Container {
       this.pokemonHatchedCountText.setText(`${dexEntry.hatchedCount}`);
 
       const defaultDexAttr = getDexAttrFromPreferences(species.speciesId, starterPreferences);
-      const defaultProps = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
-      this.setShinyIcon(defaultProps.shiny, defaultProps.variant);
 
       if (pokemonPrevolutions.hasOwnProperty(species.speciesId)) {
         this.pokemonCaughtHatchedContainer.setVisible(false);
@@ -548,7 +546,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
       }
 
       const props = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
-      props.formIndex = starterPreferences?.form ?? props.formIndex;
+      props.formIndex = starterPreferences?.formIndex ?? props.formIndex;
       const speciesForm = getPokemonSpeciesForm(species.speciesId, props.formIndex);
       this.setTypeIcons(speciesForm.type1, speciesForm.type2);
 
@@ -556,7 +554,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     } else if (dexEntry.seenAttr) {
       this.cleanStarterSprite(species, true);
 
-      const props = globalScene.gameData.getSpeciesDefaultDexAttrProps();
+      const props = globalScene.gameData.getSpeciesDefaultDexAttrProps(species);
 
       const formIndex = props.formIndex;
       const female = props.female;
@@ -569,7 +567,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     } else {
       this.cleanStarterSprite(species);
 
-      const props = globalScene.gameData.getSpeciesDefaultDexAttrProps();
+      const props = globalScene.gameData.getSpeciesDefaultDexAttrProps(species);
 
       const formIndex = props.formIndex;
       const female = props.female;
@@ -623,25 +621,17 @@ export class StarterSummary extends Phaser.GameObjects.Container {
   setSpeciesDetails(species: PokemonSpecies, options: SpeciesDetails = {}): void {
     // Here we pass some options to override everything else
     let { shiny, formIndex, female, variant, abilityIndex, natureIndex, teraType } = options;
+    console.log("OPTIONS", options);
 
     // We will only update the sprite if there is a change to form, shiny/variant
     // or gender for species with gender sprite differences
     const shouldUpdateSprite =
-      (species.genderDiffs && !isNullOrUndefined(female)) ||
-      !isNullOrUndefined(formIndex) ||
-      !isNullOrUndefined(shiny) ||
-      !isNullOrUndefined(variant);
+      (species.genderDiffs && !isNullOrUndefined(female))
+      || !isNullOrUndefined(formIndex)
+      || !isNullOrUndefined(shiny)
+      || !isNullOrUndefined(variant);
 
     this.updateCandyTooltip();
-
-    // Ensuring that gender and form are consistent
-    if (species.forms?.find(f => f.formKey === "female")) {
-      if (female !== undefined) {
-        formIndex = female ? 1 : 0;
-      } else if (formIndex !== undefined) {
-        female = formIndex === 1;
-      }
-    }
 
     this.pokemonSprite.setVisible(false);
     this.teraIcon.setVisible(false);
@@ -660,6 +650,8 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     this.pokemonNumberText.setShadowColor(
       getTextColor(shiny ? TextStyle.SUMMARY_DEX_NUM_GOLD : TextStyle.SUMMARY_DEX_NUM, true),
     );
+
+    this.setShinyIcon(shiny, variant);
 
     const assetLoadCancelled = new BooleanHolder(false);
     this.assetLoadCancelled = assetLoadCancelled;

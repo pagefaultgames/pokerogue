@@ -18,7 +18,7 @@ import type { Variant } from "#sprites/variant";
 import type { DexAttrProps, StarterDataEntry, StarterPreferences } from "#system/game-data";
 import type { DexEntry } from "#types/dex-data";
 import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";
-import { NumberHolder } from "#utils/common";
+import { isNullOrUndefined, NumberHolder } from "#utils/common";
 import i18next from "i18next";
 
 export interface SpeciesDetails {
@@ -41,8 +41,8 @@ export function isPassiveAvailable(speciesId: number): boolean {
   const starterData = globalScene.gameData.starterData[speciesId];
 
   return (
-    starterData.candyCount >= getPassiveCandyCount(speciesStarterCosts[speciesId]) &&
-    !(starterData.passiveAttr & Passive.UNLOCKED)
+    starterData.candyCount >= getPassiveCandyCount(speciesStarterCosts[speciesId])
+    && !(starterData.passiveAttr & Passive.UNLOCKED)
   );
 }
 
@@ -56,9 +56,8 @@ export function isValueReductionAvailable(speciesId: number): boolean {
   const starterData = globalScene.gameData.starterData[speciesId];
 
   return (
-    starterData.candyCount >=
-      getValueReductionCandyCounts(speciesStarterCosts[speciesId])[starterData.valueReduction] &&
-    starterData.valueReduction < VALUE_REDUCTION_MAX
+    starterData.candyCount >= getValueReductionCandyCounts(speciesStarterCosts[speciesId])[starterData.valueReduction]
+    && starterData.valueReduction < VALUE_REDUCTION_MAX
   );
 }
 
@@ -265,8 +264,8 @@ export function getDexAttrFromPreferences(speciesId: number, starterPreferences:
    *  If neither of these pass, we add DexAttr.MALE to our temp props
    */
   if (
-    starterPreferences[speciesId]?.female ||
-    ((caughtAttr & DexAttr.FEMALE) > 0n && (caughtAttr & DexAttr.MALE) === 0n)
+    starterPreferences[speciesId]?.female
+    || ((caughtAttr & DexAttr.FEMALE) > 0n && (caughtAttr & DexAttr.MALE) === 0n)
   ) {
     props += DexAttr.FEMALE;
   } else {
@@ -276,23 +275,18 @@ export function getDexAttrFromPreferences(speciesId: number, starterPreferences:
    * If they're not there, it enables shiny state by default if any shiny was caught
    */
   if (
-    starterPreferences[speciesId]?.shiny ||
-    ((caughtAttr & DexAttr.SHINY) > 0n && starterPreferences[speciesId]?.shiny !== false)
+    starterPreferences[speciesId]?.shiny
+    || ((caughtAttr & DexAttr.SHINY) > 0n && starterPreferences[speciesId]?.shiny !== false)
   ) {
     props += DexAttr.SHINY;
     if (starterPreferences[speciesId]?.variant !== undefined) {
       props += BigInt(Math.pow(2, starterPreferences[speciesId]?.variant)) * DexAttr.DEFAULT_VARIANT;
+    } else if ((caughtAttr & DexAttr.VARIANT_3) > 0) {
+      props += DexAttr.VARIANT_3;
+    } else if ((caughtAttr & DexAttr.VARIANT_2) > 0) {
+      props += DexAttr.VARIANT_2;
     } else {
-      /*  This calculates the correct variant if there's no starter preferences for it.
-       *  This gets the highest tier variant that you've caught and adds it to the temp props
-       */
-      if ((caughtAttr & DexAttr.VARIANT_3) > 0) {
-        props += DexAttr.VARIANT_3;
-      } else if ((caughtAttr & DexAttr.VARIANT_2) > 0) {
-        props += DexAttr.VARIANT_2;
-      } else {
-        props += DexAttr.DEFAULT_VARIANT;
-      }
+      props += DexAttr.DEFAULT_VARIANT;
     }
   } else {
     props += DexAttr.NON_SHINY;
@@ -313,10 +307,31 @@ export function getSpeciesPropsFromPreferences(
   species: PokemonSpecies,
   starterPreferences: StarterPreferences = {},
 ): DexAttrProps {
-  return globalScene.gameData.getSpeciesDexAttrProps(
-    species,
-    getDexAttrFromPreferences(species.speciesId, starterPreferences),
-  );
+  const defaults = globalScene.gameData.getSpeciesDefaultDexAttrProps(species);
+  return {
+    shiny: isNullOrUndefined(starterPreferences.shiny) ? defaults.shiny : starterPreferences.shiny,
+    variant: isNullOrUndefined(starterPreferences.variant) ? defaults.variant : (starterPreferences.variant as Variant),
+    female: starterPreferences.female ?? defaults.female,
+    formIndex: starterPreferences.formIndex ?? defaults.formIndex,
+  };
+}
+
+// TODO: Do we actually need props?
+export function getSpeciesDetailsFromPreferences(species: PokemonSpecies, starterPreferences: StarterPreferences = {}) {
+  const props = getSpeciesPropsFromPreferences(species, starterPreferences);
+  const abilityIndex =
+    starterPreferences.abilityIndex ?? globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
+  const nature = starterPreferences.nature ?? globalScene.gameData.getSpeciesDefaultNature(species);
+  const teraType = starterPreferences.tera ?? species.type1;
+  return {
+    shiny: props.shiny,
+    formIndex: props.formIndex,
+    female: props.female,
+    variant: props.variant,
+    abilityIndex,
+    natureIndex: nature,
+    teraType,
+  };
 }
 
 export function getRunValueLimit(): number {

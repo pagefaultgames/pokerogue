@@ -4,5 +4,5 @@ export enum PartyMemberStrength {
   WEAK,
   AVERAGE,
   STRONG,
-  STRONGER
+  STRONGER,
 }

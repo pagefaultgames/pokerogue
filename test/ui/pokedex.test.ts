@@ -106,8 +106,8 @@ describe("UI - Pokedex", () => {
     const speciesSet = new Set<SpeciesId>();
     for (const pkmn of allSpecies) {
       if (
-        [pkmn.ability1, pkmn.ability2, pkmn.getPassiveAbility(), pkmn.abilityHidden].includes(ability) ||
-        pkmn.forms.some(form =>
+        [pkmn.ability1, pkmn.ability2, pkmn.getPassiveAbility(), pkmn.abilityHidden].includes(ability)
+        || pkmn.forms.some(form =>
           [form.ability1, form.ability2, form.abilityHidden, form.getPassiveAbility()].includes(ability),
         )
       ) {
@@ -514,7 +514,7 @@ describe("UI - Pokedex", () => {
 
   it("should show caught battle form as caught", async () => {
     await game.importData("./test/test-utils/saves/data_pokedex_tests_v2.prsv");
-    const pageHandler = await runToPokedexPage(getPokemonSpecies(SpeciesId.VENUSAUR), { form: 1 });
+    const pageHandler = await runToPokedexPage(getPokemonSpecies(SpeciesId.VENUSAUR), { formIndex: 1 });
 
     // @ts-expect-error - `species` is private
     expect(pageHandler.species.speciesId).toEqual(SpeciesId.VENUSAUR);
@@ -529,7 +529,7 @@ describe("UI - Pokedex", () => {
   //TODO: check tint of the sprite
   it("should show uncaught battle form as seen", async () => {
     await game.importData("./test/test-utils/saves/data_pokedex_tests_v2.prsv");
-    const pageHandler = await runToPokedexPage(getPokemonSpecies(SpeciesId.VENUSAUR), { form: 2 });
+    const pageHandler = await runToPokedexPage(getPokemonSpecies(SpeciesId.VENUSAUR), { formIndex: 2 });
 
     // @ts-expect-error - `species` is private
     expect(pageHandler.species.speciesId).toEqual(SpeciesId.VENUSAUR);
