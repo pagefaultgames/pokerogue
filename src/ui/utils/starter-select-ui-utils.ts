@@ -319,6 +319,24 @@ export function getSpeciesPropsFromPreferences(
   );
 }
 
+// TODO: Do we actually need props?
+export function getSpeciesDetailsFromPreferences(species: PokemonSpecies, starterPreferences: StarterPreferences = {}) {
+  const props = getSpeciesPropsFromPreferences(species, starterPreferences);
+  const abilityIndex =
+    starterPreferences.abilityIndex ?? globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
+  const nature = starterPreferences.nature ?? globalScene.gameData.getSpeciesDefaultNature(species);
+  const teraType = starterPreferences.tera ?? species.type1;
+  return {
+    shiny: props.shiny,
+    formIndex: props.formIndex,
+    female: props.female,
+    variant: props.variant,
+    abilityIndex: abilityIndex,
+    natureIndex: nature,
+    teraType: teraType,
+  };
+}
+
 export function getRunValueLimit(): number {
   const valueLimit = new NumberHolder(0);
   switch (globalScene.gameMode.modeId) {

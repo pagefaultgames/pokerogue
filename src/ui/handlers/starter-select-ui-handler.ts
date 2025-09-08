@@ -67,6 +67,7 @@ import {
   getDexAttrFromPreferences,
   getRunValueLimit,
   getSpeciesData,
+  getSpeciesDetailsFromPreferences,
   getSpeciesPropsFromPreferences,
   getStarterSelectTextSettings,
   isPassiveAvailable,
@@ -75,7 +76,6 @@ import {
   isUpgradeAnimationEnabled,
   isUpgradeIconEnabled,
   isValueReductionAvailable,
-  type SpeciesDetails,
 } from "#ui/utils/starter-select-ui-utils";
 import { checkStarterValidForChallenge } from "#utils/challenge-utils";
 import { fixedInt, getLocalizedSpriteKey, isNullOrUndefined, randIntRange, rgbHexToRgba } from "#utils/common";
@@ -1373,11 +1373,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     const props = this.getSpeciesPropsFromPreferences(this.lastSpecies);
 
-    // The temporary, duplicated starter data to show info
-    // The sanitized starter preferences
+    const speciesId = this.lastSpecies.speciesId;
+
     const starterPreferences = (this.starterPreferences[this.lastSpecies.speciesId] ??= {});
-    // The original starter preferences
-    const originalStarterPreferences = (this.originalStarterPreferences[this.lastSpecies.speciesId] ??= {});
 
     switch (button) {
       case Button.CYCLE_SHINY:
@@ -1385,18 +1383,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           if (starterPreferences.shiny === false) {
             // If not shiny, we change to shiny and get the proper default variant
             const newVariant = starterPreferences.variant ? (starterPreferences.variant as Variant) : props.variant;
-            starterPreferences.shiny = true;
-            originalStarterPreferences.shiny = true;
-            starterPreferences.variant = newVariant;
-            originalStarterPreferences.variant = newVariant;
-            this.setSpeciesDetails(this.lastSpecies, {
-              shiny: true,
-              variant: newVariant,
-            });
-
+            this.setShinyAndVariant(speciesId, true, newVariant);
             globalScene.playSound("se/sparkle");
-            // Cycle tint based on current sprite tint
-            this.starterSummary.setShinyIcon(true, newVariant);
           } else {
             // If shiny, we update the variant
             let newVariant = props.variant;
@@ -1419,25 +1407,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 }
               }
             } while (newVariant !== props.variant);
-            starterPreferences.variant = newVariant; // store the selected variant
-            originalStarterPreferences.variant = newVariant;
+            this.setShinyAndVariant(speciesId, true, newVariant);
             if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.NON_SHINY && newVariant <= props.variant) {
               // If we have run out of variants, go back to non shiny
-              starterPreferences.shiny = false;
-              originalStarterPreferences.shiny = false;
-              this.setSpeciesDetails(this.lastSpecies, {
-                shiny: false,
-                variant: 0,
-              });
-              this.starterSummary.setShinyIcon(false);
+              this.setShinyAndVariant(speciesId, false, newVariant);
               success = true;
             } else {
               // If going to a higher variant, or only shiny forms are caught, go to next variant
-              this.setSpeciesDetails(this.lastSpecies, {
-                variant: newVariant as Variant,
-              });
-              // Cycle tint based on current sprite tint
-              this.starterSummary.setShinyIcon(true, newVariant as Variant);
               success = true;
             }
           }
@@ -1457,24 +1433,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
               break;
             }
           } while (newFormIndex !== props.formIndex);
-          starterPreferences.formIndex = newFormIndex; // store the selected form
-          originalStarterPreferences.formIndex = newFormIndex;
-          starterPreferences.tera = this.lastSpecies.forms[newFormIndex].type1;
-          originalStarterPreferences.tera = starterPreferences.tera;
-          this.setSpeciesDetails(this.lastSpecies, {
-            formIndex: newFormIndex,
-            teraType: starterPreferences.tera,
-          });
+          this.setNewFormIndex(speciesId, newFormIndex);
           success = true;
         }
         break;
       case Button.CYCLE_GENDER:
         if (this.canCycleGender) {
-          starterPreferences.female = !props.female;
-          originalStarterPreferences.female = starterPreferences.female;
-          this.setSpeciesDetails(this.lastSpecies, {
-            female: !props.female,
-          });
+          this.setNewGender(speciesId, !props.female);
           success = true;
         }
         break;
@@ -1502,12 +1467,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
               }
             }
           } while (newAbilityIndex !== this.abilityCursor);
-          starterPreferences.abilityIndex = newAbilityIndex; // store the selected ability
-          originalStarterPreferences.abilityIndex = newAbilityIndex;
-
-          this.setSpeciesDetails(this.lastSpecies, {
-            abilityIndex: newAbilityIndex,
-          });
+          this.setNewAbilityIndex(speciesId, newAbilityIndex);
           success = true;
         }
         break;
@@ -1517,36 +1477,76 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           const natureIndex = natures.indexOf(this.natureCursor);
           const newNature = natures[natureIndex < natures.length - 1 ? natureIndex + 1 : 0];
           // store cycled nature as default
-          starterPreferences.nature = newNature as unknown as number;
-          originalStarterPreferences.nature = starterPreferences.nature;
-          this.setSpeciesDetails(this.lastSpecies, {
-            natureIndex: newNature,
-          });
+          this.setNewNature(speciesId, newNature);
           success = true;
         }
         break;
       case Button.CYCLE_TERA:
         if (this.canCycleTera) {
           const speciesForm = getPokemonSpeciesForm(this.lastSpecies.speciesId, starterPreferences.formIndex ?? 0);
-          if (speciesForm.type1 === this.teraCursor && !isNullOrUndefined(speciesForm.type2)) {
-            starterPreferences.tera = speciesForm.type2;
-            originalStarterPreferences.tera = starterPreferences.tera;
-            this.setSpeciesDetails(this.lastSpecies, {
-              teraType: speciesForm.type2,
-            });
-          } else {
-            starterPreferences.tera = speciesForm.type1;
-            originalStarterPreferences.tera = starterPreferences.tera;
-            this.setSpeciesDetails(this.lastSpecies, {
-              teraType: speciesForm.type1,
-            });
-          }
+          const newTera =
+            speciesForm.type1 === starterPreferences.tera && !isNullOrUndefined(speciesForm.type2)
+              ? speciesForm.type2
+              : speciesForm.type1;
+          this.setNewTeraType(speciesId, newTera);
           success = true;
         }
         break;
     }
 
+    if (success) {
+      this.setSpeciesDetails(this.lastSpecies);
+    }
+
     return success;
+  }
+
+  setShinyAndVariant(speciesId: SpeciesId, shiny: boolean, variant: number) {
+    (this.starterPreferences[speciesId] ??= {}).shiny = shiny;
+    (this.originalStarterPreferences[speciesId] ??= {}).shiny = shiny;
+    (this.starterPreferences[speciesId] ??= {}).variant = variant;
+    (this.originalStarterPreferences[speciesId] ??= {}).variant = variant;
+  }
+
+  setNewFormIndex(speciesId: SpeciesId, formIndex: number) {
+    (this.starterPreferences[speciesId] ??= {}).formIndex = formIndex;
+    (this.originalStarterPreferences[speciesId] ??= {}).formIndex = formIndex;
+    // Updating tera type for new form
+    this.setNewTeraType(speciesId, this.lastSpecies.forms[formIndex].type1);
+    // Updating gender for gendered forms
+    if (getPokemonSpecies[speciesId].forms?.find(f => f.formKey === "female")) {
+      const newFemale = formIndex === 1;
+      if (this.starterPreferences[speciesId].female !== newFemale) {
+        this.setNewGender(speciesId, newFemale);
+      }
+    }
+  }
+
+  setNewGender(speciesId: SpeciesId, female: boolean) {
+    (this.starterPreferences[speciesId] ??= {}).female = female;
+    (this.originalStarterPreferences[speciesId] ??= {}).female = female;
+    // Updating form for gendered forms
+    if (getPokemonSpecies[speciesId].forms?.find(f => f.formKey === "female")) {
+      const newFormIndex = female ? 1 : 0;
+      if (this.starterPreferences[speciesId].formIndex !== newFormIndex) {
+        this.setNewFormIndex(speciesId, newFormIndex);
+      }
+    }
+  }
+
+  setNewAbilityIndex(speciesId: SpeciesId, abilityIndex: number) {
+    (this.starterPreferences[speciesId] ??= {}).abilityIndex = abilityIndex;
+    (this.originalStarterPreferences[speciesId] ??= {}).abilityIndex = abilityIndex;
+  }
+
+  setNewNature(speciesId: SpeciesId, nature: number) {
+    (this.starterPreferences[speciesId] ??= {}).nature = nature;
+    (this.originalStarterPreferences[speciesId] ??= {}).nature = nature;
+  }
+
+  setNewTeraType(speciesId: SpeciesId, teraType: PokemonType) {
+    (this.starterPreferences[speciesId] ??= {}).tera = teraType;
+    (this.originalStarterPreferences[speciesId] ??= {}).tera = teraType;
   }
 
   processPartyIconInput(button: Button) {
@@ -1828,14 +1828,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                   const option: OptionSelectItem = {
                     label: getNatureName(n, true, true, true),
                     handler: () => {
-                      starterPreferences.nature = n;
-                      originalStarterPreferences.nature = starterPreferences.nature;
+                      this.setNewNature(this.lastSpecies.speciesId, n);
                       this.clearText();
                       ui.setMode(UiMode.STARTER_SELECT);
                       // set nature for starter
-                      this.setSpeciesDetails(this.lastSpecies, {
-                        natureIndex: n,
-                      });
+                      this.setSpeciesDetails(this.lastSpecies);
                       this.blockInput = false;
                       return true;
                     },
@@ -2417,7 +2414,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       starterDataEntry.moveset = updatedMoveset;
     }
     this.hasSwappedMoves = true;
-    this.setSpeciesDetails(this.lastSpecies, {});
+    // TODO: we shouldn't need to call setSpeciesDetails here, since only the moveset is changing
+    this.setSpeciesDetails(this.lastSpecies);
     this.updateSelectedStarterMoveset(speciesId);
   }
 
@@ -3027,32 +3025,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
       const props = this.getSpeciesPropsFromPreferences(species);
 
-      const ability =
-        starterPreferences?.abilityIndex ?? globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
-      const nature = starterPreferences?.nature || globalScene.gameData.getSpeciesDefaultNature(species, dexEntry);
-
-      // TODO: are these checks necessary? getSpeciesPropsFromPreferences should have already done this.
-      if (starterPreferences?.variant && !Number.isNaN(starterPreferences.variant)) {
-        if (props.shiny) {
-          props.variant = starterPreferences.variant as Variant;
-        }
-      }
-      props.formIndex = starterPreferences?.formIndex ?? props.formIndex;
-      props.female = starterPreferences?.female ?? props.female;
-
-      this.setSpeciesDetails(
-        species,
-        {
-          shiny: props.shiny,
-          formIndex: props.formIndex,
-          female: props.female,
-          variant: props.variant,
-          abilityIndex: ability,
-          natureIndex: nature,
-          teraType: starterPreferences?.tera,
-        },
-        false,
-      );
+      this.setSpeciesDetails(species, false);
 
       if (!isNullOrUndefined(props.formIndex)) {
         // If switching forms while the pokemon is in the team, update its moveset
@@ -3107,11 +3080,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.updateInstructions();
   }
 
-  setSpeciesDetails(species: PokemonSpecies, options: SpeciesDetails = {}, save = true): void {
+  setSpeciesDetails(species: PokemonSpecies, save = true): void {
     // Here we pass some options to override everything else
-    this.starterSummary.setSpeciesDetails(species, options);
 
-    let { shiny, formIndex, female, variant, abilityIndex, natureIndex, teraType } = options;
+    const speciesDetails = getSpeciesDetailsFromPreferences(species, this.starterPreferences[species.speciesId]);
+    let { shiny, formIndex, female, variant, abilityIndex, natureIndex, teraType } = speciesDetails;
+
+    this.starterSummary.setSpeciesDetails(species, speciesDetails);
 
     // Storing old cursor values...
     const oldProps = globalScene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor);
@@ -3128,15 +3103,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.abilityCursor = -1;
     this.natureCursor = -1;
     this.teraCursor = PokemonType.UNKNOWN;
-
-    // Ensuring that gender and form are consistent
-    if (species.forms?.find(f => f.formKey === "female")) {
-      if (female !== undefined) {
-        formIndex = female ? 1 : 0;
-      } else if (formIndex !== undefined) {
-        female = formIndex === 1;
-      }
-    }
 
     // Update cursors
     this.dexAttrCursor |= (shiny !== undefined ? !shiny : !(shiny = oldProps?.shiny))
