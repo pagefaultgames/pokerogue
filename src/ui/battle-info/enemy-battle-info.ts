@@ -3,11 +3,12 @@ import { Stat } from "#enums/stat";
 import { TextStyle } from "#enums/text-style";
 import { UiTheme } from "#enums/ui-theme";
 import type { EnemyPokemon } from "#field/pokemon";
-import { BattleFlyout } from "#ui/battle-flyout";
 import type { BattleInfoParamList } from "#ui/battle-info";
 import { BattleInfo } from "#ui/battle-info";
+import { BattleFlyout } from "#ui/containers/battle-flyout";
 import { addTextObject } from "#ui/text";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
+import { getLocalizedSpriteKey } from "#utils/common";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
 
@@ -189,6 +190,9 @@ export class EnemyBattleInfo extends BattleInfo {
       this.hpBar.x += 38 * (boss ? -1 : 1);
       this.hpBar.y += 2 * (this.boss ? -1 : 1);
       this.hpBar.setTexture(`overlay_hp${boss ? "_boss" : ""}`);
+      this.hpLabel.x += 38 * (boss ? -1 : 1);
+      this.hpLabel.y += 1 * (this.boss ? -1 : 1);
+      this.hpLabel.setTexture(getLocalizedSpriteKey(`overlay_hp_label${boss ? "_boss" : ""}`));
       this.levelContainer.x += 2 * (boss ? -1 : 1);
       this.box.setTexture(this.getTextureName());
       this.statsBox.setTexture(`${this.getTextureName()}_stats`);

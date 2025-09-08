@@ -3,7 +3,6 @@ import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -24,48 +23,35 @@ describe("Abilities - Pastel Veil", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override
-      .battleStyle("double")
-      .moveset([MoveId.TOXIC_THREAD, MoveId.SPLASH])
-      .enemyAbility(AbilityId.BALL_FETCH)
-      .enemySpecies(SpeciesId.SUNKERN)
-      .enemyMoveset(MoveId.SPLASH);
+    game.override.battleStyle("double").enemyAbility(AbilityId.BALL_FETCH).enemySpecies(SpeciesId.TOXAPEX);
   });
 
-  it("prevents the user and its allies from being afflicted by poison", async () => {
+  it("should prevent the user and its allies from being poisoned", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.GALAR_PONYTA]);
-    const ponyta = game.scene.getPlayerField()[1];
-    const magikarp = game.scene.getPlayerField()[0];
-    ponyta.abilityIndex = 1;
+    const [magikarp, ponyta] = game.scene.getPlayerField();
+    game.field.mockAbility(ponyta, AbilityId.PASTEL_VEIL);
 
-    expect(ponyta.hasAbility(AbilityId.PASTEL_VEIL)).toBe(true);
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    await game.move.forceEnemyMove(MoveId.TOXIC, BattlerIndex.PLAYER);
+    await game.move.forceEnemyMove(MoveId.TOXIC, BattlerIndex.PLAYER_2);
+    await game.toEndOfTurn();
 
-    game.move.select(MoveId.SPLASH);
-    game.move.select(MoveId.TOXIC_THREAD, 1, BattlerIndex.PLAYER);
-
-    await game.phaseInterceptor.to(TurnEndPhase);
-
-    expect(magikarp.status?.effect).toBeUndefined();
+    expect(magikarp).toHaveStatusEffect(StatusEffect.NONE);
+    expect(ponyta).toHaveStatusEffect(StatusEffect.NONE);
   });
 
-  it("it heals the poisoned status condition of allies if user is sent out into battle", async () => {
+  it("should cure allies' poison if user is sent out into battle", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS, SpeciesId.GALAR_PONYTA]);
-    const ponyta = game.scene.getPlayerParty()[2];
-    const magikarp = game.scene.getPlayerField()[0];
-    ponyta.abilityIndex = 1;
+    const [magikarp, , ponyta] = game.scene.getPlayerParty();
+    game.field.mockAbility(ponyta, AbilityId.PASTEL_VEIL);
 
-    expect(ponyta.hasAbility(AbilityId.PASTEL_VEIL)).toBe(true);
+    magikarp.doSetStatus(StatusEffect.POISON);
 
-    game.move.select(MoveId.SPLASH);
-    game.move.select(MoveId.TOXIC_THREAD, 1, BattlerIndex.PLAYER);
-
-    await game.phaseInterceptor.to(TurnEndPhase);
-    expect(magikarp.status?.effect).toBe(StatusEffect.POISON);
-
-    game.move.select(MoveId.SPLASH);
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
     game.doSwitchPokemon(2);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.toEndOfTurn();
 
-    expect(magikarp.status?.effect).toBeUndefined();
+    expect(magikarp).toHaveStatusEffect(StatusEffect.NONE);
   });
 });

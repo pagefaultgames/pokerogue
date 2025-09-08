@@ -204,7 +204,7 @@ export class GameOverPhase extends BattlePhase {
             }
             this.getRunHistoryEntry().then(runHistoryEntry => {
               globalScene.gameData.saveRunHistory(runHistoryEntry, this.isVictory);
-              globalScene.phaseManager.pushNew("PostGameOverPhase", endCardPhase);
+              globalScene.phaseManager.pushNew("PostGameOverPhase", globalScene.sessionSlotId, endCardPhase);
               this.end();
             });
           };
