@@ -3,7 +3,7 @@ import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { UiTheme } from "#enums/ui-theme";
 import type { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
-import type { StarterContainer } from "#ui/starter-container";
+import type { StarterContainer } from "#ui/containers/starter-container";
 import { addTextObject, getTextColor } from "#ui/text";
 import type { UI } from "#ui/ui";
 import { addWindow, WindowVariant } from "#ui/ui-theme";

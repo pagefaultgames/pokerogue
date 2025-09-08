@@ -46,13 +46,13 @@ import { RibbonData } from "#system/ribbons/ribbon-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import { StarterContainer } from "#ui/containers/starter-container";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
 import { FilterBar } from "#ui/filter-bar";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-handler";
 import { ScrollBar } from "#ui/scroll-bar";
-import { StarterContainer } from "#ui/starter-container";
 import {
   getDexAttrFromPreferences,
   getRunValueLimit,
