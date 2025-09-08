@@ -46,7 +46,7 @@
       }
     }
   },
-  // TODO: Remove unneeded `options` blocks once biome cares
+  // TODO: Remove unneeded `options` blocks once biome's JSON schema is fixed to not require them
   "linter": {
     "enabled": true,
     "rules": {
@@ -106,7 +106,7 @@
         },
         "useCollapsedIf": "error",
         "useCollapsedElseIf": "error",
-        "noDoneCallback": "error",
+
         "noSubstr": "error",
         "noYodaExpression": "error",
         "useForOf": "error",
