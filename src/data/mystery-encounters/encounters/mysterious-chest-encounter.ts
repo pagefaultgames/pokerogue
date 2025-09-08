@@ -163,8 +163,12 @@ export const MysteriousChestEncounter: MysteryEncounter = MysteryEncounterBuilde
           queueEncounterMessage(`${namespace}:option.1.great`);
           leaveEncounterWithoutBattle();
         } else if (
-          roll >=
-          RAND_LENGTH - COMMON_REWARDS_PERCENT - ULTRA_REWARDS_PERCENT - ROGUE_REWARDS_PERCENT - MASTER_REWARDS_PERCENT
+          roll
+          >= RAND_LENGTH
+            - COMMON_REWARDS_PERCENT
+            - ULTRA_REWARDS_PERCENT
+            - ROGUE_REWARDS_PERCENT
+            - MASTER_REWARDS_PERCENT
         ) {
           // Choose 1 MASTER tier item (5%)
           setEncounterRewards({
