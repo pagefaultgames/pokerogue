@@ -2104,9 +2104,10 @@ export class GameData {
     return ret;
   }
 
-  getSpeciesDefaultDexAttrProps(): DexAttrProps {
+  getSpeciesDefaultDexAttrProps(species: PokemonSpecies): DexAttrProps {
     const shiny = false;
-    const female = false;
+    // Default is female only for species where malePercent is not null but 0
+    const female = species.malePercent === 0;
     const variant = 0;
     const formIndex = 0;
 

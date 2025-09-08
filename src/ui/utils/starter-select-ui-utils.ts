@@ -313,10 +313,12 @@ export function getSpeciesPropsFromPreferences(
   species: PokemonSpecies,
   starterPreferences: StarterPreferences = {},
 ): DexAttrProps {
-  return globalScene.gameData.getSpeciesDexAttrProps(
-    species,
-    getDexAttrFromPreferences(species.speciesId, starterPreferences),
-  );
+  return {
+    shiny: !!starterPreferences.shiny,
+    variant: (starterPreferences.variant as Variant) ?? 0,
+    female: starterPreferences.female ?? species.malePercent === 0,
+    formIndex: starterPreferences.formIndex ?? 0,
+  };
 }
 
 // TODO: Do we actually need props?

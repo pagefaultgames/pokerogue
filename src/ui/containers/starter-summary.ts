@@ -556,7 +556,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     } else if (dexEntry.seenAttr) {
       this.cleanStarterSprite(species, true);
 
-      const props = globalScene.gameData.getSpeciesDefaultDexAttrProps();
+      const props = globalScene.gameData.getSpeciesDefaultDexAttrProps(species);
 
       const formIndex = props.formIndex;
       const female = props.female;
@@ -569,7 +569,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     } else {
       this.cleanStarterSprite(species);
 
-      const props = globalScene.gameData.getSpeciesDefaultDexAttrProps();
+      const props = globalScene.gameData.getSpeciesDefaultDexAttrProps(species);
 
       const formIndex = props.formIndex;
       const female = props.female;
@@ -623,6 +623,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
   setSpeciesDetails(species: PokemonSpecies, options: SpeciesDetails = {}): void {
     // Here we pass some options to override everything else
     let { shiny, formIndex, female, variant, abilityIndex, natureIndex, teraType } = options;
+    console.log("OPTIONS", options);
 
     // We will only update the sprite if there is a change to form, shiny/variant
     // or gender for species with gender sprite differences
@@ -633,15 +634,6 @@ export class StarterSummary extends Phaser.GameObjects.Container {
       !isNullOrUndefined(variant);
 
     this.updateCandyTooltip();
-
-    // Ensuring that gender and form are consistent
-    if (species.forms?.find(f => f.formKey === "female")) {
-      if (female !== undefined) {
-        formIndex = female ? 1 : 0;
-      } else if (formIndex !== undefined) {
-        female = formIndex === 1;
-      }
-    }
 
     this.pokemonSprite.setVisible(false);
     this.teraIcon.setVisible(false);
