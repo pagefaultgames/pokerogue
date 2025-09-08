@@ -72,8 +72,3 @@ SPDX-License-Identifier = "CC0-1.0.txt"
 path = "favicon.ico" # Created by Gonstar (Paid Commission)
 SPDX-FileCopyrightText = "2024 Gonstar"
 SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
-
-# TODO: Files in public need to be licensed on a per-file basis, or by author.
-# Easiest thing to do would be to have an "annotations" section for each creator that covers the files they contributed
-[[annotations]]
-path = ["public"]
