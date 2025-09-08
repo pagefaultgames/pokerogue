@@ -2876,6 +2876,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.updateStarterValueLabel(container);
 
         container.label.setVisible(true);
+        container.label.setAbove(container.icon);
         const speciesVariants =
           speciesId && dexEntry.caughtAttr & DexAttr.SHINY
             ? [DexAttr.DEFAULT_VARIANT, DexAttr.VARIANT_2, DexAttr.VARIANT_3].filter(v => !!(dexEntry.caughtAttr & v))
