@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+ * SPDX-FileContributor: Bertie690
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
 import chalk from "chalk";
 
 /** Show help/usage text for the `eggMoves:parse` CLI. */
