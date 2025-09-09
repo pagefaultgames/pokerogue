@@ -6,7 +6,7 @@ import { BattleType } from "#enums/battle-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
-import { getEnumValues } from "#utils/enums";
+import { getEnumTestCases } from "#test/test-utils/string-utils";
 import { toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import Phaser from "phaser";
@@ -47,7 +47,7 @@ describe("Arena Tags", () => {
     vi.spyOn(game.scene.phaseManager, "queueMessage").mockImplementation((text, callbackDelay, prompt, promptDelay) =>
       game.scene.ui.showText(text, null, null, callbackDelay, prompt, promptDelay),
     );
-    game.textInterceptor.logs = [];
+    game.textInterceptor.clearLogs();
   });
 
   // These tags are either ineligible or just jaaaaaaaaaaank
@@ -60,9 +60,9 @@ describe("Arena Tags", () => {
       name: toTitleCase(t),
     }));
   describe.each(arenaTags)("$name", ({ tagType }) => {
-    it.each(getEnumValues(ArenaTagSide))(
-      "should display a message on addition, and a separate one on removal",
-      side => {
+    it.each(getEnumTestCases(ArenaTagSide))(
+      "should display a message on addition, and a separate one on removal - ArenaTagSide.$name",
+      ({ value: side }) => {
         game.scene.arena.addTag(tagType, 0, undefined, playerId, side);
 
         expect(game).toHaveArenaTag(tagType, side);
@@ -79,7 +79,7 @@ describe("Arena Tags", () => {
           expect(game.textInterceptor.logs).toHaveLength(0);
         }
 
-        game.textInterceptor.logs = [];
+        game.textInterceptor.clearLogs();
 
         game.scene.arena.removeTagOnSide(tagType, side, false);
         if (tag["onRemoveMessageKey"]) {

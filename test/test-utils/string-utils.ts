@@ -1,10 +1,12 @@
 import { getStatKey, type Stat } from "#enums/stat";
 import type { EnumOrObject, NormalEnum, TSNumericEnum } from "#types/enum-types";
 import type { ObjectValues } from "#types/type-helpers";
-import { enumValueToKey } from "#utils/enums";
+import { enumValueToKey, getEnumValues } from "#utils/enums";
 import { toTitleCase } from "#utils/strings";
 import type { MatcherState } from "@vitest/expect";
 import i18next from "i18next";
+// biome-ignore lint/correctness/noUnusedImports: TSDoc
+import type { describe, it } from "vitest";
 
 type Casing = "Preserve" | "Title";
 
@@ -87,7 +89,7 @@ export function getEnumStr<E extends EnumOrObject>(
  * ```
  */
 export function stringifyEnumArray<E extends EnumOrObject>(obj: E, enums: E[keyof E][]): string {
-  if (obj.length === 0) {
+  if (enums.length === 0) {
     return "[]";
   }
 
@@ -184,4 +186,37 @@ export function getOnelineDiffStr(this: MatcherState, obj: unknown): string {
     .stringify(obj, undefined, { maxLength: 35, indent: 0, printBasicPrototype: false })
     .replace(/\n/g, " ") // Replace newlines with spaces
     .replace(/,(\s*)\}$/g, "$1}"); // Trim trailing commas
+}
+
+/**
+ * Convert an enum or `const object` into an array of object literals
+ * suitable for use inside {@linkcode describe.each} or {@linkcode it.each}.
+ * @param obj - The {@linkcode EnumOrObject} to source reverse mappings from
+ * @param values - An array containing one or more of `obj`'s values to convert.
+ * Defaults to all the enum's values.
+ * @param options - Options to pass to {@linkcode getEnumStr}
+ * @returns An array of objects containing the enum's name and value.
+ * @example
+ * ```ts
+ * enum fakeEnum {
+ *   ONE: 1,
+ *   TWO: 2,
+ *   THREE: 3,
+ * }
+ * describe.each(getEnumTestCases(fakeEnum))("should do XYZ - $name", ({value}) => {});
+ * ```
+ */
+export function getEnumTestCases<E extends EnumOrObject>(
+  obj: E,
+  values: E[keyof E][] = isTSNumericEnum(obj) ? getEnumValues(obj) : (Object.values(obj) as E[keyof E][]),
+  options: getEnumStrOptions = {},
+): { value: E[keyof E]; name: string }[] {
+  return values.map(e => ({
+    value: e,
+    name: getEnumStr(obj, e, options),
+  }));
+}
+
+function isTSNumericEnum<E extends EnumOrObject>(obj: E): obj is TSNumericEnum<E> {
+  return Object.keys(obj).some(k => typeof k === "number");
 }
