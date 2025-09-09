@@ -519,9 +519,9 @@ export const achvs = {
     "reviver_seed",
     100,
     c =>
-      c instanceof FreshStartChallenge &&
-      c.value === 1 &&
-      !globalScene.gameMode.challenges.some(
+      c instanceof FreshStartChallenge
+      && c.value === 1
+      && !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
@@ -546,9 +546,9 @@ export const achvs = {
     "ribbon_gen1",
     100,
     c =>
-      c instanceof SingleGenerationChallenge &&
-      c.value === 1 &&
-      !globalScene.gameMode.challenges.some(
+      c instanceof SingleGenerationChallenge
+      && c.value === 1
+      && !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
@@ -558,9 +558,9 @@ export const achvs = {
     "ribbon_gen2",
     100,
     c =>
-      c instanceof SingleGenerationChallenge &&
-      c.value === 2 &&
-      !globalScene.gameMode.challenges.some(
+      c instanceof SingleGenerationChallenge
+      && c.value === 2
+      && !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
@@ -570,9 +570,9 @@ export const achvs = {
     "ribbon_gen3",
     100,
     c =>
-      c instanceof SingleGenerationChallenge &&
-      c.value === 3 &&
-      !globalScene.gameMode.challenges.some(
+      c instanceof SingleGenerationChallenge
+      && c.value === 3
+      && !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
@@ -582,9 +582,9 @@ export const achvs = {
     "ribbon_gen4",
     100,
     c =>
-      c instanceof SingleGenerationChallenge &&
-      c.value === 4 &&
-      !globalScene.gameMode.challenges.some(
+      c instanceof SingleGenerationChallenge
+      && c.value === 4
+      && !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
@@ -594,9 +594,9 @@ export const achvs = {
     "ribbon_gen5",
     100,
     c =>
-      c instanceof SingleGenerationChallenge &&
-      c.value === 5 &&
-      !globalScene.gameMode.challenges.some(
+      c instanceof SingleGenerationChallenge
+      && c.value === 5
+      && !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
@@ -606,9 +606,9 @@ export const achvs = {
     "ribbon_gen6",
     100,
     c =>
-      c instanceof SingleGenerationChallenge &&
-      c.value === 6 &&
-      !globalScene.gameMode.challenges.some(
+      c instanceof SingleGenerationChallenge
+      && c.value === 6
+      && !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
@@ -618,9 +618,9 @@ export const achvs = {
     "ribbon_gen7",
     100,
     c =>
-      c instanceof SingleGenerationChallenge &&
-      c.value === 7 &&
-      !globalScene.gameMode.challenges.some(
+      c instanceof SingleGenerationChallenge
+      && c.value === 7
+      && !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
@@ -630,9 +630,9 @@ export const achvs = {
     "ribbon_gen8",
     100,
     c =>
-      c instanceof SingleGenerationChallenge &&
-      c.value === 8 &&
-      !globalScene.gameMode.challenges.some(
+      c instanceof SingleGenerationChallenge
+      && c.value === 8
+      && !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
@@ -642,9 +642,9 @@ export const achvs = {
     "ribbon_gen9",
     100,
     c =>
-      c instanceof SingleGenerationChallenge &&
-      c.value === 9 &&
-      !globalScene.gameMode.challenges.some(
+      c instanceof SingleGenerationChallenge
+      && c.value === 9
+      && !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
@@ -654,9 +654,9 @@ export const achvs = {
     "silk_scarf",
     100,
     c =>
-      c instanceof SingleTypeChallenge &&
-      c.value === 1 &&
-      !globalScene.gameMode.challenges.some(
+      c instanceof SingleTypeChallenge
+      && c.value === 1
+      && !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
@@ -666,9 +666,9 @@ export const achvs = {
     "black_belt",
     100,
     c =>
-      c instanceof SingleTypeChallenge &&
-      c.value === 2 &&
-      !globalScene.gameMode.challenges.some(
+      c instanceof SingleTypeChallenge
+      && c.value === 2
+      && !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
@@ -678,9 +678,9 @@ export const achvs = {
     "sharp_beak",
     100,
     c =>
-      c instanceof SingleTypeChallenge &&
-      c.value === 3 &&
-      !globalScene.gameMode.challenges.some(
+      c instanceof SingleTypeChallenge
+      && c.value === 3
+      && !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
@@ -690,9 +690,9 @@ export const achvs = {
     "poison_barb",
     100,
     c =>
-      c instanceof SingleTypeChallenge &&
-      c.value === 4 &&
-      !globalScene.gameMode.challenges.some(
+      c instanceof SingleTypeChallenge
+      && c.value === 4
+      && !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
@@ -702,9 +702,9 @@ export const achvs = {
     "soft_sand",
     100,
     c =>
-      c instanceof SingleTypeChallenge &&
-      c.value === 5 &&
-      !globalScene.gameMode.challenges.some(
+      c instanceof SingleTypeChallenge
+      && c.value === 5
+      && !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
@@ -714,9 +714,9 @@ export const achvs = {
     "hard_stone",
     100,
     c =>
-      c instanceof SingleTypeChallenge &&
-      c.value === 6 &&
-      !globalScene.gameMode.challenges.some(
+      c instanceof SingleTypeChallenge
+      && c.value === 6
+      && !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
@@ -726,9 +726,9 @@ export const achvs = {
     "silver_powder",
     100,
     c =>
-      c instanceof SingleTypeChallenge &&
-      c.value === 7 &&
-      !globalScene.gameMode.challenges.some(
+      c instanceof SingleTypeChallenge
+      && c.value === 7
+      && !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
@@ -738,9 +738,9 @@ export const achvs = {
     "spell_tag",
     100,
     c =>
-      c instanceof SingleTypeChallenge &&
-      c.value === 8 &&
-      !globalScene.gameMode.challenges.some(
+      c instanceof SingleTypeChallenge
+      && c.value === 8
+      && !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
@@ -750,9 +750,9 @@ export const achvs = {
     "metal_coat",
     100,
     c =>
-      c instanceof SingleTypeChallenge &&
-      c.value === 9 &&
-      !globalScene.gameMode.challenges.some(
+      c instanceof SingleTypeChallenge
+      && c.value === 9
+      && !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
@@ -762,9 +762,9 @@ export const achvs = {
     "charcoal",
     100,
     c =>
-      c instanceof SingleTypeChallenge &&
-      c.value === 10 &&
-      !globalScene.gameMode.challenges.some(
+      c instanceof SingleTypeChallenge
+      && c.value === 10
+      && !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
@@ -774,9 +774,9 @@ export const achvs = {
     "mystic_water",
     100,
     c =>
-      c instanceof SingleTypeChallenge &&
-      c.value === 11 &&
-      !globalScene.gameMode.challenges.some(
+      c instanceof SingleTypeChallenge
+      && c.value === 11
+      && !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
@@ -786,9 +786,9 @@ export const achvs = {
     "miracle_seed",
     100,
     c =>
-      c instanceof SingleTypeChallenge &&
-      c.value === 12 &&
-      !globalScene.gameMode.challenges.some(
+      c instanceof SingleTypeChallenge
+      && c.value === 12
+      && !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
@@ -798,9 +798,9 @@ export const achvs = {
     "magnet",
     100,
     c =>
-      c instanceof SingleTypeChallenge &&
-      c.value === 13 &&
-      !globalScene.gameMode.challenges.some(
+      c instanceof SingleTypeChallenge
+      && c.value === 13
+      && !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
@@ -810,9 +810,9 @@ export const achvs = {
     "twisted_spoon",
     100,
     c =>
-      c instanceof SingleTypeChallenge &&
-      c.value === 14 &&
-      !globalScene.gameMode.challenges.some(
+      c instanceof SingleTypeChallenge
+      && c.value === 14
+      && !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
@@ -822,9 +822,9 @@ export const achvs = {
     "never_melt_ice",
     100,
     c =>
-      c instanceof SingleTypeChallenge &&
-      c.value === 15 &&
-      !globalScene.gameMode.challenges.some(
+      c instanceof SingleTypeChallenge
+      && c.value === 15
+      && !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
@@ -834,9 +834,9 @@ export const achvs = {
     "dragon_fang",
     100,
     c =>
-      c instanceof SingleTypeChallenge &&
-      c.value === 16 &&
-      !globalScene.gameMode.challenges.some(
+      c instanceof SingleTypeChallenge
+      && c.value === 16
+      && !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
@@ -846,9 +846,9 @@ export const achvs = {
     "black_glasses",
     100,
     c =>
-      c instanceof SingleTypeChallenge &&
-      c.value === 17 &&
-      !globalScene.gameMode.challenges.some(
+      c instanceof SingleTypeChallenge
+      && c.value === 17
+      && !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
@@ -858,9 +858,9 @@ export const achvs = {
     "fairy_feather",
     100,
     c =>
-      c instanceof SingleTypeChallenge &&
-      c.value === 18 &&
-      !globalScene.gameMode.challenges.some(
+      c instanceof SingleTypeChallenge
+      && c.value === 18
+      && !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
@@ -877,9 +877,9 @@ export const achvs = {
     "cracked_pot",
     50,
     c =>
-      c instanceof FlipStatChallenge &&
-      c.value > 0 &&
-      globalScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0),
+      c instanceof FlipStatChallenge
+      && c.value > 0
+      && globalScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0),
   ).setSecret(),
   BREEDERS_IN_SPACE: new Achv("breedersInSpace", "breedersInSpace.description", "moon_stone", 50).setSecret(),
 };

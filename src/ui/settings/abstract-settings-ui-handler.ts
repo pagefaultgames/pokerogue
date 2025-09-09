@@ -5,9 +5,9 @@ import { UiMode } from "#enums/ui-mode";
 import type { SettingType } from "#system/settings";
 import { Setting, SettingKeys } from "#system/settings";
 import type { InputsIcons } from "#ui/abstract-control-settings-ui-handler";
-import { MessageUiHandler } from "#ui/message-ui-handler";
+import { ScrollBar } from "#ui/containers/scroll-bar";
+import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
 import { NavigationManager, NavigationMenu } from "#ui/navigation-menu";
-import { ScrollBar } from "#ui/scroll-bar";
 import { addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import i18next from "i18next";
@@ -34,8 +34,6 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
   protected navigationIcons: InputsIcons;
 
   private cursorObj: Phaser.GameObjects.NineSlice | null;
-
-  private reloadSettings: Array<Setting>;
   private reloadRequired: boolean;
 
   protected rowsToDisplay: number;
@@ -106,8 +104,6 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
 
     this.settingLabels = [];
     this.optionValueLabels = [];
-
-    this.reloadSettings = this.settings.filter(s => s?.requireReload);
 
     let anyReloadRequired = false;
     this.settings.forEach((setting, s) => {
@@ -520,7 +516,7 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
     prompt?: boolean,
     promptDelay?: number,
   ) {
-    this.messageBoxContainer.setVisible(!!text?.length);
+    this.messageBoxContainer.setVisible(text?.length > 0);
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 }
