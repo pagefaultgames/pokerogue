@@ -89,7 +89,7 @@ describe("Moves - Imprison", () => {
     game.move.select(MoveId.IMPRISON);
     await game.move.selectEnemyMove(MoveId.GROWL);
     await game.toNextTurn();
-    expect(game.scene.arena.getTag(ArenaTagType.IMPRISON)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.IMPRISON);
     expect(enemyPokemon.getTag(BattlerTagType.IMPRISON)).toBeDefined();
     game.doSwitchPokemon(1);
     await game.move.selectEnemyMove(MoveId.SPLASH);

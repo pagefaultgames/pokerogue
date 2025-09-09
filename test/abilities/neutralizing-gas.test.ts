@@ -114,7 +114,7 @@ describe("Abilities - Neutralizing Gas", () => {
     await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeDefined(); // Now one neut gas user is left
+    expect(game).toHaveArenaTag(ArenaTagType.NEUTRALIZING_GAS); // Now one neut gas user is left
 
     game.move.select(MoveId.SPLASH, 0);
     game.move.select(MoveId.SPLASH, 1);
@@ -141,7 +141,7 @@ describe("Abilities - Neutralizing Gas", () => {
 
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
     game.move.select(MoveId.SPLASH);
-    expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.NEUTRALIZING_GAS);
     await game.doKillOpponents();
 
     expect(game).not.toHaveArenaTag(ArenaTagType.NEUTRALIZING_GAS);
@@ -150,7 +150,7 @@ describe("Abilities - Neutralizing Gas", () => {
   it("should deactivate upon catching a wild pokemon", async () => {
     game.override.battleStyle("single").enemyAbility(AbilityId.NEUTRALIZING_GAS).ability(AbilityId.BALL_FETCH);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-    expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.NEUTRALIZING_GAS);
 
     game.scene.pokeballCounts[PokeballType.MASTER_BALL] = 1;
     game.doThrowPokeball(PokeballType.MASTER_BALL);
@@ -162,7 +162,7 @@ describe("Abilities - Neutralizing Gas", () => {
   it("should deactivate after fleeing from a wild pokemon", async () => {
     game.override.enemyAbility(AbilityId.NEUTRALIZING_GAS).ability(AbilityId.BALL_FETCH);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-    expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.NEUTRALIZING_GAS);
 
     vi.spyOn(game.field.getPlayerPokemon(), "randBattleSeedInt").mockReturnValue(0);
     vi.spyOn(globalScene, "randBattleSeedInt").mockReturnValue(0);
@@ -182,7 +182,7 @@ describe("Abilities - Neutralizing Gas", () => {
     const weatherChangeAttr = enemy.getAbilityAttrs("PostSummonWeatherChangeAbAttr", false)[0];
     const weatherChangeSpy = vi.spyOn(weatherChangeAttr, "apply");
 
-    expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.NEUTRALIZING_GAS);
 
     game.move.select(MoveId.SPLASH);
     await game.killPokemon(enemy);

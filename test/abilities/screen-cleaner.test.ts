@@ -35,7 +35,7 @@ describe("Abilities - Screen Cleaner", () => {
     game.move.use(MoveId.HAIL);
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(game.scene.arena.getTag(ArenaTagType.AURORA_VEIL)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.AURORA_VEIL);
 
     await game.toNextTurn();
     game.doSwitchPokemon(1);
@@ -52,7 +52,7 @@ describe("Abilities - Screen Cleaner", () => {
     game.move.use(MoveId.SPLASH);
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(game.scene.arena.getTag(ArenaTagType.LIGHT_SCREEN)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.LIGHT_SCREEN);
 
     await game.toNextTurn();
     game.doSwitchPokemon(1);
@@ -69,7 +69,7 @@ describe("Abilities - Screen Cleaner", () => {
     game.move.use(MoveId.SPLASH);
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(game.scene.arena.getTag(ArenaTagType.REFLECT)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.REFLECT);
 
     await game.toNextTurn();
     game.doSwitchPokemon(1);

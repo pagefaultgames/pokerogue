@@ -43,8 +43,8 @@ describe("Moves - Fairy Lock", () => {
     await game.move.selectEnemyMove(MoveId.SPLASH, 1);
     await game.move.selectEnemyMove(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.PLAYER)).toBeDefined();
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.ENEMY)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.FAIRY_LOCK, ArenaTagSide.PLAYER);
+    expect(game).toHaveArenaTag(ArenaTagType.FAIRY_LOCK, ArenaTagSide.ENEMY);
 
     await game.toNextTurn();
 
@@ -74,8 +74,8 @@ describe("Moves - Fairy Lock", () => {
     await game.move.selectEnemyMove(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.PLAYER)).toBeDefined();
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.ENEMY)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.FAIRY_LOCK, ArenaTagSide.PLAYER);
+    expect(game).toHaveArenaTag(ArenaTagType.FAIRY_LOCK, ArenaTagSide.ENEMY);
 
     await game.toNextTurn();
 
@@ -102,8 +102,8 @@ describe("Moves - Fairy Lock", () => {
     await game.move.selectEnemyMove(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.PLAYER)).toBeDefined();
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.ENEMY)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.FAIRY_LOCK, ArenaTagSide.PLAYER);
+    expect(game).toHaveArenaTag(ArenaTagType.FAIRY_LOCK, ArenaTagSide.ENEMY);
 
     await game.toNextTurn();
     game.move.select(MoveId.SPLASH);
@@ -129,8 +129,8 @@ describe("Moves - Fairy Lock", () => {
     await game.move.selectEnemyMove(MoveId.SPLASH, 1);
     await game.move.selectEnemyMove(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.PLAYER)).toBeDefined();
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.ENEMY)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.FAIRY_LOCK, ArenaTagSide.PLAYER);
+    expect(game).toHaveArenaTag(ArenaTagType.FAIRY_LOCK, ArenaTagSide.ENEMY);
 
     await game.toNextTurn();
     game.move.select(MoveId.SPLASH);
