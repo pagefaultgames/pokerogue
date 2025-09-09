@@ -353,7 +353,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
       maxDuration: event.duration,
       duration: event.duration,
       terrainType: event.terrainType,
-    }
+    };
 
     this.updateFieldText();
   }

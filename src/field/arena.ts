@@ -8,7 +8,7 @@ import Overrides from "#app/overrides";
 import type { BiomeTierTrainerPools, PokemonPools } from "#balance/biomes";
 import { BiomePoolTier, biomePokemonPools, biomeTrainerPools } from "#balance/biomes";
 import type { ArenaTag } from "#data/arena-tag";
-import { getArenaTag } from "#data/arena-tag";
+import { EntryHazardTag, getArenaTag } from "#data/arena-tag";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { PositionalTagManager } from "#data/positional-tags/positional-tag-manager";
@@ -720,7 +720,7 @@ export class Arena {
     this.tags.push(newTag);
 
     // Dispatch a TagAddedEvent to update the flyout.
-    if (newTag instanceof ArenaTrapTag) {
+    if (newTag instanceof EntryHazardTag) {
       globalScene.arena.eventTarget.dispatchEvent(
         new ArenaTagAddedEvent(tagType, side, turnCount, [newTag.layers, newTag.maxLayers]),
       );

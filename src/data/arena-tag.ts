@@ -795,7 +795,9 @@ export abstract class EntryHazardTag extends SerializableArenaTag {
     this.layers++;
 
     this.onAdd(arena);
-    globalScene.arena.eventTarget.dispatchEvent(new ArenaTagAddedEvent(this.tagType, this.side, 0, [this.layers, this.maxLayers]));
+    globalScene.arena.eventTarget.dispatchEvent(
+      new ArenaTagAddedEvent(this.tagType, this.side, 0, [this.layers, this.maxLayers]),
+    );
   }
 
   /**
