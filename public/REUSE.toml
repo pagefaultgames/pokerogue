@@ -9,6 +9,8 @@ version = 1
 path = [
     "manifest.webmanifest",
     "battle-anims/*.json",  # Auto generated through our own tooling
+    "**/*.bat",
+    "**/*.ps1",
 ]
 SPDX-FileCopyrightText = "2024-2025 Pagefault Games"
 SPDX-License-Identifier = "AGPL-3.0-only"
