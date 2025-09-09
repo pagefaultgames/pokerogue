@@ -73,7 +73,7 @@ describe("Moves - Tailwind", () => {
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeUndefined();
+    expect(game).not.toHaveArenaTag(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER);
   });
 
   it("does not affect the opposing side", async () => {
@@ -89,8 +89,8 @@ describe("Moves - Tailwind", () => {
 
     expect(ally.getEffectiveStat(Stat.SPD)).equal(allySpd);
     expect(enemy.getEffectiveStat(Stat.SPD)).equal(enemySpd);
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeUndefined();
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.ENEMY)).toBeUndefined();
+    expect(game).not.toHaveArenaTag(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER);
+    expect(game).not.toHaveArenaTag(ArenaTagType.TAILWIND, ArenaTagSide.ENEMY);
 
     game.move.select(MoveId.TAILWIND);
 
@@ -99,6 +99,6 @@ describe("Moves - Tailwind", () => {
     expect(ally.getEffectiveStat(Stat.SPD)).toBe(allySpd * 2);
     expect(enemy.getEffectiveStat(Stat.SPD)).equal(enemySpd);
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeDefined();
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.ENEMY)).toBeUndefined();
+    expect(game).not.toHaveArenaTag(ArenaTagType.TAILWIND, ArenaTagSide.ENEMY);
   });
 });

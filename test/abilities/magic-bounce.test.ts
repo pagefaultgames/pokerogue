@@ -127,7 +127,7 @@ describe("Abilities - Magic Bounce", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.PLAYER)!["layers"]).toBe(1);
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY)).toBeUndefined();
+    expect(game).not.toHaveArenaTag(ArenaTagType.SPIKES, ArenaTagSide.ENEMY);
   });
 
   it("should bounce spikes even when the target is protected", async () => {

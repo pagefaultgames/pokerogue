@@ -165,7 +165,7 @@ describe("Moves - Magic Coat", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.PLAYER)!["layers"]).toBe(1);
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY)).toBeUndefined();
+    expect(game).not.toHaveArenaTag(ArenaTagType.SPIKES, ArenaTagSide.ENEMY);
   });
 
   it("should not bounce back curse", async () => {

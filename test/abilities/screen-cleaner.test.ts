@@ -41,7 +41,7 @@ describe("Abilities - Screen Cleaner", () => {
     game.doSwitchPokemon(1);
     await game.phaseInterceptor.to(PostSummonPhase);
 
-    expect(game.scene.arena.getTag(ArenaTagType.AURORA_VEIL)).toBeUndefined();
+    expect(game).not.toHaveArenaTag(ArenaTagType.AURORA_VEIL);
   });
 
   it("removes Light Screen", async () => {
@@ -58,7 +58,7 @@ describe("Abilities - Screen Cleaner", () => {
     game.doSwitchPokemon(1);
     await game.phaseInterceptor.to(PostSummonPhase);
 
-    expect(game.scene.arena.getTag(ArenaTagType.LIGHT_SCREEN)).toBeUndefined();
+    expect(game).not.toHaveArenaTag(ArenaTagType.LIGHT_SCREEN);
   });
 
   it("removes Reflect", async () => {
@@ -75,6 +75,6 @@ describe("Abilities - Screen Cleaner", () => {
     game.doSwitchPokemon(1);
     await game.phaseInterceptor.to(PostSummonPhase);
 
-    expect(game.scene.arena.getTag(ArenaTagType.REFLECT)).toBeUndefined();
+    expect(game).not.toHaveArenaTag(ArenaTagType.REFLECT);
   });
 });

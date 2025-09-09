@@ -122,7 +122,7 @@ describe("Abilities - Neutralizing Gas", () => {
     await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeUndefined(); // No neut gas users are left
+    expect(game).not.toHaveArenaTag(ArenaTagType.NEUTRALIZING_GAS); // No neut gas users are left
   });
 
   it("should deactivate when suppressed by gastro acid", async () => {
@@ -133,7 +133,7 @@ describe("Abilities - Neutralizing Gas", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeUndefined();
+    expect(game).not.toHaveArenaTag(ArenaTagType.NEUTRALIZING_GAS);
   });
 
   it("should deactivate when the pokemon faints", async () => {
@@ -144,7 +144,7 @@ describe("Abilities - Neutralizing Gas", () => {
     expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeDefined();
     await game.doKillOpponents();
 
-    expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeUndefined();
+    expect(game).not.toHaveArenaTag(ArenaTagType.NEUTRALIZING_GAS);
   });
 
   it("should deactivate upon catching a wild pokemon", async () => {
@@ -156,7 +156,7 @@ describe("Abilities - Neutralizing Gas", () => {
     game.doThrowPokeball(PokeballType.MASTER_BALL);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeUndefined();
+    expect(game).not.toHaveArenaTag(ArenaTagType.NEUTRALIZING_GAS);
   });
 
   it("should deactivate after fleeing from a wild pokemon", async () => {
@@ -171,7 +171,7 @@ describe("Abilities - Neutralizing Gas", () => {
     commandPhase.handleCommand(Command.RUN, 0);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeUndefined();
+    expect(game).not.toHaveArenaTag(ArenaTagType.NEUTRALIZING_GAS);
   });
 
   it("should not activate abilities of pokemon no longer on the field", async () => {
@@ -188,7 +188,7 @@ describe("Abilities - Neutralizing Gas", () => {
     await game.killPokemon(enemy);
     await game.killPokemon(game.field.getPlayerPokemon());
 
-    expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeUndefined();
+    expect(game).not.toHaveArenaTag(ArenaTagType.NEUTRALIZING_GAS);
     expect(weatherChangeSpy).not.toHaveBeenCalled();
   });
 });

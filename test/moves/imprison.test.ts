@@ -95,7 +95,7 @@ describe("Moves - Imprison", () => {
     await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
     expect(playerPokemon.isActive(true)).toBeFalsy();
-    expect(game.scene.arena.getTag(ArenaTagType.IMPRISON)).toBeUndefined();
+    expect(game).not.toHaveArenaTag(ArenaTagType.IMPRISON);
     expect(enemyPokemon.getTag(BattlerTagType.IMPRISON)).toBeUndefined();
   });
 });

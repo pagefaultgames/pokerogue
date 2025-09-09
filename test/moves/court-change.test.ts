@@ -55,7 +55,7 @@ describe("Move - Court Change", () => {
     await game.toEndOfTurn();
 
     // own team should now be in the swamp and slowed
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.GRASS_WATER_PLEDGE, ArenaTagSide.ENEMY)).toBeUndefined();
+    expect(game).not.toHaveArenaTag(ArenaTagType.GRASS_WATER_PLEDGE, ArenaTagSide.ENEMY);
     expect(game.scene.arena.getTagOnSide(ArenaTagType.GRASS_WATER_PLEDGE, ArenaTagSide.PLAYER)).toBeDefined();
     expect(regieleki.getEffectiveStat(Stat.SPD)).toBe(regieleki.getStat(Stat.SPD) / 4);
   });
@@ -78,7 +78,7 @@ describe("Move - Court Change", () => {
     await game.toEndOfTurn();
 
     // Ninjask should now be poisoned due to lack of Safeguard
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, ArenaTagSide.PLAYER)).toBeUndefined();
+    expect(game).not.toHaveArenaTag(ArenaTagType.SAFEGUARD, ArenaTagSide.PLAYER);
     expect(game.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, ArenaTagSide.ENEMY)).toBeDefined();
     expect(ninjask).toHaveStatusEffect(StatusEffect.POISON);
   });

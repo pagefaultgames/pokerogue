@@ -100,7 +100,7 @@ describe("Moves - Pledge Moves", () => {
     // if they combined moves, so both should be damaged.
     expect(playerPokemon.hp).toBeLessThan(playerPokemon.getMaxHp());
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
-    expect(game.scene.arena.getTag(ArenaTagType.FIRE_GRASS_PLEDGE)).toBeUndefined();
+    expect(game).not.toHaveArenaTag(ArenaTagType.FIRE_GRASS_PLEDGE);
   });
 
   it("Grass Pledge - should combine with Fire Pledge to form a 150-power Fire-type attack that creates a 'sea of fire'", async () => {
