@@ -1732,14 +1732,14 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
    */
   override canApply({ pokemon, opponent: target, move }: MoveTypeChangeAbAttrParams): boolean {
     return (
-      (this.condition?.(pokemon, target, move) ?? true) &&
-      !noAbilityTypeOverrideMoves.has(move.id) &&
-      !(
-        pokemon.isTerastallized &&
-        (move.id === MoveId.TERA_BLAST ||
-          (move.id === MoveId.TERA_STARSTORM &&
-            pokemon.getTeraType() === PokemonType.STELLAR &&
-            pokemon.hasSpecies(SpeciesId.TERAPAGOS)))
+      (this.condition?.(pokemon, target, move) ?? true)
+      && !noAbilityTypeOverrideMoves.has(move.id)
+      && !(
+        pokemon.isTerastallized
+        && (move.id === MoveId.TERA_BLAST
+          || (move.id === MoveId.TERA_STARSTORM
+            && pokemon.getTeraType() === PokemonType.STELLAR
+            && pokemon.hasSpecies(SpeciesId.TERAPAGOS)))
       )
     );
   }
