@@ -4,8 +4,7 @@
 
 version = 1
 
-# Considered code
-[[annotations]]
+[[annotations]] # Considered code
 path = [
     "manifest.webmanifest",
     "battle-anims/*.json",  # Auto generated through our own tooling
@@ -16,9 +15,19 @@ path = [
 SPDX-FileCopyrightText = "2024-2025 Pagefault Games"
 SPDX-License-Identifier = "AGPL-3.0-only"
 
+[[annotations]] # Pagefault logo should not be reused without permission as it would imply endorsement
+path = [
+    "logo128.png",
+    "logo512.png",
+    "images/logo.png",
+    "images/logo_fake.png",
+    "images/intro_dark.mp4", # Note: created by Spectremint
+]
+SPDX-FileCopyrightText = "2024-2025 Pagefault Games"
+SPDX-License-Identifier = "LicenseRef-NO-REUSE"
 
-# Of insigificant orignality
-[[annotations]]
+
+[[annotations]] # Insigificant orignality
 path = ["exp-sprites.json", ".gitkeep"]
 SPDX-FileCopyrightText = "NONE"
 SPDX-License-Identifier = "CC0-1.0"
