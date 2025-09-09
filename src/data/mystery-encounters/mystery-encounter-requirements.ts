@@ -222,8 +222,8 @@ export class WaveRangeRequirement extends EncounterSceneRequirement {
     if (!isNullOrUndefined(this.waveRange) && this.waveRange[0] <= this.waveRange[1]) {
       const waveIndex = globalScene.currentBattle.waveIndex;
       if (
-        (waveIndex >= 0 && this.waveRange[0] >= 0 && this.waveRange[0] > waveIndex) ||
-        (this.waveRange[1] >= 0 && this.waveRange[1] < waveIndex)
+        (waveIndex >= 0 && this.waveRange[0] >= 0 && this.waveRange[0] > waveIndex)
+        || (this.waveRange[1] >= 0 && this.waveRange[1] < waveIndex)
       ) {
         return false;
       }
@@ -276,9 +276,9 @@ export class TimeOfDayRequirement extends EncounterSceneRequirement {
   override meetsRequirement(): boolean {
     const timeOfDay = globalScene.arena?.getTimeOfDay();
     return !(
-      !isNullOrUndefined(timeOfDay) &&
-      this.requiredTimeOfDay?.length > 0 &&
-      !this.requiredTimeOfDay.includes(timeOfDay)
+      !isNullOrUndefined(timeOfDay)
+      && this.requiredTimeOfDay?.length > 0
+      && !this.requiredTimeOfDay.includes(timeOfDay)
     );
   }
 
@@ -298,9 +298,9 @@ export class WeatherRequirement extends EncounterSceneRequirement {
   override meetsRequirement(): boolean {
     const currentWeather = globalScene.arena.weather?.weatherType;
     return !(
-      !isNullOrUndefined(currentWeather) &&
-      this.requiredWeather?.length > 0 &&
-      !this.requiredWeather.includes(currentWeather!)
+      !isNullOrUndefined(currentWeather)
+      && this.requiredWeather?.length > 0
+      && !this.requiredWeather.includes(currentWeather!)
     );
   }
 
@@ -336,8 +336,8 @@ export class PartySizeRequirement extends EncounterSceneRequirement {
         ? globalScene.getPokemonAllowedInBattle().length
         : globalScene.getPlayerParty().length;
       if (
-        (partySize >= 0 && this.partySizeRange[0] >= 0 && this.partySizeRange[0] > partySize) ||
-        (this.partySizeRange[1] >= 0 && this.partySizeRange[1] < partySize)
+        (partySize >= 0 && this.partySizeRange[0] >= 0 && this.partySizeRange[0] > partySize)
+        || (this.partySizeRange[1] >= 0 && this.partySizeRange[1] < partySize)
       ) {
         return false;
       }
@@ -572,15 +572,15 @@ export class MoveRequirement extends EncounterPokemonRequirement {
       // get the Pokemon with at least one move in the required moves list
       return partyPokemon.filter(
         pokemon =>
-          (!this.excludeDisallowedPokemon || pokemon.isAllowedInBattle()) &&
-          pokemon.moveset.some(move => move.moveId && this.requiredMoves.includes(move.moveId)),
+          (!this.excludeDisallowedPokemon || pokemon.isAllowedInBattle())
+          && pokemon.moveset.some(move => move.moveId && this.requiredMoves.includes(move.moveId)),
       );
     }
     // for an inverted query, we only want to get the pokemon that don't have ANY of the listed moves
     return partyPokemon.filter(
       pokemon =>
-        (!this.excludeDisallowedPokemon || pokemon.isAllowedInBattle()) &&
-        !pokemon.moveset.some(move => move.moveId && this.requiredMoves.includes(move.moveId)),
+        (!this.excludeDisallowedPokemon || pokemon.isAllowedInBattle())
+        && !pokemon.moveset.some(move => move.moveId && this.requiredMoves.includes(move.moveId)),
     );
   }
 
@@ -678,15 +678,15 @@ export class AbilityRequirement extends EncounterPokemonRequirement {
     if (!this.invertQuery) {
       return partyPokemon.filter(
         pokemon =>
-          (!this.excludeDisallowedPokemon || pokemon.isAllowedInBattle()) &&
-          this.requiredAbilities.some(ability => pokemon.hasAbility(ability, false)),
+          (!this.excludeDisallowedPokemon || pokemon.isAllowedInBattle())
+          && this.requiredAbilities.some(ability => pokemon.hasAbility(ability, false)),
       );
     }
     // for an inverted query, we only want to get the pokemon that don't have ANY of the listed abilities
     return partyPokemon.filter(
       pokemon =>
-        (!this.excludeDisallowedPokemon || pokemon.isAllowedInBattle()) &&
-        this.requiredAbilities.filter(ability => pokemon.hasAbility(ability, false)).length === 0,
+        (!this.excludeDisallowedPokemon || pokemon.isAllowedInBattle())
+        && this.requiredAbilities.filter(ability => pokemon.hasAbility(ability, false)).length === 0,
     );
   }
 
@@ -728,9 +728,9 @@ export class StatusEffectRequirement extends EncounterPokemonRequirement {
           if (statusEffect === StatusEffect.NONE) {
             // StatusEffect.NONE also checks for null or undefined status
             return (
-              isNullOrUndefined(pokemon.status) ||
-              isNullOrUndefined(pokemon.status.effect) ||
-              pokemon.status.effect === statusEffect
+              isNullOrUndefined(pokemon.status)
+              || isNullOrUndefined(pokemon.status.effect)
+              || pokemon.status.effect === statusEffect
             );
           }
           return pokemon.status?.effect === statusEffect;
@@ -743,9 +743,9 @@ export class StatusEffectRequirement extends EncounterPokemonRequirement {
         if (statusEffect === StatusEffect.NONE) {
           // StatusEffect.NONE also checks for null or undefined status
           return (
-            isNullOrUndefined(pokemon.status) ||
-            isNullOrUndefined(pokemon.status.effect) ||
-            pokemon.status.effect === statusEffect
+            isNullOrUndefined(pokemon.status)
+            || isNullOrUndefined(pokemon.status.effect)
+            || pokemon.status.effect === statusEffect
           );
         }
         return pokemon.status?.effect === statusEffect;
@@ -796,9 +796,8 @@ export class CanFormChangeWithItemRequirement extends EncounterPokemonRequiremen
 
   filterByForm(pokemon, formChangeItem) {
     return (
-      pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId) &&
-      // Get all form changes for this species with an item trigger, including any compound triggers
-      pokemonFormChanges[pokemon.species.speciesId]
+      pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId) // Get all form changes for this species with an item trigger, including any compound triggers
+      && pokemonFormChanges[pokemon.species.speciesId]
         .filter(fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger))
         // Returns true if any form changes match this item
         .flatMap(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger)
@@ -870,8 +869,8 @@ export class HeldItemRequirement extends EncounterPokemonRequirement {
       pokemon =>
         pokemon.getHeldItems().filter(it => {
           return (
-            !this.requiredHeldItemModifiers.some(heldItem => it.constructor.name === heldItem) &&
-            (!this.requireTransferable || it.isTransferable)
+            !this.requiredHeldItemModifiers.some(heldItem => it.constructor.name === heldItem)
+            && (!this.requireTransferable || it.isTransferable)
           );
         }).length > 0,
     );
@@ -880,8 +879,8 @@ export class HeldItemRequirement extends EncounterPokemonRequirement {
   override getDialogueToken(pokemon?: PlayerPokemon): [string, string] {
     const requiredItems = pokemon?.getHeldItems().filter(it => {
       return (
-        this.requiredHeldItemModifiers.some(heldItem => it.constructor.name === heldItem) &&
-        (!this.requireTransferable || it.isTransferable)
+        this.requiredHeldItemModifiers.some(heldItem => it.constructor.name === heldItem)
+        && (!this.requireTransferable || it.isTransferable)
       );
     });
     if (requiredItems && requiredItems.length > 0) {
@@ -924,9 +923,9 @@ export class AttackTypeBoosterHeldItemTypeRequirement extends EncounterPokemonRe
         this.requiredHeldItemTypes.some(heldItemType => {
           return pokemon.getHeldItems().some(it => {
             return (
-              it instanceof AttackTypeBoosterModifier &&
-              (it.type as AttackTypeBoosterModifierType).moveType === heldItemType &&
-              (!this.requireTransferable || it.isTransferable)
+              it instanceof AttackTypeBoosterModifier
+              && (it.type as AttackTypeBoosterModifierType).moveType === heldItemType
+              && (!this.requireTransferable || it.isTransferable)
             );
           });
         }),
@@ -939,9 +938,9 @@ export class AttackTypeBoosterHeldItemTypeRequirement extends EncounterPokemonRe
         pokemon.getHeldItems().filter(it => {
           return !this.requiredHeldItemTypes.some(
             heldItemType =>
-              it instanceof AttackTypeBoosterModifier &&
-              (it.type as AttackTypeBoosterModifierType).moveType === heldItemType &&
-              (!this.requireTransferable || it.isTransferable),
+              it instanceof AttackTypeBoosterModifier
+              && (it.type as AttackTypeBoosterModifierType).moveType === heldItemType
+              && (!this.requireTransferable || it.isTransferable),
           );
         }).length > 0,
     );
@@ -952,10 +951,10 @@ export class AttackTypeBoosterHeldItemTypeRequirement extends EncounterPokemonRe
       return (
         this.requiredHeldItemTypes.some(
           heldItemType =>
-            it instanceof AttackTypeBoosterModifier &&
-            (it.type as AttackTypeBoosterModifierType).moveType === heldItemType,
-        ) &&
-        (!this.requireTransferable || it.isTransferable)
+            it instanceof AttackTypeBoosterModifier
+            && (it.type as AttackTypeBoosterModifierType).moveType === heldItemType,
+        )
+        && (!this.requireTransferable || it.isTransferable)
       );
     });
     if (requiredItems && requiredItems.length > 0) {
@@ -1021,8 +1020,8 @@ export class FriendshipRequirement extends EncounterPokemonRequirement {
   override meetsRequirement(): boolean {
     // Party Pokemon inside required friendship range
     if (
-      !isNullOrUndefined(this.requiredFriendshipRange) &&
-      this.requiredFriendshipRange[0] <= this.requiredFriendshipRange[1]
+      !isNullOrUndefined(this.requiredFriendshipRange)
+      && this.requiredFriendshipRange[0] <= this.requiredFriendshipRange[1]
     ) {
       const partyPokemon = globalScene.getPlayerParty();
       const pokemonInRange = this.queryParty(partyPokemon);
@@ -1037,8 +1036,8 @@ export class FriendshipRequirement extends EncounterPokemonRequirement {
     if (!this.invertQuery) {
       return partyPokemon.filter(
         pokemon =>
-          pokemon.friendship >= this.requiredFriendshipRange[0] &&
-          pokemon.friendship <= this.requiredFriendshipRange[1],
+          pokemon.friendship >= this.requiredFriendshipRange[0]
+          && pokemon.friendship <= this.requiredFriendshipRange[1],
       );
     }
     // for an inverted query, we only want to get the pokemon that don't have ANY of the listed requiredFriendshipRanges

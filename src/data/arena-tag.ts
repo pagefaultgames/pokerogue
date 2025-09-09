@@ -591,10 +591,10 @@ class MatBlockTag extends ConditionalProtectTag {
 const CraftyShieldConditionFunc: ProtectConditionFunc = moveId => {
   const move = allMoves[moveId];
   return (
-    move.category === MoveCategory.STATUS &&
-    move.moveTarget !== MoveTarget.ENEMY_SIDE &&
-    move.moveTarget !== MoveTarget.BOTH_SIDES &&
-    move.moveTarget !== MoveTarget.ALL
+    move.category === MoveCategory.STATUS
+    && move.moveTarget !== MoveTarget.ENEMY_SIDE
+    && move.moveTarget !== MoveTarget.BOTH_SIDES
+    && move.moveTarget !== MoveTarget.ALL
   );
 };
 

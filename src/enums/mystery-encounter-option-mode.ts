@@ -6,5 +6,5 @@ export enum MysteryEncounterOptionMode {
   /** Default style on requirements not met, special style on requirements met */
   DEFAULT_OR_SPECIAL,
   /** Disabled on requirements not met, special style on requirements met */
-  DISABLED_OR_SPECIAL
+  DISABLED_OR_SPECIAL,
 }

@@ -39,19 +39,19 @@ export class CheckSwitchPhase extends BattlePhase {
 
     // ...if there are no other allowed Pokemon in the player's party to switch with
     if (
-      !globalScene
+      globalScene
         .getPlayerParty()
         .slice(1)
-        .filter(p => p.isActive()).length
+        .filter(p => p.isActive()).length === 0
     ) {
       return super.end();
     }
 
     // ...or if any player Pokemon has an effect that prevents the checked Pokemon from switching
     if (
-      pokemon.getTag(BattlerTagType.FRENZY) ||
-      pokemon.isTrapped() ||
-      globalScene.getPlayerField().some(p => p.getTag(BattlerTagType.COMMANDED))
+      pokemon.getTag(BattlerTagType.FRENZY)
+      || pokemon.isTrapped()
+      || globalScene.getPlayerField().some(p => p.getTag(BattlerTagType.COMMANDED))
     ) {
       return super.end();
     }
