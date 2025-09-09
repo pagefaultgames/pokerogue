@@ -3,10 +3,10 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import { MysteryEncounterOptionSelectedPhase, MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
+import { MysteryEncounterOptionSelectedPhase } from "#phases/mystery-encounter-phases";
 import { GameManager } from "#test/test-utils/game-manager";
-import type { MessageUiHandler } from "#ui/message-ui-handler";
-import type { MysteryEncounterUiHandler } from "#ui/mystery-encounter-ui-handler";
+import type { MessageUiHandler } from "#ui/handlers/message-ui-handler";
+import type { MysteryEncounterUiHandler } from "#ui/handlers/mystery-encounter-ui-handler";
 import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -37,8 +37,8 @@ describe("Mystery Encounter Phases", () => {
         SpeciesId.VOLCARONA,
       ]);
 
-      await game.phaseInterceptor.to(MysteryEncounterPhase, false);
-      expect(game.scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
+      await game.phaseInterceptor.to("MysteryEncounterPhase", false);
+      expect(game).toBeAtPhase("MysteryEncounterPhase");
     });
 
     it("Runs MysteryEncounterPhase", async () => {
@@ -49,9 +49,9 @@ describe("Mystery Encounter Phases", () => {
 
       game.onNextPrompt("MysteryEncounterPhase", UiMode.MYSTERY_ENCOUNTER, () => {
         // End phase early for test
-        game.phaseInterceptor.superEndPhase();
+        game.endPhase();
       });
-      await game.phaseInterceptor.run(MysteryEncounterPhase);
+      await game.phaseInterceptor.to("MysteryEncounterPhase");
 
       expect(game.scene.mysteryEncounterSaveData.encounteredEvents.length).toBeGreaterThan(0);
       expect(game.scene.mysteryEncounterSaveData.encounteredEvents[0].type).toEqual(
@@ -75,7 +75,7 @@ describe("Mystery Encounter Phases", () => {
         handler.processInput(Button.ACTION);
       });
 
-      await game.phaseInterceptor.run(MysteryEncounterPhase);
+      await game.phaseInterceptor.to("MysteryEncounterPhase");
 
       // Select option 1 for encounter
       const handler = game.scene.ui.getHandler() as MysteryEncounterUiHandler;

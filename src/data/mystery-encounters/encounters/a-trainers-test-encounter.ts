@@ -82,7 +82,7 @@ export const ATrainersTestEncounter: MysteryEncounter = MysteryEncounterBuilder.
     encounter.dialogue.intro = [
       {
         speaker: `trainerNames:${trainerNameKey}`,
-        text: `${namespace}:${trainerNameKey}.intro_dialogue`,
+        text: `${namespace}:${trainerNameKey}.introDialogue`,
       },
     ];
     encounter.options[0].dialogue!.selected = [
@@ -111,7 +111,7 @@ export const ATrainersTestEncounter: MysteryEncounter = MysteryEncounterBuilder.
     const trainerSpriteKey = trainerConfig.getSpriteKey();
     encounter.enemyPartyConfigs.push({
       levelAdditiveModifier: 1,
-      trainerConfig: trainerConfig,
+      trainerConfig,
     });
 
     encounter.spriteConfigs = [

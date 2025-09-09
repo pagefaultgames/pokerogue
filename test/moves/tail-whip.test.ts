@@ -2,8 +2,6 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { EnemyCommandPhase } from "#phases/enemy-command-phase";
-import { TurnInitPhase } from "#phases/turn-init-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -43,7 +41,7 @@ describe("Moves - Tail whip", () => {
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(0);
 
     game.move.select(moveToUse);
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnInitPhase);
+    await game.toEndOfTurn();
 
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(-1);
   });

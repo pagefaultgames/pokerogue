@@ -6,7 +6,7 @@ import { loggedInUser } from "#app/account";
 import type { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import type { ArenaTrapTag } from "#data/arena-tag";
+import type { EntryHazardTag } from "#data/arena-tag";
 import { WeakenMoveTypeTag } from "#data/arena-tag";
 import { MoveChargeAnim } from "#data/battle-anims";
 import {
@@ -88,11 +88,12 @@ import type { AttackMoveResult } from "#types/attack-move-result";
 import type { Localizable } from "#types/locales";
 import type { ChargingMove, MoveAttrMap, MoveAttrString, MoveClassMap, MoveKindString, MoveMessageFunc } from "#types/move-types";
 import type { TurnMove } from "#types/turn-move";
-import { BooleanHolder, type Constructor, isNullOrUndefined, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
+import { BooleanHolder, coerceArray, type Constructor, isNullOrUndefined, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import { applyChallenges } from "#utils/challenge-utils";
+import type { AbstractConstructor } from "#types/type-helpers";
 
 /**
  * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.
@@ -1055,16 +1056,11 @@ export class SelfStatusMove extends Move {
   }
 }
 
-// TODO: Figure out how to improve the signature of this so that
-// the `ChargeMove` function knows that the argument `Base` is a specific subclass of move that cannot
-// be abstract.
-// Right now, I only know how to do this by using the type conjunction (the & operators)
-type SubMove = new (...args: any[]) => Move & {
-  is<K extends keyof MoveClassMap>(moveKind: K): this is MoveClassMap[K];
-};
+type SubMove = AbstractConstructor<Move>
 
 function ChargeMove<TBase extends SubMove>(Base: TBase, nameAppend: string) {
-  return class extends Base {
+  // NB: This cannot be made into a oneline return
+  abstract class Charging extends Base {
     /** The animation to play during the move's charging phase */
     public readonly chargeAnim: ChargeAnim = ChargeAnim[`${MoveId[this.id]}_CHARGING`];
     /** The message to show during the move's charging phase */
@@ -1141,6 +1137,7 @@ function ChargeMove<TBase extends SubMove>(Base: TBase, nameAppend: string) {
       return this;
     }
   };
+  return Charging;
 }
 
 export class ChargingAttackMove extends ChargeMove(AttackMove, "ChargingAttackMove") {}
@@ -1190,8 +1187,9 @@ export abstract class MoveAttr {
   }
 
   /**
-   * @virtual
-   * @returns the {@linkcode MoveCondition} or {@linkcode MoveConditionFunc} for this {@linkcode Move}
+   * Return this `MoveAttr`'s associated {@linkcode MoveCondition} or {@linkcode MoveConditionFunc}.
+   * The specified condition will be added to all {@linkcode Move}s with this attribute,
+   * and moves **will fail upon use** if _at least 1_ of their attached conditions returns `false`.
    */
   getCondition(): MoveCondition | MoveConditionFunc | null {
     return null;
@@ -1304,15 +1302,21 @@ export class MoveEffectAttr extends MoveAttr {
   }
 
   /**
-   * Determines whether the {@linkcode Move}'s effects are valid to {@linkcode apply}
-   * @virtual
-   * @param user {@linkcode Pokemon} using the move
-   * @param target {@linkcode Pokemon} target of the move
-   * @param move {@linkcode Move} with this attribute
-   * @param args Set of unique arguments needed by this attribute
-   * @returns true if basic application of the ability attribute should be possible
+   * Determine whether this {@linkcode MoveAttr}'s effects are able to {@linkcode apply | be applied} to the target.
+   *
+   * Will **NOT** cause the move to fail upon returning `false` (unlike {@linkcode getCondition};
+   * merely that the effect for this attribute will be nullified.
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param target - The {@linkcode Pokemon} being targeted by the move, or {@linkcode user} if the move is
+   * {@linkcode selfTarget | self-targeting}
+   * @param move - The {@linkcode Move} being used
+   * @param _args - Set of unique arguments needed by this attribute
+   * @returns `true` if basic application of this `MoveAttr`s effects should be possible
    */
-  canApply(user: Pokemon, target: Pokemon, move: Move, args?: any[]) {
+  // TODO: Decouple this check from the `apply` step
+  // TODO: Make non-damaging moves fail by default if none of their attributes can apply
+  canApply(user: Pokemon, target: Pokemon, move: Move, _args?: any[]) {
+    // TODO: These checks seem redundant
     return !! (this.selfTarget ? user.hp && !user.getTag(BattlerTagType.FRENZY) : target.hp)
            && (this.selfTarget || !target.getTag(BattlerTagType.PROTECTED) ||
                 move.doesFlagEffectApply({ flag: MoveFlags.IGNORE_PROTECT, user, target }));
@@ -1961,19 +1965,17 @@ export class AddSubstituteAttr extends MoveEffectAttr {
  * @see {@linkcode apply}
  */
 export class HealAttr extends MoveEffectAttr {
-  /** The percentage of {@linkcode Stat.HP} to heal */
-  private healRatio: number;
-  /** Should an animation be shown? */
-  private showAnim: boolean;
-
-  constructor(healRatio?: number, showAnim?: boolean, selfTarget?: boolean) {
-    super(selfTarget === undefined || selfTarget);
-
-    this.healRatio = healRatio || 1;
-    this.showAnim = !!showAnim;
+  constructor(
+    /** The percentage of {@linkcode Stat.HP} to heal. */
+    private healRatio: number,
+    /** Whether to display a healing animation when healing the target; default `false` */
+    private showAnim = false,
+    selfTarget = true
+  ) {
+    super(selfTarget);
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  override apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
     this.addHealPhase(this.selfTarget ? user : target, this.healRatio);
     return true;
   }
@@ -1982,14 +1984,68 @@ export class HealAttr extends MoveEffectAttr {
    * Creates a new {@linkcode PokemonHealPhase}.
    * This heals the target and shows the appropriate message.
    */
-  addHealPhase(target: Pokemon, healRatio: number) {
+  protected addHealPhase(target: Pokemon, healRatio: number) {
     globalScene.phaseManager.unshiftNew("PokemonHealPhase", target.getBattlerIndex(),
       toDmgValue(target.getMaxHp() * healRatio), i18next.t("moveTriggers:healHp", { pokemonName: getPokemonNameWithAffix(target) }), true, !this.showAnim);
   }
 
-  getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
+  override getTargetBenefitScore(user: Pokemon, target: Pokemon, _move: Move): number {
     const score = ((1 - (this.selfTarget ? user : target).getHpRatio()) * 20) - this.healRatio * 10;
     return Math.round(score / (1 - this.healRatio / 2));
+  }
+
+  // TODO: Change to fail move
+  override canApply(user: Pokemon, target: Pokemon, _move: Move, _args?: any[]): boolean {
+    if (!super.canApply(user, target, _move, _args)) {
+      return false;
+    }
+
+    const healedPokemon = this.selfTarget ? user : target;
+    if (healedPokemon.isFullHp()) {
+      // Ensure the fail message isn't displayed when checking the move conditions outside of the move execution
+      // TOOD: Fix this in PR#6276
+      if (globalScene.phaseManager.getCurrentPhase()?.is("MovePhase")) {
+        globalScene.phaseManager.queueMessage(i18next.t("battle:hpIsFull", {
+          pokemonName: getPokemonNameWithAffix(healedPokemon),
+        }))
+      }
+      return false;
+    }
+    return true;
+  }
+}
+
+/**
+ * Attribute to put the user to sleep for a fixed duration, fully heal them and cure their status.
+ * Used for {@linkcode MoveId.REST}.
+ */
+export class RestAttr extends HealAttr {
+  private duration: number;
+
+  constructor(duration: number) {
+    super(1, true);
+    this.duration = duration;
+  }
+
+  override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+   const wasSet = user.trySetStatus(StatusEffect.SLEEP, user, this.duration, null, true, true,
+    i18next.t("moveTriggers:restBecameHealthy", {
+      pokemonName: getPokemonNameWithAffix(user),
+    }));
+    return wasSet && super.apply(user, target, move, args);
+  }
+
+  override addHealPhase(user: Pokemon): void {
+    globalScene.phaseManager.unshiftNew("PokemonHealPhase", user.getBattlerIndex(), user.getMaxHp(), null)
+  }
+
+  // TODO: change after HealAttr is changed to fail move
+  override getCondition(): MoveConditionFunc {
+    return (user, target, move) =>
+      super.canApply(user, target, move, [])
+      // Intentionally suppress messages here as we display generic fail msg
+      // TODO: This might have order-of-operation jank
+      && user.canSetStatus(StatusEffect.SLEEP, true, true, user)
   }
 }
 
@@ -2262,20 +2318,16 @@ export class BoostHealAttr extends HealAttr {
  * @see {@linkcode apply}
  */
 export class HealOnAllyAttr extends HealAttr {
-  /**
-   * @param user {@linkcode Pokemon} using the move
-   * @param target {@linkcode Pokemon} target of the move
-   * @param move {@linkcode Move} with this attribute
-   * @param args N/A
-   * @returns true if the function succeeds
-   */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (user.getAlly() === target) {
-      super.apply(user, target, move, args);
-      return true;
-    }
+  override canApply(user: Pokemon, target: Pokemon, _move: Move, _args?: any[]): boolean {
+    // Don't trigger if not targeting an ally
+    return target === user.getAlly() && super.canApply(user, target, _move, _args);
+  }
 
-    return false;
+  override apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
+    if (user.isOpponent(target)) {
+      return false;
+    }
+    return super.apply(user, target, _move, _args);
   }
 }
 
@@ -2286,6 +2338,7 @@ export class HealOnAllyAttr extends HealAttr {
  * @see {@linkcode apply}
  * @see {@linkcode getUserBenefitScore}
  */
+// TODO: Make Strength Sap its own attribute that extends off of this one
 export class HitHealAttr extends MoveEffectAttr {
   private healRatio: number;
   private healStat: EffectiveStat | null;
@@ -2536,49 +2589,50 @@ export class WaterShurikenMultiHitTypeAttr extends ChangeMultiHitTypeAttr {
 
 export class StatusEffectAttr extends MoveEffectAttr {
   public effect: StatusEffect;
-  public turnsRemaining?: number;
-  public overrideStatus: boolean = false;
 
-  constructor(effect: StatusEffect, selfTarget?: boolean, turnsRemaining?: number, overrideStatus: boolean = false) {
+  constructor(effect: StatusEffect, selfTarget = false) {
     super(selfTarget);
 
     this.effect = effect;
-    this.turnsRemaining = turnsRemaining;
-    this.overrideStatus = overrideStatus;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, true);
     const statusCheck = moveChance < 0 || moveChance === 100 || user.randBattleSeedInt(100) < moveChance;
+    if (!statusCheck) {
+      return false;
+    }
+
+    // non-status moves don't play sound effects for failures
     const quiet = move.category !== MoveCategory.STATUS;
-    if (statusCheck) {
-      const pokemon = this.selfTarget ? user : target;
-      if (user !== target && move.category === MoveCategory.STATUS && !target.canSetStatus(this.effect, quiet, false, user, true)) {
-        return false;
-      }
-      if (((!pokemon.status || this.overrideStatus) || (pokemon.status.effect === this.effect && moveChance < 0))
-        && pokemon.trySetStatus(this.effect, true, user, this.turnsRemaining, null, this.overrideStatus, quiet)) {
-        applyAbAttrs("ConfusionOnStatusEffectAbAttr", {pokemon: user, opponent: target, move, effect: this.effect});
-        return true;
-      }
+
+    if (
+      target.trySetStatus(this.effect, user, undefined, null, false, quiet)
+    ) {
+      applyAbAttrs("ConfusionOnStatusEffectAbAttr", {pokemon: user, opponent: target, move, effect: this.effect});
+      return true;
     }
     return false;
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, false);
-    const score = (moveChance < 0) ? -10 : Math.floor(moveChance * -0.1);
+    const score = moveChance < 0 ? -10 : Math.floor(moveChance * -0.1);
     const pokemon = this.selfTarget ? user : target;
 
-    return !pokemon.status && pokemon.canSetStatus(this.effect, true, false, user) ? score : 0;
+    return pokemon.canSetStatus(this.effect, true, false, user) ? score : 0;
   }
 }
 
+/**
+ * Attribute to randomly apply one of several statuses to the target.
+ * Used for {@linkcode Moves.TRI_ATTACK} and {@linkcode Moves.DIRE_CLAW}.
+ */
 export class MultiStatusEffectAttr extends StatusEffectAttr {
   public effects: StatusEffect[];
 
-  constructor(effects: StatusEffect[], selfTarget?: boolean, turnsRemaining?: number, overrideStatus?: boolean) {
-    super(effects[0], selfTarget, turnsRemaining, overrideStatus);
+  constructor(effects: StatusEffect[], selfTarget?: boolean) {
+    super(effects[0], selfTarget);
     this.effects = effects;
   }
 
@@ -2611,26 +2665,41 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
    * @returns - Whether the effect was successfully applied to the target.
    */
   apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
-    const statusToApply: StatusEffect | undefined = user.status?.effect ?? (user.hasAbility(AbilityId.COMATOSE) ? StatusEffect.SLEEP : undefined);
+    const statusToApply = user.status?.effect ??
+      (user.hasAbility(AbilityId.COMATOSE) ? StatusEffect.SLEEP : StatusEffect.NONE);
 
-    if (target.status || !statusToApply) {
+    // Bang is justified as condition func returns early if no status is found
+    if (!target.trySetStatus(statusToApply, user)) {
       return false;
-    } else {
-      const canSetStatus = target.canSetStatus(statusToApply, true, false, user);
-      const trySetStatus = canSetStatus ? target.trySetStatus(statusToApply, true, user) : false;
+    }
 
-      if (trySetStatus && user.status) {
-        // PsychoShiftTag is added to the user if move succeeds so that the user is healed of its status effect after its move
-        user.addTag(BattlerTagType.PSYCHO_SHIFT);
+    if (user.status) {
+      // Add tag to user to heal its status effect after the move ends (unless we have comatose);
+      // occurs after move use to ensure correct Synchronize timing
+      user.addTag(BattlerTagType.PSYCHO_SHIFT)
+    }
+
+    return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target) => {
+      if (target.status?.effect) {
+        return false;
       }
 
-      return trySetStatus;
+      const statusToApply = user.status?.effect ?? (user.hasAbility(AbilityId.COMATOSE) ? StatusEffect.SLEEP : StatusEffect.NONE);
+      return !!statusToApply && target.canSetStatus(statusToApply, false, false, user);
     }
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    const statusToApply = user.status?.effect ?? (user.hasAbility(AbilityId.COMATOSE) ? StatusEffect.SLEEP : undefined);
-    return !target.status && statusToApply && target.canSetStatus(statusToApply, true, false, user) ? -10 : 0;
+    const statusToApply =
+      user.status?.effect ??
+      (user.hasAbility(AbilityId.COMATOSE) ? StatusEffect.SLEEP : StatusEffect.NONE);
+
+      // TODO: Give this a positive user benefit score
+    return !target.status?.effect && statusToApply && target.canSetStatus(statusToApply, true, false, user) ? -10 : 0;
   }
 }
 
@@ -2690,7 +2759,7 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
  * Used for Incinerate and Knock Off.
  * Not Implemented Cases: (Same applies for Thief)
  * "If the user faints due to the target's Ability (Rough Skin or Iron Barbs) or held Rocky Helmet, it cannot remove the target's held item."
- * "If the Pokémon is knocked out by the attack, Sticky Hold does not protect the held item.""
+ * "If the Pokémon is knocked out by the attack, Sticky Hold does not protect the held item."
  */
 export class RemoveHeldItemAttr extends MoveEffectAttr {
 
@@ -2900,7 +2969,7 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
    */
   constructor(selfTarget: boolean, effects: StatusEffect | StatusEffect[]) {
     super(selfTarget, { lastHitOnly: true });
-    this.effects = [ effects ].flat(1);
+    this.effects = coerceArray(effects)
   }
 
   /**
@@ -3205,7 +3274,6 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
       )
     )
 
-    user.pushMoveHistory({move: move.id, targets: [target.getBattlerIndex()], result: MoveResult.OTHER, useMode, turn: globalScene.currentBattle.turn})
     user.pushMoveHistory({move: move.id, targets: [target.getBattlerIndex()], result: MoveResult.OTHER, useMode, turn: globalScene.currentBattle.turn})
     // Queue up an attack on the given slot.
     globalScene.arena.positionalTagManager.addTag<PositionalTagType.DELAYED_ATTACK>({
@@ -3939,22 +4007,36 @@ export class BeatUpAttr extends VariablePowerAttr {
   }
 }
 
-const doublePowerChanceMessageFunc = (user: Pokemon, target: Pokemon, move: Move) => {
-  let message: string = "";
-  globalScene.executeWithSeedOffset(() => {
-    const rand = randSeedInt(100);
-    if (rand < move.chance) {
-      message = i18next.t("moveTriggers:goingAllOutForAttack", { pokemonName: getPokemonNameWithAffix(user) });
-    }
-  }, globalScene.currentBattle.turn << 6, globalScene.waveSeed);
-  return message;
-};
+/**
+ * Message function for {@linkcode MoveId.FICKLE_BEAM} that shows a message before move use if
+ * the move's power would be boosted.
+ * @todo Find another way to synchronize the RNG calls of Fickle Beam with its message
+ * than using a seed offset
+ */
+function doublePowerChanceMessageFunc(chance: number) {
+  return (user: Pokemon, target: Pokemon, move: Move) => {
+    let message: string = "";
+    globalScene.executeWithSeedOffset(() => {
+      const rand = randSeedInt(100);
+      if (rand < chance) {
+        message = i18next.t("moveTriggers:goingAllOutForAttack", { pokemonName: getPokemonNameWithAffix(user) });
+      }
+    }, globalScene.currentBattle.turn << 6, globalScene.waveSeed);
+    return message;
+  };
+}
 
 export class DoublePowerChanceAttr extends VariablePowerAttr {
+  private chance: number;
+  constructor(chance: number) {
+    super(false)
+    this.chance = chance
+  }
+
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    let rand: number;
+    let rand = 0;
     globalScene.executeWithSeedOffset(() => rand = randSeedInt(100), globalScene.currentBattle.turn << 6, globalScene.waveSeed);
-    if (rand! < move.chance) {
+    if (rand < this.chance) {
       const power = args[0] as NumberHolder;
       power.value *= 2;
       return true;
@@ -4427,6 +4509,10 @@ export class SpitUpPowerAttr extends VariablePowerAttr {
  * Does NOT remove stockpiled stacks.
  */
 export class SwallowHealAttr extends HealAttr {
+  constructor() {
+    super(1)
+  }
+
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const stockpilingTag = user.getTag(StockpilingTag);
 
@@ -6083,7 +6169,7 @@ export class AddArenaTrapTagAttr extends AddArenaTagAttr {
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
       const side = (this.selfSideTarget !== user.isPlayer()) ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER;
-      const tag = globalScene.arena.getTagOnSide(this.tagType, side) as ArenaTrapTag;
+      const tag = globalScene.arena.getTagOnSide(this.tagType, side) as EntryHazardTag;
       if (!tag) {
         return true;
       }
@@ -6107,7 +6193,7 @@ export class AddArenaTrapTagHitAttr extends AddArenaTagAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, true);
     const side = (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-    const tag = globalScene.arena.getTagOnSide(this.tagType, side) as ArenaTrapTag;
+    const tag = globalScene.arena.getTagOnSide(this.tagType, side) as EntryHazardTag;
     if ((moveChance < 0 || moveChance === 100 || user.randBattleSeedInt(100) < moveChance) && user.getLastXMoves(1)[0]?.result === MoveResult.SUCCESS) {
       globalScene.arena.addTag(this.tagType, 0, move.id, user.id, side);
       if (!tag) {
@@ -6675,7 +6761,7 @@ export class CopyBiomeTypeAttr extends MoveEffectAttr {
     user.summonData.types = [ typeChange ];
     user.updateInfo();
 
-    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:transformedIntoType", { pokemonName: getPokemonNameWithAffix(user), typeName: i18next.t(`pokemonInfo:Type.${PokemonType[typeChange]}`) }));
+    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:transformedIntoType", { pokemonName: getPokemonNameWithAffix(user), typeName: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[typeChange])}`) }));
 
     return true;
   }
@@ -6767,12 +6853,15 @@ export class CopyBiomeTypeAttr extends MoveEffectAttr {
   }
 }
 
+/** 
+ * Attribute to override the target's current types to the given type.
+ * Used by {@linkcode MoveId.SOAK} and {@linkcode MoveId.MAGIC_POWDER}.
+ */
 export class ChangeTypeAttr extends MoveEffectAttr {
   private type: PokemonType;
 
   constructor(type: PokemonType) {
     super(false);
-
     this.type = type;
   }
 
@@ -6780,7 +6869,7 @@ export class ChangeTypeAttr extends MoveEffectAttr {
     target.summonData.types = [ this.type ];
     target.updateInfo();
 
-    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:transformedIntoType", { pokemonName: getPokemonNameWithAffix(target), typeName: i18next.t(`pokemonInfo:Type.${PokemonType[this.type]}`) }));
+    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:transformedIntoType", { pokemonName: getPokemonNameWithAffix(target), typeName: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.type])}`) }));
 
     return true;
   }
@@ -6803,7 +6892,7 @@ export class AddTypeAttr extends MoveEffectAttr {
     target.summonData.addedType = this.type;
     target.updateInfo();
 
-    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:addType", { typeName: i18next.t(`pokemonInfo:Type.${PokemonType[this.type]}`), pokemonName: getPokemonNameWithAffix(target) }));
+    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:addType", { typeName: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.type])}`), pokemonName: getPokemonNameWithAffix(target) }));
 
     return true;
   }
@@ -6825,7 +6914,7 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
 
     const firstMoveType = target.getMoveset()[0].getMove().type;
     user.summonData.types = [ firstMoveType ];
-    globalScene.phaseManager.queueMessage(i18next.t("battle:transformedIntoType", { pokemonName: getPokemonNameWithAffix(user), type: i18next.t(`pokemonInfo:Type.${PokemonType[firstMoveType]}`) }));
+    globalScene.phaseManager.queueMessage(i18next.t("battle:transformedIntoType", { pokemonName: getPokemonNameWithAffix(user), type: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[firstMoveType])}`) }));
 
     return true;
   }
@@ -7909,7 +7998,7 @@ export class StatusIfBoostedAttr extends MoveEffectAttr {
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (target.turnData.statStagesIncreased) {
-      target.trySetStatus(this.effect, true, user);
+      target.trySetStatus(this.effect, user);
     }
     return true;
   }
@@ -8048,19 +8137,22 @@ const failIfSingleBattle: MoveConditionFunc = (user, target, move) => globalScen
 
 const failIfDampCondition: MoveConditionFunc = (user, target, move) => {
   const cancelled = new BooleanHolder(false);
-  globalScene.getField(true).map(p=>applyAbAttrs("FieldPreventExplosiveMovesAbAttr", {pokemon: p, cancelled}));
+  // temporary workaround to prevent displaying the message during enemy command phase
+  // TODO: either move this, or make the move condition func have a `simulated` param
+  const simulated = globalScene.phaseManager.getCurrentPhase()?.is('EnemyCommandPhase');
+  globalScene.getField(true).map(p=>applyAbAttrs("FieldPreventExplosiveMovesAbAttr", {pokemon: p, cancelled, simulated}));
   // Queue a message if an ability prevented usage of the move
-  if (cancelled.value) {
+  if (!simulated && cancelled.value) {
     globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:cannotUseMove", { pokemonName: getPokemonNameWithAffix(user), moveName: move.name }));
   }
   return !cancelled.value;
 };
 
-const userSleptOrComatoseCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) =>  user.status?.effect === StatusEffect.SLEEP || user.hasAbility(AbilityId.COMATOSE);
+const userSleptOrComatoseCondition: MoveConditionFunc = (user) => user.status?.effect === StatusEffect.SLEEP || user.hasAbility(AbilityId.COMATOSE);
 
-const targetSleptOrComatoseCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) =>  target.status?.effect === StatusEffect.SLEEP || target.hasAbility(AbilityId.COMATOSE);
+const targetSleptOrComatoseCondition: MoveConditionFunc = (_user: Pokemon, target: Pokemon, _move: Move) => target.status?.effect === StatusEffect.SLEEP || target.hasAbility(AbilityId.COMATOSE);
 
-const failIfLastCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => globalScene.phaseManager.phaseQueue.find(phase => phase.is("MovePhase")) !== undefined;
+const failIfLastCondition: MoveConditionFunc = () => globalScene.phaseManager.findPhase(phase => phase.is("MovePhase")) !== undefined;
 
 const failIfLastInPartyCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => {
   const party: Pokemon[] = user.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
@@ -8072,6 +8164,9 @@ const failIfGhostTypeCondition: MoveConditionFunc = (user: Pokemon, target: Poke
 const failIfNoTargetHeldItemsCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => target.getHeldItems().filter(i => i.isTransferable)?.length > 0;
 
 const attackedByItemMessageFunc = (user: Pokemon, target: Pokemon, move: Move) => {
+  if (isNullOrUndefined(target)) { // Fix bug when used against targets that have both fainted
+    return "";
+  }
   const heldItems = target.getHeldItems().filter(i => i.isTransferable);
   if (heldItems.length === 0) {
     return "";
@@ -8483,8 +8578,6 @@ const MoveAttrs = Object.freeze({
 /** Map of of move attribute names to their constructors */
 export type MoveAttrConstructorMap = typeof MoveAttrs;
 
-export const selfStatLowerMoves: MoveId[] = [];
-
 export function initMoves() {
   allMoves.push(
     new SelfStatusMove(MoveId.NONE, PokemonType.NORMAL, MoveCategory.STATUS, -1, -1, 0, 1),
@@ -8512,7 +8605,7 @@ export function initMoves() {
       .punchingMove(),
     new AttackMove(MoveId.SCRATCH, PokemonType.NORMAL, MoveCategory.PHYSICAL, 40, 100, 35, -1, 0, 1),
     new AttackMove(MoveId.VISE_GRIP, PokemonType.NORMAL, MoveCategory.PHYSICAL, 55, 100, 30, -1, 0, 1),
-    new AttackMove(MoveId.GUILLOTINE, PokemonType.NORMAL, MoveCategory.PHYSICAL, 200, 30, 5, -1, 0, 1)
+    new AttackMove(MoveId.GUILLOTINE, PokemonType.NORMAL, MoveCategory.PHYSICAL, 250, 30, 5, -1, 0, 1)
       .attr(OneHitKOAttr)
       .attr(OneHitKOAccuracyAttr),
     new ChargingAttackMove(MoveId.RAZOR_WIND, PokemonType.NORMAL, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 1)
@@ -8565,7 +8658,7 @@ export function initMoves() {
     new AttackMove(MoveId.HORN_ATTACK, PokemonType.NORMAL, MoveCategory.PHYSICAL, 65, 100, 25, -1, 0, 1),
     new AttackMove(MoveId.FURY_ATTACK, PokemonType.NORMAL, MoveCategory.PHYSICAL, 15, 85, 20, -1, 0, 1)
       .attr(MultiHitAttr),
-    new AttackMove(MoveId.HORN_DRILL, PokemonType.NORMAL, MoveCategory.PHYSICAL, 200, 30, 5, -1, 0, 1)
+    new AttackMove(MoveId.HORN_DRILL, PokemonType.NORMAL, MoveCategory.PHYSICAL, 250, 30, 5, -1, 0, 1)
       .attr(OneHitKOAttr)
       .attr(OneHitKOAccuracyAttr),
     new AttackMove(MoveId.TACKLE, PokemonType.NORMAL, MoveCategory.PHYSICAL, 40, 100, 35, -1, 0, 1),
@@ -8746,7 +8839,7 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (user, target, move) => globalScene.arena.getTerrainType() === TerrainType.GRASSY && target.isGrounded() ? 0.5 : 1)
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_OTHERS),
-    new AttackMove(MoveId.FISSURE, PokemonType.GROUND, MoveCategory.PHYSICAL, 200, 30, 5, -1, 0, 1)
+    new AttackMove(MoveId.FISSURE, PokemonType.GROUND, MoveCategory.PHYSICAL, 250, 30, 5, -1, 0, 1)
       .attr(OneHitKOAttr)
       .attr(OneHitKOAccuracyAttr)
       .attr(HitsTagAttr, BattlerTagType.UNDERGROUND)
@@ -8816,7 +8909,9 @@ export function initMoves() {
       .attr(AddArenaTagAttr, ArenaTagType.REFLECT, 5, true)
       .target(MoveTarget.USER_SIDE),
     new SelfStatusMove(MoveId.FOCUS_ENERGY, PokemonType.NORMAL, -1, 30, -1, 0, 1)
-      .attr(AddBattlerTagAttr, BattlerTagType.CRIT_BOOST, true, true),
+      .attr(AddBattlerTagAttr, BattlerTagType.CRIT_BOOST, true, true)
+      // TODO: Remove once dragon cheer & focus energy are merged into 1 tag
+      .condition((_user, target) => !target.getTag(BattlerTagType.DRAGON_CHEER)),
     new AttackMove(MoveId.BIDE, PokemonType.NORMAL, MoveCategory.PHYSICAL, -1, -1, 10, -1, 1, 1)
       .target(MoveTarget.USER)
       .unimplemented(),
@@ -8938,9 +9033,7 @@ export function initMoves() {
       .attr(MultiHitAttr, MultiHitType._2)
       .makesContact(false),
     new SelfStatusMove(MoveId.REST, PokemonType.PSYCHIC, -1, 5, -1, 0, 1)
-      .attr(StatusEffectAttr, StatusEffect.SLEEP, true, 3, true)
-      .attr(HealAttr, 1, true)
-      .condition((user, target, move) => !user.isFullHp() && user.canSetStatus(StatusEffect.SLEEP, true, true, user))
+      .attr(RestAttr, 3)
       .triageMove(),
     new AttackMove(MoveId.ROCK_SLIDE, PokemonType.ROCK, MoveCategory.PHYSICAL, 75, 90, 10, 30, 0, 1)
       .attr(FlinchAttr)
@@ -9286,14 +9379,16 @@ export function initMoves() {
       .condition(user => (user.getTag(StockpilingTag)?.stockpiledCount ?? 0) < 3)
       .attr(AddBattlerTagAttr, BattlerTagType.STOCKPILING, true),
     new AttackMove(MoveId.SPIT_UP, PokemonType.NORMAL, MoveCategory.SPECIAL, -1, 100, 10, -1, 0, 3)
-      .condition(hasStockpileStacksCondition)
       .attr(SpitUpPowerAttr, 100)
+      .condition(hasStockpileStacksCondition)
       .attr(RemoveBattlerTagAttr, [ BattlerTagType.STOCKPILING ], true),
     new SelfStatusMove(MoveId.SWALLOW, PokemonType.NORMAL, -1, 10, -1, 0, 3)
-      .condition(hasStockpileStacksCondition)
       .attr(SwallowHealAttr)
+      .condition(hasStockpileStacksCondition)
       .attr(RemoveBattlerTagAttr, [ BattlerTagType.STOCKPILING ], true)
-      .triageMove(),
+      .triageMove()
+      // TODO: Verify if using Swallow at full HP still consumes stacks or not
+      .edgeCase(),
     new AttackMove(MoveId.HEAT_WAVE, PokemonType.FIRE, MoveCategory.SPECIAL, 95, 90, 10, 10, 0, 3)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN)
@@ -9343,7 +9438,9 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.HELPING_HAND)
       .ignoresSubstitute()
       .target(MoveTarget.NEAR_ALLY)
-      .condition(failIfSingleBattle),
+      .condition(failIfSingleBattle)
+      // should stack multiplicatively if used multiple times in 1 turn
+      .edgeCase(),
     new StatusMove(MoveId.TRICK, PokemonType.PSYCHIC, 100, 10, -1, 0, 3)
       .unimplemented(),
     new StatusMove(MoveId.ROLE_PLAY, PokemonType.PSYCHIC, -1, 10, -1, 0, 3)
@@ -9528,7 +9625,7 @@ export function initMoves() {
     new AttackMove(MoveId.SAND_TOMB, PokemonType.GROUND, MoveCategory.PHYSICAL, 35, 85, 15, -1, 0, 3)
       .attr(TrapAttr, BattlerTagType.SAND_TOMB)
       .makesContact(false),
-    new AttackMove(MoveId.SHEER_COLD, PokemonType.ICE, MoveCategory.SPECIAL, 200, 30, 5, -1, 0, 3)
+    new AttackMove(MoveId.SHEER_COLD, PokemonType.ICE, MoveCategory.SPECIAL, 250, 30, 5, -1, 0, 3)
       .attr(IceNoEffectTypeAttr)
       .attr(OneHitKOAttr)
       .attr(SheerColdAccuracyAttr),
@@ -9679,14 +9776,8 @@ export function initMoves() {
       .unimplemented(),
     new StatusMove(MoveId.PSYCHO_SHIFT, PokemonType.PSYCHIC, 100, 10, -1, 0, 4)
       .attr(PsychoShiftEffectAttr)
-      .condition((user, target, move) => {
-        let statusToApply = user.hasAbility(AbilityId.COMATOSE) ? StatusEffect.SLEEP : undefined;
-        if (user.status?.effect && isNonVolatileStatusEffect(user.status.effect)) {
-          statusToApply = user.status.effect;
-        }
-        return !!statusToApply && target.canSetStatus(statusToApply, false, false, user);
-      }
-      ),
+      // TODO: Verify status applied if a statused pokemon obtains Comatose (via Transform) and uses Psycho Shift
+      .edgeCase(),
     new AttackMove(MoveId.TRUMP_CARD, PokemonType.NORMAL, MoveCategory.SPECIAL, -1, -1, 5, -1, 0, 4)
       .makesContact()
       .attr(LessPPMorePowerAttr),
@@ -11387,9 +11478,9 @@ export function initMoves() {
     new AttackMove(MoveId.RUINATION, PokemonType.DARK, MoveCategory.SPECIAL, -1, 90, 10, -1, 0, 9)
       .attr(TargetHalfHpDamageAttr),
     new AttackMove(MoveId.COLLISION_COURSE, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 9)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.type, user) >= 2 ? 5461 / 4096 : 1),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.type, user) >= 2 ? 4 / 3 : 1),
     new AttackMove(MoveId.ELECTRO_DRIFT, PokemonType.ELECTRIC, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 9)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.type, user) >= 2 ? 5461 / 4096 : 1)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.type, user) >= 2 ? 4 / 3 : 1)
       .makesContact(),
     new SelfStatusMove(MoveId.SHED_TAIL, PokemonType.NORMAL, -1, 10, -1, 0, 9)
       .attr(AddSubstituteAttr, 0.5, true)
@@ -11494,10 +11585,9 @@ export function initMoves() {
       .attr(TeraStarstormTypeAttr)
       .attr(VariableTargetAttr, (user, target, move) => user.hasSpecies(SpeciesId.TERAPAGOS) && (user.isTerastallized || globalScene.currentBattle.preTurnCommands[user.getFieldIndex()]?.command === Command.TERA) ? MoveTarget.ALL_NEAR_ENEMIES : MoveTarget.NEAR_OTHER)
       .partial(), /** Does not ignore abilities that affect stats, relevant in determining the move's category {@see TeraMoveCategoryAttr} */
-    new AttackMove(MoveId.FICKLE_BEAM, PokemonType.DRAGON, MoveCategory.SPECIAL, 80, 100, 5, 30, 0, 9)
-      .attr(PreMoveMessageAttr, doublePowerChanceMessageFunc)
-      .attr(DoublePowerChanceAttr)
-      .edgeCase(), // Should not interact with Sheer Force
+    new AttackMove(MoveId.FICKLE_BEAM, PokemonType.DRAGON, MoveCategory.SPECIAL, 80, 100, 5, -1, 0, 9)
+      .attr(PreMoveMessageAttr, doublePowerChanceMessageFunc(30))
+      .attr(DoublePowerChanceAttr, 30),
     new SelfStatusMove(MoveId.BURNING_BULWARK, PokemonType.FIRE, -1, 10, -1, 4, 9)
       .attr(ProtectAttr, BattlerTagType.BURNING_BULWARK)
       .condition(failIfLastCondition),
@@ -11519,6 +11609,8 @@ export function initMoves() {
       .attr(OpponentHighHpPowerAttr, 100),
     new StatusMove(MoveId.DRAGON_CHEER, PokemonType.DRAGON, -1, 15, -1, 0, 9)
       .attr(AddBattlerTagAttr, BattlerTagType.DRAGON_CHEER, false, true)
+      // TODO: Remove once dragon cheer & focus energy are merged into 1 tag
+      .condition((_user, target) => !target.getTag(BattlerTagType.CRIT_BOOST))
       .target(MoveTarget.NEAR_ALLY),
     new AttackMove(MoveId.ALLURING_VOICE, PokemonType.FAIRY, MoveCategory.SPECIAL, 80, 100, 10, 100, 0, 9)
       .attr(AddBattlerTagIfBoostedAttr, BattlerTagType.CONFUSED)
@@ -11540,9 +11632,4 @@ export function initMoves() {
     new AttackMove(MoveId.MALIGNANT_CHAIN, PokemonType.POISON, MoveCategory.SPECIAL, 100, 100, 5, 50, 0, 9)
       .attr(StatusEffectAttr, StatusEffect.TOXIC)
   );
-  allMoves.map(m => {
-    if (m.getAttrs("StatStageChangeAttr").some(a => a.selfTarget && a.stages < 0)) {
-      selfStatLowerMoves.push(m.id);
-    }
-  });
 }

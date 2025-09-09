@@ -24,9 +24,9 @@ import {
   TmModifierType,
 } from "#modifiers/modifier-type";
 import { BattlePhase } from "#phases/battle-phase";
-import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
-import { SHOP_OPTIONS_ROW_LIMIT } from "#ui/modifier-select-ui-handler";
-import { PartyOption, PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import type { ModifierSelectUiHandler } from "#ui/handlers/modifier-select-ui-handler";
+import { SHOP_OPTIONS_ROW_LIMIT } from "#ui/handlers/modifier-select-ui-handler";
+import { PartyOption, PartyUiHandler, PartyUiMode } from "#ui/handlers/party-ui-handler";
 import { isNullOrUndefined, NumberHolder } from "#utils/common";
 import i18next from "i18next";
 
@@ -177,7 +177,7 @@ export class SelectModifierPhase extends BattlePhase {
         this.openModifierMenu(modifierType, cost, modifierSelectCallback);
       }
     } else {
-      this.applyModifier(modifierType.newModifier()!);
+      this.applyModifier(modifierType.newModifier()!, cost);
     }
     return cost === -1;
   }
@@ -215,11 +215,11 @@ export class SelectModifierPhase extends BattlePhase {
       -1,
       (fromSlotIndex: number, itemIndex: number, itemQuantity: number, toSlotIndex: number) => {
         if (
-          toSlotIndex !== undefined &&
-          fromSlotIndex < 6 &&
-          toSlotIndex < 6 &&
-          fromSlotIndex !== toSlotIndex &&
-          itemIndex > -1
+          toSlotIndex !== undefined
+          && fromSlotIndex < 6
+          && toSlotIndex < 6
+          && fromSlotIndex !== toSlotIndex
+          && itemIndex > -1
         ) {
           const itemModifiers = globalScene.findModifiers(
             m => m instanceof PokemonHeldItemModifier && m.isTransferable && m.pokemonId === party[fromSlotIndex].id,
@@ -306,10 +306,10 @@ export class SelectModifierPhase extends BattlePhase {
       -1,
       (fromSlotIndex: number, spliceSlotIndex: number) => {
         if (
-          spliceSlotIndex !== undefined &&
-          fromSlotIndex < 6 &&
-          spliceSlotIndex < 6 &&
-          fromSlotIndex !== spliceSlotIndex
+          spliceSlotIndex !== undefined
+          && fromSlotIndex < 6
+          && spliceSlotIndex < 6
+          && fromSlotIndex !== spliceSlotIndex
         ) {
           globalScene.ui.setMode(UiMode.MODIFIER_SELECT, this.isPlayer()).then(() => {
             const modifier = modifierType.newModifier(party[fromSlotIndex], party[spliceSlotIndex])!; //TODO: is the bang correct?
@@ -380,9 +380,9 @@ export class SelectModifierPhase extends BattlePhase {
     // If custom modifiers are specified, overrides default item count
     if (this.customModifierSettings) {
       const newItemCount =
-        (this.customModifierSettings.guaranteedModifierTiers?.length ?? 0) +
-        (this.customModifierSettings.guaranteedModifierTypeOptions?.length ?? 0) +
-        (this.customModifierSettings.guaranteedModifierTypeFuncs?.length ?? 0);
+        (this.customModifierSettings.guaranteedModifierTiers?.length ?? 0)
+        + (this.customModifierSettings.guaranteedModifierTypeOptions?.length ?? 0)
+        + (this.customModifierSettings.guaranteedModifierTypeFuncs?.length ?? 0);
       if (this.customModifierSettings.fillRemaining) {
         const originalCount = modifierCountHolder.value;
         modifierCountHolder.value = originalCount > newItemCount ? originalCount : newItemCount;

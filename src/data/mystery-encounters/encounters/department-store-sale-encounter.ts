@@ -43,7 +43,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
       text: `${namespace}:intro`,
     },
     {
-      text: `${namespace}:intro_dialogue`,
+      text: `${namespace}:introDialogue`,
       speaker: `${namespace}:speaker`,
     },
   ])

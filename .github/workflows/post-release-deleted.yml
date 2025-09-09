@@ -6,6 +6,7 @@ jobs:
   # Set the BETA_DEPLOY_BRANCH variable to beta when a release branch is deleted
   update-release-var:
     if: github.repository == 'pagefaultgames/pokerogue' && github.event.ref_type == 'branch' && github.event.ref == 'release'
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
       - name: Set BETA_DEPLOY_BRANCH to beta

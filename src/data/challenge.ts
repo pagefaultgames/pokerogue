@@ -1,11 +1,13 @@
 import type { FixedBattleConfig } from "#app/battle";
 import { getRandomTrainerFunc } from "#app/battle";
-import { defaultStarterSpecies } from "#app/constants";
+import { defaultStarterSpeciesAndEvolutions } from "#balance/pokemon-evolutions";
 import { speciesStarterCosts } from "#balance/starters";
 import type { PokemonSpecies } from "#data/pokemon-species";
+import { AbilityAttr } from "#enums/ability-attr";
 import { BattleType } from "#enums/battle-type";
 import { Challenges } from "#enums/challenges";
 import { TypeColor, TypeShadow } from "#enums/color";
+import { DexAttr } from "#enums/dex-attr";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import { ModifierTier } from "#enums/modifier-tier";
 import { MoveId } from "#enums/move-id";
@@ -19,12 +21,13 @@ import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
 import { PokemonMove } from "#moves/pokemon-move";
-import type { DexAttrProps, GameData } from "#system/game-data";
+import type { DexAttrProps, GameData, StarterDataEntry } from "#system/game-data";
 import { RibbonData, type RibbonFlag } from "#system/ribbons/ribbon-data";
+import type { DexEntry } from "#types/dex-data";
 import { type BooleanHolder, isBetween, type NumberHolder, randSeedItem } from "#utils/common";
 import { deepCopy } from "#utils/data";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
-import { toCamelCase, toSnakeCase } from "#utils/strings";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 /** A constant for the default max cost of the starting party before a run */
@@ -49,7 +52,7 @@ export abstract class Challenge {
    * @defaultValue 0
    */
   public get ribbonAwarded(): RibbonFlag {
-    return 0 as RibbonFlag;
+    return 0n as RibbonFlag;
   }
 
   /**
@@ -234,6 +237,15 @@ export abstract class Challenge {
    * @returns {@link boolean} Whether this function did anything.
    */
   applyStarterCost(_species: SpeciesId, _cost: NumberHolder): boolean {
+    return false;
+  }
+
+  /**
+   * An apply function for STARTER_SELECT_MODIFY challenges. Derived classes should alter this.
+   * @param _pokemon {@link Pokemon} The starter pokemon to modify.
+   * @returns {@link boolean} Whether this function did anything.
+   */
+  applyStarterSelectModify(_speciesId: SpeciesId, _dexEntry: DexEntry, _starterDataEntry: StarterDataEntry): boolean {
     return false;
   }
 
@@ -436,7 +448,7 @@ export class SingleGenerationChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
     // NOTE: This logic will not work for the eventual mono gen 10 ribbon, as
     // as its flag will not be in sequence with the other mono gen ribbons.
-    return this.value ? ((RibbonData.MONO_GEN_1 << (this.value - 1)) as RibbonFlag) : 0;
+    return this.value ? ((RibbonData.MONO_GEN_1 << (BigInt(this.value) - 1n)) as RibbonFlag) : 0n;
   }
 
   constructor() {
@@ -455,8 +467,8 @@ export class SingleGenerationChallenge extends Challenge {
     const baseGeneration = getPokemonSpecies(pokemon.species.speciesId).generation;
     const fusionGeneration = pokemon.isFusion() ? getPokemonSpecies(pokemon.fusionSpecies!.speciesId).generation : 0;
     if (
-      pokemon.isPlayer() &&
-      (baseGeneration !== this.value || (pokemon.isFusion() && fusionGeneration !== this.value))
+      pokemon.isPlayer()
+      && (baseGeneration !== this.value || (pokemon.isFusion() && fusionGeneration !== this.value))
     ) {
       valid.value = false;
       return true;
@@ -674,10 +686,10 @@ export class SingleGenerationChallenge extends Challenge {
 
   getDescription(overrideValue: number = this.value): string {
     if (overrideValue === 0) {
-      return i18next.t("challenges:singleGeneration.desc_default");
+      return i18next.t("challenges:singleGeneration.descDefault");
     }
     return i18next.t("challenges:singleGeneration.desc", {
-      gen: i18next.t(`challenges:singleGeneration.gen_${overrideValue}`),
+      gen: i18next.t(`challenges:singleGeneration.gen.${overrideValue}`),
     });
   }
 
@@ -706,7 +718,7 @@ export class SingleTypeChallenge extends Challenge {
     // `this.value` represents the 1-based index of pokemon type
     // `RibbonData.MONO_NORMAL` starts the flag position for the types,
     // and we shift it by 1 for the specific type.
-    return this.value ? ((RibbonData.MONO_NORMAL << (this.value - 1)) as RibbonFlag) : 0;
+    return this.value ? ((RibbonData.MONO_NORMAL << (BigInt(this.value) - 1n)) as RibbonFlag) : 0n;
   }
   private static TYPE_OVERRIDES: monotypeOverride[] = [
     { species: SpeciesId.CASTFORM, type: PokemonType.NORMAL, fusion: false },
@@ -729,12 +741,12 @@ export class SingleTypeChallenge extends Challenge {
 
   applyPokemonInBattle(pokemon: Pokemon, valid: BooleanHolder): boolean {
     if (
-      pokemon.isPlayer() &&
-      !pokemon.isOfType(this.value - 1, false, false, true) &&
-      !SingleTypeChallenge.TYPE_OVERRIDES.some(
+      pokemon.isPlayer()
+      && !pokemon.isOfType(this.value - 1, false, false, true)
+      && !SingleTypeChallenge.TYPE_OVERRIDES.some(
         o =>
-          o.type === this.value - 1 &&
-          (pokemon.isFusion() && o.fusion ? pokemon.fusionSpecies! : pokemon.species).speciesId === o.species,
+          o.type === this.value - 1
+          && (pokemon.isFusion() && o.fusion ? pokemon.fusionSpecies! : pokemon.species).speciesId === o.species,
       )
     ) {
       // TODO: is the bang on fusionSpecies correct?
@@ -752,13 +764,13 @@ export class SingleTypeChallenge extends Challenge {
   }
 
   getValue(overrideValue: number = this.value): string {
-    return toSnakeCase(PokemonType[overrideValue - 1]);
+    return PokemonType[overrideValue - 1].toLowerCase();
   }
 
   getDescription(overrideValue: number = this.value): string {
-    const type = i18next.t(`pokemonInfo:Type.${PokemonType[overrideValue - 1]}`);
+    const type = i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[overrideValue - 1])}`);
     const typeColor = `[color=${TypeColor[PokemonType[overrideValue - 1]]}][shadow=${TypeShadow[PokemonType[this.value - 1]]}]${type}[/shadow][/color]`;
-    const defaultDesc = i18next.t("challenges:singleType.desc_default");
+    const defaultDesc = i18next.t("challenges:singleType.descDefault");
     const typeDesc = i18next.t("challenges:singleType.desc", {
       type: typeColor,
     });
@@ -778,14 +790,14 @@ export class SingleTypeChallenge extends Challenge {
  */
 export class FreshStartChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
-    return this.value ? RibbonData.FRESH_START : 0;
+    return this.value ? RibbonData.FRESH_START : 0n;
   }
   constructor() {
     super(Challenges.FRESH_START, 2);
   }
 
   applyStarterChoice(pokemon: PokemonSpecies, valid: BooleanHolder): boolean {
-    if (this.value === 1 && !defaultStarterSpecies.includes(pokemon.speciesId)) {
+    if (this.value === 1 && !defaultStarterSpeciesAndEvolutions.includes(pokemon.speciesId)) {
       valid.value = false;
       return true;
     }
@@ -797,10 +809,61 @@ export class FreshStartChallenge extends Challenge {
     return true;
   }
 
+  applyStarterSelectModify(speciesId: SpeciesId, dexEntry: DexEntry, starterDataEntry: StarterDataEntry): boolean {
+    // Remove all egg moves
+    starterDataEntry.eggMoves = 0;
+
+    // Remove hidden and passive ability
+    const defaultAbilities = AbilityAttr.ABILITY_1 | AbilityAttr.ABILITY_2;
+    starterDataEntry.abilityAttr &= defaultAbilities;
+    starterDataEntry.passiveAttr = 0;
+
+    // Remove cost reduction
+    starterDataEntry.valueReduction = 0;
+
+    // Remove natures except for the default ones
+    const neutralNaturesAttr =
+      (1 << (Nature.HARDY + 1))
+      | (1 << (Nature.DOCILE + 1))
+      | (1 << (Nature.SERIOUS + 1))
+      | (1 << (Nature.BASHFUL + 1))
+      | (1 << (Nature.QUIRKY + 1));
+    dexEntry.natureAttr &= neutralNaturesAttr;
+
+    // Cap all ivs at 15
+    for (let i = 0; i < 6; i++) {
+      dexEntry.ivs[i] = Math.min(dexEntry.ivs[i], 15);
+    }
+
+    // Removes shiny and variants
+    dexEntry.caughtAttr &= ~DexAttr.SHINY;
+    dexEntry.caughtAttr &= ~(DexAttr.VARIANT_2 | DexAttr.VARIANT_3);
+
+    // Remove unlocked forms for specific species
+    if (speciesId === SpeciesId.ZYGARDE) {
+      // Sets ability from power construct to aura break
+      const formMask = (DexAttr.DEFAULT_FORM << 2n) - 1n;
+      dexEntry.caughtAttr &= formMask;
+    } else if (
+      [
+        SpeciesId.PIKACHU,
+        SpeciesId.EEVEE,
+        SpeciesId.PICHU,
+        SpeciesId.ROTOM,
+        SpeciesId.MELOETTA,
+        SpeciesId.FROAKIE,
+      ].includes(speciesId)
+    ) {
+      const formMask = (DexAttr.DEFAULT_FORM << 1n) - 1n; // These mons are set to form 0 because they're meant to be unlocks or mid-run form changes
+      dexEntry.caughtAttr &= formMask;
+    }
+
+    return true;
+  }
+
   applyStarterModify(pokemon: Pokemon): boolean {
     pokemon.abilityIndex = pokemon.abilityIndex % 2; // Always base ability, if you set it to hidden it wraps to first ability
     pokemon.passive = false; // Passive isn't unlocked
-    pokemon.nature = Nature.HARDY; // Neutral nature
     let validMoves = pokemon.species
       .getLevelMoves()
       .filter(m => isBetween(m[0], 1, 5))
@@ -819,20 +882,22 @@ export class FreshStartChallenge extends Challenge {
     if (pokemon.species.speciesId === SpeciesId.ZYGARDE && pokemon.formIndex >= 2) {
       pokemon.formIndex -= 2; // Sets 10%-PC to 10%-AB and 50%-PC to 50%-AB
     } else if (
-      pokemon.formIndex > 0 &&
-      [
+      pokemon.formIndex > 0
+      && [
         SpeciesId.PIKACHU,
         SpeciesId.EEVEE,
         SpeciesId.PICHU,
         SpeciesId.ROTOM,
         SpeciesId.MELOETTA,
         SpeciesId.FROAKIE,
-        SpeciesId.ROCKRUFF,
       ].includes(pokemon.species.speciesId)
     ) {
       pokemon.formIndex = 0; // These mons are set to form 0 because they're meant to be unlocks or mid-run form changes
     }
-    pokemon.ivs = [15, 15, 15, 15, 15, 15]; // Default IVs of 15 for all stats (Updated to 15 from 10 in 1.2.0)
+    // Cap all ivs at 15
+    for (let i = 0; i < 6; i++) {
+      pokemon.ivs[i] = Math.min(pokemon.ivs[i], 15);
+    }
     pokemon.teraType = pokemon.species.type1; // Always primary tera type
     return true;
   }
@@ -854,7 +919,7 @@ export class FreshStartChallenge extends Challenge {
  */
 export class InverseBattleChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
-    return this.value ? RibbonData.INVERSE : 0;
+    return this.value ? RibbonData.INVERSE : 0n;
   }
   constructor() {
     super(Challenges.INVERSE_BATTLE, 1);
@@ -890,7 +955,7 @@ export class InverseBattleChallenge extends Challenge {
  */
 export class FlipStatChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
-    return this.value ? RibbonData.FLIP_STATS : 0;
+    return this.value ? RibbonData.FLIP_STATS : 0n;
   }
   constructor() {
     super(Challenges.FLIP_STAT, 1);
@@ -973,7 +1038,7 @@ export class LowerStarterPointsChallenge extends Challenge {
  */
 export class LimitedSupportChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
-    return this.value ? ((RibbonData.NO_HEAL << (this.value - 1)) as RibbonFlag) : 0;
+    return this.value ? ((RibbonData.NO_HEAL << (BigInt(this.value) - 1n)) as RibbonFlag) : 0n;
   }
   constructor() {
     super(Challenges.LIMITED_SUPPORT, 3);
@@ -1008,7 +1073,7 @@ export class LimitedSupportChallenge extends Challenge {
  */
 export class LimitedCatchChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
-    return this.value ? RibbonData.LIMITED_CATCH : 0;
+    return this.value ? RibbonData.LIMITED_CATCH : 0n;
   }
   constructor() {
     super(Challenges.LIMITED_CATCH, 1);
@@ -1035,7 +1100,7 @@ export class LimitedCatchChallenge extends Challenge {
  */
 export class HardcoreChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
-    return this.value ? RibbonData.HARDCORE : 0;
+    return this.value ? RibbonData.HARDCORE : 0n;
   }
   constructor() {
     super(Challenges.HARDCORE, 1);

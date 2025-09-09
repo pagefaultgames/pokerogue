@@ -1,20 +1,20 @@
 export enum AnimFrameTarget {
   USER,
   TARGET,
-  GRAPHIC
+  GRAPHIC,
 }
 
 export enum AnimFocus {
   TARGET = 1,
   USER,
   USER_TARGET,
-  SCREEN
+  SCREEN,
 }
 
 export enum AnimBlendType {
   NORMAL,
   ADD,
-  SUBTRACT
+  SUBTRACT,
 }
 
 export enum ChargeAnim {
@@ -38,7 +38,7 @@ export enum ChargeAnim {
   SOLAR_BLADE_CHARGING,
   BEAK_BLAST_CHARGING,
   METEOR_BEAM_CHARGING,
-  ELECTRO_SHOT_CHARGING
+  ELECTRO_SHOT_CHARGING,
 }
 
 export enum CommonAnim {
@@ -91,5 +91,5 @@ export enum CommonAnim {
   ELECTRIC_TERRAIN,
   GRASSY_TERRAIN,
   PSYCHIC_TERRAIN,
-  LOCK_ON = 2120
+  LOCK_ON = 2120,
 }

@@ -14,5 +14,5 @@ export enum ArenaTagSide {
   /** The effect applies exclusively to the player's side of the field. */
   PLAYER,
   /** The effect applies exclusively to the opposing side of the field. */
-  ENEMY
+  ENEMY,
 }

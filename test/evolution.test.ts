@@ -34,8 +34,7 @@ describe("Evolution", () => {
   it("should keep hidden ability after evolving", async () => {
     await game.classicMode.runToSummon([SpeciesId.EEVEE, SpeciesId.TRAPINCH]);
 
-    const eevee = game.scene.getPlayerParty()[0];
-    const trapinch = game.scene.getPlayerParty()[1];
+    const [eevee, trapinch] = game.scene.getPlayerParty();
     eevee.abilityIndex = 2;
     trapinch.abilityIndex = 2;
 
@@ -49,8 +48,7 @@ describe("Evolution", () => {
   it("should keep same ability slot after evolving", async () => {
     await game.classicMode.runToSummon([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER]);
 
-    const bulbasaur = game.scene.getPlayerParty()[0];
-    const charmander = game.scene.getPlayerParty()[1];
+    const [bulbasaur, charmander] = game.scene.getPlayerParty();
     bulbasaur.abilityIndex = 0;
     charmander.abilityIndex = 1;
 
@@ -80,8 +78,7 @@ describe("Evolution", () => {
     nincada.gender = 1;
 
     await nincada.evolve(pokemonEvolutions[SpeciesId.NINCADA][0], nincada.getSpeciesForm());
-    const ninjask = game.scene.getPlayerParty()[0];
-    const shedinja = game.scene.getPlayerParty()[1];
+    const [ninjask, shedinja] = game.scene.getPlayerParty();
     expect(ninjask.abilityIndex).toBe(2);
     expect(shedinja.abilityIndex).toBe(1);
     expect(ninjask.gender).toBe(1);
@@ -177,5 +174,28 @@ describe("Evolution", () => {
       const fourForm = playerPokemon.getEvolution()!;
       expect(fourForm.evoFormKey).toBe("four"); // meanwhile, according to the pokemon-forms, the evoFormKey for a 4 family maushold is "four"
     }
+  });
+
+  it("tyrogue should evolve if move is not in first slot", async () => {
+    game.override
+      .moveset([MoveId.TACKLE, MoveId.RAPID_SPIN, MoveId.LOW_KICK])
+      .enemySpecies(SpeciesId.GOLEM)
+      .enemyMoveset(MoveId.SPLASH)
+      .startingWave(41)
+      .startingLevel(19)
+      .enemyLevel(30);
+
+    await game.classicMode.startBattle([SpeciesId.TYROGUE]);
+
+    const tyrogue = game.field.getPlayerPokemon();
+
+    const golem = game.field.getEnemyPokemon();
+    golem.hp = 1;
+    expect(golem.hp).toBe(1);
+
+    game.move.select(MoveId.TACKLE);
+    await game.phaseInterceptor.to("EndEvolutionPhase");
+
+    expect(tyrogue.species.speciesId).toBe(SpeciesId.HITMONTOP);
   });
 });

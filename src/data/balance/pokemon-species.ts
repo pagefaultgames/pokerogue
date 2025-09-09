@@ -1505,9 +1505,9 @@ export function initSpecies() {
       new PokemonForm("Hero of Many Battles", "hero-of-many-battles", PokemonType.FIGHTING, null, 2.9, 210, AbilityId.DAUNTLESS_SHIELD, AbilityId.NONE, AbilityId.NONE, 660, 92, 120, 115, 80, 115, 138, 10, 0, 335, false, "", true),
       new PokemonForm("Crowned", "crowned", PokemonType.FIGHTING, PokemonType.STEEL, 2.9, 785, AbilityId.DAUNTLESS_SHIELD, AbilityId.NONE, AbilityId.NONE, 700, 92, 120, 140, 80, 140, 128, 10, 0, 360)
     ),
-    new PokemonSpecies(SpeciesId.ETERNATUS, 8, false, true, false, "Gigantic Pokémon", PokemonType.POISON, PokemonType.DRAGON, 20, 950, AbilityId.PRESSURE, AbilityId.NONE, AbilityId.NONE, 690, 140, 85, 95, 145, 95, 130, 255, 0, 345, GrowthRate.SLOW, null, false, true,
-      new PokemonForm("Normal", "", PokemonType.POISON, PokemonType.DRAGON, 20, 950, AbilityId.PRESSURE, AbilityId.NONE, AbilityId.NONE, 690, 140, 85, 95, 145, 95, 130, 255, 0, 345, false, null, true),
-      new PokemonForm("E-Max", "eternamax", PokemonType.POISON, PokemonType.DRAGON, 100, 999.9, AbilityId.PRESSURE, AbilityId.NONE, AbilityId.NONE, 1125, 255, 115, 250, 125, 250, 130, 255, 0, 345)
+    new PokemonSpecies(SpeciesId.ETERNATUS, 8, false, true, false, "Gigantic Pokémon", PokemonType.POISON, PokemonType.DRAGON, 20, 950, AbilityId.PRESSURE, AbilityId.NONE, AbilityId.NONE, 690, 140, 85, 95, 145, 95, 130, 45, 0, 345, GrowthRate.SLOW, null, false, true,
+      new PokemonForm("Normal", "", PokemonType.POISON, PokemonType.DRAGON, 20, 950, AbilityId.PRESSURE, AbilityId.NONE, AbilityId.NONE, 690, 140, 85, 95, 145, 95, 130, 45, 0, 345, false, null, true),
+      new PokemonForm("E-Max", "eternamax", PokemonType.POISON, PokemonType.DRAGON, 100, 999.9, AbilityId.PRESSURE, AbilityId.NONE, AbilityId.NONE, 1125, 255, 115, 250, 125, 250, 130, 45, 0, 345)
     ),
     new PokemonSpecies(SpeciesId.KUBFU, 8, true, false, false, "Wushu Pokémon", PokemonType.FIGHTING, null, 0.6, 12, AbilityId.INNER_FOCUS, AbilityId.NONE, AbilityId.NONE, 385, 60, 90, 60, 53, 50, 72, 3, 50, 77, GrowthRate.SLOW, 87.5, false),
     new PokemonSpecies(SpeciesId.URSHIFU, 8, true, false, false, "Wushu Pokémon", PokemonType.FIGHTING, PokemonType.DARK, 1.9, 105, AbilityId.UNSEEN_FIST, AbilityId.NONE, AbilityId.NONE, 550, 100, 130, 100, 63, 60, 97, 3, 50, 275, GrowthRate.SLOW, 87.5, false, true,

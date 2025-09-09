@@ -52,9 +52,9 @@ export class GameOverPhase extends BattlePhase {
     // Handle Mystery Encounter special Game Over cases
     // Situations such as when player lost a battle, but it isn't treated as full Game Over
     if (
-      !this.isVictory &&
-      globalScene.currentBattle.mysteryEncounter?.onGameOver &&
-      !globalScene.currentBattle.mysteryEncounter.onGameOver()
+      !this.isVictory
+      && globalScene.currentBattle.mysteryEncounter?.onGameOver
+      && !globalScene.currentBattle.mysteryEncounter.onGameOver()
     ) {
       // Do not end the game
       return this.end();
@@ -65,8 +65,8 @@ export class GameOverPhase extends BattlePhase {
       const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
       const genderStr = PlayerGender[genderIndex].toLowerCase();
       globalScene.ui.showDialogue(
-        i18next.t("miscDialogue:ending_endless", { context: genderStr }),
-        i18next.t("miscDialogue:ending_name"),
+        i18next.t("miscDialogue:endingEndless", { context: genderStr }),
+        i18next.t("miscDialogue:endingName"),
         0,
         () => this.handleGameOver(),
       );
@@ -90,8 +90,8 @@ export class GameOverPhase extends BattlePhase {
                   globalScene.phaseManager.pushNew("SummonPhase", 1);
                 }
                 if (
-                  globalScene.currentBattle.waveIndex > 1 &&
-                  globalScene.currentBattle.battleType !== BattleType.TRAINER
+                  globalScene.currentBattle.waveIndex > 1
+                  && globalScene.currentBattle.battleType !== BattleType.TRAINER
                 ) {
                   globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
                   if (globalScene.currentBattle.double && availablePartyMembers > 1) {
@@ -119,17 +119,23 @@ export class GameOverPhase extends BattlePhase {
    * game mode and challenges.
    */
   private awardRibbons(): void {
-    let ribbonFlags = 0;
-    if (globalScene.gameMode.isClassic) {
-      ribbonFlags |= RibbonData.CLASSIC;
-    }
-    if (isNuzlockeChallenge()) {
-      ribbonFlags |= RibbonData.NUZLOCKE;
-    }
+    let ribbonFlags = 0n;
     for (const challenge of globalScene.gameMode.challenges) {
       const ribbon = challenge.ribbonAwarded;
       if (challenge.value && ribbon) {
         ribbonFlags |= ribbon;
+      }
+    }
+    // Block other ribbons if flip stats or inverse is active
+    const flip_or_inverse = ribbonFlags & (RibbonData.FLIP_STATS | RibbonData.INVERSE);
+    if (flip_or_inverse) {
+      ribbonFlags = flip_or_inverse;
+    } else {
+      if (globalScene.gameMode.isClassic) {
+        ribbonFlags |= RibbonData.CLASSIC;
+      }
+      if (isNuzlockeChallenge()) {
+        ribbonFlags |= RibbonData.NUZLOCKE;
       }
     }
     // Award ribbons to all Pokémon in the player's party that are considered valid
@@ -167,6 +173,7 @@ export class GameOverPhase extends BattlePhase {
             this.awardRibbons();
           } else if (globalScene.gameMode.isDaily && newClear) {
             globalScene.gameData.gameStats.dailyRunSessionsWon++;
+            globalScene.validateAchv(achvs.DAILY_VICTORY);
           }
         }
 
@@ -197,7 +204,7 @@ export class GameOverPhase extends BattlePhase {
             }
             this.getRunHistoryEntry().then(runHistoryEntry => {
               globalScene.gameData.saveRunHistory(runHistoryEntry, this.isVictory);
-              globalScene.phaseManager.pushNew("PostGameOverPhase", endCardPhase);
+              globalScene.phaseManager.pushNew("PostGameOverPhase", globalScene.sessionSlotId, endCardPhase);
               this.end();
             });
           };
@@ -255,7 +262,7 @@ export class GameOverPhase extends BattlePhase {
         .newclear({
           slot: globalScene.sessionSlotId,
           isVictory: this.isVictory,
-          clientSessionId: clientSessionId,
+          clientSessionId,
         })
         .then(success => doGameOver(!globalScene.gameMode.isDaily || !!success))
         .catch(_err => {
@@ -283,8 +290,8 @@ export class GameOverPhase extends BattlePhase {
         globalScene.phaseManager.unshiftNew("UnlockPhase", Unlockables.ENDLESS_MODE);
       }
       if (
-        globalScene.getPlayerParty().filter(p => p.fusionSpecies).length &&
-        !globalScene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE]
+        globalScene.getPlayerParty().filter(p => p.fusionSpecies).length > 0
+        && !globalScene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE]
       ) {
         globalScene.phaseManager.unshiftNew("UnlockPhase", Unlockables.SPLICED_ENDLESS_MODE);
       }
@@ -292,8 +299,8 @@ export class GameOverPhase extends BattlePhase {
         globalScene.phaseManager.unshiftNew("UnlockPhase", Unlockables.MINI_BLACK_HOLE);
       }
       if (
-        !globalScene.gameData.unlocks[Unlockables.EVIOLITE] &&
-        globalScene.getPlayerParty().some(p => p.getSpeciesForm(true).speciesId in pokemonEvolutions)
+        !globalScene.gameData.unlocks[Unlockables.EVIOLITE]
+        && globalScene.getPlayerParty().some(p => p.getSpeciesForm(true).speciesId in pokemonEvolutions)
       ) {
         globalScene.phaseManager.unshiftNew("UnlockPhase", Unlockables.EVIOLITE);
       }

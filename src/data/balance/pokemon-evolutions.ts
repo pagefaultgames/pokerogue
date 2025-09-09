@@ -1,3 +1,4 @@
+import { defaultStarterSpecies } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { speciesStarterCosts } from "#balance/starters";
 import { allMoves } from "#data/data-lists";
@@ -15,6 +16,7 @@ import type { Pokemon } from "#field/pokemon";
 import type { SpeciesStatBoosterItem, SpeciesStatBoosterModifierType } from "#modifiers/modifier-type";
 import { coerceArray, isNullOrUndefined, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 export enum SpeciesWildEvolutionDelay {
@@ -75,7 +77,8 @@ export enum EvolutionItem {
   LEADERS_CREST
 }
 
-type TyrogueMove = MoveId.LOW_SWEEP | MoveId.MACH_PUNCH | MoveId.RAPID_SPIN;
+const tyrogueMoves = [MoveId.LOW_SWEEP, MoveId.MACH_PUNCH, MoveId.RAPID_SPIN] as const;
+type TyrogueMove = (typeof tyrogueMoves)[number];
 
 /**
  * Pokemon Evolution tuple type consisting of:
@@ -133,11 +136,11 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.FRIENDSHIP:
           return i18next.t("pokemonEvolutions:friendship");
         case EvoCondKey.TIME:
-          return i18next.t(`pokemonEvolutions:timeOfDay.${TimeOfDay[cond.time[cond.time.length - 1]]}`); // For Day and Night evos, the key we want goes last
+          return i18next.t(`pokemonEvolutions:timeOfDay.${toCamelCase(TimeOfDay[cond.time.at(-1)!])}`); // For Day and Night evos, the key we want goes last
         case EvoCondKey.MOVE_TYPE:
-          return i18next.t("pokemonEvolutions:moveType", {type: i18next.t(`pokemonInfo:Type.${PokemonType[cond.pkmnType]}`)});
+          return i18next.t("pokemonEvolutions:moveType", {type: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[cond.pkmnType])}`)});
         case EvoCondKey.PARTY_TYPE:
-          return i18next.t("pokemonEvolutions:partyType", {type: i18next.t(`pokemonInfo:Type.${PokemonType[cond.pkmnType]}`)});
+          return i18next.t("pokemonEvolutions:partyType", {type: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[cond.pkmnType])}`)});
         case EvoCondKey.GENDER:
           return i18next.t("pokemonEvolutions:gender", {gender: getGenderSymbol(cond.gender)});
         case EvoCondKey.MOVE:
@@ -156,7 +159,7 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.SPECIES_CAUGHT:
           return i18next.t("pokemonEvolutions:caught", {species: getPokemonSpecies(cond.speciesCaught).name});
         case EvoCondKey.HELD_ITEM:
-          return i18next.t(`pokemonEvolutions:heldItem.${cond.itemKey}`);
+          return i18next.t(`pokemonEvolutions:heldItem.${toCamelCase(cond.itemKey)}`);
       }
     }).filter(s => !isNullOrUndefined(s)); // Filter out stringless conditions
     return this.desc;
@@ -190,7 +193,10 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.WEATHER:
           return cond.weather.includes(globalScene.arena.getWeatherType());
         case EvoCondKey.TYROGUE:
-          return pokemon.getMoveset(true).find(m => m.moveId as TyrogueMove)?.moveId === cond.move;
+          return (
+            pokemon.getMoveset(true).find(m => (tyrogueMoves as readonly MoveId[]).includes(m.moveId))?.moveId
+            === cond.move
+          );
         case EvoCondKey.NATURE:
           return cond.nature.includes(pokemon.getNature());
         case EvoCondKey.RANDOM_FORM: {
@@ -245,7 +251,7 @@ export class SpeciesFormEvolution {
     }
     if (this.item) {
       const itemDescription = i18next.t(`modifierType:EvolutionItem.${EvolutionItem[this.item].toUpperCase()}`);
-      const rarity = this.item > 50 ? i18next.t("pokemonEvolutions:ULTRA") : i18next.t("pokemonEvolutions:GREAT");
+      const rarity = this.item > 50 ? i18next.t("pokemonEvolutions:ultra") : i18next.t("pokemonEvolutions:great");
       strings.push(i18next.t("pokemonEvolutions:using", {item: itemDescription, tier: rarity}));
     }
     if (this.condition) {
@@ -651,20 +657,12 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [SpeciesId.KIRLIA]: [
     new SpeciesEvolution(SpeciesId.GARDEVOIR, 30, null, null),
-    new SpeciesEvolution(SpeciesId.GALLADE, 1, EvolutionItem.DAWN_STONE, {key: EvoCondKey.GENDER, gender: Gender.MALE})
+    new SpeciesEvolution(SpeciesId.GALLADE, 1, EvolutionItem.DAWN_STONE, {key: EvoCondKey.GENDER, gender: Gender.MALE}, SpeciesWildEvolutionDelay.LONG),
   ],
-  [SpeciesId.SURSKIT]: [
-    new SpeciesEvolution(SpeciesId.MASQUERAIN, 22, null, null)
-  ],
-  [SpeciesId.SHROOMISH]: [
-    new SpeciesEvolution(SpeciesId.BRELOOM, 23, null, null)
-  ],
-  [SpeciesId.SLAKOTH]: [
-    new SpeciesEvolution(SpeciesId.VIGOROTH, 18, null, null)
-  ],
-  [SpeciesId.VIGOROTH]: [
-    new SpeciesEvolution(SpeciesId.SLAKING, 36, null, null)
-  ],
+  [SpeciesId.SURSKIT]: [new SpeciesEvolution(SpeciesId.MASQUERAIN, 22, null, null)],
+  [SpeciesId.SHROOMISH]: [new SpeciesEvolution(SpeciesId.BRELOOM, 23, null, null)],
+  [SpeciesId.SLAKOTH]: [new SpeciesEvolution(SpeciesId.VIGOROTH, 18, null, null)],
+  [SpeciesId.VIGOROTH]: [new SpeciesEvolution(SpeciesId.SLAKING, 36, null, null)],
   [SpeciesId.NINCADA]: [
     new SpeciesEvolution(SpeciesId.NINJASK, 20, null, null),
     new SpeciesEvolution(SpeciesId.SHEDINJA, 20, null, {key: EvoCondKey.SHEDINJA})
@@ -740,68 +738,28 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [SpeciesId.SNORUNT]: [
     new SpeciesEvolution(SpeciesId.GLALIE, 42, null, null),
-    new SpeciesEvolution(SpeciesId.FROSLASS, 1, EvolutionItem.DAWN_STONE, {key: EvoCondKey.GENDER, gender: Gender.FEMALE})
+    new SpeciesEvolution(SpeciesId.FROSLASS, 1, EvolutionItem.DAWN_STONE, {key: EvoCondKey.GENDER, gender: Gender.FEMALE}, SpeciesWildEvolutionDelay.LONG),
   ],
-  [SpeciesId.SPHEAL]: [
-    new SpeciesEvolution(SpeciesId.SEALEO, 32, null, null)
-  ],
-  [SpeciesId.SEALEO]: [
-    new SpeciesEvolution(SpeciesId.WALREIN, 44, null, null)
-  ],
-  [SpeciesId.BAGON]: [
-    new SpeciesEvolution(SpeciesId.SHELGON, 30, null, null)
-  ],
-  [SpeciesId.SHELGON]: [
-    new SpeciesEvolution(SpeciesId.SALAMENCE, 50, null, null)
-  ],
-  [SpeciesId.BELDUM]: [
-    new SpeciesEvolution(SpeciesId.METANG, 20, null, null)
-  ],
-  [SpeciesId.METANG]: [
-    new SpeciesEvolution(SpeciesId.METAGROSS, 45, null, null)
-  ],
-  [SpeciesId.TURTWIG]: [
-    new SpeciesEvolution(SpeciesId.GROTLE, 18, null, null)
-  ],
-  [SpeciesId.GROTLE]: [
-    new SpeciesEvolution(SpeciesId.TORTERRA, 32, null, null)
-  ],
-  [SpeciesId.CHIMCHAR]: [
-    new SpeciesEvolution(SpeciesId.MONFERNO, 14, null, null)
-  ],
-  [SpeciesId.MONFERNO]: [
-    new SpeciesEvolution(SpeciesId.INFERNAPE, 36, null, null)
-  ],
-  [SpeciesId.PIPLUP]: [
-    new SpeciesEvolution(SpeciesId.PRINPLUP, 16, null, null)
-  ],
-  [SpeciesId.PRINPLUP]: [
-    new SpeciesEvolution(SpeciesId.EMPOLEON, 36, null, null)
-  ],
-  [SpeciesId.STARLY]: [
-    new SpeciesEvolution(SpeciesId.STARAVIA, 14, null, null)
-  ],
-  [SpeciesId.STARAVIA]: [
-    new SpeciesEvolution(SpeciesId.STARAPTOR, 34, null, null)
-  ],
-  [SpeciesId.BIDOOF]: [
-    new SpeciesEvolution(SpeciesId.BIBAREL, 15, null, null)
-  ],
-  [SpeciesId.KRICKETOT]: [
-    new SpeciesEvolution(SpeciesId.KRICKETUNE, 10, null, null)
-  ],
-  [SpeciesId.SHINX]: [
-    new SpeciesEvolution(SpeciesId.LUXIO, 15, null, null)
-  ],
-  [SpeciesId.LUXIO]: [
-    new SpeciesEvolution(SpeciesId.LUXRAY, 30, null, null)
-  ],
-  [SpeciesId.CRANIDOS]: [
-    new SpeciesEvolution(SpeciesId.RAMPARDOS, 30, null, null)
-  ],
-  [SpeciesId.SHIELDON]: [
-    new SpeciesEvolution(SpeciesId.BASTIODON, 30, null, null)
-  ],
+  [SpeciesId.SPHEAL]: [new SpeciesEvolution(SpeciesId.SEALEO, 32, null, null)],
+  [SpeciesId.SEALEO]: [new SpeciesEvolution(SpeciesId.WALREIN, 44, null, null)],
+  [SpeciesId.BAGON]: [new SpeciesEvolution(SpeciesId.SHELGON, 30, null, null)],
+  [SpeciesId.SHELGON]: [new SpeciesEvolution(SpeciesId.SALAMENCE, 50, null, null)],
+  [SpeciesId.BELDUM]: [new SpeciesEvolution(SpeciesId.METANG, 20, null, null)],
+  [SpeciesId.METANG]: [new SpeciesEvolution(SpeciesId.METAGROSS, 45, null, null)],
+  [SpeciesId.TURTWIG]: [new SpeciesEvolution(SpeciesId.GROTLE, 18, null, null)],
+  [SpeciesId.GROTLE]: [new SpeciesEvolution(SpeciesId.TORTERRA, 32, null, null)],
+  [SpeciesId.CHIMCHAR]: [new SpeciesEvolution(SpeciesId.MONFERNO, 14, null, null)],
+  [SpeciesId.MONFERNO]: [new SpeciesEvolution(SpeciesId.INFERNAPE, 36, null, null)],
+  [SpeciesId.PIPLUP]: [new SpeciesEvolution(SpeciesId.PRINPLUP, 16, null, null)],
+  [SpeciesId.PRINPLUP]: [new SpeciesEvolution(SpeciesId.EMPOLEON, 36, null, null)],
+  [SpeciesId.STARLY]: [new SpeciesEvolution(SpeciesId.STARAVIA, 14, null, null)],
+  [SpeciesId.STARAVIA]: [new SpeciesEvolution(SpeciesId.STARAPTOR, 34, null, null)],
+  [SpeciesId.BIDOOF]: [new SpeciesEvolution(SpeciesId.BIBAREL, 15, null, null)],
+  [SpeciesId.KRICKETOT]: [new SpeciesEvolution(SpeciesId.KRICKETUNE, 10, null, null)],
+  [SpeciesId.SHINX]: [new SpeciesEvolution(SpeciesId.LUXIO, 15, null, null)],
+  [SpeciesId.LUXIO]: [new SpeciesEvolution(SpeciesId.LUXRAY, 30, null, null)],
+  [SpeciesId.CRANIDOS]: [new SpeciesEvolution(SpeciesId.RAMPARDOS, 30, null, null)],
+  [SpeciesId.SHIELDON]: [new SpeciesEvolution(SpeciesId.BASTIODON, 30, null, null)],
   [SpeciesId.BURMY]: [
     new SpeciesEvolution(SpeciesId.MOTHIM, 20, null, {key: EvoCondKey.GENDER, gender: Gender.MALE}),
     new SpeciesEvolution(SpeciesId.WORMADAM, 20, null, {key: EvoCondKey.GENDER, gender: Gender.FEMALE})
@@ -1590,7 +1548,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.WHIMSICOTT, 1, EvolutionItem.SUN_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.PETILIL]: [
-    new SpeciesEvolution(SpeciesId.HISUI_LILLIGANT, 1, EvolutionItem.SHINY_STONE, null, SpeciesWildEvolutionDelay.LONG),
+    new SpeciesEvolution(SpeciesId.HISUI_LILLIGANT, 1, EvolutionItem.DAWN_STONE, null, SpeciesWildEvolutionDelay.LONG),
     new SpeciesEvolution(SpeciesId.LILLIGANT, 1, EvolutionItem.SUN_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.BASCULIN]: [
@@ -1867,7 +1825,7 @@ export const pokemonPrevolutions: PokemonPrevolutions = {};
 
 export function initPokemonPrevolutions(): void {
   // TODO: Why do we have empty strings in our array?
-  const megaFormKeys = [ SpeciesFormKey.MEGA, "", SpeciesFormKey.MEGA_X, "", SpeciesFormKey.MEGA_Y ];
+  const megaFormKeys = [SpeciesFormKey.MEGA, "", SpeciesFormKey.MEGA_X, "", SpeciesFormKey.MEGA_Y];
   for (const [pk, evolutions] of Object.entries(pokemonEvolutions)) {
     for (const ev of evolutions) {
       if (ev.evoFormKey && megaFormKeys.indexOf(ev.evoFormKey) > -1) {
@@ -1881,6 +1839,15 @@ export function initPokemonPrevolutions(): void {
 
 // TODO: This may cause funny business for double starters such as Pichu/Pikachu
 export const pokemonStarters: PokemonPrevolutions = {};
+
+/**
+ * The default species and all their evolutions
+ */
+export const defaultStarterSpeciesAndEvolutions: SpeciesId[] = defaultStarterSpecies.flatMap(id => {
+  const stage2ids = pokemonEvolutions[id]?.map(e => e.speciesId) ?? [];
+  const stage3ids = stage2ids.flatMap(s2id => pokemonEvolutions[s2id]?.map(e => e.speciesId) ?? []);
+  return [id, ...stage2ids, ...stage3ids];
+});
 
 export function initPokemonStarters(): void {
   const starterKeys = Object.keys(pokemonPrevolutions);
