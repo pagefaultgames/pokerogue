@@ -1,3 +1,5 @@
 The asset is the intellectual property of Nintendo, Creatures, inc., and GAME FREAK, inc. and is protected by various copyrights and trademarks.
 The authors of this repository believe its inclusion is covered under Fair Use. We do not claim to re-license nor hold any ownership over the asset.
 The software distributed alongside this asset is not affiliated in any way with Nintendo, GAME FREAK, Creatures, inc., or Pokémon.
+
+See also CREDITS.md, available in the repository for PokéRogue.
