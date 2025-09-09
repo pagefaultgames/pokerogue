@@ -83,6 +83,7 @@ describe("Arena Tags", () => {
 
         game.scene.arena.removeTagOnSide(tagType, side, false);
         if (tag["onRemoveMessageKey"]) {
+          // TODO: Convert to `game.toHaveShownMessage`
           expect(game.textInterceptor.logs).toContain(
             i18next.t(tag["onRemoveMessageKey"], {
               pokemonNameWithAffix: getPokemonNameWithAffix(tag["getSourcePokemon"]()),

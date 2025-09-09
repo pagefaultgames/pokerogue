@@ -108,7 +108,7 @@ interface BaseArenaTag {
  * the Pokemon currently on-field, only cleared on arena reset or through their respective {@linkcode ArenaTag.lapse | lapse} methods.
  */
 export abstract class ArenaTag implements BaseArenaTag {
-  /** The type of the arena tag */
+  /** The type of the arena tag. */
   public abstract readonly tagType: ArenaTagType;
   // Intentionally left undocumented to inherit comments from interface
   public turnCount: number;
