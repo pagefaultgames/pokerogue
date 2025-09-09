@@ -771,12 +771,9 @@ export class TrainerConfig {
         }
       }
       // Check if !variant is true, if so return the name, else return the name with _female appended
-      else if (variant) {
-        // Check if the female version exists in the i18n file
-        if (i18next.exists(`trainerClasses:${toCamelCase(this.name)}Female`)) {
-          // If it does, return
-          return ret + "Female";
-        }
+      // Check if the female version exists in the i18n file
+      else if (variant && i18next.exists(`trainerClasses:${toCamelCase(this.name)}Female`)) {
+        return ret + "Female";
       }
     }
 

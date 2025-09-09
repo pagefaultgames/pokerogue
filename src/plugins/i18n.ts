@@ -137,6 +137,7 @@ function i18nMoneyFormatter(amount: any): string {
 //#region Initialization
 
 /**
+ * @module
  * i18next is a localization library for maintaining and using translation resources.
  *
  * Q: How do I add a new language?
