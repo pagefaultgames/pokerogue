@@ -42,7 +42,7 @@ describe("Moves - Thunder Wave", () => {
     await game.move.forceHit();
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(enemyPokemon.status?.effect).toBe(StatusEffect.PARALYSIS);
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.PARALYSIS);
   });
 
   it("does not paralyze if the Pokemon is a Ground-type", async () => {
@@ -55,7 +55,7 @@ describe("Moves - Thunder Wave", () => {
     await game.move.forceHit();
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(enemyPokemon.status).toBeUndefined();
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   it("does not paralyze if the Pokemon already has a status effect", async () => {
@@ -68,7 +68,7 @@ describe("Moves - Thunder Wave", () => {
     await game.move.forceHit();
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(enemyPokemon.status?.effect).not.toBe(StatusEffect.PARALYSIS);
+    expect(enemyPokemon).not.toHaveStatusEffect(StatusEffect.PARALYSIS);
   });
 
   it("affects Ground types if the user has Normalize", async () => {
@@ -81,7 +81,7 @@ describe("Moves - Thunder Wave", () => {
     await game.move.forceHit();
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(enemyPokemon.status?.effect).toBe(StatusEffect.PARALYSIS);
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.PARALYSIS);
   });
 
   it("does not affect Ghost types if the user has Normalize", async () => {
@@ -94,6 +94,6 @@ describe("Moves - Thunder Wave", () => {
     await game.move.forceHit();
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(enemyPokemon.status).toBeUndefined();
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.NONE);
   });
 });

@@ -141,7 +141,7 @@ describe("Transforming Effects", () => {
       game.move.use(MoveId.TRANSFORM);
       await game.toEndOfTurn();
 
-      expect(ditto.status?.effect).toBeUndefined();
+      expect(ditto).toHaveStatusEffect(StatusEffect.NONE);
       expect(ditto.getNameToRender()).not.toBe(mew.getNameToRender());
       expect(ditto.level).not.toBe(mew.level);
       expect(ditto.friendship).not.toBe(mew.friendship);
@@ -257,7 +257,11 @@ describe("Transforming Effects", () => {
   });
 
   describe("Moves - Transform", () => {
-    it.each<{ cause: string; callback: (p: Pokemon) => void; player?: boolean }>([
+    it.each<{
+      cause: string;
+      callback: (p: Pokemon) => void;
+      player?: boolean;
+    }>([
       {
         cause: "user is fused",
         callback: p => vi.spyOn(p, "isFusion").mockReturnValue(true),
@@ -321,7 +325,10 @@ describe("Transforming Effects", () => {
         name: "opponents with substitutes",
         callback: p => p.addTag(BattlerTagType.SUBSTITUTE, 1, MoveId.SUBSTITUTE, p.id),
       },
-      { name: "fused opponents", callback: p => vi.spyOn(p, "isFusion").mockReturnValue(true) },
+      {
+        name: "fused opponents",
+        callback: p => vi.spyOn(p, "isFusion").mockReturnValue(true),
+      },
       {
         name: "opponents with illusions",
         callback: p => p.setIllusion(game.scene.getEnemyParty()[1]), // doesn't really matter what the illusion is, merely that it exists

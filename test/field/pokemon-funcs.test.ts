@@ -38,13 +38,13 @@ describe("Spec - Pokemon Functions", () => {
 
       const player = game.field.getPlayerPokemon();
 
-      expect(player.status?.effect).toBeUndefined();
+      expect(player).toHaveStatusEffect(StatusEffect.NONE);
       player.doSetStatus(StatusEffect.BURN);
-      expect(player.status?.effect).toBe(StatusEffect.BURN);
+      expect(player).toHaveStatusEffect(StatusEffect.BURN);
 
       expect(player.canSetStatus(StatusEffect.SLEEP)).toBe(false);
       player.doSetStatus(StatusEffect.SLEEP, 5);
-      expect(player.status?.effect).toBe(StatusEffect.SLEEP);
+      expect(player).toHaveStatusEffect(StatusEffect.SLEEP);
       expect(player.status?.sleepTurnsRemaining).toBe(5);
     });
   });

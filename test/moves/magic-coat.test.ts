@@ -252,7 +252,7 @@ describe("Moves - Magic Coat", () => {
     // Turn 1 - thunder wave immunity test
     game.move.select(MoveId.THUNDER_WAVE);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.field.getPlayerPokemon().status).toBeUndefined();
+    expect(game.field.getPlayerPokemon()).toHaveStatusEffect(StatusEffect.NONE);
 
     // Turn 2 - soundproof immunity test
     game.move.select(MoveId.GROWL);
@@ -269,7 +269,7 @@ describe("Moves - Magic Coat", () => {
     vi.spyOn(attacker, "getAccuracyMultiplier").mockReturnValue(0.0);
     game.move.select(MoveId.SPORE);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.field.getPlayerPokemon().status?.effect).toBe(StatusEffect.SLEEP);
+    expect(game.field.getPlayerPokemon()).toHaveStatusEffect(StatusEffect.SLEEP);
   });
 
   it("should take the accuracy of the magic bounce user into account", async () => {
@@ -280,6 +280,6 @@ describe("Moves - Magic Coat", () => {
     vi.spyOn(opponent, "getAccuracyMultiplier").mockReturnValue(0);
     game.move.select(MoveId.SPORE);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.field.getPlayerPokemon().status).toBeUndefined();
+    expect(game.field.getPlayerPokemon()).toHaveStatusEffect(StatusEffect.NONE);
   });
 });

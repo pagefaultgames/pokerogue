@@ -43,7 +43,7 @@ describe("Moves - Safeguard", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    expect(enemy.status).toBeUndefined();
+    expect(enemy).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   it("protects from status moves", async () => {
@@ -54,7 +54,7 @@ describe("Moves - Safeguard", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    expect(enemyPokemon.status).toBeUndefined();
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   it("protects from confusion", async () => {
@@ -83,8 +83,8 @@ describe("Moves - Safeguard", () => {
 
     const enemyPokemon = game.scene.getEnemyField();
 
-    expect(enemyPokemon[0].status).toBeUndefined();
-    expect(enemyPokemon[1].status).toBeUndefined();
+    expect(enemyPokemon[0]).toHaveStatusEffect(StatusEffect.NONE);
+    expect(enemyPokemon[1]).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   it("protects from Yawn", async () => {
@@ -109,7 +109,7 @@ describe("Moves - Safeguard", () => {
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(enemyPokemon.status?.effect).toBe(StatusEffect.SLEEP);
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.SLEEP);
   });
 
   it("doesn't protect from self-inflicted status from Rest or Flame Orb", async () => {
@@ -122,7 +122,7 @@ describe("Moves - Safeguard", () => {
     await game.move.forceEnemyMove(MoveId.SAFEGUARD);
     await game.toNextTurn();
 
-    expect(enemyPokemon.status?.effect).toBe(StatusEffect.BURN);
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.BURN);
 
     enemyPokemon.resetStatus();
 
@@ -130,7 +130,7 @@ describe("Moves - Safeguard", () => {
     await game.move.forceEnemyMove(MoveId.REST);
     await game.toNextTurn();
 
-    expect(enemyPokemon.status?.effect).toBe(StatusEffect.SLEEP);
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.SLEEP);
   });
 
   it("protects from ability-inflicted status", async () => {
@@ -152,6 +152,6 @@ describe("Moves - Safeguard", () => {
     await game.toNextTurn();
 
     const enemyPokemon = game.field.getEnemyPokemon();
-    expect(enemyPokemon.status).toBeUndefined();
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.NONE);
   });
 });

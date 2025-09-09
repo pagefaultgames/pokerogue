@@ -61,11 +61,17 @@ describe("Abilities - Infiltrator", () => {
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
 
-    const preScreenDmg = enemy.getAttackDamage({ source: player, move: allMoves[move] }).damage;
+    const preScreenDmg = enemy.getAttackDamage({
+      source: player,
+      move: allMoves[move],
+    }).damage;
 
     game.scene.arena.addTag(tagType, 1, MoveId.NONE, enemy.id, ArenaTagSide.ENEMY, true);
 
-    const postScreenDmg = enemy.getAttackDamage({ source: player, move: allMoves[move] }).damage;
+    const postScreenDmg = enemy.getAttackDamage({
+      source: player,
+      move: allMoves[move],
+    }).damage;
 
     expect(postScreenDmg).toBe(preScreenDmg);
     expect(player.waveData.abilitiesApplied).toContain(AbilityId.INFILTRATOR);
@@ -82,7 +88,7 @@ describe("Abilities - Infiltrator", () => {
     game.move.use(MoveId.SPORE);
     await game.toEndOfTurn();
 
-    expect(enemy.status?.effect).toBe(StatusEffect.SLEEP);
+    expect(enemy).toHaveStatusEffect(StatusEffect.SLEEP);
     expect(player.waveData.abilitiesApplied).toContain(AbilityId.INFILTRATOR);
   });
 

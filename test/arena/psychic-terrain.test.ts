@@ -42,7 +42,7 @@ describe("Arena - Psychic Terrain", () => {
     game.move.select(MoveId.DARK_VOID);
     await game.toEndOfTurn();
 
-    expect(game.field.getEnemyPokemon().status?.effect).toBe(StatusEffect.SLEEP);
+    expect(game.field.getEnemyPokemon()).toHaveStatusEffect(StatusEffect.SLEEP);
   });
 
   it("Rain Dance with Prankster is not blocked", async () => {

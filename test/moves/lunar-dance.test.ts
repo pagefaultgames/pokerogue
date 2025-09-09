@@ -42,7 +42,7 @@ describe("Moves - Lunar Dance", () => {
     await game.toNextTurn();
 
     // Bulbasaur should still be burned and have used a PP for splash and not at max hp
-    expect(bulbasaur.status?.effect).toBe(StatusEffect.BURN);
+    expect(bulbasaur).toHaveStatusEffect(StatusEffect.BURN);
     expect(bulbasaur.moveset[1]?.ppUsed).toBe(1);
     expect(bulbasaur.hp).toBeLessThan(bulbasaur.getMaxHp());
 
@@ -58,7 +58,7 @@ describe("Moves - Lunar Dance", () => {
     await game.toNextTurn();
 
     // Bulbasaur should NOT have any status and have full PP for splash and be at max hp
-    expect(bulbasaur.status?.effect).toBeUndefined();
+    expect(bulbasaur).toHaveStatusEffect(StatusEffect.NONE);
     expect(bulbasaur.moveset[1]?.ppUsed).toBe(0);
     expect(bulbasaur.isFullHp()).toBe(true);
 
@@ -67,7 +67,7 @@ describe("Moves - Lunar Dance", () => {
     await game.toNextTurn();
 
     // Using Lunar dance again should fail because nothing in party and rattata should be alive
-    expect(rattata.status?.effect).toBe(StatusEffect.BURN);
+    expect(rattata).toHaveStatusEffect(StatusEffect.BURN);
     expect(rattata.hp).toBeLessThan(rattata.getMaxHp());
   });
 });

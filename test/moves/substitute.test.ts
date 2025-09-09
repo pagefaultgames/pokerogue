@@ -292,7 +292,7 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(leadPokemon.status?.effect).not.toBe(StatusEffect.PARALYSIS);
+    expect(leadPokemon).not.toHaveStatusEffect(StatusEffect.PARALYSIS);
   });
 
   it("should prevent the user's items from being stolen", async () => {
@@ -471,7 +471,7 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(enemyPokemon.status?.effect).not.toBe(StatusEffect.BURN);
+    expect(enemyPokemon).not.toHaveStatusEffect(StatusEffect.BURN);
   });
 
   it("should cause incoming attacks to not activate Counter", async () => {

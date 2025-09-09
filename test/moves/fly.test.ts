@@ -88,7 +88,7 @@ describe("Moves - Fly", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon.getTag(BattlerTagType.FLYING)).toBeUndefined();
-    expect(playerPokemon.status?.effect).toBe(StatusEffect.SLEEP);
+    expect(playerPokemon).toHaveStatusEffect(StatusEffect.SLEEP);
 
     const playerFly = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.FLY);
     expect(playerFly?.ppUsed).toBe(0);

@@ -35,8 +35,8 @@ describe("Moves - Baneful Bunker", () => {
   });
 
   function expectProtected() {
-    expect(game.scene.getEnemyPokemon()?.hp).toBe(game.scene.getEnemyPokemon()?.getMaxHp());
-    expect(game.scene.getPlayerPokemon()?.status?.effect).toBe(StatusEffect.POISON);
+    expect(game.field.getEnemyPokemon()).toHaveFullHp();
+    expect(game.scene.getPlayerPokemon()).toHaveStatusEffect(StatusEffect.POISON);
   }
 
   it("should protect the user and poison attackers that make contact", async () => {
@@ -71,6 +71,6 @@ describe("Moves - Baneful Bunker", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(toxapex.hp).toBe(toxapex.getMaxHp());
-    expect(charizard.status?.effect).toBeUndefined();
+    expect(charizard).toHaveStatusEffect(StatusEffect.NONE);
   });
 });

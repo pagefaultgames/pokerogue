@@ -6,6 +6,7 @@ import { MoveResult } from "#enums/move-result";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -86,7 +87,12 @@ describe("Moves - Protect", () => {
 
     const charizard = game.field.getPlayerPokemon();
     charizard.summonData.moveHistory = [
-      { move: MoveId.ENDURE, result: MoveResult.SUCCESS, targets: [BattlerIndex.PLAYER], useMode: MoveUseMode.NORMAL },
+      {
+        move: MoveId.ENDURE,
+        result: MoveResult.SUCCESS,
+        targets: [BattlerIndex.PLAYER],
+        useMode: MoveUseMode.NORMAL,
+      },
       {
         move: MoveId.SPIKY_SHIELD,
         result: MoveResult.SUCCESS,
@@ -227,7 +233,7 @@ describe("Moves - Protect", () => {
     await game.toNextTurn();
 
     expect(aggron.hp).toBeLessThan(aggron.getMaxHp());
-    expect(aggron.status?.effect).toBeUndefined(); // check that protect actually worked
+    expect(aggron).toHaveStatusEffect(StatusEffect.NONE); // check that protect actually worked
   });
 
   // TODO: Add test
