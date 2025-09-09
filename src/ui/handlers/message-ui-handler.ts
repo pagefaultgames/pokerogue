@@ -108,17 +108,17 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
       const textWords = text.split(" ");
       let lastLineCount = 1;
       let newText = "";
-      for (let w = 0; w < textWords.length; w++) {
-        const nextWordText = newText ? `${newText} ${textWords[w]}` : textWords[w];
+      for (const textWord of textWords) {
+        const nextWordText = newText ? `${newText} ${textWord}` : textWord;
 
-        if (textWords[w].includes("\n")) {
+        if (textWord.includes("\n")) {
           newText = nextWordText;
           lastLineCount++;
         } else {
           const lineCount = this.message.runWordWrap(nextWordText).split(/\n/g).length;
           if (lineCount > lastLineCount) {
             lastLineCount = lineCount;
-            newText = `${newText}\n${textWords[w]}`;
+            newText = `${newText}\n${textWord}`;
           } else {
             newText = nextWordText;
           }
@@ -151,7 +151,7 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
         this.pendingPrompt = true;
       }
       this.textTimer = globalScene.time.addEvent({
-        delay: delay,
+        delay,
         callback: () => {
           const charIndex = text.length - this.textTimer?.repeatCount!; // TODO: is this bang correct?
           const charVar = charVarMap.get(charIndex);
@@ -222,7 +222,7 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
   showPrompt(callback?: Function | null, callbackDelay?: number | null) {
     const wrappedTextLines = this.message.runWordWrap(this.message.text).split(/\n/g);
     const textLinesCount = wrappedTextLines.length;
-    const lastTextLine = wrappedTextLines[wrappedTextLines.length - 1];
+    const lastTextLine = wrappedTextLines.at(-1) ?? "";
     const lastLineTest = globalScene.add.text(0, 0, lastTextLine, {
       font: "96px emerald",
     });

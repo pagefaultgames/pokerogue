@@ -34,8 +34,6 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
   protected navigationIcons: InputsIcons;
 
   private cursorObj: Phaser.GameObjects.NineSlice | null;
-
-  private reloadSettings: Array<Setting>;
   private reloadRequired: boolean;
 
   protected rowsToDisplay: number;
@@ -106,8 +104,6 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
 
     this.settingLabels = [];
     this.optionValueLabels = [];
-
-    this.reloadSettings = this.settings.filter(s => s?.requireReload);
 
     let anyReloadRequired = false;
     this.settings.forEach((setting, s) => {
@@ -520,7 +516,7 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
     prompt?: boolean,
     promptDelay?: number,
   ) {
-    this.messageBoxContainer.setVisible(!!text?.length);
+    this.messageBoxContainer.setVisible(text?.length > 0);
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 }

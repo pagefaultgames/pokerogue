@@ -193,7 +193,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
   // This can be amplified or counteracted by setting levelAdditiveModifier in config
   // levelAdditiveModifier value of 0.5 will halve the modifier scaling, 2 will double it, etc.
   // Leaving null/undefined will disable level scaling
-  const mult: number = !isNullOrUndefined(partyConfig.levelAdditiveModifier) ? partyConfig.levelAdditiveModifier : 0;
+  const mult = partyConfig.levelAdditiveModifier ?? 0;
   const additive = Math.max(Math.round((globalScene.currentBattle.waveIndex / 10) * mult), 0);
   battle.enemyLevels = battle.enemyLevels.map(level => level + additive);
 
@@ -297,9 +297,9 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
 
       // Set Boss
       if (config.isBoss) {
-        let segments = !isNullOrUndefined(config.bossSegments)
-          ? config.bossSegments!
-          : globalScene.getEncounterBossSegments(globalScene.currentBattle.waveIndex, level, enemySpecies, true);
+        let segments =
+          config.bossSegments
+          ?? globalScene.getEncounterBossSegments(globalScene.currentBattle.waveIndex, level, enemySpecies, true);
         if (!isNullOrUndefined(config.bossSegmentModifier)) {
           segments += config.bossSegmentModifier;
         }
@@ -545,83 +545,74 @@ export function selectPokemonForOption(
       UiMode.PARTY,
       PartyUiMode.SELECT,
       -1,
-      (slotIndex: number, _option: PartyOption) => {
-        if (slotIndex < globalScene.getPlayerParty().length) {
-          globalScene.ui.setMode(modeToSetOnExit).then(() => {
-            const pokemon = globalScene.getPlayerParty()[slotIndex];
-            const secondaryOptions = onPokemonSelected(pokemon);
-            if (!secondaryOptions) {
-              globalScene.currentBattle.mysteryEncounter!.setDialogueToken(
-                "selectedPokemon",
-                pokemon.getNameToRender(),
-              );
-              resolve(true);
-              return;
-            }
-
-            // There is a second option to choose after selecting the Pokemon
-            globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
-              const displayOptions = () => {
-                // Always appends a cancel option to bottom of options
-                const fullOptions = secondaryOptions
-                  .map(option => {
-                    // Update handler to resolve promise
-                    const onSelect = option.handler;
-                    option.handler = () => {
-                      onSelect();
-                      globalScene.currentBattle.mysteryEncounter!.setDialogueToken(
-                        "selectedPokemon",
-                        pokemon.getNameToRender(),
-                      );
-                      resolve(true);
-                      return true;
-                    };
-                    return option;
-                  })
-                  .concat({
-                    label: i18next.t("menu:cancel"),
-                    handler: () => {
-                      globalScene.ui.clearText();
-                      globalScene.ui.setMode(modeToSetOnExit);
-                      resolve(false);
-                      return true;
-                    },
-                    onHover: () => {
-                      showEncounterText(i18next.t("mysteryEncounterMessages:cancelOption"), 0, 0, false);
-                    },
-                  });
-
-                const config: OptionSelectConfig = {
-                  options: fullOptions,
-                  maxOptions: 7,
-                  yOffset: 0,
-                  supportHover: true,
-                };
-
-                // Do hover over the starting selection option
-                if (fullOptions[0].onHover) {
-                  fullOptions[0].onHover();
-                }
-                globalScene.ui.setModeWithoutClear(UiMode.OPTION_SELECT, config, null, true);
-              };
-
-              const textPromptKey =
-                globalScene.currentBattle.mysteryEncounter?.selectedOption?.dialogue?.secondOptionPrompt;
-              if (!textPromptKey) {
-                displayOptions();
-              } else {
-                showEncounterText(textPromptKey).then(() => displayOptions());
-              }
-            });
-          });
-        } else {
-          globalScene.ui.setMode(modeToSetOnExit).then(() => {
-            if (onPokemonNotSelected) {
-              onPokemonNotSelected();
-            }
-            resolve(false);
-          });
+      async (slotIndex: number, _option: PartyOption) => {
+        await globalScene.ui.setMode(modeToSetOnExit);
+        if (slotIndex >= globalScene.getPlayerParty().length) {
+          onPokemonNotSelected?.();
+          resolve(false);
+          return;
         }
+
+        const pokemon = globalScene.getPlayerParty()[slotIndex];
+        const secondaryOptions = onPokemonSelected(pokemon);
+        if (!secondaryOptions) {
+          globalScene.currentBattle.mysteryEncounter!.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
+          resolve(true);
+          return;
+        }
+
+        // There is a second option to choose after selecting the Pokemon
+        await globalScene.ui.setMode(UiMode.MESSAGE);
+        // TODO: fix this
+        const displayOptions = () => {
+          // Always appends a cancel option to bottom of options
+          const fullOptions = secondaryOptions
+            .map(option => {
+              // Update handler to resolve promise
+              const onSelect = option.handler;
+              option.handler = () => {
+                onSelect();
+                globalScene.currentBattle.mysteryEncounter!.setDialogueToken(
+                  "selectedPokemon",
+                  pokemon.getNameToRender(),
+                );
+                resolve(true);
+                return true;
+              };
+              return option;
+            })
+            .concat({
+              label: i18next.t("menu:cancel"),
+              handler: () => {
+                globalScene.ui.clearText();
+                globalScene.ui.setMode(modeToSetOnExit);
+                resolve(false);
+                return true;
+              },
+              onHover: () => {
+                showEncounterText(i18next.t("mysteryEncounterMessages:cancelOption"), 0, 0, false);
+              },
+            });
+
+          const config: OptionSelectConfig = {
+            options: fullOptions,
+            maxOptions: 7,
+            yOffset: 0,
+            supportHover: true,
+          };
+
+          // Do hover over the starting selection option
+          if (fullOptions[0]?.onHover) {
+            fullOptions[0].onHover();
+          }
+          globalScene.ui.setModeWithoutClear(UiMode.OPTION_SELECT, config, null, true);
+        };
+
+        const textPromptKey = globalScene.currentBattle.mysteryEncounter?.selectedOption?.dialogue?.secondOptionPrompt;
+        if (textPromptKey) {
+          await showEncounterText(textPromptKey);
+        }
+        displayOptions();
       },
       selectablePokemonFilter,
     );
@@ -651,24 +642,16 @@ export function selectOptionThenPokemon(
   return new Promise<PokemonAndOptionSelected | null>(resolve => {
     const modeToSetOnExit = globalScene.ui.getMode();
 
-    const displayOptions = (config: OptionSelectConfig) => {
-      globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
-        if (!optionSelectPromptKey) {
-          // Do hover over the starting selection option
-          if (fullOptions[0].onHover) {
-            fullOptions[0].onHover();
-          }
-          globalScene.ui.setMode(UiMode.OPTION_SELECT, config);
-        } else {
-          showEncounterText(optionSelectPromptKey).then(() => {
-            // Do hover over the starting selection option
-            if (fullOptions[0].onHover) {
-              fullOptions[0].onHover();
-            }
-            globalScene.ui.setMode(UiMode.OPTION_SELECT, config);
-          });
-        }
-      });
+    const displayOptions = async (config: OptionSelectConfig) => {
+      await globalScene.ui.setMode(UiMode.MESSAGE);
+      if (optionSelectPromptKey) {
+        showEncounterText(optionSelectPromptKey);
+      }
+      // Do hover over the starting selection option
+      if (fullOptions[0]?.onHover) {
+        fullOptions[0].onHover();
+      }
+      globalScene.ui.setMode(UiMode.OPTION_SELECT, config);
     };
 
     const selectPokemonAfterOption = (selectedOptionIndex: number) => {
@@ -683,7 +666,7 @@ export function selectOptionThenPokemon(
             globalScene.ui.setMode(modeToSetOnExit).then(() => {
               const result: PokemonAndOptionSelected = {
                 selectedPokemonIndex: slotIndex,
-                selectedOptionIndex: selectedOptionIndex,
+                selectedOptionIndex,
               };
               resolve(result);
             });
@@ -965,10 +948,10 @@ export function transitionMysteryEncounterIntroVisuals(hide = true, destroy = tr
 export function handleMysteryEncounterBattleStartEffects() {
   const encounter = globalScene.currentBattle.mysteryEncounter;
   if (
-    globalScene.currentBattle.isBattleMysteryEncounter() &&
-    encounter &&
-    encounter.encounterMode !== MysteryEncounterMode.NO_BATTLE &&
-    !encounter.startOfBattleEffectsComplete
+    globalScene.currentBattle.isBattleMysteryEncounter()
+    && encounter
+    && encounter.encounterMode !== MysteryEncounterMode.NO_BATTLE
+    && !encounter.startOfBattleEffectsComplete
   ) {
     const effects = encounter.startOfBattleEffects;
     effects.forEach(effect => {
@@ -1093,7 +1076,7 @@ export function calculateMEAggregateStats(baseSpawnWeight: number) {
               .filter(b => {
                 return !Array.isArray(b) || !randSeedInt(b[1]);
               })
-              .map(b => (!Array.isArray(b) ? b : b[0]));
+              .map(b => (Array.isArray(b) ? b[0] : b));
           }, i * 100);
           if (biomes! && biomes.length > 0) {
             const specialBiomes = biomes.filter(b => alwaysPickTheseBiomes.includes(b));
@@ -1107,12 +1090,10 @@ export function calculateMEAggregateStats(baseSpawnWeight: number) {
           }
         } else if (biomeLinks.hasOwnProperty(currentBiome)) {
           currentBiome = biomeLinks[currentBiome] as BiomeId;
+        } else if (i % 50 === 0) {
+          currentBiome = BiomeId.END;
         } else {
-          if (!(i % 50)) {
-            currentBiome = BiomeId.END;
-          } else {
-            currentBiome = globalScene.generateRandomBiome(i);
-          }
+          currentBiome = globalScene.generateRandomBiome(i);
         }
 
         currentArena = globalScene.newArena(currentBiome);

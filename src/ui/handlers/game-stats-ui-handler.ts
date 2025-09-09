@@ -529,7 +529,7 @@ export function initStatsKeys() {
       displayStats[key] = {
         label_key: label,
         sourceFunc: gameData => gameData.gameStats[key].toString(),
-        hidden: hidden,
+        hidden,
       };
     } else if (displayStats[key] === null) {
       displayStats[key] = {

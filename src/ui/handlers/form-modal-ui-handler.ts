@@ -41,11 +41,11 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
 
   getHeight(config?: ModalConfig): number {
     return (
-      20 * this.getInputFieldConfigs().length +
-      (this.getModalTitle() ? 26 : 0) +
-      ((config as FormModalConfig)?.errorMessage ? 12 : 0) +
-      this.getButtonTopMargin() +
-      28
+      20 * this.getInputFieldConfigs().length
+      + (this.getModalTitle() ? 26 : 0)
+      + ((config as FormModalConfig)?.errorMessage ? 12 : 0)
+      + this.getButtonTopMargin()
+      + 28
     );
   }
 
@@ -64,7 +64,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
 
     const hasTitle = !!this.getModalTitle();
 
-    if (config.length >= 1) {
+    if (config.length > 0) {
       this.updateFields(config, hasTitle);
     }
 
@@ -100,7 +100,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       label.name = "formLabel" + f;
 
       this.formLabels.push(label);
-      this.modalContainer.add(this.formLabels[this.formLabels.length - 1]);
+      this.modalContainer.add(label);
 
       const inputWidth = label.width < 320 ? 80 : 80 - (label.width - 320) / 5.5;
       const inputContainer = globalScene.add.container(70 + (80 - inputWidth), (hasTitle ? 28 : 2) + 20 * f);
@@ -133,7 +133,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
 
       const config = args[0] as FormModalConfig;
 
-      this.submitAction = config.buttonActions.length ? config.buttonActions[0] : null;
+      this.submitAction = config.buttonActions.length > 0 ? config.buttonActions[0] : null;
       this.cancelAction = config.buttonActions[1] ?? null;
 
       // Auto focus the first input field after a short delay, to prevent accidental inputs

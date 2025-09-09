@@ -28,7 +28,7 @@ export function getBerryPredicate(berryType: BerryType): BerryPredicate {
       return (pokemon: Pokemon) => !!pokemon.status || !!pokemon.getTag(BattlerTagType.CONFUSED);
     case BerryType.ENIGMA:
       return (pokemon: Pokemon) =>
-        !!pokemon.turnData.attacksReceived.filter(a => a.result === HitResult.SUPER_EFFECTIVE).length;
+        pokemon.turnData.attacksReceived.filter(a => a.result === HitResult.SUPER_EFFECTIVE).length > 0;
     case BerryType.LIECHI:
     case BerryType.GANLON:
     case BerryType.PETAYA:
@@ -141,8 +141,8 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
         {
           // Pick the first move completely out of PP, or else the first one that has any PP missing
           const ppRestoreMove =
-            consumer.getMoveset().find(m => m.ppUsed === m.getMovePp()) ??
-            consumer.getMoveset().find(m => m.ppUsed < m.getMovePp());
+            consumer.getMoveset().find(m => m.ppUsed === m.getMovePp())
+            ?? consumer.getMoveset().find(m => m.ppUsed < m.getMovePp());
           if (ppRestoreMove) {
             ppRestoreMove.ppUsed = Math.max(ppRestoreMove.ppUsed - 10, 0);
             globalScene.phaseManager.queueMessage(

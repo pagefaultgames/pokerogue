@@ -58,7 +58,7 @@ export class SpeciesFormChange {
       return false;
     }
 
-    if (!pokemon.species.forms.length) {
+    if (pokemon.species.forms.length === 0) {
       return false;
     }
 
