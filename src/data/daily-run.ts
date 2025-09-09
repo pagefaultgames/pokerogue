@@ -6,7 +6,7 @@ import { PokemonSpecies } from "#data/pokemon-species";
 import { BiomeId } from "#enums/biome-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { SpeciesId } from "#enums/species-id";
-import type { Starter } from "#ui/starter-select-ui-handler";
+import type { Starter } from "#ui/handlers/starter-select-ui-handler";
 import { isNullOrUndefined, randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
@@ -42,10 +42,9 @@ export function getDailyRunStarters(seed: string): Starter[] {
       starterCosts.push(randSeedInt(9 - starterCosts[0], 1));
       starterCosts.push(10 - (starterCosts[0] + starterCosts[1]));
 
-      for (let c = 0; c < starterCosts.length; c++) {
-        const cost = starterCosts[c];
+      for (const cost of starterCosts) {
         const costSpecies = Object.keys(speciesStarterCosts)
-          .map(s => Number.parseInt(s) as SpeciesId)
+          .map(s => Number.parseInt(s) as SpeciesId) // TODO: Remove
           .filter(s => speciesStarterCosts[s] === cost);
         const randPkmSpecies = getPokemonSpecies(randSeedItem(costSpecies));
         const starterSpecies = getPokemonSpecies(
