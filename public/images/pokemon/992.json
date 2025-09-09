@@ -2,40 +2,27 @@
 	"textures": [
 		{
 			"image": "992.png",
-			"format": "RGBA8888",
+			"format": "I8",
 			"size": {
 				"w": 89,
-				"h": 89
+				"h": 71
 			},
 			"scale": 1,
 			"frames": [
 				{
 					"filename": "0001.png",
+					"frame": { "x": 0, "y": 0, "w": 89, "h": 71 },
 					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 89,
-						"h": 71
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 89,
-						"h": 71
-					},
-					"frame": {
-						"x": 0,
-						"y": 0,
-						"w": 89,
-						"h": 71
-					}
+					"trimmed": true,
+					"spriteSourceSize": { "x": 4, "y": 18, "w": 89, "h": 71 },
+					"sourceSize": { "w": 96, "h": 96 },
+					"duration": 100
 				}
 			]
 		}
 	],
 	"meta": {
-		"app": "https://www.codeandweb.com/texturepacker",
-		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:75d7de15add69050e59a25aa270003f2:05dd359f48e1ed262a9739efcaae8c59:0e0a08d858a35ca2f85ff792f390d694$"
+		"app": "https://www.aseprite.org/",
+		"version": "1.3.13-x64"
 	}
 }

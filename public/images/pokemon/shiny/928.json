@@ -18,8 +18,8 @@
 						"h": 96
 					},
 					"spriteSourceSize": {
-						"x": 36,
-						"y": 32,
+						"x": 38,
+						"y": 38,
 						"w": 24,
 						"h": 31
 					},
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:79ab7076d9b5bff8ea984c8dc806f89e:fdf491d2e955bd8a488492a3e0aed9c6:93e0724762b585ccb4563207c5db7a04$"
+		"smartupdate": "$TexturePacker:SmartUpdate:ce3140f97e368e83c92c9174c250f139:111be5845fe87d66c050cd2609601624:93e0724762b585ccb4563207c5db7a04$"
 	}
 }
