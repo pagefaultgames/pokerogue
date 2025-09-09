@@ -857,7 +857,7 @@ export class Arena {
   }
 
   removeAllTags(): void {
-    while (this.tags.length) {
+    while (this.tags.length > 0) {
       this.tags[0].onRemove();
       this.eventTarget.dispatchEvent(
         new TagRemovedEvent(this.tags[0].tagType, this.tags[0].side, this.tags[0].turnCount),
