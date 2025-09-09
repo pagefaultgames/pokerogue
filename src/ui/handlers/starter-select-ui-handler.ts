@@ -2174,7 +2174,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       if (!this.filterMode) {
         this.startCursorObj.setVisible(false);
         this.starterIconsCursorObj.setVisible(false);
-        this.setNoSpecies();
         this.filterBarCursor = 0;
         this.setFilterMode(true);
         this.filterBar.toggleDropDown(this.filterBarCursor);
@@ -2978,6 +2977,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     if (this.lastSpecies) {
       this.stopIconAnimation(this.oldCursor);
     }
+
+    this.starterSummary.setNoSpecies();
   }
 
   setSpecies(species: PokemonSpecies) {
