@@ -4798,6 +4798,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   // TODO: Review and verify the message order precedence in mainline if multiple status-blocking effects are present at once
   // TODO: Make argument order consistent with `trySetStatus`
+  // TODO: Remove `overrideStatus` parameter used solely for rest
   public canSetStatus(
     effect: StatusEffect,
     quiet = false,

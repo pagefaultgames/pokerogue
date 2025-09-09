@@ -2045,6 +2045,7 @@ export class HealAttr extends MoveEffectAttr {
 /**
  * Attribute to put the user to sleep for a fixed duration, fully heal them and cure their status.
  * Used for {@linkcode MoveId.REST}.
+ * @todo Move the status-based stuff to `addHealPhase` and remove `overrideStatus` parameters from status-related functions
  */
 export class RestAttr extends HealAttr {
   private duration: number;
@@ -2063,13 +2064,16 @@ export class RestAttr extends HealAttr {
   }
 
   override addHealPhase(user: Pokemon): void {
-    globalScene.phaseManager.unshiftNew("PokemonHealPhase", user.getBattlerIndex(), user.getMaxHp(), null)
+    globalScene.phaseManager.unshiftNew(
+      "PokemonHealPhase",
+      user.getBattlerIndex(),
+      user.getMaxHp()
+  )
   }
 
-  // TODO: change after HealAttr is changed to fail move
   override getCondition(): MoveConditionFunc {
     return (user, target, move) =>
-      super.canApply(user, target, move, [])
+      super.getCondition()(user, target, move)
       // Intentionally suppress messages here as we display generic fail msg
       // TODO: This might have order-of-operation jank
       && user.canSetStatus(StatusEffect.SLEEP, true, true, user)
