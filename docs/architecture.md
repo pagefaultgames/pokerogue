@@ -2,55 +2,58 @@
 
 ## Overview
 
-PokéRogue implements a greenfield Entity-Component-System (ECS) architecture optimized for high-performance game processing on the Arweave AO platform. The HyperBeam engine leverages data-oriented design patterns, SIMD vectorization, and cache-optimized memory layouts to achieve unprecedented performance in decentralized gaming.
+PokéRogue implements a greenfield Entity-Component-System (ECS) architecture on the Arweave AO platform. The system leverages Native Implemented Functions (NIFs) as global Lua modules for high-performance game calculations while maintaining a pure Lua ECS for game state management.
 
 ### Change Log
 
 | Date | Version | Description | Author |
 |------|---------|-------------|---------|
 | 2025-01-26 | 1.0.0 | Initial architecture document | Architect Agent |
-| 2025-01-26 | 2.0.0 | **MAJOR ARCHITECTURE REVISION**: HyperBEAM + Rust WASM Devices | Architect Agent |
+| 2025-01-26 | 2.0.0 | **MAJOR ARCHITECTURE REVISION**: HyperBEAM + Rust NIF Devices | Architect Agent |
 | 2025-09-08 | 3.0.0 | **GREENFIELD ECS HYPERBEAM ARCHITECTURE**: Complete project reset | Product Owner |
 
 ## High Level Architecture
 
 ### Technical Summary
 
-The PokéRogue AO migration employs a **HyperBEAM-native ECS architecture** with Rust WASM devices, transforming the existing object-oriented TypeScript codebase into a distributed Entity-Component-System running on the AO network. The architecture prioritizes **100% behavioral parity** with the current implementation while achieving **95% bundle size reduction** through external data references and enabling autonomous agent participation through rich device-based interfaces. Core architectural patterns include HyperBEAM process state management, Rust WASM device-based game logic, deterministic battle resolution through seeded RNG systems, and external data storage via Arweave references, directly supporting the PRD's goal of creating the world's first fully UI-agnostic roguelike where AI agents battle as first-class citizens.
+The PokéRogue AO migration employs an **ECS architecture with NIF-powered systems**, transforming the existing object-oriented TypeScript codebase into an Entity-Component-System running on a single AO process. The architecture prioritizes **100% behavioral parity** with the current implementation while leveraging Native Implemented Functions (NIFs) as complete ECS systems implemented in Rust. Core architectural patterns include Lua message routing, NIF systems for all game logic, deterministic world state management, and efficient component-based data organization, directly supporting the PRD's goal of creating the world's first fully UI-agnostic roguelike where AI agents battle as first-class citizens.
 
 ### High Level Overview
 
-**Architectural Style:** **HyperBEAM Entity-Component-System with Rust WASM Devices**
-- Single HyperBEAM process managing ECS world state with external data references
-- Rust WASM devices implementing game logic as stateless, type-safe computational units
-- Entity-Component-System architecture replacing object-oriented patterns
-- External data storage on Arweave eliminating bundle size constraints
+**Architectural Style:** **Single-Process ECS with NIF Systems**
+- Single AO process managing ECS world state and message routing
+- Native Implemented Functions (NIFs) implementing complete ECS systems in Rust
+- Lua handlers route messages to appropriate NIF systems
+- Embedded game data within process bundle for self-contained operation
 
 **Repository Structure:** **Monorepo** (from PRD Technical Assumptions)
-- `/devices/` - Rust WASM device implementations (battle, stats, evolution, etc.)
-- `/shared/` - Shared Rust types and traits across devices
-- `/hyperbeam-process/` - HyperBEAM process configuration and state management
-- `/arweave-data/` - Pokemon species, moves, and items data for external storage
+- `/nifs/` - Rust NIF systems (battle_system, evolution_system, stats_system)
+- `/shared/` - Shared Rust ECS types (WorldState, components, entities)
+- `/ao-process/` - AO process with Lua message handlers and world state persistence
+- `/game-data/` - Pokemon species, moves, and items data embedded in Rust
 - `/typescript-reference/` - Current implementation for parity testing
 
-**Service Architecture:** **Single HyperBEAM Process + Distributed WASM Devices**
-- HyperBEAM process maintains ECS world state (entities, components, player sessions)
-- Rust WASM devices handle game logic (battle resolution, stat calculation, evolution)
-- External Arweave storage provides Pokemon species, moves, and items data
-- Device routing and message orchestration managed by HyperBEAM
+**Service Architecture:** **Single AO Process + NIF Systems + HyperBeam Pathing**
+- AO process handles message routing and world state persistence
+- NIF systems implement complete ECS logic (entities, components, systems) in Rust
+- HyperBeam pathing exposes state via HTTP GET requests for read-only access
+- World state passed between NIF systems for processing
+- Lua handlers orchestrate system execution and state management
 
-**Primary Data Flow:** **Player → HTTP → HyperBEAM Process → Device Router → WASM Device + Arweave Data → Response**
-1. Players/agents send HTTP requests to HyperBEAM process
-2. Process routes messages to appropriate Rust WASM devices based on action
-3. Devices fetch external data from Arweave and execute game logic
-4. Process applies state updates and sends responses back via HTTP
+**Primary Data Flow:** **Player → AO Message/HyperBeam Path → Lua Router → NIF System → GameState Update → Response**
+1. Players/agents send AO messages (writes) OR HyperBeam HTTP paths (reads) to the process
+2. Lua message handlers route to appropriate NIF systems for processing
+3. HyperBeam paths provide direct access to GameState fields for read operations
+4. NIF system converts GameState to internal Bevy World, processes game logic, and returns updated GameState
+5. Process persists GameState and sends response via AO message or HTTP path response
 
 **Key Architectural Decisions:**
-- **ECS Over OOP:** Entity-Component-System architecture with external data references
-- **WASM Devices:** Rust-compiled devices for type-safe, performant game logic
-- **External Data:** Arweave storage eliminates bundle bloat (95% size reduction)
-- **HyperBEAM Native:** Single process with device routing vs. multi-process complexity
+- **ECS in Rust:** Complete Entity-Component-System implementation in NIF systems
+- **NIF Systems:** Each game system (battle, evolution, stats) as dedicated NIF function
+- **Lua Orchestration:** Lightweight message routing and world state persistence in Lua
+- **Single Process:** Unified world state passed between NIF systems
 - **Agent-First:** Rich query interfaces designed for autonomous agent participation
+- **HyperBeam Pathing:** HTTP GET access to process state via URL path navigation
 
 ### High Level Project Diagram
 
@@ -58,90 +61,93 @@ The PokéRogue AO migration employs a **HyperBEAM-native ECS architecture** with
 graph TB
     subgraph "Player Interfaces"
         P1[Human Players<br/>Phase 2: AOConnect UI]
-        P2[AI Agents<br/>Phase 3: HTTP API]
+        P2[AI Agents<br/>Phase 3: AO Messages]
     end
     
-    subgraph "HyperBEAM Process: Pokemon ECS World (~200KB)"
-        HTTP[HTTP Server<br/>~relay@1.0 device]
-        PROC[Process State<br/>ECS World + Sessions]
-        ROUTER[Message Router<br/>Device orchestration]
+    subgraph "Single AO Process: Message Router + State Persistence"
+        MSG[Lua Message Handlers<br/>Route to NIF Systems]
+        STATE[World State Persistence<br/>Lua table storage]
     end
     
-    subgraph "Rust WASM Devices (Stateless Logic)"
-        D1[~pokemon-stats@1.0<br/>Stats calculation]
-        D2[~battle-engine@1.0<br/>Damage + effects]
-        D3[~evolution-system@1.0<br/>Evolution logic]
-        D4[~query-handler@1.0<br/>Agent queries]
-        D5[~arweave-species@1.0<br/>Species data fetching]
+    subgraph "NIF ECS Systems (Complete Rust Implementation)"
+        NS1[battle_system.process_turn<br/>Complete battle ECS logic]
+        NS2[evolution_system.check_evolution<br/>Evolution processing + stats]
+        NS3[stats_system.recalculate<br/>Stat calculation system]
+        NS4[query_system.get_state<br/>Agent queries + responses]
     end
     
-    subgraph "External Data Storage (Arweave)"
-        AR1[Species Database<br/>900+ Pokemon (~2MB)]
-        AR2[Moves Database<br/>800+ moves (~1.5MB)]
-        AR3[Items Database<br/>All items (~800KB)]
-        AR4[Type Chart<br/>Effectiveness data]
+    subgraph "Embedded Game Data (In Rust)"
+        GD1[Species Database<br/>900+ Pokemon species]
+        GD2[Move Database<br/>800+ moves + effects]
+        GD3[Item Database<br/>All items + effects]
+        GD4[Type Effectiveness<br/>Damage calculations]
     end
     
-    P1 --> HTTP
-    P2 --> HTTP
-    HTTP --> ROUTER
-    ROUTER --> PROC
+    P1 --> MSG
+    P2 --> MSG
+    MSG --> NS1
+    MSG --> NS2
+    MSG --> NS3
+    MSG --> NS4
     
-    ROUTER --> D1
-    ROUTER --> D2 
-    ROUTER --> D3
-    ROUTER --> D4
-    ROUTER --> D5
+    NS1 --> STATE
+    NS2 --> STATE
+    NS3 --> STATE
+    NS4 --> STATE
     
-    D1 --> AR1
-    D2 --> AR1
-    D2 --> AR2
-    D3 --> AR1
-    D4 --> AR1
-    D5 --> AR1
-    D5 --> AR2
-    D5 --> AR3
-    D5 --> AR4
+    NS1 --> GD1
+    NS1 --> GD2
+    NS1 --> GD4
+    NS2 --> GD1
+    NS3 --> GD1
+    NS4 --> GD1
+    NS4 --> GD2
+    NS4 --> GD3
 ```
 
 ### Architectural and Design Patterns
 
-- **Entity-Component-System (ECS) Pattern:** Entities as lightweight IDs, Components as data tables, Systems as Rust WASM devices - _Rationale:_ Perfect separation of state and logic, enabling external data references and modular device development
+- **Bevy ECS Pattern:** Complete ECS implementation using Bevy's battle-tested architecture - _Rationale:_ Production-ready ECS with built-in serialization, change detection, and resource management
 
-- **HyperBEAM Device Routing:** HTTP requests routed to appropriate Rust WASM devices based on action type - _Rationale:_ Single process coordination with specialized device logic, eliminating multi-process complexity
+- **NIF System Pattern:** Each game system (battle, evolution, stats) implemented as dedicated NIF function operating on Bevy World - _Rationale:_ Complete system logic runs at native speed with rich ECS features
 
-- **External Data References:** Pokemon species, moves, and items stored on Arweave with transaction ID references - _Rationale:_ 95% bundle size reduction while maintaining unlimited data capability
+- **Custom GameState Serialization:** Custom GameState struct serialized across NIF boundaries, converted to Bevy World internally - _Rationale:_ Efficient serialization with full Bevy ECS benefits inside NIFs
 
-- **Rust WASM Device Pattern:** Stateless, type-safe computational units compiled to WebAssembly - _Rationale:_ Performance, safety, and maintainability for complex Pokemon battle calculations
+- **Lua Message Orchestration:** Lightweight Lua handlers route messages to appropriate NIF systems - _Rationale:_ Simple message routing with minimal overhead, leveraging AO's native Lua environment
 
-- **Deterministic Battle Resolution:** Seeded RNG system preserved across device calls for reproducible outcomes - _Rationale:_ Ensures exact parity with TypeScript implementation and enables battle replay/verification
+- **ECS Resources for Game Data:** Pokemon species, moves, and items stored as Bevy Resources - _Rationale:_ Type-safe global data access within ECS systems, compile-time optimization
 
-- **Cached External Data Access:** Frequently accessed Arweave data cached within devices for performance - _Rationale:_ Balances external data benefits with real-time battle requirements
+- **Component-Based Pokemon:** Pokemon represented as entities with modular components (Stats, Status, Moves) - _Rationale:_ Flexible composition enables easy extension and efficient queries
 
-- **Agent-First Query Interfaces:** Rich, granular query capabilities designed for autonomous agents - _Rationale:_ Enables AI agents to make informed decisions with full game state visibility
+- **Bevy Change Detection:** Track component modifications between NIF calls - _Rationale:_ Enables efficient delta updates and optimized processing
+
+- **Query-Based Agent Interface:** Bevy's rich query system enables complex agent state access - _Rationale:_ Powerful filtering and iteration capabilities for AI decision-making
+
+- **HyperBeam State Pathing:** Direct HTTP GET access to process state fields via URL navigation - _Rationale:_ Enables read-only state access without message overhead, perfect for agent polling and UI updates
 
 ## Tech Stack
 
 ### Cloud Infrastructure
-- **Provider:** Arweave Network (AO Protocol + HyperBEAM)
-- **Key Services:** HyperBEAM process hosting, Arweave external data storage, AOConnect for Phase 2 integration
+- **Provider:** Arweave Network (AO Protocol)
+- **Key Services:** AO process hosting, embedded data storage, AOConnect for Phase 2 integration  
 - **Deployment Regions:** Global (decentralized AO network)
 
 ### Technology Stack Table
 
 | Category | Technology | Version | Purpose | Rationale |
 |----------|------------|---------|---------|-----------|
-| **Process Runtime** | HyperBEAM | Latest | Device orchestration + HTTP interface | Advanced AO implementation with device routing |
-| **Device Language** | Rust | 1.70+ | WASM device implementation | Type safety, performance, rich ecosystem |
-| **Compilation Target** | WebAssembly (WASM) | Latest | Cross-platform device execution | Fast, secure, sandboxed execution |
-| **ECS State Management** | HyperBEAM Process Memory | - | Entity-Component storage | Lightweight state with external data refs |
-| **External Data Storage** | Arweave Transactions | - | Pokemon/move/item databases | Permanent, decentralized, unlimited capacity |
-| **Data Access** | HyperBEAM Arweave Integration | Latest | External data fetching + caching | Built-in gateway client with performance optimization |
-| **Message Protocol** | JSON over HTTP | - | Player/agent communication | RESTful interface, AOConnect compatible |
-| **RNG System** | Rust + Battle Seeds | - | Deterministic randomness | Cryptographically secure, cross-device consistency |
-| **Development Tools** | Cargo + wasm-pack | Latest | Rust WASM toolchain | Industry standard Rust development |
-| **Testing Framework** | Rust + WASM testing | Latest | Device unit + integration tests | Type-safe testing with TypeScript parity validation |
-| **Agent Discovery** | HyperBEAM Info Protocol | Latest | Process + device discovery | Native AO documentation compliance |
+| **Process Runtime** | AO (ArOS) | Latest | Lua execution environment | Standard AO runtime with NIF support |
+| **NIF Language** | Rust | 1.70+ | Complete ECS systems implementation | Type safety, performance, rich ecosystem |
+| **NIF Compilation** | Native Shared Library | Latest | ECS systems as Lua-callable functions | Maximum performance for complete game logic |
+| **ECS Implementation** | Bevy ECS | 0.12+ | Entity-Component-System with built-in serialization | Production-ready ECS with serde support for NIF boundaries |
+| **Game Data Storage** | Bevy Resources | - | Pokemon/move/item databases as ECS resources | Zero-latency access, type-safe global state |
+| **State Management** | Custom GameState | - | Serializable game state converted to Bevy World in NIFs | Efficient Lua-Rust serialization with internal ECS benefits |
+| **Message Protocol** | AO Messages (JSON) | - | Player/agent communication | Native AO protocol, AOConnect compatible |
+| **RNG System** | NIF + Battle Seeds | - | Deterministic randomness | Native performance with cross-call consistency |
+| **Development Tools** | Cargo + Rustler | Latest | Rust NIF toolchain | Industry standard Rust-Lua integration |
+| **Testing Framework** | Lua + NIF testing | Latest | ECS + NIF integration tests | Lightweight testing with TypeScript parity validation |
+| **Process Discovery** | AO Info Protocol | Latest | Standard process discovery | Native AO documentation compliance |
+| **HTTP State Access** | HyperBeam Pathing | Latest | GET request state reading | Direct URL-based access to process state fields |
 
 ## Data Models
 
@@ -372,6 +378,124 @@ sequenceDiagram
     BH->>BH: processBattleTurn(agentCommand)
     BH-->>Agent: battle result + updated state
 ```
+
+## HyperBeam HTTP GET State Access
+
+### URL Path Pattern
+
+HyperBeam enables direct HTTP GET access to process state via URL path navigation:
+
+```
+GET https://[hyperbeam-node]/[process-id]~process@1.0/[state-path]
+```
+
+### Pokemon Game State Paths
+
+#### Player Data Access
+```bash
+# Get full player state
+GET /pokemon-game~process@1.0/players/alice123
+
+# Get player's Pokemon party
+GET /pokemon-game~process@1.0/players/alice123/party
+
+# Get specific Pokemon stats
+GET /pokemon-game~process@1.0/players/alice123/party/0/stats
+
+# Get player progression
+GET /pokemon-game~process@1.0/players/alice123/progression
+```
+
+#### Battle State Access
+```bash
+# Get current battle state
+GET /pokemon-game~process@1.0/battles/battle_456
+
+# Get battle participants
+GET /pokemon-game~process@1.0/battles/battle_456/participants
+
+# Get available actions for agent decision-making
+GET /pokemon-game~process@1.0/battles/battle_456/available-actions
+
+# Get battle turn history
+GET /pokemon-game~process@1.0/battles/battle_456/history
+```
+
+#### Game Data Access
+```bash
+# Get Pokemon species data
+GET /pokemon-game~process@1.0/data/species/charizard
+
+# Get move information
+GET /pokemon-game~process@1.0/data/moves/flamethrower
+
+# Get type effectiveness chart
+GET /pokemon-game~process@1.0/data/type-effectiveness
+```
+
+### Implementation Pattern
+
+The AO process exposes GameState fields that HyperBeam can navigate via paths:
+
+```lua
+-- GameState organized for path navigation
+GameState = {
+    entities = {
+        ["pokemon_123"] = { entity_type = "pokemon", components = {...} },
+        ["player_alice"] = { entity_type = "player", components = {...} }
+    },
+    pokemon_stats = {
+        ["pokemon_123"] = { hp = 100, attack = 80, defense = 75, ... }
+    },
+    battle_states = {
+        ["battle_456"] = {
+            battle_id = "battle_456",
+            participants = {...},
+            ["available-actions"] = {...},
+            turn = 3,
+            status = "active"
+        }
+    },
+    player_sessions = {
+        ["alice123"] = {
+            player_id = "alice123",
+            progression = { wave = 15, biome = "forest" },
+            party = { "pokemon_123", "pokemon_124" }
+        }
+    },
+    -- Global game data embedded in GameState
+    species_database = { charizard = {...} },
+    moves_database = { flamethrower = {...} }
+}
+```
+
+### Agent Integration Example
+
+```javascript
+// Agent reads battle state via HTTP GET
+const battleState = await fetch(
+    'https://forward.computer/pokemon-game~process@1.0/battle_states/battle_456'
+).then(r => r.json());
+
+// Agent reads available actions  
+const availableActions = await fetch(
+    'https://forward.computer/pokemon-game~process@1.0/battle_states/battle_456/available-actions'
+).then(r => r.json());
+
+// Agent reads Pokemon stats for decision-making
+const pokemonStats = await fetch(
+    'https://forward.computer/pokemon-game~process@1.0/pokemon_stats/pokemon_123'
+).then(r => r.json());
+
+// Agent makes decision and sends AO message for action
+await ao.message({
+    Target: "pokemon-game-process-id",
+    Action: "battle-turn", 
+    Data: { battleId: "battle_456", command: "FIGHT", move: "flamethrower" }
+});
+```
+
+This pattern enables **read-only access** via HTTP GET for state polling while **writes** still go through AO messages for proper consensus and state management.
 
 ## Database Schema (Embedded Lua Data Structures)
 

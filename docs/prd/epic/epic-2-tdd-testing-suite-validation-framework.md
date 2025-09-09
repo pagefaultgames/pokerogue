@@ -1,21 +1,21 @@
 # Epic 2: TDD Testing Suite & Validation Framework
 
-Establish comprehensive Test-Driven Development infrastructure using aolite for AO process testing, aos-local for deployment validation, and Rust testing frameworks to validate TypeScript→Rust migration parity before implementation of any epic functionality.
+Establish comprehensive Test-Driven Development infrastructure using aolite for AO process testing, Rust NIF testing frameworks, and GameState parity validation to ensure 100% functional equivalence with the original Phaser/TypeScript implementation before any epic functionality implementation.
 
-## Story 2.1: aolite Unit Testing Framework for HyperBeam Lua Process
+## Story 2.1: aolite Unit Testing Framework for AO Process with GameState
 As a **TDD engineer**,  
-I want **comprehensive aolite-based unit testing framework for HyperBeam AO handlers and Lua process logic**,  
-so that **I can write failing tests for Lua handlers first, then implement HyperBeam Lua functionality to make tests pass**.
+I want **comprehensive aolite-based unit testing framework for AO handlers and GameState management**,  
+so that **I can write failing tests for Lua handlers first, then implement GameState functionality to make tests pass**.
 
 ### Acceptance Criteria
-1. aolite testing environment configured with concurrent process emulation using coroutines for HyperBeam process
-2. Message passing test framework validates Lua AO handler responses against expected game action outcomes
-3. Handler unit testing covers all game action message types with comprehensive Lua test cases
-4. Process state inspection allows validation of ECS world state after Lua handler execution
-5. Mock external data sources (Arweave transactions) for isolated Lua handler unit testing
-6. Test fixtures provide consistent game state scenarios for reproducible Lua testing
-7. Automated test discovery and execution with clear pass/fail reporting for aolite tests
-8. TDD workflow documentation guides developers in Lua handler test-first methodology
+1. aolite testing environment configured with GameState serialization testing for AO process
+2. Message passing test framework validates Lua AO handler GameState transformations against expected outcomes
+3. Handler unit testing covers all game action message types with GameState input/output validation
+4. GameState inspection allows validation of custom state structure after Lua handler execution
+5. Mock GameState fixtures provide consistent game scenarios for reproducible testing
+6. GameState serialization testing validates JSON boundaries between Lua and NIF systems
+7. Automated test discovery and execution with GameState consistency reporting
+8. TDD workflow documentation guides developers in GameState-first test methodology
 
 ## Story 2.2: aos-local Deployment Testing Integration
 As a **deployment validation engineer**,  
@@ -32,35 +32,35 @@ so that **I can validate process deployment, bundling, and real AO environment c
 7. Process restart and recovery testing ensures state persistence and reliability
 8. Integration with CI/CD pipeline for automated deployment validation
 
-## Story 2.3: Rust WASM Device Unit Testing with cargo test
-As a **Rust device developer**,  
-I want **comprehensive cargo test framework for Rust WASM device logic with TypeScript parity validation**,  
-so that **I can write failing Rust unit tests first, then implement device logic to pass tests**.
+## Story 2.3: Rust NIF System Unit Testing with cargo test
+As a **Rust NIF developer**,  
+I want **comprehensive cargo test framework for Rust NIF systems with GameState and internal Bevy ECS validation**,  
+so that **I can write failing Rust unit tests first, then implement NIF logic to pass tests**.
 
 ### Acceptance Criteria
-1. cargo test framework configured for Rust WASM device testing with wasm-pack integration
-2. Property-based testing using proptest crate validates device logic across comprehensive input ranges
-3. Unit tests with #[test] annotations cover all device functions with TDD test-first methodology
-4. Benchmark testing using criterion crate measures device performance against TypeScript reference
-5. Mock input/output testing isolates device logic from HyperBeam integration concerns using test doubles
-6. Cross-compilation testing validates device functionality across target platforms (wasm32-unknown-unknown)
-7. Memory safety testing ensures no unsafe operations or memory leaks in devices using miri
-8. Serialization testing validates data integrity between HyperBeam and device communication using serde
+1. cargo test framework configured for Rust NIF testing with rustler integration
+2. Property-based testing using proptest validates GameState transformations across input ranges
+3. Unit tests with #[test] annotations cover all NIF functions with GameState input/output validation
+4. Benchmark testing using criterion measures NIF performance against TypeScript reference
+5. GameState conversion testing validates `populate_world_from_game_state()` and `extract_world_to_game_state()`
+6. Internal Bevy ECS testing ensures proper World creation and component manipulation
+7. Memory safety testing ensures no unsafe operations in GameState serialization using miri
+8. Serialization testing validates GameState JSON integrity across Lua-Rust boundaries using serde
 
-## Story 2.4: TypeScript-Rust Parity Validation Suite
+## Story 2.4: Phaser/TypeScript-GameState Parity Validation Suite
 As a **parity validation specialist**,  
-I want **comprehensive automated testing that validates 100% functional equivalence between TypeScript and Rust implementations**,  
-so that **no behavioral differences exist between original and migrated code**.
+I want **comprehensive automated testing that validates 100% functional equivalence between original Phaser/TypeScript and GameState NIF implementations**,  
+so that **no behavioral differences exist between original PokéRogue and migrated AO version**.
 
 ### Acceptance Criteria
-1. Golden master testing captures TypeScript outputs for identical inputs across all game mechanics
-2. Regression testing automatically detects any behavioral changes during Rust migration
-3. Equivalence testing validates mathematical calculations produce identical results (damage, stats, etc.)
-4. Randomization testing ensures RNG produces identical sequences with same seeds
-5. Edge case testing validates handling of boundary conditions and error states
-6. Performance comparison testing ensures Rust implementation meets or exceeds TypeScript speed
-7. State consistency testing validates ECS world state matches TypeScript game state
-8. Comprehensive test coverage analysis ensures all code paths are validated
+1. **Golden master testing** captures Phaser/TypeScript outputs for identical inputs across all game mechanics
+2. **Regression testing** automatically detects any behavioral changes during GameState migration  
+3. **Mathematical equivalence** validates calculations produce identical results (damage, stats, evolution, etc.)
+4. **RNG parity testing** ensures deterministic randomness produces identical sequences with same seeds
+5. **Edge case testing** validates boundary conditions and error states match original behavior
+6. **Performance comparison** ensures GameState NIF implementation meets or exceeds Phaser performance
+7. **State consistency testing** validates GameState transformations match original TypeScript game state
+8. **Battle outcome parity** validates 100% identical battle results between implementations
 
 ## Story 2.5: TDD Workflow Integration and Automation
 As a **development process engineer**,  

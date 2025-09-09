@@ -1,10 +1,10 @@
 # Epic 5: Core Battle System & Turn Resolution
 
-Implement comprehensive turn-based battle engine with damage calculation, battle state management, and victory/defeat conditions using Rust WASM devices integrated with Pokemon data and move systems within the HyperBeam ECS architecture.
+Implement comprehensive turn-based battle engine with damage calculation, battle state management, and victory/defeat conditions using Rust NIF systems integrated with Pokemon data and move systems within the Bevy ECS architecture.
 
 ## Epic Goal
 
-Establish the complete turn-based battle engine by integrating Pokemon data systems (Epic 3) and move mechanics (Epic 4) into a unified battle processing framework with Rust WASM devices, achieving type-safe battle logic and maintaining 100% functional parity with TypeScript battle implementation.
+Establish the complete turn-based battle engine by integrating Pokemon data systems (Epic 3) and move mechanics (Epic 4) into a unified battle processing framework with Rust NIF systems and Bevy ECS, achieving type-safe battle logic and maintaining 100% functional parity with TypeScript battle implementation.
 
 ## Epic Description
 
@@ -20,20 +20,20 @@ Establish the complete turn-based battle engine by integrating Pokemon data syst
 
 ## Stories
 
-### Story 5.1: Battle State Management & ECS Integration
+### Story 5.1: Battle State Management in GameState Structure
 As a **battle state developer**,  
-I want **comprehensive ECS battle state management with battle entities, turn tracking, and participant management**,  
-so that **battle sessions can be created, managed, and persisted within HyperBeam world state with full state integrity**.
+I want **comprehensive battle state management within GameState with battle entities and turn tracking**,  
+so that **battle sessions can be serialized, managed, and processed through GameState NIF boundaries**.
 
-### Story 5.2: Turn Processing Engine & Priority Calculation WASM Device
+### Story 5.2: Turn Processing Engine NIF with Internal ECS
 As a **turn system developer**,  
-I want **Rust WASM device for turn processing, speed calculations, priority resolution, and action ordering**,  
+I want **Rust NIF system for turn processing using GameState input and internal Bevy ECS calculations**,  
 so that **battle turns execute with correct Pokemon speed mechanics and maintain perfect turn order parity**.
 
-### Story 5.3: Damage Calculation Engine Integration with Move & Pokemon Systems
+### Story 5.3: Damage Calculation Engine with GameState Integration
 As a **battle mechanics developer**,  
-I want **integrated damage calculation engine using Epic 3 Pokemon data and Epic 4 move effectiveness**,  
-so that **battle damage is calculated with type safety using complete Pokemon stats, move power, and type effectiveness data**.
+I want **integrated damage calculation NIF using GameState Pokemon data and move effectiveness**,  
+so that **battle damage is calculated using GameState serialization with internal ECS processing for type-safe calculations**.
 
 ### Story 5.4: Battle Action Processing & Move Execution Framework
 As a **battle action developer**,  

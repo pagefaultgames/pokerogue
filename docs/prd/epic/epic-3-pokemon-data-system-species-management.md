@@ -1,49 +1,49 @@
 # Epic 3: Pokemon Data System & Species Management
 
-Establish comprehensive Pokemon data infrastructure with species database migration, individual Pokemon instance management, and WASM device integration for type-safe Pokemon operations within the HyperBeam ECS architecture.
+Establish comprehensive Pokemon data infrastructure with embedded species database, individual Pokemon instance management, and Bevy ECS component integration for type-safe Pokemon operations within the single-process NIF architecture.
 
 ## Epic Goal
 
-Migrate Pokemon species database, abilities, nature/IV systems, and individual Pokemon instance management to Rust WASM devices while achieving 95% bundle size reduction through Arweave external data storage and maintaining 100% functional parity with TypeScript implementation.
+Migrate Pokemon species database, abilities, nature/IV systems, and individual Pokemon instance management to Bevy ECS components and NIF systems with embedded game data, maintaining compact bundle size and achieving 100% functional parity with TypeScript implementation.
 
 ## Epic Description
 
 **Existing System Context:**
 - Current functionality: TypeScript-based Pokemon species data, stat calculations, individual Pokemon instances
-- Technology stack: HyperBeam ECS process, Rust WASM devices, Arweave external storage
-- Integration points: Device registry, ECS component systems, external data fetching
+- Technology stack: Single AO process, Bevy ECS, Rust NIF systems, embedded game data
+- Integration points: NIF systems, ECS components and resources, embedded data structures
 
 **Enhancement Details:**
-- What's being added/changed: Pokemon data system migration from TypeScript to Rust WASM with external storage
-- How it integrates: Pokemon WASM devices managed by HyperBeam device orchestration with Arweave data references
-- Success criteria: 100% parity + <500KB bundle + type-safe Pokemon operations
+- What's being added/changed: Pokemon data system migration from TypeScript to Bevy ECS components with NIF systems
+- How it integrates: Pokemon data as Bevy Resources, Pokemon instances as ECS entities with components
+- Success criteria: 100% parity + compact embedded data + type-safe Pokemon operations
 
 ## Stories
 
-### Story 3.1: Pokemon Species Database Migration to Arweave
-As a **data migration developer**,  
-I want **Pokemon species data migrated to Arweave external storage with efficient reference system**,  
-so that **HyperBeam bundle size is reduced by 95% while maintaining fast species data access**.
+### Story 3.1: Pokemon Species Database in GameState Structure
+As a **data systems developer**,  
+I want **Pokemon species data embedded in GameState with efficient lookup structures**,  
+so that **species data is self-contained and serializes efficiently across NIF boundaries**.
 
-### Story 3.2: Pokemon Statistics & Nature WASM Device Implementation
+### Story 3.2: Pokemon Statistics & Nature NIF System with GameState
 As a **Pokemon mechanics developer**,  
-I want **Rust WASM device for Pokemon stat calculations, nature effects, and IV/EV processing**,  
+I want **Rust NIF system for Pokemon stat calculations using GameState input and internal Bevy ECS**,  
 so that **stat computations are type-safe and maintain parity with TypeScript implementation**.
 
-### Story 3.3: Individual Pokemon Instance Management System
+### Story 3.3: Pokemon GameState Component Management
 As a **Pokemon state developer**,  
-I want **ECS component system for individual Pokemon instances with WASM device integration**,  
-so that **Pokemon entities can be created, modified, and managed within HyperBeam world state**.
+I want **Pokemon data organized in GameState with entity-component mapping**,  
+so that **Pokemon entities can be serialized, converted to internal ECS, and managed efficiently**.
 
-### Story 3.4: Pokemon Ability System & Device Integration
+### Story 3.4: Pokemon Ability System with GameState Integration
 As a **Pokemon ability developer**,  
-I want **comprehensive ability system with Rust WASM devices for ability effects and triggers**,  
-so that **Pokemon abilities function correctly with type-safe logic and maintain gameplay parity**.
+I want **comprehensive ability system with GameState ability data and NIF processing**,  
+so that **Pokemon abilities function correctly with GameState serialization and maintain gameplay parity**.
 
-### Story 3.5: Pokemon Data Integration Testing & Parity Validation
+### Story 3.5: Pokemon GameState Integration Testing & Parity Validation
 As a **QA validation developer**,  
-I want **comprehensive testing suite comparing TypeScript vs Rust Pokemon data operations**,  
-so that **100% functional parity is verified and maintained across all Pokemon data systems**.
+I want **comprehensive testing suite comparing TypeScript vs GameState Pokemon data operations**,  
+so that **100% functional parity is verified across all Pokemon GameState transformations**.
 
 ## Compatibility Requirements
 

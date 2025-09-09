@@ -1,63 +1,63 @@
-# Epic 1: HyperBeam Foundation & Security
+# Epic 1: AO Process Foundation & NIF Systems Integration
 
-Establish foundational HyperBeam process architecture with ECS world state, device orchestration framework, and security systems for type-safe game logic processing and anti-cheat validation.
+Establish foundational single-process AO architecture with Bevy ECS, Rust NIF systems, and HyperBeam HTTP state access for high-performance game logic processing and agent integration.
 
-## Story 1.1: HyperBeam Process Architecture Setup
+## Story 1.1: Single AO Process with Custom GameState Architecture Setup
 As a **systems architect**,  
-I want **a foundational HyperBeam process with ECS world state and HTTP server**,  
-so that **game entities, components, and player sessions can be managed with device integration**.
+I want **single AO process with custom GameState serialization and Lua message routing**,  
+so that **game state can be managed efficiently with optimal Lua-Rust communication boundaries**.
 
 ### Acceptance Criteria
-1. HyperBeam process initializes with ECS world containing entity manager and component storage
-2. HTTP server provides endpoints for game actions, state queries, and device communication
-3. ECS entity creation, modification, and deletion operations function correctly
-4. Component systems for Pokemon, Player, Battle, and World entities work as expected
-5. Process state persistence with Arweave integration maintains data integrity
-6. Bundle optimization achieves <500KB target through external data references
-7. Process deployment succeeds within AO platform constraints and resource limits
-8. Basic health checks and world state validation ensure system reliability
+1. AO process initializes with custom GameState structure for serializable state management
+2. Lua message handlers route game actions to appropriate NIF systems
+3. Custom GameState contains all necessary game data (entities, components, global data)
+4. GameState-to-JSON serialization works efficiently across Lua-Rust boundaries
+5. Process deployment succeeds within AO platform constraints
+6. Message handling supports both AO messages and HTTP GameState access
+7. GameState consistency maintained across all NIF operations
+8. Helper functions convert GameState ↔ internal Bevy World seamlessly
 
-## Story 1.2: Device Orchestration Framework
-As a **device integration developer**,  
-I want **comprehensive device registry and message routing system**,  
-so that **Rust WASM devices can be discovered, versioned, and orchestrated reliably**.
-
-### Acceptance Criteria
-1. Device registry manages available Rust WASM devices with semantic versioning
-2. Message routing directs game actions to appropriate devices based on capability
-3. Device lifecycle management handles loading, unloading, and hot-swapping
-4. Error handling and timeout management for device communication failures
-5. Device health monitoring with performance metrics and availability tracking
-6. Message queuing ensures proper ordering and delivery of device requests
-7. Device capability discovery allows dynamic feature detection
-8. Integration testing validates device communication under concurrent load
-
-## Story 1.3: Security Framework & Anti-Cheat Foundation
-As a **security engineer**,  
-I want **comprehensive security validation and anti-cheat detection systems**,  
-so that **game state integrity is maintained and cheating attempts are prevented**.
+## Story 1.2: Rust NIF Systems with Internal Bevy ECS Integration
+As a **NIF systems developer**,  
+I want **Rust NIF systems that convert GameState to internal Bevy ECS for processing**,  
+so that **complete game systems run at native speed with efficient serialization boundaries**.
 
 ### Acceptance Criteria
-1. Game state validation ensures all entity modifications follow game rules
-2. Anti-cheat detection identifies impossible stat changes, invalid moves, and resource manipulation
-3. Rate limiting prevents abuse of game actions and API endpoints
-4. Cryptographic validation for critical game state changes and transactions
-5. Input sanitization and validation for all player actions and device responses
-6. Audit logging tracks all game state modifications with player attribution
-7. Security policy enforcement prevents unauthorized access to sensitive operations
-8. Integration with Arweave provides immutable audit trails for investigations
+1. Rust NIF systems compile to native shared libraries with internal Bevy ECS conversion
+2. NIF functions receive custom GameState JSON, convert to internal Bevy World
+3. NIF systems available as `battle_system.process_turn(game_state_json, params)` calls
+4. Helper functions `populate_world_from_game_state()` and `extract_world_to_game_state()`
+5. GameState serialization performance optimized for frequent NIF calls
+6. NIF system hot-reloading supports development iteration without process restart
+7. Type-safe GameState struct ensures compile-time validation of serialization
+8. Integration testing validates GameState consistency and internal ECS performance
 
-## Story 1.4: TypeScript Reference Preservation & Parity Framework
+## Story 1.3: HyperBeam HTTP GameState Access & Agent Integration
+As a **agent integration developer**,  
+I want **HyperBeam HTTP GET endpoints for reading GameState fields via URL paths**,  
+so that **agents can efficiently poll game state without message overhead**.
+
+### Acceptance Criteria
+1. HyperBeam pathing exposes GameState fields via URL navigation
+2. HTTP GET endpoints provide read-only access to GameState components
+3. State paths organized for efficient agent queries (`/battle_states/123/available-actions`)
+4. JSON responses return GameState field data optimized for agents
+5. State consistency between HTTP reads and AO message GameState updates
+6. Caching strategies minimize GameState serialization overhead  
+7. Agent integration examples demonstrate HTTP polling + AO message sending
+8. Performance benchmarks validate HTTP GameState access efficiency
+
+## Story 1.4: TypeScript Reference Preservation & GameState Parity Framework
 As a **quality assurance engineer**,  
-I want **automated parity testing framework comparing TypeScript reference with HyperBeam implementation**,  
-so that **100% functional equivalence is maintained throughout migration**.
+I want **automated parity testing framework comparing TypeScript reference with GameState NIF implementation**,  
+so that **100% functional equivalence is maintained while enabling autonomous agent participation**.
 
 ### Acceptance Criteria
 1. TypeScript reference implementation preserved in `/typescript-reference/` directory
 2. Automated test framework executes identical scenarios on both implementations
-3. Parity validation covers all game mechanics with comprehensive test coverage
-4. Regression detection immediately identifies behavioral differences between systems
-5. Performance benchmarking ensures HyperBeam meets or exceeds TypeScript performance
-6. Test data generation creates exhaustive game scenarios for validation
-7. Continuous integration enforces zero parity violations before deployment
-8. Detailed reporting provides insights into system behavior and performance differences
+3. Parity validation covers all game mechanics across GameState NIF systems
+4. Regression detection identifies behavioral differences in GameState transformations
+5. Performance benchmarking validates GameState NIF performance vs TypeScript
+6. Agent integration testing ensures autonomous agents achieve identical outcomes
+7. GameState consistency testing validates serialization accuracy and completeness
+8. Continuous integration enforces zero parity violations with agent HTTP GameState access
