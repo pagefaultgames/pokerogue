@@ -3,7 +3,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import { mockI18next } from "#test/test-utils/test-utils";
-import type { ArenaFlyout } from "#ui/arena-flyout";
+import type { ArenaFlyout } from "#ui/containers/arena-flyout";
 import type i18next from "i18next";
 import Phaser from "phaser";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, type MockInstance } from "vitest";

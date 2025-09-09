@@ -1,5 +1,5 @@
 import type { ArenaTag } from "#data/arena-tag";
-import type { ArenaFlyout } from "#ui/arena-flyout";
+import type { ArenaFlyout } from "#ui/containers/arena-flyout";
 
 /**
  * Enum used to represent a given side of the field for the purposes of {@linkcode ArenaTag}s and
