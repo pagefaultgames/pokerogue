@@ -1,5 +1,6 @@
 import type { FixedBattleConfig } from "#app/battle";
 import { getRandomTrainerFunc } from "#app/battle";
+import { globalScene } from "#app/global-scene";
 import { defaultStarterSpeciesAndEvolutions } from "#balance/pokemon-evolutions";
 import { speciesStarterCosts } from "#balance/starters";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -12,6 +13,7 @@ import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import { ModifierTier } from "#enums/modifier-tier";
 import { MoveId } from "#enums/move-id";
 import type { MoveSourceType } from "#enums/move-source-type";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
@@ -1081,7 +1083,12 @@ export class LimitedCatchChallenge extends Challenge {
 
   override applyPokemonAddToParty(pokemon: EnemyPokemon, status: BooleanHolder): boolean {
     if (status.value) {
-      status.value = pokemon.metWave % 10 === 1;
+      const isTeleporter =
+        globalScene.currentBattle.mysteryEncounter?.encounterType === MysteryEncounterType.TELEPORTING_HIJINKS
+        && globalScene.currentBattle.mysteryEncounter.selectedOption
+          !== globalScene.currentBattle.mysteryEncounter.options[2]; // don't allow catch when not choosing biome change option
+      const isFirstWave = pokemon.metWave % 10 === 1;
+      status.value = isTeleporter || isFirstWave;
       return true;
     }
     return false;
