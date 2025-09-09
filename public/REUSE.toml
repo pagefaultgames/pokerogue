@@ -15,7 +15,7 @@ path = [
 SPDX-FileCopyrightText = "2024-2025 Pagefault Games"
 SPDX-License-Identifier = "AGPL-3.0-only"
 
-[[annotations]] # Pagefault logo should not be reused without permission as it would imply endorsement
+[[annotations]] # Pagefault / Pokerogue logo should not be reused without permission as it would imply endorsement
 path = [
     "logo128.png",
     "logo512.png",
