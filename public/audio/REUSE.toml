@@ -161,7 +161,7 @@ SPDX-License-Identifier = "LicenseRef-FAIR-USE"
 [[annotations]] # Pokemon Reborn
 path = ["battle_anims/PRSFX-*.wav"]
 SPDX-FileCopyrightText = "The Pokemon Reborn Team https://www.rebornevo.com/pr/index.html/"
-SPDX-License-Identifier = "LicsenseRef-POKEMON-REBORN"
+SPDX-License-Identifier = "LicenseRef-POKEMON-REBORN"
 
 [[annotations]] # Firel
 path = [
