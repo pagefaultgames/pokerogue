@@ -1,3 +1,7 @@
+<!--
+SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+SPDX-License-Identifier: AGPL-3.0-only
+-->
 <?xml version="1.0" encoding="UTF-8"?>
 <data version="1.0">
     <struct type="Settings">

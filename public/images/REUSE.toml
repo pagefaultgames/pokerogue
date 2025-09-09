@@ -1,0 +1,10 @@
+# SPDX-FileCopyrightText: 2025 Pagefault Games
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
+version = 1
+
+[[annotations]] # JSONs created via our own tooling (colormaps for variants must not be listed here!)
+path = ["arenas/*.json", "mystery-encounters/*.json"]
+SPDX-FileCopyrightText = "2024-2025 Pagefault Games"
+SPDX-License-Identifier = "AGPL-3.0-only"
