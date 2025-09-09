@@ -2,7 +2,7 @@
 
 ## Testing Philosophy
 
-**Approach:** **Device-First Test-Driven Development with Parity Validation** - Every Rust WASM device must be validated against TypeScript reference implementation before deployment acceptance
+**Approach:** **Device-First Test-Driven Development with Parity Validation** - Every Rust NIF device must be validated against TypeScript reference implementation before deployment acceptance
 
 **Coverage Goals:** 
 - 100% behavioral parity validation for all game mechanics
@@ -68,15 +68,18 @@ mod tests {
 }
 ```
 
-#### WASM Integration Tests
-**Framework:** `wasm-bindgen-test` for WASM-specific testing
-**Purpose:** Validate compiled WASM device execution
-**Coverage:** Message protocol compliance, WASM memory management
+#### NIF Integration Tests
+**Framework:** `rustler_test` for NIF-specific testing
+**Purpose:** Validate compiled NIF device execution
+**Coverage:** Message protocol compliance, Erlang memory management
 
 ```rust
-// Example: WASM device integration test
-#[wasm_bindgen_test]
-async fn test_device_message_processing() {
+// Example: NIF device integration test
+#[rustler::nif]
+fn test_device_message_processing(
+    env: Env,
+    args: &[Term],
+) -> Result<Term, Error> {
     let device = PokemonStatsDevice::new();
     
     let message = json!({
@@ -91,12 +94,14 @@ async fn test_device_message_processing() {
         }
     });
     
-    let response = device.process(&message.to_string()).await;
+    let response = device.process(&message.to_string());
     let result: DeviceResponse = serde_json::from_str(&response).unwrap();
     
     assert!(result.success);
     assert!(result.state_updates.len() > 0);
     assert!(result.error.is_none());
+    
+    Ok(atoms::ok().encode(env))
 }
 ```
 
@@ -159,7 +164,7 @@ async function runParityTest(testCase: ParityTestCase): Promise<ParityResult> {
     // Run through TypeScript implementation
     const typescriptResult = await runTypescriptBattle(testCase);
     
-    // Run through Rust WASM devices
+    // Run through Rust NIF devices
     const rustResult = await runRustBattle(testCase);
     
     // Compare results with tolerance for floating point
@@ -222,18 +227,18 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-          target: wasm32-unknown-unknown
-      - name: Install wasm-pack
-        run: cargo install wasm-pack
+          target: x86_64-unknown-linux-gnu
+      - name: Install rustler
+        run: cargo install rustler
       
       - name: Run Device Unit Tests
         run: cargo test --workspace
       
-      - name: Build WASM Devices
-        run: ./devices/build-all-devices.sh
+      - name: Build NIF Devices
+        run: ./devices/build-all-nif-devices.sh
       
-      - name: Run WASM Integration Tests
-        run: wasm-pack test --node devices/*/
+      - name: Run NIF Integration Tests
+        run: mix test --include nif_integration
       
       - name: Run Parity Tests
         run: ./testing/run-parity-tests.sh
@@ -264,7 +269,7 @@ jobs:
 
 ### Device Deployment Gates
 - [ ] All unit tests passing (100%)
-- [ ] WASM integration tests passing (100%)
+- [ ] NIF integration tests passing (100%)
 - [ ] Parity tests achieving >99.9% consistency
 - [ ] Performance benchmarks within acceptable ranges
 - [ ] Memory leak detection passing

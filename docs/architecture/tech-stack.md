@@ -1,81 +1,113 @@
 # Tech Stack
 
 ## Cloud Infrastructure
-- **Provider:** Arweave Network (AO Protocol + HyperBEAM)
-- **Key Services:** HyperBEAM process hosting, Arweave external data storage, AOConnect for Phase 2 integration
-- **Deployment Regions:** Global (decentralized AO network)
+- **Provider:** AO Network (Actor Model + HyperBeam Device Orchestration)
+- **Key Services:** Distributed actor network, HyperBeam device hosting, cryptographic message verification, permanent data storage
+- **Deployment Regions:** Global (resilient distributed AO actor network)
+- **Architecture Pattern:** Multi-actor system with pluggable device computation
 
 ## Technology Stack Table
 
 | Category | Technology | Version | Purpose | Rationale |
 |----------|------------|---------|---------|-----------|
-| **Process Runtime** | HyperBEAM | Latest | Device orchestration + HTTP interface | Advanced AO implementation with device routing |
-| **Device Language** | Rust | 1.70+ | WASM device implementation | Type safety, performance, rich ecosystem |
-| **Compilation Target** | WebAssembly (WASM) | Latest | Cross-platform device execution | Fast, secure, sandboxed execution |
-| **ECS State Management** | HyperBEAM Process Memory | - | Entity-Component storage | Lightweight state with external data refs |
-| **External Data Storage** | Arweave Transactions | - | Pokemon/move/item databases | Permanent, decentralized, unlimited capacity |
-| **Data Access** | HyperBEAM Arweave Integration | Latest | External data fetching + caching | Built-in gateway client with performance optimization |
-| **Message Protocol** | JSON over HTTP | - | Player/agent communication | RESTful interface, AOConnect compatible |
-| **RNG System** | Rust + Battle Seeds | - | Deterministic randomness | Cryptographically secure, cross-device consistency |
-| **Development Tools** | Cargo + wasm-pack | Latest | Rust WASM toolchain | Industry standard Rust development |
-| **Testing Framework** | Rust + WASM testing | Latest | Device unit + integration tests | Type-safe testing with TypeScript parity validation |
-| **Agent Discovery** | HyperBEAM Info Protocol | Latest | Process + device discovery | Native AO documentation compliance |
+| **Actor Runtime** | AO Network | Latest | Distributed actor execution | Resilient, permissionless, trustless computation |
+| **Device Orchestration** | HyperBeam | Latest | Pluggable computation engines | Modular, extensible, custom execution environments |
+| **Message Protocol** | AO Cryptographic Messages | Latest | Actor-to-actor communication | Mathematically verifiable message chains |
+| **State Verification** | HashPaths | Latest | Computation graph validation | Trustless state verification without central authority |
+| **Device Language** | Rust | 1.70+ | High-performance device implementation | Type safety, performance, native Erlang integration |
+| **Computation Verification** | AO Crypto Module | Latest | Deterministic randomness + signatures | Cryptographically secure, reproducible game outcomes |
+| **Data Persistence** | Arweave Transactions | Latest | Permanent game state storage | Immutable, decentralized, infinite retention |
+| **Actor Discovery** | AO Info Protocol | Latest | Actor + device capability discovery | Permissionless agent integration |
+| **Development Tools** | aos + HyperBeam CLI | Latest | Local actor development | Standard AO development workflow |
+| **Testing Framework** | AO Message Testing | Latest | Actor integration testing | Message-driven test scenarios |
+| **Message Schemas** | JSON + Cryptographic Signatures | Latest | Typed actor communication | Type safety with cryptographic integrity |
 
-## Device Development Stack
+## Actor Development Stack
 
-### Rust WASM Toolchain
+### AO-Native Lua Development
+
+**Primary Language:** Lua
+**Target:** AO Actor execution environment
+**Key Libraries:**
+- `json` - Message serialization/deserialization
+- `ao` - AO protocol integration
+- `crypto` - Cryptographic operations
+- `utils` - AO utility functions
+
+## HyperBeam Device Development Stack
+
+### Rust Device Development
 
 **Primary Language:** Rust
-**Target:** WebAssembly (WASM) for cross-platform execution
+**Target:** HyperBeam Rust NIF devices
 **Key Dependencies:**
-- `wasm-bindgen` - JavaScript/WASM interop
-- `serde` - JSON serialization/deserialization  
-- `serde_json` - JSON processing
-- `console_error_panic_hook` - WASM debugging support
+- `rustler` - Erlang NIF framework for Rust
+- `anyhow` - Error handling
+- `ureq` - HTTP client for external data access
+- `serde` and `serde_json` - JSON serialization
+- `tokio` - Async runtime (when needed)
 
-### Device Architecture
+### Actor Architecture
 
-**Device Categories:**
-- **Core Logic Devices:** Battle engine, stats calculation, evolution
-- **Data Access Devices:** Arweave species/moves/items fetching
-- **Query Devices:** Agent-friendly data formatting and queries
-- **System Devices:** Administration, monitoring, process info
+**Actor Categories:**
+- **GameManager Actor:** Session coordination and message routing
+- **BattleResolver Actor:** Combat resolution with cryptographic verification
+- **StateKeeper Actor:** Permanent state management and persistence
+- **QueryHandler Actor:** Trustless state queries for agents
+
+**HyperBeam Rust NIF Device Categories:**
+- **Core Logic NIFs:** Battle engine, stats calculation, evolution (Native performance)
+- **Verification NIFs:** HashPath validation, computation graph verification (Cryptographic)
+- **Query NIFs:** Agent-friendly data formatting and queries (High-speed JSON)
+- **Persistence NIFs:** Arweave integration, state management (Direct I/O)
 
 **Development Workflow:**
-1. **Device Implementation:** Write Rust logic with WASM bindings
-2. **Compilation:** `wasm-pack build` to generate WASM binaries
-3. **Integration:** Deploy WASM devices to HyperBEAM process
-4. **Testing:** Rust unit tests + WASM integration tests
+1. **Actor Implementation:** Write Lua actor logic with message handlers
+2. **Rust NIF Development:** Create Rust libraries with `#[rustler::nif]` functions
+3. **NIF Compilation:** Build Rust NIFs as native shared libraries (.so)
+4. **HyperBeam Integration:** Deploy NIFs to HyperBeam's priv directory with dynamic loading
+5. **Testing:** Rust unit tests + Erlang NIF integration tests + actor message testing
 
 ### Local Development Environment
 
-**HyperBEAM Development Server**
-- Local HyperBEAM node for development
-- Device hot-reloading for rapid iteration
-- HTTP endpoint testing
-- Arweave gateway simulation
+**AO Local Development**
+- aos command-line interface for actor development
+- HyperBeam device orchestration testing
+- Message simulation and validation
+- Cryptographic verification testing
 
-**Rust Development Setup:**
+**AO + HyperBeam Development Setup:**
 ```bash
+# Install AO development tools
+npm install -g @permaweb/aoconnect
+npm install -g aos
+
 # Install Rust toolchain
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-rustup target add wasm32-unknown-unknown
 
-# Install WASM tools
-cargo install wasm-pack
-npm install -g @wasm-tool/wasm-pack
+# Install Erlang/OTP and rebar3 (required for HyperBeam)
+# On macOS: brew install erlang rebar3
+# On Ubuntu: sudo apt-get install erlang rebar3
 
-# Development dependencies
-cargo install cargo-watch  # File watching
-cargo install cargo-expand # Macro debugging
+# Clone HyperBeam (edge branch for beta)
+git clone -b edge https://github.com/hyperbeam/hyperbeam.git
+cd hyperbeam
+
+# Start local AO + HyperBeam development
+aos my-actor --local
+# HyperBeam will be integrated with the actor
+
+# Rust device development tools
+cargo install cargo-watch  # File watching for development
 ```
 
-**Device Testing Strategy:**
-- **Unit Tests:** Individual device function testing in Rust
-- **Integration Tests:** Cross-device communication testing  
-- **WASM Tests:** Compiled WASM execution validation
+**Actor Testing Strategy:**
+- **Unit Tests:** Individual actor message handler testing
+- **Integration Tests:** Cross-actor message flow validation
+- **NIF Tests:** HyperBeam native device computation verification
+- **Cryptographic Tests:** HashPath and signature validation
 - **Parity Tests:** Output comparison with TypeScript reference
-- **Performance Tests:** Battle resolution timing benchmarks
+- **Performance Tests:** Native performance throughput and latency benchmarks
 
 ## External Data Architecture
 
@@ -106,32 +138,39 @@ cargo install cargo-expand # Macro debugging
 }
 ```
 
-## Bundle Size Optimization
+## Actor Network Efficiency
 
-### Size Comparison
+### Architecture Comparison
 
-| Architecture | Bundle Size | External Data | Total Footprint |
-|--------------|-------------|---------------|------------------|
-| **Legacy Monolithic** | 4.5MB+ | 0MB | 4.5MB+ (exceeds limits) |
-| **HyperBEAM + WASM** | ~200KB | Unlimited | 200KB + on-demand |
+| Architecture | Actor Footprint | Device Complexity | Scalability | Verifiability |
+|--------------|-----------------|-------------------|-------------|---------------|
+| **Legacy Monolithic** | 4.5MB+ single process | N/A | Limited | None |
+| **AO Actor Model** | ~50KB per actor | Distributed devices | Unlimited | Cryptographic |
 
 ### Optimization Techniques
 
-**Process Level:**
-- Single HyperBEAM process vs. multiple AO processes
-- Lightweight ECS state management
-- External data references instead of embedded data
+**Actor Level:**
+- Lightweight Lua actors with minimal state
+- Message-driven communication eliminates coupling
+- Distributed state across specialized actors
+- Cryptographic message verification without central authority
 
-**Device Level:**  
-- Rust WASM compilation for optimal binary size
-- `wee_alloc` for minimal memory allocator
-- Dead code elimination via Rust compiler optimizations
-- Shared trait libraries to reduce duplication
+**NIF Device Level:**  
+- HyperBeam pluggable native computation engines
+- Specialized NIF devices for specific game mechanics
+- Reusable NIF libraries across multiple actors
+- Native execution environments for maximum performance
+
+**Network Level:**
+- AO's resilient distributed architecture
+- Automatic redundancy and fault tolerance
+- Permissionless actor deployment and discovery
+- Cryptographically verifiable computation paths
 
 **Data Level:**
-- Arweave external storage eliminates bundle bloat
-- Compressed JSON data formats
-- Reference-based entity relationships
-- Lazy loading of non-essential data
+- Arweave permanent storage with infinite retention
+- HashPath-linked data relationships
+- Trustless data verification without central database
+- On-demand loading through device orchestration
 
-This tech stack achieves **95% bundle size reduction** while maintaining **unlimited data capacity** and **type-safe device development**.
+This architecture achieves **unlimited scalability** while maintaining **mathematical verifiability** and **permissionless extensibility**.

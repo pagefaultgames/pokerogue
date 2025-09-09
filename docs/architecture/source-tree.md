@@ -1,243 +1,339 @@
 # Source Tree
 
-## Repository Structure
+## AO Actor Network Repository Structure
 
 ```plaintext
-pokerogue-ao-hyperbeam-migration/
-├── devices/                              # Rust WASM Device Implementations
-│   ├── shared/                           # Shared Rust Types & Traits
+pokerogue-ao-actor-network/
+├── actors/                               # Independent AO Actor Implementations
+│   ├── game-manager/                     # GameManager Actor
 │   │   ├── src/
-│   │   │   ├── lib.rs                   # Core ECS types, device traits
-│   │   │   ├── pokemon/                 # Pokemon-specific types
-│   │   │   │   ├── species.rs           # Species data structures
-│   │   │   │   ├── stats.rs             # Stat calculation types
-│   │   │   │   ├── moves.rs             # Move data structures
-│   │   │   │   └── battle.rs            # Battle state types
-│   │   │   ├── ecs/                     # ECS framework types
-│   │   │   │   ├── entity.rs            # Entity management
-│   │   │   │   ├── component.rs         # Component definitions
-│   │   │   │   └── message.rs           # Device message protocols
-│   │   │   └── arweave/                 # Arweave integration
-│   │   │       ├── client.rs            # Arweave gateway client
-│   │   │       └── cache.rs             # Data caching system
-│   │   ├── Cargo.toml                   # Shared library dependencies
-│   │   └── README.md                    # Shared library documentation
+│   │   │   ├── main.lua                  # Main actor implementation
+│   │   │   ├── handlers/                 # Message handlers
+│   │   │   │   ├── session-manager.lua  # Player session coordination
+│   │   │   │   ├── message-router.lua   # Actor message routing
+│   │   │   │   └── actor-discovery.lua  # Network discovery protocols
+│   │   │   ├── crypto/                   # Cryptographic utilities
+│   │   │   │   ├── signature-verify.lua # Message signature verification
+│   │   │   │   └── hash-path.lua        # HashPath message chain management
+│   │   │   └── utils/                    # Utility functions
+│   │   │       ├── json-schema.lua      # Message schema validation
+│   │   │       └── error-handling.lua   # Error handling patterns
+│   │   ├── tests/                        # Actor unit tests
+│   │   │   ├── message-tests.lua        # Message handler testing
+│   │   │   └── crypto-tests.lua         # Cryptographic verification tests
+│   │   ├── deploy/                       # Deployment configuration
+│   │   │   ├── actor-config.lua         # Actor configuration
+│   │   │   └── deploy.sh                # Deployment script
+│   │   └── README.md                     # Actor documentation
 │   │
-│   ├── pokemon-stats/                    # Stats Calculation Device
+│   ├── battle-resolver/                  # BattleResolver Actor
 │   │   ├── src/
-│   │   │   ├── lib.rs                   # WASM device implementation
-│   │   │   ├── calculator.rs            # Pokemon stat formulas
-│   │   │   └── nature.rs                # Nature modifier logic
-│   │   ├── Cargo.toml                   # Device dependencies
-│   │   ├── tests/                       # Device unit tests
-│   │   └── README.md                    # Device documentation
-│   │
-│   ├── battle-engine/                    # Battle Resolution Device
-│   │   ├── src/
-│   │   │   ├── lib.rs                   # WASM battle device
-│   │   │   ├── damage.rs                # Damage calculation engine
-│   │   │   ├── type_chart.rs            # Type effectiveness system
-│   │   │   ├── moves/                   # Move effect implementations
-│   │   │   │   ├── physical.rs          # Physical move effects
-│   │   │   │   ├── special.rs           # Special move effects
-│   │   │   │   └── status.rs            # Status move effects
-│   │   │   └── conditions.rs            # Status conditions logic
-│   │   ├── Cargo.toml
+│   │   │   ├── main.lua                  # Main battle actor
+│   │   │   ├── handlers/                 # Battle message handlers
+│   │   │   │   ├── battle-execution.lua # Battle turn execution
+│   │   │   │   ├── damage-calculation.lua # Damage computation
+│   │   │   │   └── outcome-verification.lua # Battle outcome verification
+│   │   │   ├── devices/                  # HyperBeam device orchestration
+│   │   │   │   ├── battle-engine.lua    # Battle engine device integration
+│   │   │   │   └── crypto-verifier.lua  # Cryptographic verification
+│   │   │   └── battle-logic/             # Game mechanics
+│   │   │       ├── type-effectiveness.lua # Type chart calculations
+│   │   │       ├── status-effects.lua   # Status condition handling
+│   │   │       └── move-effects.lua     # Move effect implementations
 │   │   ├── tests/
+│   │   ├── deploy/
 │   │   └── README.md
 │   │
-│   ├── evolution-system/                 # Evolution Logic Device
+│   ├── state-keeper/                     # StateKeeper Actor
 │   │   ├── src/
-│   │   │   ├── lib.rs                   # Evolution device implementation
-│   │   │   ├── triggers.rs              # Evolution trigger detection
-│   │   │   ├── transformations.rs       # Species transformation logic
-│   │   │   └── conditions.rs            # Special evolution conditions
-│   │   ├── Cargo.toml
+│   │   │   ├── main.lua                  # State management actor
+│   │   │   ├── handlers/                 # State message handlers
+│   │   │   │   ├── state-persistence.lua # Arweave state storage
+│   │   │   │   ├── state-synchronization.lua # Cross-actor sync
+│   │   │   │   └── integrity-verification.lua # State integrity checks
+│   │   │   ├── devices/                  # Device orchestration
+│   │   │   │   └── state-manager.lua    # State management device
+│   │   │   └── storage/                  # Storage implementations
+│   │   │       ├── arweave-client.lua   # Arweave integration
+│   │   │       └── cache-manager.lua    # Local caching system
 │   │   ├── tests/
+│   │   ├── deploy/
 │   │   └── README.md
 │   │
-│   ├── arweave-data/                     # External Data Access Device
+│   ├── query-handler/                    # QueryHandler Actor
 │   │   ├── src/
-│   │   │   ├── lib.rs                   # Data fetching device
-│   │   │   ├── species.rs               # Species data access
-│   │   │   ├── moves.rs                 # Moves data access
-│   │   │   ├── items.rs                 # Items data access
-│   │   │   └── cache.rs                 # Performance caching
-│   │   ├── Cargo.toml
+│   │   │   ├── main.lua                  # Query processing actor
+│   │   │   ├── handlers/                 # Query message handlers
+│   │   │   │   ├── trustless-queries.lua # Verified query processing
+│   │   │   │   ├── agent-interface.lua  # Agent-friendly interfaces
+│   │   │   │   └── data-aggregation.lua # Multi-actor data synthesis
+│   │   │   ├── devices/                  # Device orchestration
+│   │   │   │   └── query-processor.lua  # Query processing device
+│   │   │   └── formatters/               # Data formatting
+│   │   │       ├── agent-formatters.lua # Agent-optimized data structures
+│   │   │       └── verification-formatters.lua # Cryptographic proof formatting
 │   │   ├── tests/
+│   │   ├── deploy/
 │   │   └── README.md
 │   │
-│   ├── query-handler/                    # Agent Query Device
-│   │   ├── src/
-│   │   │   ├── lib.rs                   # Agent query interface
-│   │   │   ├── formatters.rs            # Data formatting utilities
-│   │   │   ├── aggregators.rs           # Data aggregation logic
-│   │   │   └── validators.rs            # Query validation
-│   │   ├── Cargo.toml
-│   │   ├── tests/
-│   │   └── README.md
+│   ├── shared/                           # Shared Actor Libraries
+│   │   ├── crypto/                       # Cryptographic utilities
+│   │   │   ├── hash-path.lua            # HashPath chain management
+│   │   │   ├── signature-utils.lua      # Digital signature utilities
+│   │   │   └── verification-proofs.lua  # Cryptographic proof generation
+│   │   ├── messaging/                    # Message protocols
+│   │   │   ├── actor-messages.lua       # Standard actor message formats
+│   │   │   ├── device-messages.lua      # HyperBeam device message protocols
+│   │   │   └── error-messages.lua       # Error handling messages
+│   │   ├── data-models/                  # Shared data structures
+│   │   │   ├── pokemon-models.lua       # Pokemon data structures
+│   │   │   ├── battle-models.lua        # Battle state structures
+│   │   │   └── player-models.lua        # Player state structures
+│   │   └── utils/                        # Common utilities
+│   │       ├── json-utils.lua           # JSON serialization/deserialization
+│   │       ├── validation-utils.lua     # Data validation functions
+│   │       └── logging-utils.lua        # Structured logging
 │   │
-│   ├── Cargo.toml                        # Workspace configuration
-│   ├── build-all-devices.sh             # Device build automation
-│   └── README.md                         # Device development guide
+│   ├── network-config/                   # Network Configuration
+│   │   ├── actor-registry.lua           # Actor discovery registry
+│   │   ├── message-schemas.lua          # Network message schemas
+│   │   └── verification-standards.lua   # Cryptographic standards
+│   │
+│   └── README.md                         # Actor development guide
 │
-├── hyperbeam-process/                    # HyperBEAM Process Configuration
-│   ├── config/
-│   │   ├── process.toml                 # Process configuration
-│   │   ├── devices.json                 # Device registry
-│   │   └── routing.json                 # Message routing rules
-│   ├── lua/
-│   │   ├── init.lua                     # Process initialization
-│   │   ├── message_router.lua           # Device message routing
-│   │   ├── state_manager.lua            # ECS state management
-│   │   └── http_handlers.lua            # HTTP interface handlers
-│   ├── deploy/
-│   │   ├── deploy.sh                    # Deployment automation
-│   │   └── health_check.lua             # Process health monitoring
-│   └── README.md                         # Process setup guide
+├── hyperbeam-devices/                    # HyperBeam Rust Computation Devices
+│   ├── battle-engine/                    # Battle Engine Rust Device
+│   │   ├── src/
+│   │   │   ├── lib.rs                    # Main Rust library with NIF exports
+│   │   │   ├── battle/                   # Battle logic modules
+│   │   │   │   ├── mod.rs               # Battle module exports
+│   │   │   │   ├── damage_calculator.rs # High-performance damage calculation
+│   │   │   │   ├── type_effectiveness.rs # Type chart implementation
+│   │   │   │   └── move_processor.rs    # Move effect processing
+│   │   │   ├── crypto/                   # Cryptographic utilities
+│   │   │   │   ├── mod.rs               # Crypto module exports
+│   │   │   │   └── verification.rs     # Battle outcome verification
+│   │   │   └── arweave/                 # Arweave data integration
+│   │   │       ├── mod.rs               # Arweave module exports
+│   │   │       └── client.rs            # HTTP client for Pokemon data
+│   │   ├── Cargo.toml                   # Rust dependencies (rustler, serde, etc.)
+│   │   ├── build.rs                     # Build script for HyperBeam integration
+│   │   ├── tests/                       # Rust unit and integration tests
+│   │   │   ├── battle_tests.rs          # Battle logic testing
+│   │   │   └── integration_tests.rs     # NIF integration testing
+│   │   └── README.md
+│   │
+│   ├── state-manager/                    # State Management Rust Device
+│   │   ├── src/
+│   │   │   ├── lib.rs                    # Main Rust library with NIF exports
+│   │   │   ├── persistence/              # State persistence modules
+│   │   │   │   ├── mod.rs               # Persistence module exports
+│   │   │   │   ├── arweave.rs           # High-performance Arweave client
+│   │   │   │   └── cache.rs             # Local state caching
+│   │   │   ├── integrity/                # State integrity verification
+│   │   │   │   ├── mod.rs               # Integrity module exports
+│   │   │   │   ├── hash_verification.rs # Cryptographic hash verification
+│   │   │   │   └── state_validation.rs  # State structure validation
+│   │   │   └── sync/                     # Multi-actor synchronization
+│   │   │       ├── mod.rs               # Sync module exports
+│   │   │       └── actor_coordination.rs # Cross-actor state coordination
+│   │   ├── Cargo.toml                   # Rust dependencies (rustler, ureq, tokio)
+│   │   ├── build.rs                     # Build script for HyperBeam integration
+│   │   ├── tests/                       # Rust unit and integration tests
+│   │   └── README.md
+│   │
+│   ├── crypto-verifier/                  # Cryptographic Verification Rust Device
+│   │   ├── src/
+│   │   │   ├── lib.rs                    # Main Rust library with NIF exports
+│   │   │   ├── hash_path/                # HashPath verification modules
+│   │   │   │   ├── mod.rs               # HashPath module exports
+│   │   │   │   ├── chain_validator.rs   # Message chain validation
+│   │   │   │   └── link_verifier.rs     # Individual link verification
+│   │   │   ├── computation/              # Computation graph verification
+│   │   │   │   ├── mod.rs               # Computation module exports
+│   │   │   │   ├── graph_validator.rs   # Computation graph verification
+│   │   │   │   └── proof_generator.rs   # Cryptographic proof generation
+│   │   │   └── signatures/               # Digital signature verification
+│   │   │       ├── mod.rs               # Signatures module exports
+│   │   │       └── ed25519_verifier.rs  # Ed25519 signature verification
+│   │   ├── Cargo.toml                   # Rust dependencies (rustler, ed25519, ring)
+│   │   ├── build.rs                     # Build script for HyperBeam integration
+│   │   ├── tests/                       # Rust cryptographic tests
+│   │   └── README.md
+│   │
+│   ├── query-processor/                  # Query Processing Rust Device
+│   │   ├── src/
+│   │   │   ├── lib.rs                    # Main Rust library with NIF exports
+│   │   │   ├── formatters/               # Data formatting modules
+│   │   │   │   ├── mod.rs               # Formatters module exports
+│   │   │   │   ├── agent_formatter.rs   # Agent-friendly data structures
+│   │   │   │   └── json_optimizer.rs    # JSON response optimization
+│   │   │   ├── aggregation/              # Data aggregation modules
+│   │   │   │   ├── mod.rs               # Aggregation module exports
+│   │   │   │   ├── multi_actor.rs       # Cross-actor data aggregation
+│   │   │   │   └── parallel_processor.rs # Parallel data processing
+│   │   │   └── verification/             # Query verification modules
+│   │   │       ├── mod.rs               # Verification module exports
+│   │   │       └── trustless_queries.rs # Trustless query processing
+│   │   ├── Cargo.toml                   # Rust dependencies (rustler, rayon, serde)
+│   │   ├── build.rs                     # Build script for HyperBeam integration
+│   │   ├── tests/                       # Rust query processing tests
+│   │   └── README.md
+│   │
+│   ├── shared-device-libs/               # Shared Rust Device Libraries
+│   │   ├── src/
+│   │   │   ├── lib.rs                    # Shared library exports
+│   │   │   ├── crypto_utils.rs          # Common cryptographic operations
+│   │   │   ├── arweave_client.rs        # Shared Arweave HTTP client
+│   │   │   ├── json_schemas.rs          # Shared data structures
+│   │   │   └── error_handling.rs        # Common error types and handling
+│   │   ├── Cargo.toml                   # Shared Rust dependencies
+│   │   └── README.md
+│   │
+│   └── Cargo.toml                        # Workspace configuration for all devices
 │
-├── arweave-data/                         # External Data Storage
-│   ├── species/                          # Pokemon Species Data
-│   │   ├── generation-1/                # Gen 1 Pokemon (151 species)
-│   │   │   ├── 001-bulbasaur.json      # Individual species files
-│   │   │   ├── 002-ivysaur.json
+├── arweave-data/                         # Permanent External Data
+│   ├── pokemon-species/                  # Pokemon Species Data
+│   │   ├── generation-1/                # Gen 1 Pokemon
+│   │   │   ├── bulbasaur.json           # Individual species data
 │   │   │   └── ...
-│   │   ├── generation-2/                # Gen 2 Pokemon
 │   │   └── ...
-│   ├── moves/                            # Move Definitions
-│   │   ├── physical-moves.json          # Physical move database
-│   │   ├── special-moves.json           # Special move database
-│   │   ├── status-moves.json            # Status move database
-│   │   └── type-effectiveness.json      # Type chart data
-│   ├── items/                            # Item Database
-│   │   ├── healing-items.json           # Potions, berries, etc.
-│   │   ├── battle-items.json            # X Attack, X Defense, etc.
-│   │   └── held-items.json              # Held item effects
-│   ├── upload/
-│   │   ├── upload-species.js            # Species data upload scripts
-│   │   ├── upload-moves.js              # Moves data upload scripts
-│   │   └── batch-upload.sh              # Batch upload automation
+│   ├── moves-database/                   # Move Definitions
+│   │   ├── physical-moves.json          # Physical moves
+│   │   ├── special-moves.json           # Special moves
+│   │   └── status-moves.json            # Status moves
+│   ├── type-effectiveness/               # Type Chart Data
+│   │   └── type-chart.json              # Complete type effectiveness matrix
+│   ├── deployment/                       # Data deployment scripts
+│   │   ├── upload-species.js            # Species data upload
+│   │   └── verify-uploads.js            # Upload verification
 │   └── README.md                         # Data structure documentation
 │
-├── typescript-reference/                 # Original TypeScript Implementation
-│   └── src/                              # Current PokéRogue source (unchanged)
-│       ├── battle/                      # Reference battle system
-│       ├── pokemon/                     # Reference Pokemon mechanics
-│       ├── moves/                       # Reference move implementations
-│       └── ...                          # Complete original codebase
+├── typescript-reference/                 # Original Implementation Reference
+│   └── src/                              # Unmodified original PokéRogue
+│       └── ...                          # Complete reference implementation
 │
-├── testing/                              # Testing Infrastructure
-│   ├── device-tests/                    # Device-specific tests
-│   │   ├── unit/                        # Rust unit tests
-│   │   ├── integration/                 # Cross-device integration tests
-│   │   └── wasm/                        # WASM execution tests
-│   ├── parity-testing/                  # Cross-Implementation Validation
-│   │   ├── test-harness/                # Automated parity validation
-│   │   ├── test-cases/                  # Battle scenario test cases
-│   │   └── reports/                     # Generated parity reports
-│   ├── performance/                     # Performance Testing
-│   │   ├── battle-benchmarks.rs        # Battle resolution timing
-│   │   ├── device-benchmarks.rs        # Individual device performance
-│   │   └── memory-usage.rs              # Memory footprint analysis
+├── testing/                              # Comprehensive Testing Suite
+│   ├── actor-tests/                     # Actor-specific testing
+│   │   ├── message-flow-tests/          # Cross-actor message testing
+│   │   ├── cryptographic-tests/         # Cryptographic verification testing
+│   │   └── integration-tests/           # Full actor network testing
+│   ├── device-tests/                    # HyperBeam device testing
+│   │   ├── computation-tests/           # Device computation verification
+│   │   └── orchestration-tests/        # Actor-device integration testing
+│   ├── parity-testing/                  # TypeScript compatibility validation
+│   │   ├── battle-parity/              # Battle outcome comparison
+│   │   ├── stat-calculation-parity/    # Stat calculation verification
+│   │   └── parity-reports/             # Generated comparison reports
+│   ├── network-tests/                   # Actor network testing
+│   │   ├── discovery-tests/            # Actor discovery testing
+│   │   ├── message-verification-tests/ # Cryptographic message testing
+│   │   └── scalability-tests/          # Network scalability testing
 │   └── README.md                        # Testing strategy guide
 │
 ├── development-tools/                    # Development Infrastructure
-│   ├── hyperbeam-local/                 # Local HyperBEAM development setup
-│   │   ├── start-local.sh               # Local development server
-│   │   ├── config/                      # Local configuration files
+│   ├── local-ao-network/                # Local AO development environment
+│   │   ├── start-network.sh             # Local actor network startup
+│   │   ├── aos-configs/                 # Local aos configurations
 │   │   └── docker-compose.yml           # Containerized development
-│   ├── data-migration/                  # TypeScript to Rust conversion tools
-│   │   ├── species-converter.js         # Species data conversion
-│   │   ├── moves-converter.js           # Moves data conversion
-│   │   └── validation.js                # Data validation utilities
-│   ├── debugging/                       # Development debugging tools
-│   │   ├── device-inspector.js          # WASM device debugging
-│   │   ├── message-tracer.js            # Message flow tracing
-│   │   └── state-dumper.js              # ECS state inspection
+│   ├── actor-debugger/                  # Actor debugging tools
+│   │   ├── message-tracer.lua          # Message flow tracing
+│   │   ├── state-inspector.lua         # Actor state inspection
+│   │   └── crypto-debugger.lua         # Cryptographic verification debugging
+│   ├── data-migration/                  # Data conversion tools
+│   │   ├── typescript-to-lua.js        # Code conversion utilities
+│   │   ├── data-validator.js           # Data integrity validation
+│   │   └── migration-scripts/          # Automated migration tools
 │   └── README.md                        # Development workflow guide
 │
-├── documentation/                        # Project Documentation
-│   ├── architecture/                    # Architecture documentation (this file)
-│   ├── devices/                         # Device-specific documentation
-│   │   ├── device-development-guide.md # How to create new devices
-│   │   ├── rust-wasm-patterns.md       # Common WASM patterns
-│   │   └── performance-guidelines.md   # Device optimization guide
-│   ├── deployment/                      # Deployment documentation
-│   │   ├── hyperbeam-setup.md          # HyperBEAM process deployment
-│   │   ├── arweave-data-upload.md      # External data deployment
-│   │   └── monitoring.md                # Production monitoring setup
-│   └── api/                             # API documentation
-│       ├── device-interfaces.md         # Device message protocols
-│       ├── agent-api.md                 # Agent interaction guide
-│       └── http-endpoints.md            # HTTP API reference
+├── documentation/                        # Comprehensive Documentation
+│   ├── actor-guides/                    # Actor-specific guides
+│   │   ├── actor-development.md        # Actor development guide
+│   │   ├── message-protocols.md        # Message protocol specifications
+│   │   └── cryptographic-patterns.md  # Cryptographic implementation patterns
+│   ├── device-guides/                   # HyperBeam device guides
+│   │   ├── device-development.md       # Device development guide
+│   │   └── orchestration-patterns.md  # Device orchestration patterns
+│   ├── network-guides/                  # Network operation guides
+│   │   ├── actor-discovery.md          # Actor discovery protocols
+│   │   ├── network-security.md         # Network security patterns
+│   │   └── scalability-patterns.md    # Network scalability patterns
+│   └── api-reference/                   # API Documentation
+│       ├── actor-apis.md               # Actor message APIs
+│       ├── device-apis.md              # Device interface APIs
+│       └── agent-integration.md        # Agent integration guide
 │
-├── scripts/                              # Build and Automation Scripts
+├── deployment/                           # Network Deployment
+│   ├── actor-deployment/                # Actor deployment scripts
+│   │   ├── deploy-actors.sh            # Multi-actor deployment
+│   │   ├── verify-network.sh           # Network verification
+│   │   └── rollback-actors.sh          # Rollback procedures
+│   ├── device-deployment/               # Device deployment
+│   │   └── deploy-devices.sh           # HyperBeam device deployment
+│   ├── monitoring/                      # Network monitoring
+│   │   ├── actor-health-check.lua     # Actor health monitoring
+│   │   ├── message-flow-monitor.lua   # Message flow monitoring
+│   │   └── crypto-audit.lua           # Cryptographic audit tools
+│   └── README.md                        # Deployment guide
+│
+├── scripts/                              # Automation Scripts
 │   ├── build/                           # Build automation
-│   │   ├── build-all-devices.sh        # Complete device build pipeline
-│   │   ├── optimize-wasm.sh            # WASM size optimization
-│   │   └── validate-builds.sh          # Build validation
-│   ├── testing/                         # Testing automation
-│   │   ├── run-device-tests.sh         # Device test execution
-│   │   ├── run-parity-tests.sh         # Parity validation
-│   │   └── performance-suite.sh        # Performance benchmarking
+│   │   ├── build-all-actors.sh         # Actor build pipeline (Lua)
+│   │   ├── build-rust-devices.sh       # Rust device compilation pipeline
+│   │   ├── deploy-devices-to-hyperbeam.sh # Copy .so files to HyperBeam priv directory
+│   │   └── validate-builds.sh          # Build validation (Lua + Rust)
+│   ├── testing/                         # Test automation
+│   │   ├── run-actor-tests.sh          # Actor test execution
+│   │   ├── run-network-tests.sh        # Network integration tests
+│   │   └── run-parity-tests.sh         # TypeScript parity validation
 │   ├── deployment/                      # Deployment automation
-│   │   ├── deploy-hyperbeam.sh         # HyperBEAM process deployment
-│   │   ├── upload-arweave-data.sh      # External data deployment
-│   │   └── health-check.sh             # Post-deployment validation
-│   └── maintenance/                     # Maintenance scripts
-│       ├── update-external-data.sh     # Data update automation
-│       ├── device-hot-reload.sh        # Development device updates
-│       └── backup-process-state.sh     # State backup utilities
+│   │   ├── deploy-network.sh           # Complete network deployment
+│   │   ├── update-actors.sh            # Actor update procedures
+│   │   └── verify-deployment.sh        # Post-deployment verification
+│   └── maintenance/                     # Network maintenance
+│       ├── backup-actor-states.sh      # State backup procedures
+│       ├── update-data.sh              # External data updates
+│       └── network-health-check.sh     # Comprehensive network health check
 │
-├── dist/                                 # Built Artifacts (Generated)
-│   ├── devices/                         # Compiled WASM devices
-│   │   ├── pokemon-stats.wasm           # Stats device binary
-│   │   ├── battle-engine.wasm           # Battle engine binary
-│   │   ├── evolution-system.wasm        # Evolution device binary
-│   │   ├── arweave-data.wasm           # Data access device binary
-│   │   └── query-handler.wasm           # Query device binary
-│   ├── hyperbeam/                       # HyperBEAM deployment package
-│   │   ├── process.lua                  # Main process file
-│   │   ├── devices.json                 # Device registry
-│   │   └── config.toml                  # Process configuration
-│   └── arweave/                         # Processed external data
-│       ├── species-transactions.json   # Species upload results
-│       ├── moves-transactions.json     # Moves upload results
-│       └── data-references.json        # Transaction ID references
+├── .aos/                                 # AO Development Configuration
+│   ├── local-config.json               # Local AO network configuration
+│   └── actor-templates/                 # Actor template configurations
 │
-├── .github/                              # GitHub Integration
-│   └── workflows/                       # CI/CD Pipelines
-│       ├── build-devices.yml           # Device build and test
-│       ├── parity-validation.yml       # TypeScript compatibility check
-│       ├── performance-benchmarks.yml  # Performance regression testing
-│       └── deploy.yml                   # Automated deployment
-│
-├── Cargo.toml                           # Root workspace configuration
-├── package.json                         # Node.js tools and scripts
-├── README.md                            # Project overview and setup
-└── CHANGELOG.md                         # Version history and changes
+└── package.json                         # Node.js tooling configuration
+├── README.md                            # Project overview and network setup
+└── NETWORK-ARCHITECTURE.md             # Network architecture documentation
 ```
 
-## Key Structural Benefits
+## Key Architectural Benefits
 
-### **Modular Device Architecture**
-- Each device is an independent Rust crate with its own tests and documentation
-- Shared types and utilities prevent duplication across devices
-- Clear separation between game logic (devices) and state management (process)
+### **Distributed Actor Architecture**
+- Independent actors with specialized responsibilities enable horizontal scaling
+- Cryptographic message-based communication ensures trustless operation
+- Fault isolation prevents single actor failures from affecting the entire network
+- Permissionless actor deployment enables ecosystem expansion
 
-### **External Data Organization**
-- Pokemon data organized by generation for efficient partial loading
-- Move and item databases structured for optimal query performance
-- Upload scripts enable automated data deployment to Arweave
+### **Cryptographic Verification Integration**
+- HashPath message chains provide mathematical verifiability of all game outcomes
+- Digital signature verification ensures message authenticity and integrity
+- Computation graph verification enables trustless agent validation
+- Permanent Arweave storage with cryptographic proof ensures data integrity
 
-### **Development Workflow**
-- Local HyperBEAM development environment for rapid iteration
-- Automated build pipeline for all devices
-- Comprehensive testing strategy with parity validation
+### **HyperBeam Device Orchestration**
+- Pluggable computation devices enable modular game logic implementation
+- Device specialization allows for optimized computation engines
+- Reusable device libraries prevent duplication across actors
+- Custom execution environments support complex game mechanics
 
-### **Bundle Size Optimization**
-- WASM devices compile to optimal binary sizes
-- External data eliminates embedded data bloat
-- Single HyperBEAM process reduces deployment complexity
+### **Agent-First Design**
+- Native support for autonomous agent participation as first-class network participants
+- Trustless query interfaces enable agents to verify all game state independently
+- Standardized message protocols support diverse agent implementations
+- Permissionless agent integration enables unlimited AI ecosystem growth
 
-This structure supports the **95% bundle size reduction** goal while maintaining **modular development** and **type-safe implementation** of all Pokemon game mechanics.
+### **Network Scalability**
+- Distributed state management across specialized actors
+- Message-based communication enables unlimited network expansion
+- Actor discovery protocols support dynamic network topology
+- Load distribution through specialized actor roles
+
+This structure achieves **unlimited scalability** through distributed actors, **mathematical verifiability** through cryptographic integration, and **permissionless extensibility** through standardized network protocols.
