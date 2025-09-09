@@ -1,0 +1,14 @@
+version = 1
+
+# Considered code
+[[annotations]]
+path = ["manifest.webmanifest"]
+SPDX-FileCopyrightText = "2024-2025 Pagefault Games"
+SPDX-License-Identifier = "AGPL-3.0-only"
+
+
+# Of no interest or merit
+[[annotations]]
+path = ["exp-sprites.json", ".gitkeep"]
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "CC0-1.0"
