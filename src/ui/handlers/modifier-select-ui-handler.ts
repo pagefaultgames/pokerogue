@@ -179,7 +179,8 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.player = args[0];
 
     const partyHasHeldItem =
-      this.player && !!globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.isTransferable).length;
+      this.player
+      && globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.isTransferable).length > 0;
     const canLockRarities = !!globalScene.findModifier(m => m instanceof LockModifierTiersModifier);
 
     this.transferButtonContainer.setVisible(false);
@@ -480,12 +481,10 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
             }
           } else if (this.cursor) {
             success = this.setCursor(this.cursor - 1);
+          } else if (this.rowCursor === 1 && this.options.length === 0) {
+            success = false;
           } else {
-            if (this.rowCursor === 1 && this.options.length === 0) {
-              success = false;
-            } else {
-              success = this.setCursor(this.getRowItems(this.rowCursor) - 1);
-            }
+            success = this.setCursor(this.getRowItems(this.rowCursor) - 1);
           }
           break;
         case Button.RIGHT:
@@ -514,12 +513,10 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
             }
           } else if (this.cursor < this.getRowItems(this.rowCursor) - 1) {
             success = this.setCursor(this.cursor + 1);
+          } else if (this.rowCursor === 1 && this.options.length === 0) {
+            success = this.setRowCursor(0);
           } else {
-            if (this.rowCursor === 1 && this.options.length === 0) {
-              success = this.setRowCursor(0);
-            } else {
-              success = this.setCursor(0);
-            }
+            success = this.setCursor(0);
           }
           break;
       }
@@ -541,8 +538,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.modifierContainer.add(this.cursorObj);
     }
 
-    const options =
-      this.rowCursor === 1 ? this.options : this.shopOptionsRows[this.shopOptionsRows.length - (this.rowCursor - 1)];
+    const options = this.rowCursor === 1 ? this.options : this.shopOptionsRows.at(-(this.rowCursor - 1))!;
 
     this.cursorObj.setScale(this.rowCursor === 1 ? 2 : this.rowCursor >= 2 ? 1.5 : 1);
 
@@ -554,8 +550,8 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
         this.cursorObj.setScale(1.25);
         this.cursorObj.setPosition(
           globalScene.scaledCanvas.width / 3 + 23,
-          -globalScene.scaledCanvas.height / 2 -
-            (this.shopOptionsRows.length > 1 ? SINGLE_SHOP_ROW_YOFFSET - 2 : DOUBLE_SHOP_ROW_YOFFSET - 2),
+          -globalScene.scaledCanvas.height / 2
+            - (this.shopOptionsRows.length > 1 ? SINGLE_SHOP_ROW_YOFFSET - 2 : DOUBLE_SHOP_ROW_YOFFSET - 2),
         );
         ui.showText(i18next.t("modifierSelectUiHandler:continueNextWaveDescription"));
         return ret;
@@ -566,16 +562,16 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
         // Cursor on free items
         this.cursorObj.setPosition(
           sliceWidth * (cursor + 1) + sliceWidth * 0.5 - 20,
-          -globalScene.scaledCanvas.height / 2 -
-            (this.shopOptionsRows.length > 1 ? SINGLE_SHOP_ROW_YOFFSET - 2 : DOUBLE_SHOP_ROW_YOFFSET - 2),
+          -globalScene.scaledCanvas.height / 2
+            - (this.shopOptionsRows.length > 1 ? SINGLE_SHOP_ROW_YOFFSET - 2 : DOUBLE_SHOP_ROW_YOFFSET - 2),
         );
       } else {
         // Cursor on paying items
         this.cursorObj.setPosition(
           sliceWidth * (cursor + 1) + sliceWidth * 0.5 - 16,
-          -globalScene.scaledCanvas.height / 2 -
-            globalScene.game.canvas.height / 32 -
-            (-14 + 28 * (this.rowCursor - (this.shopOptionsRows.length - 1))),
+          -globalScene.scaledCanvas.height / 2
+            - globalScene.game.canvas.height / 32
+            - (-14 + 28 * (this.rowCursor - (this.shopOptionsRows.length - 1))),
         );
       }
 
@@ -657,7 +653,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
       case 1:
         return this.options.length;
       default:
-        return this.shopOptionsRows[this.shopOptionsRows.length - (rowCursor - 1)].length;
+        return this.shopOptionsRows.at(-(rowCursor - 1))!.length;
     }
   }
 
@@ -747,7 +743,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
           duration: 250,
           ease: "Cubic.easeIn",
           onComplete: () => {
-            if (!this.options.length) {
+            if (this.options.length === 0) {
               container.setVisible(false);
             } else {
               container.setAlpha(1);
