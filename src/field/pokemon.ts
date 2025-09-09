@@ -3049,7 +3049,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public generateAndPopulateMoveset(): void {
     this.moveset = [];
     let movePool: [MoveId, number][] = [];
-    const allLevelMoves = this.getLevelMoves(1, true, true);
+    const allLevelMoves = this.getLevelMoves(1, true, true, this.hasTrainer());
     if (!allLevelMoves) {
       console.warn("Error encountered trying to generate moveset for:", this.species.name);
       return;
