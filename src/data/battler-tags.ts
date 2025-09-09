@@ -2159,7 +2159,7 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
       null,
       false,
       null,
-      true,
+      false,
     );
   }
 
