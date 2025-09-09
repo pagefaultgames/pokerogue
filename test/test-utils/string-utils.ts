@@ -34,10 +34,10 @@ interface getEnumStrOptions {
  * @returns The stringified representation of `val` as dictated by the options.
  * @example
  * ```ts
- * enum fakeEnum {
- *   ONE: 1,
- *   TWO: 2,
- *   THREE: 3,
+ * enum testEnum {
+ *   ONE = 1,
+ *   TWO = 2,
+ *   THREE = 3,
  * }
  * getEnumStr(fakeEnum, fakeEnum.ONE); // Output: "ONE (=1)"
  * getEnumStr(fakeEnum, fakeEnum.TWO, {casing: "Title", prefix: "fakeEnum.", suffix: "!!!"}); // Output: "fakeEnum.TWO!!! (=2)"
@@ -174,10 +174,14 @@ export function getStatName(s: Stat): string {
  * Convert an object into a oneline diff to be shown in an error message.
  * @param obj - The object to return the oneline diff of
  * @returns The updated diff
+ * @example
+ * ```ts
+ * const diff = getOnelineDiffStr.call(this, obj)
+ * ```
  */
 export function getOnelineDiffStr(this: MatcherState, obj: unknown): string {
   return this.utils
     .stringify(obj, undefined, { maxLength: 35, indent: 0, printBasicPrototype: false })
     .replace(/\n/g, " ") // Replace newlines with spaces
-    .replace(/,(\s*)}$/g, "$1}");
+    .replace(/,(\s*)\}$/g, "$1}"); // Trim trailing commas
 }

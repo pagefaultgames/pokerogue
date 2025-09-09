@@ -12,7 +12,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 export function toHaveFainted(this: MatcherState, received: unknown): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
     return {
-      pass: false,
+      pass: this.isNot,
       message: () => `Expected to receive a Pokémon, but got ${receivedStr(received)}!`,
     };
   }

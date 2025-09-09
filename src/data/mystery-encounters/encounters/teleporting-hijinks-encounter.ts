@@ -122,7 +122,7 @@ export const TeleportingHijinksEncounter: MysteryEncounter = MysteryEncounterBui
       .withDialogue({
         buttonLabel: `${namespace}:option.2.label`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.2.disabled_tooltip`,
+        disabledButtonTooltip: `${namespace}:option.2.disabledTooltip`,
         selected: [
           {
             text: `${namespace}:option.2.selected`,
@@ -165,7 +165,7 @@ export const TeleportingHijinksEncounter: MysteryEncounter = MysteryEncounterBui
       const config: EnemyPartyConfig = {
         pokemonConfigs: [
           {
-            level: level,
+            level,
             species: bossSpecies,
             dataSource: new PokemonData(bossPokemon),
             isBoss: true,
@@ -221,13 +221,13 @@ async function doBiomeTransitionDialogueAndBattleInit() {
   const config: EnemyPartyConfig = {
     pokemonConfigs: [
       {
-        level: level,
+        level,
         species: bossSpecies,
         dataSource: new PokemonData(bossPokemon),
         isBoss: true,
         tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
         mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-          queueEncounterMessage(`${namespace}:boss_enraged`);
+          queueEncounterMessage(`${namespace}:bossEnraged`);
           globalScene.phaseManager.unshiftNew(
             "StatStageChangePhase",
             pokemon.getBattlerIndex(),

@@ -87,7 +87,7 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter = MysteryEncounter
     },
     {
       speaker: `${namespace}:speaker`,
-      text: `${namespace}:intro_dialogue`,
+      text: `${namespace}:introDialogue`,
     },
   ])
   .withAutoHideIntroVisuals(false)
@@ -163,7 +163,7 @@ async function spawnNextTrainerOrEndEncounter() {
     globalScene.playSound("item_fanfare");
     await showEncounterText(i18next.t("battle:rewardGain", { modifierName: newModifier?.type.name }));
 
-    await showEncounterDialogue(`${namespace}:victory_2`, `${namespace}:speaker`);
+    await showEncounterDialogue(`${namespace}:victory2`, `${namespace}:speaker`);
     globalScene.ui.clearText(); // Clears "Winstrate" title from screen as rewards get animated in
     const machoBrace = generateModifierTypeOption(modifierTypes.MYSTERY_ENCOUNTER_MACHO_BRACE)!;
     machoBrace.type.tier = ModifierTier.MASTER;
@@ -212,9 +212,9 @@ function endTrainerBattleAndShowDialogue(): Promise<void> {
         // Only trigger form change when Eiscue is in Noice form
         // Hardcoded Eiscue for now in case it is fused with another pokemon
         if (
-          pokemon.species.speciesId === SpeciesId.EISCUE &&
-          pokemon.hasAbility(AbilityId.ICE_FACE) &&
-          pokemon.formIndex === 1
+          pokemon.species.speciesId === SpeciesId.EISCUE
+          && pokemon.hasAbility(AbilityId.ICE_FACE)
+          && pokemon.formIndex === 1
         ) {
           globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
         }

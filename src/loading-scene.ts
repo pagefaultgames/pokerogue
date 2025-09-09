@@ -60,9 +60,7 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("pbinfo_enemy_type", "ui");
     this.loadAtlas("pbinfo_enemy_type1", "ui");
     this.loadAtlas("pbinfo_enemy_type2", "ui");
-    this.loadAtlas("pbinfo_stat", "ui");
     this.loadAtlas("pbinfo_stat_numbers", "ui");
-    this.loadImage("overlay_lv", "ui");
     this.loadAtlas("numbers", "ui");
     this.loadAtlas("numbers_red", "ui");
     this.loadAtlas("overlay_hp", "ui");
@@ -90,6 +88,7 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("shiny_icons", "ui");
     this.loadImage("ha_capsule", "ui", "ha_capsule.png");
     this.loadImage("champion_ribbon", "ui", "champion_ribbon.png");
+    this.loadImage("champion_ribbon_emerald", "ui", "champion_ribbon_emerald.png");
     this.loadImage("icon_spliced", "ui");
     this.loadImage("icon_lock", "ui", "icon_lock.png");
     this.loadImage("icon_stop", "ui", "icon_stop.png");
@@ -98,7 +97,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("type_tera", "ui");
     this.loadAtlas("type_bgs", "ui");
     this.loadAtlas("button_tera", "ui");
-    this.loadImage("mystery_egg", "ui");
+    this.loadImage("common_egg", "ui");
     this.loadImage("normal_memory", "ui");
 
     this.loadImage("dawn_icon_fg", "ui");
@@ -122,8 +121,8 @@ export class LoadingScene extends SceneBase {
     this.loadImage("party_bg_double", "ui");
     this.loadImage("party_bg_double_manage", "ui");
     this.loadAtlas("party_slot_main", "ui");
+    this.loadAtlas("party_slot_main_short", "ui");
     this.loadAtlas("party_slot", "ui");
-    this.loadImage("party_slot_overlay_lv", "ui");
     this.loadImage("party_slot_hp_bar", "ui");
     this.loadAtlas("party_slot_hp_overlay", "ui");
     this.loadAtlas("party_pb", "ui");
@@ -136,19 +135,13 @@ export class LoadingScene extends SceneBase {
     this.loadImage("summary_profile", "ui");
     this.loadImage("summary_profile_prompt_z", "ui"); // The pixel Z button prompt
     this.loadImage("summary_profile_prompt_a", "ui"); // The pixel A button prompt
-    this.loadImage("summary_profile_ability", "ui"); // Pixel text 'ABILITY'
-    this.loadImage("summary_profile_passive", "ui"); // Pixel text 'PASSIVE'
     this.loadImage("summary_status", "ui");
     this.loadImage("summary_stats", "ui");
     this.loadImage("summary_stats_overlay_exp", "ui");
     this.loadImage("summary_moves", "ui");
     this.loadImage("summary_moves_effect", "ui");
     this.loadImage("summary_moves_overlay_row", "ui");
-    this.loadImage("summary_moves_overlay_pp", "ui");
     this.loadAtlas("summary_moves_cursor", "ui");
-    for (let t = 1; t <= 3; t++) {
-      this.loadImage(`summary_tabs_${t}`, "ui");
-    }
 
     this.loadImage("scroll_bar", "ui");
     this.loadImage("scroll_bar_handle", "ui");
@@ -228,23 +221,119 @@ export class LoadingScene extends SceneBase {
 
     this.loadAtlas("pb", "");
     this.loadAtlas("items", "");
-    this.loadAtlas("types", "");
 
     // Get current lang and load the types atlas for it. English will only load types while all other languages will load types and types_<lang>
-    const lang = i18next.resolvedLanguage;
-    if (lang !== "en") {
-      if (hasAllLocalizedSprites(lang)) {
-        this.loadAtlas(`statuses_${lang}`, "");
-        this.loadAtlas(`types_${lang}`, "");
-      } else {
-        // Fallback to English
-        this.loadAtlas("statuses", "");
-        this.loadAtlas("types", "");
-      }
-    } else {
-      this.loadAtlas("statuses", "");
-      this.loadAtlas("types", "");
+    const lang = i18next.resolvedLanguage ?? "en";
+    const keySuffix = lang !== "en" && hasAllLocalizedSprites(lang) ? `_${lang}` : "";
+
+    this.loadAtlas(`statuses${keySuffix}`, "");
+    this.loadAtlas(`types${keySuffix}`, "");
+    for (let t = 1; t <= 3; t++) {
+      this.loadImage(
+        `summary_tabs_${t}${keySuffix}`,
+        "ui",
+        `text_images/${lang}/summary/summary_tabs_${t}${keySuffix}.png`,
+      );
     }
+    this.loadImage(
+      `summary_dexnb_label${keySuffix}`,
+      "ui",
+      `text_images/${lang}/summary/summary_dexnb_label${keySuffix}.png`,
+    ); // Pixel text 'No'
+    this.loadImage(
+      `summary_dexnb_label_overlay_shiny${keySuffix}`,
+      "ui",
+      `text_images/${lang}/summary/summary_dexnb_label_overlay_shiny${keySuffix}.png`,
+    ); // Pixel text 'No' shiny
+    this.loadImage(
+      `summary_profile_profile_title${keySuffix}`,
+      "ui",
+      `text_images/${lang}/summary/summary_profile_profile_title${keySuffix}.png`,
+    ); // Pixel text 'PROFILE'
+    this.loadImage(
+      `summary_profile_ability${keySuffix}`,
+      "ui",
+      `text_images/${lang}/summary/summary_profile_ability${keySuffix}.png`,
+    ); // Pixel text 'ABILITY'
+    this.loadImage(
+      `summary_profile_passive${keySuffix}`,
+      "ui",
+      `text_images/${lang}/summary/summary_profile_passive${keySuffix}.png`,
+    ); // Pixel text 'PASSIVE'
+    this.loadImage(
+      `summary_profile_memo_title${keySuffix}`,
+      "ui",
+      `text_images/${lang}/summary/summary_profile_memo_title${keySuffix}.png`,
+    ); // Pixel text 'TRAINER MEMO'
+    this.loadImage(
+      `summary_stats_item_title${keySuffix}`,
+      "ui",
+      `text_images/${lang}/summary/summary_stats_item_title${keySuffix}.png`,
+    ); // Pixel text 'ITEM'
+    this.loadImage(
+      `summary_stats_stats_title${keySuffix}`,
+      "ui",
+      `text_images/${lang}/summary/summary_stats_stats_title${keySuffix}.png`,
+    ); // Pixel text 'STATS'
+    this.loadImage(
+      `summary_stats_exp_title${keySuffix}`,
+      "ui",
+      `text_images/${lang}/summary/summary_stats_exp_title${keySuffix}.png`,
+    ); // Pixel text 'EXP.'
+    this.loadImage(
+      `summary_stats_expbar_title${keySuffix}`,
+      "ui",
+      `text_images/${lang}/summary/summary_stats_expbar_title${keySuffix}.png`,
+    ); // Pixel mini text 'EXP'
+    this.loadImage(
+      `summary_moves_moves_title${keySuffix}`,
+      "ui",
+      `text_images/${lang}/summary/summary_moves_moves_title${keySuffix}.png`,
+    ); // Pixel text 'MOVES'
+    this.loadImage(
+      `summary_moves_descriptions_title${keySuffix}`,
+      "ui",
+      `text_images/${lang}/summary/summary_moves_descriptions_title${keySuffix}.png`,
+    ); // Pixel text 'DESCRIPTIONS'
+    this.loadImage(
+      `summary_moves_overlay_pp${keySuffix}`,
+      "ui",
+      `text_images/${lang}/summary/summary_moves_overlay_pp${keySuffix}.png`,
+    ); // Pixel text 'PP'
+    this.loadImage(
+      `summary_moves_effect_title${keySuffix}`,
+      "ui",
+      `text_images/${lang}/summary/summary_moves_effect_title${keySuffix}.png`,
+    ); // Pixel text 'EFFECT'
+
+    this.loadAtlas(`pbinfo_stat${keySuffix}`, "ui", `text_images/${lang}/battle_ui/pbinfo_stat${keySuffix}`); // Pixel text for in-battle stats info tab
+    this.loadImage(`overlay_lv${keySuffix}`, "ui", `text_images/${lang}/battle_ui/overlay_lv${keySuffix}.png`); // Pixel text in-battle 'Lv.'
+    this.loadImage(
+      `overlay_hp_label${keySuffix}`,
+      "ui",
+      `text_images/${lang}/battle_ui/overlay_hp_label${keySuffix}.png`,
+    ); // Pixel text in-battle 'HP'
+    this.loadImage(
+      `overlay_hp_label_boss${keySuffix}`,
+      "ui",
+      `text_images/${lang}/battle_ui/overlay_hp_label_boss${keySuffix}.png`,
+    ); // Pixel text in-battle 'BOSS'
+    this.loadImage(
+      `overlay_exp_label${keySuffix}`,
+      "ui",
+      `text_images/${lang}/battle_ui/overlay_exp_label${keySuffix}.png`,
+    ); // Pixel text in-battle 'EXP'
+    this.loadImage(
+      `party_slot_overlay_lv${keySuffix}`,
+      "ui",
+      `text_images/${lang}/party_ui/party_slot_overlay_lv${keySuffix}.png`,
+    ); // Pixel text party 'Lv.'
+    this.loadImage(
+      `party_slot_overlay_hp${keySuffix}`,
+      "ui",
+      `text_images/${lang}/party_ui/party_slot_overlay_hp${keySuffix}.png`,
+    ); // Pixel text party 'HP'
+
     if (timedEventManager.activeEventHasBanner()) {
       const availableLangs = timedEventManager.getEventBannerLangs();
       if (lang && availableLangs.includes(lang)) {
@@ -254,7 +343,6 @@ export class LoadingScene extends SceneBase {
       }
     }
 
-    this.loadAtlas("statuses", "");
     this.loadAtlas("categories", "");
 
     this.loadAtlas("egg", "egg");
@@ -447,7 +535,9 @@ export class LoadingScene extends SceneBase {
     );
 
     if (!mobile) {
-      loadingGraphics.map(g => g.setVisible(false));
+      loadingGraphics.forEach(g => {
+        g.setVisible(false);
+      });
     }
 
     const intro = this.add.video(0, 0);

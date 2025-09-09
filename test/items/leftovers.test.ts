@@ -53,7 +53,7 @@ describe("Items - Leftovers", () => {
     const leadHpAfterDamage = leadPokemon.hp;
 
     // Check if leftovers heal us
-    await game.toNextTurn();
+    await game.phaseInterceptor.to("PokemonHealPhase");
     expect(leadPokemon.hp).toBeGreaterThan(leadHpAfterDamage);
   });
 });

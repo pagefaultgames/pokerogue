@@ -121,8 +121,8 @@ export class ModifierBar extends Phaser.GameObjects.Container {
   }
 
   updateModifierOverflowVisibility(ignoreLimit: boolean) {
-    const modifierIcons = this.getAll().reverse();
-    for (const modifier of modifierIcons.map(m => m as Phaser.GameObjects.Container).slice(iconOverflowIndex)) {
+    const modifierIcons = this.getAll().reverse() as Phaser.GameObjects.Container[];
+    for (const modifier of modifierIcons.slice(iconOverflowIndex)) {
       modifier.setVisible(ignoreLimit);
     }
   }
@@ -1302,9 +1302,9 @@ export class SpeciesStatBoosterModifier extends StatBoosterModifier {
    */
   override shouldApply(pokemon: Pokemon, stat: Stat, statValue: NumberHolder): boolean {
     return (
-      super.shouldApply(pokemon, stat, statValue) &&
-      (this.species.includes(pokemon.getSpeciesForm(true).speciesId) ||
-        (pokemon.isFusion() && this.species.includes(pokemon.getFusionSpeciesForm(true).speciesId)))
+      super.shouldApply(pokemon, stat, statValue)
+      && (this.species.includes(pokemon.getSpeciesForm(true).speciesId)
+        || (pokemon.isFusion() && this.species.includes(pokemon.getFusionSpeciesForm(true).speciesId)))
     );
   }
 
@@ -1415,9 +1415,9 @@ export class SpeciesCritBoosterModifier extends CritBoosterModifier {
    */
   override shouldApply(pokemon: Pokemon, critStage: NumberHolder): boolean {
     return (
-      super.shouldApply(pokemon, critStage) &&
-      (this.species.includes(pokemon.getSpeciesForm(true).speciesId) ||
-        (pokemon.isFusion() && this.species.includes(pokemon.getFusionSpeciesForm(true).speciesId)))
+      super.shouldApply(pokemon, critStage)
+      && (this.species.includes(pokemon.getSpeciesForm(true).speciesId)
+        || (pokemon.isFusion() && this.species.includes(pokemon.getFusionSpeciesForm(true).speciesId)))
     );
   }
 }
@@ -1440,8 +1440,8 @@ export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
     if (modifier instanceof AttackTypeBoosterModifier) {
       const attackTypeBoosterModifier = modifier as AttackTypeBoosterModifier;
       return (
-        attackTypeBoosterModifier.moveType === this.moveType &&
-        attackTypeBoosterModifier.boostMultiplier === this.boostMultiplier
+        attackTypeBoosterModifier.moveType === this.moveType
+        && attackTypeBoosterModifier.boostMultiplier === this.boostMultiplier
       );
     }
 
@@ -1471,10 +1471,10 @@ export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
    */
   override shouldApply(pokemon?: Pokemon, moveType?: PokemonType, movePower?: NumberHolder): boolean {
     return (
-      super.shouldApply(pokemon, moveType, movePower) &&
-      typeof moveType === "number" &&
-      movePower instanceof NumberHolder &&
-      this.moveType === moveType
+      super.shouldApply(pokemon, moveType, movePower)
+      && typeof moveType === "number"
+      && movePower instanceof NumberHolder
+      && this.moveType === moveType
     );
   }
 
@@ -1734,12 +1734,12 @@ export class TurnStatusEffectModifier extends PokemonHeldItemModifier {
   }
 
   /**
-   * Tries to inflicts the holder with the associated {@linkcode StatusEffect}.
-   * @param pokemon {@linkcode Pokemon} that holds the held item
+   * Attempt to inflict the holder with the associated {@linkcode StatusEffect}.
+   * @param pokemon - The {@linkcode Pokemon} holding the item
    * @returns `true` if the status effect was applied successfully
    */
   override apply(pokemon: Pokemon): boolean {
-    return pokemon.trySetStatus(this.effect, true, undefined, undefined, this.type.name);
+    return pokemon.trySetStatus(this.effect, pokemon, undefined, this.type.name);
   }
 
   getMaxHeldItemCount(_pokemon: Pokemon): number {
@@ -2093,8 +2093,8 @@ export class TerastallizeModifier extends ConsumablePokemonModifier {
    */
   override shouldApply(playerPokemon?: PlayerPokemon): boolean {
     return (
-      super.shouldApply(playerPokemon) &&
-      [playerPokemon?.species.speciesId, playerPokemon?.fusionSpecies?.speciesId].filter(
+      super.shouldApply(playerPokemon)
+      && [playerPokemon?.species.speciesId, playerPokemon?.fusionSpecies?.speciesId].filter(
         s => s === SpeciesId.TERAPAGOS || s === SpeciesId.OGERPON || s === SpeciesId.SHEDINJA,
       ).length === 0
     );
@@ -2141,8 +2141,8 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
    */
   override shouldApply(playerPokemon?: PlayerPokemon, multiplier?: number): boolean {
     return (
-      super.shouldApply(playerPokemon) &&
-      (this.fainted || (!isNullOrUndefined(multiplier) && typeof multiplier === "number"))
+      super.shouldApply(playerPokemon)
+      && (this.fainted || (!isNullOrUndefined(multiplier) && typeof multiplier === "number"))
     );
   }
 
@@ -2162,8 +2162,11 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
         pokemon.resetStatus(true, true, false, false);
       }
       pokemon.hp = Math.min(
-        pokemon.hp +
-          Math.max(Math.ceil(Math.max(Math.floor(this.restorePercent * 0.01 * pokemon.getMaxHp()), restorePoints)), 1),
+        pokemon.hp
+          + Math.max(
+            Math.ceil(Math.max(Math.floor(this.restorePercent * 0.01 * pokemon.getMaxHp()), restorePoints)),
+            1,
+          ),
         pokemon.getMaxHp(),
       );
       return true;
@@ -2307,7 +2310,7 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
       playerPokemon.levelExp = 0;
     }
 
-    playerPokemon.addFriendship(FRIENDSHIP_GAIN_FROM_RARE_CANDY);
+    playerPokemon.addFriendship(FRIENDSHIP_GAIN_FROM_RARE_CANDY, true);
 
     globalScene.phaseManager.unshiftNew(
       "LevelUpPhase",
@@ -3213,7 +3216,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
   override apply(pokemon: Pokemon, target?: Pokemon, ..._args: unknown[]): boolean {
     const opponents = this.getTargets(pokemon, target);
 
-    if (!opponents.length) {
+    if (opponents.length === 0) {
       return false;
     }
 
@@ -3231,7 +3234,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
     ) as PokemonHeldItemModifier[];
 
     for (let i = 0; i < transferredItemCount; i++) {
-      if (!itemModifiers.length) {
+      if (itemModifiers.length === 0) {
         break;
       }
       const randItemIndex = pokemon.randBattleSeedInt(itemModifiers.length);
@@ -3246,7 +3249,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
       globalScene.phaseManager.queueMessage(this.getTransferMessage(pokemon, targetPokemon, mt));
     }
 
-    return !!transferredModifierTypes.length;
+    return transferredModifierTypes.length > 0;
   }
 
   abstract getTransferredItemCount(): number;
@@ -3608,7 +3611,7 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
    */
   override apply(enemyPokemon: Pokemon): boolean {
     if (randSeedFloat() <= this.chance * this.getStackCount()) {
-      return enemyPokemon.trySetStatus(this.effect, true);
+      return enemyPokemon.trySetStatus(this.effect);
     }
 
     return false;
@@ -3758,7 +3761,7 @@ export class EnemyFusionChanceModifier extends EnemyPersistentModifier {
 export function overrideModifiers(isPlayer = true): void {
   const modifiersOverride: ModifierOverride[] = isPlayer
     ? Overrides.STARTING_MODIFIER_OVERRIDE
-    : Overrides.OPP_MODIFIER_OVERRIDE;
+    : Overrides.ENEMY_MODIFIER_OVERRIDE;
   if (!modifiersOverride || modifiersOverride.length === 0 || !globalScene) {
     return;
   }
@@ -3800,7 +3803,7 @@ export function overrideModifiers(isPlayer = true): void {
 export function overrideHeldItems(pokemon: Pokemon, isPlayer = true): void {
   const heldItemsOverride: ModifierOverride[] = isPlayer
     ? Overrides.STARTING_HELD_ITEMS_OVERRIDE
-    : Overrides.OPP_HELD_ITEMS_OVERRIDE;
+    : Overrides.ENEMY_HELD_ITEMS_OVERRIDE;
   if (!heldItemsOverride || heldItemsOverride.length === 0 || !globalScene) {
     return;
   }

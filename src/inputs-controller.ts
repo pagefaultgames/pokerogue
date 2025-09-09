@@ -406,9 +406,9 @@ export class InputsController {
     }
     this.lastSource = "gamepad";
     if (
-      !this.selectedDevice[Device.GAMEPAD] ||
-      (globalScene.ui.getMode() !== UiMode.GAMEPAD_BINDING &&
-        this.selectedDevice[Device.GAMEPAD] !== pad.id.toLowerCase())
+      !this.selectedDevice[Device.GAMEPAD]
+      || (globalScene.ui.getMode() !== UiMode.GAMEPAD_BINDING
+        && this.selectedDevice[Device.GAMEPAD] !== pad.id.toLowerCase())
     ) {
       this.setChosenGamepad(pad.id);
     }
@@ -585,7 +585,7 @@ export class InputsController {
 
   resetConfigs(): void {
     this.configs = new Map();
-    if (this.getGamepadsName()?.length) {
+    if (this.getGamepadsName()?.length > 0) {
       this.setupGamepad(this.selectedDevice[Device.GAMEPAD]);
     }
     this.setupKeyboard();

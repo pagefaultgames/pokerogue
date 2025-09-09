@@ -7,6 +7,7 @@ import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
 import { randSeedInt } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 export function getBiomeName(biome: BiomeId | -1) {
@@ -15,13 +16,13 @@ export function getBiomeName(biome: BiomeId | -1) {
   }
   switch (biome) {
     case BiomeId.GRASS:
-      return i18next.t("biome:GRASS");
+      return i18next.t("biome:grass");
     case BiomeId.RUINS:
-      return i18next.t("biome:RUINS");
+      return i18next.t("biome:ruins");
     case BiomeId.END:
-      return i18next.t("biome:END");
+      return i18next.t("biome:end");
     default:
-      return i18next.t(`biome:${BiomeId[biome].toUpperCase()}`);
+      return i18next.t(`biome:${toCamelCase(BiomeId[biome])}`);
   }
 }
 
@@ -7648,7 +7649,7 @@ export function initBiomes() {
       ? pokemonEvolutions[speciesId]
       : [];
 
-    if (!biomeEntries.filter(b => b[0] !== BiomeId.END).length && !speciesEvolutions.filter(es => !!((pokemonBiomes.find(p => p[0] === es.speciesId)!)[3] as any[]).filter(b => b[0] !== BiomeId.END).length).length) { // TODO: is the bang on the `find()` correct?
+    if (biomeEntries.filter(b => b[0] !== BiomeId.END).length === 0&& speciesEvolutions.filter(es => ((pokemonBiomes.find(p => p[0] === es.speciesId)!)[3] as any[]).filter(b => b[0] !== BiomeId.END).length > 0).length === 0) { // TODO: is the bang on the `find()` correct?
       uncatchableSpecies.push(speciesId);
     }
 

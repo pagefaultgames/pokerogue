@@ -7,7 +7,7 @@ import { EncounterPhase } from "#phases/encounter-phase";
 import { TitlePhase } from "#phases/title-phase";
 import { TurnInitPhase } from "#phases/turn-init-phase";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
-import type { SaveSlotSelectUiHandler } from "#ui/save-slot-select-ui-handler";
+import type { SaveSlotSelectUiHandler } from "#ui/handlers/save-slot-select-ui-handler";
 
 /**
  * Helper to handle daily mode specifics
@@ -37,7 +37,7 @@ export class DailyModeHelper extends GameManagerHelper {
 
     await this.game.phaseInterceptor.to(EncounterPhase);
 
-    if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0 && this.game.override.removeEnemyStartingItems) {
+    if (overrides.ENEMY_HELD_ITEMS_OVERRIDE.length === 0 && this.game.override.removeEnemyStartingItems) {
       this.game.removeEnemyHeldItems();
     }
   }

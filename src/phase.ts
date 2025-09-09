@@ -2,8 +2,10 @@ import { globalScene } from "#app/global-scene";
 import type { PhaseMap, PhaseString } from "#types/phase-types";
 
 export abstract class Phase {
+  /** Start the current phase. */
   start() {}
 
+  /** End the current phase and start a new one. */
   end() {
     globalScene.phaseManager.shiftPhase();
   }

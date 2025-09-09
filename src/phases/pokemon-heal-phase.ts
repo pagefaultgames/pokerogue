@@ -11,6 +11,7 @@ import { HealAchv } from "#system/achv";
 import { NumberHolder, toDmgValue } from "#utils/common";
 import i18next from "i18next";
 
+// TODO: Refactor this - it has far too many arguments
 export class PokemonHealPhase extends CommonAnimPhase {
   public readonly phaseName = "PokemonHealPhase";
 

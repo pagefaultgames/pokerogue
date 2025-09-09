@@ -39,15 +39,6 @@ describe("Move - Wish", () => {
       .enemyLevel(100);
   });
 
-  /**
-   * Expect that wish is active with the specified number of attacks.
-   * @param numAttacks - The number of wish instances that should be queued; default `1`
-   */
-  function expectWishActive(numAttacks = 1) {
-    const wishes = game.scene.arena.positionalTagManager["tags"].filter(t => t.tagType === PositionalTagType.WISH);
-    expect(wishes).toHaveLength(numAttacks);
-  }
-
   it("should heal the Pokemon in the current slot for 50% of the user's maximum HP", async () => {
     await game.classicMode.startBattle([SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY]);
 
@@ -58,19 +49,19 @@ describe("Move - Wish", () => {
     game.move.use(MoveId.WISH);
     await game.toNextTurn();
 
-    expectWishActive();
+    expect(game).toHavePositionalTag(PositionalTagType.WISH);
 
     game.doSwitchPokemon(1);
     await game.toEndOfTurn();
 
-    expectWishActive(0);
+    expect(game).toHavePositionalTag(PositionalTagType.WISH, 0);
     expect(game.textInterceptor.logs).toContain(
       i18next.t("arenaTag:wishTagOnAdd", {
         pokemonNameWithAffix: getPokemonNameWithAffix(alomomola),
       }),
     );
-    expect(alomomola.hp).toBe(1);
-    expect(blissey.hp).toBe(toDmgValue(alomomola.getMaxHp() / 2) + 1);
+    expect(alomomola).toHaveHp(1);
+    expect(blissey).toHaveHp(toDmgValue(alomomola.getMaxHp() / 2) + 1);
   });
 
   it("should work if the user has full HP, but not if it already has an active Wish", async () => {
@@ -82,13 +73,13 @@ describe("Move - Wish", () => {
     game.move.use(MoveId.WISH);
     await game.toNextTurn();
 
-    expectWishActive();
+    expect(game).toHavePositionalTag(PositionalTagType.WISH);
 
     game.move.use(MoveId.WISH);
     await game.toEndOfTurn();
 
     expect(alomomola.hp).toBe(toDmgValue(alomomola.getMaxHp() / 2) + 1);
-    expect(alomomola.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(alomomola).toHaveUsedMove({ result: MoveResult.FAIL });
   });
 
   it("should function independently of Future Sight", async () => {
@@ -103,7 +94,8 @@ describe("Move - Wish", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    expectWishActive(1);
+    expect(game).toHavePositionalTag(PositionalTagType.WISH);
+    expect(game).toHavePositionalTag(PositionalTagType.DELAYED_ATTACK);
   });
 
   it("should work in double battles and trigger in order of creation", async () => {
@@ -127,7 +119,7 @@ describe("Move - Wish", () => {
     await game.setTurnOrder(oldOrder.map(p => p.getBattlerIndex()));
     await game.toNextTurn();
 
-    expectWishActive(4);
+    expect(game).toHavePositionalTag(PositionalTagType.WISH, 4);
 
     // Lower speed to change turn order
     alomomola.setStatStage(Stat.SPD, 6);
@@ -141,7 +133,7 @@ describe("Move - Wish", () => {
     await game.phaseInterceptor.to("PositionalTagPhase");
 
     // all wishes have activated and added healing phases
-    expectWishActive(0);
+    expect(game).toHavePositionalTag(PositionalTagType.WISH, 0);
 
     const healPhases = game.scene.phaseManager.phaseQueue.filter(p => p.is("PokemonHealPhase"));
     // account for phase interceptor stopping jank
@@ -170,14 +162,14 @@ describe("Move - Wish", () => {
     game.move.use(MoveId.WISH, BattlerIndex.PLAYER_2);
     await game.toNextTurn();
 
-    expectWishActive();
+    expect(game).toHavePositionalTag(PositionalTagType.WISH);
 
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
     game.move.use(MoveId.MEMENTO, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2);
     await game.toEndOfTurn();
 
     // Wish went away without doing anything
-    expectWishActive(0);
+    expect(game).toHavePositionalTag(PositionalTagType.WISH, 0);
     expect(game.textInterceptor.logs).not.toContain(
       i18next.t("arenaTag:wishTagOnAdd", {
         pokemonNameWithAffix: getPokemonNameWithAffix(blissey),

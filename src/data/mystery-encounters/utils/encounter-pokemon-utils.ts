@@ -31,9 +31,9 @@ import {
   showEncounterText,
 } from "#mystery-encounters/encounter-dialogue-utils";
 import { achvs } from "#system/achv";
-import type { PartyOption } from "#ui/party-ui-handler";
-import { PartyUiMode } from "#ui/party-ui-handler";
-import { SummaryUiMode } from "#ui/summary-ui-handler";
+import type { PartyOption } from "#ui/handlers/party-ui-handler";
+import { PartyUiMode } from "#ui/handlers/party-ui-handler";
+import { SummaryUiMode } from "#ui/handlers/summary-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, isNullOrUndefined, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
@@ -265,11 +265,11 @@ export function getRandomSpeciesByStarterCost(
     .filter(s => {
       const pokemonSpecies = getPokemonSpecies(s[0]);
       return (
-        pokemonSpecies &&
-        (!excludedSpecies || !excludedSpecies.includes(s[0])) &&
-        (allowSubLegendary || !pokemonSpecies.subLegendary) &&
-        (allowLegendary || !pokemonSpecies.legendary) &&
-        (allowMythical || !pokemonSpecies.mythical)
+        pokemonSpecies
+        && (!excludedSpecies || !excludedSpecies.includes(s[0]))
+        && (allowSubLegendary || !pokemonSpecies.subLegendary)
+        && (allowLegendary || !pokemonSpecies.legendary)
+        && (allowMythical || !pokemonSpecies.mythical)
       );
     })
     .map(s => [getPokemonSpecies(s[0]), s[1]]);
@@ -309,7 +309,7 @@ export function getRandomSpeciesByStarterCost(
  */
 export function koPlayerPokemon(pokemon: PlayerPokemon) {
   pokemon.hp = 0;
-  pokemon.trySetStatus(StatusEffect.FAINT);
+  pokemon.doSetStatus(StatusEffect.FAINT);
   pokemon.updateInfo();
   queueEncounterMessage(
     i18next.t("battle:fainted", {
@@ -409,10 +409,10 @@ export async function applyModifierTypeToPlayerPokemon(
   const modifier = modType.newModifier(pokemon);
   const existing = globalScene.findModifier(
     (m): m is PokemonHeldItemModifier =>
-      m instanceof PokemonHeldItemModifier &&
-      m.type.id === modType.id &&
-      m.pokemonId === pokemon.id &&
-      m.matchType(modifier),
+      m instanceof PokemonHeldItemModifier
+      && m.type.id === modType.id
+      && m.pokemonId === pokemon.id
+      && m.matchType(modifier),
   ) as PokemonHeldItemModifier | undefined;
 
   // At max stacks
@@ -650,8 +650,8 @@ export async function catchPokemon(
   const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
 
   if (
-    speciesForm.abilityHidden &&
-    (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1
+    speciesForm.abilityHidden
+    && (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1
   ) {
     globalScene.validateAchv(achvs.HIDDEN_ABILITY);
   }
@@ -673,6 +673,8 @@ export async function catchPokemon(
   globalScene.gameData.updateSpeciesDexIvs(pokemon.species.getRootSpeciesId(true), pokemon.ivs);
 
   return new Promise(resolve => {
+    const addStatus = new BooleanHolder(true);
+    applyChallenges(ChallengeType.POKEMON_ADD_TO_PARTY, pokemon, addStatus);
     const doPokemonCatchMenu = () => {
       const end = () => {
         // Ensure the pokemon is in the enemy party in all situations
@@ -708,9 +710,7 @@ export async function catchPokemon(
         });
       };
       Promise.all([pokemon.hideInfo(), globalScene.gameData.setPokemonCaught(pokemon)]).then(() => {
-        const addStatus = new BooleanHolder(true);
-        applyChallenges(ChallengeType.POKEMON_ADD_TO_PARTY, pokemon, addStatus);
-        if (!addStatus.value) {
+        if (!(isObtain || addStatus.value)) {
           removePokemon();
           end();
           return;
@@ -807,10 +807,16 @@ export async function catchPokemon(
     };
 
     if (showCatchObtainMessage) {
+      let catchMessage: string;
+      if (isObtain) {
+        catchMessage = "battle:pokemonObtained";
+      } else if (addStatus.value) {
+        catchMessage = "battle:pokemonCaught";
+      } else {
+        catchMessage = "battle:pokemonCaughtButChallenge";
+      }
       globalScene.ui.showText(
-        i18next.t(isObtain ? "battle:pokemonObtained" : "battle:pokemonCaught", {
-          pokemonName: pokemon.getNameToRender(),
-        }),
+        i18next.t(catchMessage, { pokemonName: pokemon.getNameToRender() }),
         null,
         doPokemonCatchMenu,
         0,
@@ -982,8 +988,8 @@ export async function addPokemonDataToDexAndValidateAchievements(pokemon: Player
   const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
 
   if (
-    speciesForm.abilityHidden &&
-    (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1
+    speciesForm.abilityHidden
+    && (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1
   ) {
     globalScene.validateAchv(achvs.HIDDEN_ABILITY);
   }

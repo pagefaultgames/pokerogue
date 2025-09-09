@@ -20,7 +20,7 @@ export function toHaveHp(
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
     return {
-      pass: false,
+      pass: this.isNot,
       message: () => `Expected to receive a Pokémon, but got ${receivedStr(received)}!`,
     };
   }

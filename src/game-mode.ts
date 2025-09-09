@@ -3,7 +3,7 @@ import { CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES, CLASSIC_MODE_MYSTERY_ENCOUNTER_
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { allChallenges, type Challenge, copyChallenge } from "#data/challenge";
-import { getDailyStartingBiome } from "#data/daily-run";
+import { getDailyEventSeedBoss, getDailyStartingBiome } from "#data/daily-run";
 import { allSpecies } from "#data/data-lists";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { BiomeId } from "#enums/biome-id";
@@ -15,6 +15,7 @@ import type { Arena } from "#field/arena";
 import { classicFixedBattles, type FixedBattleConfigs } from "#trainers/fixed-battle-configs";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, isNullOrUndefined, randSeedInt, randSeedItem } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 interface GameModeConfig {
@@ -82,11 +83,32 @@ export class GameMode implements GameModeConfig {
   }
 
   /**
+   * Helper function to see if a GameMode has any challenges, needed in tests
+   * @returns true if the game mode has at least one challenge
+   */
+  hasAnyChallenges(): boolean {
+    return this.challenges.length > 0;
+  }
+
+  /**
    * Helper function to see if the game mode is using fresh start
    * @returns true if a fresh start challenge is being applied
    */
   isFreshStartChallenge(): boolean {
     return this.hasChallenge(Challenges.FRESH_START);
+  }
+
+  /**
+   * Helper function to see if the game mode is using fresh start
+   * @returns true if a fresh start challenge is being applied
+   */
+  isFullFreshStartChallenge(): boolean {
+    for (const challenge of this.challenges) {
+      if (challenge.id === Challenges.FRESH_START && challenge.value === 1) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -203,20 +225,26 @@ export class GameMode implements GameModeConfig {
         return waveIndex > 10 && waveIndex < 50 && !(waveIndex % 10);
       default:
         return (
-          waveIndex % 30 === (offsetGym ? 0 : 20) &&
-          (biomeType !== BiomeId.END || this.isClassic || this.isWaveFinal(waveIndex))
+          waveIndex % 30 === (offsetGym ? 0 : 20)
+          && (biomeType !== BiomeId.END || this.isClassic || this.isWaveFinal(waveIndex))
         );
     }
   }
 
   getOverrideSpecies(waveIndex: number): PokemonSpecies | null {
     if (this.isDaily && this.isWaveFinal(waveIndex)) {
+      const eventBoss = getDailyEventSeedBoss(globalScene.seed);
+      if (!isNullOrUndefined(eventBoss)) {
+        // Cannot set form index here, it will be overriden when adding it as enemy pokemon.
+        return getPokemonSpecies(eventBoss.speciesId);
+      }
+
       const allFinalBossSpecies = allSpecies.filter(
         s =>
-          (s.subLegendary || s.legendary || s.mythical) &&
-          s.baseTotal >= 600 &&
-          s.speciesId !== SpeciesId.ETERNATUS &&
-          s.speciesId !== SpeciesId.ARCEUS,
+          (s.subLegendary || s.legendary || s.mythical)
+          && s.baseTotal >= 600
+          && s.speciesId !== SpeciesId.ETERNATUS
+          && s.speciesId !== SpeciesId.ARCEUS,
       );
       return randSeedItem(allFinalBossSpecies);
     }
@@ -293,8 +321,8 @@ export class GameMode implements GameModeConfig {
   isFixedBattle(waveIndex: number): boolean {
     const dummyConfig = new FixedBattleConfig();
     return (
-      this.battleConfig.hasOwnProperty(waveIndex) ||
-      applyChallenges(ChallengeType.FIXED_BATTLES, waveIndex, dummyConfig)
+      this.battleConfig.hasOwnProperty(waveIndex)
+      || applyChallenges(ChallengeType.FIXED_BATTLES, waveIndex, dummyConfig)
     );
   }
 

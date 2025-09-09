@@ -12,8 +12,6 @@ import { MysteriousChallengersEncounter } from "#mystery-encounters/mysterious-c
 import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { HUMAN_TRANSITABLE_BIOMES } from "#mystery-encounters/mystery-encounters";
-import { CommandPhase } from "#phases/command-phase";
-import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import {
   runMysteryEncounterToEnd,
   skipBattleRunMysteryEncounterRewardsPhase,
@@ -22,7 +20,7 @@ import { GameManager } from "#test/test-utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
 import { TrainerConfig } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/trainer-party-template";
-import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import { ModifierSelectUiHandler } from "#ui/handlers/modifier-select-ui-handler";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/mysteriousChallengers";
@@ -152,7 +150,7 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
-      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(game).toBeAtPhase("CommandPhase");
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
     });
@@ -161,9 +159,9 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      await game.phaseInterceptor.to("SelectModifierPhase", false);
+      expect(game).toBeAtPhase("SelectModifierPhase");
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
@@ -196,7 +194,7 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, defaultParty);
       await runMysteryEncounterToEnd(game, 2, undefined, true);
 
-      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(game).toBeAtPhase("CommandPhase");
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
     });
@@ -205,9 +203,9 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, defaultParty);
       await runMysteryEncounterToEnd(game, 2, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      await game.phaseInterceptor.to("SelectModifierPhase", false);
+      expect(game).toBeAtPhase("SelectModifierPhase");
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
@@ -215,20 +213,20 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(4);
       expect(
-        modifierSelectHandler.options[0].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
+        modifierSelectHandler.options[0].modifierTypeOption.type.tier
+          - modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
       ).toBe(ModifierTier.ULTRA);
       expect(
-        modifierSelectHandler.options[1].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
+        modifierSelectHandler.options[1].modifierTypeOption.type.tier
+          - modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
       ).toBe(ModifierTier.ULTRA);
       expect(
-        modifierSelectHandler.options[2].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
+        modifierSelectHandler.options[2].modifierTypeOption.type.tier
+          - modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
       ).toBe(ModifierTier.GREAT);
       expect(
-        modifierSelectHandler.options[3].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[3].modifierTypeOption.upgradeCount,
+        modifierSelectHandler.options[3].modifierTypeOption.type.tier
+          - modifierSelectHandler.options[3].modifierTypeOption.upgradeCount,
       ).toBe(ModifierTier.GREAT);
     });
   });
@@ -253,7 +251,7 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, defaultParty);
       await runMysteryEncounterToEnd(game, 3, undefined, true);
 
-      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(game).toBeAtPhase("CommandPhase");
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
     });
@@ -262,9 +260,8 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, defaultParty);
       await runMysteryEncounterToEnd(game, 3, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      expect(game).toBeAtPhase("SelectModifierPhase");
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
@@ -272,20 +269,20 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(4);
       expect(
-        modifierSelectHandler.options[0].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
+        modifierSelectHandler.options[0].modifierTypeOption.type.tier
+          - modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
       ).toBe(ModifierTier.ROGUE);
       expect(
-        modifierSelectHandler.options[1].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
+        modifierSelectHandler.options[1].modifierTypeOption.type.tier
+          - modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
       ).toBe(ModifierTier.ROGUE);
       expect(
-        modifierSelectHandler.options[2].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
+        modifierSelectHandler.options[2].modifierTypeOption.type.tier
+          - modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
       ).toBe(ModifierTier.ULTRA);
       expect(
-        modifierSelectHandler.options[3].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[3].modifierTypeOption.upgradeCount,
+        modifierSelectHandler.options[3].modifierTypeOption.type.tier
+          - modifierSelectHandler.options[3].modifierTypeOption.upgradeCount,
       ).toBe(ModifierTier.GREAT);
     });
   });

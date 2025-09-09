@@ -1,7 +1,9 @@
 /** biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
 import type { NewArenaEvent } from "#events/battle-scene";
+
 /** biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
 
+import { OVERRIDES_COLOR } from "#app/constants/colors";
 import type { BattleStyle, RandomTrainerOverride } from "#app/overrides";
 import Overrides from "#app/overrides";
 import { AbilityId } from "#enums/ability-id";
@@ -19,6 +21,7 @@ import type { ModifierOverride } from "#modifiers/modifier-type";
 import type { Variant } from "#sprites/variant";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
 import { coerceArray, shiftCharCodes } from "#utils/common";
+import chalk from "chalk";
 import { vi } from "vitest";
 
 /**
@@ -406,7 +409,7 @@ export class OverridesHelper extends GameManagerHelper {
    * @returns `this`
    */
   public enemySpecies(species: SpeciesId | number): this {
-    vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(species);
+    vi.spyOn(Overrides, "ENEMY_SPECIES_OVERRIDE", "get").mockReturnValue(species);
     this.log(`Enemy Pokemon species set to ${SpeciesId[species]} (=${species})!`);
     return this;
   }
@@ -416,7 +419,7 @@ export class OverridesHelper extends GameManagerHelper {
    * @returns `this`
    */
   public enableEnemyFusion(): this {
-    vi.spyOn(Overrides, "OPP_FUSION_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(Overrides, "ENEMY_FUSION_OVERRIDE", "get").mockReturnValue(true);
     this.log("Enemy Pokemon is a random fusion!");
     return this;
   }
@@ -427,7 +430,7 @@ export class OverridesHelper extends GameManagerHelper {
    * @returns `this`
    */
   public enemyFusionSpecies(species: SpeciesId | number): this {
-    vi.spyOn(Overrides, "OPP_FUSION_SPECIES_OVERRIDE", "get").mockReturnValue(species);
+    vi.spyOn(Overrides, "ENEMY_FUSION_SPECIES_OVERRIDE", "get").mockReturnValue(species);
     this.log(`Enemy Pokemon fusion species set to ${SpeciesId[species]} (=${species})!`);
     return this;
   }
@@ -438,7 +441,7 @@ export class OverridesHelper extends GameManagerHelper {
    * @returns `this`
    */
   public enemyAbility(ability: AbilityId): this {
-    vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(ability);
+    vi.spyOn(Overrides, "ENEMY_ABILITY_OVERRIDE", "get").mockReturnValue(ability);
     this.log(`Enemy Pokemon ability set to ${AbilityId[ability]} (=${ability})!`);
     return this;
   }
@@ -449,7 +452,7 @@ export class OverridesHelper extends GameManagerHelper {
    * @returns `this`
    */
   public enemyPassiveAbility(passiveAbility: AbilityId): this {
-    vi.spyOn(Overrides, "OPP_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(passiveAbility);
+    vi.spyOn(Overrides, "ENEMY_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(passiveAbility);
     this.log(`Enemy Pokemon PASSIVE ability set to ${AbilityId[passiveAbility]} (=${passiveAbility})!`);
     return this;
   }
@@ -460,7 +463,7 @@ export class OverridesHelper extends GameManagerHelper {
    * @returns `this`
    */
   public enemyHasPassiveAbility(hasPassiveAbility: boolean | null): this {
-    vi.spyOn(Overrides, "OPP_HAS_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(hasPassiveAbility);
+    vi.spyOn(Overrides, "ENEMY_HAS_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(hasPassiveAbility);
     if (hasPassiveAbility === null) {
       this.log("Enemy Pokemon PASSIVE ability no longer force enabled or disabled!");
     } else {
@@ -475,7 +478,7 @@ export class OverridesHelper extends GameManagerHelper {
    * @returns `this`
    */
   public enemyMoveset(moveset: MoveId | MoveId[]): this {
-    vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(moveset);
+    vi.spyOn(Overrides, "ENEMY_MOVESET_OVERRIDE", "get").mockReturnValue(moveset);
     moveset = coerceArray(moveset);
     const movesetStr = moveset.map(moveId => MoveId[moveId]).join(", ");
     this.log(`Enemy Pokemon moveset set to ${movesetStr} (=[${moveset.join(", ")}])!`);
@@ -488,7 +491,7 @@ export class OverridesHelper extends GameManagerHelper {
    * @returns `this`
    */
   public enemyLevel(level: number): this {
-    vi.spyOn(Overrides, "OPP_LEVEL_OVERRIDE", "get").mockReturnValue(level);
+    vi.spyOn(Overrides, "ENEMY_LEVEL_OVERRIDE", "get").mockReturnValue(level);
     this.log(`Enemy Pokemon level set to ${level}!`);
     return this;
   }
@@ -499,7 +502,7 @@ export class OverridesHelper extends GameManagerHelper {
    * @returns `this`
    */
   public enemyStatusEffect(statusEffect: StatusEffect): this {
-    vi.spyOn(Overrides, "OPP_STATUS_OVERRIDE", "get").mockReturnValue(statusEffect);
+    vi.spyOn(Overrides, "ENEMY_STATUS_OVERRIDE", "get").mockReturnValue(statusEffect);
     this.log(`Enemy Pokemon status-effect set to ${StatusEffect[statusEffect]} (=${statusEffect})!`);
     return this;
   }
@@ -510,7 +513,7 @@ export class OverridesHelper extends GameManagerHelper {
    * @returns `this`
    */
   public enemyHeldItems(items: ModifierOverride[]): this {
-    vi.spyOn(Overrides, "OPP_HELD_ITEMS_OVERRIDE", "get").mockReturnValue(items);
+    vi.spyOn(Overrides, "ENEMY_HELD_ITEMS_OVERRIDE", "get").mockReturnValue(items);
     this.log("Enemy Pokemon held items set to:", items);
     return this;
   }
@@ -571,7 +574,7 @@ export class OverridesHelper extends GameManagerHelper {
    * @param variant - (Optional) The enemy's shiny {@linkcode Variant}.
    */
   enemyShiny(shininess: boolean | null, variant?: Variant): this {
-    vi.spyOn(Overrides, "OPP_SHINY_OVERRIDE", "get").mockReturnValue(shininess);
+    vi.spyOn(Overrides, "ENEMY_SHINY_OVERRIDE", "get").mockReturnValue(shininess);
     if (shininess === null) {
       this.log("Disabled enemy Pokemon shiny override!");
     } else {
@@ -579,7 +582,7 @@ export class OverridesHelper extends GameManagerHelper {
     }
 
     if (variant !== undefined) {
-      vi.spyOn(Overrides, "OPP_VARIANT_OVERRIDE", "get").mockReturnValue(variant);
+      vi.spyOn(Overrides, "ENEMY_VARIANT_OVERRIDE", "get").mockReturnValue(variant);
       this.log(`Set enemy shiny variant to be ${variant}!`);
     }
     return this;
@@ -594,7 +597,7 @@ export class OverridesHelper extends GameManagerHelper {
    * @returns `this`
    */
   public enemyHealthSegments(healthSegments: number): this {
-    vi.spyOn(Overrides, "OPP_HEALTH_SEGMENTS_OVERRIDE", "get").mockReturnValue(healthSegments);
+    vi.spyOn(Overrides, "ENEMY_HEALTH_SEGMENTS_OVERRIDE", "get").mockReturnValue(healthSegments);
     this.log("Enemy Pokemon health segments set to:", healthSegments);
     return this;
   }
@@ -665,6 +668,6 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   private log(...params: any[]) {
-    console.log("Overrides:", ...params);
+    console.log(chalk.hex(OVERRIDES_COLOR)(...params));
   }
 }
