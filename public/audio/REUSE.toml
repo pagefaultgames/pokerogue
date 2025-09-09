@@ -4,15 +4,16 @@
 
 version = 1
 
-# From nintendo / creatures inc. / game freak inc. sourced from assets available online, like pokemon showdown
-[[annotations]]
+[[annotations]] # From nintendo / creatures inc. / game freak inc. sourced from assets online, mostly pokemon showdown
 path = [
     "cry/*",              # All pokemon cries are from showdown, which sources them from nintendo
-    "se/*.wav",
+    "se/*.wav",           # By default, assume sourced from pokemon asset, narrow down below for specific ones that are not
     "ui/*.wav",
     "battle_anims/*.m4a",
     "battle_anims/*.mp3",
     # background music
+    "bgm/bw/*.mp3",
+    "bgm/rse/*.mp3",
     "bgm/badlands.mp3",
     "bgm/battle_aether_boss.mp3",
     "bgm/battle_aether_grunt.mp3",
@@ -157,15 +158,12 @@ path = [
 SPDX-FileCopyrightText = "Nintendo, Creatures Inc., GAME FREAK inc."
 SPDX-License-Identifier = "LicenseRef-FAIR-USE"
 
-
-# Audio assets known to come from pokemon reborn
-[[annotations]]
+[[annotations]] # Pokemon Reborn
 path = ["battle_anims/PRSFX-*.wav"]
 SPDX-FileCopyrightText = "The Pokemon Reborn Team https://www.rebornevo.com/pr/index.html/"
 SPDX-License-Identifier = "LicsenseRef-POKEMON-REBORN"
 
-# Firel
-[[annotations]]
+[[annotations]] # Firel
 path = [
     "bgm/abyss.mp3",
     "bgm/desert.mp3",
@@ -185,14 +183,12 @@ path = [
 SPDX-FileCopyrightText = "Firel"
 SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
 
-# LMZ
-[[annotations]]
+[[annotations]] # LMZ
 path = ["bgm/jungle.mp3", "bgm/lake.mp3", "bgm/ruins.mp3"]
 SPDX-FileCopyrightText = "Lmz"
 SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
 
-# Andr06
-[[annotations]]
+[[annotations]] # Andr06
 path = [
     "bgm/forest.mp3",
     "bgm/fairy_cave.mp3",
@@ -204,16 +200,13 @@ path = [
 SPDX-FileCopyrightText = "Andr06"
 SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
 
-# Leavannite
-[[annotations]]
+[[annotations]] # Leavannite
 path = ["bgm/wasteland.mp3"]
 SPDX-FileCopyrightText = "Leavannite"
 SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
 
 
-# Audio assets sampled from royalty-free sites like pixabay and findsounds and modified or otherwise edited
-# Public domain (aka CC0-1.0)
-[[annotations]]
+[[annotations]] # Audio assets sampled from royalty-free sites like pixabay and findsounds and modified or otherwise edited
 path = [
     "se/gacha_dial.wav",
     "se/gacha_dispense.wav",
