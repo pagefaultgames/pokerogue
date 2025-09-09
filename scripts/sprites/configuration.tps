@@ -1,6 +1,6 @@
 <!--
-SPDX-FileCopyrightText: 2024-2025 Pagefault Games
-SPDX-License-Identifier: AGPL-3.0-only
+SPDX-FileCopyrightText: NONE
+SPDX-License-Identifier: CC0-1.0
 -->
 <?xml version="1.0" encoding="UTF-8"?>
 <data version="1.0">
