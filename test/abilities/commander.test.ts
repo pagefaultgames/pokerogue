@@ -72,7 +72,7 @@ describe("Abilities - Commander", () => {
 
     await game.classicMode.startBattle([SpeciesId.TATSUGIRI, SpeciesId.MAGIKARP, SpeciesId.DONDOZO]);
 
-    const [tatsugiri, dondozo] = game.scene.getPlayerField();
+    const [tatsugiri, _, dondozo] = game.scene.getPlayerParty();
 
     game.move.select(MoveId.LIQUIDATION, 0, BattlerIndex.ENEMY);
     game.doSwitchPokemon(2);
@@ -197,6 +197,8 @@ describe("Abilities - Commander", () => {
 
     game.move.use(MoveId.DIVE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
 
     expect(tatsugiri).toHaveBattlerTag(BattlerTagType.UNDERWATER);
