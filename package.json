@@ -7,6 +7,7 @@
     "start:prod": "vite --mode production",
     "start:beta": "vite --mode beta",
     "start:dev": "vite --mode development",
+    "start:podman": "vite --mode development --host 0.0.0.0 --port $PORT",
     "build": "vite build",
     "build:beta": "vite build --mode beta",
     "preview": "vite preview",
@@ -71,5 +72,6 @@
   },
   "engines": {
     "node": ">=22.0.0"
-  }
+  },
+  "packageManager": "pnpm@10.14.0"
 }
