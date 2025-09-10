@@ -29,7 +29,7 @@ export enum MoveFlags {
   SLICING_MOVE = 1 << 8,
   /**
    * Indicates a move should be affected by {@linkcode AbilityId.RECKLESS}
-   * @see {@linkcode Move.recklessMove()}
+   * @see {@linkcode Move.recklessMove}
    */
   RECKLESS_MOVE = 1 << 9,
   /** Indicates a move should be affected by {@linkcode AbilityId.BULLETPROOF} */

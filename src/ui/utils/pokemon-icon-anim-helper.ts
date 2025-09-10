@@ -9,7 +9,7 @@ export enum PokemonIconAnimMode {
 
 type PokemonIcon = Phaser.GameObjects.Container | Phaser.GameObjects.Sprite;
 
-export class PokemonIconAnimHandler {
+export class PokemonIconAnimHelper {
   private icons: Map<PokemonIcon, PokemonIconAnimMode>;
   private toggled: boolean;
 
