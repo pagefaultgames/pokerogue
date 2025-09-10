@@ -3496,7 +3496,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param isCritical determines whether a critical hit has occurred or not (`false` by default)
    * @param simulated determines whether effects are applied without altering game state (`true` by default)
    * @param ignoreHeldItems determines whether this Pokemon's held items should be ignored during the stat calculation, default `false`
-   * @return the stat stage multiplier to be used for effective stat calculation
+   * @returns the stat stage multiplier to be used for effective stat calculation
    */
   getStatStageMultiplier(
     stat: EffectiveStat,

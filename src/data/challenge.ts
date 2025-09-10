@@ -383,7 +383,7 @@ export abstract class Challenge {
    * An apply function for POKEMON_ADD_TO_PARTY. Derived classes should alter this.
    * @param _pokemon - The pokemon being caught
    * @param _status - Whether the pokemon can be added to the party or not
-   * @return Whether this function did anything
+   * @returns Whether this function did anything
    */
   applyPokemonAddToParty(_pokemon: EnemyPokemon, _status: BooleanHolder): boolean {
     return false;

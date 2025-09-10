@@ -1243,8 +1243,6 @@ interface MoveEffectAttrOptions {
 
 /**
  * Base class defining all Move Effect Attributes
- * @extends MoveAttr
- * @see {@linkcode apply}
  */
 export class MoveEffectAttr extends MoveAttr {
   /**
@@ -6853,7 +6851,7 @@ export class CopyBiomeTypeAttr extends MoveEffectAttr {
   }
 }
 
-/** 
+/**
  * Attribute to override the target's current types to the given type.
  * Used by {@linkcode MoveId.SOAK} and {@linkcode MoveId.MAGIC_POWDER}.
  */

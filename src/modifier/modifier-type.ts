@@ -150,7 +150,7 @@ export class ModifierType {
   /**
    * Checks if the modifier type is of a specific type
    * @param modifierType - The type to check against
-   * @return Whether the modifier type is of the specified type
+   * @returns Whether the modifier type is of the specified type
    */
   public is<K extends ModifierTypeString>(modifierType: K): this is ModifierTypeInstanceMap[K] {
     const targetType = ModifierTypeConstructorMap[modifierType];
