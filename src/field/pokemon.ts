@@ -4291,18 +4291,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return false;
   }
 
-  /**@overload */
   getTag(tagType: BattlerTagType.GRUDGE): GrudgeTag | undefined;
-
-  /** @overload */
   getTag(tagType: BattlerTagType.SUBSTITUTE): SubstituteTag | undefined;
-
-  /** @overload */
   getTag(tagType: BattlerTagType): BattlerTag | undefined;
-
-  /** @overload */
   getTag<T extends BattlerTag>(tagType: Constructor<T>): T | undefined;
-
   getTag(tagType: BattlerTagType | Constructor<BattlerTag>): BattlerTag | undefined {
     return typeof tagType === "function"
       ? this.summonData.tags.find(t => t instanceof tagType)
