@@ -5,5 +5,5 @@ export enum ExpNotification {
   /** Display smaller flyout showing level gained on gaining a new level. */
   ONLY_LEVEL_UP,
   /** Do not show any flyouts for EXP gains or levelups. */
-  SKIP
+  SKIP,
 }

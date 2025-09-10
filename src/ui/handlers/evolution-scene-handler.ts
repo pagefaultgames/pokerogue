@@ -62,16 +62,12 @@ export class EvolutionSceneHandler extends MessageUiHandler {
     }
 
     const ui = this.getUi();
-    if (this.awaitingActionInput) {
-      if (button === Button.CANCEL || button === Button.ACTION) {
-        if (this.onActionInput) {
-          ui.playSelect();
-          const originalOnActionInput = this.onActionInput;
-          this.onActionInput = null;
-          originalOnActionInput();
-          return true;
-        }
-      }
+    if (this.awaitingActionInput && (button === Button.CANCEL || button === Button.ACTION) && this.onActionInput) {
+      ui.playSelect();
+      const originalOnActionInput = this.onActionInput;
+      this.onActionInput = null;
+      originalOnActionInput();
+      return true;
     }
 
     return false;
