@@ -2523,9 +2523,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     // Related to https://github.com/pagefaultgames/pokerogue/issues/524
     // TODO: Fix once gravity makes pokemon actually grounded
     if (
-      moveType === PokemonType.GROUND &&
-      types.includes(PokemonType.FLYING) &&
-      (this.isGrounded() || arena.hasTag(ArenaTagType.GRAVITY))
+      moveType === PokemonType.GROUND
+      && types.includes(PokemonType.FLYING)
+      && (this.isGrounded() || arena.hasTag(ArenaTagType.GRAVITY))
     ) {
       types.splice(types.indexOf(PokemonType.FLYING), 1);
     }
@@ -2536,9 +2536,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       // If the target is immune to the type in question, check for effects that would ignore said nullification
       // TODO: Review if the `isActive` check is needed anymore
       if (
-        source?.isActive(true) &&
-        typeMulti === 0 &&
-        this.checkIgnoreTypeImmunity({ source, simulated, moveType, defenderType })
+        source?.isActive(true)
+        && typeMulti === 0
+        && this.checkIgnoreTypeImmunity({ source, simulated, moveType, defenderType })
       ) {
         continue;
       }
@@ -2554,7 +2554,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (
       !ignoreStrongWinds
       && arena.getWeatherType() === WeatherType.STRONG_WINDS
-      && !arena.weather.isEffectSuppressed()
+      && !arena.weather?.isEffectSuppressed()
       && this.isOfType(PokemonType.FLYING)
       && getTypeDamageMultiplier(moveType, PokemonType.FLYING) === 2
     ) {
@@ -2623,8 +2623,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (enemyTypes.length > 1) {
       defScore *=
         // TODO: Shouldn't this pass `simulated=true` here?
-        1 /
-        Math.max(
+        1
+        / Math.max(
           this.getAttackTypeEffectiveness(enemyTypes[1], { source: opponent, simulated: false, useIllusion: true }),
           0.25,
         );
