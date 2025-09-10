@@ -49,7 +49,7 @@ import { achvs } from "#system/achv";
 import { RibbonData } from "#system/ribbons/ribbon-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
-import { DexAttrProps, StarterAttributes, StarterDataEntry, StarterMoveset } from "#types/save-data";
+import type { DexAttrProps, StarterAttributes, StarterDataEntry, StarterMoveset } from "#types/save-data";
 import {
   DropDown,
   DropDownLabel,
