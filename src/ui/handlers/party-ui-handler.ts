@@ -25,7 +25,7 @@ import { MoveInfoOverlay } from "#ui/containers/move-info-overlay";
 import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
-import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/utils/pokemon-icon-anim-handler";
+import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/utils/pokemon-icon-anim-helper";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, getLocalizedSpriteKey, randInt } from "#utils/common";
 import { toCamelCase, toTitleCase } from "#utils/strings";
@@ -201,7 +201,7 @@ export class PartyUiHandler extends MessageUiHandler {
   private tmMoveId: MoveId;
   private showMovePp: boolean;
 
-  private iconAnimHandler: PokemonIconAnimHandler;
+  private iconAnimHandler: PokemonIconAnimHelper;
 
   private blockInput: boolean;
 
@@ -320,7 +320,7 @@ export class PartyUiHandler extends MessageUiHandler {
     this.optionsContainer = globalScene.add.container(globalScene.scaledCanvas.width - 1, -1);
     partyContainer.add(this.optionsContainer);
 
-    this.iconAnimHandler = new PokemonIconAnimHandler();
+    this.iconAnimHandler = new PokemonIconAnimHelper();
     this.iconAnimHandler.setup();
 
     const partyDiscardModeButton = new PartyDiscardModeButton(DISCARD_BUTTON_X, DISCARD_BUTTON_Y, this);
@@ -1892,12 +1892,12 @@ class PartySlot extends Phaser.GameObjects.Container {
 
   private slotBgKey: string;
   private pokemonIcon: Phaser.GameObjects.Container;
-  private iconAnimHandler: PokemonIconAnimHandler;
+  private iconAnimHandler: PokemonIconAnimHelper;
 
   constructor(
     slotIndex: number,
     pokemon: PlayerPokemon,
-    iconAnimHandler: PokemonIconAnimHandler,
+    iconAnimHandler: PokemonIconAnimHelper,
     partyUiMode: PartyUiMode,
     tmMoveId: MoveId,
   ) {

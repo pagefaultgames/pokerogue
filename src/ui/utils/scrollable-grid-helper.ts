@@ -16,7 +16,7 @@ type UpdateDetailsCallbackFunction = (index: number) => void;
  * - in `UiHandler.processInput`: call `processNavigationInput` to have it handle the cursor updates while calling the defined callbacks
  * - in `UiHandler.clear`: call `reset`
  */
-export class ScrollableGridHandler {
+export class ScrollableGridHelper {
   private readonly ROWS: number;
   private readonly COLUMNS: number;
   private handler: UiHandler;
@@ -47,7 +47,7 @@ export class ScrollableGridHandler {
    * @param scrollBar {@linkcode ScrollBar}
    * @returns this
    */
-  withScrollBar(scrollBar: ScrollBar): ScrollableGridHandler {
+  withScrollBar(scrollBar: ScrollBar): ScrollableGridHelper {
     this.scrollBar = scrollBar;
     this.scrollBar.setTotalRows(Math.ceil(this.totalElements / this.COLUMNS));
     return this;
@@ -58,7 +58,7 @@ export class ScrollableGridHandler {
    * @param callback {@linkcode UpdateGridCallbackFunction}
    * @returns this
    */
-  withUpdateGridCallBack(callback: UpdateGridCallbackFunction): ScrollableGridHandler {
+  withUpdateGridCallBack(callback: UpdateGridCallbackFunction): ScrollableGridHelper {
     this.updateGridCallback = callback;
     return this;
   }
@@ -68,7 +68,7 @@ export class ScrollableGridHandler {
    * @param callback {@linkcode UpdateDetailsCallbackFunction}
    * @returns this
    */
-  withUpdateSingleElementCallback(callback: UpdateDetailsCallbackFunction): ScrollableGridHandler {
+  withUpdateSingleElementCallback(callback: UpdateDetailsCallbackFunction): ScrollableGridHelper {
     this.updateDetailsCallback = callback;
     return this;
   }
