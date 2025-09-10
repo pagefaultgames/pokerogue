@@ -131,7 +131,6 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("party_transfer", "ui");
 
     this.loadImage("summary_bg", "ui");
-    this.loadImage("summary_overlay_shiny", "ui");
     this.loadImage("summary_profile", "ui");
     this.loadImage("summary_profile_prompt_z", "ui"); // The pixel Z button prompt
     this.loadImage("summary_profile_prompt_a", "ui"); // The pixel A button prompt

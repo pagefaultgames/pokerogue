@@ -377,10 +377,12 @@ export class UI extends Phaser.GameObjects.Container {
   }
 
   shouldSkipDialogue(i18nKey: string): boolean {
-    if (i18next.exists(i18nKey)) {
-      if (globalScene.skipSeenDialogues && globalScene.gameData.getSeenDialogues()[i18nKey] === true) {
-        return true;
-      }
+    if (
+      i18next.exists(i18nKey)
+      && globalScene.skipSeenDialogues
+      && globalScene.gameData.getSeenDialogues()[i18nKey] === true
+    ) {
+      return true;
     }
     return false;
   }
@@ -491,7 +493,7 @@ export class UI extends Phaser.GameObjects.Container {
       globalScene.tweens.add({
         targets: this.overlay,
         alpha: 1,
-        duration: duration,
+        duration,
         ease: "Sine.easeOut",
         onComplete: () => resolve(),
       });
@@ -506,7 +508,7 @@ export class UI extends Phaser.GameObjects.Container {
       globalScene.tweens.add({
         targets: this.overlay,
         alpha: 0,
-        duration: duration,
+        duration,
         ease: "Sine.easeIn",
         onComplete: () => {
           this.overlay.setVisible(false);
@@ -548,11 +550,11 @@ export class UI extends Phaser.GameObjects.Container {
         resolve();
       };
       if (
-        (!chainMode &&
-          (transitionModes.indexOf(this.mode) > -1 || transitionModes.indexOf(mode) > -1) &&
-          noTransitionModes.indexOf(this.mode) === -1 &&
-          noTransitionModes.indexOf(mode) === -1) ||
-        (chainMode && noTransitionModes.indexOf(mode) === -1)
+        (!chainMode
+          && (transitionModes.indexOf(this.mode) > -1 || transitionModes.indexOf(mode) > -1)
+          && noTransitionModes.indexOf(this.mode) === -1
+          && noTransitionModes.indexOf(mode) === -1)
+        || (chainMode && noTransitionModes.indexOf(mode) === -1)
       ) {
         this.fadeOut(250).then(() => {
           globalScene.time.delayedCall(100, () => {
@@ -593,7 +595,7 @@ export class UI extends Phaser.GameObjects.Container {
 
   revertMode(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      if (!this?.modeChain?.length) {
+      if (this?.modeChain?.length === 0) {
         return resolve(false);
       }
 
@@ -625,7 +627,7 @@ export class UI extends Phaser.GameObjects.Container {
 
   revertModes(): Promise<void> {
     return new Promise<void>(resolve => {
-      if (!this?.modeChain?.length) {
+      if (this?.modeChain?.length === 0) {
         return resolve();
       }
       this.revertMode().then(success => executeIf(success, this.revertModes).then(() => resolve()));

@@ -96,8 +96,8 @@ export enum FormChangeItem {
   DRACO_PLATE,
   DREAD_PLATE,
   PIXIE_PLATE,
-  BLANK_PLATE,// TODO: Find a potential use for this
-  LEGEND_PLATE,// TODO: Find a potential use for this
+  BLANK_PLATE, // TODO: Find a potential use for this
+  LEGEND_PLATE, // TODO: Find a potential use for this
   FIGHTING_MEMORY,
   FLYING_MEMORY,
   POISON_MEMORY,
@@ -115,5 +115,5 @@ export enum FormChangeItem {
   DRAGON_MEMORY,
   DARK_MEMORY,
   FAIRY_MEMORY,
-  NORMAL_MEMORY
+  NORMAL_MEMORY,
 }

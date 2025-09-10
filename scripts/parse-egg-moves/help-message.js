@@ -4,8 +4,8 @@ import chalk from "chalk";
 export function showHelpText() {
   console.log(`
 Usage: ${chalk.cyan("pnpm eggMoves:parse [options]")}
-If given no options, assumes ${chalk.blue("\`--interactive\`")}.
-If given only a file path, assumes ${chalk.blue("\`--file\`")}.
+If given no options, assumes ${chalk.blue("`--interactive`")}.
+If given only a file path, assumes ${chalk.blue("`--file`")}.
 
 ${chalk.hex("#ffa500")("Options:")}
   ${chalk.blue("-h, --help")}            Show this help message.

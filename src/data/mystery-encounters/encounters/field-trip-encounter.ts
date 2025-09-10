@@ -249,6 +249,6 @@ function pokemonAndMoveChosen(pokemon: PlayerPokemon, move: PokemonMove, correct
     setEncounterExp([pokemon.id], 100);
   }
   encounter.misc = {
-    correctMove: correctMove,
+    correctMove,
   };
 }

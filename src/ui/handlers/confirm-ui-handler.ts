@@ -21,12 +21,12 @@ export class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
 
   show(args: any[]): boolean {
     if (
-      args.length === 5 &&
-      args[0] instanceof Function &&
-      args[1] instanceof Function &&
-      args[2] instanceof Function &&
-      args[3] instanceof Function &&
-      args[4] === "fullParty"
+      args.length === 5
+      && args[0] instanceof Function
+      && args[1] instanceof Function
+      && args[2] instanceof Function
+      && args[3] instanceof Function
+      && args[4] === "fullParty"
     ) {
       const config: OptionSelectConfig = {
         options: [

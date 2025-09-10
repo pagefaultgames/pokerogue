@@ -368,10 +368,10 @@ export class GameData {
       if (!bypassLogin) {
         pokerogueApi.savedata.system.get({ clientSessionId }).then(saveDataOrErr => {
           if (
-            typeof saveDataOrErr === "number" ||
-            !saveDataOrErr ||
-            saveDataOrErr.length === 0 ||
-            saveDataOrErr[0] !== "{"
+            typeof saveDataOrErr === "number"
+            || !saveDataOrErr
+            || saveDataOrErr.length === 0
+            || saveDataOrErr[0] !== "{"
           ) {
             if (saveDataOrErr === 404) {
               globalScene.phaseManager.queueMessage(
@@ -599,7 +599,7 @@ export class GameData {
     const timestamp = runEntry.timestamp.toString();
     runHistoryData[timestamp] = {
       entry: runEntry,
-      isVictory: isVictory,
+      isVictory,
       isFavorite: false,
     };
     localStorage.setItem(
@@ -1169,7 +1169,7 @@ export class GameData {
           loadPositionalTag(tag),
         );
 
-        if (globalScene.modifiers.length) {
+        if (globalScene.modifiers.length > 0) {
           console.warn("Existing modifiers not cleared on session load, deleting...");
           globalScene.modifiers = [];
         }
@@ -1347,8 +1347,8 @@ export class GameData {
             }
 
             if (
-              md instanceof Modifier.EnemyAttackStatusEffectChanceModifier &&
-              (md.effect === StatusEffect.FREEZE || md.effect === StatusEffect.SLEEP)
+              md instanceof Modifier.EnemyAttackStatusEffectChanceModifier
+              && (md.effect === StatusEffect.FREEZE || md.effect === StatusEffect.SLEEP)
             ) {
               // Discard any old "sleep/freeze chance tokens".
               // TODO: make this migrate script
@@ -1415,7 +1415,7 @@ export class GameData {
           system: systemData,
           session: sessionData,
           sessionSlotId: globalScene.sessionSlotId,
-          clientSessionId: clientSessionId,
+          clientSessionId,
         };
 
         localStorage.setItem(
@@ -1491,8 +1491,9 @@ export class GameData {
           });
         }
 
+        // TODO: this is a really shit way of checking JSON validity
         promise.then(response => {
-          if (typeof response === "number" || !response?.length || response[0] !== "{") {
+          if (typeof response !== "string" || response.length === 0 || response.charAt(0) !== "{") {
             console.error(response);
             resolve(false);
             return;
@@ -1667,7 +1668,7 @@ export class GameData {
     globalScene.executeWithSeedOffset(
       () => {
         const neutralNatures = [Nature.HARDY, Nature.DOCILE, Nature.SERIOUS, Nature.BASHFUL, Nature.QUIRKY];
-        for (let s = 0; s < defaultStarterSpecies.length; s++) {
+        for (const _ of defaultStarterSpecies) {
           defaultStarterNatures.push(randSeedItem(neutralNatures));
         }
       },
@@ -1713,8 +1714,8 @@ export class GameData {
   setPokemonSeen(pokemon: Pokemon, incrementCount = true, trainer = false): void {
     // Some Mystery Encounters block updates to these stats
     if (
-      globalScene.currentBattle?.isBattleMysteryEncounter() &&
-      globalScene.currentBattle.mysteryEncounter?.preventGameStatsUpdates
+      globalScene.currentBattle?.isBattleMysteryEncounter()
+      && globalScene.currentBattle.mysteryEncounter?.preventGameStatsUpdates
     ) {
       return;
     }
@@ -1994,8 +1995,8 @@ export class GameData {
       let message = prependSpeciesToMessage ? species.getName() + " " : "";
       message +=
         eggMoveIndex === 3
-          ? i18next.t("egg:rareEggMoveUnlock", { moveName: moveName })
-          : i18next.t("egg:eggMoveUnlock", { moveName: moveName });
+          ? i18next.t("egg:rareEggMoveUnlock", { moveName })
+          : i18next.t("egg:eggMoveUnlock", { moveName });
 
       globalScene.ui.showText(message, null, () => resolve(true), null, true);
     });
@@ -2218,9 +2219,9 @@ export class GameData {
     for (const s of starterIds) {
       const dexAttr = dexData[s].caughtAttr;
       starterData[s].abilityAttr =
-        (dexAttr & DexAttr.DEFAULT_VARIANT ? AbilityAttr.ABILITY_1 : 0) |
-        (dexAttr & DexAttr.VARIANT_2 ? AbilityAttr.ABILITY_2 : 0) |
-        (dexAttr & DexAttr.VARIANT_3 ? AbilityAttr.ABILITY_HIDDEN : 0);
+        (dexAttr & DexAttr.DEFAULT_VARIANT ? AbilityAttr.ABILITY_1 : 0)
+        | (dexAttr & DexAttr.VARIANT_2 ? AbilityAttr.ABILITY_2 : 0)
+        | (dexAttr & DexAttr.VARIANT_3 ? AbilityAttr.ABILITY_HIDDEN : 0);
       if (dexAttr) {
         if (!(dexAttr & DexAttr.DEFAULT_VARIANT)) {
           dexData[s].caughtAttr ^= DexAttr.DEFAULT_VARIANT;

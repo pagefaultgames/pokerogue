@@ -54,13 +54,11 @@ export class MockText implements MockGameObject {
           wordWidthWithSpace += whiteSpaceWidth;
         }
 
-        if (wordWidthWithSpace > spaceLeft) {
-          // Skip printing the newline if it's the first word of the line that is greater
-          // than the word wrap width.
-          if (j > 0) {
-            result += "\n";
-            spaceLeft = this.wordWrapWidth;
-          }
+        // Skip printing the newline if it's the first word of the line that is greater
+        // than the word wrap width.
+        if (wordWidthWithSpace > spaceLeft && j > 0) {
+          result += "\n";
+          spaceLeft = this.wordWrapWidth;
         }
 
         result += word;

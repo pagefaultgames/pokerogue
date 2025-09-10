@@ -342,7 +342,7 @@ export class PartyUiHandler extends MessageUiHandler {
   }
 
   show(args: any[]): boolean {
-    if (!args.length || this.active) {
+    if (args.length === 0 || this.active) {
       return false;
     }
 
@@ -441,7 +441,7 @@ export class PartyUiHandler extends MessageUiHandler {
               ui.setMode(UiMode.PARTY);
               this.showText(
                 i18next.t("partyUiHandler:wasReverted", {
-                  fusionName: fusionName,
+                  fusionName,
                   pokemonName: pokemon.getName(false),
                 }),
                 undefined,
@@ -595,9 +595,9 @@ export class PartyUiHandler extends MessageUiHandler {
           matchingModifiers.push(
             globalScene.findModifier(
               m =>
-                m.is("PokemonHeldItemModifier") &&
-                m.pokemonId === newPokemon.id &&
-                m.matchType(allItems[this.transferOptionCursor]),
+                m.is("PokemonHeldItemModifier")
+                && m.pokemonId === newPokemon.id
+                && m.matchType(allItems[this.transferOptionCursor]),
             ) as PokemonHeldItemModifier | undefined,
           );
         }
@@ -661,34 +661,32 @@ export class PartyUiHandler extends MessageUiHandler {
 
   // TODO: Might need to check here for when this.transferMode is active.
   private processModifierTransferModeLeftRightInput(button: Button) {
+    if (!this.isItemManageMode()) {
+      return false;
+    }
     let success = false;
     const option = this.options[this.optionsCursor];
     if (button === Button.LEFT) {
       /** Decrease quantity for the current item and update UI */
-      if (this.isItemManageMode()) {
-        this.transferQuantities[option] =
-          this.transferQuantities[option] === 1
-            ? this.transferQuantitiesMax[option]
-            : this.transferQuantities[option] - 1;
-        this.updateOptions();
-        success = this.setCursor(
-          this.optionsCursor,
-        ); /** Place again the cursor at the same position. Necessary, otherwise the cursor disappears */
-      }
+      this.transferQuantities[option] =
+        this.transferQuantities[option] === 1
+          ? this.transferQuantitiesMax[option]
+          : this.transferQuantities[option] - 1;
+      this.updateOptions();
+      success = this.setCursor(
+        this.optionsCursor,
+      ); /** Place again the cursor at the same position. Necessary, otherwise the cursor disappears */
     }
-
     if (button === Button.RIGHT) {
       /** Increase quantity for the current item and update UI */
-      if (this.isItemManageMode()) {
-        this.transferQuantities[option] =
-          this.transferQuantities[option] === this.transferQuantitiesMax[option]
-            ? 1
-            : this.transferQuantities[option] + 1;
-        this.updateOptions();
-        success = this.setCursor(
-          this.optionsCursor,
-        ); /** Place again the cursor at the same position. Necessary, otherwise the cursor disappears */
-      }
+      this.transferQuantities[option] =
+        this.transferQuantities[option] === this.transferQuantitiesMax[option]
+          ? 1
+          : this.transferQuantities[option] + 1;
+      this.updateOptions();
+      success = this.setCursor(
+        this.optionsCursor,
+      ); /** Place again the cursor at the same position. Necessary, otherwise the cursor disappears */
     }
     return success;
   }
@@ -862,9 +860,9 @@ export class PartyUiHandler extends MessageUiHandler {
     // This is only relevant for PartyUiMode.CHECK
     // TODO: This risks hitting the other options (.MOVE_i and ALL) so does it? Do we need an extra check?
     if (
-      option >= PartyOption.FORM_CHANGE_ITEM &&
-      globalScene.phaseManager.getCurrentPhase().is("SelectModifierPhase") &&
-      this.partyUiMode === PartyUiMode.CHECK
+      option >= PartyOption.FORM_CHANGE_ITEM
+      && globalScene.phaseManager.getCurrentPhase().is("SelectModifierPhase")
+      && this.partyUiMode === PartyUiMode.CHECK
     ) {
       const formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
       const modifier = formChangeItemModifiers[option - PartyOption.FORM_CHANGE_ITEM];
@@ -914,8 +912,8 @@ export class PartyUiHandler extends MessageUiHandler {
 
     // This is used when switching out using the Pokemon command (possibly holding a Baton held item). In this case there is no callback.
     if (
-      (option === PartyOption.PASS_BATON || option === PartyOption.SEND_OUT) &&
-      this.partyUiMode === PartyUiMode.SWITCH
+      (option === PartyOption.PASS_BATON || option === PartyOption.SEND_OUT)
+      && this.partyUiMode === PartyUiMode.SWITCH
     ) {
       this.clearOptions();
       (globalScene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(
@@ -937,8 +935,8 @@ export class PartyUiHandler extends MessageUiHandler {
         PartyOption.MOVE_3,
         PartyOption.MOVE_4,
         PartyOption.SELECT,
-      ].includes(option) &&
-      this.selectCallback
+      ].includes(option)
+      && this.selectCallback
     ) {
       this.clearOptions();
       const selectCallback = this.selectCallback;
@@ -977,10 +975,8 @@ export class PartyUiHandler extends MessageUiHandler {
       return this.moveOptionCursor(button);
     }
 
-    if (button === Button.LEFT || button === Button.RIGHT) {
-      if (this.isItemManageMode()) {
-        return this.processModifierTransferModeLeftRightInput(button);
-      }
+    if ((button === Button.LEFT || button === Button.RIGHT) && this.isItemManageMode()) {
+      return this.processModifierTransferModeLeftRightInput(button);
     }
 
     return false;
@@ -1046,15 +1042,15 @@ export class PartyUiHandler extends MessageUiHandler {
     const ui = this.getUi();
     if (this.cursor < 6) {
       if (
-        (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && !this.transferMode) ||
-        this.partyUiMode === PartyUiMode.DISCARD
+        (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && !this.transferMode)
+        || this.partyUiMode === PartyUiMode.DISCARD
       ) {
         /** Initialize item quantities for the selected Pokemon */
         const itemModifiers = globalScene.findModifiers(
           m =>
-            m.is("PokemonHeldItemModifier") &&
-            m.isTransferable &&
-            m.pokemonId === globalScene.getPlayerParty()[this.cursor].id,
+            m.is("PokemonHeldItemModifier")
+            && m.isTransferable
+            && m.pokemonId === globalScene.getPlayerParty()[this.cursor].id,
         ) as PokemonHeldItemModifier[];
         this.transferQuantities = itemModifiers.map(item => item.getStackCount());
         this.transferQuantitiesMax = itemModifiers.map(item => item.getStackCount());
@@ -1096,8 +1092,8 @@ export class PartyUiHandler extends MessageUiHandler {
   private processPartyCancelInput(): boolean {
     const ui = this.getUi();
     if (
-      (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER || this.partyUiMode === PartyUiMode.SPLICE) &&
-      this.transferMode
+      (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER || this.partyUiMode === PartyUiMode.SPLICE)
+      && this.transferMode
     ) {
       this.clearTransfer();
       ui.playSelect();
@@ -1263,11 +1259,9 @@ export class PartyUiHandler extends MessageUiHandler {
             isScroll = true;
             this.optionsScrollCursor++;
           }
-        } else {
-          if (!cursor && this.optionsScrollCursor) {
-            isScroll = true;
-            this.optionsScrollCursor--;
-          }
+        } else if (!cursor && this.optionsScrollCursor) {
+          isScroll = true;
+          this.optionsScrollCursor--;
         }
         if (isScroll && this.optionsScrollCursor === 1) {
           this.optionsScrollCursor += isDown ? 1 : -1;
@@ -1372,8 +1366,8 @@ export class PartyUiHandler extends MessageUiHandler {
 
   private allowBatonModifierSwitch(): boolean {
     return !!(
-      this.partyUiMode !== PartyUiMode.FAINT_SWITCH &&
-      globalScene.findModifier(
+      this.partyUiMode !== PartyUiMode.FAINT_SWITCH
+      && globalScene.findModifier(
         m => m.is("SwitchEffectTransferModifier") && m.pokemonId === globalScene.getPlayerField()[this.fieldIndex].id,
       )
     );
@@ -1384,9 +1378,9 @@ export class PartyUiHandler extends MessageUiHandler {
   private isBatonPassMove(): boolean {
     const lastMove: TurnMove | undefined = globalScene.getPlayerField()[this.fieldIndex].getLastXMoves()[0];
     return (
-      this.partyUiMode === PartyUiMode.FAINT_SWITCH &&
-      lastMove?.result === MoveResult.SUCCESS &&
-      allMoves[lastMove.move].getAttrs("ForceSwitchOutAttr")[0]?.isBatonPass()
+      this.partyUiMode === PartyUiMode.FAINT_SWITCH
+      && lastMove?.result === MoveResult.SUCCESS
+      && allMoves[lastMove.move].getAttrs("ForceSwitchOutAttr")[0]?.isBatonPass()
     );
   }
 
@@ -1403,7 +1397,7 @@ export class PartyUiHandler extends MessageUiHandler {
     for (let m = 0; m < learnableMoves.length; m++) {
       this.options.push(m);
     }
-    if (learnableMoves?.length) {
+    if (learnableMoves?.length > 0) {
       // show the move overlay with info for the first move
       this.moveInfoOverlay.show(allMoves[learnableMoves[0]]);
     }
@@ -1432,8 +1426,10 @@ export class PartyUiHandler extends MessageUiHandler {
     this.options.push(PartyOption.RENAME);
 
     if (
-      pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId) ||
-      (pokemon.isFusion() && pokemon.fusionSpecies && pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId))
+      pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId)
+      || (pokemon.isFusion()
+        && pokemon.fusionSpecies
+        && pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId))
     ) {
       this.options.push(PartyOption.UNPAUSE_EVOLUTION);
     }
@@ -1466,7 +1462,7 @@ export class PartyUiHandler extends MessageUiHandler {
   updateOptions(): void {
     const pokemon = globalScene.getPlayerParty()[this.cursor];
 
-    if (this.options.length) {
+    if (this.options.length > 0) {
       this.options.splice(0, this.options.length);
       this.optionsContainer.removeAll(true);
       this.eraseOptionsCursor();
@@ -1612,14 +1608,12 @@ export class PartyUiHandler extends MessageUiHandler {
 
     this.optionsContainer.add(this.optionsBg);
 
-    const optionStartIndex = 0;
-    const optionEndIndex = this.options.length;
-
     let widestOptionWidth = 0;
     const optionTexts: BBCodeText[] = [];
 
-    for (let o = optionStartIndex; o < optionEndIndex; o++) {
-      const option = this.options[this.options.length - (o + 1)];
+    // TODO: Refactor this iteration to not be fucking bizarre
+    for (let o = 0; o < this.options.length; o++) {
+      const option = this.options.at(-(o + 1))!;
       let altText = false;
       let optionName: string;
       if (option === PartyOption.SCROLL_UP) {
@@ -1627,10 +1621,10 @@ export class PartyUiHandler extends MessageUiHandler {
       } else if (option === PartyOption.SCROLL_DOWN) {
         optionName = "↓";
       } else if (
-        (this.partyUiMode !== PartyUiMode.REMEMBER_MOVE_MODIFIER &&
-          (this.partyUiMode !== PartyUiMode.MODIFIER_TRANSFER || this.transferMode) &&
-          this.partyUiMode !== PartyUiMode.DISCARD) ||
-        option === PartyOption.CANCEL
+        (this.partyUiMode !== PartyUiMode.REMEMBER_MOVE_MODIFIER
+          && (this.partyUiMode !== PartyUiMode.MODIFIER_TRANSFER || this.transferMode)
+          && this.partyUiMode !== PartyUiMode.DISCARD)
+        || option === PartyOption.CANCEL
       ) {
         switch (option) {
           case PartyOption.MOVE_1:
@@ -1654,12 +1648,10 @@ export class PartyUiHandler extends MessageUiHandler {
               optionName = `${modifier.active ? i18next.t("partyUiHandler:deactivate") : i18next.t("partyUiHandler:activate")} ${modifier.type.name}`;
             } else if (option === PartyOption.UNPAUSE_EVOLUTION) {
               optionName = `${pokemon.pauseEvolutions ? i18next.t("partyUiHandler:unpauseEvolution") : i18next.t("partyUiHandler:pauseEvolution")}`;
+            } else if (this.localizedOptions.includes(option)) {
+              optionName = i18next.t(`partyUiHandler:${toCamelCase(PartyOption[option])}`);
             } else {
-              if (this.localizedOptions.includes(option)) {
-                optionName = i18next.t(`partyUiHandler:${toCamelCase(PartyOption[option])}`);
-              } else {
-                optionName = toTitleCase(PartyOption[option]);
-              }
+              optionName = toTitleCase(PartyOption[option]);
             }
             break;
           }
@@ -1694,11 +1686,11 @@ export class PartyUiHandler extends MessageUiHandler {
       const itemModifiers = this.getItemModifiers(pokemon);
       const itemModifier = itemModifiers[option];
       if (
-        this.isItemManageMode() &&
-        this.transferQuantitiesMax[option] > 1 &&
-        !this.transferMode &&
-        itemModifier !== undefined &&
-        itemModifier.type.name === optionName
+        this.isItemManageMode()
+        && this.transferQuantitiesMax[option] > 1
+        && !this.transferMode
+        && itemModifier !== undefined
+        && itemModifier.type.name === optionName
       ) {
         let amountText = ` (${this.transferQuantities[option]})`;
 
@@ -1737,12 +1729,12 @@ export class PartyUiHandler extends MessageUiHandler {
     this.transferMode = false;
     this.transferAll = false;
     this.partySlots[this.transferCursor].setTransfer(false);
-    for (let i = 0; i < this.partySlots.length; i++) {
-      this.partySlots[i].slotDescriptionLabel.setVisible(false);
-      this.partySlots[i].slotHpLabel.setVisible(true);
-      this.partySlots[i].slotHpBar.setVisible(true);
-      this.partySlots[i].slotHpOverlay.setVisible(true);
-      this.partySlots[i].slotHpText.setVisible(true);
+    for (const partySlot of this.partySlots) {
+      partySlot.slotDescriptionLabel.setVisible(false);
+      partySlot.slotHpLabel.setVisible(true);
+      partySlot.slotHpBar.setVisible(true);
+      partySlot.slotHpOverlay.setVisible(true);
+      partySlot.slotHpText.setVisible(true);
     }
   }
 
@@ -1774,42 +1766,42 @@ export class PartyUiHandler extends MessageUiHandler {
   getReleaseMessage(pokemonName: string): string {
     const rand = randInt(128);
     if (rand < 20) {
-      return i18next.t("partyUiHandler:goodbye", { pokemonName: pokemonName });
+      return i18next.t("partyUiHandler:goodbye", { pokemonName });
     }
     if (rand < 40) {
-      return i18next.t("partyUiHandler:byebye", { pokemonName: pokemonName });
+      return i18next.t("partyUiHandler:byebye", { pokemonName });
     }
     if (rand < 60) {
-      return i18next.t("partyUiHandler:farewell", { pokemonName: pokemonName });
+      return i18next.t("partyUiHandler:farewell", { pokemonName });
     }
     if (rand < 80) {
-      return i18next.t("partyUiHandler:soLong", { pokemonName: pokemonName });
+      return i18next.t("partyUiHandler:soLong", { pokemonName });
     }
     if (rand < 100) {
       return i18next.t("partyUiHandler:thisIsWhereWePart", {
-        pokemonName: pokemonName,
+        pokemonName,
       });
     }
     if (rand < 108) {
       return i18next.t("partyUiHandler:illMissYou", {
-        pokemonName: pokemonName,
+        pokemonName,
       });
     }
     if (rand < 116) {
       return i18next.t("partyUiHandler:illNeverForgetYou", {
-        pokemonName: pokemonName,
+        pokemonName,
       });
     }
     if (rand < 124) {
       return i18next.t("partyUiHandler:untilWeMeetAgain", {
-        pokemonName: pokemonName,
+        pokemonName,
       });
     }
     if (rand < 127) {
-      return i18next.t("partyUiHandler:sayonara", { pokemonName: pokemonName });
+      return i18next.t("partyUiHandler:sayonara", { pokemonName });
     }
     return i18next.t("partyUiHandler:smellYaLater", {
-      pokemonName: pokemonName,
+      pokemonName,
     });
   }
 
@@ -1840,9 +1832,9 @@ export class PartyUiHandler extends MessageUiHandler {
 
   getOptionsCursorWithScroll(): number {
     return (
-      this.optionsCursor +
-      this.optionsScrollCursor +
-      (this.options && this.options[0] === PartyOption.SCROLL_UP ? -1 : 0)
+      this.optionsCursor
+      + this.optionsScrollCursor
+      + (this.options && this.options[0] === PartyOption.SCROLL_UP ? -1 : 0)
     );
   }
 

@@ -28,9 +28,9 @@ export function deepCopy<T extends object>(values: T): T {
 export function deepMergeSpriteData(dest: object, source: object) {
   for (const key of Object.keys(source)) {
     if (
-      !(key in dest) ||
-      typeof source[key] !== typeof dest[key] ||
-      Array.isArray(source[key]) !== Array.isArray(dest[key])
+      !(key in dest)
+      || typeof source[key] !== typeof dest[key]
+      || Array.isArray(source[key]) !== Array.isArray(dest[key])
     ) {
       continue;
     }
