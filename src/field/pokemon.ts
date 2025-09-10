@@ -2774,7 +2774,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
      * This causes problems when there are intentional duplicates (i.e. Smeargle with Sketch)
      */
     if (levelMoves) {
-      this.getUniqueMoves(levelMoves, ret);
+      Pokemon.getUniqueMoves(levelMoves, ret);
     }
 
     return ret;
@@ -2788,7 +2788,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param levelMoves the input array to search for non-duplicates from
    * @param ret the output array to be pushed into.
    */
-  private getUniqueMoves(levelMoves: LevelMoves, ret: LevelMoves): void {
+  private static getUniqueMoves(levelMoves: LevelMoves, ret: LevelMoves): void {
     const uniqueMoves: MoveId[] = [];
     for (const lm of levelMoves) {
       if (!uniqueMoves.find(m => m === lm[1])) {
@@ -3075,10 +3075,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
+    const tmMoves: MoveId[] = [];
     if (this.hasTrainer()) {
       const tms = Object.keys(tmSpecies);
       for (const tm of tms) {
-        const moveId = Number.parseInt(tm) as MoveId;
+        const moveId = +tm as MoveId;
         let compatible = false;
         for (const p of tmSpecies[tm]) {
           if (Array.isArray(p)) {
@@ -3098,11 +3099,20 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         }
         if (compatible && !movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)")) {
           if (tmPoolTiers[moveId] === ModifierTier.COMMON && this.level >= 15) {
-            movePool.push([moveId, 10]);
+            movePool.push([moveId, 12]);
+            if (!allLevelMoves.some(m => m[1] === moveId)) {
+              tmMoves.push(moveId);
+            }
           } else if (tmPoolTiers[moveId] === ModifierTier.GREAT && this.level >= 30) {
             movePool.push([moveId, 14]);
+            if (!allLevelMoves.some(m => m[1] === moveId)) {
+              tmMoves.push(moveId);
+            }
           } else if (tmPoolTiers[moveId] === ModifierTier.ULTRA && this.level >= 50) {
-            movePool.push([moveId, 20]);
+            movePool.push([moveId, 18]);
+            if (!allLevelMoves.some(m => m[1] === moveId)) {
+              tmMoves.push(moveId);
+            }
           }
         }
       }
@@ -3208,6 +3218,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       Math.ceil(Math.pow(m[1], weightMultiplier) * 100),
     ]);
 
+    const tmCap = Math.min(Math.ceil((globalScene.currentBattle?.waveIndex ?? 200) / 40), 4);
+    let tmCount = 0;
+
     const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
       MoveId.BEAT_UP,
       MoveId.BELCH,
@@ -3266,6 +3279,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       while (rand > stabMovePool[index][1]) {
         rand -= stabMovePool[index++][1];
       }
+      if (tmMoves.includes(stabMovePool[index][0])) {
+        tmCount++;
+      }
       this.moveset.push(new PokemonMove(stabMovePool[index][0]));
     } else {
       // If there are no damaging STAB moves, just force a random damaging move
@@ -3278,6 +3294,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         let index = 0;
         while (rand > attackMovePool[index][1]) {
           rand -= attackMovePool[index++][1];
+        }
+        if (tmMoves.includes(attackMovePool[index][0])) {
+          tmCount++;
         }
         this.moveset.push(new PokemonMove(attackMovePool[index][0], 0, 0));
       }
@@ -3295,7 +3314,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
                 mo =>
                   m[0] === mo.moveId
                   || (allMoves[m[0]].hasAttr("SacrificialAttr") && mo.getMove().hasAttr("SacrificialAttr")), // Only one self-KO move allowed
-              ),
+              )
+              && (tmCount < tmCap || !tmMoves.includes(m[0])),
           )
           .map(m => {
             let ret: number;
@@ -3323,7 +3343,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
               mo =>
                 m[0] === mo.moveId
                 || (allMoves[m[0]].hasAttr("SacrificialAttr") && mo.getMove().hasAttr("SacrificialAttr")), // Only one self-KO move allowed
-            ),
+            )
+            && (tmCount < tmCap || !tmMoves.includes(m[0])),
         );
       }
       const totalWeight = movePool.reduce((v, m) => v + m[1], 0);
@@ -3331,6 +3352,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       let index = 0;
       while (rand > movePool[index][1]) {
         rand -= movePool[index++][1];
+      }
+      if (tmMoves.includes(movePool[index][0])) {
+        tmCount++;
       }
       this.moveset.push(new PokemonMove(movePool[index][0]));
     }
