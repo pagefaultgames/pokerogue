@@ -74,7 +74,7 @@ export class CommandUiHandler extends UiHandler {
 
     let commandPhase: CommandPhase;
     const currentPhase = globalScene.phaseManager.getCurrentPhase();
-    if (currentPhase?.is("CommandPhase")) {
+    if (currentPhase.is("CommandPhase")) {
       commandPhase = currentPhase;
     } else {
       commandPhase = globalScene.phaseManager.getStandbyPhase() as CommandPhase;
