@@ -70,7 +70,7 @@ describe("Move - Nature Power", () => {
     getEnumValues(TerrainType).map(terrain => ({
       move: getNaturePowerType(terrain, BiomeId.TOWN),
       moveName: toTitleCase(MoveId[getNaturePowerType(terrain, BiomeId.TOWN)]),
-      terrain: terrain,
+      terrain,
       terrainName: TerrainType[terrain],
     })),
   )("should select $moveName if the current terrain is $terrainName", async ({ move /*, terrain */ }) => {
