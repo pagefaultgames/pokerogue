@@ -18,11 +18,9 @@ export class ReloadHelper extends GameManagerHelper {
     super(game);
 
     // Whenever the game saves the session, save it to the reloadHelper instead
-    vi.spyOn(game.scene.gameData, "saveAll").mockImplementation(() => {
-      return new Promise<boolean>((resolve, _reject) => {
-        this.sessionData = game.scene.gameData.getSessionSaveData();
-        resolve(true);
-      });
+    vi.spyOn(game.scene.gameData, "saveAll").mockImplementation(async () => {
+      this.sessionData = game.scene.gameData.getSessionSaveData();
+      return true;
     });
   }
 
@@ -52,7 +50,7 @@ export class ReloadHelper extends GameManagerHelper {
       );
       this.game.scene.modifiers = [];
     }
-    await titlePhase.loadSaveSlot(-1); // Load the desired session data
+    await titlePhase["loadSaveSlot"](-1); // Load the desired session data
 
     // Run through prompts for switching Pokemon, copied from classicModeHelper.ts
     if (this.game.scene.battleStyle === BattleStyle.SWITCH) {

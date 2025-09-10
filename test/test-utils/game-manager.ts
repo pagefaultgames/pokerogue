@@ -416,7 +416,7 @@ export class GameManager {
    * Checks if the current phase matches the target phase.
    * @param phaseTarget - The target phase.
    * @returns Whether the current phase matches the target phase
-   * @deprecated - Use phaseString
+   * @deprecated - Use `PhaseString` instead
    */
   isCurrentPhase(phaseTarget: PhaseClass): boolean;
   isCurrentPhase(phaseTarget: PhaseString | PhaseClass): boolean {
@@ -425,12 +425,12 @@ export class GameManager {
   }
 
   /**
-   * Checks if the current mode matches the target mode.
+   * Check if the current `UiMode` matches the target mode.
    * @param mode - The target {@linkcode UiMode} to check.
    * @returns Whether the current mode matches the target mode.
    */
-  isCurrentMode(mode: UiMode) {
-    return this.scene.ui?.getMode() === mode;
+  isCurrentMode(mode: UiMode): boolean {
+    return this.scene.ui.getMode() === mode;
   }
 
   /**
@@ -448,10 +448,10 @@ export class GameManager {
 
   /**
    * Imports game data from a file.
-   * @param path - The path to the data file.
+   * @param path - The path to the data file
    * @returns A promise that resolves with a tuple containing a boolean indicating success and an integer status code.
    */
-  async importData(path): Promise<[boolean, number]> {
+  async importData(path: string): Promise<[boolean, number]> {
     const saveKey = "x0i2O7WRiANTqPmZ";
     const dataRaw = fs.readFileSync(path, { encoding: "utf8", flag: "r" });
     let dataStr = AES.decrypt(dataRaw, saveKey).toString(enc.Utf8);
