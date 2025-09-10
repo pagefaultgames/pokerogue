@@ -8,7 +8,7 @@ import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import type { TitlePhase } from "#phases/title-phase";
 import { GameManager } from "#test/test-utils/game-manager";
-import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import type { OptionSelectItem } from "#ui/handlers/abstract-option-select-ui-handler";
 import type { SaveSlotSelectUiHandler } from "#ui/handlers/save-slot-select-ui-handler";
 import type { StarterSelectUiHandler } from "#ui/handlers/starter-select-ui-handler";
 import type { OptionSelectUiHandler } from "#ui/option-select-ui-handler";

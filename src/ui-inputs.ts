@@ -3,11 +3,11 @@ import type { InputsController } from "#app/inputs-controller";
 import { Button } from "#enums/buttons";
 import { UiMode } from "#enums/ui-mode";
 import { Setting, SettingKeys, settingIndex } from "#system/settings";
+import type { MessageUiHandler } from "#ui/handlers/message-ui-handler";
 import { PokedexPageUiHandler } from "#ui/handlers/pokedex-page-ui-handler";
 import { PokedexUiHandler } from "#ui/handlers/pokedex-ui-handler";
 import { RunInfoUiHandler } from "#ui/handlers/run-info-ui-handler";
 import { StarterSelectUiHandler } from "#ui/handlers/starter-select-ui-handler";
-import type { MessageUiHandler } from "#ui/message-ui-handler";
 import { SettingsAudioUiHandler } from "#ui/settings-audio-ui-handler";
 import { SettingsDisplayUiHandler } from "#ui/settings-display-ui-handler";
 import { SettingsGamepadUiHandler } from "#ui/settings-gamepad-ui-handler";
@@ -103,23 +103,23 @@ export class UiInputs {
 
   getActionsKeyUp(): ActionKeys {
     const actions: ActionKeys = {
-      [Button.UP]: () => undefined,
-      [Button.DOWN]: () => undefined,
-      [Button.LEFT]: () => undefined,
-      [Button.RIGHT]: () => undefined,
-      [Button.SUBMIT]: () => undefined,
-      [Button.ACTION]: () => undefined,
-      [Button.CANCEL]: () => undefined,
-      [Button.MENU]: () => undefined,
+      [Button.UP]: () => {},
+      [Button.DOWN]: () => {},
+      [Button.LEFT]: () => {},
+      [Button.RIGHT]: () => {},
+      [Button.SUBMIT]: () => {},
+      [Button.ACTION]: () => {},
+      [Button.CANCEL]: () => {},
+      [Button.MENU]: () => {},
       [Button.STATS]: () => this.buttonStats(false),
-      [Button.CYCLE_SHINY]: () => undefined,
-      [Button.CYCLE_FORM]: () => undefined,
-      [Button.CYCLE_GENDER]: () => undefined,
-      [Button.CYCLE_ABILITY]: () => undefined,
-      [Button.CYCLE_NATURE]: () => undefined,
+      [Button.CYCLE_SHINY]: () => {},
+      [Button.CYCLE_FORM]: () => {},
+      [Button.CYCLE_GENDER]: () => {},
+      [Button.CYCLE_ABILITY]: () => {},
+      [Button.CYCLE_NATURE]: () => {},
       [Button.CYCLE_TERA]: () => this.buttonInfo(false),
-      [Button.SPEED_UP]: () => undefined,
-      [Button.SLOW_DOWN]: () => undefined,
+      [Button.SPEED_UP]: () => {},
+      [Button.SLOW_DOWN]: () => {},
     };
     return actions;
   }

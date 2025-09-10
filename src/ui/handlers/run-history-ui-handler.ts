@@ -8,8 +8,8 @@ import { TrainerVariant } from "#enums/trainer-variant";
 import { UiMode } from "#enums/ui-mode";
 import type { PokemonData } from "#system/pokemon-data";
 import type { RunEntry } from "#types/save-data";
+import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
 import { RunDisplayMode } from "#ui/handlers/run-info-ui-handler";
-import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt, formatLargeNumber } from "#utils/common";
@@ -31,8 +31,6 @@ export class RunHistoryUiHandler extends MessageUiHandler {
   private runSelectContainer: Phaser.GameObjects.Container;
   private runsContainer: Phaser.GameObjects.Container;
   private runs: RunEntryContainer[];
-
-  private runSelectCallback: RunSelectCallback | null;
 
   private scrollCursor = 0;
 
@@ -118,7 +116,6 @@ export class RunHistoryUiHandler extends MessageUiHandler {
         success = true;
         return success;
       }
-      this.runSelectCallback = null;
       success = true;
       globalScene.ui.revertMode();
     } else if (this.runs.length > 0) {
@@ -235,7 +232,6 @@ export class RunHistoryUiHandler extends MessageUiHandler {
     this.runSelectContainer.setVisible(false);
     this.setScrollCursor(0);
     this.clearCursor();
-    this.runSelectCallback = null;
     this.clearRuns();
   }
 
@@ -258,13 +254,11 @@ export class RunHistoryUiHandler extends MessageUiHandler {
  * entryData: the data of an individual run
  */
 class RunEntryContainer extends Phaser.GameObjects.Container {
-  private slotId: number;
   public entryData: RunEntry;
 
   constructor(entryData: RunEntry, slotId: number) {
     super(globalScene, 0, slotId * 56);
 
-    this.slotId = slotId;
     this.entryData = entryData;
 
     this.setup(this.entryData);
@@ -329,8 +323,8 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
         });
         this.add(enemyContainer);
       } else if (
-        data.battleType === BattleType.TRAINER ||
-        (data.battleType === BattleType.MYSTERY_ENCOUNTER && data.trainer)
+        data.battleType === BattleType.TRAINER
+        || (data.battleType === BattleType.MYSTERY_ENCOUNTER && data.trainer)
       ) {
         // Defeats from Trainers show the trainer's title and name
         const tObj = data.trainer.toTrainer();

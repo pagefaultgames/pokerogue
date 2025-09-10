@@ -71,7 +71,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
       const randomEggMove: MoveId = eggMoves[eggMoveIndex];
       encounter.misc = {
         eggMove: randomEggMove,
-        pokemon: pokemon,
+        pokemon,
       };
       if (pokemon.moveset.length < 4) {
         pokemon.moveset.push(new PokemonMove(randomEggMove));
@@ -91,7 +91,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
     const config: EnemyPartyConfig = {
       pokemonConfigs: [
         {
-          level: level,
+          level,
           species: pokemon.species,
           dataSource: new PokemonData(pokemon),
           isBoss: false,
@@ -114,8 +114,8 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
     const { spriteKey, fileRoot } = getSpriteKeysFromPokemon(pokemon);
     encounter.spriteConfigs = [
       {
-        spriteKey: spriteKey,
-        fileRoot: fileRoot,
+        spriteKey,
+        fileRoot,
         hasShadow: true,
         x: -5,
         repeat: true,

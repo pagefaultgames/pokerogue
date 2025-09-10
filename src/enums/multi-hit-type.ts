@@ -3,5 +3,5 @@ export enum MultiHitType {
   _2_TO_5,
   _3,
   _10,
-  BEAT_UP
+  BEAT_UP,
 }

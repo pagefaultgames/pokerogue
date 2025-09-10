@@ -42,7 +42,7 @@ import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encou
 import { PartySizeRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { PokemonData } from "#system/pokemon-data";
 import { MusicPreference } from "#system/settings";
-import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import type { OptionSelectItem } from "#ui/handlers/abstract-option-select-ui-handler";
 import { isNullOrUndefined, NumberHolder, randInt, randSeedInt, randSeedItem, randSeedShuffle } from "#utils/common";
 import { getEnumKeys } from "#utils/enums";
 import { getRandomLocaleEntry } from "#utils/i18n";
@@ -195,10 +195,10 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
                     : ""
                 }`;
                 const line2 =
-                  i18next.t("pokemonInfoContainer:nature") +
-                  " " +
-                  getNatureName(tradePokemon.getNature()) +
-                  (formName ? `     |     ${i18next.t("pokemonInfoContainer:form")} ${formName}` : "");
+                  i18next.t("pokemonInfoContainer:nature")
+                  + " "
+                  + getNatureName(tradePokemon.getNature())
+                  + (formName ? `     |     ${i18next.t("pokemonInfoContainer:form")} ${formName}` : "");
                 showEncounterText(`${line1}\n${line2}`, 0, 0, false);
               },
             };
@@ -292,16 +292,14 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
 
           // Extra HA roll at base 1/64 odds (boosted by events and charms)
           const hiddenIndex = tradePokemon.species.ability2 ? 2 : 1;
-          if (tradePokemon.species.abilityHidden) {
-            if (tradePokemon.abilityIndex < hiddenIndex) {
-              const hiddenAbilityChance = new NumberHolder(64);
-              globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
+          if (tradePokemon.species.abilityHidden && tradePokemon.abilityIndex < hiddenIndex) {
+            const hiddenAbilityChance = new NumberHolder(64);
+            globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
 
-              const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
+            const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
 
-              if (hasHiddenAbility) {
-                tradePokemon.abilityIndex = hiddenIndex;
-              }
+            if (hasHiddenAbility) {
+              tradePokemon.abilityIndex = hiddenIndex;
             }
           }
 

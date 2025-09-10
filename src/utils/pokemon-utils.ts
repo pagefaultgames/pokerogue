@@ -80,7 +80,7 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
   let fragA: string;
   let fragB: string;
 
-  fragA = splitNameA.length === 1 ? (fragAMatch ? fragAMatch[1] : speciesAName) : splitNameA[splitNameA.length - 1];
+  fragA = splitNameA.length === 1 ? (fragAMatch ? fragAMatch[1] : speciesAName) : splitNameA.at(-1)!;
 
   if (splitNameB.length === 1) {
     if (fragBMatch) {
@@ -101,7 +101,7 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
       fragB = speciesBName;
     }
   } else {
-    fragB = splitNameB[splitNameB.length - 1];
+    fragB = splitNameB.at(-1)!;
   }
 
   if (splitNameA.length > 1) {

@@ -7,10 +7,10 @@ import { UiMode } from "#enums/ui-mode";
 // biome-ignore lint/performance/noNamespaceImport: See `src/system/game-data.ts`
 import * as Modifier from "#modifiers/modifier";
 import type { PokemonData } from "#system/pokemon-data";
-import type { SessionSaveData } from "#types/save-data";
-import type { OptionSelectConfig } from "#ui/abstract-option-select-ui-handler";
+import { SessionSaveData } from "#types/save-data";
+import type { OptionSelectConfig } from "#ui/handlers/abstract-option-select-ui-handler";
+import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
 import { RunDisplayMode } from "#ui/handlers/run-info-ui-handler";
-import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt, formatLargeNumber, getPlayTimeString, isNullOrUndefined } from "#utils/common";
@@ -293,8 +293,8 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
           } else if (this.scrollCursor < SESSION_SLOTS_COUNT - SLOTS_ON_SCREEN) {
             success = this.setScrollCursor(this.scrollCursor + 1, cursorPosition);
           } else if (
-            this.cursor === SLOTS_ON_SCREEN - 1 &&
-            this.scrollCursor === SESSION_SLOTS_COUNT - SLOTS_ON_SCREEN
+            this.cursor === SLOTS_ON_SCREEN - 1
+            && this.scrollCursor === SESSION_SLOTS_COUNT - SLOTS_ON_SCREEN
           ) {
             this.setScrollCursor(0);
             this.revertSessionSlot(SLOTS_ON_SCREEN - 1);
@@ -357,7 +357,7 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
       this.message.setY(-37);
     }
 
-    this.saveSlotSelectMessageBoxContainer.setVisible(!!text?.length);
+    this.saveSlotSelectMessageBoxContainer.setVisible(text?.length > 0);
   }
 
   /**
