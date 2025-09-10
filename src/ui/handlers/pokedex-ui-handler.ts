@@ -31,9 +31,9 @@ import { UiMode } from "#enums/ui-mode";
 import { UiTheme } from "#enums/ui-theme";
 import type { Variant } from "#sprites/variant";
 import { getVariantIcon, getVariantTint } from "#sprites/variant";
-import type { DexAttrProps, StarterAttributes } from "#system/game-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
+import type { DexAttrProps, StarterAttributes } from "#types/save-data";
 import {
   DropDown,
   DropDownLabel,
