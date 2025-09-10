@@ -120,6 +120,14 @@ export interface Setting {
   default: number;
   type: SettingType;
   requireReload?: boolean;
+  /**
+   * Specifies the behavior when navigating left/right at the boundaries of the option
+   *
+   * - `true`: the cursor will stay on the boundary instead of moving
+   * - `false`: the cursor will wrap to the other end of the options list
+   * @defaultValue `false`
+   */
+  clamp?: boolean;
   /** Whether the setting can be activated or not */
   activatable?: boolean;
   /** Determines whether the setting should be hidden from the UI */
@@ -230,6 +238,7 @@ export const Setting: Array<Setting> = [
     ],
     default: 3,
     type: SettingType.GENERAL,
+    clamp: false,
   },
   {
     key: SettingKeys.HP_Bar_Speed,
@@ -639,6 +648,7 @@ export const Setting: Array<Setting> = [
     options: VOLUME_OPTIONS,
     default: 5,
     type: SettingType.AUDIO,
+    clamp: true,
   },
   {
     key: SettingKeys.BGM_Volume,
@@ -646,6 +656,7 @@ export const Setting: Array<Setting> = [
     options: VOLUME_OPTIONS,
     default: 10,
     type: SettingType.AUDIO,
+    clamp: true,
   },
   {
     key: SettingKeys.Field_Volume,
@@ -653,6 +664,7 @@ export const Setting: Array<Setting> = [
     options: VOLUME_OPTIONS,
     default: 10,
     type: SettingType.AUDIO,
+    clamp: true,
   },
   {
     key: SettingKeys.SE_Volume,
@@ -660,6 +672,7 @@ export const Setting: Array<Setting> = [
     options: VOLUME_OPTIONS,
     default: 10,
     type: SettingType.AUDIO,
+    clamp: true,
   },
   {
     key: SettingKeys.UI_Volume,
@@ -667,6 +680,7 @@ export const Setting: Array<Setting> = [
     options: VOLUME_OPTIONS,
     default: 10,
     type: SettingType.AUDIO,
+    clamp: true,
   },
   {
     key: SettingKeys.Battle_Music,
