@@ -18,5 +18,5 @@ export enum ClassicFixedBossWaves {
   ELITE_FOUR_3 = 186,
   ELITE_FOUR_4 = 188,
   CHAMPION = 190,
-  RIVAL_6 = 195
+  RIVAL_6 = 195,
 }

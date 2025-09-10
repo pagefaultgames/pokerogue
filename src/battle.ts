@@ -237,11 +237,11 @@ export class Battle {
       return null;
     }
     if (
-      this.battleType === BattleType.TRAINER ||
-      this.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE
+      this.battleType === BattleType.TRAINER
+      || this.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE
     ) {
-      if (!this.started && this.trainer?.config.encounterBgm && this.trainer?.getEncounterMessages()?.length) {
-        return `encounter_${this.trainer?.getEncounterBgm()}`;
+      if (!this.started && this.trainer?.config.encounterBgm && this.trainer.getEncounterMessages().length > 0) {
+        return `encounter_${this.trainer.getEncounterBgm()}`;
       }
       if (globalScene.musicPreference === MusicPreference.GENFIVE) {
         return this.trainer?.getBattleBgm() ?? null;

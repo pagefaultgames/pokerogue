@@ -19,8 +19,10 @@ import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper"
 export class ClassicModeHelper extends GameManagerHelper {
   /**
    * Runs the classic game to the summon phase.
-   * @param species - An array of {@linkcode Species} to summon.
+   * @param species - An array of {@linkcode SpeciesId} to summon.
    * @returns A promise that resolves when the summon phase is reached.
+   * @remarks
+   * Do not use this when {@linkcode startBattle} can be used!
    */
   async runToSummon(species: SpeciesId[]): Promise<void>;
   /**
@@ -30,6 +32,7 @@ export class ClassicModeHelper extends GameManagerHelper {
    * @returns A promise that resolves when the summon phase is reached.
    * @deprecated - Specifying the starters helps prevent inconsistencies from internal RNG changes.
    */
+  // biome-ignore lint/style/useUnifiedTypeSignatures: Marks the overload for deprecation
   async runToSummon(): Promise<void>;
   async runToSummon(species: SpeciesId[] | undefined): Promise<void>;
   async runToSummon(species?: SpeciesId[]): Promise<void> {
@@ -61,7 +64,7 @@ export class ClassicModeHelper extends GameManagerHelper {
 
   /**
    * Transitions to the start of a battle.
-   * @param species - An array of {@linkcode Species} to start the battle with.
+   * @param species - An array of {@linkcode SpeciesId} to start the battle with.
    * @returns A promise that resolves when the battle is started.
    */
   async startBattle(species: SpeciesId[]): Promise<void>;
@@ -72,6 +75,7 @@ export class ClassicModeHelper extends GameManagerHelper {
    * @returns A promise that resolves when the battle is started.
    * @deprecated - Specifying the starters helps prevent inconsistencies from internal RNG changes.
    */
+  // biome-ignore lint/style/useUnifiedTypeSignatures: Marks the overload for deprecation
   async startBattle(): Promise<void>;
   async startBattle(species?: SpeciesId[]): Promise<void> {
     await this.runToSummon(species);

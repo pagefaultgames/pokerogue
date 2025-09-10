@@ -303,7 +303,7 @@ export function getTypeDamageMultiplierColor(
       case 0.5:
         return "#FE8E00";
       case 1:
-        return undefined;
+        return;
       case 2:
         return "#4AA500";
       case 4:
@@ -323,7 +323,7 @@ export function getTypeDamageMultiplierColor(
       case 0.5:
         return "#0093FF";
       case 1:
-        return undefined;
+        return;
       case 2:
         return "#FE8E00";
       case 4:

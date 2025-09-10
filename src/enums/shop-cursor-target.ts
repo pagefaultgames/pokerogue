@@ -9,5 +9,5 @@ export enum ShopCursorTarget {
   /** Cursor points to Shop row */
   SHOP,
   /** Cursor points to Check Team row */
-  CHECK_TEAM
+  CHECK_TEAM,
 }
