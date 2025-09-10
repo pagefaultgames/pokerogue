@@ -15,6 +15,7 @@ const config = {
     "test/test-utils/setup",
     "test/test-utils/reporters",
   ],
+  excludePrivate: false, // Private members are useful in the docs for contributors
   excludeReferences: true, // prevent documenting re-exports
   requiredToBeDocumented: [
     "Enum",

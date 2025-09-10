@@ -46,7 +46,7 @@
     "lefthook": "^1.12.2",
     "msw": "^2.10.4",
     "phaser3spectorjs": "^0.0.8",
-    "typedoc": "^0.28.8",
+    "typedoc": "^0.28.12",
     "typedoc-github-theme": "^0.3.1",
     "typedoc-plugin-coverage": "^4.0.1",
     "typedoc-plugin-mdn-links": "^5.0.9",
