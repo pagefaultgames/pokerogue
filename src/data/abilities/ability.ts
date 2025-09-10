@@ -2573,7 +2573,7 @@ export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
 
 /**
  * Base class for defining all {@linkcode Ability} Attributes post summon
- * @see {@linkcode applyPostSummon()}
+ * @see {@linkcode applyPostSummon}
  */
 export abstract class PostSummonAbAttr extends AbAttr {
   /** Should the ability activate when gained in battle? This will almost always be true */
@@ -4633,7 +4633,7 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
 
   /**
    * @param procChance - function providing chance to restore an item
-   * @see {@linkcode createEatenBerry()}
+   * @see {@linkcode createEatenBerry}
    */
   constructor(private procChance: (pokemon: Pokemon) => number) {
     super();
@@ -5941,7 +5941,7 @@ export class FormBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
 /**
  * Base class for defining {@linkcode Ability} attributes before summon
  * (should use {@linkcode PostSummonAbAttr} for most ability)
- * @see {@linkcode applyPreSummon()}
+ * @see {@linkcode applyPreSummon}
  */
 export class PreSummonAbAttr extends AbAttr {
   private declare readonly _: never;

@@ -5227,7 +5227,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Reset a {@linkcode Pokemon}'s {@linkcode PokemonWaveData | waveData}.
    * Should be called upon starting a new wave in addition to whenever an arena transition occurs.
-   * @see {@linkcode resetBattleAndWaveData()}
+   * @see {@linkcode resetBattleAndWaveData}
    */
   resetWaveData(): void {
     this.waveData = new PokemonWaveData();
