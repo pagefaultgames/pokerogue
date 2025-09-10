@@ -1,6 +1,5 @@
 import { initAbilities } from "#abilities/ability";
 import { initBiomes } from "#balance/biomes";
-import { initEggMoves } from "#balance/egg-moves";
 import { initPokemonPrevolutions, initPokemonStarters } from "#balance/pokemon-evolutions";
 import { initSpecies } from "#balance/pokemon-species";
 import { initChallenges } from "#data/challenge";
@@ -12,7 +11,7 @@ import { initMoves } from "#moves/move";
 import { initMysteryEncounters } from "#mystery-encounters/mystery-encounters";
 import { initAchievements } from "#system/achv";
 import { initVouchers } from "#system/voucher";
-import { initStatsKeys } from "#ui/game-stats-ui-handler";
+import { initStatsKeys } from "#ui/handlers/game-stats-ui-handler";
 
 /** Initialize the game. */
 export function initializeGame() {
@@ -24,7 +23,6 @@ export function initializeGame() {
   initPokemonPrevolutions();
   initPokemonStarters();
   initBiomes();
-  initEggMoves();
   initPokemonForms();
   initTrainerTypeDialogue();
   initSpecies();

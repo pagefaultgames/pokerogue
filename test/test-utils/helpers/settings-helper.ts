@@ -1,7 +1,9 @@
+import { SETTINGS_COLOR } from "#app/constants/colors";
 import { BattleStyle } from "#enums/battle-style";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { PlayerGender } from "#enums/player-gender";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
+import chalk from "chalk";
 
 /**
  * Helper to handle settings for tests
@@ -49,6 +51,6 @@ export class SettingsHelper extends GameManagerHelper {
   }
 
   private log(...params: any[]) {
-    console.log("Settings:", ...params);
+    console.log(chalk.hex(SETTINGS_COLOR)(...params));
   }
 }

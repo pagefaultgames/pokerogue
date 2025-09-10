@@ -55,7 +55,7 @@ describe("Move - Wish", () => {
     await game.toEndOfTurn();
 
     expect(game).toHavePositionalTag(PositionalTagType.WISH, 0);
-    expect(game.textInterceptor.logs).toContain(
+    expect(game).toHaveShownMessage(
       i18next.t("arenaTag:wishTagOnAdd", {
         pokemonNameWithAffix: getPokemonNameWithAffix(alomomola),
       }),
@@ -165,7 +165,7 @@ describe("Move - Wish", () => {
 
     // Wish went away without doing anything
     expect(game).toHavePositionalTag(PositionalTagType.WISH, 0);
-    expect(game.textInterceptor.logs).not.toContain(
+    expect(game).not.toHaveShownMessage(
       i18next.t("arenaTag:wishTagOnAdd", {
         pokemonNameWithAffix: getPokemonNameWithAffix(blissey),
       }),

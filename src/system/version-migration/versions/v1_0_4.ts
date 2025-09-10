@@ -3,8 +3,8 @@ import { allSpecies } from "#data/data-lists";
 import { CustomPokemonData } from "#data/pokemon-data";
 import { AbilityAttr } from "#enums/ability-attr";
 import { DexAttr } from "#enums/dex-attr";
-import type { SessionSaveData, SystemSaveData } from "#system/game-data";
 import { SettingKeys } from "#system/settings";
+import type { SessionSaveData, SystemSaveData } from "#types/save-data";
 import type { SessionSaveMigrator } from "#types/session-save-migrator";
 import type { SettingsSaveMigrator } from "#types/settings-save-migrator";
 import type { SystemSaveMigrator } from "#types/system-save-migrator";
@@ -35,9 +35,9 @@ const fixLegendaryStats: SystemSaveMigrator = {
   version: "1.0.4",
   migrate: (data: SystemSaveData): void => {
     if (
-      data.gameStats &&
-      data.gameStats.legendaryPokemonCaught !== undefined &&
-      data.gameStats.subLegendaryPokemonCaught === undefined
+      data.gameStats
+      && data.gameStats.legendaryPokemonCaught !== undefined
+      && data.gameStats.subLegendaryPokemonCaught === undefined
     ) {
       data.gameStats.subLegendaryPokemonSeen = 0;
       data.gameStats.subLegendaryPokemonCaught = 0;
