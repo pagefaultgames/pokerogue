@@ -655,7 +655,6 @@ export class ReceivedMoveDamageMultiplierAbAttr extends PreDefendAbAttr {
 
 /**
  * Reduces the damage dealt to an allied Pokemon. Used by Friend Guard.
- * @see {@linkcode applyPreDefend}
  */
 export class AlliedFieldDamageReductionAbAttr extends PreDefendAbAttr {
   private damageMultiplier: number;
@@ -691,8 +690,6 @@ export interface TypeMultiplierAbAttrParams extends AugmentMoveInteractionAbAttr
 
 /**
  * Determines whether a Pokemon is immune to a move because of an ability.
- * @see {@linkcode applyPreDefend}
- * @see {@linkcode getCondition}
  */
 export class TypeImmunityAbAttr extends PreDefendAbAttr {
   private immuneType: PokemonType | null;
@@ -2573,7 +2570,6 @@ export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
 
 /**
  * Base class for defining all {@linkcode Ability} Attributes post summon
- * @see {@linkcode applyPostSummon}
  */
 export abstract class PostSummonAbAttr extends AbAttr {
   /** Should the ability activate when gained in battle? This will almost always be true */
@@ -3374,7 +3370,6 @@ export class PreSwitchOutHealAbAttr extends PreSwitchOutAbAttr {
 
 /**
  * Attribute for form changes that occur on switching out
- * @see {@linkcode applyPreSwitchOut}
  */
 export class PreSwitchOutFormChangeAbAttr extends PreSwitchOutAbAttr {
   private formFunc: (p: Pokemon) => number;
@@ -4898,7 +4893,6 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
 /**
  * Grabs the last failed Pokeball used
  * @sealed
- * @see {@linkcode applyPostTurn}
  */
 export class FetchBallAbAttr extends PostTurnAbAttr {
   override canApply({ simulated, pokemon }: AbAttrBaseParams): boolean {
@@ -5551,7 +5545,6 @@ export interface ReduceStatusEffectDurationAbAttrParams extends AbAttrBaseParams
 /**
  * Used by Early Bird, makes the pokemon wake up faster
  * @param statusEffect - The {@linkcode StatusEffect} to check for
- * @see {@linkcode apply}
  * @sealed
  */
 export class ReduceStatusEffectDurationAbAttr extends AbAttr {
@@ -5941,7 +5934,6 @@ export class FormBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
 /**
  * Base class for defining {@linkcode Ability} attributes before summon
  * (should use {@linkcode PostSummonAbAttr} for most ability)
- * @see {@linkcode applyPreSummon}
  */
 export class PreSummonAbAttr extends AbAttr {
   private declare readonly _: never;
@@ -6393,8 +6385,6 @@ export class PostDamageAbAttr extends AbAttr {
  * and its opponents, and determines whether a forced switch-out should occur.
  *
  * Used by Wimp Out and Emergency Exit
- *
- * @see {@linkcode applyPostDamage}
  * @sealed
  */
 export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
