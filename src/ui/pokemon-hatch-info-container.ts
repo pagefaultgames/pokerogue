@@ -9,7 +9,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import type { PlayerPokemon } from "#field/pokemon";
-import { PokemonInfoContainer } from "#ui/pokemon-info-container";
+import { PokemonInfoContainer } from "#ui/handlers/pokemon-info-container";
 import { addTextObject } from "#ui/text";
 import { padInt, rgbHexToRgba } from "#utils/common";
 import { getPokemonSpeciesForm } from "#utils/pokemon-utils";

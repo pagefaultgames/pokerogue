@@ -11,7 +11,7 @@ import type { EggLapsePhase } from "#phases/egg-lapse-phase";
 import { achvs } from "#system/achv";
 import { EggCounterContainer } from "#ui/egg-counter-container";
 import type { EggHatchSceneHandler } from "#ui/egg-hatch-scene-handler";
-import { PokemonInfoContainer } from "#ui/pokemon-info-container";
+import { PokemonInfoContainer } from "#ui/handlers/pokemon-info-container";
 import { fixedInt, getFrameMs, randInt } from "#utils/common";
 import i18next from "i18next";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
