@@ -1886,9 +1886,7 @@ export class GameData {
     });
   }
 
-  /**
-   * Checks whether the root species of a given {@PokemonSpecies} has been unlocked in the dex
-   */
+  /** Return whether the root species of a given `PokemonSpecies` has been unlocked in the dex */
   isRootSpeciesUnlocked(species: PokemonSpecies): boolean {
     return !!this.dexData[species.getRootSpeciesId()]?.caughtAttr;
   }

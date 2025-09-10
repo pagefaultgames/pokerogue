@@ -38,6 +38,7 @@ type SerializableArenaTagTypeMap = Pick<ArenaTagTypeMap, SerializableArenaTagTyp
 
 /**
  * Type mapping all `ArenaTag`s to type-safe representations of their serialized forms.
+ *
  * @interface
  */
 export type ArenaTagDataMap = {

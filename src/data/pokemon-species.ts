@@ -919,7 +919,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
    * The calculation with evolution delay is a weighted average of the easeIn and easeOut functions where preferredMinLevel is the denominator.
    * This also means a lower value of x will lead to a higher evolution chance.
    * @param strength {@linkcode PartyMemberStrength} The strength of the party member in question
-   * @returns {@linkcode number} The level difference from expected evolution level tolerated for a mon to be unevolved. Lower value = higher evolution chance.
+   * @returns The level difference from expected evolution level tolerated for a mon to be unevolved. Lower value = higher evolution chance.
    */
   private getStrengthLevelDiff(strength: PartyMemberStrength): number {
     switch (Math.min(strength, PartyMemberStrength.STRONGER)) {

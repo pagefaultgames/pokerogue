@@ -2647,11 +2647,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Gets all level up moves in a given range for a particular pokemon.
-   * @param {number} startingLevel Don't include moves below this level
-   * @param {boolean} includeEvolutionMoves Whether to include evolution moves
-   * @param {boolean} simulateEvolutionChain Whether to include moves from prior evolutions
-   * @param {boolean} includeRelearnerMoves Whether to include moves that would require a relearner. Note the move relearner inherently allows evolution moves
-   * @returns {LevelMoves} A list of moves and the levels they can be learned at
+   * @param startingLevel Don't include moves below this level
+   * @param includeEvolutionMoves Whether to include evolution moves
+   * @param simulateEvolutionChain Whether to include moves from prior evolutions
+   * @param includeRelearnerMoves Whether to include moves that would require a relearner. Note the move relearner inherently allows evolution moves
+   * @returns A list of moves and the levels they can be learned at
    */
   getLevelMoves(
     startingLevel?: number,
@@ -3496,7 +3496,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param isCritical determines whether a critical hit has occurred or not (`false` by default)
    * @param simulated determines whether effects are applied without altering game state (`true` by default)
    * @param ignoreHeldItems determines whether this Pokemon's held items should be ignored during the stat calculation, default `false`
-   * @return the stat stage multiplier to be used for effective stat calculation
+   * @returns the stat stage multiplier to be used for effective stat calculation
    */
   getStatStageMultiplier(
     stat: EffectiveStat,
@@ -3552,8 +3552,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * This method considers various factors such as the user's accuracy level, the target's evasion level,
    * abilities, and modifiers to compute the final accuracy multiplier.
    *
-   * @param target {@linkcode Pokemon} - The target Pokémon against which the move is used.
-   * @param sourceMove {@linkcode Move}  - The move being used by the user.
+   * @param target - The target Pokémon against which the move is used.
+   * @param sourceMove - The move being used by the user.
    * @returns The calculated accuracy multiplier.
    */
   getAccuracyMultiplier(target: Pokemon, sourceMove: Move): number {
@@ -4291,18 +4291,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return false;
   }
 
-  /**@overload */
   getTag(tagType: BattlerTagType.GRUDGE): GrudgeTag | undefined;
-
-  /** @overload */
   getTag(tagType: BattlerTagType.SUBSTITUTE): SubstituteTag | undefined;
-
-  /** @overload */
   getTag(tagType: BattlerTagType): BattlerTag | undefined;
-
-  /** @overload */
   getTag<T extends BattlerTag>(tagType: Constructor<T>): T | undefined;
-
   getTag(tagType: BattlerTagType | Constructor<BattlerTag>): BattlerTag | undefined {
     return typeof tagType === "function"
       ? this.summonData.tags.find(t => t instanceof tagType)
@@ -4448,7 +4440,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param user - The move user
    * @param target - The target of the move
    *
-   * @returns {boolean} `true` if the move is disabled for this Pokemon due to the player's target selection
+   * @returns `true` if the move is disabled for this Pokemon due to the player's target selection
    *
    * @see {@linkcode MoveRestrictionBattlerTag}
    */
@@ -5235,7 +5227,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Reset a {@linkcode Pokemon}'s {@linkcode PokemonWaveData | waveData}.
    * Should be called upon starting a new wave in addition to whenever an arena transition occurs.
-   * @see {@linkcode resetBattleAndWaveData()}
+   * @see {@linkcode resetBattleAndWaveData}
    */
   resetWaveData(): void {
     this.waveData = new PokemonWaveData();
