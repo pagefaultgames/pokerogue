@@ -61,9 +61,10 @@ describe.sequential("Move - Flying Press", () => {
       expect
         .soft(
           flyingPressEff,
-          `Flying Press effectiveness against ${toTitleCase(PokemonType[type])} was incorrect!` +
-            `\nExpected: ${flyingPressEff},` +
-            `\nActual: ${primaryEff * flyingEff} (=${primaryEff} * ${flyingEff})`,
+          // biome-ignore lint/complexity/noUselessStringConcat: Biome can't detect multiline concats with operators before line
+          `Flying Press effectiveness against ${toTitleCase(PokemonType[type])} was incorrect!`
+            + `\nExpected: ${flyingPressEff},`
+            + `\nActual: ${primaryEff * flyingEff} (=${primaryEff} * ${flyingEff})`,
         )
         .toBe(primaryEff * flyingEff);
     }

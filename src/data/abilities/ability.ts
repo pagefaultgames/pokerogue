@@ -736,8 +736,7 @@ export class AttackTypeImmunityAbAttr extends TypeImmunityAbAttr {
   override canApply(params: TypeMultiplierAbAttrParams): boolean {
     const { move } = params;
     return (
-      move.category !== MoveCategory.STATUS
-      // TODO: make thousand arrows ignore levitate in a different manner
+      move.category !== MoveCategory.STATUS // TODO: make thousand arrows ignore levitate in a different manner
       && !move.hasAttr("NeutralDamageAgainstFlyingTypeAttr")
       && super.canApply(params)
     );
