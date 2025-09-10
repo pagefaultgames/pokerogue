@@ -9,7 +9,7 @@ import { UiMode } from "#enums/ui-mode";
 import type { StarterAttributes } from "#system/game-data";
 import { GameManager } from "#test/test-utils/game-manager";
 import { FilterTextRow } from "#ui/containers/filter-text";
-import { PokedexPageUiHandler } from "#ui/containers/pokedex-page-ui-handler";
+import { PokedexPageUiHandler } from "#ui/handlers/pokedex-page-ui-handler";
 import { PokedexUiHandler } from "#ui/handlers/pokedex-ui-handler";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import Phaser from "phaser";
