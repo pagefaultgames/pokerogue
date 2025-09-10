@@ -143,7 +143,7 @@ export class TouchControl {
    * {@link https://stackoverflow.com/a/39778831/4622620|Source}
    *
    * Prevent zoom on specified element
-   * @param {HTMLElement} element
+   * @param element
    */
   preventElementZoom(element: HTMLElement | null): void {
     if (!element) {
