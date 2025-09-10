@@ -2474,10 +2474,7 @@ export class RemovedTypeTag extends SerializableBattlerTag {
   }
 }
 
-/**
- * Battler tag for effects that ground the source, allowing Ground-type moves to hit them.
- * @description `IGNORE_FLYING`: Persistent grounding effects (i.e. from Smack Down and Thousand Waves)
- */
+/** Battler tag for effects that ground the source, allowing Ground-type moves to hit them. */
 export class GroundedTag extends SerializableBattlerTag {
   public override readonly tagType = BattlerTagType.IGNORE_FLYING;
   constructor(tagType: BattlerTagType.IGNORE_FLYING, lapseType: BattlerTagLapseType, sourceMove: MoveId) {
@@ -2485,11 +2482,7 @@ export class GroundedTag extends SerializableBattlerTag {
   }
 }
 
-/**
- * @description `ROOSTED`: Tag for temporary grounding if only source of ungrounding is flying and pokemon uses Roost.
- * Roost removes flying type from a pokemon for a single turn.
- */
-
+/** Removes flying type from a pokemon for a single turn */
 export class RoostedTag extends BattlerTag {
   private isBaseFlying: boolean;
   private isBasePureFlying: boolean;
