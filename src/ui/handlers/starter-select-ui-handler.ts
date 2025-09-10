@@ -65,9 +65,9 @@ import { StarterContainer } from "#ui/containers/starter-container";
 import { StatsContainer } from "#ui/containers/stats-container";
 import type { OptionSelectItem } from "#ui/handlers/abstract-option-select-ui-handler";
 import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
-import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/handlers/pokemon-icon-anim-handler";
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
+import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/utils/pokemon-icon-anim-helper";
 import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";
 import {
   BooleanHolder,
@@ -384,7 +384,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   private startCursorObj: Phaser.GameObjects.NineSlice;
   private randomCursorObj: Phaser.GameObjects.NineSlice;
 
-  private iconAnimHandler: PokemonIconAnimHandler;
+  private iconAnimHandler: PokemonIconAnimHelper;
 
   //variables to keep track of the dynamically rendered list of instruction prompts for starter select
   private instructionRowX = 0;
@@ -597,7 +597,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       starterContainerWindow.setVisible(false);
     }
 
-    this.iconAnimHandler = new PokemonIconAnimHandler();
+    this.iconAnimHandler = new PokemonIconAnimHelper();
     this.iconAnimHandler.setup();
 
     this.pokemonSprite = globalScene.add.sprite(53, 63, "pkmn__sub");
