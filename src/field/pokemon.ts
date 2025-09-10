@@ -2647,11 +2647,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Gets all level up moves in a given range for a particular pokemon.
-   * @param {number} startingLevel Don't include moves below this level
-   * @param {boolean} includeEvolutionMoves Whether to include evolution moves
-   * @param {boolean} simulateEvolutionChain Whether to include moves from prior evolutions
-   * @param {boolean} includeRelearnerMoves Whether to include moves that would require a relearner. Note the move relearner inherently allows evolution moves
-   * @returns {LevelMoves} A list of moves and the levels they can be learned at
+   * @param startingLevel Don't include moves below this level
+   * @param includeEvolutionMoves Whether to include evolution moves
+   * @param simulateEvolutionChain Whether to include moves from prior evolutions
+   * @param includeRelearnerMoves Whether to include moves that would require a relearner. Note the move relearner inherently allows evolution moves
+   * @returns A list of moves and the levels they can be learned at
    */
   getLevelMoves(
     startingLevel?: number,
@@ -3209,9 +3209,55 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       Math.ceil(Math.pow(m[1], weightMultiplier) * 100),
     ]);
 
+    const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
+      MoveId.BEAT_UP,
+      MoveId.BELCH,
+      MoveId.BIDE,
+      MoveId.COMEUPPANCE,
+      MoveId.COUNTER,
+      MoveId.DOOM_DESIRE,
+      MoveId.DRAGON_RAGE,
+      MoveId.DREAM_EATER,
+      MoveId.ENDEAVOR,
+      MoveId.EXPLOSION,
+      MoveId.FAKE_OUT,
+      MoveId.FIRST_IMPRESSION,
+      MoveId.FISSURE,
+      MoveId.FLING,
+      MoveId.FOCUS_PUNCH,
+      MoveId.FUTURE_SIGHT,
+      MoveId.GUILLOTINE,
+      MoveId.HOLD_BACK,
+      MoveId.HORN_DRILL,
+      MoveId.LAST_RESORT,
+      MoveId.METAL_BURST,
+      MoveId.MIRROR_COAT,
+      MoveId.MISTY_EXPLOSION,
+      MoveId.NATURAL_GIFT,
+      MoveId.NATURES_MADNESS,
+      MoveId.NIGHT_SHADE,
+      MoveId.PSYWAVE,
+      MoveId.RUINATION,
+      MoveId.SELF_DESTRUCT,
+      MoveId.SHEER_COLD,
+      MoveId.SHELL_TRAP,
+      MoveId.SKY_DROP,
+      MoveId.SNORE,
+      MoveId.SONIC_BOOM,
+      MoveId.SPIT_UP,
+      MoveId.STEEL_BEAM,
+      MoveId.STEEL_ROLLER,
+      MoveId.SUPER_FANG,
+      MoveId.SYNCHRONOISE,
+      MoveId.UPPER_HAND,
+    ]);
+
     // All Pokemon force a STAB move first
     const stabMovePool = baseWeights.filter(
-      m => allMoves[m[0]].category !== MoveCategory.STATUS && this.isOfType(allMoves[m[0]].type),
+      m =>
+        allMoves[m[0]].category !== MoveCategory.STATUS
+        && this.isOfType(allMoves[m[0]].type)
+        && !STAB_BLACKLIST.has(m[0]),
     );
 
     if (stabMovePool.length > 0) {
@@ -3224,7 +3270,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       this.moveset.push(new PokemonMove(stabMovePool[index][0]));
     } else {
       // If there are no damaging STAB moves, just force a random damaging move
-      const attackMovePool = baseWeights.filter(m => allMoves[m[0]].category !== MoveCategory.STATUS);
+      const attackMovePool = baseWeights.filter(
+        m => allMoves[m[0]].category !== MoveCategory.STATUS && !STAB_BLACKLIST.has(m[0]),
+      );
       if (attackMovePool.length > 0) {
         const totalWeight = attackMovePool.reduce((v, m) => v + m[1], 0);
         let rand = randSeedInt(totalWeight);
@@ -3261,7 +3309,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
             } else if (allMoves[m[0]].category !== MoveCategory.STATUS) {
               ret = Math.ceil(
                 (m[1] / Math.max(Math.pow(4, this.moveset.filter(mo => (mo.getMove().power ?? 0) > 1).length) / 8, 0.5))
-                  * (this.isOfType(allMoves[m[0]].type) ? 20 : 1),
+                  * (this.isOfType(allMoves[m[0]].type) && !STAB_BLACKLIST.has(m[0]) ? 20 : 1),
               );
             } else {
               ret = m[1];
@@ -3448,7 +3496,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param isCritical determines whether a critical hit has occurred or not (`false` by default)
    * @param simulated determines whether effects are applied without altering game state (`true` by default)
    * @param ignoreHeldItems determines whether this Pokemon's held items should be ignored during the stat calculation, default `false`
-   * @return the stat stage multiplier to be used for effective stat calculation
+   * @returns the stat stage multiplier to be used for effective stat calculation
    */
   getStatStageMultiplier(
     stat: EffectiveStat,
@@ -3504,8 +3552,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * This method considers various factors such as the user's accuracy level, the target's evasion level,
    * abilities, and modifiers to compute the final accuracy multiplier.
    *
-   * @param target {@linkcode Pokemon} - The target Pokémon against which the move is used.
-   * @param sourceMove {@linkcode Move}  - The move being used by the user.
+   * @param target - The target Pokémon against which the move is used.
+   * @param sourceMove - The move being used by the user.
    * @returns The calculated accuracy multiplier.
    */
   getAccuracyMultiplier(target: Pokemon, sourceMove: Move): number {
@@ -4019,7 +4067,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   getCriticalHitResult(source: Pokemon, move: Move): boolean {
     if (move.hasAttr("FixedDamageAttr")) {
-      // fixed damage moves (Dragon Rage, etc.) will nevet crit
+      // fixed damage moves (Dragon Rage, etc.) will never crit
       return false;
     }
 
@@ -4243,18 +4291,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return false;
   }
 
-  /**@overload */
   getTag(tagType: BattlerTagType.GRUDGE): GrudgeTag | undefined;
-
-  /** @overload */
   getTag(tagType: BattlerTagType.SUBSTITUTE): SubstituteTag | undefined;
-
-  /** @overload */
   getTag(tagType: BattlerTagType): BattlerTag | undefined;
-
-  /** @overload */
   getTag<T extends BattlerTag>(tagType: Constructor<T>): T | undefined;
-
   getTag(tagType: BattlerTagType | Constructor<BattlerTag>): BattlerTag | undefined {
     return typeof tagType === "function"
       ? this.summonData.tags.find(t => t instanceof tagType)
@@ -4400,7 +4440,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param user - The move user
    * @param target - The target of the move
    *
-   * @returns {boolean} `true` if the move is disabled for this Pokemon due to the player's target selection
+   * @returns `true` if the move is disabled for this Pokemon due to the player's target selection
    *
    * @see {@linkcode MoveRestrictionBattlerTag}
    */
@@ -5187,7 +5227,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Reset a {@linkcode Pokemon}'s {@linkcode PokemonWaveData | waveData}.
    * Should be called upon starting a new wave in addition to whenever an arena transition occurs.
-   * @see {@linkcode resetBattleAndWaveData()}
+   * @see {@linkcode resetBattleAndWaveData}
    */
   resetWaveData(): void {
     this.waveData = new PokemonWaveData();
@@ -5622,7 +5662,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Generates a random number using the current battle's seed, or the global seed if `globalScene.currentBattle` is falsy
-   * <!-- @import "../battle".Battle -->
    * This calls either {@linkcode BattleScene.randBattleSeedInt}({@linkcode range}, {@linkcode min}) in `src/battle-scene.ts`
    * which calls {@linkcode Battle.randSeedInt}({@linkcode range}, {@linkcode min}) in `src/battle.ts`
    * which calls {@linkcode randSeedInt randSeedInt}({@linkcode range}, {@linkcode min}) in `src/utils.ts`,
