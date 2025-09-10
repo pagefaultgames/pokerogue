@@ -3720,6 +3720,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param simulated If `true`, suppresses changes to game state during the calculation.
    * @param effectiveness If defined, used in place of calculated effectiveness values
    * @returns The {@linkcode DamageCalculationResult}
+   * @todo Condense various multipliers into a single function
    */
   getAttackDamage({
     source,
@@ -4261,6 +4262,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       : this.summonData.tags.find(t => t.tagType === tagType);
   }
 
+  findTag<T extends BattlerTag>(tagFilter: (tag: BattlerTag) => tag is T): T | undefined;
+  findTag(tagFilter: (tag: BattlerTag) => boolean): BattlerTag | undefined;
   findTag(tagFilter: (tag: BattlerTag) => boolean) {
     return this.summonData.tags.find(t => tagFilter(t));
   }

@@ -43,6 +43,18 @@ import i18next from "i18next";
 
 export type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
 
+/**
+ * Type representing the resolved  of a move's damage processing.
+ */
+type MoveDamageTuple = [
+  /** The {@linkcode HitResult} of the interaction. */
+  result: HitResult,
+  /** The final amount of damage that was dealt. */
+  damage: number,
+  /** Whether the attack was a critical hit. */
+  wasCritical: boolean,
+];
+
 export class MoveEffectPhase extends PokemonPhase {
   public readonly phaseName = "MoveEffectPhase";
   public move: Move;
@@ -500,13 +512,13 @@ export class MoveEffectPhase extends PokemonPhase {
 
     // TODO: Break up this chunky boolean to make it more palatable
     return (
-      ![MoveTarget.ENEMY_SIDE, MoveTarget.BOTH_SIDES].includes(this.move.moveTarget) &&
-      (bypassIgnoreProtect.value || !this.move.doesFlagEffectApply({ flag: MoveFlags.IGNORE_PROTECT, user, target })) &&
-      (hasConditionalProtectApplied.value ||
-        (!target.findTags(t => t instanceof DamageProtectedTag).length &&
-          target.findTags(t => t instanceof ProtectedTag).some(t => target.lapseTag(t.tagType))) ||
-        (this.move.category !== MoveCategory.STATUS &&
-          target.findTags(t => t instanceof DamageProtectedTag).some(t => target.lapseTag(t.tagType))))
+      ![MoveTarget.ENEMY_SIDE, MoveTarget.BOTH_SIDES].includes(this.move.moveTarget)
+      && (bypassIgnoreProtect.value || !this.move.doesFlagEffectApply({ flag: MoveFlags.IGNORE_PROTECT, user, target }))
+      && (hasConditionalProtectApplied.value
+        || (target.findTags(t => t instanceof DamageProtectedTag).length === 0
+          && target.findTags(t => t instanceof ProtectedTag).some(t => target.lapseTag(t.tagType)))
+        || (this.move.category !== MoveCategory.STATUS
+          && target.findTags(t => t instanceof DamageProtectedTag).some(t => target.lapseTag(t.tagType))))
     );
   }
 
@@ -558,12 +570,12 @@ export class MoveEffectPhase extends PokemonPhase {
 
     this.triggerMoveEffects(MoveEffectTrigger.PRE_APPLY, user, target);
 
-    const [hitResult, wasCritical, dmg] = this.applyMove(user, target, effectiveness);
+    const result = this.applyMove(user, target, effectiveness);
 
     // Apply effects to the user (always) and the target (if not blocked by substitute).
     this.triggerMoveEffects(MoveEffectTrigger.POST_APPLY, user, target, firstTarget, true);
     if (!this.move.hitsSubstitute(user, target)) {
-      this.applyOnTargetEffects(user, target, hitResult, firstTarget, dmg, wasCritical);
+      this.applyOnTargetEffects(user, target, firstTarget, result);
     }
     if (this.lastHit) {
       globalScene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
@@ -578,16 +590,17 @@ export class MoveEffectPhase extends PokemonPhase {
   }
 
   /**
-   * Apply the result of this phase's move to the given target
+   * Apply the result of this phase's move to the given target.
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - The {@linkcode Pokemon} struck by the move
    * @param effectiveness - The effectiveness of the move against the target
+   * @returns A {@linkcode MoveDamageTuple} containing the results of damage application.
    */
-  protected applyMove(user: Pokemon, target: Pokemon, effectiveness: TypeDamageMultiplier): [HitResult, boolean] {
+  protected applyMove(user: Pokemon, target: Pokemon, effectiveness: TypeDamageMultiplier): MoveDamageTuple {
     const moveCategory = user.getMoveCategory(target, this.move);
 
     if (moveCategory === MoveCategory.STATUS) {
-      return [HitResult.STATUS, false];
+      return [HitResult.STATUS, 0, false];
     }
 
     const result = this.applyMoveDamage(user, target, effectiveness);
@@ -605,17 +618,15 @@ export class MoveEffectPhase extends PokemonPhase {
 
   /**
    * Sub-method of {@linkcode applyMove} that applies damage to the target.
-   *
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - The {@linkcode Pokemon} targeted by the move
-   * @param effectiveness - The effectiveness of the move against the target
-   * @returns The {@linkcode HitResult} of the move against the target, a boolean indicating whether the target was crit, and the amount of damage dealt
+   * @param effectiveness - The type effectiveness of the move against the target
+   * @returns A tuple containing:
+   * 1. The {@linkcode HitResult} of the move against the target
+   * 2. The final amount of damage dealt
+   * 3. Whether the attack was a critical hit
    */
-  protected applyMoveDamage(
-    user: Pokemon,
-    target: Pokemon,
-    effectiveness: TypeDamageMultiplier,
-  ): [result: HitResult, critical: boolean, damage: number] {
+  protected applyMoveDamage(user: Pokemon, target: Pokemon, effectiveness: TypeDamageMultiplier): MoveDamageTuple {
     const isCritical = target.getCriticalHitResult(user, this.move);
 
     /*
@@ -636,19 +647,19 @@ export class MoveEffectPhase extends PokemonPhase {
       isCritical,
     });
 
+    // TODO: Verify if flash fire/charge are consumed if damage is prevented
     const typeBoost = user.findTag(
-      t => t instanceof TypeBoostTag && t.boostedType === user.getMoveType(this.move),
-    ) as TypeBoostTag;
+      (t): t is TypeBoostTag => t instanceof TypeBoostTag && t.boostedType === user.getMoveType(this.move),
+    );
     if (typeBoost?.oneUse) {
       user.removeTag(typeBoost.tagType);
     }
 
-    const isOneHitKo = result === HitResult.ONE_HIT_KO;
-
-    if (!dmg) {
-      return [result, false, 0];
+    if (dmg <= 0) {
+      return [result, 0, false];
     }
 
+    const isOneHitKo = result === HitResult.ONE_HIT_KO;
     target.lapseTags(BattlerTagLapseType.HIT);
 
     const substitute = target.getTag(SubstituteTag);
@@ -675,7 +686,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     if (damage <= 0) {
-      return [result, isCritical, damage];
+      return [result, 0, isCritical];
     }
 
     if (user.isPlayer()) {
@@ -704,7 +715,7 @@ export class MoveEffectPhase extends PokemonPhase {
       globalScene.applyModifiers(DamageMoneyRewardModifier, true, user, new NumberHolder(damage));
     }
 
-    return [result, isCritical, damage];
+    return [result, damage, isCritical];
   }
 
   /**
@@ -758,19 +769,11 @@ export class MoveEffectPhase extends PokemonPhase {
    * To be used when the target is successfully and directly hit by the move.
    * @param user - The {@linkcode Pokemon} using the move
    * @param target - The {@linkcode Pokemon} targeted by the move
-   * @param hitResult - The {@linkcode HitResult} obtained from applying the move
    * @param firstTarget - `true` if the target is the first Pokemon hit by the attack
-   * @param damage - The amount of damage dealt to the target in the interaction
-   * @param wasCritical - `true` if the move was a critical hit
+   * @param tuple - A {@linkcode MoveDamageTuple} containing the resolved damage result.
    */
-  protected applyOnTargetEffects(
-    user: Pokemon,
-    target: Pokemon,
-    hitResult: HitResult,
-    firstTarget: boolean,
-    damage: number,
-    wasCritical = false,
-  ): void {
+  protected applyOnTargetEffects(user: Pokemon, target: Pokemon, firstTarget: boolean, tuple: MoveDamageTuple): void {
+    const [hitResult, damage] = tuple;
     /** Does {@linkcode hitResult} indicate that damage was dealt to the target? */
     const dealsDamage = [
       HitResult.EFFECTIVE,
@@ -781,7 +784,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
     this.triggerMoveEffects(MoveEffectTrigger.POST_APPLY, user, target, firstTarget, false);
     this.applyHeldItemFlinchCheck(user, target, dealsDamage);
-    this.applyOnGetHitAbEffects(user, target, hitResult, damage, wasCritical);
+    this.applyOnGetHitAbEffects(user, target, tuple);
     applyAbAttrs("PostAttackAbAttr", { pokemon: user, opponent: target, move: this.move, hitResult, damage });
 
     // We assume only enemy Pokemon are able to have the EnemyAttackStatusEffectChanceModifier from tokens
@@ -801,10 +804,15 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - {@linkcode Pokemon} the current target of this phase's invoked move
    * @param hitResult - The {@linkcode HitResult} of the attempted move
+   * @param damage - The amount of damage dealt by the attack
    * @param wasCritical - `true` if the move was a critical hit
    */
-  protected applyOnGetHitAbEffects(user: Pokemon, target: Pokemon, hitResult: HitResult, wasCritical = false): void {
-    const params = { pokemon: target, opponent: user, move: this.move, hitResult };
+  protected applyOnGetHitAbEffects(
+    user: Pokemon,
+    target: Pokemon,
+    [hitResult, damage, wasCritical]: MoveDamageTuple,
+  ): void {
+    const params = { pokemon: target, opponent: user, move: this.move, hitResult, damage };
     applyAbAttrs("PostDefendAbAttr", params);
 
     if (wasCritical) {
@@ -825,9 +833,9 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     if (
-      dealsDamage &&
-      !target.hasAbilityWithAttr("IgnoreMoveEffectsAbAttr") &&
-      !this.move.hitsSubstitute(user, target)
+      dealsDamage
+      && !target.hasAbilityWithAttr("IgnoreMoveEffectsAbAttr")
+      && !this.move.hitsSubstitute(user, target)
     ) {
       const flinched = new BooleanHolder(false);
       globalScene.applyModifiers(FlinchChanceModifier, user.isPlayer(), user, flinched);
@@ -955,12 +963,12 @@ export class MoveEffectPhase extends PokemonPhase {
 function isMoveReflectableBy(move: Move, target: Pokemon, useMode: MoveUseMode): boolean {
   return (
     // The move must not have just been reflected
-    !isReflected(useMode) &&
-    // Reflections cannot occur while semi invulnerable
-    !target.getTag(SemiInvulnerableTag) &&
-    // Move must be reflectable
-    move.hasFlag(MoveFlags.REFLECTABLE) &&
-    // target must have a reflection effect active
+    !isReflected(useMode)
+    && // Reflections cannot occur while semi invulnerable
+    !target.getTag(SemiInvulnerableTag)
+    && // Move must be reflectable
+    move.hasFlag(MoveFlags.REFLECTABLE)
+    && // target must have a reflection effect active
     (!!target.getTag(BattlerTagType.MAGIC_COAT) || target.hasAbilityWithAttr("ReflectStatusMoveAbAttr"))
   );
 }
