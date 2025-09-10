@@ -5,9 +5,9 @@ import type Phaser from "phaser";
 const repeatInputDelayMillis = 250;
 
 export class TouchControl {
-  events: Phaser.Events.EventEmitter;
+  readonly events: Phaser.Events.EventEmitter;
   private buttonLock: string[] = [];
-  private inputInterval: NodeJS.Timeout[] = [];
+  private readonly inputInterval: NodeJS.Timeout[] = [];
   /** Whether touch controls are disabled */
   private disabled = false;
   /** Whether the last touch event has finished before disabling */
@@ -61,12 +61,46 @@ export class TouchControl {
    * event, removes the keydown state, and removes the 'active' class from the node and the last touched element.
    */
   bindKey(node: HTMLElement, key: string) {
+    node.addEventListener("touchstart", (event: TouchEvent) => {
+      // Handle touch events for touch devices
+      this.touchButtonDown(node, key);
+      event.preventDefault();
+
+      // prevent pointer event from also firing (undefined just sets presence of custom attribute)
+      if (event.currentTarget instanceof HTMLElement) {
+        event.currentTarget.dataset.skipPointerEvent = undefined;
+      }
+    });
     node.addEventListener("pointerdown", event => {
+      const currentTarget = event.currentTarget;
+      if (currentTarget instanceof HTMLElement && "skipPointerDown" in currentTarget.dataset) {
+        return;
+      }
       event.preventDefault();
       this.touchButtonDown(node, key);
     });
 
+    node.addEventListener("touchcancel", (event: TouchEvent) => {
+      if (event.currentTarget instanceof HTMLElement && "skipPointerDown" in event.currentTarget.dataset) {
+        delete event.currentTarget.dataset.skipPointerEvent;
+      }
+    });
+
+    node.addEventListener("touchend", (event: TouchEvent) => {
+      event.preventDefault();
+      this.touchButtonUp(node, key, event.target?.["id"]);
+      if (event.currentTarget instanceof HTMLElement && "skipPointerDown" in event.currentTarget.dataset) {
+        // allow pointer event to once again fire
+        delete event.currentTarget.dataset.skipPointerEvent;
+        event.currentTarget.dataset.skipPointerUp = undefined;
+      }
+    });
+
     node.addEventListener("pointerup", event => {
+      if (event.currentTarget instanceof HTMLElement && "skipPointerUp" in event.currentTarget.dataset) {
+        delete event.currentTarget.dataset.skipPointerUp;
+        return;
+      }
       event.preventDefault();
       this.touchButtonUp(node, key, event.target?.["id"]);
     });
