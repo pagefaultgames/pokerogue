@@ -65,9 +65,9 @@ import { StarterContainer } from "#ui/containers/starter-container";
 import { StatsContainer } from "#ui/containers/stats-container";
 import type { OptionSelectItem } from "#ui/handlers/abstract-option-select-ui-handler";
 import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
-import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/handlers/pokemon-icon-anim-handler";
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
+import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/utils/pokemon-icon-anim-handler";
 import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";
 import {
   BooleanHolder,

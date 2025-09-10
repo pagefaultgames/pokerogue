@@ -7,8 +7,8 @@ import { HatchedPokemonContainer } from "#ui/containers/hatched-pokemon-containe
 import { PokemonHatchInfoContainer } from "#ui/containers/pokemon-hatch-info-container";
 import { ScrollBar } from "#ui/containers/scroll-bar";
 import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
-import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/handlers/pokemon-icon-anim-handler";
-import { ScrollableGridUiHandler } from "#ui/handlers/scrollable-grid-handler";
+import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/utils/pokemon-icon-anim-handler";
+import { ScrollableGridHandler } from "#ui/utils/scrollable-grid-handler";
 
 const iconContainerX = 112;
 const iconContainerY = 9;
@@ -38,7 +38,7 @@ export class EggSummaryUiHandler extends MessageUiHandler {
   private eggHatchBg: Phaser.GameObjects.Image;
   private eggHatchData: EggHatchData[];
 
-  private scrollGridHandler: ScrollableGridUiHandler;
+  private scrollGridHandler: ScrollableGridHandler;
   private cursorObj: Phaser.GameObjects.Image;
 
   /** used to add a delay before which it is not possible to exit the summary */
@@ -97,7 +97,7 @@ export class EggSummaryUiHandler extends MessageUiHandler {
     );
     this.summaryContainer.add(scrollBar);
 
-    this.scrollGridHandler = new ScrollableGridUiHandler(this, numRows, numCols)
+    this.scrollGridHandler = new ScrollableGridHandler(this, numRows, numCols)
       .withScrollBar(scrollBar)
       .withUpdateGridCallBack(() => this.updatePokemonIcons())
       .withUpdateSingleElementCallback((i: number) => this.infoContainer.showHatchInfo(this.eggHatchData[i]));

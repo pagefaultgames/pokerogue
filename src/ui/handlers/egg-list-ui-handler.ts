@@ -4,10 +4,10 @@ import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { ScrollBar } from "#ui/containers/scroll-bar";
 import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
-import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/handlers/pokemon-icon-anim-handler";
-import { ScrollableGridUiHandler } from "#ui/handlers/scrollable-grid-handler";
 import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
+import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/utils/pokemon-icon-anim-handler";
+import { ScrollableGridHandler } from "#ui/utils/scrollable-grid-handler";
 import i18next from "i18next";
 
 export class EggListUiHandler extends MessageUiHandler {
@@ -25,7 +25,7 @@ export class EggListUiHandler extends MessageUiHandler {
   private eggListMessageBoxContainer: Phaser.GameObjects.Container;
 
   private cursorObj: Phaser.GameObjects.Image;
-  private scrollGridHandler: ScrollableGridUiHandler;
+  private scrollGridHandler: ScrollableGridHandler;
 
   private iconAnimHandler: PokemonIconAnimHandler;
 
@@ -64,7 +64,7 @@ export class EggListUiHandler extends MessageUiHandler {
 
     const scrollBar = new ScrollBar(310, 5, 4, 170, this.ROWS);
 
-    this.scrollGridHandler = new ScrollableGridUiHandler(this, this.ROWS, this.COLUMNS)
+    this.scrollGridHandler = new ScrollableGridHandler(this, this.ROWS, this.COLUMNS)
       .withScrollBar(scrollBar)
       .withUpdateGridCallBack(() => this.updateEggIcons())
       .withUpdateSingleElementCallback((i: number) => this.setEggDetails(i));
