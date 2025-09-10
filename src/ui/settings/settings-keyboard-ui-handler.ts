@@ -19,11 +19,7 @@ import { truncateString } from "#utils/common";
 import { toPascalSnakeCase } from "#utils/strings";
 import i18next from "i18next";
 
-/**
- * Class representing the settings UI handler for keyboards.
- *
- * @extends AbstractControlSettingsUiHandler
- */
+/** Class representing the settings UI handler for keyboards */
 export class SettingsKeyboardUiHandler extends AbstractControlSettingsUiHandler {
   /**
    * Creates an instance of SettingsKeyboardUiHandler.

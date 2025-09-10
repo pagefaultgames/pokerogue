@@ -51,7 +51,7 @@ export function addWindow(
     windowVariant = WindowVariant.NORMAL;
   }
 
-  const borderSize = globalScene.uiTheme ? 6 : 8;
+  const borderSize = globalScene.uiTheme === UiTheme.LEGACY ? 6 : 8;
 
   const window = globalScene.add.nineslice(
     x,
@@ -117,10 +117,8 @@ export function updateWindowType(windowTypeIndex: number): void {
       } else if (object.texture?.key === "namebox") {
         themedObjects.push(object);
       }
-    } else if (object instanceof Phaser.GameObjects.Sprite) {
-      if (object.texture?.key === "bg") {
-        themedObjects.push(object);
-      }
+    } else if (object instanceof Phaser.GameObjects.Sprite && object.texture?.key === "bg") {
+      themedObjects.push(object);
     }
   };
 
@@ -153,7 +151,11 @@ export function addUiThemeOverrides(): void {
     frame?: string | number,
   ): Phaser.GameObjects.Image {
     let legacy = false;
-    if (typeof texture === "string" && globalScene.uiTheme && legacyCompatibleImages.includes(texture)) {
+    if (
+      typeof texture === "string"
+      && globalScene.uiTheme === UiTheme.LEGACY
+      && legacyCompatibleImages.includes(texture)
+    ) {
       legacy = true;
       texture += "_legacy";
     }
@@ -176,7 +178,11 @@ export function addUiThemeOverrides(): void {
     frame?: string | number,
   ): Phaser.GameObjects.Sprite {
     let legacy = false;
-    if (typeof texture === "string" && globalScene.uiTheme && legacyCompatibleImages.includes(texture)) {
+    if (
+      typeof texture === "string"
+      && globalScene.uiTheme === UiTheme.LEGACY
+      && legacyCompatibleImages.includes(texture)
+    ) {
       legacy = true;
       texture += "_legacy";
     }
@@ -205,7 +211,11 @@ export function addUiThemeOverrides(): void {
     bottomHeight?: number,
   ): Phaser.GameObjects.NineSlice {
     let legacy = false;
-    if (typeof texture === "string" && globalScene.uiTheme && legacyCompatibleImages.includes(texture)) {
+    if (
+      typeof texture === "string"
+      && globalScene.uiTheme === UiTheme.LEGACY
+      && legacyCompatibleImages.includes(texture)
+    ) {
       legacy = true;
       texture += "_legacy";
     }

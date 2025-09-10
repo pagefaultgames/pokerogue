@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "25-cosplay.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 47,
+				"h": 47
+			},
+			"scale": 0.333,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 96,
+						"h": 96
+					},
+					"spriteSourceSize": {
+						"x": 27,
+						"y": 23,
+						"w": 36,
+						"h": 47
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 36,
+						"h": 47
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:f44cc89f817e249a54c162d7a5b7ed39:148698fd4eb100762706e0290fc6b595:f523c38f99410b79826d1718c7c00ae3$"
+	}
+}

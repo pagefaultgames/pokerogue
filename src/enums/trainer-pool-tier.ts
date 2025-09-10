@@ -3,5 +3,5 @@ export enum TrainerPoolTier {
   UNCOMMON,
   RARE,
   SUPER_RARE,
-  ULTRA_RARE
+  ULTRA_RARE,
 }

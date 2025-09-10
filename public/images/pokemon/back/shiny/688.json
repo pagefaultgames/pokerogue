@@ -1,0 +1,19 @@
+{ "frames": [
+   {
+    "filename": "0001.png",
+    "frame": { "x": 0, "y": 0, "w": 51, "h": 65 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 51, "h": 65 },
+    "sourceSize": { "w": 51, "h": 65 }
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.7-dev",
+  "image": "688.png",
+  "format": "I8",
+  "size": { "w": 51, "h": 65 },
+  "scale": "1"
+ }
+}

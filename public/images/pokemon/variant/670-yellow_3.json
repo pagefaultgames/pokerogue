@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "670-yellow_3.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 59,
+				"h": 59
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 39,
+						"h": 59
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 39,
+						"h": 59
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 39,
+						"h": 59
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:46cab680c0ad7bc52d2c1bb54ac6cef1:e7fa0c54ba5f98ae104dfe606014d11b:e33b1f5cc51f17c070e89705329e1246$"
+	}
+}

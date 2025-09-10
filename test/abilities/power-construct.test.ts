@@ -33,8 +33,8 @@ describe("Abilities - POWER CONSTRUCT", () => {
   });
 
   test("check if fainted 50% Power Construct Pokemon switches to base form on arena reset", async () => {
-    const baseForm = 2,
-      completeForm = 4;
+    const baseForm = 2;
+    const completeForm = 4;
     game.override.startingWave(4).starterForms({
       [SpeciesId.ZYGARDE]: completeForm,
     });
@@ -59,8 +59,8 @@ describe("Abilities - POWER CONSTRUCT", () => {
   });
 
   test("check if fainted 10% Power Construct Pokemon switches to base form on arena reset", async () => {
-    const baseForm = 3,
-      completeForm = 5;
+    const baseForm = 3;
+    const completeForm = 5;
     game.override.startingWave(4).starterForms({
       [SpeciesId.ZYGARDE]: completeForm,
     });

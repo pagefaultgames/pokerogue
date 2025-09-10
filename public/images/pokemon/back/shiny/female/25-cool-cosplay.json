@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "25-cool-cosplay.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 47,
+				"h": 47
+			},
+			"scale": 0.333,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 96,
+						"h": 96
+					},
+					"spriteSourceSize": {
+						"x": 27,
+						"y": 23,
+						"w": 36,
+						"h": 47
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 36,
+						"h": 47
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:d47446f595ef1d59ef7ae5709cef03b0:fa8bbebdd49bbd5cfc036222389bf3bb:15fbade77a17a862981bf0392b8134eb$"
+	}
+}

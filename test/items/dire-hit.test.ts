@@ -10,7 +10,7 @@ import { NewBattlePhase } from "#phases/new-battle-phase";
 import { TurnEndPhase } from "#phases/turn-end-phase";
 import { TurnInitPhase } from "#phases/turn-init-phase";
 import { GameManager } from "#test/test-utils/game-manager";
-import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import type { ModifierSelectUiHandler } from "#ui/handlers/modifier-select-ui-handler";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

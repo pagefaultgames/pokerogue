@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "905-incarnate.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 82,
+				"h": 82
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 59,
+						"h": 82
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 59,
+						"h": 82
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 59,
+						"h": 82
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:c2976ce6914c43fffe21f5935cdec7e2:347701105edb77d1866615631c54857c:cb1709c5c227f30075ce3a697db04fcc$"
+	}
+}

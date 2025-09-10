@@ -115,8 +115,8 @@ import {
 import type { PokemonMove } from "#moves/pokemon-move";
 import { getVoucherTypeIcon, getVoucherTypeName, VoucherType } from "#system/voucher";
 import type { ModifierTypeFunc, WeightedModifierTypeWeightFunc } from "#types/modifier-types";
-import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
-import { PartyUiHandler } from "#ui/party-ui-handler";
+import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/handlers/party-ui-handler";
+import { PartyUiHandler } from "#ui/handlers/party-ui-handler";
 import { getModifierTierTextTint } from "#ui/text";
 import { applyChallenges } from "#utils/challenge-utils";
 import {
@@ -150,7 +150,7 @@ export class ModifierType {
   /**
    * Checks if the modifier type is of a specific type
    * @param modifierType - The type to check against
-   * @return Whether the modifier type is of the specified type
+   * @returns Whether the modifier type is of the specified type
    */
   public is<K extends ModifierTypeString>(modifierType: K): this is ModifierTypeInstanceMap[K] {
     const targetType = ModifierTypeConstructorMap[modifierType];
@@ -485,8 +485,8 @@ export class PokemonHpRestoreModifierType extends PokemonModifierType {
     super(
       localeKey,
       iconImage,
-      newModifierFunc ||
-        ((_type, args) =>
+      newModifierFunc
+        || ((_type, args) =>
           new PokemonHpRestoreModifier(
             this,
             (args[0] as PlayerPokemon).id,
@@ -495,11 +495,12 @@ export class PokemonHpRestoreModifierType extends PokemonModifierType {
             this.healStatus,
             false,
           )),
-      selectFilter ||
-        ((pokemon: PlayerPokemon) => {
+      selectFilter
+        || ((pokemon: PlayerPokemon) => {
           if (
-            !pokemon.hp ||
-            (pokemon.isFullHp() && (!this.healStatus || (!pokemon.status && !pokemon.getTag(BattlerTagType.CONFUSED))))
+            !pokemon.hp
+            || (pokemon.isFullHp()
+              && (!this.healStatus || (!pokemon.status && !pokemon.getTag(BattlerTagType.CONFUSED))))
           ) {
             return PartyUiHandler.NoEffectMessage;
           }
@@ -640,7 +641,7 @@ export class PokemonAllMovePpRestoreModifierType extends PokemonModifierType {
       iconImage,
       (_type, args) => new PokemonAllMovePpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePoints),
       (pokemon: PlayerPokemon) => {
-        if (!pokemon.getMoveset().filter(m => m.ppUsed).length) {
+        if (pokemon.getMoveset().filter(m => m.ppUsed).length === 0) {
           return PartyUiHandler.NoEffectMessage;
         }
         return null;
@@ -732,7 +733,7 @@ export class RememberMoveModifierType extends PokemonModifierType {
       iconImage,
       (type, args) => new RememberMoveModifier(type, (args[0] as PlayerPokemon).id, args[1] as number),
       (pokemon: PlayerPokemon) => {
-        if (!pokemon.getLearnableLevelMoves().length) {
+        if (pokemon.getLearnableLevelMoves().length === 0) {
           return PartyUiHandler.NoEffectMessage;
         }
         return null;
@@ -873,11 +874,7 @@ export class AttackTypeBoosterModifierType
 
 export type SpeciesStatBoosterItem = keyof typeof SpeciesStatBoosterModifierTypeGenerator.items;
 
-/**
- * Modifier type for {@linkcode SpeciesStatBoosterModifier}
- * @extends PokemonHeldItemModifierType
- * @implements GeneratedPersistentModifierType
- */
+/** Modifier type for {@linkcode SpeciesStatBoosterModifier} */
 export class SpeciesStatBoosterModifierType
   extends PokemonHeldItemModifierType
   implements GeneratedPersistentModifierType
@@ -1144,8 +1141,8 @@ export class TmModifierType extends PokemonModifierType {
       (_type, args) => new TmModifier(this, (args[0] as PlayerPokemon).id),
       (pokemon: PlayerPokemon) => {
         if (
-          pokemon.compatibleTms.indexOf(moveId) === -1 ||
-          pokemon.getMoveset().filter(m => m.moveId === moveId).length
+          pokemon.compatibleTms.indexOf(moveId) === -1
+          || pokemon.getMoveset().filter(m => m.moveId === moveId).length > 0
         ) {
           return PartyUiHandler.NoEffectMessage;
         }
@@ -1184,20 +1181,21 @@ export class EvolutionItemModifierType extends PokemonModifierType implements Ge
       (_type, args) => new EvolutionItemModifier(this, (args[0] as PlayerPokemon).id),
       (pokemon: PlayerPokemon) => {
         if (
-          pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId) &&
-          pokemonEvolutions[pokemon.species.speciesId].filter(e => e.validate(pokemon, false, this.evolutionItem))
-            .length &&
-          pokemon.getFormKey() !== SpeciesFormKey.GIGANTAMAX
+          pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId)
+          && pokemonEvolutions[pokemon.species.speciesId].filter(e => e.validate(pokemon, false, this.evolutionItem))
+            .length > 0
+          && pokemon.getFormKey() !== SpeciesFormKey.GIGANTAMAX
         ) {
           return null;
         }
         if (
-          pokemon.isFusion() &&
-          pokemon.fusionSpecies &&
-          pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId) &&
-          pokemonEvolutions[pokemon.fusionSpecies.speciesId].filter(e => e.validate(pokemon, true, this.evolutionItem))
-            .length &&
-          pokemon.getFusionFormKey() !== SpeciesFormKey.GIGANTAMAX
+          pokemon.isFusion()
+          && pokemon.fusionSpecies
+          && pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId)
+          && pokemonEvolutions[pokemon.fusionSpecies.speciesId].filter(e =>
+            e.validate(pokemon, true, this.evolutionItem),
+          ).length > 0
+          && pokemon.getFusionFormKey() !== SpeciesFormKey.GIGANTAMAX
         ) {
           return null;
         }
@@ -1236,9 +1234,8 @@ export class FormChangeItemModifierType extends PokemonModifierType implements G
       (pokemon: PlayerPokemon) => {
         // Make sure the Pokemon has alternate forms
         if (
-          pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId) &&
-          // Get all form changes for this species with an item trigger, including any compound triggers
-          pokemonFormChanges[pokemon.species.speciesId]
+          pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId) // Get all form changes for this species with an item trigger, including any compound triggers
+          && pokemonFormChanges[pokemon.species.speciesId]
             .filter(
               fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger) && fc.preFormKey === pokemon.getFormKey(),
             )
@@ -1306,7 +1303,7 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
           .filter(m => m.is("AttackMove"))
           .map(m => m.type),
       );
-      if (!attackMoveTypes.length) {
+      if (attackMoveTypes.length === 0) {
         return null;
       }
 
@@ -1395,7 +1392,6 @@ class TempStatStageBoosterModifierTypeGenerator extends ModifierTypeGenerator {
  * Modifier type generator for {@linkcode SpeciesStatBoosterModifierType}, which
  * encapsulates the logic for weighting the most useful held item from
  * the current list of {@linkcode items}.
- * @extends ModifierTypeGenerator
  */
 class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   /** Object comprised of the currently available species-based stat boosting held items */
@@ -1473,8 +1469,8 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
             .getHeldItems()
             .some(
               m =>
-                m instanceof SpeciesStatBoosterModifier &&
-                (m as SpeciesStatBoosterModifier).contains(checkedSpecies[0], checkedStats[0]),
+                m instanceof SpeciesStatBoosterModifier
+                && (m as SpeciesStatBoosterModifier).contains(checkedSpecies[0], checkedStats[0]),
             );
 
           if (!hasItem) {
@@ -1531,7 +1527,7 @@ class TmModifierTypeGenerator extends ModifierTypeGenerator {
         .filter(tm => tmPoolTiers[tm] === tier)
         .filter(tm => !allMoves[tm].name.endsWith(" (N)"))
         .filter((tm, i, array) => array.indexOf(tm) === i);
-      if (!tierUniqueCompatibleTms.length) {
+      if (tierUniqueCompatibleTms.length === 0) {
         return null;
       }
       // TODO: should this use `randSeedItem`?
@@ -1552,12 +1548,12 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
         party
           .filter(
             p =>
-              pokemonEvolutions.hasOwnProperty(p.species.speciesId) &&
-              (!p.pauseEvolutions ||
-                p.species.speciesId === SpeciesId.SLOWPOKE ||
-                p.species.speciesId === SpeciesId.EEVEE ||
-                p.species.speciesId === SpeciesId.KIRLIA ||
-                p.species.speciesId === SpeciesId.SNORUNT),
+              pokemonEvolutions.hasOwnProperty(p.species.speciesId)
+              && (!p.pauseEvolutions
+                || p.species.speciesId === SpeciesId.SLOWPOKE
+                || p.species.speciesId === SpeciesId.EEVEE
+                || p.species.speciesId === SpeciesId.KIRLIA
+                || p.species.speciesId === SpeciesId.SNORUNT),
           )
           .flatMap(p => {
             const evolutions = pokemonEvolutions[p.species.speciesId];
@@ -1566,14 +1562,14 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
         party
           .filter(
             p =>
-              p.isFusion() &&
-              p.fusionSpecies &&
-              pokemonEvolutions.hasOwnProperty(p.fusionSpecies.speciesId) &&
-              (!p.pauseEvolutions ||
-                p.fusionSpecies.speciesId === SpeciesId.SLOWPOKE ||
-                p.fusionSpecies.speciesId === SpeciesId.EEVEE ||
-                p.fusionSpecies.speciesId === SpeciesId.KIRLIA ||
-                p.fusionSpecies.speciesId === SpeciesId.SNORUNT),
+              p.isFusion()
+              && p.fusionSpecies
+              && pokemonEvolutions.hasOwnProperty(p.fusionSpecies.speciesId)
+              && (!p.pauseEvolutions
+                || p.fusionSpecies.speciesId === SpeciesId.SLOWPOKE
+                || p.fusionSpecies.speciesId === SpeciesId.EEVEE
+                || p.fusionSpecies.speciesId === SpeciesId.KIRLIA
+                || p.fusionSpecies.speciesId === SpeciesId.SNORUNT),
           )
           .flatMap(p => {
             const evolutions = pokemonEvolutions[p.fusionSpecies!.speciesId];
@@ -1584,7 +1580,7 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
         .flatMap(e => e.evoItem)
         .filter(i => !!i && i > 50 === rare);
 
-      if (!evolutionItemPool.length) {
+      if (evolutionItemPool.length === 0) {
         return null;
       }
 
@@ -1610,34 +1606,34 @@ export class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
               let formChangeItemTriggers = formChanges
                 .filter(
                   fc =>
-                    ((fc.formKey.indexOf(SpeciesFormKey.MEGA) === -1 &&
-                      fc.formKey.indexOf(SpeciesFormKey.PRIMAL) === -1) ||
-                      globalScene.getModifiers(MegaEvolutionAccessModifier).length) &&
-                    ((fc.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) === -1 &&
-                      fc.formKey.indexOf(SpeciesFormKey.ETERNAMAX) === -1) ||
-                      globalScene.getModifiers(GigantamaxAccessModifier).length) &&
-                    (!fc.conditions.length ||
-                      fc.conditions.filter(cond => cond instanceof SpeciesFormChangeCondition && cond.predicate(p))
-                        .length) &&
-                    fc.preFormKey === p.getFormKey(),
+                    ((fc.formKey.indexOf(SpeciesFormKey.MEGA) === -1
+                      && fc.formKey.indexOf(SpeciesFormKey.PRIMAL) === -1)
+                      || globalScene.getModifiers(MegaEvolutionAccessModifier).length > 0)
+                    && ((fc.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) === -1
+                      && fc.formKey.indexOf(SpeciesFormKey.ETERNAMAX) === -1)
+                      || globalScene.getModifiers(GigantamaxAccessModifier).length > 0)
+                    && (fc.conditions.length === 0
+                      || fc.conditions.filter(cond => cond instanceof SpeciesFormChangeCondition && cond.predicate(p))
+                        .length > 0)
+                    && fc.preFormKey === p.getFormKey(),
                 )
                 .map(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger)
                 .filter(
                   t =>
-                    t?.active &&
-                    !globalScene.findModifier(
+                    t?.active
+                    && !globalScene.findModifier(
                       m =>
-                        m instanceof PokemonFormChangeItemModifier &&
-                        m.pokemonId === p.id &&
-                        m.formChangeItem === t.item,
+                        m instanceof PokemonFormChangeItemModifier
+                        && m.pokemonId === p.id
+                        && m.formChangeItem === t.item,
                     ),
                 );
 
               if (p.species.speciesId === SpeciesId.NECROZMA) {
                 // technically we could use a simplified version and check for formChanges.length > 3, but in case any code changes later, this might break...
-                let foundULTRA_Z = false,
-                  foundN_LUNA = false,
-                  foundN_SOLAR = false;
+                let foundULTRA_Z = false;
+                let foundN_LUNA = false;
+                let foundN_SOLAR = false;
                 formChangeItemTriggers.forEach((fc, _i) => {
                   console.log("Checking ", fc.item);
                   switch (fc.item) {
@@ -1670,7 +1666,7 @@ export class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
         .filter(i => (i && i < 100) === isRareFormChangeItem);
       // convert it into a set to remove duplicate values, which can appear when the same species with a potential form change is in the party.
 
-      if (!formChangeItemPool.length) {
+      if (formChangeItemPool.length === 0) {
         return null;
       }
 
@@ -1960,7 +1956,7 @@ const modifierTypeInitObj = Object.freeze({
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in PokemonType) {
         return new TerastallizeModifierType(pregenArgs[0] as PokemonType);
       }
-      if (!globalScene.getModifiers(TerastallizeAccessModifier).length) {
+      if (globalScene.getModifiers(TerastallizeAccessModifier).length === 0) {
         return null;
       }
       const teraTypes: PokemonType[] = [];
@@ -2399,10 +2395,10 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
               ? weightedModifierType.modifierType.generateType(party)
               : weightedModifierType.modifierType;
           const weight =
-            !existingModifiers.length ||
-            itemModifierType instanceof PokemonHeldItemModifierType ||
-            itemModifierType instanceof FormChangeItemModifierType ||
-            existingModifiers.find(m => m.stackCount < m.getMaxStackCount(true))
+            existingModifiers.length === 0
+            || itemModifierType instanceof PokemonHeldItemModifierType
+            || itemModifierType instanceof FormChangeItemModifierType
+            || existingModifiers.find(m => m.stackCount < m.getMaxStackCount(true))
               ? weightedModifierType.weight instanceof Function
                 ? // biome-ignore lint/complexity/noBannedTypes: TODO: refactor to not use Function type
                   (weightedModifierType.weight as Function)(party, rerollCount)
@@ -2524,16 +2520,16 @@ export function getPlayerModifierTypeOptions(
   } else {
     // Guaranteed mod options first
     if (
-      customModifierSettings?.guaranteedModifierTypeOptions &&
-      customModifierSettings.guaranteedModifierTypeOptions.length > 0
+      customModifierSettings?.guaranteedModifierTypeOptions
+      && customModifierSettings.guaranteedModifierTypeOptions.length > 0
     ) {
       options.push(...customModifierSettings.guaranteedModifierTypeOptions!);
     }
 
     // Guaranteed mod functions second
     if (
-      customModifierSettings.guaranteedModifierTypeFuncs &&
-      customModifierSettings.guaranteedModifierTypeFuncs.length > 0
+      customModifierSettings.guaranteedModifierTypeFuncs
+      && customModifierSettings.guaranteedModifierTypeFuncs.length > 0
     ) {
       customModifierSettings.guaranteedModifierTypeFuncs!.forEach((mod, _i) => {
         const modifierId = Object.keys(modifierTypeInitObj).find(k => modifierTypeInitObj[k] === mod) as string;
@@ -2595,11 +2591,11 @@ function getModifierTypeOptionWithRetry(
   applyChallenges(ChallengeType.WAVE_REWARD, candidate, candidateValidity);
   let r = 0;
   while (
-    (existingOptions.length &&
-      ++r < retryCount &&
-      existingOptions.filter(o => o.type.name === candidate?.type.name || o.type.group === candidate?.type.group)
-        .length) ||
-    !candidateValidity.value
+    (existingOptions.length > 0
+      && ++r < retryCount
+      && existingOptions.filter(o => o.type.name === candidate?.type.name || o.type.group === candidate?.type.group)
+        .length > 0)
+    || !candidateValidity.value
   ) {
     candidate = getNewModifierTypeOption(
       party,
@@ -2703,9 +2699,9 @@ export function getEnemyBuffModifierForWave(
   let r = 0;
   let matchingModifier: PersistentModifier | undefined;
   while (
-    ++r < retryCount &&
-    (matchingModifier = enemyModifiers.find(m => m.type.id === candidate?.type?.id)) &&
-    matchingModifier.getMaxStackCount() < matchingModifier.stackCount + (r < 10 ? tierStackCount : 1)
+    ++r < retryCount
+    && (matchingModifier = enemyModifiers.find(m => m.type.id === candidate?.type?.id))
+    && matchingModifier.getMaxStackCount() < matchingModifier.stackCount + (r < 10 ? tierStackCount : 1)
   ) {
     candidate = getNewModifierTypeOption([], ModifierPoolType.ENEMY_BUFF, tier);
   }
@@ -2832,7 +2828,7 @@ function getNewModifierTypeOption(
     }
 
     tier += upgradeCount;
-    while (tier && (!pool.hasOwnProperty(tier) || !pool[tier].length)) {
+    while (tier && (!pool.hasOwnProperty(tier) || pool[tier].length === 0)) {
       tier--;
       if (upgradeCount) {
         upgradeCount--;
@@ -2843,7 +2839,7 @@ function getNewModifierTypeOption(
     if (tier < ModifierTier.MASTER && allowLuckUpgrades) {
       const partyLuckValue = getPartyLuckValue(party);
       const upgradeOdds = Math.floor(128 / ((partyLuckValue + 4) / 4));
-      while (pool.hasOwnProperty(tier + upgradeCount + 1) && pool[tier + upgradeCount + 1].length) {
+      while (pool.hasOwnProperty(tier + upgradeCount + 1) && pool[tier + upgradeCount + 1].length > 0) {
         if (randSeedInt(upgradeOdds) < 4) {
           upgradeCount++;
         } else {
@@ -2858,7 +2854,7 @@ function getNewModifierTypeOption(
   }
 
   const tierThresholds = Object.keys(thresholds[tier]);
-  const totalWeight = Number.parseInt(tierThresholds[tierThresholds.length - 1]);
+  const totalWeight = Number.parseInt(tierThresholds.at(-1)!);
   const value = randSeedInt(totalWeight);
   let index: number | undefined;
   for (const t of tierThresholds) {

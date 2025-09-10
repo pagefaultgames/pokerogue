@@ -10,6 +10,10 @@ import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin";
 import TransitionImagePackPlugin from "phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin";
 import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 
+if (import.meta.env.DEV) {
+  document.title += " (Beta)";
+}
+
 // Catch global errors and display them in an alert so users can report the issue.
 window.onerror = (_message, _source, _lineno, _colno, error) => {
   console.error(error);
@@ -101,7 +105,7 @@ const startGame = async () => {
     antialias: false,
     pipeline: [InvertPostFX] as unknown as Phaser.Types.Core.PipelineConfig,
     scene: [LoadingScene, BattleScene],
-    version: version,
+    version,
   });
   game.sound.pauseOnBlur = false;
   if (manifest) {

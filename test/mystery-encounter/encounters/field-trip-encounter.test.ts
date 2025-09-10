@@ -12,7 +12,7 @@ import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
 import { GameManager } from "#test/test-utils/game-manager";
-import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import { ModifierSelectUiHandler } from "#ui/handlers/modifier-select-ui-handler";
 import i18next from "i18next";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

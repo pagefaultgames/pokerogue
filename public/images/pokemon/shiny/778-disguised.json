@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "778-disguised.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 39,
+				"h": 48
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 39,
+						"h": 48
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 39,
+						"h": 48
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 39,
+						"h": 48
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:2b1493b6de774bb1d71fcd82fbed9dee:c618740f1e2a176625d28f327bcee7f6:92ecadef6e0cb53020b8cd41fbeaf2cd$"
+	}
+}

@@ -16,8 +16,8 @@ export class PokerogueSessionSavedataApi extends ApiBase {
   //#region Public
 
   /**
-   * Mark a session as cleared aka "newclear".\
-   * *This is **NOT** the same as {@linkcode clear | clear()}.*
+   * Mark a session as cleared aka "newclear". \
+   * _This is **NOT** the same as {@linkcode clear | clear()}._
    * @param params The {@linkcode NewClearSessionSavedataRequest} to send
    * @returns The raw savedata as `string`.
    * @throws Error if the request fails
@@ -82,6 +82,7 @@ export class PokerogueSessionSavedataApi extends ApiBase {
     try {
       const urlSearchParams = this.toUrlSearchParams(params);
       const response = await this.doGet(`/savedata/session/delete?${urlSearchParams}`);
+      console.debug("%cSending a request to delete session in slot %d", "color: blue", params.slot);
 
       if (response.ok) {
         return null;
@@ -94,8 +95,8 @@ export class PokerogueSessionSavedataApi extends ApiBase {
   }
 
   /**
-   * Clears the session savedata of the given slot.\
-   * *This is **NOT** the same as {@linkcode newclear | newclear()}.*
+   * Clears the session savedata of the given slot. \
+   * _This is **NOT** the same as {@linkcode newclear | newclear()}._
    * @param params The {@linkcode ClearSessionSavedataRequest} to send
    * @param sessionData The {@linkcode SessionSaveData} object
    */
