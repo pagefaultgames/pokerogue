@@ -28,7 +28,7 @@ import { biomeDepths, getBiomeName } from "#balance/biomes";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#balance/starters";
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets } from "#data/battle-anims";
-import { allAbilities, allMoves, allSpecies, modifierTypes } from "#data/data-lists";
+import { allMoves, allSpecies, modifierTypes } from "#data/data-lists";
 import { battleSpecDialogue } from "#data/dialogue";
 import type { SpeciesFormChangeTrigger } from "#data/form-change-triggers";
 import { SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger } from "#data/form-change-triggers";
@@ -1211,7 +1211,6 @@ export class BattleScene extends SceneBase {
       const localizable: Localizable[] = [
         ...allSpecies,
         ...allMoves,
-        ...allAbilities,
         ...getEnumValues(ModifierPoolType)
           .map(mpt => getModifierPoolForType(mpt))
           .flatMap(mp =>
