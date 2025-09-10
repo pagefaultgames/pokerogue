@@ -1,7 +1,7 @@
 import { getStatKey, type Stat } from "#enums/stat";
 import type { EnumOrObject, NormalEnum, TSNumericEnum } from "#types/enum-types";
 import type { ObjectValues } from "#types/type-helpers";
-import { enumValueToKey, getEnumValues } from "#utils/enums";
+import { enumValueToKey } from "#utils/enums";
 import { toTitleCase } from "#utils/strings";
 import type { MatcherState } from "@vitest/expect";
 import i18next from "i18next";
@@ -24,15 +24,18 @@ interface getEnumStrOptions {
    * If present, will be added to the end of the enum string.
    */
   suffix?: string;
+  /**
+   * Whether to omit the value from the text.
+   * @defaultValue Whether `E` is a non-string enum
+   */
+  omitValue?: boolean;
 }
 
 /**
  * Return the name of an enum member or const object value, alongside its corresponding value.
  * @param obj - The {@linkcode EnumOrObject} to source reverse mappings from
- * @param enums - One of {@linkcode obj}'s values
- * @param casing - A string denoting the casing method to use; default `Preserve`
- * @param prefix - An optional string to be prepended to the enum's string representation
- * @param suffix - An optional string to be appended to the enum's string representation
+ * @param val - One of {@linkcode obj}'s values
+ * @param options - Options modifying the stringification process.
  * @returns The stringified representation of `val` as dictated by the options.
  * @example
  * ```ts
@@ -48,8 +51,9 @@ interface getEnumStrOptions {
 export function getEnumStr<E extends EnumOrObject>(
   obj: E,
   val: ObjectValues<E>,
-  { casing = "Preserve", prefix = "", suffix = "" }: getEnumStrOptions = {},
+  options: getEnumStrOptions = {},
 ): string {
+  const { casing = "Preserve", prefix = "", suffix = "", omitValue = typeof val === "number" } = options;
   let casingFunc: ((s: string) => string) | undefined;
   switch (casing) {
     case "Preserve":
@@ -70,7 +74,7 @@ export function getEnumStr<E extends EnumOrObject>(
     stringPart = casingFunc(stringPart);
   }
 
-  return `${prefix}${stringPart}${suffix} (=${val})`;
+  return `${prefix}${stringPart}${suffix}${omitValue ? ` (=${val})` : ""}`;
 }
 
 /**
@@ -186,37 +190,4 @@ export function getOnelineDiffStr(this: MatcherState, obj: unknown): string {
     .stringify(obj, undefined, { maxLength: 35, indent: 0, printBasicPrototype: false })
     .replace(/\n/g, " ") // Replace newlines with spaces
     .replace(/,(\s*)\}$/g, "$1}"); // Trim trailing commas
-}
-
-/**
- * Convert an enum or `const object` into an array of object literals
- * suitable for use inside {@linkcode describe.each} or {@linkcode it.each}.
- * @param obj - The {@linkcode EnumOrObject} to source reverse mappings from
- * @param values - An array containing one or more of `obj`'s values to convert.
- * Defaults to all the enum's values.
- * @param options - Options to pass to {@linkcode getEnumStr}
- * @returns An array of objects containing the enum's name and value.
- * @example
- * ```ts
- * enum fakeEnum {
- *   ONE: 1,
- *   TWO: 2,
- *   THREE: 3,
- * }
- * describe.each(getEnumTestCases(fakeEnum))("should do XYZ - $name", ({value}) => {});
- * ```
- */
-export function getEnumTestCases<E extends EnumOrObject>(
-  obj: E,
-  values: E[keyof E][] = isTSNumericEnum(obj) ? getEnumValues(obj) : (Object.values(obj) as E[keyof E][]),
-  options: getEnumStrOptions = {},
-): { value: E[keyof E]; name: string }[] {
-  return values.map(e => ({
-    value: e,
-    name: getEnumStr(obj, e, options),
-  }));
-}
-
-function isTSNumericEnum<E extends EnumOrObject>(obj: E): obj is TSNumericEnum<E> {
-  return Object.keys(obj).some(k => typeof k === "number");
 }

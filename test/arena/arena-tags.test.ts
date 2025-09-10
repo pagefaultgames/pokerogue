@@ -6,7 +6,8 @@ import { BattleType } from "#enums/battle-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
-import { getEnumTestCases } from "#test/test-utils/string-utils";
+import { getEnumStr } from "#test/test-utils/string-utils";
+import { getEnumValues } from "#utils/enums";
 import { toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import Phaser from "phaser";
@@ -53,49 +54,53 @@ describe("Arena Tags", () => {
   // These tags are either ineligible or just jaaaaaaaaaaank
   const FORBIDDEN_TAGS = [ArenaTagType.NONE, ArenaTagType.NEUTRALIZING_GAS] as const;
 
+  const sides = getEnumValues(ArenaTagSide);
   const arenaTags = Object.values(ArenaTagType)
     .filter(t => !(FORBIDDEN_TAGS as readonly ArenaTagType[]).includes(t))
-    .map(t => ({
-      tagType: t,
-      name: toTitleCase(t),
-    }));
-  describe.each(arenaTags)("$name", ({ tagType }) => {
-    it.each(getEnumTestCases(ArenaTagSide))(
-      "should display a message on addition, and a separate one on removal - ArenaTagSide.$name",
-      ({ value: side }) => {
-        game.scene.arena.addTag(tagType, 0, undefined, playerId, side);
-
-        expect(game).toHaveArenaTag(tagType, side);
-        const tag = game.scene.arena.getTagOnSide(tagType, side)!;
-
-        if (tag["onAddMessageKey"]) {
-          expect(game.textInterceptor.logs).toContain(
-            i18next.t(tag["onAddMessageKey"], {
-              pokemonNameWithAffix: getPokemonNameWithAffix(tag["getSourcePokemon"]()),
-              moveName: tag["getMoveName"](),
-            }),
-          );
-        } else {
-          expect(game.textInterceptor.logs).toHaveLength(0);
-        }
-
-        game.textInterceptor.clearLogs();
-
-        game.scene.arena.removeTagOnSide(tagType, side, false);
-        if (tag["onRemoveMessageKey"]) {
-          // TODO: Convert to `game.toHaveShownMessage`
-          expect(game.textInterceptor.logs).toContain(
-            i18next.t(tag["onRemoveMessageKey"], {
-              pokemonNameWithAffix: getPokemonNameWithAffix(tag["getSourcePokemon"]()),
-              moveName: tag["getMoveName"](),
-            }),
-          );
-        } else {
-          expect(game.textInterceptor.logs).toHaveLength(0);
-        }
-
-        expect(game).not.toHaveArenaTag(tagType, side);
-      },
+    .flatMap(t =>
+      sides.map(side => ({
+        tagType: t,
+        name: toTitleCase(t),
+        side,
+        sideName: getEnumStr(ArenaTagSide, side),
+      })),
     );
-  });
+
+  it.each(arenaTags)(
+    "$name should display a message on addition, and a separate one on removal - $sideName",
+    ({ tagType, side }) => {
+      game.scene.arena.addTag(tagType, 0, undefined, playerId, side);
+
+      expect(game).toHaveArenaTag(tagType, side);
+      const tag = game.scene.arena.getTagOnSide(tagType, side)!;
+
+      if (tag["onAddMessageKey"]) {
+        expect(game.textInterceptor.logs).toContain(
+          i18next.t(tag["onAddMessageKey"], {
+            pokemonNameWithAffix: getPokemonNameWithAffix(tag["getSourcePokemon"]()),
+            moveName: tag["getMoveName"](),
+          }),
+        );
+      } else {
+        expect(game.textInterceptor.logs).toHaveLength(0);
+      }
+
+      game.textInterceptor.clearLogs();
+
+      game.scene.arena.removeTagOnSide(tagType, side, false);
+      if (tag["onRemoveMessageKey"]) {
+        // TODO: Convert to `game.toHaveShownMessage`
+        expect(game.textInterceptor.logs).toContain(
+          i18next.t(tag["onRemoveMessageKey"], {
+            pokemonNameWithAffix: getPokemonNameWithAffix(tag["getSourcePokemon"]()),
+            moveName: tag["getMoveName"](),
+          }),
+        );
+      } else {
+        expect(game.textInterceptor.logs).toHaveLength(0);
+      }
+
+      expect(game).not.toHaveArenaTag(tagType, side);
+    },
+  );
 });
