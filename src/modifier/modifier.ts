@@ -345,9 +345,6 @@ export class AddVoucherModifier extends ConsumableModifier {
  * modifier will be removed. If a modifier of the same type is to be added, it
  * will reset {@linkcode battleCount} back to {@linkcode maxBattles} of the
  * existing modifier instead of adding that modifier directly.
- * @extends PersistentModifier
- * @abstract
- * @see {@linkcode add}
  */
 export abstract class LapsingPersistentModifier extends PersistentModifier {
   /** The maximum amount of battles the modifier will exist for */
@@ -458,8 +455,6 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
 /**
  * Modifier used for passive items, specifically lures, that
  * temporarily increases the chance of a double battle.
- * @extends LapsingPersistentModifier
- * @see {@linkcode apply}
  */
 export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier {
   public declare type: DoubleBattleChanceBoosterModifierType;
@@ -495,8 +490,6 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
  * Modifier used for party-wide items, specifically the X items, that
  * temporarily increases the stat stage multiplier of the corresponding
  * {@linkcode TempBattleStat}.
- * @extends LapsingPersistentModifier
- * @see {@linkcode apply}
  */
 export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
   /** The stat whose stat stage multiplier will be temporarily increased */
@@ -562,8 +555,6 @@ export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
 /**
  * Modifier used for party-wide items, namely Dire Hit, that
  * temporarily increments the critical-hit stage
- * @extends LapsingPersistentModifier
- * @see {@linkcode apply}
  */
 export class TempCritBoosterModifier extends LapsingPersistentModifier {
   clone() {
@@ -818,8 +809,6 @@ export abstract class LapsingPokemonHeldItemModifier extends PokemonHeldItemModi
 /**
  * Modifier used for held items, specifically vitamins like Carbos, Hp Up, etc., that
  * increase the value of a given {@linkcode PermanentStat}.
- * @extends PokemonHeldItemModifier
- * @see {@linkcode apply}
  */
 export class BaseStatModifier extends PokemonHeldItemModifier {
   protected stat: PermanentStat;
@@ -1126,8 +1115,6 @@ export class PokemonIncrementingStatModifier extends PokemonHeldItemModifier {
 /**
  * Modifier used for held items that Applies {@linkcode Stat} boost(s)
  * using a multiplier.
- * @extends PokemonHeldItemModifier
- * @see {@linkcode apply}
  */
 export class StatBoosterModifier extends PokemonHeldItemModifier {
   /** The stats that the held item boosts */
@@ -1194,8 +1181,6 @@ export class StatBoosterModifier extends PokemonHeldItemModifier {
 /**
  * Modifier used for held items, specifically Eviolite, that apply
  * {@linkcode Stat} boost(s) using a multiplier if the holder can evolve.
- * @extends StatBoosterModifier
- * @see {@linkcode apply}
  */
 export class EvolutionStatBoosterModifier extends StatBoosterModifier {
   matchType(modifier: Modifier): boolean {
@@ -1246,8 +1231,6 @@ export class EvolutionStatBoosterModifier extends StatBoosterModifier {
 /**
  * Modifier used for held items that Applies {@linkcode Stat} boost(s) using a
  * multiplier if the holder is of a specific {@linkcode SpeciesId}.
- * @extends StatBoosterModifier
- * @see {@linkcode apply}
  */
 export class SpeciesStatBoosterModifier extends StatBoosterModifier {
   /** The species that the held item's stat boost(s) apply to */
@@ -1321,8 +1304,6 @@ export class SpeciesStatBoosterModifier extends StatBoosterModifier {
 
 /**
  * Modifier used for held items that apply critical-hit stage boost(s).
- * @extends PokemonHeldItemModifier
- * @see {@linkcode apply}
  */
 export class CritBoosterModifier extends PokemonHeldItemModifier {
   /** The amount of stages by which the held item increases the current critical-hit stage value */
@@ -1369,8 +1350,6 @@ export class CritBoosterModifier extends PokemonHeldItemModifier {
 /**
  * Modifier used for held items that apply critical-hit stage boost(s)
  * if the holder is of a specific {@linkcode SpeciesId}.
- * @extends CritBoosterModifier
- * @see {@linkcode shouldApply}
  */
 export class SpeciesCritBoosterModifier extends CritBoosterModifier {
   /** The species that the held item's critical-hit stage boost applies to */
@@ -1694,8 +1673,6 @@ export class TurnHealModifier extends PokemonHeldItemModifier {
 /**
  * Modifier used for held items, namely Toxic Orb and Flame Orb, that apply a
  * set {@linkcode StatusEffect} at the end of a turn.
- * @extends PokemonHeldItemModifier
- * @see {@linkcode apply}
  */
 export class TurnStatusEffectModifier extends PokemonHeldItemModifier {
   /** The status effect to be applied by the held item */
@@ -1966,8 +1943,6 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
 /**
  * Modifier used for held items, namely White Herb, that restore adverse stat
  * stages in battle.
- * @extends PokemonHeldItemModifier
- * @see {@linkcode apply}
  */
 export class ResetNegativeStatStageModifier extends PokemonHeldItemModifier {
   matchType(modifier: Modifier) {
@@ -2013,8 +1988,6 @@ export class ResetNegativeStatStageModifier extends PokemonHeldItemModifier {
 /**
  * Modifier used for held items, namely Mystical Rock, that extend the
  * duration of weather and terrain effects.
- * @extends PokemonHeldItemModifier
- * @see {@linkcode apply}
  */
 export class FieldEffectModifier extends PokemonHeldItemModifier {
   /**
@@ -3400,8 +3373,6 @@ export class ExtraModifierModifier extends PersistentModifier {
 
 /**
  * Modifier used for timed boosts to the player's shop item rewards.
- * @extends LapsingPersistentModifier
- * @see {@linkcode apply}
  */
 export class TempExtraModifierModifier extends LapsingPersistentModifier {
   /**

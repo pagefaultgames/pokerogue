@@ -842,7 +842,6 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
 /**
  * Attribute implementing the effects of {@link https://bulbapedia.bulbagarden.net/wiki/Tera_Shell_(Ability) | Tera Shell}
  * When the source is at full HP, incoming attacks will have a maximum 0.5x type effectiveness multiplier.
- * @extends PreDefendAbAttr
  */
 export class FullHpResistTypeAbAttr extends PreDefendAbAttr {
   /**
@@ -1351,11 +1350,9 @@ export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
   }
 }
 /**
- * @description: This ability applies the Perish Song tag to the attacking pokemon
+ * This ability applies the Perish Song tag to the attacking pokemon
  * and the defending pokemon if the move makes physical contact and neither pokemon
  * already has the Perish Song tag.
- * @class PostDefendPerishSongAbAttr
- * @extends {PostDefendAbAttr}
  */
 export class PostDefendPerishSongAbAttr extends PostDefendAbAttr {
   private turns: number;
@@ -1961,19 +1958,16 @@ export class PreAttackFieldMoveTypePowerBoostAbAttr extends FieldMovePowerBoostA
 
 /**
  * Boosts the power of a specific type of move for all Pokemon in the field.
- * @extends PreAttackFieldMoveTypePowerBoostAbAttr
  */
 export class FieldMoveTypePowerBoostAbAttr extends PreAttackFieldMoveTypePowerBoostAbAttr {}
 
 /**
  * Boosts the power of a specific type of move for the user and its allies.
- * @extends PreAttackFieldMoveTypePowerBoostAbAttr
  */
 export class UserFieldMoveTypePowerBoostAbAttr extends PreAttackFieldMoveTypePowerBoostAbAttr {}
 
 /**
  * Boosts the power of moves in specified categories.
- * @extends FieldMovePowerBoostAbAttr
  */
 export class AllyMoveCategoryPowerBoostAbAttr extends FieldMovePowerBoostAbAttr {
   /**
@@ -3180,7 +3174,6 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
 /**
  * Reverts weather-based forms to their normal forms when the user is summoned.
  * Used by Cloud Nine and Air Lock.
- * @extends PostSummonAbAttr
  */
 export class PostSummonWeatherSuppressedFormChangeAbAttr extends PostSummonAbAttr {
   override canApply(_params: AbAttrBaseParams): boolean {
@@ -3200,7 +3193,6 @@ export class PostSummonWeatherSuppressedFormChangeAbAttr extends PostSummonAbAtt
 /**
  * Triggers weather-based form change when summoned into an active weather.
  * Used by Forecast and Flower Gift.
- * @extends PostSummonAbAttr
  */
 export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
   private ability: AbilityId;
@@ -4996,7 +4988,6 @@ export class PostMoveUsedAbAttr extends AbAttr {
 
 /**
  * Triggers after a dance move is used either by the opponent or the player
- * @extends PostMoveUsedAbAttr
  */
 export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
   override canApply({ source, pokemon }: PostMoveUsedAbAttrParams): boolean {
@@ -5055,7 +5046,6 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
 
 /**
  * Triggers after the Pokemon loses or consumes an item
- * @extends AbAttr
  */
 export class PostItemLostAbAttr extends AbAttr {
   canApply(_params: Closed<AbAttrBaseParams>): boolean {
@@ -5226,7 +5216,6 @@ type ArenaTrapCondition = (user: Pokemon, target: Pokemon) => boolean;
 
 /**
  * Base class for checking if a Pokemon is trapped by arena trap
- * @extends AbAttr
  * @field {@linkcode arenaTrapCondition} Conditional for trapping abilities.
  * For example, Magnet Pull will only activate if opponent is Steel type.
  * @see {@linkcode applyCheckTrapped}
@@ -5849,8 +5838,6 @@ export class IgnoreTypeStatusEffectImmunityAbAttr extends AbAttr {
 
 /**
  * Gives money to the user after the battle.
- *
- * @extends PostBattleAbAttr
  */
 export class MoneyAbAttr extends PostBattleAbAttr {
   override canApply({ simulated, victory }: PostBattleAbAttrParams): boolean {
