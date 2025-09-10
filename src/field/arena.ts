@@ -1,12 +1,17 @@
+// biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports
+import type { PositionalTag } from "#data/positional-tags/positional-tag";
+// biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports
+
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import type { BiomeTierTrainerPools, PokemonPools } from "#balance/biomes";
 import { BiomePoolTier, biomePokemonPools, biomeTrainerPools } from "#balance/biomes";
 import type { ArenaTag } from "#data/arena-tag";
-import { ArenaTrapTag, getArenaTag } from "#data/arena-tag";
+import { EntryHazardTag, getArenaTag } from "#data/arena-tag";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
 import type { PokemonSpecies } from "#data/pokemon-species";
+import { PositionalTagManager } from "#data/positional-tags/positional-tag-manager";
 import { getTerrainClearMessage, getTerrainStartMessage, Terrain, TerrainType } from "#data/terrain";
 import {
   getLegendaryWeatherContinuesMessage,
@@ -38,11 +43,18 @@ export class Arena {
   public biomeType: BiomeId;
   public weather: Weather | null;
   public terrain: Terrain | null;
-  public tags: ArenaTag[];
+  /** All currently-active {@linkcode ArenaTag}s on both sides of the field. */
+  public tags: ArenaTag[] = [];
+  /**
+   * All currently-active {@linkcode PositionalTag}s on both sides of the field,
+   * sorted by tag type.
+   */
+  public positionalTagManager: PositionalTagManager = new PositionalTagManager();
+
   public bgm: string;
   public ignoreAbilities: boolean;
   public ignoringEffectSource: BattlerIndex | null;
-  public playerTerasUsed: number;
+  public playerTerasUsed = 0;
   /**
    * Saves the number of times a party pokemon faints during a arena encounter.
    * {@linkcode globalScene.currentBattle.enemyFaints} is the corresponding faint counter for the enemy (this resets every wave).
@@ -56,13 +68,11 @@ export class Arena {
 
   public readonly eventTarget: EventTarget = new EventTarget();
 
-  constructor(biome: BiomeId, bgm: string, playerFaints = 0) {
+  constructor(biome: BiomeId, playerFaints = 0) {
     this.biomeType = biome;
-    this.tags = [];
-    this.bgm = bgm;
+    this.bgm = BiomeId[biome].toLowerCase();
     this.trainerPool = biomeTrainerPools[biome];
     this.updatePoolsForTimeOfDay();
-    this.playerTerasUsed = 0;
     this.playerFaints = playerFaints;
   }
 
@@ -106,9 +116,11 @@ export class Arena {
       return overrideSpecies;
     }
     const isBossSpecies =
-      !!globalScene.getEncounterBossSegments(waveIndex, level) &&
-      !!this.pokemonPool[BiomePoolTier.BOSS].length &&
-      (this.biomeType !== BiomeId.END || globalScene.gameMode.isClassic || globalScene.gameMode.isWaveFinal(waveIndex));
+      !!globalScene.getEncounterBossSegments(waveIndex, level)
+      && this.pokemonPool[BiomePoolTier.BOSS].length > 0
+      && (this.biomeType !== BiomeId.END
+        || globalScene.gameMode.isClassic
+        || globalScene.gameMode.isWaveFinal(waveIndex));
     const randVal = isBossSpecies ? 64 : 512;
     // luck influences encounter rarity
     let luckModifier = 0;
@@ -134,14 +146,14 @@ export class Arena {
             ? BiomePoolTier.BOSS_SUPER_RARE
             : BiomePoolTier.BOSS_ULTRA_RARE;
     console.log(BiomePoolTier[tier]);
-    while (!this.pokemonPool[tier].length) {
+    while (this.pokemonPool[tier]?.length === 0) {
       console.log(`Downgraded rarity tier from ${BiomePoolTier[tier]} to ${BiomePoolTier[tier - 1]}`);
       tier--;
     }
     const tierPool = this.pokemonPool[tier];
     let ret: PokemonSpecies;
     let regen = false;
-    if (!tierPool.length) {
+    if (tierPool.length === 0) {
       ret = globalScene.randomSpecies(waveIndex, level);
     } else {
       // TODO: should this use `randSeedItem`?
@@ -193,8 +205,8 @@ export class Arena {
 
   randomTrainerType(waveIndex: number, isBoss = false): TrainerType {
     const isTrainerBoss =
-      !!this.trainerPool[BiomePoolTier.BOSS].length &&
-      (globalScene.gameMode.isTrainerBoss(waveIndex, this.biomeType, globalScene.offsetGym) || isBoss);
+      this.trainerPool[BiomePoolTier.BOSS].length > 0
+      && (globalScene.gameMode.isTrainerBoss(waveIndex, this.biomeType, globalScene.offsetGym) || isBoss);
     console.log(isBoss, this.trainerPool);
     const tierValue = randSeedInt(!isTrainerBoss ? 512 : 64);
     let tier = !isTrainerBoss
@@ -215,12 +227,12 @@ export class Arena {
             ? BiomePoolTier.BOSS_SUPER_RARE
             : BiomePoolTier.BOSS_ULTRA_RARE;
     console.log(BiomePoolTier[tier]);
-    while (tier && !this.trainerPool[tier].length) {
+    while (tier && this.trainerPool[tier].length === 0) {
       console.log(`Downgraded trainer rarity tier from ${BiomePoolTier[tier]} to ${BiomePoolTier[tier - 1]}`);
       tier--;
     }
     const tierPool = this.trainerPool[tier] || [];
-    return !tierPool.length ? TrainerType.BREEDER : tierPool[randSeedInt(tierPool.length)];
+    return tierPool.length === 0 ? TrainerType.BREEDER : tierPool[randSeedInt(tierPool.length)];
   }
 
   getSpeciesFormIndex(species: PokemonSpecies): number {
@@ -312,15 +324,14 @@ export class Arena {
     const oldWeatherType = this.weather?.weatherType || WeatherType.NONE;
 
     if (
-      this.weather?.isImmutable() &&
-      ![WeatherType.HARSH_SUN, WeatherType.HEAVY_RAIN, WeatherType.STRONG_WINDS, WeatherType.NONE].includes(weather)
+      this.weather?.isImmutable()
+      && ![WeatherType.HARSH_SUN, WeatherType.HEAVY_RAIN, WeatherType.STRONG_WINDS, WeatherType.NONE].includes(weather)
     ) {
       globalScene.phaseManager.unshiftNew(
         "CommonAnimPhase",
         undefined,
         undefined,
         CommonAnim.SUNNY + (oldWeatherType - 1),
-        true,
       );
       globalScene.phaseManager.queueMessage(getLegendaryWeatherContinuesMessage(oldWeatherType)!);
       return false;
@@ -339,13 +350,7 @@ export class Arena {
     ); // TODO: is this bang correct?
 
     if (this.weather) {
-      globalScene.phaseManager.unshiftNew(
-        "CommonAnimPhase",
-        undefined,
-        undefined,
-        CommonAnim.SUNNY + (weather - 1),
-        true,
-      );
+      globalScene.phaseManager.unshiftNew("CommonAnimPhase", undefined, undefined, CommonAnim.SUNNY + (weather - 1));
       globalScene.phaseManager.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
     } else {
       globalScene.phaseManager.queueMessage(getWeatherClearMessage(oldWeatherType)!); // TODO: is this bang correct?
@@ -525,6 +530,7 @@ export class Arena {
       case BiomeId.ABYSS:
       case BiomeId.SPACE:
       case BiomeId.TEMPLE:
+      case BiomeId.LABORATORY:
         return 16;
       default:
         return 0;
@@ -676,15 +682,15 @@ export class Arena {
   }
 
   /**
-   * Adds a new tag to the arena
-   * @param tagType {@linkcode ArenaTagType} the tag being added
-   * @param turnCount How many turns the tag lasts
-   * @param sourceMove {@linkcode MoveId} the move the tag came from, or `undefined` if not from a move
-   * @param sourceId The ID of the pokemon in play the tag came from (see {@linkcode BattleScene.getPokemonById})
-   * @param side {@linkcode ArenaTagSide} which side(s) the tag applies to
-   * @param quiet If a message should be queued on screen to announce the tag being added
-   * @param targetIndex The {@linkcode BattlerIndex} of the target pokemon
-   * @returns `false` if there already exists a tag of this type in the Arena
+   * Add a new {@linkcode ArenaTag} to the arena, triggering overlap effects on existing tags as applicable.
+   * @param tagType - The {@linkcode ArenaTagType} of the tag to add.
+   * @param turnCount - The number of turns the newly-added tag should last.
+   * @param sourceId - The {@linkcode Pokemon.id | PID} of the Pokemon creating the tag.
+   * @param sourceMove - The {@linkcode MoveId} of the move creating the tag, or `undefined` if not from a move.
+   * @param side - The {@linkcode ArenaTagSide}(s) to which the tag should apply; default `ArenaTagSide.BOTH`.
+   * @param quiet - Whether to suppress messages produced by tag addition; default `false`.
+   * @returns `true` if the tag was successfully added without overlapping.
+  // TODO: Do we need the return value here? literally nothing uses it
    */
   addTag(
     tagType: ArenaTagType,
@@ -693,14 +699,13 @@ export class Arena {
     sourceId: number,
     side: ArenaTagSide = ArenaTagSide.BOTH,
     quiet = false,
-    targetIndex?: BattlerIndex,
   ): boolean {
     const existingTag = this.getTagOnSide(tagType, side);
     if (existingTag) {
       existingTag.onOverlap(this, globalScene.getPokemonById(sourceId));
 
-      if (existingTag instanceof ArenaTrapTag) {
-        const { tagType, side, turnCount, layers, maxLayers } = existingTag as ArenaTrapTag;
+      if (existingTag instanceof EntryHazardTag) {
+        const { tagType, side, turnCount, layers, maxLayers } = existingTag as EntryHazardTag;
         this.eventTarget.dispatchEvent(new TagAddedEvent(tagType, side, turnCount, layers, maxLayers));
       }
 
@@ -708,12 +713,12 @@ export class Arena {
     }
 
     // creates a new tag object
-    const newTag = getArenaTag(tagType, turnCount || 0, sourceMove, sourceId, targetIndex, side);
+    const newTag = getArenaTag(tagType, turnCount || 0, sourceMove, sourceId, side);
     if (newTag) {
       newTag.onAdd(this, quiet);
       this.tags.push(newTag);
 
-      const { layers = 0, maxLayers = 0 } = newTag instanceof ArenaTrapTag ? newTag : {};
+      const { layers = 0, maxLayers = 0 } = newTag instanceof EntryHazardTag ? newTag : {};
 
       this.eventTarget.dispatchEvent(
         new TagAddedEvent(newTag.tagType, newTag.side, newTag.turnCount, layers, maxLayers),
@@ -724,10 +729,17 @@ export class Arena {
   }
 
   /**
-   * Attempts to get a tag from the Arena via {@linkcode getTagOnSide} that applies to both sides
-   * @param tagType The {@linkcode ArenaTagType} or {@linkcode ArenaTag} to get
-   * @returns either the {@linkcode ArenaTag}, or `undefined` if it isn't there
+   * Attempt to get a tag from the Arena via {@linkcode getTagOnSide} that applies to both sides
+   * @param tagType - The {@linkcode ArenaTagType} to retrieve
+   * @returns The existing {@linkcode ArenaTag}, or `undefined` if not present.
    */
+  getTag(tagType: ArenaTagType): ArenaTag | undefined;
+  /**
+   * Attempt to get a tag from the Arena via {@linkcode getTagOnSide} that applies to both sides
+   * @param tagType - The constructor of the {@linkcode ArenaTag} to retrieve
+   * @returns The existing {@linkcode ArenaTag}, or `undefined` if not present.
+   */
+  getTag<T extends ArenaTag>(tagType: Constructor<T> | AbstractConstructor<T>): T | undefined;
   getTag(tagType: ArenaTagType | Constructor<ArenaTag> | AbstractConstructor<ArenaTag>): ArenaTag | undefined {
     return this.getTagOnSide(tagType, ArenaTagSide.BOTH);
   }
@@ -816,7 +828,7 @@ export class Arena {
   }
 
   removeAllTags(): void {
-    while (this.tags.length) {
+    while (this.tags.length > 0) {
       this.tags[0].onRemove(this);
       this.eventTarget.dispatchEvent(
         new TagRemovedEvent(this.tags[0].tagType, this.tags[0].side, this.tags[0].turnCount),
@@ -875,7 +887,7 @@ export class Arena {
       case BiomeId.CAVE:
         return 14.24;
       case BiomeId.DESERT:
-        return 1.143;
+        return 9.02;
       case BiomeId.ICE_CAVE:
         return 0.0;
       case BiomeId.MEADOW:
@@ -893,7 +905,7 @@ export class Arena {
       case BiomeId.RUINS:
         return 0.0;
       case BiomeId.WASTELAND:
-        return 6.336;
+        return 6.024;
       case BiomeId.ABYSS:
         return 20.113;
       case BiomeId.SPACE:
@@ -903,7 +915,7 @@ export class Arena {
       case BiomeId.JUNGLE:
         return 0.0;
       case BiomeId.FAIRY_CAVE:
-        return 4.542;
+        return 0.0;
       case BiomeId.TEMPLE:
         return 2.547;
       case BiomeId.ISLAND:

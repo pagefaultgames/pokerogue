@@ -34,7 +34,7 @@ describe("Moves - Throat Chop", () => {
   it("prevents the target from using sound-based moves for two turns", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.GROWL);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);

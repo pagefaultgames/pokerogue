@@ -18,7 +18,7 @@ import {
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
-import type { OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
+import type { OptionSelectItem } from "#ui/handlers/abstract-option-select-ui-handler";
 import i18next from "i18next";
 
 /** i18n namespace for the encounter */
@@ -56,7 +56,7 @@ export const FieldTripEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       text: `${namespace}:intro`,
     },
     {
-      text: `${namespace}:intro_dialogue`,
+      text: `${namespace}:introDialogue`,
       speaker: `${namespace}:speaker`,
     },
   ])
@@ -70,7 +70,7 @@ export const FieldTripEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       .withDialogue({
         buttonLabel: `${namespace}:option.1.label`,
         buttonTooltip: `${namespace}:option.1.tooltip`,
-        secondOptionPrompt: `${namespace}:second_option_prompt`,
+        secondOptionPrompt: `${namespace}:secondOptionPrompt`,
       })
       .withPreOptionPhase(async (): Promise<boolean> => {
         const encounter = globalScene.currentBattle.mysteryEncounter!;
@@ -118,7 +118,7 @@ export const FieldTripEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       .withDialogue({
         buttonLabel: `${namespace}:option.2.label`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
-        secondOptionPrompt: `${namespace}:second_option_prompt`,
+        secondOptionPrompt: `${namespace}:secondOptionPrompt`,
       })
       .withPreOptionPhase(async (): Promise<boolean> => {
         const encounter = globalScene.currentBattle.mysteryEncounter!;
@@ -166,7 +166,7 @@ export const FieldTripEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       .withDialogue({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
-        secondOptionPrompt: `${namespace}:second_option_prompt`,
+        secondOptionPrompt: `${namespace}:secondOptionPrompt`,
       })
       .withPreOptionPhase(async (): Promise<boolean> => {
         const encounter = globalScene.currentBattle.mysteryEncounter!;
@@ -226,7 +226,7 @@ function pokemonAndMoveChosen(pokemon: PlayerPokemon, move: PokemonMove, correct
         speaker: `${namespace}:speaker`,
       },
       {
-        text: `${namespace}:incorrect_exp`,
+        text: `${namespace}:incorrectExp`,
       },
     ];
     setEncounterExp(
@@ -243,12 +243,12 @@ function pokemonAndMoveChosen(pokemon: PlayerPokemon, move: PokemonMove, correct
         speaker: `${namespace}:speaker`,
       },
       {
-        text: `${namespace}:correct_exp`,
+        text: `${namespace}:correctExp`,
       },
     ];
     setEncounterExp([pokemon.id], 100);
   }
   encounter.misc = {
-    correctMove: correctMove,
+    correctMove,
   };
 }

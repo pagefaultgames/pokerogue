@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { allSpecies, modifierTypes } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import type { PokemonSpecies } from "#data/pokemon-species";
+import { AbilityId } from "#enums/ability-id";
 import { Challenges } from "#enums/challenges";
 import { ModifierTier } from "#enums/modifier-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -10,8 +11,9 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { PlayerGender } from "#enums/player-gender";
-import { PokemonType } from "#enums/pokemon-type";
+import { MAX_POKEMON_TYPE, PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
+import { StatusEffect } from "#enums/status-effect";
 import { TrainerType } from "#enums/trainer-type";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { PokemonHeldItemModifier } from "#modifiers/modifier";
@@ -47,6 +49,7 @@ const namespace = "mysteryEncounters/weirdDream";
 
 /** Exclude Ultra Beasts, Paradox, Eternatus, and all legendary/mythical/trio pokemon that are below 570 BST */
 const EXCLUDED_TRANSFORMATION_SPECIES = [
+  SpeciesId.ARCEUS,
   SpeciesId.ETERNATUS,
   /** UBs */
   SpeciesId.NIHILEGO,
@@ -82,20 +85,19 @@ const EXCLUDED_TRANSFORMATION_SPECIES = [
   SpeciesId.IRON_BOULDER,
   SpeciesId.IRON_CROWN,
   /** These are banned so they don't appear in the < 570 BST pool */
+  SpeciesId.PHIONE,
+  SpeciesId.TYPE_NULL,
   SpeciesId.COSMOG,
+  SpeciesId.COSMOEM,
   SpeciesId.MELTAN,
   SpeciesId.KUBFU,
-  SpeciesId.COSMOEM,
-  SpeciesId.POIPOLE,
-  SpeciesId.TERAPAGOS,
-  SpeciesId.TYPE_NULL,
-  SpeciesId.CALYREX,
-  SpeciesId.NAGANADEL,
   SpeciesId.URSHIFU,
+  SpeciesId.CALYREX,
   SpeciesId.OGERPON,
   SpeciesId.OKIDOGI,
   SpeciesId.MUNKIDORI,
   SpeciesId.FEZANDIPITI,
+  SpeciesId.TERAPAGOS,
 ];
 
 const SUPER_LEGENDARY_BST_THRESHOLD = 600;
@@ -143,7 +145,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
     },
     {
       speaker: `${namespace}:speaker`,
-      text: `${namespace}:intro_dialogue`,
+      text: `${namespace}:introDialogue`,
     },
   ])
   .setLocalizationKey(`${namespace}`)
@@ -216,9 +218,10 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         await cutsceneDialoguePromise;
 
         doHideDreamBackground();
-        await showEncounterText(`${namespace}:option.1.dream_complete`);
+        await showEncounterText(`${namespace}:option.1.dreamComplete`);
 
         await doNewTeamPostProcess(transformations);
+        globalScene.phaseManager.unshiftNew("PartyHealPhase", true);
         setEncounterRewards({
           guaranteedModifierTypeFuncs: [
             modifierTypes.MEMORY_MUSHROOM,
@@ -226,10 +229,11 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
             modifierTypes.MINT,
             modifierTypes.MINT,
             modifierTypes.MINT,
+            modifierTypes.MINT,
           ],
           fillRemaining: false,
         });
-        leaveEncounterWithoutBattle(true);
+        leaveEncounterWithoutBattle(false);
       })
       .build(),
   )
@@ -281,7 +285,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
           species: transformation.newSpecies,
           isBoss: newPokemon.getSpeciesForm().getBaseStatTotal() > NON_LEGENDARY_BST_THRESHOLD,
           level: previousPokemon.level,
-          dataSource: dataSource,
+          dataSource,
           modifierConfigs: newPokemonHeldItemConfigs,
         };
 
@@ -295,7 +299,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         ].clone();
       trainerConfig.setPartyTemplates(new TrainerPartyTemplate(transformations.length, PartyMemberStrength.STRONG));
       const enemyPartyConfig: EnemyPartyConfig = {
-        trainerConfig: trainerConfig,
+        trainerConfig,
         pokemonConfigs: enemyPokemonConfigs,
         female: genderIndex === PlayerGender.FEMALE,
       };
@@ -328,7 +332,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         onBeforeRewards,
       );
 
-      await showEncounterText(`${namespace}:option.2.selected_2`, null, undefined, true);
+      await showEncounterText(`${namespace}:option.2.selected2`, null, undefined, true);
       await initBattleWithEnemyConfig(enemyPartyConfig);
     },
   )
@@ -430,6 +434,8 @@ function getTeamTransformations(): PokemonTransformation[] {
       newAbilityIndex,
       undefined,
     );
+
+    transformation.newPokemon.teraType = randSeedInt(MAX_POKEMON_TYPE);
   }
 
   return pokemonTransformations;
@@ -439,6 +445,8 @@ async function doNewTeamPostProcess(transformations: PokemonTransformation[]) {
   let atLeastOneNewStarter = false;
   for (const transformation of transformations) {
     const previousPokemon = transformation.previousPokemon;
+    const oldHpRatio = previousPokemon.getHpRatio(true);
+    const oldStatus = previousPokemon.status;
     const newPokemon = transformation.newPokemon;
     const speciesRootForm = newPokemon.species.getRootSpeciesId();
 
@@ -461,6 +469,19 @@ async function doNewTeamPostProcess(transformations: PokemonTransformation[]) {
     }
 
     newPokemon.calculateStats();
+    if (oldHpRatio > 0) {
+      newPokemon.hp = Math.ceil(oldHpRatio * newPokemon.getMaxHp());
+      // Assume that the `status` instance can always safely be transferred to the new pokemon
+      // This is the case (as of version 1.10.4)
+      // Safeguard against COMATOSE here
+      if (!newPokemon.hasAbility(AbilityId.COMATOSE, false, true)) {
+        newPokemon.status = oldStatus;
+      }
+    } else {
+      newPokemon.hp = 0;
+      newPokemon.doSetStatus(StatusEffect.FAINT);
+    }
+
     await newPokemon.updateInfo();
   }
 
@@ -520,12 +541,12 @@ async function postProcessTransformedPokemon(
 
   // For pokemon at/below 570 BST or any shiny pokemon, unlock it permanently as if you had caught it
   if (
-    !forBattle &&
-    (newPokemon.getSpeciesForm().getBaseStatTotal() <= NON_LEGENDARY_BST_THRESHOLD || newPokemon.isShiny())
+    !forBattle
+    && (newPokemon.getSpeciesForm().getBaseStatTotal() <= NON_LEGENDARY_BST_THRESHOLD || newPokemon.isShiny())
   ) {
     if (
-      newPokemon.getSpeciesForm().abilityHidden &&
-      newPokemon.abilityIndex === newPokemon.getSpeciesForm().getAbilityCount() - 1
+      newPokemon.getSpeciesForm().abilityHidden
+      && newPokemon.abilityIndex === newPokemon.getSpeciesForm().getAbilityCount() - 1
     ) {
       globalScene.validateAchv(achvs.HIDDEN_ABILITY);
     }
@@ -623,10 +644,10 @@ function getTransformedSpecies(
       const bstInRange = speciesBst >= bstMin && speciesBst <= bstCap;
       // Checks that a Pokemon has not already been added in the +600 or 570-600 slots;
       const validBst =
-        (!hasPokemonBstBetween570And600 ||
-          speciesBst < NON_LEGENDARY_BST_THRESHOLD ||
-          speciesBst > SUPER_LEGENDARY_BST_THRESHOLD) &&
-        (!hasPokemonBstHigherThan600 || speciesBst <= SUPER_LEGENDARY_BST_THRESHOLD);
+        (!hasPokemonBstBetween570And600
+          || speciesBst < NON_LEGENDARY_BST_THRESHOLD
+          || speciesBst > SUPER_LEGENDARY_BST_THRESHOLD)
+        && (!hasPokemonBstHigherThan600 || speciesBst <= SUPER_LEGENDARY_BST_THRESHOLD);
       return bstInRange && validBst && !EXCLUDED_TRANSFORMATION_SPECIES.includes(s.speciesId);
     });
 
@@ -648,15 +669,15 @@ function getTransformedSpecies(
 }
 
 function doShowDreamBackground() {
-  const transformationContainer = globalScene.add.container(0, -globalScene.game.canvas.height / 6);
+  const transformationContainer = globalScene.add.container(0, -globalScene.scaledCanvas.height);
   transformationContainer.name = "Dream Background";
 
   // In case it takes a bit for video to load
   const transformationStaticBg = globalScene.add.rectangle(
     0,
     0,
-    globalScene.game.canvas.width / 6,
-    globalScene.game.canvas.height / 6,
+    globalScene.scaledCanvas.width,
+    globalScene.scaledCanvas.height,
     0,
   );
   transformationStaticBg.setName("Black Background");
@@ -771,9 +792,9 @@ async function addEggMoveToNewPokemonMoveset(
 
       // For pokemon that the player owns (including ones just caught), unlock the egg move
       if (
-        !forBattle &&
-        !isNullOrUndefined(randomEggMoveIndex) &&
-        !!globalScene.gameData.dexData[speciesRootForm].caughtAttr
+        !forBattle
+        && !isNullOrUndefined(randomEggMoveIndex)
+        && !!globalScene.gameData.dexData[speciesRootForm].caughtAttr
       ) {
         await globalScene.gameData.setEggMoveUnlocked(getPokemonSpecies(speciesRootForm), randomEggMoveIndex, true);
       }

@@ -12,7 +12,7 @@ import { ModifierTypeOption } from "#modifiers/modifier-type";
 import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
-import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import { ModifierSelectUiHandler } from "#ui/handlers/modifier-select-ui-handler";
 import { shiftCharCodes } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import Phaser from "phaser";
@@ -137,16 +137,16 @@ describe("SelectModifierPhase", () => {
     expect(modifierSelectHandler.options.length).toEqual(3);
     // Reroll with lock can still upgrade
     expect(
-      modifierSelectHandler.options[0].modifierTypeOption.type.tier -
-        modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
+      modifierSelectHandler.options[0].modifierTypeOption.type.tier
+        - modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
     ).toEqual(firstRollTiers[0]);
     expect(
-      modifierSelectHandler.options[1].modifierTypeOption.type.tier -
-        modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
+      modifierSelectHandler.options[1].modifierTypeOption.type.tier
+        - modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
     ).toEqual(firstRollTiers[1]);
     expect(
-      modifierSelectHandler.options[2].modifierTypeOption.type.tier -
-        modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
+      modifierSelectHandler.options[2].modifierTypeOption.type.tier
+        - modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
     ).toEqual(firstRollTiers[2]);
   });
 
@@ -210,24 +210,24 @@ describe("SelectModifierPhase", () => {
     ) as ModifierSelectUiHandler;
     expect(modifierSelectHandler.options.length).toEqual(5);
     expect(
-      modifierSelectHandler.options[0].modifierTypeOption.type.tier -
-        modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
+      modifierSelectHandler.options[0].modifierTypeOption.type.tier
+        - modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
     ).toEqual(ModifierTier.COMMON);
     expect(
-      modifierSelectHandler.options[1].modifierTypeOption.type.tier -
-        modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
+      modifierSelectHandler.options[1].modifierTypeOption.type.tier
+        - modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
     ).toEqual(ModifierTier.GREAT);
     expect(
-      modifierSelectHandler.options[2].modifierTypeOption.type.tier -
-        modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
+      modifierSelectHandler.options[2].modifierTypeOption.type.tier
+        - modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
     ).toEqual(ModifierTier.ULTRA);
     expect(
-      modifierSelectHandler.options[3].modifierTypeOption.type.tier -
-        modifierSelectHandler.options[3].modifierTypeOption.upgradeCount,
+      modifierSelectHandler.options[3].modifierTypeOption.type.tier
+        - modifierSelectHandler.options[3].modifierTypeOption.upgradeCount,
     ).toEqual(ModifierTier.ROGUE);
     expect(
-      modifierSelectHandler.options[4].modifierTypeOption.type.tier -
-        modifierSelectHandler.options[4].modifierTypeOption.upgradeCount,
+      modifierSelectHandler.options[4].modifierTypeOption.type.tier
+        - modifierSelectHandler.options[4].modifierTypeOption.upgradeCount,
     ).toEqual(ModifierTier.MASTER);
   });
 
@@ -241,7 +241,7 @@ describe("SelectModifierPhase", () => {
     const selectModifierPhase = new SelectModifierPhase(0, undefined, customModifiers);
     scene.phaseManager.unshiftPhase(selectModifierPhase);
     game.move.select(MoveId.SPLASH);
-    await game.phaseInterceptor.run(SelectModifierPhase);
+    await game.phaseInterceptor.to("SelectModifierPhase");
 
     expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
     const modifierSelectHandler = scene.ui.handlers.find(
@@ -265,7 +265,7 @@ describe("SelectModifierPhase", () => {
     const selectModifierPhase = new SelectModifierPhase(0, undefined, customModifiers);
     scene.phaseManager.unshiftPhase(selectModifierPhase);
     game.move.select(MoveId.SPLASH);
-    await game.phaseInterceptor.run(SelectModifierPhase);
+    await game.phaseInterceptor.to("SelectModifierPhase");
 
     expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
     const modifierSelectHandler = scene.ui.handlers.find(

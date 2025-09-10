@@ -13,10 +13,9 @@ import { generateModifierType } from "#mystery-encounters/encounter-phase-utils"
 import { GlobalTradeSystemEncounter } from "#mystery-encounters/global-trade-system-encounter";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { CIVILIZATION_ENCOUNTER_BIOMES } from "#mystery-encounters/mystery-encounters";
-import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
 import { GameManager } from "#test/test-utils/game-manager";
-import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import { ModifierSelectUiHandler } from "#ui/handlers/modifier-select-ui-handler";
 import * as Utils from "#utils/common";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -93,26 +92,26 @@ describe("Global Trade System - Mystery Encounter", () => {
   describe("Option 1 - Check Trade Offers", () => {
     it("should have the correct properties", () => {
       const option = GlobalTradeSystemEncounter.options[0];
-      expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
+      expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.1.label`,
         buttonTooltip: `${namespace}:option.1.tooltip`,
-        secondOptionPrompt: `${namespace}:option.1.trade_options_prompt`,
+        secondOptionPrompt: `${namespace}:option.1.tradeOptionsPrompt`,
       });
     });
 
     it("Should trade a Pokemon from the player's party for the first of 3 Pokemon options", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.GLOBAL_TRADE_SYSTEM, defaultParty);
 
-      const speciesBefore = scene.getPlayerParty()[0].species.speciesId;
+      const speciesBefore = game.field.getPlayerPokemon().species.speciesId;
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1, optionNo: 1 });
 
       const speciesAfter = scene.getPlayerParty().at(-1)?.species.speciesId;
 
       expect(speciesAfter).toBeDefined();
       expect(speciesBefore).not.toBe(speciesAfter);
-      expect(defaultParty.includes(speciesAfter!)).toBeFalsy();
+      expect(defaultParty).not.toContain(speciesAfter);
     });
 
     it("Should trade a Pokemon from the player's party for the second of 3 Pokemon options", async () => {
@@ -154,7 +153,7 @@ describe("Global Trade System - Mystery Encounter", () => {
   describe("Option 2 - Wonder Trade", () => {
     it("should have the correct properties", () => {
       const option = GlobalTradeSystemEncounter.options[1];
-      expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
+      expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.2.label`,
@@ -210,7 +209,7 @@ describe("Global Trade System - Mystery Encounter", () => {
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
-        secondOptionPrompt: `${namespace}:option.3.trade_options_prompt`,
+        secondOptionPrompt: `${namespace}:option.3.tradeOptionsPrompt`,
       });
     });
 
@@ -220,14 +219,14 @@ describe("Global Trade System - Mystery Encounter", () => {
       // Set 2 Soul Dew on party lead
       scene.modifiers = [];
       const soulDew = generateModifierType(modifierTypes.SOUL_DEW)!;
-      const modifier = soulDew.newModifier(scene.getPlayerParty()[0]) as PokemonNatureWeightModifier;
+      const modifier = soulDew.newModifier(game.field.getPlayerPokemon()) as PokemonNatureWeightModifier;
       modifier.stackCount = 2;
       scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
 
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
-      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      expect(game).toBeAtPhase("SelectModifierPhase");
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
@@ -247,7 +246,7 @@ describe("Global Trade System - Mystery Encounter", () => {
       // Set 1 Soul Dew on party lead
       scene.modifiers = [];
       const soulDew = generateModifierType(modifierTypes.SOUL_DEW)!;
-      const modifier = soulDew.newModifier(scene.getPlayerParty()[0]) as PokemonNatureWeightModifier;
+      const modifier = soulDew.newModifier(game.field.getPlayerPokemon()) as PokemonNatureWeightModifier;
       modifier.stackCount = 1;
       scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);

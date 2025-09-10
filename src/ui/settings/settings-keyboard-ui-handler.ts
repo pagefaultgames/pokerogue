@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import type { InterfaceConfig } from "#app/inputs-controller";
 import { Device } from "#enums/devices";
+import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import cfg_keyboard_qwerty from "#inputs/cfg-keyboard-qwerty";
 import { deleteBind } from "#inputs/config-handler";
@@ -13,15 +14,12 @@ import {
 } from "#system/settings-keyboard";
 import { AbstractControlSettingsUiHandler } from "#ui/abstract-control-settings-ui-handler";
 import { NavigationManager } from "#ui/navigation-menu";
-import { addTextObject, TextStyle } from "#ui/text";
-import { reverseValueToKeySetting, truncateString } from "#utils/common";
+import { addTextObject } from "#ui/text";
+import { truncateString } from "#utils/common";
+import { toPascalSnakeCase } from "#utils/strings";
 import i18next from "i18next";
 
-/**
- * Class representing the settings UI handler for keyboards.
- *
- * @extends AbstractControlSettingsUiHandler
- */
+/** Class representing the settings UI handler for keyboards */
 export class SettingsKeyboardUiHandler extends AbstractControlSettingsUiHandler {
   /**
    * Creates an instance of SettingsKeyboardUiHandler.
@@ -100,7 +98,7 @@ export class SettingsKeyboardUiHandler extends AbstractControlSettingsUiHandler 
     }
     const cursor = this.cursor + this.scrollCursor; // Calculate the absolute cursor position.
     const selection = this.settingLabels[cursor].text;
-    const key = reverseValueToKeySetting(selection);
+    const key = toPascalSnakeCase(selection);
     const settingName = SettingKeyboard[key];
     const activeConfig = this.getActiveConfig();
     const success = deleteBind(this.getActiveConfig(), settingName);

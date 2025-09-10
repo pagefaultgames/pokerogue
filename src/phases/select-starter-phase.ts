@@ -1,15 +1,15 @@
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { Phase } from "#app/phase";
-import { applyChallenges } from "#data/challenge";
 import { SpeciesFormChangeMoveLearnedTrigger } from "#data/form-change-triggers";
 import { Gender } from "#data/gender";
 import { ChallengeType } from "#enums/challenge-type";
 import type { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { overrideHeldItems, overrideModifiers } from "#modifiers/modifier";
-import { SaveSlotUiMode } from "#ui/save-slot-select-ui-handler";
-import type { Starter } from "#ui/starter-select-ui-handler";
+import { SaveSlotUiMode } from "#ui/handlers/save-slot-select-ui-handler";
+import type { Starter } from "#ui/handlers/starter-select-ui-handler";
+import { applyChallenges } from "#utils/challenge-utils";
 import { isNullOrUndefined } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
@@ -24,10 +24,11 @@ export class SelectStarterPhase extends Phase {
     globalScene.ui.setMode(UiMode.STARTER_SELECT, (starters: Starter[]) => {
       globalScene.ui.clearText();
       globalScene.ui.setMode(UiMode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: number) => {
+        // If clicking cancel, back out to title screen
         if (slotId === -1) {
-          globalScene.phaseManager.clearPhaseQueue();
-          globalScene.phaseManager.pushNew("TitlePhase");
-          return this.end();
+          globalScene.phaseManager.toTitleScreen();
+          this.end();
+          return;
         }
         globalScene.sessionSlotId = slotId;
         this.initBattle(starters);
@@ -49,9 +50,9 @@ export class SelectStarterPhase extends Phase {
       const starterProps = globalScene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
       let starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
       if (
-        starter.species.speciesId in Overrides.STARTER_FORM_OVERRIDES &&
-        !isNullOrUndefined(Overrides.STARTER_FORM_OVERRIDES[starter.species.speciesId]) &&
-        starter.species.forms[Overrides.STARTER_FORM_OVERRIDES[starter.species.speciesId]!]
+        starter.species.speciesId in Overrides.STARTER_FORM_OVERRIDES
+        && !isNullOrUndefined(Overrides.STARTER_FORM_OVERRIDES[starter.species.speciesId])
+        && starter.species.forms[Overrides.STARTER_FORM_OVERRIDES[starter.species.speciesId]!]
       ) {
         starterFormIndex = Overrides.STARTER_FORM_OVERRIDES[starter.species.speciesId]!;
       }
@@ -98,8 +99,12 @@ export class SelectStarterPhase extends Phase {
         starterPokemon.generateFusionSpecies(true);
       }
       starterPokemon.setVisible(false);
-      applyChallenges(ChallengeType.STARTER_MODIFY, starterPokemon);
+      const chalApplied = applyChallenges(ChallengeType.STARTER_MODIFY, starterPokemon);
       party.push(starterPokemon);
+      if (chalApplied) {
+        // If any challenges modified the starter, it should update
+        loadPokemonAssets.push(starterPokemon.updateInfo());
+      }
       loadPokemonAssets.push(starterPokemon.loadAssets());
     });
     overrideModifiers();

@@ -53,12 +53,24 @@ describe("Moves - Pollen Puff", () => {
     game.override.moveset([MoveId.POLLEN_PUFF]).ability(AbilityId.PARENTAL_BOND).enemyLevel(100);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const target = game.scene.getEnemyPokemon()!;
+    const target = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.POLLEN_PUFF);
 
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(target.battleData.hitCount).toBe(2);
+  });
+
+  // Regression test for pollen puff healing an enemy after dealing damage
+  it("should not heal an enemy after dealing damage", async () => {
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    const target = game.field.getEnemyPokemon();
+    game.move.use(MoveId.POLLEN_PUFF);
+
+    await game.phaseInterceptor.to("BerryPhase", false);
+
+    expect(target.hp).not.toBe(target.getMaxHp());
+    expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
   });
 });

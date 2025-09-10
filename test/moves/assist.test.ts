@@ -51,18 +51,18 @@ describe("Moves - Assist", () => {
     // Player_2 uses Sketch, copies Swords Dance, Player_1 uses Assist, uses Player_2's Sketched Swords Dance
     await game.toNextTurn();
 
-    expect(game.scene.getPlayerPokemon()!.getStatStage(Stat.ATK)).toBe(2); // Stat raised from Assist -> Swords Dance
+    expect(game.field.getPlayerPokemon().getStatStage(Stat.ATK)).toBe(2); // Stat raised from Assist -> Swords Dance
   });
 
   it("should fail if there are no allies", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const feebas = game.scene.getPlayerPokemon()!;
+    const feebas = game.field.getPlayerPokemon();
     game.move.changeMoveset(feebas, [MoveId.ASSIST, MoveId.SKETCH, MoveId.PROTECT, MoveId.DRAGON_TAIL]);
 
     game.move.select(MoveId.ASSIST, 0);
     await game.toNextTurn();
-    expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(game.field.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 
   it("should fail if ally has no usable moves and user has usable moves", async () => {
@@ -82,21 +82,20 @@ describe("Moves - Assist", () => {
     game.move.select(MoveId.PROTECT, 1);
     await game.toNextTurn();
 
-    expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(game.field.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 
   it("should apply secondary effects of a move", async () => {
-    game.override.moveset([MoveId.ASSIST, MoveId.WOOD_HAMMER, MoveId.WOOD_HAMMER, MoveId.WOOD_HAMMER]);
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.SHUCKLE]);
 
     const [feebas, shuckle] = game.scene.getPlayerField();
-    game.move.changeMoveset(feebas, [MoveId.ASSIST, MoveId.SKETCH, MoveId.PROTECT, MoveId.DRAGON_TAIL]);
-    game.move.changeMoveset(shuckle, [MoveId.ASSIST, MoveId.SKETCH, MoveId.PROTECT, MoveId.DRAGON_TAIL]);
+    game.move.changeMoveset(feebas, [MoveId.ASSIST, MoveId.WOOD_HAMMER]);
+    game.move.changeMoveset(shuckle, [MoveId.ASSIST, MoveId.WOOD_HAMMER]);
 
     game.move.select(MoveId.ASSIST, 0);
     game.move.select(MoveId.ASSIST, 1);
     await game.toNextTurn();
 
-    expect(game.scene.getPlayerPokemon()!.isFullHp()).toBeFalsy(); // should receive recoil damage from Wood Hammer
+    expect(game.field.getPlayerPokemon().isFullHp()).toBeFalsy(); // should receive recoil damage from Wood Hammer
   });
 });

@@ -43,7 +43,7 @@ describe("Moves - Magic Coat", () => {
 
     game.move.select(MoveId.PROTECT);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.getEnemyPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(game.field.getEnemyPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 
   it("should fail if called again in the same turn due to moves like instruct", async () => {
@@ -52,7 +52,7 @@ describe("Moves - Magic Coat", () => {
 
     game.move.select(MoveId.INSTRUCT);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.getEnemyPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(game.field.getEnemyPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 
   it("should not reflect moves used on the next turn", async () => {
@@ -68,7 +68,7 @@ describe("Moves - Magic Coat", () => {
     game.move.select(MoveId.GROWL);
     await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.getEnemyPokemon()!.getStatStage(Stat.ATK)).toBe(-1);
+    expect(game.field.getEnemyPokemon().getStatStage(Stat.ATK)).toBe(-1);
   });
 
   it("should reflect basic status moves", async () => {
@@ -77,7 +77,7 @@ describe("Moves - Magic Coat", () => {
 
     game.move.select(MoveId.GROWL);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.getPlayerPokemon()!.getStatStage(Stat.ATK)).toBe(-1);
+    expect(game.field.getPlayerPokemon().getStatStage(Stat.ATK)).toBe(-1);
   });
 
   it("should individually bounce back multi-target moves when used by both targets in doubles", async () => {
@@ -110,13 +110,13 @@ describe("Moves - Magic Coat", () => {
 
   it("should still bounce back a move that would otherwise fail", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-    game.scene.getEnemyPokemon()?.setStatStage(Stat.ATK, -6);
+    game.field.getEnemyPokemon().setStatStage(Stat.ATK, -6);
     game.override.moveset([MoveId.GROWL]);
 
     game.move.select(MoveId.GROWL);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getPlayerPokemon()!.getStatStage(Stat.ATK)).toBe(-1);
+    expect(game.field.getPlayerPokemon().getStatStage(Stat.ATK)).toBe(-1);
   });
 
   it("should not bounce back a move that was just bounced", async () => {
@@ -143,7 +143,7 @@ describe("Moves - Magic Coat", () => {
     game.move.select(MoveId.GROWL);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getEnemyPokemon()!.getStatStage(Stat.ATK)).toBe(-1);
+    expect(game.field.getEnemyPokemon().getStatStage(Stat.ATK)).toBe(-1);
   });
 
   it("should still bounce back a move from a mold breaker user", async () => {
@@ -153,8 +153,8 @@ describe("Moves - Magic Coat", () => {
     game.move.select(MoveId.GROWL);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getEnemyPokemon()!.getStatStage(Stat.ATK)).toBe(0);
-    expect(game.scene.getPlayerPokemon()!.getStatStage(Stat.ATK)).toBe(-1);
+    expect(game.field.getEnemyPokemon().getStatStage(Stat.ATK)).toBe(0);
+    expect(game.field.getPlayerPokemon().getStatStage(Stat.ATK)).toBe(-1);
   });
 
   it("should only bounce spikes back once when both targets use magic coat in doubles", async () => {
@@ -175,7 +175,7 @@ describe("Moves - Magic Coat", () => {
     game.move.select(MoveId.CURSE);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getEnemyPokemon()!.getTag(BattlerTagType.CURSED)).toBeDefined();
+    expect(game.field.getEnemyPokemon().getTag(BattlerTagType.CURSED)).toBeDefined();
   });
 
   // TODO: encore is failing if the last move was virtual.
@@ -186,7 +186,7 @@ describe("Moves - Magic Coat", () => {
       .enemyAbility(AbilityId.MAGIC_BOUNCE);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     // turn 1
     game.move.select(MoveId.GROWL);
@@ -226,7 +226,7 @@ describe("Moves - Magic Coat", () => {
       await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
       const stomping_tantrum = allMoves[MoveId.STOMPING_TANTRUM];
-      const enemy = game.scene.getEnemyPokemon()!;
+      const enemy = game.field.getEnemyPokemon();
       vi.spyOn(stomping_tantrum, "calculateBattlePower");
 
       game.move.select(MoveId.SPORE);
@@ -252,34 +252,34 @@ describe("Moves - Magic Coat", () => {
     // Turn 1 - thunder wave immunity test
     game.move.select(MoveId.THUNDER_WAVE);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.getPlayerPokemon()!.status).toBeUndefined();
+    expect(game.field.getPlayerPokemon().status).toBeUndefined();
 
     // Turn 2 - soundproof immunity test
     game.move.select(MoveId.GROWL);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.getPlayerPokemon()!.getStatStage(Stat.ATK)).toBe(0);
+    expect(game.field.getPlayerPokemon().getStatStage(Stat.ATK)).toBe(0);
   });
 
   it("should bounce back a move before the accuracy check", async () => {
     game.override.moveset([MoveId.SPORE]);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const attacker = game.scene.getPlayerPokemon()!;
+    const attacker = game.field.getPlayerPokemon();
 
     vi.spyOn(attacker, "getAccuracyMultiplier").mockReturnValue(0.0);
     game.move.select(MoveId.SPORE);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.getPlayerPokemon()!.status?.effect).toBe(StatusEffect.SLEEP);
+    expect(game.field.getPlayerPokemon().status?.effect).toBe(StatusEffect.SLEEP);
   });
 
   it("should take the accuracy of the magic bounce user into account", async () => {
     game.override.moveset([MoveId.SPORE]);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-    const opponent = game.scene.getEnemyPokemon()!;
+    const opponent = game.field.getEnemyPokemon();
 
     vi.spyOn(opponent, "getAccuracyMultiplier").mockReturnValue(0);
     game.move.select(MoveId.SPORE);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.getPlayerPokemon()!.status).toBeUndefined();
+    expect(game.field.getPlayerPokemon().status).toBeUndefined();
   });
 });

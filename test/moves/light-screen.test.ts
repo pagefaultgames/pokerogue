@@ -19,7 +19,7 @@ describe("Moves - Light Screen", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
   const singleBattleMultiplier = 0.5;
-  const doubleBattleMultiplier = 2732 / 4096;
+  const doubleBattleMultiplier = 2 / 3;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -53,8 +53,8 @@ describe("Moves - Light Screen", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     const mockedDmg = getMockedMoveDamage(
-      game.scene.getEnemyPokemon()!,
-      game.scene.getPlayerPokemon()!,
+      game.field.getEnemyPokemon(),
+      game.field.getPlayerPokemon(),
       allMoves[moveToUse],
     );
 
@@ -72,8 +72,8 @@ describe("Moves - Light Screen", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
     const mockedDmg = getMockedMoveDamage(
-      game.scene.getEnemyPokemon()!,
-      game.scene.getPlayerPokemon()!,
+      game.field.getEnemyPokemon(),
+      game.field.getPlayerPokemon(),
       allMoves[moveToUse],
     );
 
@@ -88,8 +88,8 @@ describe("Moves - Light Screen", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
     const mockedDmg = getMockedMoveDamage(
-      game.scene.getEnemyPokemon()!,
-      game.scene.getPlayerPokemon()!,
+      game.field.getEnemyPokemon(),
+      game.field.getPlayerPokemon(),
       allMoves[moveToUse],
     );
 
@@ -106,8 +106,8 @@ describe("Moves - Light Screen", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     const mockedDmg = getMockedMoveDamage(
-      game.scene.getEnemyPokemon()!,
-      game.scene.getPlayerPokemon()!,
+      game.field.getEnemyPokemon(),
+      game.field.getPlayerPokemon(),
       allMoves[moveToUse],
     );
     expect(mockedDmg).toBe(allMoves[moveToUse].power);
@@ -127,17 +127,15 @@ const getMockedMoveDamage = (defender: Pokemon, attacker: Pokemon, move: Move) =
   const multiplierHolder = new NumberHolder(1);
   const side = defender.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
-  if (globalScene.arena.getTagOnSide(ArenaTagType.LIGHT_SCREEN, side)) {
-    if (move.getAttrs("CritOnlyAttr").length === 0) {
-      globalScene.arena.applyTagsForSide(
-        ArenaTagType.LIGHT_SCREEN,
-        side,
-        false,
-        attacker,
-        move.category,
-        multiplierHolder,
-      );
-    }
+  if (globalScene.arena.getTagOnSide(ArenaTagType.LIGHT_SCREEN, side) && move.getAttrs("CritOnlyAttr").length === 0) {
+    globalScene.arena.applyTagsForSide(
+      ArenaTagType.LIGHT_SCREEN,
+      side,
+      false,
+      attacker,
+      move.category,
+      multiplierHolder,
+    );
   }
 
   return move.power * multiplierHolder.value;

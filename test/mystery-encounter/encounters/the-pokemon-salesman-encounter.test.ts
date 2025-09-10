@@ -67,11 +67,11 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
     expect(dialogue).toBeDefined();
     expect(dialogue.intro).toStrictEqual([
       { text: `${namespace}:intro` },
-      { speaker: `${namespace}:speaker`, text: `${namespace}:intro_dialogue` },
+      { speaker: `${namespace}:speaker`, text: `${namespace}:introDialogue` },
     ]);
     const { title, description, query } = dialogue.encounterOptionsDialogue!;
     expect(title).toBe(`${namespace}:title`);
-    expect(description).toMatch(new RegExp(`^${namespace}\\:description(_shiny)?$`));
+    expect(description).toMatch(new RegExp(`^${namespace}\\:description(Shiny)?$`));
     expect(query).toBe(`${namespace}:query`);
     expect(options.length).toBe(2);
   });
@@ -117,10 +117,10 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
       expect(dialogue).toBeDefined();
       expect(dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.1.label`,
-        buttonTooltip: expect.stringMatching(new RegExp(`^${namespace}\\:option\\.1\\.tooltip(_shiny)?$`)),
+        buttonTooltip: expect.stringMatching(new RegExp(`^${namespace}\\:option\\.1\\.tooltip(Shiny)?$`)),
         selected: [
           {
-            text: `${namespace}:option.1.selected_message`,
+            text: `${namespace}:option.1.selectedMessage`,
           },
         ],
       });
@@ -182,7 +182,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 1);
 
-      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(game).toBeAtPhase("MysteryEncounterPhase");
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();

@@ -36,8 +36,8 @@ describe("Moves - Electrify", () => {
   it("should convert attacks to Electric type", async () => {
     await game.classicMode.startBattle([SpeciesId.EXCADRILL]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
     vi.spyOn(enemyPokemon, "getMoveType");
 
     game.move.select(MoveId.ELECTRIFY);
@@ -54,8 +54,8 @@ describe("Moves - Electrify", () => {
 
     await game.classicMode.startBattle([SpeciesId.EXCADRILL]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getPlayerPokemon();
     vi.spyOn(enemyPokemon, "getMoveType");
 
     game.move.select(MoveId.ELECTRIFY);

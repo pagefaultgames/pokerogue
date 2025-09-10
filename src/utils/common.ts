@@ -1,6 +1,5 @@
 import { pokerogueApi } from "#api/pokerogue-api";
 import { MoneyFormat } from "#enums/money-format";
-import { MoveId } from "#enums/move-id";
 import type { Variant } from "#sprites/variant";
 import i18next from "i18next";
 
@@ -10,19 +9,6 @@ export const MissingTextureKey = "__MISSING";
 
 // TODO: Draft tests for these utility functions
 // TODO: Break up this file
-/**
- * Convert a `snake_case` string in any capitalization (such as one from an enum reverse mapping)
- * into a readable `Title Case` version.
- * @param str - The snake case string to be converted.
- * @returns The result of converting `str` into title case.
- */
-export function toReadableString(str: string): string {
-  return str
-    .replace(/_/g, " ")
-    .split(" ")
-    .map(s => capitalizeFirstLetter(s.toLowerCase()))
-    .join(" ");
-}
 
 export function randomString(length: number, seeded = false) {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -84,12 +70,16 @@ export function padInt(value: number, length: number, padWith?: string): string 
 }
 
 /**
- * Returns a random integer between min and min + range
- * @param range The amount of possible numbers
- * @param min The starting number
+ * Returns a **completely unseeded** random integer between `min` and `min + range`.
+ * @param range - The amount of possible numbers to pick
+ * @param min - The minimum number to pick; default `0`
+ * @returns A psuedo-random, unseeded integer within the interval [min, min+range].
+ * @remarks
+ * This should not be used for battles or other outwards-facing randomness;
+ * battles are intended to be seeded and deterministic.
  */
 export function randInt(range: number, min = 0): number {
-  if (range === 1) {
+  if (range <= 1) {
     return min;
   }
   return Math.floor(Math.random() * range) + min;
@@ -143,14 +133,10 @@ export function randSeedItem<T>(items: T[]): T {
   return items.length === 1 ? items[0] : Phaser.Math.RND.pick(items);
 }
 
-export function randSeedWeightedItem<T>(items: T[]): T {
-  return items.length === 1 ? items[0] : Phaser.Math.RND.weightedPick(items);
-}
-
 /**
  * Shuffle a list using the seeded rng. Utilises the Fisher-Yates algorithm.
- * @param {Array} items An array of items.
- * @returns {Array} A new shuffled array of items.
+ * @param items An array of items.
+ * @returns A new shuffled array of items.
  */
 export function randSeedShuffle<T>(items: T[]): T[] {
   if (items.length <= 1) {
@@ -278,7 +264,7 @@ export function formatMoney(format: MoneyFormat, amount: number) {
 }
 
 export function formatStat(stat: number, forHp = false): string {
-  return formatLargeNumber(stat, forHp ? 100000 : 1000000);
+  return formatLargeNumber(stat, forHp ? 100_000 : 1_000_000);
 }
 
 export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T | null> {
@@ -286,25 +272,11 @@ export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>):
 }
 
 export const sessionIdKey = "pokerogue_sessionId";
-// Check if the current hostname is 'localhost' or an IP address, and ensure a port is specified
-export const isLocal =
-  ((window.location.hostname === "localhost" || /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/.test(window.location.hostname)) &&
-    window.location.port !== "") ||
-  window.location.hostname === "";
 
-/**
- * @deprecated Refer to [pokerogue-api.ts](./plugins/api/pokerogue-api.ts) instead
- */
-export const localServerUrl =
-  import.meta.env.VITE_SERVER_URL ?? `http://${window.location.hostname}:${window.location.port + 1}`;
+/** `true` when run via `pnpm start:dev` (which runs `vite --mode development`) */
+export const isLocal = import.meta.env.MODE === "development";
 
-/**
- * Set the server URL based on whether it's local or not
- *
- * @deprecated Refer to [pokerogue-api.ts](./plugins/api/pokerogue-api.ts) instead
- */
-export const apiUrl = localServerUrl ?? "https://api.pokerogue.net";
-// used to disable api calls when isLocal is true and a server is not found
+/** Used to disable api calls when isLocal is true and a server is not found */
 export let isLocalServerConnected = true;
 
 /**
@@ -312,7 +284,7 @@ export let isLocalServerConnected = true;
  * with a GET request to verify if a server is running,
  * sets isLocalServerConnected based on results
  */
-export async function localPing() {
+export async function localPing(): Promise<void> {
   if (isLocal) {
     const titleStats = await pokerogueApi.getGameTitleStats();
     isLocalServerConnected = !!titleStats;
@@ -359,31 +331,6 @@ export function fixedInt(value: number): number {
   return new FixedInt(value) as unknown as number;
 }
 
-/**
- * Formats a string to title case
- * @param unformattedText Text to be formatted
- * @returns the formatted string
- */
-export function formatText(unformattedText: string): string {
-  const text = unformattedText.split("_");
-  for (let i = 0; i < text.length; i++) {
-    text[i] = text[i].charAt(0).toUpperCase() + text[i].substring(1).toLowerCase();
-  }
-
-  return text.join(" ");
-}
-
-export function toCamelCaseString(unformattedText: string): string {
-  if (!unformattedText) {
-    return "";
-  }
-  return unformattedText
-    .split(/[_ ]/)
-    .filter(f => f)
-    .map((f, i) => (i ? `${f[0].toUpperCase()}${f.slice(1).toLowerCase()}` : f.toLowerCase()))
-    .join("");
-}
-
 export function rgbToHsv(r: number, g: number, b: number) {
   const v = Math.max(r, g, b);
   const c = v - Math.min(r, g, b);
@@ -393,8 +340,8 @@ export function rgbToHsv(r: number, g: number, b: number) {
 
 /**
  * Compare color difference in RGB
- * @param {Array} rgb1 First RGB color in array
- * @param {Array} rgb2 Second RGB color in array
+ * @param rgb1 First RGB color in array
+ * @param rgb2 Second RGB color in array
  */
 export function deltaRgb(rgb1: number[], rgb2: number[]): number {
   const [r1, g1, b1] = rgb1;
@@ -475,6 +422,7 @@ export function hasAllLocalizedSprites(lang?: string): boolean {
     case "ja":
     case "ca":
     case "ru":
+    case "tl":
       return true;
     default:
       return false;
@@ -511,56 +459,12 @@ export function truncateString(str: string, maxLength = 10) {
 }
 
 /**
- * Convert a space-separated string into a capitalized and underscored string.
- * @param input - The string to be converted.
- * @returns The converted string with words capitalized and separated by underscores.
- */
-export function reverseValueToKeySetting(input: string) {
-  // Split the input string into an array of words
-  const words = input.split(" ");
-  // Capitalize the first letter of each word and convert the rest to lowercase
-  const capitalizedWords = words.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
-  // Join the capitalized words with underscores and return the result
-  return capitalizedWords.join("_");
-}
-
-/**
- * Capitalize a string.
- * @param str - The string to be capitalized.
- * @param sep - The separator between the words of the string.
- * @param lowerFirstChar - Whether the first character of the string should be lowercase or not.
- * @param returnWithSpaces - Whether the returned string should have spaces between the words or not.
- * @returns The capitalized string.
- */
-export function capitalizeString(str: string, sep: string, lowerFirstChar = true, returnWithSpaces = false) {
-  if (str) {
-    const splitedStr = str.toLowerCase().split(sep);
-
-    for (let i = +lowerFirstChar; i < splitedStr?.length; i++) {
-      splitedStr[i] = splitedStr[i].charAt(0).toUpperCase() + splitedStr[i].substring(1);
-    }
-
-    return returnWithSpaces ? splitedStr.join(" ") : splitedStr.join("");
-  }
-  return null;
-}
-
-/**
  * Report whether a given value is nullish (`null`/`undefined`).
  * @param val - The value whose nullishness is being checked
  * @returns `true` if `val` is either `null` or `undefined`
  */
 export function isNullOrUndefined(val: any): val is null | undefined {
   return val === null || val === undefined;
-}
-
-/**
- * Capitalize the first letter of a string.
- * @param str - The string whose first letter is being capitalized
- * @return The original string with its first letter capitalized
- */
-export function capitalizeFirstLetter(str: string) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 /**
@@ -595,26 +499,6 @@ export function getLocalizedSpriteKey(baseKey: string) {
  */
 export function isBetween(num: number, min: number, max: number): boolean {
   return min <= num && num <= max;
-}
-
-/**
- * Helper method to return the animation filename for a given move
- *
- * @param move the move for which the animation filename is needed
- */
-export function animationFileName(move: MoveId): string {
-  return MoveId[move].toLowerCase().replace(/_/g, "-");
-}
-
-/**
- * Transforms a camelCase string into a kebab-case string
- * @param str The camelCase string
- * @returns A kebab-case string
- *
- * @source {@link https://stackoverflow.com/a/67243723/}
- */
-export function camelCaseToKebabCase(str: string): string {
-  return str.replace(/[A-Z]+(?![a-z])|[A-Z]/g, (s, o) => (o ? "-" : "") + s.toLowerCase());
 }
 
 /** Get the localized shiny descriptor for the provided variant

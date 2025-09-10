@@ -1,9 +1,10 @@
 import { globalScene } from "#app/global-scene";
 import { Device } from "#enums/devices";
+import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
 import { getKeyWithKeycode } from "#inputs/config-handler";
-import { AbstractBindingUiHandler } from "#ui/abstract-binding-ui-handler";
-import { addTextObject, TextStyle } from "#ui/text";
+import { AbstractBindingUiHandler } from "#ui/handlers/abstract-binding-ui-handler";
+import { addTextObject } from "#ui/text";
 import i18next from "i18next";
 
 export class KeyboardBindingUiHandler extends AbstractBindingUiHandler {

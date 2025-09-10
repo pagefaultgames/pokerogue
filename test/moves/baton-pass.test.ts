@@ -42,7 +42,7 @@ describe("Moves - Baton Pass", () => {
     game.move.select(MoveId.NASTY_PLOT);
     await game.toNextTurn();
 
-    let playerPokemon = game.scene.getPlayerPokemon()!;
+    let playerPokemon = game.field.getPlayerPokemon();
 
     expect(playerPokemon.getStatStage(Stat.SPATK)).toEqual(2);
 
@@ -52,7 +52,7 @@ describe("Moves - Baton Pass", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     // assert
-    playerPokemon = game.scene.getPlayerPokemon()!;
+    playerPokemon = game.field.getPlayerPokemon();
     expect(playerPokemon.species.speciesId).toEqual(SpeciesId.SHUCKLE);
     expect(playerPokemon.getStatStage(Stat.SPATK)).toEqual(2);
   });
@@ -73,7 +73,7 @@ describe("Moves - Baton Pass", () => {
     await game.phaseInterceptor.to("PostSummonPhase", false);
 
     // check buffs are still there
-    expect(game.scene.getEnemyPokemon()?.getStatStage(Stat.SPATK)).toEqual(2);
+    expect(game.field.getEnemyPokemon().getStatStage(Stat.SPATK)).toEqual(2);
     // confirm that a switch actually happened. can't use species because I
     // can't find a way to override trainer parties with more than 1 pokemon species
     expect(game.phaseInterceptor.log.slice(-4)).toEqual([
@@ -105,7 +105,7 @@ describe("Moves - Baton Pass", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.FIRE_SPIN);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);

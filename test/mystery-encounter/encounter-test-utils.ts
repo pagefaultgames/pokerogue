@@ -9,15 +9,14 @@ import { MessagePhase } from "#phases/message-phase";
 import {
   MysteryEncounterBattlePhase,
   MysteryEncounterOptionSelectedPhase,
-  MysteryEncounterPhase,
   MysteryEncounterRewardsPhase,
 } from "#phases/mystery-encounter-phases";
 import { VictoryPhase } from "#phases/victory-phase";
 import type { GameManager } from "#test/test-utils/game-manager";
-import type { MessageUiHandler } from "#ui/message-ui-handler";
-import type { MysteryEncounterUiHandler } from "#ui/mystery-encounter-ui-handler";
+import type { MessageUiHandler } from "#ui/handlers/message-ui-handler";
+import type { MysteryEncounterUiHandler } from "#ui/handlers/mystery-encounter-ui-handler";
+import type { PartyUiHandler } from "#ui/handlers/party-ui-handler";
 import type { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
-import type { PartyUiHandler } from "#ui/party-ui-handler";
 import { isNullOrUndefined } from "#utils/common";
 import { expect, vi } from "vitest";
 
@@ -89,9 +88,9 @@ export async function runMysteryEncounterToEnd(
       uiHandler.processInput(Button.ACTION);
     });
 
-    await game.phaseInterceptor.to(CommandPhase);
+    await game.toNextTurn();
   } else {
-    await game.phaseInterceptor.to(MysteryEncounterRewardsPhase);
+    await game.phaseInterceptor.to("MysteryEncounterRewardsPhase");
   }
 }
 
@@ -112,7 +111,7 @@ export async function runSelectMysteryEncounterOption(
   );
 
   if (game.isCurrentPhase(MessagePhase)) {
-    await game.phaseInterceptor.run(MessagePhase);
+    await game.phaseInterceptor.to("MessagePhase");
   }
 
   // dispose of intro messages
@@ -126,7 +125,7 @@ export async function runSelectMysteryEncounterOption(
     () => game.isCurrentPhase(MysteryEncounterOptionSelectedPhase),
   );
 
-  await game.phaseInterceptor.to(MysteryEncounterPhase, true);
+  await game.phaseInterceptor.to("MysteryEncounterPhase", true);
 
   // select the desired option
   const uiHandler = game.scene.ui.getHandler<MysteryEncounterUiHandler>();
@@ -205,7 +204,7 @@ export async function skipBattleRunMysteryEncounterRewardsPhase(game: GameManage
     game.scene.field.remove(p);
   });
   game.scene.phaseManager.pushPhase(new VictoryPhase(0));
-  game.phaseInterceptor.superEndPhase();
+  game.endPhase();
   game.setMode(UiMode.MESSAGE);
-  await game.phaseInterceptor.to(MysteryEncounterRewardsPhase, runRewardsPhase);
+  await game.phaseInterceptor.to("MysteryEncounterRewardsPhase", runRewardsPhase);
 }

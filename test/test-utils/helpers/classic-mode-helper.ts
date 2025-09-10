@@ -1,6 +1,7 @@
 import { getGameMode } from "#app/game-mode";
 import overrides from "#app/overrides";
 import { BattleStyle } from "#enums/battle-style";
+import { Button } from "#enums/buttons";
 import { GameModes } from "#enums/game-modes";
 import { Nature } from "#enums/nature";
 import type { SpeciesId } from "#enums/species-id";
@@ -18,8 +19,10 @@ import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper"
 export class ClassicModeHelper extends GameManagerHelper {
   /**
    * Runs the classic game to the summon phase.
-   * @param species - An array of {@linkcode Species} to summon.
+   * @param species - An array of {@linkcode SpeciesId} to summon.
    * @returns A promise that resolves when the summon phase is reached.
+   * @remarks
+   * Do not use this when {@linkcode startBattle} can be used!
    */
   async runToSummon(species: SpeciesId[]): Promise<void>;
   /**
@@ -29,6 +32,7 @@ export class ClassicModeHelper extends GameManagerHelper {
    * @returns A promise that resolves when the summon phase is reached.
    * @deprecated - Specifying the starters helps prevent inconsistencies from internal RNG changes.
    */
+  // biome-ignore lint/style/useUnifiedTypeSignatures: Marks the overload for deprecation
   async runToSummon(): Promise<void>;
   async runToSummon(species: SpeciesId[] | undefined): Promise<void>;
   async runToSummon(species?: SpeciesId[]): Promise<void> {
@@ -53,14 +57,14 @@ export class ClassicModeHelper extends GameManagerHelper {
     });
 
     await this.game.phaseInterceptor.to(EncounterPhase);
-    if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0 && this.game.override.removeEnemyStartingItems) {
+    if (overrides.ENEMY_HELD_ITEMS_OVERRIDE.length === 0 && this.game.override.removeEnemyStartingItems) {
       this.game.removeEnemyHeldItems();
     }
   }
 
   /**
    * Transitions to the start of a battle.
-   * @param species - An array of {@linkcode Species} to start the battle with.
+   * @param species - An array of {@linkcode SpeciesId} to start the battle with.
    * @returns A promise that resolves when the battle is started.
    */
   async startBattle(species: SpeciesId[]): Promise<void>;
@@ -71,6 +75,7 @@ export class ClassicModeHelper extends GameManagerHelper {
    * @returns A promise that resolves when the battle is started.
    * @deprecated - Specifying the starters helps prevent inconsistencies from internal RNG changes.
    */
+  // biome-ignore lint/style/useUnifiedTypeSignatures: Marks the overload for deprecation
   async startBattle(): Promise<void>;
   async startBattle(species?: SpeciesId[]): Promise<void> {
     await this.runToSummon(species);
@@ -99,5 +104,34 @@ export class ClassicModeHelper extends GameManagerHelper {
 
     await this.game.phaseInterceptor.to(CommandPhase);
     console.log("==================[New Turn]==================");
+  }
+
+  /**
+   * Queue inputs to switch at the start of the next battle, and then start it.
+   * @param pokemonIndex - The 0-indexed position of the party pokemon to switch to.
+   * Should never be called with 0 as that will select the currently active pokemon and freeze
+   * @returns A Promise that resolves once the battle has been started and the switch prompt resolved
+   * @todo Make this work for double battles
+   * @example
+   * ```ts
+   * await game.classicMode.runToSummon([SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA])
+   * await game.startBattleWithSwitch(1);
+   * ```
+   */
+  public async startBattleWithSwitch(pokemonIndex: number): Promise<void> {
+    this.game.scene.battleStyle = BattleStyle.SWITCH;
+    this.game.onNextPrompt(
+      "CheckSwitchPhase",
+      UiMode.CONFIRM,
+      () => {
+        this.game.scene.ui.getHandler().setCursor(0);
+        this.game.scene.ui.getHandler().processInput(Button.ACTION);
+      },
+      () => this.game.isCurrentPhase("CommandPhase") || this.game.isCurrentPhase("TurnInitPhase"),
+    );
+    this.game.doSelectPartyPokemon(pokemonIndex);
+
+    await this.game.phaseInterceptor.to("CommandPhase");
+    console.log("==================[New Battle (Initial Switch)]==================");
   }
 }

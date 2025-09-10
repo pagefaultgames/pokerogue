@@ -33,7 +33,7 @@ describe("Abilities - Illuminate", () => {
 
     await game.classicMode.startBattle();
 
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
 
     expect(player.getStatStage(Stat.ACC)).toBe(0);
 

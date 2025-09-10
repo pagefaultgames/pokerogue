@@ -61,7 +61,7 @@ export type { BattleSceneEvent };
 export class CandyUpgradeNotificationChangedEvent extends BattleSceneEvent {
   declare type: BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED;
   /** The new value the setting was changed to */
-  public newValue: number;
+  public readonly newValue: number;
   constructor(newValue: number) {
     super(BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED);
 
@@ -77,12 +77,12 @@ export class MovesetChangedEvent extends BattleSceneEvent {
   declare type: BattleSceneEventType.MOVESET_CHANGED;
 
   /** The {@linkcode Pokemon.ID | ID} of the {@linkcode Pokemon} whose moveset has changed. */
-  public pokemonId: number;
+  public readonly pokemonId: number;
   /**
    * The {@linkcode PokemonMove} having been changed.
    * Will override the corresponding slot of the moveset flyout for that Pokemon.
    */
-  public move: PokemonMove;
+  public readonly move: PokemonMove;
 
   constructor(pokemonId: number, move: PokemonMove) {
     super(BattleSceneEventType.MOVESET_CHANGED);
@@ -101,7 +101,7 @@ export class SummonDataResetEvent extends BattleSceneEvent {
   declare type: BattleSceneEventType.SUMMON_DATA_RESET;
 
   /** The {@linkcode Pokemon.ID | ID} of the {@linkcode Pokemon} whose data has been reset. */
-  public pokemonId: number;
+  public readonly pokemonId: number;
 
   constructor(pokemonId: number) {
     super(BattleSceneEventType.SUMMON_DATA_RESET);
@@ -122,16 +122,11 @@ export class EncounterPhaseEvent extends BattleSceneEvent {
 
 /**
  * Container class for {@linkcode BattleSceneEventType.TURN_END} events
- * @extends Event
  */
 export class TurnEndEvent extends BattleSceneEvent {
   declare type: BattleSceneEventType.TURN_END;
-  /** The amount of turns in the current battle */
-  public turnCount: number;
-  constructor(turnCount: number) {
+  constructor() {
     super(BattleSceneEventType.TURN_END);
-
-    this.turnCount = turnCount;
   }
 }
 /**

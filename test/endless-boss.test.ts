@@ -34,10 +34,10 @@ describe("Endless Boss", () => {
 
     expect(game.scene.currentBattle.waveIndex).toBe(EndlessBossWave.Minor);
     expect(game.scene.arena.biomeType).toBe(BiomeId.END);
-    const eternatus = game.scene.getEnemyPokemon();
-    expect(eternatus?.species.speciesId).toBe(SpeciesId.ETERNATUS);
-    expect(eternatus?.hasPassive()).toBe(false);
-    expect(eternatus?.formIndex).toBe(0);
+    const eternatus = game.field.getEnemyPokemon();
+    expect(eternatus.species.speciesId).toBe(SpeciesId.ETERNATUS);
+    expect(eternatus.hasPassive()).toBe(false);
+    expect(eternatus.formIndex).toBe(0);
   });
 
   it(`should spawn a major boss every ${EndlessBossWave.Major} waves in END biome in Endless`, async () => {
@@ -46,10 +46,10 @@ describe("Endless Boss", () => {
 
     expect(game.scene.currentBattle.waveIndex).toBe(EndlessBossWave.Major);
     expect(game.scene.arena.biomeType).toBe(BiomeId.END);
-    const eternatus = game.scene.getEnemyPokemon();
-    expect(eternatus?.species.speciesId).toBe(SpeciesId.ETERNATUS);
-    expect(eternatus?.hasPassive()).toBe(false);
-    expect(eternatus?.formIndex).toBe(1);
+    const eternatus = game.field.getEnemyPokemon();
+    expect(eternatus.species.speciesId).toBe(SpeciesId.ETERNATUS);
+    expect(eternatus.hasPassive()).toBe(false);
+    expect(eternatus.formIndex).toBe(1);
   });
 
   it(`should spawn a minor boss every ${EndlessBossWave.Minor} waves in END biome in Spliced Endless`, async () => {
@@ -58,10 +58,10 @@ describe("Endless Boss", () => {
 
     expect(game.scene.currentBattle.waveIndex).toBe(EndlessBossWave.Minor);
     expect(game.scene.arena.biomeType).toBe(BiomeId.END);
-    const eternatus = game.scene.getEnemyPokemon();
-    expect(eternatus?.species.speciesId).toBe(SpeciesId.ETERNATUS);
-    expect(eternatus?.hasPassive()).toBe(false);
-    expect(eternatus?.formIndex).toBe(0);
+    const eternatus = game.field.getEnemyPokemon();
+    expect(eternatus.species.speciesId).toBe(SpeciesId.ETERNATUS);
+    expect(eternatus.hasPassive()).toBe(false);
+    expect(eternatus.formIndex).toBe(0);
   });
 
   it(`should spawn a major boss every ${EndlessBossWave.Major} waves in END biome in Spliced Endless`, async () => {
@@ -70,10 +70,10 @@ describe("Endless Boss", () => {
 
     expect(game.scene.currentBattle.waveIndex).toBe(EndlessBossWave.Major);
     expect(game.scene.arena.biomeType).toBe(BiomeId.END);
-    const eternatus = game.scene.getEnemyPokemon();
-    expect(eternatus?.species.speciesId).toBe(SpeciesId.ETERNATUS);
-    expect(eternatus?.hasPassive()).toBe(false);
-    expect(eternatus?.formIndex).toBe(1);
+    const eternatus = game.field.getEnemyPokemon();
+    expect(eternatus.species.speciesId).toBe(SpeciesId.ETERNATUS);
+    expect(eternatus.hasPassive()).toBe(false);
+    expect(eternatus.formIndex).toBe(1);
   });
 
   it(`should NOT spawn major or minor boss outside wave ${EndlessBossWave.Minor}s in END biome`, async () => {
@@ -81,6 +81,6 @@ describe("Endless Boss", () => {
     await game.runToFinalBossEncounter([SpeciesId.BIDOOF], GameModes.ENDLESS);
 
     expect(game.scene.currentBattle.waveIndex).not.toBe(EndlessBossWave.Minor);
-    expect(game.scene.getEnemyPokemon()!.species.speciesId).not.toBe(SpeciesId.ETERNATUS);
+    expect(game.field.getEnemyPokemon().species.speciesId).not.toBe(SpeciesId.ETERNATUS);
   });
 });

@@ -1,11 +1,10 @@
 import { globalScene } from "#app/global-scene";
-import { getPokemonSpeciesForm } from "#data/pokemon-species";
 import { DexAttr } from "#enums/dex-attr";
-import type { SessionSaveData, SystemSaveData } from "#system/game-data";
+import type { SessionSaveData, SystemSaveData } from "#types/save-data";
 import type { SessionSaveMigrator } from "#types/session-save-migrator";
 import type { SystemSaveMigrator } from "#types/system-save-migrator";
 import { isNullOrUndefined } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 /**
  * If a starter is caught, but the only forms registered as caught are not starterSelectable,

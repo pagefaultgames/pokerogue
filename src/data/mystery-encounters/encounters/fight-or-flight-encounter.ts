@@ -63,13 +63,13 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder.
     const config: EnemyPartyConfig = {
       pokemonConfigs: [
         {
-          level: level,
+          level,
           species: bossPokemon.species,
           dataSource: new PokemonData(bossPokemon),
           isBoss: true,
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-            queueEncounterMessage(`${namespace}:option.1.stat_boost`);
+            queueEncounterMessage(`${namespace}:option.1.statBoost`);
             // Randomly boost 1 stat 2 stages
             // Cannot boost Spd, Acc, or Evasion
             globalScene.phaseManager.unshiftNew(
@@ -120,8 +120,8 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder.
         disableAnimation: true,
       },
       {
-        spriteKey: spriteKey,
-        fileRoot: fileRoot,
+        spriteKey,
+        fileRoot,
         hasShadow: true,
         tint: 0.25,
         x: -5,
@@ -165,7 +165,7 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder.
       .withDialogue({
         buttonLabel: `${namespace}:option.2.label`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.2.disabled_tooltip`,
+        disabledButtonTooltip: `${namespace}:option.2.disabledTooltip`,
         selected: [
           {
             text: `${namespace}:option.2.selected`,

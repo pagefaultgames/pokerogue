@@ -41,7 +41,7 @@ describe("Final Boss", () => {
 
     expect(game.scene.currentBattle.waveIndex).toBe(FinalWave.Classic);
     expect(game.scene.arena.biomeType).toBe(BiomeId.END);
-    expect(game.scene.getEnemyPokemon()!.species.speciesId).toBe(SpeciesId.ETERNATUS);
+    expect(game.field.getEnemyPokemon().species.speciesId).toBe(SpeciesId.ETERNATUS);
   });
 
   it("should NOT spawn Eternatus before wave 200 in END biome", async () => {
@@ -50,7 +50,7 @@ describe("Final Boss", () => {
 
     expect(game.scene.currentBattle.waveIndex).not.toBe(FinalWave.Classic);
     expect(game.scene.arena.biomeType).toBe(BiomeId.END);
-    expect(game.scene.getEnemyPokemon()!.species.speciesId).not.toBe(SpeciesId.ETERNATUS);
+    expect(game.field.getEnemyPokemon().species.speciesId).not.toBe(SpeciesId.ETERNATUS);
   });
 
   it("should NOT spawn Eternatus outside of END biome", async () => {
@@ -59,13 +59,13 @@ describe("Final Boss", () => {
 
     expect(game.scene.currentBattle.waveIndex).toBe(FinalWave.Classic);
     expect(game.scene.arena.biomeType).not.toBe(BiomeId.END);
-    expect(game.scene.getEnemyPokemon()!.species.speciesId).not.toBe(SpeciesId.ETERNATUS);
+    expect(game.field.getEnemyPokemon().species.speciesId).not.toBe(SpeciesId.ETERNATUS);
   });
 
   it("should initially spawn in regular form without passive & 4 boss segments", async () => {
     await game.runToFinalBossEncounter([SpeciesId.BIDOOF], GameModes.CLASSIC);
 
-    const eternatus = game.scene.getEnemyPokemon()!;
+    const eternatus = game.field.getEnemyPokemon();
     expect(eternatus.formIndex).toBe(0);
     expect(eternatus.bossSegments).toBe(4);
     expect(eternatus.bossSegmentIndex).toBe(3);
@@ -77,7 +77,7 @@ describe("Final Boss", () => {
     await game.runToFinalBossEncounter([SpeciesId.KYUREM], GameModes.CLASSIC);
 
     // phase 1
-    const eternatus = game.scene.getEnemyPokemon()!;
+    const eternatus = game.field.getEnemyPokemon();
     const phase1Hp = eternatus.getMaxHp();
 
     game.move.use(MoveId.DRAGON_PULSE);
@@ -100,7 +100,7 @@ describe("Final Boss", () => {
     await game.runToFinalBossEncounter([SpeciesId.SALAZZLE], GameModes.CLASSIC);
 
     // Eternatus phase 1
-    const eternatus = game.scene.getEnemyPokemon()!;
+    const eternatus = game.field.getEnemyPokemon();
     const phase1Hp = eternatus.getMaxHp();
 
     game.move.use(MoveId.WILL_O_WISP);

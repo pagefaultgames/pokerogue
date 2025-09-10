@@ -38,7 +38,7 @@ describe("Abilities - Trace", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getPlayerPokemon()?.getAbility().id).toBe(AbilityId.BALL_FETCH);
+    expect(game.field.getPlayerPokemon().getAbility().id).toBe(AbilityId.BALL_FETCH);
   });
 
   it("should activate a copied post-summon ability", async () => {
@@ -48,6 +48,6 @@ describe("Abilities - Trace", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getEnemyPokemon()?.getStatStage(Stat.ATK)).toBe(-1);
+    expect(game.field.getEnemyPokemon().getStatStage(Stat.ATK)).toBe(-1);
   });
 });

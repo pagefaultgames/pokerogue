@@ -4,15 +4,19 @@
  */
 export enum MoveFlags {
   NONE = 0,
+  /**
+   * Whether the move makes contact.
+   * Set by default on all contact moves, and unset by default on all special moves.
+   */
   MAKES_CONTACT = 1 << 0,
   IGNORE_PROTECT = 1 << 1,
   /**
    * Sound-based moves have the following effects:
-   * - Pokemon with the {@linkcode AbilityId.SOUNDPROOF Soundproof Ability} are unaffected by other Pokemon's sound-based moves.
-   * - Pokemon affected by {@linkcode MoveId.THROAT_CHOP Throat Chop} cannot use sound-based moves for two turns.
-   * - Sound-based moves used by a Pokemon with {@linkcode AbilityId.LIQUID_VOICE Liquid Voice} become Water-type moves.
-   * - Sound-based moves used by a Pokemon with {@linkcode AbilityId.PUNK_ROCK Punk Rock} are boosted by 30%. Pokemon with Punk Rock also take half damage from sound-based moves.
-   * - All sound-based moves (except Howl) can hit Pokemon behind an active {@linkcode MoveId.SUBSTITUTE Substitute}.
+   * - Pokemon with the {@linkcode AbilityId.SOUNDPROOF | Soundproof}  Ability are unaffected by other Pokemon's sound-based moves.
+   * - Pokemon affected by {@linkcode MoveId.THROAT_CHOP | Throat Chop} cannot use sound-based moves for two turns.
+   * - Sound-based moves used by a Pokemon with {@linkcode AbilityId.LIQUID_VOICE | Liquid Voice} become Water-type moves.
+   * - Sound-based moves used by a Pokemon with {@linkcode AbilityId.PUNK_ROCK | Punk Rock} are boosted by 30%. Pokemon with Punk Rock also take half damage from sound-based moves.
+   * - All sound-based moves (except Howl) can hit Pokemon behind an active {@linkcode MoveId.SUBSTITUTE | Substitute}.
    *
    * cf https://bulbapedia.bulbagarden.net/wiki/Sound-based_move
    */
@@ -25,7 +29,7 @@ export enum MoveFlags {
   SLICING_MOVE = 1 << 8,
   /**
    * Indicates a move should be affected by {@linkcode AbilityId.RECKLESS}
-   * @see {@linkcode Move.recklessMove()}
+   * @see {@linkcode Move.recklessMove}
    */
   RECKLESS_MOVE = 1 << 9,
   /** Indicates a move should be affected by {@linkcode AbilityId.BULLETPROOF} */
@@ -46,5 +50,5 @@ export enum MoveFlags {
   /** Indicates a move is able to be redirected to allies in a double battle if the attacker faints */
   REDIRECT_COUNTER = 1 << 18,
   /** Indicates a move is able to be reflected by {@linkcode AbilityId.MAGIC_BOUNCE} and {@linkcode MoveId.MAGIC_COAT} */
-  REFLECTABLE = 1 << 19
+  REFLECTABLE = 1 << 19,
 }

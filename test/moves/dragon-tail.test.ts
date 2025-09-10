@@ -41,7 +41,7 @@ describe("Moves - Dragon Tail", () => {
   it("should cause opponent to flee, and not crash", async () => {
     await game.classicMode.startBattle([SpeciesId.DRATINI]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.DRAGON_TAIL);
 
@@ -59,8 +59,8 @@ describe("Moves - Dragon Tail", () => {
     game.override.enemyAbility(AbilityId.ROUGH_SKIN);
     await game.classicMode.startBattle([SpeciesId.DRATINI]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.DRAGON_TAIL);
 
@@ -76,10 +76,9 @@ describe("Moves - Dragon Tail", () => {
     game.override.battleStyle("double").enemyMoveset(MoveId.SPLASH).enemyAbility(AbilityId.ROUGH_SKIN);
     await game.classicMode.startBattle([SpeciesId.DRATINI, SpeciesId.DRATINI, SpeciesId.WAILORD, SpeciesId.WAILORD]);
 
-    const leadPokemon = game.scene.getPlayerParty()[0]!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
-    const enemyLeadPokemon = game.scene.getEnemyParty()[0]!;
-    const enemySecPokemon = game.scene.getEnemyParty()[1]!;
+    const [enemyLeadPokemon, enemySecPokemon] = game.scene.getEnemyParty();
 
     game.move.select(MoveId.DRAGON_TAIL, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, 1);
@@ -105,11 +104,9 @@ describe("Moves - Dragon Tail", () => {
     game.override.battleStyle("double").enemyMoveset(MoveId.SPLASH).enemyAbility(AbilityId.ROUGH_SKIN);
     await game.classicMode.startBattle([SpeciesId.DRATINI, SpeciesId.DRATINI, SpeciesId.WAILORD, SpeciesId.WAILORD]);
 
-    const leadPokemon = game.scene.getPlayerParty()[0]!;
-    const secPokemon = game.scene.getPlayerParty()[1]!;
+    const [leadPokemon, secPokemon] = game.scene.getPlayerParty();
 
-    const enemyLeadPokemon = game.scene.getEnemyParty()[0]!;
-    const enemySecPokemon = game.scene.getEnemyParty()[1]!;
+    const [enemyLeadPokemon, enemySecPokemon] = game.scene.getEnemyParty();
 
     game.move.select(MoveId.DRAGON_TAIL, 0, BattlerIndex.ENEMY);
     // target the same pokemon, second move should be redirected after first flees
@@ -132,7 +129,7 @@ describe("Moves - Dragon Tail", () => {
     game.override.enemyAbility(AbilityId.SUCTION_CUPS);
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.DRAGON_TAIL);
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -149,7 +146,7 @@ describe("Moves - Dragon Tail", () => {
     await game.toNextTurn();
 
     // Make sure the enemy switched to a healthy Pokemon
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     expect(enemy).toBeDefined();
     expect(enemy.isFullHp()).toBe(true);
 
@@ -171,7 +168,7 @@ describe("Moves - Dragon Tail", () => {
     await game.toNextTurn();
 
     // Make sure the enemy field is not empty and has a revived Pokemon
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     expect(enemy).toBeDefined();
     expect(enemy.hp).toBe(Math.floor(enemy.getMaxHp() / 2));
     expect(game.scene.getEnemyField().length).toBe(1);
@@ -189,7 +186,7 @@ describe("Moves - Dragon Tail", () => {
     await game.toNextTurn();
 
     // Make sure the player's field is not empty and has a revived Pokemon
-    const dratini = game.scene.getPlayerPokemon()!;
+    const dratini = game.field.getPlayerPokemon();
     expect(dratini).toBeDefined();
     expect(dratini.hp).toBe(Math.floor(dratini.getMaxHp() / 2));
     expect(game.scene.getPlayerField().length).toBe(1);

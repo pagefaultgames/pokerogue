@@ -63,12 +63,12 @@ export const ATrainersTestEncounter: MysteryEncounter = MysteryEncounterBuilder.
         break;
       case 3:
         trainerType = TrainerType.MIRA;
-        spriteKeys = getSpriteKeysFromSpecies(SpeciesId.ALAKAZAM, false, 1);
+        spriteKeys = getSpriteKeysFromSpecies(SpeciesId.ALAKAZAM);
         trainerNameKey = "mira";
         break;
       case 4:
         trainerType = TrainerType.RILEY;
-        spriteKeys = getSpriteKeysFromSpecies(SpeciesId.LUCARIO, false, 1);
+        spriteKeys = getSpriteKeysFromSpecies(SpeciesId.LUCARIO);
         trainerNameKey = "riley";
         break;
       default:
@@ -82,7 +82,7 @@ export const ATrainersTestEncounter: MysteryEncounter = MysteryEncounterBuilder.
     encounter.dialogue.intro = [
       {
         speaker: `trainerNames:${trainerNameKey}`,
-        text: `${namespace}:${trainerNameKey}.intro_dialogue`,
+        text: `${namespace}:${trainerNameKey}.introDialogue`,
       },
     ];
     encounter.options[0].dialogue!.selected = [
@@ -111,7 +111,7 @@ export const ATrainersTestEncounter: MysteryEncounter = MysteryEncounterBuilder.
     const trainerSpriteKey = trainerConfig.getSpriteKey();
     encounter.enemyPartyConfigs.push({
       levelAdditiveModifier: 1,
-      trainerConfig: trainerConfig,
+      trainerConfig,
     });
 
     encounter.spriteConfigs = [
@@ -164,8 +164,8 @@ export const ATrainersTestEncounter: MysteryEncounter = MysteryEncounterBuilder.
       encounter.setDialogueToken("eggType", i18next.t(`${namespace}:eggTypes.epic`));
       setEncounterRewards(
         {
-          guaranteedModifierTypeFuncs: [modifierTypes.SACRED_ASH],
-          guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ULTRA],
+          guaranteedModifierTypeFuncs: [modifierTypes.RELIC_GOLD],
+          guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ROGUE],
           fillRemaining: true,
         },
         [eggOptions],

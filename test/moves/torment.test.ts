@@ -36,7 +36,7 @@ describe("Moves - Torment", () => {
   it("Pokemon should not be able to use the same move consecutively", async () => {
     await game.classicMode.startBattle([SpeciesId.CHANSEY]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
     // First turn, Player Pokemon uses Tackle successfully
     game.move.select(MoveId.TACKLE);
