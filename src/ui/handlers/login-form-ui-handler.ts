@@ -2,6 +2,7 @@ import { pokerogueApi } from "#api/pokerogue-api";
 import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
+import { languageOptions } from "#system/settings-language";
 import type { OptionSelectItem } from "#ui/handlers/abstract-option-select-ui-handler";
 import type { InputFieldConfig } from "#ui/handlers/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/handlers/form-modal-ui-handler";
@@ -31,6 +32,7 @@ export class LoginFormUiHandler extends FormModalUiHandler {
   private discordImage: Phaser.GameObjects.Image;
   private usernameInfoImage: Phaser.GameObjects.Image;
   private saveDownloadImage: Phaser.GameObjects.Image;
+  private changeLanguageImage: Phaser.GameObjects.Image;
   private externalPartyContainer: Phaser.GameObjects.Container;
   private infoContainer: Phaser.GameObjects.Container;
   private externalPartyBg: Phaser.GameObjects.NineSlice;
@@ -82,8 +84,14 @@ export class LoginFormUiHandler extends FormModalUiHandler {
       scale: 0.75,
     });
 
+    this.changeLanguageImage = this.buildInteractableImage("language_icon", "change-language-icon", {
+      x: 40,
+      scale: 0.5,
+    });
+
     this.infoContainer.add(this.usernameInfoImage);
     this.infoContainer.add(this.saveDownloadImage);
+    this.infoContainer.add(this.changeLanguageImage);
     this.getUi().add(this.infoContainer);
     this.infoContainer.setVisible(false);
     this.infoContainer.disableInteractive();
@@ -163,13 +171,18 @@ export class LoginFormUiHandler extends FormModalUiHandler {
 
           const [usernameInput, passwordInput] = this.inputs;
 
-          pokerogueApi.account.login({ username: usernameInput.text, password: passwordInput.text }).then(error => {
-            if (!error && originalLoginAction) {
-              originalLoginAction();
-            } else {
-              onFail(error);
-            }
-          });
+          pokerogueApi.account
+            .login({
+              username: usernameInput.text,
+              password: passwordInput.text,
+            })
+            .then(error => {
+              if (!error && originalLoginAction) {
+                originalLoginAction();
+              } else {
+                onFail(error);
+              }
+            });
         }
       };
 
@@ -185,9 +198,13 @@ export class LoginFormUiHandler extends FormModalUiHandler {
     this.infoContainer.setVisible(false);
     this.setMouseCursorStyle("default"); //reset cursor
 
-    [this.discordImage, this.googleImage, this.usernameInfoImage, this.saveDownloadImage].forEach(img =>
-      img.off("pointerdown"),
-    );
+    [
+      this.discordImage,
+      this.googleImage,
+      this.usernameInfoImage,
+      this.saveDownloadImage,
+      this.changeLanguageImage,
+    ].forEach(img => img.off("pointerdown"));
   }
 
   private processExternalProvider(config: ModalConfig): void {
@@ -206,6 +223,7 @@ export class LoginFormUiHandler extends FormModalUiHandler {
     this.getUi().moveTo(this.infoContainer, this.getUi().length - 1);
     this.usernameInfoImage.setPositionRelative(this.infoContainer, 0, 0);
     this.saveDownloadImage.setPositionRelative(this.infoContainer, 20, 0);
+    this.changeLanguageImage.setPositionRelative(this.infoContainer, 40, 0);
 
     this.discordImage.on("pointerdown", () => {
       const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/discord/callback`);
@@ -286,6 +304,14 @@ export class LoginFormUiHandler extends FormModalUiHandler {
       } else {
         return onFail(this.ERR_NO_SAVES);
       }
+    });
+
+    this.changeLanguageImage.on("pointerdown", () => {
+      globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
+        options: languageOptions,
+        maxOptions: 7,
+        delay: 1000,
+      });
     });
 
     this.externalPartyContainer.setAlpha(0);

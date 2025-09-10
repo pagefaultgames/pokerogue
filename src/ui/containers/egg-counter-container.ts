@@ -2,14 +2,11 @@ import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
 import type { EggCountChangedEvent } from "#events/egg";
 import { EggEventType } from "#events/egg";
-import type { EggHatchSceneHandler } from "#ui/handlers/egg-hatch-scene-handler";
+import type { EggHatchSceneUiHandler } from "#ui/handlers/egg-hatch-scene-ui-handler";
 import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 
-/**
- * A container that displays the count of hatching eggs.
- * @extends Phaser.GameObjects.Container
- */
+/** A container that displays the count of hatching eggs */
 export class EggCounterContainer extends Phaser.GameObjects.Container {
   private readonly WINDOW_DEFAULT_WIDTH = 37;
   private readonly WINDOW_MEDIUM_WIDTH = 42;
@@ -27,7 +24,7 @@ export class EggCounterContainer extends Phaser.GameObjects.Container {
     super(globalScene, 0, 0);
     this.eggCount = eggCount;
 
-    const uiHandler = globalScene.ui.getHandler() as EggHatchSceneHandler;
+    const uiHandler = globalScene.ui.getHandler() as EggHatchSceneUiHandler;
 
     uiHandler.eventTarget.addEventListener(EggEventType.EGG_COUNT_CHANGED, this.onEggCountChangedEvent);
     this.setup();

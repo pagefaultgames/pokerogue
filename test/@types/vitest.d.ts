@@ -27,6 +27,8 @@ import type { toHaveBattlerTagOptions } from "#test/test-utils/matchers/to-have-
 
 declare module "vitest" {
   interface Assertion<T> {
+    // #region Generic Matchers
+
     /**
      * Check whether an array contains EXACTLY the given items (in any order).
      *
@@ -38,11 +40,20 @@ declare module "vitest" {
      */
     toEqualArrayUnsorted(expected: T[]): void;
 
+    // #endregion Generic Matchers
+
+    // #region GameManager Matchers
+
     /**
-     * Check if the currently-running {@linkcode Phase} is of the given type.
+     * Check if the {@linkcode GameManager} has shown the given message at least once in the current battle.
+     * @param expectedMessage - The expected message
+     */
+    toHaveShownMessage(expectedMessage: string): void;
+    /**
      * @param expectedPhase - The expected {@linkcode PhaseString}
      */
     toBeAtPhase(expectedPhase: PhaseString): void;
+    // #endregion GameManager Matchers
 
     // #region Arena Matchers
 

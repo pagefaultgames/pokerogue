@@ -5,7 +5,7 @@ import { UiMode } from "#enums/ui-mode";
 import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
 import { addTextObject } from "#ui/text";
 
-export class EvolutionSceneHandler extends MessageUiHandler {
+export class EvolutionSceneUiHandler extends MessageUiHandler {
   public evolutionContainer: Phaser.GameObjects.Container;
   public messageBg: Phaser.GameObjects.Image;
   public messageContainer: Phaser.GameObjects.Container;

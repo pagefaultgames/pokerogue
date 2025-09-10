@@ -576,10 +576,9 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    */
 
   /**
-   * @static Defines the type of encounter which is used as an identifier, should be tied to a unique MysteryEncounterType
-   * NOTE: if new functions are added to {@linkcode MysteryEncounter} class
+   * Defines the type of encounter which is used as an identifier, should be tied to a unique MysteryEncounterType
    * @param encounterType
-   * @returns this
+   * @returns a new instance of MysteryEncounterBuilder with encounterType set
    */
   static withEncounterType(
     encounterType: MysteryEncounterType,

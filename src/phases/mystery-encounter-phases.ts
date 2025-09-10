@@ -289,10 +289,7 @@ export class MysteryEncounterBattlePhase extends Phase {
     this.doMysteryEncounterBattle();
   }
 
-  /**
-   * Gets intro battle message for new battle
-   * @private
-   */
+  /** Get intro battle message for new battle */
   private getBattleMessage(): string {
     const enemyField = globalScene.getEnemyField();
     const encounterMode = globalScene.currentBattle.mysteryEncounter!.encounterMode;
@@ -323,8 +320,7 @@ export class MysteryEncounterBattlePhase extends Phase {
   }
 
   /**
-   * Queues {@linkcode SummonPhase}s for the new battle, and handles trainer animations/dialogue if it's a Trainer battle
-   * @private
+   * Queue {@linkcode SummonPhase}s for the new battle and handle trainer animations/dialogue for Trainer battles
    */
   private doMysteryEncounterBattle() {
     const encounterMode = globalScene.currentBattle.mysteryEncounter!.encounterMode;
@@ -401,7 +397,6 @@ export class MysteryEncounterBattlePhase extends Phase {
 
   /**
    * Initiate {@linkcode SummonPhase}s, {@linkcode ScanIvsPhase}, {@linkcode PostSummonPhase}s, etc.
-   * @private
    */
   private endBattleSetup() {
     const enemyField = globalScene.getEnemyField();
@@ -450,10 +445,7 @@ export class MysteryEncounterBattlePhase extends Phase {
     this.end();
   }
 
-  /**
-   * Ease in enemy trainer
-   * @private
-   */
+  /** Ease in enemy trainer */
   private showEnemyTrainer(): void {
     // Show enemy trainer
     const trainer = globalScene.currentBattle.trainer;

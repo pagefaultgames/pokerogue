@@ -202,8 +202,8 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
    * The method fetches the total page count if necessary, followed by fetching the rankings for the specified category
    * and page. It updates the UI with the fetched rankings or shows an appropriate message if no rankings are found.
    *
-   * @param {ScoreboardCategory} [category=this.category] - The category to fetch rankings for. Defaults to the current category.
-   * @param {number} [page=this.page] - The page number to fetch. Defaults to the current page.
+   * @param [category=this.category] - The category to fetch rankings for. Defaults to the current category.
+   * @param [page=this.page] - The page number to fetch. Defaults to the current page.
    */
   update(category: ScoreboardCategory = this.category, page: number = this.page) {
     if (this.isUpdating) {
@@ -249,7 +249,7 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
 
   /**
    * Sets the state of the navigation buttons.
-   * @param {boolean} [enabled=true] - Whether the buttons should be enabled or disabled.
+   * @param [enabled=true] - Whether the buttons should be enabled or disabled.
    */
   setButtonsState(enabled = true) {
     const buttons = [

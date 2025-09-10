@@ -31,9 +31,9 @@ import { UiMode } from "#enums/ui-mode";
 import { UiTheme } from "#enums/ui-theme";
 import type { Variant } from "#sprites/variant";
 import { getVariantIcon, getVariantTint } from "#sprites/variant";
-import type { DexAttrProps, StarterAttributes } from "#system/game-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
+import type { DexAttrProps, StarterAttributes } from "#types/save-data";
 import {
   DropDown,
   DropDownLabel,
@@ -48,9 +48,9 @@ import { PokedexMonContainer } from "#ui/containers/pokedex-mon-container";
 import { ScrollBar } from "#ui/containers/scroll-bar";
 import type { OptionSelectConfig } from "#ui/handlers/abstract-option-select-ui-handler";
 import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
-import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/handlers/pokemon-icon-anim-handler";
 import { addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
+import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/utils/pokemon-icon-anim-helper";
 import { BooleanHolder, fixedInt, getLocalizedSpriteKey, padInt, randIntRange, rgbHexToRgba } from "#utils/common";
 import type { StarterPreferences } from "#utils/data";
 import { loadStarterPreferences } from "#utils/data";
@@ -198,7 +198,7 @@ export class PokedexUiHandler extends MessageUiHandler {
   public cursorObj: Phaser.GameObjects.Image;
   private pokerusCursorObjs: Phaser.GameObjects.Image[];
 
-  private iconAnimHandler: PokemonIconAnimHandler;
+  private iconAnimHandler: PokemonIconAnimHelper;
 
   private starterPreferences: StarterPreferences;
 
@@ -482,7 +482,7 @@ export class PokedexUiHandler extends MessageUiHandler {
       pokemonContainerWindow.setVisible(false);
     }
 
-    this.iconAnimHandler = new PokemonIconAnimHandler();
+    this.iconAnimHandler = new PokemonIconAnimHelper();
     this.iconAnimHandler.setup();
 
     this.pokemonNumberText = addTextObject(6, 141, "", TextStyle.SUMMARY);

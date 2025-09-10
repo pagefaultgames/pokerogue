@@ -1,10 +1,10 @@
 import * as account from "#app/account";
 import * as bypassLoginModule from "#app/global-vars/bypass-login";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
-import type { SessionSaveData } from "#app/system/game-data";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { GameManager } from "#test/test-utils/game-manager";
+import type { SessionSaveData } from "#types/save-data";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

@@ -4,8 +4,8 @@ import { Gender } from "#data/gender";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { DexAttr } from "#enums/dex-attr";
 import { getVariantTint } from "#sprites/variant";
-import type { PokemonIconAnimHandler } from "#ui/handlers/pokemon-icon-anim-handler";
-import { PokemonIconAnimMode } from "#ui/handlers/pokemon-icon-anim-handler";
+import type { PokemonIconAnimHelper } from "#ui/utils/pokemon-icon-anim-helper";
+import { PokemonIconAnimMode } from "#ui/utils/pokemon-icon-anim-helper";
 
 /**
  * A container for a Pokemon's sprite and icons to get displayed in the egg summary screen
@@ -81,9 +81,9 @@ export class HatchedPokemonContainer extends Phaser.GameObjects.Container {
    * Animates the pokemon icon if it has a new form or shiny variant
    *
    * @param hatchData the {@linkcode EggHatchData} to base the icons on
-   * @param iconAnimHandler the {@linkcode PokemonIconAnimHandler} to use to animate the sprites
+   * @param iconAnimHandler the {@linkcode PokemonIconAnimHelper} to use to animate the sprites
    */
-  updateAndAnimate(hatchData: EggHatchData, iconAnimHandler: PokemonIconAnimHandler) {
+  updateAndAnimate(hatchData: EggHatchData, iconAnimHandler: PokemonIconAnimHelper) {
     const displayPokemon = hatchData.pokemon;
     this.species = displayPokemon.species;
 

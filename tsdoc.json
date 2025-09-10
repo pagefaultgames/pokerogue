@@ -13,6 +13,10 @@
     {
       "tagName": "@module",
       "syntaxKind": "modifier"
+    },
+    {
+      "tagName": "@interface",
+      "syntaxKind": "modifier"
     }
   ]
 }

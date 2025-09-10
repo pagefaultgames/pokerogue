@@ -6,8 +6,7 @@ import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { AchvBar } from "#ui/containers/achv-bar";
 import type { BgmBar } from "#ui/containers/bgm-bar";
-import { PokedexPageUiHandler } from "#ui/containers/pokedex-page-ui-handler";
-import { SavingIconHandler } from "#ui/containers/saving-icon-handler";
+import { SavingIconContainer } from "#ui/containers/saving-icon-handler";
 import { GamepadBindingUiHandler } from "#ui/gamepad-binding-ui-handler";
 import { AchvsUiHandler } from "#ui/handlers/achvs-ui-handler";
 import { AutoCompleteUiHandler } from "#ui/handlers/autocomplete-ui-handler";
@@ -19,10 +18,10 @@ import { ChangePasswordFormUiHandler } from "#ui/handlers/change-password-form-u
 import { CommandUiHandler } from "#ui/handlers/command-ui-handler";
 import { ConfirmUiHandler } from "#ui/handlers/confirm-ui-handler";
 import { EggGachaUiHandler } from "#ui/handlers/egg-gacha-ui-handler";
-import { EggHatchSceneHandler } from "#ui/handlers/egg-hatch-scene-handler";
+import { EggHatchSceneUiHandler } from "#ui/handlers/egg-hatch-scene-ui-handler";
 import { EggListUiHandler } from "#ui/handlers/egg-list-ui-handler";
 import { EggSummaryUiHandler } from "#ui/handlers/egg-summary-ui-handler";
-import { EvolutionSceneHandler } from "#ui/handlers/evolution-scene-handler";
+import { EvolutionSceneUiHandler } from "#ui/handlers/evolution-scene-ui-handler";
 import { FightUiHandler } from "#ui/handlers/fight-ui-handler";
 import { GameStatsUiHandler } from "#ui/handlers/game-stats-ui-handler";
 import { LoadingModalUiHandler } from "#ui/handlers/loading-modal-ui-handler";
@@ -32,6 +31,7 @@ import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
 import { ModifierSelectUiHandler } from "#ui/handlers/modifier-select-ui-handler";
 import { MysteryEncounterUiHandler } from "#ui/handlers/mystery-encounter-ui-handler";
 import { PartyUiHandler } from "#ui/handlers/party-ui-handler";
+import { PokedexPageUiHandler } from "#ui/handlers/pokedex-page-ui-handler";
 import { PokedexScanUiHandler } from "#ui/handlers/pokedex-scan-ui-handler";
 import { PokedexUiHandler } from "#ui/handlers/pokedex-ui-handler";
 import { RegistrationFormUiHandler } from "#ui/handlers/registration-form-ui-handler";
@@ -115,7 +115,7 @@ export class UI extends Phaser.GameObjects.Container {
   private overlay: Phaser.GameObjects.Rectangle;
   public achvBar: AchvBar;
   public bgmBar: BgmBar;
-  public savingIcon: SavingIconHandler;
+  public savingIcon: SavingIconContainer;
 
   private tooltipContainer: Phaser.GameObjects.Container;
   private tooltipBg: Phaser.GameObjects.NineSlice;
@@ -141,8 +141,8 @@ export class UI extends Phaser.GameObjects.Container {
       new PartyUiHandler(),
       new SummaryUiHandler(),
       new StarterSelectUiHandler(),
-      new EvolutionSceneHandler(),
-      new EggHatchSceneHandler(),
+      new EvolutionSceneUiHandler(),
+      new EggHatchSceneUiHandler(),
       new EggSummaryUiHandler(),
       new ConfirmUiHandler(),
       new OptionSelectUiHandler(),
@@ -198,7 +198,7 @@ export class UI extends Phaser.GameObjects.Container {
 
     globalScene.uiContainer.add(this.achvBar);
 
-    this.savingIcon = new SavingIconHandler();
+    this.savingIcon = new SavingIconContainer();
     this.savingIcon.setup();
 
     globalScene.uiContainer.add(this.savingIcon);

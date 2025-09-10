@@ -11,7 +11,7 @@ import type { EggLapsePhase } from "#phases/egg-lapse-phase";
 import { achvs } from "#system/achv";
 import { EggCounterContainer } from "#ui/containers/egg-counter-container";
 import { PokemonInfoContainer } from "#ui/containers/pokemon-info-container";
-import type { EggHatchSceneHandler } from "#ui/handlers/egg-hatch-scene-handler";
+import type { EggHatchSceneUiHandler } from "#ui/handlers/egg-hatch-scene-ui-handler";
 import { fixedInt, getFrameMs, randInt } from "#utils/common";
 import i18next from "i18next";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
@@ -32,7 +32,7 @@ export class EggHatchPhase extends Phase {
   private eggCounterContainer: EggCounterContainer;
 
   /** The scene handler for egg hatching */
-  private eggHatchHandler: EggHatchSceneHandler;
+  private eggHatchHandler: EggHatchSceneUiHandler;
   /** The phaser gameobject container that holds everything */
   private eggHatchContainer: Phaser.GameObjects.Container;
   /** The phaser image that is the background */
@@ -92,7 +92,7 @@ export class EggHatchPhase extends Phase {
 
       globalScene.fadeOutBgm(undefined, false);
 
-      this.eggHatchHandler = globalScene.ui.getHandler() as EggHatchSceneHandler;
+      this.eggHatchHandler = globalScene.ui.getHandler() as EggHatchSceneUiHandler;
 
       this.eggHatchContainer = this.eggHatchHandler.eggHatchContainer;
 
