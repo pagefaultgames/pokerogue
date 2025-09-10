@@ -37,6 +37,7 @@ jobs:
             !/public/
             /public/images/pokemon/variant/_exp_masterlist.json
             /public/images/pokemon/variant/_masterlist.json
+            /public/images/logo.png
           sparse-checkout-cone-mode: false
 
       - name: Install pnpm
