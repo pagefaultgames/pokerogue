@@ -1,6 +1,5 @@
 import { pokerogueApi } from "#api/pokerogue-api";
 import { clientSessionId, loggedInUser, updateUserInfo } from "#app/account";
-import type { PokeballCounts } from "#app/battle-scene";
 import { defaultStarterSpecies, saveKey } from "#app/constants";
 import { getGameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
@@ -24,11 +23,9 @@ import { Device } from "#enums/devices";
 import { DexAttr } from "#enums/dex-attr";
 import { GameDataType } from "#enums/game-data-type";
 import { GameModes } from "#enums/game-modes";
-import type { MoveId } from "#enums/move-id";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
 import { PlayerGender } from "#enums/player-gender";
-import type { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { TrainerVariant } from "#enums/trainer-variant";
@@ -62,12 +59,26 @@ import {
 import { VoucherType, vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { DexData, DexEntry } from "#types/dex-data";
-import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
+import type {
+  AchvUnlocks,
+  DexAttrProps,
+  RunHistoryData,
+  SeenDialogues,
+  SessionSaveData,
+  StarterData,
+  SystemSaveData,
+  TutorialFlags,
+  Unlocks,
+  VoucherCounts,
+  VoucherUnlocks,
+} from "#types/save-data";
+import { RUN_HISTORY_LIMIT } from "#ui/handlers/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { executeIf, fixedInt, isLocal, NumberHolder, randInt, randSeedItem } from "#utils/common";
 import { decrypt, encrypt } from "#utils/data";
 import { getEnumKeys } from "#utils/enums";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { isBeta } from "#utils/utility-vars";
 import { AES, enc } from "crypto-js";
 import i18next from "i18next";
 
@@ -91,132 +102,6 @@ function getDataTypeKey(dataType: GameDataType, slotId = 0): string {
     case GameDataType.RUN_HISTORY:
       return "runHistoryData";
   }
-}
-
-// TODO: Move all these exported interfaces to @types
-export interface SystemSaveData {
-  trainerId: number;
-  secretId: number;
-  gender: PlayerGender;
-  dexData: DexData;
-  starterData: StarterData;
-  gameStats: GameStats;
-  unlocks: Unlocks;
-  achvUnlocks: AchvUnlocks;
-  voucherUnlocks: VoucherUnlocks;
-  voucherCounts: VoucherCounts;
-  eggs: EggData[];
-  gameVersion: string;
-  timestamp: number;
-  eggPity: number[];
-  unlockPity: number[];
-}
-
-export interface SessionSaveData {
-  seed: string;
-  playTime: number;
-  gameMode: GameModes;
-  party: PokemonData[];
-  enemyParty: PokemonData[];
-  modifiers: PersistentModifierData[];
-  enemyModifiers: PersistentModifierData[];
-  arena: ArenaData;
-  pokeballCounts: PokeballCounts;
-  money: number;
-  score: number;
-  waveIndex: number;
-  battleType: BattleType;
-  trainer: TrainerData;
-  gameVersion: string;
-  /** The player-chosen name of the run */
-  name: string;
-  timestamp: number;
-  challenges: ChallengeData[];
-  mysteryEncounterType: MysteryEncounterType | -1; // Only defined when current wave is ME,
-  mysteryEncounterSaveData: MysteryEncounterSaveData;
-  /**
-   * Counts the amount of pokemon fainted in your party during the current arena encounter.
-   */
-  playerFaints: number;
-}
-
-interface Unlocks {
-  [key: number]: boolean;
-}
-
-export interface AchvUnlocks {
-  [key: string]: number;
-}
-
-export interface VoucherUnlocks {
-  [key: string]: number;
-}
-
-export interface VoucherCounts {
-  [type: string]: number;
-}
-
-export type StarterMoveset = [MoveId] | [MoveId, MoveId] | [MoveId, MoveId, MoveId] | [MoveId, MoveId, MoveId, MoveId];
-
-export interface StarterFormMoveData {
-  [key: number]: StarterMoveset;
-}
-
-export interface StarterMoveData {
-  [key: number]: StarterMoveset | StarterFormMoveData;
-}
-
-export interface StarterAttributes {
-  nature?: number;
-  ability?: number;
-  variant?: number;
-  form?: number;
-  female?: boolean;
-  shiny?: boolean;
-  favorite?: boolean;
-  nickname?: string;
-  tera?: PokemonType;
-}
-
-export interface DexAttrProps {
-  shiny: boolean;
-  female: boolean;
-  variant: Variant;
-  formIndex: number;
-}
-
-export type RunHistoryData = Record<number, RunEntry>;
-
-export interface RunEntry {
-  entry: SessionSaveData;
-  isVictory: boolean;
-  /*Automatically set to false at the moment - implementation TBD*/
-  isFavorite: boolean;
-}
-
-export interface StarterDataEntry {
-  moveset: StarterMoveset | StarterFormMoveData | null;
-  eggMoves: number;
-  candyCount: number;
-  friendship: number;
-  abilityAttr: number;
-  passiveAttr: number;
-  valueReduction: number;
-  classicWinCount: number;
-}
-
-export interface StarterData {
-  [key: number]: StarterDataEntry;
-}
-
-// TODO: Rework into a bitmask
-export type TutorialFlags = {
-  [key in Tutorial]: boolean;
-};
-
-// TODO: Rework into a bitmask
-export interface SeenDialogues {
-  [key: string]: boolean;
 }
 
 const systemShortKeys = {
@@ -367,10 +252,10 @@ export class GameData {
       if (!bypassLogin) {
         pokerogueApi.savedata.system.get({ clientSessionId }).then(saveDataOrErr => {
           if (
-            typeof saveDataOrErr === "number" ||
-            !saveDataOrErr ||
-            saveDataOrErr.length === 0 ||
-            saveDataOrErr[0] !== "{"
+            typeof saveDataOrErr === "number"
+            || !saveDataOrErr
+            || saveDataOrErr.length === 0
+            || saveDataOrErr[0] !== "{"
           ) {
             if (saveDataOrErr === 404) {
               globalScene.phaseManager.queueMessage(
@@ -419,7 +304,15 @@ export class GameData {
         }
       }
 
-      console.debug(systemData);
+      if (isLocal || isBeta) {
+        try {
+          console.debug(
+            this.parseSystemData(JSON.stringify(systemData, (_, v: any) => (typeof v === "bigint" ? v.toString() : v))),
+          );
+        } catch (err) {
+          console.debug("Attempt to log system data failed:", err);
+        }
+      }
 
       localStorage.setItem(`data_${loggedInUser?.username}`, encrypt(systemDataStr, bypassLogin));
 
@@ -590,7 +483,7 @@ export class GameData {
     const timestamp = runEntry.timestamp.toString();
     runHistoryData[timestamp] = {
       entry: runEntry,
-      isVictory: isVictory,
+      isVictory,
       isFavorite: false,
     };
     localStorage.setItem(
@@ -945,45 +838,46 @@ export class GameData {
     } as SessionSaveData;
   }
 
-  getSession(slotId: number): Promise<SessionSaveData | null> {
-    // biome-ignore lint/suspicious/noAsyncPromiseExecutor: TODO: fix this
-    return new Promise(async (resolve, reject) => {
-      if (slotId < 0) {
-        return resolve(null);
+  async getSession(slotId: number): Promise<SessionSaveData | null> {
+    const { promise, resolve, reject } = Promise.withResolvers<SessionSaveData | null>();
+    if (slotId < 0) {
+      resolve(null);
+      return promise;
+    }
+    const handleSessionData = async (sessionDataStr: string) => {
+      try {
+        const sessionData = this.parseSessionData(sessionDataStr);
+        resolve(sessionData);
+      } catch (err) {
+        reject(err);
+        return;
       }
-      const handleSessionData = async (sessionDataStr: string) => {
-        try {
-          const sessionData = this.parseSessionData(sessionDataStr);
-          resolve(sessionData);
-        } catch (err) {
-          reject(err);
-          return;
-        }
-      };
+    };
 
-      if (!bypassLogin && !localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`)) {
-        pokerogueApi.savedata.session.get({ slot: slotId, clientSessionId }).then(async response => {
-          if (!response || response?.length === 0 || response?.[0] !== "{") {
-            console.error(response);
-            return resolve(null);
-          }
+    if (!bypassLogin && !localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`)) {
+      const response = await pokerogueApi.savedata.session.get({ slot: slotId, clientSessionId });
 
-          localStorage.setItem(
-            `sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`,
-            encrypt(response, bypassLogin),
-          );
-
-          await handleSessionData(response);
-        });
-      } else {
-        const sessionData = localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
-        if (sessionData) {
-          await handleSessionData(decrypt(sessionData, bypassLogin));
-        } else {
-          return resolve(null);
-        }
+      if (!response || response?.length === 0 || response?.[0] !== "{") {
+        console.error(response);
+        resolve(null);
+        return promise;
       }
-    });
+
+      localStorage.setItem(
+        `sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`,
+        encrypt(response, bypassLogin),
+      );
+
+      await handleSessionData(response);
+      return promise;
+    }
+    const sessionData = localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
+    if (sessionData) {
+      await handleSessionData(decrypt(sessionData, bypassLogin));
+      return promise;
+    }
+    resolve(null);
+    return promise;
   }
 
   async renameSession(slotId: number, newName: string): Promise<boolean> {
@@ -1028,166 +922,177 @@ export class GameData {
     return !(success !== null && !success);
   }
 
-  loadSession(slotId: number, sessionData?: SessionSaveData): Promise<boolean> {
-    // biome-ignore lint/suspicious/noAsyncPromiseExecutor: TODO: fix this
-    return new Promise(async (resolve, reject) => {
-      try {
-        const initSessionFromData = async (sessionData: SessionSaveData) => {
-          console.debug(sessionData);
-
-          globalScene.gameMode = getGameMode(sessionData.gameMode || GameModes.CLASSIC);
-          if (sessionData.challenges) {
-            globalScene.gameMode.challenges = sessionData.challenges.map(c => c.toChallenge());
+  async loadSession(slotId: number, sessionData?: SessionSaveData): Promise<boolean> {
+    const { promise, resolve, reject } = Promise.withResolvers<boolean>();
+    try {
+      const initSessionFromData = (fromSession: SessionSaveData) => {
+        if (isLocal || isBeta) {
+          try {
+            console.debug(
+              this.parseSessionData(
+                JSON.stringify(fromSession, (_, v: any) => (typeof v === "bigint" ? v.toString() : v)),
+              ),
+            );
+          } catch (err) {
+            console.debug("Attempt to log session data failed:", err);
           }
-
-          globalScene.setSeed(sessionData.seed || globalScene.game.config.seed[0]);
-          globalScene.resetSeed();
-
-          console.log("Seed:", globalScene.seed);
-
-          globalScene.sessionPlayTime = sessionData.playTime || 0;
-          globalScene.lastSavePlayTime = 0;
-
-          const loadPokemonAssets: Promise<void>[] = [];
-
-          const party = globalScene.getPlayerParty();
-          party.splice(0, party.length);
-
-          for (const p of sessionData.party) {
-            const pokemon = p.toPokemon() as PlayerPokemon;
-            pokemon.setVisible(false);
-            loadPokemonAssets.push(pokemon.loadAssets(false));
-            party.push(pokemon);
-          }
-
-          Object.keys(globalScene.pokeballCounts).forEach((key: string) => {
-            globalScene.pokeballCounts[key] = sessionData.pokeballCounts[key] || 0;
-          });
-          if (Overrides.POKEBALL_OVERRIDE.active) {
-            globalScene.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
-          }
-
-          globalScene.money = Math.floor(sessionData.money || 0);
-          globalScene.updateMoneyText();
-
-          if (globalScene.money > this.gameStats.highestMoney) {
-            this.gameStats.highestMoney = globalScene.money;
-          }
-
-          globalScene.score = sessionData.score;
-          globalScene.updateScoreText();
-
-          globalScene.mysteryEncounterSaveData = new MysteryEncounterSaveData(sessionData.mysteryEncounterSaveData);
-
-          globalScene.newArena(sessionData.arena.biome, sessionData.playerFaints);
-
-          const battleType = sessionData.battleType || 0;
-          const trainerConfig = sessionData.trainer ? trainerConfigs[sessionData.trainer.trainerType] : null;
-          const mysteryEncounterType =
-            sessionData.mysteryEncounterType !== -1 ? sessionData.mysteryEncounterType : undefined;
-          const battle = globalScene.newBattle(
-            sessionData.waveIndex,
-            battleType,
-            sessionData.trainer,
-            battleType === BattleType.TRAINER
-              ? trainerConfig?.doubleOnly || sessionData.trainer?.variant === TrainerVariant.DOUBLE
-              : sessionData.enemyParty.length > 1,
-            mysteryEncounterType,
-          );
-          battle.enemyLevels = sessionData.enemyParty.map(p => p.level);
-
-          globalScene.arena.init();
-
-          sessionData.enemyParty.forEach((enemyData, e) => {
-            const enemyPokemon = enemyData.toPokemon(
-              battleType,
-              e,
-              sessionData.trainer?.variant === TrainerVariant.DOUBLE,
-            ) as EnemyPokemon;
-            battle.enemyParty[e] = enemyPokemon;
-            if (battleType === BattleType.WILD) {
-              battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
-            }
-
-            loadPokemonAssets.push(enemyPokemon.loadAssets());
-          });
-
-          globalScene.arena.weather = sessionData.arena.weather;
-          globalScene.arena.eventTarget.dispatchEvent(
-            new WeatherChangedEvent(
-              WeatherType.NONE,
-              globalScene.arena.weather?.weatherType!,
-              globalScene.arena.weather?.turnsLeft!,
-            ),
-          ); // TODO: is this bang correct?
-
-          globalScene.arena.terrain = sessionData.arena.terrain;
-          globalScene.arena.eventTarget.dispatchEvent(
-            new TerrainChangedEvent(
-              TerrainType.NONE,
-              globalScene.arena.terrain?.terrainType!,
-              globalScene.arena.terrain?.turnsLeft!,
-            ),
-          ); // TODO: is this bang correct?
-
-          globalScene.arena.playerTerasUsed = sessionData.arena.playerTerasUsed;
-
-          globalScene.arena.tags = sessionData.arena.tags;
-          if (globalScene.arena.tags) {
-            for (const tag of globalScene.arena.tags) {
-              if (tag instanceof EntryHazardTag) {
-                const { tagType, side, turnCount, layers, maxLayers } = tag as EntryHazardTag;
-                globalScene.arena.eventTarget.dispatchEvent(
-                  new TagAddedEvent(tagType, side, turnCount, layers, maxLayers),
-                );
-              } else {
-                globalScene.arena.eventTarget.dispatchEvent(new TagAddedEvent(tag.tagType, tag.side, tag.turnCount));
-              }
-            }
-          }
-
-          globalScene.arena.positionalTagManager.tags = sessionData.arena.positionalTags.map(tag =>
-            loadPositionalTag(tag),
-          );
-
-          if (globalScene.modifiers.length) {
-            console.warn("Existing modifiers not cleared on session load, deleting...");
-            globalScene.modifiers = [];
-          }
-          for (const modifierData of sessionData.modifiers) {
-            const modifier = modifierData.toModifier(Modifier[modifierData.className]);
-            if (modifier) {
-              globalScene.addModifier(modifier, true);
-            }
-          }
-          globalScene.updateModifiers(true);
-
-          for (const enemyModifierData of sessionData.enemyModifiers) {
-            const modifier = enemyModifierData.toModifier(Modifier[enemyModifierData.className]);
-            if (modifier) {
-              globalScene.addEnemyModifier(modifier, true);
-            }
-          }
-
-          globalScene.updateModifiers(false);
-
-          Promise.all(loadPokemonAssets).then(() => resolve(true));
-        };
-        if (sessionData) {
-          initSessionFromData(sessionData);
-        } else {
-          this.getSession(slotId)
-            .then(data => data && initSessionFromData(data))
-            .catch(err => {
-              reject(err);
-              return;
-            });
         }
-      } catch (err) {
-        reject(err);
-        return;
+
+        globalScene.gameMode = getGameMode(fromSession.gameMode || GameModes.CLASSIC);
+        if (fromSession.challenges) {
+          globalScene.gameMode.challenges = fromSession.challenges.map(c => c.toChallenge());
+        }
+
+        globalScene.setSeed(fromSession.seed || globalScene.game.config.seed[0]);
+        globalScene.resetSeed();
+
+        console.log("Seed:", globalScene.seed);
+
+        globalScene.sessionPlayTime = fromSession.playTime || 0;
+        globalScene.lastSavePlayTime = 0;
+
+        const loadPokemonAssets: Promise<void>[] = [];
+
+        const party = globalScene.getPlayerParty();
+        party.splice(0, party.length);
+
+        for (const p of fromSession.party) {
+          const pokemon = p.toPokemon() as PlayerPokemon;
+          pokemon.setVisible(false);
+          loadPokemonAssets.push(pokemon.loadAssets(false));
+          party.push(pokemon);
+        }
+
+        Object.keys(globalScene.pokeballCounts).forEach((key: string) => {
+          globalScene.pokeballCounts[key] = fromSession.pokeballCounts[key] || 0;
+        });
+        if (Overrides.POKEBALL_OVERRIDE.active) {
+          globalScene.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
+        }
+
+        globalScene.money = Math.floor(fromSession.money || 0);
+        globalScene.updateMoneyText();
+
+        if (globalScene.money > this.gameStats.highestMoney) {
+          this.gameStats.highestMoney = globalScene.money;
+        }
+
+        globalScene.score = fromSession.score;
+        globalScene.updateScoreText();
+
+        globalScene.mysteryEncounterSaveData = new MysteryEncounterSaveData(fromSession.mysteryEncounterSaveData);
+
+        globalScene.newArena(fromSession.arena.biome, fromSession.playerFaints);
+
+        const battleType = fromSession.battleType || 0;
+        const trainerConfig = fromSession.trainer ? trainerConfigs[fromSession.trainer.trainerType] : null;
+        const mysteryEncounterType =
+          fromSession.mysteryEncounterType !== -1 ? fromSession.mysteryEncounterType : undefined;
+        const battle = globalScene.newBattle(
+          fromSession.waveIndex,
+          battleType,
+          fromSession.trainer,
+          battleType === BattleType.TRAINER
+            ? trainerConfig?.doubleOnly || fromSession.trainer?.variant === TrainerVariant.DOUBLE
+            : fromSession.enemyParty.length > 1,
+          mysteryEncounterType,
+        );
+        battle.enemyLevels = fromSession.enemyParty.map(p => p.level);
+
+        globalScene.arena.init();
+
+        fromSession.enemyParty.forEach((enemyData, e) => {
+          const enemyPokemon = enemyData.toPokemon(
+            battleType,
+            e,
+            fromSession.trainer?.variant === TrainerVariant.DOUBLE,
+          ) as EnemyPokemon;
+          battle.enemyParty[e] = enemyPokemon;
+          if (battleType === BattleType.WILD) {
+            battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
+          }
+
+          loadPokemonAssets.push(enemyPokemon.loadAssets());
+        });
+
+        globalScene.arena.weather = fromSession.arena.weather;
+        globalScene.arena.eventTarget.dispatchEvent(
+          new WeatherChangedEvent(
+            WeatherType.NONE,
+            globalScene.arena.weather?.weatherType!,
+            globalScene.arena.weather?.turnsLeft!,
+          ),
+        ); // TODO: is this bang correct?
+
+        globalScene.arena.terrain = fromSession.arena.terrain;
+        globalScene.arena.eventTarget.dispatchEvent(
+          new TerrainChangedEvent(
+            TerrainType.NONE,
+            globalScene.arena.terrain?.terrainType!,
+            globalScene.arena.terrain?.turnsLeft!,
+          ),
+        ); // TODO: is this bang correct?
+
+        globalScene.arena.playerTerasUsed = fromSession.arena.playerTerasUsed;
+
+        globalScene.arena.tags = fromSession.arena.tags;
+        if (globalScene.arena.tags) {
+          for (const tag of globalScene.arena.tags) {
+            if (tag instanceof EntryHazardTag) {
+              const { tagType, side, turnCount, layers, maxLayers } = tag as EntryHazardTag;
+              globalScene.arena.eventTarget.dispatchEvent(
+                new TagAddedEvent(tagType, side, turnCount, layers, maxLayers),
+              );
+            } else {
+              globalScene.arena.eventTarget.dispatchEvent(new TagAddedEvent(tag.tagType, tag.side, tag.turnCount));
+            }
+          }
+        }
+
+        globalScene.arena.positionalTagManager.tags = fromSession.arena.positionalTags.map(tag =>
+          loadPositionalTag(tag),
+        );
+
+        if (globalScene.modifiers.length > 0) {
+          console.warn("Existing modifiers not cleared on session load, deleting...");
+          globalScene.modifiers = [];
+        }
+        for (const modifierData of fromSession.modifiers) {
+          const modifier = modifierData.toModifier(Modifier[modifierData.className]);
+          if (modifier) {
+            globalScene.addModifier(modifier, true);
+          }
+        }
+        globalScene.updateModifiers(true);
+
+        for (const enemyModifierData of fromSession.enemyModifiers) {
+          const modifier = enemyModifierData.toModifier(Modifier[enemyModifierData.className]);
+          if (modifier) {
+            globalScene.addEnemyModifier(modifier, true);
+          }
+        }
+
+        globalScene.updateModifiers(false);
+
+        Promise.all(loadPokemonAssets).then(() => resolve(true));
+      };
+      if (sessionData) {
+        initSessionFromData(sessionData);
+      } else {
+        this.getSession(slotId)
+          .then(data => {
+            return data && initSessionFromData(data);
+          })
+          .catch(err => {
+            reject(err);
+            return;
+          });
       }
-    });
+    } catch (err) {
+      reject(err);
+    }
+
+    return promise;
   }
 
   /**
@@ -1326,8 +1231,8 @@ export class GameData {
             }
 
             if (
-              md instanceof Modifier.EnemyAttackStatusEffectChanceModifier &&
-              (md.effect === StatusEffect.FREEZE || md.effect === StatusEffect.SLEEP)
+              md instanceof Modifier.EnemyAttackStatusEffectChanceModifier
+              && (md.effect === StatusEffect.FREEZE || md.effect === StatusEffect.SLEEP)
             ) {
               // Discard any old "sleep/freeze chance tokens".
               // TODO: make this migrate script
@@ -1394,7 +1299,7 @@ export class GameData {
           system: systemData,
           session: sessionData,
           sessionSlotId: globalScene.sessionSlotId,
-          clientSessionId: clientSessionId,
+          clientSessionId,
         };
 
         localStorage.setItem(
@@ -1470,8 +1375,9 @@ export class GameData {
           });
         }
 
+        // TODO: this is a really shit way of checking JSON validity
         promise.then(response => {
-          if (typeof response === "number" || !response?.length || response[0] !== "{") {
+          if (typeof response !== "string" || response.length === 0 || response.charAt(0) !== "{") {
             console.error(response);
             resolve(false);
             return;
@@ -1515,6 +1421,7 @@ export class GameData {
             switch (dataType) {
               case GameDataType.SYSTEM: {
                 dataStr = this.convertSystemDataStr(dataStr);
+                dataStr = dataStr.replace(/"playTime":\d+/, `"playTime":${this.gameStats.playTime + 60}`);
                 const systemData = this.parseSystemData(dataStr);
                 valid = !!systemData.dexData && !!systemData.timestamp;
                 break;
@@ -1645,7 +1552,7 @@ export class GameData {
     globalScene.executeWithSeedOffset(
       () => {
         const neutralNatures = [Nature.HARDY, Nature.DOCILE, Nature.SERIOUS, Nature.BASHFUL, Nature.QUIRKY];
-        for (let s = 0; s < defaultStarterSpecies.length; s++) {
+        for (const _ of defaultStarterSpecies) {
           defaultStarterNatures.push(randSeedItem(neutralNatures));
         }
       },
@@ -1691,8 +1598,8 @@ export class GameData {
   setPokemonSeen(pokemon: Pokemon, incrementCount = true, trainer = false): void {
     // Some Mystery Encounters block updates to these stats
     if (
-      globalScene.currentBattle?.isBattleMysteryEncounter() &&
-      globalScene.currentBattle.mysteryEncounter?.preventGameStatsUpdates
+      globalScene.currentBattle?.isBattleMysteryEncounter()
+      && globalScene.currentBattle.mysteryEncounter?.preventGameStatsUpdates
     ) {
       return;
     }
@@ -1972,16 +1879,14 @@ export class GameData {
       let message = prependSpeciesToMessage ? species.getName() + " " : "";
       message +=
         eggMoveIndex === 3
-          ? i18next.t("egg:rareEggMoveUnlock", { moveName: moveName })
-          : i18next.t("egg:eggMoveUnlock", { moveName: moveName });
+          ? i18next.t("egg:rareEggMoveUnlock", { moveName })
+          : i18next.t("egg:eggMoveUnlock", { moveName });
 
       globalScene.ui.showText(message, null, () => resolve(true), null, true);
     });
   }
 
-  /**
-   * Checks whether the root species of a given {@PokemonSpecies} has been unlocked in the dex
-   */
+  /** Return whether the root species of a given `PokemonSpecies` has been unlocked in the dex */
   isRootSpeciesUnlocked(species: PokemonSpecies): boolean {
     return !!this.dexData[species.getRootSpeciesId()]?.caughtAttr;
   }
@@ -2196,9 +2101,9 @@ export class GameData {
     for (const s of starterIds) {
       const dexAttr = dexData[s].caughtAttr;
       starterData[s].abilityAttr =
-        (dexAttr & DexAttr.DEFAULT_VARIANT ? AbilityAttr.ABILITY_1 : 0) |
-        (dexAttr & DexAttr.VARIANT_2 ? AbilityAttr.ABILITY_2 : 0) |
-        (dexAttr & DexAttr.VARIANT_3 ? AbilityAttr.ABILITY_HIDDEN : 0);
+        (dexAttr & DexAttr.DEFAULT_VARIANT ? AbilityAttr.ABILITY_1 : 0)
+        | (dexAttr & DexAttr.VARIANT_2 ? AbilityAttr.ABILITY_2 : 0)
+        | (dexAttr & DexAttr.VARIANT_3 ? AbilityAttr.ABILITY_HIDDEN : 0);
       if (dexAttr) {
         if (!(dexAttr & DexAttr.DEFAULT_VARIANT)) {
           dexData[s].caughtAttr ^= DexAttr.DEFAULT_VARIANT;

@@ -1,9 +1,9 @@
 import "vitest";
 
-import type { TerrainType } from "#app/data/terrain";
+import type { Phase } from "#app/phase";
 import type Overrides from "#app/overrides";
 import type { ArenaTag } from "#data/arena-tag";
-import type { PositionalTag } from "#data/positional-tags/positional-tag";
+import type { TerrainType } from "#data/terrain";
 import type { AbilityId } from "#enums/ability-id";
 import type { ArenaTagSide } from "#enums/arena-tag-side";
 import type { ArenaTagType } from "#enums/arena-tag-type";
@@ -11,24 +11,24 @@ import type { BattlerTagType } from "#enums/battler-tag-type";
 import type { MoveId } from "#enums/move-id";
 import type { PokemonType } from "#enums/pokemon-type";
 import type { PositionalTagType } from "#enums/positional-tag-type";
-import type { BattleStat, EffectiveStat, Stat } from "#enums/stat";
-import type { StatusEffect } from "#enums/status-effect";
+import type { BattleStat, EffectiveStat } from "#enums/stat";
 import type { WeatherType } from "#enums/weather-type";
-import type { Arena } from "#field/arena";
-import type { Pokemon } from "#field/pokemon";
-import type { PokemonMove } from "#moves/pokemon-move";
 import type { toHaveArenaTagOptions } from "#test/test-utils/matchers/to-have-arena-tag";
 import type { toHaveEffectiveStatOptions } from "#test/test-utils/matchers/to-have-effective-stat";
 import type { toHavePositionalTagOptions } from "#test/test-utils/matchers/to-have-positional-tag";
 import type { expectedStatusType } from "#test/test-utils/matchers/to-have-status-effect";
 import type { toHaveTypesOptions } from "#test/test-utils/matchers/to-have-types";
+import type { PhaseString } from "#types/phase-types";
 import type { TurnMove } from "#types/turn-move";
 import type { AtLeastOne } from "#types/type-helpers";
-import type { toDmgValue } from "utils/common";
+import type { toDmgValue } from "#utils/common";
 import type { expect } from "vitest";
+import type { toHaveBattlerTagOptions } from "#test/test-utils/matchers/to-have-battler-tag";
 
 declare module "vitest" {
   interface Assertion<T> {
+    // #region Generic Matchers
+
     /**
      * Check whether an array contains EXACTLY the given items (in any order).
      *
@@ -39,6 +39,21 @@ declare module "vitest" {
      * @see {@linkcode expect.arrayContaining}
      */
     toEqualArrayUnsorted(expected: T[]): void;
+
+    // #endregion Generic Matchers
+
+    // #region GameManager Matchers
+
+    /**
+     * Check if the {@linkcode GameManager} has shown the given message at least once in the current battle.
+     * @param expectedMessage - The expected message
+     */
+    toHaveShownMessage(expectedMessage: string): void;
+    /**
+     * @param expectedPhase - The expected {@linkcode PhaseString}
+     */
+    toBeAtPhase(expectedPhase: PhaseString): void;
+    // #endregion GameManager Matchers
 
     // #region Arena Matchers
 
@@ -125,10 +140,15 @@ declare module "vitest" {
     toHaveStatStage(stat: BattleStat, expectedStage: number): void;
 
     /**
-     * Check whether a {@linkcode Pokemon} has a specific {@linkcode BattlerTagType}.
-     * @param expectedBattlerTagType - The expected {@linkcode BattlerTagType}
+     * Check whether a {@linkcode Pokemon} has the given {@linkcode BattlerTag}.
+     * @param expectedTag - A partially-filled {@linkcode BattlerTag} containing the desired properties
      */
-    toHaveBattlerTag(expectedBattlerTagType: BattlerTagType): void;
+    toHaveBattlerTag<B extends BattlerTagType>(expectedTag: toHaveBattlerTagOptions<B>): void;
+    /**
+     * Check whether a {@linkcode Pokemon} has the given {@linkcode BattlerTag}.
+     * @param expectedType - The expected {@linkcode BattlerTagType}
+     */
+    toHaveBattlerTag(expectedType: BattlerTagType): void;
 
     /**
      * Check whether a {@linkcode Pokemon} has applied a specific {@linkcode AbilityId}.

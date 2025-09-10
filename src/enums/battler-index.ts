@@ -7,5 +7,5 @@ export enum BattlerIndex {
   PLAYER,
   PLAYER_2,
   ENEMY,
-  ENEMY_2
+  ENEMY_2,
 }

@@ -1,3 +1,5 @@
+// biome-ignore-all lint/style/useUnifiedTypeSignatures: Rule does not allow stuff with JSDoc comments
+
 import type { FixedBattleConfig } from "#app/battle";
 import { globalScene } from "#app/global-scene";
 import { pokemonEvolutions } from "#balance/pokemon-evolutions";
@@ -10,8 +12,8 @@ import type { MoveSourceType } from "#enums/move-source-type";
 import type { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
-import type { DexAttrProps, StarterDataEntry } from "#system/game-data";
 import type { DexEntry } from "#types/dex-data";
+import type { DexAttrProps, StarterDataEntry } from "#types/save-data";
 import { BooleanHolder, type NumberHolder } from "./common";
 import { getPokemonSpecies } from "./pokemon-utils";
 
@@ -202,7 +204,7 @@ export function applyChallenges(challengeType: ChallengeType.SHOP, status: Boole
  * @param challengeType - {@linkcode ChallengeType.POKEMON_ADD_TO_PARTY}
  * @param pokemon - The pokemon being caught
  * @param status - Whether the pokemon can be added to the party or not
- * @return `true` if any challenge was sucessfully applied, `false` otherwise
+ * @returns `true` if any challenge was sucessfully applied, `false` otherwise
  */
 export function applyChallenges(
   challengeType: ChallengeType.POKEMON_ADD_TO_PARTY,
@@ -215,7 +217,7 @@ export function applyChallenges(
  * @param challengeType - {@linkcode ChallengeType.POKEMON_FUSION}
  * @param pokemon - The pokemon being checked
  * @param status - Whether the selected pokemon is allowed to fuse or not
- * @return `true` if any challenge was sucessfully applied, `false` otherwise
+ * @returns `true` if any challenge was sucessfully applied, `false` otherwise
  */
 export function applyChallenges(
   challengeType: ChallengeType.POKEMON_FUSION,
@@ -228,7 +230,7 @@ export function applyChallenges(
  * @param challengeType - {@linkcode ChallengeType.POKEMON_MOVE}
  * @param moveId - The move being checked
  * @param status - Whether the move can be used or not
- * @return `true` if any challenge was sucessfully applied, `false` otherwise
+ * @returns `true` if any challenge was sucessfully applied, `false` otherwise
  */
 export function applyChallenges(
   challengeType: ChallengeType.POKEMON_MOVE,
@@ -241,7 +243,7 @@ export function applyChallenges(
  * @param challengeType - {@linkcode ChallengeType.SHOP_ITEM}
  * @param shopItem - The item being checked
  * @param status - Whether the item should be added to the shop or not
- * @return `true` if any challenge was sucessfully applied, `false` otherwise
+ * @returns `true` if any challenge was sucessfully applied, `false` otherwise
  */
 export function applyChallenges(
   challengeType: ChallengeType.SHOP_ITEM,
@@ -254,7 +256,7 @@ export function applyChallenges(
  * @param challengeType - {@linkcode ChallengeType.WAVE_REWARD}
  * @param reward - The reward being checked
  * @param status - Whether the reward should be added to the reward options or not
- * @return `true` if any challenge was sucessfully applied, `false` otherwise
+ * @returns `true` if any challenge was sucessfully applied, `false` otherwise
  */
 export function applyChallenges(
   challengeType: ChallengeType.WAVE_REWARD,
@@ -266,7 +268,7 @@ export function applyChallenges(
  * Apply all challenges that prevent recovery from fainting
  * @param challengeType - {@linkcode ChallengeType.PREVENT_REVIVE}
  * @param status - Whether fainting is a permanent status or not
- * @return `true` if any challenge was sucessfully applied, `false` otherwise
+ * @returns `true` if any challenge was sucessfully applied, `false` otherwise
  */
 export function applyChallenges(challengeType: ChallengeType.PREVENT_REVIVE, status: BooleanHolder): boolean;
 
@@ -366,7 +368,7 @@ export function checkStarterValidForChallenge(species: PokemonSpecies, props: De
   }
   // We check the validity of every evolution and form change, and require that at least one is valid
   const speciesToCheck = [species.speciesId];
-  while (speciesToCheck.length) {
+  while (speciesToCheck.length > 0) {
     const checking = speciesToCheck.pop();
     // Linter complains if we don't handle this
     if (!checking) {

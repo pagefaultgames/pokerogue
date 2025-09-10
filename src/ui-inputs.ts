@@ -3,17 +3,17 @@ import type { InputsController } from "#app/inputs-controller";
 import { Button } from "#enums/buttons";
 import { UiMode } from "#enums/ui-mode";
 import { Setting, SettingKeys, settingIndex } from "#system/settings";
-import type { MessageUiHandler } from "#ui/message-ui-handler";
-import { PokedexPageUiHandler } from "#ui/pokedex-page-ui-handler";
-import { PokedexUiHandler } from "#ui/pokedex-ui-handler";
-import { RunInfoUiHandler } from "#ui/run-info-ui-handler";
+import type { MessageUiHandler } from "#ui/handlers/message-ui-handler";
+import { PokedexPageUiHandler } from "#ui/handlers/pokedex-page-ui-handler";
+import { PokedexUiHandler } from "#ui/handlers/pokedex-ui-handler";
+import { RunInfoUiHandler } from "#ui/handlers/run-info-ui-handler";
+import { StarterSelectUiHandler } from "#ui/handlers/starter-select-ui-handler";
 import { SettingsAudioUiHandler } from "#ui/settings-audio-ui-handler";
 import { SettingsDisplayUiHandler } from "#ui/settings-display-ui-handler";
 import { SettingsGamepadUiHandler } from "#ui/settings-gamepad-ui-handler";
 import { SettingsKeyboardUiHandler } from "#ui/settings-keyboard-ui-handler";
 import { SettingsUiHandler } from "#ui/settings-ui-handler";
-import { StarterSelectUiHandler } from "#ui/starter-select-ui-handler";
-import type Phaser from "phaser";
+import Phaser from "phaser";
 
 type ActionKeys = Record<Button, () => void>;
 
@@ -103,23 +103,23 @@ export class UiInputs {
 
   getActionsKeyUp(): ActionKeys {
     const actions: ActionKeys = {
-      [Button.UP]: () => undefined,
-      [Button.DOWN]: () => undefined,
-      [Button.LEFT]: () => undefined,
-      [Button.RIGHT]: () => undefined,
-      [Button.SUBMIT]: () => undefined,
-      [Button.ACTION]: () => undefined,
-      [Button.CANCEL]: () => undefined,
-      [Button.MENU]: () => undefined,
+      [Button.UP]: () => {},
+      [Button.DOWN]: () => {},
+      [Button.LEFT]: () => {},
+      [Button.RIGHT]: () => {},
+      [Button.SUBMIT]: () => {},
+      [Button.ACTION]: () => {},
+      [Button.CANCEL]: () => {},
+      [Button.MENU]: () => {},
       [Button.STATS]: () => this.buttonStats(false),
-      [Button.CYCLE_SHINY]: () => undefined,
-      [Button.CYCLE_FORM]: () => undefined,
-      [Button.CYCLE_GENDER]: () => undefined,
-      [Button.CYCLE_ABILITY]: () => undefined,
-      [Button.CYCLE_NATURE]: () => undefined,
+      [Button.CYCLE_SHINY]: () => {},
+      [Button.CYCLE_FORM]: () => {},
+      [Button.CYCLE_GENDER]: () => {},
+      [Button.CYCLE_ABILITY]: () => {},
+      [Button.CYCLE_NATURE]: () => {},
       [Button.CYCLE_TERA]: () => this.buttonInfo(false),
-      [Button.SPEED_UP]: () => undefined,
-      [Button.SLOW_DOWN]: () => undefined,
+      [Button.SPEED_UP]: () => {},
+      [Button.SLOW_DOWN]: () => {},
     };
     return actions;
   }
@@ -224,25 +224,26 @@ export class UiInputs {
 
   buttonSpeedChange(up = true): void {
     const settingGameSpeed = settingIndex(SettingKeys.Game_Speed);
+    const settingOptions = Setting[settingGameSpeed].options;
+    let currentSetting = settingOptions.findIndex(item => item.value === globalScene.gameSpeed.toString());
+    // if current setting is -1, then the current game speed is not a valid option, so default to index 5 (3x)
+    if (currentSetting === -1) {
+      currentSetting = 5;
+    }
+    let direction: number;
     if (up && globalScene.gameSpeed < 5) {
-      globalScene.gameData.saveSetting(
-        SettingKeys.Game_Speed,
-        Setting[settingGameSpeed].options.findIndex(item => item.label === `${globalScene.gameSpeed}x`) + 1,
-      );
-      if (globalScene.ui?.getMode() === UiMode.SETTINGS) {
-        (globalScene.ui.getHandler() as SettingsUiHandler).show([]);
-      }
+      direction = 1;
     } else if (!up && globalScene.gameSpeed > 1) {
-      globalScene.gameData.saveSetting(
-        SettingKeys.Game_Speed,
-        Math.max(
-          Setting[settingGameSpeed].options.findIndex(item => item.label === `${globalScene.gameSpeed}x`) - 1,
-          0,
-        ),
-      );
-      if (globalScene.ui?.getMode() === UiMode.SETTINGS) {
-        (globalScene.ui.getHandler() as SettingsUiHandler).show([]);
-      }
+      direction = -1;
+    } else {
+      return;
+    }
+    globalScene.gameData.saveSetting(
+      SettingKeys.Game_Speed,
+      Phaser.Math.Clamp(currentSetting + direction, 0, settingOptions.length - 1),
+    );
+    if (globalScene.ui?.getMode() === UiMode.SETTINGS) {
+      (globalScene.ui.getHandler() as SettingsUiHandler).show([]);
     }
   }
 }
