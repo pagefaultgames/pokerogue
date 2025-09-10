@@ -2561,7 +2561,7 @@ export class FormBlockDamageTag extends SerializableBattlerTag {
   /**
    * Applies the tag to the Pokémon.
    * Triggers a form change if the Pokémon is not in its defense form.
-   * @param {Pokemon} pokemon The Pokémon to which the tag is added.
+   * @param pokemon The Pokémon to which the tag is added.
    */
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);

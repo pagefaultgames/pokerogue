@@ -73,8 +73,8 @@ export class ModifierBar extends Phaser.GameObjects.Container {
 
   /**
    * Method to update content displayed in {@linkcode ModifierBar}
-   * @param {PersistentModifier[]} modifiers - The list of modifiers to be displayed in the {@linkcode ModifierBar}
-   * @param {boolean} hideHeldItems - If set to "true", only modifiers not assigned to a Pokémon are displayed
+   * @param modifiers - The list of modifiers to be displayed in the {@linkcode ModifierBar}
+   * @param hideHeldItems - If set to "true", only modifiers not assigned to a Pokémon are displayed
    */
   updateModifiers(modifiers: PersistentModifier[], hideHeldItems = false) {
     this.removeAll(true);
@@ -1201,13 +1201,16 @@ export class EvolutionStatBoosterModifier extends StatBoosterModifier {
 
   /**
    * Boosts the incoming stat value by a {@linkcode EvolutionStatBoosterModifier.multiplier} if the holder
-   * can evolve. Note that, if the holder is a fusion, they will receive
+   * can evolve
+   *
+   * @remarks
+   * Note that, if the holder is a fusion, they will receive
    * only half of the boost if either of the fused members are fully
    * evolved. However, if they are both unevolved, the full boost
    * will apply.
-   * @param pokemon {@linkcode Pokemon} that holds the item
-   * @param _stat {@linkcode Stat} The {@linkcode Stat} to be boosted
-   * @param statValue{@linkcode NumberHolder} that holds the resulting value of the stat
+   * @param pokemon - The `Pokemon` holding the item
+   * @param _stat - The `Stat` to be boosted
+   * @param statValue - Holds the resulting value of the stat
    * @returns `true` if the stat boost applies successfully, false otherwise
    * @see shouldApply
    */

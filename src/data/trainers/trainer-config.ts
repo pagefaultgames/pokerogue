@@ -274,8 +274,8 @@ export class TrainerConfig {
 
   /**
    * Sets the configuration for trainers with genders, including the female name and encounter background music (BGM).
-   * @param {string} [nameFemale] The name of the female trainer. If 'Ivy', a localized name will be assigned.
-   * @param {TrainerType | string} [femaleEncounterBgm] The encounter BGM for the female trainer, which can be a TrainerType or a string.
+   * @param [nameFemale] The name of the female trainer. If 'Ivy', a localized name will be assigned.
+   * @param [femaleEncounterBgm] The encounter BGM for the female trainer, which can be a TrainerType or a string.
    * @returns The updated TrainerConfig instance.
    */
   setHasGenders(nameFemale?: string, femaleEncounterBgm?: TrainerType | string): TrainerConfig {
@@ -523,7 +523,7 @@ export class TrainerConfig {
    * Initializes the trainer configuration for an evil team admin.
    * @param title The title of the evil team admin.
    * @param poolName The evil team the admin belongs to.
-   * @param {SpeciesId | SpeciesId[]} signatureSpecies The signature species for the evil team leader.
+   * @param signatureSpecies The signature species for the evil team leader.
    * @param specialtyType The specialty Type of the admin, if they have one
    * @returns The updated TrainerConfig instance.
    */
@@ -590,8 +590,8 @@ export class TrainerConfig {
 
   /**
    * Initializes the trainer configuration for an evil team leader. Temporarily hardcoding evil leader teams though.
-   * @param {SpeciesId | SpeciesId[]} signatureSpecies The signature species for the evil team leader.
-   * @param {PokemonType} specialtyType The specialty type for the evil team Leader.
+   * @param signatureSpecies The signature species for the evil team leader.
+   * @param specialtyType The specialty type for the evil team Leader.
    * @param boolean Whether or not this is the rematch fight
    * @returns The updated TrainerConfig instance.
    */
@@ -631,9 +631,9 @@ export class TrainerConfig {
 
   /**
    * Initializes the trainer configuration for a Gym Leader.
-   * @param {SpeciesId | SpeciesId[]} signatureSpecies The signature species for the Gym Leader. Added to party in reverse order.
+   * @param signatureSpecies The signature species for the Gym Leader. Added to party in reverse order.
    * @param isMale Whether the Gym Leader is Male or Not (for localization of the title).
-   * @param {PokemonType} specialtyType The specialty type for the Gym Leader.
+   * @param specialtyType The specialty type for the Gym Leader.
    * @param ignoreMinTeraWave Whether the Gym Leader always uses Tera (true), or only Teras after {@linkcode GYM_LEADER_TERA_WAVE} (false). Defaults to false.
    * @param teraSlot Optional, sets the party member in this slot to Terastallize. Wraps based on party size.
    * @returns The updated TrainerConfig instance.
@@ -748,7 +748,7 @@ export class TrainerConfig {
 
   /**
    * Initializes the trainer configuration for a Champion.
-   * @param {SpeciesId | SpeciesId[]} signatureSpecies The signature species for the Champion.
+   * @param signatureSpecies The signature species for the Champion.
    * @param isMale Whether the Champion is Male or Female (for localization of the title).
    * @returns The updated TrainerConfig instance.
    */
@@ -798,8 +798,8 @@ export class TrainerConfig {
 
   /**
    * Retrieves the title for the trainer based on the provided trainer slot and variant.
-   * @param {TrainerSlot} trainerSlot - The slot to determine which title to use. Defaults to TrainerSlot.NONE.
-   * @param {TrainerVariant} variant - The variant of the trainer to determine the specific title.
+   * @param trainerSlot - The slot to determine which title to use. Defaults to TrainerSlot.NONE.
+   * @param variant - The variant of the trainer to determine the specific title.
    * @returns - The title of the trainer.
    */
   getTitle(trainerSlot: TrainerSlot = TrainerSlot.NONE, variant: TrainerVariant): string {

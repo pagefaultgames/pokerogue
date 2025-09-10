@@ -2647,10 +2647,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Gets all level up moves in a given range for a particular pokemon.
-   * @param {number} startingLevel Don't include moves below this level
-   * @param {boolean} includeEvolutionMoves Whether to include evolution moves
-   * @param {boolean} simulateEvolutionChain Whether to include moves from prior evolutions
-   * @param {boolean} includeRelearnerMoves Whether to include moves that would require a relearner. Note the move relearner inherently allows evolution moves
+   * @param startingLevel Don't include moves below this level
+   * @param includeEvolutionMoves Whether to include evolution moves
+   * @param simulateEvolutionChain Whether to include moves from prior evolutions
+   * @param includeRelearnerMoves Whether to include moves that would require a relearner. Note the move relearner inherently allows evolution moves
    * @returns A list of moves and the levels they can be learned at
    */
   getLevelMoves(
@@ -3552,8 +3552,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * This method considers various factors such as the user's accuracy level, the target's evasion level,
    * abilities, and modifiers to compute the final accuracy multiplier.
    *
-   * @param target {@linkcode Pokemon} - The target Pokémon against which the move is used.
-   * @param sourceMove {@linkcode Move}  - The move being used by the user.
+   * @param target - The target Pokémon against which the move is used.
+   * @param sourceMove - The move being used by the user.
    * @returns The calculated accuracy multiplier.
    */
   getAccuracyMultiplier(target: Pokemon, sourceMove: Move): number {

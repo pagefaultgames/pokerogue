@@ -4354,10 +4354,10 @@ const countPositiveStatStages = (pokemon: Pokemon): number => {
 export class PositiveStatStagePowerAttr extends VariablePowerAttr {
 
   /**
-   * @param {Pokemon} user The pokemon that is being used to calculate the amount of positive stats
-   * @param {Pokemon} target N/A
-   * @param {Move} move N/A
-   * @param {any[]} args The argument for VariablePowerAttr, accumulates and sets the amount of power multiplied by stats
+   * @param user The pokemon that is being used to calculate the amount of positive stats
+   * @param target N/A
+   * @param move N/A
+   * @param args The argument for VariablePowerAttr, accumulates and sets the amount of power multiplied by stats
    * @returns Returns true if attribute is applied
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -4378,10 +4378,10 @@ export class PunishmentPowerAttr extends VariablePowerAttr {
   private PUNISHMENT_MAX_BASE_POWER = 200;
 
   /**
-     * @param {Pokemon} user N/A
-     * @param {Pokemon} target The pokemon that the move is being used against, as well as calculating the stats for the min/max base power
-     * @param {Move} move N/A
-     * @param {any[]} args The value that is being changed due to VariablePowerAttr
+     * @param user N/A
+     * @param target The pokemon that the move is being used against, as well as calculating the stats for the min/max base power
+     * @param move N/A
+     * @param args The value that is being changed due to VariablePowerAttr
      * @returns Returns true if attribute is applied
      */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -5482,10 +5482,10 @@ export class SheerColdAccuracyAttr extends OneHitKOAccuracyAttr {
   /**
    * Changes the normal One Hit KO Accuracy Attr to implement the Gen VII changes,
    * where if the user is Ice-Type, it has more accuracy.
-   * @param {Pokemon} user Pokemon that is using the move; checks the Pokemon's level.
-   * @param {Pokemon} target Pokemon that is receiving the move; checks the Pokemon's level.
-   * @param {Move} move N/A
-   * @param {any[]} args Uses the accuracy argument, allowing to change it from either 0 if it doesn't pass
+   * @param user Pokemon that is using the move; checks the Pokemon's level.
+   * @param target Pokemon that is receiving the move; checks the Pokemon's level.
+   * @param move N/A
+   * @param args Uses the accuracy argument, allowing to change it from either 0 if it doesn't pass
    * the first if/else, or 30/20 depending on the type of the user Pokemon.
    * @returns Returns true if move is successful, false if misses.
    */
@@ -7438,10 +7438,10 @@ export class SketchAttr extends MoveEffectAttr {
   }
   /**
    * User copies the opponent's last used move, if possible
-   * @param {Pokemon} user Pokemon that used the move and will replace Sketch with the copied move
-   * @param {Pokemon} target Pokemon that the user wants to copy a move from
-   * @param {Move} move Move being used
-   * @param {any[]} args Unused
+   * @param user Pokemon that used the move and will replace Sketch with the copied move
+   * @param target Pokemon that the user wants to copy a move from
+   * @param move Move being used
+   * @param args Unused
    * @returns true if the function succeeds, otherwise false
    */
 
@@ -7733,7 +7733,7 @@ export class ShiftStatAttr extends MoveEffectAttr {
 
   /**
    * Switches the user's stats based on the {@linkcode statToSwitch} and {@linkcode statToSwitchWith} attributes.
-   * @param {Pokemon} user the {@linkcode Pokemon} that used the move
+   * @param user the {@linkcode Pokemon} that used the move
    * @param target n/a
    * @param move n/a
    * @param args n/a
@@ -7761,7 +7761,7 @@ export class ShiftStatAttr extends MoveEffectAttr {
 
   /**
    * Encourages the user to use the move if the stat to switch with is greater than the stat to switch.
-   * @param {Pokemon} user the {@linkcode Pokemon} that used the move
+   * @param user the {@linkcode Pokemon} that used the move
    * @param target n/a
    * @param move n/a
    * @returns number of points to add to the user's benefit score
@@ -7838,7 +7838,7 @@ export class DestinyBondAttr extends MoveEffectAttr {
    * @param user {@linkcode Pokemon} that is having the tag applied to.
    * @param target {@linkcode Pokemon} N/A
    * @param move {@linkcode Move} {@linkcode Move.DESTINY_BOND}
-   * @param {any[]} args N/A
+   * @param args N/A
    * @returns true
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -7858,7 +7858,7 @@ export class AddBattlerTagIfBoostedAttr extends AddBattlerTagAttr {
    * @param user {@linkcode Pokemon} using this move
    * @param target {@linkcode Pokemon} target of this move
    * @param move {@linkcode Move} being used
-   * @param {any[]} args N/A
+   * @param args N/A
    * @returns true
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -7884,7 +7884,7 @@ export class StatusIfBoostedAttr extends MoveEffectAttr {
    * @param user {@linkcode Pokemon} using this move
    * @param target {@linkcode Pokemon} target of this move
    * @param move {@linkcode Move} N/A
-   * @param {any[]} args N/A
+   * @param args N/A
    * @returns true
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -8144,10 +8144,10 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
 
   /**
    * User changes its type to a random type that resists the target's last used move
-   * @param {Pokemon} user Pokemon that used the move and will change types
-   * @param {Pokemon} target Opposing pokemon that recently used a move
-   * @param {Move} move Move being used
-   * @param {any[]} args Unused
+   * @param user Pokemon that used the move and will change types
+   * @param target Opposing pokemon that recently used a move
+   * @param move Move being used
+   * @param args Unused
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {

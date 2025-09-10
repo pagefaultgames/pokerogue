@@ -507,7 +507,7 @@ export class ClearWeatherAbAttr extends AbAttr {
   private weather: WeatherType[];
 
   /**
-   * @param weather {@linkcode WeatherType[]} - the weather to be removed
+   * @param weather - The weather to be removed
    */
   constructor(weather: WeatherType[]) {
     super(true);
@@ -537,7 +537,7 @@ export class ClearTerrainAbAttr extends AbAttr {
   private terrain: TerrainType[];
 
   /**
-   * @param terrain {@linkcode TerrainType[]} - the terrain to be removed
+   * @param terrain - the terrain to be removed
    */
   constructor(terrain: TerrainType[]) {
     super(true);
@@ -2613,7 +2613,7 @@ export class PostSummonRemoveArenaTagAbAttr extends PostSummonAbAttr {
   private arenaTags: ArenaTagType[];
 
   /**
-   * @param arenaTags {@linkcode ArenaTagType[]} - the arena tags to be removed
+   * @param arenaTags - The arena tags to be removed
    */
   constructor(arenaTags: ArenaTagType[]) {
     super(true);
@@ -4241,7 +4241,7 @@ function getAnticipationCondition(): AbAttrCondition {
  * Creates an ability condition that causes the ability to fail if that ability
  * has already been used by that pokemon that battle. It requires an ability to
  * be specified due to current limitations in how conditions on abilities work.
- * @param {AbilityId} ability The ability to check if it's already been applied
+ * @param ability The ability to check if it's already been applied
  * @returns The condition
  */
 function getOncePerBattleCondition(ability: AbilityId): AbAttrCondition {
