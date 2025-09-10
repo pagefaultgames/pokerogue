@@ -670,10 +670,7 @@ export class SingleGenerationChallenge extends Challenge {
     return false;
   }
 
-  /**
-   * @overrides
-   */
-  getDifficulty(): number {
+  override getDifficulty(): number {
     return this.value > 0 ? 1 : 0;
   }
 
@@ -756,10 +753,7 @@ export class SingleTypeChallenge extends Challenge {
     return false;
   }
 
-  /**
-   * @overrides
-   */
-  getDifficulty(): number {
+  override getDifficulty(): number {
     return this.value > 0 ? 1 : 0;
   }
 
