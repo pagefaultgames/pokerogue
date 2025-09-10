@@ -5,7 +5,7 @@ import { ChallengeType } from "#enums/challenge-type";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
 import { BattlePhase } from "#phases/battle-phase";
-import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import type { OptionSelectItem } from "#ui/handlers/abstract-option-select-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, randSeedInt } from "#utils/common";
 
@@ -43,9 +43,9 @@ export class SelectBiomePhase extends BattlePhase {
     };
 
     if (
-      (gameMode.isClassic && gameMode.isWaveFinal(nextWaveIndex + 9)) ||
-      (gameMode.isDaily && gameMode.isWaveFinal(nextWaveIndex)) ||
-      (gameMode.hasShortBiomes && !(nextWaveIndex % 50))
+      (gameMode.isClassic && gameMode.isWaveFinal(nextWaveIndex + 9))
+      || (gameMode.isDaily && gameMode.isWaveFinal(nextWaveIndex))
+      || (gameMode.hasShortBiomes && !(nextWaveIndex % 50))
     ) {
       setNextBiome(BiomeId.END);
     } else if (gameMode.hasRandomBiomes) {

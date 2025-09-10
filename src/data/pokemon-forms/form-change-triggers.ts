@@ -167,7 +167,7 @@ export class SpeciesFormChangeMoveLearnedTrigger extends SpeciesFormChangeTrigge
   }
 
   canChange(pokemon: Pokemon): boolean {
-    return !!pokemon.moveset.filter(m => m.moveId === this.move).length === this.known;
+    return pokemon.moveset.filter(m => m.moveId === this.move).length > 0 === this.known;
   }
 }
 
@@ -200,7 +200,7 @@ export class SpeciesFormChangePostMoveTrigger extends SpeciesFormChangeMoveTrigg
 
   canChange(pokemon: Pokemon): boolean {
     return (
-      pokemon.summonData && !!pokemon.getLastXMoves(1).filter(m => this.movePredicate(m.move)).length === this.used
+      pokemon.summonData && pokemon.getLastXMoves(1).filter(m => this.movePredicate(m.move)).length > 0 === this.used
     );
   }
 }
@@ -232,9 +232,10 @@ export class SpeciesDefaultFormMatchTrigger extends SpeciesFormChangeTrigger {
 
   canChange(pokemon: Pokemon): boolean {
     return (
-      this.formKey ===
-      pokemon.species.forms[globalScene.getSpeciesFormIndex(pokemon.species, pokemon.gender, pokemon.getNature(), true)]
-        .formKey
+      this.formKey
+      === pokemon.species.forms[
+        globalScene.getSpeciesFormIndex(pokemon.species, pokemon.gender, pokemon.getNature(), true)
+      ].formKey
     );
   }
 }
@@ -283,10 +284,10 @@ export class SpeciesFormChangeWeatherTrigger extends SpeciesFormChangeTrigger {
     const isAbilitySuppressed = pokemon.summonData.abilitySuppressed;
 
     return (
-      !isAbilitySuppressed &&
-      !isWeatherSuppressed &&
-      pokemon.hasAbility(this.ability) &&
-      this.weathers.includes(currentWeather)
+      !isAbilitySuppressed
+      && !isWeatherSuppressed
+      && pokemon.hasAbility(this.ability)
+      && this.weathers.includes(currentWeather)
     );
   }
 }

@@ -117,9 +117,11 @@ export class Arena {
       return overrideSpecies;
     }
     const isBossSpecies =
-      !!globalScene.getEncounterBossSegments(waveIndex, level) &&
-      !!this.pokemonPool[BiomePoolTier.BOSS].length &&
-      (this.biomeType !== BiomeId.END || globalScene.gameMode.isClassic || globalScene.gameMode.isWaveFinal(waveIndex));
+      !!globalScene.getEncounterBossSegments(waveIndex, level)
+      && this.pokemonPool[BiomePoolTier.BOSS].length > 0
+      && (this.biomeType !== BiomeId.END
+        || globalScene.gameMode.isClassic
+        || globalScene.gameMode.isWaveFinal(waveIndex));
     const randVal = isBossSpecies ? 64 : 512;
     // luck influences encounter rarity
     let luckModifier = 0;
@@ -145,14 +147,14 @@ export class Arena {
             ? BiomePoolTier.BOSS_SUPER_RARE
             : BiomePoolTier.BOSS_ULTRA_RARE;
     console.log(BiomePoolTier[tier]);
-    while (!this.pokemonPool[tier]?.length) {
+    while (this.pokemonPool[tier]?.length === 0) {
       console.log(`Downgraded rarity tier from ${BiomePoolTier[tier]} to ${BiomePoolTier[tier - 1]}`);
       tier--;
     }
     const tierPool = this.pokemonPool[tier];
     let ret: PokemonSpecies;
     let regen = false;
-    if (!tierPool.length) {
+    if (tierPool.length === 0) {
       ret = globalScene.randomSpecies(waveIndex, level);
     } else {
       // TODO: should this use `randSeedItem`?
@@ -204,8 +206,8 @@ export class Arena {
 
   randomTrainerType(waveIndex: number, isBoss = false): TrainerType {
     const isTrainerBoss =
-      !!this.trainerPool[BiomePoolTier.BOSS].length &&
-      (globalScene.gameMode.isTrainerBoss(waveIndex, this.biomeType, globalScene.offsetGym) || isBoss);
+      this.trainerPool[BiomePoolTier.BOSS].length > 0
+      && (globalScene.gameMode.isTrainerBoss(waveIndex, this.biomeType, globalScene.offsetGym) || isBoss);
     console.log(isBoss, this.trainerPool);
     const tierValue = randSeedInt(!isTrainerBoss ? 512 : 64);
     let tier = !isTrainerBoss
@@ -226,12 +228,12 @@ export class Arena {
             ? BiomePoolTier.BOSS_SUPER_RARE
             : BiomePoolTier.BOSS_ULTRA_RARE;
     console.log(BiomePoolTier[tier]);
-    while (tier && !this.trainerPool[tier].length) {
+    while (tier && this.trainerPool[tier].length === 0) {
       console.log(`Downgraded trainer rarity tier from ${BiomePoolTier[tier]} to ${BiomePoolTier[tier - 1]}`);
       tier--;
     }
     const tierPool = this.trainerPool[tier] || [];
-    return !tierPool.length ? TrainerType.BREEDER : tierPool[randSeedInt(tierPool.length)];
+    return tierPool.length === 0 ? TrainerType.BREEDER : tierPool[randSeedInt(tierPool.length)];
   }
 
   getSpeciesFormIndex(species: PokemonSpecies): number {
@@ -323,15 +325,14 @@ export class Arena {
     const oldWeatherType = this.weather?.weatherType || WeatherType.NONE;
 
     if (
-      this.weather?.isImmutable() &&
-      ![WeatherType.HARSH_SUN, WeatherType.HEAVY_RAIN, WeatherType.STRONG_WINDS, WeatherType.NONE].includes(weather)
+      this.weather?.isImmutable()
+      && ![WeatherType.HARSH_SUN, WeatherType.HEAVY_RAIN, WeatherType.STRONG_WINDS, WeatherType.NONE].includes(weather)
     ) {
       globalScene.phaseManager.unshiftNew(
         "CommonAnimPhase",
         undefined,
         undefined,
         CommonAnim.SUNNY + (oldWeatherType - 1),
-        true,
       );
       globalScene.phaseManager.queueMessage(getLegendaryWeatherContinuesMessage(oldWeatherType)!);
       return false;
@@ -350,13 +351,7 @@ export class Arena {
     ); // TODO: is this bang correct?
 
     if (this.weather) {
-      globalScene.phaseManager.unshiftNew(
-        "CommonAnimPhase",
-        undefined,
-        undefined,
-        CommonAnim.SUNNY + (weather - 1),
-        true,
-      );
+      globalScene.phaseManager.unshiftNew("CommonAnimPhase", undefined, undefined, CommonAnim.SUNNY + (weather - 1));
       globalScene.phaseManager.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
     } else {
       globalScene.phaseManager.queueMessage(getWeatherClearMessage(oldWeatherType)!); // TODO: is this bang correct?
@@ -836,7 +831,7 @@ export class Arena {
   }
 
   removeAllTags(): void {
-    while (this.tags.length) {
+    while (this.tags.length > 0) {
       this.tags[0].onRemove(this);
       this.eventTarget.dispatchEvent(
         new TagRemovedEvent(this.tags[0].tagType, this.tags[0].side, this.tags[0].turnCount),

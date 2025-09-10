@@ -35,9 +35,9 @@ const fixLegendaryStats: SystemSaveMigrator = {
   version: "1.0.4",
   migrate: (data: SystemSaveData): void => {
     if (
-      data.gameStats &&
-      data.gameStats.legendaryPokemonCaught !== undefined &&
-      data.gameStats.subLegendaryPokemonCaught === undefined
+      data.gameStats
+      && data.gameStats.legendaryPokemonCaught !== undefined
+      && data.gameStats.subLegendaryPokemonCaught === undefined
     ) {
       data.gameStats.subLegendaryPokemonSeen = 0;
       data.gameStats.subLegendaryPokemonCaught = 0;

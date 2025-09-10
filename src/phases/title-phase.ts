@@ -14,8 +14,8 @@ import { getBiomeKey } from "#field/arena";
 import { assignDailyRunStarterHeldItems } from "#items/held-item-pool";
 import type { SessionSaveData } from "#system/game-data";
 import { vouchers } from "#system/voucher";
-import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
-import { SaveSlotUiMode } from "#ui/save-slot-select-ui-handler";
+import type { OptionSelectConfig, OptionSelectItem } from "#ui/handlers/abstract-option-select-ui-handler";
+import { SaveSlotUiMode } from "#ui/handlers/save-slot-select-ui-handler";
 import { isLocal, isLocalServerConnected, isNullOrUndefined } from "#utils/common";
 import i18next from "i18next";
 
@@ -123,7 +123,7 @@ export class TitlePhase extends Phase {
           });
           globalScene.ui.showText(i18next.t("menu:selectGameMode"), null, () =>
             globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
-              options: options,
+              options,
             }),
           );
           return true;
@@ -159,7 +159,7 @@ export class TitlePhase extends Phase {
       },
     );
     const config: OptionSelectConfig = {
-      options: options,
+      options,
       noCancel: true,
       yOffset: 47,
     };
@@ -175,6 +175,9 @@ export class TitlePhase extends Phase {
       .then((success: boolean) => {
         if (success) {
           this.loaded = true;
+          if (loggedInUser) {
+            loggedInUser.lastSessionSlot = slotId;
+          }
           globalScene.ui.showText(i18next.t("menu:sessionSuccess"), null, () => this.end());
         } else {
           this.end();
@@ -306,8 +309,8 @@ export class TitlePhase extends Phase {
       }
 
       if (
-        globalScene.currentBattle.battleType !== BattleType.TRAINER &&
-        (globalScene.currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily)
+        globalScene.currentBattle.battleType !== BattleType.TRAINER
+        && (globalScene.currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily)
       ) {
         const minPartySize = globalScene.currentBattle.double ? 2 : 1;
         if (availablePartyMembers > minPartySize) {

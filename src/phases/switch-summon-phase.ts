@@ -56,9 +56,9 @@ export class SwitchSummonPhase extends SummonPhase {
     }
 
     if (
-      !this.doReturn ||
-      (this.slotIndex !== -1 &&
-        !(this.player ? globalScene.getPlayerParty() : globalScene.getEnemyParty())[this.slotIndex])
+      !this.doReturn
+      || (this.slotIndex !== -1
+        && !(this.player ? globalScene.getPlayerParty() : globalScene.getEnemyParty())[this.slotIndex])
     ) {
       if (this.player) {
         this.switchAndSummon();
@@ -196,9 +196,9 @@ export class SwitchSummonPhase extends SummonPhase {
     // Compensate for turn spent summoning/forced switch if switched out pokemon is not fainted.
     // Needed as we increment turn counters in `TurnEndPhase`.
     if (
-      currentCommand === Command.POKEMON ||
-      lastPokemonIsForceSwitchedAndNotFainted ||
-      lastPokemonHasForceSwitchAbAttr
+      currentCommand === Command.POKEMON
+      || lastPokemonIsForceSwitchedAndNotFainted
+      || lastPokemonHasForceSwitchAbAttr
     ) {
       pokemon.tempSummonData.turnCount--;
       pokemon.tempSummonData.waveTurnCount--;

@@ -27,20 +27,18 @@ jobs:
       # Only push docs when running on pushes to main/beta
       DRY_RUN: ${{github.event_name != 'push' || (github.ref_name != 'beta' && github.ref_name != 'main')}}
 
-    strategy:
-      fail-fast: false
-
     steps:
       - name: Checkout repository for Typedoc
         uses: actions/checkout@v4
         with:
-          submodules: 'recursive'
           path: pokerogue_docs
-
-      - name: Install OS package
-        run: |
-          sudo apt update
-          sudo apt install -y git openssh-client
+          sparse-checkout: |
+            /*
+            !/public/
+            /public/images/pokemon/variant/_exp_masterlist.json
+            /public/images/pokemon/variant/_masterlist.json
+            /public/images/logo.png
+          sparse-checkout-cone-mode: false
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -77,9 +75,7 @@ jobs:
           cd pokerogue_gh
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
-          mkdir -p $GITHUB_REF_NAME
-          rm -rf $GITHUB_REF_NAME/*
-          cp -r /tmp/docs $GITHUB_REF_NAME
+          rsync -rd --delete /tmp/docs/ $GITHUB_REF_NAME
           git add $GITHUB_REF_NAME
           git commit -m "[skip ci] Deploy docs"
           git push

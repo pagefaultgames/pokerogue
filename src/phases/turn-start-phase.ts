@@ -73,7 +73,7 @@ export class TurnStartPhase extends FieldPhase {
       applyAbAttrs("PreventBypassSpeedChanceAbAttr", {
         pokemon: p,
         bypass: bypassSpeed,
-        canCheckHeldItems: canCheckHeldItems,
+        canCheckHeldItems,
       });
       if (canCheckHeldItems.value) {
         applyHeldItems(HeldItemEffect.BYPASS_SPEED_CHANCE, { pokemon: p, doBypassSpeed: bypassSpeed });
@@ -227,8 +227,8 @@ export class TurnStartPhase extends FieldPhase {
 
     // TODO: This seems somewhat dubious
     const move =
-      pokemon.getMoveset().find(m => m.moveId === queuedMove.move && m.ppUsed < m.getMovePp()) ??
-      new PokemonMove(queuedMove.move);
+      pokemon.getMoveset().find(m => m.moveId === queuedMove.move && m.ppUsed < m.getMovePp())
+      ?? new PokemonMove(queuedMove.move);
 
     if (move.getMove().hasAttr("MoveHeaderAttr")) {
       globalScene.phaseManager.unshiftNew("MoveHeaderPhase", pokemon, move);

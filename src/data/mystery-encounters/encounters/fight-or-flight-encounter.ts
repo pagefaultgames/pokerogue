@@ -66,7 +66,7 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder.
     const config: EnemyPartyConfig = {
       pokemonConfigs: [
         {
-          level: level,
+          level,
           species: bossPokemon.species,
           dataSource: new PokemonData(bossPokemon),
           isBoss: true,
@@ -123,8 +123,8 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder.
         disableAnimation: true,
       },
       {
-        spriteKey: spriteKey,
-        fileRoot: fileRoot,
+        spriteKey,
+        fileRoot,
         hasShadow: true,
         tint: 0.25,
         x: -5,

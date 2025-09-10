@@ -39,6 +39,10 @@ export class EggSummaryPhase extends Phase {
   }
 
   end() {
+    this.eggHatchData.forEach(data => {
+      data.pokemon?.destroy();
+    });
+    this.eggHatchData = [];
     globalScene.time.delayedCall(250, () => globalScene.setItemsVisible(true));
     globalScene.ui.setModeForceTransition(UiMode.MESSAGE).then(() => {
       super.end();

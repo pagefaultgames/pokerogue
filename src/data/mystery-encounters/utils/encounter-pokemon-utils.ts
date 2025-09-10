@@ -29,9 +29,9 @@ import {
   showEncounterText,
 } from "#mystery-encounters/encounter-dialogue-utils";
 import { achvs } from "#system/achv";
-import type { PartyOption } from "#ui/party-ui-handler";
-import { PartyUiMode } from "#ui/party-ui-handler";
-import { SummaryUiMode } from "#ui/summary-ui-handler";
+import type { PartyOption } from "#ui/handlers/party-ui-handler";
+import { PartyUiMode } from "#ui/handlers/party-ui-handler";
+import { SummaryUiMode } from "#ui/handlers/summary-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, isNullOrUndefined, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
@@ -263,11 +263,11 @@ export function getRandomSpeciesByStarterCost(
     .filter(s => {
       const pokemonSpecies = getPokemonSpecies(s[0]);
       return (
-        pokemonSpecies &&
-        (!excludedSpecies || !excludedSpecies.includes(s[0])) &&
-        (allowSubLegendary || !pokemonSpecies.subLegendary) &&
-        (allowLegendary || !pokemonSpecies.legendary) &&
-        (allowMythical || !pokemonSpecies.mythical)
+        pokemonSpecies
+        && (!excludedSpecies || !excludedSpecies.includes(s[0]))
+        && (allowSubLegendary || !pokemonSpecies.subLegendary)
+        && (allowLegendary || !pokemonSpecies.legendary)
+        && (allowMythical || !pokemonSpecies.mythical)
       );
     })
     .map(s => [getPokemonSpecies(s[0]), s[1]]);
@@ -601,8 +601,8 @@ export async function catchPokemon(
   const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
 
   if (
-    speciesForm.abilityHidden &&
-    (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1
+    speciesForm.abilityHidden
+    && (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1
   ) {
     globalScene.validateAchv(achvs.HIDDEN_ABILITY);
   }
@@ -937,8 +937,8 @@ export async function addPokemonDataToDexAndValidateAchievements(pokemon: Player
   const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
 
   if (
-    speciesForm.abilityHidden &&
-    (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1
+    speciesForm.abilityHidden
+    && (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1
   ) {
     globalScene.validateAchv(achvs.HIDDEN_ABILITY);
   }

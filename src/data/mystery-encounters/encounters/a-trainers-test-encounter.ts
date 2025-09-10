@@ -111,7 +111,7 @@ export const ATrainersTestEncounter: MysteryEncounter = MysteryEncounterBuilder.
     const trainerSpriteKey = trainerConfig.getSpriteKey();
     encounter.enemyPartyConfigs.push({
       levelAdditiveModifier: 1,
-      trainerConfig: trainerConfig,
+      trainerConfig,
     });
 
     encounter.spriteConfigs = [

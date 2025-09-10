@@ -457,8 +457,8 @@ export function getTextStyleOptions(
   if (extraStyleOptions) {
     if (extraStyleOptions.fontSize) {
       const sizeRatio =
-        Number.parseInt(extraStyleOptions.fontSize.toString().slice(0, -2)) /
-        Number.parseInt(styleOptions.fontSize?.toString().slice(0, -2) ?? "1");
+        Number.parseInt(extraStyleOptions.fontSize.toString().slice(0, -2))
+        / Number.parseInt(styleOptions.fontSize?.toString().slice(0, -2) ?? "1");
       shadowXpos *= sizeRatio;
     }
     styleOptions = Object.assign(styleOptions, extraStyleOptions);

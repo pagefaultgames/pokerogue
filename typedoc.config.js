@@ -8,7 +8,13 @@ const dryRun = !!process.env.DRY_RUN?.match(/true/gi);
 const config = {
   entryPoints: ["./src", "./test/test-utils"],
   entryPointStrategy: "expand",
-  exclude: ["**/*+.test.ts", "src/polyfills.ts", "src/vite.env.d.ts"],
+  exclude: [
+    "src/polyfills.ts",
+    "src/vite.env.d.ts",
+    "**/*+.test.ts",
+    "test/test-utils/setup",
+    "test/test-utils/reporters",
+  ],
   excludeReferences: true, // prevent documenting re-exports
   requiredToBeDocumented: [
     "Enum",

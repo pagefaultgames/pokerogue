@@ -100,7 +100,7 @@ describe("Abilities - Cud Chew", () => {
       expect(abDisplaySpy.mock.calls[1][2]).toBe(false);
 
       // should display messgae
-      expect(game.textInterceptor.getLatestMessage()).toBe(
+      expect(game.textInterceptor.logs).toContain(
         i18next.t("battle:hpIsFull", {
           pokemonName: getPokemonNameWithAffix(farigiraf),
         }),

@@ -4,8 +4,6 @@ import type { Phase } from "#app/phase";
 import type Overrides from "#app/overrides";
 import type { ArenaTag } from "#data/arena-tag";
 import type { TerrainType } from "#data/terrain";
-import type { BattlerTag } from "#data/battler-tags";
-import type { PositionalTag } from "#data/positional-tags/positional-tag";
 import type { AbilityId } from "#enums/ability-id";
 import type { ArenaTagSide } from "#enums/arena-tag-side";
 import type { ArenaTagType } from "#enums/arena-tag-type";
@@ -13,12 +11,8 @@ import type { BattlerTagType } from "#enums/battler-tag-type";
 import type { MoveId } from "#enums/move-id";
 import type { PokemonType } from "#enums/pokemon-type";
 import type { PositionalTagType } from "#enums/positional-tag-type";
-import type { BattleStat, EffectiveStat, Stat } from "#enums/stat";
-import type { StatusEffect } from "#enums/status-effect";
+import type { BattleStat, EffectiveStat } from "#enums/stat";
 import type { WeatherType } from "#enums/weather-type";
-import type { Arena } from "#field/arena";
-import type { Pokemon } from "#field/pokemon";
-import type { PokemonMove } from "#moves/pokemon-move";
 import type { toHaveArenaTagOptions } from "#test/test-utils/matchers/to-have-arena-tag";
 import type { toHaveEffectiveStatOptions } from "#test/test-utils/matchers/to-have-effective-stat";
 import type { toHavePositionalTagOptions } from "#test/test-utils/matchers/to-have-positional-tag";
@@ -27,10 +21,10 @@ import type { toHaveTypesOptions } from "#test/test-utils/matchers/to-have-types
 import type { PhaseString } from "#types/phase-types";
 import type { TurnMove } from "#types/turn-move";
 import type { AtLeastOne } from "#types/type-helpers";
-import type { toDmgValue } from "utils/common";
+import type { toDmgValue } from "#utils/common";
 import type { expect } from "vitest";
 import { expectedHeldItemType } from "#test/test-utils/matchers/to-have-held-item";
-import { toHaveBattlerTagOptions } from "#test/test-utils/matchers/to-have-battler-tag";
+import type { toHaveBattlerTagOptions } from "#test/test-utils/matchers/to-have-battler-tag";
 
 declare module "vitest" {
   interface Assertion<T> {

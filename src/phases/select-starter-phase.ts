@@ -7,8 +7,8 @@ import { ChallengeType } from "#enums/challenge-type";
 import type { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { overrideHeldItems, overrideTrainerItems } from "#items/item-overrides";
-import { SaveSlotUiMode } from "#ui/save-slot-select-ui-handler";
-import type { Starter } from "#ui/starter-select-ui-handler";
+import { SaveSlotUiMode } from "#ui/handlers/save-slot-select-ui-handler";
+import type { Starter } from "#ui/handlers/starter-select-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { isNullOrUndefined } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
@@ -50,9 +50,9 @@ export class SelectStarterPhase extends Phase {
       const starterProps = globalScene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
       let starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
       if (
-        starter.species.speciesId in Overrides.STARTER_FORM_OVERRIDES &&
-        !isNullOrUndefined(Overrides.STARTER_FORM_OVERRIDES[starter.species.speciesId]) &&
-        starter.species.forms[Overrides.STARTER_FORM_OVERRIDES[starter.species.speciesId]!]
+        starter.species.speciesId in Overrides.STARTER_FORM_OVERRIDES
+        && !isNullOrUndefined(Overrides.STARTER_FORM_OVERRIDES[starter.species.speciesId])
+        && starter.species.forms[Overrides.STARTER_FORM_OVERRIDES[starter.species.speciesId]!]
       ) {
         starterFormIndex = Overrides.STARTER_FORM_OVERRIDES[starter.species.speciesId]!;
       }
