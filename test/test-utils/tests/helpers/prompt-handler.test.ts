@@ -35,12 +35,12 @@ describe("Test Utils - PromptHandler", () => {
       scene: {
         ui: {
           getHandler: () => handler,
-          setModeInternal: (): Promise<void> => {
+          setModeInternal: () => {
             setModeCallback();
             return Promise.resolve();
           },
           getMode: () => UiMode.TEST_DIALOGUE,
-        } as UI,
+        } as unknown as UI,
         phaseManager: {
           getCurrentPhase: () =>
             ({
