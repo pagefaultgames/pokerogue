@@ -1143,11 +1143,7 @@ function ChargeMove<TBase extends SubMove>(Base: TBase, nameAppend: string) {
 export class ChargingAttackMove extends ChargeMove(AttackMove, "ChargingAttackMove") {}
 export class ChargingSelfStatusMove extends ChargeMove(SelfStatusMove, "ChargingSelfStatusMove") {}
 
-/**
- * Base class defining all {@linkcode Move} Attributes
- * @abstract
- * @see {@linkcode apply}
- */
+/** Base class defining all {@linkcode Move} Attributes */
 export abstract class MoveAttr {
   /** Should this {@linkcode Move} target the user? */
   public selfTarget: boolean;
