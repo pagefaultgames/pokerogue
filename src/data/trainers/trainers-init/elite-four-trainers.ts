@@ -6,13 +6,11 @@ import { SpeciesId } from "#enums/species-id";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { PokemonMove } from "#moves/pokemon-move";
-import { getRandomPartyMemberFunc, nextTrainerId, setTrainerId, TrainerConfig } from "#trainers/trainer-config";
+import { getRandomPartyMemberFunc, nextTrainerId, setTrainerId, TrainerConfig, isMoveNullOrUndefined as isNullOrUndefined } from "#trainers/trainer-config";
 import { TrainerConfigs } from "#types/trainer-funcs";
-import { t } from "i18next";
-import { isNullOrUndefined } from "util";
 
 
-export const eliteFourTrainers: TrainerConfigs = {
+export const eliteFourTrainersConfigs: TrainerConfigs = {
   // Kanto Elite Four
   [TrainerType.LORELEI]: new TrainerConfig(setTrainerId(TrainerType.LORELEI))
     .initForEliteFour(signatureSpecies["LORELEI"], false, PokemonType.ICE, 2)

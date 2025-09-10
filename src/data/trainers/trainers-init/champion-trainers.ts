@@ -6,14 +6,11 @@ import { SpeciesId } from "#enums/species-id";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { PokemonMove } from "#moves/pokemon-move";
-import { TrainerConfig, getRandomPartyMemberFunc, nextTrainerId, setTrainerId } from "#trainers/trainer-config";
+import { TrainerConfig, getRandomPartyMemberFunc, nextTrainerId, setTrainerId, isMoveNullOrUndefined as isNullOrUndefined } from "#trainers/trainer-config";
 import { TrainerConfigs } from "#types/trainer-funcs";
 import { randSeedIntRange, randSeedItem } from "#utils/common";
-import { t } from "i18next";
-import { isNullOrUndefined } from "util";
 
-
-export const championTrainers: TrainerConfigs = {
+export const championTrainersConfigs: TrainerConfigs = {
   //Kanto Johto Champions
   [TrainerType.BLUE]: new TrainerConfig(setTrainerId(TrainerType.BLUE))
     .initForChampion(true)

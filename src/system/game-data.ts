@@ -60,7 +60,7 @@ import {
   applySystemVersionMigration,
 } from "#system/version-migration/version-converter";
 import { VoucherType, vouchers } from "#system/voucher";
-import { trainerConfigs } from "#trainers/trainer-config";
+import { trainerConfigs } from "#trainers/trainer-configs-init";
 import type { DexData, DexEntry } from "#types/dex-data";
 import { RUN_HISTORY_LIMIT } from "#ui/handlers/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";

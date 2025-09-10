@@ -118,7 +118,7 @@ import { MusicPreference } from "#system/settings";
 import type { TrainerData } from "#system/trainer-data";
 import type { Voucher } from "#system/voucher";
 import { vouchers } from "#system/voucher";
-import { trainerConfigs } from "#trainers/trainer-config";
+import { trainerConfigs } from "#trainers/trainer-configs-init";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import type { Localizable } from "#types/locales";
 import { AbilityBar } from "#ui/containers/ability-bar";

@@ -3,14 +3,14 @@ import { PokeballType } from "#enums/pokeball";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
-import { getRandomPartyMemberFunc, nextTrainerId, TrainerConfig } from "#trainers/trainer-config";
+import { getRandomPartyMemberFunc, nextTrainerId, setTrainerId, TrainerConfig } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, TrainerPartyTemplate, trainerPartyTemplates } from "#trainers/trainer-party-template";
 import { TrainerConfigs } from "#types/trainer-funcs";
 
-export const mysteryEventTrainers: TrainerConfigs = {
 
+export const mysteryEventTrainersConfigs: TrainerConfigs = {
   // Mystery Event Test Trainer Encounter
-[TrainerType.BUCK]: new TrainerConfig(nextTrainerId())
+[TrainerType.BUCK]: new TrainerConfig(setTrainerId(TrainerType.BUCK))
     .setName("Buck")
     .initForStatTrainer(true)
     .setPartyMemberFunc(

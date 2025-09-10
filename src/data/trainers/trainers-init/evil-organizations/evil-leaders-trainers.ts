@@ -9,7 +9,7 @@ import { getRandomPartyMemberFunc, nextTrainerId, setTrainerId, TrainerConfig } 
 import { TrainerConfigs } from "#types/trainer-funcs";
 import { isNullOrUndefined, randSeedInt } from "#utils/common";
 
-export const evilAdminTrainers: TrainerConfigs = {
+export const evilAdminTrainersConfig: TrainerConfigs = {
   [TrainerType.ROCKET_BOSS_GIOVANNI_1]: new TrainerConfig(setTrainerId(TrainerType.ROCKET_BOSS_GIOVANNI_1))
     .setName("Giovanni")
     .initForEvilTeamLeader("Rocket Boss", [])

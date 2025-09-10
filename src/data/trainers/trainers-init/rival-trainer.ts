@@ -6,11 +6,11 @@ import { PokeballType } from "#enums/pokeball";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
-import { getRandomPartyMemberFunc, nextTrainerId, setTrainerId, TrainerConfig } from "#trainers/trainer-config";
+import { getRandomPartyMemberFunc, getSpeciesFilterRandomPartyMemberFunc, nextTrainerId, setTrainerId, TrainerConfig } from "#trainers/trainer-config";
 import { trainerPartyTemplates } from "#trainers/trainer-party-template";
 import { TrainerConfigs } from "#types/trainer-funcs";
 
-export const rivalTrainer : TrainerConfigs = {
+export const rivalTrainerConfigs : TrainerConfigs = {
   // Rival floor 8
   [TrainerType.RIVAL]: new TrainerConfig(setTrainerId(TrainerType.RIVAL))
     .setName("Finn")
@@ -510,8 +510,5 @@ export const rivalTrainer : TrainerConfigs = {
       }),
     )
     .setInstantTera(0), // Tera starter to primary type
-}
-function getSpeciesFilterRandomPartyMemberFunc(arg0: (species: PokemonSpecies) => boolean): import("#types/trainer-funcs").PartyMemberFunc {
-  throw new Error("Function not implemented.");
 }
 

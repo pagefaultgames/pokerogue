@@ -2,7 +2,7 @@ import type { PartyMemberStrength } from "#enums/party-member-strength";
 import type { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon } from "#field/pokemon";
 import type { PersistentModifier } from "#modifiers/modifier";
-import type { TrainerConfig } from "#trainers/trainer-config";
+import type { TrainerConfig } from "#trainers/trainer-configs-init";
 import type { TrainerPartyTemplate } from "#trainers/trainer-party-template";
 
 export type PartyTemplateFunc = () => TrainerPartyTemplate;

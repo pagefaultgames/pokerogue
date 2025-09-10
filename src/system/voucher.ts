@@ -1,7 +1,7 @@
 import type { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
 import { AchvTier, achvs, getAchievementDescription } from "#system/achv";
-import { trainerConfigs } from "#trainers/trainer-config";
+import { trainerConfigs } from "#trainers/trainer-configs-init";
 import type { ConditionFn } from "#types/common";
 import i18next from "i18next";
 
