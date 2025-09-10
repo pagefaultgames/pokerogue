@@ -1,5 +1,5 @@
 /**
- * The index of a given Pokemon on-field.
+ * The index of a given Pokemon on-field. \
  * Used as an index into `globalScene.getField`, as well as for most target-specifying effects.
  */
 export enum BattlerIndex {
@@ -7,5 +7,5 @@ export enum BattlerIndex {
   PLAYER,
   PLAYER_2,
   ENEMY,
-  ENEMY_2
+  ENEMY_2,
 }

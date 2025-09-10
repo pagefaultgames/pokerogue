@@ -35,13 +35,43 @@ describe("Abilities - Intimidate", () => {
   it("should lower all opponents' ATK by 1 stage on entry and switch", async () => {
     await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA]);
 
+    const [mightyena, poochyena] = game.scene.getPlayerParty();
+
     const enemy = game.field.getEnemyPokemon();
     expect(enemy.getStatStage(Stat.ATK)).toBe(-1);
+    expect(mightyena).toHaveAbilityApplied(AbilityId.INTIMIDATE);
 
     game.doSwitchPokemon(1);
     await game.toNextTurn();
 
+    expect(poochyena.isActive()).toBe(true);
     expect(enemy.getStatStage(Stat.ATK)).toBe(-2);
+    expect(poochyena).toHaveAbilityApplied(AbilityId.INTIMIDATE);
+  });
+
+  it("should trigger once on initial switch prompt without cancelling opposing abilities", async () => {
+    await game.classicMode.runToSummon([SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA]);
+    await game.classicMode.startBattleWithSwitch(1);
+
+    const [poochyena, mightyena] = game.scene.getPlayerParty();
+    expect(poochyena.species.speciesId).toBe(SpeciesId.POOCHYENA);
+
+    const enemy = game.field.getEnemyPokemon();
+    expect(enemy).toHaveStatStage(Stat.ATK, -1);
+    expect(poochyena).toHaveStatStage(Stat.ATK, -1);
+
+    expect(poochyena).toHaveAbilityApplied(AbilityId.INTIMIDATE);
+    expect(mightyena).not.toHaveAbilityApplied(AbilityId.INTIMIDATE);
+  });
+
+  it("should activate on reload with single party", async () => {
+    await game.classicMode.startBattle([SpeciesId.MIGHTYENA]);
+
+    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, -1);
+
+    await game.reload.reloadSession();
+
+    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, -1);
   });
 
   it("should lower ATK of all opponents in a double battle", async () => {

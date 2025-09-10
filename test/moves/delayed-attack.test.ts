@@ -4,12 +4,15 @@ import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
+import { Button } from "#enums/buttons";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
+import { PokeballType } from "#enums/pokeball";
 import { PokemonType } from "#enums/pokemon-type";
 import { PositionalTagType } from "#enums/positional-tag-type";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
+import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/test-utils/game-manager";
 import i18next from "i18next";
 import Phaser from "phaser";
@@ -95,7 +98,7 @@ describe("Moves - Delayed Attacks", () => {
 
     expectFutureSightActive(0);
     const enemy = game.field.getEnemyPokemon();
-    expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
+    expect(enemy).not.toHaveFullHp();
     expect(game.textInterceptor.logs).toContain(
       i18next.t("moveTriggers:tookMoveAttack", {
         pokemonName: getPokemonNameWithAffix(enemy),
@@ -130,12 +133,12 @@ describe("Moves - Delayed Attacks", () => {
 
     expectFutureSightActive();
     const enemy = game.field.getEnemyPokemon();
-    expect(enemy.hp).toBe(enemy.getMaxHp());
+    expect(enemy).toHaveFullHp();
 
     await passTurns(2);
 
     expectFutureSightActive(0);
-    expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
+    expect(enemy).not.toHaveFullHp();
   });
 
   it("should work when used against different targets in doubles", async () => {
@@ -149,15 +152,15 @@ describe("Moves - Delayed Attacks", () => {
     await game.toEndOfTurn();
 
     expectFutureSightActive(2);
-    expect(enemy1.hp).toBe(enemy1.getMaxHp());
-    expect(enemy2.hp).toBe(enemy2.getMaxHp());
+    expect(enemy1).toHaveFullHp();
+    expect(enemy2).toHaveFullHp();
     expect(karp.getLastXMoves()[0].result).toBe(MoveResult.OTHER);
     expect(feebas.getLastXMoves()[0].result).toBe(MoveResult.OTHER);
 
     await passTurns(2);
 
-    expect(enemy1.hp).toBeLessThan(enemy1.getMaxHp());
-    expect(enemy2.hp).toBeLessThan(enemy2.getMaxHp());
+    expect(enemy1).not.toHaveFullHp();
+    expect(enemy2).not.toHaveFullHp();
   });
 
   it("should trigger multiple pending attacks in order of creation, even if that order changes later on", async () => {
@@ -222,8 +225,8 @@ describe("Moves - Delayed Attacks", () => {
 
     expect(game.scene.getPlayerParty()).toEqual([milotic, karp, feebas]);
 
-    expect(karp.hp).toBe(karp.getMaxHp());
-    expect(feebas.hp).toBe(feebas.getMaxHp());
+    expect(karp).toHaveFullHp();
+    expect(feebas).toHaveFullHp();
     expect(game.textInterceptor.logs).not.toContain(
       i18next.t("moveTriggers:tookMoveAttack", {
         pokemonName: getPokemonNameWithAffix(karp),
@@ -245,15 +248,14 @@ describe("Moves - Delayed Attacks", () => {
     expect(enemy2.isFainted()).toBe(true);
     expectFutureSightActive();
 
-    const attack = game.scene.arena.positionalTagManager.tags.find(
-      t => t.tagType === PositionalTagType.DELAYED_ATTACK,
-    )!;
-    expect(attack).toBeDefined();
-    expect(attack.targetIndex).toBe(enemy1.getBattlerIndex());
+    expect(game).toHavePositionalTag({
+      tagType: PositionalTagType.DELAYED_ATTACK,
+      targetIndex: enemy1.getBattlerIndex(),
+    });
 
     await passTurns(2);
 
-    expect(enemy1.hp).toBeLessThan(enemy1.getMaxHp());
+    expect(enemy1).not.toHaveFullHp();
     expect(game.textInterceptor.logs).toContain(
       i18next.t("moveTriggers:tookMoveAttack", {
         pokemonName: getPokemonNameWithAffix(enemy1),
@@ -281,7 +283,7 @@ describe("Moves - Delayed Attacks", () => {
     await game.toNextTurn();
 
     expectFutureSightActive(0);
-    expect(enemy1.hp).toBe(enemy1.getMaxHp());
+    expect(enemy1).toHaveFullHp();
     expect(game.textInterceptor.logs).not.toContain(
       i18next.t("moveTriggers:tookMoveAttack", {
         pokemonName: getPokemonNameWithAffix(enemy1),
@@ -317,8 +319,8 @@ describe("Moves - Delayed Attacks", () => {
 
     await game.toEndOfTurn();
 
-    expect(enemy1.hp).toBe(enemy1.getMaxHp());
-    expect(enemy2.hp).toBeLessThan(enemy2.getMaxHp());
+    expect(enemy1).toHaveFullHp();
+    expect(enemy2).not.toHaveFullHp();
     expect(game.textInterceptor.logs).toContain(
       i18next.t("moveTriggers:tookMoveAttack", {
         pokemonName: getPokemonNameWithAffix(enemy2),
@@ -351,7 +353,7 @@ describe("Moves - Delayed Attacks", () => {
 
     // Player Normalize was not applied due to being off field
     const enemy = game.field.getEnemyPokemon();
-    expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
+    expect(enemy).not.toHaveFullHp();
     expect(game.textInterceptor.logs).toContain(
       i18next.t("moveTriggers:tookMoveAttack", {
         pokemonName: getPokemonNameWithAffix(enemy),
@@ -382,6 +384,35 @@ describe("Moves - Delayed Attacks", () => {
 
     expect(powerMock).toHaveLastReturnedWith(120);
     expect(typeBoostSpy).not.toHaveBeenCalled();
+  });
+
+  it("should not crash when catching & releasing a Pokemon on the same turn its delayed attack expires", async () => {
+    game.override.startingModifier([{ name: "MASTER_BALL", count: 1 }]);
+    await game.classicMode.startBattle([
+      SpeciesId.FEEBAS,
+      SpeciesId.FEEBAS,
+      SpeciesId.FEEBAS,
+      SpeciesId.FEEBAS,
+      SpeciesId.FEEBAS,
+      SpeciesId.FEEBAS,
+    ]);
+
+    game.move.use(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.FUTURE_SIGHT);
+    await game.toNextTurn();
+
+    expectFutureSightActive(1);
+
+    await passTurns(1);
+
+    // Throw master ball and release the enemy
+    game.doThrowPokeball(PokeballType.MASTER_BALL);
+    game.onNextPrompt("AttemptCapturePhase", UiMode.CONFIRM, () => {
+      game.scene.ui.processInput(Button.CANCEL);
+    });
+    await game.toEndOfTurn();
+
+    expectFutureSightActive(0);
   });
 
   // TODO: Implement and move to a power spot's test file

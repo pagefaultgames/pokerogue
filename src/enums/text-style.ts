@@ -54,6 +54,6 @@ export const TextStyle = Object.freeze({
   PERFECT_IV: 53,
   ME_OPTION_DEFAULT: 54, // Default style for choices in ME
   ME_OPTION_SPECIAL: 55, // Style for choices with special requirements in ME
-  SHADOW_TEXT: 56 // to obscure unavailable options
-})
-export type TextStyle = typeof TextStyle[keyof typeof TextStyle];
+  SHADOW_TEXT: 56, // to obscure unavailable options
+});
+export type TextStyle = (typeof TextStyle)[keyof typeof TextStyle];

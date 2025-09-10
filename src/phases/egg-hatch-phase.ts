@@ -9,9 +9,9 @@ import { doShinySparkleAnim } from "#field/anims";
 import type { PlayerPokemon } from "#field/pokemon";
 import type { EggLapsePhase } from "#phases/egg-lapse-phase";
 import { achvs } from "#system/achv";
-import { EggCounterContainer } from "#ui/egg-counter-container";
-import type { EggHatchSceneHandler } from "#ui/egg-hatch-scene-handler";
-import { PokemonInfoContainer } from "#ui/pokemon-info-container";
+import { EggCounterContainer } from "#ui/containers/egg-counter-container";
+import { PokemonInfoContainer } from "#ui/containers/pokemon-info-container";
+import type { EggHatchSceneHandler } from "#ui/handlers/egg-hatch-scene-handler";
 import { fixedInt, getFrameMs, randInt } from "#utils/common";
 import i18next from "i18next";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
@@ -64,7 +64,7 @@ export class EggHatchPhase extends Phase {
   private canSkip: boolean;
   private skipped: boolean;
   /** The sound effect being played when the egg is hatched */
-  private evolutionBgm: AnySound;
+  private evolutionBgm: AnySound | null;
   private eggLapsePhase: EggLapsePhase;
 
   constructor(hatchScene: EggLapsePhase, egg: Egg, eggsToHatchCount: number) {
@@ -230,6 +230,7 @@ export class EggHatchPhase extends Phase {
     } else {
       globalScene.time.delayedCall(250, () => globalScene.setModifiersVisible(true));
     }
+    this.pokemon?.destroy();
     super.end();
   }
 

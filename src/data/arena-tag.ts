@@ -23,8 +23,9 @@ import type { Arena } from "#field/arena";
 import type { Pokemon } from "#field/pokemon";
 import type {
   ArenaScreenTagType,
-  ArenaTagTypeData,
+  ArenaTagData,
   EntryHazardTagType,
+  RoomArenaTagType,
   SerializableArenaTagType,
 } from "#types/arena-tags";
 import type { Mutable } from "#types/type-helpers";
@@ -294,7 +295,8 @@ export abstract class WeakenMoveScreenTag extends SerializableArenaTag {
       if (bypassed.value) {
         return false;
       }
-      damageMultiplier.value = globalScene.currentBattle.double ? 2732 / 4096 : 0.5;
+      // Screens are less effective in Double Battles
+      damageMultiplier.value = globalScene.currentBattle.double ? 2 / 3 : 1 / 2;
       return true;
     }
     return false;
@@ -469,7 +471,7 @@ const QuickGuardConditionFunc: ProtectConditionFunc = (_arena, moveId) => {
   const move = allMoves[moveId];
   const effectPhase = globalScene.phaseManager.getCurrentPhase();
 
-  if (effectPhase?.is("MoveEffectPhase")) {
+  if (effectPhase.is("MoveEffectPhase")) {
     const attacker = effectPhase.getUserPokemon();
     if (attacker) {
       return move.getPriority(attacker) > 0;
@@ -570,10 +572,10 @@ class MatBlockTag extends ConditionalProtectTag {
 const CraftyShieldConditionFunc: ProtectConditionFunc = (_arena, moveId) => {
   const move = allMoves[moveId];
   return (
-    move.category === MoveCategory.STATUS &&
-    move.moveTarget !== MoveTarget.ENEMY_SIDE &&
-    move.moveTarget !== MoveTarget.BOTH_SIDES &&
-    move.moveTarget !== MoveTarget.ALL
+    move.category === MoveCategory.STATUS
+    && move.moveTarget !== MoveTarget.ENEMY_SIDE
+    && move.moveTarget !== MoveTarget.BOTH_SIDES
+    && move.moveTarget !== MoveTarget.ALL
   );
 };
 
@@ -763,9 +765,10 @@ export abstract class EntryHazardTag extends SerializableArenaTag {
     const source = this.getSourcePokemon();
     if (!source) {
       console.warn(
-        "Failed to get source Pokemon for AernaTrapTag on add message!" +
-          `\nTag type: ${this.tagType}` +
-          `\nPID: ${this.sourceId}`,
+        // biome-ignore lint/complexity/noUselessStringConcat: Rule bugs out with operator linebreaks set to `before`
+        "Failed to get source Pokemon for AernaTrapTag on add message!"
+          + `\nTag type: ${this.tagType}`
+          + `\nPID: ${this.sourceId}`,
       );
       return;
     }
@@ -935,7 +938,7 @@ class StealthRockTag extends DamagingTrapTag {
 
   protected override getTriggerMessage(pokemon: Pokemon): string {
     return i18next.t("arenaTag:stealthRockActivateTrap", {
-      pokemonName: getPokemonNameWithAffix(pokemon),
+      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
     });
   }
 
@@ -1153,11 +1156,27 @@ class ImprisonTag extends EntryHazardTag {
 }
 
 /**
+ * Abstract base class for all Room {@linkcode ArenaTag}s, characterized by their immediate removal
+ * upon overlap.
+ */
+abstract class RoomArenaTag extends SerializableArenaTag {
+  declare abstract tagType: RoomArenaTagType;
+
+  /**
+   * Immediately remove this Tag upon overlapping.
+   * @sealed
+   */
+  override onOverlap(): void {
+    globalScene.arena.removeTagOnSide(this.tagType, this.side);
+  }
+}
+
+/**
  * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Trick_Room_(move) Trick Room}.
  * Reverses the Speed stats for all Pokémon on the field as long as this arena tag is up,
  * also reversing the turn order for all Pokémon on the field as well.
  */
-export class TrickRoomTag extends SerializableArenaTag {
+export class TrickRoomTag extends RoomArenaTag {
   public readonly tagType = ArenaTagType.TRICK_ROOM;
   constructor(turnCount: number, sourceId?: number) {
     super(turnCount, MoveId.TRICK_ROOM, sourceId);
@@ -1187,7 +1206,7 @@ export class TrickRoomTag extends SerializableArenaTag {
 
     globalScene.phaseManager.queueMessage(
       i18next.t("arenaTag:trickRoomOnAdd", {
-        moveName: this.getMoveName(),
+        pokemonNameWithAffix: getPokemonNameWithAffix(source),
       }),
     );
   }
@@ -1645,7 +1664,7 @@ export function getArenaTag(
  * @param source - An arena tag
  * @returns The valid arena tag
  */
-export function loadArenaTag(source: ArenaTag | ArenaTagTypeData | { tagType: ArenaTagType.NONE }): ArenaTag {
+export function loadArenaTag(source: ArenaTag | ArenaTagData | { tagType: ArenaTagType.NONE }): ArenaTag {
   if (source.tagType === ArenaTagType.NONE) {
     return new NoneTag();
   }

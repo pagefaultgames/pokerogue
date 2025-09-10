@@ -13,10 +13,10 @@ import {
 } from "#phases/mystery-encounter-phases";
 import { VictoryPhase } from "#phases/victory-phase";
 import type { GameManager } from "#test/test-utils/game-manager";
-import type { MessageUiHandler } from "#ui/message-ui-handler";
-import type { MysteryEncounterUiHandler } from "#ui/mystery-encounter-ui-handler";
+import type { MessageUiHandler } from "#ui/handlers/message-ui-handler";
+import type { MysteryEncounterUiHandler } from "#ui/handlers/mystery-encounter-ui-handler";
+import type { PartyUiHandler } from "#ui/handlers/party-ui-handler";
 import type { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
-import type { PartyUiHandler } from "#ui/party-ui-handler";
 import { isNullOrUndefined } from "#utils/common";
 import { expect, vi } from "vitest";
 

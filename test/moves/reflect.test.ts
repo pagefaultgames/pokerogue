@@ -19,7 +19,7 @@ describe("Moves - Reflect", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
   const singleBattleMultiplier = 0.5;
-  const doubleBattleMultiplier = 2732 / 4096;
+  const doubleBattleMultiplier = 2 / 3;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -143,10 +143,8 @@ const getMockedMoveDamage = (defender: Pokemon, attacker: Pokemon, move: Move) =
   const multiplierHolder = new NumberHolder(1);
   const side = defender.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
-  if (globalScene.arena.getTagOnSide(ArenaTagType.REFLECT, side)) {
-    if (move.getAttrs("CritOnlyAttr").length === 0) {
-      globalScene.arena.applyTagsForSide(ArenaTagType.REFLECT, side, false, attacker, move.category, multiplierHolder);
-    }
+  if (globalScene.arena.getTagOnSide(ArenaTagType.REFLECT, side) && move.getAttrs("CritOnlyAttr").length === 0) {
+    globalScene.arena.applyTagsForSide(ArenaTagType.REFLECT, side, false, attacker, move.category, multiplierHolder);
   }
 
   return move.power * multiplierHolder.value;

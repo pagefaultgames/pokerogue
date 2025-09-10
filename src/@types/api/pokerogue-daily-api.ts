@@ -1,4 +1,4 @@
-import type { ScoreboardCategory } from "#ui/daily-run-scoreboard";
+import type { ScoreboardCategory } from "#ui/containers/daily-run-scoreboard";
 
 export interface GetDailyRankingsRequest {
   category: ScoreboardCategory;

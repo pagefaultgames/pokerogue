@@ -1,5 +1,5 @@
 export enum ArenaTagSide {
   BOTH,
   PLAYER,
-  ENEMY
+  ENEMY,
 }

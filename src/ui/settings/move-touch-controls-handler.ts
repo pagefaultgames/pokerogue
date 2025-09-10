@@ -9,9 +9,9 @@ export const TOUCH_CONTROL_POSITIONS_PORTRAIT = "touchControlPositionsPortrait";
 type ControlPosition = { id: string; x: number; y: number };
 
 type ConfigurationEventListeners = {
-  touchstart: EventListener[];
-  touchmove: EventListener[];
-  touchend: EventListener[];
+  pointerdown: EventListener[];
+  pointermove: EventListener[];
+  pointerup: EventListener[];
 };
 
 type ToolbarRefs = {
@@ -39,9 +39,9 @@ export class MoveTouchControlsHandler {
    * These are used to remove the event listeners when the configuration mode is disabled.
    */
   private configurationEventListeners: ConfigurationEventListeners = {
-    touchstart: [],
-    touchmove: [],
-    touchend: [],
+    pointerdown: [],
+    pointermove: [],
+    pointerup: [],
   };
 
   private overlay: Phaser.GameObjects.Container;
@@ -165,34 +165,33 @@ export class MoveTouchControlsHandler {
   /**
    * Start dragging the given button.
    * @param controlGroup The button that is being dragged.
-   * @param touch The touch event that started the drag.
+   * @param event The pointer event that started the drag.
    */
   private startDrag = (controlGroup: HTMLElement): void => {
     this.draggingElement = controlGroup;
   };
 
   /**
-   * Drags the currently dragged element to the given touch position.
-   * @param touch The touch event that is currently happening.
-   * @param isLeft Whether the dragged element is a left button.
+   * Drags the currently dragged element to the given pointer position.
+   * @param event The pointer event that is currently happening.
    */
-  private drag = (touch: Touch): void => {
+  private drag = (event: PointerEvent): void => {
     if (!this.draggingElement) {
       return;
     }
     const rect = this.draggingElement.getBoundingClientRect();
-    // Map the touch position to the center of the dragged element.
+    // Map the pointer position to the center of the dragged element.
     const xOffset = this.isLeft(this.draggingElement)
-      ? touch.clientX - rect.width / 2
-      : window.innerWidth - touch.clientX - rect.width / 2;
-    const yOffset = window.innerHeight - touch.clientY - rect.height / 2;
+      ? event.clientX - rect.width / 2
+      : window.innerWidth - event.clientX - rect.width / 2;
+    const yOffset = window.innerHeight - event.clientY - rect.height / 2;
     this.setPosition(this.draggingElement, xOffset, yOffset);
   };
 
   /**
    * Stops dragging the currently dragged element.
    */
-  private stopDrag = () => {
+  private stopDrag = (): void => {
     this.draggingElement = null;
   };
 
@@ -303,19 +302,19 @@ export class MoveTouchControlsHandler {
    */
   private createConfigurationEventListeners(controlGroups: HTMLDivElement[]): ConfigurationEventListeners {
     return {
-      touchstart: controlGroups.map((element: HTMLDivElement) => {
+      pointerdown: controlGroups.map((element: HTMLDivElement) => {
         const startDrag = () => this.startDrag(element);
-        element.addEventListener("touchstart", startDrag, { passive: true });
+        element.addEventListener("pointerdown", startDrag, { passive: true });
         return startDrag;
       }),
-      touchmove: controlGroups.map(() => {
-        const drag = event => this.drag(event.touches[0]);
-        window.addEventListener("touchmove", drag, { passive: true });
+      pointermove: controlGroups.map(() => {
+        const drag = (event: PointerEvent) => this.drag(event);
+        window.addEventListener("pointermove", drag, { passive: true });
         return drag;
       }),
-      touchend: controlGroups.map(() => {
+      pointerup: controlGroups.map(() => {
         const stopDrag = () => this.stopDrag();
-        window.addEventListener("touchend", stopDrag, { passive: true });
+        window.addEventListener("pointerup", stopDrag, { passive: true });
         return stopDrag;
       }),
     };
@@ -373,12 +372,12 @@ export class MoveTouchControlsHandler {
     this.draggingElement = null;
 
     // Remove event listeners
-    const { touchstart, touchmove, touchend } = this.configurationEventListeners;
+    const { pointerdown, pointermove, pointerup } = this.configurationEventListeners;
     this.getControlGroupElements().forEach((element, index) =>
-      element.removeEventListener("touchstart", touchstart[index]),
+      element.removeEventListener("pointerdown", pointerdown[index]),
     );
-    touchmove.forEach(listener => window.removeEventListener("touchmove", listener));
-    touchend.forEach(listener => window.removeEventListener("touchend", listener));
+    pointermove.forEach(listener => window.removeEventListener("pointermove", listener));
+    pointerup.forEach(listener => window.removeEventListener("pointerup", listener));
 
     // Remove configuration toolbar
     const toolbar = document.querySelector("#touchControls #configToolbar");

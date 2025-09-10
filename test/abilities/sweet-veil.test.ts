@@ -2,8 +2,9 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
-import { TurnEndPhase } from "#phases/turn-end-phase";
+import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -26,62 +27,108 @@ describe("Abilities - Sweet Veil", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("double")
-      .moveset([MoveId.SPLASH, MoveId.REST, MoveId.YAWN])
+      .ability(AbilityId.BALL_FETCH)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(MoveId.POWDER);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
-  it("prevents the user and its allies from falling asleep", async () => {
+  function expectNoStatus() {
+    game.scene.getPlayerField().forEach(p => {
+      expect.soft(p).toHaveStatusEffect(StatusEffect.NONE);
+    });
+  }
+
+  it("should prevent the user and its allies from falling asleep", async () => {
     await game.classicMode.startBattle([SpeciesId.SWIRLIX, SpeciesId.MAGIKARP]);
 
-    game.move.select(MoveId.SPLASH);
-    game.move.select(MoveId.SPLASH, 1);
+    game.field.mockAbility(game.field.getPlayerPokemon(), AbilityId.SWEET_VEIL);
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    await game.move.forceEnemyMove(MoveId.SPORE, BattlerIndex.PLAYER);
+    await game.move.forceEnemyMove(MoveId.SPORE, BattlerIndex.PLAYER_2);
+    await game.toEndOfTurn();
 
-    await game.phaseInterceptor.to(TurnEndPhase);
-
-    expect(game.scene.getPlayerField().every(p => p.status?.effect)).toBe(false);
+    expectNoStatus();
   });
 
-  it("causes Rest to fail when used by the user or its allies", async () => {
-    game.override.enemyMoveset(MoveId.SPLASH);
+  it("should cause Rest to fail when used by the user or its allies", async () => {
     await game.classicMode.startBattle([SpeciesId.SWIRLIX, SpeciesId.MAGIKARP]);
 
-    game.move.select(MoveId.SPLASH);
-    game.move.select(MoveId.REST, 1);
+    const [swirlix, magikarp] = game.scene.getPlayerField();
+    game.field.mockAbility(swirlix, AbilityId.SWEET_VEIL);
+    swirlix.hp = 1;
+    magikarp.hp = 1;
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    game.move.use(MoveId.REST, BattlerIndex.PLAYER);
+    game.move.use(MoveId.REST, BattlerIndex.PLAYER_2);
+    await game.toEndOfTurn();
 
-    expect(game.scene.getPlayerField().every(p => p.status?.effect)).toBe(false);
+    expectNoStatus();
+    expect(swirlix).toHaveUsedMove({ move: MoveId.REST, result: MoveResult.FAIL });
+    expect(magikarp).toHaveUsedMove({ move: MoveId.REST, result: MoveResult.FAIL });
   });
 
-  it("causes Yawn to fail if used on the user or its allies", async () => {
-    game.override.enemyMoveset(MoveId.YAWN);
+  it("should cause Yawn to fail if used on the user or its allies", async () => {
     await game.classicMode.startBattle([SpeciesId.SWIRLIX, SpeciesId.MAGIKARP]);
 
-    game.move.select(MoveId.SPLASH);
-    game.move.select(MoveId.SPLASH, 1);
+    const [shuckle, swirlix] = game.scene.getPlayerField();
+    game.field.mockAbility(swirlix, AbilityId.SWEET_VEIL);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    await game.move.forceEnemyMove(MoveId.YAWN, BattlerIndex.PLAYER);
+    await game.move.forceEnemyMove(MoveId.YAWN, BattlerIndex.PLAYER_2);
+    await game.toEndOfTurn();
 
-    expect(game.scene.getPlayerField().every(p => !!p.getTag(BattlerTagType.DROWSY))).toBe(false);
+    expect(shuckle).not.toHaveBattlerTag(BattlerTagType.DROWSY);
+    expect(swirlix).not.toHaveBattlerTag(BattlerTagType.DROWSY);
+    // TODO: This dooesn't work ATM
+    /*
+    const [karp1, karp2] = game.scene.getEnemyField();
+    expect(karp1).toHaveUsedMove({move: MoveId.YAWN, result: MoveResult.FAIL});
+    expect(karp2).toHaveUsedMove({move: MoveId.YAWN, result: MoveResult.FAIL});
+     */
   });
 
-  it("prevents the user and its allies already drowsy due to Yawn from falling asleep.", async () => {
-    game.override.enemySpecies(SpeciesId.PIKACHU).enemyLevel(5).startingLevel(5).enemyMoveset(MoveId.SPLASH);
+  it("should NOT cure allies' sleep status if user is sent out into battle", async () => {
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS, SpeciesId.SWIRLIX]);
 
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE, SpeciesId.SHUCKLE, SpeciesId.SWIRLIX]);
+    const [magikarp, , swirlix] = game.scene.getPlayerParty();
+    game.field.mockAbility(swirlix, AbilityId.PASTEL_VEIL);
 
-    game.move.select(MoveId.SPLASH);
-    game.move.select(MoveId.YAWN, 1, BattlerIndex.PLAYER);
+    game.move.use(MoveId.SPLASH);
+    game.move.use(MoveId.SPORE, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER);
+    await game.toNextTurn();
 
-    await game.phaseInterceptor.to("BerryPhase");
+    expect(magikarp).toHaveStatusEffect(StatusEffect.SLEEP);
 
-    expect(game.scene.getPlayerField().some(p => !!p.getTag(BattlerTagType.DROWSY))).toBe(true);
-
-    game.move.select(MoveId.SPLASH);
+    game.move.use(MoveId.SPLASH);
     game.doSwitchPokemon(2);
+    await game.toEndOfTurn();
 
-    expect(game.scene.getPlayerField().every(p => p.status?.effect)).toBe(false);
+    expect(magikarp).toHaveStatusEffect(StatusEffect.SLEEP);
+  });
+
+  it("should prevent an already-drowsy user or ally from falling asleep", async () => {
+    await game.classicMode.startBattle([SpeciesId.SHUCKLE, SpeciesId.SWIRLIX]);
+
+    // Add yawn before granting ability
+    const [shuckle, swirlix] = game.scene.getPlayerField();
+    shuckle.addTag(BattlerTagType.DROWSY, 1);
+    swirlix.addTag(BattlerTagType.DROWSY, 1);
+
+    game.field.mockAbility(shuckle, AbilityId.SWEET_VEIL);
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    await game.toNextTurn();
+
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    await game.toNextTurn();
+
+    expect(shuckle).not.toHaveBattlerTag(BattlerTagType.DROWSY);
+    expect(swirlix).not.toHaveBattlerTag(BattlerTagType.DROWSY);
+    expectNoStatus();
   });
 });

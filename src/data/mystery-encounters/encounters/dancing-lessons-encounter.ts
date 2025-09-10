@@ -37,7 +37,7 @@ import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encou
 import { MoveRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { DANCING_MOVES } from "#mystery-encounters/requirement-groups";
 import { PokemonData } from "#system/pokemon-data";
-import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import type { OptionSelectItem } from "#ui/handlers/abstract-option-select-ui-handler";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
@@ -168,7 +168,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
     const config: EnemyPartyConfig = {
       pokemonConfigs: [
         {
-          species: species,
+          species,
           dataSource: oricorioData,
           isBoss: true,
           // Gets +1 to all stats except SPD on battle start

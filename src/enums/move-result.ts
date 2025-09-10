@@ -3,5 +3,5 @@ export enum MoveResult {
   SUCCESS,
   FAIL,
   MISS,
-  OTHER
+  OTHER,
 }

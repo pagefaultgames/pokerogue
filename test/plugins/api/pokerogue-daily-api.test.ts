@@ -2,7 +2,7 @@ import { PokerogueDailyApi } from "#api/pokerogue-daily-api";
 import { initServerForApiTests } from "#test/test-utils/test-file-initialization";
 import { getApiBaseUrl } from "#test/test-utils/test-utils";
 import type { GetDailyRankingsPageCountRequest, GetDailyRankingsRequest } from "#types/api/pokerogue-daily-api";
-import { type RankingEntry, ScoreboardCategory } from "#ui/daily-run-scoreboard";
+import { type RankingEntry, ScoreboardCategory } from "#ui/containers/daily-run-scoreboard";
 import { HttpResponse, http } from "msw";
 import type { SetupServerApi } from "msw/node";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
