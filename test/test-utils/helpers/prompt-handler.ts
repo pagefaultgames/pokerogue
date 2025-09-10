@@ -1,9 +1,9 @@
-import type { AwaitableUiHandler } from "#app/ui/awaitable-ui-handler";
 import { UiMode } from "#enums/ui-mode";
 import type { GameManager } from "#test/test-utils/game-manager";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
 import { getEnumStr } from "#test/test-utils/string-utils";
 import type { PhaseString } from "#types/phase-types";
+import type { AwaitableUiHandler } from "#ui/handlers/awaitable-ui-handler";
 import type { UI } from "#ui/ui";
 import chalk from "chalk";
 import { vi } from "vitest";
