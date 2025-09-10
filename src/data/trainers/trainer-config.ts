@@ -204,7 +204,7 @@ export class TrainerConfig {
   /**
    * Returns the derived trainer type for a given trainer type.
    * @param trainerTypeToDeriveFrom - The trainer type to derive from. (If null, the this.trainerType property will be used.)
-   * @returns {TrainerType} - The derived trainer type.
+   * @returns - The derived trainer type.
    */
   getDerivedType(trainerTypeToDeriveFrom: TrainerType | null = null): TrainerType {
     let trainerType = trainerTypeToDeriveFrom ? trainerTypeToDeriveFrom : this.trainerType;
@@ -276,7 +276,7 @@ export class TrainerConfig {
    * Sets the configuration for trainers with genders, including the female name and encounter background music (BGM).
    * @param {string} [nameFemale] The name of the female trainer. If 'Ivy', a localized name will be assigned.
    * @param {TrainerType | string} [femaleEncounterBgm] The encounter BGM for the female trainer, which can be a TrainerType or a string.
-   * @returns {TrainerConfig} The updated TrainerConfig instance.
+   * @returns The updated TrainerConfig instance.
    */
   setHasGenders(nameFemale?: string, femaleEncounterBgm?: TrainerType | string): TrainerConfig {
     // If the female name is 'Ivy' (the rival), assign a localized name.
@@ -314,7 +314,7 @@ export class TrainerConfig {
    * Sets the configuration for trainers with double battles, including the name of the double trainer and the encounter BGM.
    * @param nameDouble The name of the double trainer (e.g., "Ace Duo" for Trainer Class Doubles or "red_blue_double" for NAMED trainer doubles).
    * @param doubleEncounterBgm The encounter BGM for the double trainer, which can be a TrainerType or a string.
-   * @returns {TrainerConfig} The updated TrainerConfig instance.
+   * @returns The updated TrainerConfig instance.
    */
   setHasDouble(nameDouble: string, doubleEncounterBgm?: TrainerType | string): TrainerConfig {
     this.hasDouble = true;
@@ -331,7 +331,7 @@ export class TrainerConfig {
   /**
    * Sets the trainer type for double battles.
    * @param trainerTypeDouble The TrainerType of the partner in a double battle.
-   * @returns {TrainerConfig} The updated TrainerConfig instance.
+   * @returns The updated TrainerConfig instance.
    */
   setDoubleTrainerType(trainerTypeDouble: TrainerType): TrainerConfig {
     this.trainerTypeDouble = trainerTypeDouble;
@@ -356,7 +356,7 @@ export class TrainerConfig {
   /**
    * Sets the title for double trainers
    * @param titleDouble The key for the title in the i18n file. (e.g., "champion_double").
-   * @returns {TrainerConfig} The updated TrainerConfig instance.
+   * @returns The updated TrainerConfig instance.
    */
   setDoubleTitle(titleDouble: string): TrainerConfig {
     // First check if i18n is initialized
@@ -525,7 +525,7 @@ export class TrainerConfig {
    * @param poolName The evil team the admin belongs to.
    * @param {SpeciesId | SpeciesId[]} signatureSpecies The signature species for the evil team leader.
    * @param specialtyType The specialty Type of the admin, if they have one
-   * @returns {TrainerConfig} The updated TrainerConfig instance.
+   * @returns The updated TrainerConfig instance.
    */
   initForEvilTeamAdmin(
     title: string,
@@ -566,7 +566,7 @@ export class TrainerConfig {
   /**
    * Initializes the trainer configuration for a Stat Trainer, as part of the Trainer's Test Mystery Encounter.
    * @param _isMale Whether the stat trainer is Male or Female (for localization of the title).
-   * @returns {TrainerConfig} The updated TrainerConfig instance.
+   * @returns The updated TrainerConfig instance.
    */
   initForStatTrainer(_isMale = false): TrainerConfig {
     if (!getIsInitialized()) {
@@ -593,7 +593,7 @@ export class TrainerConfig {
    * @param {SpeciesId | SpeciesId[]} signatureSpecies The signature species for the evil team leader.
    * @param {PokemonType} specialtyType The specialty type for the evil team Leader.
    * @param boolean Whether or not this is the rematch fight
-   * @returns {TrainerConfig} The updated TrainerConfig instance.
+   * @returns The updated TrainerConfig instance.
    */
   initForEvilTeamLeader(
     title: string,
@@ -636,7 +636,7 @@ export class TrainerConfig {
    * @param {PokemonType} specialtyType The specialty type for the Gym Leader.
    * @param ignoreMinTeraWave Whether the Gym Leader always uses Tera (true), or only Teras after {@linkcode GYM_LEADER_TERA_WAVE} (false). Defaults to false.
    * @param teraSlot Optional, sets the party member in this slot to Terastallize. Wraps based on party size.
-   * @returns {TrainerConfig} The updated TrainerConfig instance.
+   * @returns The updated TrainerConfig instance.
    */
   initForGymLeader(
     signatureSpecies: (SpeciesId | SpeciesId[])[],
@@ -750,7 +750,7 @@ export class TrainerConfig {
    * Initializes the trainer configuration for a Champion.
    * @param {SpeciesId | SpeciesId[]} signatureSpecies The signature species for the Champion.
    * @param isMale Whether the Champion is Male or Female (for localization of the title).
-   * @returns {TrainerConfig} The updated TrainerConfig instance.
+   * @returns The updated TrainerConfig instance.
    */
   initForChampion(isMale: boolean): TrainerConfig {
     // Check if the internationalization (i18n) system is initialized.
@@ -785,7 +785,7 @@ export class TrainerConfig {
   /**
    * Sets a localized name for the trainer. This should only be used for trainers that dont use a "initFor" function and are considered "named" trainers
    * @param name - The name of the trainer.
-   * @returns {TrainerConfig} The updated TrainerConfig instance.
+   * @returns The updated TrainerConfig instance.
    */
   setLocalizedName(name: string): TrainerConfig {
     // Check if the internationalization (i18n) system is initialized.
@@ -800,7 +800,7 @@ export class TrainerConfig {
    * Retrieves the title for the trainer based on the provided trainer slot and variant.
    * @param {TrainerSlot} trainerSlot - The slot to determine which title to use. Defaults to TrainerSlot.NONE.
    * @param {TrainerVariant} variant - The variant of the trainer to determine the specific title.
-   * @returns {string} - The title of the trainer.
+   * @returns - The title of the trainer.
    */
   getTitle(trainerSlot: TrainerSlot = TrainerSlot.NONE, variant: TrainerVariant): string {
     const ret = this.name;

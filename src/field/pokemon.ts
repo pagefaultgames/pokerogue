@@ -2651,7 +2651,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param {boolean} includeEvolutionMoves Whether to include evolution moves
    * @param {boolean} simulateEvolutionChain Whether to include moves from prior evolutions
    * @param {boolean} includeRelearnerMoves Whether to include moves that would require a relearner. Note the move relearner inherently allows evolution moves
-   * @returns {LevelMoves} A list of moves and the levels they can be learned at
+   * @returns A list of moves and the levels they can be learned at
    */
   getLevelMoves(
     startingLevel?: number,
@@ -4440,7 +4440,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param user - The move user
    * @param target - The target of the move
    *
-   * @returns {boolean} `true` if the move is disabled for this Pokemon due to the player's target selection
+   * @returns `true` if the move is disabled for this Pokemon due to the player's target selection
    *
    * @see {@linkcode MoveRestrictionBattlerTag}
    */

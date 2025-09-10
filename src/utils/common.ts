@@ -136,7 +136,7 @@ export function randSeedItem<T>(items: T[]): T {
 /**
  * Shuffle a list using the seeded rng. Utilises the Fisher-Yates algorithm.
  * @param {Array} items An array of items.
- * @returns {Array} A new shuffled array of items.
+ * @returns A new shuffled array of items.
  */
 export function randSeedShuffle<T>(items: T[]): T[] {
   if (items.length <= 1) {

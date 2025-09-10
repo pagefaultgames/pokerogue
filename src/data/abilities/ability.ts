@@ -4242,7 +4242,7 @@ function getAnticipationCondition(): AbAttrCondition {
  * has already been used by that pokemon that battle. It requires an ability to
  * be specified due to current limitations in how conditions on abilities work.
  * @param {AbilityId} ability The ability to check if it's already been applied
- * @returns {AbAttrCondition} The condition
+ * @returns The condition
  */
 function getOncePerBattleCondition(ability: AbilityId): AbAttrCondition {
   return (pokemon: Pokemon) => {

@@ -289,11 +289,11 @@ export abstract class Challenge {
 
   /**
    * An apply function for AI_LEVEL challenges. Derived classes should alter this.
-   * @param _level {@link NumberHolder} The generated level.
-   * @param _levelCap {@link Number} The current level cap.
-   * @param _isTrainer {@link Boolean} Whether this is a trainer pokemon.
-   * @param _isBoss {@link Boolean} Whether this is a non-trainer boss pokemon.
-   * @returns {@link boolean} Whether this function did anything.
+   * @param _level - The generated level.
+   * @param _levelCap - The current level cap.
+   * @param _isTrainer - Whether this is a trainer pokemon.
+   * @param _isBoss - Whether this is a non-trainer boss pokemon.
+   * @returns - Whether this function did anything.
    */
   applyLevelChange(_level: NumberHolder, _levelCap: number, _isTrainer: boolean, _isBoss: boolean): boolean {
     return false;
@@ -301,9 +301,9 @@ export abstract class Challenge {
 
   /**
    * An apply function for AI_MOVE_SLOTS challenges. Derived classes should alter this.
-   * @param pokemon {@link Pokemon} The pokemon that is being considered.
-   * @param moveSlots {@link NumberHolder} The amount of move slots.
-   * @returns {@link boolean} Whether this function did anything.
+   * @param pokemon - The pokemon that is being considered.
+   * @param moveSlots - The amount of move slots.
+   * @returns Whether this function did anything.
    */
   applyMoveSlot(_pokemon: Pokemon, _moveSlots: NumberHolder): boolean {
     return false;
@@ -311,8 +311,8 @@ export abstract class Challenge {
 
   /**
    * An apply function for PASSIVE_ACCESS challenges. Derived classes should alter this.
-   * @param pokemon {@link Pokemon} The pokemon to change.
-   * @param hasPassive {@link BooleanHolder} Whether it should have its passive.
+   * @param _pokemon - The pokemon to change.
+   * @param _hasPassive - Whether it should have its passive.
    * @returns {@link boolean} Whether this function did anything.
    */
   applyPassiveAccess(_pokemon: Pokemon, _hasPassive: BooleanHolder): boolean {

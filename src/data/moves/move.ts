@@ -4358,7 +4358,7 @@ export class PositiveStatStagePowerAttr extends VariablePowerAttr {
    * @param {Pokemon} target N/A
    * @param {Move} move N/A
    * @param {any[]} args The argument for VariablePowerAttr, accumulates and sets the amount of power multiplied by stats
-   * @returns {boolean} Returns true if attribute is applied
+   * @returns Returns true if attribute is applied
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const positiveStatStages: number = countPositiveStatStages(user);
@@ -6686,7 +6686,7 @@ export class CopyBiomeTypeAttr extends MoveEffectAttr {
   /**
    * Retrieves a type from the current terrain
    * @param terrainType {@linkcode TerrainType}
-   * @returns {@linkcode Type}
+   * @returns
    */
   private getTypeForTerrain(terrainType: TerrainType): PokemonType {
     switch (terrainType) {
@@ -6707,7 +6707,7 @@ export class CopyBiomeTypeAttr extends MoveEffectAttr {
   /**
    * Retrieves a type from the current biome
    * @param biomeType {@linkcode BiomeId}
-   * @returns {@linkcode Type}
+   * @returns
    */
   private getTypeForBiome(biomeType: BiomeId): PokemonType {
     switch (biomeType) {
@@ -7442,7 +7442,7 @@ export class SketchAttr extends MoveEffectAttr {
    * @param {Pokemon} target Pokemon that the user wants to copy a move from
    * @param {Move} move Move being used
    * @param {any[]} args Unused
-   * @returns {boolean} true if the function succeeds, otherwise false
+   * @returns true if the function succeeds, otherwise false
    */
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -8148,7 +8148,7 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
    * @param {Pokemon} target Opposing pokemon that recently used a move
    * @param {Move} move Move being used
    * @param {any[]} args Unused
-   * @returns {boolean} true if the function succeeds
+   * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {

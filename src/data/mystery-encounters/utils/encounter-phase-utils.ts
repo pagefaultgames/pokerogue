@@ -986,7 +986,7 @@ export function handleMysteryEncounterTurnStartEffects(): boolean {
  * @param level the level of the mon, which differs between MEs
  * @param isBoss whether the mon should be a Boss
  * @param rerollHidden whether the mon should get an extra roll for Hidden Ability
- * @returns {@linkcode EnemyPokemon} for the requested encounter
+ * @returns for the requested encounter
  */
 export function getRandomEncounterSpecies(level: number, isBoss = false, rerollHidden = false): EnemyPokemon {
   let bossSpecies: PokemonSpecies;

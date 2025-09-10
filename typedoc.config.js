@@ -3,7 +3,7 @@ import { globSync } from "node:fs";
 const dryRun = !!process.env.DRY_RUN?.match(/true/gi);
 
 /**
- * @type {Partial<import("typedoc").TypeDocOptions>}
+ * <!-- @type {Partial<import("typedoc").TypeDocOptions>} -->
  */
 const config = {
   entryPoints: ["./src", "./test/test-utils"],
@@ -61,4 +61,5 @@ if (!dryRun && process.env.REF_NAME) {
   };
 }
 
+// biome-ignore lint/style/noDefaultExport: required by TypeDoc
 export default config;

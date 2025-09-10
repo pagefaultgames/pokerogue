@@ -197,7 +197,7 @@ export class MoveTouchControlsHandler {
 
   /**
    * Returns the current positions of all touch controls that have moved from their default positions of this orientation.
-   * @returns {ControlPosition[]} The current positions of all touch controls that have moved from their default positions of this orientation
+   * @returns The current positions of all touch controls that have moved from their default positions of this orientation
    */
   private getModifiedCurrentPositions(): ControlPosition[] {
     return this.getControlGroupElements()

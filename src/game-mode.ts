@@ -316,7 +316,7 @@ export class GameMode implements GameModeConfig {
   /**
    * Checks whether there is a fixed battle on this gamemode on a given wave.
    * @param {number} waveIndex The wave to check.
-   * @returns {boolean} If this game mode has a fixed battle on this wave
+   * @returns If this game mode has a fixed battle on this wave
    */
   isFixedBattle(waveIndex: number): boolean {
     const dummyConfig = new FixedBattleConfig();
@@ -329,7 +329,7 @@ export class GameMode implements GameModeConfig {
   /**
    * Returns the config for the fixed battle for a particular wave.
    * @param {number} waveIndex The wave to check.
-   * @returns {boolean} The fixed battle for this wave.
+   * @returns The fixed battle for this wave.
    */
   getFixedBattle(waveIndex: number): FixedBattleConfig {
     const challengeConfig = new FixedBattleConfig();
