@@ -7003,6 +7003,7 @@ export function initAbilities() {
       .attr(StatMultiplierAbAttr, Stat.SPATK, 1.5)
       .condition(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN)),
     new Ability(AbilityId.QUICK_FEET, 4)
+      // TODO: This should ignore the speed drop, not manually undo it
       .conditionalAttr(pokemon => pokemon.status ? pokemon.status.effect === StatusEffect.PARALYSIS : false, StatMultiplierAbAttr, Stat.SPD, 2)
       .conditionalAttr(pokemon => !!pokemon.status || pokemon.hasAbility(AbilityId.COMATOSE), StatMultiplierAbAttr, Stat.SPD, 1.5),
     new Ability(AbilityId.NORMALIZE, 4)
