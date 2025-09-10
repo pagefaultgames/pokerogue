@@ -25,8 +25,8 @@ import { FusePokemonReward } from "#items/rewards/fuse";
 import { RememberMoveReward } from "#items/rewards/remember-move";
 import { TmReward } from "#items/rewards/tm";
 import { BattlePhase } from "#phases/battle-phase";
-import { PartyOption, PartyUiHandler, PartyUiMode, type PokemonMoveSelectFilter } from "#ui/party-ui-handler";
 import { type RewardSelectUiHandler, SHOP_OPTIONS_ROW_LIMIT } from "#ui/handlers/reward-select-ui-handler";
+import { PartyOption, PartyUiHandler, PartyUiMode, type PokemonMoveSelectFilter } from "#ui/party-ui-handler";
 import { isNullOrUndefined, NumberHolder } from "#utils/common";
 import i18next from "i18next";
 
@@ -211,11 +211,11 @@ export class SelectRewardPhase extends BattlePhase {
       -1,
       (fromSlotIndex: number, itemIndex: number, itemQuantity: number, toSlotIndex: number) => {
         if (
-          toSlotIndex !== undefined &&
-          fromSlotIndex < 6 &&
-          toSlotIndex < 6 &&
-          fromSlotIndex !== toSlotIndex &&
-          itemIndex > -1
+          toSlotIndex !== undefined
+          && fromSlotIndex < 6
+          && toSlotIndex < 6
+          && fromSlotIndex !== toSlotIndex
+          && itemIndex > -1
         ) {
           const items = party[fromSlotIndex].heldItemManager.getTransferableHeldItems();
           const item = items[itemIndex];
@@ -262,10 +262,10 @@ export class SelectRewardPhase extends BattlePhase {
       -1,
       (fromSlotIndex: number, spliceSlotIndex: number) => {
         if (
-          spliceSlotIndex !== undefined &&
-          fromSlotIndex < 6 &&
-          spliceSlotIndex < 6 &&
-          fromSlotIndex !== spliceSlotIndex
+          spliceSlotIndex !== undefined
+          && fromSlotIndex < 6
+          && spliceSlotIndex < 6
+          && fromSlotIndex !== spliceSlotIndex
         ) {
           globalScene.ui.setMode(UiMode.REWARD_SELECT, this.isPlayer()).then(() => {
             reward.apply({ pokemon: party[fromSlotIndex], pokemon2: party[spliceSlotIndex] });
@@ -302,7 +302,7 @@ export class SelectRewardPhase extends BattlePhase {
     if (isRememberMoveReward(reward)) {
       partyUiMode = PartyUiMode.REMEMBER_MOVE_REWARD;
       getParams = (slotIndex: number, option: PartyOption) => {
-        return { pokemon: party[slotIndex], moveIndex: option, cost: cost } as PokemonMoveRecallRewardParams;
+        return { pokemon: party[slotIndex], moveIndex: option, cost } as PokemonMoveRecallRewardParams;
       };
     }
     if (isTmReward(reward)) {
@@ -374,9 +374,9 @@ export class SelectRewardPhase extends BattlePhase {
     // If custom rewards are specified, overrides default item count
     if (this.customRewardSettings) {
       const newItemCount =
-        (this.customRewardSettings.guaranteedRarityTiers?.length ?? 0) +
-        (this.customRewardSettings.guaranteedRewardOptions?.length ?? 0) +
-        (this.customRewardSettings.guaranteedRewardSpecs?.length ?? 0);
+        (this.customRewardSettings.guaranteedRarityTiers?.length ?? 0)
+        + (this.customRewardSettings.guaranteedRewardOptions?.length ?? 0)
+        + (this.customRewardSettings.guaranteedRewardSpecs?.length ?? 0);
       if (this.customRewardSettings.fillRemaining) {
         const originalCount = rewardCountHolder.value;
         rewardCountHolder.value = originalCount > newItemCount ? originalCount : newItemCount;

@@ -132,6 +132,6 @@ export class VictoryPhase extends PokemonPhase {
       return gameMode.getFixedBattle(waveIndex).customRewardSettings;
     }
 
-    return undefined;
+    return;
   }
 }

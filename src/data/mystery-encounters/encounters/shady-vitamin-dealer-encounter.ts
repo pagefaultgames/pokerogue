@@ -100,7 +100,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
           encounter.setDialogueToken("boost2", allHeldItems[items[1]].name);
           encounter.misc = {
             chosenPokemon: pokemon,
-            items: items,
+            items,
           };
         };
 
@@ -180,7 +180,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
           encounter.setDialogueToken("boost2", allHeldItems[items[1]].name);
           encounter.misc = {
             chosenPokemon: pokemon,
-            items: items,
+            items,
           };
         };
 

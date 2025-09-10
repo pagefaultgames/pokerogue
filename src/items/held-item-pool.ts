@@ -133,7 +133,7 @@ function determineItemPoolTier(pool: HeldItemTieredPool, upgradeCount?: number):
   }
 
   tier += upgradeCount;
-  while (tier && !pool[tier]?.length) {
+  while (tier && pool[tier]?.length === 0) {
     tier--;
     if (upgradeCount) {
       upgradeCount--;
@@ -168,8 +168,8 @@ export function getNewBerryHeldItem(customWeights: HeldItemWeights = {}, target?
   const weights = items.map(t =>
     target?.heldItemManager.isMaxStack(t)
       ? 0
-      : (customWeights[t] ??
-          (t === HeldItemId.SITRUS_BERRY || t === HeldItemId.LUM_BERRY || t === HeldItemId.LEPPA_BERRY))
+      : (customWeights[t]
+          ?? (t === HeldItemId.SITRUS_BERRY || t === HeldItemId.LUM_BERRY || t === HeldItemId.LEPPA_BERRY))
         ? 2
         : 1,
   );
@@ -192,7 +192,7 @@ export function getNewAttackTypeBoosterHeldItem(
       .filter(m => m.getMove().is("AttackMove"))
       .map(m => p.getMoveType(m.getMove(), true)),
   );
-  if (!attackMoveTypes.length) {
+  if (attackMoveTypes.length === 0) {
     return null;
   }
 

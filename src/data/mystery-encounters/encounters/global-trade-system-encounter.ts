@@ -288,8 +288,8 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
           if (tradePokemon.species.abilityHidden && tradePokemon.abilityIndex < hiddenIndex) {
             const hiddenAbilityChance = new NumberHolder(64);
             globalScene.applyPlayerItems(TrainerItemEffect.HIDDEN_ABILITY_CHANCE_BOOSTER, {
-                numberHolder: hiddenAbilityChance,
-              });
+              numberHolder: hiddenAbilityChance,
+            });
 
             const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
 

@@ -48,7 +48,6 @@ import type { PhaseClass, PhaseString } from "#types/phase-types";
 import type { BallUiHandler } from "#ui/handlers/ball-ui-handler";
 import type { BattleMessageUiHandler } from "#ui/handlers/battle-message-ui-handler";
 import type { CommandUiHandler } from "#ui/handlers/command-ui-handler";
-import type { ModifierSelectUiHandler } from "#ui/handlers/reward-select-ui-handler";
 import type { PartyUiHandler } from "#ui/handlers/party-ui-handler";
 import type { StarterSelectUiHandler } from "#ui/handlers/starter-select-ui-handler";
 import type { TargetSelectUiHandler } from "#ui/handlers/target-select-ui-handler";

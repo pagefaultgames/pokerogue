@@ -115,10 +115,10 @@ import { AbilityBar } from "#ui/containers/ability-bar";
 import { ArenaFlyout } from "#ui/containers/arena-flyout";
 import { CandyBar } from "#ui/containers/candy-bar";
 import { CharSprite } from "#ui/containers/char-sprite";
-import { ItemBar } from "#ui/item-bar-ui";
 import { PartyExpBar } from "#ui/containers/party-exp-bar";
 import { PokeballTray } from "#ui/containers/pokeball-tray";
 import { PokemonInfoContainer } from "#ui/containers/pokemon-info-container";
+import { ItemBar } from "#ui/item-bar-ui";
 import { addTextObject, getTextColor } from "#ui/text";
 import { UI } from "#ui/ui";
 import { addUiThemeOverrides } from "#ui/ui-theme";
@@ -2907,7 +2907,7 @@ export class BattleScene extends SceneBase {
 
     for (const t in tokens) {
       (allTrainerItems[t] as EnemyAttackStatusEffectChanceTrainerItem).apply(this.enemyTrainerItems, {
-        pokemon: pokemon,
+        pokemon,
       });
     }
   }

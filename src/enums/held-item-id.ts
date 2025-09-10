@@ -15,8 +15,8 @@ export const HeldItemId = {
   APICOT_BERRY: 0x0107,
   SALAC_BERRY: 0x0108,
   LANSAT_BERRY: 0x0109,
-  STARF_BERRY: 0x010A,
-  LEPPA_BERRY: 0x010B,
+  STARF_BERRY: 0x010a,
+  LEPPA_BERRY: 0x010b,
 
   // Other items that are consumed
   REVIVER_SEED: 0x0201,
@@ -32,12 +32,12 @@ export const HeldItemId = {
   SILVER_POWDER: 0x0307,
   SPELL_TAG: 0x0308,
   METAL_COAT: 0x0309,
-  CHARCOAL: 0x030A,
-  MYSTIC_WATER: 0x030B,
-  MIRACLE_SEED: 0x030C,
-  MAGNET: 0x030D,
-  TWISTED_SPOON: 0x030E,
-  NEVER_MELT_ICE: 0x030F,
+  CHARCOAL: 0x030a,
+  MYSTIC_WATER: 0x030b,
+  MIRACLE_SEED: 0x030c,
+  MAGNET: 0x030d,
+  TWISTED_SPOON: 0x030e,
+  NEVER_MELT_ICE: 0x030f,
   DRAGON_FANG: 0x0310,
   BLACK_GLASSES: 0x0311,
   FAIRY_FEATHER: 0x0312,
@@ -69,12 +69,12 @@ export const HeldItemId = {
   WIDE_LENS: 0x0707,
   MULTI_LENS: 0x0708,
   GOLDEN_PUNCH: 0x0709,
-  GRIP_CLAW: 0x070A,
-  TOXIC_ORB: 0x070B,
-  FLAME_ORB: 0x070C,
-  SOUL_DEW: 0x070D,
-  BATON: 0x070E,
-  MINI_BLACK_HOLE: 0x070F,
+  GRIP_CLAW: 0x070a,
+  TOXIC_ORB: 0x070b,
+  FLAME_ORB: 0x070c,
+  SOUL_DEW: 0x070d,
+  BATON: 0x070e,
+  MINI_BLACK_HOLE: 0x070f,
   EVIOLITE: 0x0710,
 
   // Vitamins
@@ -92,30 +92,32 @@ export const HeldItemId = {
   MACHO_BRACE: 0x0904,
 
   // Evo trackers
-  GIMMIGHOUL_EVO_TRACKER: 0x0A01,
+  GIMMIGHOUL_EVO_TRACKER: 0x0a01,
 
   // All form change items
-  ...FormChangeItemId
+  ...FormChangeItemId,
 } as const;
 
 export type HeldItemId = ObjectValues<typeof HeldItemId>;
 
 type HeldItemNameMap = {
-  [k in HeldItemName as (typeof HeldItemId)[k]]: k
-}
+  [k in HeldItemName as (typeof HeldItemId)[k]]: k;
+};
 
 type HeldItemName = keyof typeof HeldItemId;
 
 /** `const object` mapping all held item IDs to their respective names. */
 // TODO: This stores names as UPPER_SNAKE_CASE, but the locales are in PascalCase...
-export const HeldItemNames = Object.freeze(Object.entries(HeldItemId).reduce(
-  // Use a type-safe reducer to force number keys and values
-  (acc, [key, value]) => {
-    acc[value] = key;
-    return acc;
-  },
-  {}
-)) as HeldItemNameMap;
+export const HeldItemNames = Object.freeze(
+  Object.entries(HeldItemId).reduce(
+    // Use a type-safe reducer to force number keys and values
+    (acc, [key, value]) => {
+      acc[value] = key;
+      return acc;
+    },
+    {},
+  ),
+) as HeldItemNameMap;
 
 export const HeldItemCategoryId = {
   NONE: 0x0000,
@@ -128,14 +130,14 @@ export const HeldItemCategoryId = {
   UNIQUE: 0x0700,
   VITAMIN: 0x0800,
   BASE_STAT_BOOST: 0x0900,
-  EVO_TRACKER: 0x0A00,
-  RARE_FORM_CHANGE: 0x0B00,
-  FORM_CHANGE: 0x0C00,
+  EVO_TRACKER: 0x0a00,
+  RARE_FORM_CHANGE: 0x0b00,
+  FORM_CHANGE: 0x0c00,
 } as const;
 
 export type HeldItemCategoryId = ObjectValues<typeof HeldItemCategoryId>;
 
-const ITEM_CATEGORY_MASK = 0xFF00
+const ITEM_CATEGORY_MASK = 0xff00;
 
 export function getHeldItemCategory(itemId: HeldItemId): HeldItemCategoryId {
   return (itemId & ITEM_CATEGORY_MASK) as HeldItemCategoryId;
@@ -149,9 +151,6 @@ export function isItemInCategory(itemId: HeldItemId, category: HeldItemCategoryI
   return getHeldItemCategory(itemId) === category;
 }
 
-export function isItemInRequested(
-  itemId: HeldItemId,
-  requestedItems: (HeldItemCategoryId | HeldItemId)[]
-): boolean {
+export function isItemInRequested(itemId: HeldItemId, requestedItems: (HeldItemCategoryId | HeldItemId)[]): boolean {
   return requestedItems.some(entry => itemId === entry || (itemId & ITEM_CATEGORY_MASK) === entry);
 }

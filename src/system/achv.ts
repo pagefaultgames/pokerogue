@@ -494,12 +494,8 @@ export const achvs = {
     25,
   ).setSecret(true),
   SPLICE: new Achv("splice", "splice.description", "dna_splicers", 50),
-  MINI_BLACK_HOLE: new HeldItemAchv(
-    "miniBlackHole",
-    "miniBlackHole.description",
-    "mini_black_hole",
-    25,
-    pokemon => pokemon.heldItemManager.hasItem(HeldItemId.MINI_BLACK_HOLE),
+  MINI_BLACK_HOLE: new HeldItemAchv("miniBlackHole", "miniBlackHole.description", "mini_black_hole", 25, pokemon =>
+    pokemon.heldItemManager.hasItem(HeldItemId.MINI_BLACK_HOLE),
   ).setSecret(),
   HIDDEN_ABILITY: new Achv("hiddenAbility", "hiddenAbility.description", "ability_charm", 25),
   PERFECT_IVS: new Achv("perfectIvs", "perfectIvs.description", "blunder_policy", 25),

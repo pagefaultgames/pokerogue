@@ -835,9 +835,9 @@ export class PartyUiHandler extends MessageUiHandler {
     // This is only relevant for PartyUiMode.CHECK
     // TODO: This risks hitting the other options (.MOVE_i and ALL) so does it? Do we need an extra check?
     if (
-      option >= PartyOption.FORM_CHANGE_ITEM &&
-      globalScene.phaseManager.getCurrentPhase().is("SelectRewardPhase") &&
-      this.partyUiMode === PartyUiMode.CHECK
+      option >= PartyOption.FORM_CHANGE_ITEM
+      && globalScene.phaseManager.getCurrentPhase().is("SelectRewardPhase")
+      && this.partyUiMode === PartyUiMode.CHECK
     ) {
       const formChangeItems = this.getFormChangeItems(pokemon);
       const item = formChangeItems[option - PartyOption.FORM_CHANGE_ITEM];
@@ -950,7 +950,7 @@ export class PartyUiHandler extends MessageUiHandler {
       return this.moveOptionCursor(button);
     }
 
-    if (button === Button.LEFT || button === Button.RIGHT && this.isItemManageMode()) {
+    if (button === Button.LEFT || (button === Button.RIGHT && this.isItemManageMode())) {
       return this.processItemTransferModeLeftRightInput(button);
     }
 
@@ -1017,8 +1017,8 @@ export class PartyUiHandler extends MessageUiHandler {
     const ui = this.getUi();
     if (this.cursor < 6) {
       if (
-        (this.partyUiMode === PartyUiMode.ITEM_TRANSFER && !this.transferMode) ||
-        this.partyUiMode === PartyUiMode.DISCARD
+        (this.partyUiMode === PartyUiMode.ITEM_TRANSFER && !this.transferMode)
+        || this.partyUiMode === PartyUiMode.DISCARD
       ) {
         /** Initialize item quantities for the selected Pokemon */
         const pokemon = globalScene.getPlayerParty()[this.cursor];
@@ -1063,8 +1063,8 @@ export class PartyUiHandler extends MessageUiHandler {
   private processPartyCancelInput(): boolean {
     const ui = this.getUi();
     if (
-      (this.partyUiMode === PartyUiMode.ITEM_TRANSFER || this.partyUiMode === PartyUiMode.SPLICE) &&
-      this.transferMode
+      (this.partyUiMode === PartyUiMode.ITEM_TRANSFER || this.partyUiMode === PartyUiMode.SPLICE)
+      && this.transferMode
     ) {
       this.clearTransfer();
       ui.playSelect();
@@ -1337,8 +1337,8 @@ export class PartyUiHandler extends MessageUiHandler {
 
   private allowBatonSwitch(): boolean {
     return !!(
-      this.partyUiMode !== PartyUiMode.FAINT_SWITCH &&
-      globalScene.getPlayerField()[this.fieldIndex].heldItemManager.hasItem(HeldItemId.BATON)
+      this.partyUiMode !== PartyUiMode.FAINT_SWITCH
+      && globalScene.getPlayerField()[this.fieldIndex].heldItemManager.hasItem(HeldItemId.BATON)
     );
   }
 
@@ -1580,10 +1580,10 @@ export class PartyUiHandler extends MessageUiHandler {
       } else if (option === PartyOption.SCROLL_DOWN) {
         optionName = "↓";
       } else if (
-        (this.partyUiMode !== PartyUiMode.REMEMBER_MOVE_REWARD &&
-          (this.partyUiMode !== PartyUiMode.ITEM_TRANSFER || this.transferMode) &&
-          this.partyUiMode !== PartyUiMode.DISCARD) ||
-        option === PartyOption.CANCEL
+        (this.partyUiMode !== PartyUiMode.REMEMBER_MOVE_REWARD
+          && (this.partyUiMode !== PartyUiMode.ITEM_TRANSFER || this.transferMode)
+          && this.partyUiMode !== PartyUiMode.DISCARD)
+        || option === PartyOption.CANCEL
       ) {
         switch (option) {
           case PartyOption.MOVE_1:
@@ -1645,11 +1645,11 @@ export class PartyUiHandler extends MessageUiHandler {
       const items = pokemon.getHeldItems();
       const item = items[option];
       if (
-        this.isItemManageMode() &&
-        this.transferQuantitiesMax[option] > 1 &&
-        !this.transferMode &&
-        item !== undefined &&
-        allHeldItems[item].name === optionName
+        this.isItemManageMode()
+        && this.transferQuantitiesMax[option] > 1
+        && !this.transferMode
+        && item !== undefined
+        && allHeldItems[item].name === optionName
       ) {
         let amountText = ` (${this.transferQuantities[option]})`;
 

@@ -1162,20 +1162,20 @@ export class GameData {
           }
         }
 
-          globalScene.trainerItems.clearItems();
-          globalScene.assignTrainerItemsFromSaveData(sessionData.trainerItems, true);
+        globalScene.trainerItems.clearItems();
+        globalScene.assignTrainerItemsFromSaveData(sessionData.trainerItems, true);
 
         globalScene.arena.positionalTagManager.tags = fromSession.arena.positionalTags.map(tag =>
           loadPositionalTag(tag),
         );
 
-          globalScene.enemyTrainerItems.clearItems();
-          globalScene.assignTrainerItemsFromSaveData(sessionData.enemyTrainerItems, false);
+        globalScene.enemyTrainerItems.clearItems();
+        globalScene.assignTrainerItemsFromSaveData(sessionData.enemyTrainerItems, false);
 
         Promise.all(loadPokemonAssets).then(() => resolve(true));
 
-          globalScene.updateItems(true);
-          globalScene.updateItems(false);
+        globalScene.updateItems(true);
+        globalScene.updateItems(false);
       };
       if (sessionData) {
         initSessionFromData(sessionData);

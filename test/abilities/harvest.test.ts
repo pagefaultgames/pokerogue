@@ -98,9 +98,12 @@ describe("Abilities - Harvest", () => {
 
     await game.toNextTurn();
 
-    expect(milotic.battleData.berriesEaten).toEqualArrayUnsorted(
-      [BerryType.ENIGMA, BerryType.LUM, BerryType.ENIGMA, BerryType.LUM]
-    );
+    expect(milotic.battleData.berriesEaten).toEqualArrayUnsorted([
+      BerryType.ENIGMA,
+      BerryType.LUM,
+      BerryType.ENIGMA,
+      BerryType.LUM,
+    ]);
     expect(getPartyBerries()).toHaveLength(0);
 
     // proc a high roll and we _should_ get a berry back!

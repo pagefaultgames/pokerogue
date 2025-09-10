@@ -907,8 +907,8 @@ export class HeldItemRequirement extends EncounterSceneRequirement {
   override getDialogueToken(pokemon?: PlayerPokemon): [string, string] {
     const requiredItems = pokemon?.getHeldItems().filter(item => {
       return (
-        this.requiredHeldItems.some(heldItem => item === heldItem) &&
-        (!this.requireTransferable || allHeldItems[item].isTransferable)
+        this.requiredHeldItems.some(heldItem => item === heldItem)
+        && (!this.requireTransferable || allHeldItems[item].isTransferable)
       );
     });
     if (requiredItems && requiredItems.length > 0) {

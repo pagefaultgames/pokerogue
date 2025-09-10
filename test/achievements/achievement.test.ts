@@ -202,13 +202,7 @@ describe("LevelAchv", () => {
 
 describe("HeldItemAchv", () => {
   it("should create an instance of ModifierAchv", () => {
-    const heldItemAchv = new HeldItemAchv(
-      "",
-      "Test Description",
-      "modifier_icon",
-      10,
-      () => true,
-    );
+    const heldItemAchv = new HeldItemAchv("", "Test Description", "modifier_icon", 10, () => true);
     expect(heldItemAchv).toBeInstanceOf(HeldItemAchv);
     expect(heldItemAchv instanceof Achv).toBe(true);
   });

@@ -141,8 +141,8 @@ export class SpeciesStatBoostHeldItem extends StatBoostHeldItem {
   apply(effect: typeof HeldItemEffect.STAT_BOOST, params: StatBoostParams): boolean {
     const pokemon = params.pokemon;
     const fitsSpecies =
-      this.species.includes(pokemon.getSpeciesForm(true).speciesId) ||
-      (pokemon.isFusion() && this.species.includes(pokemon.getFusionSpeciesForm(true).speciesId));
+      this.species.includes(pokemon.getSpeciesForm(true).speciesId)
+      || (pokemon.isFusion() && this.species.includes(pokemon.getFusionSpeciesForm(true).speciesId));
 
     if (fitsSpecies) {
       return super.apply(effect, params);

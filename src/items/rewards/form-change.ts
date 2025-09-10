@@ -22,9 +22,8 @@ export class FormChangeItemReward extends PokemonReward {
     super("", allHeldItems[formChangeItem].iconName, (pokemon: PlayerPokemon) => {
       // Make sure the Pokemon has alternate forms
       if (
-        pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId) &&
-        // Get all form changes for this species with an item trigger, including any compound triggers
-        pokemonFormChanges[pokemon.species.speciesId]
+        pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId) // Get all form changes for this species with an item trigger, including any compound triggers
+        && pokemonFormChanges[pokemon.species.speciesId]
           .filter(
             fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger) && fc.preFormKey === pokemon.getFormKey(),
           )
@@ -92,25 +91,24 @@ export class FormChangeItemRewardGenerator extends RewardGenerator {
             let formChangeItemTriggers = formChanges
               .filter(
                 fc =>
-                  ((fc.formKey.indexOf(SpeciesFormKey.MEGA) === -1 &&
-                    fc.formKey.indexOf(SpeciesFormKey.PRIMAL) === -1) ||
-                    globalScene.trainerItems.hasItem(TrainerItemId.MEGA_BRACELET)) &&
-                  ((fc.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) === -1 &&
-                    fc.formKey.indexOf(SpeciesFormKey.ETERNAMAX) === -1) ||
-                    globalScene.trainerItems.hasItem(TrainerItemId.DYNAMAX_BAND)) &&
-                  (!fc.conditions.length ||
-                    fc.conditions.filter(cond => cond instanceof SpeciesFormChangeCondition && cond.predicate(p))
-                      .length) &&
-                  fc.preFormKey === p.getFormKey(),
+                  ((fc.formKey.indexOf(SpeciesFormKey.MEGA) === -1 && fc.formKey.indexOf(SpeciesFormKey.PRIMAL) === -1)
+                    || globalScene.trainerItems.hasItem(TrainerItemId.MEGA_BRACELET))
+                  && ((fc.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) === -1
+                    && fc.formKey.indexOf(SpeciesFormKey.ETERNAMAX) === -1)
+                    || globalScene.trainerItems.hasItem(TrainerItemId.DYNAMAX_BAND))
+                  && (fc.conditions.length === 0
+                    || fc.conditions.filter(cond => cond instanceof SpeciesFormChangeCondition && cond.predicate(p))
+                      .length > 0)
+                  && fc.preFormKey === p.getFormKey(),
               )
               .map(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger)
               .filter(t => t?.active && !p.heldItemManager.hasItem(t.item));
 
             if (p.species.speciesId === SpeciesId.NECROZMA) {
               // technically we could use a simplified version and check for formChanges.length > 3, but in case any code changes later, this might break...
-              let foundULTRA_Z = false,
-                foundN_LUNA = false,
-                foundN_SOLAR = false;
+              let foundULTRA_Z = false;
+              let foundN_LUNA = false;
+              let foundN_SOLAR = false;
               formChangeItemTriggers.forEach((fc, _i) => {
                 console.log("Checking ", fc.item);
                 switch (fc.item) {
@@ -143,7 +141,7 @@ export class FormChangeItemRewardGenerator extends RewardGenerator {
       .filter(i => (i && i < 100) === this.isRareFormChangeItem);
     // convert it into a set to remove duplicate values, which can appear when the same species with a potential form change is in the party.
 
-    if (!formChangeItemPool.length) {
+    if (formChangeItemPool.length === 0) {
       return null;
     }
 

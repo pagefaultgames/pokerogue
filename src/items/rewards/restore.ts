@@ -69,11 +69,12 @@ export class PokemonHpRestoreReward extends PokemonReward {
     super(
       localeKey,
       iconImage,
-      selectFilter ||
-        ((pokemon: PlayerPokemon) => {
+      selectFilter
+        || ((pokemon: PlayerPokemon) => {
           if (
-            !pokemon.hp ||
-            (pokemon.isFullHp() && (!this.healStatus || (!pokemon.status && !pokemon.getTag(BattlerTagType.CONFUSED))))
+            !pokemon.hp
+            || (pokemon.isFullHp()
+              && (!this.healStatus || (!pokemon.status && !pokemon.getTag(BattlerTagType.CONFUSED))))
           ) {
             return PartyUiHandler.NoEffectMessage;
           }

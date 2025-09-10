@@ -65,7 +65,7 @@ export class PokemonAllMovePpRestoreReward extends PokemonReward {
       localeKey,
       iconImage,
       (pokemon: PlayerPokemon) => {
-        if (!pokemon.getMoveset().filter(m => m.ppUsed).length) {
+        if (pokemon.getMoveset().filter(m => m.ppUsed).length === 0) {
           return PartyUiHandler.NoEffectMessage;
         }
         return null;

@@ -144,8 +144,8 @@ export function convertModifierSaveData(data: ModifierData[]) {
     }
 
     if (itemId) {
-      const specs = { id: itemId, stack: stack };
-      const pokemonItem = { item: specs, pokemonId: pokemonId };
+      const specs = { id: itemId, stack };
+      const pokemonItem = { item: specs, pokemonId };
       pokemonItems.push(pokemonItem);
     }
   }

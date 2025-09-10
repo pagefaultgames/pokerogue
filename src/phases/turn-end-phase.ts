@@ -28,7 +28,7 @@ export class TurnEndPhase extends FieldPhase {
       if (!pokemon.switchOutStatus) {
         pokemon.lapseTags(BattlerTagLapseType.TURN_END);
 
-        applyHeldItems(HeldItemEffect.TURN_END_HEAL, { pokemon: pokemon });
+        applyHeldItems(HeldItemEffect.TURN_END_HEAL, { pokemon });
 
         if (globalScene.arena.terrain?.terrainType === TerrainType.GRASSY && pokemon.isGrounded()) {
           globalScene.phaseManager.unshiftNew(
@@ -43,16 +43,16 @@ export class TurnEndPhase extends FieldPhase {
         }
 
         if (!pokemon.isPlayer()) {
-          globalScene.applyPlayerItems(TrainerItemEffect.ENEMY_HEAL, { pokemon: pokemon });
-          globalScene.applyPlayerItems(TrainerItemEffect.ENEMY_STATUS_HEAL_CHANCE, { pokemon: pokemon });
+          globalScene.applyPlayerItems(TrainerItemEffect.ENEMY_HEAL, { pokemon });
+          globalScene.applyPlayerItems(TrainerItemEffect.ENEMY_STATUS_HEAL_CHANCE, { pokemon });
         }
 
         applyAbAttrs("PostTurnAbAttr", { pokemon });
       }
 
-      applyHeldItems(HeldItemEffect.TURN_END_STATUS, { pokemon: pokemon });
+      applyHeldItems(HeldItemEffect.TURN_END_STATUS, { pokemon });
 
-      applyHeldItems(HeldItemEffect.TURN_END_ITEM_STEAL, { pokemon: pokemon });
+      applyHeldItems(HeldItemEffect.TURN_END_ITEM_STEAL, { pokemon });
 
       pokemon.tempSummonData.turnCount++;
       pokemon.tempSummonData.waveTurnCount++;

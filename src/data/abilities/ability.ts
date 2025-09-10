@@ -4640,8 +4640,8 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
         .getHeldItems()
         .filter(
           bm =>
-            isItemInCategory(bm, HeldItemCategoryId.BERRY) &&
-            pokemon.heldItemManager.getStack(bm) < allHeldItems[bm].maxStackCount,
+            isItemInCategory(bm, HeldItemCategoryId.BERRY)
+            && pokemon.heldItemManager.getStack(bm) < allHeldItems[bm].maxStackCount,
         )
         .map(bm => (allHeldItems[bm] as BerryHeldItem).berryType),
     );
@@ -6261,16 +6261,14 @@ class ForceSwitchOutHelper {
         }
       }
 
-      if (!allyPokemon?.isActive(true)) {
-        if (switchOutTarget.hp) {
-          globalScene.phaseManager.pushNew("BattleEndPhase", false);
+      if (!allyPokemon?.isActive(true) && switchOutTarget.hp) {
+        globalScene.phaseManager.pushNew("BattleEndPhase", false);
 
-          if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
-            globalScene.phaseManager.pushNew("SelectBiomePhase");
-          }
-
-          globalScene.phaseManager.pushNew("NewBattlePhase");
+        if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
+          globalScene.phaseManager.pushNew("SelectBiomePhase");
         }
+
+        globalScene.phaseManager.pushNew("NewBattlePhase");
       }
     }
     return false;

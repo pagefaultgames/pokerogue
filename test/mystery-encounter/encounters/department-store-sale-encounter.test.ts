@@ -179,8 +179,8 @@ describe("Department Store Sale - Mystery Encounter", () => {
       expect(rewardSelectHandler.options.length).toEqual(5);
       for (const option of rewardSelectHandler.options) {
         expect(
-          option.rewardOption.type.id === RewardId.DIRE_HIT ||
-            option.rewardOption.type.id === RewardId.TEMP_STAT_STAGE_BOOSTER,
+          option.rewardOption.type.id === RewardId.DIRE_HIT
+            || option.rewardOption.type.id === RewardId.TEMP_STAT_STAGE_BOOSTER,
         ).toBeTruthy();
       }
     });

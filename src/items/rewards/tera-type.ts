@@ -52,8 +52,8 @@ export class ChangeTeraTypeReward extends PokemonReward {
    */
   shouldApply({ pokemon }: PokemonRewardParams): boolean {
     return (
-      pokemon.teraType !== this.teraType &&
-      ![SpeciesId.SHEDINJA, SpeciesId.OGERPON, SpeciesId.TERAPAGOS].some(s => pokemon.hasSpecies(s))
+      pokemon.teraType !== this.teraType
+      && ![SpeciesId.SHEDINJA, SpeciesId.OGERPON, SpeciesId.TERAPAGOS].some(s => pokemon.hasSpecies(s))
     );
   }
 
@@ -86,9 +86,9 @@ export class TeraTypeRewardGenerator extends RewardGenerator {
     const excludedType = globalScene.getPlayerParty().reduce((prevType, p) => {
       if (
         // Ignore Pokemon with fixed Tera Types
-        p.hasSpecies(SpeciesId.TERAPAGOS) ||
-        p.hasSpecies(SpeciesId.OGERPON) ||
-        p.hasSpecies(SpeciesId.SHEDINJA)
+        p.hasSpecies(SpeciesId.TERAPAGOS)
+        || p.hasSpecies(SpeciesId.OGERPON)
+        || p.hasSpecies(SpeciesId.SHEDINJA)
       ) {
         return prevType;
       }

@@ -144,8 +144,8 @@ export class OverridesHelper extends GameManagerHelper {
    * @returns `this`
    */
   public startingPokeballs(pokeballs: PokeballCounts): this {
-    vi.spyOn(Overrides, "POKEBALL_OVERRIDE", "get").mockReturnValue({ active: true, pokeballs: pokeballs });
-    this.log("Player Pokemon starting held items set to:", { active: true, pokeballs: pokeballs });
+    vi.spyOn(Overrides, "POKEBALL_OVERRIDE", "get").mockReturnValue({ active: true, pokeballs });
+    this.log("Player Pokemon starting held items set to:", { active: true, pokeballs });
     return this;
   }
 

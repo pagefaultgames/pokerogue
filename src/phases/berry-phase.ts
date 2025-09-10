@@ -36,8 +36,8 @@ export class BerryPhase extends FieldPhase {
   eatBerries(pokemon: Pokemon): void {
     const hasUsableBerry = pokemon.getHeldItems().some(m => {
       return (
-        isItemInCategory(m, HeldItemCategoryId.BERRY) &&
-        (allHeldItems[m] as BerryHeldItem).shouldApply(HeldItemEffect.BERRY, { pokemon: pokemon })
+        isItemInCategory(m, HeldItemCategoryId.BERRY)
+        && (allHeldItems[m] as BerryHeldItem).shouldApply(HeldItemEffect.BERRY, { pokemon })
       );
     });
 
@@ -64,7 +64,7 @@ export class BerryPhase extends FieldPhase {
       CommonAnim.USE_ITEM,
     );
 
-    applyHeldItems(HeldItemEffect.BERRY, { pokemon: pokemon });
+    applyHeldItems(HeldItemEffect.BERRY, { pokemon });
     globalScene.updateItems(pokemon.isPlayer());
 
     // AbilityId.CHEEK_POUCH only works once per round of nom noms

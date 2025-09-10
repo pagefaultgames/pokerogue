@@ -20,8 +20,8 @@ export class TmReward extends PokemonReward {
       `tm_${PokemonType[allMoves[moveId].type].toLowerCase()}`,
       (pokemon: PlayerPokemon) => {
         if (
-          pokemon.compatibleTms.indexOf(moveId) === -1 ||
-          pokemon.getMoveset().filter(m => m.moveId === moveId).length
+          pokemon.compatibleTms.indexOf(moveId) === -1
+          || pokemon.getMoveset().filter(m => m.moveId === moveId).length > 0
         ) {
           return PartyUiHandler.NoEffectMessage;
         }
@@ -90,7 +90,7 @@ export class TmRewardGenerator extends RewardGenerator {
       .filter(tm => tmPoolTiers[tm] === this.tier)
       .filter(tm => !allMoves[tm].name.endsWith(" (N)"))
       .filter((tm, i, array) => array.indexOf(tm) === i);
-    if (!tierUniqueCompatibleTms.length) {
+    if (tierUniqueCompatibleTms.length === 0) {
       return null;
     }
 

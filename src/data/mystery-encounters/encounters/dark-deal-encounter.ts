@@ -158,7 +158,7 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
         // Store removed pokemon types
         encounter.misc = {
           removedTypes: removedPokemon.getTypes(),
-          itemConfig: itemConfig,
+          itemConfig,
         };
       })
       .withOptionPhase(async () => {

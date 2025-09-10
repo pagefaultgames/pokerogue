@@ -43,29 +43,29 @@ export const RewardId = {
   PP_UP: 0x2901,
   PP_MAX: 0x2902,
 
-  TM_COMMON: 0x2A01,
-  TM_GREAT: 0x2A02,
-  TM_ULTRA: 0x2A03,
+  TM_COMMON: 0x2a01,
+  TM_GREAT: 0x2a02,
+  TM_ULTRA: 0x2a03,
 
-  MINT: 0x2B01,
-  TERA_SHARD: 0x2B02,
-  MEMORY_MUSHROOM: 0x2B03,
-  DNA_SPLICERS: 0x2B04,
+  MINT: 0x2b01,
+  TERA_SHARD: 0x2b02,
+  MEMORY_MUSHROOM: 0x2b03,
+  DNA_SPLICERS: 0x2b04,
 
-  SPECIES_STAT_BOOSTER: 0x2C01,
-  RARE_SPECIES_STAT_BOOSTER: 0x2C02,
-  VITAMIN: 0x2C03,
-  ATTACK_TYPE_BOOSTER: 0x2C04,
-  BERRY: 0x2C05,
+  SPECIES_STAT_BOOSTER: 0x2c01,
+  RARE_SPECIES_STAT_BOOSTER: 0x2c02,
+  VITAMIN: 0x2c03,
+  ATTACK_TYPE_BOOSTER: 0x2c04,
+  BERRY: 0x2c05,
 
-  TEMP_STAT_STAGE_BOOSTER: 0x2D01,
-  DIRE_HIT: 0x2D02,
-  LURE: 0x2D03,
-  SUPER_LURE: 0x2D04,
-  MAX_LURE: 0x2D05,
+  TEMP_STAT_STAGE_BOOSTER: 0x2d01,
+  DIRE_HIT: 0x2d02,
+  LURE: 0x2d03,
+  SUPER_LURE: 0x2d04,
+  MAX_LURE: 0x2d05,
 
-  FORM_CHANGE_ITEM: 0x2E01,
-  RARE_FORM_CHANGE_ITEM: 0x2E02,
+  FORM_CHANGE_ITEM: 0x2e01,
+  RARE_FORM_CHANGE_ITEM: 0x2e02,
 } as const;
 
 export type RewardId = ObjectValues<typeof RewardId>;
@@ -81,17 +81,17 @@ export const RewardCategoryId = {
   REVIVE: 0x0700,
   ETHER: 0x0800,
   ELIXIR: 0x0900,
-  PP_UP: 0x0A00,
-  TM: 0x0B00,
-  OTHER: 0x0C00,
-  HELD_ITEM: 0x0D00,
-  TRAINER_ITEM: 0x0E00,
-  FORM_CHANGE_ITEM: 0x0F00,
+  PP_UP: 0x0a00,
+  TM: 0x0b00,
+  OTHER: 0x0c00,
+  HELD_ITEM: 0x0d00,
+  TRAINER_ITEM: 0x0e00,
+  FORM_CHANGE_ITEM: 0x0f00,
 } as const;
 
 export type RewardCategoryId = ObjectValues<typeof RewardCategoryId>;
 
-const ITEM_CATEGORY_MASK = 0xFF00
+const ITEM_CATEGORY_MASK = 0xff00;
 
 export function getRewardCategory(itemId: RewardId): RewardCategoryId {
   return (itemId & ITEM_CATEGORY_MASK) as RewardCategoryId;

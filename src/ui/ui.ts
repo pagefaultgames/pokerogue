@@ -28,7 +28,6 @@ import { LoadingModalUiHandler } from "#ui/handlers/loading-modal-ui-handler";
 import { LoginFormUiHandler } from "#ui/handlers/login-form-ui-handler";
 import { MenuUiHandler } from "#ui/handlers/menu-ui-handler";
 import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
-import { ModifierSelectUiHandler } from "#ui/handlers/modifier-select-ui-handler";
 import { MysteryEncounterUiHandler } from "#ui/handlers/mystery-encounter-ui-handler";
 import { PartyUiHandler } from "#ui/handlers/party-ui-handler";
 import { PokedexPageUiHandler } from "#ui/handlers/pokedex-page-ui-handler";
@@ -61,6 +60,7 @@ import { executeIf } from "#utils/common";
 import i18next from "i18next";
 import { AdminUiHandler } from "./handlers/admin-ui-handler";
 import { RenameRunFormUiHandler } from "./handlers/rename-run-ui-handler";
+import { RewardSelectUiHandler } from "./handlers/reward-select-ui-handler";
 
 const transitionModes = [
   UiMode.SAVE_SLOT,

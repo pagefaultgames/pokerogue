@@ -64,10 +64,8 @@ export interface CustomRewardSettings {
 export function generateRewardPoolWeights(pool: RewardPool, party: Pokemon[], rerollCount = 0) {
   for (const tier of Object.keys(pool)) {
     const poolWeights = pool[tier].map(w => {
-      if (isTrainerItemId(w.id)) {
-        if (globalScene.trainerItems.isMaxStack(w.id)) {
-          return 0;
-        }
+      if (isTrainerItemId(w.id) && globalScene.trainerItems.isMaxStack(w.id)) {
+        return 0;
       }
       if (typeof w.weight === "number") {
         return w.weight;
@@ -118,7 +116,7 @@ function getRarityUpgradeCount(pool: RewardPool, baseTier: RarityTier, party: Po
   if (baseTier < RarityTier.MASTER) {
     const partyLuckValue = getPartyLuckValue(party);
     const upgradeOdds = Math.floor(128 / ((partyLuckValue + 4) / 4));
-    while (pool.hasOwnProperty(baseTier + upgradeCount + 1) && pool[baseTier + upgradeCount + 1].length) {
+    while (pool.hasOwnProperty(baseTier + upgradeCount + 1) && pool[baseTier + upgradeCount + 1].length > 0) {
       if (randSeedInt(upgradeOdds) < 4) {
         upgradeCount++;
       } else {
@@ -212,10 +210,10 @@ function getRewardOptionWithRetry(
   let candidate = getNewRewardOption(pool, weights, party, tier, undefined, 0, allowLuckUpgrades);
   let r = 0;
   while (
-    existingOptions.length &&
-    ++r < retryCount &&
-    //TODO: Improve this condition to refine what counts as a dupe
-    existingOptions.filter(o => o.type.name === candidate?.type.name || o.type.group === candidate?.type.group).length
+    existingOptions.length > 0
+    && ++r < retryCount //TODO: Improve this condition to refine what counts as a dupe
+    && existingOptions.filter(o => o.type.name === candidate?.type.name || o.type.group === candidate?.type.group)
+      .length > 0
   ) {
     console.log("Retry count:", r);
     console.log(candidate?.type.group);

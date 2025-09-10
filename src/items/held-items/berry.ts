@@ -73,7 +73,7 @@ export class BerryHeldItem extends ConsumableHeldItem<[typeof HeldItemEffect.BER
     //    }
 
     const preserve = new BooleanHolder(false);
-    globalScene.applyPlayerItems(TrainerItemEffect.PRESERVE_BERRY, { pokemon: pokemon, doPreserve: preserve });
+    globalScene.applyPlayerItems(TrainerItemEffect.PRESERVE_BERRY, { pokemon, doPreserve: preserve });
     const consumed = !preserve.value;
 
     // munch the berry and trigger unburden-like effects

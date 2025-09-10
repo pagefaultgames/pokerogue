@@ -212,20 +212,20 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(4);
       expect(
-        rewardSelectHandler.options[0].rewardOption.type.tier -
-          rewardSelectHandler.options[0].rewardOption.upgradeCount,
+        rewardSelectHandler.options[0].rewardOption.type.tier
+          - rewardSelectHandler.options[0].rewardOption.upgradeCount,
       ).toEqual(RarityTier.ROGUE);
       expect(
-        rewardSelectHandler.options[1].rewardOption.type.tier -
-          rewardSelectHandler.options[1].rewardOption.upgradeCount,
+        rewardSelectHandler.options[1].rewardOption.type.tier
+          - rewardSelectHandler.options[1].rewardOption.upgradeCount,
       ).toEqual(RarityTier.ROGUE);
       expect(
-        rewardSelectHandler.options[2].rewardOption.type.tier -
-          rewardSelectHandler.options[2].rewardOption.upgradeCount,
+        rewardSelectHandler.options[2].rewardOption.type.tier
+          - rewardSelectHandler.options[2].rewardOption.upgradeCount,
       ).toEqual(RarityTier.ULTRA);
       expect(
-        rewardSelectHandler.options[3].rewardOption.type.tier -
-          rewardSelectHandler.options[3].rewardOption.upgradeCount,
+        rewardSelectHandler.options[3].rewardOption.type.tier
+          - rewardSelectHandler.options[3].rewardOption.upgradeCount,
       ).toEqual(RarityTier.GREAT);
     });
   });

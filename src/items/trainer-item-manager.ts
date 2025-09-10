@@ -25,7 +25,7 @@ export class TrainerItemManager {
       };
       return itemSpecs;
     }
-    return undefined;
+    return;
   }
 
   generateTrainerItemConfiguration(restrictedIds?: TrainerItemId[]): TrainerItemConfiguration {

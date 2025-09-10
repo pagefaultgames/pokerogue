@@ -28,7 +28,7 @@ export abstract class ItemTransferHeldItem<T extends EffectTuple> extends HeldIt
   applySteal(params: ItemStealParams): boolean {
     const opponents = this.getTargets(params);
 
-    if (!opponents.length) {
+    if (opponents.length === 0) {
       return false;
     }
 
@@ -46,7 +46,7 @@ export abstract class ItemTransferHeldItem<T extends EffectTuple> extends HeldIt
     const heldItems = targetPokemon.heldItemManager.getTransferableHeldItems();
 
     for (let i = 0; i < transferredItemCount; i++) {
-      if (!heldItems.length) {
+      if (heldItems.length === 0) {
         break;
       }
       const randItemIndex = pokemon.randBattleSeedInt(heldItems.length);
@@ -62,7 +62,7 @@ export abstract class ItemTransferHeldItem<T extends EffectTuple> extends HeldIt
       globalScene.phaseManager.queueMessage(this.getTransferMessage(params, mt));
     }
 
-    return !!transferredRewards.length;
+    return transferredRewards.length > 0;
   }
 
   abstract getTargets(params: ItemStealParams): Pokemon[];

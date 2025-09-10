@@ -32,7 +32,7 @@ export class HeldItemManager {
       };
       return itemSpecs;
     }
-    return undefined;
+    return;
   }
 
   generateHeldItemConfiguration(restrictedIds?: HeldItemId[]): HeldItemConfiguration {

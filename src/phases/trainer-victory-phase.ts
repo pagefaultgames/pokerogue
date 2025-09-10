@@ -29,26 +29,25 @@ export class TrainerVictoryPhase extends BattlePhase {
 
     const trainerType = globalScene.currentBattle.trainer?.config.trainerType!; // TODO: is this bang correct?
     // Validate Voucher for boss trainers
-    if (vouchers.hasOwnProperty(TrainerType[trainerType])) {
-      if (
-        !globalScene.validateVoucher(vouchers[TrainerType[trainerType]]) &&
-        globalScene.currentBattle.trainer?.config.isBoss
-      ) {
-        if (timedEventManager.getUpgradeUnlockedVouchers()) {
-          globalScene.phaseManager.unshiftNew(
-            "RewardPhase",
-            [RewardId.VOUCHER_PLUS, RewardId.VOUCHER_PLUS, RewardId.VOUCHER_PLUS, RewardId.VOUCHER_PREMIUM][
-              vouchers[TrainerType[trainerType]].voucherType
-            ],
-          );
-        } else {
-          globalScene.phaseManager.unshiftNew(
-            "RewardPhase",
-            [RewardId.VOUCHER, RewardId.VOUCHER, RewardId.VOUCHER_PLUS, RewardId.VOUCHER_PREMIUM][
-              vouchers[TrainerType[trainerType]].voucherType
-            ],
-          );
-        }
+    if (
+      vouchers.hasOwnProperty(TrainerType[trainerType])
+      && !globalScene.validateVoucher(vouchers[TrainerType[trainerType]])
+      && globalScene.currentBattle.trainer?.config.isBoss
+    ) {
+      if (timedEventManager.getUpgradeUnlockedVouchers()) {
+        globalScene.phaseManager.unshiftNew(
+          "RewardPhase",
+          [RewardId.VOUCHER_PLUS, RewardId.VOUCHER_PLUS, RewardId.VOUCHER_PLUS, RewardId.VOUCHER_PREMIUM][
+            vouchers[TrainerType[trainerType]].voucherType
+          ],
+        );
+      } else {
+        globalScene.phaseManager.unshiftNew(
+          "RewardPhase",
+          [RewardId.VOUCHER, RewardId.VOUCHER, RewardId.VOUCHER_PLUS, RewardId.VOUCHER_PREMIUM][
+            vouchers[TrainerType[trainerType]].voucherType
+          ],
+        );
       }
     }
     // Breeders in Space achievement

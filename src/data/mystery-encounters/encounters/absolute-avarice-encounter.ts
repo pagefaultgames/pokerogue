@@ -40,11 +40,11 @@ const namespace = "mysteryEncounters/absoluteAvarice";
 
 function berrySprite(spriteKey: string, x: number, y: number): MysteryEncounterSpriteConfig {
   return {
-    spriteKey: spriteKey,
+    spriteKey,
     fileRoot: "items",
     isItem: true,
-    x: x,
-    y: y,
+    x,
+    y,
     hidden: true,
     disableAnimation: true,
   };

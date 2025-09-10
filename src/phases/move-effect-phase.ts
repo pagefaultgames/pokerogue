@@ -430,7 +430,7 @@ export class MoveEffectPhase extends PokemonPhase {
       && !this.move.hitsSubstitute(user, target)
     ) {
       const flinched = new BooleanHolder(false);
-      applyHeldItems(HeldItemEffect.FLINCH_CHANCE, { pokemon: user, flinched: flinched });
+      applyHeldItems(HeldItemEffect.FLINCH_CHANCE, { pokemon: user, flinched });
       if (flinched.value) {
         target.addTag(BattlerTagType.FLINCHED, undefined, this.move.id, user.id);
       }
@@ -882,7 +882,7 @@ export class MoveEffectPhase extends PokemonPhase {
     });
 
     if (user.isPlayer() && target.isEnemy()) {
-      applyHeldItems(HeldItemEffect.DAMAGE_MONEY_REWARD, { pokemon: user, damage: damage });
+      applyHeldItems(HeldItemEffect.DAMAGE_MONEY_REWARD, { pokemon: user, damage });
     }
 
     return [result, isCritical, damage];
@@ -1002,7 +1002,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
     // Apply Grip Claw's chance to steal an item from the target
     if (this.move.is("AttackMove")) {
-      applyHeldItems(HeldItemEffect.CONTACT_ITEM_STEAL_CHANCE, { pokemon: user, target: target });
+      applyHeldItems(HeldItemEffect.CONTACT_ITEM_STEAL_CHANCE, { pokemon: user, target });
     }
   }
 }

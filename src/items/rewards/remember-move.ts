@@ -11,7 +11,7 @@ export class RememberMoveReward extends PokemonReward {
       localeKey,
       iconImage,
       (pokemon: PlayerPokemon) => {
-        if (!pokemon.getLearnableLevelMoves().length) {
+        if (pokemon.getLearnableLevelMoves().length === 0) {
           return PartyUiHandler.NoEffectMessage;
         }
         return null;

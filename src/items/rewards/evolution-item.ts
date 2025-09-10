@@ -14,20 +14,20 @@ export class EvolutionItemReward extends PokemonReward {
   constructor(evolutionItem: EvolutionItem) {
     super("", EvolutionItem[evolutionItem].toLowerCase(), (pokemon: PlayerPokemon) => {
       if (
-        pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId) &&
-        pokemonEvolutions[pokemon.species.speciesId].filter(e => e.validate(pokemon, false, this.evolutionItem))
-          .length &&
-        pokemon.getFormKey() !== SpeciesFormKey.GIGANTAMAX
+        pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId)
+        && pokemonEvolutions[pokemon.species.speciesId].filter(e => e.validate(pokemon, false, this.evolutionItem))
+          .length > 0
+        && pokemon.getFormKey() !== SpeciesFormKey.GIGANTAMAX
       ) {
         return null;
       }
       if (
-        pokemon.isFusion() &&
-        pokemon.fusionSpecies &&
-        pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId) &&
-        pokemonEvolutions[pokemon.fusionSpecies.speciesId].filter(e => e.validate(pokemon, true, this.evolutionItem))
-          .length &&
-        pokemon.getFusionFormKey() !== SpeciesFormKey.GIGANTAMAX
+        pokemon.isFusion()
+        && pokemon.fusionSpecies
+        && pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId)
+        && pokemonEvolutions[pokemon.fusionSpecies.speciesId].filter(e => e.validate(pokemon, true, this.evolutionItem))
+          .length > 0
+        && pokemon.getFusionFormKey() !== SpeciesFormKey.GIGANTAMAX
       ) {
         return null;
       }
@@ -94,12 +94,12 @@ export class EvolutionItemRewardGenerator extends RewardGenerator {
       party
         .filter(
           p =>
-            pokemonEvolutions.hasOwnProperty(p.species.speciesId) &&
-            (!p.pauseEvolutions ||
-              p.species.speciesId === SpeciesId.SLOWPOKE ||
-              p.species.speciesId === SpeciesId.EEVEE ||
-              p.species.speciesId === SpeciesId.KIRLIA ||
-              p.species.speciesId === SpeciesId.SNORUNT),
+            pokemonEvolutions.hasOwnProperty(p.species.speciesId)
+            && (!p.pauseEvolutions
+              || p.species.speciesId === SpeciesId.SLOWPOKE
+              || p.species.speciesId === SpeciesId.EEVEE
+              || p.species.speciesId === SpeciesId.KIRLIA
+              || p.species.speciesId === SpeciesId.SNORUNT),
         )
         .flatMap(p => {
           const evolutions = pokemonEvolutions[p.species.speciesId];
@@ -108,14 +108,14 @@ export class EvolutionItemRewardGenerator extends RewardGenerator {
       party
         .filter(
           p =>
-            p.isFusion() &&
-            p.fusionSpecies &&
-            pokemonEvolutions.hasOwnProperty(p.fusionSpecies.speciesId) &&
-            (!p.pauseEvolutions ||
-              p.fusionSpecies.speciesId === SpeciesId.SLOWPOKE ||
-              p.fusionSpecies.speciesId === SpeciesId.EEVEE ||
-              p.fusionSpecies.speciesId === SpeciesId.KIRLIA ||
-              p.fusionSpecies.speciesId === SpeciesId.SNORUNT),
+            p.isFusion()
+            && p.fusionSpecies
+            && pokemonEvolutions.hasOwnProperty(p.fusionSpecies.speciesId)
+            && (!p.pauseEvolutions
+              || p.fusionSpecies.speciesId === SpeciesId.SLOWPOKE
+              || p.fusionSpecies.speciesId === SpeciesId.EEVEE
+              || p.fusionSpecies.speciesId === SpeciesId.KIRLIA
+              || p.fusionSpecies.speciesId === SpeciesId.SNORUNT),
         )
         .flatMap(p => {
           const evolutions = pokemonEvolutions[p.fusionSpecies!.speciesId];
@@ -126,7 +126,7 @@ export class EvolutionItemRewardGenerator extends RewardGenerator {
       .flatMap(e => e.evoItem)
       .filter(i => !!i && i > 50 === this.rare);
 
-    if (!evolutionItemPool.length) {
+    if (evolutionItemPool.length === 0) {
       return null;
     }
 

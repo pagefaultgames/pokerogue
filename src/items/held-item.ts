@@ -168,7 +168,7 @@ export abstract class ConsumableHeldItem<T extends EffectTuple> extends HeldItem
       globalScene.updateItems(pokemon.isPlayer());
     }
     if (unburden) {
-      applyAbAttrs("PostItemLostAbAttr", { pokemon: pokemon });
+      applyAbAttrs("PostItemLostAbAttr", { pokemon });
     }
   }
 }

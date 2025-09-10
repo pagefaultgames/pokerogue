@@ -51,9 +51,9 @@ export function assignEnemyBuffTokenForWave(tier: RarityTier) {
   let candidate = getNewTrainerItemFromPool(enemyBuffTokenPool[tier], globalScene.enemyTrainerItems);
   let r = 0;
   while (
-    ++r < retryCount &&
-    allTrainerItems[candidate].getMaxStackCount() <
-      globalScene.enemyTrainerItems.getStack(candidate) + (r < 10 ? tierStackCount : 1)
+    ++r < retryCount
+    && allTrainerItems[candidate].getMaxStackCount()
+      < globalScene.enemyTrainerItems.getStack(candidate) + (r < 10 ? tierStackCount : 1)
   ) {
     candidate = getNewTrainerItemFromPool(enemyBuffTokenPool[tier], globalScene.enemyTrainerItems);
   }
