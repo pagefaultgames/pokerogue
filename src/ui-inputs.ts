@@ -13,6 +13,7 @@ import { SettingsDisplayUiHandler } from "#ui/settings-display-ui-handler";
 import { SettingsGamepadUiHandler } from "#ui/settings-gamepad-ui-handler";
 import { SettingsKeyboardUiHandler } from "#ui/settings-keyboard-ui-handler";
 import { SettingsUiHandler } from "#ui/settings-ui-handler";
+import { CommandUiHandler } from "#ui/handlers/command-ui-handler";
 import Phaser from "phaser";
 
 type ActionKeys = Record<Button, () => void>;
@@ -213,6 +214,7 @@ export class UiInputs {
       SettingsAudioUiHandler,
       SettingsGamepadUiHandler,
       SettingsKeyboardUiHandler,
+      CommandUiHandler
     ];
     const uiHandler = globalScene.ui?.getHandler();
     if (whitelist.some(handler => uiHandler instanceof handler)) {

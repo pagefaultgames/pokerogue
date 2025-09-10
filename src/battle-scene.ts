@@ -271,6 +271,7 @@ export class BattleScene extends SceneBase {
   public lastEnemyTrainer: Trainer | null;
   public currentBattle: Battle;
   public pokeballCounts: PokeballCounts;
+  public lastPokeballType: PokeballType = PokeballType.POKEBALL;
   public money: number;
   public pokemonInfoContainer: PokemonInfoContainer;
   private party: PlayerPokemon[];
