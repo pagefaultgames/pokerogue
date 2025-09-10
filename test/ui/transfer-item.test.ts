@@ -4,8 +4,8 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/test-utils/game-manager";
-import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
-import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import { ModifierSelectUiHandler } from "#ui/handlers/modifier-select-ui-handler";
+import { PartyUiHandler, PartyUiMode } from "#ui/handlers/party-ui-handler";
 import Phaser from "phaser";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -70,7 +70,9 @@ describe("UI - Transfer Items", () => {
         handler.optionsContainer.list.some(option => (option as BBCodeText).text?.includes("Apicot Berry (2)")),
       ).toBe(true);
       expect(
-        handler.optionsContainer.list.some(option => RegExp(/Lum Berry\[color.*(2)/).exec((option as BBCodeText).text)),
+        handler.optionsContainer.list.some(option =>
+          new RegExp(/Lum Berry\[color.*(2)/).exec((option as BBCodeText).text),
+        ),
       ).toBe(true);
     });
 

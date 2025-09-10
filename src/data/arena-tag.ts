@@ -572,10 +572,10 @@ class MatBlockTag extends ConditionalProtectTag {
 const CraftyShieldConditionFunc: ProtectConditionFunc = (_arena, moveId) => {
   const move = allMoves[moveId];
   return (
-    move.category === MoveCategory.STATUS &&
-    move.moveTarget !== MoveTarget.ENEMY_SIDE &&
-    move.moveTarget !== MoveTarget.BOTH_SIDES &&
-    move.moveTarget !== MoveTarget.ALL
+    move.category === MoveCategory.STATUS
+    && move.moveTarget !== MoveTarget.ENEMY_SIDE
+    && move.moveTarget !== MoveTarget.BOTH_SIDES
+    && move.moveTarget !== MoveTarget.ALL
   );
 };
 
@@ -765,9 +765,10 @@ export abstract class EntryHazardTag extends SerializableArenaTag {
     const source = this.getSourcePokemon();
     if (!source) {
       console.warn(
-        "Failed to get source Pokemon for AernaTrapTag on add message!" +
-          `\nTag type: ${this.tagType}` +
-          `\nPID: ${this.sourceId}`,
+        // biome-ignore lint/complexity/noUselessStringConcat: Rule bugs out with operator linebreaks set to `before`
+        "Failed to get source Pokemon for AernaTrapTag on add message!"
+          + `\nTag type: ${this.tagType}`
+          + `\nPID: ${this.sourceId}`,
       );
       return;
     }
@@ -1131,7 +1132,7 @@ class ImprisonTag extends EntryHazardTag {
 
   /**
    * This applies the effects of Imprison to any opposing Pokemon that switch into the field while the source Pokemon is still active
-   * @param {Pokemon} pokemon the Pokemon Imprison is applied to
+   * @param pokemon the Pokemon Imprison is applied to
    * @returns `true`
    */
   override activateTrap(pokemon: Pokemon): boolean {

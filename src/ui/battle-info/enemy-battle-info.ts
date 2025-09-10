@@ -3,9 +3,9 @@ import { Stat } from "#enums/stat";
 import { TextStyle } from "#enums/text-style";
 import { UiTheme } from "#enums/ui-theme";
 import type { EnemyPokemon } from "#field/pokemon";
-import { BattleFlyout } from "#ui/battle-flyout";
 import type { BattleInfoParamList } from "#ui/battle-info";
 import { BattleInfo } from "#ui/battle-info";
+import { BattleFlyout } from "#ui/containers/battle-flyout";
 import { addTextObject } from "#ui/text";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import { getLocalizedSpriteKey } from "#utils/common";
@@ -113,9 +113,9 @@ export class EnemyBattleInfo extends BattleInfo {
     this.ownedIcon.setVisible(!!dexEntry.caughtAttr);
     const opponentPokemonDexAttr = pokemon.getDexAttr();
     if (
-      globalScene.gameMode.isClassic &&
-      globalScene.gameData.starterData[pokemon.species.getRootSpeciesId()].classicWinCount > 0 &&
-      globalScene.gameData.starterData[pokemon.species.getRootSpeciesId(true)].classicWinCount > 0
+      globalScene.gameMode.isClassic
+      && globalScene.gameData.starterData[pokemon.species.getRootSpeciesId()].classicWinCount > 0
+      && globalScene.gameData.starterData[pokemon.species.getRootSpeciesId(true)].classicWinCount > 0
     ) {
       // move the ribbon to the left if there is no owned icon
       const championRibbonX = this.ownedIcon.visible ? 8 : 0;
@@ -203,7 +203,7 @@ export class EnemyBattleInfo extends BattleInfo {
   }
 
   updateBossSegmentDividers(pokemon: EnemyPokemon): void {
-    while (this.hpBarSegmentDividers.length) {
+    while (this.hpBarSegmentDividers.length > 0) {
       this.hpBarSegmentDividers.pop()?.destroy();
     }
 
