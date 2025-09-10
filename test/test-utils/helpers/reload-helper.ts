@@ -44,7 +44,7 @@ export class ReloadHelper extends GameManagerHelper {
 
     // remove all persistent mods before loading
     // TODO: Look into why these aren't removed before load
-    if (this.game.scene.modifiers.length) {
+    if (this.game.scene.modifiers.length > 0) {
       console.log(
         "Removing %d modifiers from scene on load...",
         this.game.scene.modifiers.length,
