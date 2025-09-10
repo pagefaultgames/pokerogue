@@ -51,7 +51,8 @@ export class OverridesHelper extends GameManagerHelper {
 
   /**
    * Override the starting biome
-   * @warning Any event listeners that are attached to {@linkcode NewArenaEvent} may need to be handled down the line
+   *
+   * ⚠️ Any event listeners that are attached to {@linkcode NewArenaEvent} may need to be handled down the line
    * @param biome - The biome to set
    */
   public startingBiome(biome: BiomeId): this {

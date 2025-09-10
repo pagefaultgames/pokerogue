@@ -53,7 +53,7 @@ export class BgmBar extends Phaser.GameObjects.Container {
 
   /*
    * Set the BGM Name to the BGM bar.
-   * @param {string} bgmName The name of the BGM to set.
+   * @param bgmName The name of the BGM to set.
    */
   setBgmToBgmBar(bgmName: string): void {
     this.musicText.setText(`${i18next.t("bgmName:music")}${this.getRealBgmName(bgmName)}`);
@@ -71,7 +71,7 @@ export class BgmBar extends Phaser.GameObjects.Container {
 
   /*
     Show or hide the BGM bar.
-    @param {boolean} visible Whether to show or hide the BGM bar.
+    @param visible Whether to show or hide the BGM bar.
    */
   public toggleBgmBar(visible: boolean): void {
     /*
