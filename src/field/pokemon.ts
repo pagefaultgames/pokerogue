@@ -4067,7 +4067,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   getCriticalHitResult(source: Pokemon, move: Move): boolean {
     if (move.hasAttr("FixedDamageAttr")) {
-      // fixed damage moves (Dragon Rage, etc.) will nevet crit
+      // fixed damage moves (Dragon Rage, etc.) will never crit
       return false;
     }
 

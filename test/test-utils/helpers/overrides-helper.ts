@@ -342,7 +342,11 @@ export class OverridesHelper extends GameManagerHelper {
   /**
    * Force random critical hit rolls to always or never suceed.
    * @param crits - `true` to guarantee crits on eligible moves, `false` to force rolls to fail, `null` to disable override
-   * @remarks This does not bypass effects that guarantee or block critical hits; it merely mocks the chance-based rolls.
+   * @remarks
+   * This does not change any effects that guarantee or block critical hits;
+   * it merely mocks any chance-based rolls not already at 100%. \
+   * For instance, a Pokemon at +3 crit stages will still critically hit with the override set to `false`,
+   * whereas one at +2 crit stages (a 50% chance) will not.
    * @returns `this`
    */
   public criticalHits(crits: boolean | null): this {
