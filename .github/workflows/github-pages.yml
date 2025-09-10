@@ -39,11 +39,6 @@ jobs:
             /public/images/pokemon/variant/_masterlist.json
           sparse-checkout-cone-mode: false
 
-      - name: Install OS package
-        run: |
-          sudo apt update
-          sudo apt install -y git openssh-client
-
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
