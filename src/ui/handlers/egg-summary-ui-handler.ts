@@ -7,8 +7,8 @@ import { HatchedPokemonContainer } from "#ui/containers/hatched-pokemon-containe
 import { PokemonHatchInfoContainer } from "#ui/containers/pokemon-hatch-info-container";
 import { ScrollBar } from "#ui/containers/scroll-bar";
 import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
-import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/handlers/pokemon-icon-anim-handler";
-import { ScrollableGridUiHandler } from "#ui/handlers/scrollable-grid-handler";
+import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/utils/pokemon-icon-anim-helper";
+import { ScrollableGridHelper } from "#ui/utils/scrollable-grid-helper";
 
 const iconContainerX = 112;
 const iconContainerY = 9;
@@ -34,11 +34,11 @@ export class EggSummaryUiHandler extends MessageUiHandler {
   /** hatch info container that displays the current pokemon / hatch (main element on left hand side) */
   private infoContainer: PokemonHatchInfoContainer;
   /** handles jumping animations for the pokemon sprite icons */
-  private iconAnimHandler: PokemonIconAnimHandler;
+  private iconAnimHandler: PokemonIconAnimHelper;
   private eggHatchBg: Phaser.GameObjects.Image;
   private eggHatchData: EggHatchData[];
 
-  private scrollGridHandler: ScrollableGridUiHandler;
+  private scrollGridHandler: ScrollableGridHelper;
   private cursorObj: Phaser.GameObjects.Image;
 
   /** used to add a delay before which it is not possible to exit the summary */
@@ -67,7 +67,7 @@ export class EggSummaryUiHandler extends MessageUiHandler {
     this.eggHatchContainer.setVisible(false);
     ui.add(this.eggHatchContainer);
 
-    this.iconAnimHandler = new PokemonIconAnimHandler();
+    this.iconAnimHandler = new PokemonIconAnimHelper();
     this.iconAnimHandler.setup();
 
     this.eggHatchBg = globalScene.add.image(0, 0, "egg_summary_bg");
@@ -97,7 +97,7 @@ export class EggSummaryUiHandler extends MessageUiHandler {
     );
     this.summaryContainer.add(scrollBar);
 
-    this.scrollGridHandler = new ScrollableGridUiHandler(this, numRows, numCols)
+    this.scrollGridHandler = new ScrollableGridHelper(this, numRows, numCols)
       .withScrollBar(scrollBar)
       .withUpdateGridCallBack(() => this.updatePokemonIcons())
       .withUpdateSingleElementCallback((i: number) => this.infoContainer.showHatchInfo(this.eggHatchData[i]));

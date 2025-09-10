@@ -135,8 +135,9 @@ export abstract class ArenaTag implements BaseArenaTag {
   protected abstract get onRemoveMessageKey(): string;
 
   /**
-   * @returns A suffix corresponding to this tag's current {@linkcode side}.
+   * @returns A suffix corresponding to this tag's current side.
    * @sealed
+   * @todo Make this an i18n context
    */
   protected get i18nSideKey(): string {
     return this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : "";
@@ -742,7 +743,7 @@ export abstract class EntryHazardTag extends SerializableArenaTag {
   /**
    * The current number of layers this tag has.
    * Starts at 1 and increases each time the trap is laid.
-   * Intended to be mutable within the class itself and readonly outside of it
+   * Should not be accessed by anything other than this class (with exceptions for arena flyout-related code).
    * @protected
    */
   public readonly layers: number = 1;
@@ -782,6 +783,7 @@ export abstract class EntryHazardTag extends SerializableArenaTag {
    * @param simulated - Whether to suppress activation effects during execution
    * @param pokemon - The {@linkcode Pokemon} triggering this hazard
    * @returns `true` if this hazard affects the given Pokemon; `false` otherwise.
+   * @todo Do we need the return value? nothing uses it
    */
   override apply(simulated: boolean, pokemon: Pokemon): boolean {
     if (!this.canAffect(pokemon)) {
@@ -1094,7 +1096,8 @@ class ImprisonTag extends EntryHazardTag {
   }
 
   /**
-   * Checks if the source Pokemon is still active on the field   * @returns `true` if the source of the tag is still active on the field | `false` if not
+   * Checks if the source Pokemon is still active on the field
+   * @returns `true` if the source of the tag is still active on the field
    */
   override lapse(): boolean {
     const source = this.getSourcePokemon();
