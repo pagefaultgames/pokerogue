@@ -643,9 +643,9 @@ export abstract class Move implements Localizable {
    * will not consider {@linkcode AbilityId.WIND_RIDER | Wind Rider }.
    *
    * To simply check whether the move has a flag, use {@linkcode hasFlag}.
-   * @param flag {@linkcode MoveFlags} MoveFlag to check on user and/or target
-   * @param user {@linkcode Pokemon} the Pokemon using the move
-   * @param target {@linkcode Pokemon} the Pokemon receiving the move
+   * @param flag - MoveFlag to check on user and/or target
+   * @param user - the Pokemon using the move
+   * @param target - the Pokemon receiving the move
    * @param isFollowUp (defaults to `false`) `true` if the move was used as a follow up
    * @returns boolean
    * @see {@linkcode hasFlag}
