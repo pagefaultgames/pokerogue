@@ -3,7 +3,7 @@ import { Button } from "#enums/buttons";
 import { UiMode } from "#enums/ui-mode";
 import { UiHandler } from "#ui/handlers/ui-handler";
 
-export class EggHatchSceneHandler extends UiHandler {
+export class EggHatchSceneUiHandler extends UiHandler {
   public eggHatchContainer: Phaser.GameObjects.Container;
 
   /**

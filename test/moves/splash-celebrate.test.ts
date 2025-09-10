@@ -1,14 +1,20 @@
+import { loggedInUser } from "#app/account";
 import { AbilityId } from "#enums/ability-id";
-import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
-import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import i18next from "i18next";
 import Phaser from "phaser";
-import { beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("{{description}}", () => {
+describe.each<{ name: string; move: MoveId; message: () => string }>([
+  { name: "Splash", move: MoveId.SPLASH, message: () => i18next.t("moveTriggers:splash") },
+  {
+    name: "Celebrate",
+    move: MoveId.CELEBRATE,
+    message: () => i18next.t("moveTriggers:celebrate", { playerName: loggedInUser?.username }),
+  },
+])("Move - $name", ({ move, message }) => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -16,6 +22,10 @@ describe("{{description}}", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
+  });
+
+  afterEach(() => {
+    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -26,23 +36,17 @@ describe("{{description}}", () => {
       .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(MoveId.SPLASH)
+      .enemyMoveset(MoveId.TACKLE)
       .startingLevel(100)
       .enemyLevel(100);
   });
 
-  // Find more awesome utility functions inside `#test/test-utils`!
-  it("should do XYZ", async () => {
+  it("should show a message on use", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const feebas = game.field.getPlayerPokemon();
-
-    game.move.use(MoveId.SPLASH);
-    await game.move.forceEnemyMove(MoveId.CELEBRATE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.move.use(move);
     await game.toEndOfTurn();
 
-    expect(feebas).toHaveUsedMove({ move: MoveId.SPLASH, result: MoveResult.SUCCESS });
-    expect(game.textInterceptor.logs).toContain(i18next.t("moveTriggers:splash"));
+    expect(game).toHaveShownMessage(message());
   });
 });
