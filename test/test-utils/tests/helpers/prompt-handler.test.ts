@@ -1,10 +1,10 @@
-import type { PhaseString } from "#app/@types/phase-types";
 import type { Phase } from "#app/phase";
-import type { AwaitableUiHandler } from "#app/ui/awaitable-ui-handler";
 import { UiMode } from "#enums/ui-mode";
 import type { GameManager } from "#test/test-utils/game-manager";
 import { PromptHandler } from "#test/test-utils/helpers/prompt-handler";
 import type { PhaseInterceptor } from "#test/test-utils/phase-interceptor";
+import type { PhaseString } from "#types/phase-types";
+import type { AwaitableUiHandler } from "#ui/handlers/awaitable-ui-handler";
 import type { UI } from "#ui/ui";
 import { beforeAll, beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 
@@ -35,12 +35,12 @@ describe("Test Utils - PromptHandler", () => {
       scene: {
         ui: {
           getHandler: () => handler,
-          setModeInternal: () => {
+          setModeInternal: (): Promise<void> => {
             setModeCallback();
             return Promise.resolve();
           },
           getMode: () => UiMode.TEST_DIALOGUE,
-        } as unknown as UI,
+        } as UI,
         phaseManager: {
           getCurrentPhase: () =>
             ({
@@ -56,6 +56,7 @@ describe("Test Utils - PromptHandler", () => {
     } as GameManager);
   });
 
+  // Wrapper func to ignore incorrect typing on `PhaseString`
   function onNextPrompt(
     target: string,
     mode: UiMode,
@@ -69,7 +70,7 @@ describe("Test Utils - PromptHandler", () => {
   describe("setMode", () => {
     it("should wrap and pass along original function arguments from setModeInternal", async () => {
       const setModeSpy = vi.spyOn(promptHandler as any, "setMode");
-      promptHandler["game"].scene.ui["setModeInternal"](UiMode.PARTY, false, false, false, []);
+      await promptHandler["game"].scene.ui["setModeInternal"](UiMode.PARTY, false, false, false, []);
 
       expect(setModeSpy).toHaveBeenCalledExactlyOnceWith([UiMode.PARTY, false, false, false, []]);
       expect(setModeCallback).toHaveBeenCalledAfter(setModeSpy);
@@ -78,14 +79,14 @@ describe("Test Utils - PromptHandler", () => {
     it("should call PhaseInterceptor.checkMode if current phase in `endBySetMode`", async () => {
       promptHandler["game"]["scene"]["phaseManager"]["getCurrentPhase"] = () =>
         ({ phaseName: "CommandPhase" }) as Phase;
-      promptHandler["game"].scene.ui["setModeInternal"](UiMode.PARTY, false, false, false, []);
+      await promptHandler["game"].scene.ui["setModeInternal"](UiMode.PARTY, false, false, false, []);
 
       expect(checkModeCallback).toHaveBeenCalledOnce();
     });
   });
 
   describe("doPromptCheck", () => {
-    it("should check and remove the first prompt matching criteria", async () => {
+    it("should check and remove the first prompt matching criteria", () => {
       onNextPrompt("testDialoguePhase", UiMode.TEST_DIALOGUE, () => callback1());
       onNextPrompt("testDialoguePhase", UiMode.TEST_DIALOGUE, () => callback2());
       promptHandler["doPromptCheck"]();
@@ -118,7 +119,7 @@ describe("Test Utils - PromptHandler", () => {
           onNextPrompt("testDialoguePhase", UiMode.TEST_DIALOGUE, () => callback1(), undefined, true);
         },
       },
-    ])("should skip callback and keep in queue if $reason", async ({ callback }) => {
+    ])("should skip callback and keep in queue if $reason", ({ callback }) => {
       callback();
       onNextPrompt("testDialoguePhase", UiMode.TEST_DIALOGUE, () => callback2);
       promptHandler["doPromptCheck"]();
@@ -128,7 +129,7 @@ describe("Test Utils - PromptHandler", () => {
       expect(promptHandler["prompts"]).toHaveLength(2);
     });
 
-    it("should remove expired prompts without blocking", async () => {
+    it("should remove expired prompts without blocking", () => {
       onNextPrompt(
         "testDialoguePhase",
         UiMode.TEST_DIALOGUE,

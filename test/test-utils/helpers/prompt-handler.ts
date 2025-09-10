@@ -120,10 +120,10 @@ export class PromptHandler extends GameManagerHelper {
     // If the current mode, phase, and handler match the expected values, execute the callback and continue.
     // If not, leave it there.
     if (
-      mode === prompt.mode &&
-      currentPhase === prompt.phaseTarget &&
-      currentHandler.active &&
-      !(prompt.awaitingActionInput && !(currentHandler as AwaitableUiHandler)["awaitingActionInput"])
+      mode === prompt.mode
+      && currentPhase === prompt.phaseTarget
+      && currentHandler.active
+      && !(prompt.awaitingActionInput && !(currentHandler as AwaitableUiHandler)["awaitingActionInput"])
     ) {
       prompt.callback();
       this.prompts.shift();

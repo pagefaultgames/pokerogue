@@ -5,8 +5,8 @@ import { ExpNotification } from "#enums/exp-notification";
 import { PlayerGender } from "#enums/player-gender";
 import type { GameManager } from "#test/test-utils/game-manager";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
-import chalk from "chalk";
 import { getEnumStr } from "#test/test-utils/string-utils";
+import chalk from "chalk";
 
 /**
  * Helper to handle settings for tests

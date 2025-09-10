@@ -1,10 +1,10 @@
 import "vitest-canvas-mock";
 import { PromptHandler } from "#test/test-utils/helpers/prompt-handler";
-import { initTests } from "#test/test-utils/test-file-initialization";
-import { afterAll, afterEach, beforeAll, beforeEach, vi } from "vitest";
 import { MockConsole } from "#test/test-utils/mocks/mock-console/mock-console";
-import { logTestStart, logTestEnd } from "#test/test-utils/setup/test-end-log";
+import { logTestEnd, logTestStart } from "#test/test-utils/setup/test-end-log";
+import { initTests } from "#test/test-utils/test-file-initialization";
 import chalk from "chalk";
+import { afterAll, afterEach, beforeAll, beforeEach, vi } from "vitest";
 
 //#region Mocking
 

@@ -1,9 +1,9 @@
-import type { PhaseString } from "#app/@types/phase-types";
 import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
 import type { Constructor } from "#app/utils/common";
 import { GameManager } from "#test/test-utils/game-manager";
 import { mockPhase } from "#test/test-utils/mocks/mock-phase";
+import type { PhaseString } from "#types/phase-types";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -73,7 +73,7 @@ describe("Utils - Phase Interceptor - Unit", () => {
   }
 
   function expectAtPhase(phaseName: string) {
-    expect(game).toBeAtPhase(phaseName as PhaseString)
+    expect(game).toBeAtPhase(phaseName as PhaseString);
   }
 
   /** Wrapper function to make TS not complain about incompatible argument typing on `PhaseString`. */
@@ -146,6 +146,5 @@ describe("Utils - Phase Interceptor - Unit", () => {
       expect(startSpy).not.toHaveBeenCalled();
       expect(game.phaseInterceptor.log).toEqual([]);
     });
-
   });
 });
