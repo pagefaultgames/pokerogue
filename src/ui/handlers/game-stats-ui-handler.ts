@@ -108,7 +108,7 @@ const displayStats: DisplayStats = {
     sourceFunc: gameData => gameData.gameStats.highestDamage.toString(),
   },
   highestHeal: {
-    label_key: "highestHPHealed",
+    label_key: "highestHpHealed",
     sourceFunc: gameData => gameData.gameStats.highestHeal.toString(),
   },
   pokemonSeen: {
