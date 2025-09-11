@@ -138,7 +138,7 @@ export abstract class ArenaTag implements BaseArenaTag {
     }
   }
 
-  onOverlap(_arena: Arena, _source: Pokemon | null): void {}
+  onOverlap(_arena: Arena, _source: Pokemon | undefined): void {}
 
   /**
    * Trigger this {@linkcode ArenaTag}'s effect, reducing its duration as applicable.
@@ -172,9 +172,8 @@ export abstract class ArenaTag implements BaseArenaTag {
   /**
    * Helper function that retrieves the source Pokemon
    * @returns - The source {@linkcode Pokemon} for this tag.
-   * Returns `null` if `this.sourceId` is `undefined`
    */
-  public getSourcePokemon(): Pokemon | null {
+  public getSourcePokemon(): Pokemon | undefined {
     return globalScene.getPokemonById(this.sourceId);
   }
 
@@ -617,7 +616,7 @@ export class NoCritTag extends SerializableArenaTag {
 
     globalScene.phaseManager.queueMessage(
       i18next.t("arenaTag:noCritOnRemove", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(source ?? undefined),
+        pokemonNameWithAffix: getPokemonNameWithAffix(source),
         moveName: this.getMoveName(),
       }),
     );
@@ -1537,7 +1536,7 @@ export class SuppressAbilitiesTag extends SerializableArenaTag {
     }
   }
 
-  public override onOverlap(_arena: Arena, source: Pokemon | null): void {
+  public override onOverlap(_arena: Arena, source: Pokemon | undefined): void {
     (this as Mutable<this>).sourceCount++;
     this.playActivationMessage(source);
   }
@@ -1580,7 +1579,7 @@ export class SuppressAbilitiesTag extends SerializableArenaTag {
     return this.sourceCount > 1;
   }
 
-  private playActivationMessage(pokemon: Pokemon | null) {
+  private playActivationMessage(pokemon: Pokemon | undefined) {
     if (pokemon) {
       globalScene.phaseManager.queueMessage(
         i18next.t("arenaTag:neutralizingGasOnAdd", {

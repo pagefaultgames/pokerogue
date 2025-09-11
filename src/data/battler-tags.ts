@@ -198,7 +198,7 @@ export class BattlerTag implements BaseBattlerTag {
    * Helper function that retrieves the source Pokemon object
    * @returns The source {@linkcode Pokemon}, or `null` if none is found
    */
-  public getSourcePokemon(): Pokemon | null {
+  public getSourcePokemon(): Pokemon | undefined {
     return globalScene.getPokemonById(this.sourceId);
   }
 }
@@ -968,7 +968,7 @@ export class InfatuatedTag extends SerializableBattlerTag {
     phaseManager.queueMessage(
       i18next.t("battlerTags:infatuatedLapse", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        sourcePokemonName: getPokemonNameWithAffix(globalScene.getPokemonById(this.sourceId!) ?? undefined), // TODO: is that bang correct?
+        sourcePokemonName: getPokemonNameWithAffix(this.getSourcePokemon()),
       }),
     );
     phaseManager.unshiftNew("CommonAnimPhase", pokemon.getBattlerIndex(), undefined, CommonAnim.ATTRACT);
