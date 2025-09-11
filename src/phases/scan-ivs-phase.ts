@@ -20,58 +20,54 @@ export class ScanIvsPhase extends PokemonPhase {
 
     const pokemon = this.getPokemon();
 
-    let enemyIvs: number[] = [];
-    let statsContainer: Phaser.GameObjects.Sprite[] = [];
-    let statsContainerLabels: Phaser.GameObjects.Sprite[] = [];
-    const enemyField = globalScene.getEnemyField();
-    const uiTheme = globalScene.uiTheme; // Assuming uiTheme is accessible
-    for (let e = 0; e < enemyField.length; e++) {
-      enemyIvs = enemyField[e].ivs;
+    for (const enemy of globalScene.getEnemyField()) {
+      const enemyIvs = enemy.ivs;
       // we are using getRootSpeciesId() here because we want to check against the baby form, not the mid form if it exists
-      const currentIvs = globalScene.gameData.dexData[enemyField[e].species.getRootSpeciesId()].ivs;
-      statsContainer = enemyField[e].getBattleInfo().getStatsValueContainer().list as Phaser.GameObjects.Sprite[];
-      statsContainerLabels = statsContainer.filter(m => m.name.indexOf("icon_stat_label") >= 0);
-      for (let s = 0; s < statsContainerLabels.length; s++) {
-        const ivStat = Stat[statsContainerLabels[s].frame.name];
-        if (enemyIvs[ivStat] > currentIvs[ivStat] && PERMANENT_STATS.indexOf(Number(ivStat)) >= 0) {
+      const currentIvs = globalScene.gameData.dexData[enemy.species.getRootSpeciesId()].ivs;
+      const statsContainer = enemy.getBattleInfo().getStatsValueContainer().list as Phaser.GameObjects.Sprite[];
+      const statsContainerLabels = statsContainer.filter(m => m.name.includes("icon_stat_label"));
+      for (const statContainer of statsContainerLabels) {
+        const ivStat = Stat[statContainer.frame.name] as Stat;
+        if (enemyIvs[ivStat] > currentIvs[ivStat] && PERMANENT_STATS.includes(Number(ivStat))) {
           const hexColour =
             enemyIvs[ivStat] === 31
-              ? getTextColor(TextStyle.PERFECT_IV, false, uiTheme)
-              : getTextColor(TextStyle.SUMMARY_GREEN, false, uiTheme);
+              ? getTextColor(TextStyle.PERFECT_IV, false)
+              : getTextColor(TextStyle.SUMMARY_GREEN, false);
           const hexTextColour = Phaser.Display.Color.HexStringToColor(hexColour).color;
-          statsContainerLabels[s].setTint(hexTextColour);
+          statContainer.setTint(hexTextColour);
         }
-        statsContainerLabels[s].setVisible(true);
+        statContainer.setVisible(true);
       }
     }
 
-    if (!globalScene.hideIvs) {
-      globalScene.ui.showText(
-        i18next.t("battle:ivScannerUseQuestion", {
-          pokemonName: getPokemonNameWithAffix(pokemon),
-        }),
-        null,
-        () => {
-          globalScene.ui.setMode(
-            UiMode.CONFIRM,
-            () => {
-              globalScene.ui.setMode(UiMode.MESSAGE);
-              globalScene.ui.clearText();
-              globalScene.ui
-                .getMessageHandler()
-                .promptIvs(pokemon.id, pokemon.ivs)
-                .then(() => this.end());
-            },
-            () => {
-              globalScene.ui.setMode(UiMode.MESSAGE);
-              globalScene.ui.clearText();
-              this.end();
-            },
-          );
-        },
-      );
-    } else {
+    if (globalScene.hideIvs) {
       this.end();
+      return;
     }
+
+    globalScene.ui.showText(
+      i18next.t("battle:ivScannerUseQuestion", {
+        pokemonName: getPokemonNameWithAffix(pokemon),
+      }),
+      null,
+      () => {
+        globalScene.ui.setMode(
+          UiMode.CONFIRM,
+          () => {
+            globalScene.ui.setMode(UiMode.MESSAGE);
+            globalScene.ui.clearText();
+            globalScene.ui
+              .getMessageHandler()
+              .promptIvs(pokemon.id, pokemon.ivs)
+              .then(() => this.end());
+          },
+          () => {
+            globalScene.ui.setMode(UiMode.MESSAGE);
+            globalScene.ui.clearText();
+            this.end();
+          },
+        );
+      },
+    );
   }
 }

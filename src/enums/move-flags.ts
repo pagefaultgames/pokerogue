@@ -29,7 +29,7 @@ export enum MoveFlags {
   SLICING_MOVE = 1 << 8,
   /**
    * Indicates a move should be affected by {@linkcode AbilityId.RECKLESS}
-   * @see {@linkcode Move.recklessMove()}
+   * @see {@linkcode Move.recklessMove}
    */
   RECKLESS_MOVE = 1 << 9,
   /** Indicates a move should be affected by {@linkcode AbilityId.BULLETPROOF} */
@@ -50,5 +50,5 @@ export enum MoveFlags {
   /** Indicates a move is able to be redirected to allies in a double battle if the attacker faints */
   REDIRECT_COUNTER = 1 << 18,
   /** Indicates a move is able to be reflected by {@linkcode AbilityId.MAGIC_BOUNCE} and {@linkcode MoveId.MAGIC_COAT} */
-  REFLECTABLE = 1 << 19
+  REFLECTABLE = 1 << 19,
 }

@@ -21,6 +21,7 @@ jobs:
   test:
     # We can't use dynmically named jobs until https://github.com/orgs/community/discussions/13261 is implemented
     name: Shard
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     if: ${{ !inputs.skip }}
     steps:
@@ -31,8 +32,6 @@ jobs:
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
       - name: Set up Node.js
         uses: actions/setup-node@v4

@@ -47,7 +47,7 @@ describe("Moves - Chilly Reception", () => {
     expect(game.field.getPlayerPokemon()).toBe(meowth);
     expect(slowking.isOnField()).toBe(false);
     expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
-    expect(game.textInterceptor.logs).toContain(
+    expect(game).toHaveShownMessage(
       i18next.t("moveTriggers:chillyReception", { pokemonName: getPokemonNameWithAffix(slowking) }),
     );
   });
@@ -109,7 +109,7 @@ describe("Moves - Chilly Reception", () => {
     expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
     expect(game.field.getPlayerPokemon()).toBe(slowking);
     expect(slowking.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    expect(game.textInterceptor.logs).toContain(
+    expect(game).toHaveShownMessage(
       i18next.t("moveTriggers:chillyReception", { pokemonName: getPokemonNameWithAffix(slowking) }),
     );
   });
@@ -128,7 +128,7 @@ describe("Moves - Chilly Reception", () => {
     expect(game.field.getPlayerPokemon()).toBe(meowth);
     expect(slowking.isOnField()).toBe(false);
     expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
-    expect(game.textInterceptor.logs).not.toContain(
+    expect(game).not.toHaveShownMessage(
       i18next.t("moveTriggers:chillyReception", { pokemonName: getPokemonNameWithAffix(slowking) }),
     );
   });

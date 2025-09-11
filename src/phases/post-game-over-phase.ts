@@ -5,10 +5,11 @@ import type { EndCardPhase } from "#phases/end-card-phase";
 export class PostGameOverPhase extends Phase {
   public readonly phaseName = "PostGameOverPhase";
   private endCardPhase?: EndCardPhase;
+  private slotId: number;
 
-  constructor(endCardPhase?: EndCardPhase) {
+  constructor(slotId: number, endCardPhase?: EndCardPhase) {
     super();
-
+    this.slotId = slotId;
     this.endCardPhase = endCardPhase;
   }
 
@@ -20,16 +21,14 @@ export class PostGameOverPhase extends Phase {
         if (!success) {
           return globalScene.reset(true);
         }
-        globalScene.gameData
-          .tryClearSession(globalScene.sessionSlotId)
-          .then((success: boolean | [boolean, boolean]) => {
-            if (!success[0]) {
-              return globalScene.reset(true);
-            }
-            globalScene.reset();
-            globalScene.phaseManager.unshiftNew("TitlePhase");
-            this.end();
-          });
+        globalScene.gameData.tryClearSession(this.slotId).then((success: boolean | [boolean, boolean]) => {
+          if (!success[0]) {
+            return globalScene.reset(true);
+          }
+          globalScene.reset();
+          globalScene.phaseManager.unshiftNew("TitlePhase");
+          this.end();
+        });
       });
     };
 

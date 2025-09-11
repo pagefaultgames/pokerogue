@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "815-gigantamax.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 95,
+				"h": 95
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 96,
+						"h": 96
+					},
+					"spriteSourceSize": {
+						"x": 8,
+						"y": 0,
+						"w": 81,
+						"h": 95
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 81,
+						"h": 95
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:ee42faba784de1d9fe32c3283129660d:cdf144d71e1c8bb5afabbcc55371d81a:da8fdaa1b18003b4842dd4bb283b0069$"
+	}
+}

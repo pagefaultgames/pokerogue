@@ -45,9 +45,9 @@ export class CheckSwitchPhase extends BattlePhase {
     // ...or if any player Pokemon has an effect that prevents the checked Pokemon from switching
     // TODO: Ignore trapping check if baton item is held (since those bypass trapping)
     if (
-      pokemon.getTag(BattlerTagType.FRENZY) ||
-      pokemon.isTrapped() ||
-      globalScene.getPlayerField().some(p => p.getTag(BattlerTagType.COMMANDED))
+      pokemon.getTag(BattlerTagType.FRENZY)
+      || pokemon.isTrapped()
+      || globalScene.getPlayerField().some(p => p.getTag(BattlerTagType.COMMANDED))
     ) {
       return super.end();
     }

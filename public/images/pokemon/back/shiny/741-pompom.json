@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "741-pompom.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 49,
+				"h": 49
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 45,
+						"h": 49
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 45,
+						"h": 49
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 45,
+						"h": 49
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:ec79b53595dc1544b8bdf7e7a5151ede:55bd1fb129f04aaeb99fae1e07fce294:27d951c285bd2ecf6f78e065be7a12db$"
+	}
+}

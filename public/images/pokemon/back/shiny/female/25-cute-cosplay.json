@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "25-cute-cosplay.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 47,
+				"h": 47
+			},
+			"scale": 0.333,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 96,
+						"h": 96
+					},
+					"spriteSourceSize": {
+						"x": 27,
+						"y": 23,
+						"w": 36,
+						"h": 47
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 36,
+						"h": 47
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:a46f854fdcbe6a92218aeb7bb08742b5:2920aef24bccf7d8ae70bfb7813baeb1:422a6b1a97d1ecb4ae4bf1c41f0b733a$"
+	}
+}

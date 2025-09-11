@@ -156,7 +156,7 @@ async function runInteractive() {
     console.log(chalk.green.bold(`✔ File created at: test/${localDir}/${fileName}.test.ts\n`));
     console.groupEnd();
   } catch (err) {
-    console.error(chalk.red("✗ Error: ", err.message));
+    console.error(chalk.red("✗ Error: ", err));
   }
 }
 

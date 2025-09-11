@@ -61,4 +61,16 @@ describe("Moves - Pollen Puff", () => {
 
     expect(target.battleData.hitCount).toBe(2);
   });
+
+  // Regression test for pollen puff healing an enemy after dealing damage
+  it("should not heal an enemy after dealing damage", async () => {
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    const target = game.field.getEnemyPokemon();
+    game.move.use(MoveId.POLLEN_PUFF);
+
+    await game.phaseInterceptor.to("BerryPhase", false);
+
+    expect(target.hp).not.toBe(target.getMaxHp());
+    expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
+  });
 });

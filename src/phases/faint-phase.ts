@@ -88,13 +88,13 @@ export class FaintPhase extends PokemonPhase {
     if (pokemon.isPlayer()) {
       globalScene.arena.playerFaints += 1;
       globalScene.currentBattle.playerFaintsHistory.push({
-        pokemon: pokemon,
+        pokemon,
         turn: globalScene.currentBattle.turn,
       });
     } else {
       globalScene.currentBattle.enemyFaints += 1;
       globalScene.currentBattle.enemyFaintsHistory.push({
-        pokemon: pokemon,
+        pokemon,
         turn: globalScene.currentBattle.turn,
       });
     }
@@ -111,10 +111,10 @@ export class FaintPhase extends PokemonPhase {
     pokemon.resetTera();
 
     // TODO: this can be simplified by just checking whether lastAttack is defined
-    if (pokemon.turnData.attacksReceived?.length) {
+    if (pokemon.turnData.attacksReceived?.length > 0) {
       const lastAttack = pokemon.turnData.attacksReceived[0];
       applyAbAttrs("PostFaintAbAttr", {
-        pokemon: pokemon,
+        pokemon,
         // TODO: We should refactor lastAttack's sourceId to forbid null and just use undefined
         attacker: globalScene.getPokemonById(lastAttack.sourceId) ?? undefined,
         // TODO: improve the way that we provide the move that knocked out the pokemon...
@@ -130,14 +130,14 @@ export class FaintPhase extends PokemonPhase {
     for (const p of alivePlayField) {
       applyAbAttrs("PostKnockOutAbAttr", { pokemon: p, victim: pokemon });
     }
-    if (pokemon.turnData.attacksReceived?.length) {
+    if (pokemon.turnData.attacksReceived?.length > 0) {
       const defeatSource = this.source;
 
       if (defeatSource?.isOnField()) {
         applyAbAttrs("PostVictoryAbAttr", { pokemon: defeatSource });
         const pvmove = allMoves[pokemon.turnData.attacksReceived[0].move];
         const pvattrs = pvmove.getAttrs("PostVictoryStatStageChangeAttr");
-        if (pvattrs.length) {
+        if (pvattrs.length > 0) {
           for (const pvattr of pvattrs) {
             pvattr.applyPostVictory(defeatSource, defeatSource, pvmove);
           }
@@ -147,6 +147,7 @@ export class FaintPhase extends PokemonPhase {
 
     const legalBackupPokemon = globalScene.getBackupPartyMemberIndices(pokemon);
 
+    // TODO: This is convoluted
     if (this.player) {
       /** An array of Pokemon in the player's party that can legally fight. */
       const legalPlayerPokemon = globalScene.getPokemonAllowedInBattle();

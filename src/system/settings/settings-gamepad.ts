@@ -104,18 +104,16 @@ export function setSettingGamepad(setting: SettingGamepad, value: number): boole
     case SettingGamepad.Button_Speed_Up:
     case SettingGamepad.Button_Slow_Down:
     case SettingGamepad.Button_Submit:
-      if (value) {
-        if (globalScene.ui) {
-          const cancelHandler = (success = false): boolean => {
-            globalScene.ui.revertMode();
-            (globalScene.ui.getHandler() as SettingsGamepadUiHandler).updateBindings();
-            return success;
-          };
-          globalScene.ui.setOverlayMode(UiMode.GAMEPAD_BINDING, {
-            target: setting,
-            cancelHandler: cancelHandler,
-          });
-        }
+      if (value && globalScene.ui) {
+        const cancelHandler = (success = false): boolean => {
+          globalScene.ui.revertMode();
+          (globalScene.ui.getHandler() as SettingsGamepadUiHandler).updateBindings();
+          return success;
+        };
+        globalScene.ui.setOverlayMode(UiMode.GAMEPAD_BINDING, {
+          target: setting,
+          cancelHandler,
+        });
       }
       break;
     case SettingGamepad.Controller:

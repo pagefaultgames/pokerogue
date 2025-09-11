@@ -34,7 +34,7 @@ import type { StatStageChangeCallback } from "#phases/stat-stage-change-phase";
 import i18next from "#plugins/i18n";
 import type {
   AbilityBattlerTagType,
-  BattlerTagTypeData,
+  BattlerTagData,
   ContactSetStatusProtectedTagType,
   ContactStatStageChangeProtectedTagType,
   CritStageBoostTagType,
@@ -228,26 +228,27 @@ interface GenericSerializableBattlerTag<T extends BattlerTagType> extends Serial
  * Descendants can override {@linkcode isMoveRestricted} to restrict moves that
  * match a condition. A restricted move gets cancelled before it is used.
  * Players and enemies should not be allowed to select restricted moves.
+ * @todo Require descendant subclasses to inherit a `PRE_MOVE` lapse type
  */
 export abstract class MoveRestrictionBattlerTag extends SerializableBattlerTag {
   public declare readonly tagType: MoveRestrictionBattlerTagType;
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    if (lapseType === BattlerTagLapseType.PRE_MOVE) {
-      // Cancel the affected pokemon's selected move
-      const phase = globalScene.phaseManager.getCurrentPhase() as MovePhase;
-      const move = phase.move;
-
-      if (this.isMoveRestricted(move.moveId, pokemon)) {
-        if (this.interruptedText(pokemon, move.moveId)) {
-          globalScene.phaseManager.queueMessage(this.interruptedText(pokemon, move.moveId));
-        }
-        phase.cancel();
-      }
-
-      return true;
+    if (lapseType !== BattlerTagLapseType.PRE_MOVE) {
+      return super.lapse(pokemon, lapseType);
     }
 
-    return super.lapse(pokemon, lapseType);
+    // Cancel the affected pokemon's selected move
+    const phase = globalScene.phaseManager.getCurrentPhase() as MovePhase;
+    const move = phase.move;
+
+    if (this.isMoveRestricted(move.moveId, pokemon)) {
+      if (this.interruptedText(pokemon, move.moveId)) {
+        globalScene.phaseManager.queueMessage(this.interruptedText(pokemon, move.moveId));
+      }
+      phase.cancel();
+    }
+
+    return true;
   }
 
   /**
@@ -1065,8 +1066,7 @@ export class SeedTag extends SerializableBattlerTag {
     // Check which opponent to restore HP to
     const source = pokemon.getOpponents().find(o => o.getBattlerIndex() === this.sourceIndex);
     if (!source) {
-      console.warn(`Failed to get source Pokemon for SeedTag lapse; id: ${this.sourceId}`);
-      return false;
+      return true;
     }
 
     const cancelled = new BooleanHolder(false);
@@ -1142,8 +1142,8 @@ export class PowderTag extends BattlerTag {
     const move = movePhase.move.getMove();
     const weather = globalScene.arena.weather;
     if (
-      pokemon.getMoveType(move) !== PokemonType.FIRE ||
-      (weather?.weatherType === WeatherType.HEAVY_RAIN && !weather.isEffectSuppressed()) // Heavy rain takes priority over powder
+      pokemon.getMoveType(move) !== PokemonType.FIRE
+      || (weather?.weatherType === WeatherType.HEAVY_RAIN && !weather.isEffectSuppressed()) // Heavy rain takes priority over powder
     ) {
       return true;
     }
@@ -1800,9 +1800,9 @@ export abstract class ContactProtectedTag extends ProtectedTag {
 
     const moveData = getMoveEffectPhaseData(pokemon);
     if (
-      lapseType === BattlerTagLapseType.CUSTOM &&
-      moveData &&
-      moveData.move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: moveData.attacker, target: pokemon })
+      lapseType === BattlerTagLapseType.CUSTOM
+      && moveData
+      && moveData.move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: moveData.attacker, target: pokemon })
     ) {
       this.onContact(moveData.attacker, pokemon);
     }
@@ -2166,7 +2166,7 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
       null,
       false,
       null,
-      true,
+      false,
     );
   }
 
@@ -2338,10 +2338,10 @@ export class CritBoostTag extends SerializableBattlerTag {
     super.onAdd(pokemon);
 
     // Dragon cheer adds +2 crit stages if the pokemon is a Dragon type when the tag is added
-    if (this.tagType === BattlerTagType.DRAGON_CHEER && pokemon.getTypes(true).includes(PokemonType.DRAGON)) {
-      (this as Mutable<this>).critStages = 2;
-    } else {
+    if (this.tagType === BattlerTagType.DRAGON_CHEER && !pokemon.getTypes(true, true).includes(PokemonType.DRAGON)) {
       (this as Mutable<this>).critStages = 1;
+    } else {
+      (this as Mutable<this>).critStages = 2;
     }
 
     globalScene.phaseManager.queueMessage(
@@ -2481,10 +2481,7 @@ export class RemovedTypeTag extends SerializableBattlerTag {
   }
 }
 
-/**
- * Battler tag for effects that ground the source, allowing Ground-type moves to hit them.
- * @description `IGNORE_FLYING`: Persistent grounding effects (i.e. from Smack Down and Thousand Waves)
- */
+/** Battler tag for effects that ground the source, allowing Ground-type moves to hit them. */
 export class GroundedTag extends SerializableBattlerTag {
   public override readonly tagType = BattlerTagType.IGNORE_FLYING;
   constructor(tagType: BattlerTagType.IGNORE_FLYING, lapseType: BattlerTagLapseType, sourceMove: MoveId) {
@@ -2492,11 +2489,7 @@ export class GroundedTag extends SerializableBattlerTag {
   }
 }
 
-/**
- * @description `ROOSTED`: Tag for temporary grounding if only source of ungrounding is flying and pokemon uses Roost.
- * Roost removes flying type from a pokemon for a single turn.
- */
-
+/** Removes flying type from a pokemon for a single turn */
 export class RoostedTag extends BattlerTag {
   private isBaseFlying: boolean;
   private isBasePureFlying: boolean;
@@ -2545,12 +2538,10 @@ export class RoostedTag extends BattlerTag {
       let modifiedTypes: PokemonType[];
       if (this.isBasePureFlying && !isCurrentlyDualType) {
         modifiedTypes = [PokemonType.NORMAL];
+      } else if (!!pokemon.getTag(RemovedTypeTag) && isOriginallyDualType && !isCurrentlyDualType) {
+        modifiedTypes = [PokemonType.UNKNOWN];
       } else {
-        if (!!pokemon.getTag(RemovedTypeTag) && isOriginallyDualType && !isCurrentlyDualType) {
-          modifiedTypes = [PokemonType.UNKNOWN];
-        } else {
-          modifiedTypes = currentTypes.filter(type => type !== PokemonType.FLYING);
-        }
+        modifiedTypes = currentTypes.filter(type => type !== PokemonType.FLYING);
       }
       pokemon.summonData.types = modifiedTypes;
       pokemon.updateInfo();
@@ -2577,7 +2568,7 @@ export class FormBlockDamageTag extends SerializableBattlerTag {
   /**
    * Applies the tag to the Pokémon.
    * Triggers a form change if the Pokémon is not in its defense form.
-   * @param {Pokemon} pokemon The Pokémon to which the tag is added.
+   * @param pokemon The Pokémon to which the tag is added.
    */
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
@@ -2826,9 +2817,9 @@ export class GulpMissileTag extends SerializableBattlerTag {
     // Bang here is OK as if sourceMove was undefined, this would just evaluate to false
     const isSurfOrDive = [MoveId.SURF, MoveId.DIVE].includes(this.sourceMove!);
     const isNormalForm =
-      pokemon.formIndex === 0 &&
-      !pokemon.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA) &&
-      !pokemon.getTag(BattlerTagType.GULP_MISSILE_PIKACHU);
+      pokemon.formIndex === 0
+      && !pokemon.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)
+      && !pokemon.getTag(BattlerTagType.GULP_MISSILE_PIKACHU);
     const isCramorant = pokemon.species.speciesId === SpeciesId.CRAMORANT;
 
     return isSurfOrDive && isNormalForm && isCramorant;
@@ -3850,7 +3841,7 @@ export function getBattlerTag(
  * @param source - An object containing the data necessary to reconstruct the BattlerTag.
  * @returns The valid battler tag
  */
-export function loadBattlerTag(source: BattlerTag | BattlerTagTypeData): BattlerTag {
+export function loadBattlerTag(source: BattlerTag | BattlerTagData): BattlerTag {
   // TODO: Remove this bang by fixing the signature of `getBattlerTag`
   // to allow undefined sourceIds and sourceMoves (with appropriate fallback for tags that require it)
   const tag = getBattlerTag(source.tagType, source.turnCount, source.sourceMove!, source.sourceId!);
@@ -3869,7 +3860,7 @@ function getMoveEffectPhaseData(_pokemon: Pokemon): { phase: MoveEffectPhase; at
   const phase = globalScene.phaseManager.getCurrentPhase();
   if (phase?.is("MoveEffectPhase")) {
     return {
-      phase: phase,
+      phase,
       attacker: phase.getPokemon(),
       move: phase.move,
     };

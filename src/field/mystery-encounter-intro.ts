@@ -87,6 +87,7 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
     variant: Variant;
   }[];
 
+  // TODO: Refactor
   constructor(encounter: MysteryEncounter) {
     super(globalScene, -72, 76);
     this.encounter = encounter;
@@ -193,17 +194,15 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
           sprite.setPosition(sprite.x, sprite.y + y);
           tintSprite.setPosition(tintSprite.x, tintSprite.y + y);
         }
-      } else {
         // Single sprite
-        if (this.spriteConfigs.length === 1) {
-          sprite.x = origin;
-          tintSprite.x = origin;
-        } else {
-          // Do standard sprite spacing (not including offset sprites)
-          sprite.x = minX + (n + 0.5) * spacingValue + origin;
-          tintSprite.x = minX + (n + 0.5) * spacingValue + origin;
-          n++;
-        }
+      } else if (this.spriteConfigs.length === 1) {
+        sprite.x = origin;
+        tintSprite.x = origin;
+      } else {
+        // Do standard sprite spacing (not including offset sprites)
+        sprite.x = minX + (n + 0.5) * spacingValue + origin;
+        tintSprite.x = minX + (n + 0.5) * spacingValue + origin;
+        n++;
       }
 
       if (!isNullOrUndefined(pokemonShinySparkle)) {
@@ -457,7 +456,7 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
       globalScene.tweens.add({
         targets: sprite,
         alpha: alpha || 1,
-        duration: duration,
+        duration,
         ease: ease || "Linear",
       });
     } else {
@@ -490,7 +489,7 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
       globalScene.tweens.add({
         targets: sprite,
         alpha: 0,
-        duration: duration,
+        duration,
         ease: ease || "Linear",
         onComplete: () => {
           sprite.setVisible(false);
