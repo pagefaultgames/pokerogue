@@ -176,9 +176,9 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
   private onMovesetChanged(event: MovesetChangedEvent): void {
     // Ignore other Pokemon's moves as well as Struggle and MoveId.NONE
     if (
-      event.pokemonId !== this.pokemon.id ||
-      event.move.moveId === MoveId.NONE ||
-      event.move.moveId === MoveId.STRUGGLE
+      event.pokemonId !== this.pokemon.id
+      || event.move.moveId === MoveId.NONE
+      || event.move.moveId === MoveId.STRUGGLE
     ) {
       return;
     }
