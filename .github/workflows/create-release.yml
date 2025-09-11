@@ -55,15 +55,15 @@ jobs:
       - name: Create release branch
         run: git checkout -b release
 
-      # In order to be able to open a PR into beta, we need the branch to have at least one change.
-      - name: Overwrite RELEASE file
+      # In order to be able to open a PR into beta, we need the branch to have at least one commit.
+      # The first commit is _usually_ just bumping the version number, so we can kill 2 birds with 1 stone here
+      - name: Bump release version
         run: |
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          echo "Release v${{ github.event.inputs.versionName }}" > RELEASE
-          git add RELEASE
-          git commit -m "Stage release v${{ github.event.inputs.versionName }}"
-
+          pnpm --no-git-tag-version version ${{ github.events.inputs.versionName }}
+          git commit -am "Stage release for v${{ github.events.inputs.versionName }}"
+ 
       - name: Push new branch
         run: git push origin release
 
