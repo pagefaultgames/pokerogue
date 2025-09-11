@@ -1914,7 +1914,7 @@ export class GameData {
     _unlockSpeciesNature(species.speciesId);
   }
 
-  updateSpeciesDexIvs(speciesId: SpeciesId, ivs: number[]): void {
+  updateSpeciesDexIvs(speciesId: SpeciesId, ivs: Uint8Array): void {
     let dexEntry: DexEntry;
     do {
       dexEntry = globalScene.gameData.dexData[speciesId];
