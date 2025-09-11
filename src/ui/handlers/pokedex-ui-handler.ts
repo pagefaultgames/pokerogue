@@ -23,24 +23,17 @@ import { UiMode } from "#enums/ui-mode";
 import { UiTheme } from "#enums/ui-theme";
 import type { Variant } from "#sprites/variant";
 import { getVariantIcon, getVariantTint } from "#sprites/variant";
-import type { DexAttrProps, StarterPreferences } from "#system/game-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
-import {
-  DropDown,
-  DropDownLabel,
-  DropDownOption,
-  DropDownState,
-  DropDownType,
-  SortCriteria,
-} from "#ui/containers/dropdown";
-import { FilterBar } from "#ui/containers/filter-bar";
-import { FilterText, FilterTextRow } from "#ui/containers/filter-text";
-import { PokedexMonContainer } from "#ui/containers/pokedex-mon-container";
-import { ScrollBar } from "#ui/containers/scroll-bar";
-import type { OptionSelectConfig } from "#ui/handlers/abstract-option-select-ui-handler";
-import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
-import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/handlers/pokemon-icon-anim-handler";
+import type { DexAttrProps, StarterPreferences } from "#types/save-data";
+import type { OptionSelectConfig } from "#ui/abstract-option-select-ui-handler";
+import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
+import { FilterBar } from "#ui/filter-bar";
+import { FilterText, FilterTextRow } from "#ui/filter-text";
+import { MessageUiHandler } from "#ui/message-ui-handler";
+import { PokedexMonContainer } from "#ui/pokedex-mon-container";
+import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-helper";
+import { ScrollBar } from "#ui/scroll-bar";
 import { addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { BooleanHolder, fixedInt, getLocalizedSpriteKey, padInt, randIntRange, rgbHexToRgba } from "#utils/common";
@@ -193,7 +186,7 @@ export class PokedexUiHandler extends MessageUiHandler {
   public cursorObj: Phaser.GameObjects.Image;
   private pokerusCursorObjs: Phaser.GameObjects.Image[];
 
-  private iconAnimHandler: PokemonIconAnimHandler;
+  private iconAnimHandler: PokemonIconAnimHelper;
 
   private starterPreferences: AllStarterPreferences;
 
@@ -477,7 +470,7 @@ export class PokedexUiHandler extends MessageUiHandler {
       pokemonContainerWindow.setVisible(false);
     }
 
-    this.iconAnimHandler = new PokemonIconAnimHandler();
+    this.iconAnimHandler = new PokemonIconAnimHelper();
     this.iconAnimHandler.setup();
 
     this.pokemonNumberText = addTextObject(6, 141, "", TextStyle.SUMMARY);

@@ -1,6 +1,6 @@
 import { loggedInUser } from "#app/account";
 import { saveKey } from "#app/constants";
-import type { StarterPreferences } from "#system/game-data";
+import type { StarterPreferences } from "#types/save-data";
 import { AES, enc } from "crypto-js";
 
 /**

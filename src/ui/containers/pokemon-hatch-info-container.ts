@@ -9,11 +9,11 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import type { PlayerPokemon } from "#field/pokemon";
-import { PokemonInfoContainer } from "#ui/containers/pokemon-info-container";
 import { addTextObject } from "#ui/text";
 import { padInt, rgbHexToRgba } from "#utils/common";
 import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { argbFromRgba } from "@material/material-color-utilities";
+import { PokemonInfoContainer } from "./pokemon-info-container";
 
 /**
  * Class for the hatch info summary of each pokemon

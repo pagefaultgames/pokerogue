@@ -6,7 +6,6 @@ import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { loadPokemonVariantAssets } from "#sprites/pokemon-sprite";
 import type { Variant } from "#sprites/variant";
 import { isNullOrUndefined } from "#utils/common";
-import console from "node:console";
 import type { GameObjects } from "phaser";
 
 type PlayAnimationConfig = Phaser.Types.Animations.PlayAnimationConfig;

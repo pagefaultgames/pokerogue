@@ -46,9 +46,9 @@ import type { PokemonData } from "#system/pokemon-data";
 import type { TrainerConfig } from "#trainers/trainer-config";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
-import type { OptionSelectConfig, OptionSelectItem } from "#ui/handlers/abstract-option-select-ui-handler";
-import type { PartyOption, PokemonSelectFilter } from "#ui/handlers/party-ui-handler";
-import { PartyUiMode } from "#ui/handlers/party-ui-handler";
+import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import type { PartyOption, PokemonSelectFilter } from "#ui/party-ui-handler";
+import { PartyUiMode } from "#ui/party-ui-handler";
 import { coerceArray, isNullOrUndefined, randomString, randSeedInt, randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
@@ -969,7 +969,7 @@ export function handleMysteryEncounterBattleStartEffects() {
 /**
  * Can queue extra phases or logic during {@linkcode TurnInitPhase}
  * Should mostly just be used for injecting custom phases into the battle system on turn start
- * @return boolean - if true, will skip the remainder of the {@linkcode TurnInitPhase}
+ * @returns boolean - if true, will skip the remainder of the {@linkcode TurnInitPhase}
  */
 export function handleMysteryEncounterTurnStartEffects(): boolean {
   const encounter = globalScene.currentBattle.mysteryEncounter;
@@ -986,7 +986,7 @@ export function handleMysteryEncounterTurnStartEffects(): boolean {
  * @param level the level of the mon, which differs between MEs
  * @param isBoss whether the mon should be a Boss
  * @param rerollHidden whether the mon should get an extra roll for Hidden Ability
- * @returns {@linkcode EnemyPokemon} for the requested encounter
+ * @returns for the requested encounter
  */
 export function getRandomEncounterSpecies(level: number, isBoss = false, rerollHidden = false): EnemyPokemon {
   let bossSpecies: PokemonSpecies;

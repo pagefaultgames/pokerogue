@@ -19,11 +19,11 @@ import { UiMode } from "#enums/ui-mode";
 import * as Modifier from "#modifiers/modifier";
 import { getLuckString, getLuckTextTint } from "#modifiers/modifier-type";
 import { getVariantTint } from "#sprites/variant";
-import type { SessionSaveData } from "#system/game-data";
 import type { PokemonData } from "#system/pokemon-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
-import { UiHandler } from "#ui/handlers/ui-handler";
+import type { SessionSaveData } from "#types/save-data";
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { formatFancyLargeNumber, formatLargeNumber, formatMoney, getPlayTimeString } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
@@ -685,7 +685,7 @@ export class RunInfoUiHandler extends UiHandler {
 
   /**
    * This function parses the Challenges section of the Run Entry and returns a list of active challenge.
-   * @return string[] of active challenge names
+   * @returns string[] of active challenge names
    */
   private challengeParser(): string[] {
     const rules: string[] = [];
