@@ -7,7 +7,7 @@ import { UiMode } from "#enums/ui-mode";
 import type { Pokemon } from "#field/pokemon";
 import type { ModifierBar } from "#modifiers/modifier";
 import { getMoveTargets } from "#moves/move-utils";
-import { UiHandler } from "#ui/handlers/ui-handler";
+import { UiHandler } from "#ui/ui-handler";
 import { fixedInt, isNullOrUndefined } from "#utils/common";
 
 export type TargetSelectCallback = (targets: BattlerIndex[]) => void;

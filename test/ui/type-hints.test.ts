@@ -4,7 +4,7 @@ import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/test-utils/game-manager";
 import type { MockText } from "#test/test-utils/mocks/mocks-container/mock-text";
-import { FightUiHandler } from "#ui/handlers/fight-ui-handler";
+import { FightUiHandler } from "#ui/fight-ui-handler";
 import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
