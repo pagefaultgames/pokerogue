@@ -68,7 +68,7 @@ function isObject(received: unknown): received is object {
 /**
  * Helper function to check if a given object is a {@linkcode Pokemon}.
  * @param received - The object to check
- * @return Whether `received` is a {@linkcode Pokemon} instance.
+ * @returns Whether `received` is a {@linkcode Pokemon} instance.
  */
 export function isPokemonInstance(received: unknown): received is Pokemon {
   return isObject(received) && received instanceof Pokemon;
