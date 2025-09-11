@@ -9,7 +9,7 @@ import { GachaType } from "#enums/gacha-types";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { getVoucherTypeIcon, VoucherType } from "#system/voucher";
-import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
+import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addTextObject, getEggTierTextTint, getTextStyleOptions } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt, randSeedShuffle } from "#utils/common";

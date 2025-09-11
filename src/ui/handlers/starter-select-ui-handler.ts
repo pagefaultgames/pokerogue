@@ -50,24 +50,17 @@ import { RibbonData } from "#system/ribbons/ribbon-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
 import type { DexAttrProps, StarterAttributes, StarterDataEntry, StarterMoveset } from "#types/save-data";
-import {
-  DropDown,
-  DropDownLabel,
-  DropDownOption,
-  DropDownState,
-  DropDownType,
-  SortCriteria,
-} from "#ui/containers/dropdown";
-import { FilterBar } from "#ui/containers/filter-bar";
-import { MoveInfoOverlay } from "#ui/containers/move-info-overlay";
-import { ScrollBar } from "#ui/containers/scroll-bar";
-import { StarterContainer } from "#ui/containers/starter-container";
-import { StatsContainer } from "#ui/containers/stats-container";
-import type { OptionSelectItem } from "#ui/handlers/abstract-option-select-ui-handler";
-import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
+import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
+import { FilterBar } from "#ui/filter-bar";
+import { MessageUiHandler } from "#ui/message-ui-handler";
+import { MoveInfoOverlay } from "#ui/move-info-overlay";
+import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-helper";
+import { ScrollBar } from "#ui/scroll-bar";
+import { StarterContainer } from "#ui/starter-container";
+import { StatsContainer } from "#ui/stats-container";
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
-import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/utils/pokemon-icon-anim-helper";
 import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";
 import {
   BooleanHolder,
