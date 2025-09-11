@@ -20,7 +20,7 @@ import { GameManager } from "#test/test-utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
 import { TrainerConfig } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/trainer-party-template";
-import { ModifierSelectUiHandler } from "#ui/handlers/modifier-select-ui-handler";
+import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/mysteriousChallengers";

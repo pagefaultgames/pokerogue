@@ -6,15 +6,15 @@ import { PokemonType } from "#enums/pokemon-type";
 import { TextStyle } from "#enums/text-style";
 import type { Pokemon } from "#field/pokemon";
 import { getVariantTint } from "#sprites/variant";
-import type { StarterDataEntry } from "#system/game-data";
 import type { DexEntry } from "#types/dex-data";
-import { StatsContainer } from "#ui/containers/stats-container";
-import { ConfirmUiHandler } from "#ui/handlers/confirm-ui-handler";
+import type { StarterDataEntry } from "#types/save-data";
+import { ConfirmUiHandler } from "#ui/confirm-ui-handler";
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt, getShinyDescriptor } from "#utils/common";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
+import { StatsContainer } from "./stats-container";
 
 interface LanguageSetting {
   infoContainerTextSize: string;

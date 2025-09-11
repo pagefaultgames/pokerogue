@@ -25,8 +25,8 @@ import type { PokemonMove } from "#moves/pokemon-move";
 import type { Variant } from "#sprites/variant";
 import { getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
-import { UiHandler } from "#ui/handlers/ui-handler";
 import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
 import {
   fixedInt,
   formatStat,

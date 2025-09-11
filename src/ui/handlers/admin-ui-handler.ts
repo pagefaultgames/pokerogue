@@ -3,9 +3,9 @@ import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
-import type { InputFieldConfig } from "#ui/handlers/form-modal-ui-handler";
-import { FormModalUiHandler } from "#ui/handlers/form-modal-ui-handler";
-import type { ModalConfig } from "#ui/handlers/modal-ui-handler";
+import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
+import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
+import type { ModalConfig } from "#ui/modal-ui-handler";
 import { getTextColor } from "#ui/text";
 import { toTitleCase } from "#utils/strings";
 

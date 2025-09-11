@@ -3,8 +3,8 @@ import { SwitchType } from "#enums/switch-type";
 import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
 import { BattlePhase } from "#phases/battle-phase";
-import type { PartyOption } from "#ui/handlers/party-ui-handler";
-import { PartyUiHandler, PartyUiMode } from "#ui/handlers/party-ui-handler";
+import type { PartyOption } from "#ui/party-ui-handler";
+import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import { isNullOrUndefined, toDmgValue } from "#utils/common";
 import i18next from "i18next";
 

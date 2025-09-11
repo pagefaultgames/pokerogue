@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import type { UiMode } from "#enums/ui-mode";
-import { AwaitableUiHandler } from "#ui/handlers/awaitable-ui-handler";
+import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { getFrameMs } from "#utils/common";
 
 export abstract class MessageUiHandler extends AwaitableUiHandler {
