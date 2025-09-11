@@ -319,7 +319,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
 
       // Set IVs
       if (config.ivs) {
-        enemyPokemon.ivs = config.ivs;
+        enemyPokemon.ivs = new Uint8Array(config.ivs);
       }
 
       // Set Status

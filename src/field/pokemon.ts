@@ -205,7 +205,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public gender: Gender;
   public hp: number;
   public stats: number[];
-  public ivs: number[];
+  public ivs: Uint8Array;
   public nature: Nature;
   public moveset: PokemonMove[];
   /**
@@ -312,7 +312,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     gender?: Gender,
     shiny?: boolean,
     variant?: Variant,
-    ivs?: number[],
+    ivs?: Uint8Array,
     nature?: Nature,
     dataSource?: Pokemon | PokemonData,
   ) {
@@ -347,7 +347,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       this.id = dataSource.id;
       this.hp = dataSource.hp;
       this.stats = dataSource.stats;
-      this.ivs = dataSource.ivs;
+
+      this.ivs = new Uint8Array(dataSource.ivs);
       this.passive = !!dataSource.passive;
       if (this.variant === undefined) {
         this.variant = 0;
@@ -386,7 +387,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       this.stellarTypesBoosted = dataSource.stellarTypesBoosted ?? [];
     } else {
       this.id = randSeedInt(4294967296);
-      this.ivs = ivs || getIvsFromId(this.id);
+      this.ivs = new Uint8Array(ivs || getIvsFromId(this.id));
 
       if (this.gender === undefined) {
         this.gender = this.species.generateGender();
@@ -5759,7 +5760,7 @@ export class PlayerPokemon extends Pokemon {
     gender?: Gender,
     shiny?: boolean,
     variant?: Variant,
-    ivs?: number[],
+    ivs?: Uint8Array,
     nature?: Nature,
     dataSource?: Pokemon | PokemonData,
   ) {
@@ -6382,9 +6383,9 @@ export class EnemyPokemon extends Pokemon {
 
       if (this.hasTrainer() && globalScene.currentBattle) {
         const { waveIndex } = globalScene.currentBattle;
-        const ivs: number[] = [];
-        while (ivs.length < 6) {
-          ivs.push(randSeedIntRange(Math.floor(waveIndex / 10), 31));
+        const ivs = new Uint8Array(6);
+        for (let i = 0; i < 6; i++) {
+          ivs[i] = this.randBattleSeedIntRange(Math.floor(waveIndex / 10), 31);
         }
         this.ivs = ivs;
         this.friendship = Math.round(255 * (waveIndex / 200));
