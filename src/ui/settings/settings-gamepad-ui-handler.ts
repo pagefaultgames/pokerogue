@@ -18,11 +18,7 @@ import { addTextObject } from "#ui/text";
 import { truncateString } from "#utils/common";
 import i18next from "i18next";
 
-/**
- * Class representing the settings UI handler for gamepads.
- *
- * @extends AbstractControlSettingsUiHandler
- */
+/** Class representing the settings UI handler for gamepads */
 
 export class SettingsGamepadUiHandler extends AbstractControlSettingsUiHandler {
   /**

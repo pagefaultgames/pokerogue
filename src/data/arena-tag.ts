@@ -1136,7 +1136,7 @@ class ImprisonTag extends EntryHazardTag {
 
   /**
    * This applies the effects of Imprison to any opposing Pokemon that switch into the field while the source Pokemon is still active
-   * @param {Pokemon} pokemon the Pokemon Imprison is applied to
+   * @param pokemon the Pokemon Imprison is applied to
    * @returns `true`
    */
   override activateTrap(pokemon: Pokemon): boolean {
