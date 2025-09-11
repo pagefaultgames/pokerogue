@@ -126,7 +126,7 @@ export function getMoveTargets(user: Pokemon, move: MoveId, replaceTarget?: Move
 }
 
 export const frenzyMissFunc: UserMoveConditionFunc = (user: Pokemon, move: Move) => {
-  while (user.getMoveQueue().length && user.getMoveQueue()[0].move === move.id) {
+  while (user.getMoveQueue().length > 0 && user.getMoveQueue()[0].move === move.id) {
     user.getMoveQueue().shift();
   }
   user.removeTag(BattlerTagType.FRENZY); // FRENZY tag should be disrupted on miss/no effect

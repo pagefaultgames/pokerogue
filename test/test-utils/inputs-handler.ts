@@ -111,7 +111,7 @@ class FakeMobile {
     if (!node) {
       return;
     }
-    const event = new Event("touchstart");
+    const event = new Event("pointerdown");
     node.dispatchEvent(event);
   }
 
@@ -120,7 +120,7 @@ class FakeMobile {
     if (!node) {
       return;
     }
-    const event = new Event("touchend");
+    const event = new Event("pointerup");
     node.dispatchEvent(event);
   }
 }

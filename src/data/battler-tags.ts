@@ -1150,8 +1150,8 @@ export class PowderTag extends BattlerTag {
     const move = movePhase.move.getMove();
     const weather = globalScene.arena.weather;
     if (
-      pokemon.getMoveType(move) !== PokemonType.FIRE ||
-      (weather?.weatherType === WeatherType.HEAVY_RAIN && !weather.isEffectSuppressed()) // Heavy rain takes priority over powder
+      pokemon.getMoveType(move) !== PokemonType.FIRE
+      || (weather?.weatherType === WeatherType.HEAVY_RAIN && !weather.isEffectSuppressed()) // Heavy rain takes priority over powder
     ) {
       return true;
     }
@@ -1808,9 +1808,9 @@ export abstract class ContactProtectedTag extends ProtectedTag {
 
     const moveData = getMoveEffectPhaseData(pokemon);
     if (
-      lapseType === BattlerTagLapseType.CUSTOM &&
-      moveData &&
-      moveData.move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: moveData.attacker, target: pokemon })
+      lapseType === BattlerTagLapseType.CUSTOM
+      && moveData
+      && moveData.move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: moveData.attacker, target: pokemon })
     ) {
       this.onContact(moveData.attacker, pokemon);
     }
@@ -2174,7 +2174,7 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
       null,
       false,
       null,
-      true,
+      false,
     );
   }
 
@@ -2489,10 +2489,7 @@ export class RemovedTypeTag extends SerializableBattlerTag {
   }
 }
 
-/**
- * Battler tag for effects that ground the source, allowing Ground-type moves to hit them.
- * @description `IGNORE_FLYING`: Persistent grounding effects (i.e. from Smack Down and Thousand Waves)
- */
+/** Battler tag for effects that ground the source, allowing Ground-type moves to hit them. */
 export class GroundedTag extends SerializableBattlerTag {
   public override readonly tagType = BattlerTagType.IGNORE_FLYING;
   constructor(tagType: BattlerTagType.IGNORE_FLYING, lapseType: BattlerTagLapseType, sourceMove: MoveId) {
@@ -2500,11 +2497,7 @@ export class GroundedTag extends SerializableBattlerTag {
   }
 }
 
-/**
- * @description `ROOSTED`: Tag for temporary grounding if only source of ungrounding is flying and pokemon uses Roost.
- * Roost removes flying type from a pokemon for a single turn.
- */
-
+/** Removes flying type from a pokemon for a single turn */
 export class RoostedTag extends BattlerTag {
   private isBaseFlying: boolean;
   private isBasePureFlying: boolean;
@@ -2553,12 +2546,10 @@ export class RoostedTag extends BattlerTag {
       let modifiedTypes: PokemonType[];
       if (this.isBasePureFlying && !isCurrentlyDualType) {
         modifiedTypes = [PokemonType.NORMAL];
+      } else if (!!pokemon.getTag(RemovedTypeTag) && isOriginallyDualType && !isCurrentlyDualType) {
+        modifiedTypes = [PokemonType.UNKNOWN];
       } else {
-        if (!!pokemon.getTag(RemovedTypeTag) && isOriginallyDualType && !isCurrentlyDualType) {
-          modifiedTypes = [PokemonType.UNKNOWN];
-        } else {
-          modifiedTypes = currentTypes.filter(type => type !== PokemonType.FLYING);
-        }
+        modifiedTypes = currentTypes.filter(type => type !== PokemonType.FLYING);
       }
       pokemon.summonData.types = modifiedTypes;
       pokemon.updateInfo();
@@ -2585,7 +2576,7 @@ export class FormBlockDamageTag extends SerializableBattlerTag {
   /**
    * Applies the tag to the Pokémon.
    * Triggers a form change if the Pokémon is not in its defense form.
-   * @param {Pokemon} pokemon The Pokémon to which the tag is added.
+   * @param pokemon The Pokémon to which the tag is added.
    */
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
@@ -2834,9 +2825,9 @@ export class GulpMissileTag extends SerializableBattlerTag {
     // Bang here is OK as if sourceMove was undefined, this would just evaluate to false
     const isSurfOrDive = [MoveId.SURF, MoveId.DIVE].includes(this.sourceMove!);
     const isNormalForm =
-      pokemon.formIndex === 0 &&
-      !pokemon.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA) &&
-      !pokemon.getTag(BattlerTagType.GULP_MISSILE_PIKACHU);
+      pokemon.formIndex === 0
+      && !pokemon.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)
+      && !pokemon.getTag(BattlerTagType.GULP_MISSILE_PIKACHU);
     const isCramorant = pokemon.species.speciesId === SpeciesId.CRAMORANT;
 
     return isSurfOrDive && isNormalForm && isCramorant;
@@ -3870,7 +3861,7 @@ function getMoveEffectPhaseData(_pokemon: Pokemon): { phase: MoveEffectPhase; at
   const phase = globalScene.phaseManager.getCurrentPhase();
   if (phase?.is("MoveEffectPhase")) {
     return {
-      phase: phase,
+      phase,
       attacker: phase.getPokemon(),
       move: phase.move,
     };

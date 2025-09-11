@@ -3,5 +3,5 @@ export enum GameModes {
   ENDLESS,
   SPLICED_ENDLESS,
   DAILY,
-  CHALLENGE
+  CHALLENGE,
 }

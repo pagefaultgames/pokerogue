@@ -10,7 +10,7 @@ import type { PlayerPokemon } from "#field/pokemon";
 import type { EggLapsePhase } from "#phases/egg-lapse-phase";
 import { achvs } from "#system/achv";
 import { EggCounterContainer } from "#ui/egg-counter-container";
-import type { EggHatchSceneHandler } from "#ui/egg-hatch-scene-handler";
+import type { EggHatchSceneUiHandler } from "#ui/egg-hatch-scene-ui-handler";
 import { PokemonInfoContainer } from "#ui/pokemon-info-container";
 import { fixedInt, getFrameMs, randInt } from "#utils/common";
 import i18next from "i18next";
@@ -32,7 +32,7 @@ export class EggHatchPhase extends Phase {
   private eggCounterContainer: EggCounterContainer;
 
   /** The scene handler for egg hatching */
-  private eggHatchHandler: EggHatchSceneHandler;
+  private eggHatchHandler: EggHatchSceneUiHandler;
   /** The phaser gameobject container that holds everything */
   private eggHatchContainer: Phaser.GameObjects.Container;
   /** The phaser image that is the background */
@@ -92,7 +92,7 @@ export class EggHatchPhase extends Phase {
 
       globalScene.fadeOutBgm(undefined, false);
 
-      this.eggHatchHandler = globalScene.ui.getHandler() as EggHatchSceneHandler;
+      this.eggHatchHandler = globalScene.ui.getHandler() as EggHatchSceneUiHandler;
 
       this.eggHatchContainer = this.eggHatchHandler.eggHatchContainer;
 
@@ -230,6 +230,7 @@ export class EggHatchPhase extends Phase {
     } else {
       globalScene.time.delayedCall(250, () => globalScene.setModifiersVisible(true));
     }
+    this.pokemon?.destroy();
     super.end();
   }
 

@@ -62,7 +62,7 @@ function trimFromStartAndEnd(str: string, charToTrim: string): string {
 /**
  * Capitalize the first letter of a string.
  * @param str - The string whose first letter is to be capitalized
- * @return The original string with its first letter capitalized.
+ * @returns The original string with its first letter capitalized.
  * @example
  * ```ts
  * console.log(capitalizeFirstLetter("consectetur adipiscing elit")); // returns "Consectetur adipiscing elit"

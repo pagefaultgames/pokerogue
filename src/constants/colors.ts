@@ -5,8 +5,10 @@
  */
 
 // Colors used in prod
+/** Color used for "Start Phase <Phase>" logs */
 export const PHASE_START_COLOR = "green" as const;
-export const MOVE_COLOR = "RebeccaPurple" as const;
+/** Color used for logs in `MovePhase` */
+export const MOVE_COLOR = "orchid" as const;
 
 // Colors used for testing code
 export const NEW_TURN_COLOR = "#ffad00ff" as const;

@@ -285,7 +285,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
           species: transformation.newSpecies,
           isBoss: newPokemon.getSpeciesForm().getBaseStatTotal() > NON_LEGENDARY_BST_THRESHOLD,
           level: previousPokemon.level,
-          dataSource: dataSource,
+          dataSource,
           modifierConfigs: newPokemonHeldItemConfigs,
         };
 
@@ -299,7 +299,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         ].clone();
       trainerConfig.setPartyTemplates(new TrainerPartyTemplate(transformations.length, PartyMemberStrength.STRONG));
       const enemyPartyConfig: EnemyPartyConfig = {
-        trainerConfig: trainerConfig,
+        trainerConfig,
         pokemonConfigs: enemyPokemonConfigs,
         female: genderIndex === PlayerGender.FEMALE,
       };
@@ -541,12 +541,12 @@ async function postProcessTransformedPokemon(
 
   // For pokemon at/below 570 BST or any shiny pokemon, unlock it permanently as if you had caught it
   if (
-    !forBattle &&
-    (newPokemon.getSpeciesForm().getBaseStatTotal() <= NON_LEGENDARY_BST_THRESHOLD || newPokemon.isShiny())
+    !forBattle
+    && (newPokemon.getSpeciesForm().getBaseStatTotal() <= NON_LEGENDARY_BST_THRESHOLD || newPokemon.isShiny())
   ) {
     if (
-      newPokemon.getSpeciesForm().abilityHidden &&
-      newPokemon.abilityIndex === newPokemon.getSpeciesForm().getAbilityCount() - 1
+      newPokemon.getSpeciesForm().abilityHidden
+      && newPokemon.abilityIndex === newPokemon.getSpeciesForm().getAbilityCount() - 1
     ) {
       globalScene.validateAchv(achvs.HIDDEN_ABILITY);
     }
@@ -644,10 +644,10 @@ function getTransformedSpecies(
       const bstInRange = speciesBst >= bstMin && speciesBst <= bstCap;
       // Checks that a Pokemon has not already been added in the +600 or 570-600 slots;
       const validBst =
-        (!hasPokemonBstBetween570And600 ||
-          speciesBst < NON_LEGENDARY_BST_THRESHOLD ||
-          speciesBst > SUPER_LEGENDARY_BST_THRESHOLD) &&
-        (!hasPokemonBstHigherThan600 || speciesBst <= SUPER_LEGENDARY_BST_THRESHOLD);
+        (!hasPokemonBstBetween570And600
+          || speciesBst < NON_LEGENDARY_BST_THRESHOLD
+          || speciesBst > SUPER_LEGENDARY_BST_THRESHOLD)
+        && (!hasPokemonBstHigherThan600 || speciesBst <= SUPER_LEGENDARY_BST_THRESHOLD);
       return bstInRange && validBst && !EXCLUDED_TRANSFORMATION_SPECIES.includes(s.speciesId);
     });
 
@@ -792,9 +792,9 @@ async function addEggMoveToNewPokemonMoveset(
 
       // For pokemon that the player owns (including ones just caught), unlock the egg move
       if (
-        !forBattle &&
-        !isNullOrUndefined(randomEggMoveIndex) &&
-        !!globalScene.gameData.dexData[speciesRootForm].caughtAttr
+        !forBattle
+        && !isNullOrUndefined(randomEggMoveIndex)
+        && !!globalScene.gameData.dexData[speciesRootForm].caughtAttr
       ) {
         await globalScene.gameData.setEggMoveUnlocked(getPokemonSpecies(speciesRootForm), randomEggMoveIndex, true);
       }

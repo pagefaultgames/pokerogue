@@ -1,0 +1,17 @@
+{
+  "include": ["**/*.js"],
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "rootDir": ".",
+    "target": "esnext",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "erasableSyntaxOnly": true,
+    "strict": true,
+    "noEmit": true,
+    // Forcibly disable `node_modules` recursion to prevent TSC from typechecking random JS files.
+    // This is disabled by default in `tsconfig.json`, but needs to be explicitly disabled from the default of `2`
+    "maxNodeModuleJsDepth": 0
+  }
+}
