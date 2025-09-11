@@ -55,7 +55,6 @@ import {
 import { VoucherType, vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { DexData, DexEntry } from "#types/dex-data";
-import type { TrainerItemConfiguration, TrainerItemSaveData } from "#types/trainer-item-data-types";
 import type {
   AchvUnlocks,
   DexAttrProps,
@@ -69,6 +68,7 @@ import type {
   VoucherCounts,
   VoucherUnlocks,
 } from "#types/save-data";
+import type { TrainerItemConfiguration } from "#types/trainer-item-data-types";
 import { RUN_HISTORY_LIMIT } from "#ui/handlers/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { executeIf, fixedInt, isLocal, NumberHolder, randInt, randSeedItem } from "#utils/common";
@@ -1047,14 +1047,14 @@ export class GameData {
         }
 
         globalScene.trainerItems.clearItems();
-        globalScene.assignTrainerItemsFromSaveData(sessionData.trainerItems, true);
+        globalScene.assignTrainerItemsFromSaveData(fromSession.trainerItems, true);
 
         globalScene.arena.positionalTagManager.tags = fromSession.arena.positionalTags.map(tag =>
           loadPositionalTag(tag),
         );
 
         globalScene.enemyTrainerItems.clearItems();
-        globalScene.assignTrainerItemsFromSaveData(sessionData.enemyTrainerItems, false);
+        globalScene.assignTrainerItemsFromSaveData(fromSession.enemyTrainerItems, false);
 
         Promise.all(loadPokemonAssets).then(() => resolve(true));
 

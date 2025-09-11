@@ -2,7 +2,7 @@ import type { RewardId } from "#enums/reward-id";
 import type { RarityTier } from "#enums/reward-tier";
 import type { PlayerPokemon } from "#field/pokemon";
 import type { Exact } from "#types/type-helpers";
-import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
+import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/handlers/party-ui-handler";
 import i18next from "i18next";
 
 /**

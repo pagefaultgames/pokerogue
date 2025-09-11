@@ -16,7 +16,6 @@ import type { EndCardPhase } from "#phases/end-card-phase";
 import { achvs, ChallengeAchv } from "#system/achv";
 import { ArenaData } from "#system/arena-data";
 import { ChallengeData } from "#system/challenge-data";
-import type { SessionSaveData } from "#system/game-data";
 import { PokemonData } from "#system/pokemon-data";
 import { RibbonData, type RibbonFlag } from "#system/ribbons/ribbon-data";
 import { awardRibbonsToSpeciesLine } from "#system/ribbons/ribbon-methods";

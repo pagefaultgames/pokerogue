@@ -2,8 +2,8 @@ import { globalScene } from "#app/global-scene";
 import { allTrainerItems } from "#data/data-lists";
 import { RarityTier } from "#enums/reward-tier";
 import type { TrainerItemId } from "#enums/trainer-item-id";
-import type { TrainerItemPool, TrainerItemTieredPool } from "#items/trainer-item-data-types";
 import type { TrainerItemManager } from "#items/trainer-item-manager";
+import type { TrainerItemPool, TrainerItemTieredPool } from "#types/trainer-item-data-types";
 import { isNullOrUndefined, pickWeightedIndex } from "#utils/common";
 
 export const enemyBuffTokenPool: TrainerItemTieredPool = {};
