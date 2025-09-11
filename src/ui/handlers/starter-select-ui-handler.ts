@@ -41,27 +41,20 @@ import { BattleSceneEventType } from "#events/battle-scene";
 import type { Variant } from "#sprites/variant";
 import { getVariantIcon, getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
-import type { DexAttrProps, StarterMoveset, StarterPreferences } from "#types/save-data";
 import { RibbonData } from "#system/ribbons/ribbon-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
-import {
-  DropDown,
-  DropDownLabel,
-  DropDownOption,
-  DropDownState,
-  DropDownType,
-  SortCriteria,
-} from "#ui/dropdown";
+import type { DexAttrProps, StarterMoveset, StarterPreferences } from "#types/save-data";
+import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
 import { FilterBar } from "#ui/filter-bar";
+import { MessageUiHandler } from "#ui/message-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
+import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-helper";
 import { ScrollBar } from "#ui/scroll-bar";
 import { StarterContainer } from "#ui/starter-container";
-import { StatsContainer } from "#ui/stats-container";
-import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
-import { MessageUiHandler } from "#ui/message-ui-handler";
-import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-helper";
-import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
+import { StarterSummary } from "#ui/starter-summary";
+import { addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import {
   getDexAttrFromPreferences,
@@ -85,7 +78,6 @@ import { getPokemonSpecies, getPokemonSpeciesForm, getPokerusStarters } from "#u
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
-import { StarterSummary } from "#ui/starter-summary";
 
 const COLUMNS = 9;
 const ROWS = 9;

@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { TextStyle } from "#enums/text-style";
-import type { DexAttrProps } from "#system/game-data";
+import type { DexAttrProps } from "#types/save-data";
 import { addTextObject } from "#ui/text";
 
 export class StarterContainer extends Phaser.GameObjects.Container {
