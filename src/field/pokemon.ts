@@ -2281,25 +2281,25 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Return whether this Pokemon is currently on the ground.
    *
    * To be considered grounded, a Pokemon must either:
-   * * Be {@linkcode BattlerTagType.IGNORE_FLYING | forcibly grounded} from an effect like Smack Down or Ingrain
-   * * Be under the effects of {@linkcode ArenaTagType.GRAVITY | harsh gravity}
-   * * **Not** be any of the following things:
-   *   * {@linkcode PokemonType.FLYING | Flying-type}
-   *   * {@linkcode AbilityId.LEVITATE | Levitating}
-   *   * {@linkcode BattlerTagType.FLOATING | Floating} from Magnet Rise or Telekinesis
-   *   * {@linkcode SemiInvulnerableTag | Semi-invulnerable} with `ignoreSemiInvulnerable` set to `false`
+   * - Be {@linkcode BattlerTagType.IGNORE_FLYING | forcibly grounded} from an effect like Smack Down or Ingrain
+   * - Be under the effects of {@linkcode ArenaTagType.GRAVITY | harsh gravity}
+   * - **Not** be any of the following things:
+   *   - {@linkcode PokemonType.FLYING | Flying-type}
+   *   - {@linkcode AbilityId.LEVITATE | Levitating}
+   *   - {@linkcode BattlerTagType.FLOATING | Floating} from Magnet Rise or Telekinesis
+   *   - {@linkcode SemiInvulnerableTag | Semi-invulnerable} with `ignoreSemiInvulnerable` set to `false`
    * @param ignoreSemiInvulnerable - Whether to ignore the target's semi-invulnerable state when determining groundedness;
    default `false`
    * @returns Whether this pokemon is currently grounded, as described above.
    */
   public isGrounded(ignoreSemiInvulnerable = false): boolean {
     return (
-      !!this.getTag(BattlerTagType.IGNORE_FLYING) ||
-      globalScene.arena.hasTag(ArenaTagType.GRAVITY) ||
-      (!this.isOfType(PokemonType.FLYING, true, true) &&
-        !this.hasAbility(AbilityId.LEVITATE) &&
-        !this.getTag(BattlerTagType.FLOATING) &&
-        (ignoreSemiInvulnerable || !this.getTag(SemiInvulnerableTag)))
+      !!this.getTag(BattlerTagType.IGNORE_FLYING)
+      || globalScene.arena.hasTag(ArenaTagType.GRAVITY)
+      || (!this.isOfType(PokemonType.FLYING, true, true)
+        && !this.hasAbility(AbilityId.LEVITATE)
+        && !this.getTag(BattlerTagType.FLOATING)
+        && (ignoreSemiInvulnerable || !this.getTag(SemiInvulnerableTag)))
     );
   }
 
@@ -4422,17 +4422,16 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     // TODO: Rather than handling this logic in the core baton pass logic, move it to an
     // overriddable helper function on the BattlerTag instance
     const isMegaGengarReceivingTelekinesis =
-      this.species.speciesId === SpeciesId.GENGAR &&
-      this.getFormKey() === SpeciesFormKey.MEGA &&
-      !!source.getTag(BattlerTagType.TELEKINESIS);
+      this.species.speciesId === SpeciesId.GENGAR
+      && this.getFormKey() === SpeciesFormKey.MEGA
+      && !!source.getTag(BattlerTagType.TELEKINESIS);
 
     // Copy all transferrable BattlerTags
     for (const tag of source.summonData.tags) {
       if (
-        !tag.isBatonPassable ||
-        (isMegaGengarReceivingTelekinesis &&
-          (tag.tagType === BattlerTagType.TELEKINESIS
-            || tag.tagType === BattlerTagType.FLOATING))
+        !tag.isBatonPassable
+        || (isMegaGengarReceivingTelekinesis
+          && (tag.tagType === BattlerTagType.TELEKINESIS || tag.tagType === BattlerTagType.FLOATING))
       ) {
         continue;
       }
