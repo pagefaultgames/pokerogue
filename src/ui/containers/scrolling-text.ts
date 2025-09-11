@@ -44,9 +44,7 @@ export class ScrollingText extends Phaser.GameObjects.Container {
     this.offsetY = hasBackground ? BORDER - 2 : 0;
 
     // Adding the background
-    this.descBg = addWindow(0, 0, width, height);
-    this.descBg.setOrigin(0, 0);
-    this.descBg.setVisible(hasBackground);
+    this.descBg = addWindow(0, 0, width, height).setOrigin(0, 0).setVisible(hasBackground);
     this.add(this.descBg);
 
     // Adding the text element
@@ -74,8 +72,7 @@ export class ScrollingText extends Phaser.GameObjects.Container {
     const visibleHeight = this.maskHeight;
 
     const maskGraphics = scene.make.graphics({ x: 0, y: 0 });
-    maskGraphics.fillRect(globalMaskX, globalMaskY, visibleWidth, visibleHeight);
-    maskGraphics.setScale(6);
+    maskGraphics.fillRect(globalMaskX, globalMaskY, visibleWidth, visibleHeight).setScale(6);
 
     scene.add.existing(maskGraphics);
     const mask = this.createGeometryMask(maskGraphics);
