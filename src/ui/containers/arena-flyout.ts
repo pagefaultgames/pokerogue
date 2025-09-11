@@ -15,8 +15,8 @@ import {
 } from "#events/arena";
 import type { TurnEndEvent } from "#events/battle-scene";
 import { BattleSceneEventType } from "#events/battle-scene";
-import { TimeOfDayWidget } from "#ui/containers/time-of-day-widget";
 import { addTextObject } from "#ui/text";
+import { TimeOfDayWidget } from "#ui/time-of-day-widget";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import { fixedInt } from "#utils/common";
 import { toCamelCase, toTitleCase } from "#utils/strings";
