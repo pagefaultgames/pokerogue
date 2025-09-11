@@ -59,8 +59,8 @@
         "./src/ui/battle-info/*.ts",
         "./src/ui/containers/*.ts",
         "./src/ui/handlers/*.ts",
-        "./src/ui/utils/*.ts",
         "./src/ui/settings/*.ts",
+        "./src/ui/utils/*.ts",
         "./src/ui/*.ts"
       ],
       "#utils/*": ["./src/utils/*.ts"],
