@@ -96,7 +96,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
       legendaryLabelY = 0;
     }
 
-    const gachaUpLabel = addTextObject(gachaX, gachaY, i18next.t("egg:legendaryUPGacha"), gachaTextStyle).setOrigin(0);
+    const gachaUpLabel = addTextObject(gachaX, gachaY, i18next.t("egg:legendaryUpGacha"), gachaTextStyle).setOrigin(0);
     gachaInfoContainer.add(gachaUpLabel);
 
     switch (gachaType as GachaType) {
@@ -124,14 +124,14 @@ export class EggGachaUiHandler extends MessageUiHandler {
           gachaUpLabel.setAlign("center").setY(0);
         }
 
-        gachaUpLabel.setText(i18next.t("egg:moveUPGacha")).setX(0).setOrigin(0.5, 0);
+        gachaUpLabel.setText(i18next.t("egg:moveUpGacha")).setX(0).setOrigin(0.5, 0);
         break;
       case GachaType.SHINY:
         if (["de", "fr", "ko", "ru"].includes(currentLanguage)) {
           gachaUpLabel.setAlign("center").setY(0);
         }
 
-        gachaUpLabel.setText(i18next.t("egg:shinyUPGacha")).setX(0).setOrigin(0.5, 0);
+        gachaUpLabel.setText(i18next.t("egg:shinyUpGacha")).setX(0).setOrigin(0.5, 0);
         break;
     }
 

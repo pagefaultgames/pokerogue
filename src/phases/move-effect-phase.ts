@@ -926,7 +926,7 @@ export class MoveEffectPhase extends PokemonPhase {
         msg = i18next.t("battle:hitResultNotVeryEffective");
         break;
       case HitResult.ONE_HIT_KO:
-        msg = i18next.t("battle:hitResultOneHitKO");
+        msg = i18next.t("battle:hitResultOneHitKo");
         break;
     }
     if (msg) {

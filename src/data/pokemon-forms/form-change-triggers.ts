@@ -316,7 +316,7 @@ export class SpeciesFormChangeRevertWeatherFormTrigger extends SpeciesFormChange
   /**
    * Checks if the Pokemon has the required ability and the weather is one that will revert
    * the Pokemon to its original form or the weather or ability is suppressed
-   * @param {Pokemon} pokemon the pokemon that is trying to do the form change
+   * @param pokemon the pokemon that is trying to do the form change
    * @returns `true` if the Pokemon will revert to its original form, `false` otherwise
    */
   canChange(pokemon: Pokemon): boolean {

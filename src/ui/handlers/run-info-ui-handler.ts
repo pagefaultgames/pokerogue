@@ -18,9 +18,9 @@ import { TrainerVariant } from "#enums/trainer-variant";
 import { UiMode } from "#enums/ui-mode";
 import { heldItemSortFunc } from "#items/item-utility";
 import { getVariantTint } from "#sprites/variant";
-import type { SessionSaveData } from "#system/game-data";
 import type { PokemonData } from "#system/pokemon-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
+import type { SessionSaveData } from "#types/save-data";
 import { UiHandler } from "#ui/handlers/ui-handler";
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
@@ -679,7 +679,7 @@ export class RunInfoUiHandler extends UiHandler {
 
   /**
    * This function parses the Challenges section of the Run Entry and returns a list of active challenge.
-   * @return string[] of active challenge names
+   * @returns string[] of active challenge names
    */
   private challengeParser(): string[] {
     const rules: string[] = [];

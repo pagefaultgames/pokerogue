@@ -917,7 +917,7 @@ export function handleMysteryEncounterBattleStartEffects() {
 /**
  * Can queue extra phases or logic during {@linkcode TurnInitPhase}
  * Should mostly just be used for injecting custom phases into the battle system on turn start
- * @return boolean - if true, will skip the remainder of the {@linkcode TurnInitPhase}
+ * @returns boolean - if true, will skip the remainder of the {@linkcode TurnInitPhase}
  */
 export function handleMysteryEncounterTurnStartEffects(): boolean {
   const encounter = globalScene.currentBattle.mysteryEncounter;
@@ -934,7 +934,7 @@ export function handleMysteryEncounterTurnStartEffects(): boolean {
  * @param level the level of the mon, which differs between MEs
  * @param isBoss whether the mon should be a Boss
  * @param rerollHidden whether the mon should get an extra roll for Hidden Ability
- * @returns {@linkcode EnemyPokemon} for the requested encounter
+ * @returns for the requested encounter
  */
 export function getRandomEncounterSpecies(level: number, isBoss = false, rerollHidden = false): EnemyPokemon {
   let bossSpecies: PokemonSpecies;

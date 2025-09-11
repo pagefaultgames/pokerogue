@@ -733,14 +733,12 @@ export class Arena {
    * Attempt to get a tag from the Arena via {@linkcode getTagOnSide} that applies to both sides
    * @param tagType - The {@linkcode ArenaTagType} to retrieve
    * @returns The existing {@linkcode ArenaTag}, or `undefined` if not present.
-   * @overload
    */
   getTag(tagType: ArenaTagType): ArenaTag | undefined;
   /**
    * Attempt to get a tag from the Arena via {@linkcode getTagOnSide} that applies to both sides
    * @param tagType - The constructor of the {@linkcode ArenaTag} to retrieve
    * @returns The existing {@linkcode ArenaTag}, or `undefined` if not present.
-   * @overload
    */
   getTag<T extends ArenaTag>(tagType: Constructor<T> | AbstractConstructor<T>): T | undefined;
   getTag(tagType: ArenaTagType | Constructor<ArenaTag> | AbstractConstructor<ArenaTag>): ArenaTag | undefined {

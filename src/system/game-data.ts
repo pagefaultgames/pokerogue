@@ -1,6 +1,5 @@
 import { pokerogueApi } from "#api/pokerogue-api";
 import { clientSessionId, loggedInUser, updateUserInfo } from "#app/account";
-import type { PokeballCounts } from "#app/battle-scene";
 import { defaultStarterSpecies, saveKey } from "#app/constants";
 import { getGameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
@@ -24,11 +23,9 @@ import { Device } from "#enums/devices";
 import { DexAttr } from "#enums/dex-attr";
 import { GameDataType } from "#enums/game-data-type";
 import { GameModes } from "#enums/game-modes";
-import type { MoveId } from "#enums/move-id";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
 import { PlayerGender } from "#enums/player-gender";
-import type { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerVariant } from "#enums/trainer-variant";
 import { UiMode } from "#enums/ui-mode";
@@ -59,6 +56,19 @@ import { VoucherType, vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { DexData, DexEntry } from "#types/dex-data";
 import type { TrainerItemConfiguration, TrainerItemSaveData } from "#types/trainer-item-data-types";
+import type {
+  AchvUnlocks,
+  DexAttrProps,
+  RunHistoryData,
+  SeenDialogues,
+  SessionSaveData,
+  StarterData,
+  SystemSaveData,
+  TutorialFlags,
+  Unlocks,
+  VoucherCounts,
+  VoucherUnlocks,
+} from "#types/save-data";
 import { RUN_HISTORY_LIMIT } from "#ui/handlers/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { executeIf, fixedInt, isLocal, NumberHolder, randInt, randSeedItem } from "#utils/common";
@@ -89,132 +99,6 @@ function getDataTypeKey(dataType: GameDataType, slotId = 0): string {
     case GameDataType.RUN_HISTORY:
       return "runHistoryData";
   }
-}
-
-// TODO: Move all these exported interfaces to @types
-export interface SystemSaveData {
-  trainerId: number;
-  secretId: number;
-  gender: PlayerGender;
-  dexData: DexData;
-  starterData: StarterData;
-  gameStats: GameStats;
-  unlocks: Unlocks;
-  achvUnlocks: AchvUnlocks;
-  voucherUnlocks: VoucherUnlocks;
-  voucherCounts: VoucherCounts;
-  eggs: EggData[];
-  gameVersion: string;
-  timestamp: number;
-  eggPity: number[];
-  unlockPity: number[];
-}
-
-export interface SessionSaveData {
-  seed: string;
-  playTime: number;
-  gameMode: GameModes;
-  party: PokemonData[];
-  enemyParty: PokemonData[];
-  trainerItems: TrainerItemSaveData;
-  enemyTrainerItems: TrainerItemSaveData;
-  arena: ArenaData;
-  pokeballCounts: PokeballCounts;
-  money: number;
-  score: number;
-  waveIndex: number;
-  battleType: BattleType;
-  trainer: TrainerData;
-  gameVersion: string;
-  /** The player-chosen name of the run */
-  name: string;
-  timestamp: number;
-  challenges: ChallengeData[];
-  mysteryEncounterType: MysteryEncounterType | -1; // Only defined when current wave is ME,
-  mysteryEncounterSaveData: MysteryEncounterSaveData;
-  /**
-   * Counts the amount of pokemon fainted in your party during the current arena encounter.
-   */
-  playerFaints: number;
-}
-
-interface Unlocks {
-  [key: number]: boolean;
-}
-
-export interface AchvUnlocks {
-  [key: string]: number;
-}
-
-export interface VoucherUnlocks {
-  [key: string]: number;
-}
-
-export interface VoucherCounts {
-  [type: string]: number;
-}
-
-export type StarterMoveset = [MoveId] | [MoveId, MoveId] | [MoveId, MoveId, MoveId] | [MoveId, MoveId, MoveId, MoveId];
-
-export interface StarterFormMoveData {
-  [key: number]: StarterMoveset;
-}
-
-export interface StarterMoveData {
-  [key: number]: StarterMoveset | StarterFormMoveData;
-}
-
-export interface StarterAttributes {
-  nature?: number;
-  ability?: number;
-  variant?: number;
-  form?: number;
-  female?: boolean;
-  shiny?: boolean;
-  favorite?: boolean;
-  nickname?: string;
-  tera?: PokemonType;
-}
-
-export interface DexAttrProps {
-  shiny: boolean;
-  female: boolean;
-  variant: Variant;
-  formIndex: number;
-}
-
-export type RunHistoryData = Record<number, RunEntry>;
-
-export interface RunEntry {
-  entry: SessionSaveData;
-  isVictory: boolean;
-  /*Automatically set to false at the moment - implementation TBD*/
-  isFavorite: boolean;
-}
-
-export interface StarterDataEntry {
-  moveset: StarterMoveset | StarterFormMoveData | null;
-  eggMoves: number;
-  candyCount: number;
-  friendship: number;
-  abilityAttr: number;
-  passiveAttr: number;
-  valueReduction: number;
-  classicWinCount: number;
-}
-
-export interface StarterData {
-  [key: number]: StarterDataEntry;
-}
-
-// TODO: Rework into a bitmask
-export type TutorialFlags = {
-  [key in Tutorial]: boolean;
-};
-
-// TODO: Rework into a bitmask
-export interface SeenDialogues {
-  [key: string]: boolean;
 }
 
 const systemShortKeys = {
@@ -1974,9 +1858,7 @@ export class GameData {
     });
   }
 
-  /**
-   * Checks whether the root species of a given {@PokemonSpecies} has been unlocked in the dex
-   */
+  /** Return whether the root species of a given `PokemonSpecies` has been unlocked in the dex */
   isRootSpeciesUnlocked(species: PokemonSpecies): boolean {
     return !!this.dexData[species.getRootSpeciesId()]?.caughtAttr;
   }
