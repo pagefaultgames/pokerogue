@@ -870,7 +870,6 @@ export class BattleScene extends SceneBase {
     if (this.currentBattle.double === false) {
       return;
     }
-    // TODO: Remove while loop
     if (allyPokemon?.isActive(true)) {
       let targetingMovePhase: MovePhase;
       do {

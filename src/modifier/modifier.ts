@@ -1746,6 +1746,7 @@ export class HitHealModifier extends PokemonHeldItemModifier {
    */
   override apply(pokemon: Pokemon): boolean {
     if (pokemon.turnData.totalDamageDealt && !pokemon.isFullHp()) {
+      // TODO: this shouldn't be undefined AFAIK
       globalScene.phaseManager.unshiftNew(
         "PokemonHealPhase",
         pokemon.getBattlerIndex(),

@@ -64,7 +64,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
   /** Is this the first strike of a move? */
   private firstHit: boolean;
-  /** Is this the last strike of a move (either due to running out of hits or all targets being fainted/immune)? */
+  /** Is this the last strike of a move? */
   private lastHit: boolean;
 
   /**
@@ -305,7 +305,7 @@ export class MoveEffectPhase extends PokemonPhase {
     const targets = this.conductHitChecks(user, fieldMove);
 
     this.firstHit = user.turnData.hitCount === user.turnData.hitsLeft;
-    this.lastHit = user.turnData.hitsLeft === 1 || targets.every(t => !t.isActive(true));
+    this.lastHit = user.turnData.hitsLeft === 1 || !targets.some(t => t.isActive(true));
 
     // Play the animation if the move was successful against any of its targets or it has a POST_TARGET effect (like self destruct)
     if (
@@ -824,7 +824,6 @@ export class MoveEffectPhase extends PokemonPhase {
       isCritical,
     });
 
-    // Apply and/or remove type boosting tags (Flash Fire, Charge, etc.)
     const typeBoost = user.findTag(
       t => t instanceof TypeBoostTag && t.boostedType === user.getMoveType(this.move),
     ) as TypeBoostTag;
@@ -838,11 +837,10 @@ export class MoveEffectPhase extends PokemonPhase {
       return [result, false, 0];
     }
 
-    const isOneHitKo = result === HitResult.ONE_HIT_KO;
     target.lapseTags(BattlerTagLapseType.HIT);
 
     const substitute = target.getTag(SubstituteTag);
-    const isBlockedBySubstitute = !!substitute && this.move.hitsSubstitute(user, target);
+    const isBlockedBySubstitute = substitute && this.move.hitsSubstitute(user, target);
     if (isBlockedBySubstitute) {
       user.turnData.totalDamageDealt += Math.min(dmg, substitute.hp);
       substitute.hp -= dmg;
@@ -854,7 +852,7 @@ export class MoveEffectPhase extends PokemonPhase {
       ? 0
       : target.damageAndUpdate(dmg, {
           result: result as DamageResult,
-          ignoreFaintPhase: true, // ignore faint phase so we can handle it ourselves
+          ignoreFaintPhase: true,
           ignoreSegments: isOneHitKo,
           isCritical,
         });
