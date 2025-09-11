@@ -12,9 +12,9 @@ import { UiMode } from "#enums/ui-mode";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import type { PokemonMove } from "#moves/pokemon-move";
 import type { CommandPhase } from "#phases/command-phase";
-import { MoveInfoOverlay } from "#ui/containers/move-info-overlay";
-import { UiHandler } from "#ui/handlers/ui-handler";
+import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { addTextObject, getTextColor } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
 import { fixedInt, getLocalizedSpriteKey, padInt } from "#utils/common";
 import i18next from "i18next";
 

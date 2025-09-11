@@ -43,7 +43,7 @@ const config = {
   readme: "./README.md",
   coverageLabel: "Documented",
   coverageSvgWidth: 120, // Increased from 104 baseline due to adding 2 extra letters
-  favicon: "./public/images/logo.png",
+  favicon: "./favicon.ico",
   theme: "typedoc-github-theme",
   customFooterHtml: "<p>Copyright <strong>Pagefault Games</strong> 2025</p>",
   customFooterHtmlDisableWrapper: true,
