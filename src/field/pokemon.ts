@@ -133,8 +133,8 @@ import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { TurnMove } from "#types/turn-move";
 import { BattleInfo } from "#ui/battle-info";
 import { EnemyBattleInfo } from "#ui/enemy-battle-info";
-import type { PartyOption } from "#ui/handlers/party-ui-handler";
-import { PartyUiHandler, PartyUiMode } from "#ui/handlers/party-ui-handler";
+import type { PartyOption } from "#ui/party-ui-handler";
+import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import { PlayerBattleInfo } from "#ui/player-battle-info";
 import { applyChallenges } from "#utils/challenge-utils";
 import {

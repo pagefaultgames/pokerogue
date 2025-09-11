@@ -13,7 +13,7 @@ import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { CIVILIZATION_ENCOUNTER_BIOMES } from "#mystery-encounters/mystery-encounters";
 import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
 import { GameManager } from "#test/test-utils/game-manager";
-import { RewardSelectUiHandler } from "#ui/handlers/reward-select-ui-handler";
+import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import * as Utils from "#utils/common";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

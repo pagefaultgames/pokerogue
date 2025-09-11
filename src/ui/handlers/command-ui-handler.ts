@@ -9,9 +9,9 @@ import { TextStyle } from "#enums/text-style";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
 import type { CommandPhase } from "#phases/command-phase";
-import { PartyUiHandler, PartyUiMode } from "#ui/handlers/party-ui-handler";
-import { UiHandler } from "#ui/handlers/ui-handler";
+import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import { addTextObject } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
 import i18next from "i18next";
 
 export class CommandUiHandler extends UiHandler {

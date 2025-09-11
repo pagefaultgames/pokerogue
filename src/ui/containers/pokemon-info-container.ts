@@ -8,7 +8,7 @@ import type { Pokemon } from "#field/pokemon";
 import { getVariantTint } from "#sprites/variant";
 import type { DexEntry } from "#types/dex-data";
 import type { StarterDataEntry } from "#types/save-data";
-import { ConfirmUiHandler } from "#ui/handlers/confirm-ui-handler";
+import { ConfirmUiHandler } from "#ui/confirm-ui-handler";
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt, getShinyDescriptor } from "#utils/common";

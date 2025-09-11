@@ -11,7 +11,7 @@ import type { Pokemon } from "#field/pokemon";
 import type { RewardOption } from "#items/reward";
 import { generatePlayerRewardOptions, generateRewardPoolWeights, getRewardPoolForType } from "#items/reward-pool-utils";
 import { isTmReward } from "#items/reward-utils";
-import type { TrainerItemReward } from "#items/rewards/trainer-item-reward";
+import type { TrainerItemReward } from "#items/trainer-item-reward";
 import { queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {

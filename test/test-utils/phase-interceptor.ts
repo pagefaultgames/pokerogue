@@ -67,7 +67,7 @@ import { UnlockPhase } from "#phases/unlock-phase";
 import { VictoryPhase } from "#phases/victory-phase";
 import { ErrorInterceptor } from "#test/test-utils/error-interceptor";
 import type { PhaseClass, PhaseString } from "#types/phase-types";
-import type { AwaitableUiHandler } from "#ui/handlers/awaitable-ui-handler";
+import type { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { UI } from "#ui/ui";
 
 export interface PromptHandler {

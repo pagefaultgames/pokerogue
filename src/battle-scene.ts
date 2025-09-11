@@ -79,11 +79,11 @@ import { PokemonSpriteSparkleHandler } from "#field/pokemon-sprite-sparkle-handl
 import { Trainer } from "#field/trainer";
 import { applyHeldItems } from "#items/all-held-items";
 import { applyTrainerItems } from "#items/all-trainer-items";
+import type { EnemyAttackStatusEffectChanceTrainerItem } from "#items/enemy-tokens";
 import { assignEnemyHeldItemsForWave, assignItemsFromConfiguration } from "#items/held-item-pool";
 import type { MatchExact, Reward } from "#items/reward";
 import { TrainerItemManager } from "#items/trainer-item-manager";
 import { getNewTrainerItemFromPool } from "#items/trainer-item-pool";
-import type { EnemyAttackStatusEffectChanceTrainerItem } from "#items/trainer-items/enemy-tokens";
 import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterSaveData } from "#mystery-encounters/mystery-encounter-save-data";
 import { allMysteryEncounters, mysteryEncountersByBiome } from "#mystery-encounters/mystery-encounters";
@@ -111,14 +111,14 @@ import {
   type TrainerItemSaveData,
 } from "#types/trainer-item-data-types";
 import type { TrainerItemEffectParamMap } from "#types/trainer-item-parameter";
-import { AbilityBar } from "#ui/containers/ability-bar";
-import { ArenaFlyout } from "#ui/containers/arena-flyout";
-import { CandyBar } from "#ui/containers/candy-bar";
-import { CharSprite } from "#ui/containers/char-sprite";
-import { PartyExpBar } from "#ui/containers/party-exp-bar";
-import { PokeballTray } from "#ui/containers/pokeball-tray";
-import { PokemonInfoContainer } from "#ui/containers/pokemon-info-container";
+import { AbilityBar } from "#ui/ability-bar";
+import { ArenaFlyout } from "#ui/arena-flyout";
+import { CandyBar } from "#ui/candy-bar";
+import { CharSprite } from "#ui/char-sprite";
 import { ItemBar } from "#ui/item-bar-ui";
+import { PartyExpBar } from "#ui/party-exp-bar";
+import { PokeballTray } from "#ui/pokeball-tray";
+import { PokemonInfoContainer } from "#ui/pokemon-info-container";
 import { addTextObject, getTextColor } from "#ui/text";
 import { UI } from "#ui/ui";
 import { addUiThemeOverrides } from "#ui/ui-theme";

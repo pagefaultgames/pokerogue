@@ -3,7 +3,7 @@ import { getHeldItemCategory, HeldItemCategoryId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
-import { HeldItemReward } from "#items/rewards/held-item-reward";
+import { HeldItemReward } from "#items/held-item-reward";
 import { GameManager } from "#test/test-utils/game-manager";
 import { generateRewardForTest } from "#test/test-utils/reward-test-utils";
 import Phaser from "phaser";

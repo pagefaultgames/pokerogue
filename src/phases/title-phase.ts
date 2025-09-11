@@ -14,8 +14,8 @@ import { getBiomeKey } from "#field/arena";
 import { assignDailyRunStarterHeldItems } from "#items/held-item-pool";
 import { vouchers } from "#system/voucher";
 import type { SessionSaveData } from "#types/save-data";
-import type { OptionSelectConfig, OptionSelectItem } from "#ui/handlers/abstract-option-select-ui-handler";
-import { SaveSlotUiMode } from "#ui/handlers/save-slot-select-ui-handler";
+import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import { SaveSlotUiMode } from "#ui/save-slot-select-ui-handler";
 import { isLocal, isLocalServerConnected, isNullOrUndefined } from "#utils/common";
 import i18next from "i18next";
 

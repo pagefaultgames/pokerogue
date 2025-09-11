@@ -20,9 +20,9 @@ import { addPokeballCaptureStars, addPokeballOpenParticles } from "#field/anims"
 import type { EnemyPokemon } from "#field/pokemon";
 import { PokemonPhase } from "#phases/pokemon-phase";
 import { achvs } from "#system/achv";
-import type { PartyOption } from "#ui/handlers/party-ui-handler";
-import { PartyUiMode } from "#ui/handlers/party-ui-handler";
-import { SummaryUiMode } from "#ui/handlers/summary-ui-handler";
+import type { PartyOption } from "#ui/party-ui-handler";
+import { PartyUiMode } from "#ui/party-ui-handler";
+import { SummaryUiMode } from "#ui/summary-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder } from "#utils/common";
 import i18next from "i18next";

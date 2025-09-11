@@ -5,6 +5,8 @@ import { RewardPoolType } from "#enums/reward-pool-type";
 import type { RarityTier } from "#enums/reward-tier";
 import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { UiMode } from "#enums/ui-mode";
+import { FusePokemonReward } from "#items/fuse";
+import { RememberMoveReward } from "#items/remember-move";
 import {
   type PokemonMoveRecallRewardParams,
   type PokemonMoveReward,
@@ -21,12 +23,10 @@ import {
   getRewardPoolForType,
 } from "#items/reward-pool-utils";
 import { getPlayerShopRewardOptionsForWave, isMoveReward, isRememberMoveReward, isTmReward } from "#items/reward-utils";
-import { FusePokemonReward } from "#items/rewards/fuse";
-import { RememberMoveReward } from "#items/rewards/remember-move";
-import { TmReward } from "#items/rewards/tm";
+import { TmReward } from "#items/tm";
 import { BattlePhase } from "#phases/battle-phase";
-import { PartyOption, PartyUiHandler, PartyUiMode, type PokemonMoveSelectFilter } from "#ui/handlers/party-ui-handler";
-import { type RewardSelectUiHandler, SHOP_OPTIONS_ROW_LIMIT } from "#ui/handlers/reward-select-ui-handler";
+import { PartyOption, PartyUiHandler, PartyUiMode, type PokemonMoveSelectFilter } from "#ui/party-ui-handler";
+import { type RewardSelectUiHandler, SHOP_OPTIONS_ROW_LIMIT } from "#ui/reward-select-ui-handler";
 import { isNullOrUndefined, NumberHolder } from "#utils/common";
 import i18next from "i18next";
 

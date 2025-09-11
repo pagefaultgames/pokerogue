@@ -30,7 +30,12 @@
       "#events/*": ["./src/events/*.ts"],
       "#field/*": ["./src/field/*.ts"],
       "#inputs/*": ["./src/configs/inputs/*.ts"],
-      "#items/*": ["./src/items/held-items/*.ts", "./src/items/*.ts"],
+      "#items/*": [
+        "./src/items/held-items/*.ts",
+        "./src/items/trainer-items/*.ts",
+        "./src/items/rewards/*.ts",
+        "./src/items/*.ts"
+      ],
       "#moves/*": ["./src/data/moves/*.ts"],
       "#mystery-encounters/*": [
         "./src/data/mystery-encounters/utils/*.ts",
@@ -50,7 +55,14 @@
       ],
       "#trainers/*": ["./src/data/trainers/*.ts"],
       "#types/*": ["./src/@types/helpers/*.ts", "./src/@types/*.ts", "./src/typings/phaser/*.ts"],
-      "#ui/*": ["./src/ui/battle-info/*.ts", "./src/ui/settings/*.ts", "./src/ui/*.ts"],
+      "#ui/*": [
+        "./src/ui/battle-info/*.ts",
+        "./src/ui/constructors/*.ts",
+        "./src/ui/handlers/*.ts",
+        "./src/ui/utils/*.ts",
+        "./src/ui/settings/*.ts",
+        "./src/ui/*.ts"
+      ],
       "#utils/*": ["./src/utils/*.ts"],
       "#data/*": ["./src/data/pokemon-forms/*.ts", "./src/data/pokemon/*.ts", "./src/data/*.ts"],
       "#test/*": ["./test/*.ts"],

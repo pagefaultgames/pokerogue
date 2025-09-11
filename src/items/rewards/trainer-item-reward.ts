@@ -3,7 +3,7 @@ import { allTrainerItems } from "#data/data-lists";
 import { Stat, TEMP_BATTLE_STATS, type TempBattleStat } from "#enums/stat";
 import type { TrainerItemId } from "#enums/trainer-item-id";
 import { Reward, RewardGenerator } from "#items/reward";
-import { tempStatToTrainerItem } from "#items/trainer-items/x-items";
+import { tempStatToTrainerItem } from "#items/x-items";
 import { randSeedItem } from "#utils/common";
 
 export class TrainerItemReward extends Reward {
