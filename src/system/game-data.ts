@@ -72,7 +72,7 @@ import type {
   VoucherCounts,
   VoucherUnlocks,
 } from "#types/save-data";
-import { RUN_HISTORY_LIMIT } from "#ui/handlers/run-history-ui-handler";
+import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { executeIf, fixedInt, isLocal, NumberHolder, randInt, randSeedItem } from "#utils/common";
 import { decrypt, encrypt } from "#utils/data";

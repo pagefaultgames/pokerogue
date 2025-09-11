@@ -6,7 +6,7 @@ import { Gender } from "#data/gender";
 import { ChallengeType } from "#enums/challenge-type";
 import { UiMode } from "#enums/ui-mode";
 import { overrideHeldItems, overrideModifiers } from "#modifiers/modifier";
-import type { Starter } from "#system/game-data";
+import type { Starter } from "#types/save-data";
 import { SaveSlotUiMode } from "#ui/handlers/save-slot-select-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { isNullOrUndefined } from "#utils/common";
