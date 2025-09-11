@@ -13,7 +13,7 @@ import { PartyUiHandler, PartyUiMode } from "#ui/handlers/party-ui-handler";
 import { UiHandler } from "#ui/handlers/ui-handler";
 import { addTextObject } from "#ui/text";
 import i18next from "i18next";
-import { BattleType } from "../../enums/battle-type";
+import { BattleType } from "#enums/battle-type";
 
 export class CommandUiHandler extends UiHandler {
   private commandsContainer: Phaser.GameObjects.Container;
@@ -188,7 +188,7 @@ export class CommandUiHandler extends UiHandler {
             this.toggleTeraButton();
           }
           break;
-        case Button.CYCLE_SHINY:
+        case Button.CYCLE_SHINY: // Used to throw the last pokeball
           const commandPhase = globalScene.phaseManager.getCurrentPhase() as CommandPhase;
           if (globalScene.pokeballCounts[globalScene.lastPokeballType]) {
             if (commandPhase.handleCommand(Command.BALL, globalScene.lastPokeballType)) {
@@ -200,7 +200,7 @@ export class CommandUiHandler extends UiHandler {
             ui.playError();
           }
           break;
-        case Button.CYCLE_ABILITY:
+        case Button.CYCLE_ABILITY: // Used to restart the battle
           if (globalScene.enableRetries){
             globalScene.ui.setMode(UiMode.MESSAGE)
             globalScene.ui.showText(i18next.t("battle:retryBattle"), null, () => {

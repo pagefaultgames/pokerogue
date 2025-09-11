@@ -56,7 +56,7 @@ export class AttemptCapturePhase extends PokemonPhase {
     }
 
     globalScene.pokeballCounts[this.pokeballType]--;
-    globalScene.lastUsedPokeball = this.pokeballType;
+    globalScene.lastPokeballType = this.pokeballType;
 
     this.originalY = pokemon.y;
 
