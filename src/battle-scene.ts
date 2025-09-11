@@ -123,6 +123,7 @@ import { trainerConfigs } from "#trainers/trainer-config";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import type { Localizable } from "#types/locales";
 import type { TypedEventTarget } from "#types/typed-event-target";
+import { AbilityBar } from "#ui/containers/ability-bar";
 import { ArenaFlyout } from "#ui/containers/arena-flyout";
 import { CandyBar } from "#ui/containers/candy-bar";
 import { CharSprite } from "#ui/containers/char-sprite";
@@ -130,6 +131,7 @@ import { PartyExpBar } from "#ui/containers/party-exp-bar";
 import { PokeballTray } from "#ui/containers/pokeball-tray";
 import { PokemonInfoContainer } from "#ui/containers/pokemon-info-container";
 import { addTextObject, getTextColor } from "#ui/text";
+import { UI } from "#ui/ui";
 import { addUiThemeOverrides } from "#ui/ui-theme";
 import {
   BooleanHolder,
