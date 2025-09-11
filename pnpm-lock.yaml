@@ -88,17 +88,17 @@ importers:
         specifier: ^0.0.8
         version: 0.0.8
       typedoc:
-        specifier: ^0.28.12
-        version: 0.28.12(typescript@5.8.3)
+        specifier: 0.28.7
+        version: 0.28.7(typescript@5.8.3)
       typedoc-github-theme:
         specifier: ^0.3.1
-        version: 0.3.1(typedoc@0.28.12(typescript@5.8.3))
+        version: 0.3.1(typedoc@0.28.7(typescript@5.8.3))
       typedoc-plugin-coverage:
         specifier: ^4.0.1
-        version: 4.0.1(typedoc@0.28.12(typescript@5.8.3))
+        version: 4.0.1(typedoc@0.28.7(typescript@5.8.3))
       typedoc-plugin-mdn-links:
         specifier: ^5.0.9
-        version: 5.0.9(typedoc@0.28.12(typescript@5.8.3))
+        version: 5.0.9(typedoc@0.28.7(typescript@5.8.3))
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
@@ -1818,12 +1818,12 @@ packages:
     peerDependencies:
       typedoc: 0.27.x || 0.28.x
 
-  typedoc@0.28.12:
-    resolution: {integrity: sha512-H5ODu4f7N+myG4MfuSp2Vh6wV+WLoZaEYxKPt2y8hmmqNEMVrH69DAjjdmYivF4tP/C2jrIZCZhPalZlTU/ipA==}
+  typedoc@0.28.7:
+    resolution: {integrity: sha512-lpz0Oxl6aidFkmS90VQDQjk/Qf2iw0IUvFqirdONBdj7jPSN9mGXhy66BcGNDxx5ZMyKKiBVAREvPEzT6Uxipw==}
     engines: {node: '>= 18', pnpm: '>= 10'}
     hasBin: true
     peerDependencies:
-      typescript: 5.0.x || 5.1.x || 5.2.x || 5.3.x || 5.4.x || 5.5.x || 5.6.x || 5.7.x || 5.8.x || 5.9.x
+      typescript: 5.0.x || 5.1.x || 5.2.x || 5.3.x || 5.4.x || 5.5.x || 5.6.x || 5.7.x || 5.8.x
 
   typescript@5.8.3:
     resolution: {integrity: sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ==}
@@ -3663,19 +3663,19 @@ snapshots:
 
   type-fest@4.41.0: {}
 
-  typedoc-github-theme@0.3.1(typedoc@0.28.12(typescript@5.8.3)):
+  typedoc-github-theme@0.3.1(typedoc@0.28.7(typescript@5.8.3)):
     dependencies:
-      typedoc: 0.28.12(typescript@5.8.3)
+      typedoc: 0.28.7(typescript@5.8.3)
 
-  typedoc-plugin-coverage@4.0.1(typedoc@0.28.12(typescript@5.8.3)):
+  typedoc-plugin-coverage@4.0.1(typedoc@0.28.7(typescript@5.8.3)):
     dependencies:
-      typedoc: 0.28.12(typescript@5.8.3)
+      typedoc: 0.28.7(typescript@5.8.3)
 
-  typedoc-plugin-mdn-links@5.0.9(typedoc@0.28.12(typescript@5.8.3)):
+  typedoc-plugin-mdn-links@5.0.9(typedoc@0.28.7(typescript@5.8.3)):
     dependencies:
-      typedoc: 0.28.12(typescript@5.8.3)
+      typedoc: 0.28.7(typescript@5.8.3)
 
-  typedoc@0.28.12(typescript@5.8.3):
+  typedoc@0.28.7(typescript@5.8.3):
     dependencies:
       '@gerrit0/mini-shiki': 3.12.2
       lunr: 2.3.9
