@@ -111,6 +111,7 @@ export class StarterContainer extends Phaser.GameObjects.Container {
     this.checkIconId(female, formIndex, shiny, variant);
     this.icon.setTint(0);
     this.add(this.icon);
+    this.icon.setBelow(this.label);
 
     [
       this.hiddenAbilityIcon,
