@@ -7,7 +7,8 @@ import { AnimBlendType, AnimFocus, AnimFrameTarget, ChargeAnim, CommonAnim } fro
 import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
 import type { Pokemon } from "#field/pokemon";
-import { coerceArray, getFrameMs, type nil } from "#utils/common";
+import { coerceArray } from "#utils/array";
+import { getFrameMs, type nil } from "#utils/common";
 import { getEnumKeys, getEnumValues } from "#utils/enums";
 import { toKebabCase } from "#utils/strings";
 import Phaser from "phaser";

@@ -11,7 +11,8 @@ import type { TimeOfDay } from "#enums/time-of-day";
 import { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
 import type { PokemonFormChangeItemModifier } from "#modifiers/modifier";
-import { type Constructor, coerceArray } from "#utils/common";
+import { coerceArray } from "#utils/array";
+import type { Constructor } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 

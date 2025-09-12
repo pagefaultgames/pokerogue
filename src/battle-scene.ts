@@ -119,6 +119,7 @@ import { vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import type { Localizable } from "#types/locales";
+import type { ReadonlyUint8Array } from "#types/typed-arrays";
 import { AbilityBar } from "#ui/ability-bar";
 import { ArenaFlyout } from "#ui/arena-flyout";
 import { CandyBar } from "#ui/candy-bar";
@@ -866,7 +867,7 @@ export class BattleScene extends SceneBase {
     gender?: Gender,
     shiny?: boolean,
     variant?: Variant,
-    ivs?: number[],
+    ivs?: ReadonlyUint8Array | number[],
     nature?: Nature,
     dataSource?: Pokemon | PokemonData,
     postProcess?: (playerPokemon: PlayerPokemon) => void,

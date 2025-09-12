@@ -146,16 +146,17 @@ import type { IllusionData } from "#types/illusion-data";
 import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { TurnMove } from "#types/turn-move";
+import type { ReadonlyUint8Array } from "#types/typed-arrays";
 import { BattleInfo } from "#ui/battle-info";
 import { EnemyBattleInfo } from "#ui/enemy-battle-info";
 import type { PartyOption } from "#ui/party-ui-handler";
 import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import { PlayerBattleInfo } from "#ui/player-battle-info";
+import { coerceArray, setTypedArray } from "#utils/array";
 import { applyChallenges } from "#utils/challenge-utils";
 import {
   BooleanHolder,
   type Constructor,
-  coerceArray,
   deltaRgb,
   fixedInt,
   getIvsFromId,
@@ -168,7 +169,6 @@ import {
   rgbaToInt,
   rgbHexToRgba,
   rgbToHsv,
-  subArray,
   toDmgValue,
 } from "#utils/common";
 import { calculateBossSegmentDamage } from "#utils/damage";
@@ -313,7 +313,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     gender?: Gender,
     shiny?: boolean,
     variant?: Variant,
-    ivs?: Uint8Array | number[],
+    ivs?: ReadonlyUint8Array | number[],
     nature?: Nature,
     dataSource?: Pokemon | PokemonData,
   ) {
@@ -347,8 +347,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (dataSource) {
       this.id = dataSource.id;
       this.hp = dataSource.hp;
-      this.stats.set(subArray(dataSource.stats, 6));
-      this.ivs.set(subArray(dataSource.ivs, 6));
+      setTypedArray(this.stats, dataSource.stats);
+      setTypedArray(this.ivs, dataSource.ivs ?? getIvsFromId(dataSource.id));
       this.passive = !!dataSource.passive;
       if (this.variant === undefined) {
         this.variant = 0;
@@ -387,7 +387,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       this.stellarTypesBoosted = dataSource.stellarTypesBoosted ?? [];
     } else {
       this.id = randSeedInt(4294967296);
-      this.ivs.set(subArray(ivs ?? getIvsFromId(this.id), 6));
+      setTypedArray(this.ivs, ivs ?? getIvsFromId(this.id));
 
       if (this.gender === undefined) {
         this.gender = this.species.generateGender();
@@ -5756,7 +5756,7 @@ export class PlayerPokemon extends Pokemon {
     gender?: Gender,
     shiny?: boolean,
     variant?: Variant,
-    ivs?: Uint8Array | number[],
+    ivs?: ReadonlyUint8Array | number[],
     nature?: Nature,
     dataSource?: Pokemon | PokemonData,
   ) {

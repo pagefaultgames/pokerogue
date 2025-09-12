@@ -49,7 +49,8 @@ import type {
   TrainerTierPools,
 } from "#types/trainer-funcs";
 import type { Mutable } from "#types/type-helpers";
-import { coerceArray, randSeedInt, randSeedIntRange, randSeedItem } from "#utils/common";
+import { coerceArray } from "#utils/array";
+import { randSeedInt, randSeedIntRange, randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";

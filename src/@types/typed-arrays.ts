@@ -169,8 +169,12 @@ export type ReadonlyTypedArray =
  */
 export type BigIntArray = BigInt64Array | BigUint64Array;
 
+export type ReadonlyBigIntArray = ReadonlyBigInt64Array | ReadonlyBigUint64Array;
+
 /** Any {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray | TypedArray} whose elements are not `bigint`s */
 export type NumberCompatibleTypedArray = Exclude<TypedArray, BigIntArray>;
+
+export type ReadonlyNumberCompatibleTypedArray = Exclude<ReadonlyTypedArray, ReadonlyBigIntArray>;
 
 /**
  * A partial interface of `Uint8Array` where methods that return the array type have been modified to return a more specific type.

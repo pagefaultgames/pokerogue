@@ -90,7 +90,8 @@ import type { ChargingMove, MoveAttrMap, MoveAttrString, MoveClassMap, MoveKindS
 import type { TurnMove } from "#types/turn-move";
 import type { AbstractConstructor } from "#types/type-helpers";
 import { applyChallenges } from "#utils/challenge-utils";
-import { BooleanHolder, coerceArray, type Constructor, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
+import { BooleanHolder, type Constructor, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
+import { coerceArray } from "#utils/array";
 import { getEnumValues } from "#utils/enums";
 import { areAllies } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
