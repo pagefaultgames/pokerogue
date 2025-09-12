@@ -15,6 +15,7 @@ import type { AttackMoveResult } from "#types/attack-move-result";
 import type { IllusionData } from "#types/illusion-data";
 import type { TurnMove } from "#types/turn-move";
 import type { CoerceNullPropertiesToUndefined } from "#types/type-helpers";
+import { setTypedArray } from "#utils/common";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 /**
@@ -128,7 +129,7 @@ export class PokemonSummonData {
   public passiveAbility: AbilityId | undefined;
   public gender: Gender | undefined;
   public fusionGender: Gender | undefined;
-  public stats: number[] = [0, 0, 0, 0, 0, 0];
+  public stats: Uint32Array = new Uint32Array(6);
   public moveset: PokemonMove[] | null;
 
   // If not initialized this value will not be populated from save data.
@@ -161,6 +162,11 @@ export class PokemonSummonData {
 
       if (key === "speciesForm" || key === "fusionSpeciesForm") {
         this[key] = deserializePokemonSpeciesForm(value);
+        continue;
+      }
+
+      if (key === "stats") {
+        setTypedArray(this.stats, source.stats);
         continue;
       }
 
@@ -220,8 +226,10 @@ export class PokemonSummonData {
       // We coerce null to undefined in the type, as the for loop below replaces `null` with `undefined`
       ...(this as Omit<
         CoerceNullPropertiesToUndefined<PokemonSummonData>,
-        "speciesForm" | "fusionSpeciesForm" | "illusion"
+        "speciesForm" | "fusionSpeciesForm" | "illusion" | "stats"
       >),
+      // TypedArrays do not serialize to JSON as an array.
+      stats: Array.from(this.stats),
       speciesForm: speciesForm == null ? undefined : { id: speciesForm.speciesId, formIdx: speciesForm.formIndex },
       fusionSpeciesForm:
         fusionSpeciesForm == null

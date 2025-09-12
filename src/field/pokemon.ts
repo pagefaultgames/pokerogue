@@ -168,6 +168,7 @@ import {
   rgbaToInt,
   rgbHexToRgba,
   rgbToHsv,
+  subArray,
   toDmgValue,
 } from "#utils/common";
 import { calculateBossSegmentDamage } from "#utils/damage";
@@ -204,7 +205,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public levelExp: number;
   public gender: Gender;
   public hp: number;
-  public stats: number[];
+  public stats = new Uint32Array(6).fill(1);
   public ivs: Uint8Array;
   public nature: Nature;
   public moveset: PokemonMove[];
@@ -312,7 +313,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     gender?: Gender,
     shiny?: boolean,
     variant?: Variant,
-    ivs?: Uint8Array,
+    ivs?: Uint8Array | number[],
     nature?: Nature,
     dataSource?: Pokemon | PokemonData,
   ) {
@@ -346,9 +347,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (dataSource) {
       this.id = dataSource.id;
       this.hp = dataSource.hp;
-      this.stats = dataSource.stats;
-
-      this.ivs = new Uint8Array(dataSource.ivs);
+      this.stats.set(subArray(dataSource.stats, 6));
+      this.ivs.set(subArray(dataSource.ivs, 6));
       this.passive = !!dataSource.passive;
       if (this.variant === undefined) {
         this.variant = 0;
@@ -387,7 +387,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       this.stellarTypesBoosted = dataSource.stellarTypesBoosted ?? [];
     } else {
       this.id = randSeedInt(4294967296);
-      this.ivs = new Uint8Array(ivs || getIvsFromId(this.id));
+      this.ivs.set(subArray(ivs ?? getIvsFromId(this.id), 6));
 
       if (this.gender === undefined) {
         this.gender = this.species.generateGender();
@@ -1321,7 +1321,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param bypassSummonData - Whether to prefer actual stats (`true`) or in-battle overridden stats (`false`); default `true`
    * @returns The numeric values of this {@linkcode Pokemon}'s stats as an array.
    */
-  getStats(bypassSummonData = true): number[] {
+  getStats(bypassSummonData = true): ArrayLike<number> {
     if (!bypassSummonData) {
       // Only grab summon data stats if nonzero
       return this.summonData.stats.map((s, i) => s || this.stats[i]);
@@ -1553,10 +1553,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   calculateStats(): void {
-    if (!this.stats) {
-      this.stats = [0, 0, 0, 0, 0, 0];
-    }
-
     // Get and manipulate base stats
     const baseStats = this.calculateBaseStats();
     // Using base stats, calculate and store stats one by one
@@ -1589,7 +1585,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         globalScene.applyModifier(PokemonIncrementingStatModifier, this.isPlayer(), this, s, statHolder);
       }
 
-      statHolder.value = Phaser.Math.Clamp(statHolder.value, 1, Number.MAX_SAFE_INTEGER);
+      statHolder.value = Phaser.Math.Clamp(statHolder.value, 1, 0xffffffff);
 
       this.setStat(s, statHolder.value);
     }
@@ -5760,7 +5756,7 @@ export class PlayerPokemon extends Pokemon {
     gender?: Gender,
     shiny?: boolean,
     variant?: Variant,
-    ivs?: Uint8Array,
+    ivs?: Uint8Array | number[],
     nature?: Nature,
     dataSource?: Pokemon | PokemonData,
   ) {

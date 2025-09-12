@@ -99,8 +99,8 @@ export class PokemonData {
     this.levelExp = source.levelExp;
     this.gender = source.gender;
     this.hp = source.hp;
-    this.stats = source.stats;
-    this.ivs = source.ivs;
+    this.stats = Array.from(source.stats);
+    this.ivs = Array.from(source.ivs);
 
     // TODO: Can't we move some of this verification stuff to an upgrade script?
     this.nature = source.nature ?? Nature.HARDY;
@@ -162,7 +162,7 @@ export class PokemonData {
           this.gender,
           this.shiny,
           this.variant,
-          this.ivs,
+          new Uint8Array(this.ivs.slice(0, 6)),
           this.nature,
           this,
           playerPokemon => {
