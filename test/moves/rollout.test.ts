@@ -45,10 +45,10 @@ describe("Moves - Rollout", () => {
     await game.classicMode.startBattle();
 
     const playerPkm = game.field.getPlayerPokemon();
-    vi.spyOn(playerPkm, "stats", "get").mockReturnValue([500000, 1, 1, 1, 1, 1]); // HP, ATK, DEF, SPATK, SPDEF, SPD
+    vi.spyOn(playerPkm, "stats", "get").mockReturnValue(Uint32Array.of(500000, 1, 1, 1, 1, 1)); // HP, ATK, DEF, SPATK, SPDEF, SPD
 
     const enemyPkm = game.field.getEnemyPokemon();
-    vi.spyOn(enemyPkm, "stats", "get").mockReturnValue([500000, 1, 1, 1, 1, 1]); // HP, ATK, DEF, SPATK, SPDEF, SPD
+    vi.spyOn(enemyPkm, "stats", "get").mockReturnValue(Uint32Array.of(500000, 1, 1, 1, 1, 1)); // HP, ATK, DEF, SPATK, SPDEF, SPD
     vi.spyOn(enemyPkm, "getHeldItems").mockReturnValue([]); //no berries
 
     enemyPkm.hp = enemyPkm.getMaxHp();

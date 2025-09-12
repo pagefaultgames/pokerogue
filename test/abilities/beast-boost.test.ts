@@ -38,7 +38,7 @@ describe("Abilities - Beast Boost", () => {
 
     const playerPokemon = game.field.getPlayerPokemon();
     // Set the pokemon's highest stat to DEF, so it should be picked by Beast Boost
-    vi.spyOn(playerPokemon, "stats", "get").mockReturnValue([10000, 100, 1000, 200, 100, 100]);
+    vi.spyOn(playerPokemon, "stats", "get").mockReturnValue(Uint32Array.of(10000, 100, 1000, 200, 100, 100));
     console.log(playerPokemon.stats);
 
     expect(playerPokemon.getStatStage(Stat.DEF)).toBe(0);
@@ -56,7 +56,7 @@ describe("Abilities - Beast Boost", () => {
 
     const playerPokemon = game.field.getPlayerPokemon();
     // If the opponent uses Guard Split, the pokemon's second highest stat (SPATK) should be chosen
-    vi.spyOn(playerPokemon, "stats", "get").mockReturnValue([10000, 100, 201, 200, 100, 100]);
+    vi.spyOn(playerPokemon, "stats", "get").mockReturnValue(Uint32Array.of(10000, 100, 201, 200, 100, 100));
 
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(0);
 
@@ -75,7 +75,7 @@ describe("Abilities - Beast Boost", () => {
     const playerPokemon = game.field.getPlayerPokemon();
 
     // Set up tie between SPATK, SPDEF, and SPD, where SPATK should win
-    vi.spyOn(playerPokemon, "stats", "get").mockReturnValue([10000, 1, 1, 100, 100, 100]);
+    vi.spyOn(playerPokemon, "stats", "get").mockReturnValue(Uint32Array.of(10000, 1, 1, 100, 100, 100));
 
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(0);
 
