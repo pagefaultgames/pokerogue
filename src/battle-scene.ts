@@ -121,13 +121,13 @@ import { vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-configs-init";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import type { Localizable } from "#types/locales";
-import { AbilityBar } from "#ui/containers/ability-bar";
-import { ArenaFlyout } from "#ui/containers/arena-flyout";
-import { CandyBar } from "#ui/containers/candy-bar";
-import { CharSprite } from "#ui/containers/char-sprite";
-import { PartyExpBar } from "#ui/containers/party-exp-bar";
-import { PokeballTray } from "#ui/containers/pokeball-tray";
-import { PokemonInfoContainer } from "#ui/containers/pokemon-info-container";
+import { AbilityBar } from "#ui/ability-bar";
+import { ArenaFlyout } from "#ui/arena-flyout";
+import { CandyBar } from "#ui/candy-bar";
+import { CharSprite } from "#ui/char-sprite";
+import { PartyExpBar } from "#ui/party-exp-bar";
+import { PokeballTray } from "#ui/pokeball-tray";
+import { PokemonInfoContainer } from "#ui/pokemon-info-container";
 import { addTextObject, getTextColor } from "#ui/text";
 import { UI } from "#ui/ui";
 import { addUiThemeOverrides } from "#ui/ui-theme";
@@ -3108,7 +3108,7 @@ export class BattleScene extends SceneBase {
    * Apply all modifiers that match `modifierType` in a random order
    * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
    * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
-   * @param ...args The list of arguments needed to invoke `modifierType.apply`
+   * @param args The list of arguments needed to invoke `modifierType.apply`
    * @returns the list of all modifiers that matched `modifierType` and were applied.
    */
   applyShuffledModifiers<T extends PersistentModifier>(
@@ -3140,7 +3140,7 @@ export class BattleScene extends SceneBase {
    * Apply all modifiers that match `modifierType`
    * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
    * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
-   * @param ...args The list of arguments needed to invoke `modifierType.apply`
+   * @param args The list of arguments needed to invoke `modifierType.apply`
    * @returns the list of all modifiers that matched `modifierType` and were applied.
    */
   applyModifiers<T extends PersistentModifier>(
@@ -3175,7 +3175,7 @@ export class BattleScene extends SceneBase {
    * Apply the first modifier that matches `modifierType`
    * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
    * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
-   * @param ...args The list of arguments needed to invoke `modifierType.apply`
+   * @param args The list of arguments needed to invoke `modifierType.apply`
    * @returns the first modifier that matches `modifierType` and was applied; return `null` if none matched
    */
   applyModifier<T extends PersistentModifier>(
@@ -3323,7 +3323,7 @@ export class BattleScene extends SceneBase {
   /**
    * This function retrieves the sprite and audio keys for active Pokemon.
    * Active Pokemon include both enemy and player Pokemon of the current wave.
-   * Note: Questions on garbage collection go to @frutescens
+   * Note: Questions on garbage collection go to `@frutescens`
    * @returns a string array of active sprite and audio keys that should not be deleted
    */
   getActiveKeys(): string[] {

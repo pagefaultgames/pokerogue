@@ -16,7 +16,7 @@ describe("Moves - Flame Burst", () => {
    * Calculates the effect damage of Flame Burst which is 1/16 of the target ally's max HP
    * See Flame Burst {@link https://bulbapedia.bulbagarden.net/wiki/Flame_Burst_(move)}
    * See Flame Burst's move attribute {@linkcode FlameBurstAttr}
-   * @param pokemon {@linkcode Pokemon} - The ally of the move's target
+   * @param pokemon - The ally of the move's target
    * @returns Effect damage of Flame Burst
    */
   const getEffectDamage = (pokemon: Pokemon): number => {

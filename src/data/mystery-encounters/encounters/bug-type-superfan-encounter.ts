@@ -47,8 +47,8 @@ import {
 import { getRandomPartyMemberFunc } from "#trainers/trainer-config";
 import { trainerConfigs } from "#trainers/trainer-configs-init";
 import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/trainer-party-template";
-import { MoveInfoOverlay } from "#ui/containers/move-info-overlay";
-import type { OptionSelectItem } from "#ui/handlers/abstract-option-select-ui-handler";
+import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { isNullOrUndefined, randSeedInt, randSeedShuffle } from "#utils/common";
 import i18next from "i18next";
 
