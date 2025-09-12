@@ -14,7 +14,7 @@ import { TimeOfDay } from "#enums/time-of-day";
 import { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
 import type { SpeciesStatBoosterItem, SpeciesStatBoosterModifierType } from "#modifiers/modifier-type";
-import { coerceArray, isNullOrUndefined, randSeedInt } from "#utils/common";
+import { coerceArray, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
@@ -128,7 +128,7 @@ export class SpeciesEvolutionCondition {
   }
 
   public get description(): string[] {
-    if (!isNullOrUndefined(this.desc)) {
+    if (this.desc != null) {
       return this.desc;
     }
     this.desc = this.data.map(cond => {
@@ -161,7 +161,7 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.HELD_ITEM:
           return i18next.t(`pokemonEvolutions:heldItem.${toCamelCase(cond.itemKey)}`);
       }
-    }).filter(s => !isNullOrUndefined(s)); // Filter out stringless conditions
+    }).filter(s => s != null); // Filter out stringless conditions
     return this.desc;
   }
 
@@ -233,7 +233,7 @@ export class SpeciesFormEvolution {
     this.evoFormKey = evoFormKey;
     this.level = level;
     this.item = item || EvolutionItem.NONE;
-    if (!isNullOrUndefined(condition)) {
+    if (condition != null) {
       this.condition = new SpeciesEvolutionCondition(...coerceArray(condition));
     }
     this.wildDelay = wildDelay ?? SpeciesWildEvolutionDelay.NONE;
@@ -291,8 +291,8 @@ export class SpeciesFormEvolution {
     return (
       pokemon.level >= this.level &&
       // Check form key, using the fusion's form key if we're checking the fusion
-      (isNullOrUndefined(this.preFormKey) || (forFusion ? pokemon.getFusionFormKey() : pokemon.getFormKey()) === this.preFormKey) &&
-      (isNullOrUndefined(this.condition) || this.condition.conditionsFulfilled(pokemon)) &&
+      (this.preFormKey == null || (forFusion ? pokemon.getFusionFormKey() : pokemon.getFormKey()) === this.preFormKey) &&
+      (this.condition == null || this.condition.conditionsFulfilled(pokemon)) &&
       ((item ?? EvolutionItem.NONE) === (this.item ?? EvolutionItem.NONE))
     );
   }
@@ -305,11 +305,11 @@ export class SpeciesFormEvolution {
    */
   public isValidItemEvolution(pokemon: Pokemon, forFusion = false): boolean {
     return (
-      !isNullOrUndefined(this.item) &&
+      this.item != null &&
       pokemon.level >= this.level &&
       // Check form key, using the fusion's form key if we're checking the fusion
-      (isNullOrUndefined(this.preFormKey) || (forFusion ? pokemon.getFusionFormKey() : pokemon.getFormKey()) === this.preFormKey) &&
-      (isNullOrUndefined(this.condition) || this.condition.conditionsFulfilled(pokemon))
+      (this.preFormKey == null || (forFusion ? pokemon.getFusionFormKey() : pokemon.getFormKey()) === this.preFormKey) &&
+      (this.condition == null || this.condition.conditionsFulfilled(pokemon))
     );
   }
 

@@ -28,7 +28,7 @@ import type { Variant, VariantSet } from "#sprites/variant";
 import { populateVariantColorCache, variantColorCache, variantData } from "#sprites/variant";
 import type { Localizable } from "#types/locales";
 import type { StarterMoveset } from "#types/save-data";
-import { isNullOrUndefined, randSeedFloat, randSeedGauss, randSeedInt } from "#utils/common";
+import { randSeedFloat, randSeedGauss, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase, toPascalCase } from "#utils/strings";
 import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
@@ -197,7 +197,7 @@ export abstract class PokemonSpeciesForm {
    * @returns The id of the ability
    */
   getPassiveAbility(formIndex?: number): AbilityId {
-    if (isNullOrUndefined(formIndex)) {
+    if (formIndex == null) {
       formIndex = this.formIndex;
     }
     let starterSpeciesId = this.speciesId;
@@ -551,7 +551,7 @@ export abstract class PokemonSpeciesForm {
     const spriteKey = this.getSpriteKey(female, formIndex, shiny, variant, back);
     globalScene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny, variant, back));
     globalScene.load.audio(this.getCryKey(formIndex), `audio/${this.getCryKey(formIndex)}.m4a`);
-    if (!isNullOrUndefined(variant)) {
+    if (variant != null) {
       await this.loadVariantColors(spriteKey, female, variant, back, formIndex);
     }
     return new Promise<void>(resolve => {
@@ -579,7 +579,7 @@ export abstract class PokemonSpeciesForm {
         const spritePath = this.getSpriteAtlasPath(female, formIndex, shiny, variant, back)
           .replace("variant/", "")
           .replace(/_[1-3]$/, "");
-        if (!isNullOrUndefined(variant)) {
+        if (variant != null) {
           loadPokemonVariantAssets(spriteKey, spritePath, variant).then(() => resolve());
         }
       });
@@ -791,7 +791,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
    * @returns A randomly rolled gender based on this Species' {@linkcode malePercent}.
    */
   generateGender(): Gender {
-    if (isNullOrUndefined(this.malePercent)) {
+    if (this.malePercent == null) {
       return Gender.GENDERLESS;
     }
 
