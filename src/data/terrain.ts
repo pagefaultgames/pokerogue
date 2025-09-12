@@ -23,17 +23,21 @@ export class Terrain {
   public terrainType: TerrainType;
   public turnsLeft: number;
 
-  constructor(terrainType: TerrainType, turnsLeft?: number) {
+  constructor(terrainType: TerrainType, turnsLeft = 0) {
     this.terrainType = terrainType;
-    this.turnsLeft = turnsLeft || 0;
+    this.turnsLeft = turnsLeft;
   }
 
+  /**
+   * Tick down this terrain's duration.
+   * @returns Whether the current terrain should remain active (`turnsLeft > 0`)
+   */
   lapse(): boolean {
-    if (this.turnsLeft) {
-      return !!--this.turnsLeft;
+    // TODO: Add separate flag for infinite duration terrains
+    if (this.turnsLeft <= 0) {
+      return true;
     }
-
-    return true;
+    return --this.turnsLeft > 0;
   }
 
   getAttackTypeMultiplier(attackType: PokemonType): number {

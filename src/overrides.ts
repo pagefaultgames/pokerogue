@@ -1,4 +1,5 @@
 import { type PokeballCounts } from "#app/battle-scene";
+import { TerrainType } from "#app/data/terrain";
 import { EvolutionItem } from "#balance/pokemon-evolutions";
 import { Gender } from "#data/gender";
 import { AbilityId } from "#enums/ability-id";
@@ -61,6 +62,12 @@ class DefaultOverrides {
   readonly SEED_OVERRIDE: string = "";
   readonly DAILY_RUN_SEED_OVERRIDE: string | null = null;
   readonly WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
+  /**
+   * If set, will override the in-game terrain at the start of each biome transition.
+   *
+   * Lasts until cleared or replaced by another effect, and is refreshed at the start of each new biome.
+   */
+  readonly STARTING_TERRAIN_OVERRIDE: TerrainType = TerrainType.NONE;
   /**
    * If `null`, ignore this override.
    *
