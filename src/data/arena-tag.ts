@@ -19,6 +19,7 @@ import { MoveTarget } from "#enums/move-target";
 import { PokemonType } from "#enums/pokemon-type";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
+import { ArenaTagAddedEvent } from "#events/arena";
 import type { Arena } from "#field/arena";
 import type { Pokemon } from "#field/pokemon";
 import type {
@@ -794,6 +795,9 @@ export abstract class EntryHazardTag extends SerializableArenaTag {
     this.layers++;
 
     this.onAdd(arena);
+    globalScene.arena.eventTarget.dispatchEvent(
+      new ArenaTagAddedEvent(this.tagType, this.side, 0, [this.layers, this.maxLayers]),
+    );
   }
 
   /**

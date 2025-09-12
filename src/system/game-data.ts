@@ -32,7 +32,7 @@ import { TrainerVariant } from "#enums/trainer-variant";
 import { UiMode } from "#enums/ui-mode";
 import { Unlockables } from "#enums/unlockables";
 import { WeatherType } from "#enums/weather-type";
-import { TagAddedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#events/arena";
+import { ArenaTagAddedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#events/arena";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 // biome-ignore lint/performance/noNamespaceImport: Something weird is going on here and I don't want to touch it
 import * as Modifier from "#modifiers/modifier";
@@ -1016,37 +1016,26 @@ export class GameData {
         });
 
         globalScene.arena.weather = fromSession.arena.weather;
-        globalScene.arena.eventTarget.dispatchEvent(
-          new WeatherChangedEvent(
-            WeatherType.NONE,
-            globalScene.arena.weather?.weatherType!,
-            globalScene.arena.weather?.turnsLeft!,
-          ),
-        ); // TODO: is this bang correct?
+        if (globalScene.arena.getWeatherType() !== WeatherType.NONE) {
+          globalScene.arena.eventTarget.dispatchEvent(
+            new WeatherChangedEvent(globalScene.arena.getWeatherType(), globalScene.arena.weather!.turnsLeft),
+          );
+        }
 
         globalScene.arena.terrain = fromSession.arena.terrain;
-        globalScene.arena.eventTarget.dispatchEvent(
-          new TerrainChangedEvent(
-            TerrainType.NONE,
-            globalScene.arena.terrain?.terrainType!,
-            globalScene.arena.terrain?.turnsLeft!,
-          ),
-        ); // TODO: is this bang correct?
-
+        if (globalScene.arena.getTerrainType() !== TerrainType.NONE) {
+          globalScene.arena.eventTarget.dispatchEvent(
+            new TerrainChangedEvent(globalScene.arena.getTerrainType(), globalScene.arena.terrain!.turnsLeft),
+          );
+        }
         globalScene.arena.playerTerasUsed = fromSession.arena.playerTerasUsed;
 
         globalScene.arena.tags = fromSession.arena.tags;
-        if (globalScene.arena.tags) {
-          for (const tag of globalScene.arena.tags) {
-            if (tag instanceof EntryHazardTag) {
-              const { tagType, side, turnCount, layers, maxLayers } = tag as EntryHazardTag;
-              globalScene.arena.eventTarget.dispatchEvent(
-                new TagAddedEvent(tagType, side, turnCount, layers, maxLayers),
-              );
-            } else {
-              globalScene.arena.eventTarget.dispatchEvent(new TagAddedEvent(tag.tagType, tag.side, tag.turnCount));
-            }
-          }
+        for (const tag of globalScene.arena.tags) {
+          const { tagType, side, turnCount } = tag;
+          const layers: [number, number] | undefined =
+            tag instanceof EntryHazardTag ? [tag.layers, tag.maxLayers] : undefined;
+          globalScene.arena.eventTarget.dispatchEvent(new ArenaTagAddedEvent(tagType, side, turnCount, layers));
         }
 
         globalScene.arena.positionalTagManager.tags = fromSession.arena.positionalTags.map(tag =>
