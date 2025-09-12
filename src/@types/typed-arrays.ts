@@ -34,7 +34,7 @@ export type TypedArray =
  * @remarks
  * Is to `Int8Array` what `ReadonlyArray` is to `Array`
  */
-export interface ReadonlyInt8Array<TArrayBuffer extends ArrayBufferLike = ArrayBuffer>
+export interface ReadonlyInt8Array<TArrayBuffer extends ArrayBufferLike = ArrayBufferLike>
   extends Omit<Int8Array, "fill" | "set" | "sort" | "reverse" | "copyWithin" | "subarray"> {
   subarray(begin?: number, end?: number): ReadonlyInt8Array<TArrayBuffer>;
   readonly [index: number]: number;
@@ -45,7 +45,7 @@ export interface ReadonlyInt8Array<TArrayBuffer extends ArrayBufferLike = ArrayB
  * @remarks
  * Is to `Uint8Array` what `ReadonlyArray` is to `Array`
  */
-export interface ReadonlyUint8Array<TArrayBuffer extends ArrayBufferLike = ArrayBuffer>
+export interface ReadonlyUint8Array<TArrayBuffer extends ArrayBufferLike = ArrayBufferLike>
   extends Omit<Uint8Array, "fill" | "set" | "sort" | "reverse" | "copyWithin" | "subarray"> {
   subarray(begin?: number, end?: number): ReadonlyUint8Array<TArrayBuffer>;
   readonly [index: number]: number;
@@ -56,7 +56,7 @@ export interface ReadonlyUint8Array<TArrayBuffer extends ArrayBufferLike = Array
  * @remarks
  * Is to `Uint8ClampedArray` what `ReadonlyArray` is to `Array`
  */
-export interface ReadonlyUint8ClampedArray<TArrayBuffer extends ArrayBufferLike = ArrayBuffer>
+export interface ReadonlyUint8ClampedArray<TArrayBuffer extends ArrayBufferLike = ArrayBufferLike>
   extends Omit<Uint8ClampedArray<TArrayBuffer>, "fill" | "set" | "sort" | "reverse" | "copyWithin" | "subarray"> {
   subarray(begin?: number, end?: number): ReadonlyUint8ClampedArray<TArrayBuffer>;
   readonly [index: number]: number;
@@ -67,7 +67,7 @@ export interface ReadonlyUint8ClampedArray<TArrayBuffer extends ArrayBufferLike 
  * @remarks
  * Is to `Int16Array` what `ReadonlyArray` is to `Array`
  */
-export interface ReadonlyInt16Array<TArrayBuffer extends ArrayBufferLike = ArrayBuffer>
+export interface ReadonlyInt16Array<TArrayBuffer extends ArrayBufferLike = ArrayBufferLike>
   extends Omit<Int16Array<TArrayBuffer>, "fill" | "set" | "sort" | "reverse" | "copyWithin" | "subarray"> {
   subarray(begin?: number, end?: number): ReadonlyInt16Array<TArrayBuffer>;
   readonly [index: number]: number;
@@ -78,7 +78,7 @@ export interface ReadonlyInt16Array<TArrayBuffer extends ArrayBufferLike = Array
  * @remarks
  * Is to `Uint16Array` what `ReadonlyArray` is to `Array`
  */
-export interface ReadonlyUint16Array<TArrayBuffer extends ArrayBufferLike = ArrayBuffer>
+export interface ReadonlyUint16Array<TArrayBuffer extends ArrayBufferLike = ArrayBufferLike>
   extends Omit<Uint16Array<TArrayBuffer>, "fill" | "set" | "sort" | "reverse" | "copyWithin" | "subarray"> {
   subarray(begin?: number, end?: number): ReadonlyUint16Array<TArrayBuffer>;
   readonly [index: number]: number;
@@ -89,7 +89,7 @@ export interface ReadonlyUint16Array<TArrayBuffer extends ArrayBufferLike = Arra
  * @remarks
  * Is to `Int32Array` what `ReadonlyArray` is to `Array`
  */
-export interface ReadonlyInt32Array<TArrayBuffer extends ArrayBufferLike = ArrayBuffer>
+export interface ReadonlyInt32Array<TArrayBuffer extends ArrayBufferLike = ArrayBufferLike>
   extends Omit<Int32Array<TArrayBuffer>, "fill" | "set" | "sort" | "reverse" | "copyWithin" | "subarray"> {
   subarray(begin?: number, end?: number): ReadonlyInt32Array<TArrayBuffer>;
   readonly [index: number]: number;
@@ -100,7 +100,7 @@ export interface ReadonlyInt32Array<TArrayBuffer extends ArrayBufferLike = Array
  * @remarks
  * Is to `Uint32Array` what `ReadonlyArray` is to `Array`
  */
-export interface ReadonlyUint32Array<TArrayBuffer extends ArrayBufferLike = ArrayBuffer>
+export interface ReadonlyUint32Array<TArrayBuffer extends ArrayBufferLike = ArrayBufferLike>
   extends Omit<Uint32Array<TArrayBuffer>, "fill" | "set" | "sort" | "reverse" | "copyWithin" | "subarray"> {
   subarray(begin?: number, end?: number): ReadonlyUint32Array<TArrayBuffer>;
   readonly [index: number]: number;
@@ -111,7 +111,7 @@ export interface ReadonlyUint32Array<TArrayBuffer extends ArrayBufferLike = Arra
  * @remarks
  * Is to `Float32Array` what `ReadonlyArray` is to `Array`
  */
-export interface ReadonlyFloat32Array<TArrayBuffer extends ArrayBufferLike = ArrayBuffer>
+export interface ReadonlyFloat32Array<TArrayBuffer extends ArrayBufferLike = ArrayBufferLike>
   extends Omit<Float32Array<TArrayBuffer>, "fill" | "set" | "sort" | "reverse" | "copyWithin" | "subarray"> {
   subarray(begin?: number, end?: number): ReadonlyFloat32Array<TArrayBuffer>;
   readonly [index: number]: number;
@@ -122,7 +122,7 @@ export interface ReadonlyFloat32Array<TArrayBuffer extends ArrayBufferLike = Arr
  * @remarks
  * Is to `Float64Array` what `ReadonlyArray` is to `Array`
  */
-export interface ReadonlyFloat64Array<TArrayBuffer extends ArrayBufferLike = ArrayBuffer>
+export interface ReadonlyFloat64Array<TArrayBuffer extends ArrayBufferLike = ArrayBufferLike>
   extends Omit<Float64Array, "fill" | "set" | "sort" | "reverse" | "copyWithin" | "subarray"> {
   subarray(begin?: number, end?: number): ReadonlyFloat64Array<TArrayBuffer>;
   readonly [index: number]: number;
@@ -133,7 +133,7 @@ export interface ReadonlyFloat64Array<TArrayBuffer extends ArrayBufferLike = Arr
  * @remarks
  * Is to `BigInt64Array` what `ReadonlyArray` is to `Array`
  */
-export interface ReadonlyBigInt64Array<TArrayBuffer extends ArrayBufferLike = ArrayBuffer>
+export interface ReadonlyBigInt64Array<TArrayBuffer extends ArrayBufferLike = ArrayBufferLike>
   extends Omit<BigInt64Array, "fill" | "set" | "sort" | "reverse" | "copyWithin" | "subarray"> {
   subarray(begin?: number, end?: number): ReadonlyBigInt64Array<TArrayBuffer>;
   readonly [index: number]: bigint;
@@ -144,7 +144,7 @@ export interface ReadonlyBigInt64Array<TArrayBuffer extends ArrayBufferLike = Ar
  * @remarks
  * Is to `BigUint64Array` what `ReadonlyArray` is to `Array`
  */
-export interface ReadonlyBigUint64Array<TArrayBuffer extends ArrayBufferLike = ArrayBuffer>
+export interface ReadonlyBigUint64Array<TArrayBuffer extends ArrayBufferLike = ArrayBufferLike>
   extends Omit<BigUint64Array, "fill" | "set" | "sort" | "reverse" | "copyWithin" | "subarray"> {
   subarray(begin?: number, end?: number): ReadonlyBigUint64Array<TArrayBuffer>;
   readonly [index: number]: bigint;
