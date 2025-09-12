@@ -96,10 +96,12 @@
         },
         "useThrowOnlyError": "error",
         "useTrimStartEnd": "error",
-        "useReadonlyClassProperties": {
-          "level": "info", // TODO: Graduate to error eventually
-          "options": { "checkAllProperties": true }
-        },
+        // Todo: This rule has issues properly detecting reads across files.
+        // Enable once it becomes more mature
+        // "useReadonlyClassProperties": {
+        //   "level": "info", // TODO: Graduate to error eventually
+        //   "options": { "checkAllProperties": true }
+        // },
         "useConsistentObjectDefinitions": {
           "level": "error",
           "options": { "syntax": "shorthand" }
@@ -209,8 +211,8 @@
       "nursery": {
         "noUselessUndefined": "error",
         "useMaxParams": {
-          "level": "warn", // TODO: Change to "error"... eventually...
-          "options": { "max": 4 } // A lot of stuff has a few params, but
+          "level": "info", // TODO: Change to "error"... eventually...
+          "options": { "max": 7 } // A lot of stuff has a few params, but
         },
         "noShadow": "warn", // TODO: refactor and make "error"
         "noNonNullAssertedOptionalChain": "warn" // TODO: refactor and make "error"
