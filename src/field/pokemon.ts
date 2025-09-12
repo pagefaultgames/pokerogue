@@ -227,10 +227,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * The ID of the biome this Pokémon was met in
    * @remarks
-   * Primarily used for displaying in the summary screen
+   * Primarily used for display in the summary screen.
    */
   public metBiome: BiomeId | -1;
-  // TODO: figure out why this used and document it (seems only to be read for getting the Pokémon's egg moves)
+  // TODO: figure out why this is used and document it (seems only to be read for getting the Pokémon's egg moves)
   public metSpecies: SpeciesId;
   /** The wave index at which this Pokémon was met/encountered */
   public metWave: number;
@@ -248,7 +248,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public teraType: PokemonType;
   /** Whether this Pokémon is currently Terastallized */
   public isTerastallized: boolean;
-  /** The set of Types that have been boosted by this Pokémon's Stellar terastallization */
+  /** The set of Types that have been boosted by this Pokémon's Stellar Terastallization. */
   public stellarTypesBoosted: PokemonType[];
 
   // TODO: Create a fusionData class / interface and move all fusion-related fields there, exposed via getters
@@ -284,7 +284,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /** Used by Mystery Encounters to execute pokemon-specific logic (such as stat boosts) at start of battle */
   public mysteryEncounterBattleEffects?: (pokemon: Pokemon) => void;
 
-  /** The position of the pokemon on the field */
+  /** The position of this Pokémon on the field */
   public fieldPosition: FieldPosition;
 
   public maskEnabled: boolean;
@@ -841,11 +841,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Gracefully handle errors loading a variant sprite. Log if it fails and attempt to fall back on
    * non-experimental sprites before giving up.
    *
-   * @param cacheKey - the cache key for the variant color sprite
-   * @param attemptedSpritePath - the sprite path that failed to load
-   * @param useExpSprite - was the attempted sprite experimental
-   * @param battleSpritePath - the filename of the sprite
-   * @param optionalParams - any additional params to log
+   * @param cacheKey - The cache key for the variant color sprite
+   * @param attemptedSpritePath - The sprite path that failed to load
+   * @param useExpSprite - Whether the attempted sprite was experimental
+   * @param battleSpritePath - The filename of the sprite
+   * @param optionalParams - Any additional params to log
    */
   async fallbackVariantColor(
     cacheKey: string,
@@ -1198,7 +1198,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @see {@linkcode Phaser.GameObjects.Sprite.play}
    * @param sprite - Sprite to animate
    * @param tintSprite - Sprite placed on top of the sprite to add a color tint
-   * @param animConfig - string to pass to the sprite's {@linkcode Phaser.GameObjects.Sprite.play | play} method
+   * @param animConfig - String to pass to the sprite's {@linkcode Phaser.GameObjects.Sprite.play | play} method
    * @returns true if the sprite was able to be animated
    */
   tryPlaySprite(sprite: Phaser.GameObjects.Sprite, tintSprite: Phaser.GameObjects.Sprite, key: string): boolean {
@@ -1267,7 +1267,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Set the field position of this Pokémon
    * @param fieldPosition - The new field position
    * @param duration - How long the transition should take, in milliseconds; if `0` or `undefined`, the position is changed instantly
-   * @returns
    */
   public setFieldPosition(fieldPosition: FieldPosition, duration?: number): Promise<void> {
     return new Promise(resolve => {
@@ -1619,7 +1618,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return baseStats;
   }
 
-  // TOOD: Convert t his into a getter
+  // TODO: Convert this into a getter
   getNature(): Nature {
     return this.customPokemonData.nature !== -1 ? this.customPokemonData.nature : this.nature;
   }
@@ -1652,7 +1651,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.hp >= this.getMaxHp();
   }
 
-  // TODO: Conver this into a getter
+  // TODO: Convert this into a getter
   getMaxHp(): number {
     return this.getStat(Stat.HP);
   }
@@ -1664,7 +1663,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Return the ratio of this Pokémon's current HP to its maximum HP
-   * @param precise - Whether to return a precise ratio (e.g. `0.54321`), or one rounded
+   * @param precise - Whether to return the exact HP ratio (e.g. `0.54321`), or one rounded to the nearest %; default `false`
    * @returns The current HP ratio
    */
   getHpRatio(precise = false): number {
@@ -1716,7 +1715,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Get whether this Pokémon's _base_ species is shiny
-   * @param useIllusion - Whether to consider an active illusion
+   * @param useIllusion - Whether to consider an active illusion; default `false`
    * @returns Whether the pokemon is shiny
    */
   isBaseShiny(useIllusion = false) {
@@ -1725,8 +1724,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Get whether this Pokémon's _fusion_ species is shiny
-   * @param useIllusion - Whether to consider an active illusion
-   * @returns Whether the pokemon's fusion species is shiny. Always false if this is not a fusion
+   * @param useIllusion - Whether to consider an active illusion; default `true`
+   * @returns Whether this Pokémon's fusion species is shiny, or `false` if there is no fusion
    */
   isFusionShiny(useIllusion = false) {
     if (!this.isFusion(useIllusion)) {
@@ -1737,7 +1736,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Check whether this Pokemon is doubly shiny (both normal and fusion are shiny).
-   * @param useIllusion - Whether to consider an active illusion
+   * @param useIllusion - Whether to consider an active illusion; default `false`
    * @returns Whether this pokemon's base and fusion counterparts are both shiny.
    */
   isDoubleShiny(useIllusion = false): boolean {
@@ -1748,7 +1747,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Return this Pokemon's shiny variant.
    * If a fusion, returns the maximum of the two variants.
    * Only meaningful if this pokemon is actually shiny.
-   * @param useIllusion - Whether to consider an active illusion
+   * @param useIllusion - Whether to consider an active illusion; default `false`
    * @returns The shiny variant of this Pokemon.
    */
   getVariant(useIllusion = false): Variant {
@@ -1763,7 +1762,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Return the base pokemon's variant. Equivalent to {@linkcode getVariant} if this pokemon is not a fusion.
-   * @param useIllusion - Whether to consider an active illusion
+   * @param useIllusion - Whether to consider an active illusion; default `false`
    * @returns The shiny variant of this Pokemon's base species.
    */
   getBaseVariant(useIllusion = false): Variant {
@@ -1772,7 +1771,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Return the fused Pokémon's shiny variant.
+   * Get the shiny variant of this Pokémon's _fusion_ species
    *
    * @remarks
    * Always returns `0` if the pokemon is not a fusion.
@@ -1797,7 +1796,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Return whether this {@linkcode Pokemon} is currently fused with anything.
-   * @param useIllusion - Whether to consider an active illusion
+   * @param useIllusion - Whether to consider an active illusion; default `false`
    * @returns Whether this Pokemon is currently fused with another species.
    */
   isFusion(useIllusion = false): boolean {
@@ -1806,7 +1805,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Return this {@linkcode Pokemon}'s name.
-   * @param useIllusion - Whether to consider an active illusion
+   * @param useIllusion - Whether to consider an active illusion; default `false`
    * @returns This Pokemon's name.
    * @see {@linkcode getNameToRender} - gets this Pokemon's display name.
    */
@@ -1912,8 +1911,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param includeTeraType - Whether to use this Pokemon's tera type if Terastallized; default `false`
    * @param forDefend - Whether this Pokemon is currently receiving an attack; default `false`
    * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
-   * @param useIllusion - Whether to consider an active illusion
-   * @returns An array of {@linkcode PokemonType}s corresponding to this Pokemon's typing (real or percieved).
+   * @param useIllusion - Whether to consider an active illusion; default `false`
+   * @returns An array of {@linkcode PokemonType}s corresponding to this Pokemon's typing (real or perceived).
    */
   public getTypes(
     includeTeraType = false,
@@ -2121,7 +2120,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Set the Pokémon's temporary ability, activating it if it normally activates on summon
+   * Set this Pokémon's temporary ability, activating it if it normally activates on summon
    *
    * Also clears primal weather if it is from the ability being changed
    * @param ability - The temporary ability to set
@@ -2185,12 +2184,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Check whether an ability of a pokemon can be currently applied.
+   * Check whether this Pokémon can apply its current ability
    *
    * @remarks
    * This should rarely be
    * directly called, as {@linkcode hasAbility} and {@linkcode hasAbilityWithAttr} already call this.
-   * @param passive - If true, check if passive can be applied instead of non-passive
+   * @param passive - Whether to check the passive (`true`) or non-passive (`false`) ability; default `false`
    * @returns Whether the ability can be applied
    */
   public canApplyAbility(passive = false): boolean {
@@ -2665,8 +2664,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Get the first evolution this Pokémon meets the conditions to evolve into
    * @remarks
-   * Fusion evolutions are also considered
-   * @returns The evolution this pokemon can currently evolve into, or null if it cannot evolve
+   * Fusion evolutions are also considered.
+   * @returns The evolution this pokemon can currently evolve into, or `null` if it cannot evolve
    */
   getEvolution(): SpeciesFormEvolution | null {
     if (pokemonEvolutions.hasOwnProperty(this.species.speciesId)) {
@@ -2860,7 +2859,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Create a new {@linkcode PokemonMove} and set it to the specified move index in this Pokémon's moveset.
    * @param moveIndex - The index of the move to set
    * @param moveId - The ID of the move to set
-   * @returns
    */
   setMove(moveIndex: number, moveId: MoveId): void {
     if (moveId === MoveId.NONE) {
@@ -3034,7 +3032,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Generate a fusion species and add it to this Pokémon
-   * @param forStarter - Whether this fusion is being generated for a starter Pokemon
+   * @param forStarter - Whether this fusion is being generated for a starter Pokémon; default `false`
    */
   public generateFusionSpecies(forStarter?: boolean): void {
     const hiddenAbilityChance = new NumberHolder(BASE_HIDDEN_ABILITY_CHANCE);
@@ -3551,7 +3549,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Calculate the stat stage multiplier of the user against an opponent.
+   * Calculate the stat stage multiplier of the user against an opponent
    *
    * @remarks
    * This does not apply to evasion or accuracy
@@ -3559,10 +3557,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param stat - The {@linkcode EffectiveStat} to calculate
    * @param opponent - The {@linkcode Pokemon} being targeted
    * @param move - The {@linkcode Move} being used
-   * @param ignoreOppAbility - determines whether the effects of the opponent's abilities (i.e. Unaware) should be ignored (`false` by default)
-   * @param isCritical - determines whether a critical hit has occurred or not (`false` by default)
-   * @param simulated - determines whether effects are applied without altering game state (`true` by default)
-   * @param ignoreHeldItems - determines whether this Pokemon's held items should be ignored during the stat calculation, default `false`
+   * @param ignoreOppAbility - determines whether the effects of the opponent's abilities (i.e. Unaware) should be ignored; default `false`
+   * @param isCritical - determines whether a critical hit has occurred or not; default `false`
+   * @param simulated - determines whether effects are applied without altering game state; default `true`
+   * @param ignoreHeldItems - determines whether this Pokemon's held items should be ignored during the stat calculation; default `false`
    * @returns the stat stage multiplier to be used for effective stat calculation
    */
   getStatStageMultiplier(
@@ -4148,7 +4146,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Submethod called by {@linkcode damageAndUpdate} to apply damage to this Pokemon and adjust its HP.
    * @param damage - The damage to deal
-   * @param _ignoreSegments - Whether to ignore boss segments (defaults to false)
+   * @param _ignoreSegments - Whether to ignore boss segments; default `false`
    * @param preventEndure - Whether to allow the damage to bypass an Endure/Sturdy effect
    * @param ignoreFaintPhase - Whether to ignore adding a FaintPhase if this damage causes a faint
    * @returns The actual damage dealt
@@ -4340,7 +4338,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Also ensures the tag is able to be applied, similar to {@linkcode canAddTag}
    *
    * @param tagType - The type of tag to add
-   * @param turnCount - The number of turns the tag should last; defaults to `0`
+   * @param turnCount - The number of turns the tag should last; default `0`
    * @param sourceMove - The id of the move that causing the tag to be added, if caused by a move
    * @param sourceId - The {@linkcode Pokemon#id | id} of the pokemon causing the tag to be added, if caused by a Pokémon
    * @returns Whether the tag was successfully added
@@ -4512,7 +4510,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Transfer stat changes and Tags from another Pokémon
    *
    * @remarks
-   * Used to implement Baton Pass and switching via the Baton item
+   * Used to implement Baton Pass and switching via the Baton item.
    *
    * @param source - The pokemon whose stats/Tags are to be passed on from, ie: the Pokemon using Baton Pass
    */
@@ -4546,7 +4544,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Get whether the given move is currently disabled for this Pokemon.
+   * Get whether the given move is currently disabled for this Pokémon
    *
    * @param moveId - The ID of the move to check
    * @returns `true` if the move is disabled for this Pokemon, otherwise `false`
@@ -4610,7 +4608,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Add a new entry to this Pokemon's move history
    * @remarks
-   * Does nothing if this Pokemon is not currently on the field
+   * Does nothing if this Pokemon is not currently on the field.
    * @param turnMove - The move to add to the history
    */
   public pushMoveHistory(turnMove: TurnMove): void {
@@ -4677,7 +4675,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Change this Pokémon's form to the specified form, loading the required
    * assets and updating its stats and info display.
    * @param formChange - The form to change to
-   * @returns A promise that resolves once the form change has completed
+   * @returns A Promise that resolves once the form change has completed.
    */
   public async changeForm(formChange: SpeciesFormChange): Promise<void> {
     return new Promise(resolve => {
@@ -4705,7 +4703,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Play this Pokémon's cry sound
    * @param soundConfig - Optional sound configuration to apply to the cry
    * @param sceneOverride - Optional scene to use instead of the global scene
-   * @returns
    */
   public cry(soundConfig?: Phaser.Types.Sound.SoundConfig, sceneOverride?: BattleScene): AnySound | null {
     const scene = sceneOverride ?? globalScene; // TODO: is `sceneOverride` needed?
@@ -5267,9 +5264,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Reset this Pokémon's status
-   * @param revive - Whether revive should be cured; default `true`.
-   * @param confusion - Whether resetStatus should include confusion or not; default `false`
-   * @param reloadAssets - Whether to reload the assets or not; default `false`.
+   * @param revive - Whether revive should be cured; default `true`
+   * @param confusion - Whether to also cure confusion; default `false`
+   * @param reloadAssets - Whether to reload the assets or not; default `false`
    * @param asPhase - Whether to reset the status in a phase or immediately; default `true`
    */
   resetStatus(revive = true, confusion = false, reloadAssets = false, asPhase = true): void {
@@ -5395,13 +5392,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Reset this Pokémon's terastallization state
+   * Reset this Pokémon's Terastallization state
    *
    * @remarks
    * Responsible for all of the cleanup required when a pokemon goes from being
    * terastallized to no longer terastallized:
    * - Resetting stellar type boosts
-   * - Upadting the Pokémon's terastallization-dependent form
+   * - Updating the Pokémon's terastallization-dependent form
    * - Adjusting the sprite pipeline to remove the Tera effect
    */
   resetTera(): void {
@@ -5847,7 +5844,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * or it directly calls {@linkcode randSeedInt randSeedInt}({@linkcode range}, {@linkcode min}) in `src/utils.ts` if there is no current battle
    *
    * @param range - How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
-   * @param min - The minimum integer to pick, default `0`
+   * @param min - The minimum integer to pick; default `0`
    * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
    */
   randBattleSeedInt(range: number, min = 0): number {
@@ -5898,7 +5895,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    *
    * ### Custom Behavior
    * In addition to the base `destroy` behavior, this also destroys the Pokemon's
-   * {@linkcode battleInfo}, if it exists, and its substitute, if it exists.
+   * {@linkcode battleInfo} and substitute sprite (as applicable).
    */
   destroy(): void {
     this.battleInfo?.destroy();
