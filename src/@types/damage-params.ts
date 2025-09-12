@@ -3,14 +3,12 @@ import type { Pokemon } from "#field/pokemon";
 import type { Move } from "#types/move-types";
 
 /**
- *
  * Collection of types for methods like {@linkcode Pokemon#getBaseDamage} and {@linkcode Pokemon#getAttackDamage}.
  * @module
- *
  */
 
-/** Base typeclass for damage parameter methods, used for DRY */
-export type damageParams = {
+/** Base type for damage parameter methods, used for DRY */
+export interface damageParams {
   /** The attacking {@linkcode Pokemon} */
   source: Pokemon;
   /** The move used in the attack */
