@@ -883,7 +883,7 @@ export class BattleScene extends SceneBase {
     gender?: Gender,
     shiny?: boolean,
     variant?: Variant,
-    ivs?: Uint8Array,
+    ivs?: number[],
     nature?: Nature,
     dataSource?: Pokemon | PokemonData,
     postProcess?: (playerPokemon: PlayerPokemon) => void,
