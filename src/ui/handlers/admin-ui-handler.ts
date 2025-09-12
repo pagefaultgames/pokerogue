@@ -3,9 +3,9 @@ import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
-import type { InputFieldConfig } from "#ui/handlers/form-modal-ui-handler";
-import { FormModalUiHandler } from "#ui/handlers/form-modal-ui-handler";
-import type { ModalConfig } from "#ui/handlers/modal-ui-handler";
+import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
+import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
+import type { ModalConfig } from "#ui/modal-ui-handler";
 import { getTextColor } from "#ui/text";
 import { toTitleCase } from "#utils/strings";
 
@@ -18,8 +18,6 @@ export class AdminUiHandler extends FormModalUiHandler {
   private config: ModalConfig;
 
   private readonly buttonGap = 10;
-  // http response from the server when a username isn't found in the server
-  private readonly httpUserNotFoundErrorCode: number = 404;
   private readonly ERR_REQUIRED_FIELD = (field: string) => {
     if (field === "username") {
       return `${toTitleCase(field)} is required`;
@@ -322,7 +320,7 @@ export class AdminUiHandler extends FormModalUiHandler {
       });
       if (errorType || !adminInfo) {
         // error - if adminInfo.status === this.httpUserNotFoundErrorCode that means the username can't be found in the db
-        return { adminSearchResult: adminSearchResult, error: true, errorType };
+        return { adminSearchResult, error: true, errorType };
       }
       // success
       return { adminSearchResult: adminInfo, error: false };
@@ -374,10 +372,10 @@ export class AdminUiHandler extends FormModalUiHandler {
 
       if (errorType) {
         // error - if response.status === this.httpUserNotFoundErrorCode that means the username can't be found in the db
-        return { adminSearchResult: adminSearchResult, error: true, errorType };
+        return { adminSearchResult, error: true, errorType };
       }
       // success!
-      return { adminSearchResult: adminSearchResult, error: false };
+      return { adminSearchResult, error: false };
     } catch (err) {
       console.error(err);
       return { error: true, errorType: err };
@@ -421,9 +419,9 @@ export class AdminUiHandler extends FormModalUiHandler {
        * and if either of these conditions are met, the element is destroyed.
        */
       if (
-        itemsToRemove.some(iTR => mC[i].name.includes(iTR)) ||
-        (mC[i].type === "Container" &&
-          (mC[i] as Phaser.GameObjects.Container).list.find(m => m.type === "rexInputText"))
+        itemsToRemove.some(iTR => mC[i].name.includes(iTR))
+        || (mC[i].type === "Container"
+          && (mC[i] as Phaser.GameObjects.Container).list.find(m => m.type === "rexInputText"))
       ) {
         removeArray.push(mC[i]);
       }

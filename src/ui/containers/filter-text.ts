@@ -2,8 +2,8 @@ import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { UiTheme } from "#enums/ui-theme";
-import type { StarterContainer } from "#ui/containers/starter-container";
-import type { AwaitableUiHandler } from "#ui/handlers/awaitable-ui-handler";
+import type { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
+import type { StarterContainer } from "#ui/starter-container";
 import { addTextObject, getTextColor } from "#ui/text";
 import type { UI } from "#ui/ui";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
@@ -24,14 +24,12 @@ export class FilterText extends Phaser.GameObjects.Container {
   private rows: FilterTextRow[] = [];
   public cursorObj: Phaser.GameObjects.Image;
   public numFilters = 0;
-  private lastCursor = -1;
   private uiTheme: UiTheme;
 
   private menuMessageBoxContainer: Phaser.GameObjects.Container;
   private dialogueMessageBox: Phaser.GameObjects.NineSlice;
   message: any;
   private readonly textPadding = 8;
-  private readonly defaultWordWrapWidth = 1224;
 
   private onChange: () => void;
 
@@ -158,7 +156,6 @@ export class FilterText extends Phaser.GameObjects.Container {
     const cursorOffset = 8;
 
     this.cursorObj.setPosition(cursorOffset, this.labels[cursor].y + 3);
-    this.lastCursor = cursor;
   }
 
   /**

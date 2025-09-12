@@ -5,8 +5,8 @@ import { Challenges } from "#enums/challenges";
 import { Color, ShadowColor } from "#enums/color";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
-import { UiHandler } from "#ui/handlers/ui-handler";
 import { addTextObject } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { getLocalizedSpriteKey } from "#utils/common";
 import i18next from "i18next";
@@ -185,10 +185,10 @@ export class GameChallengesUiHandler extends UiHandler {
       this.valuesContainer.add(value);
 
       this.challengeLabels[i] = {
-        label: label,
-        value: value,
-        leftArrow: leftArrow,
-        rightArrow: rightArrow,
+        label,
+        value,
+        leftArrow,
+        rightArrow,
       };
     }
 
@@ -272,17 +272,17 @@ export class GameChallengesUiHandler extends UiHandler {
       challengeLabel.leftArrow.setVisible(challenge.value !== 0);
       challengeLabel.rightArrow.setPositionRelative(
         challengeLabel.leftArrow,
-        Math.max(this.monoTypeValue.width, this.widestTextBox) +
-          challengeLabel.leftArrow.displayWidth +
-          2 * this.arrowSpacing,
+        Math.max(this.monoTypeValue.width, this.widestTextBox)
+          + challengeLabel.leftArrow.displayWidth
+          + 2 * this.arrowSpacing,
         0,
       );
       challengeLabel.rightArrow.setVisible(challenge.value !== challenge.maxValue);
 
       // this check looks to make sure that the arrows and value textbox don't take up too much space that they'll clip the right edge of the options background
       if (
-        challengeLabel.rightArrow.x + challengeLabel.rightArrow.width + this.optionsBg.rightWidth + this.arrowSpacing >
-        this.optionsWidth
+        challengeLabel.rightArrow.x + challengeLabel.rightArrow.width + this.optionsBg.rightWidth + this.arrowSpacing
+        > this.optionsWidth
       ) {
         // if we go out of bounds of the box, set the x position as far right as we can without going past the box, with this.arrowSpacing to allow a small gap between the arrow and border
         challengeLabel.rightArrow.setX(this.optionsWidth - this.arrowSpacing - this.optionsBg.rightWidth);
@@ -400,75 +400,73 @@ export class GameChallengesUiHandler extends UiHandler {
       } else {
         success = false;
       }
-    } else {
-      if (this.cursorObj?.visible && !this.startCursor.visible) {
-        switch (button) {
-          case Button.UP:
-            if (this.cursor === 0) {
-              if (this.scrollCursor === 0) {
-                // When at the top of the menu and pressing UP, move to the bottommost item.
-                if (globalScene.gameMode.challenges.length > rowsToDisplay) {
-                  // If there are more than 9 challenges, scroll to the bottom
-                  // First, set the cursor to the last visible element, preparing for the scroll to the end.
-                  const successA = this.setCursor(rowsToDisplay - 1);
-                  // Then, adjust the scroll to display the bottommost elements of the menu.
-                  const successB = this.setScrollCursor(globalScene.gameMode.challenges.length - rowsToDisplay);
-                  success = successA && successB; // success is just there to play the little validation sound effect
-                } else {
-                  // If there are 9 or less challenges, just move to the bottom one
-                  success = this.setCursor(globalScene.gameMode.challenges.length - 1);
-                }
-              } else {
-                success = this.setScrollCursor(this.scrollCursor - 1);
-              }
-            } else {
-              success = this.setCursor(this.cursor - 1);
-            }
-            if (success) {
-              this.updateText();
-            }
-            break;
-          case Button.DOWN:
-            if (this.cursor === rowsToDisplay - 1) {
-              if (this.scrollCursor < globalScene.gameMode.challenges.length - rowsToDisplay) {
-                // When at the bottom and pressing DOWN, scroll if possible.
-                success = this.setScrollCursor(this.scrollCursor + 1);
-              } else {
-                // When at the bottom of a scrolling menu and pressing DOWN, move to the topmost item.
-                // First, set the cursor to the first visible element, preparing for the scroll to the top.
-                const successA = this.setCursor(0);
-                // Then, adjust the scroll to display the topmost elements of the menu.
-                const successB = this.setScrollCursor(0);
+    } else if (this.cursorObj?.visible && !this.startCursor.visible) {
+      switch (button) {
+        case Button.UP:
+          if (this.cursor === 0) {
+            if (this.scrollCursor === 0) {
+              // When at the top of the menu and pressing UP, move to the bottommost item.
+              if (globalScene.gameMode.challenges.length > rowsToDisplay) {
+                // If there are more than 9 challenges, scroll to the bottom
+                // First, set the cursor to the last visible element, preparing for the scroll to the end.
+                const successA = this.setCursor(rowsToDisplay - 1);
+                // Then, adjust the scroll to display the bottommost elements of the menu.
+                const successB = this.setScrollCursor(globalScene.gameMode.challenges.length - rowsToDisplay);
                 success = successA && successB; // success is just there to play the little validation sound effect
+              } else {
+                // If there are 9 or less challenges, just move to the bottom one
+                success = this.setCursor(globalScene.gameMode.challenges.length - 1);
               }
-            } else if (
-              globalScene.gameMode.challenges.length < rowsToDisplay &&
-              this.cursor === globalScene.gameMode.challenges.length - 1
-            ) {
-              // When at the bottom of a non-scrolling menu and pressing DOWN, move to the topmost item.
-              success = this.setCursor(0);
             } else {
-              success = this.setCursor(this.cursor + 1);
+              success = this.setScrollCursor(this.scrollCursor - 1);
             }
-            if (success) {
-              this.updateText();
+          } else {
+            success = this.setCursor(this.cursor - 1);
+          }
+          if (success) {
+            this.updateText();
+          }
+          break;
+        case Button.DOWN:
+          if (this.cursor === rowsToDisplay - 1) {
+            if (this.scrollCursor < globalScene.gameMode.challenges.length - rowsToDisplay) {
+              // When at the bottom and pressing DOWN, scroll if possible.
+              success = this.setScrollCursor(this.scrollCursor + 1);
+            } else {
+              // When at the bottom of a scrolling menu and pressing DOWN, move to the topmost item.
+              // First, set the cursor to the first visible element, preparing for the scroll to the top.
+              const successA = this.setCursor(0);
+              // Then, adjust the scroll to display the topmost elements of the menu.
+              const successB = this.setScrollCursor(0);
+              success = successA && successB; // success is just there to play the little validation sound effect
             }
-            break;
-          case Button.LEFT:
-            // Moves the option cursor left, if possible.
-            success = this.getActiveChallenge().decreaseValue();
-            if (success) {
-              this.updateText();
-            }
-            break;
-          case Button.RIGHT:
-            // Moves the option cursor right, if possible.
-            success = this.getActiveChallenge().increaseValue();
-            if (success) {
-              this.updateText();
-            }
-            break;
-        }
+          } else if (
+            globalScene.gameMode.challenges.length < rowsToDisplay
+            && this.cursor === globalScene.gameMode.challenges.length - 1
+          ) {
+            // When at the bottom of a non-scrolling menu and pressing DOWN, move to the topmost item.
+            success = this.setCursor(0);
+          } else {
+            success = this.setCursor(this.cursor + 1);
+          }
+          if (success) {
+            this.updateText();
+          }
+          break;
+        case Button.LEFT:
+          // Moves the option cursor left, if possible.
+          success = this.getActiveChallenge().decreaseValue();
+          if (success) {
+            this.updateText();
+          }
+          break;
+        case Button.RIGHT:
+          // Moves the option cursor right, if possible.
+          success = this.getActiveChallenge().increaseValue();
+          if (success) {
+            this.updateText();
+          }
+          break;
       }
     }
 

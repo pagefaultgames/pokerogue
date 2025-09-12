@@ -2,10 +2,10 @@ import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
-import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
+import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addTextObject } from "#ui/text";
 
-export class EvolutionSceneHandler extends MessageUiHandler {
+export class EvolutionSceneUiHandler extends MessageUiHandler {
   public evolutionContainer: Phaser.GameObjects.Container;
   public messageBg: Phaser.GameObjects.Image;
   public messageContainer: Phaser.GameObjects.Container;
@@ -62,16 +62,12 @@ export class EvolutionSceneHandler extends MessageUiHandler {
     }
 
     const ui = this.getUi();
-    if (this.awaitingActionInput) {
-      if (button === Button.CANCEL || button === Button.ACTION) {
-        if (this.onActionInput) {
-          ui.playSelect();
-          const originalOnActionInput = this.onActionInput;
-          this.onActionInput = null;
-          originalOnActionInput();
-          return true;
-        }
-      }
+    if (this.awaitingActionInput && (button === Button.CANCEL || button === Button.ACTION) && this.onActionInput) {
+      ui.playSelect();
+      const originalOnActionInput = this.onActionInput;
+      this.onActionInput = null;
+      originalOnActionInput();
+      return true;
     }
 
     return false;

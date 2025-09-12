@@ -2,9 +2,9 @@ import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
-import { UiHandler } from "#ui/handlers/ui-handler";
 import { NavigationManager } from "#ui/navigation-menu";
 import { addTextObject, getTextColor } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import i18next from "i18next";
 

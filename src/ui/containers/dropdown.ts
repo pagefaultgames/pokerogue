@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
-import { ScrollBar } from "#ui/containers/scroll-bar";
+import { ScrollBar } from "#ui/scroll-bar";
 import { addTextObject } from "#ui/text";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import i18next from "i18next";
@@ -504,13 +504,11 @@ export class DropDown extends Phaser.GameObjects.Container {
       if (index === 0) {
         // we are on the All option > put all other options to the newState
         this.setAllOptions(newState);
-      } else {
+      } else if (newState === DropDownState.ON && this.checkForAllOn()) {
         // select the "all" option if all others are selected, other unselect it
-        if (newState === DropDownState.ON && this.checkForAllOn()) {
-          this.options[0].setOptionState(DropDownState.ON);
-        } else {
-          this.options[0].setOptionState(DropDownState.OFF);
-        }
+        this.options[0].setOptionState(DropDownState.ON);
+      } else {
+        this.options[0].setOptionState(DropDownState.OFF);
       }
     } else if (this.dropDownType === DropDownType.SINGLE) {
       if (option.state === DropDownState.OFF) {
@@ -612,8 +610,8 @@ export class DropDown extends Phaser.GameObjects.Container {
 
     const compareValues = (keys: string[]): boolean => {
       return (
-        currentValues.length === this.defaultSettings.length &&
-        currentValues.every((value, index) => keys.every(key => value[key] === this.defaultSettings[index][key]))
+        currentValues.length === this.defaultSettings.length
+        && currentValues.every((value, index) => keys.every(key => value[key] === this.defaultSettings[index][key]))
       );
     };
 
@@ -653,10 +651,8 @@ export class DropDown extends Phaser.GameObjects.Container {
             this.options[i].setDirection(SortDirection.ASC);
             this.options[i].toggle.setVisible(true);
           }
-        } else {
-          if (this.defaultSettings[i]) {
-            this.options[i].setOptionState(this.defaultSettings[i]["state"]);
-          }
+        } else if (this.defaultSettings[i]) {
+          this.options[i].setOptionState(this.defaultSettings[i]["state"]);
         }
       }
 
@@ -699,11 +695,11 @@ export class DropDown extends Phaser.GameObjects.Container {
   autoSize(): void {
     let maxWidth = 0;
     let x = 0;
-    for (let i = 0; i < this.options.length; i++) {
-      const optionWidth = this.options[i].getWidth();
+    for (const option of this.options) {
+      const optionWidth = option.getWidth();
       if (optionWidth > maxWidth) {
         maxWidth = optionWidth;
-        x = this.options[i].getCurrentLabelX() ?? 0;
+        x = option.getCurrentLabelX() ?? 0;
       }
     }
     this.window.width = maxWidth + x - this.window.x + 9;

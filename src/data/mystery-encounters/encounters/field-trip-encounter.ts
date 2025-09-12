@@ -18,7 +18,7 @@ import {
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
-import type { OptionSelectItem } from "#ui/handlers/abstract-option-select-ui-handler";
+import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import i18next from "i18next";
 
 /** i18n namespace for the encounter */
@@ -249,6 +249,6 @@ function pokemonAndMoveChosen(pokemon: PlayerPokemon, move: PokemonMove, correct
     setEncounterExp([pokemon.id], 100);
   }
   encounter.misc = {
-    correctMove: correctMove,
+    correctMove,
   };
 }

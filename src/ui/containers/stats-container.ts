@@ -82,10 +82,10 @@ export class StatsContainer extends Phaser.GameObjects.Container {
     for (const s of PERMANENT_STATS) {
       const statLabel = addTextObject(
         ivChartBg.x + ivChartSize * ivChartStatCoordMultipliers[s][0] * 1.325 + (this.showDiff ? 0 : ivLabelOffset[s]),
-        ivChartBg.y +
-          ivChartSize * ivChartStatCoordMultipliers[s][1] * 1.325 -
-          4 +
-          (this.showDiff ? 0 : ivChartLabelyOffset[s]),
+        ivChartBg.y
+          + ivChartSize * ivChartStatCoordMultipliers[s][1] * 1.325
+          - 4
+          + (this.showDiff ? 0 : ivChartLabelyOffset[s]),
         i18next.t(getStatKey(s)),
         TextStyle.STATS_HEXAGON,
       );

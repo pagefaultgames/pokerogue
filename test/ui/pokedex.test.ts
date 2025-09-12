@@ -6,11 +6,11 @@ import { DropDownColumn } from "#enums/drop-down-column";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import type { StarterAttributes } from "#system/game-data";
 import { GameManager } from "#test/test-utils/game-manager";
-import { FilterTextRow } from "#ui/containers/filter-text";
-import { PokedexPageUiHandler } from "#ui/containers/pokedex-page-ui-handler";
-import { PokedexUiHandler } from "#ui/handlers/pokedex-ui-handler";
+import type { StarterAttributes } from "#types/save-data";
+import { FilterTextRow } from "#ui/filter-text";
+import { PokedexPageUiHandler } from "#ui/pokedex-page-ui-handler";
+import { PokedexUiHandler } from "#ui/pokedex-ui-handler";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -106,8 +106,8 @@ describe("UI - Pokedex", () => {
     const speciesSet = new Set<SpeciesId>();
     for (const pkmn of allSpecies) {
       if (
-        [pkmn.ability1, pkmn.ability2, pkmn.getPassiveAbility(), pkmn.abilityHidden].includes(ability) ||
-        pkmn.forms.some(form =>
+        [pkmn.ability1, pkmn.ability2, pkmn.getPassiveAbility(), pkmn.abilityHidden].includes(ability)
+        || pkmn.forms.some(form =>
           [form.ability1, form.ability2, form.abilityHidden, form.getPassiveAbility()].includes(ability),
         )
       ) {

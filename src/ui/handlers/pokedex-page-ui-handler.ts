@@ -43,15 +43,15 @@ import { TimeOfDay } from "#enums/time-of-day";
 import { UiMode } from "#enums/ui-mode";
 import type { Variant } from "#sprites/variant";
 import { getVariantIcon, getVariantTint } from "#sprites/variant";
-import type { StarterAttributes } from "#system/game-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
-import { BaseStatsOverlay } from "#ui/containers/base-stats-overlay";
-import { MoveInfoOverlay } from "#ui/containers/move-info-overlay";
-import { PokedexInfoOverlay } from "#ui/containers/pokedex-info-overlay";
-import { StatsContainer } from "#ui/containers/stats-container";
-import type { OptionSelectItem } from "#ui/handlers/abstract-option-select-ui-handler";
-import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
+import type { StarterAttributes } from "#types/save-data";
+import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import { BaseStatsOverlay } from "#ui/base-stats-overlay";
+import { MessageUiHandler } from "#ui/message-ui-handler";
+import { MoveInfoOverlay } from "#ui/move-info-overlay";
+import { PokedexInfoOverlay } from "#ui/pokedex-info-overlay";
+import { StatsContainer } from "#ui/stats-container";
 import { addBBCodeTextObject, addTextObject, getTextColor, getTextStyleOptions } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { BooleanHolder, getLocalizedSpriteKey, isNullOrUndefined, padInt, rgbHexToRgba } from "#utils/common";
@@ -260,8 +260,6 @@ export class PokedexPageUiHandler extends MessageUiHandler {
   private instructionRowX = 0;
   private instructionRowY = 0;
   private instructionRowTextOffset = 9;
-  private filterInstructionRowX = 0;
-  private filterInstructionRowY = 0;
 
   private starterAttributes: StarterAttributes;
   private savedStarterAttributes: StarterAttributes;
@@ -713,7 +711,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       globalScene.phaseManager.getCurrentPhase().phaseName,
     );
 
-    if (args.length >= 1 && args[0] === "refresh") {
+    if (args.length > 0 && args[0] === "refresh") {
       return false;
     }
     this.species = args[0];
@@ -764,9 +762,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       .map(o => {
         const label = i18next.t(`pokedexUiHandler:${toCamelCase(`menu${MenuOptions[o]}`)}`);
         const isDark =
-          !isSeen ||
-          (!isStarterCaught && (o === MenuOptions.TOGGLE_IVS || o === MenuOptions.NATURES)) ||
-          (this.tmMoves.length < 1 && o === MenuOptions.TM_MOVES);
+          !isSeen
+          || (!isStarterCaught && (o === MenuOptions.TOGGLE_IVS || o === MenuOptions.NATURES))
+          || (this.tmMoves.length === 0 && o === MenuOptions.TM_MOVES);
         const color = getTextColor(isDark ? TextStyle.SHADOW_TEXT : TextStyle.SETTINGS_VALUE, false);
         const shadow = getTextColor(isDark ? TextStyle.SHADOW_TEXT : TextStyle.SETTINGS_VALUE, true);
         return `[shadow=${shadow}][color=${color}]${label}[/color][/shadow]`;
@@ -784,9 +782,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     let formKey = this.species?.forms.length > 0 ? this.species.forms[this.formIndex].formKey : "";
     this.isFormGender = formKey === "male" || formKey === "female";
     if (
-      this.isFormGender &&
-      ((this.savedStarterAttributes.female === true && formKey === "male") ||
-        (this.savedStarterAttributes.female === false && formKey === "female"))
+      this.isFormGender
+      && ((this.savedStarterAttributes.female === true && formKey === "male")
+        || (this.savedStarterAttributes.female === false && formKey === "female"))
     ) {
       this.formIndex = (this.formIndex + 1) % 2;
       formKey = this.species.forms[this.formIndex].formKey;
@@ -805,9 +803,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
       // If this form has a specific set of moves, we get them.
       this.levelMoves =
-        formIndex > 0 &&
-        pokemonFormLevelMoves.hasOwnProperty(species.speciesId) &&
-        pokemonFormLevelMoves[species.speciesId].hasOwnProperty(formIndex)
+        formIndex > 0
+        && pokemonFormLevelMoves.hasOwnProperty(species.speciesId)
+        && pokemonFormLevelMoves[species.speciesId].hasOwnProperty(formIndex)
           ? pokemonFormLevelMoves[species.speciesId][formIndex]
           : pokemonSpeciesLevelMoves[species.speciesId];
       this.ability1 = form.ability1;
@@ -881,17 +879,13 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         : [];
       this.prevolutions = preEvolutions.filter(
         e =>
-          e.speciesId === species.speciesId &&
-          (((e.evoFormKey === "" || e.evoFormKey === null) &&
-            // This takes care of Cosplay Pikachu (Pichu is not shown)
-            (preSpecies.forms.some(form => form.formKey === species.forms[formIndex]?.formKey) ||
-              // This takes care of Gholdengo
-              (preSpecies.forms.length > 0 && species.forms.length === 0) ||
-              // This takes care of everything else
-              (preSpecies.forms.length === 0 &&
-                (species.forms.length === 0 || species.forms[formIndex]?.formKey === "")))) ||
-            // This takes care of Burmy, Shellos etc
-            e.evoFormKey === species.forms[formIndex]?.formKey),
+          e.speciesId === species.speciesId
+          && (((e.evoFormKey === "" || e.evoFormKey === null) // This takes care of Cosplay Pikachu (Pichu is not shown)
+            && (preSpecies.forms.some(form => form.formKey === species.forms[formIndex]?.formKey) // This takes care of Gholdengo
+              || (preSpecies.forms.length > 0 && species.forms.length === 0) // This takes care of everything else
+              || (preSpecies.forms.length === 0
+                && (species.forms.length === 0 || species.forms[formIndex]?.formKey === "")))) // This takes care of Burmy, Shellos etc
+            || e.evoFormKey === species.forms[formIndex]?.formKey),
       );
     }
 
@@ -992,7 +986,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     const formIndex = otherFormIndex !== undefined ? otherFormIndex : this.formIndex;
     const caughtAttr = this.isCaught(species);
 
-    if (caughtAttr && (!species.forms.length || species.forms.length === 1)) {
+    if (caughtAttr && (species.forms.length === 0 || species.forms.length === 1)) {
       return true;
     }
 
@@ -1043,9 +1037,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       !!(hasShiny && caughtAttr & DexAttr.VARIANT_3),
     ];
     if (
-      starterAttributes.variant === undefined ||
-      Number.isNaN(starterAttributes.variant) ||
-      starterAttributes.variant < 0
+      starterAttributes.variant === undefined
+      || Number.isNaN(starterAttributes.variant)
+      || starterAttributes.variant < 0
     ) {
       starterAttributes.variant = 0;
     } else if (!this.unlockedVariants[starterAttributes.variant]) {
@@ -1061,17 +1055,15 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
     if (starterAttributes.female !== undefined) {
       if (
-        (starterAttributes.female && !(caughtAttr & DexAttr.FEMALE)) ||
-        (!starterAttributes.female && !(caughtAttr & DexAttr.MALE))
+        (starterAttributes.female && !(caughtAttr & DexAttr.FEMALE))
+        || (!starterAttributes.female && !(caughtAttr & DexAttr.MALE))
       ) {
         starterAttributes.female = !starterAttributes.female;
       }
-    } else {
-      if (caughtAttr & DexAttr.FEMALE) {
-        starterAttributes.female = true;
-      } else if (caughtAttr & DexAttr.MALE) {
-        starterAttributes.female = false;
-      }
+    } else if (caughtAttr & DexAttr.FEMALE) {
+      starterAttributes.female = true;
+    } else if (caughtAttr & DexAttr.MALE) {
+      starterAttributes.female = false;
     }
 
     return starterAttributes;
@@ -1102,7 +1094,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       this.message.setY(singleLine ? -22 : -37);
     }
 
-    this.starterSelectMessageBoxContainer.setVisible(!!text?.length);
+    this.starterSelectMessageBoxContainer.setVisible(text?.length > 0);
   }
 
   /**
@@ -1358,7 +1350,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
           case MenuOptions.TM_MOVES:
             if (!isSeen) {
               error = true;
-            } else if (this.tmMoves.length < 1) {
+            } else if (this.tmMoves.length === 0) {
               ui.showText(i18next.t("pokedexUiHandler:noTmMoves"));
               error = true;
             } else {
@@ -1481,7 +1473,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                   });
 
                   ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
-                    options: options,
+                    options,
                     supportHover: true,
                     maxOptions: 8,
                     yOffset: 19,
@@ -1514,14 +1506,14 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                   this.biomes.map(b => {
                     options.push({
                       label:
-                        i18next.t(`biome:${toCamelCase(BiomeId[b.biome])}`) +
-                        " - " +
-                        i18next.t(`biome:${toCamelCase(BiomePoolTier[b.tier])}`) +
-                        (b.tod.length === 1 && b.tod[0] === -1
+                        i18next.t(`biome:${toCamelCase(BiomeId[b.biome])}`)
+                        + " - "
+                        + i18next.t(`biome:${toCamelCase(BiomePoolTier[b.tier])}`)
+                        + (b.tod.length === 1 && b.tod[0] === -1
                           ? ""
-                          : " (" +
-                            b.tod.map(tod => i18next.t(`biome:${toCamelCase(TimeOfDay[tod])}`)).join(", ") +
-                            ")"),
+                          : " ("
+                            + b.tod.map(tod => i18next.t(`biome:${toCamelCase(TimeOfDay[tod])}`)).join(", ")
+                            + ")"),
                       handler: () => false,
                     });
                   });
@@ -1535,14 +1527,14 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                     this.preBiomes.map(b => {
                       options.push({
                         label:
-                          i18next.t(`biome:${toCamelCase(BiomeId[b.biome])}`) +
-                          " - " +
-                          i18next.t(`biome:${toCamelCase(BiomePoolTier[b.tier])}`) +
-                          (b.tod.length === 1 && b.tod[0] === -1
+                          i18next.t(`biome:${toCamelCase(BiomeId[b.biome])}`)
+                          + " - "
+                          + i18next.t(`biome:${toCamelCase(BiomePoolTier[b.tier])}`)
+                          + (b.tod.length === 1 && b.tod[0] === -1
                             ? ""
-                            : " (" +
-                              b.tod.map(tod => i18next.t(`biome:${toCamelCase(TimeOfDay[tod])}`)).join(", ") +
-                              ")"),
+                            : " ("
+                              + b.tod.map(tod => i18next.t(`biome:${toCamelCase(TimeOfDay[tod])}`)).join(", ")
+                              + ")"),
                         handler: () => false,
                       });
                     });
@@ -1560,7 +1552,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                   });
 
                   ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
-                    options: options,
+                    options,
                     supportHover: true,
                     maxOptions: 8,
                     yOffset: 19,
@@ -1583,9 +1575,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 const options: any[] = [];
 
                 if (
-                  (!this.prevolutions || this.prevolutions?.length === 0) &&
-                  (!this.evolutions || this.evolutions?.length === 0) &&
-                  (!this.battleForms || this.battleForms?.length === 0)
+                  (!this.prevolutions || this.prevolutions?.length === 0)
+                  && (!this.evolutions || this.evolutions?.length === 0)
+                  && (!this.battleForms || this.battleForms?.length === 0)
                 ) {
                   ui.showText(i18next.t("pokedexUiHandler:noEvolutions"));
                   ui.playError();
@@ -1707,7 +1699,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
                       if (conditionText) {
                         options.push({
-                          label: label,
+                          label,
                           style: isFormCaught ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
                           handler: () => {
                             this.previousSpecies.push(this.species);
@@ -1744,7 +1736,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                   });
 
                   ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
-                    options: options,
+                    options,
                     supportHover: true,
                     maxOptions: 8,
                     yOffset: 19,
@@ -1838,10 +1830,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                     if (this.isCaught() & DexAttr.VARIANT_2) {
                       break;
                     }
-                  } else {
-                    if (this.isCaught() & DexAttr.VARIANT_3) {
-                      break;
-                    }
+                  } else if (this.isCaught() & DexAttr.VARIANT_3) {
+                    break;
                   }
                 } while (newVariant !== props.variant);
 
@@ -2040,7 +2030,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 },
               });
               ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
-                options: options,
+                options,
                 yOffset: 47,
               });
               success = true;
@@ -2203,8 +2193,6 @@ export class PokedexPageUiHandler extends MessageUiHandler {
   updateInstructions(): void {
     this.instructionRowX = 0;
     this.instructionRowY = 0;
-    this.filterInstructionRowX = 0;
-    this.filterInstructionRowY = 0;
     this.hideInstructions();
     this.instructionsContainer.removeAll();
     this.filterInstructionsContainer.removeAll();
@@ -2304,8 +2292,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     const starterData = globalScene.gameData.starterData[this.starterId];
 
     return (
-      starterData.candyCount >= getPassiveCandyCount(speciesStarterCosts[this.starterId]) &&
-      !(starterData.passiveAttr & PassiveAttr.UNLOCKED)
+      starterData.candyCount >= getPassiveCandyCount(speciesStarterCosts[this.starterId])
+      && !(starterData.passiveAttr & PassiveAttr.UNLOCKED)
     );
   }
 
@@ -2318,9 +2306,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     const starterData = globalScene.gameData.starterData[this.starterId];
 
     return (
-      starterData.candyCount >=
-        getValueReductionCandyCounts(speciesStarterCosts[this.starterId])[starterData.valueReduction] &&
-      starterData.valueReduction < valueReductionMax
+      starterData.candyCount
+        >= getValueReductionCandyCounts(speciesStarterCosts[this.starterId])[starterData.valueReduction]
+      && starterData.valueReduction < valueReductionMax
     );
   }
 
@@ -2361,10 +2349,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         const defaultDexAttr = this.getCurrentDexProps(species.speciesId);
         // Set default attributes if for some reason starterAttributes does not exist or attributes missing
         const props: StarterAttributes = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
-        if (starterAttributes?.variant && !Number.isNaN(starterAttributes.variant)) {
-          if (props.shiny) {
-            props.variant = starterAttributes.variant as Variant;
-          }
+        if (starterAttributes?.variant && !Number.isNaN(starterAttributes.variant) && props.shiny) {
+          props.variant = starterAttributes.variant as Variant;
         }
         props.form = starterAttributes?.form ?? props.form;
         props.female = starterAttributes?.female ?? props.female;
@@ -2438,11 +2424,11 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     // We will only update the sprite if there is a change to form, shiny/variant
     // or gender for species with gender sprite differences
     const shouldUpdateSprite =
-      (species?.genderDiffs && !isNullOrUndefined(female)) ||
-      !isNullOrUndefined(formIndex) ||
-      !isNullOrUndefined(shiny) ||
-      !isNullOrUndefined(variant) ||
-      forceUpdate;
+      (species?.genderDiffs && !isNullOrUndefined(female))
+      || !isNullOrUndefined(formIndex)
+      || !isNullOrUndefined(shiny)
+      || !isNullOrUndefined(variant)
+      || forceUpdate;
 
     if (this.activeTooltip === "CANDY") {
       if (this.species && this.pokemonCandyContainer.visible) {
@@ -2754,9 +2740,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     let props = 0n;
     const species = allSpecies.find(sp => sp.speciesId === speciesId);
     const caughtAttr =
-      globalScene.gameData.dexData[speciesId].caughtAttr &
-      globalScene.gameData.dexData[this.getStarterSpeciesId(speciesId)].caughtAttr &
-      (species?.getFullUnlocksData() ?? 0n);
+      globalScene.gameData.dexData[speciesId].caughtAttr
+      & globalScene.gameData.dexData[this.getStarterSpeciesId(speciesId)].caughtAttr
+      & (species?.getFullUnlocksData() ?? 0n);
 
     /*  this checks the gender of the pokemon; this works by checking a) that the starter preferences for the species exist, and if so, is it female. If so, it'll add DexAttr.FEMALE to our temp props
      *  It then checks b) if the caughtAttr for the pokemon is female and NOT male - this means that the ONLY gender we've gotten is female, and we need to add DexAttr.FEMALE to our temp props
@@ -2771,23 +2757,21 @@ export class PokedexPageUiHandler extends MessageUiHandler {
      * If they're not there, it enables shiny state by default if any shiny was caught
      */
     if (
-      this.starterAttributes?.shiny ||
-      ((caughtAttr & DexAttr.SHINY) > 0n && this.starterAttributes?.shiny !== false)
+      this.starterAttributes?.shiny
+      || ((caughtAttr & DexAttr.SHINY) > 0n && this.starterAttributes?.shiny !== false)
     ) {
       props += DexAttr.SHINY;
       if (this.starterAttributes?.variant !== undefined) {
         props += BigInt(Math.pow(2, this.starterAttributes?.variant)) * DexAttr.DEFAULT_VARIANT;
-      } else {
-        /*  This calculates the correct variant if there's no starter preferences for it.
+        /*  This chunk calculates the correct variant if there's no starter preferences for it.
          *  This gets the highest tier variant that you've caught and adds it to the temp props
          */
-        if ((caughtAttr & DexAttr.VARIANT_3) > 0) {
-          props += DexAttr.VARIANT_3;
-        } else if ((caughtAttr & DexAttr.VARIANT_2) > 0) {
-          props += DexAttr.VARIANT_2;
-        } else {
-          props += DexAttr.DEFAULT_VARIANT;
-        }
+      } else if ((caughtAttr & DexAttr.VARIANT_3) > 0) {
+        props += DexAttr.VARIANT_3;
+      } else if ((caughtAttr & DexAttr.VARIANT_2) > 0) {
+        props += DexAttr.VARIANT_2;
+      } else {
+        props += DexAttr.DEFAULT_VARIANT;
       }
     } else {
       props += DexAttr.NON_SHINY;

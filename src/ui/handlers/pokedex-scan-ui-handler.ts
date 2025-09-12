@@ -1,11 +1,11 @@
 import { allAbilities, allMoves, allSpecies } from "#data/data-lists";
 import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
-import { FilterTextRow } from "#ui/containers/filter-text";
-import type { OptionSelectItem } from "#ui/handlers/abstract-option-select-ui-handler";
-import type { InputFieldConfig } from "#ui/handlers/form-modal-ui-handler";
-import { FormModalUiHandler } from "#ui/handlers/form-modal-ui-handler";
-import type { ModalConfig } from "#ui/handlers/modal-ui-handler";
+import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import { FilterTextRow } from "#ui/filter-text";
+import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
+import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
+import type { ModalConfig } from "#ui/modal-ui-handler";
 import { isNullOrUndefined } from "#utils/common";
 import i18next from "i18next";
 
@@ -108,8 +108,8 @@ export class PokedexScanUiHandler extends FormModalUiHandler {
 
     input.on("keydown", (inputObject, evt: KeyboardEvent) => {
       if (
-        ["escape", "space"].some(v => v === evt.key.toLowerCase() || v === evt.code.toLowerCase()) &&
-        ui.getMode() === UiMode.AUTO_COMPLETE
+        ["escape", "space"].some(v => v === evt.key.toLowerCase() || v === evt.code.toLowerCase())
+        && ui.getMode() === UiMode.AUTO_COMPLETE
       ) {
         // Delete autocomplete list and recovery focus.
         inputObject.on("blur", () => inputObject.node.focus(), { once: true });
@@ -144,7 +144,7 @@ export class PokedexScanUiHandler extends FormModalUiHandler {
 
       if (options.length > 0) {
         const modalOpts = {
-          options: options,
+          options,
           maxOptions: 5,
           modalContainer: this.modalContainer,
         };

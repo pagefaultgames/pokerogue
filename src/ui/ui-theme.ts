@@ -117,10 +117,8 @@ export function updateWindowType(windowTypeIndex: number): void {
       } else if (object.texture?.key === "namebox") {
         themedObjects.push(object);
       }
-    } else if (object instanceof Phaser.GameObjects.Sprite) {
-      if (object.texture?.key === "bg") {
-        themedObjects.push(object);
-      }
+    } else if (object instanceof Phaser.GameObjects.Sprite && object.texture?.key === "bg") {
+      themedObjects.push(object);
     }
   };
 
@@ -154,9 +152,9 @@ export function addUiThemeOverrides(): void {
   ): Phaser.GameObjects.Image {
     let legacy = false;
     if (
-      typeof texture === "string" &&
-      globalScene.uiTheme === UiTheme.LEGACY &&
-      legacyCompatibleImages.includes(texture)
+      typeof texture === "string"
+      && globalScene.uiTheme === UiTheme.LEGACY
+      && legacyCompatibleImages.includes(texture)
     ) {
       legacy = true;
       texture += "_legacy";
@@ -181,9 +179,9 @@ export function addUiThemeOverrides(): void {
   ): Phaser.GameObjects.Sprite {
     let legacy = false;
     if (
-      typeof texture === "string" &&
-      globalScene.uiTheme === UiTheme.LEGACY &&
-      legacyCompatibleImages.includes(texture)
+      typeof texture === "string"
+      && globalScene.uiTheme === UiTheme.LEGACY
+      && legacyCompatibleImages.includes(texture)
     ) {
       legacy = true;
       texture += "_legacy";
@@ -214,9 +212,9 @@ export function addUiThemeOverrides(): void {
   ): Phaser.GameObjects.NineSlice {
     let legacy = false;
     if (
-      typeof texture === "string" &&
-      globalScene.uiTheme === UiTheme.LEGACY &&
-      legacyCompatibleImages.includes(texture)
+      typeof texture === "string"
+      && globalScene.uiTheme === UiTheme.LEGACY
+      && legacyCompatibleImages.includes(texture)
     ) {
       legacy = true;
       texture += "_legacy";

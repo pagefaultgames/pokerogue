@@ -12,9 +12,9 @@ import { UiMode } from "#enums/ui-mode";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import type { PokemonMove } from "#moves/pokemon-move";
 import type { CommandPhase } from "#phases/command-phase";
-import { MoveInfoOverlay } from "#ui/containers/move-info-overlay";
-import { UiHandler } from "#ui/handlers/ui-handler";
+import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { addTextObject, getTextColor } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
 import { fixedInt, getLocalizedSpriteKey, padInt } from "#utils/common";
 import i18next from "i18next";
 
@@ -372,12 +372,12 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
    */
   private getMoveColor(pokemon: Pokemon, pokemonMove: PokemonMove): string | undefined {
     if (!globalScene.typeHints) {
-      return undefined;
+      return;
     }
 
     const opponents = pokemon.getOpponents();
     if (opponents.length <= 0) {
-      return undefined;
+      return;
     }
 
     const moveColors = opponents
@@ -394,7 +394,7 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
       .sort((a, b) => b - a)
       .map(effectiveness => {
         if (pokemonMove.getMove().category === MoveCategory.STATUS && effectiveness !== 0) {
-          return undefined;
+          return;
         }
         return getTypeDamageMultiplierColor(effectiveness ?? 0, "offense");
       });

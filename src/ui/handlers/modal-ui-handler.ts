@@ -2,8 +2,8 @@ import { globalScene } from "#app/global-scene";
 import type { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
-import { UiHandler } from "#ui/handlers/ui-handler";
 import { addTextObject } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 
 export interface ModalConfig {
@@ -97,7 +97,7 @@ export abstract class ModalUiHandler extends UiHandler {
   }
 
   show(args: any[]): boolean {
-    if (args.length >= 1 && "buttonActions" in args[0]) {
+    if (args.length > 0 && "buttonActions" in args[0]) {
       super.show(args);
       if (args[0].hasOwnProperty("fadeOut") && typeof args[0].fadeOut === "function") {
         const [marginTop, marginRight, marginBottom, marginLeft] = this.getMargin();

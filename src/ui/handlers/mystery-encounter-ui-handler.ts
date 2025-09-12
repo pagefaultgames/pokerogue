@@ -9,9 +9,9 @@ import { getEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { OptionSelectSettings } from "#mystery-encounters/encounter-phase-utils";
 import type { MysteryEncounterOption } from "#mystery-encounters/mystery-encounter-option";
 import type { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
-import { PartyUiMode } from "#ui/handlers/party-ui-handler";
-import { UiHandler } from "#ui/handlers/ui-handler";
+import { PartyUiMode } from "#ui/party-ui-handler";
 import { addBBCodeTextObject, getBBCodeFrag } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import { fixedInt, isNullOrUndefined } from "#utils/common";
 import i18next from "i18next";
@@ -150,20 +150,18 @@ export class MysteryEncounterUiHandler extends UiHandler {
             }, 300);
           });
         } else if (
-          this.blockInput ||
-          (!this.optionsMeetsReqs[cursor] &&
-            (selected.optionMode === MysteryEncounterOptionMode.DISABLED_OR_DEFAULT ||
-              selected.optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL))
+          this.blockInput
+          || (!this.optionsMeetsReqs[cursor]
+            && (selected.optionMode === MysteryEncounterOptionMode.DISABLED_OR_DEFAULT
+              || selected.optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL))
         ) {
           success = false;
+        } else if (
+          (globalScene.phaseManager.getCurrentPhase() as MysteryEncounterPhase).handleOptionSelect(selected, cursor)
+        ) {
+          success = true;
         } else {
-          if (
-            (globalScene.phaseManager.getCurrentPhase() as MysteryEncounterPhase).handleOptionSelect(selected, cursor)
-          ) {
-            success = true;
-          } else {
-            ui.playError();
-          }
+          ui.playError();
         }
       } else {
         // TODO: If we need to handle cancel option? Maybe default logic to leave/run from encounter idk
@@ -306,9 +304,9 @@ export class MysteryEncounterUiHandler extends UiHandler {
       for (let i = 0; i < this.optionsContainer.length - 1; i++) {
         const optionMode = this.encounterOptions[i].optionMode;
         if (
-          !this.optionsMeetsReqs[i] &&
-          (optionMode === MysteryEncounterOptionMode.DISABLED_OR_DEFAULT ||
-            optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
+          !this.optionsMeetsReqs[i]
+          && (optionMode === MysteryEncounterOptionMode.DISABLED_OR_DEFAULT
+            || optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
         ) {
           continue;
         }
@@ -409,10 +407,10 @@ export class MysteryEncounterUiHandler extends UiHandler {
           : optionDialogue.buttonLabel;
       let text: string | null;
       if (
-        option.hasRequirements() &&
-        this.optionsMeetsReqs[i] &&
-        (option.optionMode === MysteryEncounterOptionMode.DEFAULT_OR_SPECIAL ||
-          option.optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
+        option.hasRequirements()
+        && this.optionsMeetsReqs[i]
+        && (option.optionMode === MysteryEncounterOptionMode.DEFAULT_OR_SPECIAL
+          || option.optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
       ) {
         // Options with special requirements that are met are automatically colored green
         text = getEncounterText(label, TextStyle.ME_OPTION_SPECIAL);
@@ -425,9 +423,9 @@ export class MysteryEncounterUiHandler extends UiHandler {
       }
 
       if (
-        !this.optionsMeetsReqs[i] &&
-        (option.optionMode === MysteryEncounterOptionMode.DISABLED_OR_DEFAULT ||
-          option.optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
+        !this.optionsMeetsReqs[i]
+        && (option.optionMode === MysteryEncounterOptionMode.DISABLED_OR_DEFAULT
+          || option.optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
       ) {
         optionText.setAlpha(0.5);
       }
@@ -580,10 +578,10 @@ export class MysteryEncounterUiHandler extends UiHandler {
     const cursorOption = this.encounterOptions[cursor];
     const optionDialogue = cursorOption.dialogue!;
     if (
-      !this.optionsMeetsReqs[cursor] &&
-      (cursorOption.optionMode === MysteryEncounterOptionMode.DISABLED_OR_DEFAULT ||
-        cursorOption.optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL) &&
-      optionDialogue.disabledButtonTooltip
+      !this.optionsMeetsReqs[cursor]
+      && (cursorOption.optionMode === MysteryEncounterOptionMode.DISABLED_OR_DEFAULT
+        || cursorOption.optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
+      && optionDialogue.disabledButtonTooltip
     ) {
       text = getEncounterText(optionDialogue.disabledButtonTooltip, TextStyle.TOOLTIP_CONTENT);
     } else {
@@ -596,18 +594,18 @@ export class MysteryEncounterUiHandler extends UiHandler {
       text = text.replace(
         /(\(\+\)[^([]*)/gi,
         substring =>
-          "[/color][/shadow]" +
-          getBBCodeFrag(substring, TextStyle.SUMMARY_GREEN) +
-          "[/color][/shadow]" +
-          primaryStyleString,
+          "[/color][/shadow]"
+          + getBBCodeFrag(substring, TextStyle.SUMMARY_GREEN)
+          + "[/color][/shadow]"
+          + primaryStyleString,
       );
       text = text.replace(
         /(\(-\)[^([]*)/gi,
         substring =>
-          "[/color][/shadow]" +
-          getBBCodeFrag(substring, TextStyle.SUMMARY_BLUE) +
-          "[/color][/shadow]" +
-          primaryStyleString,
+          "[/color][/shadow]"
+          + getBBCodeFrag(substring, TextStyle.SUMMARY_BLUE)
+          + "[/color][/shadow]"
+          + primaryStyleString,
       );
     }
 

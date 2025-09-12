@@ -7,10 +7,10 @@ import { Button } from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
-import { BgmBar } from "#ui/containers/bgm-bar";
-import type { OptionSelectConfig, OptionSelectItem } from "#ui/handlers/abstract-option-select-ui-handler";
-import type { AwaitableUiHandler } from "#ui/handlers/awaitable-ui-handler";
-import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
+import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import type { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
+import { BgmBar } from "#ui/bgm-bar";
+import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addTextObject, getTextStyleOptions } from "#ui/text";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import { fixedInt, isLocal, sessionIdKey } from "#utils/common";
@@ -495,7 +495,7 @@ export class MenuUiHandler extends MessageUiHandler {
             },
           });
           globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
-            options: options,
+            options,
             delay: 0,
           });
           return true;
@@ -578,7 +578,7 @@ export class MenuUiHandler extends MessageUiHandler {
           success = true;
           break;
         case MenuOptions.EGG_LIST:
-          if (globalScene.gameData.eggs.length) {
+          if (globalScene.gameData.eggs.length > 0) {
             ui.revertMode();
             ui.setOverlayMode(UiMode.EGG_LIST);
             success = true;
@@ -599,11 +599,11 @@ export class MenuUiHandler extends MessageUiHandler {
           break;
         case MenuOptions.MANAGE_DATA:
           if (
-            !bypassLogin &&
-            !this.manageDataConfig.options.some(
+            !bypassLogin
+            && !this.manageDataConfig.options.some(
               o =>
-                o.label === i18next.t("menuUiHandler:linkDiscord") ||
-                o.label === i18next.t("menuUiHandler:unlinkDiscord"),
+                o.label === i18next.t("menuUiHandler:linkDiscord")
+                || o.label === i18next.t("menuUiHandler:unlinkDiscord"),
             )
           ) {
             this.manageDataConfig.options.splice(

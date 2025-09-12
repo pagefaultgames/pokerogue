@@ -2,8 +2,8 @@ import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
-import { UiHandler } from "#ui/handlers/ui-handler";
 import { addBBCodeTextObject, getTextColor, getTextStyleOptions } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt, rgbHexToRgba } from "#utils/common";
 import { argbFromRgba } from "@material/material-color-utilities";
@@ -105,7 +105,7 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
       }
     }
 
-    if (this.optionSelectIcons?.length) {
+    if (this.optionSelectIcons?.length > 0) {
       this.optionSelectIcons.map(i => i.destroy());
       this.optionSelectIcons.splice(0, this.optionSelectIcons.length);
     }
@@ -184,7 +184,7 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
   }
 
   show(args: any[]): boolean {
-    if (!args.length || !args[0].hasOwnProperty("options") || !args[0].options.length) {
+    if (args.length === 0 || !args[0].hasOwnProperty("options") || args[0].options.length === 0) {
       return false;
     }
 
@@ -315,8 +315,8 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
     const optionStartIndex = this.scrollCursor;
     const optionEndIndex = Math.min(
       optionsScrollTotal,
-      optionStartIndex +
-        (!optionStartIndex || this.scrollCursor + (this.config.maxOptions - 1) >= optionsScrollTotal
+      optionStartIndex
+        + (!optionStartIndex || this.scrollCursor + (this.config.maxOptions - 1) >= optionsScrollTotal
           ? this.config.maxOptions - 1
           : this.config.maxOptions - 2),
     );

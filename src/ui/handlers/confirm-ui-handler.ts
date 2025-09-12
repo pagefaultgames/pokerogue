@@ -1,8 +1,8 @@
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { UiMode } from "#enums/ui-mode";
-import type { OptionSelectConfig } from "#ui/handlers/abstract-option-select-ui-handler";
-import { AbstractOptionSelectUiHandler } from "#ui/handlers/abstract-option-select-ui-handler";
+import type { OptionSelectConfig } from "#ui/abstract-option-select-ui-handler";
+import { AbstractOptionSelectUiHandler } from "#ui/abstract-option-select-ui-handler";
 import i18next from "i18next";
 
 export class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
@@ -21,12 +21,12 @@ export class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
 
   show(args: any[]): boolean {
     if (
-      args.length === 5 &&
-      args[0] instanceof Function &&
-      args[1] instanceof Function &&
-      args[2] instanceof Function &&
-      args[3] instanceof Function &&
-      args[4] === "fullParty"
+      args.length === 5
+      && args[0] instanceof Function
+      && args[1] instanceof Function
+      && args[2] instanceof Function
+      && args[3] instanceof Function
+      && args[4] === "fullParty"
     ) {
       const config: OptionSelectConfig = {
         options: [

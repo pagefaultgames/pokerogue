@@ -7,8 +7,8 @@ import { PlayerGender } from "#enums/player-gender";
 import { TextStyle } from "#enums/text-style";
 import { UiTheme } from "#enums/ui-theme";
 import type { GameData } from "#system/game-data";
-import { UiHandler } from "#ui/handlers/ui-handler";
 import { addTextObject } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { formatFancyLargeNumber, getPlayTimeString } from "#utils/common";
 import { toTitleCase } from "#utils/strings";
@@ -108,7 +108,7 @@ const displayStats: DisplayStats = {
     sourceFunc: gameData => gameData.gameStats.highestDamage.toString(),
   },
   highestHeal: {
-    label_key: "highestHPHealed",
+    label_key: "highestHpHealed",
     sourceFunc: gameData => gameData.gameStats.highestHeal.toString(),
   },
   pokemonSeen: {
@@ -529,7 +529,7 @@ export function initStatsKeys() {
       displayStats[key] = {
         label_key: label,
         sourceFunc: gameData => gameData.gameStats[key].toString(),
-        hidden: hidden,
+        hidden,
       };
     } else if (displayStats[key] === null) {
       displayStats[key] = {

@@ -15,8 +15,8 @@ import {
 } from "#events/arena";
 import type { TurnEndEvent } from "#events/battle-scene";
 import { BattleSceneEventType } from "#events/battle-scene";
-import { TimeOfDayWidget } from "#ui/containers/time-of-day-widget";
 import { addTextObject } from "#ui/text";
+import { TimeOfDayWidget } from "#ui/time-of-day-widget";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import { fixedInt } from "#utils/common";
 import { toCamelCase, toTitleCase } from "#utils/strings";
@@ -241,9 +241,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
 
     this.fieldEffectInfo.sort((infoA, infoB) => infoA.duration - infoB.duration);
 
-    for (let i = 0; i < this.fieldEffectInfo.length; i++) {
-      const fieldEffectInfo = this.fieldEffectInfo[i];
-
+    for (const fieldEffectInfo of this.fieldEffectInfo) {
       // Creates a proxy object to decide which text object needs to be updated
       let textObject: Phaser.GameObjects.Text;
       switch (fieldEffectInfo.effectType) {
@@ -389,9 +387,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     const fieldEffectInfo: ArenaEffectInfo[] = [];
     this.fieldEffectInfo.forEach(i => fieldEffectInfo.push(i));
 
-    for (let i = 0; i < fieldEffectInfo.length; i++) {
-      const info = fieldEffectInfo[i];
-
+    for (const info of fieldEffectInfo) {
       if (info.maxDuration === 0) {
         continue;
       }

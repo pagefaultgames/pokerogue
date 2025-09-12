@@ -2,10 +2,11 @@ import { pokerogueApi } from "#api/pokerogue-api";
 import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
-import type { OptionSelectItem } from "#ui/handlers/abstract-option-select-ui-handler";
-import type { InputFieldConfig } from "#ui/handlers/form-modal-ui-handler";
-import { FormModalUiHandler } from "#ui/handlers/form-modal-ui-handler";
-import type { ModalConfig } from "#ui/handlers/modal-ui-handler";
+import { languageOptions } from "#system/settings-language";
+import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
+import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
+import type { ModalConfig } from "#ui/modal-ui-handler";
 import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt } from "#utils/common";
@@ -31,6 +32,7 @@ export class LoginFormUiHandler extends FormModalUiHandler {
   private discordImage: Phaser.GameObjects.Image;
   private usernameInfoImage: Phaser.GameObjects.Image;
   private saveDownloadImage: Phaser.GameObjects.Image;
+  private changeLanguageImage: Phaser.GameObjects.Image;
   private externalPartyContainer: Phaser.GameObjects.Container;
   private infoContainer: Phaser.GameObjects.Container;
   private externalPartyBg: Phaser.GameObjects.NineSlice;
@@ -82,8 +84,14 @@ export class LoginFormUiHandler extends FormModalUiHandler {
       scale: 0.75,
     });
 
+    this.changeLanguageImage = this.buildInteractableImage("language_icon", "change-language-icon", {
+      x: 40,
+      scale: 0.5,
+    });
+
     this.infoContainer.add(this.usernameInfoImage);
     this.infoContainer.add(this.saveDownloadImage);
+    this.infoContainer.add(this.changeLanguageImage);
     this.getUi().add(this.infoContainer);
     this.infoContainer.setVisible(false);
     this.infoContainer.disableInteractive();
@@ -163,13 +171,18 @@ export class LoginFormUiHandler extends FormModalUiHandler {
 
           const [usernameInput, passwordInput] = this.inputs;
 
-          pokerogueApi.account.login({ username: usernameInput.text, password: passwordInput.text }).then(error => {
-            if (!error && originalLoginAction) {
-              originalLoginAction();
-            } else {
-              onFail(error);
-            }
-          });
+          pokerogueApi.account
+            .login({
+              username: usernameInput.text,
+              password: passwordInput.text,
+            })
+            .then(error => {
+              if (!error && originalLoginAction) {
+                originalLoginAction();
+              } else {
+                onFail(error);
+              }
+            });
         }
       };
 
@@ -185,9 +198,13 @@ export class LoginFormUiHandler extends FormModalUiHandler {
     this.infoContainer.setVisible(false);
     this.setMouseCursorStyle("default"); //reset cursor
 
-    [this.discordImage, this.googleImage, this.usernameInfoImage, this.saveDownloadImage].forEach(img =>
-      img.off("pointerdown"),
-    );
+    [
+      this.discordImage,
+      this.googleImage,
+      this.usernameInfoImage,
+      this.saveDownloadImage,
+      this.changeLanguageImage,
+    ].forEach(img => img.off("pointerdown"));
   }
 
   private processExternalProvider(config: ModalConfig): void {
@@ -206,6 +223,7 @@ export class LoginFormUiHandler extends FormModalUiHandler {
     this.getUi().moveTo(this.infoContainer, this.getUi().length - 1);
     this.usernameInfoImage.setPositionRelative(this.infoContainer, 0, 0);
     this.saveDownloadImage.setPositionRelative(this.infoContainer, 20, 0);
+    this.changeLanguageImage.setPositionRelative(this.infoContainer, 40, 0);
 
     this.discordImage.on("pointerdown", () => {
       const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/discord/callback`);
@@ -234,9 +252,9 @@ export class LoginFormUiHandler extends FormModalUiHandler {
         const dataKeys = localStorageKeys.filter(ls => ls.indexOf(keyToFind) >= 0);
         if (dataKeys.length > 0 && dataKeys.length <= 2) {
           const options: OptionSelectItem[] = [];
-          for (let i = 0; i < dataKeys.length; i++) {
+          for (const key of dataKeys) {
             options.push({
-              label: dataKeys[i].replace(keyToFind, ""),
+              label: key.replace(keyToFind, ""),
               handler: () => {
                 globalScene.ui.revertMode();
                 this.infoContainer.disableInteractive();
@@ -245,7 +263,7 @@ export class LoginFormUiHandler extends FormModalUiHandler {
             });
           }
           globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
-            options: options,
+            options,
             delay: 1000,
           });
           this.infoContainer.setInteractive(
@@ -261,7 +279,7 @@ export class LoginFormUiHandler extends FormModalUiHandler {
       }
     });
 
-    this.saveDownloadImage.on("pointerdown", () => {
+    this.saveDownloadImage.on("pointerdown", async () => {
       // find all data_ and sessionData keys, put them in a .txt file and download everything in a single zip
       const localStorageKeys = Object.keys(localStorage); // this gets the keys for localStorage
       const keyToFind = "data_";
@@ -270,23 +288,30 @@ export class LoginFormUiHandler extends FormModalUiHandler {
       const sessionKeys = localStorageKeys.filter(ls => ls.indexOf(sessionKeyToFind) >= 0);
       if (dataKeys.length > 0 || sessionKeys.length > 0) {
         const zip = new JSZip();
-        for (let i = 0; i < dataKeys.length; i++) {
-          zip.file(dataKeys[i] + ".prsv", localStorage.getItem(dataKeys[i])!);
+        for (const dataKey of dataKeys) {
+          zip.file(dataKey + ".prsv", localStorage.getItem(dataKey)!);
         }
-        for (let i = 0; i < sessionKeys.length; i++) {
-          zip.file(sessionKeys[i] + ".prsv", localStorage.getItem(sessionKeys[i])!);
+        for (const sessionKey of sessionKeys) {
+          zip.file(sessionKey + ".prsv", localStorage.getItem(sessionKey)!);
         }
-        zip.generateAsync({ type: "blob" }).then(content => {
-          const url = URL.createObjectURL(content);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = "pokerogue_saves.zip";
-          a.click();
-          URL.revokeObjectURL(url);
-        });
+        const content = await zip.generateAsync({ type: "blob" });
+        const url = URL.createObjectURL(content);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "pokerogue_saves.zip";
+        a.click();
+        URL.revokeObjectURL(url);
       } else {
         return onFail(this.ERR_NO_SAVES);
       }
+    });
+
+    this.changeLanguageImage.on("pointerdown", () => {
+      globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
+        options: languageOptions,
+        maxOptions: 7,
+        delay: 1000,
+      });
     });
 
     this.externalPartyContainer.setAlpha(0);

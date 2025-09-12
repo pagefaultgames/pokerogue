@@ -2,15 +2,14 @@ import { updateUserInfo } from "#app/account";
 import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
-import type { ModalConfig } from "#ui/handlers/modal-ui-handler";
-import { ModalUiHandler } from "#ui/handlers/modal-ui-handler";
+import type { ModalConfig } from "#ui/modal-ui-handler";
+import { ModalUiHandler } from "#ui/modal-ui-handler";
 import { addTextObject } from "#ui/text";
 import { sessionIdKey } from "#utils/common";
 import { removeCookie } from "#utils/cookies";
 import i18next from "i18next";
 
 export class UnavailableModalUiHandler extends ModalUiHandler {
-  private reconnectTimer: NodeJS.Timeout | null;
   private reconnectDuration: number;
   private reconnectCallback: () => void;
 
@@ -62,7 +61,6 @@ export class UnavailableModalUiHandler extends ModalUiHandler {
   tryReconnect(): void {
     updateUserInfo().then(response => {
       if (response[0] || [200, 400].includes(response[1])) {
-        this.reconnectTimer = null;
         this.reconnectDuration = this.minTime;
         globalScene.playSound("se/pb_bounce_1");
         this.reconnectCallback();
@@ -71,7 +69,7 @@ export class UnavailableModalUiHandler extends ModalUiHandler {
         globalScene.reset(true, true);
       } else {
         this.reconnectDuration = Math.min(this.reconnectDuration * 2, this.maxTime); // Set a max delay so it isn't infinite
-        this.reconnectTimer = setTimeout(
+        setTimeout(
           () => this.tryReconnect(),
           // Adds a random factor to avoid pendulum effect during long total breakdown
           this.reconnectDuration + Math.random() * this.randVarianceTime,
@@ -81,14 +79,14 @@ export class UnavailableModalUiHandler extends ModalUiHandler {
   }
 
   show(args: any[]): boolean {
-    if (args.length >= 1 && args[0] instanceof Function) {
+    if (args.length > 0 && args[0] instanceof Function) {
       const config: ModalConfig = {
         buttonActions: [],
       };
 
       this.reconnectCallback = args[0];
       this.reconnectDuration = this.minTime;
-      this.reconnectTimer = setTimeout(() => this.tryReconnect(), this.reconnectDuration);
+      setTimeout(() => this.tryReconnect(), this.reconnectDuration);
 
       return super.show([config]);
     }

@@ -2,10 +2,10 @@ import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
-import { ScrollBar } from "#ui/containers/scroll-bar";
-import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
-import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/handlers/pokemon-icon-anim-handler";
-import { ScrollableGridUiHandler } from "#ui/handlers/scrollable-grid-handler";
+import { MessageUiHandler } from "#ui/message-ui-handler";
+import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-helper";
+import { ScrollBar } from "#ui/scroll-bar";
+import { ScrollableGridHelper } from "#ui/scrollable-grid-helper";
 import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import i18next from "i18next";
@@ -25,9 +25,9 @@ export class EggListUiHandler extends MessageUiHandler {
   private eggListMessageBoxContainer: Phaser.GameObjects.Container;
 
   private cursorObj: Phaser.GameObjects.Image;
-  private scrollGridHandler: ScrollableGridUiHandler;
+  private scrollGridHandler: ScrollableGridHelper;
 
-  private iconAnimHandler: PokemonIconAnimHandler;
+  private iconAnimHandler: PokemonIconAnimHelper;
 
   constructor() {
     super(UiMode.EGG_LIST);
@@ -45,7 +45,7 @@ export class EggListUiHandler extends MessageUiHandler {
 
     const eggListBg = globalScene.add.image(0, 0, "egg_list_bg").setOrigin(0);
 
-    this.iconAnimHandler = new PokemonIconAnimHandler();
+    this.iconAnimHandler = new PokemonIconAnimHelper();
     this.iconAnimHandler.setup();
 
     this.eggNameText = addTextObject(8, 68, "", TextStyle.SUMMARY).setOrigin(0);
@@ -64,7 +64,7 @@ export class EggListUiHandler extends MessageUiHandler {
 
     const scrollBar = new ScrollBar(310, 5, 4, 170, this.ROWS);
 
-    this.scrollGridHandler = new ScrollableGridUiHandler(this, this.ROWS, this.COLUMNS)
+    this.scrollGridHandler = new ScrollableGridHelper(this, this.ROWS, this.COLUMNS)
       .withScrollBar(scrollBar)
       .withUpdateGridCallBack(() => this.updateEggIcons())
       .withUpdateSingleElementCallback((i: number) => this.setEggDetails(i));

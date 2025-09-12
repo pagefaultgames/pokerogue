@@ -5,8 +5,8 @@ import { Command } from "#enums/command";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { CommandPhase } from "#phases/command-phase";
-import { UiHandler } from "#ui/handlers/ui-handler";
 import { addTextObject, getTextStyleOptions } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import i18next from "i18next";
 

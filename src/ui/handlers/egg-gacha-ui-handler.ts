@@ -9,7 +9,7 @@ import { GachaType } from "#enums/gacha-types";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { getVoucherTypeIcon, VoucherType } from "#system/voucher";
-import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
+import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addTextObject, getEggTierTextTint, getTextStyleOptions } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt, randSeedShuffle } from "#utils/common";
@@ -96,7 +96,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
       legendaryLabelY = 0;
     }
 
-    const gachaUpLabel = addTextObject(gachaX, gachaY, i18next.t("egg:legendaryUPGacha"), gachaTextStyle).setOrigin(0);
+    const gachaUpLabel = addTextObject(gachaX, gachaY, i18next.t("egg:legendaryUpGacha"), gachaTextStyle).setOrigin(0);
     gachaInfoContainer.add(gachaUpLabel);
 
     switch (gachaType as GachaType) {
@@ -124,14 +124,14 @@ export class EggGachaUiHandler extends MessageUiHandler {
           gachaUpLabel.setAlign("center").setY(0);
         }
 
-        gachaUpLabel.setText(i18next.t("egg:moveUPGacha")).setX(0).setOrigin(0.5, 0);
+        gachaUpLabel.setText(i18next.t("egg:moveUpGacha")).setX(0).setOrigin(0.5, 0);
         break;
       case GachaType.SHINY:
         if (["de", "fr", "ko", "ru"].includes(currentLanguage)) {
           gachaUpLabel.setAlign("center").setY(0);
         }
 
-        gachaUpLabel.setText(i18next.t("egg:shinyUPGacha")).setX(0).setOrigin(0.5, 0);
+        gachaUpLabel.setText(i18next.t("egg:shinyUpGacha")).setX(0).setOrigin(0.5, 0);
         break;
     }
 
@@ -525,7 +525,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
       }
       const eggSprite = globalScene.add.sprite(127, 75, "egg", `egg_${eggs[i].getKey()}`).setScale(0.5);
       gachaContainer.addAt(eggSprite, 2);
-      // biome-ignore lint/nursery/noAwaitInLoop: The point of this loop is to play the animations, one after another
+      // biome-ignore lint/performance/noAwaitInLoops: The point of this loop is to play the animations, one after another
       await this.doPullAnim(eggSprite, i).finally(() => gachaContainer.remove(eggSprite, true));
     }
 
