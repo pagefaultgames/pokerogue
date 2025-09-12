@@ -43,8 +43,8 @@ import { showEncounterText } from "#mystery-encounters/encounter-dialogue-utils"
 import type { MysteryEncounterOption } from "#mystery-encounters/mystery-encounter-option";
 import type { Variant } from "#sprites/variant";
 import type { PokemonData } from "#system/pokemon-data";
-import type { TrainerConfig } from "#trainers/trainer-config";
-import { trainerConfigs } from "#trainers/trainer-config";
+import type { TrainerConfig } from "#trainers/trainer-configs-init";
+import { trainerConfigs } from "#trainers/trainer-configs-init";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import type { PartyOption, PokemonSelectFilter } from "#ui/party-ui-handler";

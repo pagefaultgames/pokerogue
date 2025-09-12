@@ -19,7 +19,7 @@ import {
 import { getSpriteKeysFromSpecies } from "#mystery-encounters/encounter-pokemon-utils";
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
-import { trainerConfigs } from "#trainers/trainer-config";
+import { trainerConfigs } from "#trainers/trainer-configs-init";
 import { randSeedInt } from "#utils/common";
 import i18next from "i18next";
 

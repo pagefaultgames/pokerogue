@@ -20,7 +20,7 @@ import type { CustomModifierSettings } from "#modifiers/modifier-type";
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import i18next from "#plugins/i18n";
 import { MusicPreference } from "#system/settings";
-import { trainerConfigs } from "#trainers/trainer-config";
+import { trainerConfigs } from "#trainers/trainer-configs-init";
 import type { TurnMove } from "#types/turn-move";
 import {
   NumberHolder,
