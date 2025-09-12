@@ -2636,7 +2636,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         e => new FusionSpeciesFormEvolution(this.species.speciesId, e),
       );
       for (const fe of fusionEvolutions) {
-        if (fe.validate(this)) {
+        if (fe.validate(this, true)) {
           return fe;
         }
       }
