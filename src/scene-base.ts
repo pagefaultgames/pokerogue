@@ -1,4 +1,4 @@
-import { coerceArray } from "#utils/common";
+import { coerceArray } from "#utils/array";
 
 export const legacyCompatibleImages: string[] = [];
 
