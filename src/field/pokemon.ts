@@ -159,7 +159,6 @@ import {
   fixedInt,
   getIvsFromId,
   isBetween,
-  isNullOrUndefined,
   NumberHolder,
   randSeedFloat,
   randSeedInt,
@@ -886,7 +885,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         return this.fallbackVariantColor(cacheKey, spritePath, useExpSprite, battleSpritePath, error);
       })
       .then(c => {
-        if (!isNullOrUndefined(c)) {
+        if (c != null) {
           variantColorCache[cacheKey] = c;
         }
       });
@@ -1475,7 +1474,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     const ally = this.getAlly();
-    if (!isNullOrUndefined(ally)) {
+    if (ally != null) {
       applyAbAttrs("AllyStatMultiplierAbAttr", {
         pokemon: ally,
         stat,
@@ -1658,7 +1657,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (useIllusion && this.summonData.illusion) {
       return this.summonData.illusion.gender;
     }
-    if (!ignoreOverride && !isNullOrUndefined(this.summonData.gender)) {
+    if (!ignoreOverride && this.summonData.gender != null) {
       return this.summonData.gender;
     }
     return this.gender;
@@ -1674,7 +1673,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (useIllusion && this.summonData.illusion?.fusionGender) {
       return this.summonData.illusion.fusionGender;
     }
-    if (!ignoreOverride && !isNullOrUndefined(this.summonData.fusionGender)) {
+    if (!ignoreOverride && this.summonData.fusionGender != null) {
       return this.summonData.fusionGender;
     }
     return this.fusionGender;
@@ -1793,7 +1792,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns Whether this Pokemon has this species as either its base or fusion counterpart.
    */
   hasSpecies(species: SpeciesId, formKey?: string): boolean {
-    if (isNullOrUndefined(formKey)) {
+    if (formKey == null) {
       return this.species.speciesId === species || this.fusionSpecies?.speciesId === species;
     }
 
@@ -1941,7 +1940,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
             secondType = fusionType1;
           }
 
-          if (secondType === PokemonType.UNKNOWN && isNullOrUndefined(fusionType2)) {
+          if (secondType === PokemonType.UNKNOWN && fusionType2 == null) {
             // If second pokemon was monotype and shared its primary type
             secondType =
               customTypes
@@ -2024,12 +2023,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return allAbilities[Overrides.ENEMY_ABILITY_OVERRIDE];
     }
     if (this.isFusion()) {
-      if (!isNullOrUndefined(this.fusionCustomPokemonData?.ability) && this.fusionCustomPokemonData.ability !== -1) {
+      if (this.fusionCustomPokemonData?.ability != null && this.fusionCustomPokemonData.ability !== -1) {
         return allAbilities[this.fusionCustomPokemonData.ability];
       }
       return allAbilities[this.getFusionSpeciesForm(ignoreOverride).getAbility(this.fusionAbilityIndex)];
     }
-    if (!isNullOrUndefined(this.customPokemonData.ability) && this.customPokemonData.ability !== -1) {
+    if (this.customPokemonData.ability != null && this.customPokemonData.ability !== -1) {
       return allAbilities[this.customPokemonData.ability];
     }
     let abilityId = this.getSpeciesForm(ignoreOverride).getAbility(this.abilityIndex);
@@ -2053,7 +2052,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (Overrides.ENEMY_PASSIVE_ABILITY_OVERRIDE && this.isEnemy()) {
       return allAbilities[Overrides.ENEMY_PASSIVE_ABILITY_OVERRIDE];
     }
-    if (!isNullOrUndefined(this.customPokemonData.passive) && this.customPokemonData.passive !== -1) {
+    if (this.customPokemonData.passive != null && this.customPokemonData.passive !== -1) {
       return allAbilities[this.customPokemonData.passive];
     }
 
@@ -2237,7 +2236,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public getWeight(): number {
     const autotomizedTag = this.getTag(AutotomizedTag);
     let weightRemoved = 0;
-    if (!isNullOrUndefined(autotomizedTag)) {
+    if (autotomizedTag != null) {
       weightRemoved = 100 * autotomizedTag.autotomizeCount;
     }
     const minWeight = 0.1;
@@ -2384,7 +2383,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     cancelled?: BooleanHolder,
     useIllusion = false,
   ): TypeDamageMultiplier {
-    if (!isNullOrUndefined(this.turnData?.moveEffectiveness)) {
+    if (this.turnData?.moveEffectiveness != null) {
       return this.turnData?.moveEffectiveness;
     }
 
@@ -3606,7 +3605,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     });
 
     const ally = this.getAlly();
-    if (!isNullOrUndefined(ally)) {
+    if (ally != null) {
       const ignore =
         this.hasAbilityWithAttr("MoveAbilityBypassAbAttr") || sourceMove.hasFlag(MoveFlags.IGNORE_ABILITIES);
       applyAbAttrs("AllyStatMultiplierAbAttr", {
@@ -4022,7 +4021,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
       const ally = this.getAlly();
       /** Additionally apply friend guard damage reduction if ally has it. */
-      if (globalScene.currentBattle.double && !isNullOrUndefined(ally) && ally.isActive(true)) {
+      if (globalScene.currentBattle.double && ally != null && ally.isActive(true)) {
         applyAbAttrs("AlliedFieldDamageReductionAbAttr", {
           ...abAttrParams,
           // Same parameters as before, except we are applying the ally's ability
@@ -6397,13 +6396,13 @@ export class EnemyPokemon extends Pokemon {
 
     if (
       speciesId in Overrides.ENEMY_FORM_OVERRIDES
-      && !isNullOrUndefined(Overrides.ENEMY_FORM_OVERRIDES[speciesId])
+      && Overrides.ENEMY_FORM_OVERRIDES[speciesId] != null
       && this.species.forms[Overrides.ENEMY_FORM_OVERRIDES[speciesId]]
     ) {
       this.formIndex = Overrides.ENEMY_FORM_OVERRIDES[speciesId];
     } else if (globalScene.gameMode.isDaily && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex)) {
       const eventBoss = getDailyEventSeedBoss(globalScene.seed);
-      if (!isNullOrUndefined(eventBoss)) {
+      if (eventBoss != null) {
         this.formIndex = eventBoss.formIndex;
       }
     }
