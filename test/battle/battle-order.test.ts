@@ -35,8 +35,8 @@ describe("Battle order", () => {
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
-    vi.spyOn(playerPokemon, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 50]); // set playerPokemon's speed to 50
-    vi.spyOn(enemyPokemon, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 150]); // set enemyPokemon's speed to 150
+    vi.spyOn(playerPokemon, "stats", "get").mockReturnValue(Uint32Array.of(20, 20, 20, 20, 20, 50)); // set playerPokemon's speed to 50
+    vi.spyOn(enemyPokemon, "stats", "get").mockReturnValue(Uint32Array.of(20, 20, 20, 20, 20, 150)); // set enemyPokemon's speed to 150
 
     game.move.select(MoveId.TACKLE);
     await game.phaseInterceptor.to("TurnStartPhase", false);
@@ -54,8 +54,8 @@ describe("Battle order", () => {
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
-    vi.spyOn(playerPokemon, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 150]); // set playerPokemon's speed to 150
-    vi.spyOn(enemyPokemon, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 50]); // set enemyPokemon's speed to 50
+    vi.spyOn(playerPokemon, "stats", "get").mockReturnValue(Uint32Array.of(20, 20, 20, 20, 20, 150)); // set playerPokemon's speed to 150
+    vi.spyOn(enemyPokemon, "stats", "get").mockReturnValue(Uint32Array.of(20, 20, 20, 20, 20, 50)); // set enemyPokemon's speed to 50
 
     game.move.select(MoveId.TACKLE);
     await game.phaseInterceptor.to("TurnStartPhase", false);
@@ -75,8 +75,8 @@ describe("Battle order", () => {
     const playerPokemon = game.scene.getPlayerField();
     const enemyPokemon = game.scene.getEnemyField();
 
-    playerPokemon.forEach(p => vi.spyOn(p, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 50])); // set both playerPokemons' speed to 50
-    enemyPokemon.forEach(p => vi.spyOn(p, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 150])); // set both enemyPokemons' speed to 150
+    playerPokemon.forEach(p => vi.spyOn(p, "stats", "get").mockReturnValue(Uint32Array.of(20, 20, 20, 20, 20, 50))); // set both playerPokemons' speed to 50
+    enemyPokemon.forEach(p => vi.spyOn(p, "stats", "get").mockReturnValue(Uint32Array.of(20, 20, 20, 20, 20, 150))); // set both enemyPokemons' speed to 150
     const playerIndices = playerPokemon.map(p => p?.getBattlerIndex());
     const enemyIndices = enemyPokemon.map(p => p?.getBattlerIndex());
 
@@ -98,9 +98,9 @@ describe("Battle order", () => {
 
     const playerPokemon = game.scene.getPlayerField();
     const enemyPokemon = game.scene.getEnemyField();
-    playerPokemon.forEach(p => vi.spyOn(p, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 100])); //set both playerPokemons' speed to 100
-    vi.spyOn(enemyPokemon[0], "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 100]); // set enemyPokemon's speed to 100
-    vi.spyOn(enemyPokemon[1], "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 150]); // set enemyPokemon's speed to 150
+    playerPokemon.forEach(p => vi.spyOn(p, "stats", "get").mockReturnValue(Uint32Array.of(20, 20, 20, 20, 20, 100))); //set both playerPokemons' speed to 100
+    vi.spyOn(enemyPokemon[0], "stats", "get").mockReturnValue(Uint32Array.of(20, 20, 20, 20, 20, 100)); // set enemyPokemon's speed to 100
+    vi.spyOn(enemyPokemon[1], "stats", "get").mockReturnValue(Uint32Array.of(20, 20, 20, 20, 20, 150)); // set enemyPokemon's speed to 150
     const playerIndices = playerPokemon.map(p => p?.getBattlerIndex());
     const enemyIndices = enemyPokemon.map(p => p?.getBattlerIndex());
 
@@ -121,10 +121,10 @@ describe("Battle order", () => {
 
     const playerPokemon = game.scene.getPlayerField();
     const enemyPokemon = game.scene.getEnemyField();
-    vi.spyOn(playerPokemon[0], "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 100]); // set one playerPokemon's speed to 100
-    vi.spyOn(playerPokemon[1], "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 150]); // set other playerPokemon's speed to 150
-    vi.spyOn(enemyPokemon[0], "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 100]); // set one enemyPokemon's speed to 100
-    vi.spyOn(enemyPokemon[1], "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 150]); // set other enemyPokemon's speed to 150
+    vi.spyOn(playerPokemon[0], "stats", "get").mockReturnValue(Uint32Array.of(20, 20, 20, 20, 20, 100)); // set one playerPokemon's speed to 100
+    vi.spyOn(playerPokemon[1], "stats", "get").mockReturnValue(Uint32Array.of(20, 20, 20, 20, 20, 150)); // set other playerPokemon's speed to 150
+    vi.spyOn(enemyPokemon[0], "stats", "get").mockReturnValue(Uint32Array.of(20, 20, 20, 20, 20, 100)); // set one enemyPokemon's speed to 100
+    vi.spyOn(enemyPokemon[1], "stats", "get").mockReturnValue(Uint32Array.of(20, 20, 20, 20, 20, 150)); // set other enemyPokemon's speed to 150
     const playerIndices = playerPokemon.map(p => p?.getBattlerIndex());
     const enemyIndices = enemyPokemon.map(p => p?.getBattlerIndex());
 
