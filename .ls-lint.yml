@@ -26,4 +26,5 @@ ignore:
    - .git
    - public
    - dist
+   - .idea
    - .devcontainer

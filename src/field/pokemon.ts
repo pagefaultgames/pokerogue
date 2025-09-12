@@ -1407,7 +1407,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param move - The {@linkcode Move} being used
    * @returns The given move's final category
    */
-  getMoveCategory(target: Pokemon, move: Move): MoveCategory {
+  getMoveCategory(target: Pokemon | null, move: Move): MoveCategory {
     const moveCategory = new NumberHolder(move.category);
     applyMoveAttrs("VariableMoveCategoryAttr", this, target, move, moveCategory);
     return moveCategory.value;
