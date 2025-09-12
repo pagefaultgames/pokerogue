@@ -1321,7 +1321,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param bypassSummonData - Whether to prefer actual stats (`true`) or in-battle overridden stats (`false`); default `true`
    * @returns The numeric values of this {@linkcode Pokemon}'s stats as an array.
    */
-  getStats(bypassSummonData = true): ArrayLike<number> {
+  getStats(bypassSummonData = true): Uint32Array {
     if (!bypassSummonData) {
       // Only grab summon data stats if nonzero
       return this.summonData.stats.map((s, i) => s || this.stats[i]);
