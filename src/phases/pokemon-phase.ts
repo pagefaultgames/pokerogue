@@ -9,7 +9,7 @@ export abstract class PokemonPhase extends FieldPhase {
    * TODO: Make this either use IDs or `BattlerIndex`es, not a weird mix of both
    */
   protected battlerIndex: BattlerIndex | number;
-  /** TODO: Why is this needed? */
+  // TODO: Why is this needed?
   public player: boolean;
   /** @todo Remove in favor of `battlerIndex` pleas for fuck's sake */
   public fieldIndex: number;
