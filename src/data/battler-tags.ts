@@ -28,6 +28,8 @@ import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import { invalidEncoreMoves } from "#moves/invalid-moves";
 import type { Move } from "#moves/move";
+import { getMoveTargets } from "#moves/move-utils";
+import { PokemonMove } from "#moves/pokemon-move";
 import type { MoveEffectPhase } from "#phases/move-effect-phase";
 import type { MovePhase } from "#phases/move-phase";
 import type { StatStageChangeCallback } from "#phases/stat-stage-change-phase";
@@ -175,6 +177,7 @@ export class BattlerTag implements BaseBattlerTag {
     return "";
   }
 
+  // TODO: Make this a getter
   isSourceLinked(): boolean {
     return false;
   }
@@ -1239,13 +1242,16 @@ export class FrenzyTag extends SerializableBattlerTag {
  */
 export class EncoreTag extends MoveRestrictionBattlerTag {
   public override readonly tagType = BattlerTagType.ENCORE;
-  /** The ID of the move the user is locked into using */
+  /** The {@linkcode MoveID} the tag holder is locked into */
   public moveId: MoveId;
 
   constructor(sourceId: number) {
+    // Encore ends at the end of the 3rd turn it procs.
+    // If used on turn X when faster, it ends at the end of turn X+2.
+    // If used on turn X when slower, it ends at the end of turn X+3.
     super(
       BattlerTagType.ENCORE,
-      [BattlerTagLapseType.CUSTOM, BattlerTagLapseType.AFTER_MOVE],
+      [BattlerTagLapseType.AFTER_MOVE, BattlerTagLapseType.TURN_END],
       3,
       MoveId.ENCORE,
       sourceId,
@@ -1267,6 +1273,14 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
       return false;
     }
 
+    if (!pokemon.getMoveset().some(m => m.moveId === lastMove.move && !m.isOutOfPp())) {
+      return false;
+    }
+
+    if (pokemon.getTag(BattlerTagType.SHELL_TRAP)) {
+      return false;
+    }
+
     this.moveId = lastMove.move;
 
     return true;
@@ -1279,35 +1293,57 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
       }),
     );
 
-    const movePhase = globalScene.phaseManager.findPhase(m => m.is("MovePhase") && m.pokemon === pokemon);
-    if (movePhase) {
-      const movesetMove = pokemon.getMoveset().find(m => m.moveId === this.moveId);
-      if (movesetMove) {
-        const lastMove = pokemon.getLastXMoves(1)[0];
-        globalScene.phaseManager.tryReplacePhase(
-          m => m.is("MovePhase") && m.pokemon === pokemon,
-          globalScene.phaseManager.create(
-            "MovePhase",
-            pokemon,
-            lastMove.targets ?? [],
-            movesetMove,
-            MoveUseMode.NORMAL,
-          ),
-        );
-      }
+    // If the target has not moved yet,
+    // replace their upcoming move with the encored move against randomized targets
+    const movePhase = globalScene.phaseManager.findPhase(
+      (m): m is MovePhase => m.is("MovePhase") && m.pokemon === pokemon,
+    );
+    if (!movePhase) {
+      return;
     }
+
+    // Use the prior move in the moveset.
+    // Bang is justified as `canAdd` returns false if not found
+    const movesetMove = pokemon.getMoveset().find(m => m.moveId === this.moveId)!;
+
+    const moveTargets = getMoveTargets(pokemon, this.moveId);
+    // Spread moves and ones with only 1 valid target will use their normal targeting.
+    // If not, target a random enemy in our target list
+    const targets =
+      moveTargets.multiple || moveTargets.targets.length === 1
+        ? moveTargets.targets
+        : [moveTargets.targets[pokemon.randBattleSeedInt(moveTargets.targets.length)]];
+
+    globalScene.phaseManager.tryReplacePhase(
+      m => m.is("MovePhase") && m.pokemon === pokemon,
+      globalScene.phaseManager.create(
+        "MovePhase",
+        pokemon,
+        targets,
+        movesetMove,
+        movePhase.useMode,
+        movePhase.isForcedLast(),
+      ),
+    );
   }
 
   /**
-   * If the encored move has run out of PP, Encore ends early. Otherwise, Encore lapses based on the AFTER_MOVE battler tag lapse type.
-   * @returns `true` to persist | `false` to end and be removed
+   * If the encored move has run out of PP or the tag's turn count has elapsed,
+   * Encore ends at the END of the turn.
+   * Otherwise, Encore's duration reduces when the target attempts to use a move.
+   * @returns Whether the tag should remain active.
    */
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    if (lapseType === BattlerTagLapseType.CUSTOM) {
-      const encoredMove = pokemon.getMoveset().find(m => m.moveId === this.moveId);
-      return !isNullOrUndefined(encoredMove) && encoredMove.getPpRatio() > 0;
+    if (lapseType === BattlerTagLapseType.AFTER_MOVE) {
+      this.turnCount--;
+      return true;
     }
-    return super.lapse(pokemon, lapseType);
+
+    const encoredMove = pokemon.getMoveset().find(m => m.moveId === this.moveId);
+    if (isNullOrUndefined(encoredMove) || encoredMove.isOutOfPp()) {
+      return false;
+    }
+    return this.turnCount > 0;
   }
 
   /**
@@ -1490,12 +1526,8 @@ export class MinimizeTag extends SerializableBattlerTag {
 
 export class DrowsyTag extends SerializableBattlerTag {
   public override readonly tagType = BattlerTagType.DROWSY;
-  constructor() {
-    super(BattlerTagType.DROWSY, BattlerTagLapseType.TURN_END, 2, MoveId.YAWN);
-  }
-
-  canAdd(pokemon: Pokemon): boolean {
-    return globalScene.arena.terrain?.terrainType !== TerrainType.ELECTRIC || !pokemon.isGrounded();
+  constructor(sourceId: number) {
+    super(BattlerTagType.DROWSY, BattlerTagLapseType.TURN_END, 2, MoveId.YAWN, sourceId);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -1510,6 +1542,7 @@ export class DrowsyTag extends SerializableBattlerTag {
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (!super.lapse(pokemon, lapseType)) {
+      // TODO: Safeguard should not prevent yawn from setting sleep after tag use
       pokemon.trySetStatus(StatusEffect.SLEEP);
       return false;
     }
@@ -3624,6 +3657,23 @@ export class MagicCoatTag extends BattlerTag {
       }),
     );
   }
+
+  /**
+   * Apply the tag to reflect a move.
+   * @param pokemon - The {@linkcode Pokemon} to whom this tag belongs
+   * @param opponent - The {@linkcode Pokemon} having originally used the move
+   * @param move - The {@linkcode Move} being used
+   */
+  public apply(pokemon: Pokemon, opponent: Pokemon, move: Move): void {
+    const newTargets = move.isMultiTarget() ? getMoveTargets(pokemon, move.id).targets : [opponent.getBattlerIndex()];
+    globalScene.phaseManager.unshiftNew(
+      "MovePhase",
+      pokemon,
+      newTargets,
+      new PokemonMove(move.id),
+      MoveUseMode.REFLECTED,
+    );
+  }
 }
 
 /**
@@ -3671,7 +3721,7 @@ export function getBattlerTag(
     case BattlerTagType.AQUA_RING:
       return new AquaRingTag();
     case BattlerTagType.DROWSY:
-      return new DrowsyTag();
+      return new DrowsyTag(sourceId);
     case BattlerTagType.TRAPPED:
       return new TrappedTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
     case BattlerTagType.NO_RETREAT:
