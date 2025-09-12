@@ -519,6 +519,22 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
             success = this.setCursor(0);
           }
           break;
+        case Button.CYCLE_SHINY:
+          if (this.onActionInput && globalScene.money >= this.rerollCost){
+            const originalOnActionInput = this.onActionInput;
+            this.awaitingActionInput = true;
+            this.onActionInput = originalOnActionInput;
+            originalOnActionInput(0, 0);
+          }
+          break;
+        case Button.CYCLE_ABILITY:
+          if (this.onActionInput && this.lockRarityButtonContainer.visible) {
+            const originalOnActionInput = this.onActionInput;
+            this.awaitingActionInput = true;
+            this.onActionInput = originalOnActionInput;
+            originalOnActionInput(0, 3);
+          }
+          break;
       }
     }
 
