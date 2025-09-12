@@ -4,6 +4,7 @@ import { AbilityId } from "#enums/ability-id";
 import { Button } from "#enums/buttons";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/test-utils/game-manager";
 import type { PartyUiHandler } from "#ui/party-ui-handler";
@@ -66,7 +67,7 @@ describe("Abilities - Arena Trap", () => {
   });
 
   it("should guarantee double battle with any one LURE", async () => {
-    game.override.startingModifier([{ name: "LURE" }]).startingWave(2);
+    game.override.startingTrainerItems([{ entry: TrainerItemId.LURE }]).startingWave(2);
     await game.classicMode.startBattle([SpeciesId.DUGTRIO]);
 
     expect(game.scene.getEnemyField()).toHaveLength(2);

@@ -1,13 +1,16 @@
 import type { BattleScene } from "#app/battle-scene";
-import { TurnHeldItemTransferModifier } from "#modifiers/modifier";
+import { allSpecies } from "#data/data-lists";
+import { HeldItemId } from "#enums/held-item-id";
+import { SpeciesId } from "#enums/species-id";
+import { PlayerPokemon } from "#field/pokemon";
 import {
   Achv,
   AchvTier,
   achvs,
   DamageAchv,
   HealAchv,
+  HeldItemAchv,
   LevelAchv,
-  ModifierAchv,
   MoneyAchv,
   RibbonAchv,
 } from "#system/achv";
@@ -197,18 +200,19 @@ describe("LevelAchv", () => {
   });
 });
 
-describe("ModifierAchv", () => {
+describe("HeldItemAchv", () => {
   it("should create an instance of ModifierAchv", () => {
-    const modifierAchv = new ModifierAchv("", "Test Description", "modifier_icon", 10, () => true);
-    expect(modifierAchv).toBeInstanceOf(ModifierAchv);
-    expect(modifierAchv instanceof Achv).toBe(true);
+    const heldItemAchv = new HeldItemAchv("", "Test Description", "modifier_icon", 10, () => true);
+    expect(heldItemAchv).toBeInstanceOf(HeldItemAchv);
+    expect(heldItemAchv instanceof Achv).toBe(true);
   });
 
-  it("should validate the achievement based on the modifier function", () => {
-    const modifierAchv = new ModifierAchv("", "Test Description", "modifier_icon", 10, () => true);
-    const modifier = new TurnHeldItemTransferModifier(null!, 3, 1);
-
-    expect(modifierAchv.validate([modifier])).toBe(true);
+  it("should validate the mini black hole achievement", () => {
+    const heldItemAchv = achvs.MINI_BLACK_HOLE;
+    const pokemon = new PlayerPokemon(allSpecies[SpeciesId.BULBASAUR], 1);
+    expect(heldItemAchv.validate([pokemon])).toBe(false);
+    pokemon.heldItemManager.add(HeldItemId.MINI_BLACK_HOLE);
+    expect(heldItemAchv.validate([pokemon])).toBe(true);
   });
 });
 
@@ -241,7 +245,7 @@ describe("achvs", () => {
     expect(achvs.TERASTALLIZE).toBeInstanceOf(Achv);
     expect(achvs.STELLAR_TERASTALLIZE).toBeInstanceOf(Achv);
     expect(achvs.SPLICE).toBeInstanceOf(Achv);
-    expect(achvs.MINI_BLACK_HOLE).toBeInstanceOf(ModifierAchv);
+    expect(achvs.MINI_BLACK_HOLE).toBeInstanceOf(HeldItemAchv);
     expect(achvs.CATCH_MYTHICAL).toBeInstanceOf(Achv);
     expect(achvs.CATCH_SUB_LEGENDARY).toBeInstanceOf(Achv);
     expect(achvs.CATCH_LEGENDARY).toBeInstanceOf(Achv);

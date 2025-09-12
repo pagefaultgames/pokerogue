@@ -9,15 +9,15 @@ import {
   SingleTypeChallenge,
 } from "#data/challenge";
 import { Challenges } from "#enums/challenges";
+import { HeldItemId } from "#enums/held-item-id";
 import { PlayerGender } from "#enums/player-gender";
 import { getShortenedStatKey, Stat } from "#enums/stat";
-import { TurnHeldItemTransferModifier } from "#modifiers/modifier";
+import type { Pokemon } from "#field/pokemon";
 import type { ConditionFn } from "#types/common";
 import { isNuzlockeChallenge } from "#utils/challenge-utils";
 import { NumberHolder } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
-import type { Modifier } from "typescript";
 
 export enum AchvTier {
   COMMON,
@@ -172,15 +172,15 @@ export class LevelAchv extends Achv {
   }
 }
 
-export class ModifierAchv extends Achv {
+export class HeldItemAchv extends Achv {
   constructor(
     localizationKey: string,
     description: string,
     iconImage: string,
     score: number,
-    modifierFunc: (modifier: Modifier) => boolean,
+    pokemonFunc: (pokemon: Pokemon) => boolean,
   ) {
-    super(localizationKey, description, iconImage, score, (args: any[]) => modifierFunc(args[0] as Modifier));
+    super(localizationKey, description, iconImage, score, (args: any[]) => pokemonFunc(args[0] as Pokemon));
   }
 }
 
@@ -494,12 +494,8 @@ export const achvs = {
     25,
   ).setSecret(true),
   SPLICE: new Achv("splice", "splice.description", "dna_splicers", 50),
-  MINI_BLACK_HOLE: new ModifierAchv(
-    "miniBlackHole",
-    "miniBlackHole.description",
-    "mini_black_hole",
-    25,
-    modifier => modifier instanceof TurnHeldItemTransferModifier,
+  MINI_BLACK_HOLE: new HeldItemAchv("miniBlackHole", "miniBlackHole.description", "mini_black_hole", 25, pokemon =>
+    pokemon.heldItemManager.hasItem(HeldItemId.MINI_BLACK_HOLE),
   ).setSecret(),
   HIDDEN_ABILITY: new Achv("hiddenAbility", "hiddenAbility.description", "ability_charm", 25),
   PERFECT_IVS: new Achv("perfectIvs", "perfectIvs.description", "blunder_policy", 25),

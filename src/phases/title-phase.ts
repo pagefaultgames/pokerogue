@@ -4,16 +4,14 @@ import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { Phase } from "#app/phase";
 import { fetchDailyRunSeed, getDailyRunStarters } from "#data/daily-run";
-import { modifierTypes } from "#data/data-lists";
 import { Gender } from "#data/gender";
 import { BattleType } from "#enums/battle-type";
 import { GameModes } from "#enums/game-modes";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
 import { Unlockables } from "#enums/unlockables";
 import { getBiomeKey } from "#field/arena";
-import type { Modifier } from "#modifiers/modifier";
-import { getDailyRunStarterModifiers, regenerateModifierPoolThresholds } from "#modifiers/modifier-type";
+import { assignDailyRunStarterHeldItems } from "#items/held-item-pool";
 import { vouchers } from "#system/voucher";
 import type { SessionSaveData } from "#types/save-data";
 import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
@@ -242,24 +240,13 @@ export class TitlePhase extends Phase {
           loadPokemonAssets.push(starterPokemon.loadAssets());
         }
 
-        regenerateModifierPoolThresholds(party, ModifierPoolType.DAILY_STARTER);
+        globalScene.trainerItems.add(TrainerItemId.EXP_SHARE, 3);
+        globalScene.trainerItems.add(TrainerItemId.GOLDEN_EXP_CHARM, 3);
+        globalScene.trainerItems.add(TrainerItemId.MAP);
 
-        const modifiers: Modifier[] = new Array(3)
-          .fill(null)
-          .map(() => modifierTypes.EXP_SHARE().withIdFromFunc(modifierTypes.EXP_SHARE).newModifier())
-          .concat(
-            new Array(3)
-              .fill(null)
-              .map(() => modifierTypes.GOLDEN_EXP_CHARM().withIdFromFunc(modifierTypes.GOLDEN_EXP_CHARM).newModifier()),
-          )
-          .concat([modifierTypes.MAP().withIdFromFunc(modifierTypes.MAP).newModifier()])
-          .concat(getDailyRunStarterModifiers(party))
-          .filter(m => m !== null);
+        assignDailyRunStarterHeldItems(party);
 
-        for (const m of modifiers) {
-          globalScene.addModifier(m, true, false, false, true);
-        }
-        globalScene.updateModifiers(true, true);
+        globalScene.updateItems(true);
 
         Promise.all(loadPokemonAssets).then(() => {
           globalScene.time.delayedCall(500, () => globalScene.playBgm());

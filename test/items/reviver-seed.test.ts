@@ -1,10 +1,11 @@
-import { allMoves } from "#data/data-lists";
+import { allHeldItems, allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import type { PokemonInstantReviveModifier } from "#modifiers/modifier";
+import type { InstantReviveHeldItem } from "#items/instant-revive";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -32,8 +33,8 @@ describe("Items - Reviver Seed", () => {
       .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .startingHeldItems([{ name: "REVIVER_SEED" }])
-      .enemyHeldItems([{ name: "REVIVER_SEED" }])
+      .startingHeldItems([{ entry: HeldItemId.REVIVER_SEED }])
+      .enemyHeldItems([{ entry: HeldItemId.REVIVER_SEED }])
       .enemyMoveset(MoveId.SPLASH);
     vi.spyOn(allMoves[MoveId.SHEER_COLD], "accuracy", "get").mockReturnValue(100);
     vi.spyOn(allMoves[MoveId.LEECH_SEED], "accuracy", "get").mockReturnValue(100);
@@ -54,7 +55,7 @@ describe("Items - Reviver Seed", () => {
     const player = game.field.getPlayerPokemon();
     player.damageAndUpdate(player.hp - 1);
 
-    const reviverSeed = player.getHeldItems()[0] as PokemonInstantReviveModifier;
+    const reviverSeed = allHeldItems[HeldItemId.REVIVER_SEED] as InstantReviveHeldItem;
     vi.spyOn(reviverSeed, "apply");
 
     game.move.select(MoveId.TACKLE);
@@ -70,7 +71,7 @@ describe("Items - Reviver Seed", () => {
     player.damageAndUpdate(player.hp - 1);
     player.addTag(BattlerTagType.CONFUSED, 3);
 
-    const reviverSeed = player.getHeldItems()[0] as PokemonInstantReviveModifier;
+    const reviverSeed = allHeldItems[HeldItemId.REVIVER_SEED] as InstantReviveHeldItem;
     vi.spyOn(reviverSeed, "apply");
 
     vi.spyOn(player, "randBattleSeedInt").mockReturnValue(0); // Force confusion self-hit
@@ -122,8 +123,8 @@ describe("Items - Reviver Seed", () => {
     const player = game.field.getPlayerPokemon();
     player.damageAndUpdate(player.hp - 1);
 
-    const playerSeed = player.getHeldItems()[0] as PokemonInstantReviveModifier;
-    vi.spyOn(playerSeed, "apply");
+    const reviverSeed = allHeldItems[HeldItemId.REVIVER_SEED] as InstantReviveHeldItem;
+    vi.spyOn(reviverSeed, "apply");
 
     game.move.select(move);
     await game.phaseInterceptor.to("TurnEndPhase");

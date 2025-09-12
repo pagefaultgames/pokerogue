@@ -18,7 +18,7 @@ import {
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/mystery-encounter/encounter-test-utils";
 import { GameManager } from "#test/test-utils/game-manager";
-import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/dancingLessons";
@@ -115,7 +115,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       expect(movePhases.filter(p => (p as MovePhase).move.moveId === MoveId.REVELATION_DANCE).length).toBe(1); // Revelation Dance used before battle
     });
 
-    it("should have a Baton in the rewards after battle", async () => {
+    it("should have a Baton in the allRewards after battle", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DANCING_LESSONS, defaultParty);
       // Make party lead's level arbitrarily high to not get KOed by move
       const partyLead = game.field.getPlayerPokemon();
@@ -123,16 +123,16 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       partyLead.calculateStats();
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to("SelectModifierPhase", false);
-      expect(game).toBeAtPhase("SelectModifierPhase");
-      await game.phaseInterceptor.to("SelectModifierPhase");
+      await game.phaseInterceptor.to("SelectRewardPhase", false);
+      expect(game).toBeAtPhase("SelectRewardPhase");
+      await game.phaseInterceptor.to("SelectRewardPhase");
 
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(3); // Should fill remaining
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toContain("BATON");
+      expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+      const rewardSelectHandler = scene.ui.handlers.find(
+        h => h instanceof RewardSelectUiHandler,
+      ) as RewardSelectUiHandler;
+      expect(rewardSelectHandler.options.length).toEqual(3); // Should fill remaining
+      expect(rewardSelectHandler.options[0].rewardOption.type.id).toContain("BATON");
     });
   });
 

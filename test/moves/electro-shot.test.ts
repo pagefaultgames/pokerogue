@@ -1,5 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
@@ -87,7 +88,7 @@ describe("Moves - Electro Shot", () => {
   });
 
   it("should only increase Sp. Atk once with Multi-Lens", async () => {
-    game.override.weather(WeatherType.RAIN).startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
+    game.override.weather(WeatherType.RAIN).startingHeldItems([{ entry: HeldItemId.MULTI_LENS }]);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 

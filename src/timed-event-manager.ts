@@ -6,7 +6,9 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import { WeatherType } from "#enums/weather-type";
+import type { SilentReward } from "#types/rewards";
 import { addTextObject } from "#ui/text";
 import type { nil } from "#utils/common";
 import { isNullOrUndefined } from "#utils/common";
@@ -40,7 +42,7 @@ interface EventMysteryEncounterTier {
 
 interface EventWaveReward {
   wave: number;
-  type: string;
+  type: SilentReward;
 }
 
 type EventMusicReplacement = [string, string];
@@ -60,7 +62,7 @@ interface TimedEvent extends EventBanner {
   startDate: Date;
   endDate: Date;
   eventEncounters?: EventEncounter[];
-  delibirdyBuff?: string[];
+  delibirdyBuff?: TrainerItemId[];
   weather?: WeatherPoolEntry[];
   mysteryEncounterTierChanges?: EventMysteryEncounterTier[];
   luckBoostedSpecies?: SpeciesId[];
@@ -104,7 +106,14 @@ const timedEvents: TimedEvent[] = [
       { species: SpeciesId.GALAR_DARUMAKA },
       { species: SpeciesId.IRON_BUNDLE },
     ],
-    delibirdyBuff: ["CATCHING_CHARM", "SHINY_CHARM", "ABILITY_CHARM", "EXP_CHARM", "SUPER_EXP_CHARM", "HEALING_CHARM"],
+    delibirdyBuff: [
+      TrainerItemId.CATCHING_CHARM,
+      TrainerItemId.SHINY_CHARM,
+      TrainerItemId.ABILITY_CHARM,
+      TrainerItemId.EXP_CHARM,
+      TrainerItemId.SUPER_EXP_CHARM,
+      TrainerItemId.HEALING_CHARM,
+    ],
     weather: [{ weatherType: WeatherType.SNOW, weight: 1 }],
     mysteryEncounterTierChanges: [
       {
@@ -123,10 +132,10 @@ const timedEvents: TimedEvent[] = [
       },
     ],
     classicWaveRewards: [
-      { wave: 8, type: "SHINY_CHARM" },
-      { wave: 8, type: "ABILITY_CHARM" },
-      { wave: 8, type: "CATCHING_CHARM" },
-      { wave: 25, type: "SHINY_CHARM" },
+      { wave: 8, type: TrainerItemId.SHINY_CHARM },
+      { wave: 8, type: TrainerItemId.ABILITY_CHARM },
+      { wave: 8, type: TrainerItemId.CATCHING_CHARM },
+      { wave: 25, type: TrainerItemId.SHINY_CHARM },
     ],
   },
   {
@@ -194,10 +203,10 @@ const timedEvents: TimedEvent[] = [
       SpeciesId.BLOODMOON_URSALUNA,
     ],
     classicWaveRewards: [
-      { wave: 8, type: "SHINY_CHARM" },
-      { wave: 8, type: "ABILITY_CHARM" },
-      { wave: 8, type: "CATCHING_CHARM" },
-      { wave: 25, type: "SHINY_CHARM" },
+      { wave: 8, type: TrainerItemId.SHINY_CHARM },
+      { wave: 8, type: TrainerItemId.ABILITY_CHARM },
+      { wave: 8, type: TrainerItemId.CATCHING_CHARM },
+      { wave: 25, type: TrainerItemId.SHINY_CHARM },
     ],
   },
   {
@@ -234,10 +243,10 @@ const timedEvents: TimedEvent[] = [
     ],
     luckBoostedSpecies: [SpeciesId.LUVDISC],
     classicWaveRewards: [
-      { wave: 8, type: "SHINY_CHARM" },
-      { wave: 8, type: "ABILITY_CHARM" },
-      { wave: 8, type: "CATCHING_CHARM" },
-      { wave: 25, type: "SHINY_CHARM" },
+      { wave: 8, type: TrainerItemId.SHINY_CHARM },
+      { wave: 8, type: TrainerItemId.ABILITY_CHARM },
+      { wave: 8, type: TrainerItemId.CATCHING_CHARM },
+      { wave: 25, type: TrainerItemId.SHINY_CHARM },
     ],
   },
   {
@@ -285,10 +294,10 @@ const timedEvents: TimedEvent[] = [
       SpeciesId.ETERNAL_FLOETTE,
     ],
     classicWaveRewards: [
-      { wave: 8, type: "SHINY_CHARM" },
-      { wave: 8, type: "ABILITY_CHARM" },
-      { wave: 8, type: "CATCHING_CHARM" },
-      { wave: 25, type: "SHINY_CHARM" },
+      { wave: 8, type: TrainerItemId.SHINY_CHARM },
+      { wave: 8, type: TrainerItemId.ABILITY_CHARM },
+      { wave: 8, type: TrainerItemId.CATCHING_CHARM },
+      { wave: 25, type: TrainerItemId.SHINY_CHARM },
     ],
   },
   {
@@ -346,10 +355,10 @@ const timedEvents: TimedEvent[] = [
       { species: SpeciesId.APPLIN },
     ],
     classicWaveRewards: [
-      { wave: 8, type: "SHINY_CHARM" },
-      { wave: 8, type: "ABILITY_CHARM" },
-      { wave: 8, type: "CATCHING_CHARM" },
-      { wave: 25, type: "SHINY_CHARM" },
+      { wave: 8, type: TrainerItemId.SHINY_CHARM },
+      { wave: 8, type: TrainerItemId.ABILITY_CHARM },
+      { wave: 8, type: TrainerItemId.CATCHING_CHARM },
+      { wave: 25, type: TrainerItemId.SHINY_CHARM },
     ],
   },
   {
@@ -376,10 +385,10 @@ const timedEvents: TimedEvent[] = [
       { species: SpeciesId.ALOLA_MEOWTH },
     ],
     classicWaveRewards: [
-      { wave: 8, type: "SHINY_CHARM" },
-      { wave: 8, type: "ABILITY_CHARM" },
-      { wave: 8, type: "CATCHING_CHARM" },
-      { wave: 25, type: "SHINY_CHARM" },
+      { wave: 8, type: TrainerItemId.SHINY_CHARM },
+      { wave: 8, type: TrainerItemId.ABILITY_CHARM },
+      { wave: 8, type: TrainerItemId.CATCHING_CHARM },
+      { wave: 25, type: TrainerItemId.SHINY_CHARM },
     ],
   },
 ];
@@ -469,10 +478,10 @@ export class TimedEventManager {
 
   /**
    * For events where Delibirdy gives extra items
-   * @returns list of ids of {@linkcode ModifierType}s that Delibirdy hands out as a bonus
+   * @returns list of ids of {@linkcode Reward}s that Delibirdy hands out as a bonus
    */
-  getDelibirdyBuff(): string[] {
-    const ret: string[] = [];
+  getDelibirdyBuff(): TrainerItemId[] {
+    const ret: TrainerItemId[] = [];
     timedEvents
       .filter(te => this.isActive(te))
       .map(te => {
@@ -571,10 +580,10 @@ export class TimedEventManager {
    * Gets all the modifier types associated with a certain wave during an event
    * @see EventWaveReward
    * @param wave the wave to check for associated rewards
-   * @returns array of strings of the event modifier reward types
+   * @returns array of strings of the event reward types
    */
-  getFixedBattleEventRewards(wave: number): string[] {
-    const ret: string[] = [];
+  getFixedBattleEventRewards(wave: number): SilentReward[] {
+    const ret: SilentReward[] = [];
     timedEvents
       .filter(te => this.isActive(te) && !isNullOrUndefined(te.classicWaveRewards))
       .map(te => {

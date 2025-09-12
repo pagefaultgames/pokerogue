@@ -28,7 +28,6 @@ import { LoadingModalUiHandler } from "#ui/loading-modal-ui-handler";
 import { LoginFormUiHandler } from "#ui/login-form-ui-handler";
 import { MenuUiHandler } from "#ui/menu-ui-handler";
 import { MessageUiHandler } from "#ui/message-ui-handler";
-import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { MysteryEncounterUiHandler } from "#ui/mystery-encounter-ui-handler";
 import { NavigationManager } from "#ui/navigation-menu";
 import { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
@@ -61,6 +60,7 @@ import { executeIf } from "#utils/common";
 import i18next from "i18next";
 import { AdminUiHandler } from "./handlers/admin-ui-handler";
 import { RenameRunFormUiHandler } from "./handlers/rename-run-ui-handler";
+import { RewardSelectUiHandler } from "./handlers/reward-select-ui-handler";
 
 const transitionModes = [
   UiMode.SAVE_SLOT,
@@ -136,7 +136,7 @@ export class UI extends Phaser.GameObjects.Container {
       new FightUiHandler(),
       new BallUiHandler(),
       new TargetSelectUiHandler(),
-      new ModifierSelectUiHandler(),
+      new RewardSelectUiHandler(),
       new SaveSlotSelectUiHandler(),
       new PartyUiHandler(),
       new SummaryUiHandler(),

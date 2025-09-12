@@ -1,15 +1,14 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { EncounterBattleAnim } from "#data/battle-anims";
-import { allAbilities, modifierTypes } from "#data/data-lists";
+import { allAbilities } from "#data/data-lists";
+import { getHeldItemTier } from "#data/items/held-item-default-tiers";
 import { CustomPokemonData } from "#data/pokemon-data";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
-import { BerryType } from "#enums/berry-type";
 import { Challenges } from "#enums/challenges";
 import { EncounterAnim } from "#enums/encounter-anims";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
-import { ModifierTier } from "#enums/modifier-tier";
+import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
 import { MoveCategory } from "#enums/move-category";
 import { MoveId } from "#enums/move-id";
 import { MoveUseMode } from "#enums/move-use-mode";
@@ -18,17 +17,16 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { PokemonType } from "#enums/pokemon-type";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
-import { BerryModifier } from "#modifiers/modifier";
-import type { PokemonHeldItemModifierType } from "#modifiers/modifier-type";
+import { assignItemsFromConfiguration } from "#items/held-item-pool";
 import { PokemonMove } from "#moves/pokemon-move";
 import { showEncounterDialogue, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
-  generateModifierType,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
   loadCustomMovesForEncounter,
@@ -36,10 +34,7 @@ import {
   setEncounterRewards,
   transitionMysteryEncounterIntroVisuals,
 } from "#mystery-encounters/encounter-phase-utils";
-import {
-  applyAbilityOverrideToPokemon,
-  applyModifierTypeToPlayerPokemon,
-} from "#mystery-encounters/encounter-pokemon-utils";
+import { applyAbilityOverrideToPokemon } from "#mystery-encounters/encounter-pokemon-utils";
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
@@ -283,16 +278,16 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
 
         const party = globalScene.getPlayerParty();
         let mostHeldItemsPokemon = party[0];
-        let count = mostHeldItemsPokemon
-          .getHeldItems()
-          .filter(m => m.isTransferable && !(m instanceof BerryModifier))
-          .reduce((v, m) => v + m.stackCount, 0);
+        let count = mostHeldItemsPokemon.heldItemManager
+          .getTransferableHeldItems()
+          .filter(m => !isItemInCategory(m, HeldItemCategoryId.BERRY))
+          .reduce((v, m) => v + mostHeldItemsPokemon.heldItemManager.getStack(m), 0);
 
         for (const pokemon of party) {
-          const nextCount = pokemon
-            .getHeldItems()
-            .filter(m => m.isTransferable && !(m instanceof BerryModifier))
-            .reduce((v, m) => v + m.stackCount, 0);
+          const nextCount = pokemon.heldItemManager
+            .getTransferableHeldItems()
+            .filter(m => !isItemInCategory(m, HeldItemCategoryId.BERRY))
+            .reduce((v, m) => v + pokemon.heldItemManager.getStack(m), 0);
           if (nextCount > count) {
             mostHeldItemsPokemon = pokemon;
             count = nextCount;
@@ -301,16 +296,31 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
 
         encounter.setDialogueToken("switchPokemon", mostHeldItemsPokemon.getNameToRender());
 
-        const items = mostHeldItemsPokemon.getHeldItems();
+        const items = mostHeldItemsPokemon.heldItemManager
+          .getTransferableHeldItems()
+          .filter(m => !isItemInCategory(m, HeldItemCategoryId.BERRY));
 
         // Shuffles Berries (if they have any)
+        const oldBerries = mostHeldItemsPokemon.heldItemManager
+          .getHeldItems()
+          .filter(m => isItemInCategory(m, HeldItemCategoryId.BERRY));
+
         let numBerries = 0;
-        for (const m of items.filter(m => m instanceof BerryModifier)) {
-          numBerries += m.stackCount;
-          globalScene.removeModifier(m);
+        for (const berry of oldBerries) {
+          const stack = mostHeldItemsPokemon.heldItemManager.getStack(berry);
+          numBerries += stack;
+          mostHeldItemsPokemon.heldItemManager.remove(berry, stack);
         }
 
-        generateItemsOfTier(mostHeldItemsPokemon, numBerries, "Berries");
+        assignItemsFromConfiguration(
+          [
+            {
+              entry: HeldItemCategoryId.BERRY,
+              count: numBerries,
+            },
+          ],
+          mostHeldItemsPokemon,
+        );
 
         // Shuffle Transferable held items in the same tier (only shuffles Ultra and Rogue atm)
         // For the purpose of this ME, Soothe Bells and Lucky Eggs are counted as Ultra tier
@@ -318,20 +328,36 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
         let numUltra = 0;
         let numRogue = 0;
 
-        for (const m of items.filter(m => m.isTransferable && !(m instanceof BerryModifier))) {
-          const type = m.type.withTierFromPool(ModifierPoolType.PLAYER, party);
-          const tier = type.tier ?? ModifierTier.ULTRA;
-          if (type.id === "GOLDEN_EGG" || tier === ModifierTier.ROGUE) {
-            numRogue += m.stackCount;
-            globalScene.removeModifier(m);
-          } else if (type.id === "LUCKY_EGG" || type.id === "SOOTHE_BELL" || tier === ModifierTier.ULTRA) {
-            numUltra += m.stackCount;
-            globalScene.removeModifier(m);
+        for (const m of items) {
+          const tier = getHeldItemTier(m) ?? RarityTier.ULTRA;
+          const stack = mostHeldItemsPokemon.heldItemManager.getStack(m);
+          if (tier === RarityTier.ROGUE) {
+            numRogue += stack;
+          } else if (tier === RarityTier.ULTRA) {
+            numUltra += stack;
           }
+          mostHeldItemsPokemon.heldItemManager.remove(m, stack);
         }
 
-        generateItemsOfTier(mostHeldItemsPokemon, numUltra, ModifierTier.ULTRA);
-        generateItemsOfTier(mostHeldItemsPokemon, numRogue, ModifierTier.ROGUE);
+        assignItemsFromConfiguration(
+          [
+            {
+              entry: ultraPool,
+              count: numUltra,
+            },
+          ],
+          mostHeldItemsPokemon,
+        );
+
+        assignItemsFromConfiguration(
+          [
+            {
+              entry: roguePool,
+              count: numRogue,
+            },
+          ],
+          mostHeldItemsPokemon,
+        );
       })
       .withOptionPhase(async () => {
         leaveEncounterWithoutBattle(true);
@@ -487,68 +513,21 @@ function onYesAbilitySwap(resolve) {
   selectPokemonForOption(onPokemonSelected, onPokemonNotSelected);
 }
 
-function generateItemsOfTier(pokemon: PlayerPokemon, numItems: number, tier: ModifierTier | "Berries") {
-  // These pools have to be defined at runtime so that modifierTypes exist
-  // Pools have instances of the modifier type equal to the max stacks that modifier can be applied to any one pokemon
-  // This is to prevent "over-generating" a random item of a certain type during item swaps
-  const ultraPool = [
-    [modifierTypes.REVIVER_SEED, 1],
-    [modifierTypes.GOLDEN_PUNCH, 5],
-    [modifierTypes.ATTACK_TYPE_BOOSTER, 99],
-    [modifierTypes.QUICK_CLAW, 3],
-    [modifierTypes.WIDE_LENS, 3],
-  ];
+const ultraPool = [
+  { entry: HeldItemCategoryId.TYPE_ATTACK_BOOSTER, weight: 1 },
+  { entry: HeldItemId.REVIVER_SEED, weight: 1 },
+  { entry: HeldItemId.GOLDEN_PUNCH, weight: 1 },
+  { entry: HeldItemId.QUICK_CLAW, weight: 1 },
+  { entry: HeldItemId.WIDE_LENS, weight: 1 },
+];
 
-  const roguePool = [
-    [modifierTypes.LEFTOVERS, 4],
-    [modifierTypes.SHELL_BELL, 4],
-    [modifierTypes.SOUL_DEW, 10],
-    [modifierTypes.SCOPE_LENS, 1],
-    [modifierTypes.BATON, 1],
-    [modifierTypes.FOCUS_BAND, 5],
-    [modifierTypes.KINGS_ROCK, 3],
-    [modifierTypes.GRIP_CLAW, 5],
-  ];
-
-  const berryPool = [
-    [BerryType.APICOT, 3],
-    [BerryType.ENIGMA, 2],
-    [BerryType.GANLON, 3],
-    [BerryType.LANSAT, 3],
-    [BerryType.LEPPA, 2],
-    [BerryType.LIECHI, 3],
-    [BerryType.LUM, 2],
-    [BerryType.PETAYA, 3],
-    [BerryType.SALAC, 2],
-    [BerryType.SITRUS, 2],
-    [BerryType.STARF, 3],
-  ];
-
-  let pool: any[];
-  if (tier === "Berries") {
-    pool = berryPool;
-  } else {
-    pool = tier === ModifierTier.ULTRA ? ultraPool : roguePool;
-  }
-
-  for (let i = 0; i < numItems; i++) {
-    if (pool.length === 0) {
-      // Stop generating new items if somehow runs out of items to spawn
-      return;
-    }
-    const randIndex = randSeedInt(pool.length);
-    const newItemType = pool[randIndex];
-    let newMod: PokemonHeldItemModifierType;
-    if (tier === "Berries") {
-      newMod = generateModifierType(modifierTypes.BERRY, [newItemType[0]]) as PokemonHeldItemModifierType;
-    } else {
-      newMod = generateModifierType(newItemType[0]) as PokemonHeldItemModifierType;
-    }
-    applyModifierTypeToPlayerPokemon(pokemon, newMod);
-    // Decrement max stacks and remove from pool if at max
-    newItemType[1]--;
-    if (newItemType[1] <= 0) {
-      pool.splice(randIndex, 1);
-    }
-  }
-}
+const roguePool = [
+  { entry: HeldItemId.LEFTOVERS, weight: 1 },
+  { entry: HeldItemId.SHELL_BELL, weight: 1 },
+  { entry: HeldItemId.SOUL_DEW, weight: 1 },
+  { entry: HeldItemId.SCOPE_LENS, weight: 1 },
+  { entry: HeldItemId.BATON, weight: 1 },
+  { entry: HeldItemId.FOCUS_BAND, weight: 1 },
+  { entry: HeldItemId.KINGS_ROCK, weight: 1 },
+  { entry: HeldItemId.GRIP_CLAW, weight: 1 },
+];
