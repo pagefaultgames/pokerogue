@@ -65,15 +65,7 @@ import type {
 import type { Closed, Exact } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
 import type { Constructor } from "#utils/common";
-import {
-  BooleanHolder,
-  coerceArray,
-  NumberHolder,
-  randSeedFloat,
-  randSeedInt,
-  randSeedItem,
-  toDmgValue,
-} from "#utils/common";
+import { BooleanHolder, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
