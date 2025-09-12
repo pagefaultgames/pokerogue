@@ -145,16 +145,17 @@ import type { DamageCalculationResult, DamageResult } from "#types/damage-result
 import type { IllusionData } from "#types/illusion-data";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { TurnMove } from "#types/turn-move";
+import type { ReadonlyUint8Array } from "#types/typed-arrays";
 import { BattleInfo } from "#ui/battle-info";
 import { EnemyBattleInfo } from "#ui/enemy-battle-info";
 import type { PartyOption } from "#ui/party-ui-handler";
 import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import { PlayerBattleInfo } from "#ui/player-battle-info";
+import { coerceArray, setTypedArray } from "#utils/array";
 import { applyChallenges } from "#utils/challenge-utils";
 import {
   BooleanHolder,
   type Constructor,
-  coerceArray,
   deltaRgb,
   fixedInt,
   getIvsFromId,
@@ -233,8 +234,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public levelExp: number;
   public gender: Gender;
   public hp: number;
-  public stats: number[];
-  public ivs: number[];
+  public stats = Uint32Array.of(1, 1, 1, 1, 1, 1);
+  public ivs = Uint8Array.of(0, 0, 0, 0, 0, 0);
   public nature: Nature;
   public moveset: PokemonMove[];
   /**
@@ -308,7 +309,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     gender?: Gender,
     shiny?: boolean,
     variant?: Variant,
-    ivs?: number[],
+    ivs?: ReadonlyUint8Array | number[],
     nature?: Nature,
     dataSource?: Pokemon | PokemonData,
   ) {
@@ -342,8 +343,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (dataSource) {
       this.id = dataSource.id;
       this.hp = dataSource.hp;
-      this.stats = dataSource.stats;
-      this.ivs = dataSource.ivs;
+      setTypedArray(this.stats, dataSource.stats);
+      setTypedArray(this.ivs, dataSource.ivs ?? getIvsFromId(dataSource.id));
       this.passive = !!dataSource.passive;
       if (this.variant === undefined) {
         this.variant = 0;
@@ -382,7 +383,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       this.stellarTypesBoosted = dataSource.stellarTypesBoosted ?? [];
     } else {
       this.id = randSeedInt(4294967296);
-      this.ivs = ivs || getIvsFromId(this.id);
+      setTypedArray(this.ivs, ivs ?? getIvsFromId(this.id));
 
       if (this.gender === undefined) {
         this.gender = this.species.generateGender();
@@ -1310,7 +1311,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param bypassSummonData - Whether to prefer actual stats (`true`) or in-battle overridden stats (`false`); default `true`
    * @returns The numeric values of this {@linkcode Pokemon}'s stats as an array.
    */
-  getStats(bypassSummonData = true): number[] {
+  getStats(bypassSummonData = true): Uint32Array {
     if (!bypassSummonData) {
       // Only grab summon data stats if nonzero
       return this.summonData.stats.map((s, i) => s || this.stats[i]);
@@ -1542,10 +1543,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   calculateStats(): void {
-    if (!this.stats) {
-      this.stats = [0, 0, 0, 0, 0, 0];
-    }
-
     // Get and manipulate base stats
     const baseStats = this.calculateBaseStats();
     // Using base stats, calculate and store stats one by one
@@ -1578,7 +1575,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         globalScene.applyModifier(PokemonIncrementingStatModifier, this.isPlayer(), this, s, statHolder);
       }
 
-      statHolder.value = Phaser.Math.Clamp(statHolder.value, 1, Number.MAX_SAFE_INTEGER);
+      statHolder.value = Phaser.Math.Clamp(statHolder.value, 1, 0xffffffff);
 
       this.setStat(s, statHolder.value);
     }
@@ -5811,7 +5808,7 @@ export class PlayerPokemon extends Pokemon {
     gender?: Gender,
     shiny?: boolean,
     variant?: Variant,
-    ivs?: number[],
+    ivs?: ReadonlyUint8Array | number[],
     nature?: Nature,
     dataSource?: Pokemon | PokemonData,
   ) {
@@ -6432,9 +6429,9 @@ export class EnemyPokemon extends Pokemon {
 
       if (this.hasTrainer() && globalScene.currentBattle) {
         const { waveIndex } = globalScene.currentBattle;
-        const ivs: number[] = [];
-        while (ivs.length < 6) {
-          ivs.push(randSeedIntRange(Math.floor(waveIndex / 10), 31));
+        const ivs = new Uint8Array(6);
+        for (let i = 0; i < 6; i++) {
+          ivs[i] = this.randBattleSeedIntRange(Math.floor(waveIndex / 10), 31);
         }
         this.ivs = ivs;
       }

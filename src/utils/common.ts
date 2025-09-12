@@ -176,15 +176,15 @@ export function getPlayTimeString(totalSeconds: number): string {
  * @param id 32-bit number
  * @returns An array of six numbers corresponding to 5-bit chunks from {@linkcode id}
  */
-export function getIvsFromId(id: number): number[] {
-  return [
+export function getIvsFromId(id: number): Uint8Array {
+  return Uint8Array.of(
     (id & 0x3e000000) >>> 25,
     (id & 0x01f00000) >>> 20,
     (id & 0x000f8000) >>> 15,
     (id & 0x00007c00) >>> 10,
     (id & 0x000003e0) >>> 5,
     id & 0x0000001f,
-  ];
+  );
 }
 
 export function formatLargeNumber(count: number, threshold: number): string {
@@ -514,13 +514,4 @@ export function getShinyDescriptor(variant: Variant): string {
     case 0:
       return i18next.t("common:commonShiny");
   }
-}
-
-/**
- * If the input isn't already an array, turns it into one.
- * @returns An array with the same type as the type of the input
- */
-export function coerceArray<T>(input: T): T extends any[] ? T : [T];
-export function coerceArray<T>(input: T): T | [T] {
-  return Array.isArray(input) ? input : [input];
 }

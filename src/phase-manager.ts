@@ -101,7 +101,8 @@ import { UnlockPhase } from "#phases/unlock-phase";
 import { VictoryPhase } from "#phases/victory-phase";
 import { WeatherEffectPhase } from "#phases/weather-effect-phase";
 import type { PhaseMap, PhaseString } from "#types/phase-types";
-import { type Constructor, coerceArray } from "#utils/common";
+import { coerceArray } from "#utils/array";
+import type { Constructor } from "#utils/common";
 
 /**
  * @module

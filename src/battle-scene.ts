@@ -121,6 +121,7 @@ import { vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import type { Localizable } from "#types/locales";
+import type { ReadonlyUint8Array } from "#types/typed-arrays";
 import { AbilityBar } from "#ui/ability-bar";
 import { ArenaFlyout } from "#ui/arena-flyout";
 import { CandyBar } from "#ui/candy-bar";
@@ -883,7 +884,7 @@ export class BattleScene extends SceneBase {
     gender?: Gender,
     shiny?: boolean,
     variant?: Variant,
-    ivs?: number[],
+    ivs?: ReadonlyUint8Array | number[],
     nature?: Nature,
     dataSource?: Pokemon | PokemonData,
     postProcess?: (playerPokemon: PlayerPokemon) => void,
@@ -914,12 +915,12 @@ export class BattleScene extends SceneBase {
       if (Overrides.IVS_OVERRIDE.some(value => !isBetween(value, 0, 31))) {
         throw new Error("All IVs in the player IV override must be between 0 and 31!");
       }
-      pokemon.ivs = Overrides.IVS_OVERRIDE;
+      pokemon.ivs = new Uint8Array(Overrides.IVS_OVERRIDE);
     } else {
       if (!isBetween(Overrides.IVS_OVERRIDE, 0, 31)) {
         throw new Error("The Player IV override must be a value between 0 and 31!");
       }
-      pokemon.ivs = new Array(6).fill(Overrides.IVS_OVERRIDE);
+      pokemon.ivs = new Uint8Array(6).fill(Overrides.IVS_OVERRIDE);
     }
 
     if (Overrides.NATURE_OVERRIDE !== null) {
@@ -979,12 +980,12 @@ export class BattleScene extends SceneBase {
       if (Overrides.ENEMY_IVS_OVERRIDE.some(value => !isBetween(value, 0, 31))) {
         throw new Error("All IVs in the enemy IV override must be between 0 and 31!");
       }
-      pokemon.ivs = Overrides.ENEMY_IVS_OVERRIDE;
+      pokemon.ivs = new Uint8Array(Overrides.ENEMY_IVS_OVERRIDE);
     } else {
       if (!isBetween(Overrides.ENEMY_IVS_OVERRIDE, 0, 31)) {
         throw new Error("The Enemy IV override must be a value between 0 and 31!");
       }
-      pokemon.ivs = new Array(6).fill(Overrides.ENEMY_IVS_OVERRIDE);
+      pokemon.ivs = new Uint8Array(6).fill(Overrides.ENEMY_IVS_OVERRIDE);
     }
 
     if (Overrides.ENEMY_NATURE_OVERRIDE !== null) {

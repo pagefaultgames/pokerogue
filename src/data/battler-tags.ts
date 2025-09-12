@@ -49,7 +49,8 @@ import type {
   TypeBoostTagType,
 } from "#types/battler-tags";
 import type { Mutable } from "#types/type-helpers";
-import { BooleanHolder, coerceArray, getFrameMs, isNullOrUndefined, NumberHolder, toDmgValue } from "#utils/common";
+import { coerceArray } from "#utils/array";
+import { BooleanHolder, getFrameMs, isNullOrUndefined, NumberHolder, toDmgValue } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
 
 /**
