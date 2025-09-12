@@ -10,6 +10,7 @@
     "start:podman": "vite --mode development --host 0.0.0.0 --port $PORT",
     "build": "vite build",
     "build:beta": "vite build --mode beta",
+    "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "test": "vitest run --no-isolate",
     "test:cov": "vitest run --coverage --no-isolate",
