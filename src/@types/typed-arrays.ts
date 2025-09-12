@@ -210,8 +210,7 @@ interface PartialUint8Array<T extends number> extends Uint8Array {
  * Useful to leverage the benefits of `TypedArrays` without losing type information. Typescript will consider the elements to be of type `T` instead of just `number`.
  * @typeParam T - The specific numeric type of the elements in the array.
  */
-// @ts-expect-error - These methods _will_ error, as we are overriding the return type to be more specific
-// in a way that makes typescript unhappy
+// @ts-expect-error - These methods _will_ error, as we are overriding the return type to be more specific in a way that makes typescript unhappy
 export interface GenericUint8Array<T extends number> extends PartialUint8Array<T> {
   // map(callbackfn: (value: T, index: number, array: this) => T, thisArg?: any): GenericUint8Array<T>;
   // this method does not trigger a typescript error on its own, but if we add in `toReversed` it causes issues....
@@ -255,8 +254,7 @@ interface PartialUint16Array<T extends number> extends Uint16Array {
  * Useful to leverage the benefits of `TypedArrays` without losing type information. Typescript will consider the elements to be of type `T` instead of just `number`.
  * @typeParam T - The specific numeric type of the elements in the array.
  */
-// @ts-expect-error - These methods _will_ error, as we are overriding the return type to be more specific
-// in a way that makes typescript unhappy
+// @ts-expect-error - These methods _will_ error, as we are overriding the return type to be more specific in a way that makes typescript unhappy
 export interface GenericUint16Array<T extends number> extends PartialUint16Array<T> {
   // map(callbackfn: (value: T, index: number, array: this) => T, thisArg?: any): GenericUint16Array<T>;
   // this method does not trigger a typescript error on its own, but if we add in `toReversed` it causes issues....
@@ -300,8 +298,7 @@ interface PartialUint32Array<T extends number> extends Uint32Array {
  * Useful to leverage the benefits of `TypedArrays` without losing type information. Typescript will consider the elements to be of type `T` instead of just `number`.
  * @typeParam T - The specific numeric type of the elements in the array.
  */
-// @ts-expect-error - These methods _will_ error, as we are overriding the return type to be more specific
-// in a way that makes typescript unhappy
+// @ts-expect-error - These methods _will_ error, as we are overriding the return type to be more specific in a way that makes typescript unhappy
 export interface GenericUint32Array<T extends number> extends PartialUint32Array<T> {
   // map(callbackfn: (value: T, index: number, array: this) => T, thisArg?: any): GenericUint32Array<T>;
   // this method does not trigger a typescript error on its own, but if we add in `toReversed` it causes issues....
@@ -345,8 +342,7 @@ interface PartialInt8Array<T extends number> extends Int8Array {
  * Useful to leverage the benefits of `TypedArrays` without losing type information. Typescript will consider the elements to be of type `T` instead of just `number`.
  * @typeParam T - The specific numeric type of the elements in the array.
  */
-// @ts-expect-error - These methods _will_ error, as we are overriding the return type to be more specific
-// in a way that makes typescript unhappy
+// @ts-expect-error - These methods _will_ error, as we are overriding the return type to be more specific in a way that makes typescript unhappy
 export interface GenericInt8Array<T extends number> extends PartialInt8Array<T> {
   // map(callbackfn: (value: T, index: number, array: this) => T, thisArg?: any): GenericInt8Array<T>;
   // this method does not trigger a typescript error on its own, but if we add in `toReversed` it causes issues....
@@ -390,8 +386,7 @@ interface PartialInt16Array<T extends number> extends Int16Array {
  * Useful to leverage the benefits of `TypedArrays` without losing type information. Typescript will consider the elements to be of type `T` instead of just `number`.
  * @typeParam T - The specific numeric type of the elements in the array.
  */
-// @ts-expect-error - These methods _will_ error, as we are overriding the return type to be more specific
-// in a way that makes typescript unhappy
+// @ts-expect-error - These methods _will_ error, as we are overriding the return type to be more specific in a way that makes typescript unhappy
 export interface GenericInt16Array<T extends number> extends PartialInt16Array<T> {
   // map(callbackfn: (value: T, index: number, array: this) => T, thisArg?: any): GenericInt16Array<T>;
   // this method does not trigger a typescript error on its own, but if we add in `toReversed` it causes issues....
@@ -435,8 +430,7 @@ interface PartialInt32Array<T extends number> extends Int32Array {
  * Useful to leverage the benefits of `TypedArrays` without losing type information. Typescript will consider the elements to be of type `T` instead of just `number`.
  * @typeParam T - The specific numeric type of the elements in the array.
  */
-// @ts-expect-error - These methods _will_ error, as we are overriding the return type to be more specific
-// in a way that makes typescript unhappy
+// @ts-expect-error - These methods _will_ error, as we are overriding the return type to be more specific in a way that makes typescript unhappy
 export interface GenericInt32Array<T extends number> extends PartialInt32Array<T> {
   // map(callbackfn: (value: T, index: number, array: this) => T, thisArg?: any): GenericInt32Array<T>;
   // this method does not trigger a typescript error on its own, but if we add in `toReversed` it causes issues....
