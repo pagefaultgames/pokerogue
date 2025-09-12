@@ -1,8 +1,8 @@
-import { setTypedArray, subArray } from "#utils/common";
+import { setTypedArray, subArray } from "#utils/array";
 import { describe, expect, it } from "vitest";
 
 /**
- * Unit tests for the utility methods in `src/utils/common.ts`
+ * Unit tests for the utility methods in `src/utils/array-utils.ts`
  * @module
  */
 

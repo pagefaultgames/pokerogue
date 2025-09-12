@@ -64,6 +64,7 @@ import type {
 } from "#types/ability-types";
 import type { Localizable } from "#types/locales";
 import type { Closed, Exact } from "#types/type-helpers";
+import { coerceArray } from "#utils/array";
 import type { Constructor } from "#utils/common";
 import {
   BooleanHolder,
