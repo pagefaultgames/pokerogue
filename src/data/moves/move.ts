@@ -7510,7 +7510,7 @@ export class AbilityChangeAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => (this.selfTarget ? user : target).getAbility().isReplaceable && (this.selfTarget ? user : target).getAbility().id !== this.ability;
+    return (user, target, move) => (this.selfTarget ? user : target).getAbility().replaceable && (this.selfTarget ? user : target).getAbility().id !== this.ability;
   }
 }
 
@@ -7544,9 +7544,9 @@ export class AbilityCopyAttr extends MoveEffectAttr {
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
       const ally = user.getAlly();
-      let ret = target.getAbility().isCopiable && user.getAbility().isReplaceable;
+      let ret = target.getAbility().copiable && user.getAbility().replaceable;
       if (this.copyToPartner && globalScene.currentBattle?.double) {
-        ret = ret && (!ally?.hp || ally?.getAbility().isReplaceable);
+        ret = ret && (!ally?.hp || ally?.getAbility().replaceable);
       } else {
         ret = ret && user.getAbility().id !== target.getAbility().id;
       }
@@ -7575,7 +7575,7 @@ export class AbilityGiveAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => user.getAbility().isCopiable && target.getAbility().isReplaceable && user.getAbility().id !== target.getAbility().id;
+    return (user, target, move) => user.getAbility().copiable && target.getAbility().replaceable && user.getAbility().id !== target.getAbility().id;
   }
 }
 
@@ -7598,7 +7598,7 @@ export class SwitchAbilitiesAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => [user, target].every(pkmn => pkmn.getAbility().isSwappable);
+    return (user, target, move) => [user, target].every(pkmn => pkmn.getAbility().swappable);
   }
 }
 
@@ -7624,7 +7624,7 @@ export class SuppressAbilitiesAttr extends MoveEffectAttr {
 
   /** Causes the effect to fail when the target's ability is unsupressable or already suppressed. */
   getCondition(): MoveConditionFunc {
-    return (_user, target, _move) => !target.summonData.abilitySuppressed && (target.getAbility().isSuppressable || (target.hasPassive() && target.getPassiveAbility().isSuppressable));
+    return (_user, target, _move) => !target.summonData.abilitySuppressed && (target.getAbility().suppressable || (target.hasPassive() && target.getPassiveAbility().suppressable));
   }
 }
 
