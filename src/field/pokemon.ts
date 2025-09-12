@@ -205,8 +205,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public levelExp: number;
   public gender: Gender;
   public hp: number;
-  public stats = new Uint32Array(6).fill(1);
-  public ivs: Uint8Array;
+  public stats = Uint32Array.of(1, 1, 1, 1, 1, 1);
+  public ivs = Uint8Array.of(0, 0, 0, 0, 0, 0);
   public nature: Nature;
   public moveset: PokemonMove[];
   /**
