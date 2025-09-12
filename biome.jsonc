@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.2.3/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -212,10 +212,14 @@
         "noUselessUndefined": "error",
         "useMaxParams": {
           "level": "info", // TODO: Change to "error"... eventually...
-          "options": { "max": 7 } // A lot of stuff has a few params, but
+          "options": { "max": 7 }
         },
         "noShadow": "warn", // TODO: refactor and make "error"
-        "noNonNullAssertedOptionalChain": "warn" // TODO: refactor and make "error"
+        "noNonNullAssertedOptionalChain": "warn", // TODO: refactor and make "error"
+        "noDuplicateDependencies": "error",
+        // TODO:  this if performance does not suffer with biome 2.2.4
+        // "noImportCycles": "error",
+        "noMisusedPromises": "error"
       }
     }
   },
