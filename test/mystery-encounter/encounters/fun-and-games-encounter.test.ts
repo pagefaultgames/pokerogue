@@ -144,7 +144,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
 
       expect(game).toBeAtPhase("CommandPhase");
       expect(game.field.getEnemyPokemon().species.speciesId).toBe(SpeciesId.WOBBUFFET);
-      expect(game.field.getEnemyPokemon().ivs).toEqual([0, 0, 0, 0, 0, 0]);
+      expect(game.field.getEnemyPokemon().ivs).toEqual(Uint8Array.of(0, 0, 0, 0, 0, 0));
       expect(game.field.getEnemyPokemon().nature).toBe(Nature.MILD);
 
       game.onNextPrompt("MessagePhase", UiMode.MESSAGE, () => {
