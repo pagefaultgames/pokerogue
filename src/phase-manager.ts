@@ -395,7 +395,7 @@ export class PhaseManager {
   /**
    * Helper method to start and log the current phase.
    *
-   * @remarks
+   * @privateRemarkd
    * This is disabled during tests by `phase-interceptor.ts` to allow for pausing execution at specific phases.
    * As such, **do not remove or split this method** as it will break integration tests.
    */
