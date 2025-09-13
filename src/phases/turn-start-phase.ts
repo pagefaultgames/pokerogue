@@ -15,13 +15,10 @@ export class TurnStartPhase extends FieldPhase {
 
   /**
    * Returns an ordering of the current field based on command priority
-   * @returns {@linkcode BattlerIndex[]} the sequence of commands for this turn
+   * @returns The sequence of commands for this turn
    */
   getCommandOrder(): BattlerIndex[] {
-    const playerField = globalScene
-      .getPlayerField()
-      .filter(p => p.isActive())
-      .map(p => p.getBattlerIndex());
+    const playerField = globalScene.getPlayerField(true).map(p => p.getBattlerIndex());
     const enemyField = globalScene
       .getEnemyField()
       .filter(p => p.isActive())
