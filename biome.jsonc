@@ -96,12 +96,12 @@
         },
         "useThrowOnlyError": "error",
         "useTrimStartEnd": "error",
-        // Todo: This rule has issues properly detecting reads across files.
-        // Enable once it becomes more mature
-        // "useReadonlyClassProperties": {
-        //   "level": "info", // TODO: Graduate to error eventually
-        //   "options": { "checkAllProperties": true }
-        // },
+        "useReadonlyClassProperties": {
+          "level": "info", // TODO: Graduate to error eventually
+          // NOTE: "checkAllProperties" has an immature implementation that
+          // causes many false positives across files. Enable if/when maturity improves
+          "options": { "checkAllProperties": false }
+        },
         "useConsistentObjectDefinitions": {
           "level": "error",
           "options": { "syntax": "shorthand" }
@@ -217,9 +217,9 @@
         "noShadow": "warn", // TODO: refactor and make "error"
         "noNonNullAssertedOptionalChain": "warn", // TODO: refactor and make "error"
         "noDuplicateDependencies": "error",
-        // TODO:  this if performance does not suffer with biome 2.2.4
-        // "noImportCycles": "error",
-        "noMisusedPromises": "error"
+        "noImportCycles": "error",
+        // TODO: Change to error once promises are used properly
+        "noMisusedPromises": "info"
       }
     }
   },
