@@ -836,7 +836,7 @@ export class Arena {
    * @todo Review the other tag manipulation functions to see if they can be migrated towards using this (more efficient)
    */
   public removeTagsOnSide(
-    tagTypes: ArenaTagType[] | ReadonlyArray<ArenaTagType>,
+    tagTypes: ArenaTagType[] | readonly ArenaTagType[],
     side: ArenaTagSide,
     quiet = false,
   ): void {
