@@ -34,11 +34,11 @@ import i18next from "i18next";
 export class MovePhase extends PokemonPhase {
   public readonly phaseName = "MovePhase";
   protected _pokemon: Pokemon;
-  protected _move: PokemonMove;
-  protected _targets: BattlerIndex[];
+  public move: PokemonMove;
+  public _targets: BattlerIndex[];
   public readonly useMode: MoveUseMode; // Made public for quash
   /** The timing modifier of the move (used by Quash and to force called moves to the front of their queue) */
-  protected _timingModifier: MovePhaseTimingModifier;
+  public timingModifier: MovePhaseTimingModifier;
   /** Whether the current move should fail but still use PP. */
   protected failed = false;
   /** Whether the current move should fail and retain PP. */
@@ -60,14 +60,6 @@ export class MovePhase extends PokemonPhase {
     this._pokemon = pokemon;
   }
 
-  public get move(): PokemonMove {
-    return this._move;
-  }
-
-  public set move(move: PokemonMove) {
-    this._move = move;
-  }
-
   public get targets(): BattlerIndex[] {
     return this._targets;
   }
@@ -76,21 +68,13 @@ export class MovePhase extends PokemonPhase {
     this._targets = targets;
   }
 
-  public get timingModifier(): MovePhaseTimingModifier {
-    return this._timingModifier;
-  }
-
-  public set timingModifier(modifier: MovePhaseTimingModifier) {
-    this._timingModifier = modifier;
-  }
-
   /**
    * Create a new MovePhase for using moves.
    * @param pokemon - The {@linkcode Pokemon} using the move
    * @param move - The {@linkcode PokemonMove} to use
    * @param useMode - The {@linkcode MoveUseMode} corresponding to this move's means of execution (usually `MoveUseMode.NORMAL`).
    * Not marked optional to ensure callers correctly pass on `useModes`.
-   * @param forcedLast - Whether to force this phase to occur last in order (for {@linkcode MoveId.QUASH}); default `false`
+   * @param timingModifier - The {@linkcode MovePhaseTimingModifier} for the move; Default {@linkcode MovePhaseTimingModifier.NORMAL}
    */
   constructor(
     pokemon: Pokemon,
