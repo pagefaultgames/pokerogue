@@ -861,12 +861,12 @@ export class BattleScene extends SceneBase {
    * Return the {@linkcode Pokemon} associated with the given ID.
    * @param pokemonId - The PID whose Pokemon will be retrieved
    * @returns The `Pokemon` associated with the given ID,
-   * or `undefined` if no Pokemon with the given ID is found.
+   * or `undefined` if none is found in either team's party.
    * @see {@linkcode Pokemon.id}
    */
-  getPokemonById(pokemonId: number | undefined): Pokemon | undefined {
+  public getPokemonById(pokemonId: number | undefined): Pokemon | undefined {
     if (pokemonId == null) {
-      // biome-ignore lint/nursery/noUselessUndefined: shut up biome for now
+      // biome-ignore lint/nursery/noUselessUndefined: More explicit
       return undefined;
     }
 
