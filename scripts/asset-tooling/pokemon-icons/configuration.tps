@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: NONE
+SPDX-FileContributor: FlashfyreDev
+SPDX-License-Identifier: CC0-1.0
+-->
 <?xml version="1.0" encoding="UTF-8"?>
 <data version="1.0">
     <struct type="Settings">
