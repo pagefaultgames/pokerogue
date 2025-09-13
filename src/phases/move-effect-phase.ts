@@ -40,7 +40,7 @@ import { DamageAchv } from "#system/achv";
 import type { DamageResult } from "#types/damage-result";
 import type { TurnMove } from "#types/turn-move";
 import type { nil } from "#utils/common";
-import { BooleanHolder, isNullOrUndefined, NumberHolder } from "#utils/common";
+import { BooleanHolder, NumberHolder } from "#utils/common";
 import i18next from "i18next";
 
 export type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
@@ -745,7 +745,7 @@ export class MoveEffectPhase extends PokemonPhase {
       (attr: MoveAttr) =>
         attr.is("MoveEffectAttr")
         && attr.trigger === triggerType
-        && (isNullOrUndefined(selfTarget) || attr.selfTarget === selfTarget)
+        && (selfTarget == null || attr.selfTarget === selfTarget)
         && (!attr.firstHitOnly || this.firstHit)
         && (!attr.lastHitOnly || this.lastHit)
         && (!attr.firstTargetOnly || (firstTarget ?? true)),
@@ -770,7 +770,7 @@ export class MoveEffectPhase extends PokemonPhase {
    */
   protected applyMoveEffects(target: Pokemon, effectiveness: TypeDamageMultiplier, firstTarget: boolean): void {
     const user = this.getUserPokemon();
-    if (isNullOrUndefined(user)) {
+    if (user == null) {
       return;
     }
 

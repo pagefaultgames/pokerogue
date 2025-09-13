@@ -459,15 +459,6 @@ export function truncateString(str: string, maxLength = 10) {
 }
 
 /**
- * Report whether a given value is nullish (`null`/`undefined`).
- * @param val - The value whose nullishness is being checked
- * @returns `true` if `val` is either `null` or `undefined`
- */
-export function isNullOrUndefined(val: any): val is null | undefined {
-  return val === null || val === undefined;
-}
-
-/**
  * This function is used in the context of a Pokémon battle game to calculate the actual integer damage value from a float result.
  * Many damage calculation formulas involve various parameters and result in float values.
  * The actual damage applied to a Pokémon's HP must be an integer.

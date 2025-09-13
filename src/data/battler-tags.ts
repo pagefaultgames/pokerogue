@@ -49,7 +49,7 @@ import type {
   TypeBoostTagType,
 } from "#types/battler-tags";
 import type { Mutable } from "#types/type-helpers";
-import { BooleanHolder, coerceArray, getFrameMs, isNullOrUndefined, NumberHolder, toDmgValue } from "#utils/common";
+import { BooleanHolder, coerceArray, getFrameMs, NumberHolder, toDmgValue } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
 
 /**
@@ -378,7 +378,7 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
     // Disable fails against struggle or an empty move history
     // TODO: Confirm if this is redundant given Disable/Cursed Body's disable conditions
     const move = pokemon.getLastNonVirtualMove();
-    if (isNullOrUndefined(move) || move.move === MoveId.STRUGGLE) {
+    if (move == null || move.move === MoveId.STRUGGLE) {
       return;
     }
 
@@ -451,7 +451,7 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
   override canAdd(pokemon: Pokemon): boolean {
     // Choice items ignore struggle, so Gorilla Tactics should too
     const lastSelectedMove = pokemon.getLastNonVirtualMove();
-    return !isNullOrUndefined(lastSelectedMove) && lastSelectedMove.move !== MoveId.STRUGGLE;
+    return lastSelectedMove != null && lastSelectedMove.move !== MoveId.STRUGGLE;
   }
 
   /**
@@ -1305,7 +1305,7 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.CUSTOM) {
       const encoredMove = pokemon.getMoveset().find(m => m.moveId === this.moveId);
-      return !isNullOrUndefined(encoredMove) && encoredMove.getPpRatio() > 0;
+      return encoredMove != null && encoredMove.getPpRatio() > 0;
     }
     return super.lapse(pokemon, lapseType);
   }
