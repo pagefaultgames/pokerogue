@@ -6,7 +6,6 @@ import type { DynamicPhaseMarker } from "#phases/dynamic-phase-marker";
 import type { PhaseConditionFunc } from "#app/@types/phase-condition";
 import type { PhaseMap, PhaseString } from "#app/@types/phase-types";
 import type { Phase } from "#app/phase";
-import { isNullOrUndefined } from "#app/utils/common";
 
 /**
 The PhaseTree is the central storage location for {@linkcode Phase}s by the {@linkcode PhaseManager}.
@@ -39,7 +38,7 @@ export class PhaseTree {
    */
   private add(phase: Phase, level: number): void {
     const addLevel = this.levels[level];
-    if (isNullOrUndefined(addLevel)) {
+    if (addLevel == null) {
       throw new Error("Attempted to add a phase to a nonexistent level of the PhaseTree!\nLevel: " + level.toString());
     }
     this.levels[level].push(phase);

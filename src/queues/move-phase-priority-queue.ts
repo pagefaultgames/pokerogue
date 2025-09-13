@@ -4,7 +4,6 @@ import type { Pokemon } from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import type { MovePhase } from "#app/phases/move-phase";
 import { PokemonPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";
-import { isNullOrUndefined } from "#app/utils/common";
 import type { BattlerIndex } from "#enums/battler-index";
 import type { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 
@@ -20,21 +19,21 @@ export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase>
 
   public cancelMove(condition: PhaseConditionFunc<"MovePhase">): void {
     const phase = this.queue.find(p => condition(p));
-    if (!isNullOrUndefined(phase)) {
+    if (phase != null) {
       phase.cancel();
     }
   }
 
   public setTimingModifier(condition: PhaseConditionFunc<"MovePhase">, modifier: MovePhaseTimingModifier): void {
     const phase = this.queue.find(p => condition(p));
-    if (!isNullOrUndefined(phase)) {
+    if (phase != null) {
       phase.timingModifier = modifier;
     }
   }
 
   public setMoveForPhase(condition: PhaseConditionFunc<"MovePhase">, move: PokemonMove) {
     const phase = this.queue.find(p => condition(p));
-    if (!isNullOrUndefined(phase)) {
+    if (phase != null) {
       phase.move = move;
     }
   }
