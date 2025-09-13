@@ -416,7 +416,7 @@ export class GameManager {
    * Checks if the current phase matches the target phase.
    * @param phaseTarget - The target phase.
    * @returns Whether the current phase matches the target phase
-   * @deprecated - Use `PhaseString` instead
+   * @deprecated Use `PhaseString` instead
    */
   isCurrentPhase(phaseTarget: PhaseClass): boolean;
   isCurrentPhase(phaseTarget: PhaseString | PhaseClass): boolean {
