@@ -29,7 +29,7 @@ export interface damageParams {
   simulated?: boolean;
   /** If defined, used in place of calculated effectiveness values */
   effectiveness?: number;
-};
+}
 
 /**
  * Type for the parameters of {@linkcode Pokemon#getBaseDamage | getBaseDamage}
