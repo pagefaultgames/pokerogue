@@ -6909,7 +6909,7 @@ export class EnemyPokemon extends Pokemon {
         const segmentSize = this.getMaxHp() / this.bossSegments;
         clearedBossSegmentIndex = Math.ceil(this.hp / segmentSize);
       }
-      if (clearedBossSegmentIndex <= this.bossSegmentIndex) {
+      if (clearedBossSegmentIndex <= this.bossSegmentIndex && !this.hasTrainer()) {
         this.handleBossSegmentCleared(clearedBossSegmentIndex);
       }
       this.battleInfo.updateBossSegments(this);
