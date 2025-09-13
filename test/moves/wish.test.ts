@@ -136,6 +136,11 @@ describe("Move - Wish", () => {
     expect(game).toHavePositionalTag(PositionalTagType.WISH, 0);
 
     const healPhases = game.scene.phaseManager.phaseQueue.filter(p => p.is("PokemonHealPhase"));
+    // account for phase interceptor stopping jank
+    const currPhase = game.scene.phaseManager.getCurrentPhase()!;
+    if (currPhase.is("PokemonHealPhase")) {
+      healPhases.unshift(currPhase);
+    }
     expect(healPhases).toHaveLength(4);
     expect.soft(healPhases.map(php => php.getPokemon())).toEqual(oldOrder);
 
