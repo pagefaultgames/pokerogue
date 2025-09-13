@@ -22,21 +22,21 @@ export function applyInSpeedOrder<T extends Pokemon>(pokemonList: T[], callback:
 
 /**
  * Sorts an array of {@linkcode Pokemon} by speed, including Trick Room
- * @param pokemonList - The list of Pokemon
+ * @param pokemonList - The list of Pokemon or objects containing Pokemon
  * @param shuffleFirst - Whether to shuffle the list before sorting (to handle speed ties). Default `true`.
  * @returns The sorted array of {@linkcode Pokemon}
  */
 export function sortInSpeedOrder<T extends Pokemon | hasPokemon>(pokemonList: T[], shuffleFirst = true): T[] {
-  pokemonList = shuffleFirst ? shuffle(pokemonList) : pokemonList;
+  pokemonList = shuffleFirst ? shufflePokemonList(pokemonList) : pokemonList;
   sortBySpeed(pokemonList);
   return pokemonList;
 }
 
 /**
- * @param pokemonList - The array
+ * @param pokemonList - The array of Pokemon or objects containing Pokemon
  * @returns The array, shuffled
  */
-function shuffle<T extends Pokemon | hasPokemon>(pokemonList: T[]): T[] {
+function shufflePokemonList<T extends Pokemon | hasPokemon>(pokemonList: T[]): T[] {
   // This is seeded with the current turn to prevent an inconsistency where it
   // was varying based on how long since you last reloaded
   globalScene.executeWithSeedOffset(
@@ -52,9 +52,9 @@ function shuffle<T extends Pokemon | hasPokemon>(pokemonList: T[]): T[] {
 /** Sorts an array of {@linkcode Pokemon} by speed (without shuffling) */
 function sortBySpeed<T extends Pokemon | hasPokemon>(pokemonList: T[]): void {
   pokemonList.sort((a, b) => {
-    const [aSpeed, bSpeed] = [a, b].map(pkmn =>
-      pkmn instanceof Pokemon ? pkmn.getEffectiveStat(Stat.SPD) : pkmn.getPokemon().getEffectiveStat(Stat.SPD),
-    );
+    const aSpeed = (a instanceof Pokemon ? a : a.getPokemon()).getEffectiveStat(Stat.SPD);
+    const bSpeed = (b instanceof Pokemon ? b : b.getPokemon()).getEffectiveStat(Stat.SPD);
+
     return bSpeed - aSpeed;
   });
 

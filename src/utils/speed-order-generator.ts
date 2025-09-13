@@ -11,7 +11,7 @@ import type { Pokemon } from "#field/pokemon";
  * @remarks
  * This should almost always be used by iteration in a `for...of` loop
  */
-export function* inSpeedOrder(side: ArenaTagSide = ArenaTagSide.BOTH): Generator<Pokemon> {
+export function* inSpeedOrder(side: ArenaTagSide = ArenaTagSide.BOTH): Generator<Pokemon, number> {
   let pokemonList: Pokemon[];
   switch (side) {
     case ArenaTagSide.PLAYER:
@@ -25,11 +25,15 @@ export function* inSpeedOrder(side: ArenaTagSide = ArenaTagSide.BOTH): Generator
   }
 
   const queue = new PokemonPriorityQueue();
+  let i = 0;
   pokemonList.forEach(p => {
     queue.push(p);
   });
   while (!queue.isEmpty()) {
     // If the queue is not empty, this can never be undefined
+    i++;
     yield queue.pop()!;
   }
+
+  return i;
 }
