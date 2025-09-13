@@ -76,7 +76,7 @@ describe("Abilities - Forecast", () => {
 
       vi.spyOn(game.scene.getPlayerParty()[5], "getAbility").mockReturnValue(allAbilities[AbilityId.CLOUD_NINE]);
 
-      const castform = game.scene.getPlayerField()[0];
+      const castform = game.field.getPlayerPokemon();
       expect(castform.formIndex).toBe(NORMAL_FORM);
 
       game.move.select(MoveId.RAIN_DANCE);

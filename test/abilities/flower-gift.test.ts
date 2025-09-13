@@ -58,12 +58,12 @@ describe("Abilities - Flower Gift", () => {
     const ally_target = allyAttacker ? BattlerIndex.ENEMY : null;
 
     await game.classicMode.startBattle([SpeciesId.CHERRIM, SpeciesId.MAGIKARP]);
-    const target = allyAttacker ? game.scene.getEnemyField()[0] : game.scene.getPlayerField()[1];
+    const target = allyAttacker ? game.field.getEnemyPokemon() : game.scene.getPlayerField()[1];
     const initialHp = target.getMaxHp();
 
     // Override the ability for the target and attacker only
     vi.spyOn(game.scene.getPlayerField()[1], "getAbility").mockReturnValue(allAbilities[allyAbility]);
-    vi.spyOn(game.scene.getEnemyField()[0], "getAbility").mockReturnValue(allAbilities[enemyAbility]);
+    vi.spyOn(game.field.getEnemyPokemon(), "getAbility").mockReturnValue(allAbilities[enemyAbility]);
 
     // turn 1
     game.move.select(MoveId.SUNNY_DAY, 0);
