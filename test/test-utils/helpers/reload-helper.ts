@@ -3,9 +3,9 @@ import { UiMode } from "#enums/ui-mode";
 import { CommandPhase } from "#phases/command-phase";
 import { TitlePhase } from "#phases/title-phase";
 import { TurnInitPhase } from "#phases/turn-init-phase";
-import type { SessionSaveData } from "#system/game-data";
 import type { GameManager } from "#test/test-utils/game-manager";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
+import type { SessionSaveData } from "#types/save-data";
 import { vi } from "vitest";
 
 /**
@@ -48,7 +48,7 @@ export class ReloadHelper extends GameManagerHelper {
 
     // remove all persistent mods before loading
     // TODO: Look into why these aren't removed before load
-    if (this.game.scene.modifiers.length) {
+    if (this.game.scene.modifiers.length > 0) {
       console.log(
         "Removing %d modifiers from scene on load...",
         this.game.scene.modifiers.length,

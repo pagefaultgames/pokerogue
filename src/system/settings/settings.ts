@@ -6,10 +6,10 @@ import { PlayerGender } from "#enums/player-gender";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { UiMode } from "#enums/ui-mode";
 import { CandyUpgradeNotificationChangedEvent } from "#events/battle-scene";
-import type { SettingsUiHandler } from "#ui/settings-ui-handler";
 import { updateWindowType } from "#ui/ui-theme";
 import { isLocal } from "#utils/common";
 import i18next from "i18next";
+import { languageOptions } from "./settings-language";
 
 const VOLUME_OPTIONS: SettingOption[] = [
   {
@@ -120,6 +120,14 @@ export interface Setting {
   default: number;
   type: SettingType;
   requireReload?: boolean;
+  /**
+   * Specifies the behavior when navigating left/right at the boundaries of the option
+   *
+   * - `true`: the cursor will stay on the boundary instead of moving
+   * - `false`: the cursor will wrap to the other end of the options list
+   * @defaultValue `false`
+   */
+  clamp?: boolean;
   /** Whether the setting can be activated or not */
   activatable?: boolean;
   /** Determines whether the setting should be hidden from the UI */
@@ -230,6 +238,7 @@ export const Setting: Array<Setting> = [
     ],
     default: 3,
     type: SettingType.GENERAL,
+    clamp: false,
   },
   {
     key: SettingKeys.HP_Bar_Speed,
@@ -639,6 +648,7 @@ export const Setting: Array<Setting> = [
     options: VOLUME_OPTIONS,
     default: 5,
     type: SettingType.AUDIO,
+    clamp: true,
   },
   {
     key: SettingKeys.BGM_Volume,
@@ -646,6 +656,7 @@ export const Setting: Array<Setting> = [
     options: VOLUME_OPTIONS,
     default: 10,
     type: SettingType.AUDIO,
+    clamp: true,
   },
   {
     key: SettingKeys.Field_Volume,
@@ -653,6 +664,7 @@ export const Setting: Array<Setting> = [
     options: VOLUME_OPTIONS,
     default: 10,
     type: SettingType.AUDIO,
+    clamp: true,
   },
   {
     key: SettingKeys.SE_Volume,
@@ -660,6 +672,7 @@ export const Setting: Array<Setting> = [
     options: VOLUME_OPTIONS,
     default: 10,
     type: SettingType.AUDIO,
+    clamp: true,
   },
   {
     key: SettingKeys.UI_Volume,
@@ -667,6 +680,7 @@ export const Setting: Array<Setting> = [
     options: VOLUME_OPTIONS,
     default: 10,
     type: SettingType.AUDIO,
+    clamp: true,
   },
   {
     key: SettingKeys.Battle_Music,
@@ -896,104 +910,12 @@ export function setSetting(setting: string, value: number): boolean {
       globalScene.typeHints = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.Language:
-      if (value) {
-        if (globalScene.ui) {
-          const cancelHandler = () => {
-            globalScene.ui.revertMode();
-            (globalScene.ui.getHandler() as SettingsUiHandler).setOptionCursor(-1, 0, true);
-          };
-          const changeLocaleHandler = (locale: string): boolean => {
-            try {
-              i18next.changeLanguage(locale);
-              localStorage.setItem("prLang", locale);
-              cancelHandler();
-              // Reload the whole game to apply the new locale since also some constants are translated
-              window.location.reload();
-              return true;
-            } catch (error) {
-              console.error("Error changing locale:", error);
-              return false;
-            }
-          };
-          globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
-            options: [
-              {
-                label: "English",
-                handler: () => changeLocaleHandler("en"),
-              },
-              {
-                label: "Español (ES)",
-                handler: () => changeLocaleHandler("es-ES"),
-              },
-              {
-                label: "Español (LATAM)",
-                handler: () => changeLocaleHandler("es-MX"),
-              },
-              {
-                label: "Français",
-                handler: () => changeLocaleHandler("fr"),
-              },
-              {
-                label: "Deutsch",
-                handler: () => changeLocaleHandler("de"),
-              },
-              {
-                label: "Italiano",
-                handler: () => changeLocaleHandler("it"),
-              },
-              {
-                label: "Português (BR)",
-                handler: () => changeLocaleHandler("pt-BR"),
-              },
-              {
-                label: "한국어",
-                handler: () => changeLocaleHandler("ko"),
-              },
-              {
-                label: "日本語",
-                handler: () => changeLocaleHandler("ja"),
-              },
-              {
-                label: "简体中文",
-                handler: () => changeLocaleHandler("zh-CN"),
-              },
-              {
-                label: "繁體中文",
-                handler: () => changeLocaleHandler("zh-TW"),
-              },
-              {
-                label: "Català (Needs Help)",
-                handler: () => changeLocaleHandler("ca"),
-              },
-              {
-                label: "Türkçe (Needs Help)",
-                handler: () => changeLocaleHandler("tr"),
-              },
-              {
-                label: "Русский (Needs Help)",
-                handler: () => changeLocaleHandler("ru"),
-              },
-              {
-                label: "Dansk (Needs Help)",
-                handler: () => changeLocaleHandler("da"),
-              },
-              {
-                label: "Română (Needs Help)",
-                handler: () => changeLocaleHandler("ro"),
-              },
-              {
-                label: "Tagalog (Needs Help)",
-                handler: () => changeLocaleHandler("tl"),
-              },
-              {
-                label: i18next.t("settings:back"),
-                handler: () => cancelHandler(),
-              },
-            ],
-            maxOptions: 7,
-          });
-          return false;
-        }
+      if (value && globalScene.ui) {
+        globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
+          options: languageOptions,
+          maxOptions: 7,
+        });
+        return false;
       }
       break;
     case SettingKeys.Shop_Overlay_Opacity:

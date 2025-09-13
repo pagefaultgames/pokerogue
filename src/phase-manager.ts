@@ -1,3 +1,4 @@
+import { PHASE_START_COLOR } from "#app/constants/colors";
 import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
 import { type PhasePriorityQueue, PostSummonPhasePriorityQueue } from "#data/phase-priority-queue";
@@ -102,10 +103,13 @@ import { WeatherEffectPhase } from "#phases/weather-effect-phase";
 import type { PhaseMap, PhaseString } from "#types/phase-types";
 import { type Constructor, coerceArray } from "#utils/common";
 
-/*
+/**
+ * @module
  * Manager for phases used by battle scene.
  *
- * *This file must not be imported or used directly. The manager is exclusively used by the battle scene and is not intended for external use.*
+ * @remarks
+ * **This file must not be imported or used directly.**
+ * The manager is exclusively used by the Battle Scene and is NOT intended for external use.
  */
 
 /**
@@ -236,7 +240,7 @@ export class PhaseManager {
   /** Parallel array to {@linkcode dynamicPhaseQueues} - matches phase types to their queues */
   private dynamicPhaseTypes: Constructor<Phase>[];
 
-  private currentPhase: Phase | null = null;
+  private currentPhase: Phase;
   private standbyPhase: Phase | null = null;
 
   constructor() {
@@ -260,7 +264,9 @@ export class PhaseManager {
   }
 
   /* Phase Functions */
-  getCurrentPhase(): Phase | null {
+
+  /** @returns The currently running {@linkcode Phase}. */
+  getCurrentPhase(): Phase {
     return this.currentPhase;
   }
 
@@ -370,20 +376,28 @@ export class PhaseManager {
         unactivatedConditionalPhases.push([condition, phase]);
       }
     }
+
     this.conditionalQueue = unactivatedConditionalPhases;
 
-    if (!this.phaseQueue.length) {
+    // If no phases are left, unshift phases to start a new turn.
+    if (this.phaseQueue.length === 0) {
       this.populatePhaseQueue();
       // Clear the conditionalQueue if there are no phases left in the phaseQueue
       this.conditionalQueue = [];
     }
 
-    this.currentPhase = this.phaseQueue.shift() ?? null;
+    // Bang is justified as `populatePhaseQueue` ensures we always have _something_ in the queue at all times
+    this.currentPhase = this.phaseQueue.shift()!;
 
-    if (this.currentPhase) {
-      console.log(`%cStart Phase ${this.currentPhase.constructor.name}`, "color:green;");
-      this.currentPhase.start();
-    }
+    this.startCurrentPhase();
+  }
+
+  /**
+   * Helper method to start and log the current phase.
+   */
+  private startCurrentPhase(): void {
+    console.log(`%cStart Phase ${this.currentPhase.phaseName}`, `color:${PHASE_START_COLOR};`);
+    this.currentPhase.start();
   }
 
   overridePhase(phase: Phase): boolean {
@@ -393,8 +407,7 @@ export class PhaseManager {
 
     this.standbyPhase = this.currentPhase;
     this.currentPhase = phase;
-    console.log(`%cStart Phase ${phase.constructor.name}`, "color:green;");
-    phase.start();
+    this.startCurrentPhase();
 
     return true;
   }
@@ -610,7 +623,7 @@ export class PhaseManager {
    * Moves everything from nextCommandPhaseQueue to phaseQueue (keeping order)
    */
   private populatePhaseQueue(): void {
-    if (this.nextCommandPhaseQueue.length) {
+    if (this.nextCommandPhaseQueue.length > 0) {
       this.phaseQueue.push(...this.nextCommandPhaseQueue);
       this.nextCommandPhaseQueue.splice(0, this.nextCommandPhaseQueue.length);
     }

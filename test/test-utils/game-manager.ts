@@ -44,13 +44,14 @@ import type { InputsHandler } from "#test/test-utils/inputs-handler";
 import { MockFetch } from "#test/test-utils/mocks/mock-fetch";
 import { PhaseInterceptor } from "#test/test-utils/phase-interceptor";
 import { TextInterceptor } from "#test/test-utils/text-interceptor";
-import type { BallUiHandler } from "#ui/ball-ui-handler";
-import type { BattleMessageUiHandler } from "#ui/battle-message-ui-handler";
-import type { CommandUiHandler } from "#ui/command-ui-handler";
-import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
-import type { PartyUiHandler } from "#ui/party-ui-handler";
-import type { StarterSelectUiHandler } from "#ui/starter-select-ui-handler";
-import type { TargetSelectUiHandler } from "#ui/target-select-ui-handler";
+import type { PhaseClass, PhaseString } from "#types/phase-types";
+import type { BallUiHandler } from "#ui/handlers/ball-ui-handler";
+import type { BattleMessageUiHandler } from "#ui/handlers/battle-message-ui-handler";
+import type { CommandUiHandler } from "#ui/handlers/command-ui-handler";
+import type { ModifierSelectUiHandler } from "#ui/handlers/modifier-select-ui-handler";
+import type { PartyUiHandler } from "#ui/handlers/party-ui-handler";
+import type { StarterSelectUiHandler } from "#ui/handlers/starter-select-ui-handler";
+import type { TargetSelectUiHandler } from "#ui/handlers/target-select-ui-handler";
 import { isNullOrUndefined } from "#utils/common";
 import fs from "node:fs";
 import { AES, enc } from "crypto-js";
@@ -160,7 +161,7 @@ export class GameManager {
    * End the currently running phase immediately.
    */
   endPhase() {
-    this.scene.phaseManager.getCurrentPhase()?.end();
+    this.scene.phaseManager.getCurrentPhase().end();
   }
 
   /**
@@ -305,10 +306,10 @@ export class GameManager {
         handler.processInput(Button.ACTION);
       },
       () =>
-        this.isCurrentPhase(CommandPhase) ||
-        this.isCurrentPhase(MovePhase) ||
-        this.isCurrentPhase(TurnStartPhase) ||
-        this.isCurrentPhase(TurnEndPhase),
+        this.isCurrentPhase(CommandPhase)
+        || this.isCurrentPhase(MovePhase)
+        || this.isCurrentPhase(TurnStartPhase)
+        || this.isCurrentPhase(TurnEndPhase),
     );
   }
 
@@ -330,9 +331,9 @@ export class GameManager {
         handler.processInput(Button.CANCEL);
       },
       () =>
-        this.isCurrentPhase(CommandPhase) ||
-        this.isCurrentPhase(NewBattlePhase) ||
-        this.isCurrentPhase(CheckSwitchPhase),
+        this.isCurrentPhase(CommandPhase)
+        || this.isCurrentPhase(NewBattlePhase)
+        || this.isCurrentPhase(CheckSwitchPhase),
       true,
     );
 
@@ -344,9 +345,9 @@ export class GameManager {
         handler.processInput(Button.ACTION);
       },
       () =>
-        this.isCurrentPhase(CommandPhase) ||
-        this.isCurrentPhase(NewBattlePhase) ||
-        this.isCurrentPhase(CheckSwitchPhase),
+        this.isCurrentPhase(CommandPhase)
+        || this.isCurrentPhase(NewBattlePhase)
+        || this.isCurrentPhase(CheckSwitchPhase),
     );
   }
 
@@ -412,10 +413,11 @@ export class GameManager {
    * Checks if the current phase matches the target phase.
    * @param phaseTarget - The target phase.
    * @returns Whether the current phase matches the target phase
+   * @todo Remove `phaseClass` from signature
    */
-  isCurrentPhase(phaseTarget) {
+  isCurrentPhase(phaseTarget: PhaseClass | PhaseString) {
     const targetName = typeof phaseTarget === "string" ? phaseTarget : phaseTarget.name;
-    return this.scene.phaseManager.getCurrentPhase()?.constructor.name === targetName;
+    return this.scene.phaseManager.getCurrentPhase().phaseName === targetName;
   }
 
   /**

@@ -19,6 +19,7 @@ on:
 
 jobs:
   check-path-change-filter:
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     permissions:
       pull-requests: read
@@ -27,6 +28,10 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github/test-filters.yml
+          sparse-checkout-cone-mode: false
 
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36
         id: filter
@@ -37,6 +42,8 @@ jobs:
     name: Run Tests
     needs: check-path-change-filter
     strategy:
+      # don't stop upon 1 shard failing
+      fail-fast: false
       matrix:
         shard: [1, 2, 3, 4, 5]
     uses: ./.github/workflows/test-shard-template.yml
