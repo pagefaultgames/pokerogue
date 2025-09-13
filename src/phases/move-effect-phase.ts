@@ -645,13 +645,18 @@ export class MoveEffectPhase extends PokemonPhase {
     return move.getAttrs("HitsTagAttr").some(hta => hta.tagType === semiInvulnerableTag.tagType);
   }
 
-  /** @returns The {@linkcode Pokemon} using this phase's invoked move */
-  public getUserPokemon(): Pokemon | null {
+  /**
+   * @todo Investigate why this doesn't use `BattlerIndex`
+   * @returns The {@linkcode Pokemon} using this phase's invoked move
+   */
+  public getUserPokemon(): Pokemon | undefined {
     // TODO: Make this purely a battler index
     if (this.battlerIndex > BattlerIndex.ENEMY_2) {
       return globalScene.getPokemonById(this.battlerIndex);
     }
-    return (this.player ? globalScene.getPlayerField() : globalScene.getEnemyField())[this.fieldIndex];
+    // TODO: Figure out why this uses `fieldIndex` instead of `BattlerIndex`
+    // TODO: Remove `?? undefined` once field pokemon getters are made sane
+    return (this.player ? globalScene.getPlayerField() : globalScene.getEnemyField())[this.fieldIndex] ?? undefined;
   }
 
   /**

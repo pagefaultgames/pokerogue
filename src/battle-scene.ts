@@ -858,20 +858,21 @@ export class BattleScene extends SceneBase {
   }
 
   /**
-   * Return the {@linkcode Pokemon} associated with a given ID.
-   * @param pokemonId - The ID whose Pokemon will be retrieved.
-   * @returns The {@linkcode Pokemon} associated with the given id.
-   * Returns `null` if the ID is `undefined` or not present in either party.
-   * @todo Change the `null` to `undefined` and update callers' signatures -
-   * this is weird and causes a lot of random jank
+   * Return the {@linkcode Pokemon} associated with the given ID.
+   * @param pokemonId - The PID whose Pokemon will be retrieved
+   * @returns The `Pokemon` associated with the given ID,
+   * or `undefined` if none is found in either team's party.
+   * @see {@linkcode Pokemon.id}
+   * @todo `pokemonId` should not allow `undefined`
    */
-  getPokemonById(pokemonId: number | undefined): Pokemon | null {
+  public getPokemonById(pokemonId: number | undefined): Pokemon | undefined {
     if (pokemonId == null) {
-      return null;
+      // biome-ignore lint/nursery/noUselessUndefined: More explicit
+      return undefined;
     }
 
     const party = (this.getPlayerParty() as Pokemon[]).concat(this.getEnemyParty());
-    return party.find(p => p.id === pokemonId) ?? null;
+    return party.find(p => p.id === pokemonId);
   }
 
   addPlayerPokemon(
