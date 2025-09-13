@@ -6909,7 +6909,7 @@ export class EnemyPokemon extends Pokemon {
         const segmentSize = this.getMaxHp() / this.bossSegments;
         clearedBossSegmentIndex = Math.ceil(this.hp / segmentSize);
       }
-      if (clearedBossSegmentIndex <= this.bossSegmentIndex && !this.hasTrainer()) {
+      if (clearedBossSegmentIndex <= this.bossSegmentIndex) {
         this.handleBossSegmentCleared(clearedBossSegmentIndex);
       }
       this.battleInfo.updateBossSegments(this);
@@ -6938,12 +6938,20 @@ export class EnemyPokemon extends Pokemon {
    * @param segmentIndex index of the segment to get down to (0 = no shield left, 1 = 1 shield left, etc.)
    */
   handleBossSegmentCleared(segmentIndex: number): void {
+    let doStatBoost = !this.hasTrainer();
+    // TODO: Rewrite this bespoke logic to improve clarity
     while (this.bossSegmentIndex > 0 && segmentIndex - 1 < this.bossSegmentIndex) {
+      this.bossSegmentIndex--;
+
+      // Continue, _not_ break here, to ensure that each segment is still broken
+      if (!doStatBoost) {
+        continue;
+      }
+      let boostedStat: EffectiveStat | undefined;
       // Filter out already maxed out stat stages and weigh the rest based on existing stats
       const leftoverStats = EFFECTIVE_STATS.filter((s: EffectiveStat) => this.getStatStage(s) < 6);
       const statWeights = leftoverStats.map((s: EffectiveStat) => this.getStat(s, false));
 
-      let boostedStat: EffectiveStat | undefined;
       const statThresholds: number[] = [];
       let totalWeight = 0;
 
@@ -6962,18 +6970,18 @@ export class EnemyPokemon extends Pokemon {
       }
 
       if (boostedStat === undefined) {
-        this.bossSegmentIndex--;
-        return;
+        doStatBoost = false;
+        continue;
       }
 
       let stages = 1;
 
       // increase the boost if the boss has at least 3 segments and we passed last shield
-      if (this.bossSegments >= 3 && this.bossSegmentIndex === 1) {
+      if (this.bossSegments >= 3 && this.bossSegmentIndex === 0) {
         stages++;
       }
       // increase the boost if the boss has at least 5 segments and we passed the second to last shield
-      if (this.bossSegments >= 5 && this.bossSegmentIndex === 2) {
+      if (this.bossSegments >= 5 && this.bossSegmentIndex === 1) {
         stages++;
       }
 
@@ -6986,7 +6994,6 @@ export class EnemyPokemon extends Pokemon {
         true,
         true,
       );
-      this.bossSegmentIndex--;
     }
   }
 
