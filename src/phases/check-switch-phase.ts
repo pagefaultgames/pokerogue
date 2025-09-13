@@ -78,7 +78,7 @@ export class CheckSwitchPhase extends BattlePhase {
     );
   }
 
-  public end(queuePostSummon = false) {
+  public override end(queuePostSummon = false): void {
     if (queuePostSummon) {
       globalScene.phaseManager.unshiftNew("PostSummonPhase", this.fieldIndex);
     }

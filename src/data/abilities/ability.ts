@@ -3254,8 +3254,7 @@ export class CommanderAbAttr extends AbAttr {
     const ally = pokemon.getAlly();
     return (
       globalScene.currentBattle?.double &&
-      !isNullOrUndefined(ally) &&
-      ally.isActive(true) &&
+      ally?.isActive(true)
       ally.species.speciesId === SpeciesId.DONDOZO &&
       !(ally.isFainted() || ally.getTag(BattlerTagType.COMMANDED))
     );

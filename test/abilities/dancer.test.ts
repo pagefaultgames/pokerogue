@@ -34,8 +34,7 @@ describe("Abilities - Dancer", () => {
     game.override.enemyAbility(AbilityId.DANCER).enemySpecies(SpeciesId.MAGIKARP).enemyMoveset(MoveId.VICTORY_DANCE);
     await game.classicMode.startBattle([SpeciesId.ORICORIO, SpeciesId.FEEBAS]);
 
-    const [oricorio, feebas] = game.scene.getPlayerField();
-    const [magikarp1] = game.scene.getEnemyField();
+    const [oricorio, feebas, magikarp1] = game.scene.getField();
     game.move.changeMoveset(oricorio, [MoveId.SWORDS_DANCE, MoveId.VICTORY_DANCE, MoveId.SPLASH]);
     game.move.changeMoveset(feebas, [MoveId.SWORDS_DANCE, MoveId.SPLASH]);
 

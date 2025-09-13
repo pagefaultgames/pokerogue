@@ -3566,8 +3566,8 @@ export class GrudgeTag extends SerializableBattlerTag {
 
 /**
  * Tag to allow the affected Pokemon's move to go first in its priority bracket.
- * Used for {@link https://bulbapedia.bulbagarden.net/wiki/Quick_Draw_(Ability) Quick Draw}
- * and {@link https://bulbapedia.bulbagarden.net/wiki/Quick_Claw Quick Claw}.
+ * Used for {@link https://bulbapedia.bulbagarden.net/wiki/Quick_Draw_(Ability) | Quick Draw}
+ * and {@link https://bulbapedia.bulbagarden.net/wiki/Quick_Claw | Quick Claw}.
  */
 export class BypassSpeedTag extends BattlerTag {
   public override readonly tagType = BattlerTagType.BYPASS_SPEED;
@@ -3578,7 +3578,7 @@ export class BypassSpeedTag extends BattlerTag {
 
   override canAdd(pokemon: Pokemon): boolean {
     const bypass = new BooleanHolder(true);
-    applyAbAttrs("PreventBypassSpeedChanceAbAttr", { pokemon: pokemon, bypass: bypass });
+    applyAbAttrs("PreventBypassSpeedChanceAbAttr", { pokemon, bypass });
     return bypass.value;
   }
 }

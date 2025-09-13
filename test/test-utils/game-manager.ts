@@ -465,7 +465,9 @@ export class GameManager {
    * Faint a player or enemy pokemon instantly by setting their HP to 0.
    * @param pokemon - The player/enemy pokemon being fainted
    * @returns A Promise that resolves once the fainted pokemon's FaintPhase finishes running.
-   * @remarks This method *pushes* a FaintPhase and runs until it's finished. This may cause a turn to play out unexpectedly
+   * @remarks
+   * This method *pushes* a FaintPhase and runs until it's finished. This may cause a turn to play out unexpectedly
+   * @todo Consider whether running the faint phase immediately can be done
    */
   async killPokemon(pokemon: PlayerPokemon | EnemyPokemon) {
     pokemon.hp = 0;

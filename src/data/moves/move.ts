@@ -888,7 +888,7 @@ export abstract class Move implements Localizable {
     applyMoveAttrs("IncrementMovePriorityAttr", user, null, this, priority);
     applyAbAttrs("ChangeMovePriorityAbAttr", {pokemon: user, simulated, move: this, priority});
 
-    if (!isNullOrUndefined(user.getTag(BattlerTagType.BYPASS_SPEED))) {
+    if (user.getTag(BattlerTagType.BYPASS_SPEED)) {
       priority.value += 0.2;
     }
 

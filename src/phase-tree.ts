@@ -34,12 +34,13 @@ export class PhaseTree {
   /**
    * Adds a {@linkcode Phase} to the specified level
    * @param phase - The phase to add
-   * @param level - The numeric level to add the phase. Must be within legal bounds
+   * @param level - The numeric level to add the phase
+   * @throws Error if `level` is out of legal bounds
    */
   private add(phase: Phase, level: number): void {
     const addLevel = this.levels[level];
     if (isNullOrUndefined(addLevel)) {
-      throw new Error("Attempted to add a phase to a nonexistent level of the PhaseTree");
+      throw new Error("Attempted to add a phase to a nonexistent level of the PhaseTree!\nLevel: " + level.toString());
     }
     this.levels[level].push(phase);
   }
