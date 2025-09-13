@@ -28,7 +28,7 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { MoneyRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { PokemonData } from "#system/pokemon-data";
-import { isNullOrUndefined, randSeedInt, randSeedItem } from "#utils/common";
+import { randSeedInt, randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 /** the i18n namespace for this encounter */
@@ -81,7 +81,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
     let tries = 0;
 
     // Reroll any species that don't have HAs
-    while ((isNullOrUndefined(species.abilityHidden) || species.abilityHidden === AbilityId.NONE) && tries < 5) {
+    while ((species.abilityHidden == null || species.abilityHidden === AbilityId.NONE) && tries < 5) {
       species = getSalesmanSpeciesOffer();
       tries++;
     }
@@ -92,11 +92,11 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
       .getEventEncounters()
       .filter(
         s =>
-          !getPokemonSpecies(s.species).legendary &&
-          !getPokemonSpecies(s.species).subLegendary &&
-          !getPokemonSpecies(s.species).mythical &&
-          !NON_LEGEND_PARADOX_POKEMON.includes(s.species) &&
-          !NON_LEGEND_ULTRA_BEASTS.includes(s.species),
+          !getPokemonSpecies(s.species).legendary
+          && !getPokemonSpecies(s.species).subLegendary
+          && !getPokemonSpecies(s.species).mythical
+          && !NON_LEGEND_PARADOX_POKEMON.includes(s.species)
+          && !NON_LEGEND_ULTRA_BEASTS.includes(s.species),
       );
 
     let pokemon: PlayerPokemon;
@@ -109,16 +109,16 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
      * Mons rolled from the event encounter pool get 3 extra shiny rolls
      */
     if (
-      r === 0 ||
-      ((isNullOrUndefined(species.abilityHidden) || species.abilityHidden === AbilityId.NONE) &&
-        validEventEncounters.length === 0)
+      r === 0
+      || ((species.abilityHidden == null || species.abilityHidden === AbilityId.NONE)
+        && validEventEncounters.length === 0)
     ) {
       // If you roll 1%, give shiny Magikarp with random variant
       species = getPokemonSpecies(SpeciesId.MAGIKARP);
       pokemon = new PlayerPokemon(species, 5, 2, undefined, undefined, true);
     } else if (
-      validEventEncounters.length > 0 &&
-      (r <= EVENT_THRESHOLD || isNullOrUndefined(species.abilityHidden) || species.abilityHidden === AbilityId.NONE)
+      validEventEncounters.length > 0
+      && (r <= EVENT_THRESHOLD || species.abilityHidden == null || species.abilityHidden === AbilityId.NONE)
     ) {
       tries = 0;
       do {
@@ -162,8 +162,8 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
 
     const { spriteKey, fileRoot } = getSpriteKeysFromPokemon(pokemon);
     encounter.spriteConfigs.push({
-      spriteKey: spriteKey,
-      fileRoot: fileRoot,
+      spriteKey,
+      fileRoot,
       hasShadow: true,
       repeat: true,
       isPokemon: true,
@@ -185,8 +185,8 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
     encounter.setDialogueToken("purchasePokemon", pokemon.getNameToRender());
     encounter.setDialogueToken("price", price.toString());
     encounter.misc = {
-      price: price,
-      pokemon: pokemon,
+      price,
+      pokemon,
     };
 
     pokemon.calculateStats();

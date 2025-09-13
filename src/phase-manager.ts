@@ -1,3 +1,4 @@
+import { PHASE_START_COLOR } from "#app/constants/colors";
 import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
 import { PhaseTree } from "#app/phase-tree";
@@ -105,10 +106,13 @@ import { WeatherEffectPhase } from "#phases/weather-effect-phase";
 import type { PhaseConditionFunc } from "#types/phase-condition";
 import type { PhaseMap, PhaseString } from "#types/phase-types";
 
-/*
+/**
+ * @module
  * Manager for phases used by battle scene.
  *
- * *This file must not be imported or used directly. The manager is exclusively used by the battle scene and is not intended for external use.*
+ * @remarks
+ * **This file must not be imported or used directly.**
+ * The manager is exclusively used by the Battle Scene and is NOT intended for external use.
  */
 
 /**
@@ -347,7 +351,7 @@ export class PhaseManager {
    * Helper method to start and log the current phase.
    */
   private startCurrentPhase(): void {
-    console.log(`%cStart Phase ${this.currentPhase.phaseName}`, "color:green;");
+    console.log(`%cStart Phase ${this.currentPhase.phaseName}`, `color:${PHASE_START_COLOR};`);
     this.currentPhase.start();
   }
 

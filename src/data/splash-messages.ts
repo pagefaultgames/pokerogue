@@ -53,8 +53,8 @@ const SEASONAL_WEIGHT_MULTIPLIER = 15;
 //#region Common Messages
 
 const commonSplashMessages = [
-  ...Array(BATTLES_WON_WEIGHT_MULTIPLIER).fill("battlesWon"),
-  ...Array(POKEMON_NAMES_WEIGHT_MULTIPLIER).fill("underratedPokemon"),
+  ...new Array(BATTLES_WON_WEIGHT_MULTIPLIER).fill("battlesWon"),
+  ...new Array(POKEMON_NAMES_WEIGHT_MULTIPLIER).fill("underratedPokemon"),
   "joinTheDiscord",
   "infiniteLevels",
   "everythingIsStackable",
@@ -234,7 +234,7 @@ const seasonalSplashMessages: Season[] = [
       "valentines.happyValentines",
       "valentines.fullOfLove",
       "valentines.applinForYou",
-      "valentines.thePowerOfLoveIsThreeThirtyBST",
+      "valentines.thePowerOfLoveIsThreeThirtyBst",
       "valentines.haveAHeartScale",
       "valentines.i<3You",
     ],
@@ -265,7 +265,7 @@ const seasonalSplashMessages: Season[] = [
       "aprilFools.whoIsFinn",
       "aprilFools.watchOutForShadowPokemon",
       "aprilFools.nowWithDarkTypeLuxray",
-      "aprilFools.onlyOnPokerogueNetAGAIN",
+      "aprilFools.onlyOnPokerogueNetAgain",
       "aprilFools.noFreeVouchers",
       "aprilFools.altffourAchievementPoints",
       "aprilFools.rokePogue",
@@ -333,7 +333,7 @@ export function getSplashMessages(): string[] {
       if (now >= startDate && now <= endDate) {
         console.log(`Adding ${messages.length} ${name} splash messages (weight: x${SEASONAL_WEIGHT_MULTIPLIER})`);
         for (const message of messages) {
-          const weightedMessage = Array(SEASONAL_WEIGHT_MULTIPLIER).fill(message);
+          const weightedMessage = new Array(SEASONAL_WEIGHT_MULTIPLIER).fill(message);
           splashMessages.push(...weightedMessage);
         }
       }

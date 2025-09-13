@@ -165,7 +165,7 @@ export const TeleportingHijinksEncounter: MysteryEncounter = MysteryEncounterBui
       const config: EnemyPartyConfig = {
         pokemonConfigs: [
           {
-            level: level,
+            level,
             species: bossSpecies,
             dataSource: new PokemonData(bossPokemon),
             isBoss: true,
@@ -221,7 +221,7 @@ async function doBiomeTransitionDialogueAndBattleInit() {
   const config: EnemyPartyConfig = {
     pokemonConfigs: [
       {
-        level: level,
+        level,
         species: bossSpecies,
         dataSource: new PokemonData(bossPokemon),
         isBoss: true,

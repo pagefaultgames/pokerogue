@@ -14,7 +14,7 @@ import type { OptionSelectSettings } from "#mystery-encounters/encounter-phase-u
 import { transitionMysteryEncounterIntroVisuals } from "#mystery-encounters/encounter-phase-utils";
 import type { MysteryEncounterOption, OptionPhaseCallback } from "#mystery-encounters/mystery-encounter-option";
 import { SeenEncounterData } from "#mystery-encounters/mystery-encounter-save-data";
-import { isNullOrUndefined, randSeedItem } from "#utils/common";
+import { randSeedItem } from "#utils/common";
 import i18next from "i18next";
 
 /**
@@ -76,10 +76,7 @@ export class MysteryEncounterPhase extends Phase {
     if (!this.optionSelectSettings) {
       // Saves the selected option in the ME save data, only if this is not a followup option select phase
       // Can be used for analytics purposes to track what options are popular on certain encounters
-      const encounterSaveData =
-        globalScene.mysteryEncounterSaveData.encounteredEvents[
-          globalScene.mysteryEncounterSaveData.encounteredEvents.length - 1
-        ];
+      const encounterSaveData = globalScene.mysteryEncounterSaveData.encounteredEvents.at(-1)!;
       if (encounterSaveData.type === globalScene.currentBattle.mysteryEncounter?.encounterType) {
         encounterSaveData.selectedOption = index;
       }
@@ -95,7 +92,7 @@ export class MysteryEncounterPhase extends Phase {
     if (option.onPreOptionPhase) {
       globalScene.executeWithSeedOffset(async () => {
         return await option.onPreOptionPhase!().then(result => {
-          if (isNullOrUndefined(result) || result) {
+          if (result == null || result) {
             this.continueEncounter();
           }
         });
@@ -224,9 +221,9 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
       tags
         .filter(
           t =>
-            includedLapseTags.includes(t.tagType) &&
-            t.lapseTypes.includes(BattlerTagLapseType.TURN_END) &&
-            !t.lapse(pokemon, BattlerTagLapseType.TURN_END),
+            includedLapseTags.includes(t.tagType)
+            && t.lapseTypes.includes(BattlerTagLapseType.TURN_END)
+            && !t.lapse(pokemon, BattlerTagLapseType.TURN_END),
         )
         .forEach(t => {
           t.onRemove(pokemon);
@@ -241,7 +238,7 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
     const legalPlayerPokemon = globalScene.getPokemonAllowedInBattle();
     // The total number of legal player Pokemon that aren't currently on the field
     const legalPlayerPartyPokemon = legalPlayerPokemon.filter(p => !p.isActive(true));
-    if (!legalPlayerPokemon.length) {
+    if (legalPlayerPokemon.length === 0) {
       globalScene.phaseManager.unshiftNew("GameOverPhase");
       return this.end();
     }
@@ -289,10 +286,7 @@ export class MysteryEncounterBattlePhase extends Phase {
     this.doMysteryEncounterBattle();
   }
 
-  /**
-   * Gets intro battle message for new battle
-   * @private
-   */
+  /** Get intro battle message for new battle */
   private getBattleMessage(): string {
     const enemyField = globalScene.getEnemyField();
     const encounterMode = globalScene.currentBattle.mysteryEncounter!.encounterMode;
@@ -323,8 +317,7 @@ export class MysteryEncounterBattlePhase extends Phase {
   }
 
   /**
-   * Queues {@linkcode SummonPhase}s for the new battle, and handles trainer animations/dialogue if it's a Trainer battle
-   * @private
+   * Queue {@linkcode SummonPhase}s for the new battle and handle trainer animations/dialogue for Trainer battles
    */
   private doMysteryEncounterBattle() {
     const encounterMode = globalScene.currentBattle.mysteryEncounter!.encounterMode;
@@ -369,7 +362,7 @@ export class MysteryEncounterBattlePhase extends Phase {
 
       const encounterMessages = globalScene.currentBattle.trainer?.getEncounterMessages();
 
-      if (!encounterMessages || !encounterMessages.length) {
+      if (!encounterMessages || encounterMessages.length === 0) {
         doSummon();
       } else {
         const trainer = globalScene.currentBattle.trainer;
@@ -401,7 +394,6 @@ export class MysteryEncounterBattlePhase extends Phase {
 
   /**
    * Initiate {@linkcode SummonPhase}s, {@linkcode ScanIvsPhase}, {@linkcode PostSummonPhase}s, etc.
-   * @private
    */
   private endBattleSetup() {
     const enemyField = globalScene.getEnemyField();
@@ -445,10 +437,7 @@ export class MysteryEncounterBattlePhase extends Phase {
     this.end();
   }
 
-  /**
-   * Ease in enemy trainer
-   * @private
-   */
+  /** Ease in enemy trainer */
   private showEnemyTrainer(): void {
     // Show enemy trainer
     const trainer = globalScene.currentBattle.trainer;
@@ -581,7 +570,7 @@ export class PostMysteryEncounterPhase extends Phase {
     if (this.onPostOptionSelect) {
       globalScene.executeWithSeedOffset(async () => {
         return await this.onPostOptionSelect!().then(result => {
-          if (isNullOrUndefined(result) || result) {
+          if (result == null || result) {
             this.continueEncounter();
           }
         });

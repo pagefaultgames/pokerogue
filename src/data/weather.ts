@@ -386,5 +386,5 @@ export function getRandomWeatherType(arena: Arena): WeatherType {
     }
   }
 
-  return weatherPool.length ? weatherPool[0].weatherType : WeatherType.NONE;
+  return weatherPool.length > 0 ? weatherPool[0].weatherType : WeatherType.NONE;
 }

@@ -8,6 +8,7 @@ import type { BattleInfoParamList } from "#ui/battle-info";
 import { BattleInfo } from "#ui/battle-info";
 import { addTextObject } from "#ui/text";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
+import { getLocalizedSpriteKey } from "#utils/common";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
 
@@ -112,9 +113,9 @@ export class EnemyBattleInfo extends BattleInfo {
     this.ownedIcon.setVisible(!!dexEntry.caughtAttr);
     const opponentPokemonDexAttr = pokemon.getDexAttr();
     if (
-      globalScene.gameMode.isClassic &&
-      globalScene.gameData.starterData[pokemon.species.getRootSpeciesId()].classicWinCount > 0 &&
-      globalScene.gameData.starterData[pokemon.species.getRootSpeciesId(true)].classicWinCount > 0
+      globalScene.gameMode.isClassic
+      && globalScene.gameData.starterData[pokemon.species.getRootSpeciesId()].classicWinCount > 0
+      && globalScene.gameData.starterData[pokemon.species.getRootSpeciesId(true)].classicWinCount > 0
     ) {
       // move the ribbon to the left if there is no owned icon
       const championRibbonX = this.ownedIcon.visible ? 8 : 0;
@@ -189,6 +190,9 @@ export class EnemyBattleInfo extends BattleInfo {
       this.hpBar.x += 38 * (boss ? -1 : 1);
       this.hpBar.y += 2 * (this.boss ? -1 : 1);
       this.hpBar.setTexture(`overlay_hp${boss ? "_boss" : ""}`);
+      this.hpLabel.x += 38 * (boss ? -1 : 1);
+      this.hpLabel.y += 1 * (this.boss ? -1 : 1);
+      this.hpLabel.setTexture(getLocalizedSpriteKey(`overlay_hp_label${boss ? "_boss" : ""}`));
       this.levelContainer.x += 2 * (boss ? -1 : 1);
       this.box.setTexture(this.getTextureName());
       this.statsBox.setTexture(`${this.getTextureName()}_stats`);
@@ -199,7 +203,7 @@ export class EnemyBattleInfo extends BattleInfo {
   }
 
   updateBossSegmentDividers(pokemon: EnemyPokemon): void {
-    while (this.hpBarSegmentDividers.length) {
+    while (this.hpBarSegmentDividers.length > 0) {
       this.hpBarSegmentDividers.pop()?.destroy();
     }
 

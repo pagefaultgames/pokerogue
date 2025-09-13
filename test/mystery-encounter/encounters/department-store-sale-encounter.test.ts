@@ -139,8 +139,8 @@ describe("Department Store Sale - Mystery Encounter", () => {
       expect(modifierSelectHandler.options.length).toEqual(3);
       for (const option of modifierSelectHandler.options) {
         expect(
-          option.modifierTypeOption.type.id.includes("PP_UP") ||
-            option.modifierTypeOption.type.id.includes("BASE_STAT_BOOSTER"),
+          option.modifierTypeOption.type.id.includes("PP_UP")
+            || option.modifierTypeOption.type.id.includes("BASE_STAT_BOOSTER"),
         ).toBeTruthy();
       }
     });
@@ -179,8 +179,8 @@ describe("Department Store Sale - Mystery Encounter", () => {
       expect(modifierSelectHandler.options.length).toEqual(5);
       for (const option of modifierSelectHandler.options) {
         expect(
-          option.modifierTypeOption.type.id.includes("DIRE_HIT") ||
-            option.modifierTypeOption.type.id.includes("TEMP_STAT_STAGE_BOOSTER"),
+          option.modifierTypeOption.type.id.includes("DIRE_HIT")
+            || option.modifierTypeOption.type.id.includes("TEMP_STAT_STAGE_BOOSTER"),
         ).toBeTruthy();
       }
     });
