@@ -6207,8 +6207,7 @@ class ForceSwitchOutHelper {
 
       if (switchOutTarget.hp > 0) {
         switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
-        globalScene.phaseManager.prependNewToPhase(
-          "MoveEndPhase",
+        globalScene.phaseManager.queueDeferred(
           "SwitchPhase",
           this.switchType,
           switchOutTarget.getFieldIndex(),
@@ -6230,8 +6229,7 @@ class ForceSwitchOutHelper {
         const summonIndex = globalScene.currentBattle.trainer
           ? globalScene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot)
           : 0;
-        globalScene.phaseManager.prependNewToPhase(
-          "MoveEndPhase",
+        globalScene.phaseManager.queueDeferred(
           "SwitchSummonPhase",
           this.switchType,
           switchOutTarget.getFieldIndex(),

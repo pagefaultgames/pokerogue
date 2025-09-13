@@ -4127,7 +4127,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     damage = Math.min(damage, this.hp);
     this.hp = this.hp - damage;
     if (this.isFainted() && !ignoreFaintPhase) {
-      globalScene.phaseManager.unshiftNewDeferred("FaintPhase", this.getBattlerIndex(), preventEndure);
+      globalScene.phaseManager.unshiftFaint(this.getBattlerIndex(), preventEndure);
       this.destroySubstitute();
       this.lapseTag(BattlerTagType.COMMANDED);
     }
@@ -5928,8 +5928,7 @@ export class PlayerPokemon extends Pokemon {
         this.getFieldIndex(),
         (slotIndex: number, _option: PartyOption) => {
           if (slotIndex >= globalScene.currentBattle.getBattlerCount() && slotIndex < 6) {
-            globalScene.phaseManager.prependNewToPhase(
-              "MoveEndPhase",
+            globalScene.phaseManager.queueDeferred(
               "SwitchSummonPhase",
               switchType,
               this.getFieldIndex(),

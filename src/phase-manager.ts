@@ -288,9 +288,9 @@ export class PhaseManager {
    * @param phase - {@linkcode Phase} the phase to add
    * @param defer - If `true` allow subsequently unshifted phases to run before this one. Default `false`
    */
-  unshiftPhase(phase: Phase, defer = false): void {
+  unshiftPhase(phase: Phase): void {
     const toAdd = this.checkDynamic(phase);
-    phase.is("MovePhase") ? this.phaseQueue.addAfter(toAdd, "MoveEndPhase") : this.phaseQueue.addPhase(toAdd, defer);
+    phase.is("MovePhase") ? this.phaseQueue.addAfter(toAdd, "MoveEndPhase") : this.phaseQueue.addPhase(toAdd);
   }
 
   /**
@@ -410,13 +410,6 @@ export class PhaseManager {
   }
 
   /**
-   * TODO this is obviously not what this does anymore. Need to rename and ensure callsites behave as expected
-   */
-  prependToPhase(phase: Phase, _targetPhase: PhaseString): void {
-    this.phaseQueue.unshiftToCurrent(phase);
-  }
-
-  /**
    * Adds a MessagePhase, either as if through {@linkcode unshiftPhase} or {@linkcode pushPhase}
    * @param message - string for MessagePhase
    * @param callbackDelay - optional param for MessagePhase constructor
@@ -507,15 +500,16 @@ export class PhaseManager {
   }
 
   /**
-   * Adds a phase to be run after the current phase, but after any other phases queued by the current phase
-   * @param phase - The {@linkcode Phase} to add
+   * Add a {@linkcode FaintPhase} to the queue
    * @param args - The arguments to pass to the phase constructor
+   *
+   * @remarks
+   *
+   * Faint phases are ordered in a special way to allow battle effects to settle before the pokemon faints.
+   * @see {@linkcode PhaseTree.addPhase}
    */
-  public unshiftNewDeferred<T extends PhaseString>(
-    phase: T,
-    ...args: ConstructorParameters<PhaseConstructorMap[T]>
-  ): void {
-    this.unshiftPhase(this.create(phase, ...args), true);
+  public unshiftFaint(...args: ConstructorParameters<PhaseConstructorMap["FaintPhase"]>): void {
+    this.phaseQueue.addPhase(this.create("FaintPhase", ...args), true);
   }
 
   /**
@@ -534,19 +528,17 @@ export class PhaseManager {
   }
 
   /**
-   * Create a new phase and immediately prepend it to an existing phase in the phase queue.
-   * Equivalent to calling {@linkcode create} followed by {@linkcode prependToPhase}.
-   * @param targetPhase - The phase to search for in phaseQueue
+   * Create a new phase and queue it to run after all others queued by the currently running phase.
    * @param phase - The name of the phase to create
    * @param args - The arguments to pass to the phase constructor
-   * @returns `true` if a `targetPhase` was found to prepend to
+   *
+   * @deprecated Only used for switches and should be phased out eventually.
    */
-  public prependNewToPhase<T extends PhaseString>(
-    targetPhase: PhaseString,
+  public queueDeferred<const T extends "SwitchPhase" | "SwitchSummonPhase">(
     phase: T,
     ...args: ConstructorParameters<PhaseConstructorMap[T]>
   ): void {
-    this.prependToPhase(this.create(phase, ...args), targetPhase);
+    this.phaseQueue.unshiftToCurrent(this.create(phase, ...args));
   }
 
   /**

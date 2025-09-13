@@ -900,7 +900,7 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param target - The {@linkcode Pokemon} that fainted
    */
   protected onFaintTarget(user: Pokemon, target: Pokemon): void {
-    globalScene.phaseManager.unshiftNewDeferred("FaintPhase", target.getBattlerIndex(), false, user);
+    globalScene.phaseManager.unshiftFaint(target.getBattlerIndex(), false, user);
 
     target.destroySubstitute();
     target.lapseTag(BattlerTagType.COMMANDED);
