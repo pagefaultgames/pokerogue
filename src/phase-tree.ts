@@ -8,11 +8,11 @@ import type { PhaseMap, PhaseString } from "#app/@types/phase-types";
 import type { Phase } from "#app/phase";
 
 /**
-The PhaseTree is the central storage location for {@linkcode Phase}s by the {@linkcode PhaseManager}.
-
-It has a tiered structure, where unshifted phases are added one level above the currently running Phase. Phases are generally popped from the Tree in FIFO order.
-
-Dynamically ordered phases are queued into the Tree only as {@linkcode DynamicPhaseMarker | Marker}s and as such are not guaranteed to run FIFO (otherwise, they would not be dynamic)
+ * The PhaseTree is the central storage location for {@linkcode Phase}s by the {@linkcode PhaseManager}.
+ *
+ * It has a tiered structure, where unshifted phases are added one level above the currently running Phase. Phases are generally popped from the Tree in FIFO order.
+ *
+ * Dynamically ordered phases are queued into the Tree only as {@linkcode DynamicPhaseMarker | Marker}s and as such are not guaranteed to run FIFO (otherwise, they would not be dynamic)
  */
 export class PhaseTree {
   /** Storage for all levels in the tree. This may be a simple array because only one Phase may have "children" at a time */
