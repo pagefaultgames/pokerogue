@@ -178,7 +178,7 @@ export class GameManager {
    * @param expireFn - Optional function to determine if the prompt has expired.
    * @param awaitingActionInput - If true, will prevent the prompt from activating until the current {@linkcode AwaitableUiHandler}
    * is awaiting input; default `false`
-   * @deprecated Remove in favor of {@linkcode promptHandler.addToNextPrompt}
+   * @deprecated Remove in favor of {@linkcode PromptHandler.addToNextPrompt}
    */
   onNextPrompt(
     phaseTarget: PhaseString,
@@ -407,21 +407,22 @@ export class GameManager {
 
   /**
    * Checks if the current phase matches the target phase.
-   * @param phaseTarget - The target phase.
-   * @returns Whether the current phase matches the target phase
+   * @param phaseTargets - The target phase(s) to check
+   * @returns Whether the current phase matches any of the target phases
    * @todo Remove `phaseClass` from signature
+   * @todo Convert existing calls of `game.isCurrentPhase(A) || game.isCurrentPhase(B)` to pass them together in 1 call
    */
-  isCurrentPhase(phaseTarget: PhaseString): boolean;
+  public isCurrentPhase(...phaseTargets: [PhaseString, ...PhaseString[]]): boolean;
   /**
    * Checks if the current phase matches the target phase.
-   * @param phaseTarget - The target phase.
+   * @param phaseTargets - The target phase to check
    * @returns Whether the current phase matches the target phase
    * @deprecated Use `PhaseString` instead
    */
-  isCurrentPhase(phaseTarget: PhaseClass): boolean;
-  isCurrentPhase(phaseTarget: PhaseString | PhaseClass): boolean {
-    const targetName = typeof phaseTarget === "string" ? phaseTarget : (phaseTarget.name as PhaseString);
-    return this.scene.phaseManager.getCurrentPhase().is(targetName);
+  public isCurrentPhase(phaseTargets: PhaseClass): boolean;
+  public isCurrentPhase(...phaseTargets: (PhaseString | PhaseClass)[]): boolean {
+    const pName = this.scene.phaseManager.getCurrentPhase().phaseName;
+    return phaseTargets.some(p => (typeof p === "string" ? p : (p.name as PhaseString) === pName));
   }
 
   /**
