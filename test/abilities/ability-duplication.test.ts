@@ -30,7 +30,7 @@ describe("Ability Duplication", () => {
       .enemyMoveset(MoveId.SPLASH);
   });
 
-  // todo: this doesn't really work
+  // TODO: Find a cleaner way of checking ability duplication effects than suppressing the ability
   it("huge power should only be applied once if both normal and passive", async () => {
     game.override.passiveAbility(AbilityId.HUGE_POWER);
 
