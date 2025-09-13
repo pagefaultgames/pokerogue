@@ -168,7 +168,7 @@ export class TitlePhase extends Phase {
     globalScene.ui.setMode(UiMode.TITLE, config);
   }
 
-  // TODO: Make callers actually wait for the damn save slot to load
+  // TODO: Make callers actually wait for the save slot to load
   private async loadSaveSlot(slotId: number): Promise<void> {
     globalScene.sessionSlotId = slotId > -1 || !loggedInUser ? slotId : loggedInUser.lastSessionSlot;
     globalScene.ui.setMode(UiMode.MESSAGE);
