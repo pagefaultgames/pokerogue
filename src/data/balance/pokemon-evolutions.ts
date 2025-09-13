@@ -1764,7 +1764,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.CROBAT, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 120}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.CHANSEY]: [
-    new SpeciesEvolution(SpeciesId.BLISSEY, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 200}, SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(SpeciesId.BLISSEY, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 180}, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.PICHU]: [
     new SpeciesFormEvolution(SpeciesId.PIKACHU, "spiky", "partner", 1, null, {key: EvoCondKey.FRIENDSHIP, value: 90}, SpeciesWildEvolutionDelay.SHORT),
