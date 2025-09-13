@@ -13,6 +13,7 @@ import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import i18next from "i18next";
+import { BattleType } from "#enums/battle-type";
 
 export class CommandUiHandler extends UiHandler {
   private commandsContainer: Phaser.GameObjects.Container;
@@ -185,6 +186,60 @@ export class CommandUiHandler extends UiHandler {
           } else if (cursor === Command.TERA) {
             success = this.setCursor(Command.FIGHT);
             this.toggleTeraButton();
+          }
+          break;
+        case Button.CYCLE_SHINY: // Used to throw the last pokeball
+          const commandPhase = globalScene.phaseManager.getCurrentPhase() as CommandPhase;
+          if (globalScene.pokeballCounts[globalScene.lastPokeballType]) {
+            if (commandPhase.handleCommand(Command.BALL, globalScene.lastPokeballType)) {
+              globalScene.ui.setMode(UiMode.COMMAND, commandPhase.getFieldIndex());
+              globalScene.ui.setMode(UiMode.MESSAGE);
+              success = true;
+            }
+          } else {
+            ui.playError();
+          }
+          break;
+        case Button.CYCLE_ABILITY: // Used to restart the battle
+          if (globalScene.enableRetries){
+            globalScene.ui.setMode(UiMode.MESSAGE)
+            globalScene.ui.showText(i18next.t("battle:retryBattle"), null, () => {
+              globalScene.ui.setMode(
+                UiMode.CONFIRM,
+                () => {
+                  globalScene.ui.fadeOut(1250).then(() => {
+                    globalScene.reset();
+                    globalScene.phaseManager.clearPhaseQueue();
+                    globalScene.gameData.loadSession(globalScene.sessionSlotId).then(() => {
+                      globalScene.phaseManager.pushNew("EncounterPhase", true);
+      
+                      const availablePartyMembers = globalScene.getPokemonAllowedInBattle().length;
+      
+                      globalScene.phaseManager.pushNew("SummonPhase", 0);
+                      if (globalScene.currentBattle.double && availablePartyMembers > 1) {
+                        globalScene.phaseManager.pushNew("SummonPhase", 1);
+                      }
+                      if (
+                        globalScene.currentBattle.waveIndex > 1 &&
+                        globalScene.currentBattle.battleType !== BattleType.TRAINER
+                      ) {
+                        globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
+                        if (globalScene.currentBattle.double && availablePartyMembers > 1) {
+                          globalScene.phaseManager.pushNew("CheckSwitchPhase", 1, globalScene.currentBattle.double);
+                        }
+                      }
+                      globalScene.ui.fadeIn(1250);
+                      globalScene.phaseManager.shiftPhase();
+                    });
+                  });
+                },
+                () => { globalScene.ui.setMode(UiMode.COMMAND)},
+                false,
+                0,
+                0,
+                1000,
+              );
+            });
           }
           break;
       }
