@@ -364,7 +364,9 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       await skipBattleRunMysteryEncounterRewardsPhase(game, false);
 
       expect(game).toBeAtPhase("MysteryEncounterRewardsPhase");
-      game.phaseInterceptor["prompts"] = []; // Clear out prompt handlers
+      // Clear out prompt handlers
+      // TODO: Is this even needed?
+      game.promptHandler["prompts"] = [];
       game.onNextPrompt("MysteryEncounterRewardsPhase", UiMode.OPTION_SELECT, () => {
         game.endPhase();
       });
