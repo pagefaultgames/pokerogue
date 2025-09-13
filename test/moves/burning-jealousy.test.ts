@@ -46,7 +46,7 @@ describe("Moves - Burning Jealousy", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemy.status?.effect).toBe(StatusEffect.BURN);
+    expect(enemy).toHaveStatusEffect(StatusEffect.BURN);
   });
 
   it("should still burn the opponent if their stat stages were both raised and lowered in the same turn", async () => {
@@ -60,7 +60,7 @@ describe("Moves - Burning Jealousy", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemy.status?.effect).toBe(StatusEffect.BURN);
+    expect(enemy).toHaveStatusEffect(StatusEffect.BURN);
   });
 
   it("should ignore stat stages raised by IMPOSTER", async () => {
@@ -72,7 +72,7 @@ describe("Moves - Burning Jealousy", () => {
     game.move.select(MoveId.BURNING_JEALOUSY);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemy.status?.effect).toBeUndefined();
+    expect(enemy).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   // TODO: Make this test if WP is implemented

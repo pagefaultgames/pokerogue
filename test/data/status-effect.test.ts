@@ -1,10 +1,10 @@
 import {
-  getStatusEffectActivationText,
-  getStatusEffectDescriptor,
-  getStatusEffectHealText,
-  getStatusEffectObtainText,
-  getStatusEffectOverlapText,
-  Status,
+    getStatusEffectActivationText,
+    getStatusEffectDescriptor,
+    getStatusEffectHealText,
+    getStatusEffectObtainText,
+    getStatusEffectOverlapText,
+    Status,
 } from "#data/status-effect";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
@@ -371,23 +371,23 @@ describe("Status Effects", () => {
       game.move.select(MoveId.SPLASH);
       await game.toNextTurn();
 
-      expect(player.status.effect).toBe(StatusEffect.SLEEP);
+      expect(player).toHaveStatusEffect(StatusEffect.SLEEP);
 
       game.move.select(MoveId.SPLASH);
       await game.toNextTurn();
 
-      expect(player.status.effect).toBe(StatusEffect.SLEEP);
+      expect(player).toHaveStatusEffect(StatusEffect.SLEEP);
 
       game.move.select(MoveId.SPLASH);
       await game.toNextTurn();
 
-      expect(player.status.effect).toBe(StatusEffect.SLEEP);
+      expect(player).toHaveStatusEffect(StatusEffect.SLEEP);
       expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
 
       game.move.select(MoveId.SPLASH);
       await game.toNextTurn();
 
-      expect(player.status).toBeFalsy();
+      expect(player).toHaveStatusEffect(StatusEffect.NONE);
       expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
     });
   });
@@ -426,7 +426,7 @@ describe("Status Effects", () => {
       player.hp = 0;
 
       expect(player.trySetStatus(StatusEffect.BURN)).toBe(false);
-      expect(player.status?.effect).not.toBe(StatusEffect.BURN);
+      expect(player).not.toHaveStatusEffect(StatusEffect.BURN);
     });
   });
 });

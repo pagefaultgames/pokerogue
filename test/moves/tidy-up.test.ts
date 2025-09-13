@@ -45,7 +45,7 @@ describe("Moves - Tidy Up", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
     game.move.select(MoveId.TIDY_UP);
     await game.phaseInterceptor.to(MoveEndPhase);
-    expect(game.scene.arena.getTag(ArenaTagType.SPIKES)).toBeUndefined();
+    expect(game).not.toHaveArenaTag(ArenaTagType.SPIKES);
   });
 
   it("stealth rocks are cleared", async () => {
@@ -56,7 +56,7 @@ describe("Moves - Tidy Up", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
     game.move.select(MoveId.TIDY_UP);
     await game.phaseInterceptor.to(MoveEndPhase);
-    expect(game.scene.arena.getTag(ArenaTagType.STEALTH_ROCK)).toBeUndefined();
+    expect(game).not.toHaveArenaTag(ArenaTagType.STEALTH_ROCK);
   });
 
   it("toxic spikes are cleared", async () => {
@@ -67,7 +67,7 @@ describe("Moves - Tidy Up", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
     game.move.select(MoveId.TIDY_UP);
     await game.phaseInterceptor.to(MoveEndPhase);
-    expect(game.scene.arena.getTag(ArenaTagType.TOXIC_SPIKES)).toBeUndefined();
+    expect(game).not.toHaveArenaTag(ArenaTagType.TOXIC_SPIKES);
   });
 
   it("sticky webs are cleared", async () => {
@@ -79,7 +79,7 @@ describe("Moves - Tidy Up", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
     game.move.select(MoveId.TIDY_UP);
     await game.phaseInterceptor.to(MoveEndPhase);
-    expect(game.scene.arena.getTag(ArenaTagType.STICKY_WEB)).toBeUndefined();
+    expect(game).not.toHaveArenaTag(ArenaTagType.STICKY_WEB);
   });
 
   it("substitutes are cleared", async () => {

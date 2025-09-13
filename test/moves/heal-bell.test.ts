@@ -46,9 +46,9 @@ describe("Moves - Heal Bell", () => {
     expect(rightPlayer.resetStatus).toHaveBeenCalledOnce();
     expect(partyPokemon.resetStatus).toHaveBeenCalledOnce();
 
-    expect(leftPlayer.status?.effect).toBeUndefined();
-    expect(rightPlayer.status?.effect).toBeUndefined();
-    expect(partyPokemon.status?.effect).toBeUndefined();
+    expect(leftPlayer).toHaveStatusEffect(StatusEffect.NONE);
+    expect(rightPlayer).toHaveStatusEffect(StatusEffect.NONE);
+    expect(partyPokemon).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   it("should not cure status effect of the target/target's allies", async () => {
@@ -69,8 +69,8 @@ describe("Moves - Heal Bell", () => {
     expect(leftOpp.status?.effect).toBeTruthy();
     expect(rightOpp.status?.effect).toBeTruthy();
 
-    expect(leftOpp.status?.effect).toBe(StatusEffect.BURN);
-    expect(rightOpp.status?.effect).toBe(StatusEffect.BURN);
+    expect(leftOpp).toHaveStatusEffect(StatusEffect.BURN);
+    expect(rightOpp).toHaveStatusEffect(StatusEffect.BURN);
   });
 
   it("should not cure status effect of allies ON FIELD with Soundproof, should still cure allies in party", async () => {
@@ -90,8 +90,8 @@ describe("Moves - Heal Bell", () => {
     expect(rightPlayer.resetStatus).toHaveBeenCalledTimes(0);
     expect(partyPokemon.resetStatus).toHaveBeenCalledOnce();
 
-    expect(leftPlayer.status?.effect).toBeUndefined();
-    expect(rightPlayer.status?.effect).toBe(StatusEffect.BURN);
-    expect(partyPokemon.status?.effect).toBeUndefined();
+    expect(leftPlayer).toHaveStatusEffect(StatusEffect.NONE);
+    expect(rightPlayer).toHaveStatusEffect(StatusEffect.BURN);
+    expect(partyPokemon).toHaveStatusEffect(StatusEffect.NONE);
   });
 });

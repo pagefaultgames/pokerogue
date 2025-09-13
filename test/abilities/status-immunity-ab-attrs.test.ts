@@ -11,14 +11,38 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe.each<{ name: string; ability: AbilityId; status: StatusEffect }>([
-  { name: "Vital Spirit", ability: AbilityId.VITAL_SPIRIT, status: StatusEffect.SLEEP },
+  {
+    name: "Vital Spirit",
+    ability: AbilityId.VITAL_SPIRIT,
+    status: StatusEffect.SLEEP,
+  },
   { name: "Insomnia", ability: AbilityId.INSOMNIA, status: StatusEffect.SLEEP },
-  { name: "Immunity", ability: AbilityId.IMMUNITY, status: StatusEffect.POISON },
-  { name: "Magma Armor", ability: AbilityId.MAGMA_ARMOR, status: StatusEffect.FREEZE },
+  {
+    name: "Immunity",
+    ability: AbilityId.IMMUNITY,
+    status: StatusEffect.POISON,
+  },
+  {
+    name: "Magma Armor",
+    ability: AbilityId.MAGMA_ARMOR,
+    status: StatusEffect.FREEZE,
+  },
   { name: "Limber", ability: AbilityId.LIMBER, status: StatusEffect.PARALYSIS },
-  { name: "Thermal Exchange", ability: AbilityId.THERMAL_EXCHANGE, status: StatusEffect.BURN },
-  { name: "Water Veil", ability: AbilityId.WATER_VEIL, status: StatusEffect.BURN },
-  { name: "Water Bubble", ability: AbilityId.WATER_BUBBLE, status: StatusEffect.BURN },
+  {
+    name: "Thermal Exchange",
+    ability: AbilityId.THERMAL_EXCHANGE,
+    status: StatusEffect.BURN,
+  },
+  {
+    name: "Water Veil",
+    ability: AbilityId.WATER_VEIL,
+    status: StatusEffect.BURN,
+  },
+  {
+    name: "Water Bubble",
+    ability: AbilityId.WATER_BUBBLE,
+    status: StatusEffect.BURN,
+  },
 ])("Abilities - $name", ({ ability, status }) => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -54,13 +78,13 @@ describe.each<{ name: string; ability: AbilityId; status: StatusEffect }>([
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const karp = game.field.getEnemyPokemon();
-    expect(karp.status?.effect).toBeUndefined();
+    expect(karp).toHaveStatusEffect(StatusEffect.NONE);
     expect(karp.canSetStatus(status)).toBe(false);
 
     game.move.use(MoveId.LUMINA_CRASH);
     await game.toEndOfTurn();
 
-    expect(karp.status?.effect).toBeUndefined();
+    expect(karp).toHaveStatusEffect(StatusEffect.NONE);
     expect(game.field.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
   });
 
@@ -69,13 +93,13 @@ describe.each<{ name: string; ability: AbilityId; status: StatusEffect }>([
 
     const feebas = game.field.getPlayerPokemon();
     feebas.doSetStatus(status);
-    expect(feebas.status?.effect).toBe(status);
+    expect(feebas).toHaveStatusEffect(status);
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.SKILL_SWAP);
     await game.toEndOfTurn();
 
-    expect(feebas.status?.effect).toBeUndefined();
+    expect(feebas).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   // TODO: This does not propagate failures currently
@@ -88,7 +112,7 @@ describe.each<{ name: string; ability: AbilityId; status: StatusEffect }>([
       await game.toEndOfTurn();
 
       const karp = game.field.getEnemyPokemon();
-      expect(karp.status?.effect).toBeUndefined();
+      expect(karp).toHaveStatusEffect(StatusEffect.NONE);
       expect(game.field.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     },
   );

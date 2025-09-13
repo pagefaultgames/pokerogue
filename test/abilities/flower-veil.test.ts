@@ -51,14 +51,14 @@ describe("Abilities - Flower Veil", () => {
     await game.move.selectEnemyMove(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
-    expect(user.status?.effect).toBe(StatusEffect.SLEEP);
+    expect(user).toHaveStatusEffect(StatusEffect.SLEEP);
 
     // remove sleep status so we can get burn from the orb
     user.resetStatus();
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
-    expect(user.status?.effect).toBe(StatusEffect.BURN);
+    expect(user).toHaveStatusEffect(StatusEffect.BURN);
   });
 
   it("should prevent drowsiness from yawn for a grass user and its grass allies", async () => {
@@ -87,7 +87,7 @@ describe("Abilities - Flower Veil", () => {
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.THUNDER_WAVE);
     await game.toNextTurn();
-    expect(game.field.getPlayerPokemon().status).toBeUndefined();
+    expect(game.field.getPlayerPokemon()).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   it("should not prevent status conditions for a non-grass user and its non-grass allies", async () => {
@@ -102,8 +102,8 @@ describe("Abilities - Flower Veil", () => {
     await game.move.selectEnemyMove(MoveId.THUNDER_WAVE, BattlerIndex.PLAYER);
     await game.move.selectEnemyMove(MoveId.THUNDER_WAVE, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(user.status?.effect).toBe(StatusEffect.PARALYSIS);
-    expect(ally.status?.effect).toBe(StatusEffect.PARALYSIS);
+    expect(user).toHaveStatusEffect(StatusEffect.PARALYSIS);
+    expect(ally).toHaveStatusEffect(StatusEffect.PARALYSIS);
   });
 
   /*******************************************

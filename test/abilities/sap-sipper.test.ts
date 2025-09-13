@@ -5,6 +5,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
 import { RandomMoveAttr } from "#moves/move";
 import { MoveEndPhase } from "#phases/move-end-phase";
 import { TurnEndPhase } from "#phases/turn-end-phase";
@@ -69,7 +70,7 @@ describe("Abilities - Sap Sipper", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(enemyPokemon.status).toBeUndefined();
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.NONE);
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
   });
 

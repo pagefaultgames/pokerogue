@@ -127,7 +127,7 @@ describe("Moves - Powder", () => {
     game.move.select(MoveId.POWDER);
 
     await game.phaseInterceptor.to(BerryPhase, false);
-    expect(enemyPokemon.status?.effect).not.toBe(StatusEffect.FREEZE);
+    expect(enemyPokemon).not.toHaveStatusEffect(StatusEffect.FREEZE);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
   });

@@ -51,7 +51,7 @@ describe("Items - Toxic orb", () => {
     await game.phaseInterceptor.to("MessagePhase");
     expect(i18next.t).toHaveBeenCalledWith("statusEffect:toxic.obtainSource", expect.anything());
 
-    expect(player.status?.effect).toBe(StatusEffect.TOXIC);
+    expect(player).toHaveStatusEffect(StatusEffect.TOXIC);
     expect(player.status?.toxicTurnCount).toBe(0);
   });
 });

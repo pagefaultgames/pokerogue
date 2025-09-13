@@ -82,8 +82,8 @@ describe("Abilities - Good As Gold", () => {
     await game.phaseInterceptor.to("BerryPhase");
     expect(good_as_gold.getAbility().id).toBe(AbilityId.GOOD_AS_GOLD);
     expect(good_as_gold.getStatStage(Stat.ATK)).toBe(0);
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.STEALTH_ROCK, ArenaTagSide.PLAYER)).toBeDefined();
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, ArenaTagSide.PLAYER)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.STEALTH_ROCK, ArenaTagSide.PLAYER);
+    expect(game).toHaveArenaTag(ArenaTagType.SAFEGUARD, ArenaTagSide.PLAYER);
   });
 
   it("should not block field targeted effects in singles", async () => {
@@ -93,7 +93,7 @@ describe("Abilities - Good As Gold", () => {
     game.move.select(MoveId.SPLASH, 0);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.PLAYER)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.SPIKES, ArenaTagSide.PLAYER);
   });
 
   it("should block the ally's helping hand", async () => {
@@ -120,12 +120,12 @@ describe("Abilities - Good As Gold", () => {
     game.move.use(MoveId.SPLASH, 0);
     game.move.use(MoveId.HEAL_BELL, 1);
     await game.toNextTurn();
-    expect(milotic.status?.effect).toBe(StatusEffect.BURN);
+    expect(milotic).toHaveStatusEffect(StatusEffect.BURN);
 
     game.doSwitchPokemon(2);
     game.move.use(MoveId.HEAL_BELL, 1);
     await game.toNextTurn();
-    expect(milotic.status?.effect).toBeUndefined();
+    expect(milotic).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   it("should not block field targeted effects like rain dance", async () => {

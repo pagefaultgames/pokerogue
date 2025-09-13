@@ -47,7 +47,7 @@ describe("Move - Court Change", () => {
     await game.toNextTurn();
 
     // enemy team will be in the swamp and slowed
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.GRASS_WATER_PLEDGE, ArenaTagSide.ENEMY)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.GRASS_WATER_PLEDGE, ArenaTagSide.ENEMY);
     expect(enemyPokemon.getEffectiveStat(Stat.SPD)).toBe(enemyPokemon.getStat(Stat.SPD) / 4);
 
     game.move.use(MoveId.COURT_CHANGE);
@@ -55,8 +55,8 @@ describe("Move - Court Change", () => {
     await game.toEndOfTurn();
 
     // own team should now be in the swamp and slowed
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.GRASS_WATER_PLEDGE, ArenaTagSide.ENEMY)).toBeUndefined();
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.GRASS_WATER_PLEDGE, ArenaTagSide.PLAYER)).toBeDefined();
+    expect(game).not.toHaveArenaTag(ArenaTagType.GRASS_WATER_PLEDGE, ArenaTagSide.ENEMY);
+    expect(game).toHaveArenaTag(ArenaTagType.GRASS_WATER_PLEDGE, ArenaTagSide.PLAYER);
     expect(regieleki.getEffectiveStat(Stat.SPD)).toBe(regieleki.getStat(Stat.SPD) / 4);
   });
 
@@ -71,15 +71,15 @@ describe("Move - Court Change", () => {
     await game.toNextTurn();
 
     // Ninjask will not be poisoned because of Safeguard
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, ArenaTagSide.PLAYER)).toBeDefined();
-    expect(ninjask.status?.effect).toBeUndefined();
+    expect(game).toHaveArenaTag(ArenaTagType.SAFEGUARD, ArenaTagSide.PLAYER);
+    expect(ninjask).toHaveStatusEffect(StatusEffect.NONE);
 
     game.move.use(MoveId.COURT_CHANGE);
     await game.toEndOfTurn();
 
     // Ninjask should now be poisoned due to lack of Safeguard
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, ArenaTagSide.PLAYER)).toBeUndefined();
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, ArenaTagSide.ENEMY)).toBeDefined();
-    expect(ninjask.status?.effect).toBe(StatusEffect.POISON);
+    expect(game).not.toHaveArenaTag(ArenaTagType.SAFEGUARD, ArenaTagSide.PLAYER);
+    expect(game).toHaveArenaTag(ArenaTagType.SAFEGUARD, ArenaTagSide.ENEMY);
+    expect(ninjask).toHaveStatusEffect(StatusEffect.POISON);
   });
 });

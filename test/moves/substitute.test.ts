@@ -189,7 +189,7 @@ describe("Moves - Substitute", () => {
     await game.toNextTurn();
 
     expect(leadPokemon.getMoveEffectiveness).not.toHaveReturnedWith(0);
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.LIGHT_SCREEN, ArenaTagSide.PLAYER)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.LIGHT_SCREEN, ArenaTagSide.PLAYER);
   });
 
   it("shouldn't block the opponent from setting hazards", async () => {
@@ -205,7 +205,7 @@ describe("Moves - Substitute", () => {
     await game.toNextTurn();
 
     expect(leadPokemon.getMoveEffectiveness).not.toHaveReturnedWith(0);
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.STEALTH_ROCK, ArenaTagSide.PLAYER)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.STEALTH_ROCK, ArenaTagSide.PLAYER);
   });
 
   it("shouldn't block moves that target both sides of the field", async () => {
@@ -224,8 +224,8 @@ describe("Moves - Substitute", () => {
     await game.toNextTurn();
 
     pokemon.forEach(p => expect(p.getMoveEffectiveness).not.toHaveReturnedWith(0));
-    expect(game.scene.arena.getTag(ArenaTagType.TRICK_ROOM)).toBeDefined();
-    expect(game.scene.arena.getTag(ArenaTagType.GRAVITY)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.TRICK_ROOM);
+    expect(game).toHaveArenaTag(ArenaTagType.GRAVITY);
   });
 
   it("should protect the user from flinching", async () => {
@@ -292,7 +292,7 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(leadPokemon.status?.effect).not.toBe(StatusEffect.PARALYSIS);
+    expect(leadPokemon).not.toHaveStatusEffect(StatusEffect.PARALYSIS);
   });
 
   it("should prevent the user's items from being stolen", async () => {
@@ -471,7 +471,7 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(enemyPokemon.status?.effect).not.toBe(StatusEffect.BURN);
+    expect(enemyPokemon).not.toHaveStatusEffect(StatusEffect.BURN);
   });
 
   it("should cause incoming attacks to not activate Counter", async () => {

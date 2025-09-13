@@ -73,7 +73,7 @@ describe("Moves - Sleep Talk", () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const feebas = game.field.getPlayerPokemon();
-    expect(feebas.status?.effect).toBe(StatusEffect.SLEEP);
+    expect(feebas).toHaveStatusEffect(StatusEffect.SLEEP);
     feebas.status!.sleepTurnsRemaining = 1;
 
     game.move.select(MoveId.SLEEP_TALK);

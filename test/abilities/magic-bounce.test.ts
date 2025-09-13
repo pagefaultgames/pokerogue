@@ -127,7 +127,7 @@ describe("Abilities - Magic Bounce", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.PLAYER)!["layers"]).toBe(1);
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY)).toBeUndefined();
+    expect(game).not.toHaveArenaTag(ArenaTagType.SPIKES, ArenaTagSide.ENEMY);
   });
 
   it("should bounce spikes even when the target is protected", async () => {
@@ -260,7 +260,7 @@ describe("Abilities - Magic Bounce", () => {
     // Turn 1 - thunder wave immunity test
     game.move.select(MoveId.THUNDER_WAVE);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.field.getPlayerPokemon().status).toBeUndefined();
+    expect(game.field.getPlayerPokemon()).toHaveStatusEffect(StatusEffect.NONE);
 
     // Turn 2 - soundproof immunity test
     game.move.select(MoveId.GROWL);
@@ -277,7 +277,7 @@ describe("Abilities - Magic Bounce", () => {
     vi.spyOn(attacker, "getAccuracyMultiplier").mockReturnValue(0.0);
     game.move.select(MoveId.SPORE);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.field.getPlayerPokemon().status?.effect).toBe(StatusEffect.SLEEP);
+    expect(game.field.getPlayerPokemon()).toHaveStatusEffect(StatusEffect.SLEEP);
   });
 
   it("should take the accuracy of the magic bounce user into account", async () => {
@@ -288,7 +288,7 @@ describe("Abilities - Magic Bounce", () => {
     vi.spyOn(opponent, "getAccuracyMultiplier").mockReturnValue(0);
     game.move.select(MoveId.SPORE);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.field.getPlayerPokemon().status).toBeUndefined();
+    expect(game.field.getPlayerPokemon()).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   it("should always apply the leftmost available target's magic bounce when bouncing moves like sticky webs in doubles", async () => {
@@ -332,8 +332,8 @@ describe("Abilities - Magic Bounce", () => {
     await game.move.selectEnemyMove(MoveId.FLY);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.field.getEnemyPokemon().status?.effect).toBe(StatusEffect.TOXIC);
-    expect(game.field.getPlayerPokemon().status).toBeUndefined();
+    expect(game.field.getEnemyPokemon()).toHaveStatusEffect(StatusEffect.TOXIC);
+    expect(game.field.getPlayerPokemon()).toHaveStatusEffect(StatusEffect.NONE);
 
     game.override.ability(AbilityId.NO_GUARD);
     game.move.select(MoveId.CHARM);

@@ -79,7 +79,7 @@ describe("Moves - Crafty Shield", () => {
     await game.move.forceEnemyMove(MoveId.TOXIC_SPIKES);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.PLAYER)).toBeDefined();
+    expect(game).toHaveArenaTag(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.PLAYER);
     expect(charizard.getTag(BattlerTagType.PERISH_SONG)).toBeDefined();
     expect(blastoise.getTag(BattlerTagType.PERISH_SONG)).toBeDefined();
   });

@@ -40,13 +40,13 @@ describe("Move - Rest", () => {
 
     const snorlax = game.field.getPlayerPokemon();
     snorlax.hp = 1;
-    expect(snorlax.status?.effect).toBe(StatusEffect.POISON);
+    expect(snorlax).toHaveStatusEffect(StatusEffect.POISON);
 
     game.move.use(MoveId.REST);
     await game.toEndOfTurn();
 
     expect(snorlax.hp).toBe(snorlax.getMaxHp());
-    expect(snorlax.status?.effect).toBe(StatusEffect.SLEEP);
+    expect(snorlax).toHaveStatusEffect(StatusEffect.SLEEP);
   });
 
   it("should always last 3 turns", async () => {
@@ -60,7 +60,7 @@ describe("Move - Rest", () => {
     game.move.use(MoveId.REST);
     await game.toNextTurn();
 
-    expect(snorlax.status?.effect).toBe(StatusEffect.SLEEP);
+    expect(snorlax).toHaveStatusEffect(StatusEffect.SLEEP);
     expect(snorlax.status?.sleepTurnsRemaining).toBe(3);
 
     game.move.use(MoveId.SWORDS_DANCE);
@@ -73,7 +73,7 @@ describe("Move - Rest", () => {
 
     game.move.use(MoveId.SWORDS_DANCE);
     await game.toNextTurn();
-    expect(snorlax.status?.effect).toBeUndefined();
+    expect(snorlax).toHaveStatusEffect(StatusEffect.NONE);
     expect(snorlax.getStatStage(Stat.ATK)).toBe(2);
   });
 
@@ -90,9 +90,17 @@ describe("Move - Rest", () => {
     expect(snorlax.getTag(BattlerTagType.CONFUSED)).toBeDefined();
   });
 
-  it.each<{ name: string; status?: StatusEffect; ability?: AbilityId; dmg?: number }>([
+  it.each<{
+    name: string;
+    status?: StatusEffect;
+    ability?: AbilityId;
+    dmg?: number;
+  }>([
     { name: "is at full HP", dmg: 0 },
-    { name: "is grounded on Electric Terrain", ability: AbilityId.ELECTRIC_SURGE },
+    {
+      name: "is grounded on Electric Terrain",
+      ability: AbilityId.ELECTRIC_SURGE,
+    },
     { name: "is grounded on Misty Terrain", ability: AbilityId.MISTY_SURGE },
     { name: "has Comatose", ability: AbilityId.COMATOSE },
   ])("should fail if the user $name", async ({ status = StatusEffect.NONE, ability = AbilityId.NONE, dmg = 1 }) => {
@@ -121,7 +129,7 @@ describe("Move - Rest", () => {
     await game.toEndOfTurn();
 
     expect(snorlax.isFullHp()).toBe(false);
-    expect(snorlax.status?.effect).toBe(StatusEffect.SLEEP);
+    expect(snorlax).toHaveStatusEffect(StatusEffect.SLEEP);
     expect(snorlax.getLastXMoves(-1).map(tm => tm.result)).toEqual([MoveResult.FAIL, MoveResult.SUCCESS]);
   });
 
@@ -132,13 +140,13 @@ describe("Move - Rest", () => {
     const snorlax = game.field.getPlayerPokemon();
     snorlax.hp = 1;
 
-    expect(snorlax.status?.effect).toBe(StatusEffect.SLEEP);
+    expect(snorlax).toHaveStatusEffect(StatusEffect.SLEEP);
     snorlax.status!.sleepTurnsRemaining = 1;
 
     game.move.use(MoveId.REST);
     await game.toNextTurn();
 
-    expect(snorlax.status!.effect).toBe(StatusEffect.SLEEP);
+    expect(snorlax).toHaveStatusEffect(StatusEffect.SLEEP);
     expect(snorlax.isFullHp()).toBe(true);
     expect(snorlax.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
     expect(snorlax.status!.sleepTurnsRemaining).toBeGreaterThan(1);

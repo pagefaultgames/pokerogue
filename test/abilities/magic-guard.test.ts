@@ -40,7 +40,11 @@ describe("AbilityId - Magic Guard", () => {
   it.each<{ name: string; move?: MoveId; enemyMove?: MoveId }>([
     { name: "Non-Volatile Status Conditions", enemyMove: MoveId.TOXIC },
     { name: "Volatile Status Conditions", enemyMove: MoveId.LEECH_SEED },
-    { name: "Crash Damage", move: MoveId.HIGH_JUMP_KICK, enemyMove: MoveId.PROTECT }, // Protect triggers crash damage
+    {
+      name: "Crash Damage",
+      move: MoveId.HIGH_JUMP_KICK,
+      enemyMove: MoveId.PROTECT,
+    }, // Protect triggers crash damage
     { name: "Variable Recoil Moves", move: MoveId.DOUBLE_EDGE },
     { name: "HP% Recoil Moves", move: MoveId.CHLOROBLAST },
   ])("should prevent damage from $name", async ({ move = MoveId.SPLASH, enemyMove = MoveId.SPLASH }) => {
@@ -55,13 +59,39 @@ describe("AbilityId - Magic Guard", () => {
     expect(magikarp.hp).toBe(magikarp.getMaxHp());
   });
 
-  it.each<{ abName: string; move?: MoveId; enemyMove?: MoveId; passive?: AbilityId; enemyAbility?: AbilityId }>([
-    { abName: "Bad Dreams", enemyMove: MoveId.SPORE, enemyAbility: AbilityId.BAD_DREAMS },
-    { abName: "Aftermath", move: MoveId.PSYCHIC_FANGS, enemyAbility: AbilityId.AFTERMATH },
-    { abName: "Innards Out", move: MoveId.PSYCHIC_FANGS, enemyAbility: AbilityId.INNARDS_OUT },
-    { abName: "Rough Skin", move: MoveId.PSYCHIC_FANGS, enemyAbility: AbilityId.ROUGH_SKIN },
+  it.each<{
+    abName: string;
+    move?: MoveId;
+    enemyMove?: MoveId;
+    passive?: AbilityId;
+    enemyAbility?: AbilityId;
+  }>([
+    {
+      abName: "Bad Dreams",
+      enemyMove: MoveId.SPORE,
+      enemyAbility: AbilityId.BAD_DREAMS,
+    },
+    {
+      abName: "Aftermath",
+      move: MoveId.PSYCHIC_FANGS,
+      enemyAbility: AbilityId.AFTERMATH,
+    },
+    {
+      abName: "Innards Out",
+      move: MoveId.PSYCHIC_FANGS,
+      enemyAbility: AbilityId.INNARDS_OUT,
+    },
+    {
+      abName: "Rough Skin",
+      move: MoveId.PSYCHIC_FANGS,
+      enemyAbility: AbilityId.ROUGH_SKIN,
+    },
     { abName: "Dry Skin", move: MoveId.SUNNY_DAY, passive: AbilityId.DRY_SKIN },
-    { abName: "Liquid Ooze", move: MoveId.DRAIN_PUNCH, enemyAbility: AbilityId.LIQUID_OOZE },
+    {
+      abName: "Liquid Ooze",
+      move: MoveId.DRAIN_PUNCH,
+      enemyAbility: AbilityId.LIQUID_OOZE,
+    },
   ])(
     "should prevent damage from $abName",
     async ({
@@ -140,7 +170,7 @@ describe("AbilityId - Magic Guard", () => {
 
     const magikarp = game.field.getPlayerPokemon();
     expect(magikarp.hp).toBe(magikarp.getMaxHp());
-    expect(magikarp.status?.effect).toBe(StatusEffect.BURN);
+    expect(magikarp).toHaveStatusEffect(StatusEffect.BURN);
     expect(getStatusEffectCatchRateMultiplier(magikarp.status!.effect)).toBe(1.5);
 
     // Heal blissey to full & use tackle again
@@ -163,6 +193,6 @@ describe("AbilityId - Magic Guard", () => {
     // Magic guard prevented damage but not poison
     const player = game.field.getPlayerPokemon();
     expect(player.hp).toBe(player.getMaxHp());
-    expect(player.status?.effect).toBe(StatusEffect.POISON);
+    expect(player).toHaveStatusEffect(StatusEffect.POISON);
   });
 });

@@ -3,6 +3,7 @@ import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
+import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -51,7 +52,11 @@ describe("Moves - Quick Guard", () => {
 
   it.each<{ name: string; move: MoveId; ability: AbilityId }>([
     { name: "Prankster", move: MoveId.SPORE, ability: AbilityId.PRANKSTER },
-    { name: "Gale Wings", move: MoveId.BRAVE_BIRD, ability: AbilityId.GALE_WINGS },
+    {
+      name: "Gale Wings",
+      move: MoveId.BRAVE_BIRD,
+      ability: AbilityId.GALE_WINGS,
+    },
   ])("should protect the user and allies from $name-boosted moves", async ({ move, ability }) => {
     game.override.enemyMoveset(move).enemyAbility(ability);
     await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
@@ -66,8 +71,8 @@ describe("Moves - Quick Guard", () => {
 
     expect(charizard.hp).toBe(charizard.getMaxHp());
     expect(blastoise.hp).toBe(blastoise.getMaxHp());
-    expect(charizard.status?.effect).toBeUndefined();
-    expect(blastoise.status?.effect).toBeUndefined();
+    expect(charizard).toHaveStatusEffect(StatusEffect.NONE);
+    expect(blastoise).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   it("should increment (but not respect) other protection moves' fail counters", async () => {
