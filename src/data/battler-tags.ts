@@ -49,7 +49,7 @@ import type {
   TypeBoostTagType,
 } from "#types/battler-tags";
 import type { Mutable } from "#types/type-helpers";
-import { BooleanHolder, coerceArray, getFrameMs, isNullOrUndefined, NumberHolder, toDmgValue } from "#utils/common";
+import { BooleanHolder, coerceArray, getFrameMs, NumberHolder, toDmgValue } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
 
 /**
@@ -198,7 +198,7 @@ export class BattlerTag implements BaseBattlerTag {
    * Helper function that retrieves the source Pokemon object
    * @returns The source {@linkcode Pokemon}, or `null` if none is found
    */
-  public getSourcePokemon(): Pokemon | null {
+  public getSourcePokemon(): Pokemon | undefined {
     return globalScene.getPokemonById(this.sourceId);
   }
 }
@@ -378,7 +378,7 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
     // Disable fails against struggle or an empty move history
     // TODO: Confirm if this is redundant given Disable/Cursed Body's disable conditions
     const move = pokemon.getLastNonVirtualMove();
-    if (isNullOrUndefined(move) || move.move === MoveId.STRUGGLE) {
+    if (move == null || move.move === MoveId.STRUGGLE) {
       return;
     }
 
@@ -451,7 +451,7 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
   override canAdd(pokemon: Pokemon): boolean {
     // Choice items ignore struggle, so Gorilla Tactics should too
     const lastSelectedMove = pokemon.getLastNonVirtualMove();
-    return !isNullOrUndefined(lastSelectedMove) && lastSelectedMove.move !== MoveId.STRUGGLE;
+    return lastSelectedMove != null && lastSelectedMove.move !== MoveId.STRUGGLE;
   }
 
   /**
@@ -968,7 +968,7 @@ export class InfatuatedTag extends SerializableBattlerTag {
     phaseManager.queueMessage(
       i18next.t("battlerTags:infatuatedLapse", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        sourcePokemonName: getPokemonNameWithAffix(globalScene.getPokemonById(this.sourceId!) ?? undefined), // TODO: is that bang correct?
+        sourcePokemonName: getPokemonNameWithAffix(this.getSourcePokemon()),
       }),
     );
     phaseManager.unshiftNew("CommonAnimPhase", pokemon.getBattlerIndex(), undefined, CommonAnim.ATTRACT);
@@ -1305,7 +1305,7 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.CUSTOM) {
       const encoredMove = pokemon.getMoveset().find(m => m.moveId === this.moveId);
-      return !isNullOrUndefined(encoredMove) && encoredMove.getPpRatio() > 0;
+      return encoredMove != null && encoredMove.getPpRatio() > 0;
     }
     return super.lapse(pokemon, lapseType);
   }

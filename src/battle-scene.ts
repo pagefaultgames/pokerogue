@@ -138,7 +138,6 @@ import {
   formatMoney,
   getIvsFromId,
   isBetween,
-  isNullOrUndefined,
   NumberHolder,
   randomString,
   randSeedInt,
@@ -859,20 +858,21 @@ export class BattleScene extends SceneBase {
   }
 
   /**
-   * Return the {@linkcode Pokemon} associated with a given ID.
-   * @param pokemonId - The ID whose Pokemon will be retrieved.
-   * @returns The {@linkcode Pokemon} associated with the given id.
-   * Returns `null` if the ID is `undefined` or not present in either party.
-   * @todo Change the `null` to `undefined` and update callers' signatures -
-   * this is weird and causes a lot of random jank
+   * Return the {@linkcode Pokemon} associated with the given ID.
+   * @param pokemonId - The PID whose Pokemon will be retrieved
+   * @returns The `Pokemon` associated with the given ID,
+   * or `undefined` if none is found in either team's party.
+   * @see {@linkcode Pokemon.id}
+   * @todo `pokemonId` should not allow `undefined`
    */
-  getPokemonById(pokemonId: number | undefined): Pokemon | null {
-    if (isNullOrUndefined(pokemonId)) {
-      return null;
+  public getPokemonById(pokemonId: number | undefined): Pokemon | undefined {
+    if (pokemonId == null) {
+      // biome-ignore lint/nursery/noUselessUndefined: More explicit
+      return undefined;
     }
 
     const party = (this.getPlayerParty() as Pokemon[]).concat(this.getEnemyParty());
-    return party.find(p => p.id === pokemonId) ?? null;
+    return party.find(p => p.id === pokemonId);
   }
 
   addPlayerPokemon(
@@ -1319,7 +1319,7 @@ export class BattleScene extends SceneBase {
       if (
         !this.gameMode.hasTrainers
         || Overrides.BATTLE_TYPE_OVERRIDE === BattleType.WILD
-        || (Overrides.DISABLE_STANDARD_TRAINERS_OVERRIDE && isNullOrUndefined(trainerData))
+        || (Overrides.DISABLE_STANDARD_TRAINERS_OVERRIDE && trainerData == null)
       ) {
         newBattleType = BattleType.WILD;
       } else {
@@ -1383,7 +1383,7 @@ export class BattleScene extends SceneBase {
       newDouble = false;
     }
 
-    if (!isNullOrUndefined(Overrides.BATTLE_STYLE_OVERRIDE)) {
+    if (Overrides.BATTLE_STYLE_OVERRIDE != null) {
       let doubleOverrideForWave: "single" | "double" | null = null;
 
       switch (Overrides.BATTLE_STYLE_OVERRIDE) {
@@ -1572,7 +1572,7 @@ export class BattleScene extends SceneBase {
       // Give trainers with specialty types an appropriately-typed form for Wormadam, Rotom, Arceus, Oricorio, Silvally, or Paldean Tauros.
       !isEggPhase
       && this.currentBattle?.battleType === BattleType.TRAINER
-      && !isNullOrUndefined(this.currentBattle.trainer)
+      && this.currentBattle.trainer != null
       && this.currentBattle.trainer.config.hasSpecialtyType()
     ) {
       if (species.speciesId === SpeciesId.WORMADAM) {
@@ -2692,7 +2692,7 @@ export class BattleScene extends SceneBase {
             }
           } else if (modifier instanceof FusePokemonModifier) {
             args.push(this.getPokemonById(modifier.fusePokemonId) as PlayerPokemon);
-          } else if (modifier instanceof RememberMoveModifier && !isNullOrUndefined(cost)) {
+          } else if (modifier instanceof RememberMoveModifier && cost != null) {
             args.push(cost);
           }
 
@@ -3007,7 +3007,7 @@ export class BattleScene extends SceneBase {
       }
       if (
         modifier instanceof PokemonHeldItemModifier
-        && !isNullOrUndefined(modifier.getSpecies())
+        && modifier.getSpecies() != null
         && !this.getPokemonById(modifier.pokemonId)?.hasSpecies(modifier.getSpecies()!)
       ) {
         modifiers.splice(m--, 1);
@@ -3573,7 +3573,7 @@ export class BattleScene extends SceneBase {
     // Loading override or session encounter
     let encounter: MysteryEncounter | null;
     if (
-      !isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_OVERRIDE)
+      Overrides.MYSTERY_ENCOUNTER_OVERRIDE != null
       && allMysteryEncounters.hasOwnProperty(Overrides.MYSTERY_ENCOUNTER_OVERRIDE)
     ) {
       encounter = allMysteryEncounters[Overrides.MYSTERY_ENCOUNTER_OVERRIDE];
@@ -3584,7 +3584,7 @@ export class BattleScene extends SceneBase {
       encounter = allMysteryEncounters[encounterType ?? -1];
       return encounter;
     } else {
-      encounter = !isNullOrUndefined(encounterType) ? allMysteryEncounters[encounterType] : null;
+      encounter = encounterType != null ? allMysteryEncounters[encounterType] : null;
     }
 
     // Check for queued encounters first
@@ -3643,7 +3643,7 @@ export class BattleScene extends SceneBase {
             ? MysteryEncounterTier.ULTRA
             : MysteryEncounterTier.ROGUE;
 
-    if (!isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_TIER_OVERRIDE)) {
+    if (Overrides.MYSTERY_ENCOUNTER_TIER_OVERRIDE != null) {
       tier = Overrides.MYSTERY_ENCOUNTER_TIER_OVERRIDE;
     }
 
