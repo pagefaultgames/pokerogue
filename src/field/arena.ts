@@ -844,8 +844,8 @@ export class Arena {
     for (const tag of this.tags) {
       // Skip tags of different types or on the wrong side of the field
       if (
-        !tagTypes.includes(tag.tagType) ||
-        !(side === ArenaTagSide.BOTH || tag.side === ArenaTagSide.BOTH || tag.side === side)
+        !tagTypes.includes(tag.tagType)
+        || !(side === ArenaTagSide.BOTH || tag.side === ArenaTagSide.BOTH || tag.side === side)
       ) {
         leftoverTags.push(tag);
         continue;

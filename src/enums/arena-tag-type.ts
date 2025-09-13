@@ -6,7 +6,7 @@
  * - The tag is added to / removed from {@linkcode NonSerializableArenaTagType} or {@linkcode SerializableArenaTagType}
  */
 export enum ArenaTagType {
-  NONE = "NONE", 
+  NONE = "NONE",
   MUD_SPORT = "MUD_SPORT",
   WATER_SPORT = "WATER_SPORT",
   SPIKES = "SPIKES",
