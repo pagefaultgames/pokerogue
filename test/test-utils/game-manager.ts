@@ -178,7 +178,7 @@ export class GameManager {
    * @param expireFn - Optional function to determine if the prompt has expired.
    * @param awaitingActionInput - If true, will prevent the prompt from activating until the current {@linkcode AwaitableUiHandler}
    * is awaiting input; default `false`
-   * @todo Remove in favor of {@linkcode promptHandler.addToNextPrompt}
+   * @deprecated Remove in favor of {@linkcode promptHandler.addToNextPrompt}
    */
   onNextPrompt(
     phaseTarget: PhaseString,
