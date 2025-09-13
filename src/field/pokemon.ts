@@ -2498,14 +2498,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Calculate the move's type effectiveness multiplier when based on this Pokémon's type(s)
-   * @param moveType - The type of the move being used
-   * @param source - The Pokemon using the move
-   * @param ignoreStrongWinds - Whether or not this ignores strong winds (anticipation, forewarn, stealth rocks)
-   * @param simulated - Whether to suppress changes to game state and prevent showing messages during this calculation
-   * @param move - The move whose type effectiveness is to be checked. Used for applying {@linkcode VariableMoveTypeChartAttr}
-   * @param useIllusion - Whether to consider an active illusion
-   * @returns A multiplier for the type effectiveness
+   * Calculates the move's type effectiveness multiplier based on the target's type/s.
+   * @param moveType {@linkcode PokemonType} the type of the move being used
+   * @param source {@linkcode Pokemon} the Pokemon using the move
+   * @param ignoreStrongWinds whether or not this ignores strong winds (anticipation, forewarn, stealth rocks)
+   * @param simulated tag to only apply the strong winds effect message when the move is used
+   * @param move (optional) the move whose type effectiveness is to be checked. Used for applying {@linkcode VariableMoveTypeChartAttr}
+   * @param useIllusion - Whether we want the attack type effectiveness on the illusion or not
+   * @returns a multiplier for the type effectiveness
    */
   getAttackTypeEffectiveness(
     moveType: PokemonType,
@@ -3486,7 +3486,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Adds experience to this PlayerPokemon, subject to wave based level caps.
    * @param exp - The amount of experience to add
-   * @param ignoreLevelCap - Whether to ignore level caps when adding experience (defaults to false)
+   * @param ignoreLevelCap - Whether to ignore level caps when adding experience; default `false`
    */
   addExp(exp: number, ignoreLevelCap = false) {
     const maxExpLevel = globalScene.getMaxExpLevel(ignoreLevelCap);
@@ -3503,8 +3503,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Compares if `this` and {@linkcode target} are on the same team.
-   * @param target - The {@linkcode Pokemon} to compare against.
+   * Check whether the specified Pokémon is an opponent
+   * @param target - The {@linkcode Pokemon} to compare against
    * @returns `true` if the two pokemon are allies, `false` otherwise
    */
   public isOpponent(target: Pokemon): boolean {
