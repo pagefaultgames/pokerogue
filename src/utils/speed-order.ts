@@ -4,12 +4,17 @@ import { BooleanHolder, randSeedShuffle } from "#app/utils/common";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Stat } from "#enums/stat";
 
-/** Interface representing a generic type which has a `getPokemon` method */
+/** Interface representing an object associated with a specific Pokemon */
 interface hasPokemon {
   getPokemon(): Pokemon;
 }
 
-export function applyInSpeedOrder<T extends Pokemon>(pokemonList: T[], callback: (pokemon: Pokemon) => any): void {
+/**
+ * Execute a callback on an array of Pokemon in speed order.
+ * @param pokemonList - An array of {@linkcode Pokemon} with which the callback will be executed
+ * @param callback - The lambda function to use. Should not return a value (will be ignored)
+ */
+export function applyInSpeedOrder<T extends Pokemon>(pokemonList: T[], callback: (pokemon: T) => void): void {
   sortInSpeedOrder(pokemonList).forEach(pokemon => {
     callback(pokemon);
   });

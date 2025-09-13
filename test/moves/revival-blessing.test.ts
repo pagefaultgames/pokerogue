@@ -126,7 +126,7 @@ describe("Moves - Revival Blessing", () => {
 
     const enemyFainting = game.scene.getEnemyField()[0];
 
-    game.move.select(MoveId.JUDGMENT, 0, enemyFainting.getBattlerIndex());
+    game.move.use(MoveId.JUDGMENT, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, 1);
 
     await game.toNextTurn();

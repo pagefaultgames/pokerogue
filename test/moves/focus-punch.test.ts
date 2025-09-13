@@ -115,7 +115,7 @@ describe("Moves - Focus Punch", () => {
     await game.phaseInterceptor.to(TurnStartPhase);
 
     expect(game.scene.phaseManager.getCurrentPhase() instanceof SwitchSummonPhase).toBeTruthy();
-    expect(game.scene.phaseManager.hasPhaseOfType("MoveHeaderPhase")).toBeTruthy();
+    expect(game.scene.phaseManager.hasPhaseOfType("MoveHeaderPhase")).toBe(true);
   });
   it("should replace the 'but it failed' text when the user gets hit", async () => {
     game.override.enemyMoveset([MoveId.TACKLE]);

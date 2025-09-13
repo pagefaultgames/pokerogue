@@ -9,7 +9,6 @@ import { sortInSpeedOrder } from "#app/utils/speed-order";
  *
  * Orders phases first by ability priority, then by the {@linkcode Pokemon}'s effective speed
  */
-
 export class PostSummonPhasePriorityQueue extends PokemonPhasePriorityQueue<PostSummonPhase> {
   protected override reorder(): void {
     this.queue = sortInSpeedOrder(this.queue, false);

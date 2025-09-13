@@ -375,7 +375,7 @@ export class PhaseManager {
   }
 
   /**
-   * Determines if there is a queued {@linkcode Phase} meeting the conditions
+   * Determine if there is a queued {@linkcode Phase} meeting the specified conditions.
    * @param type - The {@linkcode PhaseString | type} of phase to search for
    * @param condition - An optional {@linkcode PhaseConditionFunc} to add conditions to the search
    * @returns `true` if a matching phase exists, `false` otherwise
@@ -385,7 +385,7 @@ export class PhaseManager {
   }
 
   /**
-   * Finds and removes a single queued {@linkcode Phase}
+   * Attempt to find and remove the first queued {@linkcode Phase} matching the given conditions.
    * @param type - The {@linkcode PhaseString | type} of phase to search for
    * @param phaseFilter - A {@linkcode PhaseConditionFunc} to specify conditions for the phase
    * @returns `true` if a removal occurred, `false` otherwise
