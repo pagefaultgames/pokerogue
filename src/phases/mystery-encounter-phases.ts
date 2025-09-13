@@ -411,9 +411,9 @@ export class MysteryEncounterBattlePhase extends Phase {
     const availablePartyMembers = globalScene.getPlayerParty().filter(p => p.isAllowedInBattle());
     const minPartySize = globalScene.currentBattle.double ? 2 : 1;
     const checkSwitch =
-      encounterMode !== MysteryEncounterMode.TRAINER_BATTLE &&
-      !this.disableSwitch &&
-      availablePartyMembers.length > minPartySize;
+      encounterMode !== MysteryEncounterMode.TRAINER_BATTLE
+      && !this.disableSwitch
+      && availablePartyMembers.length > minPartySize;
 
     if (!availablePartyMembers[0].isOnField()) {
       globalScene.phaseManager.pushNew("SummonPhase", 0, true, false, checkSwitch);

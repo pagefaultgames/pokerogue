@@ -48,9 +48,9 @@ export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase>
       this.queue
         .filter(
           mp =>
-            mp.targets.length === 1 &&
-            mp.targets[0] === removedPokemon.getBattlerIndex() &&
-            mp.pokemon.isPlayer() !== allyPokemon.isPlayer(),
+            mp.targets.length === 1
+            && mp.targets[0] === removedPokemon.getBattlerIndex()
+            && mp.pokemon.isPlayer() !== allyPokemon.isPlayer(),
         )
         .forEach(targetingMovePhase => {
           if (targetingMovePhase && targetingMovePhase.targets[0] !== allyPokemon.getBattlerIndex()) {

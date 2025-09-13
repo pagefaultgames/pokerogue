@@ -36,7 +36,7 @@ export abstract class PriorityQueue<T> {
   }
 
   public isEmpty(): boolean {
-    return !this.queue.length;
+    return this.queue.length === 0;
   }
 
   /**

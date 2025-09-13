@@ -317,9 +317,9 @@ export class TitlePhase extends Phase {
       const availablePartyMembers = globalScene.getPokemonAllowedInBattle().length;
       const minPartySize = globalScene.currentBattle.double ? 2 : 1;
       const checkSwitch =
-        globalScene.currentBattle.battleType !== BattleType.TRAINER &&
-        (globalScene.currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily) &&
-        availablePartyMembers > minPartySize;
+        globalScene.currentBattle.battleType !== BattleType.TRAINER
+        && (globalScene.currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily)
+        && availablePartyMembers > minPartySize;
 
       globalScene.phaseManager.pushNew("SummonPhase", 0, true, true, checkSwitch);
       if (globalScene.currentBattle.double && availablePartyMembers > 1) {

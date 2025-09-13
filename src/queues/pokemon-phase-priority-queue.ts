@@ -10,8 +10,8 @@ export class PokemonPhasePriorityQueue<T extends DynamicPhase> extends PriorityQ
     if (this.setOrder) {
       this.queue.sort(
         (a, b) =>
-          this.setOrder!.indexOf(a.getPokemon().getBattlerIndex()) -
-          this.setOrder!.indexOf(b.getPokemon().getBattlerIndex()),
+          this.setOrder!.indexOf(a.getPokemon().getBattlerIndex())
+          - this.setOrder!.indexOf(b.getPokemon().getBattlerIndex()),
       );
     } else {
       this.queue = sortInSpeedOrder(this.queue);

@@ -575,9 +575,9 @@ export class EncounterPhase extends BattlePhase {
       const availablePartyMembers = globalScene.getPokemonAllowedInBattle();
       const minPartySize = globalScene.currentBattle.double ? 2 : 1;
       const checkSwitch =
-        globalScene.currentBattle.battleType !== BattleType.TRAINER &&
-        (globalScene.currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily) &&
-        availablePartyMembers.length > minPartySize;
+        globalScene.currentBattle.battleType !== BattleType.TRAINER
+        && (globalScene.currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily)
+        && availablePartyMembers.length > minPartySize;
 
       if (!availablePartyMembers[0].isOnField()) {
         globalScene.phaseManager.pushNew("SummonPhase", 0, true, false, checkSwitch);

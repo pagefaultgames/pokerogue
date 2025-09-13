@@ -6060,10 +6060,10 @@ export class BypassSpeedChanceAbAttr extends AbAttr {
     const move = turnCommand?.move?.move ? allMoves[turnCommand.move.move] : null;
     const isDamageMove = move?.category === MoveCategory.PHYSICAL || move?.category === MoveCategory.SPECIAL;
     return (
-      !simulated &&
-      pokemon.randBattleSeedInt(100) < this.chance &&
-      isDamageMove &&
-      pokemon.canAddTag(BattlerTagType.BYPASS_SPEED)
+      !simulated
+      && pokemon.randBattleSeedInt(100) < this.chance
+      && isDamageMove
+      && pokemon.canAddTag(BattlerTagType.BYPASS_SPEED)
     );
   }
 

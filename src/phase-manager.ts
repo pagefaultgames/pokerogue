@@ -526,8 +526,8 @@ export class PhaseManager {
    */
   public tryAddEnemyPostSummonPhases(): void {
     if (
-      ![BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType) &&
-      !this.phaseQueue.exists("SummonPhase")
+      ![BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType)
+      && !this.phaseQueue.exists("SummonPhase")
     ) {
       globalScene.getEnemyField().map(p => this.pushPhase(new PostSummonPhase(p.getBattlerIndex(), "SummonPhase")));
     }
