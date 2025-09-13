@@ -9,8 +9,7 @@ import { getEnumStr } from "#test/test-utils/string-utils";
 import chalk from "chalk";
 
 /**
- * Helper to handle settings for tests
- * @todo Why does this exist
+ * Helper to handle changing game settings for tests.
  */
 export class SettingsHelper extends GameManagerHelper {
   constructor(game: GameManager) {
@@ -19,6 +18,9 @@ export class SettingsHelper extends GameManagerHelper {
     this.initDefaultSettings();
   }
 
+  /**
+   * Initialize default settings upon starting a new test case.
+   */
   private initDefaultSettings(): void {
     this.game.scene.gameSpeed = 5;
     this.game.scene.moveAnimations = false;
@@ -33,42 +35,46 @@ export class SettingsHelper extends GameManagerHelper {
   }
 
   /**
-   * Change the battle style to Switch or Set mode (tests default to {@linkcode BattleStyle.SET})
-   * @param style - The {@linkcode BattleStyle} to set
+   * Change the current {@linkcode BattleStyle}.
+   * @param style - The `BattleStyle` to set
+   * @returns `this`
    */
-  battleStyle(style: BattleStyle): this {
+  public battleStyle(style: BattleStyle): this {
     this.game.scene.battleStyle = style;
-    this.log(`Battle Style set to BattleStyle.${getEnumStr(BattleStyle, style)}!`);
+    this.log(`Battle Style set to ${getEnumStr(BattleStyle, style)}!`);
     return this;
   }
 
   /**
-   * Disable/Enable type hints settings
-   * @param enable - Whether to enable or disable type hints.
+   * Toggle the availability of type hints.
+   * @param enable - Whether to enable or disable type hints
    * @returns `this`
    */
-  typeHints(enable: boolean): this {
+  public typeHints(enable: boolean): this {
     this.game.scene.typeHints = enable;
     this.log(`Type Hints ${enable ? "enabled" : "disabled"}!`);
     return this;
   }
 
   /**
-   * Change the player gender
+   * Change the player character's selected gender.
    * @param gender - The {@linkcode PlayerGender} to set
+   * @returns `this`
    */
-  playerGender(gender: PlayerGender) {
+  public playerGender(gender: PlayerGender): this {
     this.game.scene.gameData.gender = gender;
-    this.log(`Gender set to PlayerGender.${getEnumStr(PlayerGender, gender)}!`);
+    this.log(`Gender set to ${getEnumStr(PlayerGender, gender)}!`);
+    return this;
   }
 
   /**
-   * Change the exp gains speed
-   * @param speed - the {@linkcode ExpGainsSpeed} to set
+   * Change the current {@linkcode ExpGainsSpeed}.
+   * @param speed - The speed to set
+   * @returns `this`
    */
-  expGainsSpeed(speed: ExpGainsSpeed) {
+  public expGainsSpeed(speed: ExpGainsSpeed): this {
     this.game.scene.expGainsSpeed = speed;
-    this.log(`Exp Gains Speed set to ExpGainsSpeed.${getEnumStr(ExpGainsSpeed, speed)}!`);
+    this.log(`EXP Gain bar speed set to ${getEnumStr(ExpGainsSpeed, speed)}!`);
     return this;
   }
 
