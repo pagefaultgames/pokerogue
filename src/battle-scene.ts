@@ -152,8 +152,6 @@ import Phaser from "phaser";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import type UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 
-const DEBUG_RNG = false;
-
 export interface PokeballCounts {
   [pb: string]: number;
 }
@@ -360,20 +358,6 @@ export class BattleScene extends SceneBase {
   }
 
   async preload() {
-    if (DEBUG_RNG) {
-      const originalRealInRange = Phaser.Math.RND.realInRange;
-      Phaser.Math.RND.realInRange = function (min: number, max: number): number {
-        const ret = originalRealInRange.apply(this, [min, max]);
-        const args = ["RNG", ++this.rngCounter, ret / (max - min), `min: ${min} / max: ${max}`];
-        args.push(`seed: ${this.rngSeedOverride || this.waveSeed || this.seed}`);
-        if (this.rngOffset) {
-          args.push(`offset: ${this.rngOffset}`);
-        }
-        console.log(...args);
-        return ret;
-      };
-    }
-
     /**
      * These moves serve as fallback animations for other moves without loaded animations, and
      * must be loaded prior to game start.
