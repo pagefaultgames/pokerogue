@@ -537,22 +537,20 @@ export class Arena {
     }
   }
 
-  getTimeOfDay(): TimeOfDay {
+  public getTimeOfDay(): TimeOfDay {
     switch (this.biomeType) {
       case BiomeId.ABYSS:
         return TimeOfDay.NIGHT;
     }
 
-    const waveCycle = ((globalScene.currentBattle?.waveIndex || 0) + globalScene.waveCycleOffset) % 40;
+    const waveCycle = ((globalScene.currentBattle?.waveIndex ?? 0) + globalScene.waveCycleOffset) % 40;
 
     if (waveCycle < 15) {
       return TimeOfDay.DAY;
     }
-
     if (waveCycle < 20) {
       return TimeOfDay.DUSK;
     }
-
     if (waveCycle < 35) {
       return TimeOfDay.NIGHT;
     }
@@ -560,6 +558,10 @@ export class Arena {
     return TimeOfDay.DAWN;
   }
 
+  /**
+   * @returns Whether the current biome takes place "outdoors"
+   * (for the purposes of time of day tints)
+   */
   isOutside(): boolean {
     switch (this.biomeType) {
       case BiomeId.SEABED:
@@ -578,23 +580,7 @@ export class Arena {
     }
   }
 
-  overrideTint(): [number, number, number] {
-    switch (Overrides.ARENA_TINT_OVERRIDE) {
-      case TimeOfDay.DUSK:
-        return [98, 48, 73].map(c => Math.round((c + 128) / 2)) as [number, number, number];
-      case TimeOfDay.NIGHT:
-        return [64, 64, 64];
-      case TimeOfDay.DAWN:
-      case TimeOfDay.DAY:
-      default:
-        return [128, 128, 128];
-    }
-  }
-
   getDayTint(): [number, number, number] {
-    if (Overrides.ARENA_TINT_OVERRIDE !== null) {
-      return this.overrideTint();
-    }
     switch (this.biomeType) {
       case BiomeId.ABYSS:
         return [64, 64, 64];
@@ -604,23 +590,14 @@ export class Arena {
   }
 
   getDuskTint(): [number, number, number] {
-    if (Overrides.ARENA_TINT_OVERRIDE) {
-      return this.overrideTint();
-    }
     if (!this.isOutside()) {
       return [0, 0, 0];
     }
 
-    switch (this.biomeType) {
-      default:
-        return [98, 48, 73].map(c => Math.round((c + 128) / 2)) as [number, number, number];
-    }
+    return [113, 88, 101];
   }
 
   getNightTint(): [number, number, number] {
-    if (Overrides.ARENA_TINT_OVERRIDE) {
-      return this.overrideTint();
-    }
     switch (this.biomeType) {
       case BiomeId.ABYSS:
       case BiomeId.SPACE:
@@ -632,10 +609,7 @@ export class Arena {
       return [64, 64, 64];
     }
 
-    switch (this.biomeType) {
-      default:
-        return [48, 48, 98];
-    }
+    return [48, 48, 98];
   }
 
   setIgnoreAbilities(ignoreAbilities: boolean, ignoringEffectSource: BattlerIndex | null = null): void {
