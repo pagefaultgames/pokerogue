@@ -331,7 +331,7 @@ export class GameMode implements GameModeConfig {
    * @param waveIndex The wave to check.
    * @returns The fixed battle for this wave.
    */
-  getFixedBattle(waveIndex: number): FixedBattleConfig {
+  getFixedBattle(waveIndex: number): FixedBattleConfig | undefined {
     const challengeConfig = new FixedBattleConfig();
     if (applyChallenges(ChallengeType.FIXED_BATTLES, waveIndex, challengeConfig)) {
       return challengeConfig;
