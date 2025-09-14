@@ -835,11 +835,7 @@ export class Arena {
    * @param quiet - Whether to suppress removal messages from currently-present tags; default `false`
    * @todo Review the other tag manipulation functions to see if they can be migrated towards using this (more efficient)
    */
-  public removeTagsOnSide(
-    tagTypes: ArenaTagType[] | readonly ArenaTagType[],
-    side: ArenaTagSide,
-    quiet = false,
-  ): void {
+  public removeTagsOnSide(tagTypes: ArenaTagType[] | readonly ArenaTagType[], side: ArenaTagSide, quiet = false): void {
     const leftoverTags: ArenaTag[] = [];
     for (const tag of this.tags) {
       // Skip tags of different types or on the wrong side of the field
