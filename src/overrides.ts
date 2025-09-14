@@ -73,7 +73,12 @@ class DefaultOverrides {
    * If `"odd-doubles"`, follow the `"double"` rule on odd wave numbers, and follow the `"single"` rule on even wave numbers.
    */
   readonly BATTLE_STYLE_OVERRIDE: BattleStyle | null = null;
-  readonly STARTING_WAVE_OVERRIDE: number = 0;
+  /**
+   * If present and non-null, will override the starting wave # when starting a new run.
+   * Should never be set to a negative value.
+   * @defaultValue `null`
+   */
+  readonly STARTING_WAVE_OVERRIDE: number | null = null;
   readonly STARTING_BIOME_OVERRIDE: BiomeId | null = null;
   readonly ARENA_TINT_OVERRIDE: TimeOfDay | null = null;
   /** Multiplies XP gained by this value including 0. Set to null to ignore the override. */

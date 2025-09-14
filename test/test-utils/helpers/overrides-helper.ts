@@ -62,11 +62,14 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the starting wave index
-   * @param wave - The wave to set. Classic: `1`-`200`
+   * Override the starting wave index.
+   * @param wave - The wave to set, or `null` to disable the override.
    * @returns `this`
    */
-  public startingWave(wave: number): this {
+  public startingWave(wave: number | null): this {
+    if (wave != null && wave <= 0) {
+      throw new Error("Attempted to set invalid wave index: " + wave.toString());
+    }
     vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(wave);
     this.log(`Starting wave set to ${wave}!`);
     return this;
