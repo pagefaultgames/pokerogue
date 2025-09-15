@@ -2,12 +2,12 @@ import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
-import { ScrollBar } from "#ui/containers/scroll-bar";
-import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
+import { MessageUiHandler } from "#ui/message-ui-handler";
+import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-helper";
+import { ScrollBar } from "#ui/scroll-bar";
+import { ScrollableGridHelper } from "#ui/scrollable-grid-helper";
 import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
-import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/utils/pokemon-icon-anim-helper";
-import { ScrollableGridHelper } from "#ui/utils/scrollable-grid-helper";
 import i18next from "i18next";
 
 export class EggListUiHandler extends MessageUiHandler {

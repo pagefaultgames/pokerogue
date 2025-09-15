@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
 import type { EggCountChangedEvent } from "#events/egg";
 import { EggEventType } from "#events/egg";
-import type { EggHatchSceneUiHandler } from "#ui/handlers/egg-hatch-scene-ui-handler";
+import type { EggHatchSceneUiHandler } from "#ui/egg-hatch-scene-ui-handler";
 import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 

@@ -6,7 +6,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/test-utils/game-manager";
-import type { PartyUiHandler } from "#ui/handlers/party-ui-handler";
+import type { PartyUiHandler } from "#ui/party-ui-handler";
 import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";

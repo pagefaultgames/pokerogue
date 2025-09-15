@@ -42,7 +42,7 @@ import type {
 import type { VoucherType } from "#system/voucher";
 import type { ModifierInstanceMap, ModifierString } from "#types/modifier-types";
 import { addTextObject } from "#ui/text";
-import { BooleanHolder, hslToHex, isNullOrUndefined, NumberHolder, randSeedFloat, toDmgValue } from "#utils/common";
+import { BooleanHolder, hslToHex, NumberHolder, randSeedFloat, toDmgValue } from "#utils/common";
 import { getModifierType } from "#utils/modifier-utils";
 import i18next from "i18next";
 
@@ -728,7 +728,7 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
   }
 
   getPokemon(): Pokemon | undefined {
-    return globalScene.getPokemonById(this.pokemonId) ?? undefined;
+    return globalScene.getPokemonById(this.pokemonId);
   }
 
   getScoreMultiplier(): number {
@@ -2113,10 +2113,7 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
    * @returns `true` if the {@linkcode PokemonHpRestoreModifier} should be applied
    */
   override shouldApply(playerPokemon?: PlayerPokemon, multiplier?: number): boolean {
-    return (
-      super.shouldApply(playerPokemon)
-      && (this.fainted || (!isNullOrUndefined(multiplier) && typeof multiplier === "number"))
-    );
+    return super.shouldApply(playerPokemon) && (this.fainted || (multiplier != null && typeof multiplier === "number"));
   }
 
   /**
@@ -2753,10 +2750,10 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
       return false;
     }
 
-    if (!isNullOrUndefined(count)) {
+    if (count != null) {
       return this.applyHitCountBoost(count);
     }
-    if (!isNullOrUndefined(damageMultiplier)) {
+    if (damageMultiplier != null) {
       return this.applyDamageModifier(pokemon, damageMultiplier);
     }
 

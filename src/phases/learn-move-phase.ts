@@ -10,8 +10,8 @@ import { UiMode } from "#enums/ui-mode";
 import type { Pokemon } from "#field/pokemon";
 import type { Move } from "#moves/move";
 import { PlayerPartyMemberPokemonPhase } from "#phases/player-party-member-pokemon-phase";
-import { EvolutionSceneUiHandler } from "#ui/handlers/evolution-scene-ui-handler";
-import { SummaryUiMode } from "#ui/handlers/summary-ui-handler";
+import { EvolutionSceneUiHandler } from "#ui/evolution-scene-ui-handler";
+import { SummaryUiMode } from "#ui/summary-ui-handler";
 import i18next from "i18next";
 
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {

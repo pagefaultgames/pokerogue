@@ -10,7 +10,7 @@ import { LearnMoveSituation } from "#enums/learn-move-situation";
 import { UiMode } from "#enums/ui-mode";
 import { cos, sin } from "#field/anims";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
-import type { EvolutionSceneUiHandler } from "#ui/handlers/evolution-scene-ui-handler";
+import type { EvolutionSceneUiHandler } from "#ui/evolution-scene-ui-handler";
 import { fixedInt, getFrameMs, randInt } from "#utils/common";
 import i18next from "i18next";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";

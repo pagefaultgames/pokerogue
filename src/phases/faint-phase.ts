@@ -17,7 +17,6 @@ import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { PokemonInstantReviveModifier } from "#modifiers/modifier";
 import { PokemonMove } from "#moves/pokemon-move";
 import { PokemonPhase } from "#phases/pokemon-phase";
-import { isNullOrUndefined } from "#utils/common";
 import i18next from "i18next";
 
 export class FaintPhase extends PokemonPhase {
@@ -187,7 +186,7 @@ export class FaintPhase extends PokemonPhase {
 
     // in double battles redirect potential moves off fainted pokemon
     const allyPokemon = pokemon.getAlly();
-    if (globalScene.currentBattle.double && !isNullOrUndefined(allyPokemon)) {
+    if (globalScene.currentBattle.double && allyPokemon != null) {
       globalScene.redirectPokemonMoves(pokemon, allyPokemon);
     }
 

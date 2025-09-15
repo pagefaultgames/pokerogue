@@ -24,10 +24,10 @@ import {
   TmModifierType,
 } from "#modifiers/modifier-type";
 import { BattlePhase } from "#phases/battle-phase";
-import type { ModifierSelectUiHandler } from "#ui/handlers/modifier-select-ui-handler";
-import { SHOP_OPTIONS_ROW_LIMIT } from "#ui/handlers/modifier-select-ui-handler";
-import { PartyOption, PartyUiHandler, PartyUiMode } from "#ui/handlers/party-ui-handler";
-import { isNullOrUndefined, NumberHolder } from "#utils/common";
+import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import { SHOP_OPTIONS_ROW_LIMIT } from "#ui/modifier-select-ui-handler";
+import { PartyOption, PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
 
 export type ModifierSelectCallback = (rowCursor: number, cursor: number) => boolean;
@@ -429,7 +429,7 @@ export class SelectModifierPhase extends BattlePhase {
     }
 
     let multiplier = 1;
-    if (!isNullOrUndefined(this.customModifierSettings?.rerollMultiplier)) {
+    if (this.customModifierSettings?.rerollMultiplier != null) {
       if (this.customModifierSettings.rerollMultiplier < 0) {
         // Completely overrides reroll cost to -1 and early exits
         return -1;

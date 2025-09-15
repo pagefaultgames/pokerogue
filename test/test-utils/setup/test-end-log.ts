@@ -1,15 +1,15 @@
+/**
+ * Code to add markers to the beginning and end of tests.
+ * Intended for use with {@linkcode CustomDefaultReporter}, and placed inside test hooks
+ * (rather than as part of the reporter) to ensure Vitest waits for the log messages to be printed.
+ * @module
+ */
+
 // biome-ignore lint/correctness/noUnusedImports: TSDoc
 import type CustomDefaultReporter from "#test/test-utils/reporters/custom-default-reporter";
 import { basename, join, relative } from "path";
 import chalk from "chalk";
 import type { RunnerTask, RunnerTaskResult, RunnerTestCase } from "vitest";
-
-/**
- * @module
- * Code to add markers to the beginning and end of tests.
- * Intended for use with {@linkcode CustomDefaultReporter}, and placed inside test hooks
- * (rather than as part of the reporter) to ensure Vitest waits for the log messages to be printed.
- */
 
 /** A long string of "="s to partition off each test from one another. */
 const TEST_END_BARRIER = chalk.bold.hex("#ff7c7cff")("==================");

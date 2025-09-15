@@ -220,7 +220,7 @@ export class CommandPhase extends FieldPhase {
     if (!moveStatus.value) {
       cannotSelectKey = "battle:moveCannotUseChallenge";
     } else if (move.getPpRatio() === 0) {
-      cannotSelectKey = "battle:moveNoPP";
+      cannotSelectKey = "battle:moveNoPp";
     } else if (move.getName().endsWith(" (N)")) {
       cannotSelectKey = "battle:moveNotImplemented";
     } else if (user.isMoveRestricted(move.moveId, user)) {

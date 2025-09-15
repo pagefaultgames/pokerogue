@@ -3,7 +3,6 @@ import type { PokemonSpecies } from "#data/pokemon-species";
 import { TextStyle } from "#enums/text-style";
 import type { Variant } from "#sprites/variant";
 import { addTextObject } from "#ui/text";
-import { isNullOrUndefined } from "#utils/common";
 
 interface SpeciesDetails {
   shiny?: boolean;
@@ -177,16 +176,16 @@ export class PokedexMonContainer extends Phaser.GameObjects.Container {
     const defaultDexAttr = globalScene.gameData.getSpeciesDefaultDexAttr(species, false, true);
     const defaultProps = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
 
-    if (!isNullOrUndefined(formIndex)) {
+    if (formIndex != null) {
       defaultProps.formIndex = formIndex;
     }
-    if (!isNullOrUndefined(shiny)) {
+    if (shiny != null) {
       defaultProps.shiny = shiny;
     }
-    if (!isNullOrUndefined(variant)) {
+    if (variant != null) {
       defaultProps.variant = variant;
     }
-    if (!isNullOrUndefined(female)) {
+    if (female != null) {
       defaultProps.female = female;
     }
 

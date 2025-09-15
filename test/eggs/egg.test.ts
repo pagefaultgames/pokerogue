@@ -202,7 +202,7 @@ describe("Egg Generation Tests", () => {
     const scene = game.scene;
 
     const eggMoveIndex = new Egg({ scene }).eggMoveIndex;
-    const result = !Utils.isNullOrUndefined(eggMoveIndex) && eggMoveIndex >= 0 && eggMoveIndex <= 3;
+    const result = eggMoveIndex != null && eggMoveIndex >= 0 && eggMoveIndex <= 3;
 
     expect(result).toBe(true);
   });

@@ -7,7 +7,7 @@ import { EncounterPhase } from "#phases/encounter-phase";
 import { TitlePhase } from "#phases/title-phase";
 import { TurnInitPhase } from "#phases/turn-init-phase";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
-import type { SaveSlotSelectUiHandler } from "#ui/handlers/save-slot-select-ui-handler";
+import type { SaveSlotSelectUiHandler } from "#ui/save-slot-select-ui-handler";
 
 /**
  * Helper to handle daily mode specifics

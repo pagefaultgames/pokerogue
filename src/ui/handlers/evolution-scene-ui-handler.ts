@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
-import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
+import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addTextObject } from "#ui/text";
 
 export class EvolutionSceneUiHandler extends MessageUiHandler {

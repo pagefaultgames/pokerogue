@@ -43,18 +43,18 @@ import { TimeOfDay } from "#enums/time-of-day";
 import { UiMode } from "#enums/ui-mode";
 import type { Variant } from "#sprites/variant";
 import { getVariantIcon, getVariantTint } from "#sprites/variant";
-import type { StarterAttributes } from "#system/game-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
-import { BaseStatsOverlay } from "#ui/containers/base-stats-overlay";
-import { MoveInfoOverlay } from "#ui/containers/move-info-overlay";
-import { PokedexInfoOverlay } from "#ui/containers/pokedex-info-overlay";
-import { StatsContainer } from "#ui/containers/stats-container";
-import type { OptionSelectItem } from "#ui/handlers/abstract-option-select-ui-handler";
-import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
+import type { StarterAttributes } from "#types/save-data";
+import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import { BaseStatsOverlay } from "#ui/base-stats-overlay";
+import { MessageUiHandler } from "#ui/message-ui-handler";
+import { MoveInfoOverlay } from "#ui/move-info-overlay";
+import { PokedexInfoOverlay } from "#ui/pokedex-info-overlay";
+import { StatsContainer } from "#ui/stats-container";
 import { addBBCodeTextObject, addTextObject, getTextColor, getTextStyleOptions } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
-import { BooleanHolder, getLocalizedSpriteKey, isNullOrUndefined, padInt, rgbHexToRgba } from "#utils/common";
+import { BooleanHolder, getLocalizedSpriteKey, padInt, rgbHexToRgba } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
@@ -2424,11 +2424,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     // We will only update the sprite if there is a change to form, shiny/variant
     // or gender for species with gender sprite differences
     const shouldUpdateSprite =
-      (species?.genderDiffs && !isNullOrUndefined(female))
-      || !isNullOrUndefined(formIndex)
-      || !isNullOrUndefined(shiny)
-      || !isNullOrUndefined(variant)
-      || forceUpdate;
+      (species?.genderDiffs && female != null) || formIndex != null || shiny != null || variant != null || forceUpdate;
 
     if (this.activeTooltip === "CANDY") {
       if (this.species && this.pokemonCandyContainer.visible) {

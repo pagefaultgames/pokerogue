@@ -1,12 +1,11 @@
 import { allAbilities, allMoves, allSpecies } from "#data/data-lists";
 import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
-import { FilterTextRow } from "#ui/containers/filter-text";
-import type { OptionSelectItem } from "#ui/handlers/abstract-option-select-ui-handler";
-import type { InputFieldConfig } from "#ui/handlers/form-modal-ui-handler";
-import { FormModalUiHandler } from "#ui/handlers/form-modal-ui-handler";
-import type { ModalConfig } from "#ui/handlers/modal-ui-handler";
-import { isNullOrUndefined } from "#utils/common";
+import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import { FilterTextRow } from "#ui/filter-text";
+import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
+import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
+import type { ModalConfig } from "#ui/modal-ui-handler";
 import i18next from "i18next";
 
 export class PokedexScanUiHandler extends FormModalUiHandler {
@@ -132,7 +131,7 @@ export class PokedexScanUiHandler extends FormModalUiHandler {
           return {
             label: value,
             handler: () => {
-              if (!isNullOrUndefined(evt.data) || evt.inputType?.toLowerCase() === "deletecontentbackward") {
+              if (evt.data != null || evt.inputType?.toLowerCase() === "deletecontentbackward") {
                 inputObject.setText(value);
               }
               ui.revertMode();
