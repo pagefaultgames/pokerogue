@@ -1440,7 +1440,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     simulated = true,
     ignoreHeldItems = false,
   ): number {
-    // biome-ignore-start lint/nursery/useMaxParams: test
     const statVal = new NumberHolder(this.getStat(stat, false));
     if (!ignoreHeldItems) {
       globalScene.applyModifiers(StatBoosterModifier, this.isPlayer(), this, stat, statVal);
@@ -1539,7 +1538,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     return Math.floor(ret);
-    // biome-ignore-end lint/nursery/useMaxParams: test
   }
 
   calculateStats(): void {
