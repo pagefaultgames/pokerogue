@@ -245,7 +245,11 @@ function getEggPoolForSpecies(
   excludeRare: boolean,
   rareEggMoveWeight = 0,
 ): void {
-  for (const [idx, moveId] of speciesEggMoves[rootSpeciesId].entries()) {
+  const eggMoves = speciesEggMoves[rootSpeciesId];
+  if (eggMoves == null) {
+    return;
+  }
+  for (const [idx, moveId] of eggMoves.entries()) {
     if (levelPool.has(moveId) || (idx === 3 && excludeRare)) {
       continue;
     }
