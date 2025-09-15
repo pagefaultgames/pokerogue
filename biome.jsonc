@@ -256,12 +256,7 @@
     // Overrides to prevent unused import removal inside `overrides.ts`, enums & `.d.ts` files (for TSDoc linkcodes),
     // as well as inside script boilerplate files (whose imports will _presumably_ be used in the generated file).
     {
-      "includes": [
-        "**/src/overrides.ts",
-        "**/src/enums/**/*",
-        "**/*.d.ts",
-        "scripts/**/*.boilerplate.ts",
-      ],
+      "includes": ["**/src/overrides.ts", "**/src/enums/**/*", "**/*.d.ts", "scripts/**/*.boilerplate.ts"],
       "linter": {
         "rules": {
           "correctness": {
