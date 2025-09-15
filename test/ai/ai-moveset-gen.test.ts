@@ -14,11 +14,12 @@ import { NumberHolder } from "#utils/common";
 import { afterEach } from "node:test";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
-// Need a function for creating a mock pokemon
-
+/**
+ * Parameters for {@linkcode createTestablePokemon}
+ */
 interface MockPokemonParams {
+  /** The level to set the Pokémon to */
   level: number;
-  hasTrainer?: boolean;
   /**
    * Whether the pokemon is a boss or not.
    * @defaultValue `false`
