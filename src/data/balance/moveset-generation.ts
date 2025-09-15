@@ -3,9 +3,6 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-import { MoveId } from "#enums/move-id";
-
-
 /**
  * # Balance: Moveset Generation Configuration
  *
@@ -33,6 +30,7 @@ import { MoveId } from "#enums/move-id";
  *
  * @module
  */
+import { MoveId } from "#enums/move-id";
 
 
 //#region Constants
