@@ -311,7 +311,6 @@ export class BattleScene extends SceneBase {
   private bgmCache: Set<string> = new Set();
   private playTimeTimer: Phaser.Time.TimerEvent;
 
-  public rngCounter = 0;
   public rngSeedOverride = "";
   public rngOffset = 0;
 
@@ -1104,7 +1103,6 @@ export class BattleScene extends SceneBase {
 
   setSeed(seed: string): void {
     this.seed = seed;
-    this.rngCounter = 0;
     this.waveCycleOffset = this.getGeneratedWaveCycleOffset();
     this.offsetGym = this.gameMode.isClassic && this.getGeneratedOffsetGym();
   }
@@ -1817,24 +1815,20 @@ export class BattleScene extends SceneBase {
     this.waveSeed = shiftCharCodes(this.seed, wave);
     Phaser.Math.RND.sow([this.waveSeed]);
     console.log("Wave Seed:", this.waveSeed, wave);
-    this.rngCounter = 0;
   }
 
   executeWithSeedOffset(func: () => void, offset: number, seedOverride?: string): void {
     if (!func) {
       return;
     }
-    const tempRngCounter = this.rngCounter;
     const tempRngOffset = this.rngOffset;
     const tempRngSeedOverride = this.rngSeedOverride;
     const state = Phaser.Math.RND.state();
     Phaser.Math.RND.sow([shiftCharCodes(seedOverride || this.seed, offset)]);
-    this.rngCounter = 0;
     this.rngOffset = offset;
     this.rngSeedOverride = seedOverride || "";
     func();
     Phaser.Math.RND.state(state);
-    this.rngCounter = tempRngCounter;
     this.rngOffset = tempRngOffset;
     this.rngSeedOverride = tempRngSeedOverride;
   }
