@@ -303,6 +303,11 @@ function filterMovePool(pool: Map<MoveId, number>, isBoss: boolean, hasTrainer: 
       continue;
     }
     const move = allMoves[moveId];
+    // Forbid unimplemented moves
+    if (move.name.endsWith(" (N)")) {
+      pool.delete(moveId);
+      continue;
+    }
     // Bosses never get self ko moves or Pain Split
     if (isBoss && (move.hasAttr("SacrificialAttr") || move.hasAttr("HpSplitAttr"))) {
       pool.delete(moveId);
@@ -553,6 +558,16 @@ function filterRemainingTrainerMovePool(pool: [id: MoveId, weight: number][], po
   }
 }
 
+/**
+ * Fill in the remaining slots in the Pokémon's moveset from the provided pools
+ * @param pokemon - The Pokémon for which the moveset is being generated
+ * @param tmPool - The TM move pool
+ * @param eggMovePool - The egg move pool
+ * @param tmCount - A holder for the count of moves that have been added to the moveset from TMs
+ * @param eggMoveCount - A holder for the count of moves that have been added to the moveset from egg moves
+ * @param baseWeights - The base weights of all moves in the master pool
+ * @param remainingPool - The remaining move pool to select from
+ */
 function fillInRemainingMovesetSlots(
   pokemon: Pokemon,
   tmPool: Map<MoveId, number>,
@@ -566,6 +581,7 @@ function fillInRemainingMovesetSlots(
   const eggCap = getMaxEggMoveCount(pokemon.level);
   const remainingPoolWeight = new NumberHolder(0);
   while (remainingPool.length > pokemon.moveset.length && pokemon.moveset.length < 4) {
+    const nonLevelMoveCount = tmCount.value + eggMoveCount.value;
     remainingPool = filterPool(
       baseWeights,
       (m: MoveId) =>
@@ -573,8 +589,8 @@ function fillInRemainingMovesetSlots(
           mo =>
             m === mo.moveId || (allMoves[m]?.hasAttr("SacrificialAttr") && mo.getMove()?.hasAttr("SacrificialAttr")), // Only one self-KO move allowed
         )
-        && (tmCount.value < tmCap || !tmPool.has(m))
-        && (eggMoveCount.value < eggCap || !eggMovePool.has(m)),
+        && (nonLevelMoveCount < tmCap || !tmPool.has(m))
+        && (nonLevelMoveCount < eggCap || !eggMovePool.has(m)),
       remainingPoolWeight,
     );
     if (pokemon.hasTrainer()) {
@@ -662,14 +678,14 @@ export function generateMoveset(pokemon: Pokemon): void {
 
   /** The higher this is, the greater the impact of weight. At `0` all moves are equal weight. */
   let weightMultiplier = BASE_WEIGHT_MULTIPLIER;
-  if (pokemon.isBoss()) {
+  if (isBoss) {
     weightMultiplier += BOSS_EXTRA_WEIGHT_MULTIPLIER;
   }
 
   const baseWeights = new Map<MoveId, number>(movePool);
   for (const [moveId, weight] of baseWeights) {
     if (weight <= 0) {
-      movePool.delete(moveId);
+      baseWeights.delete(moveId);
       continue;
     }
     baseWeights.set(moveId, Math.ceil(Math.pow(weight, weightMultiplier) * 100));
@@ -681,7 +697,7 @@ export function generateMoveset(pokemon: Pokemon): void {
   debugMoveWeights(pokemon, baseWeights, "Pre STAB Move");
 
   // Step 4: Force a STAB move if possible
-  forceStabMove(baseWeights, tmPool, eggMovePool, pokemon, tmCount, eggMoveCount, willTera);
+  forceStabMove(movePool, tmPool, eggMovePool, pokemon, tmCount, eggMoveCount, willTera);
   // Note: To force a secondary stab, call this a second time, and pass `false` for the last parameter
   // Would also tweak the function to not consider moves already in the moveset
   // e.g. forceStabMove(..., false);
@@ -694,6 +710,6 @@ export function generateMoveset(pokemon: Pokemon): void {
     tmCount,
     eggMoveCount,
     baseWeights,
-    filterPool(baseWeights, (m: MoveId) => allMoves[m] != null),
+    filterPool(baseWeights, (m: MoveId) => !pokemon.moveset.some(mo => m[0] === mo.moveId)),
   );
 }
