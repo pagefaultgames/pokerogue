@@ -43,7 +43,6 @@ const EGG_MOVE_TO_LEVEL_WEIGHT = 0.85;
  * 3. If the Pokémon has a trainer and the move is a {@linkcode RELEARN_MOVE},
  *    weight is 60
  * 4. Otherwise, weight is the earliest level the move can be learned + 20
- *
  */
 function getAndWeightLevelMoves(pokemon: Pokemon): Map<MoveId, number> {
   const movePool = new Map<MoveId, number>();
@@ -346,12 +345,12 @@ function adjustWeightsForTrainer(pool: Map<MoveId, number>): void {
  *
  * @param pool - The move pool to adjust
  * @param pokemon - The Pokémon for which the moveset is being generated
- * @param willTera - Whether the Pokémon is expected to Tera (i.e., has instant Tera on a Trainer Pokémon)
+ * @param willTera - Whether the Pokémon is expected to Tera (i.e., has instant Tera on a Trainer Pokémon); default `false`
  * @remarks
  * Caps max power at 90 to avoid something like hyper beam ruining the stats.
  * pokemon is a pretty soft weighting factor, although it is scaled with the weight multiplier.
  */
-function adjustDamageMoveWeights(pool: Map<MoveId, number>, pokemon: Pokemon, willTera: boolean): void {
+function adjustDamageMoveWeights(pool: Map<MoveId, number>, pokemon: Pokemon, willTera = false): void {
   // begin max power at 40 to avoid inflating weights too much when there are only low power moves
   let maxPower = 40;
   for (const moveId of pool.keys()) {
@@ -370,12 +369,6 @@ function adjustDamageMoveWeights(pool: Map<MoveId, number>, pokemon: Pokemon, wi
   const worseCategory = atk > spAtk ? MoveCategory.SPECIAL : MoveCategory.PHYSICAL;
   const statRatio = lowerStat / higherStat;
   const adjustmentRatio = Math.min(Math.pow(statRatio, 3) * 1.3, 1);
-
-  // Raw multiply each move's category by the stat it uses to deal damage
-  // moves that have variable power adjustment always multiply by the larger stat.
-
-  // Determine whether this pokemon is instant tera
-  // The cast to EnemyPokemon is safe, because includes will just return false if it is not an EnemyPokemon
 
   for (const [moveId, weight] of pool) {
     const move = allMoves[moveId];
@@ -399,6 +392,8 @@ function adjustDamageMoveWeights(pool: Map<MoveId, number>, pokemon: Pokemon, wi
       && !move.hasAttr("ShellSideArmCategoryAttr")
       && !(move.hasAttr("TeraMoveCategoryAttr") && willTera)
     ) {
+      // Raw multiply each move's category by the stat it uses to deal damage
+      // moves that always use the higher offensive stat are left unadjusted
       adjustedWeight *= adjustmentRatio;
     }
 
@@ -588,14 +583,13 @@ function fillInRemainingMovesetSlots(
       rand -= remainingPool[index++][1];
     }
     const selectedMoveId = remainingPool[index][0];
+    baseWeights.delete(selectedMoveId);
     if (tmPool.has(selectedMoveId)) {
       tmCount.value++;
       tmPool.delete(selectedMoveId);
-      baseWeights.delete(selectedMoveId);
     } else if (eggMovePool.has(selectedMoveId)) {
       eggMoveCount.value++;
       eggMovePool.delete(selectedMoveId);
-      baseWeights.delete(selectedMoveId);
     }
     pokemon.moveset.push(new PokemonMove(selectedMoveId));
   }
@@ -632,12 +626,13 @@ export function generateMoveset(pokemon: Pokemon): void {
     adjustWeightsForTrainer(movePool);
   }
 
+  /** Determine whether this pokemon will instantly tera */
   const willTera =
-    (hasTrainer
-      && globalScene.currentBattle?.trainer?.config.trainerAI.instantTeras.includes(
-        (pokemon as EnemyPokemon).initialTeamIndex,
-      ))
-    ?? false;
+    hasTrainer
+    && globalScene.currentBattle?.trainer?.config.trainerAI.instantTeras.includes(
+      // The cast to EnemyPokemon is safe; includes will just return false if the property doesn't exist
+      (pokemon as EnemyPokemon).initialTeamIndex,
+    );
 
   adjustDamageMoveWeights(movePool, pokemon, willTera);
 
@@ -665,7 +660,6 @@ export function generateMoveset(pokemon: Pokemon): void {
   // Would also tweak the function to not consider moves already in the moveset
   // e.g. forceStabMove(..., false);
   if (isBeta || import.meta.env.DEV) {
-    // remap to move names
     const moveNameToWeightMap = new Map<string, number>();
     const sortedByValue = Array.from(baseWeights.entries()).sort((a, b) => b[1] - a[1]);
     for (const [moveId, weight] of sortedByValue) {
@@ -684,8 +678,4 @@ export function generateMoveset(pokemon: Pokemon): void {
     baseWeights,
     filterPool(baseWeights, (m: MoveId) => !pokemon.moveset.some(mo => m[0] === mo.moveId)),
   );
-
-  // if (import.meta.env.MODE === "test") {
-  //   return pokemon.moveset;
-  // }
 }
