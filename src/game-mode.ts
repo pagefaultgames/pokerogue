@@ -392,7 +392,7 @@ export class GameMode implements GameModeConfig {
   /**
    * Returns the wave range where MEs can spawn for the game mode [min, max]
    */
-  getMysteryEncounterLegalWaves(): [number, number] {
+  getMysteryEncounterLegalWaves(): [minWave: number, maxWave: number] {
     switch (this.modeId) {
       case GameModes.CLASSIC:
         return CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES;

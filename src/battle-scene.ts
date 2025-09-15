@@ -119,7 +119,12 @@ import { vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import type { Localizable } from "#types/locales";
-import type { NewBattleProps, NewBattleResolvedProps } from "#types/new-battle-props";
+import type {
+  NewBattleConstructedProps,
+  NewBattleInitialProps,
+  NewBattleProps,
+  NewBattleResolvedProps,
+} from "#types/new-battle-props";
 import type { SessionSaveData } from "#types/save-data";
 import { AbilityBar } from "#ui/ability-bar";
 import { ArenaFlyout } from "#ui/arena-flyout";
@@ -273,7 +278,7 @@ export class BattleScene extends SceneBase {
   public score: number;
   public lockModifierTiers: boolean;
   public trainer: Phaser.GameObjects.Sprite;
-  public lastEnemyTrainer: Trainer | null;
+  public lastEnemyTrainer: Trainer | undefined;
   public currentBattle: Battle;
   public pokeballCounts: PokeballCounts;
   public money: number;
@@ -1299,26 +1304,31 @@ export class BattleScene extends SceneBase {
    */
   public newBattle(fromSession?: SessionSaveData): Battle {
     const props = this.getNewBattleProps(fromSession);
-    const resolved: Partial<NewBattleResolvedProps> = {};
     const { waveIndex } = props;
+    const resolved: NewBattleInitialProps = { waveIndex, mysteryEncounterType: props.mysteryEncounterType };
 
+    // TODO: Address this during an RNG overhaul
     this.resetSeed(waveIndex);
 
-    // First, check if it's a fixed wave and do stuff accordingly
+    // Set attributes of the `resolved` object based on the type of battle being created.
     if (this.gameMode.isFixedBattle(waveIndex)) {
-      this.handleFixedBattle(resolved, waveIndex);
+      this.handleFixedBattle(resolved);
     } else if (props.trainerData) {
       this.handleSavedBattle(resolved, props);
     } else {
-      this.handleNonFixedBattle(resolved, props);
+      this.handleNonFixedBattle(resolved);
     }
 
-    resolved.double = this.checkIsDouble(resolved.trainer, props);
+    if (!resolved.battleType) {
+      throw new Error("Whoopsie! I guess my type checks were wrong");
+    }
+    resolved.double = this.checkIsDouble(resolved as NewBattleConstructedProps);
 
-    const lastBattle = this.currentBattle;
+    //
+    const lastBattle: Battle | undefined = this.currentBattle;
     const maxExpLevel = this.getMaxExpLevel();
 
-    this.lastEnemyTrainer = lastBattle?.trainer ?? null;
+    this.lastEnemyTrainer = lastBattle?.trainer;
     this.lastMysteryEncounter = lastBattle?.mysteryEncounter;
 
     // TODO: Is this even needed?
@@ -1335,7 +1345,7 @@ export class BattleScene extends SceneBase {
       () => {
         this.currentBattle = new Battle(this.gameMode, resolved as NewBattleResolvedProps);
       },
-      waveIndex << 3, // TODO: Why use this specific index?
+      waveIndex << 3, // TODO: Why use this specific bitshift?
       this.waveSeed,
     );
     this.currentBattle.incrementTurn();
@@ -1346,81 +1356,6 @@ export class BattleScene extends SceneBase {
       this.doPostBattleCleanup(lastBattle, maxExpLevel);
     }
     return this.currentBattle;
-  }
-
-  /**
-   * Sub-method of `launchBattle` that handles a
-   */
-  private handleFixedBattle(resolved: Partial<NewBattleResolvedProps>, waveIndex: number): Trainer {
-    // Bang is justified as this code is only called when `isFixedBattle` is true
-    const battleConfig = this.gameMode.getFixedBattle(waveIndex)!;
-    resolved.double = battleConfig.double;
-    resolved.battleType = battleConfig.battleType;
-
-    let t: Trainer;
-    this.executeWithSeedOffset(
-      () => {
-        t = battleConfig.getTrainer();
-      },
-      (battleConfig.seedOffsetWaveIndex || waveIndex) << 8,
-    );
-    // Tell TS this is defined
-    this.field.add(t!);
-    return t!;
-  }
-
-  private handleSavedBattle(foo: Partial<NewBattleResolvedProps>, props: NewBattleProps): void {
-    foo.battleType = props.battleType;
-    foo.double = props.double;
-    foo.trainer = props.trainerData?.toTrainer();
-    foo.waveIndex = props.waveIndex;
-  }
-
-  private handleNonFixedBattle(foo: Partial<NewBattleResolvedProps>, { waveIndex, battleType }: NewBattleProps): void {
-    battleType =
-      !this.gameMode.hasTrainers || Overrides.DISABLE_STANDARD_TRAINERS_OVERRIDE
-        ? BattleType.WILD
-        : (Overrides.BATTLE_TYPE_OVERRIDE
-          ?? (this.gameMode.isWaveTrainer(waveIndex, this.arena) ? BattleType.TRAINER : BattleType.WILD));
-
-    // Check for mystery encounter
-    // Can only occur in place of a standard (non-boss) wild battle, waves 10-180
-    if (this.isWaveMysteryEncounter(battleType, waveIndex)) {
-      foo.battleType = BattleType.MYSTERY_ENCOUNTER;
-      // Reset to base spawn weight
-      this.mysteryEncounterSaveData.encounterSpawnChance = BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
-      return;
-    }
-
-    if (battleType !== BattleType.TRAINER) {
-      return;
-    }
-
-    // Determine the trainer's attributes
-    const trainerType = Overrides.RANDOM_TRAINER_OVERRIDE?.trainerType ?? this.arena.randomTrainerType(waveIndex);
-    const config = trainerConfigs[trainerType];
-    let doubleTrainer: boolean;
-    if (config.doubleOnly) {
-      doubleTrainer = true;
-    } else if (
-      !config.hasDouble // Add a check that special trainers can't be double except for tate and liza - they should use the normal double chance // TODO: Review this
-      || (config.trainerTypeDouble && ![TrainerType.TATE, TrainerType.LIZA].includes(trainerType))
-    ) {
-      doubleTrainer = false;
-    } else {
-      doubleTrainer =
-        Overrides.RANDOM_TRAINER_OVERRIDE?.alwaysDouble || !randSeedInt(this.getDoubleBattleChance(waveIndex));
-    }
-
-    const variant = doubleTrainer
-      ? TrainerVariant.DOUBLE
-      : randSeedInt(2)
-        ? TrainerVariant.FEMALE
-        : TrainerVariant.DEFAULT;
-
-    const trainer = new Trainer(trainerType, variant);
-    this.field.add(trainer);
-    foo.trainer = trainer;
   }
 
   /**
@@ -1449,6 +1384,93 @@ export class BattleScene extends SceneBase {
           : battleType !== BattleType.MYSTERY_ENCOUNTER && fromSession.enemyParty.length > 1;
 
     return { battleType, mysteryEncounterType, waveIndex: newWaveIndex, trainerData, double: fixedDouble };
+  }
+
+  /**
+   * Sub-method of `launchBattle` that handles fixed trainer battles.
+   * @param resolved - The object to modify
+   */
+  private handleFixedBattle(resolved: NewBattleInitialProps): void {
+    const { waveIndex } = resolved;
+    // Bang is justified as this code is only called when `isFixedBattle` is true
+    const battleConfig = this.gameMode.getFixedBattle(waveIndex)!;
+    resolved.double = battleConfig.double;
+    resolved.battleType = battleConfig.battleType;
+
+    let t: Trainer;
+    this.executeWithSeedOffset(
+      () => {
+        t = battleConfig.getTrainer();
+      },
+      (battleConfig.seedOffsetWaveIndex || waveIndex) << 8,
+    );
+    // Tell TS this is defined
+    this.field.add(t!);
+    resolved.trainer = t!;
+  }
+
+  /**
+   * Sub-method of `launchBattle` that handles loading existing saved battles.
+   * @param resolved - The object to modify
+   * @param props - The {@linkcode NewBattleProps} created from the save data
+   */
+  private handleSavedBattle(resolved: NewBattleInitialProps, props: NewBattleProps): void {
+    resolved.battleType = props.battleType;
+    resolved.double = props.double;
+    resolved.trainer = props.trainerData?.toTrainer();
+  }
+
+  /**
+   * Sub-method of `launchBattle` that handles creating a new battle from scratch.
+   * @param resolved - The object to modify properties of
+   */
+  private handleNonFixedBattle(resolved: NewBattleInitialProps): void {
+    const { waveIndex } = resolved;
+    resolved.battleType =
+      !this.gameMode.hasTrainers || Overrides.DISABLE_STANDARD_TRAINERS_OVERRIDE
+        ? BattleType.WILD
+        : (Overrides.BATTLE_TYPE_OVERRIDE
+          ?? (this.gameMode.isWaveTrainer(waveIndex, this.arena) ? BattleType.TRAINER : BattleType.WILD));
+
+    // Check for mystery encounter
+    // Can only occur in place of a standard (non-boss) wild battle, waves 10-180
+    if (this.isWaveMysteryEncounter(resolved.battleType, waveIndex)) {
+      resolved.battleType = BattleType.MYSTERY_ENCOUNTER;
+      // Reset to base spawn weight
+      this.mysteryEncounterSaveData.encounterSpawnChance = BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
+      return;
+    }
+
+    if (resolved.battleType !== BattleType.TRAINER) {
+      return;
+    }
+
+    // Determine the trainer's attributes
+    const trainerType = Overrides.RANDOM_TRAINER_OVERRIDE?.trainerType ?? this.arena.randomTrainerType(waveIndex);
+    const config = trainerConfigs[trainerType];
+    let doubleTrainer: boolean;
+    if (config.doubleOnly) {
+      doubleTrainer = true;
+    } else if (
+      !config.hasDouble // Add a check that special trainers can't be double except for tate and liza - they should use the normal double chance // TODO: Review this
+      || (config.trainerTypeDouble && ![TrainerType.TATE, TrainerType.LIZA].includes(trainerType))
+    ) {
+      doubleTrainer = false;
+    } else {
+      doubleTrainer =
+        Overrides.RANDOM_TRAINER_OVERRIDE?.alwaysDouble || !randSeedInt(this.getDoubleBattleChance(waveIndex));
+    }
+
+    // NB: The original code leaves `double` unset here so I suppose we do too
+    const variant = doubleTrainer
+      ? TrainerVariant.DOUBLE
+      : randSeedInt(2)
+        ? TrainerVariant.FEMALE
+        : TrainerVariant.DEFAULT;
+
+    const trainer = new Trainer(trainerType, variant);
+    this.field.add(trainer);
+    resolved.trainer = trainer;
   }
 
   private doPostBattleCleanup(lastBattle: Battle, maxExpLevel: number): void {
@@ -1509,9 +1531,10 @@ export class BattleScene extends SceneBase {
 
   /**
    * Sub-method of `newBattle` that returns whether the new battle is a double battle.
-   * @param __namedParameters
+   * @param __namedParameters - filler text for typedoc to shut up
+   * @returns Whether the battle should be a duouble battle.
    */
-  private checkIsDouble(trainer: Trainer | undefined, { double, battleType, waveIndex }: NewBattleProps): boolean {
+  private checkIsDouble({ double, battleType, waveIndex, trainer }: NewBattleConstructedProps): boolean {
     // Edge cases
     if (
       // Wave 1 doubles cause crashes
@@ -1522,10 +1545,13 @@ export class BattleScene extends SceneBase {
     ) {
       return false;
     }
+
+    // Previously defined double battle status (from save data)
     if (double != null) {
       return double;
     }
 
+    // Overrides
     switch (Overrides.BATTLE_STYLE_OVERRIDE) {
       case "double":
         return true;
@@ -1537,6 +1563,7 @@ export class BattleScene extends SceneBase {
         return waveIndex % 2 === 1;
     }
 
+    // Standard wild battle chance
     if (battleType === BattleType.WILD) {
       return !randSeedInt(this.getDoubleBattleChance(waveIndex));
     }
@@ -3538,8 +3565,10 @@ export class BattleScene extends SceneBase {
 
   /**
    * Returns if a wave COULD spawn a {@linkcode MysteryEncounter}.
-   * Even if returns `true`, does not guarantee that a wave will actually be a ME.
-   * That check is made in {@linkcode BattleScene.isWaveMysteryEncounter} instead.
+   * @param battleType - The {@linkcode BattleType} of the newly created battle
+   * @param waveIndex - The wave number of the newly spawned wave
+   * @returns Whether an ME could legally spawn on the given wave.
+   * @see {@linkcode BattleScene.isWaveMysteryEncounter} - Function that rolls for ME creation on new wave start
    */
   isMysteryEncounterValidForWave(battleType: BattleType, waveIndex: number): boolean {
     const [lowestMysteryEncounterWave, highestMysteryEncounterWave] = this.gameMode.getMysteryEncounterLegalWaves();
@@ -3548,55 +3577,56 @@ export class BattleScene extends SceneBase {
       && battleType === BattleType.WILD
       && !this.gameMode.isBoss(waveIndex)
       && waveIndex % 10 !== 1
-      && waveIndex < highestMysteryEncounterWave
-      && waveIndex > lowestMysteryEncounterWave
+      && isBetween(waveIndex, lowestMysteryEncounterWave, highestMysteryEncounterWave, true)
     );
   }
 
   /**
-   * Determines whether a wave should randomly generate a {@linkcode MysteryEncounter}.
+   * Determine whether a wave should randomly generate a {@linkcode MysteryEncounter}.
    * Currently, the only modes that MEs are allowed in are Classic and Challenge.
    * Additionally, MEs cannot spawn outside of waves 10-180 in those modes
-   * @param newBattleType
-   * @param waveIndex
+   * @param battleType - The {@linkcode BattleType} of the newly created battle
+   * @param waveIndex - The wave number of the newly spawned wave
+   * @returns Whether a Mystery Encounter should be generated.
    */
-  private isWaveMysteryEncounter(newBattleType: BattleType, waveIndex: number): boolean {
-    const [lowestMysteryEncounterWave, highestMysteryEncounterWave] = this.gameMode.getMysteryEncounterLegalWaves();
-    if (this.isMysteryEncounterValidForWave(newBattleType, waveIndex)) {
-      // Base spawn weight is BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT/256, and increases by WEIGHT_INCREMENT_ON_SPAWN_MISS/256 for each missed attempt at spawning an encounter on a valid floor
-      const sessionEncounterRate = this.mysteryEncounterSaveData.encounterSpawnChance;
-      const encounteredEvents = this.mysteryEncounterSaveData.encounteredEvents;
-
-      // If total number of encounters is lower than expected for the run, slightly favor a new encounter spawn (reverse as well)
-      // Reduces occurrence of runs with total encounters significantly different from AVERAGE_ENCOUNTERS_PER_RUN_TARGET
-      // Favored rate changes can never exceed 50%. So if base rate is 15/256 and favored rate would add 200/256, result will be (15 + 128)/256
-      const expectedEncountersByFloor =
-        (AVERAGE_ENCOUNTERS_PER_RUN_TARGET / (highestMysteryEncounterWave - lowestMysteryEncounterWave))
-        * (waveIndex - lowestMysteryEncounterWave);
-      const currentRunDiffFromAvg = expectedEncountersByFloor - encounteredEvents.length;
-      const favoredEncounterRate =
-        sessionEncounterRate
-        + Math.min(currentRunDiffFromAvg * ANTI_VARIANCE_WEIGHT_MODIFIER, MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT / 2);
-
-      const successRate = Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE ?? favoredEncounterRate;
-
-      // MEs can only spawn 3 or more waves after the previous ME, barring overrides
-      const canSpawn = encounteredEvents.length === 0 || waveIndex - encounteredEvents.at(-1)!.waveIndex > 3;
-
-      if (canSpawn || Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE !== null) {
-        let roll = MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT;
-        // Always rolls the check on the same offset to ensure no RNG changes from reloading session
-        this.executeWithSeedOffset(
-          () => {
-            roll = randSeedInt(MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT);
-          },
-          waveIndex * 3 * 1000,
-        );
-        return roll < successRate;
-      }
+  private isWaveMysteryEncounter(battleType: BattleType, waveIndex: number): boolean {
+    if (!this.isMysteryEncounterValidForWave(battleType, waveIndex)) {
+      return false;
     }
 
-    return false;
+    const [lowestMysteryEncounterWave, highestMysteryEncounterWave] = this.gameMode.getMysteryEncounterLegalWaves();
+    // Base spawn weight is BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT/256, and increases
+    // by WEIGHT_INCREMENT_ON_SPAWN_MISS/256 for each missed attempt at spawning an encounter on a valid floor
+    const sessionEncounterRate = this.mysteryEncounterSaveData.encounterSpawnChance;
+    const encounteredEvents = this.mysteryEncounterSaveData.encounteredEvents;
+
+    // MEs can only spawn 3 or more waves after the previous ME, barring overrides
+    const canSpawn =
+      Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE !== null // Bang on `at()` is justified due to the check for length === 0
+      && (encounteredEvents.length === 0 || waveIndex > 3 + encounteredEvents.at(-1)!.waveIndex);
+    if (!canSpawn) {
+      return false;
+    }
+
+    // If total number of encounters is lower than expected for the run, slightly favor a new encounter spawn (reverse as well)
+    // Reduces occurrence of runs with total encounters significantly different from AVERAGE_ENCOUNTERS_PER_RUN_TARGET
+    // Favored rate changes can never exceed 50%. So if base rate is 15/256 and favored rate would add 200/256, result will be (15 + 128)/256
+    const expectedEncountersByFloor =
+      (AVERAGE_ENCOUNTERS_PER_RUN_TARGET / (highestMysteryEncounterWave - lowestMysteryEncounterWave))
+      * (waveIndex - lowestMysteryEncounterWave);
+    const currentRunDiffFromAvg = expectedEncountersByFloor - encounteredEvents.length;
+    const favoredEncounterRate =
+      sessionEncounterRate
+      + Math.min(currentRunDiffFromAvg * ANTI_VARIANCE_WEIGHT_MODIFIER, MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT / 2);
+
+    const successRate = Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE ?? favoredEncounterRate;
+
+    let roll = 0;
+    // Always rolls the check on the same offset to ensure no RNG changes from reloading session
+    this.executeWithSeedOffset(() => {
+      roll = randSeedInt(MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT);
+    }, waveIndex * 3000);
+    return roll < successRate;
   }
 
   /**

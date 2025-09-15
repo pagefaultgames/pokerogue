@@ -100,17 +100,22 @@ export class Battle {
 
   private rngCounter = 0;
 
-  constructor(gameMode: GameMode, { waveIndex, battleType, trainer, double = false }: NewBattleResolvedProps) {
+  constructor(
+    gameMode: GameMode,
+    { waveIndex, battleType, trainer, mysteryEncounterType, double = false }: NewBattleResolvedProps,
+  ) {
     this.gameMode = gameMode;
     this.waveIndex = waveIndex;
     this.battleType = battleType;
     this.trainer = trainer;
+    this.mysteryEncounterType = mysteryEncounterType;
+    this.double = double;
+
     this.initBattleSpec();
     this.enemyLevels =
       battleType !== BattleType.TRAINER
         ? new Array(double ? 2 : 1).fill(null).map(() => this.getLevelForWave())
         : trainer?.getPartyLevels(this.waveIndex);
-    this.double = double;
   }
 
   private initBattleSpec(): void {

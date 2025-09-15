@@ -228,7 +228,7 @@ function endTrainerBattleAndShowDialogue(): Promise<void> {
       // Hide the trainer and init next battle
       const trainer = globalScene.currentBattle.trainer;
       // Unassign previous trainer from battle so it isn't destroyed before animation completes
-      globalScene.currentBattle.trainer = null;
+      globalScene.currentBattle.trainer = undefined;
       await spawnNextTrainerOrEndEncounter();
       if (trainer) {
         globalScene.tweens.add({

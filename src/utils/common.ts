@@ -482,13 +482,17 @@ export function getLocalizedSpriteKey(baseKey: string) {
 }
 
 /**
- * Check if a number is **inclusively** between two numbers
- * @param num - the number to check
- * @param min - the minimum value (inclusive)
- * @param max - the maximum value (inclusive)
- * @returns Whether num is no less than min and no greater than max
+ * Check if a number is between two numbers (either inclusively or exclusively).
+ * @param num - The number to check
+ * @param min - The minimum value
+ * @param max - The maximum value
+ * @param exclusive - Whether to exclusively check boundedness; default `false` (inclusive)
+ * @returns Whether `num` is no less than `min` and no greater than `max`
  */
-export function isBetween(num: number, min: number, max: number): boolean {
+export function isBetween(num: number, min: number, max: number, exclusive = true): boolean {
+  if (exclusive) {
+    return min < num && num < max;
+  }
   return min <= num && num <= max;
 }
 
