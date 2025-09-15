@@ -12,6 +12,25 @@ import { MoveId } from "#enums/move-id";
  * This module contains configuration constants and functions that control
  * the limitations and rules around moveset generation for generated Pokémon.
  *
+ *
+ * ### Move Weights
+ *
+ * The various move weight constants in this module control how likely
+ * certain categories of moves are to appear in a generated Pokémon's
+ * moveset. Higher weights make a move more likely to be chosen.
+ * The constants here specify the *base* weight for a move when first computed.
+ * These weights are post-processed (and then scaled up such that weights have a larger impact,
+ * for instance, on boss Pokémon) before being used in the actual moveset generation.
+ *
+ * Post Processing of weights includes, but is not limited to:
+ * - Adjusting weights of status moves
+ * - Adjusting weights based on the move's power relative to the highest power available
+ * - Adjusting weights based on the stat the move uses to calculate damage relative to the higher stat
+ *
+ *
+ * All weights go through additional post-processing based on
+ * their expected power (accuracy * damage * expected number of hits)
+ *
  * @module
  */
 
@@ -56,6 +75,44 @@ const TWO_EGG_MOVE_THRESHOLD = 121;
 const THREE_EGG_MOVE_THRESHOLD = 161;
 /** Above this level, Pokémon will generate with at most 3 egg moves */
 const FOUR_EGG_MOVE_THRESHOLD = 201;
+
+
+/** The weight given to TMs in the common tier during moveset generation */
+export const COMMON_TM_MOVESET_WEIGHT = 12;
+/** The weight given to TMs in the great tier during moveset generation */
+export const GREAT_TM_MOVESET_WEIGHT = 14;
+/** The weight given to TMs in the ultra tier during moveset generation */
+export const ULTRA_TM_MOVESET_WEIGHT = 18;
+
+/**
+ * The maximum weight an egg move can ever have
+ * @remarks
+ * Egg moves have their weights adjusted based on the maximum weight of the Pokémon's
+ * level-up moves. Rare Egg moves are always 5/6th of the computed egg move weight.
+ * Boss pokemon are not allowed to spawn with rare egg moves.
+ * @see {@linkcode EGG_MOVE_TO_LEVEL_WEIGHT}
+ */
+export const EGG_MOVE_WEIGHT_MAX = 60;
+/**
+ * The percentage of the Pokémon's highest weighted level move to the weight an
+ * egg move can generate with
+ */
+export const EGG_MOVE_TO_LEVEL_WEIGHT = 0.85;
+/** The weight given to evolution moves */
+export const EVOLUTION_MOVE_WEIGHT = 60;
+/** The weight given to relearn moves */
+export const RELEARN_MOVE_WEIGHT = 60;
+
+/** The base weight multiplier to use
+ *
+ * The higher the number, the more impact weights have on the final move selection.
+ * i.e. if set to 0, all moves have equal chance of being selected regardless of their weight.
+ */
+export const BASE_WEIGHT_MULTIPLIER = 1.6;
+
+/** The additional weight added onto {@linkcode BASE_WEIGHT_MULTIPLIER} for boss Pokémon */
+export const BOSS_EXTRA_WEIGHT_MULTIPLIER = 0.4;
+
 
 
 /**

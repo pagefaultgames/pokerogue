@@ -1,14 +1,22 @@
 import { globalScene } from "#app/global-scene";
 import { speciesEggMoves } from "#balance/egg-moves";
 import {
+  BASE_WEIGHT_MULTIPLIER,
+  BOSS_EXTRA_WEIGHT_MULTIPLIER,
   COMMON_TIER_TM_LEVEL_REQUIREMENT,
+  COMMON_TM_MOVESET_WEIGHT,
   EGG_MOVE_LEVEL_REQUIREMENT,
+  EGG_MOVE_TO_LEVEL_WEIGHT,
+  EGG_MOVE_WEIGHT_MAX,
+  EVOLUTION_MOVE_WEIGHT,
   GREAT_TIER_TM_LEVEL_REQUIREMENT,
+  GREAT_TM_MOVESET_WEIGHT,
   getMaxEggMoveCount,
   getMaxTmCount,
   RARE_EGG_MOVE_LEVEL_REQUIREMENT,
   STAB_BLACKLIST,
   ULTRA_TIER_TM_LEVEL_REQUIREMENT,
+  ULTRA_TM_MOVESET_WEIGHT,
 } from "#balance/moveset-generation";
 import { EVOLVE_MOVE, RELEARN_MOVE } from "#balance/pokemon-level-moves";
 import { speciesTmMoves, tmPoolTiers } from "#balance/tms";
@@ -24,11 +32,6 @@ import { PokemonMove } from "#moves/pokemon-move";
 import { NumberHolder, randSeedInt } from "#utils/common";
 import { isBeta } from "#utils/utility-vars";
 
-/** The maximum weight an egg move can ever have */
-const EGG_MOVE_WEIGHT_MAX = 60;
-/** The percentage of the Pokémon's highest weighted level move to the weight an egg move can generate with */
-const EGG_MOVE_TO_LEVEL_WEIGHT = 0.85;
-
 /**
  * Compute and assign a weight to the level-up moves currently available to the Pokémon
  *
@@ -37,7 +40,7 @@ const EGG_MOVE_TO_LEVEL_WEIGHT = 0.85;
  *
  * @remarks
  * A move's weight is determined by its level, as follows:
- * 1. If the level is an {@linkcode EVOLVE_MOVE} move, weight is 70
+ * 1. If the level is an {@linkcode EVOLVE_MOVE} move, weight is 60
  * 2. If it is level 1 with 80+ BP, it is considered a "move reminder" move and
  *    weight is 60
  * 3. If the Pokémon has a trainer and the move is a {@linkcode RELEARN_MOVE},
@@ -72,7 +75,7 @@ function getAndWeightLevelMoves(pokemon: Pokemon): Map<MoveId, number> {
     let weight = learnLevel + 20;
     switch (learnLevel) {
       case EVOLVE_MOVE:
-        weight = 70;
+        weight = EVOLUTION_MOVE_WEIGHT;
         break;
       // Assume level 1 moves with 80+ BP are "move reminder" moves and bump their weight. Trainers use actual relearn moves.
       case 1:
@@ -146,13 +149,13 @@ function getTmPoolForSpecies(
     }
     switch (tmPoolTiers[moveId]) {
       case ModifierTier.COMMON:
-        allowCommon && tmPool.set(moveId, 12);
+        allowCommon && tmPool.set(moveId, COMMON_TM_MOVESET_WEIGHT);
         break;
       case ModifierTier.GREAT:
-        allowGreat && tmPool.set(moveId, 14);
+        allowGreat && tmPool.set(moveId, GREAT_TM_MOVESET_WEIGHT);
         break;
       case ModifierTier.ULTRA:
-        allowUltra && tmPool.set(moveId, 18);
+        allowUltra && tmPool.set(moveId, ULTRA_TM_MOVESET_WEIGHT);
         break;
     }
   }
@@ -460,7 +463,7 @@ function filterPool(
  * @param pokemon - The Pokémon for which the moveset is being generated
  * @param tmCount - A holder for the count of TM moves selected
  * @param eggMoveCount - A holder for the count of egg moves selected
- * @param willTera - Whether the Pokémon is expected to Tera (i.e., has instant Tera on a Trainer Pokémon)
+ * @param willTera - Whether the Pokémon is expected to Tera (i.e., has instant Tera on a Trainer Pokémon); default `false`
  * @param forceAnyDamageIfNoStab - If true, will force any damaging move if no STAB move is available
  */
 // biome-ignore lint/nursery/useMaxParams: This is a complex function that needs all these parameters
@@ -471,7 +474,7 @@ function forceStabMove(
   pokemon: Pokemon,
   tmCount: NumberHolder,
   eggMoveCount: NumberHolder,
-  willTera: boolean,
+  willTera = false,
   forceAnyDamageIfNoStab = false,
 ): void {
   // All Pokemon force a STAB move first
@@ -506,6 +509,7 @@ function forceStabMove(
       rand -= chosenPool[index++][1];
     }
     const selectedId = chosenPool[index][0];
+    pool.delete(selectedId);
     if (tmPool.has(selectedId)) {
       tmPool.delete(selectedId);
       tmCount.value++;
@@ -596,6 +600,23 @@ function fillInRemainingMovesetSlots(
 }
 
 /**
+ * Debugging function to log computed move weights for a Pokémon
+ * @param pokemon - The Pokémon for which the move weights were computed
+ * @param pool - The move pool containing move IDs and their weights
+ * @param note - Short note to include in the log for context
+ */
+function debugMoveWeights(pokemon: Pokemon, pool: Map<MoveId, number>, note: string): void {
+  if (isBeta || import.meta.env.DEV) {
+    const moveNameToWeightMap = new Map<string, number>();
+    const sortedByValue = Array.from(pool.entries()).sort((a, b) => b[1] - a[1]);
+    for (const [moveId, weight] of sortedByValue) {
+      moveNameToWeightMap.set(allMoves[moveId].name, weight);
+    }
+    console.log("%cComputed move weights [%s] for %s", "color: blue", note, pokemon.name, moveNameToWeightMap);
+  }
+}
+
+/**
  * Generate a moveset for a given Pokémon based on its level, types, stats, and whether it is wild or a trainer's Pokémon.
  * @param pokemon - The Pokémon to generate a moveset for
  * @returns A reference to the Pokémon's moveset array
@@ -604,13 +625,16 @@ export function generateMoveset(pokemon: Pokemon): void {
   pokemon.moveset = [];
   // Step 1: Generate the pools from various sources: level up, egg moves, and TMs
   const learnPool = getAndWeightLevelMoves(pokemon);
+  debugMoveWeights(pokemon, learnPool, "Initial Level Moves");
   const hasTrainer = pokemon.hasTrainer();
   const tmPool = new Map<MoveId, number>();
   const eggMovePool = new Map<MoveId, number>();
 
   if (hasTrainer) {
     getAndWeightEggMoves(pokemon, learnPool, eggMovePool);
+    eggMovePool.size > 0 && debugMoveWeights(pokemon, eggMovePool, "Initial Egg Moves");
     getAndWeightTmMoves(pokemon, learnPool, eggMovePool, tmPool);
+    tmPool.size > 0 && debugMoveWeights(pokemon, tmPool, "Initial Tm Moves");
   }
 
   // Now, combine pools into one master pool.
@@ -637,9 +661,9 @@ export function generateMoveset(pokemon: Pokemon): void {
   adjustDamageMoveWeights(movePool, pokemon, willTera);
 
   /** The higher this is, the greater the impact of weight. At `0` all moves are equal weight. */
-  let weightMultiplier = 1.6;
+  let weightMultiplier = BASE_WEIGHT_MULTIPLIER;
   if (pokemon.isBoss()) {
-    weightMultiplier += 0.4;
+    weightMultiplier += BOSS_EXTRA_WEIGHT_MULTIPLIER;
   }
 
   const baseWeights = new Map<MoveId, number>(movePool);
@@ -654,19 +678,13 @@ export function generateMoveset(pokemon: Pokemon): void {
   const tmCount = new NumberHolder(0);
   const eggMoveCount = new NumberHolder(0);
 
+  debugMoveWeights(pokemon, baseWeights, "Pre STAB Move");
+
   // Step 4: Force a STAB move if possible
-  forceStabMove(movePool, tmPool, eggMovePool, pokemon, tmCount, eggMoveCount, willTera);
+  forceStabMove(baseWeights, tmPool, eggMovePool, pokemon, tmCount, eggMoveCount, willTera);
   // Note: To force a secondary stab, call this a second time, and pass `false` for the last parameter
   // Would also tweak the function to not consider moves already in the moveset
   // e.g. forceStabMove(..., false);
-  if (isBeta || import.meta.env.DEV) {
-    const moveNameToWeightMap = new Map<string, number>();
-    const sortedByValue = Array.from(baseWeights.entries()).sort((a, b) => b[1] - a[1]);
-    for (const [moveId, weight] of sortedByValue) {
-      moveNameToWeightMap.set(allMoves[moveId].name, weight);
-    }
-    console.log("%cComputed move weights for %s", "color: blue", pokemon.name, moveNameToWeightMap);
-  }
 
   // Step 5: Fill in remaining slots
   fillInRemainingMovesetSlots(
@@ -676,6 +694,6 @@ export function generateMoveset(pokemon: Pokemon): void {
     tmCount,
     eggMoveCount,
     baseWeights,
-    filterPool(baseWeights, (m: MoveId) => !pokemon.moveset.some(mo => m[0] === mo.moveId)),
+    filterPool(baseWeights, (m: MoveId) => allMoves[m] != null),
   );
 }
