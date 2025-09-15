@@ -1,4 +1,4 @@
-import { type PokeballCounts } from "#app/battle-scene";
+import type { PokeballCounts } from "#app/battle-scene";
 import { EvolutionItem } from "#balance/pokemon-evolutions";
 import { Gender } from "#data/gender";
 import { AbilityId } from "#enums/ability-id";
@@ -21,7 +21,7 @@ import { TrainerType } from "#enums/trainer-type";
 import { Unlockables } from "#enums/unlockables";
 import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
-import { type ModifierOverride } from "#modifiers/modifier-type";
+import type { ModifierOverride } from "#modifiers/modifier-type";
 import { Variant } from "#sprites/variant";
 
 /**

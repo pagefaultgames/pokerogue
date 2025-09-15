@@ -119,15 +119,7 @@ import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import { getModifierTierTextTint } from "#ui/text";
 import { applyChallenges } from "#utils/challenge-utils";
-import {
-  BooleanHolder,
-  formatMoney,
-  isNullOrUndefined,
-  NumberHolder,
-  padInt,
-  randSeedInt,
-  randSeedItem,
-} from "#utils/common";
+import { BooleanHolder, formatMoney, NumberHolder, padInt, randSeedInt, randSeedItem } from "#utils/common";
 import { getEnumKeys, getEnumValues } from "#utils/enums";
 import { getModifierPoolForType, getModifierType } from "#utils/modifier-utils";
 import { toCamelCase } from "#utils/strings";
@@ -263,7 +255,7 @@ export class ModifierType {
             this.tier = modifier.modifierType.tier;
             return this;
           }
-          if (isNullOrUndefined(defaultTier)) {
+          if (defaultTier == null) {
             // If weight is 0, keep track of the first tier where the item was found
             defaultTier = modifier.modifierType.tier;
           }
@@ -2920,7 +2912,7 @@ export function getPartyLuckValue(party: Pokemon[]): number {
     globalScene.executeWithSeedOffset(
       () => {
         const eventLuck = getDailyEventSeedLuck(globalScene.seed);
-        if (!isNullOrUndefined(eventLuck)) {
+        if (eventLuck != null) {
           DailyLuck.value = eventLuck;
           return;
         }

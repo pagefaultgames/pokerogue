@@ -2,7 +2,7 @@ import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { BooleanHolder, isNullOrUndefined } from "#app/utils/common";
+import { BooleanHolder } from "#app/utils/common";
 import { BattleType } from "#enums/battle-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import type { NormalSwitchType } from "#enums/switch-type";
@@ -195,7 +195,7 @@ export class ForceSwitchOutHelper implements ForceSwitchOutHelperArgs {
     );
 
     const allyPokemon = switchOutTarget.getAlly();
-    if (globalScene.currentBattle.double && !isNullOrUndefined(allyPokemon)) {
+    if (globalScene.currentBattle.double && allyPokemon != null) {
       globalScene.redirectPokemonMoves(switchOutTarget, allyPokemon);
     }
 

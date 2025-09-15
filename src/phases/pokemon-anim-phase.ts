@@ -4,7 +4,6 @@ import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { SpeciesId } from "#enums/species-id";
 import type { Pokemon } from "#field/pokemon";
 import { BattlePhase } from "#phases/battle-phase";
-import { isNullOrUndefined } from "#utils/common";
 
 export class PokemonAnimPhase extends BattlePhase {
   public readonly phaseName = "PokemonAnimPhase";
@@ -52,7 +51,7 @@ export class PokemonAnimPhase extends BattlePhase {
 
   private doSubstituteAddAnim(): void {
     const substitute = this.pokemon.getTag(SubstituteTag);
-    if (isNullOrUndefined(substitute)) {
+    if (substitute == null) {
       this.end();
       return;
     }
@@ -336,7 +335,7 @@ export class PokemonAnimPhase extends BattlePhase {
     // Note: unlike the other Commander animation, this is played through the
     // Dondozo instead of the Tatsugiri.
     const tatsugiri = this.pokemon.getAlly();
-    if (isNullOrUndefined(tatsugiri)) {
+    if (tatsugiri == null) {
       console.warn("Aborting COMMANDER_REMOVE anim: Tatsugiri is undefined");
       this.end();
       return;
