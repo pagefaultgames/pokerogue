@@ -12,7 +12,7 @@ import { EnemyPokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
 import { NumberHolder } from "#utils/common";
 import { afterEach } from "node:test";
-import { beforeAll, describe, expect, it, vi } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
 // Need a function for creating a mock pokemon
 
@@ -157,7 +157,6 @@ describe("Unit Tests - ai-moveset-gen.ts", () => {
   describe("", () => {
     //#region boilerplate
     let phaserGame: Phaser.Game;
-    // biome-ignore lint/correctness/noUnusedVariables: May be used by tests later
     let game: GameManager;
     /**A pokemon object that will be cleaned up after every test */
     let pokemon: EnemyPokemon | null = null;
@@ -173,6 +172,10 @@ describe("Unit Tests - ai-moveset-gen.ts", () => {
 
     afterEach(() => {
       pokemon?.destroy();
+    });
+    // Sanitize the interceptor after running the suite to ensure other tests are not affected
+    afterAll(() => {
+      game.phaseInterceptor.restoreOg();
     });
     //#endregion boilerplate
 
@@ -205,7 +208,8 @@ describe("Unit Tests - ai-moveset-gen.ts", () => {
         ]);
         vi.spyOn(allMoves[MoveId.TACKLE], "name", "get").mockReturnValue("Tackle (N)");
         const result = getAndWeightLevelMoves(pokemon);
-        expect(result).toContain(MoveId.GROWL);
+        expect(result.has(MoveId.TACKLE)).toBe(false);
+        expect(result.has(MoveId.GROWL)).toBe(true);
       });
 
       it("skips moves already in the pool", () => {
@@ -239,7 +243,6 @@ describe("Unit Tests - ai-moveset-gen.ts", () => {
 describe("Regression Tests - ai-moveset-gen.ts", () => {
   //#region boilerplate
   let phaserGame: Phaser.Game;
-  // biome-ignore lint/correctness/noUnusedVariables: May be used by tests later
   let game: GameManager;
   /**A pokemon object that will be cleaned up after every test */
   let pokemon: EnemyPokemon | null = null;
@@ -255,6 +258,10 @@ describe("Regression Tests - ai-moveset-gen.ts", () => {
 
   afterEach(() => {
     pokemon?.destroy();
+  });
+
+  afterAll(() => {
+    game.phaseInterceptor.restoreOg();
   });
   //#endregion boilerplate
 
