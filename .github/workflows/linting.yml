@@ -68,6 +68,7 @@ jobs:
       # NOTE: This step *must* run last, as it deletes files in `public/`
       # Files in public/ do not yet have full licensing information, so remove them before checking for reuse compliance
       - name: Prepare for reuse compliance
-        run: rm -rf public/*
+        run: rm -rf public/* LICENSES/LicenseRef-*
+
       - name: Check for reuse compliance
         uses: fsfe/reuse-action@v5
