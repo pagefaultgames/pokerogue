@@ -1,39 +1,4 @@
-/** biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports */
-import type { BattlerTag } from "#app/data/battler-tags";
-/** biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports */
-
-import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
-import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
-import { CommonBattleAnim } from "#data/battle-anims";
-import { allMoves } from "#data/data-lists";
-import { AbilityId } from "#enums/ability-id";
-import { ArenaTagSide } from "#enums/arena-tag-side";
-import { ArenaTagType } from "#enums/arena-tag-type";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { HitResult } from "#enums/hit-result";
-import { CommonAnim } from "#enums/move-anims-common";
-import { MoveCategory } from "#enums/move-category";
-import { MoveId } from "#enums/move-id";
-import { MoveTarget } from "#enums/move-target";
-import { PokemonType } from "#enums/pokemon-type";
-import { Stat } from "#enums/stat";
-import { StatusEffect } from "#enums/status-effect";
-import type { Arena } from "#field/arena";
-import type { Pokemon } from "#field/pokemon";
-import type {
-  ArenaScreenTagType,
-  ArenaTagData,
-  EntryHazardTagType,
-  RoomArenaTagType,
-  SerializableArenaTagType,
-} from "#types/arena-tags";
-import type { Mutable } from "#types/type-helpers";
-import { BooleanHolder, type NumberHolder, toDmgValue } from "#utils/common";
-import i18next from "i18next";
-
 /**
- * @module
  * ArenaTags are are meant for effects that are tied to the arena (as opposed to a specific pokemon).
  * Examples include (but are not limited to)
  * - Cross-turn effects that persist even if the user/target switches out, such as Happy Hour
@@ -75,8 +40,42 @@ import i18next from "i18next";
  * }
  * ```
  * Notes
- * - If the class has any subclasses, then the second form of `loadTag` *must* be used.
+ * - If the class has any subclasses, then the second form of `loadTag` *must* be used.\
+ * @module
  */
+// biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports
+import type { BattlerTag } from "#app/data/battler-tags";
+// biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports
+
+import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
+import { globalScene } from "#app/global-scene";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { CommonBattleAnim } from "#data/battle-anims";
+import { allMoves } from "#data/data-lists";
+import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { HitResult } from "#enums/hit-result";
+import { CommonAnim } from "#enums/move-anims-common";
+import { MoveCategory } from "#enums/move-category";
+import { MoveId } from "#enums/move-id";
+import { MoveTarget } from "#enums/move-target";
+import { PokemonType } from "#enums/pokemon-type";
+import { Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
+import type { Arena } from "#field/arena";
+import type { Pokemon } from "#field/pokemon";
+import type {
+  ArenaScreenTagType,
+  ArenaTagData,
+  EntryHazardTagType,
+  RoomArenaTagType,
+  SerializableArenaTagType,
+} from "#types/arena-tags";
+import type { Mutable } from "#types/type-helpers";
+import { BooleanHolder, type NumberHolder, toDmgValue } from "#utils/common";
+import i18next from "i18next";
 
 /** Interface containing the serializable fields of ArenaTagData. */
 interface BaseArenaTag {
