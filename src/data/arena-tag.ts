@@ -40,9 +40,10 @@
  * }
  * ```
  * Notes
- * - If the class has any subclasses, then the second form of `loadTag` *must* be used.\
+ * - If the class has any subclasses, then the second form of `loadTag` *must* be used.
  * @module
  */
+
 // biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports
 import type { BattlerTag } from "#app/data/battler-tags";
 // biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports

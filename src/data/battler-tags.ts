@@ -36,6 +36,7 @@
  * - If the class has any subclasses, then the second form of `loadTag` *must* be used.
  * @module
  */
+
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";

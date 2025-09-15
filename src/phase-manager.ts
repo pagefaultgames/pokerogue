@@ -6,6 +6,7 @@
  * The manager is exclusively used by the Battle Scene and is NOT intended for external use.
  * @module
  */
+
 import { PHASE_START_COLOR } from "#app/constants/colors";
 import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
