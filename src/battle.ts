@@ -1,4 +1,3 @@
-import type { NewBattleResolvedProps } from "#app/battle-scene";
 import type { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -22,6 +21,7 @@ import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import i18next from "#plugins/i18n";
 import { MusicPreference } from "#system/settings";
 import { trainerConfigs } from "#trainers/trainer-config";
+import type { NewBattleResolvedProps } from "#types/new-battle-props";
 import type { TurnMove } from "#types/turn-move";
 import {
   NumberHolder,

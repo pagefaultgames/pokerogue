@@ -114,12 +114,12 @@ import { GameData } from "#system/game-data";
 import { initGameSpeed } from "#system/game-speed";
 import type { PokemonData } from "#system/pokemon-data";
 import { MusicPreference } from "#system/settings";
-import type { TrainerData } from "#system/trainer-data";
 import type { Voucher } from "#system/voucher";
 import { vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import type { Localizable } from "#types/locales";
+import type { NewBattleProps, NewBattleResolvedProps } from "#types/new-battle-props";
 import type { SessionSaveData } from "#types/save-data";
 import { AbilityBar } from "#ui/ability-bar";
 import { ArenaFlyout } from "#ui/arena-flyout";
@@ -164,29 +164,6 @@ export interface InfoToggle {
   toggleInfo(force?: boolean): void;
   isActive(): boolean;
 }
-
-// todo move this to the file
-/** Interface representing the base type of a new battle config. */
-interface NewBattleBaseProps {
-  battleType: BattleType;
-  trainer?: Trainer;
-  trainerData?: TrainerData;
-  mysteryEncounterType?: MysteryEncounterType;
-  waveIndex: number;
-  double?: boolean;
-}
-
-/**
- * Interface representing the resolved type of a new battle config.
- * @interface
- */
-export type NewBattleResolvedProps = Omit<NewBattleBaseProps, "trainerConfig" | "trainerData" | "mysteryEncounterType">;
-
-/**
- * Interface representing the type of {@linkcode BattleScene.getNewBattleProps}, used for DRY
- * @interface
- */
-export type NewBattleProps = Omit<NewBattleBaseProps, "trainer">;
 
 /**
  * The `BattleScene` is the primary scene for the game.
@@ -1315,27 +1292,28 @@ export class BattleScene extends SceneBase {
   }
 
   /**
+   * Create and initialize a new battle.
    * @param fromSession - The {@linkcode SessionSaveData} being used to seed the battle.
    * Should be omitted if not loading a new save file.
-   * @returns The newly created Battle instance
+   * @returns The newly created `Battle` instance.
    */
-  newBattle(fromSession?: SessionSaveData): Battle {
+  public newBattle(fromSession?: SessionSaveData): Battle {
     const props = this.getNewBattleProps(fromSession);
-    const foo: Partial<NewBattleResolvedProps> = {};
+    const resolved: Partial<NewBattleResolvedProps> = {};
     const { waveIndex } = props;
 
     this.resetSeed(waveIndex);
 
     // First, check if it's a fixed wave and do stuff accordingly
     if (this.gameMode.isFixedBattle(waveIndex)) {
-      this.handleFixedBattle(foo, waveIndex);
+      this.handleFixedBattle(resolved, waveIndex);
     } else if (props.trainerData) {
-      this.handleSavedBattle(foo, props);
+      this.handleSavedBattle(resolved, props);
     } else {
-      this.handleNonFixedBattle(foo, props);
+      this.handleNonFixedBattle(resolved, props);
     }
 
-    foo.double = this.checkIsDouble(foo, props);
+    resolved.double = this.checkIsDouble(resolved.trainer, props);
 
     const lastBattle = this.currentBattle;
     const maxExpLevel = this.getMaxExpLevel();
@@ -1344,7 +1322,7 @@ export class BattleScene extends SceneBase {
     this.lastMysteryEncounter = lastBattle?.mysteryEncounter;
 
     // TODO: Is this even needed?
-    if (lastBattle?.double && !foo.double) {
+    if (lastBattle?.double && !resolved.double) {
       this.phaseManager.tryRemovePhase((p: Phase) => p.is("SwitchPhase"));
       // TODO: We already do this later in the function
       for (const p of this.getPlayerField()) {
@@ -1355,7 +1333,7 @@ export class BattleScene extends SceneBase {
     // NB: Type assertion is fine as foo should always be defined
     this.executeWithSeedOffset(
       () => {
-        this.currentBattle = new Battle(this.gameMode, foo as NewBattleResolvedProps);
+        this.currentBattle = new Battle(this.gameMode, resolved as NewBattleResolvedProps);
       },
       waveIndex << 3, // TODO: Why use this specific index?
       this.waveSeed,
@@ -1370,12 +1348,16 @@ export class BattleScene extends SceneBase {
     return this.currentBattle;
   }
 
-  // TODO: Document these and stop
-  private handleFixedBattle(foo: Partial<NewBattleResolvedProps>, waveIndex: number): Trainer {
-    let t: Trainer;
+  /**
+   * Sub-method of `launchBattle` that handles a
+   */
+  private handleFixedBattle(resolved: Partial<NewBattleResolvedProps>, waveIndex: number): Trainer {
+    // Bang is justified as this code is only called when `isFixedBattle` is true
     const battleConfig = this.gameMode.getFixedBattle(waveIndex)!;
-    foo.double = battleConfig.double;
-    foo.battleType = battleConfig.battleType;
+    resolved.double = battleConfig.double;
+    resolved.battleType = battleConfig.battleType;
+
+    let t: Trainer;
     this.executeWithSeedOffset(
       () => {
         t = battleConfig.getTrainer();
@@ -1416,21 +1398,19 @@ export class BattleScene extends SceneBase {
 
     // Determine the trainer's attributes
     const trainerType = Overrides.RANDOM_TRAINER_OVERRIDE?.trainerType ?? this.arena.randomTrainerType(waveIndex);
+    const config = trainerConfigs[trainerType];
     let doubleTrainer: boolean;
-    if (trainerConfigs[trainerType].doubleOnly) {
+    if (config.doubleOnly) {
       doubleTrainer = true;
-    } else if (!trainerConfigs[trainerType].hasDouble) {
+    } else if (
+      !config.hasDouble // Add a check that special trainers can't be double except for tate and liza - they should use the normal double chance
+      || // TODO: Review this
+      (config.trainerTypeDouble && ![TrainerType.TATE, TrainerType.LIZA].includes(trainerType))
+    ) {
       doubleTrainer = false;
     } else {
       doubleTrainer =
         Overrides.RANDOM_TRAINER_OVERRIDE?.alwaysDouble || !randSeedInt(this.getDoubleBattleChance(waveIndex));
-      // Add a check that special trainers can't be double except for tate and liza - they should use the normal double chance
-      if (
-        trainerConfigs[trainerType].trainerTypeDouble
-        && ![TrainerType.TATE, TrainerType.LIZA].includes(trainerType)
-      ) {
-        doubleTrainer = false;
-      }
     }
 
     const variant = doubleTrainer
@@ -1438,11 +1418,17 @@ export class BattleScene extends SceneBase {
       : randSeedInt(2)
         ? TrainerVariant.FEMALE
         : TrainerVariant.DEFAULT;
+
     const trainer = new Trainer(trainerType, variant);
     this.field.add(trainer);
     foo.trainer = trainer;
   }
 
+  /**
+   * Helper function to {@linkcode newBattle} to initialize a {@linkcode NewBattleProps} from session data, using defaults if no session data is provided.
+   * @param fromSession - The session data being used to initialize the battle, or `undefined` if a new battle is being created mid run
+   * @returns The new battle props
+   */
   private getNewBattleProps(fromSession?: SessionSaveData): NewBattleProps {
     const battleType = fromSession?.battleType ?? BattleType.WILD;
     const mysteryEncounterType =
@@ -1459,8 +1445,8 @@ export class BattleScene extends SceneBase {
       fromSession == null
         ? undefined
         : battleType === BattleType.TRAINER
-          ? trainerConfigs[fromSession?.trainer.trainerType]?.doubleOnly
-            || fromSession.trainer?.variant === TrainerVariant.DOUBLE
+          ? trainerConfigs[fromSession.trainer.trainerType]?.doubleOnly
+            || fromSession.trainer.variant === TrainerVariant.DOUBLE
           : battleType !== BattleType.MYSTERY_ENCOUNTER && fromSession.enemyParty.length > 1;
 
     return { battleType, mysteryEncounterType, waveIndex: newWaveIndex, trainerData, double: fixedDouble };
@@ -1522,17 +1508,18 @@ export class BattleScene extends SceneBase {
     }
   }
 
-  /** Sub-method of `newBattle` that returns whether the new battle is a double battle. */
-  private checkIsDouble(
-    { trainer }: Partial<NewBattleResolvedProps>,
-    { double, battleType, waveIndex }: NewBattleProps,
-  ): boolean {
+  /**
+   * Sub-method of `newBattle` that returns whether the new battle is a double battle.
+   * @param __namedParameters
+   */
+  private checkIsDouble(trainer: Trainer | undefined, { double, battleType, waveIndex }: NewBattleProps): boolean {
     // Edge cases
     if (
-      waveIndex === 1 // Wave 1 doubles cause crashes
+      // Wave 1 doubles cause crashes
+      waveIndex === 1
       || this.gameMode.isWaveFinal(waveIndex)
       || this.gameMode.isEndlessBoss(waveIndex)
-      || battleType === BattleType.MYSTERY_ENCOUNTER
+      || battleType === BattleType.MYSTERY_ENCOUNTER // MEs are never double battles
     ) {
       return false;
     }
@@ -1877,6 +1864,7 @@ export class BattleScene extends SceneBase {
     });
   }
 
+  // TODO: Refactor this and other RNG functions - these dearly need help
   resetSeed(waveIndex?: number): void {
     const wave = waveIndex ?? this.currentBattle?.waveIndex ?? 0;
     this.waveSeed = shiftCharCodes(this.seed, wave);

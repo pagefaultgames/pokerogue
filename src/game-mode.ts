@@ -287,20 +287,21 @@ export class GameMode implements GameModeConfig {
   }
 
   /**
-   * Every 50 waves of an Endless mode is a boss
-   * At this time it is paradox pokemon
-   * @returns true if waveIndex is a multiple of 50 in Endless
+   * Check whether the current wave is an Endless boss of any kind.
+   * @param waveIndex - The current wave number.
+   * @returns Whether `waveIndex` corresponds to an Endless boss.
    */
   isEndlessBoss(waveIndex: number): boolean {
     return waveIndex % 50 === 0 && (this.modeId === GameModes.ENDLESS || this.modeId === GameModes.SPLICED_ENDLESS);
   }
 
   /**
-   * Every 250 waves of an Endless mode is a minor boss
-   * At this time it is Eternatus
-   * @returns true if waveIndex is a multiple of 250 in Endless
+   * Check whether the current wave is an Endless minor boss.
+   * Currently is normal Eternatus.
+   * @param waveIndex - The current wave number.
+   * @returns Whether `waveIndex` is a multiple of 250 during endless mode.
    */
-  isEndlessMinorBoss(waveIndex: number): boolean {
+  public isEndlessMinorBoss(waveIndex: number): boolean {
     return waveIndex % 250 === 0 && (this.modeId === GameModes.ENDLESS || this.modeId === GameModes.SPLICED_ENDLESS);
   }
 
