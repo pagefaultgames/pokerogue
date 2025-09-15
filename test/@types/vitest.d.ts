@@ -1,7 +1,7 @@
 import "vitest";
 
-import type { Phase } from "#app/phase";
 import type Overrides from "#app/overrides";
+import type { Phase } from "#app/phase";
 import type { ArenaTag } from "#data/arena-tag";
 import type { TerrainType } from "#data/terrain";
 import type { AbilityId } from "#enums/ability-id";
@@ -14,6 +14,7 @@ import type { PositionalTagType } from "#enums/positional-tag-type";
 import type { BattleStat, EffectiveStat } from "#enums/stat";
 import type { WeatherType } from "#enums/weather-type";
 import type { toHaveArenaTagOptions } from "#test/test-utils/matchers/to-have-arena-tag";
+import type { toHaveBattlerTagOptions } from "#test/test-utils/matchers/to-have-battler-tag";
 import type { toHaveEffectiveStatOptions } from "#test/test-utils/matchers/to-have-effective-stat";
 import type { toHavePositionalTagOptions } from "#test/test-utils/matchers/to-have-positional-tag";
 import type { expectedStatusType } from "#test/test-utils/matchers/to-have-status-effect";
@@ -23,7 +24,6 @@ import type { TurnMove } from "#types/turn-move";
 import type { AtLeastOne } from "#types/type-helpers";
 import type { toDmgValue } from "#utils/common";
 import type { expect } from "vitest";
-import type { toHaveBattlerTagOptions } from "#test/test-utils/matchers/to-have-battler-tag";
 
 declare module "vitest" {
   interface Assertion<T> {
@@ -40,17 +40,33 @@ declare module "vitest" {
      */
     toEqualArrayUnsorted(expected: T[]): void;
 
+    /**
+     * Check whether a {@linkcode Map} contains the given key, disregarding its value.
+     * @param expectedKey - The key whose inclusion is being checked
+     * @privateRemarks
+     * While this functionality _could_ be simulated by writing
+     * `expect(x.get(y)).toBeDefined()` or
+     * `expect(x).toContain[y, expect.anything()]`,
+     * this is still preferred due to being more ergonomic and provides better error messsages.
+     */
+    toHaveKey<E>(expectedKey: E): void;
+
     // #endregion Generic Matchers
 
     // #region GameManager Matchers
 
     /**
-     * Check if the {@linkcode GameManager} has shown the given message at least once in the current battle.
-     * @param expectedMessage - The expected message
+     * Check if the {@linkcode GameManager} has shown the given message at least once in the current test case.
+     * @param expectedMessage - The expected message to be displayed
+     * @remarks
+     * Strings consumed by this function should _always_ be produced by a call to `i18n.t`
+     * to avoid hardcoding text into test files.
      */
     toHaveShownMessage(expectedMessage: string): void;
+
     /**
-     * @param expectedPhase - The expected {@linkcode PhaseString}
+     * Check if the currently-running {@linkcode Phase} is of the given type.
+     * @param expectedPhase - The expected {@linkcode PhaseString | name of the phase}
      */
     toBeAtPhase(expectedPhase: PhaseString): void;
     // #endregion GameManager Matchers
