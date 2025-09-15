@@ -1187,8 +1187,8 @@ export class BattleScene extends SceneBase {
       this.field.remove(this.currentBattle.mysteryEncounter?.introVisuals, true);
     }
 
-    //@ts-expect-error  - allowing `null` for currentBattle causes a lot of trouble
-    this.currentBattle = null; // TODO: resolve ts-ignore
+    //@ts-expect-error  - allowing `undefined` for currentBattle causes a lot of trouble
+    this.currentBattle = undefined; // TODO: resolve ts-ignore
 
     // Reset RNG after end of game or save & quit.
     // This needs to happen after clearing this.currentBattle or the seed will be affected by the last wave played
@@ -1403,9 +1403,8 @@ export class BattleScene extends SceneBase {
     if (config.doubleOnly) {
       doubleTrainer = true;
     } else if (
-      !config.hasDouble // Add a check that special trainers can't be double except for tate and liza - they should use the normal double chance
-      || // TODO: Review this
-      (config.trainerTypeDouble && ![TrainerType.TATE, TrainerType.LIZA].includes(trainerType))
+      !config.hasDouble // Add a check that special trainers can't be double except for tate and liza - they should use the normal double chance // TODO: Review this
+      || (config.trainerTypeDouble && ![TrainerType.TATE, TrainerType.LIZA].includes(trainerType))
     ) {
       doubleTrainer = false;
     } else {
