@@ -7,6 +7,7 @@ import { toHaveEffectiveStat } from "#test/test-utils/matchers/to-have-effective
 import { toHaveFainted } from "#test/test-utils/matchers/to-have-fainted";
 import { toHaveFullHp } from "#test/test-utils/matchers/to-have-full-hp";
 import { toHaveHp } from "#test/test-utils/matchers/to-have-hp";
+import { toHaveKey } from "#test/test-utils/matchers/to-have-key";
 import { toHavePositionalTag } from "#test/test-utils/matchers/to-have-positional-tag";
 import { toHaveShownMessage } from "#test/test-utils/matchers/to-have-shown-message";
 import { toHaveStatStage } from "#test/test-utils/matchers/to-have-stat-stage";
@@ -19,13 +20,15 @@ import { toHaveUsedPP } from "#test/test-utils/matchers/to-have-used-pp";
 import { toHaveWeather } from "#test/test-utils/matchers/to-have-weather";
 import { expect } from "vitest";
 
-/*
+/**
+ * @module
  * Setup file for custom matchers.
  * Make sure to define the call signatures in `#test/@types/vitest.d.ts` too!
  */
 
 expect.extend({
   toEqualArrayUnsorted,
+  toHaveKey,
   toHaveShownMessage,
   toBeAtPhase,
   toHaveWeather,
