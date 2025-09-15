@@ -43,6 +43,7 @@ path = [
     "**/*.gitignore",
     "**/*.gitmodules",
     "**/*.gitattributes",
+    "**/*.dockerignore",
     # Configuration files
     ".editorconfig",
     ".vscode/**/*.json",
