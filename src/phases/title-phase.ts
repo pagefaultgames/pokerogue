@@ -18,7 +18,7 @@ import { vouchers } from "#system/voucher";
 import type { SessionSaveData } from "#types/save-data";
 import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { SaveSlotUiMode } from "#ui/save-slot-select-ui-handler";
-import { isLocal, isLocalServerConnected, isNullOrUndefined } from "#utils/common";
+import { isLocal, isLocalServerConnected } from "#utils/common";
 import i18next from "i18next";
 
 export class TitlePhase extends Phase {
@@ -288,7 +288,7 @@ export class TitlePhase extends Phase {
       } else {
         // Grab first 10 chars of ISO date format (YYYY-MM-DD) and convert to base64
         let seed: string = btoa(new Date().toISOString().substring(0, 10));
-        if (!isNullOrUndefined(Overrides.DAILY_RUN_SEED_OVERRIDE)) {
+        if (Overrides.DAILY_RUN_SEED_OVERRIDE != null) {
           seed = Overrides.DAILY_RUN_SEED_OVERRIDE;
         }
         generateDaily(seed);

@@ -12,7 +12,6 @@ import type { MessageUiHandler } from "#ui/message-ui-handler";
 import type { MysteryEncounterUiHandler } from "#ui/mystery-encounter-ui-handler";
 import type { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
 import type { PartyUiHandler } from "#ui/party-ui-handler";
-import { isNullOrUndefined } from "#utils/common";
 import { expect, vi } from "vitest";
 
 /**
@@ -110,12 +109,11 @@ export async function runSelectMysteryEncounterOption(
       break;
   }
 
-  if (secondaryOptionSelect?.pokemonNo == null) {
-    uiHandler.processInput(Button.ACTION);
-  } else {
+  if (secondaryOptionSelect?.pokemonNo != null) {
     await handleSecondaryOptionSelect(game, secondaryOptionSelect.pokemonNo, secondaryOptionSelect.optionNo);
+  } else {
+    uiHandler.processInput(Button.ACTION);
   }
-}
 
 async function handleSecondaryOptionSelect(game: GameManager, pokemonNo: number, optionNo?: number) {
   // Handle secondary option selections
@@ -137,7 +135,7 @@ async function handleSecondaryOptionSelect(game: GameManager, pokemonNo: number,
   partyUiHandler.processInput(Button.ACTION);
 
   // If there is a second choice to make after selecting a Pokemon
-  if (!isNullOrUndefined(optionNo)) {
+  if (optionNo != null) {
     // Wait for Summary menu to close and second options to spawn
     const secondOptionUiHandler = game.scene.ui.handlers[UiMode.OPTION_SELECT] as OptionSelectUiHandler;
     vi.spyOn(secondOptionUiHandler, "show");
