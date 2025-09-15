@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { startingWave } from "#app/starting-wave";
+import { startingWave } from "#balance/misc";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import { GameModes } from "#enums/game-modes";
 import { PartyMemberStrength } from "#enums/party-member-strength";

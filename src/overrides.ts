@@ -290,7 +290,10 @@ class DefaultOverrides {
    */
   readonly ITEM_REWARD_OVERRIDE: ModifierOverride[] = [];
 
-  /** If `true`, disable all non-scripted opponent trainer encounters. */
+  /**
+   * If `true`, disable all non-scripted opponent trainer encounters.
+   * @todo Meld into `BATTLE_TYPE_OVERRIDE`
+  */
   readonly DISABLE_STANDARD_TRAINERS_OVERRIDE: boolean = false;
 
   /**

@@ -265,7 +265,7 @@ export class GameMode implements GameModeConfig {
         return waveIndex === 200;
       case GameModes.ENDLESS:
       case GameModes.SPLICED_ENDLESS:
-        return !(waveIndex % 250);
+        return waveIndex % 250 === 0;
       case GameModes.DAILY:
         return waveIndex === 50;
     }

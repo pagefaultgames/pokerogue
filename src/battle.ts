@@ -1,3 +1,4 @@
+import type { NewBattleResolvedProps } from "#app/battle-scene";
 import type { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -56,7 +57,7 @@ export class Battle {
   public waveIndex: number;
   public battleType: BattleType;
   public battleSpec: BattleSpec;
-  public trainer: Trainer | null;
+  public trainer: Trainer | undefined;
   public enemyLevels: number[] | undefined;
   public enemyParty: EnemyPokemon[] = [];
   public seenEnemyPartyMemberIds: Set<number> = new Set<number>();
@@ -99,11 +100,11 @@ export class Battle {
 
   private rngCounter = 0;
 
-  constructor(gameMode: GameMode, waveIndex: number, battleType: BattleType, trainer?: Trainer, double = false) {
+  constructor(gameMode: GameMode, { waveIndex, battleType, trainer, double = false }: NewBattleResolvedProps) {
     this.gameMode = gameMode;
     this.waveIndex = waveIndex;
     this.battleType = battleType;
-    this.trainer = trainer ?? null;
+    this.trainer = trainer;
     this.initBattleSpec();
     this.enemyLevels =
       battleType !== BattleType.TRAINER
@@ -469,13 +470,12 @@ export class Battle {
 
 export class FixedBattle extends Battle {
   constructor(waveIndex: number, config: FixedBattleConfig) {
-    super(
-      globalScene.gameMode,
+    super(globalScene.gameMode, {
       waveIndex,
-      config.battleType,
-      config.battleType === BattleType.TRAINER ? config.getTrainer() : undefined,
-      config.double,
-    );
+      battleType: config.battleType,
+      trainer: config.battleType === BattleType.TRAINER ? config.getTrainer() : undefined,
+      double: config.double,
+    });
     if (config.getEnemyParty) {
       this.enemyParty = config.getEnemyParty();
     }
