@@ -114,6 +114,7 @@ export async function runSelectMysteryEncounterOption(
   } else {
     uiHandler.processInput(Button.ACTION);
   }
+}
 
 async function handleSecondaryOptionSelect(game: GameManager, pokemonNo: number, optionNo?: number) {
   // Handle secondary option selections
