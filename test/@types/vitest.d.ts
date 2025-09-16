@@ -71,7 +71,7 @@ interface GenericMatchers<T> {
    * @privateRemarks
    * While this functionality _could_ be simulated by writing
    * `expect(x.get(y)).toBeDefined()` or
-   * `expect(x).toContain[y, expect.anything()]`,
+   * `expect(x).toContain(y, expect.anything())`,
    * this is still preferred due to being more ergonomic and provides better error messsages.
    */
   toHaveKey: T extends Map<infer K, unknown> ? (expectedKey: K) => void : never;
