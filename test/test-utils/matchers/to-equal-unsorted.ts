@@ -8,11 +8,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @param expected - The array to check equality with
  * @returns Whether the matcher passed
  */
-export function toEqualArrayUnsorted(
-  this: MatcherState,
-  received: unknown,
-  expected: unknown[],
-): SyncExpectationResult {
+export function toEqualUnsorted(this: MatcherState, received: unknown, expected: unknown[]): SyncExpectationResult {
   if (!Array.isArray(received)) {
     return {
       pass: this.isNot,
