@@ -23,10 +23,12 @@ export function getCookie(cName: string): string {
   }
   const name = `${cName}=`;
   const ca = document.cookie.split(";");
-  // Check all cookies in the document and see if any of them match, grabbing the first one whose value lines up
-  for (const c of ca) {
-    const cTrimmed = c.trimStart();
-    if (cTrimmed.startsWith(name)) {
+  for (let c of ca) {
+    // ⚠️ DO NOT REPLACE THIS WITH C = C.TRIM() - IT BREAKS IN NON-CHROMIUM BROWSERS ⚠️
+    while (c.charAt(0) === " ") {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) === 0) {
       return c.substring(name.length, c.length);
     }
   }
