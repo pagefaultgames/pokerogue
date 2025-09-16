@@ -25,9 +25,9 @@ export function getCookie(cName: string): string {
   const ca = document.cookie.split(";");
   // Check all cookies in the document and see if any of them match, grabbing the first one whose value lines up
   for (const c of ca) {
-    const cTrimmed = c.trim();
+    const cTrimmed = c.trimStart();
     if (cTrimmed.startsWith(name)) {
-      return c.slice(name.length, c.length);
+      return c.substring(name.length, c.length);
     }
   }
   return "";
