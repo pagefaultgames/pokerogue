@@ -22,10 +22,12 @@ export interface SerializedTerrain {
 export class Terrain {
   public terrainType: TerrainType;
   public turnsLeft: number;
+  public maxDuration: number;
 
-  constructor(terrainType: TerrainType, turnsLeft?: number) {
+  constructor(terrainType: TerrainType, turnsLeft?: number, maxDuration?: number) {
     this.terrainType = terrainType;
     this.turnsLeft = turnsLeft || 0;
+    this.maxDuration = maxDuration || turnsLeft || 0;
   }
 
   lapse(): boolean {

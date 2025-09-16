@@ -344,9 +344,14 @@ export class Arena {
       globalScene.applyModifier(FieldEffectModifier, user.isPlayer(), user, weatherDuration);
     }
 
-    this.weather = weather ? new Weather(weather, weatherDuration.value) : null;
+    this.weather = weather ? new Weather(weather, weatherDuration.value, weatherDuration.value) : null;
     this.eventTarget.dispatchEvent(
-      new WeatherChangedEvent(oldWeatherType, this.weather?.weatherType!, this.weather?.turnsLeft!),
+      new WeatherChangedEvent(
+        oldWeatherType,
+        this.weather?.weatherType!,
+        this.weather?.turnsLeft!,
+        this.weather?.turnsLeft!,
+      ),
     ); // TODO: is this bang correct?
 
     if (this.weather) {
@@ -425,10 +430,15 @@ export class Arena {
       globalScene.applyModifier(FieldEffectModifier, user.isPlayer(), user, terrainDuration);
     }
 
-    this.terrain = terrain ? new Terrain(terrain, terrainDuration.value) : null;
+    this.terrain = terrain ? new Terrain(terrain, terrainDuration.value, terrainDuration.value) : null;
 
     this.eventTarget.dispatchEvent(
-      new TerrainChangedEvent(oldTerrainType, this.terrain?.terrainType!, this.terrain?.turnsLeft!),
+      new TerrainChangedEvent(
+        oldTerrainType,
+        this.terrain?.terrainType!,
+        this.terrain?.turnsLeft!,
+        this.terrain?.turnsLeft!,
+      ),
     ); // TODO: are those bangs correct?
 
     if (this.terrain) {

@@ -19,10 +19,12 @@ export interface SerializedWeather {
 export class Weather {
   public weatherType: WeatherType;
   public turnsLeft: number;
+  public maxDuration: number;
 
-  constructor(weatherType: WeatherType, turnsLeft?: number) {
+  constructor(weatherType: WeatherType, turnsLeft?: number, maxDuration?: number) {
     this.weatherType = weatherType;
     this.turnsLeft = !this.isImmutable() ? turnsLeft || 0 : 0;
+    this.maxDuration = !this.isImmutable() ? maxDuration || turnsLeft || 0 : 0;
   }
 
   lapse(): boolean {

@@ -20,10 +20,13 @@ export enum ArenaEventType {
 export class ArenaEvent extends Event {
   /** The total duration of the {@linkcode ArenaEventType} */
   public duration: number;
-  constructor(eventType: ArenaEventType, duration: number) {
+  /** The maximum duration of the {@linkcode ArenaEventType} */
+  public maxDuration: number;
+  constructor(eventType: ArenaEventType, duration: number, maxDuration: number) {
     super(eventType);
 
     this.duration = duration;
+    this.maxDuration = maxDuration || duration;
   }
 }
 /** Container class for {@linkcode ArenaEventType.WEATHER_CHANGED} events */
@@ -32,8 +35,8 @@ export class WeatherChangedEvent extends ArenaEvent {
   public oldWeatherType: WeatherType;
   /** The {@linkcode WeatherType} being set */
   public newWeatherType: WeatherType;
-  constructor(oldWeatherType: WeatherType, newWeatherType: WeatherType, duration: number) {
-    super(ArenaEventType.WEATHER_CHANGED, duration);
+  constructor(oldWeatherType: WeatherType, newWeatherType: WeatherType, duration: number, maxDuration: number) {
+    super(ArenaEventType.WEATHER_CHANGED, duration, maxDuration);
 
     this.oldWeatherType = oldWeatherType;
     this.newWeatherType = newWeatherType;
@@ -45,8 +48,8 @@ export class TerrainChangedEvent extends ArenaEvent {
   public oldTerrainType: TerrainType;
   /** The {@linkcode TerrainType} being set */
   public newTerrainType: TerrainType;
-  constructor(oldTerrainType: TerrainType, newTerrainType: TerrainType, duration: number) {
-    super(ArenaEventType.TERRAIN_CHANGED, duration);
+  constructor(oldTerrainType: TerrainType, newTerrainType: TerrainType, duration: number, maxDuration: number) {
+    super(ArenaEventType.TERRAIN_CHANGED, duration, maxDuration);
 
     this.oldTerrainType = oldTerrainType;
     this.newTerrainType = newTerrainType;
