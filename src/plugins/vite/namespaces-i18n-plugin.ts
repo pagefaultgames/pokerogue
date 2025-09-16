@@ -3,7 +3,7 @@ import path from "path";
 import { normalizePath, type Plugin as VitePlugin } from "vite";
 import "#app/plugins/utils-plugins";
 import { isFileInsideDir, namespaceMap, objectSwap } from "#app/plugins/utils-plugins";
-import { kebabCaseToCamelCase } from "#app/utils/strings";
+import { toCamelCase } from "#app/utils/strings";
 
 const namespaceMapSwap = objectSwap(namespaceMap);
 
@@ -36,16 +36,16 @@ function processDirectory(file: string, filePath: string, namespace: string[]) {
     let ns = subNameSpace;
     if (namespaceMapSwap[file.replace(".json", "")]) {
       ns = namespaceMapSwap[file.replace(".json", "")];
-    } else if (kebabCaseToCamelCase(file).replace(".json", "").startsWith("mysteryEncounters")) {
+    } else if (toCamelCase(file).replace(".json", "").startsWith("mysteryEncounters")) {
       ns = subNameSpace.replace(/Dialogue$/, "");
     }
     // format "directory/namespace" for namespace in folder
-    namespace.push(`${kebabCaseToCamelCase(file).replace(".json", "")}/${ns}`);
+    namespace.push(`${toCamelCase(file).replace(".json", "")}/${ns}`);
   }
 }
 
 function processJsonFile(file: string, namespace: string[]) {
-  let ns = kebabCaseToCamelCase(file).replace(".json", "");
+  let ns = toCamelCase(file).replace(".json", "");
   if (namespaceMapSwap[file.replace(".json", "")]) {
     ns = namespaceMapSwap[file.replace(".json", "")];
   }
