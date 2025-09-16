@@ -1,9 +1,9 @@
-import { camelCaseToKebabCase } from "#app/utils/common";
+import pkg from "#package.json";
+import { toKebabCase } from "#utils/strings";
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import HttpBackend from "i18next-http-backend";
 import processor, { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
-import pkg from "../../package.json";
 import { namespaceMap } from "./utils-plugins";
 
 //#region Interfaces/Types
@@ -66,31 +66,29 @@ const fonts: Array<LoadingFontFaceProperty> = [
       unicodeRange: rangesByLanguage.chinese,
     }),
     extraOptions: { sizeAdjust: "70%", format: "woff2" },
-    only: ["en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca"],
+    only: ["zh"],
   },
   {
     face: new FontFace("pkmnems", "url(./fonts/unifont-15.1.05.subset.woff2)", {
       unicodeRange: rangesByLanguage.chinese,
     }),
     extraOptions: { format: "woff2" },
-    only: ["en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca"],
+    only: ["zh"],
   },
   // japanese
   {
-    face: new FontFace("emerald", "url(./fonts/Galmuri11.subset.woff2)", {
+    face: new FontFace("emerald", "url(./fonts/pokemon-bw.ttf)", {
       unicodeRange: rangesByLanguage.japanese,
     }),
-    extraOptions: { sizeAdjust: "66%" },
-    only: ["ja"],
+    only: ["en", "es", "fr", "it", "de", "pt", "ko", "ja", "ca", "da", "tr", "ro", "ru", "tl"],
   },
   {
-    face: new FontFace("pkmnems", "url(./fonts/Galmuri9.subset.woff2)", {
+    face: new FontFace("pkmnems", "url(./fonts/pokemon-bw.ttf)", {
       unicodeRange: rangesByLanguage.japanese,
     }),
-    only: ["ja"],
+    only: ["en", "es", "fr", "it", "de", "pt", "ko", "ja", "ca", "da", "tr", "ro", "ru", "tl"],
   },
 ];
-
 
 //#region Functions
 
@@ -110,8 +108,8 @@ async function initFonts(language: string | undefined) {
 }
 
 /**
- * I18n money formatter with. (useful for BBCode coloring of text)\
- * *If you don't want the BBCode tag applied, just use 'number' formatter*
+ * I18n money formatter with. (useful for BBCode coloring of text) \
+ * _If you don't want the BBCode tag applied, just use 'number' formatter_
  * @example Input: `{{myMoneyValue, money}}`
  *          Output: `@[MONEY]{₽100,000,000}`
  * @param amount the money amount
@@ -125,7 +123,7 @@ function i18nMoneyFormatter(amount: any): string {
   return `@[MONEY]{${i18next.t("common:money", { amount })}}`;
 }
 
-const nsEn = [];
+const nsEn: string[] = [];
 
 //#region Exports
 
@@ -167,17 +165,37 @@ export async function initI18n(): Promise<void> {
       "es-MX": ["es-ES", "en"],
       default: ["en"],
     },
-    supportedLngs: ["en", "es-ES", "es-MX", "fr", "it", "de", "zh-CN", "zh-TW", "pt-BR", "ko", "ja", "ca-ES"],
+    supportedLngs: [
+      "en",
+      "es-ES",
+      "es-MX",
+      "fr",
+      "it",
+      "de",
+      "zh-CN",
+      "zh-TW",
+      "pt-BR",
+      "ko",
+      "ja",
+      "ca",
+      "da",
+      "tr",
+      "ro",
+      "ru",
+      "tl",
+    ],
     backend: {
       loadPath(lng: string, [ns]: string[]) {
+        // Use namespace maps where required
         let fileName: string;
         if (namespaceMap[ns]) {
           fileName = namespaceMap[ns];
         } else if (ns.startsWith("mysteryEncounters/")) {
-          fileName = camelCaseToKebabCase(ns + "Dialogue");
+          fileName = toKebabCase(ns + "-dialogue"); // mystery-encounters/a-trainers-test-dialogue
         } else {
-          fileName = camelCaseToKebabCase(ns);
+          fileName = toKebabCase(ns);
         }
+        // ex: "./locales/en/move-anims"
         return `./locales/${lng}/${fileName}.json?v=${pkg.version}`;
       },
     },
@@ -204,6 +222,7 @@ export function getIsInitialized(): boolean {
   return isInitialized;
 }
 
+// biome-ignore lint/style/noDefaultExport: necessary for i18next usage
 export default i18next;
 
 //#endregion

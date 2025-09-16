@@ -1,0 +1,88 @@
+name: Create Release Branch
+on:
+  workflow_dispatch:
+    inputs:
+      versionName:
+        description: "Name of version (i.e. 1.9.0)"
+        type: string
+        required: true
+      confirmVersion:
+        type: string
+        required: true
+        description: "Confirm version name"
+
+# explicitly specify the necessary scopes
+permissions:
+  pull-requests: write
+  actions: write
+  contents: write
+
+jobs:
+  create-release:
+    if: github.repository == 'pagefaultgames/pokerogue' && (vars.BETA_DEPLOY_BRANCH == '' || ! startsWith(vars.BETA_DEPLOY_BRANCH, 'release'))
+    timeout-minutes: 10
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed for github cli commands
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate provided version
+        # Ensure version matches confirmation and conforms to expected pattern.
+        run: |
+          if [[ "${{ github.event.inputs.versionName }}" != "${{ github.event.inputs.confirmVersion }}" ]]; then
+            echo "Version name does not match confirmation. Exiting."
+            exit 1
+          fi
+          if [[ ! "${{ github.event.inputs.versionName }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Version name must follow the format X.Y.Z where X, Y, and Z are all numbers. Exiting..."
+            exit 1
+          fi
+        shell: bash
+
+      - uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          app-id: ${{ secrets.PAGEFAULT_APP_ID }}
+          private-key: ${{ secrets.PAGEFAULT_APP_PRIVATE_KEY }}
+
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          submodules: "recursive"
+          # Always base off of beta branch, regardless of the branch the workflow was triggered from.
+          ref: beta
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Create release branch
+        run: git checkout -b release
+
+      # In order to be able to open a PR into beta, we need the branch to have at least one commit.
+      # The first commit is _usually_ just bumping the version number, so we can kill 2 birds with 1 stone here
+      - name: Bump release version
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          pnpm --no-git-tag-version version ${{ github.events.inputs.versionName }}
+          git commit -am "Stage release for v${{ github.events.inputs.versionName }}"
+ 
+      - name: Push new branch
+        run: git push origin release
+
+      # The repository variable is used by the deploy-beta workflow to determine whether to deploy from beta or release.
+      - name: Set repository variable
+        run: GITHUB_TOKEN="${{ steps.app-token.outputs.token }}" gh variable set BETA_DEPLOY_BRANCH --body "release"
+
+      - name: Create pull request to main
+        run: |
+          gh pr create --base main \
+                       --head release \
+                       --title "Release v${{ github.event.inputs.versionName }} to main" \
+                       --body "This PR is for the release of v${{ github.event.inputs.versionName }}, and was created automatically by the GitHub Actions workflow invoked by ${{ github.actor }}" \
+                       --draft
+
+      - name: Create pull request to beta
+        run: |
+          gh pr create --base beta \
+                       --head release \
+                       --title "Release v${{ github.event.inputs.versionName }} to beta" \
+                       --body "This PR is for the release of v${{ github.event.inputs.versionName }}, and was created automatically by the GitHub Actions workflow invoked by ${{ github.actor }}" \
+                       --draft

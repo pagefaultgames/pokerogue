@@ -1,6 +1,6 @@
-import type { ArenaTagSide } from "#app/data/arena-tag";
+import type { TerrainType } from "#data/terrain";
+import type { ArenaTagSide } from "#enums/arena-tag-side";
 import type { ArenaTagType } from "#enums/arena-tag-type";
-import type { TerrainType } from "#app/data/terrain";
 import type { WeatherType } from "#enums/weather-type";
 
 /** Alias for all {@linkcode ArenaEvent} type strings */
@@ -16,10 +16,7 @@ export enum ArenaEventType {
   TAG_REMOVED = "onTagRemoved",
 }
 
-/**
- * Base container class for all {@linkcode ArenaEventType} events
- * @extends Event
- */
+/** Base container class for all {@linkcode ArenaEventType} events */
 export class ArenaEvent extends Event {
   /** The total duration of the {@linkcode ArenaEventType} */
   public duration: number;
@@ -29,10 +26,7 @@ export class ArenaEvent extends Event {
     this.duration = duration;
   }
 }
-/**
- * Container class for {@linkcode ArenaEventType.WEATHER_CHANGED} events
- * @extends ArenaEvent
- */
+/** Container class for {@linkcode ArenaEventType.WEATHER_CHANGED} events */
 export class WeatherChangedEvent extends ArenaEvent {
   /** The {@linkcode WeatherType} being overridden */
   public oldWeatherType: WeatherType;
@@ -45,10 +39,7 @@ export class WeatherChangedEvent extends ArenaEvent {
     this.newWeatherType = newWeatherType;
   }
 }
-/**
- * Container class for {@linkcode ArenaEventType.TERRAIN_CHANGED} events
- * @extends ArenaEvent
- */
+/** Container class for {@linkcode ArenaEventType.TERRAIN_CHANGED} events */
 export class TerrainChangedEvent extends ArenaEvent {
   /** The {@linkcode TerrainType} being overridden */
   public oldTerrainType: TerrainType;
@@ -62,10 +53,7 @@ export class TerrainChangedEvent extends ArenaEvent {
   }
 }
 
-/**
- * Container class for {@linkcode ArenaEventType.TAG_ADDED} events
- * @extends ArenaEvent
- */
+/** Container class for {@linkcode ArenaEventType.TAG_ADDED} events */
 export class TagAddedEvent extends ArenaEvent {
   /** The {@linkcode ArenaTagType} being added */
   public arenaTagType: ArenaTagType;
@@ -91,10 +79,7 @@ export class TagAddedEvent extends ArenaEvent {
     this.arenaTagMaxLayers = arenaTagMaxLayers!; // TODO: is this bang correct?
   }
 }
-/**
- * Container class for {@linkcode ArenaEventType.TAG_REMOVED} events
- * @extends ArenaEvent
- */
+/** Container class for {@linkcode ArenaEventType.TAG_REMOVED} events */
 export class TagRemovedEvent extends ArenaEvent {
   /** The {@linkcode ArenaTagType} being removed */
   public arenaTagType: ArenaTagType;

@@ -2,7 +2,7 @@ import path from "path"; // vite externalize in production, see https://vite.dev
 
 /**
  * Maps namespaces that deviate from the file-name
- * 
+ *
  * @remarks expects file-name as value and custom-namespace as key
  * */
 export const namespaceMap = {
@@ -16,17 +16,6 @@ export const namespaceMap = {
   splashMessages: "splash-texts",
   mysteryEncounterMessages: "mystery-encounter-texts",
 };
-
-/**
- * Transform a kebab-case string into a camelCase string
- * @param str - The kebabCase string
- * @returns A camelCase string
- *
- * @source {@link https://stackoverflow.com/a/23013726}
- */
-export function kebabCaseToCamelCase(str: string): string {
-  return str.replace(/-./g, x => x[1].toUpperCase());
-}
 
 /**
  * Swap the value with the key and the key with the value

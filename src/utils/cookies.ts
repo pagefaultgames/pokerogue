@@ -1,8 +1,8 @@
-import { isBeta } from "./utility-vars";
+import { isBeta } from "#utils/utility-vars";
 
 export function setCookie(cName: string, cValue: string): void {
   const expiration = new Date();
-  expiration.setTime(new Date().getTime() + 3600000 * 24 * 30 * 3 /*7*/);
+  expiration.setTime(Date.now() + 3600000 * 24 * 30 * 3 /*7*/);
   document.cookie = `${cName}=${cValue};Secure;SameSite=Strict;Domain=${window.location.hostname};Path=/;Expires=${expiration.toUTCString()}`;
 }
 
@@ -23,8 +23,8 @@ export function getCookie(cName: string): string {
   }
   const name = `${cName}=`;
   const ca = document.cookie.split(";");
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i];
+  for (let c of ca) {
+    // ⚠️ DO NOT REPLACE THIS WITH C = C.TRIM() - IT BREAKS IN NON-CHROMIUM BROWSERS ⚠️
     while (c.charAt(0) === " ") {
       c = c.substring(1);
     }

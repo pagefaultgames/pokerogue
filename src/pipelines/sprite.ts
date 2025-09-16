@@ -1,19 +1,19 @@
-import { variantColorCache } from "#app/sprites/variant";
-import MysteryEncounterIntroVisuals from "#app/field/mystery-encounter-intro";
-import Pokemon from "#app/field/pokemon";
-import Trainer from "#app/field/trainer";
 import { globalScene } from "#app/global-scene";
-import { rgbHexToRgba } from "#app/utils/common";
-import FieldSpritePipeline from "./field-sprite";
-import spriteFragShader from "./glsl/spriteFragShader.frag?raw";
-import spriteVertShader from "./glsl/spriteShader.vert?raw";
+import { FieldSpritePipeline } from "#app/pipelines/field-sprite";
+import { MysteryEncounterIntroVisuals } from "#field/mystery-encounter-intro";
+import { Pokemon } from "#field/pokemon";
+import { Trainer } from "#field/trainer";
+import { variantColorCache } from "#sprites/variant";
+import { rgbHexToRgba } from "#utils/common";
+import spriteFragShader from "./glsl/sprite-frag-shader.frag?raw";
+import spriteVertShader from "./glsl/sprite-shader.vert?raw";
 
-export default class SpritePipeline extends FieldSpritePipeline {
+export class SpritePipeline extends FieldSpritePipeline {
   private _tone: number[];
 
   constructor(game: Phaser.Game) {
     super(game, {
-      game: game,
+      game,
       name: "sprite",
       fragShader: spriteFragShader,
       vertShader: spriteVertShader,
@@ -52,9 +52,9 @@ export default class SpritePipeline extends FieldSpritePipeline {
     const ignoreOverride = data["ignoreOverride"] as boolean;
 
     const isEntityObj =
-      sprite.parentContainer instanceof Pokemon ||
-      sprite.parentContainer instanceof Trainer ||
-      sprite.parentContainer instanceof MysteryEncounterIntroVisuals;
+      sprite.parentContainer instanceof Pokemon
+      || sprite.parentContainer instanceof Trainer
+      || sprite.parentContainer instanceof MysteryEncounterIntroVisuals;
     const field = isEntityObj ? sprite.parentContainer.parentContainer : sprite.parentContainer;
     const position = isEntityObj ? [sprite.parentContainer.x, sprite.parentContainer.y] : [sprite.x, sprite.y];
     if (field) {
@@ -65,8 +65,8 @@ export default class SpritePipeline extends FieldSpritePipeline {
       -(sprite.width - sprite.frame.width) / 2 + sprite.frame.x + (!ignoreFieldPos ? sprite.x - field.x : 0);
     if (sprite.originY === 0.5) {
       position[1] +=
-        (sprite.height / 2) * ((isEntityObj ? sprite.parentContainer : sprite).scale - 1) +
-        (!ignoreFieldPos ? sprite.y - field.y : 0);
+        (sprite.height / 2) * ((isEntityObj ? sprite.parentContainer : sprite).scale - 1)
+        + (!ignoreFieldPos ? sprite.y - field.y : 0);
     }
     this.set1f("teraTime", (this.game.getTime() % 500000) / 500000);
     this.set3fv(
@@ -90,9 +90,9 @@ export default class SpritePipeline extends FieldSpritePipeline {
 
     if (globalScene.fusionPaletteSwaps) {
       const spriteColors = ((ignoreOverride && data["spriteColorsBase"]) || data["spriteColors"] || []) as number[][];
-      const fusionSpriteColors = ((ignoreOverride && data["fusionSpriteColorsBase"]) ||
-        data["fusionSpriteColors"] ||
-        []) as number[][];
+      const fusionSpriteColors = ((ignoreOverride && data["fusionSpriteColorsBase"])
+        || data["fusionSpriteColors"]
+        || []) as number[][];
 
       const emptyColors = [0, 0, 0, 0];
       const flatSpriteColors: number[] = [];
@@ -132,14 +132,14 @@ export default class SpritePipeline extends FieldSpritePipeline {
       const flatVariantColors: number[] = [];
 
       if (
-        (sprite.parentContainer instanceof Pokemon ? sprite.parentContainer.shiny : !!data["shiny"]) &&
-        (variantColors =
+        (sprite.parentContainer instanceof Pokemon ? sprite.parentContainer.shiny : !!data["shiny"])
+        && (variantColors =
           variantColorCache[
             sprite.parentContainer instanceof Pokemon
               ? sprite.parentContainer.getSprite().texture.key
               : data["spriteKey"]
-          ]) &&
-        variantColors.hasOwnProperty(variant)
+          ])
+        && variantColors.hasOwnProperty(variant)
       ) {
         const baseColors = Object.keys(variantColors[variant]);
         for (let c = 0; c < 32; c++) {
@@ -197,9 +197,9 @@ export default class SpritePipeline extends FieldSpritePipeline {
     const yShadowOffset = (sprite.pipelineData["yShadowOffset"] as number) ?? 0;
     if (hasShadow) {
       const isEntityObj =
-        sprite.parentContainer instanceof Pokemon ||
-        sprite.parentContainer instanceof Trainer ||
-        sprite.parentContainer instanceof MysteryEncounterIntroVisuals;
+        sprite.parentContainer instanceof Pokemon
+        || sprite.parentContainer instanceof Trainer
+        || sprite.parentContainer instanceof MysteryEncounterIntroVisuals;
       const field = isEntityObj ? sprite.parentContainer.parentContainer : sprite.parentContainer;
       const fieldScaleRatio = field.scale / 6;
       const baseY = ((isEntityObj ? sprite.parentContainer.y : sprite.y + sprite.height) * 6) / fieldScaleRatio;

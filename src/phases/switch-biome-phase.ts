@@ -1,12 +1,13 @@
 import { globalScene } from "#app/global-scene";
-import type { Biome } from "#app/enums/biome";
-import { getBiomeKey } from "#app/field/arena";
-import { BattlePhase } from "./battle-phase";
+import type { BiomeId } from "#enums/biome-id";
+import { getBiomeKey } from "#field/arena";
+import { BattlePhase } from "#phases/battle-phase";
 
 export class SwitchBiomePhase extends BattlePhase {
-  private nextBiome: Biome;
+  public readonly phaseName = "SwitchBiomePhase";
+  private nextBiome: BiomeId;
 
-  constructor(nextBiome: Biome) {
+  constructor(nextBiome: BiomeId) {
     super();
 
     this.nextBiome = nextBiome;
@@ -18,6 +19,10 @@ export class SwitchBiomePhase extends BattlePhase {
     if (this.nextBiome === undefined) {
       return this.end();
     }
+
+    // Before switching biomes, make sure to set the last encounter for other phases that need it too.
+    globalScene.lastEnemyTrainer = globalScene.currentBattle?.trainer ?? null;
+    globalScene.lastMysteryEncounter = globalScene.currentBattle?.mysteryEncounter;
 
     globalScene.tweens.add({
       targets: [globalScene.arenaEnemy, globalScene.lastEnemyTrainer],

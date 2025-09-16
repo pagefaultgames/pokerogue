@@ -1,9 +1,9 @@
 import { globalScene } from "#app/global-scene";
-import { BattlerIndex } from "#app/battle";
-import { Command } from "#app/ui/command-ui-handler";
-import { FieldPhase } from "./field-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { Command } from "#enums/command";
+import { FieldPhase } from "#phases/field-phase";
 
 /**
  * Phase for determining an enemy AI's action for the next turn.
@@ -15,6 +15,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
  * @see {@linkcode EnemyPokemon.getNextMove}
  */
 export class EnemyCommandPhase extends FieldPhase {
+  public readonly phaseName = "EnemyCommandPhase";
   protected fieldIndex: number;
   protected skipTurn = false;
 
@@ -37,9 +38,9 @@ export class EnemyCommandPhase extends FieldPhase {
     const trainer = battle.trainer;
 
     if (
-      battle.double &&
-      enemyPokemon.hasAbility(Abilities.COMMANDER) &&
-      enemyPokemon.getAlly()?.getTag(BattlerTagType.COMMANDED)
+      battle.double
+      && enemyPokemon.hasAbility(AbilityId.COMMANDER)
+      && enemyPokemon.getAlly()?.getTag(BattlerTagType.COMMANDED)
     ) {
       this.skipTurn = true;
     }
@@ -53,13 +54,13 @@ export class EnemyCommandPhase extends FieldPhase {
      * member's matchup score is 3x the active enemy's score (or 2x for "boss" trainers),
      * the enemy will switch to that Pokemon.
      */
-    if (trainer && !enemyPokemon.getMoveQueue().length) {
+    if (trainer && enemyPokemon.getMoveQueue().length === 0) {
       const opponents = enemyPokemon.getOpponents();
 
       if (!enemyPokemon.isTrapped()) {
         const partyMemberScores = trainer.getPartyMemberMatchupScores(enemyPokemon.trainerSlot, true);
 
-        if (partyMemberScores.length) {
+        if (partyMemberScores.length > 0) {
           const matchupScores = opponents.map(opp => enemyPokemon.getMatchupScore(opp));
           const matchupScore = matchupScores.reduce((total, score) => (total += score), 0) / matchupScores.length;
 

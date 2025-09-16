@@ -11,9 +11,12 @@ node_modules
 dist
 dist-ssr
 *.local
+build
 
-# Editor directories and files
+# Editor directories and files (excluding `extensions.json` for devcontainer)
+*.code-workspace
 .vscode/*
+!.vscode/extensions.json
 .idea
 .DS_Store
 *.suo

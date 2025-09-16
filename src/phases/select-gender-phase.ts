@@ -1,11 +1,12 @@
 import { globalScene } from "#app/global-scene";
-import { PlayerGender } from "#app/enums/player-gender";
 import { Phase } from "#app/phase";
-import { SettingKeys } from "#app/system/settings/settings";
+import { PlayerGender } from "#enums/player-gender";
 import { UiMode } from "#enums/ui-mode";
+import { SettingKeys } from "#system/settings";
 import i18next from "i18next";
 
 export class SelectGenderPhase extends Phase {
+  public readonly phaseName = "SelectGenderPhase";
   start(): void {
     super.start();
 

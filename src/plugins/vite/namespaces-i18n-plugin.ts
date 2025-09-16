@@ -1,8 +1,9 @@
-import { normalizePath, type Plugin as VitePlugin } from "vite";
 import fs from "fs";
 import path from "path";
+import { normalizePath, type Plugin as VitePlugin } from "vite";
 import "#app/plugins/utils-plugins";
-import { objectSwap, namespaceMap, kebabCaseToCamelCase, isFileInsideDir } from "#app/plugins/utils-plugins";
+import { isFileInsideDir, namespaceMap, objectSwap } from "#app/plugins/utils-plugins";
+import { kebabCaseToCamelCase } from "#app/utils/strings";
 
 const namespaceMapSwap = objectSwap(namespaceMap);
 
@@ -31,12 +32,12 @@ function getNameSpaces(dir: string): string[] {
 
 function processDirectory(file: string, filePath: string, namespace: string[]) {
   const subnamespace = getNameSpaces(filePath);
-  for (let i = 0; i < subnamespace.length; i++) {
-    let ns = subnamespace[i];
+  for (const subNameSpace of subnamespace) {
+    let ns = subNameSpace;
     if (namespaceMapSwap[file.replace(".json", "")]) {
       ns = namespaceMapSwap[file.replace(".json", "")];
     } else if (kebabCaseToCamelCase(file).replace(".json", "").startsWith("mysteryEncounters")) {
-      ns = subnamespace[i].replace(/Dialogue$/, "");
+      ns = subNameSpace.replace(/Dialogue$/, "");
     }
     // format "directory/namespace" for namespace in folder
     namespace.push(`${kebabCaseToCamelCase(file).replace(".json", "")}/${ns}`);

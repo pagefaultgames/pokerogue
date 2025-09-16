@@ -3013,7 +3013,7 @@
 					}
 				},
 				{
-					"filename": "1012-counterfeit_2",
+					"filename": "1011_2",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3034,7 +3034,7 @@
 					}
 				},
 				{
-					"filename": "1012-counterfeit_3",
+					"filename": "1011_3",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3055,7 +3055,7 @@
 					}
 				},
 				{
-					"filename": "1013-unremarkable_2",
+					"filename": "1012-counterfeit_2",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3076,7 +3076,7 @@
 					}
 				},
 				{
-					"filename": "1013-unremarkable_3",
+					"filename": "1012-counterfeit_3",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3097,7 +3097,7 @@
 					}
 				},
 				{
-					"filename": "1018_2",
+					"filename": "1013-unremarkable_2",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3118,7 +3118,7 @@
 					}
 				},
 				{
-					"filename": "1018_3",
+					"filename": "1013-unremarkable_3",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3139,7 +3139,7 @@
 					}
 				},
 				{
-					"filename": "1022_2",
+					"filename": "1018_2",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3160,7 +3160,7 @@
 					}
 				},
 				{
-					"filename": "1022_3",
+					"filename": "1018_3",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3181,7 +3181,7 @@
 					}
 				},
 				{
-					"filename": "1023_2",
+					"filename": "1019_2",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3202,7 +3202,7 @@
 					}
 				},
 				{
-					"filename": "1023_3",
+					"filename": "1019_3",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3223,7 +3223,7 @@
 					}
 				},
 				{
-					"filename": "8901_1",
+					"filename": "1022_2",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3244,7 +3244,7 @@
 					}
 				},
 				{
-					"filename": "8901_2",
+					"filename": "1022_3",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3265,7 +3265,7 @@
 					}
 				},
 				{
-					"filename": "8901_3",
+					"filename": "1023_2",
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
@@ -3284,6 +3284,90 @@
 						"w": 40,
 						"h": 30
 					}
+				},
+				{
+					"filename": "1023_3",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 40,
+						"h": 30
+					},
+					"frame": {
+						"x": 80,
+						"y": 420,
+						"w": 40,
+						"h": 30
+					}
+				},
+				{
+					"filename": "8901_1",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 40,
+						"h": 30
+					},
+					"frame": {
+						"x": 120,
+						"y": 420,
+						"w": 40,
+						"h": 30
+					}
+				},
+				{
+					"filename": "8901_2",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 40,
+						"h": 30
+					},
+					"frame": {
+						"x": 160,
+						"y": 420,
+						"w": 40,
+						"h": 30
+					}
+				},
+				{
+					"filename": "8901_3",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 40,
+						"h": 30
+					},
+					"frame": {
+						"x": 200,
+						"y": 420,
+						"w": 40,
+						"h": 30
+					}
 				}
 			]
 		}
@@ -3291,6 +3375,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:c13ec323095f727665fa953e64e98300:e7531bea9b5e1bef44def5b357c81630:3ec5c0bc286c296cfb7fa30a8b06f3da$"
+		"smartupdate": "$TexturePacker:SmartUpdate:a78ab8261d4cd63caee19962a0e01d8a:cb77bcbd2cc296577c3f2ba84b4c50f2:3ec5c0bc286c296cfb7fa30a8b06f3da$"
 	}
 }

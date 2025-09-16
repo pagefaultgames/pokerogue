@@ -1,22 +1,21 @@
-import { BattleType } from "#enums/battle-type";
-import { getPokeballAtlasKey, getPokeballTintColor } from "#app/data/pokeball";
-import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
-import { TrainerSlot } from "#enums/trainer-slot";
-import { PlayerGender } from "#app/enums/player-gender";
-import { addPokeballOpenParticles } from "#app/field/anims";
-import type Pokemon from "#app/field/pokemon";
-import { FieldPosition } from "#app/field/pokemon";
-import { getPokemonNameWithAffix } from "#app/messages";
-import i18next from "i18next";
-import { PartyMemberPokemonPhase } from "./party-member-pokemon-phase";
-import { PostSummonPhase } from "./post-summon-phase";
-import { GameOverPhase } from "./game-over-phase";
-import { ShinySparklePhase } from "./shiny-sparkle-phase";
-import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import { applyPreSummonAbAttrs, PreSummonAbAttr } from "#app/data/abilities/ability";
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
+import { getPokeballAtlasKey, getPokeballTintColor } from "#data/pokeball";
+import { BattleType } from "#enums/battle-type";
+import { FieldPosition } from "#enums/field-position";
+import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
+import { PlayerGender } from "#enums/player-gender";
+import { TrainerSlot } from "#enums/trainer-slot";
+import { addPokeballOpenParticles } from "#field/anims";
+import type { Pokemon } from "#field/pokemon";
+import { PartyMemberPokemonPhase } from "#phases/party-member-pokemon-phase";
+import i18next from "i18next";
 
 export class SummonPhase extends PartyMemberPokemonPhase {
+  // The union type is needed to keep typescript happy as these phases extend from SummonPhase
+  public readonly phaseName: "SummonPhase" | "SummonMissingPhase" | "SwitchSummonPhase" | "ReturnPhase" = "SummonPhase";
   private loaded: boolean;
 
   constructor(fieldIndex: number, player = true, loaded = false) {
@@ -28,7 +27,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   start() {
     super.start();
 
-    applyPreSummonAbAttrs(PreSummonAbAttr, this.getPokemon());
+    applyAbAttrs("PreSummonAbAttr", { pokemon: this.getPokemon() });
     this.preSummon();
   }
 
@@ -55,8 +54,8 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       if (legalIndex === -1) {
         console.error("Party Details:\n", party);
         console.error("All available Pokemon were fainted or illegal!");
-        globalScene.clearPhaseQueue();
-        globalScene.unshiftPhase(new GameOverPhase());
+        globalScene.phaseManager.clearPhaseQueue();
+        globalScene.phaseManager.unshiftNew("GameOverPhase");
         this.end();
         return;
       }
@@ -98,8 +97,8 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       });
       globalScene.time.delayedCall(750, () => this.summon());
     } else if (
-      globalScene.currentBattle.battleType === BattleType.TRAINER ||
-      globalScene.currentBattle.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE
+      globalScene.currentBattle.battleType === BattleType.TRAINER
+      || globalScene.currentBattle.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE
     ) {
       const trainerName = globalScene.currentBattle.trainer?.getName(
         !(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
@@ -177,11 +176,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
               }
               globalScene.currentBattle.seenEnemyPartyMemberIds.add(pokemon.id);
             }
-            addPokeballOpenParticles(
-              pokemon.x,
-              pokemon.y - 16,
-              pokemon.getPokeball(true),
-            );
+            addPokeballOpenParticles(pokemon.x, pokemon.y - 16, pokemon.getPokeball(true));
             globalScene.updateModifiers(this.player);
             globalScene.updateFieldScale();
             pokemon.showInfo();
@@ -200,9 +195,9 @@ export class SummonPhase extends PartyMemberPokemonPhase {
               onComplete: () => {
                 pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
                 pokemon.getSprite().clearTint();
-                pokemon.resetSummonData();
+                pokemon.fieldSetup();
                 // necessary to stay transformed during wild waves
-                if (pokemon.summonData?.speciesForm) {
+                if (pokemon.summonData.speciesForm) {
                   pokemon.loadAssets(false);
                 }
                 globalScene.time.delayedCall(1000, () => this.end());
@@ -266,7 +261,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       onComplete: () => {
         pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
         pokemon.getSprite().clearTint();
-        pokemon.resetSummonData();
+        pokemon.fieldSetup();
         globalScene.updateFieldScale();
         globalScene.time.delayedCall(1000, () => this.end());
       },
@@ -277,15 +272,15 @@ export class SummonPhase extends PartyMemberPokemonPhase {
     const pokemon = this.getPokemon();
 
     if (pokemon.isShiny(true)) {
-      globalScene.unshiftPhase(new ShinySparklePhase(pokemon.getBattlerIndex()));
+      globalScene.phaseManager.unshiftNew("ShinySparklePhase", pokemon.getBattlerIndex());
     }
 
     pokemon.resetTurnData();
 
     if (
-      !this.loaded ||
-      [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType) ||
-      globalScene.currentBattle.waveIndex % 10 === 1
+      !this.loaded
+      || [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType)
+      || globalScene.currentBattle.waveIndex % 10 === 1
     ) {
       globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
       this.queuePostSummon();
@@ -293,7 +288,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   }
 
   queuePostSummon(): void {
-    globalScene.pushPhase(new PostSummonPhase(this.getPokemon().getBattlerIndex()));
+    globalScene.phaseManager.pushNew("PostSummonPhase", this.getPokemon().getBattlerIndex());
   }
 
   end() {

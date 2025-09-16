@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 
 export class MessagePhase extends Phase {
+  public readonly phaseName = "MessagePhase";
   private text: string;
   private callbackDelay?: number | null;
   private prompt?: boolean | null;
@@ -35,20 +36,27 @@ export class MessagePhase extends Phase {
         this.text = this.text.split(pokename[p]).join(repname[p]);
       }
       const pageIndex = this.text.indexOf("$");
-      for (let p = 0; p < globalScene.getPlayerField().length; p++) {
-        this.text = this.text.split(repname[p]).join(pokename[p]);
-      }
       if (pageIndex !== -1) {
-        globalScene.unshiftPhase(
-          new MessagePhase(
-            this.text.slice(pageIndex + 1),
-            this.callbackDelay,
-            this.prompt,
-            this.promptDelay,
-            this.speaker,
-          ),
+        let page0 = this.text.slice(0, pageIndex);
+        let page1 = this.text.slice(pageIndex + 1);
+        // Pokemon names must be re-inserted _after_ the split, otherwise the index will be wrong
+        for (let p = 0; p < globalScene.getPlayerField().length; p++) {
+          page0 = page0.split(repname[p]).join(pokename[p]);
+          page1 = page1.split(repname[p]).join(pokename[p]);
+        }
+        globalScene.phaseManager.unshiftNew(
+          "MessagePhase",
+          page1,
+          this.callbackDelay,
+          this.prompt,
+          this.promptDelay,
+          this.speaker,
         );
-        this.text = this.text.slice(0, pageIndex).trim();
+        this.text = page0.trim();
+      } else {
+        for (let p = 0; p < globalScene.getPlayerField().length; p++) {
+          this.text = this.text.split(repname[p]).join(pokename[p]);
+        }
       }
     }
 

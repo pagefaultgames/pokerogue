@@ -1,35 +1,32 @@
-import { UiMode } from "#enums/ui-mode";
-import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 import { hasTouchscreen } from "#app/touch-controls";
-import { updateWindowType } from "#app/ui/ui-theme";
-import { CandyUpgradeNotificationChangedEvent } from "#app/events/battle-scene";
-import type SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
 import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
-import { isLocal } from "#app/utils/common";
+import { UiMode } from "#enums/ui-mode";
+import { CandyUpgradeNotificationChangedEvent } from "#events/battle-scene";
+import { updateWindowType } from "#ui/ui-theme";
+import { isLocal } from "#utils/common";
+import i18next from "i18next";
+import { languageOptions } from "./settings-language";
 
-const VOLUME_OPTIONS: SettingOption[] = new Array(11).fill(null).map((_, i) =>
-  i
-    ? {
-        value: (i * 10).toString(),
-        label: (i * 10).toString(),
-      }
-    : {
-        value: "Mute",
-        label: i18next.t("settings:mute"),
-      },
-);
+const VOLUME_OPTIONS: SettingOption[] = [
+  {
+    value: "Mute",
+    label: i18next.t("settings:mute"),
+  },
+];
+for (let i = 1; i < 11; i++) {
+  const value = (i * 10).toString();
+  VOLUME_OPTIONS.push({ value, label: value });
+}
 
-const SHOP_OVERLAY_OPACITY_OPTIONS: SettingOption[] = new Array(9).fill(null).map((_, i) => {
+const SHOP_OVERLAY_OPACITY_OPTIONS: SettingOption[] = [];
+for (let i = 0; i < 9; i++) {
   const value = ((i + 1) * 10).toString();
-  return {
-    value,
-    label: value,
-  };
-});
+  SHOP_OVERLAY_OPACITY_OPTIONS.push({ value, label: value });
+}
 
 const OFF_ON: SettingOption[] = [
   {
@@ -123,6 +120,14 @@ export interface Setting {
   default: number;
   type: SettingType;
   requireReload?: boolean;
+  /**
+   * Specifies the behavior when navigating left/right at the boundaries of the option
+   *
+   * - `true`: the cursor will stay on the boundary instead of moving
+   * - `false`: the cursor will wrap to the other end of the options list
+   * @defaultValue `false`
+   */
+  clamp?: boolean;
   /** Whether the setting can be activated or not */
   activatable?: boolean;
   /** Determines whether the setting should be hidden from the UI */
@@ -174,6 +179,7 @@ export const SettingKeys = {
   UI_Volume: "UI_SOUND_EFFECTS",
   Battle_Music: "BATTLE_MUSIC",
   Show_BGM_Bar: "SHOW_BGM_BAR",
+  Hide_Username: "HIDE_USERNAME",
   Move_Touch_Controls: "MOVE_TOUCH_CONTROLS",
   Shop_Overlay_Opacity: "SHOP_OVERLAY_OPACITY",
 };
@@ -181,6 +187,12 @@ export const SettingKeys = {
 export enum MusicPreference {
   GENFIVE,
   ALLGENS,
+}
+
+const windowTypeOptions: SettingOption[] = [];
+for (let i = 0; i < 5; i++) {
+  const value = (i + 1).toString();
+  windowTypeOptions.push({ value, label: value });
 }
 
 /**
@@ -193,39 +205,40 @@ export const Setting: Array<Setting> = [
     options: [
       {
         value: "1",
-        label: "1x",
+        label: i18next.t("settings:gameSpeed100x"),
       },
       {
         value: "1.25",
-        label: "1.25x",
+        label: i18next.t("settings:gameSpeed125x"),
       },
       {
         value: "1.5",
-        label: "1.5x",
+        label: i18next.t("settings:gameSpeed150x"),
       },
       {
         value: "2",
-        label: "2x",
+        label: i18next.t("settings:gameSpeed200x"),
       },
       {
         value: "2.5",
-        label: "2.5x",
+        label: i18next.t("settings:gameSpeed250x"),
       },
       {
         value: "3",
-        label: "3x",
+        label: i18next.t("settings:gameSpeed300x"),
       },
       {
         value: "4",
-        label: "4x",
+        label: i18next.t("settings:gameSpeed400x"),
       },
       {
         value: "5",
-        label: "5x",
+        label: i18next.t("settings:gameSpeed500x"),
       },
     ],
     default: 3,
     type: SettingType.GENERAL,
+    clamp: false,
   },
   {
     key: SettingKeys.HP_Bar_Speed,
@@ -432,13 +445,7 @@ export const Setting: Array<Setting> = [
   {
     key: SettingKeys.Window_Type,
     label: i18next.t("settings:windowType"),
-    options: new Array(5).fill(null).map((_, i) => {
-      const windowType = (i + 1).toString();
-      return {
-        value: windowType,
-        label: windowType,
-      };
-    }),
+    options: windowTypeOptions,
     default: 0,
     type: SettingType.DISPLAY,
   },
@@ -568,7 +575,7 @@ export const Setting: Array<Setting> = [
       },
       {
         value: "Back",
-        label: i18next.t("settings:timeOfDay_back"),
+        label: i18next.t("settings:timeOfDayBack"),
       },
     ],
     default: 0,
@@ -629,11 +636,19 @@ export const Setting: Array<Setting> = [
     type: SettingType.DISPLAY,
   },
   {
+    key: SettingKeys.Hide_Username,
+    label: i18next.t("settings:hideUsername"),
+    options: OFF_ON,
+    default: 0,
+    type: SettingType.DISPLAY,
+  },
+  {
     key: SettingKeys.Master_Volume,
     label: i18next.t("settings:masterVolume"),
     options: VOLUME_OPTIONS,
     default: 5,
     type: SettingType.AUDIO,
+    clamp: true,
   },
   {
     key: SettingKeys.BGM_Volume,
@@ -641,6 +656,7 @@ export const Setting: Array<Setting> = [
     options: VOLUME_OPTIONS,
     default: 10,
     type: SettingType.AUDIO,
+    clamp: true,
   },
   {
     key: SettingKeys.Field_Volume,
@@ -648,6 +664,7 @@ export const Setting: Array<Setting> = [
     options: VOLUME_OPTIONS,
     default: 10,
     type: SettingType.AUDIO,
+    clamp: true,
   },
   {
     key: SettingKeys.SE_Volume,
@@ -655,6 +672,7 @@ export const Setting: Array<Setting> = [
     options: VOLUME_OPTIONS,
     default: 10,
     type: SettingType.AUDIO,
+    clamp: true,
   },
   {
     key: SettingKeys.UI_Volume,
@@ -662,6 +680,7 @@ export const Setting: Array<Setting> = [
     options: VOLUME_OPTIONS,
     default: 10,
     type: SettingType.AUDIO,
+    clamp: true,
   },
   {
     key: SettingKeys.Battle_Music,
@@ -795,6 +814,9 @@ export function setSetting(setting: string, value: number): boolean {
     case SettingKeys.Show_BGM_Bar:
       globalScene.showBgmBar = Setting[index].options[value].value === "On";
       break;
+    case SettingKeys.Hide_Username:
+      globalScene.hideUsername = Setting[index].options[value].value === "On";
+      break;
     case SettingKeys.Candy_Upgrade_Notification:
       if (globalScene.candyUpgradeNotification === value) {
         break;
@@ -804,6 +826,7 @@ export function setSetting(setting: string, value: number): boolean {
       break;
     case SettingKeys.Candy_Upgrade_Display:
       globalScene.candyUpgradeDisplay = value;
+      break;
     case SettingKeys.Money_Format:
       switch (Setting[index].options[value].value) {
         case "Normal":
@@ -887,84 +910,12 @@ export function setSetting(setting: string, value: number): boolean {
       globalScene.typeHints = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.Language:
-      if (value) {
-        if (globalScene.ui) {
-          const cancelHandler = () => {
-            globalScene.ui.revertMode();
-            (globalScene.ui.getHandler() as SettingsUiHandler).setOptionCursor(-1, 0, true);
-          };
-          const changeLocaleHandler = (locale: string): boolean => {
-            try {
-              i18next.changeLanguage(locale);
-              localStorage.setItem("prLang", locale);
-              cancelHandler();
-              // Reload the whole game to apply the new locale since also some constants are translated
-              window.location.reload();
-              return true;
-            } catch (error) {
-              console.error("Error changing locale:", error);
-              return false;
-            }
-          };
-          globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
-            options: [
-              {
-                label: "English",
-                handler: () => changeLocaleHandler("en"),
-              },
-              {
-                label: "Español (ES)",
-                handler: () => changeLocaleHandler("es-ES"),
-              },
-              {
-                label: "Español (LATAM)",
-                handler: () => changeLocaleHandler("es-MX"),
-              },
-              {
-                label: "Italiano",
-                handler: () => changeLocaleHandler("it"),
-              },
-              {
-                label: "Français",
-                handler: () => changeLocaleHandler("fr"),
-              },
-              {
-                label: "Deutsch",
-                handler: () => changeLocaleHandler("de"),
-              },
-              {
-                label: "Português (BR)",
-                handler: () => changeLocaleHandler("pt-BR"),
-              },
-              {
-                label: "简体中文",
-                handler: () => changeLocaleHandler("zh-CN"),
-              },
-              {
-                label: "繁體中文",
-                handler: () => changeLocaleHandler("zh-TW"),
-              },
-              {
-                label: "한국어",
-                handler: () => changeLocaleHandler("ko"),
-              },
-              {
-                label: "日本語",
-                handler: () => changeLocaleHandler("ja"),
-              },
-              {
-                label: "Català",
-                handler: () => changeLocaleHandler("ca-ES"),
-              },
-              {
-                label: i18next.t("settings:back"),
-                handler: () => cancelHandler(),
-              },
-            ],
-            maxOptions: 7,
-          });
-          return false;
-        }
+      if (value && globalScene.ui) {
+        globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
+          options: languageOptions,
+          maxOptions: 7,
+        });
+        return false;
       }
       break;
     case SettingKeys.Shop_Overlay_Opacity:

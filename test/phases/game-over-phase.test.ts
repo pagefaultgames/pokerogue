@@ -1,12 +1,12 @@
-import { Biome } from "#enums/biome";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
-import GameManager from "#test/testUtils/gameManager";
+import { AbilityId } from "#enums/ability-id";
+import { BiomeId } from "#enums/biome-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
+import { Unlockables } from "#enums/unlockables";
+import { achvs } from "#system/achv";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { achvs } from "#app/system/achv";
-import { Unlockables } from "#app/system/unlockables";
 
 describe("Game Over Phase", () => {
   let phaserGame: Phaser.Game;
@@ -25,28 +25,28 @@ describe("Game Over Phase", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.MEMENTO, Moves.ICE_BEAM, Moves.SPLASH])
-      .ability(Abilities.BALL_FETCH)
+      .moveset([MoveId.MEMENTO, MoveId.ICE_BEAM, MoveId.SPLASH])
+      .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH)
+      .criticalHits(false)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH)
       .startingWave(200)
-      .startingBiome(Biome.END)
+      .startingBiome(BiomeId.END)
       .startingLevel(10000);
   });
 
   it("winning a run should give rewards", async () => {
-    await game.classicMode.startBattle([Species.BULBASAUR]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
     vi.spyOn(game.scene, "validateAchv");
 
     // Note: `game.doKillOpponents()` does not properly handle final boss
     // Final boss phase 1
-    game.move.select(Moves.ICE_BEAM);
+    game.move.select(MoveId.ICE_BEAM);
     await game.toNextTurn();
 
     // Final boss phase 2
-    game.move.select(Moves.ICE_BEAM);
+    game.move.select(MoveId.ICE_BEAM);
     await game.phaseInterceptor.to("PostGameOverPhase", false);
 
     // The game refused to actually give the vouchers during tests,
@@ -60,10 +60,10 @@ describe("Game Over Phase", () => {
   });
 
   it("losing a run should not give rewards", async () => {
-    await game.classicMode.startBattle([Species.BULBASAUR]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
     vi.spyOn(game.scene, "validateAchv");
 
-    game.move.select(Moves.MEMENTO);
+    game.move.select(MoveId.MEMENTO);
     await game.phaseInterceptor.to("PostGameOverPhase", false);
 
     expect(game.phaseInterceptor.log.includes("GameOverPhase")).toBe(true);

@@ -1,37 +1,29 @@
 import { globalScene } from "#app/global-scene";
-import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
-import type Move from "#app/data/moves/move";
-import { allMoves } from "#app/data/moves/move";
-import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms";
-import { Moves } from "#enums/moves";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
-import EvolutionSceneHandler from "#app/ui/evolution-scene-handler";
-import { SummaryUiMode } from "#app/ui/summary-ui-handler";
+import { initMoveAnim, loadMoveAnimAssets } from "#data/battle-anims";
+import { allMoves } from "#data/data-lists";
+import { SpeciesFormChangeMoveLearnedTrigger } from "#data/form-change-triggers";
+import { LearnMoveType } from "#enums/learn-move-type";
+import { MoveId } from "#enums/move-id";
 import { UiMode } from "#enums/ui-mode";
+import type { Pokemon } from "#field/pokemon";
+import type { Move } from "#moves/move";
+import { PlayerPartyMemberPokemonPhase } from "#phases/player-party-member-pokemon-phase";
+import { EvolutionSceneUiHandler } from "#ui/evolution-scene-ui-handler";
+import { SummaryUiMode } from "#ui/summary-ui-handler";
 import i18next from "i18next";
-import { PlayerPartyMemberPokemonPhase } from "#app/phases/player-party-member-pokemon-phase";
-import type Pokemon from "#app/field/pokemon";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
-
-export enum LearnMoveType {
-  /** For learning a move via level-up, evolution, or other non-item-based event */
-  LEARN_MOVE,
-  /** For learning a move via Memory Mushroom */
-  MEMORY,
-  /** For learning a move via TM */
-  TM,
-}
 
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
-  private moveId: Moves;
+  public readonly phaseName = "LearnMovePhase";
+  private moveId: MoveId;
   private messageMode: UiMode;
   private learnMoveType: LearnMoveType;
   private cost: number;
 
   constructor(
     partyMemberIndex: number,
-    moveId: Moves,
+    moveId: MoveId,
     learnMoveType: LearnMoveType = LearnMoveType.LEARN_MOVE,
     cost = -1,
   ) {
@@ -49,13 +41,13 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     const currentMoveset = pokemon.getMoveset();
 
     // The game first checks if the Pokemon already has the move and ends the phase if it does.
-    const hasMoveAlready = currentMoveset.some(m => m.moveId === move.id) && this.moveId !== Moves.SKETCH;
+    const hasMoveAlready = currentMoveset.some(m => m.moveId === move.id) && this.moveId !== MoveId.SKETCH;
     if (hasMoveAlready) {
       return this.end();
     }
 
     this.messageMode =
-      globalScene.ui.getHandler() instanceof EvolutionSceneHandler ? UiMode.EVOLUTION_SCENE : UiMode.MESSAGE;
+      globalScene.ui.getHandler() instanceof EvolutionSceneUiHandler ? UiMode.EVOLUTION_SCENE : UiMode.MESSAGE;
     globalScene.ui.setMode(this.messageMode);
     // If the Pokemon has less than 4 moves, the new move is added to the largest empty moveset index
     // If it has 4 moves, the phase then checks if the player wants to replace the move itself.
@@ -195,7 +187,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
         pokemon.usedTMs = [];
       }
       pokemon.usedTMs.push(this.moveId);
-      globalScene.tryRemovePhase(phase => phase instanceof SelectModifierPhase);
+      globalScene.phaseManager.tryRemovePhase(phase => phase.is("SelectModifierPhase"));
     } else if (this.learnMoveType === LearnMoveType.MEMORY) {
       if (this.cost !== -1) {
         if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
@@ -205,7 +197,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
         }
         globalScene.playSound("se/buy");
       } else {
-        globalScene.tryRemovePhase(phase => phase instanceof SelectModifierPhase);
+        globalScene.phaseManager.tryRemovePhase(phase => phase.is("SelectModifierPhase"));
       }
     }
     pokemon.setMove(index, this.moveId);

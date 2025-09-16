@@ -1,6 +1,6 @@
-import { expSpriteKeys } from "#app/sprites/sprite-keys";
+import { expSpriteKeys } from "#sprites/sprite-keys";
 
-const expKeyRegex = /^pkmn__?(back__)?(shiny__)?(female__)?(\d+)(\-.*?)?(?:_[1-3])?$/;
+const expKeyRegex = /^pkmn__?(back__)?(shiny__)?(female__)?(\d+)(-.*?)?(?:_[1-3])?$/;
 
 export function hasExpSprite(key: string): boolean {
   const keyMatch = expKeyRegex.exec(key);
@@ -21,8 +21,5 @@ export function hasExpSprite(key: string): boolean {
   if (keyMatch[5]) {
     k += keyMatch[5];
   }
-  if (!expSpriteKeys.has(k)) {
-    return false;
-  }
-  return true;
+  return expSpriteKeys.has(k);
 }

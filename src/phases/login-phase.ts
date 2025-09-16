@@ -1,16 +1,15 @@
 import { updateUserInfo } from "#app/account";
-import { bypassLogin } from "#app/global-vars/bypass-login";
 import { globalScene } from "#app/global-scene";
+import { bypassLogin } from "#app/global-vars/bypass-login";
 import { Phase } from "#app/phase";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { UiMode } from "#enums/ui-mode";
+import { executeIf, sessionIdKey } from "#utils/common";
+import { getCookie, removeCookie } from "#utils/cookies";
 import i18next, { t } from "i18next";
-import { sessionIdKey, executeIf } from "#app/utils/common";
-import { getCookie, removeCookie } from "#app/utils/cookies";
-import { SelectGenderPhase } from "./select-gender-phase";
-import { UnavailablePhase } from "./unavailable-phase";
 
 export class LoginPhase extends Phase {
+  public readonly phaseName = "LoginPhase";
   private showText: boolean;
 
   constructor(showText = true) {
@@ -34,7 +33,7 @@ export class LoginPhase extends Phase {
             globalScene.ui.showText(i18next.t("menu:logInOrCreateAccount"));
           }
 
-          globalScene.playSound("menu_open");
+          globalScene.playSound("ui/menu_open");
 
           const loadData = () => {
             updateUserInfo().then(success => {
@@ -54,7 +53,7 @@ export class LoginPhase extends Phase {
                 loadData();
               },
               () => {
-                globalScene.playSound("menu_open");
+                globalScene.playSound("ui/menu_open");
                 globalScene.ui.setMode(UiMode.REGISTRATION_FORM, {
                   buttonActions: [
                     () => {
@@ -69,7 +68,7 @@ export class LoginPhase extends Phase {
                       });
                     },
                     () => {
-                      globalScene.unshiftPhase(new LoginPhase(false));
+                      globalScene.phaseManager.unshiftNew("LoginPhase", false);
                       this.end();
                     },
                   ],
@@ -93,7 +92,7 @@ export class LoginPhase extends Phase {
           removeCookie(sessionIdKey);
           globalScene.reset(true, true);
         } else {
-          globalScene.unshiftPhase(new UnavailablePhase());
+          globalScene.phaseManager.unshiftNew("UnavailablePhase");
           super.end();
         }
         return null;
@@ -113,7 +112,7 @@ export class LoginPhase extends Phase {
     globalScene.ui.setMode(UiMode.MESSAGE);
 
     if (!globalScene.gameData.gender) {
-      globalScene.unshiftPhase(new SelectGenderPhase());
+      globalScene.phaseManager.unshiftNew("SelectGenderPhase");
     }
 
     handleTutorial(Tutorial.Intro).then(() => super.end());

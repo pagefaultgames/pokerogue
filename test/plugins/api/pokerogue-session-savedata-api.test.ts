@@ -1,3 +1,6 @@
+import { PokerogueSessionSavedataApi } from "#api/pokerogue-session-savedata-api";
+import { initServerForApiTests } from "#test/test-utils/test-file-initialization";
+import { getApiBaseUrl } from "#test/test-utils/test-utils";
 import type {
   ClearSessionSavedataRequest,
   ClearSessionSavedataResponse,
@@ -5,14 +8,11 @@ import type {
   GetSessionSavedataRequest,
   NewClearSessionSavedataRequest,
   UpdateSessionSavedataRequest,
-} from "#app/@types/PokerogueSessionSavedataApi";
-import { PokerogueSessionSavedataApi } from "#app/plugins/api/pokerogue-session-savedata-api";
-import type { SessionSaveData } from "#app/system/game-data";
-import { getApiBaseUrl } from "#test/testUtils/testUtils";
-import { http, HttpResponse } from "msw";
-import { beforeAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { initServerForApiTests } from "#test/testUtils/testFileInitialization";
+} from "#types/api/pokerogue-session-save-data-api";
+import type { SessionSaveData } from "#types/save-data";
+import { HttpResponse, http } from "msw";
 import type { SetupServerApi } from "msw/node";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const apiBase = getApiBaseUrl();
 const sessionSavedataApi = new PokerogueSessionSavedataApi(apiBase);
@@ -57,9 +57,7 @@ describe("Pokerogue Session Savedata API", () => {
     it("should return false and report a warning on ERROR", async () => {
       server.use(http.get(`${apiBase}/savedata/session/newclear`, () => HttpResponse.error()));
 
-      const success = await sessionSavedataApi.newclear(params);
-
-      expect(success).toBe(false);
+      await expect(sessionSavedataApi.newclear(params)).rejects.toThrow("Could not newclear session!");
       expect(console.warn).toHaveBeenCalledWith("Could not newclear session!", expect.any(Error));
     });
   });

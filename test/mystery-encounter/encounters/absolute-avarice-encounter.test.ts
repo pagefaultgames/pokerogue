@@ -1,29 +1,28 @@
-import { Biome } from "#app/enums/biome";
-import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
-import { Species } from "#app/enums/species";
-import GameManager from "#test/testUtils/gameManager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import type { BattleScene } from "#app/battle-scene";
+import { BerryType } from "#enums/berry-type";
+import { BiomeId } from "#enums/biome-id";
+import { MoveId } from "#enums/move-id";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { SpeciesId } from "#enums/species-id";
+import { BerryModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
+import { AbsoluteAvariceEncounter } from "#mystery-encounters/absolute-avarice-encounter";
+import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import { MovePhase } from "#phases/move-phase";
+import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import {
   runMysteryEncounterToEnd,
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/mystery-encounter/encounter-test-utils";
-import type BattleScene from "#app/battle-scene";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
-import { BerryModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
-import { BerryType } from "#enums/berry-type";
-import { AbsoluteAvariceEncounter } from "#app/data/mystery-encounters/encounters/absolute-avarice-encounter";
-import { Moves } from "#enums/moves";
-import { CommandPhase } from "#app/phases/command-phase";
-import { MovePhase } from "#app/phases/move-phase";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { GameManager } from "#test/test-utils/game-manager";
 import i18next from "i18next";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/absoluteAvarice";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
-const defaultBiome = Biome.PLAINS;
+const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
+const defaultBiome = BiomeId.TALL_GRASS;
 const defaultWave = 45;
 
 describe("Absolute Avarice - Mystery Encounter", () => {
@@ -38,23 +37,22 @@ describe("Absolute Avarice - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves();
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
-      new Map<Biome, MysteryEncounterType[]>([
-        [Biome.PLAINS, [MysteryEncounterType.ABSOLUTE_AVARICE]],
-        [Biome.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
+      new Map<BiomeId, MysteryEncounterType[]>([
+        [BiomeId.TALL_GRASS, [MysteryEncounterType.ABSOLUTE_AVARICE]],
+        [BiomeId.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
       ]),
     );
   });
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {
@@ -71,8 +69,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
   });
 
   it("should not spawn outside of proper biomes", async () => {
-    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT);
-    game.override.startingBiome(Biome.VOLCANO);
+    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT).startingBiome(BiomeId.VOLCANO);
     await game.runToMysteryEncounter();
 
     expect(game.scene.currentBattle.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.ABSOLUTE_AVARICE);
@@ -87,10 +84,10 @@ describe("Absolute Avarice - Mystery Encounter", () => {
   });
 
   it("should spawn if player has enough berries", async () => {
-    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT);
-    game.override.startingHeldItems([
+    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT).startingHeldItems([
       { name: "BERRY", count: 2, type: BerryType.SITRUS },
       { name: "BERRY", count: 3, type: BerryType.GANLON },
+      { name: "BERRY", count: 2, type: BerryType.APICOT },
     ]);
 
     await game.runToMysteryEncounter();
@@ -102,6 +99,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
     game.override.startingHeldItems([
       { name: "BERRY", count: 2, type: BerryType.SITRUS },
       { name: "BERRY", count: 3, type: BerryType.GANLON },
+      { name: "BERRY", count: 2, type: BerryType.APICOT },
     ]);
 
     await game.runToMysteryEncounter(MysteryEncounterType.ABSOLUTE_AVARICE, defaultParty);
@@ -127,22 +125,21 @@ describe("Absolute Avarice - Mystery Encounter", () => {
     });
 
     it("should start battle against Greedent", async () => {
-      const phaseSpy = vi.spyOn(scene, "pushPhase");
+      const phaseSpy = vi.spyOn(scene.phaseManager, "pushPhase");
 
       await game.runToMysteryEncounter(MysteryEncounterType.ABSOLUTE_AVARICE, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       const enemyField = scene.getEnemyField();
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(game).toBeAtPhase("CommandPhase");
       expect(enemyField.length).toBe(1);
-      expect(enemyField[0].species.speciesId).toBe(Species.GREEDENT);
+      expect(enemyField[0].species.speciesId).toBe(SpeciesId.GREEDENT);
       const moveset = enemyField[0].moveset.map(m => m.moveId);
-      expect(moveset?.length).toBe(4);
-      expect(moveset).toEqual([Moves.THRASH, Moves.BODY_PRESS, Moves.STUFF_CHEEKS, Moves.CRUNCH]);
+      expect(moveset).toEqual([MoveId.THRASH, MoveId.CRUNCH, MoveId.BODY_PRESS, MoveId.SLACK_OFF]);
 
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
       expect(movePhases.length).toBe(1);
-      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.STUFF_CHEEKS).length).toBe(1); // Stuff Cheeks used before battle
+      expect(movePhases.filter(p => (p as MovePhase).move.moveId === MoveId.STUFF_CHEEKS).length).toBe(1); // Stuff Cheeks used before battle
     });
 
     it("should give reviver seed to each pokemon after battle", async () => {
@@ -150,7 +147,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
+      expect(game).toBeAtPhase("SelectModifierPhase");
 
       for (const partyPokemon of scene.getPlayerParty()) {
         const pokemonId = partyPokemon.id;
@@ -258,10 +255,10 @@ describe("Absolute Avarice - Mystery Encounter", () => {
 
       expect(partyCountBefore + 1).toBe(partyCountAfter);
       const greedent = scene.getPlayerParty()[scene.getPlayerParty().length - 1];
-      expect(greedent.species.speciesId).toBe(Species.GREEDENT);
+      expect(greedent.species.speciesId).toBe(SpeciesId.GREEDENT);
       const moveset = greedent.moveset.map(m => m.moveId);
       expect(moveset?.length).toBe(4);
-      expect(moveset).toEqual([Moves.THRASH, Moves.BODY_PRESS, Moves.STUFF_CHEEKS, Moves.SLACK_OFF]);
+      expect(moveset).toEqual([MoveId.THRASH, MoveId.BODY_PRESS, MoveId.STUFF_CHEEKS, MoveId.SLACK_OFF]);
     });
 
     it("should leave encounter without battle", async () => {

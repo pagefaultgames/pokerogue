@@ -1,9 +1,8 @@
 import type { UiMode } from "#enums/ui-mode";
-import AbstractSettingsUiHandler from "./abstract-settings-ui-handler";
-import { SettingKeys, SettingType } from "#app/system/settings/settings";
-("#app/inputs-controller");
+import { SettingKeys, SettingType } from "#system/settings";
+import { AbstractSettingsUiHandler } from "#ui/abstract-settings-ui-handler";
 
-export default class SettingsDisplayUiHandler extends AbstractSettingsUiHandler {
+export class SettingsDisplayUiHandler extends AbstractSettingsUiHandler {
   /**
    * Creates an instance of SettingsGamepadUiHandler.
    *
@@ -39,12 +38,6 @@ export default class SettingsDisplayUiHandler extends AbstractSettingsUiHandler 
             label: "Español (LATAM)",
           };
           break;
-        case "it":
-          this.settings[languageIndex].options[0] = {
-            value: "Italiano",
-            label: "Italiano",
-          };
-          break;
         case "fr":
           this.settings[languageIndex].options[0] = {
             value: "Français",
@@ -57,22 +50,16 @@ export default class SettingsDisplayUiHandler extends AbstractSettingsUiHandler 
             label: "Deutsch",
           };
           break;
+        case "it":
+          this.settings[languageIndex].options[0] = {
+            value: "Italiano",
+            label: "Italiano",
+          };
+          break;
         case "pt-BR":
           this.settings[languageIndex].options[0] = {
             value: "Português (BR)",
             label: "Português (BR)",
-          };
-          break;
-        case "zh-CN":
-          this.settings[languageIndex].options[0] = {
-            value: "简体中文",
-            label: "简体中文",
-          };
-          break;
-        case "zh-TW":
-          this.settings[languageIndex].options[0] = {
-            value: "繁體中文",
-            label: "繁體中文",
           };
           break;
         case "ko":
@@ -88,10 +75,52 @@ export default class SettingsDisplayUiHandler extends AbstractSettingsUiHandler 
             label: "日本語",
           };
           break;
-        case "ca-ES":
+        case "zh-CN":
+          this.settings[languageIndex].options[0] = {
+            value: "简体中文",
+            label: "简体中文",
+          };
+          break;
+        case "zh-TW":
+          this.settings[languageIndex].options[0] = {
+            value: "繁體中文",
+            label: "繁體中文",
+          };
+          break;
+        case "ca":
           this.settings[languageIndex].options[0] = {
             value: "Català",
-            label: "Català",
+            label: "Català (Needs Help)",
+          };
+          break;
+        case "tr":
+          this.settings[languageIndex].options[0] = {
+            value: "Türkçe",
+            label: "Türkçe (Needs Help)",
+          };
+          break;
+        case "ru":
+          this.settings[languageIndex].options[0] = {
+            value: "Русский",
+            label: "Русский (Needs Help)",
+          };
+          break;
+        case "da":
+          this.settings[languageIndex].options[0] = {
+            value: "Dansk",
+            label: "Dansk (Needs Help)",
+          };
+          break;
+        case "ro":
+          this.settings[languageIndex].options[0] = {
+            value: "Română",
+            label: "Română (Needs Help)",
+          };
+          break;
+        case "tl":
+          this.settings[languageIndex].options[0] = {
+            value: "Tagalog",
+            label: "Tagalog (Needs Help)",
           };
           break;
         default:

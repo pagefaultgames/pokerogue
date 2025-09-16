@@ -1,16 +1,16 @@
 import { globalScene } from "#app/global-scene";
-import PartyUiHandler, { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
-import { UiMode } from "#enums/ui-mode";
+import { DynamicPhaseType } from "#enums/dynamic-phase-type";
 import { SwitchType } from "#enums/switch-type";
-import { BattlePhase } from "./battle-phase";
-import { PostSummonPhase } from "./post-summon-phase";
-import { SwitchSummonPhase } from "./switch-summon-phase";
+import { UiMode } from "#enums/ui-mode";
+import { BattlePhase } from "#phases/battle-phase";
+import { PartyOption, PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 
 /**
  * Opens the party selector UI and transitions into a {@linkcode SwitchSummonPhase}
  * for the player (if a switch would be valid for the current battle state).
  */
 export class SwitchPhase extends BattlePhase {
+  public readonly phaseName = "SwitchPhase";
   protected readonly fieldIndex: number;
   private readonly switchType: SwitchType;
   private readonly isModal: boolean;
@@ -38,7 +38,10 @@ export class SwitchPhase extends BattlePhase {
     super.start();
 
     // Skip modal switch if impossible (no remaining party members that aren't in battle)
-    if (this.isModal && !globalScene.getPlayerParty().filter(p => p.isAllowedInBattle() && !p.isActive(true)).length) {
+    if (
+      this.isModal
+      && globalScene.getPlayerParty().filter(p => p.isAllowedInBattle() && !p.isActive(true)).length === 0
+    ) {
       return super.end();
     }
 
@@ -55,9 +58,9 @@ export class SwitchPhase extends BattlePhase {
 
     // Check if there is any space still in field
     if (
-      this.isModal &&
-      globalScene.getPlayerField().filter(p => p.isAllowedInBattle() && p.isActive(true)).length >=
-        globalScene.currentBattle.getBattlerCount()
+      this.isModal
+      && globalScene.getPlayerField().filter(p => p.isAllowedInBattle() && p.isActive(true)).length
+        >= globalScene.currentBattle.getBattlerCount()
     ) {
       return super.end();
     }
@@ -76,9 +79,14 @@ export class SwitchPhase extends BattlePhase {
         if (slotIndex >= globalScene.currentBattle.getBattlerCount() && slotIndex < 6) {
           // Remove any pre-existing PostSummonPhase under the same field index.
           // Pre-existing PostSummonPhases may occur when this phase is invoked during a prompt to switch at the start of a wave.
-          globalScene.tryRemovePhase(p => p instanceof PostSummonPhase && p.player && p.fieldIndex === this.fieldIndex);
+          // TODO: Separate the animations from `SwitchSummonPhase` and co. into another phase and use that on initial switch - this is a band-aid fix
+          globalScene.phaseManager.tryRemoveDynamicPhase(
+            DynamicPhaseType.POST_SUMMON,
+            p => p.is("PostSummonPhase") && p.player && p.fieldIndex === this.fieldIndex,
+            "all",
+          );
           const switchType = option === PartyOption.PASS_BATON ? SwitchType.BATON_PASS : this.switchType;
-          globalScene.unshiftPhase(new SwitchSummonPhase(switchType, fieldIndex, slotIndex, this.doReturn));
+          globalScene.phaseManager.unshiftNew("SwitchSummonPhase", switchType, fieldIndex, slotIndex, this.doReturn);
         }
         globalScene.ui.setMode(UiMode.MESSAGE).then(() => super.end());
       },

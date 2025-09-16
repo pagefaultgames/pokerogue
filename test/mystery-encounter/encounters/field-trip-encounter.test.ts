@@ -1,24 +1,24 @@
-import { Biome } from "#app/enums/biome";
-import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
-import { Species } from "#app/enums/species";
-import GameManager from "#test/testUtils/gameManager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
-import type BattleScene from "#app/battle-scene";
+import type { BattleScene } from "#app/battle-scene";
+import { BiomeId } from "#enums/biome-id";
+import { MoveId } from "#enums/move-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
-import { FieldTripEncounter } from "#app/data/mystery-encounters/encounters/field-trip-encounter";
-import { Moves } from "#enums/moves";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
+import { FieldTripEncounter } from "#mystery-encounters/field-trip-encounter";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import { SelectModifierPhase } from "#phases/select-modifier-phase";
+import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
+import { GameManager } from "#test/test-utils/game-manager";
+import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import i18next from "i18next";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/fieldTrip";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
-const defaultBiome = Biome.CAVE;
+const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
+const defaultBiome = BiomeId.CAVE;
 const defaultWave = 45;
 
 describe("Field Trip - Mystery Encounter", () => {
@@ -33,21 +33,20 @@ describe("Field Trip - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
-    game.override.moveset([Moves.TACKLE, Moves.UPROAR, Moves.SWORDS_DANCE]);
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves()
+      .moveset([MoveId.TACKLE, MoveId.UPROAR, MoveId.SWORDS_DANCE]);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
-      new Map<Biome, MysteryEncounterType[]>([[Biome.CAVE, [MysteryEncounterType.FIELD_TRIP]]]),
+      new Map<BiomeId, MysteryEncounterType[]>([[BiomeId.CAVE, [MysteryEncounterType.FIELD_TRIP]]]),
     );
   });
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {
@@ -62,7 +61,7 @@ describe("Field Trip - Mystery Encounter", () => {
       },
       {
         speaker: `${namespace}:speaker`,
-        text: `${namespace}:intro_dialogue`,
+        text: `${namespace}:introDialogue`,
       },
     ]);
     expect(FieldTripEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
@@ -79,7 +78,7 @@ describe("Field Trip - Mystery Encounter", () => {
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.1.label`,
         buttonTooltip: `${namespace}:option.1.tooltip`,
-        secondOptionPrompt: `${namespace}:second_option_prompt`,
+        secondOptionPrompt: `${namespace}:secondOptionPrompt`,
       });
     });
 
@@ -140,7 +139,7 @@ describe("Field Trip - Mystery Encounter", () => {
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.2.label`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
-        secondOptionPrompt: `${namespace}:second_option_prompt`,
+        secondOptionPrompt: `${namespace}:secondOptionPrompt`,
       });
     });
 
@@ -201,7 +200,7 @@ describe("Field Trip - Mystery Encounter", () => {
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
-        secondOptionPrompt: `${namespace}:second_option_prompt`,
+        secondOptionPrompt: `${namespace}:secondOptionPrompt`,
       });
     });
 

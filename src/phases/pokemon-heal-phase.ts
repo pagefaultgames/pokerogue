@@ -1,19 +1,21 @@
 import { globalScene } from "#app/global-scene";
-import type { BattlerIndex } from "#app/battle";
-import { CommonAnim } from "#app/data/battle-anims";
-import { getStatusEffectHealText } from "#app/data/status-effect";
-import { StatusEffect } from "#app/enums/status-effect";
-import { HitResult } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { HealingBoosterModifier } from "#app/modifier/modifier";
-import { HealAchv } from "#app/system/achv";
+import type { HealBlockTag } from "#data/battler-tags";
+import { getStatusEffectHealText } from "#data/status-effect";
+import type { BattlerIndex } from "#enums/battler-index";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { HitResult } from "#enums/hit-result";
+import { CommonAnim } from "#enums/move-anims-common";
+import { StatusEffect } from "#enums/status-effect";
+import { HealingBoosterModifier } from "#modifiers/modifier";
+import { CommonAnimPhase } from "#phases/common-anim-phase";
+import { HealAchv } from "#system/achv";
+import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
-import { NumberHolder } from "#app/utils/common";
-import { CommonAnimPhase } from "./common-anim-phase";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
-import type { HealBlockTag } from "#app/data/battler-tags";
 
+// TODO: Refactor this - it has far too many arguments
 export class PokemonHealPhase extends CommonAnimPhase {
+  public readonly phaseName = "PokemonHealPhase";
   private hpHealed: number;
   private message: string | null;
   private showFullHpMessage: boolean;
@@ -27,7 +29,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
     battlerIndex: BattlerIndex,
     hpHealed: number,
     message: string | null,
-    showFullHpMessage: boolean,
+    showFullHpMessage = true,
     skipAnim = false,
     revive = false,
     healStatus = false,
@@ -67,10 +69,11 @@ export class PokemonHealPhase extends CommonAnimPhase {
     let lastStatusEffect = StatusEffect.NONE;
 
     if (healBlock && this.hpHealed > 0) {
-      globalScene.queueMessage(healBlock.onActivation(pokemon));
+      globalScene.phaseManager.queueMessage(healBlock.onActivation(pokemon));
       this.message = null;
       return super.end();
     }
+
     if (healOrDamage) {
       const hpRestoreMultiplier = new NumberHolder(1);
       if (!this.revive) {
@@ -118,11 +121,13 @@ export class PokemonHealPhase extends CommonAnimPhase {
     }
 
     if (this.message) {
-      globalScene.queueMessage(this.message);
+      globalScene.phaseManager.queueMessage(this.message);
     }
 
     if (this.healStatus && lastStatusEffect && !hasMessage) {
-      globalScene.queueMessage(getStatusEffectHealText(lastStatusEffect, getPokemonNameWithAffix(pokemon)));
+      globalScene.phaseManager.queueMessage(
+        getStatusEffectHealText(lastStatusEffect, getPokemonNameWithAffix(pokemon)),
+      );
     }
 
     if (!healOrDamage && !lastStatusEffect) {

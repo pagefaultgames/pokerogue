@@ -1,9 +1,7 @@
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -23,39 +21,41 @@ describe("Moves - Tackle", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    const moveToUse = Moves.TACKLE;
-    game.override.battleStyle("single");
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.startingLevel(1);
-    game.override.startingWave(97);
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.GROWTH, Moves.GROWTH, Moves.GROWTH, Moves.GROWTH]);
-    game.override.disableCrits();
+    const moveToUse = MoveId.TACKLE;
+    game.override
+      .battleStyle("single")
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .startingLevel(1)
+      .startingWave(97)
+      .moveset([moveToUse])
+      .enemyMoveset(MoveId.GROWTH)
+      .criticalHits(false);
   });
 
   it("TACKLE against ghost", async () => {
-    const moveToUse = Moves.TACKLE;
-    game.override.enemySpecies(Species.GENGAR);
-    await game.startBattle([Species.MIGHTYENA]);
+    const moveToUse = MoveId.TACKLE;
+    game.override.enemySpecies(SpeciesId.GENGAR);
+
+    await game.classicMode.startBattle([SpeciesId.MIGHTYENA]);
     const hpOpponent = game.scene.currentBattle.enemyParty[0].hp;
     game.move.select(moveToUse);
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
+    await game.toEndOfTurn();
     const hpLost = hpOpponent - game.scene.currentBattle.enemyParty[0].hp;
     expect(hpLost).toBe(0);
-  }, 20000);
+  });
 
   it("TACKLE against not resistant", async () => {
-    const moveToUse = Moves.TACKLE;
-    await game.startBattle([Species.MIGHTYENA]);
+    const moveToUse = MoveId.TACKLE;
+    await game.classicMode.startBattle([SpeciesId.MIGHTYENA]);
     game.scene.currentBattle.enemyParty[0].stats[Stat.DEF] = 50;
-    game.scene.getPlayerParty()[0].stats[Stat.ATK] = 50;
+    game.field.getPlayerPokemon().stats[Stat.ATK] = 50;
 
     const hpOpponent = game.scene.currentBattle.enemyParty[0].hp;
 
     game.move.select(moveToUse);
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
+    await game.toEndOfTurn();
     const hpLost = hpOpponent - game.scene.currentBattle.enemyParty[0].hp;
     expect(hpLost).toBeGreaterThan(0);
     expect(hpLost).toBeLessThan(4);
-  }, 20000);
+  });
 });

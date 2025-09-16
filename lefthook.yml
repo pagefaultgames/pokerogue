@@ -1,15 +1,24 @@
 pre-commit:
-  parallel: true
+  skip:
+    - merge
+    - rebase
   commands:
     biome-lint:
-      glob: "*.{js,jsx,ts,tsx}"
-      run: npx @biomejs/biome check --write --reporter=summary {staged_files} --no-errors-on-unmatched
+      # Disable colors as certain IDEs don't support it in the output pane.
+      # Summary mode looks decent in plain ASCII anyhow
+      run: pnpm exec biome check --write --colors=off --reporter=summary --staged --no-errors-on-unmatched --diagnostic-level=error
       stage_fixed: true
-      skip:
-        - merge
-        - rebase
-      
+    ls-lint:
+      run: pnpm exec ls-lint
+
 post-merge:
   commands:
     update-submodules:
-      run: git submodule update --init --recursive
+      run: pnpm update-locales
+
+post-checkout:
+  commands:
+    update-submodules:
+      # cf https://git-scm.com/docs/githooks#_post_checkout:
+      # The 3rd argument is 1 for branch checkouts and 0 for file checkouts.
+      run: if test {3} -eq "1"; then pnpm update-locales; fi
