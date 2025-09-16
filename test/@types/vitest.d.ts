@@ -44,7 +44,7 @@ declare module "vitest" {
  * @typeParam T - The type parameter of the assertion
  * @typeParam R - The type to restrict T based off of
  * @privateRemarks
- * We cannot remove incompatible methods outright  as Typescript requires that
+ * We cannot remove incompatible methods outright as Typescript requires that
  * interfaces extend solely off of types with statically known members.
  */
 type RestrictMatcher<M extends object, T, R> = {
