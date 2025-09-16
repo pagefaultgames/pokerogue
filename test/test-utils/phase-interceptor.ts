@@ -111,8 +111,8 @@ export class PhaseInterceptor {
   private intervalRun: NodeJS.Timeout;
   private prompts: PromptHandler[];
   private inProgress?: InProgressStub;
-  private originalSetMode: UI["setMode"];
-  private originalSuperEnd: Phase["end"];
+  private originalSetMode: typeof UI.prototype.setMode;
+  private originalSuperEnd: typeof Phase.prototype.end;
 
   /**
    * List of phases with their corresponding start methods.
