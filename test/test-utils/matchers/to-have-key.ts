@@ -25,7 +25,7 @@ export function toHaveKey(this: MatcherState, received: unknown, expectedKey: un
     };
   }
 
-  const keys = [...received.values()];
+  const keys = [...received.keys()];
   const pass = this.equals(keys, expectedKey, [
     ...this.customTesters,
     this.utils.iterableEquality,
