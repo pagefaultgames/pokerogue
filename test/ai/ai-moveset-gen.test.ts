@@ -41,6 +41,8 @@ interface MockPokemonParams {
 /**
  * Construct an `EnemyPokemon` that can be used for testing
  * @param species - The species ID of the pokemon to create
+ * @returns The newly created `EnemyPokemon`.
+ * @todo Move this to a dedicated unit test util folder if more tests come to rely on it
  */
 function createTestablePokemon(
   species: SpeciesId,
@@ -269,7 +271,7 @@ describe("Regression Tests - ai-moveset-gen.ts", () => {
   describe("getTmPoolForSpecies", () => {
     const { getTmPoolForSpecies } = __INTERNAL_TEST_EXPORTS;
 
-    it("should not crash when generating a moveset for Ditto", () => {
+    it("should not crash when generating a moveset for Pokemon without TM moves", () => {
       pokemon = createTestablePokemon(SpeciesId.DITTO, { level: 50 });
       expect(() =>
         getTmPoolForSpecies(SpeciesId.DITTO, ULTRA_TIER_TM_LEVEL_REQUIREMENT, "", new Map(), new Map(), new Map(), [

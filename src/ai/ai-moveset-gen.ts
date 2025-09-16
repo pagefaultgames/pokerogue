@@ -133,6 +133,8 @@ function getTmPoolForSpecies(
 ): void {
   const [allowCommon, allowGreat, allowUltra] = allowedTiers;
   const tms = speciesTmMoves[speciesId];
+  // Species with no learnable TMs (e.g. Ditto) don't have entries in the `speciesTmMoves` object,
+  // so this is needed to avoid iterating over `undefined`
   if (tms == null) {
     return;
   }
