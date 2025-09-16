@@ -1319,7 +1319,7 @@ export class BattleScene extends SceneBase {
       this.handleNonFixedBattle(resolved);
     }
 
-    if (!resolved.battleType) {
+    if (resolved.battleType == null) {
       throw new Error("Whoopsie! I guess my type checks were wrong");
     }
     resolved.double = this.checkIsDouble(resolved as NewBattleConstructedProps);
