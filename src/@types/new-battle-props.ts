@@ -1,17 +1,17 @@
+/**
+ * A collection of types/interfaces used for {@linkcode BattleScene.newBattle} and associated
+ * sub-methods.
+ *
+ * Types are listed in order of appearance in the function.
+ * @module
+ */
+
 // biome-ignore lint/correctness/noUnusedImports: TSDoc
 import type { BattleScene } from "#app/battle-scene";
 import type { BattleType } from "#enums/battle-type";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { Trainer } from "#field/trainer";
 import type { TrainerData } from "#system/trainer-data";
-
-/**
- * @module
- * A collection of types/interfaces used for {@linkcode BattleScene.newBattle} and associated
- * sub-methods.
- *
- * Types are listed in order of appearance in the function.
- */
 
 /** Interface representing the base type of a new battle config, used for DRY. */
 interface NewBattleBaseProps {

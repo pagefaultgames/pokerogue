@@ -1534,6 +1534,12 @@ export class BattleScene extends SceneBase {
    * @returns Whether the battle should be a duouble battle.
    */
   private checkIsDouble({ double, battleType, waveIndex, trainer }: NewBattleConstructedProps): boolean {
+    const overriddenDouble = this.doCheckDoubleOverride(waveIndex);
+    // If running unit tests, overrides take precedence over normal code
+    if (import.meta.env.NODE_ENV === "test" && overriddenDouble != null) {
+      return overriddenDouble;
+    }
+
     // Edge cases
     if (
       // Wave 1 doubles cause crashes
@@ -1544,13 +1550,21 @@ export class BattleScene extends SceneBase {
     ) {
       return false;
     }
-
-    // Previously defined double battle status (from save data)
     if (double != null) {
       return double;
     }
+    if (overriddenDouble != null) {
+      return overriddenDouble;
+    }
 
-    // Overrides
+    // Standard wild battle chance
+    if (battleType === BattleType.WILD) {
+      return !randSeedInt(this.getDoubleBattleChance(waveIndex));
+    }
+    return trainer?.variant === TrainerVariant.DOUBLE;
+  }
+
+  private doCheckDoubleOverride(waveIndex: number): boolean | undefined {
     switch (Overrides.BATTLE_STYLE_OVERRIDE) {
       case "double":
         return true;
@@ -1561,12 +1575,6 @@ export class BattleScene extends SceneBase {
       case "odd-doubles":
         return waveIndex % 2 === 1;
     }
-
-    // Standard wild battle chance
-    if (battleType === BattleType.WILD) {
-      return !randSeedInt(this.getDoubleBattleChance(waveIndex));
-    }
-    return trainer?.variant === TrainerVariant.DOUBLE;
   }
 
   newArena(biome: BiomeId, playerFaints = 0): Arena {
