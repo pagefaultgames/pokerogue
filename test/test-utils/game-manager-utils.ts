@@ -9,7 +9,7 @@ import type { MoveId } from "#enums/move-id";
 import type { SpeciesId } from "#enums/species-id";
 import { PlayerPokemon } from "#field/pokemon";
 import type { StarterMoveset } from "#types/save-data";
-import type { Starter } from "#ui/handlers/starter-select-ui-handler";
+import type { Starter } from "#ui/starter-select-ui-handler";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 /** Function to convert Blob to string */

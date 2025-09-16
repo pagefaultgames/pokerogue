@@ -31,7 +31,6 @@ import {
 } from "#modifiers/modifier-pools";
 import { WeightedModifierType } from "#modifiers/modifier-type";
 import type { WeightedModifierTypeWeightFunc } from "#types/modifier-types";
-import { isNullOrUndefined } from "#utils/common";
 
 /**
  * Initialize the wild modifier pool
@@ -409,7 +408,7 @@ function initUltraModifierPool() {
           if (!isHoldingOrb) {
             const moveset = p
               .getMoveset(true)
-              .filter(m => !isNullOrUndefined(m))
+              .filter(m => m != null)
               .map(m => m.moveId);
             const canSetStatus = p.canSetStatus(StatusEffect.TOXIC, true, true, null, true);
 
@@ -455,7 +454,7 @@ function initUltraModifierPool() {
           if (!isHoldingOrb) {
             const moveset = p
               .getMoveset(true)
-              .filter(m => !isNullOrUndefined(m))
+              .filter(m => m != null)
               .map(m => m.moveId);
             const canSetStatus = p.canSetStatus(StatusEffect.BURN, true, true, null, true);
 
