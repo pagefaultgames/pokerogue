@@ -1324,7 +1324,6 @@ export class BattleScene extends SceneBase {
     }
     resolved.double = this.checkIsDouble(resolved as NewBattleConstructedProps);
 
-    //
     const lastBattle: Battle | undefined = this.currentBattle;
     const maxExpLevel = this.getMaxExpLevel();
 
@@ -1340,7 +1339,7 @@ export class BattleScene extends SceneBase {
       }
     }
 
-    // NB: Type assertion is fine as foo should always be defined
+    // NB: Type assertion is fine as resolved should always be populated at this point
     this.executeWithSeedOffset(
       () => {
         this.currentBattle = new Battle(this.gameMode, resolved as NewBattleResolvedProps);
