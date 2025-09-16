@@ -238,8 +238,7 @@ const turnEndPhases: PhaseString[] = [
  */
 export class PhaseManager {
   /** PhaseQueue: dequeue/remove the first element to get the next phase */
-  private phaseQueue: PhaseTree = new PhaseTree();
-  private nextCommandPhaseQueue: Phase[] = [];
+  private readonly phaseQueue: PhaseTree = new PhaseTree();
 
   /** Holds priority queues for dynamically ordered phases */
   public dynamicQueueManager = new DynamicQueueManager();
@@ -334,13 +333,13 @@ export class PhaseManager {
       return;
     }
 
-    let nextPhase = this.phaseQueue.getNextPhase() ?? null;
+    let nextPhase = this.phaseQueue.getNextPhase();
 
     if (nextPhase?.is("DynamicPhaseMarker")) {
-      nextPhase = this.dynamicQueueManager.popNextPhase(nextPhase.phaseType) ?? null;
+      nextPhase = this.dynamicQueueManager.popNextPhase(nextPhase.phaseType);
     }
 
-    if (nextPhase === null) {
+    if (nextPhase == null) {
       this.turnStart();
     } else {
       this.currentPhase = nextPhase;
@@ -525,7 +524,7 @@ export class PhaseManager {
       && !this.phaseQueue.exists("SummonPhase")
     ) {
       globalScene.getEnemyField().forEach(p => {
-        this.pushPhase(new PostSummonPhase(p.getBattlerIndex(), "SummonPhase"))
+        this.pushPhase(new PostSummonPhase(p.getBattlerIndex(), "SummonPhase"));
       });
     }
   }
