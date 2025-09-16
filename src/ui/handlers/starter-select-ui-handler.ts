@@ -66,7 +66,6 @@ import {
   BooleanHolder,
   fixedInt,
   getLocalizedSpriteKey,
-  isNullOrUndefined,
   NumberHolder,
   padInt,
   randIntRange,
@@ -2548,7 +2547,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           case Button.CYCLE_TERA:
             if (this.canCycleTera) {
               const speciesForm = getPokemonSpeciesForm(this.lastSpecies.speciesId, starterAttributes.form ?? 0);
-              if (speciesForm.type1 === this.teraCursor && !isNullOrUndefined(speciesForm.type2)) {
+              if (speciesForm.type1 === this.teraCursor && speciesForm.type2 != null) {
                 starterAttributes.tera = speciesForm.type2;
                 originalStarterAttributes.tera = starterAttributes.tera;
                 this.setSpeciesDetails(this.lastSpecies, {
@@ -2790,7 +2789,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
    */
   switchMoveHandler(targetIndex: number, newMove: MoveId, previousMove: MoveId) {
     const starterMoveset = this.starterMoveset;
-    if (isNullOrUndefined(starterMoveset)) {
+    if (starterMoveset == null) {
       console.warn("Trying to update a non-existing moveset");
       return;
     }
@@ -3687,7 +3686,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           );
         }
 
-        if (!isNullOrUndefined(props.formIndex)) {
+        if (props.formIndex != null) {
           // If switching forms while the pokemon is in the team, update its moveset
           this.updateSelectedStarterMoveset(species.speciesId);
         }
@@ -3809,10 +3808,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     // We will only update the sprite if there is a change to form, shiny/variant
     // or gender for species with gender sprite differences
     const shouldUpdateSprite =
-      (species?.genderDiffs && !isNullOrUndefined(female))
-      || !isNullOrUndefined(formIndex)
-      || !isNullOrUndefined(shiny)
-      || !isNullOrUndefined(variant);
+      (species?.genderDiffs && female != null) || formIndex != null || shiny != null || variant != null;
 
     const isFreshStartChallenge = globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
 
@@ -3850,7 +3846,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       ); // TODO: is this bang correct?
       this.abilityCursor = abilityIndex !== undefined ? abilityIndex : (abilityIndex = oldAbilityIndex);
       this.natureCursor = natureIndex !== undefined ? natureIndex : (natureIndex = oldNatureIndex);
-      this.teraCursor = !isNullOrUndefined(teraType) ? teraType : (teraType = oldTeraType);
+      this.teraCursor = teraType != null ? teraType : (teraType = oldTeraType);
       const [isInParty, partyIndex]: [boolean, number] = this.isInParty(species); // we use this to firstly check if the pokemon is in the party, and if so, to get the party index in order to update the icon image
       if (isInParty) {
         this.updatePartyIcon(species, partyIndex);
@@ -3991,7 +3987,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.canCycleTera =
           !this.statsMode
           && this.allowTera
-          && !isNullOrUndefined(getPokemonSpeciesForm(species.speciesId, formIndex ?? 0).type2)
+          && getPokemonSpeciesForm(species.speciesId, formIndex ?? 0).type2 != null
           && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
       }
 
@@ -4592,7 +4588,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.canCycleTera =
         !this.statsMode
         && this.allowTera
-        && !isNullOrUndefined(getPokemonSpeciesForm(this.lastSpecies.speciesId, formIndex ?? 0).type2)
+        && getPokemonSpeciesForm(this.lastSpecies.speciesId, formIndex ?? 0).type2 != null
         && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
       this.updateInstructions();
     }

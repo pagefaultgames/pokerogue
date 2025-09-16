@@ -43,7 +43,7 @@ import { FieldEffectModifier } from "#modifiers/modifier";
 import type { Move } from "#moves/move";
 import type { AbstractConstructor } from "#types/type-helpers";
 import type { TypedEventTarget } from "#types/typed-event-target";
-import { type Constructor, isNullOrUndefined, NumberHolder, randSeedInt } from "#utils/common";
+import { type Constructor, NumberHolder, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 export class Arena {
@@ -347,7 +347,7 @@ export class Arena {
 
     const weatherDuration = new NumberHolder(0);
 
-    if (!isNullOrUndefined(user)) {
+    if (user != null) {
       weatherDuration.value = 5;
       globalScene.applyModifier(FieldEffectModifier, user.isPlayer(), user, weatherDuration);
     }
@@ -426,7 +426,7 @@ export class Arena {
 
     const terrainDuration = new NumberHolder(0);
 
-    if (!isNullOrUndefined(user)) {
+    if (user != null) {
       terrainDuration.value = 5;
       globalScene.applyModifier(FieldEffectModifier, user.isPlayer(), user, terrainDuration);
     }
