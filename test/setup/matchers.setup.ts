@@ -1,5 +1,5 @@
 import { toBeAtPhase } from "#test/test-utils/matchers/to-be-at-phase";
-import { toEqualArrayUnsorted } from "#test/test-utils/matchers/to-equal-array-unsorted";
+import { toEqualUnsorted } from "#test/test-utils/matchers/to-equal-unsorted";
 import { toHaveAbilityApplied } from "#test/test-utils/matchers/to-have-ability-applied";
 import { toHaveArenaTag } from "#test/test-utils/matchers/to-have-arena-tag";
 import { toHaveBattlerTag } from "#test/test-utils/matchers/to-have-battler-tag";
@@ -27,7 +27,7 @@ import { expect } from "vitest";
  */
 
 expect.extend({
-  toEqualArrayUnsorted,
+  toEqualUnsorted,
   toHaveKey,
   toHaveShownMessage,
   toBeAtPhase,
