@@ -6,8 +6,8 @@ import { PokemonSpecies } from "#data/pokemon-species";
 import { BiomeId } from "#enums/biome-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { SpeciesId } from "#enums/species-id";
-import type { Starter } from "#ui/handlers/starter-select-ui-handler";
-import { isNullOrUndefined, randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
+import type { Starter } from "#ui/starter-select-ui-handler";
+import { randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
@@ -32,7 +32,7 @@ export function getDailyRunStarters(seed: string): Starter[] {
       const startingLevel = globalScene.gameMode.getStartingLevel();
 
       const eventStarters = getDailyEventSeedStarters(seed);
-      if (!isNullOrUndefined(eventStarters)) {
+      if (eventStarters != null) {
         starters.push(...eventStarters);
         return;
       }
@@ -127,7 +127,7 @@ const dailyBiomeWeights: BiomeWeights = {
 
 export function getDailyStartingBiome(): BiomeId {
   const eventBiome = getDailyEventSeedBiome(globalScene.seed);
-  if (!isNullOrUndefined(eventBiome)) {
+  if (eventBiome != null) {
     return eventBiome;
   }
 
