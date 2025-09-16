@@ -84,7 +84,7 @@ interface GameManagerMatchers {
    * Check if the {@linkcode GameManager} has shown the given message at least once in the current test case.
    * @param expectedMessage - The expected message to be displayed
    * @remarks
-   * Strings consumed by this function should _always_ be produced by a call to `i18n.t`
+   * Strings consumed by this function should _always_ be produced by a call to `i18next.t`
    * to avoid hardcoding text into test files.
    */
   toHaveShownMessage(expectedMessage: string): void;
