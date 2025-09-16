@@ -1,10 +1,9 @@
 import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
-import type { OptionSelectItem } from "#ui/handlers/abstract-option-select-ui-handler";
-import type { InputFieldConfig } from "#ui/handlers/form-modal-ui-handler";
-import { FormModalUiHandler } from "#ui/handlers/form-modal-ui-handler";
-import type { ModalConfig } from "#ui/handlers/modal-ui-handler";
-import { isNullOrUndefined } from "#utils/common";
+import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
+import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
+import type { ModalConfig } from "#ui/modal-ui-handler";
 import i18next from "i18next";
 
 export class TestDialogueUiHandler extends FormModalUiHandler {
@@ -18,7 +17,7 @@ export class TestDialogueUiHandler extends FormModalUiHandler {
         .map((t, i) => {
           const value = Object.values(object)[i];
 
-          if (typeof value === "object" && !isNullOrUndefined(value)) {
+          if (typeof value === "object" && value != null) {
             // we check for not null or undefined here because if the language json file has a null key, the typeof will still be an object, but that object will be null, causing issues
             // If the value is an object, execute the same process
             // si el valor es un objeto ejecuta el mismo proceso
@@ -27,7 +26,7 @@ export class TestDialogueUiHandler extends FormModalUiHandler {
               t => t.length > 0,
             );
           }
-          if (typeof value === "string" || isNullOrUndefined(value)) {
+          if (typeof value === "string" || value == null) {
             // we check for null or undefined here as per above - the typeof is still an object but the value is null so we need to exit out of this and pass the null key
 
             // Return in the format expected by i18next
@@ -109,7 +108,7 @@ export class TestDialogueUiHandler extends FormModalUiHandler {
             handler: () => {
               // this is here to make sure that if you try to backspace then enter, the last known evt.data (backspace) is picked up
               // this is because evt.data is null for backspace, so without this, the autocomplete windows just closes
-              if (!isNullOrUndefined(evt.data) || evt.inputType?.toLowerCase() === "deletecontentbackward") {
+              if (evt.data != null || evt.inputType?.toLowerCase() === "deletecontentbackward") {
                 const separatedArray = inputObject.text.split(" ");
                 separatedArray[separatedArray.length - 1] = value;
                 inputObject.setText(separatedArray.join(" "));
