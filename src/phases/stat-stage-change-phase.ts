@@ -13,7 +13,7 @@ import type { Pokemon } from "#field/pokemon";
 import { ResetNegativeStatStageModifier } from "#modifiers/modifier";
 import { PokemonPhase } from "#phases/pokemon-phase";
 import type { ConditionalUserFieldProtectStatAbAttrParams, PreStatStageChangeAbAttrParams } from "#types/ability-types";
-import { BooleanHolder, isNullOrUndefined, NumberHolder } from "#utils/common";
+import { BooleanHolder, NumberHolder } from "#utils/common";
 import i18next from "i18next";
 
 export type StatStageChangeCallback = (
@@ -153,7 +153,7 @@ export class StatStageChangePhase extends PokemonPhase {
         applyAbAttrs("ConditionalUserFieldProtectStatAbAttr", abAttrParams);
         // TODO: Consider skipping this call if `cancelled` is false.
         const ally = pokemon.getAlly();
-        if (!isNullOrUndefined(ally)) {
+        if (ally != null) {
           applyAbAttrs("ConditionalUserFieldProtectStatAbAttr", { ...abAttrParams, pokemon: ally });
         }
 

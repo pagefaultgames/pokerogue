@@ -23,6 +23,7 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
    * @param sourceText - The text to show for the source of the status effect, if any; default `null`.
    * @param statusMessage - A string containing text to be displayed upon status setting;
    * defaults to normal key for status if empty or omitted.
+   * @todo stop passing `null` to the phase
    */
   constructor(
     battlerIndex: BattlerIndex,

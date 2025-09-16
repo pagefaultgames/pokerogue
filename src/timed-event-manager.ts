@@ -9,7 +9,6 @@ import { TextStyle } from "#enums/text-style";
 import { WeatherType } from "#enums/weather-type";
 import { addTextObject } from "#ui/text";
 import type { nil } from "#utils/common";
-import { isNullOrUndefined } from "#utils/common";
 import i18next from "i18next";
 
 export enum EventType {
@@ -428,7 +427,7 @@ export class TimedEventManager {
 
   getEventBannerLangs(): string[] {
     const ret: string[] = [];
-    ret.push(...timedEvents.find(te => this.isActive(te) && !isNullOrUndefined(te.availableLangs))?.availableLangs!);
+    ret.push(...timedEvents.find(te => this.isActive(te) && te.availableLangs != null)?.availableLangs!);
     return ret;
   }
 
@@ -437,7 +436,7 @@ export class TimedEventManager {
     timedEvents
       .filter(te => this.isActive(te))
       .map(te => {
-        if (!isNullOrUndefined(te.eventEncounters)) {
+        if (te.eventEncounters != null) {
           ret.push(...te.eventEncounters);
         }
       });
@@ -452,7 +451,7 @@ export class TimedEventManager {
     let multiplier = CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER;
     const classicFriendshipEvents = timedEvents.filter(te => this.isActive(te));
     for (const fe of classicFriendshipEvents) {
-      if (!isNullOrUndefined(fe.classicFriendshipMultiplier) && fe.classicFriendshipMultiplier > multiplier) {
+      if (fe.classicFriendshipMultiplier != null && fe.classicFriendshipMultiplier > multiplier) {
         multiplier = fe.classicFriendshipMultiplier;
       }
     }
@@ -476,7 +475,7 @@ export class TimedEventManager {
     timedEvents
       .filter(te => this.isActive(te))
       .map(te => {
-        if (!isNullOrUndefined(te.delibirdyBuff)) {
+        if (te.delibirdyBuff != null) {
           ret.push(...te.delibirdyBuff);
         }
       });
@@ -492,7 +491,7 @@ export class TimedEventManager {
     timedEvents
       .filter(te => this.isActive(te))
       .map(te => {
-        if (!isNullOrUndefined(te.weather)) {
+        if (te.weather != null) {
           ret.push(...te.weather);
         }
       });
@@ -504,7 +503,7 @@ export class TimedEventManager {
     timedEvents
       .filter(te => this.isActive(te))
       .map(te => {
-        if (!isNullOrUndefined(te.mysteryEncounterTierChanges)) {
+        if (te.mysteryEncounterTierChanges != null) {
           ret.push(...te.mysteryEncounterTierChanges);
         }
       });
@@ -514,7 +513,7 @@ export class TimedEventManager {
   getEventMysteryEncountersDisabled(): MysteryEncounterType[] {
     const ret: MysteryEncounterType[] = [];
     timedEvents
-      .filter(te => this.isActive(te) && !isNullOrUndefined(te.mysteryEncounterTierChanges))
+      .filter(te => this.isActive(te) && te.mysteryEncounterTierChanges != null)
       .map(te => {
         te.mysteryEncounterTierChanges?.map(metc => {
           if (metc.disable) {
@@ -531,7 +530,7 @@ export class TimedEventManager {
   ): MysteryEncounterTier {
     let ret = normal;
     timedEvents
-      .filter(te => this.isActive(te) && !isNullOrUndefined(te.mysteryEncounterTierChanges))
+      .filter(te => this.isActive(te) && te.mysteryEncounterTierChanges != null)
       .map(te => {
         te.mysteryEncounterTierChanges?.map(metc => {
           if (metc.mysteryEncounter === encounterType) {
@@ -544,7 +543,7 @@ export class TimedEventManager {
 
   getEventLuckBoost(): number {
     let ret = 0;
-    const luckEvents = timedEvents.filter(te => this.isActive(te) && !isNullOrUndefined(te.luckBoost));
+    const luckEvents = timedEvents.filter(te => this.isActive(te) && te.luckBoost != null);
     for (const le of luckEvents) {
       ret += le.luckBoost!;
     }
@@ -556,7 +555,7 @@ export class TimedEventManager {
     timedEvents
       .filter(te => this.isActive(te))
       .map(te => {
-        if (!isNullOrUndefined(te.luckBoostedSpecies)) {
+        if (te.luckBoostedSpecies != null) {
           ret.push(...te.luckBoostedSpecies.filter(s => !ret.includes(s)));
         }
       });
@@ -576,7 +575,7 @@ export class TimedEventManager {
   getFixedBattleEventRewards(wave: number): string[] {
     const ret: string[] = [];
     timedEvents
-      .filter(te => this.isActive(te) && !isNullOrUndefined(te.classicWaveRewards))
+      .filter(te => this.isActive(te) && te.classicWaveRewards != null)
       .map(te => {
         ret.push(...te.classicWaveRewards!.filter(cwr => cwr.wave === wave).map(cwr => cwr.type));
       });
@@ -586,7 +585,7 @@ export class TimedEventManager {
   // Gets the extra shiny chance for trainers due to event (odds/65536)
   getClassicTrainerShinyChance(): number {
     let ret = 0;
-    const tsEvents = timedEvents.filter(te => this.isActive(te) && !isNullOrUndefined(te.trainerShinyChance));
+    const tsEvents = timedEvents.filter(te => this.isActive(te) && te.trainerShinyChance != null);
     tsEvents.map(t => (ret += t.trainerShinyChance!));
     return ret;
   }
@@ -594,7 +593,7 @@ export class TimedEventManager {
   getEventBgmReplacement(bgm: string): string {
     let ret = bgm;
     timedEvents.map(te => {
-      if (this.isActive(te) && !isNullOrUndefined(te.music)) {
+      if (this.isActive(te) && te.music != null) {
         te.music.map(mr => {
           if (mr[0] === bgm) {
             console.log(`it is ${te.name} so instead of ${mr[0]} we play ${mr[1]}`);

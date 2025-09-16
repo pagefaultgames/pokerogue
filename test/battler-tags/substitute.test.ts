@@ -49,7 +49,7 @@ describe("BattlerTag - SubstituteTag", () => {
 
       vi.spyOn(messages, "getPokemonNameWithAffix").mockReturnValue("");
       vi.spyOn(mockPokemon.scene as BattleScene, "getPokemonById").mockImplementation(pokemonId =>
-        mockPokemon.id === pokemonId ? mockPokemon : null,
+        mockPokemon.id === pokemonId ? mockPokemon : undefined,
       );
     });
 

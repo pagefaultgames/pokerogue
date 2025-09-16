@@ -1,4 +1,4 @@
-import { type PokeballCounts } from "#app/battle-scene";
+import type { PokeballCounts } from "#app/battle-scene";
 import { EvolutionItem } from "#balance/pokemon-evolutions";
 import { Gender } from "#data/gender";
 import { AbilityId } from "#enums/ability-id";
@@ -18,10 +18,11 @@ import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
+import { TrainerVariant } from "#enums/trainer-variant";
 import { Unlockables } from "#enums/unlockables";
 import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
-import { type ModifierOverride } from "#modifiers/modifier-type";
+import type { ModifierOverride } from "#modifiers/modifier-type";
 import { Variant } from "#sprites/variant";
 
 /**
@@ -311,8 +312,12 @@ export type BattleStyle = "double" | "single" | "even-doubles" | "odd-doubles";
 export type RandomTrainerOverride = {
   /** The Type of trainer to force */
   trainerType: Exclude<TrainerType, TrainerType.UNKNOWN>;
-  /* If the selected trainer type has a double version, it will always use its double version. */
-  alwaysDouble?: boolean;
+  /**
+   * The {@linkcode TrainerVariant} to force.
+   * @remarks
+   * `TrainerVariant.DOUBLE` cannot be forced on the first wave of a game due to issues with trainer party generation.
+   */
+  trainerVariant?: TrainerVariant;
 };
 
 /** The type of the {@linkcode DefaultOverrides} class */

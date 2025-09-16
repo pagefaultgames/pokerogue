@@ -38,7 +38,7 @@ import { DamageAchv } from "#system/achv";
 import type { DamageResult } from "#types/damage-result";
 import type { TurnMove } from "#types/turn-move";
 import type { nil } from "#utils/common";
-import { BooleanHolder, isNullOrUndefined, NumberHolder } from "#utils/common";
+import { BooleanHolder, NumberHolder } from "#utils/common";
 import i18next from "i18next";
 
 export type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
@@ -542,7 +542,7 @@ export class MoveEffectPhase extends PokemonPhase {
       (attr: MoveAttr) =>
         attr.is("MoveEffectAttr")
         && attr.trigger === triggerType
-        && (isNullOrUndefined(selfTarget) || attr.selfTarget === selfTarget)
+        && (selfTarget == null || attr.selfTarget === selfTarget)
         && (!attr.firstHitOnly || this.firstHit)
         && (!attr.lastHitOnly || this.lastHit)
         && (!attr.firstTargetOnly || (firstTarget ?? true)),
@@ -879,7 +879,8 @@ export class MoveEffectPhase extends PokemonPhase {
 
   /**
    * @returns The {@linkcode Pokemon} using this phase's invoked move.
-   * Is never null during the move execution itself, as {@linkcode start} ends the phase immediately if a source is missing.
+   * Is never nullish during the move execution itself, as the `start` method
+   * ends the phase immediately if a source is missing.
    * @todo Delete in favor of {@linkcode PokemonPhase.getPokemon}
    */
   public getUserPokemon(): Pokemon {

@@ -74,7 +74,10 @@ export class Battle {
   public battleSeed: string = randomString(16, true);
   private battleSeedState: string | null = null;
   public moneyScattered = 0;
-  /** Primarily for double battles, keeps track of last enemy and player pokemon that triggered its ability or used a move */
+  /**
+   * Primarily for double battles, keeps track of last enemy and player pokemon that triggered its ability or used a move
+   * @todo THis is only used for Sticky Web and in a really jank way...
+   */
   public lastEnemyInvolved: number;
   public lastPlayerInvolved: number;
   public lastUsedPokeball: PokeballType | null = null;
