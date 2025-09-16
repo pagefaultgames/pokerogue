@@ -127,7 +127,6 @@ describe("Moves - Revival Blessing", () => {
     const enemyFainting = game.scene.getEnemyField()[0];
 
     game.move.use(MoveId.JUDGMENT, 0, BattlerIndex.ENEMY);
-    game.move.select(MoveId.SPLASH, 1);
 
     await game.toNextTurn();
     // If there are incorrectly two switch phases into this slot, the fainted pokemon will end up in slot 3
