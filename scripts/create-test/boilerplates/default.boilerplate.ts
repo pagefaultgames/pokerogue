@@ -43,6 +43,6 @@ describe("{{description}}", () => {
     await game.toEndOfTurn();
 
     expect(feebas).toHaveUsedMove({ move: MoveId.SPLASH, result: MoveResult.SUCCESS });
-    expect(game.textInterceptor.logs).toContain(i18next.t("moveTriggers:splash"));
+    expect(game).toHaveShownMessage(i18next.t("moveTriggers:splash"));
   });
 });

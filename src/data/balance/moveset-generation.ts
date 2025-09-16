@@ -84,6 +84,33 @@ export const GREAT_TM_MOVESET_WEIGHT = 14;
 export const ULTRA_TM_MOVESET_WEIGHT = 18;
 
 /**
+ * The base weight offset for level moves
+ *
+ * @remarks
+ * The relative likelihood of moves learned at different levels is determined by
+ * the ratio of their weights,
+ * or, the formula:
+ * `(levelB + BASE_LEVEL_WEIGHT_OFFSET) / (levelA + BASE_LEVEL_WEIGHT_OFFSET)`
+ *
+ * For example, consider move A and B that are learned at levels 1 and 60, respectively,
+ * but have no other differences (same power, accuracy, category, etc).
+ * The following table demonstrates the likelihood of move B being chosen over move A.
+ *
+ * | Offset | Likelihood |
+ * |--------|------------|
+ * |   0    |    60x     |
+ * |   1    |    30x     |
+ * |   5    |    10.8x   |
+ * |   20   |    3.8x    |
+ * |   60   |    2x      |
+ *
+ * Note that increasing this without adjusting the other weights will decrease the likelihood of non-level moves
+ *
+ * For a complete picture, see {@link https://www.desmos.com/calculator/wgln4dxigl}
+ */
+export const BASE_LEVEL_WEIGHT_OFFSET = 20;
+
+/**
  * The maximum weight an egg move can ever have
  * @remarks
  * Egg moves have their weights adjusted based on the maximum weight of the Pokémon's
