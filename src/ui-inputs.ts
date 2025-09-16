@@ -87,8 +87,8 @@ export class UiInputs {
       [Button.LEFT]: () => this.buttonDirection(Button.LEFT),
       [Button.RIGHT]: () => this.buttonDirection(Button.RIGHT),
       [Button.SUBMIT]: () => this.buttonTouch(),
-      [Button.ACTION]: () => this.buttonAb(Button.ACTION),
-      [Button.CANCEL]: () => this.buttonAb(Button.CANCEL),
+      [Button.ACTION]: () => this.buttonAB(Button.ACTION),
+      [Button.CANCEL]: () => this.buttonAB(Button.CANCEL),
       [Button.MENU]: () => this.buttonMenu(),
       [Button.STATS]: () => this.buttonGoToFilter(Button.STATS),
       [Button.CYCLE_SHINY]: () => this.buttonCycleOption(Button.CYCLE_SHINY),
@@ -132,7 +132,15 @@ export class UiInputs {
     this.doVibration(inputSuccess, vibrationLength);
   }
 
-  buttonAb(button: Button): void {
+  buttonAB(button: Button): void {
+     if (this.isInSettings()) {
+      const whiteListUIModes : UiMode[] = [
+        UiMode.MODIFIER_SELECT
+      ]
+      for (const uiMode of whiteListUIModes){
+        globalScene.ui.handlers[uiMode].updateInstructionsText()
+      }
+    }
     globalScene.ui.processInput(button);
   }
 
@@ -249,5 +257,13 @@ export class UiInputs {
     if (globalScene.ui?.getMode() === UiMode.SETTINGS) {
       (globalScene.ui.getHandler() as SettingsUiHandler).show([]);
     }
+  }
+
+  private isInSettings(){
+    return globalScene.ui?.getMode() === UiMode.SETTINGS ||
+      globalScene.ui?.getMode() === UiMode.SETTINGS_AUDIO ||
+      globalScene.ui?.getMode() === UiMode.SETTINGS_DISPLAY ||
+      globalScene.ui?.getMode() === UiMode.SETTINGS_GAMEPAD ||
+      globalScene.ui?.getMode() === UiMode.SETTINGS_KEYBOARD
   }
 }

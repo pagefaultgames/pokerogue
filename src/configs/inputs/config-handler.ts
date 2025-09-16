@@ -92,6 +92,17 @@ export function getIconWithSettingName(config, settingName) {
   return getIconWithKey(config, key);
 }
 
+export function getKeyForLatestInput(configs, source, devices, settingName) {
+  let config: any; // TODO: refine type
+  if (source === "gamepad") {
+    config = configs[devices[Device.GAMEPAD]];
+  } else {
+    config = configs[devices[Device.KEYBOARD]];
+  }
+  const key = Object.keys(config["custom"]).find(k => config["custom"][k] === settingName);
+  return key?.slice(4)
+}
+
 export function getIconForLatestInput(configs, source, devices, settingName) {
   let config: any; // TODO: refine type
   if (source === "gamepad") {

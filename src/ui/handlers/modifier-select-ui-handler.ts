@@ -11,6 +11,7 @@ import { UiMode } from "#enums/ui-mode";
 import { HealShopCostModifier, LockModifierTiersModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
 import { getPlayerShopModifierTypeOptionsForWave, TmModifierType } from "#modifiers/modifier-type";
+import { SettingKeyboard } from "#system/settings-keyboard";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { addTextObject, getModifierTierTextTint, getTextColor, getTextStyleOptions } from "#ui/text";
@@ -31,6 +32,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
   private checkButtonContainer: Phaser.GameObjects.Container;
   private continueButtonContainer: Phaser.GameObjects.Container;
   private rerollCostText: Phaser.GameObjects.Text;
+  private rerollButtonText: Phaser.GameObjects.Text;
   private lockRarityButtonText: Phaser.GameObjects.Text;
   private moveInfoOverlay: MoveInfoOverlay;
   private moveInfoOverlayActive = false;
@@ -100,26 +102,28 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.rerollButtonContainer.setName("reroll-brn");
     this.rerollButtonContainer.setVisible(false);
     ui.add(this.rerollButtonContainer);
-
-    const rerollButtonText = addTextObject(-4, -2, i18next.t("modifierSelectUiHandler:reroll"), TextStyle.PARTY);
-    rerollButtonText.setName("text-reroll-btn");
-    rerollButtonText.setOrigin(0, 0);
-    this.rerollButtonContainer.add(rerollButtonText);
+    
+    const Reroll_Key = !globalScene.enableHotkeyTip ?  globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Shiny) ? `(${globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Shiny)}) ` : "" : "";
+    this.rerollButtonText = addTextObject(-4, -2, i18next.t("modifierSelectUiHandler:reroll", {Reroll_Key}), TextStyle.PARTY);
+    this.rerollButtonText.setName("text-reroll-btn");
+    this.rerollButtonText.setOrigin(0, 0);
+    this.rerollButtonContainer.add(this.rerollButtonText);
 
     this.rerollCostText = addTextObject(0, 0, "", TextStyle.MONEY);
     this.rerollCostText.setName("text-reroll-cost");
     this.rerollCostText.setOrigin(0, 0);
-    this.rerollCostText.setPositionRelative(rerollButtonText, rerollButtonText.displayWidth + 5, 1);
+    this.rerollCostText.setPositionRelative(this.rerollButtonText, this.rerollButtonText.displayWidth + 5, 1);
     this.rerollButtonContainer.add(this.rerollCostText);
 
     this.lockRarityButtonContainer = globalScene.add.container(16, OPTION_BUTTON_YPOSITION);
     this.lockRarityButtonContainer.setVisible(false);
     ui.add(this.lockRarityButtonContainer);
 
+    const Lock_Rarity_Key = !globalScene.enableHotkeyTip ? globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Ability) ? `(${globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Ability)}) ` : "" : "";
     this.lockRarityButtonText = addTextObject(
       -4,
       -2,
-      i18next.t("modifierSelectUiHandler:lockRarities"),
+      i18next.t("modifierSelectUiHandler:lockRarities", {Lock_Rarity_Key}),
       TextStyle.PARTY,
     );
     this.lockRarityButtonText.setOrigin(0, 0);
@@ -156,6 +160,11 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     globalScene.addInfoToggle(this.moveInfoOverlay);
   }
 
+  updateInstructionsText() : void {
+    this.updateRerollText();
+    this.updateRerollCostPosition();
+  }
+
   show(args: any[]): boolean {
     globalScene.disableMenu = false;
 
@@ -181,7 +190,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     const partyHasHeldItem =
       this.player
       && globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.isTransferable).length > 0;
-    const canLockRarities = !!globalScene.findModifier(m => m instanceof LockModifierTiersModifier);
+    const canLockRarities = !(!!globalScene.findModifier(m => m instanceof LockModifierTiersModifier));
 
     this.transferButtonContainer.setVisible(false);
     this.transferButtonContainer.setAlpha(0);
@@ -201,7 +210,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.rerollButtonContainer.setPositionRelative(this.lockRarityButtonContainer, 0, canLockRarities ? -12 : 0);
 
     this.rerollCost = args[3] as number;
-
+    this.updateRerollText();
     this.updateRerollCostText();
 
     const typeOptions = args[1] as ModifierTypeOption[];
@@ -682,9 +691,27 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     for (const shopOption of shopOptions) {
       shopOption.updateCostText();
     }
-
+    this.updateRerollText();
     this.updateRerollCostText();
   }
+
+  updateRerollText(): void {
+    const Reroll_Key = !globalScene.enableHotkeyTip ? globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Shiny) ? `(${globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Shiny)}) ` : "" : "";
+    this.rerollButtonText.setText(i18next.t("modifierSelectUiHandler:reroll", { Reroll_Key }));
+    if (this.lockRarityButtonText.visible){
+      const Lock_Rarity_Key = !globalScene.enableHotkeyTip ? globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Ability) ? `(${globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Ability)}) ` : "" : "";
+      this.lockRarityButtonText.setText(i18next.t("modifierSelectUiHandler:lockRarities", { Lock_Rarity_Key }));
+    }
+  }
+
+
+  updateRerollCostPosition(): void {
+    if (globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Shiny)){
+      const Reroll_Key = globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Shiny)
+      this.rerollCostText.setPositionRelative(this.rerollButtonText, this.rerollButtonText.displayWidth + 5 + Reroll_Key?.length, 1);
+    }
+  }
+
 
   updateRerollCostText(): void {
     const rerollDisabled = this.rerollCost < 0;
@@ -700,6 +727,10 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.rerollCostText.setText(i18next.t("modifierSelectUiHandler:rerollCost", { formattedMoney }));
     this.rerollCostText.setColor(getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED));
     this.rerollCostText.setShadowColor(getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED, true));
+    if (globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Shiny)){
+      const Reroll_Key = globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Shiny)
+      this.rerollCostText.setPositionRelative(this.rerollButtonText, this.rerollButtonText.displayWidth + 5 + Reroll_Key?.length, 1);
+    }
   }
 
   updateLockRaritiesText(): void {

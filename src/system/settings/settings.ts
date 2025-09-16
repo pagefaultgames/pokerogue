@@ -151,6 +151,7 @@ export const SettingKeys = {
   Tutorials: "TUTORIALS",
   Touch_Controls: "TOUCH_CONTROLS",
   Vibration: "VIBRATION",
+  HotkeyTips: "HOTKEY_TIPS",
   Language: "LANGUAGE",
   UI_Theme: "UI_THEME",
   Window_Type: "WINDOW_TYPE",
@@ -383,6 +384,13 @@ export const Setting: Array<Setting> = [
     key: SettingKeys.Vibration,
     label: i18next.t("settings:vibrations"),
     options: AUTO_DISABLED,
+    default: 0,
+    type: SettingType.GENERAL,
+  },
+  {
+    key: SettingKeys.HotkeyTips,
+    label: i18next.t("settings:hotkeyTips"),
+    options: OFF_ON,
     default: 0,
     type: SettingType.GENERAL,
   },
@@ -905,6 +913,9 @@ export function setSetting(setting: string, value: number): boolean {
     }
     case SettingKeys.Vibration:
       globalScene.enableVibration = Setting[index].options[value].value !== "Disabled" && hasTouchscreen();
+      break;
+     case SettingKeys.HotkeyTips:
+      globalScene.enableHotkeyTip = Setting[index].options[value].value !== "On";
       break;
     case SettingKeys.Type_Hints:
       globalScene.typeHints = Setting[index].options[value].value === "On";
