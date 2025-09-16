@@ -1,3 +1,9 @@
+/**
+ * @module
+ * Setup file for custom matchers.
+ * Make sure to define the call signatures in `#test/@types/vitest.d.ts` too!
+ */
+
 import { toBeAtPhase } from "#test/test-utils/matchers/to-be-at-phase";
 import { toEqualUnsorted } from "#test/test-utils/matchers/to-equal-unsorted";
 import { toHaveAbilityApplied } from "#test/test-utils/matchers/to-have-ability-applied";
@@ -19,12 +25,6 @@ import { toHaveUsedMove } from "#test/test-utils/matchers/to-have-used-move";
 import { toHaveUsedPP } from "#test/test-utils/matchers/to-have-used-pp";
 import { toHaveWeather } from "#test/test-utils/matchers/to-have-weather";
 import { expect } from "vitest";
-
-/**
- * @module
- * Setup file for custom matchers.
- * Make sure to define the call signatures in `#test/@types/vitest.d.ts` too!
- */
 
 expect.extend({
   toEqualUnsorted,
