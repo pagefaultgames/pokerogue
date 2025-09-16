@@ -277,14 +277,15 @@ export class PhaseManager {
 
   /**
    * Adds a phase to the end of the queue
-   * @param phase {@linkcode Phase} the phase to add
+   * @param phase - The {@linkcode Phase} to add
    */
   pushPhase(phase: Phase): void {
     this.phaseQueue.pushPhase(this.checkDynamic(phase));
   }
 
   /**
-   * Adds a phase to be run immediately after the current phase finishes. Unshifted phases are run in FIFO order if multiple are queued during a single phase's execution
+   * Queue a phase to be run immediately after the current phase finishes.
+   * Unshifted phases are run in FIFO order if multiple are queued during a single phase's execution.
    * @param phase - {@linkcode Phase} the phase to add
    * @param defer - If `true` allow subsequently unshifted phases to run before this one. Default `false`
    */
@@ -307,7 +308,7 @@ export class PhaseManager {
 
   /**
    * Clears the phaseQueue
-   * @param leaveUnshifted - If `true`, leaves the top level of the tree intact
+   * @param leaveUnshifted - If `true`, leaves the top level of the tree intact; default `false`
    */
   clearPhaseQueue(leaveUnshifted = false): void {
     this.phaseQueue.clear(leaveUnshifted);
@@ -342,7 +343,7 @@ export class PhaseManager {
     if (nextPhase === null) {
       this.turnStart();
     } else {
-      this.currentPhase = nextPhase!;
+      this.currentPhase = nextPhase;
     }
 
     this.startCurrentPhase();
@@ -387,7 +388,7 @@ export class PhaseManager {
   /**
    * Attempt to find and remove the first queued {@linkcode Phase} matching the given conditions.
    * @param type - The {@linkcode PhaseString | type} of phase to search for
-   * @param phaseFilter - A {@linkcode PhaseConditionFunc} to specify conditions for the phase
+   * @param phaseFilter - An optional {@linkcode PhaseConditionFunc} to add conditions to the search
    * @returns `true` if a removal occurred, `false` otherwise
    */
   tryRemovePhase<T extends PhaseString>(type: T, phaseFilter?: PhaseConditionFunc<T>): boolean {
@@ -523,7 +524,9 @@ export class PhaseManager {
       ![BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType)
       && !this.phaseQueue.exists("SummonPhase")
     ) {
-      globalScene.getEnemyField().map(p => this.pushPhase(new PostSummonPhase(p.getBattlerIndex(), "SummonPhase")));
+      globalScene.getEnemyField().forEach(p => {
+        this.pushPhase(new PostSummonPhase(p.getBattlerIndex(), "SummonPhase"))
+      });
     }
   }
 
