@@ -964,12 +964,9 @@ export class MoveEffectPhase extends PokemonPhase {
 function isMoveReflectableBy(move: Move, target: Pokemon, useMode: MoveUseMode): boolean {
   return (
     // The move must not have just been reflected
-    !isReflected(useMode)
-    && // Reflections cannot occur while semi invulnerable
-    !target.getTag(SemiInvulnerableTag)
-    && // Move must be reflectable
-    move.hasFlag(MoveFlags.REFLECTABLE)
-    && // target must have a reflection effect active
-    (!!target.getTag(BattlerTagType.MAGIC_COAT) || target.hasAbilityWithAttr("ReflectStatusMoveAbAttr"))
+    !isReflected(useMode) // Reflections cannot occur while semi invulnerable
+    && !target.getTag(SemiInvulnerableTag) // Move must be reflectable
+    && move.hasFlag(MoveFlags.REFLECTABLE) // target must have a reflection effect active
+    && (!!target.getTag(BattlerTagType.MAGIC_COAT) || target.hasAbilityWithAttr("ReflectStatusMoveAbAttr"))
   );
 }
