@@ -18,7 +18,7 @@ export function toHaveKey(this: MatcherState, received: unknown, expectedKey: un
 
   if (received.size === 0) {
     return {
-      pass: false,
+      pass: this.isNot,
       message: () => "Expected to receive a non-empty Map, but received map was empty!",
       expected: expectedKey,
       actual: received,
