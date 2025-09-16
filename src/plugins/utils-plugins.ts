@@ -4,7 +4,7 @@ import path from "path"; // vite externalize in production, see https://vite.dev
  * Maps namespaces that deviate from the file-name
  *
  * @remarks expects file-name as value and custom-namespace as key
- * */
+ */
 export const namespaceMap = {
   titles: "trainer-titles",
   moveTriggers: "move-trigger",

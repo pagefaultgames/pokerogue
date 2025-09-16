@@ -1,7 +1,7 @@
 import { defineConfig, loadEnv, type Rollup, type UserConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
-import { minifyJsonPlugin } from "./src/plugins/vite/vite-minify-json-plugin";
 import { LocaleNamespace } from "./src/plugins/vite/namespaces-i18n-plugin";
+import { minifyJsonPlugin } from "./src/plugins/vite/vite-minify-json-plugin";
 
 export const defaultConfig: UserConfig = {
   plugins: [tsconfigPaths(), minifyJsonPlugin(["images", "battle-anims"], true), LocaleNamespace()],
