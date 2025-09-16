@@ -1,7 +1,7 @@
 /**
- * @module
  * Setup file for custom matchers.
  * Make sure to define the call signatures in `#test/@types/vitest.d.ts` too!
+ * @module
  */
 
 import { toBeAtPhase } from "#test/test-utils/matchers/to-be-at-phase";
