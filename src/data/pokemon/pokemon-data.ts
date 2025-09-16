@@ -314,6 +314,18 @@ export class PokemonTurnData {
    * - `0` = Move is finished
    */
   public hitsLeft = -1;
+  /**
+   * The final amount of damage dealt by this Pokemon's last attack against each of its targets,
+   * indexed by their respective `BattlerIndex`es. \
+   * Does NOT count hits to a Pokemon's substitute.
+   * Reset to an empty array upon attempting to use a move,
+   * and is used to calculate U-Turn + Wimp Out interactions.
+   */
+  public lastMoveDamageDealt: number[] = [0, 0, 0, 0];
+  /**
+   * The total amount of damage dealt by this Pokemon's last attack.
+   * TODO: Reset this after each attack
+   */
   public totalDamageDealt = 0;
   public singleHitDamageDealt = 0;
   public damageTaken = 0;

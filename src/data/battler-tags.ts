@@ -815,10 +815,14 @@ export class ConfusedTag extends SerializableBattlerTag {
     );
   }
 
+  /**
+   * Tick down this Pokemon's confusion duration, randomly interrupting its move if not cured.
+   * @param pokemon - The {@linkcode Pokemon} with this tag
+   * @param lapseType - The {@linkcode BattlerTagLapseType | lapse type} triggering this tag's effects.
+   * @returns Whether the tag should be kept.
+   */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    const shouldLapse = lapseType !== BattlerTagLapseType.CUSTOM && super.lapse(pokemon, lapseType);
-
-    if (!shouldLapse) {
+    if (!super.lapse(pokemon, lapseType)) {
       return false;
     }
 
@@ -832,17 +836,20 @@ export class ConfusedTag extends SerializableBattlerTag {
     phaseManager.unshiftNew("CommonAnimPhase", pokemon.getBattlerIndex(), undefined, CommonAnim.CONFUSION);
 
     // 1/3 chance of hitting self with a 40 base power move
-    if (pokemon.randBattleSeedInt(3) === 0 || Overrides.CONFUSION_ACTIVATION_OVERRIDE === true) {
-      const atk = pokemon.getEffectiveStat(Stat.ATK);
-      const def = pokemon.getEffectiveStat(Stat.DEF);
-      const damage = toDmgValue(
-        ((((2 * pokemon.level) / 5 + 2) * 40 * atk) / def / 50 + 2) * (pokemon.randBattleSeedIntRange(85, 100) / 100),
-      );
-      // Intentionally don't increment rage fist's hitCount
-      phaseManager.queueMessage(i18next.t("battlerTags:confusedLapseHurtItself"));
-      pokemon.damageAndUpdate(damage, { result: HitResult.CONFUSION });
-      (phaseManager.getCurrentPhase() as MovePhase).cancel();
+    const shouldInterruptMove = Overrides.CONFUSION_ACTIVATION_OVERRIDE ?? pokemon.randBattleSeedInt(3) === 0;
+    if (!shouldInterruptMove) {
+      return true;
     }
+
+    (phaseManager.getCurrentPhase() as MovePhase).cancel();
+    const atk = pokemon.getEffectiveStat(Stat.ATK);
+    const def = pokemon.getEffectiveStat(Stat.DEF);
+    const damage = toDmgValue(
+      ((((2 * pokemon.level) / 5 + 2) * 40 * atk) / def / 50 + 2) * (pokemon.randBattleSeedIntRange(85, 100) / 100),
+    );
+    // Intentionally don't increment rage fist's hitCount
+    phaseManager.queueMessage(i18next.t("battlerTags:confusedLapseHurtItself"));
+    pokemon.damageAndUpdate(damage, { result: HitResult.CONFUSION });
 
     return true;
   }
