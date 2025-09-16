@@ -10,6 +10,7 @@ import type { ArenaTagType } from "#enums/arena-tag-type";
 import type { BattlerTagType } from "#enums/battler-tag-type";
 import type { MoveId } from "#enums/move-id";
 import type { PokemonType } from "#enums/pokemon-type";
+import type { PositionalTag } from "#data/positional-tags/positional-tag";
 import type { PositionalTagType } from "#enums/positional-tag-type";
 import type { BattleStat, EffectiveStat } from "#enums/stat";
 import type { WeatherType } from "#enums/weather-type";
@@ -27,12 +28,26 @@ import type { AtLeastOne } from "#types/type-helpers";
 import type { toDmgValue } from "#utils/common";
 import type { expect } from "vitest";
 
-// #region Boilerplate
+// #region Boilerplate/Helpers
 declare module "vitest" {
-  interface Assertion<T> extends GenericMatchers<T>, GameManagerMatchers<T>, ArenaMatchers<T>, PokemonMatchers<T> {}
+  interface Assertion<T>
+    extends GenericMatchers<T>,
+      RestrictMatcher<GameManagerMatchers, T, GameManager>,
+      RestrictMatcher<ArenaMatchers, T, GameManager>,
+      RestrictMatcher<PokemonMatchers, T, Pokemon> {}
 }
 
-// #endregion Boilerplate
+/**
+ * Utility type to restrict matchers' properties based on the type of `T`.
+ * If it does not extend `R`, all methods inside `M` will have their types resolved to `never`.
+ * @typeParam M - The type of the matchers object to restrict
+ * @typeParam T - The type parameter of the assertion
+ * @typeParam R - The type to restrict T based off of
+ */
+type RestrictMatcher<M extends object, T, R> = {
+  [k in keyof M]: T extends R ? M[k] : never;
+};
+// #endregion Boilerplate/Helpers
 
 // #region Generic Matchers
 interface GenericMatchers<T> {
@@ -45,7 +60,7 @@ interface GenericMatchers<T> {
    * @param expected - The expected contents of the array, in any order
    * @see {@linkcode expect.arrayContaining}
    */
-  toEqualArrayUnsorted(expected: T extends (infer U)[] ? U[] : never): void;
+  toEqualArrayUnsorted: T extends (infer U)[] ? (expected: U[]) => void : never;
 
   /**
    * Check whether a {@linkcode Map} contains the given key, disregarding its value.
@@ -56,12 +71,12 @@ interface GenericMatchers<T> {
    * `expect(x).toContain[y, expect.anything()]`,
    * this is still preferred due to being more ergonomic and provides better error messsages.
    */
-  toHaveKey(expectedKey: T extends Map<infer K, unknown> ? K : never): void;
+  toHaveKey: T extends Map<infer K, unknown> ? (expectedKey: K) => void : never;
 }
 // #endregion Generic Matchers
 
 // #region GameManager Matchers
-interface GameManagerMatchers<_T> {
+interface GameManagerMatchers {
   /**
    * Check if the {@linkcode GameManager} has shown the given message at least once in the current test case.
    * @param expectedMessage - The expected message to be displayed
@@ -76,27 +91,25 @@ interface GameManagerMatchers<_T> {
    * @param expectedPhase - The expected {@linkcode PhaseString | name of the phase}
    */
   toBeAtPhase(expectedPhase: PhaseString): void;
-}
-
-// #endregion GameManager Matchers
+} // #endregion GameManager Matchers
 
 // #region Arena Matchers
-interface ArenaMatchers<_T> {
+interface ArenaMatchers {
   /**
    * Check whether the current {@linkcode WeatherType} is as expected.
-   * @param expectedWeatherType - The expected {@linkcode WeatherType}
+   * @param expectedWeatherType - The expected `WeatherType`
    */
   toHaveWeather(expectedWeatherType: WeatherType): void;
 
   /**
    * Check whether the current {@linkcode TerrainType} is as expected.
-   * @param expectedTerrainType - The expected {@linkcode TerrainType}
+   * @param expectedTerrainType - The expected `TerrainType`
    */
   toHaveTerrain(expectedTerrainType: TerrainType): void;
 
   /**
    * Check whether the current {@linkcode Arena} contains the given {@linkcode ArenaTag}.
-   * @param expectedTag - A partially-filled {@linkcode ArenaTag} containing the desired properties
+   * @param expectedTag - A partially-filled `ArenaTag` containing the desired properties
    */
   toHaveArenaTag<A extends ArenaTagType>(expectedTag: toHaveArenaTagOptions<A>): void;
   /**
@@ -114,15 +127,16 @@ interface ArenaMatchers<_T> {
   /**
    * Check whether the current {@linkcode Arena} contains the given number of {@linkcode PositionalTag}s.
    * @param expectedType - The {@linkcode PositionalTagType} of the desired tag
-   * @param count - The number of instances of {@linkcode expectedType} that should be active;
+   * @param count - The number of instances of `expectedType` that should be active;
    * defaults to `1` and must be within the range `[0, 4]`
    */
   toHavePositionalTag(expectedType: PositionalTagType, count?: number): void;
 }
+
 // #endregion Arena Matchers
 
 // #region Pokemon Matchers
-interface PokemonMatchers<_T> {
+interface PokemonMatchers {
   /**
    * Check whether a {@linkcode Pokemon}'s current typing includes the given types.
    * @param expectedTypes - The expected {@linkcode PokemonType}s to check against; must have length `>0`
@@ -218,5 +232,4 @@ interface PokemonMatchers<_T> {
    */
   toHaveUsedPP(moveId: MoveId, ppUsed: number | "all"): void;
 }
-
 // #endregion Pokemon Matchers
