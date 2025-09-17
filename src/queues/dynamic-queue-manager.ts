@@ -5,9 +5,9 @@ import type { Pokemon } from "#app/field/pokemon";
 import type { Phase } from "#app/phase";
 import type { MovePhase } from "#app/phases/move-phase";
 import { MovePhasePriorityQueue } from "#app/queues/move-phase-priority-queue";
-import type { PriorityQueue } from "#app/queues/phase-priority-queue";
 import { PokemonPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";
 import { PostSummonPhasePriorityQueue } from "#app/queues/post-summon-phase-priority-queue";
+import type { PriorityQueue } from "#app/queues/priority-queue";
 import type { BattlerIndex } from "#enums/battler-index";
 import type { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 
@@ -28,7 +28,7 @@ const nonDynamicPokemonPhases: PhaseString[] = [
 /**
 The dynamic queue manager holds priority queues for phases which are queued as dynamic.
 
-Dynamic phases are generally those which hold a pokemon and are unshifted, not pushed. 
+Dynamic phases are generally those which hold a pokemon and are unshifted, not pushed.
 Queues work by sorting their entries in speed order (and possibly with more complex ordering) before each time a phase is popped.
 
 As the holder, this structure is also used to access and modify queued phases. This is mostly used in redirection, cancellation, etc. of {@linkcode MovePhase}s.
@@ -87,7 +87,7 @@ export class DynamicQueueManager {
    * @returns `true` if a matching phase exists, `false` otherwise
    */
   public exists<T extends PhaseString>(type: T, condition?: PhaseConditionFunc<T>): boolean {
-    return !!this.dynamicPhaseMap.get(type)?.hasPhaseWithCondition(condition);
+    return !!this.dynamicPhaseMap.get(type)?.has(condition);
   }
 
   /**
@@ -133,7 +133,7 @@ export class DynamicQueueManager {
    * @returns The MovePhase, or `undefined` if it does not exist
    */
   public getMovePhase(condition: PhaseConditionFunc<"MovePhase">): MovePhase | undefined {
-    return this.getMovePhaseQueue().findPhase(condition);
+    return this.getMovePhaseQueue().find(condition);
   }
 
   /**
@@ -166,7 +166,7 @@ export class DynamicQueueManager {
     this.getMovePhaseQueue().clearTurnOrder();
   }
 
-  /** Interal helper to get the {@linkcode MovePhasePriorityQueue} */
+  /** Internal helper to get the {@linkcode MovePhasePriorityQueue} */
   private getMovePhaseQueue(): MovePhasePriorityQueue {
     return this.dynamicPhaseMap.get("MovePhase") as MovePhasePriorityQueue;
   }

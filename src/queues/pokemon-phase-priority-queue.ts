@@ -1,5 +1,5 @@
 import type { DynamicPhase } from "#app/@types/phase-types";
-import { PriorityQueue } from "#app/queues/phase-priority-queue";
+import { PriorityQueue } from "#app/queues/priority-queue";
 import { sortInSpeedOrder } from "#app/utils/speed-order";
 import type { BattlerIndex } from "#enums/battler-index";
 

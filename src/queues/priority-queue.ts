@@ -21,15 +21,15 @@ export abstract class PriorityQueue<T> {
   }
 
   /**
-   * Adds a phase to the queue
-   * @param phase The phase to add
+   * Adds an element to the queue
+   * @param element The element to add
    */
-  public push(phase: T): void {
-    this.queue.push(phase);
+  public push(element: T): void {
+    this.queue.push(element);
   }
 
   /**
-   * Removes all phases from the queue
+   * Removes all elements from the queue
    */
   public clear(): void {
     this.queue.splice(0, this.queue.length);
@@ -48,21 +48,21 @@ export abstract class PriorityQueue<T> {
    * {@linkcode reorder} is not called by this method, so the removal is not guaranteed to be the true "first" element.
    */
   public remove(condition?: (t: T) => boolean): boolean {
-    const phaseIndex = this.queue.findIndex(condition ?? (() => true));
-    if (phaseIndex > -1) {
-      this.queue.splice(phaseIndex, 1);
+    const index = this.queue.findIndex(condition ?? (() => true));
+    if (index > -1) {
+      this.queue.splice(index, 1);
       return true;
     }
     return false;
   }
 
-  /** Returns a phase matching the condition */
-  public findPhase(condition?: (t: T) => boolean): T | undefined {
-    return this.queue.find(phase => !condition || condition(phase));
+  /** Returns an element matching the condition */
+  public find(condition?: (t: T) => boolean): T | undefined {
+    return this.queue.find(e => !condition || condition(e));
   }
 
-  /** Returns if a phase matching the condition exists */
-  public hasPhaseWithCondition(condition?: (t: T) => boolean): boolean {
-    return this.queue.find(phase => !condition || condition(phase)) !== undefined;
+  /** Returns if an element matching the condition exists */
+  public has(condition?: (t: T) => boolean): boolean {
+    return this.queue.find(e => !condition || condition(e)) !== undefined;
   }
 }
