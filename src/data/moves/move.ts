@@ -10752,7 +10752,7 @@ export function initMoves() {
       .condition(
         () => {
           const weather = globalScene.arena.weather;
-          if (isNullOrUndefined(weather) || weather.isEffectSuppressed()) {
+          if (weather == null || weather.isEffectSuppressed()) {
             return false;
           }
           return weather.weatherType === WeatherType.HAIL || weather.weatherType === WeatherType.SNOW;
