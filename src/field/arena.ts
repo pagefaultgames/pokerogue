@@ -346,12 +346,7 @@ export class Arena {
 
     this.weather = weather ? new Weather(weather, weatherDuration.value, weatherDuration.value) : null;
     this.eventTarget.dispatchEvent(
-      new WeatherChangedEvent(
-        oldWeatherType,
-        this.weather?.weatherType!,
-        this.weather?.turnsLeft!,
-        this.weather?.turnsLeft!,
-      ),
+      new WeatherChangedEvent(oldWeatherType, this.weather?.weatherType!, this.weather?.turnsLeft!),
     ); // TODO: is this bang correct?
 
     if (this.weather) {
@@ -433,12 +428,7 @@ export class Arena {
     this.terrain = terrain ? new Terrain(terrain, terrainDuration.value, terrainDuration.value) : null;
 
     this.eventTarget.dispatchEvent(
-      new TerrainChangedEvent(
-        oldTerrainType,
-        this.terrain?.terrainType!,
-        this.terrain?.turnsLeft!,
-        this.terrain?.turnsLeft!,
-      ),
+      new TerrainChangedEvent(oldTerrainType, this.terrain?.terrainType!, this.terrain?.turnsLeft!),
     ); // TODO: are those bangs correct?
 
     if (this.terrain) {

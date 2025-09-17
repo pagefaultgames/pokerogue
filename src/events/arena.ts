@@ -22,7 +22,7 @@ export class ArenaEvent extends Event {
   public duration: number;
   /** The maximum duration of the {@linkcode ArenaEventType} */
   public maxDuration: number;
-  constructor(eventType: ArenaEventType, duration: number, maxDuration: number) {
+  constructor(eventType: ArenaEventType, duration: number, maxDuration?: number) {
     super(eventType);
 
     this.duration = duration;
@@ -35,7 +35,7 @@ export class WeatherChangedEvent extends ArenaEvent {
   public oldWeatherType: WeatherType;
   /** The {@linkcode WeatherType} being set */
   public newWeatherType: WeatherType;
-  constructor(oldWeatherType: WeatherType, newWeatherType: WeatherType, duration: number, maxDuration: number) {
+  constructor(oldWeatherType: WeatherType, newWeatherType: WeatherType, duration: number, maxDuration?: number) {
     super(ArenaEventType.WEATHER_CHANGED, duration, maxDuration);
 
     this.oldWeatherType = oldWeatherType;
@@ -48,7 +48,7 @@ export class TerrainChangedEvent extends ArenaEvent {
   public oldTerrainType: TerrainType;
   /** The {@linkcode TerrainType} being set */
   public newTerrainType: TerrainType;
-  constructor(oldTerrainType: TerrainType, newTerrainType: TerrainType, duration: number, maxDuration: number) {
+  constructor(oldTerrainType: TerrainType, newTerrainType: TerrainType, duration: number, maxDuration?: number) {
     super(ArenaEventType.TERRAIN_CHANGED, duration, maxDuration);
 
     this.oldTerrainType = oldTerrainType;
@@ -71,7 +71,7 @@ export class TagAddedEvent extends ArenaEvent {
     arenaTagType: ArenaTagType,
     arenaTagSide: ArenaTagSide,
     duration: number,
-    maxDuration: number,
+    maxDuration?: number,
     arenaTagLayers?: number,
     arenaTagMaxLayers?: number,
   ) {
@@ -90,7 +90,7 @@ export class TagRemovedEvent extends ArenaEvent {
   /** The {@linkcode ArenaTagSide} the tag was being placed on */
   public arenaTagSide: ArenaTagSide;
   constructor(arenaTagType: ArenaTagType, arenaTagSide: ArenaTagSide, duration: number) {
-    super(ArenaEventType.TAG_REMOVED, duration, duration);
+    super(ArenaEventType.TAG_REMOVED, duration);
 
     this.arenaTagType = arenaTagType;
     this.arenaTagSide = arenaTagSide;
