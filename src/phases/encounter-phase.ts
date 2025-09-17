@@ -580,7 +580,7 @@ export class EncounterPhase extends BattlePhase {
         && (currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily)
         && availablePartyMembers.length > minPartySize;
 
-    const phaseManager = globalScene.phaseManager;
+      const phaseManager = globalScene.phaseManager;
       if (!availablePartyMembers[0].isOnField()) {
         phaseManager.pushNew("SummonPhase", 0, true, false, checkSwitch);
       }
