@@ -71,10 +71,11 @@ export class TagAddedEvent extends ArenaEvent {
     arenaTagType: ArenaTagType,
     arenaTagSide: ArenaTagSide,
     duration: number,
+    maxDuration: number,
     arenaTagLayers?: number,
     arenaTagMaxLayers?: number,
   ) {
-    super(ArenaEventType.TAG_ADDED, duration);
+    super(ArenaEventType.TAG_ADDED, duration, maxDuration);
 
     this.arenaTagType = arenaTagType;
     this.arenaTagSide = arenaTagSide;
@@ -89,7 +90,7 @@ export class TagRemovedEvent extends ArenaEvent {
   /** The {@linkcode ArenaTagSide} the tag was being placed on */
   public arenaTagSide: ArenaTagSide;
   constructor(arenaTagType: ArenaTagType, arenaTagSide: ArenaTagSide, duration: number) {
-    super(ArenaEventType.TAG_REMOVED, duration);
+    super(ArenaEventType.TAG_REMOVED, duration, duration);
 
     this.arenaTagType = arenaTagType;
     this.arenaTagSide = arenaTagSide;

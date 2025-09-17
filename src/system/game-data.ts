@@ -1041,12 +1041,14 @@ export class GameData {
         if (globalScene.arena.tags) {
           for (const tag of globalScene.arena.tags) {
             if (tag instanceof EntryHazardTag) {
-              const { tagType, side, turnCount, layers, maxLayers } = tag as EntryHazardTag;
+              const { tagType, side, turnCount, maxDuration, layers, maxLayers } = tag as EntryHazardTag;
               globalScene.arena.eventTarget.dispatchEvent(
-                new TagAddedEvent(tagType, side, turnCount, layers, maxLayers),
+                new TagAddedEvent(tagType, side, turnCount, maxDuration, layers, maxLayers),
               );
             } else {
-              globalScene.arena.eventTarget.dispatchEvent(new TagAddedEvent(tag.tagType, tag.side, tag.turnCount));
+              globalScene.arena.eventTarget.dispatchEvent(
+                new TagAddedEvent(tag.tagType, tag.side, tag.turnCount, tag.maxDuration),
+              );
             }
           }
         }

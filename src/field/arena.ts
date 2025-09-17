@@ -715,8 +715,8 @@ export class Arena {
       existingTag.onOverlap(this, globalScene.getPokemonById(sourceId));
 
       if (existingTag instanceof EntryHazardTag) {
-        const { tagType, side, turnCount, layers, maxLayers } = existingTag as EntryHazardTag;
-        this.eventTarget.dispatchEvent(new TagAddedEvent(tagType, side, turnCount, layers, maxLayers));
+        const { tagType, side, turnCount, maxDuration, layers, maxLayers } = existingTag as EntryHazardTag;
+        this.eventTarget.dispatchEvent(new TagAddedEvent(tagType, side, turnCount, maxDuration, layers, maxLayers));
       }
 
       return false;
@@ -731,7 +731,7 @@ export class Arena {
       const { layers = 0, maxLayers = 0 } = newTag instanceof EntryHazardTag ? newTag : {};
 
       this.eventTarget.dispatchEvent(
-        new TagAddedEvent(newTag.tagType, newTag.side, newTag.turnCount, layers, maxLayers),
+        new TagAddedEvent(newTag.tagType, newTag.side, newTag.turnCount, newTag.maxDuration, layers, maxLayers),
       );
     }
 
