@@ -231,7 +231,7 @@ const turnEndPhases: PhaseString[] = [
   "BerryPhase",
   "CheckStatusEffectPhase",
   "TurnEndPhase",
-];
+] as const;
 
 /**
  * PhaseManager is responsible for managing the phases in the battle scene
