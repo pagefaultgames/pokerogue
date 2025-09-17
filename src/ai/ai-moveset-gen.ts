@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { speciesEggMoves } from "#balance/egg-moves";
 import {
+  BASE_LEVEL_WEIGHT_OFFSET,
   BASE_WEIGHT_MULTIPLIER,
   BOSS_EXTRA_WEIGHT_MULTIPLIER,
   COMMON_TIER_TM_LEVEL_REQUIREMENT,
@@ -72,7 +73,7 @@ function getAndWeightLevelMoves(pokemon: Pokemon): Map<MoveId, number> {
       continue;
     }
 
-    let weight = learnLevel + 20;
+    let weight = learnLevel + BASE_LEVEL_WEIGHT_OFFSET;
     switch (learnLevel) {
       case EVOLVE_MOVE:
         weight = EVOLUTION_MOVE_WEIGHT;
@@ -132,6 +133,11 @@ function getTmPoolForSpecies(
 ): void {
   const [allowCommon, allowGreat, allowUltra] = allowedTiers;
   const tms = speciesTmMoves[speciesId];
+  // Species with no learnable TMs (e.g. Ditto) don't have entries in the `speciesTmMoves` object,
+  // so this is needed to avoid iterating over `undefined`
+  if (tms == null) {
+    return;
+  }
 
   let moveId: MoveId;
   for (const tm of tms) {
@@ -241,7 +247,11 @@ function getEggPoolForSpecies(
   excludeRare: boolean,
   rareEggMoveWeight = 0,
 ): void {
-  for (const [idx, moveId] of speciesEggMoves[rootSpeciesId].entries()) {
+  const eggMoves = speciesEggMoves[rootSpeciesId];
+  if (eggMoves == null) {
+    return;
+  }
+  for (const [idx, moveId] of eggMoves.entries()) {
     if (levelPool.has(moveId) || (idx === 3 && excludeRare)) {
       continue;
     }
@@ -416,7 +426,6 @@ function adjustDamageMoveWeights(pool: Map<MoveId, number>, pokemon: Pokemon, wi
  * @param pool - The move pool to calculate the total weight for
  * @returns The total weight of all moves in the pool
  */
-// biome-ignore lint/correctness/noUnusedVariables: May be useful
 function calculateTotalPoolWeight(pool: Map<MoveId, number>): number {
   let totalWeight = 0;
   for (const weight of pool.values()) {
@@ -622,7 +631,7 @@ function fillInRemainingMovesetSlots(
  * @param note - Short note to include in the log for context
  */
 function debugMoveWeights(pokemon: Pokemon, pool: Map<MoveId, number>, note: string): void {
-  if (isBeta || import.meta.env.DEV) {
+  if ((isBeta || import.meta.env.DEV) && import.meta.env.NODE_ENV !== "test") {
     const moveNameToWeightMap = new Map<string, number>();
     const sortedByValue = Array.from(pool.entries()).sort((a, b) => b[1] - a[1]);
     for (const [moveId, weight] of sortedByValue) {
@@ -712,4 +721,50 @@ export function generateMoveset(pokemon: Pokemon): void {
     baseWeights,
     filterPool(baseWeights, (m: MoveId) => !pokemon.moveset.some(mo => m[0] === mo.moveId)),
   );
+}
+
+/**
+ * Exports for internal testing purposes.
+ * ⚠️ These *must not* be used outside of tests, as they will not be defined.
+ * @internal
+ */
+export const __INTERNAL_TEST_EXPORTS: {
+  getAndWeightLevelMoves: typeof getAndWeightLevelMoves;
+  getAllowedTmTiers: typeof getAllowedTmTiers;
+  getTmPoolForSpecies: typeof getTmPoolForSpecies;
+  getAndWeightTmMoves: typeof getAndWeightTmMoves;
+  getEggMoveWeight: typeof getEggMoveWeight;
+  getEggPoolForSpecies: typeof getEggPoolForSpecies;
+  getAndWeightEggMoves: typeof getAndWeightEggMoves;
+  filterMovePool: typeof filterMovePool;
+  adjustWeightsForTrainer: typeof adjustWeightsForTrainer;
+  adjustDamageMoveWeights: typeof adjustDamageMoveWeights;
+  calculateTotalPoolWeight: typeof calculateTotalPoolWeight;
+  filterPool: typeof filterPool;
+  forceStabMove: typeof forceStabMove;
+  filterRemainingTrainerMovePool: typeof filterRemainingTrainerMovePool;
+  fillInRemainingMovesetSlots: typeof fillInRemainingMovesetSlots;
+} = {} as any;
+
+// We can't use `import.meta.vitest` here, because this would not be set
+// until the tests themselves begin to run, which is after imports
+// So we rely on NODE_ENV being test instead
+if (import.meta.env.NODE_ENV === "test") {
+  Object.assign(__INTERNAL_TEST_EXPORTS, {
+    getAndWeightLevelMoves,
+    getAllowedTmTiers,
+    getTmPoolForSpecies,
+    getAndWeightTmMoves,
+    getEggMoveWeight,
+    getEggPoolForSpecies,
+    getAndWeightEggMoves,
+    filterMovePool,
+    adjustWeightsForTrainer,
+    adjustDamageMoveWeights,
+    calculateTotalPoolWeight,
+    filterPool,
+    forceStabMove,
+    filterRemainingTrainerMovePool,
+    fillInRemainingMovesetSlots,
+  });
 }
