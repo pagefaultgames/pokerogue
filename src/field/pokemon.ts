@@ -5697,10 +5697,10 @@ export class PlayerPokemon extends Pokemon {
     const finalFriendship =
       capped && newFriendship > RARE_CANDY_FRIENDSHIP_CAP
         ? Math.max(RARE_CANDY_FRIENDSHIP_CAP, this.friendship)
-        : this.friendship + friendship;
+        : newFriendship;
 
     this.friendship = Math.min(finalFriendship, 255);
-    if (newFriendship >= 255) {
+    if (this.friendship >= 255) {
       globalScene.validateAchv(achvs.MAX_FRIENDSHIP);
       awardRibbonsToSpeciesLine(this.species.speciesId, RibbonData.FRIENDSHIP);
     }
