@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER } from "#balance/starters";
+import type { PokemonSpeciesFilter } from "#data/pokemon-species";
 import type { WeatherPoolEntry } from "#data/weather";
 import { Challenges } from "#enums/challenges";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -9,6 +10,7 @@ import { TextStyle } from "#enums/text-style";
 import { WeatherType } from "#enums/weather-type";
 import { addTextObject } from "#ui/text";
 import type { nil } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 export enum EventType {
@@ -25,7 +27,7 @@ interface EventBanner {
   availableLangs?: string[];
 }
 
-interface EventEncounter {
+export interface EventEncounter {
   species: SpeciesId;
   blockEvolution?: boolean;
   formIndex?: number;
@@ -441,6 +443,23 @@ export class TimedEventManager {
         }
       });
     return ret;
+  }
+
+  getAllValidEventEncounters(
+    allowSubLegendary = true,
+    allowLegendary = true,
+    allowMythical = true,
+    speciesFilter: PokemonSpeciesFilter,
+  ): EventEncounter[] {
+    return this.getEventEncounters().filter(enc => {
+      const species = getPokemonSpecies(enc.species);
+      return (
+        (allowSubLegendary || !species.subLegendary)
+        && (allowLegendary || !species.legendary)
+        && (allowMythical || !species.mythical)
+        && speciesFilter(species)
+      );
+    });
   }
 
   /**

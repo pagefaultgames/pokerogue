@@ -2844,13 +2844,17 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const shinyThreshold = new NumberHolder(BASE_SHINY_CHANCE);
     if (thresholdOverride === undefined) {
       if (timedEventManager.isEventActive()) {
-        const tchance = timedEventManager.getClassicTrainerShinyChance();
-        shinyThreshold.value *= timedEventManager.getShinyMultiplier();
-        if (this.hasTrainer() && tchance > 0) {
+        if (this.isEnemy() && this.hasTrainer()) {
+          // Trainer shiny event multiplier
+          const tchance = timedEventManager.getClassicTrainerShinyChance();
           shinyThreshold.value = Math.max(tchance, shinyThreshold.value); // Choose the higher boost
+        } else {
+          // Wild shiny event multiplier
+          shinyThreshold.value *= timedEventManager.getShinyMultiplier();
         }
       }
-      if (!this.hasTrainer()) {
+      if (this.isPlayer() || !this.hasTrainer()) {
+        // Apply shiny modifiers only to Player or wild mons
         globalScene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
       }
     } else {
@@ -2874,9 +2878,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * The base shiny odds are {@linkcode BASE_SHINY_CHANCE} / `65536`
    * @param thresholdOverride number that is divided by `2^16` (`65536`) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
    * @param applyModifiersToOverride If {@linkcode thresholdOverride} is set and this is true, will apply Shiny Charm and event modifiers to {@linkcode thresholdOverride}
+   * @param maxThreshold The maximum threshold allowed after applying modifiers
    * @returns `true` if the Pokemon has been set as a shiny, `false` otherwise
    */
-  public trySetShinySeed(thresholdOverride?: number, applyModifiersToOverride?: boolean): boolean {
+  public trySetShinySeed(
+    thresholdOverride?: number,
+    applyModifiersToOverride?: boolean,
+    maxThreshold?: number,
+  ): boolean {
     if (!this.shiny) {
       const shinyThreshold = new NumberHolder(thresholdOverride ?? BASE_SHINY_CHANCE);
       if (applyModifiersToOverride) {
@@ -2884,6 +2893,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
           shinyThreshold.value *= timedEventManager.getShinyMultiplier();
         }
         globalScene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
+      }
+
+      if (maxThreshold && maxThreshold > 0) {
+        shinyThreshold.value = Math.min(maxThreshold, shinyThreshold.value);
       }
 
       this.shiny = randSeedInt(65536) < shinyThreshold.value;

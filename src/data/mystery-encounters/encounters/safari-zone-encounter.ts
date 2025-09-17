@@ -8,11 +8,11 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PlayerGender } from "#enums/player-gender";
 import { PokeballType } from "#enums/pokeball";
-import { TrainerSlot } from "#enums/trainer-slot";
 import type { EnemyPokemon } from "#field/pokemon";
-import { HiddenAbilityRateBoosterModifier, IvScannerModifier } from "#modifiers/modifier";
+import { IvScannerModifier } from "#modifiers/modifier";
 import { getEncounterText, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import {
+  getRandomEncounterPokemon,
   initSubsequentOptionSelect,
   leaveEncounterWithoutBattle,
   transitionMysteryEncounterIntroVisuals,
@@ -29,7 +29,7 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import type { MysteryEncounterOption } from "#mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { MoneyRequirement } from "#mystery-encounters/mystery-encounter-requirements";
-import { NumberHolder, randSeedInt } from "#utils/common";
+import { BooleanHolder, NumberHolder, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 /** the i18n namespace for the encounter */
@@ -278,36 +278,32 @@ async function summonSafariPokemon() {
 
   // Generate pokemon using safariPokemonRemaining so they are always the same pokemon no matter how many turns are taken
   // Safari pokemon roll twice on shiny and HA chances, but are otherwise normal
-  let enemySpecies: PokemonSpecies;
+  const eventEncs = new NumberHolder(0);
+  const eventChance = new NumberHolder(50);
   let pokemon: any;
   globalScene.executeWithSeedOffset(
     () => {
-      enemySpecies = getSafariSpeciesSpawn();
-      const level = globalScene.currentBattle.getLevelForWave();
-      enemySpecies = getPokemonSpecies(enemySpecies.getWildSpeciesForLevel(level, true, false, globalScene.gameMode));
-      pokemon = globalScene.addEnemyPokemon(enemySpecies, level, TrainerSlot.NONE, false);
-
-      // Roll shiny twice
-      if (!pokemon.shiny) {
-        pokemon.trySetShinySeed();
-      }
-
-      // Roll HA twice
-      if (pokemon.species.abilityHidden) {
-        const hiddenIndex = pokemon.species.ability2 ? 2 : 1;
-        if (pokemon.abilityIndex < hiddenIndex) {
-          const hiddenAbilityChance = new NumberHolder(256);
-          globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
-
-          const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
-
-          if (hasHiddenAbility) {
-            pokemon.abilityIndex = hiddenIndex;
-          }
-        }
-      }
+      const fromEvent = new BooleanHolder(false);
+      pokemon = getRandomEncounterPokemon({
+        level: globalScene.currentBattle.getLevelForWave(),
+        speciesFunction: getSafariSpeciesSpawn(),
+        shinyRerolls: 1,
+        eventShinyRerolls: 1,
+        hiddenRerolls: 1,
+        eventHiddenRerolls: 1,
+        eventChance: eventChance.value,
+        isEventEncounter: fromEvent,
+      });
 
       pokemon.calculateStats();
+
+      // Increase chance of event encounter by 25% until one spawns
+      if (fromEvent.value) {
+        eventEncs.value++;
+        eventChance.value = 50;
+      } else if (eventEncs.value === 0) {
+        eventChance.value += 25;
+      }
 
       globalScene.currentBattle.enemyParty.unshift(pokemon);
     },
@@ -567,10 +563,12 @@ async function doEndTurn(cursorIndex: number) {
 }
 
 /**
- * @returns A random species that has at most 5 starter cost and is not Mythical, Paradox, etc.
+ * @returns A function to get a random species that has at most 5 starter cost and is not Mythical, Paradox, etc.
  */
-export function getSafariSpeciesSpawn(): PokemonSpecies {
-  return getPokemonSpecies(
-    getRandomSpeciesByStarterCost([0, 5], NON_LEGEND_PARADOX_POKEMON, undefined, false, false, false),
-  );
+export function getSafariSpeciesSpawn(): () => PokemonSpecies {
+  return () => {
+    return getPokemonSpecies(
+      getRandomSpeciesByStarterCost([0, 5], NON_LEGEND_PARADOX_POKEMON, undefined, false, false, false),
+    );
+  };
 }
