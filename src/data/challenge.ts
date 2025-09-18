@@ -756,10 +756,15 @@ export class SingleTypeChallenge extends Challenge {
   applyStarterSelectModify(speciesId: SpeciesId, dexEntry: DexEntry, _starterDataEntry: StarterDataEntry): boolean {
     const type = this.value - 1;
 
-    if (type === PokemonType.FIGHTING && speciesId === SpeciesId.RALTS) {
-      dexEntry.caughtAttr &= ~DexAttr.FEMALE;
+    if (speciesId === SpeciesId.RALTS) {
+      if (type === PokemonType.FIGHTING) {
+        dexEntry.caughtAttr &= ~DexAttr.FEMALE;
+      }
+      if (type === PokemonType.FAIRY) {
+        dexEntry.caughtAttr &= ~DexAttr.MALE;
+      }
     }
-    if (type === PokemonType.GHOST && speciesId === SpeciesId.SNORUNT) {
+    if (speciesId === SpeciesId.SNORUNT && type === PokemonType.GHOST) {
       dexEntry.caughtAttr &= ~DexAttr.MALE;
     }
     if (speciesId === SpeciesId.BURMY) {
