@@ -123,9 +123,8 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
       expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
       expect(game.scene.arena.getTag(ArenaTagType.PENDING_HEAL)).toBeDefined();
 
-      await game.toNextTurn();
-
       // Switch to damaged Squirtle. HW/LD's effect should activate
+      game.doSwitchPokemon(2);
 
       await game.toEndOfTurn();
       expect(squirtle.isFullHp()).toBe(true);
@@ -168,6 +167,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
       game.move.use(moveId);
       game.doSelectPartyPokemon(2);
 
+      await game.toNextTurn();
       expect(charmander.isFainted()).toBe(true);
       expect(squirtle.isFullHp()).toBe(true);
       expect(squirtle.isFullHp());
