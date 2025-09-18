@@ -317,7 +317,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
         this.fieldEffectInfo.push({
           name,
           effectType: arenaEffectType,
-          maxDuration: tagAddedEvent.duration,
+          maxDuration: tagAddedEvent.maxDuration,
           duration: tagAddedEvent.duration,
           tagType: tagAddedEvent.arenaTagType,
         });
@@ -353,7 +353,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
           ),
           effectType:
             fieldEffectChangedEvent instanceof WeatherChangedEvent ? ArenaEffectType.WEATHER : ArenaEffectType.TERRAIN,
-          maxDuration: fieldEffectChangedEvent.duration,
+          maxDuration: fieldEffectChangedEvent.maxDuration,
           duration: fieldEffectChangedEvent.duration,
         };
 

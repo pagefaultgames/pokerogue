@@ -107,7 +107,7 @@ describe("Moves - Fell Stinger", () => {
 
     await game.classicMode.startBattle([SpeciesId.LEAVANNY]);
     const leadPokemon = game.field.getPlayerPokemon();
-    const leftEnemy = game.scene.getEnemyField()[0]!;
+    const leftEnemy = game.field.getEnemyPokemon();
 
     //  Turn 1: set Salt Cure, enemy splashes and does nothing
     game.move.select(MoveId.SALT_CURE, 0, leftEnemy.getBattlerIndex());

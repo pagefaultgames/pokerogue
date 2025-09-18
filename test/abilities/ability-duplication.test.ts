@@ -30,12 +30,13 @@ describe("Ability Duplication", () => {
       .enemyMoveset(MoveId.SPLASH);
   });
 
+  // TODO: Find a cleaner way of checking ability duplication effects than suppressing the ability
   it("huge power should only be applied once if both normal and passive", async () => {
     game.override.passiveAbility(AbilityId.HUGE_POWER);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const [magikarp] = game.scene.getPlayerField();
+    const magikarp = game.field.getPlayerPokemon();
     const magikarpAttack = magikarp.getEffectiveStat(Stat.ATK);
 
     magikarp.summonData.abilitySuppressed = true;
@@ -48,7 +49,7 @@ describe("Ability Duplication", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const [magikarp] = game.scene.getPlayerField();
+    const magikarp = game.field.getPlayerPokemon();
     const magikarpAttack = magikarp.getEffectiveStat(Stat.ATK);
 
     magikarp.summonData.abilitySuppressed = true;

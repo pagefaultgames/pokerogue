@@ -171,7 +171,7 @@ describe("Moves - Dragon Tail", () => {
     const enemy = game.field.getEnemyPokemon();
     expect(enemy).toBeDefined();
     expect(enemy.hp).toBe(Math.floor(enemy.getMaxHp() / 2));
-    expect(game.scene.getEnemyField().length).toBe(1);
+    expect(game.scene.getEnemyField()).toHaveLength(1);
   });
 
   it("should not cause a softlock when activating a player's reviver seed", async () => {

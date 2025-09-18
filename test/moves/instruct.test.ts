@@ -498,7 +498,7 @@ describe("Moves - Instruct", () => {
       .enemyLevel(1);
     await game.classicMode.startBattle([SpeciesId.KORAIDON, SpeciesId.KLEFKI]);
 
-    const koraidon = game.scene.getPlayerField()[0]!;
+    const koraidon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.BREAKING_SWIPE);
     await game.phaseInterceptor.to("TurnEndPhase", false);
@@ -527,7 +527,7 @@ describe("Moves - Instruct", () => {
       .enemyLevel(1);
     await game.classicMode.startBattle([SpeciesId.KORAIDON, SpeciesId.KLEFKI]);
 
-    const koraidon = game.scene.getPlayerField()[0]!;
+    const koraidon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.BRUTAL_SWING);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -587,7 +587,7 @@ describe("Moves - Instruct", () => {
       .enemyLevel(5);
     await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.IVYSAUR]);
 
-    const [, ivysaur] = game.scene.getPlayerField();
+    const ivysaur = game.scene.getPlayerField()[1];
 
     game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER);
     game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
