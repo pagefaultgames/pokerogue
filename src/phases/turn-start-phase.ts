@@ -54,8 +54,8 @@ export class TurnStartPhase extends FieldPhase {
     const field = globalScene.getField();
     const moveOrder = this.getCommandOrder();
 
-    for (const p of inSpeedOrder(ArenaTagSide.BOTH)) {
-      const preTurnCommand = globalScene.currentBattle.preTurnCommands[p.getBattlerIndex()];
+    for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
+      const preTurnCommand = globalScene.currentBattle.preTurnCommands[pokemon.getBattlerIndex()];
 
       if (preTurnCommand?.skip) {
         continue;
@@ -63,14 +63,14 @@ export class TurnStartPhase extends FieldPhase {
 
       switch (preTurnCommand?.command) {
         case Command.TERA:
-          globalScene.phaseManager.pushNew("TeraPhase", p);
+          globalScene.phaseManager.pushNew("TeraPhase", pokemon);
       }
     }
 
     const phaseManager = globalScene.phaseManager;
-    for (const p of inSpeedOrder(ArenaTagSide.BOTH)) {
-      applyAbAttrs("BypassSpeedChanceAbAttr", { pokemon: p });
-      globalScene.applyModifiers(BypassSpeedChanceModifier, p.isPlayer(), p);
+    for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
+      applyAbAttrs("BypassSpeedChanceAbAttr", { pokemon });
+      globalScene.applyModifiers(BypassSpeedChanceModifier, pokemon.isPlayer(), pokemon);
     }
 
     moveOrder.forEach((o, index) => {

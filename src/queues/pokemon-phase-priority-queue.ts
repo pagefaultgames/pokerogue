@@ -7,11 +7,11 @@ import type { BattlerIndex } from "#enums/battler-index";
 export class PokemonPhasePriorityQueue<T extends DynamicPhase> extends PriorityQueue<T> {
   protected setOrder: BattlerIndex[] | undefined;
   protected override reorder(): void {
-    if (this.setOrder) {
+    const setOrder = this.setOrder;
+    if (setOrder) {
       this.queue.sort(
         (a, b) =>
-          this.setOrder!.indexOf(a.getPokemon().getBattlerIndex())
-          - this.setOrder!.indexOf(b.getPokemon().getBattlerIndex()),
+          setOrder.indexOf(a.getPokemon().getBattlerIndex()) - setOrder.indexOf(b.getPokemon().getBattlerIndex()),
       );
     } else {
       this.queue = sortInSpeedOrder(this.queue);

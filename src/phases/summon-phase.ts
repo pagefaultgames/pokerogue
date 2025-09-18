@@ -16,8 +16,8 @@ import i18next from "i18next";
 export class SummonPhase extends PartyMemberPokemonPhase {
   // The union type is needed to keep typescript happy as these phases extend from SummonPhase
   public readonly phaseName: "SummonPhase" | "SummonMissingPhase" | "SwitchSummonPhase" | "ReturnPhase" = "SummonPhase";
-  private loaded: boolean;
-  private checkSwitch: boolean;
+  private readonly loaded: boolean;
+  private readonly checkSwitch: boolean;
 
   constructor(fieldIndex: number, player = true, loaded = false, checkSwitch = false) {
     super(fieldIndex, player);

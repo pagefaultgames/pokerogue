@@ -225,7 +225,7 @@ const PHASES = Object.freeze({
 export type PhaseConstructorMap = typeof PHASES;
 
 /** Phases pushed at the end of each {@linkcode TurnStartPhase} */
-const turnEndPhases: PhaseString[] = [
+const turnEndPhases: readonly PhaseString[] = [
   "WeatherEffectPhase",
   "PositionalTagPhase",
   "BerryPhase",
@@ -278,17 +278,16 @@ export class PhaseManager {
    * Adds a phase to the end of the queue
    * @param phase - The {@linkcode Phase} to add
    */
-  pushPhase(phase: Phase): void {
+  public pushPhase(phase: Phase): void {
     this.phaseQueue.pushPhase(this.checkDynamic(phase));
   }
 
   /**
-   * Queue a phase to be run immediately after the current phase finishes.
+   * Queue a phase to be run immediately after the current phase finishes. \
    * Unshifted phases are run in FIFO order if multiple are queued during a single phase's execution.
    * @param phase - The {@linkcode Phase} to add
-   * @param defer - Whether to allow subsequently unshifted phases to run before this one; default `false`
    */
-  unshiftPhase(phase: Phase): void {
+  public unshiftPhase(phase: Phase): void {
     const toAdd = this.checkDynamic(phase);
     phase.is("MovePhase") ? this.phaseQueue.addAfter(toAdd, "MoveEndPhase") : this.phaseQueue.addPhase(toAdd);
   }
@@ -309,14 +308,12 @@ export class PhaseManager {
    * Clears the phaseQueue
    * @param leaveUnshifted - If `true`, leaves the top level of the tree intact; default `false`
    */
-  clearPhaseQueue(leaveUnshifted = false): void {
+  public clearPhaseQueue(leaveUnshifted = false): void {
     this.phaseQueue.clear(leaveUnshifted);
   }
 
-  /**
-   * Clears all phase-related stuff, including all phase queues, the current and standby phases, and a splice index
-   */
-  clearAllPhases(): void {
+  /** Clears all phase queues and the standby phase */
+  public clearAllPhases(): void {
     this.clearPhaseQueue();
     this.dynamicQueueManager.clearQueues();
     this.standbyPhase = null;
@@ -327,7 +324,7 @@ export class PhaseManager {
    * @privateRemarks
    * This is called by {@linkcode Phase.end} by default, and should not be called by other methods.
    */
-  shiftPhase(): void {
+  public shiftPhase(): void {
     if (this.standbyPhase) {
       this.currentPhase = this.standbyPhase;
       this.standbyPhase = null;
@@ -363,7 +360,7 @@ export class PhaseManager {
    *
    * @todo This is antithetical to the phase structure and used a single time. Remove it.
    */
-  overridePhase(phase: Phase): boolean {
+  public overridePhase(phase: Phase): boolean {
     if (this.standbyPhase) {
       return false;
     }
@@ -378,6 +375,7 @@ export class PhaseManager {
   /**
    * Determine if there is a queued {@linkcode Phase} meeting the specified conditions.
    * @param type - The {@linkcode PhaseString | type} of phase to search for
+   * @param condition - An optional {@linkcode PhaseConditionFunc} to add conditions to the search
    * @returns Whether a matching phase exists
    */
   public hasPhaseOfType<T extends PhaseString>(type: T, condition?: PhaseConditionFunc<T>): boolean {
@@ -390,7 +388,7 @@ export class PhaseManager {
    * @param phaseFilter - An optional {@linkcode PhaseConditionFunc} to add conditions to the search
    * @returns Whether a phase was successfully removed
    */
-  tryRemovePhase<T extends PhaseString>(type: T, phaseFilter?: PhaseConditionFunc<T>): boolean {
+  public tryRemovePhase<T extends PhaseString>(type: T, phaseFilter?: PhaseConditionFunc<T>): boolean {
     if (this.dynamicQueueManager.removePhase(type, phaseFilter)) {
       return true;
     }
@@ -398,11 +396,11 @@ export class PhaseManager {
   }
 
   /**
-   * Removes all occurrences of {@linkcode Phase}s of the given type
+   * Removes all {@linkcode Phase}s of the given type from the queue
    * @param phaseType - The {@linkcode PhaseString | type} of phase to search for
    *
    * @remarks
-   * This is not intended to be used with dynamically ordered phases, and does not operate on the dynamic queue.
+   * This is not intended to be used with dynamically ordered phases, and does not operate on the dynamic queue. \
    * However, it does remove {@linkcode DynamicPhaseMarker}s and so would prevent such phases from activating.
    */
   public removeAllPhasesOfType(type: PhaseString): void {
@@ -410,7 +408,7 @@ export class PhaseManager {
   }
 
   /**
-   * Adds a MessagePhase, either as if through {@linkcode unshiftPhase} or {@linkcode pushPhase}
+   * Adds a `MessagePhase` to the queue
    * @param message - string for MessagePhase
    * @param callbackDelay - optional param for MessagePhase constructor
    * @param prompt - optional param for MessagePhase constructor
@@ -435,7 +433,7 @@ export class PhaseManager {
   }
 
   /**
-   * Queues an ability bar flyout phase as if through {@linkcode unshiftPhase}
+   * Queues an ability bar flyout phase via {@linkcode unshiftPhase}
    * @param pokemon - The {@linkcode Pokemon} whose ability is being activated
    * @param passive - Whether the ability is a passive
    * @param show - If `true`, show the bar. Otherwise, hide it
@@ -570,9 +568,8 @@ export class PhaseManager {
   }
 
   /**
-   * Finds the first {@linkcode MovePhase} meeting the condition and changes its move
+   * Finds the first {@linkcode MovePhase} meeting the condition and forces it last
    * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function
-   * @param move - The {@linkcode PokemonMove | move} to use in replacement
    */
   public forceMoveLast(phaseCondition: PhaseConditionFunc<"MovePhase">): void {
     this.dynamicQueueManager.setMoveTimingModifier(phaseCondition, MovePhaseTimingModifier.LAST);
@@ -605,7 +602,11 @@ export class PhaseManager {
 
   /** Prevents end of turn effects from triggering when transitioning to a new biome on a X0 wave */
   public onInterlude(): void {
-    const phasesToRemove: PhaseString[] = ["WeatherEffectPhase", "BerryPhase", "CheckStatusEffectPhase"];
+    const phasesToRemove: readonly PhaseString[] = [
+      "WeatherEffectPhase",
+      "BerryPhase",
+      "CheckStatusEffectPhase",
+    ] as const;
     for (const phaseType of phasesToRemove) {
       this.phaseQueue.removeAll(phaseType);
     }

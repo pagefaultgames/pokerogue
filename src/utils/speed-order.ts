@@ -10,7 +10,7 @@ interface hasPokemon {
 }
 
 /**
- * Sorts an array of {@linkcode Pokemon} by speed, including Trick Room
+ * Sorts an array of {@linkcode Pokemon} by speed, taking Trick Room into account.
  * @param pokemonList - The list of Pokemon or objects containing Pokemon
  * @param shuffleFirst - Whether to shuffle the list before sorting (to handle speed ties). Default `true`.
  * @returns The sorted array of {@linkcode Pokemon}
@@ -22,10 +22,8 @@ export function sortInSpeedOrder<T extends Pokemon | hasPokemon>(pokemonList: T[
 }
 
 /**
- * Sort an array of {@linkcode Pokemon} by speed, including Trick Room.
- * @param pokemonList - An array of Pokemon or objects containint Pokemon to sort
- * @param shuffleFirst - Whether to shuffle the list before sorting (to handle speed ties). Default `true`.
- * @returns The sorted array of {@linkcode Pokemon}
+ * @param pokemonList - The array of Pokemon or objects containing Pokemon
+ * @returns The shuffled array
  */
 function shufflePokemonList<T extends Pokemon | hasPokemon>(pokemonList: T[]): T[] {
   // This is seeded with the current turn to prevent an inconsistency where it

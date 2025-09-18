@@ -51,13 +51,13 @@ export abstract class PriorityQueue<T> {
 
   /**
    * Removes the first element matching the condition
-   * @param condition - A condition function
-   * @returns `true` if a removal occurred, `false` otherwise
+   * @param condition - An optional condition function (defaults to a function that always returns `true`)
+   * @returns Whether a removal occurred
    */
-  public remove(condition?: (t: T) => boolean): boolean {
+  public remove(condition: (t: T) => boolean = () => true): boolean {
     // Reorder to remove the first element
     this.reorder();
-    const index = this.queue.findIndex(condition ?? (() => true));
+    const index = this.queue.findIndex(condition);
     if (index === -1) {
       return false;
     }
@@ -66,13 +66,13 @@ export abstract class PriorityQueue<T> {
     return true;
   }
 
-  /** Returns an element matching the condition */
+  /** @returns An element matching the condition function */
   public find(condition?: (t: T) => boolean): T | undefined {
     return this.queue.find(e => !condition || condition(e));
   }
 
-  /** Returns if an element matching the condition exists */
+  /** @returns Whether an element matching the condition function exists */
   public has(condition?: (t: T) => boolean): boolean {
-    return this.queue.find(e => !condition || condition(e)) !== undefined;
+    return this.queue.some(e => !condition || condition(e));
   }
 }

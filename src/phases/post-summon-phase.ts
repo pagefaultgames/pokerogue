@@ -10,7 +10,7 @@ import { PokemonPhase } from "#phases/pokemon-phase";
 
 export class PostSummonPhase extends PokemonPhase {
   public readonly phaseName = "PostSummonPhase";
-  /** Used to determine whether to push or unshift PostSummonActivateAbilityPhases  */
+  /** Used to determine whether to push or unshift {@linkcode PostSummonActivateAbilityPhase}s */
   public readonly source: PhaseString;
 
   constructor(battlerIndex?: BattlerIndex | number, source: PhaseString = "SwitchSummonPhase") {
@@ -22,8 +22,7 @@ export class PostSummonPhase extends PokemonPhase {
     super.start();
 
     const pokemon = this.getPokemon();
-    console.log("Ran PSP for:");
-    console.log(pokemon.name);
+    console.log("Ran PSP for:", pokemon.name);
     if (pokemon.status?.effect === StatusEffect.TOXIC) {
       pokemon.status.toxicTurnCount = 0;
     }

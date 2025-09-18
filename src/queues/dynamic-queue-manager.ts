@@ -11,7 +11,7 @@ import type { PriorityQueue } from "#app/queues/priority-queue";
 import type { BattlerIndex } from "#enums/battler-index";
 import type { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 
-// TODO might be easier to define which phases should be dynamic instead
+// TODO: might be easier to define which phases should be dynamic instead
 /** All phases which have defined a `getPokemon` method but should not be sorted dynamically */
 const nonDynamicPokemonPhases: readonly PhaseString[] = [
   "SummonPhase",
@@ -28,15 +28,16 @@ const nonDynamicPokemonPhases: readonly PhaseString[] = [
 
 /**
  * The dynamic queue manager holds priority queues for phases which are queued as dynamic.
-
- * Dynamic phases are generally those which hold a pokemon and are unshifted, not pushed.
+ *
+ * Dynamic phases are generally those which hold a pokemon and are unshifted, not pushed. \
  * Queues work by sorting their entries in speed order (and possibly with more complex ordering) before each time a phase is popped.
-
- * As the holder, this structure is also used to access and modify queued phases. This is mostly used in redirection, cancellation, etc. of {@linkcode MovePhase}s.
+ *
+ * As the holder, this structure is also used to access and modify queued phases.
+ * This is mostly used in redirection, cancellation, etc. of {@linkcode MovePhase}s.
  */
 export class DynamicQueueManager {
   /** Maps phase types to their corresponding queues */
-  private dynamicPhaseMap: Map<PhaseString, PriorityQueue<Phase>>;
+  private readonly dynamicPhaseMap: Map<PhaseString, PriorityQueue<Phase>>;
 
   constructor() {
     this.dynamicPhaseMap = new Map();
@@ -45,9 +46,7 @@ export class DynamicQueueManager {
     this.dynamicPhaseMap.set("MovePhase", new MovePhasePriorityQueue());
   }
 
-  /**
-   * Removes all phases from the manager
-   */
+  /** Removes all phases from the manager */
   public clearQueues(): void {
     for (const queue of this.dynamicPhaseMap.values()) {
       queue.clear();
@@ -57,7 +56,7 @@ export class DynamicQueueManager {
   /**
    * Adds a new phase to the manager and creates the priority queue for it if one does not exist.
    * @param phase - The {@linkcode Phase} to add
-   * @returns `true` if the phase was added, `false` otherwise (if it is not dynamic)
+   * @returns `true` if the phase was added, or `false` if it is not dynamic
    */
   public queueDynamicPhase<T extends Phase>(phase: T): boolean {
     if (!this.isDynamicPhase(phase)) {
@@ -85,7 +84,7 @@ export class DynamicQueueManager {
    * Determines if there is a queued dynamic {@linkcode Phase} meeting the conditions
    * @param type - The {@linkcode PhaseString | type} of phase to search for
    * @param condition - An optional {@linkcode PhaseConditionFunc} to add conditions to the search
-   * @returns `true` if a matching phase exists, `false` otherwise
+   * @returns Whether a matching phase exists
    */
   public exists<T extends PhaseString>(type: T, condition?: PhaseConditionFunc<T>): boolean {
     return !!this.dynamicPhaseMap.get(type)?.has(condition);
@@ -95,10 +94,10 @@ export class DynamicQueueManager {
    * Finds and removes a single queued {@linkcode Phase}
    * @param type - The {@linkcode PhaseString | type} of phase to search for
    * @param phaseFilter - A {@linkcode PhaseConditionFunc} to specify conditions for the phase
-   * @returns `true` if a removal occurred, `false` otherwise
+   * @returns Whether a removal occurred
    */
   public removePhase<T extends PhaseString>(type: T, condition?: PhaseConditionFunc<T>): boolean {
-    return this.dynamicPhaseMap.get(type)?.remove(condition) ?? false;
+    return !!this.dynamicPhaseMap.get(type)?.remove(condition);
   }
 
   /**
@@ -160,9 +159,7 @@ export class DynamicQueueManager {
     return this.getMovePhaseQueue().getTurnOrder();
   }
 
-  /**
-   * Clears the stored Move turn order
-   */
+  /** Clears the stored `Move` turn order */
   public clearLastTurnOrder(): void {
     this.getMovePhaseQueue().clearTurnOrder();
   }

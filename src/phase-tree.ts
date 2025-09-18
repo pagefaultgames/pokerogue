@@ -15,11 +15,12 @@ import type { Phase } from "#app/phase";
  * Dynamically ordered phases are queued into the Tree only as {@linkcode DynamicPhaseMarker | Marker}s and as such are not guaranteed to run FIFO (otherwise, they would not be dynamic)
  */
 export class PhaseTree {
-  /** Storage for all levels in the tree. This may be a simple array because only one Phase may have "children" at a time */
+  /** Storage for all levels in the tree. This is a simple array because only one Phase may have "children" at a time. */
   private levels: Phase[][] = [[]];
   /** The level of the currently running {@linkcode Phase} in the Tree (note that such phase is not actually in the Tree while it is running) */
   private currentLevel = 0;
-  /** True if a "deferred" level exists
+  /**
+   * True if a "deferred" level exists
    * @see {@linkcode addPhase}
    */
   private deferredActive = false;
@@ -44,7 +45,7 @@ export class PhaseTree {
    * @param defer - Whether to defer the execution of this phase by allowing subsequently-added phases to run before it
    *
    * @privateRemarks
-   * Deferral is implemented by moving the queue at {@linkcode currentLevel} up one level and inserting {@linkcode phase} below it.
+   * Deferral is implemented by moving the queue at {@linkcode currentLevel} up one level and inserting the new phase below it.
    * {@linkcode deferredActive} is set until the moved queue (and anything added to it) is exhausted.
    *
    * If {@linkcode deferredActive} is `true` when a deferred phase is added, the phase will be pushed to the second-highest level queue.
@@ -106,7 +107,7 @@ export class PhaseTree {
       this.currentLevel--;
     }
 
-    // TODO right now, this is preventing properly marking when one set of unshifted phases ends
+    // TODO: right now, this is preventing properly marking when one set of unshifted phases ends
     this.levels.push([]);
     return this.levels[this.currentLevel].shift();
   }
@@ -160,7 +161,7 @@ export class PhaseTree {
    * Finds and removes a single {@linkcode Phase} from the Tree
    * @param phaseType - The {@linkcode PhaseString | type} of phase to search for
    * @param phaseFilter - A {@linkcode PhaseConditionFunc} to specify conditions for the phase
-   * @returns `true` if a removal occurred, `false` otherwise
+   * @returns Whether a removal occurred
    */
   public remove<P extends PhaseString>(phaseType: P, phaseFilter?: PhaseConditionFunc<P>): boolean {
     for (let i = this.levels.length - 1; i >= 0; i--) {
@@ -189,7 +190,7 @@ export class PhaseTree {
    * Determines if a particular phase exists in the Tree
    * @param phaseType - The {@linkcode PhaseString | type} of phase to search for
    * @param phaseFilter - A {@linkcode PhaseConditionFunc} to specify conditions for the phase
-   * @returns `true` if a matching phase exists, `false` otherwise
+   * @returns Whether a matching phase exists
    */
   public exists<P extends PhaseString>(phaseType: P, phaseFilter?: PhaseConditionFunc<P>): boolean {
     for (const level of this.levels) {

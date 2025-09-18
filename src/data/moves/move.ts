@@ -80,7 +80,6 @@ import { applyMoveAttrs } from "#moves/apply-attrs";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSketchMoves, invalidSleepTalkMoves } from "#moves/invalid-moves";
 import { frenzyMissFunc, getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
-import { MoveEndPhase } from "#phases/move-end-phase";
 import { MovePhase } from "#phases/move-phase";
 import { PokemonHealPhase } from "#phases/pokemon-heal-phase";
 import type { AttackMoveResult } from "#types/attack-move-result";
@@ -2157,7 +2156,7 @@ export class SacrificialFullRestoreAttr extends SacrificialAttr {
 
     const pm = globalScene.phaseManager;
 
-    // TODO this is broken in this PR until these are properly implemented
+    // TODO: this is broken in this PR until these are properly implemented via https://github.com/pagefaultgames/pokerogue/pull/6027/
     pm.pushPhase(
       pm.create("PokemonHealPhase",
         user.getBattlerIndex(),
@@ -4645,7 +4644,7 @@ export class CueNextRoundAttr extends MoveEffectAttr {
       return false;
     }
 
-    globalScene.phaseManager.forceMoveNext((phase: MovePhase) => phase.is("MovePhase") && phase.move.moveId === MoveId.ROUND);
+    globalScene.phaseManager.forceMoveNext(phase => phase.move.moveId === MoveId.ROUND);
 
     // Mark the corresponding Pokemon as having "joined the Round" (for doubling power later)
     nextRoundPhase.pokemon.turnData.joinedRound = true;
@@ -6270,7 +6269,7 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
         // Handle cases where revived pokemon needs to get switched in on same turn
         if (allyPokemon.isFainted() || allyPokemon === pokemon) {
           // Enemy switch phase should be removed and replaced with the revived pkmn switching in
-          const rem = globalScene.phaseManager.tryRemovePhase("SwitchSummonPhase", phase => phase.getFieldIndex() === slotIndex);
+          globalScene.phaseManager.tryRemovePhase("SwitchSummonPhase", phase => phase.getFieldIndex() === slotIndex);
           // If the pokemon being revived was alive earlier in the turn, cancel its move
           // (revived pokemon can't move in the turn they're brought back)
           // TODO: might make sense to move this to `FaintPhase` after checking for Rev Seed (rather than handling it in the move)

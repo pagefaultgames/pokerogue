@@ -1,7 +1,6 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import type { Phase } from "#app/phase";
 import { ConditionalProtectTag } from "#data/arena-tag";
 import { MoveAnim } from "#data/battle-anims";
 import { DamageProtectedTag, ProtectedTag, SemiInvulnerableTag, SubstituteTag, TypeBoostTag } from "#data/battler-tags";
@@ -67,12 +66,6 @@ export class MoveEffectPhase extends PokemonPhase {
   private firstHit: boolean;
   /** Is this the last strike of a move? */
   private lastHit: boolean;
-
-  /**
-   * Phases queued during moves; used to add a new MovePhase for reflected moves after triggering.
-   * TODO: Remove this and move the reflection logic to ability-side
-   */
-  private queuedPhases: Phase[] = [];
 
   /**
    * @param useMode - The {@linkcode MoveUseMode} corresponding to how this move was used.

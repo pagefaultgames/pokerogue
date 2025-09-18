@@ -42,6 +42,8 @@ export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase>
     if (!globalScene.currentBattle.double) {
       return;
     }
+
+    // TODO: simplify later
     if (allyPokemon?.isActive(true)) {
       this.queue
         .filter(
