@@ -53,11 +53,10 @@ export abstract class PriorityQueue<T> {
    * Removes the first element matching the condition
    * @param condition - A condition function
    * @returns `true` if a removal occurred, `false` otherwise
-   *
-   * @remarks
-   * {@linkcode reorder} is not called by this method, so the removal is not guaranteed to be the true "first" element.
    */
   public remove(condition?: (t: T) => boolean): boolean {
+    // Reorder to remove the first element
+    this.reorder();
     const index = this.queue.findIndex(condition ?? (() => true));
     if (index === -1) {
       return false;
