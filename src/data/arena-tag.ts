@@ -1676,7 +1676,7 @@ export class PendingHealTag extends SerializableArenaTag {
     const targetEffects = this.pendingHeals[targetIndex];
 
     if (simulated) {
-      return targetEffects?.length > 0;
+      return targetEffects != null && targetEffects.length > 0;
     }
 
     const healEffect = targetEffects?.find(effect => this.canApply(effect, pokemon));
