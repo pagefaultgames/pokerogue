@@ -87,7 +87,6 @@ export class PhaseInterceptor {
    * @param target - The name of the {@linkcode Phase} to transition to
    * @param runTarget - Whether or not to run the target phase before resolving; default `true`
    * @returns A Promise that resolves once `target` has been reached.
-   * @todo remove `Constructor` from type signature in favor of phase strings
    * @remarks
    * This will not resolve for _any_ reason until the target phase has been reached.
    * @example
@@ -95,6 +94,11 @@ export class PhaseInterceptor {
    * await game.phaseInterceptor.to("MoveEffectPhase", false);
    * ```
    */
+  public async to(target: PhaseString, runTarget?: boolean): Promise<void>;
+  /**
+   * @deprecated Use `PhaseString` instead for `target`
+   */
+  public async to(target: Constructor<Phase>, runTarget?: boolean): Promise<void>;
   public async to(target: PhaseString | Constructor<Phase>, runTarget = true): Promise<void> {
     this.target = typeof target === "string" ? target : (target.name as PhaseString);
 

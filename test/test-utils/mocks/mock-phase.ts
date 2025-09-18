@@ -6,7 +6,7 @@ import { Phase } from "#app/phase";
  */
 export abstract class mockPhase extends Phase {
   public phaseName: any;
-  start() {
+  public override start() {
     this.end();
   }
 }

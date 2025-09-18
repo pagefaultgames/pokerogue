@@ -5,11 +5,9 @@ import { StatusEffect } from "#enums/status-effect";
 import { UiMode } from "#enums/ui-mode";
 // biome-ignore lint/performance/noNamespaceImport: Necessary for mocks
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
-import { MessagePhase } from "#phases/message-phase";
 import { MysteryEncounterBattlePhase, MysteryEncounterRewardsPhase } from "#phases/mystery-encounter-phases";
 import { VictoryPhase } from "#phases/victory-phase";
 import type { GameManager } from "#test/test-utils/game-manager";
-import { MockConsole } from "#test/test-utils/mocks/mock-console/mock-console";
 import type { MessageUiHandler } from "#ui/message-ui-handler";
 import type { MysteryEncounterUiHandler } from "#ui/mystery-encounter-ui-handler";
 import type { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
@@ -47,7 +45,7 @@ export async function runMysteryEncounterToEnd(
     return await game.phaseInterceptor.to("MysteryEncounterRewardsPhase");
   }
   if (game.scene.battleStyle === BattleStyle.SWITCH) {
-    MockConsole.queuePostTestWarning("BattleStyle.SWITCH was used during a test case, swapping to set mode...");
+    console.warn("BattleStyle.SWITCH was used during ME battle, swapping to set mode...");
     game.settings.battleStyle(BattleStyle.SET);
   }
   await game.toNextTurn();
@@ -69,7 +67,7 @@ export async function runSelectMysteryEncounterOption(
     () => game.isCurrentPhase("MysteryEncounterOptionSelectedPhase", "CommandPhase", "TurnInitPhase"),
   );
 
-  if (game.isCurrentPhase(MessagePhase)) {
+  if (game.isCurrentPhase("MessagePhase")) {
     await game.phaseInterceptor.to("MessagePhase");
   }
 
@@ -84,7 +82,7 @@ export async function runSelectMysteryEncounterOption(
     () => game.isCurrentPhase("MysteryEncounterOptionSelectedPhase", "CommandPhase", "TurnInitPhase"),
   );
 
-  await game.phaseInterceptor.to("MysteryEncounterPhase", true);
+  await game.phaseInterceptor.to("MysteryEncounterPhase");
 
   // select the desired option
   const uiHandler = game.scene.ui.getHandler<MysteryEncounterUiHandler>();
@@ -154,7 +152,10 @@ async function handleSecondaryOptionSelect(game: GameManager, pokemonNo: number,
  * @param game
  * @param runRewardsPhase
  */
-export async function skipBattleRunMysteryEncounterRewardsPhase(game: GameManager, runRewardsPhase = true) {
+export async function skipBattleRunMysteryEncounterRewardsPhase(
+  game: GameManager,
+  runRewardsPhase?: false | undefined,
+) {
   game.scene.phaseManager.clearPhaseQueue();
   game.scene.phaseManager.clearPhaseQueueSplice();
   game.scene.getEnemyParty().forEach(p => {

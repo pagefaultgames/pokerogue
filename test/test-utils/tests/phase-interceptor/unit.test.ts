@@ -60,9 +60,9 @@ describe("Utils - Phase Interceptor - Unit", () => {
    * @param phases - An array of constructors to {@linkcode Phase}s to set.
    * Constructors must have no arguments.
    */
-  function setPhases(phase: Constructor<mockPhase>, ...phases: Constructor<mockPhase>[]) {
+  function setPhases(...phases: [Constructor<mockPhase>, ...Constructor<mockPhase>[]]) {
     game.scene.phaseManager.clearAllPhases();
-    game.scene.phaseManager.phaseQueue = [phase, ...phases].map(m => new m()) as Phase[];
+    game.scene.phaseManager.phaseQueue = phases.map(m => new m()) as Phase[];
     game.scene.phaseManager.shiftPhase(); // start the thing going
   }
 
@@ -77,7 +77,7 @@ describe("Utils - Phase Interceptor - Unit", () => {
   }
 
   /** Wrapper function to make TS not complain about incompatible argument typing on `PhaseString`. */
-  function to(phaseName: string, runTarget = true) {
+  function to(phaseName: string, runTarget?: false): Promise<void> {
     return game.phaseInterceptor.to(phaseName as unknown as PhaseString, runTarget);
   }
 
