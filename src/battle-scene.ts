@@ -1315,13 +1315,12 @@ export class BattleScene extends SceneBase {
       if (newBattleType === BattleType.TRAINER) {
         const trainerType =
           Overrides.RANDOM_TRAINER_OVERRIDE?.trainerType ?? this.arena.randomTrainerType(newWaveIndex);
+        const hasDouble = trainerConfigs[trainerType].hasDouble;
         let doubleTrainer = false;
         if (trainerConfigs[trainerType].doubleOnly) {
           doubleTrainer = true;
-        } else if (trainerConfigs[trainerType].hasDouble) {
-          doubleTrainer =
-            Overrides.RANDOM_TRAINER_OVERRIDE?.alwaysDouble
-            || !randSeedInt(this.getDoubleBattleChance(newWaveIndex, playerField));
+        } else if (hasDouble) {
+          doubleTrainer = !randSeedInt(this.getDoubleBattleChance(newWaveIndex, playerField));
           // Add a check that special trainers can't be double except for tate and liza - they should use the normal double chance
           if (
             trainerConfigs[trainerType].trainerTypeDouble
@@ -1330,11 +1329,19 @@ export class BattleScene extends SceneBase {
             doubleTrainer = false;
           }
         }
-        const variant = doubleTrainer
-          ? TrainerVariant.DOUBLE
-          : randSeedInt(2)
-            ? TrainerVariant.FEMALE
-            : TrainerVariant.DEFAULT;
+
+        // Forcing a double battle on wave 1 causes a bug where only one enemy is sent out,
+        // making it impossible to complete the fight without a reload
+        const overrideVariant =
+          Overrides.RANDOM_TRAINER_OVERRIDE?.trainerVariant === TrainerVariant.DOUBLE
+          && (!hasDouble || newWaveIndex <= 1)
+            ? TrainerVariant.DEFAULT
+            : Overrides.RANDOM_TRAINER_OVERRIDE?.trainerVariant;
+
+        const variant =
+          overrideVariant
+          ?? (doubleTrainer ? TrainerVariant.DOUBLE : randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
+
         newTrainer = trainerData !== undefined ? trainerData.toTrainer() : new Trainer(trainerType, variant);
         this.field.add(newTrainer);
       }

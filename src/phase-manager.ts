@@ -1,3 +1,12 @@
+/**
+ * Manager for phases used by battle scene.
+ *
+ * @remarks
+ * **This file must not be imported or used directly.**
+ * The manager is exclusively used by the Battle Scene and is NOT intended for external use.
+ * @module
+ */
+
 import { PHASE_START_COLOR } from "#app/constants/colors";
 import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
@@ -105,15 +114,6 @@ import { VictoryPhase } from "#phases/victory-phase";
 import { WeatherEffectPhase } from "#phases/weather-effect-phase";
 import type { PhaseConditionFunc } from "#types/phase-condition";
 import type { PhaseMap, PhaseString } from "#types/phase-types";
-
-/**
- * @module
- * Manager for phases used by battle scene.
- *
- * @remarks
- * **This file must not be imported or used directly.**
- * The manager is exclusively used by the Battle Scene and is NOT intended for external use.
- */
 
 /**
  * Object that holds all of the phase constructors.
