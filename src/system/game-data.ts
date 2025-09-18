@@ -922,7 +922,6 @@ export class GameData {
     return !(success !== null && !success);
   }
 
-  // TODO: This is jank
   async loadSession(slotId: number, sessionData?: SessionSaveData): Promise<boolean> {
     sessionData ??= (await this.getSession(slotId)) ?? undefined;
     if (!sessionData) {
