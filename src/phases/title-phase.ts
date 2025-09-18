@@ -25,6 +25,7 @@ const NO_SAVE_SLOT = -1;
 export class TitlePhase extends Phase {
   public readonly phaseName = "TitlePhase";
   private loaded = false;
+  // TODO: Make `end` take a `GameModes` as a parameter rather than storing it on the class itself
   public gameMode: GameModes;
 
   async start(): Promise<void> {
