@@ -137,7 +137,7 @@ export class PhaseTree {
     const phases: PhaseMap[P][] = [];
     for (let i = this.levels.length - 1; i >= 0; i--) {
       const level = this.levels[i];
-      const levelPhases = level.filter(p => p.is(phaseType) && (!phaseFilter || phaseFilter(p))) as PhaseMap[P][];
+      const levelPhases = level.filter((p): p is PhaseMap[P] => p.is(phaseType) && (!phaseFilter || phaseFilter(p)));
       phases.push(...levelPhases);
     }
     return phases;

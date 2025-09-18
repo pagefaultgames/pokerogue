@@ -1,4 +1,4 @@
 import type { PhaseMap, PhaseString } from "#app/@types/phase-types";
 
-/** Function type for a phase of a particular type to a boolean */
+/** Type for predicate functions operating on a specific type of {@linkcode Phase}. */
 export type PhaseConditionFunc<T extends PhaseString> = (phase: PhaseMap[T]) => boolean;

@@ -13,9 +13,14 @@ export abstract class PriorityQueue<T> {
 
   /**
    * Calls {@linkcode reorder} and shifts the queue
-   * @returns The front element of the queue after sorting
+   * @returns The front element of the queue after sorting, or `undefined` if the queue is empty
+   * @sealed
    */
   public pop(): T | undefined {
+    if (this.isEmpty()) {
+      return;
+    }
+
     this.reorder();
     return this.queue.shift();
   }
@@ -30,11 +35,16 @@ export abstract class PriorityQueue<T> {
 
   /**
    * Removes all elements from the queue
+   * @sealed
    */
   public clear(): void {
     this.queue.splice(0, this.queue.length);
   }
 
+  /**
+   * @returns Whether the queue is empty
+   * @sealed
+   */
   public isEmpty(): boolean {
     return this.queue.length === 0;
   }
@@ -49,11 +59,12 @@ export abstract class PriorityQueue<T> {
    */
   public remove(condition?: (t: T) => boolean): boolean {
     const index = this.queue.findIndex(condition ?? (() => true));
-    if (index > -1) {
-      this.queue.splice(index, 1);
-      return true;
+    if (index === -1) {
+      return false;
     }
-    return false;
+
+    this.queue.splice(index, 1);
+    return true;
   }
 
   /** Returns an element matching the condition */

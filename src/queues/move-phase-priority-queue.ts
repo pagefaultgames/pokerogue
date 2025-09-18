@@ -14,7 +14,6 @@ export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase>
   protected override reorder(): void {
     super.reorder();
     this.sortPostSpeed();
-    console.log(this.queue.map(p => p.getPokemon().name));
   }
 
   public cancelMove(condition: PhaseConditionFunc<"MovePhase">): void {

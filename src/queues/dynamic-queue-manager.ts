@@ -26,12 +26,12 @@ const nonDynamicPokemonPhases: readonly PhaseString[] = [
 ] as const;
 
 /**
-The dynamic queue manager holds priority queues for phases which are queued as dynamic.
+ * The dynamic queue manager holds priority queues for phases which are queued as dynamic.
 
-Dynamic phases are generally those which hold a pokemon and are unshifted, not pushed.
-Queues work by sorting their entries in speed order (and possibly with more complex ordering) before each time a phase is popped.
+ * Dynamic phases are generally those which hold a pokemon and are unshifted, not pushed.
+ * Queues work by sorting their entries in speed order (and possibly with more complex ordering) before each time a phase is popped.
 
-As the holder, this structure is also used to access and modify queued phases. This is mostly used in redirection, cancellation, etc. of {@linkcode MovePhase}s.
+ * As the holder, this structure is also used to access and modify queued phases. This is mostly used in redirection, cancellation, etc. of {@linkcode MovePhase}s.
  */
 export class DynamicQueueManager {
   /** Maps phase types to their corresponding queues */
@@ -171,7 +171,14 @@ export class DynamicQueueManager {
     return this.dynamicPhaseMap.get("MovePhase") as MovePhasePriorityQueue;
   }
 
-  /** Internal helper to determine if a phase is dynamic */
+  /**
+   * Internal helper to determine if a phase is dynamic.
+   * @param phase - The {@linkcode Phase} to check
+   * @returns Whether `phase` is dynamic
+   * @privateRemarks
+   * Currently, this checks that `phase` has a `getPokemon` method
+   * and is not blacklisted in `nonDynamicPokemonPhases`.
+   */
   private isDynamicPhase(phase: Phase): phase is DynamicPhase {
     return typeof (phase as any).getPokemon === "function" && !nonDynamicPokemonPhases.includes(phase.phaseName);
   }

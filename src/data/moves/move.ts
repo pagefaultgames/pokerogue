@@ -7975,7 +7975,7 @@ const userSleptOrComatoseCondition: MoveConditionFunc = (user) => user.status?.e
 
 const targetSleptOrComatoseCondition: MoveConditionFunc = (_user: Pokemon, target: Pokemon, _move: Move) => target.status?.effect === StatusEffect.SLEEP || target.hasAbility(AbilityId.COMATOSE);
 
-const failIfLastCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => globalScene.phaseManager.hasPhaseOfType("MovePhase");
+const failIfLastCondition: MoveConditionFunc = () => globalScene.phaseManager.hasPhaseOfType("MovePhase");
 
 const failIfLastInPartyCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => {
   const party: Pokemon[] = user.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
