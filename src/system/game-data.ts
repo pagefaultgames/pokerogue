@@ -922,177 +922,160 @@ export class GameData {
     return !(success !== null && !success);
   }
 
+  // TODO: This is jank
   async loadSession(slotId: number, sessionData?: SessionSaveData): Promise<boolean> {
-    const { promise, resolve, reject } = Promise.withResolvers<boolean>();
-    try {
-      const initSessionFromData = (fromSession: SessionSaveData) => {
-        if (isLocal || isBeta) {
-          try {
-            console.debug(
-              this.parseSessionData(
-                JSON.stringify(fromSession, (_, v: any) => (typeof v === "bigint" ? v.toString() : v)),
-              ),
-            );
-          } catch (err) {
-            console.debug("Attempt to log session data failed:", err);
-          }
-        }
+    sessionData ??= (await this.getSession(slotId)) ?? undefined;
+    if (!sessionData) {
+      return false;
+    }
+    this.initSessionFromData(sessionData);
+    return true;
+  }
 
-        globalScene.gameMode = getGameMode(fromSession.gameMode || GameModes.CLASSIC);
-        if (fromSession.challenges) {
-          globalScene.gameMode.challenges = fromSession.challenges.map(c => c.toChallenge());
-        }
-
-        globalScene.setSeed(fromSession.seed || globalScene.game.config.seed[0]);
-        globalScene.resetSeed();
-
-        console.log("Seed:", globalScene.seed);
-
-        globalScene.sessionPlayTime = fromSession.playTime || 0;
-        globalScene.lastSavePlayTime = 0;
-
-        const loadPokemonAssets: Promise<void>[] = [];
-
-        const party = globalScene.getPlayerParty();
-        party.splice(0, party.length);
-
-        for (const p of fromSession.party) {
-          const pokemon = p.toPokemon() as PlayerPokemon;
-          pokemon.setVisible(false);
-          loadPokemonAssets.push(pokemon.loadAssets(false));
-          party.push(pokemon);
-        }
-
-        Object.keys(globalScene.pokeballCounts).forEach((key: string) => {
-          globalScene.pokeballCounts[key] = fromSession.pokeballCounts[key] || 0;
-        });
-        if (Overrides.POKEBALL_OVERRIDE.active) {
-          globalScene.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
-        }
-
-        globalScene.money = Math.floor(fromSession.money || 0);
-        globalScene.updateMoneyText();
-
-        if (globalScene.money > this.gameStats.highestMoney) {
-          this.gameStats.highestMoney = globalScene.money;
-        }
-
-        globalScene.score = fromSession.score;
-        globalScene.updateScoreText();
-
-        globalScene.mysteryEncounterSaveData = new MysteryEncounterSaveData(fromSession.mysteryEncounterSaveData);
-
-        globalScene.newArena(fromSession.arena.biome, fromSession.playerFaints);
-
-        const battleType = fromSession.battleType || 0;
-        const trainerConfig = fromSession.trainer ? trainerConfigs[fromSession.trainer.trainerType] : null;
-        const mysteryEncounterType =
-          fromSession.mysteryEncounterType !== -1 ? fromSession.mysteryEncounterType : undefined;
-        const battle = globalScene.newBattle(
-          fromSession.waveIndex,
-          battleType,
-          fromSession.trainer,
-          battleType === BattleType.TRAINER
-            ? trainerConfig?.doubleOnly || fromSession.trainer?.variant === TrainerVariant.DOUBLE
-            : fromSession.enemyParty.length > 1,
-          mysteryEncounterType,
+  // TODO: This needs a giant refactor and overhaul
+  private async initSessionFromData(fromSession: SessionSaveData): Promise<void> {
+    if (isLocal || isBeta) {
+      try {
+        console.debug(
+          this.parseSessionData(JSON.stringify(fromSession, (_, v: any) => (typeof v === "bigint" ? v.toString() : v))),
         );
-        battle.enemyLevels = fromSession.enemyParty.map(p => p.level);
-
-        globalScene.arena.init();
-
-        fromSession.enemyParty.forEach((enemyData, e) => {
-          const enemyPokemon = enemyData.toPokemon(
-            battleType,
-            e,
-            fromSession.trainer?.variant === TrainerVariant.DOUBLE,
-          ) as EnemyPokemon;
-          battle.enemyParty[e] = enemyPokemon;
-          if (battleType === BattleType.WILD) {
-            battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
-          }
-
-          loadPokemonAssets.push(enemyPokemon.loadAssets());
-        });
-
-        globalScene.arena.weather = fromSession.arena.weather;
-        globalScene.arena.eventTarget.dispatchEvent(
-          new WeatherChangedEvent(
-            WeatherType.NONE,
-            globalScene.arena.weather?.weatherType!,
-            globalScene.arena.weather?.turnsLeft!,
-          ),
-        ); // TODO: is this bang correct?
-
-        globalScene.arena.terrain = fromSession.arena.terrain;
-        globalScene.arena.eventTarget.dispatchEvent(
-          new TerrainChangedEvent(
-            TerrainType.NONE,
-            globalScene.arena.terrain?.terrainType!,
-            globalScene.arena.terrain?.turnsLeft!,
-          ),
-        ); // TODO: is this bang correct?
-
-        globalScene.arena.playerTerasUsed = fromSession.arena.playerTerasUsed;
-
-        globalScene.arena.tags = fromSession.arena.tags;
-        if (globalScene.arena.tags) {
-          for (const tag of globalScene.arena.tags) {
-            if (tag instanceof EntryHazardTag) {
-              const { tagType, side, turnCount, layers, maxLayers } = tag as EntryHazardTag;
-              globalScene.arena.eventTarget.dispatchEvent(
-                new TagAddedEvent(tagType, side, turnCount, layers, maxLayers),
-              );
-            } else {
-              globalScene.arena.eventTarget.dispatchEvent(new TagAddedEvent(tag.tagType, tag.side, tag.turnCount));
-            }
-          }
-        }
-
-        globalScene.arena.positionalTagManager.tags = fromSession.arena.positionalTags.map(tag =>
-          loadPositionalTag(tag),
-        );
-
-        if (globalScene.modifiers.length > 0) {
-          console.warn("Existing modifiers not cleared on session load, deleting...");
-          globalScene.modifiers = [];
-        }
-        for (const modifierData of fromSession.modifiers) {
-          const modifier = modifierData.toModifier(Modifier[modifierData.className]);
-          if (modifier) {
-            globalScene.addModifier(modifier, true);
-          }
-        }
-        globalScene.updateModifiers(true);
-
-        for (const enemyModifierData of fromSession.enemyModifiers) {
-          const modifier = enemyModifierData.toModifier(Modifier[enemyModifierData.className]);
-          if (modifier) {
-            globalScene.addEnemyModifier(modifier, true);
-          }
-        }
-
-        globalScene.updateModifiers(false);
-
-        Promise.all(loadPokemonAssets).then(() => resolve(true));
-      };
-      if (sessionData) {
-        initSessionFromData(sessionData);
-      } else {
-        this.getSession(slotId)
-          .then(data => {
-            return data && initSessionFromData(data);
-          })
-          .catch(err => {
-            reject(err);
-            return;
-          });
+      } catch (err) {
+        console.debug("Attempt to log session data failed:", err);
       }
-    } catch (err) {
-      reject(err);
     }
 
-    return promise;
+    globalScene.gameMode = getGameMode(fromSession.gameMode || GameModes.CLASSIC);
+    if (fromSession.challenges) {
+      globalScene.gameMode.challenges = fromSession.challenges.map(c => c.toChallenge());
+    }
+
+    globalScene.setSeed(fromSession.seed || globalScene.game.config.seed[0]);
+    globalScene.resetSeed();
+
+    console.log("Seed:", globalScene.seed);
+
+    globalScene.sessionPlayTime = fromSession.playTime || 0;
+    globalScene.lastSavePlayTime = 0;
+
+    const loadPokemonAssets: Promise<void>[] = [];
+
+    const party = globalScene.getPlayerParty();
+    party.splice(0, party.length);
+
+    for (const p of fromSession.party) {
+      const pokemon = p.toPokemon() as PlayerPokemon;
+      pokemon.setVisible(false);
+      loadPokemonAssets.push(pokemon.loadAssets(false));
+      party.push(pokemon);
+    }
+
+    Object.keys(globalScene.pokeballCounts).forEach((key: string) => {
+      globalScene.pokeballCounts[key] = fromSession.pokeballCounts[key] || 0;
+    });
+    if (Overrides.POKEBALL_OVERRIDE.active) {
+      globalScene.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
+    }
+
+    globalScene.money = Math.floor(fromSession.money || 0);
+    globalScene.updateMoneyText();
+
+    if (globalScene.money > this.gameStats.highestMoney) {
+      this.gameStats.highestMoney = globalScene.money;
+    }
+
+    globalScene.score = fromSession.score;
+    globalScene.updateScoreText();
+
+    globalScene.mysteryEncounterSaveData = new MysteryEncounterSaveData(fromSession.mysteryEncounterSaveData);
+
+    globalScene.newArena(fromSession.arena.biome, fromSession.playerFaints);
+
+    const battleType = fromSession.battleType || 0;
+    const trainerConfig = fromSession.trainer ? trainerConfigs[fromSession.trainer.trainerType] : null;
+    const mysteryEncounterType = fromSession.mysteryEncounterType !== -1 ? fromSession.mysteryEncounterType : undefined;
+    const battle = globalScene.newBattle(
+      fromSession.waveIndex,
+      battleType,
+      fromSession.trainer,
+      battleType === BattleType.TRAINER
+        ? trainerConfig?.doubleOnly || fromSession.trainer?.variant === TrainerVariant.DOUBLE
+        : fromSession.enemyParty.length > 1,
+      mysteryEncounterType,
+    );
+    battle.enemyLevels = fromSession.enemyParty.map(p => p.level);
+
+    globalScene.arena.init();
+
+    fromSession.enemyParty.forEach((enemyData, e) => {
+      const enemyPokemon = enemyData.toPokemon(
+        battleType,
+        e,
+        fromSession.trainer?.variant === TrainerVariant.DOUBLE,
+      ) as EnemyPokemon;
+      battle.enemyParty[e] = enemyPokemon;
+      if (battleType === BattleType.WILD) {
+        battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
+      }
+
+      loadPokemonAssets.push(enemyPokemon.loadAssets());
+    });
+
+    globalScene.arena.weather = fromSession.arena.weather;
+    globalScene.arena.eventTarget.dispatchEvent(
+      new WeatherChangedEvent(
+        WeatherType.NONE,
+        globalScene.arena.weather?.weatherType!,
+        globalScene.arena.weather?.turnsLeft!,
+      ),
+    ); // TODO: is this bang correct?
+
+    globalScene.arena.terrain = fromSession.arena.terrain;
+    globalScene.arena.eventTarget.dispatchEvent(
+      new TerrainChangedEvent(
+        TerrainType.NONE,
+        globalScene.arena.terrain?.terrainType!,
+        globalScene.arena.terrain?.turnsLeft!,
+      ),
+    ); // TODO: is this bang correct?
+
+    globalScene.arena.playerTerasUsed = fromSession.arena.playerTerasUsed;
+
+    globalScene.arena.tags = fromSession.arena.tags;
+    if (globalScene.arena.tags) {
+      for (const tag of globalScene.arena.tags) {
+        if (tag instanceof EntryHazardTag) {
+          const { tagType, side, turnCount, layers, maxLayers } = tag as EntryHazardTag;
+          globalScene.arena.eventTarget.dispatchEvent(new TagAddedEvent(tagType, side, turnCount, layers, maxLayers));
+        } else {
+          globalScene.arena.eventTarget.dispatchEvent(new TagAddedEvent(tag.tagType, tag.side, tag.turnCount));
+        }
+      }
+    }
+
+    globalScene.arena.positionalTagManager.tags = fromSession.arena.positionalTags.map(tag => loadPositionalTag(tag));
+
+    if (globalScene.modifiers.length > 0) {
+      console.warn("Existing modifiers not cleared on session load, deleting...");
+      globalScene.modifiers = [];
+    }
+    for (const modifierData of fromSession.modifiers) {
+      const modifier = modifierData.toModifier(Modifier[modifierData.className]);
+      if (modifier) {
+        globalScene.addModifier(modifier, true);
+      }
+    }
+    globalScene.updateModifiers(true);
+
+    for (const enemyModifierData of fromSession.enemyModifiers) {
+      const modifier = enemyModifierData.toModifier(Modifier[enemyModifierData.className]);
+      if (modifier) {
+        globalScene.addEnemyModifier(modifier, true);
+      }
+    }
+
+    globalScene.updateModifiers(false);
+
+    await Promise.all(loadPokemonAssets);
   }
 
   /**
