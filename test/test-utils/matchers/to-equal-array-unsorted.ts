@@ -1,4 +1,5 @@
 import { getOnelineDiffStr } from "#test/test-utils/string-utils";
+import { receivedStr } from "#test/test-utils/test-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
@@ -14,22 +15,22 @@ export function toEqualArrayUnsorted(
 ): SyncExpectationResult {
   if (!Array.isArray(received)) {
     return {
-      pass: false,
-      message: () => `Expected an array, but got ${this.utils.stringify(received)}!`,
+      pass: this.isNot,
+      message: () => `Expected to receive an array, but got ${receivedStr(received)}!`,
     };
   }
 
   if (received.length !== expected.length) {
     return {
       pass: false,
-      message: () => `Expected to receive array of length ${received.length}, but got ${expected.length} instead!`,
-      actual: received,
+      message: () => `Expected to receive an array of length ${received.length}, but got ${expected.length} instead!`,
       expected,
+      actual: received,
     };
   }
 
-  const actualSorted = received.slice().sort();
-  const expectedSorted = expected.slice().sort();
+  const actualSorted = received.toSorted();
+  const expectedSorted = expected.toSorted();
   const pass = this.equals(actualSorted, expectedSorted, [...this.customTesters, this.utils.iterableEquality]);
 
   const actualStr = getOnelineDiffStr.call(this, actualSorted);

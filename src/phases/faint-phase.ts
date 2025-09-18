@@ -17,7 +17,6 @@ import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { PokemonInstantReviveModifier } from "#modifiers/modifier";
 import { PokemonMove } from "#moves/pokemon-move";
 import { PokemonPhase } from "#phases/pokemon-phase";
-import { isNullOrUndefined } from "#utils/common";
 import i18next from "i18next";
 
 export class FaintPhase extends PokemonPhase {
@@ -89,13 +88,13 @@ export class FaintPhase extends PokemonPhase {
     if (pokemon.isPlayer()) {
       globalScene.arena.playerFaints += 1;
       globalScene.currentBattle.playerFaintsHistory.push({
-        pokemon: pokemon,
+        pokemon,
         turn: globalScene.currentBattle.turn,
       });
     } else {
       globalScene.currentBattle.enemyFaints += 1;
       globalScene.currentBattle.enemyFaintsHistory.push({
-        pokemon: pokemon,
+        pokemon,
         turn: globalScene.currentBattle.turn,
       });
     }
@@ -112,10 +111,10 @@ export class FaintPhase extends PokemonPhase {
     pokemon.resetTera();
 
     // TODO: this can be simplified by just checking whether lastAttack is defined
-    if (pokemon.turnData.attacksReceived?.length) {
+    if (pokemon.turnData.attacksReceived?.length > 0) {
       const lastAttack = pokemon.turnData.attacksReceived[0];
       applyAbAttrs("PostFaintAbAttr", {
-        pokemon: pokemon,
+        pokemon,
         // TODO: We should refactor lastAttack's sourceId to forbid null and just use undefined
         attacker: globalScene.getPokemonById(lastAttack.sourceId) ?? undefined,
         // TODO: improve the way that we provide the move that knocked out the pokemon...
@@ -131,14 +130,14 @@ export class FaintPhase extends PokemonPhase {
     for (const p of alivePlayField) {
       applyAbAttrs("PostKnockOutAbAttr", { pokemon: p, victim: pokemon });
     }
-    if (pokemon.turnData.attacksReceived?.length) {
+    if (pokemon.turnData.attacksReceived?.length > 0) {
       const defeatSource = this.source;
 
       if (defeatSource?.isOnField()) {
         applyAbAttrs("PostVictoryAbAttr", { pokemon: defeatSource });
         const pvmove = allMoves[pokemon.turnData.attacksReceived[0].move];
         const pvattrs = pvmove.getAttrs("PostVictoryStatStageChangeAttr");
-        if (pvattrs.length) {
+        if (pvattrs.length > 0) {
           for (const pvattr of pvattrs) {
             pvattr.applyPostVictory(defeatSource, defeatSource, pvmove);
           }
@@ -151,13 +150,13 @@ export class FaintPhase extends PokemonPhase {
       const legalPlayerPokemon = globalScene.getPokemonAllowedInBattle();
       /** The total number of legal player Pokemon that aren't currently on the field */
       const legalPlayerPartyPokemon = legalPlayerPokemon.filter(p => !p.isActive(true));
-      if (!legalPlayerPokemon.length) {
+      if (legalPlayerPokemon.length === 0) {
         /** If the player doesn't have any legal Pokemon, end the game */
         globalScene.phaseManager.unshiftNew("GameOverPhase");
       } else if (
-        globalScene.currentBattle.double &&
-        legalPlayerPokemon.length === 1 &&
-        legalPlayerPartyPokemon.length === 0
+        globalScene.currentBattle.double
+        && legalPlayerPokemon.length === 1
+        && legalPlayerPartyPokemon.length === 0
       ) {
         /**
          * If the player has exactly one Pokemon in total at this point in a double battle, and that Pokemon
@@ -174,10 +173,11 @@ export class FaintPhase extends PokemonPhase {
     } else {
       globalScene.phaseManager.unshiftNew("VictoryPhase", this.battlerIndex);
       if ([BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType)) {
-        const hasReservePartyMember = !!globalScene
-          .getEnemyParty()
-          .filter(p => p.isActive() && !p.isOnField() && p.trainerSlot === (pokemon as EnemyPokemon).trainerSlot)
-          .length;
+        const hasReservePartyMember =
+          globalScene
+            .getEnemyParty()
+            .filter(p => p.isActive() && !p.isOnField() && p.trainerSlot === (pokemon as EnemyPokemon).trainerSlot)
+            .length > 0;
         if (hasReservePartyMember) {
           globalScene.phaseManager.pushNew("SwitchSummonPhase", SwitchType.SWITCH, this.fieldIndex, -1, false, false);
         }
@@ -186,7 +186,7 @@ export class FaintPhase extends PokemonPhase {
 
     // in double battles redirect potential moves off fainted pokemon
     const allyPokemon = pokemon.getAlly();
-    if (globalScene.currentBattle.double && !isNullOrUndefined(allyPokemon)) {
+    if (globalScene.currentBattle.double && allyPokemon != null) {
       globalScene.redirectPokemonMoves(pokemon, allyPokemon);
     }
 
@@ -205,7 +205,7 @@ export class FaintPhase extends PokemonPhase {
           pokemon.lapseTags(BattlerTagLapseType.FAINT);
 
           pokemon.y -= 150;
-          pokemon.trySetStatus(StatusEffect.FAINT);
+          pokemon.doSetStatus(StatusEffect.FAINT);
           if (pokemon.isPlayer()) {
             globalScene.currentBattle.removeFaintedParticipant(pokemon as PlayerPokemon);
           } else {

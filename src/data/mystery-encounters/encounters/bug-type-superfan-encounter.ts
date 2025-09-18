@@ -46,9 +46,9 @@ import {
 } from "#mystery-encounters/mystery-encounter-requirements";
 import { getRandomPartyMemberFunc, trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/trainer-party-template";
-import type { OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
+import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
-import { isNullOrUndefined, randSeedInt, randSeedShuffle } from "#utils/common";
+import { randSeedInt, randSeedShuffle } from "#utils/common";
 import i18next from "i18next";
 
 /** the i18n namespace for the encounter */
@@ -198,7 +198,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
     },
     {
       speaker: `${namespace}:speaker`,
-      text: `${namespace}:intro_dialogue`,
+      text: `${namespace}:introDialogue`,
     },
   ])
   .withOnInit(() => {
@@ -213,7 +213,8 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
       female: true,
     });
 
-    let beedrillKeys: { spriteKey: string; fileRoot: string }, butterfreeKeys: { spriteKey: string; fileRoot: string };
+    let beedrillKeys: { spriteKey: string; fileRoot: string };
+    let butterfreeKeys: { spriteKey: string; fileRoot: string };
     if (globalScene.currentBattle.waveIndex < WAVE_LEVEL_BREAKPOINTS[3]) {
       beedrillKeys = getSpriteKeysFromSpecies(SpeciesId.BEEDRILL, false);
       butterfreeKeys = getSpriteKeysFromSpecies(SpeciesId.BUTTERFREE, false);
@@ -247,7 +248,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
         yShadow: -4,
       },
       {
-        spriteKey: spriteKey,
+        spriteKey,
         fileRoot: "trainer",
         hasShadow: true,
         x: 4,
@@ -312,7 +313,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
       .withDialogue({
         buttonLabel: `${namespace}:option.2.label`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.2.disabled_tooltip`,
+        disabledButtonTooltip: `${namespace}:option.2.disabledTooltip`,
       })
       .withPreOptionPhase(async () => {
         // Player shows off their bug types
@@ -333,7 +334,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
           encounter.selectedOption!.dialogue!.selected = [
             {
               speaker: `${namespace}:speaker`,
-              text: `${namespace}:option.2.selected_0_to_1`,
+              text: `${namespace}:option.2.selected0To1`,
             },
           ];
         } else if (numBugTypes < 4) {
@@ -344,7 +345,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
           encounter.selectedOption!.dialogue!.selected = [
             {
               speaker: `${namespace}:speaker`,
-              text: `${namespace}:option.2.selected_2_to_3`,
+              text: `${namespace}:option.2.selected2To3`,
             },
           ];
         } else if (numBugTypes < 6) {
@@ -355,7 +356,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
           encounter.selectedOption!.dialogue!.selected = [
             {
               speaker: `${namespace}:speaker`,
-              text: `${namespace}:option.2.selected_4_to_5`,
+              text: `${namespace}:option.2.selected4To5`,
             },
           ];
         } else {
@@ -398,7 +399,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
           encounter.selectedOption!.dialogue!.selected = [
             {
               speaker: `${namespace}:speaker`,
-              text: `${namespace}:option.2.selected_6`,
+              text: `${namespace}:option.2.selected6`,
             },
           ];
         }
@@ -421,17 +422,17 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
       .withDialogue({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
+        disabledButtonTooltip: `${namespace}:option.3.disabledTooltip`,
         selected: [
           {
             text: `${namespace}:option.3.selected`,
           },
           {
             speaker: `${namespace}:speaker`,
-            text: `${namespace}:option.3.selected_dialogue`,
+            text: `${namespace}:option.3.selectedDialogue`,
           },
         ],
-        secondOptionPrompt: `${namespace}:option.3.select_prompt`,
+        secondOptionPrompt: `${namespace}:option.3.selectPrompt`,
       })
       .withPreOptionPhase(async (): Promise<boolean> => {
         const encounter = globalScene.currentBattle.mysteryEncounter!;
@@ -440,11 +441,11 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
           // Get Pokemon held items and filter for valid ones
           const validItems = pokemon.getHeldItems().filter(item => {
             return (
-              (item instanceof BypassSpeedChanceModifier ||
-                item instanceof ContactHeldItemTransferChanceModifier ||
-                (item instanceof AttackTypeBoosterModifier &&
-                  (item.type as AttackTypeBoosterModifierType).moveType === PokemonType.BUG)) &&
-              item.isTransferable
+              (item instanceof BypassSpeedChanceModifier
+                || item instanceof ContactHeldItemTransferChanceModifier
+                || (item instanceof AttackTypeBoosterModifier
+                  && (item.type as AttackTypeBoosterModifierType).moveType === PokemonType.BUG))
+              && item.isTransferable
             );
           });
 
@@ -469,14 +470,14 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
           // If pokemon has valid item, it can be selected
           const hasValidItem = pokemon.getHeldItems().some(item => {
             return (
-              item instanceof BypassSpeedChanceModifier ||
-              item instanceof ContactHeldItemTransferChanceModifier ||
-              (item instanceof AttackTypeBoosterModifier &&
-                (item.type as AttackTypeBoosterModifierType).moveType === PokemonType.BUG)
+              item instanceof BypassSpeedChanceModifier
+              || item instanceof ContactHeldItemTransferChanceModifier
+              || (item instanceof AttackTypeBoosterModifier
+                && (item.type as AttackTypeBoosterModifierType).moveType === PokemonType.BUG)
             );
           });
           if (!hasValidItem) {
-            return getEncounterText(`${namespace}:option.3.invalid_selection`) ?? null;
+            return getEncounterText(`${namespace}:option.3.invalidSelection`) ?? null;
           }
 
           return null;
@@ -514,7 +515,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
 function getTrainerConfigForWave(waveIndex: number) {
   // Bug type superfan trainer config
   const config = trainerConfigs[TrainerType.BUG_TYPE_SUPERFAN].clone();
-  config.name = i18next.t("trainerNames:bug_type_superfan");
+  config.name = i18next.t("trainerNames:bugTypeSuperfan");
 
   let pool3Copy = POOL_3_POKEMON.slice(0);
   pool3Copy = randSeedShuffle(pool3Copy);
@@ -570,7 +571,7 @@ function getTrainerConfigForWave(waveIndex: number) {
       .setPartyMemberFunc(
         4,
         getRandomPartyMemberFunc([pool3Mon.species], TrainerSlot.TRAINER, true, p => {
-          if (!isNullOrUndefined(pool3Mon.formIndex)) {
+          if (pool3Mon.formIndex != null) {
             p.formIndex = pool3Mon.formIndex;
             p.generateAndPopulateMoveset();
             p.generateName();
@@ -602,7 +603,7 @@ function getTrainerConfigForWave(waveIndex: number) {
       .setPartyMemberFunc(
         3,
         getRandomPartyMemberFunc([pool3Mon.species], TrainerSlot.TRAINER, true, p => {
-          if (!isNullOrUndefined(pool3Mon.formIndex)) {
+          if (pool3Mon.formIndex != null) {
             p.formIndex = pool3Mon.formIndex;
             p.generateAndPopulateMoveset();
             p.generateName();
@@ -612,7 +613,7 @@ function getTrainerConfigForWave(waveIndex: number) {
       .setPartyMemberFunc(
         4,
         getRandomPartyMemberFunc([pool3Mon2.species], TrainerSlot.TRAINER, true, p => {
-          if (!isNullOrUndefined(pool3Mon2.formIndex)) {
+          if (pool3Mon2.formIndex != null) {
             p.formIndex = pool3Mon2.formIndex;
             p.generateAndPopulateMoveset();
             p.generateName();
@@ -647,7 +648,7 @@ function getTrainerConfigForWave(waveIndex: number) {
       .setPartyMemberFunc(
         3,
         getRandomPartyMemberFunc([pool3Mon.species], TrainerSlot.TRAINER, true, p => {
-          if (!isNullOrUndefined(pool3Mon.formIndex)) {
+          if (pool3Mon.formIndex != null) {
             p.formIndex = pool3Mon.formIndex;
             p.generateAndPopulateMoveset();
             p.generateName();
@@ -686,7 +687,7 @@ function getTrainerConfigForWave(waveIndex: number) {
       .setPartyMemberFunc(
         2,
         getRandomPartyMemberFunc([pool3Mon.species], TrainerSlot.TRAINER, true, p => {
-          if (!isNullOrUndefined(pool3Mon.formIndex)) {
+          if (pool3Mon.formIndex != null) {
             p.formIndex = pool3Mon.formIndex;
             p.generateAndPopulateMoveset();
             p.generateName();
@@ -696,7 +697,7 @@ function getTrainerConfigForWave(waveIndex: number) {
       .setPartyMemberFunc(
         3,
         getRandomPartyMemberFunc([pool3Mon2.species], TrainerSlot.TRAINER, true, p => {
-          if (!isNullOrUndefined(pool3Mon2.formIndex)) {
+          if (pool3Mon2.formIndex != null) {
             p.formIndex = pool3Mon2.formIndex;
             p.generateAndPopulateMoveset();
             p.generateName();
@@ -713,17 +714,15 @@ function doBugTypeMoveTutor(): Promise<void> {
   // biome-ignore lint/suspicious/noAsyncPromiseExecutor: TODO explain
   return new Promise<void>(async resolve => {
     const moveOptions = globalScene.currentBattle.mysteryEncounter!.misc.moveTutorOptions;
-    await showEncounterDialogue(`${namespace}:battle_won`, `${namespace}:speaker`);
+    await showEncounterDialogue(`${namespace}:battleWon`, `${namespace}:speaker`);
 
-    const overlayScale = 1;
     const moveInfoOverlay = new MoveInfoOverlay({
       delayVisibility: false,
-      scale: overlayScale,
       onSide: true,
       right: true,
       x: 1,
-      y: -MoveInfoOverlay.getHeight(overlayScale, true) - 1,
-      width: globalScene.game.canvas.width / 6 - 2,
+      y: -MoveInfoOverlay.getHeight(true) - 1,
+      width: globalScene.scaledCanvas.width - 2,
     });
     globalScene.ui.add(moveInfoOverlay);
 
@@ -750,7 +749,7 @@ function doBugTypeMoveTutor(): Promise<void> {
 
     const result = await selectOptionThenPokemon(
       optionSelectItems,
-      `${namespace}:teach_move_prompt`,
+      `${namespace}:teachMovePrompt`,
       undefined,
       onHoverOverCancel,
     );

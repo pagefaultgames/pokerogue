@@ -15,3 +15,10 @@ export interface AccountRegisterRequest {
   username: string;
   password: string;
 }
+
+export interface AccountChangePwRequest {
+  password: string;
+}
+export interface AccountChangePwResponse {
+  success: boolean;
+}

@@ -44,7 +44,7 @@ describe("Abilities - Ice Face", () => {
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
-    const eiscue = game.scene.getEnemyPokemon()!;
+    const eiscue = game.field.getEnemyPokemon();
 
     expect(eiscue.isFullHp()).toBe(true);
     expect(eiscue.formIndex).toBe(noiceForm);
@@ -57,7 +57,7 @@ describe("Abilities - Ice Face", () => {
 
     game.move.select(MoveId.SURGING_STRIKES);
 
-    const eiscue = game.scene.getEnemyPokemon()!;
+    const eiscue = game.field.getEnemyPokemon();
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeDefined();
 
     // First hit
@@ -85,7 +85,7 @@ describe("Abilities - Ice Face", () => {
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
-    const eiscue = game.scene.getEnemyPokemon()!;
+    const eiscue = game.field.getEnemyPokemon();
 
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).not.toBe(undefined);
     expect(eiscue.formIndex).toBe(icefaceForm);
@@ -99,7 +99,7 @@ describe("Abilities - Ice Face", () => {
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
-    const eiscue = game.scene.getEnemyPokemon()!;
+    const eiscue = game.field.getEnemyPokemon();
 
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).not.toBe(undefined);
     expect(eiscue.formIndex).toBe(icefaceForm);
@@ -114,7 +114,7 @@ describe("Abilities - Ice Face", () => {
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
-    const eiscue = game.scene.getEnemyPokemon()!;
+    const eiscue = game.field.getEnemyPokemon();
 
     expect(eiscue.isFullHp()).toBe(true);
     expect(eiscue.formIndex).toBe(noiceForm);
@@ -134,7 +134,7 @@ describe("Abilities - Ice Face", () => {
     game.move.select(MoveId.SNOWSCAPE);
 
     await game.phaseInterceptor.to(TurnEndPhase);
-    let eiscue = game.scene.getPlayerPokemon()!;
+    let eiscue = game.field.getPlayerPokemon();
 
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeUndefined();
     expect(eiscue.formIndex).toBe(noiceForm);
@@ -146,7 +146,7 @@ describe("Abilities - Ice Face", () => {
     game.doSwitchPokemon(1);
 
     await game.phaseInterceptor.to(QuietFormChangePhase);
-    eiscue = game.scene.getPlayerPokemon()!;
+    eiscue = game.field.getPlayerPokemon();
 
     expect(eiscue.formIndex).toBe(icefaceForm);
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).not.toBe(undefined);
@@ -158,7 +158,7 @@ describe("Abilities - Ice Face", () => {
     await game.classicMode.startBattle([SpeciesId.EISCUE]);
 
     game.move.select(MoveId.HAIL);
-    const eiscue = game.scene.getPlayerPokemon()!;
+    const eiscue = game.field.getPlayerPokemon();
 
     await game.phaseInterceptor.to(QuietFormChangePhase);
 
@@ -179,7 +179,7 @@ describe("Abilities - Ice Face", () => {
     game.move.select(MoveId.ICE_BEAM);
 
     await game.phaseInterceptor.to(TurnEndPhase);
-    let eiscue = game.scene.getPlayerPokemon()!;
+    let eiscue = game.field.getPlayerPokemon();
 
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeUndefined();
     expect(eiscue.formIndex).toBe(noiceForm);
@@ -206,7 +206,7 @@ describe("Abilities - Ice Face", () => {
 
     await game.classicMode.startBattle([SpeciesId.EISCUE]);
 
-    const eiscue = game.scene.getPlayerPokemon()!;
+    const eiscue = game.field.getPlayerPokemon();
 
     expect(eiscue.formIndex).toBe(noiceForm);
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeUndefined();
@@ -229,7 +229,7 @@ describe("Abilities - Ice Face", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    expect(game.scene.getEnemyPokemon()!.formIndex).toBe(icefaceForm);
+    expect(game.field.getEnemyPokemon().formIndex).toBe(icefaceForm);
   });
 
   it("cannot be suppressed", async () => {
@@ -241,7 +241,7 @@ describe("Abilities - Ice Face", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    const eiscue = game.scene.getEnemyPokemon()!;
+    const eiscue = game.field.getEnemyPokemon();
 
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).not.toBe(undefined);
     expect(eiscue.formIndex).toBe(icefaceForm);
@@ -257,7 +257,7 @@ describe("Abilities - Ice Face", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    const eiscue = game.scene.getEnemyPokemon()!;
+    const eiscue = game.field.getEnemyPokemon();
 
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeDefined();
     expect(eiscue.formIndex).toBe(icefaceForm);
@@ -269,10 +269,10 @@ describe("Abilities - Ice Face", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const eiscue = game.scene.getEnemyPokemon()!;
+    const eiscue = game.field.getEnemyPokemon();
 
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeDefined();
     expect(eiscue.formIndex).toBe(icefaceForm);
-    expect(game.scene.getPlayerPokemon()!.hasAbility(AbilityId.TRACE)).toBe(true);
+    expect(game.field.getPlayerPokemon().hasAbility(AbilityId.TRACE)).toBe(true);
   });
 });

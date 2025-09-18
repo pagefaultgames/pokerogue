@@ -37,7 +37,7 @@ import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encou
 import { MoveRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { DANCING_MOVES } from "#mystery-encounters/requirement-groups";
 import { PokemonData } from "#system/pokemon-data";
-import type { OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
+import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
@@ -168,13 +168,13 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
     const config: EnemyPartyConfig = {
       pokemonConfigs: [
         {
-          species: species,
+          species,
           dataSource: oricorioData,
           isBoss: true,
           // Gets +1 to all stats except SPD on battle start
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-            queueEncounterMessage(`${namespace}:option.1.boss_enraged`);
+            queueEncounterMessage(`${namespace}:option.1.bossEnraged`);
             globalScene.phaseManager.unshiftNew(
               "StatStageChangePhase",
               pokemon.getBattlerIndex(),
@@ -273,8 +273,8 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
       .withDialogue({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
-        secondOptionPrompt: `${namespace}:option.3.select_prompt`,
+        disabledButtonTooltip: `${namespace}:option.3.disabledTooltip`,
+        secondOptionPrompt: `${namespace}:option.3.selectPrompt`,
         selected: [
           {
             text: `${namespace}:option.3.selected`,
@@ -316,7 +316,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
           }
           const meetsReqs = encounter.options[2].pokemonMeetsPrimaryRequirements(pokemon);
           if (!meetsReqs) {
-            return getEncounterText(`${namespace}:invalid_selection`) ?? null;
+            return getEncounterText(`${namespace}:invalidSelection`) ?? null;
           }
 
           return null;

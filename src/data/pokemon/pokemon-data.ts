@@ -3,7 +3,7 @@ import { loadBattlerTag, SerializableBattlerTag } from "#data/battler-tags";
 import { allSpecies } from "#data/data-lists";
 import type { Gender } from "#data/gender";
 import { PokemonMove } from "#data/moves/pokemon-move";
-import { getPokemonSpeciesForm, type PokemonSpeciesForm } from "#data/pokemon-species";
+import type { PokemonSpeciesForm } from "#data/pokemon-species";
 import type { TypeDamageMultiplier } from "#data/type";
 import type { AbilityId } from "#enums/ability-id";
 import type { BerryType } from "#enums/berry-type";
@@ -11,11 +11,12 @@ import type { MoveId } from "#enums/move-id";
 import type { Nature } from "#enums/nature";
 import type { PokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
+import { StatusEffect } from "#enums/status-effect";
 import type { AttackMoveResult } from "#types/attack-move-result";
 import type { IllusionData } from "#types/illusion-data";
 import type { TurnMove } from "#types/turn-move";
 import type { CoerceNullPropertiesToUndefined } from "#types/type-helpers";
-import { isNullOrUndefined } from "#utils/common";
+import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 /**
  * The type that {@linkcode PokemonSpeciesForm} is converted to when an object containing it serializes it.
@@ -62,14 +63,14 @@ function deserializePokemonSpeciesForm(value: SerializedSpeciesForm | PokemonSpe
   // @ts-expect-error: We may be deserializing a PokemonSpeciesForm, but we catch later on
   let { id, formIdx } = value;
 
-  if (isNullOrUndefined(id) || isNullOrUndefined(formIdx)) {
+  if (id == null || formIdx == null) {
     // @ts-expect-error: Typescript doesn't know that in block, `value` must be a PokemonSpeciesForm
     id = value.speciesId;
     // @ts-expect-error: Same as above (plus we are accessing a protected property)
     formIdx = value._formIndex;
   }
   // If for some reason either of these fields are null/undefined, we cannot reconstruct the species form
-  if (isNullOrUndefined(id) || isNullOrUndefined(formIdx)) {
+  if (id == null || formIdx == null) {
     return null;
   }
   return getPokemonSpeciesForm(id, formIdx);
@@ -149,18 +150,19 @@ export class PokemonSummonData {
   public moveHistory: TurnMove[] = [];
 
   constructor(source?: PokemonSummonData | SerializedPokemonSummonData) {
-    if (isNullOrUndefined(source)) {
+    if (source == null) {
       return;
     }
 
     // TODO: Rework this into an actual generic function for use elsewhere
     for (const [key, value] of Object.entries(source)) {
-      if (isNullOrUndefined(value) && this.hasOwnProperty(key)) {
+      if (value == null && this.hasOwnProperty(key)) {
         continue;
       }
 
       if (key === "speciesForm" || key === "fusionSpeciesForm") {
         this[key] = deserializePokemonSpeciesForm(value);
+        continue;
       }
 
       if (key === "illusion" && typeof value === "object") {
@@ -168,7 +170,7 @@ export class PokemonSummonData {
         const illusionData = {
           ...value,
         };
-        if (!isNullOrUndefined(illusionData.fusionSpecies)) {
+        if (illusionData.fusionSpecies != null) {
           switch (typeof illusionData.fusionSpecies) {
             case "object":
               illusionData.fusionSpecies = allSpecies[illusionData.fusionSpecies.speciesId];
@@ -181,6 +183,7 @@ export class PokemonSummonData {
           }
         }
         this[key] = illusionData as IllusionData;
+        continue;
       }
 
       if (key === "moveset") {
@@ -220,18 +223,18 @@ export class PokemonSummonData {
         CoerceNullPropertiesToUndefined<PokemonSummonData>,
         "speciesForm" | "fusionSpeciesForm" | "illusion"
       >),
-      speciesForm: isNullOrUndefined(speciesForm)
-        ? undefined
-        : { id: speciesForm.speciesId, formIdx: speciesForm.formIndex },
-      fusionSpeciesForm: isNullOrUndefined(fusionSpeciesForm)
-        ? undefined
-        : { id: fusionSpeciesForm.speciesId, formIdx: fusionSpeciesForm.formIndex },
-      illusion: isNullOrUndefined(illusion)
-        ? undefined
-        : {
-            ...(this.illusion as Omit<typeof illusion, "fusionSpecies">),
-            fusionSpecies: illusionSpeciesForm?.speciesId,
-          },
+      speciesForm: speciesForm == null ? undefined : { id: speciesForm.speciesId, formIdx: speciesForm.formIndex },
+      fusionSpeciesForm:
+        fusionSpeciesForm == null
+          ? undefined
+          : { id: fusionSpeciesForm.speciesId, formIdx: fusionSpeciesForm.formIndex },
+      illusion:
+        illusion == null
+          ? undefined
+          : {
+              ...(this.illusion as Omit<typeof illusion, "fusionSpecies">),
+              fusionSpecies: illusionSpeciesForm?.speciesId,
+            },
     };
     // Replace `null` with `undefined`, as `undefined` never gets serialized
     for (const [key, value] of Object.entries(t)) {
@@ -250,7 +253,6 @@ export class PokemonTempSummonData {
    * Only currently used for positioning the battle cursor.
    */
   turnCount = 1;
-
   /**
    * The number of turns this pokemon has spent in the active position since the start of the wave
    * without switching out.
@@ -275,7 +277,7 @@ export class PokemonBattleData {
   public berriesEaten: BerryType[] = [];
 
   constructor(source?: PokemonBattleData | Partial<PokemonBattleData>) {
-    if (!isNullOrUndefined(source)) {
+    if (source != null) {
       this.hitCount = source.hitCount ?? 0;
       this.hasEatenBerry = source.hasEatenBerry ?? false;
       this.berriesEaten = source.berriesEaten ?? [];
@@ -324,6 +326,14 @@ export class PokemonTurnData {
   public switchedInThisTurn = false;
   public failedRunAway = false;
   public joinedRound = false;
+  /** Tracker for a pending status effect
+   *
+   * @remarks
+   * Set whenever {@linkcode Pokemon#trySetStatus} succeeds in order to prevent subsequent status effects
+   * from being applied. Necessary because the status is not actually set until the {@linkcode ObtainStatusEffectPhase} runs,
+   * which may not happen before another status effect is attempted to be applied.
+   */
+  public pendingStatus: StatusEffect = StatusEffect.NONE;
   /**
    * The amount of times this Pokemon has acted again and used a move in the current turn.
    * Used to make sure multi-hits occur properly when the user is

@@ -7,7 +7,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import type { Move, MoveTargetSet, UserMoveConditionFunc } from "#moves/move";
-import { isNullOrUndefined, NumberHolder } from "#utils/common";
+import { NumberHolder } from "#utils/common";
 
 /**
  * Return whether the move targets the field
@@ -78,7 +78,7 @@ export function getMoveTargets(user: Pokemon, move: MoveId, replaceTarget?: Move
     case MoveTarget.OTHER:
     case MoveTarget.ALL_NEAR_OTHERS:
     case MoveTarget.ALL_OTHERS:
-      set = !isNullOrUndefined(ally) ? opponents.concat([ally]) : opponents;
+      set = ally != null ? opponents.concat([ally]) : opponents;
       multiple = moveTarget === MoveTarget.ALL_NEAR_OTHERS || moveTarget === MoveTarget.ALL_OTHERS;
       break;
     case MoveTarget.NEAR_ENEMY:
@@ -95,22 +95,22 @@ export function getMoveTargets(user: Pokemon, move: MoveId, replaceTarget?: Move
       return { targets: [-1 as BattlerIndex], multiple: false };
     case MoveTarget.NEAR_ALLY:
     case MoveTarget.ALLY:
-      set = !isNullOrUndefined(ally) ? [ally] : [];
+      set = ally != null ? [ally] : [];
       break;
     case MoveTarget.USER_OR_NEAR_ALLY:
     case MoveTarget.USER_AND_ALLIES:
     case MoveTarget.USER_SIDE:
-      set = !isNullOrUndefined(ally) ? [user, ally] : [user];
+      set = ally != null ? [user, ally] : [user];
       multiple = moveTarget !== MoveTarget.USER_OR_NEAR_ALLY;
       break;
     case MoveTarget.ALL:
     case MoveTarget.BOTH_SIDES:
-      set = (!isNullOrUndefined(ally) ? [user, ally] : [user]).concat(opponents);
+      set = (ally != null ? [user, ally] : [user]).concat(opponents);
       multiple = true;
       break;
     case MoveTarget.CURSE:
       {
-        const extraTargets = !isNullOrUndefined(ally) ? [ally] : [];
+        const extraTargets = ally != null ? [ally] : [];
         set = user.getTypes(true).includes(PokemonType.GHOST) ? opponents.concat(extraTargets) : [user];
       }
       break;
@@ -126,7 +126,7 @@ export function getMoveTargets(user: Pokemon, move: MoveId, replaceTarget?: Move
 }
 
 export const frenzyMissFunc: UserMoveConditionFunc = (user: Pokemon, move: Move) => {
-  while (user.getMoveQueue().length && user.getMoveQueue()[0].move === move.id) {
+  while (user.getMoveQueue().length > 0 && user.getMoveQueue()[0].move === move.id) {
     user.getMoveQueue().shift();
   }
   user.removeTag(BattlerTagType.FRENZY); // FRENZY tag should be disrupted on miss/no effect

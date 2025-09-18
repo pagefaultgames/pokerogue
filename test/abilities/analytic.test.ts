@@ -38,7 +38,7 @@ describe("Abilities - Analytic", () => {
   it("should increase damage if the user moves last", async () => {
     await game.classicMode.startBattle([SpeciesId.ARCEUS]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -56,7 +56,7 @@ describe("Abilities - Analytic", () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.GENGAR, SpeciesId.SHUCKLE]);
 
-    const [enemy] = game.scene.getEnemyField();
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.TACKLE, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, 1);

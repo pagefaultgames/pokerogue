@@ -38,8 +38,8 @@ export class BattleEndPhase extends BattlePhase {
 
     globalScene.gameData.gameStats.battles++;
     if (
-      globalScene.gameMode.isEndless &&
-      globalScene.currentBattle.waveIndex + 1 > globalScene.gameData.gameStats.highestEndlessWave
+      globalScene.gameMode.isEndless
+      && globalScene.currentBattle.waveIndex + 1 > globalScene.gameData.gameStats.highestEndlessWave
     ) {
       globalScene.gameData.gameStats.highestEndlessWave = globalScene.currentBattle.waveIndex + 1;
     }
@@ -56,12 +56,6 @@ export class BattleEndPhase extends BattlePhase {
     if (globalScene.gameMode.isEndless && globalScene.currentBattle.waveIndex >= 5850) {
       globalScene.phaseManager.clearPhaseQueue();
       globalScene.phaseManager.unshiftNew("GameOverPhase", true);
-    }
-
-    for (const pokemon of globalScene.getField()) {
-      if (pokemon) {
-        pokemon.tempSummonData.waveTurnCount = 1;
-      }
     }
 
     for (const pokemon of globalScene.getPokemonAllowedInBattle()) {

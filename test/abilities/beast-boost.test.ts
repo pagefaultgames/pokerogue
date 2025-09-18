@@ -36,7 +36,7 @@ describe("Abilities - Beast Boost", () => {
   it("should prefer highest stat to boost its corresponding stat stage by 1 when winning a battle", async () => {
     await game.classicMode.startBattle([SpeciesId.SLOWBRO]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     // Set the pokemon's highest stat to DEF, so it should be picked by Beast Boost
     vi.spyOn(playerPokemon, "stats", "get").mockReturnValue([10000, 100, 1000, 200, 100, 100]);
     console.log(playerPokemon.stats);
@@ -54,7 +54,7 @@ describe("Abilities - Beast Boost", () => {
 
     await game.classicMode.startBattle([SpeciesId.SLOWBRO]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     // If the opponent uses Guard Split, the pokemon's second highest stat (SPATK) should be chosen
     vi.spyOn(playerPokemon, "stats", "get").mockReturnValue([10000, 100, 201, 200, 100, 100]);
 
@@ -72,7 +72,7 @@ describe("Abilities - Beast Boost", () => {
     // Order preference follows the order of EFFECTIVE_STAT
     await game.classicMode.startBattle([SpeciesId.SLOWBRO]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
     // Set up tie between SPATK, SPDEF, and SPD, where SPATK should win
     vi.spyOn(playerPokemon, "stats", "get").mockReturnValue([10000, 1, 1, 100, 100, 100]);

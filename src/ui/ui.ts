@@ -6,20 +6,20 @@ import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { AchvBar } from "#ui/achv-bar";
 import { AchvsUiHandler } from "#ui/achvs-ui-handler";
-import { AdminUiHandler } from "#ui/admin-ui-handler";
 import { AutoCompleteUiHandler } from "#ui/autocomplete-ui-handler";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { BallUiHandler } from "#ui/ball-ui-handler";
 import { BattleMessageUiHandler } from "#ui/battle-message-ui-handler";
 import type { BgmBar } from "#ui/bgm-bar";
 import { GameChallengesUiHandler } from "#ui/challenges-select-ui-handler";
+import { ChangePasswordFormUiHandler } from "#ui/change-password-form-ui-handler";
 import { CommandUiHandler } from "#ui/command-ui-handler";
 import { ConfirmUiHandler } from "#ui/confirm-ui-handler";
 import { EggGachaUiHandler } from "#ui/egg-gacha-ui-handler";
-import { EggHatchSceneHandler } from "#ui/egg-hatch-scene-handler";
+import { EggHatchSceneUiHandler } from "#ui/egg-hatch-scene-ui-handler";
 import { EggListUiHandler } from "#ui/egg-list-ui-handler";
 import { EggSummaryUiHandler } from "#ui/egg-summary-ui-handler";
-import { EvolutionSceneHandler } from "#ui/evolution-scene-handler";
+import { EvolutionSceneUiHandler } from "#ui/evolution-scene-ui-handler";
 import { FightUiHandler } from "#ui/fight-ui-handler";
 import { GameStatsUiHandler } from "#ui/game-stats-ui-handler";
 import { GamepadBindingUiHandler } from "#ui/gamepad-binding-ui-handler";
@@ -41,7 +41,7 @@ import { RenameFormUiHandler } from "#ui/rename-form-ui-handler";
 import { RunHistoryUiHandler } from "#ui/run-history-ui-handler";
 import { RunInfoUiHandler } from "#ui/run-info-ui-handler";
 import { SaveSlotSelectUiHandler } from "#ui/save-slot-select-ui-handler";
-import { SavingIconHandler } from "#ui/saving-icon-handler";
+import { SavingIconContainer } from "#ui/saving-icon-handler";
 import { SessionReloadModalUiHandler } from "#ui/session-reload-modal-ui-handler";
 import { SettingsAudioUiHandler } from "#ui/settings-audio-ui-handler";
 import { SettingsDisplayUiHandler } from "#ui/settings-display-ui-handler";
@@ -59,6 +59,8 @@ import { addWindow } from "#ui/ui-theme";
 import { UnavailableModalUiHandler } from "#ui/unavailable-modal-ui-handler";
 import { executeIf } from "#utils/common";
 import i18next from "i18next";
+import { AdminUiHandler } from "./handlers/admin-ui-handler";
+import { RenameRunFormUiHandler } from "./handlers/rename-run-ui-handler";
 
 const transitionModes = [
   UiMode.SAVE_SLOT,
@@ -97,11 +99,13 @@ const noTransitionModes = [
   UiMode.SESSION_RELOAD,
   UiMode.UNAVAILABLE,
   UiMode.RENAME_POKEMON,
+  UiMode.RENAME_RUN,
   UiMode.TEST_DIALOGUE,
   UiMode.AUTO_COMPLETE,
   UiMode.ADMIN,
   UiMode.MYSTERY_ENCOUNTER,
   UiMode.RUN_INFO,
+  UiMode.CHANGE_PASSWORD_FORM,
 ];
 
 export class UI extends Phaser.GameObjects.Container {
@@ -111,7 +115,7 @@ export class UI extends Phaser.GameObjects.Container {
   private overlay: Phaser.GameObjects.Rectangle;
   public achvBar: AchvBar;
   public bgmBar: BgmBar;
-  public savingIcon: SavingIconHandler;
+  public savingIcon: SavingIconContainer;
 
   private tooltipContainer: Phaser.GameObjects.Container;
   private tooltipBg: Phaser.GameObjects.NineSlice;
@@ -121,7 +125,7 @@ export class UI extends Phaser.GameObjects.Container {
   private overlayActive: boolean;
 
   constructor() {
-    super(globalScene, 0, globalScene.game.canvas.height / 6);
+    super(globalScene, 0, globalScene.scaledCanvas.height);
 
     this.mode = UiMode.MESSAGE;
     this.modeChain = [];
@@ -137,8 +141,8 @@ export class UI extends Phaser.GameObjects.Container {
       new PartyUiHandler(),
       new SummaryUiHandler(),
       new StarterSelectUiHandler(),
-      new EvolutionSceneHandler(),
-      new EggHatchSceneHandler(),
+      new EvolutionSceneUiHandler(),
+      new EggHatchSceneUiHandler(),
       new EggSummaryUiHandler(),
       new ConfirmUiHandler(),
       new OptionSelectUiHandler(),
@@ -166,12 +170,14 @@ export class UI extends Phaser.GameObjects.Container {
       new UnavailableModalUiHandler(),
       new GameChallengesUiHandler(),
       new RenameFormUiHandler(),
+      new RenameRunFormUiHandler(),
       new RunHistoryUiHandler(),
       new RunInfoUiHandler(),
       new TestDialogueUiHandler(UiMode.TEST_DIALOGUE),
       new AutoCompleteUiHandler(),
       new AdminUiHandler(),
       new MysteryEncounterUiHandler(),
+      new ChangePasswordFormUiHandler(),
     ];
   }
 
@@ -180,13 +186,7 @@ export class UI extends Phaser.GameObjects.Container {
     for (const handler of this.handlers) {
       handler.setup();
     }
-    this.overlay = globalScene.add.rectangle(
-      0,
-      0,
-      globalScene.game.canvas.width / 6,
-      globalScene.game.canvas.height / 6,
-      0,
-    );
+    this.overlay = globalScene.add.rectangle(0, 0, globalScene.scaledCanvas.width, globalScene.scaledCanvas.height, 0);
     this.overlay.setName("rect-ui-overlay");
     this.overlay.setOrigin(0, 0);
     globalScene.uiContainer.add(this.overlay);
@@ -198,7 +198,7 @@ export class UI extends Phaser.GameObjects.Container {
 
     globalScene.uiContainer.add(this.achvBar);
 
-    this.savingIcon = new SavingIconHandler();
+    this.savingIcon = new SavingIconContainer();
     this.savingIcon.setup();
 
     globalScene.uiContainer.add(this.savingIcon);
@@ -377,10 +377,12 @@ export class UI extends Phaser.GameObjects.Container {
   }
 
   shouldSkipDialogue(i18nKey: string): boolean {
-    if (i18next.exists(i18nKey)) {
-      if (globalScene.skipSeenDialogues && globalScene.gameData.getSeenDialogues()[i18nKey] === true) {
-        return true;
-      }
+    if (
+      i18next.exists(i18nKey)
+      && globalScene.skipSeenDialogues
+      && globalScene.gameData.getSeenDialogues()[i18nKey] === true
+    ) {
+      return true;
     }
     return false;
   }
@@ -437,15 +439,15 @@ export class UI extends Phaser.GameObjects.Container {
       if (isTouch) {
         // If we are in the top left quadrant on mobile, move the tooltip to the top right corner
         if (pointerX <= globalScene.game.canvas.width / 2 && pointerY <= globalScene.game.canvas.height / 2) {
-          x = globalScene.game.canvas.width / 6 - tooltipWidth - padding;
+          x = globalScene.scaledCanvas.width - tooltipWidth - padding;
         }
       } else {
         // If the tooltip would go offscreen on the right, or is close to it, move to the left of the cursor
-        if (x + tooltipWidth + padding > globalScene.game.canvas.width / 6) {
+        if (x + tooltipWidth + padding > globalScene.scaledCanvas.width) {
           x = Math.max(padding, pointerX / 6 - tooltipWidth - padding);
         }
         // If the tooltip would go offscreen at the bottom, or is close to it, move above the cursor
-        if (y + tooltipHeight + padding > globalScene.game.canvas.height / 6) {
+        if (y + tooltipHeight + padding > globalScene.scaledCanvas.height) {
           y = Math.max(padding, pointerY / 6 - tooltipHeight - padding);
         }
       }
@@ -491,7 +493,7 @@ export class UI extends Phaser.GameObjects.Container {
       globalScene.tweens.add({
         targets: this.overlay,
         alpha: 1,
-        duration: duration,
+        duration,
         ease: "Sine.easeOut",
         onComplete: () => resolve(),
       });
@@ -506,7 +508,7 @@ export class UI extends Phaser.GameObjects.Container {
       globalScene.tweens.add({
         targets: this.overlay,
         alpha: 0,
-        duration: duration,
+        duration,
         ease: "Sine.easeIn",
         onComplete: () => {
           this.overlay.setVisible(false);
@@ -548,11 +550,11 @@ export class UI extends Phaser.GameObjects.Container {
         resolve();
       };
       if (
-        (!chainMode &&
-          (transitionModes.indexOf(this.mode) > -1 || transitionModes.indexOf(mode) > -1) &&
-          noTransitionModes.indexOf(this.mode) === -1 &&
-          noTransitionModes.indexOf(mode) === -1) ||
-        (chainMode && noTransitionModes.indexOf(mode) === -1)
+        (!chainMode
+          && (transitionModes.indexOf(this.mode) > -1 || transitionModes.indexOf(mode) > -1)
+          && noTransitionModes.indexOf(this.mode) === -1
+          && noTransitionModes.indexOf(mode) === -1)
+        || (chainMode && noTransitionModes.indexOf(mode) === -1)
       ) {
         this.fadeOut(250).then(() => {
           globalScene.time.delayedCall(100, () => {
@@ -593,7 +595,7 @@ export class UI extends Phaser.GameObjects.Container {
 
   revertMode(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      if (!this?.modeChain?.length) {
+      if (this?.modeChain?.length === 0) {
         return resolve(false);
       }
 
@@ -625,7 +627,7 @@ export class UI extends Phaser.GameObjects.Container {
 
   revertModes(): Promise<void> {
     return new Promise<void>(resolve => {
-      if (!this?.modeChain?.length) {
+      if (this?.modeChain?.length === 0) {
         return resolve();
       }
       this.revertMode().then(success => executeIf(success, this.revertModes).then(() => resolve()));

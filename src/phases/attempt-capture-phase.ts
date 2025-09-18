@@ -12,6 +12,7 @@ import {
 } from "#data/pokeball";
 import { getStatusEffectCatchRateMultiplier } from "#data/status-effect";
 import { BattlerIndex } from "#enums/battler-index";
+import { ChallengeType } from "#enums/challenge-type";
 import type { PokeballType } from "#enums/pokeball";
 import { StatusEffect } from "#enums/status-effect";
 import { UiMode } from "#enums/ui-mode";
@@ -23,6 +24,8 @@ import { achvs } from "#system/achv";
 import type { PartyOption } from "#ui/party-ui-handler";
 import { PartyUiMode } from "#ui/party-ui-handler";
 import { SummaryUiMode } from "#ui/summary-ui-handler";
+import { applyChallenges } from "#utils/challenge-utils";
+import { BooleanHolder } from "#utils/common";
 import i18next from "i18next";
 
 // TODO: Refactor and split up to allow for overriding capture chance
@@ -133,10 +136,10 @@ export class AttemptCapturePhase extends PokemonPhase {
                   } else if (shakeCount++ < (isCritical ? 1 : 3)) {
                     // Shake check (skip check for critical or guaranteed captures, but still play the sound)
                     if (
-                      pokeballMultiplier === -1 ||
-                      isCritical ||
-                      modifiedCatchRate >= 255 ||
-                      pokemon.randBattleSeedInt(65536) < shakeProbability
+                      pokeballMultiplier === -1
+                      || isCritical
+                      || modifiedCatchRate >= 255
+                      || pokemon.randBattleSeedInt(65536) < shakeProbability
                     ) {
                       globalScene.playSound("se/pb_move");
                     } else {
@@ -228,8 +231,9 @@ export class AttemptCapturePhase extends PokemonPhase {
     const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
 
     if (
-      speciesForm.abilityHidden &&
-      (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1
+      speciesForm.abilityHidden
+      && (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex)
+        === speciesForm.getAbilityCount() - 1
     ) {
       globalScene.validateAchv(achvs.HIDDEN_ABILITY);
     }
@@ -250,8 +254,11 @@ export class AttemptCapturePhase extends PokemonPhase {
 
     globalScene.gameData.updateSpeciesDexIvs(pokemon.species.getRootSpeciesId(true), pokemon.ivs);
 
+    const addStatus = new BooleanHolder(true);
+    applyChallenges(ChallengeType.POKEMON_ADD_TO_PARTY, pokemon, addStatus);
+
     globalScene.ui.showText(
-      i18next.t("battle:pokemonCaught", {
+      i18next.t(addStatus.value ? "battle:pokemonCaught" : "battle:pokemonCaughtButChallenge", {
         pokemonName: getPokemonNameWithAffix(pokemon),
       }),
       null,
@@ -265,7 +272,7 @@ export class AttemptCapturePhase extends PokemonPhase {
         const removePokemon = () => {
           globalScene.addFaintedEnemyScore(pokemon);
           pokemon.hp = 0;
-          pokemon.trySetStatus(StatusEffect.FAINT);
+          pokemon.doSetStatus(StatusEffect.FAINT);
           globalScene.clearEnemyHeldItemModifiers();
           pokemon.leaveField(true, true, true);
         };
@@ -287,6 +294,11 @@ export class AttemptCapturePhase extends PokemonPhase {
           });
         };
         Promise.all([pokemon.hideInfo(), globalScene.gameData.setPokemonCaught(pokemon)]).then(() => {
+          if (!addStatus.value) {
+            removePokemon();
+            end();
+            return;
+          }
           if (globalScene.getPlayerParty().length === PLAYER_PARTY_MAX_SIZE) {
             const promptRelease = () => {
               globalScene.ui.showText(

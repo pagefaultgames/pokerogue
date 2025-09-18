@@ -15,7 +15,7 @@ import { getRandomPlayerPokemon, getRandomSpeciesByStarterCost } from "#mystery-
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
-import { isNullOrUndefined, randSeedInt } from "#utils/common";
+import { randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 /** i18n namespace for encounter */
@@ -23,12 +23,8 @@ const namespace = "mysteryEncounters/darkDeal";
 
 /** Exclude Ultra Beasts (inludes Cosmog/Solgaleo/Lunala/Necrozma), Paradox (includes Miraidon/Koraidon), Eternatus, and Mythicals */
 const excludedBosses = [
-  SpeciesId.NECROZMA,
-  SpeciesId.COSMOG,
-  SpeciesId.COSMOEM,
-  SpeciesId.SOLGALEO,
-  SpeciesId.LUNALA,
   SpeciesId.ETERNATUS,
+  /** UBs */
   SpeciesId.NIHILEGO,
   SpeciesId.BUZZWOLE,
   SpeciesId.PHEROMOSA,
@@ -40,6 +36,12 @@ const excludedBosses = [
   SpeciesId.NAGANADEL,
   SpeciesId.STAKATAKA,
   SpeciesId.BLACEPHALON,
+  SpeciesId.COSMOG,
+  SpeciesId.COSMOEM,
+  SpeciesId.SOLGALEO,
+  SpeciesId.LUNALA,
+  SpeciesId.NECROZMA,
+  /** Paradox */
   SpeciesId.GREAT_TUSK,
   SpeciesId.SCREAM_TAIL,
   SpeciesId.BRUTE_BONNET,
@@ -47,10 +49,10 @@ const excludedBosses = [
   SpeciesId.SLITHER_WING,
   SpeciesId.SANDY_SHOCKS,
   SpeciesId.ROARING_MOON,
-  SpeciesId.KORAIDON,
   SpeciesId.WALKING_WAKE,
   SpeciesId.GOUGING_FIRE,
   SpeciesId.RAGING_BOLT,
+  SpeciesId.KORAIDON,
   SpeciesId.IRON_TREADS,
   SpeciesId.IRON_BUNDLE,
   SpeciesId.IRON_HANDS,
@@ -58,22 +60,23 @@ const excludedBosses = [
   SpeciesId.IRON_MOTH,
   SpeciesId.IRON_THORNS,
   SpeciesId.IRON_VALIANT,
-  SpeciesId.MIRAIDON,
   SpeciesId.IRON_LEAVES,
   SpeciesId.IRON_BOULDER,
   SpeciesId.IRON_CROWN,
+  SpeciesId.MIRAIDON,
+  /** Mythical */
   SpeciesId.MEW,
   SpeciesId.CELEBI,
-  SpeciesId.DEOXYS,
   SpeciesId.JIRACHI,
-  SpeciesId.DARKRAI,
+  SpeciesId.DEOXYS,
   SpeciesId.PHIONE,
   SpeciesId.MANAPHY,
-  SpeciesId.ARCEUS,
+  SpeciesId.DARKRAI,
   SpeciesId.SHAYMIN,
+  SpeciesId.ARCEUS,
   SpeciesId.VICTINI,
-  SpeciesId.MELOETTA,
   SpeciesId.KELDEO,
+  SpeciesId.MELOETTA,
   SpeciesId.GENESECT,
   SpeciesId.DIANCIE,
   SpeciesId.HOOPA,
@@ -81,9 +84,9 @@ const excludedBosses = [
   SpeciesId.MAGEARNA,
   SpeciesId.MARSHADOW,
   SpeciesId.ZERAORA,
-  SpeciesId.ZARUDE,
   SpeciesId.MELTAN,
   SpeciesId.MELMETAL,
+  SpeciesId.ZARUDE,
   SpeciesId.PECHARUNT,
 ];
 
@@ -96,6 +99,7 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
   MysteryEncounterType.DARK_DEAL,
 )
   .withEncounterTier(MysteryEncounterTier.ROGUE)
+  .withDisallowedChallenges(Challenges.HARDCORE)
   .withIntroSpriteConfigs([
     {
       spriteKey: "dark_deal_scientist",
@@ -115,7 +119,7 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
     },
     {
       speaker: `${namespace}:speaker`,
-      text: `${namespace}:intro_dialogue`,
+      text: `${namespace}:introDialogue`,
     },
   ])
   .withSceneWaveRangeRequirement(30, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
@@ -133,10 +137,10 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
         selected: [
           {
             speaker: `${namespace}:speaker`,
-            text: `${namespace}:option.1.selected_dialogue`,
+            text: `${namespace}:option.1.selectedDialogue`,
           },
           {
-            text: `${namespace}:option.1.selected_message`,
+            text: `${namespace}:option.1.selectedMessage`,
           },
         ],
       })
@@ -188,7 +192,7 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
             };
           }),
         };
-        if (!isNullOrUndefined(bossSpecies.forms) && bossSpecies.forms.length > 0) {
+        if (bossSpecies.forms != null && bossSpecies.forms.length > 0) {
           pokemonConfig.formIndex = 0;
         }
         const config: EnemyPartyConfig = {

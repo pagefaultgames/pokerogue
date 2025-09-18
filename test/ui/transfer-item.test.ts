@@ -70,10 +70,10 @@ describe("UI - Transfer Items", () => {
         handler.optionsContainer.list.some(option => (option as BBCodeText).text?.includes("Apicot Berry (2)")),
       ).toBe(true);
       expect(
-        handler.optionsContainer.list.some(option => RegExp(/Lum Berry\[color.*(2)/).exec((option as BBCodeText).text)),
+        handler.optionsContainer.list.some(option =>
+          new RegExp(/Lum Berry\[color.*(2)/).exec((option as BBCodeText).text),
+        ),
       ).toBe(true);
-
-      game.phaseInterceptor.unlock();
     });
 
     await game.phaseInterceptor.to("SelectModifierPhase");
@@ -93,8 +93,6 @@ describe("UI - Transfer Items", () => {
       expect(handler.optionsContainer.list.some(option => (option as BBCodeText).text?.includes("Transfer"))).toBe(
         true,
       );
-
-      game.phaseInterceptor.unlock();
     });
 
     await game.phaseInterceptor.to("SelectModifierPhase");

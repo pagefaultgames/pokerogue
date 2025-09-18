@@ -102,9 +102,9 @@ async function promptFileName(selectedType) {
 function getBoilerplatePath(choiceType) {
   switch (choiceType) {
     // case "Reward":
-    //   return path.join(__dirname, "boilerplates/reward.ts");
+    //   return path.join(__dirname, "boilerplates/reward.boilerplate.ts");
     default:
-      return path.join(__dirname, "boilerplates/default.ts");
+      return path.join(__dirname, "boilerplates/default.boilerplate.ts");
   }
 }
 
@@ -156,7 +156,7 @@ async function runInteractive() {
     console.log(chalk.green.bold(`✔ File created at: test/${localDir}/${fileName}.test.ts\n`));
     console.groupEnd();
   } catch (err) {
-    console.error(chalk.red("✗ Error: ", err.message));
+    console.error(chalk.red("✗ Error: ", err));
   }
 }
 

@@ -36,8 +36,8 @@ describe("Moves - Guard Swap", () => {
   it("should swap the user's DEF and SPDEF stat stages with the target's", async () => {
     await game.classicMode.startBattle([SpeciesId.INDEEDEE]);
 
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     vi.spyOn(enemy.summonData, "statStages", "get").mockReturnValue(new Array(BATTLE_STATS.length).fill(1));
 

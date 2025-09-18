@@ -6,8 +6,8 @@ import { DropDownColumn } from "#enums/drop-down-column";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import type { StarterAttributes } from "#system/game-data";
 import { GameManager } from "#test/test-utils/game-manager";
+import type { StarterAttributes } from "#types/save-data";
 import { FilterTextRow } from "#ui/filter-text";
 import { PokedexPageUiHandler } from "#ui/pokedex-page-ui-handler";
 import { PokedexUiHandler } from "#ui/pokedex-ui-handler";
@@ -69,7 +69,7 @@ describe("UI - Pokedex", () => {
     // Open the pokedex UI.
     await game.runToTitle();
 
-    await game.phaseInterceptor.setOverlayMode(UiMode.POKEDEX);
+    await game.scene.ui.setOverlayMode(UiMode.POKEDEX);
 
     // Get the handler for the current UI.
     const handler = game.scene.ui.getHandler();
@@ -89,7 +89,7 @@ describe("UI - Pokedex", () => {
     // Open the pokedex UI.
     await game.runToTitle();
 
-    await game.phaseInterceptor.setOverlayMode(UiMode.POKEDEX_PAGE, species, starterAttributes);
+    await game.scene.ui.setOverlayMode(UiMode.POKEDEX_PAGE, species, starterAttributes);
 
     // Get the handler for the current UI.
     const handler = game.scene.ui.getHandler();
@@ -106,8 +106,8 @@ describe("UI - Pokedex", () => {
     const speciesSet = new Set<SpeciesId>();
     for (const pkmn of allSpecies) {
       if (
-        [pkmn.ability1, pkmn.ability2, pkmn.getPassiveAbility(), pkmn.abilityHidden].includes(ability) ||
-        pkmn.forms.some(form =>
+        [pkmn.ability1, pkmn.ability2, pkmn.getPassiveAbility(), pkmn.abilityHidden].includes(ability)
+        || pkmn.forms.some(form =>
           [form.ability1, form.ability2, form.abilityHidden, form.getPassiveAbility()].includes(ability),
         )
       ) {

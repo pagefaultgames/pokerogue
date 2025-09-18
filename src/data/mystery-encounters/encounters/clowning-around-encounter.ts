@@ -45,7 +45,7 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/trainer-party-template";
-import type { OptionSelectConfig } from "#ui/abstact-option-select-ui-handler";
+import type { OptionSelectConfig } from "#ui/abstract-option-select-ui-handler";
 import { randSeedInt, randSeedShuffle } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
@@ -119,7 +119,7 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
       text: `${namespace}:intro`,
     },
     {
-      text: `${namespace}:intro_dialogue`,
+      text: `${namespace}:introDialogue`,
       speaker: `${namespace}:speaker`,
     },
   ])
@@ -163,7 +163,7 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
           // Blacephalon has the random ability from pool, and 2 entirely random types to fit with the theme of the encounter
           species: getPokemonSpecies(SpeciesId.BLACEPHALON),
           customPokemonData: new CustomPokemonData({
-            ability: ability,
+            ability,
             types: [firstType, secondType],
           }),
           isBoss: true,
@@ -233,7 +233,7 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
         // After the battle, offer the player the opportunity to permanently swap ability
         const abilityWasSwapped = await handleSwapAbility();
         if (abilityWasSwapped) {
-          await showEncounterText(`${namespace}:option.1.ability_gained`);
+          await showEncounterText(`${namespace}:option.1.abilityGained`);
         }
 
         // Play animations once ability swap is complete
@@ -267,10 +267,10 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
             speaker: `${namespace}:speaker`,
           },
           {
-            text: `${namespace}:option.2.selected_2`,
+            text: `${namespace}:option.2.selected2`,
           },
           {
-            text: `${namespace}:option.2.selected_3`,
+            text: `${namespace}:option.2.selected3`,
             speaker: `${namespace}:speaker`,
           },
         ],
@@ -359,10 +359,10 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
             speaker: `${namespace}:speaker`,
           },
           {
-            text: `${namespace}:option.3.selected_2`,
+            text: `${namespace}:option.3.selected2`,
           },
           {
-            text: `${namespace}:option.3.selected_3`,
+            text: `${namespace}:option.3.selected3`,
             speaker: `${namespace}:speaker`,
           },
         ],
@@ -432,8 +432,8 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
 async function handleSwapAbility() {
   // biome-ignore lint/suspicious/noAsyncPromiseExecutor: TODO: Consider refactoring to avoid async promise executor
   return new Promise<boolean>(async resolve => {
-    await showEncounterDialogue(`${namespace}:option.1.apply_ability_dialogue`, `${namespace}:speaker`);
-    await showEncounterText(`${namespace}:option.1.apply_ability_message`);
+    await showEncounterDialogue(`${namespace}:option.1.applyAbilityDialogue`, `${namespace}:speaker`);
+    await showEncounterText(`${namespace}:option.1.applyAbilityMessage`);
 
     globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
       displayYesNoOptions(resolve);
@@ -442,7 +442,7 @@ async function handleSwapAbility() {
 }
 
 function displayYesNoOptions(resolve) {
-  showEncounterText(`${namespace}:option.1.ability_prompt`, null, 500, false);
+  showEncounterText(`${namespace}:option.1.abilityPrompt`, null, 500, false);
   const fullOptions = [
     {
       label: i18next.t("menu:yes"),

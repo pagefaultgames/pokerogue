@@ -18,8 +18,8 @@ describe("Abilities - Flower Gift", () => {
 
   /**
    * Tests reverting to normal form when Cloud Nine/Air Lock is active on the field
-   * @param {GameManager} game The game manager instance
-   * @param {AbilityId} ability The ability that is active on the field
+   * @param game The game manager instance
+   * @param ability The ability that is active on the field
    */
   const testRevertFormAgainstAbility = async (game: GameManager, ability: AbilityId) => {
     game.override.starterForms({ [SpeciesId.CASTFORM]: SUNSHINE_FORM }).enemyAbility(ability);
@@ -27,7 +27,7 @@ describe("Abilities - Flower Gift", () => {
 
     game.move.select(MoveId.SPLASH);
 
-    expect(game.scene.getPlayerPokemon()?.formIndex).toBe(OVERCAST_FORM);
+    expect(game.field.getPlayerPokemon().formIndex).toBe(OVERCAST_FORM);
   };
 
   /**
@@ -58,12 +58,12 @@ describe("Abilities - Flower Gift", () => {
     const ally_target = allyAttacker ? BattlerIndex.ENEMY : null;
 
     await game.classicMode.startBattle([SpeciesId.CHERRIM, SpeciesId.MAGIKARP]);
-    const target = allyAttacker ? game.scene.getEnemyField()[0] : game.scene.getPlayerField()[1];
+    const target = allyAttacker ? game.field.getEnemyPokemon() : game.scene.getPlayerField()[1];
     const initialHp = target.getMaxHp();
 
     // Override the ability for the target and attacker only
     vi.spyOn(game.scene.getPlayerField()[1], "getAbility").mockReturnValue(allAbilities[allyAbility]);
-    vi.spyOn(game.scene.getEnemyField()[0], "getAbility").mockReturnValue(allAbilities[enemyAbility]);
+    vi.spyOn(game.field.getEnemyPokemon(), "getAbility").mockReturnValue(allAbilities[enemyAbility]);
 
     // turn 1
     game.move.select(MoveId.SUNNY_DAY, 0);
@@ -169,7 +169,7 @@ describe("Abilities - Flower Gift", () => {
     game.override.weather(WeatherType.HARSH_SUN);
     await game.classicMode.startBattle([SpeciesId.CHERRIM]);
 
-    const cherrim = game.scene.getPlayerPokemon()!;
+    const cherrim = game.field.getPlayerPokemon();
     expect(cherrim.formIndex).toBe(SUNSHINE_FORM);
 
     game.move.select(MoveId.SPLASH);
@@ -188,7 +188,7 @@ describe("Abilities - Flower Gift", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHERRIM, SpeciesId.MAGIKARP]);
 
-    const cherrim = game.scene.getPlayerPokemon()!;
+    const cherrim = game.field.getPlayerPokemon();
 
     expect(cherrim.formIndex).toBe(SUNSHINE_FORM);
 
@@ -215,7 +215,7 @@ describe("Abilities - Flower Gift", () => {
     game.override.weather(WeatherType.SUNNY);
 
     await game.classicMode.startBattle([SpeciesId.CASTFORM, SpeciesId.MAGIKARP]);
-    const cherrim = game.scene.getPlayerPokemon()!;
+    const cherrim = game.field.getPlayerPokemon();
 
     expect(cherrim.formIndex).toBe(SUNSHINE_FORM);
 

@@ -7,7 +7,7 @@ import type { UiMode } from "#enums/ui-mode";
 import { getIconWithSettingName } from "#inputs/config-handler";
 import { NavigationManager, NavigationMenu } from "#ui/navigation-menu";
 import { ScrollBar } from "#ui/scroll-bar";
-import { addTextObject } from "#ui/text";
+import { addTextObject, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { toCamelCase } from "#utils/strings";
@@ -96,11 +96,11 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
     const ui = this.getUi();
     this.navigationIcons = {};
 
-    this.settingsContainer = globalScene.add.container(1, -(globalScene.game.canvas.height / 6) + 1);
+    this.settingsContainer = globalScene.add.container(1, -globalScene.scaledCanvas.height + 1);
     this.settingsContainer.setName(`settings-${this.titleSelected}`);
 
     this.settingsContainer.setInteractive(
-      new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6),
+      new Phaser.Geom.Rectangle(0, 0, globalScene.scaledCanvas.width, globalScene.scaledCanvas.height),
       Phaser.Geom.Rectangle.Contains,
     );
 
@@ -109,15 +109,15 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
     this.optionsBg = addWindow(
       0,
       this.navigationContainer.height,
-      globalScene.game.canvas.width / 6 - 2,
-      globalScene.game.canvas.height / 6 - 16 - this.navigationContainer.height - 2,
+      globalScene.scaledCanvas.width - 2,
+      globalScene.scaledCanvas.height - 16 - this.navigationContainer.height - 2,
     );
     this.optionsBg.setOrigin(0, 0);
 
     this.actionsBg = addWindow(
       0,
-      globalScene.game.canvas.height / 6 - this.navigationContainer.height,
-      globalScene.game.canvas.width / 6 - 2,
+      globalScene.scaledCanvas.height - this.navigationContainer.height,
+      globalScene.scaledCanvas.width - 2,
       22,
     );
     this.actionsBg.setOrigin(0, 0);
@@ -544,8 +544,13 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
           }
           if (this.settingBlacklisted.includes(setting) || setting.includes("BUTTON_")) {
             success = false;
-          } else if (this.optionCursors[cursor]) {
-            success = this.setOptionCursor(cursor, this.optionCursors[cursor] - 1, true);
+          } else {
+            // Cycle to the rightmost position when at the leftmost, otherwise move left
+            success = this.setOptionCursor(
+              cursor,
+              Phaser.Math.Wrap(this.optionCursors[cursor] - 1, 0, this.optionValueLabels[cursor].length),
+              true,
+            );
           }
           break;
         case Button.RIGHT: // Move selection right within the current option set.
@@ -554,8 +559,13 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
           }
           if (this.settingBlacklisted.includes(setting) || setting.includes("BUTTON_")) {
             success = false;
-          } else if (this.optionCursors[cursor] < this.optionValueLabels[cursor].length - 1) {
-            success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
+          } else {
+            // Cycle to the leftmost position when at the rightmost, otherwise move right
+            success = this.setOptionCursor(
+              cursor,
+              Phaser.Math.Wrap(this.optionCursors[cursor] + 1, 0, this.optionValueLabels[cursor].length),
+              true,
+            );
           }
           break;
         case Button.CYCLE_FORM:
@@ -597,7 +607,7 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
 
     // Check if the cursor object exists, if not, create it.
     if (!this.cursorObj) {
-      const cursorWidth = globalScene.game.canvas.width / 6 - (this.scrollBar.visible ? 16 : 10);
+      const cursorWidth = globalScene.scaledCanvas.width - (this.scrollBar.visible ? 16 : 10);
       this.cursorObj = globalScene.add.nineslice(0, 0, "summary_moves_cursor", undefined, cursorWidth, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0); // Set the origin to the top-left corner.
       this.optionsContainer.add(this.cursorObj); // Add the cursor to the options container.
@@ -653,16 +663,16 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
     if (!this.bindingSettings.includes(setting) && !setting.includes("BUTTON_")) {
       // Get the label of the last selected option and revert its color to the default.
       const lastValueLabel = this.optionValueLabels[settingIndex][lastCursor];
-      lastValueLabel.setColor(this.getTextColor(TextStyle.WINDOW));
-      lastValueLabel.setShadowColor(this.getTextColor(TextStyle.WINDOW, true));
+      lastValueLabel.setColor(getTextColor(TextStyle.WINDOW));
+      lastValueLabel.setShadowColor(getTextColor(TextStyle.WINDOW, true));
 
       // Update the cursor for the setting to the new position.
       this.optionCursors[settingIndex] = cursor;
 
       // Change the color of the new selected option to indicate it's selected.
       const newValueLabel = this.optionValueLabels[settingIndex][cursor];
-      newValueLabel.setColor(this.getTextColor(TextStyle.SETTINGS_SELECTED));
-      newValueLabel.setShadowColor(this.getTextColor(TextStyle.SETTINGS_SELECTED, true));
+      newValueLabel.setColor(getTextColor(TextStyle.SETTINGS_SELECTED));
+      newValueLabel.setShadowColor(getTextColor(TextStyle.SETTINGS_SELECTED, true));
     }
 
     // If the save flag is set, save the setting to local storage

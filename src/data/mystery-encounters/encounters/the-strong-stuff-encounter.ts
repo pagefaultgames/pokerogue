@@ -115,7 +115,7 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
           ],
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-            queueEncounterMessage(`${namespace}:option.2.stat_boost`);
+            queueEncounterMessage(`${namespace}:option.2.statBoost`);
             globalScene.phaseManager.unshiftNew(
               "StatStageChangePhase",
               pokemon.getBattlerIndex(),
@@ -181,7 +181,7 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
 
       encounter.setDialogueToken("reductionValue", HIGH_BST_REDUCTION_VALUE.toString());
       encounter.setDialogueToken("increaseValue", BST_INCREASE_VALUE.toString());
-      await showEncounterText(`${namespace}:option.1.selected_2`, null, undefined, true);
+      await showEncounterText(`${namespace}:option.1.selected2`, null, undefined, true);
 
       encounter.dialogue.outro = [
         {

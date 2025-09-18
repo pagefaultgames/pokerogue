@@ -33,7 +33,7 @@ describe("Moves - Taunt", () => {
   it("Pokemon should not be able to use Status Moves", async () => {
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
     // First turn, Player Pokemon succeeds using Growl without Taunt
     game.move.select(MoveId.GROWL);

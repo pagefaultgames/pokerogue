@@ -1,10 +1,15 @@
+import { getPokemonNameWithAffix } from "#app/messages";
 import { allAbilities } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { Button } from "#enums/buttons";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/test-utils/game-manager";
+import type { PartyUiHandler } from "#ui/party-ui-handler";
+import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Arena Trap", () => {
   let phaserGame: Phaser.Game;
@@ -23,68 +28,64 @@ describe("Abilities - Arena Trap", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset(MoveId.SPLASH)
       .ability(AbilityId.ARENA_TRAP)
+      .enemyAbility(AbilityId.ARENA_TRAP)
       .enemySpecies(SpeciesId.RALTS)
-      .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(MoveId.TELEPORT);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
-  // TODO: Enable test when Issue #935 is addressed
-  it.todo("should not allow grounded Pokémon to flee", async () => {
+  // NB: Since switching moves bypass trapping, the only way fleeing can occur in PKR is from the player
+  // TODO: Implement once forced flee helper exists
+  it.todo("should interrupt player flee attempt and display message, unless user has Run Away");
+
+  // TODO: Figure out how to wrangle the UI into not timing out
+  it.todo("should interrupt player switch attempt and display message", async () => {
     game.override.battleStyle("single");
+    await game.classicMode.startBattle([SpeciesId.DUGTRIO, SpeciesId.GOTHITELLE]);
 
-    await game.classicMode.startBattle();
+    const enemy = game.field.getEnemyPokemon();
 
-    const enemy = game.scene.getEnemyPokemon();
+    game.doSwitchPokemon(1);
+    game.onNextPrompt("CommandPhase", UiMode.PARTY, () => {
+      // no switch out command should be queued due to arena trap
+      expect(game.scene.currentBattle.turnCommands[0]).toBeNull();
 
-    game.move.select(MoveId.SPLASH);
+      // back out and end the phase to avoid timeout
+      console.log(game.scene.ui.getHandler().constructor.name);
+      (game.scene.ui.getHandler() as PartyUiHandler).processInput(Button.CANCEL);
+    });
 
-    await game.toNextTurn();
+    await game.phaseInterceptor.to("CommandPhase");
 
-    expect(enemy).toBe(game.scene.getEnemyPokemon());
+    expect(game).toHaveShownMessage(
+      i18next.t("abilityTriggers:arenaTrap", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(enemy),
+        abilityName: allAbilities[AbilityId.ARENA_TRAP].name,
+      }),
+    );
   });
 
   it("should guarantee double battle with any one LURE", async () => {
     game.override.startingModifier([{ name: "LURE" }]).startingWave(2);
+    await game.classicMode.startBattle([SpeciesId.DUGTRIO]);
 
-    await game.classicMode.startBattle();
-
-    expect(game.scene.getEnemyField().length).toBe(2);
+    expect(game.scene.getEnemyField()).toHaveLength(2);
   });
 
-  /**
-   * This checks if the Player Pokemon is able to switch out/run away after the Enemy Pokemon with {@linkcode AbilityId.ARENA_TRAP}
-   * is forcefully moved out of the field from moves such as Roar {@linkcode MoveId.ROAR}
-   *
-   * Note: It should be able to switch out/run away
-   */
   it("should lift if pokemon with this ability leaves the field", async () => {
-    game.override
-      .battleStyle("double")
-      .enemyMoveset(MoveId.SPLASH)
-      .moveset([MoveId.ROAR, MoveId.SPLASH])
-      .ability(AbilityId.BALL_FETCH);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.SUDOWOODO, SpeciesId.LUNATONE]);
+    game.override.battleStyle("single");
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const [enemy1, enemy2] = game.scene.getEnemyField();
-    const [player1, player2] = game.scene.getPlayerField();
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
-    vi.spyOn(enemy1, "getAbility").mockReturnValue(allAbilities[AbilityId.ARENA_TRAP]);
+    expect(player.isTrapped()).toBe(true);
+    expect(enemy.isOnField()).toBe(true);
 
-    game.move.select(MoveId.ROAR);
-    game.move.select(MoveId.SPLASH, 1);
+    game.move.use(MoveId.ROAR);
+    await game.toEndOfTurn();
 
-    // This runs the fist command phase where the moves are selected
-    await game.toNextTurn();
-    // During the next command phase the player pokemons should not be trapped anymore
-    game.move.select(MoveId.SPLASH);
-    game.move.select(MoveId.SPLASH, 1);
-    await game.toNextTurn();
-
-    expect(player1.isTrapped()).toBe(false);
-    expect(player2.isTrapped()).toBe(false);
-    expect(enemy1.isOnField()).toBe(false);
-    expect(enemy2.isOnField()).toBe(true);
+    expect(player.isTrapped()).toBe(false);
+    expect(enemy.isOnField()).toBe(false);
   });
 });

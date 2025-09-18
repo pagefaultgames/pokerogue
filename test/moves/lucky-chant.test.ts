@@ -37,7 +37,7 @@ describe("Moves - Lucky Chant", () => {
     game.override.criticalHits(true);
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const charizard = game.scene.getPlayerPokemon()!;
+    const charizard = game.field.getPlayerPokemon();
     expect(charizard).toBeDefined();
     const critSpy = vi.spyOn(charizard, "getCriticalHitResult"); // called on the defender (ie player)
 
@@ -59,7 +59,7 @@ describe("Moves - Lucky Chant", () => {
     game.override.enemyMoveset(MoveId.FLOWER_TRICK);
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const charizard = game.scene.getPlayerPokemon()!;
+    const charizard = game.field.getPlayerPokemon();
     expect(charizard).toBeDefined();
 
     game.move.select(MoveId.SPLASH);
@@ -79,7 +79,7 @@ describe("Moves - Lucky Chant", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 
-    const charizard = game.scene.getPlayerPokemon()!;
+    const charizard = game.field.getPlayerPokemon();
     expect(charizard).toBeDefined();
 
     game.move.select(MoveId.FOLLOW_ME, BattlerIndex.PLAYER);

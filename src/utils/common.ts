@@ -70,12 +70,16 @@ export function padInt(value: number, length: number, padWith?: string): string 
 }
 
 /**
- * Returns a random integer between min and min + range
- * @param range The amount of possible numbers
- * @param min The starting number
+ * Returns a **completely unseeded** random integer between `min` and `min + range`.
+ * @param range - The amount of possible numbers to pick
+ * @param min - The minimum number to pick; default `0`
+ * @returns A psuedo-random, unseeded integer within the interval [min, min+range].
+ * @remarks
+ * This should not be used for battles or other outwards-facing randomness;
+ * battles are intended to be seeded and deterministic.
  */
 export function randInt(range: number, min = 0): number {
-  if (range === 1) {
+  if (range <= 1) {
     return min;
   }
   return Math.floor(Math.random() * range) + min;
@@ -129,14 +133,10 @@ export function randSeedItem<T>(items: T[]): T {
   return items.length === 1 ? items[0] : Phaser.Math.RND.pick(items);
 }
 
-export function randSeedWeightedItem<T>(items: T[]): T {
-  return items.length === 1 ? items[0] : Phaser.Math.RND.weightedPick(items);
-}
-
 /**
  * Shuffle a list using the seeded rng. Utilises the Fisher-Yates algorithm.
- * @param {Array} items An array of items.
- * @returns {Array} A new shuffled array of items.
+ * @param items An array of items.
+ * @returns A new shuffled array of items.
  */
 export function randSeedShuffle<T>(items: T[]): T[] {
   if (items.length <= 1) {
@@ -272,25 +272,11 @@ export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>):
 }
 
 export const sessionIdKey = "pokerogue_sessionId";
-// Check if the current hostname is 'localhost' or an IP address, and ensure a port is specified
-export const isLocal =
-  ((window.location.hostname === "localhost" || /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/.test(window.location.hostname)) &&
-    window.location.port !== "") ||
-  window.location.hostname === "";
 
-/**
- * @deprecated Refer to [pokerogue-api.ts](./plugins/api/pokerogue-api.ts) instead
- */
-export const localServerUrl =
-  import.meta.env.VITE_SERVER_URL ?? `http://${window.location.hostname}:${window.location.port + 1}`;
+/** `true` when run via `pnpm start:dev` (which runs `vite --mode development`) */
+export const isLocal = import.meta.env.MODE === "development";
 
-/**
- * Set the server URL based on whether it's local or not
- *
- * @deprecated Refer to [pokerogue-api.ts](./plugins/api/pokerogue-api.ts) instead
- */
-export const apiUrl = localServerUrl ?? "https://api.pokerogue.net";
-// used to disable api calls when isLocal is true and a server is not found
+/** Used to disable api calls when isLocal is true and a server is not found */
 export let isLocalServerConnected = true;
 
 /**
@@ -298,7 +284,7 @@ export let isLocalServerConnected = true;
  * with a GET request to verify if a server is running,
  * sets isLocalServerConnected based on results
  */
-export async function localPing() {
+export async function localPing(): Promise<void> {
   if (isLocal) {
     const titleStats = await pokerogueApi.getGameTitleStats();
     isLocalServerConnected = !!titleStats;
@@ -354,8 +340,8 @@ export function rgbToHsv(r: number, g: number, b: number) {
 
 /**
  * Compare color difference in RGB
- * @param {Array} rgb1 First RGB color in array
- * @param {Array} rgb2 Second RGB color in array
+ * @param rgb1 First RGB color in array
+ * @param rgb2 Second RGB color in array
  */
 export function deltaRgb(rgb1: number[], rgb2: number[]): number {
   const [r1, g1, b1] = rgb1;
@@ -470,15 +456,6 @@ export function truncateString(str: string, maxLength = 10) {
   }
   // Return the original string if it does not exceed the maximum length
   return str;
-}
-
-/**
- * Report whether a given value is nullish (`null`/`undefined`).
- * @param val - The value whose nullishness is being checked
- * @returns `true` if `val` is either `null` or `undefined`
- */
-export function isNullOrUndefined(val: any): val is null | undefined {
-  return val === null || val === undefined;
 }
 
 /**

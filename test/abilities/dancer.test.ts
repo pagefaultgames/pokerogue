@@ -74,8 +74,8 @@ describe("Abilities - Dancer", () => {
       .enemyLevel(10);
     await game.classicMode.startBattle([SpeciesId.ORICORIO, SpeciesId.FEEBAS]);
 
-    const [oricorio] = game.scene.getPlayerField();
-    const [, shuckle2] = game.scene.getEnemyField();
+    const oricorio = game.field.getPlayerPokemon();
+    const shuckle2 = game.scene.getEnemyField()[1];
 
     game.move.select(MoveId.REVELATION_DANCE, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2);
     game.move.select(MoveId.FIERY_DANCE, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2);
@@ -125,7 +125,7 @@ describe("Abilities - Dancer", () => {
     game.override.battleStyle("double").moveset(MoveId.SPLASH).enemyMoveset([MoveId.SWORDS_DANCE, MoveId.FAKE_OUT]);
     await game.classicMode.startBattle([SpeciesId.ORICORIO]);
 
-    const oricorio = game.scene.getPlayerPokemon()!;
+    const oricorio = game.field.getPlayerPokemon();
     expect(oricorio).toBeDefined();
 
     // get faked out and copy swords dance

@@ -1,3 +1,42 @@
+/**
+ * BattlerTags are used to represent semi-persistent effects that can be attached to a Pokemon.
+ * Note that before serialization, a new tag object is created, and then `loadTag` is called on the
+ * tag with the object that was serialized.
+ *
+ * This means it is straightforward to avoid serializing fields.
+ * Fields that are not set in the constructor and not set in `loadTag` will thus not be serialized.
+ *
+ * Any battler tag that can persist across sessions must extend SerializableBattlerTag in its class definition signature.
+ * Only tags that persist across waves (meaning their effect can last >1 turn) should be considered
+ * serializable.
+ *
+ * Serializable battler tags have strict requirements for their fields.
+ * Properties that are not necessary to reconstruct the tag must not be serialized. This can be avoided
+ * by using a private property. If access to the property is needed outside of the class, then
+ * a getter (and potentially, a setter) should be used instead.
+ *
+ * If a property that is intended to be private must be serialized, then it should instead
+ * be declared as a public readonly propety. Then, in the `loadTag` method (or any method inside the class that needs to adjust the property)
+ * use `(this as Mutable<this>).propertyName = value;`
+ * These rules ensure that Typescript is aware of the shape of the serialized version of the class.
+ *
+ * If any new serializable fields *are* added, then the class *must* override the
+ * `loadTag` method to set the new fields. Its signature *must* match the example below:
+ * ```
+ * class ExampleTag extends SerializableBattlerTag {
+ *   // Example, if we add 2 new fields that should be serialized:
+ *   public a: string;
+ *   public b: number;
+ *   // Then we must also define a loadTag method with one of the following signatures
+ *   public override loadTag(source: BaseBattlerTag & Pick<ExampleTag, "tagType" | "a" | "b"): void;
+ *   public override loadTag<const T extends this>(source: BaseBattlerTag & Pick<T, "tagType" | "a" | "b">): void;
+ * }
+ * ```
+ * Notes
+ * - If the class has any subclasses, then the second form of `loadTag` *must* be used.
+ * @module
+ */
+
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -34,7 +73,7 @@ import type { StatStageChangeCallback } from "#phases/stat-stage-change-phase";
 import i18next from "#plugins/i18n";
 import type {
   AbilityBattlerTagType,
-  BattlerTagTypeData,
+  BattlerTagData,
   ContactSetStatusProtectedTagType,
   ContactStatStageChangeProtectedTagType,
   CritStageBoostTagType,
@@ -49,46 +88,8 @@ import type {
   TypeBoostTagType,
 } from "#types/battler-tags";
 import type { Mutable } from "#types/type-helpers";
-import { BooleanHolder, coerceArray, getFrameMs, isNullOrUndefined, NumberHolder, toDmgValue } from "#utils/common";
-
-/**
- * @module
- * BattlerTags are used to represent semi-persistent effects that can be attached to a Pokemon.
- * Note that before serialization, a new tag object is created, and then `loadTag` is called on the
- * tag with the object that was serialized.
- *
- * This means it is straightforward to avoid serializing fields.
- * Fields that are not set in the constructor and not set in `loadTag` will thus not be serialized.
- *
- * Any battler tag that can persist across sessions must extend SerializableBattlerTag in its class definition signature.
- * Only tags that persist across waves (meaning their effect can last >1 turn) should be considered
- * serializable.
- *
- * Serializable battler tags have strict requirements for their fields.
- * Properties that are not necessary to reconstruct the tag must not be serialized. This can be avoided
- * by using a private property. If access to the property is needed outside of the class, then
- * a getter (and potentially, a setter) should be used instead.
- *
- * If a property that is intended to be private must be serialized, then it should instead
- * be declared as a public readonly propety. Then, in the `loadTag` method (or any method inside the class that needs to adjust the property)
- * use `(this as Mutable<this>).propertyName = value;`
- * These rules ensure that Typescript is aware of the shape of the serialized version of the class.
- *
- * If any new serializable fields *are* added, then the class *must* override the
- * `loadTag` method to set the new fields. Its signature *must* match the example below:
- * ```
- * class ExampleTag extends SerializableBattlerTag {
- *   // Example, if we add 2 new fields that should be serialized:
- *   public a: string;
- *   public b: number;
- *   // Then we must also define a loadTag method with one of the following signatures
- *   public override loadTag(source: BaseBattlerTag & Pick<ExampleTag, "tagType" | "a" | "b"): void;
- *   public override loadTag<const T extends this>(source: BaseBattlerTag & Pick<T, "tagType" | "a" | "b">): void;
- * }
- * ```
- * Notes
- * - If the class has any subclasses, then the second form of `loadTag` *must* be used.
- */
+import { BooleanHolder, coerceArray, getFrameMs, NumberHolder, toDmgValue } from "#utils/common";
+import { toCamelCase } from "#utils/strings";
 
 /** Interface containing the serializable fields of BattlerTag */
 interface BaseBattlerTag {
@@ -197,7 +198,7 @@ export class BattlerTag implements BaseBattlerTag {
    * Helper function that retrieves the source Pokemon object
    * @returns The source {@linkcode Pokemon}, or `null` if none is found
    */
-  public getSourcePokemon(): Pokemon | null {
+  public getSourcePokemon(): Pokemon | undefined {
     return globalScene.getPokemonById(this.sourceId);
   }
 }
@@ -227,26 +228,27 @@ interface GenericSerializableBattlerTag<T extends BattlerTagType> extends Serial
  * Descendants can override {@linkcode isMoveRestricted} to restrict moves that
  * match a condition. A restricted move gets cancelled before it is used.
  * Players and enemies should not be allowed to select restricted moves.
+ * @todo Require descendant subclasses to inherit a `PRE_MOVE` lapse type
  */
 export abstract class MoveRestrictionBattlerTag extends SerializableBattlerTag {
   public declare readonly tagType: MoveRestrictionBattlerTagType;
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    if (lapseType === BattlerTagLapseType.PRE_MOVE) {
-      // Cancel the affected pokemon's selected move
-      const phase = globalScene.phaseManager.getCurrentPhase() as MovePhase;
-      const move = phase.move;
-
-      if (this.isMoveRestricted(move.moveId, pokemon)) {
-        if (this.interruptedText(pokemon, move.moveId)) {
-          globalScene.phaseManager.queueMessage(this.interruptedText(pokemon, move.moveId));
-        }
-        phase.cancel();
-      }
-
-      return true;
+    if (lapseType !== BattlerTagLapseType.PRE_MOVE) {
+      return super.lapse(pokemon, lapseType);
     }
 
-    return super.lapse(pokemon, lapseType);
+    // Cancel the affected pokemon's selected move
+    const phase = globalScene.phaseManager.getCurrentPhase() as MovePhase;
+    const move = phase.move;
+
+    if (this.isMoveRestricted(move.moveId, pokemon)) {
+      if (this.interruptedText(pokemon, move.moveId)) {
+        globalScene.phaseManager.queueMessage(this.interruptedText(pokemon, move.moveId));
+      }
+      phase.cancel();
+    }
+
+    return true;
   }
 
   /**
@@ -376,7 +378,7 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
     // Disable fails against struggle or an empty move history
     // TODO: Confirm if this is redundant given Disable/Cursed Body's disable conditions
     const move = pokemon.getLastNonVirtualMove();
-    if (isNullOrUndefined(move) || move.move === MoveId.STRUGGLE) {
+    if (move == null || move.move === MoveId.STRUGGLE) {
       return;
     }
 
@@ -449,7 +451,7 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
   override canAdd(pokemon: Pokemon): boolean {
     // Choice items ignore struggle, so Gorilla Tactics should too
     const lastSelectedMove = pokemon.getLastNonVirtualMove();
-    return !isNullOrUndefined(lastSelectedMove) && lastSelectedMove.move !== MoveId.STRUGGLE;
+    return lastSelectedMove != null && lastSelectedMove.move !== MoveId.STRUGGLE;
   }
 
   /**
@@ -563,7 +565,7 @@ export class BeakBlastChargingTag extends BattlerTag {
           target: pokemon,
         })
       ) {
-        phaseData.attacker.trySetStatus(StatusEffect.BURN, true, pokemon);
+        phaseData.attacker.trySetStatus(StatusEffect.BURN, pokemon);
       }
       return true;
     }
@@ -966,7 +968,7 @@ export class InfatuatedTag extends SerializableBattlerTag {
     phaseManager.queueMessage(
       i18next.t("battlerTags:infatuatedLapse", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        sourcePokemonName: getPokemonNameWithAffix(globalScene.getPokemonById(this.sourceId!) ?? undefined), // TODO: is that bang correct?
+        sourcePokemonName: getPokemonNameWithAffix(this.getSourcePokemon()),
       }),
     );
     phaseManager.unshiftNew("CommonAnimPhase", pokemon.getBattlerIndex(), undefined, CommonAnim.ATTRACT);
@@ -1057,8 +1059,7 @@ export class SeedTag extends SerializableBattlerTag {
     // Check which opponent to restore HP to
     const source = pokemon.getOpponents().find(o => o.getBattlerIndex() === this.sourceIndex);
     if (!source) {
-      console.warn(`Failed to get source Pokemon for SeedTag lapse; id: ${this.sourceId}`);
-      return false;
+      return true;
     }
 
     const cancelled = new BooleanHolder(false);
@@ -1134,8 +1135,8 @@ export class PowderTag extends BattlerTag {
     const move = movePhase.move.getMove();
     const weather = globalScene.arena.weather;
     if (
-      pokemon.getMoveType(move) !== PokemonType.FIRE ||
-      (weather?.weatherType === WeatherType.HEAVY_RAIN && !weather.isEffectSuppressed()) // Heavy rain takes priority over powder
+      pokemon.getMoveType(move) !== PokemonType.FIRE
+      || (weather?.weatherType === WeatherType.HEAVY_RAIN && !weather.isEffectSuppressed()) // Heavy rain takes priority over powder
     ) {
       return true;
     }
@@ -1304,7 +1305,7 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.CUSTOM) {
       const encoredMove = pokemon.getMoveset().find(m => m.moveId === this.moveId);
-      return !isNullOrUndefined(encoredMove) && encoredMove.getPpRatio() > 0;
+      return encoredMove != null && encoredMove.getPpRatio() > 0;
     }
     return super.lapse(pokemon, lapseType);
   }
@@ -1509,7 +1510,7 @@ export class DrowsyTag extends SerializableBattlerTag {
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (!super.lapse(pokemon, lapseType)) {
-      pokemon.trySetStatus(StatusEffect.SLEEP, true);
+      pokemon.trySetStatus(StatusEffect.SLEEP);
       return false;
     }
 
@@ -1792,9 +1793,9 @@ export abstract class ContactProtectedTag extends ProtectedTag {
 
     const moveData = getMoveEffectPhaseData(pokemon);
     if (
-      lapseType === BattlerTagLapseType.CUSTOM &&
-      moveData &&
-      moveData.move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: moveData.attacker, target: pokemon })
+      lapseType === BattlerTagLapseType.CUSTOM
+      && moveData
+      && moveData.move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: moveData.attacker, target: pokemon })
     ) {
       this.onContact(moveData.attacker, pokemon);
     }
@@ -1859,7 +1860,7 @@ export class ContactSetStatusProtectedTag extends DamageProtectedTag {
    * @param user - The pokemon that is being attacked and has the tag
    */
   override onContact(attacker: Pokemon, user: Pokemon): void {
-    attacker.trySetStatus(this.#statusEffect, true, user);
+    attacker.trySetStatus(this.#statusEffect, user);
   }
 }
 
@@ -2055,7 +2056,7 @@ export class TruantTag extends AbilityBattlerTag {
     const lastMove = pokemon.getLastXMoves()[0];
 
     if (!lastMove || lastMove.move === MoveId.NONE) {
-      // Don't interrupt move if last move was `Moves.NONE` OR no prior move was found
+      // Don't interrupt move if last move was `MoveId.NONE` OR no prior move was found
       return true;
     }
 
@@ -2115,8 +2116,8 @@ export class SlowStartTag extends AbilityBattlerTag {
 
 export class HighestStatBoostTag extends AbilityBattlerTag {
   public declare readonly tagType: HighestStatBoostTagType;
-  public stat: Stat;
-  public multiplier: number;
+  public stat: EffectiveStat = Stat.ATK;
+  public multiplier = 1.3;
 
   constructor(tagType: HighestStatBoostTagType, ability: AbilityId) {
     super(tagType, ability, BattlerTagLapseType.CUSTOM, 1);
@@ -2128,28 +2129,28 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
    */
   public override loadTag<T extends this>(source: BaseBattlerTag & Pick<T, "tagType" | "stat" | "multiplier">): void {
     super.loadTag(source);
-    this.stat = source.stat as Stat;
+    this.stat = source.stat;
     this.multiplier = source.multiplier;
   }
 
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
-    let highestStat: EffectiveStat;
-    EFFECTIVE_STATS.map(s =>
-      pokemon.getEffectiveStat(s, undefined, undefined, undefined, undefined, undefined, undefined, undefined, true),
-    ).reduce((highestValue: number, value: number, i: number) => {
-      if (value > highestValue) {
-        highestStat = EFFECTIVE_STATS[i];
-        return value;
-      }
-      return highestValue;
-    }, 0);
+    const highestStat = EFFECTIVE_STATS.reduce(
+      (curr: [EffectiveStat, number], stat: EffectiveStat) => {
+        const value = pokemon.getEffectiveStat(stat, undefined, undefined, true, true, true, false, true, true);
+        if (value > curr[1]) {
+          curr[0] = stat;
+          curr[1] = value;
+        }
+        return curr;
+      },
+      [Stat.ATK, 0],
+    )[0];
 
-    highestStat = highestStat!; // tell TS compiler it's defined!
     this.stat = highestStat;
 
-    this.multiplier = this.stat === Stat.SPD ? 1.5 : 1.3;
+    this.multiplier = highestStat === Stat.SPD ? 1.5 : 1.3;
     globalScene.phaseManager.queueMessage(
       i18next.t("battlerTags:highestStatBoostOnAdd", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
@@ -2158,7 +2159,7 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
       null,
       false,
       null,
-      true,
+      false,
     );
   }
 
@@ -2305,7 +2306,7 @@ export class TypeBoostTag extends SerializableBattlerTag {
     globalScene.phaseManager.queueMessage(
       i18next.t("abilityTriggers:typeImmunityPowerBoost", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        typeName: i18next.t(`pokemonInfo:Type.${PokemonType[this.boostedType]}`),
+        typeName: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.boostedType])}`),
       }),
     );
   }
@@ -2330,10 +2331,10 @@ export class CritBoostTag extends SerializableBattlerTag {
     super.onAdd(pokemon);
 
     // Dragon cheer adds +2 crit stages if the pokemon is a Dragon type when the tag is added
-    if (this.tagType === BattlerTagType.DRAGON_CHEER && pokemon.getTypes(true).includes(PokemonType.DRAGON)) {
-      (this as Mutable<this>).critStages = 2;
-    } else {
+    if (this.tagType === BattlerTagType.DRAGON_CHEER && !pokemon.getTypes(true, true).includes(PokemonType.DRAGON)) {
       (this as Mutable<this>).critStages = 1;
+    } else {
+      (this as Mutable<this>).critStages = 2;
     }
 
     globalScene.phaseManager.queueMessage(
@@ -2473,10 +2474,7 @@ export class RemovedTypeTag extends SerializableBattlerTag {
   }
 }
 
-/**
- * Battler tag for effects that ground the source, allowing Ground-type moves to hit them.
- * @description `IGNORE_FLYING`: Persistent grounding effects (i.e. from Smack Down and Thousand Waves)
- */
+/** Battler tag for effects that ground the source, allowing Ground-type moves to hit them. */
 export class GroundedTag extends SerializableBattlerTag {
   public override readonly tagType = BattlerTagType.IGNORE_FLYING;
   constructor(tagType: BattlerTagType.IGNORE_FLYING, lapseType: BattlerTagLapseType, sourceMove: MoveId) {
@@ -2484,11 +2482,7 @@ export class GroundedTag extends SerializableBattlerTag {
   }
 }
 
-/**
- * @description `ROOSTED`: Tag for temporary grounding if only source of ungrounding is flying and pokemon uses Roost.
- * Roost removes flying type from a pokemon for a single turn.
- */
-
+/** Removes flying type from a pokemon for a single turn */
 export class RoostedTag extends BattlerTag {
   private isBaseFlying: boolean;
   private isBasePureFlying: boolean;
@@ -2537,12 +2531,10 @@ export class RoostedTag extends BattlerTag {
       let modifiedTypes: PokemonType[];
       if (this.isBasePureFlying && !isCurrentlyDualType) {
         modifiedTypes = [PokemonType.NORMAL];
+      } else if (!!pokemon.getTag(RemovedTypeTag) && isOriginallyDualType && !isCurrentlyDualType) {
+        modifiedTypes = [PokemonType.UNKNOWN];
       } else {
-        if (!!pokemon.getTag(RemovedTypeTag) && isOriginallyDualType && !isCurrentlyDualType) {
-          modifiedTypes = [PokemonType.UNKNOWN];
-        } else {
-          modifiedTypes = currentTypes.filter(type => type !== PokemonType.FLYING);
-        }
+        modifiedTypes = currentTypes.filter(type => type !== PokemonType.FLYING);
       }
       pokemon.summonData.types = modifiedTypes;
       pokemon.updateInfo();
@@ -2569,7 +2561,7 @@ export class FormBlockDamageTag extends SerializableBattlerTag {
   /**
    * Applies the tag to the Pokémon.
    * Triggers a form change if the Pokémon is not in its defense form.
-   * @param {Pokemon} pokemon The Pokémon to which the tag is added.
+   * @param pokemon The Pokémon to which the tag is added.
    */
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
@@ -2614,7 +2606,7 @@ export class IceFaceBlockDamageTag extends FormBlockDamageTag {
  */
 export class CommandedTag extends SerializableBattlerTag {
   public override readonly tagType = BattlerTagType.COMMANDED;
-  public readonly tatsugiriFormKey: string;
+  public readonly tatsugiriFormKey: string = "curly";
 
   constructor(sourceId: number) {
     super(BattlerTagType.COMMANDED, BattlerTagLapseType.CUSTOM, 0, MoveId.NONE, sourceId);
@@ -2668,7 +2660,7 @@ export class StockpilingTag extends SerializableBattlerTag {
     super(BattlerTagType.STOCKPILING, BattlerTagLapseType.CUSTOM, 1, sourceMove);
   }
 
-  private onStatStagesChanged: StatStageChangeCallback = (_, statsChanged, statChanges) => {
+  private onStatStagesChanged(_: Pokemon | null, statsChanged: BattleStat[], statChanges: number[]) {
     const defChange = statChanges[statsChanged.indexOf(Stat.DEF)] ?? 0;
     const spDefChange = statChanges[statsChanged.indexOf(Stat.SPDEF)] ?? 0;
 
@@ -2678,7 +2670,11 @@ export class StockpilingTag extends SerializableBattlerTag {
     if (spDefChange) {
       this.statChangeCounts[Stat.SPDEF]++;
     }
-  };
+
+    // Removed during bundling; used to ensure this method's signature retains parity
+    // with the `StatStageChangeCallback` type.
+    this.onStatStagesChanged satisfies StatStageChangeCallback;
+  }
 
   public override loadTag(
     source: BaseBattlerTag & Pick<StockpilingTag, "tagType" | "stockpiledCount" | "statChangeCounts">,
@@ -2718,7 +2714,7 @@ export class StockpilingTag extends SerializableBattlerTag {
         true,
         false,
         true,
-        this.onStatStagesChanged,
+        this.onStatStagesChanged.bind(this),
       );
     }
   }
@@ -2799,7 +2795,7 @@ export class GulpMissileTag extends SerializableBattlerTag {
       if (this.tagType === BattlerTagType.GULP_MISSILE_ARROKUDA) {
         globalScene.phaseManager.unshiftNew("StatStageChangePhase", attacker.getBattlerIndex(), false, [Stat.DEF], -1);
       } else {
-        attacker.trySetStatus(StatusEffect.PARALYSIS, true, pokemon);
+        attacker.trySetStatus(StatusEffect.PARALYSIS, pokemon);
       }
     }
     return false;
@@ -2814,9 +2810,9 @@ export class GulpMissileTag extends SerializableBattlerTag {
     // Bang here is OK as if sourceMove was undefined, this would just evaluate to false
     const isSurfOrDive = [MoveId.SURF, MoveId.DIVE].includes(this.sourceMove!);
     const isNormalForm =
-      pokemon.formIndex === 0 &&
-      !pokemon.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA) &&
-      !pokemon.getTag(BattlerTagType.GULP_MISSILE_PIKACHU);
+      pokemon.formIndex === 0
+      && !pokemon.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA)
+      && !pokemon.getTag(BattlerTagType.GULP_MISSILE_PIKACHU);
     const isCramorant = pokemon.species.speciesId === SpeciesId.CRAMORANT;
 
     return isSurfOrDive && isNormalForm && isCramorant;
@@ -3838,7 +3834,7 @@ export function getBattlerTag(
  * @param source - An object containing the data necessary to reconstruct the BattlerTag.
  * @returns The valid battler tag
  */
-export function loadBattlerTag(source: BattlerTag | BattlerTagTypeData): BattlerTag {
+export function loadBattlerTag(source: BattlerTag | BattlerTagData): BattlerTag {
   // TODO: Remove this bang by fixing the signature of `getBattlerTag`
   // to allow undefined sourceIds and sourceMoves (with appropriate fallback for tags that require it)
   const tag = getBattlerTag(source.tagType, source.turnCount, source.sourceMove!, source.sourceId!);
@@ -3857,7 +3853,7 @@ function getMoveEffectPhaseData(_pokemon: Pokemon): { phase: MoveEffectPhase; at
   const phase = globalScene.phaseManager.getCurrentPhase();
   if (phase?.is("MoveEffectPhase")) {
     return {
-      phase: phase,
+      phase,
       attacker: phase.getPokemon(),
       move: phase.move,
     };

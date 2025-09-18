@@ -33,7 +33,7 @@ import {
   MoneyRequirement,
 } from "#mystery-encounters/mystery-encounter-requirements";
 import i18next from "#plugins/i18n";
-import type { OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
+import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 
@@ -193,7 +193,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       .withDialogue({
         buttonLabel: `${namespace}:option.2.label`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
-        secondOptionPrompt: `${namespace}:option.2.select_prompt`,
+        secondOptionPrompt: `${namespace}:option.2.selectPrompt`,
         selected: [
           {
             text: `${namespace}:option.2.selected`,
@@ -229,7 +229,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
           // If pokemon has valid item, it can be selected
           const meetsReqs = encounter.options[1].pokemonMeetsPrimaryRequirements(pokemon);
           if (!meetsReqs) {
-            return getEncounterText(`${namespace}:invalid_selection`) ?? null;
+            return getEncounterText(`${namespace}:invalidSelection`) ?? null;
           }
 
           return null;
@@ -303,7 +303,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       .withDialogue({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
-        secondOptionPrompt: `${namespace}:option.3.select_prompt`,
+        secondOptionPrompt: `${namespace}:option.3.selectPrompt`,
         selected: [
           {
             text: `${namespace}:option.3.selected`,
@@ -341,7 +341,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
           // If pokemon has valid item, it can be selected
           const meetsReqs = encounter.options[2].pokemonMeetsPrimaryRequirements(pokemon);
           if (!meetsReqs) {
-            return getEncounterText(`${namespace}:invalid_selection`) ?? null;
+            return getEncounterText(`${namespace}:invalidSelection`) ?? null;
           }
 
           return null;

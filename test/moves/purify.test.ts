@@ -38,8 +38,8 @@ describe("Moves - Purify", () => {
   test("Purify heals opponent status effect and restores user hp", async () => {
     await game.classicMode.startBattle();
 
-    const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
-    const playerPokemon: PlayerPokemon = game.scene.getPlayerPokemon()!;
+    const enemyPokemon: EnemyPokemon = game.field.getEnemyPokemon();
+    const playerPokemon: PlayerPokemon = game.field.getPlayerPokemon();
 
     playerPokemon.hp = playerPokemon.getMaxHp() - 1;
     enemyPokemon.status = new Status(StatusEffect.BURN);
@@ -55,7 +55,7 @@ describe("Moves - Purify", () => {
   test("Purify does not heal if opponent doesnt have any status effect", async () => {
     await game.classicMode.startBattle();
 
-    const playerPokemon: PlayerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon: PlayerPokemon = game.field.getPlayerPokemon();
 
     playerPokemon.hp = playerPokemon.getMaxHp() - 1;
     const playerInitialHp = playerPokemon.hp;

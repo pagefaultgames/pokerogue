@@ -124,7 +124,7 @@ export class NavigationMenu extends Phaser.GameObjects.Container {
    */
   setup() {
     const navigationManager = NavigationManager.getInstance();
-    const headerBg = addWindow(0, 0, globalScene.game.canvas.width / 6 - 2, 24);
+    const headerBg = addWindow(0, 0, globalScene.scaledCanvas.width - 2, 24);
     headerBg.setOrigin(0, 0);
     this.add(headerBg);
     this.width = headerBg.width;

@@ -40,7 +40,7 @@ describe("Moves - Burning Jealousy", () => {
   it("should burn the opponent if their stat stages were raised", async () => {
     await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.BURNING_JEALOUSY);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -53,7 +53,7 @@ describe("Moves - Burning Jealousy", () => {
     game.override.starterSpecies(0).battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.ABRA]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.BURNING_JEALOUSY);
     game.move.select(MoveId.GROWL, 1);
@@ -67,7 +67,7 @@ describe("Moves - Burning Jealousy", () => {
     game.override.enemySpecies(SpeciesId.DITTO).enemyAbility(AbilityId.IMPOSTER).enemyMoveset(MoveId.SPLASH);
     await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.BURNING_JEALOUSY);
     await game.phaseInterceptor.to("BerryPhase");

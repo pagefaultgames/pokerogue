@@ -9,7 +9,7 @@ import { TurnStartPhase } from "#phases/turn-start-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Focus Punch", () => {
   let phaserGame: Phaser.Game;
@@ -41,8 +41,8 @@ describe("Moves - Focus Punch", () => {
   it("should deal damage at the end of turn if uninterrupted", async () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     const enemyStartingHp = enemyPokemon.hp;
 
@@ -65,8 +65,8 @@ describe("Moves - Focus Punch", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     const enemyStartingHp = enemyPokemon.hp;
 
@@ -89,8 +89,8 @@ describe("Moves - Focus Punch", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.FOCUS_PUNCH);
 
@@ -125,8 +125,8 @@ describe("Moves - Focus Punch", () => {
     game.move.select(MoveId.FOCUS_PUNCH);
     await game.phaseInterceptor.to("MoveEndPhase", true);
     await game.phaseInterceptor.to("MessagePhase", false);
-    const consoleSpy = vi.spyOn(console, "log");
     await game.phaseInterceptor.to("MoveEndPhase", true);
-    expect(consoleSpy).nthCalledWith(1, i18next.t("moveTriggers:lostFocus", { pokemonName: "Charizard" }));
+    expect(game.textInterceptor.logs).toContain(i18next.t("moveTriggers:lostFocus", { pokemonName: "Charizard" }));
+    expect(game.textInterceptor.logs).not.toContain(i18next.t("battle:attackFailed"));
   });
 });

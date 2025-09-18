@@ -20,13 +20,11 @@ import { ModifierTypeOption } from "#modifiers/modifier-type";
 import { CheckSwitchPhase } from "#phases/check-switch-phase";
 import { CommandPhase } from "#phases/command-phase";
 import { EncounterPhase } from "#phases/encounter-phase";
-import { LoginPhase } from "#phases/login-phase";
 import { MovePhase } from "#phases/move-phase";
 import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
 import { NewBattlePhase } from "#phases/new-battle-phase";
 import { SelectStarterPhase } from "#phases/select-starter-phase";
 import type { SelectTargetPhase } from "#phases/select-target-phase";
-import { TitlePhase } from "#phases/title-phase";
 import { TurnEndPhase } from "#phases/turn-end-phase";
 import { TurnInitPhase } from "#phases/turn-init-phase";
 import { TurnStartPhase } from "#phases/turn-start-phase";
@@ -46,6 +44,7 @@ import type { InputsHandler } from "#test/test-utils/inputs-handler";
 import { MockFetch } from "#test/test-utils/mocks/mock-fetch";
 import { PhaseInterceptor } from "#test/test-utils/phase-interceptor";
 import { TextInterceptor } from "#test/test-utils/text-interceptor";
+import type { PhaseClass, PhaseString } from "#types/phase-types";
 import type { BallUiHandler } from "#ui/ball-ui-handler";
 import type { BattleMessageUiHandler } from "#ui/battle-message-ui-handler";
 import type { CommandUiHandler } from "#ui/command-ui-handler";
@@ -53,7 +52,6 @@ import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import type { PartyUiHandler } from "#ui/party-ui-handler";
 import type { StarterSelectUiHandler } from "#ui/starter-select-ui-handler";
 import type { TargetSelectUiHandler } from "#ui/target-select-ui-handler";
-import { isNullOrUndefined } from "#utils/common";
 import fs from "node:fs";
 import { AES, enc } from "crypto-js";
 import { expect, vi } from "vitest";
@@ -162,7 +160,7 @@ export class GameManager {
    * End the currently running phase immediately.
    */
   endPhase() {
-    this.scene.phaseManager.getCurrentPhase()?.end();
+    this.scene.phaseManager.getCurrentPhase().end();
   }
 
   /**
@@ -188,10 +186,12 @@ export class GameManager {
    * @returns A promise that resolves when the title phase is reached.
    */
   async runToTitle(): Promise<void> {
-    await this.phaseInterceptor.whenAboutToRun(LoginPhase);
-    this.phaseInterceptor.pop();
-    await this.phaseInterceptor.run(TitlePhase);
+    // Go to login phase and skip past it
+    await this.phaseInterceptor.to("LoginPhase", false);
+    this.phaseInterceptor.shiftPhase(true);
+    await this.phaseInterceptor.to("TitlePhase");
 
+    // TODO: This should be moved to a separate initialization method
     this.scene.gameSpeed = 5;
     this.scene.moveAnimations = false;
     this.scene.showLevelUpStats = false;
@@ -224,7 +224,7 @@ export class GameManager {
     // This will consider all battle entry dialog as seens and skip them
     vi.spyOn(this.scene.ui, "shouldSkipDialogue").mockReturnValue(true);
 
-    if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0) {
+    if (overrides.ENEMY_HELD_ITEMS_OVERRIDE.length === 0) {
       this.removeEnemyHeldItems();
     }
 
@@ -239,7 +239,7 @@ export class GameManager {
    * @returns A Promise that resolves when the EncounterPhase ends.
    */
   async runToMysteryEncounter(encounterType?: MysteryEncounterType, species?: SpeciesId[]) {
-    if (!isNullOrUndefined(encounterType)) {
+    if (encounterType != null) {
       this.override.disableTrainerWaves();
       this.override.mysteryEncounter(encounterType);
     }
@@ -270,8 +270,8 @@ export class GameManager {
       true,
     );
 
-    await this.phaseInterceptor.run(EncounterPhase);
-    if (!isNullOrUndefined(encounterType)) {
+    await this.phaseInterceptor.to("EncounterPhase");
+    if (encounterType != null) {
       expect(this.scene.currentBattle?.mysteryEncounter?.encounterType).toBe(encounterType);
     }
   }
@@ -305,10 +305,10 @@ export class GameManager {
         handler.processInput(Button.ACTION);
       },
       () =>
-        this.isCurrentPhase(CommandPhase) ||
-        this.isCurrentPhase(MovePhase) ||
-        this.isCurrentPhase(TurnStartPhase) ||
-        this.isCurrentPhase(TurnEndPhase),
+        this.isCurrentPhase(CommandPhase)
+        || this.isCurrentPhase(MovePhase)
+        || this.isCurrentPhase(TurnStartPhase)
+        || this.isCurrentPhase(TurnEndPhase),
     );
   }
 
@@ -330,9 +330,9 @@ export class GameManager {
         handler.processInput(Button.CANCEL);
       },
       () =>
-        this.isCurrentPhase(CommandPhase) ||
-        this.isCurrentPhase(NewBattlePhase) ||
-        this.isCurrentPhase(CheckSwitchPhase),
+        this.isCurrentPhase(CommandPhase)
+        || this.isCurrentPhase(NewBattlePhase)
+        || this.isCurrentPhase(CheckSwitchPhase),
       true,
     );
 
@@ -344,9 +344,9 @@ export class GameManager {
         handler.processInput(Button.ACTION);
       },
       () =>
-        this.isCurrentPhase(CommandPhase) ||
-        this.isCurrentPhase(NewBattlePhase) ||
-        this.isCurrentPhase(CheckSwitchPhase),
+        this.isCurrentPhase(CommandPhase)
+        || this.isCurrentPhase(NewBattlePhase)
+        || this.isCurrentPhase(CheckSwitchPhase),
     );
   }
 
@@ -412,10 +412,11 @@ export class GameManager {
    * Checks if the current phase matches the target phase.
    * @param phaseTarget - The target phase.
    * @returns Whether the current phase matches the target phase
+   * @todo Remove `phaseClass` from signature
    */
-  isCurrentPhase(phaseTarget) {
+  isCurrentPhase(phaseTarget: PhaseClass | PhaseString) {
     const targetName = typeof phaseTarget === "string" ? phaseTarget : phaseTarget.name;
-    return this.scene.phaseManager.getCurrentPhase()?.constructor.name === targetName;
+    return this.scene.phaseManager.getCurrentPhase().phaseName === targetName;
   }
 
   /**
@@ -542,7 +543,7 @@ export class GameManager {
    * ```
    */
   async setTurnOrder(order: BattlerIndex[]): Promise<void> {
-    await this.phaseInterceptor.to(TurnStartPhase, false);
+    await this.phaseInterceptor.to("TurnStartPhase", false);
 
     vi.spyOn(this.scene.phaseManager.getCurrentPhase() as TurnStartPhase, "getSpeedOrder").mockReturnValue(order);
   }

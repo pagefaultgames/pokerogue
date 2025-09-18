@@ -6,17 +6,13 @@ import * as bypassLoginModule from "#app/global-vars/bypass-login";
 import { MoveAnim } from "#data/battle-anims";
 import { Pokemon } from "#field/pokemon";
 import { version } from "#package.json";
-import { blobToString } from "#test/test-utils/game-manager-utils";
 import { MockClock } from "#test/test-utils/mocks/mock-clock";
-import { MockFetch } from "#test/test-utils/mocks/mock-fetch";
 import { MockGameObjectCreator } from "#test/test-utils/mocks/mock-game-object-creator";
 import { MockLoader } from "#test/test-utils/mocks/mock-loader";
 import { MockTextureManager } from "#test/test-utils/mocks/mock-texture-manager";
 import { MockTimedEventManager } from "#test/test-utils/mocks/mock-timed-event-manager";
 import { MockContainer } from "#test/test-utils/mocks/mocks-container/mock-container";
 import { PokedexMonContainer } from "#ui/pokedex-mon-container";
-import { sessionIdKey } from "#utils/common";
-import { setCookie } from "#utils/cookies";
 import fs from "node:fs";
 import Phaser from "phaser";
 import { vi } from "vitest";
@@ -27,20 +23,6 @@ const KeyboardPlugin = Phaser.Input.Keyboard.KeyboardPlugin;
 const GamepadPlugin = Phaser.Input.Gamepad.GamepadPlugin;
 const EventEmitter = Phaser.Events.EventEmitter;
 const UpdateList = Phaser.GameObjects.UpdateList;
-
-window.URL.createObjectURL = (blob: Blob) => {
-  blobToString(blob).then((data: string) => {
-    localStorage.setItem("toExport", data);
-  });
-  return null;
-};
-navigator.getGamepads = () => [];
-global.fetch = vi.fn(MockFetch);
-setCookie(sessionIdKey, "fake_token");
-
-window.matchMedia = () => ({
-  matches: false,
-});
 
 export class GameWrapper {
   public game: Phaser.Game;
@@ -99,6 +81,7 @@ export class GameWrapper {
       removeAll: () => null,
     };
 
+    // TODO: Can't we just turn on `noAudio` in audio config?
     this.scene.sound = {
       play: () => null,
       pause: () => null,
