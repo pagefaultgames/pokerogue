@@ -56,6 +56,7 @@ import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
+import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { HitResult } from "#enums/hit-result";
 import { CommonAnim } from "#enums/move-anims-common";
@@ -77,7 +78,6 @@ import type {
 import type { Mutable } from "#types/type-helpers";
 import { BooleanHolder, type NumberHolder, toDmgValue } from "#utils/common";
 import i18next from "i18next";
-import { BattlerIndex } from "#enums/battler-index";
 
 /** Interface containing the serializable fields of ArenaTagData. */
 interface BaseArenaTag {
@@ -1676,7 +1676,7 @@ export class PendingHealTag extends SerializableArenaTag {
     const targetEffects = this.pendingHeals[targetIndex];
 
     if (simulated) {
-      return !!targetEffects?.length;
+      return targetEffects?.length > 0;
     }
 
     const healEffect = targetEffects?.find(effect => this.canApply(effect, pokemon));
@@ -1706,7 +1706,7 @@ export class PendingHealTag extends SerializableArenaTag {
       targetEffects.splice(targetEffects.indexOf(healEffect), 1);
     }
 
-    return !isNullOrUndefined(healEffect);
+    return healEffect != null;
   }
 
   /**
@@ -1718,9 +1718,9 @@ export class PendingHealTag extends SerializableArenaTag {
    */
   private canApply(healEffect: PendingHealEffect, pokemon: Pokemon): boolean {
     return (
-      !pokemon.isFullHp() ||
-      !isNullOrUndefined(pokemon.status) ||
-      (healEffect.restorePP && pokemon.getMoveset().some(mv => mv.ppUsed > 0))
+      !pokemon.isFullHp()
+      || pokemon.status != null
+      || (healEffect.restorePP && pokemon.getMoveset().some(mv => mv.ppUsed > 0))
     );
   }
 
