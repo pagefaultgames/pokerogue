@@ -10,17 +10,6 @@ interface hasPokemon {
 }
 
 /**
- * Execute a callback on an array of Pokemon in speed order.
- * @param pokemonList - An array of {@linkcode Pokemon} with which the callback will be executed
- * @param callback - The lambda function to use. Should not return a value (will be ignored)
- */
-export function applyInSpeedOrder<T extends Pokemon>(pokemonList: T[], callback: (pokemon: T) => void): void {
-  sortInSpeedOrder(pokemonList).forEach(pokemon => {
-    callback(pokemon);
-  });
-}
-
-/**
  * Sorts an array of {@linkcode Pokemon} by speed, including Trick Room
  * @param pokemonList - The list of Pokemon or objects containing Pokemon
  * @param shuffleFirst - Whether to shuffle the list before sorting (to handle speed ties). Default `true`.

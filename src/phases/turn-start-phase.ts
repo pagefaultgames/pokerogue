@@ -1,6 +1,7 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import type { TurnCommand } from "#app/battle";
 import { globalScene } from "#app/global-scene";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import type { BattlerIndex } from "#enums/battler-index";
 import { Command } from "#enums/command";
 import { SwitchType } from "#enums/switch-type";
@@ -8,7 +9,7 @@ import type { Pokemon } from "#field/pokemon";
 import { BypassSpeedChanceModifier } from "#modifiers/modifier";
 import { PokemonMove } from "#moves/pokemon-move";
 import { FieldPhase } from "#phases/field-phase";
-import { applyInSpeedOrder } from "#utils/speed-order";
+import { inSpeedOrder } from "#utils/speed-order-generator";
 
 export class TurnStartPhase extends FieldPhase {
   public readonly phaseName = "TurnStartPhase";
@@ -51,27 +52,26 @@ export class TurnStartPhase extends FieldPhase {
     super.start();
 
     const field = globalScene.getField();
-    const activeField = globalScene.getField(true);
     const moveOrder = this.getCommandOrder();
 
-    applyInSpeedOrder(activeField, (p: Pokemon) => {
+    for (const p of inSpeedOrder(ArenaTagSide.BOTH)) {
       const preTurnCommand = globalScene.currentBattle.preTurnCommands[p.getBattlerIndex()];
 
       if (preTurnCommand?.skip) {
-        return;
+        continue;
       }
 
       switch (preTurnCommand?.command) {
         case Command.TERA:
           globalScene.phaseManager.pushNew("TeraPhase", p);
       }
-    });
+    }
 
     const phaseManager = globalScene.phaseManager;
-    applyInSpeedOrder(activeField, (p: Pokemon) => {
+    for (const p of inSpeedOrder(ArenaTagSide.BOTH)) {
       applyAbAttrs("BypassSpeedChanceAbAttr", { pokemon: p });
       globalScene.applyModifiers(BypassSpeedChanceModifier, p.isPlayer(), p);
-    });
+    }
 
     moveOrder.forEach((o, index) => {
       const pokemon = field[o];
