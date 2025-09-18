@@ -352,7 +352,7 @@ export class Arena {
       globalScene.applyModifier(FieldEffectModifier, user.isPlayer(), user, weatherDuration);
     }
 
-    this.weather = weather ? new Weather(weather, weatherDuration.value) : null;
+    this.weather = weather ? new Weather(weather, weatherDuration.value, weatherDuration.value) : null;
     this.eventTarget.dispatchEvent(new WeatherChangedEvent(this.getWeatherType(), weatherDuration.value));
 
     if (this.weather) {
@@ -431,7 +431,7 @@ export class Arena {
       globalScene.applyModifier(FieldEffectModifier, user.isPlayer(), user, terrainDuration);
     }
 
-    this.terrain = terrain ? new Terrain(terrain, terrainDuration.value) : null;
+    this.terrain = terrain ? new Terrain(terrain, terrainDuration.value, terrainDuration.value) : null;
 
     this.eventTarget.dispatchEvent(new TerrainChangedEvent(this.getTerrainType(), terrainDuration.value));
 
@@ -719,15 +719,9 @@ export class Arena {
     newTag.onAdd(this, quiet);
     this.tags.push(newTag);
 
-    // Dispatch a TagAddedEvent to update the flyout.
-    if (newTag instanceof EntryHazardTag) {
-      globalScene.arena.eventTarget.dispatchEvent(
-        new ArenaTagAddedEvent(tagType, side, turnCount, [newTag.layers, newTag.maxLayers]),
-      );
-    } else {
-      globalScene.arena.eventTarget.dispatchEvent(new ArenaTagAddedEvent(tagType, side, turnCount));
-    }
-
+    this.eventTarget.dispatchEvent(
+      new ArenaTagAddedEvent(tagType, side, turnCount)
+    );
     return true;
   }
 

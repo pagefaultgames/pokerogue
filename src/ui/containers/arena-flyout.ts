@@ -276,7 +276,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
       this.arenaTags.push({
         name,
         side: event.side,
-        maxDuration: event.duration,
+        maxDuration: event.maxDuration,
         duration: event.duration,
         tagType: event.tagType,
       });
@@ -328,7 +328,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
 
     this.weatherInfo = {
       name: this.localizeEffectName(WeatherType[event.weatherType]),
-      maxDuration: event.duration,
+      maxDuration: event.maxDuration,
       duration: event.duration,
       weatherType: event.weatherType,
     };
@@ -350,7 +350,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
 
     this.terrainInfo = {
       name: this.localizeEffectName(TerrainType[event.terrainType]),
-      maxDuration: event.duration,
+      maxDuration: event.maxDuration,
       duration: event.duration,
       terrainType: event.terrainType,
     };

@@ -15,7 +15,6 @@ import type { Egg } from "#data/egg";
 import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { loadPositionalTag } from "#data/positional-tags/load-positional-tag";
-import { TerrainType } from "#data/terrain";
 import { AbilityAttr } from "#enums/ability-attr";
 import { BattleType } from "#enums/battle-type";
 import { ChallengeType } from "#enums/challenge-type";
@@ -31,8 +30,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { TrainerVariant } from "#enums/trainer-variant";
 import { UiMode } from "#enums/ui-mode";
 import { Unlockables } from "#enums/unlockables";
-import { WeatherType } from "#enums/weather-type";
-import { ArenaTagAddedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#events/arena";
+import { ArenaTagAddedEvent, WeatherChangedEvent } from "#events/arena";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 // biome-ignore lint/performance/noNamespaceImport: Something weird is going on here and I don't want to touch it
 import * as Modifier from "#modifiers/modifier";
@@ -1016,26 +1014,35 @@ export class GameData {
         });
 
         globalScene.arena.weather = fromSession.arena.weather;
-        if (globalScene.arena.getWeatherType() !== WeatherType.NONE) {
+        if (fromSession.arena.weather != null) {
           globalScene.arena.eventTarget.dispatchEvent(
-            new WeatherChangedEvent(globalScene.arena.getWeatherType(), globalScene.arena.weather!.turnsLeft),
+            new WeatherChangedEvent(
+              fromSession.arena.weather.weatherType,
+              fromSession.arena.weather.turnsLeft,
+              fromSession.arena.weather.maxDuration,
+            ),
           );
         }
 
         globalScene.arena.terrain = fromSession.arena.terrain;
-        if (globalScene.arena.getTerrainType() !== TerrainType.NONE) {
+        if (fromSession.arena.terrain != null) {
           globalScene.arena.eventTarget.dispatchEvent(
-            new TerrainChangedEvent(globalScene.arena.getTerrainType(), globalScene.arena.terrain!.turnsLeft),
+            new WeatherChangedEvent(
+              fromSession.arena.terrain.terrainType,
+              fromSession.arena.terrain.turnsLeft,
+              fromSession.arena.terrain.maxDuration,
+            ),
           );
         }
+
         globalScene.arena.playerTerasUsed = fromSession.arena.playerTerasUsed;
 
         globalScene.arena.tags = fromSession.arena.tags;
         for (const tag of globalScene.arena.tags) {
-          const { tagType, side, turnCount } = tag;
+          const { tagType, side, turnCount, maxDuration } = tag;
           const layers: [number, number] | undefined =
             tag instanceof EntryHazardTag ? [tag.layers, tag.maxLayers] : undefined;
-          globalScene.arena.eventTarget.dispatchEvent(new ArenaTagAddedEvent(tagType, side, turnCount, layers));
+          globalScene.arena.eventTarget.dispatchEvent(new ArenaTagAddedEvent(tagType, side, turnCount, layers, maxDuration));
         }
 
         globalScene.arena.positionalTagManager.tags = fromSession.arena.positionalTags.map(tag =>
