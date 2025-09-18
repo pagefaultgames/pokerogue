@@ -1456,16 +1456,15 @@ export class BattleScene extends SceneBase {
     ) {
       doubleTrainer = false;
     } else {
-      doubleTrainer =
-        Overrides.RANDOM_TRAINER_OVERRIDE?.alwaysDouble || !randSeedInt(this.getDoubleBattleChance(waveIndex));
+      // Forcing a double battle on wave 1 causes a bug where only one enemy is sent out,
+      // making it impossible to complete the fight without a reload
+      // TODO: Find a cleaner way of syncing both this and the trainer check than duplicating the wave check
+      doubleTrainer = waveIndex > 1 && !randSeedInt(this.getDoubleBattleChance(waveIndex));
     }
 
-    // NB: The original code leaves `double` unset here so I suppose we do too
-    const variant = doubleTrainer
-      ? TrainerVariant.DOUBLE
-      : randSeedInt(2)
-        ? TrainerVariant.FEMALE
-        : TrainerVariant.DEFAULT;
+    const overrideVariant = doubleTrainer ? TrainerVariant.DOUBLE : Overrides.RANDOM_TRAINER_OVERRIDE?.trainerVariant;
+
+    const variant = overrideVariant ?? (randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
 
     const trainer = new Trainer(trainerType, variant);
     this.field.add(trainer);
@@ -1531,7 +1530,7 @@ export class BattleScene extends SceneBase {
   /**
    * Sub-method of `newBattle` that returns whether the new battle is a double battle.
    * @param __namedParameters - filler text for typedoc to shut up
-   * @returns Whether the battle should be a duouble battle.
+   * @returns Whether the battle should be a double battle.
    */
   private checkIsDouble({ double, battleType, waveIndex, trainer }: NewBattleConstructedProps): boolean {
     const overriddenDouble = this.doCheckDoubleOverride(waveIndex);
@@ -1546,7 +1545,8 @@ export class BattleScene extends SceneBase {
       waveIndex === 1
       || this.gameMode.isWaveFinal(waveIndex)
       || this.gameMode.isEndlessBoss(waveIndex)
-      || battleType === BattleType.MYSTERY_ENCOUNTER // MEs are never double battles
+      // MEs are never double battles
+      || battleType === BattleType.MYSTERY_ENCOUNTER
     ) {
       return false;
     }

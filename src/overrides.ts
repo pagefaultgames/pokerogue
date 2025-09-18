@@ -18,6 +18,7 @@ import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
+import { TrainerVariant } from "#enums/trainer-variant";
 import { Unlockables } from "#enums/unlockables";
 import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
@@ -66,11 +67,18 @@ class DefaultOverrides {
    *
    * If `"single"`, set every non-trainer battle to be a single battle.
    *
-   * If `"double"`, set every battle (including trainer battles) to be a double battle.
+   * If `"double"`, set every battle (_including_ trainer battles that are normally singles-only_)
+   * to be a double battle.
    *
-   * If `"even-doubles"`, follow the `"double"` rule on even wave numbers, and follow the `"single"` rule on odd wave numbers.
+   * If `"even-doubles"`, follow the `"double"` rule on even wave numbers,
+   * or the `"single"` rule on odd wave numbers.
    *
-   * If `"odd-doubles"`, follow the `"double"` rule on odd wave numbers, and follow the `"single"` rule on even wave numbers.
+   * If `"odd-doubles"`, follow the `"double"` rule on odd wave numbers,
+   * or the `"single"` rule on even wave numbers.
+   * @defaultValue `null`
+   * @privateRemarks
+   * Due to strange idiosyncrasies in our testing code, this is checked _before_ other relevant
+   * effects during Vitest test runs.
    */
   readonly BATTLE_STYLE_OVERRIDE: BattleStyle | null = null;
   /**
@@ -319,8 +327,12 @@ export type BattleStyle = "double" | "single" | "even-doubles" | "odd-doubles";
 export type RandomTrainerOverride = {
   /** The Type of trainer to force */
   trainerType: Exclude<TrainerType, TrainerType.UNKNOWN>;
-  /* If the selected trainer type has a double version, it will always use its double version. */
-  alwaysDouble?: boolean;
+  /**
+   * The {@linkcode TrainerVariant} to force.
+   * @remarks
+   * `TrainerVariant.DOUBLE` cannot be forced on the first wave of a game due to issues with trainer party generation.
+   */
+  trainerVariant?: TrainerVariant;
 };
 
 /** The type of the {@linkcode DefaultOverrides} class */
