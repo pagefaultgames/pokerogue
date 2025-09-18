@@ -24,10 +24,10 @@ export class Terrain {
   public turnsLeft: number;
   public maxDuration: number;
 
-  constructor(terrainType: TerrainType, turnsLeft?: number, maxDuration?: number) {
+  constructor(terrainType: TerrainType, turnsLeft = 0, maxDuration: number = turnsLeft) {
     this.terrainType = terrainType;
-    this.turnsLeft = turnsLeft || 0;
-    this.maxDuration = maxDuration || turnsLeft || 0;
+    this.turnsLeft = turnsLeft;
+    this.maxDuration = maxDuration;
   }
 
   lapse(): boolean {

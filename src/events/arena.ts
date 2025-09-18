@@ -22,11 +22,11 @@ export class ArenaEvent extends Event {
   public duration: number;
   /** The maximum duration of the {@linkcode ArenaEventType} */
   public maxDuration: number;
-  constructor(eventType: ArenaEventType, duration: number, maxDuration?: number) {
+  constructor(eventType: ArenaEventType, duration: number, maxDuration: number = duration) {
     super(eventType);
 
     this.duration = duration;
-    this.maxDuration = maxDuration || duration;
+    this.maxDuration = maxDuration;
   }
 }
 /** Container class for {@linkcode ArenaEventType.WEATHER_CHANGED} events */
