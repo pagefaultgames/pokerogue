@@ -1,4 +1,5 @@
 import { Status } from "#data/status-effect";
+import { BattleStyle } from "#enums/battle-style";
 import { Button } from "#enums/buttons";
 import { StatusEffect } from "#enums/status-effect";
 import { UiMode } from "#enums/ui-mode";
@@ -8,6 +9,7 @@ import { MessagePhase } from "#phases/message-phase";
 import { MysteryEncounterBattlePhase, MysteryEncounterRewardsPhase } from "#phases/mystery-encounter-phases";
 import { VictoryPhase } from "#phases/victory-phase";
 import type { GameManager } from "#test/test-utils/game-manager";
+import { MockConsole } from "#test/test-utils/mocks/mock-console/mock-console";
 import type { MessageUiHandler } from "#ui/message-ui-handler";
 import type { MysteryEncounterUiHandler } from "#ui/mystery-encounter-ui-handler";
 import type { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
@@ -44,15 +46,10 @@ export async function runMysteryEncounterToEnd(
   if (!isBattle) {
     return await game.phaseInterceptor.to("MysteryEncounterRewardsPhase");
   }
-  game.onNextPrompt(
-    "CheckSwitchPhase",
-    UiMode.CONFIRM,
-    () => {
-      game.setMode(UiMode.MESSAGE);
-      game.endPhase();
-    },
-    () => game.isCurrentPhase("CommandPhase") || game.isCurrentPhase("TurnInitPhase"),
-  );
+  if (game.scene.battleStyle === BattleStyle.SWITCH) {
+    MockConsole.queuePostTestWarning("BattleStyle.SWITCH was used during a test case, swapping to set mode...");
+    game.settings.battleStyle(BattleStyle.SET);
+  }
   await game.toNextTurn();
 }
 

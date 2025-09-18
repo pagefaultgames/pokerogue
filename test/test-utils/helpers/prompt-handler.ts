@@ -45,7 +45,8 @@ const endBySetMode: ReadonlyArray<PhaseString> = [
 
 /**
  * Helper class to handle executing prompts upon UI mode changes.
- * @todo Remove once a UI overhaul
+ * @todo Remove once a UI overhaul occurs -
+ * using this correctly effectively requires one to know the entire phase heiarchy
  */
 export class PromptHandler extends GameManagerHelper {
   /** An array of {@linkcode UIPrompt | prompts} with associated callbacks. */

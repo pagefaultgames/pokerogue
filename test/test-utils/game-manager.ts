@@ -23,7 +23,6 @@ import { NewBattlePhase } from "#phases/new-battle-phase";
 import { SelectStarterPhase } from "#phases/select-starter-phase";
 import type { SelectTargetPhase } from "#phases/select-target-phase";
 import { TurnEndPhase } from "#phases/turn-end-phase";
-import { TurnInitPhase } from "#phases/turn-init-phase";
 import { TurnStartPhase } from "#phases/turn-start-phase";
 import { generateStarter } from "#test/test-utils/game-manager-utils";
 import { GameWrapper } from "#test/test-utils/game-wrapper";
@@ -380,17 +379,6 @@ export class GameManager {
   async toNextWave(): Promise<void> {
     this.doSelectModifier();
 
-    // forcibly end the message box for switching pokemon
-    this.onNextPrompt(
-      "CheckSwitchPhase",
-      UiMode.CONFIRM,
-      () => {
-        this.setMode(UiMode.MESSAGE);
-        this.endPhase();
-      },
-      () => this.isCurrentPhase(TurnInitPhase),
-    );
-
     await this.phaseInterceptor.to("TurnInitPhase");
     await this.phaseInterceptor.to("CommandPhase");
     console.log("==================[New Wave]==================");
@@ -420,8 +408,8 @@ export class GameManager {
    */
   public isCurrentPhase(phaseTargets: PhaseClass): boolean;
   public isCurrentPhase(...phaseTargets: (PhaseString | PhaseClass)[]): boolean {
-    const pName = this.scene.phaseManager.getCurrentPhase().phaseName;
-    return phaseTargets.some(p => (typeof p === "string" ? p : (p.name as PhaseString) === pName));
+    const phase = this.scene.phaseManager.getCurrentPhase();
+    return phaseTargets.some(p => phase.is(typeof p === "string" ? p : (p.name as PhaseString)));
   }
 
   /**

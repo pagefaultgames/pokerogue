@@ -362,6 +362,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game, false);
+      console.log(game.promptHandler["prompts"]);
 
       expect(game).toBeAtPhase("MysteryEncounterRewardsPhase");
       game.onNextPrompt("MysteryEncounterRewardsPhase", UiMode.OPTION_SELECT, () => {
