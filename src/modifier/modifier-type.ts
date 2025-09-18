@@ -115,19 +115,11 @@ import {
 import type { PokemonMove } from "#moves/pokemon-move";
 import { getVoucherTypeIcon, getVoucherTypeName, VoucherType } from "#system/voucher";
 import type { ModifierTypeFunc, WeightedModifierTypeWeightFunc } from "#types/modifier-types";
-import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/handlers/party-ui-handler";
-import { PartyUiHandler } from "#ui/handlers/party-ui-handler";
+import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
+import { PartyUiHandler } from "#ui/party-ui-handler";
 import { getModifierTierTextTint } from "#ui/text";
 import { applyChallenges } from "#utils/challenge-utils";
-import {
-  BooleanHolder,
-  formatMoney,
-  isNullOrUndefined,
-  NumberHolder,
-  padInt,
-  randSeedInt,
-  randSeedItem,
-} from "#utils/common";
+import { BooleanHolder, formatMoney, NumberHolder, padInt, randSeedInt, randSeedItem } from "#utils/common";
 import { getEnumKeys, getEnumValues } from "#utils/enums";
 import { getModifierPoolForType, getModifierType } from "#utils/modifier-utils";
 import { toCamelCase } from "#utils/strings";
@@ -150,7 +142,7 @@ export class ModifierType {
   /**
    * Checks if the modifier type is of a specific type
    * @param modifierType - The type to check against
-   * @return Whether the modifier type is of the specified type
+   * @returns Whether the modifier type is of the specified type
    */
   public is<K extends ModifierTypeString>(modifierType: K): this is ModifierTypeInstanceMap[K] {
     const targetType = ModifierTypeConstructorMap[modifierType];
@@ -263,7 +255,7 @@ export class ModifierType {
             this.tier = modifier.modifierType.tier;
             return this;
           }
-          if (isNullOrUndefined(defaultTier)) {
+          if (defaultTier == null) {
             // If weight is 0, keep track of the first tier where the item was found
             defaultTier = modifier.modifierType.tier;
           }
@@ -874,11 +866,7 @@ export class AttackTypeBoosterModifierType
 
 export type SpeciesStatBoosterItem = keyof typeof SpeciesStatBoosterModifierTypeGenerator.items;
 
-/**
- * Modifier type for {@linkcode SpeciesStatBoosterModifier}
- * @extends PokemonHeldItemModifierType
- * @implements GeneratedPersistentModifierType
- */
+/** Modifier type for {@linkcode SpeciesStatBoosterModifier} */
 export class SpeciesStatBoosterModifierType
   extends PokemonHeldItemModifierType
   implements GeneratedPersistentModifierType
@@ -1396,7 +1384,6 @@ class TempStatStageBoosterModifierTypeGenerator extends ModifierTypeGenerator {
  * Modifier type generator for {@linkcode SpeciesStatBoosterModifierType}, which
  * encapsulates the logic for weighting the most useful held item from
  * the current list of {@linkcode items}.
- * @extends ModifierTypeGenerator
  */
 class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   /** Object comprised of the currently available species-based stat boosting held items */
@@ -2925,7 +2912,7 @@ export function getPartyLuckValue(party: Pokemon[]): number {
     globalScene.executeWithSeedOffset(
       () => {
         const eventLuck = getDailyEventSeedLuck(globalScene.seed);
-        if (!isNullOrUndefined(eventLuck)) {
+        if (eventLuck != null) {
           DailyLuck.value = eventLuck;
           return;
         }

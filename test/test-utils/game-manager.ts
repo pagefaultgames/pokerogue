@@ -45,14 +45,13 @@ import { MockFetch } from "#test/test-utils/mocks/mock-fetch";
 import { PhaseInterceptor } from "#test/test-utils/phase-interceptor";
 import { TextInterceptor } from "#test/test-utils/text-interceptor";
 import type { PhaseClass, PhaseString } from "#types/phase-types";
-import type { BallUiHandler } from "#ui/handlers/ball-ui-handler";
-import type { BattleMessageUiHandler } from "#ui/handlers/battle-message-ui-handler";
-import type { CommandUiHandler } from "#ui/handlers/command-ui-handler";
-import type { ModifierSelectUiHandler } from "#ui/handlers/modifier-select-ui-handler";
-import type { PartyUiHandler } from "#ui/handlers/party-ui-handler";
-import type { StarterSelectUiHandler } from "#ui/handlers/starter-select-ui-handler";
-import type { TargetSelectUiHandler } from "#ui/handlers/target-select-ui-handler";
-import { isNullOrUndefined } from "#utils/common";
+import type { BallUiHandler } from "#ui/ball-ui-handler";
+import type { BattleMessageUiHandler } from "#ui/battle-message-ui-handler";
+import type { CommandUiHandler } from "#ui/command-ui-handler";
+import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import type { PartyUiHandler } from "#ui/party-ui-handler";
+import type { StarterSelectUiHandler } from "#ui/starter-select-ui-handler";
+import type { TargetSelectUiHandler } from "#ui/target-select-ui-handler";
 import fs from "node:fs";
 import { AES, enc } from "crypto-js";
 import { expect, vi } from "vitest";
@@ -240,7 +239,7 @@ export class GameManager {
    * @returns A Promise that resolves when the EncounterPhase ends.
    */
   async runToMysteryEncounter(encounterType?: MysteryEncounterType, species?: SpeciesId[]) {
-    if (!isNullOrUndefined(encounterType)) {
+    if (encounterType != null) {
       this.override.disableTrainerWaves();
       this.override.mysteryEncounter(encounterType);
     }
@@ -272,7 +271,7 @@ export class GameManager {
     );
 
     await this.phaseInterceptor.to("EncounterPhase");
-    if (!isNullOrUndefined(encounterType)) {
+    if (encounterType != null) {
       expect(this.scene.currentBattle?.mysteryEncounter?.encounterType).toBe(encounterType);
     }
   }

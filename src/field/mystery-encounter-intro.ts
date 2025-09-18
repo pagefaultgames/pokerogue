@@ -5,8 +5,6 @@ import { getSpriteKeysFromSpecies } from "#mystery-encounters/encounter-pokemon-
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { loadPokemonVariantAssets } from "#sprites/pokemon-sprite";
 import type { Variant } from "#sprites/variant";
-import { isNullOrUndefined } from "#utils/common";
-import console from "node:console";
 import type { GameObjects } from "phaser";
 
 type PlayAnimationConfig = Phaser.Types.Animations.PlayAnimationConfig;
@@ -99,7 +97,7 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
         ...config,
       };
 
-      if (!isNullOrUndefined(result.species)) {
+      if (result.species != null) {
         const keys = getSpriteKeysFromSpecies(result.species, undefined, undefined, result.isShiny, result.variant);
         result.spriteKey = keys.spriteKey;
         result.fileRoot = keys.fileRoot;
@@ -206,12 +204,12 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
         n++;
       }
 
-      if (!isNullOrUndefined(pokemonShinySparkle)) {
+      if (pokemonShinySparkle != null) {
         // Offset the sparkle to match the Pokemon's position
         pokemonShinySparkle.setPosition(sprite.x, sprite.y);
       }
 
-      if (!isNullOrUndefined(alpha)) {
+      if (alpha != null) {
         sprite.setAlpha(alpha);
         tintSprite.setAlpha(alpha);
       }
@@ -235,7 +233,7 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
       this.spriteConfigs.forEach(config => {
         if (config.isPokemon) {
           globalScene.loadPokemonAtlas(config.spriteKey, config.fileRoot);
-          if (config.isShiny && !isNullOrUndefined(config.variant)) {
+          if (config.isShiny && config.variant != null) {
             shinyPromises.push(loadPokemonVariantAssets(config.spriteKey, config.fileRoot, config.variant));
           }
         } else if (config.isItem) {

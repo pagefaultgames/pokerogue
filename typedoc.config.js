@@ -3,7 +3,7 @@ import { globSync } from "node:fs";
 const dryRun = !!process.env.DRY_RUN?.match(/true/gi);
 
 /**
- * @type {Partial<import("typedoc").TypeDocOptions>}
+ * <!-- @type {Partial<import("typedoc").TypeDocOptions>} -->
  */
 const config = {
   entryPoints: ["./src", "./test/test-utils"],
@@ -15,6 +15,7 @@ const config = {
     "test/test-utils/setup",
     "test/test-utils/reporters",
   ],
+  excludePrivate: false, // Private members are useful in the docs for contributors
   excludeReferences: true, // prevent documenting re-exports
   requiredToBeDocumented: [
     "Enum",
@@ -42,7 +43,7 @@ const config = {
   readme: "./README.md",
   coverageLabel: "Documented",
   coverageSvgWidth: 120, // Increased from 104 baseline due to adding 2 extra letters
-  favicon: "./public/images/logo.png",
+  favicon: "./favicon.ico",
   theme: "typedoc-github-theme",
   customFooterHtml: "<p>Copyright <strong>Pagefault Games</strong> 2025</p>",
   customFooterHtmlDisableWrapper: true,
@@ -61,4 +62,5 @@ if (!dryRun && process.env.REF_NAME) {
   };
 }
 
+// biome-ignore lint/style/noDefaultExport: required by TypeDoc
 export default config;

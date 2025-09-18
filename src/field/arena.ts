@@ -36,7 +36,7 @@ import type { Pokemon } from "#field/pokemon";
 import { FieldEffectModifier } from "#modifiers/modifier";
 import type { Move } from "#moves/move";
 import type { AbstractConstructor } from "#types/type-helpers";
-import { type Constructor, isNullOrUndefined, NumberHolder, randSeedInt } from "#utils/common";
+import { type Constructor, NumberHolder, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 export class Arena {
@@ -339,7 +339,7 @@ export class Arena {
 
     const weatherDuration = new NumberHolder(0);
 
-    if (!isNullOrUndefined(user)) {
+    if (user != null) {
       weatherDuration.value = 5;
       globalScene.applyModifier(FieldEffectModifier, user.isPlayer(), user, weatherDuration);
     }
@@ -420,7 +420,7 @@ export class Arena {
 
     const terrainDuration = new NumberHolder(0);
 
-    if (!isNullOrUndefined(user)) {
+    if (user != null) {
       terrainDuration.value = 5;
       globalScene.applyModifier(FieldEffectModifier, user.isPlayer(), user, terrainDuration);
     }
@@ -732,14 +732,12 @@ export class Arena {
    * Attempt to get a tag from the Arena via {@linkcode getTagOnSide} that applies to both sides
    * @param tagType - The {@linkcode ArenaTagType} to retrieve
    * @returns The existing {@linkcode ArenaTag}, or `undefined` if not present.
-   * @overload
    */
   getTag(tagType: ArenaTagType): ArenaTag | undefined;
   /**
    * Attempt to get a tag from the Arena via {@linkcode getTagOnSide} that applies to both sides
    * @param tagType - The constructor of the {@linkcode ArenaTag} to retrieve
    * @returns The existing {@linkcode ArenaTag}, or `undefined` if not present.
-   * @overload
    */
   getTag<T extends ArenaTag>(tagType: Constructor<T> | AbstractConstructor<T>): T | undefined;
   getTag(tagType: ArenaTagType | Constructor<ArenaTag> | AbstractConstructor<ArenaTag>): ArenaTag | undefined {

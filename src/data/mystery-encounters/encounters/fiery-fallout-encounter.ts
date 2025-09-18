@@ -45,7 +45,7 @@ import {
   TypeRequirement,
 } from "#mystery-encounters/mystery-encounter-requirements";
 import { FIRE_RESISTANT_ABILITIES } from "#mystery-encounters/requirement-groups";
-import { isNullOrUndefined, randSeedInt } from "#utils/common";
+import { randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 /** the i18n namespace for the encounter */
@@ -238,7 +238,7 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
 
       // Burn random member
       const burnable = nonFireTypes.filter(
-        p => isNullOrUndefined(p.status) || isNullOrUndefined(p.status.effect) || p.status.effect === StatusEffect.NONE,
+        p => p.status == null || p.status.effect == null || p.status.effect === StatusEffect.NONE,
       );
       if (burnable?.length > 0) {
         const roll = randSeedInt(burnable.length);
