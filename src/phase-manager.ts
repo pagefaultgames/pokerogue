@@ -425,10 +425,10 @@ export class PhaseManager {
     defer?: boolean | null,
   ) {
     const phase = new MessagePhase(message, callbackDelay, prompt, promptDelay);
-    if (!defer) {
-      this.unshiftPhase(phase);
-    } else {
+    if (defer) {
       this.pushPhase(phase);
+    } else {
+      this.unshiftPhase(phase);
     }
   }
 
