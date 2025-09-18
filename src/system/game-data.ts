@@ -77,6 +77,7 @@ import { applyChallenges } from "#utils/challenge-utils";
 import { executeIf, fixedInt, isLocal, NumberHolder, randInt, randSeedItem } from "#utils/common";
 import { decrypt, encrypt } from "#utils/data";
 import { getEnumKeys } from "#utils/enums";
+import { getSaveDataLocalStorageKey } from "#utils/game-data-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { isBeta } from "#utils/utility-vars";
 import { AES, enc } from "crypto-js";
@@ -838,57 +839,45 @@ export class GameData {
     } as SessionSaveData;
   }
 
-  async getSession(slotId: number): Promise<SessionSaveData | null> {
-    const { promise, resolve, reject } = Promise.withResolvers<SessionSaveData | null>();
+  async getSession(slotId: number): Promise<SessionSaveData | undefined> {
+    // TODO: Do we need this fallback anymore?
     if (slotId < 0) {
-      resolve(null);
-      return promise;
+      return;
     }
-    const handleSessionData = async (sessionDataStr: string) => {
-      try {
-        const sessionData = this.parseSessionData(sessionDataStr);
-        resolve(sessionData);
-      } catch (err) {
-        reject(err);
+
+    // Check local storage for the cached session data
+    if (bypassLogin || localStorage.getItem(getSaveDataLocalStorageKey(slotId))) {
+      const sessionData = localStorage.getItem(getSaveDataLocalStorageKey(slotId));
+      if (!sessionData) {
+        console.error("No session data found!");
         return;
       }
-    };
-
-    if (!bypassLogin && !localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`)) {
-      const response = await pokerogueApi.savedata.session.get({ slot: slotId, clientSessionId });
-
-      if (!response || response?.length === 0 || response?.[0] !== "{") {
-        console.error(response);
-        resolve(null);
-        return promise;
-      }
-
-      localStorage.setItem(
-        `sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`,
-        encrypt(response, bypassLogin),
-      );
-
-      await handleSessionData(response);
-      return promise;
+      return this.parseSessionData(decrypt(sessionData, bypassLogin));
     }
-    const sessionData = localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
-    if (sessionData) {
-      await handleSessionData(decrypt(sessionData, bypassLogin));
-      return promise;
+
+    // Ask the server API for the save data and store it in localstorage
+    const response = await pokerogueApi.savedata.session.get({ slot: slotId, clientSessionId });
+
+    // TODO: This is a far cry from proper JSON validation
+    if (response == null || response.length === 0 || response.charAt(0) !== "{") {
+      console.error("Invalid save data JSON detected!", response);
+      return;
     }
-    resolve(null);
-    return promise;
+
+    localStorage.setItem(getSaveDataLocalStorageKey(slotId), encrypt(response, bypassLogin));
+
+    return this.parseSessionData(response);
   }
 
   async renameSession(slotId: number, newName: string): Promise<boolean> {
     if (slotId < 0) {
       return false;
     }
+    // TODO: Why do we consider renaming to an empty string successful if it does nothing?
     if (newName === "") {
       return true;
     }
-    const sessionData: SessionSaveData | null = await this.getSession(slotId);
-
+    const sessionData = await this.getSession(slotId);
     if (!sessionData) {
       return false;
     }
@@ -902,10 +891,7 @@ export class GameData {
     const trainerId = this.trainerId;
 
     if (bypassLogin) {
-      localStorage.setItem(
-        `sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`,
-        encrypt(updatedDataStr, bypassLogin),
-      );
+      localStorage.setItem(getSaveDataLocalStorageKey(slotId), encrypt(updatedDataStr, bypassLogin));
       return true;
     }
 
@@ -917,13 +903,20 @@ export class GameData {
     if (response) {
       return false;
     }
-    localStorage.setItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`, encrypted);
+    localStorage.setItem(getSaveDataLocalStorageKey(slotId), encrypted);
     const success = await updateUserInfo();
     return !(success !== null && !success);
   }
 
-  async loadSession(slotId: number, sessionData?: SessionSaveData): Promise<boolean> {
-    sessionData ??= (await this.getSession(slotId)) ?? undefined;
+  /**
+   * Load stored session data and re-initialize the game with its contents.
+   * @param slotIndex - The 0-indexed position of the save slot to load.
+   * Values `<=0` will be considered invalid.
+   * @returns A Promise that resolves with whether the session load succeeded
+   * (i.e. whether a save in the given slot exists)
+   */
+  public async loadSession(slotIndex: number): Promise<boolean> {
+    const sessionData = await this.getSession(slotIndex);
     if (!sessionData) {
       return false;
     }
@@ -939,7 +932,7 @@ export class GameData {
           this.parseSessionData(JSON.stringify(fromSession, (_, v: any) => (typeof v === "bigint" ? v.toString() : v))),
         );
       } catch (err) {
-        console.debug("Attempt to log session data failed:", err);
+        console.debug("Attempt to log session data failed: ", err);
       }
     }
 
@@ -1086,7 +1079,7 @@ export class GameData {
   deleteSession(slotId: number): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       if (bypassLogin) {
-        localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
+        localStorage.removeItem(getSaveDataLocalStorageKey(slotId));
         return resolve(true);
       }
 
@@ -1107,7 +1100,7 @@ export class GameData {
               loggedInUser.lastSessionSlot = -1;
             }
 
-            localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
+            localStorage.removeItem(getSaveDataLocalStorageKey(slotId));
             resolve(true);
           }
         });
@@ -1151,7 +1144,7 @@ export class GameData {
     let result: [boolean, boolean] = [false, false];
 
     if (bypassLogin) {
-      localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
+      localStorage.removeItem(getSaveDataLocalStorageKey(slotId));
       result = [true, true];
     } else {
       const sessionData = this.getSessionSaveData();
@@ -1166,7 +1159,7 @@ export class GameData {
         if (loggedInUser) {
           loggedInUser!.lastSessionSlot = -1;
         }
-        localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
+        localStorage.removeItem(getSaveDataLocalStorageKey(slotId));
       } else {
         if (jsonResponse?.error?.startsWith("session out of date")) {
           globalScene.phaseManager.clearPhaseQueue();
