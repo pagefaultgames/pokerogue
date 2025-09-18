@@ -8,7 +8,7 @@ import Overrides from "#app/overrides";
 import type { BiomeTierTrainerPools, PokemonPools } from "#balance/biomes";
 import { BiomePoolTier, biomePokemonPools, biomeTrainerPools } from "#balance/biomes";
 import type { ArenaTag } from "#data/arena-tag";
-import { EntryHazardTag, getArenaTag } from "#data/arena-tag";
+import { getArenaTag } from "#data/arena-tag";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { PositionalTagManager } from "#data/positional-tags/positional-tag-manager";
@@ -431,7 +431,7 @@ export class Arena {
       globalScene.applyModifier(FieldEffectModifier, user.isPlayer(), user, terrainDuration);
     }
 
-    this.terrain = terrain ? new Terrain(terrain, terrainDuration.value, terrainDuration.value) : null;
+    this.terrain = terrain ? new Terrain(terrain, terrainDuration.value) : null;
 
     this.eventTarget.dispatchEvent(new TerrainChangedEvent(this.getTerrainType(), terrainDuration.value));
 
@@ -719,9 +719,7 @@ export class Arena {
     newTag.onAdd(this, quiet);
     this.tags.push(newTag);
 
-    this.eventTarget.dispatchEvent(
-      new ArenaTagAddedEvent(tagType, side, turnCount)
-    );
+    this.eventTarget.dispatchEvent(new ArenaTagAddedEvent(tagType, side, turnCount));
     return true;
   }
 

@@ -30,7 +30,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { TrainerVariant } from "#enums/trainer-variant";
 import { UiMode } from "#enums/ui-mode";
 import { Unlockables } from "#enums/unlockables";
-import { ArenaTagAddedEvent, WeatherChangedEvent } from "#events/arena";
+import { ArenaTagAddedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#events/arena";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 // biome-ignore lint/performance/noNamespaceImport: Something weird is going on here and I don't want to touch it
 import * as Modifier from "#modifiers/modifier";
@@ -1027,7 +1027,7 @@ export class GameData {
         globalScene.arena.terrain = fromSession.arena.terrain;
         if (fromSession.arena.terrain != null) {
           globalScene.arena.eventTarget.dispatchEvent(
-            new WeatherChangedEvent(
+            new TerrainChangedEvent(
               fromSession.arena.terrain.terrainType,
               fromSession.arena.terrain.turnsLeft,
               fromSession.arena.terrain.maxDuration,
@@ -1035,15 +1035,16 @@ export class GameData {
           );
         }
 
-        globalScene.arena.playerTerasUsed = fromSession.arena.playerTerasUsed;
-
         globalScene.arena.tags = fromSession.arena.tags;
         for (const tag of globalScene.arena.tags) {
           const { tagType, side, turnCount, maxDuration } = tag;
           const layers: [number, number] | undefined =
             tag instanceof EntryHazardTag ? [tag.layers, tag.maxLayers] : undefined;
-          globalScene.arena.eventTarget.dispatchEvent(new ArenaTagAddedEvent(tagType, side, turnCount, layers, maxDuration));
+          globalScene.arena.eventTarget.dispatchEvent(
+            new ArenaTagAddedEvent(tagType, side, turnCount, layers, maxDuration),
+          );
         }
+        globalScene.arena.playerTerasUsed = fromSession.arena.playerTerasUsed;
 
         globalScene.arena.positionalTagManager.tags = fromSession.arena.positionalTags.map(tag =>
           loadPositionalTag(tag),
