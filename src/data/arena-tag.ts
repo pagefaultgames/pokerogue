@@ -86,6 +86,10 @@ interface BaseArenaTag {
    */
   turnCount: number;
   /**
+   * The tag's max duration.
+   */
+  maxDuration: number;
+  /**
    * The {@linkcode MoveId} that created this tag, or `undefined` if not set by a move.
    */
   sourceMove?: MoveId;
@@ -112,6 +116,7 @@ export abstract class ArenaTag implements BaseArenaTag {
   public abstract readonly tagType: ArenaTagType;
   // Intentionally left undocumented to inherit comments from interface
   public turnCount: number;
+  public maxDuration: number;
   public sourceMove?: MoveId;
   public sourceId: number | undefined;
   public side: ArenaTagSide;
@@ -145,6 +150,7 @@ export abstract class ArenaTag implements BaseArenaTag {
 
   constructor(turnCount: number, sourceMove?: MoveId, sourceId?: number, side: ArenaTagSide = ArenaTagSide.BOTH) {
     this.turnCount = turnCount;
+    this.maxDuration = turnCount;
     this.sourceMove = sourceMove;
     this.sourceId = sourceId;
     this.side = side;
@@ -224,6 +230,7 @@ export abstract class ArenaTag implements BaseArenaTag {
    */
   loadTag<const T extends this>(source: BaseArenaTag & Pick<T, "tagType">): void {
     this.turnCount = source.turnCount;
+    this.maxDuration = source.maxDuration;
     this.sourceMove = source.sourceMove;
     this.sourceId = source.sourceId;
     this.side = source.side;

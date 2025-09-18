@@ -64,7 +64,7 @@ describe("Abilities - Magic Bounce", () => {
     game.move.use(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
 
-    const user = game.scene.getPlayerField()[0];
+    const user = game.field.getPlayerPokemon();
     expect(user.getStatStage(Stat.ATK)).toBe(-2);
   });
 
