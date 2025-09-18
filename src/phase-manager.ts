@@ -8,10 +8,10 @@
  */
 
 import { PHASE_START_COLOR } from "#app/constants/colors";
+import { DynamicQueueManager } from "#app/dynamic-queue-manager";
 import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
 import { PhaseTree } from "#app/phase-tree";
-import { DynamicQueueManager } from "#app/queues/dynamic-queue-manager";
 import { BattleType } from "#enums/battle-type";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import type { Pokemon } from "#field/pokemon";
@@ -112,8 +112,7 @@ import { UnavailablePhase } from "#phases/unavailable-phase";
 import { UnlockPhase } from "#phases/unlock-phase";
 import { VictoryPhase } from "#phases/victory-phase";
 import { WeatherEffectPhase } from "#phases/weather-effect-phase";
-import type { PhaseConditionFunc } from "#types/phase-condition";
-import type { PhaseMap, PhaseString } from "#types/phase-types";
+import type { PhaseConditionFunc, PhaseMap, PhaseString } from "#types/phase-types";
 
 /**
  * Object that holds all of the phase constructors.
@@ -507,7 +506,7 @@ export class PhaseManager {
    * Faint phases are ordered in a special way to allow battle effects to settle before the pokemon faints.
    * @see {@linkcode PhaseTree.addPhase}
    */
-  public unshiftFaint(...args: ConstructorParameters<PhaseConstructorMap["FaintPhase"]>): void {
+  public queueFaintPhase(...args: ConstructorParameters<PhaseConstructorMap["FaintPhase"]>): void {
     this.phaseQueue.addPhase(this.create("FaintPhase", ...args), true);
   }
 

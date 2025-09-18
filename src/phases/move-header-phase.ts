@@ -1,27 +1,33 @@
-import type { BattlerIndex } from "#enums/battler-index";
+import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import type { PokemonMove } from "#moves/pokemon-move";
-import { PokemonPhase } from "#phases/pokemon-phase";
+import { BattlePhase } from "#phases/battle-phase";
 
-export class MoveHeaderPhase extends PokemonPhase {
+export class MoveHeaderPhase extends BattlePhase {
   public readonly phaseName = "MoveHeaderPhase";
   public move: PokemonMove;
+  public pokemon: Pokemon;
 
-  constructor(battlerIndex: BattlerIndex, move: PokemonMove) {
-    super(battlerIndex);
+  constructor(pokemon: Pokemon, move: PokemonMove) {
+    super();
 
+    this.pokemon = pokemon;
     this.move = move;
   }
 
+  public getPokemon(): Pokemon {
+    return this.pokemon;
+  }
+
   canMove(): boolean {
-    return this.getPokemon().isActive(true) && this.move.isUsable(this.getPokemon());
+    return this.pokemon.isActive(true) && this.move.isUsable(this.pokemon);
   }
 
   start() {
     super.start();
 
     if (this.canMove()) {
-      applyMoveAttrs("MoveHeaderAttr", this.getPokemon(), null, this.move.getMove());
+      applyMoveAttrs("MoveHeaderAttr", this.pokemon, null, this.move.getMove());
     }
     this.end();
   }

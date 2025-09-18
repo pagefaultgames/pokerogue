@@ -143,7 +143,7 @@ export class TurnStartPhase extends FieldPhase {
       ?? new PokemonMove(queuedMove.move);
 
     if (move.getMove().hasAttr("MoveHeaderAttr")) {
-      globalScene.phaseManager.unshiftNew("MoveHeaderPhase", pokemon.getBattlerIndex(), move);
+      globalScene.phaseManager.unshiftNew("MoveHeaderPhase", pokemon, move);
     }
 
     globalScene.phaseManager.pushNew(

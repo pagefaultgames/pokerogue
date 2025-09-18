@@ -35,12 +35,9 @@ export class PostSummonPhase extends PokemonPhase {
     ) {
       pokemon.lapseTag(BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON);
     }
-
-    const field = pokemon.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
+    const field = pokemon.isPlayer() ? globalScene.getPlayerField(true) : globalScene.getEnemyField(true);
     for (const p of field) {
-      if (p.isActive(true)) {
-        applyAbAttrs("CommanderAbAttr", { pokemon: p });
-      }
+      applyAbAttrs("CommanderAbAttr", { pokemon: p });
     }
 
     this.end();

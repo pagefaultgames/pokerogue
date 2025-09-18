@@ -1,4 +1,3 @@
-import type { PhaseConditionFunc } from "#app/@types/phase-condition";
 import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type { Pokemon } from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
@@ -6,6 +5,7 @@ import type { MovePhase } from "#app/phases/move-phase";
 import { PokemonPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";
 import type { BattlerIndex } from "#enums/battler-index";
 import type { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
+import type { PhaseConditionFunc } from "#types/phase-types";
 
 /** A priority queue responsible for the ordering of {@linkcode MovePhase}s */
 export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase> {
@@ -17,10 +17,7 @@ export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase>
   }
 
   public cancelMove(condition: PhaseConditionFunc<"MovePhase">): void {
-    const phase = this.queue.find(p => condition(p));
-    if (phase != null) {
-      phase.cancel();
-    }
+    this.queue.find(p => condition(p))?.cancel();
   }
 
   public setTimingModifier(condition: PhaseConditionFunc<"MovePhase">, modifier: MovePhaseTimingModifier): void {

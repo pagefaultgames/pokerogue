@@ -1,5 +1,4 @@
-import type { PhaseConditionFunc } from "#app/@types/phase-condition";
-import type { DynamicPhase, PhaseString } from "#app/@types/phase-types";
+import type { DynamicPhase, PhaseConditionFunc, PhaseString } from "#app/@types/phase-types";
 import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type { Pokemon } from "#app/field/pokemon";
 import type { Phase } from "#app/phase";

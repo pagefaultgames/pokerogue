@@ -35,7 +35,7 @@ export class MovePhase extends PokemonPhase {
   public readonly phaseName = "MovePhase";
   protected _pokemon: Pokemon;
   public move: PokemonMove;
-  public _targets: BattlerIndex[];
+  protected _targets: BattlerIndex[];
   public readonly useMode: MoveUseMode; // Made public for quash
   /** The timing modifier of the move (used by Quash and to force called moves to the front of their queue) */
   public timingModifier: MovePhaseTimingModifier;
