@@ -166,7 +166,6 @@ describe("Moves - Rage Fist", () => {
 
     // Charizard hit
     game.move.select(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
     expect(getPartyHitCount()).toEqual([1, 0]);
 
