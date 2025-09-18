@@ -13,7 +13,7 @@ import type { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier"
 
 // TODO might be easier to define which phases should be dynamic instead
 /** All phases which have defined a `getPokemon` method but should not be sorted dynamically */
-const nonDynamicPokemonPhases: PhaseString[] = [
+const nonDynamicPokemonPhases: readonly PhaseString[] = [
   "SummonPhase",
   "CommandPhase",
   "LearnMovePhase",
@@ -23,7 +23,7 @@ const nonDynamicPokemonPhases: PhaseString[] = [
   "DamageAnimPhase",
   "VictoryPhase",
   "PokemonHealPhase",
-];
+] as const;
 
 /**
 The dynamic queue manager holds priority queues for phases which are queued as dynamic.
@@ -74,7 +74,7 @@ export class DynamicQueueManager {
   /**
    * Returns the highest-priority (generally by speed) {@linkcode Phase} of the specified type
    * @param type - The {@linkcode PhaseString | type} to pop
-   * @returns A {@linkcode Phase}, or `undefined` if none of the specified type exist
+   * @returns The popped {@linkcode Phase}, or `undefined` if none of the specified type exist
    */
   public popNextPhase(type: PhaseString): Phase | undefined {
     return this.dynamicPhaseMap.get(type)?.pop();

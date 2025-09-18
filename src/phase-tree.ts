@@ -16,19 +16,13 @@ import type { Phase } from "#app/phase";
  */
 export class PhaseTree {
   /** Storage for all levels in the tree. This may be a simple array because only one Phase may have "children" at a time */
-  private levels: Phase[][];
+  private levels: Phase[][] = [[]];
   /** The level of the currently running {@linkcode Phase} in the Tree (note that such phase is not actually in the Tree while it is running) */
-  private currentLevel: number;
+  private currentLevel = 0;
   /** True if a "deferred" level exists
    * @see {@linkcode addPhase}
    */
-  private deferredActive: boolean;
-
-  constructor() {
-    this.currentLevel = 0;
-    this.deferredActive = false;
-    this.levels = [[]];
-  }
+  private deferredActive = false;
 
   /**
    * Adds a {@linkcode Phase} to the specified level
@@ -126,9 +120,9 @@ export class PhaseTree {
   public find<P extends PhaseString>(phaseType: P, phaseFilter?: PhaseConditionFunc<P>): PhaseMap[P] | undefined {
     for (let i = this.levels.length - 1; i >= 0; i--) {
       const level = this.levels[i];
-      const phase = level.find(p => p.is(phaseType) && (!phaseFilter || phaseFilter(p)));
+      const phase = level.find((p): p is PhaseMap[P] => p.is(phaseType) && (!phaseFilter || phaseFilter(p)));
       if (phase) {
-        return phase as PhaseMap[P];
+        return phase;
       }
     }
   }
