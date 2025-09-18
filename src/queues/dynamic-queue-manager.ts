@@ -23,6 +23,7 @@ const nonDynamicPokemonPhases: readonly PhaseString[] = [
   "DamageAnimPhase",
   "VictoryPhase",
   "PokemonHealPhase",
+  "WeatherEffectPhase",
 ] as const;
 
 /**
