@@ -7742,7 +7742,8 @@ export function initAbilities() {
     new Ability(AbilityId.SHARPNESS, 9)
       .attr(MovePowerBoostAbAttr, (_user, _target, move) => move.hasFlag(MoveFlags.SLICING_MOVE), 1.5),
     new Ability(AbilityId.SUPREME_OVERLORD, 9)
-      .conditionalAttr((p) => (p.isPlayer() ? globalScene.arena.playerFaints : globalScene.currentBattle.enemyFaints) > 0, PostSummonAddBattlerTagAbAttr, BattlerTagType.SUPREME_OVERLORD, 0, true),
+      .conditionalAttr((p) => (p.isPlayer() ? globalScene.arena.playerFaints : globalScene.currentBattle.enemyFaints) > 0, PostSummonAddBattlerTagAbAttr, BattlerTagType.SUPREME_OVERLORD, 0, true)
+      .edgeCase(), // Tag is not tied to ability, so suppression/removal etc will not function until a structure to allow this is implemented
     new Ability(AbilityId.COSTAR, 9, -2)
       .attr(PostSummonCopyAllyStatsAbAttr),
     new Ability(AbilityId.TOXIC_DEBRIS, 9)
