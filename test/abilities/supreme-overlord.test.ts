@@ -177,10 +177,11 @@ describe("Abilities - Supreme Overlord", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.toEndOfTurn();
 
+    expect(game.field.getPlayerPokemon()).not.toHaveBattlerTag(BattlerTagType.SUPREME_OVERLORD);
     expect(move.calculateBattlePower).toHaveLastReturnedWith(basePower);
   });
 
-  it("persists through game reload", async () => {
+  it("should persist fainted count through reload", async () => {
     // Avoid learning moves
     game.override.startingLevel(1000);
 
@@ -196,7 +197,8 @@ describe("Abilities - Supreme Overlord", () => {
 
     await game.toNextWave();
     await game.reload.reloadSession();
-    expect(game.field.getPlayerPokemon().getTag(BattlerTagType.SUPREME_OVERLORD)).toBeDefined();
+
+    expect(game.field.getPlayerPokemon()).toHaveBattlerTag({tagType: BattlerTagType.SUPREME_OVERLORD, faintCount: 1});
 
     game.move.select(MoveId.TACKLE);
     await game.toEndOfTurn();
