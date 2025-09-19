@@ -198,7 +198,7 @@ describe("Abilities - Supreme Overlord", () => {
     await game.toNextWave();
     await game.reload.reloadSession();
 
-    expect(game.field.getPlayerPokemon()).toHaveBattlerTag({tagType: BattlerTagType.SUPREME_OVERLORD, faintCount: 1});
+    expect(game.field.getPlayerPokemon()).toHaveBattlerTag({ tagType: BattlerTagType.SUPREME_OVERLORD, faintCount: 1 });
 
     game.move.select(MoveId.TACKLE);
     await game.toEndOfTurn();
