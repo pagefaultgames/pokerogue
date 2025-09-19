@@ -67,10 +67,12 @@ describe("Abilities - Intimidate", () => {
   it("should activate on reload with single party", async () => {
     await game.classicMode.startBattle([SpeciesId.MIGHTYENA]);
 
+    expect(game.field.getPlayerPokemon()).toHaveAbilityApplied(AbilityId.INTIMIDATE);
     expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, -1);
 
     await game.reload.reloadSession();
 
+    expect(game.field.getPlayerPokemon()).toHaveAbilityApplied(AbilityId.INTIMIDATE);
     expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, -1);
   });
 

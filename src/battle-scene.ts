@@ -1313,7 +1313,7 @@ export class BattleScene extends SceneBase {
     // Set attributes of the `resolved` object based on the type of battle being created.
     if (this.gameMode.isFixedBattle(waveIndex)) {
       this.handleFixedBattle(resolved);
-    } else if (props.trainerData) {
+    } else if (fromSession) {
       this.handleSavedBattle(resolved, props);
     } else {
       this.handleNonFixedBattle(resolved);
@@ -1348,8 +1348,6 @@ export class BattleScene extends SceneBase {
       this.waveSeed,
     );
     this.currentBattle.incrementTurn();
-
-    this.currentBattle.mysteryEncounterType = props.mysteryEncounterType;
 
     if (!fromSession && lastBattle) {
       this.doPostBattleCleanup(lastBattle, maxExpLevel);
@@ -1544,9 +1542,8 @@ export class BattleScene extends SceneBase {
       // Wave 1 doubles cause crashes
       waveIndex === 1
       || this.gameMode.isWaveFinal(waveIndex)
-      || this.gameMode.isEndlessBoss(waveIndex)
-      || // MEs are never double battles
-      battleType === BattleType.MYSTERY_ENCOUNTER
+      || this.gameMode.isEndlessBoss(waveIndex) // MEs are never double battles
+      || battleType === BattleType.MYSTERY_ENCOUNTER
     ) {
       return false;
     }
