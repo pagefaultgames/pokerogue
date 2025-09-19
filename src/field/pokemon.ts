@@ -170,6 +170,7 @@ import {
   rgbToHsv,
   toDmgValue,
 } from "#utils/common";
+import { calculateBossSegmentDamage } from "#utils/damage";
 import { getEnumValues } from "#utils/enums";
 import { getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
@@ -6763,32 +6764,17 @@ export class EnemyPokemon extends Pokemon {
       return 0;
     }
 
+    const segmentSize = this.getMaxHp() / this.bossSegments;
+
     let clearedBossSegmentIndex = this.isBoss() ? this.bossSegmentIndex + 1 : 0;
 
     if (this.isBoss() && !ignoreSegments) {
-      const segmentSize = this.getMaxHp() / this.bossSegments;
-      for (let s = this.bossSegmentIndex; s > 0; s--) {
-        const hpThreshold = segmentSize * s;
-        const roundedHpThreshold = Math.round(hpThreshold);
-        if (this.hp >= roundedHpThreshold) {
-          if (this.hp - damage <= roundedHpThreshold) {
-            const hpRemainder = this.hp - roundedHpThreshold;
-            let segmentsBypassed = 0;
-            while (
-              segmentsBypassed < this.bossSegmentIndex
-              && this.canBypassBossSegments(segmentsBypassed + 1)
-              && damage - hpRemainder >= Math.round(segmentSize * Math.pow(2, segmentsBypassed + 1))
-            ) {
-              segmentsBypassed++;
-              //console.log('damage', damage, 'segment', segmentsBypassed + 1, 'segment size', segmentSize, 'damage needed', Math.round(segmentSize * Math.pow(2, segmentsBypassed + 1)));
-            }
-
-            damage = toDmgValue(this.hp - hpThreshold + segmentSize * segmentsBypassed);
-            clearedBossSegmentIndex = s - segmentsBypassed;
-          }
-          break;
-        }
-      }
+      [damage, clearedBossSegmentIndex] = calculateBossSegmentDamage(
+        damage,
+        this.hp,
+        segmentSize,
+        this.getMinimumSegmentIndex(),
+      );
     }
 
     switch (globalScene.currentBattle.battleSpec) {
@@ -6802,7 +6788,6 @@ export class EnemyPokemon extends Pokemon {
 
     if (this.isBoss()) {
       if (ignoreSegments) {
-        const segmentSize = this.getMaxHp() / this.bossSegments;
         clearedBossSegmentIndex = Math.ceil(this.hp / segmentSize);
       }
       if (clearedBossSegmentIndex <= this.bossSegmentIndex) {
@@ -6814,16 +6799,12 @@ export class EnemyPokemon extends Pokemon {
     return ret;
   }
 
-  private canBypassBossSegments(segmentCount = 1): boolean {
-    if (
-      globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS
-      && !this.formIndex
-      && this.bossSegmentIndex - segmentCount < 1
-    ) {
-      return false;
+  private getMinimumSegmentIndex(): number {
+    if (globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS && !this.formIndex) {
+      return 1;
     }
 
-    return true;
+    return 0;
   }
 
   /**
