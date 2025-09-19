@@ -1351,7 +1351,7 @@ export class BattleScene extends SceneBase {
 
     this.currentBattle.mysteryEncounterType = props.mysteryEncounterType;
 
-    if (fromSession && lastBattle) {
+    if (!fromSession && lastBattle) {
       this.doPostBattleCleanup(lastBattle, maxExpLevel);
     }
     return this.currentBattle;
@@ -1545,8 +1545,8 @@ export class BattleScene extends SceneBase {
       waveIndex === 1
       || this.gameMode.isWaveFinal(waveIndex)
       || this.gameMode.isEndlessBoss(waveIndex)
-      // MEs are never double battles
-      || battleType === BattleType.MYSTERY_ENCOUNTER
+      || // MEs are never double battles
+      battleType === BattleType.MYSTERY_ENCOUNTER
     ) {
       return false;
     }
