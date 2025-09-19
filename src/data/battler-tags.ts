@@ -3637,12 +3637,15 @@ export class SupremeOverlordTag extends SerializableBattlerTag {
     super(BattlerTagType.SUPREME_OVERLORD, BattlerTagLapseType.FAINT, 0);
   }
 
-  public override canAdd(pokemon: Pokemon): boolean {
+  public override onAdd(pokemon: Pokemon): boolean {
     (this as Mutable<this>).faintCount = Math.min(
       pokemon.isPlayer() ? globalScene.arena.playerFaints : globalScene.currentBattle.enemyFaints,
       5,
     );
-    return this.faintCount > 0;
+    globalScene.phaseManager.queueMessage(
+      i18next.t("battlerTags:supremeOverlordOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }),
+    );
+    return true;
   }
 
   /**

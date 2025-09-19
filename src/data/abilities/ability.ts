@@ -7742,7 +7742,7 @@ export function initAbilities() {
     new Ability(AbilityId.SHARPNESS, 9)
       .attr(MovePowerBoostAbAttr, (_user, _target, move) => move.hasFlag(MoveFlags.SLICING_MOVE), 1.5),
     new Ability(AbilityId.SUPREME_OVERLORD, 9)
-      .attr(PostSummonAddBattlerTagAbAttr, BattlerTagType.SUPREME_OVERLORD, 0, true),
+      .conditionalAttr((p) => (p.isPlayer() ? globalScene.arena.playerFaints : globalScene.currentBattle.enemyFaints) > 0, PostSummonAddBattlerTagAbAttr, BattlerTagType.SUPREME_OVERLORD, 0, true),
     new Ability(AbilityId.COSTAR, 9, -2)
       .attr(PostSummonCopyAllyStatsAbAttr),
     new Ability(AbilityId.TOXIC_DEBRIS, 9)
