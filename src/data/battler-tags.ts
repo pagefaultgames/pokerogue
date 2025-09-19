@@ -3629,12 +3629,12 @@ export class MagicCoatTag extends BattlerTag {
 /**
  * Tag associated with {@linkcode AbilityId.SUPREME_OVERLORD}
  */
-export class SupremeOverlordTag extends SerializableBattlerTag {
+export class SupremeOverlordTag extends AbilityBattlerTag {
   public override readonly tagType = BattlerTagType.SUPREME_OVERLORD;
   /** The number of faints at the time the user was sent out */
   public readonly faintCount: number;
   constructor() {
-    super(BattlerTagType.SUPREME_OVERLORD, BattlerTagLapseType.FAINT, 0);
+    super(BattlerTagType.SUPREME_OVERLORD, AbilityId.SUPREME_OVERLORD, BattlerTagLapseType.FAINT, 0);
   }
 
   public override onAdd(pokemon: Pokemon): boolean {

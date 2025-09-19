@@ -89,7 +89,8 @@ export type AbilityBattlerTagType =
   | BattlerTagType.QUARK_DRIVE
   | BattlerTagType.UNBURDEN
   | BattlerTagType.SLOW_START
-  | BattlerTagType.TRUANT;
+  | BattlerTagType.TRUANT
+  | BattlerTagType.SUPREME_OVERLORD;
 
 /** Subset of {@linkcode BattlerTagType}s that provide type boosts */
 export type TypeBoostTagType = BattlerTagType.FIRE_BOOST | BattlerTagType.CHARGED;
