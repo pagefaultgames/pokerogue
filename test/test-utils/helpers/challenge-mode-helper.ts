@@ -12,6 +12,8 @@ import { TurnInitPhase } from "#phases/turn-init-phase";
 import { generateStarter } from "#test/test-utils/game-manager-utils";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
 
+type challengeStub = { id: Challenges; value: number; severity: number };
+
 /**
  * Helper to handle Challenge mode specifics
  */
@@ -30,11 +32,23 @@ export class ChallengeModeHelper extends GameManagerHelper {
   }
 
   /**
-   * Runs the Challenge game to the summon phase.
-   * @param gameMode - Optional game mode to set.
+   * Runs the challenge game to the summon phase.
+   * @param species - An array of {@linkcode Species} to summon.
    * @returns A promise that resolves when the summon phase is reached.
+   * @todo This duplicates all but 1 line of code from the classic mode variant...
    */
-  async runToSummon(species?: SpeciesId[]) {
+  async runToSummon(species: SpeciesId[]): Promise<void>;
+  /**
+   * Runs the challenge game to the summon phase.
+   * Selects 3 daily run starters with a fixed seed of "test"
+   * (see `DailyRunConfig.getDailyRunStarters` in `daily-run.ts` for more info).
+   * @returns A promise that resolves when the summon phase is reached.
+   * @deprecated - Specifying the starters helps prevent inconsistencies from internal RNG changes.
+   * @todo This duplicates all but 1 line of code from the classic mode variant...
+   */
+  async runToSummon(): Promise<void>;
+  async runToSummon(species?: SpeciesId[]): Promise<void>;
+  async runToSummon(species?: SpeciesId[]): Promise<void> {
     await this.game.runToTitle();
 
     if (this.game.override.disableShinies) {
@@ -56,10 +70,21 @@ export class ChallengeModeHelper extends GameManagerHelper {
   }
 
   /**
-   * Transitions to the start of a battle.
-   * @param species - Optional array of species to start the battle with.
+   * Transitions the challenge game to the start of a new battle.
+   * @param species - An array of {@linkcode Species} to summon.
    * @returns A promise that resolves when the battle is started.
+   * @todo This duplicates all its code with the classic mode variant...
    */
+  async startBattle(species: SpeciesId[]): Promise<void>;
+  /**
+   * Transitions the challenge game to the start of a new battle.
+   * Selects 3 daily run starters with a fixed seed of "test"
+   * (see `DailyRunConfig.getDailyRunStarters` in `daily-run.ts` for more info).
+   * @returns A promise that resolves when the battle is started.
+   * @deprecated - Specifying the starters helps prevent inconsistencies from internal RNG changes.
+   * @todo This duplicates all its code with the classic mode variant...
+   */
+  async startBattle(): Promise<void>;
   async startBattle(species?: SpeciesId[]) {
     await this.runToSummon(species);
 
@@ -87,5 +112,27 @@ export class ChallengeModeHelper extends GameManagerHelper {
 
     await this.game.phaseInterceptor.to(CommandPhase);
     console.log("==================[New Turn]==================");
+  }
+
+  /**
+   * Override an already-started game with the given challenges.
+   * @param id - The challenge id
+   * @param value - The challenge value
+   * @param severity - The challenge severity
+   * @todo Make severity optional for challenges that do not require it
+   */
+  public overrideGameWithChallenges(id: Challenges, value: number, severity: number): void;
+  /**
+   * Override an already-started game with the given challenges.
+   * @param challenges - One or more challenges to set.
+   */
+  public overrideGameWithChallenges(challenges: challengeStub[]): void;
+  public overrideGameWithChallenges(challenges: challengeStub[] | Challenges, value?: number, severity?: number): void {
+    if (typeof challenges !== "object") {
+      challenges = [{ id: challenges, value: value!, severity: severity! }];
+    }
+    for (const challenge of challenges) {
+      this.game.scene.gameMode.setChallengeValue(challenge.id, challenge.value, challenge.severity);
+    }
   }
 }

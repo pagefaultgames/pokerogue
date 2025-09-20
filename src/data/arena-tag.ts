@@ -949,7 +949,7 @@ class StealthRockTag extends DamagingTrapTag {
   }
 
   protected override getDamageHpRatio(pokemon: Pokemon): number {
-    const effectiveness = pokemon.getAttackTypeEffectiveness(PokemonType.ROCK, undefined, true);
+    const effectiveness = pokemon.getAttackTypeEffectiveness(PokemonType.ROCK, { ignoreStrongWinds: true });
     return 0.125 * effectiveness;
   }
 
