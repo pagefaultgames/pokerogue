@@ -1,5 +1,4 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
-import type { FixedBattleConfig } from "#app/battle";
 import { Battle } from "#app/battle";
 import {
   ANTI_VARIANCE_WEIGHT_MODIFIER,
@@ -21,10 +20,10 @@ import { FieldSpritePipeline } from "#app/pipelines/field-sprite";
 import { InvertPostFX } from "#app/pipelines/invert";
 import { SpritePipeline } from "#app/pipelines/sprite";
 import { SceneBase } from "#app/scene-base";
-import { startingWave } from "#app/starting-wave";
 import { TimedEventManager } from "#app/timed-event-manager";
 import { UiInputs } from "#app/ui-inputs";
 import { biomeDepths, getBiomeName } from "#balance/biomes";
+import { startingWave } from "#balance/misc";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#balance/starters";
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets } from "#data/battle-anims";
@@ -115,12 +114,18 @@ import { GameData } from "#system/game-data";
 import { initGameSpeed } from "#system/game-speed";
 import type { PokemonData } from "#system/pokemon-data";
 import { MusicPreference } from "#system/settings";
-import type { TrainerData } from "#system/trainer-data";
 import type { Voucher } from "#system/voucher";
 import { vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import type { Localizable } from "#types/locales";
+import type {
+  NewBattleConstructedProps,
+  NewBattleInitialProps,
+  NewBattleProps,
+  NewBattleResolvedProps,
+} from "#types/new-battle-props";
+import type { SessionSaveData } from "#types/save-data";
 import { AbilityBar } from "#ui/ability-bar";
 import { ArenaFlyout } from "#ui/arena-flyout";
 import { CandyBar } from "#ui/candy-bar";
@@ -165,6 +170,12 @@ export interface InfoToggle {
   isActive(): boolean;
 }
 
+/**
+ * The `BattleScene` is the primary scene for the game.
+ * Despite its name, it handles _everything_ other than initial asset loading,
+ * up to and including title menuing and settings handling.
+ * @todo Breakup into multiple scenes
+ */
 export class BattleScene extends SceneBase {
   public rexUI: UIPlugin;
   public inputController: InputsController;
@@ -267,7 +278,7 @@ export class BattleScene extends SceneBase {
   public score: number;
   public lockModifierTiers: boolean;
   public trainer: Phaser.GameObjects.Sprite;
-  public lastEnemyTrainer: Trainer | null;
+  public lastEnemyTrainer: Trainer | undefined;
   public currentBattle: Battle;
   public pokeballCounts: PokeballCounts;
   public money: number;
@@ -1181,8 +1192,8 @@ export class BattleScene extends SceneBase {
       this.field.remove(this.currentBattle.mysteryEncounter?.introVisuals, true);
     }
 
-    //@ts-expect-error  - allowing `null` for currentBattle causes a lot of trouble
-    this.currentBattle = null; // TODO: resolve ts-ignore
+    //@ts-expect-error  - allowing `undefined` for currentBattle causes a lot of trouble
+    this.currentBattle = undefined; // TODO: resolve ts-ignore
 
     // Reset RNG after end of game or save & quit.
     // This needs to happen after clearing this.currentBattle or the seed will be affected by the last wave played
@@ -1266,10 +1277,12 @@ export class BattleScene extends SceneBase {
     }
   }
 
-  getDoubleBattleChance(newWaveIndex: number, playerField: PlayerPokemon[]) {
+  // TODO: Invert the chances for this
+  private getDoubleBattleChance(newWaveIndex: number): number {
     const doubleChance = new NumberHolder(newWaveIndex % 10 === 0 ? 32 : 8);
     this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
-    for (const p of playerField) {
+    for (const p of this.getPlayerField()) {
+      // TODO: This passes `null` to `applyAbAttrs`
       applyAbAttrs("DoubleBattleChanceAbAttr", { pokemon: p, chance: doubleChance });
     }
     return Math.max(doubleChance.value, 1);
@@ -1280,239 +1293,288 @@ export class BattleScene extends SceneBase {
     const isEndlessOrDaily = this.gameMode.hasShortBiomes || this.gameMode.isDaily;
     const isEndlessFifthWave = this.gameMode.hasShortBiomes && currentBattle.waveIndex % 5 === 0;
     const isWaveIndexMultipleOfFiftyMinusOne = currentBattle.waveIndex % 50 === 49;
-    const isNewBiome =
-      isWaveIndexMultipleOfTen || isEndlessFifthWave || (isEndlessOrDaily && isWaveIndexMultipleOfFiftyMinusOne);
-    return isNewBiome;
+    return isWaveIndexMultipleOfTen || isEndlessFifthWave || (isEndlessOrDaily && isWaveIndexMultipleOfFiftyMinusOne);
   }
 
-  newBattle(
-    waveIndex?: number,
-    battleType?: BattleType,
-    trainerData?: TrainerData,
-    double?: boolean,
-    mysteryEncounterType?: MysteryEncounterType,
-  ): Battle {
-    const _startingWave = Overrides.STARTING_WAVE_OVERRIDE || startingWave;
-    const newWaveIndex = waveIndex || (this.currentBattle?.waveIndex || _startingWave - 1) + 1;
-    let newDouble: boolean | undefined;
-    let newBattleType: BattleType;
-    let newTrainer: Trainer | undefined;
+  /**
+   * Create and initialize a new battle.
+   * @param fromSession - The {@linkcode SessionSaveData} being used to seed the battle.
+   * Should be omitted if not loading a new save file.
+   * @returns The newly created `Battle` instance.
+   */
+  public newBattle(fromSession?: SessionSaveData): Battle {
+    const props = this.getNewBattleProps(fromSession);
+    const { waveIndex } = props;
+    const resolved: NewBattleInitialProps = { waveIndex, mysteryEncounterType: props.mysteryEncounterType };
 
-    let battleConfig: FixedBattleConfig | null = null;
+    // TODO: Address this during an RNG overhaul
+    this.resetSeed(waveIndex);
 
-    this.resetSeed(newWaveIndex);
-
-    const playerField = this.getPlayerField();
-
-    if (this.gameMode.isFixedBattle(newWaveIndex) && trainerData === undefined) {
-      battleConfig = this.gameMode.getFixedBattle(newWaveIndex);
-      newDouble = battleConfig.double;
-      newBattleType = battleConfig.battleType;
-      this.executeWithSeedOffset(
-        () => (newTrainer = battleConfig?.getTrainer()),
-        (battleConfig.seedOffsetWaveIndex || newWaveIndex) << 8,
-      );
-      if (newTrainer) {
-        this.field.add(newTrainer);
-      }
+    // Set attributes of the `resolved` object based on the type of battle being created.
+    if (this.gameMode.isFixedBattle(waveIndex)) {
+      this.handleFixedBattle(resolved);
+    } else if (props.trainerData) {
+      this.handleSavedBattle(resolved, props);
     } else {
-      if (
-        !this.gameMode.hasTrainers
-        || Overrides.BATTLE_TYPE_OVERRIDE === BattleType.WILD
-        || (Overrides.DISABLE_STANDARD_TRAINERS_OVERRIDE && trainerData == null)
-      ) {
-        newBattleType = BattleType.WILD;
-      } else {
-        newBattleType =
-          Overrides.BATTLE_TYPE_OVERRIDE
-          ?? battleType
-          ?? (this.gameMode.isWaveTrainer(newWaveIndex, this.arena) ? BattleType.TRAINER : BattleType.WILD);
-      }
-
-      if (newBattleType === BattleType.TRAINER) {
-        const trainerType =
-          Overrides.RANDOM_TRAINER_OVERRIDE?.trainerType ?? this.arena.randomTrainerType(newWaveIndex);
-        const hasDouble = trainerConfigs[trainerType].hasDouble;
-        let doubleTrainer = false;
-        if (trainerConfigs[trainerType].doubleOnly) {
-          doubleTrainer = true;
-        } else if (hasDouble) {
-          doubleTrainer = !randSeedInt(this.getDoubleBattleChance(newWaveIndex, playerField));
-          // Add a check that special trainers can't be double except for tate and liza - they should use the normal double chance
-          if (
-            trainerConfigs[trainerType].trainerTypeDouble
-            && ![TrainerType.TATE, TrainerType.LIZA].includes(trainerType)
-          ) {
-            doubleTrainer = false;
-          }
-        }
-
-        // Forcing a double battle on wave 1 causes a bug where only one enemy is sent out,
-        // making it impossible to complete the fight without a reload
-        const overrideVariant =
-          Overrides.RANDOM_TRAINER_OVERRIDE?.trainerVariant === TrainerVariant.DOUBLE
-          && (!hasDouble || newWaveIndex <= 1)
-            ? TrainerVariant.DEFAULT
-            : Overrides.RANDOM_TRAINER_OVERRIDE?.trainerVariant;
-
-        const variant =
-          overrideVariant
-          ?? (doubleTrainer ? TrainerVariant.DOUBLE : randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
-
-        newTrainer = trainerData !== undefined ? trainerData.toTrainer() : new Trainer(trainerType, variant);
-        this.field.add(newTrainer);
-      }
-
-      // Check for mystery encounter
-      // Can only occur in place of a standard (non-boss) wild battle, waves 10-180
-      if (
-        !Overrides.BATTLE_TYPE_OVERRIDE
-        && (this.isWaveMysteryEncounter(newBattleType, newWaveIndex) || newBattleType === BattleType.MYSTERY_ENCOUNTER)
-      ) {
-        newBattleType = BattleType.MYSTERY_ENCOUNTER;
-        // Reset to base spawn weight
-        this.mysteryEncounterSaveData.encounterSpawnChance = BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
-      }
+      this.handleNonFixedBattle(resolved);
     }
 
-    if (double === undefined && newWaveIndex > 1) {
-      if (newBattleType === BattleType.WILD && !this.gameMode.isWaveFinal(newWaveIndex)) {
-        newDouble = !randSeedInt(this.getDoubleBattleChance(newWaveIndex, playerField));
-      } else if (newBattleType === BattleType.TRAINER) {
-        newDouble = newTrainer?.variant === TrainerVariant.DOUBLE;
-      }
-    } else if (!battleConfig) {
-      newDouble = !!double;
+    if (resolved.battleType == null) {
+      throw new Error("Whoopsie! I guess my type checks were wrong");
     }
+    resolved.double = this.checkIsDouble(resolved as NewBattleConstructedProps);
 
-    // Disable double battles on Endless/Endless Spliced Wave 50x boss battles (Introduced 1.2.0)
-    if (this.gameMode.isEndlessBoss(newWaveIndex)) {
-      newDouble = false;
-    }
-
-    if (Overrides.BATTLE_STYLE_OVERRIDE != null) {
-      let doubleOverrideForWave: "single" | "double" | null = null;
-
-      switch (Overrides.BATTLE_STYLE_OVERRIDE) {
-        case "double":
-          doubleOverrideForWave = "double";
-          break;
-        case "single":
-          doubleOverrideForWave = "single";
-          break;
-        case "even-doubles":
-          doubleOverrideForWave = newWaveIndex % 2 ? "single" : "double";
-          break;
-        case "odd-doubles":
-          doubleOverrideForWave = newWaveIndex % 2 ? "double" : "single";
-          break;
-      }
-
-      if (doubleOverrideForWave === "double") {
-        newDouble = true;
-      }
-      /**
-       * Override battles into single only if not fighting with trainers.
-       * @see {@link https://github.com/pagefaultgames/pokerogue/issues/1948 GitHub Issue #1948}
-       */
-      if (newBattleType !== BattleType.TRAINER && doubleOverrideForWave === "single") {
-        newDouble = false;
-      }
-    }
-
-    const lastBattle = this.currentBattle;
-
+    const lastBattle: Battle | undefined = this.currentBattle;
     const maxExpLevel = this.getMaxExpLevel();
 
-    this.lastEnemyTrainer = lastBattle?.trainer ?? null;
+    this.lastEnemyTrainer = lastBattle?.trainer;
     this.lastMysteryEncounter = lastBattle?.mysteryEncounter;
 
-    if (newBattleType === BattleType.MYSTERY_ENCOUNTER) {
-      // Disable double battle on mystery encounters (it may be re-enabled as part of encounter)
-      newDouble = false;
-    }
-
-    if (lastBattle?.double && !newDouble) {
+    // TODO: Is this even needed?
+    if (lastBattle?.double && !resolved.double) {
       this.phaseManager.tryRemovePhase((p: Phase) => p.is("SwitchPhase"));
+      // TODO: We already do this later in the function
       for (const p of this.getPlayerField()) {
         p.lapseTag(BattlerTagType.COMMANDED);
       }
     }
 
+    // NB: Type assertion is fine as resolved should always be populated at this point
     this.executeWithSeedOffset(
       () => {
-        this.currentBattle = new Battle(this.gameMode, newWaveIndex, newBattleType, newTrainer, newDouble);
+        this.currentBattle = new Battle(this.gameMode, resolved as NewBattleResolvedProps);
       },
-      newWaveIndex << 3,
+      waveIndex << 3, // TODO: Why use this specific bitshift?
       this.waveSeed,
     );
     this.currentBattle.incrementTurn();
 
-    if (newBattleType === BattleType.MYSTERY_ENCOUNTER) {
-      // Will generate the actual Mystery Encounter during NextEncounterPhase, to ensure it uses proper biome
-      this.currentBattle.mysteryEncounterType = mysteryEncounterType;
+    this.currentBattle.mysteryEncounterType = props.mysteryEncounterType;
+
+    if (!fromSession && lastBattle) {
+      this.doPostBattleCleanup(lastBattle, maxExpLevel);
+    }
+    return this.currentBattle;
+  }
+
+  /**
+   * Helper function to {@linkcode newBattle} to initialize a {@linkcode NewBattleProps} from session data, using defaults if no session data is provided.
+   * @param fromSession - The session data being used to initialize the battle, or `undefined` if a new battle is being created mid run
+   * @returns The new battle props
+   */
+  private getNewBattleProps(fromSession?: SessionSaveData): NewBattleProps {
+    const battleType = fromSession?.battleType ?? BattleType.WILD;
+    const mysteryEncounterType =
+      fromSession?.mysteryEncounterType != null && fromSession?.mysteryEncounterType !== -1
+        ? fromSession?.mysteryEncounterType
+        : undefined;
+    // Don't increment wave index when computing starting wave
+    const newWaveIndex =
+      (fromSession?.waveIndex ?? this.currentBattle?.waveIndex) != null
+        ? (fromSession?.waveIndex ?? this.currentBattle?.waveIndex) + 1
+        : (Overrides.STARTING_WAVE_OVERRIDE ?? startingWave);
+    const trainerData = fromSession?.trainer;
+    const fixedDouble =
+      fromSession == null
+        ? undefined
+        : battleType === BattleType.TRAINER
+          ? trainerConfigs[fromSession.trainer.trainerType]?.doubleOnly
+            || fromSession.trainer.variant === TrainerVariant.DOUBLE
+          : battleType !== BattleType.MYSTERY_ENCOUNTER && fromSession.enemyParty.length > 1;
+
+    return { battleType, mysteryEncounterType, waveIndex: newWaveIndex, trainerData, double: fixedDouble };
+  }
+
+  /**
+   * Sub-method of `launchBattle` that handles fixed trainer battles.
+   * @param resolved - The object to modify
+   */
+  private handleFixedBattle(resolved: NewBattleInitialProps): void {
+    const { waveIndex } = resolved;
+    // Bang is justified as this code is only called when `isFixedBattle` is true
+    const battleConfig = this.gameMode.getFixedBattle(waveIndex)!;
+    resolved.double = battleConfig.double;
+    resolved.battleType = battleConfig.battleType;
+
+    let t: Trainer;
+    this.executeWithSeedOffset(
+      () => {
+        t = battleConfig.getTrainer();
+      },
+      (battleConfig.seedOffsetWaveIndex || waveIndex) << 8,
+    );
+    // Tell TS this is defined
+    this.field.add(t!);
+    resolved.trainer = t!;
+  }
+
+  /**
+   * Sub-method of `launchBattle` that handles loading existing saved battles.
+   * @param resolved - The object to modify
+   * @param props - The {@linkcode NewBattleProps} created from the save data
+   */
+  private handleSavedBattle(resolved: NewBattleInitialProps, props: NewBattleProps): void {
+    resolved.battleType = props.battleType;
+    resolved.double = props.double;
+    resolved.trainer = props.trainerData?.toTrainer();
+  }
+
+  /**
+   * Sub-method of `launchBattle` that handles creating a new battle from scratch.
+   * @param resolved - The object to modify properties of
+   */
+  private handleNonFixedBattle(resolved: NewBattleInitialProps): void {
+    const { waveIndex } = resolved;
+    resolved.battleType =
+      !this.gameMode.hasTrainers || Overrides.DISABLE_STANDARD_TRAINERS_OVERRIDE
+        ? BattleType.WILD
+        : (Overrides.BATTLE_TYPE_OVERRIDE
+          ?? (this.gameMode.isWaveTrainer(waveIndex, this.arena) ? BattleType.TRAINER : BattleType.WILD));
+
+    // Check for mystery encounter
+    // Can only occur in place of a standard (non-boss) wild battle, waves 10-180
+    if (this.isWaveMysteryEncounter(resolved.battleType, waveIndex)) {
+      resolved.battleType = BattleType.MYSTERY_ENCOUNTER;
+      // Reset to base spawn weight
+      this.mysteryEncounterSaveData.encounterSpawnChance = BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
+      return;
     }
 
-    if (!waveIndex && lastBattle) {
-      const isNewBiome = this.isNewBiome(lastBattle);
-      /** Whether to reset and recall pokemon */
-      const resetArenaState =
-        isNewBiome
-        || [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(this.currentBattle.battleType)
-        || this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
+    if (resolved.battleType !== BattleType.TRAINER) {
+      return;
+    }
 
-      for (const enemyPokemon of this.getEnemyParty()) {
-        enemyPokemon.destroy();
-      }
-      this.trySpreadPokerus();
-      if (!isNewBiome && newWaveIndex % 10 === 5) {
-        this.arena.updatePoolsForTimeOfDay();
-      }
-      if (resetArenaState) {
-        this.arena.resetArenaEffects();
+    // Determine the trainer's attributes
+    const trainerType = Overrides.RANDOM_TRAINER_OVERRIDE?.trainerType ?? this.arena.randomTrainerType(waveIndex);
+    const config = trainerConfigs[trainerType];
+    let doubleTrainer: boolean;
+    if (config.doubleOnly) {
+      doubleTrainer = true;
+    } else if (
+      !config.hasDouble // Add a check that special trainers can't be double except for tate and liza - they should use the normal double chance // TODO: Review this
+      || (config.trainerTypeDouble && ![TrainerType.TATE, TrainerType.LIZA].includes(trainerType))
+    ) {
+      doubleTrainer = false;
+    } else {
+      // Forcing a double battle on wave 1 causes a bug where only one enemy is sent out,
+      // making it impossible to complete the fight without a reload
+      // TODO: Find a cleaner way of syncing both this and the trainer check than duplicating the wave check
+      doubleTrainer = waveIndex > 1 && !randSeedInt(this.getDoubleBattleChance(waveIndex));
+    }
 
-        for (const pokemon of playerField) {
-          pokemon.lapseTag(BattlerTagType.COMMANDED);
+    const overrideVariant = doubleTrainer ? TrainerVariant.DOUBLE : Overrides.RANDOM_TRAINER_OVERRIDE?.trainerVariant;
+
+    const variant = overrideVariant ?? (randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
+
+    const trainer = new Trainer(trainerType, variant);
+    this.field.add(trainer);
+    resolved.trainer = trainer;
+  }
+
+  private doPostBattleCleanup(lastBattle: Battle, maxExpLevel: number): void {
+    const isNewBiome = this.isNewBiome(lastBattle);
+    /** Whether to reset and recall pokemon */
+    const resetArenaState =
+      isNewBiome
+      || [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(this.currentBattle.battleType)
+      || this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
+
+    for (const enemyPokemon of this.getEnemyParty()) {
+      enemyPokemon.destroy();
+    }
+    this.trySpreadPokerus();
+    if (!isNewBiome && this.currentBattle.waveIndex % 10 === 5) {
+      this.arena.updatePoolsForTimeOfDay();
+    }
+    if (resetArenaState) {
+      this.arena.resetArenaEffects();
+
+      this.getPlayerField().forEach((pokemon, p) => {
+        pokemon.lapseTag(BattlerTagType.COMMANDED);
+        if (pokemon.isOnField()) {
+          this.phaseManager.pushNew("ReturnPhase", p);
         }
-
-        playerField.forEach((pokemon, p) => {
-          if (pokemon.isOnField()) {
-            this.phaseManager.pushNew("ReturnPhase", p);
-          }
-        });
-
-        for (const pokemon of this.getPlayerParty()) {
-          pokemon.resetBattleAndWaveData();
-          pokemon.resetTera();
-          applyAbAttrs("PostBattleInitAbAttr", { pokemon });
-          // Terapagos resets tera on each fight
-          if (pokemon.hasSpecies(SpeciesId.TERAPAGOS)) {
-            this.arena.playerTerasUsed = 0;
-          }
-        }
-
-        if (!this.trainer.visible) {
-          this.phaseManager.pushNew("ShowTrainerPhase");
-        }
-      }
+      });
 
       for (const pokemon of this.getPlayerParty()) {
-        this.triggerPokemonFormChange(pokemon, SpeciesFormChangeTimeOfDayTrigger);
+        pokemon.resetBattleAndWaveData();
+        pokemon.resetTera();
+        applyAbAttrs("PostBattleInitAbAttr", { pokemon });
+        // Terapagos resets tera on each fight
+        if (pokemon.hasSpecies(SpeciesId.TERAPAGOS)) {
+          this.arena.playerTerasUsed = 0;
+        }
       }
 
-      if (!this.gameMode.hasRandomBiomes && !isNewBiome) {
-        this.phaseManager.pushNew("NextEncounterPhase");
-      } else {
-        this.phaseManager.pushNew("NewBiomeEncounterPhase");
-
-        const newMaxExpLevel = this.getMaxExpLevel();
-        if (newMaxExpLevel > maxExpLevel) {
-          this.phaseManager.pushNew("LevelCapPhase");
-        }
+      if (!this.trainer.visible) {
+        this.phaseManager.pushNew("ShowTrainerPhase");
       }
     }
 
-    return this.currentBattle;
+    for (const pokemon of this.getPlayerParty()) {
+      this.triggerPokemonFormChange(pokemon, SpeciesFormChangeTimeOfDayTrigger);
+    }
+
+    if (!this.gameMode.hasRandomBiomes && !isNewBiome) {
+      this.phaseManager.pushNew("NextEncounterPhase");
+    } else {
+      this.phaseManager.pushNew("NewBiomeEncounterPhase");
+
+      const newMaxExpLevel = this.getMaxExpLevel();
+      if (newMaxExpLevel > maxExpLevel) {
+        this.phaseManager.pushNew("LevelCapPhase");
+      }
+    }
+  }
+
+  /**
+   * Sub-method of `newBattle` that returns whether the new battle is a double battle.
+   * @param __namedParameters - filler text for typedoc to shut up
+   * @returns Whether the battle should be a double battle.
+   */
+  private checkIsDouble({ double, battleType, waveIndex, trainer }: NewBattleConstructedProps): boolean {
+    const overriddenDouble = this.doCheckDoubleOverride(waveIndex);
+    // If running unit tests, overrides take precedence over normal code
+    if (import.meta.env.NODE_ENV === "test" && overriddenDouble != null) {
+      return overriddenDouble;
+    }
+
+    // Edge cases
+    if (
+      // Wave 1 doubles cause crashes
+      waveIndex === 1
+      || this.gameMode.isWaveFinal(waveIndex)
+      || this.gameMode.isEndlessBoss(waveIndex)
+      || // MEs are never double battles
+      battleType === BattleType.MYSTERY_ENCOUNTER
+    ) {
+      return false;
+    }
+    if (double != null) {
+      return double;
+    }
+    if (overriddenDouble != null) {
+      return overriddenDouble;
+    }
+
+    // Standard wild battle chance
+    if (battleType === BattleType.WILD) {
+      return !randSeedInt(this.getDoubleBattleChance(waveIndex));
+    }
+    return trainer?.variant === TrainerVariant.DOUBLE;
+  }
+
+  private doCheckDoubleOverride(waveIndex: number): boolean | undefined {
+    switch (Overrides.BATTLE_STYLE_OVERRIDE) {
+      case "double":
+        return true;
+      case "single":
+        return false;
+      case "even-doubles":
+        return waveIndex % 2 === 0;
+      case "odd-doubles":
+        return waveIndex % 2 === 1;
+    }
   }
 
   newArena(biome: BiomeId, playerFaints = 0): Arena {
@@ -1835,6 +1897,7 @@ export class BattleScene extends SceneBase {
     });
   }
 
+  // TODO: Refactor this and other RNG functions - these dearly need help
   resetSeed(waveIndex?: number): void {
     const wave = waveIndex ?? this.currentBattle?.waveIndex ?? 0;
     this.waveSeed = shiftCharCodes(this.seed, wave);
@@ -3509,8 +3572,10 @@ export class BattleScene extends SceneBase {
 
   /**
    * Returns if a wave COULD spawn a {@linkcode MysteryEncounter}.
-   * Even if returns `true`, does not guarantee that a wave will actually be a ME.
-   * That check is made in {@linkcode BattleScene.isWaveMysteryEncounter} instead.
+   * @param battleType - The {@linkcode BattleType} of the newly created battle
+   * @param waveIndex - The wave number of the newly spawned wave
+   * @returns Whether an ME could legally spawn on the given wave.
+   * @see {@linkcode BattleScene.isWaveMysteryEncounter} - Function that rolls for ME creation on new wave start
    */
   isMysteryEncounterValidForWave(battleType: BattleType, waveIndex: number): boolean {
     const [lowestMysteryEncounterWave, highestMysteryEncounterWave] = this.gameMode.getMysteryEncounterLegalWaves();
@@ -3519,55 +3584,56 @@ export class BattleScene extends SceneBase {
       && battleType === BattleType.WILD
       && !this.gameMode.isBoss(waveIndex)
       && waveIndex % 10 !== 1
-      && waveIndex < highestMysteryEncounterWave
-      && waveIndex > lowestMysteryEncounterWave
+      && isBetween(waveIndex, lowestMysteryEncounterWave, highestMysteryEncounterWave, true)
     );
   }
 
   /**
-   * Determines whether a wave should randomly generate a {@linkcode MysteryEncounter}.
+   * Determine whether a wave should randomly generate a {@linkcode MysteryEncounter}.
    * Currently, the only modes that MEs are allowed in are Classic and Challenge.
    * Additionally, MEs cannot spawn outside of waves 10-180 in those modes
-   * @param newBattleType
-   * @param waveIndex
+   * @param battleType - The {@linkcode BattleType} of the newly created battle
+   * @param waveIndex - The wave number of the newly spawned wave
+   * @returns Whether a Mystery Encounter should be generated.
    */
-  private isWaveMysteryEncounter(newBattleType: BattleType, waveIndex: number): boolean {
-    const [lowestMysteryEncounterWave, highestMysteryEncounterWave] = this.gameMode.getMysteryEncounterLegalWaves();
-    if (this.isMysteryEncounterValidForWave(newBattleType, waveIndex)) {
-      // Base spawn weight is BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT/256, and increases by WEIGHT_INCREMENT_ON_SPAWN_MISS/256 for each missed attempt at spawning an encounter on a valid floor
-      const sessionEncounterRate = this.mysteryEncounterSaveData.encounterSpawnChance;
-      const encounteredEvents = this.mysteryEncounterSaveData.encounteredEvents;
-
-      // If total number of encounters is lower than expected for the run, slightly favor a new encounter spawn (reverse as well)
-      // Reduces occurrence of runs with total encounters significantly different from AVERAGE_ENCOUNTERS_PER_RUN_TARGET
-      // Favored rate changes can never exceed 50%. So if base rate is 15/256 and favored rate would add 200/256, result will be (15 + 128)/256
-      const expectedEncountersByFloor =
-        (AVERAGE_ENCOUNTERS_PER_RUN_TARGET / (highestMysteryEncounterWave - lowestMysteryEncounterWave))
-        * (waveIndex - lowestMysteryEncounterWave);
-      const currentRunDiffFromAvg = expectedEncountersByFloor - encounteredEvents.length;
-      const favoredEncounterRate =
-        sessionEncounterRate
-        + Math.min(currentRunDiffFromAvg * ANTI_VARIANCE_WEIGHT_MODIFIER, MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT / 2);
-
-      const successRate = Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE ?? favoredEncounterRate;
-
-      // MEs can only spawn 3 or more waves after the previous ME, barring overrides
-      const canSpawn = encounteredEvents.length === 0 || waveIndex - encounteredEvents.at(-1)!.waveIndex > 3;
-
-      if (canSpawn || Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE !== null) {
-        let roll = MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT;
-        // Always rolls the check on the same offset to ensure no RNG changes from reloading session
-        this.executeWithSeedOffset(
-          () => {
-            roll = randSeedInt(MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT);
-          },
-          waveIndex * 3 * 1000,
-        );
-        return roll < successRate;
-      }
+  private isWaveMysteryEncounter(battleType: BattleType, waveIndex: number): boolean {
+    if (!this.isMysteryEncounterValidForWave(battleType, waveIndex)) {
+      return false;
     }
 
-    return false;
+    const [lowestMysteryEncounterWave, highestMysteryEncounterWave] = this.gameMode.getMysteryEncounterLegalWaves();
+    // Base spawn weight is BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT/256, and increases
+    // by WEIGHT_INCREMENT_ON_SPAWN_MISS/256 for each missed attempt at spawning an encounter on a valid floor
+    const sessionEncounterRate = this.mysteryEncounterSaveData.encounterSpawnChance;
+    const encounteredEvents = this.mysteryEncounterSaveData.encounteredEvents;
+
+    // MEs can only spawn 3 or more waves after the previous ME, barring overrides
+    const canSpawn =
+      Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE !== null // Bang on `at()` is justified due to the check for length === 0
+      && (encounteredEvents.length === 0 || waveIndex > 3 + encounteredEvents.at(-1)!.waveIndex);
+    if (!canSpawn) {
+      return false;
+    }
+
+    // If total number of encounters is lower than expected for the run, slightly favor a new encounter spawn (reverse as well)
+    // Reduces occurrence of runs with total encounters significantly different from AVERAGE_ENCOUNTERS_PER_RUN_TARGET
+    // Favored rate changes can never exceed 50%. So if base rate is 15/256 and favored rate would add 200/256, result will be (15 + 128)/256
+    const expectedEncountersByFloor =
+      (AVERAGE_ENCOUNTERS_PER_RUN_TARGET / (highestMysteryEncounterWave - lowestMysteryEncounterWave))
+      * (waveIndex - lowestMysteryEncounterWave);
+    const currentRunDiffFromAvg = expectedEncountersByFloor - encounteredEvents.length;
+    const favoredEncounterRate =
+      sessionEncounterRate
+      + Math.min(currentRunDiffFromAvg * ANTI_VARIANCE_WEIGHT_MODIFIER, MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT / 2);
+
+    const successRate = Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE ?? favoredEncounterRate;
+
+    let roll = 0;
+    // Always rolls the check on the same offset to ensure no RNG changes from reloading session
+    this.executeWithSeedOffset(() => {
+      roll = randSeedInt(MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT);
+    }, waveIndex * 3000);
+    return roll < successRate;
   }
 
   /**

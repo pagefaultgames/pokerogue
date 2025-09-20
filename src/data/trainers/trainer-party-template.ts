@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { startingWave } from "#app/starting-wave";
+import { startingWave } from "#balance/misc";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import { GameModes } from "#enums/game-modes";
 import { PartyMemberStrength } from "#enums/party-member-strength";
@@ -10,11 +10,11 @@ export class TrainerPartyTemplate {
   public sameSpecies: boolean;
   public balanced: boolean;
 
-  constructor(size: number, strength: PartyMemberStrength, sameSpecies?: boolean, balanced?: boolean) {
+  constructor(size: number, strength: PartyMemberStrength, sameSpecies = false, balanced = false) {
     this.size = size;
     this.strength = strength;
-    this.sameSpecies = !!sameSpecies;
-    this.balanced = !!balanced;
+    this.sameSpecies = sameSpecies;
+    this.balanced = balanced;
   }
 
   getStrength(_index: number): PartyMemberStrength {

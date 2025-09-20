@@ -265,7 +265,7 @@ export class GameMode implements GameModeConfig {
         return waveIndex === 200;
       case GameModes.ENDLESS:
       case GameModes.SPLICED_ENDLESS:
-        return !(waveIndex % 250);
+        return waveIndex % 250 === 0;
       case GameModes.DAILY:
         return waveIndex === 50;
     }
@@ -287,20 +287,21 @@ export class GameMode implements GameModeConfig {
   }
 
   /**
-   * Every 50 waves of an Endless mode is a boss
-   * At this time it is paradox pokemon
-   * @returns true if waveIndex is a multiple of 50 in Endless
+   * Check whether the current wave is an Endless boss of any kind.
+   * @param waveIndex - The current wave number.
+   * @returns Whether `waveIndex` corresponds to an Endless boss.
    */
   isEndlessBoss(waveIndex: number): boolean {
     return waveIndex % 50 === 0 && (this.modeId === GameModes.ENDLESS || this.modeId === GameModes.SPLICED_ENDLESS);
   }
 
   /**
-   * Every 250 waves of an Endless mode is a minor boss
-   * At this time it is Eternatus
-   * @returns true if waveIndex is a multiple of 250 in Endless
+   * Check whether the current wave is an Endless minor boss.
+   * Currently is normal Eternatus.
+   * @param waveIndex - The current wave number.
+   * @returns Whether `waveIndex` is a multiple of 250 during endless mode.
    */
-  isEndlessMinorBoss(waveIndex: number): boolean {
+  public isEndlessMinorBoss(waveIndex: number): boolean {
     return waveIndex % 250 === 0 && (this.modeId === GameModes.ENDLESS || this.modeId === GameModes.SPLICED_ENDLESS);
   }
 
@@ -331,7 +332,7 @@ export class GameMode implements GameModeConfig {
    * @param waveIndex The wave to check.
    * @returns The fixed battle for this wave.
    */
-  getFixedBattle(waveIndex: number): FixedBattleConfig {
+  getFixedBattle(waveIndex: number): FixedBattleConfig | undefined {
     const challengeConfig = new FixedBattleConfig();
     if (applyChallenges(ChallengeType.FIXED_BATTLES, waveIndex, challengeConfig)) {
       return challengeConfig;
@@ -391,7 +392,7 @@ export class GameMode implements GameModeConfig {
   /**
    * Returns the wave range where MEs can spawn for the game mode [min, max]
    */
-  getMysteryEncounterLegalWaves(): [number, number] {
+  getMysteryEncounterLegalWaves(): [minWave: number, maxWave: number] {
     switch (this.modeId) {
       case GameModes.CLASSIC:
         return CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES;
