@@ -1,5 +1,6 @@
 import type { Ability, PreAttackModifyDamageAbAttrParams } from "#abilities/ability";
 import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
+import { generateMoveset } from "#app/ai/ai-moveset-gen";
 import type { AnySound, BattleScene } from "#app/battle-scene";
 import { PLAYER_PARTY_MAX_SIZE, RARE_CANDY_FRIENDSHIP_CAP } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
@@ -18,7 +19,7 @@ import type { LevelMoves } from "#balance/pokemon-level-moves";
 import { EVOLVE_MOVE, RELEARN_MOVE } from "#balance/pokemon-level-moves";
 import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY_VARIANT_CHANCE } from "#balance/rates";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#balance/starters";
-import { reverseCompatibleTms, tmPoolTiers, tmSpecies } from "#balance/tms";
+import { reverseCompatibleTms, tmSpecies } from "#balance/tms";
 import type { SuppressAbilitiesTag } from "#data/arena-tag";
 import { NoCritTag, WeakenMoveScreenTag } from "#data/arena-tag";
 import {
@@ -81,7 +82,6 @@ import { DexAttr } from "#enums/dex-attr";
 import { FieldPosition } from "#enums/field-position";
 import { HitResult } from "#enums/hit-result";
 import { LearnMoveSituation } from "#enums/learn-move-situation";
-import { ModifierTier } from "#enums/modifier-tier";
 import { MoveCategory } from "#enums/move-category";
 import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
@@ -147,8 +147,8 @@ import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { TurnMove } from "#types/turn-move";
 import { BattleInfo } from "#ui/battle-info";
 import { EnemyBattleInfo } from "#ui/enemy-battle-info";
-import type { PartyOption } from "#ui/handlers/party-ui-handler";
-import { PartyUiHandler, PartyUiMode } from "#ui/handlers/party-ui-handler";
+import type { PartyOption } from "#ui/party-ui-handler";
+import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import { PlayerBattleInfo } from "#ui/player-battle-info";
 import { applyChallenges } from "#utils/challenge-utils";
 import {
@@ -159,7 +159,6 @@ import {
   fixedInt,
   getIvsFromId,
   isBetween,
-  isNullOrUndefined,
   NumberHolder,
   randSeedFloat,
   randSeedInt,
@@ -886,7 +885,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         return this.fallbackVariantColor(cacheKey, spritePath, useExpSprite, battleSpritePath, error);
       })
       .then(c => {
-        if (!isNullOrUndefined(c)) {
+        if (c != null) {
           variantColorCache[cacheKey] = c;
         }
       });
@@ -1475,7 +1474,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     const ally = this.getAlly();
-    if (!isNullOrUndefined(ally)) {
+    if (ally != null) {
       applyAbAttrs("AllyStatMultiplierAbAttr", {
         pokemon: ally,
         stat,
@@ -1658,7 +1657,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (useIllusion && this.summonData.illusion) {
       return this.summonData.illusion.gender;
     }
-    if (!ignoreOverride && !isNullOrUndefined(this.summonData.gender)) {
+    if (!ignoreOverride && this.summonData.gender != null) {
       return this.summonData.gender;
     }
     return this.gender;
@@ -1674,7 +1673,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (useIllusion && this.summonData.illusion?.fusionGender) {
       return this.summonData.illusion.fusionGender;
     }
-    if (!ignoreOverride && !isNullOrUndefined(this.summonData.fusionGender)) {
+    if (!ignoreOverride && this.summonData.fusionGender != null) {
       return this.summonData.fusionGender;
     }
     return this.fusionGender;
@@ -1793,7 +1792,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns Whether this Pokemon has this species as either its base or fusion counterpart.
    */
   hasSpecies(species: SpeciesId, formKey?: string): boolean {
-    if (isNullOrUndefined(formKey)) {
+    if (formKey == null) {
       return this.species.speciesId === species || this.fusionSpecies?.speciesId === species;
     }
 
@@ -1941,7 +1940,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
             secondType = fusionType1;
           }
 
-          if (secondType === PokemonType.UNKNOWN && isNullOrUndefined(fusionType2)) {
+          if (secondType === PokemonType.UNKNOWN && fusionType2 == null) {
             // If second pokemon was monotype and shared its primary type
             secondType =
               customTypes
@@ -2024,12 +2023,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return allAbilities[Overrides.ENEMY_ABILITY_OVERRIDE];
     }
     if (this.isFusion()) {
-      if (!isNullOrUndefined(this.fusionCustomPokemonData?.ability) && this.fusionCustomPokemonData.ability !== -1) {
+      if (this.fusionCustomPokemonData?.ability != null && this.fusionCustomPokemonData.ability !== -1) {
         return allAbilities[this.fusionCustomPokemonData.ability];
       }
       return allAbilities[this.getFusionSpeciesForm(ignoreOverride).getAbility(this.fusionAbilityIndex)];
     }
-    if (!isNullOrUndefined(this.customPokemonData.ability) && this.customPokemonData.ability !== -1) {
+    if (this.customPokemonData.ability != null && this.customPokemonData.ability !== -1) {
       return allAbilities[this.customPokemonData.ability];
     }
     let abilityId = this.getSpeciesForm(ignoreOverride).getAbility(this.abilityIndex);
@@ -2053,7 +2052,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (Overrides.ENEMY_PASSIVE_ABILITY_OVERRIDE && this.isEnemy()) {
       return allAbilities[Overrides.ENEMY_PASSIVE_ABILITY_OVERRIDE];
     }
-    if (!isNullOrUndefined(this.customPokemonData.passive) && this.customPokemonData.passive !== -1) {
+    if (this.customPokemonData.passive != null && this.customPokemonData.passive !== -1) {
       return allAbilities[this.customPokemonData.passive];
     }
 
@@ -2237,7 +2236,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public getWeight(): number {
     const autotomizedTag = this.getTag(AutotomizedTag);
     let weightRemoved = 0;
-    if (!isNullOrUndefined(autotomizedTag)) {
+    if (autotomizedTag != null) {
       weightRemoved = 100 * autotomizedTag.autotomizeCount;
     }
     const minWeight = 0.1;
@@ -2384,7 +2383,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     cancelled?: BooleanHolder,
     useIllusion = false,
   ): TypeDamageMultiplier {
-    if (!isNullOrUndefined(this.turnData?.moveEffectiveness)) {
+    if (this.turnData?.moveEffectiveness != null) {
       return this.turnData?.moveEffectiveness;
     }
 
@@ -2636,7 +2635,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         e => new FusionSpeciesFormEvolution(this.species.speciesId, e),
       );
       for (const fe of fusionEvolutions) {
-        if (fe.validate(this)) {
+        if (fe.validate(this, true)) {
           return fe;
         }
       }
@@ -2775,7 +2774,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
      * This causes problems when there are intentional duplicates (i.e. Smeargle with Sketch)
      */
     if (levelMoves) {
-      this.getUniqueMoves(levelMoves, ret);
+      Pokemon.getUniqueMoves(levelMoves, ret);
     }
 
     return ret;
@@ -2789,7 +2788,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param levelMoves the input array to search for non-duplicates from
    * @param ret the output array to be pushed into.
    */
-  private getUniqueMoves(levelMoves: LevelMoves, ret: LevelMoves): void {
+  private static getUniqueMoves(levelMoves: LevelMoves, ret: LevelMoves): void {
     const uniqueMoves: MoveId[] = [];
     for (const lm of levelMoves) {
       if (!uniqueMoves.find(m => m === lm[1])) {
@@ -3047,294 +3046,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /** Generates a semi-random moveset for a Pokemon */
   public generateAndPopulateMoveset(): void {
-    this.moveset = [];
-    let movePool: [MoveId, number][] = [];
-    const allLevelMoves = this.getLevelMoves(1, true, true, this.hasTrainer());
-    if (!allLevelMoves) {
-      console.warn("Error encountered trying to generate moveset for:", this.species.name);
-      return;
-    }
-
-    for (const levelMove of allLevelMoves) {
-      if (this.level < levelMove[0]) {
-        break;
-      }
-      let weight = levelMove[0] + 20;
-      // Evolution Moves
-      if (levelMove[0] === EVOLVE_MOVE) {
-        weight = 70;
-      }
-      // Assume level 1 moves with 80+ BP are "move reminder" moves and bump their weight. Trainers use actual relearn moves.
-      if (
-        (levelMove[0] === 1 && allMoves[levelMove[1]].power >= 80)
-        || (levelMove[0] === RELEARN_MOVE && this.hasTrainer())
-      ) {
-        weight = 60;
-      }
-      if (!movePool.some(m => m[0] === levelMove[1]) && !allMoves[levelMove[1]].name.endsWith(" (N)")) {
-        movePool.push([levelMove[1], weight]);
-      }
-    }
-
-    if (this.hasTrainer()) {
-      const tms = Object.keys(tmSpecies);
-      for (const tm of tms) {
-        const moveId = Number.parseInt(tm) as MoveId;
-        let compatible = false;
-        for (const p of tmSpecies[tm]) {
-          if (Array.isArray(p)) {
-            if (
-              p[0] === this.species.speciesId
-              || (this.fusionSpecies
-                && p[0] === this.fusionSpecies.speciesId
-                && p.slice(1).indexOf(this.species.forms[this.formIndex]) > -1)
-            ) {
-              compatible = true;
-              break;
-            }
-          } else if (p === this.species.speciesId || (this.fusionSpecies && p === this.fusionSpecies.speciesId)) {
-            compatible = true;
-            break;
-          }
-        }
-        if (compatible && !movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)")) {
-          if (tmPoolTiers[moveId] === ModifierTier.COMMON && this.level >= 15) {
-            movePool.push([moveId, 24]);
-          } else if (tmPoolTiers[moveId] === ModifierTier.GREAT && this.level >= 30) {
-            movePool.push([moveId, 28]);
-          } else if (tmPoolTiers[moveId] === ModifierTier.ULTRA && this.level >= 50) {
-            movePool.push([moveId, 34]);
-          }
-        }
-      }
-
-      // No egg moves below level 60
-      if (this.level >= 60) {
-        for (let i = 0; i < 3; i++) {
-          const moveId = speciesEggMoves[this.species.getRootSpeciesId()][i];
-          if (!movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)")) {
-            movePool.push([moveId, 60]);
-          }
-        }
-        const moveId = speciesEggMoves[this.species.getRootSpeciesId()][3];
-        // No rare egg moves before e4
-        if (
-          this.level >= 170
-          && !movePool.some(m => m[0] === moveId)
-          && !allMoves[moveId].name.endsWith(" (N)")
-          && !this.isBoss()
-        ) {
-          movePool.push([moveId, 50]);
-        }
-        if (this.fusionSpecies) {
-          for (let i = 0; i < 3; i++) {
-            const moveId = speciesEggMoves[this.fusionSpecies.getRootSpeciesId()][i];
-            if (!movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)")) {
-              movePool.push([moveId, 60]);
-            }
-          }
-          const moveId = speciesEggMoves[this.fusionSpecies.getRootSpeciesId()][3];
-          // No rare egg moves before e4
-          if (
-            this.level >= 170
-            && !movePool.some(m => m[0] === moveId)
-            && !allMoves[moveId].name.endsWith(" (N)")
-            && !this.isBoss()
-          ) {
-            movePool.push([moveId, 50]);
-          }
-        }
-      }
-    }
-
-    // Bosses never get self ko moves or Pain Split
-    if (this.isBoss()) {
-      movePool = movePool.filter(
-        m => !allMoves[m[0]].hasAttr("SacrificialAttr") && !allMoves[m[0]].hasAttr("HpSplitAttr"),
-      );
-    }
-    // No one gets Memento or Final Gambit
-    movePool = movePool.filter(m => !allMoves[m[0]].hasAttr("SacrificialAttrOnHit"));
-    if (this.hasTrainer()) {
-      // Trainers never get OHKO moves
-      movePool = movePool.filter(m => !allMoves[m[0]].hasAttr("OneHitKOAttr"));
-      // Half the weight of self KO moves
-      movePool = movePool.map(m => [m[0], m[1] * (allMoves[m[0]].hasAttr("SacrificialAttr") ? 0.5 : 1)]);
-      // Trainers get a weight bump to stat buffing moves
-      movePool = movePool.map(m => [
-        m[0],
-        m[1] * (allMoves[m[0]].getAttrs("StatStageChangeAttr").some(a => a.stages > 1 && a.selfTarget) ? 1.25 : 1),
-      ]);
-      // Trainers get a weight decrease to multiturn moves
-      movePool = movePool.map(m => [
-        m[0],
-        m[1] * (!!allMoves[m[0]].isChargingMove() || !!allMoves[m[0]].hasAttr("RechargeAttr") ? 0.7 : 1),
-      ]);
-    }
-
-    // Weight towards higher power moves, by reducing the power of moves below the highest power.
-    // Caps max power at 90 to avoid something like hyper beam ruining the stats.
-    // This is a pretty soft weighting factor, although it is scaled with the weight multiplier.
-    const maxPower = Math.min(
-      movePool.reduce((v, m) => Math.max(allMoves[m[0]].calculateEffectivePower(), v), 40),
-      90,
-    );
-    movePool = movePool.map(m => [
-      m[0],
-      m[1]
-        * (allMoves[m[0]].category === MoveCategory.STATUS
-          ? 1
-          : Math.max(Math.min(allMoves[m[0]].calculateEffectivePower() / maxPower, 1), 0.5)),
-    ]);
-
-    // Weight damaging moves against the lower stat. This uses a non-linear relationship.
-    // If the higher stat is 1 - 1.09x higher, no change. At higher stat ~1.38x lower stat, off-stat moves have half weight.
-    // One third weight at ~1.58x higher, one quarter weight at ~1.73x higher, one fifth at ~1.87x, and one tenth at ~2.35x higher.
-    const atk = this.getStat(Stat.ATK);
-    const spAtk = this.getStat(Stat.SPATK);
-    const worseCategory: MoveCategory = atk > spAtk ? MoveCategory.SPECIAL : MoveCategory.PHYSICAL;
-    const statRatio = worseCategory === MoveCategory.PHYSICAL ? atk / spAtk : spAtk / atk;
-    movePool = movePool.map(m => [
-      m[0],
-      m[1] * (allMoves[m[0]].category === worseCategory ? Math.min(Math.pow(statRatio, 3) * 1.3, 1) : 1),
-    ]);
-
-    /** The higher this is the more the game weights towards higher level moves. At `0` all moves are equal weight. */
-    let weightMultiplier = 1.6;
-    if (this.isBoss()) {
-      weightMultiplier += 0.4;
-    }
-    const baseWeights: [MoveId, number][] = movePool.map(m => [
-      m[0],
-      Math.ceil(Math.pow(m[1], weightMultiplier) * 100),
-    ]);
-
-    const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
-      MoveId.BEAT_UP,
-      MoveId.BELCH,
-      MoveId.BIDE,
-      MoveId.COMEUPPANCE,
-      MoveId.COUNTER,
-      MoveId.DOOM_DESIRE,
-      MoveId.DRAGON_RAGE,
-      MoveId.DREAM_EATER,
-      MoveId.ENDEAVOR,
-      MoveId.EXPLOSION,
-      MoveId.FAKE_OUT,
-      MoveId.FIRST_IMPRESSION,
-      MoveId.FISSURE,
-      MoveId.FLING,
-      MoveId.FOCUS_PUNCH,
-      MoveId.FUTURE_SIGHT,
-      MoveId.GUILLOTINE,
-      MoveId.HOLD_BACK,
-      MoveId.HORN_DRILL,
-      MoveId.LAST_RESORT,
-      MoveId.METAL_BURST,
-      MoveId.MIRROR_COAT,
-      MoveId.MISTY_EXPLOSION,
-      MoveId.NATURAL_GIFT,
-      MoveId.NATURES_MADNESS,
-      MoveId.NIGHT_SHADE,
-      MoveId.PSYWAVE,
-      MoveId.RUINATION,
-      MoveId.SELF_DESTRUCT,
-      MoveId.SHEER_COLD,
-      MoveId.SHELL_TRAP,
-      MoveId.SKY_DROP,
-      MoveId.SNORE,
-      MoveId.SONIC_BOOM,
-      MoveId.SPIT_UP,
-      MoveId.STEEL_BEAM,
-      MoveId.STEEL_ROLLER,
-      MoveId.SUPER_FANG,
-      MoveId.SYNCHRONOISE,
-      MoveId.UPPER_HAND,
-    ]);
-
-    // All Pokemon force a STAB move first
-    const stabMovePool = baseWeights.filter(
-      m =>
-        allMoves[m[0]].category !== MoveCategory.STATUS
-        && this.isOfType(allMoves[m[0]].type)
-        && !STAB_BLACKLIST.has(m[0]),
-    );
-
-    if (stabMovePool.length > 0) {
-      const totalWeight = stabMovePool.reduce((v, m) => v + m[1], 0);
-      let rand = randSeedInt(totalWeight);
-      let index = 0;
-      while (rand > stabMovePool[index][1]) {
-        rand -= stabMovePool[index++][1];
-      }
-      this.moveset.push(new PokemonMove(stabMovePool[index][0]));
-    } else {
-      // If there are no damaging STAB moves, just force a random damaging move
-      const attackMovePool = baseWeights.filter(
-        m => allMoves[m[0]].category !== MoveCategory.STATUS && !STAB_BLACKLIST.has(m[0]),
-      );
-      if (attackMovePool.length > 0) {
-        const totalWeight = attackMovePool.reduce((v, m) => v + m[1], 0);
-        let rand = randSeedInt(totalWeight);
-        let index = 0;
-        while (rand > attackMovePool[index][1]) {
-          rand -= attackMovePool[index++][1];
-        }
-        this.moveset.push(new PokemonMove(attackMovePool[index][0], 0, 0));
-      }
-    }
-
-    while (baseWeights.length > this.moveset.length && this.moveset.length < 4) {
-      if (this.hasTrainer()) {
-        // Sqrt the weight of any damaging moves with overlapping types. This is about a 0.05 - 0.1 multiplier.
-        // Other damaging moves 2x weight if 0-1 damaging moves, 0.5x if 2, 0.125x if 3. These weights get 20x if STAB.
-        // Status moves remain unchanged on weight, this encourages 1-2
-        movePool = baseWeights
-          .filter(
-            m =>
-              !this.moveset.some(
-                mo =>
-                  m[0] === mo.moveId
-                  || (allMoves[m[0]].hasAttr("SacrificialAttr") && mo.getMove().hasAttr("SacrificialAttr")), // Only one self-KO move allowed
-              ),
-          )
-          .map(m => {
-            let ret: number;
-            if (
-              this.moveset.some(
-                mo => mo.getMove().category !== MoveCategory.STATUS && mo.getMove().type === allMoves[m[0]].type,
-              )
-            ) {
-              ret = Math.ceil(Math.sqrt(m[1]));
-            } else if (allMoves[m[0]].category !== MoveCategory.STATUS) {
-              ret = Math.ceil(
-                (m[1] / Math.max(Math.pow(4, this.moveset.filter(mo => (mo.getMove().power ?? 0) > 1).length) / 8, 0.5))
-                  * (this.isOfType(allMoves[m[0]].type) && !STAB_BLACKLIST.has(m[0]) ? 20 : 1),
-              );
-            } else {
-              ret = m[1];
-            }
-            return [m[0], ret];
-          });
-      } else {
-        // Non-trainer pokemon just use normal weights
-        movePool = baseWeights.filter(
-          m =>
-            !this.moveset.some(
-              mo =>
-                m[0] === mo.moveId
-                || (allMoves[m[0]].hasAttr("SacrificialAttr") && mo.getMove().hasAttr("SacrificialAttr")), // Only one self-KO move allowed
-            ),
-        );
-      }
-      const totalWeight = movePool.reduce((v, m) => v + m[1], 0);
-      let rand = randSeedInt(totalWeight);
-      let index = 0;
-      while (rand > movePool[index][1]) {
-        rand -= movePool[index++][1];
-      }
-      this.moveset.push(new PokemonMove(movePool[index][0]));
-    }
+    generateMoveset(this);
 
     // Trigger FormChange, except for enemy Pokemon during Mystery Encounters, to avoid crashes
     if (
@@ -3606,7 +3318,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     });
 
     const ally = this.getAlly();
-    if (!isNullOrUndefined(ally)) {
+    if (ally != null) {
       const ignore =
         this.hasAbilityWithAttr("MoveAbilityBypassAbAttr") || sourceMove.hasFlag(MoveFlags.IGNORE_ABILITIES);
       applyAbAttrs("AllyStatMultiplierAbAttr", {
@@ -4022,7 +3734,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
       const ally = this.getAlly();
       /** Additionally apply friend guard damage reduction if ally has it. */
-      if (globalScene.currentBattle.double && !isNullOrUndefined(ally) && ally.isActive(true)) {
+      if (globalScene.currentBattle.double && ally != null && ally.isActive(true)) {
         applyAbAttrs("AlliedFieldDamageReductionAbAttr", {
           ...abAttrParams,
           // Same parameters as before, except we are applying the ally's ability
@@ -6397,13 +6109,13 @@ export class EnemyPokemon extends Pokemon {
 
     if (
       speciesId in Overrides.ENEMY_FORM_OVERRIDES
-      && !isNullOrUndefined(Overrides.ENEMY_FORM_OVERRIDES[speciesId])
+      && Overrides.ENEMY_FORM_OVERRIDES[speciesId] != null
       && this.species.forms[Overrides.ENEMY_FORM_OVERRIDES[speciesId]]
     ) {
       this.formIndex = Overrides.ENEMY_FORM_OVERRIDES[speciesId];
     } else if (globalScene.gameMode.isDaily && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex)) {
       const eventBoss = getDailyEventSeedBoss(globalScene.seed);
-      if (!isNullOrUndefined(eventBoss)) {
+      if (eventBoss != null) {
         this.formIndex = eventBoss.formIndex;
       }
     }
@@ -6939,12 +6651,20 @@ export class EnemyPokemon extends Pokemon {
    * @param segmentIndex index of the segment to get down to (0 = no shield left, 1 = 1 shield left, etc.)
    */
   handleBossSegmentCleared(segmentIndex: number): void {
+    let doStatBoost = !this.hasTrainer();
+    // TODO: Rewrite this bespoke logic to improve clarity
     while (this.bossSegmentIndex > 0 && segmentIndex - 1 < this.bossSegmentIndex) {
+      this.bossSegmentIndex--;
+
+      // Continue, _not_ break here, to ensure that each segment is still broken
+      if (!doStatBoost) {
+        continue;
+      }
+      let boostedStat: EffectiveStat | undefined;
       // Filter out already maxed out stat stages and weigh the rest based on existing stats
       const leftoverStats = EFFECTIVE_STATS.filter((s: EffectiveStat) => this.getStatStage(s) < 6);
       const statWeights = leftoverStats.map((s: EffectiveStat) => this.getStat(s, false));
 
-      let boostedStat: EffectiveStat | undefined;
       const statThresholds: number[] = [];
       let totalWeight = 0;
 
@@ -6963,18 +6683,18 @@ export class EnemyPokemon extends Pokemon {
       }
 
       if (boostedStat === undefined) {
-        this.bossSegmentIndex--;
-        return;
+        doStatBoost = false;
+        continue;
       }
 
       let stages = 1;
 
       // increase the boost if the boss has at least 3 segments and we passed last shield
-      if (this.bossSegments >= 3 && this.bossSegmentIndex === 1) {
+      if (this.bossSegments >= 3 && this.bossSegmentIndex === 0) {
         stages++;
       }
       // increase the boost if the boss has at least 5 segments and we passed the second to last shield
-      if (this.bossSegments >= 5 && this.bossSegmentIndex === 2) {
+      if (this.bossSegments >= 5 && this.bossSegmentIndex === 1) {
         stages++;
       }
 
@@ -6987,7 +6707,6 @@ export class EnemyPokemon extends Pokemon {
         true,
         true,
       );
-      this.bossSegmentIndex--;
     }
   }
 

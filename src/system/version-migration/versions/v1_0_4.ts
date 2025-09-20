@@ -8,7 +8,6 @@ import type { SessionSaveData, SystemSaveData } from "#types/save-data";
 import type { SessionSaveMigrator } from "#types/session-save-migrator";
 import type { SettingsSaveMigrator } from "#types/settings-save-migrator";
 import type { SystemSaveMigrator } from "#types/system-save-migrator";
-import { isNullOrUndefined } from "#utils/common";
 
 /**
  * Migrate ability starter data if empty for caught species.
@@ -82,7 +81,7 @@ const fixLegendaryStats: SystemSaveMigrator = {
 const fixStarterData: SystemSaveMigrator = {
   version: "1.0.4",
   migrate: (data: SystemSaveData): void => {
-    if (!isNullOrUndefined(data.starterData)) {
+    if (data.starterData != null) {
       for (const starterId of defaultStarterSpecies) {
         if (data.starterData[starterId]?.abilityAttr) {
           data.starterData[starterId].abilityAttr |= AbilityAttr.ABILITY_1;
@@ -198,7 +197,7 @@ const migrateCustomPokemonData: SessionSaveMigrator = {
         pokemon["fusionMysteryEncounterPokemonData"] = null;
       }
       pokemon.customPokemonData = pokemon.customPokemonData ?? new CustomPokemonData();
-      if (!isNullOrUndefined(pokemon["natureOverride"]) && pokemon["natureOverride"] >= 0) {
+      if (pokemon["natureOverride"] != null && pokemon["natureOverride"] >= 0) {
         pokemon.customPokemonData.nature = pokemon["natureOverride"];
         pokemon["natureOverride"] = -1;
       }

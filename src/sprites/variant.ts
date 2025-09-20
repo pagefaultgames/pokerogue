@@ -2,7 +2,6 @@ import { globalScene } from "#app/global-scene";
 import { VariantTier } from "#enums/variant-tier";
 import type { Pokemon } from "#field/pokemon";
 import { hasExpSprite } from "#sprites/sprite-utils";
-import { isNullOrUndefined } from "#utils/common";
 
 export type Variant = 0 | 1 | 2;
 
@@ -138,7 +137,7 @@ export async function populateVariantColorCache(
       return fallbackVariantColor(cacheKey, spritePath, useExpSprite, battleSpritePath, error);
     })
     .then(c => {
-      if (!isNullOrUndefined(c)) {
+      if (c != null) {
         variantColorCache[cacheKey] = c;
       }
     });

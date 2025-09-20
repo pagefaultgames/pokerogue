@@ -67,7 +67,6 @@ import type { Constructor } from "#utils/common";
 import {
   BooleanHolder,
   coerceArray,
-  isNullOrUndefined,
   NumberHolder,
   randSeedFloat,
   randSeedInt,
@@ -1040,7 +1039,7 @@ export class PostDefendStatStageChangeAbAttr extends PostDefendAbAttr {
 
     if (this.allOthers) {
       const ally = pokemon.getAlly();
-      const otherPokemon = !isNullOrUndefined(ally) ? pokemon.getOpponents().concat([ally]) : pokemon.getOpponents();
+      const otherPokemon = ally != null ? pokemon.getOpponents().concat([ally]) : pokemon.getOpponents();
       for (const other of otherPokemon) {
         globalScene.phaseManager.unshiftNew(
           "StatStageChangePhase",
@@ -1473,7 +1472,7 @@ export class PostDefendMoveDisableAbAttr extends PostDefendAbAttr {
 
   override canApply({ move, opponent: attacker, pokemon }: PostMoveInteractionAbAttrParams): boolean {
     return (
-      isNullOrUndefined(attacker.getTag(BattlerTagType.DISABLED))
+      attacker.getTag(BattlerTagType.DISABLED) == null
       && move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon })
       && (this.chance === -1 || pokemon.randBattleSeedInt(100) < this.chance)
     );
@@ -2810,7 +2809,7 @@ export class PostSummonAllyHealAbAttr extends PostSummonAbAttr {
 
   override apply({ pokemon, simulated }: AbAttrBaseParams): void {
     const target = pokemon.getAlly();
-    if (!simulated && !isNullOrUndefined(target)) {
+    if (!simulated && target != null) {
       globalScene.phaseManager.unshiftNew(
         "PokemonHealPhase",
         target.getBattlerIndex(),
@@ -2841,7 +2840,7 @@ export class PostSummonClearAllyStatStagesAbAttr extends PostSummonAbAttr {
 
   override apply({ pokemon, simulated }: AbAttrBaseParams): void {
     const target = pokemon.getAlly();
-    if (!simulated && !isNullOrUndefined(target)) {
+    if (!simulated && target != null) {
       for (const s of BATTLE_STATS) {
         target.setStatStage(s, 0);
       }
@@ -2960,13 +2959,13 @@ export class PostSummonHealStatusAbAttr extends PostSummonRemoveEffectAbAttr {
 
   public override canApply({ pokemon }: AbAttrBaseParams): boolean {
     const status = pokemon.status?.effect;
-    return !isNullOrUndefined(status) && (this.immuneEffects.length === 0 || this.immuneEffects.includes(status));
+    return status != null && (this.immuneEffects.length === 0 || this.immuneEffects.includes(status));
   }
 
   public override apply({ pokemon }: AbAttrBaseParams): void {
     // TODO: should probably check against simulated...
     const status = pokemon.status?.effect;
-    if (!isNullOrUndefined(status)) {
+    if (status != null) {
       this.statusHealed = status;
       pokemon.resetStatus(false);
       pokemon.updateInfo();
@@ -3102,7 +3101,7 @@ export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
     }
 
     const ally = pokemon.getAlly();
-    return !(isNullOrUndefined(ally) || ally.getStatStages().every(s => s === 0));
+    return !(ally == null || ally.getStatStages().every(s => s === 0));
   }
 
   override apply({ pokemon, simulated }: AbAttrBaseParams): void {
@@ -3110,7 +3109,7 @@ export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
       return;
     }
     const ally = pokemon.getAlly();
-    if (!isNullOrUndefined(ally)) {
+    if (ally != null) {
       for (const s of BATTLE_STATS) {
         pokemon.setStatStage(s, ally.getStatStage(s));
       }
@@ -3240,7 +3239,7 @@ export class CommanderAbAttr extends AbAttr {
     const ally = pokemon.getAlly();
     return (
       globalScene.currentBattle?.double
-      && !isNullOrUndefined(ally)
+      && ally != null
       && ally.species.speciesId === SpeciesId.DONDOZO
       && !(ally.isFainted() || ally.getTag(BattlerTagType.COMMANDED))
     );
@@ -3284,7 +3283,7 @@ export class PreSwitchOutResetStatusAbAttr extends PreSwitchOutAbAttr {
   }
 
   override canApply({ pokemon }: AbAttrBaseParams): boolean {
-    return !isNullOrUndefined(pokemon.status);
+    return pokemon.status != null;
   }
 
   override apply({ pokemon, simulated }: AbAttrBaseParams): void {
@@ -3564,7 +3563,7 @@ export class ProtectStatAbAttr extends PreStatStageChangeAbAttr {
   }
 
   override canApply({ stat, cancelled }: PreStatStageChangeAbAttrParams): boolean {
-    return !cancelled.value && (isNullOrUndefined(this.protectedStat) || stat === this.protectedStat);
+    return !cancelled.value && (this.protectedStat == null || stat === this.protectedStat);
   }
 
   /**
@@ -3800,11 +3799,7 @@ export class ConditionalUserFieldProtectStatAbAttr extends PreStatStageChangeAbA
     if (!target) {
       return false;
     }
-    return (
-      !cancelled.value
-      && (isNullOrUndefined(this.protectedStat) || stat === this.protectedStat)
-      && this.condition(target)
-    );
+    return !cancelled.value && (this.protectedStat == null || stat === this.protectedStat) && this.condition(target);
   }
 
   /**
@@ -4561,7 +4556,7 @@ export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
   }
 
   override canApply({ pokemon }: AbAttrBaseParams): boolean {
-    return !isNullOrUndefined(pokemon.status) && this.effects.includes(pokemon.status.effect) && !pokemon.isFullHp();
+    return pokemon.status != null && this.effects.includes(pokemon.status.effect) && !pokemon.isFullHp();
   }
 
   override apply({ simulated, passive, pokemon }: AbAttrBaseParams): void {
@@ -4896,7 +4891,7 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
  */
 export class FetchBallAbAttr extends PostTurnAbAttr {
   override canApply({ simulated, pokemon }: AbAttrBaseParams): boolean {
-    return !simulated && !isNullOrUndefined(globalScene.currentBattle.lastUsedPokeball) && !!pokemon.isPlayer;
+    return !simulated && globalScene.currentBattle.lastUsedPokeball != null && !!pokemon.isPlayer;
   }
 
   /**
@@ -6261,7 +6256,7 @@ class ForceSwitchOutHelper {
           true,
           500,
         );
-        if (globalScene.currentBattle.double && !isNullOrUndefined(allyPokemon)) {
+        if (globalScene.currentBattle.double && allyPokemon != null) {
           globalScene.redirectPokemonMoves(switchOutTarget, allyPokemon);
         }
       }
@@ -6954,7 +6949,7 @@ export function initAbilities() {
       .attr(TypeImmunityStatStageChangeAbAttr, PokemonType.ELECTRIC, Stat.SPD, 1)
       .ignorable(),
     new Ability(AbilityId.RIVALRY, 4)
-      .attr(MovePowerBoostAbAttr, (user, target, _move) => user?.gender !== Gender.GENDERLESS && target?.gender !== Gender.GENDERLESS && user?.gender === target?.gender, 1.25, true)
+      .attr(MovePowerBoostAbAttr, (user, target, _move) => user?.gender !== Gender.GENDERLESS && target?.gender !== Gender.GENDERLESS && user?.gender === target?.gender, 1.25)
       .attr(MovePowerBoostAbAttr, (user, target, _move) => user?.gender !== Gender.GENDERLESS && target?.gender !== Gender.GENDERLESS && user?.gender !== target?.gender, 0.75),
     new Ability(AbilityId.STEADFAST, 4)
       .attr(FlinchStatStageChangeAbAttr, [ Stat.SPD ], 1),
@@ -7113,7 +7108,7 @@ export function initAbilities() {
       .attr(PostDefendMoveDisableAbAttr, 30)
       .bypassFaint(),
     new Ability(AbilityId.HEALER, 5)
-      .conditionalAttr(pokemon => !isNullOrUndefined(pokemon.getAlly()) && randSeedInt(10) < 3, PostTurnResetStatusAbAttr, true),
+      .conditionalAttr(pokemon => pokemon.getAlly() != null && randSeedInt(10) < 3, PostTurnResetStatusAbAttr, true),
     new Ability(AbilityId.FRIEND_GUARD, 5)
       .attr(AlliedFieldDamageReductionAbAttr, 0.75)
       .ignorable(),
@@ -7747,8 +7742,8 @@ export function initAbilities() {
     new Ability(AbilityId.SHARPNESS, 9)
       .attr(MovePowerBoostAbAttr, (_user, _target, move) => move.hasFlag(MoveFlags.SLICING_MOVE), 1.5),
     new Ability(AbilityId.SUPREME_OVERLORD, 9)
-      .attr(VariableMovePowerBoostAbAttr, (user, _target, _move) => 1 + 0.1 * Math.min(user.isPlayer() ? globalScene.arena.playerFaints : globalScene.currentBattle.enemyFaints, 5))
-      .partial(), // Should only boost once, on summon
+      .conditionalAttr((p) => (p.isPlayer() ? globalScene.arena.playerFaints : globalScene.currentBattle.enemyFaints) > 0, PostSummonAddBattlerTagAbAttr, BattlerTagType.SUPREME_OVERLORD, 0, true)
+      .edgeCase(), // Tag is not tied to ability, so suppression/removal etc will not function until a structure to allow this is implemented
     new Ability(AbilityId.COSTAR, 9, -2)
       .attr(PostSummonCopyAllyStatsAbAttr),
     new Ability(AbilityId.TOXIC_DEBRIS, 9)

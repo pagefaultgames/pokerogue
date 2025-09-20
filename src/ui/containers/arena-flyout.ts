@@ -15,8 +15,8 @@ import {
 } from "#events/arena";
 import type { TurnEndEvent } from "#events/battle-scene";
 import { BattleSceneEventType } from "#events/battle-scene";
-import { TimeOfDayWidget } from "#ui/containers/time-of-day-widget";
 import { addTextObject } from "#ui/text";
+import { TimeOfDayWidget } from "#ui/time-of-day-widget";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import { fixedInt } from "#utils/common";
 import { toCamelCase, toTitleCase } from "#utils/strings";
@@ -317,7 +317,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
         this.fieldEffectInfo.push({
           name,
           effectType: arenaEffectType,
-          maxDuration: tagAddedEvent.duration,
+          maxDuration: tagAddedEvent.maxDuration,
           duration: tagAddedEvent.duration,
           tagType: tagAddedEvent.arenaTagType,
         });
@@ -353,7 +353,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
           ),
           effectType:
             fieldEffectChangedEvent instanceof WeatherChangedEvent ? ArenaEffectType.WEATHER : ArenaEffectType.TERRAIN,
-          maxDuration: fieldEffectChangedEvent.duration,
+          maxDuration: fieldEffectChangedEvent.maxDuration,
           duration: fieldEffectChangedEvent.duration,
         };
 

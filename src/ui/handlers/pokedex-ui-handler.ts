@@ -34,23 +34,16 @@ import { getVariantIcon, getVariantTint } from "#sprites/variant";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
 import type { DexAttrProps, StarterAttributes } from "#types/save-data";
-import {
-  DropDown,
-  DropDownLabel,
-  DropDownOption,
-  DropDownState,
-  DropDownType,
-  SortCriteria,
-} from "#ui/containers/dropdown";
-import { FilterBar } from "#ui/containers/filter-bar";
-import { FilterText, FilterTextRow } from "#ui/containers/filter-text";
-import { PokedexMonContainer } from "#ui/containers/pokedex-mon-container";
-import { ScrollBar } from "#ui/containers/scroll-bar";
-import type { OptionSelectConfig } from "#ui/handlers/abstract-option-select-ui-handler";
-import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
+import type { OptionSelectConfig } from "#ui/abstract-option-select-ui-handler";
+import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
+import { FilterBar } from "#ui/filter-bar";
+import { FilterText, FilterTextRow } from "#ui/filter-text";
+import { MessageUiHandler } from "#ui/message-ui-handler";
+import { PokedexMonContainer } from "#ui/pokedex-mon-container";
+import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-helper";
+import { ScrollBar } from "#ui/scroll-bar";
 import { addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
-import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/utils/pokemon-icon-anim-helper";
 import { BooleanHolder, fixedInt, getLocalizedSpriteKey, padInt, randIntRange, rgbHexToRgba } from "#utils/common";
 import type { StarterPreferences } from "#utils/data";
 import { loadStarterPreferences } from "#utils/data";

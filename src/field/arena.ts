@@ -36,7 +36,7 @@ import type { Pokemon } from "#field/pokemon";
 import { FieldEffectModifier } from "#modifiers/modifier";
 import type { Move } from "#moves/move";
 import type { AbstractConstructor } from "#types/type-helpers";
-import { type Constructor, isNullOrUndefined, NumberHolder, randSeedInt } from "#utils/common";
+import { type Constructor, NumberHolder, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 export class Arena {
@@ -339,12 +339,12 @@ export class Arena {
 
     const weatherDuration = new NumberHolder(0);
 
-    if (!isNullOrUndefined(user)) {
+    if (user != null) {
       weatherDuration.value = 5;
       globalScene.applyModifier(FieldEffectModifier, user.isPlayer(), user, weatherDuration);
     }
 
-    this.weather = weather ? new Weather(weather, weatherDuration.value) : null;
+    this.weather = weather ? new Weather(weather, weatherDuration.value, weatherDuration.value) : null;
     this.eventTarget.dispatchEvent(
       new WeatherChangedEvent(oldWeatherType, this.weather?.weatherType!, this.weather?.turnsLeft!),
     ); // TODO: is this bang correct?
@@ -420,12 +420,12 @@ export class Arena {
 
     const terrainDuration = new NumberHolder(0);
 
-    if (!isNullOrUndefined(user)) {
+    if (user != null) {
       terrainDuration.value = 5;
       globalScene.applyModifier(FieldEffectModifier, user.isPlayer(), user, terrainDuration);
     }
 
-    this.terrain = terrain ? new Terrain(terrain, terrainDuration.value) : null;
+    this.terrain = terrain ? new Terrain(terrain, terrainDuration.value, terrainDuration.value) : null;
 
     this.eventTarget.dispatchEvent(
       new TerrainChangedEvent(oldTerrainType, this.terrain?.terrainType!, this.terrain?.turnsLeft!),
@@ -705,8 +705,8 @@ export class Arena {
       existingTag.onOverlap(this, globalScene.getPokemonById(sourceId));
 
       if (existingTag instanceof EntryHazardTag) {
-        const { tagType, side, turnCount, layers, maxLayers } = existingTag as EntryHazardTag;
-        this.eventTarget.dispatchEvent(new TagAddedEvent(tagType, side, turnCount, layers, maxLayers));
+        const { tagType, side, turnCount, maxDuration, layers, maxLayers } = existingTag as EntryHazardTag;
+        this.eventTarget.dispatchEvent(new TagAddedEvent(tagType, side, turnCount, maxDuration, layers, maxLayers));
       }
 
       return false;
@@ -721,7 +721,7 @@ export class Arena {
       const { layers = 0, maxLayers = 0 } = newTag instanceof EntryHazardTag ? newTag : {};
 
       this.eventTarget.dispatchEvent(
-        new TagAddedEvent(newTag.tagType, newTag.side, newTag.turnCount, layers, maxLayers),
+        new TagAddedEvent(newTag.tagType, newTag.side, newTag.turnCount, newTag.maxDuration, layers, maxLayers),
       );
     }
 
