@@ -1,13 +1,10 @@
-// biome-ignore-start lint/correctness/noUnusedImports: Used in a TSDoc comment
-import type { Pokemon } from "#field/pokemon";
-// biome-ignore-end lint/correctness/noUnusedImports: Used in a TSDoc comment
-
 import { globalScene } from "#app/global-scene";
 import { POKERUS_STARTER_COUNT, speciesStarterCosts } from "#balance/starters";
 import { allSpecies } from "#data/data-lists";
 import type { PokemonSpecies, PokemonSpeciesForm } from "#data/pokemon-species";
 import { BattlerIndex } from "#enums/battler-index";
-import type { SpeciesId } from "#enums/species-id";
+import { SpeciesId } from "#enums/species-id";
+import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { randSeedItem } from "./common";
 
 /**
@@ -145,4 +142,40 @@ export function areAllies(a: BattlerIndex, b: BattlerIndex): boolean {
     (a === BattlerIndex.PLAYER || a === BattlerIndex.PLAYER_2)
     === (b === BattlerIndex.PLAYER || b === BattlerIndex.PLAYER_2)
   );
+}
+
+/**
+ * Determine whether an enemy Pokémon will Terastallize the user
+ *
+ * Does not check if the Pokémon is allowed to Terastallize (e.g., if it's a mega)
+ * @param pokemon - The Pokémon to check
+ * @returns Whether the Pokémon will Terastallize
+ *
+ * @remarks
+ * Should really only be called with an enemy Pokémon, but will technically work with any Pokémon.
+ *
+ * @privateRemarks
+ * Assumes that Pokémon with no trainer ever tera, so this must be changed if
+ * a wild Pokémon is allowed to tera, e.g. for a Mystery Encounter.
+ */
+export function willTerastallize(pokemon: Pokemon): boolean {
+  // cast is safe, as if it is just a Pokémon, initialTeamIndex will be undefined triggering the null check
+  const initialTeamIndex = (pokemon as EnemyPokemon).initialTeamIndex;
+  return (
+    initialTeamIndex != null
+    && pokemon.hasTrainer()
+    && (globalScene.currentBattle?.trainer?.config.trainerAI.instantTeras.includes(initialTeamIndex) ?? false)
+  );
+}
+
+/**
+ * Determine whether a player Pokémon can Terastallize
+ * @param pokemon - The Pokémon to check
+ * @returns Whether the Pokémon can Terastallize
+ */
+export function canTerastallize(pokemon: PlayerPokemon): boolean {
+  const hasTeraMod = globalScene.findModifier(modifier => modifier.is("TerastallizeAccessModifier")) != null;
+  const isBlockedForm = pokemon.isMega() || pokemon.isMax() || pokemon.hasSpecies(SpeciesId.NECROZMA, "ultra");
+  const currentTeras = globalScene.arena.playerTerasUsed === 0;
+  return hasTeraMod && !isBlockedForm && currentTeras;
 }
