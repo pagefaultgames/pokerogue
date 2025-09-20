@@ -18,6 +18,7 @@ import {
   ShellTrapTag,
   StockpilingTag,
   SubstituteTag,
+  SupremeOverlordTag,
   TrappedTag,
   TypeBoostTag,
 } from "#data/battler-tags";
@@ -878,6 +879,8 @@ export abstract class Move implements Localizable {
     if (source.getTag(HelpingHandTag)) {
       power.value *= 1.5;
     }
+
+    power.value *= (source.getTag(BattlerTagType.SUPREME_OVERLORD) as SupremeOverlordTag | undefined)?.getBoost() ?? 1;
 
     return power.value;
   }
