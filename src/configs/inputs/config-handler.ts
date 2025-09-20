@@ -100,7 +100,7 @@ export function getKeyForLatestInput(configs, source, devices, settingName) {
     config = configs[devices[Device.KEYBOARD]];
   }
   const key = Object.keys(config["custom"]).find(k => config["custom"][k] === settingName);
-  return key?.slice(4)
+  return key?.slice(4);
 }
 
 export function getIconForLatestInput(configs, source, devices, settingName) {

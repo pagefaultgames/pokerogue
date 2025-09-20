@@ -1,6 +1,8 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
+import { getPokeballName } from "#data/pokeball";
 import { getTypeRgb } from "#data/type";
+import { BattleType } from "#enums/battle-type";
 import { Button } from "#enums/buttons";
 import { Command } from "#enums/command";
 import { PokemonType } from "#enums/pokemon-type";
@@ -9,14 +11,11 @@ import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { TerastallizeAccessModifier } from "#modifiers/modifier";
 import type { CommandPhase } from "#phases/command-phase";
+import { SettingKeyboard } from "#system/settings-keyboard";
 import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import i18next from "i18next";
-import { BattleType } from "#enums/battle-type";
-import { SettingKeyboard } from "#system/settings-keyboard";
-import { PokeballType } from "#enums/pokeball";
-import { getPokeballName } from "#data/pokeball";
 
 const OPTION_BUTTON_YPOSITION = -62;
 
@@ -78,10 +77,23 @@ export class CommandUiHandler extends UiHandler {
     this.throwBallTextContainer.setName("throwBall-txt");
     this.throwBallTextContainer.setVisible(false);
     ui.add(this.throwBallTextContainer);
-    
-    const Throw_Ball_Key = !globalScene.enableHotkeyTips ?  globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Shiny) ? `(${globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Shiny)}) ` : "" : "";
-    const Last_Pokeball = " " + getPokeballName(globalScene.lastPokeballType) + " x" + globalScene.pokeballCounts[globalScene.lastPokeballType];
-    this.throwBallText = addTextObject(-4, -2, i18next.t("commandUiHandler:throwBall", {Throw_Ball_Key, Last_Pokeball}), TextStyle.PARTY);
+
+    const throwBallKey = globalScene.enableHotkeyTips
+      ? ""
+      : globalScene.inputController?.getKeyForLatestInputRecorded(SettingKeyboard.Button_Cycle_Shiny)
+        ? `(${globalScene.inputController?.getKeyForLatestInputRecorded(SettingKeyboard.Button_Cycle_Shiny)}) `
+        : "";
+    const lastPokeball =
+      " "
+      + getPokeballName(globalScene.lastPokeballType)
+      + " x"
+      + globalScene.pokeballCounts[globalScene.lastPokeballType];
+    this.throwBallText = addTextObject(
+      -4,
+      -2,
+      i18next.t("commandUiHandler:throwBall", { throwBallKey, lastPokeball }),
+      TextStyle.PARTY,
+    );
     this.throwBallText.setName("text-reroll-btn");
     this.throwBallText.setOrigin(0, 0);
     this.throwBallTextContainer.add(this.throwBallText);
@@ -90,11 +102,15 @@ export class CommandUiHandler extends UiHandler {
     this.restartBattleTextContainer.setVisible(false);
     ui.add(this.restartBattleTextContainer);
 
-    const Retry_Battle_Key = !globalScene.enableHotkeyTips ? globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Ability) ? `(${globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Ability)}) ` : "" : "";
+    const retryBattleKey = globalScene.enableHotkeyTips
+      ? ""
+      : globalScene.inputController?.getKeyForLatestInputRecorded(SettingKeyboard.Button_Cycle_Ability)
+        ? `(${globalScene.inputController?.getKeyForLatestInputRecorded(SettingKeyboard.Button_Cycle_Ability)}) `
+        : "";
     this.restartBattleText = addTextObject(
       -4,
       -2,
-      i18next.t("commandUiHandler:retryBattle", {Retry_Battle_Key}),
+      i18next.t("commandUiHandler:retryBattle", { retryBattleKey }),
       TextStyle.PARTY,
     );
     this.restartBattleText.setOrigin(0, 0);
@@ -223,19 +239,25 @@ export class CommandUiHandler extends UiHandler {
             this.toggleTeraButton();
           }
           break;
-        case Button.CYCLE_SHINY: // Used to throw the last pokeball
+        case Button.CYCLE_SHINY: {
+          // Used to throw the last pokeball
           const commandPhase = globalScene.phaseManager.getCurrentPhase() as CommandPhase;
-          if (globalScene.currentBattle.battleType == 0 && globalScene.pokeballCounts[globalScene.lastPokeballType] && commandPhase.handleCommand(Command.BALL, globalScene.lastPokeballType)) {
-              globalScene.ui.setMode(UiMode.COMMAND, commandPhase.getFieldIndex());
-              globalScene.ui.setMode(UiMode.MESSAGE);
-              success = true;
+          if (
+            globalScene.currentBattle.battleType === BattleType.WILD
+            && globalScene.pokeballCounts[globalScene.lastPokeballType]
+            && commandPhase.handleCommand(Command.BALL, globalScene.lastPokeballType)
+          ) {
+            globalScene.ui.setMode(UiMode.COMMAND, commandPhase.getFieldIndex());
+            globalScene.ui.setMode(UiMode.MESSAGE);
+            success = true;
           } else {
             ui.playError();
           }
           break;
+        }
         case Button.CYCLE_ABILITY: // Used to restart the battle
-          if (globalScene.enableRetries){
-            globalScene.ui.setMode(UiMode.MESSAGE)
+          if (globalScene.enableRetries) {
+            globalScene.ui.setMode(UiMode.MESSAGE);
             globalScene.ui.showText(i18next.t("battle:retryBattle"), null, () => {
               globalScene.ui.setMode(
                 UiMode.CONFIRM,
@@ -245,16 +267,16 @@ export class CommandUiHandler extends UiHandler {
                     globalScene.phaseManager.clearPhaseQueue();
                     globalScene.gameData.loadSession(globalScene.sessionSlotId).then(() => {
                       globalScene.phaseManager.pushNew("EncounterPhase", true);
-      
+
                       const availablePartyMembers = globalScene.getPokemonAllowedInBattle().length;
-      
+
                       globalScene.phaseManager.pushNew("SummonPhase", 0);
                       if (globalScene.currentBattle.double && availablePartyMembers > 1) {
                         globalScene.phaseManager.pushNew("SummonPhase", 1);
                       }
                       if (
-                        globalScene.currentBattle.waveIndex > 1 &&
-                        globalScene.currentBattle.battleType !== BattleType.TRAINER
+                        globalScene.currentBattle.waveIndex > 1
+                        && globalScene.currentBattle.battleType !== BattleType.TRAINER
                       ) {
                         globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
                         if (globalScene.currentBattle.double && availablePartyMembers > 1) {
@@ -266,7 +288,9 @@ export class CommandUiHandler extends UiHandler {
                     });
                   });
                 },
-                () => { globalScene.ui.setMode(UiMode.COMMAND)},
+                () => {
+                  globalScene.ui.setMode(UiMode.COMMAND);
+                },
                 false,
                 0,
                 0,
@@ -306,16 +330,16 @@ export class CommandUiHandler extends UiHandler {
   }
 
   getCursor(): number {
-    return !this.fieldIndex ? this.cursor : this.cursor2;
+    return this.fieldIndex ? this.cursor2 : this.cursor;
   }
 
   setCursor(cursor: number): boolean {
     const changed = this.getCursor() !== cursor;
     if (changed) {
-      if (!this.fieldIndex) {
-        this.cursor = cursor;
-      } else {
+      if (this.fieldIndex) {
         this.cursor2 = cursor;
+      } else {
+        this.cursor = cursor;
       }
     }
 
@@ -352,13 +376,31 @@ export class CommandUiHandler extends UiHandler {
   }
 
   updateTipsText(): void {
-    const Throw_Ball_Key = !globalScene.enableHotkeyTips ?  globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Shiny) ? `(${globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Shiny)}) ` : "" : "";
-    const Last_Pokeball = " " + getPokeballName(globalScene.lastPokeballType) + " x" + globalScene.pokeballCounts[globalScene.lastPokeballType];
-    this.throwBallText.setText( i18next.t("commandUiHandler:throwBall", {Throw_Ball_Key, Last_Pokeball}));
-    const Retry_Battle_Key = !globalScene.enableHotkeyTips ? globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Ability) ? `(${globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Ability)}) ` : "" : "";
-    this.restartBattleText.setText(i18next.t("commandUiHandler:retryBattle", {Retry_Battle_Key}));
-    this.throwBallTextContainer.setVisible(!globalScene.enableHotkeyTips && globalScene.currentBattle.battleType == 0);
+    const throwBallKey = globalScene.enableHotkeyTips
+      ? ""
+      : globalScene.inputController?.getKeyForLatestInputRecorded(SettingKeyboard.Button_Cycle_Shiny)
+        ? `(${globalScene.inputController?.getKeyForLatestInputRecorded(SettingKeyboard.Button_Cycle_Shiny)}) `
+        : "";
+    const lastPokeball =
+      " "
+      + getPokeballName(globalScene.lastPokeballType)
+      + " x"
+      + globalScene.pokeballCounts[globalScene.lastPokeballType];
+    this.throwBallText.setText(i18next.t("commandUiHandler:throwBall", { throwBallKey, lastPokeball }));
+    const retryBattleKey = globalScene.enableHotkeyTips
+      ? ""
+      : globalScene.inputController?.getKeyForLatestInputRecorded(SettingKeyboard.Button_Cycle_Ability)
+        ? `(${globalScene.inputController?.getKeyForLatestInputRecorded(SettingKeyboard.Button_Cycle_Ability)}) `
+        : "";
+    this.restartBattleText.setText(i18next.t("commandUiHandler:retryBattle", { retryBattleKey }));
+    this.throwBallTextContainer.setVisible(
+      !globalScene.enableHotkeyTips && globalScene.currentBattle.battleType === BattleType.WILD,
+    );
     this.restartBattleTextContainer.setVisible(!globalScene.enableHotkeyTips);
-    this.restartBattleTextContainer.setPositionRelative(this.throwBallTextContainer, 0, globalScene.currentBattle.battleType == 0 ? -12 : 0);
+    this.restartBattleTextContainer.setPositionRelative(
+      this.throwBallTextContainer,
+      0,
+      globalScene.currentBattle.battleType === BattleType.WILD ? -12 : 0,
+    );
   }
 }

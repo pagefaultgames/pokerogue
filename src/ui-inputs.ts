@@ -3,7 +3,9 @@ import type { InputsController } from "#app/inputs-controller";
 import { Button } from "#enums/buttons";
 import { UiMode } from "#enums/ui-mode";
 import { Setting, SettingKeys, settingIndex } from "#system/settings";
+import { CommandUiHandler } from "#ui/handlers/command-ui-handler";
 import type { MessageUiHandler } from "#ui/message-ui-handler";
+import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { PokedexPageUiHandler } from "#ui/pokedex-page-ui-handler";
 import { PokedexUiHandler } from "#ui/pokedex-ui-handler";
 import { RunInfoUiHandler } from "#ui/run-info-ui-handler";
@@ -13,8 +15,6 @@ import { SettingsGamepadUiHandler } from "#ui/settings-gamepad-ui-handler";
 import { SettingsKeyboardUiHandler } from "#ui/settings-keyboard-ui-handler";
 import { SettingsUiHandler } from "#ui/settings-ui-handler";
 import { StarterSelectUiHandler } from "#ui/starter-select-ui-handler";
-import { CommandUiHandler } from "#ui/handlers/command-ui-handler";
-import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import Phaser from "phaser";
 
 type ActionKeys = Record<Button, () => void>;
@@ -133,13 +133,10 @@ export class UiInputs {
   }
 
   buttonAB(button: Button): void {
-     if (this.isInSettings()) {
-      const whiteListUIModes : UiMode[] = [
-        UiMode.MODIFIER_SELECT,
-        UiMode.COMMAND
-      ]
-      for (const uiMode of whiteListUIModes){
-        globalScene.ui.handlers[uiMode].updateTipsText()
+    if (this.isInSettings()) {
+      const whiteListUIModes: UiMode[] = [UiMode.MODIFIER_SELECT, UiMode.COMMAND];
+      for (const uiMode of whiteListUIModes) {
+        globalScene.ui.handlers[uiMode].updateTipsText();
       }
     }
     globalScene.ui.processInput(button);
@@ -225,7 +222,7 @@ export class UiInputs {
       SettingsGamepadUiHandler,
       SettingsKeyboardUiHandler,
       CommandUiHandler,
-      ModifierSelectUiHandler
+      ModifierSelectUiHandler,
     ];
     const uiHandler = globalScene.ui?.getHandler();
     if (whitelist.some(handler => uiHandler instanceof handler)) {
@@ -260,11 +257,14 @@ export class UiInputs {
     }
   }
 
-  private isInSettings(){
-    return globalScene.ui?.getMode() === UiMode.SETTINGS ||
-      globalScene.ui?.getMode() === UiMode.SETTINGS_AUDIO ||
-      globalScene.ui?.getMode() === UiMode.SETTINGS_DISPLAY ||
-      globalScene.ui?.getMode() === UiMode.SETTINGS_GAMEPAD ||
-      globalScene.ui?.getMode() === UiMode.SETTINGS_KEYBOARD
+  private isInSettings(): boolean {
+    const settingsModes: readonly UiMode[] = [
+      UiMode.SETTINGS,
+      UiMode.SETTINGS_AUDIO,
+      UiMode.SETTINGS_DISPLAY,
+      UiMode.SETTINGS_GAMEPAD,
+      UiMode.SETTINGS_KEYBOARD,
+    ] as const;
+    return settingsModes.includes(globalScene.ui?.getMode());
   }
 }
