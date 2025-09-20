@@ -191,9 +191,7 @@ describe("Moves - Destiny Bond", () => {
     expect(playerPokemon.isFainted()).toBe(true);
 
     // Ceaseless Edge spikes effect should still activate
-    const tagAfter = game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY) as EntryHazardTag;
-    expect(tagAfter.tagType).toBe(ArenaTagType.SPIKES);
-    expect(tagAfter.layers).toBe(1);
+    expect(game).toHaveArenaTag({ tagType: ArenaTagType.SPIKES, side: ArenaTagSide.ENEMY, layers: 1 });
   });
 
   it("should not cause a crash if the user is KO'd by Pledge moves", async () => {

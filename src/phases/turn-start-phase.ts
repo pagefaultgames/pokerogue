@@ -41,7 +41,7 @@ export class TurnStartPhase extends FieldPhase {
     // Check for Trick Room and reverse sort order if active.
     // Notably, Pokerogue does NOT have the "outspeed trick room" glitch at >1809 spd.
     const speedReversed = new BooleanHolder(false);
-    globalScene.arena.applyTags(TrickRoomTag, false, speedReversed);
+    globalScene.arena.applyTags(TrickRoomTag, speedReversed);
 
     orderedTargets.sort((a: Pokemon, b: Pokemon) => {
       const aSpeed = a.getEffectiveStat(Stat.SPD);

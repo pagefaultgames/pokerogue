@@ -1,3 +1,6 @@
+import type { ArenaTag, ArenaTagTypeMap } from "#data/arena-tag";
+import type { NonSerializableArenaTagType, SerializableArenaTagType } from "#types/arena-tags";
+
 /**
  * Enum representing all different types of {@linkcode ArenaTag}s.
  * @privateRemarks
