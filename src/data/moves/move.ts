@@ -7073,8 +7073,9 @@ export class RandomMoveAttr extends CallMoveAttrWithBanlist {
 
   protected override getMove(user: Pokemon): MoveId {
     // TODO: Cache the eligible move list rather than manually filtering a 1000-length array
+    // This might be a bit difficult though given challenges will change the eligibility of rev blessing
     const moveIds = getEnumValues(MoveId).filter(m => this.isMoveAllowed(m));
-    return moveIds[user.randBattleSeedInt(moveIds.length)];
+    return moveIds[user.randBattleSeedInt(moveIds.length)] ?? MoveId.NONE;
   }
 }
 
