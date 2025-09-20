@@ -285,6 +285,12 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     switch (arenaEffectChangedEvent.constructor) {
       case TagAddedEvent: {
         const tagAddedEvent = arenaEffectChangedEvent as TagAddedEvent;
+
+        const excludedTags = [ArenaTagType.PENDING_HEAL];
+        if (excludedTags.includes(tagAddedEvent.arenaTagType)) {
+          return;
+        }
+
         const isArenaTrapTag = globalScene.arena.getTag(tagAddedEvent.arenaTagType) instanceof EntryHazardTag;
         let arenaEffectType: ArenaEffectType;
 
