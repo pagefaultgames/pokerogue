@@ -54,7 +54,7 @@ import { MoveEffectTrigger } from "#enums/move-effect-trigger";
 import { MoveFlags } from "#enums/move-flags";
 import { MoveTarget } from "#enums/move-target";
 import { MultiHitType } from "#enums/multi-hit-type";
-import { PokemonType } from "#enums/pokemon-type";
+import { MAX_POKEMON_TYPE, PokemonType } from "#enums/pokemon-type";
 import { PositionalTagType } from "#enums/positional-tag-type";
 import { SpeciesId } from "#enums/species-id";
 import {
@@ -5015,6 +5015,16 @@ export class VariableMoveTypeAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     return false;
   }
+
+  /**
+   * Determine the type of the move for the purpose of determining the type-boosting item to spawn
+   * @param user - The Pokémon using the move
+   * @param move - The move being used
+   * @returns An array of types to add to the pool of type-boosting items
+   */
+  getTypesForItemSpawn(user: Pokemon, move: Move): PokemonType[] {
+    return [move.type];
+  }
 }
 
 export class FormChangeItemTypeAttr extends VariableMoveTypeAttr {
@@ -5026,8 +5036,10 @@ export class FormChangeItemTypeAttr extends VariableMoveTypeAttr {
 
     if ([ user.species.speciesId, user.fusionSpecies?.speciesId ].includes(SpeciesId.ARCEUS) || [ user.species.speciesId, user.fusionSpecies?.speciesId ].includes(SpeciesId.SILVALLY)) {
       const form = user.species.speciesId === SpeciesId.ARCEUS || user.species.speciesId === SpeciesId.SILVALLY ? user.formIndex : user.fusionSpecies?.formIndex!;
-
-      moveType.value = PokemonType[PokemonType[form]];
+      if (form >= 0 && form <= MAX_POKEMON_TYPE && form !== PokemonType.STELLAR) {
+        moveType.value = form as PokemonType;
+        return true;
+      }
       return true;
     }
 
@@ -5037,6 +5049,14 @@ export class FormChangeItemTypeAttr extends VariableMoveTypeAttr {
     }
     moveType.value = move.type
     return true;
+  }
+
+  override getTypesForItemSpawn(user: Pokemon, move: Move): PokemonType[] {
+    // Get the type
+    const typeHolder = new NumberHolder(move.type);
+    // Passing user in for target is fine; the parameter is unused anyway
+    this.apply(user, user, move, [ typeHolder ]);
+    return [typeHolder.value];
   }
 }
 
@@ -5072,6 +5092,12 @@ export class TechnoBlastTypeAttr extends VariableMoveTypeAttr {
 
     return false;
   }
+
+  override getTypesForItemSpawn(user: Pokemon, move: Move): PokemonType[] {
+    const typeHolder = new NumberHolder(move.type);
+    this.apply(user, user, move, [ typeHolder ]);
+    return [typeHolder.value];
+  }
 }
 
 export class AuraWheelTypeAttr extends VariableMoveTypeAttr {
@@ -5096,6 +5122,15 @@ export class AuraWheelTypeAttr extends VariableMoveTypeAttr {
     }
 
     return false;
+  }
+
+  override getTypesForItemSpawn(user: Pokemon, move: Move): PokemonType[] {
+    // On Morpeko only, allow this to count for both blackglasses and magnet
+    if (this.apply(user, user, move, [new NumberHolder(move.type)])) {
+      return [PokemonType.DARK, PokemonType.ELECTRIC];
+    }
+
+    return [move.type];
   }
 }
 
@@ -5124,6 +5159,12 @@ export class RagingBullTypeAttr extends VariableMoveTypeAttr {
     }
 
     return false;
+  }
+
+  override getTypesForItemSpawn(user: Pokemon, move: Move): PokemonType[] {
+    const typeHolder = new NumberHolder(move.type);
+    this.apply(user, user, move, [ typeHolder ]);
+    return [ typeHolder.value ];
   }
 }
 
@@ -5159,6 +5200,12 @@ export class IvyCudgelTypeAttr extends VariableMoveTypeAttr {
     }
 
     return false;
+  }
+
+  override getTypesForItemSpawn(user: Pokemon, move: Move): PokemonType[] {
+    const typeHolder = new NumberHolder(move.type);
+    this.apply(user, user, move, [ typeHolder ]);
+    return [ typeHolder.value ];
   }
 }
 
@@ -5273,6 +5320,12 @@ export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
 
     return true;
   }
+
+  override getTypesForItemSpawn(user: Pokemon, move: Move): PokemonType[] {
+    const typeHolder = new NumberHolder(move.type);
+    this.apply(user, user, move, [ typeHolder ]);
+    return [typeHolder.value];
+  }
 }
 
 /**
@@ -5342,7 +5395,13 @@ export class MatchUserTypeAttr extends VariableMoveTypeAttr {
     } else {
       return false;
     }
+  }
 
+  override getTypesForItemSpawn(user: Pokemon, move: Move): PokemonType[] {
+    // Instead of calling apply, just return the user's primary type
+    // this avoids inconsistencies when the user's type is temporarily changed
+    // from tera
+    return [user.getTypes(false, true, true, false)[0] ?? move.type];
   }
 }
 
