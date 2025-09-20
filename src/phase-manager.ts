@@ -394,12 +394,17 @@ export class PhaseManager {
 
   /**
    * Helper method to start and log the current phase.
+   *
+   * @privateRemarks
+   * This is disabled during tests by `phase-interceptor.ts` to allow for pausing execution at specific phases.
+   * As such, **do not remove or split this method** as it will break integration tests.
    */
   private startCurrentPhase(): void {
     console.log(`%cStart Phase ${this.currentPhase.phaseName}`, `color:${PHASE_START_COLOR};`);
     this.currentPhase.start();
   }
 
+  // TODO: Review if we can remove this
   overridePhase(phase: Phase): boolean {
     if (this.standbyPhase) {
       return false;
