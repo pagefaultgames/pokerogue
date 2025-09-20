@@ -1,8 +1,11 @@
 import { pokerogueApi } from "#api/pokerogue-api";
 import { globalScene } from "#app/global-scene";
+import { bypassLogin } from "#app/global-vars/bypass-login";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
+import type { GameData } from "#system/game-data";
+import type { SearchAccountResponse } from "#types/api/pokerogue-admin-api";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
 import type { ModalConfig } from "#ui/modal-ui-handler";
@@ -16,6 +19,8 @@ export class AdminUiHandler extends FormModalUiHandler {
   private adminMode: AdminMode;
   private adminResult: AdminSearchInfo;
   private config: ModalConfig;
+
+  private tempGameData: GameData;
 
   private readonly buttonGap = 10;
   private readonly ERR_REQUIRED_FIELD = (field: string) => {
@@ -48,13 +53,13 @@ export class AdminUiHandler extends FormModalUiHandler {
   override getButtonLabels(): string[] {
     switch (this.adminMode) {
       case AdminMode.LINK:
-        return ["Link Account", "Cancel"];
+        return ["Link Account", "Cancel", "     ", "       "];
       case AdminMode.SEARCH:
-        return ["Find account", "Cancel"];
+        return ["Find account", "Cancel", "     ", "       "];
       case AdminMode.ADMIN:
-        return ["Back to search", "Cancel"];
+        return ["Back to search", "Cancel", "Stats", "Pokedex"];
       default:
-        return ["Activate ADMIN", "Cancel"];
+        return ["Activate ADMIN", "Cancel", "        ", "           "];
     }
   }
 
@@ -273,8 +278,8 @@ export class AdminUiHandler extends FormModalUiHandler {
         }
         break;
       case AdminMode.SEARCH:
-        if (!this.inputs[0].text) {
-          // username missing from search panel
+        if (!this.inputs[0].text && !bypassLogin) {
+          // username missing from search panel, skip check for local testing
           return {
             error: true,
             errorMessage: this.ERR_REQUIRED_FIELD("username"),
@@ -314,6 +319,18 @@ export class AdminUiHandler extends FormModalUiHandler {
   }
 
   private async adminSearch(adminSearchResult: AdminSearchInfo) {
+    // Mocking response, solely for local testing
+    if (bypassLogin) {
+      const fakeResponse: SearchAccountResponse = {
+        username: adminSearchResult.username,
+        discordId: "",
+        googleId: "",
+        lastLoggedIn: "",
+        registered: "",
+      };
+      this.tempGameData = globalScene.gameData;
+      return { adminSearchResult: fakeResponse, error: false };
+    }
     try {
       const [adminInfo, errorType] = await pokerogueApi.admin.searchAccount({
         username: adminSearchResult.username,
@@ -396,6 +413,12 @@ export class AdminUiHandler extends FormModalUiHandler {
           () => {
             globalScene.ui.revertMode();
             globalScene.ui.revertMode();
+          },
+          () => {
+            globalScene.ui.setOverlayMode(UiMode.GAME_STATS, this.tempGameData);
+          },
+          () => {
+            globalScene.ui.setOverlayMode(UiMode.POKEDEX, this.tempGameData);
           },
         ],
       },
