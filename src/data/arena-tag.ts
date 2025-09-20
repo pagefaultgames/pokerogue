@@ -1675,36 +1675,43 @@ export class PendingHealTag extends SerializableArenaTag {
     const targetIndex = pokemon.getBattlerIndex();
     const targetEffects = this.pendingHeals[targetIndex];
 
+    if (targetEffects == null || targetEffects.length === 0) {
+      return false;
+    }
+
+    const healEffect = targetEffects.find(effect => this.canApply(effect, pokemon));
+
+    if (healEffect == null) {
+      return false;
+    }
+
     if (simulated) {
-      return targetEffects != null && targetEffects.length > 0;
+      return true;
     }
 
-    const healEffect = targetEffects?.find(effect => this.canApply(effect, pokemon));
-    if (targetEffects && healEffect) {
-      const { sourceId, moveId, restorePP, healMessage } = healEffect;
-      const sourcePokemon = globalScene.getPokemonById(sourceId);
-      if (!sourcePokemon) {
-        console.warn(`Source of pending ${allMoves[moveId].name} effect is undefined!`);
-        targetEffects.splice(targetEffects.indexOf(healEffect), 1);
-        // Re-evaluate after the invalid heal effect is removed
-        return this.apply(arena, simulated, pokemon);
-      }
-
-      globalScene.phaseManager.unshiftNew(
-        "PokemonHealPhase",
-        targetIndex,
-        pokemon.getMaxHp(),
-        healMessage,
-        true,
-        false,
-        false,
-        true,
-        false,
-        restorePP,
-      );
-
+    const { sourceId, moveId, restorePP, healMessage } = healEffect;
+    const sourcePokemon = globalScene.getPokemonById(sourceId);
+    if (!sourcePokemon) {
+      console.warn(`Source of pending ${allMoves[moveId].name} effect is undefined!`);
       targetEffects.splice(targetEffects.indexOf(healEffect), 1);
+      // Re-evaluate after the invalid heal effect is removed
+      return this.apply(arena, simulated, pokemon);
     }
+
+    globalScene.phaseManager.unshiftNew(
+      "PokemonHealPhase",
+      targetIndex,
+      pokemon.getMaxHp(),
+      healMessage,
+      true,
+      false,
+      false,
+      true,
+      false,
+      restorePP,
+    );
+
+    targetEffects.splice(targetEffects.indexOf(healEffect), 1);
 
     return healEffect != null;
   }
