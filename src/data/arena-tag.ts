@@ -1,39 +1,4 @@
-/** biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports */
-import type { BattlerTag } from "#app/data/battler-tags";
-/** biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports */
-
-import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
-import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
-import { CommonBattleAnim } from "#data/battle-anims";
-import { allMoves } from "#data/data-lists";
-import { AbilityId } from "#enums/ability-id";
-import { ArenaTagSide } from "#enums/arena-tag-side";
-import { ArenaTagType } from "#enums/arena-tag-type";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { HitResult } from "#enums/hit-result";
-import { CommonAnim } from "#enums/move-anims-common";
-import { MoveCategory } from "#enums/move-category";
-import { MoveId } from "#enums/move-id";
-import { MoveTarget } from "#enums/move-target";
-import { PokemonType } from "#enums/pokemon-type";
-import { Stat } from "#enums/stat";
-import { StatusEffect } from "#enums/status-effect";
-import type { Arena } from "#field/arena";
-import type { Pokemon } from "#field/pokemon";
-import type {
-  ArenaScreenTagType,
-  ArenaTagData,
-  EntryHazardTagType,
-  RoomArenaTagType,
-  SerializableArenaTagType,
-} from "#types/arena-tags";
-import type { Mutable } from "#types/type-helpers";
-import { BooleanHolder, type NumberHolder, toDmgValue } from "#utils/common";
-import i18next from "i18next";
-
 /**
- * @module
  * ArenaTags are are meant for effects that are tied to the arena (as opposed to a specific pokemon).
  * Examples include (but are not limited to)
  * - Cross-turn effects that persist even if the user/target switches out, such as Happy Hour
@@ -76,7 +41,42 @@ import i18next from "i18next";
  * ```
  * Notes
  * - If the class has any subclasses, then the second form of `loadTag` *must* be used.
+ * @module
  */
+
+// biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports
+import type { BattlerTag } from "#app/data/battler-tags";
+// biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports
+
+import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
+import { globalScene } from "#app/global-scene";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { CommonBattleAnim } from "#data/battle-anims";
+import { allMoves } from "#data/data-lists";
+import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { HitResult } from "#enums/hit-result";
+import { CommonAnim } from "#enums/move-anims-common";
+import { MoveCategory } from "#enums/move-category";
+import { MoveId } from "#enums/move-id";
+import { MoveTarget } from "#enums/move-target";
+import { PokemonType } from "#enums/pokemon-type";
+import { Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
+import type { Arena } from "#field/arena";
+import type { Pokemon } from "#field/pokemon";
+import type {
+  ArenaScreenTagType,
+  ArenaTagData,
+  EntryHazardTagType,
+  RoomArenaTagType,
+  SerializableArenaTagType,
+} from "#types/arena-tags";
+import type { Mutable } from "#types/type-helpers";
+import { BooleanHolder, type NumberHolder, toDmgValue } from "#utils/common";
+import i18next from "i18next";
 
 /** Interface containing the serializable fields of ArenaTagData. */
 interface BaseArenaTag {
@@ -84,6 +84,10 @@ interface BaseArenaTag {
    * The tag's remaining duration. Setting to any number `<=0` will make the tag's duration effectively infinite.
    */
   turnCount: number;
+  /**
+   * The tag's max duration.
+   */
+  maxDuration: number;
   /**
    * The {@linkcode MoveId} that created this tag, or `undefined` if not set by a move.
    */
@@ -110,12 +114,14 @@ export abstract class ArenaTag implements BaseArenaTag {
   /** The type of the arena tag */
   public abstract readonly tagType: ArenaTagType;
   public turnCount: number;
+  public maxDuration: number;
   public sourceMove?: MoveId;
   public sourceId: number | undefined;
   public side: ArenaTagSide;
 
   constructor(turnCount: number, sourceMove?: MoveId, sourceId?: number, side: ArenaTagSide = ArenaTagSide.BOTH) {
     this.turnCount = turnCount;
+    this.maxDuration = turnCount;
     this.sourceMove = sourceMove;
     this.sourceId = sourceId;
     this.side = side;
@@ -138,7 +144,7 @@ export abstract class ArenaTag implements BaseArenaTag {
     }
   }
 
-  onOverlap(_arena: Arena, _source: Pokemon | null): void {}
+  onOverlap(_arena: Arena, _source: Pokemon | undefined): void {}
 
   /**
    * Trigger this {@linkcode ArenaTag}'s effect, reducing its duration as applicable.
@@ -164,6 +170,7 @@ export abstract class ArenaTag implements BaseArenaTag {
    */
   loadTag<const T extends this>(source: BaseArenaTag & Pick<T, "tagType">): void {
     this.turnCount = source.turnCount;
+    this.maxDuration = source.maxDuration;
     this.sourceMove = source.sourceMove;
     this.sourceId = source.sourceId;
     this.side = source.side;
@@ -172,9 +179,8 @@ export abstract class ArenaTag implements BaseArenaTag {
   /**
    * Helper function that retrieves the source Pokemon
    * @returns - The source {@linkcode Pokemon} for this tag.
-   * Returns `null` if `this.sourceId` is `undefined`
    */
-  public getSourcePokemon(): Pokemon | null {
+  public getSourcePokemon(): Pokemon | undefined {
     return globalScene.getPokemonById(this.sourceId);
   }
 
@@ -617,7 +623,7 @@ export class NoCritTag extends SerializableArenaTag {
 
     globalScene.phaseManager.queueMessage(
       i18next.t("arenaTag:noCritOnRemove", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(source ?? undefined),
+        pokemonNameWithAffix: getPokemonNameWithAffix(source),
         moveName: this.getMoveName(),
       }),
     );
@@ -1537,7 +1543,7 @@ export class SuppressAbilitiesTag extends SerializableArenaTag {
     }
   }
 
-  public override onOverlap(_arena: Arena, source: Pokemon | null): void {
+  public override onOverlap(_arena: Arena, source: Pokemon | undefined): void {
     (this as Mutable<this>).sourceCount++;
     this.playActivationMessage(source);
   }
@@ -1580,7 +1586,7 @@ export class SuppressAbilitiesTag extends SerializableArenaTag {
     return this.sourceCount > 1;
   }
 
-  private playActivationMessage(pokemon: Pokemon | null) {
+  private playActivationMessage(pokemon: Pokemon | undefined) {
     if (pokemon) {
       globalScene.phaseManager.queueMessage(
         i18next.t("arenaTag:neutralizingGasOnAdd", {

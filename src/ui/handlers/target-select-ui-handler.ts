@@ -8,7 +8,7 @@ import type { Pokemon } from "#field/pokemon";
 import type { ModifierBar } from "#modifiers/modifier";
 import { getMoveTargets } from "#moves/move-utils";
 import { UiHandler } from "#ui/ui-handler";
-import { fixedInt, isNullOrUndefined } from "#utils/common";
+import { fixedInt } from "#utils/common";
 
 export type TargetSelectCallback = (targets: BattlerIndex[]) => void;
 
@@ -71,7 +71,7 @@ export class TargetSelectUiHandler extends UiHandler {
    */
   resetCursor(cursorN: number, user: Pokemon): void {
     if (
-      !isNullOrUndefined(cursorN)
+      cursorN != null
       && ([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2].includes(cursorN) || user.tempSummonData.waveTurnCount === 1)
     ) {
       // Reset cursor on the first turn of a fight or if an ally was targeted last turn
@@ -90,13 +90,10 @@ export class TargetSelectUiHandler extends UiHandler {
       this.targetSelectCallback(button === Button.ACTION ? targetIndexes : []);
       success = true;
       if (this.fieldIndex === BattlerIndex.PLAYER) {
-        if (isNullOrUndefined(this.cursor0) || this.cursor0 !== this.cursor) {
+        if (this.cursor0 == null || this.cursor0 !== this.cursor) {
           this.cursor0 = this.cursor;
         }
-      } else if (
-        this.fieldIndex === BattlerIndex.PLAYER_2
-        && (isNullOrUndefined(this.cursor1) || this.cursor1 !== this.cursor)
-      ) {
+      } else if (this.fieldIndex === BattlerIndex.PLAYER_2 && (this.cursor1 == null || this.cursor1 !== this.cursor)) {
         this.cursor1 = this.cursor;
       }
     } else if (this.isMultipleTargets) {
