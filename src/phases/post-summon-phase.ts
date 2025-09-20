@@ -3,6 +3,7 @@ import type { PhaseString } from "#app/@types/phase-types";
 import { globalScene } from "#app/global-scene";
 import { EntryHazardTag } from "#data/arena-tag";
 import { MysteryEncounterPostSummonTag } from "#data/battler-tags";
+import { ArenaTagType } from "#enums/arena-tag-type";
 import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { StatusEffect } from "#enums/status-effect";
@@ -26,6 +27,9 @@ export class PostSummonPhase extends PokemonPhase {
     if (pokemon.status?.effect === StatusEffect.TOXIC) {
       pokemon.status.toxicTurnCount = 0;
     }
+
+    globalScene.arena.applyTags(ArenaTagType.PENDING_HEAL, false, pokemon);
+
     globalScene.arena.applyTags(EntryHazardTag, false, pokemon);
 
     // If this is mystery encounter and has post summon phase tag, apply post summon effects

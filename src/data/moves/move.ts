@@ -6,7 +6,7 @@ import { loggedInUser } from "#app/account";
 import type { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import type { EntryHazardTag } from "#data/arena-tag";
+import type { EntryHazardTag, PendingHealTag } from "#data/arena-tag";
 import { WeakenMoveTypeTag } from "#data/arena-tag";
 import { MoveChargeAnim } from "#data/battle-anims";
 import {
@@ -18,6 +18,7 @@ import {
   ShellTrapTag,
   StockpilingTag,
   SubstituteTag,
+  SupremeOverlordTag,
   TrappedTag,
   TypeBoostTag,
 } from "#data/battler-tags";
@@ -877,6 +878,8 @@ export abstract class Move implements Localizable {
     if (source.getTag(HelpingHandTag)) {
       power.value *= 1.5;
     }
+
+    power.value *= (source.getTag(BattlerTagType.SUPREME_OVERLORD) as SupremeOverlordTag | undefined)?.getBoost() ?? 1;
 
     return power.value;
   }
@@ -2150,25 +2153,15 @@ export class SacrificialFullRestoreAttr extends SacrificialAttr {
       return false;
     }
 
-    // We don't know which party member will be chosen, so pick the highest max HP in the party
-    const party = user.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
-    const maxPartyMemberHp = party.map(p => p.getMaxHp()).reduce((maxHp: number, hp: number) => Math.max(hp, maxHp), 0);
-
-    const pm = globalScene.phaseManager;
-
-    // TODO: this is broken in this PR until these are properly implemented via https://github.com/pagefaultgames/pokerogue/pull/6027/
-    pm.pushPhase(
-      pm.create("PokemonHealPhase",
-        user.getBattlerIndex(),
-        maxPartyMemberHp,
-        i18next.t(this.moveMessage, { pokemonName: getPokemonNameWithAffix(user) }),
-        true,
-        false,
-        false,
-        true,
-        false,
-        this.restorePP),
-      );
+    // Add a tag to the field if it doesn't already exist, then queue a delayed healing effect in the user's current slot.
+    globalScene.arena.addTag(ArenaTagType.PENDING_HEAL, 0, move.id, user.id); // Arguments after first go completely unused
+    const tag = globalScene.arena.getTag(ArenaTagType.PENDING_HEAL) as PendingHealTag;
+    tag.queueHeal(user.getBattlerIndex(), {
+      sourceId: user.id,
+      moveId: move.id,
+      restorePP: this.restorePP,
+      healMessage: i18next.t(this.moveMessage, { pokemonName: getPokemonNameWithAffix(user) }),
+    });
 
     return true;
   }
