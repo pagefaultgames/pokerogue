@@ -8,7 +8,6 @@ import { MoveResult } from "#enums/move-result";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import type { RandomMoveAttr } from "#moves/move";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -16,8 +15,6 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 describe("Moves - Metronome", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-
-  let randomMoveAttr: RandomMoveAttr;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -30,86 +27,106 @@ describe("Moves - Metronome", () => {
   });
 
   beforeEach(() => {
-    randomMoveAttr = allMoves[MoveId.METRONOME].getAttrs("RandomMoveAttr")[0];
     game = new GameManager(phaserGame);
     game.override
-      .moveset([MoveId.METRONOME, MoveId.SPLASH])
       .battleStyle("single")
       .startingLevel(100)
       .enemyLevel(100)
       .enemySpecies(SpeciesId.SHUCKLE)
       .enemyMoveset(MoveId.SPLASH)
-      .enemyAbility(AbilityId.BALL_FETCH);
+      .enemyAbility(AbilityId.STURDY);
   });
 
-  it("should have one semi-invulnerable turn and deal damage on the second turn when a semi-invulnerable move is called", async () => {
+  it("should not be able to copy MoveId.NONE", async () => {
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
+
+    // Pick the first move available to use
+    const player = game.field.getPlayerPokemon();
+    vi.spyOn(player, "randBattleSeedInt").mockReturnValue(0);
+    game.move.use(MoveId.METRONOME);
+    await game.toNextTurn();
+
+    const lastMoveStr = MoveId[player.getLastXMoves()[0].move];
+    expect(lastMoveStr).not.toBe(MoveId[MoveId.NONE]);
+    expect(lastMoveStr).toBe(MoveId[1]);
+  });
+
+  it("should become semi-invulnerable when using phasing moves", async () => {
+    game.move.forceMetronomeMove(MoveId.DIVE);
+    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
+
+    const player = game.field.getPlayerPokemon();
+    expect(player.getTag(SemiInvulnerableTag)).toBeUndefined();
+    expect(player.visible).toBe(true);
+
+    game.move.use(MoveId.METRONOME);
+    await game.toNextTurn();
+
+    expect(player.getTag(SemiInvulnerableTag)).toBeDefined();
+    expect(player.visible).toBe(false);
+
+    await game.toEndOfTurn();
+
+    expect(player.getTag(SemiInvulnerableTag)).toBeUndefined();
+    expect(player.visible).toBe(true);
+
+    const enemy = game.field.getEnemyPokemon();
+    expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
+  });
+
+  it("should apply secondary effects of the called move", async () => {
+    game.move.forceMetronomeMove(MoveId.WOOD_HAMMER);
+    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
+
+    game.move.use(MoveId.METRONOME);
+    await game.toNextTurn();
+
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
-    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.DIVE);
 
-    game.move.select(MoveId.METRONOME);
-    await game.toNextTurn();
-
-    expect(player.getTag(SemiInvulnerableTag)).toBeTruthy();
-
-    await game.toNextTurn();
-    expect(player.getTag(SemiInvulnerableTag)).toBeFalsy();
-    expect(enemy.isFullHp()).toBeFalsy();
+    expect(player.hp).toBeLessThan(player.getMaxHp());
+    expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
   });
 
-  it("should apply secondary effects of a move", async () => {
+  it("should recharge after using recharge moves", async () => {
+    game.move.forceMetronomeMove(MoveId.HYPER_BEAM);
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
+
     const player = game.field.getPlayerPokemon();
-    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.WOOD_HAMMER);
-
-    game.move.select(MoveId.METRONOME);
-    await game.toNextTurn();
-
-    expect(player.isFullHp()).toBeFalsy();
-  });
-
-  it("should recharge after using recharge move", async () => {
-    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
-    const player = game.field.getPlayerPokemon();
-    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.HYPER_BEAM);
     vi.spyOn(allMoves[MoveId.HYPER_BEAM], "accuracy", "get").mockReturnValue(100);
 
-    game.move.select(MoveId.METRONOME);
+    game.move.use(MoveId.METRONOME);
     await game.toNextTurn();
 
-    expect(player.getTag(RechargingTag)).toBeTruthy();
+    expect(player.getTag(RechargingTag)).toBeDefined();
   });
 
   it("should charge for charging moves while still maintaining follow-up status", async () => {
-    game.override.moveset([]).enemyMoveset(MoveId.SPITE);
-    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.SOLAR_BEAM);
+    game.move.forceMetronomeMove(MoveId.SOLAR_BEAM);
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
 
+    // We need to override movesets here
     const player = game.field.getPlayerPokemon();
     game.move.changeMoveset(player, [MoveId.METRONOME, MoveId.SOLAR_BEAM]);
 
-    const [metronomeMove, solarBeamMove] = player.getMoveset();
-    expect(metronomeMove).toBeDefined();
-    expect(solarBeamMove).toBeDefined();
-
     game.move.select(MoveId.METRONOME);
+    await game.move.forceEnemyMove(MoveId.SPITE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.toEndOfTurn();
 
-    expect(player.getTag(BattlerTagType.CHARGING)).toBeTruthy();
-    const turn1PpUsed = metronomeMove.ppUsed;
-    expect.soft(turn1PpUsed).toBeGreaterThan(1);
-    expect(solarBeamMove.ppUsed).toBe(0);
+    // Solar beam charged up, but did not block Spite from reducing Metronome's PP
+    expect(player).toHaveBattlerTag(BattlerTagType.CHARGING);
+    expect(player).toHaveUsedPP(MoveId.METRONOME, 5);
+    expect(player).toHaveUsedPP(MoveId.SOLAR_BEAM, 0);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.toNextTurn();
+    await game.toEndOfTurn();
 
-    expect(player.getTag(BattlerTagType.CHARGING)).toBeFalsy();
-    const turn2PpUsed = metronomeMove.ppUsed - turn1PpUsed;
-    expect(turn2PpUsed).toBeGreaterThan(1);
-    expect(solarBeamMove.ppUsed).toBe(0);
-    expect(player.getLastXMoves()[0]).toMatchObject({
+    // Should have fired solar beam while still causing spite to consume PP from Metronome
+    expect(player).not.toHaveBattlerTag(BattlerTagType.CHARGING);
+    expect(player).toHaveUsedPP(MoveId.METRONOME, 9);
+    expect(player).toHaveUsedPP(MoveId.SOLAR_BEAM, 0);
+    expect(player).toHaveUsedMove({
       move: MoveId.SOLAR_BEAM,
       result: MoveResult.SUCCESS,
       useMode: MoveUseMode.FOLLOW_UP,
@@ -119,33 +136,33 @@ describe("Moves - Metronome", () => {
   it("should only target ally for Aromatic Mist", async () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.REGIELEKI, SpeciesId.RATTATA]);
+
     const [leftPlayer, rightPlayer] = game.scene.getPlayerField();
     const [leftOpp, rightOpp] = game.scene.getEnemyField();
-    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.AROMATIC_MIST);
 
-    game.move.select(MoveId.METRONOME, 0);
-    game.move.select(MoveId.SPLASH, 1);
+    game.move.use(MoveId.METRONOME, BattlerIndex.PLAYER);
+    game.move.forceMetronomeMove(MoveId.AROMATIC_MIST);
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.toNextTurn();
 
-    expect(rightPlayer.getStatStage(Stat.SPDEF)).toBe(1);
-    expect(leftPlayer.getStatStage(Stat.SPDEF)).toBe(0);
-    expect(leftOpp.getStatStage(Stat.SPDEF)).toBe(0);
-    expect(rightOpp.getStatStage(Stat.SPDEF)).toBe(0);
+    expect(rightPlayer).toHaveStatStage(Stat.SPDEF, 1);
+    expect(leftPlayer).toHaveStatStage(Stat.SPDEF, 0);
+    expect(leftOpp).toHaveStatStage(Stat.SPDEF, 0);
+    expect(rightOpp).toHaveStatStage(Stat.SPDEF, 0);
   });
 
-  it("should cause opponent to flee, and not crash for Roar", async () => {
+  it("should cause opponent to flee when using Roar", async () => {
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
-    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.ROAR);
+    game.move.forceMetronomeMove(MoveId.ROAR);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
-    game.move.select(MoveId.METRONOME);
-    await game.phaseInterceptor.to("BerryPhase");
+    game.move.use(MoveId.METRONOME);
+    await game.toEndOfTurn();
 
-    const isVisible = enemyPokemon.visible;
-    const hasFled = enemyPokemon.switchOutStatus;
-    expect(!isVisible && hasFled).toBe(true);
+    expect(enemyPokemon.visible).toBe(false);
+    expect(enemyPokemon.switchOutStatus).toBe(true);
 
-    await game.toNextTurn();
+    await game.toNextTurn(); // make sure doesn't crash
   });
 });
