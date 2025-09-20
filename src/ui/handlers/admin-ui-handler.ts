@@ -417,6 +417,9 @@ export class AdminUiHandler extends FormModalUiHandler {
           () => {
             globalScene.ui.setOverlayMode(UiMode.GAME_STATS, this.tempGameData);
           },
+          () => {
+            globalScene.ui.setOverlayMode(UiMode.POKEDEX, this.tempGameData);
+          },
         ],
       },
       mode,
