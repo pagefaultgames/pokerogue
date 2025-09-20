@@ -1,4 +1,8 @@
 # syntax=docker/dockerfile:1
+# SPDX-FileCopyrightText: 2025 Pagefault Games
+# SPDX-FileContributor: domagoj03
+#
+# SPDX-License-Identifier: AGPL-3.0-only
 ARG NODE_VERSION=22.14
 ARG OS=alpine
 

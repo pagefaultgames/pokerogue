@@ -1,0 +1,75 @@
+# SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
+version = 1
+
+# Default for all files
+# It is preferrable to use per-file annotations, which will override these entries
+[[annotations]]
+path = [
+    # source and test code. Can be overridden on a per-file basis inside the file itself (which will supercede this)
+    "src/**/*.ts",
+    "test/**/*.ts",
+    "src/**/*.json",
+    "test/**/*.json",
+    "src/**/*.jsonc",
+    "global.d.ts",
+    # HTML / CSS at the top level, or in `tests`
+    "*.html",
+    "*.css",
+    "test/**/*.html",
+    "test/**/*.css",
+    # Config files
+    ".dependency-cruiser.cjs",
+    # Json files that can't be commented
+    "package.json",
+    "tsconfig.json",
+    "tsdoc.json",
+    "typedoc.json",
+    # environment files
+    ".env",
+    ".env.*",
+    # Development files considered code
+    ".vscode/*.json",
+]
+SPDX-FileCopyrightText = "2024-2025 Pagefault Games"
+SPDX-License-Identifier = "AGPL-3.0-only"
+
+# Files with no copyright
+[[annotations]]
+path = [
+    # Git files
+    "**/*.gitignore",
+    "**/*.gitmodules",
+    "**/*.gitattributes",
+    "**/*.dockerignore",
+    # Configuration files
+    ".editorconfig",
+    ".vscode/**/*.json",
+    # any pokerogue save files for tests
+    "**/*.prsv",
+    # pnpm related files of insignificant originality
+    "package-lock.json",
+    "pnpm-lock.yaml",
+    "pnpm-workspace.yaml",
+    # Miscellaneous files of insignificant originality
+    ".nvmrc",
+    "RELEASE",
+]
+SPDX-License-Identifier = "CC0-1.0"
+SPDX-FileCopyrightText = "NONE"
+
+
+# REUSE lint will fail if any file (other than those in the LICENSES/ directory) is not explicitly licensed.
+# We have a LICENSE file at the root of the repository so that GitHub can detect the license, but we also explicitly license it here
+# Note that this is JUST to make REUSE lint happy
+[[annotations]]
+path = "LICENSE"
+SPDX-License-Identifier = "CC0-1.0.txt"
+
+
+[[annotations]]
+path = "favicon.ico"                        # Created by Gonstar (Paid Commission)
+SPDX-FileCopyrightText = "2024 Gonstar"
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
