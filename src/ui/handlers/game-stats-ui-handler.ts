@@ -239,6 +239,9 @@ export class GameStatsUiHandler extends UiHandler {
   /** Logged in username */
   private headerText: Phaser.GameObjects.Text;
 
+  /** The game data to display */
+  private gameData: GameData;
+
   /** Whether the UI is single column mode */
   private get singleCol(): boolean {
     const resolvedLang = i18next.resolvedLanguage ?? "en";
@@ -396,7 +399,12 @@ export class GameStatsUiHandler extends UiHandler {
   }
 
   show(args: any[]): boolean {
-    super.show(args);
+    super.show([]);
+
+    this.gameData = globalScene.gameData;
+    if (args.length > 0) {
+      this.gameData = args[0];
+    }
 
     // show updated username on every render
     this.headerText.setText(this.getUsername());
@@ -436,7 +444,7 @@ export class GameStatsUiHandler extends UiHandler {
     const statKeys = Object.keys(displayStats).slice(this.cursor * columns, this.cursor * columns + perPage);
     statKeys.forEach((key, s) => {
       const stat = displayStats[key] as DisplayStat;
-      const value = stat.sourceFunc?.(globalScene.gameData) ?? "-";
+      const value = stat.sourceFunc?.(this.gameData) ?? "-";
       const valAsInt = Number.parseInt(value);
       this.statLabels[s].setText(
         !stat.hidden || Number.isNaN(value) || valAsInt ? i18next.t(`gameStatsUiHandler:${stat.label_key}`) : "???",
@@ -512,6 +520,7 @@ export class GameStatsUiHandler extends UiHandler {
   clear() {
     super.clear();
     this.gameStatsContainer.setVisible(false).setActive(false);
+    // TODO: do we need to clear this.gameData here?
   }
 }
 
