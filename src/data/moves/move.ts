@@ -6849,8 +6849,8 @@ export abstract class CallMoveAttr extends OverrideMoveEffectAttr {
 
   /**
    * Abstract function yielding the move to be used.
-   * Called during attribute application by default, but can also be called in advance
-   * when determining conditions.
+   * Called automatically during attribute application by default,
+   * but can also be called in advance when determining conditions.
    * @param user - The {@linkcode Pokemon} using the move
    * @param target - The {@linkcode Pokemon} being targeted by the move
    * @returns The {@linkcode MoveId} that will be called and used.
@@ -6908,10 +6908,11 @@ export class NaturePowerAttr extends CallMoveAttr {
 
   /**
    * Helper function to retrieve the correct move for the current terrain and biome.
-   * Made into a separate function for brevity.
+   *
+   * Made into a separate function for both brevity and to allow for easier unit testing.
    * @param terrain - The arena's current {@linkcode TerrainType}
    * @param biome - The arena's current {@linkcode BiomeId}
-   * @returns The {@linkcode MoveId} that will be used
+   * @returns The {@linkcode MoveId} that will be used.
    */
   private getMoveIdForTerrain(terrain: TerrainType, biome: BiomeId): MoveId {
     switch (terrain) {
@@ -7007,13 +7008,13 @@ export class NaturePowerAttr extends CallMoveAttr {
 }
 
 /**
- * Abstract class to encompass move-copying-moves with a banlist of invalid moves.
+ * Abstract class to encompass move-calling-moves with a banlist of invalid moves.
  */
 abstract class CallMoveAttrWithBanlist extends CallMoveAttr {
   /**
    * A {@linkcode ReadonlySet} containing all {@linkcode MoveId | moves} that this attribute cannot copy,
-   * in addition to unimplemented moves and `linkcode MoveId.NONE`
-   * Subclasses should exclude all moves inside this banlist.
+   * in addition to unimplemented moves and `linkcode MoveId.NONE`.
+   * If one
    */
   private readonly invalidMoves: ReadonlySet<MoveId>;
 
@@ -7037,7 +7038,14 @@ abstract class CallMoveAttrWithBanlist extends CallMoveAttr {
     applyChallenges(ChallengeType.POKEMON_MOVE, move, valid)
     return valid.value;
   }
+
+  public override getCondition(): MoveConditionFunc {
+    return (user, target) => this.getMove(user, target) !== MoveId.NONE;
+  }
+
 }
+
+export type {CallMoveAttrWithBanlist}
 
 /**
  * Attribute used to copy the last move executed, either globally or by the specific target.
@@ -7047,16 +7055,10 @@ export class CopyMoveAttr extends CallMoveAttrWithBanlist {
   protected override getMove(_user: Pokemon, target: Pokemon): MoveId {
     // If `selfTarget` is `true`, return the last successful move used by anyone on-field.
     // Otherwise, select the last move executed by the target, failing if none were used yet.
-    return this.selfTarget
+    const calledMove = this.selfTarget
       ? globalScene.currentBattle.lastMove
       : target.getLastNonVirtualMove(false, false)?.move ?? MoveId.NONE
-  }
-
-  override getCondition(): MoveConditionFunc {
-    return (_user, target) => {
-      const chosenMove = this.getMove(_user, target);
-      return this.isMoveAllowed(chosenMove);
-    };
+      return this.isMoveAllowed(calledMove) ? calledMove : MoveId.NONE
   }
 }
 
@@ -7121,10 +7123,6 @@ export class RandomMovesetMoveAttr extends RandomMoveAttr {
     const eligibleMoves = moveset.filter(m => this.isMoveAllowed(m.moveId));
     this.selectedMove = eligibleMoves[user.randBattleSeedInt(eligibleMoves.length)]?.moveId ?? MoveId.NONE;
     return this.selectedMove;
-  }
-
-  override getCondition(): MoveConditionFunc {
-    return (user) => this.getMove(user) !== MoveId.NONE;
   }
 }
 
