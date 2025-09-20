@@ -914,8 +914,8 @@ export function setSetting(setting: string, value: number): boolean {
     case SettingKeys.Vibration:
       globalScene.enableVibration = Setting[index].options[value].value !== "Disabled" && hasTouchscreen();
       break;
-     case SettingKeys.HotkeyTips:
-      globalScene.enableHotkeyTip = Setting[index].options[value].value !== "On";
+    case SettingKeys.HotkeyTips:
+      globalScene.enableHotkeyTips = Setting[index].options[value].value !== "On";
       break;
     case SettingKeys.Type_Hints:
       globalScene.typeHints = Setting[index].options[value].value === "On";

@@ -231,7 +231,7 @@ export class BattleScene extends SceneBase {
   public fusionPaletteSwaps = true;
   public enableTouchControls = false;
   public enableVibration = false;
-  public enableHotkeyTip = false;
+  public enableHotkeyTips = false;
   public showBgmBar = true;
   public hideUsername = false;
   /** Determines the selected battle style. */

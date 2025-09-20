@@ -135,10 +135,11 @@ export class UiInputs {
   buttonAB(button: Button): void {
      if (this.isInSettings()) {
       const whiteListUIModes : UiMode[] = [
-        UiMode.MODIFIER_SELECT
+        UiMode.MODIFIER_SELECT,
+        UiMode.COMMAND
       ]
       for (const uiMode of whiteListUIModes){
-        globalScene.ui.handlers[uiMode].updateInstructionsText()
+        globalScene.ui.handlers[uiMode].updateTipsText()
       }
     }
     globalScene.ui.processInput(button);

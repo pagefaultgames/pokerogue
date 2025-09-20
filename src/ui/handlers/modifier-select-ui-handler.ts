@@ -103,7 +103,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.rerollButtonContainer.setVisible(false);
     ui.add(this.rerollButtonContainer);
     
-    const Reroll_Key = !globalScene.enableHotkeyTip ?  globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Shiny) ? `(${globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Shiny)}) ` : "" : "";
+    const Reroll_Key = !globalScene.enableHotkeyTips ?  globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Shiny) ? `(${globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Shiny)}) ` : "" : "";
     this.rerollButtonText = addTextObject(-4, -2, i18next.t("modifierSelectUiHandler:reroll", {Reroll_Key}), TextStyle.PARTY);
     this.rerollButtonText.setName("text-reroll-btn");
     this.rerollButtonText.setOrigin(0, 0);
@@ -119,7 +119,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.lockRarityButtonContainer.setVisible(false);
     ui.add(this.lockRarityButtonContainer);
 
-    const Lock_Rarity_Key = !globalScene.enableHotkeyTip ? globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Ability) ? `(${globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Ability)}) ` : "" : "";
+    const Lock_Rarity_Key = !globalScene.enableHotkeyTips ? globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Ability) ? `(${globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Ability)}) ` : "" : "";
     this.lockRarityButtonText = addTextObject(
       -4,
       -2,
@@ -160,7 +160,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     globalScene.addInfoToggle(this.moveInfoOverlay);
   }
 
-  updateInstructionsText() : void {
+  updateTipsText() : void {
     this.updateRerollText();
     this.updateRerollCostPosition();
   }
@@ -696,10 +696,10 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
   }
 
   updateRerollText(): void {
-    const Reroll_Key = !globalScene.enableHotkeyTip ? globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Shiny) ? `(${globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Shiny)}) ` : "" : "";
+    const Reroll_Key = !globalScene.enableHotkeyTips ? globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Shiny) ? `(${globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Shiny)}) ` : "" : "";
     this.rerollButtonText.setText(i18next.t("modifierSelectUiHandler:reroll", { Reroll_Key }));
     if (this.lockRarityButtonText.visible){
-      const Lock_Rarity_Key = !globalScene.enableHotkeyTip ? globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Ability) ? `(${globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Ability)}) ` : "" : "";
+      const Lock_Rarity_Key = !globalScene.enableHotkeyTips ? globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Ability) ? `(${globalScene.inputController?.getKeyForLatestInputRecorded( SettingKeyboard.Button_Cycle_Ability)}) ` : "" : "";
       this.lockRarityButtonText.setText(i18next.t("modifierSelectUiHandler:lockRarities", { Lock_Rarity_Key }));
     }
   }

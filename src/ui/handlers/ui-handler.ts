@@ -25,7 +25,7 @@ export abstract class UiHandler {
     return true;
   }
 
-  abstract updateInstructionsText(): void;
+  updateInstructionsText(){};
 
   abstract processInput(button: Button): boolean;
 
