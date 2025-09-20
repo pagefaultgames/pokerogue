@@ -3,7 +3,7 @@ import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { signatureSpecies } from "#balance/signature-species";
 import { EntryHazardTag } from "#data/arena-tag";
 import type { PokemonSpecies } from "#data/pokemon-species";
-import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaSide } from "#enums/arena-side";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { SpeciesId } from "#enums/species-id";
 import { TeraAIMode } from "#enums/tera-ai-mode";
@@ -574,7 +574,7 @@ export class Trainer extends Phaser.GameObjects.Container {
         score /= playerField.length;
         if (forSwitch && !p.isOnField()) {
           globalScene.arena
-            .findTagsOnSide(t => t instanceof EntryHazardTag, ArenaTagSide.ENEMY)
+            .findTagsOnSide(t => t instanceof EntryHazardTag, ArenaSide.ENEMY)
             .map(t => (score *= (t as EntryHazardTag).getMatchupScoreMultiplier(p)));
         }
       }

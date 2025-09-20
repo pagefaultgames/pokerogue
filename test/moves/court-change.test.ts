@@ -1,5 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
-import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaSide } from "#enums/arena-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -47,7 +47,7 @@ describe("Move - Court Change", () => {
     await game.toNextTurn();
 
     // enemy team will be in the swamp and slowed
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.GRASS_WATER_PLEDGE, ArenaTagSide.ENEMY)).toBeDefined();
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.GRASS_WATER_PLEDGE, ArenaSide.ENEMY)).toBeDefined();
     expect(enemyPokemon.getEffectiveStat(Stat.SPD)).toBe(enemyPokemon.getStat(Stat.SPD) / 4);
 
     game.move.use(MoveId.COURT_CHANGE);
@@ -55,8 +55,8 @@ describe("Move - Court Change", () => {
     await game.toEndOfTurn();
 
     // own team should now be in the swamp and slowed
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.GRASS_WATER_PLEDGE, ArenaTagSide.ENEMY)).toBeUndefined();
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.GRASS_WATER_PLEDGE, ArenaTagSide.PLAYER)).toBeDefined();
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.GRASS_WATER_PLEDGE, ArenaSide.ENEMY)).toBeUndefined();
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.GRASS_WATER_PLEDGE, ArenaSide.PLAYER)).toBeDefined();
     expect(regieleki.getEffectiveStat(Stat.SPD)).toBe(regieleki.getStat(Stat.SPD) / 4);
   });
 
@@ -71,15 +71,15 @@ describe("Move - Court Change", () => {
     await game.toNextTurn();
 
     // Ninjask will not be poisoned because of Safeguard
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, ArenaTagSide.PLAYER)).toBeDefined();
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, ArenaSide.PLAYER)).toBeDefined();
     expect(ninjask.status?.effect).toBeUndefined();
 
     game.move.use(MoveId.COURT_CHANGE);
     await game.toEndOfTurn();
 
     // Ninjask should now be poisoned due to lack of Safeguard
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, ArenaTagSide.PLAYER)).toBeUndefined();
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, ArenaTagSide.ENEMY)).toBeDefined();
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, ArenaSide.PLAYER)).toBeUndefined();
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, ArenaSide.ENEMY)).toBeDefined();
     expect(ninjask.status?.effect).toBe(StatusEffect.POISON);
   });
 });

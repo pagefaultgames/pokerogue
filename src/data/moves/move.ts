@@ -34,7 +34,7 @@ import {
 import { TerrainType } from "#data/terrain";
 import { getTypeDamageMultiplier } from "#data/type";
 import { AbilityId } from "#enums/ability-id";
-import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaSide } from "#enums/arena-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleType } from "#enums/battle-type";
 import type { BattlerIndex } from "#enums/battler-index";
@@ -1342,7 +1342,7 @@ export class MoveEffectAttr extends MoveAttr {
     applyAbAttrs("MoveEffectChanceMultiplierAbAttr", {pokemon: user, simulated: !showAbility, chance: moveChance, move});
 
     if ((!move.hasAttr("FlinchAttr") || moveChance.value <= move.chance) && !move.hasAttr("SecretPowerAttr")) {
-      const userSide = user.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+      const userSide = user.isPlayer() ? ArenaSide.PLAYER : ArenaSide.ENEMY;
       globalScene.arena.applyTagsForSide(ArenaTagType.WATER_FIRE_PLEDGE, userSide, false, moveChance);
     }
 
@@ -6009,7 +6009,7 @@ export class AddArenaTagAttr extends MoveEffectAttr {
     }
 
     if ((move.chance < 0 || move.chance === 100 || user.randBattleSeedInt(100) < move.chance) && user.getLastXMoves(1)[0]?.result === MoveResult.SUCCESS) {
-      const side = ((this.selfSideTarget ? user : target).isPlayer() !== (move.hasAttr("AddArenaTrapTagAttr") && target === user)) ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+      const side = ((this.selfSideTarget ? user : target).isPlayer() !== (move.hasAttr("AddArenaTrapTagAttr") && target === user)) ? ArenaSide.PLAYER : ArenaSide.ENEMY;
       globalScene.arena.addTag(this.tagType, this.turnCount, move.id, user.id, side);
       return true;
     }
@@ -6019,7 +6019,7 @@ export class AddArenaTagAttr extends MoveEffectAttr {
 
   getCondition(): MoveConditionFunc | null {
     return this.failOnOverlap
-      ? (user, target, move) => !globalScene.arena.getTagOnSide(this.tagType, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)
+      ? (user, target, move) => !globalScene.arena.getTagOnSide(this.tagType, target.isPlayer() ? ArenaSide.PLAYER : ArenaSide.ENEMY)
       : null;
   }
 }
@@ -6045,7 +6045,7 @@ export class RemoveArenaTagsAttr extends MoveEffectAttr {
       return false;
     }
 
-    const side = (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+    const side = (this.selfSideTarget ? user : target).isPlayer() ? ArenaSide.PLAYER : ArenaSide.ENEMY;
 
     for (const tagType of this.tagTypes) {
       globalScene.arena.removeTagOnSide(tagType, side);
@@ -6058,7 +6058,7 @@ export class RemoveArenaTagsAttr extends MoveEffectAttr {
 export class AddArenaTrapTagAttr extends AddArenaTagAttr {
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
-      const side = (this.selfSideTarget !== user.isPlayer()) ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER;
+      const side = (this.selfSideTarget !== user.isPlayer()) ? ArenaSide.ENEMY : ArenaSide.PLAYER;
       const tag = globalScene.arena.getTagOnSide(this.tagType, side) as EntryHazardTag;
       if (!tag) {
         return true;
@@ -6080,7 +6080,7 @@ export class AddArenaTrapTagHitAttr extends AddArenaTagAttr {
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, true);
-    const side = (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+    const side = (this.selfSideTarget ? user : target).isPlayer() ? ArenaSide.PLAYER : ArenaSide.ENEMY;
     const tag = globalScene.arena.getTagOnSide(this.tagType, side) as EntryHazardTag;
     if ((moveChance < 0 || moveChance === 100 || user.randBattleSeedInt(100) < moveChance) && user.getLastXMoves(1)[0]?.result === MoveResult.SUCCESS) {
       globalScene.arena.addTag(this.tagType, 0, move.id, user.id, side);
@@ -6109,20 +6109,20 @@ export class RemoveArenaTrapAttr extends MoveEffectAttr {
     }
 
     if (this.targetBothSides) {
-      globalScene.arena.removeTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.PLAYER);
-      globalScene.arena.removeTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.PLAYER);
-      globalScene.arena.removeTagOnSide(ArenaTagType.STEALTH_ROCK, ArenaTagSide.PLAYER);
-      globalScene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER);
+      globalScene.arena.removeTagOnSide(ArenaTagType.SPIKES, ArenaSide.PLAYER);
+      globalScene.arena.removeTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaSide.PLAYER);
+      globalScene.arena.removeTagOnSide(ArenaTagType.STEALTH_ROCK, ArenaSide.PLAYER);
+      globalScene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, ArenaSide.PLAYER);
 
-      globalScene.arena.removeTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY);
-      globalScene.arena.removeTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.ENEMY);
-      globalScene.arena.removeTagOnSide(ArenaTagType.STEALTH_ROCK, ArenaTagSide.ENEMY);
-      globalScene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.ENEMY);
+      globalScene.arena.removeTagOnSide(ArenaTagType.SPIKES, ArenaSide.ENEMY);
+      globalScene.arena.removeTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaSide.ENEMY);
+      globalScene.arena.removeTagOnSide(ArenaTagType.STEALTH_ROCK, ArenaSide.ENEMY);
+      globalScene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, ArenaSide.ENEMY);
     } else {
-      globalScene.arena.removeTagOnSide(ArenaTagType.SPIKES, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
-      globalScene.arena.removeTagOnSide(ArenaTagType.TOXIC_SPIKES, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
-      globalScene.arena.removeTagOnSide(ArenaTagType.STEALTH_ROCK, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
-      globalScene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
+      globalScene.arena.removeTagOnSide(ArenaTagType.SPIKES, target.isPlayer() ? ArenaSide.ENEMY : ArenaSide.PLAYER);
+      globalScene.arena.removeTagOnSide(ArenaTagType.TOXIC_SPIKES, target.isPlayer() ? ArenaSide.ENEMY : ArenaSide.PLAYER);
+      globalScene.arena.removeTagOnSide(ArenaTagType.STEALTH_ROCK, target.isPlayer() ? ArenaSide.ENEMY : ArenaSide.PLAYER);
+      globalScene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, target.isPlayer() ? ArenaSide.ENEMY : ArenaSide.PLAYER);
     }
 
     return true;
@@ -6145,17 +6145,17 @@ export class RemoveScreensAttr extends MoveEffectAttr {
     }
 
     if (this.targetBothSides) {
-      globalScene.arena.removeTagOnSide(ArenaTagType.REFLECT, ArenaTagSide.PLAYER);
-      globalScene.arena.removeTagOnSide(ArenaTagType.LIGHT_SCREEN, ArenaTagSide.PLAYER);
-      globalScene.arena.removeTagOnSide(ArenaTagType.AURORA_VEIL, ArenaTagSide.PLAYER);
+      globalScene.arena.removeTagOnSide(ArenaTagType.REFLECT, ArenaSide.PLAYER);
+      globalScene.arena.removeTagOnSide(ArenaTagType.LIGHT_SCREEN, ArenaSide.PLAYER);
+      globalScene.arena.removeTagOnSide(ArenaTagType.AURORA_VEIL, ArenaSide.PLAYER);
 
-      globalScene.arena.removeTagOnSide(ArenaTagType.REFLECT, ArenaTagSide.ENEMY);
-      globalScene.arena.removeTagOnSide(ArenaTagType.LIGHT_SCREEN, ArenaTagSide.ENEMY);
-      globalScene.arena.removeTagOnSide(ArenaTagType.AURORA_VEIL, ArenaTagSide.ENEMY);
+      globalScene.arena.removeTagOnSide(ArenaTagType.REFLECT, ArenaSide.ENEMY);
+      globalScene.arena.removeTagOnSide(ArenaTagType.LIGHT_SCREEN, ArenaSide.ENEMY);
+      globalScene.arena.removeTagOnSide(ArenaTagType.AURORA_VEIL, ArenaSide.ENEMY);
     } else {
-      globalScene.arena.removeTagOnSide(ArenaTagType.REFLECT, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
-      globalScene.arena.removeTagOnSide(ArenaTagType.LIGHT_SCREEN, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
-      globalScene.arena.removeTagOnSide(ArenaTagType.AURORA_VEIL, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
+      globalScene.arena.removeTagOnSide(ArenaTagType.REFLECT, target.isPlayer() ? ArenaSide.PLAYER : ArenaSide.ENEMY);
+      globalScene.arena.removeTagOnSide(ArenaTagType.LIGHT_SCREEN, target.isPlayer() ? ArenaSide.PLAYER : ArenaSide.ENEMY);
+      globalScene.arena.removeTagOnSide(ArenaTagType.AURORA_VEIL, target.isPlayer() ? ArenaSide.PLAYER : ArenaSide.ENEMY);
     }
 
     return true;
@@ -6178,20 +6178,20 @@ export class SwapArenaTagsAttr extends MoveEffectAttr {
       return false;
     }
 
-    const tagPlayerTemp = globalScene.arena.findTagsOnSide((t => this.SwapTags.includes(t.tagType)), ArenaTagSide.PLAYER);
-    const tagEnemyTemp = globalScene.arena.findTagsOnSide((t => this.SwapTags.includes(t.tagType)), ArenaTagSide.ENEMY);
+    const tagPlayerTemp = globalScene.arena.findTagsOnSide((t => this.SwapTags.includes(t.tagType)), ArenaSide.PLAYER);
+    const tagEnemyTemp = globalScene.arena.findTagsOnSide((t => this.SwapTags.includes(t.tagType)), ArenaSide.ENEMY);
 
 
     if (tagPlayerTemp) {
       for (const swapTagsType of tagPlayerTemp) {
-        globalScene.arena.removeTagOnSide(swapTagsType.tagType, ArenaTagSide.PLAYER, true);
-        globalScene.arena.addTag(swapTagsType.tagType, swapTagsType.turnCount, swapTagsType.sourceMove, swapTagsType.sourceId!, ArenaTagSide.ENEMY, true); // TODO: is the bang correct?
+        globalScene.arena.removeTagOnSide(swapTagsType.tagType, ArenaSide.PLAYER, true);
+        globalScene.arena.addTag(swapTagsType.tagType, swapTagsType.turnCount, swapTagsType.sourceMove, swapTagsType.sourceId!, ArenaSide.ENEMY, true); // TODO: is the bang correct?
       }
     }
     if (tagEnemyTemp) {
       for (const swapTagsType of tagEnemyTemp) {
-        globalScene.arena.removeTagOnSide(swapTagsType.tagType, ArenaTagSide.ENEMY, true);
-        globalScene.arena.addTag(swapTagsType.tagType, swapTagsType.turnCount, swapTagsType.sourceMove, swapTagsType.sourceId!, ArenaTagSide.PLAYER, true); // TODO: is the bang correct?
+        globalScene.arena.removeTagOnSide(swapTagsType.tagType, ArenaSide.ENEMY, true);
+        globalScene.arena.addTag(swapTagsType.tagType, swapTagsType.turnCount, swapTagsType.sourceMove, swapTagsType.sourceId!, ArenaSide.PLAYER, true); // TODO: is the bang correct?
       }
     }
 

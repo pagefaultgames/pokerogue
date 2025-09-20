@@ -1,5 +1,5 @@
 import type { ArenaTag, ArenaTagTypeMap } from "#data/arena-tag";
-import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaSide } from "#enums/arena-side";
 import type { ArenaTagType } from "#enums/arena-tag-type";
 import type { OneOther } from "#test/@types/test-helpers";
 // biome-ignore lint/correctness/noUnusedImports: TSDoc
@@ -28,15 +28,15 @@ export type toHaveArenaTagOptions<A extends ArenaTagType> = OneOther<
  * @param received - The object to check. Should be the current {@linkcode GameManager}.
  * @param expectedTag - The `ArenaTagType` of the desired tag, or a partially-filled object
  * containing the desired properties
- * @param side - The {@linkcode ArenaTagSide | side of the field} the tag should affect, or
- * {@linkcode ArenaTagSide.BOTH} to check both sides
+ * @param side - The {@linkcode ArenaSide | side of the field} the tag should affect, or
+ * {@linkcode ArenaSide.BOTH} to check both sides
  * @returns The result of the matching
  */
 export function toHaveArenaTag<A extends ArenaTagType>(
   this: MatcherState,
   received: unknown,
   expectedTag: A | toHaveArenaTagOptions<A>,
-  side: ArenaTagSide = ArenaTagSide.BOTH,
+  side: ArenaSide = ArenaSide.BOTH,
 ): SyncExpectationResult {
   if (!isGameManagerInstance(received)) {
     return {
@@ -55,7 +55,7 @@ export function toHaveArenaTag<A extends ArenaTagType>(
   // Coerce lone `tagType`s into objects
   // Bangs are ok as we enforce safety via overloads
   // @ts-expect-error - Typescript is being stupid as tag type and side will always exist
-  const etag: Partial<ArenaTag> & { tagType: T; side: ArenaTagSide } =
+  const etag: Partial<ArenaTag> & { tagType: T; side: ArenaSide } =
     typeof expectedTag === "object" ? expectedTag : { tagType: expectedTag, side };
 
   // If checking only tag type/side OR no tags were found, break out early.

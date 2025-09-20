@@ -20,7 +20,7 @@ import {
   Weather,
 } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
-import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaSide } from "#enums/arena-side";
 import type { ArenaTagType } from "#enums/arena-tag-type";
 import type { BattlerIndex } from "#enums/battler-index";
 import { BiomeId } from "#enums/biome-id";
@@ -652,13 +652,13 @@ export class Arena {
   /**
    * Applies each `ArenaTag` in this Arena, based on which side (self, enemy, or both) is passed in as a parameter
    * @param tagType Either an {@linkcode ArenaTagType} string, or an actual {@linkcode ArenaTag} class to filter which ones to apply
-   * @param side {@linkcode ArenaTagSide} which side's arena tags to apply
+   * @param side {@linkcode ArenaSide} which side's arena tags to apply
    * @param simulated if `true`, this applies arena tags without changing game state
    * @param args array of parameters that the called upon tags may need
    */
   applyTagsForSide(
     tagType: ArenaTagType | Constructor<ArenaTag> | AbstractConstructor<ArenaTag>,
-    side: ArenaTagSide,
+    side: ArenaSide,
     simulated: boolean,
     ...args: unknown[]
   ): void {
@@ -666,7 +666,7 @@ export class Arena {
       typeof tagType === "string"
         ? this.tags.filter(t => t.tagType === tagType)
         : this.tags.filter(t => t instanceof tagType);
-    if (side !== ArenaTagSide.BOTH) {
+    if (side !== ArenaSide.BOTH) {
       tags = tags.filter(t => t.side === side);
     }
     tags.forEach(t => t.apply(this, simulated, ...args));
@@ -684,7 +684,7 @@ export class Arena {
     simulated: boolean,
     ...args: unknown[]
   ): void {
-    this.applyTagsForSide(tagType, ArenaTagSide.BOTH, simulated, ...args);
+    this.applyTagsForSide(tagType, ArenaSide.BOTH, simulated, ...args);
   }
 
   /**
@@ -693,7 +693,7 @@ export class Arena {
    * @param turnCount - The number of turns the newly-added tag should last.
    * @param sourceId - The {@linkcode Pokemon.id | PID} of the Pokemon creating the tag.
    * @param sourceMove - The {@linkcode MoveId} of the move creating the tag, or `undefined` if not from a move.
-   * @param side - The {@linkcode ArenaTagSide}(s) to which the tag should apply; default `ArenaTagSide.BOTH`.
+   * @param side - The {@linkcode ArenaSide}(s) to which the tag should apply; default `ArenaTagSide.BOTH`.
    * @param quiet - Whether to suppress messages produced by tag addition; default `false`.
    * @returns `true` if the tag was successfully added without overlapping.
   // TODO: Do we need the return value here? literally nothing uses it
@@ -703,7 +703,7 @@ export class Arena {
     turnCount: number,
     sourceMove: MoveId | undefined,
     sourceId: number,
-    side: ArenaTagSide = ArenaTagSide.BOTH,
+    side: ArenaSide = ArenaSide.BOTH,
     quiet = false,
   ): boolean {
     const existingTag = this.getTagOnSide(tagType, side);
@@ -747,7 +747,7 @@ export class Arena {
    */
   getTag<T extends ArenaTag>(tagType: Constructor<T> | AbstractConstructor<T>): T | undefined;
   getTag(tagType: ArenaTagType | Constructor<ArenaTag> | AbstractConstructor<ArenaTag>): ArenaTag | undefined {
-    return this.getTagOnSide(tagType, ArenaTagSide.BOTH);
+    return this.getTagOnSide(tagType, ArenaSide.BOTH);
   }
 
   hasTag(tagType: ArenaTagType): boolean {
@@ -759,19 +759,19 @@ export class Arena {
    *
    * eg: `MIST` only applies to the user's side, while `MUD_SPORT` applies to both user and enemy side
    * @param tagType The {@linkcode ArenaTagType} or {@linkcode ArenaTag} to get
-   * @param side The {@linkcode ArenaTagSide} to look at
+   * @param side The {@linkcode ArenaSide} to look at
    * @returns either the {@linkcode ArenaTag}, or `undefined` if it isn't there
    */
   getTagOnSide(
     tagType: ArenaTagType | Constructor<ArenaTag> | AbstractConstructor<ArenaTag>,
-    side: ArenaTagSide,
+    side: ArenaSide,
   ): ArenaTag | undefined {
     return typeof tagType === "string"
       ? this.tags.find(
-          t => t.tagType === tagType && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side),
+          t => t.tagType === tagType && (side === ArenaSide.BOTH || t.side === ArenaSide.BOTH || t.side === side),
         )
       : this.tags.find(
-          t => t instanceof tagType && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side),
+          t => t instanceof tagType && (side === ArenaSide.BOTH || t.side === ArenaSide.BOTH || t.side === side),
         );
   }
 
@@ -784,18 +784,18 @@ export class Arena {
    * @returns array of {@linkcode ArenaTag}s from which the Arena's tags return true and apply to both sides
    */
   findTags(tagPredicate: (t: ArenaTag) => boolean): ArenaTag[] {
-    return this.findTagsOnSide(tagPredicate, ArenaTagSide.BOTH);
+    return this.findTagsOnSide(tagPredicate, ArenaSide.BOTH);
   }
 
   /**
    * Returns specific tags from the arena that pass the `tagPredicate` function passed in as a parameter, and apply to the given side
    * @param tagPredicate a function mapping {@linkcode ArenaTag}s to `boolean`s
-   * @param side The {@linkcode ArenaTagSide} to look at
+   * @param side The {@linkcode ArenaSide} to look at
    * @returns array of {@linkcode ArenaTag}s from which the Arena's tags return `true` and apply to the given side
    */
-  findTagsOnSide(tagPredicate: (t: ArenaTag) => boolean, side: ArenaTagSide): ArenaTag[] {
+  findTagsOnSide(tagPredicate: (t: ArenaTag) => boolean, side: ArenaSide): ArenaTag[] {
     return this.tags.filter(
-      t => tagPredicate(t) && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side),
+      t => tagPredicate(t) && (side === ArenaSide.BOTH || t.side === ArenaSide.BOTH || t.side === side),
     );
   }
 
@@ -822,7 +822,7 @@ export class Arena {
     return !!tag;
   }
 
-  removeTagOnSide(tagType: ArenaTagType, side: ArenaTagSide, quiet = false): boolean {
+  removeTagOnSide(tagType: ArenaTagType, side: ArenaSide, quiet = false): boolean {
     const tag = this.getTagOnSide(tagType, side);
     if (tag) {
       tag.onRemove(this, quiet);

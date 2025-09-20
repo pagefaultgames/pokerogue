@@ -6,7 +6,7 @@ import { MoveAnim } from "#data/battle-anims";
 import { DamageProtectedTag, ProtectedTag, SemiInvulnerableTag, SubstituteTag, TypeBoostTag } from "#data/battler-tags";
 import { SpeciesFormChangePostMoveTrigger } from "#data/form-change-triggers";
 import type { TypeDamageMultiplier } from "#data/type";
-import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaSide } from "#enums/arena-side";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -438,8 +438,8 @@ export class MoveEffectPhase extends PokemonPhase {
    * @returns Whether the pokemon was protected
    */
   private protectedCheck(user: Pokemon, target: Pokemon): boolean {
-    /** The {@linkcode ArenaTagSide} to which the target belongs */
-    const targetSide = target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+    /** The {@linkcode ArenaSide} to which the target belongs */
+    const targetSide = target.isPlayer() ? ArenaSide.PLAYER : ArenaSide.ENEMY;
     /** Has the invoked move been cancelled by conditional protection (e.g Quick Guard)? */
     const hasConditionalProtectApplied = new BooleanHolder(false);
     /** Does the applied conditional protection bypass Protect-ignoring effects? */

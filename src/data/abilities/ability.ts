@@ -20,7 +20,7 @@ import { getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffect
 import { TerrainType } from "#data/terrain";
 import type { Weather } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
-import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaSide } from "#enums/arena-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
@@ -1133,7 +1133,7 @@ export class PostDefendApplyArenaTrapTagAbAttr extends PostDefendAbAttr {
         0,
         undefined,
         pokemon.id,
-        pokemon.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER,
+        pokemon.isPlayer() ? ArenaSide.ENEMY : ArenaSide.PLAYER,
       );
     }
   }
@@ -2636,11 +2636,11 @@ export class PostSummonRemoveArenaTagAbAttr extends PostSummonAbAttr {
 export class PostSummonAddArenaTagAbAttr extends PostSummonAbAttr {
   private readonly tagType: ArenaTagType;
   private readonly turnCount: number;
-  private readonly side?: ArenaTagSide;
+  private readonly side?: ArenaSide;
   private readonly quiet?: boolean;
   private sourceId: number;
 
-  constructor(showAbility: boolean, tagType: ArenaTagType, turnCount: number, side?: ArenaTagSide, quiet?: boolean) {
+  constructor(showAbility: boolean, tagType: ArenaTagType, turnCount: number, side?: ArenaSide, quiet?: boolean) {
     super(showAbility);
     this.tagType = tagType;
     this.turnCount = turnCount;
@@ -5871,7 +5871,7 @@ export class PostSummonStatStageChangeOnArenaAbAttr extends PostSummonStatStageC
   }
 
   override canApply(params: AbAttrBaseParams): boolean {
-    const side = params.pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+    const side = params.pokemon.isPlayer() ? ArenaSide.PLAYER : ArenaSide.ENEMY;
     return (globalScene.arena.getTagOnSide(this.arenaTagType, side) ?? false) && super.canApply(params);
   }
 }

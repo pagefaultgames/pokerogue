@@ -1,7 +1,7 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import type { TurnCommand } from "#app/battle";
 import { globalScene } from "#app/global-scene";
-import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaSide } from "#enums/arena-side";
 import type { BattlerIndex } from "#enums/battler-index";
 import { Command } from "#enums/command";
 import { SwitchType } from "#enums/switch-type";
@@ -54,7 +54,7 @@ export class TurnStartPhase extends FieldPhase {
     const field = globalScene.getField();
     const moveOrder = this.getCommandOrder();
 
-    for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
+    for (const pokemon of inSpeedOrder(ArenaSide.BOTH)) {
       const preTurnCommand = globalScene.currentBattle.preTurnCommands[pokemon.getBattlerIndex()];
 
       if (preTurnCommand?.skip) {
@@ -68,7 +68,7 @@ export class TurnStartPhase extends FieldPhase {
     }
 
     const phaseManager = globalScene.phaseManager;
-    for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
+    for (const pokemon of inSpeedOrder(ArenaSide.BOTH)) {
       applyAbAttrs("BypassSpeedChanceAbAttr", { pokemon });
       globalScene.applyModifiers(BypassSpeedChanceModifier, pokemon.isPlayer(), pokemon);
     }
