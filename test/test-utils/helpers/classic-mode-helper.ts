@@ -10,7 +10,7 @@ import { CommandPhase } from "#phases/command-phase";
 import { EncounterPhase } from "#phases/encounter-phase";
 import { SelectStarterPhase } from "#phases/select-starter-phase";
 import { TurnInitPhase } from "#phases/turn-init-phase";
-import { generateStarter } from "#test/test-utils/game-manager-utils";
+import { generateStarters } from "#test/test-utils/game-manager-utils";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
 
 /**
@@ -35,7 +35,7 @@ export class ClassicModeHelper extends GameManagerHelper {
   // biome-ignore lint/style/useUnifiedTypeSignatures: Marks the overload for deprecation
   async runToSummon(): Promise<void>;
   async runToSummon(species: SpeciesId[] | undefined): Promise<void>;
-  async runToSummon(species?: SpeciesId[]): Promise<void> {
+  async runToSummon(speciesIds?: SpeciesId[]): Promise<void> {
     await this.game.runToTitle();
 
     if (this.game.override.disableShinies) {
@@ -50,7 +50,7 @@ export class ClassicModeHelper extends GameManagerHelper {
 
     this.game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       this.game.scene.gameMode = getGameMode(GameModes.CLASSIC);
-      const starters = generateStarter(this.game.scene, species);
+      const starters = generateStarters(this.game.scene, speciesIds);
       const selectStarterPhase = new SelectStarterPhase();
       this.game.scene.phaseManager.pushPhase(new EncounterPhase(false));
       selectStarterPhase.initBattle(starters);

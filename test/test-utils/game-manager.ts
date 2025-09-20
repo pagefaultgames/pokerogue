@@ -29,7 +29,7 @@ import { TurnEndPhase } from "#phases/turn-end-phase";
 import { TurnInitPhase } from "#phases/turn-init-phase";
 import { TurnStartPhase } from "#phases/turn-start-phase";
 import { ErrorInterceptor } from "#test/test-utils/error-interceptor";
-import { generateStarter } from "#test/test-utils/game-manager-utils";
+import { generateStarters } from "#test/test-utils/game-manager-utils";
 import { GameWrapper } from "#test/test-utils/game-wrapper";
 import { ChallengeModeHelper } from "#test/test-utils/helpers/challenge-mode-helper";
 import { ClassicModeHelper } from "#test/test-utils/helpers/classic-mode-helper";
@@ -215,7 +215,7 @@ export class GameManager {
 
     this.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       this.scene.gameMode = getGameMode(mode);
-      const starters = generateStarter(this.scene, species);
+      const starters = generateStarters(this.scene, species);
       const selectStarterPhase = new SelectStarterPhase();
       this.scene.phaseManager.pushPhase(new EncounterPhase(false));
       selectStarterPhase.initBattle(starters);
@@ -251,7 +251,7 @@ export class GameManager {
       UiMode.TITLE,
       () => {
         this.scene.gameMode = getGameMode(GameModes.CLASSIC);
-        const starters = generateStarter(this.scene, species);
+        const starters = generateStarters(this.scene, species);
         const selectStarterPhase = new SelectStarterPhase();
         this.scene.phaseManager.pushPhase(new EncounterPhase(false));
         selectStarterPhase.initBattle(starters);
