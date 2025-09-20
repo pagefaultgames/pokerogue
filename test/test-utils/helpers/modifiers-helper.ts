@@ -40,10 +40,7 @@ export class ModifierHelper extends GameManagerHelper {
    * @returns `this`
    */
   testCheck(modifier: ModifierTypeKeys, expectToBePreset: boolean): this {
-    if (expectToBePreset) {
-      expect(itemPoolChecks.get(modifier)).toBeTruthy();
-    }
-    expect(itemPoolChecks.get(modifier)).toBeFalsy();
+    (expectToBePreset ? expect(itemPoolChecks) : expect(itemPoolChecks).not).toHaveKey(modifier);
     return this;
   }
 
