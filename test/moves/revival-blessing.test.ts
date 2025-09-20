@@ -119,17 +119,16 @@ describe("Moves - Revival Blessing", () => {
     game.override
       .battleStyle("double")
       .enemyMoveset([MoveId.REVIVAL_BLESSING])
-      .moveset([MoveId.SPLASH])
+      .moveset([MoveId.SPLASH, MoveId.JUDGMENT])
+      .startingLevel(100)
       .startingWave(25); // 2nd rival battle - must have 3+ pokemon
     await game.classicMode.startBattle([SpeciesId.ARCEUS, SpeciesId.GIRATINA]);
 
     const enemyFainting = game.scene.getEnemyField()[0];
 
-    game.move.select(MoveId.SPLASH, 0);
+    game.move.use(MoveId.JUDGMENT, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, 1);
-    await game.killPokemon(enemyFainting);
 
-    await game.phaseInterceptor.to("BerryPhase");
     await game.toNextTurn();
     // If there are incorrectly two switch phases into this slot, the fainted pokemon will end up in slot 3
     // Make sure it's still in slot 1
