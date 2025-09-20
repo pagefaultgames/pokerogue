@@ -34,8 +34,7 @@ describe("Moves - Tailwind", () => {
 
   it("doubles the Speed stat of the Pokemons on its side", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MEOWTH]);
-    const magikarp = game.scene.getPlayerField()[0];
-    const meowth = game.scene.getPlayerField()[1];
+    const [magikarp, meowth] = game.scene.getPlayerField();
 
     const magikarpSpd = magikarp.getStat(Stat.SPD);
     const meowthSpd = meowth.getStat(Stat.SPD);

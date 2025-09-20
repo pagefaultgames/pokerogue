@@ -66,7 +66,7 @@ describe("Abilities - Flower Veil", () => {
     await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.BULBASAUR]);
 
     // Clear the ability of the ally to isolate the test
-    const ally = game.scene.getPlayerField()[1]!;
+    const ally = game.scene.getPlayerField()[1];
     vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[AbilityId.BALL_FETCH]);
     game.move.select(MoveId.SPLASH);
     game.move.select(MoveId.SPLASH);
