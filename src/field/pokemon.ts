@@ -3480,6 +3480,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param simulated If `true`, suppresses changes to game state during the calculation.
    * @param effectiveness If defined, used in place of calculated effectiveness values
    * @returns The {@linkcode DamageCalculationResult}
+   * @todo Condense various multipliers into a single function
    */
   getAttackDamage({
     source,
@@ -4013,6 +4014,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       : this.summonData.tags.find(t => t.tagType === tagType);
   }
 
+  findTag<T extends BattlerTag>(tagFilter: (tag: BattlerTag) => tag is T): T | undefined;
+  findTag(tagFilter: (tag: BattlerTag) => boolean): BattlerTag | undefined;
   findTag(tagFilter: (tag: BattlerTag) => boolean) {
     return this.summonData.tags.find(t => tagFilter(t));
   }
@@ -4187,14 +4190,19 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Return this Pokemon's move history.
-   * Entries are sorted in order of OLDEST to NEWEST
-   * @returns An array of {@linkcode TurnMove}, as described above.
+   * Entries are sorted in order of OLDEST to NEWEST.
+   * @returns An array of {@linkcode TurnMove}s, as described above.
    * @see {@linkcode getLastXMoves}
    */
   public getMoveHistory(): TurnMove[] {
     return this.summonData.moveHistory;
   }
 
+  /**
+   * Add a move to the end of this {@linkcode Pokemon}'s move history,
+   * used to record its most recently executed actions.
+   * @param turnMove - The {@linkcode TurnMove} to add
+   */
   public pushMoveHistory(turnMove: TurnMove): void {
     if (!this.isOnField()) {
       return;

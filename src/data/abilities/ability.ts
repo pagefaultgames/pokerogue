@@ -1,6 +1,8 @@
 /* biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
 import type { BattleScene } from "#app/battle-scene";
 import type { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-change-triggers";
+import type { MoveEffectPhase } from "#phases/move-effect-phase";
+import type { MoveEndPhase } from "#phases/move-end-phase";
 /* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
 
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
@@ -51,7 +53,8 @@ import { BerryModifierType } from "#modifiers/modifier-type";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import { noAbilityTypeOverrideMoves } from "#moves/invalid-moves";
 import type { Move } from "#moves/move";
-import type { PokemonMove } from "#moves/pokemon-move";
+import { getMoveTargets } from "#moves/move-utils";
+import { PokemonMove } from "#moves/pokemon-move";
 import type { StatStageChangePhase } from "#phases/stat-stage-change-phase";
 import type {
   AbAttrCondition,
@@ -5739,12 +5742,21 @@ export class InfiltratorAbAttr extends AbAttr {
 /**
  * Attribute implementing the effects of {@link https://bulbapedia.bulbagarden.net/wiki/Magic_Bounce_(ability) | Magic Bounce}.
  * Allows the source to bounce back {@linkcode MoveFlags.REFLECTABLE | Reflectable}
- *  moves as if the user had used {@linkcode MoveId.MAGIC_COAT | Magic Coat}.
- * @sealed
- * @todo Make reflection a part of this ability's effects
+ * moves as if the user had used {@linkcode MoveId.MAGIC_COAT | Magic Coat}.
+ * The calling {@linkcode MoveEffectPhase} will "skip" targets with a reflection effect active,
+ * showing the flyout and queueing the reaction during the move's {@linkcode MoveEndPhase}.
  */
-export class ReflectStatusMoveAbAttr extends AbAttr {
-  private declare readonly _: never;
+export class ReflectStatusMoveAbAttr extends PreDefendAbAttr {
+  override apply({ pokemon, opponent, move }: AugmentMoveInteractionAbAttrParams): void {
+    const newTargets = move.isMultiTarget() ? getMoveTargets(pokemon, move.id).targets : [opponent.getBattlerIndex()];
+    globalScene.phaseManager.unshiftNew(
+      "MovePhase",
+      pokemon,
+      newTargets,
+      new PokemonMove(move.id),
+      MoveUseMode.REFLECTED,
+    );
+  }
 }
 
 // TODO: Make these ability attributes be flags instead of dummy attributes
@@ -7198,10 +7210,7 @@ export function initAbilities() {
       .attr(PostIntimidateStatStageChangeAbAttr, [ Stat.SPD ], 1),
     new Ability(AbilityId.MAGIC_BOUNCE, 5)
       .attr(ReflectStatusMoveAbAttr)
-      .ignorable()
-      // Interactions with stomping tantrum, instruct, encore, and probably other moves that
-      // rely on move history
-      .edgeCase(),
+      .ignorable(),
     new Ability(AbilityId.SAP_SIPPER, 5)
       .attr(TypeImmunityStatStageChangeAbAttr, PokemonType.GRASS, Stat.ATK, 1)
       .ignorable(),
@@ -7235,7 +7244,7 @@ export function initAbilities() {
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonTeravolt", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
       .attr(MoveAbilityBypassAbAttr),
     new Ability(AbilityId.AROMA_VEIL, 6)
-      .attr(UserFieldBattlerTagImmunityAbAttr, [ BattlerTagType.INFATUATED, BattlerTagType.TAUNT, BattlerTagType.DISABLED, BattlerTagType.TORMENT, BattlerTagType.HEAL_BLOCK ])
+      .attr(UserFieldBattlerTagImmunityAbAttr, [ BattlerTagType.INFATUATED, BattlerTagType.TAUNT, BattlerTagType.DISABLED, BattlerTagType.TORMENT, BattlerTagType.HEAL_BLOCK, BattlerTagType.ENCORE ])
       .ignorable(),
     new Ability(AbilityId.FLOWER_VEIL, 6)
       .attr(ConditionalUserFieldStatusEffectImmunityAbAttr, (target: Pokemon, source: Pokemon | null) => {
@@ -7299,7 +7308,7 @@ export function initAbilities() {
     new Ability(AbilityId.GOOEY, 6)
       .attr(PostDefendStatStageChangeAbAttr, (_target, _user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), Stat.SPD, -1, false),
     new Ability(AbilityId.AERILATE, 6)
-      .attr(MoveTypeChangeAbAttr, PokemonType.FLYING, 1.2, (_user, _target, move) => move.type === PokemonType.NORMAL),
+    .attr(MoveTypeChangeAbAttr, PokemonType.FLYING, 1.2, (_user, _target, move) => move.type === PokemonType.NORMAL),
     new Ability(AbilityId.PARENTAL_BOND, 6)
       .attr(AddSecondStrikeAbAttr, 0.25),
     new Ability(AbilityId.DARK_AURA, 6)
