@@ -20,7 +20,7 @@ export class AdminUiHandler extends FormModalUiHandler {
   private adminResult: AdminSearchInfo;
   private config: ModalConfig;
 
-  private tempSaveData: GameData;
+  private tempGameData: GameData;
 
   private readonly buttonGap = 10;
   private readonly ERR_REQUIRED_FIELD = (field: string) => {
@@ -53,13 +53,13 @@ export class AdminUiHandler extends FormModalUiHandler {
   override getButtonLabels(): string[] {
     switch (this.adminMode) {
       case AdminMode.LINK:
-        return ["Link Account", "Cancel"];
+        return ["Link Account", "Cancel", "     ", "       "];
       case AdminMode.SEARCH:
-        return ["Find account", "Cancel"];
+        return ["Find account", "Cancel", "     ", "       "];
       case AdminMode.ADMIN:
-        return ["Back to search", "Cancel"];
+        return ["Back to search", "Cancel", "Stats", "Pokedex"];
       default:
-        return ["Activate ADMIN", "Cancel"];
+        return ["Activate ADMIN", "Cancel", "        ", "           "];
     }
   }
 
@@ -328,6 +328,7 @@ export class AdminUiHandler extends FormModalUiHandler {
         lastLoggedIn: "",
         registered: "",
       };
+      this.tempGameData = globalScene.gameData;
       return { adminSearchResult: fakeResponse, error: false };
     }
     try {
@@ -412,6 +413,9 @@ export class AdminUiHandler extends FormModalUiHandler {
           () => {
             globalScene.ui.revertMode();
             globalScene.ui.revertMode();
+          },
+          () => {
+            globalScene.ui.setOverlayMode(UiMode.GAME_STATS, this.tempGameData);
           },
         ],
       },
