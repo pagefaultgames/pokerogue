@@ -230,6 +230,7 @@ export class BattleScene extends SceneBase {
   public fusionPaletteSwaps = true;
   public enableTouchControls = false;
   public enableVibration = false;
+  public enableHotkeyTips = false;
   public showBgmBar = true;
   public hideUsername = false;
   /** Determines the selected battle style. */
@@ -270,6 +271,7 @@ export class BattleScene extends SceneBase {
   public lastEnemyTrainer: Trainer | null;
   public currentBattle: Battle;
   public pokeballCounts: PokeballCounts;
+  public lastPokeballType: PokeballType = PokeballType.POKEBALL;
   public money: number;
   public pokemonInfoContainer: PokemonInfoContainer;
   private party: PlayerPokemon[];
