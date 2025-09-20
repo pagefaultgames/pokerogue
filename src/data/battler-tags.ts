@@ -3627,6 +3627,41 @@ export class MagicCoatTag extends BattlerTag {
 }
 
 /**
+ * Tag associated with {@linkcode AbilityId.SUPREME_OVERLORD}
+ */
+export class SupremeOverlordTag extends AbilityBattlerTag {
+  public override readonly tagType = BattlerTagType.SUPREME_OVERLORD;
+  /** The number of faints at the time the user was sent out */
+  public readonly faintCount: number;
+  constructor() {
+    super(BattlerTagType.SUPREME_OVERLORD, AbilityId.SUPREME_OVERLORD, BattlerTagLapseType.FAINT, 0);
+  }
+
+  public override onAdd(pokemon: Pokemon): boolean {
+    (this as Mutable<this>).faintCount = Math.min(
+      pokemon.isPlayer() ? globalScene.arena.playerFaints : globalScene.currentBattle.enemyFaints,
+      5,
+    );
+    globalScene.phaseManager.queueMessage(
+      i18next.t("battlerTags:supremeOverlordOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }),
+    );
+    return true;
+  }
+
+  /**
+   * @returns The damage multiplier for Supreme Overlord
+   */
+  public getBoost(): number {
+    return 1 + 0.1 * this.faintCount;
+  }
+
+  public override loadTag(source: BaseBattlerTag & Pick<SupremeOverlordTag, "tagType" | "faintCount">): void {
+    super.loadTag(source);
+    (this as Mutable<this>).faintCount = source.faintCount;
+  }
+}
+
+/**
  * Retrieves a {@linkcode BattlerTag} based on the provided tag type, turn count, source move, and source ID.
  * @param sourceId - The ID of the pokemon adding the tag
  * @returns The corresponding {@linkcode BattlerTag} object.
@@ -3826,6 +3861,8 @@ export function getBattlerTag(
       return new PsychoShiftTag();
     case BattlerTagType.MAGIC_COAT:
       return new MagicCoatTag();
+    case BattlerTagType.SUPREME_OVERLORD:
+      return new SupremeOverlordTag();
   }
 }
 
@@ -3960,4 +3997,5 @@ export type BattlerTagTypeMap = {
   [BattlerTagType.GRUDGE]: GrudgeTag;
   [BattlerTagType.PSYCHO_SHIFT]: PsychoShiftTag;
   [BattlerTagType.MAGIC_COAT]: MagicCoatTag;
+  [BattlerTagType.SUPREME_OVERLORD]: SupremeOverlordTag;
 };
