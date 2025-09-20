@@ -241,11 +241,11 @@ export class SwitchSummonPhase extends SummonPhase {
 
     globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
     // Reverts to weather-based forms when weather suppressors (Cloud Nine/Air Lock) are switched out
-    globalScene.arena.triggerWeatherBasedFormChanges();
+    globalScene.arena.triggerWeatherBasedFormChanges(pokemon);
   }
 
   queuePostSummon(): void {
-    globalScene.phaseManager.startNewDynamicPhase("PostSummonPhase", this.getPokemon().getBattlerIndex());
+    globalScene.phaseManager.unshiftNew("PostSummonPhase", this.getPokemon().getBattlerIndex());
   }
 
   /**

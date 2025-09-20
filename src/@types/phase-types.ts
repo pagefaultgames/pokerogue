@@ -1,3 +1,5 @@
+import type { Pokemon } from "#app/field/pokemon";
+import type { Phase } from "#app/phase";
 import type { PhaseConstructorMap } from "#app/phase-manager";
 import type { ObjectValues } from "#types/type-helpers";
 
@@ -24,3 +26,14 @@ export type PhaseClass = ObjectValues<PhaseConstructorMap>;
  * Union type of all phase names as strings.
  */
 export type PhaseString = keyof PhaseMap;
+
+/** Type for predicate functions operating on a specific type of {@linkcode Phase}. */
+
+export type PhaseConditionFunc<T extends PhaseString> = (phase: PhaseMap[T]) => boolean;
+
+/**
+ * Interface type representing the assumption that all phases with pokemon associated are dynamic
+ */
+export interface DynamicPhase extends Phase {
+  getPokemon(): Pokemon;
+}
