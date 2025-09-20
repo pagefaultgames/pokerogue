@@ -44,9 +44,9 @@
  * @module
  */
 
-// biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports
+/** biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports */
 import type { BattlerTag } from "#app/data/battler-tags";
-// biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports
+/** biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports */
 
 import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
@@ -65,6 +65,7 @@ import { MoveTarget } from "#enums/move-target";
 import { PokemonType } from "#enums/pokemon-type";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
+import { ArenaTagAddedEvent } from "#events/arena";
 import type { Arena } from "#field/arena";
 import type { Pokemon } from "#field/pokemon";
 import type {
@@ -800,6 +801,9 @@ export abstract class EntryHazardTag extends SerializableArenaTag {
     this.layers++;
 
     this.onAdd(arena);
+    globalScene.arena.eventTarget.dispatchEvent(
+      new ArenaTagAddedEvent(this.tagType, this.side, 0, [this.layers, this.maxLayers]),
+    );
   }
 
   /**

@@ -1,98 +1,141 @@
 import type { TerrainType } from "#data/terrain";
+import { ArenaEventType } from "#enums/arena-event-type";
 import type { ArenaTagSide } from "#enums/arena-tag-side";
 import type { ArenaTagType } from "#enums/arena-tag-type";
 import type { WeatherType } from "#enums/weather-type";
 
-/** Alias for all {@linkcode ArenaEvent} type strings */
-export enum ArenaEventType {
-  /** Triggers when a {@linkcode WeatherType} is added, overlapped, or removed */
-  WEATHER_CHANGED = "onWeatherChanged",
-  /** Triggers when a {@linkcode TerrainType} is added, overlapped, or removed */
-  TERRAIN_CHANGED = "onTerrainChanged",
-
-  /** Triggers when a {@linkcode ArenaTagType} is added */
-  TAG_ADDED = "onTagAdded",
-  /** Triggers when a {@linkcode ArenaTagType} is removed */
-  TAG_REMOVED = "onTagRemoved",
+/**
+ * Abstract container class for all {@linkcode ArenaEventType} events.
+ * @eventProperty
+ */
+abstract class ArenaEvent extends Event {
+  /** The {@linkcode ArenaEventType} being emitted. */
+  public declare abstract readonly type: ArenaEventType; // that's a mouthful!
+  // biome-ignore lint/complexity/noUselessConstructor: changes the type of the type field
+  constructor(type: ArenaEventType) {
+    super(type);
+  }
 }
 
-/** Base container class for all {@linkcode ArenaEventType} events */
-export class ArenaEvent extends Event {
-  /** The total duration of the {@linkcode ArenaEventType} */
-  public duration: number;
-  /** The maximum duration of the {@linkcode ArenaEventType} */
-  public maxDuration: number;
-  constructor(eventType: ArenaEventType, duration: number, maxDuration: number = duration) {
-    super(eventType);
+export type { ArenaEvent };
 
+/**
+ * Container class for {@linkcode ArenaEventType.WEATHER_CHANGED} events. \
+ * Emitted whenever a weather effect starts, ends or is replaced.
+ * @eventProperty
+ */
+export class WeatherChangedEvent extends ArenaEvent {
+  declare type: typeof ArenaEventType.WEATHER_CHANGED;
+
+  /** The new {@linkcode WeatherType} being set. */
+  public readonly weatherType: WeatherType;
+  /**
+   * The new weather's current duration.
+   * Unused if {@linkcode weatherType} is set to {@linkcode WeatherType.NONE}.
+   */
+  public readonly duration: number;
+  /**
+   * The new weather's maximum duration.
+   * Unused if {@linkcode weatherType} is set to {@linkcode WeatherType.NONE}.
+   */
+  public readonly maxDuration: number;
+
+  constructor(weatherType: WeatherType, duration: number, maxDuration = duration) {
+    super(ArenaEventType.WEATHER_CHANGED);
+
+    this.weatherType = weatherType;
     this.duration = duration;
     this.maxDuration = maxDuration;
   }
 }
-/** Container class for {@linkcode ArenaEventType.WEATHER_CHANGED} events */
-export class WeatherChangedEvent extends ArenaEvent {
-  /** The {@linkcode WeatherType} being overridden */
-  public oldWeatherType: WeatherType;
-  /** The {@linkcode WeatherType} being set */
-  public newWeatherType: WeatherType;
-  constructor(oldWeatherType: WeatherType, newWeatherType: WeatherType, duration: number, maxDuration?: number) {
-    super(ArenaEventType.WEATHER_CHANGED, duration, maxDuration);
 
-    this.oldWeatherType = oldWeatherType;
-    this.newWeatherType = newWeatherType;
-  }
-}
-/** Container class for {@linkcode ArenaEventType.TERRAIN_CHANGED} events */
+/**
+ * Container class for {@linkcode ArenaEventType.TERRAIN_CHANGED} events. \
+ * Emitted whenever a terrain effect starts, ends or is replaced.
+ * @eventProperty
+ */
 export class TerrainChangedEvent extends ArenaEvent {
-  /** The {@linkcode TerrainType} being overridden */
-  public oldTerrainType: TerrainType;
-  /** The {@linkcode TerrainType} being set */
-  public newTerrainType: TerrainType;
-  constructor(oldTerrainType: TerrainType, newTerrainType: TerrainType, duration: number, maxDuration?: number) {
-    super(ArenaEventType.TERRAIN_CHANGED, duration, maxDuration);
+  declare type: typeof ArenaEventType.TERRAIN_CHANGED;
 
-    this.oldTerrainType = oldTerrainType;
-    this.newTerrainType = newTerrainType;
+  /** The new {@linkcode TerrainType} being set. */
+  public readonly terrainType: TerrainType;
+  /**
+   * The new terrain's current duration.
+   * Unused if {@linkcode terrainType} is set to {@linkcode TerrainType.NONE}.
+   */
+  public readonly duration: number;
+  /**
+   * The new terrain's maximum duration.
+   * Unused if {@linkcode weatherType} is set to {@linkcode WeatherType.NONE}.
+   */
+  public readonly maxDuration: number;
+
+  constructor(terrainType: TerrainType, duration: number, maxDuration = duration) {
+    super(ArenaEventType.TERRAIN_CHANGED);
+
+    this.terrainType = terrainType;
+    this.duration = duration;
+    this.maxDuration = maxDuration;
   }
 }
 
-/** Container class for {@linkcode ArenaEventType.TAG_ADDED} events */
-export class TagAddedEvent extends ArenaEvent {
-  /** The {@linkcode ArenaTagType} being added */
-  public arenaTagType: ArenaTagType;
-  /** The {@linkcode ArenaTagSide} the tag is being placed on */
-  public arenaTagSide: ArenaTagSide;
-  /** The current number of layers of the arena trap. */
-  public arenaTagLayers: number;
-  /** The maximum amount of layers of the arena trap. */
-  public arenaTagMaxLayers: number;
+/**
+ * Container class for {@linkcode ArenaEventType.ARENA_TAG_ADDED} events. \
+ * Emitted whenever a new {@linkcode ArenaTag} is added to the arena, or whenever an existing
+ * {@linkcode ArenaTrapTag} overlaps and adds new layers.
+ * @eventProperty
+ */
+export class ArenaTagAddedEvent extends ArenaEvent {
+  declare type: typeof ArenaEventType.ARENA_TAG_ADDED;
+
+  /** The {@linkcode ArenaTagType} of the tag being added */
+  public readonly tagType: ArenaTagType;
+  /** The {@linkcode ArenaTagSide} the tag is being added too */
+  public readonly side: ArenaTagSide;
+  /** The tag's initial duration. */
+  public readonly duration: number;
+  /** The tag's maximum duration. */
+  public readonly maxDuration: number;
+  /**
+   * A tuple containing the current and maximum number of layers of the current {@linkcode ArenaTrapTag},
+   * or `undefined` if the tag was not a trap.
+   */
+  public readonly trapLayers: [current: number, max: number] | undefined;
 
   constructor(
-    arenaTagType: ArenaTagType,
+    side: ArenaTagType,
     arenaTagSide: ArenaTagSide,
     duration: number,
-    maxDuration?: number,
-    arenaTagLayers?: number,
-    arenaTagMaxLayers?: number,
+    trapLayers?: [current: number, max: number],
+    maxDuration = duration,
   ) {
-    super(ArenaEventType.TAG_ADDED, duration, maxDuration);
+    super(ArenaEventType.ARENA_TAG_ADDED);
 
-    this.arenaTagType = arenaTagType;
-    this.arenaTagSide = arenaTagSide;
-    this.arenaTagLayers = arenaTagLayers!; // TODO: is this bang correct?
-    this.arenaTagMaxLayers = arenaTagMaxLayers!; // TODO: is this bang correct?
+    this.tagType = side;
+    this.side = arenaTagSide;
+    this.duration = duration;
+    this.maxDuration = maxDuration;
+    this.trapLayers = trapLayers;
   }
 }
-/** Container class for {@linkcode ArenaEventType.TAG_REMOVED} events */
-export class TagRemovedEvent extends ArenaEvent {
-  /** The {@linkcode ArenaTagType} being removed */
-  public arenaTagType: ArenaTagType;
-  /** The {@linkcode ArenaTagSide} the tag was being placed on */
-  public arenaTagSide: ArenaTagSide;
-  constructor(arenaTagType: ArenaTagType, arenaTagSide: ArenaTagSide, duration: number) {
-    super(ArenaEventType.TAG_REMOVED, duration);
 
-    this.arenaTagType = arenaTagType;
-    this.arenaTagSide = arenaTagSide;
+/**
+ * Container class for {@linkcode ArenaEventType.ARENA_TAG_REMOVED} events. \
+ * Emitted whenever an {@linkcode ArenaTag} is removed from the field for any reason.
+ * @eventProperty
+ */
+export class ArenaTagRemovedEvent extends ArenaEvent {
+  declare type: typeof ArenaEventType.ARENA_TAG_REMOVED;
+
+  /** The {@linkcode ArenaTagType} of the tag being removed. */
+  public readonly tagType: ArenaTagType;
+  /** The {@linkcode ArenaTagSide} the removed tag affected. */
+  public readonly side: ArenaTagSide;
+
+  constructor(tagType: ArenaTagType, side: ArenaTagSide) {
+    super(ArenaEventType.ARENA_TAG_REMOVED);
+
+    this.tagType = tagType;
+    this.side = side;
   }
 }
