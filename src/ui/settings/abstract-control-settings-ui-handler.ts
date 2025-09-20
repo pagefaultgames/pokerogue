@@ -451,20 +451,19 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
     // Retrieve the layout settings based on the type of the gamepad.
     const layout = this.layout[configType];
     // Update the main controller with configuration details from the selected layout.
-    if (layout) {
-      this.keys = layout.keys;
-      this.optionsContainer = layout.optionsContainer;
-      this.optionsContainer.setVisible(true);
-      this.settingLabels = layout.settingLabels;
-      this.optionValueLabels = layout.optionValueLabels;
-      this.optionCursors = layout.optionCursors;
-      this.inputsIcons = layout.inputsIcons;
-      this.bindingSettings = layout.bindingSettings;
-      this.scrollBar.setTotalRows(layout.settingLabels.length);
-      this.scrollBar.setScrollCursor(0);
-    } else {
+    if (!layout) {
       return false;
     }
+    this.keys = layout.keys;
+    this.optionsContainer = layout.optionsContainer;
+    this.optionsContainer.setVisible(true);
+    this.settingLabels = layout.settingLabels;
+    this.optionValueLabels = layout.optionValueLabels;
+    this.optionCursors = layout.optionCursors;
+    this.inputsIcons = layout.inputsIcons;
+    this.bindingSettings = layout.bindingSettings;
+    this.scrollBar.setTotalRows(layout.settingLabels.length);
+    this.scrollBar.setScrollCursor(0);
 
     // Return true indicating the layout was successfully applied.
     return true;
