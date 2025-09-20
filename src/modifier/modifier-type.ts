@@ -1302,8 +1302,9 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
           // Account for variable type changing moves
           // Get a variable type attribute of the move
           const variableTypeAttr = move.getAttrs("VariableMoveTypeAttr")[0];
-          const types = variableTypeAttr != null ? variableTypeAttr.getTypesForItemSpawn(p, move) : [move.type];
+          const types = variableTypeAttr?.getTypesForItemSpawn(p, move) ?? [move.type];
           for (const type of types) {
+            console.info("%cConsidering type " + PokemonType[type], "color: orange");
             const currentWeight = attackMoveTypeWeights.get(type) ?? 0;
             if (currentWeight < 3) {
               attackMoveTypeWeights.set(type, currentWeight + 1);
@@ -1318,10 +1319,12 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
       }
 
       const randInt = randSeedInt(totalWeight);
+      console.log("%cTotal weight " + totalWeight + ", rolled " + randInt, "color: orange");
       let weight = 0;
 
       for (const [type, typeWeight] of attackMoveTypeWeights.entries()) {
-        if (randInt <= weight + typeWeight) {
+        console.log("%cWeighted type " + PokemonType[type] + " with weight " + typeWeight, "color: orange");
+        if (randInt < weight + typeWeight) {
           return new AttackTypeBoosterModifierType(type, TYPE_BOOST_ITEM_BOOST_PERCENT);
         }
         weight += typeWeight;
