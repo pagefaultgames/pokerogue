@@ -139,7 +139,8 @@ describe("Move - Wish", () => {
     // account for phase interceptor stopping _after_ the first PokemonHealPhase is started
     // TODO: Remove in phase-interceptor PR (intentionally will fail if not removed)
     expect(game).toBeAtPhase("PokemonHealPhase");
-    expect(healPhases).toHaveLength(3);
+    healPhases.unshift(game.scene.phaseManager.getCurrentPhase());
+    expect(healPhases).toHaveLength(4);
     expect(healPhases.map(php => php.getPokemon())).toEqual(oldOrder);
 
     await game.toEndOfTurn();
