@@ -74,6 +74,7 @@ import {
   randSeedItem,
   toDmgValue,
 } from "#utils/common";
+import { inSpeedOrder } from "#utils/speed-order-generator";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
@@ -2769,7 +2770,7 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
       return;
     }
 
-    for (const opponent of pokemon.getOpponents()) {
+    for (const opponent of pokemon.getOpponentsGenerator()) {
       const cancelled = new BooleanHolder(false);
       if (this.intimidate) {
         const params: AbAttrParamsWithCancel = { pokemon: opponent, cancelled, simulated };
@@ -3079,16 +3080,12 @@ export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAtt
     if (simulated) {
       return;
     }
-    const party = pokemon.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
-    const allowedParty = party.filter(p => p.isAllowedInBattle());
 
-    for (const pokemon of allowedParty) {
-      if (pokemon.status && this.statusEffect.includes(pokemon.status.effect)) {
-        globalScene.phaseManager.queueMessage(
-          getStatusEffectHealText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)),
-        );
-        pokemon.resetStatus(false);
-        pokemon.updateInfo();
+    for (const p of pokemon.getAlliedField()) {
+      if (p.status && this.statusEffect.includes(p.status.effect)) {
+        globalScene.phaseManager.queueMessage(getStatusEffectHealText(p.status.effect, getPokemonNameWithAffix(p)));
+        p.resetStatus(false);
+        p.updateInfo();
       }
     }
   }
@@ -4302,7 +4299,7 @@ export class FriskAbAttr extends PostSummonAbAttr {
 
   override apply({ simulated, pokemon }: AbAttrBaseParams): void {
     if (!simulated) {
-      for (const opponent of pokemon.getOpponents()) {
+      for (const opponent of pokemon.getOpponentsGenerator()) {
         globalScene.phaseManager.queueMessage(
           i18next.t("abilityTriggers:frisk", {
             pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
@@ -4869,7 +4866,7 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
       return;
     }
 
-    for (const opp of pokemon.getOpponents()) {
+    for (const opp of pokemon.getOpponentsGenerator()) {
       if ((opp.status?.effect !== StatusEffect.SLEEP && !opp.hasAbility(AbilityId.COMATOSE)) || opp.switchOutStatus) {
         continue;
       }
@@ -5420,10 +5417,9 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
     }
 
     const cancelled = new BooleanHolder(false);
-    // TODO: This should be in speed order
-    globalScene
-      .getField(true)
-      .forEach(p => applyAbAttrs("FieldPreventExplosiveMovesAbAttr", { pokemon: p, cancelled, simulated }));
+    for (const p of inSpeedOrder(ArenaTagSide.BOTH)) {
+      applyAbAttrs("FieldPreventExplosiveMovesAbAttr", { pokemon: p, cancelled, simulated });
+    }
 
     if (cancelled.value) {
       return false;

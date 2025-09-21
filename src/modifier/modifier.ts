@@ -1915,9 +1915,7 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
     // Remove the Pokemon's FAINT status
     pokemon.resetStatus(true, false, true, false);
 
-    // Reapply Commander on the Pokemon's side of the field, if applicable
-    const field = pokemon.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
-    for (const p of field) {
+    for (const p of pokemon.getAlliedField()) {
       applyAbAttrs("CommanderAbAttr", { pokemon: p });
     }
     return true;

@@ -77,6 +77,7 @@ import type {
 } from "#types/arena-tags";
 import type { Mutable } from "#types/type-helpers";
 import { BooleanHolder, type NumberHolder, toDmgValue } from "#utils/common";
+import { inSpeedOrder } from "#utils/speed-order-generator";
 import i18next from "i18next";
 
 /** Interface containing the serializable fields of ArenaTagData. */
@@ -187,7 +188,7 @@ export abstract class ArenaTag implements BaseArenaTag {
 
   /**
    * Helper function that retrieves the Pokemon affected
-   * @returns list of PlayerPokemon or EnemyPokemon on the field
+   * @returns A list of PlayerPokemon or EnemyPokemon on the field, not in speed order
    */
   public getAffectedPokemon(): Pokemon[] {
     switch (this.side) {
@@ -1236,7 +1237,7 @@ export class GravityTag extends SerializableArenaTag {
 
   onAdd(_arena: Arena): void {
     globalScene.phaseManager.queueMessage(i18next.t("arenaTag:gravityOnAdd"));
-    globalScene.getField(true).forEach(pokemon => {
+    for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
       if (pokemon !== null) {
         pokemon.removeTag(BattlerTagType.FLOATING);
         pokemon.removeTag(BattlerTagType.TELEKINESIS);
@@ -1244,7 +1245,7 @@ export class GravityTag extends SerializableArenaTag {
           pokemon.addTag(BattlerTagType.INTERRUPTED);
         }
       }
-    });
+    }
   }
 
   onRemove(_arena: Arena): void {
@@ -1279,9 +1280,7 @@ class TailwindTag extends SerializableArenaTag {
       );
     }
 
-    const field = source.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
-
-    for (const pokemon of field) {
+    for (const pokemon of source.getAlliedField()) {
       // Apply the CHARGED tag to party members with the WIND_POWER ability
       // TODO: This should not be handled here
       if (pokemon.hasAbility(AbilityId.WIND_POWER) && !pokemon.getTag(BattlerTagType.CHARGED)) {
@@ -1394,27 +1393,26 @@ class FireGrassPledgeTag extends SerializableArenaTag {
   }
 
   override lapse(arena: Arena): boolean {
-    const field: Pokemon[] =
-      this.side === ArenaTagSide.PLAYER ? globalScene.getPlayerField() : globalScene.getEnemyField();
+    for (const pokemon of inSpeedOrder(this.side)) {
+      if (pokemon.isOfType(PokemonType.FIRE) || pokemon.switchOutStatus) {
+        continue;
+      }
 
-    field
-      .filter(pokemon => !pokemon.isOfType(PokemonType.FIRE) && !pokemon.switchOutStatus)
-      .forEach(pokemon => {
-        // "{pokemonNameWithAffix} was hurt by the sea of fire!"
-        globalScene.phaseManager.queueMessage(
-          i18next.t("arenaTag:fireGrassPledgeLapse", {
-            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          }),
-        );
-        // TODO: Replace this with a proper animation
-        globalScene.phaseManager.unshiftNew(
-          "CommonAnimPhase",
-          pokemon.getBattlerIndex(),
-          pokemon.getBattlerIndex(),
-          CommonAnim.MAGMA_STORM,
-        );
-        pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 8), { result: HitResult.INDIRECT });
-      });
+      // "{pokemonNameWithAffix} was hurt by the sea of fire!"
+      globalScene.phaseManager.queueMessage(
+        i18next.t("arenaTag:fireGrassPledgeLapse", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+        }),
+      );
+      // TODO: Replace this with a proper animation
+      globalScene.phaseManager.unshiftNew(
+        "CommonAnimPhase",
+        pokemon.getBattlerIndex(),
+        pokemon.getBattlerIndex(),
+        CommonAnim.MAGMA_STORM,
+      );
+      pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 8), { result: HitResult.INDIRECT });
+    }
 
     return super.lapse(arena);
   }
@@ -1532,7 +1530,7 @@ export class SuppressAbilitiesTag extends SerializableArenaTag {
     if (pokemon) {
       this.playActivationMessage(pokemon);
 
-      for (const fieldPokemon of globalScene.getField(true)) {
+      for (const fieldPokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
         if (fieldPokemon && fieldPokemon.id !== pokemon.id) {
           // TODO: investigate whether we can just remove the foreach and call `applyAbAttrs` directly, providing
           // the appropriate attributes (preLEaveField and IllusionBreak)
@@ -1573,7 +1571,7 @@ export class SuppressAbilitiesTag extends SerializableArenaTag {
       globalScene.phaseManager.queueMessage(i18next.t("arenaTag:neutralizingGasOnRemove"));
     }
 
-    for (const pokemon of globalScene.getField(true)) {
+    for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
       // There is only one pokemon with this attr on the field on removal, so its abilities are already active
       if (pokemon && !pokemon.hasAbilityWithAttr("PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr", false)) {
         [true, false].forEach(passive => {
