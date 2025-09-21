@@ -104,7 +104,6 @@ import {
 import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterSaveData } from "#mystery-encounters/mystery-encounter-save-data";
 import { allMysteryEncounters, mysteryEncountersByBiome } from "#mystery-encounters/mystery-encounters";
-import type { MovePhase } from "#phases/move-phase";
 import { expSpriteKeys } from "#sprites/sprite-keys";
 import { hasExpSprite } from "#sprites/sprite-utils";
 import type { Variant } from "#sprites/variant";
@@ -787,12 +786,14 @@ export class BattleScene extends SceneBase {
 
   /**
    * Returns an array of EnemyPokemon of length 1 or 2 depending on if in a double battle or not.
-   * Does not actually check if the pokemon are on the field or not.
+   * @param active - (Default `false`) Whether to consider only {@linkcode Pokemon.isActive | active} on-field pokemon
    * @returns array of {@linkcode EnemyPokemon}
    */
-  public getEnemyField(): EnemyPokemon[] {
+  public getEnemyField(active = false): EnemyPokemon[] {
     const party = this.getEnemyParty();
-    return party.slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1));
+    return party
+      .slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1))
+      .filter(p => !active || p.isActive());
   }
 
   /**
@@ -817,25 +818,7 @@ export class BattleScene extends SceneBase {
    * @param allyPokemon - The {@linkcode Pokemon} allied with the removed Pokemon; will have moves redirected to it
    */
   redirectPokemonMoves(removedPokemon: Pokemon, allyPokemon: Pokemon): void {
-    // failsafe: if not a double battle just return
-    if (this.currentBattle.double === false) {
-      return;
-    }
-    if (allyPokemon?.isActive(true)) {
-      let targetingMovePhase: MovePhase;
-      do {
-        targetingMovePhase = this.phaseManager.findPhase(
-          mp =>
-            mp.is("MovePhase")
-            && mp.targets.length === 1
-            && mp.targets[0] === removedPokemon.getBattlerIndex()
-            && mp.pokemon.isPlayer() !== allyPokemon.isPlayer(),
-        ) as MovePhase;
-        if (targetingMovePhase && targetingMovePhase.targets[0] !== allyPokemon.getBattlerIndex()) {
-          targetingMovePhase.targets[0] = allyPokemon.getBattlerIndex();
-        }
-      } while (targetingMovePhase);
-    }
+    this.phaseManager.redirectMoves(removedPokemon, allyPokemon);
   }
 
   /**
@@ -1433,7 +1416,7 @@ export class BattleScene extends SceneBase {
     }
 
     if (lastBattle?.double && !newDouble) {
-      this.phaseManager.tryRemovePhase((p: Phase) => p.is("SwitchPhase"));
+      this.phaseManager.tryRemovePhase("SwitchPhase");
       for (const p of this.getPlayerField()) {
         p.lapseTag(BattlerTagType.COMMANDED);
       }

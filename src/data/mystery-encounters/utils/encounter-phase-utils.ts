@@ -738,7 +738,7 @@ export function setEncounterRewards(
     if (customShopRewards) {
       globalScene.phaseManager.unshiftNew("SelectModifierPhase", 0, undefined, customShopRewards);
     } else {
-      globalScene.phaseManager.tryRemovePhase(p => p.is("MysteryEncounterRewardsPhase"));
+      globalScene.phaseManager.removeAllPhasesOfType("MysteryEncounterRewardsPhase");
     }
 
     if (eggRewards) {
@@ -812,8 +812,7 @@ export function leaveEncounterWithoutBattle(
   encounterMode: MysteryEncounterMode = MysteryEncounterMode.NO_BATTLE,
 ) {
   globalScene.currentBattle.mysteryEncounter!.encounterMode = encounterMode;
-  globalScene.phaseManager.clearPhaseQueue();
-  globalScene.phaseManager.clearPhaseQueueSplice();
+  globalScene.phaseManager.clearPhaseQueue(true);
   handleMysteryEncounterVictory(addHealPhase);
 }
 
@@ -826,7 +825,7 @@ export function handleMysteryEncounterVictory(addHealPhase = false, doNotContinu
   const allowedPkm = globalScene.getPlayerParty().filter(pkm => pkm.isAllowedInBattle());
 
   if (allowedPkm.length === 0) {
-    globalScene.phaseManager.clearPhaseQueue();
+    globalScene.phaseManager.clearPhaseQueue(true);
     globalScene.phaseManager.unshiftNew("GameOverPhase");
     return;
   }
@@ -869,7 +868,7 @@ export function handleMysteryEncounterBattleFailed(addHealPhase = false, doNotCo
   const allowedPkm = globalScene.getPlayerParty().filter(pkm => pkm.isAllowedInBattle());
 
   if (allowedPkm.length === 0) {
-    globalScene.phaseManager.clearPhaseQueue();
+    globalScene.phaseManager.clearPhaseQueue(true);
     globalScene.phaseManager.unshiftNew("GameOverPhase");
     return;
   }

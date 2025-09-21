@@ -28,7 +28,8 @@ export class CheckSwitchPhase extends BattlePhase {
 
     // ...if the user is playing in Set Mode
     if (globalScene.battleStyle === BattleStyle.SET) {
-      return super.end();
+      this.end(true);
+      return;
     }
 
     // ...if the checked Pokemon is somehow not on the field
@@ -44,7 +45,8 @@ export class CheckSwitchPhase extends BattlePhase {
         .slice(1)
         .filter(p => p.isActive()).length === 0
     ) {
-      return super.end();
+      this.end(true);
+      return;
     }
 
     // ...or if any player Pokemon has an effect that prevents the checked Pokemon from switching
@@ -53,7 +55,8 @@ export class CheckSwitchPhase extends BattlePhase {
       || pokemon.isTrapped()
       || globalScene.getPlayerField().some(p => p.getTag(BattlerTagType.COMMANDED))
     ) {
-      return super.end();
+      this.end(true);
+      return;
     }
 
     globalScene.ui.showText(
@@ -71,10 +74,17 @@ export class CheckSwitchPhase extends BattlePhase {
           },
           () => {
             globalScene.ui.setMode(UiMode.MESSAGE);
-            this.end();
+            this.end(true);
           },
         );
       },
     );
+  }
+
+  public override end(queuePostSummon = false): void {
+    if (queuePostSummon) {
+      globalScene.phaseManager.unshiftNew("PostSummonPhase", this.fieldIndex);
+    }
+    super.end();
   }
 }

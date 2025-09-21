@@ -48,7 +48,7 @@ describe("Moves - Shell Trap", () => {
 
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2]);
 
-    await game.phaseInterceptor.to(MoveEndPhase);
+    await game.phaseInterceptor.to("MoveEndPhase");
 
     const movePhase = game.scene.phaseManager.getCurrentPhase();
     expect(movePhase instanceof MovePhase).toBeTruthy();

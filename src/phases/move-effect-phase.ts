@@ -16,6 +16,7 @@ import { MoveCategory } from "#enums/move-category";
 import { MoveEffectTrigger } from "#enums/move-effect-trigger";
 import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
+import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import { MoveResult } from "#enums/move-result";
 import { MoveTarget } from "#enums/move-target";
 import { isReflected, MoveUseMode } from "#enums/move-use-mode";
@@ -318,7 +319,7 @@ export class MoveEffectPhase extends PokemonPhase {
           applyMoveAttrs("MissEffectAttr", user, target, this.move);
           break;
         case HitCheckResult.REFLECTED:
-          globalScene.phaseManager.appendNewToPhase("MoveEndPhase", "MoveReflectPhase", target, user, this.move);
+          globalScene.phaseManager.unshiftNew("MoveReflectPhase", target, user, this.move);
           break;
         case HitCheckResult.PENDING:
         case HitCheckResult.ERROR:
@@ -747,10 +748,7 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param target - The {@linkcode Pokemon} that fainted
    */
   protected onFaintTarget(user: Pokemon, target: Pokemon): void {
-    // set splice index here, so future scene queues happen before FaintedPhase
-    globalScene.phaseManager.setPhaseQueueSplice();
-
-    globalScene.phaseManager.unshiftNew("FaintPhase", target.getBattlerIndex(), false, user);
+    globalScene.phaseManager.queueFaintPhase(target.getBattlerIndex(), false, user);
 
     target.destroySubstitute();
     target.lapseTag(BattlerTagType.COMMANDED);

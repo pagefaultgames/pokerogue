@@ -343,5 +343,5 @@ export const invalidInstructMoves: ReadonlySet<MoveId> = new Set([
   MoveId.TRANSFORM,
   MoveId.MIMIC,
   MoveId.STRUGGLE,
-  // TODO: Add Max/G-Max/Z-Move blockage if or when they are implemented
+  // NB: Add Max/G-Max/Z-Move blockage if or when they are implemented
 ]);
