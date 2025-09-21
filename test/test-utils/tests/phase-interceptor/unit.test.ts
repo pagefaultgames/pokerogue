@@ -62,14 +62,14 @@ describe("Utils - Phase Interceptor - Unit", () => {
    */
   function setPhases(...phases: [Constructor<mockPhase>, ...Constructor<mockPhase>[]]) {
     game.scene.phaseManager.clearAllPhases();
-    game.scene.phaseManager.phaseQueue = phases.map(m => new m()) as Phase[];
+    for (const phase of phases) {
+      game.scene.phaseManager.unshiftPhase(new phase());
+    }
     game.scene.phaseManager.shiftPhase(); // start the thing going
   }
 
   function getQueuedPhases(): string[] {
-    return game.scene.phaseManager["phaseQueuePrepend"]
-      .concat(game.scene.phaseManager.phaseQueue)
-      .map(p => p.phaseName);
+    return game.scene.phaseManager["phaseQueue"]["levels"].flat(2).map(p => p.phaseName);
   }
 
   function expectAtPhase(phaseName: string) {
