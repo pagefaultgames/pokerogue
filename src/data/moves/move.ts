@@ -11,7 +11,6 @@ import { WeakenMoveTypeTag } from "#data/arena-tag";
 import { MoveChargeAnim } from "#data/battle-anims";
 import {
   CommandedTag,
-  DrowsyTag,
   EncoreTag,
   GulpMissileTag,
   HelpingHandTag,
@@ -5678,34 +5677,6 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
 }
 
 /**
- * Attribute to implement {@linkcode MoveId.YAWN}.
- * Yawn adds a BattlerTag to its target that puts them to sleep at the end
- * of the next turn, retaining many of the same checks as normal status setting moves.
- */
-export class YawnAttr extends AddBattlerTagAttr {
-  constructor() {
-    super(BattlerTagType.DROWSY, false, true)
-  }
-
-  getCondition(): MoveConditionFunc {
-    return (user, target, move) => {
-      if (!super.getCondition()!(user, target, move)) {
-        return false;
-      }
-
-      // Statused opponents or ones with safeguard active use a generic failure message
-      if (target.status || target.isSafeguarded(user)) {
-        return false;
-      }
-
-      // TODO: This does not display the cause of the "but it failed" message,
-      // but fixing it would require a rework of the move failure system
-      return target.canSetStatus(StatusEffect.SLEEP, true, false, user)
-    }
-  }
-}
-
-/**
  * Adds a {@link https://bulbapedia.bulbagarden.net/wiki/Seeding | Seeding} effect to the target
  * as seen with Leech Seed and Sappy Seed.
  */
@@ -9242,11 +9213,13 @@ export function initMoves() {
     new AttackMove(MoveId.BRICK_BREAK, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 75, 100, 15, -1, 0, 3)
       .attr(RemoveScreensAttr),
     new StatusMove(MoveId.YAWN, PokemonType.NORMAL, -1, 10, -1, 0, 3)
-      .attr(YawnAttr)
+      .attr(AddBattlerTagAttr, BattlerTagType.DROWSY, false, true)
+      .condition((user, target, move) => !target.status && !target.isSafeguarded(user))
       .reflectable()
-      .edgeCase(), // Should not be blocked by safeguard once tag is applied
-    new AttackMove(MoveId.KNOCK_OFF, PokemonType.DARK, MoveCategory.PHYSICAL, 65, 100, 20, -1, 0, 3)
-      .attr(MovePowerMultiplierAttr, (_user, target, _move) => target.getHeldItems().some(i => i.isTransferable) ? 1.5 : 1)
+      // Does not count as failed for terrain-based failures; should not check Safeguard when triggering drowsiness
+      .edgeCase(),
+  new AttackMove(MoveId.KNOCK_OFF, PokemonType.DARK, MoveCategory.PHYSICAL, 65, 100, 20, -1, 0, 3)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => target.getHeldItems().some(i => i.isTransferable) ? 1.5 : 1)
       .attr(RemoveHeldItemAttr, false)
       .edgeCase(),
       // Should not be able to remove held item if user faints due to Rough Skin, Iron Barbs, etc.

@@ -1285,9 +1285,7 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
 
     // If the target has not moved yet,
     // replace their upcoming move with the encored move against randomized targets
-    const movePhase = globalScene.phaseManager.getMovePhase(
-      m => m.pokemon === pokemon,
-    );
+    const movePhase = globalScene.phaseManager.getMovePhase(m => m.pokemon === pokemon);
     if (!movePhase) {
       return;
     }
@@ -1514,8 +1512,12 @@ export class MinimizeTag extends SerializableBattlerTag {
 
 export class DrowsyTag extends SerializableBattlerTag {
   public override readonly tagType = BattlerTagType.DROWSY;
-  constructor(sourceId: number) {
-    super(BattlerTagType.DROWSY, BattlerTagLapseType.TURN_END, 2, MoveId.YAWN, sourceId);
+  constructor() {
+    super(BattlerTagType.DROWSY, BattlerTagLapseType.TURN_END, 2, MoveId.YAWN);
+  }
+
+  canAdd(pokemon: Pokemon): boolean {
+    return globalScene.arena.terrain?.terrainType !== TerrainType.ELECTRIC || !pokemon.isGrounded();
   }
 
   onAdd(pokemon: Pokemon): void {
