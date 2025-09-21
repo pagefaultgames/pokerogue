@@ -72,6 +72,7 @@ jobs:
       - name: Check for reuse compliance
         id: reuse-lint
         uses: fsfe/reuse-action@v5
+        continue-on-error: true
 
       - name: Evaluate for Errors
         env:
