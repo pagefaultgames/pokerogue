@@ -1,10 +1,12 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { FieldPhase } from "#phases/field-phase";
 import { NumberHolder } from "#utils/common";
+import { inSpeedOrder } from "#utils/speed-order-generator";
 import i18next from "i18next";
 
 export class AttemptRunPhase extends FieldPhase {
@@ -15,16 +17,14 @@ export class AttemptRunPhase extends FieldPhase {
 
     // Increment escape attempts count on entry
     const currentAttempts = globalScene.currentBattle.escapeAttempts++;
-
-    const activePlayerField = globalScene.getPlayerField(true);
     const enemyField = globalScene.getEnemyField();
 
     const escapeRoll = globalScene.randBattleSeedInt(100);
     const escapeChance = new NumberHolder(this.calculateEscapeChance(currentAttempts));
 
-    activePlayerField.forEach(pokemon => {
+    for (const pokemon of inSpeedOrder(ArenaTagSide.PLAYER)) {
       applyAbAttrs("RunSuccessAbAttr", { pokemon, chance: escapeChance });
-    });
+    }
 
     if (escapeRoll < escapeChance.value) {
       enemyField.forEach(pokemon => applyAbAttrs("PreLeaveFieldAbAttr", { pokemon }));
@@ -56,7 +56,7 @@ export class AttemptRunPhase extends FieldPhase {
 
       globalScene.phaseManager.pushNew("NewBattlePhase");
     } else {
-      activePlayerField.forEach(p => {
+      globalScene.getPlayerField(true).forEach(p => {
         p.turnData.failedRunAway = true;
       });
 

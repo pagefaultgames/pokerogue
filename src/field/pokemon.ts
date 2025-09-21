@@ -172,6 +172,7 @@ import {
 } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { inSpeedOrder } from "#utils/speed-order-generator";
 import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
 import i18next from "i18next";
 import Phaser from "phaser";
@@ -2347,15 +2348,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     /** Holds whether the pokemon is trapped due to an ability */
     const trapped = new BooleanHolder(false);
-    /**
-     * Contains opposing Pokemon (Enemy/Player Pokemon) depending on perspective
-     * Afterwards, it filters out Pokemon that have been switched out of the field so trapped abilities/moves do not trigger
-     */
-    const opposingFieldUnfiltered = this.isPlayer() ? globalScene.getEnemyField() : globalScene.getPlayerField();
-    const opposingField = opposingFieldUnfiltered.filter(enemyPkm => enemyPkm.switchOutStatus === false);
-
-    for (const opponent of opposingField) {
-      applyAbAttrs("CheckTrappedAbAttr", { pokemon: opponent, trapped, opponent: this, simulated }, trappedAbMessages);
+    for (const opponent of inSpeedOrder(this.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER)) {
+      if (opponent.switchOutStatus === false) {
+        applyAbAttrs(
+          "CheckTrappedAbAttr",
+          { pokemon: opponent, trapped, opponent: this, simulated },
+          trappedAbMessages,
+        );
+      }
     }
 
     const side = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
@@ -2465,15 +2465,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       }
 
       if (!cancelledHolder.value) {
-        const defendingSidePlayField = this.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
-        defendingSidePlayField.forEach(p =>
+        for (const p of this.getAlliesGenerator()) {
           applyAbAttrs("FieldPriorityMoveImmunityAbAttr", {
             pokemon: p,
             opponent: source,
             move,
             cancelled: cancelledHolder,
-          }),
-        );
+          });
+        }
       }
     }
 
@@ -3234,7 +3233,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Returns the pokemon that oppose this one and are active
+   * Returns the pokemon that oppose this one and are active in non-speed order
    *
    * @param onField - whether to also check if the pokemon is currently on the field (defaults to true)
    */
@@ -3242,6 +3241,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return (this.isPlayer() ? globalScene.getEnemyField() : globalScene.getPlayerField()).filter(p =>
       p.isActive(onField),
     );
+  }
+
+  /**
+   * @returns A generator of pokemon that oppose this one in speed order
+   */
+  public getOpponentsGenerator(): Generator<Pokemon, number> {
+    return inSpeedOrder(this.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
   }
 
   getOpponentDescriptor(): string {
@@ -3253,12 +3259,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Gets the Pokémon on the allied field.
-   *
-   * @returns An array of Pokémon on the allied field.
+   * @returns An generator of Pokémon on the allied field in speed order.
    */
-  getAlliedField(): Pokemon[] {
-    return this.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
+  getAlliesGenerator(): Generator<Pokemon, number> {
+    return inSpeedOrder(this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
   }
 
   /**
@@ -4017,16 +4021,15 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const cancelled = new BooleanHolder(false);
     applyAbAttrs("BattlerTagImmunityAbAttr", { pokemon: this, tag: stubTag, cancelled, simulated: true });
 
-    const userField = this.getAlliedField();
-    userField.forEach(pokemon =>
+    for (const pokemon of this.getAlliesGenerator()) {
       applyAbAttrs("UserFieldBattlerTagImmunityAbAttr", {
         pokemon,
         tag: stubTag,
         cancelled,
         simulated: true,
         target: this,
-      }),
-    );
+      });
+    }
 
     return !cancelled.value;
   }
@@ -4060,7 +4063,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return false;
     }
 
-    for (const pokemon of this.getAlliedField()) {
+    for (const pokemon of this.getAlliesGenerator()) {
       applyAbAttrs("UserFieldBattlerTagImmunityAbAttr", { pokemon, tag: newTag, cancelled, target: this });
       if (cancelled.value) {
         return false;
@@ -4778,7 +4781,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return false;
     }
 
-    for (const pokemon of this.getAlliedField()) {
+    for (const pokemon of this.getAlliesGenerator()) {
       applyAbAttrs("UserFieldStatusEffectImmunityAbAttr", {
         pokemon,
         effect,
@@ -5571,10 +5574,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   leaveField(clearEffects = true, hideInfo = true, destroy = false) {
     this.resetSprite();
     this.resetTurnData();
-    globalScene
-      .getField(true)
-      .filter(p => p !== this)
-      .forEach(p => p.removeTagsBySourceId(this.id));
+    for (const p of inSpeedOrder(ArenaTagSide.BOTH)) {
+      if (p !== this) {
+        p.removeTagsBySourceId(this.id);
+      }
+    }
 
     if (clearEffects) {
       this.destroySubstitute();

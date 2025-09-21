@@ -10,6 +10,7 @@ import { getStatusEffectActivationText, getStatusEffectHealText } from "#data/st
 import { getTerrainBlockMessage } from "#data/terrain";
 import { getWeatherBlockMessage } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -29,6 +30,7 @@ import type { PokemonMove } from "#moves/pokemon-move";
 import type { TurnMove } from "#types/turn-move";
 import { NumberHolder } from "#utils/common";
 import { enumValueToKey } from "#utils/enums";
+import { inSpeedOrder } from "#utils/speed-order-generator";
 import i18next from "i18next";
 
 export class MovePhase extends PokemonPhase {
@@ -380,9 +382,9 @@ export class MovePhase extends PokemonPhase {
     // TODO: This needs to go at the end of `MoveEffectPhase` to check move results
     const dancerModes: MoveUseMode[] = [MoveUseMode.INDIRECT, MoveUseMode.REFLECTED] as const;
     if (this.move.getMove().hasFlag(MoveFlags.DANCE_MOVE) && !dancerModes.includes(this.useMode)) {
-      globalScene.getField(true).forEach(pokemon => {
+      for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
         applyAbAttrs("PostMoveUsedAbAttr", { pokemon, move: this.move, source: this.pokemon, targets: this.targets });
-      });
+      }
     }
   }
 
@@ -510,22 +512,22 @@ export class MovePhase extends PokemonPhase {
     const redirectTarget = new NumberHolder(currentTarget);
 
     // check move redirection abilities of every pokemon *except* the user.
-    globalScene
-      .getField(true)
-      .filter(p => p !== this.pokemon)
-      .forEach(pokemon => {
+    for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
+      if (pokemon !== this.pokemon) {
         applyAbAttrs("RedirectMoveAbAttr", {
           pokemon,
           moveId: this.move.moveId,
           targetIndex: redirectTarget,
           sourcePokemon: this.pokemon,
         });
-      });
+      }
+    }
 
     /** `true` if an Ability is responsible for redirecting the move to another target; `false` otherwise */
     let redirectedByAbility = currentTarget !== redirectTarget.value;
 
     // check for center-of-attention tags (note that this will override redirect abilities)
+    // TODO The target of redirection should be the first viable pokemon that used a redirection move in the turn
     this.pokemon.getOpponents(true).forEach(p => {
       const redirectTag = p.getTag(CenterOfAttentionTag);
 
