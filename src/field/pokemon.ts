@@ -2466,14 +2466,15 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
       if (!cancelledHolder.value) {
         const defendingSidePlayField = this.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
-        defendingSidePlayField.forEach(p =>
+        defendingSidePlayField.forEach((p: (typeof defendingSidePlayField)[0]) => {
           applyAbAttrs("FieldPriorityMoveImmunityAbAttr", {
             pokemon: p,
             opponent: source,
             move,
             cancelled: cancelledHolder,
-          }),
-        );
+            simulated,
+          });
+        });
       }
     }
 
@@ -2494,7 +2495,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       typeMultiplier.value = 0;
     }
 
-    return (!cancelledHolder.value ? typeMultiplier.value : 0) as TypeDamageMultiplier;
+    return (cancelledHolder.value ? 0 : typeMultiplier.value) as TypeDamageMultiplier;
   }
 
   /**
