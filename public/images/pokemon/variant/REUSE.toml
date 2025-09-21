@@ -247,7 +247,7 @@ path = [
     "646-white.json",
     "back/646-white.json",
 ]
-SPDX-FileCopyrightText = "2024-2025 hanniel.15, " # todo: fill out author for variant 2
+SPDX-FileCopyrightText = ["2024-2025 hanniel.15", "unicorn_power"] # todo: fill out author for variant 2
 SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
 VARIANT_1_AUTHOR = "hanniel.15"
-
+VARIANT_2_AUTHOR = "Unicorn_power"
