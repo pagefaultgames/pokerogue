@@ -1697,18 +1697,13 @@ export class PendingHealTag extends SerializableArenaTag {
       return this.apply(arena, simulated, pokemon);
     }
 
-    globalScene.phaseManager.unshiftNew(
-      "PokemonHealPhase",
-      targetIndex,
-      pokemon.getMaxHp(),
-      {
-        message: healMessage,
-        showFullHpMessage: false,
-        skipAnim: true,
-        healStatus: true,
-        fullRestorePP: restorePP,
-      },
-    );
+    globalScene.phaseManager.unshiftNew("PokemonHealPhase", targetIndex, pokemon.getMaxHp(), {
+      message: healMessage,
+      showFullHpMessage: false,
+      skipAnim: true,
+      healStatus: true,
+      fullRestorePP: restorePP,
+    });
     targetEffects.splice(targetEffects.indexOf(healEffect), 1);
     return true;
   }
