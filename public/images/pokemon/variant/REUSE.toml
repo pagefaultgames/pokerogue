@@ -1,0 +1,177 @@
+# SPDX-FileCopyrightText: 2025 Pagefault Games
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+version = 1
+
+#  When adding attributions to a variant file where two different people
+# created different variants, you MUST add a seprate `[[annotations]]` entry, and it
+# MUST use comma-separated names
+# e.g., `SPDX-FileCopyrightText = 2024-2025 John Doe, Jane Smith`
+# A note _MAY_ be added as metadata, via an additional key, like
+# VARIANT_1_AUTHOR = "John Doe"
+# VARIANT_2_AUTHOR = "Jane Smith"
+# While this will *not* be reflected in the software bill of materials, it will
+# make it clear who is responsible for which variant
+
+[[annotations]] # Considered code
+path = ["_masterlist.json", "_exp_masterlist.json"]
+SPDX-FileCopyrightText = "2024-2025 Pagefault Games"
+SPDX-License-Identifier = "AGPL-3.0-only"
+
+[[annotations]] # Hanniel's variants
+path = [
+    # Nidoran (M)
+    "32.json",
+    "back/32.json",
+    # Nidorino
+    "33.json",
+    "back/33.json",
+    # Nidoking
+    "34.json",
+    "back/34.json",
+    # Jigglypuff
+    "39.json",
+    "back/39.json",
+    # Wigglytuff
+    "40.json",
+    "back/40.json",
+    # Igglybuff
+    "174.json",
+    "back/174.json",
+
+    # Chimchar
+    "390.json",
+    "back/390.json",
+    # Monferno
+    "391.json",
+    "back/391.json",
+    # Infernape
+    "392.json",
+    "back/392.json",
+
+    # Cherubi
+    "420.json",
+    "back/420.json",
+    # Cherrim
+    "421.json",
+    "back/421.json",
+
+    # Darumaka
+    "554.json",
+    "back/554.json",
+    # Darmanitan
+    "555.json",
+    "back/555.json",
+    # Darmanitan Zen Mode
+    "555-zen.json",
+    "back/555-zen.json",
+
+    # Snorlax
+    "143.json",
+    "back/143.json",
+    # Munchlax
+    "446.json",
+    "back/446.json",
+
+    # Tepig
+    "498.json",
+    "back/498.json",
+    # Emboar
+    "499.json",
+    "back/499.json",
+    # Pignite
+    "500.json",
+    "back/500.json",
+
+    # Minccino
+    "572.json",
+    "back/572.json",
+    # Cinccino
+    "573.json",
+    "back/573.json",
+
+    # Drampa
+    "780.json",
+    "back/780.json",
+
+    # Jangmo-o
+    "782.json",
+    "back/782.json",
+    # Hakamo-o
+    "783.json",
+    "back/783.json",
+    # Kommo-o
+    "784.json",
+    "back/784.json",
+
+    # Starly
+    "396.json",
+    "back/396.json",
+    # Staravia
+    "397.json",
+    "back/397.json",
+    # Staraptor
+    "398.json",
+    "back/398.json",
+
+    # Pansear
+    "513.json",
+    "back/513.json",
+
+    # Simisear
+    "514.json",
+    "back/514.json",
+
+    # Gligar/Gliscor - female forms only
+    "back/207.json",
+    "female/207.json",
+    "back/female/207.json",
+    "female/208.json",
+    "back/female/208.json",
+
+    # Deoxys and all forms
+    "386.json",
+    "back/386.json",
+    "386-attack.json",
+    "back/386-attack.json",
+    "386-defense.json",
+    "back/386-defense.json",
+    "386-speed.json",
+    "back/386-speed.json",
+]
+SPDX-FileCopyrightText = "2024-2025 hanniel.15"
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
+
+[[annotations]] # Hanniel - Rare only
+path = [
+    # Reshiram
+    "643.json",
+    "back/643.json",
+    # Zekrom
+    "644.json",
+    "back/644.json",
+    # Kyurem
+    "646.json",
+    "back/646.json",
+    # Kyurem Black
+    "646-black.json",
+    "back/646-black.json",
+    # Kyurem White
+    "646-white.json",
+    "back/646-white.json",
+]
+SPDX-FileCopyrightText = "2024-2025 hanniel.15, " # todo: fill out author for variant 2
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
+VARIANT_1_AUTHOR = "hanniel.15"
+
+
+[[annotations]] # Vari's variants
+path = [
+    # Gligar/Gliscor's non-female
+    "207.json",
+    "back/207.json",
+    "208.json",
+    "back/208.json",
+]
+SPDX-FileCopyrightText = "2024 Vari"
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
