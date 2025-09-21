@@ -18,7 +18,7 @@ interface hasPokemon {
  */
 export function sortInSpeedOrder<T extends Pokemon | hasPokemon>(pokemonList: T[], shuffleFirst = true): void {
   if (shuffleFirst) {
-    pokemonList = shufflePokemonList(pokemonList);
+    shufflePokemonList(pokemonList);
   }
   sortBySpeed(pokemonList);
 }
@@ -26,19 +26,17 @@ export function sortInSpeedOrder<T extends Pokemon | hasPokemon>(pokemonList: T[
 /**
  * Helper function to randomly shuffle an array of Pokemon.
  * @param pokemonList - The array of Pokemon or objects containing Pokemon to shuffle
- * @returns The shuffled array.
  */
-function shufflePokemonList<T extends Pokemon | hasPokemon>(pokemonList: T[]): T[] {
+function shufflePokemonList<T extends Pokemon | hasPokemon>(pokemonList: T[]): void {
   // This is seeded with the current turn to prevent an inconsistency where it
   // was varying based on how long since you last reloaded
   globalScene.executeWithSeedOffset(
     () => {
-      pokemonList = randSeedShuffle(pokemonList);
+      randSeedShuffle(pokemonList, true);
     },
     globalScene.currentBattle.turn * 1000 + pokemonList.length,
     globalScene.waveSeed,
   );
-  return pokemonList;
 }
 
 /** Sort an array of {@linkcode Pokemon} in speed order (without shuffling) */

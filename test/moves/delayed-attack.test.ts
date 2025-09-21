@@ -197,9 +197,11 @@ describe("Moves - Delayed Attacks", () => {
 
     const MEPs = game.scene.phaseManager["phaseQueue"].findAll("MoveEffectPhase");
     expect(MEPs).toHaveLength(4);
-    console.log(`Expected: ${oldOrder.map(o => game.scene.getField()[o].getNameToRender())}
-Actual: ${MEPs.map(mep => mep.getPokemon().getNameToRender())}`);
-    expect(MEPs.map(mep => mep.getPokemon().getBattlerIndex())).toEqual(oldOrder);
+    expect(
+      MEPs.map(mep => mep.getPokemon().getBattlerIndex()),
+      `Expected: ${oldOrder.map(o => game.scene.getField()[o].getNameToRender())}
+Actual: ${MEPs.map(mep => mep.getPokemon().getNameToRender())}`,
+    ).toEqual(oldOrder);
   });
 
   it("should vanish silently if it would otherwise hit the user", async () => {

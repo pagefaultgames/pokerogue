@@ -555,6 +555,7 @@ export class GameManager {
       this.scene.getField(true).map(p => p.getBattlerIndex() as Exclude<BattlerIndex, BattlerIndex.ATTACKER>),
     );
 
+    // NB: This will need to be changed if `sortInSpeedOrder`'s order is ever changed
     vi.spyOn(speedOrderUtils, "sortInSpeedOrder").mockImplementation(list => {
       list.sort((a, b) => {
         const aBattlerIndex = (a instanceof Pokemon ? a : a.getPokemon()).getBattlerIndex() as Exclude<
@@ -566,7 +567,7 @@ export class GameManager {
           BattlerIndex.ATTACKER
         >;
 
-        return order.indexOf(bBattlerIndex) - order.indexOf(aBattlerIndex);
+        return order.indexOf(aBattlerIndex) - order.indexOf(bBattlerIndex);
       });
     });
   }
