@@ -6,6 +6,7 @@ import { MoveResult } from "#enums/move-result";
 import { PositionalTagType } from "#enums/positional-tag-type";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
+import type { PokemonHealPhase } from "#phases/pokemon-heal-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import { toDmgValue } from "#utils/common";
 import i18next from "i18next";
@@ -139,7 +140,7 @@ describe("Move - Wish", () => {
     // account for phase interceptor stopping _after_ the first PokemonHealPhase is started
     // TODO: Remove in phase-interceptor PR (intentionally will fail if not removed)
     expect(game).toBeAtPhase("PokemonHealPhase");
-    healPhases.unshift(game.scene.phaseManager.getCurrentPhase());
+    healPhases.unshift(game.scene.phaseManager.getCurrentPhase() as PokemonHealPhase);
     expect(healPhases).toHaveLength(4);
     expect(healPhases.map(php => php.getPokemon())).toEqual(oldOrder);
 
