@@ -10,7 +10,7 @@ interface hasPokemon {
 }
 
 /**
- * Sort an array of {@linkcode Pokemon} in _ascending_ speed order, taking Trick Room into account.
+ * Sort an array of {@linkcode Pokemon} in speed order, taking Trick Room into account.
  * @param pokemonList - An array of `Pokemon` or objects containing `Pokemon` to sort;
  * will be mutated and sorted in place.
  * @param shuffleFirst - Whether to shuffle the list before sorting (to handle speed ties); default `true`.
@@ -41,7 +41,7 @@ function shufflePokemonList<T extends Pokemon | hasPokemon>(pokemonList: T[]): T
   return pokemonList;
 }
 
-/** Sort an array of {@linkcode Pokemon} in descending speed order (without shuffling) */
+/** Sort an array of {@linkcode Pokemon} in speed order (without shuffling) */
 function sortBySpeed<T extends Pokemon | hasPokemon>(pokemonList: T[]): void {
   pokemonList.sort((a, b) => {
     const aSpeed = (a instanceof Pokemon ? a : a.getPokemon()).getEffectiveStat(Stat.SPD);

@@ -109,14 +109,14 @@ describe("Move - Wish", () => {
     vi.spyOn(karp1, "getNameToRender").mockReturnValue("Karp 1");
     vi.spyOn(karp2, "getNameToRender").mockReturnValue("Karp 2");
 
-    const oldOrder = game.field.getSpeedOrder();
+    const oldOrder = game.field.getSpeedOrder(true);
 
     game.move.use(MoveId.WISH, BattlerIndex.PLAYER);
     game.move.use(MoveId.WISH, BattlerIndex.PLAYER_2);
     await game.move.forceEnemyMove(MoveId.WISH);
     await game.move.forceEnemyMove(MoveId.WISH);
     // Ensure that the wishes are used deterministically in speed order (for speed ties)
-    await game.setTurnOrder(oldOrder.map(p => p.getBattlerIndex()));
+    await game.setTurnOrder(oldOrder);
     await game.toNextTurn();
 
     expect(game).toHavePositionalTag(PositionalTagType.WISH, 4);
@@ -137,7 +137,9 @@ describe("Move - Wish", () => {
 
     const healPhases = game.scene.phaseManager["phaseQueue"].findAll("PokemonHealPhase");
     expect(healPhases).toHaveLength(4);
-    expect.soft(healPhases.map(php => php.getPokemon())).toEqual(oldOrder);
+    expect
+      .soft(healPhases.map(php => php.getPokemon().getBattlerIndex(), "Wishes were not queued in correct order!"))
+      .toEqual(oldOrder);
 
     await game.toEndOfTurn();
 

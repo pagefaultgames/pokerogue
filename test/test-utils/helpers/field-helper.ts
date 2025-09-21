@@ -68,7 +68,7 @@ export class FieldHelper extends GameManagerHelper {
    * This does not account for Trick Room as it does not modify the _speed_ of Pokemon on the field,
    * only their turn order.
    */
-  public getSpeedOrder(indices: true): BattlerIndex[];
+  public getSpeedOrder(indices: true): Exclude<BattlerIndex, BattlerIndex.ATTACKER>[];
   public getSpeedOrder(indices = false): BattlerIndex[] | Pokemon[] {
     const ret = this.game.scene
       .getField(true)

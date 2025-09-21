@@ -17,8 +17,8 @@ describe("Moves - Destiny Bond", () => {
   let game: GameManager;
 
   const defaultParty = [SpeciesId.BULBASAUR, SpeciesId.SQUIRTLE];
-  const enemyFirst = [BattlerIndex.ENEMY, BattlerIndex.PLAYER];
-  const playerFirst = [BattlerIndex.PLAYER, BattlerIndex.ENEMY];
+  const enemyFirst = [BattlerIndex.ENEMY, BattlerIndex.PLAYER] as const;
+  const playerFirst = [BattlerIndex.PLAYER, BattlerIndex.ENEMY] as const;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({

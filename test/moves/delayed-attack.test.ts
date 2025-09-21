@@ -167,16 +167,16 @@ describe("Moves - Delayed Attacks", () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
 
-    const [alomomola, blissey] = game.scene.getField();
+    const [alomomola, blissey] = game.scene.getPlayerField();
 
-    const oldOrder = game.field.getSpeedOrder();
+    const oldOrder = game.field.getSpeedOrder(true);
 
     game.move.use(MoveId.FUTURE_SIGHT, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.use(MoveId.FUTURE_SIGHT, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2);
     await game.move.forceEnemyMove(MoveId.FUTURE_SIGHT, BattlerIndex.PLAYER);
     await game.move.forceEnemyMove(MoveId.FUTURE_SIGHT, BattlerIndex.PLAYER_2);
     // Ensure that the moves are used deterministically in speed order (for speed ties)
-    await game.setTurnOrder(oldOrder.map(p => p.getBattlerIndex()));
+    await game.setTurnOrder(oldOrder);
     await game.toNextTurn();
 
     expectFutureSightActive(4);
@@ -195,7 +195,10 @@ describe("Moves - Delayed Attacks", () => {
 
     const MEPs = game.scene.phaseManager["phaseQueue"].findAll("MoveEffectPhase");
     expect(MEPs).toHaveLength(4);
-    expect(MEPs.map(mep => mep.getPokemon())).toEqual(oldOrder);
+    expect(
+      MEPs.map(mep => mep.getPokemon().getBattlerIndex()),
+      "Delayed Attacks were not queued in correct order!",
+    ).toEqual(oldOrder);
   });
 
   it("should vanish silently if it would otherwise hit the user", async () => {
