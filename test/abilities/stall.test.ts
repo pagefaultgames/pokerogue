@@ -1,4 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
@@ -24,7 +25,7 @@ describe("Abilities - Stall", () => {
     game.override
       .battleStyle("single")
       .criticalHits(false)
-      .enemySpecies(SpeciesId.REGIELEKI)
+      .enemySpecies(SpeciesId.SHUCKLE)
       .enemyAbility(AbilityId.STALL)
       .enemyMoveset(MoveId.QUICK_ATTACK)
       .moveset([MoveId.QUICK_ATTACK, MoveId.TACKLE]);
@@ -42,7 +43,7 @@ describe("Abilities - Stall", () => {
     const player = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.QUICK_ATTACK);
-
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEndPhase", false);
     // The player Pokemon (without Stall) goes first despite having lower speed than the opponent.
     // The opponent Pokemon (with Stall) goes last despite having higher speed than the player Pokemon.
@@ -55,6 +56,7 @@ describe("Abilities - Stall", () => {
     const player = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.TACKLE);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
     // The opponent Pokemon (with Stall) goes first because its move is still within a higher priority bracket than its opponent.
@@ -69,6 +71,7 @@ describe("Abilities - Stall", () => {
     const player = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.TACKLE);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 

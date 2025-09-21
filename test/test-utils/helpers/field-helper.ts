@@ -61,7 +61,7 @@ export class FieldHelper extends GameManagerHelper {
    * Helper function to return all on-field {@linkcode Pokemon} in speed order (fastest first).
    * @param indices - Whether to only return {@linkcode BattlerIndex}es instead of full Pokemon objects
    * (such as for comparison with other speed order-related mechanisms); default `false`
-   * @returns An array containing the {@linkcode BattlerIndex}es of all on-field {@linkcode Pokemon} on the field in order of descending Speed. \
+   * @returns An array containing the {@linkcode BattlerIndex}es of all on-field `Pokemon` on the field in order of **descending** Speed. \
    * Speed ties are returned in increasing order of index.
    *
    * @remarks

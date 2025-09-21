@@ -165,9 +165,11 @@ describe("Moves - Delayed Attacks", () => {
 
   it("should trigger multiple pending attacks in order of creation, even if that order changes later on", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY]);
 
-    const [alomomola, blissey] = game.scene.getPlayerField();
+    const [alomomola, blissey, karp1, karp2] = game.scene.getField();
+    vi.spyOn(karp1, "getNameToRender").mockReturnValue("Karp 1");
+    vi.spyOn(karp2, "getNameToRender").mockReturnValue("Karp 2");
 
     const oldOrder = game.field.getSpeedOrder(true);
 

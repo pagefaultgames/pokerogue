@@ -52,12 +52,10 @@ import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import type { PartyUiHandler } from "#ui/party-ui-handler";
 import type { StarterSelectUiHandler } from "#ui/starter-select-ui-handler";
 import type { TargetSelectUiHandler } from "#ui/target-select-ui-handler";
-import { sortInSpeedOrder } from "#utils/speed-order";
+import * as speedOrderUtils from "#utils/speed-order";
 import fs from "node:fs";
 import { AES, enc } from "crypto-js";
 import { expect, vi } from "vitest";
-
-vi.mock(import("#utils/speed-order"), { spy: true });
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -557,8 +555,7 @@ export class GameManager {
       this.scene.getField(true).map(p => p.getBattlerIndex() as Exclude<BattlerIndex, BattlerIndex.ATTACKER>),
     );
 
-    expect(vi.isMockFunction(sortInSpeedOrder)).toBe(true);
-    vi.mocked(sortInSpeedOrder).mockImplementation(list => {
+    vi.spyOn(speedOrderUtils, "sortInSpeedOrder").mockImplementation(list => {
       list.sort((a, b) => {
         const aBattlerIndex = (a instanceof Pokemon ? a : a.getPokemon()).getBattlerIndex() as Exclude<
           BattlerIndex,
