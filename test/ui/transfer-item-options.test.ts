@@ -4,8 +4,8 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/test-utils/game-manager";
-import { type PartyUiHandler, PartyUiMode } from "#ui/handlers/party-ui-handler";
-import type { RenameFormUiHandler } from "#ui/handlers/rename-form-ui-handler";
+import { type PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import type { RenameFormUiHandler } from "#ui/rename-form-ui-handler";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 

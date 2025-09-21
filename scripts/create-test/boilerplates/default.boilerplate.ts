@@ -1,7 +1,10 @@
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
+import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -32,12 +35,18 @@ describe("{{description}}", () => {
       .enemyLevel(100);
   });
 
+  // Find more awesome utility functions inside `#test/test-utils`!
   it("should do XYZ", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
+    const feebas = game.field.getPlayerPokemon();
+
     game.move.use(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.CELEBRATE);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
-    expect(true).toBe(true);
+    expect(feebas).toHaveUsedMove({ move: MoveId.SPLASH, result: MoveResult.SUCCESS });
+    expect(game).toHaveShownMessage(i18next.t("moveTriggers:splash"));
   });
 });

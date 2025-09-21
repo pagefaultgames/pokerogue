@@ -5,7 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { DoubleBattleChanceBoosterModifier } from "#modifiers/modifier";
 import { GameManager } from "#test/test-utils/game-manager";
-import type { ModifierSelectUiHandler } from "#ui/handlers/modifier-select-ui-handler";
+import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -31,7 +31,7 @@ describe("Items - Double Battle Chance Boosters", () => {
 
     await game.classicMode.startBattle();
 
-    expect(game.scene.getEnemyField().length).toBe(2);
+    expect(game.scene.getEnemyField()).toHaveLength(2);
   });
 
   it("should guarantee double boss battle with 3 unique tiers", async () => {
@@ -41,7 +41,7 @@ describe("Items - Double Battle Chance Boosters", () => {
 
     const enemyField = game.scene.getEnemyField();
 
-    expect(enemyField.length).toBe(2);
+    expect(enemyField).toHaveLength(2);
     expect(enemyField[0].isBoss()).toBe(true);
     expect(enemyField[1].isBoss()).toBe(true);
   });

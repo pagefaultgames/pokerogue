@@ -132,7 +132,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
       pokemon.resetStatus();
     }
 
-    // Restore PP.
+    // Restore PP
     // TODO: This should not be the job of the healing phase
     if (this.fullRestorePP) {
       pokemon.getMoveset().forEach(m => {

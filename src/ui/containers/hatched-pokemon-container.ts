@@ -4,8 +4,8 @@ import { Gender } from "#data/gender";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { DexAttr } from "#enums/dex-attr";
 import { getVariantTint } from "#sprites/variant";
-import type { PokemonIconAnimHelper } from "#ui/utils/pokemon-icon-anim-helper";
-import { PokemonIconAnimMode } from "#ui/utils/pokemon-icon-anim-helper";
+import type { PokemonIconAnimHelper } from "#ui/pokemon-icon-anim-helper";
+import { PokemonIconAnimMode } from "#ui/pokemon-icon-anim-helper";
 
 /**
  * A container for a Pokemon's sprite and icons to get displayed in the egg summary screen

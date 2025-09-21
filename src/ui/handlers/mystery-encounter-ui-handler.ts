@@ -9,11 +9,11 @@ import { getEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { OptionSelectSettings } from "#mystery-encounters/encounter-phase-utils";
 import type { MysteryEncounterOption } from "#mystery-encounters/mystery-encounter-option";
 import type { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
-import { PartyUiMode } from "#ui/handlers/party-ui-handler";
-import { UiHandler } from "#ui/handlers/ui-handler";
+import { PartyUiMode } from "#ui/party-ui-handler";
 import { addBBCodeTextObject, getBBCodeFrag } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
-import { fixedInt, isNullOrUndefined } from "#utils/common";
+import { fixedInt } from "#utils/common";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
@@ -95,12 +95,10 @@ export class MysteryEncounterUiHandler extends UiHandler {
     super.show(args);
 
     this.overrideSettings = (args[0] as OptionSelectSettings) ?? {};
-    const showDescriptionContainer = isNullOrUndefined(this.overrideSettings?.hideDescription)
-      ? true
-      : !this.overrideSettings.hideDescription;
-    const slideInDescription = isNullOrUndefined(this.overrideSettings?.slideInDescription)
-      ? true
-      : this.overrideSettings.slideInDescription;
+    const showDescriptionContainer =
+      this.overrideSettings?.hideDescription == null ? true : !this.overrideSettings.hideDescription;
+    const slideInDescription =
+      this.overrideSettings?.slideInDescription == null ? true : this.overrideSettings.slideInDescription;
     const startingCursorIndex = this.overrideSettings?.startingCursorIndex ?? 0;
 
     this.cursorContainer.setVisible(true);
@@ -567,7 +565,7 @@ export class MysteryEncounterUiHandler extends UiHandler {
     }
     this.tooltipContainer.setVisible(true);
 
-    if (isNullOrUndefined(cursor) || cursor > this.optionsContainer.length - 2) {
+    if (cursor == null || cursor > this.optionsContainer.length - 2) {
       // Ignore hovers on view party button
       // Hide dex progress if visible
       this.showHideDexProgress(false);

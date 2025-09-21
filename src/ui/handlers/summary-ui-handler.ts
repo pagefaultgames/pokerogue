@@ -25,17 +25,9 @@ import type { PokemonMove } from "#moves/pokemon-move";
 import type { Variant } from "#sprites/variant";
 import { getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
-import { UiHandler } from "#ui/handlers/ui-handler";
 import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor } from "#ui/text";
-import {
-  fixedInt,
-  formatStat,
-  getLocalizedSpriteKey,
-  getShinyDescriptor,
-  isNullOrUndefined,
-  padInt,
-  rgbHexToRgba,
-} from "#utils/common";
+import { UiHandler } from "#ui/ui-handler";
+import { fixedInt, formatStat, getLocalizedSpriteKey, getShinyDescriptor, padInt, rgbHexToRgba } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
@@ -895,10 +887,7 @@ export class SummaryUiHandler extends UiHandler {
           profileContainer.add(luckText);
         }
 
-        if (
-          globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id)
-          && !isNullOrUndefined(this.pokemon)
-        ) {
+        if (globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id) && this.pokemon != null) {
           const teraIcon = globalScene.add.sprite(123, 26, "button_tera");
           teraIcon.setName("terastallize-icon");
           teraIcon.setFrame(PokemonType[this.pokemon.getTeraType()].toLowerCase());

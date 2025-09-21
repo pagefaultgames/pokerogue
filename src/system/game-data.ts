@@ -72,7 +72,7 @@ import type {
   VoucherCounts,
   VoucherUnlocks,
 } from "#types/save-data";
-import { RUN_HISTORY_LIMIT } from "#ui/handlers/run-history-ui-handler";
+import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { executeIf, fixedInt, isLocal, NumberHolder, randInt, randSeedItem } from "#utils/common";
 import { decrypt, encrypt } from "#utils/data";
@@ -1021,6 +1021,7 @@ export class GameData {
             WeatherType.NONE,
             globalScene.arena.weather?.weatherType!,
             globalScene.arena.weather?.turnsLeft!,
+            globalScene.arena.weather?.maxDuration!,
           ),
         ); // TODO: is this bang correct?
 
@@ -1030,6 +1031,7 @@ export class GameData {
             TerrainType.NONE,
             globalScene.arena.terrain?.terrainType!,
             globalScene.arena.terrain?.turnsLeft!,
+            globalScene.arena.terrain?.maxDuration!,
           ),
         ); // TODO: is this bang correct?
 
@@ -1039,12 +1041,14 @@ export class GameData {
         if (globalScene.arena.tags) {
           for (const tag of globalScene.arena.tags) {
             if (tag instanceof EntryHazardTag) {
-              const { tagType, side, turnCount, layers, maxLayers } = tag as EntryHazardTag;
+              const { tagType, side, turnCount, maxDuration, layers, maxLayers } = tag as EntryHazardTag;
               globalScene.arena.eventTarget.dispatchEvent(
-                new TagAddedEvent(tagType, side, turnCount, layers, maxLayers),
+                new TagAddedEvent(tagType, side, turnCount, maxDuration, layers, maxLayers),
               );
             } else {
-              globalScene.arena.eventTarget.dispatchEvent(new TagAddedEvent(tag.tagType, tag.side, tag.turnCount));
+              globalScene.arena.eventTarget.dispatchEvent(
+                new TagAddedEvent(tag.tagType, tag.side, tag.turnCount, tag.maxDuration),
+              );
             }
           }
         }

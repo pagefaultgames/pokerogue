@@ -9,9 +9,9 @@ import { doShinySparkleAnim } from "#field/anims";
 import type { PlayerPokemon } from "#field/pokemon";
 import type { EggLapsePhase } from "#phases/egg-lapse-phase";
 import { achvs } from "#system/achv";
-import { EggCounterContainer } from "#ui/containers/egg-counter-container";
-import { PokemonInfoContainer } from "#ui/containers/pokemon-info-container";
-import type { EggHatchSceneUiHandler } from "#ui/handlers/egg-hatch-scene-ui-handler";
+import { EggCounterContainer } from "#ui/egg-counter-container";
+import type { EggHatchSceneUiHandler } from "#ui/egg-hatch-scene-ui-handler";
+import { PokemonInfoContainer } from "#ui/pokemon-info-container";
 import { fixedInt, getFrameMs, randInt } from "#utils/common";
 import i18next from "i18next";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
@@ -225,7 +225,7 @@ export class EggHatchPhase extends Phase {
   }
 
   end() {
-    if (globalScene.phaseManager.findPhase(p => p.is("EggHatchPhase"))) {
+    if (globalScene.phaseManager.hasPhaseOfType("EggHatchPhase")) {
       this.eggHatchHandler.clear();
     } else {
       globalScene.time.delayedCall(250, () => globalScene.setModifiersVisible(true));
