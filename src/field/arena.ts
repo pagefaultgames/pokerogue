@@ -376,7 +376,7 @@ export class Arena {
       // TODO - This is a bandaid. Abilities leaving the field needs a better approach than
       // calling this method for every switch out that happens
       if (p === source) {
-        return;
+        continue;
       }
       const isCastformWithForecast = p.hasAbility(AbilityId.FORECAST) && p.species.speciesId === SpeciesId.CASTFORM;
       const isCherrimWithFlowerGift = p.hasAbility(AbilityId.FLOWER_GIFT) && p.species.speciesId === SpeciesId.CHERRIM;
