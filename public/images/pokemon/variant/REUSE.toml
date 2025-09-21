@@ -6,6 +6,8 @@ version = 1
 #  When adding attributions to a variant file where two different people
 # created different variants, you MUST add a seprate `[[annotations]]` entry, and it
 # MUST use comma-separated names
+# Though, if the same set of authors share the same, then multipe variants can be
+# under the same [[annotations]] entry
 # e.g., `SPDX-FileCopyrightText = 2024-2025 John Doe, Jane Smith`
 # A note _MAY_ be added as metadata, via an additional key, like
 # VARIANT_1_AUTHOR = "John Doe"
@@ -13,7 +15,7 @@ version = 1
 # While this will *not* be reflected in the software bill of materials, it will
 # make it clear who is responsible for which variant
 
-[[annotations]] # Considered code
+[[annotations]] # Code - Licensed under AGPL
 path = ["_masterlist.json", "_exp_masterlist.json"]
 SPDX-FileCopyrightText = "2024-2025 Pagefault Games"
 SPDX-License-Identifier = "AGPL-3.0-only"
@@ -142,7 +144,92 @@ path = [
 SPDX-FileCopyrightText = "2024-2025 hanniel.15"
 SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
 
-[[annotations]] # Hanniel - Rare only
+[[annotations]] # Vari's variants
+path = [
+    # Gligar/Gliscor's non-female
+    "207.json",
+    "back/207.json",
+    "208.json",
+    "back/208.json",
+]
+SPDX-FileCopyrightText = "2024 Vari"
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
+
+[[annotations]] # Green Ninja's variants
+path = [
+    # Regigigas
+    "486.json",
+    "back/486.json",
+    # Regieleki
+    "894.json",
+    "back/894.json",
+    # Regidrago
+    "895.json",
+    "back/895.json",
+] 
+SPDX-FileCopyrightText = "2024-2025 Dale B. aka Green Ninja757"
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
+
+[[annotations]] # OfficerPorkchop's variants
+path = [
+    # Wooper
+    "194.json",
+    "back/194.json",
+    # Quagsire
+    "195.json",
+    "back/195.json",
+]
+SPDX-FileCopyrightText = "2024 OfficerPorkchop"
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
+# todo: officer porkchops also responsible for Console / PC buttons: https://discord.com/channels/1125469663833370665/1243375609959415958/1419140858657243167
+
+[[annotations]] 
+
+###############################
+# Multi-Author Variants Below #
+###############################
+
+[[annotations]] # Pineco
+path = [
+    "204.json",
+    "back/204.json",
+]
+SPDX-FileCopyrightText = "2024-2025 Dale B. aka Green Ninja757"
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
+VARIANT_1_AUTHOR = "Green Ninja757"
+
+[[annotations]] # Regirock
+path = [
+    "377.json",
+    "back/377.json",
+]
+SPDX-FileCopyrightText = ["2024 Dale B. aka Green Ninja757", "2025 Gonfold"]
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
+VARIANT_1_AUTHOR = "Green Ninja757"
+NOTE = "Variant implementation and polish by Green Ninja757, original concept by Gonfold"
+
+[[annotations]] # Regice
+path = [
+    "378.json",
+    "back/378.json",
+]
+SPDX-FileCopyrightText = ["2024 Dale B. aka Green Ninja757", "2024 MonkehestMan"]
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
+VARIANT_1_AUTHOR = "Green Ninja757"
+VARIANT_2_AUTHOR = "MonkehestMan"
+
+[[annotations]] # Registeel
+path = [
+    "378.json",
+    "back/378.json",
+]
+SPDX-FileCopyrightText = ["2024 Dale B. aka Green Ninja757", "2024 Vari"]
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
+VARIANT_1_AUTHOR = "Green Ninja757"
+VARIANT_2_AUTHOR = "Vari"
+
+
+[[annotations]]
 path = [
     # Reshiram
     "643.json",
@@ -164,14 +251,3 @@ SPDX-FileCopyrightText = "2024-2025 hanniel.15, " # todo: fill out author for va
 SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
 VARIANT_1_AUTHOR = "hanniel.15"
 
-
-[[annotations]] # Vari's variants
-path = [
-    # Gligar/Gliscor's non-female
-    "207.json",
-    "back/207.json",
-    "208.json",
-    "back/208.json",
-]
-SPDX-FileCopyrightText = "2024 Vari"
-SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
