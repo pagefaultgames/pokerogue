@@ -102,7 +102,6 @@ describe("Moves - Metronome", () => {
     expect.soft(turn1PpUsed).toBeGreaterThan(1);
     expect(solarBeamMove.ppUsed).toBe(0);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
     expect(player.getTag(BattlerTagType.CHARGING)).toBeFalsy();

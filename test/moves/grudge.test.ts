@@ -64,7 +64,6 @@ describe("Moves - Grudge", () => {
 
     game.move.use(MoveId.GUILLOTINE);
     await game.move.forceEnemyMove(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
     expect(ratatta).toHaveFainted();
