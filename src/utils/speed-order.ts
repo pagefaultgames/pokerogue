@@ -10,20 +10,23 @@ interface hasPokemon {
 }
 
 /**
- * Sorts an array of {@linkcode Pokemon} by speed, taking Trick Room into account.
- * @param pokemonList - The list of Pokemon or objects containing Pokemon
- * @param shuffleFirst - Whether to shuffle the list before sorting (to handle speed ties). Default `true`.
- * @returns The sorted array of {@linkcode Pokemon}
+ * Sort an array of {@linkcode Pokemon} in _ascending_ speed order, taking Trick Room into account.
+ * @param pokemonList - An array of `Pokemon` or objects containing `Pokemon` to sort;
+ * will be mutated and sorted in place.
+ * @param shuffleFirst - Whether to shuffle the list before sorting (to handle speed ties); default `true`.
+ * If `false`, will sort speed ties in ascending order of `BattlerIndex`es.
  */
-export function sortInSpeedOrder<T extends Pokemon | hasPokemon>(pokemonList: T[], shuffleFirst = true): T[] {
-  pokemonList = shuffleFirst ? shufflePokemonList(pokemonList) : pokemonList;
+export function sortInSpeedOrder<T extends Pokemon | hasPokemon>(pokemonList: T[], shuffleFirst = true): void {
+  if (shuffleFirst) {
+    pokemonList = shufflePokemonList(pokemonList);
+  }
   sortBySpeed(pokemonList);
-  return pokemonList;
 }
 
 /**
- * @param pokemonList - The array of Pokemon or objects containing Pokemon
- * @returns The shuffled array
+ * Helper function to randomly shuffle an array of Pokemon.
+ * @param pokemonList - The array of Pokemon or objects containing Pokemon to shuffle
+ * @returns The shuffled array.
  */
 function shufflePokemonList<T extends Pokemon | hasPokemon>(pokemonList: T[]): T[] {
   // This is seeded with the current turn to prevent an inconsistency where it
@@ -38,7 +41,7 @@ function shufflePokemonList<T extends Pokemon | hasPokemon>(pokemonList: T[]): T
   return pokemonList;
 }
 
-/** Sorts an array of {@linkcode Pokemon} by speed (without shuffling) */
+/** Sort an array of {@linkcode Pokemon} in descending speed order (without shuffling) */
 function sortBySpeed<T extends Pokemon | hasPokemon>(pokemonList: T[]): void {
   pokemonList.sort((a, b) => {
     const aSpeed = (a instanceof Pokemon ? a : a.getPokemon()).getEffectiveStat(Stat.SPD);

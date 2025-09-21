@@ -7,7 +7,6 @@ import { MovePhasePriorityQueue } from "#app/queues/move-phase-priority-queue";
 import { PokemonPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";
 import { PostSummonPhasePriorityQueue } from "#app/queues/post-summon-phase-priority-queue";
 import type { PriorityQueue } from "#app/queues/priority-queue";
-import type { BattlerIndex } from "#enums/battler-index";
 import type { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 
 // TODO: might be easier to define which phases should be dynamic instead
@@ -71,8 +70,8 @@ export class DynamicQueueManager {
   }
 
   /**
-   * Returns the highest-priority (generally by speed) {@linkcode Phase} of the specified type
-   * @param type - The {@linkcode PhaseString | type} to pop
+   * Returns the highest-priority (generally by speed) {@linkcode Phase} of the specified type.
+   * @param type - The {@linkcode PhaseString | type} of phase to access
    * @returns The popped {@linkcode Phase}, or `undefined` if none of the specified type exist
    */
   public popNextPhase(type: PhaseString): Phase | undefined {
@@ -85,7 +84,7 @@ export class DynamicQueueManager {
    * @param condition - An optional {@linkcode PhaseConditionFunc} to add conditions to the search
    * @returns Whether a matching phase exists
    */
-  public exists<T extends PhaseString>(type: T, condition?: PhaseConditionFunc<T>): boolean {
+  public exists<T extends PhaseString>(type: T, condition: PhaseConditionFunc<T> = () => true): boolean {
     return !!this.dynamicPhaseMap.get(type)?.has(condition);
   }
 
@@ -136,19 +135,11 @@ export class DynamicQueueManager {
   }
 
   /**
-   * Finds and cancels a {@linkcode MovePhase} meeting the condition
-   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function
+   * Find and cancel a {@linkcode MovePhase} meeting the condition
+   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function to filter phases by
    */
   public cancelMovePhase(condition: PhaseConditionFunc<"MovePhase">): void {
     this.getMovePhaseQueue().cancelMove(condition);
-  }
-
-  /**
-   * Sets the move order to a static array rather than a dynamic queue
-   * @param order - The order of {@linkcode BattlerIndex}s
-   */
-  public setMoveOrder(order: BattlerIndex[]): void {
-    this.getMovePhaseQueue().setMoveOrder(order);
   }
 
   /**
@@ -171,7 +162,7 @@ export class DynamicQueueManager {
   /**
    * Internal helper to determine if a phase is dynamic.
    * @param phase - The {@linkcode Phase} to check
-   * @returns Whether `phase` is dynamic
+   * @returns Whether `phase` is dynamic.
    * @privateRemarks
    * Currently, this checks that `phase` has a `getPokemon` method
    * and is not blacklisted in `nonDynamicPokemonPhases`.

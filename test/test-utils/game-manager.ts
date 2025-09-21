@@ -14,7 +14,7 @@ import { PlayerGender } from "#enums/player-gender";
 import type { PokeballType } from "#enums/pokeball";
 import type { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import type { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
+import { type EnemyPokemon, type PlayerPokemon, Pokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
 import { ModifierTypeOption } from "#modifiers/modifier-type";
 import { CheckSwitchPhase } from "#phases/check-switch-phase";
@@ -52,9 +52,12 @@ import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import type { PartyUiHandler } from "#ui/party-ui-handler";
 import type { StarterSelectUiHandler } from "#ui/starter-select-ui-handler";
 import type { TargetSelectUiHandler } from "#ui/target-select-ui-handler";
+import { sortInSpeedOrder } from "#utils/speed-order";
 import fs from "node:fs";
 import { AES, enc } from "crypto-js";
 import { expect, vi } from "vitest";
+
+vi.mock(import("#utils/speed-order"), { spy: true });
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -536,19 +539,39 @@ export class GameManager {
   }
 
   /**
-   * Modifies the queue manager to return move phases in a particular order
+   * Override the speed order of the battle's current combatants.
    * Used to manually modify Pokemon turn order.
-   * Note: This *DOES NOT* account for priority.
-   * @param order - The turn order to set as an array of {@linkcode BattlerIndex}es.
+   * @param order - The turn order to set as an array of {@linkcode BattlerIndex}es
    * @example
    * ```ts
-   * await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
+   * game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
    * ```
+   * @throws Fails test immediately if `order` does not contain all non-fainted combatants' `BattlerIndex`es.
+   * @remarks
+   * This does not account for priority, the battlers' relative speed stats.
+   * @todo What should happen if the number of active battlers changes mid-test?
    */
-  async setTurnOrder(order: BattlerIndex[]): Promise<void> {
-    await this.phaseInterceptor.to("TurnStartPhase", false);
+  public setTurnOrder(order: Exclude<BattlerIndex, BattlerIndex.ATTACKER>[]): void {
+    // TODO: Remove type assertions once `BattlerIndex.ATTACKER` ceases to exist
+    expect(order).toEqualUnsorted(
+      this.scene.getField(true).map(p => p.getBattlerIndex() as Exclude<BattlerIndex, BattlerIndex.ATTACKER>),
+    );
 
-    this.scene.phaseManager.dynamicQueueManager.setMoveOrder(order);
+    expect(vi.isMockFunction(sortInSpeedOrder)).toBe(true);
+    vi.mocked(sortInSpeedOrder).mockImplementation(list => {
+      list.sort((a, b) => {
+        const aBattlerIndex = (a instanceof Pokemon ? a : a.getPokemon()).getBattlerIndex() as Exclude<
+          BattlerIndex,
+          BattlerIndex.ATTACKER
+        >;
+        const bBattlerIndex = (b instanceof Pokemon ? b : b.getPokemon()).getBattlerIndex() as Exclude<
+          BattlerIndex,
+          BattlerIndex.ATTACKER
+        >;
+
+        return order.indexOf(bBattlerIndex) - order.indexOf(aBattlerIndex);
+      });
+    });
   }
 
   /**
