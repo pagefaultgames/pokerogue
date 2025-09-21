@@ -14,13 +14,6 @@ import { vi } from "vitest";
 import { getEnumStr } from "./string-utils";
 
 /**
- * A {@linkcode ReadonlySet} containing phase names that will not be shown in the console when started.
- *
- * Used to reduce console noise from very repetitive phases.
- */
-const blacklistedPhaseNames: ReadonlySet<PhaseString> = new Set(["ActivatePriorityQueuePhase"]);
-
-/**
  * The interceptor's current state.
  * Possible values are the following:
  * - `running`: The interceptor is currently running a phase.
@@ -52,11 +45,6 @@ export class PhaseInterceptor {
   private state: StateType = "idling";
   /** The current target that is being ran to. */
   private target: PhaseString;
-  /**
-   * Whether to respect {@linkcode blacklistedPhaseNames} during logging.
-   * @defaultValue `true`
-   */
-  private respectBlacklist = true;
 
   /**
    * Initialize a new PhaseInterceptor.
@@ -220,9 +208,7 @@ export class PhaseInterceptor {
    * @param phaseName - The name of the phase to log
    */
   private logPhase(phaseName: PhaseString): void {
-    if (this.respectBlacklist && !blacklistedPhaseNames.has(phaseName)) {
-      console.log(`%cStart Phase: ${phaseName}`, `color:${PHASE_START_COLOR}`);
-    }
+    console.log(`%cStart Phase: ${phaseName}`, `color:${PHASE_START_COLOR}`);
     this.log.push(phaseName);
   }
 
@@ -231,16 +217,6 @@ export class PhaseInterceptor {
    */
   public clearLogs(): void {
     this.log = [];
-  }
-
-  /**
-   * Toggle the Interceptor's logging blacklist, enabling or disabling logging all phases in
-   * {@linkcode blacklistedPhaseNames}.
-   * @param state - Whether the blacklist should be enabled; default `false` (disable)
-   */
-  public toggleBlacklist(state = false): void {
-    this.respectBlacklist = state;
-    this.doLog(`Phase blacklist logging ${state ? "disabled" : "enabled"}!`);
   }
 
   /**
