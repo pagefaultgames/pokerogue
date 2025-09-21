@@ -1,4 +1,4 @@
-import { Pokemon } from "#app/field/pokemon";
+import type { Pokemon } from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import { BooleanHolder, randSeedShuffle } from "#app/utils/common";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -38,11 +38,16 @@ function shufflePokemonList<T extends Pokemon | hasPokemon>(pokemonList: T[]): T
   return pokemonList;
 }
 
+/** Type guard for {@linkcode sortBySpeed} to avoid importing {@linkcode Pokemon} */
+function isPokemon(p: Pokemon | hasPokemon): p is Pokemon {
+  return typeof (p as hasPokemon).getPokemon !== "function";
+}
+
 /** Sorts an array of {@linkcode Pokemon} by speed (without shuffling) */
 function sortBySpeed<T extends Pokemon | hasPokemon>(pokemonList: T[]): void {
   pokemonList.sort((a, b) => {
-    const aSpeed = (a instanceof Pokemon ? a : a.getPokemon()).getEffectiveStat(Stat.SPD);
-    const bSpeed = (b instanceof Pokemon ? b : b.getPokemon()).getEffectiveStat(Stat.SPD);
+    const aSpeed = (isPokemon(a) ? a : a.getPokemon()).getEffectiveStat(Stat.SPD);
+    const bSpeed = (isPokemon(b) ? b : b.getPokemon()).getEffectiveStat(Stat.SPD);
 
     return bSpeed - aSpeed;
   });

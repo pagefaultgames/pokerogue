@@ -13,6 +13,7 @@ import { getStatusEffectActivationText } from "#data/status-effect";
 import { getTerrainBlockMessage } from "#data/terrain";
 import { getWeatherBlockMessage } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
@@ -35,6 +36,7 @@ import type { TurnMove } from "#types/turn-move";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, NumberHolder } from "#utils/common";
 import { enumValueToKey } from "#utils/enums";
+import { inSpeedOrder } from "#utils/speed-order-generator";
 import i18next from "i18next";
 
 export class MovePhase extends PokemonPhase {
@@ -321,17 +323,16 @@ export class MovePhase extends PokemonPhase {
 
     // check move redirection abilities of every pokemon *except* the user.
     // TODO: Make storm drain, lightning rod, etc, redirect at this point for type changing moves
-    globalScene
-      .getField(true)
-      .filter(p => p !== this.pokemon)
-      .forEach(pokemon => {
+    for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
+      if (pokemon !== this.pokemon) {
         applyAbAttrs("RedirectMoveAbAttr", {
           pokemon,
           moveId: this.move.moveId,
           targetIndex: redirectTarget,
           sourcePokemon: this.pokemon,
         });
-      });
+      }
+    }
 
     /** `true` if an Ability is responsible for redirecting the move to another target; `false` otherwise */
     let redirectedByAbility = currentTarget !== redirectTarget.value;
@@ -848,9 +849,9 @@ export class MovePhase extends PokemonPhase {
     // TODO: This needs to go at the end of `MoveEffectPhase` to check move results
     const dancerModes: MoveUseMode[] = [MoveUseMode.INDIRECT, MoveUseMode.REFLECTED] as const;
     if (this.move.getMove().hasFlag(MoveFlags.DANCE_MOVE) && !dancerModes.includes(this.useMode)) {
-      globalScene.getField(true).forEach(pokemon => {
+      for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
         applyAbAttrs("PostMoveUsedAbAttr", { pokemon, move: this.move, source: user, targets });
-      });
+      }
     }
   }
 
