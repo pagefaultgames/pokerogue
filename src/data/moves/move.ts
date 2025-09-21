@@ -9204,7 +9204,7 @@ export function initMoves() {
     new SelfStatusMove(MoveId.MAGIC_COAT, PokemonType.PSYCHIC, -1, 15, -1, 4, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.MAGIC_COAT, true, true, 0)
       .condition(failIfLastCondition)
-      // Will not reflect roar / whirlwind if the target has ForceSwitchOutImmunityAbAttr
+      // Should reflect moves that would otherwise fail
       .edgeCase(),
     new SelfStatusMove(MoveId.RECYCLE, PokemonType.NORMAL, -1, 10, -1, 0, 3)
       .unimplemented(),

@@ -56,6 +56,7 @@ import { MoveCategory } from "#enums/move-category";
 import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
+import { MoveTarget } from "#enums/move-target";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PokemonType } from "#enums/pokemon-type";
@@ -1232,8 +1233,8 @@ export class FrenzyTag extends SerializableBattlerTag {
  */
 export class EncoreTag extends MoveRestrictionBattlerTag {
   public override readonly tagType = BattlerTagType.ENCORE;
-  /** The {@linkcode MoveID} the tag holder is locked into */
-  public moveId: MoveId;
+  /** The {@linkcode MoveId} the tag holder is locked into using. */
+  public readonly moveId: MoveId;
 
   constructor(sourceId: number) {
     // Encore ends at the end of the 3rd turn it procs.
@@ -1250,28 +1251,22 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
 
   public override loadTag(source: BaseBattlerTag & Pick<EncoreTag, "tagType" | "moveId">): void {
     super.loadTag(source);
-    this.moveId = source.moveId;
+    (this as Mutable<this>).moveId = source.moveId;
   }
 
   override canAdd(pokemon: Pokemon): boolean {
     const lastMove = pokemon.getLastNonVirtualMove();
-    if (!lastMove) {
+    if (
+      // No prior move has been used
+      !lastMove // Move is in the banlist
+      || invalidEncoreMoves.has(lastMove.move) // Move is out of PP
+      || !pokemon.getMoveset().some(m => m.moveId === lastMove.move && !m.isOutOfPp()) // Target has an active Shell Trap in waiting
+      || pokemon.getTag(BattlerTagType.SHELL_TRAP)
+    ) {
       return false;
     }
 
-    if (invalidEncoreMoves.has(lastMove.move)) {
-      return false;
-    }
-
-    if (!pokemon.getMoveset().some(m => m.moveId === lastMove.move && !m.isOutOfPp())) {
-      return false;
-    }
-
-    if (pokemon.getTag(BattlerTagType.SHELL_TRAP)) {
-      return false;
-    }
-
-    this.moveId = lastMove.move;
+    (this as Mutable<this>).moveId = lastMove.move;
 
     return true;
   }
@@ -1291,54 +1286,43 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
     }
 
     // Use the prior move in the moveset.
-    // Bang is justified as `canAdd` returns false if not found
-    const movesetMove = pokemon.getMoveset().find(m => m.moveId === this.moveId)!;
+    // Bang is justified as `canAdd` returns `false` if not found
+    const movesetMove = pokemon.getMoveset().find(m => m.moveId === this.moveId && !m.isOutOfPp())!;
+
+    // TODO: Resolve this after the move failure PR to occur during the start of the MP -
+    // after sleep but before all usability checks
+    movePhase.move = movesetMove;
+    movePhase["targets"] = this.getTargets(pokemon);
+  }
+
+  private getTargets(pokemon: Pokemon): BattlerIndex[] {
+    // Edge case for Acupressure - always targets self
+    if (allMoves[this.moveId].moveTarget === MoveTarget.USER_OR_NEAR_ALLY) {
+      return [pokemon.getBattlerIndex()];
+    }
 
     const moveTargets = getMoveTargets(pokemon, this.moveId);
     // Spread moves and ones with only 1 valid target will use their normal targeting.
     // If not, target a random enemy in our target list
-    const targets =
-      moveTargets.multiple || moveTargets.targets.length === 1
-        ? moveTargets.targets
-        : [moveTargets.targets[pokemon.randBattleSeedInt(moveTargets.targets.length)]];
-
-    globalScene.phaseManager.changePhaseMove(
-      m => m.is("MovePhase") && m.pokemon === pokemon,
-      globalScene.phaseManager.create(
-        "MovePhase",
-        pokemon,
-        targets,
-        movesetMove,
-        movePhase.useMode,
-        movePhase.isForcedLast(),
-      ),
-    );
+    return moveTargets.multiple || moveTargets.targets.length === 1
+      ? moveTargets.targets
+      : [moveTargets.targets[pokemon.randBattleSeedInt(moveTargets.targets.length)]];
   }
 
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     // If the encored move has run out of PP or the tag's turn count has elapsed,
     // Encore ends at the END of the turn.
     // Otherwise, Encore's duration reduces when the target attempts to use a move.
-
     if (lapseType === BattlerTagLapseType.AFTER_MOVE) {
       this.turnCount--;
       return true;
     }
 
-    const encoredMove = pokemon.getMoveset().find(m => m.moveId === this.moveId);
-    if (encoredMove == null || encoredMove.isOutOfPp()) {
-      return false;
-    }
-    return this.turnCount > 0;
+    const encoredMove = pokemon.getMoveset().find(m => m.moveId === this.moveId && !m.isOutOfPp());
+    return encoredMove && this.turnCount > 0;
   }
 
-  /**
-   * Checks if the move matches the moveId stored within the tag and returns a boolean value
-   * @param move - The ID of the move selected
-   * @param user N/A
-   * @returns `true` if the move does not match with the moveId stored and as a result, restricted
-   */
-  override isMoveRestricted(move: MoveId, _user?: Pokemon): boolean {
+  public override isMoveRestricted(move: MoveId): boolean {
     return move !== this.moveId;
   }
 

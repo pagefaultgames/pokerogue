@@ -1,5 +1,20 @@
 import { MoveId } from "#enums/move-id";
 
+/**
+ * Array containing all move-calling moves, used for DRY when writing move banlists
+ *
+ */
+const moveCallingMoves = [
+  MoveId.ASSIST,
+  MoveId.COPYCAT,
+  MoveId.ME_FIRST,
+  MoveId.METRONOME,
+  MoveId.MIRROR_MOVE,
+  MoveId.NATURE_POWER,
+  MoveId.SLEEP_TALK,
+  MoveId.SNATCH,
+] as const;
+
 /** Set of moves that cannot be called by {@linkcode MoveId.METRONOME | Metronome}. */
 export const invalidMetronomeMoves: ReadonlySet<MoveId> = new Set([
   MoveId.AFTER_YOU,
@@ -272,15 +287,18 @@ export const invalidSketchMoves: ReadonlySet<MoveId> = new Set([
 
 /** Set of all moves that cannot be locked into by {@linkcode MoveId.ENCORE}. */
 export const invalidEncoreMoves: ReadonlySet<MoveId> = new Set([
-  MoveId.MIMIC,
-  MoveId.MIRROR_MOVE,
+  ...moveCallingMoves,
   MoveId.TRANSFORM,
-  MoveId.STRUGGLE,
+  MoveId.MIMIC,
   MoveId.SKETCH,
+  MoveId.STRUGGLE,
+  MoveId.DYNAMAX_CANNON,
   MoveId.SLEEP_TALK,
   MoveId.ENCORE,
+  // NB: Add Max/G-Max/Z-Move blockage if or when they are implemented
 ]);
 
+/** Set of all moves that cannot be repeated by {@linkcode MoveId.INSTRUCT}. */
 export const invalidInstructMoves: ReadonlySet<MoveId> = new Set([
   // Locking/Continually Executed moves
   MoveId.OUTRAGE,
@@ -327,15 +345,8 @@ export const invalidInstructMoves: ReadonlySet<MoveId> = new Set([
   MoveId.SOLAR_BEAM,
   MoveId.SOLAR_BLADE,
   MoveId.METEOR_BEAM,
-  // Copying/Move-Calling moves
-  MoveId.ASSIST,
-  MoveId.COPYCAT,
-  MoveId.ME_FIRST,
-  MoveId.METRONOME,
-  MoveId.MIRROR_MOVE,
-  MoveId.NATURE_POWER,
-  MoveId.SLEEP_TALK,
-  MoveId.SNATCH,
+  // Copying/Move-Calling moves + Instruct
+  ...moveCallingMoves,
   MoveId.INSTRUCT,
   // Misc moves
   MoveId.KINGS_SHIELD,

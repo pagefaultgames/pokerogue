@@ -2,7 +2,7 @@
 import type { BattleScene } from "#app/battle-scene";
 import type { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-change-triggers";
 import type { MoveEffectPhase } from "#phases/move-effect-phase";
-import type { MoveEndPhase } from "#phases/move-end-phase";
+import type { MoveReflectPhase } from "#phases/move-reflect-phase";
 /* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
 
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
@@ -5751,10 +5751,12 @@ export class InfiltratorAbAttr extends AbAttr {
 
 /**
  * Attribute implementing the effects of {@link https://bulbapedia.bulbagarden.net/wiki/Magic_Bounce_(ability) | Magic Bounce}.
+ *
  * Allows the source to bounce back {@linkcode MoveFlags.REFLECTABLE | Reflectable}
  * moves as if the user had used {@linkcode MoveId.MAGIC_COAT | Magic Coat}.
+ *
  * The calling {@linkcode MoveEffectPhase} will "skip" targets with a reflection effect active,
- * showing the flyout and queueing the reaction during the move's {@linkcode MoveEndPhase}.
+ * showing the flyout and queueing the reaction during the pending {@linkcode MoveReflectPhase}.
  */
 export class ReflectStatusMoveAbAttr extends PreDefendAbAttr {
   override apply({ pokemon, opponent, move }: AugmentMoveInteractionAbAttrParams): void {
