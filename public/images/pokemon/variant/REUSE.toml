@@ -12,8 +12,10 @@ version = 1
 # A note _MAY_ be added as metadata, via an additional key, like
 # VARIANT_1_AUTHOR = "John Doe"
 # VARIANT_2_AUTHOR = "Jane Smith"
+# Or, even with just a general NOTE field, e..g
+# NOTE = "John Doe implemented variant, Jane Smith came up with the concept"
 # While this will *not* be reflected in the software bill of materials, it will
-# make it clear who is responsible for which variant
+# make it clear who is responsible for which variant and to what extent
 
 [[annotations]] # Code - Licensed under AGPL
 path = ["_masterlist.json", "_exp_masterlist.json"]
@@ -125,7 +127,6 @@ path = [
     "back/514.json",
 
     # Gligar/Gliscor - female forms only
-    "back/207.json",
     "female/207.json",
     "back/female/207.json",
     "female/208.json",
@@ -203,7 +204,7 @@ path = [
     "377.json",
     "back/377.json",
 ]
-SPDX-FileCopyrightText = ["2024 Dale B. aka Green Ninja757", "2025 Gonfold"]
+SPDX-FileCopyrightText = ["2024 Dale B. aka Green Ninja757", "2024 Gonfold"]
 SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
 VARIANT_1_AUTHOR = "Green Ninja757"
 NOTE = "Variant implementation and polish by Green Ninja757, original concept by Gonfold"
