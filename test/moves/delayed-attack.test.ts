@@ -195,10 +195,9 @@ describe("Moves - Delayed Attacks", () => {
 
     const MEPs = game.scene.phaseManager["phaseQueue"].findAll("MoveEffectPhase");
     expect(MEPs).toHaveLength(4);
-    expect(
-      MEPs.map(mep => mep.getPokemon().getBattlerIndex()),
-      "Delayed Attacks were not queued in correct order!",
-    ).toEqual(oldOrder);
+    console.log(`Expected: ${oldOrder.map(o => game.scene.getField()[o].getNameToRender())}
+Actual: ${MEPs.map(mep => mep.getPokemon().getNameToRender())}`);
+    expect(MEPs.map(mep => mep.getPokemon().getBattlerIndex())).toEqual(oldOrder);
   });
 
   it("should vanish silently if it would otherwise hit the user", async () => {
