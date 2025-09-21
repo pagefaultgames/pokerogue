@@ -1027,7 +1027,7 @@ export abstract class Move implements Localizable {
       aura.apply({pokemon: source, simulated, opponent: target, move: this, power});
     }
 
-    for (const p of source.getAlliedField()) {
+    for (const p of source.getAlliesGenerator()) {
       applyAbAttrs("UserFieldMoveTypePowerBoostAbAttr", {pokemon: p, opponent: target, move: this, simulated, power});
     }
 

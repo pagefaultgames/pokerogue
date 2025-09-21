@@ -3081,7 +3081,7 @@ export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAtt
       return;
     }
 
-    for (const p of pokemon.getAlliedField()) {
+    for (const p of pokemon.getAlliesGenerator()) {
       if (p.status && this.statusEffect.includes(p.status.effect)) {
         globalScene.phaseManager.queueMessage(getStatusEffectHealText(p.status.effect, getPokemonNameWithAffix(p)));
         p.resetStatus(false);

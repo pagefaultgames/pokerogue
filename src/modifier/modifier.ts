@@ -1915,7 +1915,7 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
     // Remove the Pokemon's FAINT status
     pokemon.resetStatus(true, false, true, false);
 
-    for (const p of pokemon.getAlliedField()) {
+    for (const p of pokemon.getAlliesGenerator()) {
       applyAbAttrs("CommanderAbAttr", { pokemon: p });
     }
     return true;

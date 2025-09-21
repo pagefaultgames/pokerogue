@@ -1280,7 +1280,7 @@ class TailwindTag extends SerializableArenaTag {
       );
     }
 
-    for (const pokemon of source.getAlliedField()) {
+    for (const pokemon of source.getAlliesGenerator()) {
       // Apply the CHARGED tag to party members with the WIND_POWER ability
       // TODO: This should not be handled here
       if (pokemon.hasAbility(AbilityId.WIND_POWER) && !pokemon.getTag(BattlerTagType.CHARGED)) {

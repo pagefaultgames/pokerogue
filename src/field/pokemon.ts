@@ -2469,7 +2469,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       // Do not check queenly majesty unless this is being simulated
       // This is because the move effect phase should not check queenly majesty, as that is handled by the move phase
       if (simulated && !cancelledHolder.value) {
-        for (const p of this.getAlliedField()) {
+        for (const p of this.getAlliesGenerator()) {
           applyAbAttrs("FieldPriorityMoveImmunityAbAttr", {
             pokemon: p,
             opponent: source,
@@ -3244,7 +3244,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Returns the pokemon that oppose this one and are active
+   * Returns the pokemon that oppose this one and are active in non-speed order
    *
    * @param onField - whether to also check if the pokemon is currently on the field (defaults to true)
    */
@@ -3254,6 +3254,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     );
   }
 
+  /**
+   * @returns A generator of pokemon that oppose this one in speed order
+   */
   public getOpponentsGenerator(): Generator<Pokemon, number> {
     return inSpeedOrder(this.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
   }
@@ -3267,11 +3270,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Gets the Pokémon on the allied field.
-   *
    * @returns An generator of Pokémon on the allied field in speed order.
    */
-  getAlliedField(): Generator<Pokemon, number> {
+  getAlliesGenerator(): Generator<Pokemon, number> {
     return inSpeedOrder(this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
   }
 
@@ -4031,7 +4032,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const cancelled = new BooleanHolder(false);
     applyAbAttrs("BattlerTagImmunityAbAttr", { pokemon: this, tag: stubTag, cancelled, simulated: true });
 
-    for (const pokemon of this.getAlliedField()) {
+    for (const pokemon of this.getAlliesGenerator()) {
       applyAbAttrs("UserFieldBattlerTagImmunityAbAttr", {
         pokemon,
         tag: stubTag,
@@ -4073,7 +4074,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return false;
     }
 
-    for (const pokemon of this.getAlliedField()) {
+    for (const pokemon of this.getAlliesGenerator()) {
       applyAbAttrs("UserFieldBattlerTagImmunityAbAttr", { pokemon, tag: newTag, cancelled, target: this });
       if (cancelled.value) {
         return false;
@@ -4824,7 +4825,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return false;
     }
 
-    for (const pokemon of this.getAlliedField()) {
+    for (const pokemon of this.getAlliesGenerator()) {
       applyAbAttrs("UserFieldStatusEffectImmunityAbAttr", {
         pokemon,
         effect,
