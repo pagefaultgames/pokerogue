@@ -38,6 +38,7 @@ describe("Moves - Move-calling Moves", () => {
 
     game.override
       .ability(AbilityId.NO_GUARD)
+      .passiveAbility(AbilityId.STURDY)
       .battleStyle("single")
       .criticalHits(false)
       .enemySpecies(SpeciesId.SHUCKLE)
@@ -117,6 +118,7 @@ describe("Moves - Move-calling Moves", () => {
     move: MoveId;
     attrName: MoveAttrString;
     choiceName: string;
+    /** A callback that will ensure the selected move is m. */
     callback: (m: MoveId) => void;
   }>([
     {
@@ -176,20 +178,24 @@ describe("Moves - Move-calling Moves", () => {
       banlist = attr["invalidMoves"];
       getMoveSpy = vi.spyOn(attr as typeof attr & Pick<{ getMove: (typeof attr)["getMove"] }, "getMove">, "getMove");
 
+      // Barring other things, ensure Copycat has (at least) that particular move in its moveset
+      game.override.moveset(move);
       if (move === MoveId.SLEEP_TALK) {
         game.override.statusEffect(StatusEffect.SLEEP);
       }
     });
 
+    // TODO: Revert and move back to the original tests' functions
     it.skipIf(move === MoveId.METRONOME)(`should copy and execute ${choiceName}`, async () => {
       await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
 
       callback(MoveId.SPLASH);
+
+      const feebas = game.field.getPlayerPokemon();
       game.move.select(move);
       await game.toEndOfTurn();
 
       expect(getMoveSpy).toHaveReturnedWith(MoveId.SPLASH);
-      const feebas = game.field.getPlayerPokemon();
       expect(feebas).toHaveUsedMove({ move, useMode: MoveUseMode.NORMAL }, 1);
       expect(feebas).toHaveUsedMove({
         move: MoveId.SPLASH,
@@ -204,17 +210,18 @@ describe("Moves - Move-calling Moves", () => {
         game.override.battleStyle("double");
         await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
 
-        callback(MoveId.TACKLE);
-
         const [feebas, milotic] = game.scene.getPlayerField();
+        game.move.changeMoveset(feebas, move);
         game.move.changeMoveset(milotic, MoveId.CELEBRATE);
+
+        callback(MoveId.TACKLE);
 
         // Turn 1: Force an RNG roll that hits enemy 1
         vi.spyOn(feebas, "randBattleSeedInt").mockReturnValue(0);
 
         game.move.select(move);
         game.move.select(MoveId.CELEBRATE, BattlerIndex.PLAYER_2);
-
+        await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
         await game.toEndOfTurn();
 
         console.log(feebas.getLastXMoves(-1));
@@ -249,9 +256,10 @@ describe("Moves - Move-calling Moves", () => {
       const feebas = game.field.getPlayerPokemon();
       // Mock RNG functions to return high rolls (ie last eligible target)
       // This will force the test to fail if MM were to use the same targeting algorithm
+      // as Copycat/etc
       vi.spyOn(feebas, "randBattleSeedInt").mockReturnValue(1);
 
-      game.move.select(move);
+      game.move.use(move);
       await game.toEndOfTurn();
 
       expect(feebas).toHaveUsedMove({ move, useMode: MoveUseMode.NORMAL }, 1);
@@ -262,6 +270,7 @@ describe("Moves - Move-calling Moves", () => {
       });
     });
 
+    // testing Metronome here is pointless since we literally mock out its randomness
     it.skipIf(move === MoveId.METRONOME)("should return MoveId.NONE if an invalid move would be picked", async () => {
       await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
       const firstBanlistedMove = [...banlist.values()][0];
@@ -311,7 +320,7 @@ describe("Moves - Move-calling Moves", () => {
       expect(feebas).toHaveUsedMove({ move: MoveId.SLEEP_TALK, result: MoveResult.FAIL });
     });
 
-    it("should fail the turn the user wakes up from Sleep", async () => {
+    it("should fail the turn that the user wakes up from Sleep", async () => {
       await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
       const feebas = game.field.getPlayerPokemon();
@@ -364,7 +373,6 @@ describe("Moves - Move-calling Moves", () => {
       attr = allMoves[move].getAttrs("CopyMoveAttr")[0] as CallMoveAttrWithBanlist;
       banlist = attr["invalidMoves"];
       getMoveSpy = vi.spyOn(attr as typeof attr & Pick<{ getMove: (typeof attr)["getMove"] }, "getMove">, "getMove");
-      game.override.moveset([move, MoveId.CELEBRATE]);
     });
 
     // TODO: Enable once move phase is refactored
