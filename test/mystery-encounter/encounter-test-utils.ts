@@ -157,7 +157,6 @@ export async function skipBattleRunMysteryEncounterRewardsPhase(
   runRewardsPhase?: false | undefined,
 ) {
   game.scene.phaseManager.clearPhaseQueue();
-  game.scene.phaseManager.clearPhaseQueueSplice();
   game.scene.getEnemyParty().forEach(p => {
     p.hp = 0;
     p.status = new Status(StatusEffect.FAINT);
