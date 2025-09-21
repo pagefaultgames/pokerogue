@@ -539,16 +539,16 @@ export class GameManager {
   }
 
   /**
-   * Override the speed order of the battle's current combatants.
-   * Used to manually modify Pokemon turn order.
-   * @param order - The turn order to set as an array of {@linkcode BattlerIndex}es
+   * Override the turn order of the battle's current combatants.
+   * @param order - The turn order to set, as an array of {@linkcode BattlerIndex}es
    * @example
    * ```ts
    * game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
    * ```
    * @throws Fails test immediately if `order` does not contain all non-fainted combatants' `BattlerIndex`es.
    * @remarks
-   * This does not account for priority, the battlers' relative speed stats.
+   * This does not account for priority, nor does it change the battlers' speed stats
+   * (for the purposes of Electro Ball, etc).
    * @todo What should happen if the number of active battlers changes mid-test?
    */
   public setTurnOrder(order: Exclude<BattlerIndex, BattlerIndex.ATTACKER>[]): void {
