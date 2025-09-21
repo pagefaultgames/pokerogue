@@ -44,7 +44,7 @@ export class MovePhase extends PokemonPhase {
   protected _targets: BattlerIndex[];
   public readonly useMode: MoveUseMode; // Made public for quash
   /** The timing modifier of the move (used by Quash and to force called moves to the front of their queue) */
-  public readonly timingModifier: MovePhaseTimingModifier;
+  public timingModifier: MovePhaseTimingModifier;
   /** Whether the current move should fail but still use PP. */
   protected failed = false;
   /** Whether the current move should fail and retain PP. */
