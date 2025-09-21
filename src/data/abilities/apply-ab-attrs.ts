@@ -74,7 +74,6 @@ function applyAbAttrsInternal<T extends CallableAbAttrString>(
   for (const passive of [false, true]) {
     params.passive = passive;
     applySingleAbAttrs(attrType, params, gainedMidTurn, messages);
-    globalScene.phaseManager.clearPhaseQueueSplice();
   }
   // We need to restore passive to its original state in the case that it was undefined on entry
   // this is necessary in case this method is called with an object that is reused.
