@@ -123,7 +123,7 @@ export interface Starter {
   pokerus: boolean;
   nickname?: string;
   teraType?: PokemonType;
-  ivs: number[];
+  ivs: Uint8Array;
 }
 
 export type RunHistoryData = Record<number, RunEntry>;
