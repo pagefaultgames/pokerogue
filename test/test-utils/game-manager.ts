@@ -548,6 +548,7 @@ export class GameManager {
    * This does not account for priority, nor does it change the battlers' speed stats
    * (for the purposes of Electro Ball, etc).
    * @todo What should happen if the number of active battlers changes mid-test?
+   * @todo Remove `await`s from existing test files in a follow-up PR
    */
   public setTurnOrder(order: Exclude<BattlerIndex, BattlerIndex.ATTACKER>[]): void {
     // TODO: Remove type assertions once `BattlerIndex.ATTACKER` ceases to exist
