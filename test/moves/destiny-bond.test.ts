@@ -76,7 +76,8 @@ describe("Moves - Destiny Bond", () => {
 
     // Turn 2: Player KO's the enemy before the enemy's turn
     game.move.select(moveToUse);
-    await game.phaseInterceptor.to("BerryPhase");
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.toEndOfTurn();
 
     expect(enemyPokemon.isFainted()).toBe(true);
     expect(playerPokemon.isFainted()).toBe(true);
