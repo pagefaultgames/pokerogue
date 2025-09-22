@@ -3,7 +3,6 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { BerryPhase } from "#phases/berry-phase";
 import { MessagePhase } from "#phases/message-phase";
-import { SwitchSummonPhase } from "#phases/switch-summon-phase";
 import { TurnStartPhase } from "#phases/turn-start-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import i18next from "i18next";
