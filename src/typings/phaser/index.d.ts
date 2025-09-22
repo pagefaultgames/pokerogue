@@ -54,6 +54,13 @@ declare module "phaser" {
     }
   }
 
+  namespace Math {
+    interface RandomDataGenerator {
+      pick<T>(array: ArrayLike<T>): T;
+      weightedPick<T>(array: ArrayLike<T>): T;
+    }
+  }
+
   namespace Input {
     namespace Gamepad {
       interface GamepadPlugin {

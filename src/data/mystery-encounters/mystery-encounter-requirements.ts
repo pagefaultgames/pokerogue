@@ -15,6 +15,7 @@ import { WeatherType } from "#enums/weather-type";
 import type { PlayerPokemon } from "#field/pokemon";
 import { AttackTypeBoosterModifier } from "#modifiers/modifier";
 import type { AttackTypeBoosterModifierType } from "#modifiers/modifier-type";
+import type { ReadonlyGenericUint8Array } from "#types/typed-arrays";
 import { coerceArray } from "#utils/array";
 
 export interface EncounterRequirement {
@@ -696,7 +697,7 @@ export class AbilityRequirement extends EncounterPokemonRequirement {
 }
 
 export class StatusEffectRequirement extends EncounterPokemonRequirement {
-  requiredStatusEffect: StatusEffect[];
+  requiredStatusEffect: ReadonlyGenericUint8Array<StatusEffect>;
   minNumberOfPokemon: number;
   invertQuery: boolean;
 
@@ -704,7 +705,7 @@ export class StatusEffectRequirement extends EncounterPokemonRequirement {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    this.requiredStatusEffect = coerceArray(statusEffect);
+    this.requiredStatusEffect = new Uint8Array(coerceArray(statusEffect));
   }
 
   override meetsRequirement(): boolean {
