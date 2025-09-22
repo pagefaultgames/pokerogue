@@ -56,6 +56,7 @@ import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
+import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { HitResult } from "#enums/hit-result";
 import { CommonAnim } from "#enums/move-anims-common";
@@ -1601,6 +1602,145 @@ export class SuppressAbilitiesTag extends SerializableArenaTag {
   }
 }
 
+/**
+ * Interface containing data related to a queued healing effect from
+ * {@link https://bulbapedia.bulbagarden.net/wiki/Healing_Wish_(move) | Healing Wish}
+ * or {@link https://bulbapedia.bulbagarden.net/wiki/Lunar_Dance_(move) | Lunar Dance}.
+ */
+interface PendingHealEffect {
+  /** The {@linkcode Pokemon.id | PID} of the {@linkcode Pokemon} that created the effect. */
+  readonly sourceId: number;
+  /** The {@linkcode MoveId} of the move that created the effect. */
+  readonly moveId: MoveId;
+  /** If `true`, also restores the target's PP when the effect activates. */
+  readonly restorePP: boolean;
+  /** The message to display when the effect activates */
+  readonly healMessage: string;
+}
+
+/**
+ * Arena tag to contain stored healing effects, namely from
+ * {@link https://bulbapedia.bulbagarden.net/wiki/Healing_Wish_(move) | Healing Wish}
+ * and {@link https://bulbapedia.bulbagarden.net/wiki/Lunar_Dance_(move) | Lunar Dance}.
+ * When a damaged Pokemon first enters the effect's {@linkcode BattlerIndex | field position},
+ * their HP is fully restored, and they are cured of any non-volatile status condition.
+ * If the effect is from Lunar Dance, their PP is also restored.
+ */
+export class PendingHealTag extends SerializableArenaTag {
+  public readonly tagType = ArenaTagType.PENDING_HEAL;
+  /** All pending healing effects, organized by {@linkcode BattlerIndex} */
+  public readonly pendingHeals: Partial<Record<BattlerIndex, PendingHealEffect[]>> = {};
+
+  constructor() {
+    super(0);
+  }
+
+  /**
+   * Adds a pending healing effect to the field. Effects under the same move *and*
+   * target index as an existing effect are ignored.
+   * @param targetIndex - The {@linkcode BattlerIndex} under which the effect applies
+   * @param healEffect - The {@linkcode PendingHealEffect | data} for the pending heal effect
+   */
+  public queueHeal(targetIndex: BattlerIndex, healEffect: PendingHealEffect): void {
+    const existingHealEffects = this.pendingHeals[targetIndex];
+    if (existingHealEffects) {
+      if (!existingHealEffects.some(he => he.moveId === healEffect.moveId)) {
+        existingHealEffects.push(healEffect);
+      }
+    } else {
+      this.pendingHeals[targetIndex] = [healEffect];
+    }
+  }
+
+  /** Removes default on-remove message */
+  override onRemove(_arena: Arena): void {}
+
+  /** This arena tag is removed at the end of the turn if no pending healing effects are on the field */
+  override lapse(_arena: Arena): boolean {
+    for (const key in this.pendingHeals) {
+      if (this.pendingHeals[key].length > 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Applies a pending healing effect on the given target index. If an effect is found for
+   * the index, the Pokemon at that index is healed to full HP, is cured of any non-volatile status,
+   * and has its PP fully restored (if the effect is from Lunar Dance).
+   * @param arena - The {@linkcode Arena} containing this tag
+   * @param simulated - If `true`, suppresses changes to game state
+   * @param pokemon - The {@linkcode Pokemon} receiving the healing effect
+   * @returns `true` if the target Pokemon was healed by this effect
+   * @todo This should also be called when a Pokemon moves into a new position via Ally Switch
+   */
+  override apply(arena: Arena, simulated: boolean, pokemon: Pokemon): boolean {
+    const targetIndex = pokemon.getBattlerIndex();
+    const targetEffects = this.pendingHeals[targetIndex];
+
+    if (targetEffects == null || targetEffects.length === 0) {
+      return false;
+    }
+
+    const healEffect = targetEffects.find(effect => this.canApply(effect, pokemon));
+
+    if (healEffect == null) {
+      return false;
+    }
+
+    if (simulated) {
+      return true;
+    }
+
+    const { sourceId, moveId, restorePP, healMessage } = healEffect;
+    const sourcePokemon = globalScene.getPokemonById(sourceId);
+    if (!sourcePokemon) {
+      console.warn(`Source of pending ${allMoves[moveId].name} effect is undefined!`);
+      targetEffects.splice(targetEffects.indexOf(healEffect), 1);
+      // Re-evaluate after the invalid heal effect is removed
+      return this.apply(arena, simulated, pokemon);
+    }
+
+    globalScene.phaseManager.unshiftNew(
+      "PokemonHealPhase",
+      targetIndex,
+      pokemon.getMaxHp(),
+      healMessage,
+      true,
+      false,
+      false,
+      true,
+      false,
+      restorePP,
+    );
+
+    targetEffects.splice(targetEffects.indexOf(healEffect), 1);
+
+    return healEffect != null;
+  }
+
+  /**
+   * Determines if the given {@linkcode PendingHealEffect} can immediately heal
+   * the given target {@linkcode Pokemon}.
+   * @param healEffect - The {@linkcode PendingHealEffect} to evaluate
+   * @param pokemon - The {@linkcode Pokemon} to evaluate against
+   * @returns `true` if the Pokemon can be healed by the effect
+   */
+  private canApply(healEffect: PendingHealEffect, pokemon: Pokemon): boolean {
+    return (
+      !pokemon.isFullHp()
+      || pokemon.status != null
+      || (healEffect.restorePP && pokemon.getMoveset().some(mv => mv.ppUsed > 0))
+    );
+  }
+
+  override loadTag(source: BaseArenaTag & Pick<PendingHealTag, "tagType" | "pendingHeals">): void {
+    super.loadTag(source);
+    (this as Mutable<this>).pendingHeals = source.pendingHeals;
+  }
+}
+
 // TODO: swap `sourceMove` and `sourceId` and make `sourceMove` an optional parameter
 export function getArenaTag(
   tagType: ArenaTagType,
@@ -1664,6 +1804,8 @@ export function getArenaTag(
       return new FairyLockTag(turnCount, sourceId);
     case ArenaTagType.NEUTRALIZING_GAS:
       return new SuppressAbilitiesTag(sourceId);
+    case ArenaTagType.PENDING_HEAL:
+      return new PendingHealTag();
     default:
       return null;
   }
@@ -1712,5 +1854,6 @@ export type ArenaTagTypeMap = {
   [ArenaTagType.GRASS_WATER_PLEDGE]: GrassWaterPledgeTag;
   [ArenaTagType.FAIRY_LOCK]: FairyLockTag;
   [ArenaTagType.NEUTRALIZING_GAS]: SuppressAbilitiesTag;
+  [ArenaTagType.PENDING_HEAL]: PendingHealTag;
   [ArenaTagType.NONE]: NoneTag;
 };

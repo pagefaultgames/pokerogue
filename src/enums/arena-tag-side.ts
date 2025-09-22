@@ -5,6 +5,7 @@ import type { ArenaFlyout } from "#ui/containers/arena-flyout";
  * Enum used to represent a given side of the field for the purposes of {@linkcode ArenaTag}s and
  * the current {@linkcode ArenaFlyout}.
  */
+// TODO: rename to something else (this isn't used only for arena tags)
 export enum ArenaTagSide {
   /**
    * The effect applies to both sides of the field (player & enemy).

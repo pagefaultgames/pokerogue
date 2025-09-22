@@ -4,8 +4,10 @@ import type { BattleType } from "#enums/battle-type";
 import type { GameModes } from "#enums/game-modes";
 import type { MoveId } from "#enums/move-id";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import type { Nature } from "#enums/nature";
 import type { PlayerGender } from "#enums/player-gender";
 import type { PokemonType } from "#enums/pokemon-type";
+import type { SpeciesId } from "#enums/species-id";
 import type { MysteryEncounterSaveData } from "#mystery-encounters/mystery-encounter-save-data";
 import type { Variant } from "#sprites/variant";
 import type { ArenaData } from "#system/arena-data";
@@ -106,6 +108,22 @@ export interface DexAttrProps {
   female: boolean;
   variant: Variant;
   formIndex: number;
+}
+
+export interface Starter {
+  speciesId: SpeciesId;
+  shiny: boolean;
+  variant: Variant;
+  formIndex: number;
+  female?: boolean;
+  abilityIndex: number;
+  passive: boolean;
+  nature: Nature;
+  moveset?: StarterMoveset;
+  pokerus: boolean;
+  nickname?: string;
+  teraType?: PokemonType;
+  ivs: number[];
 }
 
 export type RunHistoryData = Record<number, RunEntry>;

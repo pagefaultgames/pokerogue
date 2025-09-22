@@ -399,6 +399,8 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
 
   /**
    * Iterate over all field effects and update the corresponding {@linkcode Phaser.GameObjects.Text} object.
+   * @todo Make this use separate text objects for each line
+   * @todo Make long lines use scrolling text to allow for longer messages
    */
   private updateFieldText(): void {
     this.clearText();
