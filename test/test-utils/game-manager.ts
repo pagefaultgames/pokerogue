@@ -29,7 +29,7 @@ import { TurnEndPhase } from "#phases/turn-end-phase";
 import { TurnInitPhase } from "#phases/turn-init-phase";
 import { TurnStartPhase } from "#phases/turn-start-phase";
 import { ErrorInterceptor } from "#test/test-utils/error-interceptor";
-import { generateStarter } from "#test/test-utils/game-manager-utils";
+import { generateStarters } from "#test/test-utils/game-manager-utils";
 import { GameWrapper } from "#test/test-utils/game-wrapper";
 import { ChallengeModeHelper } from "#test/test-utils/helpers/challenge-mode-helper";
 import { ClassicModeHelper } from "#test/test-utils/helpers/classic-mode-helper";
@@ -52,7 +52,6 @@ import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import type { PartyUiHandler } from "#ui/party-ui-handler";
 import type { StarterSelectUiHandler } from "#ui/starter-select-ui-handler";
 import type { TargetSelectUiHandler } from "#ui/target-select-ui-handler";
-import { isNullOrUndefined } from "#utils/common";
 import fs from "node:fs";
 import { AES, enc } from "crypto-js";
 import { expect, vi } from "vitest";
@@ -216,7 +215,7 @@ export class GameManager {
 
     this.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       this.scene.gameMode = getGameMode(mode);
-      const starters = generateStarter(this.scene, species);
+      const starters = generateStarters(this.scene, species);
       const selectStarterPhase = new SelectStarterPhase();
       this.scene.phaseManager.pushPhase(new EncounterPhase(false));
       selectStarterPhase.initBattle(starters);
@@ -240,7 +239,7 @@ export class GameManager {
    * @returns A Promise that resolves when the EncounterPhase ends.
    */
   async runToMysteryEncounter(encounterType?: MysteryEncounterType, species?: SpeciesId[]) {
-    if (!isNullOrUndefined(encounterType)) {
+    if (encounterType != null) {
       this.override.disableTrainerWaves();
       this.override.mysteryEncounter(encounterType);
     }
@@ -252,7 +251,7 @@ export class GameManager {
       UiMode.TITLE,
       () => {
         this.scene.gameMode = getGameMode(GameModes.CLASSIC);
-        const starters = generateStarter(this.scene, species);
+        const starters = generateStarters(this.scene, species);
         const selectStarterPhase = new SelectStarterPhase();
         this.scene.phaseManager.pushPhase(new EncounterPhase(false));
         selectStarterPhase.initBattle(starters);
@@ -272,7 +271,7 @@ export class GameManager {
     );
 
     await this.phaseInterceptor.to("EncounterPhase");
-    if (!isNullOrUndefined(encounterType)) {
+    if (encounterType != null) {
       expect(this.scene.currentBattle?.mysteryEncounter?.encounterType).toBe(encounterType);
     }
   }
@@ -465,6 +464,9 @@ export class GameManager {
    * Faint a player or enemy pokemon instantly by setting their HP to 0.
    * @param pokemon - The player/enemy pokemon being fainted
    * @returns A Promise that resolves once the fainted pokemon's FaintPhase finishes running.
+   * @remarks
+   * This method *pushes* a FaintPhase and runs until it's finished. This may cause a turn to play out unexpectedly
+   * @todo Consider whether running the faint phase immediately can be done
    */
   async killPokemon(pokemon: PlayerPokemon | EnemyPokemon) {
     pokemon.hp = 0;
@@ -534,7 +536,7 @@ export class GameManager {
   }
 
   /**
-   * Intercepts `TurnStartPhase` and mocks {@linkcode TurnStartPhase.getSpeedOrder}'s return value.
+   * Modifies the queue manager to return move phases in a particular order
    * Used to manually modify Pokemon turn order.
    * Note: This *DOES NOT* account for priority.
    * @param order - The turn order to set as an array of {@linkcode BattlerIndex}es.
@@ -546,7 +548,7 @@ export class GameManager {
   async setTurnOrder(order: BattlerIndex[]): Promise<void> {
     await this.phaseInterceptor.to("TurnStartPhase", false);
 
-    vi.spyOn(this.scene.phaseManager.getCurrentPhase() as TurnStartPhase, "getSpeedOrder").mockReturnValue(order);
+    this.scene.phaseManager.dynamicQueueManager.setMoveOrder(order);
   }
 
   /**

@@ -13,7 +13,7 @@ import type { Pokemon } from "#field/pokemon";
 import { ResetNegativeStatStageModifier } from "#modifiers/modifier";
 import { PokemonPhase } from "#phases/pokemon-phase";
 import type { ConditionalUserFieldProtectStatAbAttrParams, PreStatStageChangeAbAttrParams } from "#types/ability-types";
-import { BooleanHolder, isNullOrUndefined, NumberHolder } from "#utils/common";
+import { BooleanHolder, NumberHolder } from "#utils/common";
 import i18next from "i18next";
 
 export type StatStageChangeCallback = (
@@ -153,7 +153,7 @@ export class StatStageChangePhase extends PokemonPhase {
         applyAbAttrs("ConditionalUserFieldProtectStatAbAttr", abAttrParams);
         // TODO: Consider skipping this call if `cancelled` is false.
         const ally = pokemon.getAlly();
-        if (!isNullOrUndefined(ally)) {
+        if (ally != null) {
           applyAbAttrs("ConditionalUserFieldProtectStatAbAttr", { ...abAttrParams, pokemon: ally });
         }
 
@@ -223,10 +223,7 @@ export class StatStageChangePhase extends PokemonPhase {
       });
 
       // Look for any other stat change phases; if this is the last one, do White Herb check
-      const existingPhase = globalScene.phaseManager.findPhase(
-        p => p.is("StatStageChangePhase") && p.battlerIndex === this.battlerIndex,
-      );
-      if (!existingPhase?.is("StatStageChangePhase")) {
+      if (!globalScene.phaseManager.hasPhaseOfType("StatStageChangePhase", p => p.battlerIndex === this.battlerIndex)) {
         // Apply White Herb if needed
         const whiteHerb = globalScene.applyModifier(
           ResetNegativeStatStageModifier,
@@ -294,49 +291,6 @@ export class StatStageChangePhase extends PokemonPhase {
       });
     } else {
       end();
-    }
-  }
-
-  aggregateStatStageChanges(): void {
-    const accEva: BattleStat[] = [Stat.ACC, Stat.EVA];
-    const isAccEva = accEva.some(s => this.stats.includes(s));
-    let existingPhase: StatStageChangePhase;
-    if (this.stats.length === 1) {
-      while (
-        (existingPhase = globalScene.phaseManager.findPhase(
-          p =>
-            p.is("StatStageChangePhase")
-            && p.battlerIndex === this.battlerIndex
-            && p.stats.length === 1
-            && p.stats[0] === this.stats[0]
-            && p.selfTarget === this.selfTarget
-            && p.showMessage === this.showMessage
-            && p.ignoreAbilities === this.ignoreAbilities,
-        ) as StatStageChangePhase)
-      ) {
-        this.stages += existingPhase.stages;
-
-        if (!globalScene.phaseManager.tryRemovePhase(p => p === existingPhase)) {
-          break;
-        }
-      }
-    }
-    while (
-      (existingPhase = globalScene.phaseManager.findPhase(
-        p =>
-          p.is("StatStageChangePhase")
-          && p.battlerIndex === this.battlerIndex
-          && p.selfTarget === this.selfTarget
-          && accEva.some(s => p.stats.includes(s)) === isAccEva
-          && p.stages === this.stages
-          && p.showMessage === this.showMessage
-          && p.ignoreAbilities === this.ignoreAbilities,
-      ) as StatStageChangePhase)
-    ) {
-      this.stats.push(...existingPhase.stats);
-      if (!globalScene.phaseManager.tryRemovePhase(p => p === existingPhase)) {
-        break;
-      }
     }
   }
 

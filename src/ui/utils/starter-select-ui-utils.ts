@@ -18,7 +18,7 @@ import type { Variant } from "#sprites/variant";
 import type { DexEntry } from "#types/dex-data";
 import type { DexAttrProps, StarterDataEntry, StarterPreferences } from "#types/save-data";
 import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";
-import { isNullOrUndefined, NumberHolder } from "#utils/common";
+import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
 
 export interface SpeciesDetails {
@@ -145,7 +145,7 @@ const languageSettings: { [key: string]: StarterSelectLanguageSetting } = {
     starterInfoYOffset: 0.5,
     starterInfoXPos: 38,
   },
-  "es-MX": {
+  "es-419": {
     starterInfoTextSize: "50px",
     instructionTextSize: "38px",
     starterInfoYOffset: 0.5,
@@ -309,8 +309,8 @@ export function getSpeciesPropsFromPreferences(
 ): DexAttrProps {
   const defaults = globalScene.gameData.getSpeciesDefaultDexAttrProps(species);
   return {
-    shiny: isNullOrUndefined(starterPreferences.shiny) ? defaults.shiny : starterPreferences.shiny,
-    variant: isNullOrUndefined(starterPreferences.variant) ? defaults.variant : (starterPreferences.variant as Variant),
+    shiny: starterPreferences.shiny != null ? starterPreferences.shiny : defaults.shiny,
+    variant: starterPreferences.variant != null ? (starterPreferences.variant as Variant) : defaults.variant,
     female: starterPreferences.female ?? defaults.female,
     formIndex: starterPreferences.formIndex ?? defaults.formIndex,
   };

@@ -1,39 +1,4 @@
-/** biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports */
-import type { BattlerTag } from "#app/data/battler-tags";
-/** biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports */
-
-import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
-import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
-import { CommonBattleAnim } from "#data/battle-anims";
-import { allMoves } from "#data/data-lists";
-import { AbilityId } from "#enums/ability-id";
-import { ArenaTagSide } from "#enums/arena-tag-side";
-import { ArenaTagType } from "#enums/arena-tag-type";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { HitResult } from "#enums/hit-result";
-import { CommonAnim } from "#enums/move-anims-common";
-import { MoveCategory } from "#enums/move-category";
-import { MoveId } from "#enums/move-id";
-import { MoveTarget } from "#enums/move-target";
-import { PokemonType } from "#enums/pokemon-type";
-import { Stat } from "#enums/stat";
-import { StatusEffect } from "#enums/status-effect";
-import type { Arena } from "#field/arena";
-import type { Pokemon } from "#field/pokemon";
-import type {
-  ArenaScreenTagType,
-  ArenaTagData,
-  EntryHazardTagType,
-  RoomArenaTagType,
-  SerializableArenaTagType,
-} from "#types/arena-tags";
-import type { Mutable } from "#types/type-helpers";
-import { BooleanHolder, type NumberHolder, toDmgValue } from "#utils/common";
-import i18next from "i18next";
-
 /**
- * @module
  * ArenaTags are are meant for effects that are tied to the arena (as opposed to a specific pokemon).
  * Examples include (but are not limited to)
  * - Cross-turn effects that persist even if the user/target switches out, such as Happy Hour
@@ -76,7 +41,43 @@ import i18next from "i18next";
  * ```
  * Notes
  * - If the class has any subclasses, then the second form of `loadTag` *must* be used.
+ * @module
  */
+
+// biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports
+import type { BattlerTag } from "#app/data/battler-tags";
+// biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports
+
+import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
+import { globalScene } from "#app/global-scene";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { CommonBattleAnim } from "#data/battle-anims";
+import { allMoves } from "#data/data-lists";
+import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import type { BattlerIndex } from "#enums/battler-index";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { HitResult } from "#enums/hit-result";
+import { CommonAnim } from "#enums/move-anims-common";
+import { MoveCategory } from "#enums/move-category";
+import { MoveId } from "#enums/move-id";
+import { MoveTarget } from "#enums/move-target";
+import { PokemonType } from "#enums/pokemon-type";
+import { Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
+import type { Arena } from "#field/arena";
+import type { Pokemon } from "#field/pokemon";
+import type {
+  ArenaScreenTagType,
+  ArenaTagData,
+  EntryHazardTagType,
+  RoomArenaTagType,
+  SerializableArenaTagType,
+} from "#types/arena-tags";
+import type { Mutable } from "#types/type-helpers";
+import { BooleanHolder, type NumberHolder, toDmgValue } from "#utils/common";
+import i18next from "i18next";
 
 /** Interface containing the serializable fields of ArenaTagData. */
 interface BaseArenaTag {
@@ -84,6 +85,10 @@ interface BaseArenaTag {
    * The tag's remaining duration. Setting to any number `<=0` will make the tag's duration effectively infinite.
    */
   turnCount: number;
+  /**
+   * The tag's max duration.
+   */
+  maxDuration: number;
   /**
    * The {@linkcode MoveId} that created this tag, or `undefined` if not set by a move.
    */
@@ -110,12 +115,14 @@ export abstract class ArenaTag implements BaseArenaTag {
   /** The type of the arena tag */
   public abstract readonly tagType: ArenaTagType;
   public turnCount: number;
+  public maxDuration: number;
   public sourceMove?: MoveId;
   public sourceId: number | undefined;
   public side: ArenaTagSide;
 
   constructor(turnCount: number, sourceMove?: MoveId, sourceId?: number, side: ArenaTagSide = ArenaTagSide.BOTH) {
     this.turnCount = turnCount;
+    this.maxDuration = turnCount;
     this.sourceMove = sourceMove;
     this.sourceId = sourceId;
     this.side = side;
@@ -138,7 +145,7 @@ export abstract class ArenaTag implements BaseArenaTag {
     }
   }
 
-  onOverlap(_arena: Arena, _source: Pokemon | null): void {}
+  onOverlap(_arena: Arena, _source: Pokemon | undefined): void {}
 
   /**
    * Trigger this {@linkcode ArenaTag}'s effect, reducing its duration as applicable.
@@ -164,6 +171,7 @@ export abstract class ArenaTag implements BaseArenaTag {
    */
   loadTag<const T extends this>(source: BaseArenaTag & Pick<T, "tagType">): void {
     this.turnCount = source.turnCount;
+    this.maxDuration = source.maxDuration;
     this.sourceMove = source.sourceMove;
     this.sourceId = source.sourceId;
     this.side = source.side;
@@ -172,9 +180,8 @@ export abstract class ArenaTag implements BaseArenaTag {
   /**
    * Helper function that retrieves the source Pokemon
    * @returns - The source {@linkcode Pokemon} for this tag.
-   * Returns `null` if `this.sourceId` is `undefined`
    */
-  public getSourcePokemon(): Pokemon | null {
+  public getSourcePokemon(): Pokemon | undefined {
     return globalScene.getPokemonById(this.sourceId);
   }
 
@@ -617,7 +624,7 @@ export class NoCritTag extends SerializableArenaTag {
 
     globalScene.phaseManager.queueMessage(
       i18next.t("arenaTag:noCritOnRemove", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(source ?? undefined),
+        pokemonNameWithAffix: getPokemonNameWithAffix(source),
         moveName: this.getMoveName(),
       }),
     );
@@ -1537,7 +1544,7 @@ export class SuppressAbilitiesTag extends SerializableArenaTag {
     }
   }
 
-  public override onOverlap(_arena: Arena, source: Pokemon | null): void {
+  public override onOverlap(_arena: Arena, source: Pokemon | undefined): void {
     (this as Mutable<this>).sourceCount++;
     this.playActivationMessage(source);
   }
@@ -1580,7 +1587,7 @@ export class SuppressAbilitiesTag extends SerializableArenaTag {
     return this.sourceCount > 1;
   }
 
-  private playActivationMessage(pokemon: Pokemon | null) {
+  private playActivationMessage(pokemon: Pokemon | undefined) {
     if (pokemon) {
       globalScene.phaseManager.queueMessage(
         i18next.t("arenaTag:neutralizingGasOnAdd", {
@@ -1588,6 +1595,145 @@ export class SuppressAbilitiesTag extends SerializableArenaTag {
         }),
       );
     }
+  }
+}
+
+/**
+ * Interface containing data related to a queued healing effect from
+ * {@link https://bulbapedia.bulbagarden.net/wiki/Healing_Wish_(move) | Healing Wish}
+ * or {@link https://bulbapedia.bulbagarden.net/wiki/Lunar_Dance_(move) | Lunar Dance}.
+ */
+interface PendingHealEffect {
+  /** The {@linkcode Pokemon.id | PID} of the {@linkcode Pokemon} that created the effect. */
+  readonly sourceId: number;
+  /** The {@linkcode MoveId} of the move that created the effect. */
+  readonly moveId: MoveId;
+  /** If `true`, also restores the target's PP when the effect activates. */
+  readonly restorePP: boolean;
+  /** The message to display when the effect activates */
+  readonly healMessage: string;
+}
+
+/**
+ * Arena tag to contain stored healing effects, namely from
+ * {@link https://bulbapedia.bulbagarden.net/wiki/Healing_Wish_(move) | Healing Wish}
+ * and {@link https://bulbapedia.bulbagarden.net/wiki/Lunar_Dance_(move) | Lunar Dance}.
+ * When a damaged Pokemon first enters the effect's {@linkcode BattlerIndex | field position},
+ * their HP is fully restored, and they are cured of any non-volatile status condition.
+ * If the effect is from Lunar Dance, their PP is also restored.
+ */
+export class PendingHealTag extends SerializableArenaTag {
+  public readonly tagType = ArenaTagType.PENDING_HEAL;
+  /** All pending healing effects, organized by {@linkcode BattlerIndex} */
+  public readonly pendingHeals: Partial<Record<BattlerIndex, PendingHealEffect[]>> = {};
+
+  constructor() {
+    super(0);
+  }
+
+  /**
+   * Adds a pending healing effect to the field. Effects under the same move *and*
+   * target index as an existing effect are ignored.
+   * @param targetIndex - The {@linkcode BattlerIndex} under which the effect applies
+   * @param healEffect - The {@linkcode PendingHealEffect | data} for the pending heal effect
+   */
+  public queueHeal(targetIndex: BattlerIndex, healEffect: PendingHealEffect): void {
+    const existingHealEffects = this.pendingHeals[targetIndex];
+    if (existingHealEffects) {
+      if (!existingHealEffects.some(he => he.moveId === healEffect.moveId)) {
+        existingHealEffects.push(healEffect);
+      }
+    } else {
+      this.pendingHeals[targetIndex] = [healEffect];
+    }
+  }
+
+  /** Removes default on-remove message */
+  override onRemove(_arena: Arena): void {}
+
+  /** This arena tag is removed at the end of the turn if no pending healing effects are on the field */
+  override lapse(_arena: Arena): boolean {
+    for (const key in this.pendingHeals) {
+      if (this.pendingHeals[key].length > 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Applies a pending healing effect on the given target index. If an effect is found for
+   * the index, the Pokemon at that index is healed to full HP, is cured of any non-volatile status,
+   * and has its PP fully restored (if the effect is from Lunar Dance).
+   * @param arena - The {@linkcode Arena} containing this tag
+   * @param simulated - If `true`, suppresses changes to game state
+   * @param pokemon - The {@linkcode Pokemon} receiving the healing effect
+   * @returns `true` if the target Pokemon was healed by this effect
+   * @todo This should also be called when a Pokemon moves into a new position via Ally Switch
+   */
+  override apply(arena: Arena, simulated: boolean, pokemon: Pokemon): boolean {
+    const targetIndex = pokemon.getBattlerIndex();
+    const targetEffects = this.pendingHeals[targetIndex];
+
+    if (targetEffects == null || targetEffects.length === 0) {
+      return false;
+    }
+
+    const healEffect = targetEffects.find(effect => this.canApply(effect, pokemon));
+
+    if (healEffect == null) {
+      return false;
+    }
+
+    if (simulated) {
+      return true;
+    }
+
+    const { sourceId, moveId, restorePP, healMessage } = healEffect;
+    const sourcePokemon = globalScene.getPokemonById(sourceId);
+    if (!sourcePokemon) {
+      console.warn(`Source of pending ${allMoves[moveId].name} effect is undefined!`);
+      targetEffects.splice(targetEffects.indexOf(healEffect), 1);
+      // Re-evaluate after the invalid heal effect is removed
+      return this.apply(arena, simulated, pokemon);
+    }
+
+    globalScene.phaseManager.unshiftNew(
+      "PokemonHealPhase",
+      targetIndex,
+      pokemon.getMaxHp(),
+      healMessage,
+      true,
+      false,
+      false,
+      true,
+      false,
+      restorePP,
+    );
+
+    targetEffects.splice(targetEffects.indexOf(healEffect), 1);
+
+    return healEffect != null;
+  }
+
+  /**
+   * Determines if the given {@linkcode PendingHealEffect} can immediately heal
+   * the given target {@linkcode Pokemon}.
+   * @param healEffect - The {@linkcode PendingHealEffect} to evaluate
+   * @param pokemon - The {@linkcode Pokemon} to evaluate against
+   * @returns `true` if the Pokemon can be healed by the effect
+   */
+  private canApply(healEffect: PendingHealEffect, pokemon: Pokemon): boolean {
+    return (
+      !pokemon.isFullHp()
+      || pokemon.status != null
+      || (healEffect.restorePP && pokemon.getMoveset().some(mv => mv.ppUsed > 0))
+    );
+  }
+
+  override loadTag(source: BaseArenaTag & Pick<PendingHealTag, "tagType" | "pendingHeals">): void {
+    super.loadTag(source);
+    (this as Mutable<this>).pendingHeals = source.pendingHeals;
   }
 }
 
@@ -1654,6 +1800,8 @@ export function getArenaTag(
       return new FairyLockTag(turnCount, sourceId);
     case ArenaTagType.NEUTRALIZING_GAS:
       return new SuppressAbilitiesTag(sourceId);
+    case ArenaTagType.PENDING_HEAL:
+      return new PendingHealTag();
     default:
       return null;
   }
@@ -1702,5 +1850,6 @@ export type ArenaTagTypeMap = {
   [ArenaTagType.GRASS_WATER_PLEDGE]: GrassWaterPledgeTag;
   [ArenaTagType.FAIRY_LOCK]: FairyLockTag;
   [ArenaTagType.NEUTRALIZING_GAS]: SuppressAbilitiesTag;
+  [ArenaTagType.PENDING_HEAL]: PendingHealTag;
   [ArenaTagType.NONE]: NoneTag;
 };

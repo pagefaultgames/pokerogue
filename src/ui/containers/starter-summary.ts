@@ -18,7 +18,7 @@ import { getVariantIcon, getVariantTint, type Variant } from "#sprites/variant";
 import { achvs } from "#system/achv";
 import type { Ability } from "#types/ability-types";
 import type { StarterMoveset, StarterPreferences } from "#types/save-data";
-import { BooleanHolder, getLocalizedSpriteKey, isNullOrUndefined, padInt, rgbHexToRgba } from "#utils/common";
+import { BooleanHolder, getLocalizedSpriteKey, padInt, rgbHexToRgba } from "#utils/common";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
@@ -626,10 +626,10 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     // We will only update the sprite if there is a change to form, shiny/variant
     // or gender for species with gender sprite differences
     const shouldUpdateSprite =
-      (species.genderDiffs && !isNullOrUndefined(female))
-      || !isNullOrUndefined(formIndex)
-      || !isNullOrUndefined(shiny)
-      || !isNullOrUndefined(variant);
+      (species.genderDiffs && female != null)
+      || formIndex != null
+      || shiny != null
+      || variant != null;
 
     this.updateCandyTooltip();
 
