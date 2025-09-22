@@ -240,9 +240,9 @@ export class SpeciesFormChangeWeatherTrigger extends SpeciesFormChangeTrigger {
   /** The ability that  triggers the form change */
   public ability: AbilityId;
   /** The list of weathers that trigger the form change */
-  public weathers: WeatherType[];
+  public readonly weathers: readonly WeatherType[];
 
-  constructor(ability: AbilityId, weathers: WeatherType[]) {
+  constructor(ability: AbilityId, weathers: readonly WeatherType[]) {
     super();
     this.ability = ability;
     this.weathers = weathers;
@@ -278,9 +278,9 @@ export class SpeciesFormChangeRevertWeatherFormTrigger extends SpeciesFormChange
   /** The ability that triggers the form change*/
   public ability: AbilityId;
   /** The list of weathers that will also trigger a form change to original form */
-  public weathers: WeatherType[];
+  public readonly weathers: readonly WeatherType[];
 
-  constructor(ability: AbilityId, weathers: WeatherType[]) {
+  constructor(ability: AbilityId, weathers: readonly WeatherType[]) {
     super();
     this.ability = ability;
     this.weathers = weathers;
@@ -310,9 +310,10 @@ export class SpeciesFormChangeRevertWeatherFormTrigger extends SpeciesFormChange
 }
 
 export function getSpeciesFormChangeMessage(pokemon: Pokemon, formChange: SpeciesFormChange, preName: string): string {
-  const isMega = formChange.formKey.indexOf(SpeciesFormKey.MEGA) > -1;
-  const isGmax = formChange.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1;
-  const isEmax = formChange.formKey.indexOf(SpeciesFormKey.ETERNAMAX) > -1;
+  const formKey = formChange.formKey;
+  const isMega = formKey.indexOf(SpeciesFormKey.MEGA) > -1;
+  const isGmax = formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1;
+  const isEmax = formKey.indexOf(SpeciesFormKey.ETERNAMAX) > -1;
   const isRevert = !isMega && formChange.formKey === pokemon.species.forms[0].formKey;
   if (isMega) {
     return i18next.t("battlePokemonForm:megaChange", {

@@ -25,6 +25,7 @@ import { SpeciesId } from "#enums/species-id";
 import { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
 import type { Constructor, nil } from "#types/common";
+import type { Mutable } from "#types/type-helpers";
 
 export type SpeciesFormChangeConditionPredicate = (p: Pokemon) => boolean;
 export type SpeciesFormChangeConditionEnforceFunc = (p: Pokemon) => void;
@@ -116,7 +117,7 @@ function getSpeciesDependentFormChangeCondition(species: SpeciesId): SpeciesForm
 }
 
 interface PokemonFormChanges {
-  [key: string]: SpeciesFormChange[];
+  [key: string]: readonly SpeciesFormChange[];
 }
 
 // biome-ignore format: manually formatted
@@ -608,6 +609,6 @@ export function initPokemonForms() {
         );
       }
     }
-    formChanges.push(...newFormChanges);
+    (formChanges as Mutable<typeof formChanges>).push(...newFormChanges);
   }
 }
