@@ -7,8 +7,8 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { WeatherType } from "#enums/weather-type";
+import type { nil } from "#types/common";
 import { addTextObject } from "#ui/text";
-import type { nil } from "#utils/common";
 import i18next from "i18next";
 
 export enum EventType {

@@ -3,8 +3,6 @@ import { MoneyFormat } from "#enums/money-format";
 import type { Variant } from "#sprites/variant";
 import i18next from "i18next";
 
-export type nil = null | undefined;
-
 export const MissingTextureKey = "__MISSING";
 
 // TODO: Draft tests for these utility functions
