@@ -98,6 +98,7 @@ import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import { canSpeciesTera, willTerastallize } from "#utils/pokemon-utils";
+import type { ReadonlyGenericUint8Array } from "#types/typed-arrays";
 
 /**
  * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.
@@ -2806,11 +2807,11 @@ export class StatusEffectAttr extends MoveEffectAttr {
  * Used for {@linkcode Moves.TRI_ATTACK} and {@linkcode Moves.DIRE_CLAW}.
  */
 export class MultiStatusEffectAttr extends StatusEffectAttr {
-  public effects: StatusEffect[];
+  public readonly effects: ReadonlyGenericUint8Array<StatusEffect>;
 
   constructor(effects: StatusEffect[], selfTarget?: boolean) {
     super(effects[0], selfTarget);
-    this.effects = effects;
+    this.effects = new Uint8Array(effects);
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -3136,7 +3137,7 @@ export class StealEatBerryAttr extends EatBerryAttr {
  */
 export class HealStatusEffectAttr extends MoveEffectAttr {
   /** List of Status Effects to cure */
-  private effects: StatusEffect[];
+  private readonly effects: ReadonlyGenericUint8Array<StatusEffect>;
 
   /**
    * @param selfTarget - Whether this move targets the user
@@ -3144,7 +3145,7 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
    */
   constructor(selfTarget: boolean, effects: StatusEffect | StatusEffect[]) {
     super(selfTarget, { lastHitOnly: true });
-    this.effects = coerceArray(effects)
+    this.effects = new Uint8Array(coerceArray(effects));
   }
 
   /**

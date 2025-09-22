@@ -127,11 +127,11 @@ export function randSeedFloat(): number {
   return Phaser.Math.RND.frac();
 }
 
-export function randItem<T>(items: T[]): T {
+export function randItem<T>(items: ArrayLike<T>): T {
   return items.length === 1 ? items[0] : items[randInt(items.length)];
 }
 
-export function randSeedItem<T>(items: T[]): T {
+export function randSeedItem<T>(items: ArrayLike<T>): T {
   return items.length === 1 ? items[0] : Phaser.Math.RND.pick(items);
 }
 

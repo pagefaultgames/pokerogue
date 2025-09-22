@@ -11,6 +11,7 @@ import type { TimeOfDay } from "#enums/time-of-day";
 import { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
 import type { PokemonFormChangeItemModifier } from "#modifiers/modifier";
+import type { ReadonlyGenericUint8Array } from "#types/typed-arrays";
 import { coerceArray } from "#utils/array";
 import type { Constructor } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
@@ -122,12 +123,12 @@ export class SpeciesFormChangeActiveTrigger extends SpeciesFormChangeTrigger {
 }
 
 export class SpeciesFormChangeStatusEffectTrigger extends SpeciesFormChangeTrigger {
-  public statusEffects: StatusEffect[];
+  public readonly statusEffects: ReadonlyGenericUint8Array<StatusEffect>;
   public invert: boolean;
 
   constructor(statusEffects: StatusEffect | StatusEffect[], invert = false) {
     super();
-    this.statusEffects = coerceArray(statusEffects);
+    this.statusEffects = new Uint8Array(coerceArray(statusEffects));
     this.invert = invert;
     // this.description = i18next.t("pokemonEvolutions:forms.statusEffect");
   }
