@@ -5,6 +5,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
+import type { Mutable } from "#types/type-helpers";
 import { randSeedInt } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { toCamelCase } from "#utils/strings";
@@ -88,19 +89,19 @@ export enum BiomePoolTier {
 export const uncatchableSpecies: SpeciesId[] = [];
 
 interface SpeciesTree {
-  [key: number]: SpeciesId[]
+  readonly [key: number]: SpeciesId[]
 }
 
 export interface PokemonPools {
-  [key: number]: (SpeciesId | SpeciesTree)[]
+  readonly [key: number]: (SpeciesId | SpeciesTree)[]
 }
 
 interface BiomeTierPokemonPools {
-  [key: number]: PokemonPools
+  readonly [key: number]: PokemonPools
 }
 
 interface BiomePokemonPools {
-  [key: number]: BiomeTierPokemonPools
+  readonly [key: number]: BiomeTierPokemonPools
 }
 
 export interface BiomeTierTod {
@@ -110,17 +111,17 @@ export interface BiomeTierTod {
 }
 
 export interface CatchableSpecies{
-  [key: number]: BiomeTierTod[]
+  readonly [key: number]: readonly BiomeTierTod[]
 }
 
 export const catchableSpecies: CatchableSpecies = {};
 
 export interface BiomeTierTrainerPools {
-  [key: number]: TrainerType[]
+  readonly [key: number]: readonly TrainerType[]
 }
 
 export interface BiomeTrainerPools {
-  [key: number]: BiomeTierTrainerPools
+  readonly [key: number]: BiomeTierTrainerPools
 }
 
 export const biomePokemonPools: BiomePokemonPools = {
@@ -7621,12 +7622,10 @@ export function initBiomes() {
       ? biomeLinks[biome] as (BiomeId | [ BiomeId, number ])[]
       : [ biomeLinks[biome] as BiomeId ];
     for (const linkedBiomeEntry of linkedBiomes) {
-      const linkedBiome = !Array.isArray(linkedBiomeEntry)
-        ? linkedBiomeEntry as BiomeId
-        : linkedBiomeEntry[0];
-      const biomeChance = !Array.isArray(linkedBiomeEntry)
-        ? 1
-        : linkedBiomeEntry[1];
+      const linkedBiome = Array.isArray(linkedBiomeEntry)
+        ? linkedBiomeEntry[0] : linkedBiomeEntry as BiomeId;
+      const biomeChance = Array.isArray(linkedBiomeEntry)
+        ? linkedBiomeEntry[1] : 1;
       if (!biomeDepths.hasOwnProperty(linkedBiome) || biomeChance < biomeDepths[linkedBiome][1] || (depth < biomeDepths[linkedBiome][0] && biomeChance === biomeDepths[linkedBiome][1])) {
         biomeDepths[linkedBiome] = [ depth + 1, biomeChance ];
         traverseBiome(linkedBiome, depth + 1);
@@ -7638,15 +7637,15 @@ export function initBiomes() {
   biomeDepths[BiomeId.END] = [ Object.values(biomeDepths).map(d => d[0]).reduce((max: number, value: number) => Math.max(max, value), 0) + 1, 1 ];
 
   for (const biome of getEnumValues(BiomeId)) {
-    biomePokemonPools[biome] = {};
-    biomeTrainerPools[biome] = {};
+    (biomePokemonPools[biome] as Mutable<typeof biomePokemonPools[number]>) = {};
+    (biomeTrainerPools[biome] as Mutable<typeof biomeTrainerPools[number]>) = {};
 
     for (const tier of getEnumValues(BiomePoolTier)) {
-      biomePokemonPools[biome][tier] = {};
-      biomeTrainerPools[biome][tier] = [];
+      (biomePokemonPools[biome][tier] as Mutable<typeof biomePokemonPools[number][number]>) = {};
+      (biomeTrainerPools[biome][tier] as Mutable<typeof biomeTrainerPools[number][number]>) = [];
 
       for (const tod of getEnumValues(TimeOfDay)) {
-        biomePokemonPools[biome][tier][tod] = [];
+        (biomePokemonPools[biome][tier][tod] as Mutable<typeof biomePokemonPools[number][number][number]>) = [];
       }
     }
   }
@@ -7663,8 +7662,9 @@ export function initBiomes() {
       uncatchableSpecies.push(speciesId);
     }
 
+    type mutableSpecies = Mutable<typeof catchableSpecies[SpeciesId]>;
     // array of biome options for the current species
-    catchableSpecies[speciesId] = [];
+    (catchableSpecies[speciesId] as mutableSpecies) = [];
 
     for (const b of biomeEntries) {
       const biome = b[0];
@@ -7675,7 +7675,7 @@ export function initBiomes() {
           : [ b[2] ]
         : [ TimeOfDay.ALL ];
 
-      catchableSpecies[speciesId].push({
+      (catchableSpecies[speciesId] as mutableSpecies).push({
         biome: biome as BiomeId,
         tier: tier as BiomePoolTier,
         tod: timesOfDay as TimeOfDay[]
@@ -7735,12 +7735,13 @@ export function initBiomes() {
             };
             for (let s = 1; s < entry.length; s++) {
               const speciesId = entry[s];
+              // biome-ignore lint/nursery/noShadow: one-off
               const prevolution = entry.flatMap((s: string | number) => pokemonEvolutions[s]).find(e => e && e.speciesId === speciesId);
               const level = prevolution.level - (prevolution.level === 1 ? 1 : 0) + (prevolution.wildDelay * 10) - (tier >= BiomePoolTier.BOSS ? 10 : 0);
-              if (!newEntry.hasOwnProperty(level)) {
-                newEntry[level] = [ speciesId ];
-              } else {
+              if (newEntry.hasOwnProperty(level)) {
                 newEntry[level].push(speciesId);
+              } else {
+                newEntry[level] = [ speciesId ];
               }
             }
             biomeTierTimePool[e] = newEntry;
@@ -7763,7 +7764,7 @@ export function initBiomes() {
       }
 
       const biomeTierPool = biomeTrainerPools[biome][tier];
-      biomeTierPool.push(trainerType);
+      (biomeTierPool as Mutable<typeof biomeTierPool>).push(trainerType);
     }
     //outputPools();
   }

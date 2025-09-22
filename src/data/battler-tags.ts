@@ -2154,8 +2154,8 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
 }
 
 export class WeatherHighestStatBoostTag extends HighestStatBoostTag {
-  #weatherTypes: WeatherType[];
-  public get weatherTypes(): WeatherType[] {
+  readonly #weatherTypes: readonly WeatherType[];
+  public get weatherTypes(): readonly WeatherType[] {
     return this.#weatherTypes;
   }
 
@@ -2166,8 +2166,8 @@ export class WeatherHighestStatBoostTag extends HighestStatBoostTag {
 }
 
 export class TerrainHighestStatBoostTag extends HighestStatBoostTag {
-  #terrainTypes: TerrainType[];
-  public get terrainTypes(): TerrainType[] {
+  readonly #terrainTypes: readonly TerrainType[];
+  public get terrainTypes(): readonly TerrainType[] {
     return this.#terrainTypes;
   }
 
