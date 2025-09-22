@@ -36,8 +36,9 @@ import type { Pokemon } from "#field/pokemon";
 import { FieldEffectModifier } from "#modifiers/modifier";
 import type { Move } from "#moves/move";
 import type { BiomeTierTrainerPools, PokemonPools } from "#types/biomes";
+import type { Constructor } from "#types/common";
 import type { AbstractConstructor } from "#types/type-helpers";
-import { type Constructor, NumberHolder, randSeedInt } from "#utils/common";
+import { NumberHolder, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 export class Arena {

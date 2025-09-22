@@ -178,15 +178,15 @@ export function getPlayTimeString(totalSeconds: number): string {
  * @param id 32-bit number
  * @returns An array of six numbers corresponding to 5-bit chunks from {@linkcode id}
  */
-export function getIvsFromId(id: number): Uint8Array {
-  return Uint8Array.of(
+export function getIvsFromId(id: number): [number, number, number, number, number, number] {
+  return [
     (id & 0x3e000000) >>> 25,
     (id & 0x01f00000) >>> 20,
     (id & 0x000f8000) >>> 15,
     (id & 0x00007c00) >>> 10,
     (id & 0x000003e0) >>> 5,
     id & 0x0000001f,
-  );
+  ];
 }
 
 export function formatLargeNumber(count: number, threshold: number): string {
@@ -293,9 +293,6 @@ export async function localPing(): Promise<void> {
     console.log("isLocalServerConnected:", isLocalServerConnected);
   }
 }
-
-/** Alias for the constructor of a class */
-export type Constructor<T> = new (...args: unknown[]) => T;
 
 export class BooleanHolder {
   public value: boolean;

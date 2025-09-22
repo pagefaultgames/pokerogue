@@ -90,7 +90,8 @@ import type { ChargingMove, MoveAttrMap, MoveAttrString, MoveClassMap, MoveKindS
 import type { TurnMove } from "#types/turn-move";
 import type { AbstractConstructor } from "#types/type-helpers";
 import { applyChallenges } from "#utils/challenge-utils";
-import { BooleanHolder, type Constructor, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
+import { BooleanHolder, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
+import type { Constructor } from "#types/common";
 import { coerceArray } from "#utils/array";
 import { getEnumValues } from "#utils/enums";
 import { areAllies } from "#utils/pokemon-utils";
@@ -2807,11 +2808,11 @@ export class StatusEffectAttr extends MoveEffectAttr {
  * Used for {@linkcode Moves.TRI_ATTACK} and {@linkcode Moves.DIRE_CLAW}.
  */
 export class MultiStatusEffectAttr extends StatusEffectAttr {
-  public readonly effects: ReadonlyGenericUint8Array<StatusEffect>;
+  public readonly effects: readonly StatusEffect[];
 
   constructor(effects: StatusEffect[], selfTarget?: boolean) {
     super(effects[0], selfTarget);
-    this.effects = new Uint8Array(effects);
+    this.effects = effects;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -3137,7 +3138,7 @@ export class StealEatBerryAttr extends EatBerryAttr {
  */
 export class HealStatusEffectAttr extends MoveEffectAttr {
   /** List of Status Effects to cure */
-  private readonly effects: ReadonlyGenericUint8Array<StatusEffect>;
+  private readonly effects: readonly StatusEffect[];
 
   /**
    * @param selfTarget - Whether this move targets the user
@@ -3145,7 +3146,7 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
    */
   constructor(selfTarget: boolean, effects: StatusEffect | StatusEffect[]) {
     super(selfTarget, { lastHitOnly: true });
-    this.effects = new Uint8Array(coerceArray(effects));
+    this.effects = coerceArray(effects);
   }
 
   /**

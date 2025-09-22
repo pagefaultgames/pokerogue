@@ -62,10 +62,9 @@ import type {
   PokemonDefendCondition,
   PokemonStatStageChangeCondition,
 } from "#types/ability-types";
+import type { Constructor } from "#types/common";
 import type { Closed, Exact } from "#types/type-helpers";
-import type { GenericUint8Array, ReadonlyGenericInt8Array, ReadonlyGenericUint8Array } from "#types/typed-arrays";
 import { coerceArray } from "#utils/array";
-import type { Constructor } from "#utils/common";
 import { BooleanHolder, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
@@ -1319,13 +1318,13 @@ export class PostDefendTerrainChangeAbAttr extends PostDefendAbAttr {
 
 export class PostDefendContactApplyStatusEffectAbAttr extends PostDefendAbAttr {
   private chance: number;
-  private readonly effects: ReadonlyGenericUint8Array<StatusEffect>;
+  private readonly effects: readonly StatusEffect[];
 
   constructor(chance: number, ...effects: StatusEffect[]) {
     super(true);
 
     this.chance = chance;
-    this.effects = new Uint8Array(effects);
+    this.effects = effects;
   }
 
   override canApply({ pokemon, move, opponent: attacker }: PostMoveInteractionAbAttrParams): boolean {
@@ -2289,14 +2288,14 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
 export class PostAttackApplyStatusEffectAbAttr extends PostAttackAbAttr {
   private contactRequired: boolean;
   private chance: number;
-  private readonly effects: ReadonlyGenericUint8Array<StatusEffect>;
+  private readonly effects: readonly StatusEffect[];
 
   constructor(contactRequired: boolean, chance: number, ...effects: StatusEffect[]) {
     super();
 
     this.contactRequired = contactRequired;
     this.chance = chance;
-    this.effects = new Uint8Array(effects);
+    this.effects = effects;
   }
 
   override canApply(params: PostMoveInteractionAbAttrParams): boolean {
@@ -3049,7 +3048,7 @@ export class PostSummonTerrainChangeAbAttr extends PostSummonAbAttr {
  * Heals a status effect if the Pokemon is afflicted with it upon switch in (or gain)
  */
 export class PostSummonHealStatusAbAttr extends PostSummonRemoveEffectAbAttr {
-  private readonly immuneEffects: ReadonlyGenericUint8Array<StatusEffect>;
+  private readonly immuneEffects: readonly StatusEffect[];
   private statusHealed: StatusEffect;
 
   /**
@@ -3057,7 +3056,7 @@ export class PostSummonHealStatusAbAttr extends PostSummonRemoveEffectAbAttr {
    */
   constructor(...immuneEffects: StatusEffect[]) {
     super();
-    this.immuneEffects = new Uint8Array(immuneEffects);
+    this.immuneEffects = immuneEffects;
   }
 
   public override canApply({ pokemon }: AbAttrBaseParams): boolean {
@@ -3158,7 +3157,7 @@ export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
  * Removes supplied status effects from the user's field.
  */
 export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAttr {
-  private readonly statusEffect: ReadonlyGenericUint8Array<StatusEffect>;
+  private readonly statusEffect: readonly StatusEffect[];
 
   /**
    * @param statusEffect - The status effects to be removed from the user's field.
@@ -3166,7 +3165,7 @@ export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAtt
   constructor(...statusEffect: StatusEffect[]) {
     super(false);
 
-    this.statusEffect = new Uint8Array(statusEffect);
+    this.statusEffect = statusEffect;
   }
 
   override canApply({ pokemon }: AbAttrBaseParams): boolean {
@@ -3746,7 +3745,7 @@ export class PreSetStatusAbAttr extends AbAttr {
  * Provides immunity to status effects to specified targets.
  */
 export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
-  protected readonly immuneEffects: ReadonlyGenericUint8Array<StatusEffect>;
+  protected readonly immuneEffects: readonly StatusEffect[];
 
   /**
    * @param immuneEffects - An array of {@linkcode StatusEffect}s to prevent application.
@@ -3755,7 +3754,7 @@ export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
   constructor(...immuneEffects: StatusEffect[]) {
     super();
 
-    this.immuneEffects = new Uint8Array(immuneEffects);
+    this.immuneEffects = immuneEffects;
   }
 
   override canApply({ effect, cancelled }: PreSetStatusAbAttrParams): boolean {
@@ -3814,7 +3813,7 @@ export interface UserFieldStatusEffectImmunityAbAttrParams extends AbAttrBasePar
  */
 export class UserFieldStatusEffectImmunityAbAttr extends CancelInteractionAbAttr {
   private declare readonly _: never;
-  protected readonly immuneEffects: ReadonlyGenericUint8Array<StatusEffect>;
+  protected readonly immuneEffects: readonly StatusEffect[];
 
   /**
    * @param immuneEffects - An array of {@linkcode StatusEffect}s to prevent application.
@@ -3823,7 +3822,7 @@ export class UserFieldStatusEffectImmunityAbAttr extends CancelInteractionAbAttr
   constructor(...immuneEffects: StatusEffect[]) {
     super();
 
-    this.immuneEffects = new Uint8Array(immuneEffects);
+    this.immuneEffects = immuneEffects;
   }
 
   override canApply({ effect, cancelled }: UserFieldStatusEffectImmunityAbAttrParams): boolean {
@@ -4107,7 +4106,7 @@ export class BlockNonDirectDamageAbAttr extends CancelInteractionAbAttr {
  * This attribute will block any status damage that you put in the parameter.
  */
 export class BlockStatusDamageAbAttr extends CancelInteractionAbAttr {
-  private readonly effects: ReadonlyGenericUint8Array<StatusEffect>;
+  private readonly effects: readonly StatusEffect[];
 
   /**
    * @param effects - The status effect(s) that will be blocked from damaging the ability pokemon
@@ -4115,7 +4114,7 @@ export class BlockStatusDamageAbAttr extends CancelInteractionAbAttr {
   constructor(...effects: StatusEffect[]) {
     super(false);
 
-    this.effects = new Uint8Array(effects);
+    this.effects = effects;
   }
 
   override canApply({ pokemon, cancelled }: AbAttrParamsWithCancel): boolean {
@@ -4648,7 +4647,7 @@ export class PostTurnAbAttr extends AbAttr {
  * @sealed
  */
 export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
-  private readonly effects: GenericUint8Array<StatusEffect>;
+  private readonly effects: readonly StatusEffect[];
 
   /**
    * @param effects - The status effect(s) that will qualify healing the ability pokemon
@@ -4656,7 +4655,7 @@ export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
   constructor(...effects: StatusEffect[]) {
     super(false);
 
-    this.effects = new Uint8Array(effects);
+    this.effects = effects;
   }
 
   override canApply({ pokemon }: AbAttrBaseParams): boolean {
@@ -5917,14 +5916,14 @@ export interface IgnoreTypeStatusEffectImmunityAbAttrParams extends AbAttrParams
  * @sealed
  */
 export class IgnoreTypeStatusEffectImmunityAbAttr extends AbAttr {
-  private readonly statusEffect: ReadonlyGenericUint8Array<StatusEffect>;
-  private readonly defenderType: ReadonlyGenericInt8Array<PokemonType>;
+  private readonly statusEffect: readonly StatusEffect[];
+  private readonly defenderType: readonly PokemonType[];
 
-  constructor(statusEffect: StatusEffect[], defenderType: PokemonType[]) {
+  constructor(statusEffect: readonly StatusEffect[], defenderType: readonly PokemonType[]) {
     super(false);
 
-    this.statusEffect = new Uint8Array(statusEffect);
-    this.defenderType = new Int8Array(defenderType);
+    this.statusEffect = statusEffect;
+    this.defenderType = defenderType;
   }
 
   override canApply({ statusEffect, defenderType, cancelled }: IgnoreTypeStatusEffectImmunityAbAttrParams): boolean {

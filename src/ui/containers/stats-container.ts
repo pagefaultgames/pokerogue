@@ -104,7 +104,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
     }
   }
 
-  updateIvs(ivs: Uint8Array | number[], originalIvs?: number[]): void {
+  updateIvs(ivs: number[], originalIvs?: number[]): void {
     if (ivs) {
       const ivChartData = new Array(6)
         .fill(null)
