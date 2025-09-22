@@ -1,11 +1,11 @@
-import { SpeciesId } from "#enums/species-id";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import GameManager from "#test/testUtils/gameManager";
-import { PokeballType } from "#enums/pokeball";
-import type BattleScene from "#app/battle-scene";
+import type { BattleScene } from "#app/battle-scene";
+import { CustomPokemonData } from "#data/pokemon-data";
 import { MoveId } from "#enums/move-id";
+import { PokeballType } from "#enums/pokeball";
 import { PokemonType } from "#enums/pokemon-type";
-import { CustomPokemonData } from "#app/data/custom-pokemon-data";
+import { SpeciesId } from "#enums/species-id";
+import { GameManager } from "#test/test-utils/game-manager";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Spec - Pokemon", () => {
   let phaserGame: Phaser.Game;
@@ -25,15 +25,6 @@ describe("Spec - Pokemon", () => {
     game = new GameManager(phaserGame);
   });
 
-  it("should not crash when trying to set status of undefined", async () => {
-    await game.classicMode.runToSummon([SpeciesId.ABRA]);
-
-    const pkm = game.scene.getPlayerPokemon()!;
-    expect(pkm).toBeDefined();
-
-    expect(pkm.trySetStatus(undefined)).toBe(true);
-  });
-
   describe("Add To Party", () => {
     let scene: BattleScene;
 
@@ -50,7 +41,7 @@ describe("Spec - Pokemon", () => {
     });
 
     it("should append a new pokemon by default", async () => {
-      const zubat = scene.getEnemyPokemon()!;
+      const zubat = game.field.getEnemyPokemon();
       zubat.addToParty(PokeballType.LUXURY_BALL);
 
       const party = scene.getPlayerParty();
@@ -62,7 +53,7 @@ describe("Spec - Pokemon", () => {
 
     it("should put a new pokemon into the passed slotIndex", async () => {
       const slotIndex = 1;
-      const zubat = scene.getEnemyPokemon()!;
+      const zubat = game.field.getEnemyPokemon();
       zubat.addToParty(PokeballType.LUXURY_BALL, slotIndex);
 
       const party = scene.getPlayerParty();
@@ -78,26 +69,21 @@ describe("Spec - Pokemon", () => {
 
     await game.classicMode.startBattle([SpeciesId.ROTOM]);
 
-    const fanRotom = game.scene.getPlayerPokemon()!;
+    const fanRotom = game.field.getPlayerPokemon();
 
     expect(fanRotom.compatibleTms).not.toContain(MoveId.BLIZZARD);
     expect(fanRotom.compatibleTms).toContain(MoveId.AIR_SLASH);
   });
 
   describe("Get correct fusion type", () => {
-    let scene: BattleScene;
-
     beforeEach(async () => {
-      game.override.enemySpecies(SpeciesId.ZUBAT);
-      game.override.starterSpecies(SpeciesId.ABRA);
-      game.override.enableStarterFusion();
-      scene = game.scene;
+      game.override.enemySpecies(SpeciesId.ZUBAT).starterSpecies(SpeciesId.ABRA).enableStarterFusion();
     });
 
     it("Fusing two mons with a single type", async () => {
       game.override.starterFusionSpecies(SpeciesId.CHARMANDER);
       await game.classicMode.startBattle();
-      const pokemon = scene.getPlayerParty()[0];
+      const pokemon = game.field.getPlayerPokemon();
 
       let types = pokemon.getTypes();
       expect(types[0]).toBe(PokemonType.PSYCHIC);
@@ -138,7 +124,7 @@ describe("Spec - Pokemon", () => {
     it("Fusing two mons with same single type", async () => {
       game.override.starterFusionSpecies(SpeciesId.DROWZEE);
       await game.classicMode.startBattle();
-      const pokemon = scene.getPlayerParty()[0];
+      const pokemon = game.field.getPlayerPokemon();
 
       const types = pokemon.getTypes();
       expect(types[0]).toBe(PokemonType.PSYCHIC);
@@ -146,10 +132,9 @@ describe("Spec - Pokemon", () => {
     });
 
     it("Fusing mons with one and two types", async () => {
-      game.override.starterSpecies(SpeciesId.CHARMANDER);
-      game.override.starterFusionSpecies(SpeciesId.HOUNDOUR);
+      game.override.starterSpecies(SpeciesId.CHARMANDER).starterFusionSpecies(SpeciesId.HOUNDOUR);
       await game.classicMode.startBattle();
-      const pokemon = scene.getPlayerParty()[0];
+      const pokemon = game.field.getPlayerPokemon();
 
       const types = pokemon.getTypes();
       expect(types[0]).toBe(PokemonType.FIRE);
@@ -157,10 +142,9 @@ describe("Spec - Pokemon", () => {
     });
 
     it("Fusing mons with two and one types", async () => {
-      game.override.starterSpecies(SpeciesId.NUMEL);
-      game.override.starterFusionSpecies(SpeciesId.CHARMANDER);
+      game.override.starterSpecies(SpeciesId.NUMEL).starterFusionSpecies(SpeciesId.CHARMANDER);
       await game.classicMode.startBattle();
-      const pokemon = scene.getPlayerParty()[0];
+      const pokemon = game.field.getPlayerPokemon();
 
       const types = pokemon.getTypes();
       expect(types[0]).toBe(PokemonType.FIRE);
@@ -168,10 +152,9 @@ describe("Spec - Pokemon", () => {
     });
 
     it("Fusing two mons with two types", async () => {
-      game.override.starterSpecies(SpeciesId.NATU);
-      game.override.starterFusionSpecies(SpeciesId.HOUNDOUR);
+      game.override.starterSpecies(SpeciesId.NATU).starterFusionSpecies(SpeciesId.HOUNDOUR);
       await game.classicMode.startBattle();
-      const pokemon = scene.getPlayerParty()[0];
+      const pokemon = game.field.getPlayerPokemon();
 
       let types = pokemon.getTypes();
       expect(types[0]).toBe(PokemonType.PSYCHIC);

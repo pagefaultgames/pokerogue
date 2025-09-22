@@ -1,20 +1,17 @@
+import { PostTurnResetStatusAbAttr } from "#abilities/ability";
+import { allAbilities } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import GameManager from "#test/testUtils/gameManager";
+import type { Pokemon } from "#field/pokemon";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi, type MockInstance } from "vitest";
-import { isNullOrUndefined } from "#app/utils/common";
-import { allAbilities } from "#app/data/data-lists";
-import type Pokemon from "#app/field/pokemon";
-import type { PostTurnResetStatusAbAttr } from "#app/@types/ability-types";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Healer", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  let healerAttrSpy: MockInstance;
-  let healerAttr: PostTurnResetStatusAbAttr;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -24,7 +21,6 @@ describe("Abilities - Healer", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    healerAttrSpy.mockRestore();
   });
 
   beforeEach(() => {
@@ -33,43 +29,43 @@ describe("Abilities - Healer", () => {
       .moveset([MoveId.SPLASH])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("double")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
 
-    healerAttr = allAbilities[AbilityId.HEALER].getAttrs("PostTurnResetStatusAbAttr")[0];
-    healerAttrSpy = vi
-      .spyOn(healerAttr, "getCondition")
-      .mockReturnValue((pokemon: Pokemon) => !isNullOrUndefined(pokemon.getAlly()));
+    // Mock healer to have a 100% chance of healing its ally
+    vi.spyOn(allAbilities[AbilityId.HEALER].getAttrs("PostTurnResetStatusAbAttr")[0], "getCondition").mockReturnValue(
+      (pokemon: Pokemon) => pokemon.getAlly() != null,
+    );
   });
 
   it("should not queue a message phase for healing if the ally has fainted", async () => {
+    const abSpy = vi.spyOn(PostTurnResetStatusAbAttr.prototype, "canApply");
     game.override.moveset([MoveId.SPLASH, MoveId.LUNAR_DANCE]);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
-    const user = game.scene.getPlayerPokemon()!;
-    // Only want one magikarp to have the ability.
+
+    const user = game.field.getPlayerPokemon();
+    // Only want one magikarp to have the ability
     vi.spyOn(user, "getAbility").mockReturnValue(allAbilities[AbilityId.HEALER]);
+
     game.move.select(MoveId.SPLASH);
     // faint the ally
     game.move.select(MoveId.LUNAR_DANCE, 1);
-    const abSpy = vi.spyOn(healerAttr, "canApplyPostTurn");
     await game.phaseInterceptor.to("TurnEndPhase");
 
     // It's not enough to just test that the ally still has its status.
     // We need to ensure that the ability failed to meet its condition
     expect(abSpy).toHaveReturnedWith(false);
-
-    // Explicitly restore the mock to ensure pollution doesn't happen
-    abSpy.mockRestore();
   });
 
   it("should heal the status of an ally if the ally has a status", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
     const [user, ally] = game.scene.getPlayerField();
+
     // Only want one magikarp to have the ability.
     vi.spyOn(user, "getAbility").mockReturnValue(allAbilities[AbilityId.HEALER]);
-    expect(ally.trySetStatus(StatusEffect.BURN)).toBe(true);
+    ally.doSetStatus(StatusEffect.BURN);
     game.move.select(MoveId.SPLASH);
     game.move.select(MoveId.SPLASH, 1);
 
@@ -85,7 +81,7 @@ describe("Abilities - Healer", () => {
     const [user, ally] = game.scene.getPlayerField();
     // Only want one magikarp to have the ability.
     vi.spyOn(user, "getAbility").mockReturnValue(allAbilities[AbilityId.HEALER]);
-    expect(ally.trySetStatus(StatusEffect.BURN)).toBe(true);
+    ally.doSetStatus(StatusEffect.BURN);
     game.move.select(MoveId.SPLASH);
     game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to("TurnEndPhase");

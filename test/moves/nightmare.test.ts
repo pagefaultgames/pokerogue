@@ -2,7 +2,7 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -36,7 +36,7 @@ describe("Moves - Nightmare", () => {
   it("lowers enemy hp by 1/4 each turn while asleep", async () => {
     await game.classicMode.startBattle([SpeciesId.HYPNO]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     const enemyMaxHP = enemyPokemon.hp;
 
     game.move.select(MoveId.NIGHTMARE);

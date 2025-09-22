@@ -1,13 +1,13 @@
-import type { GameObjects } from "phaser";
 import { globalScene } from "#app/global-scene";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import type { SpeciesId } from "#enums/species-id";
-import { isNullOrUndefined } from "#app/utils/common";
-import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import type { Variant } from "#app/sprites/variant";
-import { doShinySparkleAnim } from "#app/field/anims";
-import { loadPokemonVariantAssets } from "#app/sprites/pokemon-sprite";
-import PlayAnimationConfig = Phaser.Types.Animations.PlayAnimationConfig;
+import { doShinySparkleAnim } from "#field/anims";
+import { getSpriteKeysFromSpecies } from "#mystery-encounters/encounter-pokemon-utils";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { loadPokemonVariantAssets } from "#sprites/pokemon-sprite";
+import type { Variant } from "#sprites/variant";
+import type { GameObjects } from "phaser";
+
+type PlayAnimationConfig = Phaser.Types.Animations.PlayAnimationConfig;
 
 type KnownFileRoot =
   | "arenas"
@@ -77,7 +77,7 @@ export class MysteryEncounterSpriteConfig {
  * These slide in with the field as part of standard field change cycle, and will typically be hidden after the player has selected an option for the encounter
  * Note: intro visuals are not "Trainers" or any other specific game object, though they may contain trainer sprites
  */
-export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
+export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
   public encounter: MysteryEncounter;
   public spriteConfigs: MysteryEncounterSpriteConfig[];
   public enterFromRight: boolean;
@@ -86,6 +86,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     variant: Variant;
   }[];
 
+  // TODO: Refactor
   constructor(encounter: MysteryEncounter) {
     super(globalScene, -72, 76);
     this.encounter = encounter;
@@ -96,7 +97,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
         ...config,
       };
 
-      if (!isNullOrUndefined(result.species)) {
+      if (result.species != null) {
         const keys = getSpriteKeysFromSpecies(result.species, undefined, undefined, result.isShiny, result.variant);
         result.spriteKey = keys.spriteKey;
         result.fileRoot = keys.fileRoot;
@@ -192,25 +193,23 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
           sprite.setPosition(sprite.x, sprite.y + y);
           tintSprite.setPosition(tintSprite.x, tintSprite.y + y);
         }
-      } else {
         // Single sprite
-        if (this.spriteConfigs.length === 1) {
-          sprite.x = origin;
-          tintSprite.x = origin;
-        } else {
-          // Do standard sprite spacing (not including offset sprites)
-          sprite.x = minX + (n + 0.5) * spacingValue + origin;
-          tintSprite.x = minX + (n + 0.5) * spacingValue + origin;
-          n++;
-        }
+      } else if (this.spriteConfigs.length === 1) {
+        sprite.x = origin;
+        tintSprite.x = origin;
+      } else {
+        // Do standard sprite spacing (not including offset sprites)
+        sprite.x = minX + (n + 0.5) * spacingValue + origin;
+        tintSprite.x = minX + (n + 0.5) * spacingValue + origin;
+        n++;
       }
 
-      if (!isNullOrUndefined(pokemonShinySparkle)) {
+      if (pokemonShinySparkle != null) {
         // Offset the sparkle to match the Pokemon's position
         pokemonShinySparkle.setPosition(sprite.x, sprite.y);
       }
 
-      if (!isNullOrUndefined(alpha)) {
+      if (alpha != null) {
         sprite.setAlpha(alpha);
         tintSprite.setAlpha(alpha);
       }
@@ -234,7 +233,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
       this.spriteConfigs.forEach(config => {
         if (config.isPokemon) {
           globalScene.loadPokemonAtlas(config.spriteKey, config.fileRoot);
-          if (config.isShiny && !isNullOrUndefined(config.variant)) {
+          if (config.isShiny && config.variant != null) {
             shinyPromises.push(loadPokemonVariantAssets(config.spriteKey, config.fileRoot, config.variant));
           }
         } else if (config.isItem) {
@@ -456,7 +455,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
       globalScene.tweens.add({
         targets: sprite,
         alpha: alpha || 1,
-        duration: duration,
+        duration,
         ease: ease || "Linear",
       });
     } else {
@@ -489,7 +488,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
       globalScene.tweens.add({
         targets: sprite,
         alpha: 0,
-        duration: duration,
+        duration,
         ease: ease || "Linear",
         onComplete: () => {
           sprite.setVisible(false);

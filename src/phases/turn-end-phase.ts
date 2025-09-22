@@ -1,28 +1,31 @@
-import { applyPostTurnAbAttrs } from "#app/data/abilities/apply-ab-attrs";
-import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
-import { TerrainType } from "#app/data/terrain";
-import { WeatherType } from "#app/enums/weather-type";
-import { TurnEndEvent } from "#app/events/battle-scene";
-import type Pokemon from "#app/field/pokemon";
-import { getPokemonNameWithAffix } from "#app/messages";
-import {
-  TurnHealModifier,
-  EnemyTurnHealModifier,
-  EnemyStatusEffectHealChanceModifier,
-  TurnStatusEffectModifier,
-  TurnHeldItemTransferModifier,
-} from "#app/modifier/modifier";
-import i18next from "i18next";
-import { FieldPhase } from "./field-phase";
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { TerrainType } from "#data/terrain";
+import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
+import { WeatherType } from "#enums/weather-type";
+import { TurnEndEvent } from "#events/battle-scene";
+import type { Pokemon } from "#field/pokemon";
+import {
+  EnemyStatusEffectHealChanceModifier,
+  EnemyTurnHealModifier,
+  TurnHealModifier,
+  TurnHeldItemTransferModifier,
+  TurnStatusEffectModifier,
+} from "#modifiers/modifier";
+import { FieldPhase } from "#phases/field-phase";
+import i18next from "i18next";
 
 export class TurnEndPhase extends FieldPhase {
   public readonly phaseName = "TurnEndPhase";
+  public upcomingInterlude = false;
+
   start() {
     super.start();
 
     globalScene.currentBattle.incrementTurn();
     globalScene.eventTarget.dispatchEvent(new TurnEndEvent(globalScene.currentBattle.turn));
+    globalScene.phaseManager.dynamicQueueManager.clearLastTurnOrder();
 
     globalScene.phaseManager.hideAbilityBar();
 
@@ -49,7 +52,7 @@ export class TurnEndPhase extends FieldPhase {
           globalScene.applyModifier(EnemyStatusEffectHealChanceModifier, false, pokemon);
         }
 
-        applyPostTurnAbAttrs("PostTurnAbAttr", pokemon);
+        applyAbAttrs("PostTurnAbAttr", { pokemon });
       }
 
       globalScene.applyModifiers(TurnStatusEffectModifier, pokemon.isPlayer(), pokemon);
@@ -59,9 +62,11 @@ export class TurnEndPhase extends FieldPhase {
       pokemon.tempSummonData.waveTurnCount++;
     };
 
-    this.executeForAll(handlePokemon);
+    if (!this.upcomingInterlude) {
+      this.executeForAll(handlePokemon);
 
-    globalScene.arena.lapseTags();
+      globalScene.arena.lapseTags();
+    }
 
     if (globalScene.arena.weather && !globalScene.arena.weather.lapse()) {
       globalScene.arena.trySetWeather(WeatherType.NONE);

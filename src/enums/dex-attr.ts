@@ -1,3 +1,5 @@
+import type { ObjectValues } from "#types/type-helpers";
+
 export const DexAttr = Object.freeze({
   NON_SHINY: 1n,
   SHINY: 2n,
@@ -8,4 +10,4 @@ export const DexAttr = Object.freeze({
   VARIANT_3: 64n,
   DEFAULT_FORM: 128n,
 });
-export type DexAttr = typeof DexAttr[keyof typeof DexAttr];
+export type DexAttr = ObjectValues<typeof DexAttr>;

@@ -1,28 +1,28 @@
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { globalScene } from "#app/global-scene";
+import { speciesStarterCosts } from "#balance/starters";
+import { modifierTypes } from "#data/data-lists";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { SpeciesId } from "#enums/species-id";
 import {
   generateModifierType,
   leaveEncounterWithoutBattle,
   setEncounterExp,
   updatePlayerMoney,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { modifierTypes } from "#app/data/data-lists";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { SpeciesId } from "#enums/species-id";
-import { globalScene } from "#app/global-scene";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
+} from "#mystery-encounters/encounter-phase-utils";
+import { getHighestStatTotalPlayerPokemon } from "#mystery-encounters/encounter-pokemon-utils";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import {
   AbilityRequirement,
   CombinationPokemonRequirement,
   MoveRequirement,
-} from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { getHighestStatTotalPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { EXTORTION_ABILITIES, EXTORTION_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { speciesStarterCosts } from "#app/data/balance/starters";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+} from "#mystery-encounters/mystery-encounter-requirements";
+import { EXTORTION_ABILITIES, EXTORTION_MOVES } from "#mystery-encounters/requirement-groups";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
@@ -71,7 +71,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter = MysteryEncounterB
       text: `${namespace}:intro`,
     },
     {
-      text: `${namespace}:intro_dialogue`,
+      text: `${namespace}:introDialogue`,
       speaker: `${namespace}:speaker`,
     },
   ])
@@ -93,8 +93,8 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter = MysteryEncounterB
 
     // Store pokemon and price
     encounter.misc = {
-      pokemon: pokemon,
-      price: price,
+      pokemon,
+      price,
     };
 
     // If player meets the combo OR requirements for option 2, populate the token
@@ -152,7 +152,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter = MysteryEncounterB
       .withDialogue({
         buttonLabel: `${namespace}:option.2.label`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.2.tooltip_disabled`,
+        disabledButtonTooltip: `${namespace}:option.2.tooltipDisabled`,
         selected: [
           {
             speaker: `${namespace}:speaker`,

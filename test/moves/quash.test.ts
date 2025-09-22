@@ -1,12 +1,13 @@
-import { SpeciesId } from "#enums/species-id";
-import { MoveId } from "#enums/move-id";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
-import { WeatherType } from "#enums/weather-type";
+import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
-import GameManager from "#test/testUtils/gameManager";
+import { MoveUseMode } from "#enums/move-use-mode";
+import { SpeciesId } from "#enums/species-id";
+import { WeatherType } from "#enums/weather-type";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { describe, beforeAll, afterEach, beforeEach, it, expect } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Quash", () => {
   let phaserGame: Phaser.Game;
@@ -49,13 +50,46 @@ describe("Moves - Quash", () => {
 
   it("fails if the target has already moved", async () => {
     await game.classicMode.startBattle([SpeciesId.ACCELGOR, SpeciesId.RATTATA]);
-    game.move.select(MoveId.SPLASH, 0);
-    game.move.select(MoveId.QUASH, 1, BattlerIndex.PLAYER);
+    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER);
+    game.move.select(MoveId.QUASH, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(game.scene.getPlayerField()[1].getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
+  });
+
+  // TODO: Enable once rampaging moves and move queue are fixed.
+  // Currently does literally nothing because `MoveUseMode` is overridden from move queue
+  // within `MovePhase`, but should be enabled once that jank is removed
+  it.todo("should maintain PP ignore status of rampaging moves", async () => {
+    game.override.moveset([]);
+    await game.classicMode.startBattle([SpeciesId.ACCELGOR, SpeciesId.RATTATA]);
+
+    const [accelgor, rattata] = game.scene.getPlayerField();
+    expect(accelgor).toBeDefined();
+    expect(rattata).toBeDefined();
+
+    game.move.changeMoveset(accelgor, [MoveId.SPLASH, MoveId.QUASH]);
+    game.move.changeMoveset(rattata, MoveId.OUTRAGE);
+
+    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER);
+    game.move.select(MoveId.OUTRAGE, BattlerIndex.PLAYER_2);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    const outrageMove = rattata.getMoveset().find(m => m.moveId === MoveId.OUTRAGE);
+    expect(outrageMove?.ppUsed).toBe(1);
+
+    game.move.select(MoveId.QUASH, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(accelgor.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(outrageMove?.ppUsed).toBe(1);
+    expect(rattata.getLastXMoves()[0]).toMatchObject({
+      move: MoveId.OUTRAGE,
+      result: MoveResult.SUCCESS,
+      useMode: MoveUseMode.IGNORE_PP,
+    });
   });
 
   it("makes multiple quashed targets move in speed order at the end of the turn", async () => {

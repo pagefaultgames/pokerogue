@@ -1,12 +1,10 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#test/testUtils/gameManager";
-import { UiMode } from "#enums/ui-mode";
-import { Stat } from "#enums/stat";
-import { getMovePosition } from "#test/testUtils/gameManagerUtils";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
+import { GameManager } from "#test/test-utils/game-manager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Intimidate", () => {
   let phaserGame: Phaser.Game;
@@ -25,110 +23,98 @@ describe("Abilities - Intimidate", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
+      .criticalHits(false)
       .battleStyle("single")
       .enemySpecies(SpeciesId.RATTATA)
       .enemyAbility(AbilityId.INTIMIDATE)
-      .enemyPassiveAbility(AbilityId.HYDRATION)
       .ability(AbilityId.INTIMIDATE)
-      .startingWave(3)
+      .passiveAbility(AbilityId.NO_GUARD)
       .enemyMoveset(MoveId.SPLASH);
   });
 
-  it("should lower ATK stat stage by 1 of enemy Pokemon on entry and player switch", async () => {
-    await game.classicMode.runToSummon([SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA]);
-    game.onNextPrompt(
-      "CheckSwitchPhase",
-      UiMode.CONFIRM,
-      () => {
-        game.setMode(UiMode.MESSAGE);
-        game.endPhase();
-      },
-      () => game.isCurrentPhase("CommandPhase") || game.isCurrentPhase("TurnInitPhase"),
-    );
-    await game.phaseInterceptor.to("CommandPhase", false);
+  it("should lower all opponents' ATK by 1 stage on entry and switch", async () => {
+    await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA]);
 
-    let playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const [mightyena, poochyena] = game.scene.getPlayerParty();
 
-    expect(playerPokemon.species.speciesId).toBe(SpeciesId.MIGHTYENA);
-    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-1);
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-1);
+    const enemy = game.field.getEnemyPokemon();
+    expect(enemy.getStatStage(Stat.ATK)).toBe(-1);
+    expect(mightyena).toHaveAbilityApplied(AbilityId.INTIMIDATE);
 
     game.doSwitchPokemon(1);
-    await game.phaseInterceptor.run("CommandPhase");
-    await game.phaseInterceptor.to("CommandPhase");
+    await game.toNextTurn();
 
-    playerPokemon = game.scene.getPlayerPokemon()!;
-    expect(playerPokemon.species.speciesId).toBe(SpeciesId.POOCHYENA);
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(0);
-    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-2);
-  }, 20000);
+    expect(poochyena.isActive()).toBe(true);
+    expect(enemy.getStatStage(Stat.ATK)).toBe(-2);
+    expect(poochyena).toHaveAbilityApplied(AbilityId.INTIMIDATE);
+  });
 
-  it("should lower ATK stat stage by 1 for every enemy Pokemon in a double battle on entry", async () => {
-    game.override.battleStyle("double").startingWave(3);
+  it("should trigger once on initial switch prompt without cancelling opposing abilities", async () => {
     await game.classicMode.runToSummon([SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA]);
-    game.onNextPrompt(
-      "CheckSwitchPhase",
-      UiMode.CONFIRM,
-      () => {
-        game.setMode(UiMode.MESSAGE);
-        game.endPhase();
-      },
-      () => game.isCurrentPhase("CommandPhase") || game.isCurrentPhase("TurnInitPhase"),
-    );
-    await game.phaseInterceptor.to("CommandPhase", false);
+    await game.classicMode.startBattleWithSwitch(1);
 
-    const playerField = game.scene.getPlayerField()!;
-    const enemyField = game.scene.getEnemyField()!;
+    const [poochyena, mightyena] = game.scene.getPlayerParty();
+    expect(poochyena.species.speciesId).toBe(SpeciesId.POOCHYENA);
 
-    expect(enemyField[0].getStatStage(Stat.ATK)).toBe(-2);
-    expect(enemyField[1].getStatStage(Stat.ATK)).toBe(-2);
-    expect(playerField[0].getStatStage(Stat.ATK)).toBe(-2);
-    expect(playerField[1].getStatStage(Stat.ATK)).toBe(-2);
-  }, 20000);
+    const enemy = game.field.getEnemyPokemon();
+    expect(enemy).toHaveStatStage(Stat.ATK, -1);
+    expect(poochyena).toHaveStatStage(Stat.ATK, -1);
 
-  it("should not activate again if there is no switch or new entry", async () => {
-    game.override.startingWave(2);
-    game.override.moveset([MoveId.SPLASH]);
-    await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA]);
+    expect(poochyena).toHaveAbilityApplied(AbilityId.INTIMIDATE);
+    expect(mightyena).not.toHaveAbilityApplied(AbilityId.INTIMIDATE);
+  });
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+  it("should activate on reload with single party", async () => {
+    await game.classicMode.startBattle([SpeciesId.MIGHTYENA]);
 
-    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-1);
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-1);
+    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, -1);
 
-    game.move.select(MoveId.SPLASH);
+    await game.reload.reloadSession();
+
+    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, -1);
+  });
+
+  it("should lower ATK of all opponents in a double battle", async () => {
+    game.override.battleStyle("double");
+    await game.classicMode.startBattle([SpeciesId.MIGHTYENA]);
+
+    const [enemy1, enemy2] = game.scene.getEnemyField();
+
+    expect(enemy1.getStatStage(Stat.ATK)).toBe(-1);
+    expect(enemy2.getStatStage(Stat.ATK)).toBe(-1);
+  });
+
+  it("should not trigger on switching moves used by wild Pokemon", async () => {
+    game.override.enemyMoveset(MoveId.VOLT_SWITCH);
+    await game.classicMode.startBattle([SpeciesId.VENUSAUR]);
+
+    const player = game.field.getPlayerPokemon();
+    expect(player.getStatStage(Stat.ATK)).toBe(-1);
+
+    game.move.use(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-1);
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-1);
-  }, 20000);
+    // doesn't lower attack due to not actually switching out
+    expect(player.getStatStage(Stat.ATK)).toBe(-1);
+  });
 
-  it("should lower ATK stat stage by 1 for every switch", async () => {
-    game.override.moveset([MoveId.SPLASH]).enemyMoveset([MoveId.VOLT_SWITCH]).startingWave(5);
-    await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA]);
+  it("should trigger on moves that switch user/target out during trainer battles", async () => {
+    game.override.startingWave(5).enemyLevel(100);
+    await game.classicMode.startBattle([SpeciesId.MIGHTYENA]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    let enemyPokemon = game.scene.getEnemyPokemon()!;
+    const player = game.field.getPlayerPokemon();
+    expect(player.getStatStage(Stat.ATK)).toBe(-1);
 
-    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-1);
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-1);
-
-    game.move.select(getMovePosition(game.scene, 0, MoveId.SPLASH));
+    game.move.use(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.TELEPORT);
     await game.toNextTurn();
 
-    enemyPokemon = game.scene.getEnemyPokemon()!;
+    expect(player.getStatStage(Stat.ATK)).toBe(-2);
 
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-2);
-    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
-
-    game.move.select(MoveId.SPLASH);
+    game.move.use(MoveId.DRAGON_TAIL);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
 
-    enemyPokemon = game.scene.getEnemyPokemon()!;
-
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-3);
-    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
-  }, 200000);
+    expect(player.getStatStage(Stat.ATK)).toBe(-3);
+  });
 });

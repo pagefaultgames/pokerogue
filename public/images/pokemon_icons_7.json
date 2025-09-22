@@ -5764,6 +5764,153 @@
 					}
 				},
 				{
+					"filename": "774-red-meteor",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 11,
+						"y": 8,
+						"w": 17,
+						"h": 18
+					},
+					"frame": {
+						"x": 406,
+						"y": 283,
+						"w": 17,
+						"h": 18
+					}
+				},
+				{
+					"filename": "774-blue-meteor",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 11,
+						"y": 8,
+						"w": 17,
+						"h": 18
+					},
+					"frame": {
+						"x": 406,
+						"y": 283,
+						"w": 17,
+						"h": 18
+					}
+				},
+				{
+					"filename": "774-orange-meteor",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 11,
+						"y": 8,
+						"w": 17,
+						"h": 18
+					},
+					"frame": {
+						"x": 406,
+						"y": 283,
+						"w": 17,
+						"h": 18
+					}
+				},
+				{
+					"filename": "774-yellow-meteor",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 11,
+						"y": 8,
+						"w": 17,
+						"h": 18
+					},
+					"frame": {
+						"x": 406,
+						"y": 283,
+						"w": 17,
+						"h": 18
+					}
+				},
+				{
+					"filename": "774-green-meteor",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 11,
+						"y": 8,
+						"w": 17,
+						"h": 18
+					},
+					"frame": {
+						"x": 406,
+						"y": 283,
+						"w": 17,
+						"h": 18
+					}
+				},
+				{
+					"filename": "774-indigo-meteor",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 11,
+						"y": 8,
+						"w": 17,
+						"h": 18
+					},
+					"frame": {
+						"x": 406,
+						"y": 283,
+						"w": 17,
+						"h": 18
+					}
+				},
+				{
+					"filename": "774-violet-meteor",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 11,
+						"y": 8,
+						"w": 17,
+						"h": 18
+					},
+					"frame": {
+						"x": 406,
+						"y": 283,
+						"w": 17,
+						"h": 18
+					}
+				},
+				{
 					"filename": "774",
 					"rotated": false,
 					"trimmed": true,
@@ -5975,6 +6122,153 @@
 				},
 				{
 					"filename": "774s",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 11,
+						"y": 8,
+						"w": 17,
+						"h": 18
+					},
+					"frame": {
+						"x": 453,
+						"y": 305,
+						"w": 17,
+						"h": 18
+					}
+				},
+				{
+					"filename": "774s-red-meteor",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 11,
+						"y": 8,
+						"w": 17,
+						"h": 18
+					},
+					"frame": {
+						"x": 453,
+						"y": 305,
+						"w": 17,
+						"h": 18
+					}
+				},
+				{
+					"filename": "774s-orange-meteor",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 11,
+						"y": 8,
+						"w": 17,
+						"h": 18
+					},
+					"frame": {
+						"x": 453,
+						"y": 305,
+						"w": 17,
+						"h": 18
+					}
+				},
+				{
+					"filename": "774s-yellow-meteor",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 11,
+						"y": 8,
+						"w": 17,
+						"h": 18
+					},
+					"frame": {
+						"x": 453,
+						"y": 305,
+						"w": 17,
+						"h": 18
+					}
+				},
+				{
+					"filename": "774s-green-meteor",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 11,
+						"y": 8,
+						"w": 17,
+						"h": 18
+					},
+					"frame": {
+						"x": 453,
+						"y": 305,
+						"w": 17,
+						"h": 18
+					}
+				},
+				{
+					"filename": "774s-blue-meteor",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 11,
+						"y": 8,
+						"w": 17,
+						"h": 18
+					},
+					"frame": {
+						"x": 453,
+						"y": 305,
+						"w": 17,
+						"h": 18
+					}
+				},
+				{
+					"filename": "774s-indigo-meteor",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 40,
+						"h": 30
+					},
+					"spriteSourceSize": {
+						"x": 11,
+						"y": 8,
+						"w": 17,
+						"h": 18
+					},
+					"frame": {
+						"x": 453,
+						"y": 305,
+						"w": 17,
+						"h": 18
+					}
+				},
+				{
+					"filename": "774s-violet-meteor",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {

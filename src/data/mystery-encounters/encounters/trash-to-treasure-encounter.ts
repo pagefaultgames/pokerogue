@@ -1,33 +1,34 @@
-import type { EnemyPartyConfig, EnemyPokemonConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { globalScene } from "#app/global-scene";
+import { modifierTypes } from "#data/data-lists";
+import { BattlerIndex } from "#enums/battler-index";
+import { ModifierTier } from "#enums/modifier-tier";
+import { MoveId } from "#enums/move-id";
+import { MoveUseMode } from "#enums/move-use-mode";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { SpeciesId } from "#enums/species-id";
+import { HitHealModifier, PokemonHeldItemModifier, TurnHealModifier } from "#modifiers/modifier";
+import type { PokemonHeldItemModifierType } from "#modifiers/modifier-type";
+import { PokemonMove } from "#moves/pokemon-move";
+import { showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import {
+  type EnemyPartyConfig,
+  type EnemyPokemonConfig,
   generateModifierType,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
   loadCustomMovesForEncounter,
   setEncounterRewards,
   transitionMysteryEncounterIntroVisuals,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/data/data-lists";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { globalScene } from "#app/global-scene";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { SpeciesId } from "#enums/species-id";
-import { HitHealModifier, PokemonHeldItemModifier, TurnHealModifier } from "#app/modifier/modifier";
-import { applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import i18next from "#app/plugins/i18n";
-import { ModifierTier } from "#enums/modifier-tier";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { MoveId } from "#enums/move-id";
-import { BattlerIndex } from "#enums/battler-index";
-import { PokemonMove } from "#app/data/moves/pokemon-move";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
-import { randSeedInt } from "#app/utils/common";
+} from "#mystery-encounters/encounter-phase-utils";
+import { applyModifierTypeToPlayerPokemon } from "#mystery-encounters/encounter-pokemon-utils";
+import { type MysteryEncounter, MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
+import i18next from "#plugins/i18n";
+import { randSeedInt } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/trashToTreasure";
@@ -152,7 +153,7 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
         doGarbageDig();
       })
       .withOptionPhase(async () => {
-        // Gain 2 Leftovers and 1 Shell Bell
+        // Gain 1 Leftovers and 1 Shell Bell
         await transitionMysteryEncounterIntroVisuals();
         await tryApplyDigRewardItems();
 
@@ -193,13 +194,14 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
       .withOptionPhase(async () => {
         // Investigate garbage, battle Gmax Garbodor
         globalScene.setFieldScale(0.75);
-        await showEncounterText(`${namespace}:option.2.selected_2`);
+        await showEncounterText(`${namespace}:option.2.selected2`);
         await transitionMysteryEncounterIntroVisuals();
 
         const encounter = globalScene.currentBattle.mysteryEncounter!;
 
         setEncounterRewards({
-          guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.GREAT],
+          guaranteedModifierTypeFuncs: [modifierTypes.LEFTOVERS],
+          guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.GREAT],
           fillRemaining: true,
         });
         encounter.startOfBattleEffects.push(
@@ -207,13 +209,13 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
             sourceBattlerIndex: BattlerIndex.ENEMY,
             targets: [BattlerIndex.PLAYER],
             move: new PokemonMove(MoveId.TOXIC),
-            ignorePp: true,
+            useMode: MoveUseMode.IGNORE_PP,
           },
           {
             sourceBattlerIndex: BattlerIndex.ENEMY,
             targets: [BattlerIndex.ENEMY],
             move: new PokemonMove(MoveId.STOCKPILE),
-            ignorePp: true,
+            useMode: MoveUseMode.IGNORE_PP,
           },
         );
         await initBattleWithEnemyConfig(encounter.enemyPartyConfigs[0]);
@@ -229,21 +231,7 @@ async function tryApplyDigRewardItems() {
   const party = globalScene.getPlayerParty();
 
   // Iterate over the party until an item was successfully given
-  // First leftovers
-  for (const pokemon of party) {
-    const heldItems = globalScene.findModifiers(
-      m => m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id,
-      true,
-    ) as PokemonHeldItemModifier[];
-    const existingLeftovers = heldItems.find(m => m instanceof TurnHealModifier) as TurnHealModifier;
-
-    if (!existingLeftovers || existingLeftovers.getStackCount() < existingLeftovers.getMaxStackCount()) {
-      await applyModifierTypeToPlayerPokemon(pokemon, leftovers);
-      break;
-    }
-  }
-
-  // Second leftovers
+  // Only Leftovers
   for (const pokemon of party) {
     const heldItems = globalScene.findModifiers(
       m => m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id,
@@ -261,7 +249,7 @@ async function tryApplyDigRewardItems() {
   await showEncounterText(
     i18next.t("battle:rewardGainCount", {
       modifierName: leftovers.name,
-      count: 2,
+      count: 1,
     }),
     null,
     undefined,

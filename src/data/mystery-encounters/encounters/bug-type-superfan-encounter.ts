@@ -1,4 +1,29 @@
-import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { globalScene } from "#app/global-scene";
+import { allMoves, modifierTypes } from "#data/data-lists";
+import { ModifierTier } from "#enums/modifier-tier";
+import { MoveId } from "#enums/move-id";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { PartyMemberStrength } from "#enums/party-member-strength";
+import { PokemonType } from "#enums/pokemon-type";
+import { SpeciesId } from "#enums/species-id";
+import { TrainerSlot } from "#enums/trainer-slot";
+import { TrainerType } from "#enums/trainer-type";
+import type { PlayerPokemon, Pokemon } from "#field/pokemon";
+import type { PokemonHeldItemModifier } from "#modifiers/modifier";
+import {
+  AttackTypeBoosterModifier,
+  BypassSpeedChanceModifier,
+  ContactHeldItemTransferChanceModifier,
+  GigantamaxAccessModifier,
+  MegaEvolutionAccessModifier,
+} from "#modifiers/modifier";
+import type { AttackTypeBoosterModifierType, ModifierTypeOption } from "#modifiers/modifier-type";
+import { PokemonMove } from "#moves/pokemon-move";
+import { getEncounterText, showEncounterDialogue } from "#mystery-encounters/encounter-dialogue-utils";
+import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
   generateModifierType,
   generateModifierTypeOption,
@@ -8,51 +33,23 @@ import {
   selectPokemonForOption,
   setEncounterRewards,
   transitionMysteryEncounterIntroVisuals,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { getRandomPartyMemberFunc, trainerConfigs } from "#app/data/trainers/trainer-config";
-import { TrainerPartyCompoundTemplate } from "#app/data/trainers/TrainerPartyTemplate";
-import { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
-import { TrainerSlot } from "#enums/trainer-slot";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { PartyMemberStrength } from "#enums/party-member-strength";
-import { globalScene } from "#app/global-scene";
-import { isNullOrUndefined, randSeedInt, randSeedShuffle } from "#app/utils/common";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { TrainerType } from "#enums/trainer-type";
-import { SpeciesId } from "#enums/species-id";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import type Pokemon from "#app/field/pokemon";
-import { PokemonMove } from "#app/data/moves/pokemon-move";
-import { getEncounterText, showEncounterDialogue } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { MoveId } from "#enums/move-id";
-import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+} from "#mystery-encounters/encounter-phase-utils";
+import { getSpriteKeysFromSpecies } from "#mystery-encounters/encounter-pokemon-utils";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import {
   AttackTypeBoosterHeldItemTypeRequirement,
   CombinationPokemonRequirement,
   HeldItemRequirement,
   TypeRequirement,
-} from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { PokemonType } from "#enums/pokemon-type";
-import type { AttackTypeBoosterModifierType, ModifierTypeOption } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/data/data-lists";
-import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
-import {
-  AttackTypeBoosterModifier,
-  BypassSpeedChanceModifier,
-  ContactHeldItemTransferChanceModifier,
-  GigantamaxAccessModifier,
-  MegaEvolutionAccessModifier,
-} from "#app/modifier/modifier";
+} from "#mystery-encounters/mystery-encounter-requirements";
+import { getRandomPartyMemberFunc, trainerConfigs } from "#trainers/trainer-config";
+import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/trainer-party-template";
+import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import { MoveInfoOverlay } from "#ui/move-info-overlay";
+import { randSeedInt, randSeedShuffle } from "#utils/common";
 import i18next from "i18next";
-import MoveInfoOverlay from "#app/ui/move-info-overlay";
-import { allMoves } from "#app/data/data-lists";
-import { ModifierTier } from "#enums/modifier-tier";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
-import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/bugTypeSuperfan";
@@ -201,7 +198,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
     },
     {
       speaker: `${namespace}:speaker`,
-      text: `${namespace}:intro_dialogue`,
+      text: `${namespace}:introDialogue`,
     },
   ])
   .withOnInit(() => {
@@ -216,7 +213,8 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
       female: true,
     });
 
-    let beedrillKeys: { spriteKey: string; fileRoot: string }, butterfreeKeys: { spriteKey: string; fileRoot: string };
+    let beedrillKeys: { spriteKey: string; fileRoot: string };
+    let butterfreeKeys: { spriteKey: string; fileRoot: string };
     if (globalScene.currentBattle.waveIndex < WAVE_LEVEL_BREAKPOINTS[3]) {
       beedrillKeys = getSpriteKeysFromSpecies(SpeciesId.BEEDRILL, false);
       butterfreeKeys = getSpriteKeysFromSpecies(SpeciesId.BUTTERFREE, false);
@@ -250,7 +248,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
         yShadow: -4,
       },
       {
-        spriteKey: spriteKey,
+        spriteKey,
         fileRoot: "trainer",
         hasShadow: true,
         x: 4,
@@ -292,6 +290,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
 
       // Init the moves available for tutor
       const moveTutorOptions: PokemonMove[] = [];
+      // TODO: should this use `randSeedItem`?
       moveTutorOptions.push(new PokemonMove(PHYSICAL_TUTOR_MOVES[randSeedInt(PHYSICAL_TUTOR_MOVES.length)]));
       moveTutorOptions.push(new PokemonMove(SPECIAL_TUTOR_MOVES[randSeedInt(SPECIAL_TUTOR_MOVES.length)]));
       moveTutorOptions.push(new PokemonMove(STATUS_TUTOR_MOVES[randSeedInt(STATUS_TUTOR_MOVES.length)]));
@@ -314,7 +313,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
       .withDialogue({
         buttonLabel: `${namespace}:option.2.label`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.2.disabled_tooltip`,
+        disabledButtonTooltip: `${namespace}:option.2.disabledTooltip`,
       })
       .withPreOptionPhase(async () => {
         // Player shows off their bug types
@@ -335,7 +334,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
           encounter.selectedOption!.dialogue!.selected = [
             {
               speaker: `${namespace}:speaker`,
-              text: `${namespace}:option.2.selected_0_to_1`,
+              text: `${namespace}:option.2.selected0To1`,
             },
           ];
         } else if (numBugTypes < 4) {
@@ -346,7 +345,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
           encounter.selectedOption!.dialogue!.selected = [
             {
               speaker: `${namespace}:speaker`,
-              text: `${namespace}:option.2.selected_2_to_3`,
+              text: `${namespace}:option.2.selected2To3`,
             },
           ];
         } else if (numBugTypes < 6) {
@@ -357,7 +356,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
           encounter.selectedOption!.dialogue!.selected = [
             {
               speaker: `${namespace}:speaker`,
-              text: `${namespace}:option.2.selected_4_to_5`,
+              text: `${namespace}:option.2.selected4To5`,
             },
           ];
         } else {
@@ -389,6 +388,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
             specialOptions.push(rareFormChangeModifier);
           }
           if (specialOptions.length > 0) {
+            // TODO: should this use `randSeedItem`?
             modifierOptions.push(specialOptions[randSeedInt(specialOptions.length)]);
           }
 
@@ -399,7 +399,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
           encounter.selectedOption!.dialogue!.selected = [
             {
               speaker: `${namespace}:speaker`,
-              text: `${namespace}:option.2.selected_6`,
+              text: `${namespace}:option.2.selected6`,
             },
           ];
         }
@@ -422,17 +422,17 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
       .withDialogue({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
+        disabledButtonTooltip: `${namespace}:option.3.disabledTooltip`,
         selected: [
           {
             text: `${namespace}:option.3.selected`,
           },
           {
             speaker: `${namespace}:speaker`,
-            text: `${namespace}:option.3.selected_dialogue`,
+            text: `${namespace}:option.3.selectedDialogue`,
           },
         ],
-        secondOptionPrompt: `${namespace}:option.3.select_prompt`,
+        secondOptionPrompt: `${namespace}:option.3.selectPrompt`,
       })
       .withPreOptionPhase(async (): Promise<boolean> => {
         const encounter = globalScene.currentBattle.mysteryEncounter!;
@@ -441,11 +441,11 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
           // Get Pokemon held items and filter for valid ones
           const validItems = pokemon.getHeldItems().filter(item => {
             return (
-              (item instanceof BypassSpeedChanceModifier ||
-                item instanceof ContactHeldItemTransferChanceModifier ||
-                (item instanceof AttackTypeBoosterModifier &&
-                  (item.type as AttackTypeBoosterModifierType).moveType === PokemonType.BUG)) &&
-              item.isTransferable
+              (item instanceof BypassSpeedChanceModifier
+                || item instanceof ContactHeldItemTransferChanceModifier
+                || (item instanceof AttackTypeBoosterModifier
+                  && (item.type as AttackTypeBoosterModifierType).moveType === PokemonType.BUG))
+              && item.isTransferable
             );
           });
 
@@ -470,14 +470,14 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
           // If pokemon has valid item, it can be selected
           const hasValidItem = pokemon.getHeldItems().some(item => {
             return (
-              item instanceof BypassSpeedChanceModifier ||
-              item instanceof ContactHeldItemTransferChanceModifier ||
-              (item instanceof AttackTypeBoosterModifier &&
-                (item.type as AttackTypeBoosterModifierType).moveType === PokemonType.BUG)
+              item instanceof BypassSpeedChanceModifier
+              || item instanceof ContactHeldItemTransferChanceModifier
+              || (item instanceof AttackTypeBoosterModifier
+                && (item.type as AttackTypeBoosterModifierType).moveType === PokemonType.BUG)
             );
           });
           if (!hasValidItem) {
-            return getEncounterText(`${namespace}:option.3.invalid_selection`) ?? null;
+            return getEncounterText(`${namespace}:option.3.invalidSelection`) ?? null;
           }
 
           return null;
@@ -515,7 +515,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
 function getTrainerConfigForWave(waveIndex: number) {
   // Bug type superfan trainer config
   const config = trainerConfigs[TrainerType.BUG_TYPE_SUPERFAN].clone();
-  config.name = i18next.t("trainerNames:bug_type_superfan");
+  config.name = i18next.t("trainerNames:bugTypeSuperfan");
 
   let pool3Copy = POOL_3_POKEMON.slice(0);
   pool3Copy = randSeedShuffle(pool3Copy);
@@ -571,7 +571,7 @@ function getTrainerConfigForWave(waveIndex: number) {
       .setPartyMemberFunc(
         4,
         getRandomPartyMemberFunc([pool3Mon.species], TrainerSlot.TRAINER, true, p => {
-          if (!isNullOrUndefined(pool3Mon.formIndex)) {
+          if (pool3Mon.formIndex != null) {
             p.formIndex = pool3Mon.formIndex;
             p.generateAndPopulateMoveset();
             p.generateName();
@@ -603,7 +603,7 @@ function getTrainerConfigForWave(waveIndex: number) {
       .setPartyMemberFunc(
         3,
         getRandomPartyMemberFunc([pool3Mon.species], TrainerSlot.TRAINER, true, p => {
-          if (!isNullOrUndefined(pool3Mon.formIndex)) {
+          if (pool3Mon.formIndex != null) {
             p.formIndex = pool3Mon.formIndex;
             p.generateAndPopulateMoveset();
             p.generateName();
@@ -613,7 +613,7 @@ function getTrainerConfigForWave(waveIndex: number) {
       .setPartyMemberFunc(
         4,
         getRandomPartyMemberFunc([pool3Mon2.species], TrainerSlot.TRAINER, true, p => {
-          if (!isNullOrUndefined(pool3Mon2.formIndex)) {
+          if (pool3Mon2.formIndex != null) {
             p.formIndex = pool3Mon2.formIndex;
             p.generateAndPopulateMoveset();
             p.generateName();
@@ -648,7 +648,7 @@ function getTrainerConfigForWave(waveIndex: number) {
       .setPartyMemberFunc(
         3,
         getRandomPartyMemberFunc([pool3Mon.species], TrainerSlot.TRAINER, true, p => {
-          if (!isNullOrUndefined(pool3Mon.formIndex)) {
+          if (pool3Mon.formIndex != null) {
             p.formIndex = pool3Mon.formIndex;
             p.generateAndPopulateMoveset();
             p.generateName();
@@ -687,7 +687,7 @@ function getTrainerConfigForWave(waveIndex: number) {
       .setPartyMemberFunc(
         2,
         getRandomPartyMemberFunc([pool3Mon.species], TrainerSlot.TRAINER, true, p => {
-          if (!isNullOrUndefined(pool3Mon.formIndex)) {
+          if (pool3Mon.formIndex != null) {
             p.formIndex = pool3Mon.formIndex;
             p.generateAndPopulateMoveset();
             p.generateName();
@@ -697,7 +697,7 @@ function getTrainerConfigForWave(waveIndex: number) {
       .setPartyMemberFunc(
         3,
         getRandomPartyMemberFunc([pool3Mon2.species], TrainerSlot.TRAINER, true, p => {
-          if (!isNullOrUndefined(pool3Mon2.formIndex)) {
+          if (pool3Mon2.formIndex != null) {
             p.formIndex = pool3Mon2.formIndex;
             p.generateAndPopulateMoveset();
             p.generateName();
@@ -714,17 +714,15 @@ function doBugTypeMoveTutor(): Promise<void> {
   // biome-ignore lint/suspicious/noAsyncPromiseExecutor: TODO explain
   return new Promise<void>(async resolve => {
     const moveOptions = globalScene.currentBattle.mysteryEncounter!.misc.moveTutorOptions;
-    await showEncounterDialogue(`${namespace}:battle_won`, `${namespace}:speaker`);
+    await showEncounterDialogue(`${namespace}:battleWon`, `${namespace}:speaker`);
 
-    const overlayScale = 1;
     const moveInfoOverlay = new MoveInfoOverlay({
       delayVisibility: false,
-      scale: overlayScale,
       onSide: true,
       right: true,
       x: 1,
-      y: -MoveInfoOverlay.getHeight(overlayScale, true) - 1,
-      width: globalScene.game.canvas.width / 6 - 2,
+      y: -MoveInfoOverlay.getHeight(true) - 1,
+      width: globalScene.scaledCanvas.width - 2,
     });
     globalScene.ui.add(moveInfoOverlay);
 
@@ -751,7 +749,7 @@ function doBugTypeMoveTutor(): Promise<void> {
 
     const result = await selectOptionThenPokemon(
       optionSelectItems,
-      `${namespace}:teach_move_prompt`,
+      `${namespace}:teachMovePrompt`,
       undefined,
       onHoverOverCancel,
     );

@@ -1,11 +1,11 @@
-import { Stat } from "#enums/stat";
-import GameManager from "#test/testUtils/gameManager";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
+import { TurnInitPhase } from "#phases/turn-init-phase";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
 
 describe("Moves - Haze", () => {
   describe("integration tests", () => {
@@ -23,22 +23,21 @@ describe("Moves - Haze", () => {
     beforeEach(() => {
       game = new GameManager(phaserGame);
 
-      game.override.battleStyle("single");
-
-      game.override.enemySpecies(SpeciesId.RATTATA);
-      game.override.enemyLevel(100);
-      game.override.enemyMoveset(MoveId.SPLASH);
-      game.override.enemyAbility(AbilityId.NONE);
-
-      game.override.startingLevel(100);
-      game.override.moveset([MoveId.HAZE, MoveId.SWORDS_DANCE, MoveId.CHARM, MoveId.SPLASH]);
-      game.override.ability(AbilityId.NONE);
+      game.override
+        .battleStyle("single")
+        .enemySpecies(SpeciesId.RATTATA)
+        .enemyLevel(100)
+        .enemyMoveset(MoveId.SPLASH)
+        .enemyAbility(AbilityId.BALL_FETCH)
+        .startingLevel(100)
+        .moveset([MoveId.HAZE, MoveId.SWORDS_DANCE, MoveId.CHARM, MoveId.SPLASH])
+        .ability(AbilityId.BALL_FETCH);
     });
 
     it("should reset all stat changes of all Pokemon on field", async () => {
       await game.classicMode.startBattle([SpeciesId.RATTATA]);
-      const user = game.scene.getPlayerPokemon()!;
-      const enemy = game.scene.getEnemyPokemon()!;
+      const user = game.field.getPlayerPokemon();
+      const enemy = game.field.getEnemyPokemon();
 
       expect(user.getStatStage(Stat.ATK)).toBe(0);
       expect(enemy.getStatStage(Stat.ATK)).toBe(0);

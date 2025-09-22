@@ -1,20 +1,23 @@
+import { defaultStarterSpecies } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { Gender } from "#app/data/gender";
-import { PokeballType } from "#enums/pokeball";
-import type Pokemon from "#app/field/pokemon";
-import { PokemonType } from "#enums/pokemon-type";
-import { randSeedInt } from "#app/utils/common";
-import { WeatherType } from "#enums/weather-type";
-import { Nature } from "#enums/nature";
+import { speciesStarterCosts } from "#balance/starters";
+import { allMoves } from "#data/data-lists";
+import { Gender, getGenderSymbol } from "#data/gender";
 import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species-id";
+import { Nature } from "#enums/nature";
+import { PokeballType } from "#enums/pokeball";
+import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
+import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
-import type { SpeciesStatBoosterModifierType } from "#app/modifier/modifier-type";
-import { speciesStarterCosts } from "./starters";
+import { WeatherType } from "#enums/weather-type";
+import type { Pokemon } from "#field/pokemon";
+import type { SpeciesStatBoosterItem, SpeciesStatBoosterModifierType } from "#modifiers/modifier-type";
+import { coerceArray, randSeedInt } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
-import { initI18n } from "#app/plugins/i18n";
 
 export enum SpeciesWildEvolutionDelay {
   NONE,
@@ -50,6 +53,7 @@ export enum EvolutionItem {
   PRISM_SCALE,
   RAZOR_CLAW,
   RAZOR_FANG,
+  OVAL_STONE,
   REAPER_CLOTH,
   ELECTIRIZER,
   MAGMARIZER,
@@ -74,6 +78,9 @@ export enum EvolutionItem {
   LEADERS_CREST
 }
 
+const tyrogueMoves = [MoveId.LOW_SWEEP, MoveId.MACH_PUNCH, MoveId.RAPID_SPIN] as const;
+type TyrogueMove = (typeof tyrogueMoves)[number];
+
 /**
  * Pokemon Evolution tuple type consisting of:
  * @property 0 {@linkcode SpeciesId} The species of the Pokemon.
@@ -81,8 +88,135 @@ export enum EvolutionItem {
  */
 export type EvolutionLevel = [species: SpeciesId, level: number];
 
-export type EvolutionConditionPredicate = (p: Pokemon) => boolean;
-export type EvolutionConditionEnforceFunc = (p: Pokemon) => void;
+const EvoCondKey = {
+  FRIENDSHIP: 1,
+  TIME: 2,
+  MOVE: 3,
+  MOVE_TYPE: 4,
+  PARTY_TYPE: 5,
+  WEATHER: 6,
+  BIOME: 7,
+  TYROGUE: 8,
+  SHEDINJA: 9,
+  EVO_TREASURE_TRACKER: 10,
+  RANDOM_FORM: 11,
+  SPECIES_CAUGHT: 12,
+  GENDER: 13,
+  NATURE: 14,
+  HELD_ITEM: 15, // Currently checks only for species stat booster items
+} as const;
+
+type EvolutionConditionData =
+  {key: typeof EvoCondKey.FRIENDSHIP | typeof EvoCondKey.RANDOM_FORM | typeof EvoCondKey.EVO_TREASURE_TRACKER, value: number} |
+  {key: typeof EvoCondKey.MOVE, move: MoveId} |
+  {key: typeof EvoCondKey.TIME, time: TimeOfDay[]} |
+  {key: typeof EvoCondKey.BIOME, biome: BiomeId[]} |
+  {key: typeof EvoCondKey.GENDER, gender: Gender} |
+  {key: typeof EvoCondKey.MOVE_TYPE | typeof EvoCondKey.PARTY_TYPE, pkmnType: PokemonType} |
+  {key: typeof EvoCondKey.SPECIES_CAUGHT, speciesCaught: SpeciesId} |
+  {key: typeof EvoCondKey.HELD_ITEM, itemKey: SpeciesStatBoosterItem} |
+  {key: typeof EvoCondKey.NATURE, nature: Nature[]} |
+  {key: typeof EvoCondKey.WEATHER, weather: WeatherType[]} |
+  {key: typeof EvoCondKey.TYROGUE, move: TyrogueMove} |
+  {key: typeof EvoCondKey.SHEDINJA};
+
+export class SpeciesEvolutionCondition {
+  public data: EvolutionConditionData[];
+  private desc: string[];
+
+  constructor(...data: EvolutionConditionData[]) {
+    this.data = data;
+  }
+
+  public get description(): string[] {
+    if (this.desc != null) {
+      return this.desc;
+    }
+    this.desc = this.data.map(cond => {
+      switch(cond.key) {
+        case EvoCondKey.FRIENDSHIP:
+          return i18next.t("pokemonEvolutions:friendship");
+        case EvoCondKey.TIME:
+          return i18next.t(`pokemonEvolutions:timeOfDay.${toCamelCase(TimeOfDay[cond.time.at(-1)!])}`); // For Day and Night evos, the key we want goes last
+        case EvoCondKey.MOVE_TYPE:
+          return i18next.t("pokemonEvolutions:moveType", {type: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[cond.pkmnType])}`)});
+        case EvoCondKey.PARTY_TYPE:
+          return i18next.t("pokemonEvolutions:partyType", {type: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[cond.pkmnType])}`)});
+        case EvoCondKey.GENDER:
+          return i18next.t("pokemonEvolutions:gender", {gender: getGenderSymbol(cond.gender)});
+        case EvoCondKey.MOVE:
+        case EvoCondKey.TYROGUE:
+          return i18next.t("pokemonEvolutions:move", {move: allMoves[cond.move].name});
+        case EvoCondKey.BIOME:
+          return i18next.t("pokemonEvolutions:biome");
+        case EvoCondKey.NATURE:
+          return i18next.t("pokemonEvolutions:nature");
+        case EvoCondKey.WEATHER:
+          return i18next.t("pokemonEvolutions:weather");
+        case EvoCondKey.SHEDINJA:
+          return i18next.t("pokemonEvolutions:shedinja");
+        case EvoCondKey.EVO_TREASURE_TRACKER:
+          return i18next.t("pokemonEvolutions:treasure");
+        case EvoCondKey.SPECIES_CAUGHT:
+          return i18next.t("pokemonEvolutions:caught", {species: getPokemonSpecies(cond.speciesCaught).name});
+        case EvoCondKey.HELD_ITEM:
+          return i18next.t(`pokemonEvolutions:heldItem.${toCamelCase(cond.itemKey)}`);
+      }
+    }).filter(s => s != null); // Filter out stringless conditions
+    return this.desc;
+  }
+
+  public conditionsFulfilled(pokemon: Pokemon, forFusion = false): boolean {
+    console.log(this.data);
+    return this.data.every(cond => {
+      switch (cond.key) {
+        case EvoCondKey.FRIENDSHIP:
+          return pokemon.friendship >= cond.value;
+        case EvoCondKey.TIME:
+          return cond.time.includes(globalScene.arena.getTimeOfDay());
+        case EvoCondKey.MOVE:
+          return pokemon.moveset.some(m => m.moveId === cond.move);
+        case EvoCondKey.MOVE_TYPE:
+          return pokemon.moveset.some(m => m.getMove().type === cond.pkmnType);
+        case EvoCondKey.PARTY_TYPE:
+          return globalScene.getPlayerParty().some(p => p.getTypes(false, false, true).includes(cond.pkmnType))
+        case EvoCondKey.EVO_TREASURE_TRACKER:
+          return pokemon.getHeldItems().some(m =>
+            m.is("EvoTrackerModifier") &&
+            m.getStackCount() + pokemon.getPersistentTreasureCount() >= cond.value
+          );
+        case EvoCondKey.GENDER:
+          return cond.gender === (forFusion ? pokemon.fusionGender : pokemon.gender);
+        case EvoCondKey.SHEDINJA: // Shedinja cannot be evolved into directly
+          return false;
+        case EvoCondKey.BIOME:
+          return cond.biome.includes(globalScene.arena.biomeType);
+        case EvoCondKey.WEATHER:
+          return cond.weather.includes(globalScene.arena.getWeatherType());
+        case EvoCondKey.TYROGUE:
+          return (
+            pokemon.getMoveset(true).find(m => (tyrogueMoves as readonly MoveId[]).includes(m.moveId))?.moveId
+            === cond.move
+          );
+        case EvoCondKey.NATURE:
+          return cond.nature.includes(pokemon.getNature());
+        case EvoCondKey.RANDOM_FORM: {
+          let ret = false;
+          globalScene.executeWithSeedOffset(() => ret = !randSeedInt(cond.value), pokemon.id);
+          return ret;
+        }
+        case EvoCondKey.SPECIES_CAUGHT:
+          return !!globalScene.gameData.dexData[cond.speciesCaught].caughtAttr;
+        case EvoCondKey.HELD_ITEM:
+          return pokemon.getHeldItems().some(m => m.is("SpeciesStatBoosterModifier") && (m.type as SpeciesStatBoosterModifierType).key === cond.itemKey)
+      }
+    });
+  }
+}
+
+export function validateShedinjaEvo(): boolean {
+  return globalScene.getPlayerParty().length < 6 && globalScene.pokeballCounts[PokeballType.POKEBALL] > 0;
+}
 
 export class SpeciesFormEvolution {
   public speciesId: SpeciesId;
@@ -92,41 +226,101 @@ export class SpeciesFormEvolution {
   public item: EvolutionItem | null;
   public condition: SpeciesEvolutionCondition | null;
   public wildDelay: SpeciesWildEvolutionDelay;
-  public description = "";
+  public desc = "";
 
-  constructor(speciesId: SpeciesId, preFormKey: string | null, evoFormKey: string | null, level: number, item: EvolutionItem | null, condition: SpeciesEvolutionCondition | null, wildDelay?: SpeciesWildEvolutionDelay) {
-    if (!i18next.isInitialized) {
-      initI18n();
-    }
+  constructor(speciesId: SpeciesId, preFormKey: string | null, evoFormKey: string | null, level: number, item: EvolutionItem | null, condition: EvolutionConditionData | EvolutionConditionData[] | null, wildDelay?: SpeciesWildEvolutionDelay) {
     this.speciesId = speciesId;
     this.preFormKey = preFormKey;
     this.evoFormKey = evoFormKey;
     this.level = level;
     this.item = item || EvolutionItem.NONE;
-    this.condition = condition;
+    if (condition != null) {
+      this.condition = new SpeciesEvolutionCondition(...coerceArray(condition));
+    }
     this.wildDelay = wildDelay ?? SpeciesWildEvolutionDelay.NONE;
+  }
+
+  get description(): string {
+    if (this.desc.length > 0) {
+      return this.desc;
+    }
 
     const strings: string[] = [];
+    let len = 0;
     if (this.level > 1) {
-      strings.push(i18next.t("pokemonEvolutions:level") + ` ${this.level}`);
+      strings.push(i18next.t("pokemonEvolutions:atLevel", {lv: this.level}));
     }
     if (this.item) {
       const itemDescription = i18next.t(`modifierType:EvolutionItem.${EvolutionItem[this.item].toUpperCase()}`);
-      const rarity = this.item > 50 ? i18next.t("pokemonEvolutions:ULTRA") : i18next.t("pokemonEvolutions:GREAT");
-      strings.push(i18next.t("pokemonEvolutions:using") + itemDescription + ` (${rarity})`);
+      const rarity = this.item > 50 ? i18next.t("pokemonEvolutions:ultra") : i18next.t("pokemonEvolutions:great");
+      strings.push(i18next.t("pokemonEvolutions:using", {item: itemDescription, tier: rarity}));
     }
     if (this.condition) {
-      strings.push(this.condition.description);
+      if (strings.length === 0) {
+        strings.push(i18next.t("pokemonEvolutions:levelUp"));
+      }
+      strings.push(...this.condition.description);
     }
-    this.description = strings
+    this.desc = strings
       .filter(str => str !== "")
-      .map((str, index) => index > 0 ? str[0].toLowerCase() + str.slice(1) : str)
-      .join(i18next.t("pokemonEvolutions:connector"));
+      .map((str, index) => {
+        if (index === 0) {
+          len = str.length;
+          return str;
+        }
+        if (len + str.length > 60) {
+          len = str.length;
+          return "\n" + str[0].toLowerCase() + str.slice(1);
+        }
+        len += str.length;
+        return str[0].toLowerCase() + str.slice(1);
+      })
+      .join(" ")
+      .replace(" \n", i18next.t("pokemonEvolutions:connector") + "\n");
+
+    return this.desc;
+  }
+
+  /**
+   * Checks if a Pokemon fulfills the requirements of this evolution.
+   * @param pokemon {@linkcode Pokemon} who wants to evolve
+   * @param forFusion defaults to False. Whether this evolution is meant for the secondary fused mon. In that case, use their form key.
+   * @param item {@linkcode EvolutionItem} optional, check if the evolution uses a certain item
+   * @returns whether this evolution can apply to the Pokemon
+   */
+  public validate(pokemon: Pokemon, forFusion = false, item?: EvolutionItem): boolean {
+    return (
+      pokemon.level >= this.level &&
+      // Check form key, using the fusion's form key if we're checking the fusion
+      (this.preFormKey == null || (forFusion ? pokemon.getFusionFormKey() : pokemon.getFormKey()) === this.preFormKey) &&
+      (this.condition == null || this.condition.conditionsFulfilled(pokemon, forFusion)) &&
+      ((item ?? EvolutionItem.NONE) === (this.item ?? EvolutionItem.NONE))
+    );
+  }
+
+  /**
+   * Checks if this evolution is item-based and any conditions for it are fulfilled
+   * @param pokemon {@linkcode Pokemon} who wants to evolve
+   * @param forFusion defaults to False. Whether this evolution is meant for the secondary fused mon. In that case, use their form key.
+   * @returns whether this evolution uses an item and can apply to the Pokemon
+   */
+  public isValidItemEvolution(pokemon: Pokemon, forFusion = false): boolean {
+    return (
+      this.item != null &&
+      pokemon.level >= this.level &&
+      // Check form key, using the fusion's form key if we're checking the fusion
+      (this.preFormKey == null || (forFusion ? pokemon.getFusionFormKey() : pokemon.getFormKey()) === this.preFormKey) &&
+      (this.condition == null || this.condition.conditionsFulfilled(pokemon))
+    );
+  }
+
+  public get evoItem(): EvolutionItem {
+    return this.item ?? EvolutionItem.NONE;
   }
 }
 
 export class SpeciesEvolution extends SpeciesFormEvolution {
-  constructor(speciesId: SpeciesId, level: number, item: EvolutionItem | null, condition: SpeciesEvolutionCondition | null, wildDelay?: SpeciesWildEvolutionDelay) {
+  constructor(speciesId: SpeciesId, level: number, item: EvolutionItem | null, condition: EvolutionConditionData | EvolutionConditionData[] | null, wildDelay?: SpeciesWildEvolutionDelay) {
     super(speciesId, null, null, level, item, condition, wildDelay);
   }
 }
@@ -135,223 +329,9 @@ export class FusionSpeciesFormEvolution extends SpeciesFormEvolution {
   public primarySpeciesId: SpeciesId;
 
   constructor(primarySpeciesId: SpeciesId, evolution: SpeciesFormEvolution) {
-    super(evolution.speciesId, evolution.preFormKey, evolution.evoFormKey, evolution.level, evolution.item, evolution.condition, evolution.wildDelay);
+    super(evolution.speciesId, evolution.preFormKey, evolution.evoFormKey, evolution.level, evolution.item, evolution.condition?.data ?? null, evolution.wildDelay);
 
     this.primarySpeciesId = primarySpeciesId;
-  }
-}
-
-export class SpeciesEvolutionCondition {
-  public predicate: EvolutionConditionPredicate;
-  public enforceFunc?: EvolutionConditionEnforceFunc;
-  public description: string;
-
-  constructor(predicate: EvolutionConditionPredicate, enforceFunc?: EvolutionConditionEnforceFunc) {
-    this.predicate = predicate;
-    this.enforceFunc = enforceFunc;
-    this.description = "";
-  }
-}
-
-class GenderEvolutionCondition extends SpeciesEvolutionCondition {
-  public gender: Gender;
-  constructor(gender: Gender) {
-    super(p => p.gender === gender, p => p.gender = gender);
-    this.gender = gender;
-    this.description = i18next.t("pokemonEvolutions:gender", { gender: i18next.t(`pokemonEvolutions:${Gender[gender]}`) });
-  }
-}
-
-class TimeOfDayEvolutionCondition extends SpeciesEvolutionCondition {
-  public timesOfDay: TimeOfDay[];
-  constructor(tod: "day" | "night") {
-    if (tod === "day") {
-      super(() => globalScene.arena.getTimeOfDay() === TimeOfDay.DAWN || globalScene.arena.getTimeOfDay() === TimeOfDay.DAY);
-      this.timesOfDay = [ TimeOfDay.DAWN, TimeOfDay.DAY ];
-    } else if (tod === "night") {
-      super(() => globalScene.arena.getTimeOfDay() === TimeOfDay.DUSK || globalScene.arena.getTimeOfDay() === TimeOfDay.NIGHT);
-      this.timesOfDay = [ TimeOfDay.DUSK, TimeOfDay.NIGHT ];
-    } else {
-      super(() => false);
-      this.timesOfDay = [];
-    }
-    this.description = i18next.t("pokemonEvolutions:timeOfDay", { tod: i18next.t(`pokemonEvolutions:${tod}`) });
-  }
-}
-
-class MoveEvolutionCondition extends SpeciesEvolutionCondition {
-  public move: MoveId;
-  constructor(move: MoveId) {
-    super(p => p.moveset.filter(m => m.moveId === move).length > 0);
-    this.move = move;
-    const moveKey = MoveId[this.move].split("_").filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("");
-    this.description = i18next.t("pokemonEvolutions:move", { move: i18next.t(`move:${moveKey}.name`) });
-  }
-}
-
-class FriendshipEvolutionCondition extends SpeciesEvolutionCondition {
-  public amount: number;
-  constructor(amount: number) {
-    super(p => p.friendship >= amount);
-    this.amount = amount;
-    this.description = i18next.t("pokemonEvolutions:friendship");
-  }
-}
-
-class FriendshipTimeOfDayEvolutionCondition extends SpeciesEvolutionCondition {
-  public amount: number;
-  public timesOfDay: TimeOfDay[];
-  constructor(amount: number, tod: "day" | "night") {
-    if (tod === "day") {
-      super(p => p.friendship >= amount && (globalScene.arena.getTimeOfDay() === TimeOfDay.DAWN || globalScene.arena.getTimeOfDay() === TimeOfDay.DAY));
-      this.timesOfDay = [ TimeOfDay.DAWN, TimeOfDay.DAY ];
-    } else if (tod === "night") {
-      super(p => p.friendship >= amount && (globalScene.arena.getTimeOfDay() === TimeOfDay.DUSK || globalScene.arena.getTimeOfDay() === TimeOfDay.NIGHT));
-      this.timesOfDay = [ TimeOfDay.DUSK, TimeOfDay.NIGHT ];
-    } else {
-      super(_p => false);
-      this.timesOfDay = [];
-    }
-    this.amount = amount;
-    this.description = i18next.t("pokemonEvolutions:friendshipTimeOfDay", { tod: i18next.t(`pokemonEvolutions:${tod}`) });
-  }
-}
-
-class FriendshipMoveTypeEvolutionCondition extends SpeciesEvolutionCondition {
-  public amount: number;
-  public type: PokemonType;
-  constructor(amount: number, type: PokemonType) {
-    super(p => p.friendship >= amount && !!p.getMoveset().find(m => m?.getMove().type === type));
-    this.amount = amount;
-    this.type = type;
-    this.description = i18next.t("pokemonEvolutions:friendshipMoveType", { type: i18next.t(`pokemonInfo:Type.${PokemonType[this.type]}`) });
-  }
-}
-
-class ShedinjaEvolutionCondition extends SpeciesEvolutionCondition {
-  constructor() {
-    super(() => globalScene.getPlayerParty().length < 6 && globalScene.pokeballCounts[PokeballType.POKEBALL] > 0);
-    this.description = i18next.t("pokemonEvolutions:shedinja");
-  }
-}
-
-class PartyTypeEvolutionCondition extends SpeciesEvolutionCondition {
-  public type: PokemonType;
-  constructor(type: PokemonType) {
-    super(() => !!globalScene.getPlayerParty().find(p => p.getTypes(false, false, true).indexOf(type) > -1));
-    this.type = type;
-    this.description = i18next.t("pokemonEvolutions:partyType", { type: i18next.t(`pokemonInfo:Type.${PokemonType[this.type]}`) });
-  }
-}
-
-class CaughtEvolutionCondition extends SpeciesEvolutionCondition {
-  public species: SpeciesId;
-  constructor(species: SpeciesId) {
-    super(() => !!globalScene.gameData.dexData[species].caughtAttr);
-    this.species = species;
-    this.description = i18next.t("pokemonEvolutions:caught", { species: i18next.t(`pokemon:${SpeciesId[this.species].toLowerCase()}`) });
-  }
-}
-
-class WeatherEvolutionCondition extends SpeciesEvolutionCondition {
-  public weatherTypes: WeatherType[];
-  constructor(weatherTypes: WeatherType[]) {
-    super(() => weatherTypes.indexOf(globalScene.arena.weather?.weatherType || WeatherType.NONE) > -1);
-    this.weatherTypes = weatherTypes;
-    this.description = i18next.t("pokemonEvolutions:weather");
-  }
-}
-
-class MoveTypeEvolutionCondition extends SpeciesEvolutionCondition {
-  public type: PokemonType;
-  constructor(type: PokemonType) {
-    super(p => p.moveset.filter(m => m?.getMove().type === type).length > 0);
-    this.type = type;
-    this.description = i18next.t("pokemonEvolutions:moveType", { type: i18next.t(`pokemonInfo:Type.${PokemonType[this.type]}`) });
-  }
-}
-
-class TreasureEvolutionCondition extends SpeciesEvolutionCondition {
-  constructor() {
-    super(p => p.evoCounter
-      + p.getHeldItems().filter(m => m.is("DamageMoneyRewardModifier")).length
-      + globalScene.findModifiers(m => m.is("MoneyMultiplierModifier")
-        || m.is("ExtraModifierModifier") || m.is("TempExtraModifierModifier")).length > 9);
-    this.description = i18next.t("pokemonEvolutions:treasure");
-  }
-}
-
-class TyrogueEvolutionCondition extends SpeciesEvolutionCondition {
-  public move: MoveId;
-  constructor(move: MoveId) {
-    super(p =>
-      p.getMoveset(true).find(m => m && [ MoveId.LOW_SWEEP, MoveId.MACH_PUNCH, MoveId.RAPID_SPIN ].includes(m.moveId))?.moveId === move);
-    this.move = move;
-    const moveKey = MoveId[this.move].split("_").filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("");
-    this.description = i18next.t("pokemonEvolutions:move", { move: i18next.t(`move:${moveKey}.name`) });
-  }
-}
-
-class NatureEvolutionCondition extends SpeciesEvolutionCondition {
-  public natures: Nature[];
-  constructor(natures: Nature[]) {
-    super(p => natures.indexOf(p.getNature()) > -1);
-    this.natures = natures;
-    this.description = i18next.t("pokemonEvolutions:nature");
-  }
-}
-
-class MoveTimeOfDayEvolutionCondition extends SpeciesEvolutionCondition {
-  public move: MoveId;
-  public timesOfDay: TimeOfDay[];
-  constructor(move: MoveId, tod: "day" | "night") {
-    if (tod === "day") {
-      super(p => p.moveset.filter(m => m.moveId === move).length > 0 && (globalScene.arena.getTimeOfDay() === TimeOfDay.DAWN || globalScene.arena.getTimeOfDay() === TimeOfDay.DAY));
-      this.move = move;
-      this.timesOfDay = [ TimeOfDay.DAWN, TimeOfDay.DAY ];
-    } else if (tod === "night") {
-      super(p => p.moveset.filter(m => m.moveId === move).length > 0 && (globalScene.arena.getTimeOfDay() === TimeOfDay.DUSK || globalScene.arena.getTimeOfDay() === TimeOfDay.NIGHT));
-      this.move = move;
-      this.timesOfDay = [ TimeOfDay.DUSK, TimeOfDay.NIGHT ];
-    } else {
-      super(() => false);
-      this.timesOfDay = [];
-    }
-    const moveKey = MoveId[this.move].split("_").filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("");
-    this.description = i18next.t("pokemonEvolutions:moveTimeOfDay", { move: i18next.t(`move:${moveKey}.name`), tod: i18next.t(`pokemonEvolutions:${tod}`) });
-  }
-}
-
-class BiomeEvolutionCondition extends SpeciesEvolutionCondition {
-  public biomes: BiomeId[];
-  constructor(biomes: BiomeId[]) {
-    super(() => biomes.filter(b => b === globalScene.arena.biomeType).length > 0);
-    this.biomes = biomes;
-    this.description = i18next.t("pokemonEvolutions:biome");
-  }
-}
-
-class DunsparceEvolutionCondition extends SpeciesEvolutionCondition {
-  constructor() {
-    super(p => {
-      let ret = false;
-      if (p.moveset.filter(m => m.moveId === MoveId.HYPER_DRILL).length > 0) {
-        globalScene.executeWithSeedOffset(() => ret = !randSeedInt(4), p.id);
-      }
-      return ret;
-    });
-    const moveKey = MoveId[MoveId.HYPER_DRILL].split("_").filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("");
-    this.description = i18next.t("pokemonEvolutions:move", { move: i18next.t(`move:${moveKey}.name`) });
-  }
-}
-
-class TandemausEvolutionCondition extends SpeciesEvolutionCondition {
-  constructor() {
-    super(p => {
-      let ret = false;
-      globalScene.executeWithSeedOffset(() => ret = !randSeedInt(4), p.id);
-      return ret;
-    });
   }
 }
 
@@ -488,8 +468,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.ELECTRODE, 30, null, null)
   ],
   [SpeciesId.CUBONE]: [
-    new SpeciesEvolution(SpeciesId.ALOLA_MAROWAK, 28, null, new TimeOfDayEvolutionCondition("night")),
-    new SpeciesEvolution(SpeciesId.MAROWAK, 28, null, new TimeOfDayEvolutionCondition("day"))
+    new SpeciesEvolution(SpeciesId.ALOLA_MAROWAK, 28, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]}),
+    new SpeciesEvolution(SpeciesId.MAROWAK, 28, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DAWN, TimeOfDay.DAY]})
   ],
   [SpeciesId.TYROGUE]: [
     /**
@@ -498,13 +478,13 @@ export const pokemonEvolutions: PokemonEvolutions = {
      * If Tyrogue knows multiple of these moves, its evolution is based on
      * the first qualifying move in its moveset.
      */
-    new SpeciesEvolution(SpeciesId.HITMONLEE, 20, null, new TyrogueEvolutionCondition(MoveId.LOW_SWEEP)),
-    new SpeciesEvolution(SpeciesId.HITMONCHAN, 20, null, new TyrogueEvolutionCondition(MoveId.MACH_PUNCH)),
-    new SpeciesEvolution(SpeciesId.HITMONTOP, 20, null, new TyrogueEvolutionCondition(MoveId.RAPID_SPIN)),
+    new SpeciesEvolution(SpeciesId.HITMONLEE, 20, null, {key: EvoCondKey.TYROGUE, move: MoveId.LOW_SWEEP}),
+    new SpeciesEvolution(SpeciesId.HITMONCHAN, 20, null, {key: EvoCondKey.TYROGUE, move: MoveId.MACH_PUNCH}),
+    new SpeciesEvolution(SpeciesId.HITMONTOP, 20, null, {key: EvoCondKey.TYROGUE, move: MoveId.RAPID_SPIN}),
   ],
   [SpeciesId.KOFFING]: [
-    new SpeciesEvolution(SpeciesId.GALAR_WEEZING, 35, null, new TimeOfDayEvolutionCondition("night")),
-    new SpeciesEvolution(SpeciesId.WEEZING, 35, null, new TimeOfDayEvolutionCondition("day"))
+    new SpeciesEvolution(SpeciesId.GALAR_WEEZING, 35, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]}),
+    new SpeciesEvolution(SpeciesId.WEEZING, 35, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DAWN, TimeOfDay.DAY]})
   ],
   [SpeciesId.RHYHORN]: [
     new SpeciesEvolution(SpeciesId.RHYDON, 42, null, null)
@@ -549,8 +529,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.QUILAVA, 14, null, null)
   ],
   [SpeciesId.QUILAVA]: [
-    new SpeciesEvolution(SpeciesId.HISUI_TYPHLOSION, 36, null, new TimeOfDayEvolutionCondition("night")),
-    new SpeciesEvolution(SpeciesId.TYPHLOSION, 36, null, new TimeOfDayEvolutionCondition("day"))
+    new SpeciesEvolution(SpeciesId.HISUI_TYPHLOSION, 36, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]}),
+    new SpeciesEvolution(SpeciesId.TYPHLOSION, 36, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DAWN, TimeOfDay.DAY]})
   ],
   [SpeciesId.TOTODILE]: [
     new SpeciesEvolution(SpeciesId.CROCONAW, 18, null, null)
@@ -652,8 +632,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.LINOONE, 20, null, null)
   ],
   [SpeciesId.WURMPLE]: [
-    new SpeciesEvolution(SpeciesId.SILCOON, 7, null, new TimeOfDayEvolutionCondition("day")),
-    new SpeciesEvolution(SpeciesId.CASCOON, 7, null, new TimeOfDayEvolutionCondition("night"))
+    new SpeciesEvolution(SpeciesId.SILCOON, 7, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DAWN, TimeOfDay.DAY]}),
+    new SpeciesEvolution(SpeciesId.CASCOON, 7, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]})
   ],
   [SpeciesId.SILCOON]: [
     new SpeciesEvolution(SpeciesId.BEAUTIFLY, 10, null, null)
@@ -677,24 +657,16 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.KIRLIA, 20, null, null)
   ],
   [SpeciesId.KIRLIA]: [
-    new SpeciesEvolution(SpeciesId.GARDEVOIR, 30, null, new GenderEvolutionCondition(Gender.FEMALE)),
-    new SpeciesEvolution(SpeciesId.GALLADE, 30, null, new GenderEvolutionCondition(Gender.MALE))
+    new SpeciesEvolution(SpeciesId.GARDEVOIR, 30, null, null),
+    new SpeciesEvolution(SpeciesId.GALLADE, 1, EvolutionItem.DAWN_STONE, {key: EvoCondKey.GENDER, gender: Gender.MALE}, SpeciesWildEvolutionDelay.LONG),
   ],
-  [SpeciesId.SURSKIT]: [
-    new SpeciesEvolution(SpeciesId.MASQUERAIN, 22, null, null)
-  ],
-  [SpeciesId.SHROOMISH]: [
-    new SpeciesEvolution(SpeciesId.BRELOOM, 23, null, null)
-  ],
-  [SpeciesId.SLAKOTH]: [
-    new SpeciesEvolution(SpeciesId.VIGOROTH, 18, null, null)
-  ],
-  [SpeciesId.VIGOROTH]: [
-    new SpeciesEvolution(SpeciesId.SLAKING, 36, null, null)
-  ],
+  [SpeciesId.SURSKIT]: [new SpeciesEvolution(SpeciesId.MASQUERAIN, 22, null, null)],
+  [SpeciesId.SHROOMISH]: [new SpeciesEvolution(SpeciesId.BRELOOM, 23, null, null)],
+  [SpeciesId.SLAKOTH]: [new SpeciesEvolution(SpeciesId.VIGOROTH, 18, null, null)],
+  [SpeciesId.VIGOROTH]: [new SpeciesEvolution(SpeciesId.SLAKING, 36, null, null)],
   [SpeciesId.NINCADA]: [
     new SpeciesEvolution(SpeciesId.NINJASK, 20, null, null),
-    new SpeciesEvolution(SpeciesId.SHEDINJA, 20, null, new ShedinjaEvolutionCondition())
+    new SpeciesEvolution(SpeciesId.SHEDINJA, 20, null, {key: EvoCondKey.SHEDINJA})
   ],
   [SpeciesId.WHISMUR]: [
     new SpeciesEvolution(SpeciesId.LOUDRED, 20, null, null)
@@ -766,75 +738,35 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.DUSCLOPS, 37, null, null)
   ],
   [SpeciesId.SNORUNT]: [
-    new SpeciesEvolution(SpeciesId.GLALIE, 42, null, new GenderEvolutionCondition(Gender.MALE)),
-    new SpeciesEvolution(SpeciesId.FROSLASS, 42, null, new GenderEvolutionCondition(Gender.FEMALE))
+    new SpeciesEvolution(SpeciesId.GLALIE, 42, null, null),
+    new SpeciesEvolution(SpeciesId.FROSLASS, 1, EvolutionItem.DAWN_STONE, {key: EvoCondKey.GENDER, gender: Gender.FEMALE}, SpeciesWildEvolutionDelay.LONG),
   ],
-  [SpeciesId.SPHEAL]: [
-    new SpeciesEvolution(SpeciesId.SEALEO, 32, null, null)
-  ],
-  [SpeciesId.SEALEO]: [
-    new SpeciesEvolution(SpeciesId.WALREIN, 44, null, null)
-  ],
-  [SpeciesId.BAGON]: [
-    new SpeciesEvolution(SpeciesId.SHELGON, 30, null, null)
-  ],
-  [SpeciesId.SHELGON]: [
-    new SpeciesEvolution(SpeciesId.SALAMENCE, 50, null, null)
-  ],
-  [SpeciesId.BELDUM]: [
-    new SpeciesEvolution(SpeciesId.METANG, 20, null, null)
-  ],
-  [SpeciesId.METANG]: [
-    new SpeciesEvolution(SpeciesId.METAGROSS, 45, null, null)
-  ],
-  [SpeciesId.TURTWIG]: [
-    new SpeciesEvolution(SpeciesId.GROTLE, 18, null, null)
-  ],
-  [SpeciesId.GROTLE]: [
-    new SpeciesEvolution(SpeciesId.TORTERRA, 32, null, null)
-  ],
-  [SpeciesId.CHIMCHAR]: [
-    new SpeciesEvolution(SpeciesId.MONFERNO, 14, null, null)
-  ],
-  [SpeciesId.MONFERNO]: [
-    new SpeciesEvolution(SpeciesId.INFERNAPE, 36, null, null)
-  ],
-  [SpeciesId.PIPLUP]: [
-    new SpeciesEvolution(SpeciesId.PRINPLUP, 16, null, null)
-  ],
-  [SpeciesId.PRINPLUP]: [
-    new SpeciesEvolution(SpeciesId.EMPOLEON, 36, null, null)
-  ],
-  [SpeciesId.STARLY]: [
-    new SpeciesEvolution(SpeciesId.STARAVIA, 14, null, null)
-  ],
-  [SpeciesId.STARAVIA]: [
-    new SpeciesEvolution(SpeciesId.STARAPTOR, 34, null, null)
-  ],
-  [SpeciesId.BIDOOF]: [
-    new SpeciesEvolution(SpeciesId.BIBAREL, 15, null, null)
-  ],
-  [SpeciesId.KRICKETOT]: [
-    new SpeciesEvolution(SpeciesId.KRICKETUNE, 10, null, null)
-  ],
-  [SpeciesId.SHINX]: [
-    new SpeciesEvolution(SpeciesId.LUXIO, 15, null, null)
-  ],
-  [SpeciesId.LUXIO]: [
-    new SpeciesEvolution(SpeciesId.LUXRAY, 30, null, null)
-  ],
-  [SpeciesId.CRANIDOS]: [
-    new SpeciesEvolution(SpeciesId.RAMPARDOS, 30, null, null)
-  ],
-  [SpeciesId.SHIELDON]: [
-    new SpeciesEvolution(SpeciesId.BASTIODON, 30, null, null)
-  ],
+  [SpeciesId.SPHEAL]: [new SpeciesEvolution(SpeciesId.SEALEO, 32, null, null)],
+  [SpeciesId.SEALEO]: [new SpeciesEvolution(SpeciesId.WALREIN, 44, null, null)],
+  [SpeciesId.BAGON]: [new SpeciesEvolution(SpeciesId.SHELGON, 30, null, null)],
+  [SpeciesId.SHELGON]: [new SpeciesEvolution(SpeciesId.SALAMENCE, 50, null, null)],
+  [SpeciesId.BELDUM]: [new SpeciesEvolution(SpeciesId.METANG, 20, null, null)],
+  [SpeciesId.METANG]: [new SpeciesEvolution(SpeciesId.METAGROSS, 45, null, null)],
+  [SpeciesId.TURTWIG]: [new SpeciesEvolution(SpeciesId.GROTLE, 18, null, null)],
+  [SpeciesId.GROTLE]: [new SpeciesEvolution(SpeciesId.TORTERRA, 32, null, null)],
+  [SpeciesId.CHIMCHAR]: [new SpeciesEvolution(SpeciesId.MONFERNO, 14, null, null)],
+  [SpeciesId.MONFERNO]: [new SpeciesEvolution(SpeciesId.INFERNAPE, 36, null, null)],
+  [SpeciesId.PIPLUP]: [new SpeciesEvolution(SpeciesId.PRINPLUP, 16, null, null)],
+  [SpeciesId.PRINPLUP]: [new SpeciesEvolution(SpeciesId.EMPOLEON, 36, null, null)],
+  [SpeciesId.STARLY]: [new SpeciesEvolution(SpeciesId.STARAVIA, 14, null, null)],
+  [SpeciesId.STARAVIA]: [new SpeciesEvolution(SpeciesId.STARAPTOR, 34, null, null)],
+  [SpeciesId.BIDOOF]: [new SpeciesEvolution(SpeciesId.BIBAREL, 15, null, null)],
+  [SpeciesId.KRICKETOT]: [new SpeciesEvolution(SpeciesId.KRICKETUNE, 10, null, null)],
+  [SpeciesId.SHINX]: [new SpeciesEvolution(SpeciesId.LUXIO, 15, null, null)],
+  [SpeciesId.LUXIO]: [new SpeciesEvolution(SpeciesId.LUXRAY, 30, null, null)],
+  [SpeciesId.CRANIDOS]: [new SpeciesEvolution(SpeciesId.RAMPARDOS, 30, null, null)],
+  [SpeciesId.SHIELDON]: [new SpeciesEvolution(SpeciesId.BASTIODON, 30, null, null)],
   [SpeciesId.BURMY]: [
-    new SpeciesEvolution(SpeciesId.MOTHIM, 20, null, new GenderEvolutionCondition(Gender.MALE)),
-    new SpeciesEvolution(SpeciesId.WORMADAM, 20, null, new GenderEvolutionCondition(Gender.FEMALE))
+    new SpeciesEvolution(SpeciesId.MOTHIM, 20, null, {key: EvoCondKey.GENDER, gender: Gender.MALE}),
+    new SpeciesEvolution(SpeciesId.WORMADAM, 20, null, {key: EvoCondKey.GENDER, gender: Gender.FEMALE})
   ],
   [SpeciesId.COMBEE]: [
-    new SpeciesEvolution(SpeciesId.VESPIQUEN, 21, null, new GenderEvolutionCondition(Gender.FEMALE))
+    new SpeciesEvolution(SpeciesId.VESPIQUEN, 21, null, {key: EvoCondKey.GENDER, gender: Gender.FEMALE})
   ],
   [SpeciesId.BUIZEL]: [
     new SpeciesEvolution(SpeciesId.FLOATZEL, 26, null, null)
@@ -876,7 +808,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.LUMINEON, 31, null, null)
   ],
   [SpeciesId.MANTYKE]: [
-    new SpeciesEvolution(SpeciesId.MANTINE, 32, null, new CaughtEvolutionCondition(SpeciesId.REMORAID), SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(SpeciesId.MANTINE, 32, null, {key: EvoCondKey.SPECIES_CAUGHT, speciesCaught: SpeciesId.REMORAID}, SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [SpeciesId.SNOVER]: [
     new SpeciesEvolution(SpeciesId.ABOMASNOW, 40, null, null)
@@ -897,8 +829,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.DEWOTT, 17, null, null)
   ],
   [SpeciesId.DEWOTT]: [
-    new SpeciesEvolution(SpeciesId.HISUI_SAMUROTT, 36, null, new TimeOfDayEvolutionCondition("night")),
-    new SpeciesEvolution(SpeciesId.SAMUROTT, 36, null, new TimeOfDayEvolutionCondition("day"))
+    new SpeciesEvolution(SpeciesId.HISUI_SAMUROTT, 36, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]}),
+    new SpeciesEvolution(SpeciesId.SAMUROTT, 36, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DAWN, TimeOfDay.DAY]})
   ],
   [SpeciesId.PATRAT]: [
     new SpeciesEvolution(SpeciesId.WATCHOG, 20, null, null)
@@ -1048,8 +980,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.KINGAMBIT, 1, EvolutionItem.LEADERS_CREST, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.RUFFLET]: [
-    new SpeciesEvolution(SpeciesId.HISUI_BRAVIARY, 54, null, new TimeOfDayEvolutionCondition("night")),
-    new SpeciesEvolution(SpeciesId.BRAVIARY, 54, null, new TimeOfDayEvolutionCondition("day"))
+    new SpeciesEvolution(SpeciesId.HISUI_BRAVIARY, 54, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]}),
+    new SpeciesEvolution(SpeciesId.BRAVIARY, 54, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DAWN, TimeOfDay.DAY]})
   ],
   [SpeciesId.VULLABY]: [
     new SpeciesEvolution(SpeciesId.MANDIBUZZ, 54, null, null)
@@ -1106,11 +1038,11 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.GOGOAT, 32, null, null)
   ],
   [SpeciesId.PANCHAM]: [
-    new SpeciesEvolution(SpeciesId.PANGORO, 32, null, new PartyTypeEvolutionCondition(PokemonType.DARK), SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(SpeciesId.PANGORO, 32, null, {key: EvoCondKey.PARTY_TYPE, pkmnType: PokemonType.DARK}, SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [SpeciesId.ESPURR]: [
-    new SpeciesFormEvolution(SpeciesId.MEOWSTIC, "", "female", 25, null, new GenderEvolutionCondition(Gender.FEMALE)),
-    new SpeciesFormEvolution(SpeciesId.MEOWSTIC, "", "", 25, null, new GenderEvolutionCondition(Gender.MALE))
+    new SpeciesFormEvolution(SpeciesId.MEOWSTIC, "", "female", 25, null, {key: EvoCondKey.GENDER, gender: Gender.FEMALE}),
+    new SpeciesFormEvolution(SpeciesId.MEOWSTIC, "", "", 25, null, {key: EvoCondKey.GENDER, gender: Gender.MALE})
   ],
   [SpeciesId.HONEDGE]: [
     new SpeciesEvolution(SpeciesId.DOUBLADE, 35, null, null)
@@ -1128,21 +1060,21 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.CLAWITZER, 37, null, null)
   ],
   [SpeciesId.TYRUNT]: [
-    new SpeciesEvolution(SpeciesId.TYRANTRUM, 39, null, new TimeOfDayEvolutionCondition("day"))
+    new SpeciesEvolution(SpeciesId.TYRANTRUM, 39, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DAWN, TimeOfDay.DAY]})
   ],
   [SpeciesId.AMAURA]: [
-    new SpeciesEvolution(SpeciesId.AURORUS, 39, null, new TimeOfDayEvolutionCondition("night"))
+    new SpeciesEvolution(SpeciesId.AURORUS, 39, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]})
   ],
   [SpeciesId.GOOMY]: [
-    new SpeciesEvolution(SpeciesId.HISUI_SLIGGOO, 40, null, new TimeOfDayEvolutionCondition("night")),
-    new SpeciesEvolution(SpeciesId.SLIGGOO, 40, null, new TimeOfDayEvolutionCondition("day"))
+    new SpeciesEvolution(SpeciesId.HISUI_SLIGGOO, 40, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]}),
+    new SpeciesEvolution(SpeciesId.SLIGGOO, 40, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DAWN, TimeOfDay.DAY]})
   ],
   [SpeciesId.SLIGGOO]: [
-    new SpeciesEvolution(SpeciesId.GOODRA, 50, null, new WeatherEvolutionCondition([ WeatherType.RAIN, WeatherType.FOG, WeatherType.HEAVY_RAIN ]), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(SpeciesId.GOODRA, 50, null, {key: EvoCondKey.WEATHER, weather: [ WeatherType.RAIN, WeatherType.FOG, WeatherType.HEAVY_RAIN ]}, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.BERGMITE]: [
-    new SpeciesEvolution(SpeciesId.HISUI_AVALUGG, 37, null, new TimeOfDayEvolutionCondition("night")),
-    new SpeciesEvolution(SpeciesId.AVALUGG, 37, null, new TimeOfDayEvolutionCondition("day"))
+    new SpeciesEvolution(SpeciesId.HISUI_AVALUGG, 37, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]}),
+    new SpeciesEvolution(SpeciesId.AVALUGG, 37, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DAWN, TimeOfDay.DAY]})
   ],
   [SpeciesId.NOIBAT]: [
     new SpeciesEvolution(SpeciesId.NOIVERN, 48, null, null)
@@ -1151,8 +1083,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.DARTRIX, 17, null, null)
   ],
   [SpeciesId.DARTRIX]: [
-    new SpeciesEvolution(SpeciesId.HISUI_DECIDUEYE, 36, null, new TimeOfDayEvolutionCondition("night")),
-    new SpeciesEvolution(SpeciesId.DECIDUEYE, 34, null, new TimeOfDayEvolutionCondition("day"))
+    new SpeciesEvolution(SpeciesId.HISUI_DECIDUEYE, 36, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]}),
+    new SpeciesEvolution(SpeciesId.DECIDUEYE, 34, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DAWN, TimeOfDay.DAY]})
   ],
   [SpeciesId.LITTEN]: [
     new SpeciesEvolution(SpeciesId.TORRACAT, 17, null, null)
@@ -1173,7 +1105,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.TOUCANNON, 28, null, null)
   ],
   [SpeciesId.YUNGOOS]: [
-    new SpeciesEvolution(SpeciesId.GUMSHOOS, 20, null, new TimeOfDayEvolutionCondition("day"))
+    new SpeciesEvolution(SpeciesId.GUMSHOOS, 20, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DAWN, TimeOfDay.DAY]})
   ],
   [SpeciesId.GRUBBIN]: [
     new SpeciesEvolution(SpeciesId.CHARJABUG, 20, null, null)
@@ -1191,13 +1123,13 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.ARAQUANID, 22, null, null)
   ],
   [SpeciesId.FOMANTIS]: [
-    new SpeciesEvolution(SpeciesId.LURANTIS, 34, null, new TimeOfDayEvolutionCondition("day"))
+    new SpeciesEvolution(SpeciesId.LURANTIS, 34, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DAWN, TimeOfDay.DAY]})
   ],
   [SpeciesId.MORELULL]: [
     new SpeciesEvolution(SpeciesId.SHIINOTIC, 24, null, null)
   ],
   [SpeciesId.SALANDIT]: [
-    new SpeciesEvolution(SpeciesId.SALAZZLE, 33, null, new GenderEvolutionCondition(Gender.FEMALE))
+    new SpeciesEvolution(SpeciesId.SALAZZLE, 33, null, {key: EvoCondKey.GENDER, gender: Gender.FEMALE})
   ],
   [SpeciesId.STUFFUL]: [
     new SpeciesEvolution(SpeciesId.BEWEAR, 27, null, null)
@@ -1218,17 +1150,17 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.KOMMO_O, 45, null, null)
   ],
   [SpeciesId.COSMOG]: [
-    new SpeciesEvolution(SpeciesId.COSMOEM, 23, null, null)
+    new SpeciesEvolution(SpeciesId.COSMOEM, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 43}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.COSMOEM]: [
-    new SpeciesEvolution(SpeciesId.SOLGALEO, 1, EvolutionItem.SUN_FLUTE, null, SpeciesWildEvolutionDelay.VERY_LONG),
-    new SpeciesEvolution(SpeciesId.LUNALA, 1, EvolutionItem.MOON_FLUTE, null, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(SpeciesId.SOLGALEO, 13, EvolutionItem.SUN_FLUTE, null, SpeciesWildEvolutionDelay.VERY_LONG),
+    new SpeciesEvolution(SpeciesId.LUNALA, 13, EvolutionItem.MOON_FLUTE, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.MELTAN]: [
     new SpeciesEvolution(SpeciesId.MELMETAL, 48, null, null)
   ],
   [SpeciesId.ALOLA_RATTATA]: [
-    new SpeciesEvolution(SpeciesId.ALOLA_RATICATE, 20, null, new TimeOfDayEvolutionCondition("night"))
+    new SpeciesEvolution(SpeciesId.ALOLA_RATICATE, 20, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]})
   ],
   [SpeciesId.ALOLA_DIGLETT]: [
     new SpeciesEvolution(SpeciesId.ALOLA_DUGTRIO, 26, null, null)
@@ -1301,7 +1233,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [SpeciesId.TOXEL]: [
     new SpeciesFormEvolution(SpeciesId.TOXTRICITY, "", "lowkey", 30, null,
-      new NatureEvolutionCondition([ Nature.LONELY, Nature.BOLD, Nature.RELAXED, Nature.TIMID, Nature.SERIOUS, Nature.MODEST, Nature.MILD, Nature.QUIET, Nature.BASHFUL, Nature.CALM, Nature.GENTLE, Nature.CAREFUL ])
+      {key: EvoCondKey.NATURE, nature: [ Nature.LONELY, Nature.BOLD, Nature.RELAXED, Nature.TIMID, Nature.SERIOUS, Nature.MODEST, Nature.MILD, Nature.QUIET, Nature.BASHFUL, Nature.CALM, Nature.GENTLE, Nature.CAREFUL ]}
     ),
     new SpeciesFormEvolution(SpeciesId.TOXTRICITY, "", "amped", 30, null, null)
   ],
@@ -1352,7 +1284,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.GALAR_LINOONE, 20, null, null)
   ],
   [SpeciesId.GALAR_LINOONE]: [
-    new SpeciesEvolution(SpeciesId.OBSTAGOON, 35, null, new TimeOfDayEvolutionCondition("night"))
+    new SpeciesEvolution(SpeciesId.OBSTAGOON, 35, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]})
   ],
   [SpeciesId.GALAR_YAMASK]: [
     new SpeciesEvolution(SpeciesId.RUNERIGUS, 34, null, null)
@@ -1361,7 +1293,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.HISUI_ZOROARK, 30, null, null)
   ],
   [SpeciesId.HISUI_SLIGGOO]: [
-    new SpeciesEvolution(SpeciesId.HISUI_GOODRA, 50, null, new WeatherEvolutionCondition([ WeatherType.RAIN, WeatherType.FOG, WeatherType.HEAVY_RAIN ]), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(SpeciesId.HISUI_GOODRA, 50, null, {key: EvoCondKey.WEATHER, weather: [ WeatherType.RAIN, WeatherType.FOG, WeatherType.HEAVY_RAIN ]}, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.SPRIGATITO]: [
     new SpeciesEvolution(SpeciesId.FLORAGATO, 16, null, null)
@@ -1382,8 +1314,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.QUAQUAVAL, 36, null, null)
   ],
   [SpeciesId.LECHONK]: [
-    new SpeciesFormEvolution(SpeciesId.OINKOLOGNE, "", "female", 18, null, new GenderEvolutionCondition(Gender.FEMALE)),
-    new SpeciesFormEvolution(SpeciesId.OINKOLOGNE, "", "", 18, null, new GenderEvolutionCondition(Gender.MALE))
+    new SpeciesFormEvolution(SpeciesId.OINKOLOGNE, "", "female", 18, null, {key: EvoCondKey.GENDER, gender: Gender.FEMALE}),
+    new SpeciesFormEvolution(SpeciesId.OINKOLOGNE, "", "", 18, null, {key: EvoCondKey.GENDER, gender: Gender.MALE})
   ],
   [SpeciesId.TAROUNTULA]: [
     new SpeciesEvolution(SpeciesId.SPIDOPS, 15, null, null)
@@ -1398,7 +1330,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.PAWMOT, 32, null, null)
   ],
   [SpeciesId.TANDEMAUS]: [
-    new SpeciesFormEvolution(SpeciesId.MAUSHOLD, "", "three", 25, null, new TandemausEvolutionCondition()),
+    new SpeciesFormEvolution(SpeciesId.MAUSHOLD, "", "three", 25, null, {key: EvoCondKey.RANDOM_FORM, value: 4}),
     new SpeciesFormEvolution(SpeciesId.MAUSHOLD, "", "four", 25, null, null)
   ],
   [SpeciesId.FIDOUGH]: [
@@ -1456,7 +1388,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.GLIMMORA, 35, null, null)
   ],
   [SpeciesId.GREAVARD]: [
-    new SpeciesEvolution(SpeciesId.HOUNDSTONE, 30, null, new TimeOfDayEvolutionCondition("night"))
+    new SpeciesEvolution(SpeciesId.HOUNDSTONE, 30, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]})
   ],
   [SpeciesId.FRIGIBAX]: [
     new SpeciesEvolution(SpeciesId.ARCTIBAX, 35, null, null)
@@ -1513,21 +1445,21 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.EXEGGUTOR, 1, EvolutionItem.LEAF_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.TANGELA]: [
-    new SpeciesEvolution(SpeciesId.TANGROWTH, 34, null, new MoveEvolutionCondition(MoveId.ANCIENT_POWER), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(SpeciesId.TANGROWTH, 34, null, {key: EvoCondKey.MOVE, move: MoveId.ANCIENT_POWER}, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.LICKITUNG]: [
-    new SpeciesEvolution(SpeciesId.LICKILICKY, 32, null, new MoveEvolutionCondition(MoveId.ROLLOUT), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(SpeciesId.LICKILICKY, 32, null, {key: EvoCondKey.MOVE, move: MoveId.ROLLOUT}, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.STARYU]: [
     new SpeciesEvolution(SpeciesId.STARMIE, 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.EEVEE]: [
-    new SpeciesFormEvolution(SpeciesId.SYLVEON, "", "", 1, null, new FriendshipMoveTypeEvolutionCondition(120, PokemonType.FAIRY), SpeciesWildEvolutionDelay.LONG),
-    new SpeciesFormEvolution(SpeciesId.SYLVEON, "partner", "", 1, null, new FriendshipMoveTypeEvolutionCondition(120, PokemonType.FAIRY), SpeciesWildEvolutionDelay.LONG),
-    new SpeciesFormEvolution(SpeciesId.ESPEON, "", "", 1, null, new FriendshipTimeOfDayEvolutionCondition(120, "day"), SpeciesWildEvolutionDelay.LONG),
-    new SpeciesFormEvolution(SpeciesId.ESPEON, "partner", "", 1, null, new FriendshipTimeOfDayEvolutionCondition(120, "day"), SpeciesWildEvolutionDelay.LONG),
-    new SpeciesFormEvolution(SpeciesId.UMBREON, "", "", 1, null, new FriendshipTimeOfDayEvolutionCondition(120, "night"), SpeciesWildEvolutionDelay.LONG),
-    new SpeciesFormEvolution(SpeciesId.UMBREON, "partner", "", 1, null, new FriendshipTimeOfDayEvolutionCondition(120, "night"), SpeciesWildEvolutionDelay.LONG),
+    new SpeciesFormEvolution(SpeciesId.SYLVEON, "", "", 1, null, [{key: EvoCondKey.FRIENDSHIP, value: 120}, {key: EvoCondKey.MOVE_TYPE, pkmnType: PokemonType.FAIRY}], SpeciesWildEvolutionDelay.LONG),
+    new SpeciesFormEvolution(SpeciesId.SYLVEON, "partner", "", 1, null, [{key: EvoCondKey.FRIENDSHIP, value: 120}, {key: EvoCondKey.MOVE_TYPE, pkmnType: PokemonType.FAIRY}], SpeciesWildEvolutionDelay.LONG),
+    new SpeciesFormEvolution(SpeciesId.ESPEON, "", "", 1, null, [{key: EvoCondKey.FRIENDSHIP, value: 120}, {key: EvoCondKey.TIME, time: [TimeOfDay.DAWN, TimeOfDay.DAY]}], SpeciesWildEvolutionDelay.LONG),
+    new SpeciesFormEvolution(SpeciesId.ESPEON, "partner", "", 1, null, [{key: EvoCondKey.FRIENDSHIP, value: 120}, {key: EvoCondKey.TIME, time: [TimeOfDay.DAWN, TimeOfDay.DAY]}], SpeciesWildEvolutionDelay.LONG),
+    new SpeciesFormEvolution(SpeciesId.UMBREON, "", "", 1, null, [{key: EvoCondKey.FRIENDSHIP, value: 120}, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]}], SpeciesWildEvolutionDelay.LONG),
+    new SpeciesFormEvolution(SpeciesId.UMBREON, "partner", "", 1, null, [{key: EvoCondKey.FRIENDSHIP, value: 120}, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]}], SpeciesWildEvolutionDelay.LONG),
     new SpeciesFormEvolution(SpeciesId.VAPOREON, "", "", 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.LONG),
     new SpeciesFormEvolution(SpeciesId.VAPOREON, "partner", "", 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.LONG),
     new SpeciesFormEvolution(SpeciesId.JOLTEON, "", "", 1, EvolutionItem.THUNDER_STONE, null, SpeciesWildEvolutionDelay.LONG),
@@ -1543,13 +1475,13 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.TOGEKISS, 1, EvolutionItem.SHINY_STONE, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.AIPOM]: [
-    new SpeciesEvolution(SpeciesId.AMBIPOM, 32, null, new MoveEvolutionCondition(MoveId.DOUBLE_HIT), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(SpeciesId.AMBIPOM, 32, null, {key: EvoCondKey.MOVE, move: MoveId.DOUBLE_HIT}, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.SUNKERN]: [
     new SpeciesEvolution(SpeciesId.SUNFLORA, 1, EvolutionItem.SUN_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.YANMA]: [
-    new SpeciesEvolution(SpeciesId.YANMEGA, 33, null, new MoveEvolutionCondition(MoveId.ANCIENT_POWER), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(SpeciesId.YANMEGA, 33, null, {key: EvoCondKey.MOVE, move: MoveId.ANCIENT_POWER}, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.MURKROW]: [
     new SpeciesEvolution(SpeciesId.HONCHKROW, 1, EvolutionItem.DUSK_STONE, null, SpeciesWildEvolutionDelay.VERY_LONG)
@@ -1558,26 +1490,29 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.MISMAGIUS, 1, EvolutionItem.DUSK_STONE, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.GIRAFARIG]: [
-    new SpeciesEvolution(SpeciesId.FARIGIRAF, 32, null, new MoveEvolutionCondition(MoveId.TWIN_BEAM), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(SpeciesId.FARIGIRAF, 32, null, {key: EvoCondKey.MOVE, move: MoveId.TWIN_BEAM}, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.DUNSPARCE]: [
-    new SpeciesFormEvolution(SpeciesId.DUDUNSPARCE, "", "three-segment", 32, null, new DunsparceEvolutionCondition(), SpeciesWildEvolutionDelay.LONG),
-    new SpeciesFormEvolution(SpeciesId.DUDUNSPARCE, "", "two-segment", 32, null, new MoveEvolutionCondition(MoveId.HYPER_DRILL), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesFormEvolution(SpeciesId.DUDUNSPARCE, "", "three-segment", 32, null, [{key: EvoCondKey.RANDOM_FORM, value: 4}, {key: EvoCondKey.MOVE, move: MoveId.HYPER_DRILL}], SpeciesWildEvolutionDelay.LONG),
+    new SpeciesFormEvolution(SpeciesId.DUDUNSPARCE, "", "two-segment", 32, null, {key: EvoCondKey.MOVE, move: MoveId.HYPER_DRILL}, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.GLIGAR]: [
-    new SpeciesEvolution(SpeciesId.GLISCOR, 1, EvolutionItem.RAZOR_FANG, new TimeOfDayEvolutionCondition("night") /* Razor fang at night*/, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(SpeciesId.GLISCOR, 1, EvolutionItem.RAZOR_FANG, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.SNEASEL]: [
-    new SpeciesEvolution(SpeciesId.WEAVILE, 1, EvolutionItem.RAZOR_CLAW, new TimeOfDayEvolutionCondition("night") /* Razor claw at night*/, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(SpeciesId.WEAVILE, 1, EvolutionItem.RAZOR_CLAW, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]}, SpeciesWildEvolutionDelay.VERY_LONG)
+  ],
+  [SpeciesId.HAPPINY]: [
+    new SpeciesEvolution(SpeciesId.CHANSEY, 1, EvolutionItem.OVAL_STONE, {key: EvoCondKey.TIME, time: [TimeOfDay.DAWN, TimeOfDay.DAY]}, SpeciesWildEvolutionDelay.SHORT)
   ],
   [SpeciesId.URSARING]: [
     new SpeciesEvolution(SpeciesId.URSALUNA, 1, EvolutionItem.PEAT_BLOCK, null, SpeciesWildEvolutionDelay.VERY_LONG) //Ursaring does not evolve into Bloodmoon Ursaluna
   ],
   [SpeciesId.PILOSWINE]: [
-    new SpeciesEvolution(SpeciesId.MAMOSWINE, 1, null, new MoveEvolutionCondition(MoveId.ANCIENT_POWER), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(SpeciesId.MAMOSWINE, 1, null, {key: EvoCondKey.MOVE, move: MoveId.ANCIENT_POWER}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.STANTLER]: [
-    new SpeciesEvolution(SpeciesId.WYRDEER, 25, null, new MoveEvolutionCondition(MoveId.PSYSHIELD_BASH), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(SpeciesId.WYRDEER, 25, null, {key: EvoCondKey.MOVE, move: MoveId.PSYSHIELD_BASH}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.LOMBRE]: [
     new SpeciesEvolution(SpeciesId.LUDICOLO, 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.LONG)
@@ -1595,11 +1530,11 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.ROSERADE, 1, EvolutionItem.SHINY_STONE, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.BONSLY]: [
-    new SpeciesEvolution(SpeciesId.SUDOWOODO, 1, null, new MoveEvolutionCondition(MoveId.MIMIC), SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(SpeciesId.SUDOWOODO, 1, null, {key: EvoCondKey.MOVE, move: MoveId.MIMIC}, SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [SpeciesId.MIME_JR]: [
-    new SpeciesEvolution(SpeciesId.GALAR_MR_MIME, 1, null, new MoveTimeOfDayEvolutionCondition(MoveId.MIMIC, "night"), SpeciesWildEvolutionDelay.MEDIUM),
-    new SpeciesEvolution(SpeciesId.MR_MIME, 1, null, new MoveTimeOfDayEvolutionCondition(MoveId.MIMIC, "day"), SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(SpeciesId.GALAR_MR_MIME, 1, null, [{key: EvoCondKey.MOVE, move: MoveId.MIMIC}, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]}], SpeciesWildEvolutionDelay.MEDIUM),
+    new SpeciesEvolution(SpeciesId.MR_MIME, 1, null, [{key: EvoCondKey.MOVE, move: MoveId.MIMIC}, {key: EvoCondKey.TIME, time: [TimeOfDay.DAWN, TimeOfDay.DAY]}], SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [SpeciesId.PANSAGE]: [
     new SpeciesEvolution(SpeciesId.SIMISAGE, 1, EvolutionItem.LEAF_STONE, null, SpeciesWildEvolutionDelay.LONG)
@@ -1617,12 +1552,12 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.WHIMSICOTT, 1, EvolutionItem.SUN_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.PETILIL]: [
-    new SpeciesEvolution(SpeciesId.HISUI_LILLIGANT, 1, EvolutionItem.SHINY_STONE, null, SpeciesWildEvolutionDelay.LONG),
+    new SpeciesEvolution(SpeciesId.HISUI_LILLIGANT, 1, EvolutionItem.DAWN_STONE, null, SpeciesWildEvolutionDelay.LONG),
     new SpeciesEvolution(SpeciesId.LILLIGANT, 1, EvolutionItem.SUN_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.BASCULIN]: [
-    new SpeciesFormEvolution(SpeciesId.BASCULEGION, "white-striped", "female", 40, null, new GenderEvolutionCondition(Gender.FEMALE), SpeciesWildEvolutionDelay.VERY_LONG),
-    new SpeciesFormEvolution(SpeciesId.BASCULEGION, "white-striped", "male", 40, null, new GenderEvolutionCondition(Gender.MALE), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesFormEvolution(SpeciesId.BASCULEGION, "white-striped", "female", 40, null, [{key: EvoCondKey.GENDER, gender: Gender.FEMALE}], SpeciesWildEvolutionDelay.VERY_LONG),
+    new SpeciesFormEvolution(SpeciesId.BASCULEGION, "white-striped", "male", 40, null, [{key: EvoCondKey.GENDER, gender: Gender.MALE}], SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.MINCCINO]: [
     new SpeciesEvolution(SpeciesId.CINCCINO, 1, EvolutionItem.SHINY_STONE, null, SpeciesWildEvolutionDelay.LONG)
@@ -1650,14 +1585,14 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [SpeciesId.ROCKRUFF]: [
     new SpeciesFormEvolution(SpeciesId.LYCANROC, "own-tempo", "dusk", 25, null, null),
-    new SpeciesFormEvolution(SpeciesId.LYCANROC, "", "midday", 25, null, new TimeOfDayEvolutionCondition("day")),
-    new SpeciesFormEvolution(SpeciesId.LYCANROC, "", "midnight", 25, null, new TimeOfDayEvolutionCondition("night"))
+    new SpeciesFormEvolution(SpeciesId.LYCANROC, "", "midday", 25, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DAWN, TimeOfDay.DAY]}),
+    new SpeciesFormEvolution(SpeciesId.LYCANROC, "", "midnight", 25, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]})
   ],
   [SpeciesId.STEENEE]: [
-    new SpeciesEvolution(SpeciesId.TSAREENA, 28, null, new MoveEvolutionCondition(MoveId.STOMP), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(SpeciesId.TSAREENA, 28, null, {key: EvoCondKey.MOVE, move: MoveId.STOMP}, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.POIPOLE]: [
-    new SpeciesEvolution(SpeciesId.NAGANADEL, 1, null, new MoveEvolutionCondition(MoveId.DRAGON_PULSE), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(SpeciesId.NAGANADEL, 1, null, {key: EvoCondKey.MOVE, move: MoveId.DRAGON_PULSE}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.ALOLA_SANDSHREW]: [
     new SpeciesEvolution(SpeciesId.ALOLA_SANDSLASH, 1, EvolutionItem.ICE_STONE, null, SpeciesWildEvolutionDelay.LONG)
@@ -1671,7 +1606,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.APPLETUN, 1, EvolutionItem.SWEET_APPLE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.CLOBBOPUS]: [
-    new SpeciesEvolution(SpeciesId.GRAPPLOCT, 35, null, new MoveEvolutionCondition(MoveId.TAUNT)/*Once Taunt is implemented, change evo level to 1 and delay to LONG*/)
+    new SpeciesEvolution(SpeciesId.GRAPPLOCT, 35, null, {key: EvoCondKey.MOVE, move: MoveId.TAUNT}/*Once Taunt is implemented, change evo level to 1 and delay to LONG*/)
   ],
   [SpeciesId.SINISTEA]: [
     new SpeciesFormEvolution(SpeciesId.POLTEAGEIST, "phony", "phony", 1, EvolutionItem.CRACKED_POT, null, SpeciesWildEvolutionDelay.LONG),
@@ -1679,31 +1614,31 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [SpeciesId.MILCERY]: [
     new SpeciesFormEvolution(SpeciesId.ALCREMIE, "", "vanilla-cream", 1, EvolutionItem.STRAWBERRY_SWEET,
-      new BiomeEvolutionCondition([ BiomeId.TOWN, BiomeId.PLAINS, BiomeId.GRASS, BiomeId.TALL_GRASS, BiomeId.METROPOLIS ]),
+      {key: EvoCondKey.BIOME, biome: [ BiomeId.TOWN, BiomeId.PLAINS, BiomeId.GRASS, BiomeId.TALL_GRASS, BiomeId.METROPOLIS ]},
       SpeciesWildEvolutionDelay.LONG),
     new SpeciesFormEvolution(SpeciesId.ALCREMIE, "", "ruby-cream", 1, EvolutionItem.STRAWBERRY_SWEET,
-      new BiomeEvolutionCondition([ BiomeId.BADLANDS, BiomeId.VOLCANO, BiomeId.GRAVEYARD, BiomeId.FACTORY, BiomeId.SLUM ]),
+      {key: EvoCondKey.BIOME, biome: [ BiomeId.BADLANDS, BiomeId.VOLCANO, BiomeId.GRAVEYARD, BiomeId.FACTORY, BiomeId.SLUM ]},
       SpeciesWildEvolutionDelay.LONG),
     new SpeciesFormEvolution(SpeciesId.ALCREMIE, "", "matcha-cream", 1, EvolutionItem.STRAWBERRY_SWEET,
-      new BiomeEvolutionCondition([ BiomeId.FOREST, BiomeId.SWAMP, BiomeId.MEADOW, BiomeId.JUNGLE ]),
+      {key: EvoCondKey.BIOME, biome: [ BiomeId.FOREST, BiomeId.SWAMP, BiomeId.MEADOW, BiomeId.JUNGLE ]},
       SpeciesWildEvolutionDelay.LONG),
     new SpeciesFormEvolution(SpeciesId.ALCREMIE, "", "mint-cream", 1, EvolutionItem.STRAWBERRY_SWEET,
-      new BiomeEvolutionCondition([ BiomeId.SEA, BiomeId.BEACH, BiomeId.LAKE, BiomeId.SEABED ]),
+      {key: EvoCondKey.BIOME, biome: [ BiomeId.SEA, BiomeId.BEACH, BiomeId.LAKE, BiomeId.SEABED ]},
       SpeciesWildEvolutionDelay.LONG),
     new SpeciesFormEvolution(SpeciesId.ALCREMIE, "", "lemon-cream", 1, EvolutionItem.STRAWBERRY_SWEET,
-      new BiomeEvolutionCondition([ BiomeId.DESERT, BiomeId.POWER_PLANT, BiomeId.DOJO, BiomeId.RUINS, BiomeId.CONSTRUCTION_SITE ]),
+      {key: EvoCondKey.BIOME, biome: [ BiomeId.DESERT, BiomeId.POWER_PLANT, BiomeId.DOJO, BiomeId.RUINS, BiomeId.CONSTRUCTION_SITE ]},
       SpeciesWildEvolutionDelay.LONG),
     new SpeciesFormEvolution(SpeciesId.ALCREMIE, "", "salted-cream", 1, EvolutionItem.STRAWBERRY_SWEET,
-      new BiomeEvolutionCondition([ BiomeId.MOUNTAIN, BiomeId.CAVE, BiomeId.ICE_CAVE, BiomeId.FAIRY_CAVE, BiomeId.SNOWY_FOREST ]),
+      {key: EvoCondKey.BIOME, biome: [ BiomeId.MOUNTAIN, BiomeId.CAVE, BiomeId.ICE_CAVE, BiomeId.FAIRY_CAVE, BiomeId.SNOWY_FOREST ]},
       SpeciesWildEvolutionDelay.LONG),
     new SpeciesFormEvolution(SpeciesId.ALCREMIE, "", "ruby-swirl", 1, EvolutionItem.STRAWBERRY_SWEET,
-      new BiomeEvolutionCondition([ BiomeId.WASTELAND, BiomeId.LABORATORY ]),
+      {key: EvoCondKey.BIOME, biome: [ BiomeId.WASTELAND, BiomeId.LABORATORY ]},
       SpeciesWildEvolutionDelay.LONG),
     new SpeciesFormEvolution(SpeciesId.ALCREMIE, "", "caramel-swirl", 1, EvolutionItem.STRAWBERRY_SWEET,
-      new BiomeEvolutionCondition([ BiomeId.TEMPLE, BiomeId.ISLAND ]),
+      {key: EvoCondKey.BIOME, biome: [ BiomeId.TEMPLE, BiomeId.ISLAND ]},
       SpeciesWildEvolutionDelay.LONG),
     new SpeciesFormEvolution(SpeciesId.ALCREMIE, "", "rainbow-swirl", 1, EvolutionItem.STRAWBERRY_SWEET,
-      new BiomeEvolutionCondition([ BiomeId.ABYSS, BiomeId.SPACE, BiomeId.END ]),
+      {key: EvoCondKey.BIOME, biome: [ BiomeId.ABYSS, BiomeId.SPACE, BiomeId.END ]},
       SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.DURALUDON]: [
@@ -1723,10 +1658,10 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.HISUI_ELECTRODE, 1, EvolutionItem.LEAF_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.HISUI_QWILFISH]: [
-    new SpeciesEvolution(SpeciesId.OVERQWIL, 28, null, new MoveEvolutionCondition(MoveId.BARB_BARRAGE), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(SpeciesId.OVERQWIL, 28, null, {key: EvoCondKey.MOVE, move: MoveId.BARB_BARRAGE}, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.HISUI_SNEASEL]: [
-    new SpeciesEvolution(SpeciesId.SNEASLER, 1, EvolutionItem.RAZOR_CLAW, new TimeOfDayEvolutionCondition("day") /* Razor claw at day*/, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(SpeciesId.SNEASLER, 1, EvolutionItem.RAZOR_CLAW, {key: EvoCondKey.TIME, time: [TimeOfDay.DAWN, TimeOfDay.DAY]} /* Razor claw at day*/, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.CHARCADET]: [
     new SpeciesEvolution(SpeciesId.ARMAROUGE, 1, EvolutionItem.AUSPICIOUS_ARMOR, null, SpeciesWildEvolutionDelay.LONG),
@@ -1746,7 +1681,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesFormEvolution(SpeciesId.SINISTCHA, "artisan", "masterpiece", 1, EvolutionItem.MASTERPIECE_TEACUP, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.DIPPLIN]: [
-    new SpeciesEvolution(SpeciesId.HYDRAPPLE, 1, null, new MoveEvolutionCondition(MoveId.DRAGON_CHEER), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(SpeciesId.HYDRAPPLE, 1, null, {key: EvoCondKey.MOVE, move: MoveId.DRAGON_CHEER}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.KADABRA]: [
     new SpeciesEvolution(SpeciesId.ALAKAZAM, 1, EvolutionItem.LINKING_CORD, null, SpeciesWildEvolutionDelay.VERY_LONG)
@@ -1761,7 +1696,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.GENGAR, 1, EvolutionItem.LINKING_CORD, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.ONIX]: [
-    new SpeciesEvolution(SpeciesId.STEELIX, 1, EvolutionItem.LINKING_CORD, new MoveTypeEvolutionCondition(PokemonType.STEEL), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(SpeciesId.STEELIX, 1, EvolutionItem.LINKING_CORD, {key: EvoCondKey.MOVE_TYPE, pkmnType: PokemonType.STEEL}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.RHYDON]: [
     new SpeciesEvolution(SpeciesId.RHYPERIOR, 1, EvolutionItem.PROTECTOR, null, SpeciesWildEvolutionDelay.VERY_LONG)
@@ -1770,7 +1705,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.KINGDRA, 1, EvolutionItem.DRAGON_SCALE, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.SCYTHER]: [
-    new SpeciesEvolution(SpeciesId.SCIZOR, 1, EvolutionItem.LINKING_CORD, new MoveTypeEvolutionCondition(PokemonType.STEEL), SpeciesWildEvolutionDelay.VERY_LONG),
+    new SpeciesEvolution(SpeciesId.SCIZOR, 1, EvolutionItem.LINKING_CORD, {key: EvoCondKey.MOVE_TYPE, pkmnType: PokemonType.STEEL}, SpeciesWildEvolutionDelay.VERY_LONG),
     new SpeciesEvolution(SpeciesId.KLEAVOR, 1, EvolutionItem.BLACK_AUGURITE, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.ELECTABUZZ]: [
@@ -1792,9 +1727,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.DUSKNOIR, 1, EvolutionItem.REAPER_CLOTH, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.CLAMPERL]: [
-    // TODO: Change the SpeciesEvolutionConditions here to use a bespoke HeldItemEvolutionCondition after the modifier rework
-    new SpeciesEvolution(SpeciesId.HUNTAIL, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(p => p.getHeldItems().some(m => m.is("SpeciesStatBoosterModifier") && (m.type as SpeciesStatBoosterModifierType).key === "DEEP_SEA_TOOTH")), SpeciesWildEvolutionDelay.VERY_LONG),
-    new SpeciesEvolution(SpeciesId.GOREBYSS, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(p => p.getHeldItems().some(m => m.is("SpeciesStatBoosterModifier") && (m.type as SpeciesStatBoosterModifierType).key === "DEEP_SEA_SCALE")), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(SpeciesId.HUNTAIL, 1, EvolutionItem.LINKING_CORD, {key: EvoCondKey.HELD_ITEM, itemKey: "DEEP_SEA_TOOTH"}, SpeciesWildEvolutionDelay.VERY_LONG),
+    new SpeciesEvolution(SpeciesId.GOREBYSS, 1, EvolutionItem.LINKING_CORD, {key: EvoCondKey.HELD_ITEM, itemKey: "DEEP_SEA_SCALE"}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.BOLDORE]: [
     new SpeciesEvolution(SpeciesId.GIGALITH, 1, EvolutionItem.LINKING_CORD, null, SpeciesWildEvolutionDelay.VERY_LONG)
@@ -1803,10 +1737,10 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.CONKELDURR, 1, EvolutionItem.LINKING_CORD, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.KARRABLAST]: [
-    new SpeciesEvolution(SpeciesId.ESCAVALIER, 1, EvolutionItem.LINKING_CORD, new CaughtEvolutionCondition(SpeciesId.SHELMET), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(SpeciesId.ESCAVALIER, 1, EvolutionItem.LINKING_CORD, {key: EvoCondKey.SPECIES_CAUGHT, speciesCaught: SpeciesId.SHELMET}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.SHELMET]: [
-    new SpeciesEvolution(SpeciesId.ACCELGOR, 1, EvolutionItem.LINKING_CORD, new CaughtEvolutionCondition(SpeciesId.KARRABLAST), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(SpeciesId.ACCELGOR, 1, EvolutionItem.LINKING_CORD, {key: EvoCondKey.SPECIES_CAUGHT, speciesCaught: SpeciesId.KARRABLAST}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.SPRITZEE]: [
     new SpeciesEvolution(SpeciesId.AROMATISSE, 1, EvolutionItem.SACHET, null, SpeciesWildEvolutionDelay.VERY_LONG)
@@ -1824,66 +1758,63 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.ALOLA_GOLEM, 1, EvolutionItem.LINKING_CORD, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.PRIMEAPE]: [
-    new SpeciesEvolution(SpeciesId.ANNIHILAPE, 35, null, new MoveEvolutionCondition(MoveId.RAGE_FIST), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(SpeciesId.ANNIHILAPE, 35, null, {key: EvoCondKey.MOVE, move: MoveId.RAGE_FIST}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.GOLBAT]: [
-    new SpeciesEvolution(SpeciesId.CROBAT, 1, null, new FriendshipEvolutionCondition(120), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(SpeciesId.CROBAT, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 120}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.CHANSEY]: [
-    new SpeciesEvolution(SpeciesId.BLISSEY, 1, null, new FriendshipEvolutionCondition(200), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(SpeciesId.BLISSEY, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 180}, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.PICHU]: [
-    new SpeciesFormEvolution(SpeciesId.PIKACHU, "spiky", "partner", 1, null, new FriendshipEvolutionCondition(90), SpeciesWildEvolutionDelay.SHORT),
-    new SpeciesFormEvolution(SpeciesId.PIKACHU, "", "", 1, null, new FriendshipEvolutionCondition(90), SpeciesWildEvolutionDelay.SHORT),
+    new SpeciesFormEvolution(SpeciesId.PIKACHU, "spiky", "partner", 1, null, {key: EvoCondKey.FRIENDSHIP, value: 90}, SpeciesWildEvolutionDelay.SHORT),
+    new SpeciesFormEvolution(SpeciesId.PIKACHU, "", "", 1, null, {key: EvoCondKey.FRIENDSHIP, value: 90}, SpeciesWildEvolutionDelay.SHORT),
   ],
   [SpeciesId.CLEFFA]: [
-    new SpeciesEvolution(SpeciesId.CLEFAIRY, 1, null, new FriendshipEvolutionCondition(160), SpeciesWildEvolutionDelay.SHORT)
+    new SpeciesEvolution(SpeciesId.CLEFAIRY, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 160}, SpeciesWildEvolutionDelay.SHORT)
   ],
   [SpeciesId.IGGLYBUFF]: [
-    new SpeciesEvolution(SpeciesId.JIGGLYPUFF, 1, null, new FriendshipEvolutionCondition(70), SpeciesWildEvolutionDelay.SHORT)
+    new SpeciesEvolution(SpeciesId.JIGGLYPUFF, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 70}, SpeciesWildEvolutionDelay.SHORT)
   ],
   [SpeciesId.TOGEPI]: [
-    new SpeciesEvolution(SpeciesId.TOGETIC, 1, null, new FriendshipEvolutionCondition(70), SpeciesWildEvolutionDelay.SHORT)
+    new SpeciesEvolution(SpeciesId.TOGETIC, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 70}, SpeciesWildEvolutionDelay.SHORT)
   ],
   [SpeciesId.AZURILL]: [
-    new SpeciesEvolution(SpeciesId.MARILL, 1, null, new FriendshipEvolutionCondition(70), SpeciesWildEvolutionDelay.SHORT)
+    new SpeciesEvolution(SpeciesId.MARILL, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 70}, SpeciesWildEvolutionDelay.SHORT)
   ],
   [SpeciesId.BUDEW]: [
-    new SpeciesEvolution(SpeciesId.ROSELIA, 1, null, new FriendshipTimeOfDayEvolutionCondition(70, "day"), SpeciesWildEvolutionDelay.SHORT)
+    new SpeciesEvolution(SpeciesId.ROSELIA, 1, null, [{key: EvoCondKey.FRIENDSHIP, value: 70}, {key: EvoCondKey.TIME, time: [TimeOfDay.DAWN, TimeOfDay.DAY]}], SpeciesWildEvolutionDelay.SHORT)
   ],
   [SpeciesId.BUNEARY]: [
-    new SpeciesEvolution(SpeciesId.LOPUNNY, 1, null, new FriendshipEvolutionCondition(70), SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(SpeciesId.LOPUNNY, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 50}, SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [SpeciesId.CHINGLING]: [
-    new SpeciesEvolution(SpeciesId.CHIMECHO, 1, null, new FriendshipTimeOfDayEvolutionCondition(90, "night"), SpeciesWildEvolutionDelay.MEDIUM)
-  ],
-  [SpeciesId.HAPPINY]: [
-    new SpeciesEvolution(SpeciesId.CHANSEY, 1, null, new FriendshipEvolutionCondition(160), SpeciesWildEvolutionDelay.SHORT)
+    new SpeciesEvolution(SpeciesId.CHIMECHO, 1, null, [{key: EvoCondKey.FRIENDSHIP, value: 90}, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]}], SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [SpeciesId.MUNCHLAX]: [
-    new SpeciesEvolution(SpeciesId.SNORLAX, 1, null, new FriendshipEvolutionCondition(120), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(SpeciesId.SNORLAX, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 120}, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.RIOLU]: [
-    new SpeciesEvolution(SpeciesId.LUCARIO, 1, null, new FriendshipTimeOfDayEvolutionCondition(120, "day"), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(SpeciesId.LUCARIO, 1, null, [{key: EvoCondKey.FRIENDSHIP, value: 120}, {key: EvoCondKey.TIME, time: [TimeOfDay.DAWN, TimeOfDay.DAY]}], SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.WOOBAT]: [
-    new SpeciesEvolution(SpeciesId.SWOOBAT, 1, null, new FriendshipEvolutionCondition(90), SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(SpeciesId.SWOOBAT, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 90}, SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [SpeciesId.SWADLOON]: [
-    new SpeciesEvolution(SpeciesId.LEAVANNY, 1, null, new FriendshipEvolutionCondition(120), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(SpeciesId.LEAVANNY, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 120}, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.TYPE_NULL]: [
-    new SpeciesEvolution(SpeciesId.SILVALLY, 1, null, new FriendshipEvolutionCondition(100), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(SpeciesId.SILVALLY, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 100}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.ALOLA_MEOWTH]: [
-    new SpeciesEvolution(SpeciesId.ALOLA_PERSIAN, 1, null, new FriendshipEvolutionCondition(120), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(SpeciesId.ALOLA_PERSIAN, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 120}, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.SNOM]: [
-    new SpeciesEvolution(SpeciesId.FROSMOTH, 1, null, new FriendshipTimeOfDayEvolutionCondition(90, "night"), SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(SpeciesId.FROSMOTH, 1, null, [{key: EvoCondKey.FRIENDSHIP, value: 90}, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]}], SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [SpeciesId.GIMMIGHOUL]: [
-    new SpeciesFormEvolution(SpeciesId.GHOLDENGO, "chest", "", 1, null, new TreasureEvolutionCondition(), SpeciesWildEvolutionDelay.VERY_LONG),
-    new SpeciesFormEvolution(SpeciesId.GHOLDENGO, "roaming", "", 1, null, new TreasureEvolutionCondition(), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesFormEvolution(SpeciesId.GHOLDENGO, "chest", "", 1, null, {key: EvoCondKey.EVO_TREASURE_TRACKER, value: 10}, SpeciesWildEvolutionDelay.VERY_LONG),
+    new SpeciesFormEvolution(SpeciesId.GHOLDENGO, "roaming", "", 1, null, {key: EvoCondKey.EVO_TREASURE_TRACKER, value: 10}, SpeciesWildEvolutionDelay.VERY_LONG)
   ]
 };
 
@@ -1894,22 +1825,30 @@ interface PokemonPrevolutions {
 export const pokemonPrevolutions: PokemonPrevolutions = {};
 
 export function initPokemonPrevolutions(): void {
-  const megaFormKeys = [ SpeciesFormKey.MEGA, "", SpeciesFormKey.MEGA_X, "", SpeciesFormKey.MEGA_Y ].map(sfk => sfk as string);
-  const prevolutionKeys = Object.keys(pokemonEvolutions);
-  prevolutionKeys.forEach(pk => {
-    const evolutions = pokemonEvolutions[pk];
+  // TODO: Why do we have empty strings in our array?
+  const megaFormKeys = [SpeciesFormKey.MEGA, "", SpeciesFormKey.MEGA_X, "", SpeciesFormKey.MEGA_Y];
+  for (const [pk, evolutions] of Object.entries(pokemonEvolutions)) {
     for (const ev of evolutions) {
       if (ev.evoFormKey && megaFormKeys.indexOf(ev.evoFormKey) > -1) {
         continue;
       }
       pokemonPrevolutions[ev.speciesId] = Number.parseInt(pk) as SpeciesId;
     }
-  });
+  }
 }
 
 
 // TODO: This may cause funny business for double starters such as Pichu/Pikachu
 export const pokemonStarters: PokemonPrevolutions = {};
+
+/**
+ * The default species and all their evolutions
+ */
+export const defaultStarterSpeciesAndEvolutions: SpeciesId[] = defaultStarterSpecies.flatMap(id => {
+  const stage2ids = pokemonEvolutions[id]?.map(e => e.speciesId) ?? [];
+  const stage3ids = stage2ids.flatMap(s2id => pokemonEvolutions[s2id]?.map(e => e.speciesId) ?? []);
+  return [id, ...stage2ids, ...stage3ids];
+});
 
 export function initPokemonStarters(): void {
   const starterKeys = Object.keys(pokemonPrevolutions);

@@ -1,15 +1,15 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { allAbilities } from "#app/data/data-lists";
+import { allAbilities } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { WeatherType } from "#app/enums/weather-type";
-import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
-import { MovePhase } from "#app/phases/move-phase";
-import { PostSummonPhase } from "#app/phases/post-summon-phase";
-import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { WeatherType } from "#enums/weather-type";
+import { DamageAnimPhase } from "#phases/damage-anim-phase";
+import { MovePhase } from "#phases/move-phase";
+import { PostSummonPhase } from "#phases/post-summon-phase";
+import { QuietFormChangePhase } from "#phases/quiet-form-change-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -22,25 +22,9 @@ describe("Abilities - Forecast", () => {
   const SNOWY_FORM = 3;
 
   /**
-   * Tests form changes based on weather changes
-   * @param {GameManager} game The game manager instance
-   * @param {WeatherType} weather The active weather to set
-   * @param form The expected form based on the active weather
-   * @param initialForm The initial form pre form change
-   */
-  const testWeatherFormChange = async (game: GameManager, weather: WeatherType, form: number, initialForm?: number) => {
-    game.override.weather(weather).starterForms({ [SpeciesId.CASTFORM]: initialForm });
-    await game.classicMode.startBattle([SpeciesId.CASTFORM]);
-
-    game.move.select(MoveId.SPLASH);
-
-    expect(game.scene.getPlayerPokemon()?.formIndex).toBe(form);
-  };
-
-  /**
    * Tests reverting to normal form when Cloud Nine/Air Lock is active on the field
-   * @param {GameManager} game The game manager instance
-   * @param {AbilityId} ability The ability that is active on the field
+   * @param game - The game manager instance
+   * @param ability - The ability that is active on the field
    */
   const testRevertFormAgainstAbility = async (game: GameManager, ability: AbilityId) => {
     game.override.starterForms({ [SpeciesId.CASTFORM]: SUNNY_FORM }).enemyAbility(ability);
@@ -48,7 +32,7 @@ describe("Abilities - Forecast", () => {
 
     game.move.select(MoveId.SPLASH);
 
-    expect(game.scene.getPlayerPokemon()?.formIndex).toBe(NORMAL_FORM);
+    expect(game.field.getPlayerPokemon().formIndex).toBe(NORMAL_FORM);
   };
 
   beforeAll(() => {
@@ -92,7 +76,7 @@ describe("Abilities - Forecast", () => {
 
       vi.spyOn(game.scene.getPlayerParty()[5], "getAbility").mockReturnValue(allAbilities[AbilityId.CLOUD_NINE]);
 
-      const castform = game.scene.getPlayerField()[0];
+      const castform = game.field.getPlayerPokemon();
       expect(castform.formIndex).toBe(NORMAL_FORM);
 
       game.move.select(MoveId.RAIN_DANCE);
@@ -191,10 +175,6 @@ describe("Abilities - Forecast", () => {
     30 * 1000,
   );
 
-  it("reverts to Normal Form during Clear weather", async () => {
-    await testWeatherFormChange(game, WeatherType.NONE, NORMAL_FORM, SUNNY_FORM);
-  });
-
   it("reverts to Normal Form if a Pokémon on the field has Air Lock", async () => {
     await testRevertFormAgainstAbility(game, AbilityId.AIR_LOCK);
   });
@@ -206,14 +186,14 @@ describe("Abilities - Forecast", () => {
     game.move.select(MoveId.RAIN_DANCE);
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(game.scene.getPlayerPokemon()?.formIndex).toBe(RAINY_FORM);
-    expect(game.scene.getEnemyPokemon()?.formIndex).not.toBe(RAINY_FORM);
+    expect(game.field.getPlayerPokemon().formIndex).toBe(RAINY_FORM);
+    expect(game.field.getEnemyPokemon().formIndex).not.toBe(RAINY_FORM);
   });
 
   it("reverts to Normal Form when Forecast is suppressed, changes form to match the weather when it regains it", async () => {
     game.override.enemyMoveset([MoveId.GASTRO_ACID]).weather(WeatherType.RAIN);
     await game.classicMode.startBattle([SpeciesId.CASTFORM, SpeciesId.PIKACHU]);
-    const castform = game.scene.getPlayerPokemon()!;
+    const castform = game.field.getPlayerPokemon();
 
     expect(castform.formIndex).toBe(RAINY_FORM);
 
@@ -253,7 +233,7 @@ describe("Abilities - Forecast", () => {
     game.doSwitchPokemon(1);
     await game.phaseInterceptor.to(PostSummonPhase);
 
-    const castform = game.scene.getPlayerPokemon()!;
+    const castform = game.field.getPlayerPokemon();
 
     // Damage phase should come first
     await game.phaseInterceptor.to(DamageAnimPhase);
@@ -268,7 +248,7 @@ describe("Abilities - Forecast", () => {
     game.override.weather(WeatherType.RAIN);
 
     await game.classicMode.startBattle([SpeciesId.CASTFORM, SpeciesId.MAGIKARP]);
-    const castform = game.scene.getPlayerPokemon()!;
+    const castform = game.field.getPlayerPokemon();
 
     expect(castform.formIndex).toBe(RAINY_FORM);
 
@@ -276,5 +256,21 @@ describe("Abilities - Forecast", () => {
     await game.toNextTurn();
 
     expect(castform.formIndex).toBe(NORMAL_FORM);
+  });
+
+  // NOTE: The following pairs of tests are intentionally testing the same scenario, switching the player and enemy pokemon
+  // as this is a regression test where the order of player and enemy mattered.
+  it("should trigger player's form change when summoned at the same time as an enemy with a weather changing ability", async () => {
+    game.override.enemyAbility(AbilityId.DROUGHT);
+    await game.classicMode.startBattle([SpeciesId.CASTFORM, SpeciesId.MAGIKARP]);
+    const castform = game.field.getPlayerPokemon();
+    expect(castform.formIndex).toBe(SUNNY_FORM);
+  });
+
+  it("should trigger enemy's form change when summoned at the same time as a player with a weather changing ability", async () => {
+    game.override.ability(AbilityId.DROUGHT).enemySpecies(SpeciesId.CASTFORM).enemyAbility(AbilityId.FORECAST);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    const castform = game.field.getEnemyPokemon();
+    expect(castform.formIndex).toBe(SUNNY_FORM);
   });
 });

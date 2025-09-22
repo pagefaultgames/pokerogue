@@ -1,30 +1,23 @@
-import type { BattlerIndex } from "#enums/battler-index";
-import { BattleType } from "#enums/battle-type";
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import {
-  applyPostFaintAbAttrs,
-  applyPostKnockOutAbAttrs,
-  applyPostVictoryAbAttrs,
-} from "#app/data/abilities/apply-ab-attrs";
-import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
-import { battleSpecDialogue } from "#app/data/dialogue";
-import { allMoves } from "#app/data/data-lists";
-import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms/form-change-triggers";
-import { BattleSpec } from "#app/enums/battle-spec";
-import { StatusEffect } from "#app/enums/status-effect";
-import type { EnemyPokemon } from "#app/field/pokemon";
-import type Pokemon from "#app/field/pokemon";
-import { PokemonMove } from "#app/data/moves/pokemon-move";
-import { HitResult } from "#enums/hit-result";
-import type { PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { PokemonInstantReviveModifier } from "#app/modifier/modifier";
-import { SwitchType } from "#enums/switch-type";
-import i18next from "i18next";
-import { PokemonPhase } from "./pokemon-phase";
-import { isNullOrUndefined } from "#app/utils/common";
-import { FRIENDSHIP_LOSS_FROM_FAINT } from "#app/data/balance/starters";
+import { FRIENDSHIP_LOSS_FROM_FAINT } from "#balance/starters";
+import { allMoves } from "#data/data-lists";
+import { battleSpecDialogue } from "#data/dialogue";
+import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
+import { BattleSpec } from "#enums/battle-spec";
+import { BattleType } from "#enums/battle-type";
+import type { BattlerIndex } from "#enums/battler-index";
+import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { HitResult } from "#enums/hit-result";
+import { StatusEffect } from "#enums/status-effect";
+import { SwitchType } from "#enums/switch-type";
+import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
+import { PokemonInstantReviveModifier } from "#modifiers/modifier";
+import { PokemonMove } from "#moves/pokemon-move";
+import { PokemonPhase } from "#phases/pokemon-phase";
+import i18next from "i18next";
 
 export class FaintPhase extends PokemonPhase {
   public readonly phaseName = "FaintPhase";
@@ -95,13 +88,13 @@ export class FaintPhase extends PokemonPhase {
     if (pokemon.isPlayer()) {
       globalScene.arena.playerFaints += 1;
       globalScene.currentBattle.playerFaintsHistory.push({
-        pokemon: pokemon,
+        pokemon,
         turn: globalScene.currentBattle.turn,
       });
     } else {
       globalScene.currentBattle.enemyFaints += 1;
       globalScene.currentBattle.enemyFaintsHistory.push({
-        pokemon: pokemon,
+        pokemon,
         turn: globalScene.currentBattle.turn,
       });
     }
@@ -117,32 +110,34 @@ export class FaintPhase extends PokemonPhase {
 
     pokemon.resetTera();
 
-    if (pokemon.turnData.attacksReceived?.length) {
+    // TODO: this can be simplified by just checking whether lastAttack is defined
+    if (pokemon.turnData.attacksReceived?.length > 0) {
       const lastAttack = pokemon.turnData.attacksReceived[0];
-      applyPostFaintAbAttrs(
-        "PostFaintAbAttr",
+      applyAbAttrs("PostFaintAbAttr", {
         pokemon,
-        globalScene.getPokemonById(lastAttack.sourceId)!,
-        new PokemonMove(lastAttack.move).getMove(),
-        lastAttack.result,
-      ); // TODO: is this bang correct?
+        // TODO: We should refactor lastAttack's sourceId to forbid null and just use undefined
+        attacker: globalScene.getPokemonById(lastAttack.sourceId) ?? undefined,
+        // TODO: improve the way that we provide the move that knocked out the pokemon...
+        move: new PokemonMove(lastAttack.move).getMove(),
+        hitResult: lastAttack.result,
+      }); // TODO: is this bang correct?
     } else {
       //If killed by indirect damage, apply post-faint abilities without providing a last move
-      applyPostFaintAbAttrs("PostFaintAbAttr", pokemon);
+      applyAbAttrs("PostFaintAbAttr", { pokemon });
     }
 
     const alivePlayField = globalScene.getField(true);
     for (const p of alivePlayField) {
-      applyPostKnockOutAbAttrs("PostKnockOutAbAttr", p, pokemon);
+      applyAbAttrs("PostKnockOutAbAttr", { pokemon: p, victim: pokemon });
     }
-    if (pokemon.turnData.attacksReceived?.length) {
+    if (pokemon.turnData.attacksReceived?.length > 0) {
       const defeatSource = this.source;
 
       if (defeatSource?.isOnField()) {
-        applyPostVictoryAbAttrs("PostVictoryAbAttr", defeatSource);
+        applyAbAttrs("PostVictoryAbAttr", { pokemon: defeatSource });
         const pvmove = allMoves[pokemon.turnData.attacksReceived[0].move];
         const pvattrs = pvmove.getAttrs("PostVictoryStatStageChangeAttr");
-        if (pvattrs.length) {
+        if (pvattrs.length > 0) {
           for (const pvattr of pvattrs) {
             pvattr.applyPostVictory(defeatSource, defeatSource, pvmove);
           }
@@ -155,13 +150,13 @@ export class FaintPhase extends PokemonPhase {
       const legalPlayerPokemon = globalScene.getPokemonAllowedInBattle();
       /** The total number of legal player Pokemon that aren't currently on the field */
       const legalPlayerPartyPokemon = legalPlayerPokemon.filter(p => !p.isActive(true));
-      if (!legalPlayerPokemon.length) {
+      if (legalPlayerPokemon.length === 0) {
         /** If the player doesn't have any legal Pokemon, end the game */
         globalScene.phaseManager.unshiftNew("GameOverPhase");
       } else if (
-        globalScene.currentBattle.double &&
-        legalPlayerPokemon.length === 1 &&
-        legalPlayerPartyPokemon.length === 0
+        globalScene.currentBattle.double
+        && legalPlayerPokemon.length === 1
+        && legalPlayerPartyPokemon.length === 0
       ) {
         /**
          * If the player has exactly one Pokemon in total at this point in a double battle, and that Pokemon
@@ -178,10 +173,11 @@ export class FaintPhase extends PokemonPhase {
     } else {
       globalScene.phaseManager.unshiftNew("VictoryPhase", this.battlerIndex);
       if ([BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType)) {
-        const hasReservePartyMember = !!globalScene
-          .getEnemyParty()
-          .filter(p => p.isActive() && !p.isOnField() && p.trainerSlot === (pokemon as EnemyPokemon).trainerSlot)
-          .length;
+        const hasReservePartyMember =
+          globalScene
+            .getEnemyParty()
+            .filter(p => p.isActive() && !p.isOnField() && p.trainerSlot === (pokemon as EnemyPokemon).trainerSlot)
+            .length > 0;
         if (hasReservePartyMember) {
           globalScene.phaseManager.pushNew("SwitchSummonPhase", SwitchType.SWITCH, this.fieldIndex, -1, false, false);
         }
@@ -190,7 +186,7 @@ export class FaintPhase extends PokemonPhase {
 
     // in double battles redirect potential moves off fainted pokemon
     const allyPokemon = pokemon.getAlly();
-    if (globalScene.currentBattle.double && !isNullOrUndefined(allyPokemon)) {
+    if (globalScene.currentBattle.double && allyPokemon != null) {
       globalScene.redirectPokemonMoves(pokemon, allyPokemon);
     }
 
@@ -209,7 +205,7 @@ export class FaintPhase extends PokemonPhase {
           pokemon.lapseTags(BattlerTagLapseType.FAINT);
 
           pokemon.y -= 150;
-          pokemon.trySetStatus(StatusEffect.FAINT);
+          pokemon.doSetStatus(StatusEffect.FAINT);
           if (pokemon.isPlayer()) {
             globalScene.currentBattle.removeFaintedParticipant(pokemon as PlayerPokemon);
           } else {

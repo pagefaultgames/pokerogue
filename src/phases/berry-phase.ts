@@ -1,13 +1,13 @@
-import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
-import { CommonAnim } from "#enums/move-anims-common";
-import { BerryUsedEvent } from "#app/events/battle-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
-import { BerryModifier } from "#app/modifier/modifier";
-import i18next from "i18next";
-import { BooleanHolder } from "#app/utils/common";
-import { FieldPhase } from "./field-phase";
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import type Pokemon from "#app/field/pokemon";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { CommonAnim } from "#enums/move-anims-common";
+import { BerryUsedEvent } from "#events/battle-scene";
+import type { Pokemon } from "#field/pokemon";
+import { BerryModifier } from "#modifiers/modifier";
+import { FieldPhase } from "#phases/field-phase";
+import { BooleanHolder } from "#utils/common";
+import i18next from "i18next";
 
 /**
  * The phase after attacks where the pokemon eat berries.
@@ -20,7 +20,7 @@ export class BerryPhase extends FieldPhase {
 
     this.executeForAll(pokemon => {
       this.eatBerries(pokemon);
-      applyAbAttrs("RepeatBerryNextTurnAbAttr", pokemon, null);
+      applyAbAttrs("CudChewConsumeBerryAbAttr", { pokemon });
     });
 
     this.end();
@@ -42,7 +42,7 @@ export class BerryPhase extends FieldPhase {
 
     // TODO: If both opponents on field have unnerve, which one displays its message?
     const cancelled = new BooleanHolder(false);
-    pokemon.getOpponents().forEach(opp => applyAbAttrs("PreventBerryUseAbAttr", opp, cancelled));
+    pokemon.getOpponents().forEach(opp => applyAbAttrs("PreventBerryUseAbAttr", { pokemon: opp, cancelled }));
     if (cancelled.value) {
       globalScene.phaseManager.queueMessage(
         i18next.t("abilityTriggers:preventBerryUse", {
@@ -70,6 +70,6 @@ export class BerryPhase extends FieldPhase {
     globalScene.updateModifiers(pokemon.isPlayer());
 
     // AbilityId.CHEEK_POUCH only works once per round of nom noms
-    applyAbAttrs("HealFromBerryUseAbAttr", pokemon, new BooleanHolder(false));
+    applyAbAttrs("HealFromBerryUseAbAttr", { pokemon });
   }
 }

@@ -1,4 +1,11 @@
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { globalScene } from "#app/global-scene";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Stat } from "#enums/stat";
+import type { PlayerPokemon, Pokemon } from "#field/pokemon";
+import { showEncounterDialogue, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import {
   leaveEncounterWithoutBattle,
   selectPokemonForOption,
@@ -6,22 +13,14 @@ import {
   setEncounterRewards,
   transitionMysteryEncounterIntroVisuals,
   updatePlayerMoney,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { globalScene } from "#app/global-scene";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { Stat } from "#enums/stat";
-import { CHARMING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
-import { showEncounterDialogue, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+} from "#mystery-encounters/encounter-phase-utils";
+import { isPokemonValidForEncounterOptionSelection } from "#mystery-encounters/encounter-pokemon-utils";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
+import { MoveRequirement } from "#mystery-encounters/mystery-encounter-requirements";
+import { CHARMING_MOVES } from "#mystery-encounters/requirement-groups";
 import i18next from "i18next";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import type Pokemon from "#app/field/pokemon";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
-import { isPokemonValidForEncounterOptionSelection } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/partTimer";
@@ -59,7 +58,7 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
     },
     {
       speaker: `${namespace}:speaker`,
-      text: `${namespace}:intro_dialogue`,
+      text: `${namespace}:introDialogue`,
     },
   ])
   .withOnInit(() => {
@@ -129,7 +128,7 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
 
         // Only Pokemon non-KOd pokemon can be selected
         const selectableFilter = (pokemon: Pokemon) => {
-          return isPokemonValidForEncounterOptionSelection(pokemon, `${namespace}:invalid_selection`);
+          return isPokemonValidForEncounterOptionSelection(pokemon, `${namespace}:invalidSelection`);
         };
 
         return selectPokemonForOption(onPokemonSelected, undefined, selectableFilter);
@@ -143,18 +142,18 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
 
         // Give money and do dialogue
         if (moneyMultiplier > 2.5) {
-          await showEncounterDialogue(`${namespace}:job_complete_good`, `${namespace}:speaker`);
+          await showEncounterDialogue(`${namespace}:jobCompleteGood`, `${namespace}:speaker`);
         } else {
-          await showEncounterDialogue(`${namespace}:job_complete_bad`, `${namespace}:speaker`);
+          await showEncounterDialogue(`${namespace}:jobCompleteBad`, `${namespace}:speaker`);
         }
         const moneyChange = globalScene.getWaveMoneyAmount(moneyMultiplier);
         updatePlayerMoney(moneyChange, true, false);
         await showEncounterText(
-          i18next.t("mysteryEncounterMessages:receive_money", {
+          i18next.t("mysteryEncounterMessages:receiveMoney", {
             amount: moneyChange,
           }),
         );
-        await showEncounterText(`${namespace}:pokemon_tired`);
+        await showEncounterText(`${namespace}:pokemonTired`);
 
         setEncounterRewards({ fillRemaining: true });
         leaveEncounterWithoutBattle();
@@ -211,7 +210,7 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
 
         // Only Pokemon non-KOd pokemon can be selected
         const selectableFilter = (pokemon: Pokemon) => {
-          return isPokemonValidForEncounterOptionSelection(pokemon, `${namespace}:invalid_selection`);
+          return isPokemonValidForEncounterOptionSelection(pokemon, `${namespace}:invalidSelection`);
         };
 
         return selectPokemonForOption(onPokemonSelected, undefined, selectableFilter);
@@ -225,18 +224,18 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
 
         // Give money and do dialogue
         if (moneyMultiplier > 2.5) {
-          await showEncounterDialogue(`${namespace}:job_complete_good`, `${namespace}:speaker`);
+          await showEncounterDialogue(`${namespace}:jobCompleteGood`, `${namespace}:speaker`);
         } else {
-          await showEncounterDialogue(`${namespace}:job_complete_bad`, `${namespace}:speaker`);
+          await showEncounterDialogue(`${namespace}:jobCompleteBad`, `${namespace}:speaker`);
         }
         const moneyChange = globalScene.getWaveMoneyAmount(moneyMultiplier);
         updatePlayerMoney(moneyChange, true, false);
         await showEncounterText(
-          i18next.t("mysteryEncounterMessages:receive_money", {
+          i18next.t("mysteryEncounterMessages:receiveMoney", {
             amount: moneyChange,
           }),
         );
-        await showEncounterText(`${namespace}:pokemon_tired`);
+        await showEncounterText(`${namespace}:pokemonTired`);
 
         setEncounterRewards({ fillRemaining: true });
         leaveEncounterWithoutBattle();
@@ -249,7 +248,7 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       .withDialogue({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
+        disabledButtonTooltip: `${namespace}:option.3.disabledTooltip`,
         selected: [
           {
             text: `${namespace}:option.3.selected`,
@@ -283,15 +282,15 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         await transitionMysteryEncounterIntroVisuals(false, false);
 
         // Give money and do dialogue
-        await showEncounterDialogue(`${namespace}:job_complete_good`, `${namespace}:speaker`);
+        await showEncounterDialogue(`${namespace}:jobCompleteGood`, `${namespace}:speaker`);
         const moneyChange = globalScene.getWaveMoneyAmount(2.5);
         updatePlayerMoney(moneyChange, true, false);
         await showEncounterText(
-          i18next.t("mysteryEncounterMessages:receive_money", {
+          i18next.t("mysteryEncounterMessages:receiveMoney", {
             amount: moneyChange,
           }),
         );
-        await showEncounterText(`${namespace}:pokemon_tired`);
+        await showEncounterText(`${namespace}:pokemonTired`);
 
         setEncounterRewards({ fillRemaining: true });
         leaveEncounterWithoutBattle();

@@ -1,14 +1,14 @@
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import type { BattlerIndex } from "#enums/battler-index";
-import { applyAbAttrs, applyPostDamageAbAttrs } from "#app/data/abilities/apply-ab-attrs";
-import { CommonBattleAnim } from "#app/data/battle-anims";
-import { CommonAnim } from "#enums/move-anims-common";
-import { getStatusEffectActivationText } from "#app/data/status-effect";
-import { BattleSpec } from "#app/enums/battle-spec";
-import { StatusEffect } from "#app/enums/status-effect";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { BooleanHolder, NumberHolder } from "#app/utils/common";
-import { PokemonPhase } from "./pokemon-phase";
+import { CommonBattleAnim } from "#data/battle-anims";
+import { getStatusEffectActivationText } from "#data/status-effect";
+import { BattleSpec } from "#enums/battle-spec";
+import type { BattlerIndex } from "#enums/battler-index";
+import { CommonAnim } from "#enums/move-anims-common";
+import { StatusEffect } from "#enums/status-effect";
+import { PokemonPhase } from "#phases/pokemon-phase";
+import { BooleanHolder, NumberHolder } from "#utils/common";
 
 export class PostTurnStatusEffectPhase extends PokemonPhase {
   public readonly phaseName = "PostTurnStatusEffectPhase";
@@ -22,8 +22,8 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
     if (pokemon?.isActive(true) && pokemon.status && pokemon.status.isPostTurn() && !pokemon.switchOutStatus) {
       pokemon.status.incrementTurn();
       const cancelled = new BooleanHolder(false);
-      applyAbAttrs("BlockNonDirectDamageAbAttr", pokemon, cancelled);
-      applyAbAttrs("BlockStatusDamageAbAttr", pokemon, cancelled);
+      applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon, cancelled });
+      applyAbAttrs("BlockStatusDamageAbAttr", { pokemon, cancelled });
 
       if (!cancelled.value) {
         globalScene.phaseManager.queueMessage(
@@ -39,14 +39,14 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
             break;
           case StatusEffect.BURN:
             damage.value = Math.max(pokemon.getMaxHp() >> 4, 1);
-            applyAbAttrs("ReduceBurnDamageAbAttr", pokemon, null, false, damage);
+            applyAbAttrs("ReduceBurnDamageAbAttr", { pokemon, burnDamage: damage });
             break;
         }
         if (damage.value) {
           // Set preventEndure flag to avoid pokemon surviving thanks to focus band, sturdy, endure ...
           globalScene.damageNumberHandler.add(this.getPokemon(), pokemon.damage(damage.value, false, true));
           pokemon.updateInfo();
-          applyPostDamageAbAttrs("PostDamageAbAttr", pokemon, damage.value, pokemon.hasPassive(), false, []);
+          applyAbAttrs("PostDamageAbAttr", { pokemon, damage: damage.value });
         }
         new CommonBattleAnim(CommonAnim.POISON + (pokemon.status.effect - 1), pokemon).play(false, () => this.end());
       } else {

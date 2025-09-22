@@ -1,18 +1,22 @@
-import { applyMoveAttrs } from "#app/data/moves/apply-attrs";
-import type { PokemonMove } from "#app/data/moves/pokemon-move";
-import type Pokemon from "#app/field/pokemon";
-import { BattlePhase } from "./battle-phase";
+import type { Pokemon } from "#field/pokemon";
+import { applyMoveAttrs } from "#moves/apply-attrs";
+import type { PokemonMove } from "#moves/pokemon-move";
+import { BattlePhase } from "#phases/battle-phase";
 
 export class MoveHeaderPhase extends BattlePhase {
   public readonly phaseName = "MoveHeaderPhase";
-  public pokemon: Pokemon;
   public move: PokemonMove;
+  public pokemon: Pokemon;
 
   constructor(pokemon: Pokemon, move: PokemonMove) {
     super();
 
     this.pokemon = pokemon;
     this.move = move;
+  }
+
+  public getPokemon(): Pokemon {
+    return this.pokemon;
   }
 
   canMove(): boolean {

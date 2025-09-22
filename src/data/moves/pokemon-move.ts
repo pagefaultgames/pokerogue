@@ -1,27 +1,28 @@
-import type Pokemon from "#app/field/pokemon";
-import { toDmgValue } from "#app/utils/common";
-import type { MoveId } from "#enums/move-id";
-import { allMoves } from "../data-lists";
-import type Move from "./move";
+import { allMoves } from "#data/data-lists";
+import { ChallengeType } from "#enums/challenge-type";
+import { MoveId } from "#enums/move-id";
+import type { Pokemon } from "#field/pokemon";
+import type { Move } from "#moves/move";
+import { applyChallenges } from "#utils/challenge-utils";
+import { BooleanHolder, toDmgValue } from "#utils/common";
 
 /**
  * Wrapper class for the {@linkcode Move} class for Pokemon to interact with.
  * These are the moves assigned to a {@linkcode Pokemon} object.
  * It links to {@linkcode Move} class via the move ID.
  * Compared to {@linkcode Move}, this class also tracks things like
- * PP Ups recieved, PP used, etc.
+ * PP Ups received, PP used, etc.
  * @see {@linkcode isUsable} - checks if move is restricted, out of PP, or not implemented.
  * @see {@linkcode getMove} - returns {@linkcode Move} object by looking it up via ID.
  * @see {@linkcode usePp} - removes a point of PP from the move.
  * @see {@linkcode getMovePp} - returns amount of PP a move currently has.
  * @see {@linkcode getPpRatio} - returns the current PP amount / max PP amount.
  * @see {@linkcode getName} - returns name of {@linkcode Move}.
- **/
+ */
 export class PokemonMove {
   public moveId: MoveId;
   public ppUsed: number;
   public ppUp: number;
-  public virtual: boolean;
 
   /**
    * If defined and nonzero, overrides the maximum PP of the move (e.g., due to move being copied by Transform).
@@ -29,33 +30,34 @@ export class PokemonMove {
    */
   public maxPpOverride?: number;
 
-  constructor(moveId: MoveId, ppUsed = 0, ppUp = 0, virtual = false, maxPpOverride?: number) {
+  constructor(moveId: MoveId, ppUsed = 0, ppUp = 0, maxPpOverride?: number) {
     this.moveId = moveId;
     this.ppUsed = ppUsed;
     this.ppUp = ppUp;
-    this.virtual = virtual;
     this.maxPpOverride = maxPpOverride;
   }
 
   /**
-   * Checks whether the move can be selected or performed by a Pokemon, without consideration for the move's targets.
+   * Checks whether this move can be selected/performed by a Pokemon, without consideration for the move's targets.
    * The move is unusable if it is out of PP, restricted by an effect, or unimplemented.
    *
-   * @param pokemon - {@linkcode Pokemon} that would be using this move
-   * @param ignorePp - If `true`, skips the PP check
-   * @param ignoreRestrictionTags - If `true`, skips the check for move restriction tags (see {@link MoveRestrictionBattlerTag})
-   * @returns `true` if the move can be selected and used by the Pokemon, otherwise `false`.
+   * @param pokemon - The {@linkcode Pokemon} attempting to use this move
+   * @param ignorePp - Whether to ignore checking if the move is out of PP; default `false`
+   * @param ignoreRestrictionTags - Whether to skip checks for {@linkcode MoveRestrictionBattlerTag}s; default `false`
+   * @returns Whether this {@linkcode PokemonMove} can be selected by this Pokemon.
    */
   isUsable(pokemon: Pokemon, ignorePp = false, ignoreRestrictionTags = false): boolean {
-    if (this.moveId && !ignoreRestrictionTags && pokemon.isMoveRestricted(this.moveId, pokemon)) {
-      return false;
+    const move = this.getMove();
+    // TODO: Add Sky Drop's 1 turn stall
+    const usability = new BooleanHolder(
+      !move.name.endsWith(" (N)")
+        && (ignorePp || this.ppUsed < this.getMovePp() || move.pp === -1) // TODO: Review if the `MoveId.NONE` check is even necessary anymore
+        && !(this.moveId !== MoveId.NONE && !ignoreRestrictionTags && pokemon.isMoveRestricted(this.moveId, pokemon)),
+    );
+    if (pokemon.isPlayer()) {
+      applyChallenges(ChallengeType.POKEMON_MOVE, move.id, usability);
     }
-
-    if (this.getMove().name.endsWith(" (N)")) {
-      return false;
-    }
-
-    return ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1;
+    return usability.value;
   }
 
   getMove(): Move {
@@ -88,6 +90,6 @@ export class PokemonMove {
    * @returns A valid {@linkcode PokemonMove} object
    */
   static loadMove(source: PokemonMove | any): PokemonMove {
-    return new PokemonMove(source.moveId, source.ppUsed, source.ppUp, source.virtual, source.maxPpOverride);
+    return new PokemonMove(source.moveId, source.ppUsed, source.ppUp, source.maxPpOverride);
   }
 }

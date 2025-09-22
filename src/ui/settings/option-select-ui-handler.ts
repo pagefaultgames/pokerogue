@@ -1,7 +1,7 @@
-import AbstractOptionSelectUiHandler from "../abstact-option-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";
+import { AbstractOptionSelectUiHandler } from "#ui/abstract-option-select-ui-handler";
 
-export default class OptionSelectUiHandler extends AbstractOptionSelectUiHandler {
+export class OptionSelectUiHandler extends AbstractOptionSelectUiHandler {
   constructor(mode: UiMode = UiMode.OPTION_SELECT) {
     super(mode);
   }

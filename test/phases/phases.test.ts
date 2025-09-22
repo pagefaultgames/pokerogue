@@ -1,9 +1,9 @@
-import type BattleScene from "#app/battle-scene";
-import { LoginPhase } from "#app/phases/login-phase";
-import { TitlePhase } from "#app/phases/title-phase";
-import { UnavailablePhase } from "#app/phases/unavailable-phase";
+import type { BattleScene } from "#app/battle-scene";
 import { UiMode } from "#enums/ui-mode";
-import GameManager from "#test/testUtils/gameManager";
+import { LoginPhase } from "#phases/login-phase";
+import { TitlePhase } from "#phases/title-phase";
+import { UnavailablePhase } from "#phases/unavailable-phase";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -51,6 +51,6 @@ describe("Phases", () => {
       scene.phaseManager.unshiftPhase(unavailablePhase);
       await game.phaseInterceptor.to(UnavailablePhase);
       expect(scene.ui.getMode()).to.equal(UiMode.UNAVAILABLE);
-    }, 20000);
+    });
   });
 });

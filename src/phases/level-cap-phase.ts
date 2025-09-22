@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { UiMode } from "#enums/ui-mode";
+import { FieldPhase } from "#phases/field-phase";
 import i18next from "i18next";
-import { FieldPhase } from "./field-phase";
 
 export class LevelCapPhase extends FieldPhase {
   public readonly phaseName = "LevelCapPhase";

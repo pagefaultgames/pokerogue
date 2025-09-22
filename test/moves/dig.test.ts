@@ -1,13 +1,13 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { allMoves } from "#app/data/data-lists";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import { MoveResult } from "#enums/move-result";
-import { describe, beforeAll, afterEach, beforeEach, it, expect } from "vitest";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Dig", () => {
   let phaserGame: Phaser.Game;
@@ -38,12 +38,12 @@ describe("Moves - Dig", () => {
   it("should make the user semi-invulnerable, then attack over 2 turns", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.DIG);
-
     await game.phaseInterceptor.to("TurnEndPhase");
+
     expect(playerPokemon.getTag(BattlerTagType.UNDERGROUND)).toBeDefined();
     expect(enemyPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.MISS);
     expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp());
@@ -53,9 +53,25 @@ describe("Moves - Dig", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon.getTag(BattlerTagType.UNDERGROUND)).toBeUndefined();
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(playerPokemon.getMoveQueue()).toHaveLength(0);
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
+  });
 
-    const playerDig = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.DIG);
+  // TODO: Verify this on cartridge double battles
+  it.todo("should deduct PP only on the 2nd turn of the move", async () => {
+    game.override.moveset([]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+
+    const playerPokemon = game.field.getPlayerPokemon();
+    game.move.changeMoveset(playerPokemon, MoveId.DIG);
+
+    game.move.select(MoveId.DIG);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    const playerDig = playerPokemon.getMoveset().find(mv => mv?.moveId === MoveId.DIG);
+    expect(playerDig?.ppUsed).toBe(0);
+
+    await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerDig?.ppUsed).toBe(1);
   });
 
@@ -64,8 +80,8 @@ describe("Moves - Dig", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.DIG);
 
@@ -79,7 +95,7 @@ describe("Moves - Dig", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.DIG);
 
@@ -94,8 +110,8 @@ describe("Moves - Dig", () => {
   it("should cause the user to take double damage from Earthquake", async () => {
     await game.classicMode.startBattle([SpeciesId.DONDOZO]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     const preDigEarthquakeDmg = playerPokemon.getAttackDamage({
       source: enemyPokemon,

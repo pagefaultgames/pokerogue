@@ -1,33 +1,31 @@
-import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
+import type { BattleScene } from "#app/battle-scene";
+import { speciesEggMoves } from "#balance/egg-moves";
+import { modifierTypes } from "#data/data-lists";
+import { AbilityId } from "#enums/ability-id";
+import { BerryType } from "#enums/berry-type";
 import { BiomeId } from "#enums/biome-id";
-import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
+import { MoveId } from "#enums/move-id";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { Stat } from "#enums/stat";
+import type { BerryModifier } from "#modifiers/modifier";
+import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
+import { generateModifierType } from "#mystery-encounters/encounter-phase-utils";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import { UncommonBreedEncounter } from "#mystery-encounters/uncommon-breed-encounter";
+import { MovePhase } from "#phases/move-phase";
+import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
+import { StatStageChangePhase } from "#phases/stat-stage-change-phase";
 import {
   runMysteryEncounterToEnd,
   runSelectMysteryEncounterOption,
 } from "#test/mystery-encounter/encounter-test-utils";
-import { MoveId } from "#enums/move-id";
-import type BattleScene from "#app/battle-scene";
-import { PokemonMove } from "#app/data/moves/pokemon-move";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
-import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { generateModifierType } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
-import { CommandPhase } from "#app/phases/command-phase";
-import { UncommonBreedEncounter } from "#app/data/mystery-encounters/encounters/uncommon-breed-encounter";
-import { MovePhase } from "#app/phases/move-phase";
-import { speciesEggMoves } from "#app/data/balance/egg-moves";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { BerryType } from "#enums/berry-type";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
-import { Stat } from "#enums/stat";
-import type { BerryModifier } from "#app/modifier/modifier";
-import { modifierTypes } from "#app/data/data-lists";
-import { AbilityId } from "#enums/ability-id";
+import { GameManager } from "#test/test-utils/game-manager";
+import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/uncommonBreed";
 const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
@@ -62,8 +60,6 @@ describe("Uncommon Breed - Mystery Encounter", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {
@@ -123,7 +119,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       const enemyField = scene.getEnemyField();
-      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(game).toBeAtPhase("CommandPhase");
       expect(enemyField.length).toBe(1);
       expect(enemyField[0].species.speciesId).toBe(speciesToSpawn);
 
@@ -150,7 +146,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       const enemyField = scene.getEnemyField();
-      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(game).toBeAtPhase("CommandPhase");
       expect(enemyField.length).toBe(1);
       expect(enemyField[0].species.speciesId).toBe(speciesToSpawn);
 
@@ -174,7 +170,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.2.label`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.2.disabled_tooltip`,
+        disabledButtonTooltip: `${namespace}:option.2.disabledTooltip`,
         selected: [
           {
             text: `${namespace}:option.2.selected`,
@@ -202,7 +198,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 2);
 
-      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(game).toBeAtPhase("MysteryEncounterPhase");
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
@@ -216,11 +212,11 @@ describe("Uncommon Breed - Mystery Encounter", () => {
 
       // Berries on party lead
       const sitrus = generateModifierType(modifierTypes.BERRY, [BerryType.SITRUS])!;
-      const sitrusMod = sitrus.newModifier(scene.getPlayerParty()[0]) as BerryModifier;
+      const sitrusMod = sitrus.newModifier(game.field.getPlayerPokemon()) as BerryModifier;
       sitrusMod.stackCount = 2;
       scene.addModifier(sitrusMod, true, false, false, true);
       const ganlon = generateModifierType(modifierTypes.BERRY, [BerryType.GANLON])!;
-      const ganlonMod = ganlon.newModifier(scene.getPlayerParty()[0]) as BerryModifier;
+      const ganlonMod = ganlon.newModifier(game.field.getPlayerPokemon()) as BerryModifier;
       ganlonMod.stackCount = 3;
       scene.addModifier(ganlonMod, true, false, false, true);
       await scene.updateModifiers(true);
@@ -239,7 +235,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
+        disabledButtonTooltip: `${namespace}:option.3.disabledTooltip`,
         selected: [
           {
             text: `${namespace}:option.3.selected`,
@@ -262,7 +258,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 3);
 
-      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(game).toBeAtPhase("MysteryEncounterPhase");
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
@@ -272,7 +268,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);
       // Mock moveset
-      scene.getPlayerParty()[0].moveset = [new PokemonMove(MoveId.CHARM)];
+      game.move.changeMoveset(game.field.getPlayerPokemon(), MoveId.CHARM);
       await runMysteryEncounterToEnd(game, 3);
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();

@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
-import type { BattlerIndex } from "#enums/battler-index";
-import { PokemonPhase } from "./pokemon-phase";
 import { getPokemonNameWithAffix } from "#app/messages";
+import type { BattlerIndex } from "#enums/battler-index";
+import { PokemonPhase } from "#phases/pokemon-phase";
 
 export class ShowAbilityPhase extends PokemonPhase {
   public readonly phaseName = "ShowAbilityPhase";

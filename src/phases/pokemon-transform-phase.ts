@@ -1,11 +1,11 @@
+import { globalScene } from "#app/global-scene";
+import { getPokemonNameWithAffix } from "#app/messages";
 import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
-import { EFFECTIVE_STATS, BATTLE_STATS } from "#enums/stat";
-import { PokemonMove } from "#app/data/moves/pokemon-move";
-import { globalScene } from "#app/global-scene";
-import { PokemonPhase } from "./pokemon-phase";
-import { getPokemonNameWithAffix } from "#app/messages";
+import { BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
+import { PokemonMove } from "#moves/pokemon-move";
+import { PokemonPhase } from "#phases/pokemon-phase";
 import i18next from "i18next";
 
 /**
@@ -26,10 +26,11 @@ export class PokemonTransformPhase extends PokemonPhase {
 
   public override start(): void {
     const user = this.getPokemon();
-    const target = globalScene.getField(true).find(p => p.getBattlerIndex() === this.targetIndex);
+    const target = globalScene.getField()[this.targetIndex];
 
     if (!target) {
-      return this.end();
+      this.end();
+      return;
     }
 
     user.summonData.speciesForm = target.getSpeciesForm();
@@ -52,11 +53,13 @@ export class PokemonTransformPhase extends PokemonPhase {
     user.summonData.moveset = target.getMoveset().map(m => {
       if (m) {
         // If PP value is less than 5, do nothing. If greater, we need to reduce the value to 5.
-        return new PokemonMove(m.moveId, 0, 0, false, Math.min(m.getMove().pp, 5));
+        return new PokemonMove(m.moveId, 0, 0, Math.min(m.getMove().pp, 5));
       }
       console.warn(`Transform: somehow iterating over a ${m} value when copying moveset!`);
       return new PokemonMove(MoveId.NONE);
     });
+
+    // TODO: This should fallback to the target's original typing if none are left (from Burn Up, etc.)
     user.summonData.types = target.getTypes();
 
     const promises = [user.updateInfo()];

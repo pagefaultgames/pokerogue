@@ -1,5 +1,5 @@
+import { initMoveAnim, loadMoveAnimAssets } from "#data/battle-anims";
 import type { MoveId } from "#enums/move-id";
-import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
 
 /**
  * Asynchronously load the animations and assets for the provided moves.

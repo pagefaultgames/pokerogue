@@ -1,12 +1,13 @@
-import AbstractBindingUiHandler from "./abstract-binding-ui-handler";
-import type { UiMode } from "#enums/ui-mode";
-import { getKeyWithKeycode } from "#app/configs/inputs/configHandler";
-import { Device } from "#enums/devices";
-import { addTextObject, TextStyle } from "#app/ui/text";
 import { globalScene } from "#app/global-scene";
+import { Device } from "#enums/devices";
+import { TextStyle } from "#enums/text-style";
+import type { UiMode } from "#enums/ui-mode";
+import { getKeyWithKeycode } from "#inputs/config-handler";
+import { AbstractBindingUiHandler } from "#ui/abstract-binding-ui-handler";
+import { addTextObject } from "#ui/text";
 import i18next from "i18next";
 
-export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
+export class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
   constructor(mode: UiMode | null = null) {
     super(mode);
     // Listen to gamepad button down events to initiate binding.

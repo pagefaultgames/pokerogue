@@ -1,13 +1,16 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { allMoves } from "#app/data/data-lists";
-import type Pokemon from "#app/field/pokemon";
-import { MoveResult } from "#enums/move-result";
-import type { MovePhase } from "#app/phases/move-phase";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
+import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import GameManager from "#test/testUtils/gameManager";
+import type { Pokemon } from "#field/pokemon";
+import { RandomMoveAttr } from "#moves/move";
+import type { MovePhase } from "#phases/move-phase";
+import { GameManager } from "#test/test-utils/game-manager";
+import type { TurnMove } from "#types/turn-move";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -40,14 +43,14 @@ describe("Moves - Instruct", () => {
       .passiveAbility(AbilityId.NO_GUARD)
       .enemyLevel(100)
       .startingLevel(100)
-      .disableCrits();
+      .criticalHits(false);
   });
 
   it("should repeat target's last used move", async () => {
     game.override.moveset(MoveId.INSTRUCT).enemyLevel(1000); // ensures shuckle no die
     await game.classicMode.startBattle([SpeciesId.AMOONGUSS]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     game.move.changeMoveset(enemy, MoveId.SONIC_BOOM);
 
     game.move.select(MoveId.INSTRUCT);
@@ -57,7 +60,7 @@ describe("Moves - Instruct", () => {
     await game.phaseInterceptor.to("MovePhase"); // enemy attacks us
     await game.phaseInterceptor.to("MovePhase", false); // instruct
     let currentPhase = game.scene.phaseManager.getCurrentPhase() as MovePhase;
-    expect(currentPhase.pokemon).toBe(game.scene.getPlayerPokemon());
+    expect(currentPhase.pokemon).toBe(game.field.getPlayerPokemon());
     await game.phaseInterceptor.to("MoveEndPhase");
 
     await game.phaseInterceptor.to("MovePhase", false); // enemy repeats move
@@ -67,14 +70,14 @@ describe("Moves - Instruct", () => {
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
     instructSuccess(enemy, MoveId.SONIC_BOOM);
-    expect(game.scene.getPlayerPokemon()?.getInverseHp()).toBe(40);
+    expect(game.field.getPlayerPokemon().getInverseHp()).toBe(40);
   });
 
   it("should repeat enemy's move through substitute", async () => {
     game.override.moveset([MoveId.INSTRUCT, MoveId.SPLASH]);
     await game.classicMode.startBattle([SpeciesId.AMOONGUSS]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     game.move.changeMoveset(enemy, [MoveId.SONIC_BOOM, MoveId.SUBSTITUTE]);
 
     game.move.select(MoveId.SPLASH);
@@ -87,8 +90,8 @@ describe("Moves - Instruct", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
-    instructSuccess(game.scene.getEnemyPokemon()!, MoveId.SONIC_BOOM);
-    expect(game.scene.getPlayerPokemon()?.getInverseHp()).toBe(40);
+    instructSuccess(game.field.getEnemyPokemon(), MoveId.SONIC_BOOM);
+    expect(game.field.getPlayerPokemon().getInverseHp()).toBe(40);
   });
 
   it("should repeat ally's attack on enemy", async () => {
@@ -113,7 +116,7 @@ describe("Moves - Instruct", () => {
     game.override.moveset(MoveId.INSTRUCT).enemyLevel(5);
     await game.classicMode.startBattle([SpeciesId.AMOONGUSS]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     game.move.changeMoveset(enemy, [MoveId.GIGATON_HAMMER, MoveId.BLOOD_MOON]);
 
     game.move.select(MoveId.INSTRUCT);
@@ -121,7 +124,7 @@ describe("Moves - Instruct", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     instructSuccess(enemy, MoveId.GIGATON_HAMMER);
-    expect(game.scene.getPlayerPokemon()!.turnData.attacksReceived.length).toBe(2);
+    expect(game.field.getPlayerPokemon().turnData.attacksReceived.length).toBe(2);
   });
 
   it("should add moves to move queue for copycat", async () => {
@@ -138,7 +141,22 @@ describe("Moves - Instruct", () => {
 
     instructSuccess(enemy1, MoveId.WATER_GUN);
     // amoonguss gets hit by water gun thrice; once by original attack, once by instructed use and once by copycat
-    expect(game.scene.getPlayerPokemon()!.turnData.attacksReceived.length).toBe(3);
+    expect(game.field.getPlayerPokemon().turnData.attacksReceived.length).toBe(3);
+  });
+
+  it("should fail on metronomed moves, even if also in moveset", async () => {
+    vi.spyOn(RandomMoveAttr.prototype, "getMoveOverride").mockReturnValue(MoveId.ABSORB);
+    await game.classicMode.startBattle([SpeciesId.AMOONGUSS]);
+
+    const enemy = game.field.getEnemyPokemon();
+    game.move.changeMoveset(enemy, [MoveId.METRONOME, MoveId.ABSORB]);
+
+    game.move.use(MoveId.INSTRUCT);
+    await game.move.selectEnemyMove(MoveId.METRONOME);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.toEndOfTurn();
+
+    expect(game.field.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 
   it("should respect enemy's status condition", async () => {
@@ -152,21 +170,21 @@ describe("Moves - Instruct", () => {
     game.move.select(MoveId.INSTRUCT);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MovePhase");
-    // force enemy's instructed move to bork and then immediately thaw out
+    // force enemy's instructed move (and only the instructed move) to fail
     await game.move.forceStatusActivation(true);
     await game.move.forceStatusActivation(false);
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
-    const moveHistory = game.scene.getEnemyPokemon()?.getLastXMoves(-1)!;
+    const moveHistory = game.field.getEnemyPokemon().getLastXMoves(-1)!;
     expect(moveHistory.map(m => m.move)).toEqual([MoveId.SONIC_BOOM, MoveId.NONE, MoveId.SONIC_BOOM]);
-    expect(game.scene.getPlayerPokemon()?.getInverseHp()).toBe(40);
+    expect(game.field.getPlayerPokemon().getInverseHp()).toBe(40);
   });
 
   it("should not repeat enemy's out of pp move", async () => {
     game.override.moveset(MoveId.INSTRUCT).enemySpecies(SpeciesId.UNOWN);
     await game.classicMode.startBattle([SpeciesId.AMOONGUSS]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     game.move.changeMoveset(enemyPokemon, MoveId.HIDDEN_POWER);
     const moveUsed = enemyPokemon.moveset.find(m => m?.moveId === MoveId.HIDDEN_POWER)!;
     moveUsed.ppUsed = moveUsed.getMovePp() - 1;
@@ -176,7 +194,7 @@ describe("Moves - Instruct", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
-    const playerMoves = game.scene.getPlayerPokemon()!.getLastXMoves(-1)!;
+    const playerMoves = game.field.getPlayerPokemon().getLastXMoves(-1);
     expect(playerMoves[0].result).toBe(MoveResult.FAIL);
     expect(enemyPokemon.getMoveHistory().length).toBe(1);
   });
@@ -185,24 +203,36 @@ describe("Moves - Instruct", () => {
     game.override.battleStyle("double").enemyMoveset(MoveId.SPLASH).enemySpecies(SpeciesId.MAGIKARP).enemyLevel(1);
     await game.classicMode.startBattle([SpeciesId.HISUI_ELECTRODE, SpeciesId.KOMMO_O]);
 
-    const [electrode, kommo_o] = game.scene.getPlayerField()!;
-    game.move.changeMoveset(electrode, MoveId.CHLOROBLAST);
+    const [electrode, kommo_o] = game.scene.getPlayerField();
+    game.move.changeMoveset(electrode, MoveId.THUNDERBOLT);
     game.move.changeMoveset(kommo_o, MoveId.INSTRUCT);
 
-    game.move.select(MoveId.CHLOROBLAST, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.select(MoveId.THUNDERBOLT, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.select(MoveId.INSTRUCT, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
-    await game.phaseInterceptor.to("BerryPhase");
+    await game.toEndOfTurn();
 
-    // Chloroblast always deals 50% max HP% recoil UNLESS you whiff
-    // due to lack of targets or similar,
-    // so all we have to do is check whether electrode fainted or not.
-    // Naturally, both karps should also be dead as well.
-    expect(electrode.isFainted()).toBe(true);
-    const [karp1, karp2] = game.scene.getEnemyField()!;
+    expect(electrode.getMoveHistory()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining<TurnMove>({
+          result: MoveResult.SUCCESS,
+          move: MoveId.THUNDERBOLT,
+          targets: [BattlerIndex.ENEMY],
+          useMode: MoveUseMode.NORMAL,
+        }),
+        expect.objectContaining<TurnMove>({
+          result: MoveResult.SUCCESS,
+          move: MoveId.THUNDERBOLT,
+          targets: [BattlerIndex.ENEMY_2],
+          useMode: MoveUseMode.NORMAL,
+        }),
+      ]),
+    );
+    const [karp1, karp2] = game.scene.getEnemyField();
     expect(karp1.isFainted()).toBe(true);
     expect(karp2.isFainted()).toBe(true);
   });
+
   it("should allow for dancer copying of instructed dance move", async () => {
     game.override.battleStyle("double").enemyMoveset([MoveId.INSTRUCT, MoveId.SPLASH]).enemyLevel(1000);
     await game.classicMode.startBattle([SpeciesId.ORICORIO, SpeciesId.VOLCARONA]);
@@ -228,22 +258,21 @@ describe("Moves - Instruct", () => {
     game.override.enemyMoveset(MoveId.INSTRUCT).enemySpecies(SpeciesId.UNOWN);
     await game.classicMode.startBattle([SpeciesId.AMOONGUSS, SpeciesId.TOXICROAK]);
 
-    const amoonguss = game.scene.getPlayerPokemon()!;
+    const amoonguss = game.field.getPlayerPokemon();
     game.move.changeMoveset(amoonguss, MoveId.SEED_BOMB);
 
-    amoonguss.summonData.moveHistory = [
-      {
-        move: MoveId.SEED_BOMB,
-        targets: [BattlerIndex.ENEMY],
-        result: MoveResult.SUCCESS,
-      },
-    ];
+    amoonguss.pushMoveHistory({
+      move: MoveId.SEED_BOMB,
+      targets: [BattlerIndex.ENEMY],
+      result: MoveResult.SUCCESS,
+      useMode: MoveUseMode.NORMAL,
+    });
 
     game.doSwitchPokemon(1);
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
-    const enemyMoves = game.scene.getEnemyPokemon()!.getLastXMoves(-1)!;
-    expect(enemyMoves[0].result).toBe(MoveResult.FAIL);
+    const enemyMoves = game.field.getEnemyPokemon().getLastXMoves(-1);
+    expect(enemyMoves[0]?.result).toBe(MoveResult.FAIL);
   });
 
   it("should fail if no move has yet been used by target", async () => {
@@ -255,7 +284,7 @@ describe("Moves - Instruct", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
-    expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(game.field.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 
   it("should attempt to call enemy's disabled move, but move use itself should fail", async () => {
@@ -272,22 +301,16 @@ describe("Moves - Instruct", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
-    expect(game.scene.getPlayerField()[0].getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-    const enemyMove = game.scene.getEnemyField()[0]!.getLastXMoves()[0];
-    expect(enemyMove.result).toBe(MoveResult.FAIL);
-    expect(
-      game.scene
-        .getEnemyField()[0]
-        .getMoveset()
-        .find(m => m?.moveId === MoveId.SONIC_BOOM)?.ppUsed,
-    ).toBe(1);
+    expect(game.field.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(enemy1.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(enemy1.getMoveset().find(m => m.moveId === MoveId.SONIC_BOOM)?.ppUsed).toBe(1);
   });
 
   it("should not repeat enemy's move through protect", async () => {
     game.override.moveset([MoveId.INSTRUCT]);
     await game.classicMode.startBattle([SpeciesId.AMOONGUSS]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     game.move.changeMoveset(enemy, MoveId.PROTECT);
     game.move.select(MoveId.INSTRUCT);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -302,16 +325,14 @@ describe("Moves - Instruct", () => {
     game.override.moveset([MoveId.INSTRUCT]).enemyMoveset([MoveId.SONIC_BOOM, MoveId.HYPER_BEAM]);
     await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
-    enemy.summonData.moveHistory = [
-      {
-        move: MoveId.SONIC_BOOM,
-        targets: [BattlerIndex.PLAYER],
-        result: MoveResult.SUCCESS,
-        virtual: false,
-      },
-    ];
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
+    enemy.pushMoveHistory({
+      move: MoveId.SONIC_BOOM,
+      targets: [BattlerIndex.PLAYER],
+      result: MoveResult.SUCCESS,
+      useMode: MoveUseMode.NORMAL,
+    });
 
     game.move.select(MoveId.INSTRUCT);
     await game.move.selectEnemyMove(MoveId.HYPER_BEAM);
@@ -332,15 +353,15 @@ describe("Moves - Instruct", () => {
     game.override.enemyMoveset(MoveId.INSTRUCT);
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
 
-    const regieleki = game.scene.getPlayerPokemon()!;
+    const regieleki = game.field.getPlayerPokemon();
     regieleki.pushMoveHistory({
       move: MoveId.ELECTRO_DRIFT,
       targets: [BattlerIndex.PLAYER],
       result: MoveResult.SUCCESS,
-      virtual: false,
+      useMode: MoveUseMode.NORMAL,
     });
 
-    game.move.select(MoveId.SPLASH);
+    game.move.use(MoveId.SPLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toEndOfTurn();
     expect(game.field.getEnemyPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);
@@ -350,15 +371,13 @@ describe("Moves - Instruct", () => {
     game.override.enemyMoveset([MoveId.SPLASH, MoveId.WHIRLWIND]).moveset(MoveId.INSTRUCT);
     await game.classicMode.startBattle([SpeciesId.LUCARIO, SpeciesId.BANETTE]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
-    enemyPokemon.summonData.moveHistory = [
-      {
-        move: MoveId.WHIRLWIND,
-        targets: [BattlerIndex.PLAYER],
-        result: MoveResult.SUCCESS,
-        virtual: false,
-      },
-    ];
+    const enemyPokemon = game.field.getEnemyPokemon();
+    enemyPokemon.pushMoveHistory({
+      move: MoveId.WHIRLWIND,
+      targets: [BattlerIndex.PLAYER],
+      result: MoveResult.SUCCESS,
+      useMode: MoveUseMode.NORMAL,
+    });
 
     game.move.select(MoveId.INSTRUCT);
     await game.move.selectEnemyMove(MoveId.SPLASH);
@@ -368,7 +387,7 @@ describe("Moves - Instruct", () => {
     const instructedMove = enemyPokemon.getLastXMoves(-1)[1];
     expect(instructedMove.result).toBe(MoveResult.SUCCESS);
     expect(instructedMove.move).toBe(MoveId.WHIRLWIND);
-    expect(game.scene.getPlayerPokemon()?.species.speciesId).toBe(SpeciesId.BANETTE);
+    expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.BANETTE);
   });
 
   it("should respect moves' original priority for psychic terrain", async () => {
@@ -378,11 +397,20 @@ describe("Moves - Instruct", () => {
       .enemyMoveset([MoveId.SPLASH, MoveId.PSYCHIC_TERRAIN]);
     await game.classicMode.startBattle([SpeciesId.BANETTE, SpeciesId.KLEFKI]);
 
-    game.move.select(MoveId.QUICK_ATTACK, BattlerIndex.PLAYER, BattlerIndex.ENEMY); // succeeds due to terrain no
+    const banette = game.field.getPlayerPokemon();
+
+    game.move.select(MoveId.QUICK_ATTACK, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.PSYCHIC_TERRAIN);
     await game.toNextTurn();
+    expect(banette.getLastXMoves(-1)[0]).toEqual(
+      expect.objectContaining({
+        move: MoveId.QUICK_ATTACK,
+        targets: [BattlerIndex.ENEMY],
+        result: MoveResult.SUCCESS,
+      }),
+    );
 
     game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER);
     game.move.select(MoveId.INSTRUCT, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER);
@@ -390,32 +418,74 @@ describe("Moves - Instruct", () => {
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
     // quick attack failed when instructed
-    const banette = game.scene.getPlayerPokemon()!;
     expect(banette.getLastXMoves(-1)[1].move).toBe(MoveId.QUICK_ATTACK);
     expect(banette.getLastXMoves(-1)[1].result).toBe(MoveResult.FAIL);
   });
 
-  it("should still work w/ prankster in psychic terrain", async () => {
-    game.override.battleStyle("double").enemyMoveset([MoveId.SPLASH, MoveId.PSYCHIC_TERRAIN]);
+  // TODO: Enable once Sky Drop is fully implemented
+  it.todo("should not work against Sky Dropped targets, even if user/target have No Guard", async () => {
+    game.override.battleStyle("double").ability(AbilityId.NO_GUARD);
     await game.classicMode.startBattle([SpeciesId.BANETTE, SpeciesId.KLEFKI]);
 
-    const [banette, klefki] = game.scene.getPlayerField()!;
-    game.move.changeMoveset(banette, [MoveId.VINE_WHIP, MoveId.SPLASH]);
-    game.move.changeMoveset(klefki, [MoveId.INSTRUCT, MoveId.SPLASH]);
+    const [banette, klefki] = game.scene.getPlayerField();
+    banette.pushMoveHistory({
+      move: MoveId.VINE_WHIP,
+      targets: [BattlerIndex.ENEMY],
+      result: MoveResult.SUCCESS,
+      useMode: MoveUseMode.NORMAL,
+    });
 
-    game.move.select(MoveId.VINE_WHIP, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
-    await game.move.selectEnemyMove(MoveId.SPLASH);
-    await game.move.selectEnemyMove(MoveId.PSYCHIC_TERRAIN);
-    await game.toNextTurn();
+    // Attempt to instruct banette after having been sent airborne
+    game.move.use(MoveId.VINE_WHIP, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.use(MoveId.INSTRUCT, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER);
+    await game.move.forceEnemyMove(MoveId.SKY_DROP, BattlerIndex.PLAYER);
+    await game.move.forceEnemyMove(MoveId.ASTONISH, BattlerIndex.PLAYER);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2]);
+    await game.phaseInterceptor.to("TurnEndPhase", false);
 
-    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER);
+    // Klefki instruct fails due to banette being airborne, even though it got hit prior
+    expect(banette.visible).toBe(false);
+    expect(banette.isFullHp()).toBe(false);
+    expect(klefki.getLastXMoves()[0]).toMatchObject({
+      move: MoveId.INSTRUCT,
+      targets: [BattlerIndex.PLAYER],
+      result: MoveResult.FAIL,
+    });
+  });
+
+  it("should still work with prankster in psychic terrain", async () => {
+    game.override
+      .battleStyle("double")
+      .ability(AbilityId.PRANKSTER)
+      .enemyMoveset(MoveId.SPLASH)
+      .enemyAbility(AbilityId.PSYCHIC_SURGE);
+    await game.classicMode.startBattle([SpeciesId.BANETTE, SpeciesId.KLEFKI]);
+
+    const [banette, klefki] = game.scene.getPlayerField();
+    game.move.changeMoveset(banette, [MoveId.VINE_WHIP]);
+    game.move.changeMoveset(klefki, MoveId.INSTRUCT);
+    banette.pushMoveHistory({
+      move: MoveId.VINE_WHIP,
+      targets: [BattlerIndex.ENEMY],
+      result: MoveResult.SUCCESS,
+      useMode: MoveUseMode.NORMAL,
+    });
+
+    game.move.select(MoveId.VINE_WHIP, BattlerIndex.PLAYER);
     game.move.select(MoveId.INSTRUCT, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER); // copies vine whip
     await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("TurnEndPhase", false);
+
+    // Klefki instructing a non-priority move succeeds, ignoring the priority of Instruct itself
     expect(banette.getLastXMoves(-1)[1].move).toBe(MoveId.VINE_WHIP);
     expect(banette.getLastXMoves(-1)[2].move).toBe(MoveId.VINE_WHIP);
-    expect(banette.getMoveset().find(m => m?.moveId === MoveId.VINE_WHIP)?.ppUsed).toBe(2);
+    expect(klefki.getLastXMoves(-1)[0]).toEqual(
+      expect.objectContaining({
+        move: MoveId.INSTRUCT,
+        targets: [BattlerIndex.PLAYER],
+        result: MoveResult.SUCCESS,
+      }),
+    );
   });
 
   it("should cause spread moves to correctly hit targets in doubles after singles", async () => {
@@ -424,14 +494,15 @@ describe("Moves - Instruct", () => {
       .moveset([MoveId.BREAKING_SWIPE, MoveId.INSTRUCT, MoveId.SPLASH])
       .enemyMoveset(MoveId.SONIC_BOOM)
       .enemySpecies(SpeciesId.AXEW)
-      .startingLevel(500);
+      .startingLevel(500)
+      .enemyLevel(1);
     await game.classicMode.startBattle([SpeciesId.KORAIDON, SpeciesId.KLEFKI]);
 
-    const koraidon = game.scene.getPlayerField()[0]!;
+    const koraidon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.BREAKING_SWIPE);
     await game.phaseInterceptor.to("TurnEndPhase", false);
-    expect(koraidon.getInverseHp()).toBe(0);
+    expect(koraidon.hp).toBe(koraidon.getMaxHp());
     expect(koraidon.getLastXMoves(-1)[0].targets).toEqual([BattlerIndex.ENEMY]);
     await game.toNextWave();
 
@@ -439,9 +510,10 @@ describe("Moves - Instruct", () => {
     game.move.select(MoveId.INSTRUCT, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER);
     await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("TurnEndPhase", false);
+
     // did not take damage since enemies died beforehand;
     // last move used hit both enemies
-    expect(koraidon.getInverseHp()).toBe(0);
+    expect(koraidon.hp).toBe(koraidon.getMaxHp());
     expect(koraidon.getLastXMoves(-1)[1].targets?.sort()).toEqual([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
   });
 
@@ -451,30 +523,33 @@ describe("Moves - Instruct", () => {
       .moveset([MoveId.BRUTAL_SWING, MoveId.INSTRUCT, MoveId.SPLASH])
       .enemySpecies(SpeciesId.AXEW)
       .enemyMoveset(MoveId.SONIC_BOOM)
-      .startingLevel(500);
+      .startingLevel(500)
+      .enemyLevel(1);
     await game.classicMode.startBattle([SpeciesId.KORAIDON, SpeciesId.KLEFKI]);
 
-    const koraidon = game.scene.getPlayerField()[0]!;
+    const koraidon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.BRUTAL_SWING);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("TurnEndPhase", false);
-    expect(koraidon.getInverseHp()).toBe(0);
+
+    expect(koraidon.hp).toBe(koraidon.getMaxHp());
     expect(koraidon.getLastXMoves(-1)[0].targets).toEqual([BattlerIndex.ENEMY]);
+
     await game.toNextWave();
 
     game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER);
     game.move.select(MoveId.INSTRUCT, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER);
     await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("TurnEndPhase", false);
+
     // did not take damage since enemies died beforehand;
     // last move used hit everything around it
-    expect(koraidon.getInverseHp()).toBe(0);
-    expect(koraidon.getLastXMoves(-1)[1].targets?.sort()).toEqual([
-      BattlerIndex.PLAYER_2,
-      BattlerIndex.ENEMY,
-      BattlerIndex.ENEMY_2,
-    ]);
+    expect(koraidon.hp).toBe(koraidon.getMaxHp());
+    expect(koraidon.getLastXMoves(-1)[1].targets).toHaveLength(3);
+    expect(koraidon.getLastXMoves(-1)[1].targets).toEqual(
+      expect.arrayContaining([BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]),
+    );
   });
 
   it("should cause multi-hit moves to hit the appropriate number of times in singles", async () => {
@@ -484,7 +559,7 @@ describe("Moves - Instruct", () => {
       .enemyMoveset(MoveId.BULLET_SEED);
     await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
-    const bulbasaur = game.scene.getPlayerPokemon()!;
+    const bulbasaur = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
@@ -512,7 +587,7 @@ describe("Moves - Instruct", () => {
       .enemyLevel(5);
     await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.IVYSAUR]);
 
-    const [, ivysaur] = game.scene.getPlayerField();
+    const ivysaur = game.scene.getPlayerField()[1];
 
     game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER);
     game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
@@ -547,7 +622,12 @@ describe("Moves - Instruct", () => {
 
     // Fake enemy 1 having attacked prior
     const [, player2, enemy1, enemy2] = game.scene.getField();
-    enemy1.pushMoveHistory({ move: MoveId.ABSORB, targets: [BattlerIndex.PLAYER] });
+    enemy1.pushMoveHistory({
+      move: MoveId.ABSORB,
+      targets: [BattlerIndex.PLAYER],
+      result: MoveResult.SUCCESS,
+      useMode: MoveUseMode.NORMAL,
+    });
     game.field.mockAbility(enemy1, AbilityId.STEADFAST);
 
     game.move.use(MoveId.AIR_SLASH, BattlerIndex.PLAYER, BattlerIndex.ENEMY);

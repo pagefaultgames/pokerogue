@@ -1,11 +1,11 @@
 import { globalScene } from "#app/global-scene";
-import { BattleStyle } from "#app/enums/battle-style";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { UiMode } from "#enums/ui-mode";
-import i18next from "i18next";
-import { BattlePhase } from "./battle-phase";
+import { BattleStyle } from "#enums/battle-style";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { SwitchType } from "#enums/switch-type";
+import { UiMode } from "#enums/ui-mode";
+import { BattlePhase } from "#phases/battle-phase";
+import i18next from "i18next";
 
 export class CheckSwitchPhase extends BattlePhase {
   public readonly phaseName = "CheckSwitchPhase";
@@ -28,7 +28,8 @@ export class CheckSwitchPhase extends BattlePhase {
 
     // ...if the user is playing in Set Mode
     if (globalScene.battleStyle === BattleStyle.SET) {
-      return super.end();
+      this.end(true);
+      return;
     }
 
     // ...if the checked Pokemon is somehow not on the field
@@ -39,21 +40,23 @@ export class CheckSwitchPhase extends BattlePhase {
 
     // ...if there are no other allowed Pokemon in the player's party to switch with
     if (
-      !globalScene
+      globalScene
         .getPlayerParty()
         .slice(1)
-        .filter(p => p.isActive()).length
+        .filter(p => p.isActive()).length === 0
     ) {
-      return super.end();
+      this.end(true);
+      return;
     }
 
     // ...or if any player Pokemon has an effect that prevents the checked Pokemon from switching
     if (
-      pokemon.getTag(BattlerTagType.FRENZY) ||
-      pokemon.isTrapped() ||
-      globalScene.getPlayerField().some(p => p.getTag(BattlerTagType.COMMANDED))
+      pokemon.getTag(BattlerTagType.FRENZY)
+      || pokemon.isTrapped()
+      || globalScene.getPlayerField().some(p => p.getTag(BattlerTagType.COMMANDED))
     ) {
-      return super.end();
+      this.end(true);
+      return;
     }
 
     globalScene.ui.showText(
@@ -71,10 +74,17 @@ export class CheckSwitchPhase extends BattlePhase {
           },
           () => {
             globalScene.ui.setMode(UiMode.MESSAGE);
-            this.end();
+            this.end(true);
           },
         );
       },
     );
+  }
+
+  public override end(queuePostSummon = false): void {
+    if (queuePostSummon) {
+      globalScene.phaseManager.unshiftNew("PostSummonPhase", this.fieldIndex);
+    }
+    super.end();
   }
 }

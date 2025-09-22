@@ -1,0 +1,29 @@
+# Base settings to use
+# Note that the `_cfg` key isn't part of ls-lint's configuration, it's just a YAML anchor for reuse.
+_cfg: &cfg
+   .ps1: kebab-case
+   .ts: kebab-case
+   .js: kebab-case
+   .*.ts: kebab-case
+   .*.js: kebab-case
+   .dir: kebab-case
+   .py: snake_case # python files should always use snake_case
+
+ls:
+   <<: *cfg
+   src: &src
+      <<: *cfg
+      .dir: kebab-case | regex:@types
+      .js: exists:0
+   src/system/version-migration/versions:
+      .ts: snake_case
+      <<: *cfg
+   test: *src
+ignore:
+   - node_modules
+   - .vscode
+   - .github
+   - .git
+   - public
+   - dist
+   - .devcontainer

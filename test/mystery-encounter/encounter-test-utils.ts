@@ -1,24 +1,22 @@
-// biome-ignore lint/style/noNamespaceImport: Necessary for mocks
-import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { Status } from "#app/data/status-effect";
-import { CommandPhase } from "#app/phases/command-phase";
-import { MessagePhase } from "#app/phases/message-phase";
+import { Status } from "#data/status-effect";
+import { Button } from "#enums/buttons";
+import { StatusEffect } from "#enums/status-effect";
+import { UiMode } from "#enums/ui-mode";
+// biome-ignore lint/performance/noNamespaceImport: Necessary for mocks
+import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
+import { CommandPhase } from "#phases/command-phase";
+import { MessagePhase } from "#phases/message-phase";
 import {
   MysteryEncounterBattlePhase,
   MysteryEncounterOptionSelectedPhase,
-  MysteryEncounterPhase,
   MysteryEncounterRewardsPhase,
-} from "#app/phases/mystery-encounter-phases";
-import { VictoryPhase } from "#app/phases/victory-phase";
-import type MessageUiHandler from "#app/ui/message-ui-handler";
-import type MysteryEncounterUiHandler from "#app/ui/mystery-encounter-ui-handler";
-import type PartyUiHandler from "#app/ui/party-ui-handler";
-import type OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
-import { UiMode } from "#enums/ui-mode";
-import { isNullOrUndefined } from "#app/utils/common";
-import { Button } from "#enums/buttons";
-import { StatusEffect } from "#enums/status-effect";
-import type GameManager from "#test/testUtils/gameManager";
+} from "#phases/mystery-encounter-phases";
+import { VictoryPhase } from "#phases/victory-phase";
+import type { GameManager } from "#test/test-utils/game-manager";
+import type { MessageUiHandler } from "#ui/message-ui-handler";
+import type { MysteryEncounterUiHandler } from "#ui/mystery-encounter-ui-handler";
+import type { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
+import type { PartyUiHandler } from "#ui/party-ui-handler";
 import { expect, vi } from "vitest";
 
 /**
@@ -72,7 +70,6 @@ export async function runMysteryEncounterToEnd(
     // If a battle is started, fast forward to end of the battle
     game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
       game.scene.phaseManager.clearPhaseQueue();
-      game.scene.phaseManager.clearPhaseQueueSplice();
       game.scene.phaseManager.unshiftPhase(new VictoryPhase(0));
       game.endPhase();
     });
@@ -89,9 +86,9 @@ export async function runMysteryEncounterToEnd(
       uiHandler.processInput(Button.ACTION);
     });
 
-    await game.phaseInterceptor.to(CommandPhase);
+    await game.toNextTurn();
   } else {
-    await game.phaseInterceptor.to(MysteryEncounterRewardsPhase);
+    await game.phaseInterceptor.to("MysteryEncounterRewardsPhase");
   }
 }
 
@@ -112,7 +109,7 @@ export async function runSelectMysteryEncounterOption(
   );
 
   if (game.isCurrentPhase(MessagePhase)) {
-    await game.phaseInterceptor.run(MessagePhase);
+    await game.phaseInterceptor.to("MessagePhase");
   }
 
   // dispose of intro messages
@@ -126,7 +123,7 @@ export async function runSelectMysteryEncounterOption(
     () => game.isCurrentPhase(MysteryEncounterOptionSelectedPhase),
   );
 
-  await game.phaseInterceptor.to(MysteryEncounterPhase, true);
+  await game.phaseInterceptor.to("MysteryEncounterPhase", true);
 
   // select the desired option
   const uiHandler = game.scene.ui.getHandler<MysteryEncounterUiHandler>();
@@ -148,7 +145,7 @@ export async function runSelectMysteryEncounterOption(
       break;
   }
 
-  if (!isNullOrUndefined(secondaryOptionSelect?.pokemonNo)) {
+  if (secondaryOptionSelect?.pokemonNo != null) {
     await handleSecondaryOptionSelect(game, secondaryOptionSelect.pokemonNo, secondaryOptionSelect.optionNo);
   } else {
     uiHandler.processInput(Button.ACTION);
@@ -175,7 +172,7 @@ async function handleSecondaryOptionSelect(game: GameManager, pokemonNo: number,
   partyUiHandler.processInput(Button.ACTION);
 
   // If there is a second choice to make after selecting a Pokemon
-  if (!isNullOrUndefined(optionNo)) {
+  if (optionNo != null) {
     // Wait for Summary menu to close and second options to spawn
     const secondOptionUiHandler = game.scene.ui.handlers[UiMode.OPTION_SELECT] as OptionSelectUiHandler;
     vi.spyOn(secondOptionUiHandler, "show");
@@ -198,14 +195,13 @@ async function handleSecondaryOptionSelect(game: GameManager, pokemonNo: number,
  */
 export async function skipBattleRunMysteryEncounterRewardsPhase(game: GameManager, runRewardsPhase = true) {
   game.scene.phaseManager.clearPhaseQueue();
-  game.scene.phaseManager.clearPhaseQueueSplice();
   game.scene.getEnemyParty().forEach(p => {
     p.hp = 0;
     p.status = new Status(StatusEffect.FAINT);
     game.scene.field.remove(p);
   });
   game.scene.phaseManager.pushPhase(new VictoryPhase(0));
-  game.phaseInterceptor.superEndPhase();
+  game.endPhase();
   game.setMode(UiMode.MESSAGE);
-  await game.phaseInterceptor.to(MysteryEncounterRewardsPhase, runRewardsPhase);
+  await game.phaseInterceptor.to("MysteryEncounterRewardsPhase", runRewardsPhase);
 }

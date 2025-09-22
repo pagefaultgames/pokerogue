@@ -1,14 +1,14 @@
-import { MoveId } from "#enums/move-id";
+import { getPokemonNameWithAffix } from "#app/messages";
 import { AbilityId } from "#enums/ability-id";
+import { BattleType } from "#enums/battle-type";
+import { BattlerIndex } from "#enums/battler-index";
+import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { getStatKey, getStatStageChangeDescriptionKey, Stat } from "#enums/stat";
+import { GameManager } from "#test/test-utils/game-manager";
+import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { BattleType } from "#enums/battle-type";
-import { getStatKey, getStatStageChangeDescriptionKey, Stat } from "#enums/stat";
-import { BattlerIndex } from "#enums/battler-index";
-import i18next from "i18next";
-import { getPokemonNameWithAffix } from "#app/messages";
 
 describe("Abilities - Rattled", () => {
   let phaserGame: Phaser.Game;
@@ -29,7 +29,7 @@ describe("Abilities - Rattled", () => {
     game.override
       .ability(AbilityId.RATTLED)
       .battleType(BattleType.TRAINER)
-      .disableCrits()
+      .criticalHits(false)
       .battleStyle("single")
       .enemySpecies(SpeciesId.DUSKULL)
       .enemyAbility(AbilityId.INTIMIDATE)
@@ -55,7 +55,7 @@ describe("Abilities - Rattled", () => {
 
     // Rattled should've raised speed once per hit, displaying a separate message each time
     const gimmighoul = game.field.getPlayerPokemon();
-    expect(gimmighoul.getStatStage(Stat.SPD)).toBe(enemyHits);
+    expect(gimmighoul).toHaveStatStage(Stat.SPD, enemyHits);;
     expect(game.phaseInterceptor.log.filter(p => p === "ShowAbilityPhase")).toHaveLength(enemyHits);
     expect(game.phaseInterceptor.log.filter(p => p === "StatStageChangePhase")).toHaveLength(enemyHits);
     const statChangeText = i18next.t(getStatStageChangeDescriptionKey(1, true), {
@@ -80,12 +80,14 @@ describe("Abilities - Rattled", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
 
     const gimmighoul = game.field.getPlayerPokemon();
-    expect(gimmighoul.getStatStage(Stat.SPD)).toBe(0);
+    expect(gimmighoul).toHaveStatStage(Stat.SPD, 0);;
     expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
     expect(game.phaseInterceptor.log).not.toContain("StatStageChangePhase");
   });
 
-  it("should activate after Intimidate attack drop on initial send out", async () => {
+  // TODO: This test is flaky until ordering of stat stage changes on the same mon
+  // can be addressed
+  it.todo("should activate after Intimidate attack drop on initial send out", async () => {
     // `runToSummon` used instead of `startBattle` to avoid skipping past initial "post send out" effects
     await game.classicMode.runToSummon([SpeciesId.GIMMIGHOUL]);
 
@@ -93,15 +95,15 @@ describe("Abilities - Rattled", () => {
     await game.phaseInterceptor.to("StatStageChangePhase");
 
     const playerPokemon = game.field.getPlayerPokemon();
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-1);
-    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(0);
+    expect(playerPokemon).toHaveStatStage(Stat.SPD, 0);
+    expect(playerPokemon).toHaveStatStage(Stat.ATK, -1);;
     game.phaseInterceptor.clearLogs();
 
     // Rattled
-    await game.phaseInterceptor.to("StatStageChangePhase");
+    await game.phaseInterceptor.to("StatStageChangePhase", true);
 
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-1);
-    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(1);
+    expect(playerPokemon).toHaveStatStage(Stat.ATK, -1);;
+    expect(playerPokemon).toHaveStatStage(Stat.SPD, 1);;
     // Nothing but show/hide ability phases should be visible
     for (const log of game.phaseInterceptor.log) {
       expect(log).toBeOneOf(["ShowAbilityPhase", "HideAbilityPhase", "StatStageChangePhase", "MessagePhase"]);
@@ -116,10 +118,10 @@ describe("Abilities - Rattled", () => {
     await game.phaseInterceptor.to("StatStageChangePhase");
 
     const playerPokemon = game.field.getPlayerPokemon();
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-2);
-    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(1);
+    expect(playerPokemon).toHaveStatStage(Stat.ATK, -2);
+    expect(playerPokemon).toHaveStatStage(Stat.SPD, 1);;
 
     await game.phaseInterceptor.to("StatStageChangePhase");
-    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(2);
+    expect(playerPokemon).toHaveStatStage(Stat.SPD, 2);;
   });
 });

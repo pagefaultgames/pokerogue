@@ -1,10 +1,10 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { allAbilities } from "#app/data/data-lists";
+import { allAbilities } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { StatusEffect } from "#app/enums/status-effect";
-import GameManager from "#test/testUtils/gameManager";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import { StatusEffect } from "#enums/status-effect";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -37,7 +37,7 @@ describe("Moves - Safeguard", () => {
 
   it("protects from damaging moves with additional effects", async () => {
     await game.classicMode.startBattle();
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.NUZZLE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -48,7 +48,7 @@ describe("Moves - Safeguard", () => {
 
   it("protects from status moves", async () => {
     await game.classicMode.startBattle();
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.SPORE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -60,7 +60,7 @@ describe("Moves - Safeguard", () => {
   it("protects from confusion", async () => {
     game.override.moveset([MoveId.CONFUSE_RAY]);
     await game.classicMode.startBattle();
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.CONFUSE_RAY);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -89,7 +89,7 @@ describe("Moves - Safeguard", () => {
 
   it("protects from Yawn", async () => {
     await game.classicMode.startBattle();
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.YAWN);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -100,7 +100,7 @@ describe("Moves - Safeguard", () => {
 
   it("doesn't protect from already existing Yawn", async () => {
     await game.classicMode.startBattle();
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.YAWN);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -109,49 +109,49 @@ describe("Moves - Safeguard", () => {
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(enemyPokemon.status?.effect).toEqual(StatusEffect.SLEEP);
+    expect(enemyPokemon.status?.effect).toBe(StatusEffect.SLEEP);
   });
 
-  it("doesn't protect from self-inflicted via Rest or Flame Orb", async () => {
+  it("doesn't protect from self-inflicted status from Rest or Flame Orb", async () => {
     game.override.enemyHeldItems([{ name: "FLAME_ORB" }]);
     await game.classicMode.startBattle();
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
+    enemyPokemon.hp = 1;
 
     game.move.select(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.move.forceEnemyMove(MoveId.SAFEGUARD);
     await game.toNextTurn();
-    enemyPokemon.damageAndUpdate(1);
 
-    expect(enemyPokemon.status?.effect).toEqual(StatusEffect.BURN);
+    expect(enemyPokemon.status?.effect).toBe(StatusEffect.BURN);
 
-    game.override.enemyMoveset([MoveId.REST]);
-    // Force the moveset to update mid-battle
-    // TODO: Remove after enemy AI rework is in
-    enemyPokemon.getMoveset();
+    enemyPokemon.resetStatus();
+
     game.move.select(MoveId.SPLASH);
-    enemyPokemon.damageAndUpdate(1);
+    await game.move.forceEnemyMove(MoveId.REST);
     await game.toNextTurn();
 
-    expect(enemyPokemon.status?.effect).toEqual(StatusEffect.SLEEP);
+    expect(enemyPokemon.status?.effect).toBe(StatusEffect.SLEEP);
   });
 
   it("protects from ability-inflicted status", async () => {
-    game.override.ability(AbilityId.STATIC);
+    await game.classicMode.startBattle();
+
+    const player = game.field.getPlayerPokemon();
+    game.field.mockAbility(player, AbilityId.STATIC);
     vi.spyOn(
       allAbilities[AbilityId.STATIC].getAttrs("PostDefendContactApplyStatusEffectAbAttr")[0],
-      "chance",
-      "get",
-    ).mockReturnValue(100);
-    await game.classicMode.startBattle();
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+      "canApply",
+    ).mockReturnValue(true);
 
     game.move.select(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.toNextTurn();
-    game.override.enemyMoveset([MoveId.TACKLE]);
-    game.move.select(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.SAFEGUARD);
     await game.toNextTurn();
 
+    game.move.select(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.TACKLE);
+    await game.toNextTurn();
+
+    const enemyPokemon = game.field.getEnemyPokemon();
     expect(enemyPokemon.status).toBeUndefined();
   });
 });

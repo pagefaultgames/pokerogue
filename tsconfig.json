@@ -1,7 +1,18 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "ES2020",
+    "target": "ES2023",
+    "module": "ES2022",
+    // Modifying this option requires all values to be set manually because the defaults get overridden
+    // Values other than "ES2024.Promise" taken from https://github.com/microsoft/TypeScript/blob/main/src/lib/es2023.full.d.ts
+    "lib": [
+      "ES2023",
+      "ES2024.Promise",
+      "DOM",
+      "DOM.AsyncIterable",
+      "DOM.Iterable",
+      "ScriptHost",
+      "WebWorker.ImportScripts"
+    ],
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "esModuleInterop": true,
@@ -9,20 +20,58 @@
     "sourceMap": false,
     "strict": false, // TODO: Enable this eventually
     "rootDir": ".",
-    "baseUrl": "./src",
-    "paths": {
-      "#enums/*": ["./enums/*.ts"],
-      "#app/*": ["*.ts"],
-      "#test/*": ["../test/*.ts"]
-    },
     "outDir": "./build",
-    "noEmit": true
+    "noEmit": true,
+    "paths": {
+      "#abilities/*": ["./src/data/abilities/*.ts"],
+      "#api/*": ["./src/plugins/api/*.ts"],
+      "#balance/*": ["./src/data/balance/*.ts"],
+      "#enums/*": ["./src/enums/*.ts"],
+      "#events/*": ["./src/events/*.ts"],
+      "#field/*": ["./src/field/*.ts"],
+      "#inputs/*": ["./src/configs/inputs/*.ts"],
+      "#modifiers/*": ["./src/modifier/*.ts"],
+      "#moves/*": ["./src/data/moves/*.ts"],
+      "#mystery-encounters/*": [
+        "./src/data/mystery-encounters/utils/*.ts",
+        "./src/data/mystery-encounters/encounters/*.ts",
+        "./src/data/mystery-encounters/requirements/*.ts",
+        "./src/data/mystery-encounters/*.ts"
+      ],
+      "#package.json": ["./package.json"],
+      "#phases/*": ["./src/phases/*.ts"],
+      "#plugins/*": ["./src/plugins/vite/*.ts", "./src/plugins/*.ts"],
+      "#sprites/*": ["./src/sprites/*.ts"],
+      "#system/*": [
+        "./src/system/settings/*.ts",
+        "./src/system/version-migration/versions/*.ts",
+        "./src/system/version-migration/*.ts",
+        "./src/system/*.ts"
+      ],
+      "#trainers/*": ["./src/data/trainers/*.ts"],
+      "#types/*": ["./src/@types/helpers/*.ts", "./src/@types/*.ts", "./src/typings/phaser/*.ts"],
+      "#ui/*": [
+        "./src/ui/battle-info/*.ts",
+        "./src/ui/containers/*.ts",
+        "./src/ui/handlers/*.ts",
+        "./src/ui/settings/*.ts",
+        "./src/ui/utils/*.ts",
+        "./src/ui/*.ts"
+      ],
+      "#utils/*": ["./src/utils/*.ts"],
+      "#data/*": ["./src/data/pokemon-forms/*.ts", "./src/data/pokemon/*.ts", "./src/data/*.ts"],
+      "#test/*": ["./test/*.ts"],
+      "#app/*": ["./src/*.ts"]
+    }
   },
-  "typedocOptions": {
-    "entryPoints": ["./src"],
-    "entryPointStrategy": "expand",
-    "exclude": "**/*+.test.ts",
-    "out": "typedoc"
-  },
-  "exclude": ["node_modules", "dist", "vite.config.ts", "vitest.config.ts", "vitest.workspace.ts"]
+  // Exclude checking for script JS files as those are covered by the folder's `jsconfig.json`
+  "include": ["**/*.ts", "**/*.d.ts"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "vite.config.ts",
+    "vitest.config.ts",
+    "vitest.workspace.ts",
+    "public/service-worker.js"
+  ]
 }

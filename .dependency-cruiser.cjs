@@ -2,9 +2,20 @@
 module.exports = {
   forbidden: [
     {
+      name: "no-non-type-@type-exports",
+      severity: "error",
+      comment:
+        "Files in @types should not export anything but types and interfaces. The folder is intended to house imports that are removed at runtime, and thus should not contain anything with a bearing on runtime code.",
+      from: {},
+      to: {
+        path: "(^|/)src/@types",
+        dependencyTypesNot: ["type-only"],
+      },
+    },
+    {
       name: "only-type-imports",
       severity: "error",
-      comment: "Files in enums and @types may only use type imports.",
+      comment: "Files in 'enums/' and '@types/' must only use type imports.",
       from: {
         path: ["(^|/)src/@types", "(^|/)src/enums"],
       },
@@ -14,10 +25,9 @@ module.exports = {
     },
     {
       name: "no-circular-at-runtime",
-      severity: "warn",
+      severity: "error",
       comment:
-        "This dependency is part of a circular relationship. You might want to revise " +
-        "your solution (i.e. use dependency inversion, make sure the modules have a single responsibility) ",
+        "This dependency is part of a circular relationship. You might want to revise your solution (i.e. use dependency inversion, make sure the modules have a single responsibility) ",
       from: {},
       to: {
         circular: true,
@@ -29,12 +39,8 @@ module.exports = {
     {
       name: "no-orphans",
       comment:
-        "This is an orphan module - it's likely not used (anymore?). Either use it or " +
-        "remove it. If it's logical this module is an orphan (i.e. it's a config file), " +
-        "add an exception for it in your dependency-cruiser configuration. By default " +
-        "this rule does not scrutinize dot-files (e.g. .eslintrc.js), TypeScript declaration " +
-        "files (.d.ts), tsconfig.json and some of the babel and webpack configs.",
-      severity: "warn",
+        "This is an orphan module - it's likely not used (anymore?). Either use it or remove it. If it's logical this module is an orphan (i.e. it's a config file), add an exception for it in your dependency-cruiser configuration. By default this rule does not scrutinize dot-files (e.g. .eslintrc.js), TypeScript declaration files (.d.ts), tsconfig.json and some of the babel and webpack configs.",
+      severity: "error",
       from: {
         orphan: true,
         pathNot: [
@@ -42,8 +48,7 @@ module.exports = {
           "[.]d[.]ts$", // TypeScript declaration files
           "(^|/)tsconfig[.]json$", // TypeScript config
           "(^|/)(?:babel|webpack)[.]config[.](?:js|cjs|mjs|ts|cts|mts|json)$", // other configs
-          // anything in src/@types
-          "(^|/)src/@types/",
+          "(^|/)test/.+[.]setup[.]ts", // Vitest setup files
         ],
       },
       to: {},
@@ -51,9 +56,8 @@ module.exports = {
     {
       name: "no-deprecated-core",
       comment:
-        "A module depends on a node core module that has been deprecated. Find an alternative - these are " +
-        "bound to exist - node doesn't deprecate lightly.",
-      severity: "warn",
+        "A module depends on a node core module that has been deprecated. Find an alternative - these are bound to exist - node doesn't deprecate lightly.",
+      severity: "error",
       from: {},
       to: {
         dependencyTypes: ["core"],
@@ -84,9 +88,8 @@ module.exports = {
     {
       name: "not-to-deprecated",
       comment:
-        "This module uses a (version of an) npm module that has been deprecated. Either upgrade to a later " +
-        "version of that module, or find an alternative. Deprecated modules are a security risk.",
-      severity: "warn",
+        "This module uses a (version of an) npm module that has been deprecated. Either upgrade to a later version of that module, or find an alternative. Deprecated modules are a security risk.",
+      severity: "error",
       from: {},
       to: {
         dependencyTypes: ["deprecated"],
@@ -96,10 +99,7 @@ module.exports = {
       name: "no-non-package-json",
       severity: "error",
       comment:
-        "This module depends on an npm package that isn't in the 'dependencies' section of your package.json. " +
-        "That's problematic as the package either (1) won't be available on live (2 - worse) will be " +
-        "available on live with an non-guaranteed version. Fix it by adding the package to the dependencies " +
-        "in your package.json.",
+        "This module depends on an npm package that isn't in the 'dependencies' section of your package.json. That's problematic as the package either (1) won't be available on live (2 - worse) will be available on live with an non-guaranteed version. Fix it by adding the package to the dependencies in your package.json.",
       from: {},
       to: {
         dependencyTypes: ["npm-no-pkg", "npm-unknown"],
@@ -108,8 +108,7 @@ module.exports = {
     {
       name: "not-to-unresolvable",
       comment:
-        "This module depends on a module that cannot be found ('resolved to disk'). If it's an npm " +
-        "module: add it to your package.json. In all other cases you likely already know what to do.",
+        "This module depends on a module that cannot be found ('resolved to disk'). If it's an npm module: add it to your package.json. In all other cases you likely already know what to do.",
       severity: "error",
       from: {},
       to: {
@@ -119,10 +118,8 @@ module.exports = {
     {
       name: "no-duplicate-dep-types",
       comment:
-        "Likely this module depends on an external ('npm') package that occurs more than once " +
-        "in your package.json i.e. bot as a devDependencies and in dependencies. This will cause " +
-        "maintenance problems later on.",
-      severity: "warn",
+        "Likely this module depends on an external ('npm') package that occurs more than once in your package.json i.e. bot as a devDependencies and in dependencies. This will cause maintenance problems later on.",
+      severity: "error",
       from: {},
       to: {
         moreThanOneDependencyType: true,
@@ -133,14 +130,12 @@ module.exports = {
       },
     },
 
-    /* rules you might want to tweak for your specific situation: */
+    // rules you might want to tweak for your specific situation:
 
     {
       name: "not-to-spec",
       comment:
-        "This module depends on a spec (test) file. The sole responsibility of a spec file is to test code. " +
-        "If there's something in a spec that's of use to other modules, it doesn't have that single " +
-        "responsibility anymore. Factor it out into (e.g.) a separate utility/ helper or a mock.",
+        "This module depends on a spec (test) file. The sole responsibility of a spec file is to test code. If there's something in a spec that's of use to other modules, it doesn't have that single responsibility anymore. Factor it out into (e.g.) a separate utility/ helper or a mock.",
       severity: "error",
       from: {},
       to: {
@@ -151,11 +146,7 @@ module.exports = {
       name: "not-to-dev-dep",
       severity: "error",
       comment:
-        "This module depends on an npm package from the 'devDependencies' section of your " +
-        "package.json. It looks like something that ships to production, though. To prevent problems " +
-        "with npm packages that aren't there on production declare it (only!) in the 'dependencies'" +
-        "section of your package.json. If this module is development only - add it to the " +
-        "from.pathNot re of the not-to-dev-dep rule in the dependency-cruiser configuration",
+        "This module depends on an npm package from the 'devDependencies' section of your package.json. It looks like something that ships to production, though. To prevent problems with npm packages that aren't there on production declare it (only!) in the 'dependencies'section of your package.json. If this module is development only - add it to the from.pathNot re of the not-to-dev-dep rule in the dependency-cruiser configuration",
       from: {
         path: "^(src)",
         pathNot: ["[.](?:spec|test|setup|script)[.](?:js|mjs|cjs|jsx|ts|mts|cts|tsx)$", "./test"],
@@ -172,10 +163,7 @@ module.exports = {
       name: "optional-deps-used",
       severity: "info",
       comment:
-        "This module depends on an npm package that is declared as an optional dependency " +
-        "in your package.json. As this makes sense in limited situations only, it's flagged here. " +
-        "If you're using an optional dependency here by design - add an exception to your" +
-        "dependency-cruiser configuration.",
+        "This module depends on an npm package that is declared as an optional dependency in your package.json. As this makes sense in limited situations only, it's flagged here. If you're using an optional dependency here by design - add an exception to yourdependency-cruiser configuration.",
       from: {},
       to: {
         dependencyTypes: ["npm-optional"],
@@ -184,11 +172,8 @@ module.exports = {
     {
       name: "peer-deps-used",
       comment:
-        "This module depends on an npm package that is declared as a peer dependency " +
-        "in your package.json. This makes sense if your package is e.g. a plugin, but in " +
-        "other cases - maybe not so much. If the use of a peer dependency is intentional " +
-        "add an exception to your dependency-cruiser configuration.",
-      severity: "warn",
+        "This module depends on an npm package that is declared as a peer dependency in your package.json. This makes sense if your package is e.g. a plugin, but in other cases - maybe not so much. If the use of a peer dependency is intentional add an exception to your dependency-cruiser configuration.",
+      severity: "error",
       from: {},
       to: {
         dependencyTypes: ["npm-peer"],
@@ -196,6 +181,7 @@ module.exports = {
     },
   ],
   options: {
+    exclude: ["src/plugins/vite/*", "src/vite.env.d.ts"],
     /* Which modules not to follow further when encountered */
     doNotFollow: {
       /* path: an array of regular expressions in strings to match against */
@@ -218,7 +204,7 @@ module.exports = {
        module systems it knows of. It's the default because it's the safe option
        It might come at a performance penalty, though.
        moduleSystems: ['amd', 'cjs', 'es6', 'tsd']
-      
+
        As in practice only commonjs ('cjs') and ecmascript modules ('es6')
        are widely used, you can limit the moduleSystems to those.
      */
@@ -226,7 +212,7 @@ module.exports = {
     // moduleSystems: ['cjs', 'es6'],
 
     /* prefix for links in html and svg output (e.g. 'https://github.com/you/yourrepo/blob/main/'
-       to open it on your online repo or `vscode://file/${process.cwd()}/` to 
+       to open it on your online repo or `vscode://file/${process.cwd()}/` to
        open it in visual studio code),
      */
     // prefix: `vscode://file/${process.cwd()}/`,
@@ -235,7 +221,7 @@ module.exports = {
        true: also detect dependencies that only exist before typescript-to-javascript compilation
        "specify": for each dependency identify whether it only exists before compilation or also after
      */
-    // tsPreCompilationDeps: false,
+    tsPreCompilationDeps: true,
 
     /* list of extensions to scan that aren't javascript or compile-to-javascript.
        Empty by default. Only put extensions in here that you want to take into
@@ -271,7 +257,7 @@ module.exports = {
        to './webpack.conf.js'.
 
        The (optional) `env` and `arguments` attributes contain the parameters
-       to be passed if your webpack config is a function and takes them (see 
+       to be passed if your webpack config is a function and takes them (see
         webpack documentation for details)
      */
     // webpackConfig: {
@@ -310,7 +296,7 @@ module.exports = {
       conditionNames: ["import", "require", "node", "default", "types"],
       /*
          The extensions, by default are the same as the ones dependency-cruiser
-         can access (run `npx depcruise --info` to see which ones that are in
+         can access (run `pnpm exec depcruise --info` to see which ones that are in
          _your_ environment). If that list is larger than you need you can pass
          the extensions you actually use (e.g. [".js", ".jsx"]). This can speed
          up module resolution, which is the most expensive step.
@@ -322,8 +308,8 @@ module.exports = {
          A list of alias fields in package.jsons
          See [this specification](https://github.com/defunctzombie/package-browser-field-spec) and
          the webpack [resolve.alias](https://webpack.js.org/configuration/resolve/#resolvealiasfields)
-         documentation 
-         
+         documentation
+
          Defaults to an empty array (= don't use alias fields).
        */
       // aliasFields: ["browser"],

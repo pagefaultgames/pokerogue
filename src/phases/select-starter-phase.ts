@@ -1,18 +1,16 @@
 import { globalScene } from "#app/global-scene";
-import { applyChallenges } from "#app/data/challenge";
-import { ChallengeType } from "#enums/challenge-type";
-import { Gender } from "#app/data/gender";
-import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms/form-change-triggers";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { overrideHeldItems, overrideModifiers } from "#app/modifier/modifier";
 import Overrides from "#app/overrides";
 import { Phase } from "#app/phase";
-import { SaveSlotUiMode } from "#app/ui/save-slot-select-ui-handler";
-import type { Starter } from "#app/ui/starter-select-ui-handler";
+import { SpeciesFormChangeMoveLearnedTrigger } from "#data/form-change-triggers";
+import { Gender } from "#data/gender";
+import { ChallengeType } from "#enums/challenge-type";
 import { UiMode } from "#enums/ui-mode";
-import type { SpeciesId } from "#enums/species-id";
+import { overrideHeldItems, overrideModifiers } from "#modifiers/modifier";
+import type { Starter } from "#types/save-data";
+import { SaveSlotUiMode } from "#ui/handlers/save-slot-select-ui-handler";
+import { applyChallenges } from "#utils/challenge-utils";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { isNullOrUndefined } from "#app/utils/common";
 
 export class SelectStarterPhase extends Phase {
   public readonly phaseName = "SelectStarterPhase";
@@ -24,10 +22,11 @@ export class SelectStarterPhase extends Phase {
     globalScene.ui.setMode(UiMode.STARTER_SELECT, (starters: Starter[]) => {
       globalScene.ui.clearText();
       globalScene.ui.setMode(UiMode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: number) => {
+        // If clicking cancel, back out to title screen
         if (slotId === -1) {
-          globalScene.phaseManager.clearPhaseQueue();
-          globalScene.phaseManager.pushNew("TitlePhase");
-          return this.end();
+          globalScene.phaseManager.toTitleScreen();
+          this.end();
+          return;
         }
         globalScene.sessionSlotId = slotId;
         this.initBattle(starters);
@@ -37,40 +36,39 @@ export class SelectStarterPhase extends Phase {
 
   /**
    * Initialize starters before starting the first battle
-   * @param starters {@linkcode Pokemon} with which to start the first battle
+   * @param starters - Array of {@linkcode Starter}s with which to start the battle
    */
   initBattle(starters: Starter[]) {
     const party = globalScene.getPlayerParty();
     const loadPokemonAssets: Promise<void>[] = [];
     starters.forEach((starter: Starter, i: number) => {
       if (!i && Overrides.STARTER_SPECIES_OVERRIDE) {
-        starter.species = getPokemonSpecies(Overrides.STARTER_SPECIES_OVERRIDE as SpeciesId);
+        starter.speciesId = Overrides.STARTER_SPECIES_OVERRIDE;
       }
-      const starterProps = globalScene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
-      let starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
+      const species = getPokemonSpecies(starter.speciesId);
+      let starterFormIndex = starter.formIndex;
       if (
-        starter.species.speciesId in Overrides.STARTER_FORM_OVERRIDES &&
-        !isNullOrUndefined(Overrides.STARTER_FORM_OVERRIDES[starter.species.speciesId]) &&
-        starter.species.forms[Overrides.STARTER_FORM_OVERRIDES[starter.species.speciesId]!]
+        starter.speciesId in Overrides.STARTER_FORM_OVERRIDES
+        && Overrides.STARTER_FORM_OVERRIDES[starter.speciesId] != null
+        && species.forms[Overrides.STARTER_FORM_OVERRIDES[starter.speciesId]!]
       ) {
-        starterFormIndex = Overrides.STARTER_FORM_OVERRIDES[starter.species.speciesId]!;
+        starterFormIndex = Overrides.STARTER_FORM_OVERRIDES[starter.speciesId]!;
       }
 
       let starterGender =
-        starter.species.malePercent !== null ? (!starterProps.female ? Gender.MALE : Gender.FEMALE) : Gender.GENDERLESS;
+        species.malePercent !== null ? (!starter.female ? Gender.MALE : Gender.FEMALE) : Gender.GENDERLESS;
       if (Overrides.GENDER_OVERRIDE !== null) {
         starterGender = Overrides.GENDER_OVERRIDE;
       }
-      const starterIvs = globalScene.gameData.dexData[starter.species.speciesId].ivs.slice(0);
       const starterPokemon = globalScene.addPlayerPokemon(
-        starter.species,
+        species,
         globalScene.gameMode.getStartingLevel(),
         starter.abilityIndex,
         starterFormIndex,
         starterGender,
-        starterProps.shiny,
-        starterProps.variant,
-        starterIvs,
+        starter.shiny,
+        starter.variant,
+        starter.ivs,
         starter.nature,
       );
       starter.moveset && starterPokemon.tryPopulateMoveset(starter.moveset);
@@ -78,7 +76,7 @@ export class SelectStarterPhase extends Phase {
         starterPokemon.passive = true;
       }
       starterPokemon.luck = globalScene.gameData.getDexAttrLuck(
-        globalScene.gameData.dexData[starter.species.speciesId].caughtAttr,
+        globalScene.gameData.dexData[species.speciesId].caughtAttr,
       );
       if (starter.pokerus) {
         starterPokemon.pokerus = true;
@@ -88,7 +86,7 @@ export class SelectStarterPhase extends Phase {
         starterPokemon.nickname = starter.nickname;
       }
 
-      if (!isNullOrUndefined(starter.teraType)) {
+      if (starter.teraType != null) {
         starterPokemon.teraType = starter.teraType;
       } else {
         starterPokemon.teraType = starterPokemon.species.type1;
@@ -98,8 +96,12 @@ export class SelectStarterPhase extends Phase {
         starterPokemon.generateFusionSpecies(true);
       }
       starterPokemon.setVisible(false);
-      applyChallenges(ChallengeType.STARTER_MODIFY, starterPokemon);
+      const chalApplied = applyChallenges(ChallengeType.STARTER_MODIFY, starterPokemon);
       party.push(starterPokemon);
+      if (chalApplied) {
+        // If any challenges modified the starter, it should update
+        loadPokemonAssets.push(starterPokemon.updateInfo());
+      }
       loadPokemonAssets.push(starterPokemon.loadAssets());
     });
     overrideModifiers();

@@ -1,11 +1,11 @@
-import { Stat } from "#enums/stat";
-import { SpeciesId } from "#enums/species-id";
-import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
-import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import GameManager from "#test/testUtils/gameManager";
+import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
+import type { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
+import { DamageAnimPhase } from "#phases/damage-anim-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -28,28 +28,26 @@ describe("Moves - Fissure", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
 
-    game.override.battleStyle("single");
-    game.override.disableCrits();
-
-    game.override.starterSpecies(SpeciesId.SNORLAX);
-    game.override.moveset([MoveId.FISSURE]);
-    game.override.passiveAbility(AbilityId.BALL_FETCH);
-    game.override.startingLevel(100);
-
-    game.override.enemySpecies(SpeciesId.SNORLAX);
-    game.override.enemyMoveset(MoveId.SPLASH);
-    game.override.enemyPassiveAbility(AbilityId.BALL_FETCH);
-    game.override.enemyLevel(100);
+    game.override
+      .battleStyle("single")
+      .criticalHits(false)
+      .starterSpecies(SpeciesId.SNORLAX)
+      .moveset(MoveId.FISSURE)
+      .passiveAbility(AbilityId.BALL_FETCH)
+      .startingLevel(100)
+      .enemySpecies(SpeciesId.SNORLAX)
+      .enemyMoveset(MoveId.SPLASH)
+      .enemyPassiveAbility(AbilityId.BALL_FETCH)
+      .enemyLevel(100);
 
     await game.classicMode.startBattle();
 
-    partyPokemon = game.scene.getPlayerParty()[0];
-    enemyPokemon = game.scene.getEnemyPokemon()!;
+    partyPokemon = game.field.getPlayerPokemon();
+    enemyPokemon = game.field.getEnemyPokemon();
   });
 
   it("ignores damage modification from abilities, for example FUR_COAT", async () => {
-    game.override.ability(AbilityId.NO_GUARD);
-    game.override.enemyAbility(AbilityId.FUR_COAT);
+    game.override.ability(AbilityId.NO_GUARD).enemyAbility(AbilityId.FUR_COAT);
 
     game.move.select(MoveId.FISSURE);
     await game.phaseInterceptor.to(DamageAnimPhase, true);

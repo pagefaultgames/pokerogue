@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
+import type { EggHatchData } from "#data/egg-hatch-data";
 import { UiMode } from "#enums/ui-mode";
-import type { EggHatchData } from "#app/data/egg-hatch-data";
 
 /**
  * Class that represents the egg summary phase
@@ -39,6 +39,10 @@ export class EggSummaryPhase extends Phase {
   }
 
   end() {
+    this.eggHatchData.forEach(data => {
+      data.pokemon?.destroy();
+    });
+    this.eggHatchData = [];
     globalScene.time.delayedCall(250, () => globalScene.setModifiersVisible(true));
     globalScene.ui.setModeForceTransition(UiMode.MESSAGE).then(() => {
       super.end();

@@ -1,12 +1,12 @@
-import { SwitchType } from "#enums/switch-type";
 import { globalScene } from "#app/global-scene";
-import type { PartyOption } from "#app/ui/party-ui-handler";
-import PartyUiHandler, { PartyUiMode } from "#app/ui/party-ui-handler";
+import { SwitchType } from "#enums/switch-type";
 import { UiMode } from "#enums/ui-mode";
+import type { PlayerPokemon } from "#field/pokemon";
+import { BattlePhase } from "#phases/battle-phase";
+import type { PartyOption } from "#ui/party-ui-handler";
+import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import { toDmgValue } from "#utils/common";
 import i18next from "i18next";
-import { toDmgValue, isNullOrUndefined } from "#app/utils/common";
-import { BattlePhase } from "#app/phases/battle-phase";
-import type { PlayerPokemon } from "#app/field/pokemon";
 
 /**
  * Sets the Party UI and handles the effect of Revival Blessing
@@ -42,11 +42,7 @@ export class RevivalBlessingPhase extends BattlePhase {
           );
 
           const allyPokemon = this.user.getAlly();
-          if (
-            globalScene.currentBattle.double &&
-            globalScene.getPlayerParty().length > 1 &&
-            !isNullOrUndefined(allyPokemon)
-          ) {
+          if (globalScene.currentBattle.double && globalScene.getPlayerParty().length > 1 && allyPokemon != null) {
             if (slotIndex <= 1) {
               // Revived ally pokemon
               globalScene.phaseManager.unshiftNew(

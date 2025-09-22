@@ -1,13 +1,13 @@
-import { speciesEggTiers } from "#app/data/balance/species-egg-tiers";
-import { Egg, getLegendaryGachaSpeciesForTimestamp, getValidLegendaryGachaSpecies } from "#app/data/egg";
-import { allSpecies } from "#app/data/pokemon-species";
-import { EggSourceType } from "#app/enums/egg-source-types";
-import { EggTier } from "#app/enums/egg-type";
-import { VariantTier } from "#app/enums/variant-tier";
-import EggData from "#app/system/egg-data";
-import * as Utils from "#app/utils/common";
+import { speciesEggTiers } from "#balance/species-egg-tiers";
+import { allSpecies } from "#data/data-lists";
+import { Egg, getLegendaryGachaSpeciesForTimestamp, getValidLegendaryGachaSpecies } from "#data/egg";
+import { EggSourceType } from "#enums/egg-source-types";
+import { EggTier } from "#enums/egg-type";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { VariantTier } from "#enums/variant-tier";
+import { EggData } from "#system/egg-data";
+import { GameManager } from "#test/test-utils/game-manager";
+import * as Utils from "#utils/common";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -25,11 +25,10 @@ describe("Egg Generation Tests", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.restoreAllMocks();
   });
 
   beforeEach(async () => {
-    await game.importData("./test/testUtils/saves/everything.prsv");
+    await game.importData("./test/test-utils/saves/everything.prsv");
   });
 
   it("should return Kyogre for the 10th of June", () => {
@@ -203,7 +202,7 @@ describe("Egg Generation Tests", () => {
     const scene = game.scene;
 
     const eggMoveIndex = new Egg({ scene }).eggMoveIndex;
-    const result = !Utils.isNullOrUndefined(eggMoveIndex) && eggMoveIndex >= 0 && eggMoveIndex <= 3;
+    const result = eggMoveIndex != null && eggMoveIndex >= 0 && eggMoveIndex <= 3;
 
     expect(result).toBe(true);
   });
