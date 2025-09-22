@@ -5,8 +5,6 @@ import type { Variant } from "#sprites/variant";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
-export type nil = null | undefined;
-
 export const MissingTextureKey = "__MISSING";
 
 // TODO: Draft tests for these utility functions

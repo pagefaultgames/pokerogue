@@ -5,3 +5,5 @@ export type Primitive = string | number | boolean | bigint | null | undefined | 
 
 /** Alias for the constructor of a class */
 export type Constructor<T> = new (...args: unknown[]) => T;
+
+export type nil = null | undefined;
