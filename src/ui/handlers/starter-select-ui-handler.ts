@@ -2759,7 +2759,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       pokerus: this.pokerusSpecies.includes(species),
       nickname: this.starterPreferences[species.speciesId]?.nickname,
       teraType,
-      ivs: dexEntry.ivs,
+      ivs: new Uint8Array(dexEntry.ivs),
     };
 
     this.starters.push(starter);
