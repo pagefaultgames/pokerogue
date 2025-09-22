@@ -195,7 +195,7 @@ export class BattleMessageUiHandler extends MessageUiHandler {
     super.showDialogue(text, name, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
-  promptLevelUpStats(partyMemberIndex: number, prevStats: ArrayLike<number>, showTotals: boolean): Promise<void> {
+  promptLevelUpStats(partyMemberIndex: number, prevStats: number[], showTotals: boolean): Promise<void> {
     return new Promise(resolve => {
       if (!globalScene.showLevelUpStats) {
         return resolve();
@@ -219,7 +219,7 @@ export class BattleMessageUiHandler extends MessageUiHandler {
     });
   }
 
-  promptIvs(pokemonId: number, ivs: ArrayLike<number>): Promise<void> {
+  promptIvs(pokemonId: number, ivs: number[]): Promise<void> {
     return new Promise(resolve => {
       globalScene.executeWithSeedOffset(() => {
         let levelUpStatsValuesText = "";

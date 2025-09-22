@@ -1,7 +1,7 @@
 import { DelayedAttackTag, type PositionalTag, WishTag } from "#data/positional-tags/positional-tag";
 import { PositionalTagType } from "#enums/positional-tag-type";
+import type { Constructor } from "#types/common";
 import type { ObjectValues } from "#types/type-helpers";
-import type { Constructor } from "#utils/common";
 
 /**
  * Load the attributes of a {@linkcode PositionalTag}.
