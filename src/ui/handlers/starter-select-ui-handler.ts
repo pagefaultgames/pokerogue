@@ -1461,9 +1461,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         if (this.canCycleTera) {
           const speciesForm = getPokemonSpeciesForm(this.lastSpecies.speciesId, starterPreferences.formIndex ?? 0);
           const newTera =
-            speciesForm.type1 === this.teraCursor && speciesForm.type2 != null
-              ? speciesForm.type2
-              : speciesForm.type1;
+            speciesForm.type1 === this.teraCursor && speciesForm.type2 != null ? speciesForm.type2 : speciesForm.type1;
           this.setNewTeraType(speciesId, newTera);
           success = true;
         }

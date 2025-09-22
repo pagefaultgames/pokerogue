@@ -626,10 +626,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     // We will only update the sprite if there is a change to form, shiny/variant
     // or gender for species with gender sprite differences
     const shouldUpdateSprite =
-      (species.genderDiffs && female != null)
-      || formIndex != null
-      || shiny != null
-      || variant != null;
+      (species.genderDiffs && female != null) || formIndex != null || shiny != null || variant != null;
 
     this.updateCandyTooltip();
 
