@@ -3061,7 +3061,8 @@ export class PostSummonHealStatusAbAttr extends PostSummonRemoveEffectAbAttr {
 
   public override canApply({ pokemon }: AbAttrBaseParams): boolean {
     const status = pokemon.status?.effect;
-    return status != null && this.immuneEffects.includes(status);
+    const immuneEffects = this.immuneEffects;
+    return status != null && (immuneEffects.length === 0 || immuneEffects.includes(status));
   }
 
   public override apply({ pokemon }: AbAttrBaseParams): void {
