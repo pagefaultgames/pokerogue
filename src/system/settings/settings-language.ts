@@ -36,7 +36,7 @@ export const languageOptions = [
   },
   {
     label: "Español (LATAM)",
-    handler: () => changeLocaleHandler("es-MX"),
+    handler: () => changeLocaleHandler("es-419"),
   },
   {
     label: "Français",
@@ -64,11 +64,11 @@ export const languageOptions = [
   },
   {
     label: "简体中文",
-    handler: () => changeLocaleHandler("zh-CN"),
+    handler: () => changeLocaleHandler("zh-Hans"),
   },
   {
     label: "繁體中文",
-    handler: () => changeLocaleHandler("zh-TW"),
+    handler: () => changeLocaleHandler("zh-Hant"),
   },
   {
     label: "Català (Needs Help)",
