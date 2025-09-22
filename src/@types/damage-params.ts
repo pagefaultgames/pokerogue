@@ -74,4 +74,4 @@ export interface getAttackTypeEffectivenessParams {
    * @defaultValue `false`
    */
   useIllusion?: boolean;
-};
+}
