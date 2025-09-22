@@ -5,10 +5,10 @@ import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { TurnStartPhase } from "#phases/turn-start-phase";
+import { WeatherType } from "#enums/weather-type";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Move - Trick Room", () => {
   let phaserGame: Phaser.Game;
@@ -56,13 +56,11 @@ describe("Move - Trick Room", () => {
       turnCount: 4, // The 5 turn limit _includes_ the current turn!
     });
 
-    // Now, check that speed was indeed reduced
-    const turnOrderSpy = vi.spyOn(TurnStartPhase.prototype, "getSpeedOrder");
-
-    game.move.use(MoveId.SPLASH);
+    game.move.use(MoveId.SUNNY_DAY);
+    await game.move.forceEnemyMove(MoveId.RAIN_DANCE);
     await game.toEndOfTurn();
 
-    expect(turnOrderSpy).toHaveLastReturnedWith([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    expect(game.scene.arena.getWeatherType()).toBe(WeatherType.SUNNY);
   });
 
   it("should be removed when overlapped", async () => {

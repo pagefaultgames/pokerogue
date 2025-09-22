@@ -103,7 +103,7 @@ describe("Items - Multi Lens", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
 
-    const [magikarp] = game.scene.getPlayerField();
+    const magikarp = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.SWIFT, 0);
     game.move.select(MoveId.SPLASH, 1);
