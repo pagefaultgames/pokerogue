@@ -1000,7 +1000,7 @@ let t = 0;
  * @param postProcess
  */
 export function getRandomPartyMemberFunc(
-  speciesPool: SpeciesId[],
+  speciesPool: readonly SpeciesId[],
   trainerSlot: TrainerSlot = TrainerSlot.TRAINER,
   ignoreEvolution = false,
   postProcess?: (enemyPokemon: EnemyPokemon) => void,
