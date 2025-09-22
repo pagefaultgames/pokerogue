@@ -9,7 +9,7 @@ import { CommandPhase } from "#phases/command-phase";
 import { EncounterPhase } from "#phases/encounter-phase";
 import { SelectStarterPhase } from "#phases/select-starter-phase";
 import { TurnInitPhase } from "#phases/turn-init-phase";
-import { generateStarter } from "#test/test-utils/game-manager-utils";
+import { generateStarters } from "#test/test-utils/game-manager-utils";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
 
 type challengeStub = { id: Challenges; value: number; severity: number };
@@ -33,11 +33,11 @@ export class ChallengeModeHelper extends GameManagerHelper {
 
   /**
    * Runs the challenge game to the summon phase.
-   * @param species - An array of {@linkcode Species} to summon.
+   * @param speciesIds - An array of {@linkcode Species} to summon.
    * @returns A promise that resolves when the summon phase is reached.
    * @todo This duplicates all but 1 line of code from the classic mode variant...
    */
-  async runToSummon(species: SpeciesId[]): Promise<void>;
+  async runToSummon(speciesIds: SpeciesId[]): Promise<void>;
   /**
    * Runs the challenge game to the summon phase.
    * Selects 3 daily run starters with a fixed seed of "test"
@@ -46,9 +46,10 @@ export class ChallengeModeHelper extends GameManagerHelper {
    * @deprecated - Specifying the starters helps prevent inconsistencies from internal RNG changes.
    * @todo This duplicates all but 1 line of code from the classic mode variant...
    */
+  // biome-ignore lint/style/useUnifiedTypeSignatures: Marks for deprecation
   async runToSummon(): Promise<void>;
-  async runToSummon(species?: SpeciesId[]): Promise<void>;
-  async runToSummon(species?: SpeciesId[]): Promise<void> {
+  async runToSummon(speciesIds?: SpeciesId[]): Promise<void>;
+  async runToSummon(speciesIds?: SpeciesId[]): Promise<void> {
     await this.game.runToTitle();
 
     if (this.game.override.disableShinies) {
@@ -57,7 +58,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
 
     this.game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       this.game.scene.gameMode.challenges = this.challenges;
-      const starters = generateStarter(this.game.scene, species);
+      const starters = generateStarters(this.game.scene, speciesIds);
       const selectStarterPhase = new SelectStarterPhase();
       this.game.scene.phaseManager.pushPhase(new EncounterPhase(false));
       selectStarterPhase.initBattle(starters);
@@ -84,6 +85,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
    * @deprecated - Specifying the starters helps prevent inconsistencies from internal RNG changes.
    * @todo This duplicates all its code with the classic mode variant...
    */
+  // biome-ignore lint/style/useUnifiedTypeSignatures: Marks for deprecation
   async startBattle(): Promise<void>;
   async startBattle(species?: SpeciesId[]) {
     await this.runToSummon(species);

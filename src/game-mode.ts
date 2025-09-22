@@ -14,7 +14,7 @@ import { SpeciesId } from "#enums/species-id";
 import type { Arena } from "#field/arena";
 import { classicFixedBattles, type FixedBattleConfigs } from "#trainers/fixed-battle-configs";
 import { applyChallenges } from "#utils/challenge-utils";
-import { BooleanHolder, isNullOrUndefined, randSeedInt, randSeedItem } from "#utils/common";
+import { BooleanHolder, randSeedInt, randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
@@ -155,7 +155,7 @@ export class GameMode implements GameModeConfig {
    * - Town
    */
   getStartingBiome(): BiomeId {
-    if (!isNullOrUndefined(Overrides.STARTING_BIOME_OVERRIDE)) {
+    if (Overrides.STARTING_BIOME_OVERRIDE != null) {
       return Overrides.STARTING_BIOME_OVERRIDE;
     }
 
@@ -243,7 +243,7 @@ export class GameMode implements GameModeConfig {
   getOverrideSpecies(waveIndex: number): PokemonSpecies | null {
     if (this.isDaily && this.isWaveFinal(waveIndex)) {
       const eventBoss = getDailyEventSeedBoss(globalScene.seed);
-      if (!isNullOrUndefined(eventBoss)) {
+      if (eventBoss != null) {
         // Cannot set form index here, it will be overriden when adding it as enemy pokemon.
         return getPokemonSpecies(eventBoss.speciesId);
       }
@@ -324,8 +324,8 @@ export class GameMode implements GameModeConfig {
 
   /**
    * Checks whether there is a fixed battle on this gamemode on a given wave.
-   * @param {number} waveIndex The wave to check.
-   * @returns {boolean} If this game mode has a fixed battle on this wave
+   * @param waveIndex The wave to check.
+   * @returns If this game mode has a fixed battle on this wave
    */
   isFixedBattle(waveIndex: number): boolean {
     const dummyConfig = new FixedBattleConfig();
@@ -337,8 +337,8 @@ export class GameMode implements GameModeConfig {
 
   /**
    * Returns the config for the fixed battle for a particular wave.
-   * @param {number} waveIndex The wave to check.
-   * @returns {boolean} The fixed battle for this wave.
+   * @param waveIndex The wave to check.
+   * @returns The fixed battle for this wave.
    */
   getFixedBattle(waveIndex: number): FixedBattleConfig {
     const challengeConfig = new FixedBattleConfig();

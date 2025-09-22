@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
-import { ScrollBar } from "#ui/containers/scroll-bar";
+import { ScrollBar } from "#ui/scroll-bar";
 import { addTextObject } from "#ui/text";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import i18next from "i18next";

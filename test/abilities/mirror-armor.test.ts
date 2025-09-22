@@ -92,8 +92,7 @@ describe("Ability - Mirror Armor", () => {
     game.override.battleStyle("double").enemyAbility(AbilityId.MIRROR_ARMOR).ability(AbilityId.INTIMIDATE);
     await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER]);
 
-    const [enemy1, enemy2] = game.scene.getEnemyField();
-    const [player1, player2] = game.scene.getPlayerField();
+    const [player1, player2, enemy1, enemy2] = game.scene.getField();
 
     // Enemy has intimidate, enemy should lose -1 atk
     game.move.select(MoveId.SPLASH);

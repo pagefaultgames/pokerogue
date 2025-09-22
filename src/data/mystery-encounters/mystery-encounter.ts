@@ -25,7 +25,7 @@ import {
   StatusEffectRequirement,
   WaveRangeRequirement,
 } from "#mystery-encounters/mystery-encounter-requirements";
-import { coerceArray, isNullOrUndefined, randSeedInt } from "#utils/common";
+import { coerceArray, randSeedInt } from "#utils/common";
 import { capitalizeFirstLetter } from "#utils/strings";
 
 export interface EncounterStartOfBattleEffect {
@@ -275,7 +275,7 @@ export class MysteryEncounter implements IMysteryEncounter {
   private seedOffset?: any;
 
   constructor(encounter: IMysteryEncounter | null) {
-    if (!isNullOrUndefined(encounter)) {
+    if (encounter != null) {
       Object.assign(this, encounter);
     }
     this.encounterTier = this.encounterTier ?? MysteryEncounterTier.COMMON;
@@ -576,10 +576,9 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    */
 
   /**
-   * @static Defines the type of encounter which is used as an identifier, should be tied to a unique MysteryEncounterType
-   * NOTE: if new functions are added to {@linkcode MysteryEncounter} class
+   * Defines the type of encounter which is used as an identifier, should be tied to a unique MysteryEncounterType
    * @param encounterType
-   * @returns this
+   * @returns a new instance of MysteryEncounterBuilder with encounterType set
    */
   static withEncounterType(
     encounterType: MysteryEncounterType,

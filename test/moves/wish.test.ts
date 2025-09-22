@@ -55,7 +55,7 @@ describe("Move - Wish", () => {
     await game.toEndOfTurn();
 
     expect(game).toHavePositionalTag(PositionalTagType.WISH, 0);
-    expect(game.textInterceptor.logs).toContain(
+    expect(game).toHaveShownMessage(
       i18next.t("arenaTag:wishTagOnAdd", {
         pokemonNameWithAffix: getPokemonNameWithAffix(alomomola),
       }),
@@ -135,7 +135,7 @@ describe("Move - Wish", () => {
     // all wishes have activated and added healing phases
     expect(game).toHavePositionalTag(PositionalTagType.WISH, 0);
 
-    const healPhases = game.scene.phaseManager.phaseQueue.filter(p => p.is("PokemonHealPhase"));
+    const healPhases = game.scene.phaseManager["phaseQueue"].findAll("PokemonHealPhase");
     expect(healPhases).toHaveLength(4);
     expect.soft(healPhases.map(php => php.getPokemon())).toEqual(oldOrder);
 
@@ -165,7 +165,7 @@ describe("Move - Wish", () => {
 
     // Wish went away without doing anything
     expect(game).toHavePositionalTag(PositionalTagType.WISH, 0);
-    expect(game.textInterceptor.logs).not.toContain(
+    expect(game).not.toHaveShownMessage(
       i18next.t("arenaTag:wishTagOnAdd", {
         pokemonNameWithAffix: getPokemonNameWithAffix(blissey),
       }),

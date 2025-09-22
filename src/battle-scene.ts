@@ -104,7 +104,6 @@ import {
 import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterSaveData } from "#mystery-encounters/mystery-encounter-save-data";
 import { allMysteryEncounters, mysteryEncountersByBiome } from "#mystery-encounters/mystery-encounters";
-import type { MovePhase } from "#phases/move-phase";
 import { expSpriteKeys } from "#sprites/sprite-keys";
 import { hasExpSprite } from "#sprites/sprite-utils";
 import type { Variant } from "#sprites/variant";
@@ -121,13 +120,13 @@ import { vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import type { Localizable } from "#types/locales";
-import { AbilityBar } from "#ui/containers/ability-bar";
-import { ArenaFlyout } from "#ui/containers/arena-flyout";
-import { CandyBar } from "#ui/containers/candy-bar";
-import { CharSprite } from "#ui/containers/char-sprite";
-import { PartyExpBar } from "#ui/containers/party-exp-bar";
-import { PokeballTray } from "#ui/containers/pokeball-tray";
-import { PokemonInfoContainer } from "#ui/containers/pokemon-info-container";
+import { AbilityBar } from "#ui/ability-bar";
+import { ArenaFlyout } from "#ui/arena-flyout";
+import { CandyBar } from "#ui/candy-bar";
+import { CharSprite } from "#ui/char-sprite";
+import { PartyExpBar } from "#ui/party-exp-bar";
+import { PokeballTray } from "#ui/pokeball-tray";
+import { PokemonInfoContainer } from "#ui/pokemon-info-container";
 import { addTextObject, getTextColor } from "#ui/text";
 import { UI } from "#ui/ui";
 import { addUiThemeOverrides } from "#ui/ui-theme";
@@ -138,7 +137,6 @@ import {
   formatMoney,
   getIvsFromId,
   isBetween,
-  isNullOrUndefined,
   NumberHolder,
   randomString,
   randSeedInt,
@@ -788,12 +786,14 @@ export class BattleScene extends SceneBase {
 
   /**
    * Returns an array of EnemyPokemon of length 1 or 2 depending on if in a double battle or not.
-   * Does not actually check if the pokemon are on the field or not.
+   * @param active - (Default `false`) Whether to consider only {@linkcode Pokemon.isActive | active} on-field pokemon
    * @returns array of {@linkcode EnemyPokemon}
    */
-  public getEnemyField(): EnemyPokemon[] {
+  public getEnemyField(active = false): EnemyPokemon[] {
     const party = this.getEnemyParty();
-    return party.slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1));
+    return party
+      .slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1))
+      .filter(p => !active || p.isActive());
   }
 
   /**
@@ -818,25 +818,7 @@ export class BattleScene extends SceneBase {
    * @param allyPokemon - The {@linkcode Pokemon} allied with the removed Pokemon; will have moves redirected to it
    */
   redirectPokemonMoves(removedPokemon: Pokemon, allyPokemon: Pokemon): void {
-    // failsafe: if not a double battle just return
-    if (this.currentBattle.double === false) {
-      return;
-    }
-    if (allyPokemon?.isActive(true)) {
-      let targetingMovePhase: MovePhase;
-      do {
-        targetingMovePhase = this.phaseManager.findPhase(
-          mp =>
-            mp.is("MovePhase")
-            && mp.targets.length === 1
-            && mp.targets[0] === removedPokemon.getBattlerIndex()
-            && mp.pokemon.isPlayer() !== allyPokemon.isPlayer(),
-        ) as MovePhase;
-        if (targetingMovePhase && targetingMovePhase.targets[0] !== allyPokemon.getBattlerIndex()) {
-          targetingMovePhase.targets[0] = allyPokemon.getBattlerIndex();
-        }
-      } while (targetingMovePhase);
-    }
+    this.phaseManager.redirectMoves(removedPokemon, allyPokemon);
   }
 
   /**
@@ -859,20 +841,21 @@ export class BattleScene extends SceneBase {
   }
 
   /**
-   * Return the {@linkcode Pokemon} associated with a given ID.
-   * @param pokemonId - The ID whose Pokemon will be retrieved.
-   * @returns The {@linkcode Pokemon} associated with the given id.
-   * Returns `null` if the ID is `undefined` or not present in either party.
-   * @todo Change the `null` to `undefined` and update callers' signatures -
-   * this is weird and causes a lot of random jank
+   * Return the {@linkcode Pokemon} associated with the given ID.
+   * @param pokemonId - The PID whose Pokemon will be retrieved
+   * @returns The `Pokemon` associated with the given ID,
+   * or `undefined` if none is found in either team's party.
+   * @see {@linkcode Pokemon.id}
+   * @todo `pokemonId` should not allow `undefined`
    */
-  getPokemonById(pokemonId: number | undefined): Pokemon | null {
-    if (isNullOrUndefined(pokemonId)) {
-      return null;
+  public getPokemonById(pokemonId: number | undefined): Pokemon | undefined {
+    if (pokemonId == null) {
+      // biome-ignore lint/nursery/noUselessUndefined: More explicit
+      return undefined;
     }
 
     const party = (this.getPlayerParty() as Pokemon[]).concat(this.getEnemyParty());
-    return party.find(p => p.id === pokemonId) ?? null;
+    return party.find(p => p.id === pokemonId);
   }
 
   addPlayerPokemon(
@@ -1319,7 +1302,7 @@ export class BattleScene extends SceneBase {
       if (
         !this.gameMode.hasTrainers
         || Overrides.BATTLE_TYPE_OVERRIDE === BattleType.WILD
-        || (Overrides.DISABLE_STANDARD_TRAINERS_OVERRIDE && isNullOrUndefined(trainerData))
+        || (Overrides.DISABLE_STANDARD_TRAINERS_OVERRIDE && trainerData == null)
       ) {
         newBattleType = BattleType.WILD;
       } else {
@@ -1332,13 +1315,12 @@ export class BattleScene extends SceneBase {
       if (newBattleType === BattleType.TRAINER) {
         const trainerType =
           Overrides.RANDOM_TRAINER_OVERRIDE?.trainerType ?? this.arena.randomTrainerType(newWaveIndex);
+        const hasDouble = trainerConfigs[trainerType].hasDouble;
         let doubleTrainer = false;
         if (trainerConfigs[trainerType].doubleOnly) {
           doubleTrainer = true;
-        } else if (trainerConfigs[trainerType].hasDouble) {
-          doubleTrainer =
-            Overrides.RANDOM_TRAINER_OVERRIDE?.alwaysDouble
-            || !randSeedInt(this.getDoubleBattleChance(newWaveIndex, playerField));
+        } else if (hasDouble) {
+          doubleTrainer = !randSeedInt(this.getDoubleBattleChance(newWaveIndex, playerField));
           // Add a check that special trainers can't be double except for tate and liza - they should use the normal double chance
           if (
             trainerConfigs[trainerType].trainerTypeDouble
@@ -1347,11 +1329,19 @@ export class BattleScene extends SceneBase {
             doubleTrainer = false;
           }
         }
-        const variant = doubleTrainer
-          ? TrainerVariant.DOUBLE
-          : randSeedInt(2)
-            ? TrainerVariant.FEMALE
-            : TrainerVariant.DEFAULT;
+
+        // Forcing a double battle on wave 1 causes a bug where only one enemy is sent out,
+        // making it impossible to complete the fight without a reload
+        const overrideVariant =
+          Overrides.RANDOM_TRAINER_OVERRIDE?.trainerVariant === TrainerVariant.DOUBLE
+          && (!hasDouble || newWaveIndex <= 1)
+            ? TrainerVariant.DEFAULT
+            : Overrides.RANDOM_TRAINER_OVERRIDE?.trainerVariant;
+
+        const variant =
+          overrideVariant
+          ?? (doubleTrainer ? TrainerVariant.DOUBLE : randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
+
         newTrainer = trainerData !== undefined ? trainerData.toTrainer() : new Trainer(trainerType, variant);
         this.field.add(newTrainer);
       }
@@ -1383,7 +1373,7 @@ export class BattleScene extends SceneBase {
       newDouble = false;
     }
 
-    if (!isNullOrUndefined(Overrides.BATTLE_STYLE_OVERRIDE)) {
+    if (Overrides.BATTLE_STYLE_OVERRIDE != null) {
       let doubleOverrideForWave: "single" | "double" | null = null;
 
       switch (Overrides.BATTLE_STYLE_OVERRIDE) {
@@ -1426,7 +1416,7 @@ export class BattleScene extends SceneBase {
     }
 
     if (lastBattle?.double && !newDouble) {
-      this.phaseManager.tryRemovePhase((p: Phase) => p.is("SwitchPhase"));
+      this.phaseManager.tryRemovePhase("SwitchPhase");
       for (const p of this.getPlayerField()) {
         p.lapseTag(BattlerTagType.COMMANDED);
       }
@@ -1572,7 +1562,7 @@ export class BattleScene extends SceneBase {
       // Give trainers with specialty types an appropriately-typed form for Wormadam, Rotom, Arceus, Oricorio, Silvally, or Paldean Tauros.
       !isEggPhase
       && this.currentBattle?.battleType === BattleType.TRAINER
-      && !isNullOrUndefined(this.currentBattle.trainer)
+      && this.currentBattle.trainer != null
       && this.currentBattle.trainer.config.hasSpecialtyType()
     ) {
       if (species.speciesId === SpeciesId.WORMADAM) {
@@ -2692,7 +2682,7 @@ export class BattleScene extends SceneBase {
             }
           } else if (modifier instanceof FusePokemonModifier) {
             args.push(this.getPokemonById(modifier.fusePokemonId) as PlayerPokemon);
-          } else if (modifier instanceof RememberMoveModifier && !isNullOrUndefined(cost)) {
+          } else if (modifier instanceof RememberMoveModifier && cost != null) {
             args.push(cost);
           }
 
@@ -3007,7 +2997,7 @@ export class BattleScene extends SceneBase {
       }
       if (
         modifier instanceof PokemonHeldItemModifier
-        && !isNullOrUndefined(modifier.getSpecies())
+        && modifier.getSpecies() != null
         && !this.getPokemonById(modifier.pokemonId)?.hasSpecies(modifier.getSpecies()!)
       ) {
         modifiers.splice(m--, 1);
@@ -3108,7 +3098,7 @@ export class BattleScene extends SceneBase {
    * Apply all modifiers that match `modifierType` in a random order
    * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
    * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
-   * @param ...args The list of arguments needed to invoke `modifierType.apply`
+   * @param args The list of arguments needed to invoke `modifierType.apply`
    * @returns the list of all modifiers that matched `modifierType` and were applied.
    */
   applyShuffledModifiers<T extends PersistentModifier>(
@@ -3140,7 +3130,7 @@ export class BattleScene extends SceneBase {
    * Apply all modifiers that match `modifierType`
    * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
    * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
-   * @param ...args The list of arguments needed to invoke `modifierType.apply`
+   * @param args The list of arguments needed to invoke `modifierType.apply`
    * @returns the list of all modifiers that matched `modifierType` and were applied.
    */
   applyModifiers<T extends PersistentModifier>(
@@ -3175,7 +3165,7 @@ export class BattleScene extends SceneBase {
    * Apply the first modifier that matches `modifierType`
    * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
    * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
-   * @param ...args The list of arguments needed to invoke `modifierType.apply`
+   * @param args The list of arguments needed to invoke `modifierType.apply`
    * @returns the first modifier that matches `modifierType` and was applied; return `null` if none matched
    */
   applyModifier<T extends PersistentModifier>(
@@ -3323,7 +3313,7 @@ export class BattleScene extends SceneBase {
   /**
    * This function retrieves the sprite and audio keys for active Pokemon.
    * Active Pokemon include both enemy and player Pokemon of the current wave.
-   * Note: Questions on garbage collection go to @frutescens
+   * Note: Questions on garbage collection go to `@frutescens`
    * @returns a string array of active sprite and audio keys that should not be deleted
    */
   getActiveKeys(): string[] {
@@ -3573,7 +3563,7 @@ export class BattleScene extends SceneBase {
     // Loading override or session encounter
     let encounter: MysteryEncounter | null;
     if (
-      !isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_OVERRIDE)
+      Overrides.MYSTERY_ENCOUNTER_OVERRIDE != null
       && allMysteryEncounters.hasOwnProperty(Overrides.MYSTERY_ENCOUNTER_OVERRIDE)
     ) {
       encounter = allMysteryEncounters[Overrides.MYSTERY_ENCOUNTER_OVERRIDE];
@@ -3584,7 +3574,7 @@ export class BattleScene extends SceneBase {
       encounter = allMysteryEncounters[encounterType ?? -1];
       return encounter;
     } else {
-      encounter = !isNullOrUndefined(encounterType) ? allMysteryEncounters[encounterType] : null;
+      encounter = encounterType != null ? allMysteryEncounters[encounterType] : null;
     }
 
     // Check for queued encounters first
@@ -3643,7 +3633,7 @@ export class BattleScene extends SceneBase {
             ? MysteryEncounterTier.ULTRA
             : MysteryEncounterTier.ROGUE;
 
-    if (!isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_TIER_OVERRIDE)) {
+    if (Overrides.MYSTERY_ENCOUNTER_TIER_OVERRIDE != null) {
       tier = Overrides.MYSTERY_ENCOUNTER_TIER_OVERRIDE;
     }
 

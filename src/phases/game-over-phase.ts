@@ -16,13 +16,13 @@ import type { EndCardPhase } from "#phases/end-card-phase";
 import { achvs, ChallengeAchv } from "#system/achv";
 import { ArenaData } from "#system/arena-data";
 import { ChallengeData } from "#system/challenge-data";
-import type { SessionSaveData } from "#system/game-data";
 import { ModifierData as PersistentModifierData } from "#system/modifier-data";
 import { PokemonData } from "#system/pokemon-data";
 import { RibbonData, type RibbonFlag } from "#system/ribbons/ribbon-data";
 import { awardRibbonsToSpeciesLine } from "#system/ribbons/ribbon-methods";
 import { TrainerData } from "#system/trainer-data";
 import { trainerConfigs } from "#trainers/trainer-config";
+import type { SessionSaveData } from "#types/save-data";
 import { checkSpeciesValidForChallenge, isNuzlockeChallenge } from "#utils/challenge-utils";
 import { isLocal, isLocalServerConnected } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
@@ -84,19 +84,12 @@ export class GameOverPhase extends BattlePhase {
                 globalScene.phaseManager.pushNew("EncounterPhase", true);
 
                 const availablePartyMembers = globalScene.getPokemonAllowedInBattle().length;
-
-                globalScene.phaseManager.pushNew("SummonPhase", 0);
-                if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-                  globalScene.phaseManager.pushNew("SummonPhase", 1);
-                }
-                if (
+                const checkSwitch =
                   globalScene.currentBattle.waveIndex > 1
-                  && globalScene.currentBattle.battleType !== BattleType.TRAINER
-                ) {
-                  globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
-                  if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-                    globalScene.phaseManager.pushNew("CheckSwitchPhase", 1, globalScene.currentBattle.double);
-                  }
+                  && globalScene.currentBattle.battleType !== BattleType.TRAINER;
+                globalScene.phaseManager.pushNew("SummonPhase", 0, true, false, checkSwitch);
+                if (globalScene.currentBattle.double && availablePartyMembers > 1) {
+                  globalScene.phaseManager.pushNew("SummonPhase", 1, true, false, checkSwitch);
                 }
 
                 globalScene.ui.fadeIn(1250);
@@ -267,7 +260,6 @@ export class GameOverPhase extends BattlePhase {
         .then(success => doGameOver(!globalScene.gameMode.isDaily || !!success))
         .catch(_err => {
           globalScene.phaseManager.clearPhaseQueue();
-          globalScene.phaseManager.clearPhaseQueueSplice();
           globalScene.phaseManager.unshiftNew("MessagePhase", i18next.t("menu:serverCommunicationFailed"), 2500);
           // force the game to reload after 2 seconds.
           setTimeout(() => {

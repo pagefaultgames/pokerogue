@@ -80,7 +80,8 @@ Notable topics include:
 - [Commenting your code](./docs/comments.md)
 - [Linting & Formatting](./docs/linting.md)
 - [Localization](./docs/localization.md)
-- [Enemy AI move selection](./docs/enemy-ai.md)
+- [Enemy AI move selection](./docs/enemy-ai.md) 
+- [Running with Podman](./docs/podman.md)
 
 Again, if you have unanswered questions please feel free to ask!
 
