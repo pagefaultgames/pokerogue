@@ -13,7 +13,7 @@ import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
 import { PhaseTree } from "#app/phase-tree";
 import { BattleType } from "#enums/battle-type";
-import type { BattlerIndex } from "#enums/battler-index";
+import type { FieldBattlerIndex } from "#enums/battler-index";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import { SwitchType } from "#enums/switch-type";
 import type { Pokemon } from "#field/pokemon";
@@ -270,7 +270,7 @@ export class PhaseManager {
   /* Phase Functions */
 
   /**
-   * Unshifts a sequence of phases to switch out a Pokemon on the field
+   * Unshift a sequence of phases to switch out a Pokemon on the field.
    * @param battlerIndex - The {@linkcode BattlerIndex} of the Pokemon to switch out
    * @param switchType - (Default {@linkcode SwitchType.SWITCH}) The {@linkcode SwitchType | type} of switch to apply
    * @param switchInIndex - (Default `-1`) The index of the party Pokemon to switch into
@@ -278,7 +278,7 @@ export class PhaseManager {
    * during the {@linkcode SwitchPhase}.
    */
   public queueBattlerSwitchOut(
-    battlerIndex: BattlerIndex,
+    battlerIndex: FieldBattlerIndex,
     { switchType = SwitchType.SWITCH, switchInIndex = -1, when = "eager", phaseKey }: BattlerSwitchOutInit = {},
   ): void {
     const phases = [
@@ -296,13 +296,15 @@ export class PhaseManager {
       case "eager":
         this.unshiftPhase(...phases);
         break;
-      case "before":
-        validatePhaseId();
-        this.prependToPhase(phaseKey, ...phases);
-        break;
+      // case "before":
+      //   validatePhaseId();
+      //   this.phaseQueue.addAfter(phases, phaseKey);
+      //   break;
       case "after":
         validatePhaseId();
-        this.appendToPhase(phaseKey, ...phases);
+        // We need to reverse the array so recall happens before switch
+        // TODO: There has to be a better way to do this
+        phases.toReversed().forEach(() => this.phaseQueue.addAfter(phases));
         break;
     }
   }
@@ -327,11 +329,20 @@ export class PhaseManager {
   /**
    * Queue a phase to be run immediately after the current phase finishes. \
    * Unshifted phases are run in FIFO order if multiple are queued during a single phase's execution.
-   * @param phase - The {@linkcode Phase} to add
+   * @param phases - One or more {@linkcode Phase}s to add
+   * @privateRemarks
+   * Any newly-unshifted `MovePhase`s will be queued after the next `MoveEndPhase`.
    */
-  public unshiftPhase(phase: Phase): void {
-    const toAdd = this.checkDynamic(phase);
-    phase.is("MovePhase") ? this.phaseQueue.addAfter(toAdd, "MoveEndPhase") : this.phaseQueue.addPhase(toAdd);
+  public unshiftPhase(...phases: [Phase, ...Phase[]]): void {
+    for (const phase of phases) {
+      const toAdd = this.checkDynamic(phase);
+      if (phase.is("MovePhase")) {
+        // TODO: Can this be called with multiple `MovePhase`s?
+        this.phaseQueue.addAfter(toAdd, "MoveEndPhase");
+      } else {
+        this.phaseQueue.addPhase(toAdd);
+      }
+    }
   }
 
   /**

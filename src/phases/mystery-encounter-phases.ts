@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 import { getCharVariantFromDialogue } from "#data/dialogue";
 import { BattleSpec } from "#enums/battle-spec";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
@@ -416,20 +417,28 @@ export class MysteryEncounterBattlePhase extends Phase {
       && availablePartyMembers.length > minPartySize;
 
     if (!availablePartyMembers[0].isOnField()) {
-      globalScene.phaseManager.pushNew("SummonPhase", 0, true, false, checkSwitch);
+      globalScene.phaseManager.pushNew("SummonPhase", BattlerIndex.PLAYER, {
+        loaded: true,
+        playTrainerAnim: false,
+        delayPostSummon: checkSwitch,
+      });
     }
 
     if (globalScene.currentBattle.double) {
       if (availablePartyMembers.length > 1) {
         globalScene.phaseManager.pushNew("ToggleDoublePositionPhase", true);
         if (!availablePartyMembers[1].isOnField()) {
-          globalScene.phaseManager.pushNew("SummonPhase", 1, true, false, checkSwitch);
+          globalScene.phaseManager.pushNew("SummonPhase", BattlerIndex.PLAYER_2, {
+            loaded: true,
+            playTrainerAnim: false,
+            delayPostSummon: checkSwitch,
+          });
         }
       }
     } else {
       if (availablePartyMembers.length > 1 && availablePartyMembers[1].isOnField()) {
         globalScene.getPlayerField().forEach(pokemon => pokemon.lapseTag(BattlerTagType.COMMANDED));
-        globalScene.phaseManager.pushNew("ReturnPhase", 1);
+        globalScene.phaseManager.pushNew("RecallPhase", BattlerIndex.PLAYER_2);
       }
       globalScene.phaseManager.pushNew("ToggleDoublePositionPhase", false);
     }
