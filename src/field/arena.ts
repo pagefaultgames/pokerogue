@@ -589,7 +589,7 @@ export class Arena {
   overrideTint(): [number, number, number] {
     switch (Overrides.ARENA_TINT_OVERRIDE) {
       case TimeOfDay.DUSK:
-        return [98, 48, 73].map(c => Math.round((c + 128) / 2)) as [number, number, number];
+        return [113, 88, 101];
       case TimeOfDay.NIGHT:
         return [64, 64, 64];
       case TimeOfDay.DAWN:

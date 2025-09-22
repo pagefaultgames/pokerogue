@@ -134,20 +134,16 @@ export function randSeedItem<T>(items: ArrayLike<T>): T {
 }
 
 /**
- * Shuffle a list using the seeded rng. Utilises the Fisher-Yates algorithm.
+ * Shuffle a list in place using the seeded rng and the Fisher-Yates algorithm.
  * @param items An array of items.
- * @returns A new shuffled array of items.
+ * @returns `items` shuffled in place.
  */
 export function randSeedShuffle<T>(items: T[]): T[] {
-  if (items.length <= 1) {
-    return items;
-  }
-  const newArray = items.slice(0);
   for (let i = items.length - 1; i > 0; i--) {
     const j = Phaser.Math.RND.integerInRange(0, i);
-    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    [items[i], items[j]] = [items[j], items[i]];
   }
-  return newArray;
+  return items;
 }
 
 export function getFrameMs(frameCount: number): number {
@@ -340,7 +336,7 @@ export function rgbToHsv(r: number, g: number, b: number) {
  * @param rgb1 First RGB color in array
  * @param rgb2 Second RGB color in array
  */
-export function deltaRgb(rgb1: number[], rgb2: number[]): number {
+export function deltaRgb(rgb1: readonly number[], rgb2: readonly number[]): number {
   const [r1, g1, b1] = rgb1;
   const [r2, g2, b2] = rgb2;
   const drp2 = Math.pow(r1 - r2, 2);
@@ -364,7 +360,7 @@ export function rgbHexToRgba(hex: string) {
   };
 }
 
-export function rgbaToInt(rgba: number[]): number {
+export function rgbaToInt(rgba: readonly number[]): number {
   return (rgba[0] << 24) + (rgba[1] << 16) + (rgba[2] << 8) + rgba[3];
 }
 

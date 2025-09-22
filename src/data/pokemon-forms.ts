@@ -35,7 +35,7 @@ export class SpeciesFormChange {
   public formKey: string;
   public trigger: SpeciesFormChangeTrigger;
   public quiet: boolean;
-  public readonly conditions: SpeciesFormChangeCondition[];
+  public readonly conditions: readonly SpeciesFormChangeCondition[];
 
   constructor(
     speciesId: SpeciesId,

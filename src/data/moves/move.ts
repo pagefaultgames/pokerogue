@@ -8540,7 +8540,7 @@ const MoveAttrs = Object.freeze({
 export type MoveAttrConstructorMap = typeof MoveAttrs;
 
 export function initMoves() {
-  allMoves.push(
+  (allMoves as Move[]).push(
     new SelfStatusMove(MoveId.NONE, PokemonType.NORMAL, MoveCategory.STATUS, -1, -1, 0, 1),
     new AttackMove(MoveId.POUND, PokemonType.NORMAL, MoveCategory.PHYSICAL, 40, 100, 35, -1, 0, 1),
     new AttackMove(MoveId.KARATE_CHOP, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 50, 100, 25, -1, 0, 1)

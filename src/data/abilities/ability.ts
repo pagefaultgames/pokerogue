@@ -6807,7 +6807,7 @@ function getPokemonWithWeatherBasedForms() {
 
 // biome-ignore format: prevent biome from removing the newlines (e.g. prevent `new Ability(...).attr(...)`)
 export function initAbilities() {
-  allAbilities.push(
+  (allAbilities as Ability[]).push(
     new AbBuilder(AbilityId.NONE, 3).build(),
     new AbBuilder(AbilityId.STENCH, 3)
       .attr(PostAttackApplyBattlerTagAbAttr, false, (user, target, move) => !move.hasAttr("FlinchAttr") && !move.hitsSubstitute(user, target) ? 10 : 0, BattlerTagType.FLINCHED)
