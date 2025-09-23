@@ -18,11 +18,11 @@ pre-commit:
 post-merge:
   commands:
     update-submodules:
-      run: pnpm update-locales
+      run: pnpm update-assets
 
 post-checkout:
   commands:
     update-submodules:
       # cf https://git-scm.com/docs/githooks#_post_checkout:
       # The 3rd argument is 1 for branch checkouts and 0 for file checkouts.
-      run: if test {3} -eq "1"; then pnpm update-locales; fi
+      run: if test {3} -eq "1"; then pnpm update-assets; fi

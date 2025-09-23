@@ -21,7 +21,7 @@ This is the easiest way to keep in touch with both the Translation Team and othe
 # About the `pokerogue-locales` submodule
 
 PokéRogue's translations are managed under a separate dedicated repository, [`pokerogue-locales`](https://github.com/pagefaultgames/pokerogue-locales/).
-This repository is integrated into the main one as a [git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules) within the `assets/locales` folder.
+This repository is integrated into the main one as a [git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules) within the `public/locales` folder.
 
 ## What Is a Submodule?
 
@@ -31,13 +31,13 @@ The parent repo (the "superproject") houses a cloned version of the 2nd reposito
 >[!TIP]
 > Many popular IDEs have integrated `git` support with special handling around submodules:
 >
-> ![Image showing Visual Studio Code's `git` integration in the File Explorer. A blue "S" in the top right hand corner indicates the `assets/locales` folder is a submodule.](https://github.com/user-attachments/assets/bd42d354-c65b-4cbe-8873-23d760dc1714 "What the `assets/locales` submodule looks like in VS Code's File Explorer")
+> ![Image showing Visual Studio Code's `git` integration in the File Explorer. A blue "S" in the top right hand corner indicates the `public/locales` folder is a submodule.](https://github.com/user-attachments/assets/bd42d354-c65b-4cbe-8873-23d760dc1714 "What the `public/locales` submodule looks like in VS Code's File Explorer")
 >
 > ![Image showing Visual Studio Code's Source Control tab. A separate dropdown can be seen for each individual submodule.](https://github.com/user-attachments/assets/8b4d3f64-aec1-4474-91df-03dc1252a2fa "Making commits on submodules without even changing directories!")
 
 ## Fetching Changes from Submodules
 
-The following command will initialize your branch's locales repository and update its HEAD:
+The following command will initialize your branch's `assets` repository and update its HEAD:
 ```bash
 pnpm update-locales
 ```
@@ -46,11 +46,11 @@ pnpm update-locales
 > This command is run _automatically_ after cloning, merging or changing branches, so you should rarely have to run it manually.
 
 > [!IMPORTANT]
-> If you EVER run into issues with the `locales` submodule, try deleting the `.git/modules/assets` and `assets/locales` folders before re-initializing it again.
+> If you EVER run into issues with the `locales` submodule, try deleting the `.git/modules/public` and `public/locales` folders before re-initializing it again.
 
 ## How Are Translations Integrated?
 
-This project uses the [i18next library](https://www.i18next.com/) to integrate translations from `assets/locales` into the source code.
+This project uses the [i18next library](https://www.i18next.com/) to integrate translations from `public/locales` into the source code.
 The basic process for fetching translated text goes roughly as follows:
 1. The source code fetches text by a given key.
     ```ts
@@ -82,7 +82,7 @@ Since these two PRs aren't _technically_ linked, it's important to coordinate wi
 
 One perk of submodules is you don't actually _need_ to clone the locales repository to start contributing - `git` already does that for you on initialization.
 
-Given `pokerogue-locales` is a full-fledged `git` repository _inside_ `pokerogue`, making changes is roughly the same as normal, merely using `assets/locales` as your root directory.
+Given `pokerogue-locales` is a full-fledged `git` repository _inside_ `pokerogue`, making changes is roughly the same as normal, merely using `public/locales` as your root directory.
 
 > [!WARNING]
 > Make sure to checkout or rebase onto `upstream/main` (`pnpm update-locales:remote`) **BEFORE** creating a locales PR!
@@ -125,7 +125,7 @@ The basic procedure is roughly as follows:
     Many IDEs with `git` integration support doing this from the GUI, \
     or you can simply do it via command-line:
     ```bash
-    cd assets/locales
+    cd public/locales
     git checkout your-branch-name-here
     ```
 2. Set some of the [in-game overrides](../CONTRIBUTING.md#1---manual-testing) inside `overrides.ts` to values corresponding to the interactions being tested.

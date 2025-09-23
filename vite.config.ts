@@ -12,7 +12,6 @@ export const defaultConfig: UserConfig = {
   plugins: [tsconfigPaths(), minifyJsonPlugin(["images", "battle-anims"], true)],
   clearScreen: false,
   appType: "mpa",
-  publicDir: "assets",
   build: {
     chunkSizeWarningLimit: 10000,
     minify: "esbuild",
@@ -35,6 +34,7 @@ export default defineConfig(({ mode }) => {
   return {
     ...defaultConfig,
     base: "",
+    publicDir: mode === "serve" ? "assets" : false,
     esbuild: {
       pure: mode === "production" ? ["console.log"] : [],
       keepNames: true,
