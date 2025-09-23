@@ -1,9 +1,9 @@
-import type { EnumValues } from "#types/utility-types";
+import type { ObjectValues } from "#types/type-helpers";
 
 /**
- * Paths of the various subfolders found in public/images.
+ * Paths of various subfolders found in `public/images`.
  *
- * TODO: replace use of these strings in the code with this enum.
+ * @todo Replace use of these strings in the code with this enum
  */
 export const ImagesFolder = {
   ROOT: "",
@@ -42,4 +42,4 @@ export const ImagesFolder = {
   UI_WINDOWS: "ui/windows",
 } as const;
 
-export type ImagesFolder = EnumValues<typeof ImagesFolder>;
+export type ImagesFolder = ObjectValues<typeof ImagesFolder>;

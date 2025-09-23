@@ -1,7 +1,7 @@
 import type { PreAttackModifyDamageAbAttrParams } from "#abilities/ability";
 import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
 import { generateMoveset } from "#app/ai/ai-moveset-gen";
-import type { BattleScene } from "#app/battle-scene";
+import type { AnySound, BattleScene } from "#app/battle-scene";
 import { PLAYER_PARTY_MAX_SIZE, RARE_CANDY_FRIENDSHIP_CAP } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
@@ -71,7 +71,7 @@ import { AiType } from "#enums/ai-type";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
-import { BattlerIndex } from "#enums/battler-index";
+import { BattlerIndex, type FieldBattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import type { BerryType } from "#enums/berry-type";
@@ -93,7 +93,15 @@ import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
-import { BATTLE_STATS, EFFECTIVE_STATS, type EffectiveStat, PERMANENT_STATS, Stat } from "#enums/stat";
+import {
+  BATTLE_STATS,
+  type BattleStat,
+  EFFECTIVE_STATS,
+  type EffectiveStat,
+  PERMANENT_STATS,
+  type PermanentStat,
+  Stat,
+} from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { SwitchType } from "#enums/switch-type";
 import type { TrainerSlot } from "#enums/trainer-slot";
@@ -132,6 +140,8 @@ import type { PokemonData } from "#system/pokemon-data";
 import { RibbonData } from "#system/ribbons/ribbon-data";
 import { awardRibbonsToSpeciesLine } from "#system/ribbons/ribbon-methods";
 import type { AbAttrMap, AbAttrString, Ability, TypeMultiplierAbAttrParams } from "#types/ability-types";
+import type { getAttackDamageParams, getBaseDamageParams } from "#types/damage-params";
+import type { DamageCalculationResult } from "#types/damage-result";
 import type { IllusionData } from "#types/illusion-data";
 import type { DamageResult, Move } from "#types/move-types";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
@@ -145,6 +155,7 @@ import { playTween } from "#utils/anim-utils";
 import { applyChallenges } from "#utils/challenge-utils";
 import {
   BooleanHolder,
+  type Constructor,
   coerceArray,
   deltaRgb,
   fixedInt,
@@ -721,7 +732,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   abstract getFieldIndex(): number;
 
-  abstract getBattlerIndex(): BattlerIndex;
+  abstract getBattlerIndex(): FieldBattlerIndex;
 
   /**
    * Load all assets needed for this Pokemon's use in battle
@@ -5743,8 +5754,8 @@ export class PlayerPokemon extends Pokemon {
     return globalScene.getPlayerField().indexOf(this);
   }
 
-  getBattlerIndex(): BattlerIndex {
-    return this.getFieldIndex();
+  getBattlerIndex(): FieldBattlerIndex {
+    return this.getFieldIndex() as FieldBattlerIndex;
   }
 
   generateCompatibleTms(): void {
@@ -6880,8 +6891,8 @@ export class EnemyPokemon extends Pokemon {
     return globalScene.getEnemyField().indexOf(this);
   }
 
-  public getBattlerIndex(): BattlerIndex {
-    return BattlerIndex.ENEMY + this.getFieldIndex();
+  public getBattlerIndex(): FieldBattlerIndex {
+    return (BattlerIndex.ENEMY + this.getFieldIndex()) as FieldBattlerIndex;
   }
 
   /**

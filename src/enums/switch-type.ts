@@ -14,3 +14,9 @@ export enum SwitchType {
   /** Force switchout to a random party member */
   FORCE_SWITCH,
 }
+
+/**
+ * Readonly array containing all {@linkcode SwitchType}s that do not immediately cause the target
+ * to leave the field.
+ */
+export const effectPreservingSwitchTypes: ReadonlyArray<SwitchType> = [SwitchType.BATON_PASS, SwitchType.SHED_TAIL];
