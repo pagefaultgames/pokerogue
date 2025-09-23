@@ -77,3 +77,7 @@ Are there any localization additions or changes? If so:
 - [ ] Has a locales PR been created on the [locales](https://github.com/pagefaultgames/pokerogue-locales) repo?
   - [ ] If so, please leave a link to it here: 
 - [ ] Has the translation team been contacted for proofreading/translation?
+
+Does this require any (non-localization) changes to the assets folder? If so:
+  - [ ] Has a PR been created on the [assets](https://github.com/pagefaultgames/pokerogue-assets) repo?
+    - [ ] If so, please leave a link to it here: 
