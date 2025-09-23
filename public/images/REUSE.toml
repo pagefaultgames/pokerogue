@@ -8,10 +8,8 @@ version = 1
 path = ["pb.png",
 "categories_legacy.png", "categories.png", 
 "items.png"]
-
-
-[[annotations]] # CC0 for files of insignificant originality
-path = ["variant/_exp_masterlist.json", "variant/_masterlist.json"]
+SPDX-FileCopyrightText = "Nintendo, Game Freak, and Creatures Inc."
+SPDX-License-Identifier = "LicenseRef-FAIR-USE"
 
 [[annotations]] # JSONs created via our own tooling (colormaps for variants must not be listed here!)
 # list of json files that were generated from tooling and describe the animation
