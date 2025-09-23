@@ -39,7 +39,7 @@ function shufflePokemonList<T extends Pokemon | hasPokemon>(pokemonList: T[]): v
   );
 }
 
-/** Sort an array of {@linkcode Pokemon} in speed order (without shuffling) */
+/** Sort an array containing Pokémon (or objects containing one) in speed order, without shuffling */
 function sortBySpeed<T extends Pokemon | hasPokemon>(pokemonList: T[]): void {
   pokemonList.sort((a, b) => {
     const aSpeed = (a instanceof Pokemon ? a : a.getPokemon()).getEffectiveStat(Stat.SPD);
