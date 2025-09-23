@@ -33,6 +33,7 @@ import { CommonAnim } from "#enums/move-anims-common";
 import { MoveCategory } from "#enums/move-category";
 import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
+import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import { MoveResult } from "#enums/move-result";
 import { MoveTarget } from "#enums/move-target";
 import { MoveUseMode } from "#enums/move-use-mode";
@@ -2555,7 +2556,7 @@ export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
 
   override apply({ pokemon, simulated, cancelled }: AbAttrParamsWithCancel): void {
     if (!simulated) {
-      globalScene.phaseManager.pushNew(
+      globalScene.phaseManager.unshiftNew(
         "StatStageChangePhase",
         pokemon.getBattlerIndex(),
         false,
@@ -3240,6 +3241,7 @@ export class CommanderAbAttr extends AbAttr {
     return (
       globalScene.currentBattle?.double
       && ally != null
+      && ally.isActive(true)
       && ally.species.speciesId === SpeciesId.DONDOZO
       && !(ally.isFainted() || ally.getTag(BattlerTagType.COMMANDED))
     );
@@ -3254,7 +3256,7 @@ export class CommanderAbAttr extends AbAttr {
       // Apply boosts from this effect to the ally Dondozo
       pokemon.getAlly()?.addTag(BattlerTagType.COMMANDED, 0, MoveId.NONE, pokemon.id);
       // Cancel the source Pokemon's next move (if a move is queued)
-      globalScene.phaseManager.tryRemovePhase(phase => phase.is("MovePhase") && phase.pokemon === pokemon);
+      globalScene.phaseManager.tryRemovePhase("MovePhase", phase => phase.pokemon === pokemon);
     }
   }
 }
@@ -5004,7 +5006,14 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
       // If the move is an AttackMove or a StatusMove the Dancer must replicate the move on the source of the Dance
       if (move.getMove().is("AttackMove") || move.getMove().is("StatusMove")) {
         const target = this.getTarget(pokemon, source, targets);
-        globalScene.phaseManager.unshiftNew("MovePhase", pokemon, target, move, MoveUseMode.INDIRECT);
+        globalScene.phaseManager.unshiftNew(
+          "MovePhase",
+          pokemon,
+          target,
+          move,
+          MoveUseMode.INDIRECT,
+          MovePhaseTimingModifier.FIRST,
+        );
       } else if (move.getMove().is("SelfStatusMove")) {
         // If the move is a SelfStatusMove (ie. Swords Dance) the Dancer should replicate it on itself
         globalScene.phaseManager.unshiftNew(
@@ -5013,6 +5022,7 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
           [pokemon.getBattlerIndex()],
           move,
           MoveUseMode.INDIRECT,
+          MovePhaseTimingModifier.FIRST,
         );
       }
     }
@@ -6028,11 +6038,6 @@ export class IllusionPostBattleAbAttr extends PostBattleAbAttr {
   }
 }
 
-export interface BypassSpeedChanceAbAttrParams extends AbAttrBaseParams {
-  /** Holds whether the speed check is bypassed after ability application */
-  bypass: BooleanHolder;
-}
-
 /**
  * If a Pokémon with this Ability selects a damaging move, it has a 30% chance of going first in its priority bracket. If the Ability activates, this is announced at the start of the turn (after move selection).
  * @sealed
@@ -6048,26 +6053,28 @@ export class BypassSpeedChanceAbAttr extends AbAttr {
     this.chance = chance;
   }
 
-  override canApply({ bypass, simulated, pokemon }: BypassSpeedChanceAbAttrParams): boolean {
+  override canApply({ simulated, pokemon }: AbAttrBaseParams): boolean {
     // TODO: Consider whether we can move the simulated check to the `apply` method
     // May be difficult as we likely do not want to modify the randBattleSeed
     const turnCommand = globalScene.currentBattle.turnCommands[pokemon.getBattlerIndex()];
-    const isCommandFight = turnCommand?.command === Command.FIGHT;
     const move = turnCommand?.move?.move ? allMoves[turnCommand.move.move] : null;
     const isDamageMove = move?.category === MoveCategory.PHYSICAL || move?.category === MoveCategory.SPECIAL;
     return (
-      !simulated && !bypass.value && pokemon.randBattleSeedInt(100) < this.chance && isCommandFight && isDamageMove
+      !simulated
+      && pokemon.randBattleSeedInt(100) < this.chance
+      && isDamageMove
+      && pokemon.canAddTag(BattlerTagType.BYPASS_SPEED)
     );
   }
 
   /**
    * bypass move order in their priority bracket when pokemon choose damaging move
    */
-  override apply({ bypass }: BypassSpeedChanceAbAttrParams): void {
-    bypass.value = true;
+  override apply({ pokemon }: AbAttrBaseParams): void {
+    pokemon.addTag(BattlerTagType.BYPASS_SPEED);
   }
 
-  override getTriggerMessage({ pokemon }: BypassSpeedChanceAbAttrParams, _abilityName: string): string {
+  override getTriggerMessage({ pokemon }: AbAttrBaseParams, _abilityName: string): string {
     return i18next.t("abilityTriggers:quickDraw", { pokemonName: getPokemonNameWithAffix(pokemon) });
   }
 }
@@ -6075,8 +6082,6 @@ export class BypassSpeedChanceAbAttr extends AbAttr {
 export interface PreventBypassSpeedChanceAbAttrParams extends AbAttrBaseParams {
   /** Holds whether the speed check is bypassed after ability application */
   bypass: BooleanHolder;
-  /** Holds whether the Pokemon can check held items for Quick Claw's effects */
-  canCheckHeldItems: BooleanHolder;
 }
 
 /**
@@ -6103,9 +6108,8 @@ export class PreventBypassSpeedChanceAbAttr extends AbAttr {
     return isCommandFight && this.condition(pokemon, move!);
   }
 
-  override apply({ bypass, canCheckHeldItems }: PreventBypassSpeedChanceAbAttrParams): void {
+  override apply({ bypass }: PreventBypassSpeedChanceAbAttrParams): void {
     bypass.value = false;
-    canCheckHeldItems.value = false;
   }
 }
 
@@ -6203,8 +6207,7 @@ class ForceSwitchOutHelper {
 
       if (switchOutTarget.hp > 0) {
         switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
-        globalScene.phaseManager.prependNewToPhase(
-          "MoveEndPhase",
+        globalScene.phaseManager.queueDeferred(
           "SwitchPhase",
           this.switchType,
           switchOutTarget.getFieldIndex(),
@@ -6226,8 +6229,7 @@ class ForceSwitchOutHelper {
         const summonIndex = globalScene.currentBattle.trainer
           ? globalScene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot)
           : 0;
-        globalScene.phaseManager.prependNewToPhase(
-          "MoveEndPhase",
+        globalScene.phaseManager.queueDeferred(
           "SwitchSummonPhase",
           this.switchType,
           switchOutTarget.getFieldIndex(),
@@ -7161,7 +7163,7 @@ export function initAbilities() {
     new Ability(AbilityId.ANALYTIC, 5)
       .attr(MovePowerBoostAbAttr, (user) =>
         // Boost power if all other Pokemon have already moved (no other moves are slated to execute)
-        !globalScene.phaseManager.findPhase((phase) => phase.is("MovePhase") && phase.pokemon.id !== user?.id),
+        !globalScene.phaseManager.hasPhaseOfType("MovePhase", phase => phase.pokemon.id !== user?.id),
         1.3),
     new Ability(AbilityId.ILLUSION, 5)
       // The Pokemon generate an illusion if it's available
