@@ -1572,10 +1572,6 @@ export class MoveHealBoostAbAttr extends AbAttr {
   ) {
     super(showAbility);
 
-    if (healMulti === 1) {
-      throw new Error("Calling `MoveHealBoostAbAttr` with a multiplier of 1 is useless!");
-    }
-
     this.healMulti = healMulti;
     this.boostCondition = boostCondition;
   }
