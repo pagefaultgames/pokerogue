@@ -95,7 +95,7 @@ import { areAllies } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
-import { canTerastallize, willTerastallize } from "#utils/pokemon-utils";
+import { canSpeciesTera, willTerastallize } from "#utils/pokemon-utils";
 
 /**
  * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.
@@ -5538,7 +5538,7 @@ export class TeraBlastTypeAttr extends VariableMoveTypeAttr {
     const coreType = move.type;
     const teraType = user.getTeraType();
     /** Whether the user is allowed to tera. In the case of an enemy Pokémon, whether it *will* tera. */
-    const hasTeraAccess = user.isPlayer() ? canTerastallize(user) : willTerastallize(user);
+    const hasTeraAccess = user.isPlayer() ? canSpeciesTera(user) : willTerastallize(user);
     if (
       // tera type matches the move's type; no change
       !hasTeraAccess

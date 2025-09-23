@@ -1,3 +1,4 @@
+import { MAX_TERAS_PER_ARENA } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { getTypeRgb } from "#data/type";
@@ -198,9 +199,12 @@ export class CommandUiHandler extends UiHandler {
 
   canTera(): boolean {
     const activePokemon = globalScene.getField()[this.fieldIndex];
+    const currentTeras = globalScene.arena.playerTerasUsed;
     const canTera = activePokemon.isPlayer() && canTerastallize(activePokemon);
-    const plannedTera = globalScene.currentBattle.preTurnCommands[0]?.command === Command.TERA && this.fieldIndex > 0;
-    return canTera && !plannedTera;
+    const plannedTera = +(
+      globalScene.currentBattle.preTurnCommands[0]?.command === Command.TERA && this.fieldIndex > 0
+    );
+    return canTera && currentTeras + plannedTera < MAX_TERAS_PER_ARENA;
   }
 
   toggleTeraButton() {

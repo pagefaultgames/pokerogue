@@ -1,3 +1,4 @@
+import { MAX_TERAS_PER_ARENA } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { POKERUS_STARTER_COUNT, speciesStarterCosts } from "#balance/starters";
 import { allSpecies } from "#data/data-lists";
@@ -155,7 +156,7 @@ export function areAllies(a: BattlerIndex, b: BattlerIndex): boolean {
  * Should really only be called with an enemy Pokémon, but will technically work with any Pokémon.
  *
  * @privateRemarks
- * Assumes that Pokémon with no trainer ever tera, so this must be changed if
+ * Assumes that Pokémon without a trainer will never tera, so this must be changed if
  * a wild Pokémon is allowed to tera, e.g. for a Mystery Encounter.
  */
 export function willTerastallize(pokemon: Pokemon): boolean {
@@ -169,13 +170,22 @@ export function willTerastallize(pokemon: Pokemon): boolean {
 }
 
 /**
- * Determine whether a player Pokémon can Terastallize
+ * Determine whether the Pokémon's species is tera capable, and that the player has acquired the tera orb.
+ * @param pokemon - The Pokémon to check
+ * @returns Whether
+ */
+export function canSpeciesTera(pokemon: Pokemon): boolean {
+  const hasTeraMod = globalScene.findModifier(modifier => modifier.is("TerastallizeAccessModifier")) != null;
+  const isBlockedForm = pokemon.isMega() || pokemon.isMax() || pokemon.hasSpecies(SpeciesId.NECROZMA, "ultra");
+  return hasTeraMod && !isBlockedForm;
+}
+
+/**
+ * Same as {@linkcode canSpeciesTera}, but also checks that the player has not already used their tera in the arena
  * @param pokemon - The Pokémon to check
  * @returns Whether the Pokémon can Terastallize
  */
 export function canTerastallize(pokemon: PlayerPokemon): boolean {
-  const hasTeraMod = globalScene.findModifier(modifier => modifier.is("TerastallizeAccessModifier")) != null;
-  const isBlockedForm = pokemon.isMega() || pokemon.isMax() || pokemon.hasSpecies(SpeciesId.NECROZMA, "ultra");
-  const currentTeras = globalScene.arena.playerTerasUsed === 0;
-  return hasTeraMod && !isBlockedForm && currentTeras;
+  const hasAvailableTeras = globalScene.arena.playerTerasUsed < MAX_TERAS_PER_ARENA;
+  return hasAvailableTeras && canSpeciesTera(pokemon);
 }
