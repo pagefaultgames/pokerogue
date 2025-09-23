@@ -5853,7 +5853,7 @@ export class PlayerPokemon extends Pokemon {
    * For fusions, candy progress for each species in the fusion is halved.
    *
    * @param friendship - The amount of friendship to add. Negative values will reduce friendship, though not below 0.
-   * @param capped - If true, don't allow the friendship gain to exceed 200. Used to cap friendship gains from rare candies.
+   * @param capped - If true, don't allow the friendship gain to exceed {@linkcode RARE_CANDY_FRIENDSHIP_CAP}. Used to cap friendship gains from rare candies.
    */
   addFriendship(friendship: number, capped = false): void {
     // Short-circuit friendship loss, which doesn't impact candy friendship
@@ -5874,13 +5874,16 @@ export class PlayerPokemon extends Pokemon {
     friendship = amount.value;
 
     const newFriendship = this.friendship + friendship;
-    // If capped is true, only adjust friendship if the new friendship is less than or equal to 200.
-    if (!capped || newFriendship <= RARE_CANDY_FRIENDSHIP_CAP) {
-      this.friendship = Math.min(newFriendship, 255);
-      if (newFriendship >= 255) {
-        globalScene.validateAchv(achvs.MAX_FRIENDSHIP);
-        awardRibbonsToSpeciesLine(this.species.speciesId, RibbonData.FRIENDSHIP);
-      }
+    /** If capped is true, don't allow friendship gain to exceed {@linkcode RARE_CANDY_FRIENDSHIP_CAP} */
+    const finalFriendship =
+      capped && newFriendship > RARE_CANDY_FRIENDSHIP_CAP
+        ? Math.max(RARE_CANDY_FRIENDSHIP_CAP, this.friendship)
+        : newFriendship;
+
+    this.friendship = Math.min(finalFriendship, 255);
+    if (this.friendship >= 255) {
+      globalScene.validateAchv(achvs.MAX_FRIENDSHIP);
+      awardRibbonsToSpeciesLine(this.species.speciesId, RibbonData.FRIENDSHIP);
     }
 
     let candyFriendshipMultiplier = globalScene.gameMode.isClassic
