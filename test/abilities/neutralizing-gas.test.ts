@@ -59,7 +59,7 @@ describe("Abilities - Neutralizing Gas", () => {
     expect(game.field.getPlayerPokemon().getStatStage(Stat.ATK)).toBe(1);
   });
 
-  it.todo("should activate before other abilities", async () => {
+  it("should activate before other abilities", async () => {
     game.override.enemySpecies(SpeciesId.ACCELGOR).enemyLevel(100).enemyAbility(AbilityId.INTIMIDATE);
 
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
