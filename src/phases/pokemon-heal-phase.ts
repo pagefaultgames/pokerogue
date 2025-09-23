@@ -15,7 +15,6 @@ import i18next from "i18next";
 export class PokemonHealPhase extends CommonAnimPhase {
   public readonly phaseName = "PokemonHealPhase";
 
-  // TODO: move docs into an interface for better TSDoc
   /** The base amount of HP to heal. */
   private hpHealed: number;
   /**
@@ -110,9 +109,9 @@ export class PokemonHealPhase extends CommonAnimPhase {
     super.end();
   }
 
-  /** 
+  /**
    * Queue healing animations for the Pokemon affected by this Phase.
-   * @returns A Promise that resolved once the healing completes. 
+   * @returns A Promise that resolved once the healing completes.
    */
   private async heal(): Promise<void> {
     const pokemon = this.getPokemon();

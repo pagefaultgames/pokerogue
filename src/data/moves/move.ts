@@ -1956,22 +1956,21 @@ export class AddSubstituteAttr extends MoveEffectAttr {
  * Heals the user or target of the move by a fixed amount relative to their maximum HP.
  */
 export class HealAttr extends MoveEffectAttr {
-  /** 
+  /**
    * The percentage of {@linkcode Stat.HP} to heal, relative to the user/target's maximum.
    * @defaultValue `1`
    */
   protected healRatio: number;
-  /** 
+  /**
    * Whether to display a healing animation upon healing the target.
    * @defaultValue `false`
    */
   private showAnim: boolean;
-
   /**
    * Whether the move should fail if the target is at full HP.
    * @defaultValue `true`
    */
-  // TODO: Remove post move failure rework - 
+  // TODO: Remove post move failure rework -
   // this solely exists to prevent Lunar Blessing and co. from failing
   private failOnFullHp: boolean;
 
