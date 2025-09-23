@@ -15,6 +15,7 @@ import i18next from "i18next";
 export class PokemonHealPhase extends CommonAnimPhase {
   public readonly phaseName = "PokemonHealPhase";
 
+  // TODO: move docs into an interface for better TSDoc
   /** The base amount of HP to heal. */
   private hpHealed: number;
   /**
@@ -35,15 +36,16 @@ export class PokemonHealPhase extends CommonAnimPhase {
   /**
    * Whether to revive the affected Pokemon in addition to healing.
    * Revives will not be affected by any Healing Charms.
-   * @todo Remove post modifier rework as revives will not be using phases to heal stuff
    * @defaultValue `false`
    */
+  // TODO: Remove post modifier rework as revives should not be using phases to heal stuff
+  // (which is exclusively where it is used ATM)
   private revive: boolean;
   /**
    * Whether to heal the affected Pokemon's status condition.
-   * @todo This should not be the healing phase's job
    * @defaultValue `false`
    */
+  // TODO; This should arguably not be the healing phase's job
   private healStatus: boolean;
   /**
    * Whether to prevent fully healing affected Pokemon, leaving them 1 HP below full.
@@ -52,9 +54,10 @@ export class PokemonHealPhase extends CommonAnimPhase {
   private preventFullHeal: boolean;
   /**
    * Whether to fully restore PP upon healing.
-   * @todo This should not be the healing phase's job
+   * Used solely for Lunar Dance.
    * @defaultValue `false`
    */
+  // TODO; This should arguably not be the healing phase's job
   private fullRestorePP: boolean;
 
   constructor(
@@ -90,7 +93,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
     this.fullRestorePP = fullRestorePP;
   }
 
-  override start() {
+  public override start(): void {
     // Only play animation if not skipped and target is not at full HP
     if (!this.skipAnim && !this.getPokemon().isFullHp()) {
       super.start();
@@ -99,15 +102,19 @@ export class PokemonHealPhase extends CommonAnimPhase {
     }
   }
 
-  // This is required as `commonAnimPhase` calls `this.end` once the animation finishes
-  // TODO: This is a really shitty process and i hate it
-  override end() {
-    this.heal().then(() => {
-      super.end();
-    });
+  // NB: Placing this stuff directly inside `end` is required as
+  // `CommonAnimPhase` calls `this.end` once the animation finishes.
+  // TODO: refactor this bizarre control flow to make sense
+  public async override end(): Promise<void> {
+    await this.heal()
+    super.end();
   }
 
-  private async heal() {
+  /** 
+   * Queue healing animations for the Pokemon affected by this Phase.
+   * @returns A Promise that resolved once the healing completes. 
+   */
+  private async heal(): Promise<void> {
     const pokemon = this.getPokemon();
 
     // Prevent healing off-field pokemon unless via revives
@@ -117,6 +124,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
     }
 
     // Check for heal block, ending the phase early if healing was prevented
+    // TODO: Heal Block should probably be checked via `applyTags`
     const healBlock = pokemon.getTag(BattlerTagType.HEAL_BLOCK);
     if (healBlock && this.hpHealed > 0) {
       globalScene.phaseManager.queueMessage(healBlock.onActivation(pokemon));
