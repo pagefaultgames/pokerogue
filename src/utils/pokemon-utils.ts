@@ -181,7 +181,10 @@ export function canSpeciesTera(pokemon: Pokemon): boolean {
 }
 
 /**
- * Same as {@linkcode canSpeciesTera}, but also checks that the player has not already used their tera in the arena
+ * Same as {@linkcode canSpeciesTera}, but also checks that the player has not already used their tera in the arena.
+ *
+ * @remarks
+ * ⚠️ This does not account for tera commands that may be pending, so this should not be used during command selection!
  * @param pokemon - The Pokémon to check
  * @returns Whether the Pokémon can Terastallize
  */
