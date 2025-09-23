@@ -187,7 +187,7 @@ export class PhaseTree {
   /**
    * Check whether a particular Phase exists in the Tree
    * @param phaseType - The {@linkcode PhaseString | type} of phase to search for
-   * @param phaseFilter - An optional {@linkcode PhaseConditionFunc} to specify conditions for the phase
+   * @param phaseFilter - An optional `PhaseConditionFunc` to specify conditions for the phase
    * @returns Whether a matching phase exists
    */
   public exists<P extends PhaseString>(phaseType: P, phaseFilter?: PhaseConditionFunc<P>): boolean {
