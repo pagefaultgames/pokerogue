@@ -1992,7 +1992,7 @@ export class HealAttr extends MoveEffectAttr {
       return false;
     }
 
-    // Apply any boosts to healing amounts (i.e. Heal Pulse + Mega Launcher).
+    // Apply any boosts to healing amounts (e.g. Heal Pulse + Mega Launcher).
     const hp = new NumberHolder(this.healRatio)
     applyAbAttrs("MoveHealBoostAbAttr", {
       pokemon: user,
