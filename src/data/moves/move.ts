@@ -1956,17 +1956,24 @@ export class AddSubstituteAttr extends MoveEffectAttr {
  * Heals the user or target of the move by a fixed amount relative to their maximum HP.
  */
 export class HealAttr extends MoveEffectAttr {
-  /** The percentage of {@linkcode Stat.HP} to heal; default `1` */
-  protected healRatio = 1
-  /** Whether to display a healing animation upon healing the target; default `false` */
-  private showAnim = false
+  /** 
+   * The percentage of {@linkcode Stat.HP} to heal, relative to the user/target's maximum.
+   * @defaultValue `1`
+   */
+  protected healRatio: number;
+  /** 
+   * Whether to display a healing animation upon healing the target.
+   * @defaultValue `false`
+   */
+  private showAnim: boolean;
 
   /**
    * Whether the move should fail if the target is at full HP.
    * @defaultValue `true`
-   * @todo Remove post move failure rework - this solely exists to prevent Lunar Blessing and co. from failing
    */
-  private failOnFullHp = true;
+  // TODO: Remove post move failure rework - 
+  // this solely exists to prevent Lunar Blessing and co. from failing
+  private failOnFullHp: boolean;
 
   constructor(
     healRatio = 1,
@@ -1994,7 +2001,6 @@ export class HealAttr extends MoveEffectAttr {
       healRatio: hp
     })
     this.healRatio = hp.value;
-
 
     this.addHealPhase(this.selfTarget ? user : target);
     return true;
@@ -2037,8 +2043,8 @@ export class HealAttr extends MoveEffectAttr {
 /**
  * Attribute to put the user to sleep for a fixed duration, fully heal them and cure their status.
  * Used for {@linkcode MoveId.REST}.
- * @todo Move the status-based stuff to `addHealPhase` and remove `overrideStatus` parameters from status-related functions
  */
+// TODO: Move the status-based stuff to `addHealPhase` and remove `overrideStatus` parameters from status-related functions
 export class RestAttr extends HealAttr {
   private duration: number;
 
@@ -2060,7 +2066,7 @@ export class RestAttr extends HealAttr {
       "PokemonHealPhase",
       user.getBattlerIndex(),
       user.getMaxHp()
-  )
+    )
   }
 
   override getCondition(): MoveConditionFunc {
@@ -2083,9 +2089,11 @@ export class RestAttr extends HealAttr {
  *  - {@linkcode MoveId.SWALLOW}
  */
 export class VariableHealAttr extends HealAttr {
+  /** A lambda function yielding the amount of HP to heal. */
+  private healFunc: (user: Pokemon, target: Pokemon, move: Move) => number;
+
   constructor(
-    /** A function yielding the amount of HP to heal. */
-    private healFunc: (user: Pokemon, target: Pokemon, move: Move) => number,
+    healFunc: (user: Pokemon, target: Pokemon, move: Move) => number,
     showAnim = false,
     selfTarget = true,
     failOnFullHp = true,
@@ -2115,6 +2123,7 @@ export class HealOnAllyAttr extends HealAttr {
   }
 
   override getCondition(): MoveConditionFunc {
+    // Avoid checking healing condition if not used on an enemy
     return (user, target, _move) =>  user.getAlly() !== target || super.getCondition()(user, target, _move)
   }
 }
