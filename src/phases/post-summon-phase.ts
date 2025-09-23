@@ -15,7 +15,7 @@ export class PostSummonPhase extends PokemonPhase {
   /** Used to determine whether to push or unshift {@linkcode PostSummonActivateAbilityPhase}s */
   public readonly source: PhaseString;
 
-  constructor(battlerIndex?: BattlerIndex | number, source: PhaseString = "SwitchSummonPhase") {
+  constructor(battlerIndex?: BattlerIndex | number, source: PhaseString = "SwitchPhase") {
     super(battlerIndex);
     this.source = source;
   }

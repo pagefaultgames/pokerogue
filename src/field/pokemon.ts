@@ -103,9 +103,7 @@ import {
   Stat,
 } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
-import { SwitchType } from "#enums/switch-type";
 import type { TrainerSlot } from "#enums/trainer-slot";
-import { UiMode } from "#enums/ui-mode";
 import { WeatherType } from "#enums/weather-type";
 import { doShinySparkleAnim } from "#field/anims";
 import {
@@ -141,15 +139,13 @@ import { RibbonData } from "#system/ribbons/ribbon-data";
 import { awardRibbonsToSpeciesLine } from "#system/ribbons/ribbon-methods";
 import type { AbAttrMap, AbAttrString, Ability, TypeMultiplierAbAttrParams } from "#types/ability-types";
 import type { getAttackDamageParams, getBaseDamageParams } from "#types/damage-params";
-import type { DamageCalculationResult } from "#types/damage-result";
+import type { DamageCalculationResult, DamageResult } from "#types/damage-result";
 import type { IllusionData } from "#types/illusion-data";
-import type { DamageResult, Move } from "#types/move-types";
+import type { Move } from "#types/move-types";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { TurnMove } from "#types/turn-move";
 import { BattleInfo } from "#ui/battle-info";
 import { EnemyBattleInfo } from "#ui/enemy-battle-info";
-import type { PartyOption } from "#ui/party-ui-handler";
-import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import { PlayerBattleInfo } from "#ui/player-battle-info";
 import { playTween } from "#utils/anim-utils";
 import { applyChallenges } from "#utils/challenge-utils";
@@ -5804,37 +5800,6 @@ export class PlayerPokemon extends Pokemon {
     return true;
   }
 
-  /**
-   * Cause this Pokémon to leave the field (via {@linkcode leaveField}) and then
-   * open the party switcher UI to switch in a new Pokémon
-   * @param switchType - The type of this switch-out. If this is
-   * `BATON_PASS` or `SHED_TAIL`, this Pokémon's effects are not cleared upon leaving
-   * the field.
-   */
-  switchOut(switchType: SwitchType = SwitchType.SWITCH): Promise<void> {
-    return new Promise(resolve => {
-      this.leaveField(switchType === SwitchType.SWITCH);
-
-      globalScene.ui.setMode(
-        UiMode.PARTY,
-        PartyUiMode.FAINT_SWITCH,
-        this.getFieldIndex(),
-        (slotIndex: number, _option: PartyOption) => {
-          if (slotIndex >= globalScene.currentBattle.getBattlerCount() && slotIndex < 6) {
-            globalScene.phaseManager.queueDeferred(
-              "SwitchSummonPhase",
-              switchType,
-              this.getFieldIndex(),
-              slotIndex,
-              false,
-            );
-          }
-          globalScene.ui.setMode(UiMode.MESSAGE).then(resolve);
-        },
-        PartyUiHandler.FilterNonFainted,
-      );
-    });
-  }
   /**
    * Add friendship to this Pokemon
    *

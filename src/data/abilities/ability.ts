@@ -6208,8 +6208,7 @@ class ForceSwitchOutHelper {
       if (switchOutTarget.hp > 0) {
         globalScene.phaseManager.queueBattlerSwitchOut(switchOutTarget.getBattlerIndex(), {
           switchType: this.switchType,
-          when: "before",
-          phaseKey: "MoveEndPhase",
+          when: "deferred",
         });
       }
       /**
@@ -6227,8 +6226,7 @@ class ForceSwitchOutHelper {
           : 0;
         globalScene.phaseManager.queueBattlerSwitchOut(switchOutTarget.getBattlerIndex(), {
           switchType: this.switchType,
-          when: "before",
-          phaseKey: "MoveEndPhase",
+          when: "deferred",
           switchInIndex: summonIndex,
         });
         return true;

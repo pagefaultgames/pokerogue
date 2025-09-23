@@ -249,7 +249,7 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
     const playerField = globalScene.getPlayerField();
     playerField.forEach((pokemon, i) => {
       if (!pokemon.isAllowedInBattle() && legalPlayerPartyPokemon.length > i) {
-        globalScene.phaseManager.unshiftNew("SwitchPhase", SwitchType.SWITCH, i, true, false);
+        globalScene.phaseManager.unshiftNew("SwitchPhase", i, SwitchType.SWITCH);
       }
     });
 
@@ -328,9 +328,9 @@ export class MysteryEncounterBattlePhase extends Phase {
         globalScene.playBgm();
       }
       const availablePartyMembers = globalScene.getEnemyParty().filter(p => !p.isFainted()).length;
-      globalScene.phaseManager.unshiftNew("SummonPhase", 0, false);
+      globalScene.phaseManager.unshiftNew("SummonPhase", BattlerIndex.ENEMY, { delayPostSummon: true });
       if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-        globalScene.phaseManager.unshiftNew("SummonPhase", 1, false);
+        globalScene.phaseManager.unshiftNew("SummonPhase", BattlerIndex.ENEMY, { delayPostSummon: true });
       }
 
       if (!globalScene.currentBattle.mysteryEncounter?.hideBattleIntroMessage) {
@@ -348,9 +348,9 @@ export class MysteryEncounterBattlePhase extends Phase {
         const doTrainerSummon = () => {
           this.hideEnemyTrainer();
           const availablePartyMembers = globalScene.getEnemyParty().filter(p => !p.isFainted()).length;
-          globalScene.phaseManager.unshiftNew("SummonPhase", 0, false);
+          globalScene.phaseManager.unshiftNew("SummonPhase", BattlerIndex.ENEMY, { delayPostSummon: true });
           if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-            globalScene.phaseManager.unshiftNew("SummonPhase", 1, false);
+            globalScene.phaseManager.unshiftNew("SummonPhase", BattlerIndex.ENEMY_2, { delayPostSummon: true });
           }
           this.endBattleSetup();
         };

@@ -231,10 +231,27 @@ const turnEndPhases: readonly PhaseString[] = [
 ] as const;
 
 interface BattlerSwitchOutInit {
+  /**
+   * A {@linkcode SwitchType} dictating the type of switching behavior to implement.
+   * @defaultValue {@linkcode SwitchType.SWITCH}
+   */
   switchType?: SwitchType;
+  /**
+   * The index of the Pokemon being newly switched in.
+   * If set to `-1`, will determine the replacement during the {@linkcode SummonPhase}
+   * by consulting the player/enemy AI.
+   * @defaultValue `-1`
+   */
   switchInIndex?: number;
-  when?: "eager" | "before" | "after";
-  phaseKey?: PhaseString;
+  /**
+   * String denoting when to add the phase.
+   * Possible values are:
+   *  - `"eager"`: Adds the phase immediately via {@linkcode PhaseManager.unshiftPhase | unshiftPhase}
+   *  - `"deferred"`: Adds the phase immediately after all phases queued during this Phase have resolved.
+   *    Used to avoid queueing pending switches until the end of move effect processing has resolved.
+   * @defaultValue `"eager"`
+   */
+  when?: "eager" | "deferred";
 }
 
 /**
@@ -272,39 +289,23 @@ export class PhaseManager {
   /**
    * Unshift a sequence of phases to switch out a Pokemon on the field.
    * @param battlerIndex - The {@linkcode BattlerIndex} of the Pokemon to switch out
-   * @param switchType - (Default {@linkcode SwitchType.SWITCH}) The {@linkcode SwitchType | type} of switch to apply
-   * @param switchInIndex - (Default `-1`) The index of the party Pokemon to switch into
-   * the target Pokemon's place. If set to `-1`, the Pokemon to switch in is instead resolved
-   * during the {@linkcode SwitchPhase}.
+   * @param __namedParameters - Needed for Typedoc to function
    */
   public queueBattlerSwitchOut(
     battlerIndex: FieldBattlerIndex,
-    { switchType = SwitchType.SWITCH, switchInIndex = -1, when = "eager", phaseKey }: BattlerSwitchOutInit = {},
+    { switchType = SwitchType.SWITCH, switchInIndex = -1, when = "eager" }: BattlerSwitchOutInit = {},
   ): void {
     const phases = [
       this.create("RecallPhase", battlerIndex, switchType),
       this.create("SwitchPhase", battlerIndex, switchType, switchInIndex),
     ] as const;
 
-    const validatePhaseId = () => {
-      if (!phaseKey) {
-        throw new Error("`phaseId` is required if `when` is 'before' or 'after'");
-      }
-    };
-
     switch (when) {
       case "eager":
         this.unshiftPhase(...phases);
         break;
-      // case "before":
-      //   validatePhaseId();
-      //   this.phaseQueue.addAfter(phases, phaseKey);
-      //   break;
-      case "after":
-        validatePhaseId();
-        // We need to reverse the array so recall happens before switch
-        // TODO: There has to be a better way to do this
-        phases.toReversed().forEach(() => this.phaseQueue.addAfter(phases));
+      case "deferred":
+        this.phaseQueue.unshiftToCurrent(...phases);
         break;
     }
   }
@@ -329,15 +330,15 @@ export class PhaseManager {
   /**
    * Queue a phase to be run immediately after the current phase finishes. \
    * Unshifted phases are run in FIFO order if multiple are queued during a single phase's execution.
-   * @param phases - One or more {@linkcode Phase}s to add
+   * @param phases - One or more {@linkcode Phase}s to add.
+   * Phases automatically
    * @privateRemarks
    * Any newly-unshifted `MovePhase`s will be queued after the next `MoveEndPhase`.
    */
-  public unshiftPhase(...phases: [Phase, ...Phase[]]): void {
+  public unshiftPhase(...phases: [MovePhase] | [Phase, ...Phase[]]): void {
     for (const phase of phases) {
       const toAdd = this.checkDynamic(phase);
       if (phase.is("MovePhase")) {
-        // TODO: Can this be called with multiple `MovePhase`s?
         this.phaseQueue.addAfter(toAdd, "MoveEndPhase");
       } else {
         this.phaseQueue.addPhase(toAdd);
@@ -579,20 +580,6 @@ export class PhaseManager {
         this.pushPhase(new PostSummonPhase(p.getBattlerIndex(), "SummonPhase"));
       });
     }
-  }
-
-  /**
-   * Create a new phase and queue it to run after all others queued by the currently running phase.
-   * @param phase - The name of the phase to create
-   * @param args - The arguments to pass to the phase constructor
-   *
-   * @deprecated Only used for switches and should be phased out eventually.
-   */
-  public queueDeferred<const T extends "SwitchPhase" | "SwitchSummonPhase">(
-    phase: T,
-    ...args: ConstructorParameters<PhaseConstructorMap[T]>
-  ): void {
-    this.phaseQueue.unshiftToCurrent(this.create(phase, ...args));
   }
 
   /**

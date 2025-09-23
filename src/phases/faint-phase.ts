@@ -191,7 +191,7 @@ export class FaintPhase extends PokemonPhase {
          * If previous conditions weren't met, and the player has at least 1 legal Pokemon off the field,
          * push a phase that prompts the player to summon a Pokemon from their party.
          */
-        globalScene.phaseManager.pushNew("SwitchPhase", this.fieldIndex, SwitchType.MODAL_SWITCH);
+        globalScene.phaseManager.pushNew("SwitchPhase", this.fieldIndex, SwitchType.FAINT_SWITCH);
       }
     } else {
       globalScene.phaseManager.unshiftNew("VictoryPhase", this.battlerIndex);
@@ -202,7 +202,7 @@ export class FaintPhase extends PokemonPhase {
             .filter(p => p.isActive() && !p.isOnField() && p.trainerSlot === (pokemon as EnemyPokemon).trainerSlot)
             .length > 0;
         if (hasReservePartyMember) {
-          globalScene.phaseManager.pushNew("SwitchPhase", this.battlerIndex, SwitchType.MODAL_SWITCH);
+          globalScene.phaseManager.pushNew("SwitchPhase", this.battlerIndex, SwitchType.FAINT_SWITCH);
         }
       }
     }

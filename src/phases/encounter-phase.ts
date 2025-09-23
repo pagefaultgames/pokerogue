@@ -574,15 +574,7 @@ export class EncounterPhase extends BattlePhase {
     }
 
     if (!this.loaded) {
-      const availablePartyMembers = globalScene.getPokemonAllowedInBattle();
-      const minPartySize = globalScene.currentBattle.double ? 2 : 1;
-      const currentBattle = globalScene.currentBattle;
-      const checkSwitch =
-        currentBattle.battleType !== BattleType.TRAINER
-        && (currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily)
-        && availablePartyMembers.length > minPartySize;
-
-      const {double, battleType, waveIndex} = globalScene.currentBattle
+      const { double, battleType, waveIndex } = globalScene.currentBattle;
 
       const availablePartyMembers = globalScene.getPokemonAllowedInBattle().length;
       const minPartySize = double ? 2 : 1;
@@ -601,6 +593,7 @@ export class EncounterPhase extends BattlePhase {
           globalScene.phaseManager.pushNew("CheckSwitchPhase", BattlerIndex.PLAYER, double);
         }
       }
+    }
     handleTutorial(Tutorial.Access_Menu).then(() => super.end());
   }
 

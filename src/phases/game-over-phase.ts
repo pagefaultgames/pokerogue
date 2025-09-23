@@ -98,17 +98,24 @@ export class GameOverPhase extends BattlePhase {
 
               // TODO: Should this also check `!gameMode.isDaily` like in `TitlePhase.end()`?
               const checkSwitch =
-                globalScene.currentBattle.waveIndex > 1
-                && globalScene.currentBattle.battleType !== BattleType.TRAINER;
-            if (checkSwitch) {
-              globalScene.phaseManager.pushNew("CheckSwitchPhase", BattlerIndex.PLAYER, globalScene.currentBattle.double);
-              if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-                globalScene.phaseManager.pushNew("CheckSwitchPhase", BattlerIndex.PLAYER_2, globalScene.currentBattle.double);
+                globalScene.currentBattle.waveIndex > 1 && globalScene.currentBattle.battleType !== BattleType.TRAINER;
+              if (checkSwitch) {
+                globalScene.phaseManager.pushNew(
+                  "CheckSwitchPhase",
+                  BattlerIndex.PLAYER,
+                  globalScene.currentBattle.double,
+                );
+                if (globalScene.currentBattle.double && availablePartyMembers > 1) {
+                  globalScene.phaseManager.pushNew(
+                    "CheckSwitchPhase",
+                    BattlerIndex.PLAYER_2,
+                    globalScene.currentBattle.double,
+                  );
+                }
               }
-            }
 
-            globalScene.ui.fadeIn(1250);
-            this.end();
+              globalScene.ui.fadeIn(1250);
+              this.end();
             });
           },
           () => this.handleGameOver(),

@@ -2,10 +2,10 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BattleStyle } from "#enums/battle-style";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { PartyOption, PartyUiMode } from "#ui/party-ui-handler";
 import { SwitchType } from "#enums/switch-type";
 import { UiMode } from "#enums/ui-mode";
 import { BattlePhase } from "#phases/battle-phase";
+import { PartyOption, PartyUiMode } from "#ui/party-ui-handler";
 import i18next from "i18next";
 
 export class CheckSwitchPhase extends BattlePhase {
@@ -48,7 +48,7 @@ export class CheckSwitchPhase extends BattlePhase {
         .slice(1)
         .filter(p => p.isActive()).length === 0
     ) {
-      this.end(true);
+      this.end();
       return;
     }
 
@@ -58,7 +58,7 @@ export class CheckSwitchPhase extends BattlePhase {
       || pokemon.isTrapped()
       || globalScene.getPlayerField().some(p => p.getTag(BattlerTagType.COMMANDED))
     ) {
-      this.end(true);
+      this.end();
       return;
     }
 
@@ -87,10 +87,10 @@ export class CheckSwitchPhase extends BattlePhase {
     globalScene.ui.setMode(UiMode.MESSAGE).then(() => super.end());
   }
 
-  private async onPartyModeSelection(cursor: number, option: PartyOption): void {
+  private async onPartyModeSelection(cursor: number, option: PartyOption): Promise<void> {
     // Hitting "cancel" re-starts the prompt
     if (option === PartyOption.CANCEL) {
-      await globalScene.ui.setMode(UiMode.MESSAGE)
+      await globalScene.ui.setMode(UiMode.MESSAGE);
       this.start();
       return;
     }
@@ -98,7 +98,7 @@ export class CheckSwitchPhase extends BattlePhase {
     globalScene.phaseManager.unshiftNew("RecallPhase", this.fieldIndex, SwitchType.INITIAL_SWITCH);
     globalScene.phaseManager.unshiftNew("SwitchPhase", this.fieldIndex, SwitchType.INITIAL_SWITCH, cursor);
 
-    await globalScene.ui.setMode(UiMode.MESSAGE)
+    await globalScene.ui.setMode(UiMode.MESSAGE);
     this.end();
   }
 }
