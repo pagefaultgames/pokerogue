@@ -2006,7 +2006,7 @@ export class HealAttr extends MoveEffectAttr {
    */
   protected addHealPhase(healedPokemon: Pokemon) {
     globalScene.phaseManager.unshiftNew("PokemonHealPhase", healedPokemon.getBattlerIndex(),
-      // Healing moves round half UP the hp healed
+      // Healing moves always round UP
       // (unlike most other sources which round down)
       Math.round(healedPokemon.getMaxHp() * this.healRatio),
       {
