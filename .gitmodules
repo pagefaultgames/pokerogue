@@ -1,3 +1,8 @@
 # SPDX-FileCopyrightText: 2024-2025 NONE
 #
 # SPDX-License-Identifier: CC0-1.0
+
+
+[submodule "assets"]
+	path = assets
+	url = git@github.com:pagefaultgames/pokerogue-assets.git

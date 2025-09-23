@@ -34,10 +34,10 @@ jobs:
           path: pokerogue_docs
           sparse-checkout: |
             /*
-            !/public/
-            /public/images/pokemon/variant/_exp_masterlist.json
-            /public/images/pokemon/variant/_masterlist.json
-            /public/images/logo.png
+            !/assets/
+            /assets/images/pokemon/variant/_exp_masterlist.json
+            /assets/images/pokemon/variant/_masterlist.json
+            /assets/images/logo.png
           sparse-checkout-cone-mode: false
 
       - name: Install pnpm

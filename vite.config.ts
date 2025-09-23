@@ -12,6 +12,7 @@ export const defaultConfig: UserConfig = {
   plugins: [tsconfigPaths(), minifyJsonPlugin(["images", "battle-anims"], true)],
   clearScreen: false,
   appType: "mpa",
+  publicDir: "assets",
   build: {
     chunkSizeWarningLimit: 10000,
     minify: "esbuild",

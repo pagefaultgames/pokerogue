@@ -14,7 +14,7 @@ SPDX-License-Identifier: CC-BY-NC-SA-4.0
 1. `podman build -t pokerogue -f Dockerfile .`
 2. `podman create --name temp-pokerogue localhost/pokerogue`
 3. `podman cp temp-pokerogue:/app/node_modules ./`
-4. `podman cp temp-pokerogue:/app/public/locales ./public/`
+4. `podman cp temp-pokerogue:/app/assets/locales ./assets/`
 5. `podman rm temp-pokerogue`
 6. `podman run --rm -p 8000:8000 -v $(pwd):/app:Z --userns=keep-id -u $(id -u):$(id -g) localhost/pokerogue`
 7. Visit `http://localhost:8000/`

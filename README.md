@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024-2025 Pagefault Games
 SPDX-License-Identifier: CC-BY-NC-SA-4.0
 -->
 
-<div align="center"><picture><img src="./public/images/logo.png" width="300" alt="PokéRogue"></picture>
+<div align="center"><picture><img src="./assets/images/logo.png" width="300" alt="PokéRogue"></picture>
 
 [![Discord Static Badge](https://img.shields.io/badge/Community_Discord-blurple?style=flat&logo=discord&logoSize=auto&labelColor=white&color=5865F2)](https://discord.gg/pokerogue)
 [![Docs Coverage Static Badge](https://pagefaultgames.github.io/pokerogue/beta/coverage.svg)](https://pagefaultgames.github.io/pokerogue/beta)
@@ -32,6 +32,6 @@ Using the [REUSE helper tool](https://github.com/fsfe/reuse-tool), you can run `
 - All source code belonging to the project, unless otherwise noted, is licensed under [AGPL-v3.0-only](LICENSES/AGPL-3.0-only.txt)
 - All documentation (any markdown files), including this readme, as well as any documentation comments explicitly documenting source code, are also licensed under [CC-BY-NC-SA-4.0](LICENSES/CC-BY-NC-SA-4.0.txt)
 - Auto-generated files produced by external tools or files of insigifnicant originality are not copyrighted and are licensed under [CC0-1.0](LICENSES/CC0-1.0.txt)
-- To the extent that the assets we provide are [licensable and applicable](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en#ref-exception-or-limitation), they are licensed under [CC-BY-NC-SA-4.0](LICENSES/CC-BY-NC-SA-4.0.txt) unless otherwise noted. Exceptions can be found in associated REUSE.toml files. ⚠️ Files in `public/` that are not explicitly licensed, as per the REUSE.toml, should be considered to have _no_ licensing / copyright information.
+- To the extent that the assets we provide are [licensable and applicable](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en#ref-exception-or-limitation), they are licensed under [CC-BY-NC-SA-4.0](LICENSES/CC-BY-NC-SA-4.0.txt) unless otherwise noted. Exceptions can be found in associated REUSE.toml files. ⚠️ Files in `assets/` that are not explicitly licensed, as per the REUSE.toml, should be considered to have _no_ licensing / copyright information.
 
 The full license information for each file can be found by utilizing REUSE's tooling, such as via `reuse spdx`.

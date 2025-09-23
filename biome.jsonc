@@ -27,7 +27,7 @@
       "**",
       "!**/dist",
       "!**/coverage",
-      "!**/public",
+      "!**/assets",
       "!**/.github",
       "!**/node_modules",
       "!**/typedoc",

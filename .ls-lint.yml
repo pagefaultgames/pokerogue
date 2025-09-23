@@ -29,7 +29,7 @@ ignore:
    - .vscode
    - .github
    - .git
-   - public
+   - assets
    - dist
    - .devcontainer
    - "LICENSES"

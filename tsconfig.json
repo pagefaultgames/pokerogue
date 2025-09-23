@@ -77,6 +77,6 @@
     "vite.config.ts",
     "vitest.config.ts",
     "vitest.workspace.ts",
-    "public/service-worker.js"
+    "assets/service-worker.js"
   ]
 }
