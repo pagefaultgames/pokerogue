@@ -92,8 +92,16 @@ export function getIconWithSettingName(config, settingName) {
   return getIconWithKey(config, key);
 }
 
+/**
+ * Retrieve key from input keys eg: return "R" from "KEY_R"
+ * @param configs
+ * @param source Source of last input type. Eg: "gamepad"
+ * @param devices List of all devices.
+ * @param settingName Action for the input key.
+ * @returns
+ */
 export function getKeyForLatestInput(configs, source, devices, settingName) {
-  let config: any; // TODO: refine type
+  let config: any;
   if (source === "gamepad") {
     config = configs[devices[Device.GAMEPAD]];
   } else {

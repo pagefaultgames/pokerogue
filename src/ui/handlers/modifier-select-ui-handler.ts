@@ -173,6 +173,10 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     globalScene.addInfoToggle(this.moveInfoOverlay);
   }
 
+  /**
+   * To update text in the command when globalScene.enableHotkeyTips
+   * is turned off or when action keys are changed.
+   */
   updateTipsText(): void {
     this.updateRerollText();
     this.updateRerollCostPosition();
@@ -541,7 +545,11 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
             success = this.setCursor(0);
           }
           break;
-        case Button.CYCLE_SHINY: // R key, by default to reroll the shop
+        case Button.CYCLE_SHINY:
+          /**
+           * When the Cycle Shiny button is pressed,
+           * a reroll command will be played.
+           */
           if (this.onActionInput && globalScene.money >= this.rerollCost) {
             const originalOnActionInput = this.onActionInput;
             this.awaitingActionInput = true;
@@ -549,7 +557,11 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
             originalOnActionInput(0, 0);
           }
           break;
-        case Button.CYCLE_ABILITY: // E key, by default to lock rarity
+        case Button.CYCLE_ABILITY:
+          /**
+           * When the Cycle Ability button is pressed,
+           * the lock rarity will be enabled/disabled.
+           */
           if (this.onActionInput && this.lockRarityButtonContainer.visible) {
             const originalOnActionInput = this.onActionInput;
             this.awaitingActionInput = true;

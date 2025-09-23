@@ -240,7 +240,11 @@ export class CommandUiHandler extends UiHandler {
           }
           break;
         case Button.CYCLE_SHINY: {
-          // Used to throw the last pokeball
+          /**
+           * When the Cycle Shiny button is pressed,
+           * the last pokeball will be thrown.
+           * This can only be used in the UiMode.COMMAND.
+           */
           const commandPhase = globalScene.phaseManager.getCurrentPhase() as CommandPhase;
           if (
             globalScene.currentBattle.battleType === BattleType.WILD
@@ -255,7 +259,13 @@ export class CommandUiHandler extends UiHandler {
           }
           break;
         }
-        case Button.CYCLE_ABILITY: // Used to restart the battle
+        case Button.CYCLE_ABILITY:
+          /**
+           * When the Cycle Ability button is pressed,
+           * the UI will request the user if they would like
+           * to restart the battle. This can only be used in
+           * the UiMode.COMMAND.
+           */
           if (!globalScene.enableRetries) {
             break;
           }
@@ -376,6 +386,10 @@ export class CommandUiHandler extends UiHandler {
     this.cursorObj = null;
   }
 
+  /**
+   * To update text in the command when globalScene.enableHotkeyTips
+   * is turned off or when action keys are changed.
+   */
   updateTipsText(): void {
     const throwBallKey = globalScene.enableHotkeyTips
       ? ""

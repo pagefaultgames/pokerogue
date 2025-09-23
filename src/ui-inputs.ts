@@ -134,6 +134,11 @@ export class UiInputs {
 
   buttonAB(button: Button): void {
     if (this.isInSettings()) {
+      /**
+       * When exiting the settings menu, this function
+       * will update the the UI to update the text.
+       * Eg: (E) Throw Poke ball -> (Shift) Throw Poke ball
+       */
       const whiteListUIModes: UiMode[] = [UiMode.MODIFIER_SELECT, UiMode.COMMAND];
       for (const uiMode of whiteListUIModes) {
         globalScene.ui.handlers[uiMode].updateTipsText();
