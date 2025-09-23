@@ -7330,9 +7330,7 @@ export function initAbilities() {
       .attr(PostSummonUserFieldRemoveStatusEffectAbAttr, StatusEffect.SLEEP)
       .attr(UserFieldBattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .ignorable()
-      // Mold Breaker ally should not be affected by Sweet Veil
-      // TODO: Review this
-      .partial(),
+      .partial(), // Mold Breaker ally should not be affected by Sweet Veil
     new Ability(AbilityId.STANCE_CHANGE, 6)
       .attr(NoFusionAbilityAbAttr)
       .uncopiable()
