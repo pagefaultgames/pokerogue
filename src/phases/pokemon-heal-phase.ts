@@ -104,8 +104,8 @@ export class PokemonHealPhase extends CommonAnimPhase {
   // NB: Placing this stuff directly inside `end` is required as
   // `CommonAnimPhase` calls `this.end` once the animation finishes.
   // TODO: refactor this bizarre control flow to make sense
-  public async override end(): Promise<void> {
-    await this.heal()
+  public override async end(): Promise<void> {
+    await this.heal();
     super.end();
   }
 
