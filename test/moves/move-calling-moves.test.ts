@@ -117,15 +117,13 @@ describe("Moves - Move-calling Moves", () => {
     name: string;
     move: MoveId;
     attrName: MoveAttrString;
-    choiceName: string;
-    /** A callback that will ensure the selected move is m. */
+    /** A callback that will ensure the selected move is used. */
     callback: (m: MoveId) => void;
   }>([
     {
       name: "Metronome",
       move: MoveId.METRONOME,
       attrName: "RandomMoveAttr",
-      choiceName: "a completely random move",
       callback: m => {
         game.move.forceMetronomeMove(m);
       },
@@ -134,7 +132,6 @@ describe("Moves - Move-calling Moves", () => {
       name: "Sleep Talk",
       move: MoveId.SLEEP_TALK,
       attrName: "RandomMovesetMoveAttr",
-      choiceName: "a random move that the user knows",
       callback: m => {
         game.move.changeMoveset(game.field.getPlayerPokemon(), [m, MoveId.SLEEP_TALK]);
       },
@@ -143,7 +140,6 @@ describe("Moves - Move-calling Moves", () => {
       name: "Assist",
       move: MoveId.ASSIST,
       attrName: "RandomMovesetMoveAttr",
-      choiceName: "a random move known by the user's allies",
       callback: m => {
         game.move.changeMoveset(game.scene.getPlayerParty()[1], m);
       },
@@ -152,7 +148,6 @@ describe("Moves - Move-calling Moves", () => {
       name: "Mirror Move",
       move: MoveId.MIRROR_MOVE,
       attrName: "CopyMoveAttr",
-      choiceName: "the last move used by the target",
       callback: m => {
         game.field
           .getEnemyPokemon()
@@ -166,9 +161,8 @@ describe("Moves - Move-calling Moves", () => {
       callback: m => {
         game.scene.currentBattle.lastMove = m;
       },
-      choiceName: "the last move used by the target",
     },
-  ])("$name", ({ move, attrName, callback, choiceName }) => {
+  ])("$name", ({ move, attrName, callback }) => {
     let attr: CallMoveAttrWithBanlist;
     let banlist: ReadonlySet<MoveId>;
     let getMoveSpy: MockInstance<CallMoveAttrWithBanlist["getMove"]>;
@@ -183,25 +177,6 @@ describe("Moves - Move-calling Moves", () => {
       if (move === MoveId.SLEEP_TALK) {
         game.override.statusEffect(StatusEffect.SLEEP);
       }
-    });
-
-    // TODO: Revert and move back to the original tests' functions
-    it.skipIf(move === MoveId.METRONOME)(`should copy and execute ${choiceName}`, async () => {
-      await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
-
-      callback(MoveId.SPLASH);
-
-      const feebas = game.field.getPlayerPokemon();
-      game.move.select(move);
-      await game.toEndOfTurn();
-
-      expect(getMoveSpy).toHaveReturnedWith(MoveId.SPLASH);
-      expect(feebas).toHaveUsedMove({ move, useMode: MoveUseMode.NORMAL }, 1);
-      expect(feebas).toHaveUsedMove({
-        move: MoveId.SPLASH,
-        useMode: MoveUseMode.FOLLOW_UP,
-        targets: [feebas.getBattlerIndex()],
-      });
     });
 
     it.skipIf(move === MoveId.MIRROR_MOVE)(
@@ -298,6 +273,30 @@ describe("Moves - Move-calling Moves", () => {
       game.override.moveset([MoveId.SLEEP_TALK, MoveId.SWORDS_DANCE]).statusEffect(StatusEffect.SLEEP);
     });
 
+    it("should call a random valid move from the user's moveset", async () => {
+      game.override.moveset([MoveId.SLEEP_TALK, MoveId.DIG, MoveId.FLY, MoveId.SWORDS_DANCE]); // Dig and Fly are invalid moves, Swords Dance should always be called
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+
+      game.move.select(MoveId.SLEEP_TALK);
+      await game.toNextTurn();
+
+      const feebas = game.field.getPlayerPokemon();
+      expect(feebas).toHaveStatStage(Stat.ATK, 2);
+      expect(feebas).toHaveUsedMove({
+        move: MoveId.SWORDS_DANCE,
+        result: MoveResult.SUCCESS,
+        useMode: MoveUseMode.FOLLOW_UP,
+      });
+      expect(feebas).toHaveUsedMove(
+        {
+          move: MoveId.SLEEP_TALK,
+          result: MoveResult.SUCCESS,
+          useMode: MoveUseMode.NORMAL,
+        },
+        1,
+      );
+    });
+
     it("should fail if all the user's moves are invalid", async () => {
       game.override.moveset([MoveId.SLEEP_TALK, MoveId.COPYCAT]);
       await game.classicMode.startBattle([SpeciesId.FEEBAS]);
@@ -335,6 +334,44 @@ describe("Moves - Move-calling Moves", () => {
   });
 
   describe("Assist", () => {
+    it("should call a random eligible move from an ally's moveset", async () => {
+      game.override.battleStyle("double");
+      await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.SHUCKLE]);
+
+      const [feebas, shuckle] = game.scene.getPlayerField();
+      game.move.changeMoveset(feebas, [MoveId.CIRCLE_THROW, MoveId.ASSIST, MoveId.WOOD_HAMMER, MoveId.ACID_SPRAY]);
+      game.move.changeMoveset(shuckle, [MoveId.COPYCAT, MoveId.ASSIST, MoveId.TORCH_SONG, MoveId.TACKLE]);
+
+      // Force rolling the first eligible move for both mons.
+      vi.spyOn(feebas, "randBattleSeedInt").mockImplementation(() => 0);
+      vi.spyOn(shuckle, "randBattleSeedInt").mockImplementation(() => 0);
+
+      game.move.select(MoveId.ASSIST, BattlerIndex.PLAYER);
+      game.move.select(MoveId.ASSIST, BattlerIndex.PLAYER_2);
+      await game.toEndOfTurn();
+
+      expect(feebas).toHaveUsedMove({ move: MoveId.TORCH_SONG, useMode: MoveUseMode.FOLLOW_UP });
+      expect(shuckle).toHaveUsedMove({ move: MoveId.WOOD_HAMMER, useMode: MoveUseMode.FOLLOW_UP });
+      expect(feebas).toHaveUsedMove({ move: MoveId.ASSIST, useMode: MoveUseMode.FOLLOW_UP }, 1);
+      expect(shuckle).toHaveUsedMove({ move: MoveId.ASSIST, useMode: MoveUseMode.FOLLOW_UP }, 1);
+    });
+
+    it("should consider off-field allies", async () => {
+      await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.SHUCKLE]);
+
+      const [feebas, shuckle] = game.scene.getPlayerParty();
+      game.move.changeMoveset(shuckle, MoveId.SOAK);
+
+      game.move.use(MoveId.ASSIST);
+      await game.toEndOfTurn();
+
+      expect(feebas).toHaveUsedMove({
+        move: MoveId.SOAK,
+        useMode: MoveUseMode.FOLLOW_UP,
+        result: MoveResult.SUCCESS,
+      });
+    });
+
     it("should fail if there are no allies, even if user has eligible moves", async () => {
       await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
@@ -450,4 +487,9 @@ describe("Moves - Move-calling Moves", () => {
       expect(enemy).toHaveStatStage(Stat.ATK, 2);
     });
   });
+
+  describe("Metronome", () => {
+    // TODO: Figure out a good way to override RNG rolls to force Metronome to use a move
+    it.todo("should call a random move")
+  })
 });
