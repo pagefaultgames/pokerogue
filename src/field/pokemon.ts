@@ -3216,9 +3216,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Check whether 2 Pokémon oppose one another during battle.
+   * Check whether this Pokémon opposes another Pokémon during battle.
    * @param target - The {@linkcode Pokemon} to compare against
-   * @returns Whether this Pokemon is an opponent of `target` (one is player and the other enemy).
+   * @returns Whether this Pokemon opposes `target` (one is player- and the other enemy-controlled).
    */
   public isOpponent(target: Pokemon): boolean {
     return this.isPlayer() !== target.isPlayer();

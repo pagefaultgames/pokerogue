@@ -34,7 +34,7 @@ const nonDynamicPokemonPhases: readonly PhaseString[] = [
  * This is mostly used in redirection, cancellation, etc. of {@linkcode MovePhase}s.
  */
 export class DynamicQueueManager {
-  /** Maps phase types to their corresponding queues */
+  /** A Map matching `Phase` names to their corresponding priority queuess */
   private readonly dynamicPhaseMap: Map<PhaseString, PriorityQueue<Phase>>;
 
   constructor() {
@@ -56,46 +56,45 @@ export class DynamicQueueManager {
    * @param phase - The {@linkcode Phase} to add
    * @returns `true` if the phase was added, or `false` if it is not dynamic
    */
-  public queueDynamicPhase<T extends Phase>(phase: T): boolean {
+  public queueDynamicPhase(phase: Phase): boolean {
     if (!this.isDynamicPhase(phase)) {
       return false;
     }
 
     if (!this.dynamicPhaseMap.has(phase.phaseName)) {
-      // TS can't figure out that T is dynamic at this point, but it does know that `typeof phase` is
-      this.dynamicPhaseMap.set(phase.phaseName, new PokemonPhasePriorityQueue<typeof phase>());
+      this.dynamicPhaseMap.set(phase.phaseName, new PokemonPhasePriorityQueue());
     }
     this.dynamicPhaseMap.get(phase.phaseName)?.push(phase);
     return true;
   }
 
   /**
-   * Returns the highest-priority (generally by speed) {@linkcode Phase} of the specified type.
-   * @param type - The {@linkcode PhaseString | type} of phase to access
-   * @returns The popped {@linkcode Phase}, or `undefined` if none of the specified type exist
+   * Remove a {@linkcode Phase} from its corresponding queue and return it.
+   * @param name - The {@linkcode PhaseString | name} of the Phase to retrieve
+   * @returns The highest-priority `Phase` of the given type, or `undefined` if none of the specified type exist
    */
-  public popNextPhase(type: PhaseString): Phase | undefined {
-    return this.dynamicPhaseMap.get(type)?.pop();
+  public popNextPhase(name: PhaseString): Phase | undefined {
+    return this.dynamicPhaseMap.get(name)?.pop();
   }
 
   /**
    * Determines if there is a queued dynamic {@linkcode Phase} meeting the conditions
-   * @param type - The {@linkcode PhaseString | type} of phase to search for
+   * @param name - The {@linkcode PhaseString | name} of the Phase to search for
    * @param condition - An optional {@linkcode PhaseConditionFunc} to add conditions to the search
    * @returns Whether a matching phase exists
    */
-  public exists<T extends PhaseString>(type: T, condition: PhaseConditionFunc<T> = () => true): boolean {
-    return !!this.dynamicPhaseMap.get(type)?.has(condition);
+  public exists<T extends PhaseString>(name: T, condition: PhaseConditionFunc<T> = () => true): boolean {
+    return !!this.dynamicPhaseMap.get(name)?.has(condition);
   }
 
   /**
    * Finds and removes a single queued {@linkcode Phase}
-   * @param type - The {@linkcode PhaseString | type} of phase to search for
+   * @param name - The {@linkcode PhaseString | name} of the Phase to search for
    * @param phaseFilter - A {@linkcode PhaseConditionFunc} to specify conditions for the phase
    * @returns Whether a removal occurred
    */
-  public removePhase<T extends PhaseString>(type: T, condition?: PhaseConditionFunc<T>): boolean {
-    return !!this.dynamicPhaseMap.get(type)?.remove(condition);
+  public removePhase<T extends PhaseString>(name: T, condition?: PhaseConditionFunc<T>): boolean {
+    return !!this.dynamicPhaseMap.get(name)?.remove(condition);
   }
 
   /**
@@ -126,17 +125,17 @@ export class DynamicQueueManager {
   }
 
   /**
-   * Finds a {@linkcode MovePhase} meeting the condition
-   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function
-   * @returns The MovePhase, or `undefined` if it does not exist
+   * Find and return the first {@linkcode MovePhase} meeting the given condition.
+   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function used to retrieve the phase
+   * @returns The retrieved `MovePhase`, or `undefined` if none meet the criteria.
    */
   public getMovePhase(condition: PhaseConditionFunc<"MovePhase">): MovePhase | undefined {
     return this.getMovePhaseQueue().find(condition);
   }
 
   /**
-   * Find and cancel a {@linkcode MovePhase} meeting the condition
-   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function to filter phases by
+   * Find and cancel the first {@linkcode MovePhase} meeting the given condition.
+   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function used to retrieve the phase
    */
   public cancelMovePhase(condition: PhaseConditionFunc<"MovePhase">): void {
     this.getMovePhaseQueue().cancelMove(condition);
