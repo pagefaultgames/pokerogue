@@ -1,4 +1,10 @@
 /*
+ * SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
+/*
  * This script creates a test boilerplate file in the appropriate
  * directory based on the type selected.
  * Usage: `pnpm test:create`
