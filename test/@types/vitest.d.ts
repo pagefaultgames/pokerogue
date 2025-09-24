@@ -131,9 +131,9 @@ interface ArenaMatchers {
    * Check whether the current {@linkcode Arena} contains the given number of {@linkcode PositionalTag}s.
    * @param expectedType - The {@linkcode PositionalTagType} of the desired tag
    * @param count - The number of instances of `expectedType` that should be active;
-   * defaults to `1` and must be within the range `[0, 4]`
+   * defaults to `1` and must be within the range `[1, 4]`
    */
-  toHavePositionalTag(expectedType: PositionalTagType, count?: number): void;
+  toHavePositionalTag(expectedType: PositionalTagType, count?: 1 | 2 | 3 | 4): void;
 }
 
 // #endregion Arena Matchers

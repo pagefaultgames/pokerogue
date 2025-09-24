@@ -178,7 +178,7 @@ describe("Moves - Delayed Attacks", () => {
     await game.move.forceEnemyMove(MoveId.FUTURE_SIGHT, BattlerIndex.PLAYER);
     await game.move.forceEnemyMove(MoveId.FUTURE_SIGHT, BattlerIndex.PLAYER_2);
     // Ensure that the moves are used deterministically in speed order (for speed ties)
-    await game.setTurnOrder(oldOrder);
+    game.setTurnOrder(oldOrder);
     await game.toNextTurn();
 
     expectFutureSightActive(4);
@@ -187,8 +187,9 @@ describe("Moves - Delayed Attacks", () => {
     alomomola.setStatStage(Stat.SPD, 6);
     blissey.setStatStage(Stat.SPD, -6);
 
-    const newOrder = game.field.getSpeedOrder();
+    const newOrder = game.field.getSpeedOrder(true);
     expect(newOrder).not.toEqual(oldOrder);
+    game.setTurnOrder(newOrder);
 
     await passTurns(2, false);
 
@@ -199,8 +200,7 @@ describe("Moves - Delayed Attacks", () => {
     expect(MEPs).toHaveLength(4);
     expect(
       MEPs.map(mep => mep.getPokemon().getBattlerIndex()),
-      `Expected: ${oldOrder.map(o => game.scene.getField()[o].getNameToRender())}
-Actual: ${MEPs.map(mep => mep.getPokemon().getNameToRender())}`,
+      "Delayed Attacks were not queued in correct order!",
     ).toEqual(oldOrder);
   });
 
