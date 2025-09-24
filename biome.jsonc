@@ -28,6 +28,7 @@
       "!**/dist",
       "!**/coverage",
       "!**/assets",
+      "!**/locales",
       "!**/.github",
       "!**/node_modules",
       "!**/typedoc",

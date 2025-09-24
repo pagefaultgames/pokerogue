@@ -28,13 +28,13 @@ export const defaultConfig: UserConfig = {
   },
 };
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, command }) => {
   const envPort = Number(loadEnv(mode, process.cwd()).VITE_PORT);
 
   return {
     ...defaultConfig,
     base: "",
-    publicDir: mode === "serve" ? "assets" : false,
+    publicDir: command === "serve" ? "assets" : false,
     esbuild: {
       pure: mode === "production" ? ["console.log"] : [],
       keepNames: true,

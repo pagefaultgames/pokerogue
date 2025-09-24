@@ -30,6 +30,7 @@ ignore:
    - .github
    - .git
    - assets
+   - locales
    - dist
    - .devcontainer
    - "LICENSES"
