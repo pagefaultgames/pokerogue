@@ -79,11 +79,12 @@ export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase>
   }
 
   private sortPostSpeed(): void {
-    this.queue.sort(
-      (a: MovePhase, b: MovePhase) =>
-        // formatting
-        b.timingModifier - a.timingModifier || getPriorityForMP(b) - getPriorityForMP(a),
-    );
+    this.queue.sort((a: MovePhase, b: MovePhase) => {
+      if (a.timingModifier !== b.timingModifier) {
+        return b.timingModifier - a.timingModifier;
+      }
+      return getPriorityForMP(b) - getPriorityForMP(a);
+    });
   }
 }
 
