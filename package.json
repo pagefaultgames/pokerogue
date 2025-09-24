@@ -29,8 +29,12 @@
     "postinstall": "lefthook install; git config --local recurse.submodules true",
     "update-version:patch": "pnpm version patch --force --no-git-tag-version",
     "update-version:minor": "pnpm version minor --force --no-git-tag-version",
-    "update-assets": "git submodule update --progress --init --recursive --depth 1",
-    "update-assets:remote": "git submodule update --progress --init --recursive --force --remote --depth 1"
+    "update-locales": "git submodule update --progress --init --recursive --depth 1 locales",
+    "update-locales:remote": "git submodule update --progress --init --recursive --force --remote --depth 1 locales",
+    "update-assets": "git submodule update --progress --init --recursive --depth 1 assets",
+    "update-assets:remote": "git submodule update --progress --init --recursive --force --remote --depth 1 assets",
+    "update-all": "pnpm update-locales && pnpm update-assets",
+    "update-all:remote": "pnpm update-locales:remote && pnpm update"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.4",

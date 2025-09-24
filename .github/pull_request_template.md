@@ -9,8 +9,8 @@ Make sure the title includes categorization (choose the one that best fits):
 -  [Mystery]: For new or modified Mystery Encounters
 -  [Test]: If the PR is primarily adding or modifying tests
 -  [UI/UX]: If the PR is changing UI/UX elements
--  [Audio]: If the PR is adding or changing music/sfx
--  [Sprite]: If the PR is adding or changing sprites
+-  [Audio]: If the PR is adding or changing music/sfx (may come with an associated assets PR)
+-  [Sprite]: If the PR is adding or changing sprites (may come with an associated assets PR)
 -  [Balance]: If the PR is related to game balance
 -  [Challenge]: If the PR is adding or modifying challenges
 -  [Refactor]: If the PR is primarily rewriting existing code
@@ -78,6 +78,6 @@ Are there any localization additions or changes? If so:
   - [ ] If so, please leave a link to it here: 
 - [ ] Has the translation team been contacted for proofreading/translation?
 
-Does this require any (non-localization) changes to the assets folder? If so:
+Does this require any changes to the assets folder? If so:
   - [ ] Has a PR been created on the [assets](https://github.com/pagefaultgames/pokerogue-assets) repo?
     - [ ] If so, please leave a link to it here: 
