@@ -236,7 +236,8 @@ const turnEndPhases: readonly PhaseString[] = [
  * The `PhaseManager` is responsible for managing the phases in the Battle Scene.
  */
 export class PhaseManager {
-  /** PhaseQueue: dequeue/remove the first element to get the next phase */
+  /** A multi-dimensional queue of phases being run. */
+  // TODO: Consider renaming given this is no longer a simple queue
   private readonly phaseQueue: PhaseTree = new PhaseTree();
 
   /** Holds priority queues for dynamically ordered phases */

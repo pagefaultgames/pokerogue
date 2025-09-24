@@ -10,9 +10,11 @@ import type { PhaseConditionFunc } from "#types/phase-types";
 /**
  * The PhaseTree is the central storage location for {@linkcode Phase}s by the {@linkcode PhaseManager}.
  *
- * It has a tiered structure, where unshifted phases are added one level above the currently running Phase. Phases are generally popped from the Tree in FIFO order.
+ * It has a tiered structure, where unshifted phases are added one level above the currently running Phase. \
+ * Phases are generally popped from the Tree in FIFO order.
  *
- * Dynamically ordered phases are queued into the Tree only as {@linkcode DynamicPhaseMarker | Marker}s and as such are not guaranteed to run FIFO (otherwise, they would not be dynamic)
+ * Dynamically ordered phases are queued into the Tree only as {@linkcode DynamicPhaseMarker | Marker}s and
+ * are not guaranteed to run FIFO (otherwise, they would not be dynamic)
  */
 export class PhaseTree {
   /** Storage for all levels in the tree. This is a simple array because only one Phase may have "children" at a time. */
