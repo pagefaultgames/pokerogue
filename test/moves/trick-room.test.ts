@@ -54,14 +54,13 @@ describe("Move - Trick Room", () => {
       sourceMove: MoveId.TRICK_ROOM,
       turnCount: 4, // The 5 turn limit _includes_ the current turn!
     });
-
-    expect(game.field.getSpeedOrder(true, false)).toEqual([karp, feebas]);
+    expect(game.field.getSpeedOrder(false, false)).toEqual([karp, feebas]);
 
     game.move.use(MoveId.SUNNY_DAY);
     await game.move.forceEnemyMove(MoveId.RAIN_DANCE);
     await game.toEndOfTurn();
 
-    expect(game.scene.arena.getWeatherType()).toBe(WeatherType.SUNNY);
+    expect(game).toHaveWeather(WeatherType.SUNNY);
   });
 
   it("should be removed when overlapped", async () => {
