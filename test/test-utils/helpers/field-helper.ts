@@ -5,7 +5,7 @@ import type { globalScene } from "#app/global-scene";
 import type { Ability } from "#abilities/ability";
 import { allAbilities } from "#data/data-lists";
 import type { AbilityId } from "#enums/ability-id";
-import type { BattlerIndex } from "#enums/battler-index";
+import type { BattlerIndex, FieldBattlerIndex } from "#enums/battler-index";
 import type { PokemonType } from "#enums/pokemon-type";
 import { Stat } from "#enums/stat";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
@@ -68,7 +68,7 @@ export class FieldHelper extends GameManagerHelper {
    * This does not account for Trick Room as it does not modify the _speed_ of Pokemon on the field,
    * only their turn order.
    */
-  public getSpeedOrder(indices: true): Exclude<BattlerIndex, BattlerIndex.ATTACKER>[];
+  public getSpeedOrder(indices: true): FieldBattlerIndex[];
   public getSpeedOrder(indices = false): BattlerIndex[] | Pokemon[] {
     const ret = this.game.scene
       .getField(true)

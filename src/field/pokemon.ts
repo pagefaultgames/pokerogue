@@ -71,7 +71,7 @@ import { AiType } from "#enums/ai-type";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
-import { BattlerIndex } from "#enums/battler-index";
+import { BattlerIndex, type FieldBattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import type { BerryType } from "#enums/berry-type";
@@ -731,7 +731,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   abstract getFieldIndex(): number;
 
-  abstract getBattlerIndex(): BattlerIndex;
+  abstract getBattlerIndex(): FieldBattlerIndex;
 
   /**
    * Load all assets needed for this Pokemon's use in battle
@@ -5762,8 +5762,8 @@ export class PlayerPokemon extends Pokemon {
     return globalScene.getPlayerField().indexOf(this);
   }
 
-  getBattlerIndex(): BattlerIndex {
-    return this.getFieldIndex();
+  getBattlerIndex(): FieldBattlerIndex {
+    return this.getFieldIndex() as FieldBattlerIndex;
   }
 
   generateCompatibleTms(): void {
@@ -6899,8 +6899,8 @@ export class EnemyPokemon extends Pokemon {
     return globalScene.getEnemyField().indexOf(this);
   }
 
-  public getBattlerIndex(): BattlerIndex {
-    return BattlerIndex.ENEMY + this.getFieldIndex();
+  public getBattlerIndex(): FieldBattlerIndex {
+    return (BattlerIndex.ENEMY + this.getFieldIndex()) as FieldBattlerIndex;
   }
 
   /**

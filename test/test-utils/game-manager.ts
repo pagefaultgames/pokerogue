@@ -4,7 +4,7 @@ import { getGameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import overrides from "#app/overrides";
 import { modifierTypes } from "#data/data-lists";
-import { BattlerIndex } from "#enums/battler-index";
+import { BattlerIndex, type FieldBattlerIndex } from "#enums/battler-index";
 import { Button } from "#enums/buttons";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { ExpNotification } from "#enums/exp-notification";
@@ -549,13 +549,12 @@ export class GameManager {
    * @todo What should happen if the number of active battlers changes mid-test?
    * @todo Remove `await`s from existing test files in a follow-up PR
    */
-  public setTurnOrder(order: Exclude<BattlerIndex, BattlerIndex.ATTACKER>[]): void {
-    // TODO: Remove type assertions once `BattlerIndex.ATTACKER` ceases to exist
-    expect(order).toEqualUnsorted(
-      this.scene.getField(true).map(p => p.getBattlerIndex() as Exclude<BattlerIndex, BattlerIndex.ATTACKER>),
+  public setTurnOrder(order: FieldBattlerIndex[]): void {
+    expect(order, "Turn order passed to `setTurnOrder` lacked values for one or more Pokemon!").toEqualUnsorted(
+      this.scene.getField(true).map(p => p.getBattlerIndex()),
     );
 
-    this.scene.turnCommandManager.setTurnOrder(order);
+    this.scene.turnCommandManager.setOrder = order;
   }
 
   /**

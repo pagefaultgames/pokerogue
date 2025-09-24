@@ -248,6 +248,7 @@ export class BattleScene extends SceneBase {
 
   /** Manager for the phases active in the battle scene */
   public readonly phaseManager: PhaseManager;
+  /** A manager for the commands and moves used in the current battle. */
   public readonly turnCommandManager: TurnCommandManager = new TurnCommandManager();
   public field: Phaser.GameObjects.Container;
   public fieldUI: Phaser.GameObjects.Container;

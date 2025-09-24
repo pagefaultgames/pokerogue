@@ -63,7 +63,7 @@ interface GenericMatchers<T> {
    * @param expected - The expected contents of the array, in any order
    * @see {@linkcode expect.arrayContaining}
    */
-  toEqualUnsorted: T extends (infer U)[] ? (expected: U[]) => void : never;
+  toEqualUnsorted: T extends ReadonlyArray<infer U> ? (expected: ReadonlyArray<U>) => void : never;
 
   /**
    * Check whether a {@linkcode Map} contains the given key, disregarding its value.
