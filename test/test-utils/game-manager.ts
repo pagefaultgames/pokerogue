@@ -14,7 +14,7 @@ import { PlayerGender } from "#enums/player-gender";
 import type { PokeballType } from "#enums/pokeball";
 import type { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import { type EnemyPokemon, type PlayerPokemon, Pokemon } from "#field/pokemon";
+import type { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
 import { ModifierTypeOption } from "#modifiers/modifier-type";
 import { CheckSwitchPhase } from "#phases/check-switch-phase";
@@ -52,7 +52,6 @@ import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import type { PartyUiHandler } from "#ui/party-ui-handler";
 import type { StarterSelectUiHandler } from "#ui/starter-select-ui-handler";
 import type { TargetSelectUiHandler } from "#ui/target-select-ui-handler";
-import * as speedOrderUtils from "#utils/speed-order";
 import fs from "node:fs";
 import { AES, enc } from "crypto-js";
 import { expect, vi } from "vitest";
@@ -556,21 +555,7 @@ export class GameManager {
       this.scene.getField(true).map(p => p.getBattlerIndex() as Exclude<BattlerIndex, BattlerIndex.ATTACKER>),
     );
 
-    // NB: This will need to be changed if `sortInSpeedOrder`'s order is ever changed
-    vi.spyOn(speedOrderUtils, "sortInSpeedOrder").mockImplementation(list => {
-      list.sort((a, b) => {
-        const aBattlerIndex = (a instanceof Pokemon ? a : a.getPokemon()).getBattlerIndex() as Exclude<
-          BattlerIndex,
-          BattlerIndex.ATTACKER
-        >;
-        const bBattlerIndex = (b instanceof Pokemon ? b : b.getPokemon()).getBattlerIndex() as Exclude<
-          BattlerIndex,
-          BattlerIndex.ATTACKER
-        >;
-
-        return order.indexOf(aBattlerIndex) - order.indexOf(bBattlerIndex);
-      });
-    });
+    this.scene.turnCommandManager.setTurnOrder(order);
   }
 
   /**

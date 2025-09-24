@@ -390,10 +390,7 @@ export class PhaseManager {
    * @returns Whether a phase was successfully removed
    */
   public tryRemovePhase<T extends PhaseString>(name: T, phaseFilter?: PhaseConditionFunc<T>): boolean {
-    if (this.dynamicQueueManager.removePhase(name, phaseFilter)) {
-      return true;
-    }
-    return this.phaseQueue.remove(name, phaseFilter);
+    return this.dynamicQueueManager.removePhase(name, phaseFilter) || this.phaseQueue.remove(name, phaseFilter);
   }
 
   /**

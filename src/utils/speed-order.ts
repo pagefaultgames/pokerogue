@@ -41,6 +41,15 @@ function shufflePokemonList<T extends Pokemon | hasPokemon>(pokemonList: T[]): v
 
 /** Sort an array containing Pokémon (or objects containing one) in speed order, without shuffling */
 function sortBySpeed<T extends Pokemon | hasPokemon>(pokemonList: T[]): void {
+  const { setOrder } = globalScene.turnCommandManager;
+  if (setOrder) {
+    pokemonList.sort((a, b) => {
+      const aIndex = (a instanceof Pokemon ? a : a.getPokemon()).getBattlerIndex();
+      const bIndex = (b instanceof Pokemon ? b : b.getPokemon()).getBattlerIndex();
+      return setOrder.indexOf(aIndex) - setOrder.indexOf(bIndex);
+    });
+    return;
+  }
   pokemonList.sort((a, b) => {
     const aSpeed = (a instanceof Pokemon ? a : a.getPokemon()).getEffectiveStat(Stat.SPD);
     const bSpeed = (b instanceof Pokemon ? b : b.getPokemon()).getEffectiveStat(Stat.SPD);

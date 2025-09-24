@@ -88,6 +88,11 @@ export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase>
   }
 }
 
+/**
+ * Helper function to retrieve the priority for a given move phase.
+ * @param mp - The `MovePhase` to check
+ * @returns The phase's priority
+ */
 function getPriorityForMP(mp: MovePhase): number {
   const move = mp.move.getMove();
   return move.getPriority(mp.pokemon, true);

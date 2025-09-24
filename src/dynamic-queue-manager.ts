@@ -44,7 +44,7 @@ export class DynamicQueueManager {
     this.dynamicPhaseMap.set("MovePhase", new MovePhasePriorityQueue());
   }
 
-  /** Removes all phases from the manager */
+  /** Remove all phases from the manager. */
   public clearQueues(): void {
     for (const queue of this.dynamicPhaseMap.values()) {
       queue.clear();
