@@ -4,6 +4,7 @@ import { BooleanHolder, randSeedShuffle } from "#app/utils/common";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Stat } from "#enums/stat";
 
+// TODO: Add tests for these
 /** Interface representing an object associated with a specific Pokemon */
 interface hasPokemon {
   getPokemon(): Pokemon;
@@ -14,7 +15,7 @@ interface hasPokemon {
  * @param pokemonList - An array of `Pokemon` or objects containing `Pokemon` to sort;
  * will be mutated and sorted in place.
  * @param shuffleFirst - Whether to shuffle the list before sorting (to handle speed ties); default `true`.
- * If `false`, will sort speed ties in ascending order of `BattlerIndex`es.
+ * If `false`, speed ties will remain in the order they were in the original array.
  */
 export function sortInSpeedOrder<T extends Pokemon | hasPokemon>(pokemonList: T[], shuffleFirst = true): void {
   if (shuffleFirst) {

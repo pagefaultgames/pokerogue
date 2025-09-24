@@ -546,9 +546,9 @@ export class GameManager {
    * @remarks
    * This does not account for priority, nor does it change the battlers' speed stats
    * (for the purposes of Electro Ball, etc).
-   * @todo What should happen if the number of active battlers changes mid-test?
-   * @todo Remove `await`s from existing test files in a follow-up PR
    */
+  // TODO: Move to `FieldHelper`
+  // TODO: Remove `await`s from existing test files in a follow-up PR
   public setTurnOrder(order: FieldBattlerIndex[]): void {
     expect(order, "Turn order passed to `setTurnOrder` lacked values for one or more Pokemon!").toEqualUnsorted(
       this.scene.getField(true).map(p => p.getBattlerIndex()),

@@ -1130,7 +1130,7 @@ export class BattleScene extends SceneBase {
       this.gameData = new GameData();
     }
 
-    this.turnCommandManager.setOrder = undefined;
+    this.turnCommandManager.resetTurnOrder();
     this.gameMode = getGameMode(GameModes.CLASSIC);
 
     this.disableMenu = false;

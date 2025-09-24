@@ -116,7 +116,7 @@ describe("Move - Wish", () => {
     await game.move.forceEnemyMove(MoveId.WISH);
     await game.move.forceEnemyMove(MoveId.WISH);
     // Ensure that the wishes are used deterministically in speed order (for speed ties)
-    await game.setTurnOrder(oldOrder);
+    game.setTurnOrder(oldOrder);
     await game.toNextTurn();
 
     expect(game).toHavePositionalTag(PositionalTagType.WISH, 4);
@@ -125,8 +125,9 @@ describe("Move - Wish", () => {
     alomomola.setStatStage(Stat.SPD, 6);
     blissey.setStatStage(Stat.SPD, -6);
 
-    const newOrder = game.field.getSpeedOrder();
+    const newOrder = game.field.getSpeedOrder(true);
     expect(newOrder).not.toEqual(oldOrder);
+    game.setTurnOrder(newOrder);
 
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
@@ -143,8 +144,8 @@ describe("Move - Wish", () => {
 
     await game.toEndOfTurn();
 
-    expect(alomomola.hp).toBe(toDmgValue(alomomola.getMaxHp() / 2) + 1);
-    expect(blissey.hp).toBe(toDmgValue(blissey.getMaxHp() / 2) + 1);
+    expect(alomomola).toHaveHp(toDmgValue(alomomola.getMaxHp() / 2) + 1);
+    expect(blissey).toHaveHp(toDmgValue(blissey.getMaxHp() / 2) + 1);
   });
 
   it("should vanish and not play message if slot is empty", async () => {

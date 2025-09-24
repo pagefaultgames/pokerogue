@@ -10,6 +10,7 @@ import type { PokemonType } from "#enums/pokemon-type";
 import { Stat } from "#enums/stat";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
+import { sortInSpeedOrder } from "#utils/speed-order";
 import { expect, type MockInstance, vi } from "vitest";
 
 /** Helper to manage pokemon */
@@ -48,34 +49,29 @@ export class FieldHelper extends GameManagerHelper {
    * Helper function to return all on-field {@linkcode Pokemon} in speed order (fastest first).
    * @param indices - Whether to only return {@linkcode BattlerIndex}es instead of full Pokemon objects
    * (such as for comparison with other speed order-related mechanisms); default `false`
+   * @param ignoreOverride - Whether to ignore preset turn orders and speed-reversing effects (like Trick Room);
+   * default `true`
    * @returns An array containing all on-field {@linkcode Pokemon} in order of descending Speed. \
    * Speed ties are returned in increasing order of index.
-   *
-   * @remarks
-   * This does not account for Trick Room as it does not modify the _speed_ of Pokemon on the field,
-   * only their turn order.
    */
-  public getSpeedOrder(indices?: false): Pokemon[];
-
+  public getSpeedOrder(indices?: false, ignoreOverride?: boolean): Pokemon[];
   /**
    * Helper function to return all on-field {@linkcode Pokemon} in speed order (fastest first).
    * @param indices - Whether to only return {@linkcode BattlerIndex}es instead of full Pokemon objects
    * (such as for comparison with other speed order-related mechanisms); default `false`
+   * @param ignoreOverride - Whether to ignore preset turn orders and speed-reversing effects (like Trick Room);
+   * default `true`
    * @returns An array containing the {@linkcode BattlerIndex}es of all on-field `Pokemon` on the field in order of **descending** Speed. \
    * Speed ties are returned in increasing order of index.
-   *
-   * @remarks
-   * This does not account for Trick Room as it does not modify the _speed_ of Pokemon on the field,
-   * only their turn order.
    */
-  public getSpeedOrder(indices: true): FieldBattlerIndex[];
-  public getSpeedOrder(indices = false): BattlerIndex[] | Pokemon[] {
-    const ret = this.game.scene
-      .getField(true)
-      .sort(
-        (pA, pB) =>
-          pB.getEffectiveStat(Stat.SPD) - pA.getEffectiveStat(Stat.SPD) || pA.getBattlerIndex() - pB.getBattlerIndex(),
-      );
+  public getSpeedOrder(indices: true, ignoreOverride?: boolean): FieldBattlerIndex[];
+  public getSpeedOrder(indices = false, ignoreOverride = true): BattlerIndex[] | Pokemon[] {
+    const ret = this.game.scene.getField(true);
+    if (ignoreOverride) {
+      ret.sort((pA, pB) => pB.getEffectiveStat(Stat.SPD) - pA.getEffectiveStat(Stat.SPD));
+    } else {
+      sortInSpeedOrder(ret);
+    }
 
     return indices ? ret.map(p => p.getBattlerIndex()) : ret;
   }
