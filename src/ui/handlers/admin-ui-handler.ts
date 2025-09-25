@@ -141,6 +141,12 @@ export class AdminUiHandler extends FormModalUiHandler {
     }
 
     if (super.show(args)) {
+      if (this.adminMode === AdminMode.ADMIN) {
+        this.hideLastButtons(0);
+      } else {
+        this.hideLastButtons(2);
+      }
+
       this.populateFields(this.adminMode, this.adminResult);
       const originalSubmitAction = this.submitAction;
       this.submitAction = _ => {
@@ -415,10 +421,12 @@ export class AdminUiHandler extends FormModalUiHandler {
             globalScene.ui.revertMode();
           },
           () => {
-            globalScene.ui.setOverlayMode(UiMode.GAME_STATS, this.tempGameData);
+            this.hide();
+            globalScene.ui.setOverlayMode(UiMode.GAME_STATS, this.tempGameData, this.unhide.bind(this));
           },
           () => {
-            globalScene.ui.setOverlayMode(UiMode.POKEDEX, this.tempGameData);
+            this.hide();
+            globalScene.ui.setOverlayMode(UiMode.POKEDEX, this.tempGameData, this.unhide.bind(this));
           },
         ],
       },

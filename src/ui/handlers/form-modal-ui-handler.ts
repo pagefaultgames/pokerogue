@@ -203,6 +203,16 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
     this.errorMessage.setVisible(!!this.errorMessage.text);
   }
 
+  hide(): void {
+    this.modalContainer.setVisible(false).setActive(false);
+    this.inputContainers.map(ic => ic.setVisible(false).setActive(false));
+  }
+
+  unhide(): void {
+    this.modalContainer.setActive(true).setVisible(true);
+    this.inputContainers.map(ic => ic.setActive(true).setVisible(true));
+  }
+
   clear(): void {
     super.clear();
     this.modalContainer.setVisible(false);

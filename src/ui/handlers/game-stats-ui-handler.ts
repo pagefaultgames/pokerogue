@@ -7,6 +7,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { TextStyle } from "#enums/text-style";
 import { UiTheme } from "#enums/ui-theme";
 import type { GameData } from "#system/game-data";
+import type { AnyFn } from "#types/type-helpers";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
@@ -242,6 +243,8 @@ export class GameStatsUiHandler extends UiHandler {
   /** The game data to display */
   private gameData: GameData;
 
+  private exitCallback?: AnyFn;
+
   /** Whether the UI is single column mode */
   private get singleCol(): boolean {
     const resolvedLang = i18next.resolvedLanguage ?? "en";
@@ -404,6 +407,7 @@ export class GameStatsUiHandler extends UiHandler {
     this.gameData = globalScene.gameData;
     if (args.length > 0) {
       this.gameData = args[0];
+      this.exitCallback = args[1];
     }
 
     // show updated username on every render
@@ -520,6 +524,8 @@ export class GameStatsUiHandler extends UiHandler {
   clear() {
     super.clear();
     this.gameStatsContainer.setVisible(false).setActive(false);
+
+    this.exitCallback?.();
     // TODO: do we need to clear this.gameData here?
   }
 }

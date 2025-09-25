@@ -35,6 +35,7 @@ import type { GameData } from "#system/game-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
 import type { DexAttrProps, StarterAttributes } from "#types/save-data";
+import type { AnyFn } from "#types/type-helpers";
 import type { OptionSelectConfig } from "#ui/abstract-option-select-ui-handler";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
 import { FilterBar } from "#ui/filter-bar";
@@ -237,7 +238,10 @@ export class PokedexUiHandler extends MessageUiHandler {
   private showFormTrayLabel: Phaser.GameObjects.Text;
   private canShowFormTray: boolean;
   private filteredIndices: SpeciesId[];
+
   private gameData: GameData;
+  private exitCallback?: AnyFn;
+  private blockOpenPage = false;
 
   constructor() {
     super(UiMode.POKEDEX);
@@ -644,6 +648,7 @@ export class PokedexUiHandler extends MessageUiHandler {
     this.pokerusSpecies = getPokerusStarters();
 
     this.gameData = globalScene.gameData;
+    this.blockOpenPage = false;
 
     // When calling with "refresh", we do not reset the cursor and filters
     if (args.length > 0) {
@@ -651,6 +656,8 @@ export class PokedexUiHandler extends MessageUiHandler {
         return false;
       }
       this.gameData = args[0];
+      this.exitCallback = args[1];
+      this.blockOpenPage = true;
     }
 
     super.show(args);
@@ -1167,8 +1174,13 @@ export class PokedexUiHandler extends MessageUiHandler {
     } else if (this.showingTray) {
       if (button === Button.ACTION) {
         const formIndex = this.trayForms[this.trayCursor].formIndex;
-        ui.setOverlayMode(UiMode.POKEDEX_PAGE, this.lastSpecies, { form: formIndex }, this.filteredIndices);
-        success = true;
+        if (this.blockOpenPage) {
+          success = false;
+          error = true;
+        } else {
+          ui.setOverlayMode(UiMode.POKEDEX_PAGE, this.lastSpecies, { form: formIndex }, this.filteredIndices);
+          success = true;
+        }
       } else {
         const numberOfForms = this.trayContainers.length;
         const numOfRows = Math.ceil(numberOfForms / maxColumns);
@@ -1215,8 +1227,13 @@ export class PokedexUiHandler extends MessageUiHandler {
         }
       }
     } else if (button === Button.ACTION) {
-      ui.setOverlayMode(UiMode.POKEDEX_PAGE, this.lastSpecies, null, this.filteredIndices);
-      success = true;
+      if (this.blockOpenPage) {
+        success = false;
+        error = true;
+      } else {
+        ui.setOverlayMode(UiMode.POKEDEX_PAGE, this.lastSpecies, null, this.filteredIndices);
+        success = true;
+      }
     } else {
       switch (button) {
         case Button.UP:
@@ -2430,6 +2447,8 @@ export class PokedexUiHandler extends MessageUiHandler {
 
     this.starterSelectContainer.setVisible(false);
     this.blockInput = false;
+
+    this.exitCallback?.();
   }
 
   checkIconId(
