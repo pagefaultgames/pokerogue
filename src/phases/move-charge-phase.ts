@@ -75,7 +75,7 @@ export class MoveChargePhase extends PokemonPhase {
     // Otherwise, add the attack portion to the user's move queue to execute next turn.
     // TODO: This checks status twice for a single-turn usage...
     if (instantCharge.value) {
-      globalScene.phaseManager.tryRemovePhase(phase => phase.is("MoveEndPhase") && phase.getPokemon() === user);
+      globalScene.phaseManager.tryRemovePhase("MoveEndPhase", phase => phase.getPokemon() === user);
       globalScene.phaseManager.unshiftNew("MovePhase", user, [this.targetIndex], this.move, this.useMode);
     } else {
       user.pushMoveQueue({ move: move.id, targets: [this.targetIndex], useMode: this.useMode });

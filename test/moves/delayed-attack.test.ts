@@ -193,7 +193,7 @@ describe("Moves - Delayed Attacks", () => {
     // All attacks have concluded at this point, unshifting new `MoveEffectPhase`s to the queue.
     expectFutureSightActive(0);
 
-    const MEPs = game.scene.phaseManager.phaseQueue.filter(p => p.is("MoveEffectPhase"));
+    const MEPs = game.scene.phaseManager["phaseQueue"].findAll("MoveEffectPhase");
     expect(MEPs).toHaveLength(4);
     expect(MEPs.map(mep => mep.getPokemon())).toEqual(oldOrder);
   });
