@@ -12,7 +12,6 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import chalk from "chalk";
 import inquirer from "inquirer";
 
@@ -20,8 +19,7 @@ import inquirer from "inquirer";
 
 const version = "2.0.1";
 // Get the directory name of the current module file
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = import.meta.dirname;
 const projectRoot = path.join(__dirname, "..", "..");
 
 const choices = /** @type {const} */ (["Move", "Ability", "Item", "Reward", "Mystery Encounter", "Utils", "UI"]);
@@ -109,6 +107,8 @@ function getBoilerplatePath(choiceType) {
   switch (choiceType) {
     case "Reward":
       return path.join(__dirname, "boilerplates/reward.boilerplate.ts");
+    case "Item":
+      return path.join(__dirname, "boilerplates/item.boilerplate.ts");
     default:
       return path.join(__dirname, "boilerplates/default.boilerplate.ts");
   }
