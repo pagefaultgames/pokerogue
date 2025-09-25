@@ -520,7 +520,7 @@ export function getShinyDescriptor(variant: Variant): string {
  * If the input isn't already an array, turns it into one.
  * @returns An array with the same type as the type of the input
  */
-export function coerceArray<T>(input: T): T extends any[] ? T : [T];
+export function coerceArray<T>(input: T): T extends readonly unknown[] ? T : [T];
 export function coerceArray<T>(input: T): T | [T] {
   return Array.isArray(input) ? input : [input];
 }

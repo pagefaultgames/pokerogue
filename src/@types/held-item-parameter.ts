@@ -5,6 +5,7 @@ import type { Stat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
 import type { BooleanHolder, NumberHolder } from "#utils/common";
 
+/** Base interface for all held item parameter types. */
 export interface DefaultHeldItemParams {
   /** The pokemon with the item */
   pokemon: Pokemon;

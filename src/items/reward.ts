@@ -116,6 +116,7 @@ export abstract class RewardGenerator {
 
 /** Rewards that are applied to individual Pokemon. */
 export abstract class PokemonReward extends Reward {
+  // TODO: Make this an overriddable getter rather than defining functions in the constructor
   public selectFilter: PokemonSelectFilter | undefined;
 
   constructor(

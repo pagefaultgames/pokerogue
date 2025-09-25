@@ -155,14 +155,11 @@ export function initHeldItems() {
 }
 
 export function applyHeldItems<T extends HeldItemEffect>(effect: T, params: HeldItemEffectParamMap[T]) {
-  const pokemon = params.pokemon;
-  if (pokemon) {
-    // TODO: Make this use `getHeldItems` and make `heldItems` array private
-    for (const item of pokemon.heldItemManager.getHeldItems()) {
-      const heldItem = allHeldItems[item];
-      if (heldItem?.effects.includes(effect)) {
-        heldItem?.apply(effect, params);
-      }
+  const { pokemon } = params;
+  for (const item of pokemon.heldItemManager.getHeldItems()) {
+    const heldItem = allHeldItems[item];
+    if ("effects" in heldItem && heldItem.effects.includes(effect) && heldItem.shouldApply(effect, params)) {
+      heldItem.apply(effect, params);
     }
   }
 }
