@@ -1,8 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import type { TextStyle } from "#enums/text-style";
-import { UiTheme } from "#enums/ui-theme";
 import { getTextWithColors } from "#ui/text";
-import { isNullOrUndefined } from "#utils/common";
 import i18next from "i18next";
 
 /**
@@ -12,18 +10,16 @@ import i18next from "i18next";
  * @param primaryStyle Can define a text style to be applied to the entire string. Must be defined for BBCodeText styles to be applied correctly
  */
 export function getEncounterText(keyOrString?: string, primaryStyle?: TextStyle): string | null {
-  if (isNullOrUndefined(keyOrString)) {
+  if (keyOrString == null) {
     return null;
   }
-
-  const uiTheme = globalScene.uiTheme ?? UiTheme.DEFAULT;
 
   let textString: string | null = getTextWithDialogueTokens(keyOrString);
 
   // Can only color the text if a Primary Style is defined
   // primaryStyle is applied to all text that does not have its own specified style
   if (primaryStyle && textString) {
-    textString = getTextWithColors(textString, primaryStyle, uiTheme, true);
+    textString = getTextWithColors(textString, primaryStyle, true);
   }
 
   return textString;

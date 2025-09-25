@@ -16,12 +16,14 @@ import i18next from "i18next";
 export class SummonPhase extends PartyMemberPokemonPhase {
   // The union type is needed to keep typescript happy as these phases extend from SummonPhase
   public readonly phaseName: "SummonPhase" | "SummonMissingPhase" | "SwitchSummonPhase" | "ReturnPhase" = "SummonPhase";
-  private loaded: boolean;
+  private readonly loaded: boolean;
+  private readonly checkSwitch: boolean;
 
-  constructor(fieldIndex: number, player = true, loaded = false) {
+  constructor(fieldIndex: number, player = true, loaded = false, checkSwitch = false) {
     super(fieldIndex, player);
 
     this.loaded = loaded;
+    this.checkSwitch = checkSwitch;
   }
 
   start() {
@@ -97,8 +99,8 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       });
       globalScene.time.delayedCall(750, () => this.summon());
     } else if (
-      globalScene.currentBattle.battleType === BattleType.TRAINER ||
-      globalScene.currentBattle.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE
+      globalScene.currentBattle.battleType === BattleType.TRAINER
+      || globalScene.currentBattle.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE
     ) {
       const trainerName = globalScene.currentBattle.trainer?.getName(
         !(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
@@ -278,9 +280,9 @@ export class SummonPhase extends PartyMemberPokemonPhase {
     pokemon.resetTurnData();
 
     if (
-      !this.loaded ||
-      [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType) ||
-      globalScene.currentBattle.waveIndex % 10 === 1
+      !this.loaded
+      || [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType)
+      || globalScene.currentBattle.waveIndex % 10 === 1
     ) {
       globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
       this.queuePostSummon();
@@ -288,12 +290,26 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   }
 
   queuePostSummon(): void {
-    globalScene.phaseManager.pushNew("PostSummonPhase", this.getPokemon().getBattlerIndex());
+    if (this.checkSwitch) {
+      globalScene.phaseManager.pushNew(
+        "CheckSwitchPhase",
+        this.getPokemon().getFieldIndex(),
+        globalScene.currentBattle.double,
+      );
+    } else {
+      globalScene.phaseManager.pushNew("PostSummonPhase", this.getPokemon().getBattlerIndex(), this.phaseName);
+    }
+
+    globalScene.phaseManager.tryAddEnemyPostSummonPhases();
   }
 
   end() {
     this.onEnd();
 
     super.end();
+  }
+
+  public getFieldIndex(): number {
+    return this.fieldIndex;
   }
 }

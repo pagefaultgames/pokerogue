@@ -6,8 +6,8 @@ import { PokemonSpecies } from "#data/pokemon-species";
 import { BiomeId } from "#enums/biome-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { SpeciesId } from "#enums/species-id";
-import type { Starter } from "#ui/starter-select-ui-handler";
-import { isNullOrUndefined, randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
+import type { Starter } from "#types/save-data";
+import { randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
@@ -32,7 +32,7 @@ export function getDailyRunStarters(seed: string): Starter[] {
       const startingLevel = globalScene.gameMode.getStartingLevel();
 
       const eventStarters = getDailyEventSeedStarters(seed);
-      if (!isNullOrUndefined(eventStarters)) {
+      if (eventStarters != null) {
         starters.push(...eventStarters);
         return;
       }
@@ -42,10 +42,9 @@ export function getDailyRunStarters(seed: string): Starter[] {
       starterCosts.push(randSeedInt(9 - starterCosts[0], 1));
       starterCosts.push(10 - (starterCosts[0] + starterCosts[1]));
 
-      for (let c = 0; c < starterCosts.length; c++) {
-        const cost = starterCosts[c];
+      for (const cost of starterCosts) {
         const costSpecies = Object.keys(speciesStarterCosts)
-          .map(s => Number.parseInt(s) as SpeciesId)
+          .map(s => Number.parseInt(s) as SpeciesId) // TODO: Remove
           .filter(s => speciesStarterCosts[s] === cost);
         const randPkmSpecies = getPokemonSpecies(randSeedItem(costSpecies));
         const starterSpecies = getPokemonSpecies(
@@ -67,8 +66,11 @@ function getDailyRunStarter(starterSpeciesForm: PokemonSpeciesForm, startingLeve
   const formIndex = starterSpeciesForm instanceof PokemonSpecies ? undefined : starterSpeciesForm.formIndex;
   const pokemon = globalScene.addPlayerPokemon(starterSpecies, startingLevel, undefined, formIndex);
   const starter: Starter = {
-    species: starterSpecies,
-    dexAttr: pokemon.getDexAttr(),
+    speciesId: starterSpecies.speciesId,
+    shiny: pokemon.shiny,
+    variant: pokemon.variant,
+    formIndex: pokemon.formIndex,
+    ivs: pokemon.ivs,
     abilityIndex: pokemon.abilityIndex,
     passive: false,
     nature: pokemon.getNature(),
@@ -128,7 +130,7 @@ const dailyBiomeWeights: BiomeWeights = {
 
 export function getDailyStartingBiome(): BiomeId {
   const eventBiome = getDailyEventSeedBiome(globalScene.seed);
-  if (!isNullOrUndefined(eventBiome)) {
+  if (eventBiome != null) {
     return eventBiome;
   }
 

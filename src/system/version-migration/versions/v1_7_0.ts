@@ -1,9 +1,8 @@
 import { globalScene } from "#app/global-scene";
 import { DexAttr } from "#enums/dex-attr";
-import type { SessionSaveData, SystemSaveData } from "#system/game-data";
+import type { SessionSaveData, SystemSaveData } from "#types/save-data";
 import type { SessionSaveMigrator } from "#types/session-save-migrator";
 import type { SystemSaveMigrator } from "#types/system-save-migrator";
-import { isNullOrUndefined } from "#utils/common";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 /**
@@ -68,13 +67,13 @@ const migrateTera: SessionSaveMigrator = {
     }
 
     data.party.forEach(p => {
-      if (isNullOrUndefined(p.teraType)) {
+      if (p.teraType == null) {
         p.teraType = getPokemonSpeciesForm(p.species, p.formIndex).type1;
       }
     });
 
     data.enemyParty.forEach(p => {
-      if (isNullOrUndefined(p.teraType)) {
+      if (p.teraType == null) {
         p.teraType = getPokemonSpeciesForm(p.species, p.formIndex).type1;
       }
     });

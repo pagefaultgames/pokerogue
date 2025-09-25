@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2024-2025 NONE
+#
+# SPDX-License-Identifier: CC0-1.0
+
 [submodule "public/locales"]
 	path = public/locales
 	url = https://github.com/pagefaultgames/pokerogue-locales

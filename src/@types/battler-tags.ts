@@ -1,8 +1,11 @@
 // biome-ignore-start lint/correctness/noUnusedImports: Used in a TSDoc comment
 import type { AbilityBattlerTag, BattlerTagTypeMap, SerializableBattlerTag, TypeBoostTag } from "#data/battler-tags";
 import type { AbilityId } from "#enums/ability-id";
-// biome-ignore-end lint/correctness/noUnusedImports: end
+import type { SessionSaveData } from "#types/save-data";
+// biome-ignore-end lint/correctness/noUnusedImports: Used in a TSDoc comment
+
 import type { BattlerTagType } from "#enums/battler-tag-type";
+import type { InferKeys, ObjectValues } from "#types/type-helpers";
 
 /**
  * Subset of {@linkcode BattlerTagType}s that restrict the use of moves.
@@ -86,7 +89,8 @@ export type AbilityBattlerTagType =
   | BattlerTagType.QUARK_DRIVE
   | BattlerTagType.UNBURDEN
   | BattlerTagType.SLOW_START
-  | BattlerTagType.TRUANT;
+  | BattlerTagType.TRUANT
+  | BattlerTagType.SUPREME_OVERLORD;
 
 /** Subset of {@linkcode BattlerTagType}s that provide type boosts */
 export type TypeBoostTagType = BattlerTagType.FIRE_BOOST | BattlerTagType.CHARGED;
@@ -103,28 +107,35 @@ export type RemovedTypeTagType = BattlerTagType.DOUBLE_SHOCKED | BattlerTagType.
 export type HighestStatBoostTagType =
   | BattlerTagType.QUARK_DRIVE // formatting
   | BattlerTagType.PROTOSYNTHESIS;
-/**
- * Subset of {@linkcode BattlerTagType}s that are able to persist between turns and should therefore be serialized
- */
-export type SerializableBattlerTagType = keyof {
-  [K in keyof BattlerTagTypeMap as BattlerTagTypeMap[K] extends SerializableBattlerTag
-    ? K
-    : never]: BattlerTagTypeMap[K];
-};
 
 /**
- * Subset of {@linkcode BattlerTagType}s that are not able to persist across waves and should therefore not be serialized
+ * Subset of {@linkcode BattlerTagType}s that are able to persist between turns, and should therefore be serialized.
+ */
+export type SerializableBattlerTagType = InferKeys<BattlerTagTypeMap, SerializableBattlerTag>;
+
+/**
+ * Subset of {@linkcode BattlerTagType}s that are **not** able to persist between turns,
+ * and should therefore not be serialized in {@linkcode SessionSaveData}.
  */
 export type NonSerializableBattlerTagType = Exclude<BattlerTagType, SerializableBattlerTagType>;
 
 /**
- * Type-safe representation of an arbitrary, serialized Battler Tag
+ * Utility type containing all entries of {@linkcode BattlerTagTypeMap} corresponding to serializable tags.
  */
-export type BattlerTagTypeData = Parameters<
-  BattlerTagTypeMap[keyof {
-    [K in keyof BattlerTagTypeMap as K extends SerializableBattlerTagType ? K : never]: BattlerTagTypeMap[K];
-  }]["loadTag"]
->[0];
+type SerializableBattlerTagTypeMap = Pick<BattlerTagTypeMap, SerializableBattlerTagType>;
+
+/**
+ * Type mapping all `BattlerTag`s to type-safe representations of their serialized forms.
+ * @interface
+ */
+export type BattlerTagDataMap = {
+  [k in keyof SerializableBattlerTagTypeMap]: Parameters<SerializableBattlerTagTypeMap[k]["loadTag"]>[0];
+};
+
+/**
+ * Type-safe representation of an arbitrary, serialized `BattlerTag`.
+ */
+export type BattlerTagData = ObjectValues<BattlerTagDataMap>;
 
 /**
  * Dummy, typescript-only declaration to ensure that

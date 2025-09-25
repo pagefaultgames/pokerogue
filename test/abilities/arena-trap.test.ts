@@ -57,7 +57,7 @@ describe("Abilities - Arena Trap", () => {
 
     await game.phaseInterceptor.to("CommandPhase");
 
-    expect(game.textInterceptor.logs).toContain(
+    expect(game).toHaveShownMessage(
       i18next.t("abilityTriggers:arenaTrap", {
         pokemonNameWithAffix: getPokemonNameWithAffix(enemy),
         abilityName: allAbilities[AbilityId.ARENA_TRAP].name,

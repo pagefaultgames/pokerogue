@@ -4,11 +4,12 @@ import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { SettingType } from "#system/settings";
 import { Setting, SettingKeys } from "#system/settings";
+import type { AnyFn } from "#types/type-helpers";
 import type { InputsIcons } from "#ui/abstract-control-settings-ui-handler";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { NavigationManager, NavigationMenu } from "#ui/navigation-menu";
 import { ScrollBar } from "#ui/scroll-bar";
-import { addTextObject } from "#ui/text";
+import { addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import i18next from "i18next";
 
@@ -34,8 +35,6 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
   protected navigationIcons: InputsIcons;
 
   private cursorObj: Phaser.GameObjects.NineSlice | null;
-
-  private reloadSettings: Array<Setting>;
   private reloadRequired: boolean;
 
   protected rowsToDisplay: number;
@@ -55,59 +54,50 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
    */
   setup() {
     const ui = this.getUi();
+    const canvasWidth = globalScene.scaledCanvas.width;
+    const canvasHeight = globalScene.scaledCanvas.height;
 
-    this.settingsContainer = globalScene.add.container(1, -globalScene.scaledCanvas.height + 1);
-    this.settingsContainer.setName(`settings-${this.title}`);
-    this.settingsContainer.setInteractive(
-      new Phaser.Geom.Rectangle(0, 0, globalScene.scaledCanvas.width, globalScene.scaledCanvas.height - 20),
-      Phaser.Geom.Rectangle.Contains,
-    );
+    this.settingsContainer = globalScene.add
+      .container(1, -canvasHeight + 1)
+      .setName(`settings-${this.title}`)
+      .setInteractive(new Phaser.Geom.Rectangle(0, 0, canvasWidth, canvasHeight - 20), Phaser.Geom.Rectangle.Contains);
 
     this.navigationIcons = {};
 
     this.navigationContainer = new NavigationMenu(0, 0);
+    const navWidth = this.navigationContainer.width;
+    const navHeight = this.navigationContainer.height;
 
-    this.optionsBg = addWindow(
-      0,
-      this.navigationContainer.height,
-      globalScene.scaledCanvas.width - 2,
-      globalScene.scaledCanvas.height - 16 - this.navigationContainer.height - 2,
-    );
-    this.optionsBg.setName("window-options-bg");
-    this.optionsBg.setOrigin(0, 0);
+    this.optionsBg = addWindow(0, navHeight, canvasWidth - 2, canvasHeight - 16 - navHeight - 2)
+      .setName("window-options-bg")
+      .setOrigin(0);
 
-    const actionsBg = addWindow(
-      0,
-      globalScene.scaledCanvas.height - this.navigationContainer.height,
-      globalScene.scaledCanvas.width - 2,
-      22,
-    );
-    actionsBg.setOrigin(0, 0);
+    const actionsBg = addWindow(0, canvasHeight - navHeight, canvasWidth - 2, 22) // formatting
+      .setOrigin(0);
 
-    const iconAction = globalScene.add.sprite(0, 0, "keyboard");
-    iconAction.setOrigin(0, -0.1);
-    iconAction.setPositionRelative(actionsBg, this.navigationContainer.width - 32, 4);
+    const iconAction = globalScene.add
+      .sprite(0, 0, "keyboard")
+      .setOrigin(0, -0.1)
+      .setPositionRelative(actionsBg, navWidth - 32, 4);
     this.navigationIcons["BUTTON_ACTION"] = iconAction;
 
-    const actionText = addTextObject(0, 0, i18next.t("settings:action"), TextStyle.SETTINGS_LABEL);
-    actionText.setOrigin(0, 0.15);
+    const actionText = addTextObject(0, 0, i18next.t("settings:action"), TextStyle.SETTINGS_LABEL).setOrigin(0, 0.15);
     actionText.setPositionRelative(iconAction, -actionText.width / 6 - 2, 0);
 
-    const iconCancel = globalScene.add.sprite(0, 0, "keyboard");
-    iconCancel.setOrigin(0, -0.1);
-    iconCancel.setPositionRelative(actionsBg, actionText.x - 28, 4);
+    const iconCancel = globalScene.add
+      .sprite(0, 0, "keyboard")
+      .setOrigin(0, -0.1)
+      .setPositionRelative(actionsBg, actionText.x - 28, 4);
     this.navigationIcons["BUTTON_CANCEL"] = iconCancel;
 
-    const cancelText = addTextObject(0, 0, i18next.t("settings:back"), TextStyle.SETTINGS_LABEL);
-    cancelText.setOrigin(0, 0.15);
+    const cancelText = addTextObject(0, 0, i18next.t("settings:back"), TextStyle.SETTINGS_LABEL) // formatting
+      .setOrigin(0, 0.15);
     cancelText.setPositionRelative(iconCancel, -cancelText.width / 6 - 2, 0);
 
-    this.optionsContainer = globalScene.add.container(0, 0);
+    this.optionsContainer = globalScene.add.container();
 
     this.settingLabels = [];
     this.optionValueLabels = [];
-
-    this.reloadSettings = this.settings.filter(s => s?.requireReload);
 
     let anyReloadRequired = false;
     this.settings.forEach((setting, s) => {
@@ -117,8 +107,7 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
         anyReloadRequired = true;
       }
 
-      this.settingLabels[s] = addTextObject(8, 28 + s * 16, settingName, TextStyle.SETTINGS_LABEL);
-      this.settingLabels[s].setOrigin(0, 0);
+      this.settingLabels[s] = addTextObject(8, 28 + s * 16, settingName, TextStyle.SETTINGS_LABEL).setOrigin(0);
 
       this.optionsContainer.add(this.settingLabels[s]);
       this.optionValueLabels.push(
@@ -129,7 +118,7 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
             option.label,
             setting.default === o ? TextStyle.SETTINGS_SELECTED : TextStyle.SETTINGS_VALUE,
           );
-          valueLabel.setOrigin(0, 0);
+          valueLabel.setOrigin(0);
 
           this.optionsContainer.add(valueLabel);
 
@@ -164,32 +153,33 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
     this.scrollBar.setTotalRows(this.settings.length);
 
     // Two-lines message box
-    this.messageBoxContainer = globalScene.add.container(0, globalScene.scaledCanvas.height);
-    this.messageBoxContainer.setName("settings-message-box");
-    this.messageBoxContainer.setVisible(false);
+    this.messageBoxContainer = globalScene.add
+      .container(0, globalScene.scaledCanvas.height)
+      .setName("settings-message-box")
+      .setVisible(false);
 
     const settingsMessageBox = addWindow(0, -1, globalScene.scaledCanvas.width - 2, 48);
     settingsMessageBox.setOrigin(0, 1);
     this.messageBoxContainer.add(settingsMessageBox);
 
-    const messageText = addTextObject(8, -40, "", TextStyle.WINDOW, {
-      maxLines: 2,
-    });
-    messageText.setWordWrapWidth(globalScene.game.canvas.width - 60);
-    messageText.setName("settings-message");
-    messageText.setOrigin(0, 0);
+    const messageText = addTextObject(8, -40, "", TextStyle.WINDOW, { maxLines: 2 })
+      .setWordWrapWidth(globalScene.game.canvas.width - 60)
+      .setName("settings-message")
+      .setOrigin(0);
 
     this.messageBoxContainer.add(messageText);
     this.message = messageText;
 
-    this.settingsContainer.add(this.optionsBg);
-    this.settingsContainer.add(this.scrollBar);
-    this.settingsContainer.add(this.navigationContainer);
-    this.settingsContainer.add(actionsBg);
-    this.settingsContainer.add(this.optionsContainer);
-    this.settingsContainer.add(iconAction);
-    this.settingsContainer.add(iconCancel);
-    this.settingsContainer.add(actionText);
+    this.settingsContainer.add([
+      this.optionsBg,
+      this.scrollBar,
+      this.navigationContainer,
+      actionsBg,
+      this.optionsContainer,
+      iconAction,
+      iconCancel,
+      actionText,
+    ]);
     // Only add the ReloadRequired text on pages that have settings that require a reload.
     if (anyReloadRequired) {
       const reloadRequired = addTextObject(0, 0, `*${i18next.t("settings:requireReload")}`, TextStyle.SETTINGS_LABEL)
@@ -198,8 +188,7 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
         .setY(actionText.y);
       this.settingsContainer.add(reloadRequired);
     }
-    this.settingsContainer.add(cancelText);
-    this.settingsContainer.add(this.messageBoxContainer);
+    this.settingsContainer.add([cancelText, this.messageBoxContainer]);
 
     ui.add(this.settingsContainer);
 
@@ -214,17 +203,13 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
   updateBindings(): void {
     for (const settingName of Object.keys(this.navigationIcons)) {
       if (settingName === "BUTTON_HOME") {
-        this.navigationIcons[settingName].setTexture("keyboard");
-        this.navigationIcons[settingName].setFrame("HOME.png");
-        this.navigationIcons[settingName].alpha = 1;
+        this.navigationIcons[settingName].setTexture("keyboard").setFrame("HOME.png").alpha = 1;
         continue;
       }
       const icon = globalScene.inputController?.getIconForLatestInputRecorded(settingName);
       if (icon) {
         const type = globalScene.inputController?.getLastSourceType();
-        this.navigationIcons[settingName].setTexture(type);
-        this.navigationIcons[settingName].setFrame(icon);
-        this.navigationIcons[settingName].alpha = 1;
+        this.navigationIcons[settingName].setTexture(type).setFrame(icon).alpha = 1;
       } else {
         this.navigationIcons[settingName].alpha = 0;
       }
@@ -246,19 +231,41 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
       ? JSON.parse(localStorage.getItem(this.localStorageKey)!)
       : {}; // TODO: is this bang correct?
 
-    this.settings.forEach((setting, s) =>
-      this.setOptionCursor(s, settings.hasOwnProperty(setting.key) ? settings[setting.key] : this.settings[s].default),
-    );
+    this.settings.forEach((setting, s) => {
+      this.setOptionCursor(s, settings.hasOwnProperty(setting.key) ? settings[setting.key] : this.settings[s].default);
+    });
 
     this.settingsContainer.setVisible(true);
     this.setCursor(0);
     this.setScrollCursor(0);
 
-    this.getUi().moveTo(this.settingsContainer, this.getUi().length - 1);
+    const ui = this.getUi();
 
-    this.getUi().hideTooltip();
+    ui.moveTo(this.settingsContainer, ui.length - 1);
+
+    ui.hideTooltip();
 
     return true;
+  }
+
+  /**
+   * Submethod of {@linkcode processInput} to handle left/right input for changing option values
+   *
+   * @remarks
+   * If the cursor is positioned on a boundary option, will apply clamping / wrapping as appropriate
+   * @param cursor - Current cursor position in the settings menu
+   * @param dir - Direction to pan when scrolling, -1 for left, 1 for right
+   * @returns `true` if the action associated with the button was successfully processed, `false` otherwise.
+   */
+  private processLeftRightInput(cursor: number, dir: -1 | 1): boolean {
+    let boundaryAction = Phaser.Math.Wrap;
+    let upperBound = this.optionValueLabels[cursor].length;
+    if (this.settings[cursor]?.clamp) {
+      boundaryAction = Phaser.Math.Clamp;
+      // clamping is right inclusive; wrapping isn't
+      upperBound -= 1;
+    }
+    return this.setOptionCursor(cursor, boundaryAction(this.optionCursors[cursor] + dir, 0, upperBound), true);
   }
 
   /**
@@ -318,16 +325,10 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
           }
           break;
         case Button.LEFT:
-          if (this.optionCursors[cursor]) {
-            // Moves the option cursor left, if possible.
-            success = this.setOptionCursor(cursor, this.optionCursors[cursor] - 1, true);
-          }
+          success = this.processLeftRightInput(cursor, -1);
           break;
         case Button.RIGHT:
-          // Moves the option cursor right, if possible.
-          if (this.optionCursors[cursor] < this.optionValueLabels[cursor].length - 1) {
-            success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
-          }
+          success = this.processLeftRightInput(cursor, 1);
           break;
         case Button.CYCLE_FORM:
         case Button.CYCLE_SHINY:
@@ -376,8 +377,9 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
 
     if (!this.cursorObj) {
       const cursorWidth = globalScene.scaledCanvas.width - (this.scrollBar.visible ? 16 : 10);
-      this.cursorObj = globalScene.add.nineslice(0, 0, "summary_moves_cursor", undefined, cursorWidth, 16, 1, 1, 1, 1);
-      this.cursorObj.setOrigin(0, 0);
+      this.cursorObj = globalScene.add
+        .nineslice(0, 0, "summary_moves_cursor", undefined, cursorWidth, 16, 1, 1, 1, 1)
+        .setOrigin(0);
       this.optionsContainer.add(this.cursorObj);
     }
 
@@ -399,18 +401,21 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
       settingIndex = this.cursor + this.scrollCursor;
     }
     const setting = this.settings[settingIndex];
-
     const lastCursor = this.optionCursors[settingIndex];
+    // do nothing if the option isn't changing
+    if (cursor === lastCursor) {
+      return false;
+    }
 
-    const lastValueLabel = this.optionValueLabels[settingIndex][lastCursor];
-    lastValueLabel.setColor(this.getTextColor(TextStyle.SETTINGS_VALUE));
-    lastValueLabel.setShadowColor(this.getTextColor(TextStyle.SETTINGS_VALUE, true));
+    this.optionValueLabels[settingIndex][lastCursor]
+      .setColor(getTextColor(TextStyle.SETTINGS_VALUE))
+      .setShadowColor(getTextColor(TextStyle.SETTINGS_VALUE, true));
 
     this.optionCursors[settingIndex] = cursor;
 
-    const newValueLabel = this.optionValueLabels[settingIndex][cursor];
-    newValueLabel.setColor(this.getTextColor(TextStyle.SETTINGS_SELECTED));
-    newValueLabel.setShadowColor(this.getTextColor(TextStyle.SETTINGS_SELECTED, true));
+    this.optionValueLabels[settingIndex][cursor]
+      .setColor(getTextColor(TextStyle.SETTINGS_SELECTED))
+      .setShadowColor(getTextColor(TextStyle.SETTINGS_SELECTED, true));
 
     if (save) {
       const saveSetting = () => {
@@ -511,12 +516,12 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
   override showText(
     text: string,
     delay?: number,
-    callback?: Function,
+    callback?: AnyFn,
     callbackDelay?: number,
     prompt?: boolean,
     promptDelay?: number,
   ) {
-    this.messageBoxContainer.setVisible(!!text?.length);
+    this.messageBoxContainer.setVisible(text?.length > 0);
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 }

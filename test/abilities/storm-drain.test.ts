@@ -37,9 +37,7 @@ describe("Abilities - Storm Drain", () => {
   it("should redirect water type moves", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
 
-    const enemy1 = game.scene.getEnemyField()[0];
-    const enemy2 = game.scene.getEnemyField()[1];
-
+    const [enemy1, enemy2] = game.scene.getEnemyField();
     game.field.mockAbility(enemy2, AbilityId.STORM_DRAIN);
 
     game.move.select(MoveId.WATER_GUN, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
@@ -53,8 +51,7 @@ describe("Abilities - Storm Drain", () => {
     game.override.moveset([MoveId.SPLASH, MoveId.AERIAL_ACE]);
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
 
-    const enemy1 = game.scene.getEnemyField()[0];
-    const enemy2 = game.scene.getEnemyField()[1];
+    const [enemy1, enemy2] = game.scene.getEnemyField();
 
     game.field.mockAbility(enemy2, AbilityId.STORM_DRAIN);
 
@@ -83,8 +80,7 @@ describe("Abilities - Storm Drain", () => {
     game.override.ability(AbilityId.NORMALIZE);
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
 
-    const enemy1 = game.scene.getEnemyField()[0];
-    const enemy2 = game.scene.getEnemyField()[1];
+    const [enemy1, enemy2] = game.scene.getEnemyField();
     game.field.mockAbility(enemy2, AbilityId.STORM_DRAIN);
 
     game.move.select(MoveId.WATER_GUN, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
@@ -98,8 +94,7 @@ describe("Abilities - Storm Drain", () => {
     game.override.ability(AbilityId.LIQUID_VOICE);
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const enemy1 = game.scene.getEnemyField()[0];
-    const enemy2 = game.scene.getEnemyField()[1];
+    const [enemy1, enemy2] = game.scene.getEnemyField();
 
     game.field.mockAbility(enemy2, AbilityId.STORM_DRAIN);
 

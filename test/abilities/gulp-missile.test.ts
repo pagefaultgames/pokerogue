@@ -21,7 +21,7 @@ describe("Abilities - Gulp Missile", () => {
   /**
    * Gets the effect damage of Gulp Missile
    * See Gulp Missile {@link https://bulbapedia.bulbagarden.net/wiki/Gulp_Missile_(Ability)}
-   * @param {Pokemon} pokemon The pokemon taking the effect damage.
+   * @param pokemon The pokemon taking the effect damage.
    * @returns The effect damage of Gulp Missile
    */
   const getEffectDamage = (pokemon: Pokemon): number => {

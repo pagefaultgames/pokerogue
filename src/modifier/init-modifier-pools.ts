@@ -31,7 +31,6 @@ import {
 } from "#modifiers/modifier-pools";
 import { WeightedModifierType } from "#modifiers/modifier-type";
 import type { WeightedModifierTypeWeightFunc } from "#types/modifier-types";
-import { isNullOrUndefined } from "#utils/common";
 
 /**
  * Initialize the wild modifier pool
@@ -97,12 +96,12 @@ function initCommonModifierPool() {
         const thresholdPartyMemberCount = Math.min(
           party.filter(
             p =>
-              p.hp &&
-              !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA) &&
-              p
+              p.hp
+              && !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA)
+              && p
                 .getMoveset()
                 .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
-                .length,
+                .length > 0,
           ).length,
           3,
         );
@@ -116,12 +115,12 @@ function initCommonModifierPool() {
         const thresholdPartyMemberCount = Math.min(
           party.filter(
             p =>
-              p.hp &&
-              !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA) &&
-              p
+              p.hp
+              && !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA)
+              && p
                 .getMoveset()
                 .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
-                .length,
+                .length > 0,
           ).length,
           3,
         );
@@ -152,9 +151,9 @@ function initGreatModifierPool() {
         const statusEffectPartyMemberCount = Math.min(
           party.filter(
             p =>
-              p.hp &&
-              !!p.status &&
-              !p.getHeldItems().some(i => {
+              p.hp
+              && !!p.status
+              && !p.getHeldItems().some(i => {
                 if (i instanceof TurnStatusEffectModifier) {
                   return (i as TurnStatusEffectModifier).getStatusEffect() === p.status?.effect;
                 }
@@ -218,9 +217,9 @@ function initGreatModifierPool() {
         const statusEffectPartyMemberCount = Math.min(
           party.filter(
             p =>
-              p.hp &&
-              !!p.status &&
-              !p.getHeldItems().some(i => {
+              p.hp
+              && !!p.status
+              && !p.getHeldItems().some(i => {
                 if (i instanceof TurnStatusEffectModifier) {
                   return (i as TurnStatusEffectModifier).getStatusEffect() === p.status?.effect;
                 }
@@ -230,9 +229,9 @@ function initGreatModifierPool() {
           3,
         );
         const thresholdPartyMemberCount = Math.floor(
-          (Math.min(party.filter(p => p.getInverseHp() >= 100 && p.getHpRatio() <= 0.5 && !p.isFainted()).length, 3) +
-            statusEffectPartyMemberCount) /
-            2,
+          (Math.min(party.filter(p => p.getInverseHp() >= 100 && p.getHpRatio() <= 0.5 && !p.isFainted()).length, 3)
+            + statusEffectPartyMemberCount)
+            / 2,
         );
         return thresholdPartyMemberCount;
       },
@@ -244,12 +243,12 @@ function initGreatModifierPool() {
         const thresholdPartyMemberCount = Math.min(
           party.filter(
             p =>
-              p.hp &&
-              !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA) &&
-              p
+              p.hp
+              && !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA)
+              && p
                 .getMoveset()
                 .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
-                .length,
+                .length > 0,
           ).length,
           3,
         );
@@ -263,12 +262,12 @@ function initGreatModifierPool() {
         const thresholdPartyMemberCount = Math.min(
           party.filter(
             p =>
-              p.hp &&
-              !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA) &&
-              p
+              p.hp
+              && !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA)
+              && p
                 .getMoveset()
                 .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
-                .length,
+                .length > 0,
           ).length,
           3,
         );
@@ -369,9 +368,9 @@ function initUltraModifierPool() {
         return party.some(p => {
           // Check if Pokemon's species (or fusion species, if applicable) can evolve or if they're G-Max'd
           if (
-            !p.isMax() &&
-            (p.getSpeciesForm(true).speciesId in pokemonEvolutions ||
-              (p.isFusion() && p.getFusionSpeciesForm(true).speciesId in pokemonEvolutions))
+            !p.isMax()
+            && (p.getSpeciesForm(true).speciesId in pokemonEvolutions
+              || (p.isFusion() && p.getFusionSpeciesForm(true).speciesId in pokemonEvolutions))
           ) {
             // Check if Pokemon is already holding an Eviolite
             return !p.getHeldItems().some(i => i.type.id === "EVIOLITE");
@@ -391,9 +390,9 @@ function initUltraModifierPool() {
         // If a party member doesn't already have a Leek and is one of the relevant species, Leek can appear
         return party.some(
           p =>
-            !p.getHeldItems().some(i => i instanceof SpeciesCritBoosterModifier) &&
-            (checkedSpecies.includes(p.getSpeciesForm(true).speciesId) ||
-              (p.isFusion() && checkedSpecies.includes(p.getFusionSpeciesForm(true).speciesId))),
+            !p.getHeldItems().some(i => i instanceof SpeciesCritBoosterModifier)
+            && (checkedSpecies.includes(p.getSpeciesForm(true).speciesId)
+              || (p.isFusion() && checkedSpecies.includes(p.getFusionSpeciesForm(true).speciesId))),
         )
           ? 12
           : 0;
@@ -409,7 +408,7 @@ function initUltraModifierPool() {
           if (!isHoldingOrb) {
             const moveset = p
               .getMoveset(true)
-              .filter(m => !isNullOrUndefined(m))
+              .filter(m => m != null)
               .map(m => m.moveId);
             const canSetStatus = p.canSetStatus(StatusEffect.TOXIC, true, true, null, true);
 
@@ -455,7 +454,7 @@ function initUltraModifierPool() {
           if (!isHoldingOrb) {
             const moveset = p
               .getMoveset(true)
-              .filter(m => !isNullOrUndefined(m))
+              .filter(m => m != null)
               .map(m => m.moveId);
             const canSetStatus = p.canSetStatus(StatusEffect.BURN, true, true, null, true);
 
@@ -633,9 +632,9 @@ function initMasterModifierPool() {
     new WeightedModifierType(
       modifierTypes.DNA_SPLICERS,
       (party: Pokemon[]) =>
-        !(globalScene.gameMode.isClassic && timedEventManager.areFusionsBoosted()) &&
-        !globalScene.gameMode.isSplicedOnly &&
-        party.filter(p => !p.fusionSpecies).length > 1
+        !(globalScene.gameMode.isClassic && timedEventManager.areFusionsBoosted())
+        && !globalScene.gameMode.isSplicedOnly
+        && party.filter(p => !p.fusionSpecies).length > 1
           ? 24
           : 0,
       24,
@@ -643,8 +642,9 @@ function initMasterModifierPool() {
     new WeightedModifierType(
       modifierTypes.MINI_BLACK_HOLE,
       () =>
-        globalScene.gameMode.isDaily ||
-        (!globalScene.gameMode.isFreshStartChallenge() && globalScene.gameData.isUnlocked(Unlockables.MINI_BLACK_HOLE))
+        globalScene.gameMode.isDaily
+        || (!globalScene.gameMode.isFreshStartChallenge()
+          && globalScene.gameData.isUnlocked(Unlockables.MINI_BLACK_HOLE))
           ? 1
           : 0,
       1,
@@ -842,9 +842,9 @@ function skipInLastClassicWaveOrDefault(defaultWeight: number): WeightedModifier
 function lureWeightFunc(maxBattles: number, weight: number): WeightedModifierTypeWeightFunc {
   return () => {
     const lures = globalScene.getModifiers(DoubleBattleChanceBoosterModifier);
-    return !(globalScene.gameMode.isClassic && globalScene.currentBattle.waveIndex === 199) &&
-      (lures.length === 0 ||
-        lures.filter(m => m.getMaxBattles() === maxBattles && m.getBattleCount() >= maxBattles * 0.6).length === 0)
+    return !(globalScene.gameMode.isClassic && globalScene.currentBattle.waveIndex === 199)
+      && (lures.length === 0
+        || lures.filter(m => m.getMaxBattles() === maxBattles && m.getBattleCount() >= maxBattles * 0.6).length === 0)
       ? weight
       : 0;
   };

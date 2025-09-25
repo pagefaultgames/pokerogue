@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2024-2025 NONE
+#
+# SPDX-License-Identifier: CC0-1.0
+
 # Logs
 logs
 *.log
@@ -11,11 +15,13 @@ node_modules
 dist
 dist-ssr
 *.local
+build
 
 # Editor directories and files (excluding `extensions.json` for devcontainer)
 *.code-workspace
 .vscode/*
 !.vscode/extensions.json
+!.vscode/spdx.code-snippets
 .idea
 .DS_Store
 *.suo

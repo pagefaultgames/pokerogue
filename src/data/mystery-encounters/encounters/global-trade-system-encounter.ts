@@ -43,7 +43,7 @@ import { PartySizeRequirement } from "#mystery-encounters/mystery-encounter-requ
 import { PokemonData } from "#system/pokemon-data";
 import { MusicPreference } from "#system/settings";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
-import { isNullOrUndefined, NumberHolder, randInt, randSeedInt, randSeedItem, randSeedShuffle } from "#utils/common";
+import { NumberHolder, randInt, randSeedInt, randSeedItem, randSeedShuffle } from "#utils/common";
 import { getEnumKeys } from "#utils/enums";
 import { getRandomLocaleEntry } from "#utils/i18n";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
@@ -195,10 +195,10 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
                     : ""
                 }`;
                 const line2 =
-                  i18next.t("pokemonInfoContainer:nature") +
-                  " " +
-                  getNatureName(tradePokemon.getNature()) +
-                  (formName ? `     |     ${i18next.t("pokemonInfoContainer:form")} ${formName}` : "");
+                  i18next.t("pokemonInfoContainer:nature")
+                  + " "
+                  + getNatureName(tradePokemon.getNature())
+                  + (formName ? `     |     ${i18next.t("pokemonInfoContainer:form")} ${formName}` : "");
                 showEncounterText(`${line1}\n${line2}`, 0, 0, false);
               },
             };
@@ -292,16 +292,14 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
 
           // Extra HA roll at base 1/64 odds (boosted by events and charms)
           const hiddenIndex = tradePokemon.species.ability2 ? 2 : 1;
-          if (tradePokemon.species.abilityHidden) {
-            if (tradePokemon.abilityIndex < hiddenIndex) {
-              const hiddenAbilityChance = new NumberHolder(64);
-              globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
+          if (tradePokemon.species.abilityHidden && tradePokemon.abilityIndex < hiddenIndex) {
+            const hiddenAbilityChance = new NumberHolder(64);
+            globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
 
-              const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
+            const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
 
-              if (hasHiddenAbility) {
-                tradePokemon.abilityIndex = hiddenIndex;
-              }
+            if (hasHiddenAbility) {
+              tradePokemon.abilityIndex = hiddenIndex;
             }
           }
 
@@ -539,7 +537,7 @@ function generateTradeOption(alreadyUsedSpecies: PokemonSpecies[], originalBst?:
     bstCap = originalBst + 100;
     bstMin = originalBst - 100;
   }
-  while (isNullOrUndefined(newSpecies)) {
+  while (newSpecies == null) {
     // Get all non-legendary species that fall within the Bst range requirements
     let validSpecies = allSpecies.filter(s => {
       const isLegendaryOrMythical = s.legendary || s.subLegendary || s.mythical;
@@ -552,7 +550,7 @@ function generateTradeOption(alreadyUsedSpecies: PokemonSpecies[], originalBst?:
     if (validSpecies?.length > 20) {
       validSpecies = randSeedShuffle(validSpecies);
       newSpecies = validSpecies.pop();
-      while (isNullOrUndefined(newSpecies) || alreadyUsedSpecies.includes(newSpecies)) {
+      while (newSpecies == null || alreadyUsedSpecies.includes(newSpecies)) {
         newSpecies = validSpecies.pop();
       }
     } else {

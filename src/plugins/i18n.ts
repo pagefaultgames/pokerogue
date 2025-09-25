@@ -121,8 +121,8 @@ async function initFonts(language: string | undefined) {
 }
 
 /**
- * I18n money formatter with. (useful for BBCode coloring of text)\
- * *If you don't want the BBCode tag applied, just use 'number' formatter*
+ * I18n money formatter with. (useful for BBCode coloring of text) \
+ * _If you don't want the BBCode tag applied, just use 'number' formatter_
  * @example Input: `{{myMoneyValue, money}}`
  *          Output: `@[MONEY]{₽100,000,000}`
  * @param amount the money amount
@@ -171,18 +171,18 @@ export async function initI18n(): Promise<void> {
   i18next.use(new KoreanPostpositionProcessor());
   await i18next.init({
     fallbackLng: {
-      "es-MX": ["es-ES", "en"],
+      "es-419": ["es-ES", "en"],
       default: ["en"],
     },
     supportedLngs: [
       "en",
       "es-ES",
-      "es-MX",
+      "es-419", // LATAM Spanish
       "fr",
       "it",
       "de",
-      "zh-CN",
-      "zh-TW",
+      "zh-Hans",
+      "zh-Hant",
       "pt-BR",
       "ko",
       "ja",

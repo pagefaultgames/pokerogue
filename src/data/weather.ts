@@ -19,10 +19,12 @@ export interface SerializedWeather {
 export class Weather {
   public weatherType: WeatherType;
   public turnsLeft: number;
+  public maxDuration: number;
 
-  constructor(weatherType: WeatherType, turnsLeft?: number) {
+  constructor(weatherType: WeatherType, turnsLeft = 0, maxDuration: number = turnsLeft) {
     this.weatherType = weatherType;
-    this.turnsLeft = !this.isImmutable() ? turnsLeft || 0 : 0;
+    this.turnsLeft = this.isImmutable() ? 0 : turnsLeft;
+    this.maxDuration = this.isImmutable() ? 0 : maxDuration;
   }
 
   lapse(): boolean {
@@ -386,5 +388,5 @@ export function getRandomWeatherType(arena: Arena): WeatherType {
     }
   }
 
-  return weatherPool.length ? weatherPool[0].weatherType : WeatherType.NONE;
+  return weatherPool.length > 0 ? weatherPool[0].weatherType : WeatherType.NONE;
 }

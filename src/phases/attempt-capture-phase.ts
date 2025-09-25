@@ -136,10 +136,10 @@ export class AttemptCapturePhase extends PokemonPhase {
                   } else if (shakeCount++ < (isCritical ? 1 : 3)) {
                     // Shake check (skip check for critical or guaranteed captures, but still play the sound)
                     if (
-                      pokeballMultiplier === -1 ||
-                      isCritical ||
-                      modifiedCatchRate >= 255 ||
-                      pokemon.randBattleSeedInt(65536) < shakeProbability
+                      pokeballMultiplier === -1
+                      || isCritical
+                      || modifiedCatchRate >= 255
+                      || pokemon.randBattleSeedInt(65536) < shakeProbability
                     ) {
                       globalScene.playSound("se/pb_move");
                     } else {
@@ -231,8 +231,9 @@ export class AttemptCapturePhase extends PokemonPhase {
     const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
 
     if (
-      speciesForm.abilityHidden &&
-      (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1
+      speciesForm.abilityHidden
+      && (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex)
+        === speciesForm.getAbilityCount() - 1
     ) {
       globalScene.validateAchv(achvs.HIDDEN_ABILITY);
     }
