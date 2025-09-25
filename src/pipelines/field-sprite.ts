@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
-import { getTerrainColor, TerrainType } from "#data/terrain";
+import Overrides from "#app/overrides";
+import { getTerrainColor } from "#data/terrain";
 import { getCurrentTime } from "#utils/common";
 import Phaser from "phaser";
 import fieldSpriteFragShader from "./glsl/field-sprite-frag-shader.frag?raw";
@@ -33,9 +34,13 @@ export class FieldSpritePipeline extends Phaser.Renderer.WebGL.Pipelines.MultiPi
     const ignoreTimeTint = data["ignoreTimeTint"] as boolean;
     const terrainColorRatio = (data["terrainColorRatio"] as number) || 0;
 
-    const time = globalScene.currentBattle?.waveIndex
-      ? ((globalScene.currentBattle.waveIndex + globalScene.waveCycleOffset) % 40) / 40 // ((new Date().getSeconds() * 1000 + new Date().getMilliseconds()) % 10000) / 10000
-      : getCurrentTime();
+    // TODO: Refactor this to respect time of day calcs and not hardcode it
+    const time =
+      Overrides.TIME_OF_DAY_OVERRIDE !== null
+        ? Overrides.TIME_OF_DAY_OVERRIDE / 4
+        : globalScene.currentBattle?.waveIndex
+          ? ((globalScene.currentBattle.waveIndex + globalScene.waveCycleOffset) % 40) / 40 // ((new Date().getSeconds() * 1000 + new Date().getMilliseconds()) % 10000) / 10000
+          : getCurrentTime();
     this.set1f("time", time);
     this.set1i("ignoreTimeTint", ignoreTimeTint ? 1 : 0);
     this.set1i("isOutside", globalScene.arena.isOutside() ? 1 : 0);
@@ -53,7 +58,7 @@ export class FieldSpritePipeline extends Phaser.Renderer.WebGL.Pipelines.MultiPi
     );
     this.set3fv(
       "terrainColor",
-      getTerrainColor(globalScene.arena.terrain?.terrainType || TerrainType.NONE).map(c => c / 255),
+      getTerrainColor(globalScene.arena.getTerrainType()).map(c => c / 255),
     );
     this.set1f("terrainColorRatio", terrainColorRatio);
   }

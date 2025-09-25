@@ -137,6 +137,7 @@ void main() {
 	if (color.a > 0.0 && ignoreTimeTint == 0) {
 		vec3 dayNightTint;
 
+		// TODO: Explain this
 		if (time < 0.25) {
 			dayNightTint = dayTint;
 		} else if (isOutside == 0 && time < 0.5) {

@@ -543,7 +543,7 @@ export class Arena {
         return TimeOfDay.NIGHT;
     }
 
-    if (Overrides.TIME_OF_DAY_OVERRIDE != null) {
+    if (Overrides.TIME_OF_DAY_OVERRIDE !== null) {
       return Overrides.TIME_OF_DAY_OVERRIDE;
     }
 
