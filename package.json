@@ -33,8 +33,8 @@
     "update-locales:remote": "git submodule update --progress --init --recursive --force --remote --depth 1 locales",
     "update-assets": "git submodule update --progress --init --recursive --depth 1 assets",
     "update-assets:remote": "git submodule update --progress --init --recursive --force --remote --depth 1 assets",
-    "update-all": "pnpm update-locales && pnpm update-assets",
-    "update-all:remote": "pnpm update-locales:remote && pnpm update"
+    "update-submodules": "pnpm update-locales && pnpm update-assets",
+    "update-submodules:remote": "pnpm update-locales:remote && pnpm update-assets:remote"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.4",

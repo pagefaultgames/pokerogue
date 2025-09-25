@@ -18,4 +18,4 @@ pre-commit:
 post-merge:
   commands:
     update-submodules:
-      run: pnpm update-assets
+      run: pnpm update-submodules
