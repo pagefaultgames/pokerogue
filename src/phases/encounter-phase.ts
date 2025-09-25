@@ -583,18 +583,22 @@ export class EncounterPhase extends BattlePhase {
       const phaseManager = globalScene.phaseManager;
       if (!availablePartyMembers[0].isOnField()) {
         phaseManager.pushNew("SummonPhase", 0, true, false, checkSwitch);
+      } else if (checkSwitch) {
+        globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
       }
 
       if (currentBattle.double) {
         if (availablePartyMembers.length > 1) {
           phaseManager.pushNew("ToggleDoublePositionPhase", true);
           if (!availablePartyMembers[1].isOnField()) {
-            phaseManager.pushNew("SummonPhase", 1, true, false, checkSwitch);
+            phaseManager.pushNew("SummonPhase", 1);
+          } else if (checkSwitch) {
+            globalScene.phaseManager.pushNew("CheckSwitchPhase", 1, globalScene.currentBattle.double);
           }
         }
       } else {
         if (availablePartyMembers.length > 1 && availablePartyMembers[1].isOnField()) {
-          globalScene.phaseManager.pushNew("ReturnPhase", 1);
+          phaseManager.pushNew("ReturnPhase", 1);
         }
         phaseManager.pushNew("ToggleDoublePositionPhase", false);
       }
