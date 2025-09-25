@@ -1,0 +1,217 @@
+# SPDX-FileCopyrightText: 2025 Pagefault Games
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
+version = 1
+
+[[annotations]] # From nintendo / creatures inc. / game freak inc. sourced from assets online, mostly pokemon showdown
+path = [
+    "cry/*",              # All pokemon cries are from showdown, which sources them from nintendo
+    "se/*.wav",           # By default, assume sourced from pokemon asset, narrow down below for specific ones that are not
+    "ui/*.wav",
+    "battle_anims/*.m4a",
+    "battle_anims/*.mp3",
+    # background music
+    "bgm/bw/*.mp3",
+    "bgm/rse/*.mp3",
+    "bgm/badlands.mp3",
+    "bgm/battle_aether_boss.mp3",
+    "bgm/battle_aether_grunt.mp3",
+    "bgm/battle_alola_champion.mp3",
+    "bgm/battle_alola_elite.mp3",
+    "bgm/battle_aqua_magma_boss.mp3",
+    "bgm/battle_aqua_magma_grunt.mp3",
+    "bgm/battle_bb_elite.mp3",
+    "bgm/battle_champion_alder.mp3",
+    "bgm/battle_champion_geeta.mp3",
+    "bgm/battle_champion_iris.mp3",
+    "bgm/battle_champion_kieran.mp3",
+    "bgm/battle_champion_kukui.mp3",
+    "bgm/battle_champion_nemona.mp3",
+    "bgm/battle_colress.mp3",
+    "bgm/battle_final_encounter.mp3",
+    "bgm/battle_final.mp3",
+    "bgm/battle_flare_boss.mp3",
+    "bgm/battle_flare_grunt.mp3",
+    "bgm/battle_galactic_admin.mp3",
+    "bgm/battle_galactic_boss.mp3",
+    "bgm/battle_galactic_grunt.mp3",
+    "bgm/battle_galar_champion.mp3",
+    "bgm/battle_galar_elite.mp3",
+    "bgm/battle_galar_gym.mp3",
+    "bgm/battle_hoenn_champion_g5.mp3",
+    "bgm/battle_hoenn_champion_g6.mp3",
+    "bgm/battle_hoenn_elite.mp3",
+    "bgm/battle_hoenn_gym.mp3",
+    "bgm/battle_johto_champion.mp3",
+    "bgm/battle_johto_gym.mp3",
+    "bgm/battle_kalos_champion.mp3",
+    "bgm/battle_kalos_elite.mp3",
+    "bgm/battle_kalos_gym.mp3",
+    "bgm/battle_kanto_champion.mp3",
+    "bgm/battle_kanto_gym.mp3",
+    "bgm/battle_legendary_arceus.mp3",
+    "bgm/battle_legendary_birds_galar.mp3",
+    "bgm/battle_legendary_calyrex.mp3",
+    "bgm/battle_legendary_deoxys.mp3",
+    "bgm/battle_legendary_dia_pal.mp3",
+    "bgm/battle_legendary_dusk_dawn.mp3",
+    "bgm/battle_legendary_entei.mp3",
+    "bgm/battle_legendary_eternatus_p1.mp3",
+    "bgm/battle_legendary_eternatus_p2.mp3",
+    "bgm/battle_legendary_giratina.mp3",
+    "bgm/battle_legendary_glas_spec.mp3",
+    "bgm/battle_legendary_gro_kyo.mp3",
+    "bgm/battle_legendary_ho_oh.mp3",
+    "bgm/battle_legendary_kanto.mp3",
+    "bgm/battle_legendary_kor_mir.mp3",
+    "bgm/battle_legendary_kyurem.mp3",
+    "bgm/battle_legendary_lake_trio.mp3",
+    "bgm/battle_legendary_loyal_three.mp3",
+    "bgm/battle_legendary_lugia.mp3",
+    "bgm/battle_legendary_ogerpon.mp3",
+    "bgm/battle_legendary_origin_forme.mp3",
+    "bgm/battle_legendary_pecharunt.mp3",
+    "bgm/battle_legendary_raikou.mp3",
+    "bgm/battle_legendary_rayquaza.mp3",
+    "bgm/battle_legendary_regis_g5.mp3",
+    "bgm/battle_legendary_regis_g6.mp3",
+    "bgm/battle_legendary_res_zek.mp3",
+    "bgm/battle_legendary_riders.mp3",
+    "bgm/battle_legendary_ruinous.mp3",
+    "bgm/battle_legendary_sinnoh.mp3",
+    "bgm/battle_legendary_sol_lun.mp3",
+    "bgm/battle_legendary_suicune.mp3",
+    "bgm/battle_legendary_tapu.mp3",
+    "bgm/battle_legendary_terapagos.mp3",
+    "bgm/battle_legendary_ub.mp3",
+    "bgm/battle_legendary_ultra_nec.mp3",
+    "bgm/battle_legendary_unova.mp3",
+    "bgm/battle_legendary_xern_yvel.mp3",
+    "bgm/battle_legendary_zac_zam.mp3",
+    "bgm/battle_macro_boss.mp3",
+    "bgm/battle_macro_grunt.mp3",
+    "bgm/battle_mustard.mp3",
+    "bgm/battle_oleana.mp3",
+    "bgm/battle_paldea_elite.mp3",
+    "bgm/battle_paldea_gym.mp3",
+    "bgm/battle_plasma_boss.mp3",
+    "bgm/battle_plasma_grunt.mp3",
+    "bgm/battle_rival_2.mp3",
+    "bgm/battle_rival_3.mp3",
+    "bgm/battle_rival.mp3",
+    "bgm/battle_rocket_boss.mp3",
+    "bgm/battle_rocket_grunt.mp3",
+    "bgm/battle_sinnoh_champion.mp3",
+    "bgm/battle_sinnoh_gym.mp3",
+    "bgm/battle_skull_admin.mp3",
+    "bgm/battle_skull_boss.mp3",
+    "bgm/battle_skull_grunt.mp3",
+    "bgm/battle_star_admin.mp3",
+    "bgm/battle_star_boss.mp3",
+    "bgm/battle_star_grunt.mp3",
+    "bgm/battle_trainer.mp3",
+    "bgm/battle_unova_elite.mp3",
+    "bgm/battle_unova_gym.mp3",
+    "bgm/battle_wild.mp3",
+    "bgm/battle_wild_strong.mp3",
+    "bgm/beach.mp3",
+    "bgm/cave.mp3",
+    "bgm/construction_site.mp3",
+    "bgm/dojo.mp3",
+    "bgm/encounter_ace_trainer.mp3",
+    "bgm/encounter_backpacker.mp3",
+    "bgm/encounter_clerk.mp3",
+    "bgm/encounter_cyclist.mp3",
+    "bgm/encounter_final.mp3",
+    "bgm/encounter_lass.mp3",
+    "bgm/encounter_parasol_lady.mp3",
+    "bgm/encounter_plasma_grunt.mp3",
+    "bgm/encounter_pokefan.mp3",
+    "bgm/encounter_psychic.mp3",
+    "bgm/encounter_rich.mp3",
+    "bgm/encounter_rival.mp3",
+    "bgm/encounter_roughneck.mp3",
+    "bgm/encounter_scientist.mp3",
+    "bgm/encounter_twins.mp3",
+    "bgm/encounter_youngster.mp3",
+    "bgm/end_summit.mp3",
+    "bgm/factory.mp3",
+    "bgm/grass.mp3",
+    "bgm/heal.mp3",
+    "bgm/island.mp3",
+    "bgm/meadow.mp3",
+    "bgm/menu.mp3",
+    "bgm/mountain.mp3",
+    "bgm/mystery_encounter_fun_and_games.mp3",
+    "bgm/mystery_encounter_gen_5_gts.mp3",
+    "bgm/mystery_encounter_gen_6_gts.mp3",
+    "bgm/mystery_encounter_weird_dream.mp3",
+    "bgm/snowy_forest.mp3",
+    "bgm/swamp.mp3",
+    "bgm/tall_grass.mp3",
+    "bgm/temple.mp3",
+    "bgm/title.mp3",
+    "bgm/town.mp3",
+    # end background music
+]
+SPDX-FileCopyrightText = "Nintendo, Creatures Inc., GAME FREAK inc."
+SPDX-License-Identifier = "LicenseRef-FAIR-USE"
+
+[[annotations]] # Pokemon Reborn
+path = ["battle_anims/PRSFX-*.wav"]
+SPDX-FileCopyrightText = "The Pokemon Reborn Team https://www.rebornevo.com/pr/index.html/"
+SPDX-License-Identifier = "LicenseRef-POKEMON-REBORN"
+
+[[annotations]] # Firel
+path = [
+    "bgm/abyss.mp3",
+    "bgm/desert.mp3",
+    "bgm/end.mp3",
+    "bgm/graveyard.mp3",
+    "bgm/ice_cave.mp3",
+    "bgm/laboratory.mp3",
+    "bgm/metropolis.mp3",
+    "bgm/mystery_encounter_delibirdy.mp3",
+    "bgm/plains.mp3",
+    "bgm/power_plant.mp3",
+    "bgm/seabed.mp3",
+    "bgm/space.mp3",
+    "bgm/title.mp3",
+    "bgm/volcano.mp3",
+]
+SPDX-FileCopyrightText = "Firel"
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
+
+[[annotations]] # LMZ
+path = ["bgm/jungle.mp3", "bgm/lake.mp3", "bgm/ruins.mp3"]
+SPDX-FileCopyrightText = "Lmz"
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
+
+[[annotations]] # Andr06
+path = [
+    "bgm/forest.mp3",
+    "bgm/fairy_cave.mp3",
+    "bgm/sea.mp3",
+    "bgm/slum.mp3",
+    "bgm/title_afd.mp3",
+    "bgm/battle_rival_3_afd.mp3",
+]
+SPDX-FileCopyrightText = "Andr06"
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
+
+[[annotations]] # Leavannite
+path = ["bgm/wasteland.mp3"]
+SPDX-FileCopyrightText = "Leavannite"
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
+
+
+[[annotations]] # Audio assets sampled from royalty-free sites like pixabay and findsounds and modified or otherwise edited
+path = [
+    "se/gacha_dial.wav",
+    "se/gacha_dispense.wav",
+    "se/gacha_running.wav",
+    "se/upgrade.wav",
+]
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "CC0-1.0"

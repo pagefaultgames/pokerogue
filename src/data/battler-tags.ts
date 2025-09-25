@@ -606,17 +606,7 @@ export class ShellTrapTag extends BattlerTag {
 
       // Trap should only be triggered by opponent's Physical moves
       if (phaseData?.move.category === MoveCategory.PHYSICAL && pokemon.isOpponent(phaseData.attacker)) {
-        const shellTrapPhaseIndex = globalScene.phaseManager.phaseQueue.findIndex(
-          phase => phase.is("MovePhase") && phase.pokemon === pokemon,
-        );
-        const firstMovePhaseIndex = globalScene.phaseManager.phaseQueue.findIndex(phase => phase.is("MovePhase"));
-
-        // Only shift MovePhase timing if it's not already next up
-        if (shellTrapPhaseIndex !== -1 && shellTrapPhaseIndex !== firstMovePhaseIndex) {
-          const shellTrapMovePhase = globalScene.phaseManager.phaseQueue.splice(shellTrapPhaseIndex, 1)[0];
-          globalScene.phaseManager.prependToPhase(shellTrapMovePhase, "MovePhase");
-        }
-
+        globalScene.phaseManager.forceMoveNext((phase: MovePhase) => phase.pokemon === pokemon);
         this.activated = true;
       }
 
@@ -1279,22 +1269,9 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
       }),
     );
 
-    const movePhase = globalScene.phaseManager.findPhase(m => m.is("MovePhase") && m.pokemon === pokemon);
-    if (movePhase) {
-      const movesetMove = pokemon.getMoveset().find(m => m.moveId === this.moveId);
-      if (movesetMove) {
-        const lastMove = pokemon.getLastXMoves(1)[0];
-        globalScene.phaseManager.tryReplacePhase(
-          m => m.is("MovePhase") && m.pokemon === pokemon,
-          globalScene.phaseManager.create(
-            "MovePhase",
-            pokemon,
-            lastMove.targets ?? [],
-            movesetMove,
-            MoveUseMode.NORMAL,
-          ),
-        );
-      }
+    const movesetMove = pokemon.getMoveset().find(m => m.moveId === this.moveId);
+    if (movesetMove) {
+      globalScene.phaseManager.changePhaseMove((phase: MovePhase) => phase.pokemon === pokemon, movesetMove);
     }
   }
 
@@ -3579,6 +3556,25 @@ export class GrudgeTag extends SerializableBattlerTag {
 }
 
 /**
+ * Tag to allow the affected Pokemon's move to go first in its priority bracket.
+ * Used for {@link https://bulbapedia.bulbagarden.net/wiki/Quick_Draw_(Ability) | Quick Draw}
+ * and {@link https://bulbapedia.bulbagarden.net/wiki/Quick_Claw | Quick Claw}.
+ */
+export class BypassSpeedTag extends BattlerTag {
+  public override readonly tagType = BattlerTagType.BYPASS_SPEED;
+
+  constructor() {
+    super(BattlerTagType.BYPASS_SPEED, BattlerTagLapseType.TURN_END, 1);
+  }
+
+  override canAdd(pokemon: Pokemon): boolean {
+    const bypass = new BooleanHolder(true);
+    applyAbAttrs("PreventBypassSpeedChanceAbAttr", { pokemon, bypass });
+    return bypass.value;
+  }
+}
+
+/**
  * Tag used to heal the user of Psycho Shift of its status effect if Psycho Shift succeeds in transferring its status effect to the target Pokemon
  */
 export class PsychoShiftTag extends BattlerTag {
@@ -3623,6 +3619,41 @@ export class MagicCoatTag extends BattlerTag {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       }),
     );
+  }
+}
+
+/**
+ * Tag associated with {@linkcode AbilityId.SUPREME_OVERLORD}
+ */
+export class SupremeOverlordTag extends AbilityBattlerTag {
+  public override readonly tagType = BattlerTagType.SUPREME_OVERLORD;
+  /** The number of faints at the time the user was sent out */
+  public readonly faintCount: number;
+  constructor() {
+    super(BattlerTagType.SUPREME_OVERLORD, AbilityId.SUPREME_OVERLORD, BattlerTagLapseType.FAINT, 0);
+  }
+
+  public override onAdd(pokemon: Pokemon): boolean {
+    (this as Mutable<this>).faintCount = Math.min(
+      pokemon.isPlayer() ? globalScene.arena.playerFaints : globalScene.currentBattle.enemyFaints,
+      5,
+    );
+    globalScene.phaseManager.queueMessage(
+      i18next.t("battlerTags:supremeOverlordOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }),
+    );
+    return true;
+  }
+
+  /**
+   * @returns The damage multiplier for Supreme Overlord
+   */
+  public getBoost(): number {
+    return 1 + 0.1 * this.faintCount;
+  }
+
+  public override loadTag(source: BaseBattlerTag & Pick<SupremeOverlordTag, "tagType" | "faintCount">): void {
+    super.loadTag(source);
+    (this as Mutable<this>).faintCount = source.faintCount;
   }
 }
 
@@ -3826,6 +3857,10 @@ export function getBattlerTag(
       return new PsychoShiftTag();
     case BattlerTagType.MAGIC_COAT:
       return new MagicCoatTag();
+    case BattlerTagType.SUPREME_OVERLORD:
+      return new SupremeOverlordTag();
+    case BattlerTagType.BYPASS_SPEED:
+      return new BypassSpeedTag();
   }
 }
 
@@ -3960,4 +3995,6 @@ export type BattlerTagTypeMap = {
   [BattlerTagType.GRUDGE]: GrudgeTag;
   [BattlerTagType.PSYCHO_SHIFT]: PsychoShiftTag;
   [BattlerTagType.MAGIC_COAT]: MagicCoatTag;
+  [BattlerTagType.SUPREME_OVERLORD]: SupremeOverlordTag;
+  [BattlerTagType.BYPASS_SPEED]: BypassSpeedTag;
 };

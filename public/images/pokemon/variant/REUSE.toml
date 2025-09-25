@@ -1,0 +1,254 @@
+# SPDX-FileCopyrightText: 2025 Pagefault Games
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+version = 1
+
+#  When adding attributions to a variant file where two different people
+# created different variants, you MUST add a seprate `[[annotations]]` entry, and it
+# MUST use comma-separated names
+# Though, if the same set of authors share the same, then multipe variants can be
+# under the same [[annotations]] entry
+# e.g., `SPDX-FileCopyrightText = 2024-2025 John Doe, Jane Smith`
+# A note _MAY_ be added as metadata, via an additional key, like
+# VARIANT_1_AUTHOR = "John Doe"
+# VARIANT_2_AUTHOR = "Jane Smith"
+# Or, even with just a general NOTE field, e..g
+# NOTE = "John Doe implemented variant, Jane Smith came up with the concept"
+# While this will *not* be reflected in the software bill of materials, it will
+# make it clear who is responsible for which variant and to what extent
+
+[[annotations]] # Code - Licensed under AGPL
+path = ["_masterlist.json", "_exp_masterlist.json"]
+SPDX-FileCopyrightText = "2024-2025 Pagefault Games"
+SPDX-License-Identifier = "AGPL-3.0-only"
+
+[[annotations]] # Hanniel's variants
+path = [
+    # Nidoran (M)
+    "32.json",
+    "back/32.json",
+    # Nidorino
+    "33.json",
+    "back/33.json",
+    # Nidoking
+    "34.json",
+    "back/34.json",
+    # Jigglypuff
+    "39.json",
+    "back/39.json",
+    # Wigglytuff
+    "40.json",
+    "back/40.json",
+    # Igglybuff
+    "174.json",
+    "back/174.json",
+
+    # Chimchar
+    "390.json",
+    "back/390.json",
+    # Monferno
+    "391.json",
+    "back/391.json",
+    # Infernape
+    "392.json",
+    "back/392.json",
+
+    # Cherubi
+    "420.json",
+    "back/420.json",
+    # Cherrim
+    "421.json",
+    "back/421.json",
+
+    # Darumaka
+    "554.json",
+    "back/554.json",
+    # Darmanitan
+    "555.json",
+    "back/555.json",
+    # Darmanitan Zen Mode
+    "555-zen.json",
+    "back/555-zen.json",
+
+    # Snorlax
+    "143.json",
+    "back/143.json",
+    # Munchlax
+    "446.json",
+    "back/446.json",
+
+    # Tepig
+    "498.json",
+    "back/498.json",
+    # Emboar
+    "499.json",
+    "back/499.json",
+    # Pignite
+    "500.json",
+    "back/500.json",
+
+    # Minccino
+    "572.json",
+    "back/572.json",
+    # Cinccino
+    "573.json",
+    "back/573.json",
+
+    # Drampa
+    "780.json",
+    "back/780.json",
+
+    # Jangmo-o
+    "782.json",
+    "back/782.json",
+    # Hakamo-o
+    "783.json",
+    "back/783.json",
+    # Kommo-o
+    "784.json",
+    "back/784.json",
+
+    # Starly
+    "396.json",
+    "back/396.json",
+    # Staravia
+    "397.json",
+    "back/397.json",
+    # Staraptor
+    "398.json",
+    "back/398.json",
+
+    # Pansear
+    "513.json",
+    "back/513.json",
+
+    # Simisear
+    "514.json",
+    "back/514.json",
+
+    # Gligar/Gliscor - female forms only
+    "female/207.json",
+    "back/female/207.json",
+    "female/208.json",
+    "back/female/208.json",
+
+    # Deoxys and all forms
+    "386.json",
+    "back/386.json",
+    "386-attack.json",
+    "back/386-attack.json",
+    "386-defense.json",
+    "back/386-defense.json",
+    "386-speed.json",
+    "back/386-speed.json",
+]
+SPDX-FileCopyrightText = "2024-2025 hanniel.15"
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
+
+[[annotations]] # Vari's variants
+path = [
+    # Gligar/Gliscor's non-female
+    "207.json",
+    "back/207.json",
+    "208.json",
+    "back/208.json",
+]
+SPDX-FileCopyrightText = "2024 Vari"
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
+
+[[annotations]] # Green Ninja's variants
+path = [
+    # Regigigas
+    "486.json",
+    "back/486.json",
+    # Regieleki
+    "894.json",
+    "back/894.json",
+    # Regidrago
+    "895.json",
+    "back/895.json",
+] 
+SPDX-FileCopyrightText = "2024-2025 Dale B. aka Green Ninja757"
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
+
+[[annotations]] # OfficerPorkchop's variants
+path = [
+    # Wooper
+    "194.json",
+    "back/194.json",
+    # Quagsire
+    "195.json",
+    "back/195.json",
+]
+SPDX-FileCopyrightText = "2024 OfficerPorkchop"
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
+# todo: officer porkchops also responsible for Console / PC buttons: https://discord.com/channels/1125469663833370665/1243375609959415958/1419140858657243167
+
+[[annotations]] 
+
+###############################
+# Multi-Author Variants Below #
+###############################
+
+[[annotations]] # Pineco
+path = [
+    "204.json",
+    "back/204.json",
+]
+SPDX-FileCopyrightText = "2024-2025 Dale B. aka Green Ninja757"
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
+VARIANT_1_AUTHOR = "Green Ninja757"
+
+[[annotations]] # Regirock
+path = [
+    "377.json",
+    "back/377.json",
+]
+SPDX-FileCopyrightText = ["2024 Dale B. aka Green Ninja757", "2024 Gonfold"]
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
+VARIANT_1_AUTHOR = "Green Ninja757"
+NOTE = "Variant implementation and polish by Green Ninja757, original concept by Gonfold"
+
+[[annotations]] # Regice
+path = [
+    "378.json",
+    "back/378.json",
+]
+SPDX-FileCopyrightText = ["2024 Dale B. aka Green Ninja757", "2024 MonkehestMan"]
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
+VARIANT_1_AUTHOR = "Green Ninja757"
+VARIANT_2_AUTHOR = "MonkehestMan"
+
+[[annotations]] # Registeel
+path = [
+    "378.json",
+    "back/378.json",
+]
+SPDX-FileCopyrightText = ["2024 Dale B. aka Green Ninja757", "2024 Vari"]
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
+VARIANT_1_AUTHOR = "Green Ninja757"
+VARIANT_2_AUTHOR = "Vari"
+
+
+[[annotations]]
+path = [
+    # Reshiram
+    "643.json",
+    "back/643.json",
+    # Zekrom
+    "644.json",
+    "back/644.json",
+    # Kyurem
+    "646.json",
+    "back/646.json",
+    # Kyurem Black
+    "646-black.json",
+    "back/646-black.json",
+    # Kyurem White
+    "646-white.json",
+    "back/646-white.json",
+]
+SPDX-FileCopyrightText = ["2024-2025 hanniel.15", "2024-2025 unicorn_power"]
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
+VARIANT_1_AUTHOR = "hanniel.15"
+VARIANT_2_AUTHOR = "unicorn_power"

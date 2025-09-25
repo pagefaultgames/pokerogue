@@ -135,7 +135,7 @@ describe("Move - Wish", () => {
     // all wishes have activated and added healing phases
     expect(game).toHavePositionalTag(PositionalTagType.WISH, 0);
 
-    const healPhases = game.scene.phaseManager.phaseQueue.filter(p => p.is("PokemonHealPhase"));
+    const healPhases = game.scene.phaseManager["phaseQueue"].findAll("PokemonHealPhase");
     expect(healPhases).toHaveLength(4);
     expect.soft(healPhases.map(php => php.getPokemon())).toEqual(oldOrder);
 
