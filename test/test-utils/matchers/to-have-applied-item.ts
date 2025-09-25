@@ -1,10 +1,11 @@
 import { getPokemonNameWithAffix } from "#app/messages";
-import { allHeldItems } from "#data/data-lists";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { type HeldItemId, HeldItemNames } from "#enums/held-item-id";
-import { HeldItem } from "#items/held-item";
+import { allHeldItems } from "#items/all-held-items";
+import { CosmeticHeldItem, HeldItem } from "#items/held-item";
 import { getOnelineDiffStr } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
+import { ApplicableHeldItemId, allHeldItemsType } from "#types/held-item-data-types";
 import type { DefaultHeldItemParams, HeldItemEffectParamMap } from "#types/held-item-parameter";
 import type { AtLeastOne } from "#types/type-helpers";
 import { enumValueToKey } from "#utils/enums";
@@ -12,18 +13,18 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 import { type MockInstance, vi } from "vitest";
 
 /** Options type for {@linkcode toHaveAppliedItem}. */
-export type toHaveAppliedItemOptions<E extends HeldItemEffect> = Omit<
-  HeldItemEffectParamMap[E],
-  "pokemon"
-> extends Record<string, never>
+export type toHaveAppliedItemOptions<E extends HeldItemEffect> = Omit<HeldItemEffectParamMap[E], "pokemon"> extends Record<
+  string,
+  never
+>
   ? never
-  : AtLeastOne<Omit<HeldItemEffectParamMap[E], keyof DefaultHeldItemParams>>;
+  : AtLeastOne<Omit<HeldItemEffectParamMap[E], "pokemon">>;
 
 // TODO: Add proper typing on `args` and `effect` later at some point
-export function toHaveAppliedItem<E extends HeldItemEffect>(
+export function toHaveAppliedItem<T extends ApplicableHeldItemId, E extends allHeldItemsType[T]['effects'][number]>(
   this: MatcherState,
   received: unknown,
-  id: HeldItemId,
+  id: T,
   effect: E,
   options: toHaveAppliedItemOptions<E> = {} as toHaveAppliedItemOptions<E>,
 ): SyncExpectationResult {
@@ -34,7 +35,7 @@ export function toHaveAppliedItem<E extends HeldItemEffect>(
     };
   }
 
-  const item = allHeldItems[id];
+  const item = allHeldItems[id] as CosmeticHeldItem | HeldItem;
   const itemName = HeldItemNames[id];
   if (!(item instanceof HeldItem)) {
     return {
@@ -43,14 +44,13 @@ export function toHaveAppliedItem<E extends HeldItemEffect>(
     };
   }
 
-  // TODO: Stop callers from passing incompatible `effect`s when checking items that don't support them
   if (!item.effects.includes(effect)) {
     return {
       pass: this.isNot,
       message: () =>
-        `Held item ${itemName}' effects does not include HeldItemEffect.${enumValueToKey(HeldItemEffect, effect)}!`,
+        `Held item ${itemName}'s effects does not include HeldItemEffect.${enumValueToKey(HeldItemEffect, effect)}!`,
       expected: enumValueToKey(HeldItemEffect, effect),
-      actual: item.effects.map(e => enumValueToKey(HeldItemEffect, effect)),
+      actual: item.effects.map(e => enumValueToKey(HeldItemEffect, e)),
     };
   }
 
@@ -61,10 +61,10 @@ export function toHaveAppliedItem<E extends HeldItemEffect>(
     };
   }
 
-  const params: Partial<HeldItemEffectParamMap[E]> = {
+  const params = {
     ...options,
     pokemon: received,
-  };
+  } as unknown as Partial<HeldItemEffectParamMap[E]>;
 
   const calls = (item.shouldApply as unknown as MockInstance<typeof item.shouldApply>).mock.calls;
   const pass = this.equals(

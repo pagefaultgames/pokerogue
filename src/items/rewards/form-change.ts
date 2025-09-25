@@ -1,5 +1,4 @@
 import { globalScene } from "#app/global-scene";
-import { allHeldItems } from "#data/data-lists";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import { pokemonFormChanges, SpeciesFormChangeCondition } from "#data/pokemon-forms";
 import { FormChangeItemId } from "#enums/form-change-item-id";
@@ -8,6 +7,7 @@ import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import type { PlayerPokemon } from "#field/pokemon";
+import { allHeldItems } from "#items/all-held-items";
 import { PokemonReward, type PokemonRewardParams, RewardGenerator } from "#items/reward";
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import { randSeedItem } from "#utils/common";

@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { allAbilities, allHeldItems } from "#data/data-lists";
+import { allAbilities } from "#data/data-lists";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { AbilityId } from "#enums/ability-id";
@@ -14,6 +14,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { TimeOfDay } from "#enums/time-of-day";
 import { WeatherType } from "#enums/weather-type";
 import type { PlayerPokemon } from "#field/pokemon";
+import { allHeldItems } from "#items/all-held-items";
 import { coerceArray } from "#utils/common";
 
 export interface EncounterRequirement {

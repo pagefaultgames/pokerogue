@@ -1,6 +1,5 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { allHeldItems } from "#data/data-lists";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
 import { AbilityId } from "#enums/ability-id";
 import { Challenges } from "#enums/challenges";
@@ -11,6 +10,7 @@ import { StatusEffect } from "#enums/status-effect";
 import type { TimeOfDay } from "#enums/time-of-day";
 import { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
+import { allHeldItems } from "#items/all-held-items";
 import { type Constructor, coerceArray } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";

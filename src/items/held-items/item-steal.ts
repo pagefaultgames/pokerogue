@@ -1,9 +1,9 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { allHeldItems } from "#data/data-lists";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import type { HeldItemId } from "#enums/held-item-id";
 import { Pokemon } from "#field/pokemon";
+import { allHeldItems } from "#items/all-held-items";
 import { type EffectTuple, HeldItem } from "#items/held-item";
 import type { ItemStealParams } from "#types/held-item-parameter";
 import { coerceArray, randSeedFloat } from "#utils/common";

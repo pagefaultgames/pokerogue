@@ -2,6 +2,9 @@
 import type { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import type { RarityTier } from "#enums/reward-tier";
 import type { Pokemon } from "#field/pokemon";
+import type { allHeldItems } from "#items/all-held-items";
+import { CosmeticHeldItem, HeldItem } from "#items/held-item";
+import type { ExcludeKeys, InferKeys } from "#types/helpers/type-helpers";
 
 export type HeldItemData = {
   /**
@@ -74,3 +77,11 @@ export type PokemonItemMap = {
 };
 
 export type HeldItemSaveData = HeldItemSpecs[];
+
+export type allHeldItemsType = typeof allHeldItems;
+
+/** Union type of all `HeldItemId`s whose corresponding items cannot be applied. */
+type CosmeticHeldItemId = InferKeys<allHeldItemsType, CosmeticHeldItem>;
+
+/** Union type of all `HeldItemId`s whose corresponding items can be applied. */
+export type ApplicableHeldItemId = Exclude<keyof allHeldItemsType, CosmeticHeldItemId>;

@@ -1,4 +1,3 @@
-import { allHeldItems } from "#data/data-lists";
 import type { FormChangeItemId } from "#enums/form-change-item-id";
 import {
   HeldItemCategoryId,
@@ -14,6 +13,7 @@ import {
   type HeldItemSpecs,
   isHeldItemSpecs,
 } from "#types/held-item-data-types";
+import { allHeldItems } from "./all-held-items";
 
 export class HeldItemManager {
   // TODO: There should be a way of making these private...

@@ -1,7 +1,6 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { allHeldItems } from "#data/data-lists";
 import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -10,6 +9,7 @@ import { RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
+import { allHeldItems } from "#items/all-held-items";
 import { getEncounterText, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import {
   leaveEncounterWithoutBattle,
