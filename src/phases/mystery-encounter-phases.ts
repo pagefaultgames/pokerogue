@@ -417,6 +417,8 @@ export class MysteryEncounterBattlePhase extends Phase {
 
     if (!availablePartyMembers[0].isOnField()) {
       globalScene.phaseManager.pushNew("SummonPhase", 0, true, false, checkSwitch);
+    } else if (checkSwitch) {
+      globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
     }
 
     if (globalScene.currentBattle.double) {
@@ -424,6 +426,8 @@ export class MysteryEncounterBattlePhase extends Phase {
         globalScene.phaseManager.pushNew("ToggleDoublePositionPhase", true);
         if (!availablePartyMembers[1].isOnField()) {
           globalScene.phaseManager.pushNew("SummonPhase", 1, true, false, checkSwitch);
+        } else if (checkSwitch) {
+          globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
         }
       }
     } else {
@@ -432,6 +436,16 @@ export class MysteryEncounterBattlePhase extends Phase {
         globalScene.phaseManager.pushNew("ReturnPhase", 1);
       }
       globalScene.phaseManager.pushNew("ToggleDoublePositionPhase", false);
+    }
+
+    if (encounterMode !== MysteryEncounterMode.TRAINER_BATTLE && !this.disableSwitch) {
+      const minPartySize = globalScene.currentBattle.double ? 2 : 1;
+      if (availablePartyMembers.length > minPartySize) {
+        globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
+        if (globalScene.currentBattle.double) {
+          globalScene.phaseManager.pushNew("CheckSwitchPhase", 1, globalScene.currentBattle.double);
+        }
+      }
     }
 
     this.end();
