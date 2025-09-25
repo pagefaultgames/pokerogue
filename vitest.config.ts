@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 import { defineConfig } from "vitest/config";
 import { BaseSequencer, type TestSpecification } from "vitest/node";
 import { defaultConfig } from "./vite.config";

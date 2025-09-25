@@ -33,7 +33,7 @@ import type { PartyOption } from "#ui/party-ui-handler";
 import { PartyUiMode } from "#ui/party-ui-handler";
 import { SummaryUiMode } from "#ui/summary-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
-import { BooleanHolder, isNullOrUndefined, randSeedInt } from "#utils/common";
+import { BooleanHolder, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
@@ -274,7 +274,7 @@ export function getRandomSpeciesByStarterCost(
 
   if (types && types.length > 0) {
     filteredSpecies = filteredSpecies.filter(
-      s => types.includes(s[0].type1) || (!isNullOrUndefined(s[0].type2) && types.includes(s[0].type2)),
+      s => types.includes(s[0].type1) || (s[0].type2 != null && types.includes(s[0].type2)),
     );
   }
 

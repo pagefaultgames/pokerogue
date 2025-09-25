@@ -357,7 +357,7 @@ describe("Abilities - Unburden", () => {
       .startingHeldItems([{ entry: HeldItemId.WIDE_LENS }]);
     await game.classicMode.startBattle([SpeciesId.TREECKO, SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
 
-    const treecko = game.scene.getPlayerField()[0];
+    const treecko = game.field.getPlayerPokemon();
     const treeckoInitialHeldItems = getHeldItemCount(treecko);
     const initialSpeed = treecko.getStat(Stat.SPD);
 
@@ -369,7 +369,7 @@ describe("Abilities - Unburden", () => {
     game.doSelectPartyPokemon(0, "RevivalBlessingPhase");
     await game.toNextTurn();
 
-    expect(game.scene.getPlayerField()[0]).toBe(treecko);
+    expect(game.field.getPlayerPokemon()).toBe(treecko);
     expect(getHeldItemCount(treecko)).toBeLessThan(treeckoInitialHeldItems);
     expect(treecko.getEffectiveStat(Stat.SPD)).toBe(initialSpeed);
   });

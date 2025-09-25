@@ -466,6 +466,20 @@ export class SingleGenerationChallenge extends Challenge {
     return false;
   }
 
+  applyStarterSelectModify(speciesId: SpeciesId, dexEntry: DexEntry, _starterDataEntry: StarterDataEntry): boolean {
+    // Ralts must be male and Snorunt must be female
+    if (this.value === 4) {
+      if (speciesId === SpeciesId.RALTS) {
+        dexEntry.caughtAttr &= ~DexAttr.FEMALE;
+      }
+      if (speciesId === SpeciesId.SNORUNT) {
+        dexEntry.caughtAttr &= ~DexAttr.MALE;
+      }
+    }
+
+    return true;
+  }
+
   applyPokemonInBattle(pokemon: Pokemon, valid: BooleanHolder): boolean {
     const baseGeneration = getPokemonSpecies(pokemon.species.speciesId).generation;
     const fusionGeneration = pokemon.isFusion() ? getPokemonSpecies(pokemon.fusionSpecies!.speciesId).generation : 0;
@@ -737,6 +751,32 @@ export class SingleTypeChallenge extends Challenge {
       return true;
     }
     return false;
+  }
+
+  applyStarterSelectModify(speciesId: SpeciesId, dexEntry: DexEntry, _starterDataEntry: StarterDataEntry): boolean {
+    const type = this.value - 1;
+
+    if (speciesId === SpeciesId.RALTS) {
+      if (type === PokemonType.FIGHTING) {
+        dexEntry.caughtAttr &= ~DexAttr.FEMALE;
+      }
+      if (type === PokemonType.FAIRY) {
+        dexEntry.caughtAttr &= ~DexAttr.MALE;
+      }
+    }
+    if (speciesId === SpeciesId.SNORUNT && type === PokemonType.GHOST) {
+      dexEntry.caughtAttr &= ~DexAttr.MALE;
+    }
+    if (speciesId === SpeciesId.BURMY) {
+      if (type === PokemonType.FLYING) {
+        dexEntry.caughtAttr &= ~DexAttr.FEMALE;
+      }
+      if ([PokemonType.GRASS, PokemonType.GROUND, PokemonType.STEEL].includes(type)) {
+        dexEntry.caughtAttr &= ~DexAttr.MALE;
+      }
+    }
+
+    return true;
   }
 
   applyPokemonInBattle(pokemon: Pokemon, valid: BooleanHolder): boolean {

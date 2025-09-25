@@ -1,7 +1,6 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import type { Phase } from "#app/phase";
 import { ConditionalProtectTag } from "#data/arena-tag";
 import { MoveAnim } from "#data/battle-anims";
 import { DamageProtectedTag, ProtectedTag, SemiInvulnerableTag, SubstituteTag, TypeBoostTag } from "#data/battler-tags";
@@ -18,6 +17,7 @@ import { MoveCategory } from "#enums/move-category";
 import { MoveEffectTrigger } from "#enums/move-effect-trigger";
 import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
+import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import { MoveResult } from "#enums/move-result";
 import { MoveTarget } from "#enums/move-target";
 import { isReflected, MoveUseMode } from "#enums/move-use-mode";
@@ -34,7 +34,7 @@ import { DamageAchv } from "#system/achv";
 import type { DamageResult } from "#types/damage-result";
 import type { TurnMove } from "#types/turn-move";
 import type { nil } from "#utils/common";
-import { BooleanHolder, isNullOrUndefined, NumberHolder } from "#utils/common";
+import { BooleanHolder, NumberHolder } from "#utils/common";
 import i18next from "i18next";
 
 export type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
@@ -60,12 +60,6 @@ export class MoveEffectPhase extends PokemonPhase {
   private firstHit: boolean;
   /** Is this the last strike of a move? */
   private lastHit: boolean;
-
-  /**
-   * Phases queued during moves; used to add a new MovePhase for reflected moves after triggering.
-   * TODO: Remove this and move the reflection logic to ability-side
-   */
-  private queuedPhases: Phase[] = [];
 
   /**
    * @param useMode - The {@linkcode MoveUseMode} corresponding to how this move was used.
@@ -142,7 +136,7 @@ export class MoveEffectPhase extends PokemonPhase {
   }
 
   /**
-   * Queue the phaes that should occur when the target reflects the move back to the user
+   * Queue the phases that should occur when the target reflects the move back to the user
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - The {@linkcode Pokemon} that is reflecting the move
    * TODO: Rework this to use `onApply` of Magic Coat
@@ -153,24 +147,21 @@ export class MoveEffectPhase extends PokemonPhase {
       : [user.getBattlerIndex()];
     // TODO: ability displays should be handled by the ability
     if (!target.getTag(BattlerTagType.MAGIC_COAT)) {
-      this.queuedPhases.push(
-        globalScene.phaseManager.create(
-          "ShowAbilityPhase",
-          target.getBattlerIndex(),
-          target.getPassiveAbility().hasAttr("ReflectStatusMoveAbAttr"),
-        ),
+      globalScene.phaseManager.unshiftNew(
+        "ShowAbilityPhase",
+        target.getBattlerIndex(),
+        target.getPassiveAbility().hasAttr("ReflectStatusMoveAbAttr"),
       );
-      this.queuedPhases.push(globalScene.phaseManager.create("HideAbilityPhase"));
+      globalScene.phaseManager.unshiftNew("HideAbilityPhase");
     }
 
-    this.queuedPhases.push(
-      globalScene.phaseManager.create(
-        "MovePhase",
-        target,
-        newTargets,
-        new PokemonMove(this.move.id),
-        MoveUseMode.REFLECTED,
-      ),
+    globalScene.phaseManager.unshiftNew(
+      "MovePhase",
+      target,
+      newTargets,
+      new PokemonMove(this.move.id),
+      MoveUseMode.REFLECTED,
+      MovePhaseTimingModifier.FIRST,
     );
   }
 
@@ -338,9 +329,6 @@ export class MoveEffectPhase extends PokemonPhase {
       return;
     }
 
-    if (this.queuedPhases.length > 0) {
-      globalScene.phaseManager.appendToPhase(this.queuedPhases, "MoveEndPhase");
-    }
     const moveType = user.getMoveType(this.move, true);
     if (this.move.category !== MoveCategory.STATUS && !user.stellarTypesBoosted.includes(moveType)) {
       user.stellarTypesBoosted.push(moveType);
@@ -639,13 +627,18 @@ export class MoveEffectPhase extends PokemonPhase {
     return move.getAttrs("HitsTagAttr").some(hta => hta.tagType === semiInvulnerableTag.tagType);
   }
 
-  /** @returns The {@linkcode Pokemon} using this phase's invoked move */
-  public getUserPokemon(): Pokemon | null {
+  /**
+   * @todo Investigate why this doesn't use `BattlerIndex`
+   * @returns The {@linkcode Pokemon} using this phase's invoked move
+   */
+  public getUserPokemon(): Pokemon | undefined {
     // TODO: Make this purely a battler index
     if (this.battlerIndex > BattlerIndex.ENEMY_2) {
       return globalScene.getPokemonById(this.battlerIndex);
     }
-    return (this.player ? globalScene.getPlayerField() : globalScene.getEnemyField())[this.fieldIndex];
+    // TODO: Figure out why this uses `fieldIndex` instead of `BattlerIndex`
+    // TODO: Remove `?? undefined` once field pokemon getters are made sane
+    return (this.player ? globalScene.getPlayerField() : globalScene.getEnemyField())[this.fieldIndex] ?? undefined;
   }
 
   /**
@@ -734,7 +727,7 @@ export class MoveEffectPhase extends PokemonPhase {
       (attr: MoveAttr) =>
         attr.is("MoveEffectAttr")
         && attr.trigger === triggerType
-        && (isNullOrUndefined(selfTarget) || attr.selfTarget === selfTarget)
+        && (selfTarget == null || attr.selfTarget === selfTarget)
         && (!attr.firstHitOnly || this.firstHit)
         && (!attr.lastHitOnly || this.lastHit)
         && (!attr.firstTargetOnly || (firstTarget ?? true)),
@@ -759,7 +752,7 @@ export class MoveEffectPhase extends PokemonPhase {
    */
   protected applyMoveEffects(target: Pokemon, effectiveness: TypeDamageMultiplier, firstTarget: boolean): void {
     const user = this.getUserPokemon();
-    if (isNullOrUndefined(user)) {
+    if (user == null) {
       return;
     }
 
@@ -894,10 +887,7 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param target - The {@linkcode Pokemon} that fainted
    */
   protected onFaintTarget(user: Pokemon, target: Pokemon): void {
-    // set splice index here, so future scene queues happen before FaintedPhase
-    globalScene.phaseManager.setPhaseQueueSplice();
-
-    globalScene.phaseManager.unshiftNew("FaintPhase", target.getBattlerIndex(), false, user);
+    globalScene.phaseManager.queueFaintPhase(target.getBattlerIndex(), false, user);
 
     target.destroySubstitute();
     target.lapseTag(BattlerTagType.COMMANDED);

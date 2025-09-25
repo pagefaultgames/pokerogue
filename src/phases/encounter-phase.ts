@@ -538,67 +538,45 @@ export class EncounterPhase extends BattlePhase {
       }
     });
 
-    if (![BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType)) {
-      enemyField.map(p =>
-        globalScene.phaseManager.pushConditionalPhase(
-          globalScene.phaseManager.create("PostSummonPhase", p.getBattlerIndex()),
-          () => {
-            // if there is not a player party, we can't continue
-            if (globalScene.getPlayerParty().length === 0) {
-              return false;
-            }
-            // how many player pokemon are on the field ?
-            const pokemonsOnFieldCount = globalScene.getPlayerParty().filter(p => p.isOnField()).length;
-            // if it's a 2vs1, there will never be a 2nd pokemon on our field even
-            const requiredPokemonsOnField = Math.min(
-              globalScene.getPlayerParty().filter(p => !p.isFainted()).length,
-              2,
-            );
-            // if it's a double, there should be 2, otherwise 1
-            if (globalScene.currentBattle.double) {
-              return pokemonsOnFieldCount === requiredPokemonsOnField;
-            }
-            return pokemonsOnFieldCount === 1;
-          },
-        ),
-      );
-      if (globalScene.trainerItems.hasItem(TrainerItemId.IV_SCANNER)) {
-        enemyField.map(p => globalScene.phaseManager.pushNew("ScanIvsPhase", p.getBattlerIndex()));
-      }
+    if (
+      ![BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType)
+      && globalScene.trainerItems.hasItem(TrainerItemId.IV_SCANNER)
+    ) {
+      enemyField.forEach(p => {
+        globalScene.phaseManager.pushNew("ScanIvsPhase", p.getBattlerIndex());
+      });
     }
 
     if (!this.loaded) {
       const availablePartyMembers = globalScene.getPokemonAllowedInBattle();
+      const minPartySize = globalScene.currentBattle.double ? 2 : 1;
+      const currentBattle = globalScene.currentBattle;
+      const checkSwitch =
+        currentBattle.battleType !== BattleType.TRAINER
+        && (currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily)
+        && availablePartyMembers.length > minPartySize;
 
+      const phaseManager = globalScene.phaseManager;
       if (!availablePartyMembers[0].isOnField()) {
-        globalScene.phaseManager.pushNew("SummonPhase", 0);
+        phaseManager.pushNew("SummonPhase", 0, true, false, checkSwitch);
+      } else if (checkSwitch) {
+        globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
       }
 
-      if (globalScene.currentBattle.double) {
+      if (currentBattle.double) {
         if (availablePartyMembers.length > 1) {
-          globalScene.phaseManager.pushNew("ToggleDoublePositionPhase", true);
+          phaseManager.pushNew("ToggleDoublePositionPhase", true);
           if (!availablePartyMembers[1].isOnField()) {
-            globalScene.phaseManager.pushNew("SummonPhase", 1);
+            phaseManager.pushNew("SummonPhase", 1);
+          } else if (checkSwitch) {
+            globalScene.phaseManager.pushNew("CheckSwitchPhase", 1, globalScene.currentBattle.double);
           }
         }
       } else {
         if (availablePartyMembers.length > 1 && availablePartyMembers[1].isOnField()) {
-          globalScene.phaseManager.pushNew("ReturnPhase", 1);
+          phaseManager.pushNew("ReturnPhase", 1);
         }
-        globalScene.phaseManager.pushNew("ToggleDoublePositionPhase", false);
-      }
-
-      if (
-        globalScene.currentBattle.battleType !== BattleType.TRAINER
-        && (globalScene.currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily)
-      ) {
-        const minPartySize = globalScene.currentBattle.double ? 2 : 1;
-        if (availablePartyMembers.length > minPartySize) {
-          globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
-          if (globalScene.currentBattle.double) {
-            globalScene.phaseManager.pushNew("CheckSwitchPhase", 1, globalScene.currentBattle.double);
-          }
-        }
+        phaseManager.pushNew("ToggleDoublePositionPhase", false);
       }
     }
     handleTutorial(Tutorial.Access_Menu).then(() => super.end());

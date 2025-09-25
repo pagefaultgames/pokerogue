@@ -14,7 +14,7 @@ import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
 import { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
-import { coerceArray, isNullOrUndefined, randSeedInt } from "#utils/common";
+import { coerceArray, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
@@ -53,6 +53,7 @@ export enum EvolutionItem {
   PRISM_SCALE,
   RAZOR_CLAW,
   RAZOR_FANG,
+  OVAL_STONE,
   REAPER_CLOTH,
   ELECTIRIZER,
   MAGMARIZER,
@@ -128,7 +129,7 @@ export class SpeciesEvolutionCondition {
   }
 
   public get description(): string[] {
-    if (!isNullOrUndefined(this.desc)) {
+    if (this.desc != null) {
       return this.desc;
     }
     this.desc = this.data.map(cond => {
@@ -161,11 +162,11 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.HELD_ITEM:
           return i18next.t(`pokemonEvolutions:heldItem.${toCamelCase(allHeldItems[cond.itemKey].name)}`);
       }
-    }).filter(s => !isNullOrUndefined(s)); // Filter out stringless conditions
+    }).filter(s => s != null); // Filter out stringless conditions
     return this.desc;
   }
 
-  public conditionsFulfilled(pokemon: Pokemon): boolean {
+  public conditionsFulfilled(pokemon: Pokemon, forFusion = false): boolean {
     console.log(this.data);
     return this.data.every(cond => {
       switch (cond.key) {
@@ -182,7 +183,7 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.EVO_TREASURE_TRACKER:
           return allHeldItems[HeldItemId.GIMMIGHOUL_EVO_TRACKER].getStackCount(pokemon) >= cond.value;
         case EvoCondKey.GENDER:
-          return pokemon.gender === cond.gender;
+          return cond.gender === (forFusion ? pokemon.fusionGender : pokemon.gender);
         case EvoCondKey.SHEDINJA: // Shedinja cannot be evolved into directly
           return false;
         case EvoCondKey.BIOME:
@@ -230,7 +231,7 @@ export class SpeciesFormEvolution {
     this.evoFormKey = evoFormKey;
     this.level = level;
     this.item = item || EvolutionItem.NONE;
-    if (!isNullOrUndefined(condition)) {
+    if (condition != null) {
       this.condition = new SpeciesEvolutionCondition(...coerceArray(condition));
     }
     this.wildDelay = wildDelay ?? SpeciesWildEvolutionDelay.NONE;
@@ -288,8 +289,8 @@ export class SpeciesFormEvolution {
     return (
       pokemon.level >= this.level &&
       // Check form key, using the fusion's form key if we're checking the fusion
-      (isNullOrUndefined(this.preFormKey) || (forFusion ? pokemon.getFusionFormKey() : pokemon.getFormKey()) === this.preFormKey) &&
-      (isNullOrUndefined(this.condition) || this.condition.conditionsFulfilled(pokemon)) &&
+      (this.preFormKey == null || (forFusion ? pokemon.getFusionFormKey() : pokemon.getFormKey()) === this.preFormKey) &&
+      (this.condition == null || this.condition.conditionsFulfilled(pokemon, forFusion)) &&
       ((item ?? EvolutionItem.NONE) === (this.item ?? EvolutionItem.NONE))
     );
   }
@@ -302,11 +303,11 @@ export class SpeciesFormEvolution {
    */
   public isValidItemEvolution(pokemon: Pokemon, forFusion = false): boolean {
     return (
-      !isNullOrUndefined(this.item) &&
+      this.item != null &&
       pokemon.level >= this.level &&
       // Check form key, using the fusion's form key if we're checking the fusion
-      (isNullOrUndefined(this.preFormKey) || (forFusion ? pokemon.getFusionFormKey() : pokemon.getFormKey()) === this.preFormKey) &&
-      (isNullOrUndefined(this.condition) || this.condition.conditionsFulfilled(pokemon))
+      (this.preFormKey == null || (forFusion ? pokemon.getFusionFormKey() : pokemon.getFormKey()) === this.preFormKey) &&
+      (this.condition == null || this.condition.conditionsFulfilled(pokemon))
     );
   }
 
@@ -1493,10 +1494,13 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesFormEvolution(SpeciesId.DUDUNSPARCE, "", "two-segment", 32, null, {key: EvoCondKey.MOVE, move: MoveId.HYPER_DRILL}, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.GLIGAR]: [
-    new SpeciesEvolution(SpeciesId.GLISCOR, 1, EvolutionItem.RAZOR_FANG, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]} /* Razor fang at night*/, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(SpeciesId.GLISCOR, 1, EvolutionItem.RAZOR_FANG, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.SNEASEL]: [
-    new SpeciesEvolution(SpeciesId.WEAVILE, 1, EvolutionItem.RAZOR_CLAW, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]} /* Razor claw at night*/, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(SpeciesId.WEAVILE, 1, EvolutionItem.RAZOR_CLAW, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]}, SpeciesWildEvolutionDelay.VERY_LONG)
+  ],
+  [SpeciesId.HAPPINY]: [
+    new SpeciesEvolution(SpeciesId.CHANSEY, 1, EvolutionItem.OVAL_STONE, {key: EvoCondKey.TIME, time: [TimeOfDay.DAWN, TimeOfDay.DAY]}, SpeciesWildEvolutionDelay.SHORT)
   ],
   [SpeciesId.URSARING]: [
     new SpeciesEvolution(SpeciesId.URSALUNA, 1, EvolutionItem.PEAT_BLOCK, null, SpeciesWildEvolutionDelay.VERY_LONG) //Ursaring does not evolve into Bloodmoon Ursaluna
@@ -1757,7 +1761,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.CROBAT, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 120}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.CHANSEY]: [
-    new SpeciesEvolution(SpeciesId.BLISSEY, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 200}, SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(SpeciesId.BLISSEY, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 180}, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.PICHU]: [
     new SpeciesFormEvolution(SpeciesId.PIKACHU, "spiky", "partner", 1, null, {key: EvoCondKey.FRIENDSHIP, value: 90}, SpeciesWildEvolutionDelay.SHORT),
@@ -1783,9 +1787,6 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [SpeciesId.CHINGLING]: [
     new SpeciesEvolution(SpeciesId.CHIMECHO, 1, null, [{key: EvoCondKey.FRIENDSHIP, value: 90}, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]}], SpeciesWildEvolutionDelay.MEDIUM)
-  ],
-  [SpeciesId.HAPPINY]: [
-    new SpeciesEvolution(SpeciesId.CHANSEY, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 160}, SpeciesWildEvolutionDelay.SHORT)
   ],
   [SpeciesId.MUNCHLAX]: [
     new SpeciesEvolution(SpeciesId.SNORLAX, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 120}, SpeciesWildEvolutionDelay.LONG)

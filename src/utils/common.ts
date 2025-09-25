@@ -417,13 +417,13 @@ export function hasAllLocalizedSprites(lang?: string): boolean {
 
   switch (lang) {
     case "es-ES":
-    case "es-MX":
+    case "es-419":
     case "fr":
     case "da":
     case "de":
     case "it":
-    case "zh-CN":
-    case "zh-TW":
+    case "zh-Hans":
+    case "zh-Hant":
     case "pt-BR":
     case "ro":
     case "tr":
@@ -465,15 +465,6 @@ export function truncateString(str: string, maxLength = 10) {
   }
   // Return the original string if it does not exceed the maximum length
   return str;
-}
-
-/**
- * Report whether a given value is nullish (`null`/`undefined`).
- * @param val - The value whose nullishness is being checked
- * @returns `true` if `val` is either `null` or `undefined`
- */
-export function isNullOrUndefined(val: any): val is null | undefined {
-  return val === null || val === undefined;
 }
 
 /**
