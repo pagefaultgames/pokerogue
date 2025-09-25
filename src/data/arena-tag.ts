@@ -444,7 +444,6 @@ export abstract class ConditionalProtectTag extends ArenaTag {
   protected override get onAddMessageKey(): string {
     return "arenaTag:conditionalProtectOnAdd" + this.i18nSideKey;
   }
-
   protected override get onRemoveMessageKey(): string {
     return "";
   }
@@ -1578,6 +1577,12 @@ export class PendingHealTag extends SerializableArenaTag {
   public readonly tagType = ArenaTagType.PENDING_HEAL;
   /** All pending healing effects, organized by {@linkcode BattlerIndex} */
   public readonly pendingHeals: Partial<Record<BattlerIndex, PendingHealEffect[]>> = {};
+  protected override get onAddMessageKey() {
+    return "";
+  }
+  protected override get onRemoveMessageKey() {
+    return "";
+  }
 
   constructor() {
     super(0);
@@ -1600,11 +1605,8 @@ export class PendingHealTag extends SerializableArenaTag {
     }
   }
 
-  /** Removes default on-remove message */
-  override onRemove(_arena: Arena): void {}
-
   /** This arena tag is removed at the end of the turn if no pending healing effects are on the field */
-  override lapse(_arena: Arena): boolean {
+  override lapse(): boolean {
     for (const key in this.pendingHeals) {
       if (this.pendingHeals[key].length > 0) {
         return true;
@@ -1617,13 +1619,12 @@ export class PendingHealTag extends SerializableArenaTag {
    * Applies a pending healing effect on the given target index. If an effect is found for
    * the index, the Pokemon at that index is healed to full HP, is cured of any non-volatile status,
    * and has its PP fully restored (if the effect is from Lunar Dance).
-   * @param arena - The {@linkcode Arena} containing this tag
    * @param simulated - If `true`, suppresses changes to game state
    * @param pokemon - The {@linkcode Pokemon} receiving the healing effect
    * @returns `true` if the target Pokemon was healed by this effect
    * @todo This should also be called when a Pokemon moves into a new position via Ally Switch
    */
-  override apply(arena: Arena, simulated: boolean, pokemon: Pokemon): boolean {
+  override apply(simulated: boolean, pokemon: Pokemon): boolean {
     const targetIndex = pokemon.getBattlerIndex();
     const targetEffects = this.pendingHeals[targetIndex];
 
@@ -1647,7 +1648,7 @@ export class PendingHealTag extends SerializableArenaTag {
       console.warn(`Source of pending ${allMoves[moveId].name} effect is undefined!`);
       targetEffects.splice(targetEffects.indexOf(healEffect), 1);
       // Re-evaluate after the invalid heal effect is removed
-      return this.apply(arena, simulated, pokemon);
+      return this.apply(simulated, pokemon);
     }
 
     globalScene.phaseManager.unshiftNew(
