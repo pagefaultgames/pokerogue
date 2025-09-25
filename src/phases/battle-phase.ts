@@ -19,10 +19,6 @@ export abstract class BattlePhase extends Phase {
         sprite.setVisible(visible);
         sprite.clearTint();
       });
-      sprites[i].setVisible(visible);
-      tintSprites[i].setVisible(visible);
-      sprites[i].clearTint();
-      tintSprites[i].clearTint();
     }
     globalScene.tweens.add({
       targets: globalScene.currentBattle.trainer,
