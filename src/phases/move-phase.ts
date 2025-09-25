@@ -37,6 +37,33 @@ import { BooleanHolder, NumberHolder } from "#utils/common";
 import { enumValueToKey } from "#utils/enums";
 import i18next from "i18next";
 
+/**
+ * Phase responsible for beginning the execution of a move by a Pokémon.
+ *
+ * @remarks
+ * The `MovePhase` class encapsulates the logic for executing a move, including
+ * all relevant failure checks, PP deduction, move redirection, status effect
+ * handling, and move execution, before passing it off to the `MoveEffectPhase`.
+ *
+ * ### Responsibilities
+ * - Perform the sequence of failure checks (sleep, freeze, PP, move validity,
+ *   etc.) in the correct order.
+ * - Handles status effects and their interactions with moves (e.g., thawing
+ *   from freeze, waking from sleep).
+ * - Deducts PP as appropriate, including handling abilities that increase PP
+ *   usage.
+ * - Resolves move redirection, including for moves like counter.
+ * - Applies pre-execution move effects, including ability-based type changes
+ *   and triggering move animations.
+ * - Adds the record to the Pokémon's move history.
+ * - Handles move cancellation and the first 3 failure checks (those that appear
+ *   before the move's animation should play)
+ *
+ * @see {@link PokemonPhase}
+ * @see {@link MoveUseMode}
+ * @see {@link MovePhaseTimingModifier}
+ * @see {@link TurnMove}
+ */
 export class MovePhase extends PokemonPhase {
   public readonly phaseName = "MovePhase";
   protected _pokemon: Pokemon;
@@ -53,7 +80,8 @@ export class MovePhase extends PokemonPhase {
   /** Flag set to `true` during {@linkcode checkFreeze} that indicates that the pokemon will thaw if it passes the failure conditions */
   private declare thaw?: boolean;
 
-  /** The move history entry object that is pushed to the pokemon's move history
+  /**
+   * The move history entry object that is pushed to the pokemon's move history
    *
    * @remarks
    * Can be edited _after_ being pushed to the history to adjust the result, targets, etc, for this move phase.
@@ -522,7 +550,7 @@ export class MovePhase extends PokemonPhase {
    * Responsible for the following
    * - Checking if the pokemon is frozen
    * - Checking if the pokemon will thaw from random chance, OR from a thawing move.
-   *    Thawing from a freeze move is not applied until AFTER all other failure checks.
+   *    Thawing from a freeze move is not applied until _after_ all other failure checks.
    * - Activating the freeze status effect (cancelling the move, playing the message, and displaying the animation)
    * @returns Whether the move was cancelled due to the pokemon being frozen
    */
@@ -536,8 +564,6 @@ export class MovePhase extends PokemonPhase {
       this.pokemon.resetStatus(false);
       return false;
     }
-
-    // Check if move use would heal the user
 
     if (Overrides.STATUS_ACTIVATION_OVERRIDE) {
       return false;
