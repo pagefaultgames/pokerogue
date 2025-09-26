@@ -5,18 +5,14 @@ import { HeldItem } from "#items/held-item";
 import type { BaseStatParams } from "#types/held-item-parameter";
 import i18next from "i18next";
 
-type PermanentStatToHeldItemMap = {
-  [key in PermanentStat]: HeldItemId;
-};
-
-export const permanentStatToHeldItem: PermanentStatToHeldItemMap = {
+export const permanentStatToHeldItem = {
   [Stat.HP]: HeldItemId.HP_UP,
   [Stat.ATK]: HeldItemId.PROTEIN,
   [Stat.DEF]: HeldItemId.IRON,
   [Stat.SPATK]: HeldItemId.CALCIUM,
   [Stat.SPDEF]: HeldItemId.ZINC,
   [Stat.SPD]: HeldItemId.CARBOS,
-};
+} as const;
 
 export const statBoostItems: Record<PermanentStat, string> = {
   [Stat.HP]: "hp_up",

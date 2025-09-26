@@ -1,6 +1,6 @@
 import { AbAttrParamsWithCancel, PreAttackModifyPowerAbAttrParams } from "#abilities/ability";
 import {
-  applyAbAttrs
+    applyAbAttrs
 } from "#abilities/apply-ab-attrs";
 import { loggedInUser } from "#app/account";
 import type { GameMode } from "#app/game-mode";
@@ -10,26 +10,27 @@ import type { EntryHazardTag, PendingHealTag } from "#data/arena-tag";
 import { WeakenMoveTypeTag } from "#data/arena-tag";
 import { MoveChargeAnim } from "#data/battle-anims";
 import {
-  CommandedTag,
-  EncoreTag,
-  GulpMissileTag,
-  HelpingHandTag,
-  SemiInvulnerableTag,
-  ShellTrapTag,
-  StockpilingTag,
-  SubstituteTag,
-  SupremeOverlordTag,
-  TrappedTag,
-  TypeBoostTag,
+    CommandedTag,
+    EncoreTag,
+    GulpMissileTag,
+    HelpingHandTag,
+    SemiInvulnerableTag,
+    ShellTrapTag,
+    StockpilingTag,
+    SubstituteTag,
+    SupremeOverlordTag,
+    TrappedTag,
+    TypeBoostTag,
 } from "#data/battler-tags";
 import { getBerryEffectFunc } from "#data/berry";
-import { allAbilities, allHeldItems, allMoves } from "#data/data-lists";
+import { allAbilities, allMoves } from "#data/data-lists";
+import { allHeldItems } from "#items/all-held-items";
 import { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-change-triggers";
 import { DelayedAttackTag } from "#data/positional-tags/positional-tag";
 import {
-  getNonVolatileStatusEffects,
-  getStatusEffectHealText,
-  isNonVolatileStatusEffect,
+    getNonVolatileStatusEffects,
+    getStatusEffectHealText,
+    isNonVolatileStatusEffect,
 } from "#data/status-effect";
 import { TerrainType } from "#data/terrain";
 import { getTypeDamageMultiplier } from "#data/type";
@@ -58,11 +59,11 @@ import { PokemonType } from "#enums/pokemon-type";
 import { PositionalTagType } from "#enums/positional-tag-type";
 import { SpeciesId } from "#enums/species-id";
 import {
-  BATTLE_STATS,
-  type BattleStat,
-  type EffectiveStat,
-  getStatKey,
-  Stat,
+    BATTLE_STATS,
+    type BattleStat,
+    type EffectiveStat,
+    getStatKey,
+    Stat,
 } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { SwitchType } from "#enums/switch-type";

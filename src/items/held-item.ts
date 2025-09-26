@@ -123,13 +123,13 @@ export type EffectTuple = Readonly<[HeldItemEffect, ...HeldItemEffect[]]>;
 /**
  * Abstract class for all non-cosmetic held items (i.e. ones that can have their effects applied).
  */
-export abstract class HeldItem<T extends EffectTuple> extends HeldItemBase {
+export abstract class HeldItem<T extends EffectTuple = EffectTuple> extends HeldItemBase {
   /**
    * A readonly tuple containing all {@linkcode HeldItemEffect | effects} that this class can apply.
    * @privateRemarks
    * Please sort entries in ascending numerical order (for my sanity and yours)
    */
-  abstract readonly effects: UniqueArray<T>;
+  public abstract readonly effects: UniqueArray<T>;
 
   /**
    * Check whether a given effect of this item should apply.
@@ -138,7 +138,7 @@ export abstract class HeldItem<T extends EffectTuple> extends HeldItemBase {
    * @param args - Arguments required for the effect application
    * @returns Whether the effect should apply.
    */
-  shouldApply<E extends this["effects"][number]>(_effect: E, _args: HeldItemEffectParamMap[E]): boolean {
+  public shouldApply<E extends this["effects"][number]>(_effect: E, _args: HeldItemEffectParamMap[E]): boolean {
     return true;
   }
 
@@ -149,7 +149,7 @@ export abstract class HeldItem<T extends EffectTuple> extends HeldItemBase {
    * @param effect - The {@linkcode HeldItemEffect | effect} being applied
    * @param args - Arguments required for the effect application
    */
-  abstract apply<E extends this["effects"][number]>(effect: E, param: HeldItemEffectParamMap[E]): void;
+  public abstract apply<E extends this["effects"][number]>(effect: E, param: HeldItemEffectParamMap[E]): void;
 }
 
 /** Abstract class for all `HeldItem`s that can be consumed during battle. */
@@ -176,4 +176,10 @@ export abstract class ConsumableHeldItem<T extends EffectTuple> extends HeldItem
 /** Abstract class for all items that are purely cosmetic.
  * Currently coincides with the {@linkcode HeldItemBase} class.
  * Might become concrete later on if we want cosmetic items without a subclass. */
-export abstract class CosmeticHeldItem extends HeldItemBase {}
+export abstract class CosmeticHeldItem extends HeldItemBase {
+  /**
+   * This field does not exist at runtime and must not be used.
+   * Its sole purpose is to ensure that typescript is able to properly differentiate cosmetic items from normal ones.
+   */
+  private declare _: never;
+}

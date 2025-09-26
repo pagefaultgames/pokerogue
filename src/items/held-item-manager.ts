@@ -1,4 +1,3 @@
-import { allHeldItems } from "#data/data-lists";
 import type { FormChangeItemId } from "#enums/form-change-item-id";
 import {
   HeldItemCategoryId,
@@ -14,25 +13,21 @@ import {
   type HeldItemSpecs,
   isHeldItemSpecs,
 } from "#types/held-item-data-types";
+import { allHeldItems } from "./all-held-items";
 
 export class HeldItemManager {
   // TODO: There should be a way of making these private...
-  public heldItems: HeldItemDataMap;
-
-  constructor() {
-    this.heldItems = new Map();
-  }
+  public heldItems: HeldItemDataMap = new Map();
 
   getItemSpecs(id: HeldItemId): HeldItemSpecs | undefined {
     const item = this.heldItems.get(id);
-    if (item) {
-      const itemSpecs: HeldItemSpecs = {
-        ...item,
-        id,
-      };
-      return itemSpecs;
+    if (!item) {
+      return;
     }
-    return;
+    return {
+      ...item,
+      id,
+    } as HeldItemSpecs;
   }
 
   generateHeldItemConfiguration(restrictedIds?: HeldItemId[]): HeldItemConfiguration {
@@ -50,6 +45,7 @@ export class HeldItemManager {
   generateSaveData(): HeldItemSaveData {
     const saveData: HeldItemSaveData = [];
     for (const [id, item] of this.heldItems) {
+      // TODO: Is this check needed?
       if (item) {
         const specs: HeldItemSpecs = { ...item, id };
         saveData.push(specs);

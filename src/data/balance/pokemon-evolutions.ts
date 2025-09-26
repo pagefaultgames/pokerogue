@@ -1,7 +1,7 @@
 import { defaultStarterSpecies } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { speciesStarterCosts } from "#balance/starters";
-import { allHeldItems, allMoves } from "#data/data-lists";
+import { allMoves } from "#data/data-lists";
 import { Gender, getGenderSymbol } from "#data/gender";
 import { BiomeId } from "#enums/biome-id";
 import { HeldItemId } from "#enums/held-item-id";
@@ -14,6 +14,7 @@ import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
 import { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
+import { allHeldItems } from "#items/all-held-items";
 import { coerceArray, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";

@@ -1,7 +1,7 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { allHeldItems, allSpecies } from "#data/data-lists";
+import { allSpecies } from "#data/data-lists";
 import { Gender, getGenderSymbol } from "#data/gender";
 import { getHeldItemTier } from "#data/items/held-item-default-tiers";
 import { getNatureName } from "#data/nature";
@@ -22,6 +22,7 @@ import { TrainerType } from "#enums/trainer-type";
 import { doShinySparkleAnim } from "#field/anims";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { EnemyPokemon } from "#field/pokemon";
+import { allHeldItems } from "#items/all-held-items";
 import type { RewardOption } from "#items/reward";
 import { generatePlayerRewardOptions, generateRewardPoolWeights, getRewardPoolForType } from "#items/reward-pool-utils";
 import { isTmReward } from "#items/reward-utils";

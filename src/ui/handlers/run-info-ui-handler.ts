@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { getBiomeName } from "#balance/biomes";
-import { allHeldItems, allTrainerItems } from "#data/data-lists";
+import { allTrainerItems } from "#data/data-lists";
 import { getNatureName, getNatureStatMultiplier } from "#data/nature";
 import { getPokeballAtlasKey } from "#data/pokeball";
 import { getTypeRgb } from "#data/type";
@@ -16,6 +16,7 @@ import type { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { TrainerVariant } from "#enums/trainer-variant";
 import { UiMode } from "#enums/ui-mode";
+import { allHeldItems } from "#items/all-held-items";
 import { heldItemSortFunc } from "#items/item-utility";
 import { getVariantTint } from "#sprites/variant";
 import type { PokemonData } from "#system/pokemon-data";

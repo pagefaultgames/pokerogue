@@ -1,6 +1,6 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { allHeldItems, allTrainerItems } from "#data/data-lists";
+import { allTrainerItems } from "#data/data-lists";
 import { BattlerIndex } from "#enums/battler-index";
 import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
@@ -11,6 +11,7 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerItemId } from "#enums/trainer-item-id";
+import { allHeldItems } from "#items/all-held-items";
 import { assignItemToFirstFreePokemon } from "#items/item-utility";
 import { PokemonMove } from "#moves/pokemon-move";
 import { showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
