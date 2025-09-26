@@ -3,6 +3,7 @@ import { loggedInUser, updateUserInfo } from "#app/account";
 import { globalScene } from "#app/global-scene";
 import { bypassLogin } from "#app/global-vars/bypass-login";
 import { handleTutorial, Tutorial } from "#app/tutorial";
+import { AdminMode, getAdminModeName } from "#enums/admin-mode";
 import { Button } from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
 import { TextStyle } from "#enums/text-style";
@@ -19,7 +20,6 @@ import { getEnumValues } from "#utils/enums";
 import { toCamelCase } from "#utils/strings";
 import { isBeta } from "#utils/utility-vars";
 import i18next from "i18next";
-import { AdminMode, getAdminModeName } from "./admin-ui-handler";
 
 enum MenuOptions {
   GAME_SETTINGS,

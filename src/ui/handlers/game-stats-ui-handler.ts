@@ -243,7 +243,8 @@ export class GameStatsUiHandler extends UiHandler {
   /** The game data to display */
   private gameData: GameData;
 
-  private exitCallback?: AnyFn;
+  /** A callback invoked when {@linkcode clear} is called */
+  private exitCallback?: AnyFn | undefined;
 
   /** Whether the UI is single column mode */
   private get singleCol(): boolean {
@@ -324,9 +325,9 @@ export class GameStatsUiHandler extends UiHandler {
         ? i18next.t("trainerNames:playerF")
         : i18next.t("trainerNames:playerM");
 
-    const displayName = !globalScene.hideUsername
-      ? (loggedInUser?.username ?? i18next.t("common:guest"))
-      : usernameReplacement;
+    const displayName = globalScene.hideUsername
+      ? usernameReplacement
+      : (loggedInUser?.username ?? i18next.t("common:guest"));
 
     return i18next.t("gameStatsUiHandler:stats", { username: displayName });
   }
@@ -401,17 +402,19 @@ export class GameStatsUiHandler extends UiHandler {
     this.gameStatsContainer.setVisible(false);
   }
 
-  show(args: any[]): boolean {
+  show([username, data, callback]: [] | [username: string, data: GameData, callback?: AnyFn]): boolean {
     super.show([]);
 
-    this.gameData = globalScene.gameData;
-    if (args.length > 0) {
-      this.gameData = args[0];
-      this.exitCallback = args[1];
+    if (username != null && data != null) {
+      this.gameData = data;
+      this.exitCallback = callback;
+      this.headerText.setText(username);
+    } else {
+      this.gameData = globalScene.gameData;
+      this.exitCallback = undefined;
+      // show updated username on every render
+      this.headerText.setText(this.getUsername());
     }
-
-    // show updated username on every render
-    this.headerText.setText(this.getUsername());
 
     this.gameStatsContainer.setActive(true).setVisible(true);
 
@@ -525,7 +528,11 @@ export class GameStatsUiHandler extends UiHandler {
     super.clear();
     this.gameStatsContainer.setVisible(false).setActive(false);
 
-    this.exitCallback?.();
+    const callback = this.exitCallback;
+    if (callback != null) {
+      this.exitCallback = undefined;
+      callback();
+    }
   }
 }
 

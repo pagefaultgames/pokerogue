@@ -647,17 +647,16 @@ export class PokedexUiHandler extends MessageUiHandler {
 
     this.pokerusSpecies = getPokerusStarters();
 
-    this.gameData = globalScene.gameData;
-    this.blockOpenPage = false;
-
     // When calling with "refresh", we do not reset the cursor and filters
     if (args.length > 0) {
       if (args[0] === "refresh") {
         return false;
       }
-      this.gameData = args[0];
-      this.exitCallback = args[1];
+      [this.gameData, this.exitCallback] = args;
       this.blockOpenPage = true;
+    } else {
+      this.gameData = globalScene.gameData;
+      this.blockOpenPage = false;
     }
 
     super.show(args);
@@ -2448,7 +2447,12 @@ export class PokedexUiHandler extends MessageUiHandler {
     this.starterSelectContainer.setVisible(false);
     this.blockInput = false;
 
-    this.exitCallback?.();
+    // sanitize exit callback so it does not leak into futrue calls
+    const exitCallback = this.exitCallback;
+    if (exitCallback != null) {
+      this.exitCallback = undefined;
+      exitCallback();
+    }
   }
 
   checkIconId(
