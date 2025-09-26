@@ -579,21 +579,22 @@ export class EncounterPhase extends BattlePhase {
         currentBattle.battleType !== BattleType.TRAINER
         && (currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily)
         && availablePartyMembers.length > minPartySize;
+      const checkSwitchIndices: number[] = [];
 
       const phaseManager = globalScene.phaseManager;
       if (!availablePartyMembers[0].isOnField()) {
         phaseManager.pushNew("SummonPhase", 0, true, false, checkSwitch);
       } else if (checkSwitch) {
-        globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
+        checkSwitchIndices.push(0);
       }
 
       if (currentBattle.double) {
         if (availablePartyMembers.length > 1) {
           phaseManager.pushNew("ToggleDoublePositionPhase", true);
           if (!availablePartyMembers[1].isOnField()) {
-            phaseManager.pushNew("SummonPhase", 1);
+            phaseManager.pushNew("SummonPhase", 1, true, false, checkSwitch);
           } else if (checkSwitch) {
-            globalScene.phaseManager.pushNew("CheckSwitchPhase", 1, globalScene.currentBattle.double);
+            checkSwitchIndices.push(1);
           }
         }
       } else {
@@ -602,6 +603,9 @@ export class EncounterPhase extends BattlePhase {
         }
         phaseManager.pushNew("ToggleDoublePositionPhase", false);
       }
+      checkSwitchIndices.forEach(i => {
+        phaseManager.pushNew("CheckSwitchPhase", i, globalScene.currentBattle.double);
+      });
     }
     handleTutorial(Tutorial.Access_Menu).then(() => super.end());
   }
