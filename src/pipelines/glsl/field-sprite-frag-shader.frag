@@ -12,8 +12,9 @@ varying float outTintEffect;
 varying vec4 outTint;
 
 uniform float time;
-uniform int ignoreTimeTint;
-uniform int isOutside;
+uniform bool ignoreTimeTint;
+uniform bool isOutside;
+uniform vec3 overrideTint;
 uniform vec3 dayTint;
 uniform vec3 duskTint;
 uniform vec3 nightTint;
@@ -134,11 +135,12 @@ void main() {
 	}
 
 	/* Apply day/night tint */
-	if (color.a > 0.0 && ignoreTimeTint == 0) {
+	if (color.a > 0.0 && ignoreTimeTint) {
 		vec3 dayNightTint;
 
-		// TODO: Explain this
-		if (time < 0.25) {
+		if (any(lessThan(vec3(0.0), overrideTint))) {
+			dayNightTint = overrideTint;
+		} else if (time < 0.25) {
 			dayNightTint = dayTint;
 		} else if (isOutside == 0 && time < 0.5) {
 			dayNightTint = mix(dayTint, nightTint, (time - 0.25) / 0.25);
@@ -159,10 +161,13 @@ void main() {
 		color = vec4(blendHardLight(color.rgb, dayNightTint), color.a);
 	}
 
-	if (terrainColorRatio > 0.0 && (1.0 - terrainColorRatio) < outTexCoord.y) {
-		if (color.a > 0.0 && (terrainColor.r > 0.0 || terrainColor.g > 0.0 || terrainColor.b > 0.0)) {
-			color.rgb = mix(color.rgb, blendHue(color.rgb, terrainColor), 1.0);
-		}
+	if (
+		terrainColorRatio > 0.0
+		&& (1.0 - terrainColorRatio) < outTexCoord.y
+		&& color.a > 0.0
+		&& (any(lessThan(vec3(0.0), terrainColor)))
+	) {
+		color.rgb = mix(color.rgb, blendHue(color.rgb, terrainColor), 1.0);
 	}
 
 	gl_FragColor = color;

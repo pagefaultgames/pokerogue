@@ -78,6 +78,8 @@ class DefaultOverrides {
   /**
    * Overrides the Time of Day for the given biome.
    * Set to `null` to disable.
+   * @remarks
+   * Will also influence field sprite tint coloration.
    */
   readonly TIME_OF_DAY_OVERRIDE: Exclude<TimeOfDay, TimeOfDay.ALL> | null = null;
   /** Multiplies XP gained by this value including 0. Set to null to ignore the override. */

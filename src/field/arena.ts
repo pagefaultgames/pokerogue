@@ -35,6 +35,7 @@ import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEven
 import type { Pokemon } from "#field/pokemon";
 import { FieldEffectModifier } from "#modifiers/modifier";
 import type { Move } from "#moves/move";
+import type { RGBArray } from "#types/sprite-types";
 import type { AbstractConstructor } from "#types/type-helpers";
 import { type Constructor, NumberHolder, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
@@ -584,7 +585,7 @@ export class Arena {
     }
   }
 
-  getDayTint(): [number, number, number] {
+  getDayTint(): RGBArray {
     switch (this.biomeType) {
       case BiomeId.ABYSS:
         return [64, 64, 64];
@@ -593,7 +594,7 @@ export class Arena {
     }
   }
 
-  getDuskTint(): [number, number, number] {
+  getDuskTint(): RGBArray {
     if (!this.isOutside()) {
       return [0, 0, 0];
     }
@@ -601,7 +602,7 @@ export class Arena {
     return [113, 88, 101];
   }
 
-  getNightTint(): [number, number, number] {
+  getNightTint(): RGBArray {
     switch (this.biomeType) {
       case BiomeId.ABYSS:
       case BiomeId.SPACE:

@@ -1,6 +1,8 @@
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { getTerrainColor } from "#data/terrain";
+import { TimeOfDay } from "#enums/time-of-day";
+import type { RGBArray } from "#types/sprite-types";
 import { getCurrentTime } from "#utils/common";
 import Phaser from "phaser";
 import fieldSpriteFragShader from "./glsl/field-sprite-frag-shader.frag?raw";
@@ -31,19 +33,17 @@ export class FieldSpritePipeline extends Phaser.Renderer.WebGL.Pipelines.MultiPi
     const sprite = gameObject as Phaser.GameObjects.Sprite | Phaser.GameObjects.NineSlice;
 
     const data = sprite.pipelineData;
-    const ignoreTimeTint = data["ignoreTimeTint"] as boolean;
-    const terrainColorRatio = (data["terrainColorRatio"] as number) || 0;
+    const ignoreTimeTint = !!data["ignoreTimeTint"];
+    const terrainColorRatio = (data["terrainColorRatio"] as number) ?? 0;
 
-    // TODO: Refactor this to respect time of day calcs and not hardcode it
-    const time =
-      Overrides.TIME_OF_DAY_OVERRIDE !== null
-        ? Overrides.TIME_OF_DAY_OVERRIDE / 4
-        : globalScene.currentBattle?.waveIndex
-          ? ((globalScene.currentBattle.waveIndex + globalScene.waveCycleOffset) % 40) / 40 // ((new Date().getSeconds() * 1000 + new Date().getMilliseconds()) % 10000) / 10000
-          : getCurrentTime();
+    const time = globalScene.currentBattle?.waveIndex
+      ? ((globalScene.currentBattle.waveIndex + globalScene.waveCycleOffset) % 40) / 40 // ((new Date().getSeconds() * 1000 + new Date().getMilliseconds()) % 10000) / 10000
+      : getCurrentTime();
+
     this.set1f("time", time);
-    this.set1i("ignoreTimeTint", ignoreTimeTint ? 1 : 0);
-    this.set1i("isOutside", globalScene.arena.isOutside() ? 1 : 0);
+    this.setBoolean("ignoreTimeTint", ignoreTimeTint);
+    this.setBoolean("isOutside", globalScene.arena.isOutside());
+    this.set3fv("overrideTint", overrideTint());
     this.set3fv(
       "dayTint",
       globalScene.arena.getDayTint().map(c => c / 255),
@@ -67,5 +67,23 @@ export class FieldSpritePipeline extends Phaser.Renderer.WebGL.Pipelines.MultiPi
     if (gameObject) {
       this.flush();
     }
+  }
+}
+
+/**
+ * Override the current arena tint based on the Time of day override
+ * @returns The overriden tint colors as an RGB array.
+ */
+function overrideTint(): RGBArray {
+  switch (Overrides.TIME_OF_DAY_OVERRIDE) {
+    case TimeOfDay.DAY:
+    case TimeOfDay.DAWN:
+      return globalScene.arena.getDayTint();
+    case TimeOfDay.DUSK:
+      return globalScene.arena.getDuskTint();
+    case TimeOfDay.NIGHT:
+      return globalScene.arena.getNightTint();
+    default:
+      return [0, 0, 0];
   }
 }
