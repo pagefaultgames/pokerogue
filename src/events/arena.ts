@@ -1,5 +1,5 @@
 import type { TerrainType } from "#data/terrain";
-import type { ArenaTagSide } from "#enums/arena-tag-side";
+import type { ArenaSide } from "#enums/arena-side";
 import type { ArenaTagType } from "#enums/arena-tag-type";
 import type { WeatherType } from "#enums/weather-type";
 
@@ -60,8 +60,8 @@ export class TerrainChangedEvent extends ArenaEvent {
 export class TagAddedEvent extends ArenaEvent {
   /** The {@linkcode ArenaTagType} being added */
   public arenaTagType: ArenaTagType;
-  /** The {@linkcode ArenaTagSide} the tag is being placed on */
-  public arenaTagSide: ArenaTagSide;
+  /** The {@linkcode ArenaSide} the tag is being placed on */
+  public arenaTagSide: ArenaSide;
   /** The current number of layers of the arena trap. */
   public arenaTagLayers: number;
   /** The maximum amount of layers of the arena trap. */
@@ -69,7 +69,7 @@ export class TagAddedEvent extends ArenaEvent {
 
   constructor(
     arenaTagType: ArenaTagType,
-    arenaTagSide: ArenaTagSide,
+    arenaTagSide: ArenaSide,
     duration: number,
     maxDuration?: number,
     arenaTagLayers?: number,
@@ -87,9 +87,9 @@ export class TagAddedEvent extends ArenaEvent {
 export class TagRemovedEvent extends ArenaEvent {
   /** The {@linkcode ArenaTagType} being removed */
   public arenaTagType: ArenaTagType;
-  /** The {@linkcode ArenaTagSide} the tag was being placed on */
-  public arenaTagSide: ArenaTagSide;
-  constructor(arenaTagType: ArenaTagType, arenaTagSide: ArenaTagSide, duration: number) {
+  /** The {@linkcode ArenaSide} the tag was being placed on */
+  public arenaTagSide: ArenaSide;
+  constructor(arenaTagType: ArenaTagType, arenaTagSide: ArenaSide, duration: number) {
     super(ArenaEventType.TAG_REMOVED, duration);
 
     this.arenaTagType = arenaTagType;

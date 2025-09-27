@@ -1,6 +1,6 @@
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaSide } from "#enums/arena-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
@@ -63,7 +63,7 @@ describe("Abilities - Infiltrator", () => {
 
     const preScreenDmg = enemy.getAttackDamage({ source: player, move: allMoves[move] }).damage;
 
-    game.scene.arena.addTag(tagType, 1, MoveId.NONE, enemy.id, ArenaTagSide.ENEMY, true);
+    game.scene.arena.addTag(tagType, 1, MoveId.NONE, enemy.id, ArenaSide.ENEMY, true);
 
     const postScreenDmg = enemy.getAttackDamage({ source: player, move: allMoves[move] }).damage;
 
@@ -77,7 +77,7 @@ describe("Abilities - Infiltrator", () => {
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
 
-    game.scene.arena.addTag(ArenaTagType.SAFEGUARD, 1, MoveId.NONE, enemy.id, ArenaTagSide.ENEMY, true);
+    game.scene.arena.addTag(ArenaTagType.SAFEGUARD, 1, MoveId.NONE, enemy.id, ArenaSide.ENEMY, true);
 
     game.move.use(MoveId.SPORE);
     await game.toEndOfTurn();
@@ -93,7 +93,7 @@ describe("Abilities - Infiltrator", () => {
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
 
-    game.scene.arena.addTag(ArenaTagType.MIST, 1, MoveId.NONE, enemy.id, ArenaTagSide.ENEMY, true);
+    game.scene.arena.addTag(ArenaTagType.MIST, 1, MoveId.NONE, enemy.id, ArenaSide.ENEMY, true);
 
     game.move.select(MoveId.BABY_DOLL_EYES);
 

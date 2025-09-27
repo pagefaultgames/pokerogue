@@ -1,6 +1,6 @@
 import { allAbilities, allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaSide } from "#enums/arena-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { BiomeId } from "#enums/biome-id";
@@ -74,7 +74,7 @@ describe("Moves - Secret Power", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    let rainbowEffect = game.scene.arena.getTagOnSide(ArenaTagType.WATER_FIRE_PLEDGE, ArenaTagSide.PLAYER);
+    let rainbowEffect = game.scene.arena.getTagOnSide(ArenaTagType.WATER_FIRE_PLEDGE, ArenaSide.PLAYER);
     expect(rainbowEffect).toBeDefined();
 
     rainbowEffect = rainbowEffect!;

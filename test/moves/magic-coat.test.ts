@@ -1,6 +1,6 @@
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaSide } from "#enums/arena-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -164,8 +164,8 @@ describe("Moves - Magic Coat", () => {
     game.move.select(MoveId.SPIKES);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.PLAYER)!["layers"]).toBe(1);
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY)).toBeUndefined();
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaSide.PLAYER)!["layers"]).toBe(1);
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaSide.ENEMY)).toBeUndefined();
   });
 
   it("should not bounce back curse", async () => {

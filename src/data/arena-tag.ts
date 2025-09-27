@@ -54,7 +54,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { CommonBattleAnim } from "#data/battle-anims";
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaSide } from "#enums/arena-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -100,10 +100,10 @@ interface BaseArenaTag {
   // Note: Intentionally not using `?`, as the property should always exist, but just be undefined if not present.
   sourceId: number | undefined;
   /**
-   * The {@linkcode ArenaTagSide | side of the field} that this arena tag affects.
+   * The {@linkcode ArenaSide | side of the field} that this arena tag affects.
    * @defaultValue `ArenaTagSide.BOTH`
    */
-  side: ArenaTagSide;
+  side: ArenaSide;
 }
 
 /**
@@ -118,9 +118,9 @@ export abstract class ArenaTag implements BaseArenaTag {
   public maxDuration: number;
   public sourceMove?: MoveId;
   public sourceId: number | undefined;
-  public side: ArenaTagSide;
+  public side: ArenaSide;
 
-  constructor(turnCount: number, sourceMove?: MoveId, sourceId?: number, side: ArenaTagSide = ArenaTagSide.BOTH) {
+  constructor(turnCount: number, sourceMove?: MoveId, sourceId?: number, side: ArenaSide = ArenaSide.BOTH) {
     this.turnCount = turnCount;
     this.maxDuration = turnCount;
     this.sourceMove = sourceMove;
@@ -138,7 +138,7 @@ export abstract class ArenaTag implements BaseArenaTag {
     if (!quiet) {
       globalScene.phaseManager.queueMessage(
         i18next.t(
-          `arenaTag:arenaOnRemove${this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : ""}`,
+          `arenaTag:arenaOnRemove${this.side === ArenaSide.PLAYER ? "Player" : this.side === ArenaSide.ENEMY ? "Enemy" : ""}`,
           { moveName: this.getMoveName() },
         ),
       );
@@ -191,11 +191,11 @@ export abstract class ArenaTag implements BaseArenaTag {
    */
   public getAffectedPokemon(): Pokemon[] {
     switch (this.side) {
-      case ArenaTagSide.PLAYER:
+      case ArenaSide.PLAYER:
         return globalScene.getPlayerField() ?? [];
-      case ArenaTagSide.ENEMY:
+      case ArenaSide.ENEMY:
         return globalScene.getEnemyField() ?? [];
-      case ArenaTagSide.BOTH:
+      case ArenaSide.BOTH:
       default:
         return globalScene.getField(true) ?? [];
     }
@@ -215,7 +215,7 @@ export abstract class SerializableArenaTag extends ArenaTag {
  */
 export class MistTag extends SerializableArenaTag {
   readonly tagType = ArenaTagType.MIST;
-  constructor(turnCount: number, sourceId: number | undefined, side: ArenaTagSide) {
+  constructor(turnCount: number, sourceId: number | undefined, side: ArenaSide) {
     super(turnCount, MoveId.MIST, sourceId, side);
   }
 
@@ -320,7 +320,7 @@ class ReflectTag extends WeakenMoveScreenTag {
     return [MoveCategory.PHYSICAL];
   }
 
-  constructor(turnCount: number, sourceId: number | undefined, side: ArenaTagSide) {
+  constructor(turnCount: number, sourceId: number | undefined, side: ArenaSide) {
     super(turnCount, MoveId.REFLECT, sourceId, side);
   }
 
@@ -328,7 +328,7 @@ class ReflectTag extends WeakenMoveScreenTag {
     if (!quiet) {
       globalScene.phaseManager.queueMessage(
         i18next.t(
-          `arenaTag:reflectOnAdd${this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : ""}`,
+          `arenaTag:reflectOnAdd${this.side === ArenaSide.PLAYER ? "Player" : this.side === ArenaSide.ENEMY ? "Enemy" : ""}`,
         ),
       );
     }
@@ -344,7 +344,7 @@ class LightScreenTag extends WeakenMoveScreenTag {
   protected get weakenedCategories(): [MoveCategory.SPECIAL] {
     return [MoveCategory.SPECIAL];
   }
-  constructor(turnCount: number, sourceId: number | undefined, side: ArenaTagSide) {
+  constructor(turnCount: number, sourceId: number | undefined, side: ArenaSide) {
     super(turnCount, MoveId.LIGHT_SCREEN, sourceId, side);
   }
 
@@ -352,7 +352,7 @@ class LightScreenTag extends WeakenMoveScreenTag {
     if (!quiet) {
       globalScene.phaseManager.queueMessage(
         i18next.t(
-          `arenaTag:lightScreenOnAdd${this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : ""}`,
+          `arenaTag:lightScreenOnAdd${this.side === ArenaSide.PLAYER ? "Player" : this.side === ArenaSide.ENEMY ? "Enemy" : ""}`,
         ),
       );
     }
@@ -369,7 +369,7 @@ class AuroraVeilTag extends WeakenMoveScreenTag {
     return [MoveCategory.PHYSICAL, MoveCategory.SPECIAL];
   }
 
-  constructor(turnCount: number, sourceId: number | undefined, side: ArenaTagSide) {
+  constructor(turnCount: number, sourceId: number | undefined, side: ArenaSide) {
     super(turnCount, MoveId.AURORA_VEIL, sourceId, side);
   }
 
@@ -377,7 +377,7 @@ class AuroraVeilTag extends WeakenMoveScreenTag {
     if (!quiet) {
       globalScene.phaseManager.queueMessage(
         i18next.t(
-          `arenaTag:auroraVeilOnAdd${this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : ""}`,
+          `arenaTag:auroraVeilOnAdd${this.side === ArenaSide.PLAYER ? "Player" : this.side === ArenaSide.ENEMY ? "Enemy" : ""}`,
         ),
       );
     }
@@ -402,7 +402,7 @@ export abstract class ConditionalProtectTag extends ArenaTag {
   constructor(
     sourceMove: MoveId,
     sourceId: number | undefined,
-    side: ArenaTagSide,
+    side: ArenaSide,
     condition: ProtectConditionFunc,
     ignoresBypass = false,
   ) {
@@ -415,7 +415,7 @@ export abstract class ConditionalProtectTag extends ArenaTag {
   onAdd(_arena: Arena): void {
     globalScene.phaseManager.queueMessage(
       i18next.t(
-        `arenaTag:conditionalProtectOnAdd${this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : ""}`,
+        `arenaTag:conditionalProtectOnAdd${this.side === ArenaSide.PLAYER ? "Player" : this.side === ArenaSide.ENEMY ? "Enemy" : ""}`,
         { moveName: super.getMoveName() },
       ),
     );
@@ -445,7 +445,7 @@ export abstract class ConditionalProtectTag extends ArenaTag {
     moveId: MoveId,
     ignoresProtectBypass: BooleanHolder,
   ): boolean {
-    if ((this.side === ArenaTagSide.PLAYER) === defender.isPlayer() && this.protectConditionFunc(arena, moveId)) {
+    if ((this.side === ArenaSide.PLAYER) === defender.isPlayer() && this.protectConditionFunc(arena, moveId)) {
       if (!isProtected.value) {
         isProtected.value = true;
         if (!simulated) {
@@ -493,7 +493,7 @@ const QuickGuardConditionFunc: ProtectConditionFunc = (_arena, moveId) => {
  */
 class QuickGuardTag extends ConditionalProtectTag {
   public readonly tagType = ArenaTagType.QUICK_GUARD;
-  constructor(sourceId: number | undefined, side: ArenaTagSide) {
+  constructor(sourceId: number | undefined, side: ArenaSide) {
     super(MoveId.QUICK_GUARD, sourceId, side, QuickGuardConditionFunc);
   }
 }
@@ -525,7 +525,7 @@ const WideGuardConditionFunc: ProtectConditionFunc = (_arena, moveId): boolean =
  */
 class WideGuardTag extends ConditionalProtectTag {
   public readonly tagType = ArenaTagType.WIDE_GUARD;
-  constructor(sourceId: number | undefined, side: ArenaTagSide) {
+  constructor(sourceId: number | undefined, side: ArenaSide) {
     super(MoveId.WIDE_GUARD, sourceId, side, WideGuardConditionFunc);
   }
 }
@@ -548,7 +548,7 @@ const MatBlockConditionFunc: ProtectConditionFunc = (_arena, moveId): boolean =>
  */
 class MatBlockTag extends ConditionalProtectTag {
   public readonly tagType = ArenaTagType.MAT_BLOCK;
-  constructor(sourceId: number | undefined, side: ArenaTagSide) {
+  constructor(sourceId: number | undefined, side: ArenaSide) {
     super(MoveId.MAT_BLOCK, sourceId, side, MatBlockConditionFunc);
   }
 
@@ -593,7 +593,7 @@ const CraftyShieldConditionFunc: ProtectConditionFunc = (_arena, moveId) => {
  */
 class CraftyShieldTag extends ConditionalProtectTag {
   public readonly tagType = ArenaTagType.CRAFTY_SHIELD;
-  constructor(sourceId: number | undefined, side: ArenaTagSide) {
+  constructor(sourceId: number | undefined, side: ArenaSide) {
     super(MoveId.CRAFTY_SHIELD, sourceId, side, CraftyShieldConditionFunc, true);
   }
 }
@@ -608,7 +608,7 @@ export class NoCritTag extends SerializableArenaTag {
   /** Queues a message upon adding this effect to the field */
   onAdd(_arena: Arena): void {
     globalScene.phaseManager.queueMessage(
-      i18next.t(`arenaTag:noCritOnAdd${this.side === ArenaTagSide.PLAYER ? "Player" : "Enemy"}`, {
+      i18next.t(`arenaTag:noCritOnAdd${this.side === ArenaSide.PLAYER ? "Player" : "Enemy"}`, {
         moveName: this.getMoveName(),
       }),
     );
@@ -752,7 +752,7 @@ export abstract class EntryHazardTag extends SerializableArenaTag {
     return true;
   }
 
-  constructor(sourceMove: MoveId, sourceId: number | undefined, side: ArenaTagSide) {
+  constructor(sourceMove: MoveId, sourceId: number | undefined, side: ArenaSide) {
     super(0, sourceMove, sourceId, side);
   }
 
@@ -811,7 +811,7 @@ export abstract class EntryHazardTag extends SerializableArenaTag {
    * @returns `true` if this hazard affects the given Pokemon; `false` otherwise.
    */
   override apply(_arena: Arena, simulated: boolean, pokemon: Pokemon): boolean {
-    if ((this.side === ArenaTagSide.PLAYER) !== pokemon.isPlayer()) {
+    if ((this.side === ArenaSide.PLAYER) !== pokemon.isPlayer()) {
       return false;
     }
 
@@ -896,7 +896,7 @@ class SpikesTag extends DamagingTrapTag {
     return 3 as const;
   }
 
-  constructor(sourceId: number | undefined, side: ArenaTagSide) {
+  constructor(sourceId: number | undefined, side: ArenaSide) {
     super(MoveId.SPIKES, sourceId, side);
   }
 
@@ -933,7 +933,7 @@ class StealthRockTag extends DamagingTrapTag {
     return false;
   }
 
-  constructor(sourceId: number | undefined, side: ArenaTagSide) {
+  constructor(sourceId: number | undefined, side: ArenaSide) {
     super(MoveId.STEALTH_ROCK, sourceId, side);
   }
 
@@ -977,7 +977,7 @@ class ToxicSpikesTag extends EntryHazardTag {
     return 2 as const;
   }
 
-  constructor(sourceId: number | undefined, side: ArenaTagSide) {
+  constructor(sourceId: number | undefined, side: ArenaSide) {
     super(MoveId.TOXIC_SPIKES, sourceId, side);
   }
 
@@ -1040,7 +1040,7 @@ class StickyWebTag extends EntryHazardTag {
     return 1 as const;
   }
 
-  constructor(sourceId: number | undefined, side: ArenaTagSide) {
+  constructor(sourceId: number | undefined, side: ArenaSide) {
     super(MoveId.STICKY_WEB, sourceId, side);
   }
 
@@ -1103,7 +1103,7 @@ class ImprisonTag extends EntryHazardTag {
     return 1 as const;
   }
 
-  constructor(sourceId: number | undefined, side: ArenaTagSide) {
+  constructor(sourceId: number | undefined, side: ArenaSide) {
     super(MoveId.IMPRISON, sourceId, side);
   }
 
@@ -1259,7 +1259,7 @@ export class GravityTag extends SerializableArenaTag {
  */
 class TailwindTag extends SerializableArenaTag {
   public readonly tagType = ArenaTagType.TAILWIND;
-  constructor(turnCount: number, sourceId: number | undefined, side: ArenaTagSide) {
+  constructor(turnCount: number, sourceId: number | undefined, side: ArenaSide) {
     super(turnCount, MoveId.TAILWIND, sourceId, side);
   }
 
@@ -1274,7 +1274,7 @@ class TailwindTag extends SerializableArenaTag {
     if (!quiet) {
       globalScene.phaseManager.queueMessage(
         i18next.t(
-          `arenaTag:tailwindOnAdd${this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : ""}`,
+          `arenaTag:tailwindOnAdd${this.side === ArenaSide.PLAYER ? "Player" : this.side === ArenaSide.ENEMY ? "Enemy" : ""}`,
         ),
       );
     }
@@ -1315,7 +1315,7 @@ class TailwindTag extends SerializableArenaTag {
     if (!quiet) {
       globalScene.phaseManager.queueMessage(
         i18next.t(
-          `arenaTag:tailwindOnRemove${this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : ""}`,
+          `arenaTag:tailwindOnRemove${this.side === ArenaSide.PLAYER ? "Player" : this.side === ArenaSide.ENEMY ? "Enemy" : ""}`,
         ),
       );
     }
@@ -1328,7 +1328,7 @@ class TailwindTag extends SerializableArenaTag {
  */
 class HappyHourTag extends SerializableArenaTag {
   public readonly tagType = ArenaTagType.HAPPY_HOUR;
-  constructor(turnCount: number, sourceId: number | undefined, side: ArenaTagSide) {
+  constructor(turnCount: number, sourceId: number | undefined, side: ArenaSide) {
     super(turnCount, MoveId.HAPPY_HOUR, sourceId, side);
   }
 
@@ -1343,14 +1343,14 @@ class HappyHourTag extends SerializableArenaTag {
 
 class SafeguardTag extends ArenaTag {
   public readonly tagType = ArenaTagType.SAFEGUARD;
-  constructor(turnCount: number, sourceId: number | undefined, side: ArenaTagSide) {
+  constructor(turnCount: number, sourceId: number | undefined, side: ArenaSide) {
     super(turnCount, MoveId.SAFEGUARD, sourceId, side);
   }
 
   onAdd(_arena: Arena): void {
     globalScene.phaseManager.queueMessage(
       i18next.t(
-        `arenaTag:safeguardOnAdd${this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : ""}`,
+        `arenaTag:safeguardOnAdd${this.side === ArenaSide.PLAYER ? "Player" : this.side === ArenaSide.ENEMY ? "Enemy" : ""}`,
       ),
     );
   }
@@ -1358,7 +1358,7 @@ class SafeguardTag extends ArenaTag {
   onRemove(_arena: Arena): void {
     globalScene.phaseManager.queueMessage(
       i18next.t(
-        `arenaTag:safeguardOnRemove${this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : ""}`,
+        `arenaTag:safeguardOnRemove${this.side === ArenaSide.PLAYER ? "Player" : this.side === ArenaSide.ENEMY ? "Enemy" : ""}`,
       ),
     );
   }
@@ -1380,7 +1380,7 @@ class NoneTag extends ArenaTag {
  */
 class FireGrassPledgeTag extends SerializableArenaTag {
   public readonly tagType = ArenaTagType.FIRE_GRASS_PLEDGE;
-  constructor(sourceId: number | undefined, side: ArenaTagSide) {
+  constructor(sourceId: number | undefined, side: ArenaSide) {
     super(4, MoveId.FIRE_PLEDGE, sourceId, side);
   }
 
@@ -1388,14 +1388,14 @@ class FireGrassPledgeTag extends SerializableArenaTag {
     // "A sea of fire enveloped your/the opposing team!"
     globalScene.phaseManager.queueMessage(
       i18next.t(
-        `arenaTag:fireGrassPledgeOnAdd${this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : ""}`,
+        `arenaTag:fireGrassPledgeOnAdd${this.side === ArenaSide.PLAYER ? "Player" : this.side === ArenaSide.ENEMY ? "Enemy" : ""}`,
       ),
     );
   }
 
   override lapse(arena: Arena): boolean {
     const field: Pokemon[] =
-      this.side === ArenaTagSide.PLAYER ? globalScene.getPlayerField() : globalScene.getEnemyField();
+      this.side === ArenaSide.PLAYER ? globalScene.getPlayerField() : globalScene.getEnemyField();
 
     field
       .filter(pokemon => !pokemon.isOfType(PokemonType.FIRE) && !pokemon.switchOutStatus)
@@ -1429,7 +1429,7 @@ class FireGrassPledgeTag extends SerializableArenaTag {
  */
 class WaterFirePledgeTag extends SerializableArenaTag {
   public readonly tagType = ArenaTagType.WATER_FIRE_PLEDGE;
-  constructor(sourceId: number | undefined, side: ArenaTagSide) {
+  constructor(sourceId: number | undefined, side: ArenaSide) {
     super(4, MoveId.WATER_PLEDGE, sourceId, side);
   }
 
@@ -1437,7 +1437,7 @@ class WaterFirePledgeTag extends SerializableArenaTag {
     // "A rainbow appeared in the sky on your/the opposing team's side!"
     globalScene.phaseManager.queueMessage(
       i18next.t(
-        `arenaTag:waterFirePledgeOnAdd${this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : ""}`,
+        `arenaTag:waterFirePledgeOnAdd${this.side === ArenaSide.PLAYER ? "Player" : this.side === ArenaSide.ENEMY ? "Enemy" : ""}`,
       ),
     );
   }
@@ -1464,7 +1464,7 @@ class WaterFirePledgeTag extends SerializableArenaTag {
  */
 class GrassWaterPledgeTag extends SerializableArenaTag {
   public readonly tagType = ArenaTagType.GRASS_WATER_PLEDGE;
-  constructor(sourceId: number | undefined, side: ArenaTagSide) {
+  constructor(sourceId: number | undefined, side: ArenaSide) {
     super(4, MoveId.GRASS_PLEDGE, sourceId, side);
   }
 
@@ -1472,7 +1472,7 @@ class GrassWaterPledgeTag extends SerializableArenaTag {
     // "A swamp enveloped your/the opposing team!"
     globalScene.phaseManager.queueMessage(
       i18next.t(
-        `arenaTag:grassWaterPledgeOnAdd${this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : ""}`,
+        `arenaTag:grassWaterPledgeOnAdd${this.side === ArenaSide.PLAYER ? "Player" : this.side === ArenaSide.ENEMY ? "Enemy" : ""}`,
       ),
     );
   }
@@ -1743,7 +1743,7 @@ export function getArenaTag(
   turnCount: number,
   sourceMove: MoveId | undefined,
   sourceId: number | undefined,
-  side: ArenaTagSide = ArenaTagSide.BOTH,
+  side: ArenaSide = ArenaSide.BOTH,
 ): ArenaTag | null {
   switch (tagType) {
     case ArenaTagType.MIST:

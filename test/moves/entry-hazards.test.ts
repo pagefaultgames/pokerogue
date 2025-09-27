@@ -2,7 +2,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { allMoves } from "#data/data-lists";
 import type { TypeDamageMultiplier } from "#data/type";
 import { AbilityId } from "#enums/ability-id";
-import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaSide } from "#enums/arena-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
@@ -72,8 +72,8 @@ describe("Moves - Entry Hazards", () => {
       await game.toNextTurn();
 
       // Tag should've been added to the opposing side of the field
-      expect(game).not.toHaveArenaTag(tagType, ArenaTagSide.PLAYER);
-      expect(game).toHaveArenaTag(tagType, ArenaTagSide.ENEMY);
+      expect(game).not.toHaveArenaTag(tagType, ArenaSide.PLAYER);
+      expect(game).toHaveArenaTag(tagType, ArenaSide.ENEMY);
     });
 
     // TODO: re-enable after re-fixing hazards moves
@@ -90,7 +90,7 @@ describe("Moves - Entry Hazards", () => {
 
       expect(enemy1.isFainted()).toBe(true);
       expect(enemy2.isFainted()).toBe(true);
-      expect(game).toHaveArenaTag(tagType, ArenaTagSide.ENEMY);
+      expect(game).toHaveArenaTag(tagType, ArenaSide.ENEMY);
     });
 
     const maxLayers = tagType === ArenaTagType.SPIKES ? 3 : tagType === ArenaTagType.TOXIC_SPIKES ? 2 : 1;
@@ -110,14 +110,14 @@ describe("Moves - Entry Hazards", () => {
         await game.toNextTurn();
 
         expect(feebas).toHaveUsedMove({ move, result: MoveResult.SUCCESS });
-        expect(game).toHaveArenaTag({ tagType, side: ArenaTagSide.ENEMY, layers: i + 1 });
+        expect(game).toHaveArenaTag({ tagType, side: ArenaSide.ENEMY, layers: i + 1 });
       }
 
       game.move.use(move);
       await game.toNextTurn();
 
       expect(feebas).toHaveUsedMove({ move, result: MoveResult.FAIL });
-      expect(game).toHaveArenaTag({ tagType, side: ArenaTagSide.ENEMY, layers: maxLayers });
+      expect(game).toHaveArenaTag({ tagType, side: ArenaSide.ENEMY, layers: maxLayers });
     });
   });
 
@@ -128,7 +128,7 @@ describe("Moves - Entry Hazards", () => {
       { layers: 3, damage: 25 },
     ])("should play message and deal $damage% of the target's max HP at $layers", async ({ layers, damage }) => {
       for (let i = 0; i < layers; i++) {
-        game.scene.arena.addTag(ArenaTagType.SPIKES, 0, undefined, 0, ArenaTagSide.ENEMY);
+        game.scene.arena.addTag(ArenaTagType.SPIKES, 0, undefined, 0, ArenaSide.ENEMY);
       }
 
       await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA]);
@@ -149,7 +149,7 @@ describe("Moves - Entry Hazards", () => {
       { name: "Toxic", layers: 2, status: StatusEffect.TOXIC },
     ])("should apply $name at $layers without displaying neutralization msg", async ({ layers, status }) => {
       for (let i = 0; i < layers; i++) {
-        game.scene.arena.addTag(ArenaTagType.TOXIC_SPIKES, 0, undefined, 0, ArenaTagSide.ENEMY);
+        game.scene.arena.addTag(ArenaTagType.TOXIC_SPIKES, 0, undefined, 0, ArenaSide.ENEMY);
       }
       await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA]);
 
@@ -167,13 +167,13 @@ describe("Moves - Entry Hazards", () => {
   it("should be removed without triggering upon a grounded Poison-type switching in", async () => {
     await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.EKANS]);
 
-    game.scene.arena.addTag(ArenaTagType.TOXIC_SPIKES, 0, undefined, 0, ArenaTagSide.ENEMY);
+    game.scene.arena.addTag(ArenaTagType.TOXIC_SPIKES, 0, undefined, 0, ArenaSide.ENEMY);
 
     game.doSwitchPokemon(1);
     await game.toNextTurn();
 
     const ekans = game.field.getPlayerPokemon();
-    expect(game).not.toHaveArenaTag(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.PLAYER);
+    expect(game).not.toHaveArenaTag(ArenaTagType.TOXIC_SPIKES, ArenaSide.PLAYER);
     expect(game.textInterceptor.logs).not.toContain(
       i18next.t("arenaTag:toxicSpikesActivateTrapPoison", {
         pokemonNameWithAffix: getPokemonNameWithAffix(ekans),
@@ -192,7 +192,7 @@ describe("Moves - Entry Hazards", () => {
       { multi: 4, species: SpeciesId.DELIBIRD },
     ])("should deal damage based on the target's weakness to Rock - $multi", async ({ multi, species }) => {
       game.override.enemySpecies(species);
-      game.scene.arena.addTag(ArenaTagType.STEALTH_ROCK, 0, undefined, 0, ArenaTagSide.ENEMY);
+      game.scene.arena.addTag(ArenaTagType.STEALTH_ROCK, 0, undefined, 0, ArenaSide.ENEMY);
       await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.EKANS]);
 
       const enemy = game.field.getEnemyPokemon();
@@ -207,7 +207,7 @@ describe("Moves - Entry Hazards", () => {
 
     it("should ignore strong winds for type effectiveness", async () => {
       game.override.enemyAbility(AbilityId.DELTA_STREAM).enemySpecies(SpeciesId.RAYQUAZA);
-      game.scene.arena.addTag(ArenaTagType.STEALTH_ROCK, 0, undefined, 0, ArenaTagSide.ENEMY);
+      game.scene.arena.addTag(ArenaTagType.STEALTH_ROCK, 0, undefined, 0, ArenaSide.ENEMY);
       await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.EKANS]);
 
       const rayquaza = game.field.getEnemyPokemon();
@@ -218,7 +218,7 @@ describe("Moves - Entry Hazards", () => {
 
   describe("Sticky Web", () => {
     it("should lower the target's speed by 1 stage on entry", async () => {
-      game.scene.arena.addTag(ArenaTagType.STICKY_WEB, 0, undefined, 0, ArenaTagSide.ENEMY);
+      game.scene.arena.addTag(ArenaTagType.STICKY_WEB, 0, undefined, 0, ArenaSide.ENEMY);
       await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.EKANS]);
 
       const enemy = game.field.getEnemyPokemon();

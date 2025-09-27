@@ -5,7 +5,7 @@ import { handleTutorial, Tutorial } from "#app/tutorial";
 import type { ArenaTag } from "#data/arena-tag";
 import { MistTag } from "#data/arena-tag";
 import { OctolockTag } from "#data/battler-tags";
-import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaSide } from "#enums/arena-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import type { BattlerIndex } from "#enums/battler-index";
 import { type BattleStat, getStatKey, getStatStageChangeDescriptionKey, Stat } from "#enums/stat";
@@ -92,7 +92,7 @@ export class StatStageChangePhase extends PokemonPhase {
         /** If this SSCP is from sticky web, then check if pokemon that last sucessfully used sticky web is on field */
         const stickyTagID = globalScene.arena.findTagsOnSide(
           (t: ArenaTag) => t.tagType === ArenaTagType.STICKY_WEB,
-          ArenaTagSide.PLAYER,
+          ArenaSide.PLAYER,
         )[0].sourceId;
         globalScene.getEnemyField().forEach(e => {
           if (e.id === stickyTagID) {
@@ -105,7 +105,7 @@ export class StatStageChangePhase extends PokemonPhase {
     } else {
       const stickyTagID = globalScene.arena.findTagsOnSide(
         (t: ArenaTag) => t.tagType === ArenaTagType.STICKY_WEB,
-        ArenaTagSide.ENEMY,
+        ArenaSide.ENEMY,
       )[0].sourceId;
       globalScene.getPlayerField().forEach(e => {
         if (e.id === stickyTagID) {
@@ -133,7 +133,7 @@ export class StatStageChangePhase extends PokemonPhase {
         // TODO: add a reference to the source of the stat change to fix Infiltrator interaction
         globalScene.arena.applyTagsForSide(
           MistTag,
-          pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY,
+          pokemon.isPlayer() ? ArenaSide.PLAYER : ArenaSide.ENEMY,
           false,
           null,
           cancelled,

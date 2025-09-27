@@ -1,6 +1,6 @@
 import { allAbilities } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaSide } from "#enums/arena-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -82,8 +82,8 @@ describe("Abilities - Good As Gold", () => {
     await game.phaseInterceptor.to("BerryPhase");
     expect(good_as_gold.getAbility().id).toBe(AbilityId.GOOD_AS_GOLD);
     expect(good_as_gold.getStatStage(Stat.ATK)).toBe(0);
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.STEALTH_ROCK, ArenaTagSide.PLAYER)).toBeDefined();
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, ArenaTagSide.PLAYER)).toBeDefined();
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.STEALTH_ROCK, ArenaSide.PLAYER)).toBeDefined();
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, ArenaSide.PLAYER)).toBeDefined();
   });
 
   it("should not block field targeted effects in singles", async () => {
@@ -93,7 +93,7 @@ describe("Abilities - Good As Gold", () => {
     game.move.select(MoveId.SPLASH, 0);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.PLAYER)).toBeDefined();
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaSide.PLAYER)).toBeDefined();
   });
 
   it("should block the ally's helping hand", async () => {

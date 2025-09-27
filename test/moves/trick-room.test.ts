@@ -1,5 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
-import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaSide } from "#enums/arena-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
@@ -50,7 +50,7 @@ describe("Move - Trick Room", () => {
 
     expect(game).toHaveArenaTag({
       tagType: ArenaTagType.TRICK_ROOM,
-      side: ArenaTagSide.BOTH,
+      side: ArenaSide.BOTH,
       sourceId: feebas.id,
       sourceMove: MoveId.TRICK_ROOM,
       turnCount: 4, // The 5 turn limit _includes_ the current turn!

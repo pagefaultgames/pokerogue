@@ -1,5 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
-import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaSide } from "#enums/arena-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -79,7 +79,7 @@ describe("Moves - Crafty Shield", () => {
     await game.move.forceEnemyMove(MoveId.TOXIC_SPIKES);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.PLAYER)).toBeDefined();
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaSide.PLAYER)).toBeDefined();
     expect(charizard.getTag(BattlerTagType.PERISH_SONG)).toBeDefined();
     expect(blastoise.getTag(BattlerTagType.PERISH_SONG)).toBeDefined();
   });

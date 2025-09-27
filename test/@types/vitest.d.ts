@@ -5,7 +5,7 @@ import type { Phase } from "#app/phase";
 import type { ArenaTag } from "#data/arena-tag";
 import type { TerrainType } from "#data/terrain";
 import type { AbilityId } from "#enums/ability-id";
-import type { ArenaTagSide } from "#enums/arena-tag-side";
+import type { ArenaSide } from "#enums/arena-side";
 import type { ArenaTagType } from "#enums/arena-tag-type";
 import type { BattlerTagType } from "#enums/battler-tag-type";
 import type { MoveId } from "#enums/move-id";
@@ -118,9 +118,9 @@ interface ArenaMatchers {
   /**
    * Check whether the current {@linkcode Arena} contains the given {@linkcode ArenaTag}.
    * @param expectedType - The {@linkcode ArenaTagType} of the desired tag
-   * @param side - The {@linkcode ArenaTagSide | side(s) of the field} the tag should affect; default {@linkcode ArenaTagSide.BOTH}
+   * @param side - The {@linkcode ArenaSide | side(s) of the field} the tag should affect; default {@linkcode ArenaSide.BOTH}
    */
-  toHaveArenaTag(expectedType: ArenaTagType, side?: ArenaTagSide): void;
+  toHaveArenaTag(expectedType: ArenaTagType, side?: ArenaSide): void;
 
   /**
    * Check whether the current {@linkcode Arena} contains the given {@linkcode PositionalTag}.

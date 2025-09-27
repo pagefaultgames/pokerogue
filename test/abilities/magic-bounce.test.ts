@@ -1,6 +1,6 @@
 import { allAbilities, allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaSide } from "#enums/arena-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -126,8 +126,8 @@ describe("Abilities - Magic Bounce", () => {
     game.move.select(MoveId.SPIKES);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.PLAYER)!["layers"]).toBe(1);
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY)).toBeUndefined();
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaSide.PLAYER)!["layers"]).toBe(1);
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaSide.ENEMY)).toBeUndefined();
   });
 
   it("should bounce spikes even when the target is protected", async () => {
@@ -136,7 +136,7 @@ describe("Abilities - Magic Bounce", () => {
 
     game.move.select(MoveId.SPIKES);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.PLAYER)!["layers"]).toBe(1);
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaSide.PLAYER)!["layers"]).toBe(1);
   });
 
   it("should not bounce spikes when the target is in the semi-invulnerable state", async () => {
@@ -146,7 +146,7 @@ describe("Abilities - Magic Bounce", () => {
     game.move.select(MoveId.SPIKES);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY)!["layers"]).toBe(1);
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaSide.ENEMY)!["layers"]).toBe(1);
   });
 
   it("should not bounce back curse", async () => {
@@ -305,22 +305,16 @@ describe("Abilities - Magic Bounce", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(
-      game.scene.arena
-        .getTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER)
-        ?.getSourcePokemon()
-        ?.getBattlerIndex(),
+      game.scene.arena.getTagOnSide(ArenaTagType.STICKY_WEB, ArenaSide.PLAYER)?.getSourcePokemon()?.getBattlerIndex(),
     ).toBe(BattlerIndex.ENEMY);
-    game.scene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER, true);
+    game.scene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, ArenaSide.PLAYER, true);
 
     // turn 2
     game.move.select(MoveId.STICKY_WEB, 0);
     game.move.select(MoveId.TRICK_ROOM, 1);
     await game.phaseInterceptor.to("BerryPhase");
     expect(
-      game.scene.arena
-        .getTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER)
-        ?.getSourcePokemon()
-        ?.getBattlerIndex(),
+      game.scene.arena.getTagOnSide(ArenaTagType.STICKY_WEB, ArenaSide.PLAYER)?.getSourcePokemon()?.getBattlerIndex(),
     ).toBe(BattlerIndex.ENEMY);
   });
 
