@@ -51,6 +51,7 @@ import { BaseStatsOverlay } from "#ui/base-stats-overlay";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { PokedexInfoOverlay } from "#ui/pokedex-info-overlay";
+import { RibbonTray } from "#ui/ribbon-tray-container";
 import { StatsContainer } from "#ui/stats-container";
 import { addBBCodeTextObject, addTextObject, getTextColor, getTextStyleOptions } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
@@ -169,6 +170,7 @@ enum MenuOptions {
   BIOMES,
   NATURES,
   TOGGLE_IVS,
+  RIBBONS,
   EVOLUTIONS,
 }
 
@@ -287,6 +289,10 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
   private canUseCandies: boolean;
   private exitCallback;
+
+  // Ribbons
+  private ribbonContainer: RibbonTray;
+  private isRibbonTrayOpen = false;
 
   constructor() {
     super(UiMode.POKEDEX_PAGE);
@@ -657,6 +663,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       i18next.t("pokedexUiHandler:showBiomes"),
       i18next.t("pokedexUiHandler:showNatures"),
       i18next.t("pokedexUiHandler:toggleIVs"),
+      i18next.t("pokedexUiHandler:showRibbons"),
       i18next.t("pokedexUiHandler:showEvolutions"),
     ];
 
@@ -697,6 +704,10 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       y: globalScene.scaledCanvas.height - PokedexInfoOverlay.getHeight() - 29,
     });
     this.starterSelectContainer.add(this.infoOverlay);
+
+    this.ribbonContainer = new RibbonTray(this, 192, 0);
+    this.starterSelectContainer.add(this.ribbonContainer);
+    this.ribbonContainer.setVisible(false);
 
     // Filter bar sits above everything, except the message box
     this.starterSelectContainer.bringToTop(this.starterSelectMessageBoxContainer);
@@ -763,7 +774,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         const label = i18next.t(`pokedexUiHandler:${toCamelCase(`menu${MenuOptions[o]}`)}`);
         const isDark =
           !isSeen
-          || (!isStarterCaught && (o === MenuOptions.TOGGLE_IVS || o === MenuOptions.NATURES))
+          || (!isStarterCaught
+            && (o === MenuOptions.TOGGLE_IVS || o === MenuOptions.NATURES || o === MenuOptions.RIBBONS))
           || (this.tmMoves.length === 0 && o === MenuOptions.TM_MOVES);
         const color = getTextColor(isDark ? TextStyle.SHADOW_TEXT : TextStyle.SETTINGS_VALUE, false);
         const shadow = getTextColor(isDark ? TextStyle.SHADOW_TEXT : TextStyle.SETTINGS_VALUE, true);
@@ -1151,6 +1163,17 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     const isFormCaught = this.isFormCaught();
     const isSeen = this.isSeen();
     const isStarterCaught = !!this.isCaught(this.getStarterSpecies(this.species));
+
+    if (this.isRibbonTrayOpen) {
+      if (button === Button.CANCEL) {
+        this.isRibbonTrayOpen = false;
+        this.ribbonContainer.close();
+        this.setCursor(MenuOptions.RIBBONS);
+        ui.playSelect();
+        return success;
+      }
+      return this.ribbonContainer.processInput(button);
+    }
 
     if (this.blockInputOverlay) {
       if (button === Button.CANCEL || button === Button.ACTION) {
@@ -1755,6 +1778,16 @@ export class PokedexPageUiHandler extends MessageUiHandler {
             } else {
               this.toggleStatsMode();
               ui.setMode(UiMode.POKEDEX_PAGE, "refresh");
+              success = true;
+            }
+            break;
+
+          case MenuOptions.RIBBONS:
+            if (!isStarterCaught) {
+              error = true;
+            } else {
+              this.isRibbonTrayOpen = true;
+              this.ribbonContainer.open(this.species);
               success = true;
             }
             break;

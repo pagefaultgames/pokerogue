@@ -20,11 +20,13 @@ export class RibbonTray extends Phaser.GameObjects.Container {
 
   private ribbonData: RibbonData;
 
-  private maxColumns = 4;
+  private maxColumns = 6;
 
   constructor(handler: MessageUiHandler, x: number, y: number) {
     super(globalScene, x, y);
     this.handler = handler;
+
+    this.setup();
   }
 
   setup() {
@@ -40,43 +42,48 @@ export class RibbonTray extends Phaser.GameObjects.Container {
   processInput(button: Button) {
     let success = false;
 
-    const numberOfForms = this.trayIcons.length;
-    const numOfRows = Math.ceil(numberOfForms / this.maxColumns);
+    const numberOfIcons = this.trayIcons.length;
+    const numOfRows = Math.ceil(numberOfIcons / this.maxColumns);
     const currentTrayRow = Math.floor(this.trayCursor / this.maxColumns);
     switch (button) {
       case Button.UP:
         if (currentTrayRow > 0) {
-          success = this.setTrayCursor(this.trayCursor - 9);
+          success = this.setTrayCursor(this.trayCursor - this.maxColumns);
         } else {
           const targetCol = this.trayCursor;
-          if (numberOfForms % 9 > targetCol) {
-            success = this.setTrayCursor(numberOfForms - (numberOfForms % 9) + targetCol);
+          if (numberOfIcons % this.maxColumns > targetCol) {
+            success = this.setTrayCursor(numberOfIcons - (numberOfIcons % this.maxColumns) + targetCol);
           } else {
-            success = this.setTrayCursor(Math.max(numberOfForms - (numberOfForms % 9) + targetCol - 9, 0));
+            success = this.setTrayCursor(
+              Math.max(numberOfIcons - (numberOfIcons % this.maxColumns) + targetCol - this.maxColumns, 0),
+            );
           }
         }
         break;
       case Button.DOWN:
-        if (currentTrayRow < numOfRows - 1) {
-          success = this.setTrayCursor(this.trayCursor + 9);
+        if (currentTrayRow < numOfRows - 1 && this.trayCursor + this.maxColumns < numberOfIcons) {
+          success = this.setTrayCursor(this.trayCursor + this.maxColumns);
         } else {
-          success = this.setTrayCursor(this.trayCursor % 9);
+          success = this.setTrayCursor(this.trayCursor % this.maxColumns);
         }
         break;
       case Button.LEFT:
-        if (this.trayCursor % 9 !== 0) {
+        if (this.trayCursor % this.maxColumns !== 0) {
           success = this.setTrayCursor(this.trayCursor - 1);
         } else {
           success = this.setTrayCursor(
-            currentTrayRow < numOfRows - 1 ? (currentTrayRow + 1) * this.maxColumns - 1 : numberOfForms - 1,
+            currentTrayRow < numOfRows - 1 ? (currentTrayRow + 1) * this.maxColumns - 1 : numberOfIcons - 1,
           );
         }
         break;
       case Button.RIGHT:
-        if (this.trayCursor % 9 < (currentTrayRow < numOfRows - 1 ? 8 : (numberOfForms - 1) % 9)) {
+        if (
+          this.trayCursor % this.maxColumns
+          < (currentTrayRow < numOfRows - 1 ? 8 : (numberOfIcons - 1) % this.maxColumns)
+        ) {
           success = this.setTrayCursor(this.trayCursor + 1);
         } else {
-          success = this.setTrayCursor(currentTrayRow * 9);
+          success = this.setTrayCursor(currentTrayRow * this.maxColumns);
         }
         break;
       case Button.CANCEL:
@@ -93,7 +100,7 @@ export class RibbonTray extends Phaser.GameObjects.Container {
       this.trayCursor = cursor;
     }
 
-    this.trayCursorObj.setPosition(5 + (cursor % 9) * 18, 4 + Math.floor(cursor / 9) * 17);
+    this.trayCursorObj.setPosition(5 + (cursor % this.maxColumns) * 18, 4 + Math.floor(cursor / this.maxColumns) * 17);
 
     const ribbonDescription = this.ribbonData.has(this.ribbons[cursor])
       ? "Description will show up here"
@@ -114,7 +121,7 @@ export class RibbonTray extends Phaser.GameObjects.Container {
       Math.floor(this.trayNumIcons / this.maxColumns) + (this.trayNumIcons % this.maxColumns === 0 ? 0 : 1);
     this.trayColumns = Math.min(this.trayNumIcons, this.maxColumns);
 
-    this.trayBg.setSize(13 + this.trayColumns * 17, 8 + this.trayRows * 18);
+    this.trayBg.setSize(15 + this.trayColumns * 17, 8 + this.trayRows * 18);
 
     this.trayIcons = [];
     for (const [index, ribbon] of this.ribbons.entries()) {
@@ -128,11 +135,13 @@ export class RibbonTray extends Phaser.GameObjects.Container {
         icon.setTint(0);
       }
 
-      icon.setPosition(5 + (index % 9) * 18, 4 + Math.floor(index / 9) * 17);
+      icon.setPosition(14 + (index % this.maxColumns) * 18, 14 + Math.floor(index / this.maxColumns) * 17);
 
       this.add(icon);
       this.trayIcons.push(icon);
     }
+
+    this.setVisible(true);
 
     this.setTrayCursor(0);
 
