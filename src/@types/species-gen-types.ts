@@ -1,5 +1,5 @@
 // biome-ignore lint/correctness/noUnusedImports: Used in TSDoc comment
-import type { EvoLevelThresholdSort } from "#enums/evo-level-threshold-kind";
+import type { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import type { SpeciesId } from "#enums/species-id";
 
 /**
@@ -8,7 +8,7 @@ import type { SpeciesId } from "#enums/species-id";
  * - `normal`: The evo level for a regular Trainer with average strength
  * - `wild`: The evo level for wild encounters
  *
- * @see {@linkcode EvoLevelThresholdSort}
+ * @see {@linkcode EvoLevelThresholdKind}
  */
 export type EvoLevelThreshold = [strong: number, normal: number, wild: number];
 

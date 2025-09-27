@@ -4,7 +4,7 @@ import type { EvoLevelThreshold } from "#types/species-gen-types";
  * Enum for the different evolution level threholds based on the encounter type
  * @see {@linkcode EvoLevelThreshold}
  */
-export const EvoLevelThresholdSort = Object.freeze({
+export const EvoLevelThresholdKind = Object.freeze({
   /** Meant to be used for Gym Leaders and Evil Admins */
   STRONG: 0,
   /** Normal trainers and Boss Pokémon */
@@ -14,4 +14,4 @@ export const EvoLevelThresholdSort = Object.freeze({
 });
 
 /** {@inheritdoc EvoLevelThresholdKind} */
-export type EvoLevelThresholdSort = (typeof EvoLevelThresholdSort)[keyof typeof EvoLevelThresholdSort];
+export type EvoLevelThresholdKind = (typeof EvoLevelThresholdKind)[keyof typeof EvoLevelThresholdKind];
