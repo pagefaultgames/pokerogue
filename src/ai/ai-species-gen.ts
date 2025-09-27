@@ -3,24 +3,24 @@ import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { pokemonEvolutions, pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { allSpecies } from "#data/data-lists";
 import type { PokemonSpecies } from "#data/pokemon-species";
-import { EvoLevelThresholdKind as EvoLevelThresholdSort } from "#enums/evo-level-threshold-kind";
+import { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import type { SpeciesId } from "#enums/species-id";
 import { randSeedInt, randSeedItem } from "#utils/common";
 
 /**
  * Controls the maximum level difference that a Pokémon spawned with
- * {@linkcode EvoLevelThresholdSort.NORMAL} is allowd to remain unevolved.
+ * {@linkcode EvoLevelThresholdKind.NORMAL} is allowd to remain unevolved.
  */
 const NORMAL_TRAINER_LEVEL_DIFF_PERCENT = 0.1;
 /**
  * Controls the maximum level difference that a Pokémon spawned with
- * {@linkcode EvoLevelThresholdSort.WILD} is allowd to remain unevolved.
+ * {@linkcode EvoLevelThresholdKind.WILD} is allowd to remain unevolved.
  */
 const WILD_LEVEL_DIFF_PERCENT = 0.2;
 /**
  * Controls the maximum level difference that a Pokémon spawned with
- * {@linkcode EvoLevelThresholdSort.} is allowd to remain unevolved.
+ * {@linkcode EvoLevelThresholdKind.} is allowd to remain unevolved.
  */
 const STRONG_LEVEL_DIFF_PERCENT = 0;
 
@@ -31,11 +31,16 @@ const STRONG_LEVEL_DIFF_PERCENT = 0;
  * @param evolutionPool - The pool of evolutions to add to
  * @returns The level threshold required for the evolution, or `0` if not eligible
  */
-function calcEvoChance(ev: SpeciesFormEvolution, level: number, encounterKind: EvoLevelThresholdSort): number {
+function calcEvoChance(ev: SpeciesFormEvolution, level: number, encounterKind: EvoLevelThresholdKind): number {
   /** The level requirement based on the trainer type */
   const levelThreshold = Math.max(ev.level, ev.evoLevelThreshold?.[encounterKind] ?? 0);
   // Disallow evolution if the level is below its required threshold.
   if (level < ev.level || level < levelThreshold) {
+    console.info(
+      "%cDisallowing evolution of %s to %s at level %d (needs %d)",
+      "color: blue",
+      allSpecies[ev.speciesId]?.name,
+    );
     return 0;
   }
   return levelThreshold;
@@ -64,7 +69,7 @@ function calcEvoChance(ev: SpeciesFormEvolution, level: number, encounterKind: E
 function getRequiredPrevo(
   species: PokemonSpecies,
   level: number,
-  encounterKind: EvoLevelThresholdSort,
+  encounterKind: EvoLevelThresholdKind,
 ): SpeciesId | null {
   // Get the prevolution levels for this species.
   const prevolutionLevels = species.getPrevolutionLevels(true);
@@ -74,9 +79,17 @@ function getRequiredPrevo(
   // NOTE: This will *not* apply the randomness factor.
   for (let pl = prevolutionLevels.length - 1; pl >= 0; pl--) {
     const [prevoSpecies, levelReq, evoThreshold] = prevolutionLevels[pl];
-    const threshold = evoThreshold?.[encounterKind] ?? 0;
+    const threshold = evoThreshold?.[encounterKind] ?? levelReq;
     const req = levelReq === 1 ? threshold : Math.min(levelReq, threshold);
     if (level < req) {
+      console.info(
+        "%cForcing prevo %s for %s at level %d (needs %d)",
+        "color: orange",
+        prevoSpecies,
+        species.speciesId,
+        level,
+        req,
+      );
       return prevoSpecies;
     }
   }
@@ -92,7 +105,7 @@ function getRequiredPrevo(
  * @param allowEvolving - Whether to allow evolution; default `false`
  * @param forTrainer - Whether the Pokémon is for a trainer; default `false`
  * @param strength - The strength of the party member; default {@linkcode PartyMemberStrength.WEAKER | Weaker}
- * @param encounterKind - The kind of evolution threshold to use; default {@linkcode EvoLevelThresholdSort.NORMAL | Normal} for trainers, {@linkcode EvoLevelThresholdSort.WILD | Wild} otherwise
+ * @param encounterKind - The kind of evolution threshold to use; default {@linkcode EvoLevelThresholdKind.NORMAL | Normal} for trainers, {@linkcode EvoLevelThresholdKind.WILD | Wild} otherwise
  * @param tryForcePrevo - Whether to skip checking for prevolutions. Should only be `false` when invoked recursively; default `true`
  *
  * @remarks
@@ -110,9 +123,16 @@ export function determineEnemySpecies(
   allowEvolving = false,
   forTrainer = false,
   strength: PartyMemberStrength = PartyMemberStrength.WEAKER,
-  encounterKind: EvoLevelThresholdSort = forTrainer ? EvoLevelThresholdSort.NORMAL : EvoLevelThresholdSort.WILD,
+  encounterKind: EvoLevelThresholdKind = forTrainer ? EvoLevelThresholdKind.NORMAL : EvoLevelThresholdKind.WILD,
   tryForcePrevo = true,
 ): SpeciesId {
+  console.info(
+    "%c Determining species for %s at level %d with encounter kind %s",
+    "color: blue",
+    species.name,
+    level,
+    encounterKind,
+  );
   const requiredPrevo =
     tryForcePrevo
     && pokemonPrevolutions.hasOwnProperty(species.speciesId)
@@ -124,7 +144,7 @@ export function determineEnemySpecies(
   if (
     // If evolutions shouldn't happen, add more cases here :)
     !allowEvolving
-    || evolutions.length >= 0
+    || evolutions.length <= 0
     || (globalScene.currentBattle?.waveIndex === 20
       && globalScene.gameMode.isClassic
       && globalScene.currentBattle.trainer)
@@ -141,6 +161,7 @@ export function determineEnemySpecies(
     }
   }
   if (evoPool.length === 0) {
+    console.log("%c No evolutions available, returning base species", "color: blue");
     return species.speciesId;
   }
   const [choice, evoSpecies] = randSeedItem(evoPool);
@@ -151,20 +172,27 @@ export function determineEnemySpecies(
   // Then it is guaranteed to evolve by level 60, and has a 10% chance to be evolved
   let multiplier = 1;
   switch (encounterKind) {
-    case EvoLevelThresholdSort.STRONG:
+    case EvoLevelThresholdKind.STRONG:
       multiplier = STRONG_LEVEL_DIFF_PERCENT;
       break;
-    case EvoLevelThresholdSort.NORMAL:
+    case EvoLevelThresholdKind.NORMAL:
       multiplier = NORMAL_TRAINER_LEVEL_DIFF_PERCENT;
       break;
-    case EvoLevelThresholdSort.WILD:
+    case EvoLevelThresholdKind.WILD:
       multiplier = WILD_LEVEL_DIFF_PERCENT;
       break;
   }
 
+  console.info(
+    "%c Returning a random integer between %d and %d",
+    "color: blue",
+    choice,
+    Math.round(choice * multiplier),
+  );
   const randomLevel = randSeedInt(choice, Math.round(choice * multiplier));
+  console.info("%c Random level is %d", "color: blue", randomLevel);
   if (randomLevel <= level) {
-    return determineEnemySpecies(allSpecies[evoSpecies], level, true, forTrainer, strength, encounterKind, true);
+    return determineEnemySpecies(allSpecies[evoSpecies], level, true, forTrainer, strength, encounterKind, false);
   }
   return species.speciesId;
 }

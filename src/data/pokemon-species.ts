@@ -893,6 +893,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
       allowEvolving,
       false,
       (isBoss ? PartyMemberStrength.WEAKER : PartyMemberStrength.AVERAGE) + (gameMode?.isEndless ? 1 : 0),
+      isBoss ? EvoLevelThresholdKind.NORMAL : EvoLevelThresholdKind.WILD,
     );
   }
 
