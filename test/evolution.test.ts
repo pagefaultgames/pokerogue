@@ -90,7 +90,7 @@ describe("Evolution", () => {
   it("should set wild delay to NONE by default", () => {
     const speciesFormEvo = new SpeciesFormEvolution(SpeciesId.ABRA, null, null, 1000, null, null);
 
-    expect(speciesFormEvo.wildDelay).toBe(SpeciesWildEvolutionDelay.NONE);
+    expect(speciesFormEvo.evoLevelThreshold).toBe(SpeciesWildEvolutionDelay.NONE);
   });
 
   it("should increase both HP and max HP when evolving", async () => {
