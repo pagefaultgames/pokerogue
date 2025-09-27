@@ -421,7 +421,7 @@ export class Trainer extends Phaser.GameObjects.Container {
                   level,
                   false,
                   template.getStrength(offset),
-                  globalScene.currentBattle.waveIndex,
+                  template.evoLevelThresholdKind,
                 ),
               )
             : this.genNewPartyMemberSpecies(level, strength);
