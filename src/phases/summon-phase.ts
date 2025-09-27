@@ -279,6 +279,14 @@ export class SummonPhase extends PartyMemberPokemonPhase {
 
     pokemon.resetTurnData();
 
+    if (this.checkSwitch) {
+      globalScene.phaseManager.pushNew(
+        "CheckSwitchPhase",
+        this.getPokemon().getFieldIndex(),
+        globalScene.currentBattle.double,
+      );
+    }
+
     if (
       !this.loaded
       || [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType)
@@ -290,13 +298,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   }
 
   queuePostSummon(): void {
-    if (this.checkSwitch) {
-      globalScene.phaseManager.pushNew(
-        "CheckSwitchPhase",
-        this.getPokemon().getFieldIndex(),
-        globalScene.currentBattle.double,
-      );
-    } else {
+    if (!this.checkSwitch) {
       globalScene.phaseManager.pushNew("PostSummonPhase", this.getPokemon().getBattlerIndex(), this.phaseName);
     }
 
