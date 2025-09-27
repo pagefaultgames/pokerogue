@@ -2447,7 +2447,7 @@ export class PokedexUiHandler extends MessageUiHandler {
     this.starterSelectContainer.setVisible(false);
     this.blockInput = false;
 
-    // sanitize exit callback so it does not leak into futrue calls
+    // sanitize exit callback so it does not leak into future calls
     const exitCallback = this.exitCallback;
     if (exitCallback != null) {
       this.exitCallback = undefined;
