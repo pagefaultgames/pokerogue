@@ -7129,7 +7129,7 @@ export class RepeatMoveAttr extends MoveEffectAttr {
     // TODO: There might be a better way of doing this...
     const targetEncore = target.getTag(BattlerTagType.ENCORE) as EncoreTag | undefined;
     if (targetEncore) {
-      targetEncore["turnCount"]++
+      targetEncore.turnCount++
     }
 
     globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:instructingMove", {
@@ -7137,7 +7137,7 @@ export class RepeatMoveAttr extends MoveEffectAttr {
       targetPokemonName: getPokemonNameWithAffix(target)
     }));
     target.turnData.extraTurns++;
-    globalScene.phaseManager.unshiftNew("MovePhase", target, moveTargets, movesetMove, MoveUseMode.NORMAL, MovePhaseTimingModifier.FIRST);
+    globalScene.phaseManager.unshiftNew("MovePhase", target, moveTargets, this.movesetMove, MoveUseMode.NORMAL, MovePhaseTimingModifier.FIRST);
     return true;
   }
 
@@ -7156,8 +7156,9 @@ export class RepeatMoveAttr extends MoveEffectAttr {
       ) {
         return false;
       }
+
       this.movesetMove = movesetMove;
-      this.lastMoveTargets = lastMove.targets
+      this.lastMoveTargets = lastMove.targets;
       return true;
     };
   }

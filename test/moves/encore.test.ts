@@ -12,7 +12,7 @@ import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("Moves - Encore", () => {
+describe("Move - Encore", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -29,7 +29,6 @@ describe("Moves - Encore", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([MoveId.SPLASH, MoveId.ENCORE])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .criticalHits(false)
@@ -42,23 +41,29 @@ describe("Moves - Encore", () => {
   it("should prevent the target from using any move except the last used move", async () => {
     await game.classicMode.startBattle([SpeciesId.SNORLAX]);
 
-    const enemy = game.field.getEnemyPokemon();
-
     game.move.use(MoveId.ENCORE);
-    await game.move.forceEnemyMove(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    expect(enemy).toHaveBattlerTag(BattlerTagType.ENCORE);
-    expect(enemy.isMoveRestricted(MoveId.TACKLE)).toBe(true);
-    expect(enemy.isMoveRestricted(MoveId.SPLASH)).toBe(false);
+    const karp = game.field.getEnemyPokemon();
+
+    expect(game).toHaveShownMessage(
+      i18next.t("battlerTags:encoreOnAdd", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(karp),
+      }),
+    );
+
+    expect(karp).toHaveBattlerTag({ tagType: BattlerTagType.ENCORE, moveId: MoveId.TACKLE });
+    expect(karp.isMoveRestricted(MoveId.SPLASH)).toBe(true);
+    expect(karp.isMoveRestricted(MoveId.TACKLE)).toBe(false);
   });
 
   it("should be removed on turn end after triggering thrice, ignoring Instruct", async () => {
     await game.classicMode.startBattle([SpeciesId.SNORLAX]);
 
-    const enemy = game.field.getEnemyPokemon();
-    enemy.pushMoveHistory({ move: MoveId.SPLASH, targets: [BattlerIndex.PLAYER], useMode: MoveUseMode.NORMAL });
+    const karp = game.field.getEnemyPokemon();
+    karp.pushMoveHistory({ move: MoveId.SPLASH, targets: [BattlerIndex.PLAYER], useMode: MoveUseMode.NORMAL });
 
     game.move.use(MoveId.ENCORE);
     await game.move.forceEnemyMove(MoveId.SPLASH);
@@ -66,49 +71,73 @@ describe("Moves - Encore", () => {
     await game.toNextTurn();
 
     // Should have ticked down once
-    expect(enemy).toHaveBattlerTag(BattlerTagType.ENCORE);
-    expect(enemy.getTag(BattlerTagType.ENCORE)!.turnCount).toBe(2);
+    expect(karp).toHaveBattlerTag({ tagType: BattlerTagType.ENCORE, turnCount: 2 });
 
     game.move.use(MoveId.INSTRUCT);
     await game.toNextTurn();
 
-    expect(enemy.getTag(BattlerTagType.ENCORE)!.turnCount).toBe(1);
+    expect(karp).toHaveBattlerTag({ tagType: BattlerTagType.ENCORE, turnCount: 1 });
 
     game.move.use(MoveId.INSTRUCT);
     await game.toEndOfTurn(false);
 
     // Tag should still be present until the `TurnEndPhase` ticks it down
-    expect(enemy).toHaveBattlerTag(BattlerTagType.ENCORE);
+    expect(karp).toHaveBattlerTag(BattlerTagType.ENCORE);
 
     await game.toNextTurn();
 
-    expect(enemy).not.toHaveBattlerTag(BattlerTagType.ENCORE);
-    expect(game.textInterceptor.logs).toContain(
+    expect(karp).not.toHaveBattlerTag(BattlerTagType.ENCORE);
+    expect(game).toHaveShownMessage(
       i18next.t("battlerTags:encoreOnRemove", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(enemy),
+        pokemonNameWithAffix: getPokemonNameWithAffix(karp),
       }),
     );
   });
 
-  it("should override any upcoming moves with the Encored move, while still consuming PP", async () => {
+  it("should override the target's upcoming move with the Encored move while still consuming PP", async () => {
     await game.classicMode.startBattle([SpeciesId.SNORLAX]);
 
     // Fake enemy having used tackle the turn prior
+    const karp = game.field.getEnemyPokemon();
+    game.move.changeMoveset(karp, [MoveId.SPLASH, MoveId.TACKLE]);
+    karp.pushMoveHistory({ move: MoveId.TACKLE, targets: [BattlerIndex.PLAYER], useMode: MoveUseMode.NORMAL });
+
+    game.move.use(MoveId.ENCORE);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.toEndOfTurn();
+
+    // Encore overrode the selected Splash with a tackle
+    expect(karp).toHaveUsedMove({ move: MoveId.TACKLE, targets: [BattlerIndex.PLAYER], useMode: MoveUseMode.NORMAL });
+    expect(karp).toHaveUsedPP(MoveId.TACKLE, 1);
+  });
+
+  // TODO: Write test
+  it.todo("should choose targets for overridden move randomly if multiple are eligible");
+
+  // TODO: Write test
+  it.todo("should always target self for Acupressure");
+
+  it("should be removed at turn end if target lacks the Encored move", async () => {
+    await game.classicMode.startBattle([SpeciesId.SNORLAX]);
+
+    // Lock the enemy into Encore before removing it from their moveset on turn end.
     const enemy = game.field.getEnemyPokemon();
     game.move.changeMoveset(enemy, [MoveId.SPLASH, MoveId.TACKLE]);
     enemy.pushMoveHistory({ move: MoveId.TACKLE, targets: [BattlerIndex.PLAYER], useMode: MoveUseMode.NORMAL });
 
     game.move.use(MoveId.ENCORE);
-    await game.move.selectEnemyMove(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.toNextTurn();
+    await game.toEndOfTurn(false);
 
-    expect(enemy).toHaveUsedMove({ move: MoveId.TACKLE, targets: [BattlerIndex.PLAYER], useMode: MoveUseMode.NORMAL });
-    expect(enemy).toHaveUsedPP(MoveId.TACKLE, 1);
+    expect(enemy).toHaveBattlerTag({ tagType: BattlerTagType.ENCORE, moveId: MoveId.TACKLE });
+
+    game.move.changeMoveset(enemy, [MoveId.SPLASH]);
+    await game.toEndOfTurn();
+
+    expect(enemy).not.toHaveBattlerTag(BattlerTagType.ENCORE);
   });
-
-  // TODO: Make test using `changeMoveset`
-  it.todo("should end at turn end if the user forgets the Encored move");
 
   it("should be removed at turn end if the Encored move runs out of PP", async () => {
     await game.classicMode.startBattle([SpeciesId.SNORLAX]);
@@ -125,7 +154,7 @@ describe("Moves - Encore", () => {
     await game.toNextTurn();
 
     expect(enemy).toHaveUsedMove({ move: MoveId.TACKLE, targets: [BattlerIndex.PLAYER], useMode: MoveUseMode.NORMAL });
-    expect(enemy).toHaveUsedPP(MoveId.TACKLE, enemy.moveset[1].getMovePp() - 1);
+    expect(enemy).toHaveUsedPP(MoveId.TACKLE, -1);
     expect(enemy).toHaveBattlerTag(BattlerTagType.ENCORE);
 
     game.move.use(MoveId.SPLASH);
@@ -144,13 +173,15 @@ describe("Moves - Encore", () => {
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
+    game.move.changeMoveset(enemy, [move, MoveId.SPLASH]);
     enemy.pushMoveHistory({ move, targets: [BattlerIndex.PLAYER], useMode: MoveUseMode.NORMAL });
 
     game.move.use(MoveId.ENCORE);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
-    expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
+    expect(player).toHaveUsedMove({ move: MoveId.ENCORE, result: MoveResult.FAIL });
     expect(enemy).not.toHaveBattlerTag(BattlerTagType.ENCORE);
   });
 
@@ -164,7 +195,7 @@ describe("Moves - Encore", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
-    expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
+    expect(player).toHaveUsedMove({ move: MoveId.ENCORE, result: MoveResult.FAIL });
     expect(enemy).not.toHaveBattlerTag(BattlerTagType.ENCORE);
   });
 
@@ -181,7 +212,6 @@ describe("Moves - Encore", () => {
     expect(enemy).toHaveBattlerTag(BattlerTagType.ENCORE);
 
     game.move.use(MoveId.TORMENT);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(enemy).toHaveBattlerTag(BattlerTagType.ENCORE);

@@ -34,6 +34,13 @@ export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase>
     }
   }
 
+  public setTargetsForPhase(condition: PhaseConditionFunc<"MovePhase">, targets: BattlerIndex[]) {
+    const phase = this.queue.find(condition);
+    if (phase != null) {
+      phase["targets"] = targets;
+    }
+  }
+
   public redirectMoves(removedPokemon: Pokemon, allyPokemon: Pokemon): void {
     // failsafe: if not a double battle just return
     if (!globalScene.currentBattle.double) {

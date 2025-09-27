@@ -1280,19 +1280,14 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
 
     // If the target has not moved yet,
     // replace their upcoming move with the encored move against randomized targets
-    const movePhase = globalScene.phaseManager.getMovePhase(m => m.pokemon === pokemon);
-    if (!movePhase) {
-      return;
-    }
 
-    // Use the prior move in the moveset.
     // Bang is justified as `canAdd` returns `false` if not found
     const movesetMove = pokemon.getMoveset().find(m => m.moveId === this.moveId && !m.isOutOfPp())!;
 
-    // TODO: Resolve this after the move failure PR to occur during the start of the MP -
+    // TODO: Change this after the move failure PR to occur during the start of the MP -
     // after sleep but before all usability checks
-    movePhase.move = movesetMove;
-    movePhase["targets"] = this.getTargets(pokemon);
+    globalScene.phaseManager.changePhaseMove(p => p.pokemon === pokemon, movesetMove);
+    globalScene.phaseManager.changePhaseTargets(p => p.pokemon === pokemon, this.getTargets(pokemon));
   }
 
   private getTargets(pokemon: Pokemon): BattlerIndex[] {
@@ -1318,8 +1313,8 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
       return true;
     }
 
-    const encoredMove = pokemon.getMoveset().find(m => m.moveId === this.moveId && !m.isOutOfPp());
-    return encoredMove && this.turnCount > 0;
+    const hasEncoredMove = pokemon.getMoveset().some(m => m.moveId === this.moveId && !m.isOutOfPp());
+    return hasEncoredMove && this.turnCount > 0;
   }
 
   public override isMoveRestricted(move: MoveId): boolean {
@@ -3749,7 +3744,7 @@ export function getBattlerTag(
     case BattlerTagType.AQUA_RING:
       return new AquaRingTag();
     case BattlerTagType.DROWSY:
-      return new DrowsyTag(sourceId);
+      return new DrowsyTag();
     case BattlerTagType.TRAPPED:
       return new TrappedTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
     case BattlerTagType.NO_RETREAT:
