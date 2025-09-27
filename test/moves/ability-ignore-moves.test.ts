@@ -23,7 +23,6 @@ describe("Moves - Ability-Ignoring Moves", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([MoveId.MOONGEIST_BEAM, MoveId.SUNSTEEL_STRIKE, MoveId.PHOTON_GEYSER, MoveId.METRONOME])
       .ability(AbilityId.BALL_FETCH)
       .startingLevel(200)
       .battleStyle("single")
@@ -43,25 +42,26 @@ describe("Moves - Ability-Ignoring Moves", () => {
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
 
-    game.move.select(move);
+    game.move.use(move);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(game.scene.arena.ignoreAbilities).toBe(true);
     expect(game.scene.arena.ignoringEffectSource).toBe(player.getBattlerIndex());
 
     await game.toEndOfTurn();
+
     expect(game.scene.arena.ignoreAbilities).toBe(false);
     expect(enemy.isFainted()).toBe(true);
   });
 
   it("should not ignore enemy abilities when called by Metronome", async () => {
-    await game.classicMode.startBattle([SpeciesId.MILOTIC]);
     game.move.forceMetronomeMove(MoveId.PHOTON_GEYSER, true);
+    await game.classicMode.startBattle([SpeciesId.MILOTIC]);
 
-    const enemy = game.field.getEnemyPokemon();
-    game.move.select(MoveId.METRONOME);
+    game.move.use(MoveId.METRONOME);
     await game.toEndOfTurn();
 
+    const enemy = game.field.getEnemyPokemon();
     expect(enemy.isFainted()).toBe(false);
     expect(game.field.getPlayerPokemon().getLastXMoves()[0].move).toBe(MoveId.PHOTON_GEYSER);
   });

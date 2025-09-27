@@ -135,7 +135,7 @@ describe("Moves - Entry Hazards", () => {
 
       const enemy = game.field.getEnemyPokemon();
       expect(enemy).toHaveTakenDamage((enemy.getMaxHp() * damage) / 100);
-      expect(game.textInterceptor.logs).toContain(
+      expect(game).toHaveShownMessage(
         i18next.t("arenaTag:spikesActivateTrap", {
           pokemonNameWithAffix: getPokemonNameWithAffix(enemy),
         }),
@@ -198,7 +198,7 @@ describe("Moves - Entry Hazards", () => {
       const enemy = game.field.getEnemyPokemon();
       expect(enemy.getAttackTypeEffectiveness(PokemonType.ROCK, undefined, true)).toBe(multi);
       expect(enemy).toHaveTakenDamage(enemy.getMaxHp() * 0.125 * multi);
-      expect(game.textInterceptor.logs).toContain(
+      expect(game).toHaveShownMessage(
         i18next.t("arenaTag:stealthRockActivateTrap", {
           pokemonNameWithAffix: getPokemonNameWithAffix(enemy),
         }),
@@ -223,7 +223,7 @@ describe("Moves - Entry Hazards", () => {
 
       const enemy = game.field.getEnemyPokemon();
       expect(enemy).toHaveStatStage(Stat.SPD, -1);
-      expect(game.textInterceptor.logs).toContain(
+      expect(game).toHaveShownMessage(
         i18next.t("arenaTag:stickyWebActivateTrap", {
           pokemonName: enemy.getNameToRender(),
         }),
