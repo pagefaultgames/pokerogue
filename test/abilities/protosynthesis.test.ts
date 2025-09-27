@@ -97,7 +97,6 @@ describe("Abilities - Protosynthesis", () => {
       true,
     );
     game.move.select(MoveId.TACKLE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
     const boosted_dmg = initialHp - enemy.hp;
     expect(boosted_dmg).toBeGreaterThan(unboosted_dmg);

@@ -135,14 +135,17 @@ export function randSeedItem<T>(items: T[]): T {
 
 /**
  * Shuffle a list using the seeded rng. Utilises the Fisher-Yates algorithm.
- * @param items An array of items.
+ * @param items - The array of items to shuffle
+ * @param mutate - Whether to mutate the array in place (`true`) or create a new one
+ * (`false`); default `false`
  * @returns A new shuffled array of items.
  */
-export function randSeedShuffle<T>(items: T[]): T[] {
+export function randSeedShuffle<T>(items: T[], mutate = false): T[] {
   if (items.length <= 1) {
     return items;
   }
-  const newArray = items.slice(0);
+
+  const newArray = mutate ? items.slice(0) : items;
   for (let i = items.length - 1; i > 0; i--) {
     const j = Phaser.Math.RND.integerInRange(0, i);
     [newArray[i], newArray[j]] = [newArray[j], newArray[i]];

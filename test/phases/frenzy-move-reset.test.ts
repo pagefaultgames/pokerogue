@@ -62,7 +62,6 @@ describe("Frenzy Move Reset", () => {
     expect(playerPokemon.summonData.moveQueue.length).toBe(2);
     expect(playerPokemon.summonData.tags.some(tag => tag.tagType === BattlerTagType.FRENZY)).toBe(true);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceStatusActivation(true);
     await game.toNextTurn();
 

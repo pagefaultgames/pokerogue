@@ -54,7 +54,7 @@ describe("Move - Wish", () => {
     game.doSwitchPokemon(1);
     await game.toEndOfTurn();
 
-    expect(game).toHavePositionalTag(PositionalTagType.WISH, 0);
+    expect(game).not.toHavePositionalTag(PositionalTagType.WISH);
     expect(game).toHaveShownMessage(
       i18next.t("arenaTag:wishTagOnAdd", {
         pokemonNameWithAffix: getPokemonNameWithAffix(alomomola),
@@ -68,37 +68,54 @@ describe("Move - Wish", () => {
     await game.classicMode.startBattle([SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY]);
 
     const alomomola = game.field.getPlayerPokemon();
-    alomomola.hp = 1;
 
     game.move.use(MoveId.WISH);
     await game.toNextTurn();
 
-    expect(game).toHavePositionalTag(PositionalTagType.WISH);
+    expect(alomomola).toHaveUsedMove({ move: MoveId.WISH, result: MoveResult.SUCCESS });
 
     game.move.use(MoveId.WISH);
     await game.toEndOfTurn();
 
-    expect(alomomola.hp).toBe(toDmgValue(alomomola.getMaxHp() / 2) + 1);
-    expect(alomomola).toHaveUsedMove({ result: MoveResult.FAIL });
+    expect(alomomola).toHaveUsedMove({ move: MoveId.WISH, result: MoveResult.FAIL });
   });
 
   it("should function independently of Future Sight", async () => {
     await game.classicMode.startBattle([SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY]);
 
-    const [alomomola, blissey] = game.scene.getPlayerParty();
-    alomomola.hp = 1;
-    blissey.hp = 1;
-
     game.move.use(MoveId.WISH);
     await game.move.forceEnemyMove(MoveId.FUTURE_SIGHT);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(game).toHavePositionalTag(PositionalTagType.WISH);
     expect(game).toHavePositionalTag(PositionalTagType.DELAYED_ATTACK);
   });
 
-  it("should work in double battles and trigger in order of creation", async () => {
+  it("should work in double battles", async () => {
+    game.override.battleStyle("double");
+    await game.classicMode.startBattle([SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY]);
+
+    const [alomomola, blissey] = game.scene.getPlayerField();
+    alomomola.hp = 1;
+    blissey.hp = 1;
+
+    game.move.use(MoveId.WISH, BattlerIndex.PLAYER);
+    game.move.use(MoveId.WISH, BattlerIndex.PLAYER_2);
+    await game.toNextTurn();
+
+    expect(game).toHavePositionalTag(PositionalTagType.WISH, 2);
+
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    await game.toEndOfTurn();
+
+    expect(game).not.toHavePositionalTag(PositionalTagType.WISH);
+
+    expect(alomomola).toHaveHp(toDmgValue(alomomola.getMaxHp() / 2) + 1);
+    expect(blissey).toHaveHp(toDmgValue(blissey.getMaxHp() / 2) + 1);
+  });
+
+  it("should trigger in order of creation, even if that order changes later on", async () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY]);
 
@@ -109,14 +126,14 @@ describe("Move - Wish", () => {
     vi.spyOn(karp1, "getNameToRender").mockReturnValue("Karp 1");
     vi.spyOn(karp2, "getNameToRender").mockReturnValue("Karp 2");
 
-    const oldOrder = game.field.getSpeedOrder();
+    const oldOrder = game.field.getSpeedOrder(true);
 
     game.move.use(MoveId.WISH, BattlerIndex.PLAYER);
     game.move.use(MoveId.WISH, BattlerIndex.PLAYER_2);
     await game.move.forceEnemyMove(MoveId.WISH);
     await game.move.forceEnemyMove(MoveId.WISH);
     // Ensure that the wishes are used deterministically in speed order (for speed ties)
-    await game.setTurnOrder(oldOrder.map(p => p.getBattlerIndex()));
+    game.setTurnOrder(oldOrder);
     await game.toNextTurn();
 
     expect(game).toHavePositionalTag(PositionalTagType.WISH, 4);
@@ -125,51 +142,47 @@ describe("Move - Wish", () => {
     alomomola.setStatStage(Stat.SPD, 6);
     blissey.setStatStage(Stat.SPD, -6);
 
-    const newOrder = game.field.getSpeedOrder();
+    const newOrder = game.field.getSpeedOrder(true);
     expect(newOrder).not.toEqual(oldOrder);
+    game.setTurnOrder(newOrder);
 
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("PositionalTagPhase");
 
     // all wishes have activated and added healing phases
-    expect(game).toHavePositionalTag(PositionalTagType.WISH, 0);
+    expect(game).not.toHavePositionalTag(PositionalTagType.WISH);
 
     const healPhases = game.scene.phaseManager["phaseQueue"].findAll("PokemonHealPhase");
     expect(healPhases).toHaveLength(4);
-    expect.soft(healPhases.map(php => php.getPokemon())).toEqual(oldOrder);
-
-    await game.toEndOfTurn();
-
-    expect(alomomola.hp).toBe(toDmgValue(alomomola.getMaxHp() / 2) + 1);
-    expect(blissey.hp).toBe(toDmgValue(blissey.getMaxHp() / 2) + 1);
+    expect(
+      healPhases.map(php => php.getPokemon().getBattlerIndex(), "Wishes were not queued in correct order!"),
+    ).toEqual(oldOrder);
   });
 
   it("should vanish and not play message if slot is empty", async () => {
-    game.override.battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY]);
 
     const [alomomola, blissey] = game.scene.getPlayerParty();
     alomomola.hp = 1;
     blissey.hp = 1;
 
-    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
-    game.move.use(MoveId.WISH, BattlerIndex.PLAYER_2);
+    game.move.use(MoveId.WISH);
     await game.toNextTurn();
 
     expect(game).toHavePositionalTag(PositionalTagType.WISH);
 
-    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
-    game.move.use(MoveId.MEMENTO, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2);
+    game.move.use(MoveId.MEMENTO);
     await game.toEndOfTurn();
 
     // Wish went away without doing anything
-    expect(game).toHavePositionalTag(PositionalTagType.WISH, 0);
+    expect(game).not.toHavePositionalTag(PositionalTagType.WISH);
     expect(game).not.toHaveShownMessage(
       i18next.t("arenaTag:wishTagOnAdd", {
         pokemonNameWithAffix: getPokemonNameWithAffix(blissey),
       }),
     );
-    expect(alomomola.hp).toBe(1);
+    expect(alomomola).toHaveFainted();
+    expect(blissey).toHaveHp(1);
   });
 });

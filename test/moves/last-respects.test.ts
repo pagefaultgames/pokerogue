@@ -59,7 +59,6 @@ describe("Moves - Last Respects", () => {
      * Charmander faints once
      */
     game.move.select(MoveId.EXPLOSION);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     game.doSelectPartyPokemon(2);
     await game.toNextTurn();
 
@@ -86,7 +85,6 @@ describe("Moves - Last Respects", () => {
      */
     game.doRevivePokemon(1);
     game.move.select(MoveId.EXPLOSION);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
 
@@ -99,7 +97,6 @@ describe("Moves - Last Respects", () => {
     await game.toNextTurn();
 
     game.move.select(MoveId.LAST_RESPECTS);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(move.calculateBattlePower).toHaveReturnedWith(basePower + 3 * 50);
@@ -127,7 +124,6 @@ describe("Moves - Last Respects", () => {
      * Enemy Pokemon faints and new wave is entered.
      */
     game.move.select(MoveId.LAST_RESPECTS);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextWave();
     expect(game.scene.arena.playerFaints).toBe(1);
 
@@ -160,7 +156,6 @@ describe("Moves - Last Respects", () => {
      * Enemy Pokemon faints and new wave is entered.
      */
     game.move.select(MoveId.LAST_RESPECTS);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextWave();
     expect(game.scene.currentBattle.enemyFaints).toBe(0);
 
@@ -184,7 +179,6 @@ describe("Moves - Last Respects", () => {
     await game.toNextTurn();
 
     game.move.select(MoveId.LAST_RESPECTS);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextWave();
 
     game.move.select(MoveId.LAST_RESPECTS);
@@ -205,7 +199,6 @@ describe("Moves - Last Respects", () => {
     await game.toNextTurn();
 
     game.move.select(MoveId.LAST_RESPECTS);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextWave();
 
     game.move.select(MoveId.LAST_RESPECTS);

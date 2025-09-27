@@ -111,7 +111,6 @@ describe("Moves - Baton Pass", () => {
     expect(enemy.getTag(BattlerTagType.FIRE_SPIN)).toBeDefined();
 
     game.move.select(MoveId.BATON_PASS);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
