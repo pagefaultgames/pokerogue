@@ -1,9 +1,10 @@
 import type { MoveCategory } from "#enums/move-category";
 import type { Pokemon } from "#field/pokemon";
-import type { Move } from "#types/move-types";
+// biome-ignore lint/correctness/noUnusedImports: TSDoc
+import type { Move, VariableMoveTypeChartAttr } from "#types/move-types";
 
 /**
- * Collection of types for methods like {@linkcode Pokemon#getBaseDamage} and {@linkcode Pokemon#getAttackDamage}.
+ * Collection of types for methods like {@linkcode Pokemon.getBaseDamage} and {@linkcode Pokemon.getAttackDamage}.
  * @module
  */
 
@@ -32,13 +33,45 @@ export interface damageParams {
 }
 
 /**
- * Type for the parameters of {@linkcode Pokemon#getBaseDamage | getBaseDamage}
+ * Type for the parameters of {@linkcode Pokemon#=.getBaseDamage | getBaseDamage}
  * @interface
  */
 export type getBaseDamageParams = Omit<damageParams, "effectiveness">;
 
 /**
- * Type for the parameters of {@linkcode Pokemon#getAttackDamage | getAttackDamage}
+ * Type for the parameters of {@linkcode Pokemon#=.getAttackDamage | getAttackDamage}
  * @interface
  */
 export type getAttackDamageParams = Omit<damageParams, "moveCategory">;
+
+/**
+ * Type for the parameters of {@linkcode Pokemon.getAttackTypeEffectiveness | getAttackTypeEffectiveness}
+ * and associated helper functions.
+ */
+export interface getAttackTypeEffectivenessParams {
+  /**
+   * The {@linkcode Pokemon} using the move, used to check the user's Scrappy and Mind's Eye abilities
+   * and the effects of Foresight/Odor Sleuth.
+   */
+  source?: Pokemon;
+  /**
+   * If `true`, ignores the effect of strong winds (used by anticipation, forewarn, stealth rocks)
+   * @defaultValue `false`
+   */
+  ignoreStrongWinds?: boolean;
+  /**
+   * If `true`, will prevent changes to game state during calculations.
+   * @defaultValue `false`
+   */
+  simulated?: boolean;
+  /**
+   * The {@linkcode Move} whose type effectiveness is being checked.
+   * Used for applying {@linkcode VariableMoveTypeChartAttr}
+   */
+  move?: Move;
+  /**
+   * Whether to consider this Pokemon's {@linkcode IllusionData | illusion} when determining types.
+   * @defaultValue `false`
+   */
+  useIllusion?: boolean;
+}
