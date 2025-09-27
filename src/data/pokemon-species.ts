@@ -1009,7 +1009,11 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
           Math.min(
             Math.max(
               evolution?.level!
-                + Math.round(randSeedGauss(0.5, 1 + levelDiff * 0.2) * Math.max(evolution?.evoLevelThreshold!, 0.5) * 5)
+                + Math.round(
+                  randSeedGauss(0.5, 1 + levelDiff * 0.2)
+                    * Math.max(evolution?.evoLevelThreshold?.[EvoLevelThresholdKind.WILD] ?? 0, 0.5)
+                    * 5,
+                )
                 - 1,
               2,
               evolution?.level!,
@@ -1025,7 +1029,11 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
         Math.min(
           Math.max(
             lastPrevolutionLevel
-              + Math.round(randSeedGauss(0.5, 1 + levelDiff * 0.2) * Math.max(evolution?.evoLevelThreshold!, 0.5) * 5),
+              + Math.round(
+                randSeedGauss(0.5, 1 + levelDiff * 0.2)
+                  * Math.max(evolution?.evoLevelThreshold?.[EvoLevelThresholdKind.WILD] ?? 0, 0.5)
+                  * 5,
+              ),
             lastPrevolutionLevel + 1,
             evolution?.level!,
           ),
