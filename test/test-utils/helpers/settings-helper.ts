@@ -1,53 +1,81 @@
 import { SETTINGS_COLOR } from "#app/constants/colors";
 import { BattleStyle } from "#enums/battle-style";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
+import { ExpNotification } from "#enums/exp-notification";
 import { PlayerGender } from "#enums/player-gender";
+import type { GameManager } from "#test/test-utils/game-manager";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
+import { getEnumStr } from "#test/test-utils/string-utils";
 import chalk from "chalk";
 
 /**
- * Helper to handle settings for tests
+ * Helper to handle changing game settings for tests.
  */
 export class SettingsHelper extends GameManagerHelper {
-  private _battleStyle: BattleStyle = BattleStyle.SET;
+  constructor(game: GameManager) {
+    super(game);
 
-  get battleStyle(): BattleStyle {
-    return this._battleStyle;
+    this.initDefaultSettings();
   }
 
   /**
-   * Change the battle style to Switch or Set mode (tests default to {@linkcode BattleStyle.SET})
-   * @param mode {@linkcode BattleStyle.SWITCH} or {@linkcode BattleStyle.SET}
+   * Initialize default settings upon starting a new test case.
    */
-  set battleStyle(mode: BattleStyle.SWITCH | BattleStyle.SET) {
-    this._battleStyle = mode;
+  private initDefaultSettings(): void {
+    this.game.scene.gameSpeed = 5;
+    this.game.scene.moveAnimations = false;
+    this.game.scene.showLevelUpStats = false;
+    this.game.scene.expGainsSpeed = ExpGainsSpeed.SKIP;
+    this.game.scene.expParty = ExpNotification.SKIP;
+    this.game.scene.hpBarSpeed = 3;
+    this.game.scene.enableTutorials = false;
+    this.game.scene.battleStyle = BattleStyle.SET;
+    this.game.scene.gameData.gender = PlayerGender.MALE; // set initial player gender;
+    this.game.scene.fieldVolume = 0;
   }
 
   /**
-   * Disable/Enable type hints settings
-   * @param enable true to enabled, false to disabled
+   * Change the current {@linkcode BattleStyle}.
+   * @param style - The `BattleStyle` to set
+   * @returns `this`
    */
-  typeHints(enable: boolean): void {
+  public battleStyle(style: BattleStyle): this {
+    this.game.scene.battleStyle = style;
+    this.log(`Battle Style set to ${getEnumStr(BattleStyle, style)}!`);
+    return this;
+  }
+
+  /**
+   * Toggle the availability of type hints.
+   * @param enable - Whether to enable or disable type hints
+   * @returns `this`
+   */
+  public typeHints(enable: boolean): this {
     this.game.scene.typeHints = enable;
-    this.log(`Type Hints ${enable ? "enabled" : "disabled"}`);
+    this.log(`Type Hints ${enable ? "enabled" : "disabled"}!`);
+    return this;
   }
 
   /**
-   * Change the player gender
-   * @param gender the {@linkcode PlayerGender} to set
+   * Change the player character's selected gender.
+   * @param gender - The {@linkcode PlayerGender} to set
+   * @returns `this`
    */
-  playerGender(gender: PlayerGender) {
+  public playerGender(gender: PlayerGender): this {
     this.game.scene.gameData.gender = gender;
-    this.log(`Gender set to: ${PlayerGender[gender]} (=${gender})`);
+    this.log(`Gender set to ${getEnumStr(PlayerGender, gender)}!`);
+    return this;
   }
 
   /**
-   * Change the exp gains speed
-   * @param speed the {@linkcode ExpGainsSpeed} to set
+   * Change the current {@linkcode ExpGainsSpeed}.
+   * @param speed - The speed to set
+   * @returns `this`
    */
-  expGainsSpeed(speed: ExpGainsSpeed) {
+  public expGainsSpeed(speed: ExpGainsSpeed): this {
     this.game.scene.expGainsSpeed = speed;
-    this.log(`Exp Gains Speed set to: ${ExpGainsSpeed[speed]} (=${speed})`);
+    this.log(`EXP Gain bar speed set to ${getEnumStr(ExpGainsSpeed, speed)}!`);
+    return this;
   }
 
   private log(...params: any[]) {

@@ -102,7 +102,7 @@ describe("Abilities - Good As Gold", () => {
 
     game.move.select(MoveId.HELPING_HAND, 0);
     game.move.select(MoveId.TACKLE, 1);
-    await game.phaseInterceptor.to("MoveEndPhase", true);
+    await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(game.scene.getPlayerField()[1].getTag(BattlerTagType.HELPING_HAND)).toBeUndefined();
   });
