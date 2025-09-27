@@ -15,6 +15,7 @@ import type { PositionalTagType } from "#enums/positional-tag-type";
 import type { BattleStat, EffectiveStat } from "#enums/stat";
 import type { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
+import type { PokemonMove } from "#moves/pokemon-move";
 import type { GameManager } from "#test/test-utils/game-manager";
 import type { toHaveArenaTagOptions } from "#test/test-utils/matchers/to-have-arena-tag";
 import type { toHaveBattlerTagOptions } from "#test/test-utils/matchers/to-have-battler-tag";
@@ -201,8 +202,9 @@ interface PokemonMatchers {
   /**
    * Check whether a {@linkcode Pokemon} has a specific amount of {@linkcode Stat.HP | HP}.
    * @param expectedHp - The expected amount of {@linkcode Stat.HP | HP} to have
+   * @param roundDown - Whether to round down {@linkcode expectedDamageTaken} with {@linkcode toDmgValue}; default `true`
    */
-  toHaveHp(expectedHp: number): void;
+  toHaveHp(expectedHp: number, roundDown?: boolean): void;
 
   /**
    * Check whether a {@linkcode Pokemon} has taken a specific amount of damage.
