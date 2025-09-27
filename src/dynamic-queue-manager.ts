@@ -123,6 +123,15 @@ export class DynamicQueueManager {
   }
 
   /**
+   * Find and change the targets of the first {@linkcode MovePhase} meeting the given condition.
+   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function used to retrieve the phase
+   * @param targets - An array of `BattlerIndex`es to use as targets
+   */
+  public setTargetsForPhase(condition: PhaseConditionFunc<"MovePhase">, targets: BattlerIndex[]): void {
+    this.getMovePhaseQueue().setTargetsForPhase(condition, targets);
+  }
+
+  /**
    * Redirects moves which were targeted at a {@linkcode Pokemon} that has been removed
    * @param removedPokemon - The removed {@linkcode Pokemon}
    * @param allyPokemon - The ally of the removed pokemon

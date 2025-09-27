@@ -11,7 +11,6 @@ import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { BattlerTagDataMap, SerializableBattlerTagType } from "#types/battler-tags";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
-// intersection required to preserve T for inferences
 /**
  * Options type for {@linkcode toHaveBattlerTag}.
  * @typeParam B - The {@linkcode BattlerTagType} being checked
@@ -21,7 +20,8 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  */
 export type toHaveBattlerTagOptions<B extends BattlerTagType> = (B extends SerializableBattlerTagType
   ? OneOther<BattlerTagDataMap[B], "tagType">
-  : OneOther<BattlerTagTypeMap[B], "tagType">) & {
+  : // intersection required to preserve B for inferences
+    OneOther<BattlerTagTypeMap[B], "tagType">) & {
   tagType: B;
 };
 

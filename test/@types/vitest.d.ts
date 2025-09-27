@@ -3,6 +3,7 @@ import "vitest";
 import type Overrides from "#app/overrides";
 import type { Phase } from "#app/phase";
 import type { ArenaTag } from "#data/arena-tag";
+import type { PositionalTag } from "#data/positional-tags/positional-tag";
 import type { TerrainType } from "#data/terrain";
 import type { AbilityId } from "#enums/ability-id";
 import type { ArenaTagSide } from "#enums/arena-tag-side";
@@ -10,11 +11,11 @@ import type { ArenaTagType } from "#enums/arena-tag-type";
 import type { BattlerTagType } from "#enums/battler-tag-type";
 import type { MoveId } from "#enums/move-id";
 import type { PokemonType } from "#enums/pokemon-type";
-import type { PositionalTag } from "#data/positional-tags/positional-tag";
 import type { PositionalTagType } from "#enums/positional-tag-type";
 import type { BattleStat, EffectiveStat } from "#enums/stat";
 import type { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
+import type { PokemonMove } from "#moves/pokemon-move";
 import type { GameManager } from "#test/test-utils/game-manager";
 import type { toHaveArenaTagOptions } from "#test/test-utils/matchers/to-have-arena-tag";
 import type { toHaveBattlerTagOptions } from "#test/test-utils/matchers/to-have-battler-tag";
@@ -34,7 +35,19 @@ declare module "vitest" {
     extends GenericMatchers<T>,
       RestrictMatcher<GameManagerMatchers, T, GameManager>,
       RestrictMatcher<ArenaMatchers, T, GameManager>,
-      RestrictMatcher<PokemonMatchers, T, Pokemon> {}
+      RestrictMatcher<PokemonMatchers, T, Pokemon> {
+    /**
+     * Invert a matcher's conditions, causing it to error whenever it would normally succeed
+     * (and vice versa).
+     * @privateRemarks
+     * Matchers with custom "invalid" conditions can (and should) ignore this in case of invalid input.
+     * @example
+     * ```ts
+     * expect(1).not.toBe(2);
+     * ```
+     */
+    not: Assertion<T>;
+  }
 }
 
 /**
@@ -154,6 +167,8 @@ interface PokemonMatchers {
    * @param index - The index of the move history entry to check, in order from most recent to least recent; default `0`
    * @see {@linkcode Pokemon.getLastXMoves}
    */
+  // TODO: Change typing to MoveId | OneOther<TurnMove, "move">
+  // to force callers to check the move being used as well
   toHaveUsedMove(expectedMove: MoveId | AtLeastOne<TurnMove>, index?: number): void;
 
   /**
@@ -228,7 +243,8 @@ interface PokemonMatchers {
    * Check whether a {@linkcode Pokemon} has consumed the given amount of PP for one of its moves.
    * @param moveId - The {@linkcode MoveId} corresponding to the {@linkcode PokemonMove} that should have consumed PP
    * @param ppUsed - The numerical amount of PP that should have been consumed,
-   * or `all` to indicate the move should be _out_ of PP
+   * or `all` to check that the move is _out_ of PP.
+   * Negative values will count backwards from the move's maximum PP.
    * @remarks
    * If the Pokemon's moveset has been set via {@linkcode Overrides.MOVESET_OVERRIDE}/{@linkcode Overrides.ENEMY_MOVESET_OVERRIDE}
    * or does not contain exactly one copy of `moveId`, this will fail the test.

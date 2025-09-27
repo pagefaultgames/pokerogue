@@ -3532,6 +3532,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Calculates the damage of an attack made by another Pokemon against this Pokemon
    * @param __namedParameters.source - Needed for proper typedoc rendering
    * @returns The {@linkcode DamageCalculationResult}
+   * @todo Condense various multipliers into a single function
    */
   getAttackDamage({
     source,
@@ -4089,6 +4090,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       : this.summonData.tags.find(t => t.tagType === tagType);
   }
 
+  findTag<T extends BattlerTag>(tagFilter: (tag: BattlerTag) => tag is T): T | undefined;
+  findTag(tagFilter: (tag: BattlerTag) => boolean): BattlerTag | undefined;
   /**
    * Find the first `BattlerTag` matching the specified predicate
    * @remarks
@@ -4299,8 +4302,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Return this Pokemon's move history.
-   * Entries are sorted in order of OLDEST to NEWEST
-   * @returns An array of {@linkcode TurnMove}, as described above.
+   * Entries are sorted in order of OLDEST to NEWEST.
+   * @returns An array of {@linkcode TurnMove}s, as described above.
    * @see {@linkcode getLastXMoves}
    */
   public getMoveHistory(): TurnMove[] {
@@ -4308,9 +4311,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Add a new entry to this Pokemon's move history
-   * @remarks
-   * Does nothing if this Pokemon is not currently on the field.
+   * Add a move to the end of this {@linkcode Pokemon}'s move history,
+   * used to record its most recently executed actions.
    * @param turnMove - The move to add to the history
    */
   public pushMoveHistory(turnMove: TurnMove): void {
