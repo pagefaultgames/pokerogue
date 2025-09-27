@@ -56,13 +56,13 @@ export class AdminUiHandler extends FormModalUiHandler {
   override getButtonLabels(): string[] {
     switch (this.adminMode) {
       case AdminMode.LINK:
-        return ["Link Account", "Cancel", "     ", "       "];
+        return ["Link Account", "Cancel", "", ""];
       case AdminMode.SEARCH:
-        return ["Find account", "Cancel", "     ", "       "];
+        return ["Find account", "Cancel", "", ""];
       case AdminMode.ADMIN:
         return ["Back to search", "Cancel", "Stats", "Pokedex"];
       default:
-        return ["Activate ADMIN", "Cancel", "        ", "           "];
+        return ["Activate ADMIN", "Cancel", "Stats", "Pokedex"];
     }
   }
 
