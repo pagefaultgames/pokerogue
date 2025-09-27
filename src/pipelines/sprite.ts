@@ -27,7 +27,7 @@ export class SpritePipeline extends FieldSpritePipeline {
 
     this.set1f("teraTime", 0);
     this.set3fv("teraColor", [0, 0, 0]);
-    this.set1i("hasShadow", 0);
+    this.setBoolean("hasShadow", false);
     this.set1i("yCenter", 0);
     this.set2f("relPosition", 0, 0);
     this.set2f("texFrameUv", 0, 0);
@@ -73,7 +73,7 @@ export class SpritePipeline extends FieldSpritePipeline {
       "teraColor",
       teraColor.map(c => c / 255),
     );
-    this.set1i("hasShadow", hasShadow ? 1 : 0);
+    this.setBoolean("hasShadow", hasShadow);
     this.set1i("yCenter", sprite.originY === 0.5 ? 1 : 0);
     this.set1f("fieldScale", field?.scale || 1);
     this.set2f("relPosition", position[0], position[1]);
