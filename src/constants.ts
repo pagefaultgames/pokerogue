@@ -107,3 +107,8 @@ export const FAKE_TITLE_LOGO_CHANCE = 10000;
  * Using rare candies will never increase friendship beyond this value.
  */
 export const RARE_CANDY_FRIENDSHIP_CAP = 200;
+
+/**
+ * The maximum number of times a player can Terastallize in a single arena run
+ */
+export const MAX_TERAS_PER_ARENA = 1;
