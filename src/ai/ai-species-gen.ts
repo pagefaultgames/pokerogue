@@ -3,7 +3,7 @@ import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { pokemonEvolutions, pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { allSpecies } from "#data/data-lists";
 import type { PokemonSpecies } from "#data/pokemon-species";
-import { EvoLevelThresholdSort } from "#enums/evo-level-threshold-kind";
+import { EvoLevelThresholdKind as EvoLevelThresholdSort} from "#enums/evo-level-threshold-kind";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import type { SpeciesId } from "#enums/species-id";
 import { randSeedInt, randSeedItem } from "#utils/common";
