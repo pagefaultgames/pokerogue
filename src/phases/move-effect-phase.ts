@@ -746,7 +746,7 @@ export class MoveEffectPhase extends PokemonPhase {
   /**
    * Applies all move effects that trigger in the event of a successful hit:
    *
-   * - {@linkcode MoveEffectTrigger.PRE_APPLY | PRE_APPLY} effects`
+   * - {@linkcode MoveEffectTrigger.PRE_APPLY | PRE_APPLY} effects
    * - Applying damage to the target
    * - {@linkcode MoveEffectTrigger.POST_APPLY | POST_APPLY} effects
    * - Invoking {@linkcode applyOnTargetEffects} if the move does not hit a substitute
