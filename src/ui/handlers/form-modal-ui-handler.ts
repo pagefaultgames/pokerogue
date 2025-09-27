@@ -124,7 +124,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       }
 
       const config = args[0] as FormModalConfig;
-      const buttonActions = config.buttonActions || [];
+      const buttonActions = config.buttonActions ?? [];
 
       [this.submitAction, this.cancelAction] = buttonActions;
 
