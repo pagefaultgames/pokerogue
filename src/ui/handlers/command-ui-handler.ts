@@ -6,8 +6,8 @@ import { Command } from "#enums/command";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
-import { TerastallizeAccessModifier } from "#modifiers/modifier";
 import type { CommandPhase } from "#phases/command-phase";
 import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import { addTextObject } from "#ui/text";
@@ -198,7 +198,7 @@ export class CommandUiHandler extends UiHandler {
   }
 
   canTera(): boolean {
-    const hasTeraMod = globalScene.getModifiers(TerastallizeAccessModifier).length > 0;
+    const hasTeraMod = !!globalScene.trainerItems.hasItem(TrainerItemId.TERA_ORB);
     const activePokemon = globalScene.getField()[this.fieldIndex];
     const isBlockedForm =
       activePokemon.isMega() || activePokemon.isMax() || activePokemon.hasSpecies(SpeciesId.NECROZMA, "ultra");

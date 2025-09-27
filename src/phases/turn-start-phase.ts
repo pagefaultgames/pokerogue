@@ -4,9 +4,11 @@ import { globalScene } from "#app/global-scene";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import type { BattlerIndex } from "#enums/battler-index";
 import { Command } from "#enums/command";
+import { HeldItemEffect } from "#enums/held-item-effect";
+import { Stat } from "#enums/stat";
 import { SwitchType } from "#enums/switch-type";
 import type { Pokemon } from "#field/pokemon";
-import { BypassSpeedChanceModifier } from "#modifiers/modifier";
+import { applyHeldItems } from "#items/all-held-items";
 import { PokemonMove } from "#moves/pokemon-move";
 import { FieldPhase } from "#phases/field-phase";
 import { inSpeedOrder } from "#utils/speed-order-generator";
@@ -70,7 +72,7 @@ export class TurnStartPhase extends FieldPhase {
     const phaseManager = globalScene.phaseManager;
     for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
       applyAbAttrs("BypassSpeedChanceAbAttr", { pokemon });
-      globalScene.applyModifiers(BypassSpeedChanceModifier, pokemon.isPlayer(), pokemon);
+      applyHeldItems(HeldItemEffect.BYPASS_SPEED_CHANCE, { pokemon }));
     }
 
     moveOrder.forEach((o, index) => {

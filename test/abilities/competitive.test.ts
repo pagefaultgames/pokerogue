@@ -1,4 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
@@ -59,7 +60,7 @@ describe("Abilities - Competitive", () => {
   });
 
   it("white herb should remove only the negative effects", async () => {
-    game.override.startingHeldItems([{ name: "WHITE_HERB" }]);
+    game.override.startingHeldItems([{ entry: HeldItemId.WHITE_HERB }]);
     await game.classicMode.startBattle([SpeciesId.FLYGON]);
 
     const playerPokemon = game.field.getPlayerPokemon();

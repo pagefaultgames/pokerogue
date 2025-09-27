@@ -129,8 +129,8 @@ export function randItem<T>(items: T[]): T {
   return items.length === 1 ? items[0] : items[randInt(items.length)];
 }
 
-export function randSeedItem<T>(items: T[]): T {
-  return items.length === 1 ? items[0] : Phaser.Math.RND.pick(items);
+export function randSeedItem<T>(items: T[] | readonly T[]): T {
+  return items.length === 1 ? items[0] : Phaser.Math.RND.pick(items as T[]);
 }
 
 /**
@@ -265,6 +265,15 @@ export function formatMoney(format: MoneyFormat, amount: number) {
 
 export function formatStat(stat: number, forHp = false): string {
   return formatLargeNumber(stat, forHp ? 100_000 : 1_000_000);
+}
+
+// TODO: Remove in place of enum utils
+export function getTypedKeys<T extends Record<number, any>, K extends number = Extract<keyof T, number>>(obj: T): K[] {
+  return Object.keys(obj).map(k => Number(k) as K);
+}
+
+export function getTypedEntries<T extends object>(obj: T): [keyof T, T[keyof T]][] {
+  return Object.entries(obj) as [keyof T, T[keyof T]][];
 }
 
 export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T | null> {
@@ -511,7 +520,50 @@ export function getShinyDescriptor(variant: Variant): string {
  * If the input isn't already an array, turns it into one.
  * @returns An array with the same type as the type of the input
  */
-export function coerceArray<T>(input: T): T extends any[] ? T : [T];
+export function coerceArray<T>(input: T): T extends readonly unknown[] ? T : [T];
 export function coerceArray<T>(input: T): T | [T] {
   return Array.isArray(input) ? input : [input];
 }
+
+export function pickWeightedIndex(weights: number[]): number | undefined {
+  const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+
+  if (totalWeight <= 0) {
+    return;
+  }
+
+  let r = randSeedFloat() * totalWeight;
+
+  for (let i = 0; i < weights.length; i++) {
+    if (r < weights[i]) {
+      return i;
+    }
+    r -= weights[i];
+  }
+
+  return; // TODO: Change to something more appropriate
+}
+
+/**
+ * Type helper to check if a given item is in a tuple, returning `true` or `false` as appropriate.
+ * @typeParam T - The tuple to check
+ * @param X - The item whose inclusion is being checked
+ */
+type InArray<T, X> = T extends readonly [X, ...infer _Rest]
+  ? true
+  : T extends readonly [X]
+    ? true
+    : T extends readonly [infer _, ...infer Rest]
+      ? InArray<Rest, X>
+      : false;
+
+/**
+ * Type helper to allow only unique elements in a tuple (effectively converting it to a Set).
+ * Within it, any duplicate elements will be flagged and converted to an error message.
+ * @typeParam T - The tuple to render unique
+ */
+export type UniqueArray<T> = T extends readonly [infer X, ...infer Rest]
+  ? InArray<Rest, X> extends true
+    ? ["Encountered value with duplicates:", X]
+    : readonly [X, ...UniqueArray<Rest>]
+  : T;

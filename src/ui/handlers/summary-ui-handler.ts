@@ -19,7 +19,8 @@ import { StatusEffect } from "#enums/status-effect";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
-import { modifierSortFunc, PokemonHeldItemModifier } from "#modifiers/modifier";
+import { allHeldItems } from "#items/all-held-items";
+import { heldItemSortFunc } from "#items/item-utility";
 import type { Move } from "#moves/move";
 import type { PokemonMove } from "#moves/pokemon-move";
 import type { Variant } from "#sprites/variant";
@@ -1077,22 +1078,22 @@ export class SummaryUiHandler extends UiHandler {
         });
         this.ivContainer.setVisible(false);
 
-        const itemModifiers = (
-          globalScene.findModifiers(
-            m => m instanceof PokemonHeldItemModifier && m.pokemonId === this.pokemon?.id,
-            this.playerParty,
-          ) as PokemonHeldItemModifier[]
-        ).sort(modifierSortFunc);
+        const heldItems = this.pokemon?.getHeldItems().sort(heldItemSortFunc);
 
-        itemModifiers.forEach((item, i) => {
-          const icon = item.getIcon(true);
+        heldItems?.forEach((itemKey, i) => {
+          const heldItem = allHeldItems[itemKey];
 
-          icon.setPosition((i % 17) * 12 + 3, 14 * Math.floor(i / 17) + 15);
-          this.statsContainer.add(icon);
+          if (this.pokemon) {
+            const icon = heldItem.createSummaryIcon(this.pokemon);
 
-          icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 32), Phaser.Geom.Rectangle.Contains);
-          icon.on("pointerover", () => globalScene.ui.showTooltip(item.type.name, item.type.getDescription(), true));
-          icon.on("pointerout", () => globalScene.ui.hideTooltip());
+            console.log(icon);
+            icon.setPosition((i % 17) * 12 + 3, 14 * Math.floor(i / 17) + 15);
+            this.statsContainer.add(icon);
+
+            icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 32), Phaser.Geom.Rectangle.Contains);
+            icon.on("pointerover", () => globalScene.ui.showTooltip(heldItem.name, heldItem.description, true));
+            icon.on("pointerout", () => globalScene.ui.hideTooltip());
+          }
         });
 
         const pkmLvl = this.pokemon?.level!; // TODO: is this bang correct?

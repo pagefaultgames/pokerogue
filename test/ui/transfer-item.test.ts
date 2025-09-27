@@ -1,11 +1,11 @@
-import { BerryType } from "#enums/berry-type";
 import { Button } from "#enums/buttons";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/test-utils/game-manager";
-import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import Phaser from "phaser";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -31,9 +31,9 @@ describe("UI - Transfer Items", () => {
       .startingLevel(100)
       .startingWave(1)
       .startingHeldItems([
-        { name: "BERRY", count: 1, type: BerryType.SITRUS },
-        { name: "BERRY", count: 2, type: BerryType.APICOT },
-        { name: "BERRY", count: 2, type: BerryType.LUM },
+        { entry: HeldItemId.SITRUS_BERRY, count: 1 },
+        { entry: HeldItemId.APICOT_BERRY, count: 2 },
+        { entry: HeldItemId.LUM_BERRY, count: 2 },
       ])
       .moveset([MoveId.DRAGON_CLAW])
       .enemySpecies(SpeciesId.MAGIKARP)
@@ -43,21 +43,21 @@ describe("UI - Transfer Items", () => {
 
     game.move.select(MoveId.DRAGON_CLAW);
 
-    game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, () => {
-      expect(game.scene.ui.getHandler()).toBeInstanceOf(ModifierSelectUiHandler);
+    game.onNextPrompt("SelectRewardPhase", UiMode.REWARD_SELECT, () => {
+      expect(game.scene.ui.getHandler()).toBeInstanceOf(RewardSelectUiHandler);
 
-      const handler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
+      const handler = game.scene.ui.getHandler() as RewardSelectUiHandler;
       handler.setCursor(1);
       handler.processInput(Button.ACTION);
 
-      void game.scene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.MODIFIER_TRANSFER);
+      void game.scene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.ITEM_TRANSFER);
     });
 
     await game.phaseInterceptor.to("BattleEndPhase");
   });
 
   it("check red tint for held item limit in transfer menu", async () => {
-    game.onNextPrompt("SelectModifierPhase", UiMode.PARTY, () => {
+    game.onNextPrompt("SelectRewardPhase", UiMode.PARTY, () => {
       expect(game.scene.ui.getHandler()).toBeInstanceOf(PartyUiHandler);
 
       const handler = game.scene.ui.getHandler() as PartyUiHandler;
@@ -76,11 +76,11 @@ describe("UI - Transfer Items", () => {
       ).toBe(true);
     });
 
-    await game.phaseInterceptor.to("SelectModifierPhase");
+    await game.phaseInterceptor.to("SelectRewardPhase");
   });
 
   it("check transfer option for pokemon to transfer to", async () => {
-    game.onNextPrompt("SelectModifierPhase", UiMode.PARTY, () => {
+    game.onNextPrompt("SelectRewardPhase", UiMode.PARTY, () => {
       expect(game.scene.ui.getHandler()).toBeInstanceOf(PartyUiHandler);
 
       const handler = game.scene.ui.getHandler() as PartyUiHandler;
@@ -95,6 +95,6 @@ describe("UI - Transfer Items", () => {
       );
     });
 
-    await game.phaseInterceptor.to("SelectModifierPhase");
+    await game.phaseInterceptor.to("SelectRewardPhase");
   });
 });

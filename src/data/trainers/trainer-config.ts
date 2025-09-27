@@ -5,17 +5,18 @@ import { signatureSpecies } from "#balance/signature-species";
 import { tmSpecies } from "#balance/tms";
 // biome-ignore lint/correctness/noUnusedImports: Used in a tsdoc comment
 import type { RARE_EGG_MOVE_LEVEL_REQUIREMENT } from "#data/balance/moveset-generation";
-import { modifierTypes } from "#data/data-lists";
 import { doubleBattleDialogue } from "#data/double-battle-dialogue";
 import { Gender } from "#data/gender";
 import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { PokeballType } from "#enums/pokeball";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TeraAIMode } from "#enums/tera-ai-mode";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import { TrainerPoolTier } from "#enums/trainer-pool-tier";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
@@ -33,10 +34,11 @@ import {
   TrainerPartyTemplate,
   trainerPartyTemplates,
 } from "#trainers/trainer-party-template";
-import type { ModifierTypeFunc } from "#types/modifier-types";
+import type { HeldItemConfiguration } from "#types/held-item-data-types";
+import type { SilentReward } from "#types/rewards";
 import type {
   GenAIFunc,
-  GenModifiersFunc,
+  GenTrainerItemsFunc,
   PartyMemberFunc,
   PartyMemberFuncs,
   PartyTemplateFunc,
@@ -110,9 +112,9 @@ export class TrainerConfig {
   public femaleEncounterBgm: string;
   public doubleEncounterBgm: string;
   public victoryBgm: string;
-  public genModifiersFunc: GenModifiersFunc;
+  public genTrainerItemsFunc: GenTrainerItemsFunc;
   public genAIFuncs: GenAIFunc[] = [];
-  public modifierRewardFuncs: ModifierTypeFunc[] = [];
+  public silentRewards: SilentReward[] = [];
   public partyTemplates: TrainerPartyTemplate[];
   public partyTemplateFunc: PartyTemplateFunc;
   public partyMemberFuncs: PartyMemberFuncs = {};
@@ -487,8 +489,8 @@ export class TrainerConfig {
     return this;
   }
 
-  setGenModifiersFunc(genModifiersFunc: GenModifiersFunc): TrainerConfig {
-    this.genModifiersFunc = genModifiersFunc;
+  setGenTrainerItemsFunc(genTrainerItemsFunc: GenTrainerItemsFunc): TrainerConfig {
+    this.genTrainerItemsFunc = genTrainerItemsFunc;
     return this;
   }
 
@@ -498,7 +500,7 @@ export class TrainerConfig {
    * @param slot Optional, a specified slot that should be terastallized. Wraps to match party size (-1 will get the last slot and so on).
    * @returns this
    */
-  setRandomTeraModifiers(count: () => number, slot?: number): TrainerConfig {
+  setRandomTeraType(count: () => number, slot?: number): TrainerConfig {
     this.genAIFuncs.push((party: EnemyPokemon[]) => {
       const shedinjaCanTera = !this.hasSpecialtyType() || this.specialtyType === PokemonType.BUG; // Better to check one time than 6
       const partyMemberIndexes = new Array(party.length)
@@ -529,24 +531,8 @@ export class TrainerConfig {
     return this;
   }
 
-  // function getRandomTeraModifiers(party: EnemyPokemon[], count: integer, types?: Type[]): PersistentModifier[] {
-  //   const ret: PersistentModifier[] = [];
-  //   const partyMemberIndexes = new Array(party.length).fill(null).map((_, i) => i);
-  //   for (let t = 0; t < Math.min(count, party.length); t++) {
-  //     const randomIndex = Utils.randSeedItem(partyMemberIndexes);
-  //     partyMemberIndexes.splice(partyMemberIndexes.indexOf(randomIndex), 1);
-  //     ret.push(modifierTypes.TERA_SHARD().generateType([], [ Utils.randSeedItem(types ? types : party[randomIndex].getTypes()) ])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(party[randomIndex]) as PersistentModifier); // TODO: is the bang correct?
-  //   }
-  //   return ret;
-  // }
-
-  setModifierRewardFuncs(...modifierTypeFuncs: (() => ModifierTypeFunc)[]): TrainerConfig {
-    this.modifierRewardFuncs = modifierTypeFuncs.map(func => () => {
-      const modifierTypeFunc = func();
-      const modifierType = modifierTypeFunc();
-      modifierType.withIdFromFunc(modifierTypeFunc);
-      return modifierType;
-    });
+  setSilentReward(...silentRewards: SilentReward[]): TrainerConfig {
+    this.silentRewards = silentRewards;
     return this;
   }
 
@@ -711,7 +697,7 @@ export class TrainerConfig {
     this.setHasVoucher(true);
     this.setBattleBgm("battle_unova_gym");
     this.setVictoryBgm("victory_gym");
-    this.setRandomTeraModifiers(
+    this.setRandomTeraType(
       () => (ignoreMinTeraWave || globalScene.currentBattle.waveIndex >= GYM_LEADER_TERA_WAVE ? 1 : 0),
       teraSlot,
     );
@@ -772,7 +758,7 @@ export class TrainerConfig {
     this.setHasVoucher(true);
     this.setBattleBgm("battle_unova_elite");
     this.setVictoryBgm("victory_gym");
-    this.setRandomTeraModifiers(() => 1, teraSlot);
+    this.setRandomTeraType(() => 1, teraSlot);
 
     return this;
   }
@@ -949,11 +935,11 @@ export class TrainerConfig {
     clone = this.battleBgm ? clone.setBattleBgm(this.battleBgm) : clone;
     clone = this.encounterBgm ? clone.setEncounterBgm(this.encounterBgm) : clone;
     clone = this.victoryBgm ? clone.setVictoryBgm(this.victoryBgm) : clone;
-    clone = this.genModifiersFunc ? clone.setGenModifiersFunc(this.genModifiersFunc) : clone;
+    clone = this.genTrainerItemsFunc ? clone.setGenTrainerItemsFunc(this.genTrainerItemsFunc) : clone;
 
-    if (this.modifierRewardFuncs) {
+    if (this.silentRewards) {
       // Clones array instead of passing ref
-      clone.modifierRewardFuncs = this.modifierRewardFuncs.slice(0);
+      clone.silentRewards = this.silentRewards.slice(0);
     }
 
     if (this.partyTemplates) {
@@ -1003,6 +989,7 @@ export function getRandomPartyMemberFunc(
   trainerSlot: TrainerSlot = TrainerSlot.TRAINER,
   ignoreEvolution = false,
   postProcess?: (enemyPokemon: EnemyPokemon) => void,
+  heldItemConfig?: HeldItemConfiguration,
 ) {
   return (level: number, strength: PartyMemberStrength) => {
     let species = randSeedItem(speciesPool);
@@ -1020,6 +1007,7 @@ export function getRandomPartyMemberFunc(
       trainerSlot,
       undefined,
       false,
+      heldItemConfig,
       undefined,
       postProcess,
     );
@@ -1045,7 +1033,16 @@ function getSpeciesFilterRandomPartyMemberFunc(
         .getTrainerSpeciesForLevel(level, true, strength, waveIndex),
     );
 
-    return globalScene.addEnemyPokemon(species, level, trainerSlot, undefined, false, undefined, postProcess);
+    return globalScene.addEnemyPokemon(
+      species,
+      level,
+      trainerSlot,
+      undefined,
+      false,
+      undefined,
+      undefined,
+      postProcess,
+    );
   };
 }
 
@@ -3868,15 +3865,21 @@ export const trainerConfigs: TrainerConfigs = {
     .setDoubleTitle("champion_double")
     .setPartyMemberFunc(
       0,
-      getRandomPartyMemberFunc([SpeciesId.PIKACHU], TrainerSlot.TRAINER, true, p => {
-        p.formIndex = 1; // Partner Pikachu
-        p.gender = Gender.MALE;
-        p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.VOLT_TACKLE)) {
-          // Check if Volt Tackle is in the moveset, if not, replace the first move with Volt Tackle.
-          p.moveset[0] = new PokemonMove(MoveId.VOLT_TACKLE);
-        }
-      }),
+      getRandomPartyMemberFunc(
+        [SpeciesId.PIKACHU],
+        TrainerSlot.TRAINER,
+        true,
+        p => {
+          p.formIndex = 1; // Partner Pikachu
+          p.gender = Gender.MALE;
+          p.generateAndPopulateMoveset();
+          if (!p.moveset.some(move => move != null && move.moveId === MoveId.VOLT_TACKLE)) {
+            // Check if Volt Tackle is in the moveset, if not, replace the first move with Volt Tackle.
+            p.moveset[0] = new PokemonMove(MoveId.VOLT_TACKLE);
+          }
+        },
+        [{ entry: HeldItemId.LIGHT_BALL, count: 1 }],
+      ),
     )
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.MEGANIUM, SpeciesId.TYPHLOSION, SpeciesId.FERALIGATR]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.ESPEON, SpeciesId.UMBREON, SpeciesId.SYLVEON]))
@@ -4543,10 +4546,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setBattleBgm("battle_rival")
     .setMixedBattleBgm("battle_rival")
     .setPartyTemplates(trainerPartyTemplates.RIVAL)
-    .setModifierRewardFuncs(
-      () => modifierTypes.SUPER_EXP_CHARM,
-      () => modifierTypes.EXP_SHARE,
-    )
+    .setSilentReward(TrainerItemId.SUPER_EXP_CHARM, TrainerItemId.EXP_SHARE)
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc(
@@ -4613,7 +4613,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setBattleBgm("battle_rival")
     .setMixedBattleBgm("battle_rival")
     .setPartyTemplates(trainerPartyTemplates.RIVAL_2)
-    .setModifierRewardFuncs(() => modifierTypes.EXP_SHARE)
+    .setSilentReward(TrainerItemId.EXP_SHARE)
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc(
@@ -4766,7 +4766,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setBattleBgm("battle_rival_2")
     .setMixedBattleBgm("battle_rival_2")
     .setPartyTemplates(trainerPartyTemplates.RIVAL_4)
-    .setModifierRewardFuncs(() => modifierTypes.TERA_ORB)
+    .setSilentReward(TrainerItemId.TERA_ORB)
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc(

@@ -6,10 +6,10 @@ import { allMoves } from "#data/data-lists";
 import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
 import { getPokeballTintColor } from "#data/pokeball";
 import { Command } from "#enums/command";
+import { HeldItemId } from "#enums/held-item-id";
 import { SwitchType } from "#enums/switch-type";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type { Pokemon } from "#field/pokemon";
-import { SwitchEffectTransferModifier } from "#modifiers/modifier";
 import { SummonPhase } from "#phases/summon-phase";
 import i18next from "i18next";
 
@@ -138,29 +138,11 @@ export class SwitchSummonPhase extends SummonPhase {
       );
 
       // If the recipient pokemon lacks a baton, give our baton to it during the swap
-      if (
-        !globalScene.findModifier(
-          m =>
-            m instanceof SwitchEffectTransferModifier
-            && (m as SwitchEffectTransferModifier).pokemonId === switchedInPokemon.id,
-        )
-      ) {
-        const batonPassModifier = globalScene.findModifier(
-          m =>
-            m instanceof SwitchEffectTransferModifier
-            && (m as SwitchEffectTransferModifier).pokemonId === this.lastPokemon.id,
-        ) as SwitchEffectTransferModifier;
+      if (!switchedInPokemon.heldItemManager.hasItem(HeldItemId.BATON)) {
+        const batonPassModifier = this.lastPokemon.heldItemManager.hasItem(HeldItemId.BATON);
 
         if (batonPassModifier) {
-          globalScene.tryTransferHeldItemModifier(
-            batonPassModifier,
-            switchedInPokemon,
-            false,
-            undefined,
-            undefined,
-            undefined,
-            false,
-          );
+          globalScene.tryTransferHeldItem(HeldItemId.BATON, this.lastPokemon, switchedInPokemon, false);
         }
       }
     }

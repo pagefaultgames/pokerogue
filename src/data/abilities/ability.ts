@@ -28,6 +28,7 @@ import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import type { BerryType } from "#enums/berry-type";
 import { Command } from "#enums/command";
+import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
 import { HitResult } from "#enums/hit-result";
 import { CommonAnim } from "#enums/move-anims-common";
 import { MoveCategory } from "#enums/move-category";
@@ -47,8 +48,8 @@ import { SwitchType } from "#enums/switch-type";
 import { WeatherType } from "#enums/weather-type";
 import { BerryUsedEvent } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
-import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
-import { BerryModifierType } from "#modifiers/modifier-type";
+import { allHeldItems } from "#items/all-held-items";
+import { type BerryHeldItem, berryTypeToHeldItem } from "#items/berry";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import { noAbilityTypeOverrideMoves } from "#moves/invalid-moves";
 import type { Move } from "#moves/move";
@@ -2127,7 +2128,7 @@ export abstract class PostAttackAbAttr extends AbAttr {
 
 export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
   private stealCondition: PokemonAttackCondition | null;
-  private stolenItem?: PokemonHeldItemModifier;
+  private stolenItem?: HeldItemId;
 
   constructor(stealCondition?: PokemonAttackCondition) {
     super();
@@ -2146,11 +2147,11 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
       && hitResult < HitResult.NO_EFFECT
       && (!this.stealCondition || this.stealCondition(pokemon, opponent, move))
     ) {
-      const heldItems = this.getTargetHeldItems(opponent).filter(i => i.isTransferable);
+      const heldItems = opponent.heldItemManager.getTransferableHeldItems();
       if (heldItems.length > 0) {
         // Ensure that the stolen item in testing is the same as when the effect is applied
         this.stolenItem = heldItems[pokemon.randBattleSeedInt(heldItems.length)];
-        if (globalScene.canTransferHeldItemModifier(this.stolenItem, pokemon)) {
+        if (globalScene.canTransferHeldItem(this.stolenItem, opponent, pokemon)) {
           return true;
         }
       }
@@ -2160,27 +2161,20 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
   }
 
   override apply({ opponent, pokemon }: PostMoveInteractionAbAttrParams): void {
-    const heldItems = this.getTargetHeldItems(opponent).filter(i => i.isTransferable);
+    const heldItems = opponent.heldItemManager.getTransferableHeldItems();
     if (!this.stolenItem) {
       this.stolenItem = heldItems[pokemon.randBattleSeedInt(heldItems.length)];
     }
-    if (globalScene.tryTransferHeldItemModifier(this.stolenItem, pokemon, false)) {
+    if (globalScene.tryTransferHeldItem(this.stolenItem, opponent, pokemon, false)) {
       globalScene.phaseManager.queueMessage(
         i18next.t("abilityTriggers:postAttackStealHeldItem", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
           defenderName: opponent.name,
-          stolenItemType: this.stolenItem.type.name,
+          stolenItemType: allHeldItems[this.stolenItem].name,
         }),
       );
     }
     this.stolenItem = undefined;
-  }
-
-  getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
-    return globalScene.findModifiers(
-      m => m instanceof PokemonHeldItemModifier && m.pokemonId === target.id,
-      target.isPlayer(),
-    ) as PokemonHeldItemModifier[];
   }
 }
 
@@ -2272,7 +2266,7 @@ export class PostAttackApplyBattlerTagAbAttr extends PostAttackAbAttr {
 
 export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
   private condition?: PokemonDefendCondition;
-  private stolenItem?: PokemonHeldItemModifier;
+  private stolenItem?: HeldItemId;
 
   constructor(condition?: PokemonDefendCondition) {
     super();
@@ -2282,10 +2276,10 @@ export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
 
   override canApply({ simulated, pokemon, opponent, move, hitResult }: PostMoveInteractionAbAttrParams): boolean {
     if (!simulated && hitResult < HitResult.NO_EFFECT && (!this.condition || this.condition(pokemon, opponent, move))) {
-      const heldItems = this.getTargetHeldItems(opponent).filter(i => i.isTransferable);
+      const heldItems = opponent.heldItemManager.getTransferableHeldItems();
       if (heldItems.length > 0) {
         this.stolenItem = heldItems[pokemon.randBattleSeedInt(heldItems.length)];
-        if (globalScene.canTransferHeldItemModifier(this.stolenItem, pokemon)) {
+        if (globalScene.canTransferHeldItem(this.stolenItem, opponent, pokemon)) {
           return true;
         }
       }
@@ -2294,27 +2288,20 @@ export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
   }
 
   override apply({ pokemon, opponent }: PostMoveInteractionAbAttrParams): void {
-    const heldItems = this.getTargetHeldItems(opponent).filter(i => i.isTransferable);
+    const heldItems = opponent.heldItemManager.getTransferableHeldItems();
     if (!this.stolenItem) {
       this.stolenItem = heldItems[pokemon.randBattleSeedInt(heldItems.length)];
     }
-    if (globalScene.tryTransferHeldItemModifier(this.stolenItem, pokemon, false)) {
+    if (globalScene.tryTransferHeldItem(this.stolenItem, opponent, pokemon, false)) {
       globalScene.phaseManager.queueMessage(
         i18next.t("abilityTriggers:postDefendStealHeldItem", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
           attackerName: opponent.name,
-          stolenItemType: this.stolenItem.type.name,
+          stolenItemType: allHeldItems[this.stolenItem].name,
         }),
       );
     }
     this.stolenItem = undefined;
-  }
-
-  getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
-    return globalScene.findModifiers(
-      m => m instanceof PokemonHeldItemModifier && m.pokemonId === target.id,
-      target.isPlayer(),
-    ) as PokemonHeldItemModifier[];
   }
 }
 
@@ -4634,10 +4621,14 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
   override canApply({ pokemon }: AbAttrBaseParams): boolean {
     // Ensure we have at least 1 recoverable berry (at least 1 berry in berriesEaten is not capped)
     const cappedBerries = new Set(
-      globalScene
-        .getModifiers(BerryModifier, pokemon.isPlayer())
-        .filter(bm => bm.pokemonId === pokemon.id && bm.getCountUnderMax() < 1)
-        .map(bm => bm.berryType),
+      pokemon
+        .getHeldItems()
+        .filter(
+          bm =>
+            isItemInCategory(bm, HeldItemCategoryId.BERRY)
+            && pokemon.heldItemManager.getStack(bm) < allHeldItems[bm].maxStackCount,
+        )
+        .map(bm => (allHeldItems[bm] as BerryHeldItem).berryType),
     );
 
     this.berriesUnderCap = pokemon.battleData.berriesEaten.filter(bt => !cappedBerries.has(bt));
@@ -4667,30 +4658,15 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
     const randomIdx = randSeedInt(this.berriesUnderCap.length);
     const chosenBerryType = this.berriesUnderCap[randomIdx];
     pokemon.battleData.berriesEaten.splice(randomIdx, 1); // Remove berry from memory
-    const chosenBerry = new BerryModifierType(chosenBerryType);
+    const chosenBerry = berryTypeToHeldItem[chosenBerryType];
 
-    // Add the randomly chosen berry or update the existing one
-    const berryModifier = globalScene.findModifier(
-      m => m instanceof BerryModifier && m.berryType === chosenBerryType && m.pokemonId === pokemon.id,
-      pokemon.isPlayer(),
-    ) as BerryModifier | undefined;
+    pokemon.heldItemManager.add(chosenBerry);
 
-    if (berryModifier) {
-      berryModifier.stackCount++;
-    } else {
-      const newBerry = new BerryModifier(chosenBerry, pokemon.id, chosenBerryType, 1);
-      if (pokemon.isPlayer()) {
-        globalScene.addModifier(newBerry);
-      } else {
-        globalScene.addEnemyModifier(newBerry);
-      }
-    }
-
-    globalScene.updateModifiers(pokemon.isPlayer());
+    globalScene.updateItems(pokemon.isPlayer());
     globalScene.phaseManager.queueMessage(
       i18next.t("abilityTriggers:postTurnLootCreateEatenBerry", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        berryName: chosenBerry.name,
+        berryName: allHeldItems[chosenBerry].name,
       }),
     );
     return true;
@@ -4724,8 +4700,7 @@ export class CudChewConsumeBerryAbAttr extends AbAttr {
     // This doesn't count as "eating" a berry (for unnerve/stuff cheeks/unburden) as no item is consumed.
     for (const berryType of pokemon.summonData.berriesEatenLast) {
       getBerryEffectFunc(berryType)(pokemon);
-      const bMod = new BerryModifier(new BerryModifierType(berryType), pokemon.id, berryType, 1);
-      globalScene.eventTarget.dispatchEvent(new BerryUsedEvent(bMod)); // trigger message
+      globalScene.eventTarget.dispatchEvent(new BerryUsedEvent(pokemon, berryType)); // trigger message
     }
 
     // uncomment to make cheek pouch work with cud chew
@@ -5309,13 +5284,13 @@ export abstract class PostBattleAbAttr extends AbAttr {
 }
 
 export class PostBattleLootAbAttr extends PostBattleAbAttr {
-  private randItem?: PokemonHeldItemModifier;
+  private randItem?: HeldItemId;
 
   override canApply({ simulated, victory, pokemon }: PostBattleAbAttrParams): boolean {
     const postBattleLoot = globalScene.currentBattle.postBattleLoot;
     if (!simulated && postBattleLoot.length > 0 && victory) {
       this.randItem = randSeedItem(postBattleLoot);
-      return globalScene.canTransferHeldItemModifier(this.randItem, pokemon, 1);
+      return pokemon.heldItemManager.getStack(this.randItem) < allHeldItems[this.randItem].maxStackCount;
     }
     return false;
   }
@@ -5326,12 +5301,12 @@ export class PostBattleLootAbAttr extends PostBattleAbAttr {
       this.randItem = randSeedItem(postBattleLoot);
     }
 
-    if (globalScene.tryTransferHeldItemModifier(this.randItem, pokemon, true, 1, true, undefined, false)) {
+    if (pokemon.heldItemManager.add(this.randItem)) {
       postBattleLoot.splice(postBattleLoot.indexOf(this.randItem), 1);
       globalScene.phaseManager.queueMessage(
         i18next.t("abilityTriggers:postBattleLoot", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          itemName: this.randItem.type.name,
+          itemName: allHeldItems[this.randItem].name,
         }),
       );
     }
@@ -6263,18 +6238,14 @@ class ForceSwitchOutHelper {
         }
       }
 
-      if (!allyPokemon?.isActive(true)) {
-        globalScene.clearEnemyHeldItemModifiers();
+      if (!allyPokemon?.isActive(true) && switchOutTarget.hp) {
+        globalScene.phaseManager.pushNew("BattleEndPhase", false);
 
-        if (switchOutTarget.hp) {
-          globalScene.phaseManager.pushNew("BattleEndPhase", false);
-
-          if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
-            globalScene.phaseManager.pushNew("SelectBiomePhase");
-          }
-
-          globalScene.phaseManager.pushNew("NewBattlePhase");
+        if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
+          globalScene.phaseManager.pushNew("SelectBiomePhase");
         }
+
+        globalScene.phaseManager.pushNew("NewBattlePhase");
       }
     }
     return false;
@@ -6352,11 +6323,9 @@ class ForceSwitchOutHelper {
  * @returns The amount of health recovered by Shell Bell.
  */
 function calculateShellBellRecovery(pokemon: Pokemon): number {
-  const shellBellModifier = pokemon.getHeldItems().find(m => m instanceof HitHealModifier);
-  if (shellBellModifier) {
-    return toDmgValue(pokemon.turnData.totalDamageDealt / 8) * shellBellModifier.stackCount;
-  }
-  return 0;
+  // Returns 0 if no Shell Bell is present
+  const shellBellStack = pokemon.heldItemManager.getStack(HeldItemId.SHELL_BELL);
+  return toDmgValue(pokemon.turnData.totalDamageDealt / 8) * shellBellStack;
 }
 
 export interface PostDamageAbAttrParams extends AbAttrBaseParams {

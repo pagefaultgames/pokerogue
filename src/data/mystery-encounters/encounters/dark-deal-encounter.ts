@@ -1,20 +1,19 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { modifierTypes } from "#data/data-lists";
 import { Challenges } from "#enums/challenges";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { PokemonType } from "#enums/pokemon-type";
+import { RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
-import type { PokemonHeldItemModifier } from "#modifiers/modifier";
-import { PokemonFormChangeItemModifier } from "#modifiers/modifier";
 import type { EnemyPartyConfig, EnemyPokemonConfig } from "#mystery-encounters/encounter-phase-utils";
 import { initBattleWithEnemyConfig, leaveEncounterWithoutBattle } from "#mystery-encounters/encounter-phase-utils";
 import { getRandomPlayerPokemon, getRandomSpeciesByStarterCost } from "#mystery-encounters/encounter-pokemon-utils";
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
+import type { HeldItemConfiguration } from "#types/held-item-data-types";
 import { randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 
@@ -150,7 +149,7 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
         const removedPokemon = getRandomPlayerPokemon(true, false, true);
 
         // Get all the pokemon's held items
-        const modifiers = removedPokemon.getHeldItems().filter(m => !(m instanceof PokemonFormChangeItemModifier));
+        const itemConfig = removedPokemon.heldItemManager.generateHeldItemConfiguration();
         globalScene.removePokemonFromPlayerParty(removedPokemon);
 
         const encounter = globalScene.currentBattle.mysteryEncounter!;
@@ -159,13 +158,13 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
         // Store removed pokemon types
         encounter.misc = {
           removedTypes: removedPokemon.getTypes(),
-          modifiers,
+          itemConfig,
         };
       })
       .withOptionPhase(async () => {
         // Give the player 5 Rogue Balls
         const encounter = globalScene.currentBattle.mysteryEncounter!;
-        globalScene.phaseManager.unshiftNew("ModifierRewardPhase", modifierTypes.ROGUE_BALL);
+        globalScene.phaseManager.unshiftNew("RewardPhase", RewardId.ROGUE_BALL);
 
         // Start encounter with random legendary (7-10 starter strength) that has level additive
         // If this is a mono-type challenge, always ensure the required type is filtered for
@@ -177,7 +176,7 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
           bossTypes = singleTypeChallenges.map(c => (c.value - 1) as PokemonType);
         }
 
-        const bossModifiers: PokemonHeldItemModifier[] = encounter.misc.modifiers;
+        const bossItemConfig: HeldItemConfiguration = encounter.misc.itemConfig;
         // Starter egg tier, 35/50/10/5 %odds for tiers 6/7/8/9+
         const roll = randSeedInt(100);
         const starterTier: number | [number, number] = roll >= 65 ? 6 : roll >= 15 ? 7 : roll >= 5 ? 8 : [9, 10];
@@ -185,12 +184,7 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
         const pokemonConfig: EnemyPokemonConfig = {
           species: bossSpecies,
           isBoss: true,
-          modifierConfigs: bossModifiers.map(m => {
-            return {
-              modifier: m,
-              stackCount: m.getStackCount(),
-            };
-          }),
+          heldItemConfig: bossItemConfig,
         };
         if (bossSpecies.forms != null && bossSpecies.forms.length > 0) {
           pokemonConfig.formIndex = 0;

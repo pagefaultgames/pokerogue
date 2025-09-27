@@ -1,6 +1,7 @@
 import { allAbilities } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
@@ -113,7 +114,7 @@ describe("Moves - Safeguard", () => {
   });
 
   it("doesn't protect from self-inflicted status from Rest or Flame Orb", async () => {
-    game.override.enemyHeldItems([{ name: "FLAME_ORB" }]);
+    game.override.enemyHeldItems([{ entry: HeldItemId.FLAME_ORB }]);
     await game.classicMode.startBattle();
     const enemyPokemon = game.field.getEnemyPokemon();
     enemyPokemon.hp = 1;

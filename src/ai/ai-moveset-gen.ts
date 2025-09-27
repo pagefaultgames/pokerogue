@@ -646,6 +646,7 @@ function debugMoveWeights(pokemon: Pokemon, pool: Map<MoveId, number>, note: str
  * @param pokemon - The Pokémon to generate a moveset for
  * @returns A reference to the Pokémon's moveset array
  */
+// TODO: Review and/or fix if needed
 export function generateMoveset(pokemon: Pokemon): void {
   pokemon.moveset = [];
   // Step 1: Generate the pools from various sources: level up, egg moves, and TMs
