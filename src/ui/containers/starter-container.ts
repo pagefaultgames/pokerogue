@@ -100,18 +100,19 @@ export class StarterContainer extends Phaser.GameObjects.Container {
 
     if (this.icon) {
       this.remove(this.icon);
-      this.icon.destroy(); // Properly removes the sprite from memory
+      this.icon.destroy();
     }
 
     // icon
-    this.icon = globalScene.add.sprite(-2, 2, species.getIconAtlasKey(formIndex, shiny, variant));
-    this.icon.setScale(0.5);
-    this.icon.setOrigin(0, 0);
-    this.icon.setFrame(species.getIconId(female, formIndex, shiny, variant));
+    this.icon = globalScene.add
+      .sprite(-2, 2, species.getIconAtlasKey(formIndex, shiny, variant))
+      .setScale(0.5)
+      .setOrigin(0)
+      .setFrame(species.getIconId(female, formIndex, shiny, variant))
+      .setTint(0)
+      .setBelow(this.label);
     this.checkIconId(female, formIndex, shiny, variant);
-    this.icon.setTint(0);
     this.add(this.icon);
-    this.icon.setBelow(this.label);
 
     [
       this.hiddenAbilityIcon,
