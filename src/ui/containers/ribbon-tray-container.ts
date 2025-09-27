@@ -4,7 +4,9 @@ import { Button } from "#enums/buttons";
 import type { RibbonData, RibbonFlag } from "#system/ribbons/ribbon-data";
 import type { MessageUiHandler } from "#ui/message-ui-handler";
 import { addWindow } from "#ui/ui-theme";
-import { getAvailableRibbons } from "#utils/ribbon-utils";
+import { getAvailableRibbons, getRibbonKey } from "#utils/ribbon-utils";
+import { toCamelCase } from "#utils/strings";
+import i18next from "i18next";
 
 export class RibbonTray extends Phaser.GameObjects.Container {
   private trayBg: Phaser.GameObjects.NineSlice;
@@ -102,9 +104,7 @@ export class RibbonTray extends Phaser.GameObjects.Container {
 
     this.trayCursorObj.setPosition(5 + (cursor % this.maxColumns) * 18, 4 + Math.floor(cursor / this.maxColumns) * 17);
 
-    const ribbonDescription = this.ribbonData.has(this.ribbons[cursor])
-      ? "Description will show up here"
-      : "Ribbon not unlocked";
+    const ribbonDescription = i18next.t(`ribbons:${toCamelCase(getRibbonKey(this.ribbons[cursor]))}`);
 
     this.handler.showText(ribbonDescription);
 

@@ -83,3 +83,12 @@ export function getAvailableRibbons(species: PokemonSpecies): RibbonFlag[] {
 
   return ribbons.concat(extraRibbons);
 }
+
+export function getRibbonKey(flag: RibbonFlag): string {
+  for (const [key, value] of Object.entries(RibbonData)) {
+    if (typeof value === "bigint" && value === flag) {
+      return key;
+    }
+  }
+  return "";
+}

@@ -253,6 +253,7 @@ export async function initI18n(): Promise<void> {
       "pokemonInfo",
       "pokemonInfoContainer",
       "pokemonSummary",
+      "ribbons",
       "saveSlotSelectUiHandler",
       "settings",
       "splashMessages",
