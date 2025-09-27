@@ -2202,10 +2202,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return false;
     }
     const arena = globalScene?.arena;
-    if (arena.ignoreAbilities && arena.ignoringEffectSource !== this.getBattlerIndex() && ability.isIgnorable) {
+    if (arena.ignoreAbilities && arena.ignoringEffectSource !== this.getBattlerIndex() && ability.ignorable) {
       return false;
     }
-    if (this.summonData.abilitySuppressed && ability.isSuppressable) {
+    if (this.summonData.abilitySuppressed && ability.suppressable) {
       return false;
     }
     const suppressAbilitiesTag = arena.getTag(ArenaTagType.NEUTRALIZING_GAS) as SuppressAbilitiesTag;
@@ -2217,14 +2217,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       // (Balance decided that the other ability of a neutralizing gas pokemon should not be neutralized)
       // If the ability itself is neutralizing gas, don't suppress it (handled through arena tag)
       const unsuppressable =
-        !ability.isSuppressable
+        !ability.suppressable
         || thisAbilitySuppressing
         || (hasSuppressingAbility && !suppressAbilitiesTag.shouldApplyToSelf());
       if (!unsuppressable) {
         return false;
       }
     }
-    return (this.hp > 0 || ability.isBypassFaint) && !ability.conditions.find(condition => !condition(this));
+    return (this.hp > 0 || ability.bypassFaint) && !ability.conditions.find(condition => !condition(this));
   }
 
   /**
