@@ -124,7 +124,8 @@ export class RibbonTray extends Phaser.GameObjects.Container {
     this.trayBg.setSize(15 + this.trayColumns * 17, 8 + this.trayRows * 18);
 
     this.trayIcons = [];
-    for (const [index, ribbon] of this.ribbons.entries()) {
+    let index = 0;
+    for (const ribbon of this.ribbons) {
       const hasRibbon = this.ribbonData.has(ribbon);
 
       const icon = globalScene.add.image(0, 0, "champion_ribbon");
@@ -135,10 +136,14 @@ export class RibbonTray extends Phaser.GameObjects.Container {
         icon.setTint(0);
       }
 
-      icon.setPosition(14 + (index % this.maxColumns) * 18, 14 + Math.floor(index / this.maxColumns) * 17);
+      if (hasRibbon || globalScene.dexForDevs || globalScene.showMissingRibbons) {
+        icon.setPosition(14 + (index % this.maxColumns) * 18, 14 + Math.floor(index / this.maxColumns) * 17);
 
-      this.add(icon);
-      this.trayIcons.push(icon);
+        this.add(icon);
+        this.trayIcons.push(icon);
+
+        index++;
+      }
     }
 
     this.setVisible(true);

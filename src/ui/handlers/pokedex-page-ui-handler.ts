@@ -773,7 +773,10 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         const isDark =
           !isSeen
           || (!isStarterCaught && (o === MenuOptions.NATURES || o === MenuOptions.RIBBONS))
-          || (this.tmMoves.length === 0 && o === MenuOptions.TM_MOVES);
+          || (this.tmMoves.length === 0 && o === MenuOptions.TM_MOVES)
+          || (!globalScene.gameData.dexData[this.species.speciesId].ribbons.getRibbons()
+            && o === MenuOptions.RIBBONS
+            && !globalScene.showMissingRibbons);
         const color = getTextColor(isDark ? TextStyle.SHADOW_TEXT : TextStyle.SETTINGS_VALUE, false);
         const shadow = getTextColor(isDark ? TextStyle.SHADOW_TEXT : TextStyle.SETTINGS_VALUE, true);
         return `[shadow=${shadow}][color=${color}]${label}[/color][/shadow]`;
@@ -1771,6 +1774,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
           case MenuOptions.RIBBONS:
             if (!isStarterCaught) {
+              error = true;
+            } else if (!globalScene.gameData.dexData[this.species.speciesId].ribbons.getRibbons()) {
+              ui.showText(i18next.t("pokedexUiHandler:noRibbons"));
               error = true;
             } else {
               this.isRibbonTrayOpen = true;

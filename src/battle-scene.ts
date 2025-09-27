@@ -182,6 +182,7 @@ export class BattleScene extends SceneBase {
   public shopCursorTarget: number = ShopCursorTarget.REWARDS;
   public commandCursorMemory = false;
   public dexForDevs = false;
+  public showMissingRibbons = false;
   public showMovesetFlyout = true;
   public showArenaFlyout = true;
   public showTimeOfDayWidget = true;

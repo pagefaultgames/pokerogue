@@ -145,4 +145,12 @@ export class RibbonData {
   public has(flag: RibbonFlag): boolean {
     return !!(this.payload & flag);
   }
+
+  /**
+   * Allow access to the bigint of ribbons
+   * @returns The ribbons as a bigint
+   */
+  public getRibbons(): bigint {
+    return this.payload;
+  }
 }
