@@ -1,4 +1,10 @@
 /*
+ * SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
+/*
  * This script creates a test boilerplate file in the appropriate
  * directory based on the type selected.
  * Usage: `pnpm test:create`
@@ -102,9 +108,9 @@ async function promptFileName(selectedType) {
 function getBoilerplatePath(choiceType) {
   switch (choiceType) {
     // case "Reward":
-    //   return path.join(__dirname, "boilerplates/reward.ts");
+    //   return path.join(__dirname, "boilerplates/reward.boilerplate.ts");
     default:
-      return path.join(__dirname, "boilerplates/default.ts");
+      return path.join(__dirname, "boilerplates/default.boilerplate.ts");
   }
 }
 

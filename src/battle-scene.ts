@@ -104,7 +104,6 @@ import {
 import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterSaveData } from "#mystery-encounters/mystery-encounter-save-data";
 import { allMysteryEncounters, mysteryEncountersByBiome } from "#mystery-encounters/mystery-encounters";
-import type { MovePhase } from "#phases/move-phase";
 import { expSpriteKeys } from "#sprites/sprite-keys";
 import { hasExpSprite } from "#sprites/sprite-utils";
 import type { Variant } from "#sprites/variant";
@@ -791,12 +790,14 @@ export class BattleScene extends SceneBase {
 
   /**
    * Returns an array of EnemyPokemon of length 1 or 2 depending on if in a double battle or not.
-   * Does not actually check if the pokemon are on the field or not.
+   * @param active - (Default `false`) Whether to consider only {@linkcode Pokemon.isActive | active} on-field pokemon
    * @returns array of {@linkcode EnemyPokemon}
    */
-  public getEnemyField(): EnemyPokemon[] {
+  public getEnemyField(active = false): EnemyPokemon[] {
     const party = this.getEnemyParty();
-    return party.slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1));
+    return party
+      .slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1))
+      .filter(p => !active || p.isActive());
   }
 
   /**
@@ -821,25 +822,7 @@ export class BattleScene extends SceneBase {
    * @param allyPokemon - The {@linkcode Pokemon} allied with the removed Pokemon; will have moves redirected to it
    */
   redirectPokemonMoves(removedPokemon: Pokemon, allyPokemon: Pokemon): void {
-    // failsafe: if not a double battle just return
-    if (this.currentBattle.double === false) {
-      return;
-    }
-    if (allyPokemon?.isActive(true)) {
-      let targetingMovePhase: MovePhase;
-      do {
-        targetingMovePhase = this.phaseManager.findPhase(
-          mp =>
-            mp.is("MovePhase")
-            && mp.targets.length === 1
-            && mp.targets[0] === removedPokemon.getBattlerIndex()
-            && mp.pokemon.isPlayer() !== allyPokemon.isPlayer(),
-        ) as MovePhase;
-        if (targetingMovePhase && targetingMovePhase.targets[0] !== allyPokemon.getBattlerIndex()) {
-          targetingMovePhase.targets[0] = allyPokemon.getBattlerIndex();
-        }
-      } while (targetingMovePhase);
-    }
+    this.phaseManager.redirectMoves(removedPokemon, allyPokemon);
   }
 
   /**
@@ -1336,13 +1319,12 @@ export class BattleScene extends SceneBase {
       if (newBattleType === BattleType.TRAINER) {
         const trainerType =
           Overrides.RANDOM_TRAINER_OVERRIDE?.trainerType ?? this.arena.randomTrainerType(newWaveIndex);
+        const hasDouble = trainerConfigs[trainerType].hasDouble;
         let doubleTrainer = false;
         if (trainerConfigs[trainerType].doubleOnly) {
           doubleTrainer = true;
-        } else if (trainerConfigs[trainerType].hasDouble) {
-          doubleTrainer =
-            Overrides.RANDOM_TRAINER_OVERRIDE?.alwaysDouble
-            || !randSeedInt(this.getDoubleBattleChance(newWaveIndex, playerField));
+        } else if (hasDouble) {
+          doubleTrainer = !randSeedInt(this.getDoubleBattleChance(newWaveIndex, playerField));
           // Add a check that special trainers can't be double except for tate and liza - they should use the normal double chance
           if (
             trainerConfigs[trainerType].trainerTypeDouble
@@ -1351,11 +1333,19 @@ export class BattleScene extends SceneBase {
             doubleTrainer = false;
           }
         }
-        const variant = doubleTrainer
-          ? TrainerVariant.DOUBLE
-          : randSeedInt(2)
-            ? TrainerVariant.FEMALE
-            : TrainerVariant.DEFAULT;
+
+        // Forcing a double battle on wave 1 causes a bug where only one enemy is sent out,
+        // making it impossible to complete the fight without a reload
+        const overrideVariant =
+          Overrides.RANDOM_TRAINER_OVERRIDE?.trainerVariant === TrainerVariant.DOUBLE
+          && (!hasDouble || newWaveIndex <= 1)
+            ? TrainerVariant.DEFAULT
+            : Overrides.RANDOM_TRAINER_OVERRIDE?.trainerVariant;
+
+        const variant =
+          overrideVariant
+          ?? (doubleTrainer ? TrainerVariant.DOUBLE : randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
+
         newTrainer = trainerData !== undefined ? trainerData.toTrainer() : new Trainer(trainerType, variant);
         this.field.add(newTrainer);
       }
@@ -1430,7 +1420,7 @@ export class BattleScene extends SceneBase {
     }
 
     if (lastBattle?.double && !newDouble) {
-      this.phaseManager.tryRemovePhase((p: Phase) => p.is("SwitchPhase"));
+      this.phaseManager.tryRemovePhase("SwitchPhase");
       for (const p of this.getPlayerField()) {
         p.lapseTag(BattlerTagType.COMMANDED);
       }

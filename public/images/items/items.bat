@@ -1,1 +1,0 @@
-cmd /c TexturePacker ./  ./configuration.tps --sheet ../items.png --data ../items.json --replace .png=

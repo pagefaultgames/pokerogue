@@ -32,14 +32,27 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: pokerogue_docs
-          sparse-checkout: |
-            /*
-            !/public/
-            /public/images/pokemon/variant/_exp_masterlist.json
-            /public/images/pokemon/variant/_masterlist.json
-            /public/images/logo.png
-          sparse-checkout-cone-mode: false
 
+      - name: Get submodule ref
+        id: asset-submodule-ref
+        run: |
+          cd pokerogue_docs
+          SUBMODULE_REF=$(git submodule status assets | awk '{print $1}' | sed 's/^-//')
+          echo "asset_ref=$SUBMODULE_REF" >> $GITHUB_OUTPUT
+          rm -rf assets
+
+      - name: Checkout asset submodule
+        uses: actions/checkout@v4
+        with:
+          repository: 'pagefaultgames/pokerogue-assets'
+          ref: ${{ steps.asset-submodule-ref.asset_ref }}
+          path: pokerogue_docs/assets
+          sparse-checkout: |
+            images/pokemon/variant/_exp_masterlist.json
+            images/pokemon/variant/_masterlist.json
+            images/logo.png
+          sparse-checkout-cone-mode: true
+          
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:

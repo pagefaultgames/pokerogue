@@ -166,7 +166,7 @@ export class SpeciesEvolutionCondition {
     return this.desc;
   }
 
-  public conditionsFulfilled(pokemon: Pokemon): boolean {
+  public conditionsFulfilled(pokemon: Pokemon, forFusion = false): boolean {
     console.log(this.data);
     return this.data.every(cond => {
       switch (cond.key) {
@@ -186,7 +186,7 @@ export class SpeciesEvolutionCondition {
             m.getStackCount() + pokemon.getPersistentTreasureCount() >= cond.value
           );
         case EvoCondKey.GENDER:
-          return pokemon.gender === cond.gender;
+          return cond.gender === (forFusion ? pokemon.fusionGender : pokemon.gender);
         case EvoCondKey.SHEDINJA: // Shedinja cannot be evolved into directly
           return false;
         case EvoCondKey.BIOME:
@@ -293,7 +293,7 @@ export class SpeciesFormEvolution {
       pokemon.level >= this.level &&
       // Check form key, using the fusion's form key if we're checking the fusion
       (this.preFormKey == null || (forFusion ? pokemon.getFusionFormKey() : pokemon.getFormKey()) === this.preFormKey) &&
-      (this.condition == null || this.condition.conditionsFulfilled(pokemon)) &&
+      (this.condition == null || this.condition.conditionsFulfilled(pokemon, forFusion)) &&
       ((item ?? EvolutionItem.NONE) === (this.item ?? EvolutionItem.NONE))
     );
   }

@@ -1,3 +1,42 @@
+/**
+ * BattlerTags are used to represent semi-persistent effects that can be attached to a Pokemon.
+ * Note that before serialization, a new tag object is created, and then `loadTag` is called on the
+ * tag with the object that was serialized.
+ *
+ * This means it is straightforward to avoid serializing fields.
+ * Fields that are not set in the constructor and not set in `loadTag` will thus not be serialized.
+ *
+ * Any battler tag that can persist across sessions must extend SerializableBattlerTag in its class definition signature.
+ * Only tags that persist across waves (meaning their effect can last >1 turn) should be considered
+ * serializable.
+ *
+ * Serializable battler tags have strict requirements for their fields.
+ * Properties that are not necessary to reconstruct the tag must not be serialized. This can be avoided
+ * by using a private property. If access to the property is needed outside of the class, then
+ * a getter (and potentially, a setter) should be used instead.
+ *
+ * If a property that is intended to be private must be serialized, then it should instead
+ * be declared as a public readonly propety. Then, in the `loadTag` method (or any method inside the class that needs to adjust the property)
+ * use `(this as Mutable<this>).propertyName = value;`
+ * These rules ensure that Typescript is aware of the shape of the serialized version of the class.
+ *
+ * If any new serializable fields *are* added, then the class *must* override the
+ * `loadTag` method to set the new fields. Its signature *must* match the example below:
+ * ```
+ * class ExampleTag extends SerializableBattlerTag {
+ *   // Example, if we add 2 new fields that should be serialized:
+ *   public a: string;
+ *   public b: number;
+ *   // Then we must also define a loadTag method with one of the following signatures
+ *   public override loadTag(source: BaseBattlerTag & Pick<ExampleTag, "tagType" | "a" | "b"): void;
+ *   public override loadTag<const T extends this>(source: BaseBattlerTag & Pick<T, "tagType" | "a" | "b">): void;
+ * }
+ * ```
+ * Notes
+ * - If the class has any subclasses, then the second form of `loadTag` *must* be used.
+ * @module
+ */
+
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -51,45 +90,6 @@ import type {
 import type { Mutable } from "#types/type-helpers";
 import { BooleanHolder, coerceArray, getFrameMs, NumberHolder, toDmgValue } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
-
-/**
- * @module
- * BattlerTags are used to represent semi-persistent effects that can be attached to a Pokemon.
- * Note that before serialization, a new tag object is created, and then `loadTag` is called on the
- * tag with the object that was serialized.
- *
- * This means it is straightforward to avoid serializing fields.
- * Fields that are not set in the constructor and not set in `loadTag` will thus not be serialized.
- *
- * Any battler tag that can persist across sessions must extend SerializableBattlerTag in its class definition signature.
- * Only tags that persist across waves (meaning their effect can last >1 turn) should be considered
- * serializable.
- *
- * Serializable battler tags have strict requirements for their fields.
- * Properties that are not necessary to reconstruct the tag must not be serialized. This can be avoided
- * by using a private property. If access to the property is needed outside of the class, then
- * a getter (and potentially, a setter) should be used instead.
- *
- * If a property that is intended to be private must be serialized, then it should instead
- * be declared as a public readonly propety. Then, in the `loadTag` method (or any method inside the class that needs to adjust the property)
- * use `(this as Mutable<this>).propertyName = value;`
- * These rules ensure that Typescript is aware of the shape of the serialized version of the class.
- *
- * If any new serializable fields *are* added, then the class *must* override the
- * `loadTag` method to set the new fields. Its signature *must* match the example below:
- * ```
- * class ExampleTag extends SerializableBattlerTag {
- *   // Example, if we add 2 new fields that should be serialized:
- *   public a: string;
- *   public b: number;
- *   // Then we must also define a loadTag method with one of the following signatures
- *   public override loadTag(source: BaseBattlerTag & Pick<ExampleTag, "tagType" | "a" | "b"): void;
- *   public override loadTag<const T extends this>(source: BaseBattlerTag & Pick<T, "tagType" | "a" | "b">): void;
- * }
- * ```
- * Notes
- * - If the class has any subclasses, then the second form of `loadTag` *must* be used.
- */
 
 /** Interface containing the serializable fields of BattlerTag */
 interface BaseBattlerTag {
@@ -606,17 +606,7 @@ export class ShellTrapTag extends BattlerTag {
 
       // Trap should only be triggered by opponent's Physical moves
       if (phaseData?.move.category === MoveCategory.PHYSICAL && pokemon.isOpponent(phaseData.attacker)) {
-        const shellTrapPhaseIndex = globalScene.phaseManager.phaseQueue.findIndex(
-          phase => phase.is("MovePhase") && phase.pokemon === pokemon,
-        );
-        const firstMovePhaseIndex = globalScene.phaseManager.phaseQueue.findIndex(phase => phase.is("MovePhase"));
-
-        // Only shift MovePhase timing if it's not already next up
-        if (shellTrapPhaseIndex !== -1 && shellTrapPhaseIndex !== firstMovePhaseIndex) {
-          const shellTrapMovePhase = globalScene.phaseManager.phaseQueue.splice(shellTrapPhaseIndex, 1)[0];
-          globalScene.phaseManager.prependToPhase(shellTrapMovePhase, "MovePhase");
-        }
-
+        globalScene.phaseManager.forceMoveNext((phase: MovePhase) => phase.pokemon === pokemon);
         this.activated = true;
       }
 
@@ -1279,22 +1269,9 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
       }),
     );
 
-    const movePhase = globalScene.phaseManager.findPhase(m => m.is("MovePhase") && m.pokemon === pokemon);
-    if (movePhase) {
-      const movesetMove = pokemon.getMoveset().find(m => m.moveId === this.moveId);
-      if (movesetMove) {
-        const lastMove = pokemon.getLastXMoves(1)[0];
-        globalScene.phaseManager.tryReplacePhase(
-          m => m.is("MovePhase") && m.pokemon === pokemon,
-          globalScene.phaseManager.create(
-            "MovePhase",
-            pokemon,
-            lastMove.targets ?? [],
-            movesetMove,
-            MoveUseMode.NORMAL,
-          ),
-        );
-      }
+    const movesetMove = pokemon.getMoveset().find(m => m.moveId === this.moveId);
+    if (movesetMove) {
+      globalScene.phaseManager.changePhaseMove((phase: MovePhase) => phase.pokemon === pokemon, movesetMove);
     }
   }
 
@@ -3579,6 +3556,25 @@ export class GrudgeTag extends SerializableBattlerTag {
 }
 
 /**
+ * Tag to allow the affected Pokemon's move to go first in its priority bracket.
+ * Used for {@link https://bulbapedia.bulbagarden.net/wiki/Quick_Draw_(Ability) | Quick Draw}
+ * and {@link https://bulbapedia.bulbagarden.net/wiki/Quick_Claw | Quick Claw}.
+ */
+export class BypassSpeedTag extends BattlerTag {
+  public override readonly tagType = BattlerTagType.BYPASS_SPEED;
+
+  constructor() {
+    super(BattlerTagType.BYPASS_SPEED, BattlerTagLapseType.TURN_END, 1);
+  }
+
+  override canAdd(pokemon: Pokemon): boolean {
+    const bypass = new BooleanHolder(true);
+    applyAbAttrs("PreventBypassSpeedChanceAbAttr", { pokemon, bypass });
+    return bypass.value;
+  }
+}
+
+/**
  * Tag used to heal the user of Psycho Shift of its status effect if Psycho Shift succeeds in transferring its status effect to the target Pokemon
  */
 export class PsychoShiftTag extends BattlerTag {
@@ -3623,6 +3619,41 @@ export class MagicCoatTag extends BattlerTag {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       }),
     );
+  }
+}
+
+/**
+ * Tag associated with {@linkcode AbilityId.SUPREME_OVERLORD}
+ */
+export class SupremeOverlordTag extends AbilityBattlerTag {
+  public override readonly tagType = BattlerTagType.SUPREME_OVERLORD;
+  /** The number of faints at the time the user was sent out */
+  public readonly faintCount: number;
+  constructor() {
+    super(BattlerTagType.SUPREME_OVERLORD, AbilityId.SUPREME_OVERLORD, BattlerTagLapseType.FAINT, 0);
+  }
+
+  public override onAdd(pokemon: Pokemon): boolean {
+    (this as Mutable<this>).faintCount = Math.min(
+      pokemon.isPlayer() ? globalScene.arena.playerFaints : globalScene.currentBattle.enemyFaints,
+      5,
+    );
+    globalScene.phaseManager.queueMessage(
+      i18next.t("battlerTags:supremeOverlordOnAdd", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }),
+    );
+    return true;
+  }
+
+  /**
+   * @returns The damage multiplier for Supreme Overlord
+   */
+  public getBoost(): number {
+    return 1 + 0.1 * this.faintCount;
+  }
+
+  public override loadTag(source: BaseBattlerTag & Pick<SupremeOverlordTag, "tagType" | "faintCount">): void {
+    super.loadTag(source);
+    (this as Mutable<this>).faintCount = source.faintCount;
   }
 }
 
@@ -3826,6 +3857,10 @@ export function getBattlerTag(
       return new PsychoShiftTag();
     case BattlerTagType.MAGIC_COAT:
       return new MagicCoatTag();
+    case BattlerTagType.SUPREME_OVERLORD:
+      return new SupremeOverlordTag();
+    case BattlerTagType.BYPASS_SPEED:
+      return new BypassSpeedTag();
   }
 }
 
@@ -3960,4 +3995,6 @@ export type BattlerTagTypeMap = {
   [BattlerTagType.GRUDGE]: GrudgeTag;
   [BattlerTagType.PSYCHO_SHIFT]: PsychoShiftTag;
   [BattlerTagType.MAGIC_COAT]: MagicCoatTag;
+  [BattlerTagType.SUPREME_OVERLORD]: SupremeOverlordTag;
+  [BattlerTagType.BYPASS_SPEED]: BypassSpeedTag;
 };

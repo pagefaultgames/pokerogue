@@ -3,6 +3,8 @@ import { globalScene } from "#app/global-scene";
 import { pokemonEvolutions, pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { signatureSpecies } from "#balance/signature-species";
 import { tmSpecies } from "#balance/tms";
+// biome-ignore lint/correctness/noUnusedImports: Used in a tsdoc comment
+import type { RARE_EGG_MOVE_LEVEL_REQUIREMENT } from "#data/balance/moveset-generation";
 import { modifierTypes } from "#data/data-lists";
 import { doubleBattleDialogue } from "#data/double-battle-dialogue";
 import { Gender } from "#data/gender";
@@ -41,6 +43,7 @@ import type {
   TrainerConfigs,
   TrainerTierPools,
 } from "#types/trainer-funcs";
+import type { Mutable } from "#types/type-helpers";
 import { coerceArray, randSeedInt, randSeedIntRange, randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
@@ -118,6 +121,15 @@ export class TrainerConfig {
   public specialtyType: PokemonType;
   public hasVoucher = false;
   public trainerAI: TrainerAI;
+
+  /**
+   * Whether this trainer's Pokémon are allowed to generate with egg moves
+   * @defaultValue `false`
+   *
+   * @see {@linkcode setEggMovesAllowed}
+   * @see {@linkcode RARE_EGG_MOVE_LEVEL_THRESHOLD}
+   */
+  public readonly allowEggMoves: boolean = false;
 
   public encounterMessages: string[] = [];
   public victoryMessages: string[] = [];
@@ -387,8 +399,27 @@ export class TrainerConfig {
     return this;
   }
 
-  setBoss(): TrainerConfig {
+  /**
+   * Allow this trainer's Pokémon to have egg moves when generating their movesets.
+   *
+   * @remarks
+   * It is redundant to call this if {@linkcode setBoss} is also called on the configuration.
+   * @returns `this` for method chaining
+   * @see {@linkcode allowEggMoves}
+   */
+  public setEggMovesAllowed(): this {
+    (this as Mutable<this>).allowEggMoves = true;
+    return this;
+  }
+
+  /**
+   * Set this trainer as a boss trainer
+   * @returns `this` for method chaining
+   * @see {@linkcode isBoss}
+   */
+  public setBoss(): TrainerConfig {
     this.isBoss = true;
+    (this as Mutable<this>).allowEggMoves = true;
     return this;
   }
 
