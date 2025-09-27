@@ -1775,7 +1775,10 @@ export class PokedexPageUiHandler extends MessageUiHandler {
           case MenuOptions.RIBBONS:
             if (!isStarterCaught) {
               error = true;
-            } else if (!globalScene.gameData.dexData[this.species.speciesId].ribbons.getRibbons()) {
+            } else if (
+              !globalScene.gameData.dexData[this.species.speciesId].ribbons.getRibbons()
+              && !globalScene.showMissingRibbons
+            ) {
               ui.showText(i18next.t("pokedexUiHandler:noRibbons"));
               error = true;
             } else {
