@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+
+SPDX-License-Identifier: CC-BY-NC-SA-4.0
+-->
+
 # Linting & Formatting
 
 Writing clean, readable code is important, and linters and formatters are an integral part of ensuring code quality and readability. \

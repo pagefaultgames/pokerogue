@@ -49,7 +49,8 @@ describe("check if every variant's sprite are correctly set", () => {
         const trimmedFilePath = `${trimmedDirpath}${filename}`;
         const ext = filename.split(".")[1];
         const name = filename.split(".")[0];
-        if (excludes.includes(name)) {
+        // skip REUSE.toml files
+        if (excludes.includes(name) || ext === "toml") {
           continue;
         }
         if (name.includes("_")) {
