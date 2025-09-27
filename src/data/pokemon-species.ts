@@ -17,7 +17,7 @@ import type { GrowthRate } from "#data/exp";
 import { Gender } from "#data/gender";
 import { AbilityId } from "#enums/ability-id";
 import { DexAttr } from "#enums/dex-attr";
-import { EvoLevelThresholdSort } from "#enums/evo-level-threshold-kind";
+import { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import type { PokemonType } from "#enums/pokemon-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
@@ -905,7 +905,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
     level: number,
     allowEvolving = false,
     strength: PartyMemberStrength = PartyMemberStrength.WEAKER,
-    encounterKind: EvoLevelThresholdSort = EvoLevelThresholdSort.NORMAL,
+    encounterKind: EvoLevelThresholdKind = EvoLevelThresholdKind.NORMAL,
   ): SpeciesId {
     return this.getSpeciesForLevel(level, allowEvolving, true, strength, encounterKind);
   }
@@ -919,7 +919,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
     allowEvolving = false,
     forTrainer = false,
     strength: PartyMemberStrength = PartyMemberStrength.WEAKER,
-    encounterKind: EvoLevelThresholdSort = EvoLevelThresholdSort.NORMAL,
+    encounterKind: EvoLevelThresholdKind = EvoLevelThresholdKind.NORMAL,
   ): SpeciesId {
     return determineEnemySpecies(this, level, allowEvolving, forTrainer, strength, encounterKind);
   }
