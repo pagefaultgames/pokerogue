@@ -3,7 +3,7 @@ import { loggedInUser } from "#app/account";
 /**
  * Obtain the local storage key corresponding to a given save slot.
  * @param slotId - The numerical save slot ID
- * Will throw an error if `<0` (in line with standard util functions)
+ *   Will throw an error if `<0` (in line with standard util functions)
  * @returns The local storage key used to access the save data for the given slot.
  */
 export function getSaveDataLocalStorageKey(slotId: number): string {
@@ -11,5 +11,7 @@ export function getSaveDataLocalStorageKey(slotId: number): string {
     throw new Error("Cannot access a negative save slot ID from localstorage!");
   }
 
+  // TODO: Default to `Guest` as a fallback for no logged in username
+  // rather than leaving a trailing underscore
   return `sessionData${slotId || ""}_${loggedInUser?.username}`;
 }
