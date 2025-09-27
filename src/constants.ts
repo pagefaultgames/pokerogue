@@ -23,7 +23,7 @@ export const TYPE_BOOST_ITEM_BOOST_PERCENT = 20;
 /**
  * The default species that a new player can choose from
  */
-export const defaultStarterSpecies: SpeciesId[] = [
+export const defaultStarterSpecies: readonly SpeciesId[] = [
   SpeciesId.BULBASAUR,
   SpeciesId.CHARMANDER,
   SpeciesId.SQUIRTLE,

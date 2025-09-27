@@ -62,18 +62,11 @@ import type {
   PokemonDefendCondition,
   PokemonStatStageChangeCondition,
 } from "#types/ability-types";
+import type { Constructor } from "#types/common";
 import type { Localizable } from "#types/locales";
 import type { Closed, Exact } from "#types/type-helpers";
-import type { Constructor } from "#utils/common";
-import {
-  BooleanHolder,
-  coerceArray,
-  NumberHolder,
-  randSeedFloat,
-  randSeedInt,
-  randSeedItem,
-  toDmgValue,
-} from "#utils/common";
+import { coerceArray } from "#utils/array";
+import { BooleanHolder, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
@@ -1217,7 +1210,7 @@ export class PostDefendTerrainChangeAbAttr extends PostDefendAbAttr {
 
 export class PostDefendContactApplyStatusEffectAbAttr extends PostDefendAbAttr {
   private chance: number;
-  private effects: StatusEffect[];
+  private readonly effects: readonly StatusEffect[];
 
   constructor(chance: number, ...effects: StatusEffect[]) {
     super(true);
@@ -2187,7 +2180,7 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
 export class PostAttackApplyStatusEffectAbAttr extends PostAttackAbAttr {
   private contactRequired: boolean;
   private chance: number;
-  private effects: StatusEffect[];
+  private readonly effects: readonly StatusEffect[];
 
   constructor(contactRequired: boolean, chance: number, ...effects: StatusEffect[]) {
     super();
@@ -2947,7 +2940,7 @@ export class PostSummonTerrainChangeAbAttr extends PostSummonAbAttr {
  * Heals a status effect if the Pokemon is afflicted with it upon switch in (or gain)
  */
 export class PostSummonHealStatusAbAttr extends PostSummonRemoveEffectAbAttr {
-  private immuneEffects: StatusEffect[];
+  private readonly immuneEffects: readonly StatusEffect[];
   private statusHealed: StatusEffect;
 
   /**
@@ -2960,7 +2953,8 @@ export class PostSummonHealStatusAbAttr extends PostSummonRemoveEffectAbAttr {
 
   public override canApply({ pokemon }: AbAttrBaseParams): boolean {
     const status = pokemon.status?.effect;
-    return status != null && (this.immuneEffects.length === 0 || this.immuneEffects.includes(status));
+    const immuneEffects = this.immuneEffects;
+    return status != null && (immuneEffects.length === 0 || immuneEffects.includes(status));
   }
 
   public override apply({ pokemon }: AbAttrBaseParams): void {
@@ -3056,7 +3050,7 @@ export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
  * Removes supplied status effects from the user's field.
  */
 export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAttr {
-  private statusEffect: StatusEffect[];
+  private readonly statusEffect: readonly StatusEffect[];
 
   /**
    * @param statusEffect - The status effects to be removed from the user's field.
@@ -3644,7 +3638,7 @@ export class PreSetStatusAbAttr extends AbAttr {
  * Provides immunity to status effects to specified targets.
  */
 export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
-  protected immuneEffects: StatusEffect[];
+  protected readonly immuneEffects: readonly StatusEffect[];
 
   /**
    * @param immuneEffects - An array of {@linkcode StatusEffect}s to prevent application.
@@ -3712,7 +3706,7 @@ export interface UserFieldStatusEffectImmunityAbAttrParams extends AbAttrBasePar
  */
 export class UserFieldStatusEffectImmunityAbAttr extends CancelInteractionAbAttr {
   private declare readonly _: never;
-  protected immuneEffects: StatusEffect[];
+  protected readonly immuneEffects: readonly StatusEffect[];
 
   /**
    * @param immuneEffects - An array of {@linkcode StatusEffect}s to prevent application.
@@ -4005,7 +3999,7 @@ export class BlockNonDirectDamageAbAttr extends CancelInteractionAbAttr {
  * This attribute will block any status damage that you put in the parameter.
  */
 export class BlockStatusDamageAbAttr extends CancelInteractionAbAttr {
-  private effects: StatusEffect[];
+  private readonly effects: readonly StatusEffect[];
 
   /**
    * @param effects - The status effect(s) that will be blocked from damaging the ability pokemon
@@ -4546,7 +4540,7 @@ export class PostTurnAbAttr extends AbAttr {
  * @sealed
  */
 export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
-  private effects: StatusEffect[];
+  private readonly effects: readonly StatusEffect[];
 
   /**
    * @param effects - The status effect(s) that will qualify healing the ability pokemon
@@ -5815,10 +5809,10 @@ export interface IgnoreTypeStatusEffectImmunityAbAttrParams extends AbAttrParams
  * @sealed
  */
 export class IgnoreTypeStatusEffectImmunityAbAttr extends AbAttr {
-  private statusEffect: StatusEffect[];
-  private defenderType: PokemonType[];
+  private readonly statusEffect: readonly StatusEffect[];
+  private readonly defenderType: readonly PokemonType[];
 
-  constructor(statusEffect: StatusEffect[], defenderType: PokemonType[]) {
+  constructor(statusEffect: readonly StatusEffect[], defenderType: readonly PokemonType[]) {
     super(false);
 
     this.statusEffect = statusEffect;
@@ -6706,7 +6700,7 @@ function getPokemonWithWeatherBasedForms() {
 
 // biome-ignore format: prevent biome from removing the newlines (e.g. prevent `new Ability(...).attr(...)`)
 export function initAbilities() {
-  allAbilities.push(
+  (allAbilities as Ability[]).push(
     new Ability(AbilityId.NONE, 3),
     new Ability(AbilityId.STENCH, 3)
       .attr(PostAttackApplyBattlerTagAbAttr, false, (user, target, move) => !move.hasAttr("FlinchAttr") && !move.hitsSubstitute(user, target) ? 10 : 0, BattlerTagType.FLINCHED),
