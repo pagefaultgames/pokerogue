@@ -103,7 +103,7 @@ export class RibbonData {
   //#endregion Ribbons
 
   /** Create a new instance of RibbonData. Generally, {@linkcode fromJSON} is used instead. */
-  constructor(value: number) {
+  constructor(value: number | bigint) {
     this.payload = BigInt(value);
   }
 
