@@ -1,11 +1,7 @@
-<<<<<<< HEAD
-import { type PokeballCounts } from "#app/battle-scene";
-import { TerrainType } from "#app/data/terrain";
-=======
 import type { PokeballCounts } from "#app/battle-scene";
->>>>>>> upstream/beta
 import { EvolutionItem } from "#balance/pokemon-evolutions";
 import { Gender } from "#data/gender";
+import { TerrainType } from "#data/terrain";
 import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
 import { BerryType } from "#enums/berry-type";
