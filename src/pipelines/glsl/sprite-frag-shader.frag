@@ -30,7 +30,7 @@ uniform vec3 nightTint;
 uniform float teraTime;
 uniform vec3 teraColor;
 uniform bool hasShadow;
-uniform int yCenter;
+uniform bool yCenter;
 uniform float fieldScale;
 uniform float vCutoff;
 uniform vec2 relPosition;
@@ -229,7 +229,7 @@ void main() {
 			dayNightTint = overrideTint;
 		} else if (time < 0.25) {
 			dayNightTint = dayTint;
-		} else if (isOutside == 0 && time < 0.5) {
+		} else if (!isOutside && time < 0.5) {
 			dayNightTint = mix(dayTint, nightTint, (time - 0.25) / 0.25);
 		} else if (time < 0.375) {
 			dayNightTint = mix(dayTint, duskTint, (time - 0.25) / 0.125);
@@ -237,7 +237,7 @@ void main() {
 			dayNightTint = mix(duskTint, nightTint, (time - 0.375) / 0.125);
 		} else if (time < 0.75) {
 			dayNightTint = nightTint;
-		} else if (isOutside == 0) {
+		} else if (!isOutside) {
 			dayNightTint = mix(nightTint, dayTint, (time - 0.75) / 0.25);
 		} else if (time < 0.875) {
 			dayNightTint = mix(nightTint, duskTint, (time - 0.75) / 0.125);
@@ -254,7 +254,7 @@ void main() {
 		float spriteX = ((floor(outPosition.x / fieldScale) - relPosition.x) / width) + 0.5;
 		float spriteY = ((floor(outPosition.y / fieldScale) - relPosition.y - yShadowOffset) / size.y);
 
-		if (yCenter == 1) {
+		if (yCenter) {
 			spriteY += 0.5;
 		} else {
 			spriteY += 1.0;

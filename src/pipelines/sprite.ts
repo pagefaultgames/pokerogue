@@ -9,8 +9,6 @@ import spriteFragShader from "./glsl/sprite-frag-shader.frag?raw";
 import spriteVertShader from "./glsl/sprite-shader.vert?raw";
 
 export class SpritePipeline extends FieldSpritePipeline {
-  private _tone: number[];
-
   constructor(game: Phaser.Game) {
     super(game, {
       game,
@@ -18,8 +16,6 @@ export class SpritePipeline extends FieldSpritePipeline {
       fragShader: spriteFragShader,
       vertShader: spriteVertShader,
     });
-
-    this._tone = [0, 0, 0, 0];
   }
 
   onPreRender(): void {
@@ -28,14 +24,14 @@ export class SpritePipeline extends FieldSpritePipeline {
     this.set1f("teraTime", 0);
     this.set3fv("teraColor", [0, 0, 0]);
     this.setBoolean("hasShadow", false);
-    this.set1i("yCenter", 0);
+    this.setBoolean("yCenter", false);
     this.set2f("relPosition", 0, 0);
     this.set2f("texFrameUv", 0, 0);
     this.set2f("size", 0, 0);
     this.set2f("texSize", 0, 0);
     this.set1f("yOffset", 0);
     this.set1f("yShadowOffset", 0);
-    this.set4fv("tone", this._tone);
+    this.set4fv("tone", [0, 0, 0, 0]);
   }
 
   onBind(gameObject: Phaser.GameObjects.GameObject): void {
@@ -43,6 +39,7 @@ export class SpritePipeline extends FieldSpritePipeline {
 
     const sprite = gameObject as Phaser.GameObjects.Sprite;
 
+    // TODO: Add strong typing on this stuff
     const data = sprite.pipelineData;
     const tone = data["tone"] as number[];
     const teraColor = (data["isTerastallized"] as boolean) ? ((data["teraColor"] as number[]) ?? [0, 0, 0]) : [0, 0, 0];
@@ -62,11 +59,11 @@ export class SpritePipeline extends FieldSpritePipeline {
       position[1] += field.y / field.scale;
     }
     position[0] +=
-      -(sprite.width - sprite.frame.width) / 2 + sprite.frame.x + (!ignoreFieldPos ? sprite.x - field.x : 0);
+      -(sprite.width - sprite.frame.width) / 2 + sprite.frame.x + (ignoreFieldPos ? 0 : sprite.x - field.x);
     if (sprite.originY === 0.5) {
       position[1] +=
         (sprite.height / 2) * ((isEntityObj ? sprite.parentContainer : sprite).scale - 1)
-        + (!ignoreFieldPos ? sprite.y - field.y : 0);
+        + (ignoreFieldPos ? 0 : sprite.y - field.y);
     }
     this.set1f("teraTime", (this.game.getTime() % 500000) / 500000);
     this.set3fv(
@@ -74,7 +71,7 @@ export class SpritePipeline extends FieldSpritePipeline {
       teraColor.map(c => c / 255),
     );
     this.setBoolean("hasShadow", hasShadow);
-    this.set1i("yCenter", sprite.originY === 0.5 ? 1 : 0);
+    this.setBoolean("yCenter", sprite.originY === 0.5);
     this.set1f("fieldScale", field?.scale || 1);
     this.set2f("relPosition", position[0], position[1]);
     this.set2f("texFrameUv", sprite.frame.u0, sprite.frame.v0);
@@ -115,7 +112,7 @@ export class SpritePipeline extends FieldSpritePipeline {
     }
   }
 
-  onBatch(gameObject: Phaser.GameObjects.GameObject): void {
+  override onBatch(gameObject: Phaser.GameObjects.GameObject): void {
     if (gameObject) {
       const sprite = gameObject as Phaser.GameObjects.Sprite;
       const data = sprite.pipelineData;
@@ -167,7 +164,8 @@ export class SpritePipeline extends FieldSpritePipeline {
     super.onBatch(gameObject);
   }
 
-  batchQuad(
+  // biome-ignore lint/nursery/useMaxParams: Not our fault Phaser gives this 20 params
+  override batchQuad(
     gameObject: Phaser.GameObjects.GameObject,
     x0: number,
     y0: number,
@@ -233,13 +231,5 @@ export class SpritePipeline extends FieldSpritePipeline {
       texture,
       unit,
     );
-  }
-
-  get tone(): number[] {
-    return this._tone;
-  }
-
-  set tone(value: number[]) {
-    this._tone = value;
   }
 }

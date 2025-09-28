@@ -150,7 +150,7 @@ void main() {
 			dayNightTint = overrideTint;
 		} else if (time < 0.25) {
 			dayNightTint = dayTint;
-		} else if (isOutside == 0 && time < 0.5) {
+		} else if (!isOutside && time < 0.5) {
 			dayNightTint = mix(dayTint, nightTint, (time - 0.25) / 0.25);
 		} else if (time < 0.375) {
 			dayNightTint = mix(dayTint, duskTint, (time - 0.25) / 0.125);
@@ -158,7 +158,7 @@ void main() {
 			dayNightTint = mix(duskTint, nightTint, (time - 0.375) / 0.125);
 		} else if (time < 0.75) {
 			dayNightTint = nightTint;
-		} else if (isOutside == 0) {
+		} else if (!isOutside) {
 			dayNightTint = mix(nightTint, dayTint, (time - 0.75) / 0.25);
 		} else if (time < 0.875) {
 			dayNightTint = mix(nightTint, duskTint, (time - 0.75) / 0.125);

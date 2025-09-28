@@ -1117,11 +1117,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getSprite(): Phaser.GameObjects.Sprite {
-    return this.getAt(0) as Phaser.GameObjects.Sprite;
+    return this.getAt(0);
   }
 
   getTintSprite(): Phaser.GameObjects.Sprite | null {
-    return !this.maskEnabled ? (this.getAt(1) as Phaser.GameObjects.Sprite) : this.maskSprite;
+    return this.maskEnabled ? this.maskSprite : (this.getAt(1) as Phaser.GameObjects.Sprite);
   }
 
   getSpriteScale(): number {
@@ -1175,14 +1175,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     this.setScale(this.getSpriteScale());
   }
 
-  updateSpritePipelineData(): void {
+  async updateSpritePipelineData(): Promise<void> {
     [this.getSprite(), this.getTintSprite()]
       .filter(s => !!s)
       .map(s => {
         s.pipelineData["teraColor"] = getTypeRgb(this.getTeraType());
         s.pipelineData["isTerastallized"] = this.isTerastallized;
       });
-    this.updateInfo(true);
+    await this.updateInfo(true);
   }
 
   initShinySparkle(): void {
