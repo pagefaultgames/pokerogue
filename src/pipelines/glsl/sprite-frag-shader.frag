@@ -225,7 +225,7 @@ void main() {
 	if (color.a > 0.0 && !ignoreTimeTint) {
 		vec3 dayNightTint;
 
-		if (any(lessThan(overrideTint, vec3(0.0)))) {
+		if (all(lessThan(overrideTint, vec3(0.0)))) {
 			dayNightTint = overrideTint;
 		} else if (time < 0.25) {
 			dayNightTint = dayTint;

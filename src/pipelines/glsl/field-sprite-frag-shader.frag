@@ -143,10 +143,10 @@ void main() {
 	}
 
 	/* Apply day/night tint */
-	if (color.a > 0.0 && ignoreTimeTint) {
+	if (color.a > 0.0 && !ignoreTimeTint) {
 		vec3 dayNightTint;
 
-		if (any(lessThan(vec3(0.0), overrideTint))) {
+		if (all(lessThan(vec3(0.0), overrideTint))) {
 			dayNightTint = overrideTint;
 		} else if (time < 0.25) {
 			dayNightTint = dayTint;
