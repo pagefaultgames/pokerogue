@@ -207,7 +207,7 @@ describe("Terrain -", () => {
       // expect(pidgeot).toHaveUsedMove({ move: MoveId.SPORE, result: MoveResult.FAIL });
       // expect(shuckle).toHaveUsedMove({ move: MoveId.SPORE, result: MoveResult.SUCCESS });
 
-      expect(game.textInterceptor.logs).toContain(
+      expect(game).toHaveShownMessage(
         i18next.t("terrain:defaultBlockMessage", {
           pokemonNameWithAffix: getPokemonNameWithAffix(shuckle),
           terrainName: getTerrainName(TerrainType.ELECTRIC),
@@ -231,7 +231,7 @@ describe("Terrain -", () => {
       expect(statusSpy).toHaveLastReturnedWith(false);
       expect(blissey).toHaveUsedMove({ move: MoveId.RELIC_SONG, result: MoveResult.SUCCESS });
 
-      expect(game.textInterceptor.logs).not.toContain(
+      expect(game).not.toHaveShownMessage(
         i18next.t("terrain:defaultBlockMessage", {
           pokemonNameWithAffix: getPokemonNameWithAffix(shuckle),
           terrainName: getTerrainName(TerrainType.ELECTRIC),
@@ -262,7 +262,7 @@ describe("Terrain -", () => {
       // expect(blissey.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
       // expect(shuckle.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
 
-      expect(game.textInterceptor.logs).toContain(
+      expect(game).toHaveShownMessage(
         i18next.t("terrain:mistyBlockMessage", {
           pokemonNameWithAffix: getPokemonNameWithAffix(blissey),
         }),
@@ -283,7 +283,7 @@ describe("Terrain -", () => {
       // blissey is grounded & protected, shuckle isn't
       expect(blissey).not.toHaveBattlerTag(BattlerTagType.CONFUSED);
       expect(shuckle).toHaveBattlerTag(BattlerTagType.CONFUSED);
-      expect(game.textInterceptor.logs).toContain(
+      expect(game).toHaveShownMessage(
         i18next.t("terrain:mistyBlockMessage", {
           pokemonNameWithAffix: getPokemonNameWithAffix(blissey),
         }),
@@ -316,7 +316,7 @@ describe("Terrain -", () => {
       expect(blissey).toHaveStatusEffect(StatusEffect.NONE);
       expect(shuckle).toHaveUsedMove({ move, result: MoveResult.SUCCESS });
 
-      expect(game.textInterceptor.logs).not.toContain(
+      expect(game).not.toHaveShownMessage(
         i18next.t("terrain:mistyBlockMessage", {
           pokemonNameWithAffix: getPokemonNameWithAffix(blissey),
         }),
@@ -341,7 +341,7 @@ describe("Terrain -", () => {
 
       expect(blissey.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
       expect(shuckle.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-      expect(game.textInterceptor.logs).toContain(
+      expect(game).toHaveShownMessage(
         i18next.t("terrain:defaultBlockMessage", {
           pokemonNameWithAffix: getPokemonNameWithAffix(shuckle),
           terrainName: getTerrainName(TerrainType.PSYCHIC),
@@ -361,7 +361,7 @@ describe("Terrain -", () => {
 
       expect(blissey.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
       expect(shuckle.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-      expect(game.textInterceptor.logs).toContain(
+      expect(game).toHaveShownMessage(
         i18next.t("terrain:defaultBlockMessage", {
           pokemonNameWithAffix: getPokemonNameWithAffix(shuckle),
           terrainName: getTerrainName(TerrainType.PSYCHIC),

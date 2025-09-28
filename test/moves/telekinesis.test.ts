@@ -47,7 +47,7 @@ describe("Move - Telekinesis", () => {
 
     expect(game).toHaveShownMessage(
       i18next.t("battlerTags:telekinesisOnAdd", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(player),
+        pokemonNameWithAffix: getPokemonNameWithAffix(enemy),
       }),
     );
     expect(enemy).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
