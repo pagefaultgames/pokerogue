@@ -811,7 +811,7 @@ export abstract class EntryHazardTag extends SerializableArenaTag {
    * @returns `true` if this hazard affects the given Pokemon; `false` otherwise.
    */
   override apply(_arena: Arena, simulated: boolean, pokemon: Pokemon): boolean {
-    if ((this.side === ArenaTagSide.PLAYER) !== pokemon.isPlayer()) {
+    if ((this.side !== ArenaTagSide.ENEMY) !== pokemon.isPlayer()) {
       return false;
     }
 

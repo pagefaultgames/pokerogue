@@ -1,3 +1,4 @@
+import { getPokemonNameWithAffix } from "#app/messages";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -7,6 +8,7 @@ import { SpeciesId } from "#enums/species-id";
 import { invalidTelekinesisSpecies } from "#moves/invalid-moves";
 import { GameManager } from "#test/test-utils/game-manager";
 import { getEnumStr } from "#test/test-utils/string-utils";
+import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -35,7 +37,7 @@ describe("Move - Telekinesis", () => {
   });
 
   it("should cause opposing non-OHKO moves to always hit the target", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
@@ -43,6 +45,11 @@ describe("Move - Telekinesis", () => {
     game.move.use(MoveId.TELEKINESIS);
     await game.toNextTurn();
 
+    expect(game).toHaveShownMessage(
+      i18next.t("battlerTags:telekinesisOnAdd", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(player),
+      }),
+    );
     expect(enemy).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
     expect(enemy).toHaveBattlerTag(BattlerTagType.FLOATING);
 
@@ -56,7 +63,7 @@ describe("Move - Telekinesis", () => {
   });
 
   it("should forcibly unground the target", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const enemy = game.field.getEnemyPokemon();
     expect(enemy.isGrounded()).toBe(true);
@@ -68,24 +75,29 @@ describe("Move - Telekinesis", () => {
   });
 
   // TODO: Verify whether the 3 turn duration includes the turn the move is used
-  it.todo("should last 3 turns", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+  it.todo("should last 3 turns and display message when removed", async () => {
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     game.move.use(MoveId.TELEKINESIS);
-    await game.phaseInterceptor.to("MoveEndPhase");
+    await game.toNextTurn();
 
     const enemy = game.field.getEnemyPokemon();
     expect(enemy).toHaveBattlerTag({ tagType: BattlerTagType.TELEKINESIS, turnCount: 2 });
 
-    await game.toNextTurn();
-
     game.move.use(MoveId.SPLASH);
     await game.toNextTurn();
+
     expect(enemy).toHaveBattlerTag({ tagType: BattlerTagType.TELEKINESIS, turnCount: 1 });
 
     game.move.use(MoveId.SPLASH);
-    await game.toNextTurn();
+    await game.toEndOfTurn();
+
     expect(enemy).not.toHaveBattlerTag(BattlerTagType.TELEKINESIS);
+    expect(game).toHaveShownMessage(
+      i18next.t("battlerTags:telekinesisOnRemove", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(enemy),
+      }),
+    );
   });
 
   const cases = ([BattlerTagType.TELEKINESIS, BattlerTagType.FLOATING, BattlerTagType.IGNORE_FLYING] as const).map(
@@ -95,7 +107,7 @@ describe("Move - Telekinesis", () => {
     }),
   );
   it.each(cases)("should fail if the target already has BattlerTagType.$name", async ({ tagType }) => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const enemy = game.field.getEnemyPokemon();
     enemy.addTag(tagType);
@@ -103,8 +115,8 @@ describe("Move - Telekinesis", () => {
     game.move.use(MoveId.TELEKINESIS);
     await game.toEndOfTurn();
 
-    const karp = game.field.getPlayerPokemon();
-    expect(karp).toHaveUsedMove({ move: MoveId.TELEKINESIS, result: MoveResult.FAIL });
+    const feebas = game.field.getPlayerPokemon();
+    expect(feebas).toHaveUsedMove({ move: MoveId.TELEKINESIS, result: MoveResult.FAIL });
   });
 
   const invalidSpecies = [...invalidTelekinesisSpecies].map(s => ({
@@ -162,13 +174,13 @@ describe("Move - Telekinesis", () => {
     expect(enemy).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
     expect(enemy).toHaveBattlerTag(BattlerTagType.FLOATING);
 
-    const feebas = game.field.getPlayerPokemon();
-    expect(feebas).toHaveUsedMove({ move: MoveId.TELEKINESIS, result: MoveResult.SUCCESS });
+    const player = game.field.getPlayerPokemon();
+    expect(player).toHaveUsedMove({ move: MoveId.TELEKINESIS, result: MoveResult.SUCCESS });
   });
 
   // TODO: Move to ingrain's test file
   it("should become grounded when Ingrain is used, but not remove the guaranteed hit effect", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();

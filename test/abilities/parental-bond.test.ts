@@ -279,6 +279,7 @@ describe("Abilities - Parental Bond", () => {
   });
 
   it("Smack Down boosted by this ability should only ground the target after the second hit", async () => {
+    game.override.enemySpecies(SpeciesId.CORVIKNIGHT);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const leadPokemon = game.field.getPlayerPokemon();

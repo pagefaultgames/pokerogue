@@ -76,6 +76,8 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
 
     const eelektross = game.field.getEnemyPokemon();
     eelektross.addTag(tag);
+    // Fake eelektross being ungrounded since Smack Down/etc require it to apply effects
+    vi.spyOn(eelektross, "isGrounded").mockReturnValue(false);
 
     game.move.use(MoveId.SMACK_DOWN);
     await game.toEndOfTurn();
@@ -97,13 +99,16 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
 
     // Eelektross should be grounded solely due to using Dig,
     const eelektross = game.field.getEnemyPokemon();
+    expect(eelektross).toHaveBattlerTag(BattlerTagType.UNDERGROUND);
     expect(eelektross.isGrounded()).toBe(false);
     expect(eelektross.isGrounded(true)).toBe(true);
     await game.toEndOfTurn();
 
     // Eelektross took damage but was not forcibly grounded
-    expect(eelektross.isGrounded()).toBe(true);
+    expect(eelektross.isGrounded()).toBe(false);
+    expect(eelektross.isGrounded(true)).toBe(true);
     expect(eelektross).not.toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
+    expect(eelektross).toHaveBattlerTag(BattlerTagType.UNDERGROUND);
     expect(eelektross).not.toHaveFullHp();
   });
 

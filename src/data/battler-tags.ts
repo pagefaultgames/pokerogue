@@ -780,9 +780,8 @@ export class ConfusedTag extends SerializableBattlerTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
-    const blockedByTerrain = pokemon.isGrounded() && globalScene.arena.getTerrainType() === TerrainType.MISTY;
+    const blockedByTerrain = pokemon.isGrounded() && globalScene.arena.terrain?.terrainType === TerrainType.MISTY;
     if (blockedByTerrain) {
-      // TODO: this should not trigger if the current move is an attacking move
       pokemon.queueStatusImmuneMessage(false, TerrainType.MISTY);
       return false;
     }
@@ -2232,8 +2231,8 @@ export abstract class TypeImmuneTag extends SerializableBattlerTag {
  */
 export class FloatingTag extends TypeImmuneTag {
   public override readonly tagType = BattlerTagType.FLOATING;
-  constructor(tagType: BattlerTagType, sourceMove: MoveId, turnCount: number) {
-    super(tagType, sourceMove, PokemonType.GROUND, turnCount);
+  constructor(sourceMove: MoveId, turnCount: number) {
+    super(BattlerTagType.FLOATING, sourceMove, PokemonType.GROUND, turnCount);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -3456,12 +3455,20 @@ export class SyrupBombTag extends SerializableBattlerTag {
 export class TelekinesisTag extends SerializableBattlerTag {
   public override readonly tagType = BattlerTagType.TELEKINESIS;
   constructor() {
-    super(BattlerTagType.TELEKINESIS, BattlerTagLapseType.TURN_END, 3, MoveId.TELEKINESIS, undefined, true);
+    super(BattlerTagType.TELEKINESIS, BattlerTagLapseType.TURN_END, 3, undefined, undefined, true);
   }
 
   override onAdd(pokemon: Pokemon) {
     globalScene.phaseManager.queueMessage(
       i18next.t("battlerTags:telekinesisOnAdd", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      }),
+    );
+  }
+
+  override onRemove(pokemon: Pokemon) {
+    globalScene.phaseManager.queueMessage(
+      i18next.t("battlerTags:telekinesisOnRemove", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       }),
     );
@@ -3805,7 +3812,7 @@ export function getBattlerTag(
     case BattlerTagType.CHARGED:
       return new TypeBoostTag(tagType, sourceMove, PokemonType.ELECTRIC, 2, true);
     case BattlerTagType.FLOATING:
-      return new FloatingTag(tagType, sourceMove, turnCount);
+      return new FloatingTag(sourceMove, turnCount);
     case BattlerTagType.MINIMIZED:
       return new MinimizeTag();
     case BattlerTagType.DESTINY_BOND:

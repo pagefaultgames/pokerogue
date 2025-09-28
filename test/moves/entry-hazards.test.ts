@@ -229,5 +229,18 @@ describe("Moves - Entry Hazards", () => {
         }),
       );
     });
+
+    it("should not affect ungrounded Pokemon", async () => {
+      game.scene.arena.addTag(ArenaTagType.STICKY_WEB, 0, undefined, 0, ArenaTagSide.ENEMY);
+      await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.EKANS]);
+
+      const enemy = game.field.getEnemyPokemon();
+      expect(enemy).toHaveStatStage(Stat.SPD, -1);
+      expect(game.textInterceptor.logs).toContain(
+        i18next.t("arenaTag:stickyWebActivateTrap", {
+          pokemonName: enemy.getNameToRender(),
+        }),
+      );
+    });
   });
 });
