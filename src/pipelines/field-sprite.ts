@@ -21,10 +21,10 @@ export class FieldSpritePipeline extends Phaser.Renderer.WebGL.Pipelines.MultiPi
   }
 
   onPreRender(): void {
-    this.set1f("time", 0);
-    this.setBoolean("ignoreTimeTint", false);
-    this.set1f("terrainColorRatio", 0);
-    this.set3fv("terrainColor", [0, 0, 0]);
+    this.set1f("time", 0)
+      .setBoolean("ignoreTimeTint", false)
+      .set1f("terrainColorRatio", 0)
+      .set3fv("terrainColor", [0, 0, 0]);
   }
 
   onBind(gameObject: Phaser.GameObjects.GameObject): void {
@@ -40,27 +40,27 @@ export class FieldSpritePipeline extends Phaser.Renderer.WebGL.Pipelines.MultiPi
       ? ((globalScene.currentBattle.waveIndex + globalScene.waveCycleOffset) % 40) / 40 // ((new Date().getSeconds() * 1000 + new Date().getMilliseconds()) % 10000) / 10000
       : getCurrentTime();
 
-    this.set1f("time", time);
-    this.setBoolean("ignoreTimeTint", ignoreTimeTint);
-    this.setBoolean("isOutside", globalScene.arena.isOutside());
-    this.set3fv("overrideTint", overrideTint());
-    this.set3fv(
-      "dayTint",
-      globalScene.arena.getDayTint().map(c => c / 255),
-    );
-    this.set3fv(
-      "duskTint",
-      globalScene.arena.getDuskTint().map(c => c / 255),
-    );
-    this.set3fv(
-      "nightTint",
-      globalScene.arena.getNightTint().map(c => c / 255),
-    );
-    this.set3fv(
-      "terrainColor",
-      getTerrainColor(globalScene.arena.getTerrainType()).map(c => c / 255),
-    );
-    this.set1f("terrainColorRatio", terrainColorRatio);
+    this.set1f("time", time)
+      .setBoolean("ignoreTimeTint", ignoreTimeTint)
+      .setBoolean("isOutside", globalScene.arena.isOutside())
+      .set3fv("overrideTint", overrideTint())
+      .set3fv(
+        "dayTint",
+        globalScene.arena.getDayTint().map(c => c / 255),
+      )
+      .set3fv(
+        "duskTint",
+        globalScene.arena.getDuskTint().map(c => c / 255),
+      )
+      .set3fv(
+        "nightTint",
+        globalScene.arena.getNightTint().map(c => c / 255),
+      )
+      .set3fv(
+        "terrainColor",
+        getTerrainColor(globalScene.arena.getTerrainType()).map(c => c / 255),
+      )
+      .set1f("terrainColorRatio", terrainColorRatio);
   }
 
   onBatch(gameObject: Phaser.GameObjects.GameObject): void {

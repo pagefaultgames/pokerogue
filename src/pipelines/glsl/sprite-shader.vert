@@ -9,7 +9,6 @@
 precision mediump float;
 
 uniform mat4 uProjectionMatrix;
-// TODO: Is this ever set?
 uniform bool uRoundPixels;
 uniform vec2 uResolution;
 

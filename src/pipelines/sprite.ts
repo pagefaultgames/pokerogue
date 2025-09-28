@@ -21,17 +21,17 @@ export class SpritePipeline extends FieldSpritePipeline {
   onPreRender(): void {
     super.onPreRender();
 
-    this.set1f("teraTime", 0);
-    this.set3fv("teraColor", [0, 0, 0]);
-    this.setBoolean("hasShadow", false);
-    this.setBoolean("yCenter", false);
-    this.set2f("relPosition", 0, 0);
-    this.set2f("texFrameUv", 0, 0);
-    this.set2f("size", 0, 0);
-    this.set2f("texSize", 0, 0);
-    this.set1f("yOffset", 0);
-    this.set1f("yShadowOffset", 0);
-    this.set4fv("tone", [0, 0, 0, 0]);
+    this.set1f("teraTime", 0)
+      .set3fv("teraColor", [0, 0, 0])
+      .setBoolean("hasShadow", false)
+      .setBoolean("yCenter", false)
+      .set2f("relPosition", 0, 0)
+      .set2f("texFrameUv", 0, 0)
+      .set2f("size", 0, 0)
+      .set2f("texSize", 0, 0)
+      .set1f("yOffset", 0)
+      .set1f("yShadowOffset", 0)
+      .set4fv("tone", [0, 0, 0, 0]);
   }
 
   onBind(gameObject: Phaser.GameObjects.GameObject): void {
@@ -65,25 +65,25 @@ export class SpritePipeline extends FieldSpritePipeline {
         (sprite.height / 2) * ((isEntityObj ? sprite.parentContainer : sprite).scale - 1)
         + (ignoreFieldPos ? 0 : sprite.y - field.y);
     }
-    this.set1f("teraTime", (this.game.getTime() % 500000) / 500000);
-    this.set3fv(
-      "teraColor",
-      teraColor.map(c => c / 255),
-    );
-    this.setBoolean("hasShadow", hasShadow);
-    this.setBoolean("yCenter", sprite.originY === 0.5);
-    this.set1f("fieldScale", field?.scale || 1);
-    this.set2f("relPosition", position[0], position[1]);
-    this.set2f("texFrameUv", sprite.frame.u0, sprite.frame.v0);
-    this.set2f("size", sprite.frame.width, sprite.height);
-    this.set2f("texSize", sprite.texture.source[0].width, sprite.texture.source[0].height);
-    this.set1f(
-      "yOffset",
-      sprite.height - sprite.frame.height * (isEntityObj ? sprite.parentContainer.scale : sprite.scale),
-    );
-    this.set1f("yShadowOffset", yShadowOffset ?? 0);
-    this.set4fv("tone", tone);
-    this.bindTexture(this.game.textures.get("tera").source[0].glTexture!, 1); // TODO: is this bang correct?
+    this.set1f("teraTime", (this.game.getTime() % 500000) / 500000)
+      .set3fv(
+        "teraColor",
+        teraColor.map(c => c / 255),
+      )
+      .setBoolean("hasShadow", hasShadow)
+      .setBoolean("yCenter", sprite.originY === 0.5)
+      .set1f("fieldScale", field?.scale || 1)
+      .set2f("relPosition", position[0], position[1])
+      .set2f("texFrameUv", sprite.frame.u0, sprite.frame.v0)
+      .set2f("size", sprite.frame.width, sprite.height)
+      .set2f("texSize", sprite.texture.source[0].width, sprite.texture.source[0].height)
+      .set1f(
+        "yOffset",
+        sprite.height - sprite.frame.height * (isEntityObj ? sprite.parentContainer.scale : sprite.scale),
+      )
+      .set1f("yShadowOffset", yShadowOffset ?? 0)
+      .set4fv("tone", tone)
+      .bindTexture(this.game.textures.get("tera").source[0].glTexture!, 1); // TODO: is this bang correct?
 
     if (globalScene.fusionPaletteSwaps) {
       const spriteColors = ((ignoreOverride && data["spriteColorsBase"]) || data["spriteColors"] || []) as number[][];
@@ -107,8 +107,7 @@ export class SpritePipeline extends FieldSpritePipeline {
         );
       }
 
-      this.set4fv("spriteColors", flatSpriteColors.flat());
-      this.set4iv("fusionSpriteColors", flatFusionSpriteColors.flat());
+      this.set4fv("spriteColors", flatSpriteColors.flat()).set4iv("fusionSpriteColors", flatFusionSpriteColors.flat());
     }
   }
 
@@ -157,8 +156,7 @@ export class SpritePipeline extends FieldSpritePipeline {
         }
       }
 
-      this.set4fv("baseVariantColors", flatBaseColors.flat());
-      this.set4fv("variantColors", flatVariantColors.flat());
+      this.set4fv("baseVariantColors", flatBaseColors.flat()).set4fv("variantColors", flatVariantColors.flat());
     }
 
     super.onBatch(gameObject);
