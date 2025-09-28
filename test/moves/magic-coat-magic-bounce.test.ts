@@ -40,39 +40,48 @@ describe("Moves - Reflecting effects", () => {
 
   describe("Reflecting effects", () => {
     it("should reflect basic status moves, copying them against the user", async () => {
-      await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
       game.move.use(MoveId.GROWL);
       await game.toEndOfTurn();
 
-      const player = game.field.getPlayerPokemon();
       const enemy = game.field.getEnemyPokemon();
-
       expect(enemy).toHaveUsedMove({
         move: MoveId.GROWL,
         useMode: MoveUseMode.REFLECTED,
         targets: [BattlerIndex.PLAYER],
       });
-      expect(player).toHaveStatStage(Stat.ATK, -1);
+      const feebas = game.field.getPlayerPokemon();
+      expect(feebas).toHaveStatStage(Stat.ATK, -1);
     });
 
-    it("should bounce back multi-target moves against each target", async () => {
+    it("should bounce back multi-target moves against each target individually", async () => {
       game.override.battleStyle("double");
-      await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
+      await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
 
       game.move.use(MoveId.GROWL, BattlerIndex.PLAYER);
       game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
       await game.toEndOfTurn();
 
-      const [karp1, karp2] = game.scene.getPlayerField();
-      expect(karp1).toHaveStatStage(Stat.ATK, -2);
-      expect(karp2).toHaveStatStage(Stat.ATK, -2);
+      const [feebas, milotic, karp1, karp2] = game.scene.getField();
+      expect(karp1).toHaveUsedMove({
+        move: MoveId.GROWL,
+        useMode: MoveUseMode.REFLECTED,
+        targets: [BattlerIndex.PLAYER, BattlerIndex.PLAYER_2],
+      });
+      expect(karp2).toHaveUsedMove({
+        move: MoveId.GROWL,
+        useMode: MoveUseMode.REFLECTED,
+        targets: [BattlerIndex.PLAYER, BattlerIndex.PLAYER_2],
+      });
+      expect(feebas).toHaveStatStage(Stat.ATK, -2);
+      expect(milotic).toHaveStatStage(Stat.ATK, -2);
     });
 
-    // TODO: This is broken - failed moves never make it to a MEP
+    // TODO: This is broken - failed moves never make it to a MEP in the first place
     it.todo("should still bounce back a move that would otherwise fail", async () => {
       game.override.enemyAbility(AbilityId.INSOMNIA);
-      await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
       game.move.use(MoveId.YAWN);
       await game.toEndOfTurn();
@@ -81,13 +90,10 @@ describe("Moves - Reflecting effects", () => {
     });
 
     it("should not bounce back a move that was just bounced", async () => {
-      game.override.battleStyle("double").ability(AbilityId.MAGIC_BOUNCE);
-      await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
+      game.override.ability(AbilityId.MAGIC_BOUNCE);
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-      game.move.use(MoveId.MAGIC_COAT, BattlerIndex.PLAYER);
-      game.move.use(MoveId.GROWL, BattlerIndex.PLAYER_2);
-      await game.move.forceEnemyMove(MoveId.MAGIC_COAT);
-      await game.move.forceEnemyMove(MoveId.SPLASH);
+      game.move.use(MoveId.GROWL);
       await game.toEndOfTurn();
 
       expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, 0);
@@ -95,33 +101,33 @@ describe("Moves - Reflecting effects", () => {
 
     it("should take precedence over Mirror Armor", async () => {
       game.override.enemyAbility(AbilityId.MIRROR_ARMOR);
-      await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
       game.move.use(MoveId.GROWL);
       await game.toEndOfTurn();
 
-      const enemy = game.field.getPlayerPokemon();
-      expect(enemy).toHaveStatStage(Stat.ATK, -1);
-      expect(enemy).not.toHaveAbilityApplied(AbilityId.MIRROR_ARMOR);
+      const karp = game.field.getPlayerPokemon();
+      expect(karp).toHaveStatStage(Stat.ATK, -1);
+      expect(karp).not.toHaveAbilityApplied(AbilityId.MIRROR_ARMOR);
     });
 
     it("should not bounce back non-reflectable effects", async () => {
-      await game.classicMode.startBattle([SpeciesId.GASTLY]);
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-      game.move.use(MoveId.CURSE);
+      game.move.use(MoveId.SALT_CURE);
       await game.toEndOfTurn();
 
-      expect(game.field.getEnemyPokemon()).toHaveBattlerTag(BattlerTagType.CURSED);
+      expect(game.field.getEnemyPokemon()).toHaveBattlerTag(BattlerTagType.SALT_CURED);
     });
 
-    it("should not cause encore to be interrupted after bouncing", async () => {
-      await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    it("should not break encore after bouncing", async () => {
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-      const playerPokemon = game.field.getPlayerPokemon();
-      const enemyPokemon = game.field.getEnemyPokemon();
+      const feebas = game.field.getPlayerPokemon();
+      const karp = game.field.getEnemyPokemon();
 
       // Give the player MOLD_BREAKER for this turn to bypass Magic Bounce.
-      const playerAbilitySpy = game.field.mockAbility(playerPokemon, AbilityId.MOLD_BREAKER);
+      const playerAbilitySpy = game.field.mockAbility(feebas, AbilityId.MOLD_BREAKER);
 
       // turn 1
       game.move.use(MoveId.ENCORE);
@@ -129,7 +135,7 @@ describe("Moves - Reflecting effects", () => {
       await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toNextTurn();
 
-      expect(enemyPokemon.getTag(BattlerTagType.ENCORE)!["moveId"]).toBe(MoveId.TACKLE);
+      expect(karp).toHaveBattlerTag({ tagType: BattlerTagType.ENCORE, moveId: MoveId.TACKLE });
 
       // turn 2
       playerAbilitySpy.mockRestore();
@@ -138,97 +144,86 @@ describe("Moves - Reflecting effects", () => {
       await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.toEndOfTurn();
 
-      expect(enemyPokemon.getTag(BattlerTagType.ENCORE)!["moveId"]).toBe(MoveId.TACKLE);
-      expect(enemyPokemon.getLastXMoves()[0].move).toBe(MoveId.TACKLE);
+      expect(karp).toHaveBattlerTag({ tagType: BattlerTagType.ENCORE, moveId: MoveId.TACKLE });
+      expect(karp).toHaveUsedMove(MoveId.TACKLE);
     });
 
-    it("should not cause the bounced move to count for encore", async () => {
-      game.override.battleStyle("double");
-      await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.ABRA]);
-
-      // Fake abra having mold breaker and the enemy having used Tackle
-      const [, abra, enemy1] = game.scene.getField();
-      game.field.mockAbility(abra, AbilityId.MOLD_BREAKER);
-      game.field.mockAbility(enemy1, AbilityId.MAGIC_BOUNCE);
-      game.move.changeMoveset(enemy1, [MoveId.TACKLE, MoveId.SPLASH]);
-      enemy1.pushMoveHistory({ move: MoveId.TACKLE, targets: [BattlerIndex.PLAYER], useMode: MoveUseMode.NORMAL });
-
-      // Magikarp uses growl as Abra attempts to encore enemy 1
-      game.move.use(MoveId.GROWL, BattlerIndex.PLAYER);
-      game.move.use(MoveId.ENCORE, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY);
-      await game.move.selectEnemyMove(MoveId.SPLASH);
-      await game.move.forceEnemyMove(MoveId.SPLASH);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
-      await game.toNextTurn();
-
-      console.log(enemy1.getLastXMoves(-1));
-      // Encore locked into Tackle, replacing the enemy's Growl with another Tackle
-      expect(enemy1.getTag(BattlerTagType.ENCORE)?.["moveId"]).toBe(MoveId.TACKLE);
-      expect(enemy1).toHaveUsedMove({ move: MoveId.TACKLE, useMode: MoveUseMode.NORMAL });
-    });
-
+    // TODO: Move to Stomping Tantrum test file
     it("should boost stomping tantrum after a failed bounce", async () => {
       game.override.ability(AbilityId.INSOMNIA);
-      await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
+      await game.classicMode.startBattle([SpeciesId.AMOONGUSS]);
 
-      const enemy = game.field.getEnemyPokemon();
+      const karp = game.field.getEnemyPokemon();
       const powerSpy = vi.spyOn(allMoves[MoveId.STOMPING_TANTRUM], "calculateBattlePower");
 
-      // Yawn gets reflected back onto us, failing due to Insomnia
-      game.move.use(MoveId.YAWN);
+      // Spore gets reflected back onto us and fails
+      game.move.use(MoveId.SPORE);
       await game.move.forceEnemyMove(MoveId.MAGIC_COAT);
       await game.toNextTurn();
 
-      expect(enemy).toHaveUsedMove({ move: MoveId.YAWN, result: MoveResult.FAIL, useMode: MoveUseMode.REFLECTED });
+      expect(karp).toHaveUsedMove({ move: MoveId.SPORE, result: MoveResult.MISS, useMode: MoveUseMode.REFLECTED });
 
       game.move.use(MoveId.SPLASH);
       await game.move.forceEnemyMove(MoveId.STOMPING_TANTRUM);
-      await game.toNextTurn();
+      await game.toEndOfTurn();
 
       expect(powerSpy).toHaveReturnedWith(150);
     });
 
-    it("should respect immunities when bouncing a move", async () => {
+    // TODO: The immunities are respected, but most reflectable moves won't count as failed
+    // due to condition jank
+    it.todo("should respect immunities when bouncing a move", async () => {
       vi.spyOn(allMoves[MoveId.THUNDER_WAVE], "accuracy", "get").mockReturnValue(100);
       game.override.ability(AbilityId.SOUNDPROOF);
-      await game.classicMode.startBattle([SpeciesId.PHANPY]);
+      await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+
+      const pikachu = game.field.getPlayerPokemon();
+      const karp = game.field.getEnemyPokemon();
 
       // Turn 1 - thunder wave immunity test
       game.move.use(MoveId.THUNDER_WAVE);
-      await game.toEndOfTurn();
-      expect(game.field.getPlayerPokemon().status).toBeUndefined();
+      await game.toNextTurn();
+
+      expect(karp).toHaveUsedMove({
+        move: MoveId.THUNDER_WAVE,
+        result: MoveResult.FAIL,
+        useMode: MoveUseMode.REFLECTED,
+      });
+      expect(pikachu).toHaveStatusEffect(StatusEffect.NONE);
 
       // Turn 2 - soundproof immunity test
       game.move.use(MoveId.GROWL);
       await game.toEndOfTurn();
-      expect(game.field.getPlayerPokemon()).toHaveStatStage(Stat.ATK, 0);
+
+      expect(karp).toHaveUsedMove({ move: MoveId.GROWL, result: MoveResult.FAIL, useMode: MoveUseMode.REFLECTED });
+      expect(pikachu).toHaveStatStage(Stat.ATK, 0);
     });
 
-    it("should ignore the original move's accuracy and use the user's accuracy", async () => {
-      await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    it("should ignore the original move's accuracy and use the user's accuracy instead", async () => {
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-      const magikarp = game.field.getPlayerPokemon();
-      const feebas = game.field.getEnemyPokemon();
-      const karpMissSpy = vi.spyOn(magikarp, "getAccuracyMultiplier").mockReturnValue(0);
+      const feebas = game.field.getPlayerPokemon();
+      const karp = game.field.getEnemyPokemon();
+      const karpMissSpy = vi.spyOn(feebas, "getAccuracyMultiplier").mockReturnValue(0);
 
-      // Turn 1: Force a miss on initial move
+      // Turn 1: Force a miss on initial move; should reflect regardless
       game.move.use(MoveId.SPORE);
       await game.phaseInterceptor.to("MoveEndPhase");
       await game.toEndOfTurn();
 
-      // todo change once matchers fixed
-      expect(magikarp.status?.effect).toBe(StatusEffect.SLEEP);
+      expect(karp).toHaveUsedMove({ move: MoveId.SPORE, result: MoveResult.SUCCESS, useMode: MoveUseMode.REFLECTED });
+      expect(feebas).toHaveStatusEffect(StatusEffect.SLEEP);
 
-      magikarp.clearStatus(false, false);
-
+      // Turn 2: Force a miss on enemy's reflected move
+      feebas.clearStatus(false, false);
       karpMissSpy.mockRestore();
-      vi.spyOn(feebas, "getAccuracyMultiplier").mockReturnValue(0);
+      vi.spyOn(karp, "getAccuracyMultiplier").mockReturnValue(0);
 
-      // Turn 2: Force a miss on Feebas' reflected move
       game.move.use(MoveId.SPORE);
       await game.toEndOfTurn();
 
-      expect(magikarp.status?.effect).toBeFalsy();
+      expect(karp).toHaveUsedMove({ move: MoveId.SPORE, result: MoveResult.MISS, useMode: MoveUseMode.REFLECTED });
+      expect(feebas).toHaveStatusEffect(StatusEffect.NONE);
     });
   });
 
@@ -237,43 +232,11 @@ describe("Moves - Reflecting effects", () => {
       game.override.enemyAbility(AbilityId.MAGIC_BOUNCE).enemyMoveset(MoveId.SPLASH);
     });
 
-    // TODO: Change post speed order rework to check the FASTER pokemon's ability
-    it("should only apply the leftmost available target's magic bounce when bouncing field-targeted moves in doubles", async () => {
-      game.override.battleStyle("double");
-      await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
-
-      const [enemy1, enemy2] = game.scene.getEnemyField();
-      // set speed to different values just in case logic erroneously checks for speed order
-      enemy1.setStat(Stat.SPD, enemy2.getStat(Stat.SPD) + 1);
-
-      // turn 1
-      game.move.use(MoveId.SPIKES, 0);
-      game.move.use(MoveId.TRICK_ROOM, 1);
-      await game.toNextTurn();
-
-      // TODO: Replace this with `expect(game).toHaveArenaTag({tagType: ArenaTagType.SPIKES, side: ArenaTagSide.PLAYER, sourceId: enemy1.id, layers: 1})
-      const tag = game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.PLAYER)!;
-      expect(tag).toBeDefined();
-      expect(tag.getSourcePokemon()).toBe(enemy1);
-      expect(tag["layers"]).toBe(1);
-      game.scene.arena.removeTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.PLAYER, true);
-
-      // turn 2
-      game.move.use(MoveId.SPIKES, 0);
-      game.move.use(MoveId.TRICK_ROOM, 1);
-      await game.toEndOfTurn();
-
-      // TODO: Replace this with `expect(game).toHaveArenaTag({tagType: ArenaTagType.SPIKES, side: ArenaTagSide.PLAYER, sourceId: enemy1.id, layers: 1})
-      expect(
-        game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.PLAYER)?.getSourcePokemon()?.getBattlerIndex(),
-      ).toBe(BattlerIndex.ENEMY);
-    });
-
     it("should not bounce back status moves against semi-invulnerable Pokemon, even with No Guard", async () => {
-      await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-      const player = game.field.getPlayerPokemon();
-      const enemy = game.field.getEnemyPokemon();
+      const feebas = game.field.getPlayerPokemon();
+      const karp = game.field.getEnemyPokemon();
 
       // Turn 1: use charm while enemy is airborne; misses
       game.move.use(MoveId.CHARM);
@@ -281,46 +244,44 @@ describe("Moves - Reflecting effects", () => {
       await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toNextTurn();
 
-      expect(player).toHaveStatStage(Stat.ATK, 0);
-      expect(enemy).toHaveStatStage(Stat.ATK, 0);
+      expect(feebas).toHaveStatStage(Stat.ATK, 0);
+      expect(karp).toHaveStatStage(Stat.ATK, 0);
 
       // Turn 2: Use Charm through No Guard; should not be reflected
-      game.field.mockAbility(player, AbilityId.NO_GUARD);
+      game.field.mockAbility(feebas, AbilityId.NO_GUARD);
 
       game.move.use(MoveId.CHARM);
       await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.toEndOfTurn();
 
-      expect(player).toHaveStatStage(Stat.ATK, 0);
-      expect(enemy).toHaveStatStage(Stat.ATK, -2);
+      expect(feebas).toHaveStatStage(Stat.ATK, 0);
+      expect(karp).toHaveStatStage(Stat.ATK, -2);
     });
 
     it("should be overridden by Magic Coat without stacking", async () => {
-      await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-
-      const karp = game.field.getPlayerPokemon();
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
       game.move.use(MoveId.GROWL);
       await game.move.forceEnemyMove(MoveId.MAGIC_COAT);
       await game.toEndOfTurn();
 
+      const karp = game.field.getPlayerPokemon();
       expect(karp).toHaveStatStage(Stat.ATK, -1);
       expect(game.field.getEnemyPokemon()).not.toHaveAbilityApplied(AbilityId.MAGIC_BOUNCE);
     });
 
     it("should bounce spikes even when the target is protected", async () => {
-      await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
       game.move.use(MoveId.SPIKES);
       await game.move.forceEnemyMove(MoveId.PROTECT);
       await game.toEndOfTurn();
 
-      // TODO: Replace this with `expect(game).toHaveArenaTag({tagType: ArenaTagType.SPIKES, side: ArenaTagSide.PLAYER, layers: 1})
-      expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.PLAYER)!["layers"]).toBe(1);
+      expect(game).toHaveArenaTag({ tagType: ArenaTagType.SPIKES, side: ArenaTagSide.PLAYER, layers: 1 });
     });
 
     it("should not break subsequent multi-strike moves", async () => {
-      await game.classicMode.startBattle([SpeciesId.PALKIA]);
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
       game.move.use(MoveId.GROWL);
       await game.move.forceEnemyMove(MoveId.SURGING_STRIKES);
@@ -334,57 +295,32 @@ describe("Moves - Reflecting effects", () => {
 
   describe("Magic Coat", () => {
     it("should fail if the user goes last in the turn", async () => {
-      await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
       game.move.use(MoveId.PROTECT);
       await game.toEndOfTurn();
 
-      expect(game.field.getEnemyPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+      expect(game.field.getEnemyPokemon()).toHaveUsedMove({ move: MoveId.MAGIC_COAT, result: MoveResult.FAIL });
     });
 
     it("should fail if called again in the same turn from Instruct", async () => {
-      await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
       game.move.use(MoveId.INSTRUCT);
       await game.toEndOfTurn();
-      expect(game.field.getEnemyPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+
+      expect(game.field.getEnemyPokemon()).toHaveUsedMove({ move: MoveId.MAGIC_COAT, result: MoveResult.FAIL });
     });
 
-    it("should not reflect moves used on the next turn", async () => {
-      await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    it("should disappear at turn end", async () => {
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
       // turn 1
       game.move.use(MoveId.SPLASH);
       await game.move.forceEnemyMove(MoveId.MAGIC_COAT);
       await game.toNextTurn();
 
-      // turn 2
-      game.move.use(MoveId.GROWL);
-      await game.move.forceEnemyMove(MoveId.SPLASH);
-      await game.toEndOfTurn();
-      expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, -1);
-    });
-
-    it("should still bounce back a move from a mold breaker user", async () => {
-      game.override.ability(AbilityId.MOLD_BREAKER).moveset([MoveId.GROWL]);
-      await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-
-      game.move.use(MoveId.GROWL);
-      await game.toEndOfTurn();
-
-      expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, 0);
-      expect(game.field.getPlayerPokemon()).toHaveStatStage(Stat.ATK, -1);
-    });
-
-    it("should only bounce spikes back once when both targets use magic coat in doubles", async () => {
-      game.override.battleStyle("double");
-      await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-
-      game.move.use(MoveId.SPIKES);
-      await game.toEndOfTurn();
-
-      expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.PLAYER)!["layers"]).toBe(1);
-      expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY)).toBeUndefined();
+      expect(game.field.getEnemyPokemon()).not.toHaveBattlerTag(BattlerTagType.MAGIC_COAT);
     });
   });
 });

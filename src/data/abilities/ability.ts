@@ -5767,6 +5767,7 @@ export class ReflectStatusMoveAbAttr extends PreDefendAbAttr {
       newTargets,
       new PokemonMove(move.id),
       MoveUseMode.REFLECTED,
+      MovePhaseTimingModifier.FIRST,
     );
   }
 }

@@ -55,6 +55,7 @@ import { ChargeAnim, CommonAnim } from "#enums/move-anims-common";
 import { MoveCategory } from "#enums/move-category";
 import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
+import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import { MoveResult } from "#enums/move-result";
 import { MoveTarget } from "#enums/move-target";
 import { MoveUseMode } from "#enums/move-use-mode";
@@ -3660,6 +3661,7 @@ export class MagicCoatTag extends BattlerTag {
       newTargets,
       new PokemonMove(move.id),
       MoveUseMode.REFLECTED,
+      MovePhaseTimingModifier.FIRST,
     );
   }
 }

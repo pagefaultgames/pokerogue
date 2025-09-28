@@ -210,6 +210,8 @@ interface PokemonMatchers {
   /**
    * Check whether a {@linkcode Pokemon} has applied a specific {@linkcode AbilityId}.
    * @param expectedAbilityId - The `AbilityId` to check for
+   * @remarks
+   * This will clear the Pokemon's `abilitiesApplied` set to allow for repeated calls on the same Pokemon.
    */
   toHaveAbilityApplied(expectedAbilityId: AbilityId): void;
 
