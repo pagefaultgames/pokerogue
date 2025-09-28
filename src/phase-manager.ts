@@ -1,10 +1,21 @@
+/**
+ * Manager for phases used by battle scene.
+ *
+ * @remarks
+ * **This file must not be imported or used directly.**
+ * The manager is exclusively used by the Battle Scene and is NOT intended for external use.
+ * @module
+ */
+
 import { PHASE_START_COLOR } from "#app/constants/colors";
+import { DynamicQueueManager } from "#app/dynamic-queue-manager";
 import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
-import { type PhasePriorityQueue, PostSummonPhasePriorityQueue } from "#data/phase-priority-queue";
-import type { DynamicPhaseType } from "#enums/dynamic-phase-type";
+import { PhaseTree } from "#app/phase-tree";
+import { BattleType } from "#enums/battle-type";
+import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import type { Pokemon } from "#field/pokemon";
-import { ActivatePriorityQueuePhase } from "#phases/activate-priority-queue-phase";
+import type { PokemonMove } from "#moves/pokemon-move";
 import { AddEnemyBuffModifierPhase } from "#phases/add-enemy-buff-modifier-phase";
 import { AttemptCapturePhase } from "#phases/attempt-capture-phase";
 import { AttemptRunPhase } from "#phases/attempt-run-phase";
@@ -16,6 +27,7 @@ import { CheckSwitchPhase } from "#phases/check-switch-phase";
 import { CommandPhase } from "#phases/command-phase";
 import { CommonAnimPhase } from "#phases/common-anim-phase";
 import { DamageAnimPhase } from "#phases/damage-anim-phase";
+import { DynamicPhaseMarker } from "#phases/dynamic-phase-marker";
 import { EggHatchPhase } from "#phases/egg-hatch-phase";
 import { EggLapsePhase } from "#phases/egg-lapse-phase";
 import { EggSummaryPhase } from "#phases/egg-summary-phase";
@@ -100,17 +112,7 @@ import { UnavailablePhase } from "#phases/unavailable-phase";
 import { UnlockPhase } from "#phases/unlock-phase";
 import { VictoryPhase } from "#phases/victory-phase";
 import { WeatherEffectPhase } from "#phases/weather-effect-phase";
-import type { PhaseMap, PhaseString } from "#types/phase-types";
-import { type Constructor, coerceArray } from "#utils/common";
-
-/**
- * @module
- * Manager for phases used by battle scene.
- *
- * @remarks
- * **This file must not be imported or used directly.**
- * The manager is exclusively used by the Battle Scene and is NOT intended for external use.
- */
+import type { PhaseConditionFunc, PhaseMap, PhaseString } from "#types/phase-types";
 
 /**
  * Object that holds all of the phase constructors.
@@ -121,7 +123,6 @@ import { type Constructor, coerceArray } from "#utils/common";
  * This allows for easy creation of new phases without needing to import each phase individually.
  */
 const PHASES = Object.freeze({
-  ActivatePriorityQueuePhase,
   AddEnemyBuffModifierPhase,
   AttemptCapturePhase,
   AttemptRunPhase,
@@ -133,6 +134,7 @@ const PHASES = Object.freeze({
   CommandPhase,
   CommonAnimPhase,
   DamageAnimPhase,
+  DynamicPhaseMarker,
   EggHatchPhase,
   EggLapsePhase,
   EggSummaryPhase,
@@ -221,32 +223,29 @@ const PHASES = Object.freeze({
 /** Maps Phase strings to their constructors */
 export type PhaseConstructorMap = typeof PHASES;
 
+/** Phases pushed at the end of each {@linkcode TurnStartPhase} */
+const turnEndPhases: readonly PhaseString[] = [
+  "WeatherEffectPhase",
+  "PositionalTagPhase",
+  "BerryPhase",
+  "CheckStatusEffectPhase",
+  "TurnEndPhase",
+] as const;
+
 /**
  * PhaseManager is responsible for managing the phases in the battle scene
  */
 export class PhaseManager {
   /** PhaseQueue: dequeue/remove the first element to get the next phase */
-  public phaseQueue: Phase[] = [];
-  public conditionalQueue: Array<[() => boolean, Phase]> = [];
-  /** PhaseQueuePrepend: is a temp storage of what will be added to PhaseQueue */
-  private phaseQueuePrepend: Phase[] = [];
+  private readonly phaseQueue: PhaseTree = new PhaseTree();
 
-  /** overrides default of inserting phases to end of phaseQueuePrepend array. Useful for inserting Phases "out of order" */
-  private phaseQueuePrependSpliceIndex = -1;
-  private nextCommandPhaseQueue: Phase[] = [];
+  /** Holds priority queues for dynamically ordered phases */
+  public dynamicQueueManager = new DynamicQueueManager();
 
-  /** Storage for {@linkcode PhasePriorityQueue}s which hold phases whose order dynamically changes */
-  private dynamicPhaseQueues: PhasePriorityQueue[];
-  /** Parallel array to {@linkcode dynamicPhaseQueues} - matches phase types to their queues */
-  private dynamicPhaseTypes: Constructor<Phase>[];
-
+  /** The currently-running phase */
   private currentPhase: Phase;
+  /** The phase put on standby if {@linkcode overridePhase} is called */
   private standbyPhase: Phase | null = null;
-
-  constructor() {
-    this.dynamicPhaseQueues = [new PostSummonPhasePriorityQueue()];
-    this.dynamicPhaseTypes = [PostSummonPhase];
-  }
 
   /**
    * Clear all previously set phases, then add a new {@linkcode TitlePhase} to transition to the title screen.
@@ -275,123 +274,76 @@ export class PhaseManager {
   }
 
   /**
-   * Adds a phase to the conditional queue and ensures it is executed only when the specified condition is met.
-   *
-   * This method allows deferring the execution of a phase until certain conditions are met, which is useful for handling
-   * situations like abilities and entry hazards that depend on specific game states.
-   *
-   * @param phase - The phase to be added to the conditional queue.
-   * @param condition - A function that returns a boolean indicating whether the phase should be executed.
-   *
+   * Adds a phase to the end of the queue
+   * @param phase - The {@linkcode Phase} to add
    */
-  pushConditionalPhase(phase: Phase, condition: () => boolean): void {
-    this.conditionalQueue.push([condition, phase]);
+  public pushPhase(phase: Phase): void {
+    this.phaseQueue.pushPhase(this.checkDynamic(phase));
   }
 
   /**
-   * Adds a phase to nextCommandPhaseQueue, as long as boolean passed in is false
-   * @param phase {@linkcode Phase} the phase to add
-   * @param defer boolean on which queue to add to, defaults to false, and adds to phaseQueue
+   * Queue a phase to be run immediately after the current phase finishes. \
+   * Unshifted phases are run in FIFO order if multiple are queued during a single phase's execution.
+   * @param phase - The {@linkcode Phase} to add
    */
-  pushPhase(phase: Phase, defer = false): void {
-    if (this.getDynamicPhaseType(phase) !== undefined) {
-      this.pushDynamicPhase(phase);
-    } else {
-      (!defer ? this.phaseQueue : this.nextCommandPhaseQueue).push(phase);
-    }
+  public unshiftPhase(phase: Phase): void {
+    const toAdd = this.checkDynamic(phase);
+    phase.is("MovePhase") ? this.phaseQueue.addAfter(toAdd, "MoveEndPhase") : this.phaseQueue.addPhase(toAdd);
   }
 
   /**
-   * Adds Phase(s) to the end of phaseQueuePrepend, or at phaseQueuePrependSpliceIndex
-   * @param phases {@linkcode Phase} the phase(s) to add
+   * Helper method to queue a phase as dynamic if necessary
+   * @param phase - The phase to check
+   * @returns The {@linkcode Phase} or a {@linkcode DynamicPhaseMarker} to be used in its place
    */
-  unshiftPhase(...phases: Phase[]): void {
-    if (this.phaseQueuePrependSpliceIndex === -1) {
-      this.phaseQueuePrepend.push(...phases);
-    } else {
-      this.phaseQueuePrepend.splice(this.phaseQueuePrependSpliceIndex, 0, ...phases);
+  private checkDynamic(phase: Phase): Phase {
+    if (this.dynamicQueueManager.queueDynamicPhase(phase)) {
+      return new DynamicPhaseMarker(phase.phaseName);
     }
+    return phase;
   }
 
   /**
    * Clears the phaseQueue
+   * @param leaveUnshifted - If `true`, leaves the top level of the tree intact; default `false`
    */
-  clearPhaseQueue(): void {
-    this.phaseQueue.splice(0, this.phaseQueue.length);
+  public clearPhaseQueue(leaveUnshifted = false): void {
+    this.phaseQueue.clear(leaveUnshifted);
   }
 
-  /**
-   * Clears all phase-related stuff, including all phase queues, the current and standby phases, and a splice index
-   */
-  clearAllPhases(): void {
-    for (const queue of [this.phaseQueue, this.phaseQueuePrepend, this.conditionalQueue, this.nextCommandPhaseQueue]) {
-      queue.splice(0, queue.length);
-    }
-    this.dynamicPhaseQueues.forEach(queue => queue.clear());
+  /** Clears all phase queues and the standby phase */
+  public clearAllPhases(): void {
+    this.clearPhaseQueue();
+    this.dynamicQueueManager.clearQueues();
     this.standbyPhase = null;
-    this.clearPhaseQueueSplice();
   }
 
   /**
-   * Used by function unshiftPhase(), sets index to start inserting at current length instead of the end of the array, useful if phaseQueuePrepend gets longer with Phases
+   * Determines the next phase to run and starts it.
+   * @privateRemarks
+   * This is called by {@linkcode Phase.end} by default, and should not be called by other methods.
    */
-  setPhaseQueueSplice(): void {
-    this.phaseQueuePrependSpliceIndex = this.phaseQueuePrepend.length;
-  }
-
-  /**
-   * Resets phaseQueuePrependSpliceIndex to -1, implies that calls to unshiftPhase will insert at end of phaseQueuePrepend
-   */
-  clearPhaseQueueSplice(): void {
-    this.phaseQueuePrependSpliceIndex = -1;
-  }
-
-  /**
-   * Is called by each Phase implementations "end()" by default
-   * We dump everything from phaseQueuePrepend to the start of of phaseQueue
-   * then removes first Phase and starts it
-   */
-  shiftPhase(): void {
+  public shiftPhase(): void {
     if (this.standbyPhase) {
       this.currentPhase = this.standbyPhase;
       this.standbyPhase = null;
       return;
     }
 
-    if (this.phaseQueuePrependSpliceIndex > -1) {
-      this.clearPhaseQueueSplice();
-    }
-    this.phaseQueue.unshift(...this.phaseQueuePrepend);
-    this.phaseQueuePrepend.splice(0);
+    let nextPhase = this.phaseQueue.getNextPhase();
 
-    const unactivatedConditionalPhases: [() => boolean, Phase][] = [];
-    // Check if there are any conditional phases queued
-    for (const [condition, phase] of this.conditionalQueue) {
-      // Evaluate the condition associated with the phase
-      if (condition()) {
-        // If the condition is met, add the phase to the phase queue
-        this.pushPhase(phase);
-      } else {
-        // If the condition is not met, re-add the phase back to the end of the conditional queue
-        unactivatedConditionalPhases.push([condition, phase]);
-      }
+    if (nextPhase?.is("DynamicPhaseMarker")) {
+      nextPhase = this.dynamicQueueManager.popNextPhase(nextPhase.phaseType);
     }
 
-    this.conditionalQueue = unactivatedConditionalPhases;
-
-    // If no phases are left, unshift phases to start a new turn.
-    if (this.phaseQueue.length === 0) {
-      this.populatePhaseQueue();
-      // Clear the conditionalQueue if there are no phases left in the phaseQueue
-      this.conditionalQueue = [];
+    if (nextPhase == null) {
+      this.turnStart();
+    } else {
+      this.currentPhase = nextPhase;
     }
-
-    // Bang is justified as `populatePhaseQueue` ensures we always have _something_ in the queue at all times
-    this.currentPhase = this.phaseQueue.shift()!;
 
     this.startCurrentPhase();
   }
-
   /**
    * Helper method to start and log the current phase.
    */
@@ -400,7 +352,14 @@ export class PhaseManager {
     this.currentPhase.start();
   }
 
-  overridePhase(phase: Phase): boolean {
+  /**
+   * Overrides the currently running phase with another
+   * @param phase - The {@linkcode Phase} to override the current one with
+   * @returns If the override succeeded
+   *
+   * @todo This is antithetical to the phase structure and used a single time. Remove it.
+   */
+  public overridePhase(phase: Phase): boolean {
     if (this.standbyPhase) {
       return false;
     }
@@ -413,173 +372,47 @@ export class PhaseManager {
   }
 
   /**
-   * Find a specific {@linkcode Phase} in the phase queue.
+   * Determine if there is a queued {@linkcode Phase} meeting the specified conditions.
+   * @param type - The {@linkcode PhaseString | type} of phase to search for
+   * @param condition - An optional {@linkcode PhaseConditionFunc} to add conditions to the search
+   * @returns Whether a matching phase exists
+   */
+  public hasPhaseOfType<T extends PhaseString>(type: T, condition?: PhaseConditionFunc<T>): boolean {
+    return this.dynamicQueueManager.exists(type, condition) || this.phaseQueue.exists(type, condition);
+  }
+
+  /**
+   * Attempt to find and remove the first queued {@linkcode Phase} matching the given conditions.
+   * @param type - The {@linkcode PhaseString | type} of phase to search for
+   * @param phaseFilter - An optional {@linkcode PhaseConditionFunc} to add conditions to the search
+   * @returns Whether a phase was successfully removed
+   */
+  public tryRemovePhase<T extends PhaseString>(type: T, phaseFilter?: PhaseConditionFunc<T>): boolean {
+    if (this.dynamicQueueManager.removePhase(type, phaseFilter)) {
+      return true;
+    }
+    return this.phaseQueue.remove(type, phaseFilter);
+  }
+
+  /**
+   * Removes all {@linkcode Phase}s of the given type from the queue
+   * @param phaseType - The {@linkcode PhaseString | type} of phase to search for
    *
-   * @param phaseFilter filter function to use to find the wanted phase
-   * @returns the found phase or undefined if none found
+   * @remarks
+   * This is not intended to be used with dynamically ordered phases, and does not operate on the dynamic queue. \
+   * However, it does remove {@linkcode DynamicPhaseMarker}s and so would prevent such phases from activating.
    */
-  findPhase<P extends Phase = Phase>(phaseFilter: (phase: P) => boolean): P | undefined {
-    return this.phaseQueue.find(phaseFilter) as P | undefined;
-  }
-
-  tryReplacePhase(phaseFilter: (phase: Phase) => boolean, phase: Phase): boolean {
-    const phaseIndex = this.phaseQueue.findIndex(phaseFilter);
-    if (phaseIndex > -1) {
-      this.phaseQueue[phaseIndex] = phase;
-      return true;
-    }
-    return false;
-  }
-
-  tryRemovePhase(phaseFilter: (phase: Phase) => boolean): boolean {
-    const phaseIndex = this.phaseQueue.findIndex(phaseFilter);
-    if (phaseIndex > -1) {
-      this.phaseQueue.splice(phaseIndex, 1);
-      return true;
-    }
-    return false;
+  public removeAllPhasesOfType(type: PhaseString): void {
+    this.phaseQueue.removeAll(type);
   }
 
   /**
-   * Will search for a specific phase in {@linkcode phaseQueuePrepend} via filter, and remove the first result if a match is found.
-   * @param phaseFilter filter function
-   */
-  tryRemoveUnshiftedPhase(phaseFilter: (phase: Phase) => boolean): boolean {
-    const phaseIndex = this.phaseQueuePrepend.findIndex(phaseFilter);
-    if (phaseIndex > -1) {
-      this.phaseQueuePrepend.splice(phaseIndex, 1);
-      return true;
-    }
-    return false;
-  }
-
-  /**
-   * Tries to add the input phase to index before target phase in the phaseQueue, else simply calls unshiftPhase()
-   * @param phase - The phase to be added
-   * @param targetPhase - The phase to search for in phaseQueue
-   * @returns boolean if a targetPhase was found and added
-   */
-  prependToPhase(phase: Phase | Phase[], targetPhase: PhaseString): boolean {
-    phase = coerceArray(phase);
-    const target = PHASES[targetPhase];
-    const targetIndex = this.phaseQueue.findIndex(ph => ph instanceof target);
-
-    if (targetIndex !== -1) {
-      this.phaseQueue.splice(targetIndex, 0, ...phase);
-      return true;
-    }
-    this.unshiftPhase(...phase);
-    return false;
-  }
-
-  /**
-   * Tries to add the input phase(s) to index after target phase in the {@linkcode phaseQueue}, else simply calls {@linkcode unshiftPhase()}
-   * @param phase {@linkcode Phase} the phase(s) to be added
-   * @param targetPhase {@linkcode Phase} the type of phase to search for in {@linkcode phaseQueue}
-   * @param condition Condition the target phase must meet to be appended to
-   * @returns `true` if a `targetPhase` was found to append to
-   */
-  appendToPhase(phase: Phase | Phase[], targetPhase: PhaseString, condition?: (p: Phase) => boolean): boolean {
-    phase = coerceArray(phase);
-    const target = PHASES[targetPhase];
-    const targetIndex = this.phaseQueue.findIndex(ph => ph instanceof target && (!condition || condition(ph)));
-
-    if (targetIndex !== -1 && this.phaseQueue.length > targetIndex) {
-      this.phaseQueue.splice(targetIndex + 1, 0, ...phase);
-      return true;
-    }
-    this.unshiftPhase(...phase);
-    return false;
-  }
-
-  /**
-   * Checks a phase and returns the matching {@linkcode DynamicPhaseType}, or undefined if it does not match one
-   * @param phase The phase to check
-   * @returns The corresponding {@linkcode DynamicPhaseType} or `undefined`
-   */
-  public getDynamicPhaseType(phase: Phase | null): DynamicPhaseType | undefined {
-    let phaseType: DynamicPhaseType | undefined;
-    this.dynamicPhaseTypes.forEach((cls, index) => {
-      if (phase instanceof cls) {
-        phaseType = index;
-      }
-    });
-
-    return phaseType;
-  }
-
-  /**
-   * Pushes a phase onto its corresponding dynamic queue and marks the activation point in {@linkcode phaseQueue}
-   *
-   * The {@linkcode ActivatePriorityQueuePhase} will run the top phase in the dynamic queue (not necessarily {@linkcode phase})
-   * @param phase The phase to push
-   */
-  public pushDynamicPhase(phase: Phase): void {
-    const type = this.getDynamicPhaseType(phase);
-    if (type === undefined) {
-      return;
-    }
-
-    this.pushPhase(new ActivatePriorityQueuePhase(type));
-    this.dynamicPhaseQueues[type].push(phase);
-  }
-
-  /**
-   * Attempt to remove one or more Phases from the given DynamicPhaseQueue, removing the equivalent amount of {@linkcode ActivatePriorityQueuePhase}s from the queue.
-   * @param type - The {@linkcode DynamicPhaseType} to check
-   * @param phaseFilter - The function to select phases for removal
-   * @param removeCount - The maximum number of phases to remove, or `all` to remove all matching phases;
-   * default `1`
-   * @todo Remove this eventually once the patchwork bug this is used for is fixed
-   */
-  public tryRemoveDynamicPhase(
-    type: DynamicPhaseType,
-    phaseFilter: (phase: Phase) => boolean,
-    removeCount: number | "all" = 1,
-  ): void {
-    const numRemoved = this.dynamicPhaseQueues[type].tryRemovePhase(phaseFilter, removeCount);
-    for (let x = 0; x < numRemoved; x++) {
-      this.tryRemovePhase(p => p.is("ActivatePriorityQueuePhase"));
-    }
-  }
-
-  /**
-   * Unshifts the top phase from the corresponding dynamic queue onto {@linkcode phaseQueue}
-   * @param type {@linkcode DynamicPhaseType} The type of dynamic phase to start
-   */
-  public startDynamicPhaseType(type: DynamicPhaseType): void {
-    const phase = this.dynamicPhaseQueues[type].pop();
-    if (phase) {
-      this.unshiftPhase(phase);
-    }
-  }
-
-  /**
-   * Unshifts an {@linkcode ActivatePriorityQueuePhase} for {@linkcode phase}, then pushes {@linkcode phase} to its dynamic queue
-   *
-   * This is the same as {@linkcode pushDynamicPhase}, except the activation phase is unshifted
-   *
-   * {@linkcode phase} is not guaranteed to be the next phase from the queue to run (if the queue is not empty)
-   * @param phase The phase to add
-   * @returns
-   */
-  public startDynamicPhase(phase: Phase): void {
-    const type = this.getDynamicPhaseType(phase);
-    if (type === undefined) {
-      return;
-    }
-
-    this.unshiftPhase(new ActivatePriorityQueuePhase(type));
-    this.dynamicPhaseQueues[type].push(phase);
-  }
-
-  /**
-   * Adds a MessagePhase, either to PhaseQueuePrepend or nextCommandPhaseQueue
+   * Adds a `MessagePhase` to the queue
    * @param message - string for MessagePhase
    * @param callbackDelay - optional param for MessagePhase constructor
    * @param prompt - optional param for MessagePhase constructor
    * @param promptDelay - optional param for MessagePhase constructor
-   * @param defer - Whether to allow the phase to be deferred
+   * @param defer - If `true`, push the phase instead of unshifting; default `false`
    *
    * @see {@linkcode MessagePhase} for more details on the parameters
    */
@@ -591,20 +424,18 @@ export class PhaseManager {
     defer?: boolean | null,
   ) {
     const phase = new MessagePhase(message, callbackDelay, prompt, promptDelay);
-    if (!defer) {
-      // adds to the end of PhaseQueuePrepend
-      this.unshiftPhase(phase);
-    } else {
-      //remember that pushPhase adds it to nextCommandPhaseQueue
+    if (defer) {
       this.pushPhase(phase);
+    } else {
+      this.unshiftPhase(phase);
     }
   }
 
   /**
-   * Queue a phase to show or hide the ability flyout bar.
+   * Queues an ability bar flyout phase via {@linkcode unshiftPhase}
    * @param pokemon - The {@linkcode Pokemon} whose ability is being activated
    * @param passive - Whether the ability is a passive
-   * @param show - Whether to show or hide the bar
+   * @param show - If `true`, show the bar. Otherwise, hide it
    */
   public queueAbilityDisplay(pokemon: Pokemon, passive: boolean, show: boolean): void {
     this.unshiftPhase(show ? new ShowAbilityPhase(pokemon.getBattlerIndex(), passive) : new HideAbilityPhase());
@@ -620,14 +451,12 @@ export class PhaseManager {
   }
 
   /**
-   * Moves everything from nextCommandPhaseQueue to phaseQueue (keeping order)
+   * Clear all dynamic queues and begin a new {@linkcode TurnInitPhase} for the new turn.
+   * Called whenever the current phase queue is empty.
    */
-  private populatePhaseQueue(): void {
-    if (this.nextCommandPhaseQueue.length > 0) {
-      this.phaseQueue.push(...this.nextCommandPhaseQueue);
-      this.nextCommandPhaseQueue.splice(0, this.nextCommandPhaseQueue.length);
-    }
-    this.phaseQueue.push(new TurnInitPhase());
+  private turnStart(): void {
+    this.dynamicQueueManager.clearQueues();
+    this.currentPhase = new TurnInitPhase();
   }
 
   /**
@@ -669,50 +498,119 @@ export class PhaseManager {
   }
 
   /**
-   * Create a new phase and immediately prepend it to an existing phase in the phase queue.
-   * Equivalent to calling {@linkcode create} followed by {@linkcode prependToPhase}.
-   * @param targetPhase - The phase to search for in phaseQueue
-   * @param phase - The name of the phase to create
+   * Add a {@linkcode FaintPhase} to the queue
    * @param args - The arguments to pass to the phase constructor
-   * @returns `true` if a `targetPhase` was found to prepend to
+   *
+   * @remarks
+   *
+   * Faint phases are ordered in a special way to allow battle effects to settle before the pokemon faints.
+   * @see {@linkcode PhaseTree.addPhase}
    */
-  public prependNewToPhase<T extends PhaseString>(
-    targetPhase: PhaseString,
-    phase: T,
-    ...args: ConstructorParameters<PhaseConstructorMap[T]>
-  ): boolean {
-    return this.prependToPhase(this.create(phase, ...args), targetPhase);
+  public queueFaintPhase(...args: ConstructorParameters<PhaseConstructorMap["FaintPhase"]>): void {
+    this.phaseQueue.addPhase(this.create("FaintPhase", ...args), true);
   }
 
   /**
-   * Create a new phase and immediately append it to an existing phase the phase queue.
-   * Equivalent to calling {@linkcode create} followed by {@linkcode appendToPhase}.
-   * @param targetPhase - The phase to search for in phaseQueue
-   * @param phase - The name of the phase to create
-   * @param args - The arguments to pass to the phase constructor
-   * @returns `true` if a `targetPhase` was found to append to
+   * Attempts to add {@linkcode PostSummonPhase}s for the enemy pokemon
+   *
+   * This is used to ensure that wild pokemon (which have no {@linkcode SummonPhase}) do not queue a {@linkcode PostSummonPhase}
+   * until all pokemon are on the field.
    */
-  public appendNewToPhase<T extends PhaseString>(
-    targetPhase: PhaseString,
-    phase: T,
-    ...args: ConstructorParameters<PhaseConstructorMap[T]>
-  ): boolean {
-    return this.appendToPhase(this.create(phase, ...args), targetPhase);
+  public tryAddEnemyPostSummonPhases(): void {
+    if (
+      ![BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType)
+      && !this.phaseQueue.exists("SummonPhase")
+    ) {
+      globalScene.getEnemyField().forEach(p => {
+        this.pushPhase(new PostSummonPhase(p.getBattlerIndex(), "SummonPhase"));
+      });
+    }
   }
 
-  public startNewDynamicPhase<T extends PhaseString>(
+  /**
+   * Create a new phase and queue it to run after all others queued by the currently running phase.
+   * @param phase - The name of the phase to create
+   * @param args - The arguments to pass to the phase constructor
+   *
+   * @deprecated Only used for switches and should be phased out eventually.
+   */
+  public queueDeferred<const T extends "SwitchPhase" | "SwitchSummonPhase">(
     phase: T,
     ...args: ConstructorParameters<PhaseConstructorMap[T]>
   ): void {
-    this.startDynamicPhase(this.create(phase, ...args));
+    this.phaseQueue.unshiftToCurrent(this.create(phase, ...args));
+  }
+
+  /**
+   * Finds the first {@linkcode MovePhase} meeting the condition
+   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function
+   * @returns The MovePhase, or `undefined` if it does not exist
+   */
+  public getMovePhase(phaseCondition: PhaseConditionFunc<"MovePhase">): MovePhase | undefined {
+    return this.dynamicQueueManager.getMovePhase(phaseCondition);
+  }
+
+  /**
+   * Finds and cancels the first {@linkcode MovePhase} meeting the condition
+   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function
+   */
+  public cancelMove(phaseCondition: PhaseConditionFunc<"MovePhase">): void {
+    this.dynamicQueueManager.cancelMovePhase(phaseCondition);
+  }
+
+  /**
+   * Finds the first {@linkcode MovePhase} meeting the condition and forces it next
+   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function
+   */
+  public forceMoveNext(phaseCondition: PhaseConditionFunc<"MovePhase">): void {
+    this.dynamicQueueManager.setMoveTimingModifier(phaseCondition, MovePhaseTimingModifier.FIRST);
+  }
+
+  /**
+   * Finds the first {@linkcode MovePhase} meeting the condition and forces it last
+   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function
+   */
+  public forceMoveLast(phaseCondition: PhaseConditionFunc<"MovePhase">): void {
+    this.dynamicQueueManager.setMoveTimingModifier(phaseCondition, MovePhaseTimingModifier.LAST);
+  }
+
+  /**
+   * Finds the first {@linkcode MovePhase} meeting the condition and changes its move
+   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function
+   * @param move - The {@linkcode PokemonMove | move} to use in replacement
+   */
+  public changePhaseMove(phaseCondition: PhaseConditionFunc<"MovePhase">, move: PokemonMove): void {
+    this.dynamicQueueManager.setMoveForPhase(phaseCondition, move);
+  }
+
+  /**
+   * Redirects moves which were targeted at a {@linkcode Pokemon} that has been removed
+   * @param removedPokemon - The removed {@linkcode Pokemon}
+   * @param allyPokemon - The ally of the removed pokemon
+   */
+  public redirectMoves(removedPokemon: Pokemon, allyPokemon: Pokemon): void {
+    this.dynamicQueueManager.redirectMoves(removedPokemon, allyPokemon);
+  }
+
+  /** Queues phases which run at the end of each turn */
+  public queueTurnEndPhases(): void {
+    turnEndPhases.forEach(p => {
+      this.pushNew(p);
+    });
   }
 
   /** Prevents end of turn effects from triggering when transitioning to a new biome on a X0 wave */
   public onInterlude(): void {
-    const phasesToRemove = ["WeatherEffectPhase", "BerryPhase", "CheckStatusEffectPhase"];
-    this.phaseQueue = this.phaseQueue.filter(p => !phasesToRemove.includes(p.phaseName));
+    const phasesToRemove: readonly PhaseString[] = [
+      "WeatherEffectPhase",
+      "BerryPhase",
+      "CheckStatusEffectPhase",
+    ] as const;
+    for (const phaseType of phasesToRemove) {
+      this.phaseQueue.removeAll(phaseType);
+    }
 
-    const turnEndPhase = this.findPhase<TurnEndPhase>(p => p.phaseName === "TurnEndPhase");
+    const turnEndPhase = this.phaseQueue.find("TurnEndPhase");
     if (turnEndPhase) {
       turnEndPhase.upcomingInterlude = true;
     }

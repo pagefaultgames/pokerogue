@@ -3,6 +3,7 @@ import { MOVE_COLOR } from "#app/constants/colors";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
+import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { CenterOfAttentionTag } from "#data/battler-tags";
 import { SpeciesFormChangePreMoveTrigger } from "#data/form-change-triggers";
 import { getStatusEffectActivationText, getStatusEffectHealText } from "#data/status-effect";
@@ -15,6 +16,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { CommonAnim } from "#enums/move-anims-common";
 import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
+import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import { MoveResult } from "#enums/move-result";
 import { isIgnorePP, isIgnoreStatus, isReflected, isVirtual, MoveUseMode } from "#enums/move-use-mode";
 import { PokemonType } from "#enums/pokemon-type";
@@ -24,20 +26,19 @@ import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import { frenzyMissFunc } from "#moves/move-utils";
 import type { PokemonMove } from "#moves/pokemon-move";
-import { BattlePhase } from "#phases/battle-phase";
 import type { TurnMove } from "#types/turn-move";
 import { NumberHolder } from "#utils/common";
 import { enumValueToKey } from "#utils/enums";
 import i18next from "i18next";
 
-export class MovePhase extends BattlePhase {
+export class MovePhase extends PokemonPhase {
   public readonly phaseName = "MovePhase";
   protected _pokemon: Pokemon;
-  protected _move: PokemonMove;
+  public move: PokemonMove;
   protected _targets: BattlerIndex[];
   public readonly useMode: MoveUseMode; // Made public for quash
-  /** Whether the current move is forced last (used for Quash). */
-  protected forcedLast: boolean;
+  /** The timing modifier of the move (used by Quash and to force called moves to the front of their queue) */
+  public timingModifier: MovePhaseTimingModifier;
   /** Whether the current move should fail but still use PP. */
   protected failed = false;
   /** Whether the current move should fail and retain PP. */
@@ -59,14 +60,6 @@ export class MovePhase extends BattlePhase {
     this._pokemon = pokemon;
   }
 
-  public get move(): PokemonMove {
-    return this._move;
-  }
-
-  protected set move(move: PokemonMove) {
-    this._move = move;
-  }
-
   public get targets(): BattlerIndex[] {
     return this._targets;
   }
@@ -81,16 +74,22 @@ export class MovePhase extends BattlePhase {
    * @param move - The {@linkcode PokemonMove} to use
    * @param useMode - The {@linkcode MoveUseMode} corresponding to this move's means of execution (usually `MoveUseMode.NORMAL`).
    * Not marked optional to ensure callers correctly pass on `useModes`.
-   * @param forcedLast - Whether to force this phase to occur last in order (for {@linkcode MoveId.QUASH}); default `false`
+   * @param timingModifier - The {@linkcode MovePhaseTimingModifier} for the move; Default {@linkcode MovePhaseTimingModifier.NORMAL}
    */
-  constructor(pokemon: Pokemon, targets: BattlerIndex[], move: PokemonMove, useMode: MoveUseMode, forcedLast = false) {
-    super();
+  constructor(
+    pokemon: Pokemon,
+    targets: BattlerIndex[],
+    move: PokemonMove,
+    useMode: MoveUseMode,
+    timingModifier: MovePhaseTimingModifier = MovePhaseTimingModifier.NORMAL,
+  ) {
+    super(pokemon.getBattlerIndex());
 
     this.pokemon = pokemon;
     this.targets = targets;
     this.move = move;
     this.useMode = useMode;
-    this.forcedLast = forcedLast;
+    this.timingModifier = timingModifier;
     this.moveHistoryEntry = {
       move: MoveId.NONE,
       targets,
@@ -119,14 +118,6 @@ export class MovePhase extends BattlePhase {
   /** Signifies the current move should cancel and retain PP */
   public cancel(): void {
     this.cancelled = true;
-  }
-
-  /**
-   * Shows whether the current move has been forced to the end of the turn
-   * Needed for speed order, see {@linkcode MoveId.QUASH}
-   */
-  public isForcedLast(): boolean {
-    return this.forcedLast;
   }
 
   public start(): void {

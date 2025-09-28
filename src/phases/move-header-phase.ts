@@ -5,14 +5,18 @@ import { BattlePhase } from "#phases/battle-phase";
 
 export class MoveHeaderPhase extends BattlePhase {
   public readonly phaseName = "MoveHeaderPhase";
-  public pokemon: Pokemon;
   public move: PokemonMove;
+  public pokemon: Pokemon;
 
   constructor(pokemon: Pokemon, move: PokemonMove) {
     super();
 
     this.pokemon = pokemon;
     this.move = move;
+  }
+
+  public getPokemon(): Pokemon {
+    return this.pokemon;
   }
 
   canMove(): boolean {

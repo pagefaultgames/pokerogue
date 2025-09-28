@@ -47,8 +47,12 @@ export class ArenaData {
     }
 
     this.biome = source.biome;
-    this.weather = source.weather ? new Weather(source.weather.weatherType, source.weather.turnsLeft) : null;
-    this.terrain = source.terrain ? new Terrain(source.terrain.terrainType, source.terrain.turnsLeft) : null;
+    this.weather = source.weather
+      ? new Weather(source.weather.weatherType, source.weather.turnsLeft, source.weather.maxDuration)
+      : null;
+    this.terrain = source.terrain
+      ? new Terrain(source.terrain.terrainType, source.terrain.turnsLeft, source.terrain.maxDuration)
+      : null;
     this.positionalTags = source.positionalTags ?? [];
   }
 }

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+
+SPDX-License-Identifier: CC-BY-NC-SA-4.0
+-->
+
 # EnemyCommandPhase: How Enemy Pokémon Decide What to Do
 
 ## Step 1: Should the Enemy Pokémon Switch?
