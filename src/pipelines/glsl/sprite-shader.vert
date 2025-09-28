@@ -1,4 +1,3 @@
-
 /*
  * SPDX-FileCopyrightText: 2024-2025 Pagefault Games
  * SPDX-FileContributor: FlashfyreDev
