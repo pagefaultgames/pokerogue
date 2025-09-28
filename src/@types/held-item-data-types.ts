@@ -3,8 +3,8 @@ import type { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import type { RarityTier } from "#enums/reward-tier";
 import type { Pokemon } from "#field/pokemon";
 import type { allHeldItems } from "#items/all-held-items";
-import { CosmeticHeldItem, HeldItem } from "#items/held-item";
-import type { ExcludeKeys, InferKeys } from "#types/helpers/type-helpers";
+import type { CosmeticHeldItem } from "#items/held-item";
+import type { InferKeys } from "#types/helpers/type-helpers";
 
 export type HeldItemData = {
   /**

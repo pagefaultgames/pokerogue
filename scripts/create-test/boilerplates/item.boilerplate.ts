@@ -37,7 +37,7 @@ describe("{{description}}", () => {
       .startingLevel(100)
       .enemyLevel(100);
 
-    vi.spyOn(allHeldItems[HeldItemId.WIDE_LENS] as AccuracyBoosterHeldItem, "shouldApply");
+    vi.spyOn(allHeldItems[HeldItemId.WIDE_LENS], "shouldApply");
   });
 
   it("should do XYZ when applied", async () => {
@@ -48,14 +48,10 @@ describe("{{description}}", () => {
 
     // Replace with actual logic for item in question
     const accMult = new NumberHolder(1);
-    applySingleHeldItem(
-      allHeldItems[HeldItemId.WIDE_LENS] as AccuracyBoosterHeldItem,
-      HeldItemEffect.ACCURACY_BOOSTER,
-      {
-        pokemon: feebas,
-        moveAccuracy: accMult,
-      },
-    );
+    applySingleHeldItem(HeldItemId.WIDE_LENS, HeldItemEffect.ACCURACY_BOOSTER, {
+      pokemon: feebas,
+      moveAccuracy: accMult,
+    });
 
     expect(accMult.value).toBe(1.05);
   });

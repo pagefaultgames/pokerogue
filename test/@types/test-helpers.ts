@@ -26,4 +26,4 @@ export type OneOther<O extends object, K extends keyof O> = AtLeastOne<Omit<nonF
   [key in K]: O[K];
 };
 
-export type PartialWith<O extends object, K extends keyof O> = Partial<O> & Required<Pick<O, K>>
+export type PartialWith<O extends object, K extends keyof O> = Partial<O> & Required<Pick<O, K>>;

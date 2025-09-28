@@ -12,7 +12,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 export type expectedHeldItemType = HeldItemId | HeldItemCategoryId | PartialWith<HeldItemSpecs, "id" | "stack">;
 
 /**
- * Matcher that checks if a {@linkcode Pokemon} has a given held item.
+ * Matcher that checks if a {@linkcode Pokemon} has the given held item.
  * @param received - The object to check. Should be a {@linkcode Pokemon}
  * @param expectedItem - A {@linkcode HeldItemId} or {@linkcode HeldItemCategoryId} to check, or a partially filled
  * {@linkcode HeldItemSpecs} containing the desired values
@@ -32,7 +32,7 @@ export function toHaveHeldItem(
 
   const pkmName = getPokemonNameWithAffix(received);
 
-  // If a category was requested OR we lack the item in question, show an error message.
+  // If a category was requested OR we lack the item in question, show `an error message.
   if (typeof expectedItem === "number" || !received.heldItemManager.hasItem(expectedItem.id)) {
     expectedItem = typeof expectedItem === "number" ? expectedItem : expectedItem.id;
 

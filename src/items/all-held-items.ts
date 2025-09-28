@@ -21,7 +21,7 @@ import { FieldEffectHeldItem } from "#items/field-effect";
 import { FlinchChanceHeldItem } from "#items/flinch-chance";
 import { FormChangeHeldItem } from "#items/form-change-item";
 import { FriendshipBoosterHeldItem } from "#items/friendship-booster";
-import { CosmeticHeldItem, HeldItem } from "#items/held-item";
+import type { CosmeticHeldItem, HeldItem } from "#items/held-item";
 import { HitHealHeldItem } from "#items/hit-heal";
 import { InstantReviveHeldItem } from "#items/instant-revive";
 import { ContactItemStealChanceHeldItem, TurnEndItemStealHeldItem } from "#items/item-steal";
@@ -206,8 +206,7 @@ export const allHeldItems = Object.freeze({
     SpeciesId.GIMMIGHOUL,
     10,
   ),
-} satisfies Record<Exclude<HeldItemId, typeof HeldItemId.NONE>, CosmeticHeldItem | HeldItem>
-);
+} satisfies Record<Exclude<HeldItemId, typeof HeldItemId.NONE>, CosmeticHeldItem | HeldItem>);
 
 // TODO: Move to another file
 export function applyHeldItems<T extends HeldItemEffect>(effect: T, params: HeldItemEffectParamMap[T]) {

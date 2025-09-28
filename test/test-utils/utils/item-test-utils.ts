@@ -1,7 +1,7 @@
+import { getPokemonNameWithAffix } from "#app/messages";
 import { HeldItemNames } from "#enums/held-item-id";
 import type { Pokemon } from "#field/pokemon";
-import type { HeldItem } from "#items/held-item";
-import type { HeldItemSpecs } from "#types/held-item-data-types";
+import type { ApplicableHeldItemId, allHeldItemsType, HeldItemSpecs } from "#types/held-item-data-types";
 import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
 import { expect } from "vitest";
 
@@ -14,14 +14,14 @@ export function getAllItemSpecs(pokemon: Pokemon): HeldItemSpecs[] {
  * Apply a single `HeldItem` to a given Pokemon.
  * Does not require the item to be on the Pokemon prior, and will add it with 1 stack if it is not present.
  *
- * @param item - The {@linkcode HeldItem} class instance to apply
- * @param effect - The desired one of `item`'s effects to apply
+ * @param item - The {@linkcode HeldItemId | ID} of the `HeldItem` class instance to apply
+ * @param effect - One of `item`'s effects to apply
  * @param params - Parameters to pass to the class' `apply` method
  * @returns Whether the application succeeded
  * @throws {Error}
  * Fails test immediately if the `pokemon` contained in the parameter map lacks the item in question.
  */
-export function applySingleHeldItem<T extends HeldItem, E extends T["effects"][number]>(
+export function applySingleHeldItem<T extends ApplicableHeldItemId, E extends allHeldItemsType[T]["effects"][number]>(
   item: T,
   effect: E,
   params: HeldItemEffectParamMap[E],
@@ -29,7 +29,7 @@ export function applySingleHeldItem<T extends HeldItem, E extends T["effects"][n
   const { pokemon } = params;
   expect(
     pokemon.heldItemManager.hasItem(item.type),
-    `Pokemon ${pokemon.getNameToRender()} lacks item of type ${HeldItemNames[item.type]}`,
+    `Pokemon ${getPokemonNameWithAffix(pokemon)} lacks item of type ${HeldItemNames[item.type]}`,
   ).toBe(true);
 
   if (!item.shouldApply(effect, params)) {

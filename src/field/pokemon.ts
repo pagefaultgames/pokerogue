@@ -93,7 +93,6 @@ import { Nature } from "#enums/nature";
 import { PokeballType } from "#enums/pokeball";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PokemonType } from "#enums/pokemon-type";
-import { RarityTier } from "#enums/reward-tier";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import {

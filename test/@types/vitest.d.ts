@@ -147,7 +147,7 @@ interface PokemonMatchers {
    * Used during unit tests to ensure effects were applied correctly.
    * @param id - The {@linkcode HeldItemId} of the item being applied
    * @param effect - One of `item`'s applicable {@linkcode HeldItemEffect} to check application of
-   * @param options - A partially-filled parameters object
+   * @param options - A partially-filled parameters object used to query the arguments `item` was called with
    */
   toHaveAppliedItem<T extends ApplicableHeldItemId, E extends allHeldItemsType[T]["effects"][number]>(
     id: T,
@@ -251,7 +251,7 @@ interface PokemonMatchers {
   toHaveUsedPP(moveId: MoveId, ppUsed: number | "all"): void;
 
   /**
-   * Check whether a {@linkcode Pokemon} has a given held item.
+   * Check whether a {@linkcode Pokemon} has the given held item.
    * @param received - The object to check. Should be a {@linkcode Pokemon}.
    * @param expectedItem - A {@linkcode HeldItemId} or {@linkcode HeldItemCategoryId} to check, or a partially filled
    * {@linkcode HeldItemSpecs} containing the desired values

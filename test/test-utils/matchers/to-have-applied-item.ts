@@ -1,27 +1,34 @@
 import { getPokemonNameWithAffix } from "#app/messages";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import { type HeldItemId, HeldItemNames } from "#enums/held-item-id";
+import { HeldItemNames } from "#enums/held-item-id";
 import { allHeldItems } from "#items/all-held-items";
-import { CosmeticHeldItem, HeldItem } from "#items/held-item";
+import { type CosmeticHeldItem, HeldItem } from "#items/held-item";
 import { getOnelineDiffStr } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
-import { ApplicableHeldItemId, allHeldItemsType } from "#types/held-item-data-types";
-import type { DefaultHeldItemParams, HeldItemEffectParamMap } from "#types/held-item-parameter";
+import type { ApplicableHeldItemId, allHeldItemsType } from "#types/held-item-data-types";
+import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
 import type { AtLeastOne } from "#types/type-helpers";
 import { enumValueToKey } from "#utils/enums";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 import { type MockInstance, vi } from "vitest";
 
 /** Options type for {@linkcode toHaveAppliedItem}. */
-export type toHaveAppliedItemOptions<E extends HeldItemEffect> = Omit<HeldItemEffectParamMap[E], "pokemon"> extends Record<
-  string,
-  never
->
+export type toHaveAppliedItemOptions<E extends HeldItemEffect> = Omit<
+  HeldItemEffectParamMap[E],
+  "pokemon"
+> extends Record<string, never>
   ? never
   : AtLeastOne<Omit<HeldItemEffectParamMap[E], "pokemon">>;
 
-// TODO: Add proper typing on `args` and `effect` later at some point
-export function toHaveAppliedItem<T extends ApplicableHeldItemId, E extends allHeldItemsType[T]['effects'][number]>(
+/**
+ * Matcher that checks if a {@linkcode Pokemon} has applied the given {@linkcode HeldItem}.
+ * Used during unit tests to ensure effects were applied correctly.
+ * @param id - The {@linkcode HeldItemId} of the item being applied
+ * @param effect - One of `item`'s applicable {@linkcode HeldItemEffect}s whose application will be checked
+ * @param options - A partially-filled parameters object used to query the arguments `item` was called with
+ * @returns Whether the matcher passed
+ */
+export function toHaveAppliedItem<T extends ApplicableHeldItemId, E extends allHeldItemsType[T]["effects"][number]>(
   this: MatcherState,
   received: unknown,
   id: T,
