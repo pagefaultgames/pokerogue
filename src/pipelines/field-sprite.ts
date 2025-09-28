@@ -43,7 +43,10 @@ export class FieldSpritePipeline extends Phaser.Renderer.WebGL.Pipelines.MultiPi
     this.set1f("time", time)
       .setBoolean("ignoreTimeTint", ignoreTimeTint)
       .setBoolean("isOutside", globalScene.arena.isOutside())
-      .set3fv("overrideTint", overrideTint())
+      .set3fv(
+        "overrideTint",
+        overrideTint().map(c => c / 255),
+      )
       .set3fv(
         "dayTint",
         globalScene.arena.getDayTint().map(c => c / 255),
