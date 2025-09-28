@@ -7,6 +7,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { TextStyle } from "#enums/text-style";
 import { UiTheme } from "#enums/ui-theme";
 import type { GameData } from "#system/game-data";
+import type { AnyFn } from "#types/type-helpers";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
@@ -239,6 +240,12 @@ export class GameStatsUiHandler extends UiHandler {
   /** Logged in username */
   private headerText: Phaser.GameObjects.Text;
 
+  /** The game data to display */
+  private gameData: GameData;
+
+  /** A callback invoked when {@linkcode clear} is called */
+  private exitCallback?: AnyFn | undefined;
+
   /** Whether the UI is single column mode */
   private get singleCol(): boolean {
     const resolvedLang = i18next.resolvedLanguage ?? "en";
@@ -318,9 +325,9 @@ export class GameStatsUiHandler extends UiHandler {
         ? i18next.t("trainerNames:playerF")
         : i18next.t("trainerNames:playerM");
 
-    const displayName = !globalScene.hideUsername
-      ? (loggedInUser?.username ?? i18next.t("common:guest"))
-      : usernameReplacement;
+    const displayName = globalScene.hideUsername
+      ? usernameReplacement
+      : (loggedInUser?.username ?? i18next.t("common:guest"));
 
     return i18next.t("gameStatsUiHandler:stats", { username: displayName });
   }
@@ -395,11 +402,19 @@ export class GameStatsUiHandler extends UiHandler {
     this.gameStatsContainer.setVisible(false);
   }
 
-  show(args: any[]): boolean {
-    super.show(args);
+  show([username, data, callback]: [] | [username: string, data: GameData, callback?: AnyFn]): boolean {
+    super.show([]);
 
-    // show updated username on every render
-    this.headerText.setText(this.getUsername());
+    if (username != null && data != null) {
+      this.gameData = data;
+      this.exitCallback = callback;
+      this.headerText.setText(username);
+    } else {
+      this.gameData = globalScene.gameData;
+      this.exitCallback = undefined;
+      // show updated username on every render
+      this.headerText.setText(this.getUsername());
+    }
 
     this.gameStatsContainer.setActive(true).setVisible(true);
 
@@ -436,7 +451,7 @@ export class GameStatsUiHandler extends UiHandler {
     const statKeys = Object.keys(displayStats).slice(this.cursor * columns, this.cursor * columns + perPage);
     statKeys.forEach((key, s) => {
       const stat = displayStats[key] as DisplayStat;
-      const value = stat.sourceFunc?.(globalScene.gameData) ?? "-";
+      const value = stat.sourceFunc?.(this.gameData) ?? "-";
       const valAsInt = Number.parseInt(value);
       this.statLabels[s].setText(
         !stat.hidden || Number.isNaN(value) || valAsInt ? i18next.t(`gameStatsUiHandler:${stat.label_key}`) : "???",
@@ -512,6 +527,12 @@ export class GameStatsUiHandler extends UiHandler {
   clear() {
     super.clear();
     this.gameStatsContainer.setVisible(false).setActive(false);
+
+    const callback = this.exitCallback;
+    if (callback != null) {
+      this.exitCallback = undefined;
+      callback();
+    }
   }
 }
 
