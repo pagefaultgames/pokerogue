@@ -1,4 +1,9 @@
 /*
+ * SPDX-FileCopyrightText: 2025 Pagefault Games
+ * SPDX-FileContributor: Bertie690
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ *
  * This script accepts a CSV value or file path as input, parses the egg moves,
  * and writes the output to a TypeScript file.
  * It can be run interactively or with command line arguments.

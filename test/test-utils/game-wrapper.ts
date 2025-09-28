@@ -206,7 +206,7 @@ export class GameWrapper {
 }
 
 function prependPath(originalPath) {
-  const prefix = "public";
+  const prefix = "assets";
   if (originalPath.startsWith("./")) {
     return originalPath.replace("./", `${prefix}/`);
   }

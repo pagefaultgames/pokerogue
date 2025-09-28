@@ -3,18 +3,6 @@
 # everything (whole code-base) - Junior Devs
 * @pagefaultgames/junior-dev-team
 
-# Art Team
-/public/**/*.png @pagefaultgames/art-team
-/public/**/*.json @pagefaultgames/art-team
-/public/images @pagefaultgames/art-team
-/public/battle-anims @pagefaultgames/art-team
-
-# Audio files
-*.mp3 @pagefaultgames/composer-team
-*.wav @pagefaultgames/composer-team
-*.ogg @pagefaultgames/composer-team
-/public/audio @pagefaultgames/composer-team
-
 # Balance Files; contain actual code logic and must also be owned by dev team
 /src/data/balance @pagefaultgames/balance-team @pagefaultgames/junior-dev-team
 /src/data/trainers @pagefaultgames/balance-team @pagefaultgames/junior-dev-team
