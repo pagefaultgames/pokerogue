@@ -17,11 +17,6 @@ declare global {
 
     call<T extends AnyFn>(this: T, thisArg: ThisParameterType<T>, ...argArray: Parameters<T>): ReturnType<T>;
   }
-
-  // Type-safe aliases for `Object.keys` when working with string records
-  interface ObjectConstructor {
-    keys<O extends Record<string, unknown>>(o: O): keyof O[];
-  }
 }
 
 // Global augments for `typedoc` to prevent TS from erroring when editing the config JS file
