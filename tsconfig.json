@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
 {
   "compilerOptions": {
     "target": "ES2023",
@@ -72,6 +77,6 @@
     "vite.config.ts",
     "vitest.config.ts",
     "vitest.workspace.ts",
-    "public/service-worker.js"
+    "assets/service-worker.js"
   ]
 }

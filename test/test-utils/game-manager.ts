@@ -24,6 +24,7 @@ import { SelectStarterPhase } from "#phases/select-starter-phase";
 import type { SelectTargetPhase } from "#phases/select-target-phase";
 import { TurnEndPhase } from "#phases/turn-end-phase";
 import { TurnStartPhase } from "#phases/turn-start-phase";
+import { GameData } from "#system/game-data";
 import { generateStarters } from "#test/test-utils/game-manager-utils";
 import { GameWrapper } from "#test/test-utils/game-wrapper";
 import { ChallengeModeHelper } from "#test/test-utils/helpers/challenge-mode-helper";
@@ -444,7 +445,7 @@ export class GameManager {
     const dataRaw = fs.readFileSync(path, { encoding: "utf8", flag: "r" });
     let dataStr = AES.decrypt(dataRaw, saveKey).toString(enc.Utf8);
     dataStr = this.scene.gameData.convertSystemDataStr(dataStr);
-    const systemData = this.scene.gameData.parseSystemData(dataStr);
+    const systemData = GameData.parseSystemData(dataStr);
     const valid = !!systemData.dexData && !!systemData.timestamp;
     if (valid) {
       await updateUserInfo();
