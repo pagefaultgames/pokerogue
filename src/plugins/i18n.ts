@@ -160,18 +160,18 @@ await i18next
   .init(
     {
       fallbackLng: {
-        "es-MX": ["es-ES", "en"],
+        "es-419": ["es-ES", "en"],
         default: ["en"],
       },
       supportedLngs: [
         "en",
         "es-ES",
-        "es-MX",
+        "es-419", // LATAM Spanish
         "fr",
         "it",
         "de",
-        "zh-CN",
-        "zh-TW",
+        "zh-Hans",
+        "zh-Hant",
         "pt-BR",
         "ko",
         "ja",
@@ -180,6 +180,7 @@ await i18next
         "tr",
         "ro",
         "ru",
+        "tl",
       ],
       backend: {
         loadPath(lng: string, [ns]: string[]) {
