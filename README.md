@@ -25,7 +25,7 @@ Thank you to all the wonderful people that have contributed to the PokéRogue pr
 
 # License
 
-This repository seeks to be REUSE compliant, so copyright and/or licensing information for each file is stored 
+This repository seeks to be REUSE compliant, meaning that copyright and/or licensing information for each file is stored 
 either in the file itself or in an associated `REUSE.toml` file.
 
 - All source code belonging to the project, unless otherwise noted, is licensed under [AGPL-v3.0-only](LICENSES/AGPL-3.0-only.txt)
