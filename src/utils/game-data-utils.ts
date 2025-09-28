@@ -3,7 +3,8 @@ import { loggedInUser } from "#app/account";
 /**
  * Obtain the local storage key corresponding to a given save slot.
  * @param slotId - The numerical save slot ID
- *   Will throw an error if `<0` (in line with standard util functions)
+ * @throws {Error} 
+ * Throws if `slotId < 0` (which likely indicates an invalid slot passed from the title screen)
  * @returns The local storage key used to access the save data for the given slot.
  */
 export function getSaveDataLocalStorageKey(slotId: number): string {
