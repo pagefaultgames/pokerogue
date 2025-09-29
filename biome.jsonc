@@ -115,7 +115,17 @@
         },
         "useCollapsedIf": "error",
         "useCollapsedElseIf": "error",
-
+        "useDeprecatedReason": "error",
+        "useConsistentArrayType": {
+          "level": "error",
+          "fix": "unsafe",
+          "options": {}
+        },
+        "useShorthandAssign": {
+          "level": "error",
+          "fix": "safe",
+          "options": {}
+        },
         "noSubstr": "error",
         "noYodaExpression": "error",
         "useForOf": "error",

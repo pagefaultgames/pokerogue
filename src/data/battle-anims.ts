@@ -819,7 +819,7 @@ export abstract class BattleAnim {
               frame.target === AnimFrameTarget.GRAPHIC
               && isReversed(this.srcLine[0], this.srcLine[2], this.dstLine[0], this.dstLine[2])
             ) {
-              scaleX = scaleX * -1;
+              scaleX *= -1;
             }
           }
           break;

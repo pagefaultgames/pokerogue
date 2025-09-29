@@ -419,7 +419,7 @@ export abstract class PokemonSpeciesForm {
         case SpeciesId.BLOODMOON_URSALUNA:
           break;
         default:
-          speciesId = speciesId % 2000;
+          speciesId %= 2000;
           break;
       }
     }

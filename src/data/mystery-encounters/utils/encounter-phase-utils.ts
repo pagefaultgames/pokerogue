@@ -1131,8 +1131,8 @@ export function calculateMEAggregateStats(baseSpawnWeight: number) {
         const tierWeights = [66, 40, 19, 3];
 
         // Adjust tier weights by currently encountered events (pity system that lowers odds of multiple Common/Great)
-        tierWeights[0] = tierWeights[0] - 6 * numEncounters[0];
-        tierWeights[1] = tierWeights[1] - 4 * numEncounters[1];
+        tierWeights[0] -= 6 * numEncounters[0];
+        tierWeights[1] -= 4 * numEncounters[1];
 
         const totalWeight = tierWeights.reduce((a, b) => a + b);
         const tierValue = randSeedInt(totalWeight);
