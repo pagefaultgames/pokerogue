@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2025 Pagefault Games
+ * SPDX-FileContributor: Bertie690
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
 import { globSync } from "node:fs";
 
 const dryRun = !!process.env.DRY_RUN?.match(/true/gi);

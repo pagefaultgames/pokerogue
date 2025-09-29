@@ -24,19 +24,20 @@ export class SwitchPhase extends PokemonPhase {
   private switchType: SwitchType;
   private switchInIndex: number;
   /**
-   * If `true`, this phase schedules a {@linkcode SummonPhase}
-   * to run immediately after it ends.
+   * Whether to schedule a {@linkcode SummonPhase} immediately after this phase ends
+   * to render animations for the new Pokemon switching in.
+   * @defaultValue `true`
    */
   private readonly withSummon: boolean;
 
   /**
    * @param battlerIndex - The {@linkcode FieldBattlerIndex} of the Pokemon switching out
    * @param switchType - A {@linkcode SwitchType} dictating the type of switch behavior
-   * being used.
-   * @param switchInIndex - The party index of the Pokemon to switch in. If set to
-   * `-1`, will prompt the player or Enemy AI to select a Pokemon to switch in
+   * to perform
+   * @param switchInIndex - The party index of the Pokemon to switch in, or `-1` to prompt a switch
+   * from the Player party UI or enemy AI; default `-1`
    * @param withSummon - Whether to queue a {@linkcode SummonPhase} upon this phase's completion to render
-   * animations for the new Pokemon switching in; default `false`
+   * animations for the new Pokemon switching in; default `true`
    */
   constructor(battlerIndex: FieldBattlerIndex, switchType: SwitchType, switchInIndex = -1, withSummon = true) {
     super(battlerIndex);

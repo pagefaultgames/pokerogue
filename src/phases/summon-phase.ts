@@ -50,27 +50,8 @@ interface SummonPhaseOptions {
 export class SummonPhase extends PokemonPhase {
   public override readonly phaseName = "SummonPhase";
 
-  /**
-   * If `true`, summons the Pokemon as if loading into a wave
-   * @defaultValue `false`
-   */
   private readonly loaded: boolean;
-  /**
-   * If `true` for an enemy Trainer's switch, this phase will play
-   * an animation on the Trainer before the "thrown Poke Ball" animation.
-   * This does not affect summons on the Player's side since part of the
-   * Player Trainer's animation is implemented in {@linkcode EncounterPhase}.
-   * @defaultValue `true`
-   */
   private readonly playTrainerAnim: boolean;
-  /**
-   * If `true`, this phase will push its corresponding {@linkcode PostSummonPhase}
-   * to the phase manager instead of unshifting it.
-   * @defaultValue `false`
-   * @privateRemarks
-   * This should be enabled whenever multiple Pokemon are summoned at the same
-   * time outside of a turn in battle, e.g. at the start of a Trainer battle.
-   */
   private readonly delayPostSummon: boolean;
 
   constructor(
@@ -408,8 +389,10 @@ export class SummonPhase extends PokemonPhase {
       globalScene.phaseManager.unshiftNew("ShinySparklePhase", pokemon.getBattlerIndex());
     }
 
-    // TODO: The conditions to apply post-summon effects here are inaccurate
-    if (!this.loaded || waveIndex % 10 === 1) {
+    // TODO: Review the conditions to perform post summon stuff
+    if (!this.loaded
+      || [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType)
+      || globalScene.currentBattle.waveIndex % 10 === 1) {
       globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
       this.queuePostSummon();
     }
@@ -420,9 +403,9 @@ export class SummonPhase extends PokemonPhase {
   private queuePostSummon(): void {
     const { phaseManager } = globalScene;
     if (this.delayPostSummon) {
-      phaseManager.createAndPushPhase("PostSummonPhase", this.battlerIndex);
+      phaseManager.pushNew("PostSummonPhase", this.battlerIndex);
     } else {
-      phaseManager.createAndUnshiftPhase("PostSummonPhase", this.battlerIndex);
+      phaseManager.unshiftNew("PostSummonPhase", this.battlerIndex);
     }
   }
 }

@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+# SPDX-FileContributor: SirzBenjie
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
 """
 Validates the contents of the variant's masterlist file and identifies
 any mismatched entries for the sprite of the same key between front, back, exp, exp back, and female.
@@ -20,10 +25,10 @@ from dataclasses import dataclass, field
 from typing import Literal as L
 
 MASTERLIST_PATH = os.path.join(
-    os.path.dirname(os.path.dirname(__file__)), "public", "images", "pokemon", "variant", "_masterlist.json"
+    os.path.dirname(os.path.dirname(__file__)), "assets", "images", "pokemon", "variant", "_masterlist.json"
 )
 EXP_MASTERLIST_PATH = os.path.join(
-    os.path.dirname(os.path.dirname(__file__)), "public", "images", "pokemon", "variant", "_exp_masterlist.json"
+    os.path.dirname(os.path.dirname(__file__)), "assets", "images", "pokemon", "variant", "_exp_masterlist.json"
 )
 DEFAULT_OUTPUT_PATH = "sprite-mismatches.csv"
 

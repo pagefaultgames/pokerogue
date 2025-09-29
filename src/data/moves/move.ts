@@ -6358,7 +6358,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
           switchInIndex:
           this.switchType === SwitchType.FORCE_SWITCH
             ? eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)]
-            :  undefined,
+            : undefined,
         });
         return true;
       }
