@@ -510,11 +510,7 @@ function forceStabMove(
   const chosenPool =
     stabMovePool.length > 0 || !forceAnyDamageIfNoStab
       ? stabMovePool
-      : filterPool(
-          pool,
-          m => allMoves[m[0]].category !== MoveCategory.STATUS && !STAB_BLACKLIST.has(m[0]),
-          totalWeight,
-        );
+      : filterPool(pool, m => allMoves[m].category !== MoveCategory.STATUS && !STAB_BLACKLIST.has(m), totalWeight);
 
   if (chosenPool.length > 0) {
     let rand = randSeedInt(totalWeight.value);
@@ -589,7 +585,7 @@ function fillInRemainingMovesetSlots(
   const tmCap = getMaxTmCount(pokemon.level);
   const eggCap = getMaxEggMoveCount(pokemon.level);
   const remainingPoolWeight = new NumberHolder(0);
-  while (remainingPool.length > pokemon.moveset.length && pokemon.moveset.length < 4) {
+  while (pokemon.moveset.length < 4) {
     const nonLevelMoveCount = tmCount.value + eggMoveCount.value;
     remainingPool = filterPool(
       baseWeights,
@@ -604,6 +600,11 @@ function fillInRemainingMovesetSlots(
     );
     if (pokemon.hasTrainer()) {
       filterRemainingTrainerMovePool(remainingPool, pokemon);
+    }
+    // Ensure loop cannot run infinitely if there are no allowed moves left to
+    // fill the remaining slots
+    if (remainingPool.length === 0) {
+      return;
     }
     const totalWeight = remainingPool.reduce((v, m) => v + m[1], 0);
     let rand = randSeedInt(totalWeight);
@@ -719,7 +720,7 @@ export function generateMoveset(pokemon: Pokemon): void {
     tmCount,
     eggMoveCount,
     baseWeights,
-    filterPool(baseWeights, (m: MoveId) => !pokemon.moveset.some(mo => m[0] === mo.moveId)),
+    filterPool(baseWeights, (m: MoveId) => !pokemon.moveset.some(mo => m === mo.moveId)),
   );
 }
 
