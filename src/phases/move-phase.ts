@@ -305,6 +305,81 @@ export class MovePhase extends PokemonPhase {
     return false;
   }
 
+  /**
+   * Modifies `this.targets` in place, based upon:
+   * - Move redirection abilities, effects, etc.
+   * - Counterattacks, which pass a special value into the `targets` constructor param (`[`{@linkcode BattlerIndex.ATTACKER}`]`).
+   */
+  protected resolveRedirectTarget(): void {
+    if (this.targets.length !== 1) {
+      // Spread moves cannot be redirected
+      return;
+    }
+
+    const currentTarget = this.targets[0];
+    const redirectTarget = new NumberHolder(currentTarget);
+
+    // check move redirection abilities of every pokemon *except* the user.
+    // TODO: Make storm drain, lightning rod, etc, redirect at this point for type changing moves
+    globalScene
+      .getField(true)
+      .filter(p => p !== this.pokemon)
+      .forEach(pokemon => {
+        applyAbAttrs("RedirectMoveAbAttr", {
+          pokemon,
+          moveId: this.move.moveId,
+          targetIndex: redirectTarget,
+          sourcePokemon: this.pokemon,
+        });
+      });
+
+    /** `true` if an Ability is responsible for redirecting the move to another target; `false` otherwise */
+    let redirectedByAbility = currentTarget !== redirectTarget.value;
+
+    // check for center-of-attention tags (note that this will override redirect abilities)
+    this.pokemon.getOpponents(true).forEach(p => {
+      const redirectTag = p.getTag(CenterOfAttentionTag);
+
+      // TODO: don't hardcode this interaction.
+      // Handle interaction between the rage powder center-of-attention tag and moves used by grass types/overcoat-havers (which are immune to RP's redirect)
+      if (
+        redirectTag
+        && (!redirectTag.powder
+          || (!this.pokemon.isOfType(PokemonType.GRASS) && !this.pokemon.hasAbility(AbilityId.OVERCOAT)))
+      ) {
+        redirectTarget.value = p.getBattlerIndex();
+        redirectedByAbility = false;
+      }
+    });
+
+    // TODO: Don't hardcode these ability interactions
+    if (currentTarget !== redirectTarget.value) {
+      const bypassRedirectAttrs = this.move.getMove().getAttrs("BypassRedirectAttr");
+      bypassRedirectAttrs.forEach(attr => {
+        if (!attr.abilitiesOnly || redirectedByAbility) {
+          redirectTarget.value = currentTarget;
+        }
+      });
+
+      if (this.pokemon.hasAbilityWithAttr("BlockRedirectAbAttr")) {
+        redirectTarget.value = currentTarget;
+        // TODO: Ability displays should be handled by the ability
+        globalScene.phaseManager.queueAbilityDisplay(
+          this.pokemon,
+          this.pokemon.getPassiveAbility().hasAttr("BlockRedirectAbAttr"),
+          true,
+        );
+        globalScene.phaseManager.queueAbilityDisplay(
+          this.pokemon,
+          this.pokemon.getPassiveAbility().hasAttr("BlockRedirectAbAttr"),
+          false,
+        );
+      }
+
+      this.targets[0] = redirectTarget.value;
+    }
+  }
+
   public start(): void {
     super.start();
 
@@ -401,7 +476,7 @@ export class MovePhase extends PokemonPhase {
       // Struggle's "There are no more moves it can use" message
 
       globalScene.triggerPokemonFormChange(user, SpeciesFormChangePreMoveTrigger);
-      // TODO: apply gorilla tactics
+      // TODO: apply gorilla tactics here instead of in the move effect phase
     }
 
     this.showMoveText();
@@ -522,11 +597,9 @@ export class MovePhase extends PokemonPhase {
 
     // For some reason, dancer will immediately thaw its user
     if (this.useMode === MoveUseMode.INDIRECT) {
-      this.pokemon.resetStatus(false);
+      pokemon.resetStatus(false);
       return false;
     }
-
-    // Check if move use would heal the user
 
     if (Overrides.STATUS_ACTIVATION_OVERRIDE) {
       return false;
@@ -552,7 +625,6 @@ export class MovePhase extends PokemonPhase {
       return false;
     }
 
-    // Otherwise, trigger the freeze status effect
     this.triggerStatus(StatusEffect.FREEZE);
     return true;
   }
@@ -656,17 +728,17 @@ export class MovePhase extends PokemonPhase {
    */
   private checkGravity(): boolean {
     const move = this.move.getMove();
-    if (globalScene.arena.hasTag(ArenaTagType.GRAVITY) && move.hasFlag(MoveFlags.GRAVITY)) {
-      // Play the failure message
-      this.showFailedText(
-        i18next.t("battle:moveDisabledGravity", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),
-          moveName: move.name,
-        }),
-      );
-      return true;
+    if (!globalScene.arena.hasTag(ArenaTagType.GRAVITY) || !move.hasFlag(MoveFlags.GRAVITY)) {
+      return false;
     }
-    return false;
+
+    this.showFailedText(
+      i18next.t("battle:moveDisabledGravity", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),
+        moveName: move.name,
+      }),
+    );
+    return true;
   }
 
   /**
@@ -686,18 +758,22 @@ export class MovePhase extends PokemonPhase {
     return true;
   }
 
+  /**
+   * Deduct PP from the move being used, accounting for Pressure and other effects
+   */
   protected usePP(): void {
     if (!isIgnorePP(this.useMode)) {
       const move = this.move;
       // "commit" to using the move, deducting PP.
       const ppUsed = 1 + this.getPpIncreaseFromPressure(this.getActiveTargetPokemon());
       move.usePp(ppUsed);
-      globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon.id, this.move.getMove(), this.move.ppUsed));
+      globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon.id, move.getMove(), move.ppUsed));
     }
   }
 
   /**
-   * Clear out two turn moves, then schedule the move to be used if it passes the third failure check
+   * Clear out two turn moves, then schedule the move to be used if it passes
+   * the third failure check.
    */
   protected useMove(charging = false): void {
     const user = this.pokemon;
@@ -705,6 +781,7 @@ export class MovePhase extends PokemonPhase {
     /* Clear out any two turn moves once they've been used.
     TODO: Refactor move queues and remove this assignment;
     Move queues should be handled by the calling `CommandPhase` or a manager for it */
+
     // @ts-expect-error - useMode is readonly and shouldn't normally be assigned to
     this.useMode = user.getMoveQueue().shift()?.useMode ?? this.useMode;
 
@@ -716,6 +793,7 @@ export class MovePhase extends PokemonPhase {
       console.log("Move failed during third failure check");
       return;
     }
+
     /*
     At this point, delayed moves (future sight, wish, doom desire) are issued, and, if they occur, the move animations are played.
     Then, combined pledge moves are checked for. Interestingly, the "wasMoveEffective" flag is set to false if the combined technique
@@ -784,6 +862,7 @@ export class MovePhase extends PokemonPhase {
   protected failMove(failedDueToTerrain = false) {
     const move = this.move.getMove();
     const targets = this.getActiveTargetPokemon();
+    const pokemon = this.pokemon;
 
     // DO NOT CHANGE THE ORDER OF OPERATIONS HERE!
     // Protean is supposed to trigger its effects first, _then_ move text is displayed,
@@ -797,24 +876,23 @@ export class MovePhase extends PokemonPhase {
       || [MoveId.ROAR, MoveId.WHIRLWIND, MoveId.TRICK_OR_TREAT, MoveId.FORESTS_CURSE].includes(this.move.moveId)
     ) {
       applyAbAttrs("PokemonTypeChangeAbAttr", {
-        pokemon: this.pokemon,
+        pokemon,
         move,
         opponent: targets[0],
       });
     }
 
-    this.pokemon.pushMoveHistory({
-      move: this.move.moveId,
+    pokemon.pushMoveHistory({
+      move: move.id,
       targets: this.targets,
       result: MoveResult.FAIL,
       useMode: this.useMode,
     });
-    console.log("==========PUSHING MOVE HISTORY WITH FAIL FOR %s=============", MoveId[this.move.moveId]);
 
     // Use move-specific failure messages if present before checking terrain/weather blockage
     // and falling back to the classic "But it failed!".
     const failureMessage =
-      move.getFailedText(this.pokemon, targets[0], move)
+      move.getFailedText(pokemon, targets[0], move)
       || (failedDueToTerrain
         ? getTerrainBlockMessage(targets[0], globalScene.arena.getTerrainType())
         : i18next.t("battle:attackFailed"));
@@ -822,7 +900,7 @@ export class MovePhase extends PokemonPhase {
     this.showFailedText(failureMessage);
 
     // Remove the user from its semi-invulnerable state (if applicable)
-    this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
+    pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
   }
 
   /**
@@ -861,83 +939,8 @@ export class MovePhase extends PokemonPhase {
   public getPpIncreaseFromPressure(targets: Pokemon[]): number {
     const foesWithPressure = this.pokemon
       .getOpponents(true)
-      .filter(o => targets.includes(o) && o.hasAbilityWithAttr("IncreasePpAbAttr"));
+      .filter(opponent => targets.includes(opponent) && opponent.hasAbilityWithAttr("IncreasePpAbAttr"));
     return foesWithPressure.length;
-  }
-
-  /**
-   * Modifies `this.targets` in place, based upon:
-   * - Move redirection abilities, effects, etc.
-   * - Counterattacks, which pass a special value into the `targets` constructor param (`[`{@linkcode BattlerIndex.ATTACKER}`]`).
-   */
-  protected resolveRedirectTarget(): void {
-    if (this.targets.length !== 1) {
-      // Spread moves cannot be redirected
-      return;
-    }
-
-    const currentTarget = this.targets[0];
-    const redirectTarget = new NumberHolder(currentTarget);
-
-    // check move redirection abilities of every pokemon *except* the user.
-    // TODO: Make storm drain, lightning rod, etc, redirect at this point for type changing moves
-    globalScene
-      .getField(true)
-      .filter(p => p !== this.pokemon)
-      .forEach(pokemon => {
-        applyAbAttrs("RedirectMoveAbAttr", {
-          pokemon,
-          moveId: this.move.moveId,
-          targetIndex: redirectTarget,
-          sourcePokemon: this.pokemon,
-        });
-      });
-
-    /** `true` if an Ability is responsible for redirecting the move to another target; `false` otherwise */
-    let redirectedByAbility = currentTarget !== redirectTarget.value;
-
-    // check for center-of-attention tags (note that this will override redirect abilities)
-    this.pokemon.getOpponents(true).forEach(p => {
-      const redirectTag = p.getTag(CenterOfAttentionTag);
-
-      // TODO: don't hardcode this interaction.
-      // Handle interaction between the rage powder center-of-attention tag and moves used by grass types/overcoat-havers (which are immune to RP's redirect)
-      if (
-        redirectTag
-        && (!redirectTag.powder
-          || (!this.pokemon.isOfType(PokemonType.GRASS) && !this.pokemon.hasAbility(AbilityId.OVERCOAT)))
-      ) {
-        redirectTarget.value = p.getBattlerIndex();
-        redirectedByAbility = false;
-      }
-    });
-
-    // TODO: Don't hardcode these ability interactions
-    if (currentTarget !== redirectTarget.value) {
-      const bypassRedirectAttrs = this.move.getMove().getAttrs("BypassRedirectAttr");
-      bypassRedirectAttrs.forEach(attr => {
-        if (!attr.abilitiesOnly || redirectedByAbility) {
-          redirectTarget.value = currentTarget;
-        }
-      });
-
-      if (this.pokemon.hasAbilityWithAttr("BlockRedirectAbAttr")) {
-        redirectTarget.value = currentTarget;
-        // TODO: Ability displays should be handled by the ability
-        globalScene.phaseManager.queueAbilityDisplay(
-          this.pokemon,
-          this.pokemon.getPassiveAbility().hasAttr("BlockRedirectAbAttr"),
-          true,
-        );
-        globalScene.phaseManager.queueAbilityDisplay(
-          this.pokemon,
-          this.pokemon.getPassiveAbility().hasAttr("BlockRedirectAbAttr"),
-          false,
-        );
-      }
-
-      this.targets[0] = redirectTarget.value;
-    }
   }
 
   /**
@@ -948,14 +951,15 @@ export class MovePhase extends PokemonPhase {
    * move is marked for failure
    */
   protected resolveCounterAttackTarget(): void {
-    if (this.targets.length !== 1 || this.targets[0] !== BattlerIndex.ATTACKER) {
+    const targets = this.targets;
+    if (targets.length !== 1 || targets[0] !== BattlerIndex.ATTACKER) {
       return;
     }
 
     const targetHolder = new NumberHolder(BattlerIndex.ATTACKER);
 
     applyMoveAttrs("CounterRedirectAttr", this.pokemon, null, this.move.getMove(), targetHolder);
-    this.targets[0] = targetHolder.value;
+    targets[0] = targetHolder.value;
     if (targetHolder.value === BattlerIndex.ATTACKER) {
       this.fail();
     }
@@ -980,31 +984,35 @@ export class MovePhase extends PokemonPhase {
       return;
     }
 
-    if (this.cancelled && this.pokemon.summonData.tags.some(t => t.tagType === BattlerTagType.FRENZY)) {
-      frenzyMissFunc(this.pokemon, this.move.getMove());
+    const pokemon = this.pokemon;
+
+    if (this.cancelled && pokemon.summonData.tags.some(t => t.tagType === BattlerTagType.FRENZY)) {
+      frenzyMissFunc(pokemon, this.move.getMove());
     }
 
     const moveHistoryEntry = this.moveHistoryEntry;
     moveHistoryEntry.result = MoveResult.FAIL;
-    this.pokemon.pushMoveHistory(moveHistoryEntry);
+    pokemon.pushMoveHistory(moveHistoryEntry);
 
-    this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
-    this.pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
+    pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
+    pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
 
     // This clears out 2 turn moves after they've been used
     // TODO: Remove post move queue refactor
-    this.pokemon.getMoveQueue().shift();
+    pokemon.getMoveQueue().shift();
   }
 
   /**
    * Displays the move's usage text to the player as applicable for the move being used.
    */
   public showMoveText(): void {
-    const moveId = this.move.moveId;
+    const pokemonMove = this.move;
+    const moveId = pokemonMove.moveId;
+    const pokemon = this.pokemon;
     if (
       moveId === MoveId.NONE
-      || this.pokemon.getTag(BattlerTagType.RECHARGING)
-      || this.pokemon.getTag(BattlerTagType.INTERRUPTED)
+      || pokemon.getTag(BattlerTagType.RECHARGING)
+      || pokemon.getTag(BattlerTagType.INTERRUPTED)
     ) {
       return;
     }
@@ -1014,15 +1022,15 @@ export class MovePhase extends PokemonPhase {
     // TODO: This should be done by the move...
     globalScene.phaseManager.queueMessage(
       i18next.t(isReflected(this.useMode) ? "battle:magicCoatActivated" : "battle:useMove", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),
-        moveName: this.move.getName(),
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+        moveName: pokemonMove.getName(),
       }),
       500,
     );
 
     // Moves with pre-use messages (Magnitude, Chilly Reception, Fickle Beam, etc.) always display their messages even on failure
     // TODO: This assumes single target for message funcs - is this sustainable?
-    applyMoveAttrs("PreMoveMessageAttr", this.pokemon, this.getActiveTargetPokemon()[0], this.move.getMove());
+    applyMoveAttrs("PreMoveMessageAttr", pokemon, this.getActiveTargetPokemon()[0], pokemonMove.getMove());
   }
 
   /**
