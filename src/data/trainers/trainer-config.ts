@@ -4896,12 +4896,7 @@ export const trainerConfigs: TrainerConfigs = {
         ],
         TrainerSlot.TRAINER,
         true,
-        p => {
-          if (p.species.speciesId === SpeciesId.ARMAROUGE || p.species.speciesId === SpeciesId.CERULEDGE) {
-            // TODO
-          }
-          p.level = 36;
-        },
+        p => (p.level = 36),
       ),
     )
     .setPartyMemberFunc(
