@@ -268,7 +268,7 @@ export class MockContainer implements MockGameObject {
   }
 
   // biome-ignore lint/complexity/noBannedTypes: This matches the signature of the method it mocks
-  each(callback: Function, context?: object, ...args: any[]): this {
+  each(callback: () => void, context?: object, ...args: any[]): this {
     if (context !== undefined) {
       callback = callback.bind(context);
     }
@@ -279,7 +279,7 @@ export class MockContainer implements MockGameObject {
   }
 
   // biome-ignore lint/complexity/noBannedTypes: This matches the signature of the method it mocks
-  iterate(callback: Function, context?: object, ...args: any[]): this {
+  iterate(callback: () => void, context?: object, ...args: any[]): this {
     if (context !== undefined) {
       callback = callback.bind(context);
     }

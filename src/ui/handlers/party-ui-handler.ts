@@ -1289,7 +1289,7 @@ export class PartyUiHandler extends MessageUiHandler {
   showText(
     text: string,
     delay?: number | null,
-    callback?: Function | null,
+    callback?: (() => void) | null,
     callbackDelay?: number | null,
     prompt?: boolean | null,
     promptDelay?: number | null,

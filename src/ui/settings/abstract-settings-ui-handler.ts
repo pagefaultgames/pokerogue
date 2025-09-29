@@ -4,7 +4,6 @@ import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { SettingType } from "#system/settings";
 import { Setting, SettingKeys } from "#system/settings";
-import type { AnyFn } from "#types/type-helpers";
 import type { InputsIcons } from "#ui/abstract-control-settings-ui-handler";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { NavigationManager, NavigationMenu } from "#ui/navigation-menu";
@@ -516,7 +515,7 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
   override showText(
     text: string,
     delay?: number,
-    callback?: AnyFn,
+    callback?: () => void,
     callbackDelay?: number,
     prompt?: boolean,
     promptDelay?: number,

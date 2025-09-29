@@ -5,7 +5,7 @@ import { UiHandler } from "#ui/ui-handler";
 
 export abstract class AwaitableUiHandler extends UiHandler {
   protected awaitingActionInput: boolean;
-  protected onActionInput: Function | null;
+  protected onActionInput: (() => void) | null;
   public tutorialActive = false;
   public tutorialOverlay: Phaser.GameObjects.Rectangle;
 

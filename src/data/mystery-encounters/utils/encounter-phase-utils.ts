@@ -728,7 +728,7 @@ export function selectOptionThenPokemon(
 export function setEncounterRewards(
   customShopRewards?: CustomModifierSettings,
   eggRewards?: IEggOptions[],
-  preRewardsCallback?: Function,
+  preRewardsCallback?: () => void,
 ) {
   globalScene.currentBattle.mysteryEncounter!.doEncounterRewards = () => {
     if (preRewardsCallback) {

@@ -35,7 +35,6 @@ import type { GameData } from "#system/game-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
 import type { DexAttrProps, StarterAttributes } from "#types/save-data";
-import type { AnyFn } from "#types/type-helpers";
 import type { OptionSelectConfig } from "#ui/abstract-option-select-ui-handler";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
 import { FilterBar } from "#ui/filter-bar";
@@ -240,7 +239,7 @@ export class PokedexUiHandler extends MessageUiHandler {
   private filteredIndices: SpeciesId[];
 
   private gameData: GameData;
-  private exitCallback?: AnyFn;
+  private exitCallback?: () => void;
   private blockOpenPage = false;
 
   constructor() {
@@ -794,7 +793,7 @@ export class PokedexUiHandler extends MessageUiHandler {
   showText(
     text: string,
     delay?: number,
-    callback?: Function,
+    callback?: () => void,
     callbackDelay?: number,
     prompt?: boolean,
     promptDelay?: number,
