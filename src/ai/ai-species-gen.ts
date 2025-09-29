@@ -192,7 +192,7 @@ export function determineEnemySpecies(
   const randomLevel = randSeedInt(choice, Math.round(choice * multiplier));
   console.info("%c Random level is %d", "color: blue", randomLevel);
   if (randomLevel <= level) {
-    return determineEnemySpecies(allSpecies[evoSpecies], level, true, forTrainer, strength, encounterKind, false);
+    return determineEnemySpecies(allSpecies[evoSpecies - 1], level, true, forTrainer, strength, encounterKind, false);
   }
   return species.speciesId;
 }

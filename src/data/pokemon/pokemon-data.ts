@@ -173,10 +173,10 @@ export class PokemonSummonData {
         if (illusionData.fusionSpecies != null) {
           switch (typeof illusionData.fusionSpecies) {
             case "object":
-              illusionData.fusionSpecies = allSpecies[illusionData.fusionSpecies.speciesId];
+              illusionData.fusionSpecies = allSpecies[illusionData.fusionSpecies.speciesId - 1];
               break;
             case "number":
-              illusionData.fusionSpecies = allSpecies[illusionData.fusionSpecies];
+              illusionData.fusionSpecies = allSpecies[illusionData.fusionSpecies - 1];
               break;
             default:
               illusionData.fusionSpecies = undefined;

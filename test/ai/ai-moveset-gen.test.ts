@@ -50,7 +50,7 @@ function createTestablePokemon(
 ): EnemyPokemon {
   const pokemon = new EnemyPokemon(allSpecies[species], level, trainerSlot, boss);
   if (formIndex !== 0) {
-    const formIndexLength = allSpecies[species]?.forms.length;
+    const formIndexLength = allSpecies[species - 1]?.forms.length;
     const name = allSpecies[species]?.name;
     expect(formIndex, `${name} does not have a form with index ${formIndex}`).toBeLessThan(formIndexLength);
     pokemon.formIndex = formIndex;
