@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: NONE
+#
+# SPDX-License-Identifier: CC0-1.0
+
 # Auto detect text files and perform LF normalization
 * text=auto
 * -crlf
