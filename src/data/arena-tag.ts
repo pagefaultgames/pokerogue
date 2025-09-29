@@ -206,7 +206,7 @@ export abstract class ArenaTag implements BaseArenaTag {
    * Apply effects when this Tag overlaps by creating a new instance while one is already present.
    * @param _source - The `Pokemon` having added the tag
    */
-  public onOverlap(_source: Pokemon): void {}
+  public onOverlap(_source?: Pokemon): void {}
 
   /**
    * Reduce this {@linkcode ArenaTag}'s duration and apply any end-of-turn effects
@@ -1506,7 +1506,10 @@ export class SuppressAbilitiesTag extends SerializableArenaTag {
     }
   }
 
-  public override onOverlap(source: Pokemon): void {
+  public override onOverlap(source?: Pokemon): void {
+    if (source == null) {
+      return;
+    }
     (this as Mutable<this>).sourceCount++;
     this.playActivationMessage(source);
   }
