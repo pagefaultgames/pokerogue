@@ -204,7 +204,7 @@ export class CommandPhase extends FieldPhase {
    * Submethod of {@linkcode handleFightCommand} responsible for queuing the provided error message when the move cannot be used
    * @param msg - The reason why the move cannot be used
    */
-  private queueFightErrorMessage(msg: string) {
+  private queueFightErrorMessage(msg: string): void {
     const ui = globalScene.ui;
     ui.setMode(UiMode.MESSAGE);
     ui.showText(

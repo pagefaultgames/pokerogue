@@ -2411,7 +2411,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param source - The attacking Pokémon.
    * @param move - The move being used by the attacking Pokémon.
    * @param ignoreAbility - Whether to ignore abilities that might affect type effectiveness or immunity; default `false`
-   * @param simulated - Whether to apply abilities via simulated calls; default `true`; ⚠️ Should only ever be false during `moveEffect` phase
+   * @param simulated - (Default `true`) Whether to apply abilities via simulated calls. \
+   *   ⚠️ Should only ever be false during `MoveEffectPhase`
    * @param cancelled - Stores whether the move was cancelled by a non-type-based immunity.
    * @param useIllusion - Whether to consider an active illusion
    * @returns The type damage multiplier, indicating the effectiveness of the move

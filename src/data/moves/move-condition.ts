@@ -211,7 +211,7 @@ class CounterAttackConditon extends MoveCondition {
 
 /** Condition check for counterattacks that proc againt physical moves */
 export const counterAttackConditionPhysical = new CounterAttackConditon(MoveCategory.PHYSICAL);
-/** Condition check for counterattacks that proc against special moves*/
+/** Condition check for counterattacks that proc against special moves */
 export const counterAttackConditionSpecial = new CounterAttackConditon(MoveCategory.SPECIAL);
 /** Condition check for counterattacks that proc against moves regardless of damage type */
 export const counterAttackConditionBoth = new CounterAttackConditon();
@@ -224,8 +224,8 @@ export const counterAttackConditionBoth = new CounterAttackConditon();
  * use a {@linkcode MoveCondition} instead.
  */
 export class MoveRestriction {
-  public declare readonly func: UserMoveConditionFunc;
-  public declare readonly i18nkey: string;
+  public readonly func: UserMoveConditionFunc;
+  public readonly i18nkey: string;
   constructor(func: UserMoveConditionFunc, i18nkey = "battle:moveRestricted") {
     this.func = func;
     this.i18nkey = i18nkey;
