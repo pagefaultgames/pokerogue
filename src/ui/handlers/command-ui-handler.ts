@@ -73,16 +73,14 @@ export class CommandUiHandler extends UiHandler {
       this.commandsContainer.add(commandText);
     }
 
-    this.throwBallTextContainer = globalScene.add.container(16, OPTION_BUTTON_YPOSITION);
-    this.throwBallTextContainer.setName("throwBall-txt");
-    this.throwBallTextContainer.setVisible(false);
+    this.throwBallTextContainer = globalScene.add
+      .container(16, OPTION_BUTTON_YPOSITION)
+      .setName("throwBall-txt")
+      .setVisible(false);
     ui.add(this.throwBallTextContainer);
 
-    const throwBallKey = globalScene.enableHotkeyTips
-      ? ""
-      : globalScene.inputController?.getKeyForLatestInputRecorded(SettingKeyboard.Button_Cycle_Shiny)
-        ? `(${globalScene.inputController?.getKeyForLatestInputRecorded(SettingKeyboard.Button_Cycle_Shiny)}) `
-        : "";
+    const cycleShinyKey = globalScene.inputController?.getKeyForLatestInputRecorded(SettingKeyboard.Button_Cycle_Shiny);
+    const throwBallKey = globalScene.enableHotkeyTips && cycleShinyKey ? `(${cycleShinyKey}) ` : "";
     const lastPokeball =
       " "
       + getPokeballName(globalScene.lastPokeballType)
@@ -93,27 +91,26 @@ export class CommandUiHandler extends UiHandler {
       -2,
       i18next.t("commandUiHandler:throwBall", { throwBallKey, lastPokeball }),
       TextStyle.PARTY,
-    );
-    this.throwBallText.setName("text-reroll-btn");
-    this.throwBallText.setOrigin(0, 0);
+    )
+      .setName("text-reroll-btn")
+      .setOrigin(0);
     this.throwBallTextContainer.add(this.throwBallText);
 
     this.restartBattleTextContainer = globalScene.add.container(16, OPTION_BUTTON_YPOSITION);
     this.restartBattleTextContainer.setVisible(false);
     ui.add(this.restartBattleTextContainer);
 
-    const retryBattleKey = globalScene.enableHotkeyTips
-      ? ""
-      : globalScene.inputController?.getKeyForLatestInputRecorded(SettingKeyboard.Button_Cycle_Ability)
-        ? `(${globalScene.inputController?.getKeyForLatestInputRecorded(SettingKeyboard.Button_Cycle_Ability)}) `
-        : "";
+    const cycleAbilityKey = globalScene.inputController?.getKeyForLatestInputRecorded(
+      SettingKeyboard.Button_Cycle_Ability,
+    );
+    const retryBattleKey = globalScene.enableHotkeyTips && cycleAbilityKey ? `(${cycleAbilityKey}) ` : "";
     this.restartBattleText = addTextObject(
       -4,
       -2,
       i18next.t("commandUiHandler:retryBattle", { retryBattleKey }),
       TextStyle.PARTY,
-    );
-    this.restartBattleText.setOrigin(0, 0);
+    ) //
+      .setOrigin(0);
     this.restartBattleTextContainer.add(this.restartBattleText);
   }
 
@@ -389,32 +386,29 @@ export class CommandUiHandler extends UiHandler {
    * To update text in the command when globalScene.enableHotkeyTips
    * is turned off or when action keys are changed.
    */
-  updateTipsText(): void {
-    const throwBallKey = globalScene.enableHotkeyTips
-      ? ""
-      : globalScene.inputController?.getKeyForLatestInputRecorded(SettingKeyboard.Button_Cycle_Shiny)
-        ? `(${globalScene.inputController?.getKeyForLatestInputRecorded(SettingKeyboard.Button_Cycle_Shiny)}) `
-        : "";
+  override updateTipsText(): void {
+    const cycleShinyKey = globalScene.inputController?.getKeyForLatestInputRecorded(SettingKeyboard.Button_Cycle_Shiny);
+    const throwBallKey = globalScene.enableHotkeyTips && cycleShinyKey ? `(${cycleShinyKey}) ` : "";
     const lastPokeball =
       " "
       + getPokeballName(globalScene.lastPokeballType)
       + " x"
       + globalScene.pokeballCounts[globalScene.lastPokeballType];
     this.throwBallText.setText(i18next.t("commandUiHandler:throwBall", { throwBallKey, lastPokeball }));
-    const retryBattleKey = globalScene.enableHotkeyTips
-      ? ""
-      : globalScene.inputController?.getKeyForLatestInputRecorded(SettingKeyboard.Button_Cycle_Ability)
-        ? `(${globalScene.inputController?.getKeyForLatestInputRecorded(SettingKeyboard.Button_Cycle_Ability)}) `
-        : "";
+    const cycleAbilityKey = globalScene.inputController?.getKeyForLatestInputRecorded(
+      SettingKeyboard.Button_Cycle_Ability,
+    );
+    const retryBattleKey = globalScene.enableHotkeyTips && cycleAbilityKey ? `(${cycleAbilityKey}) ` : "";
     this.restartBattleText.setText(i18next.t("commandUiHandler:retryBattle", { retryBattleKey }));
     this.throwBallTextContainer.setVisible(
       !globalScene.enableHotkeyTips && globalScene.currentBattle.battleType === BattleType.WILD,
     );
-    this.restartBattleTextContainer.setVisible(!globalScene.enableHotkeyTips);
-    this.restartBattleTextContainer.setPositionRelative(
-      this.throwBallTextContainer,
-      0,
-      globalScene.currentBattle.battleType === BattleType.WILD ? -12 : 0,
-    );
+    this.restartBattleTextContainer
+      .setVisible(!globalScene.enableHotkeyTips)
+      .setPositionRelative(
+        this.throwBallTextContainer,
+        0,
+        globalScene.currentBattle.battleType === BattleType.WILD ? -12 : 0,
+      );
   }
 }
