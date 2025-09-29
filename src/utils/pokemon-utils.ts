@@ -1,7 +1,12 @@
+// biome-ignore-start lint/correctness/noUnusedImports: Used in a TSDoc comment
+import type { Pokemon } from "#field/pokemon";
+// biome-ignore-end lint/correctness/noUnusedImports: Used in a TSDoc comment
+
 import { globalScene } from "#app/global-scene";
 import { POKERUS_STARTER_COUNT, speciesStarterCosts } from "#balance/starters";
 import { allSpecies } from "#data/data-lists";
 import type { PokemonSpecies, PokemonSpeciesForm } from "#data/pokemon-species";
+import { BattlerIndex } from "#enums/battler-index";
 import type { SpeciesId } from "#enums/species-id";
 import { randSeedItem } from "./common";
 
@@ -18,7 +23,8 @@ export function getPokemonSpecies(species: SpeciesId | SpeciesId[]): PokemonSpec
     species = species[Math.floor(Math.random() * species.length)];
   }
   if (species >= 2000) {
-    return allSpecies.find(s => s.speciesId === species)!; // TODO: is this bang correct?
+    // the `!` is safe, `allSpecies` is static and contains all `SpeciesId`s
+    return allSpecies.find(s => s.speciesId === species)!;
   }
   return allSpecies[species - 1];
 }
@@ -122,4 +128,21 @@ export function getPokemonSpeciesForm(species: SpeciesId, formIndex: number): Po
     return retSpecies.forms[formIndex];
   }
   return retSpecies;
+}
+
+/**
+ * Return whether two battler indices are considered allies.
+ * To instead check with {@linkcode Pokemon} objects, use {@linkcode Pokemon.isOpponent}.
+ * @param a - First battler index
+ * @param b - Second battler index
+ * @returns Whether the two battler indices are allies. Always `false` if either index is `ATTACKER`.
+ */
+export function areAllies(a: BattlerIndex, b: BattlerIndex): boolean {
+  if (a === BattlerIndex.ATTACKER || b === BattlerIndex.ATTACKER) {
+    return false;
+  }
+  return (
+    (a === BattlerIndex.PLAYER || a === BattlerIndex.PLAYER_2)
+    === (b === BattlerIndex.PLAYER || b === BattlerIndex.PLAYER_2)
+  );
 }
