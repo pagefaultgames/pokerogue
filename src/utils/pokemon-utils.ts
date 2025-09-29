@@ -18,7 +18,8 @@ export function getPokemonSpecies(species: SpeciesId | SpeciesId[]): PokemonSpec
     species = species[Math.floor(Math.random() * species.length)];
   }
   if (species >= 2000) {
-    return allSpecies.find(s => s.speciesId === species)!; // TODO: is this bang correct?
+    // the `!` is safe, `allSpecies` is static and contains all `SpeciesId`s
+    return allSpecies.find(s => s.speciesId === species)!;
   }
   return allSpecies[species - 1];
 }

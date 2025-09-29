@@ -1,4 +1,4 @@
-import { __INTERNAL_TEST_EXPORTS } from "#app/ai/ai-moveset-gen";
+import { __INTERNAL_TEST_EXPORTS, generateMoveset } from "#app/ai/ai-moveset-gen";
 import {
   COMMON_TIER_TM_LEVEL_REQUIREMENT,
   GREAT_TIER_TM_LEVEL_REQUIREMENT,
@@ -280,6 +280,30 @@ describe("Regression Tests - ai-moveset-gen.ts", () => {
           true,
         ]),
       ).not.toThrow();
+    });
+  });
+
+  describe("generateMoveset", () => {
+    it("should spawn with 4 moves if possible", async () => {
+      // Need to be in a wave for moveset generation to not actually break
+      await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+
+      // Create a pokemon that can learn at least 4 moves
+      pokemon = createTestablePokemon(SpeciesId.ROCKRUFF, { level: 15 });
+      vi.spyOn(pokemon, "getLevelMoves").mockReturnValue([
+        [1, MoveId.TACKLE],
+        [4, MoveId.LEER],
+        [7, MoveId.SAND_ATTACK],
+        [10, MoveId.ROCK_THROW],
+        [13, MoveId.DOUBLE_TEAM],
+      ]);
+
+      // Generate the moveset
+      generateMoveset(pokemon);
+      expect(pokemon.moveset).toHaveLength(4);
+      // Unlike other test suites, phase interceptor is not automatically restored after the tests here,
+      // since most tests in this suite do not need the phase
+      game.phaseInterceptor.restoreOg();
     });
   });
 });

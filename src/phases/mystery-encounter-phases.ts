@@ -414,9 +414,12 @@ export class MysteryEncounterBattlePhase extends Phase {
       encounterMode !== MysteryEncounterMode.TRAINER_BATTLE
       && !this.disableSwitch
       && availablePartyMembers.length > minPartySize;
+    const checkSwitchIndices: number[] = [];
 
     if (!availablePartyMembers[0].isOnField()) {
       globalScene.phaseManager.pushNew("SummonPhase", 0, true, false, checkSwitch);
+    } else if (checkSwitch) {
+      checkSwitchIndices.push(0);
     }
 
     if (globalScene.currentBattle.double) {
@@ -424,6 +427,8 @@ export class MysteryEncounterBattlePhase extends Phase {
         globalScene.phaseManager.pushNew("ToggleDoublePositionPhase", true);
         if (!availablePartyMembers[1].isOnField()) {
           globalScene.phaseManager.pushNew("SummonPhase", 1, true, false, checkSwitch);
+        } else if (checkSwitch) {
+          checkSwitchIndices.push(1);
         }
       }
     } else {
@@ -434,6 +439,9 @@ export class MysteryEncounterBattlePhase extends Phase {
       globalScene.phaseManager.pushNew("ToggleDoublePositionPhase", false);
     }
 
+    checkSwitchIndices.forEach(i => {
+      globalScene.phaseManager.pushNew("CheckSwitchPhase", i, globalScene.currentBattle.double);
+    });
     this.end();
   }
 

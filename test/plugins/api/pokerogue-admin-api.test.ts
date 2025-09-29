@@ -2,12 +2,10 @@ import { PokerogueAdminApi } from "#api/pokerogue-admin-api";
 import { initServerForApiTests } from "#test/test-utils/test-file-initialization";
 import { getApiBaseUrl } from "#test/test-utils/test-utils";
 import type {
-  LinkAccountToDiscordIdRequest,
-  LinkAccountToGoogledIdRequest,
+  DiscordRequest,
+  GoogleRequest,
   SearchAccountRequest,
   SearchAccountResponse,
-  UnlinkAccountFromDiscordIdRequest,
-  UnlinkAccountFromGoogledIdRequest,
 } from "#types/api/pokerogue-admin-api";
 import { HttpResponse, http } from "msw";
 import type { SetupServerApi } from "msw/node";
@@ -31,7 +29,7 @@ describe("Pokerogue Admin API", () => {
   });
 
   describe("Link Account to Discord", () => {
-    const params: LinkAccountToDiscordIdRequest = {
+    const params: DiscordRequest = {
       username: "test",
       discordId: "test-12575756",
     };
@@ -39,7 +37,7 @@ describe("Pokerogue Admin API", () => {
     it("should return null on SUCCESS", async () => {
       server.use(http.post(`${apiBase}/admin/account/discordLink`, () => HttpResponse.json(true)));
 
-      const success = await adminApi.linkAccountToDiscord(params);
+      const success = await adminApi.linkUnlinkRequest("Link", "discord", params);
 
       expect(success).toBeNull();
     });
@@ -47,7 +45,7 @@ describe("Pokerogue Admin API", () => {
     it("should return a ERR_GENERIC and report a warning on FAILURE", async () => {
       server.use(http.post(`${apiBase}/admin/account/discordLink`, () => new HttpResponse("", { status: 400 })));
 
-      const success = await adminApi.linkAccountToDiscord(params);
+      const success = await adminApi.linkUnlinkRequest("Link", "discord", params);
 
       expect(success).toBe(adminApi.ERR_GENERIC);
       expect(console.warn).toHaveBeenCalledWith("Could not link account with discord!", 400, "Bad Request");
@@ -56,7 +54,7 @@ describe("Pokerogue Admin API", () => {
     it("should return a ERR_USERNAME_NOT_FOUND and report a warning on 404", async () => {
       server.use(http.post(`${apiBase}/admin/account/discordLink`, () => new HttpResponse("", { status: 404 })));
 
-      const success = await adminApi.linkAccountToDiscord(params);
+      const success = await adminApi.linkUnlinkRequest("Link", "discord", params);
 
       expect(success).toBe(adminApi.ERR_USERNAME_NOT_FOUND);
       expect(console.warn).toHaveBeenCalledWith("Could not link account with discord!", 404, "Not Found");
@@ -65,7 +63,7 @@ describe("Pokerogue Admin API", () => {
     it("should return a ERR_GENERIC and report a warning on ERROR", async () => {
       server.use(http.post(`${apiBase}/admin/account/discordLink`, () => HttpResponse.error()));
 
-      const success = await adminApi.linkAccountToDiscord(params);
+      const success = await adminApi.linkUnlinkRequest("Link", "discord", params);
 
       expect(success).toBe(adminApi.ERR_GENERIC);
       expect(console.warn).toHaveBeenCalledWith("Could not link account with discord!", expect.any(Error));
@@ -73,7 +71,7 @@ describe("Pokerogue Admin API", () => {
   });
 
   describe("Unlink Account from Discord", () => {
-    const params: UnlinkAccountFromDiscordIdRequest = {
+    const params: DiscordRequest = {
       username: "test",
       discordId: "test-12575756",
     };
@@ -81,7 +79,7 @@ describe("Pokerogue Admin API", () => {
     it("should return null on SUCCESS", async () => {
       server.use(http.post(`${apiBase}/admin/account/discordUnlink`, () => HttpResponse.json(true)));
 
-      const success = await adminApi.unlinkAccountFromDiscord(params);
+      const success = await adminApi.linkUnlinkRequest("Unlink", "discord", params);
 
       expect(success).toBeNull();
     });
@@ -89,7 +87,7 @@ describe("Pokerogue Admin API", () => {
     it("should return a ERR_GENERIC and report a warning on FAILURE", async () => {
       server.use(http.post(`${apiBase}/admin/account/discordUnlink`, () => new HttpResponse("", { status: 400 })));
 
-      const success = await adminApi.unlinkAccountFromDiscord(params);
+      const success = await adminApi.linkUnlinkRequest("Unlink", "discord", params);
 
       expect(success).toBe(adminApi.ERR_GENERIC);
       expect(console.warn).toHaveBeenCalledWith("Could not unlink account from discord!", 400, "Bad Request");
@@ -98,7 +96,7 @@ describe("Pokerogue Admin API", () => {
     it("should return a ERR_USERNAME_NOT_FOUND and report a warning on 404", async () => {
       server.use(http.post(`${apiBase}/admin/account/discordUnlink`, () => new HttpResponse("", { status: 404 })));
 
-      const success = await adminApi.unlinkAccountFromDiscord(params);
+      const success = await adminApi.linkUnlinkRequest("Unlink", "discord", params);
 
       expect(success).toBe(adminApi.ERR_USERNAME_NOT_FOUND);
       expect(console.warn).toHaveBeenCalledWith("Could not unlink account from discord!", 404, "Not Found");
@@ -107,7 +105,7 @@ describe("Pokerogue Admin API", () => {
     it("should return a ERR_GENERIC and report a warning on ERROR", async () => {
       server.use(http.post(`${apiBase}/admin/account/discordUnlink`, () => HttpResponse.error()));
 
-      const success = await adminApi.unlinkAccountFromDiscord(params);
+      const success = await adminApi.linkUnlinkRequest("Unlink", "discord", params);
 
       expect(success).toBe(adminApi.ERR_GENERIC);
       expect(console.warn).toHaveBeenCalledWith("Could not unlink account from discord!", expect.any(Error));
@@ -115,7 +113,7 @@ describe("Pokerogue Admin API", () => {
   });
 
   describe("Link Account to Google", () => {
-    const params: LinkAccountToGoogledIdRequest = {
+    const params: GoogleRequest = {
       username: "test",
       googleId: "test-12575756",
     };
@@ -123,7 +121,7 @@ describe("Pokerogue Admin API", () => {
     it("should return null on SUCCESS", async () => {
       server.use(http.post(`${apiBase}/admin/account/googleLink`, () => HttpResponse.json(true)));
 
-      const success = await adminApi.linkAccountToGoogleId(params);
+      const success = await adminApi.linkUnlinkRequest("Link", "google", params);
 
       expect(success).toBeNull();
     });
@@ -131,7 +129,7 @@ describe("Pokerogue Admin API", () => {
     it("should return a ERR_GENERIC and report a warning on FAILURE", async () => {
       server.use(http.post(`${apiBase}/admin/account/googleLink`, () => new HttpResponse("", { status: 400 })));
 
-      const success = await adminApi.linkAccountToGoogleId(params);
+      const success = await adminApi.linkUnlinkRequest("Link", "google", params);
 
       expect(success).toBe(adminApi.ERR_GENERIC);
       expect(console.warn).toHaveBeenCalledWith("Could not link account with google!", 400, "Bad Request");
@@ -140,7 +138,7 @@ describe("Pokerogue Admin API", () => {
     it("should return a ERR_USERNAME_NOT_FOUND and report a warning on 404", async () => {
       server.use(http.post(`${apiBase}/admin/account/googleLink`, () => new HttpResponse("", { status: 404 })));
 
-      const success = await adminApi.linkAccountToGoogleId(params);
+      const success = await adminApi.linkUnlinkRequest("Link", "google", params);
 
       expect(success).toBe(adminApi.ERR_USERNAME_NOT_FOUND);
       expect(console.warn).toHaveBeenCalledWith("Could not link account with google!", 404, "Not Found");
@@ -149,7 +147,7 @@ describe("Pokerogue Admin API", () => {
     it("should return a ERR_GENERIC and report a warning on ERROR", async () => {
       server.use(http.post(`${apiBase}/admin/account/googleLink`, () => HttpResponse.error()));
 
-      const success = await adminApi.linkAccountToGoogleId(params);
+      const success = await adminApi.linkUnlinkRequest("Link", "google", params);
 
       expect(success).toBe(adminApi.ERR_GENERIC);
       expect(console.warn).toHaveBeenCalledWith("Could not link account with google!", expect.any(Error));
@@ -157,7 +155,7 @@ describe("Pokerogue Admin API", () => {
   });
 
   describe("Unlink Account from Google", () => {
-    const params: UnlinkAccountFromGoogledIdRequest = {
+    const params: GoogleRequest = {
       username: "test",
       googleId: "test-12575756",
     };
@@ -165,7 +163,7 @@ describe("Pokerogue Admin API", () => {
     it("should return null on SUCCESS", async () => {
       server.use(http.post(`${apiBase}/admin/account/googleUnlink`, () => HttpResponse.json(true)));
 
-      const success = await adminApi.unlinkAccountFromGoogleId(params);
+      const success = await adminApi.linkUnlinkRequest("Unlink", "google", params);
 
       expect(success).toBeNull();
     });
@@ -173,7 +171,7 @@ describe("Pokerogue Admin API", () => {
     it("should return a ERR_GENERIC and report a warning on FAILURE", async () => {
       server.use(http.post(`${apiBase}/admin/account/googleUnlink`, () => new HttpResponse("", { status: 400 })));
 
-      const success = await adminApi.unlinkAccountFromGoogleId(params);
+      const success = await adminApi.linkUnlinkRequest("Unlink", "google", params);
 
       expect(success).toBe(adminApi.ERR_GENERIC);
       expect(console.warn).toHaveBeenCalledWith("Could not unlink account from google!", 400, "Bad Request");
@@ -182,7 +180,7 @@ describe("Pokerogue Admin API", () => {
     it("should return a ERR_USERNAME_NOT_FOUND and report a warning on 404", async () => {
       server.use(http.post(`${apiBase}/admin/account/googleUnlink`, () => new HttpResponse("", { status: 404 })));
 
-      const success = await adminApi.unlinkAccountFromGoogleId(params);
+      const success = await adminApi.linkUnlinkRequest("Unlink", "google", params);
 
       expect(success).toBe(adminApi.ERR_USERNAME_NOT_FOUND);
       expect(console.warn).toHaveBeenCalledWith("Could not unlink account from google!", 404, "Not Found");
@@ -191,7 +189,7 @@ describe("Pokerogue Admin API", () => {
     it("should return a ERR_GENERIC and report a warning on ERROR", async () => {
       server.use(http.post(`${apiBase}/admin/account/googleUnlink`, () => HttpResponse.error()));
 
-      const success = await adminApi.unlinkAccountFromGoogleId(params);
+      const success = await adminApi.linkUnlinkRequest("Unlink", "google", params);
 
       expect(success).toBe(adminApi.ERR_GENERIC);
       expect(console.warn).toHaveBeenCalledWith("Could not unlink account from google!", expect.any(Error));

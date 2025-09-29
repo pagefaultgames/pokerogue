@@ -64,10 +64,10 @@ jobs:
         id: typecheck-scripts
         continue-on-error: true
 
-      # NOTE: This step *must* run as the last linter; it deletes files in `public/`
-      # Files in public/ do not yet have full licensing information, so remove them before checking for reuse compliance
+      # NOTE: This step *must* run as the last linter; it deletes files in `assets/`
+      # Files in assets/ do not yet have full licensing information, so remove them before checking for reuse compliance
       - name: Prepare for reuse compliance
-        run: rm -rf public/* LICENSES/LicenseRef-*
+        run: rm -rf assets/* LICENSES/LicenseRef-*
 
       - name: Check for reuse compliance
         id: reuse-lint
