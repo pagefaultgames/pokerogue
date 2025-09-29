@@ -38,7 +38,7 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
 
   protected rowsToDisplay: number;
   protected title: string;
-  protected settings: Array<Setting>;
+  protected settings: Setting[];
   protected localStorageKey: string;
 
   constructor(type: SettingType, mode: UiMode | null = null) {

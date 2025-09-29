@@ -12,7 +12,7 @@ export class TestDialogueUiHandler extends FormModalUiHandler {
   setup() {
     super.setup();
 
-    const flattenKeys = (object?: any, topKey?: string, middleKey?: string[]): Array<any> => {
+    const flattenKeys = (object?: any, topKey?: string, middleKey?: string[]): any[] => {
       return Object.keys(object ?? {})
         .map((t, i) => {
           const value = Object.values(object)[i];

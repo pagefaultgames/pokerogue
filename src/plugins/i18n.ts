@@ -10,7 +10,7 @@ import processor, { KoreanPostpositionProcessor } from "i18next-korean-postposit
 interface LoadingFontFaceProperty {
   face: FontFace;
   extraOptions?: { [key: string]: any };
-  only?: Array<string>;
+  only?: string[];
 }
 
 //#region Constants
@@ -34,7 +34,7 @@ const rangesByLanguage = {
   ),
 };
 
-const fonts: Array<LoadingFontFaceProperty> = [
+const fonts: LoadingFontFaceProperty[] = [
   // unicode (special character from PokePT)
   {
     face: new FontFace("emerald", "url(./fonts/PokePT_Wansung.woff2)", {

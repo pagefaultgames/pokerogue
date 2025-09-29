@@ -118,7 +118,7 @@
         "useDeprecatedReason": "error",
         "useConsistentArrayType": {
           "level": "error",
-          "fix": "unsafe",
+          "fix": "safe",
           "options": {}
         },
         "useShorthandAssign": {
