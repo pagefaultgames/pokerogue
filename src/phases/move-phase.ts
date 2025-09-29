@@ -9,7 +9,7 @@ import Overrides from "#app/overrides";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { CenterOfAttentionTag } from "#data/battler-tags";
 import { SpeciesFormChangePreMoveTrigger } from "#data/form-change-triggers";
-import { getStatusEffectActivationText, getStatusEffectHealText } from "#data/status-effect";
+import { getStatusEffectActivationText } from "#data/status-effect";
 import { getTerrainBlockMessage } from "#data/terrain";
 import { getWeatherBlockMessage } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
@@ -200,7 +200,7 @@ export class MovePhase extends PokemonPhase {
       return;
     }
     if (this.thaw) {
-      this.cureStatus(
+      user.cureStatus(
         StatusEffect.FREEZE,
         i18next.t("statusEffect:freeze.healByMove", {
           pokemonName: getPokemonNameWithAffix(user),
@@ -445,20 +445,6 @@ export class MovePhase extends PokemonPhase {
   }
 
   /**
-   * Queue the status cure message, reset the status, and update the Pokemon info display
-   * @param effect - The effect being cured
-   * @param msg - A custom message to display when curing the status effect (used for curing freeze due to move use)
-   */
-  private cureStatus(effect: StatusEffect, msg?: string): void {
-    const pokemon = this.pokemon;
-    // Freeze healed by move uses its own msg
-    globalScene.phaseManager.queueMessage(msg ?? getStatusEffectHealText(effect, getPokemonNameWithAffix(pokemon)));
-    // cannot use `asPhase=true` as it will cause status to be reset _after_ this phase ends
-    pokemon.resetStatus(undefined, undefined, undefined, false);
-    pokemon.updateInfo();
-  }
-
-  /**
    * Queue the status activation message, play its animation, and cancel the move
    *
    * @param effect - The effect being triggered
@@ -506,7 +492,7 @@ export class MovePhase extends PokemonPhase {
 
     user.status.sleepTurnsRemaining = turnsRemaining.value;
     if (user.status.sleepTurnsRemaining <= 0) {
-      this.cureStatus(StatusEffect.SLEEP);
+      user.cureStatus(StatusEffect.SLEEP);
       return false;
     }
 
@@ -529,7 +515,8 @@ export class MovePhase extends PokemonPhase {
    * @returns Whether the move was cancelled due to the pokemon being frozen
    */
   protected checkFreeze(): boolean {
-    if (this.pokemon.status?.effect !== StatusEffect.FREEZE) {
+    const pokemon = this.pokemon;
+    if (pokemon.status?.effect !== StatusEffect.FREEZE) {
       return false;
     }
 
@@ -549,7 +536,7 @@ export class MovePhase extends PokemonPhase {
     const move = this.move.getMove();
     if (
       move.findAttr(attr => attr.selfTarget && attr.is("HealStatusEffectAttr") && attr.isOfEffect(StatusEffect.FREEZE))
-      && (move.id !== MoveId.BURN_UP || this.pokemon.isOfType(PokemonType.FIRE, true, true))
+      && (move.id !== MoveId.BURN_UP || pokemon.isOfType(PokemonType.FIRE, true, true))
     ) {
       this.thaw = true;
       return false;
@@ -559,9 +546,9 @@ export class MovePhase extends PokemonPhase {
       || this.move
         .getMove()
         .findAttr(attr => attr.selfTarget && attr.is("HealStatusEffectAttr") && attr.isOfEffect(StatusEffect.FREEZE))
-      || (!this.pokemon.randBattleSeedInt(5) && Overrides.STATUS_ACTIVATION_OVERRIDE !== true)
+      || (!pokemon.randBattleSeedInt(5) && Overrides.STATUS_ACTIVATION_OVERRIDE !== true)
     ) {
-      this.cureStatus(StatusEffect.FREEZE);
+      pokemon.cureStatus(StatusEffect.FREEZE);
       return false;
     }
 

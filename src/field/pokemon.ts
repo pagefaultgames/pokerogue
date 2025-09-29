@@ -62,7 +62,7 @@ import {
 import type { SpeciesFormChange } from "#data/pokemon-forms";
 import type { PokemonSpeciesForm } from "#data/pokemon-species";
 import { PokemonSpecies } from "#data/pokemon-species";
-import { getRandomStatus, getStatusEffectOverlapText, Status } from "#data/status-effect";
+import { getRandomStatus, getStatusEffectHealText, getStatusEffectOverlapText, Status } from "#data/status-effect";
 import { getTerrainBlockMessage, TerrainType } from "#data/terrain";
 import type { TypeDamageMultiplier } from "#data/type";
 import { getTypeDamageMultiplier, getTypeRgb } from "#data/type";
@@ -5006,6 +5006,21 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     this.status = new Status(effect, 0, sleepTurnsRemaining);
   }
 
+  /**
+   * Queue the status cure message, reset the status, and update the info display
+   * @param effect - The effect to cure. If this does not match the current status, nothing happens.
+   * @param msg - A custom message to display when curing the status effect (used for curing freeze due to move use)
+   */
+  public cureStatus(effect: StatusEffect, msg?: string): void {
+    if (effect !== this.status?.effect) {
+      return;
+    }
+    // Freeze healed by move uses its own msg
+    globalScene.phaseManager.queueMessage(msg ?? getStatusEffectHealText(effect, getPokemonNameWithAffix(this)));
+    // cannot use `asPhase=true` as it will cause status to be reset _after_ this phase ends
+    this.resetStatus(undefined, undefined, undefined, false);
+    this.updateInfo();
+  }
   /**
    * Reset this Pokémon's status
    * @param revive - Whether revive should be cured; default `true`
