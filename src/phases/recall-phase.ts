@@ -1,6 +1,5 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import type { SubstituteTag } from "#data/battler-tags";
 import { getPokeballTintColor } from "#data/pokeball";
 import type { FieldBattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -101,7 +100,7 @@ export class RecallPhase extends PokemonPhase {
   }
 
   private async removeSubstitute(): Promise<void> {
-    const substitute = this.pokemon.getTag<SubstituteTag>(BattlerTagType.SUBSTITUTE);
+    const substitute = this.pokemon.getTag(BattlerTagType.SUBSTITUTE);
     if (!substitute) {
       return;
     }

@@ -74,4 +74,12 @@ export abstract class PokemonPhase extends FieldPhase {
     }
     return pokemon.trainerSlot;
   }
+
+  public getAlliedField(): Pokemon[] {
+    return this.player ? globalScene.getPlayerField() : globalScene.getEnemyField();
+  }
+
+  public getOpposingField(): Pokemon[] {
+    return this.player ? globalScene.getEnemyField() : globalScene.getPlayerField();
+  }
 }

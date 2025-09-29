@@ -333,6 +333,8 @@ export class BattleScene extends SceneBase {
    */
   public readonly eventTarget: EventTarget = new EventTarget();
 
+  public readonly animations: Animation = new Animation();
+
   constructor() {
     super("battle");
     this.phaseManager = new PhaseManager();

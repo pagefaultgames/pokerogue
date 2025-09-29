@@ -208,12 +208,12 @@ export class SummonPhase extends PokemonPhase {
 
   /**
    * Plays an animation to move the enemy Trainer onto the field.
-   * This, of course, assumes the Pokemon to switch in is an enemy
+   * Should only be called if the switched-in Pokemon is an enemy.
    */
   private async playEnemyTrainerEntranceAnim(): Promise<void> {
     await this.showEnemyTrainer(this.getTrainerSlot());
     await globalScene.pbTrayEnemy.showPbTray(globalScene.getEnemyParty());
-    await new Promise<void>(resolve => globalScene.time.delayedCall(1000, resolve));
+    await waitTime(1000);
   }
 
   /**
@@ -222,7 +222,7 @@ export class SummonPhase extends PokemonPhase {
    * the Pokemon exiting from the Poke Ball, and the Pokemon's entrance animation and cry.
    */
   private async playPokeBallSummonFX(): Promise<void> {
-    const { add, currentBattle, field } = globalScene;
+    const { add, currentBattle, animations, field } = globalScene;
     const pokemon = this.getPokemon();
 
     const pokeball = globalScene.addFieldSprite(
@@ -282,7 +282,7 @@ export class SummonPhase extends PokemonPhase {
       currentBattle.seenEnemyPartyMemberIds.add(pokemon.id);
     }
 
-    globalScene.addPokeballOpenParticles(pokemon.x, pokemon.y - 16, pokemon.pokeball);
+    animations.addPokeballOpenParticles(pokemon.x, pokemon.y - 16, pokemon.pokeball);
     globalScene.updateModifiers(this.player);
     globalScene.updateFieldScale();
 
@@ -322,7 +322,7 @@ export class SummonPhase extends PokemonPhase {
    * implemented as utility methods?
    */
   private async playWildSummonFX(): Promise<void> {
-    const { add, currentBattle, field, time } = globalScene;
+    const { add, currentBattle, field } = globalScene;
     const pokemon = this.getPokemon();
 
     if (this.fieldIndex === 1) {
@@ -374,11 +374,11 @@ export class SummonPhase extends PokemonPhase {
     pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
     pokemon.getSprite().clearTint();
 
-    await new Promise(resolve => time.delayedCall(1000, resolve));
+    await waitTime(1000);
   }
 
   public override end(): void {
-    const { waveIndex } = globalScene.currentBattle;
+    const { waveIndex, battleType } = globalScene.currentBattle;
     const pokemon = this.getPokemon();
 
     // If the Pokemon summoned was recalled earlier without switching (e.g. on arena reset),
@@ -389,10 +389,12 @@ export class SummonPhase extends PokemonPhase {
       globalScene.phaseManager.unshiftNew("ShinySparklePhase", pokemon.getBattlerIndex());
     }
 
-    // TODO: Review the conditions to perform post summon stuff
-    if (!this.loaded
-      || [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType)
-      || globalScene.currentBattle.waveIndex % 10 === 1) {
+    // TODO: Review these conditions
+    if (
+      !this.loaded
+      || [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(battleType)
+      || waveIndex % 10 === 1
+    ) {
       globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
       this.queuePostSummon();
     }

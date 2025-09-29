@@ -3251,6 +3251,15 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
+   * Gets the Pokémon on the opposing field.
+   *
+   * @returns An array of Pokémon on the opposite side of the field..
+   */
+  public getOpposingField(): Pokemon[] {
+    return this.isPlayer() ? globalScene.getEnemyField() : globalScene.getPlayerField();
+  }
+
+  /**
    * Calculate the stat stage multiplier of the user against an opponent
    *
    * @remarks

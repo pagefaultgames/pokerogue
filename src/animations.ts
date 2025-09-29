@@ -1,18 +1,18 @@
 /* biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
-import type { BattleAnim } from "#animations/battle-anims";
+import type { BattleAnim } from "#data/battle-anims";
 /* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
 
 import { globalScene } from "#app/global-scene";
-import type { Variant } from "#data/variant";
-import { PokeballType } from "#enums/pokeball-type";
-import { settings } from "#system/settings-manager";
-import { type BooleanHolder, getFrameMs } from "#utils/common-utils";
-import { randGauss, randInt } from "#utils/random-utils";
+import { PokeballType } from "#enums/pokeball";
+import type { Variant } from "#sprites/variant";
+import { type BooleanHolder, getFrameMs, randGauss, randInt } from "#utils/common";
 
 /**
  * Class for handling general animations such as particle effects.
  * For battle animations, see {@linkcode BattleAnim}.
  */
+// TODO: Can this be made into an interface?
+// TODO: Rename this to something less obscure
 export class Animation {
   /**
    * Animates particles that "spiral" upwards at start of transform animation
@@ -269,7 +269,7 @@ export class Animation {
 
     // Play the animation
     sparkleSprite.play(animationKey);
-    globalScene.audioManager.playSound("se/sparkle");
+    globalScene.playSound("se/sparkle");
   }
 
   public cos(index: number, amplitude: number): number {
@@ -309,7 +309,7 @@ export class Animation {
       particle.play({
         key: "pb_open_particle",
         startFrame: (index + 3) % 4,
-        frameRate: Math.floor(16 * settings.general.gameSpeed),
+        frameRate: Math.floor(16 * globalScene.gameSpeed),
       });
       globalScene.tweens.add({
         targets: particle,

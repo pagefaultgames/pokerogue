@@ -5,7 +5,6 @@ import type { RecallPhase } from "#phases/recall-phase";
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import type { SwitchEffectTransferModifier } from "#app/modifier/modifier";
-import type { SubstituteTag } from "#data/battler-tags";
 import type { FieldBattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { SwitchType } from "#enums/switch-type";
@@ -13,10 +12,11 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { UiMode } from "#enums/ui-mode";
 import type { Pokemon } from "#field/pokemon";
 import { PokemonPhase } from "#phases/pokemon-phase";
-import { PartyOption, type PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import { PartyOption, PartyUiMode } from "#ui/party-ui-handler";
 
 /**
  * Phase to handle all logical elements of switching a Pokemon.
+ * Does **NOT** queue any animations
  */
 export class SwitchPhase extends PokemonPhase {
   public override readonly phaseName = "SwitchPhase";
@@ -31,11 +31,11 @@ export class SwitchPhase extends PokemonPhase {
   private readonly withSummon: boolean;
 
   /**
-   * @param battlerIndex - The {@linkcode FieldBattlerIndex} of the Pokemon switching out
+   * @param battlerIndex - The {@linkcode FieldBattlerIndex} of the Pokemon switching **out**
    * @param switchType - A {@linkcode SwitchType} dictating the type of switch behavior
    * to perform
-   * @param switchInIndex - The party index of the Pokemon to switch in, or `-1` to prompt a switch
-   * from the Player party UI or enemy AI; default `-1`
+   * @param switchInIndex - The party index of the Pokemon switching **in**, or `-1` to prompt a switch
+   * from the Player party selector or enemy AI; default `-1`
    * @param withSummon - Whether to queue a {@linkcode SummonPhase} upon this phase's completion to render
    * animations for the new Pokemon switching in; default `true`
    */
@@ -71,13 +71,13 @@ export class SwitchPhase extends PokemonPhase {
 
   public override end(): void {
     if (this.withSummon) {
-      globalScene.phaseManager.createAndUnshiftPhase("SummonPhase", this.battlerIndex);
+      globalScene.phaseManager.unshiftNew("SummonPhase", this.battlerIndex);
     }
     super.end();
   }
 
   private resolvePlayerSwitchInIndex(): void {
-    globalScene.ui.setMode<PartyUiHandler>(
+    globalScene.ui.setMode(
       UiMode.PARTY,
       PartyUiMode.MODAL_SWITCH,
       this.fieldIndex,
@@ -90,7 +90,7 @@ export class SwitchPhase extends PokemonPhase {
     if (option === PartyOption.PASS_BATON) {
       this.switchType = SwitchType.BATON_PASS;
     }
-    await globalScene.ui.setMessageMode();
+    await globalScene.ui.setMode(UiMode.MESSAGE);
     this.updatePokemonData();
     this.end();
   }
@@ -127,11 +127,12 @@ export class SwitchPhase extends PokemonPhase {
     applyAbAttrs("PreSwitchOutAbAttr", { pokemon: activePokemon });
 
     // Remove all tags applied to the active Pokemon's opponents by the active Pokemon
-    // (e.g. the "binding" effect from Bind, Fire Spin, etc.)
+    // (e.g. "binding" effects from Bind, Fire Spin, etc.)
     activePokemon.getOpponents().forEach(opp => opp.removeTagsBySourceId(activePokemon.id));
 
-    // If this switch is the result of Baton, Baton Pass, or Shed Tail, transfer all
-    // relevant effects from the active Pokemon to the switched in Pokemon
+    // If this switch is the result of a Baton (item/move), transfer all
+    // relevant effects from the active Pokemon to the switched in Pokemon.
+    // A similar effect occurs for the user's active Substitute and Shed Tail.
     if (this.switchType === SwitchType.BATON_PASS) {
       this.transferBatonPassableEffects(activePokemon, switchedInPokemon);
       activePokemon.resetSummonData();
@@ -145,7 +146,7 @@ export class SwitchPhase extends PokemonPhase {
 
     // If a Substitute was transferred, update the switched in Pokemon's sprite
     // to a "behind Substitute" state
-    const transferredSubTag = switchedInPokemon.getTag<SubstituteTag>(BattlerTagType.SUBSTITUTE);
+    const transferredSubTag = switchedInPokemon.getTag(BattlerTagType.SUBSTITUTE);
     if (transferredSubTag) {
       switchedInPokemon.x += switchedInPokemon.getSubstituteOffset()[0];
       switchedInPokemon.y += switchedInPokemon.getSubstituteOffset()[1];
@@ -173,26 +174,24 @@ export class SwitchPhase extends PokemonPhase {
       opposingPokemon.transferTagsBySourceId(activePokemon.id, switchedInPokemon.id),
     );
 
+    // If the prior pokemon held a Baton and the current one doesn't
     const switchedInPokemonHeldBaton = globalScene.findModifier(
-      m => m.isSwitchEffectTransferModifier() && m.pokemonId === switchedInPokemon.id,
-    );
+      m => m.is("SwitchEffectTransferModifier") && m.pokemonId === switchedInPokemon.id,
+    ) as SwitchEffectTransferModifier | undefined;
+    const lastPokemonHeldBaton = globalScene.findModifier(
+      m => m.is("SwitchEffectTransferModifier") && m.pokemonId === activePokemon.id,
+    ) as SwitchEffectTransferModifier | undefined;
 
-    if (!switchedInPokemonHeldBaton) {
-      const lastPokemonHeldBaton = globalScene.findModifier(
-        m => m.isSwitchEffectTransferModifier() && m.pokemonId === activePokemon.id,
-      ) as SwitchEffectTransferModifier;
-
-      if (lastPokemonHeldBaton) {
-        globalScene.tryTransferHeldItemModifier(
-          lastPokemonHeldBaton,
-          switchedInPokemon,
-          false,
-          undefined,
-          undefined,
-          undefined,
-          false,
-        );
-      }
+    if (lastPokemonHeldBaton && !switchedInPokemonHeldBaton) {
+      globalScene.tryTransferHeldItemModifier(
+        lastPokemonHeldBaton,
+        switchedInPokemon,
+        false,
+        undefined,
+        undefined,
+        undefined,
+        false,
+      );
     }
 
     switchedInPokemon.transferSummon(activePokemon);
