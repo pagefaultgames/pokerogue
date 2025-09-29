@@ -453,6 +453,7 @@ export class MovePhase extends PokemonPhase {
     const pokemon = this.pokemon;
     // Freeze healed by move uses its own msg
     globalScene.phaseManager.queueMessage(msg ?? getStatusEffectHealText(effect, getPokemonNameWithAffix(pokemon)));
+    // cannot use `asPhase=true` as it will cause status to be reset _after_ this phase ends
     pokemon.resetStatus(undefined, undefined, undefined, false);
     pokemon.updateInfo();
   }
@@ -461,8 +462,9 @@ export class MovePhase extends PokemonPhase {
    * Queue the status activation message, play its animation, and cancel the move
    *
    * @param effect - The effect being triggered
-   * @param cancel - Whether to cancel the move after triggering the status effect; default `true`;
-   *    pass `false` to only trigger the animation and message without cancelling the move (e.g. sleep talk/snore)
+   * @param cancel - Whether to cancel the move after triggering the status
+   *   effect animation  message; default `true`. Set to `false` for
+   *   sleep-bypassing moves to avoid cancelling attack.
    */
   private triggerStatus(effect: StatusEffect, cancel = true): void {
     const pokemon = this.pokemon;
@@ -689,10 +691,7 @@ export class MovePhase extends PokemonPhase {
     if (this.pokemon.status?.effect !== StatusEffect.PARALYSIS) {
       return false;
     }
-    const proc =
-      Overrides.STATUS_ACTIVATION_OVERRIDE != null
-        ? Overrides.STATUS_ACTIVATION_OVERRIDE
-        : this.pokemon.randBattleSeedInt(4) === 0;
+    const proc = Overrides.STATUS_ACTIVATION_OVERRIDE ?? this.pokemon.randBattleSeedInt(4) === 0;
     if (!proc) {
       return false;
     }
