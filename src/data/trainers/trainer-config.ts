@@ -1050,7 +1050,6 @@ function getSpeciesFilterRandomPartyMemberFunc(
   };
 }
 
-// biome-ignore format: manually formatted
 export const trainerConfigs: TrainerConfigs = {
   [TrainerType.UNKNOWN]: new TrainerConfig(0).setHasGenders(),
   [TrainerType.ACE_TRAINER]: new TrainerConfig(++t)
@@ -4602,6 +4601,27 @@ export const trainerConfigs: TrainerConfigs = {
         ],
         TrainerSlot.TRAINER,
         true,
+        p => {
+          if (p.species.speciesId === SpeciesId.PIDGEY) {
+            p.abilityIndex = 1; // Tangled Feet
+          } else if (p.species.speciesId === SpeciesId.HOOTHOOT) {
+            p.abilityIndex = 2; // Tinted Lens
+          } else if (p.species.speciesId === SpeciesId.TAILLOW) {
+            p.abilityIndex = 0; // Guts
+          } else if (p.species.speciesId === SpeciesId.STARLY) {
+            p.abilityIndex = 0; // Keen Eye
+          } else if (p.species.speciesId === SpeciesId.PIDOVE) {
+            p.abilityIndex = 1; // Super Luck
+          } else if (p.species.speciesId === SpeciesId.FLETCHLING) {
+            p.abilityIndex = 2; // Gale Wings
+          } else if (p.species.speciesId === SpeciesId.PIKIPEK) {
+            p.abilityIndex = 1; // Skill Link
+          } else if (p.species.speciesId === SpeciesId.ROOKIDEE) {
+            p.abilityIndex = 2; // Big Pecks
+          } else if (p.species.speciesId === SpeciesId.WATTREL) {
+            p.abilityIndex = 1; // Volt Absorb
+          }
+        },
       ),
     ),
   [TrainerType.RIVAL_2]: new TrainerConfig(++t)
@@ -4669,6 +4689,27 @@ export const trainerConfigs: TrainerConfigs = {
         ],
         TrainerSlot.TRAINER,
         true,
+        p => {
+          if (p.species.speciesId === SpeciesId.PIDGEOTTO) {
+            p.abilityIndex = 1; // Tangled Feet
+          } else if (p.species.speciesId === SpeciesId.HOOTHOOT) {
+            p.abilityIndex = 2; // Tinted Lens
+          } else if (p.species.speciesId === SpeciesId.TAILLOW) {
+            p.abilityIndex = 0; // Guts
+          } else if (p.species.speciesId === SpeciesId.STARAVIA) {
+            p.abilityIndex = 0; // Intimidate
+          } else if (p.species.speciesId === SpeciesId.TRANQUILL) {
+            p.abilityIndex = 1; // Super Luck
+          } else if (p.species.speciesId === SpeciesId.FLETCHINDER) {
+            p.abilityIndex = 2; // Gale Wings
+          } else if (p.species.speciesId === SpeciesId.TRUMBEAK) {
+            p.abilityIndex = 1; // Skill Link
+          } else if (p.species.speciesId === SpeciesId.CORVISQUIRE) {
+            p.abilityIndex = 2; // Big Pecks
+          } else if (p.species.speciesId === SpeciesId.WATTREL) {
+            p.abilityIndex = 1; // Volt Absorb
+          }
+        },
       ),
     )
     .setPartyMemberFunc(
@@ -4718,6 +4759,7 @@ export const trainerConfigs: TrainerConfigs = {
         ],
         TrainerSlot.TRAINER,
         true,
+        p => (p.level = 16),
       ),
     ),
   [TrainerType.RIVAL_3]: new TrainerConfig(++t)
@@ -4784,6 +4826,27 @@ export const trainerConfigs: TrainerConfigs = {
         ],
         TrainerSlot.TRAINER,
         true,
+        p => {
+          if (p.species.speciesId === SpeciesId.PIDGEOT) {
+            p.abilityIndex = 1; // Tangled Feet
+          } else if (p.species.speciesId === SpeciesId.NOCTOWL) {
+            p.abilityIndex = 2; // Tinted Lens
+          } else if (p.species.speciesId === SpeciesId.SWELLOW) {
+            p.abilityIndex = 0; // Guts
+          } else if (p.species.speciesId === SpeciesId.STARAPTOR) {
+            p.abilityIndex = 0; // Intimidate
+          } else if (p.species.speciesId === SpeciesId.UNFEZANT) {
+            p.abilityIndex = 1; // Super Luck
+          } else if (p.species.speciesId === SpeciesId.TALONFLAME) {
+            p.abilityIndex = 2; // Gale Wings
+          } else if (p.species.speciesId === SpeciesId.TOUCANNON) {
+            p.abilityIndex = 1; // Skill Link
+          } else if (p.species.speciesId === SpeciesId.CORVIKNIGHT) {
+            p.abilityIndex = 2; // Mirror Armor
+          } else if (p.species.speciesId === SpeciesId.KILOWATTREL) {
+            p.abilityIndex = 1; // Volt Absorb
+          }
+        },
       ),
     )
     .setPartyMemberFunc(
@@ -4827,12 +4890,18 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.MORGREM,
           SpeciesId.DOLLIV,
           SpeciesId.NACLSTACK,
-          (SpeciesId.ARMAROUGE || SpeciesId.CERULEDGE),
+          SpeciesId.ARMAROUGE || SpeciesId.CERULEDGE,
           SpeciesId.TINKATUFF,
           SpeciesId.GLIMMORA,
         ],
         TrainerSlot.TRAINER,
         true,
+        p => {
+          if (p.species.speciesId === SpeciesId.ARMAROUGE || p.species.speciesId === SpeciesId.CERULEDGE) {
+            // TODO
+          }
+          p.level = 36;
+        },
       ),
     )
     .setPartyMemberFunc(
@@ -4840,7 +4909,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc(
         [
           SpeciesId.CLEFABLE,
-          (SpeciesId.SLOWBRO || SpeciesId.SLOWKING),
+          SpeciesId.SLOWBRO || SpeciesId.SLOWKING,
           SpeciesId.PINSIR,
           SpeciesId.LAPRAS,
           SpeciesId.SCIZOR,
@@ -4852,9 +4921,9 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.LUCARIO,
           SpeciesId.DRAPION,
           SpeciesId.GALLADE,
-          (SpeciesId.ROTOM || SpeciesId.ROTOM || SpeciesId.ROTOM), // Heat, Wash, Mow
+          SpeciesId.ROTOM,
           SpeciesId.EXCADRILL,
-          (SpeciesId.ZOROARK || SpeciesId.HISUI_ZOROARK),
+          SpeciesId.ZOROARK || SpeciesId.HISUI_ZOROARK,
           SpeciesId.FERROTHORN,
           SpeciesId.DURANT,
           SpeciesId.FLORGES,
@@ -4865,7 +4934,7 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.POLTEAGEIST,
           SpeciesId.COPPERAJAH,
           SpeciesId.KLEAVOR,
-          SpeciesId.BASCULIN, // White
+          SpeciesId.BASCULIN,
           SpeciesId.HISUI_SNEASEL,
           SpeciesId.HISUI_QWILFISH,
           SpeciesId.PAWMOT,
@@ -4874,12 +4943,36 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.DUDUNSPARCE,
           SpeciesId.GHOLDENGO,
           SpeciesId.POLTCHAGEIST,
-          (SpeciesId.GALAR_SLOWBRO || SpeciesId.GALAR_SLOWKING),
+          SpeciesId.GALAR_SLOWBRO || SpeciesId.GALAR_SLOWKING,
           SpeciesId.HISUI_ARCANINE,
-          (SpeciesId.PALDEA_TAUROS || SpeciesId.PALDEA_TAUROS), // Fire, Aqua
+          SpeciesId.PALDEA_TAUROS || SpeciesId.PALDEA_TAUROS,
         ],
         TrainerSlot.TRAINER,
         true,
+        p => {
+          if (p.species.speciesId === SpeciesId.ROTOM) {
+            const form = randSeedIntRange(1, 3);
+            if (form === 1) {
+              p.formIndex = 1; // Heat
+            } else if (form === 2) {
+              p.formIndex = 2; // Wash
+            } else {
+              p.formIndex = 5; // Mow
+            }
+          }
+          if (p.species.speciesId === SpeciesId.BASCULIN) {
+            p.formIndex = 2; // White
+          }
+          if (p.species.speciesId === SpeciesId.PALDEA_TAUROS) {
+            const form = randSeedIntRange(1, 2); // Blaze, Aqua
+            if (form === 1) {
+              p.formIndex = 1; // Blaze
+            } else {
+              p.formIndex = 2; // Aqua
+            }
+          }
+          p.level = 38;
+        },
       ),
     ),
   [TrainerType.RIVAL_4]: new TrainerConfig(++t)
@@ -4951,6 +5044,27 @@ export const trainerConfigs: TrainerConfigs = {
         ],
         TrainerSlot.TRAINER,
         true,
+        p => {
+          if (p.species.speciesId === SpeciesId.PIDGEOT) {
+            p.abilityIndex = 1; // Tangled Feet
+          } else if (p.species.speciesId === SpeciesId.NOCTOWL) {
+            p.abilityIndex = 2; // Tinted Lens
+          } else if (p.species.speciesId === SpeciesId.SWELLOW) {
+            p.abilityIndex = 0; // Guts
+          } else if (p.species.speciesId === SpeciesId.STARAPTOR) {
+            p.abilityIndex = 0; // Intimidate
+          } else if (p.species.speciesId === SpeciesId.UNFEZANT) {
+            p.abilityIndex = 1; // Super Luck
+          } else if (p.species.speciesId === SpeciesId.TALONFLAME) {
+            p.abilityIndex = 2; // Gale Wings
+          } else if (p.species.speciesId === SpeciesId.TOUCANNON) {
+            p.abilityIndex = 1; // Skill Link
+          } else if (p.species.speciesId === SpeciesId.CORVIKNIGHT) {
+            p.abilityIndex = 2; // Mirror Armor
+          } else if (p.species.speciesId === SpeciesId.KILOWATTREL) {
+            p.abilityIndex = 1; // Volt Absorb
+          }
+        },
       ),
     )
     .setPartyMemberFunc(
@@ -4994,12 +5108,13 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.GRIMMSNARL,
           SpeciesId.ARBOLIVA,
           SpeciesId.GARGANACL,
-          (SpeciesId.ARMAROUGE || SpeciesId.CERULEDGE),
+          SpeciesId.ARMAROUGE || SpeciesId.CERULEDGE,
           SpeciesId.TINKATON,
           SpeciesId.GLIMMORA,
         ],
         TrainerSlot.TRAINER,
         true,
+        p => (p.level = 71),
       ),
     )
     .setPartyMemberFunc(
@@ -5007,7 +5122,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc(
         [
           SpeciesId.CLEFABLE,
-          (SpeciesId.SLOWBRO || SpeciesId.SLOWKING),
+          SpeciesId.SLOWBRO || SpeciesId.SLOWKING,
           SpeciesId.PINSIR,
           SpeciesId.LAPRAS,
           SpeciesId.SCIZOR,
@@ -5019,9 +5134,9 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.LUCARIO,
           SpeciesId.DRAPION,
           SpeciesId.GALLADE,
-          (SpeciesId.ROTOM || SpeciesId.ROTOM || SpeciesId.ROTOM), // Heat, Wash, Mow
+          SpeciesId.ROTOM,
           SpeciesId.EXCADRILL,
-          (SpeciesId.ZOROARK || SpeciesId.HISUI_ZOROARK),
+          SpeciesId.ZOROARK || SpeciesId.HISUI_ZOROARK,
           SpeciesId.FERROTHORN,
           SpeciesId.DURANT,
           SpeciesId.FLORGES,
@@ -5041,12 +5156,41 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.DUDUNSPARCE,
           SpeciesId.GHOLDENGO,
           SpeciesId.POLTCHAGEIST,
-          (SpeciesId.GALAR_SLOWBRO || SpeciesId.GALAR_SLOWKING),
+          SpeciesId.GALAR_SLOWBRO || SpeciesId.GALAR_SLOWKING,
           SpeciesId.HISUI_ARCANINE,
-          (SpeciesId.PALDEA_TAUROS || SpeciesId.PALDEA_TAUROS), // Fire, Aqua
+          SpeciesId.PALDEA_TAUROS,
         ],
         TrainerSlot.TRAINER,
         true,
+        p => {
+          if (p.species.speciesId === SpeciesId.ROTOM) {
+            const form = randSeedIntRange(1, 3);
+            if (form === 1) {
+              p.formIndex = 1; // Heat
+            } else if (form === 2) {
+              p.formIndex = 2; // Wash
+            } else {
+              p.formIndex = 5; // Mow
+            }
+          }
+          if (p.species.speciesId === SpeciesId.BASCULEGION) {
+            const form = randSeedIntRange(0, 1);
+            if (form === 0) {
+              p.formIndex = 0; // Male
+            } else {
+              p.formIndex = 1; // Female
+            }
+          }
+          if (p.species.speciesId === SpeciesId.PALDEA_TAUROS) {
+            const form = randSeedIntRange(1, 2); // Blaze, Aqua
+            if (form === 1) {
+              p.formIndex = 1; // Blaze
+            } else {
+              p.formIndex = 2; // Aqua
+            }
+          }
+          p.level = 71;
+        },
       ),
     )
     .setPartyMemberFunc(
@@ -5074,6 +5218,7 @@ export const trainerConfigs: TrainerConfigs = {
         ],
         TrainerSlot.TRAINER,
         true,
+        p => (p.level = 69),
       ),
     )
     .setInstantTera(0), // Tera starter to primary type
@@ -5146,6 +5291,27 @@ export const trainerConfigs: TrainerConfigs = {
         ],
         TrainerSlot.TRAINER,
         true,
+        p => {
+          if (p.species.speciesId === SpeciesId.PIDGEOT) {
+            p.abilityIndex = 1; // Tangled Feet
+          } else if (p.species.speciesId === SpeciesId.NOCTOWL) {
+            p.abilityIndex = 2; // Tinted Lens
+          } else if (p.species.speciesId === SpeciesId.SWELLOW) {
+            p.abilityIndex = 0; // Guts
+          } else if (p.species.speciesId === SpeciesId.STARAPTOR) {
+            p.abilityIndex = 0; // Intimidate
+          } else if (p.species.speciesId === SpeciesId.UNFEZANT) {
+            p.abilityIndex = 1; // Super Luck
+          } else if (p.species.speciesId === SpeciesId.TALONFLAME) {
+            p.abilityIndex = 2; // Gale Wings
+          } else if (p.species.speciesId === SpeciesId.TOUCANNON) {
+            p.abilityIndex = 1; // Skill Link
+          } else if (p.species.speciesId === SpeciesId.CORVIKNIGHT) {
+            p.abilityIndex = 2; // Mirror Armor
+          } else if (p.species.speciesId === SpeciesId.KILOWATTREL) {
+            p.abilityIndex = 1; // Volt Absorb
+          }
+        },
       ),
     )
     .setPartyMemberFunc(
@@ -5189,12 +5355,13 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.GRIMMSNARL,
           SpeciesId.ARBOLIVA,
           SpeciesId.GARGANACL,
-          (SpeciesId.ARMAROUGE || SpeciesId.CERULEDGE),
+          SpeciesId.ARMAROUGE || SpeciesId.CERULEDGE,
           SpeciesId.TINKATON,
           SpeciesId.GLIMMORA,
         ],
         TrainerSlot.TRAINER,
         true,
+        p => (p.level = 125),
       ),
     )
     .setPartyMemberFunc(
@@ -5202,7 +5369,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc(
         [
           SpeciesId.CLEFABLE,
-          (SpeciesId.SLOWBRO || SpeciesId.SLOWKING),
+          SpeciesId.SLOWBRO || SpeciesId.SLOWKING,
           SpeciesId.PINSIR,
           SpeciesId.LAPRAS,
           SpeciesId.SCIZOR,
@@ -5214,9 +5381,9 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.LUCARIO,
           SpeciesId.DRAPION,
           SpeciesId.GALLADE,
-          (SpeciesId.ROTOM || SpeciesId.ROTOM || SpeciesId.ROTOM), // Heat, Wash, Mow
+          SpeciesId.ROTOM,
           SpeciesId.EXCADRILL,
-          (SpeciesId.ZOROARK || SpeciesId.HISUI_ZOROARK),
+          SpeciesId.ZOROARK || SpeciesId.HISUI_ZOROARK,
           SpeciesId.FERROTHORN,
           SpeciesId.DURANT,
           SpeciesId.FLORGES,
@@ -5236,12 +5403,41 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.DUDUNSPARCE,
           SpeciesId.GHOLDENGO,
           SpeciesId.POLTCHAGEIST,
-          (SpeciesId.GALAR_SLOWBRO || SpeciesId.GALAR_SLOWKING),
+          SpeciesId.GALAR_SLOWBRO || SpeciesId.GALAR_SLOWKING,
           SpeciesId.HISUI_ARCANINE,
-          (SpeciesId.PALDEA_TAUROS || SpeciesId.PALDEA_TAUROS), // Fire, Aqua
+          SpeciesId.PALDEA_TAUROS,
         ],
         TrainerSlot.TRAINER,
         true,
+        p => {
+          if (p.species.speciesId === SpeciesId.ROTOM) {
+            const form = randSeedIntRange(1, 3);
+            if (form === 1) {
+              p.formIndex = 1; // Heat
+            } else if (form === 2) {
+              p.formIndex = 2; // Wash
+            } else {
+              p.formIndex = 5; // Mow
+            }
+          }
+          if (p.species.speciesId === SpeciesId.BASCULEGION) {
+            const form = randSeedIntRange(0, 1);
+            if (form === 0) {
+              p.formIndex = 0; // Male
+            } else {
+              p.formIndex = 1; // Female
+            }
+          }
+          if (p.species.speciesId === SpeciesId.PALDEA_TAUROS) {
+            const form = randSeedIntRange(1, 2); // Blaze, Aqua
+            if (form === 1) {
+              p.formIndex = 1; // Blaze
+            } else {
+              p.formIndex = 2; // Aqua
+            }
+          }
+          p.level = 125;
+        },
       ),
     )
     .setPartyMemberFunc(
@@ -5269,6 +5465,7 @@ export const trainerConfigs: TrainerConfigs = {
         ],
         TrainerSlot.TRAINER,
         true,
+        p => (p.level = 127),
       ),
     )
     .setPartyMemberFunc(
@@ -5352,6 +5549,25 @@ export const trainerConfigs: TrainerConfigs = {
         TrainerSlot.TRAINER,
         true,
         p => {
+          if (p.species.speciesId === SpeciesId.PIDGEOT) {
+            p.abilityIndex = 1; // Tangled Feet
+          } else if (p.species.speciesId === SpeciesId.NOCTOWL) {
+            p.abilityIndex = 2; // Tinted Lens
+          } else if (p.species.speciesId === SpeciesId.SWELLOW) {
+            p.abilityIndex = 0; // Guts
+          } else if (p.species.speciesId === SpeciesId.STARAPTOR) {
+            p.abilityIndex = 0; // Intimidate
+          } else if (p.species.speciesId === SpeciesId.UNFEZANT) {
+            p.abilityIndex = 1; // Super Luck
+          } else if (p.species.speciesId === SpeciesId.TALONFLAME) {
+            p.abilityIndex = 2; // Gale Wings
+          } else if (p.species.speciesId === SpeciesId.TOUCANNON) {
+            p.abilityIndex = 1; // Skill Link
+          } else if (p.species.speciesId === SpeciesId.CORVIKNIGHT) {
+            p.abilityIndex = 2; // Mirror Armor
+          } else if (p.species.speciesId === SpeciesId.KILOWATTREL) {
+            p.abilityIndex = 1; // Volt Absorb
+          }
           p.setBoss(true, 2);
           p.generateAndPopulateMoveset();
         },
@@ -5398,12 +5614,13 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.GRIMMSNARL,
           SpeciesId.ARBOLIVA,
           SpeciesId.GARGANACL,
-          (SpeciesId.ARMAROUGE || SpeciesId.CERULEDGE),
+          SpeciesId.ARMAROUGE || SpeciesId.CERULEDGE,
           SpeciesId.TINKATON,
           SpeciesId.GLIMMORA,
         ],
         TrainerSlot.TRAINER,
         true,
+        p => (p.level = 189),
       ),
     )
     .setPartyMemberFunc(
@@ -5411,7 +5628,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc(
         [
           SpeciesId.CLEFABLE,
-          (SpeciesId.SLOWBRO || SpeciesId.SLOWKING),
+          SpeciesId.SLOWBRO || SpeciesId.SLOWKING,
           SpeciesId.PINSIR,
           SpeciesId.LAPRAS,
           SpeciesId.SCIZOR,
@@ -5423,9 +5640,9 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.LUCARIO,
           SpeciesId.DRAPION,
           SpeciesId.GALLADE,
-          (SpeciesId.ROTOM || SpeciesId.ROTOM || SpeciesId.ROTOM), // Heat, Wash, Mow
+          SpeciesId.ROTOM,
           SpeciesId.EXCADRILL,
-          (SpeciesId.ZOROARK || SpeciesId.HISUI_ZOROARK),
+          SpeciesId.ZOROARK || SpeciesId.HISUI_ZOROARK,
           SpeciesId.FERROTHORN,
           SpeciesId.DURANT,
           SpeciesId.FLORGES,
@@ -5445,12 +5662,41 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.DUDUNSPARCE,
           SpeciesId.GHOLDENGO,
           SpeciesId.POLTCHAGEIST,
-          (SpeciesId.GALAR_SLOWBRO || SpeciesId.GALAR_SLOWKING),
+          SpeciesId.GALAR_SLOWBRO || SpeciesId.GALAR_SLOWKING,
           SpeciesId.HISUI_ARCANINE,
-          (SpeciesId.PALDEA_TAUROS || SpeciesId.PALDEA_TAUROS), // Fire, Aqua
+          SpeciesId.PALDEA_TAUROS,
         ],
         TrainerSlot.TRAINER,
         true,
+        p => {
+          if (p.species.speciesId === SpeciesId.ROTOM) {
+            const form = randSeedIntRange(1, 3);
+            if (form === 1) {
+              p.formIndex = 1; // Heat
+            } else if (form === 2) {
+              p.formIndex = 2; // Wash
+            } else {
+              p.formIndex = 5; // Mow
+            }
+          }
+          if (p.species.speciesId === SpeciesId.BASCULEGION) {
+            const form = randSeedIntRange(0, 1);
+            if (form === 0) {
+              p.formIndex = 0; // Male
+            } else {
+              p.formIndex = 1; // Female
+            }
+          }
+          if (p.species.speciesId === SpeciesId.PALDEA_TAUROS) {
+            const form = randSeedIntRange(1, 2); // Blaze, Aqua
+            if (form === 1) {
+              p.formIndex = 1; // Blaze
+            } else {
+              p.formIndex = 2; // Aqua
+            }
+          }
+          p.level = 189;
+        },
       ),
     )
     .setPartyMemberFunc(
@@ -5478,6 +5724,7 @@ export const trainerConfigs: TrainerConfigs = {
         ],
         TrainerSlot.TRAINER,
         true,
+        p => (p.level = 189),
       ),
     )
     .setPartyMemberFunc(
