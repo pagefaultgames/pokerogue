@@ -734,10 +734,12 @@ export class Arena {
     quiet = false,
   ): boolean {
     const existingTag = this.getTagOnSide(tagType, side);
-    if (existingTag) {
-      existingTag.onOverlap(globalScene.getPokemonById(sourceId));
+    const sourcePokemon = globalScene.getPokemonById(sourceId);
+    if (existingTag != null && sourcePokemon != null) {
+      existingTag.onOverlap(sourcePokemon);
 
       if (existingTag instanceof EntryHazardTag) {
+        // biome-ignore lint/nursery/noShadow: benign
         const { tagType, side, turnCount, maxDuration, layers, maxLayers } = existingTag as EntryHazardTag;
         this.eventTarget.dispatchEvent(new TagAddedEvent(tagType, side, turnCount, maxDuration, layers, maxLayers));
       }

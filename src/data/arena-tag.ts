@@ -44,9 +44,9 @@
  * @module
  */
 
-/** biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports */
+// biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports
 import type { BattlerTag } from "#app/data/battler-tags";
-/** biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports */
+// biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports
 
 import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
@@ -96,8 +96,8 @@ interface BaseArenaTag {
   sourceMove?: MoveId;
   /**
    * The {@linkcode Pokemon.id | PID} of the {@linkcode Pokemon} having created the tag, or `undefined` if not set by a Pokemon.
-   * @todo Implement handling for `ArenaTag`s created by non-pokemon sources (most tags will throw errors without a source)
    */
+  // TODO: Implement handling for `ArenaTag`s created by non-pokemon sources (most tags will throw errors without a source)
   // Note: Intentionally not using `?`, as the property should always exist, but just be undefined if not present.
   sourceId: number | undefined;
   /**
@@ -113,7 +113,7 @@ interface BaseArenaTag {
  * the Pokemon currently on-field, only cleared on arena reset or through their respective {@linkcode ArenaTag.lapse | lapse} methods.
  */
 export abstract class ArenaTag implements BaseArenaTag {
-  /** The type of the arena tag. */
+  /** The type of the arena tag */
   public abstract readonly tagType: ArenaTagType;
   // Intentionally left undocumented to inherit comments from interface
   public turnCount: number;
@@ -143,8 +143,8 @@ export abstract class ArenaTag implements BaseArenaTag {
   /**
    * @returns A suffix corresponding to this tag's current side.
    * @sealed
-   * @todo Make this an i18n context
    */
+  // TODO: Make this an i18n context
   protected get i18nSideKey(): string {
     return this.side === ArenaTagSide.PLAYER ? "Player" : this.side === ArenaTagSide.ENEMY ? "Enemy" : "";
   }
@@ -160,10 +160,10 @@ export abstract class ArenaTag implements BaseArenaTag {
   /**
    * Apply this tag's effects during a turn.
    * @param _args - Arguments used by subclasses.
-   * @todo Remove all boolean return values from subclasses
-   * @todo Move all classes with `apply` triggers into a unique sub-class to prevent
-   * applying effects of tags that lack effect application
    */
+  // TODO: Remove all boolean return values from subclasses
+  // TODO: Move all classes with `apply` triggers into a unique sub-class to prevent
+  // applying effects of tags that lack effect application
   public apply(..._args: unknown[]): void {}
 
   /**
@@ -204,10 +204,9 @@ export abstract class ArenaTag implements BaseArenaTag {
 
   /**
    * Apply effects when this Tag overlaps by creating a new instance while one is already present.
-   * @param _source - The {@linkcode Pokemon} having added the tag, or `undefined` if no pokemon did
-   * @todo Rather than passing this `undefined`, maybe just... don't pass the tags?
+   * @param _source - The `Pokemon` having added the tag
    */
-  public onOverlap(_source: Pokemon | undefined): void {}
+  public onOverlap(_source: Pokemon): void {}
 
   /**
    * Reduce this {@linkcode ArenaTag}'s duration and apply any end-of-turn effects
@@ -791,8 +790,8 @@ export abstract class EntryHazardTag extends SerializableArenaTag {
    * @param simulated - Whether to suppress activation effects during execution
    * @param pokemon - The {@linkcode Pokemon} triggering this hazard
    * @returns `true` if this hazard affects the given Pokemon; `false` otherwise.
-   * @todo Do we need the return value? nothing uses it
    */
+  // TODO: Consider removing the return value; nothing uses it
   override apply(simulated: boolean, pokemon: Pokemon): boolean {
     if (!this.canAffect(pokemon)) {
       return false;
@@ -810,8 +809,8 @@ export abstract class EntryHazardTag extends SerializableArenaTag {
    * @param simulated - Whether the activation is simulated
    * @param pokemon - The {@linkcode Pokemon} switching in
    * @returns Whether the trap activation succeeded
-   * @todo Do we need the return value? nothing uses it
    */
+  // TODO: Consider removing the return value; nothing uses it
   protected abstract activateTrap(simulated: boolean, pokemon: Pokemon): boolean;
 
   getMatchupScoreMultiplier(pokemon: Pokemon): number {
@@ -1507,7 +1506,7 @@ export class SuppressAbilitiesTag extends SerializableArenaTag {
     }
   }
 
-  public override onOverlap(source: Pokemon | undefined): void {
+  public override onOverlap(source: Pokemon): void {
     (this as Mutable<this>).sourceCount++;
     this.playActivationMessage(source);
   }
@@ -1616,14 +1615,18 @@ export class PendingHealTag extends SerializableArenaTag {
   }
 
   /**
-   * Applies a pending healing effect on the given target index. If an effect is found for
-   * the index, the Pokemon at that index is healed to full HP, is cured of any non-volatile status,
-   * and has its PP fully restored (if the effect is from Lunar Dance).
+   * Apply a pending healing effect on the given target index
+   *
+   * @remarks
+   * If an effect is found for the index, the Pokemon at that index is healed to
+   * full HP, is cured of any non-volatile status, and has its PP fully restored
+   * (if the effect is from Lunar Dance).
+   *
    * @param simulated - If `true`, suppresses changes to game state
-   * @param pokemon - The {@linkcode Pokemon} receiving the healing effect
-   * @returns `true` if the target Pokemon was healed by this effect
-   * @todo This should also be called when a Pokemon moves into a new position via Ally Switch
+   * @param pokemon - The `pokemon` receiving the healing effect
+   * @returns Whether the target Pokemon was healed by this effect
    */
+  // TODO: This should also be called when a Pokemon moves into a new position via Ally Switch
   override apply(simulated: boolean, pokemon: Pokemon): boolean {
     const targetIndex = pokemon.getBattlerIndex();
     const targetEffects = this.pendingHeals[targetIndex];
