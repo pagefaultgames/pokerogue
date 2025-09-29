@@ -2,6 +2,7 @@ import type { MockGameObject } from "#test/test-utils/mocks/mock-game-object";
 import type { MockTextureManager } from "#test/test-utils/mocks/mock-texture-manager";
 import { coerceArray } from "#utils/common";
 
+// TODO: Make this implement Phaser.GameObjects.Container
 export class MockContainer implements MockGameObject {
   protected x: number;
   protected y: number;
@@ -268,7 +269,7 @@ export class MockContainer implements MockGameObject {
   }
 
   // biome-ignore lint/complexity/noBannedTypes: This matches the signature of the method it mocks
-  each(callback: () => void, context?: object, ...args: any[]): this {
+  each(callback: Function, context?: object, ...args: any[]): this {
     if (context !== undefined) {
       callback = callback.bind(context);
     }
@@ -279,7 +280,7 @@ export class MockContainer implements MockGameObject {
   }
 
   // biome-ignore lint/complexity/noBannedTypes: This matches the signature of the method it mocks
-  iterate(callback: () => void, context?: object, ...args: any[]): this {
+  iterate(callback: Function, context?: object, ...args: any[]): this {
     if (context !== undefined) {
       callback = callback.bind(context);
     }

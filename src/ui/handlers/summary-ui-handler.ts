@@ -119,7 +119,7 @@ export class SummaryUiHandler extends UiHandler {
   private playerParty: boolean;
   /**This is set to false when checking the summary of a freshly caught Pokemon as it is not part of a player's party yet but still needs to display its items*/
   private newMove: Move | null;
-  private moveSelectFunction: (() => void) | null;
+  private moveSelectFunction: ((cursor: number) => void) | null;
   private transitioning: boolean;
   private statusVisible: boolean;
   private moveEffectsVisible: boolean;
@@ -127,7 +127,7 @@ export class SummaryUiHandler extends UiHandler {
   private moveSelect: boolean;
   private moveCursor: number;
   private selectedMoveIndex: number;
-  private selectCallback: (() => void) | null;
+  private selectCallback: ((cursor: number) => void) | null;
 
   constructor() {
     super(UiMode.SUMMARY);
@@ -331,9 +331,27 @@ export class SummaryUiHandler extends UiHandler {
   show(
     args: [
       pokemon: PlayerPokemon,
+      uiMode?: SummaryUiMode.DEFAULT,
+      startPage?: Page,
+      selectCallback?: (cursor: number) => void,
+      player?: boolean,
+    ],
+  ): boolean;
+  show(
+    args: [
+      pokemon: PlayerPokemon,
+      uiMode: SummaryUiMode.LEARN_MOVE,
+      move?: Move,
+      moveSelectCallback?: (cursor: number) => void,
+      player?: boolean,
+    ],
+  ): boolean;
+  show(
+    args: [
+      pokemon: PlayerPokemon,
       uiMode?: SummaryUiMode,
       startPage?: Page | Move,
-      callback?: () => void,
+      callback?: (cursor: number) => void,
       player?: boolean,
     ],
   ): boolean {
@@ -490,14 +508,12 @@ export class SummaryUiHandler extends UiHandler {
         const page = (args[2] as Page) ?? Page.PROFILE;
         this.hideMoveEffect(true);
         this.setCursor(page);
-        if (args.length > 3) {
-          this.selectCallback = args[3];
-        }
+        this.selectCallback = args[3] ?? null;
         break;
       }
       case SummaryUiMode.LEARN_MOVE:
         this.newMove = args[2] as Move;
-        this.moveSelectFunction = args[3] as () => void;
+        this.moveSelectFunction = args[3] ?? null;
 
         this.showMoveEffect(true);
         this.setCursor(Page.MOVES);
@@ -616,7 +632,7 @@ export class SummaryUiHandler extends UiHandler {
         if (this.selectCallback instanceof Function) {
           const selectCallback = this.selectCallback;
           this.selectCallback = null;
-          selectCallback();
+          selectCallback(-1);
         }
 
         if (!fromPartyMode) {

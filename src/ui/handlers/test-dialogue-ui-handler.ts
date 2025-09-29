@@ -139,7 +139,7 @@ export class TestDialogueUiHandler extends FormModalUiHandler {
       } else {
         this.inputs[0].text = args[1];
       }
-      this.submitAction = _ => {
+      this.submitAction = () => {
         if (ui.getMode() === UiMode.TEST_DIALOGUE) {
           this.sanitizeInputs();
           const sanitizedName = btoa(unescape(encodeURIComponent(this.inputs[0].text)));
