@@ -314,8 +314,8 @@ export class SpeciesFormEvolution {
 }
 
 export class SpeciesEvolution extends SpeciesFormEvolution {
-  constructor(speciesId: SpeciesId, level: number, item: EvolutionItem | null, condition: EvolutionConditionData | EvolutionConditionData[] | null, oppDelay?: EvoLevelThreshold) {
-    super(speciesId, null, null, level, item, condition, oppDelay);
+  constructor(speciesId: SpeciesId, level: number, item: EvolutionItem | null, condition: EvolutionConditionData | EvolutionConditionData[] | null, evoDelay?: EvoLevelThreshold) {
+    super(speciesId, null, null, level, item, condition, evoDelay);
   }
 }
 
