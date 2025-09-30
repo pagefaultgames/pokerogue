@@ -998,13 +998,16 @@ let t = 0;
  * @param postProcess
  */
 export function getRandomPartyMemberFunc(
-  speciesPool: SpeciesId[],
+  speciesPool: (SpeciesId | SpeciesId[])[],
   trainerSlot: TrainerSlot = TrainerSlot.TRAINER,
   ignoreEvolution = false,
   postProcess?: (enemyPokemon: EnemyPokemon) => void,
 ) {
   return (level: number, strength: PartyMemberStrength) => {
-    let species = randSeedItem(speciesPool);
+    let species: SpeciesId | SpeciesId[];
+    do {
+      species = randSeedItem(speciesPool);
+    } while (Array.isArray(species));
     if (!ignoreEvolution) {
       species = getPokemonSpecies(species).getTrainerSpeciesForLevel(
         level,
@@ -4890,7 +4893,7 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.MORGREM,
           SpeciesId.DOLLIV,
           SpeciesId.NACLSTACK,
-          SpeciesId.ARMAROUGE || SpeciesId.CERULEDGE,
+          [SpeciesId.ARMAROUGE, SpeciesId.CERULEDGE],
           SpeciesId.TINKATUFF,
           SpeciesId.GLIMMORA,
         ],
@@ -4904,7 +4907,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc(
         [
           SpeciesId.CLEFABLE,
-          SpeciesId.SLOWBRO || SpeciesId.SLOWKING,
+          [SpeciesId.SLOWBRO, SpeciesId.SLOWKING],
           SpeciesId.PINSIR,
           SpeciesId.LAPRAS,
           SpeciesId.SCIZOR,
@@ -4918,7 +4921,7 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.GALLADE,
           SpeciesId.ROTOM,
           SpeciesId.EXCADRILL,
-          SpeciesId.ZOROARK || SpeciesId.HISUI_ZOROARK,
+          [SpeciesId.ZOROARK, SpeciesId.HISUI_ZOROARK],
           SpeciesId.FERROTHORN,
           SpeciesId.DURANT,
           SpeciesId.FLORGES,
@@ -4938,7 +4941,7 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.DUDUNSPARCE,
           SpeciesId.GHOLDENGO,
           SpeciesId.POLTCHAGEIST,
-          SpeciesId.GALAR_SLOWBRO || SpeciesId.GALAR_SLOWKING,
+          [SpeciesId.GALAR_SLOWBRO, SpeciesId.GALAR_SLOWKING],
           SpeciesId.HISUI_ARCANINE,
           SpeciesId.PALDEA_TAUROS,
         ],
@@ -5103,7 +5106,7 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.GRIMMSNARL,
           SpeciesId.ARBOLIVA,
           SpeciesId.GARGANACL,
-          SpeciesId.ARMAROUGE || SpeciesId.CERULEDGE,
+          [SpeciesId.ARMAROUGE, SpeciesId.CERULEDGE],
           SpeciesId.TINKATON,
           SpeciesId.GLIMMORA,
         ],
@@ -5117,7 +5120,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc(
         [
           SpeciesId.CLEFABLE,
-          SpeciesId.SLOWBRO || SpeciesId.SLOWKING,
+          [SpeciesId.SLOWBRO, SpeciesId.SLOWKING],
           SpeciesId.PINSIR,
           SpeciesId.LAPRAS,
           SpeciesId.SCIZOR,
@@ -5131,7 +5134,7 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.GALLADE,
           SpeciesId.ROTOM,
           SpeciesId.EXCADRILL,
-          SpeciesId.ZOROARK || SpeciesId.HISUI_ZOROARK,
+          [SpeciesId.ZOROARK, SpeciesId.HISUI_ZOROARK],
           SpeciesId.FERROTHORN,
           SpeciesId.DURANT,
           SpeciesId.FLORGES,
@@ -5151,7 +5154,7 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.DUDUNSPARCE,
           SpeciesId.GHOLDENGO,
           SpeciesId.POLTCHAGEIST,
-          SpeciesId.GALAR_SLOWBRO || SpeciesId.GALAR_SLOWKING,
+          [SpeciesId.GALAR_SLOWBRO, SpeciesId.GALAR_SLOWKING],
           SpeciesId.HISUI_ARCANINE,
           SpeciesId.PALDEA_TAUROS,
         ],
@@ -5350,7 +5353,7 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.GRIMMSNARL,
           SpeciesId.ARBOLIVA,
           SpeciesId.GARGANACL,
-          SpeciesId.ARMAROUGE || SpeciesId.CERULEDGE,
+          [SpeciesId.ARMAROUGE, SpeciesId.CERULEDGE],
           SpeciesId.TINKATON,
           SpeciesId.GLIMMORA,
         ],
@@ -5364,7 +5367,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc(
         [
           SpeciesId.CLEFABLE,
-          SpeciesId.SLOWBRO || SpeciesId.SLOWKING,
+          [SpeciesId.SLOWBRO, SpeciesId.SLOWKING],
           SpeciesId.PINSIR,
           SpeciesId.LAPRAS,
           SpeciesId.SCIZOR,
@@ -5378,7 +5381,7 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.GALLADE,
           SpeciesId.ROTOM,
           SpeciesId.EXCADRILL,
-          SpeciesId.ZOROARK || SpeciesId.HISUI_ZOROARK,
+          [SpeciesId.ZOROARK, SpeciesId.HISUI_ZOROARK],
           SpeciesId.FERROTHORN,
           SpeciesId.DURANT,
           SpeciesId.FLORGES,
@@ -5398,7 +5401,7 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.DUDUNSPARCE,
           SpeciesId.GHOLDENGO,
           SpeciesId.POLTCHAGEIST,
-          SpeciesId.GALAR_SLOWBRO || SpeciesId.GALAR_SLOWKING,
+          [SpeciesId.GALAR_SLOWBRO, SpeciesId.GALAR_SLOWKING],
           SpeciesId.HISUI_ARCANINE,
           SpeciesId.PALDEA_TAUROS,
         ],
@@ -5609,7 +5612,7 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.GRIMMSNARL,
           SpeciesId.ARBOLIVA,
           SpeciesId.GARGANACL,
-          SpeciesId.ARMAROUGE || SpeciesId.CERULEDGE,
+          [SpeciesId.ARMAROUGE, SpeciesId.CERULEDGE],
           SpeciesId.TINKATON,
           SpeciesId.GLIMMORA,
         ],
@@ -5623,7 +5626,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc(
         [
           SpeciesId.CLEFABLE,
-          SpeciesId.SLOWBRO || SpeciesId.SLOWKING,
+          [SpeciesId.SLOWBRO, SpeciesId.SLOWKING],
           SpeciesId.PINSIR,
           SpeciesId.LAPRAS,
           SpeciesId.SCIZOR,
@@ -5637,7 +5640,7 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.GALLADE,
           SpeciesId.ROTOM,
           SpeciesId.EXCADRILL,
-          SpeciesId.ZOROARK || SpeciesId.HISUI_ZOROARK,
+          [SpeciesId.ZOROARK, SpeciesId.HISUI_ZOROARK],
           SpeciesId.FERROTHORN,
           SpeciesId.DURANT,
           SpeciesId.FLORGES,
@@ -5657,7 +5660,7 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.DUDUNSPARCE,
           SpeciesId.GHOLDENGO,
           SpeciesId.POLTCHAGEIST,
-          SpeciesId.GALAR_SLOWBRO || SpeciesId.GALAR_SLOWKING,
+          [SpeciesId.GALAR_SLOWBRO, SpeciesId.GALAR_SLOWKING],
           SpeciesId.HISUI_ARCANINE,
           SpeciesId.PALDEA_TAUROS,
         ],
