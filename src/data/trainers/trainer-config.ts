@@ -1011,7 +1011,7 @@ export function getRandomPartyMemberFunc(
         level,
         true,
         strength,
-        globalScene.currentBattle.waveIndex,
+        // TODO: What EvoLevelThresholdKind to use here?
       );
     }
     return globalScene.addEnemyPokemon(
@@ -1042,7 +1042,8 @@ function getSpeciesFilterRandomPartyMemberFunc(
     const species = getPokemonSpecies(
       globalScene
         .randomSpecies(waveIndex, level, false, speciesFilter)
-        .getTrainerSpeciesForLevel(level, true, strength, waveIndex),
+        // TODO: What EvoLevelThresholdKind to use here?
+        .getTrainerSpeciesForLevel(level, true, strength),
     );
 
     return globalScene.addEnemyPokemon(species, level, trainerSlot, undefined, false, undefined, postProcess);
