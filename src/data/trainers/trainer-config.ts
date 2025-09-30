@@ -4721,7 +4721,7 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.IMPIDIMP,
           SpeciesId.SMOLIV,
           SpeciesId.NACLI,
-          SpeciesId.CHARCADET,
+          [SpeciesId.CHARCADET, SpeciesId.CHARCADET],
           SpeciesId.TINKATINK,
           SpeciesId.GLIMMET,
         ],

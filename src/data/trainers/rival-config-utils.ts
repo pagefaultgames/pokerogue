@@ -34,8 +34,8 @@ export function forceRivalStarterTraitsBoss(pokemon: EnemyPokemon): void {
 export function forceRivalBirdAbility(pokemon: EnemyPokemon): void {
   switch (pokemon.species.speciesId) {
     // Guts for Tailow line
-    case SpeciesId.TAILLOW: // guts
-    case SpeciesId.SWELLOW: // guts
+    case SpeciesId.TAILLOW:
+    case SpeciesId.SWELLOW:
     // Intimidate for Starly line
     case SpeciesId.STARLY:
     case SpeciesId.STARAVIA:
