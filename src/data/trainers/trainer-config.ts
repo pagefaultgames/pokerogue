@@ -4940,7 +4940,7 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.POLTCHAGEIST,
           SpeciesId.GALAR_SLOWBRO || SpeciesId.GALAR_SLOWKING,
           SpeciesId.HISUI_ARCANINE,
-          SpeciesId.PALDEA_TAUROS || SpeciesId.PALDEA_TAUROS,
+          SpeciesId.PALDEA_TAUROS,
         ],
         TrainerSlot.TRAINER,
         true,
