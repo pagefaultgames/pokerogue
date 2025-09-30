@@ -24,11 +24,7 @@ import { PokemonMove } from "#moves/pokemon-move";
 import { getIsInitialized, initI18n } from "#plugins/i18n";
 import type { EvilTeam } from "#trainers/evil-admin-trainer-pools";
 import { evilAdminTrainerPools } from "#trainers/evil-admin-trainer-pools";
-import {
-  forceRivalBirdAbility,
-  forceRivalStarterTraits,
-  forceRivalStarterTraitsBoss,
-} from "#trainers/rival-config-utils";
+import { forceRivalBirdAbility, forceRivalStarterTraits } from "#trainers/rival-config-utils";
 import {
   getEvilGruntPartyTemplate,
   getGymLeaderPartyTemplate,
@@ -5188,7 +5184,7 @@ export const trainerConfigs: TrainerConfigs = {
         ],
         TrainerSlot.TRAINER,
         true,
-        forceRivalStarterTraitsBoss,
+        p => forceRivalStarterTraits(p, 2),
       ),
     )
     .setPartyMemberFunc(
@@ -5420,12 +5416,7 @@ export const trainerConfigs: TrainerConfigs = {
         ],
         TrainerSlot.TRAINER,
         true,
-        p => {
-          p.setBoss(true, 3);
-          p.abilityIndex = 0;
-          p.teraType = p.species.type1;
-          p.generateAndPopulateMoveset();
-        },
+        p => forceRivalStarterTraits(p, 3),
       ),
     )
     .setPartyMemberFunc(
@@ -5444,11 +5435,7 @@ export const trainerConfigs: TrainerConfigs = {
         ],
         TrainerSlot.TRAINER,
         true,
-        p => {
-          forceRivalBirdAbility(p);
-          p.setBoss(true, 2);
-          p.generateAndPopulateMoveset();
-        },
+        p => forceRivalBirdAbility(p, 2),
       ),
     )
     .setPartyMemberFunc(

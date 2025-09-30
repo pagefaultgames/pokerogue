@@ -7,20 +7,15 @@ import type { EnemyPokemon } from "#field/pokemon";
  * @remarks
  * Used for the rival's starter pokemon. Does not set boss, for that, see {@link forceRivalStarterTraitsBoss}
  * @param pokemon - The pokemon to force traits for
+ * @param bars - (default `0`) The number of boss bar segments to set. If `zero`, the pokemon will not be a boss
  */
-export function forceRivalStarterTraits(pokemon: EnemyPokemon): void {
+export function forceRivalStarterTraits(pokemon: EnemyPokemon, bars = 0): void {
   pokemon.abilityIndex = 0;
   pokemon.teraType = pokemon.species.type1;
-}
-
-/**
- * Does what {@linkcode forceRivalStarterTraits} does, but also sets the pokemon to be a boss
- * @param pokemon - The pokemon to force traits for
- */
-export function forceRivalStarterTraitsBoss(pokemon: EnemyPokemon): void {
-  forceRivalStarterTraits(pokemon);
-  pokemon.setBoss(true, 2);
-  pokemon.generateAndPopulateMoveset();
+  if (bars > 0) {
+    pokemon.setBoss(true, bars);
+    pokemon.generateAndPopulateMoveset();
+  }
 }
 
 /**
@@ -30,8 +25,9 @@ export function forceRivalStarterTraitsBoss(pokemon: EnemyPokemon): void {
  * Currently used to force ability indices
  *
  * @param pokemon - The rival bird pokemon to force an ability for
+ * @param bars - (default `0`) The number of boss bar segments to set. If `zero`, the pokemon will not be a boss
  */
-export function forceRivalBirdAbility(pokemon: EnemyPokemon): void {
+export function forceRivalBirdAbility(pokemon: EnemyPokemon, bars = 0): void {
   switch (pokemon.species.speciesId) {
     // Guts for Tailow line
     case SpeciesId.TAILLOW:
@@ -71,5 +67,10 @@ export function forceRivalBirdAbility(pokemon: EnemyPokemon): void {
       pokemon.abilityIndex = 2;
       break;
     }
+  }
+
+  if (bars > 0) {
+    pokemon.setBoss(true, bars);
+    pokemon.generateAndPopulateMoveset();
   }
 }
