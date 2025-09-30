@@ -24,6 +24,7 @@ import { PokemonMove } from "#moves/pokemon-move";
 import { getIsInitialized, initI18n } from "#plugins/i18n";
 import type { EvilTeam } from "#trainers/evil-admin-trainer-pools";
 import { evilAdminTrainerPools } from "#trainers/evil-admin-trainer-pools";
+import { forceRivalBirdAbility, forceRivalStarterTraits } from "#trainers/rival-config-utils";
 import {
   getEvilGruntPartyTemplate,
   getGymLeaderPartyTemplate,
@@ -4585,7 +4586,7 @@ export const trainerConfigs: TrainerConfigs = {
         ],
         TrainerSlot.TRAINER,
         true,
-        p => (p.abilityIndex = 0),
+        forceRivalStarterTraits,
       ),
     )
     .setPartyMemberFunc(
@@ -4604,27 +4605,7 @@ export const trainerConfigs: TrainerConfigs = {
         ],
         TrainerSlot.TRAINER,
         true,
-        p => {
-          if (p.species.speciesId === SpeciesId.PIDGEY) {
-            p.abilityIndex = 1; // Tangled Feet
-          } else if (p.species.speciesId === SpeciesId.HOOTHOOT) {
-            p.abilityIndex = 2; // Tinted Lens
-          } else if (p.species.speciesId === SpeciesId.TAILLOW) {
-            p.abilityIndex = 0; // Guts
-          } else if (p.species.speciesId === SpeciesId.STARLY) {
-            p.abilityIndex = 0; // Keen Eye
-          } else if (p.species.speciesId === SpeciesId.PIDOVE) {
-            p.abilityIndex = 1; // Super Luck
-          } else if (p.species.speciesId === SpeciesId.FLETCHLING) {
-            p.abilityIndex = 2; // Gale Wings
-          } else if (p.species.speciesId === SpeciesId.PIKIPEK) {
-            p.abilityIndex = 1; // Skill Link
-          } else if (p.species.speciesId === SpeciesId.ROOKIDEE) {
-            p.abilityIndex = 2; // Big Pecks
-          } else if (p.species.speciesId === SpeciesId.WATTREL) {
-            p.abilityIndex = 1; // Volt Absorb
-          }
-        },
+        forceRivalBirdAbility,
       ),
     ),
   [TrainerType.RIVAL_2]: new TrainerConfig(++t)
@@ -4673,7 +4654,7 @@ export const trainerConfigs: TrainerConfigs = {
         ],
         TrainerSlot.TRAINER,
         true,
-        p => (p.abilityIndex = 0),
+        forceRivalStarterTraits,
       ),
     )
     .setPartyMemberFunc(
@@ -4692,27 +4673,7 @@ export const trainerConfigs: TrainerConfigs = {
         ],
         TrainerSlot.TRAINER,
         true,
-        p => {
-          if (p.species.speciesId === SpeciesId.PIDGEOTTO) {
-            p.abilityIndex = 1; // Tangled Feet
-          } else if (p.species.speciesId === SpeciesId.HOOTHOOT) {
-            p.abilityIndex = 2; // Tinted Lens
-          } else if (p.species.speciesId === SpeciesId.TAILLOW) {
-            p.abilityIndex = 0; // Guts
-          } else if (p.species.speciesId === SpeciesId.STARAVIA) {
-            p.abilityIndex = 0; // Intimidate
-          } else if (p.species.speciesId === SpeciesId.TRANQUILL) {
-            p.abilityIndex = 1; // Super Luck
-          } else if (p.species.speciesId === SpeciesId.FLETCHINDER) {
-            p.abilityIndex = 2; // Gale Wings
-          } else if (p.species.speciesId === SpeciesId.TRUMBEAK) {
-            p.abilityIndex = 1; // Skill Link
-          } else if (p.species.speciesId === SpeciesId.CORVISQUIRE) {
-            p.abilityIndex = 2; // Big Pecks
-          } else if (p.species.speciesId === SpeciesId.WATTREL) {
-            p.abilityIndex = 1; // Volt Absorb
-          }
-        },
+        forceRivalBirdAbility,
       ),
     )
     .setPartyMemberFunc(
@@ -4810,7 +4771,7 @@ export const trainerConfigs: TrainerConfigs = {
         ],
         TrainerSlot.TRAINER,
         true,
-        p => (p.abilityIndex = 0),
+        forceRivalStarterTraits,
       ),
     )
     .setPartyMemberFunc(
@@ -4829,27 +4790,7 @@ export const trainerConfigs: TrainerConfigs = {
         ],
         TrainerSlot.TRAINER,
         true,
-        p => {
-          if (p.species.speciesId === SpeciesId.PIDGEOT) {
-            p.abilityIndex = 1; // Tangled Feet
-          } else if (p.species.speciesId === SpeciesId.NOCTOWL) {
-            p.abilityIndex = 2; // Tinted Lens
-          } else if (p.species.speciesId === SpeciesId.SWELLOW) {
-            p.abilityIndex = 0; // Guts
-          } else if (p.species.speciesId === SpeciesId.STARAPTOR) {
-            p.abilityIndex = 0; // Intimidate
-          } else if (p.species.speciesId === SpeciesId.UNFEZANT) {
-            p.abilityIndex = 1; // Super Luck
-          } else if (p.species.speciesId === SpeciesId.TALONFLAME) {
-            p.abilityIndex = 2; // Gale Wings
-          } else if (p.species.speciesId === SpeciesId.TOUCANNON) {
-            p.abilityIndex = 1; // Skill Link
-          } else if (p.species.speciesId === SpeciesId.CORVIKNIGHT) {
-            p.abilityIndex = 2; // Mirror Armor
-          } else if (p.species.speciesId === SpeciesId.KILOWATTREL) {
-            p.abilityIndex = 1; // Volt Absorb
-          }
-        },
+        forceRivalBirdAbility,
       ),
     )
     .setPartyMemberFunc(
@@ -5020,10 +4961,7 @@ export const trainerConfigs: TrainerConfigs = {
         ],
         TrainerSlot.TRAINER,
         true,
-        p => {
-          p.abilityIndex = 0;
-          p.teraType = p.species.type1;
-        },
+        forceRivalStarterTraits,
       ),
     )
     .setPartyMemberFunc(
@@ -5042,27 +4980,7 @@ export const trainerConfigs: TrainerConfigs = {
         ],
         TrainerSlot.TRAINER,
         true,
-        p => {
-          if (p.species.speciesId === SpeciesId.PIDGEOT) {
-            p.abilityIndex = 1; // Tangled Feet
-          } else if (p.species.speciesId === SpeciesId.NOCTOWL) {
-            p.abilityIndex = 2; // Tinted Lens
-          } else if (p.species.speciesId === SpeciesId.SWELLOW) {
-            p.abilityIndex = 0; // Guts
-          } else if (p.species.speciesId === SpeciesId.STARAPTOR) {
-            p.abilityIndex = 0; // Intimidate
-          } else if (p.species.speciesId === SpeciesId.UNFEZANT) {
-            p.abilityIndex = 1; // Super Luck
-          } else if (p.species.speciesId === SpeciesId.TALONFLAME) {
-            p.abilityIndex = 2; // Gale Wings
-          } else if (p.species.speciesId === SpeciesId.TOUCANNON) {
-            p.abilityIndex = 1; // Skill Link
-          } else if (p.species.speciesId === SpeciesId.CORVIKNIGHT) {
-            p.abilityIndex = 2; // Mirror Armor
-          } else if (p.species.speciesId === SpeciesId.KILOWATTREL) {
-            p.abilityIndex = 1; // Volt Absorb
-          }
-        },
+        forceRivalBirdAbility,
       ),
     )
     .setPartyMemberFunc(
@@ -5289,27 +5207,7 @@ export const trainerConfigs: TrainerConfigs = {
         ],
         TrainerSlot.TRAINER,
         true,
-        p => {
-          if (p.species.speciesId === SpeciesId.PIDGEOT) {
-            p.abilityIndex = 1; // Tangled Feet
-          } else if (p.species.speciesId === SpeciesId.NOCTOWL) {
-            p.abilityIndex = 2; // Tinted Lens
-          } else if (p.species.speciesId === SpeciesId.SWELLOW) {
-            p.abilityIndex = 0; // Guts
-          } else if (p.species.speciesId === SpeciesId.STARAPTOR) {
-            p.abilityIndex = 0; // Intimidate
-          } else if (p.species.speciesId === SpeciesId.UNFEZANT) {
-            p.abilityIndex = 1; // Super Luck
-          } else if (p.species.speciesId === SpeciesId.TALONFLAME) {
-            p.abilityIndex = 2; // Gale Wings
-          } else if (p.species.speciesId === SpeciesId.TOUCANNON) {
-            p.abilityIndex = 1; // Skill Link
-          } else if (p.species.speciesId === SpeciesId.CORVIKNIGHT) {
-            p.abilityIndex = 2; // Mirror Armor
-          } else if (p.species.speciesId === SpeciesId.KILOWATTREL) {
-            p.abilityIndex = 1; // Volt Absorb
-          }
-        },
+        forceRivalBirdAbility,
       ),
     )
     .setPartyMemberFunc(
@@ -5547,25 +5445,7 @@ export const trainerConfigs: TrainerConfigs = {
         TrainerSlot.TRAINER,
         true,
         p => {
-          if (p.species.speciesId === SpeciesId.PIDGEOT) {
-            p.abilityIndex = 1; // Tangled Feet
-          } else if (p.species.speciesId === SpeciesId.NOCTOWL) {
-            p.abilityIndex = 2; // Tinted Lens
-          } else if (p.species.speciesId === SpeciesId.SWELLOW) {
-            p.abilityIndex = 0; // Guts
-          } else if (p.species.speciesId === SpeciesId.STARAPTOR) {
-            p.abilityIndex = 0; // Intimidate
-          } else if (p.species.speciesId === SpeciesId.UNFEZANT) {
-            p.abilityIndex = 1; // Super Luck
-          } else if (p.species.speciesId === SpeciesId.TALONFLAME) {
-            p.abilityIndex = 2; // Gale Wings
-          } else if (p.species.speciesId === SpeciesId.TOUCANNON) {
-            p.abilityIndex = 1; // Skill Link
-          } else if (p.species.speciesId === SpeciesId.CORVIKNIGHT) {
-            p.abilityIndex = 2; // Mirror Armor
-          } else if (p.species.speciesId === SpeciesId.KILOWATTREL) {
-            p.abilityIndex = 1; // Volt Absorb
-          }
+          forceRivalBirdAbility(p);
           p.setBoss(true, 2);
           p.generateAndPopulateMoveset();
         },
