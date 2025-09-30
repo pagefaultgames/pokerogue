@@ -1,9 +1,26 @@
 import { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon } from "#field/pokemon";
 
+/**
+ * Set the abiltiy index to 0 and the tera type to the primary type
+ *
+ * @remarks
+ * Used for the rival's starter pokemon. Does not set boss, for that, see {@link forceRivalStarterTraitsBoss}
+ * @param pokemon - The pokemon to force traits for
+ */
 export function forceRivalStarterTraits(pokemon: EnemyPokemon): void {
   pokemon.abilityIndex = 0;
   pokemon.teraType = pokemon.species.type1;
+}
+
+/**
+ * Does what {@linkcode forceRivalStarterTraits} does, but also sets the pokemon to be a boss
+ * @param pokemon - The pokemon to force traits for
+ */
+export function forceRivalStarterTraitsBoss(pokemon: EnemyPokemon): void {
+  forceRivalStarterTraits(pokemon);
+  pokemon.setBoss(true, 2);
+  pokemon.generateAndPopulateMoveset();
 }
 
 /**
