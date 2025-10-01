@@ -314,7 +314,7 @@ export function getRandomRivalPartyMemberFunc(
       species = pool[choice] as SpeciesId;
       CHOSEN_RIVAL_ROLLS[slot] = [choice];
     } else {
-      species = (pool[choice[0]] as SpeciesId[])[choice[1]];
+      species = pool[choice[0]][choice[1]];
       CHOSEN_RIVAL_ROLLS[slot] = choice;
     }
 
