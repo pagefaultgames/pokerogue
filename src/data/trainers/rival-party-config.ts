@@ -534,11 +534,10 @@ const SLOT_5_FINAL = [
  * Post-process logic for rival slot 6, fight 5
  *
  * @remarks
- * Sets the level to the provided argument, sets the Pokémon to be caught in a Master Ball,
- * sets boss
+ * Sets the level to the provided argument, sets the Pokémon to be caught in a Master Ball, sets boss
  * @param pokemon - The pokemon to post-process
  * @param level - (default {@linkcode SLOT_6_FIGHT_5_LEVEL}) The level to set the pokemon to
- * @param numBossSegments - The number of boss segments to set the pokemon to
+ * @param overrideSegments - If `true`, will force the pokemon to have 3 boss bar segments
  */
 function postProcessSlot6Fight5(pokemon: EnemyPokemon, level = SLOT_6_FIGHT_5_LEVEL, overrideSegments = true): void {
   pokemon.level = level;
@@ -556,7 +555,8 @@ function postProcessSlot6Fight5(pokemon: EnemyPokemon, level = SLOT_6_FIGHT_5_LE
  * Post-process logic for rival slot 6, fight 6
  *
  * @remarks
- * Does what {@linkcode postProcessSlot6Fight5} does, but with a different level, num
+ * Applies {@linkcode postProcessSlot6Fight5} with an updated level
+ * and also sets the `formIndex` to `1` for Mega Rayquaza
  * @param pokemon
  */
 function postProcessSlot6Fight6(pokemon: EnemyPokemon): void {
@@ -606,6 +606,7 @@ export const RIVAL_1_POOL: RivalPoolConfig = [
   { pool: SLOT_1_FIGHT_1, postProcess: forceRivalStarterTraits },
   { pool: SLOT_2_FIGHT_1, postProcess: forceRivalBirdAbility },
 ];
+
 /** Pools for the second rival fight */
 export const RIVAL_2_POOL: RivalPoolConfig = [
   { pool: SLOT_1_FIGHT_2, postProcess: forceRivalStarterTraits },
@@ -649,6 +650,7 @@ export const RIVAL_4_POOL: RivalPoolConfig = [
   },
   { pool: SLOT_5_FINAL, postProcess: p => (p.level = SLOT_5_FIGHT_4_LEVEL) },
 ];
+
 /** Pools for the fifth rival fight */
 export const RIVAL_5_POOL: RivalPoolConfig = [
   { pool: SLOT_1_FINAL, postProcess: p => forceRivalStarterTraits(p, 2) },
@@ -668,6 +670,7 @@ export const RIVAL_5_POOL: RivalPoolConfig = [
   { pool: SLOT_5_FINAL, postProcess: p => (p.level = SLOT_5_FIGHT_5_LEVEL) },
   { pool: SLOT_6_FINAL, postProcess: postProcessSlot6Fight5 },
 ];
+
 /** Pools for the sixth rival fight */
 export const RIVAL_6_POOL: RivalPoolConfig = [
   { pool: SLOT_1_FINAL, postProcess: p => forceRivalStarterTraits(p, 3) },
@@ -687,5 +690,3 @@ export const RIVAL_6_POOL: RivalPoolConfig = [
   { pool: SLOT_5_FINAL, postProcess: p => (p.level = SLOT_5_FIGHT_6_LEVEL) },
   { pool: SLOT_6_FINAL, postProcess: postProcessSlot6Fight6 },
 ];
-
-// Post processing functions
