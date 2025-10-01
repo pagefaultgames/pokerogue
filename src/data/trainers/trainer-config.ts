@@ -558,12 +558,7 @@ export class TrainerConfig {
    * @param specialtyType The specialty Type of the admin, if they have one
    * @returns The updated TrainerConfig instance.
    */
-  initForEvilTeamAdmin(
-    title: string,
-    poolName: EvilTeam,
-    signatureSpecies: (SpeciesId | SpeciesId[])[],
-    specialtyType?: PokemonType,
-  ): TrainerConfig {
+  initForEvilTeamAdmin(title: string, poolName: EvilTeam, specialtyType?: PokemonType): TrainerConfig {
     if (!getIsInitialized()) {
       initI18n();
     }
@@ -576,10 +571,6 @@ export class TrainerConfig {
 
     // Set the species pools for the evil team admin.
     this.speciesPools = evilAdminTrainerPools[poolName];
-
-    signatureSpecies.forEach((speciesPool, s) => {
-      this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(coerceArray(speciesPool)));
-    });
 
     const nameForCall = toCamelCase(this.name);
     this.name = i18next.t(`trainerNames:${nameForCall}`);
@@ -2030,36 +2021,68 @@ export const trainerConfigs: TrainerConfigs = {
     }),
   [TrainerType.ARCHER]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("rocket_admin", "rocket", [SpeciesId.HOUNDOOM])
+    .initForEvilTeamAdmin("rocket_admin", "rocket")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_rocket_grunt")
     .setVictoryBgm("victory_team_plasma")
-    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate()),
+    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.ELECTRODE]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.MAGMAR]))
+    .setPartyMemberFunc(
+      5,
+      getRandomPartyMemberFunc([SpeciesId.HOUNDOOM], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+      }),
+    ),
   [TrainerType.ARIANA]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("rocket_admin_female", "rocket", [SpeciesId.ARBOK])
+    .initForEvilTeamAdmin("rocket_admin_female", "rocket")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_rocket_grunt")
     .setVictoryBgm("victory_team_plasma")
-    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate()),
+    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.VILEPLUME]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.HONCHKROW]))
+    .setPartyMemberFunc(
+      5,
+      getRandomPartyMemberFunc([SpeciesId.ARBOK], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+      }),
+    ),
   [TrainerType.PROTON]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("rocket_admin", "rocket", [SpeciesId.CROBAT])
+    .initForEvilTeamAdmin("rocket_admin", "rocket")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_rocket_grunt")
     .setVictoryBgm("victory_team_plasma")
-    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate()),
+    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.MUK]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.ELECTIVIRE]))
+    .setPartyMemberFunc(
+      5,
+      getRandomPartyMemberFunc([SpeciesId.CROBAT], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+      }),
+    ),
   [TrainerType.PETREL]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("rocket_admin", "rocket", [SpeciesId.WEEZING])
+    .initForEvilTeamAdmin("rocket_admin", "rocket")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_rocket_grunt")
     .setVictoryBgm("victory_team_plasma")
-    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate()),
+    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.RATICATE]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.GALAR_WEEZING]))
+    .setPartyMemberFunc(
+      5,
+      getRandomPartyMemberFunc([SpeciesId.WEEZING], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+      }),
+    ),
   [TrainerType.MAGMA_GRUNT]: new TrainerConfig(++t)
     .setHasGenders("Magma Grunt Female")
     .setHasDouble("Magma Grunts")
@@ -2163,20 +2186,36 @@ export const trainerConfigs: TrainerConfigs = {
     }),
   [TrainerType.MATT]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("aqua_admin", "aqua", [SpeciesId.SHARPEDO])
+    .initForEvilTeamAdmin("aqua_admin", "aqua")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_aqua_magma_grunt")
     .setVictoryBgm("victory_team_plasma")
-    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate()),
+    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.AZUMARILL]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.HUNTAIL]))
+    .setPartyMemberFunc(
+      5,
+      getRandomPartyMemberFunc([SpeciesId.SHARPEDO], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+      }),
+    ),
   [TrainerType.SHELLY]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("aqua_admin_female", "aqua", [SpeciesId.SHARPEDO])
+    .initForEvilTeamAdmin("aqua_admin_female", "aqua")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_aqua_magma_grunt")
     .setVictoryBgm("victory_team_plasma")
-    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate()),
+    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.CRAWDAUNT]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.GOREBYSS]))
+    .setPartyMemberFunc(
+      5,
+      getRandomPartyMemberFunc([SpeciesId.SHARPEDO], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+      }),
+    ),
   [TrainerType.GALACTIC_GRUNT]: new TrainerConfig(++t)
     .setHasGenders("Galactic Grunt Female")
     .setHasDouble("Galactic Grunts")
@@ -2221,28 +2260,52 @@ export const trainerConfigs: TrainerConfigs = {
     }),
   [TrainerType.JUPITER]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("galactic_commander_female", "galactic", [SpeciesId.SKUNTANK])
+    .initForEvilTeamAdmin("galactic_commander_female", "galactic")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_galactic_admin")
     .setVictoryBgm("victory_team_plasma")
-    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate()),
+    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.TANGROWTH]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.BRONZONG]))
+    .setPartyMemberFunc(
+      5,
+      getRandomPartyMemberFunc([SpeciesId.SKUNTANK], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+      }),
+    ),
   [TrainerType.MARS]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("galactic_commander_female", "galactic", [SpeciesId.PURUGLY])
+    .initForEvilTeamAdmin("galactic_commander_female", "galactic")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_galactic_admin")
     .setVictoryBgm("victory_team_plasma")
-    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate()),
+    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.YANMEGA]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.BRONZONG]))
+    .setPartyMemberFunc(
+      5,
+      getRandomPartyMemberFunc([SpeciesId.PURUGLY], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+      }),
+    ),
   [TrainerType.SATURN]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("galactic_commander", "galactic", [SpeciesId.TOXICROAK])
+    .initForEvilTeamAdmin("galactic_commander", "galactic")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_galactic_admin")
     .setVictoryBgm("victory_team_plasma")
-    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate()),
+    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.ALAKAZAM]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.BRONZONG]))
+    .setPartyMemberFunc(
+      5,
+      getRandomPartyMemberFunc([SpeciesId.TOXICROAK], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+      }),
+    ),
   [TrainerType.PLASMA_GRUNT]: new TrainerConfig(++t)
     .setHasGenders("Plasma Grunt Female")
     .setHasDouble("Plasma Grunts")
@@ -2289,20 +2352,36 @@ export const trainerConfigs: TrainerConfigs = {
     }),
   [TrainerType.ZINZOLIN]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("plasma_sage", "plasma_zinzolin", [SpeciesId.CRYOGONAL])
+    .initForEvilTeamAdmin("plasma_sage", "plasma_zinzolin")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_plasma_grunt")
     .setVictoryBgm("victory_team_plasma")
-    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate()),
+    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.WEAVILE]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.VANILLUXE]))
+    .setPartyMemberFunc(
+      5,
+      getRandomPartyMemberFunc([SpeciesId.CRYOGONAL], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+      }),
+    ),
   [TrainerType.COLRESS]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("plasma_boss", "plasma_colress", [SpeciesId.KLINKLANG])
+    .initForEvilTeamAdmin("plasma_boss", "plasma_colress")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_colress")
     .setMixedBattleBgm("battle_colress")
     .setVictoryBgm("victory_team_plasma")
-    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate()),
+    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.MAGNEZONE]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.BEHEEYEM]))
+    .setPartyMemberFunc(
+      5,
+      getRandomPartyMemberFunc([SpeciesId.KLINKLANG], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+      }),
+    ),
   [TrainerType.FLARE_GRUNT]: new TrainerConfig(++t)
     .setHasGenders("Flare Grunt Female")
     .setHasDouble("Flare Grunts")
@@ -2343,20 +2422,34 @@ export const trainerConfigs: TrainerConfigs = {
     }),
   [TrainerType.BRYONY]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("flare_admin_female", "flare", [SpeciesId.LIEPARD])
+    .initForEvilTeamAdmin("flare_admin_female", "flare")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_flare_grunt")
     .setVictoryBgm("victory_team_plasma")
-    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate()),
+    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.LIEPARD]))
+    .setPartyMemberFunc(
+      5,
+      getRandomPartyMemberFunc([SpeciesId.BISHARP], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+      }),
+    ),
   [TrainerType.XEROSIC]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("flare_admin", "flare", [SpeciesId.MALAMAR])
+    .initForEvilTeamAdmin("flare_admin", "flare")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_flare_grunt")
     .setVictoryBgm("victory_team_plasma")
-    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate()),
+    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.CROBAT]))
+    .setPartyMemberFunc(
+      5,
+      getRandomPartyMemberFunc([SpeciesId.MALAMAR], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+      }),
+    ),
   [TrainerType.AETHER_GRUNT]: new TrainerConfig(++t)
     .setHasGenders("Aether Grunt Female")
     .setHasDouble("Aether Grunts")
@@ -2410,12 +2503,20 @@ export const trainerConfigs: TrainerConfigs = {
     }),
   [TrainerType.FABA]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("aether_admin", "aether", [SpeciesId.HYPNO])
+    .initForEvilTeamAdmin("aether_admin", "aether")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_aether_grunt")
     .setVictoryBgm("victory_team_plasma")
-    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate()),
+    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.BRUXISH]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.ALOLA_RAICHU]))
+    .setPartyMemberFunc(
+      5,
+      getRandomPartyMemberFunc([SpeciesId.HYPNO], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+      }),
+    ),
   [TrainerType.SKULL_GRUNT]: new TrainerConfig(++t)
     .setHasGenders("Skull Grunt Female")
     .setHasDouble("Skull Grunts")
@@ -2464,12 +2565,20 @@ export const trainerConfigs: TrainerConfigs = {
     }),
   [TrainerType.PLUMERIA]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("skull_admin", "skull", [SpeciesId.SALAZZLE])
+    .initForEvilTeamAdmin("skull_admin", "skull")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_skull_admin")
     .setVictoryBgm("victory_team_plasma")
-    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate()),
+    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.TOXAPEX]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.ALOLA_MUK]))
+    .setPartyMemberFunc(
+      5,
+      getRandomPartyMemberFunc([SpeciesId.SALAZZLE], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+      }),
+    ),
   [TrainerType.MACRO_GRUNT]: new TrainerConfig(++t)
     .setHasGenders("Macro Grunt Female")
     .setHasDouble("Macro Grunts")
@@ -2517,12 +2626,20 @@ export const trainerConfigs: TrainerConfigs = {
     }),
   [TrainerType.OLEANA]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("macro_admin", "macro_cosmos", [SpeciesId.GARBODOR])
+    .initForEvilTeamAdmin("macro_admin", "macro_cosmos")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_oleana")
     .setVictoryBgm("victory_team_plasma")
-    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate()),
+    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.MILOTIC]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.TSAREENA]))
+    .setPartyMemberFunc(
+      5,
+      getRandomPartyMemberFunc([SpeciesId.GARBODOR], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+      }),
+    ),
   [TrainerType.STAR_GRUNT]: new TrainerConfig(++t)
     .setHasGenders("Star Grunt Female")
     .setHasDouble("Star Grunts")
@@ -2584,14 +2701,16 @@ export const trainerConfigs: TrainerConfigs = {
     }),
   [TrainerType.GIACOMO]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("star_admin", "star_dark", [SpeciesId.KINGAMBIT], PokemonType.DARK)
+    .initForEvilTeamAdmin("star_admin", "star_dark", PokemonType.DARK)
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_star_admin")
     .setVictoryBgm("victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.MABOSSTIFF]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.KINGAMBIT]))
     .setPartyMemberFunc(
-      3,
+      5,
       getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
         p.formIndex = 1; // Segin Starmobile
         p.moveset = [
@@ -2604,14 +2723,16 @@ export const trainerConfigs: TrainerConfigs = {
     ),
   [TrainerType.MELA]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("star_admin", "star_fire", [SpeciesId.ARMAROUGE], PokemonType.FIRE)
+    .initForEvilTeamAdmin("star_admin", "star_fire", PokemonType.FIRE)
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_star_admin")
     .setVictoryBgm("victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.SCOVILLAIN]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.ARMAROUGE]))
     .setPartyMemberFunc(
-      3,
+      5,
       getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
         p.formIndex = 2; // Schedar Starmobile
         p.moveset = [
@@ -2624,14 +2745,16 @@ export const trainerConfigs: TrainerConfigs = {
     ),
   [TrainerType.ATTICUS]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("star_admin", "star_poison", [SpeciesId.REVAVROOM], PokemonType.POISON)
+    .initForEvilTeamAdmin("star_admin", "star_poison", PokemonType.POISON)
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_star_admin")
     .setVictoryBgm("victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.GRAFAIAI]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.REVAVROOM]))
     .setPartyMemberFunc(
-      3,
+      5,
       getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
         p.formIndex = 3; // Navi Starmobile
         p.moveset = [
@@ -2644,14 +2767,16 @@ export const trainerConfigs: TrainerConfigs = {
     ),
   [TrainerType.ORTEGA]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("star_admin", "star_fairy", [SpeciesId.DACHSBUN], PokemonType.FAIRY)
+    .initForEvilTeamAdmin("star_admin", "star_fairy", PokemonType.FAIRY)
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_star_admin")
     .setVictoryBgm("victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.TINKATON]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.DACHSBUN]))
     .setPartyMemberFunc(
-      3,
+      5,
       getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
         p.formIndex = 4; // Ruchbah Starmobile
         p.moveset = [
@@ -2664,14 +2789,16 @@ export const trainerConfigs: TrainerConfigs = {
     ),
   [TrainerType.ERI]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("star_admin", "star_fighting", [SpeciesId.ANNIHILAPE], PokemonType.FIGHTING)
+    .initForEvilTeamAdmin("star_admin", "star_fighting", PokemonType.FIGHTING)
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_star_admin")
     .setVictoryBgm("victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.FLAMIGO]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.ANNIHILAPE]))
     .setPartyMemberFunc(
-      3,
+      5,
       getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
         p.formIndex = 5; // Caph Starmobile
         p.moveset = [
