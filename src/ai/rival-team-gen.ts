@@ -9,14 +9,30 @@ import type { SpeciesId } from "#enums/species-id";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type { EnemyPokemon } from "#field/pokemon";
 import { RIVAL_6_POOL, type RivalPoolConfig } from "#trainers/rival-party-config";
-import type { Mutable } from "#types/type-helpers";
 import { applyChallenges } from "#utils/challenge-utils";
 import { NumberHolder, randSeedItem } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 
-/** The maximum number of shared weaknesses to tolerate when balancing weakness */
+/**
+ * The maximum number of shared weaknesses to tolerate when balancing weakness
+ *
+ * @remarks
+ * When generating a slot that has weakness balancing enabled, the pool will
+ * exclude any species that would cause a type to be a weakness for more than
+ * this number of party members.
+ * Note that it is assumed that slot 0 is always going to Terastallize to its primary type,
+ * so slot 0's secondary type is excluded from weakness calculations.
+ */
 const MAX_SHARED_WEAKNESSES = 2;
+/**
+ * The maximum number of shared types to tolerate when balancing types
+ *
+ * @remarks
+ * When generating a slot that has type balancing enabled, the pool will
+ * exclude any species that would cause a type to be present in more than
+ * this number of party members.
+ */
 const MAX_SHARED_TYPES = 1;
 
 /** Record of the chosen indices in the rival species pool, for type balancing based on the final fight */
@@ -32,9 +48,8 @@ function rivalRollToSpecies(
   [roll1, roll2]: [number] | [number, number],
   pool: readonly (SpeciesId | readonly SpeciesId[])[],
 ): SpeciesId | undefined {
-  // Drop readonly because typescript does not preserve it with its `isArray` signature
-  const pull1 = pool[roll1] as Mutable<(typeof pool)[number]>;
-  if (!Array.isArray(pull1)) {
+  const pull1 = pool[roll1];
+  if (typeof pull1 === "number") {
     return pull1;
   }
   if (roll2 == null) {
@@ -62,16 +77,21 @@ function rivalRollToSpecies(
  */
 function getWeakTypes(species: PokemonSpecies, exclude2ndType = false): Set<PokemonType> {
   const weaknesses = new Set<PokemonType>();
-  const alwaysHasLevitate =
-    species.ability1 === AbilityId.LEVITATE
-    && (species.ability2 == null || species.ability2 !== AbilityId.LEVITATE)
-    && (species.abilityHidden == null || species.abilityHidden !== AbilityId.LEVITATE);
+  // If the species is always immune to ground, skip ground type checks
+  // Note that there are no other Pokémon with guaranteed immunities due to all 3 of their abilities providing
+  // an immunity.
+  // At this point, we do not have an ability to know which ability the Pokémon generated with, so we can only
+  // work with guaranteed immunities.
+  const isAlwaysGroundImmune =
+    [AbilityId.LEVITATE, AbilityId.EARTH_EATER].includes(species.ability1)
+    && (species.ability2 == null || [AbilityId.LEVITATE, AbilityId.EARTH_EATER].includes(species.ability2))
+    && (species.abilityHidden == null || [AbilityId.LEVITATE, AbilityId.EARTH_EATER].includes(species.ability2));
   for (const ty of getEnumValues(PokemonType)) {
     if (
       ty === PokemonType.UNKNOWN
       || ty === PokemonType.STELLAR
       || ty > MAX_POKEMON_TYPE
-      || (ty === PokemonType.GROUND && alwaysHasLevitate)
+      || (ty === PokemonType.GROUND && isAlwaysGroundImmune)
     ) {
       continue;
     }
@@ -96,14 +116,18 @@ function getWeakTypes(species: PokemonSpecies, exclude2ndType = false): Set<Poke
 
 /**
  * Calculate the existing types and weaknesses in the party up to the target slot
+ * @remarks
+ * At least one of either `balanceTypes` or `balanceWeaknesses` should be `true`,
+ * otherwise the function does nothing.
  * @param targetSlot - The slot we are calculating up to (exclusive)
- * @param config - The current rival pool configuration
- * @param referenceConfig - (default {@linkcode RIVAL_6_POOL}); The reference rival pool configuration to use for type considerations
- * @param pokemonTypes - A set that will hold the types present in the party
+ * @param pokemonTypes - A map that will hold the types present in the party
  * @param pokemonWeaknesses - A map that will hold the weaknesses present in the party, and their counts
- * @param balanceWeaknesses - (default `false`) Whether include weakness balancing
+ * @param balanceTypes - (Default `false`) Whether to include type balancing
+ * @param balanceWeaknesses - (Default `false`) Whether to attempt to add the party's existing weaknesses for the purpose of weakness balancing.
+ * @param referenceConfig - (Default {@linkcode RIVAL_6_POOL}); The reference rival pool configuration to use for type considerations
+ *
+ * @see {@linkcode MAX_SHARED_WEAKNESSES}
  */
-
 function calcPartyTypings(
   targetSlot: number,
   pokemonTypes: Map<PokemonType, number>,
@@ -192,11 +216,11 @@ function checkTypingConstraints(
  * @param existingTypes - The existing types in the party
  * @param existingWeaknesses - The existing weaknesses in the party
  * @param balanceTypes - (default `false`) Whether to include type balancing
- * @param balanceWeaknesses - (default `false`) Whether to include weakness balancing
+ * @param balanceWeaknesses - (default `false`) Whether to include weakness balancing6
  * @returns A list of choices, where each choice is either a single index or a tuple of indices for sub-pools
  */
 function convertPoolToChoices(
-  pool: any,
+  pool: readonly (SpeciesId | readonly SpeciesId[])[],
   existingTypes: ReadonlyMap<PokemonType, number>,
   existingWeaknesses: ReadonlyMap<PokemonType, number>,
   balanceTypes = false,
@@ -258,9 +282,6 @@ export function getRandomRivalPartyMemberFunc(
     throw new Error(`Slot ${slot} is out of range for the provided config of length ${config.length}`);
   }
   return (level: number, _strength: PartyMemberStrength) => {
-    // Protect against accidental out of bounds accesses
-
-    // Get the configuration for the specified slot
     const { pool, postProcess, balanceTypes, balanceWeaknesses } = config[slot];
 
     const existingTypes = new Map<PokemonType, number>();
@@ -298,7 +319,6 @@ export function getRandomRivalPartyMemberFunc(
     }
 
     return globalScene.addEnemyPokemon(
-      // bang is safe here, species is guaranteed to be defined because of the above check
       getPokemonSpecies(species),
       level,
       TrainerSlot.TRAINER,
