@@ -158,7 +158,7 @@ function checkTypingConstraints(
   species: SpeciesId,
   existingTypes: ReadonlyMap<PokemonType, number>,
   existingWeaknesses: ReadonlyMap<PokemonType, number>,
-  balanceTypes: boolean,
+  balanceTypes = false,
   balanceWeaknesses = false,
 ): boolean {
   if (!balanceTypes && !balanceWeaknesses) {
@@ -168,8 +168,8 @@ function checkTypingConstraints(
 
   if (
     balanceTypes
-    && ((existingTypes.get(type1) ?? 0) > MAX_SHARED_TYPES
-      || (type2 != null && (existingTypes.get(type2) ?? 0) > MAX_SHARED_TYPES))
+    && ((existingTypes.get(type1) ?? 0) >= MAX_SHARED_TYPES
+      || (type2 != null && (existingTypes.get(type2) ?? 0) >= MAX_SHARED_TYPES))
   ) {
     return false;
   }
@@ -177,7 +177,7 @@ function checkTypingConstraints(
   if (balanceWeaknesses) {
     const weaknesses = getWeakTypes(getPokemonSpecies(species));
     for (const weakType of weaknesses) {
-      if ((existingWeaknesses.get(weakType) ?? 0) > MAX_SHARED_WEAKNESSES) {
+      if ((existingWeaknesses.get(weakType) ?? 0) >= MAX_SHARED_WEAKNESSES) {
         return false;
       }
     }
@@ -270,21 +270,23 @@ export function getRandomRivalPartyMemberFunc(
       // Clear out the rolls from previous rival generations
       CHOSEN_RIVAL_ROLLS.fill(undefined);
     } else if (balanceTypes || balanceWeaknesses) {
-      calcPartyTypings(
-        slot,
-        existingTypes,
-        existingWeaknesses,
-        balanceTypes ?? false,
-        balanceWeaknesses,
-        referenceConfig,
-      );
+      calcPartyTypings(slot, existingTypes, existingWeaknesses, balanceTypes, balanceWeaknesses, referenceConfig);
     }
 
     // Filter the pool to its choices, or map it
 
     let species: SpeciesId | SpeciesId[];
 
-    const choices = convertPoolToChoices(pool, existingTypes, existingWeaknesses, balanceTypes, balanceWeaknesses);
+    // When converting poool to choices, base off of the reference config
+    // to use for type balancing, as we only narrow based on what the slot
+    // will be in its final stage
+    const choices = convertPoolToChoices(
+      referenceConfig[slot].pool,
+      existingTypes,
+      existingWeaknesses,
+      balanceTypes,
+      balanceWeaknesses,
+    );
 
     const choice = randSeedItem(choices);
     if (typeof choice === "number") {
