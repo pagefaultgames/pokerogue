@@ -2126,20 +2126,36 @@ export const trainerConfigs: TrainerConfigs = {
     }),
   [TrainerType.TABITHA]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("magma_admin", "magma", [SpeciesId.CAMERUPT])
+    .initForEvilTeamAdmin("magma_admin", "magma")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_aqua_magma_grunt")
     .setVictoryBgm("victory_team_plasma")
-    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate()),
+    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.TORKOAL]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.FLYGON]))
+    .setPartyMemberFunc(
+      5,
+      getRandomPartyMemberFunc([SpeciesId.CAMERUPT], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+      }),
+    ),
   [TrainerType.COURTNEY]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("magma_admin_female", "magma", [SpeciesId.CAMERUPT])
+    .initForEvilTeamAdmin("magma_admin_female", "magma")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_aqua_magma_grunt")
     .setVictoryBgm("victory_team_plasma")
-    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate()),
+    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.NINETALES]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.CLAYDOL]))
+    .setPartyMemberFunc(
+      5,
+      getRandomPartyMemberFunc([SpeciesId.CAMERUPT], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+      }),
+    ),
   [TrainerType.AQUA_GRUNT]: new TrainerConfig(++t)
     .setHasGenders("Aqua Grunt Female")
     .setHasDouble("Aqua Grunts")
