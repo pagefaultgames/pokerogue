@@ -71,7 +71,7 @@ function rivalRollToSpecies(
  * exported because it uses logic specific to this file, such as excluding the second type for Tera starters
  *
  * @param species - The species to calculate weaknesses for
- * @param exclude2ndType - (default `false`) Whether to exclude the second type when calculating weaknesses
+ * @param exclude2ndType - (Default `false`) Whether to exclude the second type when calculating weaknesses
  *  Intended to be used for starters since they will terastallize to their primary type.
  * @returns The set of types that the species is weak to
  */
@@ -174,8 +174,8 @@ function calcPartyTypings(
  * @param species - The species to check
  * @param existingTypes - The existing types in the party
  * @param existingWeaknesses - The existing weaknesses in the party
- * @param balanceTypes - Whether to include type balancing
- * @param balanceWeaknesses - (default `false`) Whether to include weakness balancing
+ * @param balanceTypes - (Default `false`) Whether to include type balancing
+ * @param balanceWeaknesses - (Default `false`) Whether to include weakness balancing
  * @returns Whether the species meets the constraints
  */
 function checkTypingConstraints(
@@ -215,8 +215,8 @@ function checkTypingConstraints(
  * @param pool - The pool to convert to choices
  * @param existingTypes - The existing types in the party
  * @param existingWeaknesses - The existing weaknesses in the party
- * @param balanceTypes - (default `false`) Whether to include type balancing
- * @param balanceWeaknesses - (default `false`) Whether to include weakness balancing
+ * @param balanceTypes - (Default `false`) Whether to include type balancing
+ * @param balanceWeaknesses - (Default `false`) Whether to include weakness balancing
  * @returns A list of choices, where each choice is either a single index or a tuple of indices for sub-pools
  */
 function convertPoolToChoices(
@@ -263,10 +263,10 @@ function convertPoolToChoices(
 
 /**
  * Randomly selects one of the `Species` from `speciesPool`, determines its evolution, level, and strength.
- * Then adds Pokemon to globalScene.
+ * Then adds Pokemon to `globalScene`.
  * @param config - The configuration for the rival pool fight
  * @param slot - The slot being generated for (0-5)
- * @param referenceConfig - (default {@linkcode RIVAL_6_POOL}); The final rival pool configuration to use if `config` is `RIVAL_POOL_CONFIG.FINAL`
+ * @param referenceConfig - (Default {@linkcode RIVAL_6_POOL}); The final rival pool configuration to use if `config` is `RIVAL_POOL_CONFIG.FINAL`
  *
  * @throws
  * If no configuration is found for the specified slot.
@@ -298,7 +298,7 @@ export function getRandomRivalPartyMemberFunc(
 
     let species: SpeciesId | SpeciesId[];
 
-    // When converting poool to choices, base off of the reference config
+    // When converting pool to choices, base off of the reference config
     // to use for type balancing, as we only narrow based on what the slot
     // will be in its final stage
     const choices = convertPoolToChoices(
