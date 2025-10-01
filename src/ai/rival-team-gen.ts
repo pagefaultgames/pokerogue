@@ -17,7 +17,7 @@ import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 /** The maximum number of shared weaknesses to tolerate when balancing weakness */
 const MAX_SHARED_WEAKNESSES = 2;
-const MAX_SHARED_TYPES = 2;
+const MAX_SHARED_TYPES = 1;
 
 /** Record of the chosen indices in the rival species pool, for type balancing based on the final fight */
 const CHOSEN_RIVAL_ROLLS: (undefined | [number] | [number, number])[] = new Array(6);
@@ -53,12 +53,14 @@ function rivalRollToSpecies(
  *
  * @privateRemarks
  * Despite potentially being a useful utility method, this is intentionally *not*
- * exported because it uses logic specific to this file.
+ * exported because it uses logic specific to this file, such as excluding the second type for Tera starters
  *
  * @param species - The species to calculate weaknesses for
+ * @param exclude2ndType - (default `false`) Whether to exclude the second type when calculating weaknesses
+ *  Intended to be used for starters since they will terastallize to their primary type.
  * @returns The set of types that the species is weak to
  */
-function getWeakTypes(species: PokemonSpecies): Set<PokemonType> {
+function getWeakTypes(species: PokemonSpecies, exclude2ndType = false): Set<PokemonType> {
   const weaknesses = new Set<PokemonType>();
   const alwaysHasLevitate =
     species.ability1 === AbilityId.LEVITATE
@@ -76,7 +78,7 @@ function getWeakTypes(species: PokemonSpecies): Set<PokemonType> {
     const multiplier = new NumberHolder(getTypeDamageMultiplier(ty, species.type1));
     applyChallenges(ChallengeType.TYPE_EFFECTIVENESS, multiplier);
 
-    if (multiplier.value >= 2) {
+    if (multiplier.value >= 2 && !exclude2ndType) {
       const type2 = species.type2;
       if (type2 != null) {
         const multiplier2 = new NumberHolder(getTypeDamageMultiplier(ty, type2));

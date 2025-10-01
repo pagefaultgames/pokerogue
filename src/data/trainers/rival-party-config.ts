@@ -635,16 +635,36 @@ export const RIVAL_3_POOL: RivalPoolConfig = [
 export const RIVAL_4_POOL: RivalPoolConfig = [
   { pool: SLOT_1_FINAL, postProcess: forceRivalStarterTraits },
   { pool: SLOT_2_FINAL, postProcess: forceRivalBirdAbility },
-  { pool: SLOT_3_FINAL, postProcess: p => (p.level = SLOT_3_FIGHT_4_LEVEL) },
-  { pool: SLOT_4_FINAL, postProcess: p => postProcessSlot4Fight4(p, SLOT_4_FIGHT_4_LEVEL) },
+  {
+    pool: SLOT_3_FINAL,
+    postProcess: p => (p.level = SLOT_3_FIGHT_4_LEVEL),
+    balanceTypes: true,
+    balanceWeaknesses: true,
+  },
+  {
+    pool: SLOT_4_FINAL,
+    postProcess: p => postProcessSlot4Fight4(p, SLOT_4_FIGHT_4_LEVEL),
+    balanceTypes: true,
+    balanceWeaknesses: true,
+  },
   { pool: SLOT_5_FINAL, postProcess: p => (p.level = SLOT_5_FIGHT_4_LEVEL) },
 ];
 /** Pools for the fifth rival fight */
 export const RIVAL_5_POOL: RivalPoolConfig = [
   { pool: SLOT_1_FINAL, postProcess: p => forceRivalStarterTraits(p, 2) },
   { pool: SLOT_2_FINAL, postProcess: forceRivalBirdAbility },
-  { pool: SLOT_3_FINAL, postProcess: p => (p.level = SLOT_3_FIGHT_5_LEVEL) },
-  { pool: SLOT_4_FINAL, postProcess: p => postProcessSlot4Fight4(p, SLOT_4_FIGHT_5_LEVEL) },
+  {
+    pool: SLOT_3_FINAL,
+    postProcess: p => (p.level = SLOT_3_FIGHT_5_LEVEL),
+    balanceTypes: true,
+    balanceWeaknesses: true,
+  },
+  {
+    pool: SLOT_4_FINAL,
+    postProcess: p => postProcessSlot4Fight4(p, SLOT_4_FIGHT_5_LEVEL),
+    balanceTypes: true,
+    balanceWeaknesses: true,
+  },
   { pool: SLOT_5_FINAL, postProcess: p => (p.level = SLOT_5_FIGHT_5_LEVEL) },
   { pool: SLOT_6_FINAL, postProcess: postProcessSlot6Fight5 },
 ];
@@ -652,8 +672,18 @@ export const RIVAL_5_POOL: RivalPoolConfig = [
 export const RIVAL_6_POOL: RivalPoolConfig = [
   { pool: SLOT_1_FINAL, postProcess: p => forceRivalStarterTraits(p, 3) },
   { pool: SLOT_2_FINAL, postProcess: p => forceRivalBirdAbility(p, 2) },
-  { pool: SLOT_3_FINAL, postProcess: p => (p.level = SLOT_3_FIGHT_6_LEVEL) },
-  { pool: SLOT_4_FINAL, postProcess: p => postProcessSlot4Fight4(p, SLOT_4_FIGHT_6_LEVEL) },
+  {
+    pool: SLOT_3_FINAL,
+    postProcess: p => (p.level = SLOT_3_FIGHT_6_LEVEL),
+    balanceTypes: true,
+    balanceWeaknesses: true,
+  },
+  {
+    pool: SLOT_4_FINAL,
+    postProcess: p => postProcessSlot4Fight4(p, SLOT_4_FIGHT_6_LEVEL),
+    balanceTypes: true,
+    balanceWeaknesses: true,
+  },
   { pool: SLOT_5_FINAL, postProcess: p => (p.level = SLOT_5_FIGHT_6_LEVEL) },
   { pool: SLOT_6_FINAL, postProcess: postProcessSlot6Fight6 },
 ];
