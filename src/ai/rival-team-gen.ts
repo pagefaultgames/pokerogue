@@ -216,7 +216,7 @@ function checkTypingConstraints(
  * @param existingTypes - The existing types in the party
  * @param existingWeaknesses - The existing weaknesses in the party
  * @param balanceTypes - (default `false`) Whether to include type balancing
- * @param balanceWeaknesses - (default `false`) Whether to include weakness balancing6
+ * @param balanceWeaknesses - (default `false`) Whether to include weakness balancing
  * @returns A list of choices, where each choice is either a single index or a tuple of indices for sub-pools
  */
 function convertPoolToChoices(
