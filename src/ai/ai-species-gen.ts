@@ -1,7 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { pokemonEvolutions, pokemonPrevolutions } from "#balance/pokemon-evolutions";
-import { allSpecies } from "#data/data-lists";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import { PartyMemberStrength } from "#enums/party-member-strength";
@@ -37,11 +36,6 @@ function calcEvoChance(ev: SpeciesFormEvolution, level: number, encounterKind: E
   const levelThreshold = Math.max(ev.level, ev.evoLevelThreshold?.[encounterKind] ?? 0);
   // Disallow evolution if the level is below its required threshold.
   if (level < ev.level || level < levelThreshold) {
-    console.info(
-      "%cDisallowing evolution of %s to %s at level %d (needs %d)",
-      "color: blue",
-      allSpecies[ev.speciesId]?.name,
-    );
     return 0;
   }
   return levelThreshold;
@@ -83,14 +77,6 @@ function getRequiredPrevo(
     const threshold = evoThreshold?.[encounterKind] ?? levelReq;
     const req = levelReq === 1 ? threshold : Math.min(levelReq, threshold);
     if (level < req) {
-      console.info(
-        "%cForcing prevo %s for %s at level %d (needs %d)",
-        "color: orange",
-        prevoSpecies,
-        species.speciesId,
-        level,
-        req,
-      );
       return prevoSpecies;
     }
   }
@@ -127,13 +113,6 @@ export function determineEnemySpecies(
   encounterKind: EvoLevelThresholdKind = forTrainer ? EvoLevelThresholdKind.NORMAL : EvoLevelThresholdKind.WILD,
   tryForcePrevo = true,
 ): SpeciesId {
-  console.info(
-    "%c Determining species for %s at level %d with encounter kind %s",
-    "color: blue",
-    species.name,
-    level,
-    encounterKind,
-  );
   const requiredPrevo =
     tryForcePrevo
     && pokemonPrevolutions.hasOwnProperty(species.speciesId)
@@ -162,7 +141,6 @@ export function determineEnemySpecies(
     }
   }
   if (evoPool.length === 0) {
-    console.log("%c No evolutions available, returning base species", "color: blue");
     return species.speciesId;
   }
   const [choice, evoSpecies] = randSeedItem(evoPool);
@@ -184,14 +162,7 @@ export function determineEnemySpecies(
       break;
   }
 
-  console.info(
-    "%c Returning a random integer between %d and %d",
-    "color: blue",
-    choice,
-    Math.round(choice * multiplier),
-  );
   const randomLevel = randSeedInt(choice, Math.round(choice * multiplier));
-  console.info("%c Random level is %d", "color: blue", randomLevel);
   if (randomLevel <= level) {
     return determineEnemySpecies(
       getPokemonSpecies(evoSpecies),
