@@ -1,9 +1,7 @@
-import { timedEventManager } from "#app/global-event-manager";
+import { getRandomRivalPartyMemberFunc } from "#app/ai/rival-team-gen";
 import { globalScene } from "#app/global-scene";
 import { signatureSpecies } from "#balance/signature-species";
 import { tmSpecies } from "#balance/tms";
-// biome-ignore lint/correctness/noUnusedImports: Used in a tsdoc comment
-import type { RARE_EGG_MOVE_LEVEL_REQUIREMENT } from "#data/balance/moveset-generation";
 import { modifierTypes } from "#data/data-lists";
 import { doubleBattleDialogue } from "#data/double-battle-dialogue";
 import { Gender } from "#data/gender";
@@ -24,7 +22,14 @@ import { PokemonMove } from "#moves/pokemon-move";
 import { getIsInitialized, initI18n } from "#plugins/i18n";
 import type { EvilTeam } from "#trainers/evil-admin-trainer-pools";
 import { evilAdminTrainerPools } from "#trainers/evil-admin-trainer-pools";
-import { forceRivalBirdAbility, forceRivalStarterTraits } from "#trainers/rival-config-utils";
+import {
+  RIVAL_1_POOL,
+  RIVAL_2_POOL,
+  RIVAL_3_POOL,
+  RIVAL_4_POOL,
+  RIVAL_5_POOL,
+  RIVAL_6_POOL,
+} from "#trainers/rival-party-config";
 import {
   getEvilGruntPartyTemplate,
   getGymLeaderPartyTemplate,
@@ -988,35 +993,30 @@ export class TrainerConfig {
   }
 }
 
-let t = 0;
-
 /**
  * Randomly selects one of the `Species` from `speciesPool`, determines its evolution, level, and strength.
  * Then adds Pokemon to globalScene.
- * @param speciesPool
- * @param trainerSlot
- * @param ignoreEvolution
- * @param postProcess
+ * @param speciesPool - The pool of species to choose from. Can be a list of `SpeciesId` or a list of lists of `SpeciesId`.
+ * @param trainerSlot - (default {@linkcode TrainerSlot.TRAINER | TRAINER}); The trainer slot to generate for.
+ * @param ignoreEvolution - (default `false`); Whether to ignore evolution when determining the species to use.
+ * @param postProcess - An optional function to post-process the generated `EnemyPokemon`
  */
 export function getRandomPartyMemberFunc(
   speciesPool: (SpeciesId | SpeciesId[])[],
   trainerSlot: TrainerSlot = TrainerSlot.TRAINER,
   ignoreEvolution = false,
   postProcess?: (enemyPokemon: EnemyPokemon) => void,
-) {
+): (level: number, strength: PartyMemberStrength) => EnemyPokemon {
   return (level: number, strength: PartyMemberStrength) => {
-    let species: SpeciesId | SpeciesId[];
+    let species: SpeciesId | SpeciesId[] | typeof speciesPool = speciesPool;
     do {
-      species = randSeedItem(speciesPool);
+      species = randSeedItem(species);
     } while (Array.isArray(species));
+
     if (!ignoreEvolution) {
-      species = getPokemonSpecies(species).getTrainerSpeciesForLevel(
-        level,
-        true,
-        strength,
-        // TODO: What EvoLevelThresholdKind to use here?
-      );
+      species = getPokemonSpecies(species).getTrainerSpeciesForLevel(level, true, strength);
     }
+
     return globalScene.addEnemyPokemon(
       getPokemonSpecies(species),
       level,
@@ -1054,6 +1054,7 @@ function getSpeciesFilterRandomPartyMemberFunc(
   };
 }
 
+let t = 0;
 export const trainerConfigs: TrainerConfigs = {
   [TrainerType.UNKNOWN]: new TrainerConfig(0).setHasGenders(),
   [TrainerType.ACE_TRAINER]: new TrainerConfig(++t)
@@ -4552,62 +4553,8 @@ export const trainerConfigs: TrainerConfigs = {
       () => modifierTypes.SUPER_EXP_CHARM,
       () => modifierTypes.EXP_SHARE,
     )
-    .setPartyMemberFunc(
-      0,
-      getRandomPartyMemberFunc(
-        [
-          SpeciesId.BULBASAUR,
-          SpeciesId.CHARMANDER,
-          SpeciesId.SQUIRTLE,
-          SpeciesId.CHIKORITA,
-          SpeciesId.CYNDAQUIL,
-          SpeciesId.TOTODILE,
-          SpeciesId.TREECKO,
-          SpeciesId.TORCHIC,
-          SpeciesId.MUDKIP,
-          SpeciesId.TURTWIG,
-          SpeciesId.CHIMCHAR,
-          SpeciesId.PIPLUP,
-          SpeciesId.SNIVY,
-          SpeciesId.TEPIG,
-          SpeciesId.OSHAWOTT,
-          SpeciesId.CHESPIN,
-          SpeciesId.FENNEKIN,
-          SpeciesId.FROAKIE,
-          SpeciesId.ROWLET,
-          SpeciesId.LITTEN,
-          SpeciesId.POPPLIO,
-          SpeciesId.GROOKEY,
-          SpeciesId.SCORBUNNY,
-          SpeciesId.SOBBLE,
-          SpeciesId.SPRIGATITO,
-          SpeciesId.FUECOCO,
-          SpeciesId.QUAXLY,
-        ],
-        TrainerSlot.TRAINER,
-        true,
-        forceRivalStarterTraits,
-      ),
-    )
-    .setPartyMemberFunc(
-      1,
-      getRandomPartyMemberFunc(
-        [
-          SpeciesId.PIDGEY,
-          SpeciesId.HOOTHOOT,
-          SpeciesId.TAILLOW,
-          SpeciesId.STARLY,
-          SpeciesId.PIDOVE,
-          SpeciesId.FLETCHLING,
-          SpeciesId.PIKIPEK,
-          SpeciesId.ROOKIDEE,
-          SpeciesId.WATTREL,
-        ],
-        TrainerSlot.TRAINER,
-        true,
-        forceRivalBirdAbility,
-      ),
-    ),
+    .setPartyMemberFunc(0, getRandomRivalPartyMemberFunc(RIVAL_1_POOL, 0))
+    .setPartyMemberFunc(1, getRandomRivalPartyMemberFunc(RIVAL_1_POOL, 1)),
   [TrainerType.RIVAL_2]: new TrainerConfig(++t)
     .setName("Finn")
     .setHasGenders("Ivy")
@@ -4620,112 +4567,9 @@ export const trainerConfigs: TrainerConfigs = {
     .setMixedBattleBgm("battle_rival")
     .setPartyTemplates(trainerPartyTemplates.RIVAL_2)
     .setModifierRewardFuncs(() => modifierTypes.EXP_SHARE)
-    .setPartyMemberFunc(
-      0,
-      getRandomPartyMemberFunc(
-        [
-          SpeciesId.IVYSAUR,
-          SpeciesId.CHARMELEON,
-          SpeciesId.WARTORTLE,
-          SpeciesId.BAYLEEF,
-          SpeciesId.QUILAVA,
-          SpeciesId.CROCONAW,
-          SpeciesId.GROVYLE,
-          SpeciesId.COMBUSKEN,
-          SpeciesId.MARSHTOMP,
-          SpeciesId.GROTLE,
-          SpeciesId.MONFERNO,
-          SpeciesId.PRINPLUP,
-          SpeciesId.SERVINE,
-          SpeciesId.PIGNITE,
-          SpeciesId.DEWOTT,
-          SpeciesId.QUILLADIN,
-          SpeciesId.BRAIXEN,
-          SpeciesId.FROGADIER,
-          SpeciesId.DARTRIX,
-          SpeciesId.TORRACAT,
-          SpeciesId.BRIONNE,
-          SpeciesId.THWACKEY,
-          SpeciesId.RABOOT,
-          SpeciesId.DRIZZILE,
-          SpeciesId.FLORAGATO,
-          SpeciesId.CROCALOR,
-          SpeciesId.QUAXWELL,
-        ],
-        TrainerSlot.TRAINER,
-        true,
-        forceRivalStarterTraits,
-      ),
-    )
-    .setPartyMemberFunc(
-      1,
-      getRandomPartyMemberFunc(
-        [
-          SpeciesId.PIDGEOTTO,
-          SpeciesId.HOOTHOOT,
-          SpeciesId.TAILLOW,
-          SpeciesId.STARAVIA,
-          SpeciesId.TRANQUILL,
-          SpeciesId.FLETCHINDER,
-          SpeciesId.TRUMBEAK,
-          SpeciesId.CORVISQUIRE,
-          SpeciesId.WATTREL,
-        ],
-        TrainerSlot.TRAINER,
-        true,
-        forceRivalBirdAbility,
-      ),
-    )
-    .setPartyMemberFunc(
-      2,
-      getRandomPartyMemberFunc(
-        [
-          SpeciesId.NIDORINA,
-          SpeciesId.NIDORINO,
-          SpeciesId.MANKEY,
-          SpeciesId.GROWLITHE,
-          SpeciesId.ABRA,
-          SpeciesId.MACHOP,
-          SpeciesId.GASTLY,
-          SpeciesId.MAGNEMITE,
-          SpeciesId.RHYDON,
-          SpeciesId.TANGELA,
-          SpeciesId.PORYGON,
-          SpeciesId.ELEKID,
-          SpeciesId.MAGBY,
-          SpeciesId.MARILL,
-          SpeciesId.TEDDIURSA,
-          SpeciesId.SWINUB,
-          SpeciesId.SLAKOTH,
-          SpeciesId.ARON,
-          SpeciesId.SPHEAL,
-          SpeciesId.FEEBAS,
-          SpeciesId.MUNCHLAX,
-          SpeciesId.ROGGENROLA,
-          SpeciesId.TIMBURR,
-          SpeciesId.TYMPOLE,
-          SpeciesId.SANDILE,
-          SpeciesId.YAMASK,
-          SpeciesId.SOLOSIS,
-          SpeciesId.VANILLITE,
-          SpeciesId.TYMPOLE,
-          SpeciesId.LITWICK,
-          SpeciesId.MUDBRAY,
-          SpeciesId.DEWPIDER,
-          SpeciesId.WIMPOD,
-          SpeciesId.HATENNA,
-          SpeciesId.IMPIDIMP,
-          SpeciesId.SMOLIV,
-          SpeciesId.NACLI,
-          [SpeciesId.CHARCADET, SpeciesId.CHARCADET],
-          SpeciesId.TINKATINK,
-          SpeciesId.GLIMMET,
-        ],
-        TrainerSlot.TRAINER,
-        true,
-        p => (p.level = 16),
-      ),
-    ),
+    .setPartyMemberFunc(0, getRandomRivalPartyMemberFunc(RIVAL_2_POOL, 0))
+    .setPartyMemberFunc(1, getRandomRivalPartyMemberFunc(RIVAL_2_POOL, 1))
+    .setPartyMemberFunc(2, getRandomRivalPartyMemberFunc(RIVAL_2_POOL, 2)),
   [TrainerType.RIVAL_3]: new TrainerConfig(++t)
     .setName("Finn")
     .setHasGenders("Ivy")
@@ -4737,183 +4581,10 @@ export const trainerConfigs: TrainerConfigs = {
     .setBattleBgm("battle_rival")
     .setMixedBattleBgm("battle_rival")
     .setPartyTemplates(trainerPartyTemplates.RIVAL_3)
-    .setPartyMemberFunc(
-      0,
-      getRandomPartyMemberFunc(
-        [
-          SpeciesId.VENUSAUR,
-          SpeciesId.CHARIZARD,
-          SpeciesId.BLASTOISE,
-          SpeciesId.MEGANIUM,
-          SpeciesId.TYPHLOSION,
-          SpeciesId.FERALIGATR,
-          SpeciesId.SCEPTILE,
-          SpeciesId.BLAZIKEN,
-          SpeciesId.SWAMPERT,
-          SpeciesId.TORTERRA,
-          SpeciesId.INFERNAPE,
-          SpeciesId.EMPOLEON,
-          SpeciesId.SERPERIOR,
-          SpeciesId.EMBOAR,
-          SpeciesId.SAMUROTT,
-          SpeciesId.CHESNAUGHT,
-          SpeciesId.DELPHOX,
-          SpeciesId.GRENINJA,
-          SpeciesId.DECIDUEYE,
-          SpeciesId.INCINEROAR,
-          SpeciesId.PRIMARINA,
-          SpeciesId.RILLABOOM,
-          SpeciesId.CINDERACE,
-          SpeciesId.INTELEON,
-          SpeciesId.MEOWSCARADA,
-          SpeciesId.SKELEDIRGE,
-          SpeciesId.QUAQUAVAL,
-        ],
-        TrainerSlot.TRAINER,
-        true,
-        forceRivalStarterTraits,
-      ),
-    )
-    .setPartyMemberFunc(
-      1,
-      getRandomPartyMemberFunc(
-        [
-          SpeciesId.PIDGEOT,
-          SpeciesId.NOCTOWL,
-          SpeciesId.SWELLOW,
-          SpeciesId.STARAPTOR,
-          SpeciesId.UNFEZANT,
-          SpeciesId.TALONFLAME,
-          SpeciesId.TOUCANNON,
-          SpeciesId.CORVIKNIGHT,
-          SpeciesId.KILOWATTREL,
-        ],
-        TrainerSlot.TRAINER,
-        true,
-        forceRivalBirdAbility,
-      ),
-    )
-    .setPartyMemberFunc(
-      2,
-      getRandomPartyMemberFunc(
-        [
-          SpeciesId.NIDOQUEEN,
-          SpeciesId.NIDOKING,
-          SpeciesId.PRIMEAPE,
-          SpeciesId.ARCANINE,
-          SpeciesId.KADABRA,
-          SpeciesId.MACHOKE,
-          SpeciesId.HAUNTER,
-          SpeciesId.MAGNETON,
-          SpeciesId.RHYDON,
-          SpeciesId.TANGROWTH,
-          SpeciesId.PORYGON2,
-          SpeciesId.ELECTIVIRE,
-          SpeciesId.MAGMAR,
-          SpeciesId.AZUMARILL,
-          SpeciesId.URSARING,
-          SpeciesId.PILOSWINE,
-          SpeciesId.VIGOROTH,
-          SpeciesId.LAIRON,
-          SpeciesId.SEALEO,
-          SpeciesId.MILOTIC,
-          SpeciesId.SNORLAX,
-          SpeciesId.BOLDORE,
-          SpeciesId.GURDURR,
-          SpeciesId.PALPITOAD,
-          SpeciesId.KROKOROK,
-          SpeciesId.COFAGRIGUS,
-          SpeciesId.DUOSION,
-          SpeciesId.VANILLISH,
-          SpeciesId.EELEKTRIK,
-          SpeciesId.LAMPENT,
-          SpeciesId.MUDSDALE,
-          SpeciesId.ARAQUANID,
-          SpeciesId.GOLISOPOD,
-          SpeciesId.HATTREM,
-          SpeciesId.MORGREM,
-          SpeciesId.DOLLIV,
-          SpeciesId.NACLSTACK,
-          [SpeciesId.ARMAROUGE, SpeciesId.CERULEDGE],
-          SpeciesId.TINKATUFF,
-          SpeciesId.GLIMMORA,
-        ],
-        TrainerSlot.TRAINER,
-        true,
-        p => (p.level = 36),
-      ),
-    )
-    .setPartyMemberFunc(
-      3,
-      getRandomPartyMemberFunc(
-        [
-          SpeciesId.CLEFABLE,
-          [SpeciesId.SLOWBRO, SpeciesId.SLOWKING],
-          SpeciesId.PINSIR,
-          SpeciesId.LAPRAS,
-          SpeciesId.SCIZOR,
-          SpeciesId.HERACROSS,
-          SpeciesId.SNEASEL,
-          SpeciesId.GARDEVOIR,
-          SpeciesId.ROSERADE,
-          SpeciesId.SPIRITOMB,
-          SpeciesId.LUCARIO,
-          SpeciesId.DRAPION,
-          SpeciesId.GALLADE,
-          SpeciesId.ROTOM,
-          SpeciesId.EXCADRILL,
-          [SpeciesId.ZOROARK, SpeciesId.HISUI_ZOROARK],
-          SpeciesId.FERROTHORN,
-          SpeciesId.DURANT,
-          SpeciesId.FLORGES,
-          SpeciesId.DOUBLADE,
-          SpeciesId.VIKAVOLT,
-          SpeciesId.MIMIKYU,
-          SpeciesId.DHELMISE,
-          SpeciesId.POLTEAGEIST,
-          SpeciesId.COPPERAJAH,
-          SpeciesId.KLEAVOR,
-          SpeciesId.BASCULIN,
-          SpeciesId.HISUI_SNEASEL,
-          SpeciesId.HISUI_QWILFISH,
-          SpeciesId.PAWMOT,
-          SpeciesId.CETITAN,
-          SpeciesId.DONDOZO,
-          SpeciesId.DUDUNSPARCE,
-          SpeciesId.GHOLDENGO,
-          SpeciesId.POLTCHAGEIST,
-          [SpeciesId.GALAR_SLOWBRO, SpeciesId.GALAR_SLOWKING],
-          SpeciesId.HISUI_ARCANINE,
-          SpeciesId.PALDEA_TAUROS,
-        ],
-        TrainerSlot.TRAINER,
-        true,
-        p => {
-          if (p.species.speciesId === SpeciesId.ROTOM) {
-            const form = randSeedIntRange(1, 3);
-            if (form === 1) {
-              p.formIndex = 1; // Heat
-            } else if (form === 2) {
-              p.formIndex = 2; // Wash
-            } else {
-              p.formIndex = 5; // Mow
-            }
-          }
-          if (p.species.speciesId === SpeciesId.BASCULIN) {
-            p.formIndex = 2; // White
-          }
-          if (p.species.speciesId === SpeciesId.PALDEA_TAUROS) {
-            const form = randSeedIntRange(1, 2); // Blaze, Aqua
-            if (form === 1) {
-              p.formIndex = 1; // Blaze
-            } else {
-              p.formIndex = 2; // Aqua
-            }
-          }
-          p.level = 38;
-        },
-      ),
-    ),
+    .setPartyMemberFunc(0, getRandomRivalPartyMemberFunc(RIVAL_3_POOL, 0))
+    .setPartyMemberFunc(1, getRandomRivalPartyMemberFunc(RIVAL_3_POOL, 1))
+    .setPartyMemberFunc(2, getRandomRivalPartyMemberFunc(RIVAL_3_POOL, 2))
+    .setPartyMemberFunc(3, getRandomRivalPartyMemberFunc(RIVAL_3_POOL, 3)),
   [TrainerType.RIVAL_4]: new TrainerConfig(++t)
     .setName("Finn")
     .setHasGenders("Ivy")
@@ -4927,216 +4598,11 @@ export const trainerConfigs: TrainerConfigs = {
     .setMixedBattleBgm("battle_rival_2")
     .setPartyTemplates(trainerPartyTemplates.RIVAL_4)
     .setModifierRewardFuncs(() => modifierTypes.TERA_ORB)
-    .setPartyMemberFunc(
-      0,
-      getRandomPartyMemberFunc(
-        [
-          SpeciesId.VENUSAUR,
-          SpeciesId.CHARIZARD,
-          SpeciesId.BLASTOISE,
-          SpeciesId.MEGANIUM,
-          SpeciesId.TYPHLOSION,
-          SpeciesId.FERALIGATR,
-          SpeciesId.SCEPTILE,
-          SpeciesId.BLAZIKEN,
-          SpeciesId.SWAMPERT,
-          SpeciesId.TORTERRA,
-          SpeciesId.INFERNAPE,
-          SpeciesId.EMPOLEON,
-          SpeciesId.SERPERIOR,
-          SpeciesId.EMBOAR,
-          SpeciesId.SAMUROTT,
-          SpeciesId.CHESNAUGHT,
-          SpeciesId.DELPHOX,
-          SpeciesId.GRENINJA,
-          SpeciesId.DECIDUEYE,
-          SpeciesId.INCINEROAR,
-          SpeciesId.PRIMARINA,
-          SpeciesId.RILLABOOM,
-          SpeciesId.CINDERACE,
-          SpeciesId.INTELEON,
-          SpeciesId.MEOWSCARADA,
-          SpeciesId.SKELEDIRGE,
-          SpeciesId.QUAQUAVAL,
-        ],
-        TrainerSlot.TRAINER,
-        true,
-        forceRivalStarterTraits,
-      ),
-    )
-    .setPartyMemberFunc(
-      1,
-      getRandomPartyMemberFunc(
-        [
-          SpeciesId.PIDGEOT,
-          SpeciesId.NOCTOWL,
-          SpeciesId.SWELLOW,
-          SpeciesId.STARAPTOR,
-          SpeciesId.UNFEZANT,
-          SpeciesId.TALONFLAME,
-          SpeciesId.TOUCANNON,
-          SpeciesId.CORVIKNIGHT,
-          SpeciesId.KILOWATTREL,
-        ],
-        TrainerSlot.TRAINER,
-        true,
-        forceRivalBirdAbility,
-      ),
-    )
-    .setPartyMemberFunc(
-      2,
-      getRandomPartyMemberFunc(
-        [
-          SpeciesId.NIDOQUEEN,
-          SpeciesId.NIDOKING,
-          SpeciesId.ANNIHILAPE,
-          SpeciesId.ARCANINE,
-          SpeciesId.ALAKAZAM,
-          SpeciesId.MACHAMP,
-          SpeciesId.GENGAR,
-          SpeciesId.MAGNEZONE,
-          SpeciesId.RHYPERIOR,
-          SpeciesId.TANGROWTH,
-          SpeciesId.PORYGON_Z,
-          SpeciesId.ELECTIVIRE,
-          SpeciesId.MAGMORTAR,
-          SpeciesId.AZUMARILL,
-          SpeciesId.URSALUNA,
-          SpeciesId.MAMOSWINE,
-          SpeciesId.SLAKING,
-          SpeciesId.AGGRON,
-          SpeciesId.WALREIN,
-          SpeciesId.MILOTIC,
-          SpeciesId.SNORLAX,
-          SpeciesId.GIGALITH,
-          SpeciesId.CONKELDURR,
-          SpeciesId.SEISMITOAD,
-          SpeciesId.KROOKODILE,
-          SpeciesId.COFAGRIGUS,
-          SpeciesId.REUNICLUS,
-          SpeciesId.VANILLUXE,
-          SpeciesId.EELEKTROSS,
-          SpeciesId.CHANDELURE,
-          SpeciesId.MUDSDALE,
-          SpeciesId.ARAQUANID,
-          SpeciesId.GOLISOPOD,
-          SpeciesId.HATTERENE,
-          SpeciesId.GRIMMSNARL,
-          SpeciesId.ARBOLIVA,
-          SpeciesId.GARGANACL,
-          [SpeciesId.ARMAROUGE, SpeciesId.CERULEDGE],
-          SpeciesId.TINKATON,
-          SpeciesId.GLIMMORA,
-        ],
-        TrainerSlot.TRAINER,
-        true,
-        p => (p.level = 71),
-      ),
-    )
-    .setPartyMemberFunc(
-      3,
-      getRandomPartyMemberFunc(
-        [
-          SpeciesId.CLEFABLE,
-          [SpeciesId.SLOWBRO, SpeciesId.SLOWKING],
-          SpeciesId.PINSIR,
-          SpeciesId.LAPRAS,
-          SpeciesId.SCIZOR,
-          SpeciesId.HERACROSS,
-          SpeciesId.WEAVILE,
-          SpeciesId.GARDEVOIR,
-          SpeciesId.ROSERADE,
-          SpeciesId.SPIRITOMB,
-          SpeciesId.LUCARIO,
-          SpeciesId.DRAPION,
-          SpeciesId.GALLADE,
-          SpeciesId.ROTOM,
-          SpeciesId.EXCADRILL,
-          [SpeciesId.ZOROARK, SpeciesId.HISUI_ZOROARK],
-          SpeciesId.FERROTHORN,
-          SpeciesId.DURANT,
-          SpeciesId.FLORGES,
-          SpeciesId.AEGISLASH,
-          SpeciesId.VIKAVOLT,
-          SpeciesId.MIMIKYU,
-          SpeciesId.DHELMISE,
-          SpeciesId.POLTEAGEIST,
-          SpeciesId.COPPERAJAH,
-          SpeciesId.KLEAVOR,
-          SpeciesId.BASCULEGION, // Ensure gender does not change
-          SpeciesId.SNEASLER,
-          SpeciesId.OVERQWIL,
-          SpeciesId.PAWMOT,
-          SpeciesId.CETITAN,
-          SpeciesId.DONDOZO,
-          SpeciesId.DUDUNSPARCE,
-          SpeciesId.GHOLDENGO,
-          SpeciesId.POLTCHAGEIST,
-          [SpeciesId.GALAR_SLOWBRO, SpeciesId.GALAR_SLOWKING],
-          SpeciesId.HISUI_ARCANINE,
-          SpeciesId.PALDEA_TAUROS,
-        ],
-        TrainerSlot.TRAINER,
-        true,
-        p => {
-          if (p.species.speciesId === SpeciesId.ROTOM) {
-            const form = randSeedIntRange(1, 3);
-            if (form === 1) {
-              p.formIndex = 1; // Heat
-            } else if (form === 2) {
-              p.formIndex = 2; // Wash
-            } else {
-              p.formIndex = 5; // Mow
-            }
-          }
-          if (p.species.speciesId === SpeciesId.BASCULEGION) {
-            const form = randSeedIntRange(0, 1);
-            if (form === 0) {
-              p.formIndex = 0; // Male
-            } else {
-              p.formIndex = 1; // Female
-            }
-          }
-          if (p.species.speciesId === SpeciesId.PALDEA_TAUROS) {
-            const form = randSeedIntRange(1, 2); // Blaze, Aqua
-            if (form === 1) {
-              p.formIndex = 1; // Blaze
-            } else {
-              p.formIndex = 2; // Aqua
-            }
-          }
-          p.level = 71;
-        },
-      ),
-    )
-    .setPartyMemberFunc(
-      4,
-      getRandomPartyMemberFunc(
-        [
-          SpeciesId.DRAGONITE,
-          SpeciesId.KINGDRA,
-          SpeciesId.TYRANITAR,
-          SpeciesId.SALAMENCE,
-          SpeciesId.METAGROSS,
-          SpeciesId.GARCHOMP,
-          SpeciesId.HAXORUS,
-          SpeciesId.HYDREIGON,
-          SpeciesId.VOLCARONA,
-          SpeciesId.GOODRA,
-          SpeciesId.KOMMO_O,
-          SpeciesId.DRAGAPULT,
-          SpeciesId.KINGAMBIT,
-          SpeciesId.BAXCALIBUR,
-          SpeciesId.GHOLDENGO,
-          SpeciesId.ARCHALUDON,
-          SpeciesId.HYDRAPPLE,
-          SpeciesId.HISUI_GOODRA,
-        ],
-        TrainerSlot.TRAINER,
-        true,
-        p => (p.level = 69),
-      ),
-    )
+    .setPartyMemberFunc(0, getRandomRivalPartyMemberFunc(RIVAL_4_POOL, 0))
+    .setPartyMemberFunc(1, getRandomRivalPartyMemberFunc(RIVAL_4_POOL, 1))
+    .setPartyMemberFunc(2, getRandomRivalPartyMemberFunc(RIVAL_4_POOL, 2))
+    .setPartyMemberFunc(3, getRandomRivalPartyMemberFunc(RIVAL_4_POOL, 3))
+    .setPartyMemberFunc(4, getRandomRivalPartyMemberFunc(RIVAL_4_POOL, 4))
     .setInstantTera(0), // Tera starter to primary type
   [TrainerType.RIVAL_5]: new TrainerConfig(++t)
     .setName("Finn")
@@ -5150,225 +4616,12 @@ export const trainerConfigs: TrainerConfigs = {
     .setBattleBgm("battle_rival_3")
     .setMixedBattleBgm("battle_rival_3")
     .setPartyTemplates(trainerPartyTemplates.RIVAL_5)
-    .setPartyMemberFunc(
-      0,
-      getRandomPartyMemberFunc(
-        [
-          SpeciesId.VENUSAUR,
-          SpeciesId.CHARIZARD,
-          SpeciesId.BLASTOISE,
-          SpeciesId.MEGANIUM,
-          SpeciesId.TYPHLOSION,
-          SpeciesId.FERALIGATR,
-          SpeciesId.SCEPTILE,
-          SpeciesId.BLAZIKEN,
-          SpeciesId.SWAMPERT,
-          SpeciesId.TORTERRA,
-          SpeciesId.INFERNAPE,
-          SpeciesId.EMPOLEON,
-          SpeciesId.SERPERIOR,
-          SpeciesId.EMBOAR,
-          SpeciesId.SAMUROTT,
-          SpeciesId.CHESNAUGHT,
-          SpeciesId.DELPHOX,
-          SpeciesId.GRENINJA,
-          SpeciesId.DECIDUEYE,
-          SpeciesId.INCINEROAR,
-          SpeciesId.PRIMARINA,
-          SpeciesId.RILLABOOM,
-          SpeciesId.CINDERACE,
-          SpeciesId.INTELEON,
-          SpeciesId.MEOWSCARADA,
-          SpeciesId.SKELEDIRGE,
-          SpeciesId.QUAQUAVAL,
-        ],
-        TrainerSlot.TRAINER,
-        true,
-        p => forceRivalStarterTraits(p, 2),
-      ),
-    )
-    .setPartyMemberFunc(
-      1,
-      getRandomPartyMemberFunc(
-        [
-          SpeciesId.PIDGEOT,
-          SpeciesId.NOCTOWL,
-          SpeciesId.SWELLOW,
-          SpeciesId.STARAPTOR,
-          SpeciesId.UNFEZANT,
-          SpeciesId.TALONFLAME,
-          SpeciesId.TOUCANNON,
-          SpeciesId.CORVIKNIGHT,
-          SpeciesId.KILOWATTREL,
-        ],
-        TrainerSlot.TRAINER,
-        true,
-        forceRivalBirdAbility,
-      ),
-    )
-    .setPartyMemberFunc(
-      2,
-      getRandomPartyMemberFunc(
-        [
-          SpeciesId.NIDOQUEEN,
-          SpeciesId.NIDOKING,
-          SpeciesId.ANNIHILAPE,
-          SpeciesId.ARCANINE,
-          SpeciesId.ALAKAZAM,
-          SpeciesId.MACHAMP,
-          SpeciesId.GENGAR,
-          SpeciesId.MAGNEZONE,
-          SpeciesId.RHYPERIOR,
-          SpeciesId.TANGROWTH,
-          SpeciesId.PORYGON_Z,
-          SpeciesId.ELECTIVIRE,
-          SpeciesId.MAGMORTAR,
-          SpeciesId.AZUMARILL,
-          SpeciesId.URSALUNA,
-          SpeciesId.MAMOSWINE,
-          SpeciesId.SLAKING,
-          SpeciesId.AGGRON,
-          SpeciesId.WALREIN,
-          SpeciesId.MILOTIC,
-          SpeciesId.SNORLAX,
-          SpeciesId.GIGALITH,
-          SpeciesId.CONKELDURR,
-          SpeciesId.SEISMITOAD,
-          SpeciesId.KROOKODILE,
-          SpeciesId.COFAGRIGUS,
-          SpeciesId.REUNICLUS,
-          SpeciesId.VANILLUXE,
-          SpeciesId.EELEKTROSS,
-          SpeciesId.CHANDELURE,
-          SpeciesId.MUDSDALE,
-          SpeciesId.ARAQUANID,
-          SpeciesId.GOLISOPOD,
-          SpeciesId.HATTERENE,
-          SpeciesId.GRIMMSNARL,
-          SpeciesId.ARBOLIVA,
-          SpeciesId.GARGANACL,
-          [SpeciesId.ARMAROUGE, SpeciesId.CERULEDGE],
-          SpeciesId.TINKATON,
-          SpeciesId.GLIMMORA,
-        ],
-        TrainerSlot.TRAINER,
-        true,
-        p => (p.level = 125),
-      ),
-    )
-    .setPartyMemberFunc(
-      3,
-      getRandomPartyMemberFunc(
-        [
-          SpeciesId.CLEFABLE,
-          [SpeciesId.SLOWBRO, SpeciesId.SLOWKING],
-          SpeciesId.PINSIR,
-          SpeciesId.LAPRAS,
-          SpeciesId.SCIZOR,
-          SpeciesId.HERACROSS,
-          SpeciesId.WEAVILE,
-          SpeciesId.GARDEVOIR,
-          SpeciesId.ROSERADE,
-          SpeciesId.SPIRITOMB,
-          SpeciesId.LUCARIO,
-          SpeciesId.DRAPION,
-          SpeciesId.GALLADE,
-          SpeciesId.ROTOM,
-          SpeciesId.EXCADRILL,
-          [SpeciesId.ZOROARK, SpeciesId.HISUI_ZOROARK],
-          SpeciesId.FERROTHORN,
-          SpeciesId.DURANT,
-          SpeciesId.FLORGES,
-          SpeciesId.AEGISLASH,
-          SpeciesId.VIKAVOLT,
-          SpeciesId.MIMIKYU,
-          SpeciesId.DHELMISE,
-          SpeciesId.POLTEAGEIST,
-          SpeciesId.COPPERAJAH,
-          SpeciesId.KLEAVOR,
-          SpeciesId.BASCULEGION, // Ensure gender does not change
-          SpeciesId.SNEASLER,
-          SpeciesId.OVERQWIL,
-          SpeciesId.PAWMOT,
-          SpeciesId.CETITAN,
-          SpeciesId.DONDOZO,
-          SpeciesId.DUDUNSPARCE,
-          SpeciesId.GHOLDENGO,
-          SpeciesId.POLTCHAGEIST,
-          [SpeciesId.GALAR_SLOWBRO, SpeciesId.GALAR_SLOWKING],
-          SpeciesId.HISUI_ARCANINE,
-          SpeciesId.PALDEA_TAUROS,
-        ],
-        TrainerSlot.TRAINER,
-        true,
-        p => {
-          if (p.species.speciesId === SpeciesId.ROTOM) {
-            const form = randSeedIntRange(1, 3);
-            if (form === 1) {
-              p.formIndex = 1; // Heat
-            } else if (form === 2) {
-              p.formIndex = 2; // Wash
-            } else {
-              p.formIndex = 5; // Mow
-            }
-          }
-          if (p.species.speciesId === SpeciesId.BASCULEGION) {
-            const form = randSeedIntRange(0, 1);
-            if (form === 0) {
-              p.formIndex = 0; // Male
-            } else {
-              p.formIndex = 1; // Female
-            }
-          }
-          if (p.species.speciesId === SpeciesId.PALDEA_TAUROS) {
-            const form = randSeedIntRange(1, 2); // Blaze, Aqua
-            if (form === 1) {
-              p.formIndex = 1; // Blaze
-            } else {
-              p.formIndex = 2; // Aqua
-            }
-          }
-          p.level = 125;
-        },
-      ),
-    )
-    .setPartyMemberFunc(
-      4,
-      getRandomPartyMemberFunc(
-        [
-          SpeciesId.DRAGONITE,
-          SpeciesId.KINGDRA,
-          SpeciesId.TYRANITAR,
-          SpeciesId.SALAMENCE,
-          SpeciesId.METAGROSS,
-          SpeciesId.GARCHOMP,
-          SpeciesId.HAXORUS,
-          SpeciesId.HYDREIGON,
-          SpeciesId.VOLCARONA,
-          SpeciesId.GOODRA,
-          SpeciesId.KOMMO_O,
-          SpeciesId.DRAGAPULT,
-          SpeciesId.KINGAMBIT,
-          SpeciesId.BAXCALIBUR,
-          SpeciesId.GHOLDENGO,
-          SpeciesId.ARCHALUDON,
-          SpeciesId.HYDRAPPLE,
-          SpeciesId.HISUI_GOODRA,
-        ],
-        TrainerSlot.TRAINER,
-        true,
-        p => (p.level = 127),
-      ),
-    )
-    .setPartyMemberFunc(
-      5,
-      getRandomPartyMemberFunc([SpeciesId.RAYQUAZA], TrainerSlot.TRAINER, true, p => {
-        p.setBoss(true, 3);
-        p.pokeball = PokeballType.MASTER_BALL;
-        p.shiny = timedEventManager.getClassicTrainerShinyChance() === 0;
-        p.variant = 1;
-      }),
-    )
+    .setPartyMemberFunc(0, getRandomRivalPartyMemberFunc(RIVAL_5_POOL, 0))
+    .setPartyMemberFunc(1, getRandomRivalPartyMemberFunc(RIVAL_5_POOL, 1))
+    .setPartyMemberFunc(2, getRandomRivalPartyMemberFunc(RIVAL_5_POOL, 2))
+    .setPartyMemberFunc(3, getRandomRivalPartyMemberFunc(RIVAL_5_POOL, 3))
+    .setPartyMemberFunc(4, getRandomRivalPartyMemberFunc(RIVAL_5_POOL, 4))
+    .setPartyMemberFunc(5, getRandomRivalPartyMemberFunc(RIVAL_5_POOL, 5))
     .setInstantTera(0), // Tera starter to primary type
   [TrainerType.RIVAL_6]: new TrainerConfig(++t)
     .setName("Finn")
@@ -5382,230 +4635,13 @@ export const trainerConfigs: TrainerConfigs = {
     .setBattleBgm("battle_rival_3")
     .setMixedBattleBgm("battle_rival_3")
     .setPartyTemplates(trainerPartyTemplates.RIVAL_6)
-    .setPartyMemberFunc(
-      0,
-      getRandomPartyMemberFunc(
-        [
-          SpeciesId.VENUSAUR,
-          SpeciesId.CHARIZARD,
-          SpeciesId.BLASTOISE,
-          SpeciesId.MEGANIUM,
-          SpeciesId.TYPHLOSION,
-          SpeciesId.FERALIGATR,
-          SpeciesId.SCEPTILE,
-          SpeciesId.BLAZIKEN,
-          SpeciesId.SWAMPERT,
-          SpeciesId.TORTERRA,
-          SpeciesId.INFERNAPE,
-          SpeciesId.EMPOLEON,
-          SpeciesId.SERPERIOR,
-          SpeciesId.EMBOAR,
-          SpeciesId.SAMUROTT,
-          SpeciesId.CHESNAUGHT,
-          SpeciesId.DELPHOX,
-          SpeciesId.GRENINJA,
-          SpeciesId.DECIDUEYE,
-          SpeciesId.INCINEROAR,
-          SpeciesId.PRIMARINA,
-          SpeciesId.RILLABOOM,
-          SpeciesId.CINDERACE,
-          SpeciesId.INTELEON,
-          SpeciesId.MEOWSCARADA,
-          SpeciesId.SKELEDIRGE,
-          SpeciesId.QUAQUAVAL,
-        ],
-        TrainerSlot.TRAINER,
-        true,
-        p => forceRivalStarterTraits(p, 3),
-      ),
-    )
-    .setPartyMemberFunc(
-      1,
-      getRandomPartyMemberFunc(
-        [
-          SpeciesId.PIDGEOT,
-          SpeciesId.NOCTOWL,
-          SpeciesId.SWELLOW,
-          SpeciesId.STARAPTOR,
-          SpeciesId.UNFEZANT,
-          SpeciesId.TALONFLAME,
-          SpeciesId.TOUCANNON,
-          SpeciesId.CORVIKNIGHT,
-          SpeciesId.KILOWATTREL,
-        ],
-        TrainerSlot.TRAINER,
-        true,
-        p => forceRivalBirdAbility(p, 2),
-      ),
-    )
-    .setPartyMemberFunc(
-      2,
-      getRandomPartyMemberFunc(
-        [
-          SpeciesId.NIDOQUEEN,
-          SpeciesId.NIDOKING,
-          SpeciesId.ANNIHILAPE,
-          SpeciesId.ARCANINE,
-          SpeciesId.ALAKAZAM,
-          SpeciesId.MACHAMP,
-          SpeciesId.GENGAR,
-          SpeciesId.MAGNEZONE,
-          SpeciesId.RHYPERIOR,
-          SpeciesId.TANGROWTH,
-          SpeciesId.PORYGON_Z,
-          SpeciesId.ELECTIVIRE,
-          SpeciesId.MAGMORTAR,
-          SpeciesId.AZUMARILL,
-          SpeciesId.URSALUNA,
-          SpeciesId.MAMOSWINE,
-          SpeciesId.SLAKING,
-          SpeciesId.AGGRON,
-          SpeciesId.WALREIN,
-          SpeciesId.MILOTIC,
-          SpeciesId.SNORLAX,
-          SpeciesId.GIGALITH,
-          SpeciesId.CONKELDURR,
-          SpeciesId.SEISMITOAD,
-          SpeciesId.KROOKODILE,
-          SpeciesId.COFAGRIGUS,
-          SpeciesId.REUNICLUS,
-          SpeciesId.VANILLUXE,
-          SpeciesId.EELEKTROSS,
-          SpeciesId.CHANDELURE,
-          SpeciesId.MUDSDALE,
-          SpeciesId.ARAQUANID,
-          SpeciesId.GOLISOPOD,
-          SpeciesId.HATTERENE,
-          SpeciesId.GRIMMSNARL,
-          SpeciesId.ARBOLIVA,
-          SpeciesId.GARGANACL,
-          [SpeciesId.ARMAROUGE, SpeciesId.CERULEDGE],
-          SpeciesId.TINKATON,
-          SpeciesId.GLIMMORA,
-        ],
-        TrainerSlot.TRAINER,
-        true,
-        p => (p.level = 189),
-      ),
-    )
-    .setPartyMemberFunc(
-      3,
-      getRandomPartyMemberFunc(
-        [
-          SpeciesId.CLEFABLE,
-          [SpeciesId.SLOWBRO, SpeciesId.SLOWKING],
-          SpeciesId.PINSIR,
-          SpeciesId.LAPRAS,
-          SpeciesId.SCIZOR,
-          SpeciesId.HERACROSS,
-          SpeciesId.WEAVILE,
-          SpeciesId.GARDEVOIR,
-          SpeciesId.ROSERADE,
-          SpeciesId.SPIRITOMB,
-          SpeciesId.LUCARIO,
-          SpeciesId.DRAPION,
-          SpeciesId.GALLADE,
-          SpeciesId.ROTOM,
-          SpeciesId.EXCADRILL,
-          [SpeciesId.ZOROARK, SpeciesId.HISUI_ZOROARK],
-          SpeciesId.FERROTHORN,
-          SpeciesId.DURANT,
-          SpeciesId.FLORGES,
-          SpeciesId.AEGISLASH,
-          SpeciesId.VIKAVOLT,
-          SpeciesId.MIMIKYU,
-          SpeciesId.DHELMISE,
-          SpeciesId.POLTEAGEIST,
-          SpeciesId.COPPERAJAH,
-          SpeciesId.KLEAVOR,
-          SpeciesId.BASCULEGION, // Ensure gender does not change
-          SpeciesId.SNEASLER,
-          SpeciesId.OVERQWIL,
-          SpeciesId.PAWMOT,
-          SpeciesId.CETITAN,
-          SpeciesId.DONDOZO,
-          SpeciesId.DUDUNSPARCE,
-          SpeciesId.GHOLDENGO,
-          SpeciesId.POLTCHAGEIST,
-          [SpeciesId.GALAR_SLOWBRO, SpeciesId.GALAR_SLOWKING],
-          SpeciesId.HISUI_ARCANINE,
-          SpeciesId.PALDEA_TAUROS,
-        ],
-        TrainerSlot.TRAINER,
-        true,
-        p => {
-          if (p.species.speciesId === SpeciesId.ROTOM) {
-            const form = randSeedIntRange(1, 3);
-            if (form === 1) {
-              p.formIndex = 1; // Heat
-            } else if (form === 2) {
-              p.formIndex = 2; // Wash
-            } else {
-              p.formIndex = 5; // Mow
-            }
-          }
-          if (p.species.speciesId === SpeciesId.BASCULEGION) {
-            const form = randSeedIntRange(0, 1);
-            if (form === 0) {
-              p.formIndex = 0; // Male
-            } else {
-              p.formIndex = 1; // Female
-            }
-          }
-          if (p.species.speciesId === SpeciesId.PALDEA_TAUROS) {
-            const form = randSeedIntRange(1, 2); // Blaze, Aqua
-            if (form === 1) {
-              p.formIndex = 1; // Blaze
-            } else {
-              p.formIndex = 2; // Aqua
-            }
-          }
-          p.level = 189;
-        },
-      ),
-    )
-    .setPartyMemberFunc(
-      4,
-      getRandomPartyMemberFunc(
-        [
-          SpeciesId.DRAGONITE,
-          SpeciesId.KINGDRA,
-          SpeciesId.TYRANITAR,
-          SpeciesId.SALAMENCE,
-          SpeciesId.METAGROSS,
-          SpeciesId.GARCHOMP,
-          SpeciesId.HAXORUS,
-          SpeciesId.HYDREIGON,
-          SpeciesId.VOLCARONA,
-          SpeciesId.GOODRA,
-          SpeciesId.KOMMO_O,
-          SpeciesId.DRAGAPULT,
-          SpeciesId.KINGAMBIT,
-          SpeciesId.BAXCALIBUR,
-          SpeciesId.GHOLDENGO,
-          SpeciesId.ARCHALUDON,
-          SpeciesId.HYDRAPPLE,
-          SpeciesId.HISUI_GOODRA,
-        ],
-        TrainerSlot.TRAINER,
-        true,
-        p => (p.level = 189),
-      ),
-    )
-    .setPartyMemberFunc(
-      5,
-      getRandomPartyMemberFunc([SpeciesId.RAYQUAZA], TrainerSlot.TRAINER, true, p => {
-        p.setBoss();
-        p.generateAndPopulateMoveset();
-        p.pokeball = PokeballType.MASTER_BALL;
-        p.shiny = timedEventManager.getClassicTrainerShinyChance() === 0;
-        p.variant = 1;
-        p.formIndex = 1; // Mega Rayquaza
-        p.generateName();
-      }),
-    )
+    .setPartyMemberFunc(0, getRandomRivalPartyMemberFunc(RIVAL_6_POOL, 0))
+    .setPartyMemberFunc(1, getRandomRivalPartyMemberFunc(RIVAL_6_POOL, 1))
+    .setPartyMemberFunc(2, getRandomRivalPartyMemberFunc(RIVAL_6_POOL, 2))
+    .setPartyMemberFunc(3, getRandomRivalPartyMemberFunc(RIVAL_6_POOL, 3))
+    .setPartyMemberFunc(4, getRandomRivalPartyMemberFunc(RIVAL_6_POOL, 4))
+    .setPartyMemberFunc(5, getRandomRivalPartyMemberFunc(RIVAL_6_POOL, 5))
     .setInstantTera(0), // Tera starter to primary type
-
   [TrainerType.ROCKET_BOSS_GIOVANNI_1]: new TrainerConfig((t = TrainerType.ROCKET_BOSS_GIOVANNI_1))
     .setName("Giovanni")
     .initForEvilTeamLeader("Rocket Boss", [])
