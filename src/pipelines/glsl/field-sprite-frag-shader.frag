@@ -1,3 +1,11 @@
+/*
+ * SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+ * SPDX-FileContributor: FlashfyreDev
+ * SPDX-FileContributor: SirzBenjie
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 #ifdef GL_FRAGMENT_PRECISION_HIGH
 precision highp float;
 #else
