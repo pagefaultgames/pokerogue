@@ -1,6 +1,7 @@
 import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { BiomeId } from "#enums/biome-id";
+import { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
@@ -7621,12 +7622,10 @@ export function initBiomes() {
       ? biomeLinks[biome] as (BiomeId | [ BiomeId, number ])[]
       : [ biomeLinks[biome] as BiomeId ];
     for (const linkedBiomeEntry of linkedBiomes) {
-      const linkedBiome = !Array.isArray(linkedBiomeEntry)
-        ? linkedBiomeEntry as BiomeId
-        : linkedBiomeEntry[0];
-      const biomeChance = !Array.isArray(linkedBiomeEntry)
-        ? 1
-        : linkedBiomeEntry[1];
+      const linkedBiome = Array.isArray(linkedBiomeEntry)
+        ? linkedBiomeEntry[0] : linkedBiomeEntry as BiomeId;
+      const biomeChance = Array.isArray(linkedBiomeEntry)
+        ? linkedBiomeEntry[1] : 1;
       if (!biomeDepths.hasOwnProperty(linkedBiome) || biomeChance < biomeDepths[linkedBiome][1] || (depth < biomeDepths[linkedBiome][0] && biomeChance === biomeDepths[linkedBiome][1])) {
         biomeDepths[linkedBiome] = [ depth + 1, biomeChance ];
         traverseBiome(linkedBiome, depth + 1);
@@ -7736,11 +7735,11 @@ export function initBiomes() {
             for (let s = 1; s < entry.length; s++) {
               const speciesId = entry[s];
               const prevolution = entry.flatMap((s: string | number) => pokemonEvolutions[s]).find(e => e && e.speciesId === speciesId);
-              const level = prevolution.level - (prevolution.level === 1 ? 1 : 0) + (prevolution.wildDelay * 10) - (tier >= BiomePoolTier.BOSS ? 10 : 0);
-              if (!newEntry.hasOwnProperty(level)) {
-                newEntry[level] = [ speciesId ];
-              } else {
+              const level = prevolution.level - (prevolution.level === 1 ? 1 : 0) + EvoLevelThresholdKind.WILD - (tier >= BiomePoolTier.BOSS ? 10 : 0);
+              if (newEntry.hasOwnProperty(level)) {
                 newEntry[level].push(speciesId);
+              } else {
+                newEntry[level] = [ speciesId ];
               }
             }
             biomeTierTimePool[e] = newEntry;

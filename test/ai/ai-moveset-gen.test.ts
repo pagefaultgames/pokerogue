@@ -11,6 +11,7 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { EnemyPokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
 import { NumberHolder } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { afterEach } from "node:test";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
@@ -50,7 +51,7 @@ function createTestablePokemon(
 ): EnemyPokemon {
   const pokemon = new EnemyPokemon(allSpecies[species], level, trainerSlot, boss);
   if (formIndex !== 0) {
-    const formIndexLength = allSpecies[species]?.forms.length;
+    const formIndexLength = getPokemonSpecies(species)?.forms.length;
     const name = allSpecies[species]?.name;
     expect(formIndex, `${name} does not have a form with index ${formIndex}`).toBeLessThan(formIndexLength);
     pokemon.formIndex = formIndex;

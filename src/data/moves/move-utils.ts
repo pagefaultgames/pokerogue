@@ -1,6 +1,7 @@
 import { allMoves } from "#data/data-lists";
 import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { MoveCategory, type MoveDamageCategory } from "#enums/move-category";
 import type { MoveId } from "#enums/move-id";
 import { MoveTarget } from "#enums/move-target";
 import { PokemonType } from "#enums/pokemon-type";
@@ -8,6 +9,7 @@ import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import type { Move, MoveTargetSet, UserMoveConditionFunc } from "#moves/move";
 import { NumberHolder } from "#utils/common";
+import { areAllies } from "#utils/pokemon-utils";
 
 /**
  * Return whether the move targets the field
@@ -133,3 +135,25 @@ export const frenzyMissFunc: UserMoveConditionFunc = (user: Pokemon, move: Move)
 
   return true;
 };
+
+/**
+ * Determine the target for the `user`'s counter-attack move
+ * @param user - The pokemon using the counter-like move
+ * @param damageCategory - The category of move to counter (physical or special), or `undefined` to counter both
+ * @returns - The battler index of the most recent, non-ally attacker using a move that matches the specified category, or `null` if no such attacker exists
+ */
+export function getCounterAttackTarget(user: Pokemon, damageCategory?: MoveDamageCategory): BattlerIndex | null {
+  for (const attackRecord of user.turnData.attacksReceived) {
+    // check if the attacker was an ally
+    const moveCategory = allMoves[attackRecord.move].category;
+    const sourceBattlerIndex = attackRecord.sourceBattlerIndex;
+    if (
+      moveCategory !== MoveCategory.STATUS
+      && !areAllies(sourceBattlerIndex, user.getBattlerIndex())
+      && (damageCategory === undefined || moveCategory === damageCategory)
+    ) {
+      return sourceBattlerIndex;
+    }
+  }
+  return null;
+}
