@@ -7,7 +7,7 @@ all:
   # Negations syntax from https://github.com/dorny/paths-filter/issues/184#issuecomment-2786521554
   - "src/**/!(*.{md,py,sh,gitkeep,gitignore})"
   - "test/**/!(*.{md,py,sh,gitkeep,gitignore})"
-  - "public/**/!(*.{md,py,sh,gitkeep,gitignore})"
+  - "assets/**/!(*.{md,py,sh,gitkeep,gitignore})"
   # Workflows that can impact tests
   - ".github/workflows/test*.yml"
   - ".github/test-filters.yml"

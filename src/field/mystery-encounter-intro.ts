@@ -36,7 +36,7 @@ type KnownFileRoot =
 export class MysteryEncounterSpriteConfig {
   /** The sprite key (which is the image file name). e.g. "ace_trainer_f" */
   spriteKey: string;
-  /** Refer to [/public/images](../../public/images) directorty for all folder names */
+  /** Refer to [/assets/images](../../assets/images) directorty for all folder names */
   fileRoot: (KnownFileRoot & string) | string;
   /** Optional replacement for `spriteKey`/`fileRoot`. Just know this defaults to male/genderless, form 0, no shiny */
   species?: SpeciesId;

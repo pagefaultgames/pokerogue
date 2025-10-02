@@ -31,6 +31,7 @@ import { Stat } from "#enums/stat";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import { PokemonMove } from "#moves/pokemon-move";
 import { NumberHolder, randSeedInt } from "#utils/common";
+import { willTerastallize } from "#utils/pokemon-utils";
 import { isBeta } from "#utils/utility-vars";
 
 /**
@@ -510,11 +511,7 @@ function forceStabMove(
   const chosenPool =
     stabMovePool.length > 0 || !forceAnyDamageIfNoStab
       ? stabMovePool
-      : filterPool(
-          pool,
-          m => allMoves[m[0]].category !== MoveCategory.STATUS && !STAB_BLACKLIST.has(m[0]),
-          totalWeight,
-        );
+      : filterPool(pool, m => allMoves[m].category !== MoveCategory.STATUS && !STAB_BLACKLIST.has(m), totalWeight);
 
   if (chosenPool.length > 0) {
     let rand = randSeedInt(totalWeight.value);
@@ -589,7 +586,7 @@ function fillInRemainingMovesetSlots(
   const tmCap = getMaxTmCount(pokemon.level);
   const eggCap = getMaxEggMoveCount(pokemon.level);
   const remainingPoolWeight = new NumberHolder(0);
-  while (remainingPool.length > pokemon.moveset.length && pokemon.moveset.length < 4) {
+  while (pokemon.moveset.length < 4) {
     const nonLevelMoveCount = tmCount.value + eggMoveCount.value;
     remainingPool = filterPool(
       baseWeights,
@@ -604,6 +601,11 @@ function fillInRemainingMovesetSlots(
     );
     if (pokemon.hasTrainer()) {
       filterRemainingTrainerMovePool(remainingPool, pokemon);
+    }
+    // Ensure loop cannot run infinitely if there are no allowed moves left to
+    // fill the remaining slots
+    if (remainingPool.length === 0) {
+      return;
     }
     const totalWeight = remainingPool.reduce((v, m) => v + m[1], 0);
     let rand = randSeedInt(totalWeight);
@@ -676,12 +678,7 @@ export function generateMoveset(pokemon: Pokemon): void {
   }
 
   /** Determine whether this pokemon will instantly tera */
-  const willTera =
-    hasTrainer
-    && globalScene.currentBattle?.trainer?.config.trainerAI.instantTeras.includes(
-      // The cast to EnemyPokemon is safe; includes will just return false if the property doesn't exist
-      (pokemon as EnemyPokemon).initialTeamIndex,
-    );
+  const willTera = hasTrainer && willTerastallize(pokemon as EnemyPokemon);
 
   adjustDamageMoveWeights(movePool, pokemon, willTera);
 
@@ -719,7 +716,7 @@ export function generateMoveset(pokemon: Pokemon): void {
     tmCount,
     eggMoveCount,
     baseWeights,
-    filterPool(baseWeights, (m: MoveId) => !pokemon.moveset.some(mo => m[0] === mo.moveId)),
+    filterPool(baseWeights, (m: MoveId) => !pokemon.moveset.some(mo => m === mo.moveId)),
   );
 }
 

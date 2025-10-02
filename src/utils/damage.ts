@@ -16,6 +16,7 @@ import { toDmgValue } from "#utils/common";
  * @param currentHp - The target's current HP
  * @param segmentHp - The HP in each segment (total HP / number of segments)
  * @param minSegmentIndex - The minimum segment index that can be cleared; default `0` (all segments). Used for the final boss
+ * @param currentSegmentIndex - The current segment index of the target; if not provided, it will be calculated from `currentHp` and `segmentHp`.
  * @returns A tuple consisting of the adjusted damage and index of the boss segment the target is in after damage is applied.
  */
 export function calculateBossSegmentDamage(
@@ -23,8 +24,9 @@ export function calculateBossSegmentDamage(
   currentHp: number,
   segmentHp: number,
   minSegmentIndex = 0,
+  currentSegmentIndex?: number,
 ): [adjustedDamage: number, clearedBossSegmentIndex: number] {
-  const segmentIndex = Math.ceil(currentHp / segmentHp) - 1;
+  const segmentIndex = currentSegmentIndex ?? Math.ceil(currentHp / segmentHp) - 1;
   if (segmentIndex <= 0) {
     return [damage, 1];
   }

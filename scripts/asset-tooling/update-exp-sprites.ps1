@@ -5,7 +5,7 @@
 
 [string[]] $keys = @()
 
-Get-ChildItem -Path '.\public\images\pokemon' -Recurse -Directory | Where-Object { $_.Name -eq 'exp' } | ForEach-Object {
+Get-ChildItem -Path '.\assets\images\pokemon' -Recurse -Directory | Where-Object { $_.Name -eq 'exp' } | ForEach-Object {
 	Get-ChildItem -Path $_.FullName -Recurse -File | ForEach-Object {
         $attr = ""
         if ($_.FullName.Contains('\shiny\')) {
@@ -26,4 +26,4 @@ Get-ChildItem -Path '.\public\images\pokemon' -Recurse -Directory | Where-Object
     }
 }
 
-$keys | ConvertTo-Json | Out-File -encoding ASCII .\public\exp-sprites.json
+$keys | ConvertTo-Json | Out-File -encoding ASCII .\assets\exp-sprites.json
