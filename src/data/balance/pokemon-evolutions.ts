@@ -802,7 +802,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.LUMINEON, 31, null, null)
   ],
   [SpeciesId.MANTYKE]: [
-    new SpeciesEvolution(SpeciesId.MANTINE, 28, null, {key: EvoCondKey.SPECIES_CAUGHT, speciesCaught: SpeciesId.REMORAID}, [28, 28, 48])
+    new SpeciesEvolution(SpeciesId.MANTINE, 28, null, {key: EvoCondKey.SPECIES_CAUGHT, speciesCaught: SpeciesId.REMORAID}, [0, 0, 20])
   ],
   [SpeciesId.SNOVER]: [
     new SpeciesEvolution(SpeciesId.ABOMASNOW, 40, null, null)
@@ -1032,7 +1032,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.GOGOAT, 32, null, null)
   ],
   [SpeciesId.PANCHAM]: [
-    new SpeciesEvolution(SpeciesId.PANGORO, 32, null, {key: EvoCondKey.PARTY_TYPE, pkmnType: PokemonType.DARK}, [32, 36, 40])
+    new SpeciesEvolution(SpeciesId.PANGORO, 32, null, {key: EvoCondKey.PARTY_TYPE, pkmnType: PokemonType.DARK}, [0, 4, 8])
   ],
   [SpeciesId.ESPURR]: [
     new SpeciesFormEvolution(SpeciesId.MEOWSTIC, "", "female", 25, null, {key: EvoCondKey.GENDER, gender: Gender.FEMALE}),
@@ -1064,7 +1064,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.SLIGGOO, 40, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DAWN, TimeOfDay.DAY]})
   ],
   [SpeciesId.SLIGGOO]: [
-    new SpeciesEvolution(SpeciesId.GOODRA, 50, null, {key: EvoCondKey.WEATHER, weather: [ WeatherType.RAIN, WeatherType.FOG, WeatherType.HEAVY_RAIN ]}, [50, 60, 70])
+    new SpeciesEvolution(SpeciesId.GOODRA, 50, null, {key: EvoCondKey.WEATHER, weather: [ WeatherType.RAIN, WeatherType.FOG, WeatherType.HEAVY_RAIN ]}, [0, 10, 20])
   ],
   [SpeciesId.BERGMITE]: [
     new SpeciesEvolution(SpeciesId.HISUI_AVALUGG, 37, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]}),
@@ -1147,8 +1147,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.COSMOEM, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 43}, [43, 53, 59])
   ],
   [SpeciesId.COSMOEM]: [
-    new SpeciesEvolution(SpeciesId.SOLGALEO, 13, EvolutionItem.SUN_FLUTE, null, [53, 73, 79]),
-    new SpeciesEvolution(SpeciesId.LUNALA, 13, EvolutionItem.MOON_FLUTE, null, [53, 73, 79])
+    new SpeciesEvolution(SpeciesId.SOLGALEO, 13, EvolutionItem.SUN_FLUTE, null, [40, 60, 66]),
+    new SpeciesEvolution(SpeciesId.LUNALA, 13, EvolutionItem.MOON_FLUTE, null, [40, 60, 66])
   ],
   [SpeciesId.MELTAN]: [
     new SpeciesEvolution(SpeciesId.MELMETAL, 48, null, null)
@@ -1266,7 +1266,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.SIRFETCHD, 30, null, null, /* [30, 35, 40] */)
   ],
   [SpeciesId.GALAR_SLOWPOKE]: [
-    new SpeciesEvolution(SpeciesId.GALAR_SLOWBRO, 1, EvolutionItem.GALARICA_CUFF, null, ),
+    new SpeciesEvolution(SpeciesId.GALAR_SLOWBRO, 1, EvolutionItem.GALARICA_CUFF, null, [37, 37, 37]),
     new SpeciesEvolution(SpeciesId.GALAR_SLOWKING, 1, EvolutionItem.GALARICA_WREATH, null, [37, 37, 37])
   ],
   [SpeciesId.GALAR_MR_MIME]: [
@@ -1288,7 +1288,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.HISUI_ZOROARK, 30, null, null)
   ],
   [SpeciesId.HISUI_SLIGGOO]: [
-    new SpeciesEvolution(SpeciesId.HISUI_GOODRA, 50, null, {key: EvoCondKey.WEATHER, weather: [ WeatherType.RAIN, WeatherType.FOG, WeatherType.HEAVY_RAIN ]}, [60, 70, 80])
+    new SpeciesEvolution(SpeciesId.HISUI_GOODRA, 50, null, {key: EvoCondKey.WEATHER, weather: [ WeatherType.RAIN, WeatherType.FOG, WeatherType.HEAVY_RAIN ]}, [0, 10, 20])
   ],
   [SpeciesId.SPRIGATITO]: [
     new SpeciesEvolution(SpeciesId.FLORAGATO, 16, null, null)
@@ -1440,10 +1440,10 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.EXEGGUTOR, 1, EvolutionItem.LEAF_STONE, null, [35, 40, 40])
   ],
   [SpeciesId.TANGELA]: [
-    new SpeciesEvolution(SpeciesId.TANGROWTH, 34, null, {key: EvoCondKey.MOVE, move: MoveId.ANCIENT_POWER}, [29, 37, 45])
+    new SpeciesEvolution(SpeciesId.TANGROWTH, 34, null, {key: EvoCondKey.MOVE, move: MoveId.ANCIENT_POWER}, [0, 3, 11])
   ],
   [SpeciesId.LICKITUNG]: [
-    new SpeciesEvolution(SpeciesId.LICKILICKY, 32, null, {key: EvoCondKey.MOVE, move: MoveId.ROLLOUT}, [33, 38, 48])
+    new SpeciesEvolution(SpeciesId.LICKILICKY, 32, null, {key: EvoCondKey.MOVE, move: MoveId.ROLLOUT}, [1, 6, 16])
   ],
   [SpeciesId.STARYU]: [
     new SpeciesEvolution(SpeciesId.STARMIE, 1, EvolutionItem.WATER_STONE, null, [20, 25, 30])
@@ -1470,13 +1470,13 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.TOGEKISS, 1, EvolutionItem.SHINY_STONE, null, [40, 45, 50])
   ],
   [SpeciesId.AIPOM]: [
-    new SpeciesEvolution(SpeciesId.AMBIPOM, 32, null, {key: EvoCondKey.MOVE, move: MoveId.DOUBLE_HIT}, [33, 38, 38])
+    new SpeciesEvolution(SpeciesId.AMBIPOM, 32, null, {key: EvoCondKey.MOVE, move: MoveId.DOUBLE_HIT}, [1, 6, 6])
   ],
   [SpeciesId.SUNKERN]: [
     new SpeciesEvolution(SpeciesId.SUNFLORA, 1, EvolutionItem.SUN_STONE, null, [16, 18, 20])
   ],
   [SpeciesId.YANMA]: [
-    new SpeciesEvolution(SpeciesId.YANMEGA, 33, null, {key: EvoCondKey.MOVE, move: MoveId.ANCIENT_POWER}, [34, 42, 50])
+    new SpeciesEvolution(SpeciesId.YANMEGA, 33, null, {key: EvoCondKey.MOVE, move: MoveId.ANCIENT_POWER}, [1, 9, 17])
   ],
   [SpeciesId.MURKROW]: [
     new SpeciesEvolution(SpeciesId.HONCHKROW, 1, EvolutionItem.DUSK_STONE, null, [26, 32, 38])
@@ -1485,11 +1485,11 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.MISMAGIUS, 1, EvolutionItem.DUSK_STONE, null, [22, 26, 30])
   ],
   [SpeciesId.GIRAFARIG]: [
-    new SpeciesEvolution(SpeciesId.FARIGIRAF, 32, null, {key: EvoCondKey.MOVE, move: MoveId.TWIN_BEAM}, [33, 38, 48])
+    new SpeciesEvolution(SpeciesId.FARIGIRAF, 32, null, {key: EvoCondKey.MOVE, move: MoveId.TWIN_BEAM}, [1, 6, 16])
   ],
   [SpeciesId.DUNSPARCE]: [
-    new SpeciesFormEvolution(SpeciesId.DUDUNSPARCE, "", "three-segment", 32, null, [{key: EvoCondKey.RANDOM_FORM, value: 4}, {key: EvoCondKey.MOVE, move: MoveId.HYPER_DRILL}], [33, 38, 48]),
-    new SpeciesFormEvolution(SpeciesId.DUDUNSPARCE, "", "two-segment", 32, null, {key: EvoCondKey.MOVE, move: MoveId.HYPER_DRILL}, [33, 38, 48])
+    new SpeciesFormEvolution(SpeciesId.DUDUNSPARCE, "", "three-segment", 32, null, [{key: EvoCondKey.RANDOM_FORM, value: 4}, {key: EvoCondKey.MOVE, move: MoveId.HYPER_DRILL}], [1, 6, 16]),
+    new SpeciesFormEvolution(SpeciesId.DUDUNSPARCE, "", "two-segment", 32, null, {key: EvoCondKey.MOVE, move: MoveId.HYPER_DRILL}, [1, 6, 16])
   ],
   [SpeciesId.GLIGAR]: [
     new SpeciesEvolution(SpeciesId.GLISCOR, 1, EvolutionItem.RAZOR_FANG, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]}, [48, 56, 64])
@@ -1507,7 +1507,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.MAMOSWINE, 1, null, {key: EvoCondKey.MOVE, move: MoveId.ANCIENT_POWER}, [48, 56, 64])
   ],
   [SpeciesId.STANTLER]: [
-    new SpeciesEvolution(SpeciesId.WYRDEER, 25, null, {key: EvoCondKey.MOVE, move: MoveId.PSYSHIELD_BASH}, [35, 45, 55])
+    new SpeciesEvolution(SpeciesId.WYRDEER, 25, null, {key: EvoCondKey.MOVE, move: MoveId.PSYSHIELD_BASH}, [10, 20, 30])
   ],
   [SpeciesId.LOMBRE]: [
     new SpeciesEvolution(SpeciesId.LUDICOLO, 1, EvolutionItem.WATER_STONE, null, [35, 42, 49])
@@ -1552,8 +1552,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [SpeciesId.BASCULIN]: [
     // TODO: Uncomment evo delay when different evo condition is implemented
-    new SpeciesFormEvolution(SpeciesId.BASCULEGION, "white-striped", "female", 40, null, [{key: EvoCondKey.GENDER, gender: Gender.FEMALE}], /* [45, 65, 85] */),
-    new SpeciesFormEvolution(SpeciesId.BASCULEGION, "white-striped", "male", 40, null, [{key: EvoCondKey.GENDER, gender: Gender.MALE}], /* [45, 65, 85 ] */)
+    new SpeciesFormEvolution(SpeciesId.BASCULEGION, "white-striped", "female", 40, null, [{key: EvoCondKey.GENDER, gender: Gender.FEMALE}] /*, [45, 65, 85]*/),
+    new SpeciesFormEvolution(SpeciesId.BASCULEGION, "white-striped", "male", 40, null, [{key: EvoCondKey.GENDER, gender: Gender.MALE}] /*, [45, 65, 85 ]*/)
   ],
   [SpeciesId.MINCCINO]: [
     new SpeciesEvolution(SpeciesId.CINCCINO, 1, EvolutionItem.SHINY_STONE, null, [24, 32, 32])
@@ -1585,7 +1585,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesFormEvolution(SpeciesId.LYCANROC, "", "midnight", 25, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]})
   ],
   [SpeciesId.STEENEE]: [
-    new SpeciesEvolution(SpeciesId.TSAREENA, 28, null, {key: EvoCondKey.MOVE, move: MoveId.STOMP}, [29, 34, 39])
+    new SpeciesEvolution(SpeciesId.TSAREENA, 28, null, {key: EvoCondKey.MOVE, move: MoveId.STOMP}, [1, 6, 11])
   ],
   [SpeciesId.POIPOLE]: [
     new SpeciesEvolution(SpeciesId.NAGANADEL, 1, null, {key: EvoCondKey.MOVE, move: MoveId.DRAGON_PULSE}, [53, 59, 61])
@@ -1754,7 +1754,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.ALOLA_GOLEM, 1, EvolutionItem.LINKING_CORD, null, [35, 45, 55])
   ],
   [SpeciesId.PRIMEAPE]: [
-    new SpeciesEvolution(SpeciesId.ANNIHILAPE, 35, null, {key: EvoCondKey.MOVE, move: MoveId.RAGE_FIST}, [45, 55, 65])
+    new SpeciesEvolution(SpeciesId.ANNIHILAPE, 35, null, {key: EvoCondKey.MOVE, move: MoveId.RAGE_FIST}, [10, 20, 30])
   ],
   [SpeciesId.GOLBAT]: [
     new SpeciesEvolution(SpeciesId.CROBAT, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 120}, [42, 48, 54])
