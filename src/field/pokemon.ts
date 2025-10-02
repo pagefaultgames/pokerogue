@@ -68,7 +68,7 @@ import type { TypeDamageMultiplier } from "#data/type";
 import { getTypeDamageMultiplier, getTypeRgb } from "#data/type";
 import { AbilityId } from "#enums/ability-id";
 import { AiType } from "#enums/ai-type";
-import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaSide } from "#enums/arena-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
 import { BattlerIndex } from "#enums/battler-index";
@@ -1520,7 +1520,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         }
         break;
       case Stat.SPD: {
-        const side = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+        const side = this.isPlayer() ? ArenaSide.PLAYER : ArenaSide.ENEMY;
         if (globalScene.arena.getTagOnSide(ArenaTagType.TAILWIND, side)) {
           ret *= 2;
         }
@@ -2359,7 +2359,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       applyAbAttrs("CheckTrappedAbAttr", { pokemon: opponent, trapped, opponent: this, simulated }, trappedAbMessages);
     }
 
-    const side = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+    const side = this.isPlayer() ? ArenaSide.PLAYER : ArenaSide.ENEMY;
     return (
       trapped.value || !!this.getTag(TrappedTag) || !!globalScene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, side)
     );
@@ -3554,7 +3554,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     effectiveness,
   }: getAttackDamageParams): DamageCalculationResult {
     const damage = new NumberHolder(0);
-    const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+    const defendingSide = this.isPlayer() ? ArenaSide.PLAYER : ArenaSide.ENEMY;
 
     const variableCategory = new NumberHolder(move.category);
     applyMoveAttrs("VariableMoveCategoryAttr", source, this, move, variableCategory);
@@ -3860,7 +3860,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     applyAbAttrs("BlockCritAbAttr", { pokemon: this, blockCrit });
     const blockCritTag = globalScene.arena.getTagOnSide(
       NoCritTag,
-      this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY,
+      this.isPlayer() ? ArenaSide.PLAYER : ArenaSide.ENEMY,
     );
     isCritical &&= !blockCritTag && !blockCrit.value; // need to roll a crit and not be blocked by either crit prevention effect
 
@@ -5070,7 +5070,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns Whether this Pokémon is protected by Safeguard
    */
   public isSafeguarded(attacker: Pokemon): boolean {
-    const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+    const defendingSide = this.isPlayer() ? ArenaSide.PLAYER : ArenaSide.ENEMY;
     if (globalScene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, defendingSide)) {
       const bypassed = new BooleanHolder(false);
       if (attacker) {

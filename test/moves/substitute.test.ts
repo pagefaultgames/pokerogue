@@ -1,7 +1,7 @@
 import { SubstituteTag, TrappedTag } from "#data/battler-tags";
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaSide } from "#enums/arena-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -189,7 +189,7 @@ describe("Moves - Substitute", () => {
     await game.toNextTurn();
 
     expect(leadPokemon.getMoveEffectiveness).not.toHaveReturnedWith(0);
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.LIGHT_SCREEN, ArenaTagSide.PLAYER)).toBeDefined();
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.LIGHT_SCREEN, ArenaSide.PLAYER)).toBeDefined();
   });
 
   it("shouldn't block the opponent from setting hazards", async () => {
@@ -205,7 +205,7 @@ describe("Moves - Substitute", () => {
     await game.toNextTurn();
 
     expect(leadPokemon.getMoveEffectiveness).not.toHaveReturnedWith(0);
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.STEALTH_ROCK, ArenaTagSide.PLAYER)).toBeDefined();
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.STEALTH_ROCK, ArenaSide.PLAYER)).toBeDefined();
   });
 
   it("shouldn't block moves that target both sides of the field", async () => {

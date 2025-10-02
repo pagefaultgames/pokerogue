@@ -4,7 +4,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { speciesStarterCosts } from "#balance/starters";
 import { TrappedTag } from "#data/battler-tags";
 import { AbilityId } from "#enums/ability-id";
-import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaSide } from "#enums/arena-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleType } from "#enums/battle-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -495,7 +495,7 @@ export class CommandPhase extends FieldPhase {
       }
     } else {
       const trapTag = playerPokemon.getTag(TrappedTag);
-      const fairyLockTag = globalScene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.PLAYER);
+      const fairyLockTag = globalScene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaSide.PLAYER);
 
       if (!isSwitch) {
         globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
