@@ -78,14 +78,9 @@ import {
   PreserveBerryModifier,
 } from "#modifiers/modifier";
 import { applyMoveAttrs } from "#moves/apply-attrs";
-<<<<<<< HEAD
 import { invalidAssistMoves, invalidCopycatMoves, invalidInstructMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSketchMoves, invalidSleepTalkMoves } from "#moves/invalid-moves";
-import { frenzyMissFunc, ,getMoveTargets } from "#moves/move-utils";
-=======
-import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSketchMoves, invalidSleepTalkMoves } from "#moves/invalid-moves";
 import { consecutiveUseRestriction, counterAttackConditionBoth, counterAttackConditionPhysical, counterAttackConditionSpecial, failAgainstFinalBossCondition, FailIfInsufficientHpCondition, failIfTargetNotAttackingCondition, failTeleportCondition, FirstMoveCondition, gravityUseRestriction, lastResortCondition, MoveCondition, MoveRestriction, upperHandCondition } from "#moves/move-condition";
 import { frenzyMissFunc, getCounterAttackTarget, getMoveTargets } from "#moves/move-utils";
->>>>>>> upstream/beta
 import { PokemonMove } from "#moves/pokemon-move";
 import { MovePhase } from "#phases/move-phase";
 import { PokemonHealPhase } from "#phases/pokemon-heal-phase";
@@ -9436,15 +9431,8 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.DEF ], -1, true),
     new SelfStatusMove(MoveId.MAGIC_COAT, PokemonType.PSYCHIC, -1, 15, -1, 4, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.MAGIC_COAT, true, true, 0)
-<<<<<<< HEAD
       .condition(failIfLastCondition)
       // Should reflect moves that would otherwise fail
-=======
-      .condition(failIfLastCondition, 3)
-      // Interactions with stomping tantrum, instruct, and other moves that
-      // rely on move history
-      // Also will not reflect roar / whirlwind if the target has ForceSwitchOutImmunityAbAttr
->>>>>>> upstream/beta
       .edgeCase(),
     new SelfStatusMove(MoveId.RECYCLE, PokemonType.NORMAL, -1, 10, -1, 0, 3)
       .unimplemented(),
