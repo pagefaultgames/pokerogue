@@ -10,6 +10,7 @@ import { doubleBattleDialogue } from "#data/double-battle-dialogue";
 import { Gender } from "#data/gender";
 import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
+import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import { MoveId } from "#enums/move-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { PokeballType } from "#enums/pokeball";
@@ -2021,7 +2022,7 @@ export const trainerConfigs: TrainerConfigs = {
     }),
   [TrainerType.ARCHER]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("rocket_admin", "rocket")
+    .initForEvilTeamAdmin("rocket_admin", "rocket_archer")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_rocket_grunt")
@@ -2037,7 +2038,7 @@ export const trainerConfigs: TrainerConfigs = {
     ),
   [TrainerType.ARIANA]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("rocket_admin_female", "rocket")
+    .initForEvilTeamAdmin("rocket_admin_female", "rocket_ariana")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_rocket_grunt")
@@ -2053,7 +2054,7 @@ export const trainerConfigs: TrainerConfigs = {
     ),
   [TrainerType.PROTON]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("rocket_admin", "rocket")
+    .initForEvilTeamAdmin("rocket_admin", "rocket_proton")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_rocket_grunt")
@@ -2069,7 +2070,7 @@ export const trainerConfigs: TrainerConfigs = {
     ),
   [TrainerType.PETREL]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("rocket_admin", "rocket")
+    .initForEvilTeamAdmin("rocket_admin", "rocket_petrel")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_rocket_grunt")
@@ -2276,7 +2277,7 @@ export const trainerConfigs: TrainerConfigs = {
     }),
   [TrainerType.JUPITER]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("galactic_commander_female", "galactic")
+    .initForEvilTeamAdmin("galactic_commander_female", "galactic_jupiter")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_galactic_admin")
@@ -2292,7 +2293,7 @@ export const trainerConfigs: TrainerConfigs = {
     ),
   [TrainerType.MARS]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("galactic_commander_female", "galactic")
+    .initForEvilTeamAdmin("galactic_commander_female", "galactic_mars")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_galactic_admin")
@@ -2308,7 +2309,7 @@ export const trainerConfigs: TrainerConfigs = {
     ),
   [TrainerType.SATURN]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("galactic_commander", "galactic")
+    .initForEvilTeamAdmin("galactic_commander", "galactic_saturn")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_galactic_admin")
@@ -2453,7 +2454,7 @@ export const trainerConfigs: TrainerConfigs = {
     ),
   [TrainerType.XEROSIC]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("flare_admin", "flare")
+    .initForEvilTeamAdmin("flare_admin", "flare_xerosic")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_flare_grunt")
@@ -2728,13 +2729,17 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
-        p.formIndex = 1; // Segin Starmobile
-        p.moveset = [
-          new PokemonMove(MoveId.WICKED_TORQUE),
-          new PokemonMove(MoveId.SPIN_OUT),
-          new PokemonMove(MoveId.PARTING_SHOT),
-          new PokemonMove(MoveId.HIGH_HORSEPOWER),
-        ];
+        if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_1) {
+          p.formIndex = 0;
+        } else {
+          p.formIndex = 3; // Segin Starmobile
+          p.moveset = [
+            new PokemonMove(MoveId.WICKED_TORQUE),
+            new PokemonMove(MoveId.SPIN_OUT),
+            new PokemonMove(MoveId.PARTING_SHOT),
+            new PokemonMove(MoveId.HIGH_HORSEPOWER),
+          ];
+        }
       }),
     ),
   [TrainerType.MELA]: new TrainerConfig(++t)
@@ -2750,13 +2755,17 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
-        p.formIndex = 2; // Schedar Starmobile
-        p.moveset = [
-          new PokemonMove(MoveId.BLAZING_TORQUE),
-          new PokemonMove(MoveId.SPIN_OUT),
-          new PokemonMove(MoveId.FLAME_CHARGE),
-          new PokemonMove(MoveId.HIGH_HORSEPOWER),
-        ];
+        if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_1) {
+          p.formIndex = 0;
+        } else {
+          p.formIndex = 3; // Schedar Starmobile
+          p.moveset = [
+            new PokemonMove(MoveId.BLAZING_TORQUE),
+            new PokemonMove(MoveId.SPIN_OUT),
+            new PokemonMove(MoveId.FLAME_CHARGE),
+            new PokemonMove(MoveId.HIGH_HORSEPOWER),
+          ];
+        }
       }),
     ),
   [TrainerType.ATTICUS]: new TrainerConfig(++t)
@@ -2772,13 +2781,17 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
-        p.formIndex = 3; // Navi Starmobile
-        p.moveset = [
-          new PokemonMove(MoveId.NOXIOUS_TORQUE),
-          new PokemonMove(MoveId.SPIN_OUT),
-          new PokemonMove(MoveId.TOXIC_SPIKES),
-          new PokemonMove(MoveId.HIGH_HORSEPOWER),
-        ];
+        if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_1) {
+          p.formIndex = 0;
+        } else {
+          p.formIndex = 3; // Navi Starmobile
+          p.moveset = [
+            new PokemonMove(MoveId.NOXIOUS_TORQUE),
+            new PokemonMove(MoveId.SPIN_OUT),
+            new PokemonMove(MoveId.TOXIC_SPIKES),
+            new PokemonMove(MoveId.HIGH_HORSEPOWER),
+          ];
+        }
       }),
     ),
   [TrainerType.ORTEGA]: new TrainerConfig(++t)
@@ -2794,13 +2807,17 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
-        p.formIndex = 4; // Ruchbah Starmobile
-        p.moveset = [
-          new PokemonMove(MoveId.MAGICAL_TORQUE),
-          new PokemonMove(MoveId.SPIN_OUT),
-          new PokemonMove(MoveId.MISTY_TERRAIN),
-          new PokemonMove(MoveId.HIGH_HORSEPOWER),
-        ];
+        if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_1) {
+          p.formIndex = 0;
+        } else {
+          p.formIndex = 4; // Ruchbah Starmobile
+          p.moveset = [
+            new PokemonMove(MoveId.MAGICAL_TORQUE),
+            new PokemonMove(MoveId.SPIN_OUT),
+            new PokemonMove(MoveId.MISTY_TERRAIN),
+            new PokemonMove(MoveId.HIGH_HORSEPOWER),
+          ];
+        }
       }),
     ),
   [TrainerType.ERI]: new TrainerConfig(++t)
@@ -2816,13 +2833,17 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
-        p.formIndex = 5; // Caph Starmobile
-        p.moveset = [
-          new PokemonMove(MoveId.COMBAT_TORQUE),
-          new PokemonMove(MoveId.SPIN_OUT),
-          new PokemonMove(MoveId.IRON_DEFENSE),
-          new PokemonMove(MoveId.HIGH_HORSEPOWER),
-        ];
+        if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_1) {
+          p.formIndex = 0;
+        } else {
+          p.formIndex = 4; // Caph Starmobile
+          p.moveset = [
+            new PokemonMove(MoveId.COMBAT_TORQUE),
+            new PokemonMove(MoveId.SPIN_OUT),
+            new PokemonMove(MoveId.IRON_DEFENSE),
+            new PokemonMove(MoveId.HIGH_HORSEPOWER),
+          ];
+        }
       }),
     ),
 
@@ -4047,7 +4068,17 @@ export const trainerConfigs: TrainerConfigs = {
         },
       ),
     )
-    .setInstantTera(0), // Tera Electric Pikachu
+    .setInstantTera(0) // Tera Electric Pikachu
+    .setGenModifiersFunc(party => {
+      const pikachu = party[0];
+      return [
+        modifierTypes
+          .RARE_SPECIES_STAT_BOOSTER()
+          .generateType([], ["LIGHT_BALL"])
+          ?.withIdFromFunc(modifierTypes.RARE_SPECIES_STAT_BOOSTER)
+          .newModifier(pikachu) as SpeciesStatBoosterModifier,
+      ];
+    }),
   [TrainerType.LANCE_CHAMPION]: new TrainerConfig(++t)
     .setName("Lance")
     .initForChampion(true)
