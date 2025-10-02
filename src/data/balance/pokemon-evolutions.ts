@@ -1266,7 +1266,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.SIRFETCHD, 30, null, null, /* [30, 35, 40] */)
   ],
   [SpeciesId.GALAR_SLOWPOKE]: [
-    new SpeciesEvolution(SpeciesId.GALAR_SLOWBRO, 1, EvolutionItem.GALARICA_CUFF, null, ),
+    new SpeciesEvolution(SpeciesId.GALAR_SLOWBRO, 1, EvolutionItem.GALARICA_CUFF, null, [37, 37, 37]),
     new SpeciesEvolution(SpeciesId.GALAR_SLOWKING, 1, EvolutionItem.GALARICA_WREATH, null, [37, 37, 37])
   ],
   [SpeciesId.GALAR_MR_MIME]: [
