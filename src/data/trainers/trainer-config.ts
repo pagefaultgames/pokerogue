@@ -2739,7 +2739,7 @@ export const trainerConfigs: TrainerConfigs = {
         if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_1) {
           p.formIndex = 0;
         } else {
-          p.formIndex = 3; // Segin Starmobile
+          p.formIndex = 1; // Segin Starmobile
           p.moveset = [
             new PokemonMove(MoveId.WICKED_TORQUE),
             new PokemonMove(MoveId.SPIN_OUT),
@@ -2765,7 +2765,7 @@ export const trainerConfigs: TrainerConfigs = {
         if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_1) {
           p.formIndex = 0;
         } else {
-          p.formIndex = 3; // Schedar Starmobile
+          p.formIndex = 2; // Schedar Starmobile
           p.moveset = [
             new PokemonMove(MoveId.BLAZING_TORQUE),
             new PokemonMove(MoveId.SPIN_OUT),
@@ -2843,7 +2843,7 @@ export const trainerConfigs: TrainerConfigs = {
         if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_1) {
           p.formIndex = 0;
         } else {
-          p.formIndex = 4; // Caph Starmobile
+          p.formIndex = 5; // Caph Starmobile
           p.moveset = [
             new PokemonMove(MoveId.COMBAT_TORQUE),
             new PokemonMove(MoveId.SPIN_OUT),
