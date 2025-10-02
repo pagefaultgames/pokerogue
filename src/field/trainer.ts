@@ -474,7 +474,11 @@ export class Trainer extends Phaser.GameObjects.Container {
         tier--;
       }
       const tierPool = this.config.speciesPools[tier];
-      baseSpecies = getPokemonSpecies(randSeedItem(tierPool));
+      let rolledSpecies = randSeedItem(tierPool);
+      while (typeof rolledSpecies !== "number") {
+        rolledSpecies = randSeedItem(tierPool);
+      }
+      baseSpecies = getPokemonSpecies(rolledSpecies);
     } else {
       baseSpecies = globalScene.randomSpecies(battle.waveIndex, level, false, this.config.speciesFilter);
     }
