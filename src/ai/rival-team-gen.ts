@@ -4,7 +4,7 @@ import { getTypeDamageMultiplier } from "#data/type";
 import { AbilityId } from "#enums/ability-id";
 import { ChallengeType } from "#enums/challenge-type";
 import type { PartyMemberStrength } from "#enums/party-member-strength";
-import { MAX_POKEMON_TYPE, PokemonType } from "#enums/pokemon-type";
+import { PokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type { EnemyPokemon } from "#field/pokemon";
@@ -91,7 +91,6 @@ function getWeakTypes(species: PokemonSpecies, exclude2ndType = false): Set<Poke
     if (
       ty === PokemonType.UNKNOWN
       || ty === PokemonType.STELLAR
-      || ty > MAX_POKEMON_TYPE
       || (ty === PokemonType.GROUND && isAlwaysGroundImmune)
     ) {
       continue;
