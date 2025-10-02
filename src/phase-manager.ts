@@ -37,6 +37,7 @@ import { EncounterPhase } from "#phases/encounter-phase";
 import { EndCardPhase } from "#phases/end-card-phase";
 import { EndEvolutionPhase } from "#phases/end-evolution-phase";
 import { EnemyCommandPhase } from "#phases/enemy-command-phase";
+import { EntrancePhase } from "#phases/entrance-phase";
 import { EvolutionPhase } from "#phases/evolution-phase";
 import { ExpPhase } from "#phases/exp-phase";
 import { FaintPhase } from "#phases/faint-phase";
@@ -135,6 +136,7 @@ const PHASES = Object.freeze({
   CommonAnimPhase,
   DamageAnimPhase,
   DynamicPhaseMarker,
+  EntrancePhase,
   EggHatchPhase,
   EggLapsePhase,
   EggSummaryPhase,
@@ -202,8 +204,8 @@ const PHASES = Object.freeze({
   ShowTrainerPhase,
   StatStageChangePhase,
   SummonPhase,
-  SwitchBiomePhase,
   SwitchPhase,
+  SwitchBiomePhase,
   TeraPhase,
   TitlePhase,
   ToggleDoublePositionPhase,

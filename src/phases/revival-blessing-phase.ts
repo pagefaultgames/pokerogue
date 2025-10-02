@@ -1,6 +1,7 @@
 /* biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
+
+import type { EntrancePhase } from "#phases/entrance-phase";
 import type { FaintPhase } from "#phases/faint-phase";
-import type { SwitchPhase } from "#phases/switch-phase";
 import type { TurnEndPhase } from "#phases/turn-end-phase";
 /* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
 
@@ -80,7 +81,7 @@ export class RevivalBlessingPhase extends BattlePhase {
   }
 
   /**
-   * Clears the {@linkcode SwitchPhase} for the given fainted Pokemon
+   * Clears the {@linkcode EntrancePhase} for the given fainted Pokemon
    * from the phase queue.
    * @param pokemon - The fainted {@linkcode Pokemon}
    * @todo This is only required because {@linkcode FaintPhase} pushes `SwitchPhases`

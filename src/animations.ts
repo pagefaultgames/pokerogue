@@ -12,7 +12,7 @@ import { type BooleanHolder, getFrameMs, randGauss, randInt } from "#utils/commo
  * For battle animations, see {@linkcode BattleAnim}.
  */
 // TODO: Can this be made into an interface?
-// TODO: Rename this to something less obscure
+// TODO: Rename to not conflict with built-in `animation` class
 export class Animation {
   /**
    * Animates particles that "spiral" upwards at start of transform animation

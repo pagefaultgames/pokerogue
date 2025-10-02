@@ -83,10 +83,6 @@ export class CheckSwitchPhase extends BattlePhase {
     );
   }
 
-  private onCancel(): void {
-    globalScene.ui.setMode(UiMode.MESSAGE).then(() => super.end());
-  }
-
   private async onPartyModeSelection(cursor: number, option: PartyOption): Promise<void> {
     // Hitting "cancel" re-starts the prompt
     if (option === PartyOption.CANCEL) {
@@ -100,5 +96,11 @@ export class CheckSwitchPhase extends BattlePhase {
 
     await globalScene.ui.setMode(UiMode.MESSAGE);
     this.end();
+  }
+
+  // TODO: Set this up in a way that the CheckSwitchPhase can initiate the required effects
+  // to
+  private onCancel(): void {
+    globalScene.ui.setMode(UiMode.MESSAGE).then(() => this.end());
   }
 }

@@ -1,10 +1,11 @@
 /* biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
 import type { EncounterPhase } from "#phases/encounter-phase";
+import type { EntrancePhase } from "#phases/entrance-phase";
 import type { PostSummonPhase } from "#phases/post-summon-phase";
+import type { SwitchPhase } from "#phases/switch-phase";
 /* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
 
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
 import { getPokeballAtlasKey, getPokeballTintColor } from "#data/pokeball";
 import { BattleType } from "#enums/battle-type";
@@ -39,30 +40,37 @@ interface SummonPhaseOptions {
    * This should be enabled whenever multiple Pokemon are summoned at the same
    * time outside of a turn in battle, e.g. at the start of a Trainer battle.
    */
+  // TODO: Is this needed post dynamic speed order?
   delayPostSummon?: boolean;
+
+  /**
+   * If provided, will override the message shown when a Pokemon is sent out.
+   * Should only be provided when being added via a `SwitchPhase`.
+   */
+  overrideMessage?: string;
 }
 
 /**
- * Phase to visually summon the Pokemon at the given {@linkcode fieldIndex} onto the field.
- * @remarks
- * This does not update any game logic
+ * Phase to handle all visual elements of adding a Pokemon to the field.
+ * @see {@linkcode SwitchPhase} Phase handling the logical aspects of switching 2 Pokemon
+ * @see {@linkcode EntrancePhase} Phase handling the logical aspects of sending out a Pokemon
  */
 export class SummonPhase extends PokemonPhase {
   public override readonly phaseName = "SummonPhase";
 
   private readonly loaded: boolean;
   private readonly playTrainerAnim: boolean;
-  private readonly delayPostSummon: boolean;
+  private readonly overrideMessage: string | undefined;
 
   constructor(
     battlerIndex: FieldBattlerIndex,
-    { loaded = false, playTrainerAnim = true, delayPostSummon = false }: SummonPhaseOptions = {},
+    { loaded = false, playTrainerAnim = true, overrideMessage }: SummonPhaseOptions = {},
   ) {
     super(battlerIndex);
 
     this.loaded = loaded;
     this.playTrainerAnim = playTrainerAnim;
-    this.delayPostSummon = delayPostSummon;
+    this.overrideMessage = overrideMessage;
   }
 
   public override async start(): Promise<void> {
@@ -70,17 +78,12 @@ export class SummonPhase extends PokemonPhase {
 
     // If the Pokemon about to be summoned is fainted or illegal under active challenges,
     // try to reorganize the Pokemon's party such that a legal inactive Pokemon is summoned instead.
-    // If this cannot be done,
+    // If this cannot be done, queue a game over and end the phase.
     if (!this.getPokemon().isAllowedInBattle() && !this.handleIllegalSummon()) {
+      globalScene.phaseManager.clearAllPhases();
+      globalScene.phaseManager.unshiftNew("GameOverPhase", false);
       super.end();
       return;
-    }
-
-    // If this summon is from loading into a wave, load the Pokemon's saved summon data.
-    // TODO: This only uses `resetSummonData` to push data from `Pokemon.summonDataPrimer`.
-    // This should use a separate dedicated method instead to avoid the risk of side effects.
-    if (this.loaded) {
-      this.getPokemon().resetSummonData();
     }
 
     await this.playSummonSequence();
@@ -114,21 +117,19 @@ export class SummonPhase extends PokemonPhase {
     }
 
     console.warn("All Pokemon in the Player's party cannot be summoned!");
-
-    globalScene.phaseManager.clearAllPhases();
-    globalScene.phaseManager.unshiftNew("GameOverPhase", false);
     return false;
   }
 
   /**
-   * Plays animations for the Trainer summoning the Pokemon, then plays
-   * summon animations for the Pokemon.
+   * Play animations and trigger text for the summon sequence,
+   * including Trainer summon animations and field entrance effects.
    */
   private async playSummonSequence(): Promise<void> {
-    const { currentBattle, pbTray, pbTrayEnemy, trainer, ui } = globalScene;
+    const { currentBattle, pbTray, pbTrayEnemy, trainer } = globalScene;
     if (this.player) {
-      ui.showText(i18next.t("battle:playerGo", { pokemonName: getPokemonNameWithAffix(this.getPokemon()) }));
       pbTray.hide();
+      // TODO: Should we await this?
+      this.playSendOutMessage(true);
       if (trainer.visible) {
         await this.playPlayerTrainerThrowSequence();
       }
@@ -186,7 +187,7 @@ export class SummonPhase extends PokemonPhase {
    * then hides itself as it announces the Pokemon entering the field.
    */
   private async playEnemyTrainerThrowSequence(): Promise<void> {
-    const { currentBattle, pbTrayEnemy, ui } = globalScene;
+    const { currentBattle, pbTrayEnemy } = globalScene;
     const { trainer } = currentBattle;
     if (!trainer) {
       console.warn("SummonPhase: Enemy Trainer is missing!");
@@ -199,11 +200,7 @@ export class SummonPhase extends PokemonPhase {
 
     await Promise.allSettled([this.hideEnemyTrainer(), pbTrayEnemy.hide()]);
 
-    const trainerName = trainer.getName(this.getTrainerSlot());
-    const pokemonName = this.getPokemon().getNameToRender();
-    const message = i18next.t("battle:trainerSendOut", { trainerName, pokemonName });
-
-    await new Promise<void>(resolve => ui.showText(message, undefined, resolve));
+    await this.playSendOutMessage(false);
   }
 
   /**
@@ -307,6 +304,7 @@ export class SummonPhase extends PokemonPhase {
     pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
     pokemon.getSprite().clearTint();
     // required to load the proper assets when loading from save data
+    // TODO: Do we need this?
     if (this.loaded && pokemon.summonData.speciesForm) {
       pokemon.loadAssets(false);
     }
@@ -402,12 +400,24 @@ export class SummonPhase extends PokemonPhase {
     super.end();
   }
 
-  private queuePostSummon(): void {
-    const { phaseManager } = globalScene;
-    if (this.delayPostSummon) {
-      phaseManager.pushNew("PostSummonPhase", this.battlerIndex);
+  private async playSendOutMessage(player: boolean): Promise<void> {
+    const { ui } = globalScene;
+    const { trainer } = globalScene.currentBattle;
+    let msg: string;
+
+    if (this.overrideMessage) {
+      msg = this.overrideMessage;
+    } else if (player) {
+      msg = i18next.t("battle:playerGo", {
+        pokemonName: this.getPokemon().getNameToRender(),
+      });
     } else {
-      phaseManager.unshiftNew("PostSummonPhase", this.battlerIndex);
+      msg = i18next.t("battle:trainerSendOut", {
+        trainerName: trainer?.getName(this.getTrainerSlot()),
+        pokemonName: this.getPokemon().getNameToRender(),
+      });
     }
+
+    await new Promise<void>(resolve => ui.showText(msg, undefined, resolve));
   }
 }

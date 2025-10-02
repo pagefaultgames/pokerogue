@@ -12,6 +12,7 @@ import { EggLapsePhase } from "#phases/egg-lapse-phase";
 import { EncounterPhase } from "#phases/encounter-phase";
 import { EndEvolutionPhase } from "#phases/end-evolution-phase";
 import { EnemyCommandPhase } from "#phases/enemy-command-phase";
+import { EntrancePhase } from "#phases/entrance-phase";
 import { EvolutionPhase } from "#phases/evolution-phase";
 import { ExpPhase } from "#phases/exp-phase";
 import { FaintPhase } from "#phases/faint-phase";
@@ -55,7 +56,6 @@ import { ShinySparklePhase } from "#phases/shiny-sparkle-phase";
 import { ShowAbilityPhase } from "#phases/show-ability-phase";
 import { StatStageChangePhase } from "#phases/stat-stage-change-phase";
 import { SummonPhase } from "#phases/summon-phase";
-import { SwitchPhase } from "#phases/switch-phase";
 import { TitlePhase } from "#phases/title-phase";
 import { ToggleDoublePositionPhase } from "#phases/toggle-double-position-phase";
 import { TurnEndPhase } from "#phases/turn-end-phase";
@@ -156,7 +156,7 @@ export class PhaseInterceptor {
     SelectTargetPhase,
     UnavailablePhase,
     QuietFormChangePhase,
-    SwitchPhase,
+    EntrancePhase,
     PartyHealPhase,
     FormChangePhase,
     EvolutionPhase,

@@ -58,6 +58,7 @@ export class RecallPhase extends PokemonPhase {
   /** Plays a message before this phase's target {@linkcode Pokemon} is recalled */
   private async playRecallMessage(): Promise<void> {
     const { promise, resolve } = Promise.withResolvers<void>();
+    // TODO: Add the ability to override the recall message (for U-Turn, etc.)
     const text = this.player
       ? i18next.t("battle:playerComeBack", { pokemonName: getPokemonNameWithAffix(this.pokemon) })
       : i18next.t("battle:trainerComeBack", {
