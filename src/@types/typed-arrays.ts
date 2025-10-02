@@ -188,7 +188,7 @@ interface PartialUint8Array<T extends number> extends Uint8Array {
   entries(): ArrayIterator<[number, T]>;
   fill(value: T, start?: number, end?: number): this;
   find(predicate: (value: T, index: number, array: this) => boolean, thisArg?: any): T | undefined;
-  findLast(predicate: (value: number, index: number, array: this) => boolean, thisArg?: any): T | undefined;
+  findLast(predicate: (value: T, index: number, array: this) => boolean, thisArg?: any): T | undefined;
   forEach(callbackfn: (value: T, index: number, array: this) => void, thisArg?: any): void;
   includes(searchElement: T, fromIndex?: number): boolean;
   indexOf(searchElement: T, fromIndex?: number): number;
