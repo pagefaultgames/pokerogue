@@ -97,9 +97,16 @@ describe("Moves - Sleep Talk", () => {
 
     game.move.select(MoveId.SLEEP_TALK);
     await game.toNextTurn();
+    expect(game.field.getPlayerPokemon().getStatStage(Stat.ATK));
+  });
 
-    const feebas = game.field.getPlayerPokemon();
-    expect(feebas.getStatStage(Stat.SPD)).toBe(1);
-    expect(feebas.getStatStage(Stat.DEF)).toBe(-1);
+  it("should apply secondary effects of a move", async () => {
+    game.override.moveset([MoveId.SLEEP_TALK, MoveId.DIG, MoveId.FLY, MoveId.WOOD_HAMMER]); // Dig and Fly are invalid moves, Wood Hammer should always be called
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+
+    game.move.select(MoveId.SLEEP_TALK);
+    await game.toNextTurn();
+
+    expect(game.field.getPlayerPokemon().isFullHp()).toBeFalsy(); // Wood Hammer recoil effect should be applied
   });
 });

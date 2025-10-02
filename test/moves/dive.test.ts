@@ -74,7 +74,7 @@ describe("Moves - Dive", () => {
     expect(enemyPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
   });
 
-  it("should not expend PP when the attack phase is cancelled", async () => {
+  it("should expend PP when the attack phase is cancelled by sleep", async () => {
     game.override.enemyAbility(AbilityId.NO_GUARD).enemyMoveset(MoveId.SPORE);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
@@ -88,7 +88,7 @@ describe("Moves - Dive", () => {
     expect(playerPokemon.status?.effect).toBe(StatusEffect.SLEEP);
 
     const playerDive = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.DIVE);
-    expect(playerDive?.ppUsed).toBe(0);
+    expect(playerDive?.ppUsed).toBe(1);
   });
 
   it("should trigger on-contact post-defend ability effects", async () => {
