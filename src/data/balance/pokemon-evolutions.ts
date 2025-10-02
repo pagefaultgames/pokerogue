@@ -802,7 +802,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.LUMINEON, 31, null, null)
   ],
   [SpeciesId.MANTYKE]: [
-    new SpeciesEvolution(SpeciesId.MANTINE, 28, null, {key: EvoCondKey.SPECIES_CAUGHT, speciesCaught: SpeciesId.REMORAID}, [0, 0, 48])
+    new SpeciesEvolution(SpeciesId.MANTINE, 28, null, {key: EvoCondKey.SPECIES_CAUGHT, speciesCaught: SpeciesId.REMORAID}, [28, 28, 48])
   ],
   [SpeciesId.SNOVER]: [
     new SpeciesEvolution(SpeciesId.ABOMASNOW, 40, null, null)
