@@ -6835,6 +6835,7 @@ export class EnemyPokemon extends Pokemon {
         this.hp,
         segmentSize,
         this.getMinimumSegmentIndex(),
+        this.bossSegmentIndex,
       );
     }
 
