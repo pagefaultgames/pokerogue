@@ -80,7 +80,7 @@ const timedEvents: TimedEvent[] = [
     endDate: new Date(Date.UTC(2025, 0, 4, 0)),
     bannerKey: "winter_holidays2024-event",
     scale: 0.21,
-    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-Hans"],
     eventEncounters: [
       { species: SpeciesId.GIMMIGHOUL, blockEvolution: true },
       { species: SpeciesId.DELIBIRD },
@@ -136,7 +136,7 @@ const timedEvents: TimedEvent[] = [
     endDate: new Date(Date.UTC(2025, 1, 3, 0)),
     bannerKey: "yearofthesnakeevent",
     scale: 0.21,
-    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-Hans"],
     eventEncounters: [
       { species: SpeciesId.EKANS },
       { species: SpeciesId.ONIX },
@@ -208,7 +208,7 @@ const timedEvents: TimedEvent[] = [
     shinyMultiplier: 2,
     bannerKey: "valentines2025event",
     scale: 0.21,
-    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-Hans"],
     eventEncounters: [
       { species: SpeciesId.NIDORAN_F },
       { species: SpeciesId.NIDORAN_M },
@@ -247,7 +247,7 @@ const timedEvents: TimedEvent[] = [
     classicFriendshipMultiplier: 4,
     bannerKey: "pkmnday2025event",
     scale: 0.21,
-    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-Hans"],
     eventEncounters: [
       { species: SpeciesId.PIKACHU, formIndex: 1, blockEvolution: true }, // Partner Form
       { species: SpeciesId.EEVEE, formIndex: 1, blockEvolution: true }, // Partner Form
@@ -297,7 +297,7 @@ const timedEvents: TimedEvent[] = [
     endDate: new Date(Date.UTC(2025, 3, 3)),
     bannerKey: "aprf25",
     scale: 0.21,
-    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-MX", "pt-BR", "zh-CN"],
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-419", "pt-BR", "zh-Hans"],
     trainerShinyChance: 13107, // 13107/65536 = 1/5
     music: [
       ["title", "title_afd"],
@@ -317,7 +317,7 @@ const timedEvents: TimedEvent[] = [
     endDate: new Date(Date.UTC(2025, 4, 13)),
     bannerKey: "spr25event",
     scale: 0.21,
-    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-MX", "pt-BR", "zh-CN"],
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-419", "pt-BR", "zh-Hans"],
     shinyMultiplier: 2,
     upgradeUnlockedVouchers: true,
     eventEncounters: [
@@ -358,7 +358,7 @@ const timedEvents: TimedEvent[] = [
     endDate: new Date(Date.UTC(2025, 5, 30)),
     bannerKey: "pride2025",
     scale: 0.105,
-    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-MX", "pt-BR", "zh-CN", "zh-TW"],
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-419", "pt-BR", "zh-Hans", "zh-Hant"],
     shinyMultiplier: 2,
     eventEncounters: [
       { species: SpeciesId.CHARMANDER },

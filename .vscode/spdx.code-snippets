@@ -1,0 +1,48 @@
+/*
+ * SPDX-FileCopyrightText: 2025 Pagefault Games
+ * SPDX-FileContributor: SirzBenjie
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+{
+  // REUSE-IgnoreStart
+  "Add SPDX header (/* */ comments )": {
+    "scope": "javascript,typescript,css,glsl,jsonc",
+    "prefix": "SPDX",
+    "body": [
+      "/*",
+      " * SPDX-FileCopyrightText: ${CURRENT_YEAR} Pagefault Games",
+      " *",
+      " * SPDX-License-Identifier: AGPL-3.0-only",
+      " */",
+      "$0"
+    ],
+    "description": "AGPL-3.0-only SPDX header (c style comments)"
+  },
+
+  "Add SPDX header (<!--> comments)": {
+    "scope": "html,markdown",
+    "prefix": "SPDX",
+    "body": [
+      "<!--",
+      "SPDX-FileCopyrightText: ${CURRENT_YEAR} Pagefault Games",
+      "SPDX-License-Identifier: AGPL-3.0-only",
+      "-->",
+      "$0"
+    ],
+    "description": "AGPL-3.0-only SPDX header (html style comments)"
+  },
+
+  "Add SPDX header (# comments) ": {
+    "prefix": "SPDX",
+    "scope": "powershell,python,yaml,shellscript,ignore,toml,git,gitattributes",
+    "body": [
+      "# SPDX-FileCopyrightText: ${CURRENT_YEAR} Pagefault Games",
+      "#",
+      "# SPDX-License-Identifier: AGPL-3.0-only",
+      "$0"
+    ],
+    "description": "AGPL-3.0-only SPDX header (# style comments)"
+  }
+  // REUSE-IgnoreEnd
+}

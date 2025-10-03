@@ -719,7 +719,7 @@ export class Arena {
     }
 
     // creates a new tag object
-    const newTag = getArenaTag(tagType, turnCount || 0, sourceMove, sourceId, side);
+    const newTag = getArenaTag(tagType, turnCount, sourceMove, sourceId, side);
     if (newTag) {
       newTag.onAdd(this, quiet);
       this.tags.push(newTag);
@@ -831,6 +831,32 @@ export class Arena {
       this.eventTarget.dispatchEvent(new TagRemovedEvent(tag.tagType, tag.side, tag.turnCount));
     }
     return !!tag;
+  }
+
+  /**
+   * Find and remove all {@linkcode ArenaTag}s with the given tag types on the given side of the field.
+   * @param tagTypes - The {@linkcode ArenaTagType}s to remove
+   * @param side - The {@linkcode ArenaTagSide} to remove the tags from (for side-based tags), or {@linkcode ArenaTagSide.BOTH}
+   * to clear all tags on either side of the field
+   * @param quiet - Whether to suppress removal messages from currently-present tags; default `false`
+   * @todo Review the other tag manipulation functions to see if they can be migrated towards using this (more efficient)
+   */
+  public removeTagsOnSide(tagTypes: ArenaTagType[] | readonly ArenaTagType[], side: ArenaTagSide, quiet = false): void {
+    const leftoverTags: ArenaTag[] = [];
+    for (const tag of this.tags) {
+      // Skip tags of different types or on the wrong side of the field
+      if (
+        !tagTypes.includes(tag.tagType)
+        || !(side === ArenaTagSide.BOTH || tag.side === ArenaTagSide.BOTH || tag.side === side)
+      ) {
+        leftoverTags.push(tag);
+        continue;
+      }
+
+      tag.onRemove(this, quiet);
+    }
+
+    this.tags = leftoverTags;
   }
 
   removeAllTags(): void {
