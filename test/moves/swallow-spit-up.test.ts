@@ -63,7 +63,11 @@ describe("Moves - Swallow & Spit Up - ", () => {
         game.move.use(MoveId.SWALLOW);
         await game.toEndOfTurn();
 
-        expect(swalot).toHaveHp(Math.min(swalot.getMaxHp(), Math.round((swalot.getMaxHp() * healPercent) / 100) + 1));
+        if (healPercent === 100) {
+          expect(swalot).toHaveFullHp();
+        } else {
+          expect(swalot).toHaveHp((swalot.getMaxHp() * healPercent) / 100 + 1, { rounding: "half up" });
+        }
         expect(swalot).not.toHaveBattlerTag(BattlerTagType.STOCKPILING);
       },
     );

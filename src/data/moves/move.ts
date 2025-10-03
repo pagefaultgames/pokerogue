@@ -478,7 +478,7 @@ export abstract class Move implements Localizable {
   public restriction<T extends UserMoveConditionFunc | MoveRestriction>(
     restriction: T,
     i18nkey?: string,
-    alsoCondition: typeof restriction extends MoveRestriction ? false : boolean = false,
+    alsoCondition: T extends MoveRestriction ? false : boolean = false,
     conditionSeq = 4,
   ): this {
     if (typeof restriction === "function") {
@@ -1484,7 +1484,6 @@ export class MoveEffectAttr extends MoveAttr {
   // TODO: Decouple this check from the `apply` step
   // TODO: Make non-damaging moves fail by default if none of their attributes can apply
   canApply(user: Pokemon, target: Pokemon, move: Move, _args?: any[]) {
-    // TODO: These checks seem redundant
     return !! (this.selfTarget ? user.hp && !user.getTag(BattlerTagType.FRENZY) : target.hp)
            && (this.selfTarget || !target.getTag(BattlerTagType.PROTECTED) ||
                 move.doesFlagEffectApply({ flag: MoveFlags.IGNORE_PROTECT, user, target }));
@@ -2333,17 +2332,15 @@ export class VariableHealAttr extends HealAttr {
  */
 export class HealOnAllyAttr extends HealAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (user.getAlly() === target) {
-      super.apply(user, target, move, args);
-      return true;
+    if (user.isOpponent(target)) {
+      return false;
     }
-
-    return false;
+    return super.apply(user, target, move, args);
   }
 
   override getCondition(): MoveConditionFunc {
     // Avoid checking healing condition if not used on an enemy
-    return (user, target, _move) =>  user.getAlly() !== target || super.getCondition()(user, target, _move)
+    return (user, target, _move) =>  user.isOpponent(target) || super.getCondition()(user, target, _move)
   }
 }
 
@@ -10765,7 +10762,7 @@ export function initMoves() {
       .attr(HealOnAllyAttr, 0.5, true, false)
       .ballBombMove()
       // Fail if used against an ally that is affected by heal block, during the second failure check
-      .condition((user, target) => target.isOpponent(user) || !!target.getTag(BattlerTagType.HEAL_BLOCK), 2),
+      .condition((user, target) => target.isOpponent(user) || !target.getTag(BattlerTagType.HEAL_BLOCK), 2),
     new AttackMove(MoveId.ANCHOR_SHOT, PokemonType.STEEL, MoveCategory.PHYSICAL, 80, 100, 20, 100, 0, 7)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1, 1, true),
     new StatusMove(MoveId.PSYCHIC_TERRAIN, PokemonType.PSYCHIC, -1, 10, -1, 0, 7)

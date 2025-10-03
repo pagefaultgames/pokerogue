@@ -5,18 +5,28 @@ import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import { toDmgValue } from "#utils/common";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
+/** Options type for {@linkcode toHaveHp} */
+export interface toHaveHpOptions {
+  /**
+   * The rounding method to use when coercing hp counts to an integer.
+   * Possible values are `"down"` (for {@linkcode toDmgValue}) and `"half up"` (for "Math.round")
+   * @defaultValue `"down"`
+   */
+  rounding?: "down" | "half up";
+}
+
 /**
  * Matcher that checks if a Pokemon has a specific amount of HP.
- * @param received - The object to check. Should be a {@linkcode Pokemon}.
- * @param expectedHp - The expected amount of HP the {@linkcode Pokemon} has
- * @param roundDown - Whether to round down {@linkcode expectedDamageTaken} with {@linkcode toDmgValue}; default `true`
+ * @param received - The object to check. Should be a {@linkcode Pokemon}
+ * @param expectedHp - The expected amount of HP the {@linkcode Pokemon} is expected to have;
+ * @param __namedParameters - Needed for Typedoc to function
  * @returns Whether the matcher passed
  */
 export function toHaveHp(
   this: MatcherState,
   received: unknown,
   expectedHp: number,
-  roundDown = true,
+  { rounding = "down" }: toHaveHpOptions = {},
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
     return {
@@ -25,9 +35,15 @@ export function toHaveHp(
     };
   }
 
-  if (roundDown) {
-    expectedHp = toDmgValue(expectedHp);
+  switch (rounding) {
+    case "down":
+      expectedHp = toDmgValue(expectedHp);
+      break;
+    case "half up":
+      expectedHp = Math.round(expectedHp);
+      break;
   }
+
   const actualHp = received.hp;
   const pass = actualHp === expectedHp;
 
