@@ -45,6 +45,26 @@ export class FieldHelper extends GameManagerHelper {
   }
 
   /**
+   * Passthrough for {@linkcode globalScene.getPlayerParty} that adds a check that the party contains at least 1 pokemon.
+   * @returns The enemy party
+   */
+  public getPlayerParty(): PlayerPokemon[] {
+    const party = this.game.scene.getPlayerParty();
+    expect(party.length).toBeGreaterThan(0);
+    return party;
+  }
+
+  /**
+   * Passthrough for {@linkcode globalScene.getEnemyParty} that adds a check that the party contains at least 1 pokemon.
+   * @returns The enemy party
+   */
+  public getEnemyParty(): EnemyPokemon[] {
+    const party = this.game.scene.getEnemyParty();
+    expect(party.length).toBeGreaterThan(0);
+    return party;
+  }
+
+  /**
    * Helper function to return all on-field {@linkcode Pokemon} in speed order (fastest first).
    * @param indices - Whether to only return {@linkcode BattlerIndex}es instead of full Pokemon objects
    * (such as for comparison with other speed order-related mechanisms); default `false`
