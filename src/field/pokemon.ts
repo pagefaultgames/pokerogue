@@ -6390,6 +6390,7 @@ export class EnemyPokemon extends Pokemon {
           ivs.push(randSeedIntRange(Math.floor(waveIndex / 10), 31));
         }
         this.ivs = ivs;
+        this.friendship = Math.round(255 * (waveIndex / 200));
       }
     }
 
