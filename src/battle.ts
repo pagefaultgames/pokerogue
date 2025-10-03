@@ -252,7 +252,8 @@ export class Battle {
     if (this.gameMode.isClassic) {
       if (isBetween(this.waveIndex, 191, 194)) {
         return "end";
-      } else if (isBetween(this.waveIndex, 196, 199)) {
+      }
+      if (isBetween(this.waveIndex, 196, 199)) {
         return "end_summit";
       }
     }
@@ -409,7 +410,6 @@ export class Battle {
             case SpeciesId.SCREAM_TAIL:
             case SpeciesId.BRUTE_BONNET:
             case SpeciesId.FLUTTER_MANE:
-            case SpeciesId.SLITHER_WING:
             case SpeciesId.SLITHER_WING:
             case SpeciesId.SANDY_SHOCKS:
             case SpeciesId.IRON_TREADS:
