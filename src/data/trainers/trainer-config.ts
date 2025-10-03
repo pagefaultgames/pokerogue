@@ -67,14 +67,36 @@ const GYM_LEADER_TERA_WAVE = 100;
  */
 export class TrainerAI {
   public teraMode: TeraAIMode = TeraAIMode.NO_TERA;
-  public instantTeras: number[];
+  /**
+   * Logic determining which Pokémon will instantly Tera.
+   * Each entry is either a number (the slot index) or a tuple of the slot index and a condition function.
+   */
+  private readonly teraLogic: (number | [slot: number, condition: () => boolean])[] = [];
+
+  /**
+   * Determine the indices of the Pokémon that will instantly Tera
+   */
+  public get instantTeras(): number[] {
+    if (this.teraMode === TeraAIMode.NO_TERA) {
+      return [];
+    }
+    const instantTeras: number[] = [];
+    for (const index of this.teraLogic) {
+      if (typeof index === "number") {
+        instantTeras.push(index);
+      } else if (index[1]?.()) {
+        instantTeras.push(index[0]);
+      }
+    }
+
+    return instantTeras;
+  }
 
   /**
    * @param canTerastallize Whether this trainer is allowed to tera
    */
   constructor(teraMode: TeraAIMode = TeraAIMode.NO_TERA) {
     this.teraMode = teraMode;
-    this.instantTeras = [];
   }
 
   /**
@@ -87,11 +109,16 @@ export class TrainerAI {
 
   /**
    * Sets a pokemon on this AI to just instantly Tera on first move used
-   * @param index The index of the pokemon to instantly tera.
+   * @param index - The index of the pokemon to instantly tera
+   * @param condition - An optional condition function, evaluated at
    */
-  public setInstantTera(index: number) {
+  public setInstantTera(index: number, condition?: () => boolean) {
     this.teraMode = TeraAIMode.INSTANT_TERA;
-    this.instantTeras.push(index);
+    if (typeof condition === "function") {
+      this.teraLogic.push([index, condition]);
+    } else {
+      this.teraLogic.push(index);
+    }
   }
 }
 
@@ -528,11 +555,12 @@ export class TrainerConfig {
 
   /**
    * Sets a specific pokemon to instantly Tera
-   * @param index The index within the team to have instant Tera.
-   * @returns this
+   * @param index - The index within the team to have instant Tera.
+   * @param condition - A condition under which the tera will occur
+   * @returns `this`
    */
-  setInstantTera(index: number): TrainerConfig {
-    this.trainerAI.setInstantTera(index);
+  setInstantTera(index: number, condition?: () => boolean): this {
+    this.trainerAI.setInstantTera(index, condition);
     return this;
   }
 
@@ -559,19 +587,32 @@ export class TrainerConfig {
 
   /**
    * Initializes the trainer configuration for an evil team admin.
-   * @param title The title of the evil team admin.
-   * @param poolName The evil team the admin belongs to.
-   * @param signatureSpecies The signature species for the evil team leader.
-   * @param specialtyType The specialty Type of the admin, if they have one
+   * @param title - The title of the evil team admin.
+   * @param poolName - The evil team the admin belongs to.
+   * @param signatureSpecies - The signature species for the evil team leader.
+   * @param specialtyType - The specialty Type of the admin, if they have one
+   * @param starAdminInstantTeraSlot - (default `4`); If the admin is a Star Admin, the slot that should instantly Tera in {@linkcode ClassicFixedBossWaves.EVIL_ADMIN_3}
    * @returns The updated TrainerConfig instance.
    */
-  initForEvilTeamAdmin(title: string, poolName: EvilTeam, specialtyType?: PokemonType): TrainerConfig {
+  initForEvilTeamAdmin(
+    title: string,
+    poolName: EvilTeam,
+    specialtyType?: PokemonType,
+    starAdminInstantTeraSlot = 4,
+  ): TrainerConfig {
     if (!getIsInitialized()) {
       initI18n();
     }
 
     if (specialtyType != null) {
       this.setSpecialtyType(specialtyType);
+    }
+
+    if (title === "star_admin") {
+      this.setInstantTera(
+        starAdminInstantTeraSlot,
+        () => globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3,
+      );
     }
 
     this.setPartyTemplates(trainerPartyTemplates.RIVAL_5);
