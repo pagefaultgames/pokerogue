@@ -2040,7 +2040,12 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.HOUNDOOM], TrainerSlot.TRAINER, true, p => {
+        if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
+          p.setBoss(true, 2);
+        }
+        p.abilityIndex = 1; // Flash Fire
         p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
       }),
     ),
   [TrainerType.ARIANA]: new TrainerConfig(++t)
@@ -2056,7 +2061,12 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.ARBOK], TrainerSlot.TRAINER, true, p => {
+        if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
+          p.setBoss(true, 2);
+        }
+        p.abilityIndex = 0; // Intimidate
         p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
       }),
     ),
   [TrainerType.PROTON]: new TrainerConfig(++t)
@@ -2072,7 +2082,11 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.CROBAT], TrainerSlot.TRAINER, true, p => {
+        if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
+          p.setBoss(true, 2);
+        }
         p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
       }),
     ),
   [TrainerType.PETREL]: new TrainerConfig(++t)
@@ -2089,6 +2103,7 @@ export const trainerConfigs: TrainerConfigs = {
       5,
       getRandomPartyMemberFunc([SpeciesId.WEEZING], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
       }),
     ),
   [TrainerType.MAGMA_GRUNT]: new TrainerConfig(++t)
@@ -2145,7 +2160,12 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.CAMERUPT], TrainerSlot.TRAINER, true, p => {
+        if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
+          p.setBoss(true, 2);
+        }
+        p.abilityIndex = 1; // Solid Rock
         p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
       }),
     ),
   [TrainerType.COURTNEY]: new TrainerConfig(++t)
@@ -2161,7 +2181,12 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.CAMERUPT], TrainerSlot.TRAINER, true, p => {
+        if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
+          p.setBoss(true, 2);
+        }
+        p.abilityIndex = 1; // Solid Rock
         p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
       }),
     ),
   [TrainerType.AQUA_GRUNT]: new TrainerConfig(++t)
@@ -2221,7 +2246,11 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.SHARPEDO], TrainerSlot.TRAINER, true, p => {
+        if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
+          p.setBoss(true, 2);
+        }
         p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
       }),
     ),
   [TrainerType.SHELLY]: new TrainerConfig(++t)
@@ -2237,7 +2266,11 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.SHARPEDO], TrainerSlot.TRAINER, true, p => {
+        if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
+          p.setBoss(true, 2);
+        }
         p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
       }),
     ),
   [TrainerType.GALACTIC_GRUNT]: new TrainerConfig(++t)
@@ -2295,7 +2328,11 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.SKUNTANK], TrainerSlot.TRAINER, true, p => {
+        if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
+          p.setBoss(true, 2);
+        }
         p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
       }),
     ),
   [TrainerType.MARS]: new TrainerConfig(++t)
@@ -2311,7 +2348,12 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.PURUGLY], TrainerSlot.TRAINER, true, p => {
+        if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
+          p.setBoss(true, 2);
+        }
+        p.abilityIndex = 0; // Thick Fat
         p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
       }),
     ),
   [TrainerType.SATURN]: new TrainerConfig(++t)
@@ -2327,7 +2369,12 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.TOXICROAK], TrainerSlot.TRAINER, true, p => {
+        if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
+          p.setBoss(true, 2);
+        }
+        p.abilityIndex = 1; // Dry Skin
         p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
       }),
     ),
   [TrainerType.PLASMA_GRUNT]: new TrainerConfig(++t)
@@ -2382,12 +2429,13 @@ export const trainerConfigs: TrainerConfigs = {
     .setMixedBattleBgm("battle_plasma_grunt")
     .setVictoryBgm("victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.WEAVILE]))
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.CRYOGONAL]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.VANILLUXE]))
     .setPartyMemberFunc(
       5,
-      getRandomPartyMemberFunc([SpeciesId.CRYOGONAL], TrainerSlot.TRAINER, true, p => {
+      getRandomPartyMemberFunc([SpeciesId.WEAVILE], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
       }),
     ),
   [TrainerType.COLRESS]: new TrainerConfig(++t)
@@ -2403,7 +2451,12 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.KLINKLANG], TrainerSlot.TRAINER, true, p => {
+        if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
+          p.setBoss(true, 2);
+        }
+        p.abilityIndex = 2; // Clear Body
         p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
       }),
     ),
   [TrainerType.FLARE_GRUNT]: new TrainerConfig(++t)
@@ -2457,11 +2510,12 @@ export const trainerConfigs: TrainerConfigs = {
       5,
       getRandomPartyMemberFunc([SpeciesId.BISHARP], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
       }),
     ),
   [TrainerType.XEROSIC]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
-    .initForEvilTeamAdmin("flare_admin", "flare_xerosic")
+    .initForEvilTeamAdmin("flare_admin", "flare_xerosic", PokemonType.FIRE)
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_flare_grunt")
@@ -2471,7 +2525,12 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.MALAMAR], TrainerSlot.TRAINER, true, p => {
+        if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
+          p.setBoss(true, 2);
+        }
+        p.abilityIndex = 0; // Contrary
         p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
       }),
     ),
   [TrainerType.AETHER_GRUNT]: new TrainerConfig(++t)
@@ -2538,7 +2597,12 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.HYPNO], TrainerSlot.TRAINER, true, p => {
+        if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
+          p.setBoss(true, 2);
+        }
+        p.abilityIndex = 1; // FOREWARN
         p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
       }),
     ),
   [TrainerType.SKULL_GRUNT]: new TrainerConfig(++t)
@@ -2600,7 +2664,11 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.SALAZZLE], TrainerSlot.TRAINER, true, p => {
+        if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
+          p.setBoss(true, 2);
+        }
         p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
       }),
     ),
   [TrainerType.MACRO_GRUNT]: new TrainerConfig(++t)
@@ -2661,7 +2729,12 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.GARBODOR], TrainerSlot.TRAINER, true, p => {
+        if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
+          p.setBoss(true, 2);
+        }
+        p.abilityIndex = 0; // Intimidate
         p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
       }),
     ),
   [TrainerType.STAR_GRUNT]: new TrainerConfig(++t)
@@ -2738,12 +2811,22 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
         if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_1) {
           p.formIndex = 0;
-        } else {
+          p.generateAndPopulateMoveset();
+        } else if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_2) {
           p.formIndex = 1; // Segin Starmobile
           p.moveset = [
             new PokemonMove(MoveId.WICKED_TORQUE),
             new PokemonMove(MoveId.SPIN_OUT),
             new PokemonMove(MoveId.PARTING_SHOT),
+            new PokemonMove(MoveId.HIGH_HORSEPOWER),
+          ];
+        } else if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
+          p.setBoss(true, 1);
+          p.formIndex = 1; // Segin Starmobile
+          p.moveset = [
+            new PokemonMove(MoveId.WICKED_TORQUE),
+            new PokemonMove(MoveId.SPIN_OUT),
+            new PokemonMove(MoveId.SHIFT_GEAR),
             new PokemonMove(MoveId.HIGH_HORSEPOWER),
           ];
         }
@@ -2764,12 +2847,22 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
         if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_1) {
           p.formIndex = 0;
-        } else {
+          p.generateAndPopulateMoveset();
+        } else if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_2) {
           p.formIndex = 2; // Schedar Starmobile
           p.moveset = [
             new PokemonMove(MoveId.BLAZING_TORQUE),
             new PokemonMove(MoveId.SPIN_OUT),
             new PokemonMove(MoveId.FLAME_CHARGE),
+            new PokemonMove(MoveId.HIGH_HORSEPOWER),
+          ];
+        } else if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
+          p.setBoss(true, 1);
+          p.formIndex = 2; // Schedar Starmobile
+          p.moveset = [
+            new PokemonMove(MoveId.BLAZING_TORQUE),
+            new PokemonMove(MoveId.SPIN_OUT),
+            new PokemonMove(MoveId.SHIFT_GEAR),
             new PokemonMove(MoveId.HIGH_HORSEPOWER),
           ];
         }
@@ -2790,12 +2883,22 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
         if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_1) {
           p.formIndex = 0;
-        } else {
+          p.generateAndPopulateMoveset();
+        } else if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_2) {
           p.formIndex = 3; // Navi Starmobile
           p.moveset = [
             new PokemonMove(MoveId.NOXIOUS_TORQUE),
             new PokemonMove(MoveId.SPIN_OUT),
             new PokemonMove(MoveId.TOXIC_SPIKES),
+            new PokemonMove(MoveId.HIGH_HORSEPOWER),
+          ];
+        } else if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
+          p.setBoss(true, 1);
+          p.formIndex = 3; // Navi Starmobile
+          p.moveset = [
+            new PokemonMove(MoveId.NOXIOUS_TORQUE),
+            new PokemonMove(MoveId.SPIN_OUT),
+            new PokemonMove(MoveId.SHIFT_GEAR),
             new PokemonMove(MoveId.HIGH_HORSEPOWER),
           ];
         }
@@ -2816,12 +2919,22 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
         if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_1) {
           p.formIndex = 0;
-        } else {
+          p.generateAndPopulateMoveset();
+        } else if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_2) {
           p.formIndex = 4; // Ruchbah Starmobile
           p.moveset = [
             new PokemonMove(MoveId.MAGICAL_TORQUE),
             new PokemonMove(MoveId.SPIN_OUT),
             new PokemonMove(MoveId.MISTY_TERRAIN),
+            new PokemonMove(MoveId.HIGH_HORSEPOWER),
+          ];
+        } else if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
+          p.setBoss(true, 1);
+          p.formIndex = 4; // Navi Starmobile
+          p.moveset = [
+            new PokemonMove(MoveId.MAGICAL_TORQUE),
+            new PokemonMove(MoveId.SPIN_OUT),
+            new PokemonMove(MoveId.SHIFT_GEAR),
             new PokemonMove(MoveId.HIGH_HORSEPOWER),
           ];
         }
@@ -2842,12 +2955,22 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
         if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_1) {
           p.formIndex = 0;
-        } else {
+          p.generateAndPopulateMoveset();
+        } else if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_2) {
           p.formIndex = 5; // Caph Starmobile
           p.moveset = [
             new PokemonMove(MoveId.COMBAT_TORQUE),
             new PokemonMove(MoveId.SPIN_OUT),
             new PokemonMove(MoveId.IRON_DEFENSE),
+            new PokemonMove(MoveId.HIGH_HORSEPOWER),
+          ];
+        } else if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
+          p.setBoss(true, 1);
+          p.formIndex = 5; // Caph Starmobile
+          p.moveset = [
+            new PokemonMove(MoveId.COMBAT_TORQUE),
+            new PokemonMove(MoveId.SPIN_OUT),
+            new PokemonMove(MoveId.SHIFT_GEAR),
             new PokemonMove(MoveId.HIGH_HORSEPOWER),
           ];
         }
