@@ -2853,21 +2853,12 @@ export const trainerConfigs: TrainerConfigs = {
         if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_1) {
           p.formIndex = 0;
           p.generateAndPopulateMoveset();
-        } else if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_2) {
+        } else {
           p.formIndex = 1; // Segin Starmobile
           p.moveset = [
             new PokemonMove(MoveId.WICKED_TORQUE),
             new PokemonMove(MoveId.SPIN_OUT),
             new PokemonMove(MoveId.PARTING_SHOT),
-            new PokemonMove(MoveId.HIGH_HORSEPOWER),
-          ];
-        } else if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
-          p.setBoss(true, 1);
-          p.formIndex = 1; // Segin Starmobile
-          p.moveset = [
-            new PokemonMove(MoveId.WICKED_TORQUE),
-            new PokemonMove(MoveId.SPIN_OUT),
-            new PokemonMove(MoveId.SHIFT_GEAR),
             new PokemonMove(MoveId.HIGH_HORSEPOWER),
           ];
         }
@@ -2889,21 +2880,12 @@ export const trainerConfigs: TrainerConfigs = {
         if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_1) {
           p.formIndex = 0;
           p.generateAndPopulateMoveset();
-        } else if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_2) {
+        } else {
           p.formIndex = 2; // Schedar Starmobile
           p.moveset = [
             new PokemonMove(MoveId.BLAZING_TORQUE),
             new PokemonMove(MoveId.SPIN_OUT),
             new PokemonMove(MoveId.FLAME_CHARGE),
-            new PokemonMove(MoveId.HIGH_HORSEPOWER),
-          ];
-        } else if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
-          p.setBoss(true, 1);
-          p.formIndex = 2; // Schedar Starmobile
-          p.moveset = [
-            new PokemonMove(MoveId.BLAZING_TORQUE),
-            new PokemonMove(MoveId.SPIN_OUT),
-            new PokemonMove(MoveId.SHIFT_GEAR),
             new PokemonMove(MoveId.HIGH_HORSEPOWER),
           ];
         }
@@ -2925,21 +2907,12 @@ export const trainerConfigs: TrainerConfigs = {
         if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_1) {
           p.formIndex = 0;
           p.generateAndPopulateMoveset();
-        } else if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_2) {
+        } else {
           p.formIndex = 3; // Navi Starmobile
           p.moveset = [
             new PokemonMove(MoveId.NOXIOUS_TORQUE),
             new PokemonMove(MoveId.SPIN_OUT),
             new PokemonMove(MoveId.TOXIC_SPIKES),
-            new PokemonMove(MoveId.HIGH_HORSEPOWER),
-          ];
-        } else if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
-          p.setBoss(true, 1);
-          p.formIndex = 3; // Navi Starmobile
-          p.moveset = [
-            new PokemonMove(MoveId.NOXIOUS_TORQUE),
-            new PokemonMove(MoveId.SPIN_OUT),
-            new PokemonMove(MoveId.SHIFT_GEAR),
             new PokemonMove(MoveId.HIGH_HORSEPOWER),
           ];
         }
@@ -2961,21 +2934,12 @@ export const trainerConfigs: TrainerConfigs = {
         if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_1) {
           p.formIndex = 0;
           p.generateAndPopulateMoveset();
-        } else if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_2) {
+        } else {
           p.formIndex = 4; // Ruchbah Starmobile
           p.moveset = [
             new PokemonMove(MoveId.MAGICAL_TORQUE),
             new PokemonMove(MoveId.SPIN_OUT),
             new PokemonMove(MoveId.MISTY_TERRAIN),
-            new PokemonMove(MoveId.HIGH_HORSEPOWER),
-          ];
-        } else if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
-          p.setBoss(true, 1);
-          p.formIndex = 4; // Navi Starmobile
-          p.moveset = [
-            new PokemonMove(MoveId.MAGICAL_TORQUE),
-            new PokemonMove(MoveId.SPIN_OUT),
-            new PokemonMove(MoveId.SHIFT_GEAR),
             new PokemonMove(MoveId.HIGH_HORSEPOWER),
           ];
         }
@@ -2997,21 +2961,12 @@ export const trainerConfigs: TrainerConfigs = {
         if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_1) {
           p.formIndex = 0;
           p.generateAndPopulateMoveset();
-        } else if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_2) {
+        } else {
           p.formIndex = 5; // Caph Starmobile
           p.moveset = [
             new PokemonMove(MoveId.COMBAT_TORQUE),
             new PokemonMove(MoveId.SPIN_OUT),
             new PokemonMove(MoveId.IRON_DEFENSE),
-            new PokemonMove(MoveId.HIGH_HORSEPOWER),
-          ];
-        } else if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
-          p.setBoss(true, 1);
-          p.formIndex = 5; // Caph Starmobile
-          p.moveset = [
-            new PokemonMove(MoveId.COMBAT_TORQUE),
-            new PokemonMove(MoveId.SPIN_OUT),
-            new PokemonMove(MoveId.SHIFT_GEAR),
             new PokemonMove(MoveId.HIGH_HORSEPOWER),
           ];
         }
