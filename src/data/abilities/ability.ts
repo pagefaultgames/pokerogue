@@ -7299,7 +7299,8 @@ export function initAbilities() {
     new Ability(AbilityId.PIXILATE, 6)
       .attr(MoveTypeChangeAbAttr, PokemonType.FAIRY, 1.2, (_user, _target, move) => move.type === PokemonType.NORMAL),
     new Ability(AbilityId.GOOEY, 6)
-      .attr(PostDefendStatStageChangeAbAttr, (_target, _user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), Stat.SPD, -1, false),
+      .attr(PostDefendStatStageChangeAbAttr, (_target, _user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), Stat.SPD, -1, false)
+      .bypassFaint(),
     new Ability(AbilityId.AERILATE, 6)
       .attr(MoveTypeChangeAbAttr, PokemonType.FLYING, 1.2, (_user, _target, move) => move.type === PokemonType.NORMAL),
     new Ability(AbilityId.PARENTAL_BOND, 6)
@@ -7464,7 +7465,8 @@ export function initAbilities() {
     new Ability(AbilityId.SOUL_HEART, 7)
       .attr(PostKnockOutStatStageChangeAbAttr, Stat.SPATK, 1),
     new Ability(AbilityId.TANGLING_HAIR, 7)
-      .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => move.doesFlagEffectApply({flag: MoveFlags.MAKES_CONTACT, user, target}), Stat.SPD, -1, false),
+      .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => move.doesFlagEffectApply({flag: MoveFlags.MAKES_CONTACT, user, target}), Stat.SPD, -1, false)
+      .bypassFaint(),
     new Ability(AbilityId.RECEIVER, 7)
       .attr(CopyFaintedAllyAbilityAbAttr)
       .uncopiable(),
