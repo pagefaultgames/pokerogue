@@ -35,6 +35,7 @@ describe("Moves - Throat Chop", () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const enemy = game.field.getEnemyPokemon();
+    const player = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.GROWL);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -46,6 +47,7 @@ describe("Moves - Throat Chop", () => {
     // Second turn, struggle if no valid moves
     await game.toNextTurn();
 
+    expect(player.trySelectMove(MoveId.GROWL)[0]).toBe(false);
     game.move.select(MoveId.GROWL);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 

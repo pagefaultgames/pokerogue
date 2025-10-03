@@ -12,7 +12,7 @@ import { MockLoader } from "#test/test-utils/mocks/mock-loader";
 import { MockTextureManager } from "#test/test-utils/mocks/mock-texture-manager";
 import { MockTimedEventManager } from "#test/test-utils/mocks/mock-timed-event-manager";
 import { MockContainer } from "#test/test-utils/mocks/mocks-container/mock-container";
-import { PokedexMonContainer } from "#ui/containers/pokedex-mon-container";
+import { PokedexMonContainer } from "#ui/pokedex-mon-container";
 import fs from "node:fs";
 import Phaser from "phaser";
 import { vi } from "vitest";
@@ -206,7 +206,7 @@ export class GameWrapper {
 }
 
 function prependPath(originalPath) {
-  const prefix = "public";
+  const prefix = "assets";
   if (originalPath.startsWith("./")) {
     return originalPath.replace("./", `${prefix}/`);
   }

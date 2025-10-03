@@ -8,7 +8,7 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/test-utils/game-manager";
-import { ModifierSelectUiHandler } from "#ui/handlers/modifier-select-ui-handler";
+import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -43,8 +43,10 @@ describe("Challenges - Hardcore", () => {
     await game.challengeMode.startBattle([SpeciesId.NUZLEAF]);
 
     const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
     const revBlessing = player.getMoveset()[0];
-    expect(revBlessing.isUsable(player)).toBe(false);
+    expect(revBlessing.isUsable(player)[0]).toBe(false);
+    expect(revBlessing.isUsable(enemy)[0]).toBe(true);
 
     game.move.select(MoveId.REVIVAL_BLESSING);
     await game.toEndOfTurn();

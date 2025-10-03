@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
 {
   "compilerOptions": {
     "target": "ES2023",
@@ -50,7 +55,14 @@
       ],
       "#trainers/*": ["./src/data/trainers/*.ts"],
       "#types/*": ["./src/@types/helpers/*.ts", "./src/@types/*.ts", "./src/typings/phaser/*.ts"],
-      "#ui/*": ["./src/ui/battle-info/*.ts", "./src/ui/settings/*.ts", "./src/ui/*.ts"],
+      "#ui/*": [
+        "./src/ui/battle-info/*.ts",
+        "./src/ui/containers/*.ts",
+        "./src/ui/handlers/*.ts",
+        "./src/ui/settings/*.ts",
+        "./src/ui/utils/*.ts",
+        "./src/ui/*.ts"
+      ],
       "#utils/*": ["./src/utils/*.ts"],
       "#data/*": ["./src/data/pokemon-forms/*.ts", "./src/data/pokemon/*.ts", "./src/data/*.ts"],
       "#test/*": ["./test/*.ts"],
@@ -65,6 +77,6 @@
     "vite.config.ts",
     "vitest.config.ts",
     "vitest.workspace.ts",
-    "public/service-worker.js"
+    "assets/service-worker.js"
   ]
 }

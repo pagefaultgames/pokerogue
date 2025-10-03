@@ -8,8 +8,8 @@ import { toTitleCase } from "#utils/strings";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
- * Matcher that checks if the {@linkcode WeatherType} is as expected
- * @param received - The object to check. Expects an instance of {@linkcode GameManager}.
+ * Matcher that checks if the current {@linkcode WeatherType} is as expected.
+ * @param received - The object to check. Should be the current {@linkcode GameManager}
  * @param expectedWeatherType - The expected {@linkcode WeatherType}
  * @returns Whether the matcher passed
  */

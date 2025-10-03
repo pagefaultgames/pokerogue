@@ -46,15 +46,15 @@ import { getVariantIcon, getVariantTint } from "#sprites/variant";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
 import type { StarterAttributes } from "#types/save-data";
-import { BaseStatsOverlay } from "#ui/containers/base-stats-overlay";
-import { MoveInfoOverlay } from "#ui/containers/move-info-overlay";
-import { PokedexInfoOverlay } from "#ui/containers/pokedex-info-overlay";
-import { StatsContainer } from "#ui/containers/stats-container";
-import type { OptionSelectItem } from "#ui/handlers/abstract-option-select-ui-handler";
-import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
+import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import { BaseStatsOverlay } from "#ui/base-stats-overlay";
+import { MessageUiHandler } from "#ui/message-ui-handler";
+import { MoveInfoOverlay } from "#ui/move-info-overlay";
+import { PokedexInfoOverlay } from "#ui/pokedex-info-overlay";
+import { StatsContainer } from "#ui/stats-container";
 import { addBBCodeTextObject, addTextObject, getTextColor, getTextStyleOptions } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
-import { BooleanHolder, getLocalizedSpriteKey, isNullOrUndefined, padInt, rgbHexToRgba } from "#utils/common";
+import { BooleanHolder, getLocalizedSpriteKey, padInt, rgbHexToRgba } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
@@ -85,7 +85,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoYOffset: 0.5,
     starterInfoXPos: 38,
   },
-  "es-MX": {
+  "es-419": {
     starterInfoTextSize: "50px",
     instructionTextSize: "38px",
     starterInfoYOffset: 0.5,
@@ -2424,11 +2424,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     // We will only update the sprite if there is a change to form, shiny/variant
     // or gender for species with gender sprite differences
     const shouldUpdateSprite =
-      (species?.genderDiffs && !isNullOrUndefined(female))
-      || !isNullOrUndefined(formIndex)
-      || !isNullOrUndefined(shiny)
-      || !isNullOrUndefined(variant)
-      || forceUpdate;
+      (species?.genderDiffs && female != null) || formIndex != null || shiny != null || variant != null || forceUpdate;
 
     if (this.activeTooltip === "CANDY") {
       if (this.species && this.pokemonCandyContainer.visible) {

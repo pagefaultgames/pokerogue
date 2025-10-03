@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+# SPDX-FileContributor: Benjamin Odom
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
 import re
 
 filenames = [['src/enums/moves.ts', 'move'], ['src/enums/abilities.ts', 'ability'], ['src/enums/species.ts', 'Pokémon']]

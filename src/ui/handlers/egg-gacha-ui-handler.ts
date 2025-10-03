@@ -9,7 +9,7 @@ import { GachaType } from "#enums/gacha-types";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { getVoucherTypeIcon, VoucherType } from "#system/voucher";
-import { MessageUiHandler } from "#ui/handlers/message-ui-handler";
+import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addTextObject, getEggTierTextTint, getTextStyleOptions } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt, randSeedShuffle } from "#utils/common";
@@ -81,7 +81,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
     let pokemonIconX = -20;
     let pokemonIconY = 6;
 
-    if (["de", "es-ES", "es-MX", "fr", "ko", "pt-BR", "ja", "ru"].includes(currentLanguage)) {
+    if (["de", "es-ES", "es-419", "fr", "ko", "pt-BR", "ja", "ru"].includes(currentLanguage)) {
       gachaTextStyle = TextStyle.SMALLER_WINDOW_ALT;
       gachaX = 2;
       gachaY = 2;
@@ -89,14 +89,14 @@ export class EggGachaUiHandler extends MessageUiHandler {
 
     let legendaryLabelX = gachaX;
     let legendaryLabelY = gachaY;
-    if (["de", "es-ES", "es-MX"].includes(currentLanguage)) {
+    if (["de", "es-ES", "es-419"].includes(currentLanguage)) {
       pokemonIconX = -25;
       pokemonIconY = 10;
       legendaryLabelX = -6;
       legendaryLabelY = 0;
     }
 
-    const gachaUpLabel = addTextObject(gachaX, gachaY, i18next.t("egg:legendaryUPGacha"), gachaTextStyle).setOrigin(0);
+    const gachaUpLabel = addTextObject(gachaX, gachaY, i18next.t("egg:legendaryUpGacha"), gachaTextStyle).setOrigin(0);
     gachaInfoContainer.add(gachaUpLabel);
 
     switch (gachaType as GachaType) {
@@ -124,14 +124,14 @@ export class EggGachaUiHandler extends MessageUiHandler {
           gachaUpLabel.setAlign("center").setY(0);
         }
 
-        gachaUpLabel.setText(i18next.t("egg:moveUPGacha")).setX(0).setOrigin(0.5, 0);
+        gachaUpLabel.setText(i18next.t("egg:moveUpGacha")).setX(0).setOrigin(0.5, 0);
         break;
       case GachaType.SHINY:
         if (["de", "fr", "ko", "ru"].includes(currentLanguage)) {
           gachaUpLabel.setAlign("center").setY(0);
         }
 
-        gachaUpLabel.setText(i18next.t("egg:shinyUPGacha")).setX(0).setOrigin(0.5, 0);
+        gachaUpLabel.setText(i18next.t("egg:shinyUpGacha")).setX(0).setOrigin(0.5, 0);
         break;
     }
 

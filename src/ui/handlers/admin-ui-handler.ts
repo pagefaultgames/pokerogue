@@ -1,33 +1,41 @@
 import { pokerogueApi } from "#api/pokerogue-api";
 import { globalScene } from "#app/global-scene";
+import { bypassLogin } from "#app/global-vars/bypass-login";
+import { AdminMode } from "#enums/admin-mode";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
-import type { InputFieldConfig } from "#ui/handlers/form-modal-ui-handler";
-import { FormModalUiHandler } from "#ui/handlers/form-modal-ui-handler";
-import type { ModalConfig } from "#ui/handlers/modal-ui-handler";
+import { GameData } from "#system/game-data";
+import type {
+  AdminUiHandlerService,
+  AdminUiHandlerServiceMode,
+  SearchAccountResponse,
+} from "#types/api/pokerogue-admin-api";
+import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
+import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
+import type { ModalConfig } from "#ui/modal-ui-handler";
 import { getTextColor } from "#ui/text";
 import { toTitleCase } from "#utils/strings";
 
-type AdminUiHandlerService = "discord" | "google";
-type AdminUiHandlerServiceMode = "Link" | "Unlink";
-
 export class AdminUiHandler extends FormModalUiHandler {
   private adminMode: AdminMode;
-  private adminResult: AdminSearchInfo;
+  private adminResult: SearchAccountResponse;
   private config: ModalConfig;
 
+  private tempGameData: GameData | null = null;
+
   private readonly buttonGap = 10;
-  private readonly ERR_REQUIRED_FIELD = (field: string) => {
+  /** @returns "[field] is required" */
+  private static ERR_REQUIRED_FIELD(field: string) {
     if (field === "username") {
       return `${toTitleCase(field)} is required`;
     }
     return `${toTitleCase(field)} Id is required`;
-  };
-  // returns a string saying whether a username has been successfully linked/unlinked to discord/google
-  private readonly SUCCESS_SERVICE_MODE = (service: string, mode: string) => {
+  }
+  /** @returns "Username and [service] successfully [mode]ed" */
+  private static SUCCESS_SERVICE_MODE(service: string, mode: string) {
     return `Username and ${service} successfully ${mode.toLowerCase()}ed`;
-  };
+  }
 
   constructor(mode: UiMode | null = null) {
     super(mode);
@@ -48,50 +56,41 @@ export class AdminUiHandler extends FormModalUiHandler {
   override getButtonLabels(): string[] {
     switch (this.adminMode) {
       case AdminMode.LINK:
-        return ["Link Account", "Cancel"];
+        return ["Link Account", "Cancel", "", ""];
       case AdminMode.SEARCH:
-        return ["Find account", "Cancel"];
+        return ["Find account", "Cancel", "", ""];
       case AdminMode.ADMIN:
-        return ["Back to search", "Cancel"];
+        return ["Back to search", "Cancel", "Stats", "Pokedex"];
       default:
-        return ["Activate ADMIN", "Cancel"];
+        return ["Activate ADMIN", "Cancel", "Stats", "Pokedex"];
     }
   }
 
   override getInputFieldConfigs(): InputFieldConfig[] {
-    const inputFieldConfigs: InputFieldConfig[] = [];
     switch (this.adminMode) {
       case AdminMode.LINK:
-        inputFieldConfigs.push({ label: "Username" });
-        inputFieldConfigs.push({ label: "Discord ID" });
-        break;
+        return [{ label: "Username" }, { label: "Discord ID" }];
       case AdminMode.SEARCH:
-        inputFieldConfigs.push({ label: "Username" });
-        break;
+        return [{ label: "Username" }];
       case AdminMode.ADMIN: {
-        const adminResult = this.adminResult ?? {
-          username: "",
-          discordId: "",
-          googleId: "",
-          lastLoggedIn: "",
-          registered: "",
-        };
         // Discord and Google ID fields that are not empty get locked, other fields are all locked
-        inputFieldConfigs.push({ label: "Username", isReadOnly: true });
-        inputFieldConfigs.push({
-          label: "Discord ID",
-          isReadOnly: adminResult.discordId !== "",
-        });
-        inputFieldConfigs.push({
-          label: "Google ID",
-          isReadOnly: adminResult.googleId !== "",
-        });
-        inputFieldConfigs.push({ label: "Last played", isReadOnly: true });
-        inputFieldConfigs.push({ label: "Registered", isReadOnly: true });
-        break;
+        return [
+          { label: "Username", isReadOnly: true },
+          {
+            label: "Discord ID",
+            isReadOnly: (this.adminResult?.discordId ?? "") !== "",
+          },
+          {
+            label: "Google ID",
+            isReadOnly: (this.adminResult?.googleId ?? "") !== "",
+          },
+          { label: "Last played", isReadOnly: true },
+          { label: "Registered", isReadOnly: true },
+        ];
       }
+      default:
+        return [];
     }
-    return inputFieldConfigs;
   }
 
   processInput(button: Button): boolean {
@@ -126,36 +125,41 @@ export class AdminUiHandler extends FormModalUiHandler {
       this.buttonLabels[i].setText(labels[i]); // sets the label text
     }
 
-    this.errorMessage.setPosition(10, (hasTitle ? 31 : 5) + 20 * (fields.length - 1) + 16 + this.getButtonTopMargin()); // sets the position of the message dynamically
-    if (isMessageError) {
-      this.errorMessage.setColor(getTextColor(TextStyle.SUMMARY_PINK));
-      this.errorMessage.setShadowColor(getTextColor(TextStyle.SUMMARY_PINK, true));
-    } else {
-      this.errorMessage.setColor(getTextColor(TextStyle.SUMMARY_GREEN));
-      this.errorMessage.setShadowColor(getTextColor(TextStyle.SUMMARY_GREEN, true));
+    const msgColor = isMessageError ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_GREEN;
+
+    this.errorMessage
+      .setPosition(10, (hasTitle ? 31 : 5) + 20 * (fields.length - 1) + 16 + this.getButtonTopMargin())
+      .setColor(getTextColor(msgColor))
+      .setShadowColor(getTextColor(msgColor, true));
+
+    if (!super.show(args)) {
+      return false;
     }
 
-    if (super.show(args)) {
-      this.populateFields(this.adminMode, this.adminResult);
-      const originalSubmitAction = this.submitAction;
-      this.submitAction = _ => {
-        this.submitAction = originalSubmitAction;
-        const adminSearchResult: AdminSearchInfo = this.convertInputsToAdmin(); // this converts the input texts into a single object for use later
-        const validFields = this.areFieldsValid(this.adminMode);
-        if (validFields.error) {
-          globalScene.ui.setMode(UiMode.LOADING, { buttonActions: [] }); // this is here to force a loading screen to allow the admin tool to reopen again if there's an error
-          return this.showMessage(validFields.errorMessage ?? "", adminSearchResult, true);
-        }
-        globalScene.ui.setMode(UiMode.LOADING, { buttonActions: [] });
-        if (this.adminMode === AdminMode.LINK) {
+    this.hideLastButtons(this.adminMode === AdminMode.ADMIN ? 0 : 2);
+
+    this.populateFields(this.adminMode, this.adminResult);
+    const originalSubmitAction = this.submitAction;
+    this.submitAction = () => {
+      this.submitAction = originalSubmitAction;
+      const adminSearchResult: SearchAccountResponse = this.convertInputsToAdmin(); // this converts the input texts into a single object for use later
+      const validFields = this.areFieldsValid(this.adminMode);
+      if (validFields.error) {
+        globalScene.ui.setMode(UiMode.LOADING, { buttonActions: [] }); // this is here to force a loading screen to allow the admin tool to reopen again if there's an error
+        return this.showMessage(validFields.errorMessage ?? "", adminSearchResult, true);
+      }
+      globalScene.ui.setMode(UiMode.LOADING, { buttonActions: [] });
+      switch (this.adminMode) {
+        case AdminMode.LINK:
           this.adminLinkUnlink(adminSearchResult, "discord", "Link") // calls server to link discord
             .then(response => {
               if (response.error) {
                 return this.showMessage(response.errorType, adminSearchResult, true); // error or some kind
               }
-              return this.showMessage(this.SUCCESS_SERVICE_MODE("discord", "link"), adminSearchResult, false); // success
+              return this.showMessage(AdminUiHandler.SUCCESS_SERVICE_MODE("discord", "link"), adminSearchResult, false); // success
             });
-        } else if (this.adminMode === AdminMode.SEARCH) {
+          break;
+        case AdminMode.SEARCH:
           this.adminSearch(adminSearchResult) // admin search for username
             .then(response => {
               if (response.error) {
@@ -163,16 +167,16 @@ export class AdminUiHandler extends FormModalUiHandler {
               }
               this.updateAdminPanelInfo(response.adminSearchResult ?? adminSearchResult); // success
             });
-        } else if (this.adminMode === AdminMode.ADMIN) {
+          break;
+        case AdminMode.ADMIN:
           this.updateAdminPanelInfo(adminSearchResult, AdminMode.SEARCH);
-        }
-      };
-      return true;
-    }
-    return false;
+          break;
+      }
+    };
+    return true;
   }
 
-  showMessage(message: string, adminResult: AdminSearchInfo, isError: boolean) {
+  showMessage(message: string, adminResult: SearchAccountResponse, isError: boolean) {
     globalScene.ui.setMode(
       UiMode.ADMIN,
       Object.assign(this.config, { errorMessage: message?.trim() }),
@@ -187,13 +191,65 @@ export class AdminUiHandler extends FormModalUiHandler {
     }
   }
 
+  private populateAdminFields(adminResult: SearchAccountResponse) {
+    for (const [i, aR] of Object.keys(adminResult).entries()) {
+      if (aR === "systemData") {
+        continue;
+      }
+      this.inputs[i].setText(adminResult[aR]);
+      if (aR === "discordId" || aR === "googleId") {
+        // this is here to add the icons for linking/unlinking of google/discord IDs
+        const nineSlice = this.inputContainers[i].list.find(iC => iC.type === "NineSlice");
+        const img = globalScene.add.image(
+          this.inputContainers[i].x + nineSlice!.width + this.buttonGap,
+          this.inputContainers[i].y + Math.floor(nineSlice!.height / 2),
+          adminResult[aR] === "" ? "link_icon" : "unlink_icon",
+        );
+        img
+          .setName(`adminBtn_${aR}`)
+          .setOrigin()
+          .setInteractive()
+          .on("pointerdown", () => {
+            const service = aR.toLowerCase().replace("id", ""); // this takes our key (discordId or googleId) and removes the "Id" at the end to make it more url friendly
+            const mode = adminResult[aR] === "" ? "Link" : "Unlink"; // this figures out if we're linking or unlinking a service
+            const validFields = this.areFieldsValid(this.adminMode, service);
+            if (validFields.error) {
+              globalScene.ui.setMode(UiMode.LOADING, { buttonActions: [] }); // this is here to force a loading screen to allow the admin tool to reopen again if there's an error
+              return this.showMessage(validFields.errorMessage ?? "", adminResult, true);
+            }
+            this.adminLinkUnlink(this.convertInputsToAdmin(), service as AdminUiHandlerService, mode).then(response => {
+              // attempts to link/unlink depending on the service
+              if (response.error) {
+                globalScene.ui.setMode(UiMode.LOADING, { buttonActions: [] });
+                return this.showMessage(response.errorType, adminResult, true); // fail
+              }
+              // success, reload panel with new results
+              globalScene.ui.setMode(UiMode.LOADING, { buttonActions: [] });
+              this.adminSearch(adminResult).then(searchResponse => {
+                if (searchResponse.error) {
+                  return this.showMessage(searchResponse.errorType, adminResult, true);
+                }
+                return this.showMessage(
+                  AdminUiHandler.SUCCESS_SERVICE_MODE(service, mode),
+                  searchResponse.adminSearchResult ?? adminResult,
+                  false,
+                );
+              });
+            });
+          });
+        this.addInteractionHoverEffect(img);
+        this.modalContainer.add(img);
+      }
+    }
+  }
+
   /**
    * This is used to update the fields' text when loading in a new admin ui handler. It uses the {@linkcode adminResult}
    * to update the input text based on the {@linkcode adminMode}. For a linking adminMode, it sets the username and discord.
    * For a search adminMode, it sets the username. For an admin adminMode, it sets all the info from adminResult in the
    * appropriate text boxes, and also sets the link/unlink icons for discord/google depending on the result
    */
-  private populateFields(adminMode: AdminMode, adminResult: AdminSearchInfo) {
+  private populateFields(adminMode: AdminMode, adminResult: SearchAccountResponse) {
     switch (adminMode) {
       case AdminMode.LINK:
         this.inputs[0].setText(adminResult.username);
@@ -203,53 +259,7 @@ export class AdminUiHandler extends FormModalUiHandler {
         this.inputs[0].setText(adminResult.username);
         break;
       case AdminMode.ADMIN:
-        Object.keys(adminResult).forEach((aR, i) => {
-          this.inputs[i].setText(adminResult[aR]);
-          if (aR === "discordId" || aR === "googleId") {
-            // this is here to add the icons for linking/unlinking of google/discord IDs
-            const nineSlice = this.inputContainers[i].list.find(iC => iC.type === "NineSlice");
-            const img = globalScene.add.image(
-              this.inputContainers[i].x + nineSlice!.width + this.buttonGap,
-              this.inputContainers[i].y + Math.floor(nineSlice!.height / 2),
-              adminResult[aR] === "" ? "link_icon" : "unlink_icon",
-            );
-            img.setName(`adminBtn_${aR}`);
-            img.setOrigin(0.5, 0.5);
-            img.setInteractive();
-            img.on("pointerdown", () => {
-              const service = aR.toLowerCase().replace("id", ""); // this takes our key (discordId or googleId) and removes the "Id" at the end to make it more url friendly
-              const mode = adminResult[aR] === "" ? "Link" : "Unlink"; // this figures out if we're linking or unlinking a service
-              const validFields = this.areFieldsValid(this.adminMode, service);
-              if (validFields.error) {
-                globalScene.ui.setMode(UiMode.LOADING, { buttonActions: [] }); // this is here to force a loading screen to allow the admin tool to reopen again if there's an error
-                return this.showMessage(validFields.errorMessage ?? "", adminResult, true);
-              }
-              this.adminLinkUnlink(this.convertInputsToAdmin(), service as AdminUiHandlerService, mode).then(
-                response => {
-                  // attempts to link/unlink depending on the service
-                  if (response.error) {
-                    globalScene.ui.setMode(UiMode.LOADING, { buttonActions: [] });
-                    return this.showMessage(response.errorType, adminResult, true); // fail
-                  }
-                  // success, reload panel with new results
-                  globalScene.ui.setMode(UiMode.LOADING, { buttonActions: [] });
-                  this.adminSearch(adminResult).then(response => {
-                    if (response.error) {
-                      return this.showMessage(response.errorType, adminResult, true);
-                    }
-                    return this.showMessage(
-                      this.SUCCESS_SERVICE_MODE(service, mode),
-                      response.adminSearchResult ?? adminResult,
-                      false,
-                    );
-                  });
-                },
-              );
-            });
-            this.addInteractionHoverEffect(img);
-            this.modalContainer.add(img);
-          }
-        });
+        this.populateAdminFields(adminResult);
         break;
     }
   }
@@ -261,23 +271,23 @@ export class AdminUiHandler extends FormModalUiHandler {
           // username missing from link panel
           return {
             error: true,
-            errorMessage: this.ERR_REQUIRED_FIELD("username"),
+            errorMessage: AdminUiHandler.ERR_REQUIRED_FIELD("username"),
           };
         }
         if (!this.inputs[1].text) {
           // discordId missing from linking panel
           return {
             error: true,
-            errorMessage: this.ERR_REQUIRED_FIELD("discord"),
+            errorMessage: AdminUiHandler.ERR_REQUIRED_FIELD("discord"),
           };
         }
         break;
       case AdminMode.SEARCH:
-        if (!this.inputs[0].text) {
-          // username missing from search panel
+        if (!this.inputs[0].text && !bypassLogin) {
+          // username missing from search panel, skip check for local testing
           return {
             error: true,
-            errorMessage: this.ERR_REQUIRED_FIELD("username"),
+            errorMessage: AdminUiHandler.ERR_REQUIRED_FIELD("username"),
           };
         }
         break;
@@ -286,14 +296,14 @@ export class AdminUiHandler extends FormModalUiHandler {
           // discordId missing from admin panel
           return {
             error: true,
-            errorMessage: this.ERR_REQUIRED_FIELD(service),
+            errorMessage: AdminUiHandler.ERR_REQUIRED_FIELD(service),
           };
         }
         if (!this.inputs[2].text && service === "google") {
           // googleId missing from admin panel
           return {
             error: true,
-            errorMessage: this.ERR_REQUIRED_FIELD(service),
+            errorMessage: AdminUiHandler.ERR_REQUIRED_FIELD(service),
           };
         }
         break;
@@ -303,17 +313,32 @@ export class AdminUiHandler extends FormModalUiHandler {
     };
   }
 
-  private convertInputsToAdmin(): AdminSearchInfo {
+  private convertInputsToAdmin(): SearchAccountResponse {
+    const inputs = this.inputs;
     return {
-      username: this.inputs[0]?.node ? this.inputs[0].text : "",
-      discordId: this.inputs[1]?.node ? this.inputs[1]?.text : "",
-      googleId: this.inputs[2]?.node ? this.inputs[2]?.text : "",
-      lastLoggedIn: this.inputs[3]?.node ? this.inputs[3]?.text : "",
-      registered: this.inputs[4]?.node ? this.inputs[4]?.text : "",
+      username: inputs[0]?.node ? inputs[0].text : "",
+      discordId: inputs[1]?.node ? inputs[1]?.text : "",
+      googleId: inputs[2]?.node ? inputs[2]?.text : "",
+      lastLoggedIn: inputs[3]?.node ? inputs[3]?.text : "",
+      registered: inputs[4]?.node ? inputs[4]?.text : "",
     };
   }
 
-  private async adminSearch(adminSearchResult: AdminSearchInfo) {
+  private async adminSearch(adminSearchResult: SearchAccountResponse) {
+    this.tempGameData = null;
+    // Mocking response, solely for local testing
+    if (bypassLogin) {
+      const fakeResponse: SearchAccountResponse = {
+        username: adminSearchResult.username,
+        discordId: "",
+        googleId: "",
+        lastLoggedIn: "",
+        registered: "",
+      };
+      this.tempGameData = globalScene.gameData;
+      return { adminSearchResult: fakeResponse, error: false };
+    }
+
     try {
       const [adminInfo, errorType] = await pokerogueApi.admin.searchAccount({
         username: adminSearchResult.username,
@@ -322,7 +347,14 @@ export class AdminUiHandler extends FormModalUiHandler {
         // error - if adminInfo.status === this.httpUserNotFoundErrorCode that means the username can't be found in the db
         return { adminSearchResult, error: true, errorType };
       }
-      // success
+      if (adminInfo.systemData) {
+        const rawSystem = JSON.stringify(adminInfo.systemData);
+        try {
+          this.tempGameData = GameData.fromRawSystem(rawSystem);
+        } catch {
+          console.warn("Could not parse system data for admin panel, stats/pokedex will be unavailable!");
+        }
+      }
       return { adminSearchResult: adminInfo, error: false };
     } catch (err) {
       console.error(err);
@@ -331,58 +363,23 @@ export class AdminUiHandler extends FormModalUiHandler {
   }
 
   private async adminLinkUnlink(
-    adminSearchResult: AdminSearchInfo,
+    adminSearchResult: SearchAccountResponse,
     service: AdminUiHandlerService,
     mode: AdminUiHandlerServiceMode,
   ) {
     try {
-      let errorType: string | null = null;
-
-      if (service === "discord") {
-        if (mode === "Link") {
-          errorType = await pokerogueApi.admin.linkAccountToDiscord({
-            discordId: adminSearchResult.discordId,
-            username: adminSearchResult.username,
-          });
-        } else if (mode === "Unlink") {
-          errorType = await pokerogueApi.admin.unlinkAccountFromDiscord({
-            discordId: adminSearchResult.discordId,
-            username: adminSearchResult.username,
-          });
-        } else {
-          console.warn("Unknown mode", mode, "for service", service);
-        }
-      } else if (service === "google") {
-        if (mode === "Link") {
-          errorType = await pokerogueApi.admin.linkAccountToGoogleId({
-            googleId: adminSearchResult.googleId,
-            username: adminSearchResult.username,
-          });
-        } else if (mode === "Unlink") {
-          errorType = await pokerogueApi.admin.unlinkAccountFromGoogleId({
-            googleId: adminSearchResult.googleId,
-            username: adminSearchResult.username,
-          });
-        } else {
-          console.warn("Unknown mode", mode, "for service", service);
-        }
-      } else {
-        console.warn("Unknown service", service);
+      const error = await pokerogueApi.admin.linkUnlinkRequest(mode, service, adminSearchResult);
+      if (error != null) {
+        return { error: true, errorType: error };
       }
-
-      if (errorType) {
-        // error - if response.status === this.httpUserNotFoundErrorCode that means the username can't be found in the db
-        return { adminSearchResult, error: true, errorType };
-      }
-      // success!
-      return { adminSearchResult, error: false };
     } catch (err) {
       console.error(err);
       return { error: true, errorType: err };
     }
+    return { adminSearchResult, error: false };
   }
 
-  private updateAdminPanelInfo(adminSearchResult: AdminSearchInfo, mode?: AdminMode) {
+  private updateAdminPanelInfo(adminSearchResult: SearchAccountResponse, mode?: AdminMode) {
     mode = mode ?? AdminMode.ADMIN;
     globalScene.ui.setMode(
       UiMode.ADMIN,
@@ -396,6 +393,27 @@ export class AdminUiHandler extends FormModalUiHandler {
           () => {
             globalScene.ui.revertMode();
             globalScene.ui.revertMode();
+          },
+          () => {
+            if (this.tempGameData == null) {
+              globalScene.ui.playError();
+              return;
+            }
+            this.hide();
+            globalScene.ui.setOverlayMode(
+              UiMode.GAME_STATS,
+              adminSearchResult.username,
+              this.tempGameData,
+              this.unhide.bind(this),
+            );
+          },
+          () => {
+            if (this.tempGameData == null) {
+              globalScene.ui.playError();
+              return;
+            }
+            this.hide();
+            globalScene.ui.setOverlayMode(UiMode.POKEDEX, this.tempGameData, this.unhide.bind(this));
           },
         ],
       },
@@ -431,29 +449,4 @@ export class AdminUiHandler extends FormModalUiHandler {
       this.modalContainer.remove(removeArray.pop(), true);
     }
   }
-}
-
-export enum AdminMode {
-  LINK,
-  SEARCH,
-  ADMIN,
-}
-
-export function getAdminModeName(adminMode: AdminMode): string {
-  switch (adminMode) {
-    case AdminMode.LINK:
-      return "Link";
-    case AdminMode.SEARCH:
-      return "Search";
-    default:
-      return "";
-  }
-}
-
-interface AdminSearchInfo {
-  username: string;
-  discordId: string;
-  googleId: string;
-  lastLoggedIn: string;
-  registered: string;
 }

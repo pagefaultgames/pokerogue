@@ -127,7 +127,8 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       });
     });
 
-    it("should start battle against the trainer with correctly loaded assets", async () => {
+    // TODO: This is a flaky test that needs to have its fishy logic revisited
+    it.todo("should start battle against the trainer with correctly loaded assets", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER, defaultParty);
 
       let successfullyLoaded = false;

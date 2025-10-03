@@ -1,5 +1,6 @@
 import type { BattleScene } from "#app/battle-scene";
 import { BiomeId } from "#enums/biome-id";
+import { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import { ModifierTier } from "#enums/modifier-tier";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -20,7 +21,7 @@ import { GameManager } from "#test/test-utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
 import { TrainerConfig } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/trainer-party-template";
-import { ModifierSelectUiHandler } from "#ui/handlers/modifier-select-ui-handler";
+import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/mysteriousChallengers";
@@ -120,9 +121,9 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
     );
     expect(encounter.enemyPartyConfigs[2].trainerConfig?.partyTemplates[0]).toEqual(
       new TrainerPartyCompoundTemplate(
-        new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE),
-        new TrainerPartyTemplate(3, PartyMemberStrength.STRONG),
-        new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER),
+        new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE, undefined, undefined, EvoLevelThresholdKind.STRONG),
+        new TrainerPartyTemplate(3, PartyMemberStrength.STRONG, undefined, undefined, EvoLevelThresholdKind.STRONG),
+        new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER, undefined, undefined, EvoLevelThresholdKind.STRONG),
       ),
     );
     expect(encounter.spriteConfigs).toBeDefined();
