@@ -8222,7 +8222,6 @@ const attackedByItemMessageFunc = (user: Pokemon, target: Pokemon, move: Move) =
   return message;
 };
 
-<<<<<<< HEAD
 const sunnyHealRatioFunc = (): number => {
   if (globalScene.arena.weather?.isEffectSuppressed()) {
     return 1 / 2;
@@ -8270,59 +8269,6 @@ const swallowHealFunc = (user: Pokemon): number => {
   }
 }
 
-export class MoveCondition {
-  protected func: MoveConditionFunc;
-
-  constructor(func: MoveConditionFunc) {
-    this.func = func;
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move): boolean {
-    return this.func(user, target, move);
-  }
-
-  getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    return 0;
-  }
-}
-
-/**
- * Condition to allow a move's use only on the first turn this Pokemon is sent into battle
- * (or the start of a new wave, whichever comes first).
- */
-
-export class FirstMoveCondition extends MoveCondition {
-  constructor() {
-    super((user, _target, _move) => user.tempSummonData.waveTurnCount === 1);
-  }
-
-  getUserBenefitScore(user: Pokemon, _target: Pokemon, _move: Move): number {
-    return this.apply(user, _target, _move) ? 10 : -20;
-  }
-}
-
-/**
- * Condition used by the move {@link https://bulbapedia.bulbagarden.net/wiki/Upper_Hand_(move) | Upper Hand}.
- * Moves with this condition are only successful when the target has selected
- * a high-priority attack (after factoring in priority-boosting effects) and
- * hasn't moved yet this turn.
- */
-export class UpperHandCondition extends MoveCondition {
-  constructor() {
-    super((user, target, move) => {
-      const targetCommand = globalScene.currentBattle.turnCommands[target.getBattlerIndex()];
-
-      return targetCommand?.command === Command.FIGHT
-        && !target.turnData.acted
-        && !!targetCommand.move?.move
-        && allMoves[targetCommand.move.move].category !== MoveCategory.STATUS
-        && allMoves[targetCommand.move.move].getPriority(target) > 0;
-    });
-  }
-}
-
-=======
->>>>>>> upstream/beta
 export class HitsSameTypeAttr extends VariableMoveTypeMultiplierAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const multiplier = args[0] as NumberHolder;
@@ -9473,24 +9419,15 @@ export function initMoves() {
       .partial(), // Does not lock the user, does not stop Pokemon from sleeping
       // Likely can make use of FrenzyAttr and an ArenaTag (just without the FrenzyMissFunc)
     new SelfStatusMove(MoveId.STOCKPILE, PokemonType.NORMAL, -1, 20, -1, 0, 3)
-<<<<<<< HEAD
-      .condition(user => (user.getTag(BattlerTagType.STOCKPILING)?.stockpiledCount ?? 0) < 3)
-=======
-      .condition(user => (user.getTag(StockpilingTag)?.stockpiledCount ?? 0) < 3, 3)
->>>>>>> upstream/beta
-      .attr(AddBattlerTagAttr, BattlerTagType.STOCKPILING, true),
+      .attr(AddBattlerTagAttr, BattlerTagType.STOCKPILING, true)
+      .condition(user => (user.getTag(BattlerTagType.STOCKPILING)?.stockpiledCount ?? 0) < 3, 3),
     new AttackMove(MoveId.SPIT_UP, PokemonType.NORMAL, MoveCategory.SPECIAL, -1, 100, 10, -1, 0, 3)
-      .condition(hasStockpileStacksCondition, 3)
       .attr(SpitUpPowerAttr, 100)
-      .attr(RemoveBattlerTagAttr, [ BattlerTagType.STOCKPILING ], true),
+      .attr(RemoveBattlerTagAttr, [ BattlerTagType.STOCKPILING ], true)
+      .condition(hasStockpileStacksCondition, 3),
     new SelfStatusMove(MoveId.SWALLOW, PokemonType.NORMAL, -1, 10, -1, 0, 3)
-<<<<<<< HEAD
       .attr(VariableHealAttr, swallowHealFunc, false, true, false)
-      .condition(hasStockpileStacksCondition)
-=======
       .condition(hasStockpileStacksCondition, 3)
-      .attr(SwallowHealAttr)
->>>>>>> upstream/beta
       .attr(RemoveBattlerTagAttr, [ BattlerTagType.STOCKPILING ], true)
       .triageMove()
       // TODO: Verify if using Swallow at full HP still consumes stacks or not
