@@ -4280,7 +4280,7 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
   
         // New max reached; clear prior results and update tracker 
         maxPowerSeen = movePower;
-        movesAtMaxPower.slice(0, movesAtMaxPower.length, move.name);
+        movesAtMaxPower.splice(0, movesAtMaxPower.length, move.name);
       }
     }
 
