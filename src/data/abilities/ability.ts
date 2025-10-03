@@ -4286,9 +4286,8 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
 
     // Pick a random move in our list.
     if (movesAtMaxPower.length === 0) {
-    // NB: The 
+      // NB: The ONLY way this can happen is if both opponents have 0 moves in their moveset
       throw new Error("Forewarn ability found 0 valid moves!");
-      return;
     }
     const chosenMove = movesAtMaxPower[pokemon.randBattleSeedInt(movesAtMaxPower.length)];
     globalScene.phaseManager.queueMessage(
