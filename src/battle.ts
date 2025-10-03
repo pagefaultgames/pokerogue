@@ -528,22 +528,20 @@ export class FixedBattleConfig {
  * Helper function to generate a random trainer for evil team trainers and the elite 4/champion
  * @param trainerPool - The TrainerType or list of TrainerTypes that can possibly be generated
  * @param randomGender - (default `false`); Whether or not to randomly (50%) generate a female trainer (for use with evil team grunts)
- * @param seedOffset - (default `0`); The seed offset to use for the random generation of the trainer
- * @param forceUnique - (default `false`); Whether or not to use seed offset to force a unique trainer from the provided pool
+ * @param seedOffset - (default `0`); A seed offset indicating the invocation count of the function to attempt to choose a random, but unique, trainer from the pool
  * @returns A function to generate a random trainer
  */
 export function getRandomTrainerFunc(
   trainerPool: (TrainerType | TrainerType[])[],
   randomGender = false,
   seedOffset = 0,
-  forceUnique = false,
 ): GetTrainerFunc {
   return () => {
     /** The chosen entry in the pool */
     let choice = randSeedItem(trainerPool);
 
     if (typeof choice !== "number") {
-      choice = forceUnique ? randSeedUniqueItem(choice, seedOffset) : randSeedItem(choice);
+      choice = seedOffset === 0 ? randSeedItem(choice) : randSeedUniqueItem(choice, seedOffset);
     }
 
     let trainerGender = TrainerVariant.DEFAULT;
