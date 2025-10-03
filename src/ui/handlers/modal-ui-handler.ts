@@ -182,6 +182,32 @@ export abstract class ModalUiHandler extends UiHandler {
     }
   }
 
+  hideLastButtons(hideCount = 0) {
+    const visibleCount = this.buttonBgs.length - hideCount;
+
+    const totalButtonWidth = this.buttonBgs.slice(0, visibleCount).reduce((sum, bg) => sum + bg.width, 0);
+
+    // Clamping the button spacing between 2 and 12
+    // Dividing by visibleCount rather than visibleCount-1 to leave space at the edge
+    // -8 is to take the border of the background into account
+    const spacing = Math.max(2, Math.min(12, (this.modalBg.width - 8 - totalButtonWidth) / visibleCount));
+
+    const totalVisibleWidth = totalButtonWidth + spacing * Math.max(visibleCount - 1, 0);
+
+    let x = (this.modalBg.width - totalVisibleWidth) / 2;
+
+    this.buttonContainers.forEach((container, i) => {
+      const visible = i < visibleCount;
+
+      container.setActive(visible).setVisible(visible);
+
+      if (visible) {
+        container.setPosition(x + this.buttonBgs[i].width / 2, this.modalBg.height - (this.buttonBgs[i].height + 8));
+        x += this.buttonBgs[i].width + spacing;
+      }
+    });
+  }
+
   processInput(_button: Button): boolean {
     return false;
   }

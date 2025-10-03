@@ -32,7 +32,7 @@ export class SettingsDisplayUiHandler extends AbstractSettingsUiHandler {
             label: "Español (ES)",
           };
           break;
-        case "es-MX":
+        case "es-419":
           this.settings[languageIndex].options[0] = {
             value: "Español (LATAM)",
             label: "Español (LATAM)",
@@ -75,13 +75,13 @@ export class SettingsDisplayUiHandler extends AbstractSettingsUiHandler {
             label: "日本語",
           };
           break;
-        case "zh-CN":
+        case "zh-Hans":
           this.settings[languageIndex].options[0] = {
             value: "简体中文",
             label: "简体中文",
           };
           break;
-        case "zh-TW":
+        case "zh-Hant":
           this.settings[languageIndex].options[0] = {
             value: "繁體中文",
             label: "繁體中文",
