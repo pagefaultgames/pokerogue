@@ -4243,6 +4243,11 @@ function getOncePerBattleCondition(ability: AbilityId): AbAttrCondition {
 }
 
 /**
+ * Ability attribute used by {@linkcode AbilityId.FOREWARN}.
+ *
+ * Displays a message on switch-in containing the highest power Move known by the user's opponents,
+ * picking randomly in the case of a tie.
+ * @see {@link https://www.smogon.com/dex/sv/abilities/forewarn/}
  * @sealed
  */
 export class ForewarnAbAttr extends PostSummonAbAttr {
@@ -4251,44 +4256,75 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
   }
 
   override apply({ simulated, pokemon }: AbAttrBaseParams): void {
-    if (!simulated) {
+    if (simulated) {
       return;
     }
-    let maxPowerSeen = 0;
-    let maxMove = "";
-    let movePower = 0;
-    for (const opponent of pokemon.getOpponents()) {
-      for (const move of opponent.moveset) {
-        if (move?.getMove().is("StatusMove")) {
-          movePower = 1;
-        } else if (move?.getMove().hasAttr("OneHitKOAttr")) {
-          movePower = 150;
-        } else if (
-          move?.getMove().id === MoveId.COUNTER
-          || move?.getMove().id === MoveId.MIRROR_COAT
-          || move?.getMove().id === MoveId.METAL_BURST
-        ) {
-          movePower = 120;
-        } else if (move?.getMove().power === -1) {
-          movePower = 80;
-        } else {
-          movePower = move?.getMove().power ?? 0;
-        }
 
-        if (movePower > maxPowerSeen) {
-          maxPowerSeen = movePower;
-          maxMove = move?.getName() ?? "";
+    let maxPowerSeen = 0;
+    const movesAtMaxPower: string[] = [];
+
+    // Record all moves in all opponents' movesets seen at our max power threshold, clearing it if a new "highest power" is found
+    // TODO: Change to `pokemon.getOpponents().flatMap(p => p.getMoveset())` if or when we upgrade to ES2025
+    for (const opp of pokemon.getOpponents()) {
+      for (const oppMove of opp.getMoveset()) {
+        const move = oppMove.getMove();
+        const movePower = getForewarnPower(move);
+        if (movePower < maxPowerSeen) {
+          continue;
         }
+  
+        // Another move at current max found; add to tiebreaker array 
+        if {movePower === maxPowerSeen) {
+          movesAtMaxPower.push(move.getName());
+        }
+  
+        // New max reached; clear prior results and update tracker 
+        maxPowerSeen = movePower;
+        movesAtMaxPower.slice(0, movesAtMaxPower.length, move.getName());
       }
     }
 
+    // Pick a random move in our list.
+    if (movesAtMaxPower.length === 0) {
+    // NB: The 
+      throw new Error("Forewarn ability found 0 valid moves!");
+      return;
+    }
+    const chosenMove = movesAtMaxPower[pokemon.randBattleSeedInt(movesAtMaxPower.length)];
     globalScene.phaseManager.queueMessage(
       i18next.t("abilityTriggers:forewarn", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        moveName: maxMove,
+        moveName: chosenMove,
       }),
     );
   }
+}
+
+/**
+ * Helper function to return the estimated power used by Forewarn's "highest power" ranking.
+ * @param move - The `Move` being checked
+ * @returns The "forewarned" power of the move.
+ * @see {@link https://www.smogon.com/dex/sv/abilities/forewarn/}
+ */
+function getForewarnPower(move: Move): number {
+  if (move.is("StatusMove")) {
+    return 1;
+  } 
+  
+  if (move.hasAttr("OneHitKOAttr")) {
+    return 150;
+  } 
+
+  // NB: Mainline doesn't count Comeuppance in its "counter move exceptions" list, which is dumb
+  if (move.hasAttr("CounterDamageAttr")) {
+    return 120;
+  }
+
+  // All damaging moves with unlisted powers use 80 as a fallback 
+  if (move.power === -1) {
+    return 80;
+  }
+  return move.power;
 }
 
 /**
