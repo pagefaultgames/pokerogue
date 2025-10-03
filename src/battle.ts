@@ -251,11 +251,11 @@ export class Battle {
     }
     if (this.gameMode.isClassic) {
       if (isBetween(this.waveIndex, 191, 194)) {
-           return "end";
-     } else if (isBetween(this.waveIndex, 196, 199)) {
-       return "end_summit";
-  }
-}
+        return "end";
+      } else if (isBetween(this.waveIndex, 196, 199)) {
+        return "end_summit";
+      }
+    }
     const wildOpponents = globalScene.getEnemyParty();
     for (const pokemon of wildOpponents) {
       if (this.battleSpec === BattleSpec.FINAL_BOSS) {
