@@ -4275,12 +4275,12 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
   
         // Another move at current max found; add to tiebreaker array 
         if (movePower === maxPowerSeen) {
-          movesAtMaxPower.push(move.getName());
+          movesAtMaxPower.push(move.name);
         }
   
         // New max reached; clear prior results and update tracker 
         maxPowerSeen = movePower;
-        movesAtMaxPower.slice(0, movesAtMaxPower.length, move.getName());
+        movesAtMaxPower.slice(0, movesAtMaxPower.length, move.name);
       }
     }
 
