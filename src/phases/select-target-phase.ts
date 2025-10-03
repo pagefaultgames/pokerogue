@@ -23,9 +23,9 @@ export class SelectTargetPhase extends PokemonPhase {
       const fieldSide = globalScene.getField();
       const user = fieldSide[this.fieldIndex];
       const moveObject = allMoves[move!];
-      if (moveObject && user.isMoveTargetRestricted(moveObject.id, user, fieldSide[targets[0]])) {
+      if (moveObject && user.isMoveTargetRestricted(moveObject.id, fieldSide[targets[0]])) {
         const errorMessage = user
-          .getRestrictingTag(move!, user, fieldSide[targets[0]])!
+          .getRestrictingTag(move!, fieldSide[targets[0]])!
           .selectionDeniedText(user, moveObject.id);
         globalScene.phaseManager.queueMessage(i18next.t(errorMessage, { moveName: moveObject.name }), 0, true);
         targets = [];

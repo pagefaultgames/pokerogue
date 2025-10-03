@@ -7,7 +7,7 @@ import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { EntryHazardTag, SuppressAbilitiesTag } from "#data/arena-tag";
-import type { BattlerTag } from "#data/battler-tags";
+import type { BattlerTag, BattlerTagTypeConstructorMap } from "#data/battler-tags";
 import { GroundedTag } from "#data/battler-tags";
 import { getBerryEffectFunc } from "#data/berry";
 import { allAbilities, allMoves } from "#data/data-lists";
@@ -4384,17 +4384,21 @@ export class PostWeatherChangeFormChangeAbAttr extends PostWeatherChangeAbAttr {
  * Add a battler tag to the pokemon when the weather changes.
  * @sealed
  */
-export class PostWeatherChangeAddBattlerTagAttr extends PostWeatherChangeAbAttr {
-  private tagType: BattlerTagType;
-  private turnCount: number;
-  private weatherTypes: WeatherType[];
+export class PostWeatherChangeAddBattlerTagAttr<T extends BattlerTagType> extends PostWeatherChangeAbAttr {
+  private readonly tagType: T;
+  private readonly weatherTypes: readonly [WeatherType, ...WeatherType[]];
+  private readonly args: readonly ConstructorParameters<BattlerTagTypeConstructorMap[T]>;
 
-  constructor(tagType: BattlerTagType, turnCount: number, ...weatherTypes: WeatherType[]) {
+  constructor(
+    tagType: T,
+    weatherTypes: readonly [WeatherType, ...WeatherType[]],
+    ...args: readonly ConstructorParameters<BattlerTagTypeConstructorMap[T]>
+  ) {
     super();
 
     this.tagType = tagType;
-    this.turnCount = turnCount;
     this.weatherTypes = weatherTypes;
+    this.args = args;
   }
 
   override canApply({ weather, pokemon }: PostWeatherChangeAbAttrParams): boolean {
@@ -4403,7 +4407,7 @@ export class PostWeatherChangeAddBattlerTagAttr extends PostWeatherChangeAbAttr 
 
   override apply({ simulated, pokemon }: PostWeatherChangeAbAttrParams): void {
     if (!simulated) {
-      pokemon.addTag(this.tagType, this.turnCount);
+      pokemon.addTag(this.tagType, ...this.args);
     }
   }
 }

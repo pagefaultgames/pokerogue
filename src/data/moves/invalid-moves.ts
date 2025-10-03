@@ -1,3 +1,5 @@
+// biome-ignore lint/correctness/noUnusedImports: TSDoc
+import type { HealBlockTag } from "#data/battler-tags";
 import { MoveId } from "#enums/move-id";
 
 /** Set of moves that cannot be called by {@linkcode MoveId.METRONOME | Metronome}. */
@@ -241,7 +243,8 @@ export const invalidMirrorMoveMoves: ReadonlySet<MoveId> = new Set([
   MoveId.WIDE_GUARD,
 ]);
 
-/** Set of moves that can never have their type overridden by an ability like Pixilate or Normalize
+/**
+ *  Set of moves that can never have their type overridden by an ability like Pixilate or Normalize
  *
  * Excludes tera blast and tera starstorm, as these are only conditionally forbidden
  */
@@ -268,6 +271,50 @@ export const invalidSketchMoves: ReadonlySet<MoveId> = new Set([
   MoveId.TERA_STARSTORM,
   MoveId.BREAKNECK_BLITZ__PHYSICAL,
   MoveId.BREAKNECK_BLITZ__SPECIAL,
+]);
+
+/**
+ * Set of all Moves rendered unusable by {@linkcode HealBlockTag | Heal Block}.
+ *
+ * Pollen Puff is not included as that is only forbidden if used _against_ a Pokemon with Heal Block applied.
+ */
+export const healBlockedMoves: ReadonlySet<MoveId> = new Set([
+  MoveId.ABSORB,
+  MoveId.MEGA_DRAIN,
+  MoveId.RECOVER,
+  MoveId.SOFT_BOILED,
+  MoveId.DREAM_EATER,
+  MoveId.LEECH_LIFE,
+  MoveId.REST,
+  MoveId.GIGA_DRAIN,
+  MoveId.MILK_DRINK,
+  MoveId.MORNING_SUN,
+  MoveId.SYNTHESIS,
+  MoveId.MOONLIGHT,
+  MoveId.SWALLOW,
+  MoveId.WISH,
+  MoveId.SLACK_OFF,
+  MoveId.ROOST,
+  MoveId.HEALING_WISH,
+  MoveId.DRAIN_PUNCH,
+  MoveId.HEAL_ORDER,
+  MoveId.LUNAR_DANCE,
+  MoveId.HEAL_PULSE,
+  MoveId.HORN_LEECH,
+  MoveId.PARABOLIC_CHARGE,
+  MoveId.DRAINING_KISS,
+  MoveId.OBLIVION_WING,
+  MoveId.SHORE_UP,
+  MoveId.FLORAL_HEALING,
+  MoveId.STRENGTH_SAP,
+  MoveId.PURIFY,
+  MoveId.BOUNCY_BUBBLE,
+  MoveId.LIFE_DEW,
+  MoveId.JUNGLE_HEALING,
+  MoveId.LUNAR_BLESSING,
+  MoveId.REVIVAL_BLESSING,
+  MoveId.BITTER_BLADE,
+  MoveId.MATCHA_GOTCHA,
 ]);
 
 /** Set of all moves that cannot be locked into by {@linkcode MoveId.ENCORE}. */

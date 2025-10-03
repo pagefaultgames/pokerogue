@@ -65,7 +65,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
-import { invalidEncoreMoves } from "#moves/invalid-moves";
+import { healBlockedMoves, invalidEncoreMoves } from "#moves/invalid-moves";
 import type { Move } from "#moves/move";
 import type { MoveEffectPhase } from "#phases/move-effect-phase";
 import type { MovePhase } from "#phases/move-phase";
@@ -394,7 +394,7 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
     super.onRemove(pokemon);
 
     globalScene.phaseManager.queueMessage(
-      i18next.t("battlerTags:disabledLapse", {
+      i18next.t("battlerTags:disabledOnRemove", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
         moveName: allMoves[this.moveId].name,
       }),
@@ -1430,6 +1430,7 @@ export class OctolockTag extends TrappedTag {
   }
 }
 
+// TODO: Merge with `IngrainTag`
 export class AquaRingTag extends SerializableBattlerTag {
   public override readonly tagType = BattlerTagType.AQUA_RING;
   constructor() {
@@ -2864,27 +2865,28 @@ export class ExposedTag extends SerializableBattlerTag {
 
 /**
  * Tag that prevents HP recovery from held items and move effects. It also blocks the usage of recovery moves.
- * Applied by moves:  {@linkcode MoveId.HEAL_BLOCK | Heal Block (5 turns)}, {@linkcode MoveId.PSYCHIC_NOISE | Psychic Noise (2 turns)}
+ * Applied by moves:
+ * - {@linkcode MoveId.HEAL_BLOCK} (5 turns)
+ * - {@linkcode MoveId.PSYCHIC_NOISE} (2 turns)
  */
 export class HealBlockTag extends MoveRestrictionBattlerTag {
   public override readonly tagType = BattlerTagType.HEAL_BLOCK;
-  constructor(turnCount: number, sourceMove: MoveId) {
-    super(BattlerTagType.HEAL_BLOCK, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
+  constructor(turnCount: number) {
+    super(BattlerTagType.HEAL_BLOCK, BattlerTagLapseType.TURN_END, turnCount);
   }
 
-  onActivation(pokemon: Pokemon): string {
-    return i18next.t("battle:battlerTagsHealBlock", {
+  /**
+   * @returns The message to be displayed when Heal Block blocks healing.
+   */
+  // TODO: This is an extremely poor way to display the heal block message
+  public onActivation(pokemon: Pokemon): string {
+    return i18next.t("battlerTags:healBlockCannotHeal", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
     });
   }
 
-  /**
-   * Checks if a move is disabled under Heal Block
-   * @param move - {@linkcode MoveId | ID} of the move being used
-   * @returns `true` if the move has a TRIAGE_MOVE flag and is a status move
-   */
   override isMoveRestricted(move: MoveId): boolean {
-    return allMoves[move].hasFlag(MoveFlags.TRIAGE_MOVE) && allMoves[move].category === MoveCategory.STATUS;
+    return healBlockedMoves.has(move);
   }
 
   /**
@@ -2895,46 +2897,41 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
    * @param target - The target of the move
    * @returns `true` if the move cannot be used because the target is an ally
    */
+  // TODO: This should probably be a restriction on pollen puff rather than being done here
   override isMoveTargetRestricted(move: MoveId, user: Pokemon, target: Pokemon) {
     const moveCategory = new NumberHolder(allMoves[move].category);
     applyMoveAttrs("StatusCategoryOnAllyAttr", user, target, allMoves[move], moveCategory);
     return allMoves[move].hasAttr("HealOnAllyAttr") && moveCategory.value === MoveCategory.STATUS;
   }
 
-  /**
-   * Uses its own unique selectionDeniedText() message
-   */
   override selectionDeniedText(pokemon: Pokemon, move: MoveId): string {
     return i18next.t("battle:moveDisabledHealBlock", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       moveName: allMoves[move].name,
-      healBlockName: allMoves[MoveId.HEAL_BLOCK].name,
     });
   }
 
-  /**
-   * @param pokemon - {@linkcode Pokemon} attempting to use the restricted move
-   * @param move - {@linkcode MoveId | ID} of the move being interrupted
-   * @returns Text to display when the move is interrupted
-   */
   override interruptedText(pokemon: Pokemon, move: MoveId): string {
-    return i18next.t("battle:moveDisabledHealBlock", {
-      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      moveName: allMoves[move].name,
-      healBlockName: allMoves[MoveId.HEAL_BLOCK].name,
-    });
+    return this.selectionDeniedText(pokemon, move);
+  }
+
+  override onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    globalScene.phaseManager.queueMessage(
+      i18next.t("battlerTags:healBlockOnAdd", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      }),
+    );
   }
 
   override onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
 
     globalScene.phaseManager.queueMessage(
-      i18next.t("battle:battlerTagsHealBlockOnRemove", {
+      i18next.t("battlerTags:healBlockOnRemove", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       }),
-      null,
-      false,
-      null,
     );
   }
 }
@@ -3846,7 +3843,7 @@ export function getBattlerTag(
     case BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON:
       return new MysteryEncounterPostSummonTag();
     case BattlerTagType.HEAL_BLOCK:
-      return new HealBlockTag(turnCount, sourceMove);
+      return new HealBlockTag(turnCount);
     case BattlerTagType.TORMENT:
       return new TormentTag(sourceId);
     case BattlerTagType.TAUNT:
