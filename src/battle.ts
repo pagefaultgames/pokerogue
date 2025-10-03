@@ -23,6 +23,7 @@ import { MusicPreference } from "#system/settings";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { TurnMove } from "#types/turn-move";
 import {
+  isBetween,
   NumberHolder,
   randInt,
   randomString,
@@ -248,9 +249,13 @@ export class Battle {
       }
       return this.trainer?.getMixedBattleBgm() ?? null;
     }
-    if (this.gameMode.isClassic && this.waveIndex > 195 && this.battleSpec !== BattleSpec.FINAL_BOSS) {
-      return "end_summit";
-    }
+    if (this.gameMode.isClassic) {
+      if (isBetween(this.waveIndex, 191, 194)) {
+           return "end";
+     } else if (isBetween(this.waveIndex, 196, 199)) {
+       return "end_summit";
+  }
+}
     const wildOpponents = globalScene.getEnemyParty();
     for (const pokemon of wildOpponents) {
       if (this.battleSpec === BattleSpec.FINAL_BOSS) {
@@ -400,8 +405,29 @@ export class Battle {
             case SpeciesId.TING_LU:
             case SpeciesId.CHI_YU:
               return "battle_legendary_ruinous";
+            case SpeciesId.GREAT_TUSK:
+            case SpeciesId.SCREAM_TAIL:
+            case SpeciesId.BRUTE_BONNET:
+            case SpeciesId.FLUTTER_MANE:
+            case SpeciesId.SLITHER_WING:
+            case SpeciesId.SLITHER_WING:
+            case SpeciesId.SANDY_SHOCKS:
+            case SpeciesId.IRON_TREADS:
+            case SpeciesId.IRON_BUNDLE:
+            case SpeciesId.IRON_HANDS:
+            case SpeciesId.IRON_JUGULIS:
+            case SpeciesId.IRON_MOTH:
+            case SpeciesId.IRON_THORNS:
+            case SpeciesId.ROARING_MOON:
+            case SpeciesId.IRON_VALIANT:
             case SpeciesId.KORAIDON:
             case SpeciesId.MIRAIDON:
+            case SpeciesId.WALKING_WAKE:
+            case SpeciesId.IRON_LEAVES:
+            case SpeciesId.GOUGING_FIRE:
+            case SpeciesId.RAGING_BOLT:
+            case SpeciesId.IRON_BOULDER:
+            case SpeciesId.IRON_CROWN:
               return "battle_legendary_kor_mir";
             case SpeciesId.OKIDOGI:
             case SpeciesId.MUNKIDORI:
