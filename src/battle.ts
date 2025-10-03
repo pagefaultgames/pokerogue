@@ -32,6 +32,7 @@ import {
   shiftCharCodes,
 } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
+import { randSeedUniqueItem } from "#utils/random";
 
 export interface TurnCommand {
   command: Command;
@@ -523,29 +524,27 @@ export class FixedBattleConfig {
     return this;
   }
 }
-
 /**
  * Helper function to generate a random trainer for evil team trainers and the elite 4/champion
- * @param trainerPool The TrainerType or list of TrainerTypes that can possibly be generated
- * @param randomGender whether or not to randomly (50%) generate a female trainer (for use with evil team grunts)
- * @param seedOffset the seed offset to use for the random generation of the trainer
- * @returns the generated trainer
+ * @param trainerPool - The TrainerType or list of TrainerTypes that can possibly be generated
+ * @param randomGender - (default `false`); Whether or not to randomly (50%) generate a female trainer (for use with evil team grunts)
+ * @param seedOffset - (default `0`); The seed offset to use for the random generation of the trainer
+ * @param forceUnique - (default `false`); Whether or not to use seed offset to force a unique trainer from the provided pool
+ * @returns A function to generate a random trainer
  */
 export function getRandomTrainerFunc(
   trainerPool: (TrainerType | TrainerType[])[],
   randomGender = false,
   seedOffset = 0,
+  forceUnique = false,
 ): GetTrainerFunc {
   return () => {
-    const rand = randSeedInt(trainerPool.length);
-    const trainerTypes: TrainerType[] = [];
+    /** The chosen entry in the pool */
+    let choice = randSeedItem(trainerPool);
 
-    globalScene.executeWithSeedOffset(() => {
-      for (const trainerPoolEntry of trainerPool) {
-        const trainerType = Array.isArray(trainerPoolEntry) ? randSeedItem(trainerPoolEntry) : trainerPoolEntry;
-        trainerTypes.push(trainerType);
-      }
-    }, seedOffset);
+    if (typeof choice !== "number") {
+      choice = forceUnique ? randSeedUniqueItem(choice, seedOffset) : randSeedItem(choice);
+    }
 
     let trainerGender = TrainerVariant.DEFAULT;
     if (randomGender) {
@@ -565,12 +564,12 @@ export function getRandomTrainerFunc(
       TrainerType.MACRO_GRUNT,
       TrainerType.STAR_GRUNT,
     ];
-    const isEvilTeamGrunt = evilTeamGrunts.includes(trainerTypes[rand]);
+    const isEvilTeamGrunt = evilTeamGrunts.includes(choice);
 
-    if (trainerConfigs[trainerTypes[rand]].hasDouble && isEvilTeamGrunt) {
-      return new Trainer(trainerTypes[rand], randInt(3) === 0 ? TrainerVariant.DOUBLE : trainerGender);
+    if (trainerConfigs[choice].hasDouble && isEvilTeamGrunt) {
+      return new Trainer(choice, randInt(3) === 0 ? TrainerVariant.DOUBLE : trainerGender);
     }
 
-    return new Trainer(trainerTypes[rand], trainerGender);
+    return new Trainer(choice, trainerGender);
   };
 }

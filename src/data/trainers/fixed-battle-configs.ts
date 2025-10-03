@@ -259,7 +259,7 @@ export const classicFixedBattles: FixedBattleConfigs = {
           [TrainerType.GIACOMO, TrainerType.MELA, TrainerType.ATTICUS, TrainerType.ORTEGA, TrainerType.ERI],
         ],
         true,
-        1,
+        2,
       ),
     ),
   [ClassicFixedBossWaves.EVIL_BOSS_2]: new FixedBattleConfig()
