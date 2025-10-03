@@ -265,7 +265,12 @@ export class Battle {
         }
         return "battle_final_encounter";
       }
-      if (pokemon.species.legendary || pokemon.species.subLegendary || pokemon.species.mythical) {
+      if (
+        pokemon.species.legendary
+        || pokemon.species.subLegendary
+        || pokemon.species.mythical
+        || pokemon.species.category.startsWith("Paradox")
+      ) {
         if (globalScene.musicPreference === MusicPreference.GENFIVE) {
           switch (pokemon.species.speciesId) {
             case SpeciesId.REGIROCK:
