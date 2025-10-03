@@ -2254,7 +2254,8 @@ export class HealAttr extends MoveEffectAttr {
     if (healedPokemon.isFullHp()) {
       return i18next.t("battle:hpIsFull", {
         pokemonName: getPokemonNameWithAffix(healedPokemon),
-    })
+      })
+    }
   }
 }
 
