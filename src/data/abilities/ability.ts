@@ -4274,7 +4274,7 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
         }
   
         // Another move at current max found; add to tiebreaker array 
-        if {movePower === maxPowerSeen) {
+        if (movePower === maxPowerSeen) {
           movesAtMaxPower.push(move.getName());
         }
   
