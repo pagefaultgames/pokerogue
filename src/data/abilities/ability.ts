@@ -4272,14 +4272,14 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
         if (movePower < maxPowerSeen) {
           continue;
         }
-  
-        // Another move at current max found; add to tiebreaker array 
+
+        // Another move at current max found; add to tiebreaker array
         if (movePower === maxPowerSeen) {
           movesAtMaxPower.push(move.name);
           continue;
         }
-  
-        // New max reached; clear prior results and update tracker 
+
+        // New max reached; clear prior results and update tracker
         maxPowerSeen = movePower;
         movesAtMaxPower.splice(0, movesAtMaxPower.length, move.name);
       }
@@ -4309,18 +4309,18 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
 function getForewarnPower(move: Move): number {
   if (move.is("StatusMove")) {
     return 1;
-  } 
-  
+  }
+
   if (move.hasAttr("OneHitKOAttr")) {
     return 150;
-  } 
+  }
 
   // NB: Mainline doesn't count Comeuppance in its "counter move exceptions" list, which is dumb
   if (move.hasAttr("CounterDamageAttr")) {
     return 120;
   }
 
-  // All damaging moves with unlisted powers use 80 as a fallback 
+  // All damaging moves with unlisted powers use 80 as a fallback
   if (move.power === -1) {
     return 80;
   }
