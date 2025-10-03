@@ -2897,7 +2897,6 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
    * @param target - The target of the move
    * @returns `true` if the move cannot be used because the target is an ally
    */
-  // TODO: This should probably be a restriction on pollen puff rather than being done here
   override isMoveTargetRestricted(move: MoveId, user: Pokemon, target: Pokemon) {
     const moveCategory = new NumberHolder(allMoves[move].category);
     applyMoveAttrs("StatusCategoryOnAllyAttr", user, target, allMoves[move], moveCategory);

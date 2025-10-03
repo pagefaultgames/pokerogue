@@ -58,18 +58,45 @@ describe("Move - Heal Block", () => {
     ]);
   });
 
-  it("shouldn't stop Liquid Ooze from dealing damage", async () => {
+  it("should prevent the target from receiving healing via normal means", async () => {
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+
+    const feebas = game.field.getPlayerPokemon();
+    feebas.hp = 1;
+    feebas.addTag(BattlerTagType.HEAL_BLOCK);
+
+    game.scene.phaseManager.unshiftNew("PokemonHealPhase", BattlerIndex.PLAYER, 1, null);
+    game.move.use(MoveId.SPLASH);
+    await game.phaseInterceptor.to("PokemonHealPhase");
+
+    expect(feebas).toHaveHp(1);
+  });
+
+  it("shouldn't stop Leech Seed from dealing damage, but should nullify healing", async () => {
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+
+    const feebas = game.field.getPlayerPokemon();
+    feebas.hp = 1;
+    const enemy = game.field.getEnemyPokemon();
+
+    game.move.use(MoveId.LEECH_SEED);
+    await game.toNextTurn();
+
+    expect(feebas).toHaveHp(1);
+    expect(enemy).not.toHaveFullHp();
+  });
+
+  it("shouldn't prevent Leech Seed from damaging the user with Liquid Ooze", async () => {
     game.override.enemyAbility(AbilityId.LIQUID_OOZE);
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const player = game.field.getPlayerPokemon();
+    const feebas = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
 
-    game.move.use(MoveId.ABSORB);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.toEndOfTurn();
+    game.move.use(MoveId.LEECH_SEED);
+    await game.toNextTurn();
 
-    expect(player).not.toHaveFullHp();
+    expect(feebas).not.toHaveFullHp(1);
     expect(enemy).not.toHaveFullHp();
   });
 
@@ -94,19 +121,6 @@ describe("Move - Heal Block", () => {
     expect(player).toHaveHp(1);
   });
 
-  it("should prevent Grassy Terrain from restoring HP", async () => {
-    game.override.enemyAbility(AbilityId.GRASSY_SURGE);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
-
-    const player = game.field.getPlayerPokemon();
-    player.hp = 1;
-
-    game.move.use(MoveId.SPLASH);
-    await game.toEndOfTurn();
-
-    expect(player).toHaveHp(1);
-  });
-
   it.each([
     { name: "Aqua Ring", move: MoveId.AQUA_RING, tagType: BattlerTagType.AQUA_RING },
     { name: "Ingrain", move: MoveId.INGRAIN, tagType: BattlerTagType.INGRAIN },
@@ -121,19 +135,6 @@ describe("Move - Heal Block", () => {
 
     expect(feebas).toHaveBattlerTag(tagType);
     expect(feebas).toHaveHp(1);
-  });
-
-  it("should stop healing from items", async () => {
-    game.override.startingHeldItems([{ name: "LEFTOVERS" }]);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
-
-    const player = game.field.getPlayerPokemon();
-    player.hp = 1;
-
-    game.move.use(MoveId.SPLASH);
-    await game.toEndOfTurn();
-
-    expect(player).toHaveHp(1);
   });
 
   // TODO: Write tests
