@@ -881,7 +881,7 @@ export class Arena {
         continue;
       }
 
-      tag.onRemove(this, quiet);
+      tag.onRemove(quiet);
     }
 
     this.tags = leftoverTags;
