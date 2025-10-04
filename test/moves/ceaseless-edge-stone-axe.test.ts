@@ -55,7 +55,7 @@ describe.each<{ name: string; move: MoveId; hazard: EntryHazardTagType; hazardNa
 
   const maxLayers = hazard === ArenaTagType.SPIKES ? 3 : 1;
 
-  it(`should not fail if ${hazardName} already has ${maxLayers} layer${maxLayers === 1 ? "" : "s"}`, async () => {
+  it(`should not fail if ${hazardName} already has max layers (${maxLayers})`, async () => {
     await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
 
     for (let i = 0; i < maxLayers; i++) {
