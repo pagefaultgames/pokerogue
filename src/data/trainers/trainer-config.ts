@@ -4122,10 +4122,17 @@ export const trainerConfigs: TrainerConfigs = {
         p => {
           p.generateAndPopulateMoveset();
           p.teraType = p.species.type1;
+          p.abilityIndex = p.species.speciesId === SpeciesId.EXEGGUTOR ? 2 : 0; // Intimidate Gyarados / Arcanine, Harvest Exeggutor
         },
       ),
     )
-    .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.RHYPERIOR, SpeciesId.ELECTIVIRE]))
+    .setPartyMemberFunc(
+      2,
+      getRandomPartyMemberFunc([SpeciesId.RHYPERIOR, SpeciesId.ELECTIVIRE], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+        p.abilityIndex = p.species.speciesId === SpeciesId.RHYPERIOR ? 1 : 0; // Solid Rock Rhyperior, Motor Drive Electivire
+      }),
+    )
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.MACHAMP]))
     .setPartyMemberFunc(
       4,
@@ -4167,7 +4174,13 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.MEGANIUM, SpeciesId.TYPHLOSION, SpeciesId.FERALIGATR]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.ESPEON, SpeciesId.UMBREON, SpeciesId.SYLVEON]))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.SNORLAX]))
+    .setPartyMemberFunc(
+      3,
+      getRandomPartyMemberFunc([SpeciesId.SNORLAX], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+        p.abilityIndex = 1; // Thick Fat
+      }),
+    )
     .setPartyMemberFunc(
       4,
       getRandomPartyMemberFunc([SpeciesId.LUGIA], TrainerSlot.TRAINER, true, p => {
@@ -4207,7 +4220,13 @@ export const trainerConfigs: TrainerConfigs = {
     .initForChampion(true)
     .setBattleBgm("battle_johto_champion")
     .setMixedBattleBgm("battle_johto_champion")
-    .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.GYARADOS, SpeciesId.KINGDRA]))
+    .setPartyMemberFunc(
+      0,
+      getRandomPartyMemberFunc([SpeciesId.GYARADOS, SpeciesId.KINGDRA], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+        p.abilityIndex = 1; // Intimidate Gyarados, Sniper Kingdra
+      }),
+    )
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.AERODACTYL]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.CHARIZARD]))
     .setPartyMemberFunc(
@@ -4255,7 +4274,13 @@ export const trainerConfigs: TrainerConfigs = {
         p.generateAndPopulateMoveset();
       }),
     )
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.SKARMORY, SpeciesId.CLAYDOL]))
+    .setPartyMemberFunc(
+      1,
+      getRandomPartyMemberFunc([SpeciesId.SKARMORY, SpeciesId.CLAYDOL], TrainerSlot.TRAINER, true, p => {
+        p.abilityIndex = 1; // Sturdy Skarmory, Levitate Claydol
+        p.generateAndPopulateMoveset();
+      }),
+    )
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.AGGRON]))
     .setPartyMemberFunc(
       3,
@@ -4285,7 +4310,12 @@ export const trainerConfigs: TrainerConfigs = {
         p.generateName();
       }),
     )
-    .setInstantTera(4), // Tera Rock Regirock / Ice Regice / Steel Registeel
+    .setInstantTera(4) // Tera Rock Regirock / Ice Regice / Steel Registeel
+    .setGenModifiersFunc(party => {
+      // Mystical Rock Gigalith
+      const weather = party[0];
+      return [modifierTypes.MYSTICAL_ROCK().withIdFromFunc(modifierTypes.MYSTICAL_ROCK).newModifier(weather)];
+    }),
   [TrainerType.WALLACE]: new TrainerConfig(++t)
     .initForChampion(true)
     .setBattleBgm("battle_hoenn_champion_g5")
@@ -4337,7 +4367,12 @@ export const trainerConfigs: TrainerConfigs = {
         p.gender = Gender.FEMALE;
       }),
     )
-    .setInstantTera(5), // Tera Water Milotic
+    .setInstantTera(5) // Tera Water Milotic
+    .setGenModifiersFunc(party => {
+      // Mystical Rock Pelipper
+      const weather = party[0];
+      return [modifierTypes.MYSTICAL_ROCK().withIdFromFunc(modifierTypes.MYSTICAL_ROCK).newModifier(weather)];
+    }),
   [TrainerType.CYNTHIA]: new TrainerConfig(++t)
     .initForChampion(false)
     .setBattleBgm("battle_sinnoh_champion")
@@ -4347,6 +4382,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       2,
       getRandomPartyMemberFunc([SpeciesId.TOGEKISS], TrainerSlot.TRAINER, true, p => {
+        p.abilityIndex = 1; // Serene Grace
         p.generateAndPopulateMoveset();
         p.teraType = p.species.type1;
       }),
@@ -4385,6 +4421,7 @@ export const trainerConfigs: TrainerConfigs = {
         TrainerSlot.TRAINER,
         true,
         p => {
+          p.abilityIndex = 1; // Hustle Lilligant, Illusion Zoroark, Adaptability Basculegion
           p.generateAndPopulateMoveset();
           p.pokeball = PokeballType.ROGUE_BALL;
         },
