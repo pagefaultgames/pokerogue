@@ -72,7 +72,7 @@ export function getEnumStr<E extends EnumOrObject>(
     stringPart = casingFunc(stringPart);
   }
 
-  return `${prefix}${stringPart}${suffix}${omitValue ? ` (=${val})` : ""}`;
+  return `${prefix}${stringPart}${suffix}${omitValue ? "" : ` (=${val})`}`;
 }
 
 /**
