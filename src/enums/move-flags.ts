@@ -47,8 +47,8 @@ export enum MoveFlags {
   CHECK_ALL_HITS = 1 << 16,
   /** Indicates a move is able to bypass its target's Substitute (if the target has one) */
   IGNORE_SUBSTITUTE = 1 << 17,
-  /** Indicates a move is able to be redirected to allies in a double battle if the attacker faints */
-  REDIRECT_COUNTER = 1 << 18,
   /** Indicates a move is able to be reflected by {@linkcode AbilityId.MAGIC_BOUNCE} and {@linkcode MoveId.MAGIC_COAT} */
-  REFLECTABLE = 1 << 19,
+  REFLECTABLE = 1 << 18,
+  /** Indicates a move should fail when {@link https://bulbapedia.bulbagarden.net/wiki/Gravity_(move) | Gravity} is in effect */
+  GRAVITY = 1 << 19,
 }

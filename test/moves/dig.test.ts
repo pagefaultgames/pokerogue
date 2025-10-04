@@ -90,7 +90,7 @@ describe("Moves - Dig", () => {
     expect(enemyPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
   });
 
-  it("should not expend PP when the attack phase is cancelled", async () => {
+  it("should expend PP when the attack phase is cancelled by sleep", async () => {
     game.override.enemyAbility(AbilityId.NO_GUARD).enemyMoveset(MoveId.SPORE);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
@@ -104,7 +104,7 @@ describe("Moves - Dig", () => {
     expect(playerPokemon.status?.effect).toBe(StatusEffect.SLEEP);
 
     const playerDig = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.DIG);
-    expect(playerDig?.ppUsed).toBe(0);
+    expect(playerDig?.ppUsed).toBe(1);
   });
 
   it("should cause the user to take double damage from Earthquake", async () => {
