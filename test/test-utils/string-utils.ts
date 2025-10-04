@@ -5,8 +5,6 @@ import { enumValueToKey } from "#utils/enums";
 import { toTitleCase } from "#utils/strings";
 import type { MatcherState } from "@vitest/expect";
 import i18next from "i18next";
-// biome-ignore lint/correctness/noUnusedImports: TSDoc
-import type { describe, it } from "vitest";
 
 type Casing = "Preserve" | "Title";
 
