@@ -675,7 +675,7 @@ export class Arena {
     ...args: Parameters<ArenaTagTypeMap[T]["apply"]>
   ): void;
   applyTagsForSide<T extends ArenaTag>(
-    tagType: T["tagType"] | Constructor<T> | AbstractConstructor<ArenaTag>,
+    tagType: T["tagType"] | Constructor<T> | AbstractConstructor<T>,
     side: ArenaTagSide,
     ...args: Parameters<T["apply"]>
   ): void {
