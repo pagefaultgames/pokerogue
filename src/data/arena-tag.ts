@@ -767,7 +767,7 @@ export abstract class EntryHazardTag extends SerializableArenaTag {
   }
 
   /**
-   * Check if this tag can have more layers added to it.
+   * Check if the maximum number of layers for this tag has been reached.
    * @returns Whether this tag can have another layer added to it.
    */
   public canAdd(): boolean {
