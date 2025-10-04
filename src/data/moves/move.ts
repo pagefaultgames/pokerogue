@@ -1,3 +1,4 @@
+import type { BattlerTag } from "#data/battler-tags";
 import { AbAttrParamsWithCancel, PreAttackModifyPowerAbAttrParams } from "#abilities/ability";
 import {
   applyAbAttrs
@@ -1484,9 +1485,7 @@ export class MoveEffectAttr extends MoveAttr {
   // TODO: Decouple this check from the `apply` step
   // TODO: Make non-damaging moves fail by default if none of their attributes can apply
   canApply(user: Pokemon, target: Pokemon, move: Move, _args?: any[]) {
-    return !! (this.selfTarget ? user.hp && !user.getTag(BattlerTagType.FRENZY) : target.hp)
-           && (this.selfTarget || !target.getTag(BattlerTagType.PROTECTED) ||
-                move.doesFlagEffectApply({ flag: MoveFlags.IGNORE_PROTECT, user, target }));
+    return !(this.selfTarget ? user : target).isFainted();
   }
 
   /** Applies move effects so long as they are able based on {@linkcode canApply} */
@@ -5852,16 +5851,15 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
   public tagType: BattlerTagType;
   public turnCountMin: number;
   public turnCountMax: number;
-  protected cancelOnFail: boolean;
   private failOnOverlap: boolean;
 
-  constructor(tagType: BattlerTagType, selfTarget: boolean = false, failOnOverlap: boolean = false, turnCountMin: number = 0, turnCountMax?: number, lastHitOnly: boolean = false) {
-    super(selfTarget, { lastHitOnly: lastHitOnly });
+  constructor(tagType: BattlerTagType, selfTarget: boolean = false, failOnOverlap = false, turnCountMin = 0, turnCountMax = turnCountMin, lastHitOnly = false) {
+    super(selfTarget, { lastHitOnly });
 
     this.tagType = tagType;
     this.turnCountMin = turnCountMin;
-    this.turnCountMax = turnCountMax !== undefined ? turnCountMax : turnCountMin;
-    this.failOnOverlap = !!failOnOverlap;
+    this.turnCountMax = turnCountMax;
+    this.failOnOverlap = failOnOverlap;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -5869,9 +5867,10 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
       return false;
     }
 
+    // TODO: Do any moves actually use chance-based battler tag adding?
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, true);
     if (moveChance < 0 || moveChance === 100 || user.randBattleSeedInt(100) < moveChance) {
-      return (this.selfTarget ? user : target).addTag(this.tagType,  user.randBattleSeedIntRange(this.turnCountMin, this.turnCountMax), move.id, user.id);
+      return (this.selfTarget ? user : target).addTag(this.tagType, user.randBattleSeedIntRange(this.turnCountMin, this.turnCountMax), move.id, user.id);
     }
 
     return false;
@@ -6075,32 +6074,14 @@ export class CurseAttr extends MoveEffectAttr {
   }
 }
 
-export class LapseBattlerTagAttr extends MoveEffectAttr {
-  public tagTypes: BattlerTagType[];
-
-  constructor(tagTypes: BattlerTagType[], selfTarget: boolean = false) {
-    super(selfTarget);
-
-    this.tagTypes = tagTypes;
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args)) {
-      return false;
-    }
-
-    for (const tagType of this.tagTypes) {
-      (this.selfTarget ? user : target).lapseTag(tagType);
-    }
-
-    return true;
-  }
-}
-
+/**
+ * Attribute to remove all {@linkcode BattlerTag}s matching one or more tag types.
+ */
 export class RemoveBattlerTagAttr extends MoveEffectAttr {
-  public tagTypes: BattlerTagType[];
+  /** An array of {@linkcode BattlerTagType}s to clear. */
+  public tagTypes: [BattlerTagType, ...BattlerTagType[]];
 
-  constructor(tagTypes: BattlerTagType[], selfTarget: boolean = false) {
+  constructor(tagTypes: [BattlerTagType, ...BattlerTagType[]], selfTarget = false) {
     super(selfTarget);
 
     this.tagTypes = tagTypes;
@@ -6111,9 +6092,7 @@ export class RemoveBattlerTagAttr extends MoveEffectAttr {
       return false;
     }
 
-    for (const tagType of this.tagTypes) {
-      (this.selfTarget ? user : target).removeTag(tagType);
-    }
+    (this.selfTarget ? user : target).findAndRemoveTags(t => this.tagTypes.includes(t.tagType));
 
     return true;
   }
@@ -6218,14 +6197,13 @@ export class RemoveAllSubstitutesAttr extends MoveEffectAttr {
 export class HitsTagAttr extends MoveAttr {
   /** The {@linkcode BattlerTagType} this move hits */
   public tagType: BattlerTagType;
-  /** Should this move deal double damage against {@linkcode HitsTagAttr.tagType}? */
-  public doubleDamage: boolean;
+  /** Should this move deal double damage against {@linkcode tagType}? */
+  public doubleDamage = false;
 
-  constructor(tagType: BattlerTagType, doubleDamage: boolean = false) {
+  constructor(tagType: BattlerTagType) {
     super();
 
     this.tagType = tagType;
-    this.doubleDamage = !!doubleDamage;
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
@@ -6240,7 +6218,8 @@ export class HitsTagAttr extends MoveAttr {
  */
 export class HitsTagForDoubleDamageAttr extends HitsTagAttr {
   constructor(tagType: BattlerTagType) {
-    super(tagType, true);
+    super(tagType);
+    this.doubleDamage = true;
   }
 }
 
@@ -6250,11 +6229,11 @@ export class AddArenaTagAttr extends MoveEffectAttr {
   private failOnOverlap: boolean;
   public selfSideTarget: boolean;
 
-  constructor(tagType: ArenaTagType, turnCount?: number | null, failOnOverlap: boolean = false, selfSideTarget: boolean = false) {
+  constructor(tagType: ArenaTagType, turnCount = 0, failOnOverlap = false, selfSideTarget: boolean = false) {
     super(true);
 
     this.tagType = tagType;
-    this.turnCount = turnCount!; // TODO: is the bang correct?
+    this.turnCount = turnCount;
     this.failOnOverlap = failOnOverlap;
     this.selfSideTarget = selfSideTarget;
   }
@@ -6264,6 +6243,7 @@ export class AddArenaTagAttr extends MoveEffectAttr {
       return false;
     }
 
+    // TODO: Why does this check effect chance if nothing uses it?
     if ((move.chance < 0 || move.chance === 100 || user.randBattleSeedInt(100) < move.chance) && user.getLastXMoves(1)[0]?.result === MoveResult.SUCCESS) {
       const side = ((this.selfSideTarget ? user : target).isPlayer() !== (move.hasAttr("AddArenaTrapTagAttr") && target === user)) ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
       globalScene.arena.addTag(this.tagType, this.turnCount, move.id, user.id, side);
@@ -6275,25 +6255,29 @@ export class AddArenaTagAttr extends MoveEffectAttr {
 
   getCondition(): MoveConditionFunc | null {
     return this.failOnOverlap
-      ? (user, target, move) => !globalScene.arena.getTagOnSide(this.tagType, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)
+      ? (_user, target, _move) => !globalScene.arena.getTagOnSide(this.tagType, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)
       : null;
   }
 }
 
 /**
- * Generic class for removing arena tags
- * @param tagTypes: The types of tags that can be removed
- * @param selfSideTarget: Is the user removing tags from its own side?
+ * Attribute to remove one or more arena tags from the field.
  */
 export class RemoveArenaTagsAttr extends MoveEffectAttr {
-  public tagTypes: ArenaTagType[];
-  public selfSideTarget: boolean;
+  /** An array containing the tags to be removed. */
+  private readonly tagTypes: readonly [ArenaTagType, ...ArenaTagType[]];
+  /**
+   * Whether to remove tags from both sides of the field (`true`) or
+   * the target's side of the field (`false`)
+   * @defaultValue `false`
+   */
+  private removeAllTags: boolean
 
-  constructor(tagTypes: ArenaTagType[], selfSideTarget: boolean) {
-    super(true);
+  constructor(tagTypes: readonly [ArenaTagType, ...ArenaTagType[]], removeAllTags = false, options?: MoveEffectAttrOptions) {
+    super(true, options);
 
     this.tagTypes = tagTypes;
-    this.selfSideTarget = selfSideTarget;
+    this.removeAllTags = removeAllTags;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -6301,11 +6285,9 @@ export class RemoveArenaTagsAttr extends MoveEffectAttr {
       return false;
     }
 
-    const side = (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+    const side = this.removeAllTags ? ArenaTagSide.BOTH : target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
-    for (const tagType of this.tagTypes) {
-      globalScene.arena.removeTagOnSide(tagType, side);
-    }
+    globalScene.arena.removeTagsOnSide(this.tagTypes, side);
 
     return true;
   }
@@ -6328,6 +6310,7 @@ export class AddArenaTrapTagAttr extends AddArenaTagAttr {
  * Attribute used for Stone Axe and Ceaseless Edge.
  * Applies the given ArenaTrapTag when move is used.
  */
+// TODO: This has exactly 1 line of code difference from the base attribute wrt. effect chances...
 export class AddArenaTrapTagHitAttr extends AddArenaTagAttr {
   /**
    * @param user {@linkcode Pokemon} using this move
@@ -6349,84 +6332,44 @@ export class AddArenaTrapTagHitAttr extends AddArenaTagAttr {
   }
 }
 
-export class RemoveArenaTrapAttr extends MoveEffectAttr {
+// TODO: Review if we can remove these attributes
+const arenaTrapTags = [
+  ArenaTagType.SPIKES,
+  ArenaTagType.TOXIC_SPIKES,
+  ArenaTagType.STEALTH_ROCK,
+  ArenaTagType.STICKY_WEB,
+] as const;
 
-  private targetBothSides: boolean;
-
-  constructor(targetBothSides: boolean = false) {
-    super(true, { trigger: MoveEffectTrigger.PRE_APPLY });
-    this.targetBothSides = targetBothSides;
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-
-    if (!super.apply(user, target, move, args)) {
-      return false;
-    }
-
-    if (this.targetBothSides) {
-      globalScene.arena.removeTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.PLAYER);
-      globalScene.arena.removeTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.PLAYER);
-      globalScene.arena.removeTagOnSide(ArenaTagType.STEALTH_ROCK, ArenaTagSide.PLAYER);
-      globalScene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER);
-
-      globalScene.arena.removeTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY);
-      globalScene.arena.removeTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.ENEMY);
-      globalScene.arena.removeTagOnSide(ArenaTagType.STEALTH_ROCK, ArenaTagSide.ENEMY);
-      globalScene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.ENEMY);
-    } else {
-      globalScene.arena.removeTagOnSide(ArenaTagType.SPIKES, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
-      globalScene.arena.removeTagOnSide(ArenaTagType.TOXIC_SPIKES, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
-      globalScene.arena.removeTagOnSide(ArenaTagType.STEALTH_ROCK, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
-      globalScene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, target.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
-    }
-
-    return true;
+export class RemoveArenaTrapAttr extends RemoveArenaTagsAttr {
+  constructor(targetBothSides = false) {
+    // TODO: This triggers at a different time than `RemoveArenaTagsAbAttr`...
+    super(arenaTrapTags, targetBothSides, { trigger: MoveEffectTrigger.PRE_APPLY });
   }
 }
 
-export class RemoveScreensAttr extends MoveEffectAttr {
+const screenTags = [
+  ArenaTagType.REFLECT,
+  ArenaTagType.LIGHT_SCREEN,
+  ArenaTagType.AURORA_VEIL
+] as const;
 
-  private targetBothSides: boolean;
-
-  constructor(targetBothSides: boolean = false) {
-    super(true, { trigger: MoveEffectTrigger.PRE_APPLY });
-    this.targetBothSides = targetBothSides;
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-
-    if (!super.apply(user, target, move, args)) {
-      return false;
-    }
-
-    if (this.targetBothSides) {
-      globalScene.arena.removeTagOnSide(ArenaTagType.REFLECT, ArenaTagSide.PLAYER);
-      globalScene.arena.removeTagOnSide(ArenaTagType.LIGHT_SCREEN, ArenaTagSide.PLAYER);
-      globalScene.arena.removeTagOnSide(ArenaTagType.AURORA_VEIL, ArenaTagSide.PLAYER);
-
-      globalScene.arena.removeTagOnSide(ArenaTagType.REFLECT, ArenaTagSide.ENEMY);
-      globalScene.arena.removeTagOnSide(ArenaTagType.LIGHT_SCREEN, ArenaTagSide.ENEMY);
-      globalScene.arena.removeTagOnSide(ArenaTagType.AURORA_VEIL, ArenaTagSide.ENEMY);
-    } else {
-      globalScene.arena.removeTagOnSide(ArenaTagType.REFLECT, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
-      globalScene.arena.removeTagOnSide(ArenaTagType.LIGHT_SCREEN, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
-      globalScene.arena.removeTagOnSide(ArenaTagType.AURORA_VEIL, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
-    }
-
-    return true;
-
+export class RemoveScreensAttr extends RemoveArenaTagsAttr {
+  constructor(targetBothSides = false) {
+    // TODO: This triggers at a different time than {@linkcode RemoveArenaTagsAbAttr}...
+    super(screenTags, targetBothSides, { trigger: MoveEffectTrigger.PRE_APPLY });
   }
 }
 
-/** Swaps arena effects between the player and enemy side */
+/**
+ * Attribute to swap all valid {@linkcode ArenaTag}s between the player and enemy side of the field.
+ * Ones affecting both sides are unaffected.
+ */
 export class SwapArenaTagsAttr extends MoveEffectAttr {
-  public SwapTags: ArenaTagType[];
+  private readonly validTags: ArenaTagType[];
 
-
-  constructor(SwapTags: ArenaTagType[]) {
+  constructor(validTags: ArenaTagType[]) {
     super(true);
-    this.SwapTags = SwapTags;
+    this.validTags = validTags;
   }
 
   apply(user:Pokemon, target:Pokemon, move:Move, args: any[]): boolean {
@@ -6434,23 +6377,17 @@ export class SwapArenaTagsAttr extends MoveEffectAttr {
       return false;
     }
 
-    const tagPlayerTemp = globalScene.arena.findTagsOnSide((t => this.SwapTags.includes(t.tagType)), ArenaTagSide.PLAYER);
-    const tagEnemyTemp = globalScene.arena.findTagsOnSide((t => this.SwapTags.includes(t.tagType)), ArenaTagSide.ENEMY);
+    const tagPlayerTemp = globalScene.arena.findTagsOnSide((t => this.validTags.includes(t.tagType)), ArenaTagSide.PLAYER);
+    const tagEnemyTemp = globalScene.arena.findTagsOnSide((t => this.validTags.includes(t.tagType)), ArenaTagSide.ENEMY);
 
-
-    if (tagPlayerTemp) {
-      for (const swapTagsType of tagPlayerTemp) {
-        globalScene.arena.removeTagOnSide(swapTagsType.tagType, ArenaTagSide.PLAYER, true);
-        globalScene.arena.addTag(swapTagsType.tagType, swapTagsType.turnCount, swapTagsType.sourceMove, swapTagsType.sourceId!, ArenaTagSide.ENEMY, true); // TODO: is the bang correct?
-      }
+    for (const playerTag of tagPlayerTemp) {
+      globalScene.arena.removeTagOnSide(playerTag.tagType, ArenaTagSide.PLAYER, true);
+      globalScene.arena.addTag(playerTag.tagType, playerTag.turnCount, playerTag.sourceMove, playerTag.sourceId!, ArenaTagSide.ENEMY, true); // TODO: is the bang correct?
     }
-    if (tagEnemyTemp) {
-      for (const swapTagsType of tagEnemyTemp) {
-        globalScene.arena.removeTagOnSide(swapTagsType.tagType, ArenaTagSide.ENEMY, true);
-        globalScene.arena.addTag(swapTagsType.tagType, swapTagsType.turnCount, swapTagsType.sourceMove, swapTagsType.sourceId!, ArenaTagSide.PLAYER, true); // TODO: is the bang correct?
-      }
+    for (const enemyTag of tagEnemyTemp) {
+      globalScene.arena.removeTagOnSide(enemyTag.tagType, ArenaTagSide.ENEMY, true);
+      globalScene.arena.addTag(enemyTag.tagType, enemyTag.turnCount, enemyTag.sourceMove, enemyTag.sourceId!, ArenaTagSide.PLAYER, true); // TODO: is the bang correct?
     }
-
 
     globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:swapArenaTags", { pokemonName: getPokemonNameWithAffix(user) }));
     return true;
@@ -8550,7 +8487,6 @@ const MoveAttrs = Object.freeze({
   GulpMissileTagAttr,
   JawLockAttr,
   CurseAttr,
-  LapseBattlerTagAttr,
   RemoveBattlerTagAttr,
   FlinchAttr,
   ConfuseAttr,
@@ -10560,7 +10496,7 @@ export function initMoves() {
       .target(MoveTarget.USER_AND_ALLIES)
       .condition((user, target, move) => !![ user, user.getAlly() ].filter(p => p?.isActive()).find(p => !![ AbilityId.PLUS, AbilityId.MINUS ].find(a => p?.hasAbility(a, false)))),
     new StatusMove(MoveId.HAPPY_HOUR, PokemonType.NORMAL, -1, 30, -1, 0, 6) // No animation
-      .attr(AddArenaTagAttr, ArenaTagType.HAPPY_HOUR, null, true)
+      .attr(AddArenaTagAttr, ArenaTagType.HAPPY_HOUR, 0, true)
       .target(MoveTarget.USER_SIDE),
     new StatusMove(MoveId.ELECTRIC_TERRAIN, PokemonType.ELECTRIC, -1, 10, -1, 0, 6)
       .attr(TerrainChangeAttr, TerrainType.ELECTRIC)
@@ -10851,7 +10787,7 @@ export function initMoves() {
     new AttackMove(MoveId.MALICIOUS_MOONSAULT, PokemonType.DARK, MoveCategory.PHYSICAL, 180, -1, 1, -1, 0, 7)
       .unimplemented()
       .attr(AlwaysHitMinimizeAttr)
-      .attr(HitsTagAttr, BattlerTagType.MINIMIZED, true)
+      .attr(HitsTagForDoubleDamageAttr, BattlerTagType.MINIMIZED)
       .edgeCase(), // I assume it's because it needs darkest lariat and incineroar
     new AttackMove(MoveId.OCEANIC_OPERETTA, PokemonType.WATER, MoveCategory.SPECIAL, 195, -1, 1, -1, 0, 7)
       .unimplemented()
@@ -11494,7 +11430,7 @@ export function initMoves() {
     new AttackMove(MoveId.TRIPLE_DIVE, PokemonType.WATER, MoveCategory.PHYSICAL, 30, 95, 10, -1, 0, 9)
       .attr(MultiHitAttr, MultiHitType._3),
     new AttackMove(MoveId.MORTAL_SPIN, PokemonType.POISON, MoveCategory.PHYSICAL, 30, 100, 15, 100, 0, 9)
-      .attr(LapseBattlerTagAttr, [
+      .attr(RemoveBattlerTagAttr, [
         BattlerTagType.BIND,
         BattlerTagType.WRAP,
         BattlerTagType.FIRE_SPIN,

@@ -6389,6 +6389,7 @@ export class EnemyPokemon extends Pokemon {
           ivs.push(randSeedIntRange(Math.floor(waveIndex / 10), 31));
         }
         this.ivs = ivs;
+        this.friendship = Math.round(255 * (waveIndex / 200));
       }
     }
 
@@ -6542,8 +6543,9 @@ export class EnemyPokemon extends Pokemon {
               move.category !== MoveCategory.STATUS
               && moveTargets.some(p => {
                 const doesNotFail =
-                  move.applyConditions(this, p, -1)
-                  || [MoveId.SUCKER_PUNCH, MoveId.UPPER_HAND, MoveId.THUNDERCLAP].includes(move.id);
+                  !globalScene.arena.isMoveWeatherCancelled(this, move)
+                  && (move.applyConditions(this, p, -1)
+                    || [MoveId.SUCKER_PUNCH, MoveId.UPPER_HAND, MoveId.THUNDERCLAP].includes(move.id));
                 return (
                   doesNotFail
                   && p.getAttackDamage({
