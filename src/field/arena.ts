@@ -708,7 +708,7 @@ export class Arena {
     ...args: Parameters<T["apply"]>
   ): void;
   applyTags<T extends ArenaTag>(
-    tagType: T["tagType"] | Constructor<T> | AbstractConstructor<ArenaTag>,
+    tagType: T["tagType"] | Constructor<T> | AbstractConstructor<T>,
     ...args: Parameters<T["apply"]>
   ) {
     // @ts-expect-error - Overload resolution
