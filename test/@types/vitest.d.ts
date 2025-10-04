@@ -23,6 +23,7 @@ import type { toHaveEffectiveStatOptions } from "#test/test-utils/matchers/to-ha
 import type { toHavePositionalTagOptions } from "#test/test-utils/matchers/to-have-positional-tag";
 import type { expectedStatusType } from "#test/test-utils/matchers/to-have-status-effect";
 import type { toHaveTypesOptions } from "#test/test-utils/matchers/to-have-types";
+import type { toHaveHpOptions } from "#test/test-utils/matchers/to-have-hp";
 import type { PhaseString } from "#types/phase-types";
 import type { TurnMove } from "#types/turn-move";
 import type { AtLeastOne } from "#types/type-helpers";
@@ -202,9 +203,9 @@ interface PokemonMatchers {
   /**
    * Check whether a {@linkcode Pokemon} has a specific amount of {@linkcode Stat.HP | HP}.
    * @param expectedHp - The expected amount of {@linkcode Stat.HP | HP} to have
-   * @param roundDown - Whether to round down {@linkcode expectedDamageTaken} with {@linkcode toDmgValue}; default `true`
+   * @param options - Optional parameters taken by the matcher
    */
-  toHaveHp(expectedHp: number, roundDown?: boolean): void;
+  toHaveHp(expectedHp: number, options?: toHaveHpOptions): void;
 
   /**
    * Check whether a {@linkcode Pokemon} has taken a specific amount of damage.
