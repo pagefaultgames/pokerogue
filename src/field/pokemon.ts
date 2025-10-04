@@ -19,7 +19,8 @@ import type { LevelMoves } from "#balance/pokemon-level-moves";
 import { EVOLVE_MOVE, RELEARN_MOVE } from "#balance/pokemon-level-moves";
 import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY_VARIANT_CHANCE } from "#balance/rates";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#balance/starters";
-import { reverseCompatibleTms, tmSpecies } from "#balance/tms";
+import { tmSpecies } from "#balance/tm-species-map";
+import { reverseCompatibleTms } from "#balance/tms";
 import type { SuppressAbilitiesTag } from "#data/arena-tag";
 import { NoCritTag, WeakenMoveScreenTag } from "#data/arena-tag";
 import {
