@@ -919,7 +919,7 @@ class SpikesTag extends DamagingTrapTag {
  */
 class StealthRockTag extends DamagingTrapTag {
   public readonly tagType = ArenaTagType.STEALTH_ROCK;
-  override get maxLayers() {
+  public override get maxLayers() {
     return 1 as const;
   }
   protected override get groundedOnly() {
