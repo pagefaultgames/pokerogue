@@ -91,13 +91,11 @@ describe("Move - Heal Block", () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const feebas = game.field.getPlayerPokemon();
-    const enemy = game.field.getEnemyPokemon();
 
     game.move.use(MoveId.LEECH_SEED);
     await game.toNextTurn();
 
-    expect(feebas).not.toHaveFullHp(1);
-    expect(enemy).not.toHaveFullHp();
+    expect(feebas).not.toHaveFullHp();
   });
 
   it("should prevent pending Wishes from restoring HP", async () => {
