@@ -701,6 +701,7 @@ export class Arena {
    * by calling {@linkcode applyTagsForSide()}
    * @param tagType - A constructor of an ArenaTag to filter tags by
    * @param args - Parameters for the tag
+   * @deprecated Use an `ArenaTagType` for `tagType` instead of an `ArenaTag` constructor
    */
   applyTags<T extends ArenaTag>(
     tagType: Constructor<T> | AbstractConstructor<T>,
