@@ -865,7 +865,7 @@ abstract class DamagingTrapTag extends EntryHazardTag {
   }
 
   /**
-   * Return the i18n key of the text to be displayed when this tag deals damage.
+   * Return the i18n key of the text to be displayed when this tag deals damage. \
    * Within the text, `{{pokemonNameWithAffix}}` will be populated with the victim's name.
    * @returns The locales key for the trigger message to be displayed on-screen.
    */
