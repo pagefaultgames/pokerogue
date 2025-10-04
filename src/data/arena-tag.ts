@@ -1010,7 +1010,7 @@ class ToxicSpikesTag extends EntryHazardTag {
  */
 class StickyWebTag extends EntryHazardTag {
   public readonly tagType = ArenaTagType.STICKY_WEB;
-  override get maxLayers() {
+  public override get maxLayers() {
     return 1 as const;
   }
 
