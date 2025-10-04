@@ -59,7 +59,7 @@ export class PokemonMove {
     }
 
     if (!ignorePp && move.pp !== -1 && this.ppUsed >= this.getMovePp()) {
-      return [false, i18next.t("battle:moveNoPP", { moveName: move.name })];
+      return [false, i18next.t("battle:moveNoPp", { moveName: move.name })];
     }
 
     if (forSelection) {

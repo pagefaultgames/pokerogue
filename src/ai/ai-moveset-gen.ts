@@ -31,6 +31,7 @@ import { Stat } from "#enums/stat";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import { PokemonMove } from "#moves/pokemon-move";
 import { NumberHolder, randSeedInt } from "#utils/common";
+import { willTerastallize } from "#utils/pokemon-utils";
 import { isBeta } from "#utils/utility-vars";
 
 /**
@@ -677,12 +678,7 @@ export function generateMoveset(pokemon: Pokemon): void {
   }
 
   /** Determine whether this pokemon will instantly tera */
-  const willTera =
-    hasTrainer
-    && globalScene.currentBattle?.trainer?.config.trainerAI.instantTeras.includes(
-      // The cast to EnemyPokemon is safe; includes will just return false if the property doesn't exist
-      (pokemon as EnemyPokemon).initialTeamIndex,
-    );
+  const willTera = hasTrainer && willTerastallize(pokemon as EnemyPokemon);
 
   adjustDamageMoveWeights(movePool, pokemon, willTera);
 
