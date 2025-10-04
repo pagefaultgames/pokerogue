@@ -585,7 +585,7 @@ class MatBlockTag extends ConditionalProtectTag {
   }
 
   protected override get condition(): ProtectConditionFunc {
-    return m => allMoves[m].category !== MoveCategory.STATUS;
+    return moveId => allMoves[moveId].category !== MoveCategory.STATUS;
   }
 }
 
