@@ -562,7 +562,7 @@ class WideGuardTag extends ConditionalProtectTag {
   }
 
   override get condition(): ProtectConditionFunc {
-    return m => isSpreadMove(allMoves[m]);
+    return moveId => isSpreadMove(allMoves[moveId]);
   }
 }
 
