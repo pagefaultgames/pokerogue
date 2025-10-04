@@ -748,10 +748,11 @@ export class IonDelugeTag extends ArenaTag {
 export abstract class EntryHazardTag extends SerializableArenaTag {
   public declare abstract readonly tagType: EntryHazardTagType;
   /**
-   * The current number of layers this tag has.
-   * Starts at 1 and increases each time the trap is laid.
-   * Should not be accessed by anything other than this class (with exceptions for arena flyout-related code).
-   * @protected
+   * The current number of layers this tag has. \
+   * Starts at `1` and increases each time the trap is laid.
+   * @privateRemarks
+   * Should not be modified by anything other than this class or its subclasses, \
+   * and should (ideally) not be accessed by anything but them and the arena flyout.
    */
   public readonly layers: number = 1;
   /** The maximum number of layers this tag can have. */
