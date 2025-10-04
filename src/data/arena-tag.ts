@@ -1075,7 +1075,7 @@ class StickyWebTag extends EntryHazardTag {
 // TODO: refactor Imprison to no longer use an `ArenaTag` (cf https://github.com/Despair-Games/poketernity/pull/709)
 class ImprisonTag extends EntryHazardTag {
   public readonly tagType = ArenaTagType.IMPRISON;
-  override get maxLayers() {
+  public override get maxLayers() {
     return 1 as const;
   }
 
