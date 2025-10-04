@@ -4223,8 +4223,8 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc([SpeciesId.GYARADOS, SpeciesId.KINGDRA], TrainerSlot.TRAINER, true, p => {
-        p.generateAndPopulateMoveset();
         p.abilityIndex = 1; // Intimidate Gyarados, Sniper Kingdra
+        p.generateAndPopulateMoveset();
       }),
     )
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.AERODACTYL]))
