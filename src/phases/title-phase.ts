@@ -7,6 +7,7 @@ import { fetchDailyRunSeed, getDailyRunStarters } from "#data/daily-run";
 import { modifierTypes } from "#data/data-lists";
 import { Gender } from "#data/gender";
 import { BattleType } from "#enums/battle-type";
+import { BattlerIndex } from "#enums/battler-index";
 import { GameModes } from "#enums/game-modes";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { UiMode } from "#enums/ui-mode";
@@ -310,17 +311,26 @@ export class TitlePhase extends Phase {
 
     globalScene.phaseManager.pushNew("EncounterPhase", this.loaded);
 
+    // TODO: This is duplicated verbatim from `encounterPhase` WTF
     if (this.loaded) {
-      const availablePartyMembers = globalScene.getPokemonAllowedInBattle().length;
-      const minPartySize = globalScene.currentBattle.double ? 2 : 1;
-      const checkSwitch =
-        globalScene.currentBattle.battleType !== BattleType.TRAINER
-        && (globalScene.currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily)
-        && availablePartyMembers > minPartySize;
+      const { double, battleType, waveIndex } = globalScene.currentBattle;
 
-      globalScene.phaseManager.pushNew("SummonPhase", 0, true, true, checkSwitch);
-      if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-        globalScene.phaseManager.pushNew("SummonPhase", 1, true, true, checkSwitch);
+      const availablePartyMembers = globalScene.getPokemonAllowedInBattle().length;
+      const minPartySize = double ? 2 : 1;
+      globalScene.phaseManager.pushNew("SummonPhase", BattlerIndex.PLAYER, { loaded: true });
+      if (double && availablePartyMembers > 1) {
+        globalScene.phaseManager.pushNew("SummonPhase", BattlerIndex.PLAYER_2, { loaded: true });
+      }
+
+      const checkSwitch =
+        battleType !== BattleType.TRAINER
+        && (waveIndex > 1 || !globalScene.gameMode.isDaily)
+        && availablePartyMembers > minPartySize;
+      if (checkSwitch) {
+        globalScene.phaseManager.pushNew("CheckSwitchPhase", BattlerIndex.PLAYER_2, double);
+        if (double) {
+          globalScene.phaseManager.pushNew("CheckSwitchPhase", BattlerIndex.PLAYER, double);
+        }
       }
     }
 

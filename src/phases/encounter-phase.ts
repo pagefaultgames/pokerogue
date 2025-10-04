@@ -429,9 +429,11 @@ export class EncounterPhase extends BattlePhase {
         const doTrainerSummon = () => {
           this.hideEnemyTrainer();
           const availablePartyMembers = globalScene.getEnemyParty().filter(p => !p.isFainted()).length;
-          globalScene.phaseManager.unshiftNew("SummonPhase", 0, false);
+          globalScene.phaseManager.unshiftNew("SummonPhase", BattlerIndex.ENEMY, { delayPostSummon: true });
           if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-            globalScene.phaseManager.unshiftNew("SummonPhase", 1, false);
+            globalScene.phaseManager.unshiftNew("SummonPhase", BattlerIndex.ENEMY_2, {
+              delayPostSummon: true,
+            });
           }
           this.end();
         };
@@ -561,40 +563,25 @@ export class EncounterPhase extends BattlePhase {
     }
 
     if (!this.loaded) {
-      const availablePartyMembers = globalScene.getPokemonAllowedInBattle();
-      const minPartySize = globalScene.currentBattle.double ? 2 : 1;
-      const currentBattle = globalScene.currentBattle;
+      const { double, battleType, waveIndex } = globalScene.currentBattle;
+
+      const availablePartyMembers = globalScene.getPokemonAllowedInBattle().length;
+      const minPartySize = double ? 2 : 1;
       const checkSwitch =
-        currentBattle.battleType !== BattleType.TRAINER
-        && (currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily)
-        && availablePartyMembers.length > minPartySize;
-      const checkSwitchIndices: number[] = [];
+        battleType !== BattleType.TRAINER
+        && (waveIndex > 1 || !globalScene.gameMode.isDaily)
+        && availablePartyMembers > minPartySize;
 
-      const phaseManager = globalScene.phaseManager;
-      if (!availablePartyMembers[0].isOnField()) {
-        phaseManager.pushNew("SummonPhase", 0, true, false, checkSwitch);
-      } else if (checkSwitch) {
-        checkSwitchIndices.push(0);
+      globalScene.phaseManager.pushNew("SummonPhase", BattlerIndex.PLAYER, { loaded: true });
+      if (double && availablePartyMembers > 1) {
+        globalScene.phaseManager.pushNew("SummonPhase", BattlerIndex.PLAYER_2, { loaded: true });
       }
-
-      if (currentBattle.double) {
-        if (availablePartyMembers.length > 1) {
-          phaseManager.pushNew("ToggleDoublePositionPhase", true);
-          if (!availablePartyMembers[1].isOnField()) {
-            phaseManager.pushNew("SummonPhase", 1, true, false, checkSwitch);
-          } else if (checkSwitch) {
-            checkSwitchIndices.push(1);
-          }
+      if (checkSwitch) {
+        globalScene.phaseManager.pushNew("CheckSwitchPhase", BattlerIndex.PLAYER_2, double);
+        if (double) {
+          globalScene.phaseManager.pushNew("CheckSwitchPhase", BattlerIndex.PLAYER, double);
         }
-      } else {
-        if (availablePartyMembers.length > 1 && availablePartyMembers[1].isOnField()) {
-          phaseManager.pushNew("ReturnPhase", 1);
-        }
-        phaseManager.pushNew("ToggleDoublePositionPhase", false);
       }
-      checkSwitchIndices.forEach(i => {
-        phaseManager.pushNew("CheckSwitchPhase", i, globalScene.currentBattle.double);
-      });
     }
     handleTutorial(Tutorial.Access_Menu).then(() => super.end());
   }

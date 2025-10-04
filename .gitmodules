@@ -9,3 +9,4 @@
 [submodule "locales"]
 	path = locales
 	url = https://github.com/pagefaultgames/pokerogue-locales.git
+	branch = main

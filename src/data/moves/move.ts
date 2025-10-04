@@ -6475,6 +6475,9 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
    * @returns `true` if function succeeds.
    */
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const { phaseManager } = globalScene;
+
+    // TODO: Refactor to use more early returns
     // If user is player, checks if the user has fainted pokemon
     if (user.isPlayer()) {
       globalScene.phaseManager.unshiftNew("RevivalBlessingPhase", user);
@@ -6487,21 +6490,26 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
       const slotIndex = globalScene.getEnemyParty().findIndex((p) => pokemon.id === p.id);
       pokemon.resetStatus(true, false, false, true);
       pokemon.heal(Math.min(toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
-      globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:revivalBlessing", { pokemonName: getPokemonNameWithAffix(pokemon) }), 0, true);
+      phaseManager.queueMessage(i18next.t("moveTriggers:revivalBlessing", { pokemonName: getPokemonNameWithAffix(pokemon) }), 0, true);
       const allyPokemon = user.getAlly();
       if (globalScene.currentBattle.double && globalScene.getEnemyParty().length > 1 && allyPokemon != null) {
         // Handle cases where revived pokemon needs to get switched in on same turn
         if (allyPokemon.isFainted() || allyPokemon === pokemon) {
           // Enemy switch phase should be removed and replaced with the revived pkmn switching in
-          globalScene.phaseManager.tryRemovePhase("SwitchSummonPhase", phase => phase.getFieldIndex() === slotIndex);
+          // TODO: Is this needed?
+          phaseManager.tryRemovePhase("SwitchPhase", phase => phase.fieldIndex === slotIndex);
           // If the pokemon being revived was alive earlier in the turn, cancel its move
           // (revived pokemon can't move in the turn they're brought back)
           // TODO: might make sense to move this to `FaintPhase` after checking for Rev Seed (rather than handling it in the move)
-          globalScene.phaseManager.getMovePhase((phase: MovePhase) => phase.pokemon === pokemon)?.cancel();
+          phaseManager.getMovePhase((phase: MovePhase) => phase.pokemon === pokemon)?.cancel();
           if (user.fieldPosition === FieldPosition.CENTER) {
             user.setFieldPosition(FieldPosition.LEFT);
           }
-          globalScene.phaseManager.unshiftNew("SwitchSummonPhase", SwitchType.SWITCH, allyPokemon.getFieldIndex(), slotIndex, false, false);
+          phaseManager.unshiftPhase(
+            // SummonPhase is queued separately from SwitchPhase to disable the Enemy Trainer anim
+            phaseManager.create("SwitchPhase", allyPokemon.getBattlerIndex(), SwitchType.SWITCH, slotIndex, false),
+            phaseManager.create("SummonPhase", allyPokemon.getBattlerIndex(), { playTrainerAnim: false }),
+           );
         }
       }
       return true;
@@ -6575,28 +6583,15 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       }
 
       if (switchOutTarget.hp > 0) {
-        if (this.switchType === SwitchType.FORCE_SWITCH) {
-          switchOutTarget.leaveField(true);
-          const slotIndex = eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)];
-          globalScene.phaseManager.queueDeferred(
-            "SwitchSummonPhase",
-            this.switchType,
-            switchOutTarget.getFieldIndex(),
-            slotIndex,
-            false,
-            true
-          );
-        } else {
-          switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
-          globalScene.phaseManager.queueDeferred(
-            "SwitchPhase",
-              this.switchType,
-              switchOutTarget.getFieldIndex(),
-              true,
-              true
-          );
-          return true;
-        }
+        globalScene.phaseManager.queueBattlerSwitchOut(switchOutTarget.getBattlerIndex(), {
+          switchType: this.switchType,
+          when: "deferred",
+          switchInIndex:
+          this.switchType === SwitchType.FORCE_SWITCH
+            ? eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)]
+            : undefined,
+        });
+        return true;
       }
       return false;
     } else if (globalScene.currentBattle.battleType !== BattleType.WILD) { // Switch out logic for enemy trainers
@@ -6614,28 +6609,14 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       }
 
       if (switchOutTarget.hp > 0) {
-        if (this.switchType === SwitchType.FORCE_SWITCH) {
-          switchOutTarget.leaveField(true);
-          const slotIndex = eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)];
-          globalScene.phaseManager.queueDeferred(
-            "SwitchSummonPhase",
-              this.switchType,
-              switchOutTarget.getFieldIndex(),
-              slotIndex,
-              false,
-              false
-          );
-        } else {
-          switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
-          globalScene.phaseManager.queueDeferred(
-            "SwitchSummonPhase",
-            this.switchType,
-            switchOutTarget.getFieldIndex(),
-            (globalScene.currentBattle.trainer ? globalScene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot) : 0),
-            false,
-            false
-          );
-        }
+        globalScene.phaseManager.queueBattlerSwitchOut(switchOutTarget.getBattlerIndex(), {
+          switchType: this.switchType,
+          when: "deferred",
+          switchInIndex:
+          this.switchType === SwitchType.FORCE_SWITCH
+            ? eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)]
+            : undefined,
+        });
       }
     } else { // Switch out logic for wild pokemon
       /**

@@ -79,12 +79,13 @@ export class PhaseTree {
   }
 
   /**
-   * Unshifts a {@linkcode Phase} to the current level.
-   * This is effectively the same as if the phase were added immediately after the currently-running phase, before it started.
-   * @param phase - The {@linkcode Phase} to be added
+   * Unshifts one or more {@linkcode Phase}s to the current level.
+   * This is effectively the same as if the phases were added immediately _after_ the currently-running phase,
+   * before it started.
+   * @param phase - One or more {@linkcode Phase}s to be added
    */
-  public unshiftToCurrent(phase: Phase): void {
-    this.levels[this.currentLevel].unshift(phase);
+  public unshiftToCurrent(...phases: [Phase, ...Phase[]]): void {
+    this.levels[this.currentLevel].unshift(...phases);
   }
 
   /**

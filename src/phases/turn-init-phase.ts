@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { BattlerIndex } from "#enums/battler-index";
+import { SwitchType } from "#enums/switch-type";
 import { TurnInitEvent } from "#events/battle-scene";
 import type { PlayerPokemon } from "#field/pokemon";
 import {
@@ -34,7 +35,7 @@ export class TurnInitPhase extends FieldPhase {
           || (globalScene.currentBattle.double && !allowedPokemon[0].isActive(true))
         ) {
           // If there is at least one pokemon in the back that is legal to switch in, force a switch.
-          p.switchOut();
+          globalScene.phaseManager.unshiftNew("SwitchPhase", p.getBattlerIndex(), SwitchType.SWITCH);
         } else {
           // If there are no pokemon in the back but we're not game overing, just hide the pokemon.
           // This should only happen in double battles.

@@ -13,7 +13,9 @@ import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
 import { PhaseTree } from "#app/phase-tree";
 import { BattleType } from "#enums/battle-type";
+import type { FieldBattlerIndex } from "#enums/battler-index";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
+import { SwitchType } from "#enums/switch-type";
 import type { Pokemon } from "#field/pokemon";
 import type { PokemonMove } from "#moves/pokemon-move";
 import { AddEnemyBuffModifierPhase } from "#phases/add-enemy-buff-modifier-phase";
@@ -35,6 +37,7 @@ import { EncounterPhase } from "#phases/encounter-phase";
 import { EndCardPhase } from "#phases/end-card-phase";
 import { EndEvolutionPhase } from "#phases/end-evolution-phase";
 import { EnemyCommandPhase } from "#phases/enemy-command-phase";
+import { EntrancePhase } from "#phases/entrance-phase";
 import { EvolutionPhase } from "#phases/evolution-phase";
 import { ExpPhase } from "#phases/exp-phase";
 import { FaintPhase } from "#phases/faint-phase";
@@ -79,9 +82,9 @@ import { PostGameOverPhase } from "#phases/post-game-over-phase";
 import { PostSummonPhase } from "#phases/post-summon-phase";
 import { PostTurnStatusEffectPhase } from "#phases/post-turn-status-effect-phase";
 import { QuietFormChangePhase } from "#phases/quiet-form-change-phase";
+import { RecallPhase } from "#phases/recall-phase";
 import { ReloadSessionPhase } from "#phases/reload-session-phase";
 import { ResetStatusPhase } from "#phases/reset-status-phase";
-import { ReturnPhase } from "#phases/return-phase";
 import { RevivalBlessingPhase } from "#phases/revival-blessing-phase";
 import { RibbonModifierRewardPhase } from "#phases/ribbon-modifier-reward-phase";
 import { ScanIvsPhase } from "#phases/scan-ivs-phase";
@@ -96,11 +99,9 @@ import { ShowAbilityPhase } from "#phases/show-ability-phase";
 import { ShowPartyExpBarPhase } from "#phases/show-party-exp-bar-phase";
 import { ShowTrainerPhase } from "#phases/show-trainer-phase";
 import { StatStageChangePhase } from "#phases/stat-stage-change-phase";
-import { SummonMissingPhase } from "#phases/summon-missing-phase";
 import { SummonPhase } from "#phases/summon-phase";
 import { SwitchBiomePhase } from "#phases/switch-biome-phase";
 import { SwitchPhase } from "#phases/switch-phase";
-import { SwitchSummonPhase } from "#phases/switch-summon-phase";
 import { TeraPhase } from "#phases/tera-phase";
 import { TitlePhase } from "#phases/title-phase";
 import { ToggleDoublePositionPhase } from "#phases/toggle-double-position-phase";
@@ -135,6 +136,7 @@ const PHASES = Object.freeze({
   CommonAnimPhase,
   DamageAnimPhase,
   DynamicPhaseMarker,
+  EntrancePhase,
   EggHatchPhase,
   EggLapsePhase,
   EggSummaryPhase,
@@ -186,7 +188,7 @@ const PHASES = Object.freeze({
   QuietFormChangePhase,
   ReloadSessionPhase,
   ResetStatusPhase,
-  ReturnPhase,
+  RecallPhase,
   RevivalBlessingPhase,
   RibbonModifierRewardPhase,
   ScanIvsPhase,
@@ -201,11 +203,9 @@ const PHASES = Object.freeze({
   ShowPartyExpBarPhase,
   ShowTrainerPhase,
   StatStageChangePhase,
-  SummonMissingPhase,
   SummonPhase,
-  SwitchBiomePhase,
   SwitchPhase,
-  SwitchSummonPhase,
+  SwitchBiomePhase,
   TeraPhase,
   TitlePhase,
   ToggleDoublePositionPhase,
@@ -231,6 +231,30 @@ const turnEndPhases: readonly PhaseString[] = [
   "CheckStatusEffectPhase",
   "TurnEndPhase",
 ] as const;
+
+interface BattlerSwitchOutInit {
+  /**
+   * A {@linkcode SwitchType} dictating the type of switching behavior to implement.
+   * @defaultValue {@linkcode SwitchType.SWITCH}
+   */
+  switchType?: SwitchType;
+  /**
+   * The index of the Pokemon being newly switched in.
+   * If set to `-1`, will determine the replacement during the {@linkcode SummonPhase}
+   * by consulting the player/enemy AI.
+   * @defaultValue `-1`
+   */
+  switchInIndex?: number;
+  /**
+   * String denoting when to add the phase.
+   * Possible values are:
+   *  - `"eager"`: Adds the phase immediately via {@linkcode PhaseManager.unshiftPhase | unshiftPhase}
+   *  - `"deferred"`: Adds the phase immediately after all phases queued during this Phase have resolved.
+   *    Used to avoid queueing pending switches until the end of move effect processing has resolved.
+   * @defaultValue `"eager"`
+   */
+  when?: "eager" | "deferred";
+}
 
 /**
  * PhaseManager is responsible for managing the phases in the battle scene
@@ -264,6 +288,30 @@ export class PhaseManager {
 
   /* Phase Functions */
 
+  /**
+   * Unshift a sequence of phases to switch out a Pokemon on the field.
+   * @param battlerIndex - The {@linkcode BattlerIndex} of the Pokemon to switch out
+   * @param __namedParameters - Needed for Typedoc to function
+   */
+  public queueBattlerSwitchOut(
+    battlerIndex: FieldBattlerIndex,
+    { switchType = SwitchType.SWITCH, switchInIndex = -1, when = "eager" }: BattlerSwitchOutInit = {},
+  ): void {
+    const phases = [
+      this.create("RecallPhase", battlerIndex, switchType),
+      this.create("SwitchPhase", battlerIndex, switchType, switchInIndex),
+    ] as const;
+
+    switch (when) {
+      case "eager":
+        this.unshiftPhase(...phases);
+        break;
+      case "deferred":
+        this.phaseQueue.unshiftToCurrent(...phases);
+        break;
+    }
+  }
+
   /** @returns The currently running {@linkcode Phase}. */
   getCurrentPhase(): Phase {
     return this.currentPhase;
@@ -284,11 +332,20 @@ export class PhaseManager {
   /**
    * Queue a phase to be run immediately after the current phase finishes. \
    * Unshifted phases are run in FIFO order if multiple are queued during a single phase's execution.
-   * @param phase - The {@linkcode Phase} to add
+   * @param phases - One or more {@linkcode Phase}s to add.
+   * Phases automatically
+   * @privateRemarks
+   * Any newly-unshifted `MovePhase`s will be queued after the next `MoveEndPhase`.
    */
-  public unshiftPhase(phase: Phase): void {
-    const toAdd = this.checkDynamic(phase);
-    phase.is("MovePhase") ? this.phaseQueue.addAfter(toAdd, "MoveEndPhase") : this.phaseQueue.addPhase(toAdd);
+  public unshiftPhase(...phases: [MovePhase] | [Phase, ...Phase[]]): void {
+    for (const phase of phases) {
+      const toAdd = this.checkDynamic(phase);
+      if (phase.is("MovePhase")) {
+        this.phaseQueue.addAfter(toAdd, "MoveEndPhase");
+      } else {
+        this.phaseQueue.addPhase(toAdd);
+      }
+    }
   }
 
   /**
@@ -525,20 +582,6 @@ export class PhaseManager {
         this.pushPhase(new PostSummonPhase(p.getBattlerIndex(), "SummonPhase"));
       });
     }
-  }
-
-  /**
-   * Create a new phase and queue it to run after all others queued by the currently running phase.
-   * @param phase - The name of the phase to create
-   * @param args - The arguments to pass to the phase constructor
-   *
-   * @deprecated Only used for switches and should be phased out eventually.
-   */
-  public queueDeferred<const T extends "SwitchPhase" | "SwitchSummonPhase">(
-    phase: T,
-    ...args: ConstructorParameters<PhaseConstructorMap[T]>
-  ): void {
-    this.phaseQueue.unshiftToCurrent(this.create(phase, ...args));
   }
 
   /**

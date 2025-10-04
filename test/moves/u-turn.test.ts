@@ -48,7 +48,7 @@ describe("Moves - U-turn", () => {
     expect(game.scene.getPlayerParty()[1].hp).toEqual(
       Math.floor(game.scene.getPlayerParty()[1].getMaxHp() * 0.33 + playerHp),
     );
-    expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
+    expect(game.phaseInterceptor.log).toContain("SwitchPhase");
     expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.SHUCKLE);
   });
 
@@ -67,7 +67,7 @@ describe("Moves - U-turn", () => {
     expect(playerPkm.hp).not.toEqual(playerPkm.getMaxHp());
     expect(game.field.getEnemyPokemon().waveData.abilityRevealed).toBe(true); // proxy for asserting ability activated
     expect(playerPkm.species.speciesId).toEqual(SpeciesId.RAICHU);
-    expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
+    expect(game.phaseInterceptor.log).toContain("DamageAnimPhase");
   });
 
   it("triggers contact abilities on the u-turn user (eg poison point) before a new pokemon is switched in", async () => {
@@ -85,7 +85,7 @@ describe("Moves - U-turn", () => {
     expect(playerPkm.status?.effect).toEqual(StatusEffect.POISON);
     expect(playerPkm.species.speciesId).toEqual(SpeciesId.RAICHU);
     expect(game.field.getEnemyPokemon().waveData.abilityRevealed).toBe(true); // proxy for asserting ability activated
-    expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
+    expect(game.phaseInterceptor.log).not.toContain("ObtainStatusEffectPhase");
   });
 
   it("still forces a switch if u-turn KO's the opponent", async () => {
@@ -100,7 +100,7 @@ describe("Moves - U-turn", () => {
     expect(enemy.isFainted()).toBe(true);
 
     // Check that U-Turn forced a switch
-    expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
+    expect(game.phaseInterceptor.log).toContain("SwitchPhase");
     expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.SHUCKLE);
   });
 });

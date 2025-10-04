@@ -3,6 +3,7 @@ import type { PhaseString } from "#app/@types/phase-types";
 import { globalScene } from "#app/global-scene";
 import { EntryHazardTag } from "#data/arena-tag";
 import { MysteryEncounterPostSummonTag } from "#data/battler-tags";
+import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -14,7 +15,7 @@ export class PostSummonPhase extends PokemonPhase {
   /** Used to determine whether to push or unshift {@linkcode PostSummonActivateAbilityPhase}s */
   public readonly source: PhaseString;
 
-  constructor(battlerIndex?: BattlerIndex | number, source: PhaseString = "SwitchSummonPhase") {
+  constructor(battlerIndex?: BattlerIndex | number, source: PhaseString = "SwitchPhase") {
     super(battlerIndex);
     this.source = source;
   }
@@ -43,6 +44,13 @@ export class PostSummonPhase extends PokemonPhase {
     for (const p of field) {
       applyAbAttrs("CommanderAbAttr", { pokemon: p });
     }
+
+    // If the Pokemon takes a different form when active, change its form
+    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
+    // Update weather-based forms in case the summoned Pokemon's Cloud Nine activated.
+    // Other weather-changing effects are already accounted for.
+    // TODO: Make Cloud Nine's ability attribute do this
+    globalScene.arena.triggerWeatherBasedFormChanges();
 
     this.end();
   }
