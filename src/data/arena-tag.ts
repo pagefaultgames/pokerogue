@@ -1308,6 +1308,7 @@ class SafeguardTag extends ArenaTag {
   }
 }
 
+// TODO: delete `NoneTag`
 class NoneTag extends ArenaTag {
   public readonly tagType = ArenaTagType.NONE;
   constructor() {
