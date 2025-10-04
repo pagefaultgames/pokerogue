@@ -1,10 +1,8 @@
 import { globalScene } from "#app/global-scene";
-import { allMoves } from "#data/data-lists";
 import type { BattlerIndex } from "#enums/battler-index";
 import { Command } from "#enums/command";
 import { UiMode } from "#enums/ui-mode";
 import { PokemonPhase } from "#phases/pokemon-phase";
-import i18next from "#plugins/i18n";
 
 export class SelectTargetPhase extends PokemonPhase {
   public readonly phaseName = "SelectTargetPhase";
@@ -20,14 +18,17 @@ export class SelectTargetPhase extends PokemonPhase {
     const move = turnCommand?.move?.move;
     globalScene.ui.setMode(UiMode.TARGET_SELECT, this.fieldIndex, move, (targets: BattlerIndex[]) => {
       globalScene.ui.setMode(UiMode.MESSAGE);
+      if (!move) {
+        return;
+      }
       const fieldSide = globalScene.getField();
       const user = fieldSide[this.fieldIndex];
-      const moveObject = allMoves[move!];
-      if (moveObject && user.isMoveTargetRestricted(moveObject.id, fieldSide[targets[0]])) {
-        const errorMessage = user
-          .getRestrictingTag(move!, fieldSide[targets[0]])!
-          .selectionDeniedText(user, moveObject.id);
-        globalScene.phaseManager.queueMessage(i18next.t(errorMessage, { moveName: moveObject.name }), 0, true);
+      // Find any tags blocking this target from being selected
+      // TODO: This is really jank i hate it so much
+      const restrictedTag = user.getTargetRestrictingTag(move, fieldSide[targets[0]]);
+      if (restrictedTag) {
+        const errorMessage = restrictedTag.selectionDeniedText(user, move);
+        globalScene.phaseManager.queueMessage(errorMessage, 0, true);
         targets = [];
       }
       if (targets.length === 0) {
@@ -36,7 +37,9 @@ export class SelectTargetPhase extends PokemonPhase {
       } else {
         turnCommand!.targets = targets; //TODO: is the bang correct here?
       }
-      if (turnCommand?.command === Command.BALL && this.fieldIndex) {
+      // If Pokemon 1 threw a ball, skip both pokemon's commands
+      // TODO: This is likely redundant and almost certainly shouldn't be occurring here
+      if (turnCommand?.command === Command.BALL && this.fieldIndex > 0) {
         globalScene.currentBattle.turnCommands[this.fieldIndex - 1]!.skip = true; //TODO: is the bang correct here?
       }
       this.end();

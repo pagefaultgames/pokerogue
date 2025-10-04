@@ -64,7 +64,6 @@ import { type BattleStat, EFFECTIVE_STATS, type EffectiveStat, getStatKey, Stat 
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
-import { applyMoveAttrs } from "#moves/apply-attrs";
 import { healBlockedMoves, invalidEncoreMoves } from "#moves/invalid-moves";
 import type { Move } from "#moves/move";
 import type { MoveEffectPhase } from "#phases/move-effect-phase";
@@ -88,7 +87,7 @@ import type {
   TypeBoostTagType,
 } from "#types/battler-tags";
 import type { Mutable } from "#types/type-helpers";
-import { BooleanHolder, coerceArray, getFrameMs, NumberHolder, toDmgValue } from "#utils/common";
+import { BooleanHolder, coerceArray, getFrameMs, toDmgValue } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
 
 /** Interface containing the serializable fields of BattlerTag */
@@ -2891,16 +2890,15 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
 
   /**
    * Checks if a move is disabled under Heal Block because of its choice of target
-   * Implemented b/c of Pollen Puff
+   * Used solely to prevent pokemon from targeting Heal Blocked allies with Pollen Puff.
    * @param move - {@linkcode MoveId | ID} of the move being used
    * @param user - The pokemon using the move
    * @param target - The target of the move
-   * @returns `true` if the move cannot be used because the target is an ally
+   * @returns Whether the move cannot be used against `target` specifically
    */
+  // TODO: Move this to a restriction on Pollen Puff itself
   override isMoveTargetRestricted(move: MoveId, user: Pokemon, target: Pokemon) {
-    const moveCategory = new NumberHolder(allMoves[move].category);
-    applyMoveAttrs("StatusCategoryOnAllyAttr", user, target, allMoves[move], moveCategory);
-    return allMoves[move].hasAttr("HealOnAllyAttr") && moveCategory.value === MoveCategory.STATUS;
+    return move.id === MoveId.POLLEN_PUFF && !user.isOpponent(target);
   }
 
   override selectionDeniedText(pokemon: Pokemon, move: MoveId): string {
