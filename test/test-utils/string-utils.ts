@@ -33,7 +33,7 @@ interface getEnumStrOptions {
  * Return the name of an enum member or const object value, alongside its corresponding value.
  * @param obj - The {@linkcode EnumOrObject} to source reverse mappings from
  * @param val - One of {@linkcode obj}'s values
- * @param options - Options modifying the stringification process.
+ * @param options - Options modifying the stringification process
  * @returns The stringified representation of `val` as dictated by the options.
  * @example
  * ```ts
