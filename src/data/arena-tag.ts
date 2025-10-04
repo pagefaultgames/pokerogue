@@ -1072,6 +1072,7 @@ class StickyWebTag extends EntryHazardTag {
  * Imprison remains in effect as long as the source Pokemon is active and present on the field.
  * Imprison will apply to any opposing Pokemon that switch onto the field as well.
  */
+// TODO: refactor Imprison to no longer use an `ArenaTag` (cf https://github.com/Despair-Games/poketernity/pull/709)
 class ImprisonTag extends EntryHazardTag {
   public readonly tagType = ArenaTagType.IMPRISON;
   override get maxLayers() {
