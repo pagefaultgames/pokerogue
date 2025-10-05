@@ -112,3 +112,9 @@ export const RARE_CANDY_FRIENDSHIP_CAP = 200;
  * The maximum number of times a player can Terastallize in a single arena run
  */
 export const MAX_TERAS_PER_ARENA = 1;
+
+/** Moves that can only be learned with a memory-mushroom */
+export const RELEARN_MOVE = -1;
+
+/** Moves that can only be learned with an evolve */
+export const EVOLVE_MOVE = 0;

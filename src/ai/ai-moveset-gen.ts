@@ -1,3 +1,4 @@
+import { EVOLVE_MOVE, RELEARN_MOVE } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { speciesEggMoves } from "#balance/egg-moves";
 import {
@@ -19,7 +20,6 @@ import {
   ULTRA_TIER_TM_LEVEL_REQUIREMENT,
   ULTRA_TM_MOVESET_WEIGHT,
 } from "#balance/moveset-generation";
-import { EVOLVE_MOVE, RELEARN_MOVE } from "#balance/pokemon-level-moves";
 import { speciesTmMoves, tmPoolTiers } from "#balance/tms";
 import { allMoves } from "#data/data-lists";
 import { ModifierTier } from "#enums/modifier-tier";
