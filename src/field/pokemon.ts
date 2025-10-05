@@ -4286,19 +4286,16 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Get whether the given move is currently disabled for this Pokémon
+   * Get whether the given move is currently disabled for this Pokémon by a move restriction tag.
    *
    * @remarks
    * ⚠️ Only checks for restrictions due to a battler tag, not due to the move's own attributes.
-   * (for that behavior, see {@linkcode isMoveSelectable}).
-   *
    * @param moveId - The ID of the move to check
    * @returns `true` if the move is disabled for this Pokemon, otherwise `false`
-   *
    * @see {@linkcode MoveRestrictionBattlerTag}
    */
-  // TODO: rename this method as it can be easily confused with a move being restricted
-  public isMoveRestricted(moveId: MoveId): boolean {
+  // TODO: Move this behavior into a matcher and expunge it from the codebase - we only use it for tests
+  public hasRestrictingTag(moveId: MoveId): boolean {
     return this.getRestrictingTag(moveId) !== null;
   }
 

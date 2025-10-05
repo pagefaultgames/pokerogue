@@ -1,13 +1,8 @@
-import { getPokemonNameWithAffix } from "#app/messages";
-import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
-import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
-import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
-import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -76,59 +71,6 @@ describe("Moves - Pollen Puff", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(target.hp).not.toBe(target.getMaxHp());
-    expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
-  });
-
-  // TODO: Move into heal attr file once pr is merged (moving it here for now to check my fix worked)
-  it("should be unable to target Heal Blocked allies, but should work against Heal Blocked enemies", async () => {
-    game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.BLISSEY, SpeciesId.SNORLAX]);
-
-    const [blissey, snorlax, chansey] = game.scene.getField();
-    snorlax.hp = 1;
-    snorlax.addTag(BattlerTagType.HEAL_BLOCK);
-    chansey.addTag(BattlerTagType.HEAL_BLOCK);
-    expect(snorlax).toHaveBattlerTag(BattlerTagType.HEAL_BLOCK);
-    expect(chansey).toHaveBattlerTag(BattlerTagType.HEAL_BLOCK);
-
-    // Blissey should not be able to use Pollen Puff on Snorlax (who has heal block), while
-    // Snorlax should still be able to target Blissey despite being Heal Blocked themself.
-    // Chansey, being an enemy, should be targetable by both
-    expect(blissey.isMoveTargetRestricted(MoveId.POLLEN_PUFF, snorlax)).toBe(true);
-    expect(snorlax.isMoveTargetRestricted(MoveId.POLLEN_PUFF, blissey)).toBe(false);
-    expect(blissey.isMoveTargetRestricted(MoveId.POLLEN_PUFF, chansey)).toBe(false);
-    expect(snorlax.isMoveTargetRestricted(MoveId.POLLEN_PUFF, chansey)).toBe(false);
-
-    // Remove heal blocks for the duration of the `CommandPhases`,
-    // then re-add them after move selection
-    snorlax.removeTag(BattlerTagType.HEAL_BLOCK);
-    chansey.removeTag(BattlerTagType.HEAL_BLOCK);
-
-    game.move.use(MoveId.POLLEN_PUFF, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2);
-    game.move.use(MoveId.POLLEN_PUFF, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY);
-    await game.phaseInterceptor.to("EnemyCommandPhase", false);
-    snorlax.addTag(BattlerTagType.HEAL_BLOCK);
-    chansey.addTag(BattlerTagType.HEAL_BLOCK);
-    await game.toEndOfTurn();
-
-    // Ally-targeting PP didn't heal; enemy-targeting PP damaged correctly
-    expect(blissey).toHaveUsedMove({ move: MoveId.POLLEN_PUFF, result: MoveResult.FAIL });
-    expect(snorlax).toHaveHp(1);
-    expect(chansey).not.toHaveFullHp();
-    expect(snorlax).toHaveUsedMove({ move: MoveId.POLLEN_PUFF, result: MoveResult.SUCCESS });
-    expect(game).toHaveShownMessage(
-      i18next.t("battle:moveDisabledHealBlock", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(snorlax),
-        moveName: allMoves[MoveId.POLLEN_PUFF].name,
-      }),
-    );
-    expect(game).not.toHaveShownMessage(
-      i18next.t("battle:moveDisabledHealBlock", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(chansey),
-        moveName: allMoves[MoveId.POLLEN_PUFF].name,
-      }),
-    );
-    // nobody got actually healed
     expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
   });
 });
