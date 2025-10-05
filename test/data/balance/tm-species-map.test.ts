@@ -14,6 +14,7 @@
  *
  * @module
  */
+
 import { tmSpecies } from "#balance/tm-species-map";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";

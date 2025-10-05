@@ -17,7 +17,6 @@ import { TrainerType } from "#enums/trainer-type";
 import { randSeedInt } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 
-
 export function initBiomes() {
   const pokemonBiomes = [
     [SpeciesId.BULBASAUR, PokemonType.GRASS, PokemonType.POISON, [
