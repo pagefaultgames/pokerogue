@@ -702,7 +702,7 @@ export function generateMoveset(pokemon: Pokemon): void {
   debugMoveWeights(pokemon, baseWeights, "Pre STAB Move");
 
   // Step 4: Force a STAB move if possible
-  forceStabMove(movePool, tmPool, eggMovePool, pokemon, tmCount, eggMoveCount, willTera);
+  forceStabMove(baseWeights, tmPool, eggMovePool, pokemon, tmCount, eggMoveCount, willTera);
   // Note: To force a secondary stab, call this a second time, and pass `false` for the last parameter
   // Would also tweak the function to not consider moves already in the moveset
   // e.g. forceStabMove(..., false);
