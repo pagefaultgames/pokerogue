@@ -8,7 +8,7 @@
     "start:beta": "vite --mode beta",
     "start:dev": "vite --mode development",
     "start:podman": "vite --mode development --host 0.0.0.0 --port $PORT",
-    "build": "vite build && node --mode development && node scripts/sync-dist-assets.js",
+    "build": "vite build && node scripts/sync-dist-assets.js",
     "build:beta": "vite build --mode beta && node scripts/sync-dist-assets.js",
     "build:dev": "vite build --mode development && node scripts/sync-dist-assets.js",
     "preview": "vite preview",
