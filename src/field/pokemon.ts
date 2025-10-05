@@ -2,7 +2,7 @@ import type { Ability, PreAttackModifyDamageAbAttrParams } from "#abilities/abil
 import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
 import { generateMoveset } from "#app/ai/ai-moveset-gen";
 import type { AnySound, BattleScene } from "#app/battle-scene";
-import { PLAYER_PARTY_MAX_SIZE, RARE_CANDY_FRIENDSHIP_CAP } from "#app/constants";
+import { EVOLVE_MOVE, PLAYER_PARTY_MAX_SIZE, RARE_CANDY_FRIENDSHIP_CAP, RELEARN_MOVE } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -15,11 +15,10 @@ import {
   pokemonPrevolutions,
   validateShedinjaEvo,
 } from "#balance/pokemon-evolutions";
-import type { LevelMoves } from "#balance/pokemon-level-moves";
-import { EVOLVE_MOVE, RELEARN_MOVE } from "#balance/pokemon-level-moves";
 import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY_VARIANT_CHANCE } from "#balance/rates";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#balance/starters";
-import { reverseCompatibleTms, tmSpecies } from "#balance/tms";
+import { tmSpecies } from "#balance/tm-species-map";
+import { reverseCompatibleTms } from "#balance/tms";
 import type { SuppressAbilitiesTag } from "#data/arena-tag";
 import { NoCritTag, WeakenMoveScreenTag } from "#data/arena-tag";
 import {
@@ -144,6 +143,7 @@ import type { AbAttrMap, AbAttrString, TypeMultiplierAbAttrParams } from "#types
 import type { getAttackDamageParams, getBaseDamageParams } from "#types/damage-params";
 import type { DamageCalculationResult, DamageResult } from "#types/damage-result";
 import type { IllusionData } from "#types/illusion-data";
+import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { TurnMove } from "#types/turn-move";
 import { BattleInfo } from "#ui/battle-info";
@@ -4264,19 +4264,16 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Get whether the given move is currently disabled for this Pokémon
+   * Get whether the given move is currently disabled for this Pokémon by a move restriction tag.
    *
    * @remarks
    * ⚠️ Only checks for restrictions due to a battler tag, not due to the move's own attributes.
-   * (for that behavior, see {@linkcode isMoveSelectable}).
-   *
    * @param moveId - The ID of the move to check
    * @returns `true` if the move is disabled for this Pokemon, otherwise `false`
-   *
    * @see {@linkcode MoveRestrictionBattlerTag}
    */
-  // TODO: rename this method as it can be easily confused with a move being restricted
-  public isMoveRestricted(moveId: MoveId): boolean {
+  // TODO: Move this behavior into a matcher and expunge it from the codebase - we only use it for tests
+  public hasRestrictingTag(moveId: MoveId): boolean {
     return this.getRestrictingTag(moveId, this) !== null;
   }
 

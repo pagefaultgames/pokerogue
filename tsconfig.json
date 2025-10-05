@@ -18,6 +18,7 @@
       "ScriptHost",
       "WebWorker.ImportScripts"
     ],
+    "skipLibCheck": true, // Safe and almost always beneficial
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "esModuleInterop": true,

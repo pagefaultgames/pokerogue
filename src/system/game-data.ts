@@ -78,7 +78,6 @@ import { executeIf, fixedInt, isLocal, NumberHolder, randInt, randSeedItem } fro
 import { decrypt, encrypt } from "#utils/data";
 import { getEnumKeys } from "#utils/enums";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
-import { isBeta } from "#utils/utility-vars";
 import { AES, enc } from "crypto-js";
 import i18next from "i18next";
 
@@ -414,7 +413,7 @@ export class GameData {
         }
       }
 
-      if (isLocal || isBeta) {
+      if (import.meta.env.DEV) {
         try {
           console.debug(
             GameData.parseSystemData(
@@ -955,7 +954,7 @@ export class GameData {
     const { promise, resolve, reject } = Promise.withResolvers<boolean>();
     try {
       const initSessionFromData = (fromSession: SessionSaveData) => {
-        if (isLocal || isBeta) {
+        if (import.meta.env.DEV) {
           try {
             console.debug(
               this.parseSessionData(
