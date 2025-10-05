@@ -2898,7 +2898,7 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
    */
   // TODO: Move this to a restriction on Pollen Puff itself
   override isMoveTargetRestricted(move: MoveId, user: Pokemon, target: Pokemon) {
-    return move.id === MoveId.POLLEN_PUFF && !user.isOpponent(target);
+    return move === MoveId.POLLEN_PUFF && !user.isOpponent(target);
   }
 
   override selectionDeniedText(pokemon: Pokemon, move: MoveId): string {

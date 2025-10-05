@@ -4,7 +4,7 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
-import { MoveResult } from "#enums/move-result"
+import { MoveResult } from "#enums/move-result";
 import { PositionalTagType } from "#enums/positional-tag-type";
 import { SpeciesId } from "#enums/species-id";
 import { healBlockedMoves } from "#moves/invalid-moves";
@@ -35,7 +35,7 @@ describe("Move - Heal Block", () => {
       .enemyMoveset(MoveId.HEAL_BLOCK)
       .ability(AbilityId.NO_GUARD)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemySpecies(SpeciesId.BLISSEY)
+      .enemySpecies(SpeciesId.CHANSEY)
       .criticalHits(false);
   });
 
