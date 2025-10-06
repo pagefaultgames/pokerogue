@@ -1082,8 +1082,10 @@ export class PostDefendAbAttr extends AbAttr {
 
 /** Class for abilities that make drain moves deal damage to user instead of healing them. */
 export class ReverseDrainAbAttr extends PostDefendAbAttr {
-  override canApply({ move }: PostMoveInteractionAbAttrParams): boolean {
-    return move.hasAttr("HitHealAttr");
+  override canApply({ move, opponent, simulated }: PostMoveInteractionAbAttrParams): boolean {
+    const cancelled = new BooleanHolder(false);
+    applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon: opponent, cancelled, simulated });
+    return !cancelled.value && move.hasAttr("HitHealAttr");
   }
 
   /**
@@ -1091,12 +1093,24 @@ export class ReverseDrainAbAttr extends PostDefendAbAttr {
    * Examples include: Absorb, Draining Kiss, Bitter Blade, etc.
    * Also displays a message to show this ability was activated.
    */
-  override apply({ simulated, opponent: attacker }: PostMoveInteractionAbAttrParams): void {
-    if (!simulated) {
-      globalScene.phaseManager.queueMessage(
-        i18next.t("abilityTriggers:reverseDrain", { pokemonNameWithAffix: getPokemonNameWithAffix(attacker) }),
-      );
+  override apply({ move, simulated, opponent, pokemon }: PostMoveInteractionAbAttrParams): void {
+    if (simulated) {
+      return;
     }
+    const damageAmount = move.getAttrs<"HitHealAttr">("HitHealAttr")[0].getHealAmount(opponent, pokemon);
+    pokemon.turnData.damageTaken += damageAmount;
+    globalScene.phaseManager.unshiftNew(
+      "PokemonHealPhase",
+      opponent.getBattlerIndex(),
+      -damageAmount,
+      null,
+      false,
+      true,
+    );
+  }
+
+  public override getTriggerMessage({ opponent }: PostMoveInteractionAbAttrParams): string | null {
+    return i18next.t("abilityTriggers:reverseDrain", { pokemonNameWithAffix: getPokemonNameWithAffix(opponent) });
   }
 }
 
