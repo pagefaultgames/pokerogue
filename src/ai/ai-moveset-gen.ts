@@ -32,7 +32,6 @@ import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import { PokemonMove } from "#moves/pokemon-move";
 import { NumberHolder, randSeedInt } from "#utils/common";
 import { willTerastallize } from "#utils/pokemon-utils";
-import { isBeta } from "#utils/utility-vars";
 
 /**
  * Compute and assign a weight to the level-up moves currently available to the Pokémon
@@ -633,7 +632,7 @@ function fillInRemainingMovesetSlots(
  * @param note - Short note to include in the log for context
  */
 function debugMoveWeights(pokemon: Pokemon, pool: Map<MoveId, number>, note: string): void {
-  if ((isBeta || import.meta.env.DEV) && import.meta.env.NODE_ENV !== "test") {
+  if (import.meta.env.DEV && import.meta.env.NODE_ENV !== "test") {
     const moveNameToWeightMap = new Map<string, number>();
     const sortedByValue = Array.from(pool.entries()).sort((a, b) => b[1] - a[1]);
     for (const [moveId, weight] of sortedByValue) {
@@ -703,7 +702,7 @@ export function generateMoveset(pokemon: Pokemon): void {
   debugMoveWeights(pokemon, baseWeights, "Pre STAB Move");
 
   // Step 4: Force a STAB move if possible
-  forceStabMove(movePool, tmPool, eggMovePool, pokemon, tmCount, eggMoveCount, willTera);
+  forceStabMove(baseWeights, tmPool, eggMovePool, pokemon, tmCount, eggMoveCount, willTera);
   // Note: To force a secondary stab, call this a second time, and pass `false` for the last parameter
   // Would also tweak the function to not consider moves already in the moveset
   // e.g. forceStabMove(..., false);
