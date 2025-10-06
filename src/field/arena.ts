@@ -38,7 +38,7 @@ import type { Move } from "#moves/move";
 import type { BiomeTierTrainerPools, PokemonPools } from "#types/biomes";
 import type { AbstractConstructor } from "#types/type-helpers";
 import { type Constructor, NumberHolder, randSeedInt } from "#utils/common";
-import { getPokemonSpecieils } from "#utils/pokemon-utils";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 export class Arena {
   public biomeType: BiomeId;
