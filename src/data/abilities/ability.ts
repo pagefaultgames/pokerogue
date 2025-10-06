@@ -169,17 +169,19 @@ export class Ability {
   }
   /**
    * Whether this ability is partially implemented.
+   * @remarks
    * Mutually exclusive with {@linkcode unimplemented}
    */
   public get partial(): boolean {
-    return !(this.flags & AB_FLAG_PARTIAL);
+    return (this.flags & AB_FLAG_PARTIAL) !== 0;
   }
   /**
    * Whether this ability is unimplemented.
+   * @remarks
    * Mutually exclusive with {@linkcode partial}
    */
   public get unimplemented(): boolean {
-    return !(this.flags & AB_FLAG_UNIMPLEMENTED);
+    return (this.flags & AB_FLAG_UNIMPLEMENTED) !== 0;
   }
   /**
    * Whether this ability can be swapped via effects like {@linkcode MoveId.SKILL_SWAP | Skill Swap}.
