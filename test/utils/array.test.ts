@@ -140,13 +140,11 @@ describe("Utils - Array", () => {
     });
 
     it("works with BigUint64Array and bigint[]", () => {
-      if (typeof BigUint64Array !== "undefined") {
-        const target = new BigUint64Array(3);
-        const source = [1n, 2n, 3n, 4n];
+      const target = new BigUint64Array(3);
+      const source = [1n, 2n, 3n, 4n];
 
-        setTypedArray(target, source, 1);
-        expect(Array.from(target)).toEqual([0n, 1n, 2n]);
-      }
+      setTypedArray(target, source, 1);
+      expect(Array.from(target)).toEqual([0n, 1n, 2n]);
     });
   });
 
@@ -239,10 +237,8 @@ describe("Utils - Array", () => {
       ["Float64Array", Float64Array],
       ["Float32Array", Float32Array],
     ])("returns true for %s", (_, ArrayType) => {
-      if (typeof ArrayType !== "undefined") {
-        const arr = new ArrayType([1, 2, 3]);
-        expect(isTypedArray(arr)).toBe(true);
-      }
+      const arr = new ArrayType([1, 2, 3]);
+      expect(isTypedArray(arr)).toBe(true);
     });
 
     it.each([
