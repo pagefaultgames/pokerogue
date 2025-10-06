@@ -6942,7 +6942,7 @@ export class EnemyPokemon extends Pokemon {
     return globalScene.getEnemyField().indexOf(this);
   }
 
-  public getBattlerIndex(): BattlerIndex {
+  public getBattlerIndex(): FieldBattlerIndex {
     const fieldIndex = this.getFieldIndex();
     if (fieldIndex === -1) {
       // TODO: Fix this typing once field pokemon getters are reworked to make sense
