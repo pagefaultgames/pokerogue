@@ -257,6 +257,10 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
       globalScene.phaseManager.unshiftNew("ToggleDoublePositionPhase", true);
     }
 
+    for (const pokemon of globalScene.getField(true)) {
+      pokemon.resetTurnData();
+    }
+
     this.end();
   }
 }
@@ -414,11 +418,12 @@ export class MysteryEncounterBattlePhase extends Phase {
       encounterMode !== MysteryEncounterMode.TRAINER_BATTLE
       && !this.disableSwitch
       && availablePartyMembers.length > minPartySize;
+    const checkSwitchIndices: number[] = [];
 
     if (!availablePartyMembers[0].isOnField()) {
       globalScene.phaseManager.pushNew("SummonPhase", 0, true, false, checkSwitch);
     } else if (checkSwitch) {
-      globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
+      checkSwitchIndices.push(0);
     }
 
     if (globalScene.currentBattle.double) {
@@ -427,7 +432,7 @@ export class MysteryEncounterBattlePhase extends Phase {
         if (!availablePartyMembers[1].isOnField()) {
           globalScene.phaseManager.pushNew("SummonPhase", 1, true, false, checkSwitch);
         } else if (checkSwitch) {
-          globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
+          checkSwitchIndices.push(1);
         }
       }
     } else {
@@ -438,16 +443,9 @@ export class MysteryEncounterBattlePhase extends Phase {
       globalScene.phaseManager.pushNew("ToggleDoublePositionPhase", false);
     }
 
-    if (encounterMode !== MysteryEncounterMode.TRAINER_BATTLE && !this.disableSwitch) {
-      const minPartySize = globalScene.currentBattle.double ? 2 : 1;
-      if (availablePartyMembers.length > minPartySize) {
-        globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
-        if (globalScene.currentBattle.double) {
-          globalScene.phaseManager.pushNew("CheckSwitchPhase", 1, globalScene.currentBattle.double);
-        }
-      }
-    }
-
+    checkSwitchIndices.forEach(i => {
+      globalScene.phaseManager.pushNew("CheckSwitchPhase", i, globalScene.currentBattle.double);
+    });
     this.end();
   }
 
