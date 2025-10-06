@@ -2546,28 +2546,18 @@ export class HitHealAttr extends MoveEffectAttr {
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    let healAmount = 0;
+    if (target.hasAbilityWithAttr("ReverseDrainAbAttr")) {
+      return false;
+    }
+
+    const healAmount = this.getHealAmount(user, target);
     let message = "";
-    const reverseDrain = target.hasAbilityWithAttr("ReverseDrainAbAttr", false);
     if (this.healStat !== null) {
-      // Strength Sap formula
-      healAmount = target.getEffectiveStat(this.healStat);
       message = i18next.t("battle:drainMessage", { pokemonName: getPokemonNameWithAffix(target) });
     } else {
-      // Default healing formula used by draining moves like Absorb, Draining Kiss, Bitter Blade, etc.
-      healAmount = toDmgValue(user.turnData.singleHitDamageDealt * this.healRatio);
       message = i18next.t("battle:regainHealth", { pokemonName: getPokemonNameWithAffix(user) });
     }
-    if (reverseDrain) {
-      if (user.hasAbilityWithAttr("BlockNonDirectDamageAbAttr")) {
-        healAmount = 0;
-        message = "";
-      } else {
-        user.turnData.damageTaken += healAmount;
-        healAmount = healAmount * -1;
-        message = "";
-      }
-    }
+
     globalScene.phaseManager.unshiftNew("PokemonHealPhase", user.getBattlerIndex(), healAmount, message, false, true);
     return true;
   }
@@ -2585,6 +2575,10 @@ export class HitHealAttr extends MoveEffectAttr {
       return Math.floor(Math.max(0, (Math.min(1, (healAmount + user.hp) / user.getMaxHp() - 0.33))) / user.getHpRatio());
     }
     return Math.floor(Math.max((1 - user.getHpRatio()) - 0.33, 0) * (move.power / 4));
+  }
+
+  public getHealAmount(user: Pokemon, target: Pokemon): number {
+    return (this.healStat) ? target.getEffectiveStat(this.healStat) : toDmgValue(user.turnData.singleHitDamageDealt * this.healRatio);
   }
 }
 
@@ -7705,7 +7699,7 @@ export class AbilityChangeAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => (this.selfTarget ? user : target).getAbility().isReplaceable && (this.selfTarget ? user : target).getAbility().id !== this.ability;
+    return (user, target, move) => (this.selfTarget ? user : target).getAbility().replaceable && (this.selfTarget ? user : target).getAbility().id !== this.ability;
   }
 }
 
@@ -7739,9 +7733,9 @@ export class AbilityCopyAttr extends MoveEffectAttr {
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
       const ally = user.getAlly();
-      let ret = target.getAbility().isCopiable && user.getAbility().isReplaceable;
+      let ret = target.getAbility().copiable && user.getAbility().replaceable;
       if (this.copyToPartner && globalScene.currentBattle?.double) {
-        ret = ret && (!ally?.hp || ally?.getAbility().isReplaceable);
+        ret = ret && (!ally?.hp || ally?.getAbility().replaceable);
       } else {
         ret = ret && user.getAbility().id !== target.getAbility().id;
       }
@@ -7770,7 +7764,7 @@ export class AbilityGiveAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => user.getAbility().isCopiable && target.getAbility().isReplaceable && user.getAbility().id !== target.getAbility().id;
+    return (user, target, move) => user.getAbility().copiable && target.getAbility().replaceable && user.getAbility().id !== target.getAbility().id;
   }
 }
 
@@ -7793,7 +7787,7 @@ export class SwitchAbilitiesAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => [user, target].every(pkmn => pkmn.getAbility().isSwappable);
+    return (user, target, move) => [user, target].every(pkmn => pkmn.getAbility().swappable);
   }
 }
 
@@ -7819,7 +7813,7 @@ export class SuppressAbilitiesAttr extends MoveEffectAttr {
 
   /** Causes the effect to fail when the target's ability is unsupressable or already suppressed. */
   getCondition(): MoveConditionFunc {
-    return (_user, target, _move) => !target.summonData.abilitySuppressed && (target.getAbility().isSuppressable || (target.hasPassive() && target.getPassiveAbility().isSuppressable));
+    return (_user, target, _move) => !target.summonData.abilitySuppressed && (target.getAbility().suppressable || (target.hasPassive() && target.getPassiveAbility().suppressable));
   }
 }
 
