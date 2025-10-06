@@ -8,8 +8,8 @@ import { isGameManagerInstance, receivedStr } from "#test/test-utils/test-utils"
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
- * Matcher that checks if the {@linkcode TerrainType} is as expected
- * @param received - The object to check. Should be an instance of {@linkcode GameManager}.
+ * Matcher that checks if the current {@linkcode TerrainType} is as expected.
+ * @param received - The object to check. Should be the current {@linkcode GameManager}.
  * @param expectedTerrainType - The expected {@linkcode TerrainType}, or {@linkcode TerrainType.NONE} if no terrain should be active
  * @returns Whether the matcher passed
  */

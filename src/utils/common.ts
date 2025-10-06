@@ -1,6 +1,8 @@
 import { pokerogueApi } from "#api/pokerogue-api";
+import { BiomeId } from "#enums/biome-id";
 import { MoneyFormat } from "#enums/money-format";
 import type { Variant } from "#sprites/variant";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 export type nil = null | undefined;
@@ -408,13 +410,13 @@ export function hasAllLocalizedSprites(lang?: string): boolean {
 
   switch (lang) {
     case "es-ES":
-    case "es-MX":
+    case "es-419":
     case "fr":
     case "da":
     case "de":
     case "it":
-    case "zh-CN":
-    case "zh-TW":
+    case "zh-Hans":
+    case "zh-Hant":
     case "pt-BR":
     case "ro":
     case "tr":
@@ -514,4 +516,20 @@ export function getShinyDescriptor(variant: Variant): string {
 export function coerceArray<T>(input: T): T extends any[] ? T : [T];
 export function coerceArray<T>(input: T): T | [T] {
   return Array.isArray(input) ? input : [input];
+}
+
+export function getBiomeName(biome: BiomeId | -1) {
+  if (biome === -1) {
+    return i18next.t("biome:unknownLocation");
+  }
+  switch (biome) {
+    case BiomeId.GRASS:
+      return i18next.t("biome:grass");
+    case BiomeId.RUINS:
+      return i18next.t("biome:ruins");
+    case BiomeId.END:
+      return i18next.t("biome:end");
+    default:
+      return i18next.t(`biome:${toCamelCase(BiomeId[biome])}`);
+  }
 }

@@ -5,8 +5,7 @@ import type { PositionalTag } from "#data/positional-tags/positional-tag";
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
-import type { BiomeTierTrainerPools, PokemonPools } from "#balance/biomes";
-import { BiomePoolTier, biomePokemonPools, biomeTrainerPools } from "#balance/biomes";
+import { biomePokemonPools, biomeTrainerPools } from "#balance/biomes";
 import type { ArenaTag } from "#data/arena-tag";
 import { EntryHazardTag, getArenaTag } from "#data/arena-tag";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
@@ -24,6 +23,7 @@ import { ArenaTagSide } from "#enums/arena-tag-side";
 import type { ArenaTagType } from "#enums/arena-tag-type";
 import type { BattlerIndex } from "#enums/battler-index";
 import { BiomeId } from "#enums/biome-id";
+import { BiomePoolTier } from "#enums/biome-pool-tier";
 import { CommonAnim } from "#enums/move-anims-common";
 import type { MoveId } from "#enums/move-id";
 import type { PokemonType } from "#enums/pokemon-type";
@@ -35,6 +35,7 @@ import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEven
 import type { Pokemon } from "#field/pokemon";
 import { FieldEffectModifier } from "#modifiers/modifier";
 import type { Move } from "#moves/move";
+import type { BiomeTierTrainerPools, PokemonPools } from "#types/biomes";
 import type { AbstractConstructor } from "#types/type-helpers";
 import { type Constructor, NumberHolder, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
@@ -371,9 +372,15 @@ export class Arena {
 
   /**
    * Function to trigger all weather based form changes
+   * @param source - The Pokemon causing the changes by removing itself from the field
    */
-  triggerWeatherBasedFormChanges(): void {
+  triggerWeatherBasedFormChanges(source?: Pokemon): void {
     globalScene.getField(true).forEach(p => {
+      // TODO - This is a bandaid. Abilities leaving the field needs a better approach than
+      // calling this method for every switch out that happens
+      if (p === source) {
+        return;
+      }
       const isCastformWithForecast = p.hasAbility(AbilityId.FORECAST) && p.species.speciesId === SpeciesId.CASTFORM;
       const isCherrimWithFlowerGift = p.hasAbility(AbilityId.FLOWER_GIFT) && p.species.speciesId === SpeciesId.CHERRIM;
 
@@ -713,7 +720,7 @@ export class Arena {
     }
 
     // creates a new tag object
-    const newTag = getArenaTag(tagType, turnCount || 0, sourceMove, sourceId, side);
+    const newTag = getArenaTag(tagType, turnCount, sourceMove, sourceId, side);
     if (newTag) {
       newTag.onAdd(this, quiet);
       this.tags.push(newTag);
@@ -825,6 +832,32 @@ export class Arena {
       this.eventTarget.dispatchEvent(new TagRemovedEvent(tag.tagType, tag.side, tag.turnCount));
     }
     return !!tag;
+  }
+
+  /**
+   * Find and remove all {@linkcode ArenaTag}s with the given tag types on the given side of the field.
+   * @param tagTypes - The {@linkcode ArenaTagType}s to remove
+   * @param side - The {@linkcode ArenaTagSide} to remove the tags from (for side-based tags), or {@linkcode ArenaTagSide.BOTH}
+   * to clear all tags on either side of the field
+   * @param quiet - Whether to suppress removal messages from currently-present tags; default `false`
+   * @todo Review the other tag manipulation functions to see if they can be migrated towards using this (more efficient)
+   */
+  public removeTagsOnSide(tagTypes: ArenaTagType[] | readonly ArenaTagType[], side: ArenaTagSide, quiet = false): void {
+    const leftoverTags: ArenaTag[] = [];
+    for (const tag of this.tags) {
+      // Skip tags of different types or on the wrong side of the field
+      if (
+        !tagTypes.includes(tag.tagType)
+        || !(side === ArenaTagSide.BOTH || tag.side === ArenaTagSide.BOTH || tag.side === side)
+      ) {
+        leftoverTags.push(tag);
+        continue;
+      }
+
+      tag.onRemove(this, quiet);
+    }
+
+    this.tags = leftoverTags;
   }
 
   removeAllTags(): void {

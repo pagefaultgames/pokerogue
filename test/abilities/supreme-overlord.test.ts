@@ -1,6 +1,7 @@
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import type { Move } from "#moves/move";
@@ -165,5 +166,42 @@ describe("Abilities - Supreme Overlord", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(move.calculateBattlePower).toHaveLastReturnedWith(basePower);
+  });
+
+  it("should not increase in power if ally faints while on the field", async () => {
+    game.override.battleStyle("double");
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
+
+    game.move.select(MoveId.TACKLE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.select(MoveId.LUNAR_DANCE, BattlerIndex.PLAYER_2);
+    await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    await game.toEndOfTurn();
+
+    expect(game.field.getPlayerPokemon()).not.toHaveBattlerTag(BattlerTagType.SUPREME_OVERLORD);
+    expect(move.calculateBattlePower).toHaveLastReturnedWith(basePower);
+  });
+
+  it("should persist fainted count through reload", async () => {
+    // Avoid learning moves
+    game.override.startingLevel(1000);
+
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
+
+    game.move.select(MoveId.LUNAR_DANCE);
+    game.doSelectPartyPokemon(1);
+    await game.toNextTurn();
+
+    game.move.select(MoveId.TACKLE);
+    await game.toEndOfTurn();
+    expect(move.calculateBattlePower).toHaveLastReturnedWith(basePower * 1.1);
+
+    await game.toNextWave();
+    await game.reload.reloadSession();
+
+    expect(game.field.getPlayerPokemon()).toHaveBattlerTag({ tagType: BattlerTagType.SUPREME_OVERLORD, faintCount: 1 });
+
+    game.move.select(MoveId.TACKLE);
+    await game.toEndOfTurn();
+    expect(move.calculateBattlePower).toHaveLastReturnedWith(basePower * 1.1);
   });
 });

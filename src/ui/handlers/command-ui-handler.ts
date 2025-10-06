@@ -1,17 +1,17 @@
+import { MAX_TERAS_PER_ARENA } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { getTypeRgb } from "#data/type";
 import { Button } from "#enums/buttons";
 import { Command } from "#enums/command";
 import { PokemonType } from "#enums/pokemon-type";
-import { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
-import { TerastallizeAccessModifier } from "#modifiers/modifier";
 import type { CommandPhase } from "#phases/command-phase";
 import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
+import { canTerastallize } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 export class CommandUiHandler extends UiHandler {
@@ -74,7 +74,7 @@ export class CommandUiHandler extends UiHandler {
 
     let commandPhase: CommandPhase;
     const currentPhase = globalScene.phaseManager.getCurrentPhase();
-    if (currentPhase?.is("CommandPhase")) {
+    if (currentPhase.is("CommandPhase")) {
       commandPhase = currentPhase;
     } else {
       commandPhase = globalScene.phaseManager.getStandbyPhase() as CommandPhase;
@@ -198,14 +198,13 @@ export class CommandUiHandler extends UiHandler {
   }
 
   canTera(): boolean {
-    const hasTeraMod = globalScene.getModifiers(TerastallizeAccessModifier).length > 0;
     const activePokemon = globalScene.getField()[this.fieldIndex];
-    const isBlockedForm =
-      activePokemon.isMega() || activePokemon.isMax() || activePokemon.hasSpecies(SpeciesId.NECROZMA, "ultra");
     const currentTeras = globalScene.arena.playerTerasUsed;
-    const plannedTera =
-      globalScene.currentBattle.preTurnCommands[0]?.command === Command.TERA && this.fieldIndex > 0 ? 1 : 0;
-    return hasTeraMod && !isBlockedForm && currentTeras + plannedTera < 1;
+    const canTera = activePokemon.isPlayer() && canTerastallize(activePokemon);
+    const plannedTera = +(
+      globalScene.currentBattle.preTurnCommands[0]?.command === Command.TERA && this.fieldIndex > 0
+    );
+    return canTera && currentTeras + plannedTera < MAX_TERAS_PER_ARENA;
   }
 
   toggleTeraButton() {
