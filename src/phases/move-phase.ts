@@ -877,7 +877,7 @@ export class MovePhase extends PokemonPhase {
   }
 
   /** Execute the current move and apply its effects. */
-  private executeMove() {
+  private executeMove(): void{
     const user = this.pokemon;
     const move = this.move.getMove();
     const targets = this.targets;
@@ -901,7 +901,7 @@ export class MovePhase extends PokemonPhase {
   /**
    * Queue a {@linkcode MoveChargePhase} for this phase's invoked move.
    */
-  protected chargeMove() {
+  protected chargeMove(): void {
     globalScene.phaseManager.unshiftNew(
       "MoveChargePhase",
       this.pokemon.getBattlerIndex(),
@@ -911,11 +911,10 @@ export class MovePhase extends PokemonPhase {
     );
   }
 
-  //#endregion Move Execution
   /**
    * Queue a {@linkcode MoveEndPhase} and then end this phase.
    */
-  public end(): void {
+  public override end(): void {
     globalScene.phaseManager.unshiftNew(
       "MoveEndPhase",
       this.pokemon.getBattlerIndex(),
@@ -925,6 +924,10 @@ export class MovePhase extends PokemonPhase {
 
     super.end();
   }
+
+  //#endregion Move Execution
+
+  //#region Helpers
 
   /**
    * Handle cases where the move was cancelled or failed:
@@ -951,6 +954,8 @@ export class MovePhase extends PokemonPhase {
     }
 
     const moveHistoryEntry = this.moveHistoryEntry;
+    // TODO: probably redundant; everything that sete `failed/cancelled` changes
+    // the history entry
     moveHistoryEntry.result = MoveResult.FAIL;
     pokemon.pushMoveHistory(moveHistoryEntry);
 
@@ -962,12 +967,10 @@ export class MovePhase extends PokemonPhase {
     pokemon.getMoveQueue().shift();
   }
 
-  //#region Helpers
-
   /** Signifies the current move should fail but still use PP */
   public fail(): void {
-    this.moveHistoryEntry.result = MoveResult.FAIL;
     this.failed = true;
+    this.moveHistoryEntry.result = MoveResult.FAIL;
   }
 
   /** Signifies the current move should cancel and retain PP */
@@ -993,7 +996,7 @@ export class MovePhase extends PokemonPhase {
   /**
    * Fail the move currently being used.
    * Handles failure messages, pushing to move history, etc.
-   * @param failedDueToTerrain - Whether the move failed due to terrain (default `false`)
+   * @param failedDueToTerrain - Whether the move failed due to terrain; default `false`
    */
   protected failMove(failedDueToTerrain = false) {
     const move = this.move.getMove();
@@ -1044,7 +1047,7 @@ export class MovePhase extends PokemonPhase {
    * optionally cancelling the move as well.
    * @param effect - The effect being triggered
    * @param cancel - Whether to additionally cancel the current move usage; default `true`.
-   * Used by sleep-bypassing moves
+   *   Used by sleep-bypassing moves
    */
   private triggerStatus(effect: StatusEffect, cancel = true): void {
     const pokemon = this.pokemon;
