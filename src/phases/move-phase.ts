@@ -315,11 +315,11 @@ export class MovePhase extends PokemonPhase {
 
     // Dancer will immediately wake its user from sleep when triggering
     if (this.useMode === MoveUseMode.INDIRECT) {
-      user.resetStatus(false);
+      user.cureStatus(StatusEffect.SLEEP);
       return false;
     }
 
-    // TODO: Move into `incrementTurn`
+    // TODO: Move Early Bird check into `incrementTurn`
     user.status.incrementTurn();
     const turnsRemaining = new NumberHolder(user.status.sleepTurnsRemaining ?? 0);
     applyAbAttrs("ReduceStatusEffectDurationAbAttr", {
@@ -327,13 +327,14 @@ export class MovePhase extends PokemonPhase {
       statusEffect: user.status.effect,
       duration: turnsRemaining,
     });
-
     user.status.sleepTurnsRemaining = turnsRemaining.value;
+
     if (user.status.sleepTurnsRemaining <= 0) {
       user.cureStatus(StatusEffect.SLEEP);
       return false;
     }
 
+    // Check for sleep bypassing moves
     const bypassSleepHolder = new BooleanHolder(false);
     applyMoveAttrs("BypassSleepAttr", this.pokemon, null, this.move.getMove(), bypassSleepHolder);
     const cancel = !bypassSleepHolder.value;
@@ -357,7 +358,7 @@ export class MovePhase extends PokemonPhase {
 
     // Dancer will immediately thaw its user upon activation
     if (this.useMode === MoveUseMode.INDIRECT) {
-      user.resetStatus(false);
+      user.cureStatus(StatusEffect.FREEZE);
       return false;
     }
 
@@ -391,12 +392,13 @@ export class MovePhase extends PokemonPhase {
    */
   protected checkPP(): boolean {
     const move = this.move;
-    if (move.getMove().pp !== -1 && !isIgnorePP(this.useMode) && move.ppUsed >= move.getMovePp()) {
-      this.cancel();
-      this.showFailedText();
-      return true;
+    if (isIgnorePP(this.useMode) || !move.isOutOfPp()) {
+      return false;
     }
-    return false;
+
+    this.cancel();
+    this.showFailedText();
+    return true;
   }
 
   /**

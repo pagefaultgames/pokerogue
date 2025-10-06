@@ -93,10 +93,10 @@ export class PokemonMove {
   }
 
   /**
-   * Sets {@link ppUsed} for this move and ensures the value does not exceed {@link getMovePp}
-   * @param count Amount of PP to use
+   * Consume up to `count` PP from this move (up to its maximum PP).
+   * @param count - The amount of PP to use; default `1`
    */
-  usePp(count = 1) {
+  public usePp(count = 1): void {
     this.ppUsed = Math.min(this.ppUsed + count, this.getMovePp());
   }
 
@@ -108,6 +108,11 @@ export class PokemonMove {
     return 1 - this.ppUsed / this.getMovePp();
   }
 
+  /**
+   * Check whether this `PokemonMove` is out of PP.
+   * @returns Whether this `PokemonMove` is out of PP.
+   */
+  // TODO: Replace checks comparing `getPpRatio` with 0 to use this instead
   public isOutOfPp(): boolean {
     return this.getMovePp() !== -1 && this.ppUsed >= this.getMovePp();
   }
@@ -121,7 +126,6 @@ export class PokemonMove {
    * @param source The data for the move to copy; can be a {@linkcode PokemonMove} or JSON object representing one
    * @returns A valid {@linkcode PokemonMove} object
    */
-  // TODO: Don't serialize the `maxPpOverride` parameter - it is solely used for temporary moveset overrides from Transform
   static loadMove(source: PokemonMove | any): PokemonMove {
     return new PokemonMove(source.moveId, source.ppUsed, source.ppUp, source.maxPpOverride);
   }

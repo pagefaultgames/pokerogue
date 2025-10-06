@@ -5004,7 +5004,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Queue the status cure message, reset the status, and update the info display
+   * Helper function for the Move phase that queues the status cure message,
+   * resets it, and updates the info display.
    * @param effect - The effect to cure. If this does not match the current status, nothing happens.
    * @param msg - If provided, will override the default message displayed when removing status.
    *   Used for moves that thaw the user out
@@ -5014,9 +5015,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (effect !== this.status?.effect) {
       return;
     }
-    // Freeze healed by move uses its own msg
+
     globalScene.phaseManager.queueMessage(msg);
-    // cannot use `asPhase=true` as it will cause status to be reset _after_ this phase ends
+    // cannot use `asPhase=true` as it will cause status to be reset _after_ the move phase ends
     this.resetStatus(undefined, undefined, undefined, false);
     this.updateInfo();
   }
@@ -5052,11 +5053,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const lastStatus = this.status?.effect;
     this.status = null;
     this.setFrameRate(10);
+
     if (lastStatus === StatusEffect.SLEEP && this.getTag(BattlerTagType.NIGHTMARE)) {
-      this.lapseTag(BattlerTagType.NIGHTMARE);
+      this.removeTag(BattlerTagType.NIGHTMARE);
     }
     if (confusion && this.getTag(BattlerTagType.CONFUSED)) {
-      this.lapseTag(BattlerTagType.CONFUSED);
+      this.removeTag(BattlerTagType.CONFUSED);
     }
     if (reloadAssets) {
       this.loadAssets(false).then(() => this.playAnim());

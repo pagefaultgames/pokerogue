@@ -3197,13 +3197,13 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
  */
 // TODO: Give this `userSleptOrComatoseCondition` by default
 export class BypassSleepAttr extends MoveAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: [BooleanHolder, ...any[]]): boolean {
+  apply(_user: Pokemon, _target: Pokemon, _move: Move, args: [bypassSleep: BooleanHolder]): boolean {
     const bypassSleep = args[0];
     if (bypassSleep.value) {
       return false;
     }
     bypassSleep.value = true;
-    return true
+    return true;
   }
 
   /**
