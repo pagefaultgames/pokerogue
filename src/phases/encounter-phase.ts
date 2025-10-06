@@ -125,7 +125,7 @@ export class EncounterPhase extends BattlePhase {
             !!globalScene.getEncounterBossSegments(battle.waveIndex, level, enemySpecies),
           );
           if (globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
-            battle.enemyParty[e].ivs = new Array(6).fill(31);
+            battle.enemyParty[e].ivs.fill(31);
           }
           globalScene
             .getPlayerParty()
