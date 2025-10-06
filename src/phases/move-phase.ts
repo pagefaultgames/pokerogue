@@ -215,7 +215,7 @@ export class MovePhase extends PokemonPhase {
     // Stance Change does not trigger on called moves
     if (!isFollowUp) {
       globalScene.triggerPokemonFormChange(user, SpeciesFormChangePreMoveTrigger);
-      // TODO: apply gorilla tactics here instead of in the move effect phase
+      // TODO: apply gorilla tactics lock-in here instead of in the move effect phase
     }
 
     this.showMoveText();
@@ -372,7 +372,7 @@ export class MovePhase extends PokemonPhase {
       return false;
     }
 
-    // Perform a 20% random roll, subject to overridse
+    // Perform a 20% random roll, subject to overrides
     const randomThaw =
       Overrides.STATUS_ACTIVATION_OVERRIDE !== null
         ? !Overrides.STATUS_ACTIVATION_OVERRIDE
@@ -506,15 +506,17 @@ export class MovePhase extends PokemonPhase {
   }
 
   /**
-   * Check and activate the user's paralysis status condition
+   * Handle checking and activating the user's Paralysis status condition.
    * @returns Whether the move was cancelled due to the user being fully paralyzed.
+   * Returns `false` if `user` is not paralyzed
    */
   private checkPara(): boolean {
-    if (this.pokemon.status?.effect !== StatusEffect.PARALYSIS) {
+    const user = this.pokemon;
+    if (user.status?.effect !== StatusEffect.PARALYSIS) {
       return false;
     }
 
-    const proc = Overrides.STATUS_ACTIVATION_OVERRIDE ?? this.pokemon.randBattleSeedInt(4) === 0;
+    const proc = Overrides.STATUS_ACTIVATION_OVERRIDE ?? user.randBattleSeedInt(4) === 0;
     if (!proc) {
       return false;
     }
@@ -625,7 +627,7 @@ export class MovePhase extends PokemonPhase {
    * If there is no last attacker or they are no longer on the field, a message is displayed and the
    * move is marked for failure
    */
-  // TODO: Decouple this from `BattlerIndex.ATTACKER altogether`
+  // TODO: Decouple this from `BattlerIndex.ATTACKER` altogether
   protected resolveCounterAttackTarget(): void {
     const targets = this.targets;
     if (targets.length !== 1 || targets[0] !== BattlerIndex.ATTACKER) {
@@ -642,12 +644,13 @@ export class MovePhase extends PokemonPhase {
   }
 
   /**
-   * Deduct PP from the move being used, accounting for Pressure and other effects
+   * Deduct PP from the move being used, accounting for Pressure and other effects.
    */
   protected usePP(): void {
     if (isIgnorePP(this.useMode)) {
       return;
     }
+
     const move = this.move;
     const ppUsed = 1 + this.getPpIncreaseFromPressure(this.getActiveTargetPokemon());
     move.usePp(ppUsed);
@@ -661,6 +664,7 @@ export class MovePhase extends PokemonPhase {
    * @returns The amount of extra PP consumed due to Pressure
    */
   // TODO: This hardcodes the PP increase at 1 per opponent, rather than deferring to the ability.
+  // This is likely due to said ability being a stub...
   private getPpIncreaseFromPressure(targets: Pokemon[]): number {
     const foesWithPressure = this.pokemon
       .getOpponents(true)
