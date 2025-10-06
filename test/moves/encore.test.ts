@@ -55,8 +55,8 @@ describe("Move - Encore", () => {
     );
 
     expect(karp).toHaveBattlerTag({ tagType: BattlerTagType.ENCORE, moveId: MoveId.TACKLE });
-    expect(karp.isMoveRestricted(MoveId.SPLASH)).toBe(true);
-    expect(karp.isMoveRestricted(MoveId.TACKLE)).toBe(false);
+    expect(karp.hasRestrictingTag(MoveId.SPLASH)).toBe(true);
+    expect(karp.hasRestrictingTag(MoveId.TACKLE)).toBe(false);
   });
 
   it("should be removed on turn end after triggering thrice, ignoring Instruct", async () => {
