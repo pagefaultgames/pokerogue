@@ -401,14 +401,12 @@ export class MovePhase extends PokemonPhase {
 
   /**
    * Check if the move is valid and not in an error state
-   *
+   * @returns Whether the move was cancelled due to being invalid
    * @remarks
-   * Checks occur in the following order
+   * Checks occur in the following order:
    * 1. Move is not implemented
    * 2. Move is somehow invalid (it is {@linkcode MoveId.NONE} or {@linkcode targets} is somehow empty)
    * 3. Move cannot be used by the player due to a challenge
-   *
-   * @returns Whether the move was cancelled due to being invalid
    */
   protected checkValidity(): boolean {
     const move = this.move;
@@ -421,6 +419,7 @@ export class MovePhase extends PokemonPhase {
     } else if (moveId === MoveId.NONE || this.targets.length === 0) {
       this.cancel();
 
+      // TODO: Do we want to log a message here?
       const pokemonName = this.pokemon.name;
       const warningText =
         moveId === MoveId.NONE
@@ -432,7 +431,9 @@ export class MovePhase extends PokemonPhase {
       return true;
     } else if (this.isChallengeInvalid()) {
       failedText = i18next.t("battle:moveCannotUseChallenge", { moveName });
-    } else {
+    }
+
+    if (!failedText) {
       return false;
     }
 
@@ -450,7 +451,7 @@ export class MovePhase extends PokemonPhase {
     if (!user.isPlayer()) {
       return false;
     }
-    const usability = new BooleanHolder(false);
+    const usability = new BooleanHolder(true);
     applyChallenges(ChallengeType.POKEMON_MOVE, this.move.moveId, usability);
     return !usability.value;
   }
