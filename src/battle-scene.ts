@@ -361,7 +361,7 @@ export class BattleScene extends SceneBase {
   async preload() {
     if (DEBUG_RNG) {
       const originalRealInRange = Phaser.Math.RND.realInRange;
-      Phaser.Math.RND.realInRange = function (min: number, max: number): number {
+      Phaser.Math.RND.realInRange = function (this: BattleScene, min: number, max: number): number {
         const ret = originalRealInRange.apply(this, [min, max]);
         const args = ["RNG", ++this.rngCounter, ret / (max - min), `min: ${min} / max: ${max}`];
         args.push(`seed: ${this.rngSeedOverride || this.waveSeed || this.seed}`);

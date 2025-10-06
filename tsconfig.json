@@ -25,6 +25,7 @@
     "strictNullChecks": true,
     "sourceMap": false,
     "strict": false, // TODO: Enable this eventually
+    "noImplicitThis": true,
     "rootDir": ".",
     "outDir": "./build",
     "noEmit": true,

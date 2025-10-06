@@ -133,7 +133,7 @@ export class InputsController {
     if (typeof globalScene.input.gamepad !== "undefined") {
       globalScene.input.gamepad?.on(
         "connected",
-        function (thisGamepad) {
+        function (this: InputsController, thisGamepad: Phaser.Input.Gamepad.Gamepad) {
           if (!thisGamepad) {
             return;
           }
@@ -146,7 +146,7 @@ export class InputsController {
 
       globalScene.input.gamepad?.on(
         "disconnected",
-        function (thisGamepad) {
+        function (this: InputsController, thisGamepad: Phaser.Input.Gamepad.Gamepad) {
           this.onDisconnect(thisGamepad); // when a gamepad is disconnected
         },
         this,
