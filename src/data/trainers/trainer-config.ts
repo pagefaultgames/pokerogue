@@ -1,7 +1,7 @@
 import { getRandomRivalPartyMemberFunc } from "#app/ai/rival-team-gen";
 import { globalScene } from "#app/global-scene";
 import { signatureSpecies } from "#balance/signature-species";
-import { tmSpecies } from "#balance/tms";
+import { tmSpecies } from "#balance/tm-species-map";
 import { modifierTypes } from "#data/data-lists";
 import { doubleBattleDialogue } from "#data/double-battle-dialogue";
 import { Gender } from "#data/gender";

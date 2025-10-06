@@ -69,7 +69,8 @@ export abstract class ApiBase {
       "Content-Type": config.headers?.["Content-Type"] ?? "application/json",
     };
 
-    if (import.meta.env.DEV) {
+    // can't import `isLocal` due to circular import issues
+    if (import.meta.env.MODE === "development") {
       console.log(`Sending ${config.method ?? "GET"} request to: `, this.base + path, config);
     }
 

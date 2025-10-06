@@ -2,7 +2,6 @@ import type { Ability } from "#abilities/ability";
 import { loggedInUser } from "#app/account";
 import { globalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
-import { getBiomeName } from "#balance/biomes";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#balance/starters";
 import { getLevelRelExp, getLevelTotalExp } from "#data/exp";
 import { getGenderColor, getGenderSymbol } from "#data/gender";
@@ -27,7 +26,15 @@ import { getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
 import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
-import { fixedInt, formatStat, getLocalizedSpriteKey, getShinyDescriptor, padInt, rgbHexToRgba } from "#utils/common";
+import {
+  fixedInt,
+  formatStat,
+  getBiomeName,
+  getLocalizedSpriteKey,
+  getShinyDescriptor,
+  padInt,
+  rgbHexToRgba,
+} from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
