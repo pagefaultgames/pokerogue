@@ -1261,6 +1261,8 @@ export class FrenzyTag extends SerializableBattlerTag {
  */
 export class EncoreTag extends MoveRestrictionBattlerTag {
   public override readonly tagType = BattlerTagType.ENCORE;
+  #addedThisTurn = true;
+
   /** The {@linkcode MoveId} the tag holder is locked into using. */
   public readonly moveId: MoveId;
 
@@ -1305,17 +1307,25 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       }),
     );
+  }
 
-    // If the target has not moved yet,
-    // replace their upcoming move with the encored move against randomized targets
+  /**
+   * Override the target's pending move if Encore was used prior to their move this turn.
+   * Should only be called during the `MovePhase`
+   * @returns A tuple containing the updated move and targets, or `undefined`
+   * if the attempted override failed.
+   */
+  public tryOverrideMove(pokemon: Pokemon): [move: PokemonMove, targets: BattlerIndex[]] | undefined {
+    if (!this.#addedThisTurn) {
+      return;
+    }
 
-    // Bang is justified as `canAdd` returns `false` if not found
-    const movesetMove = pokemon.getMoveset().find(m => m.moveId === this.moveId && !m.isOutOfPp())!;
+    const movesetMove = pokemon.getMoveset().find(m => m.moveId === this.moveId && !m.isOutOfPp());
+    if (!movesetMove) {
+      return;
+    }
 
-    // TODO: Change this after the move failure PR to occur during the start of the MP -
-    // after sleep but before all usability checks
-    globalScene.phaseManager.changePhaseMove(p => p.pokemon === pokemon, movesetMove);
-    globalScene.phaseManager.changePhaseTargets(p => p.pokemon === pokemon, this.getTargets(pokemon));
+    return [movesetMove, this.getTargets(pokemon)];
   }
 
   private getTargets(pokemon: Pokemon): BattlerIndex[] {
@@ -1333,6 +1343,7 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
   }
 
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    this.#addedThisTurn = false;
     // If the encored move has run out of PP or the tag's turn count has elapsed,
     // Encore ends at the END of the turn.
     // Otherwise, Encore's duration reduces when the target attempts to use a move.

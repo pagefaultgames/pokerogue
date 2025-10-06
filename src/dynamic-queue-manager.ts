@@ -1,5 +1,4 @@
 import type { DynamicPhase, PhaseConditionFunc, PhaseString } from "#app/@types/phase-types";
-import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type { Pokemon } from "#app/field/pokemon";
 import type { Phase } from "#app/phase";
 import type { MovePhase } from "#app/phases/move-phase";
@@ -111,24 +110,6 @@ export class DynamicQueueManager {
    */
   public setMoveTimingModifier(condition: PhaseConditionFunc<"MovePhase">, modifier: MovePhaseTimingModifier): void {
     this.getMovePhaseQueue().setTimingModifier(condition, modifier);
-  }
-
-  /**
-   * Finds the {@linkcode MovePhase} meeting the condition and changes its move
-   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function
-   * @param move - The {@linkcode PokemonMove | move} to use in replacement
-   */
-  public setMoveForPhase(condition: PhaseConditionFunc<"MovePhase">, move: PokemonMove): void {
-    this.getMovePhaseQueue().setMoveForPhase(condition, move);
-  }
-
-  /**
-   * Find and change the targets of the first {@linkcode MovePhase} meeting the given condition.
-   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function used to retrieve the phase
-   * @param targets - An array of `BattlerIndex`es to use as targets
-   */
-  public setTargetsForPhase(condition: PhaseConditionFunc<"MovePhase">, targets: BattlerIndex[]): void {
-    this.getMovePhaseQueue().setTargetsForPhase(condition, targets);
   }
 
   /**

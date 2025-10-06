@@ -13,10 +13,8 @@ import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
 import { PhaseTree } from "#app/phase-tree";
 import { BattleType } from "#enums/battle-type";
-import type { BattlerIndex } from "#enums/battler-index";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import type { Pokemon } from "#field/pokemon";
-import type { PokemonMove } from "#moves/pokemon-move";
 import { AddEnemyBuffModifierPhase } from "#phases/add-enemy-buff-modifier-phase";
 import { AttemptCapturePhase } from "#phases/attempt-capture-phase";
 import { AttemptRunPhase } from "#phases/attempt-run-phase";
@@ -575,27 +573,6 @@ export class PhaseManager {
    */
   public forceMoveLast(phaseCondition: PhaseConditionFunc<"MovePhase">): void {
     this.dynamicQueueManager.setMoveTimingModifier(phaseCondition, MovePhaseTimingModifier.LAST);
-  }
-
-  /**
-   * Find and change the queued move of the first {@linkcode MovePhase} meeting the given condition.
-   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function used to retrieve the phase
-   * @param move - The {@linkcode PokemonMove | move} to use in replacement
-   */
-  // TODO: Remove these and associated helper functions in `dynamic-queue-manager` and `move-phase-priority-queue`
-  // after move failure rework PR - these are only used by Encore and can be simplified
-  // by simply having Encore change the move during the start of the MEP
-  public changePhaseMove(phaseCondition: PhaseConditionFunc<"MovePhase">, move: PokemonMove): void {
-    this.dynamicQueueManager.setMoveForPhase(phaseCondition, move);
-  }
-
-  /**
-   * Find and change the targets of the first {@linkcode MovePhase} meeting the given condition.
-   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function used to retrieve the phase
-   * @param targets - An array of `BattlerIndex`es to use as targets
-   */
-  public changePhaseTargets(phaseCondition: PhaseConditionFunc<"MovePhase">, targets: BattlerIndex[]): void {
-    this.dynamicQueueManager.setTargetsForPhase(phaseCondition, targets);
   }
 
   /**
