@@ -108,6 +108,10 @@ export class PokemonMove {
     return 1 - this.ppUsed / this.getMovePp();
   }
 
+  public isOutOfPp(): boolean {
+    return this.getMovePp() !== -1 && this.ppUsed >= this.getMovePp();
+  }
+
   getName(): string {
     return this.getMove().name;
   }
@@ -117,6 +121,7 @@ export class PokemonMove {
    * @param source The data for the move to copy; can be a {@linkcode PokemonMove} or JSON object representing one
    * @returns A valid {@linkcode PokemonMove} object
    */
+  // TODO: Don't serialize the `maxPpOverride` parameter - it is solely used for temporary moveset overrides from Transform
   static loadMove(source: PokemonMove | any): PokemonMove {
     return new PokemonMove(source.moveId, source.ppUsed, source.ppUp, source.maxPpOverride);
   }

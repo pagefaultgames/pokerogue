@@ -1,8 +1,10 @@
 // biome-ignore-start lint/correctness/noUnusedImports: Used in a tsdoc comment
 import type { Move, PreUseInterruptAttr } from "#types/move-types";
+
 // biome-ignore-end lint/correctness/noUnusedImports: Used in a tsdoc comment
 
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import { MOVE_COLOR } from "#app/constants/colors";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
@@ -119,8 +121,7 @@ export class MovePhase extends PokemonPhase {
   }
 
   /**
-   * Check the first round of failure checks
-   *
+   * Perform the first round of failure checks.
    * @returns Whether the move failed
    *
    * @remarks
@@ -167,7 +168,8 @@ export class MovePhase extends PokemonPhase {
   }
 
   /**
-   * Follow up moves need to check a subset of the first failure checks
+   * Check a subset of the checks done in {@linkcode firstFailureCheck}
+   * for called moves.
    *
    * @remarks
    *
@@ -187,7 +189,7 @@ export class MovePhase extends PokemonPhase {
   }
 
   /**
-   * Handle the status interactions for sleep and freeze that happen after passing the first failure check
+   * Handle status interactions for sleep and freeze that happen after passing the first failure check.
    *
    * @remarks
    * - If the user is asleep but can use the move, the sleep animation and message is still shown
@@ -211,7 +213,8 @@ export class MovePhase extends PokemonPhase {
   }
 
   /**
-   * Second failure check that occurs after the "Pokemon used move" text is shown but BEFORE the move has been registered
+   * Perform the second round of move failure checks, occurring after move usage messages
+   *  text is shown but BEFORE the move has been registered
    * as being the last move used (for the purposes of something like Copycat)
    *
    * @remarks
@@ -383,48 +386,66 @@ export class MovePhase extends PokemonPhase {
   public start(): void {
     super.start();
 
-    if (!this.pokemon.isActive(true)) {
+    const user = this.pokemon;
+
+    // Fallback - end phase early if the user is removed from the field or faints
+    // before using a move.
+    // TODO: Cancel the user's queued `MovePhase`s when they leave the field -
+    // force switching a pokemon out and back in should not let them use a move
+    if (!user.isActive(true)) {
       this.end();
       return;
     }
 
-    const user = this.pokemon;
+    const useMode = this.useMode;
+    const ignoreStatus = isIgnoreStatus(useMode);
+    const isFollowUp = useMode === MoveUseMode.FOLLOW_UP;
 
-    // Removing Glaive Rush's two flags *always* happens first
+    console.log(
+      // biome-ignore lint/complexity/noUselessStringConcat: biome doesn't recognize leading pluses
+      `%cUser: ${user.name}`
+        + `\nMove: ${MoveId[this.move.moveId]}`
+        + `\nUse Mode: ${enumValueToKey(MoveUseMode, this.useMode)}`,
+      `color:${MOVE_COLOR}`,
+    );
+
+    // Removing Glaive Rush's two flags happens before **everything** else
     user.removeTag(BattlerTagType.ALWAYS_GET_HIT);
     user.removeTag(BattlerTagType.RECEIVE_DOUBLE_DAMAGE);
-    console.log(MoveId[this.move.moveId], enumValueToKey(MoveUseMode, this.useMode));
 
     // For the purposes of payback and kin, the pokemon is considered to have acted
     // if it attempted to move at all.
     user.turnData.acted = true;
-    const useMode = this.useMode;
-    const ignoreStatus = isIgnoreStatus(useMode);
-    const isFollowUp = useMode === MoveUseMode.FOLLOW_UP;
+
+    // TODO: Should these look at stuff
     if (!ignoreStatus) {
       this.firstFailureCheck();
       user.lapseTags(BattlerTagLapseType.PRE_MOVE);
-      // At this point, called moves should be decided.
+
+      // TODO: Rework move-calling-moves to change the currently queued move
+      // once the concept of a "move-in-flight" is established
       // For now, this comment works as a placeholder until called moves are reworked
       // For correct alignment with mainline, this SHOULD go here, and this phase SHOULD rewrite its own move
     } else if (isFollowUp) {
-      // Follow up moves need to make sure the called move passes a few of the conditions to continue
+      // Follow up moves check a subset of conditions
       this.followUpMoveFirstFailureCheck();
     }
+
     // If the first failure check did not pass, then the move is cancelled
-    // Note: This only checks `cancelled`, as `failed` should NEVER be set by anything in the first failure check
+    // Note: This only checks `cancelled`, as `failed` should NEVER be set by anything in the above block
     if (this.cancelled) {
       this.handlePreMoveFailures();
       this.end();
       return;
     }
 
-    // If the first failure check passes (and this is not a sub-move) then thaw the user if its move will thaw it.
+    // If this is not a sub-move, thaw the user if its move will thaw it.
     if (!isFollowUp) {
       this.doThawCheck();
     }
 
     // Reset hit-related turn data when starting follow-up moves (e.g. Metronomed moves, Dancer repeats)
+    // TODO: Apply this to the current "move in flight" object and remove the equivalent calls from MEP
     if (isVirtual(useMode)) {
       const turnData = user.turnData;
       turnData.hitsLeft = -1;
@@ -432,27 +453,32 @@ export class MovePhase extends PokemonPhase {
     }
 
     const pokemonMove = this.move;
+    const move = pokemonMove.getMove();
 
-    // Check move to see if arena.ignoreAbilities should be true.
+    // Toggle ability-ignoring effects for the duration of the move, if the user and move permit.
     if (
-      pokemonMove.getMove().doesFlagEffectApply({
+      move.doesFlagEffectApply({
         flag: MoveFlags.IGNORE_ABILITIES,
         user,
-        isFollowUp: isVirtual(useMode), // Sunsteel strike and co. don't work when called indirectly
+        isFollowUp: isVirtual(useMode), // Sunsteel strike and co. don't ignore abilities when called indirectly
       })
     ) {
       globalScene.arena.setIgnoreAbilities(true, user.getBattlerIndex());
     }
 
-    // At this point, move's type changing and multi-target effects *should* be applied
+    // TODO: Apply move type changes and multi-target effects here
     // Pokerogue's current implementation applies these effects during the move effect phase
     // as there is not (yet) a notion of a move-in-flight for determinations to occur
 
+    // Compute targets from redirection and counterattacks
     this.resolveRedirectTarget();
     this.resolveCounterAttackTarget();
 
-    // If this is the *release* turn of the charge move, PP is not deducted
-    const move = this.move.getMove();
+    // Update the battle's "last move" pointer unless we're currently mimicking a move or triggering Dancer.
+    // TODO: This should presumably be after the 2nd set of failure checks
+    if (!move.hasAttr("CopyMoveAttr") && !isReflected(useMode)) {
+      globalScene.currentBattle.lastMove = move.id;
+    }
 
     const isChargingMove = move.isChargingMove();
     /** Indicates this is the charging turn of the move */
@@ -460,25 +486,19 @@ export class MovePhase extends PokemonPhase {
     /** Indicates this is the release turn of the move */
     const releasing = isChargingMove && !charging;
 
-    // Update the battle's "last move" pointer unless we're currently mimicking a move or triggering Dancer.
-    if (!move.hasAttr("CopyMoveAttr") && !isReflected(useMode)) {
-      globalScene.currentBattle.lastMove = move.id;
-    }
-
     // Charging moves consume PP when they begin charging, *not* when they release
     if (!releasing) {
       this.usePP();
     }
 
     if (!isFollowUp) {
-      // Gorilla tactics lock in (and choice items if they are ever added)
-      // Stance Change form change
-      // Struggle's "There are no more moves it can use" message
+      // Stance Change
 
       globalScene.triggerPokemonFormChange(user, SpeciesFormChangePreMoveTrigger);
       // TODO: apply gorilla tactics here instead of in the move effect phase
     }
 
+    // Show move text
     this.showMoveText();
 
     if (this.secondFailureCheck()) {
@@ -714,7 +734,6 @@ export class MovePhase extends PokemonPhase {
   /**
    * Lapse the tag type and check if the move is cancelled from it. Meant to be used during the first failure check
    * @param tag - The tag type whose lapse method will be called with {@linkcode BattlerTagLapseType.PRE_MOVE}
-   * @param checkIgnoreStatus - Whether to check {@link isIgnoreStatus} for the current {@linkcode MoveUseMode} to skip this check
    * @returns Whether the move was cancelled due to a `BattlerTag` effect
    */
   private checkTagCancel(tag: BattlerTagType): boolean {
