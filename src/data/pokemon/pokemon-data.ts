@@ -1,6 +1,5 @@
 import type { BattlerTag } from "#data/battler-tags";
 import { loadBattlerTag, SerializableBattlerTag } from "#data/battler-tags";
-import { allSpecies } from "#data/data-lists";
 import type { Gender } from "#data/gender";
 import { PokemonMove } from "#data/moves/pokemon-move";
 import type { PokemonSpeciesForm } from "#data/pokemon-species";
@@ -16,7 +15,7 @@ import type { AttackMoveResult } from "#types/attack-move-result";
 import type { IllusionData } from "#types/illusion-data";
 import type { TurnMove } from "#types/turn-move";
 import type { CoerceNullPropertiesToUndefined } from "#types/type-helpers";
-import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 /**
  * The type that {@linkcode PokemonSpeciesForm} is converted to when an object containing it serializes it.
@@ -173,10 +172,10 @@ export class PokemonSummonData {
         if (illusionData.fusionSpecies != null) {
           switch (typeof illusionData.fusionSpecies) {
             case "object":
-              illusionData.fusionSpecies = allSpecies[illusionData.fusionSpecies.speciesId];
+              illusionData.fusionSpecies = getPokemonSpecies(illusionData.fusionSpecies.speciesId);
               break;
             case "number":
-              illusionData.fusionSpecies = allSpecies[illusionData.fusionSpecies];
+              illusionData.fusionSpecies = getPokemonSpecies(illusionData.fusionSpecies);
               break;
             default:
               illusionData.fusionSpecies = undefined;

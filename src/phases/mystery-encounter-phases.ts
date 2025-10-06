@@ -257,6 +257,10 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
       globalScene.phaseManager.unshiftNew("ToggleDoublePositionPhase", true);
     }
 
+    for (const pokemon of globalScene.getField(true)) {
+      pokemon.resetTurnData();
+    }
+
     this.end();
   }
 }

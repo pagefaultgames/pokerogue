@@ -38,7 +38,7 @@
       // TODO: enable linting this file
       "!**/src/data/moves/move.ts",
       // this file is too big
-      "!**/src/data/balance/tms.ts"
+      "!**/src/data/balance/tm-species-map.ts"
     ]
   },
   "assist": {

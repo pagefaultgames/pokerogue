@@ -4,6 +4,7 @@ import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import HttpBackend from "i18next-http-backend";
 import processor, { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
+import { namespaceMap } from "./utils-plugins";
 
 //#region Interfaces/Types
 
@@ -89,20 +90,6 @@ const fonts: LoadingFontFaceProperty[] = [
   },
 ];
 
-/** maps namespaces that deviate from the file-name */
-const namespaceMap = {
-  titles: "trainer-titles",
-  moveTriggers: "move-trigger",
-  abilityTriggers: "ability-trigger",
-  battlePokemonForm: "pokemon-form-battle",
-  miscDialogue: "dialogue-misc",
-  battleSpecDialogue: "dialogue-final-boss",
-  doubleBattleDialogue: "dialogue-double-battle",
-  splashMessages: "splash-texts",
-  mysteryEncounterMessages: "mystery-encounter-texts",
-  biome: "biomes",
-};
-
 //#region Functions
 
 async function initFonts(language: string | undefined) {
@@ -136,6 +123,8 @@ function i18nMoneyFormatter(amount: any): string {
   return `@[MONEY]{${i18next.t("common:money", { amount })}}`;
 }
 
+const nsEn: string[] = [];
+
 //#region Exports
 
 /**
@@ -157,7 +146,9 @@ export async function initI18n(): Promise<void> {
    *    Don't forget to declare new language in `supportedLngs` i18next initializer
    *
    * Q: How do I add a new namespace?
-   * A: To add a new namespace, create a new file in each language folder with the translations.
+   * A: To add a new namespace, create a new file .json in each language folder with the translations.
+   *    The expected format for the file-name is kebab-case {@link https://developer.mozilla.org/en-US/docs/Glossary/Kebab_case}
+   *    If you want the namespace name to be different from the file name, configure it in namespacemap.ts.
    *    Then update the config file for that language in its locale directory
    *    and the CustomTypeOptions interface in the @types/i18next.d.ts file.
    *
@@ -209,100 +200,7 @@ export async function initI18n(): Promise<void> {
       },
     },
     defaultNS: "menu",
-    ns: [
-      "ability",
-      "abilityTriggers",
-      "arenaFlyout",
-      "arenaTag",
-      "battle",
-      "battleScene",
-      "battleInfo",
-      "battleMessageUiHandler",
-      "battlePokemonForm",
-      "battlerTags",
-      "berry",
-      "bgmName",
-      "biome",
-      "challenges",
-      "commandUiHandler",
-      "common",
-      "achv",
-      "dialogue",
-      "battleSpecDialogue",
-      "miscDialogue",
-      "doubleBattleDialogue",
-      "egg",
-      "fightUiHandler",
-      "filterBar",
-      "filterText",
-      "gameMode",
-      "gameStatsUiHandler",
-      "growth",
-      "menu",
-      "menuUiHandler",
-      "modifier",
-      "modifierType",
-      "move",
-      "nature",
-      "pokeball",
-      "pokedexUiHandler",
-      "pokemon",
-      "pokemonCategory",
-      "pokemonEvolutions",
-      "pokemonForm",
-      "pokemonInfo",
-      "pokemonInfoContainer",
-      "pokemonSummary",
-      "saveSlotSelectUiHandler",
-      "settings",
-      "splashMessages",
-      "starterSelectUiHandler",
-      "statusEffect",
-      "terrain",
-      "titles",
-      "trainerClasses",
-      "trainersCommon",
-      "trainerNames",
-      "tutorial",
-      "voucher",
-      "weather",
-      "partyUiHandler",
-      "modifierSelectUiHandler",
-      "moveTriggers",
-      "runHistory",
-      "mysteryEncounters/mysteriousChallengers",
-      "mysteryEncounters/mysteriousChest",
-      "mysteryEncounters/darkDeal",
-      "mysteryEncounters/fightOrFlight",
-      "mysteryEncounters/slumberingSnorlax",
-      "mysteryEncounters/trainingSession",
-      "mysteryEncounters/departmentStoreSale",
-      "mysteryEncounters/shadyVitaminDealer",
-      "mysteryEncounters/fieldTrip",
-      "mysteryEncounters/safariZone",
-      "mysteryEncounters/lostAtSea",
-      "mysteryEncounters/fieryFallout",
-      "mysteryEncounters/theStrongStuff",
-      "mysteryEncounters/thePokemonSalesman",
-      "mysteryEncounters/anOfferYouCantRefuse",
-      "mysteryEncounters/delibirdy",
-      "mysteryEncounters/absoluteAvarice",
-      "mysteryEncounters/aTrainersTest",
-      "mysteryEncounters/trashToTreasure",
-      "mysteryEncounters/berriesAbound",
-      "mysteryEncounters/clowningAround",
-      "mysteryEncounters/partTimer",
-      "mysteryEncounters/dancingLessons",
-      "mysteryEncounters/weirdDream",
-      "mysteryEncounters/theWinstrateChallenge",
-      "mysteryEncounters/teleportingHijinks",
-      "mysteryEncounters/bugTypeSuperfan",
-      "mysteryEncounters/funAndGames",
-      "mysteryEncounters/uncommonBreed",
-      "mysteryEncounters/globalTradeSystem",
-      "mysteryEncounters/theExpertPokemonBreeder",
-      "mysteryEncounterMessages",
-    ],
+    ns: nsEn, // assigned with #app/plugins/vite/namespaces-i18n-plugin.ts
     detection: {
       lookupLocalStorage: "prLang",
     },
@@ -324,6 +222,7 @@ export function getIsInitialized(): boolean {
   return isInitialized;
 }
 
+// biome-ignore lint/style/noDefaultExport: necessary for i18next usage
 export default i18next;
 
 //#endregion

@@ -203,14 +203,29 @@ describe("Spec - Pokemon", () => {
     "should set minimum IVs for enemy trainer pokemon based on wave (%i)",
     async wave => {
       game.override.startingWave(wave);
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
-      const { waveIndex } = game.scene.currentBattle;
+      await game.classicMode.runToSummon([SpeciesId.FEEBAS]);
 
-      for (const pokemon of game.scene.getEnemyParty()) {
-        for (const index in pokemon.ivs) {
-          expect(pokemon.ivs[index]).toBeGreaterThanOrEqual(Math.floor(waveIndex / 10));
+      for (const pokemon of game.field.getEnemyParty()) {
+        for (const iv of pokemon.ivs) {
+          expect(iv).toBeGreaterThanOrEqual(Math.floor(wave / 10));
         }
       }
     },
   );
+
+  it.each([
+    { wave: 5, friendship: 6 },
+    { wave: 25, friendship: 32 },
+    { wave: 55, friendship: 70 },
+    { wave: 95, friendship: 121 },
+    { wave: 145, friendship: 185 },
+    { wave: 195, friendship: 249 },
+  ])("should set friendship for enemy trainer pokemon based on wave ($wave)", async ({ wave, friendship }) => {
+    game.override.startingWave(wave);
+    await game.classicMode.runToSummon([SpeciesId.FEEBAS]);
+
+    for (const pokemon of game.field.getEnemyParty()) {
+      expect(pokemon.friendship).toBe(friendship);
+    }
+  });
 });
