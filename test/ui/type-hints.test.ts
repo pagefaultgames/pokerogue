@@ -1,14 +1,13 @@
-import { Button } from "#app/enums/buttons";
+import { Button } from "#enums/buttons";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { CommandPhase } from "#app/phases/command-phase";
-import FightUiHandler from "#app/ui/fight-ui-handler";
 import { UiMode } from "#enums/ui-mode";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
+import type { MockText } from "#test/test-utils/mocks/mocks-container/mock-text";
+import { FightUiHandler } from "#ui/fight-ui-handler";
+import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import type MockText from "#test/testUtils/mocks/mocksContainer/mockText";
-import i18next from "i18next";
 
 describe("UI - Type Hints", () => {
   let phaserGame: Phaser.Game;
@@ -46,7 +45,6 @@ describe("UI - Type Hints", () => {
       const { ui } = game.scene;
       const handler = ui.getHandler<FightUiHandler>();
       handler.processInput(Button.ACTION); // select "Fight"
-      game.phaseInterceptor.unlock();
     });
 
     game.onNextPrompt("CommandPhase", UiMode.FIGHT, () => {
@@ -59,7 +57,7 @@ describe("UI - Type Hints", () => {
       expect.soft(dragonClawText.color).toBe("#929292");
       ui.getHandler().processInput(Button.ACTION);
     });
-    await game.phaseInterceptor.to(CommandPhase);
+    await game.phaseInterceptor.to("CommandPhase");
   });
 
   it("check status move color", async () => {
@@ -71,7 +69,6 @@ describe("UI - Type Hints", () => {
       const { ui } = game.scene;
       const handler = ui.getHandler<FightUiHandler>();
       handler.processInput(Button.ACTION); // select "Fight"
-      game.phaseInterceptor.unlock();
     });
 
     game.onNextPrompt("CommandPhase", UiMode.FIGHT, () => {
@@ -84,14 +81,14 @@ describe("UI - Type Hints", () => {
       expect.soft(growlText.color).toBe(undefined);
       ui.getHandler().processInput(Button.ACTION);
     });
-    await game.phaseInterceptor.to(CommandPhase);
+    await game.phaseInterceptor.to("CommandPhase");
   });
 
-  it("should show the proper hint for a move in doubles after one of the enemy pokemon flees", async () => {
+  it("should show the proper hint for a move in doubles after one of the enemy pokemon faints", async () => {
     game.override
       .enemySpecies(SpeciesId.ABRA)
       .moveset([MoveId.SPLASH, MoveId.SHADOW_BALL, MoveId.SOAK])
-      .enemyMoveset([MoveId.SPLASH, MoveId.TELEPORT])
+      .enemyMoveset([MoveId.SPLASH, MoveId.MEMENTO])
       .battleStyle("double");
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
@@ -100,14 +97,13 @@ describe("UI - Type Hints", () => {
     game.move.select(MoveId.SOAK, 1);
 
     await game.move.selectEnemyMove(MoveId.SPLASH);
-    await game.move.selectEnemyMove(MoveId.TELEPORT);
+    await game.move.selectEnemyMove(MoveId.MEMENTO);
     await game.toNextTurn();
 
     game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
       const { ui } = game.scene;
       const handler = ui.getHandler<FightUiHandler>();
       handler.processInput(Button.ACTION); // select "Fight"
-      game.phaseInterceptor.unlock();
     });
 
     game.onNextPrompt("CommandPhase", UiMode.FIGHT, () => {
@@ -121,6 +117,6 @@ describe("UI - Type Hints", () => {
       expect.soft(shadowBallText.color).toBe(undefined);
       ui.getHandler().processInput(Button.ACTION);
     });
-    await game.phaseInterceptor.to(CommandPhase);
+    await game.phaseInterceptor.to("CommandPhase");
   });
 });

@@ -1,9 +1,9 @@
-import { Stat } from "#enums/stat";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { Stat } from "#enums/stat";
+import { TurnInitPhase } from "#phases/turn-init-phase";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -36,7 +36,7 @@ describe("Abilities - Competitive", () => {
   it("lower atk and def by 1 via tickle, then increase spatk by 4 via competitive", async () => {
     await game.classicMode.startBattle([SpeciesId.FLYGON]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to(TurnInitPhase);
 
@@ -49,7 +49,7 @@ describe("Abilities - Competitive", () => {
     game.override.enemyMoveset(MoveId.SPLASH);
     await game.classicMode.startBattle([SpeciesId.FLYGON]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     game.move.select(MoveId.CLOSE_COMBAT);
     await game.phaseInterceptor.to(TurnInitPhase);
 
@@ -62,7 +62,7 @@ describe("Abilities - Competitive", () => {
     game.override.startingHeldItems([{ name: "WHITE_HERB" }]);
     await game.classicMode.startBattle([SpeciesId.FLYGON]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to(TurnInitPhase);
 

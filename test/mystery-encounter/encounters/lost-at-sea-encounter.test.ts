@@ -1,20 +1,23 @@
-import { LostAtSeaEncounter } from "#app/data/mystery-encounters/encounters/lost-at-sea-encounter";
-import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
-import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
+import type { BattleScene } from "#app/battle-scene";
 import { BiomeId } from "#enums/biome-id";
-import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
-import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption } from "../encounter-test-utils";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
-import type BattleScene from "#app/battle-scene";
-import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
-import { PartyExpPhase } from "#app/phases/party-exp-phase";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { SpeciesId } from "#enums/species-id";
+import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
+import { LostAtSeaEncounter } from "#mystery-encounters/lost-at-sea-encounter";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
+import { PartyExpPhase } from "#phases/party-exp-phase";
+import {
+  runMysteryEncounterToEnd,
+  runSelectMysteryEncounterOption,
+} from "#test/mystery-encounter/encounter-test-utils";
+import { GameManager } from "#test/test-utils/game-manager";
+import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/lostAtSea";
 /** Blastoise for surf. Pidgeot for fly. Abra for none. */
@@ -96,9 +99,9 @@ describe("Lost at Sea - Mystery Encounter", () => {
       expect(option1.dialogue).toBeDefined();
       expect(option1.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.1.label`,
-        disabledButtonLabel: `${namespace}:option.1.label_disabled`,
+        disabledButtonLabel: `${namespace}:option.1.labelDisabled`,
         buttonTooltip: `${namespace}:option.1.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.1.tooltip_disabled`,
+        disabledButtonTooltip: `${namespace}:option.1.tooltipDisabled`,
         selected: [
           {
             text: `${namespace}:option.1.selected`,
@@ -144,7 +147,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 1);
 
-      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(game).toBeAtPhase("MysteryEncounterPhase");
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
@@ -159,9 +162,9 @@ describe("Lost at Sea - Mystery Encounter", () => {
       expect(option2.dialogue).toBeDefined();
       expect(option2.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.2.label`,
-        disabledButtonLabel: `${namespace}:option.2.label_disabled`,
+        disabledButtonLabel: `${namespace}:option.2.labelDisabled`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.2.tooltip_disabled`,
+        disabledButtonTooltip: `${namespace}:option.2.tooltipDisabled`,
         selected: [
           {
             text: `${namespace}:option.2.selected`,
@@ -209,7 +212,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 2);
 
-      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(game).toBeAtPhase("MysteryEncounterPhase");
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();

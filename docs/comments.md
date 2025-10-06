@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+
+SPDX-License-Identifier: CC-BY-NC-SA-4.0
+-->
+
 # Commenting code
 
 People spend more time reading code than writing it (sometimes substantially more so). As such, comments and documentation are **vital** for any large codebase like this.
@@ -23,7 +29,7 @@ When formatted correctly, these comments are shown within VS Code or similar IDE
 - Functions also show the comment for each parameter as you type them, making keeping track of arguments inside lengthy functions much more clear.
 
 They can also be used to generate a commentated overview of the codebase. There is a GitHub action that automatically updates [this docs site](https://pagefaultgames.github.io/pokerogue/main/index.html)
-and you can generate it locally as well via `npm run docs` which will generate into the `typedoc/` directory.
+and you can generate it locally as well via `pnpm run docs` which will generate into the `typedoc/` directory.
 
 ## Syntax
 For an example of how TSDoc comments work, here are some TSDoc comments taken from `src/data/moves/move.ts`:

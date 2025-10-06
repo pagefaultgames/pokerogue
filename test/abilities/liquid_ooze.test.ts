@@ -1,7 +1,7 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -37,7 +37,7 @@ describe("Abilities - Liquid Ooze", () => {
     game.move.select(MoveId.GIGA_DRAIN);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getPlayerPokemon()?.isFullHp()).toBe(false);
+    expect(game.field.getPlayerPokemon()).not.toHaveFullHp();
   });
 
   it("should not drain the attacker's HP if it ignores indirect damage", async () => {
@@ -47,7 +47,7 @@ describe("Abilities - Liquid Ooze", () => {
     game.move.select(MoveId.GIGA_DRAIN);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getPlayerPokemon()?.isFullHp()).toBe(true);
+    expect(game.field.getPlayerPokemon()).toHaveFullHp();
   });
 
   it("should not apply if suppressed", async () => {
@@ -57,6 +57,6 @@ describe("Abilities - Liquid Ooze", () => {
     game.move.select(MoveId.GIGA_DRAIN);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getPlayerPokemon()?.isFullHp()).toBe(true);
+    expect(game.field.getPlayerPokemon()).toHaveFullHp();
   });
 });

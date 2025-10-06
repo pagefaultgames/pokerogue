@@ -1,42 +1,41 @@
-import { globalScene } from "#app/global-scene";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import {
-  CombinationPokemonRequirement,
-  HeldItemRequirement,
-  MoneyRequirement,
-} from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { getEncounterText, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import {
-  generateModifierType,
-  leaveEncounterWithoutBattle,
-  selectPokemonForOption,
-  updatePlayerMoney,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import type Pokemon from "#app/field/pokemon";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
-import type { PokemonHeldItemModifier, PokemonInstantReviveModifier } from "#app/modifier/modifier";
+import { timedEventManager } from "#app/global-event-manager";
+import { globalScene } from "#app/global-scene";
+import { modifierTypes } from "#data/data-lists";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { SpeciesId } from "#enums/species-id";
+import type { PlayerPokemon, Pokemon } from "#field/pokemon";
+import type { PokemonHeldItemModifier, PokemonInstantReviveModifier } from "#modifiers/modifier";
 import {
   BerryModifier,
   HealingBoosterModifier,
   LevelIncrementBoosterModifier,
   MoneyMultiplierModifier,
   PreserveBerryModifier,
-} from "#app/modifier/modifier";
-import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/data/data-lists";
-import i18next from "#app/plugins/i18n";
-import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
-import { randSeedItem } from "#app/utils/common";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { SpeciesId } from "#enums/species-id";
-import { timedEventManager } from "#app/global-event-manager";
+} from "#modifiers/modifier";
+import type { PokemonHeldItemModifierType } from "#modifiers/modifier-type";
+import { getEncounterText, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
+import {
+  generateModifierType,
+  leaveEncounterWithoutBattle,
+  selectPokemonForOption,
+  updatePlayerMoney,
+} from "#mystery-encounters/encounter-phase-utils";
+import { applyModifierTypeToPlayerPokemon } from "#mystery-encounters/encounter-pokemon-utils";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
+import {
+  CombinationPokemonRequirement,
+  HeldItemRequirement,
+  MoneyRequirement,
+} from "#mystery-encounters/mystery-encounter-requirements";
+import i18next from "#plugins/i18n";
+import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import { randSeedItem } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/delibirdy";
@@ -194,7 +193,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       .withDialogue({
         buttonLabel: `${namespace}:option.2.label`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
-        secondOptionPrompt: `${namespace}:option.2.select_prompt`,
+        secondOptionPrompt: `${namespace}:option.2.selectPrompt`,
         selected: [
           {
             text: `${namespace}:option.2.selected`,
@@ -230,7 +229,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
           // If pokemon has valid item, it can be selected
           const meetsReqs = encounter.options[1].pokemonMeetsPrimaryRequirements(pokemon);
           if (!meetsReqs) {
-            return getEncounterText(`${namespace}:invalid_selection`) ?? null;
+            return getEncounterText(`${namespace}:invalidSelection`) ?? null;
           }
 
           return null;
@@ -304,7 +303,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       .withDialogue({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
-        secondOptionPrompt: `${namespace}:option.3.select_prompt`,
+        secondOptionPrompt: `${namespace}:option.3.selectPrompt`,
         selected: [
           {
             text: `${namespace}:option.3.selected`,
@@ -342,7 +341,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
           // If pokemon has valid item, it can be selected
           const meetsReqs = encounter.options[2].pokemonMeetsPrimaryRequirements(pokemon);
           if (!meetsReqs) {
-            return getEncounterText(`${namespace}:invalid_selection`) ?? null;
+            return getEncounterText(`${namespace}:invalidSelection`) ?? null;
           }
 
           return null;

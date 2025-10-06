@@ -1,9 +1,9 @@
-import { BattlerIndex } from "#enums/battler-index";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -36,10 +36,8 @@ describe("Abilities - Lightningrod", () => {
   it("should redirect electric type moves", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
 
-    const enemy1 = game.scene.getEnemyField()[0];
-    const enemy2 = game.scene.getEnemyField()[1];
-
-    enemy2.summonData.ability = AbilityId.LIGHTNING_ROD;
+    const [enemy1, enemy2] = game.scene.getEnemyField();
+    game.field.mockAbility(enemy2, AbilityId.LIGHTNING_ROD);
 
     game.move.select(MoveId.SHOCK_WAVE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
@@ -52,10 +50,8 @@ describe("Abilities - Lightningrod", () => {
     game.override.moveset([MoveId.SPLASH, MoveId.AERIAL_ACE]);
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
 
-    const enemy1 = game.scene.getEnemyField()[0];
-    const enemy2 = game.scene.getEnemyField()[1];
-
-    enemy2.summonData.ability = AbilityId.LIGHTNING_ROD;
+    const [enemy1, enemy2] = game.scene.getEnemyField();
+    game.field.mockAbility(enemy2, AbilityId.LIGHTNING_ROD);
 
     game.move.select(MoveId.AERIAL_ACE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
@@ -68,8 +64,7 @@ describe("Abilities - Lightningrod", () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
 
     const enemy2 = game.scene.getEnemyField()[1];
-
-    enemy2.summonData.ability = AbilityId.LIGHTNING_ROD;
+    game.field.mockAbility(enemy2, AbilityId.LIGHTNING_ROD);
 
     game.move.select(MoveId.SHOCK_WAVE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
@@ -81,31 +76,25 @@ describe("Abilities - Lightningrod", () => {
 
   it("should not redirect moves changed from electric type via ability", async () => {
     game.override.ability(AbilityId.NORMALIZE);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const enemy1 = game.scene.getEnemyField()[0];
-    const enemy2 = game.scene.getEnemyField()[1];
-
-    enemy2.summonData.ability = AbilityId.LIGHTNING_ROD;
+    const [enemy1, enemy2] = game.scene.getEnemyField();
+    game.field.mockAbility(enemy2, AbilityId.LIGHTNING_ROD);
 
     game.move.select(MoveId.SHOCK_WAVE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy1.isFullHp()).toBe(false);
   });
 
   it("should redirect moves changed to electric type via ability", async () => {
-    game.override.ability(AbilityId.GALVANIZE).moveset(MoveId.TACKLE);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
+    game.override.ability(AbilityId.GALVANIZE);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const enemy1 = game.scene.getEnemyField()[0];
-    const enemy2 = game.scene.getEnemyField()[1];
+    const [enemy1, enemy2] = game.scene.getEnemyField();
+    game.field.mockAbility(enemy2, AbilityId.LIGHTNING_ROD);
 
-    enemy2.summonData.ability = AbilityId.LIGHTNING_ROD;
-
-    game.move.select(MoveId.TACKLE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    game.move.use(MoveId.TACKLE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy1.isFullHp()).toBe(true);

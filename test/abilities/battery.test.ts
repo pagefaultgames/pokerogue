@@ -1,10 +1,10 @@
-import { allMoves } from "#app/data/data-lists";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { MoveEffectPhase } from "#phases/move-effect-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

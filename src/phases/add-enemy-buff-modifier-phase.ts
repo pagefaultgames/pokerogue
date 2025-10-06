@@ -1,9 +1,9 @@
-import { ModifierTier } from "#enums/modifier-tier";
-import { regenerateModifierPoolThresholds, getEnemyBuffModifierForWave } from "#app/modifier/modifier-type";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
-import { EnemyPersistentModifier } from "#app/modifier/modifier";
-import { Phase } from "#app/phase";
 import { globalScene } from "#app/global-scene";
+import { Phase } from "#app/phase";
+import { ModifierPoolType } from "#enums/modifier-pool-type";
+import { ModifierTier } from "#enums/modifier-tier";
+import { EnemyPersistentModifier } from "#modifiers/modifier";
+import { getEnemyBuffModifierForWave, regenerateModifierPoolThresholds } from "#modifiers/modifier-type";
 
 export class AddEnemyBuffModifierPhase extends Phase {
   public readonly phaseName = "AddEnemyBuffModifierPhase";

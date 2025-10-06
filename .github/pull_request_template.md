@@ -9,8 +9,8 @@ Make sure the title includes categorization (choose the one that best fits):
 -  [Mystery]: For new or modified Mystery Encounters
 -  [Test]: If the PR is primarily adding or modifying tests
 -  [UI/UX]: If the PR is changing UI/UX elements
--  [Audio]: If the PR is adding or changing music/sfx
--  [Sprite]: If the PR is adding or changing sprites
+-  [Audio]: If the PR is adding or changing music/sfx (may come with an associated assets PR)
+-  [Sprite]: If the PR is adding or changing sprites (may come with an associated assets PR)
 -  [Balance]: If the PR is related to game balance
 -  [Challenge]: If the PR is adding or modifying challenges
 -  [Refactor]: If the PR is primarily rewriting existing code
@@ -68,8 +68,8 @@ Do the reviewers need to do something special in order to test your changes?
 - [ ] The PR is self-contained and cannot be split into smaller PRs?
 - [ ] Have I provided a clear explanation of the changes?
 - [ ] Have I tested the changes manually?
-- [ ] Are all unit tests still passing? (`npm run test:silent`)
-  - [ ] Have I created new automated tests (`npm run test:create`) or updated existing tests related to the PR's changes?
+- [ ] Are all unit tests still passing? (`pnpm test:silent`)
+  - [ ] Have I created new automated tests (`pnpm test:create`) or updated existing tests related to the PR's changes?
 - [ ] Have I provided screenshots/videos of the changes (if applicable)?
   - [ ] Have I made sure that any UI change works for both UI themes (default and legacy)?
 
@@ -77,3 +77,7 @@ Are there any localization additions or changes? If so:
 - [ ] Has a locales PR been created on the [locales](https://github.com/pagefaultgames/pokerogue-locales) repo?
   - [ ] If so, please leave a link to it here: 
 - [ ] Has the translation team been contacted for proofreading/translation?
+
+Does this require any changes to the assets folder? If so:
+  - [ ] Has a PR been created on the [assets](https://github.com/pagefaultgames/pokerogue-assets) repo?
+    - [ ] If so, please leave a link to it here: 

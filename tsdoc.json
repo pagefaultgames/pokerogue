@@ -1,0 +1,22 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/tsdoc/v0/tsdoc.schema.json",
+  "noStandardTags": false,
+  "tagDefinitions": [
+    {
+      "tagName": "@todo",
+      "syntaxKind": "block"
+    },
+    {
+      "tagName": "@linkcode",
+      "syntaxKind": "inline"
+    },
+    {
+      "tagName": "@module",
+      "syntaxKind": "modifier"
+    },
+    {
+      "tagName": "@interface",
+      "syntaxKind": "modifier"
+    }
+  ]
+}

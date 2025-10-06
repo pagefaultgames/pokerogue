@@ -1,9 +1,8 @@
-import { allMoves } from "#app/data/data-lists";
-import { CommandPhase } from "#app/phases/command-phase";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -45,10 +44,10 @@ describe("Moves - Rollout", () => {
 
     await game.classicMode.startBattle();
 
-    const playerPkm = game.scene.getPlayerParty()[0];
+    const playerPkm = game.field.getPlayerPokemon();
     vi.spyOn(playerPkm, "stats", "get").mockReturnValue([500000, 1, 1, 1, 1, 1]); // HP, ATK, DEF, SPATK, SPDEF, SPD
 
-    const enemyPkm = game.scene.getEnemyParty()[0];
+    const enemyPkm = game.field.getEnemyPokemon();
     vi.spyOn(enemyPkm, "stats", "get").mockReturnValue([500000, 1, 1, 1, 1, 1]); // HP, ATK, DEF, SPATK, SPDEF, SPD
     vi.spyOn(enemyPkm, "getHeldItems").mockReturnValue([]); //no berries
 
@@ -57,8 +56,7 @@ describe("Moves - Rollout", () => {
 
     for (let i = 0; i < turns; i++) {
       game.move.select(MoveId.ROLLOUT);
-      await game.phaseInterceptor.to(CommandPhase);
-
+      await game.toNextTurn();
       dmgHistory.push(previousHp - enemyPkm.hp);
       previousHp = enemyPkm.hp;
     }

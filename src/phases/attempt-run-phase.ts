@@ -1,34 +1,33 @@
-import { applyAbAttrs, applyPreLeaveFieldAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import { globalScene } from "#app/global-scene";
+import Overrides from "#app/overrides";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
-import type { PlayerPokemon, EnemyPokemon } from "#app/field/pokemon";
-import type Pokemon from "#app/field/pokemon";
+import { FieldPhase } from "#phases/field-phase";
+import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
-import { NumberHolder } from "#app/utils/common";
-import { PokemonPhase } from "./pokemon-phase";
-import { globalScene } from "#app/global-scene";
 
-export class AttemptRunPhase extends PokemonPhase {
+export class AttemptRunPhase extends FieldPhase {
   public readonly phaseName = "AttemptRunPhase";
-  /** For testing purposes: this is to force the pokemon to fail and escape */
-  public forceFailEscape = false;
 
-  start() {
+  public start() {
     super.start();
 
-    const playerField = globalScene.getPlayerField();
+    // Increment escape attempts count on entry
+    const currentAttempts = globalScene.currentBattle.escapeAttempts++;
+
+    const activePlayerField = globalScene.getPlayerField(true);
     const enemyField = globalScene.getEnemyField();
 
-    const playerPokemon = this.getPokemon();
+    const escapeRoll = globalScene.randBattleSeedInt(100);
+    const escapeChance = new NumberHolder(this.calculateEscapeChance(currentAttempts));
 
-    const escapeChance = new NumberHolder(0);
+    activePlayerField.forEach(pokemon => {
+      applyAbAttrs("RunSuccessAbAttr", { pokemon, chance: escapeChance });
+    });
 
-    this.attemptRunAway(playerField, enemyField, escapeChance);
-
-    applyAbAttrs("RunSuccessAbAttr", playerPokemon, null, false, escapeChance);
-
-    if (playerPokemon.randBattleSeedInt(100) < escapeChance.value && !this.forceFailEscape) {
-      enemyField.forEach(enemyPokemon => applyPreLeaveFieldAbAttrs("PreLeaveFieldAbAttr", enemyPokemon));
+    if (escapeRoll < escapeChance.value) {
+      enemyField.forEach(pokemon => applyAbAttrs("PreLeaveFieldAbAttr", { pokemon }));
 
       globalScene.playSound("se/flee");
       globalScene.phaseManager.queueMessage(i18next.t("battle:runAwaySuccess"), null, true, 500);
@@ -38,18 +37,15 @@ export class AttemptRunPhase extends PokemonPhase {
         alpha: 0,
         duration: 250,
         ease: "Sine.easeIn",
-        onComplete: () =>
-          // biome-ignore lint/complexity/noForEach: TODO
-          enemyField.forEach(enemyPokemon => enemyPokemon.destroy()),
+        onComplete: () => enemyField.forEach(enemyPokemon => enemyPokemon.destroy()),
       });
 
       globalScene.clearEnemyHeldItemModifiers();
 
-      // biome-ignore lint/complexity/noForEach: TODO
       enemyField.forEach(enemyPokemon => {
         enemyPokemon.hideInfo().then(() => enemyPokemon.destroy());
         enemyPokemon.hp = 0;
-        enemyPokemon.trySetStatus(StatusEffect.FAINT);
+        enemyPokemon.doSetStatus(StatusEffect.FAINT);
       });
 
       globalScene.phaseManager.pushNew("BattleEndPhase", false);
@@ -60,24 +56,35 @@ export class AttemptRunPhase extends PokemonPhase {
 
       globalScene.phaseManager.pushNew("NewBattlePhase");
     } else {
-      playerPokemon.turnData.failedRunAway = true;
+      activePlayerField.forEach(p => {
+        p.turnData.failedRunAway = true;
+      });
+
       globalScene.phaseManager.queueMessage(i18next.t("battle:runAwayCannotEscape"), null, true, 500);
     }
 
     this.end();
   }
 
-  attemptRunAway(playerField: PlayerPokemon[], enemyField: EnemyPokemon[], escapeChance: NumberHolder) {
-    /** Sum of the speed of all enemy pokemon on the field */
-    const enemySpeed = enemyField.reduce(
-      (total: number, enemyPokemon: Pokemon) => total + enemyPokemon.getStat(Stat.SPD),
-      0,
-    );
-    /** Sum of the speed of all player pokemon on the field */
-    const playerSpeed = playerField.reduce(
-      (total: number, playerPokemon: Pokemon) => total + playerPokemon.getStat(Stat.SPD),
-      0,
-    );
+  /**
+   * Calculate the chance for the player's team to successfully run away from battle.
+   *
+   * @param escapeAttempts - The number of prior failed escape attempts in the current battle
+   * @returns The final escape chance, as percentage out of 100.
+   */
+  public calculateEscapeChance(escapeAttempts: number): number {
+    //   Check for override, guaranteeing or forbidding random flee attempts as applicable.
+    if (Overrides.RUN_SUCCESS_OVERRIDE !== null) {
+      return Overrides.RUN_SUCCESS_OVERRIDE ? 100 : 0;
+    }
+
+    const enemyField = globalScene.getEnemyField();
+    const activePlayerField = globalScene.getPlayerField(true);
+
+    // Cf https://bulbapedia.bulbagarden.net/wiki/Escape#Generation_V_onwards
+    // From gen 5 onwards, running takes the _base_ speed totals of both party sides.
+    const enemySpeed = enemyField.reduce((total, enemy) => total + enemy.getStat(Stat.SPD), 0);
+    const playerSpeed = activePlayerField.reduce((total, player) => total + player.getStat(Stat.SPD), 0);
 
     /*  The way the escape chance works is by looking at the difference between your speed and the enemy field's average speed as a ratio. The higher this ratio, the higher your chance of success.
      *  However, there is a cap for the ratio of your speed vs enemy speed which beyond that point, you won't gain any advantage. It also looks at how many times you've tried to escape.
@@ -95,10 +102,8 @@ export class AttemptRunPhase extends PokemonPhase {
      *  From the above, we can calculate the below values
      */
 
-    let isBoss = false;
-    for (let e = 0; e < enemyField.length; e++) {
-      isBoss = isBoss || enemyField[e].isBoss(); // this line checks if any of the enemy pokemon on the field are bosses; if so, the calculation for escaping is different
-    }
+    /** Whether at least 1 pokemon on the enemy field is a boss. */
+    const isBoss = enemyField.some(e => e.isBoss());
 
     /** The ratio between the speed of your active pokemon and the speed of the enemy field */
     const speedRatio = playerSpeed / enemySpeed;
@@ -114,8 +119,8 @@ export class AttemptRunPhase extends PokemonPhase {
     const escapeSlope = (maxChance - minChance) / speedCap;
 
     // This will calculate the escape chance given all of the above and clamp it to the range of [`minChance`, `maxChance`]
-    escapeChance.value = Phaser.Math.Clamp(
-      Math.round(escapeSlope * speedRatio + minChance + escapeBonus * globalScene.currentBattle.escapeAttempts++),
+    return Phaser.Math.Clamp(
+      Math.round(escapeSlope * speedRatio + minChance + escapeBonus * escapeAttempts),
       minChance,
       maxChance,
     );

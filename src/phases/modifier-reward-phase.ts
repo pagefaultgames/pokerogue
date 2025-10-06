@@ -1,9 +1,9 @@
 import { globalScene } from "#app/global-scene";
-import type { ModifierType } from "#app/modifier/modifier-type";
-import type { ModifierTypeFunc } from "#app/@types/modifier-types";
-import { getModifierType } from "#app/utils/modifier-utils";
+import type { ModifierType } from "#modifiers/modifier-type";
+import { BattlePhase } from "#phases/battle-phase";
+import type { ModifierTypeFunc } from "#types/modifier-types";
+import { getModifierType } from "#utils/modifier-utils";
 import i18next from "i18next";
-import { BattlePhase } from "./battle-phase";
 
 export class ModifierRewardPhase extends BattlePhase {
   // RibbonModifierRewardPhase extends ModifierRewardPhase and to make typescript happy

@@ -1,22 +1,33 @@
+import type { Pokemon } from "#field/pokemon";
 import type {
   AttackMove,
-  StatusMove,
-  SelfStatusMove,
   ChargingAttackMove,
   ChargingSelfStatusMove,
-  MoveAttrConstructorMap,
+  Move,
   MoveAttr,
-} from "#app/data/moves/move";
+  MoveAttrConstructorMap,
+  SelfStatusMove,
+  StatusMove,
+} from "#moves/move";
+
+/**
+ * A generic function producing a message during a Move's execution.
+ * @param user - The {@linkcode Pokemon} using the move
+ * @param target - The {@linkcode Pokemon} targeted by the move
+ * @param move - The {@linkcode Move} being used
+ * @returns a string
+ */
+export type MoveMessageFunc = (user: Pokemon, target: Pokemon, move: Move) => string;
 
 export type MoveAttrFilter = (attr: MoveAttr) => boolean;
 
-export type * from "#app/data/moves/move";
+export type * from "#moves/move";
 
 /**
  * Map of move subclass names to their respective classes.
  * Does not include the ChargeMove subclasses. For that, use `ChargingMoveClassMap`.
  *
- * @privateremarks
+ * @privateRemarks
  * The `never` field (`declare private _: never`) in some classes is necessary
  * to ensure typescript does not improperly narrow a failed `is` guard to `never`.
  *

@@ -1,18 +1,17 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { RechargingTag, SemiInvulnerableTag } from "#app/data/battler-tags";
-import type { RandomMoveAttr } from "#app/data/moves/move";
-import { allMoves } from "#app/data/data-lists";
+import { RechargingTag, SemiInvulnerableTag } from "#data/battler-tags";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { Stat } from "#app/enums/stat";
-import { MoveResult } from "#enums/move-result";
-import { CommandPhase } from "#app/phases/command-phase";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { MoveUseMode } from "#enums/move-use-mode";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
+import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { Stat } from "#enums/stat";
+import type { RandomMoveAttr } from "#moves/move";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, it, expect, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Metronome", () => {
   let phaserGame: Phaser.Game;
@@ -45,8 +44,8 @@ describe("Moves - Metronome", () => {
 
   it("should have one semi-invulnerable turn and deal damage on the second turn when a semi-invulnerable move is called", async () => {
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
     vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.DIVE);
 
     game.move.select(MoveId.METRONOME);
@@ -61,7 +60,7 @@ describe("Moves - Metronome", () => {
 
   it("should apply secondary effects of a move", async () => {
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
     vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.WOOD_HAMMER);
 
     game.move.select(MoveId.METRONOME);
@@ -72,7 +71,7 @@ describe("Moves - Metronome", () => {
 
   it("should recharge after using recharge move", async () => {
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
     vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.HYPER_BEAM);
     vi.spyOn(allMoves[MoveId.HYPER_BEAM], "accuracy", "get").mockReturnValue(100);
 
@@ -125,7 +124,6 @@ describe("Moves - Metronome", () => {
     vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.AROMATIC_MIST);
 
     game.move.select(MoveId.METRONOME, 0);
-    await game.phaseInterceptor.to(CommandPhase);
     game.move.select(MoveId.SPLASH, 1);
     await game.toNextTurn();
 
@@ -139,7 +137,7 @@ describe("Moves - Metronome", () => {
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
     vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.ROAR);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.METRONOME);
     await game.phaseInterceptor.to("BerryPhase");
@@ -148,6 +146,6 @@ describe("Moves - Metronome", () => {
     const hasFled = enemyPokemon.switchOutStatus;
     expect(!isVisible && hasFled).toBe(true);
 
-    await game.phaseInterceptor.to("CommandPhase");
+    await game.toNextTurn();
   });
 });

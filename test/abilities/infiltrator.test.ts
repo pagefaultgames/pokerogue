@@ -1,13 +1,13 @@
+import { allMoves } from "#data/data-lists";
+import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
-import { allMoves } from "#app/data/data-lists";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { Stat } from "#enums/stat";
-import { StatusEffect } from "#enums/status-effect";
-import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -58,8 +58,8 @@ describe("Abilities - Infiltrator", () => {
   ])("should bypass the target's $effectName", async ({ tagType, move }) => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     const preScreenDmg = enemy.getAttackDamage({ source: player, move: allMoves[move] }).damage;
 
@@ -74,14 +74,14 @@ describe("Abilities - Infiltrator", () => {
   it("should bypass the target's Safeguard", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     game.scene.arena.addTag(ArenaTagType.SAFEGUARD, 1, MoveId.NONE, enemy.id, ArenaTagSide.ENEMY, true);
 
-    game.move.select(MoveId.SPORE);
+    game.move.use(MoveId.SPORE);
+    await game.toEndOfTurn();
 
-    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemy.status?.effect).toBe(StatusEffect.SLEEP);
     expect(player.waveData.abilitiesApplied).toContain(AbilityId.INFILTRATOR);
   });
@@ -90,8 +90,8 @@ describe("Abilities - Infiltrator", () => {
   it.todo("should bypass the target's Mist", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     game.scene.arena.addTag(ArenaTagType.MIST, 1, MoveId.NONE, enemy.id, ArenaTagSide.ENEMY, true);
 
@@ -105,8 +105,8 @@ describe("Abilities - Infiltrator", () => {
   it("should bypass the target's Substitute", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     enemy.addTag(BattlerTagType.SUBSTITUTE, 1, MoveId.NONE, enemy.id);
 

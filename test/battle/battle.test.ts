@@ -1,32 +1,17 @@
-import { allSpecies } from "#app/data/data-lists";
-import { Stat } from "#enums/stat";
-import { getGameMode } from "#app/game-mode";
-import { GameModes } from "#enums/game-modes";
-import { BattleEndPhase } from "#app/phases/battle-end-phase";
-import { CommandPhase } from "#app/phases/command-phase";
-import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
-import { EncounterPhase } from "#app/phases/encounter-phase";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
-import { LoginPhase } from "#app/phases/login-phase";
-import { NextEncounterPhase } from "#app/phases/next-encounter-phase";
-import { SelectGenderPhase } from "#app/phases/select-gender-phase";
-import { SelectStarterPhase } from "#app/phases/select-starter-phase";
-import { SummonPhase } from "#app/phases/summon-phase";
-import { SwitchPhase } from "#app/phases/switch-phase";
-import { TitlePhase } from "#app/phases/title-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
-import GameManager from "#test/testUtils/gameManager";
-import { generateStarter } from "#test/testUtils/gameManagerUtils";
-import { UiMode } from "#enums/ui-mode";
+import { allSpecies } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
-import { PlayerGender } from "#enums/player-gender";
 import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
+import { UiMode } from "#enums/ui-mode";
+import { CommandPhase } from "#phases/command-phase";
+import { NextEncounterPhase } from "#phases/next-encounter-phase";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { BiomeId } from "#enums/biome-id";
 
-describe("Test Battle Phase", () => {
+describe("Phase - Battle Phase", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -45,55 +30,11 @@ describe("Test Battle Phase", () => {
     game.scene.gameData.gender = undefined!; // just for these tests!
   });
 
-  it("test phase interceptor with prompt", async () => {
-    await game.phaseInterceptor.run(LoginPhase);
-
-    game.onNextPrompt("SelectGenderPhase", UiMode.OPTION_SELECT, () => {
-      game.scene.gameData.gender = PlayerGender.MALE;
-      game.endPhase();
-    });
-
-    await game.phaseInterceptor.run(SelectGenderPhase);
-
-    await game.phaseInterceptor.run(TitlePhase);
-    await game.waitMode(UiMode.TITLE);
-
-    expect(game.scene.ui?.getMode()).toBe(UiMode.TITLE);
-    expect(game.scene.gameData.gender).toBe(PlayerGender.MALE);
-  });
-
-  it("test phase interceptor with prompt with preparation for a future prompt", async () => {
-    await game.phaseInterceptor.run(LoginPhase);
-
-    game.onNextPrompt("SelectGenderPhase", UiMode.OPTION_SELECT, () => {
-      game.scene.gameData.gender = PlayerGender.MALE;
-      game.endPhase();
-    });
-
-    game.onNextPrompt("CheckSwitchPhase", UiMode.CONFIRM, () => {
-      game.setMode(UiMode.MESSAGE);
-      game.endPhase();
-    });
-    await game.phaseInterceptor.run(SelectGenderPhase);
-
-    await game.phaseInterceptor.run(TitlePhase);
-    await game.waitMode(UiMode.TITLE);
-
-    expect(game.scene.ui?.getMode()).toBe(UiMode.TITLE);
-    expect(game.scene.gameData.gender).toBe(PlayerGender.MALE);
-  });
-
-  it("newGame one-liner", async () => {
-    await game.classicMode.startBattle();
-    expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
-    expect(game.scene.phaseManager.getCurrentPhase()?.phaseName).toBe("CommandPhase");
-  });
-
   it("do attack wave 3 - single battle - regular - OHKO", async () => {
     game.override.enemySpecies(SpeciesId.RATTATA).startingLevel(2000).battleStyle("single").startingWave(3);
     await game.classicMode.startBattle([SpeciesId.MEWTWO]);
     game.move.use(MoveId.TACKLE);
-    await game.phaseInterceptor.to("SelectModifierPhase");
+    await game.toNextWave();
   });
 
   it("do attack wave 3 - single battle - regular - NO OHKO with opponent using non damage attack", async () => {
@@ -107,11 +48,11 @@ describe("Test Battle Phase", () => {
       .battleStyle("single");
     await game.classicMode.startBattle([SpeciesId.MEWTWO]);
     game.move.select(MoveId.TACKLE);
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnInitPhase, false);
+    await game.phaseInterceptor.to("TurnInitPhase", false);
   });
 
   it("load 100% data file", async () => {
-    await game.importData("./test/testUtils/saves/everything.prsv");
+    await game.importData("./test/test-utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter(key => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
@@ -135,109 +76,25 @@ describe("Test Battle Phase", () => {
     }
   });
 
-  it("wrong phase", async () => {
-    await game.phaseInterceptor.run(LoginPhase);
-    await game.phaseInterceptor.run(LoginPhase).catch(e => {
-      expect(e).toBe("Wrong phase: this is SelectGenderPhase and not LoginPhase");
-    });
-  });
+  it.each([
+    { name: "1v1", double: false, qty: 1 },
+    { name: "2v1", double: false, qty: 2 },
+    { name: "2v2", double: true, qty: 2 },
+    { name: "4v2", double: true, qty: 4 },
+  ])("should not crash when starting $name battle", async ({ double, qty }) => {
+    game.override
+      .battleStyle(double ? "double" : "single")
+      .enemySpecies(SpeciesId.MIGHTYENA)
+      .enemyAbility(AbilityId.HYDRATION)
+      .ability(AbilityId.HYDRATION);
 
-  it("wrong phase but skip", async () => {
-    await game.phaseInterceptor.run(LoginPhase);
-    await game.phaseInterceptor.run(LoginPhase, () => game.isCurrentPhase(SelectGenderPhase));
-  });
-
-  it("good run", async () => {
-    await game.phaseInterceptor.run(LoginPhase);
-    game.onNextPrompt(
-      "SelectGenderPhase",
-      UiMode.OPTION_SELECT,
-      () => {
-        game.scene.gameData.gender = PlayerGender.MALE;
-        game.endPhase();
-      },
-      () => game.isCurrentPhase(TitlePhase),
+    await game.classicMode.startBattle(
+      [SpeciesId.BLASTOISE, SpeciesId.CHARIZARD, SpeciesId.DARKRAI, SpeciesId.GABITE].slice(0, qty),
     );
-    await game.phaseInterceptor.run(SelectGenderPhase, () => game.isCurrentPhase(TitlePhase));
-    await game.phaseInterceptor.run(TitlePhase);
+
+    expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
+    expect(game.scene.phaseManager.getCurrentPhase()).toBeInstanceOf(CommandPhase);
   });
-
-  it("good run from select gender to title", async () => {
-    await game.phaseInterceptor.run(LoginPhase);
-    game.onNextPrompt(
-      "SelectGenderPhase",
-      UiMode.OPTION_SELECT,
-      () => {
-        game.scene.gameData.gender = PlayerGender.MALE;
-        game.endPhase();
-      },
-      () => game.isCurrentPhase(TitlePhase),
-    );
-    await game.phaseInterceptor.runFrom(SelectGenderPhase).to(TitlePhase);
-  });
-
-  it("good run to SummonPhase phase", async () => {
-    await game.phaseInterceptor.run(LoginPhase);
-    game.onNextPrompt(
-      "SelectGenderPhase",
-      UiMode.OPTION_SELECT,
-      () => {
-        game.scene.gameData.gender = PlayerGender.MALE;
-        game.endPhase();
-      },
-      () => game.isCurrentPhase(TitlePhase),
-    );
-    game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
-      game.scene.gameMode = getGameMode(GameModes.CLASSIC);
-      const starters = generateStarter(game.scene);
-      const selectStarterPhase = new SelectStarterPhase();
-      game.scene.phaseManager.pushPhase(new EncounterPhase(false));
-      selectStarterPhase.initBattle(starters);
-    });
-    await game.phaseInterceptor.runFrom(SelectGenderPhase).to(SummonPhase);
-  });
-
-  it("2vs1", async () => {
-    game.override.battleStyle("single");
-    game.override.enemySpecies(SpeciesId.MIGHTYENA);
-    game.override.enemyAbility(AbilityId.HYDRATION);
-    game.override.ability(AbilityId.HYDRATION);
-    await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD]);
-    expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
-    expect(game.scene.phaseManager.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
-  }, 20000);
-
-  it("1vs1", async () => {
-    game.override.battleStyle("single");
-    game.override.enemySpecies(SpeciesId.MIGHTYENA);
-    game.override.enemyAbility(AbilityId.HYDRATION);
-    game.override.ability(AbilityId.HYDRATION);
-    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
-    expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
-    expect(game.scene.phaseManager.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
-  }, 20000);
-
-  it("2vs2", async () => {
-    game.override.battleStyle("double");
-    game.override.enemySpecies(SpeciesId.MIGHTYENA);
-    game.override.enemyAbility(AbilityId.HYDRATION);
-    game.override.ability(AbilityId.HYDRATION);
-    game.override.startingWave(3);
-    await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD]);
-    expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
-    expect(game.scene.phaseManager.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
-  }, 20000);
-
-  it("4vs2", async () => {
-    game.override.battleStyle("double");
-    game.override.enemySpecies(SpeciesId.MIGHTYENA);
-    game.override.enemyAbility(AbilityId.HYDRATION);
-    game.override.ability(AbilityId.HYDRATION);
-    game.override.startingWave(3);
-    await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD, SpeciesId.DARKRAI, SpeciesId.GABITE]);
-    expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
-    expect(game.scene.phaseManager.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
-  }, 20000);
 
   it("kill opponent pokemon", async () => {
     const moveToUse = MoveId.SPLASH;
@@ -254,7 +111,7 @@ describe("Test Battle Phase", () => {
     await game.classicMode.startBattle([SpeciesId.DARMANITAN, SpeciesId.CHARIZARD]);
 
     game.move.select(moveToUse);
-    await game.phaseInterceptor.to(DamageAnimPhase, false);
+    await game.phaseInterceptor.to("DamageAnimPhase", false);
     await game.killPokemon(game.scene.currentBattle.enemyParty[0]);
     expect(game.scene.currentBattle.enemyParty[0].isFainted()).toBe(true);
     await game.phaseInterceptor.to("VictoryPhase");
@@ -315,10 +172,10 @@ describe("Test Battle Phase", () => {
       .startingHeldItems([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }]);
 
     await game.classicMode.startBattle();
-    game.scene.getPlayerPokemon()!.hp = 1;
+    game.field.getPlayerPokemon().hp = 1;
     game.move.select(moveToUse);
 
-    await game.phaseInterceptor.to(BattleEndPhase);
+    await game.phaseInterceptor.to("BattleEndPhase");
     game.doRevivePokemon(0); // pretend max revive was picked
     game.doSelectModifier();
 
@@ -330,6 +187,6 @@ describe("Test Battle Phase", () => {
       },
       () => game.isCurrentPhase(NextEncounterPhase),
     );
-    await game.phaseInterceptor.to(SwitchPhase);
+    await game.phaseInterceptor.to("SwitchPhase");
   });
 });

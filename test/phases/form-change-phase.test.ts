@@ -1,12 +1,12 @@
+import { modifierTypes } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
+import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { generateModifierType } from "#mystery-encounters/encounter-phase-utils";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { PokemonType } from "#enums/pokemon-type";
-import { generateModifierType } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { modifierTypes } from "#app/data/data-lists";
 
 describe("Form Change Phase", () => {
   let phaserGame: Phaser.Game;
@@ -38,7 +38,7 @@ describe("Form Change Phase", () => {
     await game.classicMode.startBattle([SpeciesId.ZACIAN]);
 
     // Before the form change: Should be Hero form
-    const zacian = game.scene.getPlayerParty()[0];
+    const zacian = game.field.getPlayerPokemon();
     expect(zacian.getFormKey()).toBe("hero-of-many-battles");
     expect(zacian.getTypes()).toStrictEqual([PokemonType.FAIRY]);
     expect(zacian.calculateBaseStats()).toStrictEqual([92, 120, 115, 80, 115, 138]);

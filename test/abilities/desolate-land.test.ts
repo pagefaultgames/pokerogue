@@ -1,13 +1,14 @@
-import { PokeballType } from "#app/enums/pokeball";
-import { WeatherType } from "#app/enums/weather-type";
-import type { CommandPhase } from "#app/phases/command-phase";
-import { Command } from "#enums/command";
+import { globalScene } from "#app/global-scene";
 import { AbilityId } from "#enums/ability-id";
+import { Command } from "#enums/command";
 import { MoveId } from "#enums/move-id";
+import { PokeballType } from "#enums/pokeball";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { WeatherType } from "#enums/weather-type";
+import type { CommandPhase } from "#phases/command-phase";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, it, expect, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Desolate Land", () => {
   let phaserGame: Phaser.Game;
@@ -144,7 +145,8 @@ describe("Abilities - Desolate Land", () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
 
-    vi.spyOn(game.scene.getPlayerPokemon()!, "randBattleSeedInt").mockReturnValue(0);
+    vi.spyOn(game.field.getPlayerPokemon(), "randBattleSeedInt").mockReturnValue(0);
+    vi.spyOn(globalScene, "randBattleSeedInt").mockReturnValue(0);
 
     const commandPhase = game.scene.phaseManager.getCurrentPhase() as CommandPhase;
     commandPhase.handleCommand(Command.RUN, 0);

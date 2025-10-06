@@ -1,10 +1,10 @@
+import { TerrainType } from "#data/terrain";
 import { AbilityId } from "#enums/ability-id";
-import { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species-id";
-import { TerrainType } from "#app/data/terrain";
-import { PokemonType } from "#enums/pokemon-type";
 import { BattlerIndex } from "#enums/battler-index";
-import GameManager from "#test/testUtils/gameManager";
+import { MoveId } from "#enums/move-id";
+import { PokemonType } from "#enums/pokemon-type";
+import { SpeciesId } from "#enums/species-id";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -37,7 +37,7 @@ describe("Moves - Camouflage", () => {
   it("Camouflage should look at terrain first when selecting a type to change into", async () => {
     await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.CAMOUFLAGE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);

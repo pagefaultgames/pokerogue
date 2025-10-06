@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { FieldPosition } from "#enums/field-position";
-import { BattlePhase } from "./battle-phase";
+import { BattlePhase } from "#phases/battle-phase";
 
 export class ToggleDoublePositionPhase extends BattlePhase {
   public readonly phaseName = "ToggleDoublePositionPhase";

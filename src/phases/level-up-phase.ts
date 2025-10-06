@@ -1,10 +1,10 @@
 import { globalScene } from "#app/global-scene";
-import { ExpNotification } from "#app/enums/exp-notification";
-import type { PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { PlayerPartyMemberPokemonPhase } from "#app/phases/player-party-member-pokemon-phase";
-import { LevelAchv } from "#app/system/achv";
-import { NumberHolder } from "#app/utils/common";
+import { ExpNotification } from "#enums/exp-notification";
+import type { PlayerPokemon } from "#field/pokemon";
+import { PlayerPartyMemberPokemonPhase } from "#phases/player-party-member-pokemon-phase";
+import { LevelAchv } from "#system/achv";
+import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
 
 export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {

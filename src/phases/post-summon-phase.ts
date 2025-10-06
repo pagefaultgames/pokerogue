@@ -1,34 +1,47 @@
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import type { PhaseString } from "#app/@types/phase-types";
 import { globalScene } from "#app/global-scene";
-import { ArenaTrapTag } from "#app/data/arena-tag";
-import { StatusEffect } from "#app/enums/status-effect";
-import { PokemonPhase } from "./pokemon-phase";
-import { MysteryEncounterPostSummonTag } from "#app/data/battler-tags";
+import { EntryHazardTag } from "#data/arena-tag";
+import { MysteryEncounterPostSummonTag } from "#data/battler-tags";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import { StatusEffect } from "#enums/status-effect";
+import { PokemonPhase } from "#phases/pokemon-phase";
 
 export class PostSummonPhase extends PokemonPhase {
   public readonly phaseName = "PostSummonPhase";
+  /** Used to determine whether to push or unshift {@linkcode PostSummonActivateAbilityPhase}s */
+  public readonly source: PhaseString;
+
+  constructor(battlerIndex?: BattlerIndex | number, source: PhaseString = "SwitchSummonPhase") {
+    super(battlerIndex);
+    this.source = source;
+  }
+
   start() {
     super.start();
 
     const pokemon = this.getPokemon();
-
+    console.log("Ran PSP for:", pokemon.name);
     if (pokemon.status?.effect === StatusEffect.TOXIC) {
       pokemon.status.toxicTurnCount = 0;
     }
-    globalScene.arena.applyTags(ArenaTrapTag, false, pokemon);
+
+    globalScene.arena.applyTags(ArenaTagType.PENDING_HEAL, false, pokemon);
+
+    globalScene.arena.applyTags(EntryHazardTag, false, pokemon);
 
     // If this is mystery encounter and has post summon phase tag, apply post summon effects
     if (
-      globalScene.currentBattle.isBattleMysteryEncounter() &&
-      pokemon.findTags(t => t instanceof MysteryEncounterPostSummonTag).length > 0
+      globalScene.currentBattle.isBattleMysteryEncounter()
+      && pokemon.findTags(t => t instanceof MysteryEncounterPostSummonTag).length > 0
     ) {
       pokemon.lapseTag(BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON);
     }
-
-    const field = pokemon.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
+    const field = pokemon.isPlayer() ? globalScene.getPlayerField(true) : globalScene.getEnemyField(true);
     for (const p of field) {
-      applyAbAttrs("CommanderAbAttr", p, null, false);
+      applyAbAttrs("CommanderAbAttr", { pokemon: p });
     }
 
     this.end();

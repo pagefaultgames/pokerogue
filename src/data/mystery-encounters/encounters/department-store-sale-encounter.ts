@@ -1,16 +1,13 @@
-import {
-  leaveEncounterWithoutBattle,
-  setEncounterRewards,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import type { ModifierTypeFunc } from "#app/@types/modifier-types";
-import { modifierTypes } from "#app/data/data-lists";
-import { randSeedInt } from "#app/utils/common";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { modifierTypes } from "#data/data-lists";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { leaveEncounterWithoutBattle, setEncounterRewards } from "#mystery-encounters/encounter-phase-utils";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import type { ModifierTypeFunc } from "#types/modifier-types";
+import { randSeedInt } from "#utils/common";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounters/departmentStoreSale";
@@ -46,7 +43,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
       text: `${namespace}:intro`,
     },
     {
-      text: `${namespace}:intro_dialogue`,
+      text: `${namespace}:introDialogue`,
       speaker: `${namespace}:speaker`,
     },
   ])

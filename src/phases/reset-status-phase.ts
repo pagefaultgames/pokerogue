@@ -1,5 +1,5 @@
-import type Pokemon from "#app/field/pokemon";
-import { BattlePhase } from "#app/phases/battle-phase";
+import type { Pokemon } from "#field/pokemon";
+import { BattlePhase } from "#phases/battle-phase";
 
 /**
  * Phase which handles resetting a Pokemon's status to none

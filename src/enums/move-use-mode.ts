@@ -1,5 +1,4 @@
-import type { PostDancingMoveAbAttr } from "#app/data/abilities/ability";
-import type { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
+import type { ObjectValues } from "#types/type-helpers";
 
 /**
  * Enum representing all the possible means through which a given move can be executed.
@@ -13,9 +12,9 @@ import type { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
  */
 export const MoveUseMode = {
   /**
-  * This move was used normally (i.e. clicking on the button) or called via Instruct.
-  * It deducts PP from the user's moveset (failing if out of PP), and interacts normally with other moves and abilities.
-  */
+   * This move was used normally (i.e. clicking on the button) or called via Instruct.
+   * It deducts PP from the user's moveset (failing if out of PP), and interacts normally with other moves and abilities.
+   */
   NORMAL: 1,
 
   /**
@@ -59,11 +58,20 @@ export const MoveUseMode = {
    * and retain the same copy prevention as {@linkcode MoveUseMode.FOLLOW_UP}, but additionally
    * **cannot be reflected by other reflecting effects**.
    */
-  REFLECTED: 5
-  // TODO: Add use type TRANSPARENT for Future Sight and Doom Desire to prevent move history pushing
+  REFLECTED: 5,
+  /**
+   * This "move" was created by a transparent effect that **does not count as using a move**,
+   * such as {@linkcode DelayedAttackAttr | Future Sight/Doom Desire}.
+   *
+   * In addition to inheriting the cancellation ignores and copy prevention from {@linkcode MoveUseMode.REFLECTED},
+   * transparent moves are ignored by **all forms of move usage checks** due to **not pushing to move history**.
+   * @todo Consider other means of implementing FS/DD than this - we currently only use it
+   * to prevent pushing to move history and avoid re-delaying the attack portion
+   */
+  DELAYED_ATTACK: 6,
 } as const;
 
-export type MoveUseMode = (typeof MoveUseMode)[keyof typeof MoveUseMode];
+export type MoveUseMode = ObjectValues<typeof MoveUseMode>;
 
 // # HELPER FUNCTIONS
 // Please update the markdown tables if any new `MoveUseMode`s get added.
@@ -75,16 +83,17 @@ export type MoveUseMode = (typeof MoveUseMode)[keyof typeof MoveUseMode];
  * @remarks
  * This function is equivalent to the following truth table:
  *
- * | Use Type                           | Returns |
- * |------------------------------------|---------|
- * | {@linkcode MoveUseMode.NORMAL}     | `false` |
- * | {@linkcode MoveUseMode.IGNORE_PP}  | `false` |
- * | {@linkcode MoveUseMode.INDIRECT}   | `true`  |
- * | {@linkcode MoveUseMode.FOLLOW_UP}  | `true`  |
- * | {@linkcode MoveUseMode.REFLECTED}  | `true`  |
+ * | Use Type                               | Returns |
+ * |----------------------------------------|---------|
+ * | {@linkcode MoveUseMode.NORMAL}         | `false` |
+ * | {@linkcode MoveUseMode.IGNORE_PP}      | `false` |
+ * | {@linkcode MoveUseMode.INDIRECT}       | `true`  |
+ * | {@linkcode MoveUseMode.FOLLOW_UP}      | `true`  |
+ * | {@linkcode MoveUseMode.REFLECTED}      | `true`  |
+ * | {@linkcode MoveUseMode.DELAYED_ATTACK} | `true`  |
  */
 export function isVirtual(useMode: MoveUseMode): boolean {
-  return useMode >= MoveUseMode.INDIRECT
+  return useMode >= MoveUseMode.INDIRECT;
 }
 
 /**
@@ -95,13 +104,14 @@ export function isVirtual(useMode: MoveUseMode): boolean {
  * @remarks
  * This function is equivalent to the following truth table:
  *
- * | Use Type                           | Returns |
- * |------------------------------------|---------|
- * | {@linkcode MoveUseMode.NORMAL}     | `false` |
- * | {@linkcode MoveUseMode.IGNORE_PP}  | `false` |
- * | {@linkcode MoveUseMode.INDIRECT}   | `false` |
- * | {@linkcode MoveUseMode.FOLLOW_UP}  | `true`  |
- * | {@linkcode MoveUseMode.REFLECTED}  | `true`  |
+ * | Use Type                               | Returns |
+ * |----------------------------------------|---------|
+ * | {@linkcode MoveUseMode.NORMAL}         | `false` |
+ * | {@linkcode MoveUseMode.IGNORE_PP}      | `false` |
+ * | {@linkcode MoveUseMode.INDIRECT}       | `false` |
+ * | {@linkcode MoveUseMode.FOLLOW_UP}      | `true`  |
+ * | {@linkcode MoveUseMode.REFLECTED}      | `true`  |
+ * | {@linkcode MoveUseMode.DELAYED_ATTACK} | `true`  |
  */
 export function isIgnoreStatus(useMode: MoveUseMode): boolean {
   return useMode >= MoveUseMode.FOLLOW_UP;
@@ -115,13 +125,14 @@ export function isIgnoreStatus(useMode: MoveUseMode): boolean {
  * @remarks
  * This function is equivalent to the following truth table:
  *
- * | Use Type                           | Returns |
- * |------------------------------------|---------|
- * | {@linkcode MoveUseMode.NORMAL}     | `false` |
- * | {@linkcode MoveUseMode.IGNORE_PP}  | `true`  |
- * | {@linkcode MoveUseMode.INDIRECT}   | `true`  |
- * | {@linkcode MoveUseMode.FOLLOW_UP}  | `true`  |
- * | {@linkcode MoveUseMode.REFLECTED}  | `true`  |
+ * | Use Type                               | Returns |
+ * |----------------------------------------|---------|
+ * | {@linkcode MoveUseMode.NORMAL}         | `false` |
+ * | {@linkcode MoveUseMode.IGNORE_PP}      | `true`  |
+ * | {@linkcode MoveUseMode.INDIRECT}       | `true`  |
+ * | {@linkcode MoveUseMode.FOLLOW_UP}      | `true`  |
+ * | {@linkcode MoveUseMode.REFLECTED}      | `true`  |
+ * | {@linkcode MoveUseMode.DELAYED_ATTACK} | `true`  |
  */
 export function isIgnorePP(useMode: MoveUseMode): boolean {
   return useMode >= MoveUseMode.IGNORE_PP;
@@ -136,13 +147,14 @@ export function isIgnorePP(useMode: MoveUseMode): boolean {
  * @remarks
  * This function is equivalent to the following truth table:
  *
- * | Use Type                           | Returns |
- * |------------------------------------|---------|
- * | {@linkcode MoveUseMode.NORMAL}     | `false` |
- * | {@linkcode MoveUseMode.IGNORE_PP}  | `false` |
- * | {@linkcode MoveUseMode.INDIRECT}   | `false` |
- * | {@linkcode MoveUseMode.FOLLOW_UP}  | `false` |
- * | {@linkcode MoveUseMode.REFLECTED}  | `true`  |
+ * | Use Type                               | Returns |
+ * |----------------------------------------|---------|
+ * | {@linkcode MoveUseMode.NORMAL}         | `false` |
+ * | {@linkcode MoveUseMode.IGNORE_PP}      | `false` |
+ * | {@linkcode MoveUseMode.INDIRECT}       | `false` |
+ * | {@linkcode MoveUseMode.FOLLOW_UP}      | `false` |
+ * | {@linkcode MoveUseMode.REFLECTED}      | `true`  |
+ * | {@linkcode MoveUseMode.DELAYED_ATTACK} | `false` |
  */
 export function isReflected(useMode: MoveUseMode): boolean {
   return useMode === MoveUseMode.REFLECTED;

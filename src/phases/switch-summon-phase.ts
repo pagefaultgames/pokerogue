@@ -1,17 +1,17 @@
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { applyPreSummonAbAttrs, applyPreSwitchOutAbAttrs } from "#app/data/abilities/apply-ab-attrs";
-import { allMoves } from "#app/data/data-lists";
-import { getPokeballTintColor } from "#app/data/pokeball";
-import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms/form-change-triggers";
-import { TrainerSlot } from "#enums/trainer-slot";
-import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { SwitchEffectTransferModifier } from "#app/modifier/modifier";
+import { SubstituteTag } from "#data/battler-tags";
+import { allMoves } from "#data/data-lists";
+import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
+import { getPokeballTintColor } from "#data/pokeball";
 import { Command } from "#enums/command";
-import i18next from "i18next";
-import { SummonPhase } from "./summon-phase";
-import { SubstituteTag } from "#app/data/battler-tags";
 import { SwitchType } from "#enums/switch-type";
+import { TrainerSlot } from "#enums/trainer-slot";
+import type { Pokemon } from "#field/pokemon";
+import { SwitchEffectTransferModifier } from "#modifiers/modifier";
+import { SummonPhase } from "#phases/summon-phase";
+import i18next from "i18next";
 
 export class SwitchSummonPhase extends SummonPhase {
   public readonly phaseName: "SwitchSummonPhase" | "ReturnPhase" = "SwitchSummonPhase";
@@ -44,7 +44,7 @@ export class SwitchSummonPhase extends SummonPhase {
   preSummon(): void {
     if (!this.player) {
       if (this.slotIndex === -1) {
-        //@ts-ignore
+        //@ts-expect-error
         this.slotIndex = globalScene.currentBattle.trainer?.getNextSummonIndex(
           !this.fieldIndex ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
         ); // TODO: what would be the default trainer-slot fallback?
@@ -56,9 +56,9 @@ export class SwitchSummonPhase extends SummonPhase {
     }
 
     if (
-      !this.doReturn ||
-      (this.slotIndex !== -1 &&
-        !(this.player ? globalScene.getPlayerParty() : globalScene.getEnemyParty())[this.slotIndex])
+      !this.doReturn
+      || (this.slotIndex !== -1
+        && !(this.player ? globalScene.getPlayerParty() : globalScene.getEnemyParty())[this.slotIndex])
     ) {
       if (this.player) {
         this.switchAndSummon();
@@ -124,8 +124,8 @@ export class SwitchSummonPhase extends SummonPhase {
     switchedInPokemon.resetSummonData();
     switchedInPokemon.loadAssets(true);
 
-    applyPreSummonAbAttrs("PreSummonAbAttr", switchedInPokemon);
-    applyPreSwitchOutAbAttrs("PreSwitchOutAbAttr", this.lastPokemon);
+    applyAbAttrs("PreSummonAbAttr", { pokemon: switchedInPokemon });
+    applyAbAttrs("PreSwitchOutAbAttr", { pokemon: this.lastPokemon });
     if (!switchedInPokemon) {
       this.end();
       return;
@@ -141,14 +141,14 @@ export class SwitchSummonPhase extends SummonPhase {
       if (
         !globalScene.findModifier(
           m =>
-            m instanceof SwitchEffectTransferModifier &&
-            (m as SwitchEffectTransferModifier).pokemonId === switchedInPokemon.id,
+            m instanceof SwitchEffectTransferModifier
+            && (m as SwitchEffectTransferModifier).pokemonId === switchedInPokemon.id,
         )
       ) {
         const batonPassModifier = globalScene.findModifier(
           m =>
-            m instanceof SwitchEffectTransferModifier &&
-            (m as SwitchEffectTransferModifier).pokemonId === this.lastPokemon.id,
+            m instanceof SwitchEffectTransferModifier
+            && (m as SwitchEffectTransferModifier).pokemonId === this.lastPokemon.id,
         ) as SwitchEffectTransferModifier;
 
         if (batonPassModifier) {
@@ -214,9 +214,9 @@ export class SwitchSummonPhase extends SummonPhase {
     // Compensate for turn spent summoning/forced switch if switched out pokemon is not fainted.
     // Needed as we increment turn counters in `TurnEndPhase`.
     if (
-      currentCommand === Command.POKEMON ||
-      lastPokemonIsForceSwitchedAndNotFainted ||
-      lastPokemonHasForceSwitchAbAttr
+      currentCommand === Command.POKEMON
+      || lastPokemonIsForceSwitchedAndNotFainted
+      || lastPokemonHasForceSwitchAbAttr
     ) {
       pokemon.tempSummonData.turnCount--;
       pokemon.tempSummonData.waveTurnCount--;
@@ -241,11 +241,11 @@ export class SwitchSummonPhase extends SummonPhase {
 
     globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
     // Reverts to weather-based forms when weather suppressors (Cloud Nine/Air Lock) are switched out
-    globalScene.arena.triggerWeatherBasedFormChanges();
+    globalScene.arena.triggerWeatherBasedFormChanges(pokemon);
   }
 
   queuePostSummon(): void {
-    globalScene.phaseManager.startNewDynamicPhase("PostSummonPhase", this.getPokemon().getBattlerIndex());
+    globalScene.phaseManager.unshiftNew("PostSummonPhase", this.getPokemon().getBattlerIndex());
   }
 
   /**

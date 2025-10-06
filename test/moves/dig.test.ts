@@ -1,13 +1,13 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { allMoves } from "#app/data/data-lists";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import { MoveResult } from "#enums/move-result";
-import { describe, beforeAll, afterEach, beforeEach, it, expect } from "vitest";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Dig", () => {
   let phaserGame: Phaser.Game;
@@ -38,8 +38,8 @@ describe("Moves - Dig", () => {
   it("should make the user semi-invulnerable, then attack over 2 turns", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.DIG);
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -62,7 +62,7 @@ describe("Moves - Dig", () => {
     game.override.moveset([]);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     game.move.changeMoveset(playerPokemon, MoveId.DIG);
 
     game.move.select(MoveId.DIG);
@@ -80,8 +80,8 @@ describe("Moves - Dig", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.DIG);
 
@@ -90,12 +90,12 @@ describe("Moves - Dig", () => {
     expect(enemyPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
   });
 
-  it("should not expend PP when the attack phase is cancelled", async () => {
+  it("should expend PP when the attack phase is cancelled by sleep", async () => {
     game.override.enemyAbility(AbilityId.NO_GUARD).enemyMoveset(MoveId.SPORE);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.DIG);
 
@@ -104,14 +104,14 @@ describe("Moves - Dig", () => {
     expect(playerPokemon.status?.effect).toBe(StatusEffect.SLEEP);
 
     const playerDig = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.DIG);
-    expect(playerDig?.ppUsed).toBe(0);
+    expect(playerDig?.ppUsed).toBe(1);
   });
 
   it("should cause the user to take double damage from Earthquake", async () => {
     await game.classicMode.startBattle([SpeciesId.DONDOZO]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     const preDigEarthquakeDmg = playerPokemon.getAttackDamage({
       source: enemyPokemon,

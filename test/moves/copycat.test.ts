@@ -1,14 +1,13 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { RandomMoveAttr } from "#app/data/moves/move";
-import { Stat } from "#app/enums/stat";
-import { MoveResult } from "#enums/move-result";
 import { AbilityId } from "#enums/ability-id";
-import { MoveUseMode } from "#enums/move-use-mode";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
+import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { Stat } from "#enums/stat";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Copycat", () => {
   let phaserGame: Phaser.Game;
@@ -36,7 +35,7 @@ describe("Moves - Copycat", () => {
       .enemyMoveset(MoveId.SPLASH);
   });
 
-  it("should copy the last move successfully executed", async () => {
+  it("should copy the last move executed across turns", async () => {
     game.override.enemyMoveset(MoveId.SUCKER_PUNCH);
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
@@ -44,9 +43,10 @@ describe("Moves - Copycat", () => {
     await game.toNextTurn();
 
     game.move.select(MoveId.COPYCAT); // Last successful move should be Swords Dance
+    await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(game.scene.getPlayerPokemon()!.getStatStage(Stat.ATK)).toBe(4);
+    expect(game.field.getPlayerPokemon().getStatStage(Stat.ATK)).toBe(4);
   });
 
   it("should fail when the last move used is not a valid Copycat move", async () => {
@@ -59,19 +59,19 @@ describe("Moves - Copycat", () => {
     game.move.select(MoveId.COPYCAT);
     await game.toNextTurn();
 
-    expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(game.field.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 
   it("should copy the called move when the last move successfully calls another", async () => {
     game.override.moveset([MoveId.SPLASH, MoveId.METRONOME]).enemyMoveset(MoveId.COPYCAT);
     await game.classicMode.startBattle([SpeciesId.DRAMPA]);
-    vi.spyOn(RandomMoveAttr.prototype, "getMoveOverride").mockReturnValue(MoveId.SWORDS_DANCE);
+    game.move.forceMetronomeMove(MoveId.SWORDS_DANCE, true);
 
     game.move.select(MoveId.METRONOME);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]); // Player moves first so enemy can copy Swords Dance
     await game.toNextTurn();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     expect(enemy.getLastXMoves()[0]).toMatchObject({
       move: MoveId.SWORDS_DANCE,
       result: MoveResult.SUCCESS,
@@ -88,6 +88,6 @@ describe("Moves - Copycat", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    expect(game.scene.getEnemyPokemon()!.getStatStage(Stat.SPDEF)).toBe(-2);
+    expect(game.field.getEnemyPokemon().getStatStage(Stat.SPDEF)).toBe(-2);
   });
 });

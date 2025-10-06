@@ -1,22 +1,21 @@
-import { BattleType } from "#enums/battle-type";
 import { globalScene } from "#app/global-scene";
-import type { Gender } from "../data/gender";
-import { Nature } from "#enums/nature";
-import { PokeballType } from "#enums/pokeball";
-import { getPokemonSpeciesForm } from "#app/data/pokemon-species";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
-import { Status } from "../data/status-effect";
-import Pokemon, { EnemyPokemon, PokemonBattleData, PokemonSummonData } from "../field/pokemon";
-import { PokemonMove } from "#app/data/moves/pokemon-move";
-import { TrainerSlot } from "#enums/trainer-slot";
-import type { Variant } from "#app/sprites/variant";
+import type { Gender } from "#data/gender";
+import { CustomPokemonData, PokemonBattleData, PokemonSummonData } from "#data/pokemon-data";
+import { Status } from "#data/status-effect";
+import { BattleType } from "#enums/battle-type";
 import type { BiomeId } from "#enums/biome-id";
 import type { MoveId } from "#enums/move-id";
-import type { SpeciesId } from "#enums/species-id";
-import { CustomPokemonData } from "#app/data/custom-pokemon-data";
+import { Nature } from "#enums/nature";
+import { PokeballType } from "#enums/pokeball";
 import type { PokemonType } from "#enums/pokemon-type";
+import type { SpeciesId } from "#enums/species-id";
+import { TrainerSlot } from "#enums/trainer-slot";
+import { EnemyPokemon, Pokemon } from "#field/pokemon";
+import { PokemonMove } from "#moves/pokemon-move";
+import type { Variant } from "#sprites/variant";
+import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
-export default class PokemonData {
+export class PokemonData {
   public id: number;
   public player: boolean;
   public species: SpeciesId;
@@ -88,12 +87,12 @@ export default class PokemonData {
     this.id = source.id;
     this.player = sourcePokemon?.isPlayer() ?? source.player;
     this.species = sourcePokemon?.species.speciesId ?? source.species;
-    this.nickname = sourcePokemon?.summonData.illusion?.basePokemon.nickname ?? source.nickname;
+    this.nickname = source.nickname;
     this.formIndex = Math.max(Math.min(source.formIndex, getPokemonSpecies(this.species).forms.length - 1), 0);
     this.abilityIndex = source.abilityIndex;
     this.passive = source.passive;
-    this.shiny = sourcePokemon?.summonData.illusion?.basePokemon.shiny ?? source.shiny;
-    this.variant = sourcePokemon?.summonData.illusion?.basePokemon.variant ?? source.variant;
+    this.shiny = source.shiny;
+    this.variant = source.variant;
     this.pokeball = source.pokeball ?? PokeballType.POKEBALL;
     this.level = source.level;
     this.exp = source.exp;
@@ -105,7 +104,7 @@ export default class PokemonData {
 
     // TODO: Can't we move some of this verification stuff to an upgrade script?
     this.nature = source.nature ?? Nature.HARDY;
-    this.moveset = source.moveset.map((m: any) => PokemonMove.loadMove(m));
+    this.moveset = source.moveset?.map((m: any) => PokemonMove.loadMove(m)) ?? [];
     this.status = source.status
       ? new Status(source.status.effect, source.status.toxicTurnCount, source.status.sleepTurnsRemaining)
       : null;
@@ -134,8 +133,8 @@ export default class PokemonData {
     this.fusionSpecies = sourcePokemon?.fusionSpecies?.speciesId ?? source.fusionSpecies;
     this.fusionFormIndex = source.fusionFormIndex;
     this.fusionAbilityIndex = source.fusionAbilityIndex;
-    this.fusionShiny = sourcePokemon?.summonData.illusion?.basePokemon.fusionShiny ?? source.fusionShiny;
-    this.fusionVariant = sourcePokemon?.summonData.illusion?.basePokemon.fusionVariant ?? source.fusionVariant;
+    this.fusionShiny = source.fusionShiny;
+    this.fusionVariant = source.fusionVariant;
     this.fusionGender = source.fusionGender;
     this.fusionLuck = source.fusionLuck ?? (source.fusionShiny ? source.fusionVariant + 1 : 0);
     this.fusionTeraType = (source.fusionTeraType ?? 0) as PokemonType;

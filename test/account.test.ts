@@ -1,7 +1,7 @@
-import * as bypassLogin from "#app/global-vars/bypass-login";
-import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
-import { describe, expect, it, vi } from "vitest";
+import { pokerogueApi } from "#api/pokerogue-api";
 import { initLoggedInUser, loggedInUser, updateUserInfo } from "#app/account";
+import * as bypassLogin from "#app/global-vars/bypass-login";
+import { describe, expect, it, vi } from "vitest";
 
 describe("account", () => {
   describe("initLoggedInUser", () => {

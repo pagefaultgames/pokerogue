@@ -1,22 +1,25 @@
-import type Pokemon from "#app/field/pokemon";
-import { toDmgValue } from "#app/utils/common";
-import type { MoveId } from "#enums/move-id";
-import { allMoves } from "../data-lists";
-import type Move from "./move";
+import { allMoves } from "#data/data-lists";
+import { ChallengeType } from "#enums/challenge-type";
+import { MoveId } from "#enums/move-id";
+import type { Pokemon } from "#field/pokemon";
+import type { Move } from "#moves/move";
+import { applyChallenges } from "#utils/challenge-utils";
+import { BooleanHolder, toDmgValue } from "#utils/common";
+import i18next from "i18next";
 
 /**
  * Wrapper class for the {@linkcode Move} class for Pokemon to interact with.
  * These are the moves assigned to a {@linkcode Pokemon} object.
  * It links to {@linkcode Move} class via the move ID.
  * Compared to {@linkcode Move}, this class also tracks things like
- * PP Ups recieved, PP used, etc.
+ * PP Ups received, PP used, etc.
  * @see {@linkcode isUsable} - checks if move is restricted, out of PP, or not implemented.
  * @see {@linkcode getMove} - returns {@linkcode Move} object by looking it up via ID.
  * @see {@linkcode usePp} - removes a point of PP from the move.
  * @see {@linkcode getMovePp} - returns amount of PP a move currently has.
  * @see {@linkcode getPpRatio} - returns the current PP amount / max PP amount.
  * @see {@linkcode getName} - returns name of {@linkcode Move}.
- **/
+ */
 export class PokemonMove {
   public moveId: MoveId;
   public ppUsed: number;
@@ -36,29 +39,57 @@ export class PokemonMove {
   }
 
   /**
-   * Checks whether the move can be selected or performed by a Pokemon, without consideration for the move's targets.
+   * Checks whether this move can be performed by a Pokemon, without consideration for the move's targets.
    * The move is unusable if it is out of PP, restricted by an effect, or unimplemented.
    *
-   * @param pokemon - {@linkcode Pokemon} that would be using this move
-   * @param ignorePp - If `true`, skips the PP check
-   * @param ignoreRestrictionTags - If `true`, skips the check for move restriction tags (see {@link MoveRestrictionBattlerTag})
-   * @returns `true` if the move can be selected and used by the Pokemon, otherwise `false`.
+   * Should not be confused with {@linkcode isSelectable}, which only checks if the move can be selected by a Pokemon.
+   *
+   * @param pokemon - The {@linkcode Pokemon} attempting to use this move
+   * @param ignorePp - Whether to ignore checking if the move is out of PP; default `false`
+   * @param forSelection - Whether this is being checked for move selection; default `false`
+   * @returns A tuple containing a boolean indicating whether the move can be selected, and a string with the reason if it cannot
    */
-  isUsable(pokemon: Pokemon, ignorePp = false, ignoreRestrictionTags = false): boolean {
+  public isUsable(pokemon: Pokemon, ignorePp = false, forSelection = false): [usable: boolean, preventionText: string] {
+    const move = this.getMove();
+    const moveName = move.name;
+
     // TODO: Add Sky Drop's 1 turn stall
-    if (this.moveId && !ignoreRestrictionTags && pokemon.isMoveRestricted(this.moveId, pokemon)) {
-      return false;
+    if (this.moveId === MoveId.NONE || move.name.endsWith(" (N)")) {
+      return [false, i18next.t("battle:moveNotImplemented", moveName.replace(" (N)", ""))];
     }
 
-    if (this.getMove().name.endsWith(" (N)")) {
-      return false;
+    if (!ignorePp && move.pp !== -1 && this.ppUsed >= this.getMovePp()) {
+      return [false, i18next.t("battle:moveNoPp", { moveName: move.name })];
     }
 
-    return ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1;
+    if (forSelection) {
+      const result = pokemon.isMoveSelectable(this.moveId);
+      if (!result[0]) {
+        return result;
+      }
+    }
+
+    const usability = new BooleanHolder(true);
+    if (pokemon.isPlayer() && applyChallenges(ChallengeType.POKEMON_MOVE, this.moveId, usability) && !usability.value) {
+      return [false, i18next.t("battle:moveCannotUseChallenge", { moveName: move.name })];
+    }
+
+    return [true, ""];
   }
 
   getMove(): Move {
     return allMoves[this.moveId];
+  }
+
+  /**
+   * Determine whether the move can be selected by the pokemon based on its own requirements
+   * @remarks
+   * Does not check for PP, moves blocked by challenges, or unimplemented moves, all of which are handled by {@linkcode isUsable}
+   * @param pokemon - The Pokemon under consideration
+   * @returns An tuple containing a boolean indicating whether the move can be selected, and a string with the reason if it cannot
+   */
+  public isSelectable(pokemon: Pokemon): [selectable: boolean, preventionText: string] {
+    return pokemon.isMoveSelectable(this.moveId);
   }
 
   /**

@@ -1,10 +1,10 @@
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { BattlerIndex } from "#enums/battler-index";
-import { MoveResult } from "#enums/move-result";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -39,7 +39,7 @@ describe("Moves - Encore", () => {
   it("should prevent the target from using any move except the last used move", async () => {
     await game.classicMode.startBattle([SpeciesId.SNORLAX]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.ENCORE);
     await game.move.selectEnemyMove(MoveId.SPLASH);
@@ -67,8 +67,8 @@ describe("Moves - Encore", () => {
 
       await game.classicMode.startBattle([SpeciesId.SNORLAX]);
 
-      const playerPokemon = game.scene.getPlayerPokemon()!;
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      const playerPokemon = game.field.getPlayerPokemon();
+      const enemyPokemon = game.field.getEnemyPokemon();
 
       if (delay) {
         game.move.select(MoveId.SPLASH);
@@ -92,23 +92,23 @@ describe("Moves - Encore", () => {
     game.override.moveset([MoveId.ENCORE, MoveId.TORMENT, MoveId.SPLASH]);
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
     game.move.select(MoveId.ENCORE);
     await game.setTurnOrder(turnOrder);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(enemyPokemon?.getTag(BattlerTagType.ENCORE)).toBeDefined();
+    expect(enemyPokemon.getTag(BattlerTagType.ENCORE)).toBeDefined();
 
     await game.toNextTurn();
     game.move.select(MoveId.TORMENT);
     await game.setTurnOrder(turnOrder);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(enemyPokemon?.getTag(BattlerTagType.TORMENT)).toBeDefined();
+    expect(enemyPokemon.getTag(BattlerTagType.TORMENT)).toBeDefined();
 
     await game.toNextTurn();
     game.move.select(MoveId.SPLASH);
     await game.setTurnOrder(turnOrder);
     await game.phaseInterceptor.to("BerryPhase");
-    const lastMove = enemyPokemon?.getLastXMoves()[0];
+    const lastMove = enemyPokemon.getLastXMoves()[0];
     expect(lastMove?.move).toBe(MoveId.STRUGGLE);
   });
 });

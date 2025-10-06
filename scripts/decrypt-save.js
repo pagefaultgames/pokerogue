@@ -1,7 +1,15 @@
-import pkg from "crypto-js";
-const { AES, enc } = pkg;
-// biome-ignore lint: This is how you import fs from node
-import * as fs from "node:fs";
+/*
+ * SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
+// Usage: node decrypt-save.js <encrypted-file> [save-file]
+
+import fs from "node:fs";
+import crypto_js from "crypto-js";
+
+const { AES, enc } = crypto_js;
 
 const SAVE_KEY = "x0i2O7WRiANTqPmZ";
 
@@ -57,6 +65,11 @@ function decryptSave(path) {
   try {
     fileData = fs.readFileSync(path, "utf8");
   } catch (e) {
+    if (!(e instanceof Error)) {
+      console.error(`Unrecognized error: ${e}`);
+      process.exit(1);
+    }
+    // @ts-expect-error - e is usually a SystemError (all of which have codes)
     switch (e.code) {
       case "ENOENT":
         console.error(`File not found: ${path}`);
@@ -101,6 +114,13 @@ function writeToFile(filePath, data) {
   try {
     fs.writeFileSync(filePath, data);
   } catch (e) {
+    if (!(e instanceof Error)) {
+      console.error("Unknown error detected: ", e);
+      process.exitCode = 1;
+      return;
+    }
+
+    // @ts-expect-error - e is usually a SystemError (all of which have codes)
     switch (e.code) {
       case "EACCES":
         console.error(`Could not open ${filePath}: Permission denied`);
@@ -111,7 +131,8 @@ function writeToFile(filePath, data) {
       default:
         console.error(`Error writing file: ${e.message}`);
     }
-    process.exit(1);
+    process.exitCode = 1;
+    return;
   }
 }
 
@@ -143,7 +164,7 @@ function main() {
     process.exit(0);
   }
 
-  writeToFile(destPath, decrypt);
+  writeToFile(args[1], decrypt);
 }
 
 main();

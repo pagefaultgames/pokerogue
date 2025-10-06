@@ -1,20 +1,20 @@
+import type { BattleScene } from "#app/battle-scene";
 import { BiomeId } from "#enums/biome-id";
-import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
-import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
-import type BattleScene from "#app/battle-scene";
+import { MoveId } from "#enums/move-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
-import { FieldTripEncounter } from "#app/data/mystery-encounters/encounters/field-trip-encounter";
-import { MoveId } from "#enums/move-id";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
+import { FieldTripEncounter } from "#mystery-encounters/field-trip-encounter";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import { SelectModifierPhase } from "#phases/select-modifier-phase";
+import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
+import { GameManager } from "#test/test-utils/game-manager";
+import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import i18next from "i18next";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/fieldTrip";
 const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
@@ -61,7 +61,7 @@ describe("Field Trip - Mystery Encounter", () => {
       },
       {
         speaker: `${namespace}:speaker`,
-        text: `${namespace}:intro_dialogue`,
+        text: `${namespace}:introDialogue`,
       },
     ]);
     expect(FieldTripEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
@@ -78,7 +78,7 @@ describe("Field Trip - Mystery Encounter", () => {
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.1.label`,
         buttonTooltip: `${namespace}:option.1.tooltip`,
-        secondOptionPrompt: `${namespace}:second_option_prompt`,
+        secondOptionPrompt: `${namespace}:secondOptionPrompt`,
       });
     });
 
@@ -139,7 +139,7 @@ describe("Field Trip - Mystery Encounter", () => {
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.2.label`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
-        secondOptionPrompt: `${namespace}:second_option_prompt`,
+        secondOptionPrompt: `${namespace}:secondOptionPrompt`,
       });
     });
 
@@ -200,7 +200,7 @@ describe("Field Trip - Mystery Encounter", () => {
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
-        secondOptionPrompt: `${namespace}:second_option_prompt`,
+        secondOptionPrompt: `${namespace}:secondOptionPrompt`,
       });
     });
 

@@ -1,19 +1,21 @@
+# SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
 pre-commit:
-  parallel: true
+  skip:
+    - merge
+    - rebase
   commands:
     biome-lint:
-      run: npx biome check --write --reporter=summary --staged --no-errors-on-unmatched
+      # Disable colors as certain IDEs don't support it in the output pane.
+      # Summary mode looks decent in plain ASCII anyhow
+      run: pnpm exec biome check --write --colors=off --reporter=summary --staged --no-errors-on-unmatched --diagnostic-level=error
       stage_fixed: true
-      skip:
-        - merge
-        - rebase
+    ls-lint:
+      run: pnpm exec ls-lint
 
 post-merge:
   commands:
     update-submodules:
-      run: git submodule update --init --recursive
-
-post-checkout:
-  commands:
-    update-submodules:
-      run: git submodule update --init --recursive
+      run: pnpm update-submodules

@@ -1,20 +1,16 @@
+import { pokerogueApi } from "#api/pokerogue-api";
+import { BiomeId } from "#enums/biome-id";
 import { MoneyFormat } from "#enums/money-format";
-import { MoveId } from "#enums/move-id";
+import type { Variant } from "#sprites/variant";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
-import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
-import type { Variant } from "#app/sprites/variant";
 
 export type nil = null | undefined;
 
 export const MissingTextureKey = "__MISSING";
 
-export function toReadableString(str: string): string {
-  return str
-    .replace(/\_/g, " ")
-    .split(" ")
-    .map(s => `${s.slice(0, 1)}${s.slice(1).toLowerCase()}`)
-    .join(" ");
-}
+// TODO: Draft tests for these utility functions
+// TODO: Break up this file
 
 export function randomString(length: number, seeded = false) {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -76,12 +72,16 @@ export function padInt(value: number, length: number, padWith?: string): string 
 }
 
 /**
- * Returns a random integer between min and min + range
- * @param range The amount of possible numbers
- * @param min The starting number
+ * Returns a **completely unseeded** random integer between `min` and `min + range`.
+ * @param range - The amount of possible numbers to pick
+ * @param min - The minimum number to pick; default `0`
+ * @returns A psuedo-random, unseeded integer within the interval [min, min+range].
+ * @remarks
+ * This should not be used for battles or other outwards-facing randomness;
+ * battles are intended to be seeded and deterministic.
  */
 export function randInt(range: number, min = 0): number {
-  if (range === 1) {
+  if (range <= 1) {
     return min;
   }
   return Math.floor(Math.random() * range) + min;
@@ -135,14 +135,10 @@ export function randSeedItem<T>(items: T[]): T {
   return items.length === 1 ? items[0] : Phaser.Math.RND.pick(items);
 }
 
-export function randSeedWeightedItem<T>(items: T[]): T {
-  return items.length === 1 ? items[0] : Phaser.Math.RND.weightedPick(items);
-}
-
 /**
  * Shuffle a list using the seeded rng. Utilises the Fisher-Yates algorithm.
- * @param {Array} items An array of items.
- * @returns {Array} A new shuffled array of items.
+ * @param items An array of items.
+ * @returns A new shuffled array of items.
  */
 export function randSeedShuffle<T>(items: T[]): T[] {
   if (items.length <= 1) {
@@ -201,19 +197,19 @@ export function formatLargeNumber(count: number, threshold: number): string {
   let suffix = "";
   switch (Math.ceil(ret.length / 3) - 1) {
     case 1:
-      suffix = "K";
+      suffix = i18next.t("common:abrThousand");
       break;
     case 2:
-      suffix = "M";
+      suffix = i18next.t("common:abrMillion");
       break;
     case 3:
-      suffix = "B";
+      suffix = i18next.t("common:abrBillion");
       break;
     case 4:
-      suffix = "T";
+      suffix = i18next.t("common:abrTrillion");
       break;
     case 5:
-      suffix = "q";
+      suffix = i18next.t("common:abrQuadrillion");
       break;
     default:
       return "?";
@@ -227,15 +223,31 @@ export function formatLargeNumber(count: number, threshold: number): string {
 }
 
 // Abbreviations from 10^0 to 10^33
-const AbbreviationsLargeNumber: string[] = ["", "K", "M", "B", "t", "q", "Q", "s", "S", "o", "n", "d"];
+function getAbbreviationsLargeNumber(): string[] {
+  return [
+    "",
+    i18next.t("common:abrThousand"),
+    i18next.t("common:abrMillion"),
+    i18next.t("common:abrBillion"),
+    i18next.t("common:abrTrillion"),
+    i18next.t("common:abrQuadrillion"),
+    i18next.t("common:abrQuintillion"),
+    i18next.t("common:abrSextillion"),
+    i18next.t("common:abrSeptillion"),
+    i18next.t("common:abrOctillion"),
+    i18next.t("common:abrNonillion"),
+    i18next.t("common:abrDecillion"),
+  ];
+}
 
 export function formatFancyLargeNumber(number: number, rounded = 3): string {
+  const abbreviations = getAbbreviationsLargeNumber();
   let exponent: number;
 
   if (number < 1000) {
     exponent = 0;
   } else {
-    const maxExp = AbbreviationsLargeNumber.length - 1;
+    const maxExp = abbreviations.length - 1;
 
     exponent = Math.floor(Math.log(number) / Math.log(1000));
     exponent = Math.min(exponent, maxExp);
@@ -243,7 +255,7 @@ export function formatFancyLargeNumber(number: number, rounded = 3): string {
     number /= Math.pow(1000, exponent);
   }
 
-  return `${(exponent === 0) || number % 1 === 0 ? number : number.toFixed(rounded)}${AbbreviationsLargeNumber[exponent]}`;
+  return `${exponent === 0 || number % 1 === 0 ? number : number.toFixed(rounded)}${abbreviations[exponent]}`;
 }
 
 export function formatMoney(format: MoneyFormat, amount: number) {
@@ -254,19 +266,7 @@ export function formatMoney(format: MoneyFormat, amount: number) {
 }
 
 export function formatStat(stat: number, forHp = false): string {
-  return formatLargeNumber(stat, forHp ? 100000 : 1000000);
-}
-
-export function getEnumKeys(enumType: any): string[] {
-  return Object.values(enumType)
-    .filter(v => Number.isNaN(Number.parseInt(v!.toString())))
-    .map(v => v!.toString());
-}
-
-export function getEnumValues(enumType: any): number[] {
-  return Object.values(enumType)
-    .filter(v => !Number.isNaN(Number.parseInt(v!.toString())))
-    .map(v => Number.parseInt(v!.toString()));
+  return formatLargeNumber(stat, forHp ? 100_000 : 1_000_000);
 }
 
 export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T | null> {
@@ -274,25 +274,11 @@ export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>):
 }
 
 export const sessionIdKey = "pokerogue_sessionId";
-// Check if the current hostname is 'localhost' or an IP address, and ensure a port is specified
-export const isLocal =
-  ((window.location.hostname === "localhost" || /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/.test(window.location.hostname)) &&
-    window.location.port !== "") ||
-  window.location.hostname === "";
 
-/**
- * @deprecated Refer to [pokerogue-api.ts](./plugins/api/pokerogue-api.ts) instead
- */
-export const localServerUrl =
-  import.meta.env.VITE_SERVER_URL ?? `http://${window.location.hostname}:${window.location.port + 1}`;
+/** `true` when run via `pnpm start:dev` (which runs `vite --mode development`) */
+export const isLocal = import.meta.env.MODE === "development";
 
-/**
- * Set the server URL based on whether it's local or not
- *
- * @deprecated Refer to [pokerogue-api.ts](./plugins/api/pokerogue-api.ts) instead
- */
-export const apiUrl = localServerUrl ?? "https://api.pokerogue.net";
-// used to disable api calls when isLocal is true and a server is not found
+/** Used to disable api calls when isLocal is true and a server is not found */
 export let isLocalServerConnected = true;
 
 /**
@@ -300,7 +286,7 @@ export let isLocalServerConnected = true;
  * with a GET request to verify if a server is running,
  * sets isLocalServerConnected based on results
  */
-export async function localPing() {
+export async function localPing(): Promise<void> {
   if (isLocal) {
     const titleStats = await pokerogueApi.getGameTitleStats();
     isLocalServerConnected = !!titleStats;
@@ -325,6 +311,10 @@ export class NumberHolder {
   constructor(value: number) {
     this.value = value;
   }
+
+  valueOf(): number {
+    return this.value;
+  }
 }
 
 export class FixedInt {
@@ -333,35 +323,14 @@ export class FixedInt {
   constructor(value: number) {
     this.value = value;
   }
+
+  [Symbol.toPrimitive](_hint: string): number {
+    return this.value;
+  }
 }
 
 export function fixedInt(value: number): number {
   return new FixedInt(value) as unknown as number;
-}
-
-/**
- * Formats a string to title case
- * @param unformattedText Text to be formatted
- * @returns the formatted string
- */
-export function formatText(unformattedText: string): string {
-  const text = unformattedText.split("_");
-  for (let i = 0; i < text.length; i++) {
-    text[i] = text[i].charAt(0).toUpperCase() + text[i].substring(1).toLowerCase();
-  }
-
-  return text.join(" ");
-}
-
-export function toCamelCaseString(unformattedText: string): string {
-  if (!unformattedText) {
-    return "";
-  }
-  return unformattedText
-    .split(/[_ ]/)
-    .filter(f => f)
-    .map((f, i) => (i ? `${f[0].toUpperCase()}${f.slice(1).toLowerCase()}` : f.toLowerCase()))
-    .join("");
 }
 
 export function rgbToHsv(r: number, g: number, b: number) {
@@ -373,8 +342,8 @@ export function rgbToHsv(r: number, g: number, b: number) {
 
 /**
  * Compare color difference in RGB
- * @param {Array} rgb1 First RGB color in array
- * @param {Array} rgb2 Second RGB color in array
+ * @param rgb1 First RGB color in array
+ * @param rgb2 Second RGB color in array
  */
 export function deltaRgb(rgb1: number[], rgb2: number[]): number {
   const [r1, g1, b1] = rgb1;
@@ -441,13 +410,13 @@ export function hasAllLocalizedSprites(lang?: string): boolean {
 
   switch (lang) {
     case "es-ES":
-    case "es-MX":
+    case "es-419":
     case "fr":
     case "da":
     case "de":
     case "it":
-    case "zh-CN":
-    case "zh-TW":
+    case "zh-Hans":
+    case "zh-Hant":
     case "pt-BR":
     case "ro":
     case "tr":
@@ -455,6 +424,7 @@ export function hasAllLocalizedSprites(lang?: string): boolean {
     case "ja":
     case "ca":
     case "ru":
+    case "tl":
       return true;
     default:
       return false;
@@ -491,59 +461,6 @@ export function truncateString(str: string, maxLength = 10) {
 }
 
 /**
- * Convert a space-separated string into a capitalized and underscored string.
- * @param input - The string to be converted.
- * @returns The converted string with words capitalized and separated by underscores.
- */
-export function reverseValueToKeySetting(input: string) {
-  // Split the input string into an array of words
-  const words = input.split(" ");
-  // Capitalize the first letter of each word and convert the rest to lowercase
-  const capitalizedWords = words.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
-  // Join the capitalized words with underscores and return the result
-  return capitalizedWords.join("_");
-}
-
-/**
- * Capitalize a string.
- * @param str - The string to be capitalized.
- * @param sep - The separator between the words of the string.
- * @param lowerFirstChar - Whether the first character of the string should be lowercase or not.
- * @param returnWithSpaces - Whether the returned string should have spaces between the words or not.
- * @returns The capitalized string.
- */
-export function capitalizeString(str: string, sep: string, lowerFirstChar = true, returnWithSpaces = false) {
-  if (str) {
-    const splitedStr = str.toLowerCase().split(sep);
-
-    for (let i = +lowerFirstChar; i < splitedStr?.length; i++) {
-      splitedStr[i] = splitedStr[i].charAt(0).toUpperCase() + splitedStr[i].substring(1);
-    }
-
-    return returnWithSpaces ? splitedStr.join(" ") : splitedStr.join("");
-  }
-  return null;
-}
-
-/**
- * Report whether a given value is nullish (`null`/`undefined`).
- * @param val - The value whose nullishness is being checked
- * @returns `true` if `val` is either `null` or `undefined`
- */
-export function isNullOrUndefined(val: any): val is null | undefined {
-  return val === null || val === undefined;
-}
-
-/**
- * Capitalize the first letter of a string.
- * @param str - The string whose first letter is being capitalized
- * @return The original string with its first letter capitalized
- */
-export function capitalizeFirstLetter(str: string) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
-/**
  * This function is used in the context of a Pokémon battle game to calculate the actual integer damage value from a float result.
  * Many damage calculation formulas involve various parameters and result in float values.
  * The actual damage applied to a Pokémon's HP must be an integer.
@@ -577,26 +494,6 @@ export function isBetween(num: number, min: number, max: number): boolean {
   return min <= num && num <= max;
 }
 
-/**
- * Helper method to return the animation filename for a given move
- *
- * @param move the move for which the animation filename is needed
- */
-export function animationFileName(move: MoveId): string {
-  return MoveId[move].toLowerCase().replace(/\_/g, "-");
-}
-
-/**
- * Transforms a camelCase string into a kebab-case string
- * @param str The camelCase string
- * @returns A kebab-case string
- *
- * @source {@link https://stackoverflow.com/a/67243723/}
- */
-export function camelCaseToKebabCase(str: string): string {
-  return str.replace(/[A-Z]+(?![a-z])|[A-Z]/g, (s, o) => (o ? "-" : "") + s.toLowerCase());
-}
-
 /** Get the localized shiny descriptor for the provided variant
  * @param variant - The variant to get the shiny descriptor for
  * @returns The localized shiny descriptor
@@ -621,24 +518,18 @@ export function coerceArray<T>(input: T): T | [T] {
   return Array.isArray(input) ? input : [input];
 }
 
-/**
- * Returns the name of the key that matches the enum [object] value.
- * @param input - The enum [object] to check
- * @param val - The value to get the key of
- * @returns The name of the key with the specified value
- * @example
- * const thing = {
- *   one: 1,
- *   two: 2,
- * } as const;
- * console.log(enumValueToKey(thing, thing.two)); // output: "two"
- * @throws An `Error` if an invalid enum value is passed to the function
- */
-export function enumValueToKey<T extends Record<string, string | number>>(input: T, val: T[keyof T]): keyof T {
-  for (const [key, value] of Object.entries(input)) {
-    if (val === value) {
-      return key as keyof T;
-    }
+export function getBiomeName(biome: BiomeId | -1) {
+  if (biome === -1) {
+    return i18next.t("biome:unknownLocation");
   }
-  throw new Error(`Invalid value passed to \`enumValueToKey\`! Value: ${val}`);
+  switch (biome) {
+    case BiomeId.GRASS:
+      return i18next.t("biome:grass");
+    case BiomeId.RUINS:
+      return i18next.t("biome:ruins");
+    case BiomeId.END:
+      return i18next.t("biome:end");
+    default:
+      return i18next.t(`biome:${toCamelCase(BiomeId[biome])}`);
+  }
 }

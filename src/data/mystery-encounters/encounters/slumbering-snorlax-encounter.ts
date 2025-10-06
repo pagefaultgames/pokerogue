@@ -1,15 +1,22 @@
-import { STEALING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
-import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/data/data-lists";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { SpeciesId } from "#enums/species-id";
 import { globalScene } from "#app/global-scene";
+import { modifierTypes } from "#data/data-lists";
+import { CustomPokemonData } from "#data/pokemon-data";
+import { AiType } from "#enums/ai-type";
+import { BattlerIndex } from "#enums/battler-index";
+import { BerryType } from "#enums/berry-type";
+import { MoveId } from "#enums/move-id";
+import { MoveUseMode } from "#enums/move-use-mode";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Nature } from "#enums/nature";
+import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import type { EnemyPartyConfig, EnemyPokemonConfig } from "../utils/encounter-phase-utils";
+import type { PokemonHeldItemModifierType } from "#modifiers/modifier-type";
+import { PokemonMove } from "#moves/pokemon-move";
+import { queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
+import type { EnemyPartyConfig, EnemyPokemonConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
   generateModifierType,
   initBattleWithEnemyConfig,
@@ -17,21 +24,14 @@ import {
   loadCustomMovesForEncounter,
   setEncounterExp,
   setEncounterRewards,
-} from "../utils/encounter-phase-utils";
-import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { Nature } from "#enums/nature";
-import { MoveId } from "#enums/move-id";
-import { BattlerIndex } from "#enums/battler-index";
-import { PokemonMove } from "#app/data/moves/pokemon-move";
-import { AiType } from "#enums/ai-type";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { BerryType } from "#enums/berry-type";
-import { Stat } from "#enums/stat";
-import { CustomPokemonData } from "#app/data/custom-pokemon-data";
-import { randSeedInt } from "#app/utils/common";
-import { MoveUseMode } from "#enums/move-use-mode";
+} from "#mystery-encounters/encounter-phase-utils";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
+import { MoveRequirement } from "#mystery-encounters/mystery-encounter-requirements";
+import { STEALING_MOVES } from "#mystery-encounters/requirement-groups";
+import { randSeedInt } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 /** i18n namespace for the encounter */
 const namespace = "mysteryEncounters/slumberingSnorlax";
@@ -157,7 +157,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
       // Fall asleep waiting for Snorlax
       // Full heal party
       globalScene.phaseManager.unshiftNew("PartyHealPhase", true);
-      queueEncounterMessage(`${namespace}:option.2.rest_result`);
+      queueEncounterMessage(`${namespace}:option.2.restResult`);
       leaveEncounterWithoutBattle();
     },
   )
@@ -167,7 +167,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
       .withDialogue({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
+        disabledButtonTooltip: `${namespace}:option.3.disabledTooltip`,
         selected: [
           {
             text: `${namespace}:option.3.selected`,

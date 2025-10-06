@@ -1,8 +1,8 @@
-import { Stat } from "#app/enums/stat";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { Stat } from "#enums/stat";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -38,7 +38,7 @@ describe("Moves - Entrainment", () => {
     game.move.select(MoveId.ENTRAINMENT);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getEnemyPokemon()?.getAbility().id).toBe(AbilityId.ADAPTABILITY);
+    expect(game.field.getEnemyPokemon().getAbility().id).toBe(AbilityId.ADAPTABILITY);
   });
 
   it("should activate post-summon abilities", async () => {
@@ -48,6 +48,6 @@ describe("Moves - Entrainment", () => {
     game.move.select(MoveId.ENTRAINMENT);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getPlayerPokemon()?.getStatStage(Stat.ATK)).toBe(-1);
+    expect(game.field.getPlayerPokemon().getStatStage(Stat.ATK)).toBe(-1);
   });
 });

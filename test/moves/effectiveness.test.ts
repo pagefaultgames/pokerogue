@@ -1,12 +1,12 @@
-import { allMoves } from "#app/data/data-lists";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
-import { TrainerSlot } from "#enums/trainer-slot";
-import { PokemonType } from "#enums/pokemon-type";
+import * as Messages from "#app/messages";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
+import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
-import * as Messages from "#app/messages";
-import GameManager from "#test/testUtils/gameManager";
+import { TrainerSlot } from "#enums/trainer-slot";
+import { GameManager } from "#test/test-utils/game-manager";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 

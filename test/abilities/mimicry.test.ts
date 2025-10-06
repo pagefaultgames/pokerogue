@@ -1,8 +1,8 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species-id";
 import { PokemonType } from "#enums/pokemon-type";
-import GameManager from "#test/testUtils/gameManager";
+import { SpeciesId } from "#enums/species-id";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -47,44 +47,44 @@ describe("Abilities - Mimicry", () => {
   });
 
   it("Pokemon should revert back to its original, root type once terrain ends", async () => {
-    game.override
-      .moveset([MoveId.SPLASH, MoveId.TRANSFORM])
-      .enemyAbility(AbilityId.MIMICRY)
-      .enemyMoveset([MoveId.SPLASH, MoveId.PSYCHIC_TERRAIN]);
+    game.override.enemyAbility(AbilityId.MIMICRY);
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
 
-    const playerPokemon = game.scene.getPlayerPokemon();
-    game.move.select(MoveId.TRANSFORM);
-    await game.move.selectEnemyMove(MoveId.PSYCHIC_TERRAIN);
+    const playerPokemon = game.field.getPlayerPokemon();
+
+    game.move.use(MoveId.SKILL_SWAP);
+    await game.move.forceEnemyMove(MoveId.PSYCHIC_TERRAIN);
     await game.toNextTurn();
-    expect(playerPokemon?.getTypes().includes(PokemonType.PSYCHIC)).toBe(true);
+
+    expect(playerPokemon.getTypes()).toEqual([PokemonType.PSYCHIC]);
 
     if (game.scene.arena.terrain) {
       game.scene.arena.terrain.turnsLeft = 1;
     }
 
-    game.move.select(MoveId.SPLASH);
-    await game.move.selectEnemyMove(MoveId.SPLASH);
+    game.move.use(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
-    expect(playerPokemon?.getTypes().includes(PokemonType.ELECTRIC)).toBe(true);
+
+    expect(playerPokemon.getTypes()).toEqual([PokemonType.ELECTRIC]);
   });
 
   it("If the Pokemon is under the effect of a type-adding move and an equivalent terrain activates, the move's effect disappears", async () => {
     game.override.enemyMoveset([MoveId.FORESTS_CURSE, MoveId.GRASSY_TERRAIN]);
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const playerPokemon = game.scene.getPlayerPokemon();
+    const playerPokemon = game.field.getPlayerPokemon();
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.FORESTS_CURSE);
     await game.toNextTurn();
 
-    expect(playerPokemon?.summonData.addedType).toBe(PokemonType.GRASS);
+    expect(playerPokemon.summonData.addedType).toBe(PokemonType.GRASS);
 
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.GRASSY_TERRAIN);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(playerPokemon?.summonData.addedType).toBeNull();
-    expect(playerPokemon?.getTypes().includes(PokemonType.GRASS)).toBe(true);
+    expect(playerPokemon.summonData.addedType).toBeNull();
+    expect(playerPokemon.getTypes()).toEqual([PokemonType.GRASS]);
   });
 });

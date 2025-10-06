@@ -1,9 +1,9 @@
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { randInt } from "#app/utils/common";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
-import Phase from "phaser";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/test-utils/game-manager";
+import { randInt } from "#utils/common";
+import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Items - Leek", () => {
@@ -11,7 +11,7 @@ describe("Items - Leek", () => {
   let game: GameManager;
 
   beforeAll(() => {
-    phaserGame = new Phase.Game({
+    phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
   });
@@ -34,7 +34,7 @@ describe("Items - Leek", () => {
   it("should raise CRIT stage by 2 when held by FARFETCHD", async () => {
     await game.classicMode.startBattle([SpeciesId.FARFETCHD]);
 
-    const enemyMember = game.scene.getEnemyPokemon()!;
+    const enemyMember = game.field.getEnemyPokemon();
 
     vi.spyOn(enemyMember, "getCritStage");
 
@@ -48,7 +48,7 @@ describe("Items - Leek", () => {
   it("should raise CRIT stage by 2 when held by GALAR_FARFETCHD", async () => {
     await game.classicMode.startBattle([SpeciesId.GALAR_FARFETCHD]);
 
-    const enemyMember = game.scene.getEnemyPokemon()!;
+    const enemyMember = game.field.getEnemyPokemon();
 
     vi.spyOn(enemyMember, "getCritStage");
 
@@ -62,7 +62,7 @@ describe("Items - Leek", () => {
   it("should raise CRIT stage by 2 when held by SIRFETCHD", async () => {
     await game.classicMode.startBattle([SpeciesId.SIRFETCHD]);
 
-    const enemyMember = game.scene.getEnemyPokemon()!;
+    const enemyMember = game.field.getEnemyPokemon();
 
     vi.spyOn(enemyMember, "getCritStage");
 
@@ -90,7 +90,7 @@ describe("Items - Leek", () => {
     partyMember.fusionGender = ally.gender;
     partyMember.fusionLuck = ally.luck;
 
-    const enemyMember = game.scene.getEnemyPokemon()!;
+    const enemyMember = game.field.getEnemyPokemon();
 
     vi.spyOn(enemyMember, "getCritStage");
 
@@ -118,7 +118,7 @@ describe("Items - Leek", () => {
     partyMember.fusionGender = ally.gender;
     partyMember.fusionLuck = ally.luck;
 
-    const enemyMember = game.scene.getEnemyPokemon()!;
+    const enemyMember = game.field.getEnemyPokemon();
 
     vi.spyOn(enemyMember, "getCritStage");
 
@@ -132,7 +132,7 @@ describe("Items - Leek", () => {
   it("should not raise CRIT stage when held by a Pokemon outside of FARFETCHD line", async () => {
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
-    const enemyMember = game.scene.getEnemyPokemon()!;
+    const enemyMember = game.field.getEnemyPokemon();
 
     vi.spyOn(enemyMember, "getCritStage");
 
