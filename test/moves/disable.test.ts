@@ -49,8 +49,8 @@ describe("Moves - Disable", () => {
     await game.toNextTurn();
 
     expect(enemyMon.getLastXMoves(-1)).toHaveLength(2);
-    expect(enemyMon.isMoveRestricted(MoveId.SPLASH)).toBe(true);
-    expect(enemyMon.isMoveRestricted(MoveId.GROWL)).toBe(false);
+    expect(enemyMon.hasRestrictingTag(MoveId.SPLASH)).toBe(true);
+    expect(enemyMon.hasRestrictingTag(MoveId.GROWL)).toBe(false);
   });
 
   it("should fail if enemy has no move history", async () => {
@@ -67,7 +67,7 @@ describe("Moves - Disable", () => {
       move: MoveId.DISABLE,
       result: MoveResult.FAIL,
     });
-    expect(enemyMon.isMoveRestricted(MoveId.SPLASH)).toBe(false);
+    expect(enemyMon.hasRestrictingTag(MoveId.SPLASH)).toBe(false);
   });
 
   it("causes STRUGGLE if all usable moves are disabled", async () => {
@@ -100,7 +100,7 @@ describe("Moves - Disable", () => {
 
     expect(playerMon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(enemyMon.getLastXMoves()[0].move).toBe(MoveId.STRUGGLE);
-    expect(enemyMon.isMoveRestricted(MoveId.STRUGGLE)).toBe(false);
+    expect(enemyMon.hasRestrictingTag(MoveId.STRUGGLE)).toBe(false);
   });
 
   it("should interrupt target's move if used first", async () => {
@@ -142,11 +142,11 @@ describe("Moves - Disable", () => {
     await game.toNextTurn();
 
     const enemyMon = game.field.getEnemyPokemon();
-    expect(enemyMon.isMoveRestricted(moveId), `calling move ${MoveId[moveId]} was not disabled`).toBe(true);
+    expect(enemyMon.hasRestrictingTag(moveId), `calling move ${MoveId[moveId]} was not disabled`).toBe(true);
     expect(enemyMon.getLastXMoves(-1)).toHaveLength(2);
     const calledMove = enemyMon.getLastXMoves()[0].move;
     expect(
-      enemyMon.isMoveRestricted(calledMove),
+      enemyMon.hasRestrictingTag(calledMove),
       `called move ${MoveId[calledMove]} (from ${MoveId[moveId]}) was incorrectly disabled`,
     ).toBe(false);
   });
@@ -171,8 +171,8 @@ describe("Moves - Disable", () => {
     // Dancer-induced Swords Dance was ignored in favor of splash,
     // leaving the subsequent _normal_ swords dance free to work as normal
     const shuckle = game.field.getEnemyPokemon();
-    expect.soft(shuckle.isMoveRestricted(MoveId.SPLASH)).toBe(true);
-    expect.soft(shuckle.isMoveRestricted(MoveId.SWORDS_DANCE)).toBe(false);
+    expect.soft(shuckle.hasRestrictingTag(MoveId.SPLASH)).toBe(true);
+    expect.soft(shuckle.hasRestrictingTag(MoveId.SWORDS_DANCE)).toBe(false);
     expect(shuckle.getLastXMoves()[0]).toMatchObject({ move: MoveId.SWORDS_DANCE, result: MoveResult.SUCCESS });
     expect(shuckle.getStatStage(Stat.ATK)).toBe(4);
   });

@@ -1,0 +1,11 @@
+export enum BiomePoolTier {
+  COMMON,
+  UNCOMMON,
+  RARE,
+  SUPER_RARE,
+  ULTRA_RARE,
+  BOSS,
+  BOSS_RARE,
+  BOSS_SUPER_RARE,
+  BOSS_ULTRA_RARE,
+}

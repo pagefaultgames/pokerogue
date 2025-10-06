@@ -37,9 +37,9 @@ import { getMoveTargets, isFieldTargeted } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import { PokemonPhase } from "#phases/pokemon-phase";
 import { DamageAchv } from "#system/achv";
+import type { nil } from "#types/common";
 import type { DamageResult } from "#types/damage-result";
 import type { TurnMove } from "#types/turn-move";
-import type { nil } from "#utils/common";
 import { BooleanHolder, NumberHolder } from "#utils/common";
 import i18next from "i18next";
 

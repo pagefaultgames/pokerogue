@@ -12,6 +12,24 @@ import type { BattlerTagDataMap, SerializableBattlerTagType } from "#types/battl
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 // intersection required to preserve T for inferences
+
+/**
+ * Helper type for serializable battler tag options. Allows for caching of the type to avoid
+ * instantiation each time typescript encounters the type. (dramatically speeds up typechecking)
+ * @internal
+ */
+type SerializableTagOptions<B extends SerializableBattlerTagType> = OneOther<BattlerTagDataMap[B], "tagType"> & {
+  tagType: B;
+};
+
+/**
+ * Helper type for non-serializable battler tag options.
+ * @internal
+ */
+type NonSerializableTagOptions<B extends BattlerTagType> = OneOther<BattlerTagTypeMap[B], "tagType"> & {
+  tagType: B;
+};
+
 /**
  * Options type for {@linkcode toHaveBattlerTag}.
  * @typeParam B - The {@linkcode BattlerTagType} being checked
@@ -19,11 +37,9 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * If B corresponds to a serializable `BattlerTag`, only properties allowed to be serialized
  * (i.e. can change across instances) will be present and able to be checked.
  */
-export type toHaveBattlerTagOptions<B extends BattlerTagType> = (B extends SerializableBattlerTagType
-  ? OneOther<BattlerTagDataMap[B], "tagType">
-  : OneOther<BattlerTagTypeMap[B], "tagType">) & {
-  tagType: B;
-};
+export type toHaveBattlerTagOptions<B extends BattlerTagType> = B extends SerializableBattlerTagType
+  ? SerializableTagOptions<B>
+  : NonSerializableTagOptions<B>;
 
 /**
  * Matcher that checks if a {@linkcode Pokemon} has a specific {@linkcode BattlerTag}.

@@ -526,24 +526,25 @@ export class FixedBattleConfig {
 
 /**
  * Helper function to generate a random trainer for evil team trainers and the elite 4/champion
- * @param trainerPool The TrainerType or list of TrainerTypes that can possibly be generated
- * @param randomGender whether or not to randomly (50%) generate a female trainer (for use with evil team grunts)
- * @param seedOffset the seed offset to use for the random generation of the trainer
- * @returns the generated trainer
+ * @param trainerPool - An array of trainer types to choose from. If an entry is an array, a random trainer type will be chosen from that array
+ * @param randomGender - Whether or not to randomly (50%) generate a female trainer (for use with evil team grunts)
+ * @param seedOffset - The seed offset to use for the random generation of the trainer
+ * @returns A function to get a random trainer
  */
 export function getRandomTrainerFunc(
-  trainerPool: (TrainerType | TrainerType[])[],
+  trainerPool: readonly (TrainerType | readonly TrainerType[])[],
   randomGender = false,
   seedOffset = 0,
 ): GetTrainerFunc {
   return () => {
     const rand = randSeedInt(trainerPool.length);
-    const trainerTypes: TrainerType[] = [];
+    const trainerTypes: TrainerType[] = new Array(trainerPool.length);
 
     globalScene.executeWithSeedOffset(() => {
-      for (const trainerPoolEntry of trainerPool) {
+      for (let i = 0; i < trainerPool.length; i++) {
+        const trainerPoolEntry = trainerPool[i];
         const trainerType = Array.isArray(trainerPoolEntry) ? randSeedItem(trainerPoolEntry) : trainerPoolEntry;
-        trainerTypes.push(trainerType);
+        trainerTypes[i] = trainerType;
       }
     }, seedOffset);
 

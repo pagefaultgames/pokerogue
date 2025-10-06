@@ -14,11 +14,10 @@ import { BgmBar } from "#ui/bgm-bar";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addTextObject, getTextStyleOptions } from "#ui/text";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
-import { fixedInt, isLocal, sessionIdKey } from "#utils/common";
+import { fixedInt, sessionIdKey } from "#utils/common";
 import { getCookie } from "#utils/cookies";
 import { getEnumValues } from "#utils/enums";
 import { toCamelCase } from "#utils/strings";
-import { isBeta } from "#utils/utility-vars";
 import i18next from "i18next";
 
 enum MenuOptions {
@@ -238,7 +237,7 @@ export class MenuUiHandler extends MessageUiHandler {
       });
     };
 
-    if (isLocal || isBeta) {
+    if (import.meta.env.DEV) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importSession"),
         handler: () => {
@@ -292,7 +291,7 @@ export class MenuUiHandler extends MessageUiHandler {
       },
       keepOpen: true,
     });
-    if (isLocal || isBeta) {
+    if (import.meta.env.DEV) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importData"),
         handler: () => {
@@ -339,7 +338,7 @@ export class MenuUiHandler extends MessageUiHandler {
         keepOpen: true,
       },
     );
-    if (isLocal || isBeta) {
+    if (import.meta.env.DEV) {
       // this should make sure we don't have this option in live
       manageDataOptions.push({
         label: "Test Dialogue",

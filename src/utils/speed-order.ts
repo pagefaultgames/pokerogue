@@ -13,9 +13,9 @@ interface hasPokemon {
 /**
  * Sort an array of {@linkcode Pokemon} in speed order, taking Trick Room into account.
  * @param pokemonList - An array of `Pokemon` or objects containing `Pokemon` to sort;
- * will be mutated and sorted in place.
+ * will be mutated and sorted in place
  * @param shuffleFirst - Whether to shuffle the list before sorting (to handle speed ties); default `true`.
- * If `false`, speed ties will remain in the order they were in the original array.
+ * If `false`, speed ties will remain in the order they were in the original array
  */
 export function sortInSpeedOrder<T extends Pokemon | hasPokemon>(pokemonList: T[], shuffleFirst = true): void {
   if (shuffleFirst) {
@@ -27,17 +27,19 @@ export function sortInSpeedOrder<T extends Pokemon | hasPokemon>(pokemonList: T[
 /**
  * Helper function to randomly shuffle an array of Pokemon.
  * @param pokemonList - The array of Pokemon or objects containing Pokemon to shuffle
+ * @returns A reference to the same array, now shuffled in place
  */
-function shufflePokemonList<T extends Pokemon | hasPokemon>(pokemonList: T[]): void {
+function shufflePokemonList<T extends Pokemon | hasPokemon>(pokemonList: T[]): T[] {
   // This is seeded with the current turn to prevent an inconsistency where it
   // was varying based on how long since you last reloaded
   globalScene.executeWithSeedOffset(
     () => {
-      randSeedShuffle(pokemonList, true);
+      randSeedShuffle(pokemonList);
     },
     globalScene.currentBattle.turn * 1000 + pokemonList.length,
     globalScene.waveSeed,
   );
+  return pokemonList;
 }
 
 /** Sort an array containing Pokémon (or objects containing one) in speed order, without shuffling */

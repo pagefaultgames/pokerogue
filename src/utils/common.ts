@@ -1,9 +1,9 @@
 import { pokerogueApi } from "#api/pokerogue-api";
+import { BiomeId } from "#enums/biome-id";
 import { MoneyFormat } from "#enums/money-format";
 import type { Variant } from "#sprites/variant";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
-
-export type nil = null | undefined;
 
 export const MissingTextureKey = "__MISSING";
 
@@ -125,32 +125,25 @@ export function randSeedFloat(): number {
   return Phaser.Math.RND.frac();
 }
 
-export function randItem<T>(items: T[]): T {
+export function randItem<T>(items: ArrayLike<T>): T {
   return items.length === 1 ? items[0] : items[randInt(items.length)];
 }
 
-export function randSeedItem<T>(items: T[]): T {
+export function randSeedItem<T>(items: ArrayLike<T>): T {
   return items.length === 1 ? items[0] : Phaser.Math.RND.pick(items);
 }
 
 /**
- * Shuffle a list using the seeded rng. Utilises the Fisher-Yates algorithm.
- * @param items - The array of items to shuffle
- * @param mutate - Whether to mutate the array in place (`true`) or create a new one
- * (`false`); default `false`
- * @returns A new shuffled array of items.
+ * Shuffle an array using seeded RNG via the Fisher-Yates algorithm.
+ * @param items - The array to shuffle; will be mutated
+ * @returns A reference to the same `items` array, now shuffled in place.
  */
-export function randSeedShuffle<T>(items: T[], mutate = false): T[] {
-  if (items.length <= 1) {
-    return items;
-  }
-
-  const newArray = mutate ? items.slice(0) : items;
+export function randSeedShuffle<T>(items: T[]): T[] {
   for (let i = items.length - 1; i > 0; i--) {
     const j = Phaser.Math.RND.integerInRange(0, i);
-    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    [items[i], items[j]] = [items[j], items[i]];
   }
-  return newArray;
+  return items;
 }
 
 export function getFrameMs(frameCount: number): number {
@@ -179,7 +172,7 @@ export function getPlayTimeString(totalSeconds: number): string {
  * @param id 32-bit number
  * @returns An array of six numbers corresponding to 5-bit chunks from {@linkcode id}
  */
-export function getIvsFromId(id: number): number[] {
+export function getIvsFromId(id: number): [number, number, number, number, number, number] {
   return [
     (id & 0x3e000000) >>> 25,
     (id & 0x01f00000) >>> 20,
@@ -295,9 +288,6 @@ export async function localPing(): Promise<void> {
   }
 }
 
-/** Alias for the constructor of a class */
-export type Constructor<T> = new (...args: unknown[]) => T;
-
 export class BooleanHolder {
   public value: boolean;
 
@@ -346,7 +336,7 @@ export function rgbToHsv(r: number, g: number, b: number) {
  * @param rgb1 First RGB color in array
  * @param rgb2 Second RGB color in array
  */
-export function deltaRgb(rgb1: number[], rgb2: number[]): number {
+export function deltaRgb(rgb1: readonly number[], rgb2: readonly number[]): number {
   const [r1, g1, b1] = rgb1;
   const [r2, g2, b2] = rgb2;
   const drp2 = Math.pow(r1 - r2, 2);
@@ -370,7 +360,7 @@ export function rgbHexToRgba(hex: string) {
   };
 }
 
-export function rgbaToInt(rgba: number[]): number {
+export function rgbaToInt(rgba: readonly number[]): number {
   return (rgba[0] << 24) + (rgba[1] << 16) + (rgba[2] << 8) + rgba[3];
 }
 
@@ -517,4 +507,20 @@ export function getShinyDescriptor(variant: Variant): string {
 export function coerceArray<T>(input: T): T extends any[] ? T : [T];
 export function coerceArray<T>(input: T): T | [T] {
   return Array.isArray(input) ? input : [input];
+}
+
+export function getBiomeName(biome: BiomeId | -1) {
+  if (biome === -1) {
+    return i18next.t("biome:unknownLocation");
+  }
+  switch (biome) {
+    case BiomeId.GRASS:
+      return i18next.t("biome:grass");
+    case BiomeId.RUINS:
+      return i18next.t("biome:ruins");
+    case BiomeId.END:
+      return i18next.t("biome:end");
+    default:
+      return i18next.t(`biome:${toCamelCase(BiomeId[biome])}`);
+  }
 }
