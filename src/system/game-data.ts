@@ -78,7 +78,6 @@ import { executeIf, fixedInt, isLocal, NumberHolder, randInt, randSeedItem } fro
 import { decrypt, encrypt } from "#utils/data";
 import { getEnumKeys } from "#utils/enums";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
-import { isBeta } from "#utils/utility-vars";
 import { AES, enc } from "crypto-js";
 import i18next from "i18next";
 
@@ -146,12 +145,20 @@ export class GameData {
   public eggPity: number[];
   public unlockPity: number[];
 
-  constructor() {
-    this.loadSettings();
-    this.loadGamepadSettings();
-    this.loadMappingConfigs();
-    this.trainerId = randInt(65536);
-    this.secretId = randInt(65536);
+  /**
+   * @param fromRaw - If true, will skip initialization of fields that are normally randomized on new game start. Used for the admin panel; default `false`
+   */
+  constructor(fromRaw = false) {
+    if (fromRaw) {
+      this.trainerId = 0;
+      this.secretId = 0;
+    } else {
+      this.loadSettings();
+      this.loadGamepadSettings();
+      this.loadMappingConfigs();
+      this.trainerId = randInt(65536);
+      this.secretId = randInt(65536);
+    }
     this.starterData = {};
     this.gameStats = new GameStats();
     this.runHistory = {};
@@ -288,13 +295,115 @@ export class GameData {
     });
   }
 
+  /**
+   *
+   * @param dataStr - The raw JSON string of the `SystemSaveData`
+   * @returns - A new `GameData` instance initialized with the parsed `SystemSaveData`
+   */
+  public static fromRawSystem(dataStr: string): GameData {
+    const gameData = new GameData(true);
+    const systemData = GameData.parseSystemData(dataStr);
+    gameData.initParsedSystem(systemData);
+    return gameData;
+  }
+
+  /**
+   * Initialize system data _after_ it has been parsed from JSON.
+   * @param systemData The parsed `SystemSaveData` to initialize from
+   */
+  private initParsedSystem(systemData: SystemSaveData): void {
+    applySystemVersionMigration(systemData);
+
+    this.trainerId = systemData.trainerId;
+    this.secretId = systemData.secretId;
+
+    this.gender = systemData.gender;
+
+    this.saveSetting(SettingKeys.Player_Gender, systemData.gender === PlayerGender.FEMALE ? 1 : 0);
+
+    if (systemData.starterData) {
+      this.starterData = systemData.starterData;
+    } else {
+      this.initStarterData();
+
+      if (systemData["starterMoveData"]) {
+        const starterMoveData = systemData["starterMoveData"];
+        for (const s of Object.keys(starterMoveData)) {
+          this.starterData[s].moveset = starterMoveData[s];
+        }
+      }
+
+      if (systemData["starterEggMoveData"]) {
+        const starterEggMoveData = systemData["starterEggMoveData"];
+        for (const s of Object.keys(starterEggMoveData)) {
+          this.starterData[s].eggMoves = starterEggMoveData[s];
+        }
+      }
+
+      this.migrateStarterAbilities(systemData, this.starterData);
+
+      const starterIds = Object.keys(this.starterData).map(s => Number.parseInt(s) as SpeciesId);
+      for (const s of starterIds) {
+        this.starterData[s].candyCount += systemData.dexData[s].caughtCount;
+        this.starterData[s].candyCount += systemData.dexData[s].hatchedCount * 2;
+        if (systemData.dexData[s].caughtAttr & DexAttr.SHINY) {
+          this.starterData[s].candyCount += 4;
+        }
+      }
+    }
+
+    if (systemData.gameStats) {
+      this.gameStats = systemData.gameStats;
+    }
+
+    if (systemData.unlocks) {
+      for (const key of Object.keys(systemData.unlocks)) {
+        if (this.unlocks.hasOwnProperty(key)) {
+          this.unlocks[key] = systemData.unlocks[key];
+        }
+      }
+    }
+
+    if (systemData.achvUnlocks) {
+      for (const a of Object.keys(systemData.achvUnlocks)) {
+        if (achvs.hasOwnProperty(a)) {
+          this.achvUnlocks[a] = systemData.achvUnlocks[a];
+        }
+      }
+    }
+
+    if (systemData.voucherUnlocks) {
+      for (const v of Object.keys(systemData.voucherUnlocks)) {
+        if (vouchers.hasOwnProperty(v)) {
+          this.voucherUnlocks[v] = systemData.voucherUnlocks[v];
+        }
+      }
+    }
+
+    if (systemData.voucherCounts) {
+      getEnumKeys(VoucherType).forEach(key => {
+        const index = VoucherType[key];
+        this.voucherCounts[index] = systemData.voucherCounts[index] || 0;
+      });
+    }
+
+    this.eggs = systemData.eggs ? systemData.eggs.map(e => e.toEgg()) : [];
+
+    this.eggPity = systemData.eggPity ? systemData.eggPity.slice(0) : [0, 0, 0, 0];
+    this.unlockPity = systemData.unlockPity ? systemData.unlockPity.slice(0) : [0, 0, 0, 0];
+
+    this.dexData = Object.assign(this.dexData, systemData.dexData);
+    this.consolidateDexData(this.dexData);
+    this.defaultDexData = null;
+  }
+
   public initSystem(systemDataStr: string, cachedSystemDataStr?: string): Promise<boolean> {
     const { promise, resolve } = Promise.withResolvers<boolean>();
     try {
-      let systemData = this.parseSystemData(systemDataStr);
+      let systemData = GameData.parseSystemData(systemDataStr);
 
       if (cachedSystemDataStr) {
-        const cachedSystemData = this.parseSystemData(cachedSystemDataStr);
+        const cachedSystemData = GameData.parseSystemData(cachedSystemDataStr);
         if (cachedSystemData.timestamp > systemData.timestamp) {
           console.debug("Use cached system");
           systemData = cachedSystemData;
@@ -304,10 +413,12 @@ export class GameData {
         }
       }
 
-      if (isLocal || isBeta) {
+      if (import.meta.env.DEV) {
         try {
           console.debug(
-            this.parseSystemData(JSON.stringify(systemData, (_, v: any) => (typeof v === "bigint" ? v.toString() : v))),
+            GameData.parseSystemData(
+              JSON.stringify(systemData, (_, v: any) => (typeof v === "bigint" ? v.toString() : v)),
+            ),
           );
         } catch (err) {
           console.debug("Attempt to log system data failed:", err);
@@ -322,90 +433,7 @@ export class GameData {
         localStorage.setItem(lsItemKey, "");
       }
 
-      applySystemVersionMigration(systemData);
-
-      this.trainerId = systemData.trainerId;
-      this.secretId = systemData.secretId;
-
-      this.gender = systemData.gender;
-
-      this.saveSetting(SettingKeys.Player_Gender, systemData.gender === PlayerGender.FEMALE ? 1 : 0);
-
-      if (!systemData.starterData) {
-        this.initStarterData();
-
-        if (systemData["starterMoveData"]) {
-          const starterMoveData = systemData["starterMoveData"];
-          for (const s of Object.keys(starterMoveData)) {
-            this.starterData[s].moveset = starterMoveData[s];
-          }
-        }
-
-        if (systemData["starterEggMoveData"]) {
-          const starterEggMoveData = systemData["starterEggMoveData"];
-          for (const s of Object.keys(starterEggMoveData)) {
-            this.starterData[s].eggMoves = starterEggMoveData[s];
-          }
-        }
-
-        this.migrateStarterAbilities(systemData, this.starterData);
-
-        const starterIds = Object.keys(this.starterData).map(s => Number.parseInt(s) as SpeciesId);
-        for (const s of starterIds) {
-          this.starterData[s].candyCount += systemData.dexData[s].caughtCount;
-          this.starterData[s].candyCount += systemData.dexData[s].hatchedCount * 2;
-          if (systemData.dexData[s].caughtAttr & DexAttr.SHINY) {
-            this.starterData[s].candyCount += 4;
-          }
-        }
-      } else {
-        this.starterData = systemData.starterData;
-      }
-
-      if (systemData.gameStats) {
-        this.gameStats = systemData.gameStats;
-      }
-
-      if (systemData.unlocks) {
-        for (const key of Object.keys(systemData.unlocks)) {
-          if (this.unlocks.hasOwnProperty(key)) {
-            this.unlocks[key] = systemData.unlocks[key];
-          }
-        }
-      }
-
-      if (systemData.achvUnlocks) {
-        for (const a of Object.keys(systemData.achvUnlocks)) {
-          if (achvs.hasOwnProperty(a)) {
-            this.achvUnlocks[a] = systemData.achvUnlocks[a];
-          }
-        }
-      }
-
-      if (systemData.voucherUnlocks) {
-        for (const v of Object.keys(systemData.voucherUnlocks)) {
-          if (vouchers.hasOwnProperty(v)) {
-            this.voucherUnlocks[v] = systemData.voucherUnlocks[v];
-          }
-        }
-      }
-
-      if (systemData.voucherCounts) {
-        getEnumKeys(VoucherType).forEach(key => {
-          const index = VoucherType[key];
-          this.voucherCounts[index] = systemData.voucherCounts[index] || 0;
-        });
-      }
-
-      this.eggs = systemData.eggs ? systemData.eggs.map(e => e.toEgg()) : [];
-
-      this.eggPity = systemData.eggPity ? systemData.eggPity.slice(0) : [0, 0, 0, 0];
-      this.unlockPity = systemData.unlockPity ? systemData.unlockPity.slice(0) : [0, 0, 0, 0];
-
-      this.dexData = Object.assign(this.dexData, systemData.dexData);
-      this.consolidateDexData(this.dexData);
-      this.defaultDexData = null;
-
+      this.initParsedSystem(systemData);
       resolve(true);
     } catch (err) {
       console.error(err);
@@ -507,7 +535,7 @@ export class GameData {
     return true;
   }
 
-  parseSystemData(dataStr: string): SystemSaveData {
+  static parseSystemData(dataStr: string): SystemSaveData {
     return JSON.parse(dataStr, (k: string, v: any) => {
       if (k === "gameStats") {
         return new GameStats(v);
@@ -926,7 +954,7 @@ export class GameData {
     const { promise, resolve, reject } = Promise.withResolvers<boolean>();
     try {
       const initSessionFromData = (fromSession: SessionSaveData) => {
-        if (isLocal || isBeta) {
+        if (import.meta.env.DEV) {
           try {
             console.debug(
               this.parseSessionData(
@@ -1021,6 +1049,7 @@ export class GameData {
             WeatherType.NONE,
             globalScene.arena.weather?.weatherType!,
             globalScene.arena.weather?.turnsLeft!,
+            globalScene.arena.weather?.maxDuration!,
           ),
         ); // TODO: is this bang correct?
 
@@ -1030,6 +1059,7 @@ export class GameData {
             TerrainType.NONE,
             globalScene.arena.terrain?.terrainType!,
             globalScene.arena.terrain?.turnsLeft!,
+            globalScene.arena.terrain?.maxDuration!,
           ),
         ); // TODO: is this bang correct?
 
@@ -1039,12 +1069,14 @@ export class GameData {
         if (globalScene.arena.tags) {
           for (const tag of globalScene.arena.tags) {
             if (tag instanceof EntryHazardTag) {
-              const { tagType, side, turnCount, layers, maxLayers } = tag as EntryHazardTag;
+              const { tagType, side, turnCount, maxDuration, layers, maxLayers } = tag as EntryHazardTag;
               globalScene.arena.eventTarget.dispatchEvent(
-                new TagAddedEvent(tagType, side, turnCount, layers, maxLayers),
+                new TagAddedEvent(tagType, side, turnCount, maxDuration, layers, maxLayers),
               );
             } else {
-              globalScene.arena.eventTarget.dispatchEvent(new TagAddedEvent(tag.tagType, tag.side, tag.turnCount));
+              globalScene.arena.eventTarget.dispatchEvent(
+                new TagAddedEvent(tag.tagType, tag.side, tag.turnCount, tag.maxDuration),
+              );
             }
           }
         }
@@ -1292,7 +1324,7 @@ export class GameData {
           : this.getSessionSaveData();
         const maxIntAttrValue = 0x80000000;
         const systemData = useCachedSystem
-          ? this.parseSystemData(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, bypassLogin))
+          ? GameData.parseSystemData(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, bypassLogin))
           : this.getSystemSaveData(); // TODO: is this bang correct?
 
         const request = {
@@ -1422,7 +1454,7 @@ export class GameData {
               case GameDataType.SYSTEM: {
                 dataStr = this.convertSystemDataStr(dataStr);
                 dataStr = dataStr.replace(/"playTime":\d+/, `"playTime":${this.gameStats.playTime + 60}`);
-                const systemData = this.parseSystemData(dataStr);
+                const systemData = GameData.parseSystemData(dataStr);
                 valid = !!systemData.dexData && !!systemData.timestamp;
                 break;
               }

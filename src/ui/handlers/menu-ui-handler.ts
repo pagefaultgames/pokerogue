@@ -3,6 +3,7 @@ import { loggedInUser, updateUserInfo } from "#app/account";
 import { globalScene } from "#app/global-scene";
 import { bypassLogin } from "#app/global-vars/bypass-login";
 import { handleTutorial, Tutorial } from "#app/tutorial";
+import { AdminMode, getAdminModeName } from "#enums/admin-mode";
 import { Button } from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
 import { TextStyle } from "#enums/text-style";
@@ -13,13 +14,11 @@ import { BgmBar } from "#ui/bgm-bar";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addTextObject, getTextStyleOptions } from "#ui/text";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
-import { fixedInt, isLocal, sessionIdKey } from "#utils/common";
+import { fixedInt, sessionIdKey } from "#utils/common";
 import { getCookie } from "#utils/cookies";
 import { getEnumValues } from "#utils/enums";
 import { toCamelCase } from "#utils/strings";
-import { isBeta } from "#utils/utility-vars";
 import i18next from "i18next";
-import { AdminMode, getAdminModeName } from "./admin-ui-handler";
 
 enum MenuOptions {
   GAME_SETTINGS,
@@ -238,7 +237,7 @@ export class MenuUiHandler extends MessageUiHandler {
       });
     };
 
-    if (isLocal || isBeta) {
+    if (import.meta.env.DEV) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importSession"),
         handler: () => {
@@ -292,7 +291,7 @@ export class MenuUiHandler extends MessageUiHandler {
       },
       keepOpen: true,
     });
-    if (isLocal || isBeta) {
+    if (import.meta.env.DEV) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importData"),
         handler: () => {
@@ -339,7 +338,7 @@ export class MenuUiHandler extends MessageUiHandler {
         keepOpen: true,
       },
     );
-    if (isLocal || isBeta) {
+    if (import.meta.env.DEV) {
       // this should make sure we don't have this option in live
       manageDataOptions.push({
         label: "Test Dialogue",
@@ -452,7 +451,7 @@ export class MenuUiHandler extends MessageUiHandler {
         keepOpen: true,
       },
     ];
-    if (!bypassLogin && loggedInUser?.hasAdminRole) {
+    if (bypassLogin || loggedInUser?.hasAdminRole) {
       communityOptions.push({
         label: "Admin",
         handler: () => {

@@ -102,7 +102,7 @@ describe("Moves - Ability-Ignoring Moves", () => {
 
     // Both the initial and redirected instruct use ignored sturdy
     const [enemy1, enemy2] = game.scene.getEnemyField();
-    expect(enemy1.isFainted()).toBe(true);
-    expect(enemy2.isFainted()).toBe(true);
+    expect(enemy1).toHaveFainted();
+    expect(enemy2).toHaveFainted();
   });
 });

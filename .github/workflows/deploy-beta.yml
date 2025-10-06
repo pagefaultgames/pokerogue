@@ -33,7 +33,7 @@ jobs:
       - name: Build
         run: pnpm build:beta
         env:
-          NODE_ENV: production
+          NODE_ENV: beta
 
       - name: Set up SSH
         run: |

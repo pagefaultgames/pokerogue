@@ -162,18 +162,18 @@ export async function initI18n(): Promise<void> {
   i18next.use(new KoreanPostpositionProcessor());
   await i18next.init({
     fallbackLng: {
-      "es-MX": ["es-ES", "en"],
+      "es-419": ["es-ES", "en"],
       default: ["en"],
     },
     supportedLngs: [
       "en",
       "es-ES",
-      "es-MX",
+      "es-419", // LATAM Spanish
       "fr",
       "it",
       "de",
-      "zh-CN",
-      "zh-TW",
+      "zh-Hans",
+      "zh-Hant",
       "pt-BR",
       "ko",
       "ja",

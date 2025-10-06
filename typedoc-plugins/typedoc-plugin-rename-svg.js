@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2025 Pagefault Games
+ * SPDX-FileContributor: Bertie690
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
 // @ts-check
 
 import { PageKind, Renderer } from "typedoc";
