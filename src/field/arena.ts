@@ -958,7 +958,7 @@ export class Arena {
       case BiomeId.SLUM:
         return 0.0;
       case BiomeId.SNOWY_FOREST:
-        return 3.047;
+        return 3.814;
       case BiomeId.END:
         return 17.153;
       default:
