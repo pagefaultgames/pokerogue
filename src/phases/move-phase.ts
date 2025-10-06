@@ -208,7 +208,8 @@ export class MovePhase extends PokemonPhase {
     const charging = isChargingMove && !user.getTag(BattlerTagType.CHARGING);
 
     // Charging moves consume PP when they begin charging, *not* when they release
-    if (charging) {
+    // TODO: We may not need the `!user.getTag` check if charging moves pass `ignorePP` for use mode
+    if (!isChargingMove || charging) {
       this.usePP();
     }
 
