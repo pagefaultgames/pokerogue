@@ -148,7 +148,7 @@ export class Ability {
   }
   /**
    * Whether this ability can be suppressed by effects like
-   *  {@linkcode MoveId.GASTRO_ACID | Gastro Acid} or {@linkcode AbilityId.NEUTRALIZING_GAS | Neutralizing Gas}.
+   * {@linkcode MoveId.GASTRO_ACID | Gastro Acid} or {@linkcode AbilityId.NEUTRALIZING_GAS | Neutralizing Gas}.
    */
   public get suppressable(): boolean {
     return !(this.flags & AB_FLAG_UNSUPPRESSABLE);
