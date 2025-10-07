@@ -3,6 +3,7 @@ import { FAKE_TITLE_LOGO_CHANCE } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { TimedEventDisplay } from "#app/timed-event-manager";
+import { isBeta, isDev } from "#constants/app-constants";
 import { getSplashMessages } from "#data/splash-messages";
 import { PlayerGender } from "#enums/player-gender";
 import type { SpeciesId } from "#enums/species-id";
@@ -141,7 +142,7 @@ export class TitleUiHandler extends OptionSelectUiHandler {
         }),
       );
 
-      const betaText = import.meta.env.DEV ? " (Beta)" : "";
+      const betaText = isBeta || isDev ? " (Beta)" : "";
       this.appVersionText.setText("v" + version + betaText);
 
       const ui = this.getUi();

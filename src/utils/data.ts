@@ -67,6 +67,7 @@ export function isBareObject(obj: any): boolean {
   if (typeof obj !== "object") {
     return false;
   }
+  // biome-ignore lint/suspicious/useGuardForIn: Checking a bare object should include prototype chain
   for (const _ in obj) {
     return false;
   }
