@@ -3,6 +3,7 @@ import { GameMode, getGameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { Phase } from "#app/phase";
+import { bypassLogin } from "#constants/app-constants";
 import { fetchDailyRunSeed, getDailyRunStarters } from "#data/daily-run";
 import { modifierTypes } from "#data/data-lists";
 import { Gender } from "#data/gender";
@@ -18,7 +19,7 @@ import { vouchers } from "#system/voucher";
 import type { SessionSaveData } from "#types/save-data";
 import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { SaveSlotUiMode } from "#ui/save-slot-select-ui-handler";
-import { isLocal, isLocalServerConnected } from "#utils/common";
+import { isLocalServerConnected } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
@@ -271,7 +272,7 @@ export class TitlePhase extends Phase {
       };
 
       // If Online, calls seed fetch from db to generate daily run. If Offline, generates a daily run based on current date.
-      if (!isLocal || isLocalServerConnected) {
+      if (!bypassLogin || isLocalServerConnected) {
         fetchDailyRunSeed()
           .then(seed => {
             if (seed) {

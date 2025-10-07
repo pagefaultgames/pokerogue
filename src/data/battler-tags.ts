@@ -92,7 +92,8 @@ import type {
   TypeBoostTagType,
 } from "#types/battler-tags";
 import type { Mutable } from "#types/type-helpers";
-import { BooleanHolder, coerceArray, getFrameMs, NumberHolder, toDmgValue } from "#utils/common";
+import { coerceArray } from "#utils/array";
+import { BooleanHolder, getFrameMs, NumberHolder, toDmgValue } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
 
 /** Interface containing the serializable fields of BattlerTag */
@@ -2217,8 +2218,8 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
 }
 
 export class WeatherHighestStatBoostTag extends HighestStatBoostTag {
-  #weatherTypes: WeatherType[];
-  public get weatherTypes(): WeatherType[] {
+  readonly #weatherTypes: readonly WeatherType[];
+  public get weatherTypes(): readonly WeatherType[] {
     return this.#weatherTypes;
   }
 
@@ -2229,8 +2230,8 @@ export class WeatherHighestStatBoostTag extends HighestStatBoostTag {
 }
 
 export class TerrainHighestStatBoostTag extends HighestStatBoostTag {
-  #terrainTypes: TerrainType[];
-  public get terrainTypes(): TerrainType[] {
+  readonly #terrainTypes: readonly TerrainType[];
+  public get terrainTypes(): readonly TerrainType[] {
     return this.#terrainTypes;
   }
 
