@@ -110,15 +110,17 @@ describe("Move - Heal Block", () => {
     expect(snorlax).toHaveHp(1);
     expect(chansey).not.toHaveFullHp();
     expect(snorlax).toHaveUsedMove({ move: MoveId.POLLEN_PUFF, result: MoveResult.SUCCESS });
-    expect(game).toHaveShownMessage(
-      i18next.t("battle:moveDisabledHealBlock", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(snorlax),
-        moveName: allMoves[MoveId.POLLEN_PUFF].name,
-      }),
-    );
+
+    // TODO: Pollen Puff should show a unique message for its failure
+    // expect(game).toHaveShownMessage(
+    //   i18next.t("battle:moveDisabledHealBlock", {
+    //     pokemonNameWithAffix: getPokemonNameWithAffix(blissey),
+    //     moveName: allMoves[MoveId.POLLEN_PUFF].name,
+    //   }),
+    // );
     expect(game).not.toHaveShownMessage(
       i18next.t("battle:moveDisabledHealBlock", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(chansey),
+        pokemonNameWithAffix: getPokemonNameWithAffix(snorlax),
         moveName: allMoves[MoveId.POLLEN_PUFF].name,
       }),
     );
@@ -158,6 +160,7 @@ describe("Move - Heal Block", () => {
     const player = game.field.getPlayerPokemon();
     player.hp = 1;
 
+    // Cannot use heal block turn 1 as that will render Wish unusable
     game.move.use(MoveId.WISH);
     await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
