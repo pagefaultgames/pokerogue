@@ -14,6 +14,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
+import type { Mutable } from "#types/type-helpers";
 import { randSeedInt } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 
@@ -5736,15 +5737,15 @@ export function initBiomes() {
   biomeDepths[BiomeId.END] = [Object.values(biomeDepths).map(d => d[0]).reduce((max: number, value: number) => Math.max(max, value), 0) + 1, 1];
 
   for (const biome of getEnumValues(BiomeId)) {
-    biomePokemonPools[biome] = {};
-    biomeTrainerPools[biome] = {};
+    (biomePokemonPools[biome] as Mutable<typeof biomePokemonPools[number]>) = {};
+    (biomeTrainerPools[biome] as Mutable<typeof biomeTrainerPools[number]>) = {};
 
     for (const tier of getEnumValues(BiomePoolTier)) {
-      biomePokemonPools[biome][tier] = {};
-      biomeTrainerPools[biome][tier] = [];
+      (biomePokemonPools[biome][tier] as Mutable<typeof biomePokemonPools[number][number]>) = {};
+      (biomeTrainerPools[biome][tier] as Mutable<typeof biomeTrainerPools[number][number]>) = [];
 
       for (const tod of getEnumValues(TimeOfDay)) {
-        biomePokemonPools[biome][tier][tod] = [];
+        (biomePokemonPools[biome][tier][tod] as Mutable<typeof biomePokemonPools[number][number][number]>) = [];
       }
     }
   }
@@ -5761,8 +5762,9 @@ export function initBiomes() {
       uncatchableSpecies.push(speciesId);
     }
 
+    type mutableSpecies = Mutable<typeof catchableSpecies[SpeciesId]>;
     // array of biome options for the current species
-    catchableSpecies[speciesId] = [];
+    (catchableSpecies[speciesId] as mutableSpecies) = [];
 
     for (const b of biomeEntries) {
       const biome = b[0];
@@ -5773,7 +5775,7 @@ export function initBiomes() {
           : [b[2]]
         : [TimeOfDay.ALL];
 
-      catchableSpecies[speciesId].push({
+      (catchableSpecies[speciesId] as mutableSpecies).push({
         biome: biome as BiomeId,
         tier: tier as BiomePoolTier,
         tod: timesOfDay as TimeOfDay[]
@@ -5861,7 +5863,7 @@ export function initBiomes() {
       }
 
       const biomeTierPool = biomeTrainerPools[biome][tier];
-      biomeTierPool.push(trainerType);
+      (biomeTierPool as Mutable<typeof biomeTierPool>).push(trainerType);
     }
     //outputPools();
   }

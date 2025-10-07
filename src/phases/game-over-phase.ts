@@ -2,6 +2,7 @@ import { pokerogueApi } from "#api/pokerogue-api";
 import { clientSessionId } from "#app/account";
 import { globalScene } from "#app/global-scene";
 import { pokemonEvolutions } from "#balance/pokemon-evolutions";
+import { bypassLogin } from "#constants/app-constants";
 import { modifierTypes } from "#data/data-lists";
 import { getCharVariantFromDialogue } from "#data/dialogue";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -24,7 +25,7 @@ import { TrainerData } from "#system/trainer-data";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { SessionSaveData } from "#types/save-data";
 import { checkSpeciesValidForChallenge, isNuzlockeChallenge } from "#utils/challenge-utils";
-import { isLocal, isLocalServerConnected } from "#utils/common";
+import { isLocalServerConnected } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
@@ -247,10 +248,9 @@ export class GameOverPhase extends BattlePhase {
       });
     };
 
-    /* Added a local check to see if the game is running offline
-      If Online, execute apiFetch as intended
-      If Offline, execute offlineNewClear() only for victory, a localStorage implementation of newClear daily run checks */
-    if (!isLocal || isLocalServerConnected) {
+    // If Online, execute apiFetch as intended
+    // If Offline, execute offlineNewClear() only for victory, a localStorage implementation of newClear daily run checks
+    if (!bypassLogin || isLocalServerConnected) {
       pokerogueApi.savedata.session
         .newclear({
           slot: globalScene.sessionSlotId,
