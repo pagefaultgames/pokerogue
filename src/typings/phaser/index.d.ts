@@ -33,6 +33,7 @@ declare module "phaser" {
     interface Rectangle extends hasSetPositionRelative {}
   }
 
+  // Overrides for `pick` and `weightedPick` to permit any array-like object
   namespace Math {
     interface RandomDataGenerator {
       pick<T>(array: ArrayLike<T>): T;
