@@ -3,6 +3,7 @@ import "#app/polyfills";
 
 import { InvertPostFX } from "#app/pipelines/invert";
 import { initI18n } from "#app/plugins/i18n";
+import { isBeta, isDev } from "#constants/app-constants";
 import { version } from "#package.json";
 import Phaser from "phaser";
 import BBCodeTextPlugin from "phaser3-rex-plugins/plugins/bbcodetext-plugin";
@@ -10,7 +11,7 @@ import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin";
 import TransitionImagePackPlugin from "phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin";
 import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 
-if (import.meta.env.DEV) {
+if (isBeta || isDev) {
   document.title += " (Beta)";
 }
 
@@ -59,9 +60,9 @@ Phaser.GameObjects.Text.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative;
 
 document.fonts.load("16px emerald").then(() => document.fonts.load("10px pkmnems"));
-// biome-ignore lint/suspicious/noImplicitAnyLet: TODO
+// biome-ignore lint: TODO
 let game;
-// biome-ignore lint/suspicious/noImplicitAnyLet: TODO
+// biome-ignore lint: TODO
 let manifest;
 
 const startGame = async () => {

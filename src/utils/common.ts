@@ -1,4 +1,5 @@
 import { pokerogueApi } from "#api/pokerogue-api";
+import { bypassLogin, isDev } from "#constants/app-constants";
 import { BiomeId } from "#enums/biome-id";
 import { MoneyFormat } from "#enums/money-format";
 import type { Variant } from "#sprites/variant";
@@ -269,11 +270,8 @@ export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>):
 
 export const sessionIdKey = "pokerogue_sessionId";
 
-/** `true` when run via `pnpm start:dev` (which runs `vite --mode development`) */
-export const isLocal = import.meta.env.MODE === "development";
-
-/** Used to disable api calls when isLocal is true and a server is not found */
-export let isLocalServerConnected = true;
+/** Used to disable api calls when `isDev` is true and a server is not found */
+export let isLocalServerConnected = !bypassLogin;
 
 /**
  * When locally running the game, "pings" the local server
@@ -281,7 +279,7 @@ export let isLocalServerConnected = true;
  * sets isLocalServerConnected based on results
  */
 export async function localPing(): Promise<void> {
-  if (isLocal) {
+  if (isDev) {
     const titleStats = await pokerogueApi.getGameTitleStats();
     isLocalServerConnected = !!titleStats;
     console.log("isLocalServerConnected:", isLocalServerConnected);
