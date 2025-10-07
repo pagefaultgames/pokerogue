@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { hasTouchscreen } from "#app/touch-controls";
+import { isDev } from "#constants/app-constants";
 import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
@@ -7,7 +8,6 @@ import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { UiMode } from "#enums/ui-mode";
 import { CandyUpgradeNotificationChangedEvent } from "#events/battle-scene";
 import { updateWindowType } from "#ui/ui-theme";
-import { isLocal } from "#utils/common";
 import i18next from "i18next";
 import { languageOptions } from "./settings-language";
 
@@ -716,7 +716,7 @@ export const Setting: Array<Setting> = [
   },
 ];
 
-if (isLocal) {
+if (isDev) {
   Setting.push({
     key: SettingKeys.Dex_For_Devs,
     label: i18next.t("settings:dexForDevs"),
