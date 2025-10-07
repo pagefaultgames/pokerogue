@@ -1,4 +1,5 @@
 import { Device } from "#enums/devices";
+import type { InterfaceConfig } from "#types/configs/inputs";
 
 /**
  * Retrieves the key associated with the specified keycode from the mapping.
@@ -7,8 +8,12 @@ import { Device } from "#enums/devices";
  * @param keycode - The keycode to search for.
  * @returns The key associated with the specified keycode.
  */
-export function getKeyWithKeycode(config, keycode) {
-  return Object.keys(config.deviceMapping).find(key => config.deviceMapping[key] === keycode);
+export function getKeyWithKeycode(config: InterfaceConfig, keycode: number) {
+  for (const [key, value] of Object.entries(config.deviceMapping)) {
+    if (value === keycode) {
+      return key;
+    }
+  }
 }
 
 /**
@@ -18,9 +23,9 @@ export function getKeyWithKeycode(config, keycode) {
  * @param keycode - The keycode to search for.
  * @returns The setting name associated with the specified keycode.
  */
-export function getSettingNameWithKeycode(config, keycode) {
+export function getSettingNameWithKeycode(config: InterfaceConfig, keycode: number) {
   const key = getKeyWithKeycode(config, keycode);
-  return key ? config.custom[key] : null;
+  return key ? config.custom?.[key] : null;
 }
 
 /**
@@ -54,8 +59,15 @@ export function getButtonWithKeycode(config, keycode) {
  * @param settingName - The setting name to search for.
  * @returns The key associated with the specified setting name.
  */
-export function getKeyWithSettingName(config, settingName) {
-  return Object.keys(config.custom).find(key => config.custom[key] === settingName);
+export function getKeyWithSettingName<const T extends InterfaceConfig>(
+  config: T,
+  settingName: string,
+): string | undefined {
+  for (const [key, value] of Object.entries(config.custom!)) {
+    if (value === settingName) {
+      return key as Exclude<keyof T["default"], symbol | number>;
+    }
+  }
 }
 
 /**
@@ -65,8 +77,8 @@ export function getKeyWithSettingName(config, settingName) {
  * @param key - The key to search for.
  * @returns The setting name associated with the specified key.
  */
-export function getSettingNameWithKey(config, key) {
-  return config.custom[key];
+export function getSettingNameWithKey(config: InterfaceConfig, key) {
+  return config.custom?.[key];
 }
 
 /**

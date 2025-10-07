@@ -30,8 +30,8 @@
     "strictFunctionTypes": true,
     // TODO: Enable this when possible
     "strictPropertyInitialization": false,
-    // todo: enable this when possible.
-    "noImplicitAny": false,
+    // TODO: Enable this when possible.
+    "noImplicitAny": true,
     "noImplicitThis": true,
     // Even with strict mode on, this is not useful as we do not throw non Errors,
     // and it just makes it more cumbersome to catch errors.

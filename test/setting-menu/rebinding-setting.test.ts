@@ -1,11 +1,11 @@
-import type { InterfaceConfig } from "#app/inputs-controller";
 import { Button } from "#enums/buttons";
 import { Device } from "#enums/devices";
-import cfg_keyboard_qwerty from "#inputs/cfg-keyboard-qwerty";
+import { CFG_KEYBOARD_QWERTY } from "#inputs/cfg-keyboard-qwerty";
 import { getKeyWithKeycode, getKeyWithSettingName } from "#inputs/config-handler";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import { InGameManip } from "#test/setting-menu/helpers/in-game-manip";
 import { MenuManip } from "#test/setting-menu/helpers/menu-manip";
+import type { InterfaceConfig } from "#types/configs/inputs";
 import { deepCopy } from "#utils/data";
 import { beforeEach, describe, expect, it } from "vitest";
 
@@ -23,7 +23,7 @@ describe("Test Rebinding", () => {
   };
 
   beforeEach(() => {
-    config = deepCopy(cfg_keyboard_qwerty);
+    config = deepCopy(CFG_KEYBOARD_QWERTY);
     config.custom = { ...config.default };
     configs["default"] = config;
     inGame = new InGameManip(configs, config, selectedDevice);

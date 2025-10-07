@@ -3,47 +3,20 @@ import { TouchControl } from "#app/touch-controls";
 import { Button } from "#enums/buttons";
 import { Device } from "#enums/devices";
 import { UiMode } from "#enums/ui-mode";
-import cfg_keyboard_qwerty from "#inputs/cfg-keyboard-qwerty";
+import { CFG_KEYBOARD_QWERTY } from "#inputs/cfg-keyboard-qwerty";
 import { assign, getButtonWithKeycode, getIconForLatestInput, swap } from "#inputs/config-handler";
-import pad_dualshock from "#inputs/pad-dualshock";
-import pad_generic from "#inputs/pad-generic";
-import pad_procon from "#inputs/pad-procon";
-import pad_unlicensedSNES from "#inputs/pad-unlicensed-snes";
-import pad_xbox360 from "#inputs/pad-xbox360";
-import type { SettingGamepad } from "#system/settings-gamepad";
-import type { SettingKeyboard } from "#system/settings-keyboard";
+import { PAD_DUALSHOCK } from "#inputs/pad-dualshock";
+import { PAD_GENERIC } from "#inputs/pad-generic";
+import { PAD_PROCON } from "#inputs/pad-procon";
+import { PAD_UNLICENSED_SNES } from "#inputs/pad-unlicensed-snes";
+import { PAD_XBOX360 } from "#inputs/pad-xbox360";
+import type { InterfaceConfig } from "#types/configs/inputs";
 import { MoveTouchControlsHandler } from "#ui/move-touch-controls-handler";
 import type { SettingsGamepadUiHandler } from "#ui/settings-gamepad-ui-handler";
 import type { SettingsKeyboardUiHandler } from "#ui/settings-keyboard-ui-handler";
 import { deepCopy } from "#utils/data";
 import { getEnumValues } from "#utils/enums";
 import Phaser from "phaser";
-
-export interface DeviceMapping {
-  [key: string]: number;
-}
-
-export interface IconsMapping {
-  [key: string]: string;
-}
-
-export interface SettingMapping {
-  [key: string]: Button;
-}
-
-export interface MappingLayout {
-  [key: string]: SettingGamepad | SettingKeyboard | number;
-}
-
-export interface InterfaceConfig {
-  padID: string;
-  padType: string;
-  deviceMapping: DeviceMapping;
-  icons: IconsMapping;
-  settings: SettingMapping;
-  default: MappingLayout;
-  custom?: MappingLayout;
-}
 
 const repeatInputDelayMillis = 250;
 
@@ -481,19 +454,19 @@ export class InputsController {
     id = id.toLowerCase();
 
     if (id.includes("081f") && id.includes("e401")) {
-      return pad_unlicensedSNES;
+      return PAD_UNLICENSED_SNES;
     }
     if (id.includes("xbox") && id.includes("360")) {
-      return pad_xbox360;
+      return PAD_XBOX360;
     }
     if (id.includes("054c")) {
-      return pad_dualshock;
+      return PAD_DUALSHOCK;
     }
     if (id.includes("057e") && id.includes("2009")) {
-      return pad_procon;
+      return PAD_PROCON;
     }
 
-    return pad_generic;
+    return PAD_GENERIC;
   }
 
   /**
@@ -504,10 +477,10 @@ export class InputsController {
    */
   getConfigKeyboard(id: string): InterfaceConfig {
     if (id === "default") {
-      return cfg_keyboard_qwerty;
+      return CFG_KEYBOARD_QWERTY;
     }
 
-    return cfg_keyboard_qwerty;
+    return CFG_KEYBOARD_QWERTY;
   }
 
   /**
