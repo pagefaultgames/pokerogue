@@ -240,8 +240,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
   private passive: AbilityId;
   private hasPassive: boolean;
   private hasAbilities: number[];
-  private biomes: BiomeTierTod[];
-  private preBiomes: BiomeTierTod[];
+  private biomes: readonly BiomeTierTod[];
+  private preBiomes: readonly BiomeTierTod[];
   private baseStats: number[];
   private baseTotal: number;
   private evolutions: SpeciesFormEvolution[];
@@ -893,7 +893,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
   }
 
   // Function to ensure that forms appear in the appropriate biome and tod
-  sanitizeBiomes(biomes: BiomeTierTod[], speciesId: number): BiomeTierTod[] {
+  sanitizeBiomes(biomes: readonly BiomeTierTod[], speciesId: number): readonly BiomeTierTod[] {
     if (speciesId === SpeciesId.BURMY || speciesId === SpeciesId.WORMADAM) {
       return biomes.filter(b => {
         const formIndex = (() => {

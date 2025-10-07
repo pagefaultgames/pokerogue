@@ -32,6 +32,7 @@
       "#abilities/*": ["./src/data/abilities/*.ts"],
       "#api/*": ["./src/plugins/api/*.ts"],
       "#balance/*": ["./src/data/balance/*.ts"],
+      "#constants/*": ["./src/constants/*.ts"],
       "#enums/*": ["./src/enums/*.ts"],
       "#events/*": ["./src/events/*.ts"],
       "#field/*": ["./src/field/*.ts"],

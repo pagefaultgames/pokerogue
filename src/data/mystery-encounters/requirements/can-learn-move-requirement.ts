@@ -3,7 +3,7 @@ import type { MoveId } from "#enums/move-id";
 import type { PlayerPokemon } from "#field/pokemon";
 import { PokemonMove } from "#moves/pokemon-move";
 import { EncounterPokemonRequirement } from "#mystery-encounters/mystery-encounter-requirements";
-import { coerceArray } from "#utils/common";
+import { coerceArray } from "#utils/array";
 
 /**
  * {@linkcode CanLearnMoveRequirement} options
