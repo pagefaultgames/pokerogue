@@ -84,7 +84,7 @@ const AB_FLAG_UNREPLACEABLE = 1 << 4;
 const AB_FLAG_UNIMPLEMENTED = 1 << 5;
 /** Bit set for an ability's `partial` flag */
 const AB_FLAG_PARTIAL = 1 << 6;
-/** Bit set for a swappable ability */
+/** Bit set for an unswappable ability */
 const AB_FLAG_UNSWAPPABLE = AB_FLAG_UNCOPIABLE | AB_FLAG_UNREPLACEABLE;
 
 //#endregion Bit sets
