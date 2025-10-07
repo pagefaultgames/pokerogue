@@ -149,7 +149,6 @@ import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 import Phaser from "phaser";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import type UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 
 const DEBUG_RNG = false;
 
@@ -165,7 +164,6 @@ export interface InfoToggle {
 }
 
 export class BattleScene extends SceneBase {
-  public rexUI: UIPlugin;
   public inputController: InputsController;
   public uiInputs: UiInputs;
 
@@ -3252,14 +3250,14 @@ export class BattleScene extends SceneBase {
     return true;
   }
 
-  validateAchvs(achvType: Constructor<Achv>, ...args: unknown[]): void {
+  validateAchvs<T extends Achv>(achvType: Constructor<T>, ...args: NonNullable<Parameters<T["validate"]>[0]>): void {
     const filteredAchvs = Object.values(achvs).filter(a => a instanceof achvType);
     for (const achv of filteredAchvs) {
       this.validateAchv(achv, args);
     }
   }
 
-  validateAchv(achv: Achv, args?: unknown[]): boolean {
+  validateAchv<T extends Achv>(achv: T, args?: Parameters<T["validate"]>[0]): boolean {
     if (
       (!this.gameData.achvUnlocks.hasOwnProperty(achv.id) || Overrides.ACHIEVEMENTS_REUNLOCK_OVERRIDE)
       && achv.validate(args)

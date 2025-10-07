@@ -22,10 +22,20 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "strictNullChecks": true,
     "sourceMap": false,
     "strict": false, // TODO: Enable this eventually
+    "strictNullChecks": true,
+    "strictBindCallApply": true,
+    "strictBuiltinIteratorReturn": true,
+    "strictFunctionTypes": true,
+    // TODO: Enable this when possible
+    "strictPropertyInitialization": false,
+    // todo: enable this when possible.
+    "noImplicitAny": false,
     "noImplicitThis": true,
+    // Even with strict mode on, this is not useful as we do not throw non Errors,
+    // and it just makes it more cumbersome to catch errors.
+    "useUnknownInCatchVariables": false,
     "rootDir": ".",
     "outDir": "./build",
     "noEmit": true,

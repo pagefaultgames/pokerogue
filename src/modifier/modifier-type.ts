@@ -1284,7 +1284,7 @@ export class FusePokemonModifierType extends PokemonModifierType {
 
 class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   constructor() {
-    super((party: Pokemon[], pregenArgs?: any[]) => {
+    super((party: readonly Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in PokemonType) {
         return new AttackTypeBoosterModifierType(pregenArgs[0] as PokemonType, TYPE_BOOST_ITEM_BOOST_PERCENT);
       }
@@ -1344,7 +1344,7 @@ class BaseStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   };
 
   constructor() {
-    super((_party: Pokemon[], pregenArgs?: any[]) => {
+    super((_party: readonly Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs) {
         return new BaseStatBoosterModifierType(pregenArgs[0]);
       }
@@ -1365,7 +1365,7 @@ class TempStatStageBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   };
 
   constructor() {
-    super((_party: Pokemon[], pregenArgs?: any[]) => {
+    super((_party: readonly Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && TEMP_BATTLE_STATS.includes(pregenArgs[0])) {
         return new TempStatStageBoosterModifierType(pregenArgs[0]);
       }
@@ -1422,7 +1422,7 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   };
 
   constructor(rare: boolean) {
-    super((party: Pokemon[], pregenArgs?: any[]) => {
+    super((party: readonly Pokemon[], pregenArgs?: any[]) => {
       const items = SpeciesStatBoosterModifierTypeGenerator.items;
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in items) {
         return new SpeciesStatBoosterModifierType(pregenArgs[0] as SpeciesStatBoosterItem);
@@ -1499,7 +1499,7 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
 
 class TmModifierTypeGenerator extends ModifierTypeGenerator {
   constructor(tier: ModifierTier) {
-    super((party: Pokemon[], pregenArgs?: any[]) => {
+    super((party: readonly Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in MoveId) {
         return new TmModifierType(pregenArgs[0] as MoveId);
       }
@@ -1526,7 +1526,7 @@ class TmModifierTypeGenerator extends ModifierTypeGenerator {
 
 class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
   constructor(rare: boolean) {
-    super((party: Pokemon[], pregenArgs?: any[]) => {
+    super((party: readonly Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in EvolutionItem) {
         return new EvolutionItemModifierType(pregenArgs[0] as EvolutionItem);
       }
@@ -1579,7 +1579,7 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
 
 export class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
   constructor(isRareFormChangeItem: boolean) {
-    super((party: Pokemon[], pregenArgs?: any[]) => {
+    super((party: readonly Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in FormChangeItem) {
         return new FormChangeItemModifierType(pregenArgs[0] as FormChangeItem);
       }
@@ -1924,7 +1924,7 @@ const modifierTypeInitObj = Object.freeze({
   ATTACK_TYPE_BOOSTER: () => new AttackTypeBoosterModifierTypeGenerator(),
 
   MINT: () =>
-    new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
+    new ModifierTypeGenerator((_party: readonly Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in Nature) {
         return new PokemonNatureChangeModifierType(pregenArgs[0] as Nature);
       }
@@ -1939,7 +1939,7 @@ const modifierTypeInitObj = Object.freeze({
     ),
 
   TERA_SHARD: () =>
-    new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
+    new ModifierTypeGenerator((party: readonly Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in PokemonType) {
         return new TerastallizeModifierType(pregenArgs[0] as PokemonType);
       }
@@ -1966,7 +1966,7 @@ const modifierTypeInitObj = Object.freeze({
     }),
 
   BERRY: () =>
-    new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
+    new ModifierTypeGenerator((_party: readonly Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in BerryType) {
         return new BerryModifierType(pregenArgs[0] as BerryType);
       }
@@ -2284,7 +2284,7 @@ const modifierTypeInitObj = Object.freeze({
     ),
 
   MYSTERY_ENCOUNTER_SHUCKLE_JUICE: () =>
-    new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
+    new ModifierTypeGenerator((_party: readonly Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs) {
         return new PokemonBaseStatTotalModifierType(pregenArgs[0] as 10 | -15);
       }
@@ -2297,7 +2297,7 @@ const modifierTypeInitObj = Object.freeze({
       (type, args) => new PokemonBaseStatFlatModifier(type, (args[0] as Pokemon).id),
     ),
   MYSTERY_ENCOUNTER_BLACK_SLUDGE: () =>
-    new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
+    new ModifierTypeGenerator((_party: readonly Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs) {
         return new ModifierType(
           "modifierType:ModifierType.MYSTERY_ENCOUNTER_BLACK_SLUDGE",
