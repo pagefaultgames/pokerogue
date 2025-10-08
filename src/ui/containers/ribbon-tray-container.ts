@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { Button } from "#enums/buttons";
 import type { RibbonData, RibbonFlag } from "#system/ribbons/ribbon-data";
+import { ribbonFlagToAssetKey } from "#system/ribbons/ribbon-methods";
 import type { MessageUiHandler } from "#ui/message-ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { getAvailableRibbons, getRibbonKey } from "#utils/ribbon-utils";
@@ -126,7 +127,7 @@ export class RibbonTray extends Phaser.GameObjects.Container {
     for (const ribbon of this.ribbons) {
       const hasRibbon = this.ribbonData.has(ribbon);
 
-      const icon = globalScene.add.image(0, 0, "champion_ribbon");
+      const icon = ribbonFlagToAssetKey(ribbon);
 
       if (hasRibbon || globalScene.dexForDevs) {
         icon.clearTint();
