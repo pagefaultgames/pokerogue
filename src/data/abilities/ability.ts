@@ -1197,10 +1197,7 @@ export class PostDefendApplyArenaTrapTagAbAttr extends PostDefendAbAttr {
 
   override canApply({ pokemon, opponent: attacker, move }: PostMoveInteractionAbAttrParams): boolean {
     const tag = globalScene.arena.getTag(this.arenaTagType) as EntryHazardTag;
-    return (
-      this.condition(pokemon, attacker, move)
-      && (!globalScene.arena.getTag(this.arenaTagType) || tag.layers < tag.maxLayers)
-    );
+    return this.condition(pokemon, attacker, move) && (!tag || tag.canAdd());
   }
 
   override apply({ simulated, pokemon }: PostMoveInteractionAbAttrParams): void {
