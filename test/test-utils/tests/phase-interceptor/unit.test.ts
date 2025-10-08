@@ -1,8 +1,8 @@
 import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
-import type { Constructor } from "#app/utils/common";
 import { GameManager } from "#test/test-utils/game-manager";
 import { mockPhase } from "#test/test-utils/mocks/mock-phase";
+import type { Constructor } from "#types/common";
 import type { PhaseString } from "#types/phase-types";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
