@@ -1,5 +1,5 @@
 import type { Button } from "#enums/buttons";
-import { Device } from "#enums/devices";
+import type { Device } from "#enums/devices";
 import type { PAD_DUALSHOCK } from "#inputs/pad-dualshock";
 import type { PAD_GENERIC } from "#inputs/pad-generic";
 import type { PAD_PROCON } from "#inputs/pad-procon";
