@@ -532,7 +532,7 @@ export class FixedBattleConfig {
  * @returns A function to generate a random trainer
  */
 export function getRandomTrainerFunc(
-  trainerPool: (TrainerType | TrainerType[])[],
+  trainerPool: readonly (TrainerType | readonly TrainerType[])[],
   randomGender = false,
   seedOffset = 0,
 ): GetTrainerFunc {

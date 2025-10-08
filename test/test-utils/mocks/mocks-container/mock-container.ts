@@ -1,6 +1,6 @@
 import type { MockGameObject } from "#test/test-utils/mocks/mock-game-object";
 import type { MockTextureManager } from "#test/test-utils/mocks/mock-texture-manager";
-import { coerceArray } from "#utils/common";
+import { coerceArray } from "#utils/array";
 
 export class MockContainer implements MockGameObject {
   protected x: number;

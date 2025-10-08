@@ -1,7 +1,7 @@
 import { getRandomRivalPartyMemberFunc } from "#app/ai/rival-team-gen";
 import { globalScene } from "#app/global-scene";
 import { signatureSpecies } from "#balance/signature-species";
-import { tmSpecies } from "#balance/tms";
+import { tmSpecies } from "#balance/tm-species-map";
 import { modifierTypes } from "#data/data-lists";
 import { doubleBattleDialogue } from "#data/double-battle-dialogue";
 import { Gender } from "#data/gender";
@@ -51,7 +51,8 @@ import type {
   TrainerTierPools,
 } from "#types/trainer-funcs";
 import type { Mutable } from "#types/type-helpers";
-import { coerceArray, randSeedInt, randSeedIntRange, randSeedItem } from "#utils/common";
+import { coerceArray } from "#utils/array";
+import { randSeedInt, randSeedIntRange, randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
@@ -1036,16 +1037,16 @@ export class TrainerConfig {
  * @param postProcess - An optional function to post-process the generated `EnemyPokemon`
  */
 export function getRandomPartyMemberFunc(
-  speciesPool: (SpeciesId | SpeciesId[])[],
+  speciesPool: readonly (SpeciesId | readonly SpeciesId[])[],
   trainerSlot: TrainerSlot = TrainerSlot.TRAINER,
   ignoreEvolution = false,
   postProcess?: (enemyPokemon: EnemyPokemon) => void,
 ): (level: number, strength: PartyMemberStrength) => EnemyPokemon {
   return (level: number, strength: PartyMemberStrength) => {
-    let species: SpeciesId | SpeciesId[] | typeof speciesPool = speciesPool;
+    let species: SpeciesId | readonly SpeciesId[] | typeof speciesPool = speciesPool;
     do {
       species = randSeedItem(species);
-    } while (Array.isArray(species));
+    } while (typeof species !== "number");
 
     if (!ignoreEvolution) {
       species = getPokemonSpecies(species).getTrainerSpeciesForLevel(level, true, strength);
