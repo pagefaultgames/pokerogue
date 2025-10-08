@@ -50,8 +50,7 @@ function sortBySpeed<T extends Pokemon | hasPokemon>(pokemonList: T[]): void {
 
   /** 'true' if Trick Room is on the field. */
   const speedReversed = new BooleanHolder(false);
-  globalScene.arena.applyTags(ArenaTagType.TRICK_ROOM, false, speedReversed);
-
+  globalScene.arena.applyTags(ArenaTagType.TRICK_ROOM, speedReversed);
   if (speedReversed.value) {
     pokemonList.reverse();
   }
