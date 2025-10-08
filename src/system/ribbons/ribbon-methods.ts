@@ -40,7 +40,7 @@ export function ribbonFlagToAssetKey(flag: RibbonFlag): Phaser.GameObjects.Sprit
       imageKey ??= "ribbon_gen8";
     case RibbonData.MONO_GEN_9:
       imageKey ??= "ribbon_gen9";
-      return globalScene.add.image(0, 0, "items", imageKey).setDisplaySize(12, 12);
+      return globalScene.add.image(0, 0, "items", imageKey).setDisplaySize(16, 16);
     // biome-ignore-end lint/suspicious/noFallthroughSwitchClause: done with fallthrough
     // Ribbons that use images instead of sprites
     // biome-ignore-start lint/suspicious/noFallthroughSwitchClause: Another fallthrough block
@@ -48,7 +48,12 @@ export function ribbonFlagToAssetKey(flag: RibbonFlag): Phaser.GameObjects.Sprit
       imageKey = "champion_ribbon_emerald";
     default:
       imageKey ??= "champion_ribbon";
-      return globalScene.add.image(0, 0, imageKey);
+      {
+        const img = globalScene.add.image(0, 0, imageKey);
+        const target = 12;
+        const scale = Math.min(target / img.width, target / img.height);
+        return img.setScale(scale);
+      }
     // biome-ignore-end lint/suspicious/noFallthroughSwitchClause: End fallthrough block
   }
 }
