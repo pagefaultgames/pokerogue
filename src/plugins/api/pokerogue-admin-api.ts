@@ -1,112 +1,47 @@
 import { ApiBase } from "#api/api-base";
 import type {
-  LinkAccountToDiscordIdRequest,
-  LinkAccountToGoogledIdRequest,
+  AdminUiHandlerService,
+  AdminUiHandlerServiceMode,
+  PokerogueAdminApiParams,
   SearchAccountRequest,
   SearchAccountResponse,
-  UnlinkAccountFromDiscordIdRequest,
-  UnlinkAccountFromGoogledIdRequest,
 } from "#types/api/pokerogue-admin-api";
 
 export class PokerogueAdminApi extends ApiBase {
   public readonly ERR_USERNAME_NOT_FOUND: string = "Username not found!";
 
   /**
-   * Links an account to a discord id.
-   * @param params The {@linkcode LinkAccountToDiscordIdRequest} to send
-   * @returns `null` if successful, error message if not
+   * Link or unlink a third party service to/from a user account
+   * @param mode - The mode, either "Link" or "Unlink"
+   * @param service - The third party service to perform the action with
+   * @param params - The parameters for the user to perform the action on
+   * @returns `null` if successful, otherwise an error message
    */
-  public async linkAccountToDiscord(params: LinkAccountToDiscordIdRequest) {
+  public async linkUnlinkRequest(
+    mode: AdminUiHandlerServiceMode,
+    service: AdminUiHandlerService,
+    params: PokerogueAdminApiParams[typeof service],
+  ): Promise<string | null> {
+    const endpoint = "/admin/account/" + service + mode;
+    const preposition = mode === "Link" ? "with " : "from ";
+    const errMsg = "Could not " + mode.toLowerCase() + " account " + preposition + service + "!";
     try {
-      const response = await this.doPost("/admin/account/discordLink", params, "form-urlencoded");
+      const response = await this.doPost(endpoint, params, "form-urlencoded");
 
       if (response.ok) {
         return null;
       }
-      console.warn("Could not link account with discord!", response.status, response.statusText);
+      console.warn(errMsg, response.status, response.statusText);
 
       if (response.status === 404) {
         return this.ERR_USERNAME_NOT_FOUND;
       }
     } catch (err) {
-      console.warn("Could not link account with discord!", err);
+      console.warn(errMsg, err);
     }
 
     return this.ERR_GENERIC;
   }
-
-  /**
-   * Unlinks an account from a discord id.
-   * @param params The {@linkcode UnlinkAccountFromDiscordIdRequest} to send
-   * @returns `null` if successful, error message if not
-   */
-  public async unlinkAccountFromDiscord(params: UnlinkAccountFromDiscordIdRequest) {
-    try {
-      const response = await this.doPost("/admin/account/discordUnlink", params, "form-urlencoded");
-
-      if (response.ok) {
-        return null;
-      }
-      console.warn("Could not unlink account from discord!", response.status, response.statusText);
-
-      if (response.status === 404) {
-        return this.ERR_USERNAME_NOT_FOUND;
-      }
-    } catch (err) {
-      console.warn("Could not unlink account from discord!", err);
-    }
-
-    return this.ERR_GENERIC;
-  }
-
-  /**
-   * Links an account to a google id.
-   * @param params The {@linkcode LinkAccountToGoogledIdRequest} to send
-   * @returns `null` if successful, error message if not
-   */
-  public async linkAccountToGoogleId(params: LinkAccountToGoogledIdRequest) {
-    try {
-      const response = await this.doPost("/admin/account/googleLink", params, "form-urlencoded");
-
-      if (response.ok) {
-        return null;
-      }
-      console.warn("Could not link account with google!", response.status, response.statusText);
-
-      if (response.status === 404) {
-        return this.ERR_USERNAME_NOT_FOUND;
-      }
-    } catch (err) {
-      console.warn("Could not link account with google!", err);
-    }
-
-    return this.ERR_GENERIC;
-  }
-
-  /**
-   * Unlinks an account from a google id.
-   * @param params The {@linkcode UnlinkAccountFromGoogledIdRequest} to send
-   * @returns `null` if successful, error message if not
-   */
-  public async unlinkAccountFromGoogleId(params: UnlinkAccountFromGoogledIdRequest) {
-    try {
-      const response = await this.doPost("/admin/account/googleUnlink", params, "form-urlencoded");
-
-      if (response.ok) {
-        return null;
-      }
-      console.warn("Could not unlink account from google!", response.status, response.statusText);
-
-      if (response.status === 404) {
-        return this.ERR_USERNAME_NOT_FOUND;
-      }
-    } catch (err) {
-      console.warn("Could not unlink account from google!", err);
-    }
-
-    return this.ERR_GENERIC;
-  }
-
   /**
    * Search an account.
    * @param params The {@linkcode SearchAccountRequest} to send

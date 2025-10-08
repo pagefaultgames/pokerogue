@@ -1,8 +1,8 @@
 import { updateUserInfo } from "#app/account";
 import { globalScene } from "#app/global-scene";
-import { bypassLogin } from "#app/global-vars/bypass-login";
 import { Phase } from "#app/phase";
 import { handleTutorial, Tutorial } from "#app/tutorial";
+import { bypassLogin } from "#constants/app-constants";
 import { UiMode } from "#enums/ui-mode";
 import { executeIf, sessionIdKey } from "#utils/common";
 import { getCookie, removeCookie } from "#utils/cookies";
