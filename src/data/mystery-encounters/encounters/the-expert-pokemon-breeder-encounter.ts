@@ -539,12 +539,10 @@ function getPartyConfig(): EnemyPartyConfig {
       {
         species: getPokemonSpecies(pool1Species),
         isBoss: false,
-        ivs: [31, 31, 31, 31, 31, 31],
       },
       {
         species: getPokemonSpecies(pool2Species),
         isBoss: false,
-        ivs: [31, 31, 31, 31, 31, 31],
       },
     );
   }
