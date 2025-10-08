@@ -249,13 +249,15 @@ describe("Regression Tests - ai-moveset-gen.ts", () => {
   /**A pokemon object that will be cleaned up after every test */
   let pokemon: EnemyPokemon | null = null;
 
-  beforeAll(() => {
+  beforeAll(async () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-    // Game manager can be reused between tests as we are not really modifying the global state
-    // So there is no need to put this in a beforeEach with cleanup in afterEach.
+
     game = new GameManager(phaserGame);
+
+    // Need to be in a wave for moveset generation to not actually break
+    await game.classicMode.runToSummon([SpeciesId.PIKACHU]);
   });
 
   afterEach(() => {
@@ -281,9 +283,6 @@ describe("Regression Tests - ai-moveset-gen.ts", () => {
 
   describe("generateMoveset", () => {
     it("should spawn with 4 moves if possible", async () => {
-      // Need to be in a wave for moveset generation to not actually break
-      await game.classicMode.startBattle([SpeciesId.PIKACHU]);
-
       // Create a pokemon that can learn at least 4 moves
       pokemon = createTestablePokemon(SpeciesId.ROCKRUFF, { level: 15 });
       vi.spyOn(pokemon, "getLevelMoves").mockReturnValue([

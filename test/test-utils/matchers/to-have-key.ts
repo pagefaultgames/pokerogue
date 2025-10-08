@@ -32,18 +32,14 @@ export function toHaveKey(
     };
   }
 
-  const keys = Array.from(received.keys());
-  const hasKey = this.equals(keys, expectedKey, [
-    ...this.customTesters,
-    this.utils.iterableEquality,
-    this.utils.subsetEquality,
-  ]);
+  const keys = [...received.keys()];
+  const hasKey = keys.includes(expectedKey);
 
   const actualStr = getOnelineDiffStr.call(this, received);
   const expectedStr = getOnelineDiffStr.call(this, expectedKey);
 
   // Break out early if no expected value was provided OR the key was missing
-  if (typeof expectedValue !== "undefined" || !hasKey) {
+  if (typeof expectedValue === "undefined" || !hasKey) {
     return {
       pass: hasKey,
       message: () =>
@@ -56,17 +52,16 @@ export function toHaveKey(
   }
 
   // Check for value equality
-
   const gotVal = received.get(expectedKey);
-  const pass = this.equals(keys, expectedKey, [...this.customTesters, this.utils.iterableEquality]);
+  const pass = this.equals(gotVal, expectedValue, [...this.customTesters, this.utils.iterableEquality]);
 
   const valueStr = getOnelineDiffStr.call(this, expectedValue);
   const gotValStr = getOnelineDiffStr.call(this, gotVal);
   return {
     pass,
     message: () =>
-      hasKey
-        ? `Expected ${actualStr}'s value for ${expectedKey} to NOT be ${valueStr}, but it did!`
+      pass
+        ? `Expected ${actualStr}'s value for ${expectedKey} to NOT be ${valueStr}, but it was!`
         : `Expected ${actualStr}'s value for ${expectedKey} to be ${valueStr}, but got ${gotValStr} instead!`,
     expected: expectedValue,
     actual: gotVal,
