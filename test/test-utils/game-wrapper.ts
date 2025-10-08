@@ -142,6 +142,7 @@ export class GameWrapper {
       },
     };
 
+    // TODO: These stubs override phaser classes with ones of... different types?
     this.scene.anims = this.game.anims;
     this.scene.cache = this.game.cache;
     this.scene.plugins = this.game.plugins;

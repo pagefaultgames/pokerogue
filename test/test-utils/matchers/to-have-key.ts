@@ -5,10 +5,17 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 /**
  * Matcher that checks if a {@linkcode Map} contains the given key, regardless of its value.
  * @param received - The received value. Should be a Map
- * @param expectedKey - The key whose inclusion in the map is being checked
+ * @param expectedKey - The key whose inclusion is being checked
+ * @param expectedValue - The desired value for the given key-value pair;
+ * if omitted, will only check that the given key exists (disregarding its value)
  * @returns Whether the matcher passed
  */
-export function toHaveKey(this: MatcherState, received: unknown, expectedKey: unknown): SyncExpectationResult {
+export function toHaveKey(
+  this: MatcherState,
+  received: unknown,
+  expectedKey: unknown,
+  expectedValue?: unknown,
+): SyncExpectationResult {
   if (!(received instanceof Map)) {
     return {
       pass: this.isNot,
@@ -25,8 +32,8 @@ export function toHaveKey(this: MatcherState, received: unknown, expectedKey: un
     };
   }
 
-  const keys = [...received.keys()];
-  const pass = this.equals(keys, expectedKey, [
+  const keys = Array.from(received.keys());
+  const hasKey = this.equals(keys, expectedKey, [
     ...this.customTesters,
     this.utils.iterableEquality,
     this.utils.subsetEquality,
@@ -35,13 +42,33 @@ export function toHaveKey(this: MatcherState, received: unknown, expectedKey: un
   const actualStr = getOnelineDiffStr.call(this, received);
   const expectedStr = getOnelineDiffStr.call(this, expectedKey);
 
+  // Break out early if no expected value was provided OR the key was missing
+  if (typeof expectedValue !== "undefined" || !hasKey) {
+    return {
+      pass: hasKey,
+      message: () =>
+        hasKey
+          ? `Expected ${actualStr} to NOT have the key ${expectedStr}, but it did!`
+          : `Expected ${actualStr} to have the key ${expectedStr}, but it didn't!`,
+      expected: expectedKey,
+      actual: keys,
+    };
+  }
+
+  // Check for value equality
+
+  const gotVal = received.get(expectedKey);
+  const pass = this.equals(keys, expectedKey, [...this.customTesters, this.utils.iterableEquality]);
+
+  const valueStr = getOnelineDiffStr.call(this, expectedValue);
+  const gotValStr = getOnelineDiffStr.call(this, gotVal);
   return {
     pass,
     message: () =>
-      pass
-        ? `Expected ${actualStr} to NOT have the key ${expectedStr}, but it did!`
-        : `Expected ${actualStr} to have the key ${expectedStr}, but it didn't!`,
-    expected: expectedKey,
-    actual: keys,
+      hasKey
+        ? `Expected ${actualStr}'s value for ${expectedKey} to NOT be ${valueStr}, but it did!`
+        : `Expected ${actualStr}'s value for ${expectedKey} to be ${valueStr}, but got ${gotValStr} instead!`,
+    expected: expectedValue,
+    actual: gotVal,
   };
 }

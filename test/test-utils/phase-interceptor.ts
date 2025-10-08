@@ -1,4 +1,4 @@
-import type { PhaseManager, PhaseString } from "#app/@types/phase-types";
+import type { PhaseString } from "#app/@types/phase-types";
 import type { BattleScene } from "#app/battle-scene";
 import { PHASE_INTERCEPTOR_COLOR, PHASE_START_COLOR } from "#app/constants/colors";
 import type { Phase } from "#app/phase";
@@ -49,25 +49,20 @@ export class PhaseInterceptor {
   /**
    * Initialize a new PhaseInterceptor.
    * @param scene - The scene to be managed
-   * @todo This should take a GameManager instance once multi scene stuff becomes a reality
    * @remarks
    * This overrides {@linkcode PhaseManager.startCurrentPhase} to toggle the interceptor's state
    * instead of immediately starting the next phase.
    */
+  // TODO: This should take a `GameManager` instance once multi-scene things become a reality
+  // (though our entire Phase system will likely have to be redone anyways)
   constructor(scene: BattleScene) {
     this.scene = scene;
-    vi.spyOn(
-      this.scene.phaseManager as PhaseManager &
-        Pick<
-          {
-            startCurrentPhase: PhaseManager["startCurrentPhase"];
-          },
-          "startCurrentPhase"
-        >,
-      "startCurrentPhase",
-    ).mockImplementation(() => {
+    // Persistently stub out `this.scene.phaseManager.getCurrentPhase`
+    // to toggle the interceptor's state (rather than starting a new phase).
+    // We do not use `vi.spyOn` as that will reset once the test ends
+    this.scene.phaseManager["startCurrentPhase"] = () => {
       this.state = "idling";
-    });
+    };
   }
 
   /**
