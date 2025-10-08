@@ -42,7 +42,7 @@ export function ribbonFlagToAssetKey(flag: RibbonFlag): Phaser.GameObjects.Sprit
       imageKey ??= "ribbon_gen9";
       return globalScene.add.image(0, 0, "items", imageKey).setDisplaySize(16, 16);
     // biome-ignore-end lint/suspicious/noFallthroughSwitchClause: done with fallthrough
-    // Ribbons that use images instead of sprites
+    // Ribbons that don't use the items atlas
     // biome-ignore-start lint/suspicious/noFallthroughSwitchClause: Another fallthrough block
     case RibbonData.NUZLOCKE:
       imageKey = "champion_ribbon_emerald";
