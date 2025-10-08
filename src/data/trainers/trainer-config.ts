@@ -2771,7 +2771,7 @@ export const trainerConfigs: TrainerConfigs = {
         if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
           p.setBoss(true, 2);
         }
-        p.abilityIndex = 0; // Weak Armor
+        p.abilityIndex = 1; // Weak Armor
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
       }),
