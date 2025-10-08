@@ -334,12 +334,6 @@ export class PokemonTurnData {
    */
   public pendingStatus: StatusEffect = StatusEffect.NONE;
   /**
-   * The amount of times this Pokemon has acted again and used a move in the current turn.
-   * Used to make sure multi-hits occur properly when the user is
-   * forced to act again in the same turn, and **must be incremented** by any effects that grant extra actions.
-   */
-  public extraTurns = 0;
-  /**
    * All berries eaten by this pokemon in this turn.
    * Saved into {@linkcode PokemonSummonData | SummonData} by {@linkcode AbilityId.CUD_CHEW} on turn end.
    * @see {@linkcode PokemonSummonData.berriesEatenLast}
