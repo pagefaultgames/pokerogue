@@ -495,6 +495,7 @@ function getPartyConfig(): EnemyPartyConfig {
         moveSet: [MoveId.FIRE_PUNCH, MoveId.ICE_PUNCH, MoveId.THUNDER_PUNCH, MoveId.METEOR_MASH],
         ivs: [31, 31, 31, 31, 31, 31],
         tera: PokemonType.FAIRY,
+        friendship: 255,
       },
     ],
   };
@@ -514,6 +515,7 @@ function getPartyConfig(): EnemyPartyConfig {
         nature: Nature.MODEST,
         moveSet: [MoveId.DAZZLING_GLEAM, MoveId.MYSTICAL_FIRE, MoveId.ICE_BEAM, MoveId.THUNDERBOLT], // Make this one have an item gimmick when we have more items/finish implementations
         ivs: [31, 31, 31, 31, 31, 31],
+        friendship: 255,
       },
       {
         nickname: i18next.t(`${namespace}:cleffa3Nickname`, {
@@ -527,6 +529,7 @@ function getPartyConfig(): EnemyPartyConfig {
         nature: Nature.BOLD,
         moveSet: [MoveId.TRI_ATTACK, MoveId.STORED_POWER, MoveId.CALM_MIND, MoveId.MOONLIGHT],
         ivs: [31, 31, 31, 31, 31, 31],
+        friendship: 255,
       },
     );
   } else {
