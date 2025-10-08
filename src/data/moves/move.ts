@@ -3469,7 +3469,7 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
 
 /**
  * Attribute to queue a {@linkcode WishTag} to activate in 2 turns.
- * The tag whill heal
+ * The tag will heal 50% of the user's maximum HP to whichever Pokemon is active when it triggers.
  */
 export class WishAttr extends MoveEffectAttr {
   public override apply(user: Pokemon, target: Pokemon, _move: Move): boolean {

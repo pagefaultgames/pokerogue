@@ -131,12 +131,16 @@ export class PokemonSummonData {
   public stats: number[] = [0, 0, 0, 0, 0, 0];
   public moveset: PokemonMove[] | null;
 
-  // If not initialized this value will not be populated from save data.
   public types: PokemonType[] = [];
   public addedType: PokemonType | null = null;
 
-  /** Data pertaining to this pokemon's illusion. */
+  /** Data pertaining to this pokemon's Illusion, if it has one. */
   public illusion: IllusionData | null = null;
+  /**
+   * Whether this Pokemon's illusion has been broken since switching out.
+   * @defaultValue `false`
+   */
+  // TODO: Since Illusion applies on switch in, and this entire class is reset
   public illusionBroken = false;
 
   /** Array containing all berries eaten in the last turn; used by {@linkcode AbilityId.CUD_CHEW} */
@@ -325,12 +329,15 @@ export class PokemonTurnData {
   public switchedInThisTurn = false;
   public failedRunAway = false;
   public joinedRound = false;
-  /** Tracker for a pending status effect
+  /**
+   * Tracker for a pending status effect.
    *
    * @remarks
    * Set whenever {@linkcode Pokemon#trySetStatus} succeeds in order to prevent subsequent status effects
-   * from being applied. Necessary because the status is not actually set until the {@linkcode ObtainStatusEffectPhase} runs,
+   * from being applied. \
+   * Necessary because the status is not actually set until the {@linkcode ObtainStatusEffectPhase} runs,
    * which may not happen before another status effect is attempted to be applied.
+   * @defaultValue `StatusEffect.NONE`
    */
   public pendingStatus: StatusEffect = StatusEffect.NONE;
   /**
