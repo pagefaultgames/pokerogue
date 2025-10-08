@@ -1,5 +1,11 @@
+/*
+ * SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 {
-  "$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.2.5/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -21,7 +27,8 @@
       "**",
       "!**/dist",
       "!**/coverage",
-      "!**/public",
+      "!**/assets",
+      "!**/locales",
       "!**/.github",
       "!**/node_modules",
       "!**/typedoc",
@@ -31,7 +38,7 @@
       // TODO: enable linting this file
       "!**/src/data/moves/move.ts",
       // this file is too big
-      "!**/src/data/balance/tms.ts"
+      "!**/src/data/balance/tm-species-map.ts"
     ]
   },
   "assist": {
@@ -53,6 +60,7 @@
       "recommended": true,
       "correctness": {
         "noUndeclaredVariables": "error",
+        "useParseIntRadix": "off",
         "noUnusedVariables": "error",
         "noSwitchDeclarations": "error",
         "noVoidTypeReturn": "error",

@@ -421,7 +421,7 @@ export class Trainer extends Phaser.GameObjects.Container {
                   level,
                   false,
                   template.getStrength(offset),
-                  globalScene.currentBattle.waveIndex,
+                  template.evoLevelThresholdKind,
                 ),
               )
             : this.genNewPartyMemberSpecies(level, strength);
@@ -429,7 +429,7 @@ export class Trainer extends Phaser.GameObjects.Container {
         // If the species is from newSpeciesPool, we need to adjust it based on the level and strength
         if (newSpeciesPool) {
           species = getPokemonSpecies(
-            species.getSpeciesForLevel(level, true, true, strength, globalScene.currentBattle.waveIndex),
+            species.getSpeciesForLevel(level, true, true, strength, template.evoLevelThresholdKind),
           );
         }
 
@@ -480,7 +480,7 @@ export class Trainer extends Phaser.GameObjects.Container {
     }
 
     let ret = getPokemonSpecies(
-      baseSpecies.getTrainerSpeciesForLevel(level, true, strength, globalScene.currentBattle.waveIndex),
+      baseSpecies.getTrainerSpeciesForLevel(level, true, strength, template.evoLevelThresholdKind),
     );
     let retry = false;
 
@@ -506,7 +506,7 @@ export class Trainer extends Phaser.GameObjects.Container {
       let evoAttempt = 0;
       while (retry && evoAttempt++ < 10) {
         ret = getPokemonSpecies(
-          baseSpecies.getTrainerSpeciesForLevel(level, true, strength, globalScene.currentBattle.waveIndex),
+          baseSpecies.getTrainerSpeciesForLevel(level, true, strength, template.evoLevelThresholdKind),
         );
         console.log(ret.name);
         if (ret.isOfType(this.config.specialtyType)) {
@@ -642,14 +642,14 @@ export class Trainer extends Phaser.GameObjects.Container {
     }
   }
 
-  genModifiers(party: EnemyPokemon[]): PersistentModifier[] {
+  genModifiers(party: readonly EnemyPokemon[]): PersistentModifier[] {
     if (this.config.genModifiersFunc) {
       return this.config.genModifiersFunc(party);
     }
     return [];
   }
 
-  genAI(party: EnemyPokemon[]) {
+  genAI(party: readonly EnemyPokemon[]) {
     if (this.config.genAIFuncs) {
       this.config.genAIFuncs.forEach(f => f(party));
     }

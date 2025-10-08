@@ -15,7 +15,7 @@ import { WeatherType } from "#enums/weather-type";
 import type { PlayerPokemon } from "#field/pokemon";
 import { AttackTypeBoosterModifier } from "#modifiers/modifier";
 import type { AttackTypeBoosterModifierType } from "#modifiers/modifier-type";
-import { coerceArray } from "#utils/common";
+import { coerceArray } from "#utils/array";
 
 export interface EncounterRequirement {
   meetsRequirement(): boolean; // Boolean to see if a requirement is met
@@ -696,11 +696,11 @@ export class AbilityRequirement extends EncounterPokemonRequirement {
 }
 
 export class StatusEffectRequirement extends EncounterPokemonRequirement {
-  requiredStatusEffect: StatusEffect[];
+  requiredStatusEffect: readonly StatusEffect[];
   minNumberOfPokemon: number;
   invertQuery: boolean;
 
-  constructor(statusEffect: StatusEffect | StatusEffect[], minNumberOfPokemon = 1, invertQuery = false) {
+  constructor(statusEffect: StatusEffect | readonly StatusEffect[], minNumberOfPokemon = 1, invertQuery = false) {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
@@ -717,7 +717,7 @@ export class StatusEffectRequirement extends EncounterPokemonRequirement {
     return x;
   }
 
-  override queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
+  override queryParty(partyPokemon: readonly PlayerPokemon[]): PlayerPokemon[] {
     if (!this.invertQuery) {
       return partyPokemon.filter(pokemon => {
         return this.requiredStatusEffect.some(statusEffect => {
@@ -761,11 +761,11 @@ export class StatusEffectRequirement extends EncounterPokemonRequirement {
  * If you want to trigger the event based on the form change enabler, use PersistentModifierRequirement.
  */
 export class CanFormChangeWithItemRequirement extends EncounterPokemonRequirement {
-  requiredFormChangeItem: FormChangeItem[];
+  requiredFormChangeItem: readonly FormChangeItem[];
   minNumberOfPokemon: number;
   invertQuery: boolean;
 
-  constructor(formChangeItem: FormChangeItem | FormChangeItem[], minNumberOfPokemon = 1, invertQuery = false) {
+  constructor(formChangeItem: FormChangeItem | readonly FormChangeItem[], minNumberOfPokemon = 1, invertQuery = false) {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
@@ -792,7 +792,7 @@ export class CanFormChangeWithItemRequirement extends EncounterPokemonRequiremen
     );
   }
 
-  override queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
+  override queryParty(partyPokemon: readonly PlayerPokemon[]): PlayerPokemon[] {
     if (!this.invertQuery) {
       return partyPokemon.filter(
         pokemon =>
@@ -877,13 +877,13 @@ export class HeldItemRequirement extends EncounterPokemonRequirement {
 }
 
 export class AttackTypeBoosterHeldItemTypeRequirement extends EncounterPokemonRequirement {
-  requiredHeldItemTypes: PokemonType[];
+  requiredHeldItemTypes: readonly PokemonType[];
   minNumberOfPokemon: number;
   invertQuery: boolean;
   requireTransferable: boolean;
 
   constructor(
-    heldItemTypes: PokemonType | PokemonType[],
+    heldItemTypes: PokemonType | readonly PokemonType[],
     minNumberOfPokemon = 1,
     invertQuery = false,
     requireTransferable = true,
