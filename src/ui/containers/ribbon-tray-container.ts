@@ -18,11 +18,11 @@ export class RibbonTray extends Phaser.GameObjects.Container {
   private trayCursorObj: Phaser.GameObjects.Image;
   private trayCursor = 0;
 
-  private handler: MessageUiHandler;
+  private readonly handler: MessageUiHandler;
 
   private ribbonData: RibbonData;
 
-  private maxColumns = 6;
+  private readonly maxColumns = 6;
 
   constructor(handler: MessageUiHandler, x: number, y: number) {
     super(globalScene, x, y);
@@ -32,12 +32,10 @@ export class RibbonTray extends Phaser.GameObjects.Container {
   }
 
   setup() {
-    this.trayBg = addWindow(0, 0, 0, 0);
-    this.trayBg.setOrigin(0, 0);
+    this.trayBg = addWindow(0, 0, 0, 0).setOrigin(0);
     this.add(this.trayBg);
 
-    this.trayCursorObj = globalScene.add.image(0, 0, "select_cursor");
-    this.trayCursorObj.setOrigin(0, 0);
+    this.trayCursorObj = globalScene.add.image(0, 0, "select_cursor").setOrigin(0);
     this.add(this.trayCursorObj);
   }
 
@@ -146,9 +144,7 @@ export class RibbonTray extends Phaser.GameObjects.Container {
       }
     }
 
-    this.setVisible(true);
-
-    this.setTrayCursor(0);
+    this.setVisible(true).setTrayCursor(0);
 
     return true;
   }
