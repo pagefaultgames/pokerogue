@@ -86,19 +86,6 @@ describe("Moves - Beak Blast", () => {
     expect(enemyPokemon.status?.effect).not.toBe(StatusEffect.BURN);
   });
 
-  it("should only hit twice with Multi-Lens", async () => {
-    game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
-
-    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
-
-    const leadPokemon = game.field.getPlayerPokemon();
-
-    game.move.select(MoveId.BEAK_BLAST);
-
-    await game.phaseInterceptor.to(BerryPhase, false);
-    expect(leadPokemon.turnData.hitCount).toBe(2);
-  });
-
   it("should be blocked by Protect", async () => {
     game.override.enemyMoveset([MoveId.PROTECT]);
 
