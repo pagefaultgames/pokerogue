@@ -50,7 +50,8 @@ import type { HeldModifierConfig } from "#types/held-modifier-config";
 import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import type { PartyOption, PokemonSelectFilter } from "#ui/party-ui-handler";
 import { PartyUiMode } from "#ui/party-ui-handler";
-import { coerceArray, randomString, randSeedInt, randSeedItem } from "#utils/common";
+import { coerceArray } from "#utils/array";
+import { randomString, randSeedInt, randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
