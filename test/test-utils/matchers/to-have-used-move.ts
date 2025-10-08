@@ -3,8 +3,8 @@ import type { Pokemon } from "#field/pokemon";
 /** biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports */
 
 import { getPokemonNameWithAffix } from "#app/messages";
-import type { MoveId } from "#enums/move-id";
-import { getOnelineDiffStr, getOrdinal } from "#test/test-utils/string-utils";
+import { MoveId } from "#enums/move-id";
+import { getEnumStr, getOnelineDiffStr, getOrdinal } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { TurnMove } from "#types/turn-move";
 import type { AtLeastOne } from "#types/type-helpers";
@@ -43,7 +43,7 @@ export function toHaveUsedMove(
     };
   }
 
-  // Coerce to a `TurnMove`
+  // Coerce to a `TurnMove` if only 1 property was passed
   if (typeof expectedMove === "number") {
     expectedMove = { move: expectedMove };
   }
@@ -56,13 +56,18 @@ export function toHaveUsedMove(
     this.utils.iterableEquality,
   ]);
 
-  const expectedStr = getOnelineDiffStr.call(this, expectedMove);
+  // Customize the diff message if a single move was passed
+  const onlyMove =
+    !!expectedMove.move && Object.keys(expectedMove).length === 1 && Object.keys(expectedMove)[0] === "move";
+  const expectedStr = onlyMove
+    ? `be MoveId.${getEnumStr(MoveId, expectedMove.move!)}`
+    : `match ${getOnelineDiffStr.call(this, expectedMove)}`;
   return {
     pass,
     message: () =>
       pass
-        ? `Expected ${pkmName}'s ${moveIndexStr} to NOT match ${expectedStr}, but it did!`
-        : `Expected ${pkmName}'s ${moveIndexStr} to match ${expectedStr}, but it didn't!`,
+        ? `Expected ${pkmName}'s ${moveIndexStr} to NOT ${expectedStr}, but it did!`
+        : `Expected ${pkmName}'s ${moveIndexStr} to ${expectedStr}, but it didn't!`,
     expected: expectedMove,
     actual: move,
   };

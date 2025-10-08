@@ -412,8 +412,7 @@ describe("Moves - Move-calling Moves", () => {
       getMoveSpy = vi.spyOn(attr as typeof attr & Pick<{ getMove: (typeof attr)["getMove"] }, "getMove">, "getMove");
     });
 
-    // TODO: Enable once move phase is refactored
-    it.runIf(move === MoveId.COPYCAT).todo(
+    it.runIf(move === MoveId.COPYCAT)(
       'should update "last move" tracker for moves failing conditions, but not pre-move interrupts',
       async () => {
         game.override.enemyStatusEffect(StatusEffect.SLEEP);
@@ -421,16 +420,15 @@ describe("Moves - Move-calling Moves", () => {
 
         game.move.use(MoveId.SUCKER_PUNCH);
         await game.move.forceEnemyMove(MoveId.SPLASH);
-        await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-        await game.phaseInterceptor.to("MoveEndPhase");
-
-        // Enemy is asleep and should not have updated tracker
-        expect(game.scene.currentBattle.lastMove).toBe(MoveId.NONE);
-
         await game.phaseInterceptor.to("MoveEndPhase");
 
         // Player sucker punch failed conditions, but still updated tracker
         expect(game.field.getPlayerPokemon()).toHaveUsedMove({ move: MoveId.SUCKER_PUNCH, result: MoveResult.FAIL });
+        expect(game.scene.currentBattle.lastMove).toBe(MoveId.SUCKER_PUNCH);
+
+        await game.phaseInterceptor.to("MoveEndPhase");
+
+        // Enemy is asleep and should not have updated tracker
         expect(game.scene.currentBattle.lastMove).toBe(MoveId.SUCKER_PUNCH);
       },
     );
@@ -490,6 +488,6 @@ describe("Moves - Move-calling Moves", () => {
 
   describe("Metronome", () => {
     // TODO: Figure out a good way to override RNG rolls to force Metronome to use a move
-    it.todo("should call a random move")
-  })
+    it.todo("should call a random move");
+  });
 });

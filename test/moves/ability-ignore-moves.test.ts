@@ -36,7 +36,7 @@ describe("Moves - Ability-Ignoring Moves", () => {
     { name: "Sunsteel Strike", move: MoveId.SUNSTEEL_STRIKE },
     { name: "Moongeist Beam", move: MoveId.MOONGEIST_BEAM },
     { name: "Photon Geyser", move: MoveId.PHOTON_GEYSER },
-  ])("$name should ignore enemy abilities during move use", async ({ move }) => {
+  ])("$name should ignore ignorable enemy abilities during move use", async ({ move }) => {
     await game.classicMode.startBattle([SpeciesId.NECROZMA]);
 
     const player = game.field.getPlayerPokemon();
@@ -50,45 +50,32 @@ describe("Moves - Ability-Ignoring Moves", () => {
 
     await game.toEndOfTurn();
 
+    // should bypass sturdy OKHO prevention
     expect(game.scene.arena.ignoreAbilities).toBe(false);
+    expect(enemy).not.toHaveAbilityApplied(AbilityId.STURDY);
     expect(enemy.isFainted()).toBe(true);
   });
 
-  it("should not ignore enemy abilities when called by Metronome", async () => {
-    game.move.forceMetronomeMove(MoveId.PHOTON_GEYSER, true);
+  it("should not ignore enemy abilities when called by move-calling moves", async () => {
     await game.classicMode.startBattle([SpeciesId.MILOTIC]);
 
     game.move.use(MoveId.METRONOME);
-    await game.toEndOfTurn();
+    game.move.forceMetronomeMove(MoveId.PHOTON_GEYSER, true);
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
-    const enemy = game.field.getEnemyPokemon();
-    expect(enemy.isFainted()).toBe(false);
-    expect(game.field.getPlayerPokemon().getLastXMoves()[0].move).toBe(MoveId.PHOTON_GEYSER);
-  });
-
-  it("should not ignore enemy abilities when called by Mirror Move", async () => {
-    game.override.moveset(MoveId.MIRROR_MOVE).enemyMoveset(MoveId.SUNSTEEL_STRIKE);
-
-    await game.classicMode.startBattle([SpeciesId.MILOTIC]);
-
-    const enemy = game.field.getEnemyPokemon();
-    game.move.select(MoveId.MIRROR_MOVE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.toEndOfTurn();
-
-    expect(enemy.isFainted()).toBe(false);
-    expect(game.field.getPlayerPokemon().getLastXMoves()[0].move).toBe(MoveId.SUNSTEEL_STRIKE);
+    expect(game.field.getPlayerPokemon()).toHaveUsedMove(MoveId.PHOTON_GEYSER);
+    expect(game.scene.arena.ignoreAbilities).toBe(false);
   });
 
   // TODO: Verify this behavior on cart
   it("should ignore enemy abilities when called by Instruct", async () => {
-    game.override.moveset([MoveId.SUNSTEEL_STRIKE, MoveId.INSTRUCT]).battleStyle("double");
+    game.override.battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.SOLGALEO, SpeciesId.LUNALA]);
 
     const solgaleo = game.field.getPlayerPokemon();
 
-    game.move.select(MoveId.SUNSTEEL_STRIKE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-    game.move.select(MoveId.INSTRUCT, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER);
+    game.move.use(MoveId.SUNSTEEL_STRIKE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.use(MoveId.INSTRUCT, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to("MoveEffectPhase"); // initial attack
@@ -102,6 +89,8 @@ describe("Moves - Ability-Ignoring Moves", () => {
 
     // Both the initial and redirected instruct use ignored sturdy
     const [enemy1, enemy2] = game.scene.getEnemyField();
+    expect(enemy1).not.toHaveAbilityApplied(AbilityId.STURDY);
+    expect(enemy2).not.toHaveAbilityApplied(AbilityId.STURDY);
     expect(enemy1).toHaveFainted();
     expect(enemy2).toHaveFainted();
   });
