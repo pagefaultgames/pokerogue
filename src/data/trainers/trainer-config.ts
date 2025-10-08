@@ -4314,7 +4314,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setGenModifiersFunc(party => {
       // Mystical Rock Gigalith
       const weather = party[0];
-      return [modifierTypes.MYSTICAL_ROCK().withIdFromFunc(modifierTypes.MYSTICAL_ROCK).newModifier(weather)];
+      return [modifierTypes.MYSTICAL_ROCK().newModifier(weather)];
     }),
   [TrainerType.WALLACE]: new TrainerConfig(++t)
     .initForChampion(true)
@@ -4371,7 +4371,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setGenModifiersFunc(party => {
       // Mystical Rock Pelipper
       const weather = party[0];
-      return [modifierTypes.MYSTICAL_ROCK().withIdFromFunc(modifierTypes.MYSTICAL_ROCK).newModifier(weather)];
+      return [modifierTypes.MYSTICAL_ROCK().newModifier(weather)];
     }),
   [TrainerType.CYNTHIA]: new TrainerConfig(++t)
     .initForChampion(false)
