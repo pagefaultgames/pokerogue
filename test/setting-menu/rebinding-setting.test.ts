@@ -5,20 +5,16 @@ import { getKeyWithKeycode, getKeyWithSettingName } from "#inputs/config-handler
 import { SettingKeyboard } from "#system/settings-keyboard";
 import { InGameManip } from "#test/setting-menu/helpers/in-game-manip";
 import { MenuManip } from "#test/setting-menu/helpers/menu-manip";
-import type { InterfaceConfig } from "#types/configs/inputs";
+import type { InterfaceConfig, SelectedDevice } from "#types/configs/inputs";
 import { deepCopy } from "#utils/data";
 import { beforeEach, describe, expect, it } from "vitest";
 
 describe("Test Rebinding", () => {
-  // biome-ignore lint/suspicious/noImplicitAnyLet: TODO
-  let config;
-  // biome-ignore lint/suspicious/noImplicitAnyLet: TODO
-  let inGame;
-  // biome-ignore lint/suspicious/noImplicitAnyLet: TODO
-  let inTheSettingMenu;
-  const configs: Map<string, InterfaceConfig> = new Map();
-  const selectedDevice = {
-    [Device.GAMEPAD]: null,
+  let config: InterfaceConfig;
+  let inGame: InGameManip;
+  let inTheSettingMenu: MenuManip;
+  const configs: Record<string, InterfaceConfig> = {};
+  const selectedDevice: SelectedDevice = {
     [Device.KEYBOARD]: "default",
   };
 
@@ -40,14 +36,14 @@ describe("Test Rebinding", () => {
   });
   it("Check key for Keyboard KeyCode", () => {
     const key = getKeyWithKeycode(config, Phaser.Input.Keyboard.KeyCodes.LEFT) ?? "";
-    const settingName = config.custom[key];
-    const button = config.settings[settingName];
+    const settingName = config.custom?.[key as keyof typeof config.custom];
+    const button = config.settings[settingName as keyof typeof config.custom];
     expect(button).toEqual(Button.LEFT);
   });
   it("Check key for currenly Assigned to action not alt", () => {
     const key = getKeyWithKeycode(config, Phaser.Input.Keyboard.KeyCodes.A) ?? "";
-    const settingName = config.custom[key];
-    const button = config.settings[settingName];
+    const settingName = config.custom?.[key as keyof typeof config.custom];
+    const button = config.settings[settingName as keyof typeof config.settings];
     expect(button).toEqual(Button.LEFT);
   });
 
@@ -69,25 +65,25 @@ describe("Test Rebinding", () => {
   it("Check icon for currenly Assigned to key code", () => {
     const keycode = Phaser.Input.Keyboard.KeyCodes.LEFT;
     const key = getKeyWithKeycode(config, keycode) ?? "";
-    const icon = config.icons[key];
+    const icon = config.icons[key as keyof typeof config.icons];
     expect(icon).toEqual("KEY_ARROW_LEFT.png");
   });
   it("Check icon for currenly Assigned to key code", () => {
     const keycode = Phaser.Input.Keyboard.KeyCodes.A;
     const key = getKeyWithKeycode(config, keycode) ?? "";
-    const icon = config.icons[key];
+    const icon = config.icons[key as keyof typeof config.icons];
     expect(icon).toEqual("A.png");
   });
   it("Check icon for currenly Assigned to setting name", () => {
     const settingName = SettingKeyboard.Button_Left;
     const key = getKeyWithSettingName(config, settingName) ?? "";
-    const icon = config.icons[key];
+    const icon = config.icons[key as keyof typeof config.icons];
     expect(icon).toEqual("KEY_ARROW_LEFT.png");
   });
   it("Check icon for currenly Assigned to setting name alt", () => {
     const settingName = SettingKeyboard.Alt_Button_Left;
     const key = getKeyWithSettingName(config, settingName) ?? "";
-    const icon = config.icons[key];
+    const icon = config.icons[key as keyof typeof config.icons];
     expect(icon).toEqual("A.png");
   });
 
@@ -322,18 +318,18 @@ describe("Test Rebinding", () => {
 
   it("Delete blacklisted bind", () => {
     inGame.whenWePressOnKeyboard("LEFT").weShouldTriggerTheButton("Button_Left");
-    inTheSettingMenu.whenWeDelete("Button_Left").weCantDelete().iconDisplayedIs("KEY_ARROW_LEFT");
+    inTheSettingMenu.whenWeDelete(SettingKeyboard.Button_Left).weCantDelete().iconDisplayedIs("KEY_ARROW_LEFT");
     inGame.whenWePressOnKeyboard("LEFT").weShouldTriggerTheButton("Button_Left");
   });
 
   it("Delete bind", () => {
     inGame.whenWePressOnKeyboard("A").weShouldTriggerTheButton("Alt_Button_Left");
-    inTheSettingMenu.whenWeDelete("Alt_Button_Left").thereShouldBeNoIconAnymore();
+    inTheSettingMenu.whenWeDelete(SettingKeyboard.Alt_Button_Left).thereShouldBeNoIconAnymore();
     inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
   });
 
   it("Delete bind then assign a not yet binded button", () => {
-    inTheSettingMenu.whenWeDelete("Alt_Button_Left").thereShouldBeNoIconAnymore();
+    inTheSettingMenu.whenWeDelete(SettingKeyboard.Alt_Button_Left).thereShouldBeNoIconAnymore();
     inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("B").nothingShouldHappen();
     inTheSettingMenu
@@ -370,7 +366,7 @@ describe("Test Rebinding", () => {
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Button_Cycle_Shiny");
     inGame.whenWePressOnKeyboard("A").weShouldTriggerTheButton("Alt_Button_Left");
 
-    inTheSettingMenu.whenWeDelete("Alt_Button_Left").thereShouldBeNoIconAnymore();
+    inTheSettingMenu.whenWeDelete(SettingKeyboard.Alt_Button_Left).thereShouldBeNoIconAnymore();
     inGame.whenWePressOnKeyboard("R").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("F").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("W").weShouldTriggerTheButton("Button_Cycle_Form");
@@ -397,7 +393,7 @@ describe("Test Rebinding", () => {
     inGame.whenWePressOnKeyboard("A").weShouldTriggerTheButton("Alt_Button_Left");
     inGame.whenWePressOnKeyboard("B").nothingShouldHappen();
 
-    inTheSettingMenu.whenWeDelete("Alt_Button_Left").thereShouldBeNoIconAnymore();
+    inTheSettingMenu.whenWeDelete(SettingKeyboard.Alt_Button_Left).thereShouldBeNoIconAnymore();
     inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("B").nothingShouldHappen();
 
@@ -475,11 +471,11 @@ describe("Test Rebinding", () => {
     inGame.whenWePressOnKeyboard("A").weShouldTriggerTheButton("Alt_Button_Left");
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Alt_Button_Right");
 
-    inTheSettingMenu.whenWeDelete("Alt_Button_Left").thereShouldBeNoIconAnymore();
+    inTheSettingMenu.whenWeDelete(SettingKeyboard.Alt_Button_Left).thereShouldBeNoIconAnymore();
     inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Alt_Button_Right");
 
-    inTheSettingMenu.whenWeDelete("Alt_Button_Right").thereShouldBeNoIconAnymore();
+    inTheSettingMenu.whenWeDelete(SettingKeyboard.Alt_Button_Right).thereShouldBeNoIconAnymore();
     inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("D").nothingShouldHappen();
 
@@ -495,8 +491,8 @@ describe("Test Rebinding", () => {
   it("test keyboard listener", () => {
     const keyDown = Phaser.Input.Keyboard.KeyCodes.S;
     const key = getKeyWithKeycode(config, keyDown) ?? "";
-    const settingName = config.custom[key];
-    const buttonDown = config.settings[settingName];
+    const settingName = config.custom?.[key as keyof typeof config.custom];
+    const buttonDown = config.settings[settingName as keyof typeof config.settings];
     expect(buttonDown).toEqual(Button.DOWN);
   });
 

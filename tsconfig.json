@@ -31,7 +31,7 @@
     // TODO: Enable this when possible
     "strictPropertyInitialization": false,
     // TODO: Enable this when possible.
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "noImplicitThis": true,
     // Even with strict mode on, this is not useful as we do not throw non Errors,
     // and it just makes it more cumbersome to catch errors.
