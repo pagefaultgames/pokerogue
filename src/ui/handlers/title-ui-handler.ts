@@ -1,4 +1,5 @@
 import { pokerogueApi } from "#api/pokerogue-api";
+import { loggedInUser } from "#app/account";
 import { FAKE_TITLE_LOGO_CHANCE } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
@@ -21,6 +22,7 @@ export class TitleUiHandler extends OptionSelectUiHandler {
   private static readonly BATTLES_WON_FALLBACK: number = -1;
 
   private titleContainer: Phaser.GameObjects.Container;
+  private usernameLabel: Phaser.GameObjects.Text;
   private playerCountLabel: Phaser.GameObjects.Text;
   private splashMessage: string;
   private splashMessageText: Phaser.GameObjects.Text;
@@ -28,6 +30,23 @@ export class TitleUiHandler extends OptionSelectUiHandler {
   private appVersionText: Phaser.GameObjects.Text;
 
   private titleStatsTimer: NodeJS.Timeout | null;
+
+  /**
+   * Returns the username of logged in user. If the username is hidden, the trainer name based on gender will be displayed.
+   * @returns The username of logged in user
+   */
+  private getUsername(): string {
+    const usernameReplacement =
+      globalScene.gameData.gender === PlayerGender.FEMALE
+        ? i18next.t("trainerNames:player_f")
+        : i18next.t("trainerNames:player_m");
+
+    const displayName = !globalScene.hideUsername
+      ? (loggedInUser?.username ?? i18next.t("common:guest"))
+      : usernameReplacement;
+
+    return i18next.t("menu:loggedAs", { username: displayName });
+  }
 
   constructor(mode: UiMode = UiMode.TITLE) {
     super(mode);
@@ -52,6 +71,17 @@ export class TitleUiHandler extends OptionSelectUiHandler {
       this.eventDisplay.setup();
       this.titleContainer.add(this.eventDisplay);
     }
+
+    this.usernameLabel = addTextObject(
+      // Actual y position will be determined after the title menu has been populated with options
+      globalScene.scaledCanvas.width - 2,
+      0,
+      this.getUsername(),
+      TextStyle.MESSAGE,
+      { fontSize: "54px" },
+    );
+    this.usernameLabel.setOrigin(1, 0);
+    this.titleContainer.add(this.usernameLabel);
 
     this.playerCountLabel = addTextObject(
       // Actual y position will be determined after the title menu has been populated with options
@@ -132,7 +162,8 @@ export class TitleUiHandler extends OptionSelectUiHandler {
     const ret = super.show(args);
 
     if (ret) {
-      // Moving player count to top of the menu
+      // Moving username and player count to top of the menu
+      this.usernameLabel.setY(globalScene.scaledCanvas.height - 23 - this.getWindowHeight());
       this.playerCountLabel.setY(globalScene.scaledCanvas.height - 13 - this.getWindowHeight());
 
       this.splashMessage = randItem(getSplashMessages());
