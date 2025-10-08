@@ -881,7 +881,7 @@ export class MovePhase extends PokemonPhase {
   }
 
   /** Execute the current move and apply its effects. */
-  private executeMove(): void{
+  private executeMove(): void {
     const user = this.pokemon;
     const move = this.move.getMove();
     const targets = this.targets;
