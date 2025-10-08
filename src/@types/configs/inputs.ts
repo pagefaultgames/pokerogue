@@ -75,6 +75,8 @@ export interface PadConfig<T extends DeviceMapping = DeviceMapping> {
   /** Custom bindings for each button */
   custom?: Record<keyof T, SettingGamepad | -1>;
 }
+export type CustomPadConfig<T extends DeviceMapping = DeviceMapping> = Omit<PadConfig<T>, "custom"> &
+  Required<Pick<PadConfig<T>, "custom">>;
 
 export interface KeyboardConfig {
   /** Identifier for the pad ID */
@@ -115,6 +117,8 @@ export type CustomGamepadConfig =
   | (typeof PAD_XBOX360 & Required<Pick<typeof PAD_XBOX360, "custom">>)
   | (typeof PAD_UNLICENSED_SNES & Required<Pick<typeof PAD_UNLICENSED_SNES, "custom">>);
 
+export type CustomKeyboardConfig = Omit<KeyboardConfig, "custom"> & Required<Pick<KeyboardConfig, "custom">>;
+
 /** Union type of all supported configurations (gamepad and keyboard) */
 export type InterfaceConfig = PadConfig | KeyboardConfig;
 /** The name of a keyboard key */
@@ -127,9 +131,7 @@ export type ConfigSet = Record<string, InterfaceConfig>;
 /**
  * Union type of all supported configurations (gamepad and keyboard), with the `custom` property marked as required
  */
-export type CustomInterfaceConfig =
-  | (Omit<PadConfig, "custom"> & Required<Pick<PadConfig, "custom">>)
-  | (Omit<KeyboardConfig, "custom"> & Required<Pick<KeyboardConfig, "custom">>);
+export type CustomInterfaceConfig = CustomPadConfig | CustomKeyboardConfig;
 
 export interface Interaction {
   pressTime: boolean;

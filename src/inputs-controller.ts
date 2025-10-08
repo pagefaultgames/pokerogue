@@ -12,11 +12,11 @@ import { PAD_UNLICENSED_SNES } from "#inputs/pad-unlicensed-snes";
 import { PAD_XBOX360 } from "#inputs/pad-xbox360";
 import type {
   CustomInterfaceConfig,
+  CustomKeyboardConfig,
+  CustomPadConfig,
   Interaction,
   InterfaceConfig,
-  KeyboardConfig,
   MappingSettingName,
-  PadConfig,
   SelectedDevice,
 } from "#types/configs/inputs";
 import { MoveTouchControlsHandler } from "#ui/move-touch-controls-handler";
@@ -504,17 +504,19 @@ export class InputsController {
    *
    * @returns InterfaceConfig The configuration object for the active gamepad, or null if not set.
    */
-  getActiveConfig(device: Device.KEYBOARD): KeyboardConfig | null;
-  getActiveConfig(device: Device.GAMEPAD): PadConfig | null;
-  getActiveConfig(device: Device): InterfaceConfig | null;
-  getActiveConfig(device: Device) {
+  getActiveConfig(device: Device.KEYBOARD): CustomKeyboardConfig | null;
+  getActiveConfig(device: Device.GAMEPAD): CustomPadConfig | null;
+  getActiveConfig(device: Device): CustomInterfaceConfig | null;
+  getActiveConfig(device: Device): CustomInterfaceConfig | null {
     const activeDevice = this.selectedDevice[device];
     if (activeDevice == null) {
       return null;
     }
     const config = this.configs[activeDevice];
     if (config?.padID) {
-      return config;
+      config.custom ??= { ...config.default };
+      // Cast is safe here as we assign `custom` above if it was undefined
+      return config as CustomInterfaceConfig;
     }
     return null;
   }

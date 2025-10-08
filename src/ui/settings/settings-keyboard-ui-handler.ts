@@ -101,7 +101,7 @@ export class SettingsKeyboardUiHandler extends AbstractControlSettingsUiHandler 
     const key = toPascalSnakeCase(selection);
     const settingName = SettingKeyboard[key];
     const activeConfig = this.getActiveConfig();
-    const success = deleteBind(this.getActiveConfig(), settingName);
+    const success = activeConfig != null && deleteBind(activeConfig, settingName);
     if (success) {
       this.saveCustomKeyboardMappingToLocalStorage(activeConfig);
       this.updateBindings();

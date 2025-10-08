@@ -2187,7 +2187,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
             // Unlock passive option
             if (!(passiveAttr & PassiveAttr.UNLOCKED) && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START)) {
-              const passiveCost = getPassiveCandyCount(speciesStarterCosts[this.lastSpecies.speciesId]);
+              // TODO: is this bang correct?
+              const passiveCost = getPassiveCandyCount(speciesStarterCosts[this.lastSpecies.speciesId]!);
               options.push({
                 label: `×${passiveCost} ${i18next.t("starterSelectUiHandler:unlockPassive")}`,
                 handler: () => {
@@ -2225,7 +2226,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             // Reduce cost option
             const valueReduction = starterData.valueReduction;
             if (valueReduction < valueReductionMax && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START)) {
-              const reductionCost = getValueReductionCandyCounts(speciesStarterCosts[this.lastSpecies.speciesId])[
+              // TODO: is this bang correct?
+              const reductionCost = getValueReductionCandyCounts(speciesStarterCosts[this.lastSpecies.speciesId]!)[
                 valueReduction
               ];
               options.push({
@@ -2263,7 +2265,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             }
 
             // Same species egg menu option.
-            const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarterCosts[this.lastSpecies.speciesId]);
+            // TODO: is this bang correct?
+            const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarterCosts[this.lastSpecies.speciesId]!);
             options.push({
               label: `×${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
               handler: () => {
@@ -2849,7 +2852,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     iconElement: GameObjects.Sprite,
     controlLabel: GameObjects.Text,
   ): void {
-    let iconPath: string;
+    let iconPath: string | undefined;
     // touch controls cannot be rebound as is, and are just emulating a keyboard event.
     // Additionally, since keyboard controls can be rebound (and will be displayed when they are), we need to have special handling for the touch controls
     if (gamepadType === "touch") {
@@ -2904,7 +2907,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     iconElement: GameObjects.Sprite,
     controlLabel: GameObjects.Text,
   ): void {
-    let iconPath: string;
+    let iconPath: string | undefined;
     // touch controls cannot be rebound as is, and are just emulating a keyboard event.
     // Additionally, since keyboard controls can be rebound (and will be displayed when they are), we need to have special handling for the touch controls
     if (gamepadType === "touch") {
@@ -2939,7 +2942,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     let gamepadType: string;
     if (globalScene.inputMethod === "gamepad") {
       gamepadType = globalScene.inputController.getConfig(
-        globalScene.inputController.selectedDevice[Device.GAMEPAD],
+        globalScene.inputController.selectedDevice[Device.GAMEPAD]!,
       ).padType;
     } else {
       gamepadType = globalScene.inputMethod;

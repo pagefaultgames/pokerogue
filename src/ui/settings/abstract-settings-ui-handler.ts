@@ -4,6 +4,7 @@ import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { SettingType } from "#system/settings";
 import { Setting, SettingKeys } from "#system/settings";
+import type { MappingSettingName } from "#types/configs/inputs";
 import type { AnyFn } from "#types/type-helpers";
 import type { InputsIcons } from "#ui/abstract-control-settings-ui-handler";
 import { MessageUiHandler } from "#ui/message-ui-handler";
@@ -206,10 +207,11 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
         this.navigationIcons[settingName].setTexture("keyboard").setFrame("HOME.png").alpha = 1;
         continue;
       }
-      const icon = globalScene.inputController?.getIconForLatestInputRecorded(settingName);
-      if (icon) {
-        const type = globalScene.inputController?.getLastSourceType();
-        this.navigationIcons[settingName].setTexture(type).setFrame(icon).alpha = 1;
+      const inputController = globalScene.inputController;
+      const icon = inputController?.getIconForLatestInputRecorded(settingName as MappingSettingName);
+      const type = inputController?.getLastSourceType();
+      if (icon && type != null) {
+        this.navigationIcons[settingName].setTexture(type).setFrame(icon).setAlpha(1);
       } else {
         this.navigationIcons[settingName].alpha = 0;
       }

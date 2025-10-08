@@ -616,7 +616,12 @@ export const speciesStarterCosts = {
   [SpeciesId.PALDEA_TAUROS]: 5,
   [SpeciesId.PALDEA_WOOPER]: 3,
   [SpeciesId.BLOODMOON_URSALUNA]: 5,
-} as Partial<Record<SpeciesId, number>>;
+};
+
+/**
+ * Type for the valid species ids that can be used as starters, based on the keys of {@linkcode speciesStarterCosts}
+ */
+export type StarterSpeciesId = keyof typeof speciesStarterCosts;
 
 const starterCandyCosts: { passive: number; costReduction: [number, number]; egg: number; }[] = [
   { passive: 40, costReduction: [ 25, 60 ], egg: 30 }, // 1 Cost

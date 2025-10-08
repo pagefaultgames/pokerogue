@@ -205,21 +205,18 @@ export function assign(config: CustomInterfaceConfig, settingNameTarget: Mapping
   if (previousSettingName) {
     const previousKey = getKeyWithSettingName(config, previousSettingName);
     if (previousKey && config.custom) {
-      // @ts-expect-error: TypeScript can't handle union of config types
       config.custom[previousKey] = -1;
     }
   }
   // then, we need to delete the current key for this settingName
   const currentKey = getKeyWithSettingName(config, settingNameTarget);
   if (currentKey) {
-    // @ts-expect-error: TypeScript can't handle union of config types
     config.custom[currentKey] = -1;
   }
 
   // then, the new key is assigned to the new settingName
   const newKey = getKeyWithKeycode(config, keycode);
   if (newKey) {
-    // @ts-expect-error: TypeScript can't handle union of config types
     config.custom[newKey] = settingNameTarget;
   }
   return true;
@@ -237,11 +234,9 @@ export function swap(config: CustomInterfaceConfig, settingNameTarget: MappingSe
   const new_settingName = getSettingNameWithKey(config, new_key!);
 
   if (prev_key) {
-    // @ts-expect-error: Typescript doesn't know that prev_key must match a key of config.custom
     config.custom[prev_key] = new_settingName;
   }
   if (new_key) {
-    // @ts-expect-error: Typescript doesn't know that prev_key must match a key of config.custom
     config.custom[new_key] = prev_settingName;
   }
   return true;

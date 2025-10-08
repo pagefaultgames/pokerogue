@@ -4,7 +4,7 @@ import type { Device } from "#enums/devices";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
 import { getIconWithSettingName } from "#inputs/config-handler";
-import type { InterfaceConfig } from "#types/configs/inputs";
+import type { CustomInterfaceConfig, InterfaceConfig, MappingSettingName } from "#types/configs/inputs";
 import { NavigationManager, NavigationMenu } from "#ui/navigation-menu";
 import { ScrollBar } from "#ui/scroll-bar";
 import { addTextObject, getTextColor } from "#ui/text";
@@ -54,10 +54,10 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
   protected keys: Array<string>;
 
   // Store the specific settings related to key bindings for the current gamepad configuration.
-  protected bindingSettings: Array<string>;
+  protected bindingSettings: Array<MappingSettingName>;
 
-  protected setting;
-  protected settingBlacklisted;
+  protected setting: Record<string, MappingSettingName>;
+  protected settingBlacklisted: string[];
   protected settingDeviceDefaults;
   protected settingDeviceOptions;
   protected configs;
@@ -324,7 +324,7 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
    *
    * @returns The active configuration for current device
    */
-  getActiveConfig(): InterfaceConfig {
+  getActiveConfig(): CustomInterfaceConfig | null {
     return globalScene.inputController.getActiveConfig(this.device);
   }
 
@@ -338,7 +338,7 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
     const activeConfig = this.getActiveConfig();
 
     // Set the UI layout for the active configuration. If unsuccessful, exit the function early.
-    if (!this.setLayout(activeConfig)) {
+    if (activeConfig == null || !this.setLayout(activeConfig)) {
       return;
     }
 
@@ -388,12 +388,12 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
         this.navigationIcons[settingName].alpha = 1;
         continue;
       }
-      const icon = globalScene.inputController?.getIconForLatestInputRecorded(settingName);
-      if (icon) {
-        const type = globalScene.inputController?.getLastSourceType();
-        this.navigationIcons[settingName].setTexture(type);
-        this.navigationIcons[settingName].setFrame(icon);
-        this.navigationIcons[settingName].alpha = 1;
+      const inputController = globalScene.inputController;
+      // cast is fine here. If it doesn't match, it will just return undefined
+      const icon = inputController?.getIconForLatestInputRecorded(settingName as MappingSettingName);
+      const type = inputController?.getLastSourceType();
+      if (icon != null && type != null) {
+        this.navigationIcons[settingName].setTexture(type).setFrame(icon).setAlpha(1);
       } else {
         this.navigationIcons[settingName].alpha = 0;
       }

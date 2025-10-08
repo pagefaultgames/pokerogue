@@ -1,6 +1,6 @@
 import { getIconForLatestInput, getSettingNameWithKeycode } from "#inputs/config-handler";
 import { SettingKeyboard } from "#system/settings-keyboard";
-import type { InterfaceConfig, SelectedDevice } from "#types/configs/inputs";
+import type { InterfaceConfig, MappingSettingName, SelectedDevice } from "#types/configs/inputs";
 import { toPascalSnakeCase } from "#utils/strings";
 import { expect } from "vitest";
 
@@ -47,9 +47,14 @@ export class InGameManip {
       icon = "KEY_" + icon;
     }
     this.icon = this.config.icons[icon as keyof typeof this.config.icons];
-    expect(getIconForLatestInput(this.configs, this.latestSource!, this.selectedDevice, this.settingName!)).toEqual(
-      this.icon,
-    );
+    expect(
+      getIconForLatestInput(
+        this.configs,
+        this.latestSource!,
+        this.selectedDevice,
+        this.settingName as MappingSettingName,
+      ),
+    ).toEqual(this.icon);
     return this;
   }
 
