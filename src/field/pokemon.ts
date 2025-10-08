@@ -140,6 +140,7 @@ import type { PokemonData } from "#system/pokemon-data";
 import { RibbonData } from "#system/ribbons/ribbon-data";
 import { awardRibbonsToSpeciesLine } from "#system/ribbons/ribbon-methods";
 import type { AbAttrMap, AbAttrString, TypeMultiplierAbAttrParams } from "#types/ability-types";
+import type { Constructor } from "#types/common";
 import type { getAttackDamageParams, getBaseDamageParams } from "#types/damage-params";
 import type { DamageCalculationResult, DamageResult } from "#types/damage-result";
 import type { IllusionData } from "#types/illusion-data";
@@ -151,11 +152,10 @@ import { EnemyBattleInfo } from "#ui/enemy-battle-info";
 import type { PartyOption } from "#ui/party-ui-handler";
 import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import { PlayerBattleInfo } from "#ui/player-battle-info";
+import { coerceArray } from "#utils/array";
 import { applyChallenges } from "#utils/challenge-utils";
 import {
   BooleanHolder,
-  type Constructor,
-  coerceArray,
   deltaRgb,
   fixedInt,
   getIvsFromId,
@@ -2141,7 +2141,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Suppresses an ability and calls its onlose attributes
    */
   public suppressAbility() {
-    [true, false].forEach(passive => applyOnLoseAbAttrs({ pokemon: this, passive }));
+    applyOnLoseAbAttrs({ pokemon: this, passive: true });
+    applyOnLoseAbAttrs({ pokemon: this, passive: false });
     this.summonData.abilitySuppressed = true;
   }
 

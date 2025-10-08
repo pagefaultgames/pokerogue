@@ -7,8 +7,8 @@ import type { TrainerPartyTemplate } from "#trainers/trainer-party-template";
 
 export type PartyTemplateFunc = () => TrainerPartyTemplate;
 export type PartyMemberFunc = (level: number, strength: PartyMemberStrength) => EnemyPokemon;
-export type GenModifiersFunc = (party: EnemyPokemon[]) => PersistentModifier[];
-export type GenAIFunc = (party: EnemyPokemon[]) => void;
+export type GenModifiersFunc = (party: readonly EnemyPokemon[]) => PersistentModifier[];
+export type GenAIFunc = (party: readonly EnemyPokemon[]) => void;
 
 export interface TrainerTierPools {
   [key: number]: SpeciesId[];
