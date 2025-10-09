@@ -14,9 +14,9 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
-import type { PokemonHeldItemModifierType } from "#modifiers/modifier-type";
 import { TrainerType } from "#enums/trainer-type";
 import type { PlayerPokemon } from "#field/pokemon";
+import type { PokemonHeldItemModifierType } from "#modifiers/modifier-type";
 import { getEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
