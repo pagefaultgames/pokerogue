@@ -1152,7 +1152,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.LUNALA, 13, EvolutionItem.MOON_FLUTE, null, [53, 73, 79])
   ],
   [SpeciesId.MELTAN]: [
-    new SpeciesEvolution(SpeciesId.MELMETAL, 30, null, null)
+    new SpeciesEvolution(SpeciesId.MELMETAL, 30, null, null, [30, 50, 70])
   ],
   [SpeciesId.ALOLA_RATTATA]: [
     new SpeciesEvolution(SpeciesId.ALOLA_RATICATE, 20, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]})
