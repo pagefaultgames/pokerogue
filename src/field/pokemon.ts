@@ -4338,7 +4338,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Return the `BattlerTag` preventing this Pokemon from using a move against the given target.
    * @param moveId - The `MoveId` of the move being used
    * @param target - The `Pokemon` being targeted by the move
-   * @returns The first `BattlerTag` preventing this Pokemon from using `moveId` against `target (if one exists).
+   * @returns The first `BattlerTag` preventing this Pokemon from using `moveId` against `target` (if one exists).
    * @remarks
    * Currently used solely to prevent Pollen Puff from being used on an ally with Heal Block active.
    * @privateRemarks
@@ -4353,8 +4353,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Get the {@link MoveRestrictionBattlerTag} that is restricting this Pokemon's move usage,
-   * if one exists.
+   * Get the {@link MoveRestrictionBattlerTag} that is restricting this Pokemon's move usage, if one exists.
    *
    * @param moveId - The ID of the move to check
    * @param target - The target of the move; optional, and used when the target is a factor in the move's restricted status

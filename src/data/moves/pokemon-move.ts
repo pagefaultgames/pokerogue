@@ -47,7 +47,7 @@ export class PokemonMove {
    * @param forSelection - Whether this is being checked for move selection; default `false`
    * @returns A tuple containing a boolean indicating whether the move can be selected, and a string with the reason if it cannot
    */
-  // TODO - Remove this method and simply check `isoutOfPp` during selection
+  // TODO - Remove this method and simply check `isOutOfPp` during selection
   public isUsable(pokemon: Pokemon, ignorePp = false, forSelection = false): [usable: boolean, preventionText: string] {
     const move = this.getMove();
     const moveName = move.name;

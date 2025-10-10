@@ -2864,7 +2864,7 @@ export class ExposedTag extends SerializableBattlerTag {
 }
 
 /**
- * Tag that prevents HP recovery from held items and move effects. It also blocks the usage of recovery moves.
+ * Tag that prevents HP recovery from held items and move effects. It also blocks the usage of recovery moves. \
  * Applied by moves:
  * - {@linkcode MoveId.HEAL_BLOCK} (5 turns)
  * - {@linkcode MoveId.PSYCHIC_NOISE} (2 turns)

@@ -220,13 +220,13 @@ export const counterAttackConditionBoth = new CounterAttackConditon();
  * A restriction that prevents a move from being selected
  *
  * @remarks
- * Restrictions will only prevent the move from being **selected**, and have no bearing on the
- * actual success or failure thereof. \
+ * Restrictions will only prevent the move from being **selected**,
+ * and have no bearing on the actual success or failure thereof. \
  * @see {@linkcode MoveCondition} Similar class handling move failures instead
  */
 export class MoveRestriction {
   /**
-   * An arbitrary lambda function checked when this move is selescted.
+   * An arbitrary lambda function checked when this move is selected. \
    * Should return `false` if the move is to be rendered unselectable.
    */
   public readonly func: UserMoveConditionFunc;
@@ -235,7 +235,9 @@ export class MoveRestriction {
    * Within the text, `{{pokemonNameWithAffix}}` and `{{moveName}}` will be populated with
    * the name of the Pokemon using the move and the name of the move being selected, respectively.
    * @defaultValue `"battle:moveRestricted"`
-   */ public readonly i18nkey: string;
+   */
+  public readonly i18nkey: string;
+
   constructor(func: UserMoveConditionFunc, i18nkey = "battle:moveRestricted") {
     this.func = func;
     this.i18nkey = i18nkey;
