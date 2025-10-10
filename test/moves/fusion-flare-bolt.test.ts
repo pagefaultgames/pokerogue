@@ -166,8 +166,8 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
 
     // Mock stats by replacing entries in copy with desired values for specific stats
     const stats = {
-      enemy: [[...enemyParty[0].stats], [...enemyParty[1].stats]],
-      player: [[...party[0].stats], [...party[1].stats]],
+      enemy: [enemyParty[0].stats.slice(), enemyParty[1].stats.slice()],
+      player: [party[0].stats.slice(), party[1].stats.slice()],
     };
 
     // Ensure survival by reducing enemy Sp. Atk and boosting party Sp. Def
@@ -220,8 +220,8 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
 
     // Mock stats by replacing entries in copy with desired values for specific stats
     const stats = {
-      enemy: [[...enemyParty[0].stats], [...enemyParty[1].stats]],
-      player: [[...party[0].stats], [...party[1].stats]],
+      enemy: [enemyParty[0].stats.slice(), enemyParty[1].stats.slice()],
+      player: [party[0].stats.slice(), party[1].stats.slice()],
     };
 
     // Ensure survival by reducing enemy Sp. Atk and boosting party Sp. Def

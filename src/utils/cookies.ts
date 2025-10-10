@@ -1,4 +1,4 @@
-import { isBeta } from "#utils/utility-vars";
+import { isBeta } from "#constants/app-constants";
 
 export function setCookie(cName: string, cValue: string): void {
   const expiration = new Date();

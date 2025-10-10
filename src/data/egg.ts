@@ -485,14 +485,14 @@ export class Egg {
      * and being the same each time
      */
     let totalWeight = 0;
-    const speciesWeights: number[] = [];
-    for (const speciesId of speciesPool) {
+    const speciesWeights = new Array<number>(speciesPool.length);
+    for (const [idx, speciesId] of speciesPool.entries()) {
       // Accounts for species that have starter costs outside of the normal range for their EggTier
       const speciesCostClamped = Phaser.Math.Clamp(speciesStarterCosts[speciesId], minStarterValue, maxStarterValue);
       const weight = Math.floor(
         (((maxStarterValue - speciesCostClamped) / (maxStarterValue - minStarterValue + 1)) * 1.5 + 1) * 100,
       );
-      speciesWeights.push(totalWeight + weight);
+      speciesWeights[idx] = totalWeight + weight;
       totalWeight += weight;
     }
 
