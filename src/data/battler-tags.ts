@@ -1079,7 +1079,6 @@ export class SeedTag extends SerializableBattlerTag {
 
     const cancelled = new BooleanHolder(false);
     applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon, cancelled });
-
     if (cancelled.value) {
       return true;
     }
@@ -1095,7 +1094,7 @@ export class SeedTag extends SerializableBattlerTag {
     // TODO: Liquid ooze should queue a damage anim phase directly
     const damage = pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 8), { result: HitResult.INDIRECT });
     const reverseDrain = pokemon.hasAbilityWithAttr("ReverseDrainAbAttr", false);
-    globalScene.phaseManager.unshiftNew("PokemonHealPhase", source.getBattlerIndex(), reverseDrain ? -damage : damage, {
+    globalScene.phaseManager.unshiftNew("PokemonHealPhase", source.getBattlerIndex(), damage, {
       message: i18next.t(reverseDrain ? "battlerTags:seededLapseShed" : "battlerTags:seededLapse", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       }),

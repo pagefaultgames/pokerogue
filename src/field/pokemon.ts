@@ -3948,6 +3948,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.switchOutStatus && source) {
       damage = 0;
     }
+
+    // TODO: Refactor this weird sequence of creating the damage phase first and then
+    // updating the amount later -
+    // this is a weird way of allowing sturdy to show its ability flyout after the damage animation plays,
     damage = this.damage(damage, ignoreSegments, isIndirectDamage, ignoreFaintPhase);
     // Damage amount may have changed, but needed to be queued before calling damage function
     damagePhase.updateAmount(damage);
