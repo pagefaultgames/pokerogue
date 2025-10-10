@@ -324,7 +324,9 @@ export class PokemonTurnData {
   public statStagesDecreased = false;
   public moveEffectiveness: TypeDamageMultiplier | null = null;
   public combiningPledge?: MoveId;
+  /** The Pokemon was brought in this turn by a switch action (not an intial encounter/summon) */
   public switchedInThisTurn = false;
+  public summonedThisTurn = false;
   public failedRunAway = false;
   public joinedRound = false;
   /** Tracker for a pending status effect
