@@ -9,6 +9,7 @@ import { UiTheme } from "#enums/ui-theme";
 import type { Pokemon } from "#field/pokemon";
 import { getVariantTint } from "#sprites/variant";
 import { addTextObject } from "#ui/text";
+import { playTween } from "#utils/anim-utils";
 import { fixedInt, getLocalizedSpriteKey, getShinyDescriptor } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
@@ -544,14 +545,18 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     this.updateHpFrame();
   }
 
-  /** Update the pokemonHp bar */
-  protected updatePokemonHp(pokemon: Pokemon, resolve: (r: void | PromiseLike<void>) => void, instant?: boolean): void {
-    let duration = !instant ? Phaser.Math.Clamp(Math.abs(this.lastHp - pokemon.hp) * 5, 250, 5000) : 0;
+  /**
+   * Update the pokemonHp bar.
+   * @param pokemon - The `Pokemon` to which this bar is attached
+   * @param instant - Whether to instantly update the bar; default `false`
+   */
+  protected async updatePokemonHp(pokemon: Pokemon, instant = false): Promise<void> {
+    let duration = instant ? 0 : Phaser.Math.Clamp(Math.abs(this.lastHp - pokemon.hp) * 5, 250, 5000);
     const speed = globalScene.hpBarSpeed;
     if (speed) {
       duration = speed >= 3 ? 0 : duration / Math.pow(2, speed);
     }
-    globalScene.tweens.add({
+    await playTween({
       targets: this.hpBar,
       ease: "Sine.easeOut",
       scaleX: pokemon.getHpRatio(true),
@@ -559,25 +564,22 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
       onUpdate: () => {
         this.onHpTweenUpdate(pokemon);
       },
-      onComplete: () => {
-        this.updateHpFrame();
-        resolve();
-      },
     });
+    this.updateHpFrame();
     this.lastMaxHp = pokemon.getMaxHp();
   }
 
   //#endregion
 
+  // TODO: Copy the relevant variables from the Pokemon to avoid improper updates when multiple
+  // damage instances occur without calling 
   async updateInfo(pokemon: Pokemon, instant?: boolean): Promise<void> {
-    let resolve: (r: void | PromiseLike<void>) => void = () => {};
-    const promise = new Promise<void>(r => (resolve = r));
+    // TODO: Is this fallback needed?
     if (!globalScene) {
-      return resolve();
+      return;
     }
 
-    const gender: Gender = pokemon.summonData?.illusion?.gender ?? pokemon.gender;
-
+    const gender = pokemon.summonData?.illusion?.gender ?? pokemon.gender;
     this.genderText.setText(getGenderSymbol(gender)).setColor(getGenderColor(gender));
 
     const nameUpdated = this.updateName(pokemon);
@@ -585,7 +587,6 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     const teraTypeUpdated = this.updateTeraType(pokemon.isTerastallized ? pokemon.getTeraType() : PokemonType.UNKNOWN);
 
     const isFusion = pokemon.isFusion(true);
-
     if (nameUpdated || teraTypeUpdated) {
       this.updateIconDisplay(isFusion);
     }
@@ -595,8 +596,10 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     this.setTypes(pokemon.getTypes(true, false, undefined, true));
 
     if (this.lastHp !== pokemon.hp || this.lastMaxHp !== pokemon.getMaxHp()) {
-      return this.updatePokemonHp(pokemon, resolve, instant);
+      this.updatePokemonHp(pokemon, instant);
+      return;
     }
+
     if (!this.player && this.lastLevel !== pokemon.level) {
       this.setLevel(pokemon.level);
       this.lastLevel = pokemon.level;
@@ -613,18 +616,14 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     this.shinyIcon.setVisible(pokemon.isShiny(true));
 
     const doubleShiny = isFusion && pokemon.shiny && pokemon.fusionShiny;
-    const baseVariant = !doubleShiny ? pokemon.getVariant(true) : pokemon.variant;
+    const baseVariant = doubleShiny ?  pokemon.variant : pokemon.getVariant(true);
     this.shinyIcon.setTint(getVariantTint(baseVariant));
 
     this.fusionShinyIcon.setVisible(doubleShiny).setPosition(this.shinyIcon.x, this.shinyIcon.y);
     if (isFusion) {
       this.fusionShinyIcon.setTint(getVariantTint(pokemon.fusionVariant));
     }
-
-    resolve();
-    await promise;
   }
-  //#endregion
 
   updateNameText(pokemon: Pokemon): void {
     let displayName = pokemon.getNameToRender().replace(/[♂♀]/g, "");

@@ -235,10 +235,9 @@ export class EnemyBattleInfo extends BattleInfo {
 
   protected override updatePokemonHp(
     pokemon: EnemyPokemon,
-    resolve: (r: void | PromiseLike<void>) => void,
     instant?: boolean,
   ): void {
-    super.updatePokemonHp(pokemon, resolve, instant);
+    super.updatePokemonHp(pokemon, instant);
     this.lastHp = pokemon.hp;
   }
 }
