@@ -127,7 +127,7 @@ describe("Utils - Strings", () => {
           padding: 5,
         });
         expect(ret).toEqual(
-          "[testHexObj.Abcd blah, testHexObj.Fffd blah, testHexObj.XA1 blah] (=[0x0ABCD, 0x0FFFD, 0x000A1])",
+          "[testHexObj.Abcd blah, testHexObj.Fffd blah, testHexObj.Xa1 blah] (=[0x0ABCD, 0x0FFFD, 0x000A1])",
         );
       });
 
