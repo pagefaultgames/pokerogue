@@ -43,14 +43,14 @@ interface getEnumStrValueOptions {
  *
  * Selectively includes properties based on the type of `Val`
  */
-type getEnumStrOptions<Val extends string | number = string | number> = {
+type getEnumStrOptions<Val extends string | number = string | number, X extends boolean = boolean> = {
   /**
    * Whether to omit the enum members' values from the output.
    * @defaultValue Whether `Val` is a string
    */
-  excludeValues?: boolean;
+  excludeValues?: X;
 } & getEnumStrKeyOptions &
-  ([Val] extends [string] ? unknown : getEnumStrValueOptions);
+  ([Val] extends [string] ? unknown : [X] extends [true] ? unknown : getEnumStrValueOptions);
 
 /**
  * Return the name of an enum member or `const object` value, alongside its corresponding value.
@@ -69,10 +69,10 @@ type getEnumStrOptions<Val extends string | number = string | number> = {
  * getEnumStr(fakeEnum, fakeEnum.TWO, {casing: "Title", prefix: "fakeEnum.", suffix: "!!!"}); // Output: "fakeEnum.TWO!!! (=2)"
  * ```
  */
-export function getEnumStr<E extends EnumOrObject, const V extends E[keyof E]>(
+export function getEnumStr<E extends EnumOrObject, const V extends E[keyof E], X extends boolean>(
   obj: E,
   val: V,
-  options: getEnumStrOptions<V> = {},
+  options: getEnumStrOptions<V, X> = {},
 ): string {
   const {
     casing = "Preserve",
@@ -163,10 +163,10 @@ function getPrefixForBase(base: number): string {
  * // Output: "[Thing ONE Yeah, Thing TWO Yeah, Thing THREE Yeah]";
  * ```
  */
-export function stringifyEnumArray<E extends EnumOrObject, V extends E[keyof E]>(
+export function stringifyEnumArray<E extends EnumOrObject, V extends E[keyof E], X extends boolean>(
   obj: E,
   values: readonly V[],
-  options: getEnumStrOptions<V> = {},
+  options: getEnumStrOptions<V, X> = {},
 ): string {
   if (values.length === 0) {
     return "[]";

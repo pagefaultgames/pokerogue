@@ -130,6 +130,19 @@ describe("Utils - Strings", () => {
           "[testHexObj.Abcd blah, testHexObj.Fffd blah, testHexObj.X01 blah] (=[0x0ABCD, 0x0FFFD, 0x00001])",
         );
       });
+
+      it("should type correctly", () => {
+        // @ts-expect-error - value props should not be providable if values aren't being included
+        stringifyEnumArray(testEnumNum, [testEnumNum.testN1], { excludeValues: true, base: 10 });
+        stringifyEnumArray(testEnumNum, [testEnumNum.testN1], { base: 10 });
+        stringifyEnumArray(testEnumNum, [testEnumNum.testN1], { excludeValues: true, prefix: "12" });
+
+        // @ts-expect-error - value props should not be providable if values aren't being included
+        stringifyEnumArray(testEnumString, [testEnumString.testS1], { excludeValues: true, base: 10 });
+        // @ts-expect-error - should not be able to specify base on string enum
+        stringifyEnumArray(testEnumString, [testEnumString.testS1], { excludeValues: false, base: 10 });
+        stringifyEnumArray(testEnumString, [testEnumString.testS1], { excludeValues: true, suffix: "23" });
+      });
     });
   });
 });
