@@ -52,7 +52,7 @@ export class AttackTypeBoosterHeldItem extends HeldItem<[typeof HeldItemEffect.A
     return `${HeldItemNames[this.type]?.toLowerCase()}`;
   }
 
-  override shouldApply(
+  public override shouldApply(
     _effect: typeof HeldItemEffect.ATTACK_TYPE_BOOST,
     { moveType, movePower }: AttackTypeBoostParams,
   ): boolean {
@@ -60,7 +60,10 @@ export class AttackTypeBoosterHeldItem extends HeldItem<[typeof HeldItemEffect.A
     return moveType === this.moveType && movePower.value >= 1;
   }
 
-  apply(_effect: typeof HeldItemEffect.ATTACK_TYPE_BOOST, { pokemon, movePower }: AttackTypeBoostParams): void {
+  public override apply(
+    _effect: typeof HeldItemEffect.ATTACK_TYPE_BOOST,
+    { pokemon, movePower }: AttackTypeBoostParams,
+  ): void {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     movePower.value = Math.floor(movePower.value * (1 + stackCount * this.powerBoost));
   }

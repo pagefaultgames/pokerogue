@@ -96,7 +96,7 @@ export function stringifyEnumArray<E extends EnumOrObject>(
   enums: E[keyof E][],
   transformValues?: (val: (typeof enums)[number]) => string,
 ): string {
-  if (obj.length === 0) {
+  if (enums.length === 0) {
     return "[]";
   }
 

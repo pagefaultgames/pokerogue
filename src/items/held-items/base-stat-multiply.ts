@@ -49,7 +49,10 @@ export class BaseStatMultiplyHeldItem extends HeldItem<[typeof HeldItemEffect.BA
   /**
    * Applies the {@linkcode BaseStatModifier} to the specified {@linkcode Pokemon}.
    */
-  apply(_effect: typeof HeldItemEffect.BASE_STAT_MULTIPLY, { pokemon, baseStats }: BaseStatParams): void {
+  public override apply(
+    _effect: typeof HeldItemEffect.BASE_STAT_MULTIPLY,
+    { pokemon, baseStats }: BaseStatParams,
+  ): void {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     const stat = this.stat;
     baseStats[stat] = Math.floor(baseStats[stat] * (1 + stackCount * 0.1));
