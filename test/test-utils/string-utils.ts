@@ -1,6 +1,5 @@
 import { getStatKey, type Stat } from "#enums/stat";
-import type { EnumOrObject, NormalEnum, TSNumericEnum } from "#types/enum-types";
-import type { ObjectValues } from "#types/type-helpers";
+import type { EnumOrObject, NormalEnum } from "#types/enum-types";
 import { enumValueToKey } from "#utils/enums";
 import { toTitleCase } from "#utils/strings";
 import type { MatcherState } from "@vitest/expect";
@@ -8,32 +7,56 @@ import i18next from "i18next";
 
 type Casing = "Preserve" | "Title";
 
-interface getEnumStrOptions {
+interface getEnumStrKeyOptions {
   /**
    * A string denoting the casing method to use.
    * @defaultValue "Preserve"
    */
   casing?: Casing;
   /**
-   * If present, will be prepended to the beginning of the enum string.
+   * If present, will be prepended to the beginning of the key name string.
    */
   prefix?: string;
   /**
-   * If present, will be added to the end of the enum string.
+   * If present, will be added to the end of the key name string.
    */
   suffix?: string;
+}
+
+interface getEnumStrValueOptions {
   /**
-   * Whether to omit the value from the text.
-   * @defaultValue Whether `E` is a non-string enum
+   * A numeric base that will be used to convert `val` into a number.
+   * Special formatting will be applied for binary, octal and hexadecimal to add base prefixes,
+   * and should be omitted if a string value is passed.
+   * @defaultValue `10`
    */
-  omitValue?: boolean;
+  base?: number;
+  /**
+   * The amount of padding to add to the numeral representation.
+   * @defaultValue `0`
+   */
+  padding?: number;
 }
 
 /**
- * Return the name of an enum member or const object value, alongside its corresponding value.
- * @param obj - The {@linkcode EnumOrObject} to source reverse mappings from
- * @param val - One of {@linkcode obj}'s values
- * @param options - Options modifying the stringification process
+ * Options type for `getEnumStr` and company.
+ *
+ * Selectively includes properties based on the type of `Val`
+ */
+type getEnumStrOptions<Val extends string | number = string | number> = {
+  /**
+   * Whether to omit the enum members' values from the output.
+   * @defaultValue Whether `Val` is a string
+   */
+  excludeValues?: boolean;
+} & getEnumStrKeyOptions &
+  ([Val] extends [string] ? unknown : getEnumStrValueOptions);
+
+/**
+ * Return the name of an enum member or `const object` value, alongside its corresponding value.
+ * @param obj - The `EnumOrObject` to source reverse mappings from
+ * @param val - One of `obj`'s values to stringify
+ * @param options - Optional parameters modifying the stringification process
  * @returns The stringified representation of `val` as dictated by the options.
  * @example
  * ```ts
@@ -46,103 +69,134 @@ interface getEnumStrOptions {
  * getEnumStr(fakeEnum, fakeEnum.TWO, {casing: "Title", prefix: "fakeEnum.", suffix: "!!!"}); // Output: "fakeEnum.TWO!!! (=2)"
  * ```
  */
-export function getEnumStr<E extends EnumOrObject>(
+export function getEnumStr<E extends EnumOrObject, const V extends E[keyof E]>(
   obj: E,
-  val: ObjectValues<E>,
-  options: getEnumStrOptions = {},
+  val: V,
+  options: getEnumStrOptions<V> = {},
 ): string {
-  const { casing = "Preserve", prefix = "", suffix = "", omitValue = typeof val === "number" } = options;
-  let casingFunc: ((s: string) => string) | undefined;
+  const {
+    casing = "Preserve",
+    prefix = "",
+    suffix = "",
+    excludeValues = typeof val === "string",
+    base = 10,
+    padding = 0,
+  } = options as getEnumStrOptions;
+
+  const keyPart = excludeValues ? "" : getKeyPart(obj, val, { casing, prefix, suffix });
+  const valuePart = typeof val === "string" ? val.toString() : getValuePart(val, { base, padding });
+
+  return `${keyPart} ${valuePart}`.trim();
+}
+
+function getKeyPart<E extends EnumOrObject, V extends E[keyof E]>(
+  obj: E,
+  val: V,
+  { casing, prefix, suffix }: Required<getEnumStrKeyOptions>,
+): string {
+  let casingFunc: (s: string) => string;
   switch (casing) {
     case "Preserve":
+      casingFunc = s => s;
       break;
     case "Title":
       casingFunc = toTitleCase;
       break;
   }
 
-  let stringPart =
+  const keyName =
     obj[val] !== undefined
       ? // TS reverse mapped enum
         (obj[val] as string)
-      : // Normal enum/`const object`
+      : // Normal enum / `const object`
+        // TODO: Figure out a way to cache the names of commonly-used enum numbers for performance if needed
         (enumValueToKey(obj as NormalEnum<E>, val) as string);
 
-  if (casingFunc) {
-    stringPart = casingFunc(stringPart);
-  }
+  return `${prefix}${casingFunc(keyName)}${suffix}`;
+}
 
-  return `${prefix}${stringPart}${suffix}${omitValue ? "" : ` (=${val})`}`;
+/**
+ * Helper function used by `getEnumStr` and company to format the "value" part of an enum string.
+ * @param val - The value to be stringified
+ * @param options - Options modifying the stringification process
+ * @param addParen - Whether to add enclosing parentheses and `=` sign; default `true`
+ * @returns The stringified version of `val`
+ */
+function getValuePart(val: number, options: Required<getEnumStrValueOptions>, addParen = true): string {
+  const { base, padding } = options;
+  const valFormatted = `${getPrefixForBase(base)}${val.toString(base).toUpperCase().padStart(padding, "0")}`;
+
+  return addParen ? `(=${valFormatted})` : valFormatted;
+}
+
+function getPrefixForBase(base: number): string {
+  switch (base) {
+    case 2:
+      return "0b";
+    case 8:
+      return "0o";
+    case 16:
+      return "0x";
+    default:
+      return "";
+  }
 }
 
 /**
  * Convert an array of enums or `const object`s into a readable string version.
- * @param obj - The {@linkcode EnumOrObject} to source reverse mappings from
- * @param enums - An array of {@linkcode obj}'s values
+ * @param obj - The `EnumOrObject` to source reverse mappings from
+ * @param values - An array of `obj`'s values to convert into strings
+ * @param options - Optional parameters modifying the stringification process
  * @returns The stringified representation of `enums`.
  * @example
  * ```ts
  * enum fakeEnum {
- *   ONE: 1,
- *   TWO: 2,
- *   THREE: 3,
+ *   ONE = 1,
+ *   TWO = 2,
+ *   THREE = 3,
  * }
- * console.log(stringifyEnumArray(fakeEnum, [fakeEnum.ONE, fakeEnum.TWO, fakeEnum.THREE])); // Output: "[ONE, TWO, THREE] (=[1, 2, 3])"
+ * const vals = [fakeEnum.ONE, fakeEnum.TWO, fakeEnum.THREE] as const;
+ *
+ * console.log(stringifyEnumArray(fakeEnum, vals));
+ * // Output: "[ONE, TWO, THREE] (=[1, 2, 3])";
+ * console.log(stringifyEnumArray(fakeEnum, vals, {prefix: "Thing ", suffix: " Yeah", exclude: "values"}));
+ * // Output: "[Thing ONE Yeah, Thing TWO Yeah, Thing THREE Yeah]";
  * ```
  */
-export function stringifyEnumArray<E extends EnumOrObject>(obj: E, enums: E[keyof E][]): string {
-  if (enums.length === 0) {
+export function stringifyEnumArray<E extends EnumOrObject, V extends E[keyof E]>(
+  obj: E,
+  values: readonly V[],
+  options: getEnumStrOptions<V> = {},
+): string {
+  if (values.length === 0) {
     return "[]";
   }
 
-  const vals = enums.slice();
-  /** An array of string names */
-  let names: string[];
+  const {
+    casing = "Preserve",
+    prefix = "",
+    suffix = "",
+    excludeValues = typeof values[0] === "string",
+    base = 10,
+    padding = 0,
+  } = options as getEnumStrOptions;
 
-  if (obj[enums[0]] !== undefined) {
-    // Reverse mapping exists - `obj` is a `TSNumericEnum` and its reverse mapped counterparts are strings
-    names = enums.map(e => (obj as TSNumericEnum<E>)[e] as string);
-  } else {
-    // No reverse mapping exists means `obj` is a `NormalEnum`.
-    // NB: This (while ugly) should be more ergonomic than doing a repeated lookup for large `const object`s
-    // as the `enums` array should be significantly shorter than the corresponding enum type.
-    names = [];
-    for (const [k, v] of Object.entries(obj as NormalEnum<E>)) {
-      if (names.length === enums.length) {
-        // No more names to get
-        break;
-      }
-      // Find all matches for the given enum, assigning their keys to the names array
-      findIndices(enums, v).forEach(matchIndex => {
-        names[matchIndex] = k;
-      });
-    }
+  const keyPart = values.map(v => getKeyPart(obj, v, { casing, prefix, suffix })).join(", ");
+  if (excludeValues) {
+    return keyPart;
   }
-  return `[${names.join(", ")}] (=[${vals.join(", ")}])`;
+  const valuePart =
+    typeof values[0] === "string"
+      ? values.join(", ")
+      : (values as readonly number[]).map(v => getValuePart(v, { base, padding }, false)).join(", ");
+
+  return `[${keyPart}] (=[${valuePart}])`;
 }
 
 /**
- * Return the indices of all occurrences of a value in an array.
- * @param arr - The array to search
- * @param searchElement - The value to locate in the array
- * @param fromIndex - The array index at which to begin the search. If fromIndex is omitted, the
- * search starts at index 0
- */
-function findIndices<T>(arr: T[], searchElement: T, fromIndex = 0): number[] {
-  const indices: number[] = [];
-  const arrSliced = arr.slice(fromIndex);
-  for (const [index, value] of arrSliced.entries()) {
-    if (value === searchElement) {
-      indices.push(index);
-    }
-  }
-  return indices;
-}
-
-/**
- * Convert a number into an English ordinal
+ * Convert a number into an English ordinal.
  * @param num - The number to convert into an ordinal
- * @returns The ordinal representation of {@linkcode num}.
+ * @returns The ordinal representation of `num`.
  * @example
  * ```ts
  * console.log(getOrdinal(1)); // Output: "1st"
