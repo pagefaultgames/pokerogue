@@ -19,15 +19,6 @@ export class EvoTrackerHeldItem extends HeldItem<[typeof HeldItemEffect.EVO_TRAC
     this.species = species;
     this.required = required;
   }
-
-  /**
-   * Applies the {@linkcode EvoTrackerModifier}
-   * @returns always `true`
-   */
-  // TODO: does this need fixing?
-  apply(): boolean {
-    return true;
-  }
 }
 
 export class GimmighoulEvoTrackerHeldItem extends EvoTrackerHeldItem {

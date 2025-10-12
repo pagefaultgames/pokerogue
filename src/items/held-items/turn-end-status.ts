@@ -21,12 +21,15 @@ export class TurnEndStatusHeldItem extends HeldItem<[typeof HeldItemEffect.TURN_
     this.effect = effect;
   }
 
+  override shouldApply(_effect: typeof HeldItemEffect.TURN_END_STATUS, { pokemon }: TurnEndStatusParams): boolean {
+    return pokemon.canSetStatus(this.effect, true, false, pokemon, false);
+  }
   /**
    * Tries to inflicts the holder with the associated {@linkcode StatusEffect}.
    * @returns `true` if the status effect was applied successfully
    */
-  apply(_effect: typeof HeldItemEffect.TURN_END_STATUS, { pokemon }: TurnEndStatusParams): boolean {
-    return pokemon.trySetStatus(this.effect, pokemon, undefined, this.name);
+  apply(_effect: typeof HeldItemEffect.TURN_END_STATUS, { pokemon }: TurnEndStatusParams): void {
+    pokemon.trySetStatus(this.effect, pokemon, undefined, this.name);
   }
 
   getStatusEffect(): StatusEffect {

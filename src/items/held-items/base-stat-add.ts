@@ -17,7 +17,7 @@ export class OldGateauHeldItem extends HeldItem<[typeof HeldItemEffect.BASE_STAT
     return i18next.t("modifierType:ModifierType.PokemonBaseStatFlatModifierType.description");
   }
 
-  apply(_effect: typeof HeldItemEffect.BASE_STAT_ADD, { pokemon, baseStats }: BaseStatParams): true {
+  apply(_effect: typeof HeldItemEffect.BASE_STAT_ADD, { pokemon, baseStats }: BaseStatParams): void {
     const stats = this.getStats(pokemon);
     const statModifier = 20;
     // Modifies the passed in baseStats[] array by a flat value, only if the stat is specified in this.stats
@@ -27,8 +27,6 @@ export class OldGateauHeldItem extends HeldItem<[typeof HeldItemEffect.BASE_STAT
         baseStats[i] = Math.min(Math.max(newVal, 1), 999999);
       }
     });
-
-    return true;
   }
 
   /**

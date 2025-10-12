@@ -3,24 +3,22 @@ import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId } from "#enums/held-item-id";
 import type { SpeciesId } from "#enums/species-id";
 import type { Stat } from "#enums/stat";
-import type { Pokemon } from "#field/pokemon";
 import { HeldItem } from "#items/held-item";
 import type { StatBoostParams } from "#types/held-item-parameter";
 
 /**
  * Modifier used for held items that Applies {@linkcode Stat} boost(s)
  * using a multiplier.
- * @extends PokemonHeldItemModifier
  * @see {@linkcode apply}
  */
 export class StatBoostHeldItem extends HeldItem<[typeof HeldItemEffect.STAT_BOOST]> {
   public readonly effects = [HeldItemEffect.STAT_BOOST] as const;
   /** The stats that the held item boosts */
-  protected stats: Stat[];
+  protected readonly stats: readonly Stat[];
   /** The multiplier used to increase the relevant stat(s) */
-  protected multiplier: number;
+  protected readonly multiplier: number;
 
-  constructor(type: HeldItemId, maxStackCount: number, stats: Stat[], multiplier: number) {
+  constructor(type: HeldItemId, maxStackCount: number, stats: readonly Stat[], multiplier: number) {
     super(type, maxStackCount);
 
     this.stats = stats;
@@ -44,12 +42,11 @@ export class StatBoostHeldItem extends HeldItem<[typeof HeldItemEffect.STAT_BOOS
    * @returns `true` if the stat boost applies successfully, false otherwise
    * @see shouldApply
    */
-  apply(_effect: typeof HeldItemEffect.STAT_BOOST, { statHolder }: StatBoostParams): boolean {
+  apply(_effect: typeof HeldItemEffect.STAT_BOOST, { statHolder }: StatBoostParams): void {
     statHolder.value *= this.multiplier;
-    return true;
   }
 
-  getMaxHeldItemCount(_pokemon: Pokemon): number {
+  getMaxHeldItemCount(): number {
     return 1;
   }
 }
@@ -57,7 +54,6 @@ export class StatBoostHeldItem extends HeldItem<[typeof HeldItemEffect.STAT_BOOS
 /**
  * Modifier used for held items, specifically Eviolite, that apply
  * {@linkcode Stat} boost(s) using a multiplier if the holder can evolve.
- * @extends StatBoosterModifier
  * @see {@linkcode apply}
  */
 export class EvolutionStatBoostHeldItem extends StatBoostHeldItem {
@@ -73,6 +69,14 @@ export class EvolutionStatBoostHeldItem extends StatBoostHeldItem {
   //    return super.shouldApply(pokemon, stat, statValue) && !pokemon.isMax();
   //  }
 
+  override shouldApply(_: typeof HeldItemEffect.STAT_BOOST, { pokemon }: StatBoostParams): boolean {
+    const isUnevolved = pokemon.getSpeciesForm(true).speciesId in pokemonEvolutions;
+    // check for fusion that has eviolite
+    return (
+      (pokemon.isFusion() && pokemon.getFusionSpeciesForm(true).speciesId in pokemonEvolutions !== isUnevolved)
+      || (isUnevolved && !pokemon.isMax())
+    );
+  }
   /**
    * Boosts the incoming stat value by a {@linkcode EvolutionStatBoosterModifier.multiplier} if the holder
    * can evolve. Note that, if the holder is a fusion, they will receive
@@ -80,23 +84,18 @@ export class EvolutionStatBoostHeldItem extends StatBoostHeldItem {
    * evolved. However, if they are both unevolved, the full boost
    * will apply.
    * @returns `true` if the stat boost applies successfully, false otherwise
-   * @see shouldApply
    */
-  override apply(effect: typeof HeldItemEffect.STAT_BOOST, params: StatBoostParams): boolean {
+  override apply(effect: typeof HeldItemEffect.STAT_BOOST, params: StatBoostParams): void {
     const pokemon = params.pokemon;
     const isUnevolved = pokemon.getSpeciesForm(true).speciesId in pokemonEvolutions;
 
     if (pokemon.isFusion() && pokemon.getFusionSpeciesForm(true).speciesId in pokemonEvolutions !== isUnevolved) {
       // Half boost applied if pokemon is fused and either part of fusion is fully evolved
       params.statHolder.value *= 1 + (this.multiplier - 1) / 2;
-      return true;
-    }
-    if (isUnevolved && !pokemon.isMax()) {
-      // Full boost applied if holder is unfused and unevolved or, if fused, both parts of fusion are unevolved
-      return super.apply(effect, params);
+      return;
     }
 
-    return false;
+    super.apply(effect, params);
   }
 }
 
@@ -108,7 +107,7 @@ export type SpeciesStatBoosterItemId =
   | typeof HeldItemId.DEEP_SEA_SCALE
   | typeof HeldItemId.DEEP_SEA_TOOTH;
 
-export const SPECIES_STAT_BOOSTER_ITEMS: SpeciesStatBoosterItemId[] = [
+export const SPECIES_STAT_BOOSTER_ITEMS: readonly SpeciesStatBoosterItemId[] = [
   HeldItemId.LIGHT_BALL,
   HeldItemId.THICK_CLUB,
   HeldItemId.METAL_POWDER,
@@ -120,35 +119,27 @@ export const SPECIES_STAT_BOOSTER_ITEMS: SpeciesStatBoosterItemId[] = [
 /**
  * Modifier used for held items that Applies {@linkcode Stat} boost(s) using a
  * multiplier if the holder is of a specific {@linkcode SpeciesId}.
- * @extends StatBoostHeldItem
- * @see {@linkcode apply}
- */
+|*/
 export class SpeciesStatBoostHeldItem extends StatBoostHeldItem {
   /** The species that the held item's stat boost(s) apply to */
-  public species: SpeciesId[];
+  public species: readonly SpeciesId[];
 
   constructor(
     type: SpeciesStatBoosterItemId,
     maxStackCount: number,
-    stats: Stat[],
+    stats: readonly Stat[],
     multiplier: number,
-    species: SpeciesId[],
+    species: readonly SpeciesId[],
   ) {
     super(type, maxStackCount, stats, multiplier);
     this.species = species;
   }
 
-  apply(effect: typeof HeldItemEffect.STAT_BOOST, params: StatBoostParams): boolean {
-    const pokemon = params.pokemon;
-    const fitsSpecies =
+  override shouldApply(_: typeof HeldItemEffect.STAT_BOOST, { pokemon }: StatBoostParams): boolean {
+    return (
       this.species.includes(pokemon.getSpeciesForm(true).speciesId)
-      || (pokemon.isFusion() && this.species.includes(pokemon.getFusionSpeciesForm(true).speciesId));
-
-    if (fitsSpecies) {
-      return super.apply(effect, params);
-    }
-
-    return false;
+      || (pokemon.isFusion() && this.species.includes(pokemon.getFusionSpeciesForm(true).speciesId))
+    );
   }
 
   /**

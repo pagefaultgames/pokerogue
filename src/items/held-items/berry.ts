@@ -54,9 +54,9 @@ export class BerryHeldItem extends ConsumableHeldItem<[typeof HeldItemEffect.BER
   }
 
   /**
-   * Checks if {@linkcode BerryModifier} should be applied
-   * @param pokemon The {@linkcode Pokemon} that holds the berry
-   * @returns `true` if {@linkcode BerryModifier} should be applied
+   * Determine whether the Berry can be applied
+   * @param pokemon - The user with the berry
+   * @returns Whether the {@linkcode BerryModifier} should be applied
    */
   shouldApply(_effect: typeof HeldItemEffect.BERRY, { pokemon }: BerryParams): boolean {
     return getBerryPredicate(this.berryType)(pokemon);
@@ -66,7 +66,7 @@ export class BerryHeldItem extends ConsumableHeldItem<[typeof HeldItemEffect.BER
    * Applies {@linkcode BerryHeldItem}
    * @returns always `true`
    */
-  apply(_effect: typeof HeldItemEffect.BERRY, { pokemon }: BerryParams): boolean {
+  apply(_effect: typeof HeldItemEffect.BERRY, { pokemon }: BerryParams): void {
     // TODO: This call should not be here?
     //    if (!this.shouldApply(pokemon)) {
     //      return false;
@@ -86,7 +86,5 @@ export class BerryHeldItem extends ConsumableHeldItem<[typeof HeldItemEffect.BER
     pokemon.recordEatenBerry(this.berryType, consumed);
 
     globalScene.eventTarget.dispatchEvent(new BerryUsedEvent(pokemon, this.berryType));
-
-    return true;
   }
 }

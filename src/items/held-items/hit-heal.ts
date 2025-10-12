@@ -22,26 +22,23 @@ export class HitHealHeldItem extends HeldItem<[typeof HeldItemEffect.HIT_HEAL]> 
     return "shell_bell";
   }
 
-  /**
-   * Applies {@linkcode HitHealModifier}
-   * @returns `true` if the {@linkcode Pokemon} was healed
-   */
-  apply(_effect: typeof HeldItemEffect.HIT_HEAL, { pokemon }: HitHealParams): boolean {
+  public override shouldApply(_effect: typeof HeldItemEffect.HIT_HEAL, { pokemon }: HitHealParams): boolean {
+    return pokemon.turnData.totalDamageDealt > 0 && !pokemon.isFullHp();
+  }
+
+  apply(_effect: typeof HeldItemEffect.HIT_HEAL, { pokemon }: HitHealParams): void {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
-    if (pokemon.turnData.totalDamageDealt > 0 && !pokemon.isFullHp()) {
-      // TODO: this shouldn't be undefined AFAIK
-      globalScene.phaseManager.unshiftPhase(
-        new PokemonHealPhase(
-          pokemon.getBattlerIndex(),
-          toDmgValue(pokemon.turnData.totalDamageDealt / 8) * stackCount,
-          i18next.t("modifier:hitHealApply", {
-            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-            typeName: this.name,
-          }),
-          true,
-        ),
-      );
-    }
-    return true;
+    // TODO: this shouldn't be undefined AFAIK
+    globalScene.phaseManager.unshiftPhase(
+      new PokemonHealPhase(
+        pokemon.getBattlerIndex(),
+        toDmgValue(pokemon.turnData.totalDamageDealt / 8) * stackCount,
+        i18next.t("modifier:hitHealApply", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+          typeName: this.name,
+        }),
+        true,
+      ),
+    );
   }
 }

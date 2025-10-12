@@ -9,9 +9,8 @@ import { toDmgValue } from "#utils/common";
 import i18next from "i18next";
 
 /**
- * Modifier used for held items, namely White Herb, that restore adverse stat
- * stages in battle.
- * @extends PokemonHeldItemModifier
+ * Modifier used for held items, namely Reviver Seed, that revive a fainted
+ * {@linkcode Pokemon} immediately when it faints to direct damage
  * @see {@linkcode apply}
  */
 export class InstantReviveHeldItem extends ConsumableHeldItem<[typeof HeldItemEffect.INSTANT_REVIVE]> {
@@ -28,12 +27,7 @@ export class InstantReviveHeldItem extends ConsumableHeldItem<[typeof HeldItemEf
   get iconName(): string {
     return "reviver_seed";
   }
-  /**
-   * Goes through the holder's stat stages and, if any are negative, resets that
-   * stat stage back to 0.
-   * @returns `true` if any stat stages were reset, false otherwise
-   */
-  apply(_effect: typeof HeldItemEffect.INSTANT_REVIVE, { pokemon }: InstantReviveParams): boolean {
+  apply(_effect: typeof HeldItemEffect.INSTANT_REVIVE, { pokemon }: InstantReviveParams): void {
     // Restore the Pokemon to half HP
     globalScene.phaseManager.unshiftPhase(
       new PokemonHealPhase(
@@ -57,7 +51,6 @@ export class InstantReviveHeldItem extends ConsumableHeldItem<[typeof HeldItemEf
     for (const p of field) {
       applyAbAttrs("CommanderAbAttr", { pokemon: p });
     }
-    return true;
   }
 
   //TODO: is this missing the consume call?

@@ -10,10 +10,10 @@ import i18next from "i18next";
 
 export class TrainerItem {
   //  public pokemonId: number;
-  public type: TrainerItemId;
-  public maxStackCount: number;
-  public isLapsing = false;
-  public effects: TrainerItemEffect[] = [];
+  public readonly type: TrainerItemId;
+  public readonly maxStackCount: number;
+  public readonly isLapsing: boolean = false;
+  public readonly effects: readonly TrainerItemEffect[] = [];
 
   constructor(type: TrainerItemId, maxStackCount = 1) {
     this.type = type;
@@ -49,7 +49,7 @@ export class TrainerItem {
     return container;
   }
 
-  getIconStackText(stackCount: number): Phaser.GameObjects.BitmapText | null {
+  public getIconStackText(stackCount: number): Phaser.GameObjects.BitmapText | null {
     if (this.getMaxStackCount() === 1 || stackCount < 1) {
       return null;
     }
@@ -71,13 +71,10 @@ export class TrainerItem {
 }
 
 export class LapsingTrainerItem extends TrainerItem {
-  isLapsing = true;
+  public readonly isLapsing = true;
 
-  createIcon(battleCount: number): Phaser.GameObjects.Container {
-    const container = globalScene.add.container(0, 0);
-
+  public createIcon(battleCount: number): Phaser.GameObjects.Container {
     const item = globalScene.add.sprite(0, 12, "items").setFrame(this.iconName).setOrigin(0, 0.5);
-    container.add(item);
 
     // Linear interpolation on hue
     const hue = Math.floor(120 * (battleCount / this.getMaxStackCount()) + 5);
@@ -89,13 +86,12 @@ export class LapsingTrainerItem extends TrainerItem {
     const battleCountText = addTextObject(27, 0, battleCount.toString(), TextStyle.PARTY, {
       fontSize: "66px",
       color: typeHex,
-    });
-    battleCountText.setShadow(0, 0);
-    battleCountText.setStroke(strokeHex, 16);
-    battleCountText.setOrigin(1, 0);
-    container.add(battleCountText);
+    })
+      .setShadow(0, 0)
+      .setStroke(strokeHex, 16)
+      .setOrigin(1, 0);
 
-    return container;
+    return globalScene.add.container(0, 0, [item, battleCountText]);
   }
 }
 
@@ -114,7 +110,7 @@ export class LevelIncrementBoosterTrainerItem extends TrainerItem {
 export class PreserveBerryTrainerItem extends TrainerItem {
   public effects: TrainerItemEffect[] = [TrainerItemEffect.PRESERVE_BERRY];
 
-  apply(manager: TrainerItemManager, params: PreserveBerryParams) {
+  public apply(manager: TrainerItemManager, params: PreserveBerryParams) {
     const stack = manager.getStack(this.type);
     params.doPreserve.value ||= params.pokemon.randBattleSeedInt(10) < stack * 3;
   }
@@ -122,8 +118,8 @@ export class PreserveBerryTrainerItem extends TrainerItem {
 
 // Healing Charm
 export class HealingBoosterTrainerItem extends TrainerItem {
-  public effects: TrainerItemEffect[] = [TrainerItemEffect.HEALING_BOOSTER];
-  private multiplier: number;
+  public effects: readonly TrainerItemEffect[] = [TrainerItemEffect.HEALING_BOOSTER];
+  private readonly multiplier: number;
 
   constructor(type: TrainerItemId, multiplier: number, stackCount?: number) {
     super(type, stackCount);
@@ -131,7 +127,7 @@ export class HealingBoosterTrainerItem extends TrainerItem {
     this.multiplier = multiplier;
   }
 
-  apply(manager: TrainerItemManager, params: NumberHolderParams) {
+  public apply(manager: TrainerItemManager, params: NumberHolderParams) {
     const healingMultiplier = params.numberHolder;
     const stack = manager.getStack(this.type);
     healingMultiplier.value *= 1 + (this.multiplier - 1) * stack;
@@ -141,7 +137,7 @@ export class HealingBoosterTrainerItem extends TrainerItem {
 // Exp Booster
 export class ExpBoosterTrainerItem extends TrainerItem {
   public effects: TrainerItemEffect[] = [TrainerItemEffect.EXP_BOOSTER];
-  private boostPercent: number;
+  private readonly boostPercent: number;
 
   constructor(type: TrainerItemId, boostPercent: number, stackCount?: number) {
     super(type, stackCount);
@@ -149,13 +145,13 @@ export class ExpBoosterTrainerItem extends TrainerItem {
     this.boostPercent = boostPercent;
   }
 
-  get description(): string {
+  public get description(): string {
     return i18next.t("modifierType:ModifierType.ExpBoosterModifierType.description", {
       boostPercent: this.boostPercent,
     });
   }
 
-  apply(manager: TrainerItemManager, params: NumberHolderParams) {
+  public apply(manager: TrainerItemManager, params: NumberHolderParams): void {
     const boost = params.numberHolder;
     const stack = manager.getStack(this.type);
     boost.value = Math.floor(boost.value * (1 + stack * this.boostPercent * 0.01));
@@ -163,9 +159,9 @@ export class ExpBoosterTrainerItem extends TrainerItem {
 }
 
 export class MoneyMultiplierTrainerItem extends TrainerItem {
-  public effects: TrainerItemEffect[] = [TrainerItemEffect.MONEY_MULTIPLIER];
+  public effects: readonly TrainerItemEffect[] = [TrainerItemEffect.MONEY_MULTIPLIER];
 
-  apply(manager: TrainerItemManager, params: NumberHolderParams) {
+  apply(manager: TrainerItemManager, params: NumberHolderParams): void {
     const moneyMultiplier = params.numberHolder;
     const stack = manager.getStack(this.type);
     moneyMultiplier.value += Math.floor(moneyMultiplier.value * 0.2 * stack);
@@ -175,7 +171,7 @@ export class MoneyMultiplierTrainerItem extends TrainerItem {
 export class HiddenAbilityChanceBoosterTrainerItem extends TrainerItem {
   public effects: TrainerItemEffect[] = [TrainerItemEffect.HIDDEN_ABILITY_CHANCE_BOOSTER];
 
-  apply(manager: TrainerItemManager, params: NumberHolderParams) {
+  public apply(manager: TrainerItemManager, params: NumberHolderParams): void {
     const boost = params.numberHolder;
     const stack = manager.getStack(this.type);
     boost.value *= Math.pow(2, -1 - stack);
@@ -185,7 +181,7 @@ export class HiddenAbilityChanceBoosterTrainerItem extends TrainerItem {
 export class ShinyRateBoosterTrainerItem extends TrainerItem {
   public effects: TrainerItemEffect[] = [TrainerItemEffect.SHINY_RATE_BOOSTER];
 
-  apply(manager: TrainerItemManager, params: NumberHolderParams) {
+  public apply(manager: TrainerItemManager, params: NumberHolderParams): void {
     const boost = params.numberHolder;
     const stack = manager.getStack(this.type);
     boost.value *= Math.pow(2, 1 + stack);
@@ -195,7 +191,7 @@ export class ShinyRateBoosterTrainerItem extends TrainerItem {
 export class CriticalCatchChanceBoosterTrainerItem extends TrainerItem {
   public effects: TrainerItemEffect[] = [TrainerItemEffect.CRITICAL_CATCH_CHANCE_BOOSTER];
 
-  apply(manager: TrainerItemManager, params: NumberHolderParams) {
+  public apply(manager: TrainerItemManager, params: NumberHolderParams): void {
     const boost = params.numberHolder;
     const stack = manager.getStack(this.type);
     boost.value *= 1.5 + stack / 2;
@@ -205,7 +201,7 @@ export class CriticalCatchChanceBoosterTrainerItem extends TrainerItem {
 export class ExtraRewardTrainerItem extends TrainerItem {
   public effects: TrainerItemEffect[] = [TrainerItemEffect.EXTRA_REWARD];
 
-  apply(manager: TrainerItemManager, params: NumberHolderParams) {
+  public apply(manager: TrainerItemManager, params: NumberHolderParams): void {
     const count = params.numberHolder;
     const stack = manager.getStack(this.type);
     count.value += stack;
@@ -222,7 +218,7 @@ export class HealShopCostTrainerItem extends TrainerItem {
     this.shopMultiplier = shopMultiplier;
   }
 
-  apply(_manager: TrainerItemManager, params: NumberHolderParams) {
+  apply(_manager: TrainerItemManager, params: NumberHolderParams): void {
     const moneyCost = params.numberHolder;
     moneyCost.value = Math.floor(moneyCost.value * this.shopMultiplier);
   }

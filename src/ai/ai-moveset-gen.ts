@@ -23,10 +23,10 @@ import {
 import { speciesTmMoves, tmPoolTiers } from "#balance/tms";
 import { isBeta, isDev } from "#constants/app-constants";
 import { allMoves } from "#data/data-lists";
-import { ModifierTier } from "#enums/modifier-tier";
 import { MoveCategory } from "#enums/move-category";
 import type { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
+import { RarityTier } from "#enums/reward-tier";
 import type { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
@@ -155,13 +155,13 @@ function getTmPoolForSpecies(
       continue;
     }
     switch (tmPoolTiers[moveId]) {
-      case ModifierTier.COMMON:
+      case RarityTier.COMMON:
         allowCommon && tmPool.set(moveId, COMMON_TM_MOVESET_WEIGHT);
         break;
-      case ModifierTier.GREAT:
+      case RarityTier.GREAT:
         allowGreat && tmPool.set(moveId, GREAT_TM_MOVESET_WEIGHT);
         break;
-      case ModifierTier.ULTRA:
+      case RarityTier.ULTRA:
         allowUltra && tmPool.set(moveId, ULTRA_TM_MOVESET_WEIGHT);
         break;
     }

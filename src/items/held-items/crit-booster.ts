@@ -7,7 +7,6 @@ import type { CritBoostParams } from "#types/held-item-parameter";
 /**
  * Modifier used for held items that apply critical-hit stage boost(s).
  * using a multiplier.
- * @extends PokemonHeldItemModifier
  * @see {@linkcode apply}
  */
 export class CritBoostHeldItem extends HeldItem<[typeof HeldItemEffect.CRIT_BOOST]> {
@@ -28,9 +27,8 @@ export class CritBoostHeldItem extends HeldItem<[typeof HeldItemEffect.CRIT_BOOS
    * @param critStage {@linkcode NumberHolder} that holds the resulting critical-hit level
    * @returns always `true`
    */
-  apply(_effect: typeof HeldItemEffect.CRIT_BOOST, { critStage }: CritBoostParams): boolean {
+  apply(_effect: typeof HeldItemEffect.CRIT_BOOST, { critStage }: CritBoostParams): void {
     critStage.value += this.stageIncrement;
-    return true;
   }
 }
 
@@ -42,9 +40,9 @@ export class CritBoostHeldItem extends HeldItem<[typeof HeldItemEffect.CRIT_BOOS
  */
 export class SpeciesCritBoostHeldItem extends CritBoostHeldItem {
   /** The species that the held item's critical-hit stage boost applies to */
-  private species: SpeciesId[];
+  private readonly species: readonly SpeciesId[];
 
-  constructor(type: HeldItemId, maxStackCount: number, stageIncrement: number, species: SpeciesId[]) {
+  constructor(type: HeldItemId, maxStackCount: number, stageIncrement: number, species: readonly SpeciesId[]) {
     super(type, maxStackCount, stageIncrement);
 
     this.species = species;
@@ -53,28 +51,16 @@ export class SpeciesCritBoostHeldItem extends CritBoostHeldItem {
   /**
    * Checks if the holder's {@linkcode SpeciesId} (or its fused species) is listed
    * in {@linkcode species}.
-   * @param pokemon {@linkcode Pokemon} that holds the held item
-   * @param critStage {@linkcode NumberHolder} that holds the resulting critical-hit level
-   * @returns `true` if the critical-hit level can be incremented, false otherwise
+   * @param effect - The effect to be applied
+   * @param __namedParameters.critStage - Needed for proper typedoc rendering
+   * @returns Whether the critical-hit stage boost should be applied
    */
-  //  override shouldApply(pokemon: Pokemon, critStage: NumberHolder): boolean {
-  //    return (
-  //      super.shouldApply(pokemon, critStage) &&
-  //      (this.species.includes(pokemon.getSpeciesForm(true).speciesId) ||
-  //        (pokemon.isFusion() && this.species.includes(pokemon.getFusionSpeciesForm(true).speciesId)))
-  //    );
-  //  }
-
-  apply(effect: typeof HeldItemEffect.CRIT_BOOST, params: CritBoostParams): boolean {
+  override shouldApply(effect: typeof HeldItemEffect.CRIT_BOOST, params: CritBoostParams): boolean {
     const pokemon = params.pokemon;
-    const fitsSpecies =
-      this.species.includes(pokemon.getSpeciesForm(true).speciesId)
-      || (pokemon.isFusion() && this.species.includes(pokemon.getFusionSpeciesForm(true).speciesId));
-
-    if (fitsSpecies) {
-      return super.apply(effect, params);
-    }
-
-    return false;
+    return (
+      super.shouldApply(effect, params)
+      && (this.species.includes(pokemon.getSpeciesForm(true).speciesId)
+        || (pokemon.isFusion() && this.species.includes(pokemon.getFusionSpeciesForm(true).speciesId)))
+    );
   }
 }

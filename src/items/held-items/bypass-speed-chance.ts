@@ -12,42 +12,26 @@ import i18next from "i18next";
 export class BypassSpeedChanceHeldItem extends HeldItem<[typeof HeldItemEffect.BYPASS_SPEED_CHANCE]> {
   public readonly effects = [HeldItemEffect.BYPASS_SPEED_CHANCE] as const;
 
-  /**
-   * Checks if {@linkcode BypassSpeedChanceModifier} should be applied
-   * @param pokemon the {@linkcode Pokemon} that holds the item
-   * @param doBypassSpeed {@linkcode BooleanHolder} that is `true` if speed should be bypassed
-   * @returns `true` if {@linkcode BypassSpeedChanceModifier} should be applied
-   */
-  //  override shouldApply(pokemon?: Pokemon, doBypassSpeed?: BooleanHolder): boolean {
-  //    return super.shouldApply(pokemon, doBypassSpeed) && !!doBypassSpeed;
-  //  }
-
-  /**
-   * Applies {@linkcode BypassSpeedChanceModifier}
-   * @returns `true` if {@linkcode BypassSpeedChanceModifier} has been applied
-   */
-  apply(
+  override shouldApply(
     _effect: typeof HeldItemEffect.BYPASS_SPEED_CHANCE,
     { pokemon, doBypassSpeed }: BypassSpeedChanceParams,
   ): boolean {
-    // TODO: Fix this to be consistent with Dean's PR
     const stackCount = pokemon.heldItemManager.getStack(this.type);
-    if (!doBypassSpeed.value && pokemon.randBattleSeedInt(10) < stackCount) {
-      doBypassSpeed.value = true;
-      const isCommandFight =
-        globalScene.currentBattle.turnCommands[pokemon.getBattlerIndex()]?.command === Command.FIGHT;
+    return !doBypassSpeed.value && pokemon.randBattleSeedInt(10) < stackCount;
+  }
 
-      if (isCommandFight) {
-        globalScene.phaseManager.queueMessage(
-          i18next.t("modifier:bypassSpeedChanceApply", {
-            pokemonName: getPokemonNameWithAffix(pokemon),
-            itemName: this.name,
-          }),
-        );
-      }
-      return true;
+  apply(_effect: typeof HeldItemEffect.BYPASS_SPEED_CHANCE, { pokemon, doBypassSpeed }: BypassSpeedChanceParams): void {
+    // TODO: Fix this to be consistent with Dean's PR
+    doBypassSpeed.value = true;
+    const isCommandFight = globalScene.currentBattle.turnCommands[pokemon.getBattlerIndex()]?.command === Command.FIGHT;
+
+    if (isCommandFight) {
+      globalScene.phaseManager.queueMessage(
+        i18next.t("modifier:bypassSpeedChanceApply", {
+          pokemonName: getPokemonNameWithAffix(pokemon),
+          itemName: this.name,
+        }),
+      );
     }
-
-    return false;
   }
 }

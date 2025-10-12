@@ -8,7 +8,7 @@ import type { AccuracyBoostParams } from "#types/held-item-parameter";
  */
 export class AccuracyBoosterHeldItem extends HeldItem<[typeof HeldItemEffect.ACCURACY_BOOSTER]> {
   public readonly effects = [HeldItemEffect.ACCURACY_BOOSTER] as const;
-  private accuracyAmount: number;
+  private readonly accuracyAmount: number;
 
   constructor(type: HeldItemId, maxStackCount: number, accuracy: number) {
     super(type, maxStackCount);

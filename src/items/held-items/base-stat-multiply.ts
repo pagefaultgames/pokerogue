@@ -47,21 +47,11 @@ export class BaseStatMultiplyHeldItem extends HeldItem<[typeof HeldItemEffect.BA
   }
 
   /**
-   * Checks if {@linkcode BaseStatModifier} should be applied to the specified {@linkcode Pokemon}.
-   * @param _pokemon - The {@linkcode Pokemon} to be modified
-   * @param baseStats - The base stats of the {@linkcode Pokemon}
-   * @returns `true` if the {@linkcode Pokemon} should be modified
-   */
-  //  override shouldApply(_pokemon?: Pokemon, baseStats?: number[]): boolean {
-  //      return super.shouldApply(_pokemon, baseStats) && Array.isArray(baseStats);
-  //  }
-
-  /**
    * Applies the {@linkcode BaseStatModifier} to the specified {@linkcode Pokemon}.
    */
-  apply(_effect: typeof HeldItemEffect.BASE_STAT_MULTIPLY, { pokemon, baseStats }: BaseStatParams): boolean {
+  apply(_effect: typeof HeldItemEffect.BASE_STAT_MULTIPLY, { pokemon, baseStats }: BaseStatParams): void {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
-    baseStats[this.stat] = Math.floor(baseStats[this.stat] * (1 + stackCount * 0.1));
-    return true;
+    const stat = this.stat;
+    baseStats[stat] = Math.floor(baseStats[stat] * (1 + stackCount * 0.1));
   }
 }

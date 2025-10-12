@@ -52,14 +52,16 @@ export class AttackTypeBoosterHeldItem extends HeldItem<[typeof HeldItemEffect.A
     return `${HeldItemNames[this.type]?.toLowerCase()}`;
   }
 
-  apply(
+  override shouldApply(
     _effect: typeof HeldItemEffect.ATTACK_TYPE_BOOST,
-    { pokemon, moveType, movePower }: AttackTypeBoostParams,
-  ): void {
+    { moveType, movePower }: AttackTypeBoostParams,
+  ): boolean {
+    // TODO: Investigate why there's a check against movePower being less than 1
+    return moveType === this.moveType && movePower.value >= 1;
+  }
+
+  apply(_effect: typeof HeldItemEffect.ATTACK_TYPE_BOOST, { pokemon, movePower }: AttackTypeBoostParams): void {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
-    // TODO: Move the check into a `shouldApply` for unit testing
-    if (moveType === this.moveType && movePower.value >= 1) {
-      movePower.value = Math.floor(movePower.value * (1 + stackCount * this.powerBoost));
-    }
+    movePower.value = Math.floor(movePower.value * (1 + stackCount * this.powerBoost));
   }
 }

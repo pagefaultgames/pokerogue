@@ -16,32 +16,29 @@ export class SurviveChanceHeldItem extends HeldItem<[typeof HeldItemEffect.SURVI
 
   /**
    * Checks if the {@linkcode SurviveDamageModifier} should be applied
-   * @param pokemon the {@linkcode Pokemon} that holds the item
-   * @param surviveDamage {@linkcode BooleanHolder} that holds the survive damage
-   * @returns `true` if the {@linkcode SurviveDamageModifier} should be applied
+   * @param _effect - Unused
+   * @param __namedParameters.pokemon - Needed for proper typedoc rendering
+   * @returns Whether the
    */
-  //  override shouldApply(pokemon?: Pokemon, surviveDamage?: BooleanHolder): boolean {
-  //    return super.shouldApply(pokemon, surviveDamage) && !!surviveDamage;
-  //  }
+  override shouldApply(
+    _effect: typeof HeldItemEffect.SURVIVE_CHANCE,
+    { pokemon, surviveDamage }: SurviveChanceParams,
+  ): boolean {
+    return !surviveDamage.value && pokemon.randBattleSeedInt(10) < pokemon.heldItemManager.getStack(this.type);
+  }
 
   /**
    * Applies {@linkcode SurviveDamageModifier}
    * @returns `true` if the survive damage has been applied
    */
-  apply(_effect: typeof HeldItemEffect.SURVIVE_CHANCE, { pokemon, surviveDamage }: SurviveChanceParams): boolean {
-    const stackCount = pokemon.heldItemManager.getStack(this.type);
-    if (!surviveDamage.value && pokemon.randBattleSeedInt(10) < stackCount) {
-      surviveDamage.value = true;
+  apply(_effect: typeof HeldItemEffect.SURVIVE_CHANCE, { pokemon, surviveDamage }: SurviveChanceParams): void {
+    surviveDamage.value = true;
 
-      globalScene.phaseManager.queueMessage(
-        i18next.t("modifier:surviveDamageApply", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          typeName: this.name,
-        }),
-      );
-      return true;
-    }
-
-    return false;
+    globalScene.phaseManager.queueMessage(
+      i18next.t("modifier:surviveDamageApply", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+        typeName: this.name,
+      }),
+    );
   }
 }

@@ -7,10 +7,7 @@ export class BatonHeldItem extends HeldItem<[typeof HeldItemEffect.BATON]> {
 
   /**
    * Applies {@linkcode SwitchEffectTransferModifier}
-   * @returns always `true`
    */
   // TODO: This seems suspicious...
-  apply(_effect: typeof HeldItemEffect.BATON, _params: BatonParams): true {
-    return true;
-  }
+  apply(_effect: typeof HeldItemEffect.BATON, _params: BatonParams): void {}
 }

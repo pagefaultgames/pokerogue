@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2025 Pagefault Games
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
 import { allHeldItems } from "#data/data-lists";
 import { BerryType } from "#enums/berry-type";
 import { FormChangeItemId } from "#enums/form-change-item-id";
@@ -205,8 +210,11 @@ const heldItems = Object.freeze({
     SpeciesId.GIMMIGHOUL,
     10,
   ),
-} satisfies Record<Exclude<HeldItemId, typeof HeldItemId.NONE>, CosmeticHeldItem | HeldItem>);
+} satisfies Record<Exclude<HeldItemId, typeof HeldItemId.NONE>, CosmeticHeldItem | HeldItem<any>>);
 
+/**
+ * @see {@linkcode heldItems}
+ */
 export type AllHeldItems = typeof heldItems;
 
 Object.assign(allHeldItems, heldItems);
