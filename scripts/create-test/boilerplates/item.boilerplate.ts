@@ -1,10 +1,10 @@
+import { allHeldItems } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import type { AccuracyBoosterHeldItem } from "#items/accuracy-booster";
-import { allHeldItems } from "#items/all-held-items";
 import { GameManager } from "#test/test-utils/game-manager";
 import { applySingleHeldItem } from "#test/test-utils/utils/item-test-utils";
 import { NumberHolder } from "#utils/common";

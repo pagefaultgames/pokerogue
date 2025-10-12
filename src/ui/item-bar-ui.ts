@@ -1,9 +1,8 @@
 import { globalScene } from "#app/global-scene";
-import { allTrainerItems } from "#data/data-lists";
+import { allHeldItems, allTrainerItems } from "#data/data-lists";
 import type { HeldItemId } from "#enums/held-item-id";
 import type { TrainerItemId } from "#enums/trainer-item-id";
 import type { Pokemon } from "#field/pokemon";
-import { allHeldItems } from "#items/all-held-items";
 import { heldItemSortFunc, trainerItemSortFunc } from "#items/item-utility";
 import type { TrainerItemManager } from "#items/trainer-item-manager";
 

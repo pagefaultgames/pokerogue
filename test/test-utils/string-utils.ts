@@ -91,8 +91,12 @@ export function getEnumStr<E extends EnumOrObject>(
  * console.log(stringifyEnumArray(fakeEnum, [fakeEnum.ONE, fakeEnum.TWO, fakeEnum.THREE])); // Output: "[ONE, TWO, THREE] (=[1, 2, 3])"
  * ```
  */
-export function stringifyEnumArray<E extends EnumOrObject>(obj: E, enums: E[keyof E][]): string {
-  if (enums.length === 0) {
+export function stringifyEnumArray<E extends EnumOrObject>(
+  obj: E,
+  enums: E[keyof E][],
+  transformValues?: (val: (typeof enums)[number]) => string,
+): string {
+  if (obj.length === 0) {
     return "[]";
   }
 
@@ -121,7 +125,6 @@ export function stringifyEnumArray<E extends EnumOrObject>(obj: E, enums: E[keyo
   }
   return `[${names.join(", ")}] (=[${vals.join(", ")}])`;
 }
-
 /**
  * Return the indices of all occurrences of a value in an array.
  * @param arr - The array to search

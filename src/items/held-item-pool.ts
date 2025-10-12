@@ -1,3 +1,4 @@
+import { allHeldItems } from "#data/data-lists";
 import { BerryType } from "#enums/berry-type";
 import { HeldItemCategoryId, HeldItemId, HeldItemNames, isCategoryId } from "#enums/held-item-id";
 import type { PokemonType } from "#enums/pokemon-type";
@@ -21,7 +22,6 @@ import {
 } from "#types/held-item-data-types";
 import { coerceArray, isNullOrUndefined, pickWeightedIndex, randSeedInt } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
-import { allHeldItems } from "./all-held-items";
 
 export const wildHeldItemPool: HeldItemTieredPool = {};
 

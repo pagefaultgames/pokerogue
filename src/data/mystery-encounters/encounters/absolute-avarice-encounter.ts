@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { allHeldItems } from "#data/data-lists";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
@@ -14,7 +15,6 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import type { MysteryEncounterSpriteConfig } from "#field/mystery-encounter-intro";
 import type { Pokemon } from "#field/pokemon";
 import { EnemyPokemon } from "#field/pokemon";
-import { allHeldItems } from "#items/all-held-items";
 import { getPartyBerries } from "#items/item-utility";
 import { PokemonMove } from "#moves/pokemon-move";
 import { queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";

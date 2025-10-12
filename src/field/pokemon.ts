@@ -110,7 +110,6 @@ import type { TrainerSlot } from "#enums/trainer-slot";
 import { UiMode } from "#enums/ui-mode";
 import { WeatherType } from "#enums/weather-type";
 import { doShinySparkleAnim } from "#field/anims";
-import { applyHeldItems } from "#items/all-held-items";
 import { HeldItemManager } from "#items/held-item-manager";
 import { assignItemsFromConfiguration } from "#items/held-item-pool";
 import { applyMoveAttrs } from "#moves/apply-attrs";
@@ -158,6 +157,7 @@ import {
 } from "#utils/common";
 import { calculateBossSegmentDamage } from "#utils/damage";
 import { getEnumValues } from "#utils/enums";
+import { applyHeldItems } from "#utils/items";
 import { getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
 import i18next from "i18next";
@@ -1928,7 +1928,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         && this.summonData.types.length > 0
         && (!this.summonData.illusion || !useIllusion)
       ) {
-        this.summonData.types.forEach(t => types.push(t));
+        types.push(...this.summonData.types);
       } else {
         const speciesForm = this.getSpeciesForm(ignoreOverride, useIllusion);
         const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOverride, useIllusion);

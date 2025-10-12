@@ -1,7 +1,7 @@
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { pokemonEvolutions } from "#balance/pokemon-evolutions";
-import { allTrainerItems } from "#data/data-lists";
+import { allHeldItems, allTrainerItems } from "#data/data-lists";
 import { MAX_PER_TYPE_POKEBALLS } from "#data/pokeball";
 import { AbilityId } from "#enums/ability-id";
 import { HeldItemId } from "#enums/held-item-id";
@@ -18,7 +18,6 @@ import { rewardPool } from "#items/reward-pools";
 import type { TurnEndStatusHeldItem } from "#items/turn-end-status";
 import type { WeightedRewardWeightFunc } from "#types/rewards";
 import { isNullOrUndefined } from "#utils/common";
-import { allHeldItems } from "./all-held-items";
 
 /**
  * Initialize the common modifier pool

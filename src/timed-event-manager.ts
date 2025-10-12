@@ -8,8 +8,8 @@ import { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { WeatherType } from "#enums/weather-type";
-import type { SilentReward } from "#types/rewards";
 import type { nil } from "#types/common";
+import type { SilentReward } from "#types/rewards";
 import { addTextObject } from "#ui/text";
 import i18next from "i18next";
 

@@ -1,6 +1,6 @@
+import { allHeldItems } from "#data/data-lists";
 import { BerryType } from "#enums/berry-type";
 import { FormChangeItemId } from "#enums/form-change-item-id";
-import type { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId } from "#enums/held-item-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
@@ -33,7 +33,6 @@ import { EvolutionStatBoostHeldItem, SpeciesStatBoostHeldItem } from "#items/sta
 import { SurviveChanceHeldItem } from "#items/survive-chance";
 import { TurnEndHealHeldItem } from "#items/turn-end-heal";
 import { TurnEndStatusHeldItem } from "#items/turn-end-status";
-import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
 import { getEnumValues } from "#utils/enums";
 
 // TODO: Move these to wherever the "XYZ enum to held item id" utils are eventually placed
@@ -125,7 +124,7 @@ const formChangeItems = Object.values(FormChangeItemId).reduce(
   {} as Record<FormChangeItemId, FormChangeHeldItem>,
 );
 
-export const allHeldItems = Object.freeze({
+const heldItems = Object.freeze({
   ...berryItems,
   ...typeBoostHeldItems,
   ...vitaminItems,
@@ -208,13 +207,7 @@ export const allHeldItems = Object.freeze({
   ),
 } satisfies Record<Exclude<HeldItemId, typeof HeldItemId.NONE>, CosmeticHeldItem | HeldItem>);
 
-// TODO: Move to another file
-export function applyHeldItems<T extends HeldItemEffect>(effect: T, params: HeldItemEffectParamMap[T]) {
-  const { pokemon } = params;
-  for (const item of pokemon.heldItemManager.getHeldItems()) {
-    const heldItem = allHeldItems[item];
-    if ("effects" in heldItem && heldItem.effects.includes(effect) && heldItem.shouldApply(effect, params)) {
-      heldItem.apply(effect, params);
-    }
-  }
-}
+export type AllHeldItems = typeof heldItems;
+
+Object.assign(allHeldItems, heldItems);
+Object.freeze(allHeldItems);

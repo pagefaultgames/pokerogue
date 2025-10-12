@@ -34,12 +34,12 @@ import { TrainerType } from "#enums/trainer-type";
 import { WeatherType } from "#enums/weather-type";
 import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#events/arena";
 import type { Pokemon } from "#field/pokemon";
-import { applyHeldItems } from "#items/all-held-items";
 import type { Move } from "#moves/move";
 import type { BiomeTierTrainerPools, PokemonPools } from "#types/biomes";
 import type { Constructor } from "#types/common";
 import type { AbstractConstructor } from "#types/type-helpers";
 import { NumberHolder, randSeedInt } from "#utils/common";
+import { applyHeldItems } from "#utils/items";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 export class Arena {

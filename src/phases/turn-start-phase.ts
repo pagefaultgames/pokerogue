@@ -7,9 +7,9 @@ import { Command } from "#enums/command";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { SwitchType } from "#enums/switch-type";
 import type { Pokemon } from "#field/pokemon";
-import { applyHeldItems } from "#items/all-held-items";
 import { PokemonMove } from "#moves/pokemon-move";
 import { FieldPhase } from "#phases/field-phase";
+import { applyHeldItems } from "#utils/items";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 
 export class TurnStartPhase extends FieldPhase {

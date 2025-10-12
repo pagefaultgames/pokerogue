@@ -11,10 +11,10 @@ import type { BattlerIndex } from "#enums/battler-index";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { type BattleStat, getStatKey, getStatStageChangeDescriptionKey, Stat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
-import { applyHeldItems } from "#items/all-held-items";
 import { PokemonPhase } from "#phases/pokemon-phase";
 import type { ConditionalUserFieldProtectStatAbAttrParams, PreStatStageChangeAbAttrParams } from "#types/ability-types";
 import { BooleanHolder, NumberHolder } from "#utils/common";
+import { applyHeldItems } from "#utils/items";
 import i18next from "i18next";
 
 export type StatStageChangeCallback = (

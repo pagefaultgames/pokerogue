@@ -1,6 +1,6 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { allMoves } from "#data/data-lists";
+import { allHeldItems, allMoves } from "#data/data-lists";
 import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -15,7 +15,6 @@ import { TrainerItemId } from "#enums/trainer-item-id";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
-import { allHeldItems } from "#items/all-held-items";
 import type { RewardOption } from "#items/reward";
 import { generateRewardOptionFromId } from "#items/reward-utils";
 import { PokemonMove } from "#moves/pokemon-move";

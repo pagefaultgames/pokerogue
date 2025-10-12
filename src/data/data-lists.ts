@@ -17,3 +17,5 @@ export const allTrainerItems: Record<TrainerItemId, TrainerItem> = {};
 export const catchableSpecies: CatchableSpecies = {};
 export const biomeDepths: BiomeDepths = {};
 export const uncatchableSpecies: SpeciesId[] = [];
+
+export const allHeldItems = {};

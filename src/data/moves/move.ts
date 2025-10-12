@@ -25,7 +25,7 @@ import {
 } from "#data/battler-tags";
 import { getBerryEffectFunc } from "#data/berry";
 import { allAbilities, allMoves } from "#data/data-lists";
-import { allHeldItems } from "#items/all-held-items";
+import { allHeldItems } from "#data/data-lists";
 import { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-change-triggers";
 import { DelayedAttackTag } from "#data/positional-tags/positional-tag";
 import {
@@ -71,7 +71,7 @@ import { SwitchType } from "#enums/switch-type";
 import { WeatherType } from "#enums/weather-type";
 import { MoveUsedEvent } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
-import { applyHeldItems } from "#items/all-held-items";
+import { applyHeldItems } from "#utils/items";
 import { BerryHeldItem, berryTypeToHeldItem } from "#items/berry";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { applyMoveAttrs } from "#moves/apply-attrs";

@@ -15,9 +15,9 @@ import { HitResult } from "#enums/hit-result";
 import { StatusEffect } from "#enums/status-effect";
 import { SwitchType } from "#enums/switch-type";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
-import { applyHeldItems } from "#items/all-held-items";
 import { PokemonMove } from "#moves/pokemon-move";
 import { PokemonPhase } from "#phases/pokemon-phase";
+import { applyHeldItems } from "#utils/items";
 import i18next from "i18next";
 
 export class FaintPhase extends PokemonPhase {

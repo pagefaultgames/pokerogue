@@ -1,7 +1,7 @@
 import { getPokemonNameWithAffix } from "#app/messages";
+import { allHeldItems } from "#data/data-lists";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemNames } from "#enums/held-item-id";
-import { allHeldItems } from "#items/all-held-items";
 import { type CosmeticHeldItem, HeldItem } from "#items/held-item";
 import { getOnelineDiffStr } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";

@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
+import { allHeldItems } from "#data/data-lists";
 import { HeldItemId } from "#enums/held-item-id";
 import { SpeciesId } from "#enums/species-id";
-import { allHeldItems } from "#items/all-held-items";
 import { RewardGenerator } from "#items/reward";
 import type { SpeciesStatBoosterItemId, SpeciesStatBoostHeldItem } from "#items/stat-boost";
 import { randSeedInt } from "#utils/common";

@@ -1,5 +1,6 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { allHeldItems } from "#data/data-lists";
 import { getNatureName } from "#data/nature";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -7,7 +8,6 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { Nature } from "#enums/nature";
 import { SpeciesId } from "#enums/species-id";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
-import { allHeldItems } from "#items/all-held-items";
 import { getNewVitaminHeldItem } from "#items/held-item-pool";
 import { getEncounterText, queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
 import {

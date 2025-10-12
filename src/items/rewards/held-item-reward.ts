@@ -1,11 +1,11 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
+import { allHeldItems } from "#data/data-lists";
 import type { BerryType } from "#enums/berry-type";
 import type { HeldItemId } from "#enums/held-item-id";
 import type { PokemonType } from "#enums/pokemon-type";
 import type { PermanentStat } from "#enums/stat";
 import type { PlayerPokemon } from "#field/pokemon";
-import { allHeldItems } from "#items/all-held-items";
 import { attackTypeToHeldItem } from "#items/attack-type-booster";
 import { permanentStatToHeldItem } from "#items/base-stat-multiply";
 import { berryTypeToHeldItem } from "#items/berry";

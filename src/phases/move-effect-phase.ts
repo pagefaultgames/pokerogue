@@ -24,7 +24,6 @@ import { isReflected, MoveUseMode } from "#enums/move-use-mode";
 import { PokemonType } from "#enums/pokemon-type";
 import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import type { Pokemon } from "#field/pokemon";
-import { applyHeldItems } from "#items/all-held-items";
 import { applyFilteredMoveAttrs, applyMoveAttrs } from "#moves/apply-attrs";
 import type { Move, MoveAttr } from "#moves/move";
 import { getMoveTargets, isFieldTargeted } from "#moves/move-utils";
@@ -35,6 +34,7 @@ import type { nil } from "#types/common";
 import type { DamageResult } from "#types/damage-result";
 import type { TurnMove } from "#types/turn-move";
 import { BooleanHolder, NumberHolder } from "#utils/common";
+import { applyHeldItems } from "#utils/items";
 import i18next from "i18next";
 
 export type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
