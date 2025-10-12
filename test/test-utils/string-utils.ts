@@ -183,7 +183,7 @@ export function stringifyEnumArray<E extends EnumOrObject, V extends E[keyof E],
 
   const keyPart = values.map(v => getKeyPart(obj, v, { casing, prefix, suffix })).join(", ");
   if (excludeValues) {
-    return keyPart;
+    return `[${keyPart}]`;
   }
   const valuePart =
     typeof values[0] === "string"

@@ -110,12 +110,12 @@ describe("Utils - Strings", () => {
         expect(ret).toEqual("[]");
       });
 
-      it("should allow excluding values from string, and default for non string enums", () => {
+      it("should allow excluding values from result, defaulting to doing so for string enums", () => {
         const num = stringifyEnumArray(testEnumNum, [testEnumNum.testN1, testEnumNum.testN2], { excludeValues: true });
         expect(num).toEqual("[testN1, testN2]");
 
         const str = stringifyEnumArray(testEnumString, [testEnumString.testS1, testEnumString.testS2]);
-        expect(str).toEqual("[testN1, testN2]");
+        expect(str).toEqual("[testS1, testS2]");
       });
 
       it("should support custon formatting args", () => {
