@@ -1,26 +1,15 @@
+// @ts-nocheck
+/**
+ * @internal
+ * @module
+ */
+
+import { EVOLVE_MOVE, RELEARN_MOVE } from "#app/constants";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import type { PokemonSpeciesFormLevelMoves, PokemonSpeciesLevelMoves } from "#types/pokemon-level-moves";
 
-export type LevelMoves = ([number, MoveId])[];
-
-interface PokemonSpeciesLevelMoves {
-  [key: number]: LevelMoves
-}
-
-interface PokemonFormLevelMoves {
-  [key: number]: LevelMoves
-}
-
-interface PokemonSpeciesFormLevelMoves {
-  [key: number]: PokemonFormLevelMoves
-}
-
-/** Moves that can only be learned with a memory-mushroom */
-export const RELEARN_MOVE = -1;
-/** Moves that can only be learned with an evolve */
-export const EVOLVE_MOVE = 0;
-
-export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
+export const pokemonSpeciesLevelMoves = {
   [SpeciesId.BULBASAUR]: [
     [ 1, MoveId.TACKLE ],
     [ 1, MoveId.GROWL ],
@@ -18932,9 +18921,9 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 64, MoveId.HAMMER_ARM ],
     [ 70, MoveId.BLOOD_MOON ],
   ]
-};
+} as PokemonSpeciesLevelMoves;
 
-export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
+export const pokemonFormLevelMoves = {
   [SpeciesId.PIKACHU]: { // Custom
     1: [
       [ 1, MoveId.TAIL_WHIP ],
@@ -20018,4 +20007,4 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
       [ 60, MoveId.CLOSE_COMBAT ],
     ]
   }
-};
+} as PokemonSpeciesFormLevelMoves;
