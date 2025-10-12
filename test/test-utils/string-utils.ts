@@ -22,15 +22,18 @@ interface getEnumStrOptions {
    * If present, will be added to the end of the enum string.
    */
   suffix?: string;
+  /**
+   * Whether to omit the value from the text.
+   * @defaultValue Whether `E` is a non-string enum
+   */
+  omitValue?: boolean;
 }
 
 /**
  * Return the name of an enum member or const object value, alongside its corresponding value.
  * @param obj - The {@linkcode EnumOrObject} to source reverse mappings from
- * @param enums - One of {@linkcode obj}'s values
- * @param casing - A string denoting the casing method to use; default `Preserve`
- * @param prefix - An optional string to be prepended to the enum's string representation
- * @param suffix - An optional string to be appended to the enum's string representation
+ * @param val - One of {@linkcode obj}'s values
+ * @param options - Options modifying the stringification process
  * @returns The stringified representation of `val` as dictated by the options.
  * @example
  * ```ts
@@ -46,8 +49,9 @@ interface getEnumStrOptions {
 export function getEnumStr<E extends EnumOrObject>(
   obj: E,
   val: ObjectValues<E>,
-  { casing = "Preserve", prefix = "", suffix = "" }: getEnumStrOptions = {},
+  options: getEnumStrOptions = {},
 ): string {
+  const { casing = "Preserve", prefix = "", suffix = "", omitValue = typeof val === "number" } = options;
   let casingFunc: ((s: string) => string) | undefined;
   switch (casing) {
     case "Preserve":
@@ -68,7 +72,7 @@ export function getEnumStr<E extends EnumOrObject>(
     stringPart = casingFunc(stringPart);
   }
 
-  return `${prefix}${stringPart}${suffix} (=${val})`;
+  return `${prefix}${stringPart}${suffix}${omitValue ? "" : ` (=${val})`}`;
 }
 
 /**
@@ -87,12 +91,8 @@ export function getEnumStr<E extends EnumOrObject>(
  * console.log(stringifyEnumArray(fakeEnum, [fakeEnum.ONE, fakeEnum.TWO, fakeEnum.THREE])); // Output: "[ONE, TWO, THREE] (=[1, 2, 3])"
  * ```
  */
-export function stringifyEnumArray<E extends EnumOrObject>(
-  obj: E,
-  enums: ObjectValues<E>[],
-  transformValues?: (val: (typeof enums)[number]) => string,
-): string {
-  if (obj.length === 0) {
+export function stringifyEnumArray<E extends EnumOrObject>(obj: E, enums: E[keyof E][]): string {
+  if (enums.length === 0) {
     return "[]";
   }
 

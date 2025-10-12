@@ -19,7 +19,7 @@ export class TurnStartPhase extends FieldPhase {
    * Returns an ordering of the current field based on command priority
    * @returns The sequence of commands for this turn
    */
-  getCommandOrder(): BattlerIndex[] {
+  private getCommandOrder(): BattlerIndex[] {
     const playerField = globalScene.getPlayerField(true).map(p => p.getBattlerIndex());
     const enemyField = globalScene.getEnemyField(true).map(p => p.getBattlerIndex());
     const orderedTargets: BattlerIndex[] = playerField.concat(enemyField);

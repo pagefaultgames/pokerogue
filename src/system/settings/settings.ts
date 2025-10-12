@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { hasTouchscreen } from "#app/touch-controls";
+import { isDev } from "#constants/app-constants";
 import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
@@ -7,7 +8,6 @@ import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { UiMode } from "#enums/ui-mode";
 import { CandyUpgradeNotificationChangedEvent } from "#events/battle-scene";
 import { updateWindowType } from "#ui/ui-theme";
-import { isLocal } from "#utils/common";
 import i18next from "i18next";
 import { languageOptions } from "./settings-language";
 
@@ -180,6 +180,7 @@ export const SettingKeys = {
   Battle_Music: "BATTLE_MUSIC",
   Show_BGM_Bar: "SHOW_BGM_BAR",
   Hide_Username: "HIDE_USERNAME",
+  Show_Missing_Ribbons: "SHOW_MISSING_RIBBONS",
   Move_Touch_Controls: "MOVE_TOUCH_CONTROLS",
   Shop_Overlay_Opacity: "SHOP_OVERLAY_OPACITY",
 };
@@ -643,6 +644,13 @@ export const Setting: Array<Setting> = [
     type: SettingType.DISPLAY,
   },
   {
+    key: SettingKeys.Show_Missing_Ribbons,
+    label: i18next.t("settings:showMissingRibbons"),
+    options: OFF_ON,
+    default: 0,
+    type: SettingType.DISPLAY,
+  },
+  {
     key: SettingKeys.Master_Volume,
     label: i18next.t("settings:masterVolume"),
     options: VOLUME_OPTIONS,
@@ -716,7 +724,7 @@ export const Setting: Array<Setting> = [
   },
 ];
 
-if (isLocal) {
+if (isDev) {
   Setting.push({
     key: SettingKeys.Dex_For_Devs,
     label: i18next.t("settings:dexForDevs"),
@@ -873,6 +881,9 @@ export function setSetting(setting: string, value: number): boolean {
       break;
     case SettingKeys.Dex_For_Devs:
       globalScene.dexForDevs = Setting[index].options[value].value === "On";
+      break;
+    case SettingKeys.Show_Missing_Ribbons:
+      globalScene.showMissingRibbons = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.EXP_Gains_Speed:
       globalScene.expGainsSpeed = value;

@@ -1,5 +1,6 @@
 import { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
+import { isBeta, isDev } from "#constants/app-constants";
 import { allTrainerItems } from "#data/data-lists";
 import { Button } from "#enums/buttons";
 import { GameModes } from "#enums/game-modes";
@@ -201,7 +202,7 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
                       false,
                       0,
                       19,
-                      import.meta.env.DEV ? 300 : 2000,
+                      isBeta || isDev ? 300 : 2000,
                     );
                   });
                   return true;
@@ -250,7 +251,7 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
                     false,
                     0,
                     19,
-                    import.meta.env.DEV ? 300 : 2000,
+                    isBeta || isDev ? 300 : 2000,
                   );
                 });
               } else if (this.sessionSlots[cursor].hasData === false) {

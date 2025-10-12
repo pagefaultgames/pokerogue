@@ -15,7 +15,7 @@ import { TimeOfDay } from "#enums/time-of-day";
 import { WeatherType } from "#enums/weather-type";
 import type { PlayerPokemon } from "#field/pokemon";
 import { allHeldItems } from "#items/all-held-items";
-import { coerceArray } from "#utils/common";
+import { coerceArray } from "#utils/array";
 
 export interface EncounterRequirement {
   meetsRequirement(): boolean; // Boolean to see if a requirement is met
@@ -663,11 +663,11 @@ export class AbilityRequirement extends EncounterPokemonRequirement {
 }
 
 export class StatusEffectRequirement extends EncounterPokemonRequirement {
-  requiredStatusEffect: StatusEffect[];
+  requiredStatusEffect: readonly StatusEffect[];
   minNumberOfPokemon: number;
   invertQuery: boolean;
 
-  constructor(statusEffect: StatusEffect | StatusEffect[], minNumberOfPokemon = 1, invertQuery = false) {
+  constructor(statusEffect: StatusEffect | readonly StatusEffect[], minNumberOfPokemon = 1, invertQuery = false) {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
@@ -684,7 +684,7 @@ export class StatusEffectRequirement extends EncounterPokemonRequirement {
     return x;
   }
 
-  override queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
+  override queryParty(partyPokemon: readonly PlayerPokemon[]): PlayerPokemon[] {
     if (!this.invertQuery) {
       return partyPokemon.filter(pokemon => {
         return this.requiredStatusEffect.some(statusEffect => {
@@ -728,11 +728,11 @@ export class StatusEffectRequirement extends EncounterPokemonRequirement {
  * If you want to trigger the event based on the form change enabler, use PersistentModifierRequirement.
  */
 export class CanFormChangeWithItemRequirement extends EncounterPokemonRequirement {
-  requiredFormChangeItem: FormChangeItemId[];
+  requiredFormChangeItem: readonly FormChangeItemId[];
   minNumberOfPokemon: number;
   invertQuery: boolean;
 
-  constructor(formChangeItem: FormChangeItemId | FormChangeItemId[], minNumberOfPokemon = 1, invertQuery = false) {
+  constructor(formChangeItem: FormChangeItemId | readonly FormChangeItemId[], minNumberOfPokemon = 1, invertQuery = false) {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
@@ -759,7 +759,7 @@ export class CanFormChangeWithItemRequirement extends EncounterPokemonRequiremen
     );
   }
 
-  override queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
+  override queryParty(partyPokemon: readonly PlayerPokemon[]): PlayerPokemon[] {
     if (!this.invertQuery) {
       return partyPokemon.filter(
         pokemon =>
@@ -848,13 +848,13 @@ export class HoldingItemRequirement extends EncounterPokemonRequirement {
 }
 
 export class HeldItemRequirement extends EncounterSceneRequirement {
-  requiredHeldItems: (HeldItemId | HeldItemCategoryId)[];
+  requiredHeldItems: readonly (HeldItemId | HeldItemCategoryId)[];
   minNumberOfItems: number;
   invertQuery: boolean;
   requireTransferable: boolean;
 
   constructor(
-    heldItem: HeldItemId | HeldItemCategoryId | (HeldItemId | HeldItemCategoryId)[],
+    heldItem: HeldItemId | HeldItemCategoryId | readonly (HeldItemId | HeldItemCategoryId)[],
     minNumberOfItems = 1,
     invertQuery = false,
     requireTransferable = true,
@@ -868,7 +868,7 @@ export class HeldItemRequirement extends EncounterSceneRequirement {
 
   override meetsRequirement(): boolean {
     const partyPokemon = globalScene.getPlayerParty();
-    if (isNullOrUndefined(partyPokemon)) {
+    if (partyPokemon == null) {
       return false;
     }
     console.log("COUNTED:", this.queryPartyForItems(partyPokemon), this.minNumberOfItems);

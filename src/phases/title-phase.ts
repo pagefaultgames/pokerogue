@@ -3,6 +3,7 @@ import { GameMode, getGameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { Phase } from "#app/phase";
+import { bypassLogin } from "#constants/app-constants";
 import { fetchDailyRunSeed, getDailyRunStarters } from "#data/daily-run";
 import { Gender } from "#data/gender";
 import { BattleType } from "#enums/battle-type";
@@ -16,7 +17,7 @@ import { vouchers } from "#system/voucher";
 import type { SessionSaveData } from "#types/save-data";
 import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { SaveSlotUiMode } from "#ui/save-slot-select-ui-handler";
-import { isLocal, isLocalServerConnected } from "#utils/common";
+import { isLocalServerConnected } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
@@ -258,7 +259,7 @@ export class TitlePhase extends Phase {
       };
 
       // If Online, calls seed fetch from db to generate daily run. If Offline, generates a daily run based on current date.
-      if (!isLocal || isLocalServerConnected) {
+      if (!bypassLogin || isLocalServerConnected) {
         fetchDailyRunSeed()
           .then(seed => {
             if (seed) {
@@ -299,15 +300,23 @@ export class TitlePhase extends Phase {
 
     if (this.loaded) {
       const availablePartyMembers = globalScene.getPokemonAllowedInBattle().length;
-      const minPartySize = globalScene.currentBattle.double ? 2 : 1;
-      const checkSwitch =
+
+      globalScene.phaseManager.pushNew("SummonPhase", 0, true, true);
+      if (globalScene.currentBattle.double && availablePartyMembers > 1) {
+        globalScene.phaseManager.pushNew("SummonPhase", 1, true, true);
+      }
+
+      if (
         globalScene.currentBattle.battleType !== BattleType.TRAINER
         && (globalScene.currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily)
-        && availablePartyMembers > minPartySize;
-
-      globalScene.phaseManager.pushNew("SummonPhase", 0, true, true, checkSwitch);
-      if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-        globalScene.phaseManager.pushNew("SummonPhase", 1, true, true, checkSwitch);
+      ) {
+        const minPartySize = globalScene.currentBattle.double ? 2 : 1;
+        if (availablePartyMembers > minPartySize) {
+          globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
+          if (globalScene.currentBattle.double) {
+            globalScene.phaseManager.pushNew("CheckSwitchPhase", 1, globalScene.currentBattle.double);
+          }
+        }
       }
     }
 

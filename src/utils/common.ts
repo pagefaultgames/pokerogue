@@ -1,9 +1,10 @@
 import { pokerogueApi } from "#api/pokerogue-api";
+import { bypassLogin, isDev } from "#constants/app-constants";
+import { BiomeId } from "#enums/biome-id";
 import { MoneyFormat } from "#enums/money-format";
 import type { Variant } from "#sprites/variant";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
-
-export type nil = null | undefined;
 
 export const MissingTextureKey = "__MISSING";
 
@@ -125,29 +126,25 @@ export function randSeedFloat(): number {
   return Phaser.Math.RND.frac();
 }
 
-export function randItem<T>(items: T[]): T {
+export function randItem<T>(items: ArrayLike<T>): T {
   return items.length === 1 ? items[0] : items[randInt(items.length)];
 }
 
-export function randSeedItem<T>(items: T[] | readonly T[]): T {
-  return items.length === 1 ? items[0] : Phaser.Math.RND.pick(items as T[]);
+export function randSeedItem<T>(items: ArrayLike<T>): T {
+  return items.length === 1 ? items[0] : Phaser.Math.RND.pick(items);
 }
 
 /**
- * Shuffle a list using the seeded rng. Utilises the Fisher-Yates algorithm.
- * @param items An array of items.
- * @returns A new shuffled array of items.
+ * Shuffle a list in place using the seeded rng and the Fisher-Yates algorithm.
+ * @param items - An array of items.
+ * @returns The same `items` array, now shuffled in place.
  */
 export function randSeedShuffle<T>(items: T[]): T[] {
-  if (items.length <= 1) {
-    return items;
-  }
-  const newArray = items.slice(0);
   for (let i = items.length - 1; i > 0; i--) {
     const j = Phaser.Math.RND.integerInRange(0, i);
-    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    [items[i], items[j]] = [items[j], items[i]];
   }
-  return newArray;
+  return items;
 }
 
 export function getFrameMs(frameCount: number): number {
@@ -176,7 +173,7 @@ export function getPlayTimeString(totalSeconds: number): string {
  * @param id 32-bit number
  * @returns An array of six numbers corresponding to 5-bit chunks from {@linkcode id}
  */
-export function getIvsFromId(id: number): number[] {
+export function getIvsFromId(id: number): [number, number, number, number, number, number] {
   return [
     (id & 0x3e000000) >>> 25,
     (id & 0x01f00000) >>> 20,
@@ -282,11 +279,8 @@ export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>):
 
 export const sessionIdKey = "pokerogue_sessionId";
 
-/** `true` when run via `pnpm start:dev` (which runs `vite --mode development`) */
-export const isLocal = import.meta.env.MODE === "development";
-
-/** Used to disable api calls when isLocal is true and a server is not found */
-export let isLocalServerConnected = true;
+/** Used to disable api calls when `isDev` is true and a server is not found */
+export let isLocalServerConnected = !bypassLogin;
 
 /**
  * When locally running the game, "pings" the local server
@@ -294,15 +288,12 @@ export let isLocalServerConnected = true;
  * sets isLocalServerConnected based on results
  */
 export async function localPing(): Promise<void> {
-  if (isLocal) {
+  if (isDev) {
     const titleStats = await pokerogueApi.getGameTitleStats();
     isLocalServerConnected = !!titleStats;
     console.log("isLocalServerConnected:", isLocalServerConnected);
   }
 }
-
-/** Alias for the constructor of a class */
-export type Constructor<T> = new (...args: unknown[]) => T;
 
 export class BooleanHolder {
   public value: boolean;
@@ -352,7 +343,7 @@ export function rgbToHsv(r: number, g: number, b: number) {
  * @param rgb1 First RGB color in array
  * @param rgb2 Second RGB color in array
  */
-export function deltaRgb(rgb1: number[], rgb2: number[]): number {
+export function deltaRgb(rgb1: readonly number[], rgb2: readonly number[]): number {
   const [r1, g1, b1] = rgb1;
   const [r2, g2, b2] = rgb2;
   const drp2 = Math.pow(r1 - r2, 2);
@@ -376,7 +367,7 @@ export function rgbHexToRgba(hex: string) {
   };
 }
 
-export function rgbaToInt(rgba: number[]): number {
+export function rgbaToInt(rgba: readonly number[]): number {
   return (rgba[0] << 24) + (rgba[1] << 16) + (rgba[2] << 8) + rgba[3];
 }
 
@@ -525,45 +516,18 @@ export function coerceArray<T>(input: T): T | [T] {
   return Array.isArray(input) ? input : [input];
 }
 
-export function pickWeightedIndex(weights: number[]): number | undefined {
-  const totalWeight = weights.reduce((sum, w) => sum + w, 0);
-
-  if (totalWeight <= 0) {
-    return;
+export function getBiomeName(biome: BiomeId | -1) {
+  if (biome === -1) {
+    return i18next.t("biome:unknownLocation");
   }
-
-  let r = randSeedFloat() * totalWeight;
-
-  for (let i = 0; i < weights.length; i++) {
-    if (r < weights[i]) {
-      return i;
-    }
-    r -= weights[i];
+  switch (biome) {
+    case BiomeId.GRASS:
+      return i18next.t("biome:grass");
+    case BiomeId.RUINS:
+      return i18next.t("biome:ruins");
+    case BiomeId.END:
+      return i18next.t("biome:end");
+    default:
+      return i18next.t(`biome:${toCamelCase(BiomeId[biome])}`);
   }
-
-  return; // TODO: Change to something more appropriate
 }
-
-/**
- * Type helper to check if a given item is in a tuple, returning `true` or `false` as appropriate.
- * @typeParam T - The tuple to check
- * @param X - The item whose inclusion is being checked
- */
-type InArray<T, X> = T extends readonly [X, ...infer _Rest]
-  ? true
-  : T extends readonly [X]
-    ? true
-    : T extends readonly [infer _, ...infer Rest]
-      ? InArray<Rest, X>
-      : false;
-
-/**
- * Type helper to allow only unique elements in a tuple (effectively converting it to a Set).
- * Within it, any duplicate elements will be flagged and converted to an error message.
- * @typeParam T - The tuple to render unique
- */
-export type UniqueArray<T> = T extends readonly [infer X, ...infer Rest]
-  ? InArray<Rest, X> extends true
-    ? ["Encountered value with duplicates:", X]
-    : readonly [X, ...UniqueArray<Rest>]
-  : T;

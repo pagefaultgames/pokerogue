@@ -12,7 +12,6 @@ import { DynamicQueueManager } from "#app/dynamic-queue-manager";
 import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
 import { PhaseTree } from "#app/phase-tree";
-import { BattleType } from "#enums/battle-type";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import type { Pokemon } from "#field/pokemon";
 import type { PokemonMove } from "#moves/pokemon-move";
@@ -44,6 +43,7 @@ import { GameOverPhase } from "#phases/game-over-phase";
 import { GameOverRewardPhase } from "#phases/game-over-reward-phase";
 import { HideAbilityPhase } from "#phases/hide-ability-phase";
 import { HidePartyExpBarPhase } from "#phases/hide-party-exp-bar-phase";
+import { InitEncounterPhase } from "#phases/init-encounter-phase";
 import { LearnMovePhase } from "#phases/learn-move-phase";
 import { LevelCapPhase } from "#phases/level-cap-phase";
 import { LevelUpPhase } from "#phases/level-up-phase";
@@ -152,6 +152,7 @@ const PHASES = Object.freeze({
   GameOverRewardPhase,
   HideAbilityPhase,
   HidePartyExpBarPhase,
+  InitEncounterPhase,
   LearnMovePhase,
   LevelCapPhase,
   LevelUpPhase,
@@ -510,23 +511,6 @@ export class PhaseManager {
    */
   public queueFaintPhase(...args: ConstructorParameters<PhaseConstructorMap["FaintPhase"]>): void {
     this.phaseQueue.addPhase(this.create("FaintPhase", ...args), true);
-  }
-
-  /**
-   * Attempts to add {@linkcode PostSummonPhase}s for the enemy pokemon
-   *
-   * This is used to ensure that wild pokemon (which have no {@linkcode SummonPhase}) do not queue a {@linkcode PostSummonPhase}
-   * until all pokemon are on the field.
-   */
-  public tryAddEnemyPostSummonPhases(): void {
-    if (
-      ![BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType)
-      && !this.phaseQueue.exists("SummonPhase")
-    ) {
-      globalScene.getEnemyField().forEach(p => {
-        this.pushPhase(new PostSummonPhase(p.getBattlerIndex(), "SummonPhase"));
-      });
-    }
   }
 
   /**
