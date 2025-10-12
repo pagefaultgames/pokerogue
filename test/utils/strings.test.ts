@@ -119,7 +119,7 @@ describe("Utils - Strings", () => {
       });
 
       it("should support custon formatting args", () => {
-        const ret = stringifyEnumArray(testHexObj, [testHexObj.ABCD, testHexObj.FFFD], {
+        const ret = stringifyEnumArray(testHexObj, [testHexObj.ABCD, testHexObj.FFFD, testHexObj.XA1], {
           base: 16,
           casing: "Title",
           prefix: "testHexObj.",
@@ -127,7 +127,7 @@ describe("Utils - Strings", () => {
           padding: 5,
         });
         expect(ret).toEqual(
-          "[testHexObj.Abcd blah, testHexObj.Fffd blah, testHexObj.X01 blah] (=[0x0ABCD, 0x0FFFD, 0x00001])",
+          "[testHexObj.Abcd blah, testHexObj.Fffd blah, testHexObj.XA1 blah] (=[0x0ABCD, 0x0FFFD, 0x000A1])",
         );
       });
 
