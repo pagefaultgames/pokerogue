@@ -31,7 +31,7 @@ export const heldItemSortFunc = (a: HeldItemId, b: HeldItemId): number => {
 // Iterate over the party until an item is successfully given
 export function assignItemToFirstFreePokemon(item: HeldItemId, party: Pokemon[]): void {
   for (const pokemon of party) {
-    const stack = pokemon.heldItemManager.getStack(item);
+    const stack = pokemon.heldItemManager.getAmount(item);
     if (stack < allHeldItems[item].getMaxStackCount()) {
       pokemon.heldItemManager.add(item);
       return;
@@ -43,9 +43,9 @@ export function assignItemToFirstFreePokemon(item: HeldItemId, party: Pokemon[])
 export function getPartyBerries(): PokemonItemMap[] {
   const pokemonItems: PokemonItemMap[] = [];
   globalScene.getPlayerParty().forEach(pokemon => {
-    const berries = pokemon.getHeldItems().filter(item => isItemInCategory(item, HeldItemCategoryId.BERRY));
+    const berries = pokemon.iterHeldItems().filter(item => isItemInCategory(item, HeldItemCategoryId.BERRY));
     berries.forEach(berryId => {
-      const berryStack = pokemon.heldItemManager.getStack(berryId);
+      const berryStack = pokemon.heldItemManager.getAmount(berryId);
       pokemonItems.push({ item: { id: berryId, stack: berryStack }, pokemonId: pokemon.id });
     });
   });

@@ -8,7 +8,7 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { Challenges } from "#enums/challenges";
 import { EncounterAnim } from "#enums/encounter-anims";
-import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
+import { HeldItemCategoryId, HeldItemId, isBerry, isItemInCategory } from "#enums/held-item-id";
 import { MoveCategory } from "#enums/move-category";
 import { MoveId } from "#enums/move-id";
 import { MoveUseMode } from "#enums/move-use-mode";
@@ -281,35 +281,31 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
         let count = mostHeldItemsPokemon.heldItemManager
           .getTransferableHeldItems()
           .filter(m => !isItemInCategory(m, HeldItemCategoryId.BERRY))
-          .reduce((v, m) => v + mostHeldItemsPokemon.heldItemManager.getStack(m), 0);
+          .reduce((v, m) => v + mostHeldItemsPokemon.heldItemManager.getAmount(m), 0);
 
         for (const pokemon of party) {
           const nextCount = pokemon.heldItemManager
             .getTransferableHeldItems()
             .filter(m => !isItemInCategory(m, HeldItemCategoryId.BERRY))
-            .reduce((v, m) => v + pokemon.heldItemManager.getStack(m), 0);
+            .reduce((v, m) => v + pokemon.heldItemManager.getAmount(m), 0);
           if (nextCount > count) {
             mostHeldItemsPokemon = pokemon;
             count = nextCount;
           }
         }
 
+        /** The item manager for the Pokemon with the most held items */
+        const itemManager = mostHeldItemsPokemon.heldItemManager;
+
         encounter.setDialogueToken("switchPokemon", mostHeldItemsPokemon.getNameToRender());
 
-        const items = mostHeldItemsPokemon.heldItemManager
-          .getTransferableHeldItems()
-          .filter(m => !isItemInCategory(m, HeldItemCategoryId.BERRY));
-
         // Shuffles Berries (if they have any)
-        const oldBerries = mostHeldItemsPokemon.heldItemManager
-          .getHeldItems()
-          .filter(m => isItemInCategory(m, HeldItemCategoryId.BERRY));
 
         let numBerries = 0;
-        for (const berry of oldBerries) {
-          const stack = mostHeldItemsPokemon.heldItemManager.getStack(berry);
+        for (const berry of itemManager.iterBerries()) {
+          const stack = itemManager.getAmount(berry);
           numBerries += stack;
-          mostHeldItemsPokemon.heldItemManager.remove(berry, stack);
+          itemManager.remove(berry, stack);
         }
 
         assignItemsFromConfiguration(
@@ -328,15 +324,17 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
         let numUltra = 0;
         let numRogue = 0;
 
-        for (const m of items) {
-          const tier = getHeldItemTier(m) ?? RarityTier.ULTRA;
-          const stack = mostHeldItemsPokemon.heldItemManager.getStack(m);
+        for (const [item, { stack }] of itemManager) {
+          if (isBerry(item)) {
+            continue;
+          }
+          const tier = getHeldItemTier(item) ?? RarityTier.ULTRA;
           if (tier === RarityTier.ROGUE) {
             numRogue += stack;
           } else if (tier === RarityTier.ULTRA) {
             numUltra += stack;
           }
-          mostHeldItemsPokemon.heldItemManager.remove(m, stack);
+          itemManager.remove(item, -1);
         }
 
         assignItemsFromConfiguration(

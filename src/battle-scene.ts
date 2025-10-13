@@ -2073,7 +2073,7 @@ export class BattleScene extends SceneBase {
       enemy.getSpeciesForm().getBaseExp()
       * (enemy.level / this.getMaxExpLevel())
       * ((enemy.ivs.reduce((iv: number, total: number) => (total += iv), 0) / 93) * 0.2 + 0.8);
-    enemy.getHeldItems().map(m => (scoreIncrease *= allHeldItems[m].getScoreMultiplier()));
+    enemy.iterHeldItems().map(m => (scoreIncrease *= allHeldItems[m].getScoreMultiplier()));
     if (enemy.isBoss()) {
       scoreIncrease *= Math.sqrt(enemy.bossSegments);
     }
@@ -2668,8 +2668,8 @@ export class BattleScene extends SceneBase {
       return false;
     }
 
-    const itemStack = source.heldItemManager.getStack(heldItemId);
-    const matchingItemStack = target.heldItemManager.getStack(heldItemId);
+    const itemStack = source.heldItemManager.getAmount(heldItemId);
+    const matchingItemStack = target.heldItemManager.getAmount(heldItemId);
 
     const maxStackCount = allHeldItems[heldItemId].getMaxStackCount();
     if (matchingItemStack >= maxStackCount) {
@@ -2684,7 +2684,7 @@ export class BattleScene extends SceneBase {
     source.heldItemManager.remove(heldItemId, countTaken);
     target.heldItemManager.add(itemSpecs);
 
-    if (source.heldItemManager.getStack(heldItemId) === 0 && itemLost) {
+    if (source.heldItemManager.getAmount(heldItemId) === 0 && itemLost) {
       applyAbAttrs("PostItemLostAbAttr", { pokemon: source });
     }
 
@@ -2711,8 +2711,8 @@ export class BattleScene extends SceneBase {
       return false;
     }
 
-    const itemStack = source.heldItemManager.getStack(heldItemId);
-    const matchingItemStack = target.heldItemManager.getStack(heldItemId);
+    const itemStack = source.heldItemManager.getAmount(heldItemId);
+    const matchingItemStack = target.heldItemManager.getAmount(heldItemId);
 
     const maxStackCount = allHeldItems[heldItemId].getMaxStackCount();
     if (matchingItemStack >= maxStackCount) {

@@ -90,7 +90,7 @@ describe("Final Boss", () => {
     expect(eternatus.formIndex).toBe(1);
     expect(eternatus.bossSegments).toBe(5);
     expect(eternatus.bossSegmentIndex).toBe(4);
-    expect(eternatus.heldItemManager.getStack(HeldItemId.MINI_BLACK_HOLE)).toBe(1);
+    expect(eternatus.heldItemManager.getAmount(HeldItemId.MINI_BLACK_HOLE)).toBe(1);
   });
 
   it("should change form on status damage down to last boss fragment", async () => {
@@ -125,6 +125,6 @@ describe("Final Boss", () => {
     expect(eternatus.formIndex).toBe(1);
     expect(eternatus.bossSegments).toBe(5);
     expect(eternatus.bossSegmentIndex).toBe(4);
-    expect(eternatus.heldItemManager.getStack(HeldItemId.MINI_BLACK_HOLE)).toBe(1);
+    expect(eternatus.heldItemManager.getAmount(HeldItemId.MINI_BLACK_HOLE)).toBe(1);
   });
 });

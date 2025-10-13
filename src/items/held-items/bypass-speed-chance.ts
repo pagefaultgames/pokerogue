@@ -16,7 +16,7 @@ export class BypassSpeedChanceHeldItem extends HeldItem<[typeof HeldItemEffect.B
     _effect: typeof HeldItemEffect.BYPASS_SPEED_CHANCE,
     { pokemon, doBypassSpeed }: BypassSpeedChanceParams,
   ): boolean {
-    const stackCount = pokemon.heldItemManager.getStack(this.type);
+    const stackCount = pokemon.heldItemManager.getAmount(this.type);
     return !doBypassSpeed.value && pokemon.randBattleSeedInt(10) < stackCount;
   }
 

@@ -434,7 +434,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
 
         const selectableFilter = (pokemon: Pokemon) => {
           // If pokemon has valid item, it can be selected
-          const hasValidItem = pokemon.getHeldItems().some(item => REQUIRED_ITEMS.some(i => i === item));
+          const hasValidItem = pokemon.iterHeldItems().some(item => REQUIRED_ITEMS.some(i => i === item));
           if (!hasValidItem) {
             return getEncounterText(`${namespace}:option.3.invalidSelection`) ?? null;
           }

@@ -78,22 +78,14 @@ export class SpeciesFormChangeItemTrigger extends SpeciesFormChangeTrigger {
   }
 
   get description(): string {
-    return this.active
-      ? i18next.t("pokemonEvolutions:forms.item", {
-          item: allHeldItems[this.item].name,
-        })
-      : i18next.t("pokemonEvolutions:forms.deactivateItem", {
-          item: allHeldItems[this.item].name,
-        });
+    return i18next.t(
+      this.active ? "pokemonEvolutions:forms.activateItem" : "pokemonEvolutions:forms.deactivateItem", // formatting
+      { item: allHeldItems[this.item].name },
+    );
   }
 
   canChange(pokemon: Pokemon): boolean {
-    const matchItem = pokemon.heldItemManager.heldItems[this.item];
-    if (!matchItem) {
-      return false;
-    }
-    console.log("CAN CHANGE FORMS:", matchItem.active === this.active);
-    return matchItem.active === this.active;
+    return !!pokemon.heldItemManager.getItemData(this.item)?.active === this.active;
   }
 }
 

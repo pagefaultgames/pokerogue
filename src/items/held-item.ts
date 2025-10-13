@@ -136,7 +136,7 @@ export abstract class HeldItemBase {
   }
 
   getStackCount(pokemon: Pokemon): number {
-    const stackCount = pokemon.heldItemManager.getStack(this.type);
+    const stackCount = pokemon.heldItemManager.getAmount(this.type);
     return stackCount;
   }
 

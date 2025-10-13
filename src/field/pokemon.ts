@@ -127,7 +127,7 @@ import type { AbAttrMap, AbAttrString, TypeMultiplierAbAttrParams } from "#types
 import type { Constructor } from "#types/common";
 import type { getAttackDamageParams, getBaseDamageParams } from "#types/damage-params";
 import type { DamageCalculationResult, DamageResult } from "#types/damage-result";
-import type { HeldItemConfiguration } from "#types/held-item-data-types";
+import type { HeldItemConfiguration, HeldItemData } from "#types/held-item-data-types";
 import type { IllusionData } from "#types/illusion-data";
 import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
@@ -1157,8 +1157,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     this.setScale(this.getSpriteScale());
   }
 
-  getHeldItems(): HeldItemId[] {
-    return this.heldItemManager.getHeldItems();
+  /**
+   * Iterate over the held items of this Pokemon.
+   * @returns An iterator of `[ HeldItemId, HeldItemData ]` tuples for each held item this Pokemon has.
+   */
+  iterHeldItems(): IteratorObject<[HeldItemId, HeldItemData], undefined, unknown> {
+    return this.heldItemManager[Symbol.iterator]();
   }
 
   updateScale(): void {
@@ -6063,7 +6067,7 @@ export class PlayerPokemon extends Pokemon {
       if (preEvolution.speciesId === SpeciesId.GIMMIGHOUL) {
         const evotracker = this.heldItemManager.hasItem(HeldItemId.GIMMIGHOUL_EVO_TRACKER);
         if (evotracker) {
-          this.heldItemManager.remove(HeldItemId.GIMMIGHOUL_EVO_TRACKER, 0, true);
+          this.heldItemManager.remove(HeldItemId.GIMMIGHOUL_EVO_TRACKER, -1);
         }
       }
       if (!globalScene.gameMode.isDaily || this.metBiome > -1) {
@@ -6117,10 +6121,10 @@ export class PlayerPokemon extends Pokemon {
         globalScene.getPlayerParty().push(newPokemon);
         newPokemon.evolve(!isFusion ? newEvolution : new FusionSpeciesFormEvolution(this.id, newEvolution), evoSpecies);
         //TODO: This currently does not consider any values associated with the items e.g. disabled
-        const heldItems = this.getHeldItems();
-        heldItems.forEach(item => {
-          newPokemon.heldItemManager.add(item, this.heldItemManager.getStack(item));
-        });
+        for (const [item] of this.heldItemManager) {
+          newPokemon.heldItemManager.add(item, this.heldItemManager.getAmount(item));
+        }
+
         globalScene.updateItems(true);
       }
     }
@@ -6233,9 +6237,9 @@ export class PlayerPokemon extends Pokemon {
     }
 
     // combine the two mons' held items
-    const fusedPartyMemberHeldItems = pokemon.getHeldItems();
+    const fusedPartyMemberHeldItems = pokemon.iterHeldItems();
     for (const item of fusedPartyMemberHeldItems) {
-      globalScene.tryTransferHeldItem(item, pokemon, this, false, pokemon.heldItemManager.getStack(item), true, false);
+      globalScene.tryTransferHeldItem(item, pokemon, this, false, pokemon.heldItemManager.getAmount(item), true, false);
     }
     globalScene.updateItems(true);
     globalScene.getPlayerParty().splice(fusedPartyMemberIndex, 1)[0];

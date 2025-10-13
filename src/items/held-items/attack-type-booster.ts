@@ -64,7 +64,7 @@ export class AttackTypeBoosterHeldItem extends HeldItem<[typeof HeldItemEffect.A
     _effect: typeof HeldItemEffect.ATTACK_TYPE_BOOST,
     { pokemon, movePower }: AttackTypeBoostParams,
   ): void {
-    const stackCount = pokemon.heldItemManager.getStack(this.type);
+    const stackCount = pokemon.heldItemManager.getAmount(this.type);
     movePower.value = Math.floor(movePower.value * (1 + stackCount * this.powerBoost));
   }
 }

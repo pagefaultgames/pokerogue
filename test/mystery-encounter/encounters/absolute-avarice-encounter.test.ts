@@ -101,7 +101,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
     await game.runToMysteryEncounter(MysteryEncounterType.ABSOLUTE_AVARICE, defaultParty);
 
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).toBe(MysteryEncounterType.ABSOLUTE_AVARICE);
-    expect(scene.getPlayerParty()[0].getHeldItems().length).toBe(0);
+    expect(scene.getPlayerParty()[0].iterHeldItems().length).toBe(0);
   });
 
   describe("Option 1 - Fight the Greedent", () => {
@@ -146,7 +146,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
       expect(game).toBeAtPhase("SelectRewardPhase");
 
       for (const partyPokemon of scene.getPlayerParty()) {
-        expect(partyPokemon.heldItemManager.getStack(HeldItemId.REVIVER_SEED)).toBe(1);
+        expect(partyPokemon.heldItemManager.getAmount(HeldItemId.REVIVER_SEED)).toBe(1);
       }
     });
   });
@@ -177,7 +177,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.ABSOLUTE_AVARICE, defaultParty);
 
       expect(scene.currentBattle?.mysteryEncounter?.encounterType).toBe(MysteryEncounterType.ABSOLUTE_AVARICE);
-      expect(scene.getPlayerParty()[0].getHeldItems().length).toBe(0);
+      expect(scene.getPlayerParty()[0].iterHeldItems().length).toBe(0);
 
       await runMysteryEncounterToEnd(game, 2);
 
@@ -194,7 +194,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.ABSOLUTE_AVARICE, defaultParty);
 
       expect(scene.currentBattle?.mysteryEncounter?.encounterType).toBe(MysteryEncounterType.ABSOLUTE_AVARICE);
-      expect(scene.getPlayerParty()[0].getHeldItems().length).toBe(0);
+      expect(scene.getPlayerParty()[0].iterHeldItems().length).toBe(0);
 
       await runMysteryEncounterToEnd(game, 2);
 

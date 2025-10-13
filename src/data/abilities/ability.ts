@@ -4746,13 +4746,13 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
     // Ensure we have at least 1 recoverable berry (at least 1 berry in berriesEaten is not capped)
     const cappedBerries = new Set(
       pokemon
-        .getHeldItems()
+        .iterHeldItems()
         .filter(
-          bm =>
+          ([bm]) =>
             isItemInCategory(bm, HeldItemCategoryId.BERRY)
-            && pokemon.heldItemManager.getStack(bm) < allHeldItems[bm].maxStackCount,
+            && pokemon.heldItemManager.getAmount(bm) < allHeldItems[bm].maxStackCount,
         )
-        .map(bm => (allHeldItems[bm] as BerryHeldItem).berryType),
+        .map(([bm]) => (allHeldItems[bm] as BerryHeldItem).berryType),
     );
 
     this.berriesUnderCap = pokemon.battleData.berriesEaten.filter(bt => !cappedBerries.has(bt));
@@ -5416,7 +5416,7 @@ export class PostBattleLootAbAttr extends PostBattleAbAttr {
     const postBattleLoot = globalScene.currentBattle.postBattleLoot;
     if (!simulated && postBattleLoot.length > 0 && victory) {
       this.randItem = randSeedItem(postBattleLoot);
-      return pokemon.heldItemManager.getStack(this.randItem) < allHeldItems[this.randItem].maxStackCount;
+      return pokemon.heldItemManager.getAmount(this.randItem) < allHeldItems[this.randItem].maxStackCount;
     }
     return false;
   }
@@ -6455,7 +6455,7 @@ class ForceSwitchOutHelper {
  */
 function calculateShellBellRecovery(pokemon: Pokemon): number {
   // Returns 0 if no Shell Bell is present
-  const shellBellStack = pokemon.heldItemManager.getStack(HeldItemId.SHELL_BELL);
+  const shellBellStack = pokemon.heldItemManager.getAmount(HeldItemId.SHELL_BELL);
   return toDmgValue(pokemon.turnData.totalDamageDealt / 8) * shellBellStack;
 }
 

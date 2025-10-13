@@ -243,6 +243,6 @@ describe("Moves - Destiny Bond", () => {
     expect(playerPokemon.isFainted()).toBe(true);
 
     // Check that the Tackle user's Reviver Seed did not activate
-    expect(playerPokemon.heldItemManager.getStack(HeldItemId.REVIVER_SEED)).toBe(1);
+    expect(playerPokemon.heldItemManager.getAmount(HeldItemId.REVIVER_SEED)).toBe(1);
   });
 });

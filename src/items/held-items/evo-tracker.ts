@@ -44,7 +44,7 @@ export class GimmighoulEvoTrackerHeldItem extends EvoTrackerHeldItem {
   }
 
   getStackCount(pokemon: Pokemon): number {
-    const getStack = pokemon.heldItemManager.getStack;
+    const getStack = pokemon.heldItemManager.getAmount;
     const getGlobalStack = globalScene.trainerItems.getStack;
     const stackCount =
       getStack(this.type)

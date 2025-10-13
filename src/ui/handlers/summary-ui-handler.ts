@@ -1085,7 +1085,7 @@ export class SummaryUiHandler extends UiHandler {
         });
         this.ivContainer.setVisible(false);
 
-        const heldItems = this.pokemon?.getHeldItems().sort(heldItemSortFunc);
+        const heldItems = this.pokemon?.iterHeldItems().sort(heldItemSortFunc);
 
         heldItems?.forEach((itemKey, i) => {
           const heldItem = allHeldItems[itemKey];

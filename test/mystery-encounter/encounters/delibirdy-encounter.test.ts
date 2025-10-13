@@ -123,7 +123,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1);
 
       expect(scene.trainerItems.getStack(TrainerItemId.AMULET_COIN)).toBe(5);
-      expect(scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.SHELL_BELL)).toBe(1);
+      expect(scene.getPlayerParty()[0].heldItemManager.getAmount(HeldItemId.SHELL_BELL)).toBe(1);
     });
 
     it("should be disabled if player does not have enough money", async () => {
@@ -184,7 +184,7 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 1 });
 
-      expect(scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.SITRUS_BERRY)).toBe(1);
+      expect(scene.getPlayerParty()[0].heldItemManager.getAmount(HeldItemId.SITRUS_BERRY)).toBe(1);
       expect(scene.trainerItems.getStack(TrainerItemId.CANDY_JAR)).toBe(1);
     });
 
@@ -198,7 +198,7 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 1 });
 
-      expect(scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.REVIVER_SEED)).toBe(0);
+      expect(scene.getPlayerParty()[0].heldItemManager.getAmount(HeldItemId.REVIVER_SEED)).toBe(0);
       expect(scene.trainerItems.getStack(TrainerItemId.BERRY_POUCH)).toBe(1);
     });
 
@@ -215,9 +215,9 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 1 });
 
-      expect(scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.SITRUS_BERRY)).toBe(1);
+      expect(scene.getPlayerParty()[0].heldItemManager.getAmount(HeldItemId.SITRUS_BERRY)).toBe(1);
       expect(scene.trainerItems.getStack(TrainerItemId.CANDY_JAR)).toBe(99);
-      expect(scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.SHELL_BELL)).toBe(1);
+      expect(scene.getPlayerParty()[0].heldItemManager.getAmount(HeldItemId.SHELL_BELL)).toBe(1);
     });
 
     it("Should give the player a Shell Bell if they have max stacks of Berry Pouches", async () => {
@@ -233,9 +233,9 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 1 });
 
-      expect(scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.REVIVER_SEED)).toBe(0);
+      expect(scene.getPlayerParty()[0].heldItemManager.getAmount(HeldItemId.REVIVER_SEED)).toBe(0);
       expect(scene.trainerItems.getStack(TrainerItemId.BERRY_POUCH)).toBe(3);
-      expect(scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.SHELL_BELL)).toBe(1);
+      expect(scene.getPlayerParty()[0].heldItemManager.getAmount(HeldItemId.SHELL_BELL)).toBe(1);
     });
 
     it("should be disabled if player does not have any proper items", async () => {
@@ -305,7 +305,7 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
 
-      expect(scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.SOUL_DEW)).toBe(1);
+      expect(scene.getPlayerParty()[0].heldItemManager.getAmount(HeldItemId.SOUL_DEW)).toBe(1);
       expect(scene.trainerItems.getStack(TrainerItemId.HEALING_CHARM)).toBe(1);
     });
 
@@ -319,7 +319,7 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
 
-      expect(scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.SOUL_DEW)).toBe(0);
+      expect(scene.getPlayerParty()[0].heldItemManager.getAmount(HeldItemId.SOUL_DEW)).toBe(0);
       expect(scene.trainerItems.getStack(TrainerItemId.HEALING_CHARM)).toBe(1);
     });
 
@@ -336,9 +336,9 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
 
-      expect(scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.SOUL_DEW)).toBe(0);
+      expect(scene.getPlayerParty()[0].heldItemManager.getAmount(HeldItemId.SOUL_DEW)).toBe(0);
       expect(scene.trainerItems.getStack(TrainerItemId.HEALING_CHARM)).toBe(5);
-      expect(scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.SHELL_BELL)).toBe(1);
+      expect(scene.getPlayerParty()[0].heldItemManager.getAmount(HeldItemId.SHELL_BELL)).toBe(1);
     });
 
     it("should be disabled if player does not have any proper items", async () => {

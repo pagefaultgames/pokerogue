@@ -29,10 +29,6 @@ export type HeldItemSpecs = HeldItemData & {
   id: HeldItemId;
 };
 
-export function isHeldItemSpecs(entry: any): entry is HeldItemSpecs {
-  return typeof entry.id === "number" && "stack" in entry;
-}
-
 export type HeldItemWeights = {
   [key in HeldItemId]?: number;
 };
@@ -43,10 +39,6 @@ export type HeldItemCategoryEntry = HeldItemData & {
   id: HeldItemCategoryId;
   customWeights?: HeldItemWeights;
 };
-
-export function isHeldItemCategoryEntry(entry: any): entry is HeldItemCategoryEntry {
-  return entry?.id && isHeldItemCategoryEntry(entry.id) && "customWeights" in entry;
-}
 
 type HeldItemPoolEntry = {
   entry: HeldItemId | HeldItemCategoryId | HeldItemCategoryEntry | HeldItemSpecs | HeldItemPool;

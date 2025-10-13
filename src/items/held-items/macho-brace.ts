@@ -33,7 +33,7 @@ export class MachoBraceHeldItem extends HeldItem<[typeof HeldItemEffect.MACHO_BR
     _effect: typeof HeldItemEffect.MACHO_BRACE,
     { pokemon, statHolder, stat }: StatBoostParams,
   ): void {
-    const stackCount = pokemon.heldItemManager.getStack(this.type);
+    const stackCount = pokemon.heldItemManager.getAmount(this.type);
 
     // Modifies the passed in stat number holder by +2 per stack for HP, +1 per stack for other stats
     // If the Macho Brace is at max stacks (50), adds additional 10% to total HP and 5% to other stats

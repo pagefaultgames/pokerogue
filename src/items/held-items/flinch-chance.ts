@@ -27,7 +27,7 @@ export class FlinchChanceHeldItem extends HeldItem<[typeof HeldItemEffect.FLINCH
     _effect: typeof HeldItemEffect.FLINCH_CHANCE,
     { pokemon, flinched }: FlinchChanceParams,
   ): boolean {
-    const stackCount = pokemon.heldItemManager.getStack(this.type);
+    const stackCount = pokemon.heldItemManager.getAmount(this.type);
     return !flinched.value && pokemon.randBattleSeedInt(100) < stackCount * this.chance;
     // The check for pokemon.summonData is to ensure that a crash doesn't occur when a Pokemon with King's Rock procs a flinch
   }

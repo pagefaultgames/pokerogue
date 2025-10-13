@@ -268,19 +268,19 @@ describe("Clowning Around - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 2);
 
-      const leadItemsAfter = game.field.getPlayerPokemon().getHeldItems();
+      const leadItemsAfter = game.field.getPlayerPokemon().iterHeldItems();
       const ultraCountAfter = leadItemsAfter
         .filter(m => getHeldItemTier(m) === RarityTier.ULTRA)
-        .reduce((a, b) => a + scene.getPlayerParty()[0].heldItemManager.getStack(b), 0);
+        .reduce((a, b) => a + scene.getPlayerParty()[0].heldItemManager.getAmount(b), 0);
       const rogueCountAfter = leadItemsAfter
         .filter(m => getHeldItemTier(m) === RarityTier.ROGUE)
-        .reduce((a, b) => a + scene.getPlayerParty()[0].heldItemManager.getStack(b), 0);
+        .reduce((a, b) => a + scene.getPlayerParty()[0].heldItemManager.getAmount(b), 0);
       expect(ultraCountAfter).toBe(13);
       expect(rogueCountAfter).toBe(7);
 
-      const secondItemsAfter = scene.getPlayerParty()[1].getHeldItems();
+      const secondItemsAfter = scene.getPlayerParty()[1].iterHeldItems();
       expect(secondItemsAfter.length).toBe(1);
-      expect(scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.SOUL_DEW)).toBe(5);
+      expect(scene.getPlayerParty()[0].heldItemManager.getAmount(HeldItemId.SOUL_DEW)).toBe(5);
     });
 
     it("should leave encounter without battle", async () => {

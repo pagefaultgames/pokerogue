@@ -136,8 +136,8 @@ describe("UI - Transfer Items", () => {
 
     expect(pokemon).toBeDefined();
     if (pokemon) {
-      expect(pokemon.getHeldItems()).toHaveLength(3);
-      expect(pokemon.getHeldItems().map(h => h.stackCount)).toEqual([1, 2, 2]);
+      expect(pokemon.iterHeldItems()).toHaveLength(3);
+      expect(pokemon.iterHeldItems().map(h => h.stackCount)).toEqual([1, 2, 2]);
     }
 
     await new Promise<void>(resolve => {
@@ -165,8 +165,8 @@ describe("UI - Transfer Items", () => {
     expect(pokemon).toBeDefined();
     if (pokemon) {
       // Sitrus berry was discarded, leaving 2 stacks of 2 berries behind
-      expect(pokemon.getHeldItems()).toHaveLength(2);
-      expect(pokemon.getHeldItems().map(h => h.stackCount)).toEqual([2, 2]);
+      expect(pokemon.iterHeldItems()).toHaveLength(2);
+      expect(pokemon.iterHeldItems().map(h => h.stackCount)).toEqual([2, 2]);
     }
   });
 

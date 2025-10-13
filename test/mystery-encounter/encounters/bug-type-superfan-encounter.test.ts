@@ -550,7 +550,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       game.override.startingHeldItems([{ entry: HeldItemId.GRIP_CLAW, count: 1 }]);
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [SpeciesId.BUTTERFREE]);
 
-      const gripClawCountBefore = scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.GRIP_CLAW);
+      const gripClawCountBefore = scene.getPlayerParty()[0].heldItemManager.getAmount(HeldItemId.GRIP_CLAW);
 
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
 
@@ -565,7 +565,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       expect(rewardSelectHandler.options[0].rewardOption.type.id).toBe("MYSTERY_ENCOUNTER_GOLDEN_BUG_NET");
       expect(rewardSelectHandler.options[1].rewardOption.type.id).toBe("REVIVER_SEED");
 
-      const gripClawCountAfter = scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.GRIP_CLAW);
+      const gripClawCountAfter = scene.getPlayerParty()[0].heldItemManager.getAmount(HeldItemId.GRIP_CLAW);
       expect(gripClawCountBefore - 1).toBe(gripClawCountAfter);
     });
 

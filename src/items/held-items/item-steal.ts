@@ -150,7 +150,7 @@ export class ContactItemStealChanceHeldItem extends ItemTransferHeldItem<
   }
 
   protected override getTransferredItemCount({ pokemon }: ItemStealParams): number {
-    const stackCount = pokemon.heldItemManager.getStack(this.type);
+    const stackCount = pokemon.heldItemManager.getAmount(this.type);
     return randSeedFloat() <= this.chance * stackCount ? 1 : 0;
   }
 

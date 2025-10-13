@@ -19,7 +19,7 @@ export class AccuracyBoosterHeldItem extends HeldItem<[typeof HeldItemEffect.ACC
     _effect: typeof HeldItemEffect.ACCURACY_BOOSTER,
     { pokemon, moveAccuracy }: AccuracyBoostParams,
   ): void {
-    const stackCount = pokemon.heldItemManager.getStack(this.type);
+    const stackCount = pokemon.heldItemManager.getAmount(this.type);
     moveAccuracy.value += this.accuracyAmount * stackCount;
   }
 }
