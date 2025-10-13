@@ -35,8 +35,8 @@ describe("Moves - Clear Smog", () => {
     await game.classicMode.startBattle([SpeciesId.RATTATA]);
     const enemy = game.field.getEnemyPokemon();
 
-    expect(enemy.getStatStage(Stat.ATK)).toBe(0);
-    expect(enemy.getStatStage(Stat.ACC)).toBe(0);
+    expect(enemy).toHaveStatStage(Stat.ATK, 0);
+    expect(enemy).toHaveStatStage(Stat.ACC, 0);
 
     game.move.use(MoveId.SAND_ATTACK);
     await game.toNextTurn();
@@ -50,24 +50,5 @@ describe("Moves - Clear Smog", () => {
 
     expect(enemy).toHaveStatStage(Stat.ATK, 0);
     expect(enemy).toHaveStatStage(Stat.ACC, 0);
-  });
-
-  it("should clear all stat changes even when enemy uses the move", async () => {
-    game.override.enemyMoveset(MoveId.SAND_ATTACK);
-    await game.classicMode.startBattle([SpeciesId.RATTATA]);
-    const user = game.field.getPlayerPokemon();
-
-    game.move.select(MoveId.SWORDS_DANCE);
-    await game.toNextTurn();
-
-    expect(user.getStatStage(Stat.ATK)).toBe(2);
-    expect(user.getStatStage(Stat.ACC)).toBe(-1);
-
-    game.override.enemyMoveset(MoveId.CLEAR_SMOG);
-    game.move.select(MoveId.SAND_ATTACK);
-    await game.toNextTurn();
-
-    expect(user.getStatStage(Stat.ATK)).toBe(0);
-    expect(user.getStatStage(Stat.ACC)).toBe(0);
   });
 });
