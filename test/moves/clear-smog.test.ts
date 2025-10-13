@@ -48,8 +48,8 @@ describe("Moves - Clear Smog", () => {
     await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(enemy.getStatStage(Stat.ATK)).toBe(0);
-    expect(enemy.getStatStage(Stat.ACC)).toBe(0);
+    expect(enemy).toHaveStatStage(Stat.ATK, 0);
+    expect(enemy).toHaveStatStage(Stat.ACC, 0);
   });
 
   it("should clear all stat changes even when enemy uses the move", async () => {
