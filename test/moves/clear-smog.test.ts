@@ -28,7 +28,6 @@ describe("Moves - Clear Smog", () => {
       .enemyMoveset(MoveId.SWORDS_DANCE)
       .enemyAbility(AbilityId.BALL_FETCH)
       .startingLevel(100)
-      .moveset([MoveId.CLEAR_SMOG, MoveId.SAND_ATTACK, MoveId.SWORDS_DANCE])
       .ability(AbilityId.BALL_FETCH);
   });
 
