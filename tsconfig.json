@@ -16,7 +16,12 @@
       "DOM.AsyncIterable",
       "DOM.Iterable",
       "ScriptHost",
-      "WebWorker.ImportScripts"
+      "WebWorker.ImportScripts",
+      "ES2024.Object",
+      // NOTE: Be *very* mindful of these when updating typescript versions,
+      // as their definitions may change in breaking ways
+      "ESNext.Iterator",
+      "ESNext.Collection"
     ],
     "skipLibCheck": true, // Safe and almost always beneficial
     "moduleResolution": "bundler",
