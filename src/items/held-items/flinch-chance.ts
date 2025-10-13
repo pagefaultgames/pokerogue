@@ -32,7 +32,7 @@ export class FlinchChanceHeldItem extends HeldItem<[typeof HeldItemEffect.FLINCH
     // The check for pokemon.summonData is to ensure that a crash doesn't occur when a Pokemon with King's Rock procs a flinch
   }
 
-  apply(_effect: typeof HeldItemEffect.FLINCH_CHANCE, { flinched }: FlinchChanceParams): boolean {
+  apply(_effect: typeof HeldItemEffect.FLINCH_CHANCE, { flinched }: FlinchChanceParams): void {
     flinched.value = true;
   }
 }

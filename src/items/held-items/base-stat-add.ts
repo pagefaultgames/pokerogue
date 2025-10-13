@@ -2,7 +2,7 @@ import { HeldItemEffect } from "#enums/held-item-effect";
 import type { HeldItemId } from "#enums/held-item-id";
 import { Stat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
-import { HeldItem } from "#items/held-item";
+import { DEFAULT_HELD_ITEM_FLAGS, HELD_ITEM_FLAG_TRANSFERABLE, HeldItem } from "#items/held-item";
 import type { BaseStatParams } from "#types/held-item-parameter";
 import i18next from "i18next";
 
@@ -11,7 +11,11 @@ import i18next from "i18next";
  */
 export class OldGateauHeldItem extends HeldItem<[typeof HeldItemEffect.BASE_STAT_ADD]> {
   public readonly effects = [HeldItemEffect.BASE_STAT_ADD] as const;
-  public isTransferable = false;
+  /**
+   * Set of item flags for the held item
+   * @defaultValue {@linkcode DEFAULT_HELD_ITEM_FLAGS} with {@linkcode HELD_ITEM_FLAG_TRANSFERABLE} removed
+   */
+  public flags = DEFAULT_HELD_ITEM_FLAGS & ~HELD_ITEM_FLAG_TRANSFERABLE;
 
   get description(): string {
     return i18next.t("modifierType:ModifierType.PokemonBaseStatFlatModifierType.description");
@@ -48,8 +52,8 @@ export class OldGateauHeldItem extends HeldItem<[typeof HeldItemEffect.BASE_STAT
  */
 export class ShuckleJuiceHeldItem extends HeldItem<[typeof HeldItemEffect.BASE_STAT_ADD]> {
   public readonly effects = [HeldItemEffect.BASE_STAT_ADD] as const;
-  public isTransferable = false;
-  public statModifier: number;
+  public flags = DEFAULT_HELD_ITEM_FLAGS & ~HELD_ITEM_FLAG_TRANSFERABLE;
+  private readonly statModifier: number;
 
   constructor(type: HeldItemId, maxStackCount: number, statModifier: number) {
     super(type, maxStackCount);
@@ -57,16 +61,20 @@ export class ShuckleJuiceHeldItem extends HeldItem<[typeof HeldItemEffect.BASE_S
   }
 
   override get name(): string {
-    return this.statModifier > 0
-      ? i18next.t("modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_GOOD.name")
-      : i18next.t("modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_BAD.name");
+    return i18next.t(
+      this.statModifier > 0
+        ? "modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_GOOD.name"
+        : "modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_BAD.name",
+    );
   }
 
   // TODO: where is this description shown?
   override get description(): string {
-    return this.statModifier > 0
-      ? i18next.t("modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_GOOD.description")
-      : i18next.t("modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_BAD.description");
+    return i18next.t(
+      this.statModifier > 0
+        ? "modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_GOOD.description"
+        : "modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_BAD.description",
+    );
   }
 
   override get iconName(): string {

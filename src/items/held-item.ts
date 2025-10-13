@@ -7,28 +7,78 @@ import type { UniqueArray } from "#types/common";
 import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
 import i18next from "i18next";
 
+/** Bit set for a held item's `transferrable` flag */
+export const HELD_ITEM_FLAG_TRANSFERABLE = 1;
+/** Bit set for a held item's `stealable` flag */
+export const HELD_ITEM_FLAG_STEALABLE = 2;
+/** Bit set for a held item's `suppressable` flag */
+export const HELD_ITEM_FLAG_SUPPRESSABLE = 4;
+
+/** Default flags used by all items */
+export const DEFAULT_HELD_ITEM_FLAGS =
+  HELD_ITEM_FLAG_TRANSFERABLE | HELD_ITEM_FLAG_STEALABLE | HELD_ITEM_FLAG_SUPPRESSABLE;
+
+/** Same as {@linkcode DEFAULT_HELD_ITEM_FLAGS}, but without the `transferrable` flag set */
+export const DEFAULT_NON_TRANSFERABLE_HELD_ITEM_FLAGS = DEFAULT_HELD_ITEM_FLAGS & ~HELD_ITEM_FLAG_TRANSFERABLE;
+/** Same as {@linkcode DEFAULT_HELD_ITEM_FLAGS}, but without the `stealable` flag set */
+export const DEFAULT_NON_STEALABLE_HELD_ITEM_FLAGS = DEFAULT_HELD_ITEM_FLAGS & ~HELD_ITEM_FLAG_STEALABLE;
+/** Same as {@linkcode DEFAULT_HELD_ITEM_FLAGS}, but without the `transferrable` and `stealable` flags set */
+export const LOCKED_HELD_ITEM_FLAGS =
+  DEFAULT_HELD_ITEM_FLAGS & ~HELD_ITEM_FLAG_TRANSFERABLE & ~HELD_ITEM_FLAG_STEALABLE;
+
 export abstract class HeldItemBase {
   public type: HeldItemId;
   public readonly maxStackCount: number;
-  public isTransferable = true;
-  public isStealable = true;
-  public isSuppressable = true;
 
+  /**
+   * Holder for the item's flags
+   * @defaultValue {@linkcode DEFAULT_HELD_ITEM_FLAGS}
+   */
+  protected flags: number = DEFAULT_HELD_ITEM_FLAGS;
+  /** Whether the item can be transferred between pokemon */
+  public get isTransferable(): boolean {
+    return (this.flags & HELD_ITEM_FLAG_TRANSFERABLE) !== 0;
+  }
+
+  /** Whether the item can be stolen, e.g. through covet */
+  public get isStealable(): boolean {
+    return (this.flags & HELD_ITEM_FLAG_STEALABLE) !== 0;
+  }
+
+  /** Whether the item can be suppressed, e.g. through magic room */
+  public get isSuppressable(): boolean {
+    return (this.flags & HELD_ITEM_FLAG_SUPPRESSABLE) !== 0;
+  }
+
+  /**
+   * Create a new held item
+   * @param type - The type of held item
+   * @param maxStackCount - The max stack count
+   */
   constructor(type: HeldItemId, maxStackCount = 1) {
     this.type = type;
     this.maxStackCount = maxStackCount;
   }
 
-  get name(): string {
+  /**
+   * The localized name of the held item
+   */
+  public get name(): string {
     return i18next.t(`modifierType:ModifierType.${HeldItemNames[this.type]}.name`);
   }
 
-  get description(): string {
+  /**
+   * The localized description of the held item
+   */
+  public get description(): string {
     return i18next.t(`modifierType:ModifierType.${HeldItemNames[this.type]}.description`);
   }
 
-  get iconName(): string {
-    return `${HeldItemNames[this.type]?.toLowerCase()}`;
+  /**
+   * The icon name of the held item (corresponding to a frame in the `items` atlas)
+   */
+  public get iconName(): string {
+    return HeldItemNames[this.type]?.toLowerCase();
   }
 
   // TODO: https://github.com/pagefaultgames/pokerogue/pull/5656#discussion_r2114950716
@@ -90,22 +140,36 @@ export abstract class HeldItemBase {
     return stackCount;
   }
 
-  getScoreMultiplier(): number {
+  public getScoreMultiplier(): number {
     return 1;
   }
 
+  // TODO: Turn this into a builder class such that these methods are not part of the public API
+
+  /**
+   * Set the item to be untransferable
+   * @returns `this`, for chaining
+   */
   untransferable(): this {
-    this.isTransferable = false;
+    this.flags &= ~HELD_ITEM_FLAG_TRANSFERABLE;
     return this;
   }
 
+  /**
+   * Set the item to be unstealable
+   * @returns `this`, for chaining
+   */
   unstealable(): this {
-    this.isStealable = false;
+    this.flags &= ~HELD_ITEM_FLAG_STEALABLE;
     return this;
   }
 
+  /**
+   * Set the item to be unsuppressable
+   * @returns `this`, for chaining
+   */
   unsuppressable(): this {
-    this.isSuppressable = false;
+    this.flags &= ~HELD_ITEM_FLAG_SUPPRESSABLE;
     return this;
   }
 }
@@ -151,8 +215,8 @@ export abstract class ConsumableHeldItem<T extends EffectTuple> extends HeldItem
    * Consume this item and apply relevant effects.
    * Should be overridden by any subclasses with their own on-consume effects.
    * @param pokemon - The Pokémon consuming the item
-   * @param remove - Whether to remove the item during consumption; default `true`
-   * @param unburden - Whether to trigger item loss abilities (i.e. Unburden)  when consuming the item; default `true`
+   * @param remove - (default `true`) Whether to remove the item during consumption
+   * @param unburden - (default `true)` Whether to trigger item loss abilities (i.e. Unburden) when consuming the item
    */
   public consume(pokemon: Pokemon, remove = true, unburden = true): void {
     if (remove) {

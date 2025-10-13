@@ -9,6 +9,7 @@ import {
 } from "#enums/held-item-id";
 import {
   type HeldItemConfiguration,
+  type HeldItemData,
   type HeldItemDataMap,
   type HeldItemSaveData,
   type HeldItemSpecs,
@@ -54,12 +55,35 @@ export class HeldItemManager {
     return saveData;
   }
 
-  getHeldItems(): HeldItemId[] {
-    return Array.from(this.heldItems.keys());
+  /**
+   * Iterate over the the held items in this manager
+   * @returns An iterator over
+   */
+  [Symbol.iterator](): Iterator<[HeldItemId, HeldItemData]> {
+    return this.heldItems[Symbol.iterator]();
   }
 
-  getTransferableHeldItems(): HeldItemId[] {
-    return this.getHeldItems().filter(k => allHeldItems[k].isTransferable);
+  /**
+   * @returns - A fresh array of the held items in the manager
+   */
+  getHeldItems(): HeldItemId[] {
+    return this.heldItems.keys().toArray();
+  }
+
+  /**
+   * Return an array of all held items that are transferable
+   */
+  getTransferableHeldItems(): IteratorObject<HeldItemId, undefined> {
+    return this.heldItems.keys().filter(k => allHeldItems[k].isTransferable);
+  }
+
+  public hasStealableHeldItems(): boolean {
+    for (const [item] of this.heldItems) {
+      if (allHeldItems[item].isStealable) {
+        return true;
+      }
+    }
+    return false;
   }
 
   getStealableHeldItems(): HeldItemId[] {
