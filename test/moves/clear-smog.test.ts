@@ -38,7 +38,7 @@ describe("Moves - Clear Smog", () => {
     expect(enemy.getStatStage(Stat.ATK)).toBe(0);
     expect(enemy.getStatStage(Stat.ACC)).toBe(0);
 
-    game.move.select(MoveId.SAND_ATTACK);
+    game.move.use(MoveId.SAND_ATTACK);
     await game.toNextTurn();
 
     expect(enemy).toHaveStatStage(Stat.ATK, 2);
