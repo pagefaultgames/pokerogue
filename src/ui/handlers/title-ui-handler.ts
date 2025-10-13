@@ -168,8 +168,17 @@ export class TitleUiHandler extends OptionSelectUiHandler {
     const windowHeight = this.getWindowHeight();
 
     // Moving username and player count to top of the menu
-    this.usernameLabel.setY(scaledHeight - 23 - windowHeight);
-    this.playerCountLabel.setY(scaledHeight - 13 - windowHeight);
+    // and sorting it, to display the shorter one on top
+    const UPPER_LABEL = scaledHeight - 23 - windowHeight;
+    const LOWER_LABEL = scaledHeight - 13 - windowHeight;
+
+    if (this.usernameLabel.width < this.playerCountLabel.width) {
+      this.usernameLabel.setY(UPPER_LABEL);
+      this.playerCountLabel.setY(LOWER_LABEL);
+    } else {
+      this.usernameLabel.setY(LOWER_LABEL);
+      this.playerCountLabel.setY(UPPER_LABEL);
+    }
 
     this.splashMessage = randItem(getSplashMessages());
     this.splashMessageText.setText(
