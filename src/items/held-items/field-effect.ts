@@ -15,6 +15,6 @@ export class FieldEffectHeldItem extends HeldItem<[typeof HeldItemEffect.FIELD_E
    * by the holder.
    */
   apply(_effect: typeof HeldItemEffect.FIELD_EFFECT, { pokemon, fieldDuration }: FieldEffectParams): void {
-    fieldDuration.value += 2 * pokemon.heldItemManager.getStack(this.type);
+    fieldDuration.value += 2 * pokemon.heldItemManager.getAmount(this.type);
   }
 }

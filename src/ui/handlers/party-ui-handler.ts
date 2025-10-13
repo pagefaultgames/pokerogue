@@ -1023,8 +1023,8 @@ export class PartyUiHandler extends MessageUiHandler {
         /** Initialize item quantities for the selected Pokemon */
         const pokemon = globalScene.getPlayerParty()[this.cursor];
         const items = pokemon.heldItemManager.getTransferableHeldItems();
-        this.transferQuantities = items.map(item => pokemon.heldItemManager.getStack(item));
-        this.transferQuantitiesMax = items.map(item => pokemon.heldItemManager.getStack(item));
+        this.transferQuantities = items.map(item => pokemon.heldItemManager.getAmount(item));
+        this.transferQuantitiesMax = items.map(item => pokemon.heldItemManager.getAmount(item));
       }
       this.showOptions();
       ui.playSelect();
@@ -1628,7 +1628,7 @@ export class PartyUiHandler extends MessageUiHandler {
         // add the number of items to the `all` option
         optionName += ` (${pokemon.heldItemManager.getTransferableHeldItems().length})`;
       } else {
-        const items = pokemon.getHeldItems();
+        const items = pokemon.iterHeldItems();
         const item = items[option];
         optionName = allHeldItems[item].name;
       }
@@ -1642,7 +1642,7 @@ export class PartyUiHandler extends MessageUiHandler {
       optionText.setOrigin(0);
 
       /** For every item that has stack bigger than 1, display the current quantity selection */
-      const items = pokemon.getHeldItems();
+      const items = pokemon.iterHeldItems();
       const item = items[option];
       if (
         this.isItemManageMode()

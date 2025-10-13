@@ -22,7 +22,7 @@ export class MultiHitHeldItem extends HeldItem<
   }
 
   private shouldApplyDamageModifier({ pokemon }: MultiHitDamageParams): boolean {
-    const stackCount = pokemon.heldItemManager.getStack(this.type);
+    const stackCount = pokemon.heldItemManager.getAmount(this.type);
     return (
       pokemon.turnData.hitsLeft === pokemon.turnData.hitCount
       || pokemon.turnData.hitCount - pokemon.turnData.hitsLeft !== stackCount + 1
@@ -103,7 +103,7 @@ export class MultiHitHeldItem extends HeldItem<
 
   /** Adds strikes to a move equal to the number of stacked Multi-Lenses */
   private applyHitCountBoost(pokemon: Pokemon, count: NumberHolder): void {
-    const stackCount = pokemon.heldItemManager.getStack(this.type);
+    const stackCount = pokemon.heldItemManager.getAmount(this.type);
     count.value += stackCount;
   }
 
@@ -113,7 +113,7 @@ export class MultiHitHeldItem extends HeldItem<
    * Additional strikes beyond that are given a 0.25x damage multiplier
    */
   private applyDamageModifier(pokemon: Pokemon, damageMultiplier: NumberHolder): void {
-    const stackCount = pokemon.heldItemManager.getStack(this.type);
+    const stackCount = pokemon.heldItemManager.getAmount(this.type);
     if (pokemon.turnData.hitsLeft === pokemon.turnData.hitCount) {
       // Reduce first hit by 25% for each stack count
       damageMultiplier.value *= 1 - 0.25 * stackCount;

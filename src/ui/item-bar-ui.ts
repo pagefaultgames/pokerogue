@@ -30,8 +30,8 @@ export class ItemBar extends Phaser.GameObjects.Container {
 
     const sortedTrainerItems = trainerItems.getTrainerItems().sort(trainerItemSortFunc);
 
-    const heldItemsA = pokemonA ? pokemonA.getHeldItems().sort(heldItemSortFunc) : [];
-    const heldItemsB = pokemonB ? pokemonB.getHeldItems().sort(heldItemSortFunc) : [];
+    const heldItemsA = pokemonA ? pokemonA.iterHeldItems().sort(heldItemSortFunc) : [];
+    const heldItemsB = pokemonB ? pokemonB.iterHeldItems().sort(heldItemSortFunc) : [];
 
     this.totalVisibleLength = sortedTrainerItems.length + heldItemsA.length + heldItemsB.length;
 

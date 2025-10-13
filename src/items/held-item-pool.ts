@@ -16,12 +16,11 @@ import {
   type HeldItemSpecs,
   type HeldItemTieredPool,
   type HeldItemWeights,
-  isHeldItemCategoryEntry,
   isHeldItemPool,
-  isHeldItemSpecs,
 } from "#types/held-item-data-types";
 import { coerceArray, isNullOrUndefined, pickWeightedIndex, randSeedInt } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
+import { isHeldItemCategoryEntry, isHeldItemSpecs } from "#utils/items";
 
 export const wildHeldItemPool: HeldItemTieredPool = {};
 
@@ -243,7 +242,7 @@ function getPoolWeights(pool: HeldItemPool, pokemon: Pokemon): number[] {
       console.log("ITEM ID: ", itemId, HeldItemNames[itemId]);
       console.log(allHeldItems[itemId]);
 
-      if (pokemon.heldItemManager.getStack(itemId) >= allHeldItems[itemId].getMaxStackCount()) {
+      if (pokemon.heldItemManager.getAmount(itemId) >= allHeldItems[itemId].getMaxStackCount()) {
         weight = 0;
       }
     }

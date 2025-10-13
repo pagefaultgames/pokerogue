@@ -11,7 +11,7 @@ export class FriendshipBoosterHeldItem extends HeldItem<[typeof HeldItemEffect.F
   }
 
   apply(_effect: typeof HeldItemEffect.FRIENDSHIP_BOOSTER, { pokemon, friendship }: FriendshipBoostParams): void {
-    const stackCount = pokemon.heldItemManager.getStack(this.type);
+    const stackCount = pokemon.heldItemManager.getAmount(this.type);
     friendship.value = Math.floor(friendship.value * (1 + 0.5 * stackCount));
   }
 }

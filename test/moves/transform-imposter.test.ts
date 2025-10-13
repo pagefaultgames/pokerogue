@@ -145,7 +145,7 @@ describe("Transforming Effects", () => {
       expect(ditto.getNameToRender()).not.toBe(mew.getNameToRender());
       expect(ditto.level).not.toBe(mew.level);
       expect(ditto.friendship).not.toBe(mew.friendship);
-      expect(ditto.getHeldItems()).not.toEqual(mew.getHeldItems());
+      expect(ditto.iterHeldItems()).not.toEqual(mew.iterHeldItems());
     });
 
     it("should copy in-battle overridden stats", async () => {

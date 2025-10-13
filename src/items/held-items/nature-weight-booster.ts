@@ -16,7 +16,7 @@ export class NatureWeightBoosterHeldItem extends HeldItem<[typeof HeldItemEffect
     _effect: typeof HeldItemEffect.NATURE_WEIGHT_BOOSTER,
     { pokemon, multiplier }: NatureWeightBoostParams,
   ): boolean {
-    const stackCount = pokemon.heldItemManager.getStack(this.type);
+    const stackCount = pokemon.heldItemManager.getAmount(this.type);
     multiplier.value += 0.1 * stackCount * (multiplier.value > 1 ? 1 : -1);
     return true;
   }

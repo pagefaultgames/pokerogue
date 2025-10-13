@@ -827,7 +827,7 @@ export class HoldingItemRequirement extends EncounterPokemonRequirement {
     // for an inverted query, we only want to get the pokemon that have any held items that are NOT in requiredHeldItemModifiers
     // E.g. functions as a blacklist
     return partyPokemon.filter(pokemon =>
-      pokemon.getHeldItems().some(item => {
+      pokemon.iterHeldItems().some(item => {
         return (
           !this.requiredHeldItems.some(heldItem => item === heldItem || getHeldItemCategory(item) === heldItem)
           && (!this.requireTransferable || allHeldItems[item].isTransferable)
@@ -837,7 +837,7 @@ export class HoldingItemRequirement extends EncounterPokemonRequirement {
   }
 
   override getDialogueToken(pokemon?: PlayerPokemon): [string, string] {
-    const requiredItems = pokemon?.getHeldItems().filter(item => {
+    const requiredItems = pokemon?.iterHeldItems().filter(item => {
       return (
         this.requiredHeldItems.some(heldItem => item === heldItem)
         && (!this.requireTransferable || allHeldItems[item].isTransferable)
@@ -881,13 +881,13 @@ export class HeldItemRequirement extends EncounterSceneRequirement {
   queryPartyForItems(partyPokemon: PlayerPokemon[]): number {
     let count = 0;
     for (const pokemon of partyPokemon) {
-      for (const item of pokemon.getHeldItems()) {
+      for (const item of pokemon.iterHeldItems()) {
         const itemInList = this.requiredHeldItems.some(
           heldItem => item === heldItem || getHeldItemCategory(item) === heldItem,
         );
         const requiredItem = this.invertQuery ? !itemInList : itemInList;
         if (requiredItem && (!this.requireTransferable || allHeldItems[item].isTransferable)) {
-          count += pokemon.heldItemManager.getStack(item);
+          count += pokemon.heldItemManager.getAmount(item);
         }
       }
     }
@@ -895,7 +895,7 @@ export class HeldItemRequirement extends EncounterSceneRequirement {
   }
 
   override getDialogueToken(pokemon?: PlayerPokemon): [string, string] {
-    const requiredItems = pokemon?.getHeldItems().filter(item => {
+    const requiredItems = pokemon?.iterHeldItems().filter(item => {
       return (
         this.requiredHeldItems.some(heldItem => item === heldItem)
         && (!this.requireTransferable || allHeldItems[item].isTransferable)

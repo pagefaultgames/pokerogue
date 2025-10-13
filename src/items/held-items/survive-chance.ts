@@ -24,7 +24,7 @@ export class SurviveChanceHeldItem extends HeldItem<[typeof HeldItemEffect.SURVI
     _effect: typeof HeldItemEffect.SURVIVE_CHANCE,
     { pokemon, surviveDamage }: SurviveChanceParams,
   ): boolean {
-    return !surviveDamage.value && pokemon.randBattleSeedInt(10) < pokemon.heldItemManager.getStack(this.type);
+    return !surviveDamage.value && pokemon.randBattleSeedInt(10) < pokemon.heldItemManager.getAmount(this.type);
   }
 
   /**

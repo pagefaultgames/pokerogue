@@ -27,7 +27,7 @@ export class HitHealHeldItem extends HeldItem<[typeof HeldItemEffect.HIT_HEAL]> 
   }
 
   apply(_effect: typeof HeldItemEffect.HIT_HEAL, { pokemon }: HitHealParams): void {
-    const stackCount = pokemon.heldItemManager.getStack(this.type);
+    const stackCount = pokemon.heldItemManager.getAmount(this.type);
     // TODO: this shouldn't be undefined AFAIK
     globalScene.phaseManager.unshiftPhase(
       new PokemonHealPhase(

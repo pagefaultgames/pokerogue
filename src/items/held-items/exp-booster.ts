@@ -22,7 +22,7 @@ export class ExpBoosterHeldItem extends HeldItem<[typeof HeldItemEffect.EXP_BOOS
   }
 
   apply(_effect: typeof HeldItemEffect.EXP_BOOSTER, { pokemon, expAmount }: ExpBoostParams): void {
-    const stackCount = pokemon.heldItemManager.getStack(this.type);
+    const stackCount = pokemon.heldItemManager.getAmount(this.type);
     expAmount.value = Math.floor(expAmount.value * (1 + stackCount * this.boostMultiplier));
   }
 }

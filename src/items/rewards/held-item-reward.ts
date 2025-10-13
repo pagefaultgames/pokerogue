@@ -27,7 +27,7 @@ export class HeldItemReward extends PokemonReward {
             pokemonName: getPokemonNameWithAffix(pokemon),
           });
         }
-        if (hasItem && pokemon.heldItemManager.getStack(this.itemId) === maxStackCount) {
+        if (hasItem && pokemon.heldItemManager.getAmount(this.itemId) === maxStackCount) {
           return i18next.t("modifierType:ModifierType.PokemonHeldItemModifierType.extra.tooMany", {
             pokemonName: getPokemonNameWithAffix(pokemon),
           });

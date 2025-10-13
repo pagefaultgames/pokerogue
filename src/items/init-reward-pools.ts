@@ -109,7 +109,7 @@ function initGreatRewardPool() {
               p.hp
               && !!p.status
               && !p
-                .getHeldItems()
+                .iterHeldItems()
                 .filter(i => i in [HeldItemId.TOXIC_ORB, HeldItemId.FLAME_ORB])
                 .some(i => (allHeldItems[i] as TurnEndStatusHeldItem).effect === p.status?.effect),
           ).length,
@@ -173,7 +173,7 @@ function initGreatRewardPool() {
               p.hp
               && !!p.status
               && !p
-                .getHeldItems()
+                .iterHeldItems()
                 .filter(i => i in [HeldItemId.TOXIC_ORB, HeldItemId.FLAME_ORB])
                 .some(i => (allHeldItems[i] as TurnEndStatusHeldItem).effect === p.status?.effect),
           ).length,
@@ -357,7 +357,7 @@ function initUltraRewardPool() {
       id: HeldItemId.TOXIC_ORB,
       weight: (party: Pokemon[]) => {
         return party.some(p => {
-          const isHoldingOrb = p.getHeldItems().some(i => i in [HeldItemId.FLAME_ORB, HeldItemId.TOXIC_ORB]);
+          const isHoldingOrb = p.iterHeldItems().some(i => i in [HeldItemId.FLAME_ORB, HeldItemId.TOXIC_ORB]);
 
           if (!isHoldingOrb) {
             const moveset = p
@@ -403,7 +403,7 @@ function initUltraRewardPool() {
       id: HeldItemId.FLAME_ORB,
       weight: (party: Pokemon[]) => {
         return party.some(p => {
-          const isHoldingOrb = p.getHeldItems().some(i => i in [HeldItemId.FLAME_ORB, HeldItemId.TOXIC_ORB]);
+          const isHoldingOrb = p.iterHeldItems().some(i => i in [HeldItemId.FLAME_ORB, HeldItemId.TOXIC_ORB]);
 
           if (!isHoldingOrb) {
             const moveset = p
@@ -449,7 +449,7 @@ function initUltraRewardPool() {
       id: HeldItemId.MYSTICAL_ROCK,
       weight: (party: Pokemon[]) => {
         return party.some(p => {
-          const stack = p.heldItemManager.getStack(HeldItemId.MYSTICAL_ROCK);
+          const stack = p.heldItemManager.getAmount(HeldItemId.MYSTICAL_ROCK);
           const isHoldingMax = stack === allHeldItems[HeldItemId.MYSTICAL_ROCK].maxStackCount;
 
           if (!isHoldingMax) {

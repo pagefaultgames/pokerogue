@@ -175,7 +175,7 @@ export class Battle {
   }
 
   addPostBattleLoot(enemyPokemon: EnemyPokemon): void {
-    this.postBattleLoot.push(...enemyPokemon.getHeldItems());
+    this.postBattleLoot.push(...enemyPokemon.iterHeldItems());
   }
 
   pickUpScatteredMoney(): void {

@@ -141,9 +141,9 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       expect(game).toBeAtPhase("SelectRewardPhase");
       await game.phaseInterceptor.to("SelectRewardPhase");
 
-      expect(scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.LEFTOVERS)).toBe(1);
+      expect(scene.getPlayerParty()[0].heldItemManager.getAmount(HeldItemId.LEFTOVERS)).toBe(1);
 
-      expect(scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.SHELL_BELL)).toBe(1);
+      expect(scene.getPlayerParty()[0].heldItemManager.getAmount(HeldItemId.SHELL_BELL)).toBe(1);
 
       expect(scene.trainerItems.getStack(TrainerItemId.BLACK_SLUDGE)).toBe(1);
     });

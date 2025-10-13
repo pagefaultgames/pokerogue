@@ -195,13 +195,13 @@ describe("The Strong Stuff - Mystery Encounter", () => {
       expect(enemyField.length).toBe(1);
       expect(enemyField[0].species.speciesId).toBe(SpeciesId.SHUCKLE);
       expect(enemyField[0].summonData.statStages).toEqual([0, 1, 0, 1, 0, 0, 0]);
-      const shuckleItems = enemyField[0].getHeldItems();
+      const shuckleItems = enemyField[0].iterHeldItems();
       expect(shuckleItems.length).toBe(5);
-      expect(enemyField[0].heldItemManager.getStack(HeldItemId.SITRUS_BERRY)).toBe(1);
-      expect(enemyField[0].heldItemManager.getStack(HeldItemId.ENIGMA_BERRY)).toBe(1);
-      expect(enemyField[0].heldItemManager.getStack(HeldItemId.GANLON_BERRY)).toBe(1);
-      expect(enemyField[0].heldItemManager.getStack(HeldItemId.APICOT_BERRY)).toBe(1);
-      expect(enemyField[0].heldItemManager.getStack(HeldItemId.LUM_BERRY)).toBe(2);
+      expect(enemyField[0].heldItemManager.getAmount(HeldItemId.SITRUS_BERRY)).toBe(1);
+      expect(enemyField[0].heldItemManager.getAmount(HeldItemId.ENIGMA_BERRY)).toBe(1);
+      expect(enemyField[0].heldItemManager.getAmount(HeldItemId.GANLON_BERRY)).toBe(1);
+      expect(enemyField[0].heldItemManager.getAmount(HeldItemId.APICOT_BERRY)).toBe(1);
+      expect(enemyField[0].heldItemManager.getAmount(HeldItemId.LUM_BERRY)).toBe(2);
       expect(enemyField[0].moveset).toEqual([
         new PokemonMove(MoveId.INFESTATION),
         new PokemonMove(MoveId.SALT_CURE),

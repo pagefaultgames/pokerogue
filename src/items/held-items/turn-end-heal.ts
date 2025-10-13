@@ -15,7 +15,7 @@ export class TurnEndHealHeldItem extends HeldItem<[typeof HeldItemEffect.TURN_EN
   }
 
   apply(_effect: typeof HeldItemEffect.TURN_END_HEAL, { pokemon }: TurnEndHealParams): void {
-    const stackCount = pokemon.heldItemManager.getStack(this.type);
+    const stackCount = pokemon.heldItemManager.getAmount(this.type);
     globalScene.phaseManager.unshiftPhase(
       new PokemonHealPhase(
         pokemon.getBattlerIndex(),

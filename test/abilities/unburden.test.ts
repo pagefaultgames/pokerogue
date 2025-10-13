@@ -21,7 +21,7 @@ describe("Abilities - Unburden", () => {
    * Count the number of held items a Pokemon has, accounting for stacks of multiple items.
    */
   function getHeldItemCount(pokemon: Pokemon): number {
-    const stackCounts = pokemon.getHeldItems().map(t => pokemon.heldItemManager.getStack(t));
+    const stackCounts = pokemon.iterHeldItems().map(t => pokemon.heldItemManager.getAmount(t));
     return stackCounts.reduce((a, b) => a + b, 0);
   }
 

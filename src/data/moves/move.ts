@@ -1766,7 +1766,7 @@ export class TargetHalfHpDamageAttr extends FixedDamageAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     // first, determine if the hit is coming from multi lens or not
-    const lensCount = user.heldItemManager.getStack(HeldItemId.MULTI_LENS);
+    const lensCount = user.heldItemManager.getAmount(HeldItemId.MULTI_LENS);
     if (lensCount <= 0) {
       // no multi lenses; we can just halve the target's hp and call it a day
       (args[0] as NumberHolder).value = toDmgValue(target.hp / 2);
@@ -3007,12 +3007,12 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
   }
 
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    const heldItems = target.getHeldItems();
+    const heldItems = target.iterHeldItems();
     return heldItems.length ? 5 : 0;
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    const heldItems = target.getHeldItems();
+    const heldItems = target.iterHeldItems();
     return heldItems.length ? -5 : 0;
   }
 }
@@ -3062,7 +3062,7 @@ export class EatBerryAttr extends MoveEffectAttr {
   }
 
   getTargetHeldBerries(target: Pokemon): HeldItemId[] {
-    return target.getHeldItems().filter(m => isItemInCategory(m, HeldItemCategoryId.BERRY));
+    return target.iterHeldItems().filter(m => isItemInCategory(m, HeldItemCategoryId.BERRY));
   }
 
   reduceBerryItem(target: Pokemon) {
@@ -10173,7 +10173,7 @@ export function initMoves() {
       .condition((user, target, move) => !target.turnData.acted)
       .attr(ForceLastAttr),
     new AttackMove(MoveId.ACROBATICS, PokemonType.FLYING, MoveCategory.PHYSICAL, 55, 100, 15, -1, 0, 5)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => Math.max(1, 2 - 0.2 * user.heldItemManager.getTransferableHeldItems().reduce((v, m) => v + user.heldItemManager.getStack(m), 0))),
+      .attr(MovePowerMultiplierAttr, (user, target, move) => Math.max(1, 2 - 0.2 * user.heldItemManager.getTransferableHeldItems().reduce((v, m) => v + user.heldItemManager.getAmount(m), 0))),
     new StatusMove(MoveId.REFLECT_TYPE, PokemonType.NORMAL, -1, 15, -1, 0, 5)
       .ignoresSubstitute()
       .attr(CopyTypeAttr),
@@ -10942,7 +10942,7 @@ export function initMoves() {
       .attr(EatBerryAttr, true)
       .attr(StatStageChangeAttr, [ Stat.DEF ], 2, true)
       .restriction(
-        user => user.getHeldItems().filter(m => isItemInCategory(m, HeldItemCategoryId.BERRY)).length === 0,
+        user => user.iterHeldItems().filter(m => isItemInCategory(m, HeldItemCategoryId.BERRY)).length === 0,
         "battle:moveDisabledNoBerry",
         true,
         3
