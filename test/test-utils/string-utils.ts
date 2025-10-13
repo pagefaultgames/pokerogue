@@ -84,7 +84,7 @@ export function getEnumStr<E extends EnumOrObject, const V extends E[keyof E], X
   } = options as getEnumStrOptions;
 
   const keyPart = excludeValues ? "" : getKeyPart(obj, val, { casing, prefix, suffix });
-  const valuePart = typeof val === "string" ? val.toString() : getValuePart(val, { base, padding });
+  const valuePart = typeof val === "string" ? val : getValuePart(val, { base, padding });
 
   return `${keyPart} ${valuePart}`.trim();
 }
