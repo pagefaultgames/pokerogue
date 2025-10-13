@@ -45,7 +45,7 @@ describe("Moves - Clear Smog", () => {
     expect(enemy).toHaveStatStage(Stat.ACC, -1);
 
     game.move.select(MoveId.CLEAR_SMOG);
-    game.override.enemyMoveset(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
 
     expect(enemy.getStatStage(Stat.ATK)).toBe(0);
