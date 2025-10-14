@@ -69,7 +69,7 @@ type getEnumStrOptions<Val extends string | number = string | number, X extends 
  * getEnumStr(fakeEnum, fakeEnum.TWO, {casing: "Title", prefix: "fakeEnum.", suffix: "!!!"}); // Output: "fakeEnum.TWO!!! (=2)"
  * ```
  */
-export function getEnumStr<E extends EnumOrObject, const V extends E[keyof E], X extends boolean>(
+export function getEnumStr<E extends EnumOrObject, V extends E[keyof E], X extends boolean>(
   obj: E,
   val: V,
   options: getEnumStrOptions<V, X> = {},
@@ -116,7 +116,7 @@ function getKeyPart<E extends EnumOrObject, V extends E[keyof E]>(
 }
 
 /**
- * Helper function used by `getEnumStr` and company to format the "value" part of an enum string.
+ * Helper function used by `getEnumStr` and company to format the "value" part of a numeric enum value.
  * @param val - The value to be stringified
  * @param options - Options modifying the stringification process
  * @param addParen - Whether to add enclosing parentheses and `=` sign; default `true`
