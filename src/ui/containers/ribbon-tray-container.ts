@@ -111,21 +111,18 @@ export class RibbonTray extends Phaser.GameObjects.Container {
   }
 
   open(species: PokemonSpecies): boolean {
-    this.ribbons = getAvailableRibbons(species);
+    const ribbons: RibbonFlag[] = (this.ribbons = []);
 
     this.ribbonData = globalScene.gameData.dexData[species.speciesId].ribbons;
 
-    this.trayNumIcons = this.ribbons.length;
-    this.trayRows =
-      Math.floor(this.trayNumIcons / this.maxColumns) + (this.trayNumIcons % this.maxColumns === 0 ? 0 : 1);
-    this.trayColumns = Math.min(this.trayNumIcons, this.maxColumns);
-
-    this.trayBg.setSize(15 + this.trayColumns * 17, 8 + this.trayRows * 18);
-
     this.trayIcons = [];
     let index = 0;
-    for (const ribbon of this.ribbons) {
+    for (const ribbon of getAvailableRibbons(species)) {
       const hasRibbon = this.ribbonData.has(ribbon);
+      if (!hasRibbon && !globalScene.dexForDevs && !globalScene.showMissingRibbons) {
+        continue;
+      }
+      ribbons.push(ribbon);
 
       const icon = ribbonFlagToAssetKey(ribbon);
 
@@ -144,6 +141,12 @@ export class RibbonTray extends Phaser.GameObjects.Container {
         index++;
       }
     }
+
+    this.trayNumIcons = ribbons.length;
+    this.trayRows =
+      Math.floor(this.trayNumIcons / this.maxColumns) + (this.trayNumIcons % this.maxColumns === 0 ? 0 : 1);
+    this.trayColumns = Math.min(this.trayNumIcons, this.maxColumns);
+    this.trayBg.setSize(15 + this.trayColumns * 17, 8 + this.trayRows * 18);
 
     this.setVisible(true).setTrayCursor(0);
 
