@@ -58,6 +58,7 @@ import { MultiHitType } from "#enums/multi-hit-type";
 import { MAX_POKEMON_TYPE, PokemonType } from "#enums/pokemon-type";
 import { PositionalTagType } from "#enums/positional-tag-type";
 import { SpeciesId } from "#enums/species-id";
+import { SpeciesFormKey } from "#enums/species-form-key";
 import {
   BATTLE_STATS,
   type BattleStat,
@@ -88,7 +89,6 @@ import {
   invalidSleepTalkMoves,
   invalidTelekinesisSpecies,
 } from "#moves/invalid-moves";
-import { frenzyMissFunc, getMoveTargets } from "#moves/move-utils";
 import { consecutiveUseRestriction, counterAttackConditionBoth, counterAttackConditionPhysical, counterAttackConditionSpecial, failAgainstFinalBossCondition, FailIfInsufficientHpCondition, failIfTargetNotAttackingCondition, failTeleportCondition, FirstMoveCondition, gravityUseRestriction, lastResortCondition, MoveCondition, MoveRestriction, upperHandCondition } from "#moves/move-condition";
 import { frenzyMissFunc, getCounterAttackTarget, getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
