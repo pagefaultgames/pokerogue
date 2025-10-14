@@ -421,7 +421,7 @@ export class Trainer extends Phaser.GameObjects.Container {
                   level,
                   false,
                   template.getStrength(offset),
-                  globalScene.currentBattle.waveIndex,
+                  template.evoLevelThresholdKind,
                 ),
               )
             : this.genNewPartyMemberSpecies(level, strength);
@@ -429,7 +429,7 @@ export class Trainer extends Phaser.GameObjects.Container {
         // If the species is from newSpeciesPool, we need to adjust it based on the level and strength
         if (newSpeciesPool) {
           species = getPokemonSpecies(
-            species.getSpeciesForLevel(level, true, true, strength, globalScene.currentBattle.waveIndex),
+            species.getSpeciesForLevel(level, true, true, strength, template.evoLevelThresholdKind),
           );
         }
 
@@ -452,20 +452,21 @@ export class Trainer extends Phaser.GameObjects.Container {
   genNewPartyMemberSpecies(level: number, strength: PartyMemberStrength, attempt?: number): PokemonSpecies {
     const battle = globalScene.currentBattle;
     const template = this.getPartyTemplate();
-
     let baseSpecies: PokemonSpecies;
     if (this.config.speciesPools) {
       const tierValue = randSeedInt(512);
-      let tier =
-        tierValue >= 156
-          ? TrainerPoolTier.COMMON
-          : tierValue >= 32
-            ? TrainerPoolTier.UNCOMMON
-            : tierValue >= 6
-              ? TrainerPoolTier.RARE
-              : tierValue >= 1
-                ? TrainerPoolTier.SUPER_RARE
-                : TrainerPoolTier.ULTRA_RARE;
+      let tier: TrainerPoolTier;
+      if (tierValue >= 156) {
+        tier = TrainerPoolTier.COMMON;
+      } else if (tierValue >= 32) {
+        tier = TrainerPoolTier.UNCOMMON;
+      } else if (tierValue >= 6) {
+        tier = TrainerPoolTier.RARE;
+      } else if (tierValue >= 1) {
+        tier = TrainerPoolTier.SUPER_RARE;
+      } else {
+        tier = TrainerPoolTier.ULTRA_RARE;
+      }
       console.log(TrainerPoolTier[tier]);
       while (!this.config.speciesPools.hasOwnProperty(tier) || this.config.speciesPools[tier].length === 0) {
         console.log(
@@ -474,13 +475,17 @@ export class Trainer extends Phaser.GameObjects.Container {
         tier--;
       }
       const tierPool = this.config.speciesPools[tier];
-      baseSpecies = getPokemonSpecies(randSeedItem(tierPool));
+      let rolledSpecies = randSeedItem(tierPool);
+      while (typeof rolledSpecies !== "number") {
+        rolledSpecies = randSeedItem(tierPool);
+      }
+      baseSpecies = getPokemonSpecies(rolledSpecies);
     } else {
       baseSpecies = globalScene.randomSpecies(battle.waveIndex, level, false, this.config.speciesFilter);
     }
 
     let ret = getPokemonSpecies(
-      baseSpecies.getTrainerSpeciesForLevel(level, true, strength, globalScene.currentBattle.waveIndex),
+      baseSpecies.getTrainerSpeciesForLevel(level, true, strength, template.evoLevelThresholdKind),
     );
     let retry = false;
 
@@ -506,7 +511,7 @@ export class Trainer extends Phaser.GameObjects.Container {
       let evoAttempt = 0;
       while (retry && evoAttempt++ < 10) {
         ret = getPokemonSpecies(
-          baseSpecies.getTrainerSpeciesForLevel(level, true, strength, globalScene.currentBattle.waveIndex),
+          baseSpecies.getTrainerSpeciesForLevel(level, true, strength, template.evoLevelThresholdKind),
         );
         console.log(ret.name);
         if (ret.isOfType(this.config.specialtyType)) {
@@ -642,14 +647,14 @@ export class Trainer extends Phaser.GameObjects.Container {
     }
   }
 
-  genModifiers(party: EnemyPokemon[]): PersistentModifier[] {
+  genModifiers(party: readonly EnemyPokemon[]): PersistentModifier[] {
     if (this.config.genModifiersFunc) {
       return this.config.genModifiersFunc(party);
     }
     return [];
   }
 
-  genAI(party: EnemyPokemon[]) {
+  genAI(party: readonly EnemyPokemon[]) {
     if (this.config.genAIFuncs) {
       this.config.genAIFuncs.forEach(f => f(party));
     }

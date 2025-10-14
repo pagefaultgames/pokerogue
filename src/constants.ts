@@ -23,7 +23,7 @@ export const TYPE_BOOST_ITEM_BOOST_PERCENT = 20;
 /**
  * The default species that a new player can choose from
  */
-export const defaultStarterSpecies: SpeciesId[] = [
+export const defaultStarterSpecies: readonly SpeciesId[] = [
   SpeciesId.BULBASAUR,
   SpeciesId.CHARMANDER,
   SpeciesId.SQUIRTLE,
@@ -107,3 +107,14 @@ export const FAKE_TITLE_LOGO_CHANCE = 10000;
  * Using rare candies will never increase friendship beyond this value.
  */
 export const RARE_CANDY_FRIENDSHIP_CAP = 200;
+
+/**
+ * The maximum number of times a player can Terastallize in a single arena run
+ */
+export const MAX_TERAS_PER_ARENA = 1;
+
+/** Moves that can only be learned with a memory-mushroom */
+export const RELEARN_MOVE = -1;
+
+/** Moves that can only be learned with an evolve */
+export const EVOLVE_MOVE = 0;

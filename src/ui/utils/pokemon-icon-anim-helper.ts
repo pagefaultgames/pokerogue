@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
-import { coerceArray, fixedInt } from "#utils/common";
+import { coerceArray } from "#utils/array";
+import { fixedInt } from "#utils/common";
 
 export enum PokemonIconAnimMode {
   NONE,

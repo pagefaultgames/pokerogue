@@ -1,9 +1,16 @@
+/*
+ * SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 import { defineConfig, loadEnv, type Rollup, type UserConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
+import { LocaleNamespace } from "./src/plugins/vite/namespaces-i18n-plugin";
 import { minifyJsonPlugin } from "./src/plugins/vite/vite-minify-json-plugin";
 
 export const defaultConfig: UserConfig = {
-  plugins: [tsconfigPaths(), minifyJsonPlugin(["images", "battle-anims"], true)],
+  plugins: [tsconfigPaths(), minifyJsonPlugin(["images", "battle-anims"], true), LocaleNamespace()],
   clearScreen: false,
   appType: "mpa",
   build: {
@@ -22,12 +29,13 @@ export const defaultConfig: UserConfig = {
   },
 };
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, command }) => {
   const envPort = Number(loadEnv(mode, process.cwd()).VITE_PORT);
 
   return {
     ...defaultConfig,
     base: "",
+    publicDir: command === "serve" ? "assets" : false,
     esbuild: {
       pure: mode === "production" ? ["console.log"] : [],
       keepNames: true,

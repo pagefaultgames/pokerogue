@@ -2,7 +2,7 @@ import type { Ability, PreAttackModifyDamageAbAttrParams } from "#abilities/abil
 import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
 import { generateMoveset } from "#app/ai/ai-moveset-gen";
 import type { AnySound, BattleScene } from "#app/battle-scene";
-import { PLAYER_PARTY_MAX_SIZE, RARE_CANDY_FRIENDSHIP_CAP } from "#app/constants";
+import { EVOLVE_MOVE, PLAYER_PARTY_MAX_SIZE, RARE_CANDY_FRIENDSHIP_CAP, RELEARN_MOVE } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -15,11 +15,10 @@ import {
   pokemonPrevolutions,
   validateShedinjaEvo,
 } from "#balance/pokemon-evolutions";
-import type { LevelMoves } from "#balance/pokemon-level-moves";
-import { EVOLVE_MOVE, RELEARN_MOVE } from "#balance/pokemon-level-moves";
 import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY_VARIANT_CHANCE } from "#balance/rates";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#balance/starters";
-import { reverseCompatibleTms, tmSpecies } from "#balance/tms";
+import { tmSpecies } from "#balance/tm-species-map";
+import { reverseCompatibleTms } from "#balance/tms";
 import type { SuppressAbilitiesTag } from "#data/arena-tag";
 import { NoCritTag, WeakenMoveScreenTag } from "#data/arena-tag";
 import {
@@ -62,7 +61,7 @@ import {
 import type { SpeciesFormChange } from "#data/pokemon-forms";
 import type { PokemonSpeciesForm } from "#data/pokemon-species";
 import { PokemonSpecies } from "#data/pokemon-species";
-import { getRandomStatus, getStatusEffectOverlapText, Status } from "#data/status-effect";
+import { getRandomStatus, getStatusEffectHealText, getStatusEffectOverlapText, Status } from "#data/status-effect";
 import { getTerrainBlockMessage, TerrainType } from "#data/terrain";
 import type { TypeDamageMultiplier } from "#data/type";
 import { getTypeDamageMultiplier, getTypeRgb } from "#data/type";
@@ -141,9 +140,11 @@ import type { PokemonData } from "#system/pokemon-data";
 import { RibbonData } from "#system/ribbons/ribbon-data";
 import { awardRibbonsToSpeciesLine } from "#system/ribbons/ribbon-methods";
 import type { AbAttrMap, AbAttrString, TypeMultiplierAbAttrParams } from "#types/ability-types";
+import type { Constructor } from "#types/common";
 import type { getAttackDamageParams, getBaseDamageParams } from "#types/damage-params";
 import type { DamageCalculationResult, DamageResult } from "#types/damage-result";
 import type { IllusionData } from "#types/illusion-data";
+import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { TurnMove } from "#types/turn-move";
 import { BattleInfo } from "#ui/battle-info";
@@ -151,11 +152,10 @@ import { EnemyBattleInfo } from "#ui/enemy-battle-info";
 import type { PartyOption } from "#ui/party-ui-handler";
 import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import { PlayerBattleInfo } from "#ui/player-battle-info";
+import { coerceArray } from "#utils/array";
 import { applyChallenges } from "#utils/challenge-utils";
 import {
   BooleanHolder,
-  type Constructor,
-  coerceArray,
   deltaRgb,
   fixedInt,
   getIvsFromId,
@@ -170,6 +170,7 @@ import {
   rgbToHsv,
   toDmgValue,
 } from "#utils/common";
+import { calculateBossSegmentDamage } from "#utils/damage";
 import { getEnumValues } from "#utils/enums";
 import { getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
@@ -2140,7 +2141,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Suppresses an ability and calls its onlose attributes
    */
   public suppressAbility() {
-    [true, false].forEach(passive => applyOnLoseAbAttrs({ pokemon: this, passive }));
+    applyOnLoseAbAttrs({ pokemon: this, passive: true });
+    applyOnLoseAbAttrs({ pokemon: this, passive: false });
     this.summonData.abilitySuppressed = true;
   }
 
@@ -2201,10 +2203,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return false;
     }
     const arena = globalScene?.arena;
-    if (arena.ignoreAbilities && arena.ignoringEffectSource !== this.getBattlerIndex() && ability.isIgnorable) {
+    if (arena.ignoreAbilities && arena.ignoringEffectSource !== this.getBattlerIndex() && ability.ignorable) {
       return false;
     }
-    if (this.summonData.abilitySuppressed && ability.isSuppressable) {
+    if (this.summonData.abilitySuppressed && ability.suppressable) {
       return false;
     }
     const suppressAbilitiesTag = arena.getTag(ArenaTagType.NEUTRALIZING_GAS) as SuppressAbilitiesTag;
@@ -2216,14 +2218,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       // (Balance decided that the other ability of a neutralizing gas pokemon should not be neutralized)
       // If the ability itself is neutralizing gas, don't suppress it (handled through arena tag)
       const unsuppressable =
-        !ability.isSuppressable
+        !ability.suppressable
         || thisAbilitySuppressing
         || (hasSuppressingAbility && !suppressAbilitiesTag.shouldApplyToSelf());
       if (!unsuppressable) {
         return false;
       }
     }
-    return (this.hp > 0 || ability.isBypassFaint) && !ability.conditions.find(condition => !condition(this));
+    return (this.hp > 0 || ability.bypassFaint) && !ability.conditions.find(condition => !condition(this));
   }
 
   /**
@@ -2396,7 +2398,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return moveTypeHolder.value as PokemonType;
     }
 
-    globalScene.arena.applyTags(ArenaTagType.ION_DELUGE, simulated, moveTypeHolder);
+    globalScene.arena.applyTags(ArenaTagType.ION_DELUGE, moveTypeHolder);
     if (this.getTag(BattlerTagType.ELECTRIFIED)) {
       moveTypeHolder.value = PokemonType.ELECTRIC;
     }
@@ -2409,8 +2411,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * modifiers from move and ability attributes
    * @param source - The attacking Pokémon.
    * @param move - The move being used by the attacking Pokémon.
-   * @param ignoreAbility - Whether to ignore abilities that might affect type effectiveness or immunity (defaults to `false`).
-   * @param simulated - Whether to apply abilities via simulated calls (defaults to `true`)
+   * @param ignoreAbility - Whether to ignore abilities that might affect type effectiveness or immunity; default `false`
+   * @param simulated - (Default `true`) Whether to apply abilities via simulated calls. \
+   *   ⚠️ Should only ever be false during `MoveEffectPhase`
    * @param cancelled - Stores whether the move was cancelled by a non-type-based immunity.
    * @param useIllusion - Whether to consider an active illusion
    * @returns The type damage multiplier, indicating the effectiveness of the move
@@ -2464,7 +2467,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         applyAbAttrs("MoveImmunityAbAttr", commonAbAttrParams);
       }
 
-      if (!cancelledHolder.value) {
+      // Do not check queenly majesty unless this is being simulated
+      // This is because the move effect phase should not check queenly majesty, as that is handled by the move phase
+      if (simulated && !cancelledHolder.value) {
         const defendingSidePlayField = this.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
         defendingSidePlayField.forEach((p: (typeof defendingSidePlayField)[0]) => {
           applyAbAttrs("FieldPriorityMoveImmunityAbAttr", {
@@ -3130,9 +3135,15 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
-  public trySelectMove(moveIndex: number, ignorePp?: boolean): boolean {
+  /**
+   * Attempt to select the move at the move index.
+   * @param moveIndex - The index of the move to select
+   * @param ignorePp - Whether to ignore PP when checking if the move is usable (defaults to false)
+   * @returns A tuple containing a boolean indicating if the move can be selected, and a string with the reason if it cannot be selected
+   */
+  public trySelectMove(moveIndex: number, ignorePp?: boolean): [isUsable: boolean, failureMessage: string] {
     const move = this.getMoveset().length > moveIndex ? this.getMoveset()[moveIndex] : null;
-    return move?.isUsable(this, ignorePp) ?? false;
+    return move?.isUsable(this, ignorePp, true) ?? [false, ""];
   }
 
   /** Show this Pokémon's info panel */
@@ -3219,7 +3230,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Check whether the specified Pokémon is an opponent
    * @param target - The {@linkcode Pokemon} to compare against
-   * @returns `true` if the two pokemon are allies, `false` otherwise
+   * @returns `true` if the two pokemon are opponents, `false` otherwise
    */
   public isOpponent(target: Pokemon): boolean {
     return this.isPlayer() !== target.isPlayer();
@@ -3703,14 +3714,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     // Critical hits should bypass screens
     if (!isCritical) {
-      globalScene.arena.applyTagsForSide(
-        WeakenMoveScreenTag,
-        defendingSide,
-        simulated,
-        source,
-        moveCategory,
-        screenMultiplier,
-      );
+      globalScene.arena.applyTagsForSide(WeakenMoveScreenTag, defendingSide, source, moveCategory, screenMultiplier);
     }
 
     /**
@@ -3848,11 +3852,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     // apply crit block effects from lucky chant & co., overriding previous effects
     const blockCrit = new BooleanHolder(false);
     applyAbAttrs("BlockCritAbAttr", { pokemon: this, blockCrit });
-    const blockCritTag = globalScene.arena.getTagOnSide(
+    globalScene.arena.applyTagsForSide(
       NoCritTag,
       this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY,
+      blockCrit,
     );
-    isCritical &&= !blockCritTag && !blockCrit.value; // need to roll a crit and not be blocked by either crit prevention effect
+    isCritical &&= !blockCrit.value; // need to roll a crit and not be blocked by either crit prevention effect
 
     return isCritical;
   }
@@ -4111,19 +4116,28 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Tick down the first {@linkcode BattlerTag} found matching the given {@linkcode BattlerTagType},
-   * removing it if its duration goes below 0.
-   * @param tagType - The `BattlerTagType` to lapse
-   * @returns Whether the tag was present
+   * Lapse the first {@linkcode BattlerTag} matching `tagType`
+   *
+   * @remarks
+   * Also responsible for removing the tag when the lapse method returns `false`.
+   *
+   *
+   * ⚠️ Lapse types other than `CUSTOM` are generally lapsed automatically. However, some tags
+   * support manually lapsing
+   *
+   * @param tagType - The {@linkcode BattlerTagType} to search for
+   * @param lapseType - The lapse type to use for the lapse method; defaults to {@linkcode BattlerTagLapseType.CUSTOM}
+   * @returns Whether a tag matching the given type was found
+   * @see {@linkcode BattlerTag.lapse}
    */
-  public lapseTag(tagType: BattlerTagType): boolean {
+  public lapseTag(tagType: BattlerTagType, lapseType = BattlerTagLapseType.CUSTOM): boolean {
     const tags = this.summonData.tags;
     const tag = tags.find(t => t.tagType === tagType);
     if (!tag) {
       return false;
     }
 
-    if (!tag.lapse(this, BattlerTagLapseType.CUSTOM)) {
+    if (!tag.lapse(this, lapseType)) {
       tag.onRemove(this);
       tags.splice(tags.indexOf(tag), 1);
     }
@@ -4135,7 +4149,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * `lapseType`, removing any whose durations fall below 0.
    * @param lapseType - The type of lapse to process
    */
-  public lapseTags(lapseType: BattlerTagLapseType): void {
+  public lapseTags(lapseType: Exclude<BattlerTagLapseType, BattlerTagLapseType.CUSTOM>): void {
     const tags = this.summonData.tags;
     tags
       .filter(
@@ -4245,15 +4259,36 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Get whether the given move is currently disabled for this Pokémon
+   * Get whether the given move is currently disabled for this Pokémon by a move restriction tag.
    *
+   * @remarks
+   * ⚠️ Only checks for restrictions due to a battler tag, not due to the move's own attributes.
    * @param moveId - The ID of the move to check
    * @returns `true` if the move is disabled for this Pokemon, otherwise `false`
-   *
    * @see {@linkcode MoveRestrictionBattlerTag}
    */
-  public isMoveRestricted(moveId: MoveId, pokemon?: Pokemon): boolean {
-    return this.getRestrictingTag(moveId, pokemon) !== null;
+  // TODO: Move this behavior into a matcher and expunge it from the codebase - we only use it for tests
+  public hasRestrictingTag(moveId: MoveId): boolean {
+    return this.getRestrictingTag(moveId, this) !== null;
+  }
+
+  /**
+   * Determine whether the given move is selectable by this Pokemon and the message to display if it is not.
+   *
+   * @remarks
+   * Checks both the move's own restrictions and any restrictions imposed by battler tags like disable or throat chop.
+   *
+   * @param moveId - The move ID to check
+   * @returns A tuple of the form [response, msg], where msg contains the text to display if `response` is false.
+   *
+   * @see {@linkcode isMoveRestricted}
+   */
+  public isMoveSelectable(moveId: MoveId): [boolean, string] {
+    const restrictedTag = this.getRestrictingTag(moveId, this);
+    if (restrictedTag) {
+      return [false, restrictedTag.selectionDeniedText(this, moveId)];
+    }
+    return allMoves[moveId].checkRestrictions(this);
   }
 
   /**
@@ -4963,6 +4998,21 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     this.status = new Status(effect, 0, sleepTurnsRemaining);
   }
 
+  /**
+   * Queue the status cure message, reset the status, and update the info display
+   * @param effect - The effect to cure. If this does not match the current status, nothing happens.
+   * @param msg - A custom message to display when curing the status effect (used for curing freeze due to move use)
+   */
+  public cureStatus(effect: StatusEffect, msg?: string): void {
+    if (effect !== this.status?.effect) {
+      return;
+    }
+    // Freeze healed by move uses its own msg
+    globalScene.phaseManager.queueMessage(msg ?? getStatusEffectHealText(effect, getPokemonNameWithAffix(this)));
+    // cannot use `asPhase=true` as it will cause status to be reset _after_ this phase ends
+    this.resetStatus(undefined, undefined, undefined, false);
+    this.updateInfo();
+  }
   /**
    * Reset this Pokémon's status
    * @param revive - Whether revive should be cured; default `true`
@@ -5852,7 +5902,7 @@ export class PlayerPokemon extends Pokemon {
    * For fusions, candy progress for each species in the fusion is halved.
    *
    * @param friendship - The amount of friendship to add. Negative values will reduce friendship, though not below 0.
-   * @param capped - If true, don't allow the friendship gain to exceed 200. Used to cap friendship gains from rare candies.
+   * @param capped - If true, don't allow the friendship gain to exceed {@linkcode RARE_CANDY_FRIENDSHIP_CAP}. Used to cap friendship gains from rare candies.
    */
   addFriendship(friendship: number, capped = false): void {
     // Short-circuit friendship loss, which doesn't impact candy friendship
@@ -5873,13 +5923,16 @@ export class PlayerPokemon extends Pokemon {
     friendship = amount.value;
 
     const newFriendship = this.friendship + friendship;
-    // If capped is true, only adjust friendship if the new friendship is less than or equal to 200.
-    if (!capped || newFriendship <= RARE_CANDY_FRIENDSHIP_CAP) {
-      this.friendship = Math.min(newFriendship, 255);
-      if (newFriendship >= 255) {
-        globalScene.validateAchv(achvs.MAX_FRIENDSHIP);
-        awardRibbonsToSpeciesLine(this.species.speciesId, RibbonData.FRIENDSHIP);
-      }
+    /** If capped is true, don't allow friendship gain to exceed {@linkcode RARE_CANDY_FRIENDSHIP_CAP} */
+    const finalFriendship =
+      capped && newFriendship > RARE_CANDY_FRIENDSHIP_CAP
+        ? Math.max(RARE_CANDY_FRIENDSHIP_CAP, this.friendship)
+        : newFriendship;
+
+    this.friendship = Math.min(finalFriendship, 255);
+    if (this.friendship >= 255) {
+      globalScene.validateAchv(achvs.MAX_FRIENDSHIP);
+      awardRibbonsToSpeciesLine(this.species.speciesId, RibbonData.FRIENDSHIP);
     }
 
     let candyFriendshipMultiplier = globalScene.gameMode.isClassic
@@ -6329,6 +6382,7 @@ export class EnemyPokemon extends Pokemon {
           ivs.push(randSeedIntRange(Math.floor(waveIndex / 10), 31));
         }
         this.ivs = ivs;
+        this.friendship = Math.round(255 * (waveIndex / 200));
       }
     }
 
@@ -6414,7 +6468,7 @@ export class EnemyPokemon extends Pokemon {
       // If the queued move was called indirectly, ignore all PP and usability checks.
       // Otherwise, ensure that the move being used is actually usable & in our moveset.
       // TODO: What should happen if a pokemon forgets a charging move mid-use?
-      if (isVirtual(queuedMove.useMode) || movesetMove?.isUsable(this, isIgnorePP(queuedMove.useMode))) {
+      if (isVirtual(queuedMove.useMode) || movesetMove?.isUsable(this, isIgnorePP(queuedMove.useMode), true)) {
         moveQueue.splice(0, i); // TODO: This should not be done here
         return queuedMove;
       }
@@ -6424,7 +6478,7 @@ export class EnemyPokemon extends Pokemon {
     this.summonData.moveQueue = [];
 
     // Filter out any moves this Pokemon cannot use
-    let movePool = this.getMoveset().filter(m => m.isUsable(this));
+    let movePool = this.getMoveset().filter(m => m.isUsable(this, false, true)[0]);
     // If no moves are left, use Struggle. Otherwise, continue with move selection
     if (movePool.length > 0) {
       // If there's only 1 move in the move pool, use it.
@@ -6482,8 +6536,9 @@ export class EnemyPokemon extends Pokemon {
               move.category !== MoveCategory.STATUS
               && moveTargets.some(p => {
                 const doesNotFail =
-                  move.applyConditions(this, p, move)
-                  || [MoveId.SUCKER_PUNCH, MoveId.UPPER_HAND, MoveId.THUNDERCLAP].includes(move.id);
+                  !globalScene.arena.isMoveWeatherCancelled(this, move)
+                  && (move.applyConditions(this, p, -1)
+                    || [MoveId.SUCKER_PUNCH, MoveId.UPPER_HAND, MoveId.THUNDERCLAP].includes(move.id));
                 return (
                   doesNotFail
                   && p.getAttackDamage({
@@ -6543,7 +6598,7 @@ export class EnemyPokemon extends Pokemon {
                * target score to -20
                */
               if (
-                (move.name.endsWith(" (N)") || !move.applyConditions(this, target, move))
+                (move.name.endsWith(" (N)") || !move.applyConditions(this, target, -1))
                 && ![MoveId.SUCKER_PUNCH, MoveId.UPPER_HAND, MoveId.THUNDERCLAP].includes(move.id)
               ) {
                 targetScore = -20;
@@ -6764,32 +6819,18 @@ export class EnemyPokemon extends Pokemon {
       return 0;
     }
 
+    const segmentSize = this.getMaxHp() / this.bossSegments;
+
     let clearedBossSegmentIndex = this.isBoss() ? this.bossSegmentIndex + 1 : 0;
 
     if (this.isBoss() && !ignoreSegments) {
-      const segmentSize = this.getMaxHp() / this.bossSegments;
-      for (let s = this.bossSegmentIndex; s > 0; s--) {
-        const hpThreshold = segmentSize * s;
-        const roundedHpThreshold = Math.round(hpThreshold);
-        if (this.hp >= roundedHpThreshold) {
-          if (this.hp - damage <= roundedHpThreshold) {
-            const hpRemainder = this.hp - roundedHpThreshold;
-            let segmentsBypassed = 0;
-            while (
-              segmentsBypassed < this.bossSegmentIndex
-              && this.canBypassBossSegments(segmentsBypassed + 1)
-              && damage - hpRemainder >= Math.round(segmentSize * Math.pow(2, segmentsBypassed + 1))
-            ) {
-              segmentsBypassed++;
-              //console.log('damage', damage, 'segment', segmentsBypassed + 1, 'segment size', segmentSize, 'damage needed', Math.round(segmentSize * Math.pow(2, segmentsBypassed + 1)));
-            }
-
-            damage = toDmgValue(this.hp - hpThreshold + segmentSize * segmentsBypassed);
-            clearedBossSegmentIndex = s - segmentsBypassed;
-          }
-          break;
-        }
-      }
+      [damage, clearedBossSegmentIndex] = calculateBossSegmentDamage(
+        damage,
+        this.hp,
+        segmentSize,
+        this.getMinimumSegmentIndex(),
+        this.bossSegmentIndex,
+      );
     }
 
     switch (globalScene.currentBattle.battleSpec) {
@@ -6803,7 +6844,6 @@ export class EnemyPokemon extends Pokemon {
 
     if (this.isBoss()) {
       if (ignoreSegments) {
-        const segmentSize = this.getMaxHp() / this.bossSegments;
         clearedBossSegmentIndex = Math.ceil(this.hp / segmentSize);
       }
       if (clearedBossSegmentIndex <= this.bossSegmentIndex) {
@@ -6815,16 +6855,12 @@ export class EnemyPokemon extends Pokemon {
     return ret;
   }
 
-  private canBypassBossSegments(segmentCount = 1): boolean {
-    if (
-      globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS
-      && !this.formIndex
-      && this.bossSegmentIndex - segmentCount < 1
-    ) {
-      return false;
+  private getMinimumSegmentIndex(): number {
+    if (globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS && !this.formIndex) {
+      return 1;
     }
 
-    return true;
+    return 0;
   }
 
   /**
@@ -6901,6 +6937,10 @@ export class EnemyPokemon extends Pokemon {
   }
 
   public getBattlerIndex(): BattlerIndex {
+    const fieldIndex = this.getFieldIndex();
+    if (fieldIndex === -1) {
+      return BattlerIndex.ATTACKER;
+    }
     return BattlerIndex.ENEMY + this.getFieldIndex();
   }
 

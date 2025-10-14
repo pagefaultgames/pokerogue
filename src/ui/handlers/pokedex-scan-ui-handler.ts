@@ -157,6 +157,8 @@ export class PokedexScanUiHandler extends FormModalUiHandler {
 
       const inputWidth = label.width < 420 ? 200 : 200 - (label.width - 420) / 5.75;
       this.inputs[0].resize(inputWidth * 5.75, 116);
+      // @ts-expect-error: TODO Resolve
+      // TODO: Figure out what the type of `this.inputContainers.list` is
       this.inputContainers[0].list[0].width = inputWidth;
       if (args[1] && typeof (args[1] as PlayerPokemon).getNameToRender === "function") {
         this.inputs[0].text = (args[1] as PlayerPokemon).getNameToRender();
