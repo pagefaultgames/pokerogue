@@ -11,6 +11,7 @@
     "build": "vite build && node scripts/sync-dist-assets.js",
     "build:beta": "vite build --mode beta && node scripts/sync-dist-assets.js",
     "build:dev": "vite build --mode development && node scripts/sync-dist-assets.js",
+    "build:app": "vite build --mode app && node scripts/sync-dist-assets.js",
     "preview": "vite preview",
     "test": "vitest run --no-isolate",
     "test:cov": "vitest run --coverage --no-isolate",
