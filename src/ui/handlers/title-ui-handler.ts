@@ -44,7 +44,7 @@ export class TitleUiHandler extends OptionSelectUiHandler {
       ? usernameReplacement
       : (loggedInUser?.username ?? i18next.t("common:guest"));
 
-    return i18next.t("menu:loggedAs", { username: displayName });
+    return i18next.t("menu:loggedInAs", { username: displayName });
   }
 
   constructor(mode: UiMode = UiMode.TITLE) {
