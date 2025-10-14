@@ -185,9 +185,8 @@ describe("Moves - Move-calling Moves", () => {
         game.override.battleStyle("double");
         await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
 
-        const [feebas, milotic] = game.scene.getPlayerField();
+        const feebas = game.field.getPlayerPokemon();
         game.move.changeMoveset(feebas, move);
-        game.move.changeMoveset(milotic, MoveId.CELEBRATE);
 
         callback(MoveId.TACKLE);
 
@@ -195,11 +194,10 @@ describe("Moves - Move-calling Moves", () => {
         vi.spyOn(feebas, "randBattleSeedInt").mockReturnValue(0);
 
         game.move.select(move);
-        game.move.select(MoveId.CELEBRATE, BattlerIndex.PLAYER_2);
+        game.move.use(MoveId.TACKLE, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER);
         await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
         await game.toEndOfTurn();
 
-        console.log(feebas.getLastXMoves(-1));
         expect(feebas).toHaveUsedMove({ move, useMode: MoveUseMode.NORMAL }, 1);
         expect(feebas).toHaveUsedMove({
           move: MoveId.TACKLE,
@@ -222,11 +220,9 @@ describe("Moves - Move-calling Moves", () => {
       },
     );
 
-    it.runIf(move === MoveId.MIRROR_MOVE)("should always target the Mirror Move recipient", async () => {
+    it.runIf(move === MoveId.MIRROR_MOVE)("should always target the Mirror Move recipient if possible", async () => {
       game.override.battleStyle("double");
       await game.classicMode.startBattle([SpeciesId.FEEBAS]);
-
-      callback(MoveId.TACKLE);
 
       const feebas = game.field.getPlayerPokemon();
       // Mock RNG functions to return high rolls (ie last eligible target)
@@ -234,10 +230,13 @@ describe("Moves - Move-calling Moves", () => {
       // as Copycat/etc
       vi.spyOn(feebas, "randBattleSeedInt").mockReturnValue(1);
 
-      game.move.use(move);
+      game.move.use(MoveId.MIRROR_MOVE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+      await game.move.forceEnemyMove(MoveId.TACKLE, BattlerIndex.ENEMY_2);
+      await game.move.forceEnemyMove(MoveId.SPLASH);
+      await game.setTurnOrder([BattlerIndex.ENEMY_2, BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toEndOfTurn();
 
-      expect(feebas).toHaveUsedMove({ move, useMode: MoveUseMode.NORMAL }, 1);
+      expect(feebas).toHaveUsedMove({ move: MoveId.MIRROR_MOVE, useMode: MoveUseMode.NORMAL }, 1);
       expect(feebas).toHaveUsedMove({
         move: MoveId.TACKLE,
         useMode: MoveUseMode.FOLLOW_UP,
@@ -352,8 +351,8 @@ describe("Moves - Move-calling Moves", () => {
 
       expect(feebas).toHaveUsedMove({ move: MoveId.TORCH_SONG, useMode: MoveUseMode.FOLLOW_UP });
       expect(shuckle).toHaveUsedMove({ move: MoveId.WOOD_HAMMER, useMode: MoveUseMode.FOLLOW_UP });
-      expect(feebas).toHaveUsedMove({ move: MoveId.ASSIST, useMode: MoveUseMode.FOLLOW_UP }, 1);
-      expect(shuckle).toHaveUsedMove({ move: MoveId.ASSIST, useMode: MoveUseMode.FOLLOW_UP }, 1);
+      expect(feebas).toHaveUsedMove({ move: MoveId.ASSIST, useMode: MoveUseMode.NORMAL }, 1);
+      expect(shuckle).toHaveUsedMove({ move: MoveId.ASSIST, useMode: MoveUseMode.NORMAL }, 1);
     });
 
     it("should consider off-field allies", async () => {
@@ -462,7 +461,7 @@ describe("Moves - Move-calling Moves", () => {
       await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
       game.move.use(MoveId.METRONOME);
-      game.move.forceMetronomeMove(MoveId.SWORDS_DANCE, true);
+      game.move.forceMetronomeMove(MoveId.SWORDS_DANCE);
       await game.move.forceEnemyMove(move);
       // Ensure player moves first so enemy can copy Swords Dance
       await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -488,6 +487,7 @@ describe("Moves - Move-calling Moves", () => {
 
   describe("Metronome", () => {
     // TODO: Figure out a good way to override RNG rolls to force Metronome to use a move
+    // WITHOUT using the override that mocks the method
     it.todo("should call a random move");
   });
 });
