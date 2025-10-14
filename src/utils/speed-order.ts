@@ -16,22 +16,23 @@ interface hasPokemon {
  * @returns The sorted array of {@linkcode Pokemon}
  */
 export function sortInSpeedOrder<T extends Pokemon | hasPokemon>(pokemonList: T[], shuffleFirst = true): T[] {
-  pokemonList = shuffleFirst ? shufflePokemonList(pokemonList) : pokemonList;
+  if (shuffleFirst) {
+    shufflePokemonList(pokemonList);
+  }
   sortBySpeed(pokemonList);
   return pokemonList;
 }
 
 /**
+ * Shuffle the list of pokemon *in place*
  * @param pokemonList - The array of Pokemon or objects containing Pokemon
- * @returns The shuffled array
+ * @returns The same array instance that was passed in, shuffled.
  */
 function shufflePokemonList<T extends Pokemon | hasPokemon>(pokemonList: T[]): T[] {
   // This is seeded with the current turn to prevent an inconsistency where it
   // was varying based on how long since you last reloaded
   globalScene.executeWithSeedOffset(
-    () => {
-      pokemonList = randSeedShuffle(pokemonList);
-    },
+    () => randSeedShuffle(pokemonList),
     globalScene.currentBattle.turn * 1000 + pokemonList.length,
     globalScene.waveSeed,
   );
@@ -49,8 +50,7 @@ function sortBySpeed<T extends Pokemon | hasPokemon>(pokemonList: T[]): void {
 
   /** 'true' if Trick Room is on the field. */
   const speedReversed = new BooleanHolder(false);
-  globalScene.arena.applyTags(ArenaTagType.TRICK_ROOM, false, speedReversed);
-
+  globalScene.arena.applyTags(ArenaTagType.TRICK_ROOM, speedReversed);
   if (speedReversed.value) {
     pokemonList.reverse();
   }

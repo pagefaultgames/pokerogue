@@ -9,7 +9,6 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleType } from "#enums/battle-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
-import { ChallengeType } from "#enums/challenge-type";
 import { Command } from "#enums/command";
 import { FieldPosition } from "#enums/field-position";
 import { MoveId } from "#enums/move-id";
@@ -20,11 +19,8 @@ import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
 import type { MoveTargetSet } from "#moves/move";
 import { getMoveTargets } from "#moves/move-utils";
-import type { PokemonMove } from "#moves/pokemon-move";
 import { FieldPhase } from "#phases/field-phase";
 import type { TurnMove } from "#types/turn-move";
-import { applyChallenges } from "#utils/challenge-utils";
-import { BooleanHolder } from "#utils/common";
 import i18next from "i18next";
 
 export class CommandPhase extends FieldPhase {
@@ -127,7 +123,7 @@ export class CommandPhase extends FieldPhase {
       if (
         queuedMove.move !== MoveId.NONE
         && !isVirtual(queuedMove.useMode)
-        && !movesetQueuedMove?.isUsable(playerPokemon, isIgnorePP(queuedMove.useMode))
+        && !movesetQueuedMove?.isUsable(playerPokemon, isIgnorePP(queuedMove.useMode), true)
       ) {
         entriesToDelete++;
       } else {
@@ -205,39 +201,18 @@ export class CommandPhase extends FieldPhase {
   }
 
   /**
-   * Submethod of {@linkcode handleFightCommand} responsible for queuing the appropriate
-   * error message when a move cannot be used.
-   * @param user - The pokemon using the move
-   * @param move - The move that cannot be used
+   * Submethod of {@linkcode handleFightCommand} responsible for queuing the provided error message when the move cannot be used
+   * @param msg - The reason why the move cannot be used
    */
-  private queueFightErrorMessage(user: PlayerPokemon, move: PokemonMove) {
-    globalScene.ui.setMode(UiMode.MESSAGE);
-
-    // Set the translation key for why the move cannot be selected
-    let cannotSelectKey: string;
-    const moveStatus = new BooleanHolder(true);
-    applyChallenges(ChallengeType.POKEMON_MOVE, move.moveId, moveStatus);
-    if (!moveStatus.value) {
-      cannotSelectKey = "battle:moveCannotUseChallenge";
-    } else if (move.getPpRatio() === 0) {
-      cannotSelectKey = "battle:moveNoPp";
-    } else if (move.getName().endsWith(" (N)")) {
-      cannotSelectKey = "battle:moveNotImplemented";
-    } else if (user.isMoveRestricted(move.moveId, user)) {
-      cannotSelectKey = user.getRestrictingTag(move.moveId, user)!.selectionDeniedText(user, move.moveId);
-    } else {
-      // TODO: Consider a message that signals a being unusable for an unknown reason
-      cannotSelectKey = "";
-    }
-
-    const moveName = move.getName().replace(" (N)", ""); // Trims off the indicator
-
-    globalScene.ui.showText(
-      i18next.t(cannotSelectKey, { moveName }),
+  private queueFightErrorMessage(msg: string): void {
+    const ui = globalScene.ui;
+    ui.setMode(UiMode.MESSAGE);
+    ui.showText(
+      msg,
       null,
       () => {
-        globalScene.ui.clearText();
-        globalScene.ui.setMode(UiMode.FIGHT, this.fieldIndex);
+        ui.clearText();
+        ui.setMode(UiMode.FIGHT, this.fieldIndex);
       },
       null,
       true,
@@ -274,22 +249,16 @@ export class CommandPhase extends FieldPhase {
   ): boolean {
     const playerPokemon = this.getPokemon();
     const ignorePP = isIgnorePP(useMode);
-
-    let canUse = cursor === -1 || playerPokemon.trySelectMove(cursor, ignorePP);
-
-    const moveset = playerPokemon.getMoveset();
+    const [canUse, reason] = cursor === -1 ? [true, ""] : playerPokemon.trySelectMove(cursor, ignorePP);
 
     // Ternary here ensures we don't compute struggle conditions unless necessary
-    const useStruggle = canUse ? false : cursor > -1 && !moveset.some(m => m.isUsable(playerPokemon));
+    const useStruggle = canUse
+      ? false
+      : cursor > -1 && !playerPokemon.getMoveset().some(m => m.isUsable(playerPokemon, ignorePP, true)[0]);
 
-    canUse ||= useStruggle;
-
-    if (!canUse) {
-      // Selected move *may* be undefined if the cursor is over a position that the mon does not have
-      const selectedMove: PokemonMove | undefined = moveset[cursor];
-      if (selectedMove) {
-        this.queueFightErrorMessage(playerPokemon, moveset[cursor]);
-      }
+    if (!canUse && !useStruggle) {
+      console.error("Cannot use move:", reason);
+      this.queueFightErrorMessage(reason);
       return false;
     }
 

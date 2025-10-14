@@ -12,7 +12,11 @@ import type { applyAbAttrs } from "#abilities/apply-ab-attrs";
 export type AbAttrCondition = (pokemon: Pokemon) => boolean;
 export type PokemonAttackCondition = (user: Pokemon | null, target: Pokemon | null, move: Move) => boolean;
 export type PokemonDefendCondition = (target: Pokemon, user: Pokemon, move: Move) => boolean;
-export type PokemonStatStageChangeCondition = (target: Pokemon, statsChanged: BattleStat[], stages: number) => boolean;
+export type PokemonStatStageChangeCondition = (
+  target: Pokemon,
+  statsChanged: readonly BattleStat[],
+  stages: number,
+) => boolean;
 
 /**
  * Union type of all ability attribute class names as strings

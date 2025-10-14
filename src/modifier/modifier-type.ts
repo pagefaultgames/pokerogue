@@ -4,7 +4,8 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { EvolutionItem, pokemonEvolutions } from "#balance/pokemon-evolutions";
-import { tmPoolTiers, tmSpecies } from "#balance/tms";
+import { tmSpecies } from "#balance/tm-species-map";
+import { tmPoolTiers } from "#balance/tms";
 import { getBerryEffectDescription, getBerryName } from "#data/berry";
 import { getDailyEventSeedLuck } from "#data/daily-run";
 import { allMoves, modifierTypes } from "#data/data-lists";
@@ -277,7 +278,7 @@ export class ModifierType {
   }
 }
 
-type ModifierTypeGeneratorFunc = (party: Pokemon[], pregenArgs?: any[]) => ModifierType | null;
+type ModifierTypeGeneratorFunc = (party: readonly Pokemon[], pregenArgs?: any[]) => ModifierType | null;
 
 export class ModifierTypeGenerator extends ModifierType {
   private genTypeFunc: ModifierTypeGeneratorFunc;
@@ -287,7 +288,7 @@ export class ModifierTypeGenerator extends ModifierType {
     this.genTypeFunc = genTypeFunc;
   }
 
-  generateType(party: Pokemon[], pregenArgs?: any[]) {
+  generateType(party: readonly Pokemon[], pregenArgs?: any[]) {
     const ret = this.genTypeFunc(party, pregenArgs);
     if (ret) {
       ret.id = this.id;
@@ -1288,52 +1289,46 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
         return new AttackTypeBoosterModifierType(pregenArgs[0] as PokemonType, TYPE_BOOST_ITEM_BOOST_PERCENT);
       }
 
-      const attackMoveTypes = party.flatMap(p =>
-        p
-          .getMoveset()
-          .map(m => m.getMove())
-          .filter(m => m.is("AttackMove"))
-          .map(m => m.type),
-      );
-      if (attackMoveTypes.length === 0) {
-        return null;
-      }
-
       const attackMoveTypeWeights = new Map<PokemonType, number>();
       let totalWeight = 0;
-      for (const t of attackMoveTypes) {
-        if (attackMoveTypeWeights.has(t)) {
-          if (attackMoveTypeWeights.get(t)! < 3) {
-            // attackMoveTypeWeights.has(t) was checked before
-            attackMoveTypeWeights.set(t, attackMoveTypeWeights.get(t)! + 1);
-          } else {
+      for (const p of party) {
+        if (!p.isAllowedInChallenge()) {
+          continue;
+        }
+        for (const pokemonMove of p.getMoveset()) {
+          const move = pokemonMove.getMove();
+          if (!move.is("AttackMove")) {
             continue;
           }
-        } else {
-          attackMoveTypeWeights.set(t, 1);
+          // Account for variable type changing moves
+          // Get a variable type attribute of the move
+          const variableTypeAttr = move.getAttrs("VariableMoveTypeAttr")[0];
+          const types = variableTypeAttr?.getTypesForItemSpawn(p, move) ?? [move.type];
+          for (const type of types) {
+            const currentWeight = attackMoveTypeWeights.get(type) ?? 0;
+            if (currentWeight < 3) {
+              attackMoveTypeWeights.set(type, currentWeight + 1);
+              totalWeight++;
+            }
+          }
         }
-        totalWeight++;
       }
 
-      if (!totalWeight) {
+      if (attackMoveTypeWeights.size === 0) {
         return null;
       }
-
-      let type: PokemonType;
 
       const randInt = randSeedInt(totalWeight);
       let weight = 0;
 
-      for (const t of attackMoveTypeWeights.keys()) {
-        const typeWeight = attackMoveTypeWeights.get(t)!; // guranteed to be defined
-        if (randInt <= weight + typeWeight) {
-          type = t;
-          break;
+      for (const [type, typeWeight] of attackMoveTypeWeights.entries()) {
+        if (randInt < weight + typeWeight) {
+          return new AttackTypeBoosterModifierType(type, TYPE_BOOST_ITEM_BOOST_PERCENT);
         }
         weight += typeWeight;
       }
 
-      return new AttackTypeBoosterModifierType(type!, TYPE_BOOST_ITEM_BOOST_PERCENT);
+      return null;
     });
   }
 }
@@ -2360,7 +2355,11 @@ const tierWeights = [768 / 1024, 195 / 1024, 48 / 1024, 12 / 1024, 1 / 1024];
  */
 export const itemPoolChecks: Map<ModifierTypeKeys, boolean | undefined> = new Map();
 
-export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: ModifierPoolType, rerollCount = 0) {
+export function regenerateModifierPoolThresholds(
+  party: readonly Pokemon[],
+  poolType: ModifierPoolType,
+  rerollCount = 0,
+) {
   const pool = getModifierPoolForType(poolType);
   itemPoolChecks.forEach((_v, k) => {
     itemPoolChecks.set(k, false);
@@ -2906,7 +2905,7 @@ export class ModifierTypeOption {
  * @param party The player's party.
  * @returns A number between 0 and 14 based on the party's total luck value, or a random number between 0 and 14 if the player is in Daily Run mode.
  */
-export function getPartyLuckValue(party: Pokemon[]): number {
+export function getPartyLuckValue(party: readonly Pokemon[]): number {
   if (globalScene.gameMode.isDaily) {
     const DailyLuck = new NumberHolder(0);
     globalScene.executeWithSeedOffset(

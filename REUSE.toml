@@ -60,15 +60,6 @@ path = [
 SPDX-License-Identifier = "CC0-1.0"
 SPDX-FileCopyrightText = "NONE"
 
-
-# REUSE lint will fail if any file (other than those in the LICENSES/ directory) is not explicitly licensed.
-# We have a LICENSE file at the root of the repository so that GitHub can detect the license, but we also explicitly license it here
-# Note that this is JUST to make REUSE lint happy
-[[annotations]]
-path = "LICENSE"
-SPDX-License-Identifier = "CC0-1.0.txt"
-
-
 [[annotations]]
 path = "favicon.ico"                        # Created by Gonstar (Paid Commission)
 SPDX-FileCopyrightText = "2024 Gonstar"

@@ -8,7 +8,7 @@ import { SpeciesId } from "#enums/species-id";
 
 // biome-ignore format: manually formatted
 export function initSpecies() {
-  allSpecies.push(
+  (allSpecies as PokemonSpecies[]).push(
     new PokemonSpecies(SpeciesId.BULBASAUR, 1, false, false, false, "Seed Pokémon", PokemonType.GRASS, PokemonType.POISON, 0.7, 6.9, AbilityId.OVERGROW, AbilityId.NONE, AbilityId.CHLOROPHYLL, 318, 45, 49, 49, 65, 65, 45, 45, 50, 64, GrowthRate.MEDIUM_SLOW, 87.5, false),
     new PokemonSpecies(SpeciesId.IVYSAUR, 1, false, false, false, "Seed Pokémon", PokemonType.GRASS, PokemonType.POISON, 1, 13, AbilityId.OVERGROW, AbilityId.NONE, AbilityId.CHLOROPHYLL, 405, 60, 62, 63, 80, 80, 60, 45, 50, 142, GrowthRate.MEDIUM_SLOW, 87.5, false),
     new PokemonSpecies(SpeciesId.VENUSAUR, 1, false, false, false, "Seed Pokémon", PokemonType.GRASS, PokemonType.POISON, 2, 100, AbilityId.OVERGROW, AbilityId.NONE, AbilityId.CHLOROPHYLL, 525, 80, 82, 83, 100, 100, 80, 45, 50, 263, GrowthRate.MEDIUM_SLOW, 87.5, true, true,

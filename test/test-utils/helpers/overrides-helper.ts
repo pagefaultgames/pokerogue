@@ -22,7 +22,8 @@ import type { ModifierOverride } from "#modifiers/modifier-type";
 import type { Variant } from "#sprites/variant";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
 import { getEnumStr } from "#test/test-utils/string-utils";
-import { coerceArray, shiftCharCodes } from "#utils/common";
+import { coerceArray } from "#utils/array";
+import { shiftCharCodes } from "#utils/common";
 import chalk from "chalk";
 import { vi } from "vitest";
 

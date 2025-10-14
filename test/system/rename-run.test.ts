@@ -1,6 +1,6 @@
 import * as account from "#app/account";
-import * as bypassLoginModule from "#app/global-vars/bypass-login";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
+import * as appConstants from "#constants/app-constants";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { GameManager } from "#test/test-utils/game-manager";
@@ -33,7 +33,7 @@ describe("System - Rename Run", () => {
 
   describe("renameSession", () => {
     beforeEach(() => {
-      vi.spyOn(bypassLoginModule, "bypassLogin", "get").mockReturnValue(false);
+      vi.spyOn(appConstants, "bypassLogin", "get").mockReturnValue(false);
       vi.spyOn(account, "updateUserInfo").mockImplementation(async () => [true, 1]);
     });
 
@@ -52,7 +52,7 @@ describe("System - Rename Run", () => {
     });
 
     it("should return true if bypassLogin is true", async () => {
-      vi.spyOn(bypassLoginModule, "bypassLogin", "get").mockReturnValue(true);
+      vi.spyOn(appConstants, "bypassLogin", "get").mockReturnValue(true);
       vi.spyOn(game.scene.gameData, "getSession").mockResolvedValue({} as SessionSaveData);
 
       const result = await game.scene.gameData.renameSession(0, "Named Run");

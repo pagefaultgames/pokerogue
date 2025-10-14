@@ -1,6 +1,6 @@
 import { DEBUG_COLOR, NEW_TURN_COLOR, TRACE_COLOR, UI_MSG_COLOR } from "#app/constants/colors";
 import { inferColorFormat } from "#test/test-utils/mocks/mock-console/infer-color";
-import { coerceArray } from "#utils/common";
+import { coerceArray } from "#utils/array";
 import { type InspectOptions, inspect } from "node:util";
 import chalk, { type ChalkInstance } from "chalk";
 

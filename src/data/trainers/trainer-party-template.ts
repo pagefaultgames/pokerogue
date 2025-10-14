@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { startingWave } from "#app/starting-wave";
+import { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import { GameModes } from "#enums/game-modes";
 import { PartyMemberStrength } from "#enums/party-member-strength";
@@ -9,12 +10,30 @@ export class TrainerPartyTemplate {
   public strength: PartyMemberStrength;
   public sameSpecies: boolean;
   public balanced: boolean;
+  /**
+   * Controls which evolution level threshold to use for the trainer.
+   * Bosses should use `EvoLevelThresholdKind.STRONG`, regular trainers
+   * should use `EvoLevelThresholdKind.NORMAL`.
+   * @defaultValue `EvoLevelThresholdKind.NORMAL`
+   * @see {@link EvoLevelThresholdKind | EvoLevelThresholdKind}
+   */
+  public readonly evoLevelThresholdKind: Exclude<EvoLevelThresholdKind, typeof EvoLevelThresholdKind.WILD>;
 
-  constructor(size: number, strength: PartyMemberStrength, sameSpecies?: boolean, balanced?: boolean) {
+  constructor(
+    size: number,
+    strength: PartyMemberStrength,
+    sameSpecies?: boolean,
+    balanced?: boolean,
+    evoLevelThresholdKind: Exclude<
+      EvoLevelThresholdKind,
+      typeof EvoLevelThresholdKind.WILD
+    > = EvoLevelThresholdKind.NORMAL,
+  ) {
     this.size = size;
     this.strength = strength;
     this.sameSpecies = !!sameSpecies;
     this.balanced = !!balanced;
+    this.evoLevelThresholdKind = evoLevelThresholdKind;
   }
 
   getStrength(_index: number): PartyMemberStrength {
@@ -149,39 +168,40 @@ export const trainerPartyTemplates = {
   SIX_WEAK_BALANCED: new TrainerPartyTemplate(6, PartyMemberStrength.WEAK, false, true),
 
   GYM_LEADER_1: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
+    new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE, undefined, undefined, EvoLevelThresholdKind.STRONG),
+    new TrainerPartyTemplate(1, PartyMemberStrength.STRONG, undefined, undefined, EvoLevelThresholdKind.STRONG),
   ),
   GYM_LEADER_2: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER),
+    new TrainerPartyTemplate(1, PartyMemberStrength.AVERAGE, undefined, undefined, EvoLevelThresholdKind.STRONG),
+    new TrainerPartyTemplate(1, PartyMemberStrength.STRONG, undefined, undefined, EvoLevelThresholdKind.STRONG),
+    new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER, undefined, undefined, EvoLevelThresholdKind.STRONG),
   ),
   GYM_LEADER_3: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER),
+    new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE, undefined, undefined, EvoLevelThresholdKind.STRONG),
+    new TrainerPartyTemplate(1, PartyMemberStrength.STRONG, undefined, undefined, EvoLevelThresholdKind.STRONG),
+    new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER, undefined, undefined, EvoLevelThresholdKind.STRONG),
   ),
   GYM_LEADER_4: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER),
+    new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE, undefined, undefined, EvoLevelThresholdKind.STRONG),
+    new TrainerPartyTemplate(1, PartyMemberStrength.STRONG, undefined, undefined, EvoLevelThresholdKind.STRONG),
+    new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER, undefined, undefined, EvoLevelThresholdKind.STRONG),
   ),
+  /** 3 Average 2 Strong 1 Stronger */
   GYM_LEADER_5: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE),
-    new TrainerPartyTemplate(2, PartyMemberStrength.STRONG),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER),
+    new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE, undefined, undefined, EvoLevelThresholdKind.STRONG),
+    new TrainerPartyTemplate(2, PartyMemberStrength.STRONG, undefined, undefined, EvoLevelThresholdKind.STRONG),
+    new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER, undefined, undefined, EvoLevelThresholdKind.STRONG),
   ),
 
   ELITE_FOUR: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE),
-    new TrainerPartyTemplate(3, PartyMemberStrength.STRONG),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER),
+    new TrainerPartyTemplate(2, PartyMemberStrength.AVERAGE, undefined, undefined, EvoLevelThresholdKind.STRONG),
+    new TrainerPartyTemplate(3, PartyMemberStrength.STRONG, undefined, undefined, EvoLevelThresholdKind.STRONG),
+    new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER, undefined, undefined, EvoLevelThresholdKind.STRONG),
   ),
 
   CHAMPION: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(4, PartyMemberStrength.STRONG),
-    new TrainerPartyTemplate(2, PartyMemberStrength.STRONGER, false, true),
+    new TrainerPartyTemplate(4, PartyMemberStrength.STRONG, undefined, undefined, EvoLevelThresholdKind.STRONG),
+    new TrainerPartyTemplate(2, PartyMemberStrength.STRONGER, false, true, EvoLevelThresholdKind.STRONG),
   ),
 
   RIVAL: new TrainerPartyCompoundTemplate(
@@ -235,7 +255,7 @@ export function getEvilGruntPartyTemplate(): TrainerPartyTemplate {
     return trainerPartyTemplates.TWO_AVG_ONE_STRONG;
   }
   if (waveIndex <= ClassicFixedBossWaves.EVIL_ADMIN_1) {
-    return trainerPartyTemplates.GYM_LEADER_4; // 3avg 1 strong 1 stronger
+    return trainerPartyTemplates.GYM_LEADER_5; // 3avg 2 strong 1 stronger
   }
   return trainerPartyTemplates.GYM_LEADER_5; // 3 avg 2 strong 1 stronger
 }
