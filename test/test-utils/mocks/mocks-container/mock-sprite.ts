@@ -1,5 +1,5 @@
 import type { MockGameObject } from "#test/test-utils/mocks/mock-game-object";
-import { coerceArray } from "#utils/common";
+import { coerceArray } from "#utils/array";
 import Phaser from "phaser";
 
 type Frame = Phaser.Textures.Frame;

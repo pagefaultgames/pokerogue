@@ -1,6 +1,5 @@
 import { globalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
-import { catchableSpecies } from "#balance/biomes";
 import { speciesEggMoves } from "#balance/egg-moves";
 import { pokemonStarters } from "#balance/pokemon-evolutions";
 import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#balance/pokemon-level-moves";
@@ -13,7 +12,7 @@ import {
   speciesStarterCosts,
 } from "#balance/starters";
 import { speciesTmMoves } from "#balance/tms";
-import { allAbilities, allMoves, allSpecies } from "#data/data-lists";
+import { allAbilities, allMoves, allSpecies, catchableSpecies } from "#data/data-lists";
 import type { PokemonForm, PokemonSpecies } from "#data/pokemon-species";
 import { normalForm } from "#data/pokemon-species";
 import { AbilityAttr } from "#enums/ability-attr";

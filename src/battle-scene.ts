@@ -22,12 +22,11 @@ import { SpritePipeline } from "#app/pipelines/sprite";
 import { SceneBase } from "#app/scene-base";
 import { TimedEventManager } from "#app/timed-event-manager";
 import { UiInputs } from "#app/ui-inputs";
-import { biomeDepths, getBiomeName } from "#balance/biomes";
 import { startingWave } from "#balance/misc";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#balance/starters";
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets } from "#data/battle-anims";
-import { allAbilities, allMoves, allSpecies, modifierTypes } from "#data/data-lists";
+import { allMoves, allSpecies, biomeDepths, modifierTypes } from "#data/data-lists";
 import { battleSpecDialogue } from "#data/dialogue";
 import type { SpeciesFormChangeTrigger } from "#data/form-change-triggers";
 import { SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger } from "#data/form-change-triggers";
@@ -116,6 +115,7 @@ import { MusicPreference } from "#system/settings";
 import type { Voucher } from "#system/voucher";
 import { vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-config";
+import type { Constructor } from "#types/common";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import type { Localizable } from "#types/locales";
 import type {
@@ -137,9 +137,9 @@ import { UI } from "#ui/ui";
 import { addUiThemeOverrides } from "#ui/ui-theme";
 import {
   BooleanHolder,
-  type Constructor,
   fixedInt,
   formatMoney,
+  getBiomeName,
   getIvsFromId,
   isBetween,
   NumberHolder,
@@ -193,6 +193,7 @@ export class BattleScene extends SceneBase {
   public shopCursorTarget: number = ShopCursorTarget.REWARDS;
   public commandCursorMemory = false;
   public dexForDevs = false;
+  public showMissingRibbons = false;
   public showMovesetFlyout = true;
   public showArenaFlyout = true;
   public showTimeOfDayWidget = true;
@@ -1222,7 +1223,6 @@ export class BattleScene extends SceneBase {
       const localizable: Localizable[] = [
         ...allSpecies,
         ...allMoves,
-        ...allAbilities,
         ...getEnumValues(ModifierPoolType)
           .map(mpt => getModifierPoolForType(mpt))
           .flatMap(mp =>
@@ -3419,6 +3419,7 @@ export class BattleScene extends SceneBase {
             this.phaseManager.pushNew("ToggleDoublePositionPhase", true);
             if (!availablePartyMembers[1].isOnField()) {
               this.phaseManager.pushNew("SummonPhase", 1);
+              this.phaseManager.pushNew("PostSummonPhase", 1);
             }
           }
 
