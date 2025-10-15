@@ -4,10 +4,10 @@ import type { Pokemon } from "#field/pokemon";
 
 import { getPokemonNameWithAffix } from "#app/messages";
 import { MoveId } from "#enums/move-id";
+import type { OneOther } from "#test/@types/test-helpers";
 import { getEnumStr, getOnelineDiffStr, getOrdinal } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { TurnMove } from "#types/turn-move";
-import type { AtLeastOne } from "#types/type-helpers";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
@@ -15,14 +15,14 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @param received - The actual value received. Should be a {@linkcode Pokemon}
  * @param expectedMove - The {@linkcode MoveId} the Pokemon is expected to have used,
  * or a partially filled {@linkcode TurnMove} containing the desired properties to check
- * @param index - The index of the move history entry to check, in order from most recent to least recent.
- * Default `0` (last used move)
+ * @param index - The index of the move history entry to check, in order from most recent to least recent;
+ * default `0` (last used move)
  * @returns Whether the matcher passed
  */
 export function toHaveUsedMove(
   this: MatcherState,
   received: unknown,
-  expectedMove: MoveId | AtLeastOne<TurnMove>,
+  expectedMove: MoveId | OneOther<TurnMove, "move">,
   index = 0,
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
@@ -44,30 +44,36 @@ export function toHaveUsedMove(
   }
 
   // Coerce to a `TurnMove` if only 1 property was passed
+  let onlyMove = false;
+  let moveObj: Partial<TurnMove> & Pick<TurnMove, "move">;
   if (typeof expectedMove === "number") {
-    expectedMove = { move: expectedMove };
+    moveObj = { move: expectedMove };
+    onlyMove = true;
+  } else {
+    moveObj = expectedMove as Partial<TurnMove>;
   }
 
   const moveIndexStr = index === 0 ? "last move" : `${getOrdinal(index)} most recent move`;
 
-  const pass = this.equals(move, expectedMove, [
+  const pass = this.equals(move, moveObj, [
     ...this.customTesters,
     this.utils.subsetEquality,
     this.utils.iterableEquality,
   ]);
 
   // Customize the diff message if a single move was passed
-  const onlyMove =
-    !!expectedMove.move && Object.keys(expectedMove).length === 1 && Object.keys(expectedMove)[0] === "move";
   const expectedStr = onlyMove
-    ? `be MoveId.${getEnumStr(MoveId, expectedMove.move!)}`
+    ? `be MoveId.${getEnumStr(MoveId, moveObj.move)}`
     : `match ${getOnelineDiffStr.call(this, expectedMove)}`;
+  const notVerb = onlyMove ? "did" : "was";
+
   return {
     pass,
     message: () =>
       pass
-        ? `Expected ${pkmName}'s ${moveIndexStr} to NOT ${expectedStr}, but it did!`
-        : `Expected ${pkmName}'s ${moveIndexStr} to ${expectedStr}, but it didn't!`,
+        ? // Expected Magikarp' 5th most recent move to be MoveId.PHOTON_GEYSER, but it wasn't!
+          `Expected ${pkmName}'s ${moveIndexStr} to NOT ${expectedStr}, but it ${notVerb}!`
+        : `Expected ${pkmName}'s ${moveIndexStr} to ${expectedStr}, but it ${notVerb}n't!`,
     expected: expectedMove,
     actual: move,
   };

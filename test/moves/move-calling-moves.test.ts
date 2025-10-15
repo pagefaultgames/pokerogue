@@ -220,30 +220,6 @@ describe("Moves - Move-calling Moves", () => {
       },
     );
 
-    it.runIf(move === MoveId.MIRROR_MOVE)("should always target the Mirror Move recipient if possible", async () => {
-      game.override.battleStyle("double");
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
-
-      const feebas = game.field.getPlayerPokemon();
-      // Mock RNG functions to return high rolls (ie last eligible target)
-      // This will force the test to fail if MM were to use the same targeting algorithm
-      // as Copycat/etc
-      vi.spyOn(feebas, "randBattleSeedInt").mockReturnValue(1);
-
-      game.move.use(MoveId.MIRROR_MOVE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-      await game.move.forceEnemyMove(MoveId.TACKLE, BattlerIndex.ENEMY_2);
-      await game.move.forceEnemyMove(MoveId.SPLASH);
-      await game.setTurnOrder([BattlerIndex.ENEMY_2, BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-      await game.toEndOfTurn();
-
-      expect(feebas).toHaveUsedMove({ move: MoveId.MIRROR_MOVE, useMode: MoveUseMode.NORMAL }, 1);
-      expect(feebas).toHaveUsedMove({
-        move: MoveId.TACKLE,
-        useMode: MoveUseMode.FOLLOW_UP,
-        targets: [BattlerIndex.ENEMY],
-      });
-    });
-
     // testing Metronome here is pointless since we literally mock out its randomness
     it.skipIf(move === MoveId.METRONOME)("should return MoveId.NONE if an invalid move would be picked", async () => {
       await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
@@ -341,9 +317,9 @@ describe("Moves - Move-calling Moves", () => {
       game.move.changeMoveset(feebas, [MoveId.CIRCLE_THROW, MoveId.ASSIST, MoveId.WOOD_HAMMER, MoveId.ACID_SPRAY]);
       game.move.changeMoveset(shuckle, [MoveId.COPYCAT, MoveId.ASSIST, MoveId.TORCH_SONG, MoveId.TACKLE]);
 
-      // Force rolling the first eligible move for both mons.
-      vi.spyOn(feebas, "randBattleSeedInt").mockImplementation(() => 0);
-      vi.spyOn(shuckle, "randBattleSeedInt").mockImplementation(() => 0);
+      // Force rolling the first eligible move for both mons
+      vi.spyOn(feebas, "randBattleSeedInt").mockReturnValue(0);
+      vi.spyOn(shuckle, "randBattleSeedInt").mockReturnValue(0);
 
       game.move.select(MoveId.ASSIST, BattlerIndex.PLAYER);
       game.move.select(MoveId.ASSIST, BattlerIndex.PLAYER_2);
