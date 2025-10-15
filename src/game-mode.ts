@@ -115,7 +115,7 @@ export class GameMode implements GameModeConfig {
    * Helper function to get starting level for game mode.
    * @returns either:
    * - starting level override from overrides.ts
-   * - 20 for Daily Runs
+   * - 100 for Daily Runs
    * - 5 for all other modes
    */
   getStartingLevel(): number {
@@ -124,7 +124,7 @@ export class GameMode implements GameModeConfig {
     }
     switch (this.modeId) {
       case GameModes.DAILY:
-        return 20;
+        return 100;
       default:
         return 5;
     }
