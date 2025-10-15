@@ -1067,16 +1067,11 @@ export class ReverseDrainAbAttr extends PostDefendAbAttr {
     if (simulated) {
       return;
     }
-    const damageAmount = move.getAttrs<"HitHealAttr">("HitHealAttr")[0].getHealAmount(opponent, pokemon);
+    const damageAmount = move.getAttrs("HitHealAttr")[0].getHealAmount(opponent, pokemon);
     pokemon.turnData.damageTaken += damageAmount;
-    globalScene.phaseManager.unshiftNew(
-      "PokemonHealPhase",
-      opponent.getBattlerIndex(),
-      -damageAmount,
-      null,
-      false,
-      true,
-    );
+    globalScene.phaseManager.unshiftNew("PokemonHealPhase", opponent.getBattlerIndex(), -damageAmount, {
+      skipAnim: true,
+    });
   }
 
   public override getTriggerMessage({ opponent }: PostMoveInteractionAbAttrParams): string | null {
