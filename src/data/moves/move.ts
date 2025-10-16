@@ -6082,6 +6082,7 @@ export class JawLockAttr extends AddBattlerTagAttr {
   }
 }
 
+// TODO: This is jaaank
 export class CurseAttr extends MoveEffectAttr {
 
   apply(user: Pokemon, target: Pokemon, move:Move, args: any[]): boolean {

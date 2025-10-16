@@ -77,6 +77,7 @@ import type {
   ContactSetStatusProtectedTagType,
   ContactStatStageChangeProtectedTagType,
   CritStageBoostTagType,
+  DamageOverTimeTagType,
   DamageProtectedTagType,
   EndureTagType,
   HighestStatBoostTagType,
@@ -87,7 +88,7 @@ import type {
   TrappingBattlerTagType,
   TypeBoostTagType,
 } from "#types/battler-tags";
-import type { Mutable } from "#types/type-helpers";
+import type { AbstractConstructor, Mutable } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
 import { BooleanHolder, getFrameMs, NumberHolder, toDmgValue } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
@@ -1521,6 +1522,7 @@ export class DrowsyTag extends SerializableBattlerTag {
   }
 }
 
+// TODO:
 export abstract class DamagingTrapTag extends TrappedTag {
   public declare readonly tagType: TrappingBattlerTagType;
   /** The animation to play during the damage sequence */
@@ -2365,101 +2367,151 @@ export class CritBoostTag extends SerializableBattlerTag {
   }
 }
 
-export class SaltCuredTag extends SerializableBattlerTag {
-  public override readonly tagType = BattlerTagType.SALT_CURED;
-  constructor(sourceId: number) {
-    super(BattlerTagType.SALT_CURED, BattlerTagLapseType.TURN_END, 1, MoveId.SALT_CURE, sourceId);
+/**
+ * Mixin to implement `BattlerTag`s with damaging effects.
+ *
+ * Adds abstract functions to damage the user based on their maximum HP and play a corresponding animation.
+ * @param Base - The base class constructor to mix
+ */
+function DamagingBattlerTag<TagBase extends AbstractConstructor<SerializableBattlerTag>>(Base: TagBase) {
+  abstract class DoTTag extends Base {
+    /** The `CommonAnim` played upon this Tag dealing damage. */
+    protected abstract get animation(): CommonAnim;
+
+    /**
+     * Return the `i18n` locales key of the text to be displayed when this tag deals damage. \
+     * Within the text, `{{pokemonNameWithAffix}}` will be populated with the victim's name.
+     * @returns The locales key for the trigger message to be displayed on-screen.
+     */
+    protected abstract get triggerMessageKey(): string;
+
+    /**
+     * Return the amount of damage this tag should deal to the given Pokemon, relative to its maximum HP.
+     * @param pokemon - The `Pokemon` to whom this Tag is attached
+     * @returns The percentage of max HP to deal upon activation
+     */
+    protected abstract getDamageHpRatio(pokemon: Pokemon): number;
+
+    /**
+     * Damage the Pokemon to whom this Tag is attached.
+     *
+     * Handles checking for Magic Guard, queueing animations, and other assorted checks.
+     * @param pokemon - The `Pokemon` to whom this Tag is attached
+     */
+    protected damage(pokemon: Pokemon): void {
+      // TODO: Verify on cartridge whether Magic Guard blocking Curse-like DoT effects
+      // sbows the animation and/or messaage
+      globalScene.phaseManager.unshiftNew(
+        "CommonAnimPhase",
+        pokemon.getBattlerIndex(),
+        pokemon.getBattlerIndex(),
+        this.animation,
+      );
+
+      const cancelled = new BooleanHolder(false);
+      applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon, cancelled });
+      if (cancelled.value) {
+        return;
+      }
+
+      pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() * this.getDamageHpRatio(pokemon)), {
+        result: HitResult.INDIRECT,
+      });
+      globalScene.phaseManager.queueMessage(
+        i18next.t(this.triggerMessageKey, {
+          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+        }),
+      );
+    }
   }
 
-  onAdd(pokemon: Pokemon): void {
-    const source = this.getSourcePokemon();
-    if (!source) {
-      console.warn(`Failed to get source Pokemon for SaltCureTag onAdd; id: ${this.sourceId}`);
+  return DoTTag;
+}
+
+/**
+ * Abstract class to damage the attached Pokemon at the end of each turn.
+ */
+abstract class DamageOverTimeTag extends DamagingBattlerTag(SerializableBattlerTag) {
+  abstract override readonly tagType: DamageOverTimeTagType;
+  constructor(tagType: DamageOverTimeTagType, sourceId: number) {
+    super(tagType, BattlerTagLapseType.TURN_END, 1, undefined, sourceId, true);
+  }
+
+  // TODO: Move this functionality into the base class - so many tags have basic `onAdd` messages
+  // that an abstract getter would be extremely good for DRY
+  /**
+   * Return the i18n locales key that will be shown when this tag is added. \
+   * Within the text, `{{pokemonNameWithAffix}}` will be populated with the name of the
+   * {@linkcode Pokemon} to whom this Tag is attached.
+   * @remarks
+   * If this evaluates to an empty string, no message will be displayed.
+   */
+  protected abstract get onAddMessageKey(): string;
+
+  override onAdd(pokemon: Pokemon): void {
+    if (!this.onAddMessageKey) {
       return;
     }
 
-    super.onAdd(pokemon);
     globalScene.phaseManager.queueMessage(
-      i18next.t("battlerTags:saltCuredOnAdd", {
+      i18next.t(this.onAddMessageKey, {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       }),
     );
   }
 
-  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
-
-    if (ret) {
-      globalScene.phaseManager.unshiftNew(
-        "CommonAnimPhase",
-        pokemon.getBattlerIndex(),
-        pokemon.getBattlerIndex(),
-        CommonAnim.SALT_CURE,
-      );
-
-      const cancelled = new BooleanHolder(false);
-      applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon, cancelled });
-
-      if (!cancelled.value) {
-        const pokemonSteelOrWater = pokemon.isOfType(PokemonType.STEEL) || pokemon.isOfType(PokemonType.WATER);
-        pokemon.damageAndUpdate(toDmgValue(pokemonSteelOrWater ? pokemon.getMaxHp() / 4 : pokemon.getMaxHp() / 8), {
-          result: HitResult.INDIRECT,
-        });
-
-        globalScene.phaseManager.queueMessage(
-          i18next.t("battlerTags:saltCuredLapse", {
-            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-            moveName: this.getMoveName(),
-          }),
-        );
-      }
-    }
-
-    return ret;
+  override lapse(pokemon: Pokemon): boolean {
+    this.damage(pokemon);
+    return true;
   }
 }
 
-export class CursedTag extends SerializableBattlerTag {
+export type { DamageOverTimeTag };
+
+export class SaltCuredTag extends DamageOverTimeTag {
+  public override readonly tagType = BattlerTagType.SALT_CURED;
+  constructor(sourceId: number) {
+    super(BattlerTagType.SALT_CURED, sourceId);
+  }
+
+  override get animation() {
+    return CommonAnim.SALT_CURE;
+  }
+
+  override get onAddMessageKey() {
+    return "saltCuredOnAdd";
+  }
+
+  override get triggerMessageKey() {
+    return "cursedLapse";
+  }
+
+  override getDamageHpRatio() {
+    return 0.25;
+  }
+}
+
+export class CursedTag extends DamageOverTimeTag {
   public override readonly tagType = BattlerTagType.CURSED;
   constructor(sourceId: number) {
-    super(BattlerTagType.CURSED, BattlerTagLapseType.TURN_END, 1, MoveId.CURSE, sourceId, true);
+    super(BattlerTagType.CURSED, sourceId);
   }
 
-  onAdd(pokemon: Pokemon): void {
-    const source = this.getSourcePokemon();
-    if (!source) {
-      console.warn(`Failed to get source Pokemon for CursedTag onAdd; id: ${this.sourceId}`);
-      return;
-    }
-
-    super.onAdd(pokemon);
+  override get animation() {
+    return CommonAnim.CURSE;
   }
 
-  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
+  // Disable on add message due to being handled in the move itself
+  override get onAddMessageKey() {
+    return "";
+  }
 
-    if (ret) {
-      globalScene.phaseManager.unshiftNew(
-        "CommonAnimPhase",
-        pokemon.getBattlerIndex(),
-        pokemon.getBattlerIndex(),
-        CommonAnim.SALT_CURE,
-      );
+  override get triggerMessageKey() {
+    return "cursedLapse";
+  }
 
-      const cancelled = new BooleanHolder(false);
-      applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon, cancelled });
-
-      if (!cancelled.value) {
-        pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 4), { result: HitResult.INDIRECT });
-        globalScene.phaseManager.queueMessage(
-          i18next.t("battlerTags:cursedLapse", {
-            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          }),
-        );
-      }
-    }
-
-    return ret;
+  override getDamageHpRatio() {
+    return 0.25;
   }
 }
 

@@ -1,8 +1,15 @@
-// biome-ignore-start lint/correctness/noUnusedImports: Used in a TSDoc comment
-import type { AbilityBattlerTag, BattlerTagTypeMap, SerializableBattlerTag, TypeBoostTag } from "#data/battler-tags";
+// biome-ignore-start lint/correctness/noUnusedImports: TSDoc
+import type {
+  AbilityBattlerTag,
+  BattlerTagTypeMap,
+  DamageOverTimeTag,
+  SerializableBattlerTag,
+  TrappedTag,
+  TypeBoostTag,
+} from "#data/battler-tags";
 import type { AbilityId } from "#enums/ability-id";
 import type { SessionSaveData } from "#types/save-data";
-// biome-ignore-end lint/correctness/noUnusedImports: Used in a TSDoc comment
+// biome-ignore-end lint/correctness/noUnusedImports: TSDoc
 
 import type { BattlerTagType } from "#enums/battler-tag-type";
 import type { InferKeys, ObjectValues } from "#types/type-helpers";
@@ -76,6 +83,15 @@ export type SemiInvulnerableTagType =
   | BattlerTagType.UNDERGROUND
   | BattlerTagType.UNDERWATER
   | BattlerTagType.HIDDEN;
+
+/**
+ * Subset of {@linkcode BattlerTagType}s that deal persistent turn-end damage-over-time.
+ *
+ * @remarks
+ * ⚠️ Does not include any members of {@linkcode TrappingBattlerTagType} that deal damage,
+ * which subclass {@linkcode TrappedTag} instead of {@linkcode DamageOverTimeTag}.
+ */
+export type DamageOverTimeTagType = BattlerTagType.SALT_CURED | BattlerTagType.CURSED | BattlerTagType.NIGHTMARE;
 
 /**
  * Subset of {@linkcode BattlerTagType}s corresponding to {@linkcode AbilityBattlerTag}s
