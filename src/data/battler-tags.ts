@@ -1,21 +1,21 @@
 /**
  * `BattlerTag`s are used to represent semi-persistent effects that can be attached to a Pokemon.
- * 
+ *
  * During serialization, a new blank tag object is created, before its `loadTag` is called
  * with the object that was serialized. \
- * This makes it fairly straightforward to avoid serializing fields — anything not set in the class constructor 
+ * This makes it fairly straightforward to avoid serializing fields — anything not set in the class constructor
  * or the tag's `loadTag` method will not be serialized.
  *
  * Any battler tag that can persist across waves **must extend `SerializableBattlerTag`** in its class definition signature.
  * (In most cases, this corresponds to it being able to last multiple turns in battle.)
  *
  * `SerializableBattlerTag`s have strict requirements for their fields:
- * Properties that are not necessary to reconstruct the tag **must not be serialized** 
- * (such as by using readonly {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_elements | private elements}). 
+ * Properties that are not necessary to reconstruct the tag **must not be serialized**
+ * (such as by using readonly {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_elements | private elements}).
  * If access to the property is needed outside of the class, then
  * a getter (and/or a setter) may be used instead.
  *
- * If a property that is intended to be "private" should be serialized, it **must** 
+ * If a property that is intended to be "private" should be serialized, it **must**
  * be declared as `public readonly` instead.
  * Then, in the `loadTag` method (or any internal method that needs to adjust the property),
  * use a cast to `Mutable<this>` (such as `(this as Mutable<this>).propertyName = value`).
@@ -217,9 +217,9 @@ export class BattlerTag implements BaseBattlerTag {
 }
 
 export class SerializableBattlerTag extends BattlerTag {
-  /** 
+  /**
    * Nonexistent, dummy field to allow typescript to distinguish this class from `BattlerTag`.
-   * 
+   *
    * @remarks
    * Does not exist at runtime, so must not be used!
    */
