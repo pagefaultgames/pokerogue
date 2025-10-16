@@ -141,4 +141,5 @@ fetch("/manifest.json")
 
 export default game;
 
-var MakeBiomeScreamSoICanTestTheWorkflow = 12345;
+let MakeTSCScreamSoICanTestTheWorkflow: number = 12345;
+MakeTSCScreamSoICanTestTheWorkflow = "foobarbazquxquux"
