@@ -1,39 +1,42 @@
 /**
- * BattlerTags are used to represent semi-persistent effects that can be attached to a Pokemon.
- * Note that before serialization, a new tag object is created, and then `loadTag` is called on the
- * tag with the object that was serialized.
+ * `BattlerTag`s are used to represent semi-persistent effects that can be attached to a Pokemon.
+ * 
+ * During serialization, a new blank tag object is created, before its `loadTag` is called
+ * with the object that was serialized.
  *
- * This means it is straightforward to avoid serializing fields.
- * Fields that are not set in the constructor and not set in `loadTag` will thus not be serialized.
+ * This means it is straightforward to avoid serializing fields - ones not set in the constructor or the tag's 
+ * `loadTag` method will not be serialized.
  *
- * Any battler tag that can persist across sessions must extend SerializableBattlerTag in its class definition signature.
- * Only tags that persist across waves (meaning their effect can last >1 turn) should be considered
- * serializable.
+ * Any battler tag that can persist across waves **must extend `SerializableBattlerTag`** in its class definition signature.
+ * (In most cases, the deciding factor is whether it can last >1 turn in battle.)
  *
- * Serializable battler tags have strict requirements for their fields.
- * Properties that are not necessary to reconstruct the tag must not be serialized. This can be avoided
- * by using a private property. If access to the property is needed outside of the class, then
- * a getter (and potentially, a setter) should be used instead.
+ * `SerializableBattlerTag`s have strict requirements for their fields:
+ * Properties that are not necessary to reconstruct the tag **must not be serialized** 
+ * (such as by using readonly {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_elements | private elements}). 
+ * If access to the property is needed outside of the class, then
+ * a getter (and/or a setter) may be used instead.
  *
- * If a property that is intended to be private must be serialized, then it should instead
- * be declared as a public readonly propety. Then, in the `loadTag` method (or any method inside the class that needs to adjust the property)
- * use `(this as Mutable<this>).propertyName = value;`
+ * If a property that is intended to be "private" should be serialized, it **must** 
+ * be declared as `public readonly` instead.
+ * Then, in the `loadTag` method (or any internal method that needs to adjust the property),
+ * use a cast to `Mutable<this>` (such as `(this as Mutable<this>).propertyName = value`).
  * These rules ensure that Typescript is aware of the shape of the serialized version of the class.
  *
- * If any new serializable fields *are* added, then the class *must* override the
- * `loadTag` method to set the new fields. Its signature *must* match the example below:
- * ```
+ * If any new serializable fields _are_ added, then the class **must** override the
+ * `loadTag` method to set the new fields.
+ * Its signature must match the example below:
+ * ```ts
  * class ExampleTag extends SerializableBattlerTag {
  *   // Example, if we add 2 new fields that should be serialized:
  *   public a: string;
  *   public b: number;
- *   // Then we must also define a loadTag method with one of the following signatures
+ *   // Then we must also define a loadTag method with one of the following signatures:
  *   public override loadTag(source: BaseBattlerTag & Pick<ExampleTag, "tagType" | "a" | "b"): void;
  *   public override loadTag<const T extends this>(source: BaseBattlerTag & Pick<T, "tagType" | "a" | "b">): void;
  * }
  * ```
  * Notes
- * - If the class has any subclasses, then the second form of `loadTag` *must* be used.
+ * - If the class has any subclasses, then the second form of `loadTag` *must* be used to allow for subclassing.
  * @module
  */
 
@@ -92,13 +95,14 @@ import { coerceArray } from "#utils/array";
 import { BooleanHolder, getFrameMs, NumberHolder, toDmgValue } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
 
-/** Interface containing the serializable fields of BattlerTag */
+/** Interface containing the serializable fields of `BattlerTag` */
 interface BaseBattlerTag {
-  /** The tag's remaining duration */
+  /** The tag's remaining duration. */
+  // TODO: Add support for omitting `turnCount`
   turnCount: number;
-  /** The {@linkcode MoveId} that created this tag, or `undefined` if not set by a move */
+  /** The {@linkcode MoveId} that created this tag, or `undefined` if not set by a move. */
   sourceMove?: MoveId;
-  /** The {@linkcode Pokemon.id | PID} of the Pokemon that added this tag, or `undefined` if not set by a pokemon */
+  /** The {@linkcode Pokemon.id | PID} of the Pokemon that added this tag, or `undefined` if not set by a Pokemon. */
   sourceId?: number;
 }
 
@@ -144,6 +148,7 @@ export class BattlerTag implements BaseBattlerTag {
     this.#lapseTypes = coerceArray(lapseType);
     this.turnCount = turnCount;
     // We intentionally don't want to set source move to `MoveId.NONE` here, so a raw boolean comparison is OK.
+    // TODO: Rework tags passing `MoveId.NONE` to instead pass `undefined` for consistency
     if (sourceMove) {
       this.sourceMove = sourceMove;
     }
@@ -195,7 +200,7 @@ export class BattlerTag implements BaseBattlerTag {
   /**
    * Load the data for a given {@linkcode BattlerTag} or JSON representation thereof.
    * Should be inherited from by any battler tag with custom attributes.
-   * @param source - An object containing the fields needed to reconstruct this tag.
+   * @param source - An object containing the fields needed to reconstruct this tag
    */
   public loadTag<const T extends this>(source: BaseBattlerTag & Pick<T, "tagType">): void {
     this.turnCount = source.turnCount;
@@ -205,7 +210,7 @@ export class BattlerTag implements BaseBattlerTag {
 
   /**
    * Helper function that retrieves the source Pokemon object
-   * @returns The source {@linkcode Pokemon}, or `null` if none is found
+   * @returns The source {@linkcode Pokemon}, or `undefined` if none is found
    */
   public getSourcePokemon(): Pokemon | undefined {
     return globalScene.getPokemonById(this.sourceId);
@@ -213,7 +218,12 @@ export class BattlerTag implements BaseBattlerTag {
 }
 
 export class SerializableBattlerTag extends BattlerTag {
-  /** Nonexistent, dummy field to allow typescript to distinguish this class from `BattlerTag` */
+  /** 
+   * Nonexistent, dummy field to allow typescript to distinguish this class from `BattlerTag`.
+   * 
+   * @remarks
+   * Does not exist at runtime, so must not be used!
+   */
   private declare __SerializableBattlerTag: never;
 }
 
@@ -223,7 +233,7 @@ export class SerializableBattlerTag extends BattlerTag {
  *
  * @remarks
  * Used to ensure type safety when serializing battler tags,
- * allowing typescript to properly infer the type of the tag.
+ * allowing Typescript to properly infer the type of the tag.
  * @see BattlerTagTypeMap
  */
 interface GenericSerializableBattlerTag<T extends BattlerTagType> extends SerializableBattlerTag {
