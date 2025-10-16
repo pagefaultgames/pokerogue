@@ -74,7 +74,7 @@ describe.each([
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
   });
 
-  it("should not affect non-Normal type Moves", async () => {
+  it("should not affect moves that are not Normal type", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const feebas = game.field.getPlayerPokemon();
