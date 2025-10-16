@@ -84,11 +84,35 @@ export function getAvailableRibbons(species: PokemonSpecies): RibbonFlag[] {
   return ribbons.concat(extraRibbons);
 }
 
+/**
+ * Get the locale key for the given ribbon flag
+ * @param flag - The ribbon flag to get the key for
+ */
 export function getRibbonKey(flag: RibbonFlag): string {
-  for (const [key, value] of Object.entries(RibbonData)) {
-    if (typeof value === "bigint" && value === flag) {
-      return key;
-    }
+  switch (flag) {
+    case RibbonData.CLASSIC:
+      return "CLASSIC";
+    case RibbonData.NUZLOCKE:
+      return "NUZLOCKE";
+    case RibbonData.FRIENDSHIP:
+      return "FRIENDSHIP";
+    case RibbonData.FLIP_STATS:
+      return "FLIP_STATS";
+    case RibbonData.INVERSE:
+      return "INVERSE";
+    case RibbonData.FRESH_START:
+      return "FRESH_START";
+    case RibbonData.HARDCORE:
+      return "HARDCORE";
+    case RibbonData.LIMITED_CATCH:
+      return "LIMITED_CATCH";
+    case RibbonData.NO_HEAL:
+      return "NO_HEAL";
+    case RibbonData.NO_SHOP:
+      return "NO_SHOP";
+    case RibbonData.NO_SUPPORT:
+      return "NO_SUPPORT";
+    default:
+      return "";
   }
-  return "";
 }
