@@ -140,3 +140,5 @@ fetch("/manifest.json")
   });
 
 export default game;
+
+var MakeBiomeScreamSoICanTestTheWorkflow = 12345;
