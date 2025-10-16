@@ -40,6 +40,7 @@ describe("Battler Tags - Damage Over Time", () => {
   });
 
   afterEach(() => {
+    feebas.hp = feebas.getMaxHp();
     feebas.resetSummonData();
     game.field.getEnemyPokemon().resetSummonData();
     game.scene.phaseManager.clearAllPhases();
