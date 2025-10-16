@@ -15,6 +15,7 @@ on:
       - "hotfix*"
   merge_group:
     types: [checks_requested]
+  workflow_dispatch:
 
 jobs:
   run-linters:
