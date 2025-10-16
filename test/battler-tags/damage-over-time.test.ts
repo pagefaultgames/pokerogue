@@ -42,6 +42,7 @@ describe("Battler Tags - Damage Over Time", () => {
   afterEach(() => {
     feebas.resetSummonData();
     game.field.getEnemyPokemon().resetSummonData();
+    game.scene.phaseManager.clearAllPhases();
   });
 
   describe.each([
@@ -49,15 +50,20 @@ describe("Battler Tags - Damage Over Time", () => {
     { tagType: BattlerTagType.SALT_CURED, name: "Salt Cure" },
     { tagType: BattlerTagType.CURSED, name: "Nightmare" },
   ])("$name", ({ tagType }) => {
-    it("should deal persistent max HP-based damage each turn", () => {
+    it("should deal persistent max HP-based damage each turn and queue animations", () => {
       feebas.addTag(tagType);
       expect(feebas).toHaveBattlerTag(tagType);
-      const dmgPercent = (feebas.getTag(tagType) as DamageOverTimeTag).getDamageHpRatio();
+
+      const dotTag = feebas.getTag(tagType) as DamageOverTimeTag;
+      const dmgPercent = dotTag["getDamageHpRatio"](feebas);
+      const anim = dotTag["animation"];
 
       feebas.lapseTag(tagType, BattlerTagLapseType.TURN_END);
 
       expect(feebas.getHpRatio()).toBe(1 - dmgPercent);
-      expect(game.scene.phaseManager);
+      expect(
+        game.scene.phaseManager.hasPhaseOfType("CommonAnimPhase", c => c.getPokemon() === feebas && c["anim"] === anim),
+      ).toBe(true);
     });
   });
 

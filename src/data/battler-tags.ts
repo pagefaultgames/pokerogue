@@ -619,8 +619,17 @@ export class ShellTrapTag extends BattlerTag {
   }
 }
 
-export class TrappedTag extends SerializableBattlerTag {
+//#region Trapping effects
+
+/**
+ * Abstract base class for {@link https://bulbapedia.bulbagarden.net/wiki/Escape_prevention | persistent trapping effects}.
+ *
+ * These tags prevent the target from switching out or fleeing while the duration lasts,
+ * and cannot apply if they are already trapped.
+ */
+export abstract class TrappedTag extends SerializableBattlerTag {
   public declare readonly tagType: TrappingBattlerTagType;
+
   constructor(
     tagType: BattlerTagType,
     lapseType: BattlerTagLapseType,
@@ -632,24 +641,34 @@ export class TrappedTag extends SerializableBattlerTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
+    // Trapping effects fail if the target has ANY prior trapping effect at all
+    if (pokemon.getTag(TrappedTag)) {
+      return false;
+    }
+
     const source = this.getSourcePokemon();
     if (!source) {
       console.warn(`Failed to get source Pokemon for TrappedTag canAdd; id: ${this.sourceId}`);
       return false;
     }
+
+    // TODO: Move this to the move attribute
     if (this.sourceMove && allMoves[this.sourceMove]?.hitsSubstitute(source, pokemon)) {
       return false;
     }
-    const isGhost = pokemon.isOfType(PokemonType.GHOST);
-    const isTrapped = pokemon.getTag(TrappedTag);
 
-    return !isTrapped && !isGhost;
+    return true;
   }
 
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
-
-    globalScene.phaseManager.queueMessage(this.getTrapMessage(pokemon));
+    const source = this.getSourcePokemon();
+    globalScene.phaseManager.queueMessage(
+      i18next.t(this.onAddMessageKey, {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+        sourcePokemonName: getPokemonNameWithAffix(source),
+      }),
+    );
   }
 
   onRemove(pokemon: Pokemon): void {
@@ -663,6 +682,8 @@ export class TrappedTag extends SerializableBattlerTag {
     );
   }
 
+  protected abstract get onAddMessageKey(): string;
+
   getDescriptor(): string {
     return i18next.t("battlerTags:trappedDesc");
   }
@@ -670,30 +691,267 @@ export class TrappedTag extends SerializableBattlerTag {
   isSourceLinked(): boolean {
     return true;
   }
+}
 
-  getTrapMessage(pokemon: Pokemon): string {
-    return i18next.t("battlerTags:trappedOnAdd", {
-      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-    });
+/**
+ * Class implementing "generic" persistent trapping effects
+ * (such as those from Mean Look or Spider Web).
+ *
+ * Lasts until the user or target is removed from the field.
+ */
+export class GenericTrappedTag extends TrappedTag {
+  public override readonly tagType = BattlerTagType.TRAPPED;
+  protected override get onAddMessageKey() {
+    return "battlerTags:trappedOnAdd";
+  }
+  constructor(turnCount: number, sourceMove: MoveId, sourceId: number) {
+    super(BattlerTagType.TRAPPED, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
+  }
+
+  // Insofar as ghost types cannot be trapped by trapping effects, simple trapping effects do not do anythign on them
+  // TODO: Do we need to fail the move?
+  override canAdd(pokemon: Pokemon): boolean {
+    return !pokemon.isOfType(PokemonType.GHOST, true, true);
   }
 }
 
 /**
  * BattlerTag implementing No Retreat's trapping effect.
- * This is treated separately from other trapping effects to prevent
- * Ghost-type Pokemon from being able to reuse the move.
+ * This is treated separately from other generic trapping effects to allow
+ * Ghost-type Pokemon to use the move once.
  */
 class NoRetreatTag extends TrappedTag {
   public override readonly tagType = BattlerTagType.NO_RETREAT;
-  constructor(sourceId: number) {
-    super(BattlerTagType.NO_RETREAT, BattlerTagLapseType.CUSTOM, 0, MoveId.NO_RETREAT, sourceId);
+  protected override get onAddMessageKey() {
+    return "battlerTags:noRetreatOnAdd";
   }
-
-  /** overrides {@linkcode TrappedTag.apply}, removing the Ghost-type condition */
-  canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.getTag(TrappedTag);
+  constructor(sourceId: number) {
+    super(BattlerTagType.NO_RETREAT, BattlerTagLapseType.CUSTOM, 1, MoveId.NO_RETREAT, sourceId);
   }
 }
+
+/**
+ * BattlerTag to implement the effects of {@linkcode MoveId.INGRAIN}.
+ *
+ * Ingrain heals the user for 1/16th of their maximum HP each turn while grounding them and trapping them on-field.
+ * {@see {@linkcode GroundedTag}} - Tag used by Ingrain and other effects to forcibly ground target
+ */
+export class IngrainTag extends TrappedTag {
+  public override readonly tagType = BattlerTagType.INGRAIN;
+  protected override get onAddMessageKey() {
+    return "battlerTags:ingrainOnAdd";
+  }
+
+  constructor(sourceId: number) {
+    super(BattlerTagType.INGRAIN, BattlerTagLapseType.TURN_END, 1, MoveId.INGRAIN, sourceId);
+  }
+
+  override lapse(pokemon: Pokemon): boolean {
+    globalScene.phaseManager.unshiftNew(
+      "PokemonHealPhase",
+      pokemon.getBattlerIndex(),
+      toDmgValue(pokemon.getMaxHp() / 16),
+      i18next.t("battlerTags:ingrainLapse", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      }),
+      true,
+    );
+    return true;
+  }
+
+  getDescriptor(): string {
+    return i18next.t("battlerTags:ingrainDesc");
+  }
+}
+
+/**
+ * Octolock traps the target pokemon and reduces its DEF and SPDEF by one stage at the
+ * end of each turn.
+ */
+export class OctolockTag extends TrappedTag {
+  public override readonly tagType = BattlerTagType.OCTOLOCK;
+  protected override get onAddMessageKey() {
+    return "battlerTags:octolockOnAdd";
+  }
+  constructor(sourceId: number) {
+    super(BattlerTagType.OCTOLOCK, BattlerTagLapseType.TURN_END, 1, MoveId.OCTOLOCK, sourceId);
+  }
+
+  lapse(pokemon: Pokemon): boolean {
+    globalScene.phaseManager.unshiftNew(
+      "StatStageChangePhase",
+      pokemon.getBattlerIndex(),
+      false,
+      [Stat.DEF, Stat.SPDEF],
+      -1,
+    );
+    return true;
+  }
+}
+
+/**
+ * Abstract base class for all damaging trapping effects.
+ *
+ * Handles dealing damage and playing the appropriate animation.
+ */
+export abstract class DamagingTrapTag extends DamagingBattlerTag(TrappedTag) {
+  public declare readonly tagType: TrappingBattlerTagType;
+  /** @sealed */
+  protected override get triggerMessageKey() {
+    return "battlerTags:damagingTrapLapse";
+  }
+  // NB: This being an overriddable getter with a `pokemon` parameter
+  // makes it really easy to parametrize it (such as for adding something like Binding Band)
+  protected override getDamageHpRatio() {
+    return 0.125;
+  }
+  constructor(tagType: BattlerTagType, turnCount: number, sourceMove: MoveId, sourceId: number) {
+    super(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceMove, sourceId);
+  }
+
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    const shouldPersist = super.lapse(pokemon, lapseType);
+    if (!shouldPersist) {
+      return false;
+    }
+
+    this.damage(pokemon);
+    return true;
+  }
+}
+
+export class BindTag extends DamagingTrapTag {
+  public override readonly tagType = BattlerTagType.BIND;
+  protected override get animation() {
+    return CommonAnim.BIND as const;
+  }
+  protected override get onAddMessageKey() {
+    return "battlerTags:bindOnAdd";
+  }
+  constructor(turnCount: number, sourceId: number) {
+    super(BattlerTagType.BIND, turnCount, MoveId.BIND, sourceId);
+  }
+}
+
+export class WrapTag extends DamagingTrapTag {
+  public override readonly tagType = BattlerTagType.WRAP;
+  protected override get animation() {
+    return CommonAnim.WRAP as const;
+  }
+  protected override get onAddMessageKey() {
+    return "battlerTags:wrapOnAdd";
+  }
+  constructor(turnCount: number, sourceId: number) {
+    super(BattlerTagType.WRAP, turnCount, MoveId.WRAP, sourceId);
+  }
+}
+
+export class FireSpinTag extends DamagingTrapTag {
+  public override readonly tagType = BattlerTagType.FIRE_SPIN;
+  protected override get animation() {
+    return CommonAnim.FIRE_SPIN as const;
+  }
+  protected override get onAddMessageKey() {
+    return "battlerTags:fireSpinOnAdd";
+  }
+  constructor(turnCount: number, sourceId: number) {
+    super(BattlerTagType.FIRE_SPIN, turnCount, MoveId.FIRE_SPIN, sourceId);
+  }
+}
+
+export class WhirlpoolTag extends DamagingTrapTag {
+  public override readonly tagType = BattlerTagType.WHIRLPOOL;
+  protected override get animation() {
+    return CommonAnim.WHIRLPOOL as const;
+  }
+  protected override get onAddMessageKey() {
+    return "battlerTags:whirlpoolOnAdd";
+  }
+  constructor(turnCount: number, sourceId: number) {
+    super(BattlerTagType.WHIRLPOOL, turnCount, MoveId.WHIRLPOOL, sourceId);
+  }
+}
+
+export class ClampTag extends DamagingTrapTag {
+  public override readonly tagType = BattlerTagType.CLAMP;
+  protected override get animation() {
+    return CommonAnim.CLAMP as const;
+  }
+  protected override get onAddMessageKey() {
+    return "battlerTags:clampOnAdd";
+  }
+  constructor(turnCount: number, sourceId: number) {
+    super(BattlerTagType.CLAMP, turnCount, MoveId.CLAMP, sourceId);
+  }
+}
+
+export class SandTombTag extends DamagingTrapTag {
+  public override readonly tagType = BattlerTagType.SAND_TOMB;
+  protected override get animation() {
+    return CommonAnim.SAND_TOMB as const;
+  }
+  protected override get onAddMessageKey() {
+    return "battlerTags:sandTombOnAdd";
+  }
+
+  constructor(turnCount: number, sourceId: number) {
+    super(BattlerTagType.SAND_TOMB, turnCount, MoveId.SAND_TOMB, sourceId);
+  }
+}
+
+export class MagmaStormTag extends DamagingTrapTag {
+  public override readonly tagType = BattlerTagType.MAGMA_STORM;
+  protected override get animation() {
+    return CommonAnim.MAGMA_STORM as const;
+  }
+  protected override get onAddMessageKey() {
+    return "battlerTags:magmaStormOnAdd";
+  }
+  constructor(turnCount: number, sourceId: number) {
+    super(BattlerTagType.MAGMA_STORM, turnCount, MoveId.MAGMA_STORM, sourceId);
+  }
+}
+
+export class SnapTrapTag extends DamagingTrapTag {
+  public override readonly tagType = BattlerTagType.SNAP_TRAP;
+  protected override get animation() {
+    return CommonAnim.SNAP_TRAP as const;
+  }
+  protected override get onAddMessageKey() {
+    return "battlerTags:snapTrapOnAdd";
+  }
+  constructor(turnCount: number, sourceId: number) {
+    super(BattlerTagType.SNAP_TRAP, turnCount, MoveId.SNAP_TRAP, sourceId);
+  }
+}
+
+export class ThunderCageTag extends DamagingTrapTag {
+  public override readonly tagType = BattlerTagType.THUNDER_CAGE;
+  protected override get animation() {
+    return CommonAnim.THUNDER_CAGE as const;
+  }
+  protected override get onAddMessageKey() {
+    return "battlerTags:thunderCageOnAdd";
+  }
+  constructor(turnCount: number, sourceId: number) {
+    super(BattlerTagType.THUNDER_CAGE, turnCount, MoveId.THUNDER_CAGE, sourceId);
+  }
+}
+
+export class InfestationTag extends DamagingTrapTag {
+  public override readonly tagType = BattlerTagType.INFESTATION;
+  protected override get animation() {
+    return CommonAnim.INFESTATION as const;
+  }
+  protected override get onAddMessageKey() {
+    return "battlerTags:infestationOnAdd";
+  }
+  constructor(turnCount: number, sourceId: number) {
+    super(BattlerTagType.INFESTATION, turnCount, MoveId.INFESTATION, sourceId);
+  }
+}
+
+//#endregion Trapping effects
 
 /**
  * BattlerTag that represents the {@link https://bulbapedia.bulbagarden.net/wiki/Flinch Flinch} status condition
@@ -1303,81 +1561,6 @@ export class HelpingHandTag extends BattlerTag {
   }
 }
 
-/**
- * Applies the Ingrain tag to a pokemon
- */
-export class IngrainTag extends TrappedTag {
-  public override readonly tagType = BattlerTagType.INGRAIN;
-  constructor(sourceId: number) {
-    super(BattlerTagType.INGRAIN, BattlerTagLapseType.TURN_END, 1, MoveId.INGRAIN, sourceId);
-  }
-
-  /**
-   * Check if the Ingrain tag can be added to the pokemon
-   * @param pokemon - The pokemon to check if the tag can be added to
-   * @returns boolean True if the tag can be added, false otherwise
-   */
-  canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.getTag(BattlerTagType.TRAPPED);
-  }
-
-  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
-
-    if (ret) {
-      globalScene.phaseManager.unshiftNew(
-        "PokemonHealPhase",
-        pokemon.getBattlerIndex(),
-        toDmgValue(pokemon.getMaxHp() / 16),
-        i18next.t("battlerTags:ingrainLapse", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        }),
-        true,
-      );
-    }
-
-    return ret;
-  }
-
-  getTrapMessage(pokemon: Pokemon): string {
-    return i18next.t("battlerTags:ingrainOnTrap", {
-      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-    });
-  }
-
-  getDescriptor(): string {
-    return i18next.t("battlerTags:ingrainDesc");
-  }
-}
-
-/**
- * Octolock traps the target pokemon and reduces its DEF and SPDEF by one stage at the
- * end of each turn.
- */
-export class OctolockTag extends TrappedTag {
-  public override readonly tagType = BattlerTagType.OCTOLOCK;
-  constructor(sourceId: number) {
-    super(BattlerTagType.OCTOLOCK, BattlerTagLapseType.TURN_END, 1, MoveId.OCTOLOCK, sourceId);
-  }
-
-  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    const shouldLapse = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
-
-    if (shouldLapse) {
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        false,
-        [Stat.DEF, Stat.SPDEF],
-        -1,
-      );
-      return true;
-    }
-
-    return false;
-  }
-}
-
 export class AquaRingTag extends SerializableBattlerTag {
   public override readonly tagType = BattlerTagType.AQUA_RING;
   constructor() {
@@ -1465,215 +1648,6 @@ export class DrowsyTag extends SerializableBattlerTag {
 
   getDescriptor(): string {
     return i18next.t("battlerTags:drowsyDesc");
-  }
-}
-
-export abstract class DamagingTrapTag extends DamagingBattlerTag(TrappedTag) {
-  public declare readonly tagType: TrappingBattlerTagType;
-
-  override get triggerMessageKey() {
-    return "battlerTags:damagingTrapLapse";
-  }
-
-  constructor(tagType: BattlerTagType, turnCount: number, sourceMove: MoveId, sourceId: number) {
-    super(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceMove, sourceId);
-  }
-
-  canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.getTag(TrappedTag) && !pokemon.getTag(BattlerTagType.SUBSTITUTE);
-  }
-
-  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    const shouldPersist = super.lapse(pokemon, lapseType);
-    if (!shouldPersist) {
-      return false;
-    }
-
-    this.damage(pokemon);
-    return true;
-  }
-}
-
-// TODO: Condense all these tags into 1 singular tag with a modified message func
-export class BindTag extends DamagingTrapTag {
-  public override readonly tagType = BattlerTagType.BIND;
-  protected override get animation() {
-    return CommonAnim.BIND as const;
-  }
-
-  constructor(turnCount: number, sourceId: number) {
-    super(BattlerTagType.BIND, turnCount, MoveId.BIND, sourceId);
-  }
-
-  getTrapMessage(pokemon: Pokemon): string {
-    const source = this.getSourcePokemon();
-    if (!source) {
-      console.warn(`Failed to get source Pokemon for BindTag getTrapMessage; id: ${this.sourceId}`);
-      return "ERROR - CHECK CONSOLE AND REPORT";
-    }
-
-    return i18next.t("battlerTags:bindOnTrap", {
-      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      sourcePokemonName: getPokemonNameWithAffix(source),
-      moveName: this.getMoveName(),
-    });
-  }
-}
-
-export class WrapTag extends DamagingTrapTag {
-  public override readonly tagType = BattlerTagType.WRAP;
-  constructor(turnCount: number, sourceId: number) {
-    super(BattlerTagType.WRAP, CommonAnim.WRAP, turnCount, MoveId.WRAP, sourceId);
-  }
-
-  getTrapMessage(pokemon: Pokemon): string {
-    const source = this.getSourcePokemon();
-    if (!source) {
-      console.warn(`Failed to get source Pokemon for WrapTag getTrapMessage; id: ${this.sourceId}`);
-      return "ERROR - CHECK CONSOLE AND REPORT";
-    }
-
-    return i18next.t("battlerTags:wrapOnTrap", {
-      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      sourcePokemonName: getPokemonNameWithAffix(source),
-      moveName: this.getMoveName(),
-    });
-  }
-}
-
-export abstract class VortexTrapTag extends DamagingTrapTag {
-  getTrapMessage(pokemon: Pokemon): string {
-    return i18next.t("battlerTags:vortexOnTrap", {
-      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-    });
-  }
-}
-
-export class FireSpinTag extends VortexTrapTag {
-  public override readonly tagType = BattlerTagType.FIRE_SPIN;
-  protected override get animation() {
-    return CommonAnim.FIRE_SPIN as const;
-  }
-
-  constructor(turnCount: number, sourceId: number) {
-    super(BattlerTagType.FIRE_SPIN, turnCount, MoveId.FIRE_SPIN, sourceId);
-  }
-}
-
-export class WhirlpoolTag extends VortexTrapTag {
-  public override readonly tagType = BattlerTagType.WHIRLPOOL;
-  protected override get animation() {
-    return CommonAnim.WHIRLPOOL as const;
-  }
-  constructor(turnCount: number, sourceId: number) {
-    super(BattlerTagType.WHIRLPOOL, turnCount, MoveId.WHIRLPOOL, sourceId);
-  }
-}
-
-export class ClampTag extends DamagingTrapTag {
-  public override readonly tagType = BattlerTagType.CLAMP;
-  protected override get animation() {
-    return CommonAnim.CLAMP as const;
-  }
-
-  constructor(turnCount: number, sourceId: number) {
-    super(BattlerTagType.CLAMP, turnCount, MoveId.CLAMP, sourceId);
-  }
-
-  getTrapMessage(pokemon: Pokemon): string {
-    const source = this.getSourcePokemon();
-    if (!source) {
-      console.warn(`Failed to get source Pokemon for ClampTag getTrapMessage; id: ${this.sourceId}`);
-      return "ERROR - CHECK CONSOLE AND REPORT ASAP";
-    }
-
-    return i18next.t("battlerTags:clampOnTrap", {
-      sourcePokemonNameWithAffix: getPokemonNameWithAffix(source),
-      pokemonName: getPokemonNameWithAffix(pokemon),
-    });
-  }
-}
-
-export class SandTombTag extends DamagingTrapTag {
-  public override readonly tagType = BattlerTagType.SAND_TOMB;
-  protected override get animation() {
-    return CommonAnim.CLAMP as const;
-  }
-  constructor(turnCount: number, sourceId: number) {
-    super(BattlerTagType.SAND_TOMB, CommonAnim.SAND_TOMB, turnCount, MoveId.SAND_TOMB, sourceId);
-  }
-
-  getTrapMessage(pokemon: Pokemon): string {
-    return i18next.t("battlerTags:sandTombOnTrap", {
-      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      moveName: this.getMoveName(),
-    });
-  }
-}
-
-export class MagmaStormTag extends DamagingTrapTag {
-  public override readonly tagType = BattlerTagType.MAGMA_STORM;
-  constructor(turnCount: number, sourceId: number) {
-    super(BattlerTagType.MAGMA_STORM, CommonAnim.MAGMA_STORM, turnCount, MoveId.MAGMA_STORM, sourceId);
-  }
-
-  getTrapMessage(pokemon: Pokemon): string {
-    return i18next.t("battlerTags:magmaStormOnTrap", {
-      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-    });
-  }
-}
-
-export class SnapTrapTag extends DamagingTrapTag {
-  public override readonly tagType = BattlerTagType.SNAP_TRAP;
-  constructor(turnCount: number, sourceId: number) {
-    super(BattlerTagType.SNAP_TRAP, CommonAnim.SNAP_TRAP, turnCount, MoveId.SNAP_TRAP, sourceId);
-  }
-
-  getTrapMessage(pokemon: Pokemon): string {
-    return i18next.t("battlerTags:snapTrapOnTrap", {
-      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-    });
-  }
-}
-
-export class ThunderCageTag extends DamagingTrapTag {
-  public override readonly tagType = BattlerTagType.THUNDER_CAGE;
-  constructor(turnCount: number, sourceId: number) {
-    super(BattlerTagType.THUNDER_CAGE, CommonAnim.THUNDER_CAGE, turnCount, MoveId.THUNDER_CAGE, sourceId);
-  }
-
-  getTrapMessage(pokemon: Pokemon): string {
-    const source = this.getSourcePokemon();
-    if (!source) {
-      console.warn(`Failed to get source Pokemon for ThunderCageTag getTrapMessage; id: ${this.sourceId}`);
-      return "ERROR - PLEASE REPORT ASAP";
-    }
-
-    return i18next.t("battlerTags:thunderCageOnTrap", {
-      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      sourcePokemonNameWithAffix: getPokemonNameWithAffix(source),
-    });
-  }
-}
-
-export class InfestationTag extends DamagingTrapTag {
-  public override readonly tagType = BattlerTagType.INFESTATION;
-  constructor(turnCount: number, sourceId: number) {
-    super(BattlerTagType.INFESTATION, CommonAnim.INFESTATION, turnCount, MoveId.INFESTATION, sourceId);
-  }
-
-  getTrapMessage(pokemon: Pokemon): string {
-    const source = this.getSourcePokemon();
-    if (!source) {
-      console.warn(`Failed to get source Pokemon for InfestationTag getTrapMessage; id: ${this.sourceId}`);
-      return "ERROR - CHECK CONSOLE AND REPORT";
-    }
-
-    return i18next.t("battlerTags:infestationOnTrap", {
-      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      sourcePokemonNameWithAffix: getPokemonNameWithAffix(source),
-    });
   }
 }
 
@@ -2344,12 +2318,7 @@ function DamagingBattlerTag<TagBase extends AbstractConstructor<SerializableBatt
     protected damage(pokemon: Pokemon): void {
       // TODO: Verify on cartridge whether Magic Guard blocking Curse-like DoT effects
       // sbows the animation and/or messaage
-      globalScene.phaseManager.unshiftNew(
-        "CommonAnimPhase",
-        pokemon.getBattlerIndex(),
-        pokemon.getBattlerIndex(),
-        this.animation,
-      );
+      globalScene.phaseManager.unshiftNew("CommonAnimPhase", pokemon.getBattlerIndex(), undefined, this.animation);
 
       const cancelled = new BooleanHolder(false);
       applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon, cancelled });
@@ -3751,7 +3720,7 @@ export function getBattlerTag(
     case BattlerTagType.DROWSY:
       return new DrowsyTag();
     case BattlerTagType.TRAPPED:
-      return new TrappedTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
+      return new GenericTrappedTag(turnCount, sourceMove, sourceId);
     case BattlerTagType.NO_RETREAT:
       return new NoRetreatTag(sourceId);
     case BattlerTagType.BIND:
@@ -3961,7 +3930,7 @@ export type BattlerTagTypeMap = {
   [BattlerTagType.INGRAIN]: IngrainTag;
   [BattlerTagType.AQUA_RING]: AquaRingTag;
   [BattlerTagType.DROWSY]: DrowsyTag;
-  [BattlerTagType.TRAPPED]: TrappedTag;
+  [BattlerTagType.TRAPPED]: GenericTrappedTag;
   [BattlerTagType.NO_RETREAT]: NoRetreatTag;
   [BattlerTagType.BIND]: BindTag;
   [BattlerTagType.WRAP]: WrapTag;

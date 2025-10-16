@@ -1366,6 +1366,7 @@ export abstract class MoveAttr {
    * The specified condition will be added to all {@linkcode Move}s with this attribute,
    * and moves **will fail upon use** if _at least 1_ of their attached conditions returns `false`.
    */
+  // TODO: Remove MoveCondition from this signature - it causes issues when tacking on conditions to a superclass
   getCondition(): MoveCondition | MoveConditionFunc | null {
     return null;
   }
@@ -6054,6 +6055,7 @@ export class GulpMissileTagAttr extends MoveEffectAttr {
 /**
  * Attribute to implement Jaw Lock's linked trapping effect between the user and target
  */
+// TODO: This should not be chance based
 export class JawLockAttr extends AddBattlerTagAttr {
   constructor() {
     super(BattlerTagType.TRAPPED);
@@ -6074,6 +6076,7 @@ export class JawLockAttr extends AddBattlerTagAttr {
       /**
        * Add the tag to both the user and the target.
        * The target's tag source is considered to be the user and vice versa
+       * so that both are removed if either one is forcibly removed from the field
        */
       return target.addTag(BattlerTagType.TRAPPED, 1, move.id, user.id)
           && user.addTag(BattlerTagType.TRAPPED, 1, move.id, target.id);
@@ -6098,8 +6101,13 @@ export class CurseAttr extends MoveEffectAttr {
     return this.getAttr(user).apply(user, target, move, _args);
   }
 
-  getCondition(): MoveConditionFunc | null {
-    return this.getAttr(user).getCondition();
+  getCondition(): MoveConditionFunc {
+    // NB: The bang looks worse than it is since `addBattlerTagAttr` always has a condition
+    // if `failOnOverlap` is set (which it is)
+    return (user, target, move) => {
+      const attr = this.getAttr(user);
+      return attr.getCondition()?.(user, target, move) ?? true;
+    }
   }
 }
 
@@ -6140,6 +6148,9 @@ class CurseNonGhostAttr extends MoveEffectAttr {
     globalScene.phaseManager.unshiftNew("StatStageChangePhase", user.getBattlerIndex(), true, [ Stat.SPD ], -1);
     return true;
   }
+
+  // needed to show TS that this is null by default
+  override getCondition(): null {return null};
 }
 
 /**

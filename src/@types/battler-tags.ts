@@ -36,6 +36,7 @@ export type FormBlockDamageBattlerTagType = BattlerTagType.ICE_FACE | BattlerTag
  * Subset of {@linkcode BattlerTagType}s that are related to trapping effects.
  */
 export type TrappingBattlerTagType =
+  | BattlerTagType.TRAPPED
   | BattlerTagType.BIND
   | BattlerTagType.WRAP
   | BattlerTagType.FIRE_SPIN
