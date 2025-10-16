@@ -189,8 +189,8 @@ export class BattlerTag implements BaseBattlerTag {
     return false;
   }
 
-  getMoveName(): string | null {
-    return this.sourceMove ? allMoves[this.sourceMove].name : null;
+  getMoveName(): string | undefined {
+    return this.sourceMove ? allMoves[this.sourceMove]?.name : undefined;
   }
 
   /**
@@ -1178,60 +1178,6 @@ export class PowderTag extends BattlerTag {
     globalScene.phaseManager.queueMessage(i18next.t("battlerTags:powderLapse", { moveName: move.name }));
 
     return true;
-  }
-}
-
-export class NightmareTag extends SerializableBattlerTag {
-  public override readonly tagType = BattlerTagType.NIGHTMARE;
-  constructor() {
-    super(BattlerTagType.NIGHTMARE, BattlerTagLapseType.TURN_END, 1, MoveId.NIGHTMARE);
-  }
-
-  onAdd(pokemon: Pokemon): void {
-    super.onAdd(pokemon);
-
-    globalScene.phaseManager.queueMessage(
-      i18next.t("battlerTags:nightmareOnAdd", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      }),
-    );
-  }
-
-  onOverlap(pokemon: Pokemon): void {
-    super.onOverlap(pokemon);
-
-    globalScene.phaseManager.queueMessage(
-      i18next.t("battlerTags:nightmareOnOverlap", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      }),
-    );
-  }
-
-  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
-
-    if (ret) {
-      const phaseManager = globalScene.phaseManager;
-      phaseManager.queueMessage(
-        i18next.t("battlerTags:nightmareLapse", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        }),
-      );
-      phaseManager.unshiftNew("CommonAnimPhase", pokemon.getBattlerIndex(), undefined, CommonAnim.CURSE); // TODO: Update animation type
-
-      const cancelled = new BooleanHolder(false);
-      applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon, cancelled });
-
-      if (!cancelled.value) {
-        pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 4), { result: HitResult.INDIRECT });
-      }
-    }
-
-    return ret;
-  }
-
-  getDescriptor(): string {
-    return i18next.t("battlerTags:nightmareDesc");
   }
 }
 
@@ -2375,7 +2321,7 @@ export class CritBoostTag extends SerializableBattlerTag {
  */
 function DamagingBattlerTag<TagBase extends AbstractConstructor<SerializableBattlerTag>>(Base: TagBase) {
   abstract class DoTTag extends Base {
-    /** The `CommonAnim` played upon this Tag dealing damage. */
+    /** The `CommonAnim` to play upon this Tag dealing damage. */
     protected abstract get animation(): CommonAnim;
 
     /**
@@ -2430,11 +2376,13 @@ function DamagingBattlerTag<TagBase extends AbstractConstructor<SerializableBatt
 
 /**
  * Abstract class to damage the attached Pokemon at the end of each turn.
+ *
+ * Triggers repeatedly until removed by an effect or move.
  */
 abstract class DamageOverTimeTag extends DamagingBattlerTag(SerializableBattlerTag) {
   abstract override readonly tagType: DamageOverTimeTagType;
-  constructor(tagType: DamageOverTimeTagType, sourceId: number) {
-    super(tagType, BattlerTagLapseType.TURN_END, 1, undefined, sourceId, true);
+  constructor(tagType: DamageOverTimeTagType) {
+    super(tagType, BattlerTagLapseType.TURN_END, 1, undefined, undefined, true);
   }
 
   // TODO: Move this functionality into the base class - so many tags have basic `onAdd` messages
@@ -2470,35 +2418,36 @@ export type { DamageOverTimeTag };
 
 export class SaltCuredTag extends DamageOverTimeTag {
   public override readonly tagType = BattlerTagType.SALT_CURED;
-  constructor(sourceId: number) {
-    super(BattlerTagType.SALT_CURED, sourceId);
+  constructor() {
+    super(BattlerTagType.SALT_CURED);
   }
 
-  override get animation() {
-    return CommonAnim.SALT_CURE;
+  protected override get animation() {
+    return CommonAnim.SALT_CURE as const;
   }
 
   override get onAddMessageKey() {
-    return "saltCuredOnAdd";
+    return "battlerTags:saltCuredOnAdd";
   }
 
   override get triggerMessageKey() {
-    return "cursedLapse";
+    return "battlerTags:saltCuredLapse";
   }
 
-  override getDamageHpRatio() {
-    return 0.25;
+  override getDamageHpRatio(pokemon: Pokemon): number {
+    const waterOrSteel = pokemon.getTypes(true, true).some(t => t === PokemonType.WATER || t === PokemonType.STEEL);
+    return waterOrSteel ? 0.25 : 0.125;
   }
 }
 
 export class CursedTag extends DamageOverTimeTag {
   public override readonly tagType = BattlerTagType.CURSED;
-  constructor(sourceId: number) {
-    super(BattlerTagType.CURSED, sourceId);
+  constructor() {
+    super(BattlerTagType.CURSED);
   }
 
-  override get animation() {
-    return CommonAnim.CURSE;
+  protected override get animation() {
+    return CommonAnim.CURSE as const;
   }
 
   // Disable on add message due to being handled in the move itself
@@ -2507,11 +2456,49 @@ export class CursedTag extends DamageOverTimeTag {
   }
 
   override get triggerMessageKey() {
-    return "cursedLapse";
+    return "battlerTags:cursedLapse";
   }
 
   override getDamageHpRatio() {
-    return 0.25;
+    return 0.25 as const;
+  }
+}
+
+export class NightmareTag extends DamageOverTimeTag {
+  public override readonly tagType = BattlerTagType.NIGHTMARE;
+  constructor() {
+    super(BattlerTagType.NIGHTMARE);
+  }
+
+  // TODO: Update the animation to not re-use Curse's anim
+  protected override get animation() {
+    return CommonAnim.CURSE as const;
+  }
+
+  override get onAddMessageKey() {
+    return "battlerTags:nightmareOnAdd";
+  }
+
+  override get triggerMessageKey() {
+    return "battlerTags:nightmareLapse";
+  }
+
+  override getDamageHpRatio() {
+    return 0.25 as const;
+  }
+
+  override onOverlap(pokemon: Pokemon): void {
+    super.onOverlap(pokemon);
+
+    globalScene.phaseManager.queueMessage(
+      i18next.t("battlerTags:nightmareOnOverlap", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      }),
+    );
+  }
+
+  override getDescriptor(): string {
+    return i18next.t("battlerTags:nightmareDesc");
   }
 }
 
