@@ -640,6 +640,15 @@ export abstract class TrappedTag extends SerializableBattlerTag {
     super(tagType, lapseType, turnCount, sourceMove, sourceId, true);
   }
 
+  /**
+   * Return the i18n locales key that will be shown when this tag is added. \
+   * Within the text, `{{pokemonNameWithAffix}}` will be populated with the name of the
+   * {@linkcode Pokemon} to whom this Tag is attached.
+   * @remarks
+   * If this evaluates to an empty string, no message will be displayed.
+   */
+  protected abstract get onAddMessageKey(): string;
+
   canAdd(pokemon: Pokemon): boolean {
     // Trapping effects fail if the target has ANY prior trapping effect at all
     if (pokemon.getTag(TrappedTag)) {
@@ -681,8 +690,6 @@ export abstract class TrappedTag extends SerializableBattlerTag {
       }),
     );
   }
-
-  protected abstract get onAddMessageKey(): string;
 
   getDescriptor(): string {
     return i18next.t("battlerTags:trappedDesc");
