@@ -220,7 +220,7 @@ export const tmPoolTiers: TmPoolTiers = {
   [MoveId.AERIAL_ACE]: ModifierTier.GREAT,
   [MoveId.ICICLE_SPEAR]: ModifierTier.GREAT,
   [MoveId.IRON_DEFENSE]: ModifierTier.GREAT,
-  [MoveId.DRAGON_CLAW]: ModifierTier.ULTRA,
+  [MoveId.DRAGON_CLAW]: ModifierTier.GREAT,
   [MoveId.FRENZY_PLANT]: ModifierTier.ULTRA,
   [MoveId.BULK_UP]: ModifierTier.GREAT,
   [MoveId.BOUNCE]: ModifierTier.GREAT,
