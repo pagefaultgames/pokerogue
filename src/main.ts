@@ -140,6 +140,3 @@ fetch("/manifest.json")
   });
 
 export default game;
-
-let MakeTSCScreamSoICanTestTheWorkflow: number = 12345;
-MakeTSCScreamSoICanTestTheWorkflow = "foobarbazquxquux"
