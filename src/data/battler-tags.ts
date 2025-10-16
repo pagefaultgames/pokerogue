@@ -1468,22 +1468,15 @@ export class DrowsyTag extends SerializableBattlerTag {
   }
 }
 
-// TODO:
-export abstract class DamagingTrapTag extends TrappedTag {
+export abstract class DamagingTrapTag extends DamagingBattlerTag(TrappedTag) {
   public declare readonly tagType: TrappingBattlerTagType;
-  /** The animation to play during the damage sequence */
-  #commonAnim: CommonAnim;
 
-  constructor(
-    tagType: BattlerTagType,
-    commonAnim: CommonAnim,
-    turnCount: number,
-    sourceMove: MoveId,
-    sourceId: number,
-  ) {
+  override get triggerMessageKey() {
+    return "battlerTags:damagingTrapLapse";
+  }
+
+  constructor(tagType: BattlerTagType, turnCount: number, sourceMove: MoveId, sourceId: number) {
     super(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceMove, sourceId);
-
-    this.#commonAnim = commonAnim;
   }
 
   canAdd(pokemon: Pokemon): boolean {
@@ -1491,35 +1484,25 @@ export abstract class DamagingTrapTag extends TrappedTag {
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    const ret = super.lapse(pokemon, lapseType);
-
-    if (ret) {
-      const phaseManager = globalScene.phaseManager;
-      phaseManager.queueMessage(
-        i18next.t("battlerTags:damagingTrapLapse", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          moveName: this.getMoveName(),
-        }),
-      );
-      phaseManager.unshiftNew("CommonAnimPhase", pokemon.getBattlerIndex(), undefined, this.#commonAnim);
-
-      const cancelled = new BooleanHolder(false);
-      applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon, cancelled });
-
-      if (!cancelled.value) {
-        pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 8), { result: HitResult.INDIRECT });
-      }
+    const shouldPersist = super.lapse(pokemon, lapseType);
+    if (!shouldPersist) {
+      return false;
     }
 
-    return ret;
+    this.damage(pokemon);
+    return true;
   }
 }
 
 // TODO: Condense all these tags into 1 singular tag with a modified message func
 export class BindTag extends DamagingTrapTag {
   public override readonly tagType = BattlerTagType.BIND;
+  protected override get animation() {
+    return CommonAnim.BIND as const;
+  }
+
   constructor(turnCount: number, sourceId: number) {
-    super(BattlerTagType.BIND, CommonAnim.BIND, turnCount, MoveId.BIND, sourceId);
+    super(BattlerTagType.BIND, turnCount, MoveId.BIND, sourceId);
   }
 
   getTrapMessage(pokemon: Pokemon): string {
@@ -1568,22 +1551,33 @@ export abstract class VortexTrapTag extends DamagingTrapTag {
 
 export class FireSpinTag extends VortexTrapTag {
   public override readonly tagType = BattlerTagType.FIRE_SPIN;
+  protected override get animation() {
+    return CommonAnim.FIRE_SPIN as const;
+  }
+
   constructor(turnCount: number, sourceId: number) {
-    super(BattlerTagType.FIRE_SPIN, CommonAnim.FIRE_SPIN, turnCount, MoveId.FIRE_SPIN, sourceId);
+    super(BattlerTagType.FIRE_SPIN, turnCount, MoveId.FIRE_SPIN, sourceId);
   }
 }
 
 export class WhirlpoolTag extends VortexTrapTag {
   public override readonly tagType = BattlerTagType.WHIRLPOOL;
+  protected override get animation() {
+    return CommonAnim.WHIRLPOOL as const;
+  }
   constructor(turnCount: number, sourceId: number) {
-    super(BattlerTagType.WHIRLPOOL, CommonAnim.WHIRLPOOL, turnCount, MoveId.WHIRLPOOL, sourceId);
+    super(BattlerTagType.WHIRLPOOL, turnCount, MoveId.WHIRLPOOL, sourceId);
   }
 }
 
 export class ClampTag extends DamagingTrapTag {
   public override readonly tagType = BattlerTagType.CLAMP;
+  protected override get animation() {
+    return CommonAnim.CLAMP as const;
+  }
+
   constructor(turnCount: number, sourceId: number) {
-    super(BattlerTagType.CLAMP, CommonAnim.CLAMP, turnCount, MoveId.CLAMP, sourceId);
+    super(BattlerTagType.CLAMP, turnCount, MoveId.CLAMP, sourceId);
   }
 
   getTrapMessage(pokemon: Pokemon): string {
@@ -1602,6 +1596,9 @@ export class ClampTag extends DamagingTrapTag {
 
 export class SandTombTag extends DamagingTrapTag {
   public override readonly tagType = BattlerTagType.SAND_TOMB;
+  protected override get animation() {
+    return CommonAnim.CLAMP as const;
+  }
   constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.SAND_TOMB, CommonAnim.SAND_TOMB, turnCount, MoveId.SAND_TOMB, sourceId);
   }
@@ -3839,9 +3836,9 @@ export function getBattlerTag(
     case BattlerTagType.DOUBLE_SHOCKED:
       return new RemovedTypeTag(tagType, BattlerTagLapseType.CUSTOM, sourceMove);
     case BattlerTagType.SALT_CURED:
-      return new SaltCuredTag(sourceId);
+      return new SaltCuredTag();
     case BattlerTagType.CURSED:
-      return new CursedTag(sourceId);
+      return new CursedTag();
     case BattlerTagType.CHARGED:
       return new TypeBoostTag(tagType, sourceMove, PokemonType.ELECTRIC, 2, true);
     case BattlerTagType.FLOATING:
