@@ -6102,8 +6102,6 @@ export class CurseAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    // NB: The bang looks worse than it is since `addBattlerTagAttr` always has a condition
-    // if `failOnOverlap` is set (which it is)
     return (user, target, move) => {
       const attr = this.getAttr(user);
       return attr.getCondition()?.(user, target, move) ?? true;
@@ -9101,8 +9099,7 @@ export function initMoves() {
       .condition(userSleptOrComatoseCondition, 3)
       .soundBased(),
     new StatusMove(MoveId.CURSE, PokemonType.GHOST, -1, 10, -1, 0, 2)
-      .attr(CurseGhostAttr)
-      .attr(CurseNonGhostAttr)
+      .attr(CurseAttr)
       .ignoresSubstitute()
       .ignoresProtect()
       .target(MoveTarget.CURSE),
