@@ -2358,8 +2358,8 @@ function DamagingBattlerTag<TagBase extends AbstractConstructor<SerializableBatt
  */
 abstract class DamageOverTimeTag extends DamagingBattlerTag(SerializableBattlerTag) {
   abstract override readonly tagType: DamageOverTimeTagType;
-  constructor(tagType: DamageOverTimeTagType) {
-    super(tagType, BattlerTagLapseType.TURN_END, 1, undefined, undefined, true);
+  constructor(tagType: DamageOverTimeTagType, isBatonPassable = false) {
+    super(tagType, BattlerTagLapseType.TURN_END, 1, undefined, undefined, isBatonPassable);
   }
 
   // TODO: Move this functionality into the base class - so many tags have basic `onAdd` messages
@@ -2420,7 +2420,7 @@ export class SaltCuredTag extends DamageOverTimeTag {
 export class CursedTag extends DamageOverTimeTag {
   public override readonly tagType = BattlerTagType.CURSED;
   constructor() {
-    super(BattlerTagType.CURSED);
+    super(BattlerTagType.CURSED, true);
   }
 
   protected override get animation() {
