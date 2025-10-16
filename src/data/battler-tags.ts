@@ -671,6 +671,10 @@ export abstract class TrappedTag extends SerializableBattlerTag {
 
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
+
+    if (!this.onAddMessageKey) {
+      return;
+    }
     const source = this.getSourcePokemon();
     globalScene.phaseManager.queueMessage(
       i18next.t(this.onAddMessageKey, {
