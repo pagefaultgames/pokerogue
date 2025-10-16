@@ -2,13 +2,12 @@
  * `BattlerTag`s are used to represent semi-persistent effects that can be attached to a Pokemon.
  * 
  * During serialization, a new blank tag object is created, before its `loadTag` is called
- * with the object that was serialized.
- *
- * This means it is straightforward to avoid serializing fields - ones not set in the constructor or the tag's 
- * `loadTag` method will not be serialized.
+ * with the object that was serialized. \
+ * This makes it fairly straightforward to avoid serializing fields — anything not set in the class constructor 
+ * or the tag's `loadTag` method will not be serialized.
  *
  * Any battler tag that can persist across waves **must extend `SerializableBattlerTag`** in its class definition signature.
- * (In most cases, the deciding factor is whether it can last >1 turn in battle.)
+ * (In most cases, this corresponds to it being able to last multiple turns in battle.)
  *
  * `SerializableBattlerTag`s have strict requirements for their fields:
  * Properties that are not necessary to reconstruct the tag **must not be serialized** 
