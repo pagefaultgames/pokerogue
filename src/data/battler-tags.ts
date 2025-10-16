@@ -1,41 +1,40 @@
 /**
- * `BattlerTag`s are used to represent semi-persistent effects that can be attached to a Pokemon.
+ * `BattlerTag`s are used to represent semi-persistent effects attached to individual Pokemon.
  *
  * During serialization, a new blank tag object is created, before its `loadTag` is called
  * with the object that was serialized. \
  * This makes it fairly straightforward to avoid serializing fields — anything not set in the class constructor
  * or the tag's `loadTag` method will not be serialized.
  *
- * Any battler tag that can persist across waves **must extend `SerializableBattlerTag`** in its class definition signature.
- * (In most cases, this corresponds to it being able to last multiple turns in battle.)
+ * Any battler tag that can persist across waves (i.e. lasts more than 1 turn in battle) 
+ * **must extend `SerializableBattlerTag`** in its class definition signature.
  *
  * `SerializableBattlerTag`s have strict requirements for their fields:
- * Properties that are not necessary to reconstruct the tag **must not be serialized**
- * (such as by using readonly {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_elements | private elements}).
- * If access to the property is needed outside of the class, then
- * a getter (and/or a setter) may be used instead.
+ * - Properties that are not necessary to reconstruct the tag **must not be serialized**
+ *   (such as by using readonly {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_elements | private elements}).
+ *   If access to the property is needed outside of the class, then
+ *   a getter (and/or a setter) may be used instead.
  *
- * If a property that is intended to be "private" should be serialized, it **must**
- * be declared as `public readonly` instead.
- * Then, in the `loadTag` method (or any internal method that needs to adjust the property),
- * use a cast to `Mutable<this>` (such as `(this as Mutable<this>).propertyName = value`).
- * These rules ensure that Typescript is aware of the shape of the serialized version of the class.
+ * - If a property that is intended to be "private" should be serialized, it **must**
+ *   be declared as `public readonly` instead.
+ *   Then, in the `loadTag` method (or any internal method that needs to adjust the property),
+ *   use a cast to `Mutable<this>` (such as `(this as Mutable<this>).propertyName = value`).
+ *   (These rules ensure that Typescript is aware of the shape of the serialized version of the class.)
  *
- * If any new serializable fields _are_ added, then the class **must** override the
- * `loadTag` method to set the new fields.
- * Its signature must match the example below:
- * ```ts
- * class ExampleTag extends SerializableBattlerTag {
- *   // Example, if we add 2 new fields that should be serialized:
- *   public a: string;
- *   public b: number;
- *   // Then we must also define a loadTag method with one of the following signatures:
- *   public override loadTag(source: BaseBattlerTag & Pick<ExampleTag, "tagType" | "a" | "b"): void;
- *   public override loadTag<const T extends this>(source: BaseBattlerTag & Pick<T, "tagType" | "a" | "b">): void;
- * }
- * ```
- * Notes
- * - If the class has any subclasses, then the second form of `loadTag` *must* be used to allow for subclassing.
+ * - If any new serializable fields _are_ added, then the class **must** override the
+ *   `loadTag` method to set the new fields.
+ *   Its signature must match the example below:
+ *   ```ts
+ *   class ExampleTag extends SerializableBattlerTag {
+ *     // Example, if we add 2 new fields that should be serialized:
+ *     public a: string;
+ *     public b: number;
+ *     // Then we must also define a loadTag method with one of the following signatures.
+ *     // Note that if any subclasses are present, the 2nd version MUST be used.
+ *     public override loadTag(source: BaseBattlerTag & Pick<ExampleTag, "tagType" | "a" | "b"): void;
+ *     public override loadTag<const T extends this>(source: BaseBattlerTag & Pick<T, "tagType" | "a" | "b">): void;
+ *   }
+ *   ```
  * @module
  */
 
