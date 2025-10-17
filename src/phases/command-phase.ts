@@ -355,13 +355,13 @@ export class CommandPhase extends FieldPhase {
    */
   private checkCanUseBall(): boolean {
     const { arena, currentBattle, gameData, gameMode } = globalScene;
-    const { battleType } = currentBattle;
+    const { battleType, waveIndex } = currentBattle;
     const { biomeType } = arena;
     const { isClassic, isEndless, isDaily } = gameMode;
     const { dexData } = gameData;
 
-    const isClassicFinalBoss = gameMode.isBattleClassicFinalBoss(globalScene.currentBattle.waveIndex);
-    const isEndlessMinorBoss = gameMode.isEndlessMinorBoss(globalScene.currentBattle.waveIndex);
+    const isClassicFinalBoss = gameMode.isBattleClassicFinalBoss(waveIndex);
+    const isEndlessMinorBoss = gameMode.isEndlessMinorBoss(waveIndex);
     const isFullFreshStart = gameMode.isFullFreshStartChallenge();
     const someUncaughtSpeciesOnField = globalScene
       .getEnemyField()

@@ -2427,7 +2427,8 @@ export class CursedTag extends DamageOverTimeTag {
     return CommonAnim.CURSE as const;
   }
 
-  // Disable on add message due to being handled in the move itself
+  // Disable on add message due to being handled in the move itself.
+  // This is done primarily to reduce save data size due to not needing to keep a reference to `sourceId`
   override get onAddMessageKey() {
     return "";
   }

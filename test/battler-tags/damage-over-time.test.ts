@@ -7,7 +7,7 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import type { PlayerPokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
-import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Battler Tags - Damage Over Time", () => {
   let phaserGame: Phaser.Game;
@@ -49,7 +49,14 @@ describe("Battler Tags - Damage Over Time", () => {
   describe.each([
     { tagType: BattlerTagType.NIGHTMARE, name: "Nightmare" },
     { tagType: BattlerTagType.SALT_CURED, name: "Salt Cure" },
-    { tagType: BattlerTagType.CURSED, name: "Nightmare" },
+    { tagType: BattlerTagType.CURSED, name: "Curse" },
+    { tagType: BattlerTagType.FIRE_SPIN, name: "Fire Spin" },
+    { tagType: BattlerTagType.WHIRLPOOL, name: "Whirlpool" },
+    { tagType: BattlerTagType.MAGMA_STORM, name: "Magma Storm" },
+    { tagType: BattlerTagType.THUNDER_CAGE, name: "Thunder Cage" },
+    { tagType: BattlerTagType.CLAMP, name: "Clamp" },
+    { tagType: BattlerTagType.BIND, name: "Bind" },
+    { tagType: BattlerTagType.WRAP, name: "Wrap" },
   ])("$name", ({ tagType }) => {
     it("should deal persistent max HP-based damage each turn and queue animations", () => {
       feebas.addTag(tagType);
@@ -71,7 +78,7 @@ describe("Battler Tags - Damage Over Time", () => {
   describe("Salt Cure", () => {
     let saltTag: SaltCuredTag;
 
-    beforeAll(() => {
+    beforeEach(() => {
       feebas.addTag(BattlerTagType.SALT_CURED);
       expect(feebas).toHaveBattlerTag(BattlerTagType.SALT_CURED);
 
@@ -83,7 +90,7 @@ describe("Battler Tags - Damage Over Time", () => {
       { name: "Steel", types: [PokemonType.STEEL], dmgPercent: 0.25 },
       { name: "Water", types: [PokemonType.WATER], dmgPercent: 0.25 },
       { name: "neither Water nor Steel", types: [PokemonType.GRASS], dmgPercent: 0.125 },
-    ])("should deal $dmgPercent% to a $name-type Pokemon", ({ dmgPercent, types }) => {
+    ])("should deal $dmgPercent% of max HP to a $name-type Pokemon", ({ dmgPercent, types }) => {
       feebas.summonData.types = types;
 
       const percent = saltTag.getDamageHpRatio(feebas);
