@@ -1554,6 +1554,7 @@ export class PartyUiHandler extends MessageUiHandler {
       case PartyUiMode.CHECK:
         this.addCommonOptions(pokemon);
         if (globalScene.phaseManager.getCurrentPhase().is("SelectModifierPhase")) {
+          this.options.push(PartyOption.RELEASE);
           const formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
           for (let i = 0; i < formChangeItemModifiers.length; i++) {
             this.options.push(PartyOption.FORM_CHANGE_ITEM + i);
