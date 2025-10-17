@@ -1515,11 +1515,8 @@ export class PartyUiHandler extends MessageUiHandler {
           );
         }
         this.addCommonOptions(pokemon);
-        if (this.partyUiMode === PartyUiMode.SWITCH) {
-          if (pokemon.isFusion()) {
-            this.options.push(PartyOption.UNSPLICE);
-          }
-          this.options.push(PartyOption.RELEASE);
+        if (this.partyUiMode === PartyUiMode.SWITCH && pokemon.isFusion()) {
+          this.options.push(PartyOption.UNSPLICE);
         }
         break;
       case PartyUiMode.REVIVAL_BLESSING:
