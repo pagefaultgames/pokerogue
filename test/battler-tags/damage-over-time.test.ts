@@ -59,7 +59,7 @@ describe("Battler Tags - Damage Over Time", () => {
     { tagType: BattlerTagType.WRAP, name: "Wrap" },
   ])("$name", ({ tagType }) => {
     it("should deal persistent max HP-based damage each turn and queue animations", () => {
-      feebas.addTag(tagType);
+      feebas.addTag(tagType, 0, undefined, game.field.getEnemyPokemon().id);
       expect(feebas).toHaveBattlerTag(tagType);
 
       const dotTag = feebas.getTag(tagType) as DamageOverTimeTag;
@@ -68,7 +68,7 @@ describe("Battler Tags - Damage Over Time", () => {
 
       feebas.lapseTag(tagType, BattlerTagLapseType.TURN_END);
 
-      expect(feebas.getHpRatio()).toBe(1 - dmgPercent);
+      expect(feebas.getHpRatio(true)).toBeCloseTo(1 - dmgPercent);
       expect(
         game.scene.phaseManager.hasPhaseOfType("CommonAnimPhase", c => c.getPokemon() === feebas && c["anim"] === anim),
       ).toBe(true);
@@ -79,22 +79,22 @@ describe("Battler Tags - Damage Over Time", () => {
     let saltTag: SaltCuredTag;
 
     beforeEach(() => {
-      feebas.addTag(BattlerTagType.SALT_CURED);
+      feebas.addTag(BattlerTagType.SALT_CURED, 0, undefined, game.field.getEnemyPokemon().id);
       expect(feebas).toHaveBattlerTag(BattlerTagType.SALT_CURED);
 
       saltTag = feebas.getTag(BattlerTagType.SALT_CURED) as SaltCuredTag;
     });
 
     it.each([
-      { name: "dual Water/Steel", types: [PokemonType.WATER, PokemonType.STEEL], dmgPercent: 0.25 },
-      { name: "Steel", types: [PokemonType.STEEL], dmgPercent: 0.25 },
-      { name: "Water", types: [PokemonType.WATER], dmgPercent: 0.25 },
-      { name: "neither Water nor Steel", types: [PokemonType.GRASS], dmgPercent: 0.125 },
+      { name: "dual Water/Steel", types: [PokemonType.WATER, PokemonType.STEEL], dmgPercent: 25 },
+      { name: "Steel", types: [PokemonType.STEEL], dmgPercent: 25 },
+      { name: "Water", types: [PokemonType.WATER], dmgPercent: 25 },
+      { name: "neither Water nor Steel", types: [PokemonType.GRASS], dmgPercent: 12.5 },
     ])("should deal $dmgPercent% of max HP to a $name-type Pokemon", ({ dmgPercent, types }) => {
       feebas.summonData.types = types;
 
       const percent = saltTag.getDamageHpRatio(feebas);
-      expect(percent).toBe(dmgPercent);
+      expect(percent).toBe(dmgPercent / 100);
     });
   });
 });

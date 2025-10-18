@@ -657,11 +657,11 @@ export abstract class TrappedTag extends SerializableBattlerTag {
 
     const source = this.getSourcePokemon();
     if (!source) {
-      console.warn(`Failed to get source Pokemon for TrappedTag canAdd; id: ${this.sourceId}`);
+      console.warn(`Failed to get source Pokemon for TrappedTag canAdd substitute check!\nSource ID: ${this.sourceId}`);
       return false;
     }
 
-    // TODO: Move this to the move attribute
+    // TODO: This is really weird and probably shouldn't occur here
     if (this.sourceMove && allMoves[this.sourceMove]?.hitsSubstitute(source, pokemon)) {
       return false;
     }
