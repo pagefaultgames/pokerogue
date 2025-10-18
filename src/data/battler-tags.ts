@@ -6,33 +6,44 @@
  * This makes it fairly straightforward to avoid serializing fields — anything not set in the class constructor
  * or the tag's `loadTag` method will not be serialized.
  *
- * Any battler tag that can persist across waves (i.e. lasts more than 1 turn in battle) 
+ * Any battler tag that can persist across waves (meaning it lasts longer than 1 turn)
  * **must extend `SerializableBattlerTag`** in its class definition signature.
  *
  * `SerializableBattlerTag`s have strict requirements for their fields:
  * - Properties that are not necessary to reconstruct the tag **must not be serialized**
- *   (such as by using readonly {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_elements | private elements}).
- *   If access to the property is needed outside of the class, then
- *   a getter (and/or a setter) may be used instead.
+ *   This can be accomplished by using {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_elements | private elements}
+ *   and/or {@link https://www.typescriptlang.org/docs/handbook/2/classes.html#getters--setters | `getters`}. \
+ *   Note that `getter`s do not need to be tied to a class field, for example:
+ *   ```ts
+ *   class Example {
+ *     public get thing(): number {
+ *       return 5;
+ *     }
+ *   }
+ *   ```
  *
  * - If a property that is intended to be "private" should be serialized, it **must**
  *   be declared as `public readonly` instead.
  *   Then, in the `loadTag` method (or any internal method that needs to adjust the property),
- *   use a cast to `Mutable<this>` (such as `(this as Mutable<this>).propertyName = value`).
- *   (These rules ensure that Typescript is aware of the shape of the serialized version of the class.)
+ *   use a cast to `Mutable<this>` (such as `(this as Mutable<this>).propertyName = value`). \
+ *   This ensures that Typescript is aware of the shape of the serialized version of the class.
  *
  * - If any new serializable fields _are_ added, then the class **must** override the
- *   `loadTag` method to set the new fields.
+ *   `loadTag` method to set the new fields. \
  *   Its signature must match the example below:
  *   ```ts
  *   class ExampleTag extends SerializableBattlerTag {
  *     // Example, if we add 2 new fields that should be serialized:
  *     public a: string;
  *     public b: number;
- *     // Then we must also define a loadTag method with one of the following signatures.
- *     // Note that if any subclasses are present, the 2nd version MUST be used.
+ *     // Then we must also define a loadTag method with one of the following signatures:
+ *     // This signature should be used if the class has no subclasses:
  *     public override loadTag(source: BaseBattlerTag & Pick<ExampleTag, "tagType" | "a" | "b"): void;
- *     public override loadTag<const T extends this>(source: BaseBattlerTag & Pick<T, "tagType" | "a" | "b">): void;
+ *     // This signature should be used if the class has any subclasses:
+ *     public override loadTag<const T extends this>(source: BaseBattlerTag & Pick<T, "tagType" | "a" | "b">): void
+ *       this.a = source.a;
+ *       this.b = source.b;
+ *     }
  *   }
  *   ```
  * @module
