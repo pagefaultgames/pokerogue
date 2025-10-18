@@ -2539,11 +2539,20 @@ export class HitHealAttr extends MoveEffectAttr {
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (target.hasAbilityWithAttr("ReverseDrainAbAttr")) {
+    const healAmount = this.getHealAmount(user, target);
+
+    // Check for Liquid Ooze reversing our healing
+    const reverseDrained = new BooleanHolder(false);
+    applyAbAttrs("ReverseDrainAbAttr", {
+      pokemon: target,
+      opponent: user,
+      cancelled: reverseDrained,
+      healAmount,
+    });
+    if (reverseDrained.value) {
       return false;
     }
 
-    const healAmount = this.getHealAmount(user, target);
     let message: string;
     if (this.healStat !== null) {
       message = i18next.t("battle:drainMessage", { pokemonName: getPokemonNameWithAffix(target) });

@@ -572,7 +572,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
   //#endregion
 
   // TODO: Copy the relevant variables from the Pokemon to avoid improper updates when multiple
-  // damage instances occur without calling 
+  // damage instances occur without calling this
   async updateInfo(pokemon: Pokemon, instant?: boolean): Promise<void> {
     // TODO: Is this fallback needed?
     if (!globalScene) {
@@ -597,7 +597,6 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
 
     if (this.lastHp !== pokemon.hp || this.lastMaxHp !== pokemon.getMaxHp()) {
       this.updatePokemonHp(pokemon, instant);
-      return;
     }
 
     if (!this.player && this.lastLevel !== pokemon.level) {
@@ -616,7 +615,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     this.shinyIcon.setVisible(pokemon.isShiny(true));
 
     const doubleShiny = isFusion && pokemon.shiny && pokemon.fusionShiny;
-    const baseVariant = doubleShiny ?  pokemon.variant : pokemon.getVariant(true);
+    const baseVariant = doubleShiny ? pokemon.variant : pokemon.getVariant(true);
     this.shinyIcon.setTint(getVariantTint(baseVariant));
 
     this.fusionShinyIcon.setVisible(doubleShiny).setPosition(this.shinyIcon.x, this.shinyIcon.y);

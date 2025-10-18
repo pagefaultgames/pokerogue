@@ -1052,7 +1052,7 @@ export class PostDefendAbAttr extends AbAttr {
 
 interface ReverseDrainAbAttrParams extends AbAttrParamsWithCancel {
   /** The amount of healing done, before applying multipliers from Healing Charm. */
-  healing: number;
+  healAmount: number;
   /** The opponent that initiated the healing effect. */
   opponent: Pokemon;
   /**
@@ -1072,7 +1072,7 @@ export class ReverseDrainAbAttr extends CancelInteractionAbAttr {
    * Examples include: Absorb, Draining Kiss, Bitter Blade, etc.
    * Also displays a message to show this ability was activated.
    */
-  override apply({ simulated, healing, opponent, pokemon, cancelled }: ReverseDrainAbAttrParams): void {
+  override apply({ simulated, healAmount, opponent, pokemon, cancelled }: ReverseDrainAbAttrParams): void {
     if (simulated) {
       return;
     }
@@ -1081,6 +1081,7 @@ export class ReverseDrainAbAttr extends CancelInteractionAbAttr {
 
     const indirectImmune = new BooleanHolder(false);
     applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon: opponent, cancelled, simulated });
+    // TODO: Does this show a message?
     if (indirectImmune.value) {
       return;
     }
@@ -1089,7 +1090,7 @@ export class ReverseDrainAbAttr extends CancelInteractionAbAttr {
     const healMulti = new NumberHolder(1);
     globalScene.applyModifiers(HealingBoosterModifier, pokemon.isPlayer(), healMulti);
     // Liquid ooze dmg rounds TOWARDS 0, not down like other healing moves
-    const damageAmount = -Math.round(healing * healMulti.value);
+    const damageAmount = Math.round(healAmount * healMulti.value);
 
     opponent.turnData.damageTaken += damageAmount;
     opponent.damageAndUpdate(damageAmount, { result: HitResult.INDIRECT, source: pokemon });
