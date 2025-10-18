@@ -5659,25 +5659,6 @@ export class NeutralDamageAgainstFlyingTypeMultiplierAttr extends VariableMoveTy
   }
 }
 
-export class NeutralDamageAgainstFairyTypeMultiplierAttr extends VariableMoveTypeMultiplierAttr {
-  /**
-   * Checks to see if the target is Fairy-Type or not. If so, the move will have neutral effectiveness.
-   * @param user n/a
-   * @param target The {@linkcode Pokemon} targeted by the move
-   * @param move n/a
-   * @param args `[0]` a {@linkcode NumberHolder | NumberHolder} containing a type effectiveness multiplier
-   * @returns `true` if this Pokemon is Fairy-type; `false` otherwise
-   */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const multiplier = args[0] as NumberHolder;
-    if (target.isOfType(PokemonType.FAIRY)) {
-      multiplier.value = 1;
-      return true;
-    }
-    return false;
-  }
-}
-
 export class IceNoEffectTypeAttr extends VariableMoveTypeMultiplierAttr {
   /**
    * Checks to see if the Target is Ice-Type or not. If so, the move will have no effect.
@@ -5733,6 +5714,23 @@ export class FreezeDryAttr extends VariableMoveTypeChartAttr {
 
     if (defType === PokemonType.WATER) {
       multiplier.value = 2;
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
+/**
+ * Attribute that forces Nihil Light to be neutral effectiveness against Fairy types.
+ */
+export class NihilLightAttr extends VariableMoveTypeChartAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const multiplier = args[0] as NumberHolder;
+    const defType = args[1] as PokemonType;
+
+    if (defType === PokemonType.FAIRY) {
+      multiplier.value = 1;
       return true;
     } else {
       return false;
@@ -8480,11 +8478,11 @@ const MoveAttrs = Object.freeze({
   CombinedPledgeTypeAttr,
   VariableMoveTypeMultiplierAttr,
   NeutralDamageAgainstFlyingTypeMultiplierAttr,
-  NeutralDamageAgainstFairyTypeMultiplierAttr,
   IceNoEffectTypeAttr,
   FlyingTypeMultiplierAttr,
   VariableMoveTypeChartAttr,
   FreezeDryAttr,
+  NihilLightAttr,
   OneHitKOAccuracyAttr,
   SheerColdAccuracyAttr,
   MissEffectAttr,
@@ -11637,7 +11635,7 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.TOXIC),
     new AttackMove(MoveId.NIHIL_LIGHT, PokemonType.DRAGON, MoveCategory.SPECIAL, 100, 100, 10, -1, 0, 9)
       .attr(IgnoreOpponentStatStagesAttr)
-      .attr(NeutralDamageAgainstFairyTypeMultiplierAttr)
+      .attr(NihilLightAttr)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .edgeCase() // Needs to replace the user's Core Enforcer if mega evolved (Zygarde-Complete to Mega Zygarde)
   );
