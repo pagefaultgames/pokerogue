@@ -1650,7 +1650,7 @@ export class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
       ]
         .flat()
         .flatMap(fc => fc.item)
-        .filter(i => (i && i < 100) === isRareFormChangeItem);
+        .filter(i => (i && i < 150) === isRareFormChangeItem);
       // convert it into a set to remove duplicate values, which can appear when the same species with a potential form change is in the party.
 
       if (formChangeItemPool.length === 0) {

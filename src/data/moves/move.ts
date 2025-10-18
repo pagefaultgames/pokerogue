@@ -5659,6 +5659,25 @@ export class NeutralDamageAgainstFlyingTypeMultiplierAttr extends VariableMoveTy
   }
 }
 
+export class NeutralDamageAgainstFairyTypeMultiplierAttr extends VariableMoveTypeMultiplierAttr {
+  /**
+   * Checks to see if the target is Fairy-Type or not. If so, the move will have neutral effectiveness.
+   * @param user n/a
+   * @param target The {@linkcode Pokemon} targeted by the move
+   * @param move n/a
+   * @param args `[0]` a {@linkcode NumberHolder | NumberHolder} containing a type effectiveness multiplier
+   * @returns `true` if this Pokemon is Fairy-type; `false` otherwise
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const multiplier = args[0] as NumberHolder;
+    if (target.isOfType(PokemonType.FAIRY)) {
+      multiplier.value = 1;
+      return true;
+    }
+    return false;
+  }
+}
+
 export class IceNoEffectTypeAttr extends VariableMoveTypeMultiplierAttr {
   /**
    * Checks to see if the Target is Ice-Type or not. If so, the move will have no effect.
@@ -8461,6 +8480,7 @@ const MoveAttrs = Object.freeze({
   CombinedPledgeTypeAttr,
   VariableMoveTypeMultiplierAttr,
   NeutralDamageAgainstFlyingTypeMultiplierAttr,
+  NeutralDamageAgainstFairyTypeMultiplierAttr,
   IceNoEffectTypeAttr,
   FlyingTypeMultiplierAttr,
   VariableMoveTypeChartAttr,
@@ -10455,7 +10475,9 @@ export function initMoves() {
     new AttackMove(MoveId.WATER_SHURIKEN, PokemonType.WATER, MoveCategory.SPECIAL, 15, 100, 20, -1, 1, 6)
       .attr(MultiHitAttr)
       .attr(WaterShurikenPowerAttr)
-      .attr(WaterShurikenMultiHitTypeAttr),
+      .attr(WaterShurikenMultiHitTypeAttr)
+      .partial(), // This move gained new functionality in ZA when used by Mega Greninja
+      // It should determine the number of hits it would do out of 2-to-5, adjust the power to that number of hits, and deal all the damage in one hit
     new AttackMove(MoveId.MYSTICAL_FIRE, PokemonType.FIRE, MoveCategory.SPECIAL, 75, 100, 10, 100, 0, 6)
       .attr(StatStageChangeAttr, [ Stat.SPATK ], -1),
     new SelfStatusMove(MoveId.SPIKY_SHIELD, PokemonType.GRASS, -1, 10, -1, 4, 6)
@@ -11612,6 +11634,11 @@ export function initMoves() {
       .attr(FlinchAttr)
       .condition(upperHandCondition, 3),
     new AttackMove(MoveId.MALIGNANT_CHAIN, PokemonType.POISON, MoveCategory.SPECIAL, 100, 100, 5, 50, 0, 9)
-      .attr(StatusEffectAttr, StatusEffect.TOXIC)
+      .attr(StatusEffectAttr, StatusEffect.TOXIC),
+    new AttackMove(MoveId.NIHIL_LIGHT, PokemonType.DRAGON, MoveCategory.SPECIAL, 100, 100, 10, -1, 0, 9)
+      .attr(IgnoreOpponentStatStagesAttr)
+      .attr(NeutralDamageAgainstFairyTypeMultiplierAttr)
+      .target(MoveTarget.ALL_NEAR_ENEMIES)
+      .edgeCase() // Needs to replace the user's Core Enforcer if mega evolved (Zygarde-Complete to Mega Zygarde)
   );
 }
