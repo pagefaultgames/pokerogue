@@ -313,8 +313,10 @@ export class PokemonTurnData {
   /** How many times the current move should hit the target(s) */
   public hitCount = 0;
   /**
-   * - `-1` = Calculate how many hits are left
-   * - `0` = Move is finished
+   * - `-1`: Calculate how many hits are left
+   * - `0`: Move is finished
+   * - `>0`: Move is in process of hitting targets
+   * @defaultValue `-1`
    */
   public hitsLeft = -1;
   public totalDamageDealt = 0;

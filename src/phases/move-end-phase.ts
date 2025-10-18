@@ -27,7 +27,6 @@ export class MoveEndPhase extends PokemonPhase {
     // TODO: These properties should be stored inside a "move in flight" object,
     // which this Phase would promptly destroy
     pokemon.turnData.hitsLeft = -1;
-    pokemon.turnData.hitCount = 0;
 
     if (!this.wasFollowUp && pokemon?.isActive(true)) {
       pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);

@@ -100,13 +100,7 @@ export class DelayedAttackTag extends PositionalTag implements DelayedAttackArgs
   public override trigger(): void {
     // Bangs are justified as the `shouldTrigger` method will queue the tag for removal
     // if the source or target no longer exist
-    const source = globalScene.getPokemonById(this.sourceId)!;
     const target = this.getTarget()!;
-
-    // Reset hits left counter.
-    // NB: This is required as the `MoveEndPhase` (when this is normally reset)
-    // does not get queued when queueing Future Sight directly
-    source.turnData.hitsLeft = -1;
 
     globalScene.phaseManager.queueMessage(
       i18next.t("moveTriggers:tookMoveAttack", {

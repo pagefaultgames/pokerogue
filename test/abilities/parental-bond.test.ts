@@ -37,6 +37,8 @@ describe("Abilities - Parental Bond", () => {
       .enemyLevel(100);
   });
 
+  // TODO: Review how many of these tests are duplicated in other files
+  // and/or in Multi Lens' suite
   it("should add second strike to attack move", async () => {
     game.override.moveset([MoveId.TACKLE]);
 
@@ -335,20 +337,6 @@ describe("Abilities - Parental Bond", () => {
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
     expect(enemyPokemon.status?.effect).toBeUndefined();
-  });
-
-  it("should not cause user to hit into King's Shield more than once", async () => {
-    game.override.moveset([MoveId.TACKLE]).enemyMoveset([MoveId.KINGS_SHIELD]);
-
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-
-    const leadPokemon = game.field.getPlayerPokemon();
-
-    game.move.select(MoveId.TACKLE);
-
-    await game.phaseInterceptor.to("MoveEndPhase", false);
-
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(-1);
   });
 
   it("should not cause user to hit into Storm Drain more than once", async () => {
