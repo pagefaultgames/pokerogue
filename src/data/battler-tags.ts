@@ -40,7 +40,7 @@
  *     // This signature should be used if the class has no subclasses:
  *     public override loadTag(source: BaseBattlerTag & Pick<ExampleTag, "tagType" | "a" | "b"): void;
  *     // This signature should be used if the class has any subclasses:
- *     public override loadTag<const T extends this>(source: BaseBattlerTag & Pick<T, "tagType" | "a" | "b">): void
+ *     public override loadTag<const T extends this>(source: BaseBattlerTag & Pick<T, "tagType" | "a" | "b">): void {
  *       this.a = source.a;
  *       this.b = source.b;
  *     }
