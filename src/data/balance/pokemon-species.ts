@@ -116,7 +116,7 @@ export function initSpecies() {
     new PokemonSpecies(SpeciesId.MACHOKE, 1, false, false, false, "Superpower Pokémon", PokemonType.FIGHTING, null, 1.5, 70.5, AbilityId.GUTS, AbilityId.NO_GUARD, AbilityId.STEADFAST, 405, 80, 100, 70, 50, 60, 45, 90, 50, 142, GrowthRate.MEDIUM_SLOW, 75, false),
     new PokemonSpecies(SpeciesId.MACHAMP, 1, false, false, false, "Superpower Pokémon", PokemonType.FIGHTING, null, 1.6, 130, AbilityId.GUTS, AbilityId.NO_GUARD, AbilityId.STEADFAST, 505, 90, 130, 80, 65, 85, 55, 45, 50, 253, GrowthRate.MEDIUM_SLOW, 75, false, true,
       new PokemonForm("Normal", "", PokemonType.FIGHTING, null, 1.6, 130, AbilityId.GUTS, AbilityId.NO_GUARD, AbilityId.STEADFAST, 505, 90, 130, 80, 65, 85, 55, 45, 50, 253, false, null, true),
-      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, PokemonType.FIGHTING, null, 25, 999.9, AbilityId.GUTS, AbilityId.GUTS, AbilityId.GUTS, 605, 120, 170, 85, 75, 90, 65, 45, 50, 253)
+      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, PokemonType.FIGHTING, null, 25, 999.9, AbilityId.GUTS, AbilityId.GUTS, AbilityId.GUTS, 605, 120, 170, 95, 80, 85, 55, 45, 50, 253)
     ),
     new PokemonSpecies(SpeciesId.BELLSPROUT, 1, false, false, false, "Flower Pokémon", PokemonType.GRASS, PokemonType.POISON, 0.7, 4, AbilityId.CHLOROPHYLL, AbilityId.NONE, AbilityId.GLUTTONY, 300, 50, 75, 35, 70, 30, 40, 255, 70, 60, GrowthRate.MEDIUM_SLOW, 50, false),
     new PokemonSpecies(SpeciesId.WEEPINBELL, 1, false, false, false, "Flycatcher Pokémon", PokemonType.GRASS, PokemonType.POISON, 1, 6.4, AbilityId.CHLOROPHYLL, AbilityId.NONE, AbilityId.GLUTTONY, 390, 65, 90, 50, 85, 45, 55, 120, 70, 137, GrowthRate.MEDIUM_SLOW, 50, false),
@@ -149,7 +149,7 @@ export function initSpecies() {
     new PokemonSpecies(SpeciesId.GENGAR, 1, false, false, false, "Shadow Pokémon", PokemonType.GHOST, PokemonType.POISON, 1.5, 40.5, AbilityId.CURSED_BODY, AbilityId.NONE, AbilityId.NONE, 500, 60, 65, 60, 130, 75, 110, 45, 50, 250, GrowthRate.MEDIUM_SLOW, 50, false, true,
       new PokemonForm("Normal", "", PokemonType.GHOST, PokemonType.POISON, 1.5, 40.5, AbilityId.CURSED_BODY, AbilityId.NONE, AbilityId.NONE, 500, 60, 65, 60, 130, 75, 110, 45, 50, 250, false, null, true),
       new PokemonForm("Mega", SpeciesFormKey.MEGA, PokemonType.GHOST, PokemonType.POISON, 1.4, 40.5, AbilityId.SHADOW_TAG, AbilityId.NONE, AbilityId.NONE, 600, 60, 65, 80, 170, 95, 130, 45, 50, 250),
-      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, PokemonType.GHOST, PokemonType.POISON, 20, 999.9, AbilityId.CURSED_BODY, AbilityId.NONE, AbilityId.NONE, 600, 140, 65, 70, 140, 85, 100, 45, 50, 250)
+      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, PokemonType.GHOST, PokemonType.POISON, 20, 999.9, AbilityId.SHADOW_TAG, AbilityId.NONE, AbilityId.NONE, 600, 150, 50, 65, 150, 85, 100, 45, 50, 250)
     ),
     new PokemonSpecies(SpeciesId.ONIX, 1, false, false, false, "Rock Snake Pokémon", PokemonType.ROCK, PokemonType.GROUND, 8.8, 210, AbilityId.ROCK_HEAD, AbilityId.STURDY, AbilityId.WEAK_ARMOR, 385, 35, 45, 160, 30, 45, 70, 45, 50, 77, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(SpeciesId.DROWZEE, 1, false, false, false, "Hypnosis Pokémon", PokemonType.PSYCHIC, null, 1, 32.4, AbilityId.INSOMNIA, AbilityId.FOREWARN, AbilityId.INNER_FOCUS, 328, 60, 48, 45, 43, 90, 42, 190, 70, 66, GrowthRate.MEDIUM_FAST, 50, false),
@@ -223,7 +223,7 @@ export function initSpecies() {
     ),
     new PokemonSpecies(SpeciesId.SNORLAX, 1, false, false, false, "Sleeping Pokémon", PokemonType.NORMAL, null, 2.1, 460, AbilityId.IMMUNITY, AbilityId.THICK_FAT, AbilityId.GLUTTONY, 540, 160, 110, 65, 65, 110, 30, 25, 50, 189, GrowthRate.SLOW, 87.5, false, true,
       new PokemonForm("Normal", "", PokemonType.NORMAL, null, 2.1, 460, AbilityId.IMMUNITY, AbilityId.THICK_FAT, AbilityId.GLUTTONY, 540, 160, 110, 65, 65, 110, 30, 25, 50, 189, false, null, true),
-      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, PokemonType.NORMAL, null, 35, 999.9, AbilityId.HARVEST, AbilityId.HARVEST, AbilityId.HARVEST, 640, 210, 135, 70, 90, 115, 20, 25, 50, 189)
+      new PokemonForm("G-Max", SpeciesFormKey.GIGANTAMAX, PokemonType.NORMAL, null, 35, 999.9, AbilityId.HARVEST, AbilityId.HARVEST, AbilityId.HARVEST, 640, 210, 125, 65, 90, 120, 20, 25, 50, 189)
     ),
     new PokemonSpecies(SpeciesId.ARTICUNO, 1, true, false, false, "Freeze Pokémon", PokemonType.ICE, PokemonType.FLYING, 1.7, 55.4, AbilityId.PRESSURE, AbilityId.NONE, AbilityId.SNOW_CLOAK, 580, 90, 85, 100, 95, 125, 85, 3, 35, 290, GrowthRate.SLOW, null, false),
     new PokemonSpecies(SpeciesId.ZAPDOS, 1, true, false, false, "Electric Pokémon", PokemonType.ELECTRIC, PokemonType.FLYING, 1.6, 52.6, AbilityId.PRESSURE, AbilityId.NONE, AbilityId.STATIC, 580, 90, 90, 85, 125, 90, 100, 3, 35, 290, GrowthRate.SLOW, null, false),
