@@ -245,7 +245,7 @@ export function initSpecies() {
     new PokemonSpecies(SpeciesId.DRAGONAIR, 1, false, false, false, "Dragon Pokémon", PokemonType.DRAGON, null, 4, 16.5, AbilityId.SHED_SKIN, AbilityId.NONE, AbilityId.MARVEL_SCALE, 420, 61, 84, 65, 70, 70, 70, 45, 35, 147, GrowthRate.SLOW, 50, false),
     new PokemonSpecies(SpeciesId.DRAGONITE, 1, false, false, false, "Dragon Pokémon", PokemonType.DRAGON, PokemonType.FLYING, 2.2, 210, AbilityId.INNER_FOCUS, AbilityId.NONE, AbilityId.MULTISCALE, 600, 91, 134, 95, 100, 100, 80, 45, 35, 300, GrowthRate.SLOW, 50, false, true,
       new PokemonForm("Normal", "", PokemonType.DRAGON, PokemonType.FLYING, 2.2, 210, AbilityId.INNER_FOCUS, AbilityId.NONE, AbilityId.MULTISCALE, 600, 91, 134, 95, 100, 100, 80, 45, 35, 300, false, null, true),
-      new PokemonForm("Mega", SpeciesFormKey.MEGA, PokemonType.DRAGON, PokemonType.FLYING, 2.2, 290, AbilityId.TOUGH_CLAWS, AbilityId.TOUGH_CLAWS, AbilityId.TOUGH_CLAWS, 700, 91, 124, 115, 145, 125, 100, 45, 35, 300, false, "")
+      new PokemonForm("Mega", SpeciesFormKey.MEGA, PokemonType.DRAGON, PokemonType.FLYING, 2.2, 290, AbilityId.INNER_FOCUS, AbilityId.NONE, AbilityId.MULTISCALE, 700, 91, 124, 115, 145, 125, 100, 45, 35, 300, false, "")
     ),
     new PokemonSpecies(SpeciesId.MEWTWO, 1, false, true, false, "Genetic Pokémon", PokemonType.PSYCHIC, null, 2, 122, AbilityId.PRESSURE, AbilityId.NONE, AbilityId.UNNERVE, 680, 106, 110, 90, 154, 90, 130, 3, 0, 340, GrowthRate.SLOW, null, false, true,
       new PokemonForm("Normal", "", PokemonType.PSYCHIC, null, 2, 122, AbilityId.PRESSURE, AbilityId.NONE, AbilityId.UNNERVE, 680, 106, 110, 90, 154, 90, 130, 3, 0, 340, false, null, true),
