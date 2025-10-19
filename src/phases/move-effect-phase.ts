@@ -458,10 +458,13 @@ export class MoveEffectPhase extends PokemonPhase {
     if (this.move.hasAttr("ToxicAccuracyAttr") && user.isOfType(PokemonType.POISON)) {
       return true;
     }
-    // TODO: Fix lock on / mind reader check.
+    // TODO: Fix lock on / mind reader check to belong to the battler tag - this is really ugly
     if (
       user.getTag(BattlerTagType.IGNORE_ACCURACY)
-      && (user.getLastXMoves().find(() => true)?.targets || []).indexOf(target.getBattlerIndex()) !== -1
+      && user
+        .getLastXMoves(-1)
+        .find(m => m.id === MoveId.LOCK_ON || m.id === MoveId.MIND_READER)
+        ?.targets?.includes(target.getBattlerIndex())
     ) {
       return true;
     }
