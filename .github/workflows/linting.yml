@@ -15,6 +15,7 @@ on:
       - "hotfix*"
   merge_group:
     types: [checks_requested]
+  workflow_dispatch:
 
 jobs:
   run-linters:
@@ -41,82 +42,36 @@ jobs:
         run: pnpm i
 
       # Lint files with Biome-Lint - https://biomejs.dev/linter/
-      - name: Run Biome-Lint
+      - name: Lint with Biome
         run: pnpm biome-ci
-        id: biome_lint
-        continue-on-error: true
+        if: ${{ !cancelled() }}
 
       # Validate dependencies with dependency-cruiser - https://github.com/sverweij/dependency-cruiser
-      - name: Run Dependency-Cruise
+      - name: Run Dependency Cruiser
         run: pnpm depcruise
-        id: depcruise
-        continue-on-error: true
+        if: ${{ !cancelled() }}
 
       # Validate types with tsc - https://www.typescriptlang.org/docs/handbook/compiler-options.html#using-the-cli
       - name: Run Typecheck
         run: pnpm typecheck
         id: typecheck
-        continue-on-error: true
+        if: ${{ !cancelled() }}
 
-      # The exact same thing
+      # Run tsc again on the scripts folder.
+      # Required in order to use separate rules for script js files and regular ts files
       - name: Run Typecheck (scripts)
         run: pnpm typecheck:scripts
         id: typecheck-scripts
-        continue-on-error: true
+        if: ${{ !cancelled() }}
 
-      # NOTE: This step *must* run as the last linter; it deletes files in `assets/`
-      # Files in assets/ do not yet have full licensing information, so remove them before checking for reuse compliance
-      - name: Prepare for reuse compliance
+      # NOTE: These steps *must* be ran last for the moment due to deleting files in `assets/`.
+      # Some asset files do not yet have full licensing information, and thus must be removed 
+      # before checking for REUSE compliance
+      - name: Prepare for REUSE compliance
         run: rm -rf assets/* LICENSES/LicenseRef-*
+        if: ${{ !cancelled() }}
 
-      - name: Check for reuse compliance
+      - name: Check for REUSE compliance
         id: reuse-lint
         uses: fsfe/reuse-action@v5
-        continue-on-error: true
-
-      - name: Evaluate for Errors
-        env:
-          BIOME_LINT_OUTCOME: ${{ steps.biome_lint.outcome }}
-          DEPCRUISE_OUTCOME: ${{ steps.depcruise.outcome }}
-          TYPECHECK_OUTCOME: ${{ steps.typecheck.outcome }}
-          TYPECHECK_SCRIPTS_OUTCOME: ${{ steps.typecheck-scripts.outcome }}
-          REUSE_OUTCOME: ${{ steps.reuse-lint.outcome }}
-        run: |
-          # Check for Errors
-
-          # Make text red.
-          red () {
-            printf "\e[31m%s\e[0m" "$1"
-          }
-
-          # Make text green.
-          green () {
-            printf "\e[32m%s\e[0m" "$1"
-          }
-
-          print_result() {
-            local name=$1
-            local outcome=$2
-            if [ "$outcome" == "success" ]; then
-              printf "$(green "✅ $name: $outcome")\n"
-            else
-              printf "$(red "❌ $name: $outcome")\n"
-            fi
-          }
-
-          print_result "Biome" "$BIOME_LINT_OUTCOME"
-          print_result "Depcruise" "$DEPCRUISE_OUTCOME"
-          print_result "Typecheck" "$TYPECHECK_OUTCOME"
-          print_result "Typecheck scripts" "$TYPECHECK_SCRIPTS_OUTCOME"
-          print_result "Reuse Compliance" "$REUSE_OUTCOME"
-
-          if [[ "$BIOME_LINT_OUTCOME" != "success" || \
-            "$DEPCRUISE_OUTCOME" != "success" || \
-            "$TYPECHECK_OUTCOME" != "success" || \
-            "$TYPECHECK_SCRIPTS_OUTCOME" != "success" || \
-            "$REUSE_OUTCOME" != "success" ]]; then
-            printf "$(red "❌ One or more checks failed!")\n" >&2
-            exit 1
-          fi
-
-          printf "$(green "✅ All checks passed!")\n"
+        if: ${{ !cancelled() }}

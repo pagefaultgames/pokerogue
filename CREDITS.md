@@ -34,6 +34,7 @@ SPDX-License-Identifier: CC-BY-NC-SA-4.0
 - Lmz (Custom Ancient Ruins, Jungle, and Lake biome music)
 - Andr06 (Custom Forest, Slum, Sea, and Fairy Cave biome music)
 - Leavannite (Custom Wasteland biome music)
+- “Big” bird_obsession (Custom Snowy Forest biome music)
 - _tresnoir
 - unveiler
 
