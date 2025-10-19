@@ -1871,13 +1871,14 @@ export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
    * Add one to the move's hit count, and, if the pokemon has only one hit left, sets the damage multiplier
    * to the damage multiplier of this ability.
    */
+  // TODO: Refactor this out into 2 separate abilities
   override apply({ hitCount, multiplier, pokemon }: AddSecondStrikeAbAttrParams): void {
     if (hitCount?.value) {
       hitCount.value += 1;
     }
 
     if (multiplier?.value && pokemon.turnData.hitsLeft === 1) {
-      multiplier.value = this.damageMultiplier;
+      multiplier.value *= this.damageMultiplier;
     }
   }
 }

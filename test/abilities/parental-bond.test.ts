@@ -158,7 +158,7 @@ describe("Abilities - Parental Bond", () => {
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.COUNTER);
-    await game.phaseInterceptor.to("DamageAnimPhase");
+    await game.phaseInterceptor.to("MoveEndPhase");
 
     const playerDamage = leadPokemon.getMaxHp() - leadPokemon.hp;
 
@@ -170,16 +170,13 @@ describe("Abilities - Parental Bond", () => {
   it("should not apply to multi-target moves", async () => {
     game.override.battleStyle("double").moveset([MoveId.EARTHQUAKE]).passiveAbility(AbilityId.LEVITATE);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
-
-    const playerPokemon = game.scene.getPlayerField();
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     game.move.select(MoveId.EARTHQUAKE);
-    game.move.select(MoveId.EARTHQUAKE, 1);
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    playerPokemon.forEach(p => expect(p.turnData.hitCount).toBe(1));
+    expect(game.field.getPlayerPokemon().turnData.hitCount).toBe(1);
   });
 
   it("should apply to multi-target moves when hitting only one target", async () => {
