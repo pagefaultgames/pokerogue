@@ -463,7 +463,7 @@ export class MoveEffectPhase extends PokemonPhase {
       user.getTag(BattlerTagType.IGNORE_ACCURACY)
       && user
         .getLastXMoves(-1)
-        .find(m => m.id === MoveId.LOCK_ON || m.id === MoveId.MIND_READER)
+        .find(m => m.move === MoveId.LOCK_ON || m.move === MoveId.MIND_READER)
         ?.targets?.includes(target.getBattlerIndex())
     ) {
       return true;
