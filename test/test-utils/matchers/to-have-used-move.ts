@@ -50,7 +50,7 @@ export function toHaveUsedMove(
     moveObj = { move: expectedMove };
     onlyMove = true;
   } else {
-    moveObj = expectedMove as Partial<TurnMove>;
+    moveObj = expectedMove;
   }
 
   const moveIndexStr = index === 0 ? "last move" : `${getOrdinal(index)} most recent move`;
@@ -65,7 +65,7 @@ export function toHaveUsedMove(
   const expectedStr = onlyMove
     ? `be MoveId.${getEnumStr(MoveId, moveObj.move)}`
     : `match ${getOnelineDiffStr.call(this, expectedMove)}`;
-  const notVerb = onlyMove ? "did" : "was";
+  const notVerb = onlyMove ? "was" : "did";
 
   return {
     pass,
