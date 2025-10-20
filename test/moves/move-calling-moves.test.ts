@@ -183,19 +183,17 @@ describe("Moves - Move-calling Moves", () => {
       "should target called moves randomly if multiple valid targets exist",
       async () => {
         game.override.battleStyle("double");
-        await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
+        await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
         const feebas = game.field.getPlayerPokemon();
-        game.move.changeMoveset(feebas, move);
 
-        callback(MoveId.TACKLE);
+        getMoveSpy.mockReturnValue(MoveId.TACKLE);
 
         // Turn 1: Force an RNG roll that hits enemy 1
         vi.spyOn(feebas, "randBattleSeedInt").mockReturnValue(0);
 
-        game.move.select(move);
-        game.move.use(MoveId.TACKLE, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER);
-        await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+        game.move.use(move);
+        await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
         await game.toEndOfTurn();
 
         expect(feebas).toHaveUsedMove({ move, useMode: MoveUseMode.NORMAL }, 1);
@@ -208,7 +206,7 @@ describe("Moves - Move-calling Moves", () => {
         // Turn 2: exact same thing, but with 2nd enemy instead
         vi.spyOn(feebas, "randBattleSeedInt").mockReturnValue(1);
 
-        game.move.select(move);
+        game.move.use(move);
         await game.toEndOfTurn();
 
         expect(feebas).toHaveUsedMove({ move, useMode: MoveUseMode.NORMAL }, 1);
@@ -219,6 +217,30 @@ describe("Moves - Move-calling Moves", () => {
         });
       },
     );
+
+    it.runIf(move === MoveId.MIRROR_MOVE)("should always target the Mirror Move recipient if possible", async () => {
+      game.override.battleStyle("double");
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+
+      const feebas = game.field.getPlayerPokemon();
+      // Mock RNG functions to return high rolls (ie last eligible target)
+      // This will force the test to fail if MM were to use the same targeting algorithm
+      // as Copycat/etc
+      vi.spyOn(feebas, "randBattleSeedInt").mockReturnValue(1);
+
+      game.move.use(MoveId.MIRROR_MOVE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+      await game.move.forceEnemyMove(MoveId.TACKLE, BattlerIndex.ENEMY_2);
+      await game.move.forceEnemyMove(MoveId.SPLASH);
+      await game.setTurnOrder([BattlerIndex.ENEMY_2, BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.toEndOfTurn();
+
+      expect(feebas).toHaveUsedMove({ move: MoveId.MIRROR_MOVE, useMode: MoveUseMode.NORMAL }, 1);
+      expect(feebas).toHaveUsedMove({
+        move: MoveId.TACKLE,
+        useMode: MoveUseMode.FOLLOW_UP,
+        targets: [BattlerIndex.ENEMY],
+      });
+    });
 
     // testing Metronome here is pointless since we literally mock out its randomness
     it.skipIf(move === MoveId.METRONOME)("should return MoveId.NONE if an invalid move would be picked", async () => {

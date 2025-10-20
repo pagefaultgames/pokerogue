@@ -7243,7 +7243,7 @@ abstract class CallMoveAttrWithBanlist extends CallMoveAttr {
 
 }
 
-export type {CallMoveAttrWithBanlist}
+export type { CallMoveAttrWithBanlist }
 
 /**
  * Attribute used to copy the last move executed, either globally or by the specific target.
