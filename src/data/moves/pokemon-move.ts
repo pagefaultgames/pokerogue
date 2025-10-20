@@ -109,8 +109,7 @@ export class PokemonMove {
   }
 
   /**
-   * Check whether this `PokemonMove` is out of PP.
-   * @returns Whether this `PokemonMove` is out of PP.
+   * @returns Whether this move is out of PP.
    */
   // TODO: Replace checks comparing `getPpRatio` with 0 to use this instead
   public isOutOfPp(): boolean {
