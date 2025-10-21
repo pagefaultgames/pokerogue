@@ -1,25 +1,24 @@
 import type { SerializedPositionalTag, toSerializedPosTag } from "#data/positional-tags/load-positional-tag";
 import type { DelayedAttackTag, WishTag } from "#data/positional-tags/positional-tag";
 import type { PositionalTagType } from "#enums/positional-tag-type";
-import type { Mutable, NonFunctionPropertiesRecursive } from "#types/type-helpers";
+import type { NonFunctionPropertiesRecursive } from "#types/type-helpers";
 import { describe, expectTypeOf, it } from "vitest";
 
-// Needed to get around properties being readonly in certain classes
-type NonFunctionMutable<T> = Mutable<NonFunctionPropertiesRecursive<T>>;
-
 describe("toSerializedPosTag", () => {
-  it("should contain representations of each tag's serialized form", () => {
+  it("should map each class' tag type to their serialized forms", () => {
     expectTypeOf<toSerializedPosTag<PositionalTagType.DELAYED_ATTACK>>().branded.toEqualTypeOf<
-      NonFunctionMutable<DelayedAttackTag>
+      NonFunctionPropertiesRecursive<DelayedAttackTag>
     >();
-    expectTypeOf<toSerializedPosTag<PositionalTagType.WISH>>().branded.toEqualTypeOf<NonFunctionMutable<WishTag>>();
+    expectTypeOf<toSerializedPosTag<PositionalTagType.WISH>>().branded.toEqualTypeOf<
+      NonFunctionPropertiesRecursive<WishTag>
+    >();
   });
 });
 
 describe("SerializedPositionalTag", () => {
   it("should be a union of all serialized tag forms", () => {
     expectTypeOf<SerializedPositionalTag>().branded.toEqualTypeOf<
-      NonFunctionMutable<DelayedAttackTag> | NonFunctionMutable<WishTag>
+      NonFunctionPropertiesRecursive<DelayedAttackTag> | NonFunctionPropertiesRecursive<WishTag>
     >();
   });
   it("should be extended by all unserialized tag forms", () => {

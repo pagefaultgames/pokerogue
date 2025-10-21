@@ -3408,14 +3408,16 @@ abstract class OverrideMoveEffectAttr extends MoveAttr {
 export class DelayedAttackAttr extends OverrideMoveEffectAttr {
   /**
    * The {@linkcode ChargeAnim | charging animation} used for the move's charging phase.
+   *
+   * Rendered public to allow for charge animation code to function
    */
-  private chargeAnim: ChargeAnim;
+  public chargeAnim: ChargeAnim;
   /**
    * The `i18next` locales key to show when the delayed attack is queued
    * (**not** when it activates)! \
    * In the displayed text, `{{pokemonName}}` will be populated with the user's name.
    */
-  private chargeText: string;
+  private chargeKey: string;
 
   constructor(chargeAnim: ChargeAnim, chargeKey: string) {
     super();
