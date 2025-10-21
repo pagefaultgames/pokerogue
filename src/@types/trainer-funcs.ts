@@ -11,7 +11,7 @@ export type GenModifiersFunc = (party: readonly EnemyPokemon[]) => PersistentMod
 export type GenAIFunc = (party: readonly EnemyPokemon[]) => void;
 
 export interface TrainerTierPools {
-  [key: number]: SpeciesId[];
+  [key: number]: (SpeciesId | SpeciesId[])[];
 }
 export interface TrainerConfigs {
   [key: number]: TrainerConfig;
