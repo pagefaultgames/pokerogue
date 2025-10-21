@@ -35,9 +35,9 @@ import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEven
 import type { Pokemon } from "#field/pokemon";
 import { FieldEffectModifier } from "#modifiers/modifier";
 import type { Move } from "#moves/move";
-import type { RGBArray } from "#types/sprite-types";
 import type { BiomeTierTrainerPools, PokemonPools } from "#types/biomes";
 import type { Constructor } from "#types/common";
+import type { RGBArray } from "#types/sprite-types";
 import type { AbstractConstructor } from "#types/type-helpers";
 import { NumberHolder, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
