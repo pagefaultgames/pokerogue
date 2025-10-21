@@ -389,6 +389,10 @@ export class TimedEventManager {
     return event.startDate < now && now < event.endDate;
   }
 
+  /**
+   * Get the active event
+   * @returns The first active {@linkcode TimedEvent} or `undefined` if there are no active events
+   */
   activeEvent(): TimedEvent | undefined {
     return timedEvents.find((te: TimedEvent) => this.isActive(te));
   }
@@ -402,44 +406,27 @@ export class TimedEventManager {
    * @returns Whether the April Fools event is currently active.
    */
   isAprilFoolsActive(): boolean {
-    return timedEvents.some(
-      te => this.isActive(te) && te.hasOwnProperty("bannerKey") && te.bannerKey!.startsWith("aprf"),
-    );
+    return this.activeEvent()?.bannerKey?.startsWith("aprf") ?? false;
   }
 
   activeEventHasBanner(): boolean {
-    const activeEvents = timedEvents.filter(te => this.isActive(te) && te.hasOwnProperty("bannerKey"));
-    return activeEvents.length > 0;
+    return this.activeEvent()?.bannerKey != null;
   }
 
   getShinyEncounterMultiplier(): number {
-    let multiplier = 1;
-    const shinyEvents = timedEvents.filter(te => te.eventType === EventType.SHINY && this.isActive(te));
-    for (const se of shinyEvents) {
-      multiplier *= se.shinyMultiplier ?? 1;
-    }
-
-    return multiplier;
+    return this.activeEvent()?.shinyMultiplier ?? 1;
   }
 
   getEventBannerFilename(): string {
-    return timedEvents.find((te: TimedEvent) => this.isActive(te))?.bannerKey ?? "";
+    return this.activeEvent()?.bannerKey ?? "";
   }
 
   getEventBannerLangs(): string[] {
-    const ret: string[] = [];
-    ret.push(...(timedEvents.find(te => this.isActive(te) && te.availableLangs != null)?.availableLangs ?? []));
-    return ret;
+    return [...(this.activeEvent()?.availableLangs ?? [])];
   }
 
   getEventEncounters(): EventEncounter[] {
-    const ret: EventEncounter[] = [];
-    for (const te of timedEvents) {
-      if (this.isActive(te) && te.eventEncounters != null) {
-        ret.push(...te.eventEncounters);
-      }
-    }
-    return ret;
+    return [...(this.activeEvent()?.eventEncounters ?? [])];
   }
 
   /**
@@ -447,14 +434,7 @@ export class TimedEventManager {
    * @returns The highest classic friendship multiplier among the active events, or the default CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER
    */
   getClassicFriendshipMultiplier(): number {
-    let multiplier = CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER;
-    const classicFriendshipEvents = timedEvents.filter(te => this.isActive(te));
-    for (const fe of classicFriendshipEvents) {
-      if (fe.classicFriendshipMultiplier != null && fe.classicFriendshipMultiplier > multiplier) {
-        multiplier = fe.classicFriendshipMultiplier;
-      }
-    }
-    return multiplier;
+    return this.activeEvent()?.classicFriendshipMultiplier ?? CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER;
   }
 
   /**
@@ -462,7 +442,7 @@ export class TimedEventManager {
    * @returns Whether vouchers should be upgraded
    */
   getUpgradeUnlockedVouchers(): boolean {
-    return timedEvents.some(te => this.isActive(te) && (te.upgradeUnlockedVouchers ?? false));
+    return this.activeEvent()?.upgradeUnlockedVouchers ?? false;
   }
 
   /**
@@ -470,13 +450,7 @@ export class TimedEventManager {
    * @returns list of ids of {@linkcode ModifierType}s that Delibirdy hands out as a bonus
    */
   getDelibirdyBuff(): string[] {
-    const ret: string[] = [];
-    for (const te of timedEvents) {
-      if (this.isActive(te) && te.delibirdyBuff != null) {
-        ret.push(...te.delibirdyBuff);
-      }
-    }
-    return ret;
+    return [...(this.activeEvent()?.delibirdyBuff ?? [])];
   }
 
   /**
@@ -484,13 +458,7 @@ export class TimedEventManager {
    * @returns Event weathers for town
    */
   getWeather(): WeatherPoolEntry[] {
-    const ret: WeatherPoolEntry[] = [];
-    for (const te of timedEvents) {
-      if (this.isActive(te) && te.weather != null) {
-        ret.push(...te.weather);
-      }
-    }
-    return ret;
+    return [...(this.activeEvent()?.weather ?? [])];
   }
 
   getAllMysteryEncounterChanges(): EventMysteryEncounterTier[] {
@@ -505,13 +473,10 @@ export class TimedEventManager {
 
   getEventMysteryEncountersDisabled(): MysteryEncounterType[] {
     const ret: MysteryEncounterType[] = [];
-    for (const te of timedEvents) {
-      if (this.isActive(te) && te.mysteryEncounterTierChanges != null) {
-        for (const metc of te.mysteryEncounterTierChanges) {
-          if (metc.disable) {
-            ret.push(metc.mysteryEncounter);
-          }
-        }
+    const metChanges = this.activeEvent()?.mysteryEncounterTierChanges ?? [];
+    for (const metc of metChanges) {
+      if (metc.disable) {
+        ret.push(metc.mysteryEncounter);
       }
     }
     return ret;
