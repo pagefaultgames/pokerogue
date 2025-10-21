@@ -10,6 +10,9 @@ import { isGameManagerInstance, receivedStr } from "#test/test-utils/test-utils"
 import { toTitleCase } from "#utils/strings";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
+/**
+ * Options type for {@linkcode toHavePositionalTag}.
+ */
 export type toHavePositionalTagOptions<P extends PositionalTagType> = OneOther<toSerializedPosTag<P>, "tagType">;
 
 /**
