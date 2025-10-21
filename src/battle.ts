@@ -21,6 +21,7 @@ import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import i18next from "#plugins/i18n";
 import { MusicPreference } from "#system/settings";
 import { trainerConfigs } from "#trainers/trainer-config";
+import type { NewBattleResolvedProps } from "#types/new-battle-props";
 import type { TurnMove } from "#types/turn-move";
 import {
   NumberHolder,
@@ -57,7 +58,7 @@ export class Battle {
   public waveIndex: number;
   public battleType: BattleType;
   public battleSpec: BattleSpec;
-  public trainer: Trainer | null;
+  public trainer: Trainer | undefined;
   public enemyLevels: number[] | undefined;
   public enemyParty: EnemyPokemon[] = [];
   public seenEnemyPartyMemberIds: Set<number> = new Set<number>();
@@ -100,17 +101,22 @@ export class Battle {
 
   private rngCounter = 0;
 
-  constructor(gameMode: GameMode, waveIndex: number, battleType: BattleType, trainer?: Trainer, double = false) {
+  constructor(
+    gameMode: GameMode,
+    { waveIndex, battleType, trainer, mysteryEncounterType, double = false }: NewBattleResolvedProps,
+  ) {
     this.gameMode = gameMode;
     this.waveIndex = waveIndex;
     this.battleType = battleType;
-    this.trainer = trainer ?? null;
+    this.trainer = trainer;
+    this.mysteryEncounterType = mysteryEncounterType;
+    this.double = double;
+
     this.initBattleSpec();
     this.enemyLevels =
       battleType !== BattleType.TRAINER
         ? new Array(double ? 2 : 1).fill(null).map(() => this.getLevelForWave())
         : trainer?.getPartyLevels(this.waveIndex);
-    this.double = double;
   }
 
   private initBattleSpec(): void {
@@ -470,13 +476,12 @@ export class Battle {
 
 export class FixedBattle extends Battle {
   constructor(waveIndex: number, config: FixedBattleConfig) {
-    super(
-      globalScene.gameMode,
+    super(globalScene.gameMode, {
       waveIndex,
-      config.battleType,
-      config.battleType === BattleType.TRAINER ? config.getTrainer() : undefined,
-      config.double,
-    );
+      battleType: config.battleType,
+      trainer: config.battleType === BattleType.TRAINER ? config.getTrainer() : undefined,
+      double: config.double,
+    });
     if (config.getEnemyParty) {
       this.enemyParty = config.getEnemyParty();
     }
