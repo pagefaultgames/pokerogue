@@ -7034,31 +7034,40 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
  * for executing called moves.
  */
 export abstract class CallMoveAttr extends OverrideMoveEffectAttr {
+  /**
+   * Whether to target the called move at the move's selected target if possible; default `false`.
+   * If `false`, will unleash non-spread moves against a random eligible target.
+   *
+   * Should never be `true` if the move is set to target the user!
+   */
+  private targetEnemy: boolean
   constructor(
     /**
-     * Whether this move should target the user; default `true`.
-     * If `true`, will unleash non-spread moves against a random eligible target,
-     * as opposed to the move's selected target.
+     * Whether to target the called move at the move's selected target if possible; default `false`.
+     * If `false`, will unleash non-spread moves against a random eligible target.
+     *
+     * Should never be `true` if the move is set to target the user!
      */
-    override selfTarget = true,
+    targetEnemy = false,
   ) {
-    super(selfTarget)
+    super(false); // NB: We probably won't care about this after move-calling-move refactor
+    this.targetEnemy = targetEnemy;
   }
 
   /**
    * Abstract function yielding the move to be used.
    * Called automatically during attribute application by default,
-   * but can also be called in advance when determining conditions.
-   * @param user - The {@linkcode Pokemon} using the move
-   * @param target - The {@linkcode Pokemon} being targeted by the move
-   * @returns The {@linkcode MoveId} that will be called and used.
+   * but can also be called in advance when evaluating move conditions.
+   * @param user - The `Pokemon` using the move
+   * @param target - The `Pokemon` being targeted by the move
+   * @returns The `MoveId` that will be called and used.
    */
   protected abstract getMove(user: Pokemon, target: Pokemon): MoveId;
 
   /**
    * Apply the attribute's effects to execute the called move.
-   * @param user - The {@linkcode Pokemon} using the move
-   * @param target - The {@linkcode Pokemon} targeted by the move
+   * @param user - The `Pokemon` using the move
+   * @param target - The `Pokemon` targeted by the move
    * @returns always `true`
    * @sealed
    */
@@ -7074,9 +7083,9 @@ export abstract class CallMoveAttr extends OverrideMoveEffectAttr {
       moveTargets.multiple || moveTargets.targets.length === 1
         ? moveTargets.targets
         : [
-            this.selfTarget
-              ? moveTargets.targets[user.randBattleSeedInt(moveTargets.targets.length)]
-              : target.getBattlerIndex(),
+            this.targetEnemy
+              ?  target.getBattlerIndex()
+              : moveTargets.targets[user.randBattleSeedInt(moveTargets.targets.length)],
           ];
 
     globalScene.phaseManager.unshiftNew("LoadMoveAnimPhase", copiedMove.id);
@@ -7091,7 +7100,7 @@ export abstract class CallMoveAttr extends OverrideMoveEffectAttr {
  */
 export class NaturePowerAttr extends CallMoveAttr {
   constructor() {
-    super(false)
+    super(true)
   }
 
   protected override getMove(user: Pokemon): MoveId {
@@ -7207,29 +7216,39 @@ export class NaturePowerAttr extends CallMoveAttr {
 
 /**
  * Abstract class to encompass move-calling-moves with a banlist of invalid moves.
+ *
+ * @privateRemarks
+ * Since this attribute checks the value of `getMove` during move condition evaluation,
+ * subclasses must ensure their `getMove` functions are consistent when called during `getCondition`
+ * and `apply`.
+ *
+ * This restriction will likely be lifted once move-calling moves are pushed earlier in the failure sequence.
  */
 abstract class CallMoveAttrWithBanlist extends CallMoveAttr {
   /**
    * A {@linkcode ReadonlySet} containing all {@linkcode MoveId | moves} that this attribute cannot copy,
-   * in addition to unimplemented moves and `linkcode MoveId.NONE`.
-   * If one
+   * in addition to unimplemented/challenge-restricted moves and `MoveId.NONE`.
    */
   private readonly invalidMoves: ReadonlySet<MoveId>;
 
   constructor(
     invalidMoves: ReadonlySet<MoveId>,
-    selfTarget = true,
+    // Exposed solely for `CopyMoveAttr`
+    targetEnemy = false,
   ) {
-    super(selfTarget);
+    super(targetEnemy);
     this.invalidMoves = invalidMoves;
   }
 
   /**
-   * Check whether a {@linkcode MoveId} is selectable by this attribute, based on its currnet banlist.
-   * Moves that are unimplemented or {@linkcode MoveId.NONE} are always disallowed, as are ones barred by a challenge.
+   * Check whether a given move is selectable by this attribute, based on its currnet banlist.
+   * `MoveId.NONE` and unimplemented moves are always disallowed, as are ones barred by a challenge.
    * @param move - The {@linkcode MoveId} to check
    * @returns Whether `move` can be called successfully.
    * @sealed
+   * @privateRemarks
+   * Subclasses' `getMove` functions should return `MoveId.NONE` if they would otherwise be forced
+   * to use a disallowed move.
    */
   protected isMoveAllowed(move: MoveId): boolean {
     const valid = new BooleanHolder(move !== MoveId.NONE && !this.invalidMoves.has(move) && !allMoves[move].name.endsWith(" (N)"))
@@ -7237,6 +7256,9 @@ abstract class CallMoveAttrWithBanlist extends CallMoveAttr {
     return valid.value;
   }
 
+  /**
+   * @sealed
+   */
   public override getCondition(): MoveConditionFunc {
     return (user, target) => this.getMove(user, target) !== MoveId.NONE;
   }
@@ -7251,12 +7273,13 @@ export type { CallMoveAttrWithBanlist }
  */
 export class CopyMoveAttr extends CallMoveAttrWithBanlist {
   protected override getMove(_user: Pokemon, target: Pokemon): MoveId {
-    // If `selfTarget` is `true`, return the last successful move used by anyone on-field.
-    // Otherwise, select the last move executed by the target, failing if none were used yet.
-    const calledMove = this.selfTarget
-      ? globalScene.currentBattle.lastMove
-      : target.getLastNonVirtualMove(false, false)?.move ?? MoveId.NONE
-      return this.isMoveAllowed(calledMove) ? calledMove : MoveId.NONE
+    // If `targetEnemy` is `true`, select the last move executed by the target.
+    // Otherwise, return the last successful move used by anyone on-field.
+    const calledMove = this.targetEnemy
+      ? target.getLastNonVirtualMove(false, false)?.move ?? MoveId.NONE
+      : globalScene.currentBattle.lastMove;
+
+    return this.isMoveAllowed(calledMove) ? calledMove : MoveId.NONE
   }
 }
 
@@ -7266,7 +7289,7 @@ export class CopyMoveAttr extends CallMoveAttrWithBanlist {
  */
 export class RandomMoveAttr extends CallMoveAttrWithBanlist {
   constructor(invalidMoves: ReadonlySet<MoveId>) {
-    super(invalidMoves, true);
+    super(invalidMoves, false);
   }
 
   protected override getMove(user: Pokemon): MoveId {
@@ -7281,7 +7304,7 @@ export class RandomMoveAttr extends CallMoveAttrWithBanlist {
  * Attribute used to call a random move in the user or its allies' moveset.
  * Used for {@linkcode MoveId.ASSIST} and {@linkcode MoveId.SLEEP_TALK}.
  *
- * Fails if the user has no callable moves.
+ * Fails if no callable moves are found.
  */
 export class RandomMovesetMoveAttr extends RandomMoveAttr {
   /**
@@ -7293,7 +7316,7 @@ export class RandomMovesetMoveAttr extends RandomMoveAttr {
   /**
    * Whether to consider moves from the user's other party members (`true`)
    * or the user's own moveset (`false`).
-     * @defaultValue `false`
+   * @defaultValue `false`
    */
   private includeParty = false;
 
@@ -7311,17 +7334,19 @@ export class RandomMovesetMoveAttr extends RandomMoveAttr {
       return temp;
     }
 
+    // Assist & Sleep Talk consider duplicate moves for their selection (hence why we use an array instead of a set)
+    const eligibleMoves = this.getEligibleMoves(user);
+    this.selectedMove = eligibleMoves[user.randBattleSeedInt(eligibleMoves.length)]?.moveId ?? MoveId.NONE;
+    return this.selectedMove;
+  }
+
+  private getEligibleMoves(user: Pokemon): PokemonMove[] {
     // `includeParty` will be true for Assist, false for Sleep Talk
     const allies: Pokemon[] =
       this.includeParty
         ? (user.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty()).filter(p => p !== user)
         : [ user ];
-
-    // Assist & Sleep Talk consider duplicate moves for their selection (hence why we use an array instead of a set)
-    const moveset = allies.flatMap(p => p.moveset);
-    const eligibleMoves = moveset.filter(m => this.isMoveAllowed(m.moveId));
-    this.selectedMove = eligibleMoves[user.randBattleSeedInt(eligibleMoves.length)]?.moveId ?? MoveId.NONE;
-    return this.selectedMove;
+    return allies.flatMap(p => p.moveset).filter(pm => this.isMoveAllowed(pm.moveId));
   }
 }
 
@@ -8888,7 +8913,7 @@ export function initMoves() {
     new SelfStatusMove(MoveId.METRONOME, PokemonType.NORMAL, -1, 10, -1, 0, 1)
       .attr(RandomMoveAttr, invalidMetronomeMoves),
     new StatusMove(MoveId.MIRROR_MOVE, PokemonType.FLYING, -1, 20, -1, 0, 1)
-      .attr(CopyMoveAttr, invalidMirrorMoveMoves, false),
+      .attr(CopyMoveAttr, invalidMirrorMoveMoves, true),
     new AttackMove(MoveId.SELF_DESTRUCT, PokemonType.NORMAL, MoveCategory.PHYSICAL, 200, 100, 5, -1, 0, 1)
       .attr(SacrificialAttr)
       .makesContact(false)

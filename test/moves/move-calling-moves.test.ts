@@ -162,7 +162,7 @@ describe("Moves - Move-calling Moves", () => {
         game.scene.currentBattle.lastMove = m;
       },
     },
-  ])("$name", ({ move, attrName, callback }) => {
+  ])("General Checks - $name", ({ move, attrName, callback }) => {
     let attr: CallMoveAttrWithBanlist;
     let banlist: ReadonlySet<MoveId>;
     let getMoveSpy: MockInstance<CallMoveAttrWithBanlist["getMove"]>;
@@ -172,7 +172,7 @@ describe("Moves - Move-calling Moves", () => {
       banlist = attr["invalidMoves"];
       getMoveSpy = vi.spyOn(attr as typeof attr & Pick<{ getMove: (typeof attr)["getMove"] }, "getMove">, "getMove");
 
-      // Barring other things, ensure Copycat has (at least) that particular move in its moveset
+      // Barring other things, ensure Sleep Talk (at least) has that particular move in its moveset
       game.override.moveset(move);
       if (move === MoveId.SLEEP_TALK) {
         game.override.statusEffect(StatusEffect.SLEEP);
@@ -224,7 +224,7 @@ describe("Moves - Move-calling Moves", () => {
 
       const feebas = game.field.getPlayerPokemon();
       // Mock RNG functions to return high rolls (ie last eligible target)
-      // This will force the test to fail if MM were to use the same targeting algorithm
+      // This will force the test to fail if MM were to use the same random targeting algorithm
       // as Copycat/etc
       vi.spyOn(feebas, "randBattleSeedInt").mockReturnValue(1);
 
@@ -232,7 +232,7 @@ describe("Moves - Move-calling Moves", () => {
       await game.move.forceEnemyMove(MoveId.TACKLE, BattlerIndex.ENEMY_2);
       await game.move.forceEnemyMove(MoveId.SPLASH);
       await game.setTurnOrder([BattlerIndex.ENEMY_2, BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-      await game.toEndOfTurn();
+      await game.toNextTurn();
 
       expect(feebas).toHaveUsedMove({ move: MoveId.MIRROR_MOVE, useMode: MoveUseMode.NORMAL }, 1);
       expect(feebas).toHaveUsedMove({
@@ -240,6 +240,13 @@ describe("Moves - Move-calling Moves", () => {
         useMode: MoveUseMode.FOLLOW_UP,
         targets: [BattlerIndex.ENEMY],
       });
+
+      // 2nd turn: Copy a move that physically cannot target the Mirror Move recipient
+      game.move.use(MoveId.MIRROR_MOVE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+      await game.move.forceEnemyMove(MoveId.TACKLE, BattlerIndex.ENEMY_2);
+      await game.move.forceEnemyMove(MoveId.SPLASH);
+      await game.setTurnOrder([BattlerIndex.ENEMY_2, BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.toEndOfTurn();
     });
 
     // testing Metronome here is pointless since we literally mock out its randomness

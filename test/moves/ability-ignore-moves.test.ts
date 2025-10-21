@@ -61,7 +61,9 @@ describe("Moves - Ability-Ignoring Moves", () => {
 
     game.move.use(MoveId.METRONOME);
     game.move.forceMetronomeMove(MoveId.PHOTON_GEYSER, true);
-    // TODO: Change to `MoveEffectPhase` once move-calling moves are refactored
+    // TODO: This has to change to `MoveEffectPhase` once move-calling moves are refactored
+    // to not create a new `MovePhase`
+    await game.phaseInterceptor.to("MoveEndPhase");
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
     expect(game.field.getPlayerPokemon()).toHaveUsedMove(MoveId.PHOTON_GEYSER);
