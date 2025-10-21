@@ -59,11 +59,18 @@ type posTagParamMap = {
 };
 
 /**
+ * Generic type to convert a `PositionalTagType` into the serialized representation of its corresponding class instance.
+ *
+ * Used in place of a mapped type to work around Typescript deficiencies in function type signatures.
+ */
+export type toSerializedPosTag<T extends PositionalTagType> = posTagParamMap[T] & { tagType: T };
+
+/**
  * Type mapping all positional tag types to their constructors' parameters, alongside the `tagType` selector.
  * Equivalent to their serialized representations.
  */
-export type serializedPosTagMap = {
-  [k in PositionalTagType]: posTagParamMap[k] & { tagType: k };
+type serializedPosTagMap = {
+  [k in PositionalTagType]: toSerializedPosTag<T>;
 };
 
 /** Union type containing all serialized {@linkcode PositionalTag}s. */

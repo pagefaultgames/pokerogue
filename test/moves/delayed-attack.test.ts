@@ -72,10 +72,7 @@ describe("Moves - Delayed Attacks", () => {
    * @param numAttacks - The number of delayed attacks that should be queued; default `1`
    */
   function expectFutureSightActive(numAttacks = 1) {
-    const delayedAttacks = game.scene.arena.positionalTagManager["tags"].filter(
-      t => t.tagType === PositionalTagType.DELAYED_ATTACK,
-    );
-    expect(delayedAttacks).toHaveLength(numAttacks);
+    expect(game).toHavePositionalTag(PositionalTagType.DELAYED_ATTACK, numAttacks);
   }
 
   it.each<{ name: string; move: MoveId }>([
@@ -88,7 +85,11 @@ describe("Moves - Delayed Attacks", () => {
     game.move.use(move);
     await game.toNextTurn();
 
-    expectFutureSightActive();
+    expect(game).toHavePositionalTag({
+      tagType: PositionalTagType.DELAYED_ATTACK,
+      sourceMove: move,
+      targetIndex: BattlerIndex.ENEMY,
+    });
 
     game.doSwitchPokemon(1);
     game.forceEnemyToSwitch();
