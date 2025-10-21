@@ -412,7 +412,7 @@ export class TimedEventManager {
     return activeEvents.length > 0;
   }
 
-  getShinyMultiplier(): number {
+  getShinyEncounterMultiplier(): number {
     let multiplier = 1;
     const shinyEvents = timedEvents.filter(te => te.eventType === EventType.SHINY && this.isActive(te));
     for (const se of shinyEvents) {
