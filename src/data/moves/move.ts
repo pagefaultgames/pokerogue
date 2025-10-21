@@ -2554,7 +2554,7 @@ export class HitHealAttr extends MoveEffectAttr {
     if (target.hasAbilityWithAttr("ReverseDrainAbAttr")) {
       return false;
     }
-e
+
     const healAmount = this.getHealAmount(user, target);
     let message = "";
     if (this.healStat !== null) {
