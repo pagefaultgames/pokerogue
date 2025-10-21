@@ -22,6 +22,4 @@ import type { AtLeastOne, NonFunctionPropertiesRecursive as nonFunc } from "#typ
  * @typeParam O - The object to source keys from
  * @typeParam K - One or more of O's keys to render mandatory
  */
-export type OneOther<O extends object, K extends keyof O> = AtLeastOne<Omit<nonFunc<O>, K>> & {
-  [key in K]: O[K];
-};
+export type OneOther<O extends object, K extends keyof nonFunc<O>> = Pick<O, K> & AtLeastOne<Omit<nonFunc<O>, K>>;

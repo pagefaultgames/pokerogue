@@ -32,10 +32,10 @@ export function toHaveUsedMove(
     };
   }
 
-  const move: TurnMove | undefined = received.getLastXMoves(-1)[index];
+  const historyMove: TurnMove | undefined = received.getLastXMoves(-1)[index];
   const pkmName = getPokemonNameWithAffix(received);
 
-  if (move === undefined) {
+  if (historyMove === undefined) {
     return {
       pass: this.isNot,
       message: () => `Expected ${pkmName} to have used ${index + 1} moves, but it didn't!`,
@@ -43,38 +43,39 @@ export function toHaveUsedMove(
     };
   }
 
-  // Coerce to a `TurnMove` if only 1 property was passed
-  let onlyMove = false;
-  let moveObj: Partial<TurnMove> & Pick<TurnMove, "move">;
-  if (typeof expectedMove === "number") {
-    moveObj = { move: expectedMove };
-    onlyMove = true;
-  } else {
-    moveObj = expectedMove;
-  }
-
   const moveIndexStr = index === 0 ? "last move" : `${getOrdinal(index)} most recent move`;
 
-  const pass = this.equals(move, moveObj, [
+  // Customize the diff message if move did not match
+  const expectedId = typeof expectedMove === "number" ? expectedMove : expectedMove.move;
+  const actualId = historyMove.move;
+  if (!this.equals(actualId, expectedId, this.customTesters)) {
+    const expectedIdStr = getEnumStr(MoveId, expectedId);
+    const actualIdStr = getEnumStr(MoveId, actualId);
+    return {
+      pass: false,
+      // Expected Magikarp' 5th most recent move to be PHOTON_GEYSER, but got METRONOME instead!
+      message: () => `Expected ${pkmName}'s ${moveIndexStr} to be ${expectedIdStr}, but got ${actualIdStr} instead!`,
+      expected: expectedId,
+      actual: actualId,
+    };
+  }
+
+  // Compare equality with the provided object
+  const pass = this.equals(historyMove, expectedMove, [
     ...this.customTesters,
     this.utils.subsetEquality,
     this.utils.iterableEquality,
   ]);
 
-  // Customize the diff message if a single move was passed
-  const expectedStr = onlyMove
-    ? `be MoveId.${getEnumStr(MoveId, moveObj.move)}`
-    : `match ${getOnelineDiffStr.call(this, expectedMove)}`;
-  const notVerb = onlyMove ? "was" : "did";
+  const expectedStr = `${getOnelineDiffStr.call(this, expectedMove)}`;
 
   return {
     pass,
     message: () =>
       pass
-        ? // Expected Magikarp' 5th most recent move to be MoveId.PHOTON_GEYSER, but it wasn't!
-          `Expected ${pkmName}'s ${moveIndexStr} to NOT ${expectedStr}, but it ${notVerb}!`
-        : `Expected ${pkmName}'s ${moveIndexStr} to ${expectedStr}, but it ${notVerb}n't!`,
+        ? `Expected ${pkmName}'s ${moveIndexStr} to NOT match ${expectedStr}, but it did!`
+        : `Expected ${pkmName}'s ${moveIndexStr} to match ${expectedStr}, but it didn't!`,
     expected: expectedMove,
-    actual: move,
+    actual: historyMove,
   };
 }
