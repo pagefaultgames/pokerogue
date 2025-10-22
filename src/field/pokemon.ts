@@ -3150,8 +3150,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       const otherBattleInfo = globalScene.fieldUI
         .getAll()
         .slice(0, 4)
-        .filter(ui => ui instanceof BattleInfo && (ui as BattleInfo) instanceof PlayerBattleInfo === this.isPlayer())
-        .find(() => true);
+        .find(ui => ui instanceof BattleInfo && (ui as BattleInfo) instanceof PlayerBattleInfo === this.isPlayer());
       if (!otherBattleInfo || !this.getFieldIndex()) {
         globalScene.fieldUI.sendToBack(this.battleInfo);
         globalScene.sendTextToBack(); // Push the top right text objects behind everything else
