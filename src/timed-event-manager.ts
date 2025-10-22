@@ -39,6 +39,10 @@ interface EventMysteryEncounterTier {
 }
 
 interface EventWaveReward {
+  /**
+   * The wave at which the reward should be given.
+   * {@linkcode ClassicFixedBossWaves.RIVAL1} and {@linkcode ClassicFixedBossWaves.RIVAL2} are currently the only waves that give fixed rewards.
+   */
   readonly wave: number;
   readonly type: ModifierTypeKeys;
 }
