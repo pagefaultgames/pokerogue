@@ -10,18 +10,38 @@ import type { ArenaTagDataMap, SerializableArenaTagType } from "#types/arena-tag
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
+ * Helper type for serializable arena tag options. Allows for caching of the type to avoid
+ * instantiation each time typescript encounters the type. (dramatically speeds up typechecking)
+ * @internal
+ */
+type SerializableArenaTagOptions<A extends SerializableArenaTagType> = OneOther<
+  ArenaTagDataMap[A],
+  "tagType" | "side"
+> & {
+  tagType: A;
+};
+
+/**
+ * Helper type for non-serializable arena tag options.
+ * @internal
+ * @privateRemarks
+ * A cannot extend from NonSerializableArenaTagType due to a
+ * {@link https://github.com/microsoft/TypeScript/issues/48710 | longstanding Typescript issue}
+ */
+type NonSerializableArenaTagOptions<A extends ArenaTagType> = OneOther<ArenaTagTypeMap[A], "tagType" | "side"> & {
+  tagType: A;
+};
+
+/**
  * Options type for {@linkcode toHaveArenaTag}.
  * @typeParam A - The {@linkcode ArenaTagType} being checked
  * @remarks
  * If A corresponds to a serializable `ArenaTag`, only properties allowed to be serialized
  * (i.e. can change across instances) will be present and able to be checked.
  */
-export type toHaveArenaTagOptions<A extends ArenaTagType> = OneOther<
-  A extends SerializableArenaTagType ? ArenaTagDataMap[A] : ArenaTagTypeMap[A],
-  "tagType" | "side"
-> & {
-  tagType: A;
-};
+export type toHaveArenaTagOptions<A extends ArenaTagType> = [A] extends [SerializableArenaTagType]
+  ? SerializableArenaTagOptions<A>
+  : NonSerializableArenaTagOptions<A>;
 
 /**
  * Matcher to check if the {@linkcode Arena} has a given {@linkcode ArenaTag} active.
