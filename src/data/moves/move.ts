@@ -90,13 +90,16 @@ import type { ChargingMove, MoveAttrMap, MoveAttrString, MoveClassMap, MoveKindS
 import type { TurnMove } from "#types/turn-move";
 import type { AbstractConstructor } from "#types/type-helpers";
 import { applyChallenges } from "#utils/challenge-utils";
-import { BooleanHolder, coerceArray, type Constructor, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
+import { BooleanHolder, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
+import type { Constructor } from "#types/common";
+import { coerceArray } from "#utils/array";
 import { getEnumValues } from "#utils/enums";
 import { areAllies } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import { canSpeciesTera, willTerastallize } from "#utils/pokemon-utils";
+import type { ReadonlyGenericUint8Array } from "#types/typed-arrays";
 
 /**
  * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.
@@ -1040,7 +1043,7 @@ export abstract class Move implements Localizable {
 
 
     if (!this.hasAttr("TypelessAttr")) {
-      globalScene.arena.applyTags(WeakenMoveTypeTag, simulated, typeChangeHolder.value, power);
+      globalScene.arena.applyTags(WeakenMoveTypeTag, typeChangeHolder.value, power);
       globalScene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, typeChangeHolder.value, power);
     }
 
@@ -1509,7 +1512,7 @@ export class MoveEffectAttr extends MoveAttr {
 
     if ((!move.hasAttr("FlinchAttr") || moveChance.value <= move.chance) && !move.hasAttr("SecretPowerAttr")) {
       const userSide = user.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-      globalScene.arena.applyTagsForSide(ArenaTagType.WATER_FIRE_PLEDGE, userSide, false, moveChance);
+      globalScene.arena.applyTagsForSide(ArenaTagType.WATER_FIRE_PLEDGE, userSide, moveChance);
     }
 
     if (!selfEffect) {
@@ -2546,28 +2549,18 @@ export class HitHealAttr extends MoveEffectAttr {
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    let healAmount = 0;
+    if (target.hasAbilityWithAttr("ReverseDrainAbAttr")) {
+      return false;
+    }
+
+    const healAmount = this.getHealAmount(user, target);
     let message = "";
-    const reverseDrain = target.hasAbilityWithAttr("ReverseDrainAbAttr", false);
     if (this.healStat !== null) {
-      // Strength Sap formula
-      healAmount = target.getEffectiveStat(this.healStat);
       message = i18next.t("battle:drainMessage", { pokemonName: getPokemonNameWithAffix(target) });
     } else {
-      // Default healing formula used by draining moves like Absorb, Draining Kiss, Bitter Blade, etc.
-      healAmount = toDmgValue(user.turnData.singleHitDamageDealt * this.healRatio);
       message = i18next.t("battle:regainHealth", { pokemonName: getPokemonNameWithAffix(user) });
     }
-    if (reverseDrain) {
-      if (user.hasAbilityWithAttr("BlockNonDirectDamageAbAttr")) {
-        healAmount = 0;
-        message = "";
-      } else {
-        user.turnData.damageTaken += healAmount;
-        healAmount = healAmount * -1;
-        message = "";
-      }
-    }
+
     globalScene.phaseManager.unshiftNew("PokemonHealPhase", user.getBattlerIndex(), healAmount, message, false, true);
     return true;
   }
@@ -2585,6 +2578,10 @@ export class HitHealAttr extends MoveEffectAttr {
       return Math.floor(Math.max(0, (Math.min(1, (healAmount + user.hp) / user.getMaxHp() - 0.33))) / user.getHpRatio());
     }
     return Math.floor(Math.max((1 - user.getHpRatio()) - 0.33, 0) * (move.power / 4));
+  }
+
+  public getHealAmount(user: Pokemon, target: Pokemon): number {
+    return (this.healStat) ? target.getEffectiveStat(this.healStat) : toDmgValue(user.turnData.singleHitDamageDealt * this.healRatio);
   }
 }
 
@@ -2811,7 +2808,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
  * Used for {@linkcode Moves.TRI_ATTACK} and {@linkcode Moves.DIRE_CLAW}.
  */
 export class MultiStatusEffectAttr extends StatusEffectAttr {
-  public effects: StatusEffect[];
+  public readonly effects: readonly StatusEffect[];
 
   constructor(effects: StatusEffect[], selfTarget?: boolean) {
     super(effects[0], selfTarget);
@@ -3141,7 +3138,7 @@ export class StealEatBerryAttr extends EatBerryAttr {
  */
 export class HealStatusEffectAttr extends MoveEffectAttr {
   /** List of Status Effects to cure */
-  private effects: StatusEffect[];
+  private readonly effects: readonly StatusEffect[];
 
   /**
    * @param selfTarget - Whether this move targets the user
@@ -3149,7 +3146,7 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
    */
   constructor(selfTarget: boolean, effects: StatusEffect | StatusEffect[]) {
     super(selfTarget, { lastHitOnly: true });
-    this.effects = coerceArray(effects)
+    this.effects = coerceArray(effects);
   }
 
   /**
@@ -6339,7 +6336,7 @@ export class AddArenaTrapTagAttr extends AddArenaTagAttr {
       if (!tag) {
         return true;
       }
-      return tag.layers < tag.maxLayers;
+      return tag.canAdd();
     };
   }
 }
@@ -6364,7 +6361,7 @@ export class AddArenaTrapTagHitAttr extends AddArenaTagAttr {
       if (!tag) {
         return true;
       }
-      return tag.layers < tag.maxLayers;
+      return tag.canAdd();
     }
     return false;
   }
@@ -7705,7 +7702,7 @@ export class AbilityChangeAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => (this.selfTarget ? user : target).getAbility().isReplaceable && (this.selfTarget ? user : target).getAbility().id !== this.ability;
+    return (user, target, move) => (this.selfTarget ? user : target).getAbility().replaceable && (this.selfTarget ? user : target).getAbility().id !== this.ability;
   }
 }
 
@@ -7739,9 +7736,9 @@ export class AbilityCopyAttr extends MoveEffectAttr {
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
       const ally = user.getAlly();
-      let ret = target.getAbility().isCopiable && user.getAbility().isReplaceable;
+      let ret = target.getAbility().copiable && user.getAbility().replaceable;
       if (this.copyToPartner && globalScene.currentBattle?.double) {
-        ret = ret && (!ally?.hp || ally?.getAbility().isReplaceable);
+        ret = ret && (!ally?.hp || ally?.getAbility().replaceable);
       } else {
         ret = ret && user.getAbility().id !== target.getAbility().id;
       }
@@ -7770,7 +7767,7 @@ export class AbilityGiveAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => user.getAbility().isCopiable && target.getAbility().isReplaceable && user.getAbility().id !== target.getAbility().id;
+    return (user, target, move) => user.getAbility().copiable && target.getAbility().replaceable && user.getAbility().id !== target.getAbility().id;
   }
 }
 
@@ -7793,7 +7790,7 @@ export class SwitchAbilitiesAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => [user, target].every(pkmn => pkmn.getAbility().isSwappable);
+    return (user, target, move) => [user, target].every(pkmn => pkmn.getAbility().swappable);
   }
 }
 
@@ -7819,7 +7816,7 @@ export class SuppressAbilitiesAttr extends MoveEffectAttr {
 
   /** Causes the effect to fail when the target's ability is unsupressable or already suppressed. */
   getCondition(): MoveConditionFunc {
-    return (_user, target, _move) => !target.summonData.abilitySuppressed && (target.getAbility().isSuppressable || (target.hasPassive() && target.getPassiveAbility().isSuppressable));
+    return (_user, target, _move) => !target.summonData.abilitySuppressed && (target.getAbility().suppressable || (target.hasPassive() && target.getPassiveAbility().suppressable));
   }
 }
 
@@ -8543,7 +8540,7 @@ const MoveAttrs = Object.freeze({
 export type MoveAttrConstructorMap = typeof MoveAttrs;
 
 export function initMoves() {
-  allMoves.push(
+  (allMoves as Move[]).push(
     new SelfStatusMove(MoveId.NONE, PokemonType.NORMAL, MoveCategory.STATUS, -1, -1, 0, 1),
     new AttackMove(MoveId.POUND, PokemonType.NORMAL, MoveCategory.PHYSICAL, 40, 100, 35, -1, 0, 1),
     new AttackMove(MoveId.KARATE_CHOP, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 50, 100, 25, -1, 0, 1)

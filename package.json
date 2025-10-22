@@ -11,6 +11,7 @@
     "build": "vite build && node scripts/sync-dist-assets.js",
     "build:beta": "vite build --mode beta && node scripts/sync-dist-assets.js",
     "build:dev": "vite build --mode development && node scripts/sync-dist-assets.js",
+    "build:app": "vite build --mode app && node scripts/sync-dist-assets.js",
     "preview": "vite preview",
     "test": "vitest run --no-isolate",
     "test:cov": "vitest run --coverage --no-isolate",
@@ -65,6 +66,7 @@
   "dependencies": {
     "@material/material-color-utilities": "^0.3.0",
     "compare-versions": "^6.1.1",
+    "core-js": "^3.46.0",
     "crypto-js": "^4.2.0",
     "i18next": "^25.5.3",
     "i18next-browser-languagedetector": "^8.2.0",
@@ -78,5 +80,5 @@
   "engines": {
     "node": ">=24.9.0"
   },
-  "packageManager": "pnpm@10.18.0"
+  "packageManager": "pnpm@10.18.3"
 }

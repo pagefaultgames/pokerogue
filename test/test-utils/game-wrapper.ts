@@ -2,7 +2,7 @@
 
 import { BattleScene } from "#app/battle-scene";
 // biome-ignore lint/performance/noNamespaceImport: Necessary in order to mock the var
-import * as bypassLoginModule from "#app/global-vars/bypass-login";
+import * as appConstants from "#constants/app-constants";
 import { MoveAnim } from "#data/battle-anims";
 import { Pokemon } from "#field/pokemon";
 import { version } from "#package.json";
@@ -33,7 +33,7 @@ export class GameWrapper {
     Phaser.Math.RND.sow(["test"]);
     // vi.spyOn(Utils, "apiFetch", "get").mockReturnValue(fetch);
     if (bypassLogin) {
-      vi.spyOn(bypassLoginModule, "bypassLogin", "get").mockReturnValue(true);
+      vi.spyOn(appConstants, "bypassLogin", "get").mockReturnValue(true);
     }
     this.game = phaserGame;
     // TODO: Move these mocks elsewhere
