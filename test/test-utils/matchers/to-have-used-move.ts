@@ -3,11 +3,11 @@ import type { Pokemon } from "#field/pokemon";
 /** biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports */
 
 import { getPokemonNameWithAffix } from "#app/messages";
-import type { MoveId } from "#enums/move-id";
-import { getOnelineDiffStr, getOrdinal } from "#test/test-utils/string-utils";
+import { MoveId } from "#enums/move-id";
+import type { OneOther } from "#test/@types/test-helpers";
+import { getEnumStr, getOnelineDiffStr, getOrdinal } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { TurnMove } from "#types/turn-move";
-import type { AtLeastOne } from "#types/type-helpers";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
@@ -15,14 +15,14 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @param received - The actual value received. Should be a {@linkcode Pokemon}
  * @param expectedMove - The {@linkcode MoveId} the Pokemon is expected to have used,
  * or a partially filled {@linkcode TurnMove} containing the desired properties to check
- * @param index - The index of the move history entry to check, in order from most recent to least recent.
- * Default `0` (last used move)
+ * @param index - The index of the move history entry to check, in order from most recent to least recent;
+ * default `0` (last used move)
  * @returns Whether the matcher passed
  */
 export function toHaveUsedMove(
   this: MatcherState,
   received: unknown,
-  expectedMove: MoveId | AtLeastOne<TurnMove>,
+  expectedMove: MoveId | OneOther<TurnMove, "move">,
   index = 0,
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
@@ -32,10 +32,10 @@ export function toHaveUsedMove(
     };
   }
 
-  const move: TurnMove | undefined = received.getLastXMoves(-1)[index];
+  const historyMove: TurnMove | undefined = received.getLastXMoves(-1)[index];
   const pkmName = getPokemonNameWithAffix(received);
 
-  if (move === undefined) {
+  if (historyMove === undefined) {
     return {
       pass: this.isNot,
       message: () => `Expected ${pkmName} to have used ${index + 1} moves, but it didn't!`,
@@ -43,20 +43,32 @@ export function toHaveUsedMove(
     };
   }
 
-  // Coerce to a `TurnMove`
-  if (typeof expectedMove === "number") {
-    expectedMove = { move: expectedMove };
-  }
-
   const moveIndexStr = index === 0 ? "last move" : `${getOrdinal(index)} most recent move`;
 
-  const pass = this.equals(move, expectedMove, [
+  // Customize the diff message if move did not match
+  const expectedId = typeof expectedMove === "number" ? expectedMove : expectedMove.move;
+  const actualId = historyMove.move;
+  if (!this.equals(actualId, expectedId, this.customTesters)) {
+    const expectedIdStr = getEnumStr(MoveId, expectedId);
+    const actualIdStr = getEnumStr(MoveId, actualId);
+    return {
+      pass: false,
+      // Expected Magikarp' 5th most recent move to be PHOTON_GEYSER, but got METRONOME instead!
+      message: () => `Expected ${pkmName}'s ${moveIndexStr} to be ${expectedIdStr}, but got ${actualIdStr} instead!`,
+      expected: expectedId,
+      actual: actualId,
+    };
+  }
+
+  // Compare equality with the provided object
+  const pass = this.equals(historyMove, expectedMove, [
     ...this.customTesters,
     this.utils.subsetEquality,
     this.utils.iterableEquality,
   ]);
 
-  const expectedStr = getOnelineDiffStr.call(this, expectedMove);
+  const expectedStr = `${getOnelineDiffStr.call(this, expectedMove)}`;
+
   return {
     pass,
     message: () =>
@@ -64,6 +76,6 @@ export function toHaveUsedMove(
         ? `Expected ${pkmName}'s ${moveIndexStr} to NOT match ${expectedStr}, but it did!`
         : `Expected ${pkmName}'s ${moveIndexStr} to match ${expectedStr}, but it didn't!`,
     expected: expectedMove,
-    actual: move,
+    actual: historyMove,
   };
 }
