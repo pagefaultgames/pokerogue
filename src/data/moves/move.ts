@@ -3417,7 +3417,7 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
    * (**not** when it activates)! \
    * In the displayed text, `{{pokemonName}}` will be populated with the user's name.
    */
-  private chargeKey: string;
+  private readonly chargeKey: string;
 
   constructor(chargeAnim: ChargeAnim, chargeKey: string) {
     super();
