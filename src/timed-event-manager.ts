@@ -486,43 +486,25 @@ export class TimedEventManager {
     encounterType: MysteryEncounterType,
     normal: MysteryEncounterTier,
   ): MysteryEncounterTier {
-    let ret = normal;
-    for (const te of timedEvents) {
-      if (this.isActive(te) && te.mysteryEncounterTierChanges != null) {
-        for (const metc of te.mysteryEncounterTierChanges) {
-          if (metc.mysteryEncounter === encounterType) {
-            ret = metc.tier ?? normal;
-          }
-        }
+    const metChanges = this.activeEvent()?.mysteryEncounterTierChanges ?? [];
+    for (const metc of metChanges) {
+      if (metc.mysteryEncounter === encounterType) {
+        return metc.tier ?? normal;
       }
     }
-    return ret;
+    return normal;
   }
 
   getEventLuckBoost(): number {
-    let ret = 0;
-    const luckEvents = timedEvents.filter(te => this.isActive(te) && te.luckBoost != null);
-    for (const le of luckEvents) {
-      ret += le.luckBoost!;
-    }
-    return ret;
+    return this.activeEvent()?.luckBoost ?? 0;
   }
 
   getEventLuckBoostedSpecies(): SpeciesId[] {
-    const ret = new Set<SpeciesId>();
-
-    for (const te of timedEvents) {
-      if (this.isActive(te) && te.luckBoostedSpecies != null) {
-        for (const s of te.luckBoostedSpecies) {
-          ret.add(s);
-        }
-      }
-    }
-    return Array.from(ret);
+    return [...(this.activeEvent()?.luckBoostedSpecies ?? [])];
   }
 
   areFusionsBoosted(): boolean {
-    return timedEvents.some(te => this.isActive(te) && te.boostFusions);
+    return this.activeEvent()?.boostFusions ?? false;
   }
 
   /**
@@ -532,42 +514,30 @@ export class TimedEventManager {
    * @returns array of strings of the event modifier reward types
    */
   getFixedBattleEventRewards(wave: number): string[] {
-    const ret: string[] = [];
-    for (const te of timedEvents) {
-      if (this.isActive(te) && te.classicWaveRewards != null) {
-        ret.push(...te.classicWaveRewards.filter(cwr => cwr.wave === wave).map(cwr => cwr.type));
-      }
-    }
-    return ret;
+    // todo: maybe switch to using `ModifierTypeKeys` instead of string
+    return (
+      this.activeEvent()
+        ?.classicWaveRewards?.filter(cwr => cwr.wave === wave)
+        .map(cwr => cwr.type) ?? []
+    );
   }
 
   /**
    * Get the extra shiny chance for trainers due to event
    */
   getClassicTrainerShinyChance(): number {
-    let ret = 0;
-    for (const te of timedEvents) {
-      const shinyChance = te.trainerShinyChance;
-      if (shinyChance && this.isActive(te)) {
-        ret += shinyChance;
-      }
-    }
-    return ret;
+    return this.activeEvent()?.trainerShinyChance ?? 0;
   }
 
   getEventBgmReplacement(bgm: string): string {
-    let ret = bgm;
-    for (const te of timedEvents) {
-      if (this.isActive(te) && te.music != null) {
-        for (const mr of te.music) {
-          if (mr[0] === bgm) {
-            console.log(`it is ${te.name} so instead of ${mr[0]} we play ${mr[1]}`);
-            ret = mr[1];
-          }
-        }
+    const EventMusicReplacements = this.activeEvent()?.music ?? [];
+    for (const emr of EventMusicReplacements) {
+      if (emr[0] === bgm) {
+        console.log(`it is ${this.activeEvent()?.name} so instead of ${emr[0]} we play ${emr[1]}`);
+        return emr[1];
       }
     }
-    return ret;
+    return bgm;
   }
 
   /**
