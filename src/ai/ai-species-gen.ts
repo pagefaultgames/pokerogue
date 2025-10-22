@@ -5,24 +5,24 @@ import type { PokemonSpecies } from "#data/pokemon-species";
 import { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import type { SpeciesId } from "#enums/species-id";
-import { randSeedInt, randSeedItem } from "#utils/common";
+import { randSeedIntRange, randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 /**
  * Controls the maximum level difference that a Pokémon spawned with
  * {@linkcode EvoLevelThresholdKind.NORMAL} is allowd to remain unevolved.
  */
-const NORMAL_TRAINER_LEVEL_DIFF_PERCENT = 0.1;
+const NORMAL_TRAINER_LEVEL_DIFF_PERCENT = 1.1;
 /**
  * Controls the maximum level difference that a Pokémon spawned with
  * {@linkcode EvoLevelThresholdKind.WILD} is allowd to remain unevolved.
  */
-const WILD_LEVEL_DIFF_PERCENT = 0.2;
+const WILD_LEVEL_DIFF_PERCENT = 1.2;
 /**
  * Controls the maximum level difference that a Pokémon spawned with
  * {@linkcode EvoLevelThresholdKind.} is allowd to remain unevolved.
  */
-const STRONG_LEVEL_DIFF_PERCENT = 0;
+const STRONG_LEVEL_DIFF_PERCENT = 1;
 
 /**
  * Get the evolution threshold for the given evolution, or `0` for ineligible
@@ -162,7 +162,7 @@ export function determineEnemySpecies(
       break;
   }
 
-  const randomLevel = randSeedInt(choice, Math.round(choice * multiplier));
+  const randomLevel = randSeedIntRange(choice, Math.round(choice * multiplier));
   if (randomLevel <= level) {
     return determineEnemySpecies(
       getPokemonSpecies(evoSpecies),
