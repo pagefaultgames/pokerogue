@@ -392,7 +392,7 @@ export class TimedEventManager {
   }
 
   /**
-   * Get the active event
+   * For getting the active event
    * @returns The first active {@linkcode TimedEvent} or `undefined` if there are no active events
    */
   activeEvent(): TimedEvent | undefined {
@@ -445,7 +445,7 @@ export class TimedEventManager {
 
   /**
    * For events that change the classic candy friendship multiplier
-   * @returns The highest classic friendship multiplier among the active events, or the default CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER
+   * @returns The classic friendship multiplier of the active {@linkcode TimedEvent}, or the default {@linkcode CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER}
    */
   getClassicFriendshipMultiplier(): number {
     return this.activeEvent()?.classicFriendshipMultiplier ?? CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER;
