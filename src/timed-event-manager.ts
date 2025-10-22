@@ -53,7 +53,8 @@ interface EventChallenge {
 interface TimedEvent extends EventBanner {
   readonly name: string;
   readonly eventType: EventType;
-  readonly shinyMultiplier?: number;
+  readonly shinyEncounterMultiplier?: number;
+  readonly shinyCatchMultiplier?: number;
   readonly classicFriendshipMultiplier?: number;
   readonly luckBoost?: number;
   readonly upgradeUnlockedVouchers?: boolean;
@@ -75,7 +76,7 @@ const timedEvents: readonly TimedEvent[] = [
   {
     name: "Winter Holiday Update",
     eventType: EventType.SHINY,
-    shinyMultiplier: 2,
+    shinyEncounterMultiplier: 2,
     upgradeUnlockedVouchers: true,
     startDate: new Date(Date.UTC(2024, 11, 21, 0)),
     endDate: new Date(Date.UTC(2025, 0, 4, 0)),
@@ -206,7 +207,7 @@ const timedEvents: readonly TimedEvent[] = [
     startDate: new Date(Date.UTC(2025, 1, 10)),
     endDate: new Date(Date.UTC(2025, 1, 21)),
     boostFusions: true,
-    shinyMultiplier: 2,
+    shinyEncounterMultiplier: 2,
     bannerKey: "valentines2025event",
     scale: 0.21,
     availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-Hans"],
@@ -319,7 +320,7 @@ const timedEvents: readonly TimedEvent[] = [
     bannerKey: "spr25event",
     scale: 0.21,
     availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-419", "pt-BR", "zh-Hans"],
-    shinyMultiplier: 2,
+    shinyEncounterMultiplier: 2,
     upgradeUnlockedVouchers: true,
     eventEncounters: [
       { species: SpeciesId.HOPPIP },
@@ -360,7 +361,7 @@ const timedEvents: readonly TimedEvent[] = [
     bannerKey: "pride2025",
     scale: 0.105,
     availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-419", "pt-BR", "zh-Hans", "zh-Hant"],
-    shinyMultiplier: 2,
+    shinyEncounterMultiplier: 2,
     eventEncounters: [
       { species: SpeciesId.CHARMANDER },
       { species: SpeciesId.SANDILE },
@@ -403,7 +404,7 @@ export class TimedEventManager {
   }
 
   /**
-   * Check whether the current event is active and for April Fools.
+   * Check whether the current {@linkcode TimedEvent} is active and for April Fools.
    * @returns Whether the April Fools event is currently active.
    */
   isAprilFoolsActive(): boolean {
@@ -414,12 +415,20 @@ export class TimedEventManager {
     return this.activeEvent()?.bannerKey != null;
   }
 
+  /**
+   * Get the multiplier for shiny encounters during a shiny {@linkcode TimedEvent}
+   * @returns the shiny encounter multiplier
+   */
   getShinyEncounterMultiplier(): number {
-    return this.activeEvent()?.shinyMultiplier ?? 1;
+    return this.activeEvent()?.shinyEncounterMultiplier ?? 1;
   }
 
+  /**
+   * Get the multiplier for shiny catches during a shiny {@linkcode TimedEvent}
+   * @returns the shiny catch multiplier
+   */
   getShinyCatchMultiplier(): number {
-    return 1; // todo: add actual functionality after #6670 gets merged
+    return this.activeEvent()?.shinyCatchMultiplier ?? 1; // todo: add base constant from #6670 after it gets merged
   }
 
   getEventBannerFilename(): string {
