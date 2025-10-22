@@ -140,11 +140,11 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
   .withOption(
     MysteryEncounterOptionBuilder.newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
       .withDialogue({
-        buttonLabel: `${namespace}:option.1.label`,
-        buttonTooltip: `${namespace}:option.1.tooltip`,
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
         selected: [
           {
-            text: `${namespace}:option.1.selected`,
+            text: `${namespace}:option.2.selected`,
           },
         ],
       })
@@ -183,18 +183,18 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
   .withOption(
     MysteryEncounterOptionBuilder.newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
       .withDialogue({
-        buttonLabel: `${namespace}:option.2.label`,
-        buttonTooltip: `${namespace}:option.2.tooltip`,
+        buttonLabel: `${namespace}:option.1.label`,
+        buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}:option.2.selected`,
+            text: `${namespace}:option.1.selected`,
           },
         ],
       })
       .withOptionPhase(async () => {
         // Investigate garbage, battle Gmax Garbodor
         globalScene.setFieldScale(0.75);
-        await showEncounterText(`${namespace}:option.2.selected2`);
+        await showEncounterText(`${namespace}:option.1.selected2`);
         await transitionMysteryEncounterIntroVisuals();
 
         const encounter = globalScene.currentBattle.mysteryEncounter!;
