@@ -7,6 +7,7 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { WeatherType } from "#enums/weather-type";
+import type { ModifierTypeKeys } from "#modifiers/modifier-type";
 import type { nil } from "#types/common";
 import { addTextObject } from "#ui/text";
 import i18next from "i18next";
@@ -39,7 +40,7 @@ interface EventMysteryEncounterTier {
 
 interface EventWaveReward {
   readonly wave: number;
-  readonly type: string;
+  readonly type: ModifierTypeKeys;
 }
 
 type EventMusicReplacement = readonly [string, string];
@@ -417,6 +418,10 @@ export class TimedEventManager {
     return this.activeEvent()?.shinyMultiplier ?? 1;
   }
 
+  getShinyCatchMultiplier(): number {
+    return 1; // todo: add actual functionality after #6670 gets merged
+  }
+
   getEventBannerFilename(): string {
     return this.activeEvent()?.bannerKey ?? "";
   }
@@ -513,8 +518,7 @@ export class TimedEventManager {
    * @param wave the wave to check for associated rewards
    * @returns array of strings of the event modifier reward types
    */
-  getFixedBattleEventRewards(wave: number): string[] {
-    // todo: maybe switch to using `ModifierTypeKeys` instead of string
+  getFixedBattleEventRewards(wave: number): ModifierTypeKeys[] {
     return (
       this.activeEvent()
         ?.classicWaveRewards?.filter(cwr => cwr.wave === wave)
