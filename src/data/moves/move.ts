@@ -10474,8 +10474,8 @@ export function initMoves() {
       .attr(MultiHitAttr)
       .attr(WaterShurikenPowerAttr)
       .attr(WaterShurikenMultiHitTypeAttr)
-      .partial(), // This move gained new functionality in ZA when used by Mega Greninja
-      // It should determine the number of hits it would do out of 2-to-5, adjust the power to that number of hits, and deal all the damage in one hit
+      .edgeCase(), // This move gained new functionality in ZA when used by Mega Greninja
+      // It should deal 75 damage and be a regular, single hit attack
     new AttackMove(MoveId.MYSTICAL_FIRE, PokemonType.FIRE, MoveCategory.SPECIAL, 75, 100, 10, 100, 0, 6)
       .attr(StatStageChangeAttr, [ Stat.SPATK ], -1),
     new SelfStatusMove(MoveId.SPIKY_SHIELD, PokemonType.GRASS, -1, 10, -1, 4, 6)
