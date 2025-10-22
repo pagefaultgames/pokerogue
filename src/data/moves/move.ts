@@ -3411,7 +3411,7 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
    *
    * Rendered public to allow for charge animation code to function
    */
-  public chargeAnim: ChargeAnim;
+  public readonly chargeAnim: ChargeAnim;
   /**
    * The `i18next` locales key to show when the delayed attack is queued
    * (**not** when it activates)! \
