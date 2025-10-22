@@ -3482,7 +3482,7 @@ export class WishAttr extends MoveEffectAttr {
   }
 
   public override getCondition(): MoveConditionFunc {
-    // Check the arena if another similar attack is active and affecting the same slot
+    // Check the arena if another similar move is active and affecting the same slot
     return (_user, target) => globalScene.arena.positionalTagManager.canAddTag(PositionalTagType.WISH, target.getBattlerIndex())
   }
 }
