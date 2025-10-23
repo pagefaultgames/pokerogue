@@ -20,7 +20,7 @@ const NORMAL_TRAINER_LEVEL_DIFF_PERCENT = 1.1;
 const WILD_LEVEL_DIFF_PERCENT = 1.2;
 /**
  * Controls the maximum level difference that a Pokémon spawned with
- * {@linkcode EvoLevelThresholdKind.} is allowd to remain unevolved.
+ * {@linkcode EvoLevelThresholdKind.STRONG} is allowed to remain unevolved.
  */
 const STRONG_LEVEL_DIFF_PERCENT = 1;
 
