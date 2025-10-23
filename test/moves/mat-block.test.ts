@@ -50,7 +50,7 @@ describe("Moves - Mat Block", () => {
 
     leadPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
     expect(game.textInterceptor.logs).toContain(
-      i18next.t("arenaTags:matBlockApply", {
+      i18next.t("arenaTag:matBlockApply", {
         attackName: allMoves[MoveId.TACKLE].name,
       }),
     );
