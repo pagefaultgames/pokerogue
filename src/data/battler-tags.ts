@@ -79,6 +79,8 @@ import type {
   CritStageBoostTagType,
   DamageOverTimeTagType,
   DamageProtectedTagType,
+  DamagingBattlerTagType,
+  DamagingTrapBattlerTagType,
   EndureTagType,
   HighestStatBoostTagType,
   MoveRestrictionBattlerTagType,
@@ -806,7 +808,7 @@ export class OctolockTag extends TrappedTag {
  * Handles dealing damage and playing the appropriate animation.
  */
 export abstract class DamagingTrapTag extends DamagingBattlerTag(TrappedTag) {
-  public declare readonly tagType: TrappingBattlerTagType;
+  public declare readonly tagType: DamagingTrapBattlerTagType;
   /** @sealed */
   protected override get triggerMessageKey() {
     return "battlerTags:damagingTrapLapse";
@@ -2298,11 +2300,12 @@ export class CritBoostTag extends SerializableBattlerTag {
 /**
  * Mixin to implement `BattlerTag`s with damaging effects.
  *
- * Adds abstract functions to damage the user based on their maximum HP and play a corresponding animation.
+ * Adds abstract functions to damage a Pokemon based on their maximum HP and play a corresponding animation.
  * @param Base - The base class constructor to mix
  */
 function DamagingBattlerTag<TagBase extends AbstractConstructor<SerializableBattlerTag>>(Base: TagBase) {
   abstract class DoTTag extends Base {
+    public declare abstract readonly tagType: DamagingBattlerTagType;
     /** The `CommonAnim` to play upon this Tag dealing damage. */
     protected abstract get animation(): CommonAnim;
 
@@ -2324,7 +2327,7 @@ function DamagingBattlerTag<TagBase extends AbstractConstructor<SerializableBatt
      * Damage the Pokemon to whom this Tag is attached.
      *
      * Handles checking for Magic Guard, queueing animations, and other assorted checks.
-     * @param pokemon - The `Pokemon` to whom this Tag is attached
+     * @param pokemon - The `Pokemon` that will be damaged
      */
     protected damage(pokemon: Pokemon): void {
       // TODO: Verify on cartridge whether Magic Guard blocking Curse-like DoT effects

@@ -1,4 +1,4 @@
-import type { DamageOverTimeTag, SaltCuredTag } from "#data/battler-tags";
+import type { SaltCuredTag } from "#data/battler-tags";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -7,6 +7,7 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import type { PlayerPokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
+import type { DamagingBattlerTagType } from "#types/battler-tags";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Battler Tags - Damage Over Time", () => {
@@ -46,7 +47,7 @@ describe("Battler Tags - Damage Over Time", () => {
     game.scene.phaseManager.clearAllPhases();
   });
 
-  describe.each([
+  describe.each<{ tagType: DamagingBattlerTagType; name: string }>([
     { tagType: BattlerTagType.NIGHTMARE, name: "Nightmare" },
     { tagType: BattlerTagType.SALT_CURED, name: "Salt Cure" },
     { tagType: BattlerTagType.CURSED, name: "Curse" },
@@ -62,7 +63,7 @@ describe("Battler Tags - Damage Over Time", () => {
       feebas.addTag(tagType, 0, undefined, game.field.getEnemyPokemon().id);
       expect(feebas).toHaveBattlerTag(tagType);
 
-      const dotTag = feebas.getTag(tagType) as DamageOverTimeTag;
+      const dotTag = feebas.getTag(tagType);
       const dmgPercent = dotTag["getDamageHpRatio"](feebas);
       const anim = dotTag["animation"];
 

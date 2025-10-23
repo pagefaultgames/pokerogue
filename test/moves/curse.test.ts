@@ -104,7 +104,7 @@ describe("Move - Curse", () => {
     expect(karp).toHaveBattlerTag(BattlerTagType.CURSED);
   });
 
-  it("should respect Tera Stellar", async () => {
+  it("should respect Tera Stellar and Curse the opponent", async () => {
     await game.classicMode.startBattle([SpeciesId.SHUPPET]);
 
     const shuppet = game.field.getPlayerPokemon();
@@ -115,6 +115,8 @@ describe("Move - Curse", () => {
     game.move.use(MoveId.CURSE);
     await game.toEndOfTurn(false);
 
+    // NB: We need both checks here to ensure Curse's targeting _also_ respects Tera Stellar
+    // (i.e. we didn't cast it on ourselves)
     expect(shuppet.getHpRatio(true)).toBeCloseTo(0.5);
     expect(karp).toHaveBattlerTag(BattlerTagType.CURSED);
   });

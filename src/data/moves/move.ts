@@ -8129,6 +8129,8 @@ export class StatusIfBoostedAttr extends MoveEffectAttr {
   }
 }
 
+// TODO: These should not take target based parameters - they are wholly unused
+// and it doesn't even make SENSE anyhow
 export class VariableTargetAttr extends MoveAttr {
   private targetChangeFunc: (user: Pokemon, target: Pokemon, move: Move) => number;
 

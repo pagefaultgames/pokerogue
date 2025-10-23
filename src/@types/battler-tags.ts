@@ -37,6 +37,15 @@ export type FormBlockDamageBattlerTagType = BattlerTagType.ICE_FACE | BattlerTag
  */
 export type TrappingBattlerTagType =
   | BattlerTagType.TRAPPED
+  | BattlerTagType.INGRAIN
+  | BattlerTagType.OCTOLOCK
+  | BattlerTagType.NO_RETREAT
+  | DamagingTrapBattlerTagType;
+
+/**
+ * Subset of {@linkcode TrappingBattlerTagType}s that also deal per-turn damage.
+ */
+export type DamagingTrapBattlerTagType =
   | BattlerTagType.BIND
   | BattlerTagType.WRAP
   | BattlerTagType.FIRE_SPIN
@@ -46,10 +55,23 @@ export type TrappingBattlerTagType =
   | BattlerTagType.MAGMA_STORM
   | BattlerTagType.SNAP_TRAP
   | BattlerTagType.THUNDER_CAGE
-  | BattlerTagType.INFESTATION
-  | BattlerTagType.INGRAIN
-  | BattlerTagType.OCTOLOCK
-  | BattlerTagType.NO_RETREAT;
+  | BattlerTagType.INFESTATION;
+
+/**
+ * Subset of {@linkcode BattlerTagType}s that deal persistent turn-end damage-over-time.
+ *
+ * @remarks
+ * ⚠️ Does not include any members of {@linkcode DamagingTrapBattlerTagType},
+ * which subclass {@linkcode TrappedTag} instead of {@linkcode DamageOverTimeTag}.
+ */
+export type DamageOverTimeTagType = BattlerTagType.SALT_CURED | BattlerTagType.CURSED | BattlerTagType.NIGHTMARE;
+
+/**
+ * Subset of {@linkcode BattlerTagType}s that are capable of dealing indirect damage.
+ *
+ * Excludes Confusion and Leech Seed, since those function through different mechanisms altogether.
+ */
+export type DamagingBattlerTagType = DamageOverTimeTagType | DamagingTrapBattlerTagType;
 
 /**
  * Subset of {@linkcode BattlerTagType}s that are related to protection effects.
@@ -84,15 +106,6 @@ export type SemiInvulnerableTagType =
   | BattlerTagType.UNDERGROUND
   | BattlerTagType.UNDERWATER
   | BattlerTagType.HIDDEN;
-
-/**
- * Subset of {@linkcode BattlerTagType}s that deal persistent turn-end damage-over-time.
- *
- * @remarks
- * ⚠️ Does not include any members of {@linkcode TrappingBattlerTagType} that deal damage,
- * which subclass {@linkcode TrappedTag} instead of {@linkcode DamageOverTimeTag}.
- */
-export type DamageOverTimeTagType = BattlerTagType.SALT_CURED | BattlerTagType.CURSED | BattlerTagType.NIGHTMARE;
 
 /**
  * Subset of {@linkcode BattlerTagType}s corresponding to {@linkcode AbilityBattlerTag}s
