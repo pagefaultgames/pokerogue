@@ -222,7 +222,6 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       ).toEqual(ModifierTier.GREAT);
     });
   });
-});
 
   describe("Option 2 - Dig for Valuables", () => {
     it("should have the correct properties", () => {
@@ -268,3 +267,4 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
     });
   });
+});
