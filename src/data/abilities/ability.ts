@@ -1784,9 +1784,7 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
     super(false);
     this.newType = newType;
     this.powerMultiplier = powerMultiplier;
-    if (this.condition != null) {
-      this.condition = condition;
-    }
+    this.condition = condition;
   }
 
   /**
