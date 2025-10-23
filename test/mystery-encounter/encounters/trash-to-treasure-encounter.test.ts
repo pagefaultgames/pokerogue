@@ -171,7 +171,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       const phaseSpy = vi.spyOn(scene.phaseManager, "pushPhase");
 
       await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
-      await runMysteryEncounterToEnd(game, 2, undefined, true);
+      await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       const enemyField = scene.getEnemyField();
       expect(game).toBeAtPhase("CommandPhase");
@@ -193,7 +193,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
 
     it("should have 2 Rogue, 1 Ultra, 1 Great in rewards", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
-      await runMysteryEncounterToEnd(game, 2, undefined, true);
+      await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to("SelectModifierPhase", false);
       expect(game).toBeAtPhase("SelectModifierPhase");
@@ -241,7 +241,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
 
     it("should give 1 Leftovers, 1 Shell Bell, and Black Sludge", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
-      await runMysteryEncounterToEnd(game, 1);
+      await runMysteryEncounterToEnd(game, 2);
       expect(game).toBeAtPhase("SelectModifierPhase");
       await game.phaseInterceptor.to("SelectModifierPhase");
 
@@ -262,7 +262,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
-      await runMysteryEncounterToEnd(game, 1);
+      await runMysteryEncounterToEnd(game, 2);
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
     });
