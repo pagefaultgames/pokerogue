@@ -10,12 +10,12 @@ import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 /**
  * Controls the maximum level difference that a Pokémon spawned with
- * {@linkcode EvoLevelThresholdKind.NORMAL} is allowd to remain unevolved.
+ * {@linkcode EvoLevelThresholdKind.NORMAL} is allowed to remain unevolved.
  */
 const NORMAL_TRAINER_LEVEL_DIFF_PERCENT = 1.1;
 /**
  * Controls the maximum level difference that a Pokémon spawned with
- * {@linkcode EvoLevelThresholdKind.WILD} is allowd to remain unevolved.
+ * {@linkcode EvoLevelThresholdKind.WILD} is allowed to remain unevolved.
  */
 const WILD_LEVEL_DIFF_PERCENT = 1.2;
 /**
