@@ -1,3 +1,4 @@
+import { getPokemonNameWithAffix } from "#app/messages";
 import type { SaltCuredTag } from "#data/battler-tags";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
@@ -5,15 +6,17 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import type { PlayerPokemon } from "#field/pokemon";
+import type { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
 import type { DamagingBattlerTagType } from "#types/battler-tags";
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import i18next from "i18next";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Battler Tags - Damage Over Time", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
   let feebas: PlayerPokemon;
+  let karp: EnemyPokemon;
 
   beforeAll(async () => {
     phaserGame = new Phaser.Game({
@@ -34,6 +37,15 @@ describe("Battler Tags - Damage Over Time", () => {
     await game.classicMode.startBattle([SpeciesId.SHUPPET]);
 
     feebas = game.field.getPlayerPokemon();
+    karp = game.field.getEnemyPokemon();
+  });
+
+  beforeEach(() => {
+    // spy on the message queue function to just show the message instantly
+    // TODO: Consider making a `textInterceptor` mock
+    vi.spyOn(game.scene.phaseManager, "queueMessage").mockImplementation(message => {
+      game.textInterceptor.showText(message);
+    });
   });
 
   afterAll(() => {
@@ -59,8 +71,8 @@ describe("Battler Tags - Damage Over Time", () => {
     { tagType: BattlerTagType.BIND, name: "Bind" },
     { tagType: BattlerTagType.WRAP, name: "Wrap" },
   ])("$name", ({ tagType }) => {
-    it("should deal persistent max HP-based damage each turn and queue animations", () => {
-      feebas.addTag(tagType, 0, undefined, game.field.getEnemyPokemon().id);
+    it("should deal persistent max HP-based damage each turn and queue animations", async () => {
+      feebas.addTag(tagType, 0, undefined, karp.id);
       expect(feebas).toHaveBattlerTag(tagType);
 
       const dotTag = feebas.getTag(tagType);
@@ -73,6 +85,12 @@ describe("Battler Tags - Damage Over Time", () => {
       expect(
         game.scene.phaseManager.hasPhaseOfType("CommonAnimPhase", c => c.getPokemon() === feebas && c["anim"] === anim),
       ).toBe(true);
+      expect(game).toHaveShownMessage(
+        i18next.t(this.triggerMessageKey, {
+          pokemonNameWithAffix: getPokemonNameWithAffix(feebas),
+          sourcePokemonName: getPokemonNameWithAffix(karp),
+        }),
+      );
     });
   });
 

@@ -32,7 +32,7 @@ export class TextInterceptor {
 
   /**
    * Format text to be displayed to the test console, as follows:
-   * 1. Replaces new lines and new text boxes (marked by `$`) with indented new lines.
+   * 1. Replaces new lines and new text boxes (marked by `$`) with spaces and indented new lines.
    * 2. Removes all `@c{}`, `@d{}`, `@s{}`, and `@f{}` flags from the text.
    * 3. Makes text blue
    * @param text - The unformatted text

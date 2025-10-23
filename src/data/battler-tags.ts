@@ -2311,7 +2311,8 @@ function DamagingBattlerTag<TagBase extends AbstractConstructor<SerializableBatt
 
     /**
      * Return the `i18n` locales key of the text to be displayed when this tag deals damage. \
-     * Within the text, `{{pokemonNameWithAffix}}` will be populated with the victim's name.
+     * Within the text, `{{pokemonNameWithAffix}}` and `{{sourcePokemonName}}` will be populated with
+     * the name of the Pokemon taking damage and the source Pokemon's name, if present.
      * @returns The locales key for the trigger message to be displayed on-screen.
      */
     protected abstract get triggerMessageKey(): string;
@@ -2327,7 +2328,7 @@ function DamagingBattlerTag<TagBase extends AbstractConstructor<SerializableBatt
      * Damage the Pokemon to whom this Tag is attached.
      *
      * Handles checking for Magic Guard, queueing animations, and other assorted checks.
-     * @param pokemon - The `Pokemon` that will be damaged
+     * @param pokemon - The `Pokemon` to whom this Tag is attached
      */
     protected damage(pokemon: Pokemon): void {
       // TODO: Verify on cartridge whether Magic Guard blocking Curse-like DoT effects
@@ -2346,6 +2347,7 @@ function DamagingBattlerTag<TagBase extends AbstractConstructor<SerializableBatt
       globalScene.phaseManager.queueMessage(
         i18next.t(this.triggerMessageKey, {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+          sourcePokemonName: getPokemonNameWithAffix(this.getSourcePokemon()),
         }),
       );
     }
