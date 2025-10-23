@@ -56,4 +56,30 @@ describe("Arena - Psychic Terrain", () => {
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.RAIN);
   });
+
+  it("Quick claw boosted move is not blocked", async () => {
+    game.override.startingHeldItems([{ name: "QUICK_CLAW", count: 10 }]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+
+    game.move.select(MoveId.PSYCHIC_TERRAIN);
+    await game.toNextTurn();
+
+    game.move.use(MoveId.POUND);
+    await game.toEndOfTurn();
+
+    expect(game.field.getEnemyPokemon().hp).toBeLessThan(game.field.getEnemyPokemon().getMaxHp());
+  });
+
+  it("Quick claw boosted priority move to be blocked", async () => {
+    game.override.startingHeldItems([{ name: "QUICK_CLAW", count: 10 }]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+
+    game.move.select(MoveId.PSYCHIC_TERRAIN);
+    await game.toNextTurn();
+
+    game.move.use(MoveId.QUICK_ATTACK);
+    await game.toEndOfTurn();
+
+    expect(game.field.getEnemyPokemon().hp).toHaveFullHp;
+  });
 });
