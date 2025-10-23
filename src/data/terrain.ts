@@ -1,6 +1,5 @@
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { BattlerIndex } from "#enums/battler-index";
-import { BattlerTagType } from "#enums/battler-tag-type";
 import { PokemonType } from "#enums/pokemon-type";
 import type { Pokemon } from "#field/pokemon";
 import type { Move } from "#moves/move";
@@ -69,10 +68,8 @@ export class Terrain {
         return (
           // ... is neither spread nor field-targeted,
           !isFieldTargeted(move)
-          && !isSpreadMove(move) 
-          // .. has positive final priority, excluding Quick Claw boost
-          && move.getPriority(user) >= 0.2
-          // ...and is targeting at least 1 grounded opponent
+          && !isSpreadMove(move) // .. has positive final priority, excluding Quick Claw boost
+          && move.getPriority(user) > 0.2 // ...and is targeting at least 1 grounded opponent
           && user.getOpponents(true).some(o => targets.includes(o.getBattlerIndex()) && o.isGrounded())
         );
     }
