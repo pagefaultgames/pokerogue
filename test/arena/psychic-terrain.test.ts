@@ -57,7 +57,7 @@ describe("Arena - Psychic Terrain", () => {
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.RAIN);
   });
 
-  it("Quick claw boosted move is not blocked", async () => {
+  it("should not block non-priority moves boosted by Quick Claw", async () => {
     game.override.startingHeldItems([{ name: "QUICK_CLAW", count: 10 }]);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 

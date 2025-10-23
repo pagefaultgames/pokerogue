@@ -69,9 +69,10 @@ export class Terrain {
         return (
           // ... is neither spread nor field-targeted,
           !isFieldTargeted(move)
-          && !isSpreadMove(move) // .. has positive final priority, but not just has the boost from Quick Claw,
-          && move.getPriority(user) > 0
-          && !(user.getTag(BattlerTagType.BYPASS_SPEED) && move.getPriority(user) === 0.2) // ...and is targeting at least 1 grounded opponent
+          && !isSpreadMove(move) 
+          // .. has positive final priority, excluding Quick Claw boost
+          && move.getPriority(user) >= 0.2
+          // ...and is targeting at least 1 grounded opponent
           && user.getOpponents(true).some(o => targets.includes(o.getBattlerIndex()) && o.isGrounded())
         );
     }
