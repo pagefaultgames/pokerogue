@@ -432,7 +432,7 @@ export class TimedEventManager {
    * @returns the shiny catch multiplier
    */
   getShinyCatchMultiplier(): number {
-    return this.activeEvent()?.shinyCatchMultiplier ?? 1; // todo: add base constant from #6670 after it gets merged
+    return this.activeEvent()?.shinyCatchMultiplier ?? 1;
   }
 
   getEventBannerFilename(): string {
@@ -547,8 +547,8 @@ export class TimedEventManager {
   }
 
   getEventBgmReplacement(bgm: string): string {
-    const EventMusicReplacements = this.activeEvent()?.music ?? [];
-    for (const emr of EventMusicReplacements) {
+    const eventMusicReplacements = this.activeEvent()?.music ?? [];
+    for (const emr of eventMusicReplacements) {
       if (emr[0] === bgm) {
         console.log(`it is ${this.activeEvent()?.name} so instead of ${emr[0]} we play ${emr[1]}`);
         return emr[1];
