@@ -72,10 +72,10 @@ describe("Battler Tags - Damage Over Time", () => {
     { tagType: BattlerTagType.WRAP, name: "Wrap" },
   ])("$name", ({ tagType }) => {
     it("should deal persistent max HP-based damage each turn and queue animations", async () => {
-      feebas.addTag(tagType, 0, undefined, karp.id);
+      feebas.addTag(tagType, 2, undefined, karp.id);
       expect(feebas).toHaveBattlerTag(tagType);
 
-      const dotTag = feebas.getTag(tagType);
+      const dotTag = feebas.getTag(tagType)!;
       const dmgPercent = dotTag["getDamageHpRatio"](feebas);
       const anim = dotTag["animation"];
 
@@ -86,7 +86,7 @@ describe("Battler Tags - Damage Over Time", () => {
         game.scene.phaseManager.hasPhaseOfType("CommonAnimPhase", c => c.getPokemon() === feebas && c["anim"] === anim),
       ).toBe(true);
       expect(game).toHaveShownMessage(
-        i18next.t(this.triggerMessageKey, {
+        i18next.t(dotTag["triggerMessageKey"], {
           pokemonNameWithAffix: getPokemonNameWithAffix(feebas),
           sourcePokemonName: getPokemonNameWithAffix(karp),
         }),

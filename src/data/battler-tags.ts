@@ -644,8 +644,9 @@ export abstract class TrappedTag extends SerializableBattlerTag {
 
   /**
    * Return the i18n locales key that will be shown when this tag is added. \
-   * Within the text, `{{pokemonNameWithAffix}}` will be populated with the name of the
-   * {@linkcode Pokemon} to whom this Tag is attached.
+   * Within the text, `{{pokemonNameWithAffix}}` and `{{sourcePokemonName}}` will be populated with
+   * the name of the {@linkcode Pokemon} to whom this Tag is attached
+   * and the source Pokemon's name, respectively.
    * @remarks
    * If this evaluates to an empty string, no message will be displayed.
    */
@@ -2306,20 +2307,22 @@ export class CritBoostTag extends SerializableBattlerTag {
 function DamagingBattlerTag<TagBase extends AbstractConstructor<SerializableBattlerTag>>(Base: TagBase) {
   abstract class DoTTag extends Base {
     public declare abstract readonly tagType: DamagingBattlerTagType;
-    /** The `CommonAnim` to play upon this Tag dealing damage. */
+    /** The {@linkcode CommonAnim} to play upon this Tag dealing damage. */
     protected abstract get animation(): CommonAnim;
 
     /**
      * Return the `i18n` locales key of the text to be displayed when this tag deals damage. \
-     * Within the text, `{{pokemonNameWithAffix}}` and `{{sourcePokemonName}}` will be populated with
-     * the name of the Pokemon taking damage and the source Pokemon's name, if present.
+     * Within the text, the following variables will be populated:
+     * - `{{pokemonNameWithAffix}}` - the name of the {@linkcode Pokemon} to whom this Tag is attached.
+     * - `{{sourcePokemonName}}` - the name of the {@linkcode Pokemon} having created this Tag, if recorded.
+     * - `{{moveName}}` - The name of the {@linkcode Move} to which this Tag is attached, if recorded.
      * @returns The locales key for the trigger message to be displayed on-screen.
      */
     protected abstract get triggerMessageKey(): string;
 
     /**
      * Return the amount of damage this tag should deal to the given Pokemon, relative to its maximum HP.
-     * @param pokemon - The `Pokemon` to whom this Tag is attached
+     * @param pokemon - The {@linkcode Pokemon} to whom this Tag is attached
      * @returns The percentage of max HP to deal upon activation
      */
     protected abstract getDamageHpRatio(pokemon: Pokemon): number;
@@ -2328,7 +2331,7 @@ function DamagingBattlerTag<TagBase extends AbstractConstructor<SerializableBatt
      * Damage the Pokemon to whom this Tag is attached.
      *
      * Handles checking for Magic Guard, queueing animations, and other assorted checks.
-     * @param pokemon - The `Pokemon` to whom this Tag is attached
+     * @param pokemon - The {@linkcode Pokemon} to whom this Tag is attached
      */
     protected damage(pokemon: Pokemon): void {
       // TODO: Verify on cartridge whether Magic Guard blocking Curse-like DoT effects
@@ -2348,6 +2351,7 @@ function DamagingBattlerTag<TagBase extends AbstractConstructor<SerializableBatt
         i18next.t(this.triggerMessageKey, {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
           sourcePokemonName: getPokemonNameWithAffix(this.getSourcePokemon()),
+          moveName: this.getMoveName(),
         }),
       );
     }
@@ -2417,7 +2421,9 @@ export class SaltCuredTag extends DamageOverTimeTag {
   }
 
   override getDamageHpRatio(pokemon: Pokemon): number {
-    const waterOrSteel = pokemon.getTypes(true, true).some(t => t === PokemonType.WATER || t === PokemonType.STEEL);
+    const types = pokemon.getTypes(true, true);
+    // Slightly faster than doing an `includes`
+    const waterOrSteel = types.some(t => t === PokemonType.WATER || t === PokemonType.STEEL);
     return waterOrSteel ? 0.25 : 0.125;
   }
 }
@@ -2433,7 +2439,8 @@ export class CursedTag extends DamageOverTimeTag {
   }
 
   // Disable on add message due to being handled in the move itself.
-  // This is done primarily to reduce save data size due to not needing to keep a reference to `sourceId`
+  // This is done primarily to reduce save data size to avoid needing to keep a reference to `sourceId`
+  // TODO: There should be a way to track the source ID just for the on add call
   override get onAddMessageKey() {
     return "";
   }
