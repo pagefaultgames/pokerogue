@@ -1621,6 +1621,7 @@ export class BattleScene extends SceneBase {
       case SpeciesId.UNOWN:
       case SpeciesId.SHELLOS:
       case SpeciesId.GASTRODON:
+      case SpeciesId.ROTOM:
       case SpeciesId.BASCULIN:
       case SpeciesId.DEERLING:
       case SpeciesId.SAWSBUCK:
@@ -1714,7 +1715,6 @@ export class BattleScene extends SceneBase {
       switch (species.speciesId) {
         case SpeciesId.BURMY:
         case SpeciesId.WORMADAM:
-        case SpeciesId.ROTOM:
         case SpeciesId.LYCANROC:
           return randSeedInt(species.forms.length);
       }

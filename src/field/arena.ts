@@ -248,8 +248,6 @@ export class Arena {
             return 2;
         }
         break;
-      case SpeciesId.ROTOM:
-        return randSeedInt(species.forms.length);
       case SpeciesId.LYCANROC: {
         const timeOfDay = this.getTimeOfDay();
         switch (timeOfDay) {
