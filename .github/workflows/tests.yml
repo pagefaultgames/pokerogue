@@ -41,7 +41,7 @@ jobs:
   run-tests:
     name: Run Tests
     needs: check-path-change-filter
-    if: ${{ needs.check-path-change-filter.outputs.all != 'true'}}
+    if: ${{ needs.check-path-change-filter.outputs.all == 'true'}}
     strategy:
       # don't stop upon 1 shard failing
       fail-fast: false
