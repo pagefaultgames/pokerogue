@@ -52,3 +52,18 @@ jobs:
       shard: ${{ matrix.shard }}
       totalShards: 5
       skip: ${{ needs.check-path-change-filter.outputs.all != 'true'}}
+
+  merge-reports:
+    name: Merge Test Reports
+    needs: run-tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download blob artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: shard-?-blob
+          path: test-results
+          merge-multiple: true
+
+      - name: Merge blobs
+        run: pnpm exec vitest --merge-reports=test-results
