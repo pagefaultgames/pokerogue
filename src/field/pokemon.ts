@@ -140,6 +140,7 @@ import type { PokemonData } from "#system/pokemon-data";
 import { RibbonData } from "#system/ribbons/ribbon-data";
 import { awardRibbonsToSpeciesLine } from "#system/ribbons/ribbon-methods";
 import type { AbAttrMap, AbAttrString, TypeMultiplierAbAttrParams } from "#types/ability-types";
+import type { Constructor } from "#types/common";
 import type { getAttackDamageParams, getBaseDamageParams } from "#types/damage-params";
 import type { DamageCalculationResult, DamageResult } from "#types/damage-result";
 import type { IllusionData } from "#types/illusion-data";
@@ -151,11 +152,10 @@ import { EnemyBattleInfo } from "#ui/enemy-battle-info";
 import type { PartyOption } from "#ui/party-ui-handler";
 import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import { PlayerBattleInfo } from "#ui/player-battle-info";
+import { coerceArray } from "#utils/array";
 import { applyChallenges } from "#utils/challenge-utils";
 import {
   BooleanHolder,
-  type Constructor,
-  coerceArray,
   deltaRgb,
   fixedInt,
   getIvsFromId,
@@ -604,20 +604,18 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /** Generate `abilityIndex` based on species and hidden ability if not pre-defined. */
   private generateAbilityIndex(): number {
-    // Roll for hidden ability chance, applying any ability charms for enemy mons
     const hiddenAbilityChance = new NumberHolder(BASE_HIDDEN_ABILITY_CHANCE);
+    // Ability Charms should only affect wild Pokemon
+    // TODO: move this `if` check into the ability charm code
     if (!this.hasTrainer()) {
       globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
     }
 
-    // If the roll succeeded and we have one, use HA; otherwise pick a random ability
-    const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
-    if (this.species.abilityHidden && hasHiddenAbility) {
-      return 2;
-    }
+    // Neither RNG roll depends on the outcome of the other, so that Ability Charms do not affect RNG.
+    const regularAbility = this.species.ability2 !== this.species.ability1 ? randSeedInt(2) : 0;
+    const useHiddenAbility = this.species.abilityHidden ? !randSeedInt(hiddenAbilityChance.value) : false;
 
-    // only use random ability if species has a second ability
-    return this.species.ability2 !== this.species.ability1 ? randSeedInt(2) : 0;
+    return useHiddenAbility ? 2 : regularAbility;
   }
 
   /**
@@ -2141,7 +2139,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Suppresses an ability and calls its onlose attributes
    */
   public suppressAbility() {
-    [true, false].forEach(passive => applyOnLoseAbAttrs({ pokemon: this, passive }));
+    applyOnLoseAbAttrs({ pokemon: this, passive: true });
+    applyOnLoseAbAttrs({ pokemon: this, passive: false });
     this.summonData.abilitySuppressed = true;
   }
 
@@ -2397,7 +2396,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return moveTypeHolder.value as PokemonType;
     }
 
-    globalScene.arena.applyTags(ArenaTagType.ION_DELUGE, simulated, moveTypeHolder);
+    globalScene.arena.applyTags(ArenaTagType.ION_DELUGE, moveTypeHolder);
     if (this.getTag(BattlerTagType.ELECTRIFIED)) {
       moveTypeHolder.value = PokemonType.ELECTRIC;
     }
@@ -2905,7 +2904,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (thresholdOverride === undefined) {
       if (timedEventManager.isEventActive()) {
         const tchance = timedEventManager.getClassicTrainerShinyChance();
-        shinyThreshold.value *= timedEventManager.getShinyMultiplier();
+        shinyThreshold.value *= timedEventManager.getShinyEncounterMultiplier();
         if (this.hasTrainer() && tchance > 0) {
           shinyThreshold.value = Math.max(tchance, shinyThreshold.value); // Choose the higher boost
         }
@@ -2943,7 +2942,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       const shinyThreshold = new NumberHolder(thresholdOverride ?? BASE_SHINY_CHANCE);
       if (applyModifiersToOverride) {
         if (timedEventManager.isEventActive()) {
-          shinyThreshold.value *= timedEventManager.getShinyMultiplier();
+          shinyThreshold.value *= timedEventManager.getShinyEncounterMultiplier();
         }
         globalScene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
       }
@@ -3151,8 +3150,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       const otherBattleInfo = globalScene.fieldUI
         .getAll()
         .slice(0, 4)
-        .filter(ui => ui instanceof BattleInfo && (ui as BattleInfo) instanceof PlayerBattleInfo === this.isPlayer())
-        .find(() => true);
+        .find(ui => ui instanceof BattleInfo && (ui as BattleInfo) instanceof PlayerBattleInfo === this.isPlayer());
       if (!otherBattleInfo || !this.getFieldIndex()) {
         globalScene.fieldUI.sendToBack(this.battleInfo);
         globalScene.sendTextToBack(); // Push the top right text objects behind everything else
@@ -3713,14 +3711,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     // Critical hits should bypass screens
     if (!isCritical) {
-      globalScene.arena.applyTagsForSide(
-        WeakenMoveScreenTag,
-        defendingSide,
-        simulated,
-        source,
-        moveCategory,
-        screenMultiplier,
-      );
+      globalScene.arena.applyTagsForSide(WeakenMoveScreenTag, defendingSide, source, moveCategory, screenMultiplier);
     }
 
     /**
@@ -3858,11 +3849,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     // apply crit block effects from lucky chant & co., overriding previous effects
     const blockCrit = new BooleanHolder(false);
     applyAbAttrs("BlockCritAbAttr", { pokemon: this, blockCrit });
-    const blockCritTag = globalScene.arena.getTagOnSide(
+    globalScene.arena.applyTagsForSide(
       NoCritTag,
       this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY,
+      blockCrit,
     );
-    isCritical &&= !blockCritTag && !blockCrit.value; // need to roll a crit and not be blocked by either crit prevention effect
+    isCritical &&= !blockCrit.value; // need to roll a crit and not be blocked by either crit prevention effect
 
     return isCritical;
   }

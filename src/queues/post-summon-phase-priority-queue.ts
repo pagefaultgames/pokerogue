@@ -37,9 +37,7 @@ export class PostSummonPhasePriorityQueue extends PokemonPhasePriorityQueue<Post
         priority,
         idx !== 0,
       );
-      phase.source === "SummonPhase"
-        ? globalScene.phaseManager.pushPhase(activateAbilityPhase)
-        : globalScene.phaseManager.unshiftPhase(activateAbilityPhase);
+      globalScene.phaseManager.unshiftPhase(activateAbilityPhase);
     });
   }
 }

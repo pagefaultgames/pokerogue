@@ -12,17 +12,19 @@ export interface BiomeDepths {
   [key: number]: [number, number];
 }
 interface SpeciesTree {
-  [key: number]: SpeciesId[];
+  readonly [key: number]: SpeciesId[];
 }
 
 export interface PokemonPools {
-  [key: number]: (SpeciesId | SpeciesTree)[];
+  readonly [key: number]: (SpeciesId | SpeciesTree)[];
 }
+
 interface BiomeTierPokemonPools {
-  [key: number]: PokemonPools;
+  readonly [key: number]: PokemonPools;
 }
+
 export interface BiomePokemonPools {
-  [key: number]: BiomeTierPokemonPools;
+  readonly [key: number]: BiomeTierPokemonPools;
 }
 
 export interface BiomeTierTod {
@@ -32,13 +34,13 @@ export interface BiomeTierTod {
 }
 
 export interface CatchableSpecies {
-  [key: number]: BiomeTierTod[];
+  readonly [key: number]: readonly BiomeTierTod[];
 }
 
 export interface BiomeTierTrainerPools {
-  [key: number]: TrainerType[];
+  readonly [key: number]: readonly TrainerType[];
 }
 
 export interface BiomeTrainerPools {
-  [key: number]: BiomeTierTrainerPools;
+  readonly [key: number]: BiomeTierTrainerPools;
 }

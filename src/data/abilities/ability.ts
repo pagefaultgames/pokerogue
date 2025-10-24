@@ -62,17 +62,10 @@ import type {
   PokemonDefendCondition,
   PokemonStatStageChangeCondition,
 } from "#types/ability-types";
+import type { Constructor } from "#types/common";
 import type { Closed, Exact } from "#types/type-helpers";
-import type { Constructor } from "#utils/common";
-import {
-  BooleanHolder,
-  coerceArray,
-  NumberHolder,
-  randSeedFloat,
-  randSeedInt,
-  randSeedItem,
-  toDmgValue,
-} from "#utils/common";
+import { coerceArray } from "#utils/array";
+import { BooleanHolder, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
@@ -548,7 +541,7 @@ export class PostBattleInitAbAttr extends AbAttr {
 }
 
 export class PostBattleInitFormChangeAbAttr extends PostBattleInitAbAttr {
-  private formFunc: (p: Pokemon) => number;
+  private readonly formFunc: (p: Pokemon) => number;
 
   constructor(formFunc: (p: Pokemon) => number) {
     super(false);
@@ -567,8 +560,8 @@ export class PostBattleInitFormChangeAbAttr extends PostBattleInitAbAttr {
 }
 
 export class PostTeraFormChangeStatChangeAbAttr extends AbAttr {
-  private stats: BattleStat[];
-  private stages: number;
+  private readonly stats: readonly BattleStat[];
+  private readonly stages: number;
 
   constructor(stats: BattleStat[], stages: number) {
     super();
@@ -594,21 +587,9 @@ export class PostTeraFormChangeStatChangeAbAttr extends AbAttr {
 }
 
 /**
- * Clears a specified weather whenever this attribute is called.
+ * Clears all weather whenever this attribute is applied
  */
 export class ClearWeatherAbAttr extends AbAttr {
-  // TODO: evaluate why this is a field and constructor parameter even though it is never checked
-  private weather: WeatherType[];
-
-  /**
-   * @param weather - The weather to be removed
-   */
-  constructor(weather: WeatherType[]) {
-    super(true);
-
-    this.weather = weather;
-  }
-
   /**
    * @param _params - No parameters are used for this attribute.
    */
@@ -624,21 +605,9 @@ export class ClearWeatherAbAttr extends AbAttr {
 }
 
 /**
- * Clears a specified terrain whenever this attribute is called.
+ * Clears all terrain whenever this attribute is called.
  */
 export class ClearTerrainAbAttr extends AbAttr {
-  // TODO: evaluate why this is a field and constructor parameter even though it is never checked
-  private terrain: TerrainType[];
-
-  /**
-   * @param terrain - the terrain to be removed
-   */
-  constructor(terrain: TerrainType[]) {
-    super(true);
-
-    this.terrain = terrain;
-  }
-
   override canApply(_: AbAttrBaseParams): boolean {
     return globalScene.arena.canSetTerrain(TerrainType.NONE);
   }
@@ -728,8 +697,8 @@ export class StabBoostAbAttr extends AbAttr {
 }
 
 export class ReceivedMoveDamageMultiplierAbAttr extends PreDefendAbAttr {
-  protected condition: PokemonDefendCondition;
-  private damageMultiplier: number;
+  protected readonly condition: PokemonDefendCondition;
+  private readonly damageMultiplier: number;
 
   constructor(condition: PokemonDefendCondition, damageMultiplier: number, showAbility = false) {
     super(showAbility);
@@ -751,7 +720,7 @@ export class ReceivedMoveDamageMultiplierAbAttr extends PreDefendAbAttr {
  * Reduces the damage dealt to an allied Pokemon. Used by Friend Guard.
  */
 export class AlliedFieldDamageReductionAbAttr extends PreDefendAbAttr {
-  private damageMultiplier: number;
+  private readonly damageMultiplier: number;
 
   constructor(damageMultiplier: number) {
     super();
@@ -786,8 +755,8 @@ export interface TypeMultiplierAbAttrParams extends AugmentMoveInteractionAbAttr
  * Determines whether a Pokemon is immune to a move because of an ability.
  */
 export class TypeImmunityAbAttr extends PreDefendAbAttr {
-  private immuneType: PokemonType | null;
-  private condition: AbAttrCondition | null;
+  private readonly immuneType: PokemonType | null;
+  private readonly condition: AbAttrCondition | null;
 
   // TODO: Change `NonSuperEffectiveImmunityAbAttr` to not pass `null` as immune type
   constructor(immuneType: PokemonType | null, condition?: AbAttrCondition) {
@@ -844,7 +813,7 @@ export class TypeImmunityHealAbAttr extends TypeImmunityAbAttr {
     super.apply(params);
     const { pokemon, cancelled, simulated, passive } = params;
     if (!pokemon.isFullHp() && !simulated) {
-      const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
+      const abilityName = (passive ? pokemon.getPassiveAbility() : pokemon.getAbility()).name;
       globalScene.phaseManager.unshiftNew(
         "PokemonHealPhase",
         pokemon.getBattlerIndex(),
@@ -861,8 +830,8 @@ export class TypeImmunityHealAbAttr extends TypeImmunityAbAttr {
 }
 
 class TypeImmunityStatStageChangeAbAttr extends TypeImmunityAbAttr {
-  private stat: BattleStat;
-  private stages: number;
+  private readonly stat: BattleStat;
+  private readonly stages: number;
 
   constructor(immuneType: PokemonType, stat: BattleStat, stages: number, condition?: AbAttrCondition) {
     super(immuneType, condition);
@@ -888,8 +857,8 @@ class TypeImmunityStatStageChangeAbAttr extends TypeImmunityAbAttr {
 }
 
 class TypeImmunityAddBattlerTagAbAttr extends TypeImmunityAbAttr {
-  private tagType: BattlerTagType;
-  private turnCount: number;
+  private readonly tagType: BattlerTagType;
+  private readonly turnCount: number;
 
   constructor(immuneType: PokemonType, tagType: BattlerTagType, turnCount: number, condition?: AbAttrCondition) {
     super(immuneType, condition);
@@ -989,7 +958,7 @@ export interface MoveImmunityAbAttrParams extends AugmentMoveInteractionAbAttrPa
 // TODO: Consider examining whether this move immunity ability attribute
 // can be merged with the MoveTypeMultiplierAbAttr in some way.
 export class MoveImmunityAbAttr extends PreDefendAbAttr {
-  private immuneCondition: PreDefendAbAttrCondition;
+  private readonly immuneCondition: PreDefendAbAttrCondition;
 
   constructor(immuneCondition: PreDefendAbAttrCondition) {
     super(true);
@@ -1034,8 +1003,8 @@ export class WonderSkinAbAttr extends PreDefendAbAttr {
 }
 
 export class MoveImmunityStatStageChangeAbAttr extends MoveImmunityAbAttr {
-  private stat: BattleStat;
-  private stages: number;
+  private readonly stat: BattleStat;
+  private readonly stages: number;
 
   constructor(immuneCondition: PreDefendAbAttrCondition, stat: BattleStat, stages: number) {
     super(immuneCondition);
@@ -1115,11 +1084,11 @@ export class ReverseDrainAbAttr extends PostDefendAbAttr {
 }
 
 export class PostDefendStatStageChangeAbAttr extends PostDefendAbAttr {
-  private condition: PokemonDefendCondition;
-  private stat: BattleStat;
-  private stages: number;
-  private selfTarget: boolean;
-  private allOthers: boolean;
+  private readonly condition: PokemonDefendCondition;
+  private readonly stat: BattleStat;
+  private readonly stages: number;
+  private readonly selfTarget: boolean;
+  private readonly allOthers: boolean;
 
   constructor(
     condition: PokemonDefendCondition,
@@ -1171,11 +1140,11 @@ export class PostDefendStatStageChangeAbAttr extends PostDefendAbAttr {
 }
 
 export class PostDefendHpGatedStatStageChangeAbAttr extends PostDefendAbAttr {
-  private condition: PokemonDefendCondition;
-  private hpGate: number;
-  private stats: BattleStat[];
-  private stages: number;
-  private selfTarget: boolean;
+  private readonly condition: PokemonDefendCondition;
+  private readonly hpGate: number;
+  private readonly stats: readonly BattleStat[];
+  private readonly stages: number;
+  private readonly selfTarget: boolean;
 
   constructor(
     condition: PokemonDefendCondition,
@@ -1216,8 +1185,8 @@ export class PostDefendHpGatedStatStageChangeAbAttr extends PostDefendAbAttr {
 }
 
 export class PostDefendApplyArenaTrapTagAbAttr extends PostDefendAbAttr {
-  private condition: PokemonDefendCondition;
-  private arenaTagType: ArenaTagType;
+  private readonly condition: PokemonDefendCondition;
+  private readonly arenaTagType: ArenaTagType;
 
   constructor(condition: PokemonDefendCondition, tagType: ArenaTagType) {
     super(true);
@@ -1228,10 +1197,7 @@ export class PostDefendApplyArenaTrapTagAbAttr extends PostDefendAbAttr {
 
   override canApply({ pokemon, opponent: attacker, move }: PostMoveInteractionAbAttrParams): boolean {
     const tag = globalScene.arena.getTag(this.arenaTagType) as EntryHazardTag;
-    return (
-      this.condition(pokemon, attacker, move)
-      && (!globalScene.arena.getTag(this.arenaTagType) || tag.layers < tag.maxLayers)
-    );
+    return this.condition(pokemon, attacker, move) && (!tag || tag.canAdd());
   }
 
   override apply({ simulated, pokemon }: PostMoveInteractionAbAttrParams): void {
@@ -1248,8 +1214,8 @@ export class PostDefendApplyArenaTrapTagAbAttr extends PostDefendAbAttr {
 }
 
 export class PostDefendApplyBattlerTagAbAttr extends PostDefendAbAttr {
-  private condition: PokemonDefendCondition;
-  private tagType: BattlerTagType;
+  private readonly condition: PokemonDefendCondition;
+  private readonly tagType: BattlerTagType;
   constructor(condition: PokemonDefendCondition, tagType: BattlerTagType) {
     super(true);
 
@@ -1304,7 +1270,7 @@ export class PostDefendTypeChangeAbAttr extends PostDefendAbAttr {
 }
 
 export class PostDefendTerrainChangeAbAttr extends PostDefendAbAttr {
-  private terrainType: TerrainType;
+  private readonly terrainType: TerrainType;
 
   constructor(terrainType: TerrainType) {
     super();
@@ -1324,8 +1290,8 @@ export class PostDefendTerrainChangeAbAttr extends PostDefendAbAttr {
 }
 
 export class PostDefendContactApplyStatusEffectAbAttr extends PostDefendAbAttr {
-  private chance: number;
-  private effects: StatusEffect[];
+  private readonly chance: number;
+  private readonly effects: readonly StatusEffect[];
 
   constructor(chance: number, ...effects: StatusEffect[]) {
     super(true);
@@ -1365,9 +1331,9 @@ export class EffectSporeAbAttr extends PostDefendContactApplyStatusEffectAbAttr 
 }
 
 export class PostDefendContactApplyTagChanceAbAttr extends PostDefendAbAttr {
-  private chance: number;
-  private tagType: BattlerTagType;
-  private turnCount: number | undefined;
+  private readonly chance: number;
+  private readonly tagType: BattlerTagType;
+  private readonly turnCount: number | undefined;
 
   constructor(chance: number, tagType: BattlerTagType, turnCount?: number) {
     super();
@@ -1402,8 +1368,8 @@ export class PostDefendContactApplyTagChanceAbAttr extends PostDefendAbAttr {
  * @sealed
  */
 export class PostReceiveCritStatStageChangeAbAttr extends AbAttr {
-  private stat: BattleStat;
-  private stages: number;
+  private readonly stat: BattleStat;
+  private readonly stages: number;
 
   constructor(stat: BattleStat, stages: number) {
     super();
@@ -1426,7 +1392,7 @@ export class PostReceiveCritStatStageChangeAbAttr extends AbAttr {
 }
 
 export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
-  private damageRatio: number;
+  private readonly damageRatio: number;
 
   constructor(damageRatio: number) {
     super();
@@ -1460,7 +1426,7 @@ export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
  * already has the Perish Song tag.
  */
 export class PostDefendPerishSongAbAttr extends PostDefendAbAttr {
-  private turns: number;
+  private readonly turns: number;
 
   constructor(turns: number) {
     super();
@@ -1491,14 +1457,16 @@ export class PostDefendPerishSongAbAttr extends PostDefendAbAttr {
 }
 
 export class PostDefendWeatherChangeAbAttr extends PostDefendAbAttr {
-  private weatherType: WeatherType;
-  protected condition?: PokemonDefendCondition;
+  private readonly weatherType: WeatherType;
+  protected readonly condition?: PokemonDefendCondition;
 
   constructor(weatherType: WeatherType, condition?: PokemonDefendCondition) {
     super();
 
     this.weatherType = weatherType;
-    this.condition = condition;
+    if (condition != null) {
+      this.condition = condition;
+    }
   }
 
   override canApply({ pokemon, opponent: attacker, move }: PostMoveInteractionAbAttrParams): boolean {
@@ -1540,7 +1508,7 @@ export class PostDefendAbilitySwapAbAttr extends PostDefendAbAttr {
 }
 
 export class PostDefendAbilityGiveAbAttr extends PostDefendAbAttr {
-  private ability: AbilityId;
+  private readonly ability: AbilityId;
 
   constructor(ability: AbilityId) {
     super();
@@ -1570,8 +1538,7 @@ export class PostDefendAbilityGiveAbAttr extends PostDefendAbAttr {
 }
 
 export class PostDefendMoveDisableAbAttr extends PostDefendAbAttr {
-  private chance: number;
-  private attacker: Pokemon;
+  private readonly chance: number;
 
   constructor(chance: number) {
     super();
@@ -1587,17 +1554,16 @@ export class PostDefendMoveDisableAbAttr extends PostDefendAbAttr {
     );
   }
 
-  override apply({ simulated, opponent: attacker, pokemon }: PostMoveInteractionAbAttrParams): void {
+  override apply({ simulated, opponent, pokemon }: PostMoveInteractionAbAttrParams): void {
     if (!simulated) {
-      this.attacker = attacker;
-      this.attacker.addTag(BattlerTagType.DISABLED, 4, 0, pokemon.id);
+      opponent.addTag(BattlerTagType.DISABLED, 4, 0, pokemon.id);
     }
   }
 }
 
 export interface PostStatStageChangeAbAttrParams extends AbAttrBaseParams {
   /** The stats that were changed */
-  stats: BattleStat[];
+  stats: readonly BattleStat[];
   /** The amount of stages that the stats changed by */
   stages: number;
   /** Whether the source of the stat stages were from the user's own move */
@@ -1615,9 +1581,9 @@ export class PostStatStageChangeAbAttr extends AbAttr {
 }
 
 export class PostStatStageChangeStatStageChangeAbAttr extends PostStatStageChangeAbAttr {
-  private condition: PokemonStatStageChangeCondition;
-  private statsToChange: BattleStat[];
-  private stages: number;
+  private readonly condition: PokemonStatStageChangeCondition;
+  private readonly statsToChange: readonly BattleStat[];
+  private readonly stages: number;
 
   constructor(condition: PokemonStatStageChangeCondition, statsToChange: BattleStat[], stages: number) {
     super(true);
@@ -1662,7 +1628,7 @@ export interface ModifyMoveEffectChanceAbAttrParams extends AbAttrBaseParams {
  * Modifies moves additional effects with multipliers, ie. Sheer Force, Serene Grace.
  */
 export class MoveEffectChanceMultiplierAbAttr extends AbAttr {
-  private chanceMultiplier: number;
+  private readonly chanceMultiplier: number;
 
   constructor(chanceMultiplier: number) {
     super(false);
@@ -1724,14 +1690,14 @@ export interface FieldMultiplyStatAbAttrParams extends AbAttrBaseParams {
  * If this ability cannot stack, a BooleanHolder can be used to prevent this from stacking.
  */
 export class FieldMultiplyStatAbAttr extends AbAttr {
-  private stat: Stat;
-  private multiplier: number;
+  private readonly stat: Stat;
+  private readonly multiplier: number;
   /**
    * Whether this ability can stack with others of the same type for this stat.
    * @defaultValue `false`
    * @todo Remove due to being literally useless - the ruin abilities are hardcoded to never stack in game
    */
-  private canStack: boolean;
+  private readonly canStack: boolean;
 
   constructor(stat: Stat, multiplier: number, canStack = false) {
     super(false);
@@ -1768,13 +1734,20 @@ export interface MoveTypeChangeAbAttrParams extends AugmentMoveInteractionAbAttr
 }
 
 export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
+  private readonly newType: PokemonType;
+  private readonly powerMultiplier: number;
+  private readonly condition?: PokemonAttackCondition;
+
   constructor(
-    private newType: PokemonType,
-    private powerMultiplier: number,
+    newType: PokemonType,
+    powerMultiplier: number,
     // TODO: all moves with this attr solely check the move being used...
-    private condition?: PokemonAttackCondition,
+    condition?: PokemonAttackCondition,
   ) {
     super(false);
+    this.newType = newType;
+    this.powerMultiplier = powerMultiplier;
+    this.condition = condition;
   }
 
   /**
@@ -1872,11 +1845,14 @@ export interface AddSecondStrikeAbAttrParams extends Omit<AugmentMoveInteraction
  * Used by {@linkcode MoveId.PARENTAL_BOND | Parental Bond}.
  */
 export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
+  /** The damage multiplier for the second strike, relative to the first */
+  private readonly damageMultiplier: number;
   /**
    * @param damageMultiplier - The damage multiplier for the second strike, relative to the first
    */
-  constructor(private damageMultiplier: number) {
+  constructor(damageMultiplier: number) {
     super(false);
+    this.damageMultiplier = damageMultiplier;
   }
 
   /**
@@ -1918,8 +1894,8 @@ export interface PreAttackModifyDamageAbAttrParams extends AugmentMoveInteractio
  * @param condition the condition for this ability to be applied
  */
 export class DamageBoostAbAttr extends PreAttackAbAttr {
-  private damageMultiplier: number;
-  private condition: PokemonAttackCondition;
+  private readonly damageMultiplier: number;
+  private readonly condition: PokemonAttackCondition;
 
   constructor(damageMultiplier: number, condition: PokemonAttackCondition) {
     super(false);
@@ -1959,8 +1935,8 @@ export abstract class VariableMovePowerAbAttr extends PreAttackAbAttr {
 }
 
 export class MovePowerBoostAbAttr extends VariableMovePowerAbAttr {
-  private condition: PokemonAttackCondition;
-  private powerMultiplier: number;
+  private readonly condition: PokemonAttackCondition;
+  private readonly powerMultiplier: number;
 
   constructor(condition: PokemonAttackCondition, powerMultiplier: number, showAbility = false) {
     super(showAbility);
@@ -1998,7 +1974,7 @@ export class LowHpMoveTypePowerBoostAbAttr extends MoveTypePowerBoostAbAttr {
  * Abilities which cause a variable amount of power increase.
  */
 export class VariableMovePowerBoostAbAttr extends VariableMovePowerAbAttr {
-  private mult: (user: Pokemon, target: Pokemon, move: Move) => number;
+  private readonly mult: (user: Pokemon, target: Pokemon, move: Move) => number;
 
   /**
    * @param mult - A function which takes the user, target, and move, and returns the power multiplier. 1 means no multiplier.
@@ -2024,8 +2000,8 @@ export class VariableMovePowerBoostAbAttr extends VariableMovePowerAbAttr {
  */
 export class FieldMovePowerBoostAbAttr extends AbAttr {
   // TODO: Refactor this class? It extends from base AbAttr but has preAttack methods and gets called directly instead of going through applyAbAttrsInternal
-  private condition: PokemonAttackCondition;
-  private powerMultiplier: number;
+  private readonly condition: PokemonAttackCondition;
+  private readonly powerMultiplier: number;
 
   /**
    * @param condition - A function that determines whether the power boost condition is met.
@@ -2095,22 +2071,24 @@ export interface StatMultiplierAbAttrParams extends AbAttrBaseParams {
 
 export class StatMultiplierAbAttr extends AbAttr {
   private declare readonly _: never;
-  private stat: BattleStat;
-  private multiplier: number;
+  private readonly stat: BattleStat;
+  private readonly multiplier: number;
   /**
    * Function determining if the stat multiplier is able to be applied to the move.
    *
    * @remarks
    * Currently only used by Hustle.
    */
-  private condition: PokemonAttackCondition | null;
+  private readonly condition?: PokemonAttackCondition;
 
   constructor(stat: BattleStat, multiplier: number, condition?: PokemonAttackCondition) {
     super(false);
 
     this.stat = stat;
     this.multiplier = multiplier;
-    this.condition = condition ?? null;
+    if (condition != null) {
+      this.condition = condition;
+    }
   }
 
   override canApply({ pokemon, move, stat }: StatMultiplierAbAttrParams): boolean {
@@ -2135,9 +2113,9 @@ export interface AllyStatMultiplierAbAttrParams extends StatMultiplierAbAttrPara
  * Multiplies a Stat from an ally pokemon's ability.
  */
 export class AllyStatMultiplierAbAttr extends AbAttr {
-  private stat: BattleStat;
-  private multiplier: number;
-  private ignorable: boolean;
+  private readonly stat: BattleStat;
+  private readonly multiplier: number;
+  private readonly ignorable: boolean;
 
   /**
    * @param stat - The stat being modified
@@ -2208,7 +2186,7 @@ This is enforced via the `Closed` type.
  * Base class for abilities that apply some effect after the user's move successfully executes.
  */
 export abstract class PostAttackAbAttr extends AbAttr {
-  private attackCondition: PokemonAttackCondition;
+  private readonly attackCondition: PokemonAttackCondition;
 
   /** The default `attackCondition` requires that the selected move is a damaging move */
   constructor(
@@ -2234,13 +2212,14 @@ export abstract class PostAttackAbAttr extends AbAttr {
 }
 
 export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
-  private stealCondition: PokemonAttackCondition | null;
+  private readonly stealCondition?: PokemonAttackCondition;
   private stolenItem?: PokemonHeldItemModifier;
 
   constructor(stealCondition?: PokemonAttackCondition) {
     super();
-
-    this.stealCondition = stealCondition ?? null;
+    if (stealCondition != null) {
+      this.stealCondition = stealCondition;
+    }
   }
 
   override canApply(params: PostMoveInteractionAbAttrParams): boolean {
@@ -2293,9 +2272,9 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
 }
 
 export class PostAttackApplyStatusEffectAbAttr extends PostAttackAbAttr {
-  private contactRequired: boolean;
-  private chance: number;
-  private effects: StatusEffect[];
+  private readonly contactRequired: boolean;
+  private readonly chance: number;
+  private readonly effects: readonly StatusEffect[];
 
   constructor(contactRequired: boolean, chance: number, ...effects: StatusEffect[]) {
     super();
@@ -2339,9 +2318,9 @@ export class PostAttackContactApplyStatusEffectAbAttr extends PostAttackApplySta
 }
 
 export class PostAttackApplyBattlerTagAbAttr extends PostAttackAbAttr {
-  private contactRequired: boolean;
-  private chance: (user: Pokemon, target: Pokemon, move: Move) => number;
-  private effects: BattlerTagType[];
+  private readonly contactRequired: boolean;
+  private readonly chance: (user: Pokemon, target: Pokemon, move: Move) => number;
+  private readonly effects: readonly BattlerTagType[];
 
   constructor(
     contactRequired: boolean,
@@ -2379,13 +2358,14 @@ export class PostAttackApplyBattlerTagAbAttr extends PostAttackAbAttr {
 }
 
 export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
-  private condition?: PokemonDefendCondition;
+  private readonly condition?: PokemonDefendCondition;
   private stolenItem?: PokemonHeldItemModifier;
 
   constructor(condition?: PokemonDefendCondition) {
     super();
-
-    this.condition = condition;
+    if (condition) {
+      this.condition = condition;
+    }
   }
 
   override canApply({ simulated, pokemon, opponent, move, hitResult }: PostMoveInteractionAbAttrParams): boolean {
@@ -2502,8 +2482,8 @@ export class PostVictoryAbAttr extends AbAttr {
 }
 
 class PostVictoryStatStageChangeAbAttr extends PostVictoryAbAttr {
-  private stat: BattleStat | ((p: Pokemon) => BattleStat);
-  private stages: number;
+  private readonly stat: BattleStat | ((p: Pokemon) => BattleStat);
+  private readonly stages: number;
 
   constructor(stat: BattleStat | ((p: Pokemon) => BattleStat), stages: number) {
     super();
@@ -2521,7 +2501,7 @@ class PostVictoryStatStageChangeAbAttr extends PostVictoryAbAttr {
 }
 
 export class PostVictoryFormChangeAbAttr extends PostVictoryAbAttr {
-  private formFunc: (p: Pokemon) => number;
+  private readonly formFunc: (p: Pokemon) => number;
 
   constructor(formFunc: (p: Pokemon) => number) {
     super(true);
@@ -2563,8 +2543,8 @@ export abstract class PostKnockOutAbAttr extends AbAttr {
 }
 
 export class PostKnockOutStatStageChangeAbAttr extends PostKnockOutAbAttr {
-  private stat: BattleStat | ((p: Pokemon) => BattleStat);
-  private stages: number;
+  private readonly stat: BattleStat | ((p: Pokemon) => BattleStat);
+  private readonly stages: number;
 
   constructor(stat: BattleStat | ((p: Pokemon) => BattleStat), stages: number) {
     super();
@@ -2610,7 +2590,7 @@ export interface IgnoreOpponentStatStagesAbAttrParams extends AbAttrBaseParams {
  * @param stats the stats that should be ignored
  */
 export class IgnoreOpponentStatStagesAbAttr extends AbAttr {
-  private stats: readonly BattleStat[];
+  private readonly stats: readonly BattleStat[];
 
   constructor(stats?: BattleStat[]) {
     super(false);
@@ -2651,11 +2631,11 @@ export class IntimidateImmunityAbAttr extends CancelInteractionAbAttr {
 }
 
 export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
-  private stats: BattleStat[];
-  private stages: number;
-  private overwrites: boolean;
+  private readonly stats: readonly BattleStat[];
+  private readonly stages: number;
+  private readonly overwrites: boolean;
 
-  constructor(stats: BattleStat[], stages: number, overwrites?: boolean) {
+  constructor(stats: readonly BattleStat[], stages: number, overwrites?: boolean) {
     super(true);
     this.stats = stats;
     this.stages = stages;
@@ -2681,7 +2661,7 @@ export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
  */
 export abstract class PostSummonAbAttr extends AbAttr {
   /** Should the ability activate when gained in battle? This will almost always be true */
-  private activateOnGain: boolean;
+  private readonly activateOnGain: boolean;
 
   constructor(showAbility = true, activateOnGain = true) {
     super(showAbility);
@@ -2714,12 +2694,12 @@ export abstract class PostSummonRemoveEffectAbAttr extends PostSummonAbAttr {}
  * Removes specified arena tags when a Pokemon is summoned.
  */
 export class PostSummonRemoveArenaTagAbAttr extends PostSummonAbAttr {
-  private arenaTags: ArenaTagType[];
+  private readonly arenaTags: readonly ArenaTagType[];
 
   /**
    * @param arenaTags - The arena tags to be removed
    */
-  constructor(arenaTags: ArenaTagType[]) {
+  constructor(arenaTags: readonly ArenaTagType[]) {
     super(true);
 
     this.arenaTags = arenaTags;
@@ -2765,7 +2745,7 @@ export class PostSummonAddArenaTagAbAttr extends PostSummonAbAttr {
 }
 
 export class PostSummonMessageAbAttr extends PostSummonAbAttr {
-  private messageFunc: (pokemon: Pokemon) => string;
+  private readonly messageFunc: (pokemon: Pokemon) => string;
 
   constructor(messageFunc: (pokemon: Pokemon) => string) {
     super(true);
@@ -2782,7 +2762,7 @@ export class PostSummonMessageAbAttr extends PostSummonAbAttr {
 
 export class PostSummonUnnamedMessageAbAttr extends PostSummonAbAttr {
   //Attr doesn't force pokemon name on the message
-  private message: string;
+  private readonly message: string;
 
   constructor(message: string) {
     super(true);
@@ -2798,8 +2778,8 @@ export class PostSummonUnnamedMessageAbAttr extends PostSummonAbAttr {
 }
 
 export class PostSummonAddBattlerTagAbAttr extends PostSummonAbAttr {
-  private tagType: BattlerTagType;
-  private turnCount: number;
+  private readonly tagType: BattlerTagType;
+  private readonly turnCount: number;
 
   constructor(tagType: BattlerTagType, turnCount: number, showAbility?: boolean) {
     super(showAbility);
@@ -2825,7 +2805,7 @@ export class PostSummonAddBattlerTagAbAttr extends PostSummonAbAttr {
  * This should realistically only ever activate on gain rather than on summon
  */
 export class PostSummonRemoveBattlerTagAbAttr extends PostSummonRemoveEffectAbAttr {
-  private immuneTags: BattlerTagType[];
+  private readonly immuneTags: readonly BattlerTagType[];
 
   /**
    * @param immuneTags - The {@linkcode BattlerTagType | battler tags} the Pokémon is immune to.
@@ -2845,12 +2825,12 @@ export class PostSummonRemoveBattlerTagAbAttr extends PostSummonRemoveEffectAbAt
 }
 
 export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
-  private stats: BattleStat[];
-  private stages: number;
-  private selfTarget: boolean;
-  private intimidate: boolean;
+  private readonly stats: readonly BattleStat[];
+  private readonly stages: number;
+  private readonly selfTarget: boolean;
+  private readonly intimidate: boolean;
 
-  constructor(stats: BattleStat[], stages: number, selfTarget?: boolean, intimidate?: boolean) {
+  constructor(stats: readonly BattleStat[], stages: number, selfTarget?: boolean, intimidate?: boolean) {
     super(true);
 
     this.stats = stats;
@@ -2902,8 +2882,8 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
 }
 
 export class PostSummonAllyHealAbAttr extends PostSummonAbAttr {
-  private healRatio: number;
-  private showAnim: boolean;
+  private readonly healRatio: number;
+  private readonly showAnim: boolean;
 
   constructor(healRatio: number, showAnim = false) {
     super();
@@ -3007,7 +2987,7 @@ export class DownloadAbAttr extends PostSummonAbAttr {
 }
 
 export class PostSummonWeatherChangeAbAttr extends PostSummonAbAttr {
-  private weatherType: WeatherType;
+  private readonly weatherType: WeatherType;
 
   constructor(weatherType: WeatherType) {
     super();
@@ -3032,7 +3012,7 @@ export class PostSummonWeatherChangeAbAttr extends PostSummonAbAttr {
 }
 
 export class PostSummonTerrainChangeAbAttr extends PostSummonAbAttr {
-  private terrainType: TerrainType;
+  private readonly terrainType: TerrainType;
 
   constructor(terrainType: TerrainType) {
     super();
@@ -3055,7 +3035,7 @@ export class PostSummonTerrainChangeAbAttr extends PostSummonAbAttr {
  * Heals a status effect if the Pokemon is afflicted with it upon switch in (or gain)
  */
 export class PostSummonHealStatusAbAttr extends PostSummonRemoveEffectAbAttr {
-  private immuneEffects: StatusEffect[];
+  private readonly immuneEffects: readonly StatusEffect[];
   private statusHealed: StatusEffect;
 
   /**
@@ -3068,7 +3048,8 @@ export class PostSummonHealStatusAbAttr extends PostSummonRemoveEffectAbAttr {
 
   public override canApply({ pokemon }: AbAttrBaseParams): boolean {
     const status = pokemon.status?.effect;
-    return status != null && (this.immuneEffects.length === 0 || this.immuneEffects.includes(status));
+    const immuneEffects = this.immuneEffects;
+    return status != null && (immuneEffects.length === 0 || immuneEffects.includes(status));
   }
 
   public override apply({ pokemon }: AbAttrBaseParams): void {
@@ -3090,7 +3071,7 @@ export class PostSummonHealStatusAbAttr extends PostSummonRemoveEffectAbAttr {
 }
 
 export class PostSummonFormChangeAbAttr extends PostSummonAbAttr {
-  private formFunc: (p: Pokemon) => number;
+  private readonly formFunc: (p: Pokemon) => number;
 
   constructor(formFunc: (p: Pokemon) => number) {
     super(true);
@@ -3164,7 +3145,7 @@ export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
  * Removes supplied status effects from the user's field.
  */
 export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAttr {
-  private statusEffect: StatusEffect[];
+  private readonly statusEffect: readonly StatusEffect[];
 
   /**
    * @param statusEffect - The status effects to be removed from the user's field.
@@ -3190,13 +3171,13 @@ export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAtt
     const party = pokemon.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
     const allowedParty = party.filter(p => p.isAllowedInBattle());
 
-    for (const pokemon of allowedParty) {
-      if (pokemon.status && this.statusEffect.includes(pokemon.status.effect)) {
+    for (const partyPokemon of allowedParty) {
+      if (partyPokemon.status && this.statusEffect.includes(partyPokemon.status.effect)) {
         globalScene.phaseManager.queueMessage(
-          getStatusEffectHealText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)),
+          getStatusEffectHealText(partyPokemon.status.effect, getPokemonNameWithAffix(partyPokemon)),
         );
-        pokemon.resetStatus(false);
-        pokemon.updateInfo();
+        partyPokemon.resetStatus(false);
+        partyPokemon.updateInfo();
       }
     }
   }
@@ -3299,14 +3280,6 @@ export class PostSummonWeatherSuppressedFormChangeAbAttr extends PostSummonAbAtt
  * Used by Forecast and Flower Gift.
  */
 export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
-  private ability: AbilityId;
-
-  constructor(ability: AbilityId) {
-    super(true);
-
-    this.ability = ability;
-  }
-
   /**
    * Determine if the pokemon has a forme change that is triggered by the weather
    */
@@ -3481,7 +3454,7 @@ export class PreSwitchOutHealAbAttr extends PreSwitchOutAbAttr {
  * Attribute for form changes that occur on switching out
  */
 export class PreSwitchOutFormChangeAbAttr extends PreSwitchOutAbAttr {
-  private formFunc: (p: Pokemon) => number;
+  private readonly formFunc: (p: Pokemon) => number;
 
   constructor(formFunc: (p: Pokemon) => number) {
     super();
@@ -3664,12 +3637,13 @@ export class ReflectStatStageChangeAbAttr extends PreStatStageChangeAbAttr {
  */
 export class ProtectStatAbAttr extends PreStatStageChangeAbAttr {
   /** {@linkcode BattleStat} to protect or `undefined` if **all** {@linkcode BattleStat} are protected */
-  private protectedStat?: BattleStat;
+  private readonly protectedStat?: BattleStat;
 
   constructor(protectedStat?: BattleStat) {
     super();
-
-    this.protectedStat = protectedStat;
+    if (protectedStat != null) {
+      this.protectedStat = protectedStat;
+    }
   }
 
   override canApply({ stat, cancelled }: PreStatStageChangeAbAttrParams): boolean {
@@ -3708,7 +3682,7 @@ export interface ConfusionOnStatusEffectAbAttrParams extends AbAttrBaseParams {
  */
 export class ConfusionOnStatusEffectAbAttr extends AbAttr {
   /** List of effects to apply confusion after */
-  private effects: ReadonlySet<StatusEffect>;
+  private readonly effects: ReadonlySet<StatusEffect>;
 
   constructor(...effects: StatusEffect[]) {
     super();
@@ -3752,7 +3726,7 @@ export class PreSetStatusAbAttr extends AbAttr {
  * Provides immunity to status effects to specified targets.
  */
 export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
-  protected immuneEffects: StatusEffect[];
+  protected readonly immuneEffects: readonly StatusEffect[];
 
   /**
    * @param immuneEffects - An array of {@linkcode StatusEffect}s to prevent application.
@@ -3820,7 +3794,7 @@ export interface UserFieldStatusEffectImmunityAbAttrParams extends AbAttrBasePar
  */
 export class UserFieldStatusEffectImmunityAbAttr extends CancelInteractionAbAttr {
   private declare readonly _: never;
-  protected immuneEffects: StatusEffect[];
+  protected readonly immuneEffects: readonly StatusEffect[];
 
   /**
    * @param immuneEffects - An array of {@linkcode StatusEffect}s to prevent application.
@@ -3854,7 +3828,7 @@ export class ConditionalUserFieldStatusEffectImmunityAbAttr extends UserFieldSta
    * @param target - The target of the status effect
    * @param source - The source of the status effect
    */
-  private condition: (target: Pokemon, source: Pokemon | null) => boolean;
+  private readonly condition: (target: Pokemon, source: Pokemon | null) => boolean;
 
   /**
    * @param immuneEffects - An array of {@linkcode StatusEffect}s to prevent application.
@@ -3995,7 +3969,7 @@ export interface UserFieldBattlerTagImmunityAbAttrParams extends PreApplyBattler
 export class UserFieldBattlerTagImmunityAbAttr extends BaseBattlerTagImmunityAbAttr<UserFieldBattlerTagImmunityAbAttrParams> {}
 
 export class ConditionalUserFieldBattlerTagImmunityAbAttr extends UserFieldBattlerTagImmunityAbAttr {
-  private condition: (target: Pokemon) => boolean;
+  private readonly condition: (target: Pokemon) => boolean;
 
   /**
    * Determine whether the {@linkcode ConditionalUserFieldBattlerTagImmunityAbAttr} can be applied by passing the target pokemon to the condition.
@@ -4086,7 +4060,7 @@ export interface ConditionalCritAbAttrParams extends AbAttrBaseParams {
  * Guarantees a critical hit according to the given condition, except if target prevents critical hits. ie. Merciless
  */
 export class ConditionalCritAbAttr extends AbAttr {
-  private condition: PokemonAttackCondition;
+  private readonly condition: PokemonAttackCondition;
 
   constructor(condition: PokemonAttackCondition, _checkUser?: boolean) {
     super(false);
@@ -4113,7 +4087,7 @@ export class BlockNonDirectDamageAbAttr extends CancelInteractionAbAttr {
  * This attribute will block any status damage that you put in the parameter.
  */
 export class BlockStatusDamageAbAttr extends CancelInteractionAbAttr {
-  private effects: StatusEffect[];
+  private readonly effects: readonly StatusEffect[];
 
   /**
    * @param effects - The status effect(s) that will be blocked from damaging the ability pokemon
@@ -4146,8 +4120,8 @@ export interface ChangeMovePriorityAbAttrParams extends AbAttrBaseParams {
  * @sealed
  */
 export class ChangeMovePriorityAbAttr extends AbAttr {
-  private moveFunc: (pokemon: Pokemon, move: Move) => boolean;
-  private changeAmount: number;
+  private readonly moveFunc: (pokemon: Pokemon, move: Move) => boolean;
+  private readonly changeAmount: number;
 
   /**
    * @param moveFunc - applies priority-change to moves that meet the condition
@@ -4195,7 +4169,7 @@ export abstract class PreWeatherEffectAbAttr extends AbAttr {
 export abstract class PreWeatherDamageAbAttr extends PreWeatherEffectAbAttr {}
 
 export class BlockWeatherDamageAttr extends PreWeatherDamageAbAttr {
-  private weatherTypes: WeatherType[];
+  private readonly weatherTypes: readonly WeatherType[];
 
   constructor(...weatherTypes: WeatherType[]) {
     super(false);
@@ -4351,6 +4325,11 @@ function getOncePerBattleCondition(ability: AbilityId): AbAttrCondition {
 }
 
 /**
+ * Ability attribute used by {@linkcode AbilityId.FOREWARN}.
+ *
+ * Displays a message on switch-in containing the highest power Move known by the user's opponents,
+ * picking randomly in the case of a tie.
+ * @see {@link https://www.smogon.com/dex/sv/abilities/forewarn/}
  * @sealed
  */
 export class ForewarnAbAttr extends PostSummonAbAttr {
@@ -4358,45 +4337,79 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
     super(true);
   }
 
+  override canApply({ pokemon }: AbAttrBaseParams): boolean {
+    return pokemon.getOpponents().some(opp => opp.getMoveset().length > 0);
+  }
+
   override apply({ simulated, pokemon }: AbAttrBaseParams): void {
-    if (!simulated) {
+    if (simulated) {
       return;
     }
+
     let maxPowerSeen = 0;
-    let maxMove = "";
-    let movePower = 0;
-    for (const opponent of pokemon.getOpponents()) {
-      for (const move of opponent.moveset) {
-        if (move?.getMove().is("StatusMove")) {
-          movePower = 1;
-        } else if (move?.getMove().hasAttr("OneHitKOAttr")) {
-          movePower = 150;
-        } else if (
-          move?.getMove().id === MoveId.COUNTER
-          || move?.getMove().id === MoveId.MIRROR_COAT
-          || move?.getMove().id === MoveId.METAL_BURST
-        ) {
-          movePower = 120;
-        } else if (move?.getMove().power === -1) {
-          movePower = 80;
-        } else {
-          movePower = move?.getMove().power ?? 0;
+    const movesAtMaxPower: string[] = [];
+
+    // Record all moves in all opponents' movesets seen at our max power threshold, clearing it if a new "highest power" is found
+    // TODO: Change to `pokemon.getOpponents().flatMap(p => p.getMoveset())` if or when we upgrade to ES2025
+    for (const opp of pokemon.getOpponents()) {
+      for (const oppMove of opp.getMoveset()) {
+        const move = oppMove.getMove();
+        const movePower = getForewarnPower(move);
+        if (movePower < maxPowerSeen) {
+          continue;
         }
 
-        if (movePower > maxPowerSeen) {
-          maxPowerSeen = movePower;
-          maxMove = move?.getName() ?? "";
+        // Another move at current max found; add to tiebreaker array
+        if (movePower === maxPowerSeen) {
+          movesAtMaxPower.push(move.name);
+          continue;
         }
+
+        // New max reached; clear prior results and update tracker
+        maxPowerSeen = movePower;
+        movesAtMaxPower.splice(0, movesAtMaxPower.length, move.name);
       }
     }
 
+    // Pick a random move in our list.
+    if (movesAtMaxPower.length === 0) {
+      return;
+    }
+    const chosenMove = movesAtMaxPower[pokemon.randBattleSeedInt(movesAtMaxPower.length)];
     globalScene.phaseManager.queueMessage(
       i18next.t("abilityTriggers:forewarn", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        moveName: maxMove,
+        moveName: chosenMove,
       }),
     );
   }
+}
+
+/**
+ * Helper function to return the estimated power used by Forewarn's "highest power" ranking.
+ * @param move - The `Move` being checked
+ * @returns The "forewarned" power of the move.
+ * @see {@link https://www.smogon.com/dex/sv/abilities/forewarn/}
+ */
+function getForewarnPower(move: Move): number {
+  if (move.is("StatusMove")) {
+    return 1;
+  }
+
+  if (move.hasAttr("OneHitKOAttr")) {
+    return 150;
+  }
+
+  // NB: Mainline doesn't count Comeuppance in its "counter move exceptions" list, which is dumb
+  if (move.hasAttr("CounterDamageAttr")) {
+    return 120;
+  }
+
+  // All damaging moves with unlisted powers use 80 as a fallback
+  if (move.power === -1) {
+    return 80;
+  }
+  return move.power;
 }
 
 /**
@@ -4447,10 +4460,10 @@ export abstract class PostWeatherChangeAbAttr extends AbAttr {
  * @sealed
  */
 export class PostWeatherChangeFormChangeAbAttr extends PostWeatherChangeAbAttr {
-  private ability: AbilityId;
-  private formRevertingWeathers: WeatherType[];
+  private readonly ability: AbilityId;
+  private readonly formRevertingWeathers: readonly WeatherType[];
 
-  constructor(ability: AbilityId, formRevertingWeathers: WeatherType[]) {
+  constructor(ability: AbilityId, formRevertingWeathers: readonly WeatherType[]) {
     super(false);
 
     this.ability = ability;
@@ -4493,9 +4506,9 @@ export class PostWeatherChangeFormChangeAbAttr extends PostWeatherChangeAbAttr {
  * @sealed
  */
 export class PostWeatherChangeAddBattlerTagAttr extends PostWeatherChangeAbAttr {
-  private tagType: BattlerTagType;
-  private turnCount: number;
-  private weatherTypes: WeatherType[];
+  private readonly tagType: BattlerTagType;
+  private readonly turnCount: number;
+  private readonly weatherTypes: readonly WeatherType[];
 
   constructor(tagType: BattlerTagType, turnCount: number, ...weatherTypes: WeatherType[]) {
     super();
@@ -4538,7 +4551,7 @@ export class PostWeatherLapseAbAttr extends AbAttr {
 }
 
 export class PostWeatherLapseHealAbAttr extends PostWeatherLapseAbAttr {
-  private healFactor: number;
+  private readonly healFactor: number;
 
   constructor(healFactor: number, ...weatherTypes: WeatherType[]) {
     super(...weatherTypes);
@@ -4551,7 +4564,7 @@ export class PostWeatherLapseHealAbAttr extends PostWeatherLapseAbAttr {
   }
 
   override apply({ pokemon, passive, simulated }: PostWeatherLapseAbAttrParams): void {
-    const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
+    const abilityName = (passive ? pokemon.getPassiveAbility() : pokemon.getAbility()).name;
     if (!simulated) {
       globalScene.phaseManager.unshiftNew(
         "PokemonHealPhase",
@@ -4568,7 +4581,7 @@ export class PostWeatherLapseHealAbAttr extends PostWeatherLapseAbAttr {
 }
 
 export class PostWeatherLapseDamageAbAttr extends PostWeatherLapseAbAttr {
-  private damageFactor: number;
+  private readonly damageFactor: number;
 
   constructor(damageFactor: number, ...weatherTypes: WeatherType[]) {
     super(...weatherTypes);
@@ -4582,7 +4595,7 @@ export class PostWeatherLapseDamageAbAttr extends PostWeatherLapseAbAttr {
 
   override apply({ simulated, pokemon, passive }: PostWeatherLapseAbAttrParams): void {
     if (!simulated) {
-      const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
+      const abilityName = (passive ? pokemon.getPassiveAbility() : pokemon.getAbility()).name;
       globalScene.phaseManager.queueMessage(
         i18next.t("abilityTriggers:postWeatherLapseDamage", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
@@ -4610,9 +4623,9 @@ export class PostTerrainChangeAbAttr extends AbAttr {
 }
 
 export class PostTerrainChangeAddBattlerTagAttr extends PostTerrainChangeAbAttr {
-  private tagType: BattlerTagType;
-  private turnCount: number;
-  private terrainTypes: TerrainType[];
+  private readonly tagType: BattlerTagType;
+  private readonly turnCount: number;
+  private readonly terrainTypes: readonly TerrainType[];
 
   constructor(tagType: BattlerTagType, turnCount: number, ...terrainTypes: TerrainType[]) {
     super();
@@ -4654,7 +4667,7 @@ export class PostTurnAbAttr extends AbAttr {
  * @sealed
  */
 export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
-  private effects: StatusEffect[];
+  private readonly effects: readonly StatusEffect[];
 
   /**
    * @param effects - The status effect(s) that will qualify healing the ability pokemon
@@ -4671,7 +4684,7 @@ export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
 
   override apply({ simulated, passive, pokemon }: AbAttrBaseParams): void {
     if (!simulated) {
-      const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
+      const abilityName = (passive ? pokemon.getPassiveAbility() : pokemon.getAbility()).name;
       globalScene.phaseManager.unshiftNew(
         "PokemonHealPhase",
         pokemon.getBattlerIndex(),
@@ -4690,7 +4703,7 @@ export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
  * @sealed
  */
 export class PostTurnResetStatusAbAttr extends PostTurnAbAttr {
-  private allyTarget: boolean;
+  private readonly allyTarget: boolean;
   private target: Pokemon | undefined;
 
   constructor(allyTarget = false) {
@@ -4729,14 +4742,16 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
    * Array containing all {@linkcode BerryType | BerryTypes} that are under cap and able to be restored.
    * Stored inside the class for a minor performance boost
    */
-  private berriesUnderCap: BerryType[];
+  private berriesUnderCap: readonly BerryType[];
+  private readonly procChance: (pokemon: Pokemon) => number;
 
   /**
    * @param procChance - function providing chance to restore an item
    * @see {@linkcode createEatenBerry}
    */
-  constructor(private procChance: (pokemon: Pokemon) => number) {
+  constructor(procChance: (pokemon: Pokemon) => number) {
     super();
+    this.procChance = procChance;
   }
 
   override canApply({ pokemon }: AbAttrBaseParams): boolean {
@@ -4919,7 +4934,7 @@ export class PostTurnHealAbAttr extends PostTurnAbAttr {
 
   override apply({ simulated, pokemon, passive }: AbAttrBaseParams): void {
     if (!simulated) {
-      const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
+      const abilityName = (passive ? pokemon.getPassiveAbility() : pokemon.getAbility()).name;
       globalScene.phaseManager.unshiftNew(
         "PokemonHealPhase",
         pokemon.getBattlerIndex(),
@@ -4936,7 +4951,7 @@ export class PostTurnHealAbAttr extends PostTurnAbAttr {
 
 /** @sealed */
 export class PostTurnFormChangeAbAttr extends PostTurnAbAttr {
-  private formFunc: (p: Pokemon) => number;
+  private readonly formFunc: (p: Pokemon) => number;
 
   constructor(formFunc: (p: Pokemon) => number) {
     super(true);
@@ -5025,7 +5040,7 @@ export class PostBiomeChangeAbAttr extends AbAttr {
 }
 
 export class PostBiomeChangeWeatherChangeAbAttr extends PostBiomeChangeAbAttr {
-  private weatherType: WeatherType;
+  private readonly weatherType: WeatherType;
 
   constructor(weatherType: WeatherType) {
     super();
@@ -5046,7 +5061,7 @@ export class PostBiomeChangeWeatherChangeAbAttr extends PostBiomeChangeAbAttr {
 
 /** @sealed */
 export class PostBiomeChangeTerrainChangeAbAttr extends PostBiomeChangeAbAttr {
-  private terrainType: TerrainType;
+  private readonly terrainType: TerrainType;
 
   constructor(terrainType: TerrainType) {
     super();
@@ -5166,7 +5181,7 @@ export class PostItemLostAbAttr extends AbAttr {
  * Applies a Battler Tag to the Pokemon after it loses or consumes an item
  */
 export class PostItemLostApplyBattlerTagAbAttr extends PostItemLostAbAttr {
-  private tagType: BattlerTagType;
+  private readonly tagType: BattlerTagType;
   constructor(tagType: BattlerTagType) {
     super(false);
     this.tagType = tagType;
@@ -5191,7 +5206,7 @@ export interface StatStageChangeMultiplierAbAttrParams extends AbAttrBaseParams 
   numStages: NumberHolder;
 }
 export class StatStageChangeMultiplierAbAttr extends AbAttr {
-  private multiplier: number;
+  private readonly multiplier: number;
 
   constructor(multiplier: number) {
     super(false);
@@ -5206,7 +5221,7 @@ export class StatStageChangeMultiplierAbAttr extends AbAttr {
 
 export interface StatStageChangeCopyAbAttrParams extends AbAttrBaseParams {
   /** The stats to change */
-  stats: BattleStat[];
+  stats: readonly BattleStat[];
   /** The number of stages that were changed by the original */
   numStages: number;
 }
@@ -5245,8 +5260,10 @@ export interface ReduceBurnDamageAbAttrParams extends AbAttrBaseParams {
  * @param multiplier Multiplied with the damage taken
  */
 export class ReduceBurnDamageAbAttr extends AbAttr {
-  constructor(protected multiplier: number) {
+  protected readonly multiplier: number;
+  constructor(multiplier: number) {
     super(false);
+    this.multiplier = multiplier;
   }
 
   /**
@@ -5280,7 +5297,7 @@ export class PreventBerryUseAbAttr extends CancelInteractionAbAttr {}
  */
 export class HealFromBerryUseAbAttr extends AbAttr {
   /** Percent of Max HP to heal */
-  private healPercent: number;
+  private readonly healPercent: number;
 
   constructor(healPercent: number) {
     super();
@@ -5490,7 +5507,7 @@ export class PostFaintUnsuppressedWeatherFormChangeAbAttr extends PostFaintAbAtt
 }
 
 export class PostFaintFormChangeAbAttr extends PostFaintAbAttr {
-  private formFunc: (p: Pokemon) => number;
+  private readonly formFunc: (p: Pokemon) => number;
 
   constructor(formFunc: (p: Pokemon) => number) {
     super(true);
@@ -5510,7 +5527,7 @@ export class PostFaintFormChangeAbAttr extends PostFaintAbAttr {
 }
 
 export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
-  private damageRatio: number;
+  private readonly damageRatio: number;
 
   constructor(damageRatio: number) {
     super(true);
@@ -5661,7 +5678,7 @@ export interface ReduceStatusEffectDurationAbAttrParams extends AbAttrBaseParams
  * @sealed
  */
 export class ReduceStatusEffectDurationAbAttr extends AbAttr {
-  private statusEffect: StatusEffect;
+  private readonly statusEffect: StatusEffect;
 
   constructor(statusEffect: StatusEffect) {
     super(false);
@@ -5700,10 +5717,10 @@ export abstract class FlinchEffectAbAttr extends AbAttr {
 }
 
 export class FlinchStatStageChangeAbAttr extends FlinchEffectAbAttr {
-  private stats: BattleStat[];
-  private stages: number;
+  private readonly stats: readonly BattleStat[];
+  private readonly stages: number;
 
-  constructor(stats: BattleStat[], stages: number) {
+  constructor(stats: readonly BattleStat[], stages: number) {
     super();
 
     this.stats = stats;
@@ -5762,7 +5779,7 @@ export interface WeightMultiplierAbAttrParams extends AbAttrBaseParams {
  * @sealed
  */
 export class WeightMultiplierAbAttr extends AbAttr {
-  private multiplier: number;
+  private readonly multiplier: number;
 
   constructor(multiplier: number) {
     super(false);
@@ -5799,7 +5816,7 @@ export interface MoveAbilityBypassAbAttrParams extends AbAttrBaseParams {
 }
 
 export class MoveAbilityBypassAbAttr extends AbAttr {
-  private moveIgnoreFunc: (pokemon: Pokemon, move: Move) => boolean;
+  private readonly moveIgnoreFunc: (pokemon: Pokemon, move: Move) => boolean;
 
   constructor(moveIgnoreFunc?: (pokemon: Pokemon, move: Move) => boolean) {
     super(false);
@@ -5893,10 +5910,10 @@ export interface IgnoreTypeImmunityAbAttrParams extends AbAttrBaseParams {
 
 /** @sealed */
 export class IgnoreTypeImmunityAbAttr extends AbAttr {
-  private defenderType: PokemonType;
-  private allowedMoveTypes: PokemonType[];
+  private readonly defenderType: PokemonType;
+  private readonly allowedMoveTypes: readonly PokemonType[];
 
-  constructor(defenderType: PokemonType, allowedMoveTypes: PokemonType[]) {
+  constructor(defenderType: PokemonType, allowedMoveTypes: readonly PokemonType[]) {
     super(false);
     this.defenderType = defenderType;
     this.allowedMoveTypes = allowedMoveTypes;
@@ -5923,10 +5940,10 @@ export interface IgnoreTypeStatusEffectImmunityAbAttrParams extends AbAttrParams
  * @sealed
  */
 export class IgnoreTypeStatusEffectImmunityAbAttr extends AbAttr {
-  private statusEffect: StatusEffect[];
-  private defenderType: PokemonType[];
+  private readonly statusEffect: readonly StatusEffect[];
+  private readonly defenderType: readonly PokemonType[];
 
-  constructor(statusEffect: StatusEffect[], defenderType: PokemonType[]) {
+  constructor(statusEffect: readonly StatusEffect[], defenderType: readonly PokemonType[]) {
     super(false);
 
     this.statusEffect = statusEffect;
@@ -5965,7 +5982,7 @@ export class MoneyAbAttr extends PostBattleAbAttr {
  */
 export class PostSummonStatStageChangeOnArenaAbAttr extends PostSummonStatStageChangeAbAttr {
   /** The type of arena tag that conditions the stat change. */
-  private arenaTagType: ArenaTagType;
+  private readonly arenaTagType: ArenaTagType;
 
   /**
    * Creates an instance of PostSummonStatStageChangeOnArenaAbAttr.
@@ -5992,10 +6009,10 @@ export class PostSummonStatStageChangeOnArenaAbAttr extends PostSummonStatStageC
  * @sealed
  */
 export class FormBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
-  private multiplier: number;
-  private tagType: BattlerTagType;
-  private recoilDamageFunc?: (pokemon: Pokemon) => number;
-  private triggerMessageFunc: (pokemon: Pokemon, abilityName: string) => string;
+  private readonly multiplier: number;
+  private readonly tagType: BattlerTagType;
+  private readonly recoilDamageFunc?: (pokemon: Pokemon) => number;
+  private readonly triggerMessageFunc: (pokemon: Pokemon, abilityName: string) => string;
 
   constructor(
     condition: PokemonDefendCondition,
@@ -6008,8 +6025,10 @@ export class FormBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
 
     this.multiplier = multiplier;
     this.tagType = tagType;
-    this.recoilDamageFunc = recoilDamageFunc;
     this.triggerMessageFunc = triggerMessageFunc;
+    if (recoilDamageFunc != null) {
+      this.recoilDamageFunc = recoilDamageFunc;
+    }
   }
 
   override canApply({ pokemon, opponent, move }: PreDefendModifyDamageAbAttrParams): boolean {
@@ -6151,7 +6170,7 @@ export class IllusionPostBattleAbAttr extends PostBattleAbAttr {
  * @sealed
  */
 export class BypassSpeedChanceAbAttr extends AbAttr {
-  public chance: number;
+  public readonly chance: number;
 
   /**
    * @param chance - Probability of the ability activating
@@ -6198,7 +6217,7 @@ export interface PreventBypassSpeedChanceAbAttrParams extends AbAttrBaseParams {
  * @sealed
  */
 export class PreventBypassSpeedChanceAbAttr extends AbAttr {
-  private condition: (pokemon: Pokemon, move: Move) => boolean;
+  private readonly condition: (pokemon: Pokemon, move: Move) => boolean;
 
   /**
    * @param condition - checks if a move meets certain conditions
@@ -6292,7 +6311,10 @@ export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
 }
 
 class ForceSwitchOutHelper {
-  constructor(private switchType: SwitchType) {}
+  private readonly switchType: SwitchType;
+  constructor(switchType: SwitchType) {
+    this.switchType = switchType;
+  }
 
   /**
    * Handles the logic for switching out a Pokémon based on battle conditions, HP, and the switch type.
@@ -6493,8 +6515,8 @@ export class PostDamageAbAttr extends AbAttr {
  * @sealed
  */
 export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
-  private helper: ForceSwitchOutHelper = new ForceSwitchOutHelper(SwitchType.SWITCH);
-  private hpRatio: number;
+  private readonly helper: ForceSwitchOutHelper = new ForceSwitchOutHelper(SwitchType.SWITCH);
+  private readonly hpRatio: number;
 
   constructor(hpRatio = 0.5) {
     super();
@@ -6814,7 +6836,7 @@ function getPokemonWithWeatherBasedForms() {
 
 // biome-ignore format: prevent biome from removing the newlines (e.g. prevent `new Ability(...).attr(...)`)
 export function initAbilities() {
-  allAbilities.push(
+  (allAbilities as Ability[]).push(
     new AbBuilder(AbilityId.NONE, 3).build(),
     new AbBuilder(AbilityId.STENCH, 3)
       .attr(PostAttackApplyBattlerTagAbAttr, false, (user, target, move) => !move.hasAttr("FlinchAttr") && !move.hitsSubstitute(user, target) ? 10 : 0, BattlerTagType.FLINCHED)
@@ -7059,7 +7081,7 @@ export function initAbilities() {
       .uncopiable()
       .unreplaceable()
       .attr(NoFusionAbilityAbAttr)
-      .attr(PostSummonFormChangeByWeatherAbAttr, AbilityId.FORECAST)
+      .attr(PostSummonFormChangeByWeatherAbAttr)
       .attr(PostWeatherChangeFormChangeAbAttr, AbilityId.FORECAST, [ WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG ])
       .build(),
     new AbBuilder(AbilityId.STICKY_HOLD, 3)
@@ -7311,7 +7333,7 @@ export function initAbilities() {
       .conditionalAttr(getWeatherCondition(WeatherType.SUNNY || WeatherType.HARSH_SUN), AllyStatMultiplierAbAttr, Stat.ATK, 1.5)
       .conditionalAttr(getWeatherCondition(WeatherType.SUNNY || WeatherType.HARSH_SUN), AllyStatMultiplierAbAttr, Stat.SPDEF, 1.5)
       .attr(NoFusionAbilityAbAttr)
-      .attr(PostSummonFormChangeByWeatherAbAttr, AbilityId.FLOWER_GIFT)
+      .attr(PostSummonFormChangeByWeatherAbAttr)
       .attr(PostWeatherChangeFormChangeAbAttr, AbilityId.FLOWER_GIFT, [ WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG, WeatherType.HAIL, WeatherType.HEAVY_RAIN, WeatherType.SNOW, WeatherType.RAIN ])
       .uncopiable()
       .unreplaceable()
@@ -8073,7 +8095,7 @@ export function initAbilities() {
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
       .attr(PostBattleInitFormChangeAbAttr, () => 0)
-      .attr(PreSwitchOutFormChangeAbAttr, (pokemon) => !pokemon.isFainted() ? 1 : pokemon.formIndex)
+      .attr(PreSwitchOutFormChangeAbAttr, (pokemon) => pokemon.isFainted() ? pokemon.formIndex : 1)
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.COMMANDER, 9)
@@ -8227,8 +8249,8 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.TERAFORM_ZERO, 9)
-      .attr(ClearWeatherAbAttr, [ WeatherType.SUNNY, WeatherType.RAIN, WeatherType.SANDSTORM, WeatherType.HAIL, WeatherType.SNOW, WeatherType.FOG, WeatherType.HEAVY_RAIN, WeatherType.HARSH_SUN, WeatherType.STRONG_WINDS ])
-      .attr(ClearTerrainAbAttr, [ TerrainType.MISTY, TerrainType.ELECTRIC, TerrainType.GRASSY, TerrainType.PSYCHIC ])
+      .attr(ClearWeatherAbAttr)
+      .attr(ClearTerrainAbAttr)
       .uncopiable()
       .unreplaceable()
       .condition(getOncePerBattleCondition(AbilityId.TERAFORM_ZERO))

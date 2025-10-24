@@ -50,7 +50,8 @@ import type { HeldModifierConfig } from "#types/held-modifier-config";
 import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import type { PartyOption, PokemonSelectFilter } from "#ui/party-ui-handler";
 import { PartyUiMode } from "#ui/party-ui-handler";
-import { coerceArray, randomString, randSeedInt, randSeedItem } from "#utils/common";
+import { coerceArray } from "#utils/array";
+import { randomString, randSeedInt, randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
@@ -107,6 +108,7 @@ export interface EnemyPokemonConfig {
   dataSource?: PokemonData;
   tera?: PokemonType;
   aiType?: AiType;
+  friendship?: number;
 }
 
 export interface EnemyPartyConfig {
@@ -351,6 +353,11 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
         enemyPokemon.aiType = config.aiType;
       }
 
+      // Set friendship
+      if (config.friendship != null) {
+        enemyPokemon.friendship = config.friendship;
+      }
+
       // Set moves
       if (config?.moveSet && config.moveSet.length > 0) {
         const moves = config.moveSet.map(m => new PokemonMove(m));
@@ -405,6 +412,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
       `| Species ID: ${enemyPokemon.species.speciesId}`,
       `| Level: ${enemyPokemon.level}`,
       `| Nature: ${getNatureName(enemyPokemon.nature, true, true, true)}`,
+      `| Friendship: ${enemyPokemon.friendship}`,
     );
     console.log(`Stats (IVs): ${stats}`);
     console.log(

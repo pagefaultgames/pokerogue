@@ -90,13 +90,16 @@ import type { ChargingMove, MoveAttrMap, MoveAttrString, MoveClassMap, MoveKindS
 import type { TurnMove } from "#types/turn-move";
 import type { AbstractConstructor } from "#types/type-helpers";
 import { applyChallenges } from "#utils/challenge-utils";
-import { BooleanHolder, coerceArray, type Constructor, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
+import { BooleanHolder, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
+import type { Constructor } from "#types/common";
+import { coerceArray } from "#utils/array";
 import { getEnumValues } from "#utils/enums";
 import { areAllies } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import { canSpeciesTera, willTerastallize } from "#utils/pokemon-utils";
+import type { ReadonlyGenericUint8Array } from "#types/typed-arrays";
 
 /**
  * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.
@@ -1040,7 +1043,7 @@ export abstract class Move implements Localizable {
 
 
     if (!this.hasAttr("TypelessAttr")) {
-      globalScene.arena.applyTags(WeakenMoveTypeTag, simulated, typeChangeHolder.value, power);
+      globalScene.arena.applyTags(WeakenMoveTypeTag, typeChangeHolder.value, power);
       globalScene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, typeChangeHolder.value, power);
     }
 
@@ -1509,7 +1512,7 @@ export class MoveEffectAttr extends MoveAttr {
 
     if ((!move.hasAttr("FlinchAttr") || moveChance.value <= move.chance) && !move.hasAttr("SecretPowerAttr")) {
       const userSide = user.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-      globalScene.arena.applyTagsForSide(ArenaTagType.WATER_FIRE_PLEDGE, userSide, false, moveChance);
+      globalScene.arena.applyTagsForSide(ArenaTagType.WATER_FIRE_PLEDGE, userSide, moveChance);
     }
 
     if (!selfEffect) {
@@ -2805,7 +2808,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
  * Used for {@linkcode Moves.TRI_ATTACK} and {@linkcode Moves.DIRE_CLAW}.
  */
 export class MultiStatusEffectAttr extends StatusEffectAttr {
-  public effects: StatusEffect[];
+  public readonly effects: readonly StatusEffect[];
 
   constructor(effects: StatusEffect[], selfTarget?: boolean) {
     super(effects[0], selfTarget);
@@ -3135,7 +3138,7 @@ export class StealEatBerryAttr extends EatBerryAttr {
  */
 export class HealStatusEffectAttr extends MoveEffectAttr {
   /** List of Status Effects to cure */
-  private effects: StatusEffect[];
+  private readonly effects: readonly StatusEffect[];
 
   /**
    * @param selfTarget - Whether this move targets the user
@@ -3143,7 +3146,7 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
    */
   constructor(selfTarget: boolean, effects: StatusEffect | StatusEffect[]) {
     super(selfTarget, { lastHitOnly: true });
-    this.effects = coerceArray(effects)
+    this.effects = coerceArray(effects);
   }
 
   /**
@@ -6333,7 +6336,7 @@ export class AddArenaTrapTagAttr extends AddArenaTagAttr {
       if (!tag) {
         return true;
       }
-      return tag.layers < tag.maxLayers;
+      return tag.canAdd();
     };
   }
 }
@@ -6358,7 +6361,7 @@ export class AddArenaTrapTagHitAttr extends AddArenaTagAttr {
       if (!tag) {
         return true;
       }
-      return tag.layers < tag.maxLayers;
+      return tag.canAdd();
     }
     return false;
   }
@@ -8537,7 +8540,7 @@ const MoveAttrs = Object.freeze({
 export type MoveAttrConstructorMap = typeof MoveAttrs;
 
 export function initMoves() {
-  allMoves.push(
+  (allMoves as Move[]).push(
     new SelfStatusMove(MoveId.NONE, PokemonType.NORMAL, MoveCategory.STATUS, -1, -1, 0, 1),
     new AttackMove(MoveId.POUND, PokemonType.NORMAL, MoveCategory.PHYSICAL, 40, 100, 35, -1, 0, 1),
     new AttackMove(MoveId.KARATE_CHOP, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 50, 100, 25, -1, 0, 1)
