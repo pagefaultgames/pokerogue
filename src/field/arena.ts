@@ -235,35 +235,6 @@ export class Arena {
     return tierPool.length === 0 ? TrainerType.BREEDER : tierPool[randSeedInt(tierPool.length)];
   }
 
-  getSpeciesFormIndex(species: PokemonSpecies): number {
-    switch (species.speciesId) {
-      case SpeciesId.BURMY:
-      case SpeciesId.WORMADAM:
-        switch (this.biomeType) {
-          case BiomeId.BEACH:
-            return 1;
-          case BiomeId.SLUM:
-            return 2;
-        }
-        break;
-      case SpeciesId.LYCANROC: {
-        const timeOfDay = this.getTimeOfDay();
-        switch (timeOfDay) {
-          case TimeOfDay.DAY:
-          case TimeOfDay.DAWN:
-            return 0;
-          case TimeOfDay.DUSK:
-            return 2;
-          case TimeOfDay.NIGHT:
-            return 1;
-        }
-        break;
-      }
-    }
-
-    return 0;
-  }
-
   getBgTerrainColorRatioForBiome(): number {
     switch (this.biomeType) {
       case BiomeId.SPACE:
