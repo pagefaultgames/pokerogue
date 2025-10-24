@@ -41,6 +41,7 @@ jobs:
   run-tests:
     name: Run Tests
     needs: check-path-change-filter
+    if: ${{ needs.check-path-change-filter.outputs.all != 'true'}}
     strategy:
       # don't stop upon 1 shard failing
       fail-fast: false
@@ -48,18 +49,16 @@ jobs:
         shard: [1, 2, 3, 4, 5]
     uses: ./.github/workflows/test-shard-template.yml
     with:
-      project: main
       shard: ${{ matrix.shard }}
       totalShards: 5
-      skip: ${{ needs.check-path-change-filter.outputs.all != 'true'}}
 
-  merge-reports:
-    name: Check tests
+  check-results:
+    name: Check Test Results
     timeout-minutes: 8
-    needs: [check-path-change-filter, run-tests]
+    needs: run-tests
     runs-on: ubuntu-latest
     # don't run if tests skipped
-    if: ${{ needs.check-path-change-filter.outputs.all == 'true' && !cancelled() }}
+    if: ${{ needs.run-tests.result != 'skipped' && needs.run-tests.result != 'cancelled' }}
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v4.2.2
@@ -86,4 +85,4 @@ jobs:
           merge-multiple: true
 
       - name: Merge blobs
-        run: pnpm exec vitest --merge-reports=test-results
+        run: pnpm test:silent --merge-reports=test-results
