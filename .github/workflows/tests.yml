@@ -26,7 +26,7 @@ jobs:
     outputs:
       all: ${{ steps.filter.outputs.all }}
     steps:
-      - name: checkout
+      - name: Checkout GitHub repository
         uses: actions/checkout@v4
         with:
           sparse-checkout: |
@@ -55,8 +55,11 @@ jobs:
 
   merge-reports:
     name: Check tests
-    needs: run-tests
+    timeout-minutes: 8
+    needs: [check-path-change-filter, run-tests]
     runs-on: ubuntu-latest
+    # don't run if tests skipped
+    if: ${{ needs.check-path-change-filter.outputs.all == 'true' && !cancelled() }}
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v4.2.2
