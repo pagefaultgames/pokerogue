@@ -46,6 +46,10 @@ describe("Moves - Instruct", () => {
       .criticalHits(false);
   });
 
+  it("faling test to see how blob handles failing tests", () => {
+    expect("foo").toBe("bar");
+  });
+
   it("should repeat target's last used move", async () => {
     game.override.moveset(MoveId.INSTRUCT).enemyLevel(1000); // ensures shuckle no die
     await game.classicMode.startBattle([SpeciesId.AMOONGUSS]);

@@ -54,10 +54,27 @@ jobs:
       skip: ${{ needs.check-path-change-filter.outputs.all != 'true'}}
 
   merge-reports:
-    name: Merge Test Reports
+    name: Check tests
     needs: run-tests
     runs-on: ubuntu-latest
     steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4.2.2
+        with:
+          submodules: "recursive"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Install Node.js dependencies
+        run: pnpm i
+
       - name: Download blob artifacts
         uses: actions/download-artifact@v4
         with:
