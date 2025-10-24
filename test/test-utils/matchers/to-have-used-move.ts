@@ -45,18 +45,23 @@ export function toHaveUsedMove(
 
   const moveIndexStr = index === 0 ? "last move" : `${getOrdinal(index)} most recent move`;
 
-  // Customize the diff message if move did not match
+  // Break out early if a move-only comparison was done or if the move ID did not match
   const expectedId = typeof expectedMove === "number" ? expectedMove : expectedMove.move;
   const actualId = historyMove.move;
-  if (!this.equals(actualId, expectedId, this.customTesters)) {
+  const sameId = this.equals(actualId, expectedId, this.customTesters);
+
+  if (typeof expectedMove === "number" || !sameId) {
     const expectedIdStr = getEnumStr(MoveId, expectedId);
     const actualIdStr = getEnumStr(MoveId, actualId);
     return {
-      pass: false,
+      pass: sameId,
       // Expected Magikarp' 5th most recent move to be PHOTON_GEYSER, but got METRONOME instead!
-      message: () => `Expected ${pkmName}'s ${moveIndexStr} to be ${expectedIdStr}, but got ${actualIdStr} instead!`,
-      expected: expectedId,
-      actual: actualId,
+      message: () =>
+        sameId
+          ? `Expected ${pkmName}'s ${moveIndexStr} to NOT be ${expectedIdStr}, but it was!`
+          : `Expected ${pkmName}'s ${moveIndexStr} to be ${expectedIdStr}, but got ${actualIdStr} instead!`,
+      expected: expectedMove,
+      actual: historyMove,
     };
   }
 
@@ -67,7 +72,7 @@ export function toHaveUsedMove(
     this.utils.iterableEquality,
   ]);
 
-  const expectedStr = `${getOnelineDiffStr.call(this, expectedMove)}`;
+  const expectedStr = getOnelineDiffStr.call(this, expectedMove);
 
   return {
     pass,
