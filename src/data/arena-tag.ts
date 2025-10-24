@@ -1213,7 +1213,7 @@ export class GravityTag extends SerializableArenaTag {
           pokemon.addTag(BattlerTagType.INTERRUPTED);
         }
       }
-    });
+    }
   }
 }
 
@@ -1349,7 +1349,7 @@ class FireGrassPledgeTag extends SerializableArenaTag {
     return "arenaTag:fireGrassPledgeOnRemove" + this.i18nSideKey;
   }
 
-  override lapse(arena: Arena): boolean {
+  override lapse(): boolean {
     for (const pokemon of inSpeedOrder(this.side)) {
       if (pokemon.isOfType(PokemonType.FIRE) || pokemon.switchOutStatus) {
         continue;
