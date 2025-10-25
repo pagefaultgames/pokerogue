@@ -71,6 +71,7 @@ jobs:
             test/test-utils/reporters
             vitest.config.ts
             vite.config.ts
+            src/plugins/vite
           sparse-checkout-cone-mode: false
 
       - name: Install pnpm
