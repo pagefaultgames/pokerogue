@@ -3268,7 +3268,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * @returns An generator of Pokémon on the allied field in speed order.
+   * @returns A generator of Pokémon on the allied field in speed order.
    */
   getAlliesGenerator(): Generator<Pokemon, number> {
     return inSpeedOrder(this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
