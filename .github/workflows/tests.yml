@@ -63,7 +63,11 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v4.2.2
         with:
-          submodules: "recursive"
+          sparse-checkout: |
+            package.json
+            pnpm-lock.yaml
+            pnpm-workspace.yaml
+          sparse-checkout-cone-mode: false
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -74,8 +78,8 @@ jobs:
           node-version-file: ".nvmrc"
           cache: "pnpm"
 
-      - name: Install Node.js dependencies
-        run: pnpm i
+      - name: Install Vitest
+        run: pnpm add vitest
 
       - name: Download blob artifacts
         uses: actions/download-artifact@v4
