@@ -67,6 +67,7 @@ jobs:
             package.json
             pnpm-lock.yaml
             pnpm-workspace.yaml
+            .nvmrc
           sparse-checkout-cone-mode: false
 
       - name: Install pnpm
