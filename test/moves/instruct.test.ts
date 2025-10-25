@@ -24,10 +24,6 @@ describe("Moves - Instruct", () => {
     expect(target.getMoveset().find(m => m?.moveId === move)?.ppUsed).toBe(2);
   }
 
-  it("fails", () => {
-    expect(1).toBe(2);
-  });
-
   beforeAll(() => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
