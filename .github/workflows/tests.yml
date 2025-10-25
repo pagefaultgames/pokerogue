@@ -68,6 +68,9 @@ jobs:
             pnpm-lock.yaml
             pnpm-workspace.yaml
             .nvmrc
+            test/test-utils/reporters
+            vitest.config.ts
+            vite.config.ts
           sparse-checkout-cone-mode: false
 
       - name: Install pnpm
