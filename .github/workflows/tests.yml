@@ -57,7 +57,6 @@ jobs:
     timeout-minutes: 8
     needs: run-tests
     runs-on: ubuntu-latest
-    # don't run if tests skipped
     if: ${{ needs.run-tests.result != 'skipped' && needs.run-tests.result != 'cancelled' }}
     steps:
       - name: Check out Git repository
