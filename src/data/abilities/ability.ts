@@ -5373,10 +5373,7 @@ export class ArenaTrapAbAttr extends CheckTrappedAbAttr {
   override canApply({ pokemon, opponent }: CheckTrappedAbAttrParams): boolean {
     return (
       this.arenaTrapCondition(pokemon, opponent)
-      && !(
-        opponent.getTypes(true).includes(PokemonType.GHOST)
-        || (opponent.getTypes(true).includes(PokemonType.STELLAR) && opponent.getTypes().includes(PokemonType.GHOST))
-      )
+      && !opponent.isOfType(PokemonType.GHOST, true, true)
       && !opponent.hasAbility(AbilityId.RUN_AWAY)
     );
   }
@@ -7015,9 +7012,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.MAGNET_PULL, 3)
-      .attr(ArenaTrapAbAttr, (_user, target) => {
-        return target.getTypes(true).includes(PokemonType.STEEL) || (target.getTypes(true).includes(PokemonType.STELLAR) && target.getTypes().includes(PokemonType.STEEL));
-      })
+      .attr(ArenaTrapAbAttr, (_user, target) => target.isOfType(PokemonType.STEEL, true, true))
       .build(),
     new AbBuilder(AbilityId.SOUNDPROOF, 3)
       .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.hasFlag(MoveFlags.SOUND_BASED))
@@ -7535,18 +7530,14 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.FLOWER_VEIL, 6)
-      .attr(ConditionalUserFieldStatusEffectImmunityAbAttr, (target: Pokemon, source: Pokemon | null) => {
-        return source ? target.getTypes().includes(PokemonType.GRASS) && target.id !== source.id : false;
-      })
+      .attr(ConditionalUserFieldStatusEffectImmunityAbAttr, (target, source) =>
+        !!source && target.id !== source.id && target.isOfType(PokemonType.GRASS, true, true)
+      )
       .attr(ConditionalUserFieldBattlerTagImmunityAbAttr,
-        (target: Pokemon) => {
-          return target.getTypes().includes(PokemonType.GRASS);
-        },
+        target => target.isOfType(PokemonType.GRASS, true, true)
         [ BattlerTagType.DROWSY ],
       )
-      .attr(ConditionalUserFieldProtectStatAbAttr, (target: Pokemon) => {
-        return target.getTypes().includes(PokemonType.GRASS);
-      })
+      .attr(ConditionalUserFieldProtectStatAbAttr, target => target.isOfType(PokemonType.GRASS, true, true))
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.CHEEK_POUCH, 6)
@@ -7882,7 +7873,7 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.LIBERO, 8)
       .attr(PokemonTypeChangeAbAttr)
-    //.condition((p) => !p.summonData.abilitiesApplied.includes(AbilityId.LIBERO)), //Gen 9 Implementation
+      //.condition((p) => !p.summonData.abilitiesApplied.includes(AbilityId.LIBERO)), //Gen 9 Implementation
       // TODO: needs testing on interaction with weather blockage
       .edgeCase()
       .build(),
