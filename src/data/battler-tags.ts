@@ -129,7 +129,17 @@ export class BattlerTag implements BaseBattlerTag {
 
   //#region non-serializable fields
   // Fields that should never be serialized, as they must not change after instantiation
+
+  /**
+   * Whether this Tag can be transferred via {@linkcode MoveId.BATON_PASS}.
+   * @defaultValue `false`
+   * @todo Make this an overriddable getter on subclasses rather than a value defined in the constructor
+   */
   #isBatonPassable = false;
+  /**
+   * Whether this Tag can be transferred via {@linkcode MoveId.BATON_PASS}.
+   * @defaultValue `false`
+   */
   public get isBatonPassable(): boolean {
     return this.#isBatonPassable;
   }
@@ -752,6 +762,10 @@ export class FlinchedTag extends BattlerTag {
   }
 }
 
+/**
+ * Tag to cancel the target's action when knocked out of a flying move by Smack Down or Gravity.
+ */
+// TODO: This is not a very good way to cancel a semi invulnerable turn
 export class InterruptedTag extends BattlerTag {
   public override readonly tagType = BattlerTagType.INTERRUPTED;
   constructor(sourceMove: MoveId) {
@@ -2252,14 +2266,14 @@ export abstract class TypeImmuneTag extends SerializableBattlerTag {
 }
 
 /**
- * Battler Tag that lifts the affected Pokemon into the air and provides immunity to Ground type moves.
+ * Battler Tag that lifts the affected Pokemon into the air, providing immunity to Ground-type moves.
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Magnet_Rise_(move) | MoveId.MAGNET_RISE}
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move) | MoveId.TELEKINESIS}
  */
 export class FloatingTag extends TypeImmuneTag {
   public override readonly tagType = BattlerTagType.FLOATING;
-  constructor(tagType: BattlerTagType, sourceMove: MoveId, turnCount: number) {
-    super(tagType, sourceMove, PokemonType.GROUND, turnCount);
+  constructor(sourceMove: MoveId, turnCount: number) {
+    super(BattlerTagType.FLOATING, sourceMove, PokemonType.GROUND, turnCount);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -3463,27 +3477,28 @@ export class SyrupBombTag extends SerializableBattlerTag {
 }
 
 /**
- * Telekinesis raises the target into the air for three turns and causes all moves used against the target (aside from OHKO moves) to hit the target unless the target is in a semi-invulnerable state from Fly/Dig.
- * The first effect is provided by {@linkcode FloatingTag}, the accuracy-bypass effect is provided by TelekinesisTag
- * The effects of Telekinesis can be baton passed to a teammate.
- * @see {@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move) | MoveId.TELEKINESIS}
+ * Tag used by {@linkcode MoveId.TELEKINESIS} to provide its guaranteed-hit effect. \
+ * The effects of Telekinesis can be Baton Passed to a teammate, including ones unaffected by the original move.
+ * A notable exception is Mega Gengar, which cannot receive either effect via Baton Pass.
+ * @see {@linkcode FloatingTag} - Tag used by Telekinesis to unground the target
  */
 export class TelekinesisTag extends SerializableBattlerTag {
   public override readonly tagType = BattlerTagType.TELEKINESIS;
-  constructor(sourceMove: MoveId) {
-    super(
-      BattlerTagType.TELEKINESIS,
-      [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_MOVE],
-      3,
-      sourceMove,
-      undefined,
-      true,
-    );
+  constructor() {
+    super(BattlerTagType.TELEKINESIS, BattlerTagLapseType.TURN_END, 3, undefined, undefined, true);
   }
 
   override onAdd(pokemon: Pokemon) {
     globalScene.phaseManager.queueMessage(
       i18next.t("battlerTags:telekinesisOnAdd", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      }),
+    );
+  }
+
+  override onRemove(pokemon: Pokemon) {
+    globalScene.phaseManager.queueMessage(
+      i18next.t("battlerTags:telekinesisOnRemove", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       }),
     );
@@ -3825,7 +3840,7 @@ export function getBattlerTag(
     case BattlerTagType.CHARGED:
       return new TypeBoostTag(tagType, sourceMove, PokemonType.ELECTRIC, 2, true);
     case BattlerTagType.FLOATING:
-      return new FloatingTag(tagType, sourceMove, turnCount);
+      return new FloatingTag(sourceMove, turnCount);
     case BattlerTagType.MINIMIZED:
       return new MinimizeTag();
     case BattlerTagType.DESTINY_BOND:
@@ -3876,7 +3891,7 @@ export function getBattlerTag(
     case BattlerTagType.SYRUP_BOMB:
       return new SyrupBombTag(sourceId);
     case BattlerTagType.TELEKINESIS:
-      return new TelekinesisTag(sourceMove);
+      return new TelekinesisTag();
     case BattlerTagType.POWER_TRICK:
       return new PowerTrickTag(sourceMove, sourceId);
     case BattlerTagType.GRUDGE:

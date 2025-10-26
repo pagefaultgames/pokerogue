@@ -30,12 +30,16 @@ export class Terrain {
     this.maxDuration = maxDuration;
   }
 
+  /**
+   * Tick down this terrain's duration.
+   * @returns Whether the current terrain should remain active (`turnsLeft > 0`)
+   */
   lapse(): boolean {
-    if (this.turnsLeft) {
-      return !!--this.turnsLeft;
+    // TODO: Add separate flag for infinite duration terrains
+    if (this.turnsLeft <= 0) {
+      return true;
     }
-
-    return true;
+    return --this.turnsLeft > 0;
   }
 
   getAttackTypeMultiplier(attackType: PokemonType): number {

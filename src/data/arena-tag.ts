@@ -1184,7 +1184,7 @@ export class TrickRoomTag extends RoomArenaTag {
 }
 
 /**
- * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Gravity_(move) Gravity}.
+ * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Gravity_(move) | Gravity}.
  * Grounds all Pokémon on the field, including Flying-types and those with
  * {@linkcode AbilityId.LEVITATE} for the duration of the arena tag, usually 5 turns.
  */
@@ -1204,15 +1204,21 @@ export class GravityTag extends SerializableArenaTag {
 
   onAdd(quiet = false): void {
     super.onAdd(quiet);
-    globalScene.getField(true).forEach(pokemon => {
-      if (pokemon !== null) {
+
+    // Remove all flying-related effects from all on-field Pokemon.
+    // TODO: Do we need to move this to a helper method?
+    globalScene
+      .getField(true)
+      .forEach(pokemon => {
         pokemon.removeTag(BattlerTagType.FLOATING);
         pokemon.removeTag(BattlerTagType.TELEKINESIS);
         if (pokemon.getTag(BattlerTagType.FLYING)) {
+          pokemon.removeTag(BattlerTagType.FLYING);
+          // TODO: This is an extremely poor way of handling move interruption
+
           pokemon.addTag(BattlerTagType.INTERRUPTED);
         }
-      }
-    });
+      });
   }
 }
 

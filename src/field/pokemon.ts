@@ -27,7 +27,6 @@ import {
   CritBoostTag,
   EncoreTag,
   ExposedTag,
-  GroundedTag,
   type GrudgeTag,
   getBattlerTag,
   HighestStatBoostTag,
@@ -2317,13 +2316,29 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.teraType;
   }
 
-  public isGrounded(): boolean {
+  /**
+   * Return whether this Pokemon is currently on the ground.
+   *
+   * To be considered grounded, a Pokemon must either:
+   * - Be {@linkcode BattlerTagType.IGNORE_FLYING | forcibly grounded} from an effect like Smack Down or Ingrain
+   * - Be under the effects of {@linkcode ArenaTagType.GRAVITY | harsh gravity}
+   * - **Not** be any of the following things:
+   *   - {@linkcode PokemonType.FLYING | Flying-type}
+   *   - {@linkcode AbilityId.LEVITATE | Levitating}
+   *   - {@linkcode BattlerTagType.FLOATING | Floating} from Magnet Rise or Telekinesis
+   *   - {@linkcode SemiInvulnerableTag | Semi-invulnerable} with `ignoreSemiInvulnerable` set to `false`
+   * @param ignoreSemiInvulnerable - Whether to ignore the target's semi-invulnerable state when determining groundedness;
+   default `false`
+   * @returns Whether this pokemon is currently grounded, as described above.
+   */
+  public isGrounded(ignoreSemiInvulnerable = false): boolean {
     return (
-      !!this.getTag(GroundedTag)
+      !!this.getTag(BattlerTagType.IGNORE_FLYING)
+      || globalScene.arena.hasTag(ArenaTagType.GRAVITY)
       || (!this.isOfType(PokemonType.FLYING, true, true)
         && !this.hasAbility(AbilityId.LEVITATE)
         && !this.getTag(BattlerTagType.FLOATING)
-        && !this.getTag(SemiInvulnerableTag))
+        && (ignoreSemiInvulnerable || !this.getTag(SemiInvulnerableTag)))
     );
   }
 
@@ -2527,7 +2542,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     // Handle flying v ground type immunity without removing flying type so effective types are still effective
     // Related to https://github.com/pagefaultgames/pokerogue/issues/524
-    if (moveType === PokemonType.GROUND && (this.isGrounded() || arena.hasTag(ArenaTagType.GRAVITY))) {
+    if (moveType === PokemonType.GROUND && this.isGrounded()) {
       const flyingIndex = types.indexOf(PokemonType.FLYING);
       if (flyingIndex > -1) {
         types.splice(flyingIndex, 1);
@@ -3577,6 +3592,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const isPhysical = moveCategory === MoveCategory.PHYSICAL;
 
     /** Combined damage multiplier from field effects such as weather, terrain, etc. */
+    // TODO: This should be applied directly to base power
     const arenaAttackTypeMultiplier = new NumberHolder(
       globalScene.arena.getAttackTypeMultiplier(moveType, source.isGrounded()),
     );
@@ -4219,14 +4235,17 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Transfer stat changes and Tags from another Pokémon
+   * Transfer stat changes and volatile status effects from another Pokemon
+   * to this one.
    *
    * @remarks
    * Used to implement Baton Pass and switching via the Baton item.
    *
-   * @param source - The pokemon whose stats/Tags are to be passed on from, ie: the Pokemon using Baton Pass
+   * @param source - The `Pokemon` whose stats/Tags are to be passed on from
+   * (i.e. the one having switched out)
    */
   public transferSummon(source: Pokemon): void {
+    // Copy all stat stages
     for (const s of BATTLE_STATS) {
       const sourceStage = source.getStatStage(s);
       if (this.isPlayer() && sourceStage === 6) {
@@ -4235,12 +4254,20 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       this.setStatStage(s, sourceStage);
     }
 
+    // Edge case: avoid transferring either of Telekinesis' effects when passing to Mega Gengar
+    // TODO: Rather than handling this logic in the core baton pass logic, move it to an
+    // overriddable helper function on the BattlerTag instance
+    const isMegaGengarReceivingTelekinesis =
+      this.species.speciesId === SpeciesId.GENGAR
+      && this.getFormKey() === SpeciesFormKey.MEGA
+      && !!source.getTag(BattlerTagType.TELEKINESIS);
+
+    // Copy all transferrable BattlerTags
     for (const tag of source.summonData.tags) {
       if (
         !tag.isBatonPassable
-        || (tag.tagType === BattlerTagType.TELEKINESIS
-          && this.species.speciesId === SpeciesId.GENGAR
-          && this.getFormKey() === "mega")
+        || (isMegaGengarReceivingTelekinesis
+          && (tag.tagType === BattlerTagType.TELEKINESIS || tag.tagType === BattlerTagType.FLOATING))
       ) {
         continue;
       }
