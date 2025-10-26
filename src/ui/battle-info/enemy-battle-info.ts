@@ -233,10 +233,7 @@ export class EnemyBattleInfo extends BattleInfo {
     super.updateStatusIcon(pokemon, (this.ownedIcon.visible ? 8 : 0) + (this.championRibbon.visible ? 8 : 0));
   }
 
-  protected override updatePokemonHp(
-    pokemon: EnemyPokemon,
-    instant?: boolean,
-  ): void {
+  protected override async updatePokemonHp(pokemon: EnemyPokemon, instant?: boolean): Promise<void> {
     super.updatePokemonHp(pokemon, instant);
     this.lastHp = pokemon.hp;
   }
