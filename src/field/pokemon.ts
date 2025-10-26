@@ -24,11 +24,11 @@ import { NoCritTag, WeakenMoveScreenTag } from "#data/arena-tag";
 import {
   AutotomizedTag,
   BattlerTag,
+  type BattlerTagTypeMap,
   CritBoostTag,
   EncoreTag,
   ExposedTag,
   GroundedTag,
-  type GrudgeTag,
   getBattlerTag,
   HighestStatBoostTag,
   MoveRestrictionBattlerTag,
@@ -147,6 +147,7 @@ import type { IllusionData } from "#types/illusion-data";
 import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { TurnMove } from "#types/turn-move";
+import type { AbstractConstructor } from "#types/type-helpers";
 import { BattleInfo } from "#ui/battle-info";
 import { EnemyBattleInfo } from "#ui/enemy-battle-info";
 import type { PartyOption } from "#ui/party-ui-handler";
@@ -4079,12 +4080,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return false;
   }
 
-  // TODO: Utilize a type map for these so we can avoid overloads
-  public getTag(tagType: BattlerTagType.GRUDGE): GrudgeTag | undefined;
-  public getTag(tagType: BattlerTagType.SUBSTITUTE): SubstituteTag | undefined;
-  public getTag(tagType: BattlerTagType): BattlerTag | undefined;
-  public getTag<T extends BattlerTag>(tagType: Constructor<T>): T | undefined;
-  public getTag(tagType: BattlerTagType | Constructor<BattlerTag>): BattlerTag | undefined {
+  public getTag<T extends BattlerTagType>(tagType: T): BattlerTagTypeMap[T] | undefined;
+  public getTag<T extends BattlerTag>(tagType: Constructor<T> | AbstractConstructor<T>): T | undefined;
+  public getTag(
+    tagType: BattlerTagType | Constructor<BattlerTag> | AbstractConstructor<BattlerTag>,
+  ): BattlerTag | undefined {
     return typeof tagType === "function"
       ? this.summonData.tags.find(t => t instanceof tagType)
       : this.summonData.tags.find(t => t.tagType === tagType);
