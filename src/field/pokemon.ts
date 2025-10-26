@@ -250,6 +250,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /** Whether this Pokémon is currently Terastallized */
   public isTerastallized: boolean;
   /** The set of Types that have been boosted by this Pokémon's Stellar Terastallization. */
+  // TODO: Make this an actual set that is serialized to/from an array
   public stellarTypesBoosted: PokemonType[];
 
   // TODO: Create a fusionData class / interface and move all fusion-related fields there, exposed via getters
@@ -1907,14 +1908,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Evaluate and return this Pokemon's typing.
-   * @param includeTeraType - Whether to use this Pokemon's tera type if Terastallized; default `false`
+   * @param includeTeraType - Whether to use this Pokemon's tera type if Terastallized; default `true`
    * @param forDefend - Whether this Pokemon is currently receiving an attack; default `false`
-   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
+   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform} and similar effects; default `false`
    * @param useIllusion - Whether to consider an active illusion; default `false`
    * @returns An array of {@linkcode PokemonType}s corresponding to this Pokemon's typing (real or perceived).
    */
   public getTypes(
-    includeTeraType = false,
+    includeTeraType = true,
     forDefend = false,
     ignoreOverride = false,
     useIllusion = false,
@@ -2032,9 +2033,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param type - The {@linkcode PokemonType} to check
    * @param includeTeraType - Whether to use this Pokemon's tera type if Terastallized; default `true`
    * @param forDefend - Whether this Pokemon is currently receiving an attack; default `false`
-   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
+   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform} and similar effects; default `false`
    * @returns Whether this Pokemon is of the specified type.
    */
+  // TODO: Make `forDefend` default to `true`
   public isOfType(type: PokemonType, includeTeraType = true, forDefend = false, ignoreOverride = false): boolean {
     return this.getTypes(includeTeraType, forDefend, ignoreOverride).includes(type);
   }
@@ -2622,7 +2624,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
       // Add STAB multiplier for attack type effectiveness.
       // For now, simply don't apply STAB to moves that may change type
-      if (this.getTypes(true).includes(moveType) && !move.getMove().hasAttr("VariableMoveTypeAttr")) {
+      if (this.isOfType(moveType, true) && !move.getMove().hasAttr("VariableMoveTypeAttr")) {
         thisScore *= 1.5;
       }
 
@@ -3500,16 +3502,19 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    *
    * @returns The STAB multiplier for the move used against this Pokemon
    */
+  // TODO: This uses nothing from this Pokemon AT ALL, so why is this called on the defender?
   calculateStabMultiplier(source: Pokemon, move: Move, ignoreSourceAbility: boolean, simulated: boolean): number {
     // If the move has the Typeless attribute, it doesn't get STAB (e.g. struggle)
     if (move.hasAttr("TypelessAttr")) {
       return 1;
     }
-    const sourceTypes = source.getTypes();
+    const sourceTypes = source.getTypes(false, false);
     const sourceTeraType = source.getTeraType();
     const moveType = source.getMoveType(move);
     const matchesSourceType = sourceTypes.includes(source.getMoveType(move));
+
     const stabMultiplier = new NumberHolder(1);
+
     if (matchesSourceType && moveType !== PokemonType.STELLAR) {
       stabMultiplier.value += 0.5;
     }
@@ -3520,19 +3525,35 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       applyAbAttrs("StabBoostAbAttr", { pokemon: source, simulated, multiplier: stabMultiplier });
     }
 
-    if (source.isTerastallized && sourceTeraType === moveType && moveType !== PokemonType.STELLAR) {
-      stabMultiplier.value += 0.5;
-    }
-
-    if (
-      source.isTerastallized
-      && source.getTeraType() === PokemonType.STELLAR
-      && (!source.stellarTypesBoosted.includes(moveType) || source.hasSpecies(SpeciesId.TERAPAGOS))
-    ) {
-      stabMultiplier.value += matchesSourceType ? 0.5 : 0.2;
+    // Compute tera boosts
+    if (source.isTerastallized) {
+      stabMultiplier.value += source.getTeraTypeBoost(sourceTeraType, moveType, matchesSourceType);
     }
 
     return Math.min(stabMultiplier.value, 2.25);
+  }
+
+  /**
+   * Helper function to {@linkcode calculateStabMultiplier} that handles computing boosts from a Pokemon being Terastallized.
+   * @param teraType - This Pokemon's Tera Type
+   * @param moveType - The type of the `Move` being used
+   * @param matchesSourceType - Whether the move type matches this Pokemon's base type
+   * @returns The computed STAB bonus from terastallization.
+   */
+  private getTeraTypeBoost(teraType: PokemonType, moveType: PokemonType, matchesSourceType: boolean): number {
+    // Non-stellar Teras give a 50% boost to their type exclusively
+    if (moveType !== PokemonType.STELLAR) {
+      return teraType === moveType ? 0.5 : 0;
+    }
+
+    // TODO: Instead of ignoring terapagos' tera stellar boosts when calling this,
+    // we should avoid pushing its usages to the array altogether to reduce save data size
+    const canBoostStellar = !this.stellarTypesBoosted.includes(moveType) || this.hasSpecies(SpeciesId.TERAPAGOS);
+    if (!canBoostStellar) {
+      return 0;
+    }
+    // Stellar gives 50% to original types and 20% to others, but once per move type
+    return matchesSourceType ? 0.5 : 0.2;
   }
 
   /**

@@ -7531,10 +7531,10 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.FLOWER_VEIL, 6)
       .attr(ConditionalUserFieldStatusEffectImmunityAbAttr, (target, source) =>
-        !!source && target.id !== source.id && target.isOfType(PokemonType.GRASS, true, true)
+        !!source && target.id !== source.id && target.isOfType(PokemonType.GRASS, true, true),
       )
       .attr(ConditionalUserFieldBattlerTagImmunityAbAttr,
-        target => target.isOfType(PokemonType.GRASS, true, true)
+        target => target.isOfType(PokemonType.GRASS, true, true),
         [ BattlerTagType.DROWSY ],
       )
       .attr(ConditionalUserFieldProtectStatAbAttr, target => target.isOfType(PokemonType.GRASS, true, true))

@@ -517,22 +517,15 @@ export class TypeRequirement extends EncounterPokemonRequirement {
 
   override queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
     if (!this.invertQuery) {
-      return partyPokemon.filter(
-        pokemon => this.requiredType.filter(type => pokemon.getTypes().includes(type)).length > 0,
-      );
+      return partyPokemon.some(pokemon => this.requiredType.some(type => pokemon.isOfType(type, false, false)));
     }
     // for an inverted query, we only want to get the pokemon that don't have ANY of the listed types
-    return partyPokemon.filter(
-      pokemon => this.requiredType.filter(type => pokemon.getTypes().includes(type)).length === 0,
-    );
+    return partyPokemon.every(pokemon => this.requiredType.every(type => !pokemon.isOfType(type, false, false)));
   }
 
   override getDialogueToken(pokemon?: PlayerPokemon): [string, string] {
-    const includedTypes = this.requiredType.filter(ty => pokemon?.getTypes().includes(ty));
-    if (includedTypes.length > 0) {
-      return ["type", PokemonType[includedTypes[0]]];
-    }
-    return ["type", ""];
+    const includedType = this.requiredType.find(ty => pokemon?.isOfType(ty, false, false));
+    return ["type", includedType ? PokemonType[includedType] : ""];
   }
 }
 

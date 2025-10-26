@@ -8193,7 +8193,7 @@ const attackedByItemMessageFunc = (user: Pokemon, target: Pokemon, move: Move) =
 export class HitsSameTypeAttr extends VariableMoveTypeMultiplierAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const multiplier = args[0] as NumberHolder;
-    if (!user.getTypes(true).some(type => target.getTypes(true).includes(type))) {
+    if (!user.getTypes(true, true).some(type => target.isOfType(type, true, true))) {
       multiplier.value = 0;
       return true;
     }
@@ -10405,7 +10405,7 @@ export function initMoves() {
       .condition(failIfLastCondition, 3),
     new StatusMove(MoveId.FLOWER_SHIELD, PokemonType.FAIRY, -1, 10, -1, 0, 6)
       .target(MoveTarget.ALL)
-      .attr(StatStageChangeAttr, [ Stat.DEF ], 1, false, { condition: (user, target, move) => target.getTypes().includes(PokemonType.GRASS) && !target.getTag(SemiInvulnerableTag) }),
+      .attr(StatStageChangeAttr, [ Stat.DEF ], 1, false, { condition: (user, target, move) => target.isOfType(PokemonType.GRASS, true, true) && !target.getTag(SemiInvulnerableTag) }),
     new StatusMove(MoveId.GRASSY_TERRAIN, PokemonType.GRASS, -1, 10, -1, 0, 6)
       .attr(TerrainChangeAttr, TerrainType.GRASSY)
       .target(MoveTarget.BOTH_SIDES),
