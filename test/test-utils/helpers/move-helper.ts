@@ -351,7 +351,8 @@ export class MoveHelper extends GameManagerHelper {
       "getMove",
     );
     if (once) {
-      spy.mockReturnValueOnce(move);
+      // Need to mock twice since it gets called twice - once for condition function, once for `apply` check
+      spy.mockReturnValueOnce(move).mockReturnValueOnce(move);
     } else {
       spy.mockReturnValue(move);
     }
