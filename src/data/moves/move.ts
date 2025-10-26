@@ -7040,7 +7040,7 @@ export abstract class CallMoveAttr extends OverrideMoveEffectAttr {
    *
    * Should never be `true` if the move is set to target the user!
    */
-  private targetEnemy: boolean
+  protected targetEnemy: boolean
   constructor(
     /**
      * Whether to target the called move at the move's selected target if possible; default `false`.
