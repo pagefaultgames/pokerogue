@@ -1856,7 +1856,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.isPlayer()) {
       this.moveset = [];
     }
-    // TODO: Maybe we don't need to manually set PP to max?
+    // TODO: Preserve PP used while the moveset override is active
     overrideArray.forEach((move: MoveId, index: number) => {
       const ppUsed = this.moveset[index]?.ppUsed ?? 0;
       this.moveset[index] = new PokemonMove(move, Math.min(ppUsed, allMoves[move].pp));
