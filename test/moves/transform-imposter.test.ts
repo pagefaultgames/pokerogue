@@ -73,7 +73,7 @@ describe("Transforming Effects", () => {
 
       expect(ditto.getMoveset().map(m => m.moveId)).toEqual(ditto.getMoveset().map(m => m.moveId));
 
-      expect(ditto.getTypes()).toEqual(mew.getTypes());
+      expect(ditto).toHaveTypes(mew.getTypes(), { mode: "ordered" });
     });
 
     // TODO: This is not implemented
