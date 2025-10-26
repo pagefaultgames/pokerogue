@@ -3297,7 +3297,7 @@ export class BattleScene extends SceneBase {
         this.party?.map(p => ({
           name: p.name,
           form: p.getFormKey(),
-          types: p.getTypes().map(type => PokemonType[type]),
+          types: p.getTypes(false).map(type => PokemonType[type]),
           teraType: PokemonType[p.getTeraType()],
           isTerastallized: p.isTerastallized,
           level: p.level,

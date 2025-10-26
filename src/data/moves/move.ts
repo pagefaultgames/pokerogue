@@ -10408,8 +10408,10 @@ export function initMoves() {
       .attr(AddArenaTagAttr, ArenaTagType.CRAFTY_SHIELD, 1, true, true)
       .condition(failIfLastCondition, 3),
     new StatusMove(MoveId.FLOWER_SHIELD, PokemonType.FAIRY, -1, 10, -1, 0, 6)
+      .attr(StatStageChangeAttr, [ Stat.DEF ], 1, false, { condition: (user, target, move) => target.isOfType(PokemonType.GRASS, true, true) && !target.getTag(SemiInvulnerableTag) })
       .target(MoveTarget.ALL)
-      .attr(StatStageChangeAttr, [ Stat.DEF ], 1, false, { condition: (user, target, move) => target.isOfType(PokemonType.GRASS, true, true) && !target.getTag(SemiInvulnerableTag) }),
+      // fails if no non-invulnerable pokemon on field are grass-type
+      .condition(() => globalScene.getField(true).some(p => p.isOfType(PokemonType.GRASS, true, true) && !p.getTag(SemiInvulnerableTag))),
     new StatusMove(MoveId.GRASSY_TERRAIN, PokemonType.GRASS, -1, 10, -1, 0, 6)
       .attr(TerrainChangeAttr, TerrainType.GRASSY)
       .target(MoveTarget.BOTH_SIDES),
