@@ -5,8 +5,8 @@ import { BattlePhase } from "#phases/battle-phase";
 
 export class MoveHeaderPhase extends BattlePhase {
   public readonly phaseName = "MoveHeaderPhase";
-  public pokemon: Pokemon;
   public move: PokemonMove;
+  public pokemon: Pokemon;
 
   constructor(pokemon: Pokemon, move: PokemonMove) {
     super();
@@ -15,8 +15,12 @@ export class MoveHeaderPhase extends BattlePhase {
     this.move = move;
   }
 
+  public getPokemon(): Pokemon {
+    return this.pokemon;
+  }
+
   canMove(): boolean {
-    return this.pokemon.isActive(true) && this.move.isUsable(this.pokemon);
+    return this.pokemon.isActive(true) && this.move.isUsable(this.pokemon)[0];
   }
 
   start() {

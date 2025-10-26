@@ -220,7 +220,7 @@ async function summonPlayerPokemon() {
       false,
       true,
     );
-    wobbuffet.ivs = [0, 0, 0, 0, 0, 0];
+    wobbuffet.ivs.fill(0);
     wobbuffet.setNature(Nature.MILD);
     wobbuffet.setAlpha(0);
     wobbuffet.setVisible(false);
@@ -414,7 +414,7 @@ function summonPlayerPokemonAnimation(pokemon: PlayerPokemon): Promise<void> {
                   pokemon.resetTurnData();
 
                   globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
-                  globalScene.phaseManager.pushNew("PostSummonPhase", pokemon.getBattlerIndex());
+                  globalScene.phaseManager.unshiftNew("PostSummonPhase", pokemon.getBattlerIndex());
                   resolve();
                 });
               },
