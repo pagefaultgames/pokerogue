@@ -502,7 +502,7 @@ export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
     this.stat = stat;
     // Note that, because we want X Accuracy to maintain its original behavior,
     // it will increment as it did previously, directly to the stat stage.
-    this.boost = stat !== Stat.ACC ? 0.3 : 1;
+    this.boost = stat !== Stat.ACC ? 0.2 : 1;
   }
 
   match(modifier: Modifier): boolean {

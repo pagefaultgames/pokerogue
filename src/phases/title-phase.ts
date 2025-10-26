@@ -251,6 +251,8 @@ export class TitlePhase extends Phase {
               .map(() => modifierTypes.GOLDEN_EXP_CHARM().withIdFromFunc(modifierTypes.GOLDEN_EXP_CHARM).newModifier()),
           )
           .concat([modifierTypes.MAP().withIdFromFunc(modifierTypes.MAP).newModifier()])
+          .concat([modifierTypes.ABILITY_CHARM().withIdFromFunc(modifierTypes.ABILITY_CHARM).newModifier()])
+          .concat([modifierTypes.SHINY_CHARM().withIdFromFunc(modifierTypes.SHINY_CHARM).newModifier()])
           .concat(getDailyRunStarterModifiers(party))
           .filter(m => m !== null);
 

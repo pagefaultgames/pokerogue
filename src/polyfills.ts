@@ -1,5 +1,5 @@
 /*
-Manual rolling of polyfills desired by the project.
+Manual rolling or other polyfills desired by the project.
 
 IMPORTANT: When adding / removing polyfills, ensure that typescript becomes
 aware of their existence, either by creating `src/typings/polyfills.d.ts`
@@ -19,3 +19,8 @@ if (typeof Promise.withResolvers === "undefined") {
     return { promise, resolve, reject };
   };
 }
+
+import "core-js/stable/set";
+import "core-js/stable/iterator";
+import "core-js/stable/map/group-by";
+import "core-js/stable/object/group-by";
