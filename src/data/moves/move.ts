@@ -6981,9 +6981,9 @@ export class ChangeTypeAttr extends MoveEffectAttr {
       !target.isTerastallized
       && !target.hasAbility(AbilityId.MULTITYPE)
       && !target.hasAbility(AbilityId.RKS_SYSTEM)
-      && !(target.getTypes().length === 1 && target.getTypes()[0] === this.type);
+      && !(target.getTypes().length === 1 && target.getTypes()[0] === this.type)
     )
-}
+    };
 }
 
 export class AddTypeAttr extends MoveEffectAttr {
