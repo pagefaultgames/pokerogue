@@ -1,10 +1,10 @@
 import { getPokemonNameWithAffix } from "#app/messages";
 import { PokemonType } from "#enums/pokemon-type";
 import type { Pokemon } from "#field/pokemon";
-import { isPokemonInstance, receivedStr } from "#test/test-utils";
 import { stringifyEnumArray } from "#test/test-utils/string-utils";
 import { coerceArray } from "#utils/array";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
+import { isPokemonInstance, receivedStr } from "..test-utils";
 
 export interface toHaveTypesOptions {
   /**
