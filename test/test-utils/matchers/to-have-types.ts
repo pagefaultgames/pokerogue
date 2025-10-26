@@ -21,6 +21,7 @@ export interface toHaveTypesOptions {
   /**
    * Optional arguments to pass to {@linkcode Pokemon.getTypes}.
    */
+  // TODO: Change this to use object spread once `Pokemon.getTypes` has its parameters coaclesced into an object
   args?: Parameters<Pokemon["getTypes"]>;
 }
 

@@ -100,12 +100,12 @@ describe("Transforming Effects", () => {
       const ditto = game.field.getPlayerPokemon();
       const magmar = game.field.getEnemyPokemon();
       magmar.isTerastallized = true;
-      magmar.teraType = PokemonType.DARK;
+      magmar.teraType = PokemonType.STELLAR;
 
       game.move.use(MoveId.TRANSFORM);
       await game.toEndOfTurn();
 
-      expect(ditto.getTypes(true)).toEqual([PokemonType.FIRE]);
+      expect(ditto).toHaveTypes(PokemonType.FIRE);
     });
 
     // TODO: This is not currently implemented
