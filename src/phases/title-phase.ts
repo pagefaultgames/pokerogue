@@ -251,6 +251,8 @@ export class TitlePhase extends Phase {
               .map(() => modifierTypes.GOLDEN_EXP_CHARM().withIdFromFunc(modifierTypes.GOLDEN_EXP_CHARM).newModifier()),
           )
           .concat([modifierTypes.MAP().withIdFromFunc(modifierTypes.MAP).newModifier()])
+          .concat([modifierTypes.ABILITY_CHARM().withIdFromFunc(modifierTypes.ABILITY_CHARM).newModifier()])
+          .concat([modifierTypes.SHINY_CHARM().withIdFromFunc(modifierTypes.SHINY_CHARM).newModifier()])
           .concat(getDailyRunStarterModifiers(party))
           .filter(m => m !== null);
 
@@ -313,15 +315,23 @@ export class TitlePhase extends Phase {
 
     if (this.loaded) {
       const availablePartyMembers = globalScene.getPokemonAllowedInBattle().length;
-      const minPartySize = globalScene.currentBattle.double ? 2 : 1;
-      const checkSwitch =
+
+      globalScene.phaseManager.pushNew("SummonPhase", 0, true, true);
+      if (globalScene.currentBattle.double && availablePartyMembers > 1) {
+        globalScene.phaseManager.pushNew("SummonPhase", 1, true, true);
+      }
+
+      if (
         globalScene.currentBattle.battleType !== BattleType.TRAINER
         && (globalScene.currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily)
-        && availablePartyMembers > minPartySize;
-
-      globalScene.phaseManager.pushNew("SummonPhase", 0, true, true, checkSwitch);
-      if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-        globalScene.phaseManager.pushNew("SummonPhase", 1, true, true, checkSwitch);
+      ) {
+        const minPartySize = globalScene.currentBattle.double ? 2 : 1;
+        if (availablePartyMembers > minPartySize) {
+          globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
+          if (globalScene.currentBattle.double) {
+            globalScene.phaseManager.pushNew("CheckSwitchPhase", 1, globalScene.currentBattle.double);
+          }
+        }
       }
     }
 

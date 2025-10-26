@@ -73,28 +73,39 @@ export class RibbonData {
   public static readonly MONO_GEN_9 = 0x4000000n as RibbonFlag;
   //#endregion Monogen ribbons
 
+  // biome-ignore format: manual
   /** Ribbon for winning classic */
-  public static readonly CLASSIC = 0x8000000n as RibbonFlag;
+  public static readonly CLASSIC        = 0x0008000000n as RibbonFlag;
+  // biome-ignore format: manual
   /** Ribbon for winning the nuzzlocke challenge */
-  public static readonly NUZLOCKE = 0x10000000n as RibbonFlag;
+  public static readonly NUZLOCKE       = 0x0010000000n as RibbonFlag;
+  // biome-ignore format: manual
   /** Ribbon for reaching max friendship */
-  public static readonly FRIENDSHIP = 0x20000000n as RibbonFlag;
+  public static readonly FRIENDSHIP     = 0x0020000000n as RibbonFlag;
+  // biome-ignore format: manual
   /** Ribbon for winning the flip stats challenge */
-  public static readonly FLIP_STATS = 0x40000000n as RibbonFlag;
+  public static readonly FLIP_STATS     = 0x0040000000n as RibbonFlag;
+  // biome-ignore format: manual
   /** Ribbon for winning the inverse challenge */
-  public static readonly INVERSE = 0x80000000n as RibbonFlag;
+  public static readonly INVERSE        = 0x0080000000n as RibbonFlag;
+  // biome-ignore format: manual
   /** Ribbon for winning the fresh start challenge */
-  public static readonly FRESH_START = 0x100000000n as RibbonFlag;
+  public static readonly FRESH_START    = 0x0100000000n as RibbonFlag;
+  // biome-ignore format: manual
   /** Ribbon for winning the hardcore challenge */
-  public static readonly HARDCORE = 0x200000000n as RibbonFlag;
+  public static readonly HARDCORE       = 0x0200000000n as RibbonFlag;
+  // biome-ignore format: manual
   /** Ribbon for winning the limited catch challenge */
-  public static readonly LIMITED_CATCH = 0x400000000n as RibbonFlag;
+  public static readonly LIMITED_CATCH  = 0x0400000000n as RibbonFlag;
+  // biome-ignore format: manual
   /** Ribbon for winning the limited support challenge set to no heal */
-  public static readonly NO_HEAL = 0x800000000n as RibbonFlag;
+  public static readonly NO_HEAL        = 0x0800000000n as RibbonFlag;
+  // biome-ignore format: manual
   /** Ribbon for winning the limited uspport challenge set to no shop */
-  public static readonly NO_SHOP = 0x1000000000n as RibbonFlag;
+  public static readonly NO_SHOP        = 0x1000000000n as RibbonFlag;
+  // biome-ignore format: manual
   /** Ribbon for winning the limited support challenge set to both*/
-  public static readonly NO_SUPPORT = 0x2000000000n as RibbonFlag;
+  public static readonly NO_SUPPORT     = 0x2000000000n as RibbonFlag;
 
   // NOTE: max possible ribbon flag is 0x20000000000000 (53 total ribbons)
   // Once this is exceeded, bitfield needs to be changed to a bigint or even a uint array
@@ -103,7 +114,7 @@ export class RibbonData {
   //#endregion Ribbons
 
   /** Create a new instance of RibbonData. Generally, {@linkcode fromJSON} is used instead. */
-  constructor(value: number) {
+  constructor(value: number | bigint) {
     this.payload = BigInt(value);
   }
 
@@ -144,5 +155,13 @@ export class RibbonData {
    */
   public has(flag: RibbonFlag): boolean {
     return !!(this.payload & flag);
+  }
+
+  /**
+   * Allow access to the bigint of ribbons
+   * @returns The ribbons as a bigint
+   */
+  public getRibbons(): bigint {
+    return this.payload;
   }
 }

@@ -108,6 +108,7 @@ export interface EnemyPokemonConfig {
   dataSource?: PokemonData;
   tera?: PokemonType;
   aiType?: AiType;
+  friendship?: number;
 }
 
 export interface EnemyPartyConfig {
@@ -352,6 +353,11 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
         enemyPokemon.aiType = config.aiType;
       }
 
+      // Set friendship
+      if (config.friendship != null) {
+        enemyPokemon.friendship = config.friendship;
+      }
+
       // Set moves
       if (config?.moveSet && config.moveSet.length > 0) {
         const moves = config.moveSet.map(m => new PokemonMove(m));
@@ -406,6 +412,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
       `| Species ID: ${enemyPokemon.species.speciesId}`,
       `| Level: ${enemyPokemon.level}`,
       `| Nature: ${getNatureName(enemyPokemon.nature, true, true, true)}`,
+      `| Friendship: ${enemyPokemon.friendship}`,
     );
     console.log(`Stats (IVs): ${stats}`);
     console.log(
