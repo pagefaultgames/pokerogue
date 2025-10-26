@@ -89,8 +89,8 @@ describe("Transforming Effects", () => {
       await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toEndOfTurn();
 
-      expect(magmar.getTypes()).toEqual([PokemonType.UNKNOWN]);
-      expect(ditto.getTypes()).toEqual([PokemonType.FIRE]);
+      expect(magmar).toHaveTypes(PokemonType.UNKNOWN);
+      expect(ditto).toHaveTypes(PokemonType.FIRE);
     });
 
     it("should not consider the target's Tera Type when copying types", async () => {

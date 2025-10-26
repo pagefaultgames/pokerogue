@@ -63,7 +63,7 @@ interface GenericMatchers<T> {
    * @param expected - The expected contents of the array, in any order
    * @see {@linkcode expect.arrayContaining}
    */
-  toEqualUnsorted: T extends (infer U)[] ? (expected: U[]) => void : never;
+  toEqualUnsorted: T extends readonly (infer U)[] ? (expected: readonly U[]) => void : never;
 
   /**
    * Check whether a {@linkcode Map} contains the given key, disregarding its value.
@@ -142,10 +142,13 @@ interface ArenaMatchers {
 interface PokemonMatchers {
   /**
    * Check whether a {@linkcode Pokemon}'s current typing includes the given types.
-   * @param expectedTypes - The expected {@linkcode PokemonType}s to check against; must have length `>0`
+   * @param expectedTypes - The expected {@linkcode PokemonType}(s) to check against (single or array)
    * @param options - The {@linkcode toHaveTypesOptions | options} passed to the matcher
    */
-  toHaveTypes(expectedTypes: PokemonType[], options?: toHaveTypesOptions): void;
+  toHaveTypes(
+    expectedTypes: PokemonType | readonly [PokemonType, ...PokemonType[]],
+    options?: toHaveTypesOptions,
+  ): void;
 
   /**
    * Check whether a {@linkcode Pokemon} has used a move matching the given criteria.

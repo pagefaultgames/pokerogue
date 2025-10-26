@@ -198,7 +198,7 @@ describe("Abilities - Protean/Libero", () => {
     await game.toEndOfTurn();
 
     expect(karp.waveData.abilitiesApplied.size).toBe(0);
-    expect(karp.getTypes()).toEqual([allMoves[MoveId.WATERFALL].type]);
+    expect(karp).toHaveTypes(allMoves[MoveId.WATERFALL].type);
   });
 
   it.each<{ moveName: string; move: MoveId }>([

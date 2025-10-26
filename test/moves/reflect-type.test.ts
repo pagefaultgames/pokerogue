@@ -43,13 +43,13 @@ describe("Moves - Reflect Type", () => {
     game.move.use(MoveId.FORESTS_CURSE);
     await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
-    expect(enemyPokemon.getTypes().includes(PokemonType.UNKNOWN)).toBe(true);
-    expect(enemyPokemon.getTypes().includes(PokemonType.GRASS)).toBe(true);
+    expect(enemyPokemon).toHaveTypes(PokemonType.UNKNOWN);
+    expect(enemyPokemon).toHaveTypes(PokemonType.GRASS);
 
     game.move.use(MoveId.REFLECT_TYPE);
     await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon.getTypes()[0]).toBe(PokemonType.NORMAL);
-    expect(playerPokemon.getTypes().includes(PokemonType.GRASS)).toBe(true);
+    expect(playerPokemon).toHaveTypes(PokemonType.GRASS);
   });
 });
