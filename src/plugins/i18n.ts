@@ -208,7 +208,6 @@ await i18next
     },
   );
 
-
 // TODO: Stop re-exporting i18next - half the places use
 export default i18next;
 
