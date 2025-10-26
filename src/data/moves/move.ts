@@ -7019,11 +7019,15 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
       return false;
     }
 
-    const firstMoveType = target.getMoveset()[0].getMove().type;
+    const firstMoveType = user.getMoveset()[0].getMove().type;
     user.summonData.types = [ firstMoveType ];
     globalScene.phaseManager.queueMessage(i18next.t("battle:transformedIntoType", { pokemonName: getPokemonNameWithAffix(user), type: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[firstMoveType])}`) }));
 
     return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user) => !user.isTerastallized && !user.isOfType(user.getMoveset()[0].getMove().type)
   }
 }
 
