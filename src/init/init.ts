@@ -1,3 +1,4 @@
+import "#plugins/i18n"; // Initializes i18n on import
 import { initAbilities } from "#abilities/ability";
 import { initBiomes } from "#balance/init-biomes";
 import { initPokemonPrevolutions, initPokemonStarters } from "#balance/pokemon-evolutions";

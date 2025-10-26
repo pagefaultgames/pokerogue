@@ -1,5 +1,4 @@
 import "vitest-canvas-mock";
-import "#plugins/i18n"; // Initializes i18n on import
 
 import { MockConsole } from "#test/test-utils/mocks/mock-console/mock-console";
 import { logTestEnd, logTestStart } from "#test/test-utils/setup/test-end-log";
