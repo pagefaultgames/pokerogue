@@ -9,9 +9,9 @@ import { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { WeatherType } from "#enums/weather-type";
 import type { ModifierTypeKeys } from "#modifiers/modifier-type";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
-import { addTextObject } from "#ui/text";
 import type { nil } from "#types/common";
+import { addTextObject } from "#ui/text";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 export enum EventType {

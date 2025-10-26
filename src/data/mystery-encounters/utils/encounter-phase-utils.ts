@@ -3,8 +3,8 @@ import { AVERAGE_ENCOUNTERS_PER_RUN_TARGET, WEIGHT_INCREMENT_ON_SPAWN_MISS } fro
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE } from "#balance/rates";
 import { biomeLinks } from "#balance/biomes";
+import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE } from "#balance/rates";
 import { initMoveAnim, loadMoveAnimAssets } from "#data/battle-anims";
 import { modifierTypes } from "#data/data-lists";
 import type { IEggOptions } from "#data/egg";
