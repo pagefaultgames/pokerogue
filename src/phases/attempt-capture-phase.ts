@@ -71,6 +71,15 @@ export class AttemptCapturePhase extends PokemonPhase {
     );
     const shakeProbability = Math.round(65536 / Math.pow(255 / modifiedCatchRate, 0.1875)); // Formula taken from gen 6
     const criticalCaptureChance = getCriticalCaptureChance(modifiedCatchRate);
+
+    console.log("Base catch rate: %d", catchRate);
+    console.log("Ball mult: %d", pokeballMultiplier);
+    console.log("Status mult: %d", statusMultiplier);
+    console.log("Shiny bonus: %d", shinyMultiplier);
+    console.log("Modified catch rate: %d", modifiedCatchRate);
+    console.log("Shake prob: %d", shakeProbability);
+    console.log("Crit catch chance: %d", criticalCaptureChance);
+
     const isCritical = pokemon.randBattleSeedInt(256) < criticalCaptureChance;
     const fpOffset = pokemon.getFieldPositionOffset();
 
