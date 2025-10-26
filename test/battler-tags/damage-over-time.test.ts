@@ -89,6 +89,7 @@ describe("Battler Tags - Damage Over Time", () => {
         i18next.t(dotTag["triggerMessageKey"], {
           pokemonNameWithAffix: getPokemonNameWithAffix(feebas),
           sourcePokemonName: getPokemonNameWithAffix(karp),
+          moveName: dotTag["getMoveName"](),
         }),
       );
     });
@@ -98,7 +99,7 @@ describe("Battler Tags - Damage Over Time", () => {
     let saltTag: SaltCuredTag;
 
     beforeEach(() => {
-      feebas.addTag(BattlerTagType.SALT_CURED, 0, undefined, game.field.getEnemyPokemon().id);
+      feebas.addTag(BattlerTagType.SALT_CURED, 0, undefined, karp.id);
       expect(feebas).toHaveBattlerTag(BattlerTagType.SALT_CURED);
 
       saltTag = feebas.getTag(BattlerTagType.SALT_CURED) as SaltCuredTag;
@@ -112,7 +113,7 @@ describe("Battler Tags - Damage Over Time", () => {
     ])("should deal $dmgPercent% of max HP to a $name-type Pokemon", ({ dmgPercent, types }) => {
       feebas.summonData.types = types;
 
-      const percent = saltTag.getDamageHpRatio(feebas);
+      const percent = saltTag["getDamageHpRatio"](feebas);
       expect(percent).toBe(dmgPercent / 100);
     });
   });
