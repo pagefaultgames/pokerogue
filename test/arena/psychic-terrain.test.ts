@@ -70,8 +70,10 @@ describe("Arena - Psychic Terrain", () => {
 
     game.move.use(MoveId.POUND);
     await game.phaseInterceptor.to("MovePhase", false);
+
     const feebas = game.field.getPlayerPokemon();
     expect(allMoves[MoveId.POUND].getPriority(feebas)).toBe(0.2);
+
     await game.toEndOfTurn();
 
     const shuckle = game.field.getEnemyPokemon();
@@ -89,8 +91,10 @@ describe("Arena - Psychic Terrain", () => {
 
     game.move.use(MoveId.QUICK_ATTACK);
     await game.phaseInterceptor.to("MovePhase", false);
+
     const feebas = game.field.getPlayerPokemon();
     expect(allMoves[MoveId.QUICK_ATTACK].getPriority(feebas)).toBe(1.2);
+
     await game.toEndOfTurn();
 
     const shuckle = game.field.getEnemyPokemon();
