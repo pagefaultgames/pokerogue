@@ -198,7 +198,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public shiny: boolean;
   public variant: Variant;
   public pokeball: PokeballType;
-  protected battleInfo: BattleInfo;
+  protected battleInfo: BattleInfo<this>;
   public level: number;
   public exp: number;
   public levelExp: number;
@@ -3153,7 +3153,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       const otherBattleInfo = globalScene.fieldUI
         .getAll()
         .slice(0, 4)
-        .filter(ui => ui instanceof BattleInfo && (ui as BattleInfo) instanceof PlayerBattleInfo === this.isPlayer())
+        .filter(ui => ui instanceof BattleInfo && ui instanceof PlayerBattleInfo === this.isPlayer())
         .find(() => true);
       if (!otherBattleInfo || !this.getFieldIndex()) {
         globalScene.fieldUI.sendToBack(this.battleInfo);

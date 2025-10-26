@@ -7,7 +7,7 @@ import type { BattleInfoParamList } from "#ui/battle-info";
 import { BattleInfo } from "#ui/battle-info";
 import { getLocalizedSpriteKey } from "#utils/common";
 
-export class PlayerBattleInfo extends BattleInfo {
+export class PlayerBattleInfo extends BattleInfo<PlayerPokemon> {
   protected player: true = true;
   protected hpNumbersContainer: Phaser.GameObjects.Container;
   protected expBarLabel: Phaser.GameObjects.Image;

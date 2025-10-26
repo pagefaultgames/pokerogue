@@ -41,7 +41,7 @@ export type BattleInfoParamList = {
   };
 };
 
-export abstract class BattleInfo extends Phaser.GameObjects.Container {
+export abstract class BattleInfo<P extends Pokemon> extends Phaser.GameObjects.Container {
   public static readonly EXP_GAINS_DURATION_BASE = 1650;
 
   protected baseY: number;
@@ -288,7 +288,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
 
   //#region Initialization methods
 
-  initSplicedIcon(pokemon: Pokemon, baseWidth: number) {
+  initSplicedIcon(pokemon: P, baseWidth: number) {
     this.splicedIcon.setPositionRelative(
       this.nameText,
       baseWidth + this.genderText.displayWidth + 1 + (this.teraIcon.visible ? this.teraIcon.displayWidth + 1 : 0),
@@ -311,7 +311,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
    * @param baseXOffset - The x offset to use for the shiny icon
    * @param doubleShiny - Whether the pokemon is shiny and its fusion species is also shiny
    */
-  protected initShinyIcon(pokemon: Pokemon, xOffset: number, doubleShiny: boolean) {
+  protected initShinyIcon(pokemon: P, xOffset: number, doubleShiny: boolean) {
     const baseVariant = !doubleShiny ? pokemon.getVariant(true) : pokemon.variant;
 
     this.shinyIcon.setPositionRelative(
@@ -346,7 +346,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     }
   }
 
-  initInfo(pokemon: Pokemon) {
+  initInfo(pokemon: P) {
     this.updateNameText(pokemon);
     const nameTextWidth = this.nameText.displayWidth;
 
@@ -441,7 +441,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
    * @param pokemon - The pokemon object attached to this battle info
    * @param xOffset - The offset from the name text
    */
-  updateStatusIcon(pokemon: Pokemon, xOffset = 0) {
+  updateStatusIcon(pokemon: P, xOffset = 0) {
     if (this.lastStatus !== (pokemon.status?.effect || StatusEffect.NONE)) {
       this.lastStatus = pokemon.status?.effect || StatusEffect.NONE;
 
@@ -454,7 +454,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
   }
 
   /** Update the pokemon name inside the container */
-  protected updateName(pokemon: Pokemon): boolean {
+  protected updateName(pokemon: P): boolean {
     const name = pokemon.getNameToRender();
     if (this.lastName === name) {
       return false;
@@ -541,7 +541,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
    * Called by every frame in the hp animation tween created in {@linkcode updatePokemonHp}
    * @param _pokemon - The pokemon the battle-info bar belongs to
    */
-  protected onHpTweenUpdate(_pokemon: Pokemon): void {
+  protected onHpTweenUpdate(_pokemon: P): void {
     this.updateHpFrame();
   }
 
@@ -550,7 +550,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
    * @param pokemon - The `Pokemon` to which this bar is attached
    * @param instant - Whether to instantly update the bar; default `false`
    */
-  protected async updatePokemonHp(pokemon: Pokemon, instant = false): Promise<void> {
+  protected async updatePokemonHp(pokemon: P, instant = false): Promise<void> {
     let duration = instant ? 0 : Phaser.Math.Clamp(Math.abs(this.lastHp - pokemon.hp) * 5, 250, 5000);
     const speed = globalScene.hpBarSpeed;
     if (speed) {
@@ -571,9 +571,9 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
 
   //#endregion
 
-  // TODO: Copy the relevant variables from the Pokemon to avoid improper updates when multiple
-  // damage instances occur without calling this
-  async updateInfo(pokemon: Pokemon, instant?: boolean): Promise<void> {
+  // TODO: Consider copying the relevant variables from the Pokemon to avoid improper updates
+  // when multiple damage instances occur in a row -
+  public async updateInfo(pokemon: P, instant?: boolean): Promise<void> {
     // TODO: Is this fallback needed?
     if (!globalScene) {
       return;
@@ -624,7 +624,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     }
   }
 
-  updateNameText(pokemon: Pokemon): void {
+  updateNameText(pokemon: P): void {
     let displayName = pokemon.getNameToRender().replace(/[♂♀]/g, "");
     let nameTextWidth: number;
 
