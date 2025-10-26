@@ -42,7 +42,7 @@ describe("Abilities - Rattled", () => {
     { type: "Dark", move: MoveId.BEAT_UP },
   ])("should raise the user's Speed by 1 stage for each hit of a $type-type move", async ({ move }) => {
     game.override.enemyAbility(AbilityId.BALL_FETCH);
-    await game.classicMode.startBattle([SpeciesId.GIMMIGHOUL]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(move);
@@ -54,8 +54,8 @@ describe("Abilities - Rattled", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
 
     // Rattled should've raised speed once per hit, displaying a separate message each time
-    const gimmighoul = game.field.getPlayerPokemon();
-    expect(gimmighoul).toHaveStatStage(Stat.SPD, enemyHits);;
+    const feebas = game.field.getPlayerPokemon();
+    expect(feebas).toHaveStatStage(Stat.SPD, enemyHits);
     expect(game.phaseInterceptor.log.filter(p => p === "ShowAbilityPhase")).toHaveLength(enemyHits);
     expect(game.phaseInterceptor.log.filter(p => p === "StatStageChangePhase")).toHaveLength(enemyHits);
     const statChangeText = i18next.t(getStatStageChangeDescriptionKey(1, true), {
@@ -72,15 +72,15 @@ describe("Abilities - Rattled", () => {
     { type: "Dark", move: MoveId.TAUNT },
   ])("should not trigger from $type-type status moves", async ({ move }) => {
     game.override.enemyAbility(AbilityId.BALL_FETCH);
-    await game.classicMode.startBattle([SpeciesId.GIMMIGHOUL]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(move);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    const gimmighoul = game.field.getPlayerPokemon();
-    expect(gimmighoul).toHaveStatStage(Stat.SPD, 0);;
+    const feebas = game.field.getPlayerPokemon();
+    expect(feebas).toHaveStatStage(Stat.SPD, 0);
     expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
     expect(game.phaseInterceptor.log).not.toContain("StatStageChangePhase");
   });
@@ -89,21 +89,21 @@ describe("Abilities - Rattled", () => {
   // can be addressed
   it.todo("should activate after Intimidate attack drop on initial send out", async () => {
     // `runToSummon` used instead of `startBattle` to avoid skipping past initial "post send out" effects
-    await game.classicMode.runToSummon([SpeciesId.GIMMIGHOUL]);
+    await game.classicMode.runToSummon([SpeciesId.FEEBAS]);
 
     // Intimidate
     await game.phaseInterceptor.to("StatStageChangePhase");
 
-    const playerPokemon = game.field.getPlayerPokemon();
-    expect(playerPokemon).toHaveStatStage(Stat.SPD, 0);
-    expect(playerPokemon).toHaveStatStage(Stat.ATK, -1);;
+    const feebas = game.field.getPlayerPokemon();
+    expect(feebas).toHaveStatStage(Stat.ATK, -1);
+    expect(feebas).toHaveStatStage(Stat.SPD, 0);
     game.phaseInterceptor.clearLogs();
 
     // Rattled
     await game.phaseInterceptor.to("StatStageChangePhase", true);
 
-    expect(playerPokemon).toHaveStatStage(Stat.ATK, -1);;
-    expect(playerPokemon).toHaveStatStage(Stat.SPD, 1);;
+    expect(feebas).toHaveStatStage(Stat.ATK, -1);
+    expect(feebas).toHaveStatStage(Stat.SPD, 1);
     // Nothing but show/hide ability phases should be visible
     for (const log of game.phaseInterceptor.log) {
       expect(log).toBeOneOf(["ShowAbilityPhase", "HideAbilityPhase", "StatStageChangePhase", "MessagePhase"]);
@@ -111,17 +111,22 @@ describe("Abilities - Rattled", () => {
   });
 
   it("should activate after Intimidate from enemy switch", async () => {
-    await game.classicMode.startBattle([SpeciesId.GIMMIGHOUL, SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.BULBASAUR]);
 
+    // Reset prior stat stages from send-out
+    const feebas = game.field.getPlayerPokemon();
+    feebas.setStatStage(Stat.ATK, 0);
+    feebas.setStatStage(Stat.SPD, 0);
+    
     game.move.use(MoveId.SPLASH);
     game.forceEnemyToSwitch();
     await game.phaseInterceptor.to("StatStageChangePhase");
 
-    const playerPokemon = game.field.getPlayerPokemon();
-    expect(playerPokemon).toHaveStatStage(Stat.ATK, -2);
-    expect(playerPokemon).toHaveStatStage(Stat.SPD, 1);;
+    expect(feebas).toHaveStatStage(Stat.ATK, -1);
+    expect(feebas).toHaveStatStage(Stat.SPD, 0);
 
     await game.phaseInterceptor.to("StatStageChangePhase");
-    expect(playerPokemon).toHaveStatStage(Stat.SPD, 2);;
+    expect(feebas).toHaveStatStage(Stat.ATK, -1);
+    expect(feebas).toHaveStatStage(Stat.SPD, 1);
   });
 });
