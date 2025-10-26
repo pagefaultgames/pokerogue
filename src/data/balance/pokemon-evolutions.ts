@@ -17,7 +17,8 @@ import { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
 import type { SpeciesStatBoosterItem, SpeciesStatBoosterModifierType } from "#modifiers/modifier-type";
 import type { EvoLevelThreshold } from "#types/species-gen-types";
-import { coerceArray, randSeedInt } from "#utils/common";
+import { coerceArray } from "#utils/array";
+import { randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
@@ -1151,7 +1152,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.LUNALA, 13, EvolutionItem.MOON_FLUTE, null, [53, 73, 79])
   ],
   [SpeciesId.MELTAN]: [
-    new SpeciesEvolution(SpeciesId.MELMETAL, 48, null, null)
+    new SpeciesEvolution(SpeciesId.MELMETAL, 30, null, null, [30, 50, 70])
   ],
   [SpeciesId.ALOLA_RATTATA]: [
     new SpeciesEvolution(SpeciesId.ALOLA_RATICATE, 20, null, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]})

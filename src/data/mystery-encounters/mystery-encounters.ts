@@ -1,4 +1,3 @@
-import { getBiomeName } from "#balance/biomes";
 import { BiomeId } from "#enums/biome-id";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { ATrainersTestEncounter } from "#mystery-encounters/a-trainers-test-encounter";
@@ -33,6 +32,7 @@ import { TrainingSessionEncounter } from "#mystery-encounters/training-session-e
 import { TrashToTreasureEncounter } from "#mystery-encounters/trash-to-treasure-encounter";
 import { UncommonBreedEncounter } from "#mystery-encounters/uncommon-breed-encounter";
 import { WeirdDreamEncounter } from "#mystery-encounters/weird-dream-encounter";
+import { getBiomeName } from "#utils/common";
 
 export const EXTREME_ENCOUNTER_BIOMES = [
   BiomeId.SEA,
