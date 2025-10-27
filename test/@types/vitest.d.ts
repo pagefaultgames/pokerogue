@@ -142,7 +142,7 @@ interface ArenaMatchers {
 interface PokemonMatchers {
   /**
    * Check whether a {@linkcode Pokemon}'s current typing includes the given types.
-   * @param expectedTypes - The expected {@linkcode PokemonType}(s) to check against (single or array)
+   * @param expectedTypes - The expected {@linkcode PokemonType}(s) to check against (single or array); must be non-empty
    * @param options - The {@linkcode toHaveTypesOptions | options} passed to the matcher
    */
   toHaveTypes(

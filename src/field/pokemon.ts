@@ -1912,110 +1912,40 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param forDefend - Whether this Pokemon is currently receiving an attack; default `false`
    * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform} and similar effects; default `false`
    * @param useIllusion - Whether to consider an active illusion; default `false`
-   * @returns An array of {@linkcode PokemonType}s corresponding to this Pokemon's typing (real or perceived).
+   * @returns A non-empty array of {@linkcode PokemonType}s corresponding to this Pokemon's typing (real or perceived).
    */
   public getTypes(
     includeTeraType = true,
     forDefend = false,
     ignoreOverride = false,
     useIllusion = false,
-  ): PokemonType[] {
+  ): [PokemonType, ...PokemonType[]] {
     const types: PokemonType[] = [];
+    const teraType = this.getTeraType();
+    // Stellar tera does nothing defensively (uses original types)
+    const shouldUseTeraStellar = !(forDefend && teraType === PokemonType.STELLAR);
 
-    if (includeTeraType && this.isTerastallized) {
-      const teraType = this.getTeraType();
-      if (this.isTerastallized && !(forDefend && teraType === PokemonType.STELLAR)) {
-        // Stellar tera uses its original types defensively
-        types.push(teraType);
-        if (forDefend) {
-          return types;
-        }
+    if (includeTeraType && this.isTerastallized && shouldUseTeraStellar) {
+      // Defensive Teras override everything else
+      if (forDefend) {
+        return [teraType];
       }
-    }
-    if (types.length === 0 || !includeTeraType) {
-      if (
-        !ignoreOverride
-        && this.summonData.types
-        && this.summonData.types.length > 0
-        && (!this.summonData.illusion || !useIllusion)
-      ) {
-        this.summonData.types.forEach(t => types.push(t));
-      } else {
-        const speciesForm = this.getSpeciesForm(ignoreOverride, useIllusion);
-        const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOverride, useIllusion);
-        const customTypes = this.customPokemonData.types?.length > 0;
-
-        // First type, checking for "permanently changed" types from ME
-        const firstType =
-          customTypes && this.customPokemonData.types[0] !== PokemonType.UNKNOWN
-            ? this.customPokemonData.types[0]
-            : speciesForm.type1;
-        types.push(firstType);
-
-        // Second type
-        let secondType: PokemonType = PokemonType.UNKNOWN;
-
-        if (fusionSpeciesForm) {
-          // Check if the fusion Pokemon also has permanent changes from ME when determining the fusion types
-          const fusionType1 =
-            this.fusionCustomPokemonData?.types
-            && this.fusionCustomPokemonData.types.length > 0
-            && this.fusionCustomPokemonData.types[0] !== PokemonType.UNKNOWN
-              ? this.fusionCustomPokemonData.types[0]
-              : fusionSpeciesForm.type1;
-          const fusionType2 =
-            this.fusionCustomPokemonData?.types
-            && this.fusionCustomPokemonData.types.length > 1
-            && this.fusionCustomPokemonData.types[1] !== PokemonType.UNKNOWN
-              ? this.fusionCustomPokemonData.types[1]
-              : fusionSpeciesForm.type2;
-
-          // Assign second type if the fusion can provide one
-          if (fusionType2 !== null && fusionType2 !== types[0]) {
-            secondType = fusionType2;
-          } else if (fusionType1 !== types[0]) {
-            secondType = fusionType1;
-          }
-
-          if (secondType === PokemonType.UNKNOWN && fusionType2 == null) {
-            // If second pokemon was monotype and shared its primary type
-            secondType =
-              customTypes
-              && this.customPokemonData.types.length > 1
-              && this.customPokemonData.types[1] !== PokemonType.UNKNOWN
-                ? this.customPokemonData.types[1]
-                : (speciesForm.type2 ?? PokemonType.UNKNOWN);
-          }
-        } else {
-          // If not a fusion, just get the second type from the species, checking for permanent changes from ME
-          secondType =
-            customTypes
-            && this.customPokemonData.types.length > 1
-            && this.customPokemonData.types[1] !== PokemonType.UNKNOWN
-              ? this.customPokemonData.types[1]
-              : (speciesForm.type2 ?? PokemonType.UNKNOWN);
-        }
-
-        if (secondType !== PokemonType.UNKNOWN) {
-          types.push(secondType);
-        }
-      }
+      types.push(teraType);
+    } else {
+      types.push(...this.getNormalTyping(ignoreOverride, useIllusion));
     }
 
-    // become UNKNOWN if no types are present
+    // become UNKNOWN if no types are present, or remove it if other types are present
     if (types.length === 0) {
       types.push(PokemonType.UNKNOWN);
-    }
-
-    // remove UNKNOWN if other types are present
-    if (types.length > 1) {
+    } else if (types.length > 1) {
       const index = types.indexOf(PokemonType.UNKNOWN);
       if (index !== -1) {
         types.splice(index, 1);
       }
     }
 
-    // check type added to Pokemon from moves like Forest's Curse or Trick Or Treat
+    // check type added to Pokemon from moves like Forest's Curse or Trick Or Treat.
     if (!ignoreOverride && this.summonData.addedType && !types.includes(this.summonData.addedType)) {
       types.push(this.summonData.addedType);
     }
@@ -2023,6 +1953,78 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     // If both types are the same (can happen in weird custom typing scenarios), reduce to single type
     if (types.length > 1 && types[0] === types[1]) {
       types.splice(0, 1);
+    }
+
+    return types as [PokemonType, ...PokemonType[]];
+  }
+
+  /**
+   * Helper to {@linkcode getTypes} that handles computing a Pokemon's normal typing.
+   */
+  private getNormalTyping(ignoreOverride = false, useIllusion = false): PokemonType[] {
+    if (!ignoreOverride && this.summonData.types?.length > 0 && (!this.summonData.illusion || !useIllusion)) {
+      return this.summonData.types;
+    }
+
+    const types: PokemonType[] = [];
+
+    const speciesForm = this.getSpeciesForm(ignoreOverride, useIllusion);
+    const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOverride, useIllusion);
+    const hasCustomTypes = this.customPokemonData.types?.length > 0;
+
+    // First type, checking for "permanently changed" types from ME
+    const firstType =
+      hasCustomTypes && this.customPokemonData.types[0] !== PokemonType.UNKNOWN
+        ? this.customPokemonData.types[0]
+        : speciesForm.type1;
+    types.push(firstType);
+
+    // Second type
+    let secondType: PokemonType = PokemonType.UNKNOWN;
+
+    if (fusionSpeciesForm) {
+      // Check if the fusion Pokemon also has permanent changes from ME when determining the fusion types
+      const fusionType1 =
+        this.fusionCustomPokemonData?.types
+        && this.fusionCustomPokemonData.types.length > 0
+        && this.fusionCustomPokemonData.types[0] !== PokemonType.UNKNOWN
+          ? this.fusionCustomPokemonData.types[0]
+          : fusionSpeciesForm.type1;
+      const fusionType2 =
+        this.fusionCustomPokemonData?.types
+        && this.fusionCustomPokemonData.types.length > 1
+        && this.fusionCustomPokemonData.types[1] !== PokemonType.UNKNOWN
+          ? this.fusionCustomPokemonData.types[1]
+          : fusionSpeciesForm.type2;
+
+      // Assign second type if the fusion can provide one
+      if (fusionType2 !== null && fusionType2 !== types[0]) {
+        secondType = fusionType2;
+      } else if (fusionType1 !== types[0]) {
+        secondType = fusionType1;
+      }
+
+      if (secondType === PokemonType.UNKNOWN && fusionType2 == null) {
+        // If second pokemon was monotype and shared its primary type
+        secondType =
+          hasCustomTypes
+          && this.customPokemonData.types.length > 1
+          && this.customPokemonData.types[1] !== PokemonType.UNKNOWN
+            ? this.customPokemonData.types[1]
+            : (speciesForm.type2 ?? PokemonType.UNKNOWN);
+      }
+    } else {
+      // If not a fusion, just get the second type from the species, checking for permanent changes from ME
+      secondType =
+        hasCustomTypes
+        && this.customPokemonData.types.length > 1
+        && this.customPokemonData.types[1] !== PokemonType.UNKNOWN
+          ? this.customPokemonData.types[1]
+          : (speciesForm.type2 ?? PokemonType.UNKNOWN);
+    }
+
+    if (secondType !== PokemonType.UNKNOWN) {
+      types.push(secondType);
     }
 
     return types;

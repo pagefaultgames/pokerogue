@@ -6825,8 +6825,12 @@ export class CopyTypeAttr extends MoveEffectAttr {
     }
 
     const targetTypes = target.getTypes(true, true);
-    if (targetTypes.includes(PokemonType.UNKNOWN) && targetTypes.indexOf(PokemonType.UNKNOWN) > -1) {
-      targetTypes[targetTypes.indexOf(PokemonType.UNKNOWN)] = PokemonType.NORMAL;
+    // Replace UNKNOWN with grass type
+    // TODO: `getTypes` arguably shouldn't include `UNKNOWN` if a type was added anyways,
+    // and this should DEFNINITELY get its own helper function for Roost and co.
+    const unknownIndex = targetTypes.indexOf(PokemonType.UNKNOWN);
+    if (unknownIndex !== -1) {
+      targetTypes[unknownIndex] = PokemonType.NORMAL;
     }
     user.summonData.types = targetTypes;
     user.updateInfo();
@@ -6837,8 +6841,10 @@ export class CopyTypeAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target) => !user.isTerastallized
-    && (!target.isOfType(PokemonType.UNKNOWN, true, true) || target.summonData.addedType !== null);
+    return (user, target) => (
+      !user.isTerastallized
+      && (!target.isOfType(PokemonType.UNKNOWN, true, true) || target.summonData.addedType !== null)
+    )
   }
 }
 

@@ -90,7 +90,7 @@ export function getEnumStr<E extends EnumOrObject>(
  * console.log(stringifyEnumArray(fakeEnum, [fakeEnum.ONE, fakeEnum.TWO, fakeEnum.THREE])); // Output: "[ONE, TWO, THREE] (=[1, 2, 3])"
  * ```
  */
-export function stringifyEnumArray<E extends EnumOrObject>(obj: E, enums: E[keyof E][]): string {
+export function stringifyEnumArray<E extends EnumOrObject>(obj: E, enums: readonly E[keyof E][]): string {
   if (enums.length === 0) {
     return "[]";
   }
@@ -128,7 +128,7 @@ export function stringifyEnumArray<E extends EnumOrObject>(obj: E, enums: E[keyo
  * @param fromIndex - The array index at which to begin the search. If fromIndex is omitted, the
  * search starts at index 0
  */
-function findIndices<T>(arr: T[], searchElement: T, fromIndex = 0): number[] {
+function findIndices<T>(arr: readonly T[], searchElement: T, fromIndex = 0): number[] {
   const indices: number[] = [];
   const arrSliced = arr.slice(fromIndex);
   for (const [index, value] of arrSliced.entries()) {

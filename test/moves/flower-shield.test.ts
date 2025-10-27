@@ -85,7 +85,7 @@ describe("Moves - Flower Shield", () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.CHERRIM]);
 
-    const [cherrim, karp1, karp2] = game.scene.getField();
+    const [cherrim, _, karp1, karp2] = game.scene.getField();
 
     // Hide cherrim  while enemies use Flower Shield
     game.move.use(MoveId.DIG, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
