@@ -567,10 +567,9 @@ export class TimedEventManager {
       globalScene.gameMode.setChallengeValue(eventChal.challenge, eventChal.value);
     }
   }
-  getEventDailyStartingItems(): ModifierTypeKeys[] {
-    const ret: ModifierTypeKeys[] = [];
-    ret.push(...(this.activeEvent()?.dailyRunStartingItems ?? []));
-    return ret;
+
+  getEventDailyStartingItems(): readonly ModifierTypeKeys[] {
+    return this.activeEvent()?.dailyRunStartingItems ?? [];
   }
 }
 
