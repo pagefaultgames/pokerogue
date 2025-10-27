@@ -125,7 +125,7 @@ export class EncounterPhase extends BattlePhase {
             !!globalScene.getEncounterBossSegments(battle.waveIndex, level, enemySpecies),
           );
           if (globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
-            battle.enemyParty[e].ivs = new Array(6).fill(31);
+            battle.enemyParty[e].ivs.fill(31);
           }
           globalScene
             .getPlayerParty()
@@ -292,7 +292,10 @@ export class EncounterPhase extends BattlePhase {
       }
 
       globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
-        if (!this.loaded) {
+        if (this.loaded) {
+          this.doEncounter();
+          globalScene.resetSeed();
+        } else {
           this.trySetWeatherIfNewBiome(); // Set weather before session gets saved
           // Game syncs to server on waves X1 and X6 (As of 1.2.0)
           globalScene.gameData
@@ -305,9 +308,6 @@ export class EncounterPhase extends BattlePhase {
               this.doEncounter();
               globalScene.resetSeed();
             });
-        } else {
-          this.doEncounter();
-          globalScene.resetSeed();
         }
       });
     });
@@ -490,36 +490,25 @@ export class EncounterPhase extends BattlePhase {
           this.end();
         };
 
-        if (showEncounterMessage) {
-          const introDialogue = encounter.dialogue.intro;
-          if (!introDialogue) {
-            doShowEncounterOptions();
-          } else {
-            const FIRST_DIALOGUE_PROMPT_DELAY = 750;
-            let i = 0;
-            const showNextDialogue = () => {
-              const nextAction = i === introDialogue.length - 1 ? doShowEncounterOptions : showNextDialogue;
-              const dialogue = introDialogue[i];
-              const title = getEncounterText(dialogue?.speaker);
-              const text = getEncounterText(dialogue.text)!;
-              i++;
-              if (title) {
-                globalScene.ui.showDialogue(
-                  text,
-                  title,
-                  null,
-                  nextAction,
-                  0,
-                  i === 1 ? FIRST_DIALOGUE_PROMPT_DELAY : 0,
-                );
-              } else {
-                globalScene.ui.showText(text, null, nextAction, i === 1 ? FIRST_DIALOGUE_PROMPT_DELAY : 0, true);
-              }
-            };
-
-            if (introDialogue.length > 0) {
-              showNextDialogue();
+        const introDialogue = encounter.dialogue.intro;
+        if (showEncounterMessage && introDialogue) {
+          const FIRST_DIALOGUE_PROMPT_DELAY = 750;
+          let i = 0;
+          const showNextDialogue = () => {
+            const nextAction = i === introDialogue.length - 1 ? doShowEncounterOptions : showNextDialogue;
+            const dialogue = introDialogue[i];
+            const title = getEncounterText(dialogue?.speaker);
+            const text = getEncounterText(dialogue.text)!;
+            i++;
+            if (title) {
+              globalScene.ui.showDialogue(text, title, null, nextAction, 0, i === 1 ? FIRST_DIALOGUE_PROMPT_DELAY : 0);
+            } else {
+              globalScene.ui.showText(text, null, nextAction, i === 1 ? FIRST_DIALOGUE_PROMPT_DELAY : 0, true);
             }
+          };
+
+          if (introDialogue.length > 0) {
+            showNextDialogue();
           }
         } else {
           doShowEncounterOptions();
@@ -528,13 +517,13 @@ export class EncounterPhase extends BattlePhase {
 
       const encounterMessage = i18next.t("battle:mysteryEncounterAppeared");
 
-      if (!encounterMessage) {
-        doEncounter();
-      } else {
+      if (encounterMessage) {
         doTrainerExclamation();
         globalScene.ui.showDialogue(encounterMessage, "???", null, () => {
           globalScene.charSprite.hide().then(() => globalScene.hideFieldOverlay(250).then(() => doEncounter()));
         });
+      } else {
+        doEncounter();
       }
     }
   }
@@ -573,41 +562,41 @@ export class EncounterPhase extends BattlePhase {
 
     if (!this.loaded) {
       const availablePartyMembers = globalScene.getPokemonAllowedInBattle();
-      const minPartySize = globalScene.currentBattle.double ? 2 : 1;
-      const currentBattle = globalScene.currentBattle;
-      const checkSwitch =
-        currentBattle.battleType !== BattleType.TRAINER
-        && (currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily)
-        && availablePartyMembers.length > minPartySize;
-      const checkSwitchIndices: number[] = [];
 
-      const phaseManager = globalScene.phaseManager;
       if (!availablePartyMembers[0].isOnField()) {
-        phaseManager.pushNew("SummonPhase", 0, true, false, checkSwitch);
-      } else if (checkSwitch) {
-        checkSwitchIndices.push(0);
+        globalScene.phaseManager.pushNew("SummonPhase", 0);
       }
 
-      if (currentBattle.double) {
+      if (globalScene.currentBattle.double) {
         if (availablePartyMembers.length > 1) {
-          phaseManager.pushNew("ToggleDoublePositionPhase", true);
+          globalScene.phaseManager.pushNew("ToggleDoublePositionPhase", true);
           if (!availablePartyMembers[1].isOnField()) {
-            phaseManager.pushNew("SummonPhase", 1, true, false, checkSwitch);
-          } else if (checkSwitch) {
-            checkSwitchIndices.push(1);
+            globalScene.phaseManager.pushNew("SummonPhase", 1);
           }
         }
       } else {
         if (availablePartyMembers.length > 1 && availablePartyMembers[1].isOnField()) {
-          phaseManager.pushNew("ReturnPhase", 1);
+          globalScene.phaseManager.pushNew("ReturnPhase", 1);
         }
-        phaseManager.pushNew("ToggleDoublePositionPhase", false);
+        globalScene.phaseManager.pushNew("ToggleDoublePositionPhase", false);
       }
-      checkSwitchIndices.forEach(i => {
-        phaseManager.pushNew("CheckSwitchPhase", i, globalScene.currentBattle.double);
-      });
+
+      if (
+        globalScene.currentBattle.battleType !== BattleType.TRAINER
+        && (globalScene.currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily)
+      ) {
+        const minPartySize = globalScene.currentBattle.double ? 2 : 1;
+        if (availablePartyMembers.length > minPartySize) {
+          globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
+          if (globalScene.currentBattle.double) {
+            globalScene.phaseManager.pushNew("CheckSwitchPhase", 1, globalScene.currentBattle.double);
+          }
+        }
+      }
     }
     handleTutorial(Tutorial.Access_Menu).then(() => super.end());
+
+    globalScene.phaseManager.pushNew("InitEncounterPhase");
   }
 
   tryOverrideForBattleSpec(): boolean {
