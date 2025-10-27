@@ -2,6 +2,7 @@ import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
+import { isBeta, isDev } from "#constants/app-constants";
 import { SubstituteTag } from "#data/battler-tags";
 import { Gender } from "#data/gender";
 import {
@@ -72,13 +73,17 @@ export class AttemptCapturePhase extends PokemonPhase {
     const shakeProbability = Math.round(65536 / Math.pow(255 / modifiedCatchRate, 0.1875)); // Formula taken from gen 6
     const criticalCaptureChance = getCriticalCaptureChance(modifiedCatchRate);
 
-    console.log("Base catch rate: %d", catchRate);
-    console.log("Ball mult: %d", pokeballMultiplier);
-    console.log("Status mult: %d", statusMultiplier);
-    console.log("Shiny bonus: %d", shinyMultiplier);
-    console.log("Modified catch rate: %d", modifiedCatchRate);
-    console.log("Shake prob: %d", shakeProbability);
-    console.log("Crit catch chance: %d", criticalCaptureChance);
+    if ((isBeta || isDev) && import.meta.env.NODE_ENV !== "test") {
+      console.log(
+        `Base catch rate: ${catchRate}`
+         + `\nBall mult: ${pokeballMultiplier}`
+         + `\nStatus mult: ${statusMultiplier}`
+         + `\nShiny bonus: ${shinyMultiplier}`
+         + `\nModified catch rate: ${modifiedCatchRate}`
+         + `\nShake chance: ${shakeProbability}`
+         + `\nCritical catch chance: ${criticalCaptureChance}`,
+      );
+    }
 
     const isCritical = pokemon.randBattleSeedInt(256) < criticalCaptureChance;
     const fpOffset = pokemon.getFieldPositionOffset();
