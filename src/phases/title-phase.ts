@@ -1,5 +1,6 @@
 import { loggedInUser } from "#app/account";
 import { GameMode, getGameMode } from "#app/game-mode";
+import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { Phase } from "#app/phase";
@@ -258,6 +259,11 @@ export class TitlePhase extends Phase {
 
         for (const m of modifiers) {
           globalScene.addModifier(m, true, false, false, true);
+        }
+        globalScene.updateModifiers(true, true);
+
+        for (const m of timedEventManager.getEventDailyStartingItems()) {
+          globalScene.addModifier(modifierTypes[m]().newModifier(), true, false, false, true);
         }
         globalScene.updateModifiers(true, true);
 
