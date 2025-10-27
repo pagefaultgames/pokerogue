@@ -59,7 +59,7 @@ describe("Abilities - Rattled", () => {
     expect(game.phaseInterceptor.log.filter(p => p === "ShowAbilityPhase")).toHaveLength(enemyHits);
     expect(game.phaseInterceptor.log.filter(p => p === "StatStageChangePhase")).toHaveLength(enemyHits);
     const statChangeText = i18next.t(getStatStageChangeDescriptionKey(1, true), {
-      pokemonNameWithAffix: getPokemonNameWithAffix(gimmighoul),
+      pokemonNameWithAffix: getPokemonNameWithAffix(feebas),
       stats: i18next.t(getStatKey(Stat.SPD)),
       count: 1,
     });
