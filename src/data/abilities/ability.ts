@@ -2640,7 +2640,7 @@ export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
     this.stages = stages;
   }
 
-  override apply({ pokemon, simulated }: AbAttrParamsWithCancel): void {
+  override apply({ pokemon, simulated }: AbAttrBaseParams): void {
     if (!simulated) {
       globalScene.phaseManager.unshiftNew(
         "StatStageChangePhase",
