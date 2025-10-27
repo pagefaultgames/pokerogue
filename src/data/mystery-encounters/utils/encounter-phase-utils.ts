@@ -1061,7 +1061,7 @@ export function getRandomEncounterPokemon(params: RandomEncounterParams): EnemyP
     ret.formIndex = formIndex;
   }
 
-  if (isEventEncounter) {
+  if (isEventEncounter.value) {
     hiddenRerolls += eventHiddenRerolls;
     shinyRerolls += eventShinyRerolls;
   }

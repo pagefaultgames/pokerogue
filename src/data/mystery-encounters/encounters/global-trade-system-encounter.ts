@@ -276,6 +276,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
               return generateTradeOption(globalScene.getPlayerParty().map(p => p.species));
             },
             isBoss: false,
+            eventChance: 100,
             shinyRerolls: 1,
             hiddenRerolls: 1,
             eventShinyRerolls: 1,

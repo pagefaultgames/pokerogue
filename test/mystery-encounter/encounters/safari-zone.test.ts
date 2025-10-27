@@ -136,7 +136,7 @@ describe("Safari Zone - Mystery Encounter", () => {
 
       for (let i = 0; i < NUM_ROLLS; i++) {
         rngSweepProgress = (2 * i + 1) / (2 * NUM_ROLLS);
-        const simSpecies = getSafariSpeciesSpawn()().speciesId;
+        const simSpecies = getSafariSpeciesSpawn().speciesId;
         expect(NON_LEGEND_PARADOX_POKEMON).not.toContain(simSpecies);
       }
     });
