@@ -145,6 +145,7 @@ interface PokemonMatchers {
    * @param expectedTypes - The expected {@linkcode PokemonType}(s) to check against (single or array); must be non-empty
    * @param options - The {@linkcode toHaveTypesOptions | options} passed to the matcher
    */
+  // TODO: Figure out a way to ban passing a literal single-element array to the matcher for consistency
   toHaveTypes(
     expectedTypes: PokemonType | readonly [PokemonType, ...PokemonType[]],
     options?: toHaveTypesOptions,
