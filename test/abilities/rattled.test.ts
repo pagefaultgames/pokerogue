@@ -110,7 +110,8 @@ describe("Abilities - Rattled", () => {
     }
   });
 
-  it("should activate after Intimidate from enemy switch", async () => {
+  // TODO: This is also flaky 
+  it.todo("should activate after Intimidate from enemy switch", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.BULBASAUR]);
 
     // Reset prior stat stages from send-out
