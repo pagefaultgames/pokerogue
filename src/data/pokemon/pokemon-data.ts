@@ -140,7 +140,8 @@ export class PokemonSummonData {
    * Whether this Pokemon's illusion has been broken since switching out.
    * @defaultValue `false`
    */
-  // TODO: Since Illusion applies on switch in, and this entire class is reset
+  // TODO: Since Illusion applies on switch in, and this entire class is reset on switch-in,
+  // this may be replaceable with a check for `pokemon.summonData.illusionData !== null`
   public illusionBroken = false;
 
   /** Array containing all berries eaten in the last turn; used by {@linkcode AbilityId.CUD_CHEW} */
@@ -150,6 +151,7 @@ export class PokemonSummonData {
    * An array of all moves this pokemon has used since entering the battle.
    * Used for most moves and abilities that check prior move usage or copy already-used moves.
    */
+  // TODO: Rework this into a sort of "global move history" that also allows checking execution order (for Fusion Bolt/Flare)
   public moveHistory: TurnMove[] = [];
 
   constructor(source?: PokemonSummonData | SerializedPokemonSummonData) {
