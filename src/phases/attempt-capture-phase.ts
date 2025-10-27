@@ -75,7 +75,7 @@ export class AttemptCapturePhase extends PokemonPhase {
 
     if ((isBeta || isDev) && import.meta.env.NODE_ENV !== "test") {
       console.log(
-        "Base catch rate: %d\nBall mult: %d\nStatus mult: %d\nShiny bonus: %d\nModified catch rate: %d\nShake probability: %d\nCritical catch chance: %d",
+        "Base Catch Rate: %d\nBall Mult: %d\nStatus Mult: %d\nShiny Bonus: %d\nModified Catch Rate: %d\nShake Probability: %d\nCritical Catch Chance: %d",
         catchRate,
         pokeballMultiplier,
         statusMultiplier,
