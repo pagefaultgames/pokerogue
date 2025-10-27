@@ -42,6 +42,9 @@ const SAFARI_MONEY_MULTIPLIER = 2;
 
 const NUM_SAFARI_ENCOUNTERS = 3;
 
+const eventEncs = new NumberHolder(0);
+const eventChance = new NumberHolder(50);
+
 /**
  * Safari Zone encounter.
  * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3800 | GitHub Issue #3800}
@@ -74,6 +77,8 @@ export const SafariZoneEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
   .withQuery(`${namespace}:query`)
   .withOnInit(() => {
     globalScene.currentBattle.mysteryEncounter?.setDialogueToken("numEncounters", NUM_SAFARI_ENCOUNTERS.toString());
+    eventEncs.value = 0;
+    eventChance.value = 50;
     return true;
   })
   .withOption(
@@ -279,14 +284,16 @@ async function summonSafariPokemon() {
 
   // Generate pokemon using safariPokemonRemaining so they are always the same pokemon no matter how many turns are taken
   // Safari pokemon roll twice on shiny and HA chances, but are otherwise normal
-  const eventEncs = new NumberHolder(0);
-  const eventChance = new NumberHolder(50);
   let pokemon: any;
   globalScene.executeWithSeedOffset(
     () => {
+      console.log("Event chance %d", eventChance.value);
       const fromEvent = new BooleanHolder(false);
       pokemon = getRandomEncounterPokemon({
         level: globalScene.currentBattle.getLevelForWave(),
+        includeLegendary: false,
+        includeSubLegendary: false,
+        includeMythical: false,
         speciesFunction: getSafariSpeciesSpawn,
         shinyRerolls: 1,
         eventShinyRerolls: 1,
@@ -296,13 +303,15 @@ async function summonSafariPokemon() {
         isEventEncounter: fromEvent,
       });
 
-      pokemon.calculateStats();
+      pokemon.init();
 
       // Increase chance of event encounter by 25% until one spawns
       if (fromEvent.value) {
+        console.log("From event");
         eventEncs.value++;
         eventChance.value = 50;
       } else if (eventEncs.value === 0) {
+        console.log("Not from event");
         eventChance.value += 25;
       }
 

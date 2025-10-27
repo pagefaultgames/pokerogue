@@ -1042,7 +1042,9 @@ export function getRandomEncounterPokemon(params: RandomEncounterParams): EnemyP
       isBoss,
       globalScene.gameMode,
     );
-    isEventEncounter.value = true;
+    if (params.isEventEncounter) {
+      params.isEventEncounter.value = true;
+    }
     bossSpecies = getPokemonSpecies(levelSpecies);
     formIndex = eventEncounter.formIndex;
   } else if (speciesFunction) {
