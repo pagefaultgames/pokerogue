@@ -2904,7 +2904,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (thresholdOverride === undefined) {
       if (timedEventManager.isEventActive()) {
         const tchance = timedEventManager.getClassicTrainerShinyChance();
-        shinyThreshold.value *= timedEventManager.getShinyEncounterMultiplier();
         if (this.isEnemy() && this.hasTrainer() && tchance > 0) {
           shinyThreshold.value = Math.max(tchance, shinyThreshold.value); // Choose the higher boost
         } else {
