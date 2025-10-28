@@ -995,16 +995,16 @@ export function handleMysteryEncounterTurnStartEffects(): boolean {
  * If the mon is from the event encounter list, it will do an extra shiny roll.
  * @param level the level of the mon, which differs between MEs
  * @param isBoss whether the mon should be a Boss
- * @param eventChance the chance out of 100 to pick an event encounter
- * @param hiddenRerolls number of rerolls for HA that should be attempted
- * @param shinyRerolls number of rerolls for shininess/variant tier that should be attempted
- * @param eventHiddenRerolls number of extra HA rerolls for event mons
- * @param eventShinyRerolls number of extra shiny rerolls for event mons
- * @param hiddenAbilityChance the overridden HA chance, defaults to base
- * @param shinyChance the overridden shiny chance, defaults to base
- * @param maxShinyChance the max shiny threshold after modifiers are applied
- * @param excluded {@linkcode PokemonSpecies} excluded from consideration
- * @returns the EnemyPokemon for the requested encounter
+ * @param eventChance - the chance out of 100 to pick an event encounter
+ * @param hiddenRerolls - number of rerolls for HA that should be attempted
+ * @param shinyRerolls - number of rerolls for shininess/variant tier that should be attempted
+ * @param eventHiddenRerolls - number of extra HA rerolls for event mons
+ * @param eventShinyRerolls - number of extra shiny rerolls for event mons
+ * @param hiddenAbilityChance - The overridden HA chance, defaults to base
+ * @param shinyChance - The overridden shiny chance, defaults to base
+ * @param maxShinyChance - The max shiny threshold after modifiers are applied
+ * @param excluded - {@linkcode PokemonSpecies} excluded from consideration
+ * @returns The EnemyPokemon for the requested encounter
  */
 export function getRandomEncounterPokemon(params: RandomEncounterParams): EnemyPokemon {
   let {

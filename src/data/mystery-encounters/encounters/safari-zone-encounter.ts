@@ -307,11 +307,11 @@ async function summonSafariPokemon() {
 
       // Increase chance of event encounter by 25% until one spawns
       if (fromEvent.value) {
-        console.log("From event");
+        console.log("Safari zone encounter is from event");
         eventEncs.value++;
         eventChance.value = 50;
       } else if (eventEncs.value === 0) {
-        console.log("Not from event");
+        console.log("Safari zone encounter is not from event");
         eventChance.value += 25;
       }
 
