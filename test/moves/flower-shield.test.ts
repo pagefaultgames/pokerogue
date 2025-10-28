@@ -52,6 +52,7 @@ describe("Moves - Flower Shield", () => {
   });
 
   it("should not affect semi-invulnerable Pokemon", async () => {
+    game.override.enemySpecies(SpeciesId.PARAS);
     await game.classicMode.startBattle([SpeciesId.CHERRIM]);
 
     const cherrim = game.field.getPlayerPokemon();
@@ -67,8 +68,10 @@ describe("Moves - Flower Shield", () => {
   });
 
   it("should check all affected targets' Tera Types, including Tera Stellar", async () => {
+    game.override.enemySpecies(SpeciesId.PARAS);
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
+    // Tera Grass Feebas, Tera Stellar Paras
     const feebas = game.field.getPlayerPokemon();
     const paras = game.field.getEnemyPokemon();
     game.field.forceTera(feebas, PokemonType.GRASS);
@@ -87,7 +90,7 @@ describe("Moves - Flower Shield", () => {
 
     const [cherrim, _, karp1, karp2] = game.scene.getField();
 
-    // Hide cherrim  while enemies use Flower Shield
+    // Hide cherrim while enemies use Flower Shield
     game.move.use(MoveId.DIG, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     await game.move.forceEnemyMove(MoveId.FLOWER_SHIELD);
     await game.toEndOfTurn();
