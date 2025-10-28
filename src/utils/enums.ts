@@ -56,7 +56,7 @@ export function getEnumValues<E extends EnumOrObject>(enumType: TSNumericEnum<E>
  *   two: 2,
  * } as const;
  * console.log(enumValueToKey(thing, 2)); // output: "two"
- * @throws Error if an invalid enum value is passed to the function
+ * @throws Throws an {@linkcode Error} if an invalid enum value is passed to the function.
  * @remarks
  * If multiple keys map to the same value, the first one (in insertion order) will be retrieved,
  * but the return type will be the union of ALL their corresponding keys.

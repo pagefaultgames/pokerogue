@@ -8,6 +8,7 @@ import { defineConfig } from "vitest/config";
 import { BaseSequencer, type TestSpecification } from "vitest/node";
 import { defaultConfig } from "./vite.config";
 
+// biome-ignore lint/style/noDefaultExport: required for vitest
 export default defineConfig(({ mode }) => ({
   ...defaultConfig,
   test: {

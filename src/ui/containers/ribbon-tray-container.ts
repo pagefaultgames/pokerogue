@@ -6,7 +6,6 @@ import { ribbonFlagToAssetKey } from "#system/ribbons/ribbon-methods";
 import type { MessageUiHandler } from "#ui/message-ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { getAvailableRibbons, getRibbonKey } from "#utils/ribbon-utils";
-import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 export class RibbonTray extends Phaser.GameObjects.Container {
@@ -69,22 +68,17 @@ export class RibbonTray extends Phaser.GameObjects.Container {
         }
         break;
       case Button.LEFT:
-        if (this.trayCursor % this.maxColumns !== 0) {
+        if (this.trayCursor !== 0) {
           success = this.setTrayCursor(this.trayCursor - 1);
         } else {
-          success = this.setTrayCursor(
-            currentTrayRow < numOfRows - 1 ? (currentTrayRow + 1) * this.maxColumns - 1 : numberOfIcons - 1,
-          );
+          success = this.setTrayCursor(numberOfIcons - 1);
         }
         break;
       case Button.RIGHT:
-        if (
-          this.trayCursor % this.maxColumns
-          < (currentTrayRow < numOfRows - 1 ? 8 : (numberOfIcons - 1) % this.maxColumns)
-        ) {
+        if (this.trayCursor !== numberOfIcons - 1) {
           success = this.setTrayCursor(this.trayCursor + 1);
         } else {
-          success = this.setTrayCursor(currentTrayRow * this.maxColumns);
+          success = this.setTrayCursor(0);
         }
         break;
       case Button.CANCEL:
@@ -103,7 +97,7 @@ export class RibbonTray extends Phaser.GameObjects.Container {
 
     this.trayCursorObj.setPosition(5 + (cursor % this.maxColumns) * 18, 4 + Math.floor(cursor / this.maxColumns) * 17);
 
-    const ribbonDescription = i18next.t(`ribbons:${toCamelCase(getRibbonKey(this.ribbons[cursor]))}`);
+    const ribbonDescription = i18next.t(`ribbons:${getRibbonKey(this.ribbons[cursor])}`);
 
     this.handler.showText(ribbonDescription);
 
@@ -111,21 +105,18 @@ export class RibbonTray extends Phaser.GameObjects.Container {
   }
 
   open(species: PokemonSpecies): boolean {
-    this.ribbons = getAvailableRibbons(species);
+    const ribbons: RibbonFlag[] = (this.ribbons = []);
 
     this.ribbonData = globalScene.gameData.dexData[species.speciesId].ribbons;
 
-    this.trayNumIcons = this.ribbons.length;
-    this.trayRows =
-      Math.floor(this.trayNumIcons / this.maxColumns) + (this.trayNumIcons % this.maxColumns === 0 ? 0 : 1);
-    this.trayColumns = Math.min(this.trayNumIcons, this.maxColumns);
-
-    this.trayBg.setSize(15 + this.trayColumns * 17, 8 + this.trayRows * 18);
-
     this.trayIcons = [];
     let index = 0;
-    for (const ribbon of this.ribbons) {
+    for (const ribbon of getAvailableRibbons(species)) {
       const hasRibbon = this.ribbonData.has(ribbon);
+      if (!hasRibbon && !globalScene.dexForDevs && !globalScene.showMissingRibbons) {
+        continue;
+      }
+      ribbons.push(ribbon);
 
       const icon = ribbonFlagToAssetKey(ribbon);
 
@@ -144,6 +135,12 @@ export class RibbonTray extends Phaser.GameObjects.Container {
         index++;
       }
     }
+
+    this.trayNumIcons = ribbons.length;
+    this.trayRows =
+      Math.floor(this.trayNumIcons / this.maxColumns) + (this.trayNumIcons % this.maxColumns === 0 ? 0 : 1);
+    this.trayColumns = Math.min(this.trayNumIcons, this.maxColumns);
+    this.trayBg.setSize(15 + this.trayColumns * 17, 8 + this.trayRows * 18);
 
     this.setVisible(true).setTrayCursor(0);
 

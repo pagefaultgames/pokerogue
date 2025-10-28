@@ -64,12 +64,10 @@ export class Terrain {
     switch (this.terrainType) {
       case TerrainType.PSYCHIC:
         // Cf https://bulbapedia.bulbagarden.net/wiki/Psychic_Terrain_(move)#Generation_VII
-        // Psychic terrain will only cancel a move if it:
         return (
-          // ... is neither spread nor field-targeted,
           !isFieldTargeted(move)
-          && !isSpreadMove(move) // .. has positive final priority,
-          && move.getPriority(user) > 0 // ...and is targeting at least 1 grounded opponent
+          && !isSpreadMove(move)
+          && move.getPriority(user) > 0.2 // fractional priority is used by quick claw etc and is not blocked by terrain
           && user.getOpponents(true).some(o => targets.includes(o.getBattlerIndex()) && o.isGrounded())
         );
     }

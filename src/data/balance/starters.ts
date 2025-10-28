@@ -450,7 +450,7 @@ export const speciesStarterCosts = {
   [SpeciesId.TAPU_KOKO]: 6,
   [SpeciesId.TAPU_LELE]: 7,
   [SpeciesId.TAPU_BULU]: 6,
-  [SpeciesId.TAPU_FINI]: 5,
+  [SpeciesId.TAPU_FINI]: 6,
   [SpeciesId.COSMOG]: 7,
   [SpeciesId.NIHILEGO]: 6,
   [SpeciesId.BUZZWOLE]: 6,

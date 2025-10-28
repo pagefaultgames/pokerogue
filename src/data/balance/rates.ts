@@ -51,3 +51,6 @@ export const BOOSTED_RARE_EGGMOVE_RATES: readonly number[] = [16, 12, 6, 3];
 // The chance x/10 of a shiny being a variant, then of being specifically an epic variant
 export const SHINY_VARIANT_CHANCE = 4;
 export const SHINY_EPIC_CHANCE = 1;
+
+// The catch rate bonus for shiny mons, introduced in Z-A. Can be boosted in events.
+export const SHINY_CATCH_RATE_MULTIPLIER = 2;

@@ -279,7 +279,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
           if (!tradePokemon.shiny) {
             const shinyThreshold = new NumberHolder(WONDER_TRADE_SHINY_CHANCE);
             if (timedEventManager.isEventActive()) {
-              shinyThreshold.value *= timedEventManager.getShinyMultiplier();
+              shinyThreshold.value *= timedEventManager.getShinyEncounterMultiplier();
             }
             globalScene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
 

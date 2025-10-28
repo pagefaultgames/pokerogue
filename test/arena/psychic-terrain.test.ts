@@ -1,3 +1,5 @@
+import { allMoves } from "#data/data-lists";
+import { TerrainType } from "#data/terrain";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -55,5 +57,47 @@ describe("Arena - Psychic Terrain", () => {
     await game.toEndOfTurn();
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.RAIN);
+  });
+
+  it("should not block non-priority moves boosted by Quick Claw", async () => {
+    game.override.startingHeldItems([{ name: "QUICK_CLAW", count: 10 }]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+
+    game.move.use(MoveId.PSYCHIC_TERRAIN);
+    await game.toNextTurn();
+
+    expect(game).toHaveTerrain(TerrainType.PSYCHIC);
+
+    game.move.use(MoveId.POUND);
+    await game.phaseInterceptor.to("MovePhase", false);
+
+    const feebas = game.field.getPlayerPokemon();
+    expect(allMoves[MoveId.POUND].getPriority(feebas)).toBe(0.2);
+
+    await game.toEndOfTurn();
+
+    const shuckle = game.field.getEnemyPokemon();
+    expect(shuckle).not.toHaveFullHp();
+  });
+
+  it("should block priority moves boosted by Quick Claw", async () => {
+    game.override.startingHeldItems([{ name: "QUICK_CLAW", count: 10 }]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+
+    game.move.use(MoveId.PSYCHIC_TERRAIN);
+    await game.toNextTurn();
+
+    expect(game).toHaveTerrain(TerrainType.PSYCHIC);
+
+    game.move.use(MoveId.QUICK_ATTACK);
+    await game.phaseInterceptor.to("MovePhase", false);
+
+    const feebas = game.field.getPlayerPokemon();
+    expect(allMoves[MoveId.QUICK_ATTACK].getPriority(feebas)).toBe(1.2);
+
+    await game.toEndOfTurn();
+
+    const shuckle = game.field.getEnemyPokemon();
+    expect(shuckle).toHaveFullHp();
   });
 });

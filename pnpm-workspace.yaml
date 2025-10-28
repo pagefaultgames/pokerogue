@@ -1,6 +1,7 @@
 onlyBuiltDependencies:
+  - core-js
   - esbuild
-  - msw
   - lefthook
+  - msw
 
 shellEmulator: true
