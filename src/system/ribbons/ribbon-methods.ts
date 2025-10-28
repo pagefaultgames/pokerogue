@@ -84,9 +84,5 @@ export function ribbonFlagToAssetKey(flag: RibbonFlag): Phaser.GameObjects.Sprit
       imageKey ??= "ribbon_typeless";
       return globalScene.add.image(0, 0, "items", imageKey).setDisplaySize(16, 16);
     // biome-ignore-end lint/suspicious/noFallthroughSwitchClause: done with fallthrough
-    // Ribbons that don't use the items atlas
-    // biome-ignore-start lint/suspicious/noFallthroughSwitchClause: Another fallthrough block
-
-    // biome-ignore-end lint/suspicious/noFallthroughSwitchClause: End fallthrough block
   }
 }
