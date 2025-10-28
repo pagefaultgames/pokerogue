@@ -1,6 +1,8 @@
 /* biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
 import type { BattleScene } from "#app/battle-scene";
 import type { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-change-triggers";
+import type { QuietFormChangePhase } from "#phases/quiet-form-change-phase";
+import type { TeraPhase } from "#phases/tera-phase";
 /* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
 
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
@@ -559,7 +561,17 @@ export class PostBattleInitFormChangeAbAttr extends PostBattleInitAbAttr {
   }
 }
 
-export class PostTeraFormChangeStatChangeAbAttr extends AbAttr {
+/**
+ * Abstract class containing all abilities that trigger after Terastallization.
+ *
+ * Will trigger either during {@linkcode TeraPhase} or {@linkcode QuietFormChangePhase},
+ * depending on whether the species has a Tera-related form change or not.
+ */
+export abstract class PostTeraAbAttr extends AbAttr {
+  private declare readonly _: never;
+}
+
+export class PostTeraFormChangeStatChangeAbAttr extends PostTeraAbAttr {
   private readonly stats: readonly BattleStat[];
   private readonly stages: number;
 
@@ -586,14 +598,8 @@ export class PostTeraFormChangeStatChangeAbAttr extends AbAttr {
   }
 }
 
-/**
- * Clears all weather whenever this attribute is applied
- */
-export class ClearWeatherAbAttr extends AbAttr {
-  /**
-   * @param _params - No parameters are used for this attribute.
-   */
-  override canApply(_params: AbAttrBaseParams): boolean {
+export class PostTeraClearWeatherAbAttr extends PostTeraAbAttr {
+  override canApply(_: AbAttrBaseParams): boolean {
     return globalScene.arena.canSetWeather(WeatherType.NONE);
   }
 
@@ -605,9 +611,9 @@ export class ClearWeatherAbAttr extends AbAttr {
 }
 
 /**
- * Clears all terrain whenever this attribute is called.
+ * Clears all terrain when a Pokemon Terastallizes.
  */
-export class ClearTerrainAbAttr extends AbAttr {
+export class PostTeraClearTerrainAbAttr extends AbAttr {
   override canApply(_: AbAttrBaseParams): boolean {
     return globalScene.arena.canSetTerrain(TerrainType.NONE);
   }
@@ -6593,9 +6599,10 @@ const AbilityAttrs = Object.freeze({
   DoubleBattleChanceAbAttr,
   PostBattleInitAbAttr,
   PostBattleInitFormChangeAbAttr,
+  PostTeraAbAttr,
   PostTeraFormChangeStatChangeAbAttr,
-  ClearWeatherAbAttr,
-  ClearTerrainAbAttr,
+  PostTeraClearWeatherAbAttr,
+  PostTeraClearTerrainAbAttr,
   PreDefendAbAttr,
   PreDefendFullHpEndureAbAttr,
   BlockItemTheftAbAttr,
@@ -8249,8 +8256,8 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.TERAFORM_ZERO, 9)
-      .attr(ClearWeatherAbAttr)
-      .attr(ClearTerrainAbAttr)
+      .attr(PostTeraClearWeatherAbAttr)
+      .attr(PostTeraClearTerrainAbAttr)
       .uncopiable()
       .unreplaceable()
       .condition(getOncePerBattleCondition(AbilityId.TERAFORM_ZERO))

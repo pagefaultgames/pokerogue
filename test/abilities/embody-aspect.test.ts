@@ -41,7 +41,7 @@ describe("Ability - Embody Aspect", () => {
     expect(ogerpon.formIndex).toBe(baseForm);
     expect(ogerpon).toHaveStatStage(Stat.SPD, 0);
 
-    //Terastallize Ogerpon
+    // Terastallize Ogerpon
     game.move.selectWithTera(MoveId.SPLASH);
     await game.phaseInterceptor.to("QuietFormChangePhase");
 
@@ -52,18 +52,13 @@ describe("Ability - Embody Aspect", () => {
     expect(ogerpon).toHaveStatStage(Stat.SPD, 1);
     expect(ogerpon).toHaveAbilityApplied(AbilityId.EMBODY_ASPECT_TEAL);
 
-    // Clear out abilities applied set so we can check it again later
-    ogerpon.waveData.abilitiesApplied.clear();
-
-    //Switch ogerpon out
+    // Switch ogerpon out and back in
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
     game.doSwitchPokemon(1);
     await game.toNextTurn();
 
-    //Switch ogerpon back in
-    game.doSwitchPokemon(1);
-    await game.toNextTurn();
-
-    //Ability activated again
+    // Ability activated again
     expect(ogerpon).toHaveStatStage(Stat.SPD, 1);
     expect(ogerpon).toHaveAbilityApplied(AbilityId.EMBODY_ASPECT_TEAL);
   });

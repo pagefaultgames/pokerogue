@@ -195,8 +195,9 @@ interface PokemonMatchers {
   /**
    * Check whether a {@linkcode Pokemon} has applied a specific {@linkcode AbilityId}.
    * @param expectedAbilityId - The `AbilityId` to check for
+   * @param clear - Whether to clear the set upon a match being found; default `true`
    */
-  toHaveAbilityApplied(expectedAbilityId: AbilityId): void;
+  toHaveAbilityApplied(expectedAbilityId: AbilityId, clear?: boolean): void;
 
   /**
    * Check whether a {@linkcode Pokemon} has a specific amount of {@linkcode Stat.HP | HP}.
