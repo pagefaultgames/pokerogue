@@ -1,6 +1,8 @@
 /* biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
 import type { BattleScene } from "#app/battle-scene";
 import type { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-change-triggers";
+import type { QuietFormChangePhase } from "#phases/quiet-form-change-phase";
+import type { TeraPhase } from "#phases/tera-phase";
 /* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
 
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
@@ -54,7 +56,6 @@ import { applyMoveAttrs } from "#moves/apply-attrs";
 import { noAbilityTypeOverrideMoves } from "#moves/invalid-moves";
 import type { Move } from "#moves/move";
 import type { PokemonMove } from "#moves/pokemon-move";
-import type { StatStageChangePhase } from "#phases/stat-stage-change-phase";
 import type {
   AbAttrCondition,
   AbAttrMap,
@@ -558,66 +559,6 @@ export class PostBattleInitFormChangeAbAttr extends PostBattleInitAbAttr {
 
   override apply({ pokemon }: AbAttrBaseParams): void {
     globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger, false);
-  }
-}
-
-export class PostTeraFormChangeStatChangeAbAttr extends AbAttr {
-  private readonly stats: readonly BattleStat[];
-  private readonly stages: number;
-
-  constructor(stats: BattleStat[], stages: number) {
-    super();
-
-    this.stats = stats;
-    this.stages = stages;
-  }
-
-  override apply({ pokemon, simulated }: AbAttrBaseParams): void {
-    const statStageChangePhases: StatStageChangePhase[] = [];
-
-    if (!simulated) {
-      const phaseManager = globalScene.phaseManager;
-      statStageChangePhases.push(
-        phaseManager.create("StatStageChangePhase", pokemon.getBattlerIndex(), true, this.stats, this.stages),
-      );
-
-      for (const statStageChangePhase of statStageChangePhases) {
-        phaseManager.unshiftPhase(statStageChangePhase);
-      }
-    }
-  }
-}
-
-/**
- * Clears all weather whenever this attribute is applied
- */
-export class ClearWeatherAbAttr extends AbAttr {
-  /**
-   * @param _params - No parameters are used for this attribute.
-   */
-  override canApply(_params: AbAttrBaseParams): boolean {
-    return globalScene.arena.canSetWeather(WeatherType.NONE);
-  }
-
-  override apply({ pokemon, simulated }: AbAttrBaseParams): void {
-    if (!simulated) {
-      globalScene.arena.trySetWeather(WeatherType.NONE, pokemon);
-    }
-  }
-}
-
-/**
- * Clears all terrain whenever this attribute is called.
- */
-export class ClearTerrainAbAttr extends AbAttr {
-  override canApply(_: AbAttrBaseParams): boolean {
-    return globalScene.arena.canSetTerrain(TerrainType.NONE);
-  }
-
-  public override apply({ pokemon, simulated }: AbAttrBaseParams): void {
-    if (!simulated) {
-      globalScene.arena.trySetTerrain(TerrainType.NONE, true, pokemon);
-    }
   }
 }
 
@@ -2641,7 +2582,13 @@ export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
  * Base class for defining all {@linkcode Ability} Attributes post summon
  */
 export abstract class PostSummonAbAttr extends AbAttr {
-  /** Should the ability activate when gained in battle? This will almost always be true */
+  /**
+   * Whether to activate the ability when gained in battle
+   * @defaultValue `true`
+   * @remarks
+   * Used exclusively by Imposter.
+   */
+  // TODO: Make this a publicly accessible getter
   private readonly activateOnGain: boolean;
 
   constructor(showAbility = true, activateOnGain = true) {
@@ -6588,9 +6535,6 @@ const AbilityAttrs = Object.freeze({
   DoubleBattleChanceAbAttr,
   PostBattleInitAbAttr,
   PostBattleInitFormChangeAbAttr,
-  PostTeraFormChangeStatChangeAbAttr,
-  ClearWeatherAbAttr,
-  ClearTerrainAbAttr,
   PreDefendAbAttr,
   PreDefendFullHpEndureAbAttr,
   BlockItemTheftAbAttr,
@@ -8214,29 +8158,25 @@ export function initAbilities() {
       .attr(PostAttackApplyStatusEffectAbAttr, false, 30, StatusEffect.TOXIC)
       .build(),
     new AbBuilder(AbilityId.EMBODY_ASPECT_TEAL, 9)
-      .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.SPD ], 1) // Activates immediately upon Terastallizing, as well as upon switching in while Terastallized
-      .conditionalAttr(pokemon => pokemon.isTerastallized, PostSummonStatStageChangeAbAttr, [ Stat.SPD ], 1, true)
+      .attr(PostSummonStatStageChangeAbAttr, [ Stat.SPD ], 1, true)
       .uncopiable()
       .unreplaceable() // TODO is this true?
       .attr(NoTransformAbilityAbAttr)
       .build(),
     new AbBuilder(AbilityId.EMBODY_ASPECT_WELLSPRING, 9)
-      .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.SPDEF ], 1)
-      .conditionalAttr(pokemon => pokemon.isTerastallized, PostSummonStatStageChangeAbAttr, [ Stat.SPDEF ], 1, true)
+      .attr(PostSummonStatStageChangeAbAttr, [ Stat.SPDEF ], 1, true)
       .uncopiable()
       .unreplaceable()
       .attr(NoTransformAbilityAbAttr)
       .build(),
     new AbBuilder(AbilityId.EMBODY_ASPECT_HEARTHFLAME, 9)
-      .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.ATK ], 1)
-      .conditionalAttr(pokemon => pokemon.isTerastallized, PostSummonStatStageChangeAbAttr, [ Stat.ATK ], 1, true)
+      .attr(PostSummonStatStageChangeAbAttr, [ Stat.ATK ], 1, true)
       .uncopiable()
       .unreplaceable()
       .attr(NoTransformAbilityAbAttr)
       .build(),
     new AbBuilder(AbilityId.EMBODY_ASPECT_CORNERSTONE, 9)
-      .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.DEF ], 1)
-      .conditionalAttr(pokemon => pokemon.isTerastallized, PostSummonStatStageChangeAbAttr, [ Stat.DEF ], 1, true)
+      .attr(PostSummonStatStageChangeAbAttr, [ Stat.DEF ], 1, true)
       .uncopiable()
       .unreplaceable()
       .attr(NoTransformAbilityAbAttr)
@@ -8256,11 +8196,10 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.TERAFORM_ZERO, 9)
-      .attr(ClearWeatherAbAttr)
-      .attr(ClearTerrainAbAttr)
+      .attr(PostSummonWeatherChangeAbAttr, WeatherType.NONE)
+      .attr(PostSummonTerrainChangeAbAttr, TerrainType.NONE)
       .uncopiable()
       .unreplaceable()
-      .condition(getOncePerBattleCondition(AbilityId.TERAFORM_ZERO))
       .build(),
     new AbBuilder(AbilityId.POISON_PUPPETEER, 9)
       .uncopiable()

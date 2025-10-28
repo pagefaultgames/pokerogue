@@ -5,8 +5,8 @@ export interface PassiveAbilities {
   [key: number]: AbilityId
 }
 
-interface StarterPassiveAbilities {
-  [key: number]: PassiveAbilities
+type StarterPassiveAbilities = {
+  [key in SpeciesId]: PassiveAbilities
 }
 
 export const starterPassiveAbilities: StarterPassiveAbilities = {

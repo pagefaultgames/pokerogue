@@ -114,13 +114,18 @@ export class FieldHelper extends GameManagerHelper {
   }
 
   /**
-   * Force a given Pokemon to be terastallized to the given type.
+   * Force a given Pokemon to terastallize to the given type.
    *
-   * @param pokemon - The pokemon to terastallize.
-   * @param teraType - The {@linkcode PokemonType} to terastallize into; defaults to the pokemon's primary type.
+   * @param pokemon - The {@linkcode Pokemon} to terastallize
+   * @param teraType - The {@linkcode PokemonType} to terastallize into;
+   * defaults to the primary type of `pokemon`'s original species.
    * @remarks
-   * This function only mocks the Pokemon's tera-related variables; it does NOT activate any tera-related abilities.
+   * This function only mocks the Pokemon's Tera-related variables;
+   * it does NOT activate any related abilities or form changes.
+   * It also will not override the Tera Types of any "fixed tera" species
+   * (such as the Ogerpon formes and Terapagos).
    */
+  public forceTera(pokemon: Pokemon, teraType?: Exclude<PokemonType, PokemonType.UNKNOWN>): void;
   public forceTera(pokemon: Pokemon, teraType: PokemonType = pokemon.getSpeciesForm(true).type1): void {
     vi.spyOn(pokemon, "isTerastallized", "get").mockReturnValue(true);
     vi.spyOn(pokemon, "teraType", "get").mockReturnValue(teraType);

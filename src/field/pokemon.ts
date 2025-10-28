@@ -2263,7 +2263,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Return the ability priorities of the pokemon's ability and, if enabled, its passive ability
    * @returns A tuple containing the ability priorities of the pokemon
    */
-  public getAbilityPriorities(): [number] | [activePriority: number, passivePriority: number] {
+  public getAbilityPriorities(): [activePriority: number] | [activePriority: number, passivePriority: number] {
     const abilityPriority = this.getAbility().postSummonPriority;
     if (this.hasPassive()) {
       return [abilityPriority, this.getPassiveAbility().postSummonPriority];
@@ -4418,25 +4418,32 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns A Promise that resolves once the form change has completed.
    */
   public async changeForm(formChange: SpeciesFormChange): Promise<void> {
-    return new Promise(resolve => {
-      this.formIndex = Math.max(
-        this.species.forms.findIndex(f => f.formKey === formChange.formKey),
-        0,
+    this.formIndex = Math.max(
+      this.species.forms.findIndex(f => f.formKey === formChange.formKey),
+      0,
+    );
+    this.generateName();
+
+    const abilityCount = this.getSpeciesForm().getAbilityCount();
+    if (this.abilityIndex >= abilityCount) {
+      console.warn(
+        // biome-ignore lint/complexity/noUselessStringConcat: spurious and fixed in biome v2.3.2
+        "Pokemon ability index out of bounds!"
+          + `Name: ${this.name}`
+          + `Old Ability Index: ${this.abilityIndex}`
+          + `Ability Count: ${abilityCount}`
+          + `Form Key: ${formChange.formKey}`,
       );
-      this.generateName();
-      const abilityCount = this.getSpeciesForm().getAbilityCount();
-      if (this.abilityIndex >= abilityCount) {
-        // Shouldn't happen
-        this.abilityIndex = abilityCount - 1;
-      }
-      globalScene.gameData.setPokemonSeen(this, false);
-      this.setScale(this.getSpriteScale());
-      this.loadAssets().then(() => {
-        this.calculateStats();
-        globalScene.updateModifiers(this.isPlayer(), true);
-        Promise.all([this.updateInfo(), globalScene.updateFieldScale()]).then(() => resolve());
-      });
-    });
+      this.abilityIndex = abilityCount - 1;
+    }
+
+    globalScene.gameData.setPokemonSeen(this, false);
+    this.setScale(this.getSpriteScale());
+
+    await this.loadAssets();
+    this.calculateStats();
+    globalScene.updateModifiers(this.isPlayer(), true);
+    await Promise.all([this.updateInfo(), globalScene.updateFieldScale()]);
   }
 
   /**
@@ -5667,7 +5674,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param abilityIndex - The ability index to check
    * @returns Whether the Pokemon's root form has the same ability
    */
-  hasSameAbilityInRootForm(abilityIndex: number): boolean {
+  private hasSameAbilityInRootForm(abilityIndex: number): boolean {
     const currentAbilityIndex = this.abilityIndex;
     const rootForm = getPokemonSpecies(this.species.getRootSpeciesId());
     return rootForm.getAbility(abilityIndex) === rootForm.getAbility(currentAbilityIndex);
