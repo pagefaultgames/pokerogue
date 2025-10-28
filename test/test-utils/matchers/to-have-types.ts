@@ -5,7 +5,6 @@ import { stringifyEnumArray } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import { coerceArray } from "#utils/array";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
-import { isPokemonInstance, receivedStr } from "../test-utils";
 
 export interface toHaveTypesOptions {
   /**
