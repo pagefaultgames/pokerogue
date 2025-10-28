@@ -70,7 +70,7 @@ import { AiType } from "#enums/ai-type";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
-import { BattlerIndex } from "#enums/battler-index";
+import { BattlerIndex, type FieldBattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import type { BerryType } from "#enums/berry-type";
@@ -730,7 +730,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   abstract getFieldIndex(): number;
 
-  abstract getBattlerIndex(): BattlerIndex;
+  abstract getBattlerIndex(): FieldBattlerIndex;
 
   /**
    * Load all assets needed for this Pokemon's use in battle
@@ -3225,9 +3225,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Check whether the specified Pokémon is an opponent
+   * Check whether this Pokémon opposes another Pokémon during battle.
    * @param target - The {@linkcode Pokemon} to compare against
-   * @returns `true` if the two pokemon are opponents, `false` otherwise
+   * @returns Whether this Pokemon opposes `target` (one is player-controlled and the other enemy-controlled).
    */
   public isOpponent(target: Pokemon): boolean {
     return this.isPlayer() !== target.isPlayer();
@@ -5810,8 +5810,8 @@ export class PlayerPokemon extends Pokemon {
     return globalScene.getPlayerField().indexOf(this);
   }
 
-  getBattlerIndex(): BattlerIndex {
-    return this.getFieldIndex();
+  getBattlerIndex(): FieldBattlerIndex {
+    return this.getFieldIndex() as FieldBattlerIndex;
   }
 
   generateCompatibleTms(): void {
@@ -6933,12 +6933,13 @@ export class EnemyPokemon extends Pokemon {
     return globalScene.getEnemyField().indexOf(this);
   }
 
-  public getBattlerIndex(): BattlerIndex {
+  public getBattlerIndex(): FieldBattlerIndex {
     const fieldIndex = this.getFieldIndex();
     if (fieldIndex === -1) {
-      return BattlerIndex.ATTACKER;
+      // TODO: Fix this typing once field pokemon getters are reworked to make sense
+      return BattlerIndex.ATTACKER as unknown as FieldBattlerIndex;
     }
-    return BattlerIndex.ENEMY + this.getFieldIndex();
+    return (BattlerIndex.ENEMY + this.getFieldIndex()) as FieldBattlerIndex;
   }
 
   /**

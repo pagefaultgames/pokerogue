@@ -5,7 +5,8 @@ import type { Pokemon } from "#field/pokemon";
 
 /**
  * A generator function which uses a priority queue to yield each pokemon from a given side of the field in speed order.
- * @param side - The {@linkcode ArenaTagSide | side} of the field to use
+ * @param side - The {@linkcode ArenaTagSide | side} of the field to use;
+ * default `ArenaTagSide.BOTH`
  * @returns A {@linkcode Generator} of {@linkcode Pokemon}
  *
  * @remarks

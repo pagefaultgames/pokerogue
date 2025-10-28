@@ -22,14 +22,14 @@ export abstract class Phase {
   /**
    * Check if the phase is of the given type without requiring `instanceof`.
    *
-   * @param phase - The string name of the phase to check.
+   * @param phaseName - The name of the phase to check.
    * @returns Whether this phase is of the provided type.
    *
    * @remarks
    * This does not check for subclasses! It only checks if the phase is *exactly* the given type.
    * This method exists to avoid circular import issues, as using `instanceof` would require importing each phase.
    */
-  is<K extends keyof PhaseMap>(phase: K): this is PhaseMap[K] {
-    return this.phaseName === phase;
+  is<K extends keyof PhaseMap>(phaseName: K): this is PhaseMap[K] {
+    return this.phaseName === phaseName;
   }
 }

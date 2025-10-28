@@ -3,7 +3,6 @@ import type { Pokemon } from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import type { MovePhase } from "#app/phases/move-phase";
 import { PokemonPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";
-import type { BattlerIndex } from "#enums/battler-index";
 import type { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import type { PhaseConditionFunc } from "#types/phase-types";
 
@@ -17,18 +16,18 @@ export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase>
   }
 
   public cancelMove(condition: PhaseConditionFunc<"MovePhase">): void {
-    this.queue.find(p => condition(p))?.cancel();
+    this.queue.find(condition)?.cancel();
   }
 
   public setTimingModifier(condition: PhaseConditionFunc<"MovePhase">, modifier: MovePhaseTimingModifier): void {
-    const phase = this.queue.find(p => condition(p));
+    const phase = this.queue.find(condition);
     if (phase != null) {
       phase.timingModifier = modifier;
     }
   }
 
   public setMoveForPhase(condition: PhaseConditionFunc<"MovePhase">, move: PokemonMove) {
-    const phase = this.queue.find(p => condition(p));
+    const phase = this.queue.find(condition);
     if (phase != null) {
       phase.move = move;
     }
@@ -47,7 +46,7 @@ export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase>
           mp =>
             mp.targets.length === 1
             && mp.targets[0] === removedPokemon.getBattlerIndex()
-            && mp.pokemon.isPlayer() !== allyPokemon.isPlayer(),
+            && mp.pokemon.isOpponent(allyPokemon),
         )
         .forEach(targetingMovePhase => {
           if (targetingMovePhase && targetingMovePhase.targets[0] !== allyPokemon.getBattlerIndex()) {
@@ -55,10 +54,6 @@ export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase>
           }
         });
     }
-  }
-
-  public setMoveOrder(order: BattlerIndex[]) {
-    this.setOrder = order;
   }
 
   public override pop(): MovePhase | undefined {
@@ -79,25 +74,26 @@ export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase>
   }
 
   public override clear(): void {
-    this.setOrder = undefined;
     this.lastTurnOrder = [];
     super.clear();
   }
 
   private sortPostSpeed(): void {
     this.queue.sort((a: MovePhase, b: MovePhase) => {
-      const priority = [a, b].map(movePhase => {
-        const move = movePhase.move.getMove();
-        return move.getPriority(movePhase.pokemon, true);
-      });
-
-      const timingModifiers = [a, b].map(movePhase => movePhase.timingModifier);
-
-      if (timingModifiers[0] !== timingModifiers[1]) {
-        return timingModifiers[1] - timingModifiers[0];
+      if (a.timingModifier !== b.timingModifier) {
+        return b.timingModifier - a.timingModifier;
       }
-
-      return priority[1] - priority[0];
+      return getPriorityForMP(b) - getPriorityForMP(a);
     });
   }
+}
+
+/**
+ * Helper function to retrieve the priority for a given move phase.
+ * @param mp - The `MovePhase` to check
+ * @returns The phase's priority
+ */
+function getPriorityForMP(mp: MovePhase): number {
+  const move = mp.move.getMove();
+  return move.getPriority(mp.pokemon, true);
 }
