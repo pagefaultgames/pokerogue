@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { SHINY_CATCH_RATE_MULTIPLIER } from "#balance/rates";
 import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER } from "#balance/starters";
 import type { WeatherPoolEntry } from "#data/weather";
 import { Challenges } from "#enums/challenges";
@@ -432,7 +433,7 @@ export class TimedEventManager {
    * @returns the shiny catch multiplier
    */
   getShinyCatchMultiplier(): number {
-    return this.activeEvent()?.shinyCatchMultiplier ?? 1;
+    return this.activeEvent()?.shinyCatchMultiplier ?? SHINY_CATCH_RATE_MULTIPLIER;
   }
 
   getEventBannerFilename(): string {

@@ -900,7 +900,7 @@ class SpikesTag extends DamagingTrapTag {
   }
 
   protected override get onRemoveMessageKey(): string {
-    return "arenaTag:spikesOnAdd" + this.i18nSideKey;
+    return "arenaTag:spikesOnRemove" + this.i18nSideKey;
   }
 
   protected override get triggerMessageKey(): string {
@@ -1422,7 +1422,7 @@ class GrassWaterPledgeTag extends SerializableArenaTag {
   }
 
   protected override get onRemoveMessageKey(): string {
-    return "arenaTag:grassWaterPledgeOnAdd" + this.i18nSideKey;
+    return "arenaTag:grassWaterPledgeOnRemove" + this.i18nSideKey;
   }
 
   // TODO: Move speed drops into this class's `apply` method instead of an explicit check for it
