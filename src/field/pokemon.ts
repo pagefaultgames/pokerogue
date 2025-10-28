@@ -2904,7 +2904,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (thresholdOverride === undefined) {
       if (timedEventManager.isEventActive()) {
         const tchance = timedEventManager.getClassicTrainerShinyChance();
-        shinyThreshold.value *= timedEventManager.getShinyMultiplier();
+        shinyThreshold.value *= timedEventManager.getShinyEncounterMultiplier();
         if (this.hasTrainer() && tchance > 0) {
           shinyThreshold.value = Math.max(tchance, shinyThreshold.value); // Choose the higher boost
         }
@@ -2942,7 +2942,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       const shinyThreshold = new NumberHolder(thresholdOverride ?? BASE_SHINY_CHANCE);
       if (applyModifiersToOverride) {
         if (timedEventManager.isEventActive()) {
-          shinyThreshold.value *= timedEventManager.getShinyMultiplier();
+          shinyThreshold.value *= timedEventManager.getShinyEncounterMultiplier();
         }
         globalScene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
       }
@@ -3150,8 +3150,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       const otherBattleInfo = globalScene.fieldUI
         .getAll()
         .slice(0, 4)
-        .filter(ui => ui instanceof BattleInfo && (ui as BattleInfo) instanceof PlayerBattleInfo === this.isPlayer())
-        .find(() => true);
+        .find(ui => ui instanceof BattleInfo && (ui as BattleInfo) instanceof PlayerBattleInfo === this.isPlayer());
       if (!otherBattleInfo || !this.getFieldIndex()) {
         globalScene.fieldUI.sendToBack(this.battleInfo);
         globalScene.sendTextToBack(); // Push the top right text objects behind everything else

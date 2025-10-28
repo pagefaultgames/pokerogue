@@ -1,5 +1,6 @@
 import { loggedInUser } from "#app/account";
 import { GameMode, getGameMode } from "#app/game-mode";
+import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { Phase } from "#app/phase";
@@ -251,11 +252,16 @@ export class TitlePhase extends Phase {
               .map(() => modifierTypes.GOLDEN_EXP_CHARM().withIdFromFunc(modifierTypes.GOLDEN_EXP_CHARM).newModifier()),
           )
           .concat([modifierTypes.MAP().withIdFromFunc(modifierTypes.MAP).newModifier()])
+          .concat([modifierTypes.ABILITY_CHARM().withIdFromFunc(modifierTypes.ABILITY_CHARM).newModifier()])
+          .concat([modifierTypes.SHINY_CHARM().withIdFromFunc(modifierTypes.SHINY_CHARM).newModifier()])
           .concat(getDailyRunStarterModifiers(party))
           .filter(m => m !== null);
 
         for (const m of modifiers) {
           globalScene.addModifier(m, true, false, false, true);
+        }
+        for (const m of timedEventManager.getEventDailyStartingItems()) {
+          globalScene.addModifier(modifierTypes[m]().newModifier(), true, false, false, true);
         }
         globalScene.updateModifiers(true, true);
 
