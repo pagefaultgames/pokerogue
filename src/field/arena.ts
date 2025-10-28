@@ -305,7 +305,7 @@ export class Arena {
 
   /** Returns weather or not the weather can be changed to {@linkcode weather} */
   canSetWeather(weather: WeatherType): boolean {
-    return this.getWeatherType() === weather;
+    return this.getWeatherType() !== weather;
   }
 
   /**

@@ -36,7 +36,7 @@ export function toHaveAbilityApplied(
   const pkmName = getPokemonNameWithAffix(received);
 
   // Shallow-copy the abilities applied set if we're going to clear it
-  let values: Set<string>;
+  let values: Set<AbilityId>;
   if (pass && clear) {
     console.log(`toHaveAbilityApplied: Clearing ${pkmName}'s abilities applied set`);
     values = new Set(received.waveData.abilitiesApplied);

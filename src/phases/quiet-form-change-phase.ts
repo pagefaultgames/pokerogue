@@ -39,7 +39,7 @@ export class QuietFormChangePhase extends BattlePhase {
       return;
     }
 
-    this.playFormChangeTween();
+    await this.playFormChangeTween();
   }
 
   /**
