@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { Button } from "#enums/buttons";
-import type { RibbonData, RibbonFlag } from "#system/ribbons/ribbon-data";
+import { RibbonData, type RibbonFlag } from "#system/ribbons/ribbon-data";
 import { ribbonFlagToAssetKey } from "#system/ribbons/ribbon-methods";
 import type { MessageUiHandler } from "#ui/message-ui-handler";
 import { addWindow } from "#ui/ui-theme";
@@ -115,8 +115,11 @@ export class RibbonTray extends Phaser.GameObjects.Container {
     const availableRibbons = getAvailableRibbons(species);
     const availableOrderedRibbons = orderedRibbons.filter(r => availableRibbons.includes(r));
 
+    const hasWonClassic = globalScene.gameData.starterData[species.speciesId]?.classicWinCount > 0;
+
     for (const ribbon of availableOrderedRibbons) {
-      const hasRibbon = this.ribbonData.has(ribbon);
+      const hasRibbon = this.ribbonData.has(ribbon) || (ribbon === RibbonData.CLASSIC && hasWonClassic);
+
       if (!hasRibbon && !globalScene.dexForDevs && !globalScene.showMissingRibbons) {
         continue;
       }
