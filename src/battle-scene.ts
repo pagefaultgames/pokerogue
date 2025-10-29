@@ -1625,6 +1625,7 @@ export class BattleScene extends SceneBase {
       case SpeciesId.UNOWN:
       case SpeciesId.SHELLOS:
       case SpeciesId.GASTRODON:
+      case SpeciesId.ROTOM:
       case SpeciesId.BASCULIN:
       case SpeciesId.DEERLING:
       case SpeciesId.SAWSBUCK:
@@ -1644,11 +1645,10 @@ export class BattleScene extends SceneBase {
       case SpeciesId.TATSUGIRI:
       case SpeciesId.PALDEA_TAUROS:
         return randSeedInt(species.forms.length);
-      case SpeciesId.MAUSHOLD:
-      case SpeciesId.DUDUNSPARCE:
-        return !randSeedInt(4) ? 1 : 0;
       case SpeciesId.SINISTEA:
       case SpeciesId.POLTEAGEIST:
+      case SpeciesId.MAUSHOLD:
+      case SpeciesId.DUDUNSPARCE:
       case SpeciesId.POLTCHAGEIST:
       case SpeciesId.SINISTCHA:
         return !randSeedInt(16) ? 1 : 0;
@@ -1718,7 +1718,6 @@ export class BattleScene extends SceneBase {
       switch (species.speciesId) {
         case SpeciesId.BURMY:
         case SpeciesId.WORMADAM:
-        case SpeciesId.ROTOM:
         case SpeciesId.LYCANROC:
           return randSeedInt(species.forms.length);
       }
