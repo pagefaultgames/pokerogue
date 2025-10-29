@@ -57,6 +57,7 @@ import { StatStageChangePhase } from "#phases/stat-stage-change-phase";
 import { SummonPhase } from "#phases/summon-phase";
 import { SwitchPhase } from "#phases/switch-phase";
 import { SwitchSummonPhase } from "#phases/switch-summon-phase";
+import { TeraPhase } from "#phases/tera-phase";
 import { TitlePhase } from "#phases/title-phase";
 import { ToggleDoublePositionPhase } from "#phases/toggle-double-position-phase";
 import { TurnEndPhase } from "#phases/turn-end-phase";
@@ -162,6 +163,7 @@ export class PhaseInterceptor {
     PartyHealPhase,
     FormChangePhase,
     EvolutionPhase,
+    TeraPhase,
     EndEvolutionPhase,
     LevelCapPhase,
     AttemptRunPhase,
