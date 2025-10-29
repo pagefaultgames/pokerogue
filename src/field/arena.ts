@@ -249,20 +249,6 @@ export class Arena {
             return 2;
         }
         break;
-      case SpeciesId.ROTOM:
-        switch (this.biomeType) {
-          case BiomeId.VOLCANO:
-            return 1;
-          case BiomeId.SEA:
-            return 2;
-          case BiomeId.ICE_CAVE:
-            return 3;
-          case BiomeId.MOUNTAIN:
-            return 4;
-          case BiomeId.TALL_GRASS:
-            return 5;
-        }
-        break;
       case SpeciesId.LYCANROC: {
         const timeOfDay = this.getTimeOfDay();
         switch (timeOfDay) {
