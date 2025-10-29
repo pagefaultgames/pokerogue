@@ -760,8 +760,8 @@ export const biomePokemonPools: BiomePokemonPools = {
   },
   [BiomeId.DESERT]: {
     [BiomePoolTier.COMMON]: {
-      [TimeOfDay.DAWN]: [ SpeciesId.HELIOPTILE, SpeciesId.TRAPINCH ],
-      [TimeOfDay.DAY]: [ SpeciesId.HELIOPTILE, SpeciesId.TRAPINCH ],
+      [TimeOfDay.DAWN]: [ SpeciesId.TRAPINCH, SpeciesId.HELIOPTILE ],
+      [TimeOfDay.DAY]: [ SpeciesId.TRAPINCH, SpeciesId.HELIOPTILE ],
       [TimeOfDay.DUSK]: [ SpeciesId.CACNEA ],
       [TimeOfDay.NIGHT]: [ SpeciesId.CACNEA ],
       [TimeOfDay.ALL]: [ SpeciesId.SANDSHREW, SpeciesId.SKORUPI, SpeciesId.SILICOBRA, SpeciesId.BRAMBLIN, SpeciesId.RELLOR ]
@@ -971,7 +971,7 @@ export const biomePokemonPools: BiomePokemonPools = {
       [TimeOfDay.DAY]: [],
       [TimeOfDay.DUSK]: [],
       [TimeOfDay.NIGHT]: [],
-      [TimeOfDay.ALL]: [ SpeciesId.NINETALES, SpeciesId.ARCANINE, SpeciesId.RAPIDASH, SpeciesId.MAGCARGO, SpeciesId.CAMERUPT, SpeciesId.TORKOAL, SpeciesId.MAGMORTAR, SpeciesId.SIMISEAR, SpeciesId.HEATMOR, SpeciesId.SALAZZLE, SpeciesId.TURTONATOR, SpeciesId.COALOSSAL, SpeciesId.ALOLA_DIGLETT ]
+      [TimeOfDay.ALL]: [ SpeciesId.NINETALES, SpeciesId.ARCANINE, SpeciesId.RAPIDASH, SpeciesId.MAGCARGO, SpeciesId.CAMERUPT, SpeciesId.TORKOAL, SpeciesId.MAGMORTAR, SpeciesId.SIMISEAR, SpeciesId.HEATMOR, SpeciesId.SALAZZLE, SpeciesId.TURTONATOR, SpeciesId.COALOSSAL, SpeciesId.ALOLA_DUGTRIO ]
     },
     [BiomePoolTier.BOSS_RARE]: {
       [TimeOfDay.DAWN]: [],
@@ -1186,7 +1186,7 @@ export const biomePokemonPools: BiomePokemonPools = {
       [TimeOfDay.ALL]: [ SpeciesId.ABSOL, SpeciesId.SPIRITOMB, SpeciesId.FROSLASS, SpeciesId.ZORUA ]
     },
     [BiomePoolTier.SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ SpeciesId.UMBREON, SpeciesId.DEINO, SpeciesId.DREEPY ] },
-    [BiomePoolTier.ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ SpeciesId.DARKRAI ] },
+    [BiomePoolTier.ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ SpeciesId.DARKRAI, SpeciesId.GALAR_MOLTRES ] },
     [BiomePoolTier.BOSS]: {
       [TimeOfDay.DAWN]: [],
       [TimeOfDay.DAY]: [],
