@@ -397,8 +397,8 @@ const timedEvents: readonly TimedEvent[] = [
     eventType: EventType.SHINY,
     startDate: new Date(Date.UTC(2025, 9, 27)),
     endDate: new Date(Date.UTC(2025, 10, 10)),
-    bannerKey: "pride2025",
-    scale: 0.105,
+    bannerKey: "pride2025", // Replace with "halloween2025" or actual banner name
+    scale: 0.25, // Replace with actual number
     availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-419", "pt-BR", "zh-Hans", "zh-Hant"],
     shinyEncounterMultiplier: 2,
     shinyCatchMultiplier: 3,
@@ -431,6 +431,7 @@ const timedEvents: readonly TimedEvent[] = [
       { wave: 25, type: "SHINY_CHARM" },
       { wave: 25, type: "CANDY_JAR" },
     ],
+    dailyRunStartingItems: ["ABILITY_CHARM", "SHINY_CHARM", "CANDY_JAR"],
   },
 ];
 
