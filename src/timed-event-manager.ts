@@ -395,7 +395,7 @@ const timedEvents: readonly TimedEvent[] = [
   {
     name: "Halloween 25",
     eventType: EventType.SHINY,
-    startDate: new Date(Date.UTC(2025, 9, 27)),
+    startDate: new Date(Date.UTC(2025, 9, 29)),
     endDate: new Date(Date.UTC(2025, 10, 10)),
     bannerKey: "pride2025", // Replace with "halloween2025" or actual banner name
     scale: 0.25, // Replace with actual number
@@ -403,15 +403,16 @@ const timedEvents: readonly TimedEvent[] = [
     shinyEncounterMultiplier: 2,
     shinyCatchMultiplier: 3,
     eventEncounters: [
-      { species: SpeciesId.FEAROW },
+      { species: SpeciesId.SPEAROW },
       { species: SpeciesId.PARAS },
       { species: SpeciesId.LICKITUNG },
-      { species: SpeciesId.JYNX },
+      { species: SpeciesId.SMOOCHUM },
       { species: SpeciesId.AERODACTYL },
       { species: SpeciesId.CLAMPERL },
       { species: SpeciesId.RALTS },
       { species: SpeciesId.GULPIN },
-      { species: SpeciesId.ROSELIA },
+      { species: SpeciesId.WYNAUT },
+      { species: SpeciesId.BUDEW },
       { species: SpeciesId.FEEBAS },
       { species: SpeciesId.CHINGLING },
       { species: SpeciesId.DEOXYS },
