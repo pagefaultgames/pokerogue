@@ -5,7 +5,7 @@ import type { RibbonData, RibbonFlag } from "#system/ribbons/ribbon-data";
 import { ribbonFlagToAssetKey } from "#system/ribbons/ribbon-methods";
 import type { MessageUiHandler } from "#ui/message-ui-handler";
 import { addWindow } from "#ui/ui-theme";
-import { getAvailableRibbons, getRibbonKey } from "#utils/ribbon-utils";
+import { getAvailableRibbons, getRibbonKey, orderedRibbons } from "#utils/ribbon-utils";
 import i18next from "i18next";
 
 export class RibbonTray extends Phaser.GameObjects.Container {
@@ -111,7 +111,11 @@ export class RibbonTray extends Phaser.GameObjects.Container {
 
     this.trayIcons = [];
     let index = 0;
-    for (const ribbon of getAvailableRibbons(species)) {
+
+    const availableRibbons = getAvailableRibbons(species);
+    const availableOrderedRibbons = orderedRibbons.filter(r => availableRibbons.includes(r));
+
+    for (const ribbon of availableOrderedRibbons) {
       const hasRibbon = this.ribbonData.has(ribbon);
       if (!hasRibbon && !globalScene.dexForDevs && !globalScene.showMissingRibbons) {
         continue;
