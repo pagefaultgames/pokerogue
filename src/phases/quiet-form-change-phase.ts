@@ -1,7 +1,7 @@
-import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import { applyOnLoseAbAttrs, applyPostFormChangeAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { getSpeciesFormChangeMessage, SpeciesFormChangeTeraTrigger } from "#data/form-change-triggers";
+import { getSpeciesFormChangeMessage } from "#data/form-change-triggers";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
 import { getTypeRgb } from "#data/type";
 import { BattleSpec } from "#enums/battle-spec";
@@ -10,6 +10,11 @@ import type { Pokemon } from "#field/pokemon";
 import { BattlePhase } from "#phases/battle-phase";
 import { playTween } from "#utils/anim-utils";
 
+/**
+ * Phase handling mid-battle form changes that do not occur in the Party modal
+ * and do not show an evolution dialogue.
+ */
+// TODO: Rename as the term "quiet" can be confusing
 export class QuietFormChangePhase extends BattlePhase {
   public readonly phaseName = "QuietFormChangePhase";
   public readonly pokemon: Pokemon;
@@ -28,10 +33,9 @@ export class QuietFormChangePhase extends BattlePhase {
 
     this.preName = getPokemonNameWithAffix(this.pokemon);
 
-    // Don't do anything if the user is already in the same form
-    // TODO: This removes autotomize and triggers related effects
+    // Don't do anything if the user is already in the same form.
     if (this.pokemon.formIndex === this.pokemon.species.forms.findIndex(f => f.formKey === this.formChange.formKey)) {
-      this.end();
+      super.end();
       return;
     }
 
@@ -52,7 +56,7 @@ export class QuietFormChangePhase extends BattlePhase {
       return false;
     }
 
-    await this.pokemon.changeForm(this.formChange);
+    await this.changeForm();
     globalScene.ui.showText(
       getSpeciesFormChangeMessage(this.pokemon, this.formChange, this.preName),
       null,
@@ -60,6 +64,20 @@ export class QuietFormChangePhase extends BattlePhase {
       1500,
     );
     return true;
+  }
+
+  /**
+   * Wrapper function to queue effects related to a Pokemon changing forms.
+   */
+  private async changeForm(): Promise<void> {
+    // TODO: This will have ordering issues with on lose abilities' trigger messages showing after this Phase ends
+    // if any are given to a Pokemon with mid-battle form changes
+    // If this is desired later on, the animation/textual part of `QuietFormChangePhase` will need to be pulled out
+    // into a separate Phase
+    applyOnLoseAbAttrs({ pokemon: this.pokemon });
+    const prevForm = this.pokemon.getSpeciesForm();
+    this.pokemon.changeForm(this.formChange);
+    applyPostFormChangeAbAttrs({ pokemon: this.pokemon }, prevForm);
   }
 
   private async playFormChangeTween(): Promise<void> {
@@ -186,10 +204,6 @@ export class QuietFormChangePhase extends BattlePhase {
       this.pokemon.cry();
 
       globalScene.phaseManager.cancelMove(p => p.pokemon === this.pokemon);
-    }
-
-    if (this.formChange.trigger instanceof SpeciesFormChangeTeraTrigger) {
-      applyAbAttrs("PostTeraAbAttr", { pokemon: this.pokemon });
     }
 
     super.end();

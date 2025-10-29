@@ -2666,7 +2666,13 @@ export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
  * Base class for defining all {@linkcode Ability} Attributes post summon
  */
 export abstract class PostSummonAbAttr extends AbAttr {
-  /** Should the ability activate when gained in battle? This will almost always be true */
+  /**
+   * Whether to activate the ability activate when gained in battle
+   * @defaultValue `true`
+   * @remarks
+   * Used exclusively by Imposter.
+   */
+  // TODO: Make this a publicly accessible getter
   private readonly activateOnGain: boolean;
 
   constructor(showAbility = true, activateOnGain = true) {
@@ -2732,6 +2738,7 @@ export class PostSummonAddArenaTagAbAttr extends PostSummonAbAttr {
   private readonly turnCount: number;
   private readonly side?: ArenaTagSide;
   private readonly quiet?: boolean;
+  // TODO: This should not need to track the source ID in a tempvar
   private sourceId: number;
 
   constructor(showAbility: boolean, tagType: ArenaTagType, turnCount: number, side?: ArenaTagSide, quiet?: boolean) {
@@ -2766,6 +2773,7 @@ export class PostSummonMessageAbAttr extends PostSummonAbAttr {
   }
 }
 
+// TODO: This should be merged with message func
 export class PostSummonUnnamedMessageAbAttr extends PostSummonAbAttr {
   //Attr doesn't force pokemon name on the message
   private readonly message: string;
@@ -2836,13 +2844,13 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
   private readonly selfTarget: boolean;
   private readonly intimidate: boolean;
 
-  constructor(stats: readonly BattleStat[], stages: number, selfTarget?: boolean, intimidate?: boolean) {
+  constructor(stats: readonly BattleStat[], stages: number, selfTarget = false, intimidate = true) {
     super(true);
 
     this.stats = stats;
     this.stages = stages;
-    this.selfTarget = !!selfTarget;
-    this.intimidate = !!intimidate;
+    this.selfTarget = selfTarget;
+    this.intimidate = intimidate;
   }
 
   override apply({ pokemon, simulated }: AbAttrBaseParams): void {
@@ -5022,25 +5030,26 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
  */
 export class FetchBallAbAttr extends PostTurnAbAttr {
   override canApply({ simulated, pokemon }: AbAttrBaseParams): boolean {
-    return !simulated && globalScene.currentBattle.lastUsedPokeball != null && !!pokemon.isPlayer;
+    return !simulated && globalScene.currentBattle.lastUsedPokeball != null && pokemon.isPlayer();
   }
 
   /**
    * Adds the last used Pokeball back into the player's inventory
    */
   override apply({ pokemon }: AbAttrBaseParams): void {
-    const lastUsed = globalScene.currentBattle.lastUsedPokeball;
-    globalScene.pokeballCounts[lastUsed!]++;
+    const lastUsed = globalScene.currentBattle.lastUsedPokeball!;
+    globalScene.pokeballCounts[lastUsed]++;
     globalScene.currentBattle.lastUsedPokeball = null;
     globalScene.phaseManager.queueMessage(
       i18next.t("abilityTriggers:fetchBall", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        pokeballName: getPokeballName(lastUsed!),
+        pokeballName: getPokeballName(lastUsed),
       }),
     );
   }
 }
 
+// TODO: Remove this and just replace it with applying `PostSummonChangeTerrainAbAttr` again
 export class PostBiomeChangeAbAttr extends AbAttr {
   private declare readonly _: never;
 }
@@ -5065,6 +5074,7 @@ export class PostBiomeChangeWeatherChangeAbAttr extends PostBiomeChangeAbAttr {
   }
 }
 
+// TODO: Remove this and just replace it with applying `PostSummonChangeTerrainAbAttr` again
 /** @sealed */
 export class PostBiomeChangeTerrainChangeAbAttr extends PostBiomeChangeAbAttr {
   private readonly terrainType: TerrainType;
@@ -8214,29 +8224,25 @@ export function initAbilities() {
       .attr(PostAttackApplyStatusEffectAbAttr, false, 30, StatusEffect.TOXIC)
       .build(),
     new AbBuilder(AbilityId.EMBODY_ASPECT_TEAL, 9)
-      .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.SPD ], 1) // Activates immediately upon Terastallizing, as well as upon switching in while Terastallized
-      .conditionalAttr(pokemon => pokemon.isTerastallized, PostSummonStatStageChangeAbAttr, [ Stat.SPD ], 1, true)
+      .attr(PostSummonStatStageChangeAbAttr, [ Stat.SPD ], 1, true)
       .uncopiable()
       .unreplaceable() // TODO is this true?
       .attr(NoTransformAbilityAbAttr)
       .build(),
     new AbBuilder(AbilityId.EMBODY_ASPECT_WELLSPRING, 9)
-      .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.SPDEF ], 1)
-      .conditionalAttr(pokemon => pokemon.isTerastallized, PostSummonStatStageChangeAbAttr, [ Stat.SPDEF ], 1, true)
+      .attr(PostSummonStatStageChangeAbAttr, [ Stat.SPDEF ], 1, true)
       .uncopiable()
       .unreplaceable()
       .attr(NoTransformAbilityAbAttr)
       .build(),
     new AbBuilder(AbilityId.EMBODY_ASPECT_HEARTHFLAME, 9)
-      .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.ATK ], 1)
-      .conditionalAttr(pokemon => pokemon.isTerastallized, PostSummonStatStageChangeAbAttr, [ Stat.ATK ], 1, true)
+      .attr(PostSummonStatStageChangeAbAttr, [ Stat.ATK ], 1, true)
       .uncopiable()
       .unreplaceable()
       .attr(NoTransformAbilityAbAttr)
       .build(),
     new AbBuilder(AbilityId.EMBODY_ASPECT_CORNERSTONE, 9)
-      .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.DEF ], 1)
-      .conditionalAttr(pokemon => pokemon.isTerastallized, PostSummonStatStageChangeAbAttr, [ Stat.DEF ], 1, true)
+      .attr(PostSummonStatStageChangeAbAttr, [ Stat.DEF ], 1, true)
       .uncopiable()
       .unreplaceable()
       .attr(NoTransformAbilityAbAttr)
@@ -8256,11 +8262,10 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.TERAFORM_ZERO, 9)
-      .attr(PostTeraClearWeatherAbAttr)
-      .attr(PostTeraClearTerrainAbAttr)
+      .attr(PostSummonWeatherChangeAbAttr, WeatherType.NONE)
+      .attr(PostSummonTerrainChangeAbAttr, TerrainType.NONE)
       .uncopiable()
       .unreplaceable()
-      .condition(getOncePerBattleCondition(AbilityId.TERAFORM_ZERO))
       .build(),
     new AbBuilder(AbilityId.POISON_PUPPETEER, 9)
       .uncopiable()
