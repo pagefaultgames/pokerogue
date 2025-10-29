@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { SHINY_CATCH_RATE_MULTIPLIER } from "#balance/rates";
 import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER } from "#balance/starters";
 import type { WeatherPoolEntry } from "#data/weather";
 import { Challenges } from "#enums/challenges";
@@ -74,6 +75,7 @@ interface TimedEvent extends EventBanner {
   readonly trainerShinyChance?: number; // Odds over 65536 of trainer mon generating as shiny
   readonly music?: readonly EventMusicReplacement[];
   readonly dailyRunChallenges?: readonly EventChallenge[];
+  readonly dailyRunStartingItems?: readonly ModifierTypeKeys[];
 }
 
 const timedEvents: readonly TimedEvent[] = [
@@ -386,6 +388,7 @@ const timedEvents: readonly TimedEvent[] = [
       { wave: 8, type: "CATCHING_CHARM" },
       { wave: 25, type: "SHINY_CHARM" },
     ],
+    dailyRunStartingItems: ["SHINY_CHARM", "ABILITY_CHARM"],
   },
 ];
 
@@ -432,7 +435,7 @@ export class TimedEventManager {
    * @returns the shiny catch multiplier
    */
   getShinyCatchMultiplier(): number {
-    return this.activeEvent()?.shinyCatchMultiplier ?? 1;
+    return this.activeEvent()?.shinyCatchMultiplier ?? SHINY_CATCH_RATE_MULTIPLIER;
   }
 
   getEventBannerFilename(): string {
@@ -564,6 +567,10 @@ export class TimedEventManager {
     for (const eventChal of this.activeEvent()?.dailyRunChallenges ?? []) {
       globalScene.gameMode.setChallengeValue(eventChal.challenge, eventChal.value);
     }
+  }
+
+  getEventDailyStartingItems(): readonly ModifierTypeKeys[] {
+    return this.activeEvent()?.dailyRunStartingItems ?? [];
   }
 }
 
