@@ -65,7 +65,7 @@ export function getAvailableRibbons(species: PokemonSpecies): RibbonFlag[] {
       data |= getRibbonForType(checkingSpecies.type2);
     }
 
-    for (const form of species.forms) {
+    for (const form of checkingSpecies.forms) {
       data |= getRibbonForType(form.type1);
       if (form.type2 != null) {
         data |= getRibbonForType(form.type2);
