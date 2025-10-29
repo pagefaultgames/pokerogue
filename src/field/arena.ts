@@ -40,6 +40,7 @@ import type { Constructor } from "#types/common";
 import type { AbstractConstructor } from "#types/type-helpers";
 import { NumberHolder, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { inSpeedOrder } from "#utils/speed-order-generator";
 
 export class Arena {
   public biomeType: BiomeId;
@@ -344,15 +345,12 @@ export class Arena {
       globalScene.phaseManager.queueMessage(getWeatherClearMessage(oldWeatherType)!); // TODO: is this bang correct?
     }
 
-    globalScene
-      .getField(true)
-      .filter(p => p.isOnField())
-      .map(pokemon => {
-        pokemon.findAndRemoveTags(
-          t => "weatherTypes" in t && !(t.weatherTypes as WeatherType[]).find(t => t === weather),
-        );
-        applyAbAttrs("PostWeatherChangeAbAttr", { pokemon, weather });
-      });
+    for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
+      pokemon.findAndRemoveTags(
+        tag => "weatherTypes" in tag && !(tag.weatherTypes as WeatherType[]).find(t => t === weather),
+      );
+      applyAbAttrs("PostWeatherChangeAbAttr", { pokemon, weather });
+    }
 
     return true;
   }
@@ -362,11 +360,11 @@ export class Arena {
    * @param source - The Pokemon causing the changes by removing itself from the field
    */
   triggerWeatherBasedFormChanges(source?: Pokemon): void {
-    globalScene.getField(true).forEach(p => {
+    for (const p of inSpeedOrder(ArenaTagSide.BOTH)) {
       // TODO - This is a bandaid. Abilities leaving the field needs a better approach than
       // calling this method for every switch out that happens
       if (p === source) {
-        return;
+        continue;
       }
       const isCastformWithForecast = p.hasAbility(AbilityId.FORECAST) && p.species.speciesId === SpeciesId.CASTFORM;
       const isCherrimWithFlowerGift = p.hasAbility(AbilityId.FLOWER_GIFT) && p.species.speciesId === SpeciesId.CHERRIM;
@@ -374,23 +372,23 @@ export class Arena {
       if (isCastformWithForecast || isCherrimWithFlowerGift) {
         globalScene.triggerPokemonFormChange(p, SpeciesFormChangeWeatherTrigger);
       }
-    });
+    }
   }
 
   /**
    * Function to trigger all weather based form changes back into their normal forms
    */
   triggerWeatherBasedFormChangesToNormal(): void {
-    globalScene.getField(true).forEach(p => {
+    for (const p of inSpeedOrder(ArenaTagSide.BOTH)) {
       const isCastformWithForecast =
         p.hasAbility(AbilityId.FORECAST, false, true) && p.species.speciesId === SpeciesId.CASTFORM;
       const isCherrimWithFlowerGift =
         p.hasAbility(AbilityId.FLOWER_GIFT, false, true) && p.species.speciesId === SpeciesId.CHERRIM;
 
       if (isCastformWithForecast || isCherrimWithFlowerGift) {
-        return globalScene.triggerPokemonFormChange(p, SpeciesFormChangeRevertWeatherFormTrigger);
+        globalScene.triggerPokemonFormChange(p, SpeciesFormChangeRevertWeatherFormTrigger);
       }
-    });
+    }
   }
 
   /** Returns whether or not the terrain can be set to {@linkcode terrain} */
@@ -439,16 +437,13 @@ export class Arena {
       globalScene.phaseManager.queueMessage(getTerrainClearMessage(oldTerrainType));
     }
 
-    globalScene
-      .getField(true)
-      .filter(p => p.isOnField())
-      .map(pokemon => {
-        pokemon.findAndRemoveTags(
-          t => "terrainTypes" in t && !(t.terrainTypes as TerrainType[]).find(t => t === terrain),
-        );
-        applyAbAttrs("PostTerrainChangeAbAttr", { pokemon, terrain });
-        applyAbAttrs("TerrainEventTypeChangeAbAttr", { pokemon });
-      });
+    for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
+      pokemon.findAndRemoveTags(
+        t => "terrainTypes" in t && !(t.terrainTypes as TerrainType[]).find(t => t === terrain),
+      );
+      applyAbAttrs("PostTerrainChangeAbAttr", { pokemon, terrain });
+      applyAbAttrs("TerrainEventTypeChangeAbAttr", { pokemon });
+    }
 
     return true;
   }

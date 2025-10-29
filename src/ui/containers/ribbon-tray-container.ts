@@ -6,7 +6,6 @@ import { ribbonFlagToAssetKey } from "#system/ribbons/ribbon-methods";
 import type { MessageUiHandler } from "#ui/message-ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { getAvailableRibbons, getRibbonKey } from "#utils/ribbon-utils";
-import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 export class RibbonTray extends Phaser.GameObjects.Container {
@@ -98,7 +97,7 @@ export class RibbonTray extends Phaser.GameObjects.Container {
 
     this.trayCursorObj.setPosition(5 + (cursor % this.maxColumns) * 18, 4 + Math.floor(cursor / this.maxColumns) * 17);
 
-    const ribbonDescription = i18next.t(`ribbons:${toCamelCase(getRibbonKey(this.ribbons[cursor]))}`);
+    const ribbonDescription = i18next.t(`ribbons:${getRibbonKey(this.ribbons[cursor])}`);
 
     this.handler.showText(ribbonDescription);
 
