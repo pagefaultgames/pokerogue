@@ -4213,28 +4213,26 @@ export class SuppressWeatherEffectAbAttr extends PreWeatherEffectAbAttr {
 /**
  * Condition function to applied to abilities related to Sheer Force.
  * Checks if last move used against target was affected by a Sheer Force user and:
- * Disables: Color Change, Pickpocket, Berserk, Anger Shell
+ * Disables: Color Change, Pickpocket, Berserk, Anger Shell, Wimp Out, Emergency Exit
  * @returns An {@linkcode AbAttrCondition} to disable the ability under the proper conditions.
  */
-function getSheerForceHitDisableAbCondition(): AbAttrCondition {
-  return (pokemon: Pokemon) => {
-    const lastReceivedAttack = pokemon.turnData.attacksReceived[0];
-    if (!lastReceivedAttack) {
-      return true;
-    }
+const sheerForceHitDisableAbCondition: AbAttrCondition = (pokemon: Pokemon) => {
+  const lastReceivedAttack = pokemon.turnData.attacksReceived[0];
+  if (!lastReceivedAttack) {
+    return true;
+  }
 
-    const lastAttacker = pokemon.getOpponents().find(p => p.id === lastReceivedAttack.sourceId);
-    if (!lastAttacker) {
-      return true;
-    }
+  const lastAttacker = pokemon.getOpponents().find(p => p.id === lastReceivedAttack.sourceId);
+  if (!lastAttacker) {
+    return true;
+  }
 
-    /** `true` if the last move's chance is above 0 and the last attacker's ability is sheer force */
-    const SheerForceAffected =
-      allMoves[lastReceivedAttack.move].chance >= 0 && lastAttacker.hasAbility(AbilityId.SHEER_FORCE);
+  /** `true` if the last move's chance is above 0 and the last attacker's ability is sheer force */
+  const sheerForceAffected =
+    allMoves[lastReceivedAttack.move].chance >= 0 && lastAttacker.hasAbility(AbilityId.SHEER_FORCE);
 
-    return !SheerForceAffected;
-  };
-}
+  return !sheerForceAffected;
+};
 
 function getWeatherCondition(...weatherTypes: WeatherType[]): AbAttrCondition {
   return () => {
@@ -6906,7 +6904,7 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.COLOR_CHANGE, 3)
       .attr(PostDefendTypeChangeAbAttr)
-      .condition(getSheerForceHitDisableAbCondition())
+      .condition(sheerForceHitDisableAbCondition)
       .build(),
     new AbBuilder(AbilityId.IMMUNITY, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
@@ -7342,7 +7340,7 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.PICKPOCKET, 5)
       .attr(PostDefendStealHeldItemAbAttr, (target, user, move) => move.doesFlagEffectApply({flag: MoveFlags.MAKES_CONTACT, user, target}))
-      .condition(getSheerForceHitDisableAbCondition())
+      .condition(sheerForceHitDisableAbCondition)
       .build(),
     new AbBuilder(AbilityId.SHEER_FORCE, 5)
       .attr(MovePowerBoostAbAttr, (_user, _target, move) => move.chance >= 1, 1.3)
@@ -7656,10 +7654,12 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.WIMP_OUT, 7)
       .attr(PostDamageForceSwitchAbAttr)
+      .condition(sheerForceHitDisableAbCondition)
       .edgeCase() // Should not trigger when hurting itself in confusion, causes Fake Out to fail turn 1 and succeed turn 2 if pokemon is switched out before battle start via playing in Switch Mode
       .build(),
     new AbBuilder(AbilityId.EMERGENCY_EXIT, 7)
       .attr(PostDamageForceSwitchAbAttr)
+      .condition(sheerForceHitDisableAbCondition)
       .edgeCase() // Should not trigger when hurting itself in confusion, causes Fake Out to fail turn 1 and succeed turn 2 if pokemon is switched out before battle start via playing in Switch Mode
       .build(),
     new AbBuilder(AbilityId.WATER_COMPACTION, 7)
@@ -7699,7 +7699,7 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.BERSERK, 7)
       .attr(PostDefendHpGatedStatStageChangeAbAttr, (_target, _user, move) => move.category !== MoveCategory.STATUS, 0.5, [ Stat.SPATK ], 1)
-      .condition(getSheerForceHitDisableAbCondition())
+      .condition(sheerForceHitDisableAbCondition)
       .build(),
     new AbBuilder(AbilityId.SLUSH_RUSH, 7)
       .attr(StatMultiplierAbAttr, Stat.SPD, 2)
@@ -8059,7 +8059,7 @@ export function initAbilities() {
     new AbBuilder(AbilityId.ANGER_SHELL, 9)
       .attr(PostDefendHpGatedStatStageChangeAbAttr, (_target, _user, move) => move.category !== MoveCategory.STATUS, 0.5, [ Stat.ATK, Stat.SPATK, Stat.SPD ], 1)
       .attr(PostDefendHpGatedStatStageChangeAbAttr, (_target, _user, move) => move.category !== MoveCategory.STATUS, 0.5, [ Stat.DEF, Stat.SPDEF ], -1)
-      .condition(getSheerForceHitDisableAbCondition())
+      .condition(sheerForceHitDisableAbCondition)
       .build(),
     new AbBuilder(AbilityId.PURIFYING_SALT, 9)
       .attr(StatusEffectImmunityAbAttr)
