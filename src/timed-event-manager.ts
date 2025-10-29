@@ -75,6 +75,7 @@ interface TimedEvent extends EventBanner {
   readonly trainerShinyChance?: number; // Odds over 65536 of trainer mon generating as shiny
   readonly music?: readonly EventMusicReplacement[];
   readonly dailyRunChallenges?: readonly EventChallenge[];
+  readonly dailyRunStartingItems?: readonly ModifierTypeKeys[];
 }
 
 const timedEvents: readonly TimedEvent[] = [
@@ -387,6 +388,7 @@ const timedEvents: readonly TimedEvent[] = [
       { wave: 8, type: "CATCHING_CHARM" },
       { wave: 25, type: "SHINY_CHARM" },
     ],
+    dailyRunStartingItems: ["SHINY_CHARM", "ABILITY_CHARM"],
   },
 ];
 
@@ -565,6 +567,10 @@ export class TimedEventManager {
     for (const eventChal of this.activeEvent()?.dailyRunChallenges ?? []) {
       globalScene.gameMode.setChallengeValue(eventChal.challenge, eventChal.value);
     }
+  }
+
+  getEventDailyStartingItems(): readonly ModifierTypeKeys[] {
+    return this.activeEvent()?.dailyRunStartingItems ?? [];
   }
 }
 
