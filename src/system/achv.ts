@@ -483,7 +483,7 @@ export const achvs = {
   LV_250: new LevelAchv("lv250", 250, "rarer_candy", 25).setSecret(true),
   LV_1000: new LevelAchv("lv1000", 1000, "candy_jar", 50).setSecret(true),
   TRANSFER_MAX_STAT_STAGE: new Achv("transferMaxStatStage", "transferMaxStatStage.description", "baton", 25),
-  MAX_FRIENDSHIP: new Achv("maxFriendship", "maxFriendship.description", "soothe_bell", 25),
+  MAX_FRIENDSHIP: new Achv("maxFriendship", "maxFriendship.description", "ribbon_friendship", 25),
   MEGA_EVOLVE: new Achv("megaEvolve", "megaEvolve.description", "mega_bracelet", 50),
   GIGANTAMAX: new Achv("gigantamax", "gigantamax.description", "dynamax_band", 50),
   TERASTALLIZE: new Achv("terastallize", "terastallize.description", "tera_orb", 25),
