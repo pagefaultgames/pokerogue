@@ -54,7 +54,7 @@ describe("Ability - Embody Aspect", () => {
     expect(ogerpon.formIndex).toBe(embodyAspectTealForm);
     expect(ogerpon).toHaveAbilityApplied(AbilityId.EMBODY_ASPECT_TEAL);
 
-    await game.toEndOfTurn();
+    await game.toNextTurn();
 
     expect(ogerpon).toHaveStatStage(Stat.SPD, 1);
   });
@@ -71,7 +71,7 @@ describe("Ability - Embody Aspect", () => {
     expect(feebas.isTerastallized).toBe(true);
     expect(feebas).toHaveAbilityApplied(AbilityId.EMBODY_ASPECT_TEAL);
 
-    await game.toEndOfTurn();
+    await game.toNextTurn();
 
     expect(feebas).toHaveStatStage(Stat.SPD, 1);
   });
@@ -79,7 +79,7 @@ describe("Ability - Embody Aspect", () => {
   it("should activate on switch-in if user is Terastallized", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
 
-    const [feebas, milotic] = game.scene.getPlayerField();
+    const [feebas, milotic] = game.scene.getPlayerParty();
     // Feebas, not being tera'd, should not get boost
     expect(feebas.isTerastallized).toBe(false);
     expect(feebas).not.toHaveAbilityApplied(AbilityId.EMBODY_ASPECT_TEAL);
