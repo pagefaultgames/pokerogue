@@ -296,15 +296,16 @@ export function getDailyEventSeedBossVariant(seed: string): Variant | null {
     return null;
   }
 
-  const match = /boss(\d{4})(\d{2})(\d{2})/g.exec(seed);
-  if (!match || match.length !== 4) {
+  const match = /boss\d{6}(\d{2})/g.exec(seed);
+  if (!match || match.length !== 2) {
     return null;
   }
 
-  const variant = Number.parseInt(match[3]) as Variant;
+  const variant = Number.parseInt(match[1]) as Variant;
   if (variant > 2) {
     return null;
   }
+
   return variant;
 }
 
