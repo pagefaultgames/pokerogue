@@ -218,6 +218,7 @@ export class TitlePhase extends Phase {
         const starters = getDailyRunStarters(seed);
         const startingLevel = globalScene.gameMode.getStartingLevel();
 
+        // TODO: Dedupe this
         const party = globalScene.getPlayerParty();
         const loadPokemonAssets: Promise<void>[] = [];
         for (const starter of starters) {
@@ -237,6 +238,11 @@ export class TitlePhase extends Phase {
             starter.nature,
           );
           starterPokemon.setVisible(false);
+          if (starter.moveset) {
+            // avoid validating daily run starter movesets which are pre-populated already
+            starterPokemon.tryPopulateMoveset(starter.moveset, true);
+          }
+
           party.push(starterPokemon);
           loadPokemonAssets.push(starterPokemon.loadAssets());
         }
