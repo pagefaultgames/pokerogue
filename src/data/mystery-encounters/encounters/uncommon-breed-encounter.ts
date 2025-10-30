@@ -15,7 +15,7 @@ import { PokemonMove } from "#moves/pokemon-move";
 import { queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
-  getRandomEncounterSpecies,
+  getRandomEncounterPokemon,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
   setEncounterExp,
@@ -62,7 +62,12 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
     // Calculate boss mon
     // Level equal to 2 below highest party member
     const level = getHighestLevelPlayerPokemon(false, true).level - 2;
-    const pokemon = getRandomEncounterSpecies(level, true, true);
+    const pokemon = getRandomEncounterPokemon({
+      level,
+      isBoss: true,
+      eventShinyRerolls: 2,
+      eventHiddenRerolls: 1,
+    });
 
     // Pokemon will always have one of its egg moves in its moveset
     const eggMoves = pokemon.getEggMoves();
