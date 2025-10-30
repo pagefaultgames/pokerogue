@@ -1,4 +1,5 @@
 import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species";
+import type { getRandomEncounterPokemon } from "#data/mystery-encounters/utils/encounter-phase-utils";
 import type { SpeciesId } from "#enums/species-id";
 import type { BooleanHolder } from "#utils/common";
 
@@ -10,43 +11,89 @@ export type SerializedSpeciesForm = {
   formIdx: number;
 };
 
-/**
- * Various configurations for generating a random encounter, including pulling from the ongoing event's encounter pool
- * If the mon is from the event encounter list, it may do an extra shiny or HA roll.
- * If a mon is already shiny, a reroll will attempt to upgrade its variant tier.
- * @param level the level of the mon
- * @param speciesFunction - the default function to be used to return the {@linkcode PokemonSpecies} to be encountered
- * @param isBoss whether the mon should be a Boss
- * @param includeSubLegendary - whether Sub-legendaries can be encountered, mainly for event encounters
- * @param includeLegendary - whether Legendaries can be encountered
- * @param includeMythical - whether Mythicals can be encountered
- * @param eventChance - the chance out of 100 to pick an event encounter
- * @param hiddenRerolls - number of rerolls for HA that should be attempted
- * @param shinyRerolls - number of rerolls for shininess/variant tier that should be attempted
- * @param eventHiddenRerolls - number of extra HA rerolls for event mons
- * @param eventShinyRerolls - number of extra shiny rerolls for event mons
- * @param hiddenAbilityChance - The overridden HA chance, defaults to base
- * @param shinyChance - The overridden shiny chance, defaults to base
- * @param maxShinyChance - The max shiny threshold after modifiers are applied. Values below 1 mean no maximum
- * @param speciesFilter - {@linkcode PokemonSpeciesFilter} filter for eligible mons, applied to event encounter pool
- * @param isEventEncounter - {@linkcode BooleanHolder} to let the caller know if it pulled from an event
- * @returns The EnemyPokemon for the requested encounter
- */
 export interface RandomEncounterParams {
+  /** The level of the mon */
   level: number;
+
+  /** A custom function used to return the {@linkcode PokemonSpecies} to generate */
   speciesFunction?: () => PokemonSpecies;
+
+  /** 
+   * Whether the Pokemon should be a Boss.
+   * @defaultValue `false`
+  */
   isBoss?: boolean;
+
+  /** 
+   * Whether Sub-legendaries can be encountered, mainly for event encounters
+   * @defaultValue `true`
+   */
   includeSubLegendary?: boolean;
+
+  /** 
+   * Whether Legendaries can be encountered
+   * @defaultValue `true`
+   */
   includeLegendary?: boolean;
+
+  /** 
+   * Whether Mythicals can be encountered
+   * @defaultValue `true`
+   */  
   includeMythical?: boolean;
+
+  /**
+   * The chance out of 100 to pick an event encounter
+   * @defaultValue `50`
+   */
   eventChance?: number;
+
+  /** 
+   * Number of rerolls for Hidden Ability (HA) that should be attempted
+   * @defaultValue `0`
+   */
   hiddenRerolls?: number;
+
+  /** 
+   * Number of rerolls for shininess/variants that should be attempted
+   * @defaultValue `0`
+   */
   shinyRerolls?: number;
+
+  /** 
+   * Number of extra HA rerolls for event mons 
+   * @defaultValue `0`
+   */
   eventHiddenRerolls?: number;
+
+  /** 
+   * Number of extra shiny rerolls for event mons 
+   * @defaultValue `0`
+   */
   eventShinyRerolls?: number;
+
+  /** 
+   * The overridden HA chance, defaults to base 
+   */
   hiddenAbilityChance?: number;
+
+  /** 
+   * The overridden shiny chance, defaults to base 
+   */
   shinyChance?: number;
+
+  /** 
+   * The max shiny threshold after modifiers are applied. Values below 1 mean no maximum
+   * @defaultValue `0` (no maximum)
+   */
   maxShinyChance?: number;
+
+  /** 
+   * An optional filter for eligible mons, applied to the event encounter pool.
+   * If omitted, no filter will be applied.
+   */
   speciesFilter?: PokemonSpeciesFilter;
+
+  /** An optional {@linkcode BooleanHolder} used to let the caller know if it pulled from an event. */
   isEventEncounter?: BooleanHolder;
 }
