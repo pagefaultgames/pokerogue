@@ -1646,7 +1646,8 @@ export class MoveHealBoostAbAttr extends AbAttr {
   }
 
   override canApply({ pokemon: user, opponent: target, move }: MoveHealBoostAbAttrParams): boolean {
-    return this.boostCondition?.(user, target, move) ?? true;
+    // TODO: Should this support optional conditions?
+    return this.boostCondition(user, target, move);
   }
 
   override apply({ healRatio }: MoveHealBoostAbAttrParams): void {
