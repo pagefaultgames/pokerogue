@@ -993,23 +993,8 @@ export function handleMysteryEncounterTurnStartEffects(): boolean {
 /**
  * Helper function for encounters such as {@linkcode UncommonBreedEncounter} which call for a random species including event encounters.
  * If the mon is from the event encounter list, it may do an extra shiny or HA roll.
- * @param level the level of the mon, which differs between MEs
- * @param speciesFunction - the default function used by the ME to return the {@linkcode PokemonSpecies} to be encountered
- * @param isBoss whether the mon should be a Boss
- * @param includeSubLegendary - whether Sub-legendaries can be encountered, mainly for event encounters
- * @param includeLegendary - whether Legendaries can be encountered
- * @param includeMythical - whether Mythicals can be encountered
- * @param eventChance - the chance out of 100 to pick an event encounter
- * @param hiddenRerolls - number of rerolls for HA that should be attempted
- * @param shinyRerolls - number of rerolls for shininess/variant tier that should be attempted
- * @param eventHiddenRerolls - number of extra HA rerolls for event mons
- * @param eventShinyRerolls - number of extra shiny rerolls for event mons
- * @param hiddenAbilityChance - The overridden HA chance, defaults to base
- * @param shinyChance - The overridden shiny chance, defaults to base
- * @param maxShinyChance - The max shiny threshold after modifiers are applied. Values below 1 mean no maximum
- * @param speciesFilter - {@linkcode PokemonSpeciesFilter} filter for eligible mons, applied to event encounter pool
- * @param isEventEncounter - {@linkcode BooleanHolder} to let the ME know if it pulled from an event
- * @returns The EnemyPokemon for the requested encounter
+ * @param params - The {@linkcode RandomEncounterParams} used to configure the encounter  
+ * @returns The generated {@linkcode EnemyPokemon} for the requested encounter
  */
 export function getRandomEncounterPokemon(params: RandomEncounterParams): EnemyPokemon {
   let {
