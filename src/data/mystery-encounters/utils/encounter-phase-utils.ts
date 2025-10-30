@@ -993,7 +993,7 @@ export function handleMysteryEncounterTurnStartEffects(): boolean {
 /**
  * Helper function for encounters such as {@linkcode UncommonBreedEncounter} which call for a random species including event encounters.
  * If the mon is from the event encounter list, it may do an extra shiny or HA roll.
- * @param params - The {@linkcode RandomEncounterParams} used to configure the encounter  
+ * @param params - The {@linkcode RandomEncounterParams} used to configure the encounter
  * @returns The generated {@linkcode EnemyPokemon} for the requested encounter
  */
 export function getRandomEncounterPokemon(params: RandomEncounterParams): EnemyPokemon {
