@@ -399,7 +399,7 @@ const timedEvents: readonly TimedEvent[] = [
     endDate: new Date(Date.UTC(2025, 10, 10)),
     bannerKey: "halloween2025",
     scale: 0.19,
-    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-419", "pt-BR", "zh-Hans", "zh-Hant"],
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-419", "pt-BR", "zh-Hans", "zh-Hant", "da", "ru"],
     shinyEncounterMultiplier: 2,
     shinyCatchMultiplier: 3,
     eventEncounters: [
