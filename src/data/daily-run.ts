@@ -1,42 +1,36 @@
-import { pokerogueApi } from "#api/pokerogue-api";
 import { globalScene } from "#app/global-scene";
 import { speciesStarterCosts } from "#balance/starters";
 import type { PokemonSpeciesForm } from "#data/pokemon-species";
 import { PokemonSpecies } from "#data/pokemon-species";
 import { BiomeId } from "#enums/biome-id";
+import { MoveId } from "#enums/move-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { SpeciesId } from "#enums/species-id";
-import type { Starter } from "#types/save-data";
-import { randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
+import type { Starter, StarterMoveset } from "#types/save-data";
+import { isBetween, randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { chunkString } from "#utils/strings";
 
 export interface DailyRunConfig {
   seed: number;
   starters: Starter;
 }
+type StarterTuple = [Starter, Starter, Starter];
 
-export function fetchDailyRunSeed(): Promise<string | null> {
-  return new Promise<string | null>((resolve, _reject) => {
-    pokerogueApi.daily.getSeed().then(dailySeed => {
-      resolve(dailySeed);
-    });
-  });
-}
-
-export function getDailyRunStarters(seed: string): Starter[] {
+export function getDailyRunStarters(seed: string): StarterTuple {
   const starters: Starter[] = [];
 
   globalScene.executeWithSeedOffset(
     () => {
-      const startingLevel = globalScene.gameMode.getStartingLevel();
-
       const eventStarters = getDailyEventSeedStarters(seed);
       if (eventStarters != null) {
         starters.push(...eventStarters);
         return;
       }
 
+      // TODO: explain this math
+      const startingLevel = globalScene.gameMode.getStartingLevel();
       const starterCosts: number[] = [];
       starterCosts.push(Math.min(Math.round(3.5 + Math.abs(randSeedGauss(1))), 8));
       starterCosts.push(randSeedInt(9 - starterCosts[0], 1));
@@ -57,9 +51,12 @@ export function getDailyRunStarters(seed: string): Starter[] {
     seed,
   );
 
-  return starters;
+  setDailyRunEventStarterMovesets(seed, starters as StarterTuple);
+
+  return starters as StarterTuple;
 }
 
+// TODO: Refactor this unmaintainable mess
 function getDailyRunStarter(starterSpeciesForm: PokemonSpeciesForm, startingLevel: number): Starter {
   const starterSpecies =
     starterSpeciesForm instanceof PokemonSpecies ? starterSpeciesForm : getPokemonSpecies(starterSpeciesForm.speciesId);
@@ -170,29 +167,82 @@ export function isDailyEventSeed(seed: string): boolean {
 }
 
 /**
+ * The length of a single numeric Move ID string.
+ * Must be updated whenever the `MoveId` enum gets a new digit!
+ */
+const MOVE_ID_STRING_LENGTH = 4;
+
+const MOVE_ID_SEED_REGEX = /(?<=\/moves)((?:\d{4}){0,4})(?:,((?:\d{4}){0,4}))?(?:,((?:\d{4}){0,4}))?/;
+
+/**
+ * Perform moveset post-processing on Daily run starters. \
+ * If the seed matches {@linkcode MOVE_ID_SEED_REGEX},
+ * the extracted Move IDs will be used to populate the starters' moveset instead.
+ * @param seed - The daily run seed
+ * @param starters - The previously generated starters; will have movesets mutated in place
+ */
+function setDailyRunEventStarterMovesets(seed: string, starters: StarterTuple): void {
+  const moveMatch: readonly string[] = MOVE_ID_SEED_REGEX.exec(seed)?.slice(1) ?? [];
+  if (moveMatch.length === 0) {
+    return;
+  }
+
+  if (!isBetween(moveMatch.length, 1, 3)) {
+    console.error(
+      "Invalid custom seeded moveset used for daily run seed!\nSeed: %s\nMatch contents: %s",
+      seed,
+      moveMatch,
+    );
+    return;
+  }
+
+  const moveIds = getEnumValues(MoveId);
+  for (const [i, moveStr] of moveMatch.entries()) {
+    if (!moveStr) {
+      // Fallback for empty capture groups from omitted entries
+      continue;
+    }
+    const starter = starters[i];
+    const parsedMoveIds = chunkString(moveStr, MOVE_ID_STRING_LENGTH).map(m => Number.parseInt(m) as MoveId);
+
+    if (parsedMoveIds.some(f => !moveIds.includes(f))) {
+      console.error("Invalid move IDs used for custom daily run seed moveset on starter %d:", i, parsedMoveIds);
+      continue;
+    }
+
+    starter.moveset = parsedMoveIds as StarterMoveset;
+  }
+}
+
+/**
  * Expects the seed to contain `/starters\d{18}/`
  * where the digits alternate between 4 digits for the species ID and 2 digits for the form index
  * (left padded with `0`s as necessary).
  * @returns An array of {@linkcode Starter}s, or `null` if no valid match.
  */
-export function getDailyEventSeedStarters(seed: string): Starter[] | null {
+// TODO: Rework this setup into JSON or similar - this is quite hard to maintain
+export function getDailyEventSeedStarters(seed: string): StarterTuple | null {
   if (!isDailyEventSeed(seed)) {
     return null;
   }
 
   const starters: Starter[] = [];
-  const match = /starters(\d{4})(\d{2})(\d{4})(\d{2})(\d{4})(\d{2})/g.exec(seed);
+  const speciesMatch = /starters(\d{4})(\d{2})(\d{4})(\d{2})(\d{4})(\d{2})/g.exec(seed)?.slice(1);
 
-  if (!match || match.length !== 7) {
+  if (!speciesMatch || speciesMatch.length !== 6) {
     return null;
   }
 
-  for (let i = 1; i < match.length; i += 2) {
-    const speciesId = Number.parseInt(match[i]) as SpeciesId;
-    const formIndex = Number.parseInt(match[i + 1]);
+  // TODO: Move these to server-side validation
+  const speciesIds = getEnumValues(SpeciesId);
 
-    if (!getEnumValues(SpeciesId).includes(speciesId)) {
-      console.warn("Invalid species ID used for custom daily run seed starter:", speciesId);
+  // generate each starter in turn
+  for (let i = 0; i < 3; i++) {
+    const speciesId = Number.parseInt(speciesMatch[2 * i]) as SpeciesId;
+    const formIndex = Number.parseInt(speciesMatch[2 * i + 1]);
+
+    if (!speciesIds.includes(speciesId)) {
+      console.error("Invalid species ID used for custom daily run seed starter:", speciesId);
       return null;
     }
 
@@ -202,7 +252,7 @@ export function getDailyEventSeedStarters(seed: string): Starter[] | null {
     starters.push(starter);
   }
 
-  return starters;
+  return starters as StarterTuple;
 }
 
 /**

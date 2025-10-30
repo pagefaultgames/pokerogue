@@ -5849,19 +5849,27 @@ export class PlayerPokemon extends Pokemon {
     }
   }
 
-  tryPopulateMoveset(moveset: StarterMoveset): boolean {
+  /**
+   * Attempt to populate this Pokemon's moveset based on those from a Starter
+   * @param moveset - The {@linkcode StarterMoveset} to use; will override corresponding slots
+   * of this Pokemon's moveset
+   * @param ignoreValidate - Whether to ignore validating the passed-in moveset; default `false`
+   */
+  tryPopulateMoveset(moveset: StarterMoveset, ignoreValidate = false): void {
+    // TODO: Why do we need to re-validate starter movesets after picking them?
     if (
-      !this.getSpeciesForm().validateStarterMoveset(
+      !ignoreValidate
+      && !this.getSpeciesForm().validateStarterMoveset(
         moveset,
         globalScene.gameData.starterData[this.species.getRootSpeciesId()].eggMoves,
       )
     ) {
-      return false;
+      return;
     }
 
-    this.moveset = moveset.map(m => new PokemonMove(m));
-
-    return true;
+    moveset.forEach((m, i) => {
+      this.moveset[i] = new PokemonMove(m);
+    });
   }
 
   /**
