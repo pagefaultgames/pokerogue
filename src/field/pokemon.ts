@@ -39,7 +39,7 @@ import {
   TrappedTag,
   TypeImmuneTag,
 } from "#data/battler-tags";
-import { getDailyEventSeedBoss } from "#data/daily-run";
+import { getDailyEventSeedBoss, getDailyEventSeedBossVariant } from "#data/daily-run";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import {
@@ -6387,8 +6387,13 @@ export class EnemyPokemon extends Pokemon {
         this.initShinySparkle();
       }
 
+      const eventBossVariant = getDailyEventSeedBossVariant(globalScene.seed);
+      if (eventBossVariant != null && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex)) {
+        this.shiny = true;
+      }
+
       if (this.shiny) {
-        this.variant = this.generateShinyVariant();
+        this.variant = eventBossVariant ?? this.generateShinyVariant();
         if (Overrides.ENEMY_VARIANT_OVERRIDE !== null) {
           this.variant = Overrides.ENEMY_VARIANT_OVERRIDE;
         }

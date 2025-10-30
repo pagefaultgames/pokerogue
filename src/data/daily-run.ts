@@ -6,6 +6,7 @@ import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { SpeciesId } from "#enums/species-id";
+import type { Variant } from "#sprites/variant";
 import type { Starter, StarterMoveset } from "#types/save-data";
 import { isBetween, randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
@@ -281,6 +282,31 @@ export function getDailyEventSeedBoss(seed: string): PokemonSpeciesForm | null {
 
   const starterForm = getPokemonSpeciesForm(speciesId, formIndex);
   return starterForm;
+}
+
+/**
+ * Expects the seed to contain `/boss\d{4}\d{2}\d{2}/`
+ * where the first 4 digits are the species ID, the next 2 digits are the form index, and the last 2 digits are the variant.
+ * Only the last 2 digits matter for the variant, and it is clamped to 0-2.
+ * (left padded with `0`s as necessary).
+ * @returns A {@linkcode Variant} to be used for the boss, or `null` if no valid match.
+ */
+export function getDailyEventSeedBossVariant(seed: string): Variant | null {
+  if (!isDailyEventSeed(seed)) {
+    return null;
+  }
+
+  const match = /boss\d{6}(\d{2})/g.exec(seed);
+  if (!match || match.length !== 2) {
+    return null;
+  }
+
+  const variant = Number.parseInt(match[1]) as Variant;
+  if (variant > 2) {
+    return null;
+  }
+
+  return variant;
 }
 
 /**
