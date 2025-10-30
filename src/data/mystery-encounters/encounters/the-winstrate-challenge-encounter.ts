@@ -45,6 +45,8 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter = MysteryEncounter
 )
   .withEncounterTier(MysteryEncounterTier.ROGUE)
   .withSceneWaveRangeRequirement(100, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
+  .withScenePartySizeRequirement(3, 6)
+  .withMaxAllowedEncounters(1)
   .withIntroSpriteConfigs([
     {
       spriteKey: "vito",
@@ -212,9 +214,9 @@ function endTrainerBattleAndShowDialogue(): Promise<void> {
         // Only trigger form change when Eiscue is in Noice form
         // Hardcoded Eiscue for now in case it is fused with another pokemon
         if (
-          pokemon.species.speciesId === SpeciesId.EISCUE &&
-          pokemon.hasAbility(AbilityId.ICE_FACE) &&
-          pokemon.formIndex === 1
+          pokemon.species.speciesId === SpeciesId.EISCUE
+          && pokemon.hasAbility(AbilityId.ICE_FACE)
+          && pokemon.formIndex === 1
         ) {
           globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
         }

@@ -28,7 +28,8 @@ export class CheckSwitchPhase extends BattlePhase {
 
     // ...if the user is playing in Set Mode
     if (globalScene.battleStyle === BattleStyle.SET) {
-      return super.end();
+      this.end();
+      return;
     }
 
     // ...if the checked Pokemon is somehow not on the field
@@ -39,21 +40,23 @@ export class CheckSwitchPhase extends BattlePhase {
 
     // ...if there are no other allowed Pokemon in the player's party to switch with
     if (
-      !globalScene
+      globalScene
         .getPlayerParty()
         .slice(1)
-        .filter(p => p.isActive()).length
+        .filter(p => p.isActive()).length === 0
     ) {
-      return super.end();
+      this.end();
+      return;
     }
 
     // ...or if any player Pokemon has an effect that prevents the checked Pokemon from switching
     if (
-      pokemon.getTag(BattlerTagType.FRENZY) ||
-      pokemon.isTrapped() ||
-      globalScene.getPlayerField().some(p => p.getTag(BattlerTagType.COMMANDED))
+      pokemon.getTag(BattlerTagType.FRENZY)
+      || pokemon.isTrapped()
+      || globalScene.getPlayerField().some(p => p.getTag(BattlerTagType.COMMANDED))
     ) {
-      return super.end();
+      this.end();
+      return;
     }
 
     globalScene.ui.showText(

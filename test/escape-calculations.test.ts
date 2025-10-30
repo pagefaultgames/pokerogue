@@ -7,6 +7,7 @@ import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
+// TODO: These tests are stupid and need to be redone
 describe("Escape chance calculations", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -76,9 +77,9 @@ describe("Escape chance calculations", () => {
       { pokemonSpeedRatio: 2, escapeAttempts: 3, expectedEscapeChance: 80 },
     ];
 
-    for (let i = 0; i < escapeChances.length; i++) {
-      // sets the number of escape attempts to the required amount
-      game.scene.currentBattle.escapeAttempts = escapeChances[i].escapeAttempts;
+    for (const check of escapeChances) {
+      // set the number of escape attempts to the required amount
+      game.scene.currentBattle.escapeAttempts = check.escapeAttempts;
       // set playerPokemon's speed to a multiple of the enemySpeed
       vi.spyOn(playerPokemon[0], "stats", "get").mockReturnValue([
         20,
@@ -86,10 +87,10 @@ describe("Escape chance calculations", () => {
         20,
         20,
         20,
-        escapeChances[i].pokemonSpeedRatio * enemySpeed,
+        check.pokemonSpeedRatio * enemySpeed,
       ]);
       const chance = phase.calculateEscapeChance(game.scene.currentBattle.escapeAttempts);
-      expect(chance).toBe(escapeChances[i].expectedEscapeChance);
+      expect(chance).toBe(check.expectedEscapeChance);
     }
   });
 
@@ -146,9 +147,9 @@ describe("Escape chance calculations", () => {
       { pokemonSpeedRatio: 2, escapeAttempts: 10, expectedEscapeChance: 95 },
     ];
 
-    for (let i = 0; i < escapeChances.length; i++) {
+    for (const check of escapeChances) {
       // sets the number of escape attempts to the required amount
-      game.scene.currentBattle.escapeAttempts = escapeChances[i].escapeAttempts;
+      game.scene.currentBattle.escapeAttempts = check.escapeAttempts;
       // set the first playerPokemon's speed to a multiple of the enemySpeed
       vi.spyOn(playerPokemon[0], "stats", "get").mockReturnValue([
         20,
@@ -156,7 +157,7 @@ describe("Escape chance calculations", () => {
         20,
         20,
         20,
-        Math.floor(escapeChances[i].pokemonSpeedRatio * totalEnemySpeed * playerASpeedPercentage),
+        Math.floor(check.pokemonSpeedRatio * totalEnemySpeed * playerASpeedPercentage),
       ]);
       // set the second playerPokemon's speed to the remaining value of speed
       vi.spyOn(playerPokemon[1], "stats", "get").mockReturnValue([
@@ -165,15 +166,13 @@ describe("Escape chance calculations", () => {
         20,
         20,
         20,
-        escapeChances[i].pokemonSpeedRatio * totalEnemySpeed - playerPokemon[0].stats[5],
+        check.pokemonSpeedRatio * totalEnemySpeed - playerPokemon[0].stats[5],
       ]);
       const chance = phase.calculateEscapeChance(game.scene.currentBattle.escapeAttempts);
       // checks to make sure the escape values are the same
-      expect(chance).toBe(escapeChances[i].expectedEscapeChance);
+      expect(chance).toBe(check.expectedEscapeChance);
       // checks to make sure the sum of the player's speed for all pokemon is equal to the appropriate ratio of the total enemy speed
-      expect(playerPokemon[0].stats[5] + playerPokemon[1].stats[5]).toBe(
-        escapeChances[i].pokemonSpeedRatio * totalEnemySpeed,
-      );
+      expect(playerPokemon[0].stats[5] + playerPokemon[1].stats[5]).toBe(check.pokemonSpeedRatio * totalEnemySpeed);
     }
   });
 
@@ -238,9 +237,9 @@ describe("Escape chance calculations", () => {
       { pokemonSpeedRatio: 6.1, escapeAttempts: 3, expectedEscapeChance: 25 },
     ];
 
-    for (let i = 0; i < escapeChances.length; i++) {
+    for (const check of escapeChances) {
       // sets the number of escape attempts to the required amount
-      game.scene.currentBattle.escapeAttempts = escapeChances[i].escapeAttempts;
+      game.scene.currentBattle.escapeAttempts = check.escapeAttempts;
       // set playerPokemon's speed to a multiple of the enemySpeed
       vi.spyOn(playerPokemon[0], "stats", "get").mockReturnValue([
         20,
@@ -248,10 +247,10 @@ describe("Escape chance calculations", () => {
         20,
         20,
         20,
-        escapeChances[i].pokemonSpeedRatio * enemySpeed,
+        check.pokemonSpeedRatio * enemySpeed,
       ]);
       const chance = phase.calculateEscapeChance(game.scene.currentBattle.escapeAttempts);
-      expect(chance).toBe(escapeChances[i].expectedEscapeChance);
+      expect(chance).toBe(check.expectedEscapeChance);
     }
   });
 
@@ -321,9 +320,9 @@ describe("Escape chance calculations", () => {
       { pokemonSpeedRatio: 5.2, escapeAttempts: 2, expectedEscapeChance: 25 },
     ];
 
-    for (let i = 0; i < escapeChances.length; i++) {
+    for (const check of escapeChances) {
       // sets the number of escape attempts to the required amount
-      game.scene.currentBattle.escapeAttempts = escapeChances[i].escapeAttempts;
+      game.scene.currentBattle.escapeAttempts = check.escapeAttempts;
       // set the first playerPokemon's speed to a multiple of the enemySpeed
       vi.spyOn(playerPokemon[0], "stats", "get").mockReturnValue([
         20,
@@ -331,7 +330,7 @@ describe("Escape chance calculations", () => {
         20,
         20,
         20,
-        Math.floor(escapeChances[i].pokemonSpeedRatio * totalEnemySpeed * playerASpeedPercentage),
+        Math.floor(check.pokemonSpeedRatio * totalEnemySpeed * playerASpeedPercentage),
       ]);
       // set the second playerPokemon's speed to the remaining value of speed
       vi.spyOn(playerPokemon[1], "stats", "get").mockReturnValue([
@@ -340,15 +339,13 @@ describe("Escape chance calculations", () => {
         20,
         20,
         20,
-        escapeChances[i].pokemonSpeedRatio * totalEnemySpeed - playerPokemon[0].stats[5],
+        check.pokemonSpeedRatio * totalEnemySpeed - playerPokemon[0].stats[5],
       ]);
       const chance = phase.calculateEscapeChance(game.scene.currentBattle.escapeAttempts);
       // checks to make sure the escape values are the same
-      expect(chance).toBe(escapeChances[i].expectedEscapeChance);
+      expect(chance).toBe(check.expectedEscapeChance);
       // checks to make sure the sum of the player's speed for all pokemon is equal to the appropriate ratio of the total enemy speed
-      expect(playerPokemon[0].stats[5] + playerPokemon[1].stats[5]).toBe(
-        escapeChances[i].pokemonSpeedRatio * totalEnemySpeed,
-      );
+      expect(playerPokemon[0].stats[5] + playerPokemon[1].stats[5]).toBe(check.pokemonSpeedRatio * totalEnemySpeed);
     }
   });
 });

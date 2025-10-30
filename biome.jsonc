@@ -1,7 +1,13 @@
+/*
+ * SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 {
-  "$schema": "https://biomejs.dev/schemas/2.0.0/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.2.5/schema.json",
   "vcs": {
-    "enabled": false,
+    "enabled": true,
     "clientKind": "git",
     "useIgnoreFile": true,
     "defaultBranch": "beta"
@@ -10,7 +16,7 @@
     "enabled": true,
     "useEditorconfig": true,
     "indentStyle": "space",
-    "includes": ["**", "!**/src/enums/**/*", "!**/src/data/balance/**/*"],
+    "includes": ["**", "!**/src/data/balance/**"],
     "lineWidth": 120
   },
   "files": {
@@ -19,21 +25,20 @@
     // and having to verify whether each individual file is ignored
     "includes": [
       "**",
-      "!**/dist/**/*",
-      "!**/build/**/*",
-      "!**/coverage/**/*",
-      "!**/public/**/*",
-      "!**/.github/**/*",
-      "!**/node_modules/**/*",
-      "!**/.vscode/**/*",
-      "!**/typedoc/**/*",
+      "!**/dist",
+      "!**/coverage",
+      "!**/assets",
+      "!**/locales",
+      "!**/.github",
+      "!**/node_modules",
+      "!**/typedoc",
       // TODO: lint css and html?
       "!**/*.css",
       "!**/*.html",
       // TODO: enable linting this file
       "!**/src/data/moves/move.ts",
       // this file is too big
-      "!**/src/data/balance/tms.ts"
+      "!**/src/data/balance/tm-species-map.ts"
     ]
   },
   "assist": {
@@ -48,28 +53,78 @@
       }
     }
   },
+  // TODO: Remove unneeded `options` blocks once biome's JSON schema is fixed to not require them
   "linter": {
     "enabled": true,
     "rules": {
       "recommended": true,
       "correctness": {
-        "noUndeclaredVariables": "off",
+        "noUndeclaredVariables": "error",
+        "useParseIntRadix": "off",
         "noUnusedVariables": "error",
         "noSwitchDeclarations": "error",
         "noVoidTypeReturn": "error",
         "noUnusedImports": {
           "level": "error",
-          "fix": "safe"
+          "fix": "safe",
+          "options": {}
         },
         "noUnusedFunctionParameters": "error",
         "noUnusedLabels": "error",
-        "noPrivateImports": "error"
+        "noPrivateImports": "error",
+        "useSingleJsDocAsterisk": "error",
+        "useJsonImportAttributes": "off" // "Import attributes are only supported when the '--module' option is set to 'esnext', 'node18', 'nodenext', or 'preserve'. ts(2823)"
       },
       "style": {
-        "useEnumInitializers": "off", // large enums like Moves/Species would make this cumbersome
+        "useExplicitLengthCheck": {
+          "level": "error",
+          "fix": "safe",
+          "options": {}
+        },
+        "useAtIndex": "error",
+        "noNegationElse": {
+          "level": "info", // TODO: Promote to error eventually
+          "fix": "unsafe", // duplicates else blocks
+          "options": {}
+        },
+        // TODO: Fix all instances of this and promote to `error` - this and enums are the 2 things
+        // barring us from `esModuleInterop`
+        "noParameterProperties": "warn",
+        "useConsistentBuiltinInstantiation": {
+          "level": "error",
+          "fix": "safe",
+          "options": {}
+        },
+        "noDefaultExport": "warn", // TODO: Fix `overrides.ts` and enable
+        "noShoutyConstants": "error",
+        "useThrowNewError": {
+          "level": "error",
+          "fix": "safe",
+          "options": {}
+        },
+        "useThrowOnlyError": "error",
+        "useTrimStartEnd": "error",
+        "useReadonlyClassProperties": {
+          "level": "info", // TODO: Graduate to error eventually
+          // NOTE: "checkAllProperties" has an immature implementation that
+          // causes many false positives across files. Enable if/when maturity improves
+          "options": { "checkAllProperties": false }
+        },
+        "useConsistentObjectDefinitions": {
+          "level": "error",
+          "options": { "syntax": "shorthand" }
+        },
+        "useCollapsedIf": "error",
+        "useCollapsedElseIf": "error",
+
+        "noSubstr": "error",
+        "noYodaExpression": "error",
+        "useForOf": "error",
+        "useEnumInitializers": "off", // large enums like MoveId/SpeciesId would make this cumbersome
         "useBlockStatements": {
           "level": "error",
-          "fix": "safe"
+          "fix": "safe",
+          "options": {}
         },
         "useConst": "error",
         "useImportType": "error",
@@ -80,9 +135,14 @@
           // TODO: Fix spots in the codebase where this flag would be triggered
           // and then set to "error" and re-enable the fixer
           "level": "warn",
-          "fix": "none"
+          "fix": "none",
+          "options": {}
         },
-        "useSingleVarDeclarator": "off",
+        "useSingleVarDeclarator": {
+          "level": "error",
+          "fix": "safe",
+          "options": {}
+        },
         "useNodejsImportProtocol": "off",
         "useTemplate": "off", // string concatenation is faster: https://stackoverflow.com/questions/29055518/are-es6-template-literals-faster-than-string-concatenation
         "useAsConstAssertion": "error",
@@ -100,58 +160,84 @@
               }
             }
           }
-        }
+        },
+
+        // TODO: Wait until the rule gets options for ignoring doc comments and/or different parameter names,
+        // and THEN enable it codebase-wide
+        "useUnifiedTypeSignatures": {
+          "level": "info",
+          "fix": "none",
+          "options": {}
+        },
+        "useGroupedAccessorPairs": "error",
+        "useObjectSpread": "error",
+        "useNumericSeparators": "off" // TODO: Consider enabling?
       },
       "suspicious": {
+        "useErrorMessage": "error",
+        "noEvolvingTypes": "warn", // TODO: Review and enable ASAP - this is VERY VERY BAD
+        "useNumberToFixedDigitsArgument": "error",
+        "useGuardForIn": "warn", // TODO: Review and enable ASAP - this is EVEN FRICKING WORSE
         "noDoubleEquals": "error",
         // While this would be a nice rule to enable, the current structure of the codebase makes this infeasible
         // due to being used for move/ability `args` params and save data-related code.
         // This can likely be enabled for all non-utils files once these are eventually reworked, but until then we leave it off.
         "noExplicitAny": "off",
         "noAssignInExpressions": "off",
-        "noPrototypeBuiltins": "off",
+        "noPrototypeBuiltins": "off", // TODO: enable this
         "noFallthroughSwitchClause": "error", // Prevents accidental automatic fallthroughs in switch cases (use disable comment if needed)
         "noImplicitAnyLet": "warn", // TODO: Refactor and make this an error
         "noRedeclare": "info", // TODO: Refactor and make this an error
-        "noGlobalIsNan": "off",
+        "noGlobalIsNan": "error",
         "noAsyncPromiseExecutor": "warn", // TODO: Refactor and make this an error
         "noVar": "error",
-        "noDocumentCookie": "off" // Firefox has minimal support for the "Cookie Store API"
+        "noDocumentCookie": "off", // Firefox has minimal support for the "Cookie Store API"
+        "noConstantBinaryExpressions": "error",
+        "noTsIgnore": "error",
+        "useIterableCallbackReturn": "warn" // TODO: Refactor and change to error
       },
       "complexity": {
+        "useWhile": "error",
+        "noVoid": "warn", // TODO: Review and enable ASAP - this is also bad
+        "noUselessStringConcat": "error",
         "noExcessiveCognitiveComplexity": "info", // TODO: Refactor and make this an error
-        "useLiteralKeys": "off",
+        "useLiteralKeys": "off", // TODO: enable?
         "noForEach": "off", // Foreach vs for of is not that simple.
         "noUselessSwitchCase": "off", // Explicit > Implicit
         "noUselessConstructor": "error",
         "noBannedTypes": "warn", // TODO: Refactor and make this an error
         "noThisInStatic": "error",
         "noUselessThisAlias": "error",
-        "noUselessTernary": "error"
+        "noUselessTernary": "error",
+        "useIndexOf": "error"
       },
       "performance": {
         "noNamespaceImport": "error",
-        "noDelete": "error"
+        "noDelete": "error",
+        "noBarrelFile": "error"
       },
       "nursery": {
-        "useAdjacentGetterSetter": "error",
-        "noConstantBinaryExpression": "error",
-        "noTsIgnore": "error",
-        "noAwaitInLoop": "off",
-        "useJsonImportAttribute": "off", // "Import attributes are only supported when the '--module' option is set to 'esnext', 'node18', 'nodenext', or 'preserve'. ts(2823)"
-        "useIndexOf": "error",
-        "useObjectSpread": "error",
-        "useNumericSeparators": "off", // TODO: enable?
-        "useIterableCallbackReturn": "warn", // TODO: refactor and make "error"
-        "noShadow": "warn" // TODO: refactor and make "error"
+        "noUselessUndefined": "error",
+        "useMaxParams": {
+          "level": "info", // TODO: Change to "error"... eventually...
+          "options": { "max": 7 }
+        },
+        "noShadow": "warn", // TODO: refactor and make "error"
+        "noNonNullAssertedOptionalChain": "warn", // TODO: refactor and make "error"
+        "noDuplicateDependencies": "error",
+        "noImportCycles": "error",
+        // TODO: Change to error once promises are used properly
+        "noMisusedPromises": "info"
       }
     }
   },
   "javascript": {
     "formatter": {
       "quoteStyle": "double",
-      "arrowParentheses": "asNeeded"
+      "arrowParentheses": "asNeeded",
+      "operatorLinebreak": "before"
     },
+    "globals": ["Phaser"],
     "parser": {
       "jsxEverywhere": false
     }
@@ -166,7 +252,7 @@
             "noNamespaceImport": "off" // this is required for `vi.spyOn` to work in some tests
           },
           "style": {
-            "noNonNullAssertion": "off"
+            "noNonNullAssertion": "off" // tedious in some tests
           },
           "nursery": {
             "noFloatingPromises": "error"
@@ -175,10 +261,10 @@
       }
     },
 
-    // Overrides to prevent unused import removal inside `overrides.ts` and enums files (for TSDoc linkcodes),
-    // as well as in all TS files in `scripts/` (which are assumed to be boilerplate templates).
+    // Overrides to prevent unused import removal inside `overrides.ts`, enums & `.d.ts` files (for TSDoc linkcodes),
+    // as well as inside script boilerplate files (whose imports will _presumably_ be used in the generated file).
     {
-      "includes": ["**/src/overrides.ts", "**/src/enums/**/*", "**/scripts/**/*.ts", "**/*.d.ts"],
+      "includes": ["**/src/overrides.ts", "**/src/enums/**/*", "**/*.d.ts", "scripts/**/*.boilerplate.ts"],
       "linter": {
         "rules": {
           "correctness": {
@@ -188,7 +274,7 @@
       }
     },
     {
-      "includes": ["**/src/overrides.ts", "**/scripts/**/*.ts"],
+      "includes": ["**/src/overrides.ts"],
       "linter": {
         "rules": {
           "style": {

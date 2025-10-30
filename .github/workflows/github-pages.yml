@@ -20,31 +20,45 @@ jobs:
   pages:
     name: Github Pages
     if: github.repository == 'pagefaultgames/pokerogue'
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     env:
-      api-dir: ./
-
-    strategy:
-      fail-fast: false
+      docs-dir: ./pokerogue_docs
+      # Only push docs when running on pushes to main/beta
+      DRY_RUN: ${{github.event_name != 'push' || (github.ref_name != 'beta' && github.ref_name != 'main')}}
 
     steps:
       - name: Checkout repository for Typedoc
         uses: actions/checkout@v4
         with:
-          submodules: 'recursive'
           path: pokerogue_docs
 
-      - name: Install OS package
+      - name: Get submodule ref
+        id: asset-submodule-ref
         run: |
-          sudo apt update
-          sudo apt install -y git openssh-client
+          cd pokerogue_docs
+          SUBMODULE_REF=$(git submodule status assets | awk '{print $1}' | sed 's/^-//')
+          echo "asset_ref=$SUBMODULE_REF" >> $GITHUB_OUTPUT
+          rm -rf assets
 
+      - name: Checkout asset submodule
+        uses: actions/checkout@v4
+        with:
+          repository: 'pagefaultgames/pokerogue-assets'
+          ref: ${{ steps.asset-submodule-ref.asset_ref }}
+          path: pokerogue_docs/assets
+          sparse-checkout: |
+            images/pokemon/variant/_exp_masterlist.json
+            images/pokemon/variant/_masterlist.json
+            images/logo.png
+          sparse-checkout-cone-mode: true
+          
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 10
 
-      - name: Setup Node 22.14.1
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version-file: "pokerogue_docs/.nvmrc"
@@ -57,26 +71,24 @@ jobs:
           ref: gh-pages
 
       - name: Install Node.js dependencies
-        working-directory: ${{env.api-dir}}
-        run: |
-          cd pokerogue_docs
-          pnpm i
+        working-directory: ${{env.docs-dir}}
+        run: pnpm i
 
       - name: Generate Typedoc docs
-        working-directory: ${{env.api-dir}}
-        run: |
-          cd pokerogue_docs
-          pnpm exec typedoc --out /tmp/docs --githubPages false --entryPoints ./src/
+        working-directory: ${{env.docs-dir}}
+        env:
+          REF_NAME: ${{github.ref_name}}
+          DRY_RUN: ${{env.DRY_RUN}}
+        run: pnpm typedoc
 
       - name: Commit & Push docs
-        if: github.event_name == 'push' && (github.ref_name == 'beta' || github.ref_name == 'main')
+        # env vars are stored as strings instead of booleans (hence why an explicit check is required)
+        if: ${{ env.DRY_RUN == 'false'}}
         run: |
           cd pokerogue_gh
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
-          mkdir -p $GITHUB_REF_NAME
-          rm -rf $GITHUB_REF_NAME/*
-          cp -r /tmp/docs/. $GITHUB_REF_NAME
+          rsync -rd --delete /tmp/docs/ $GITHUB_REF_NAME
           git add $GITHUB_REF_NAME
-          git commit --allow-empty -m "[skip ci] Deploy docs"
+          git commit -m "[skip ci] Deploy docs"
           git push

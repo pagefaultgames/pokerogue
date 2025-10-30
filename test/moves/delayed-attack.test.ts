@@ -99,7 +99,7 @@ describe("Moves - Delayed Attacks", () => {
     expectFutureSightActive(0);
     const enemy = game.field.getEnemyPokemon();
     expect(enemy).not.toHaveFullHp();
-    expect(game.textInterceptor.logs).toContain(
+    expect(game).toHaveShownMessage(
       i18next.t("moveTriggers:tookMoveAttack", {
         pokemonName: getPokemonNameWithAffix(enemy),
         moveName: allMoves[move].name,
@@ -193,7 +193,7 @@ describe("Moves - Delayed Attacks", () => {
     // All attacks have concluded at this point, unshifting new `MoveEffectPhase`s to the queue.
     expectFutureSightActive(0);
 
-    const MEPs = game.scene.phaseManager.phaseQueue.filter(p => p.is("MoveEffectPhase"));
+    const MEPs = game.scene.phaseManager["phaseQueue"].findAll("MoveEffectPhase");
     expect(MEPs).toHaveLength(4);
     expect(MEPs.map(mep => mep.getPokemon())).toEqual(oldOrder);
   });
@@ -227,7 +227,7 @@ describe("Moves - Delayed Attacks", () => {
 
     expect(karp).toHaveFullHp();
     expect(feebas).toHaveFullHp();
-    expect(game.textInterceptor.logs).not.toContain(
+    expect(game).not.toHaveShownMessage(
       i18next.t("moveTriggers:tookMoveAttack", {
         pokemonName: getPokemonNameWithAffix(karp),
         moveName: allMoves[MoveId.FUTURE_SIGHT].name,
@@ -256,7 +256,7 @@ describe("Moves - Delayed Attacks", () => {
     await passTurns(2);
 
     expect(enemy1).not.toHaveFullHp();
-    expect(game.textInterceptor.logs).toContain(
+    expect(game).toHaveShownMessage(
       i18next.t("moveTriggers:tookMoveAttack", {
         pokemonName: getPokemonNameWithAffix(enemy1),
         moveName: allMoves[MoveId.FUTURE_SIGHT].name,
@@ -284,7 +284,7 @@ describe("Moves - Delayed Attacks", () => {
 
     expectFutureSightActive(0);
     expect(enemy1).toHaveFullHp();
-    expect(game.textInterceptor.logs).not.toContain(
+    expect(game).not.toHaveShownMessage(
       i18next.t("moveTriggers:tookMoveAttack", {
         pokemonName: getPokemonNameWithAffix(enemy1),
         moveName: allMoves[MoveId.FUTURE_SIGHT].name,
@@ -321,7 +321,7 @@ describe("Moves - Delayed Attacks", () => {
 
     expect(enemy1).toHaveFullHp();
     expect(enemy2).not.toHaveFullHp();
-    expect(game.textInterceptor.logs).toContain(
+    expect(game).toHaveShownMessage(
       i18next.t("moveTriggers:tookMoveAttack", {
         pokemonName: getPokemonNameWithAffix(enemy2),
         moveName: allMoves[MoveId.FUTURE_SIGHT].name,
@@ -354,7 +354,7 @@ describe("Moves - Delayed Attacks", () => {
     // Player Normalize was not applied due to being off field
     const enemy = game.field.getEnemyPokemon();
     expect(enemy).not.toHaveFullHp();
-    expect(game.textInterceptor.logs).toContain(
+    expect(game).toHaveShownMessage(
       i18next.t("moveTriggers:tookMoveAttack", {
         pokemonName: getPokemonNameWithAffix(enemy),
         moveName: allMoves[MoveId.DOOM_DESIRE].name,

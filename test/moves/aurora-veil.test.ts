@@ -139,17 +139,8 @@ const getMockedMoveDamage = (defender: Pokemon, attacker: Pokemon, move: Move) =
   const multiplierHolder = new NumberHolder(1);
   const side = defender.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
-  if (globalScene.arena.getTagOnSide(ArenaTagType.AURORA_VEIL, side)) {
-    if (move.getAttrs("CritOnlyAttr").length === 0) {
-      globalScene.arena.applyTagsForSide(
-        ArenaTagType.AURORA_VEIL,
-        side,
-        false,
-        attacker,
-        move.category,
-        multiplierHolder,
-      );
-    }
+  if (globalScene.arena.getTagOnSide(ArenaTagType.AURORA_VEIL, side) && move.getAttrs("CritOnlyAttr").length === 0) {
+    globalScene.arena.applyTagsForSide(ArenaTagType.AURORA_VEIL, side, attacker, move.category, multiplierHolder);
   }
 
   return move.power * multiplierHolder.value;

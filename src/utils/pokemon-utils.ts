@@ -1,8 +1,11 @@
+import { MAX_TERAS_PER_ARENA } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { POKERUS_STARTER_COUNT, speciesStarterCosts } from "#balance/starters";
 import { allSpecies } from "#data/data-lists";
 import type { PokemonSpecies, PokemonSpeciesForm } from "#data/pokemon-species";
-import type { SpeciesId } from "#enums/species-id";
+import { BattlerIndex } from "#enums/battler-index";
+import { SpeciesId } from "#enums/species-id";
+import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { randSeedItem } from "./common";
 
 /**
@@ -18,7 +21,8 @@ export function getPokemonSpecies(species: SpeciesId | SpeciesId[]): PokemonSpec
     species = species[Math.floor(Math.random() * species.length)];
   }
   if (species >= 2000) {
-    return allSpecies.find(s => s.speciesId === species)!; // TODO: is this bang correct?
+    // the `!` is safe, `allSpecies` is static and contains all `SpeciesId`s
+    return allSpecies.find(s => s.speciesId === species)!;
   }
   return allSpecies[species - 1];
 }
@@ -80,7 +84,7 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
   let fragA: string;
   let fragB: string;
 
-  fragA = splitNameA.length === 1 ? (fragAMatch ? fragAMatch[1] : speciesAName) : splitNameA[splitNameA.length - 1];
+  fragA = splitNameA.length === 1 ? (fragAMatch ? fragAMatch[1] : speciesAName) : splitNameA.at(-1)!;
 
   if (splitNameB.length === 1) {
     if (fragBMatch) {
@@ -101,7 +105,7 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
       fragB = speciesBName;
     }
   } else {
-    fragB = splitNameB[splitNameB.length - 1];
+    fragB = splitNameB.at(-1)!;
   }
 
   if (splitNameA.length > 1) {
@@ -122,4 +126,69 @@ export function getPokemonSpeciesForm(species: SpeciesId, formIndex: number): Po
     return retSpecies.forms[formIndex];
   }
   return retSpecies;
+}
+
+/**
+ * Return whether two battler indices are considered allies.
+ * To instead check with {@linkcode Pokemon} objects, use {@linkcode Pokemon.isOpponent}.
+ * @param a - First battler index
+ * @param b - Second battler index
+ * @returns Whether the two battler indices are allies. Always `false` if either index is `ATTACKER`.
+ */
+export function areAllies(a: BattlerIndex, b: BattlerIndex): boolean {
+  if (a === BattlerIndex.ATTACKER || b === BattlerIndex.ATTACKER) {
+    return false;
+  }
+  return (
+    (a === BattlerIndex.PLAYER || a === BattlerIndex.PLAYER_2)
+    === (b === BattlerIndex.PLAYER || b === BattlerIndex.PLAYER_2)
+  );
+}
+
+/**
+ * Determine whether an enemy Pokémon will Terastallize the user
+ *
+ * Does not check if the Pokémon is allowed to Terastallize (e.g., if it's a mega)
+ * @param pokemon - The Pokémon to check
+ * @returns Whether the Pokémon will Terastallize
+ *
+ * @remarks
+ * Should really only be called with an enemy Pokémon, but will technically work with any Pokémon.
+ *
+ * @privateRemarks
+ * Assumes that Pokémon without a trainer will never tera, so this must be changed if
+ * a wild Pokémon is allowed to tera, e.g. for a Mystery Encounter.
+ */
+export function willTerastallize(pokemon: Pokemon): boolean {
+  // cast is safe, as if it is just a Pokémon, initialTeamIndex will be undefined triggering the null check
+  const initialTeamIndex = (pokemon as EnemyPokemon).initialTeamIndex;
+  return (
+    initialTeamIndex != null
+    && pokemon.hasTrainer()
+    && (globalScene.currentBattle?.trainer?.config.trainerAI.instantTeras.includes(initialTeamIndex) ?? false)
+  );
+}
+
+/**
+ * Determine whether the Pokémon's species is tera capable, and that the player has acquired the tera orb.
+ * @param pokemon - The Pokémon to check
+ * @returns Whether
+ */
+export function canSpeciesTera(pokemon: Pokemon): boolean {
+  const hasTeraMod = globalScene.findModifier(modifier => modifier.is("TerastallizeAccessModifier")) != null;
+  const isBlockedForm = pokemon.isMega() || pokemon.isMax() || pokemon.hasSpecies(SpeciesId.NECROZMA, "ultra");
+  return hasTeraMod && !isBlockedForm;
+}
+
+/**
+ * Same as {@linkcode canSpeciesTera}, but also checks that the player has not already used their tera in the arena.
+ *
+ * @remarks
+ * ⚠️ This does not account for tera commands that may be pending, so this should not be used during command selection!
+ * @param pokemon - The Pokémon to check
+ * @returns Whether the Pokémon can Terastallize
+ */
+export function canTerastallize(pokemon: PlayerPokemon): boolean {
+  const hasAvailableTeras = globalScene.arena.playerTerasUsed < MAX_TERAS_PER_ARENA;
+  return hasAvailableTeras && canSpeciesTera(pokemon);
 }

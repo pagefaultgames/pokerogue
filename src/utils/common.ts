@@ -1,9 +1,10 @@
 import { pokerogueApi } from "#api/pokerogue-api";
+import { bypassLogin, isDev } from "#constants/app-constants";
+import { BiomeId } from "#enums/biome-id";
 import { MoneyFormat } from "#enums/money-format";
 import type { Variant } from "#sprites/variant";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
-
-export type nil = null | undefined;
 
 export const MissingTextureKey = "__MISSING";
 
@@ -125,33 +126,25 @@ export function randSeedFloat(): number {
   return Phaser.Math.RND.frac();
 }
 
-export function randItem<T>(items: T[]): T {
+export function randItem<T>(items: ArrayLike<T>): T {
   return items.length === 1 ? items[0] : items[randInt(items.length)];
 }
 
-export function randSeedItem<T>(items: T[]): T {
+export function randSeedItem<T>(items: ArrayLike<T>): T {
   return items.length === 1 ? items[0] : Phaser.Math.RND.pick(items);
 }
 
-export function randSeedWeightedItem<T>(items: T[]): T {
-  return items.length === 1 ? items[0] : Phaser.Math.RND.weightedPick(items);
-}
-
 /**
- * Shuffle a list using the seeded rng. Utilises the Fisher-Yates algorithm.
- * @param {Array} items An array of items.
- * @returns {Array} A new shuffled array of items.
+ * Shuffle a list in place using the seeded rng and the Fisher-Yates algorithm.
+ * @param items - An array of items.
+ * @returns The same `items` array, now shuffled in place.
  */
 export function randSeedShuffle<T>(items: T[]): T[] {
-  if (items.length <= 1) {
-    return items;
-  }
-  const newArray = items.slice(0);
   for (let i = items.length - 1; i > 0; i--) {
     const j = Phaser.Math.RND.integerInRange(0, i);
-    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    [items[i], items[j]] = [items[j], items[i]];
   }
-  return newArray;
+  return items;
 }
 
 export function getFrameMs(frameCount: number): number {
@@ -180,7 +173,7 @@ export function getPlayTimeString(totalSeconds: number): string {
  * @param id 32-bit number
  * @returns An array of six numbers corresponding to 5-bit chunks from {@linkcode id}
  */
-export function getIvsFromId(id: number): number[] {
+export function getIvsFromId(id: number): [number, number, number, number, number, number] {
   return [
     (id & 0x3e000000) >>> 25,
     (id & 0x01f00000) >>> 20,
@@ -276,42 +269,22 @@ export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>):
 }
 
 export const sessionIdKey = "pokerogue_sessionId";
-// Check if the current hostname is 'localhost' or an IP address, and ensure a port is specified
-export const isLocal =
-  ((window.location.hostname === "localhost" || /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/.test(window.location.hostname)) &&
-    window.location.port !== "") ||
-  window.location.hostname === "";
 
-/**
- * @deprecated Refer to [pokerogue-api.ts](./plugins/api/pokerogue-api.ts) instead
- */
-export const localServerUrl =
-  import.meta.env.VITE_SERVER_URL ?? `http://${window.location.hostname}:${window.location.port + 1}`;
-
-/**
- * Set the server URL based on whether it's local or not
- *
- * @deprecated Refer to [pokerogue-api.ts](./plugins/api/pokerogue-api.ts) instead
- */
-export const apiUrl = localServerUrl ?? "https://api.pokerogue.net";
-// used to disable api calls when isLocal is true and a server is not found
-export let isLocalServerConnected = true;
+/** Used to disable api calls when `isDev` is true and a server is not found */
+export let isLocalServerConnected = !bypassLogin;
 
 /**
  * When locally running the game, "pings" the local server
  * with a GET request to verify if a server is running,
  * sets isLocalServerConnected based on results
  */
-export async function localPing() {
-  if (isLocal) {
+export async function localPing(): Promise<void> {
+  if (isDev) {
     const titleStats = await pokerogueApi.getGameTitleStats();
     isLocalServerConnected = !!titleStats;
     console.log("isLocalServerConnected:", isLocalServerConnected);
   }
 }
-
-/** Alias for the constructor of a class */
-export type Constructor<T> = new (...args: unknown[]) => T;
 
 export class BooleanHolder {
   public value: boolean;
@@ -358,10 +331,10 @@ export function rgbToHsv(r: number, g: number, b: number) {
 
 /**
  * Compare color difference in RGB
- * @param {Array} rgb1 First RGB color in array
- * @param {Array} rgb2 Second RGB color in array
+ * @param rgb1 First RGB color in array
+ * @param rgb2 Second RGB color in array
  */
-export function deltaRgb(rgb1: number[], rgb2: number[]): number {
+export function deltaRgb(rgb1: readonly number[], rgb2: readonly number[]): number {
   const [r1, g1, b1] = rgb1;
   const [r2, g2, b2] = rgb2;
   const drp2 = Math.pow(r1 - r2, 2);
@@ -385,7 +358,7 @@ export function rgbHexToRgba(hex: string) {
   };
 }
 
-export function rgbaToInt(rgba: number[]): number {
+export function rgbaToInt(rgba: readonly number[]): number {
   return (rgba[0] << 24) + (rgba[1] << 16) + (rgba[2] << 8) + rgba[3];
 }
 
@@ -426,13 +399,13 @@ export function hasAllLocalizedSprites(lang?: string): boolean {
 
   switch (lang) {
     case "es-ES":
-    case "es-MX":
+    case "es-419":
     case "fr":
     case "da":
     case "de":
     case "it":
-    case "zh-CN":
-    case "zh-TW":
+    case "zh-Hans":
+    case "zh-Hant":
     case "pt-BR":
     case "ro":
     case "tr":
@@ -477,15 +450,6 @@ export function truncateString(str: string, maxLength = 10) {
 }
 
 /**
- * Report whether a given value is nullish (`null`/`undefined`).
- * @param val - The value whose nullishness is being checked
- * @returns `true` if `val` is either `null` or `undefined`
- */
-export function isNullOrUndefined(val: any): val is null | undefined {
-  return val === null || val === undefined;
-}
-
-/**
  * This function is used in the context of a Pokémon battle game to calculate the actual integer damage value from a float result.
  * Many damage calculation formulas involve various parameters and result in float values.
  * The actual damage applied to a Pokémon's HP must be an integer.
@@ -509,7 +473,7 @@ export function getLocalizedSpriteKey(baseKey: string) {
 }
 
 /**
- * Check if a number is **inclusively** between two numbers
+ * Check if a number is **inclusively** between two numbers.
  * @param num - the number to check
  * @param min - the minimum value (inclusive)
  * @param max - the maximum value (inclusive)
@@ -541,4 +505,20 @@ export function getShinyDescriptor(variant: Variant): string {
 export function coerceArray<T>(input: T): T extends any[] ? T : [T];
 export function coerceArray<T>(input: T): T | [T] {
   return Array.isArray(input) ? input : [input];
+}
+
+export function getBiomeName(biome: BiomeId | -1) {
+  if (biome === -1) {
+    return i18next.t("biome:unknownLocation");
+  }
+  switch (biome) {
+    case BiomeId.GRASS:
+      return i18next.t("biome:grass");
+    case BiomeId.RUINS:
+      return i18next.t("biome:ruins");
+    case BiomeId.END:
+      return i18next.t("biome:end");
+    default:
+      return i18next.t(`biome:${toCamelCase(BiomeId[biome])}`);
+  }
 }

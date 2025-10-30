@@ -168,7 +168,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
     const config: EnemyPartyConfig = {
       pokemonConfigs: [
         {
-          species: species,
+          species,
           dataSource: oricorioData,
           isBoss: true,
           // Gets +1 to all stats except SPD on battle start

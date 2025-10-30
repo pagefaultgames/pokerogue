@@ -1,18 +1,32 @@
-import { defineProject } from "vitest/config";
+/*
+ * SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
+import { defineConfig } from "vitest/config";
 import { BaseSequencer, type TestSpecification } from "vitest/node";
 import { defaultConfig } from "./vite.config";
 
-export default defineProject(({ mode }) => ({
+// biome-ignore lint/style/noDefaultExport: required for vitest
+export default defineConfig(({ mode }) => ({
   ...defaultConfig,
   test: {
+    reporters: process.env.GITHUB_ACTIONS
+      ? ["github-actions", "./test/test-utils/reporters/custom-default-reporter.ts"]
+      : ["./test/test-utils/reporters/custom-default-reporter.ts"],
     env: {
       TZ: "UTC",
     },
-    testTimeout: 20000,
-    setupFiles: ["./test/font-face.setup.ts", "./test/vitest.setup.ts", "./test/matchers.setup.ts"],
+    testTimeout: 20_000,
+    slowTestThreshold: 10_000,
+    // TODO: Consider enabling
+    // expect: {requireAssertions: true},
+    setupFiles: ["./test/setup/font-face.setup.ts", "./test/setup/vitest.setup.ts", "./test/setup/matchers.setup.ts"],
     sequence: {
       sequencer: MySequencer,
     },
+    includeTaskLocation: true,
     environment: "jsdom" as const,
     environmentOptions: {
       jsdom: {

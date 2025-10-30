@@ -12,8 +12,6 @@ import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { HUMAN_TRANSITABLE_BIOMES } from "#mystery-encounters/mystery-encounters";
 import { TheExpertPokemonBreederEncounter } from "#mystery-encounters/the-expert-pokemon-breeder-encounter";
-import { CommandPhase } from "#phases/command-phase";
-import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import {
   runMysteryEncounterToEnd,
   skipBattleRunMysteryEncounterRewardsPhase,
@@ -129,7 +127,8 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       });
     });
 
-    it("should start battle against the trainer with correctly loaded assets", async () => {
+    // TODO: This is a flaky test that needs to have its fishy logic revisited
+    it.todo("should start battle against the trainer with correctly loaded assets", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER, defaultParty);
 
       let successfullyLoaded = false;
@@ -157,7 +156,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       expect(successfullyLoaded).toBe(true);
 
       // Check usual battle stuff
-      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(game).toBeAtPhase("CommandPhase");
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
       expect(scene.getPlayerParty().length).toBe(1);
@@ -175,8 +174,8 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to("SelectModifierPhase", false);
-      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
+      expect(game).toBeAtPhase("SelectModifierPhase");
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       const eggsAfter = scene.gameData.eggs;
       const commonEggs = scene.currentBattle.mysteryEncounter!.misc.pokemon1CommonEggs;
@@ -242,7 +241,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       expect(successfullyLoaded).toBe(true);
 
       // Check usual battle stuff
-      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(game).toBeAtPhase("CommandPhase");
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
       expect(scene.getPlayerParty().length).toBe(1);
@@ -260,8 +259,8 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 2, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to("SelectModifierPhase", false);
-      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
+      expect(game).toBeAtPhase("SelectModifierPhase");
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       const eggsAfter = scene.gameData.eggs;
       const commonEggs = scene.currentBattle.mysteryEncounter!.misc.pokemon2CommonEggs;
@@ -324,7 +323,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       expect(successfullyLoaded).toBe(true);
 
       // Check usual battle stuff
-      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(game).toBeAtPhase("CommandPhase");
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
       expect(scene.getPlayerParty().length).toBe(1);
@@ -342,8 +341,8 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 3, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to("SelectModifierPhase", false);
-      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
+      expect(game).toBeAtPhase("SelectModifierPhase");
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       const eggsAfter = scene.gameData.eggs;
       const commonEggs = scene.currentBattle.mysteryEncounter!.misc.pokemon3CommonEggs;

@@ -25,7 +25,8 @@ import {
   StatusEffectRequirement,
   WaveRangeRequirement,
 } from "#mystery-encounters/mystery-encounter-requirements";
-import { coerceArray, isNullOrUndefined, randSeedInt } from "#utils/common";
+import { coerceArray } from "#utils/array";
+import { randSeedInt } from "#utils/common";
 import { capitalizeFirstLetter } from "#utils/strings";
 
 export interface EncounterStartOfBattleEffect {
@@ -275,7 +276,7 @@ export class MysteryEncounter implements IMysteryEncounter {
   private seedOffset?: any;
 
   constructor(encounter: IMysteryEncounter | null) {
-    if (!isNullOrUndefined(encounter)) {
+    if (encounter != null) {
       Object.assign(this, encounter);
     }
     this.encounterTier = this.encounterTier ?? MysteryEncounterTier.COMMON;
@@ -576,10 +577,9 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    */
 
   /**
-   * @static Defines the type of encounter which is used as an identifier, should be tied to a unique MysteryEncounterType
-   * NOTE: if new functions are added to {@linkcode MysteryEncounter} class
+   * Defines the type of encounter which is used as an identifier, should be tied to a unique MysteryEncounterType
    * @param encounterType
-   * @returns this
+   * @returns a new instance of MysteryEncounterBuilder with encounterType set
    */
   static withEncounterType(
     encounterType: MysteryEncounterType,
@@ -658,7 +658,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   withIntroSpriteConfigs(
     spriteConfigs: MysteryEncounterSpriteConfig[],
   ): this & Pick<IMysteryEncounter, "spriteConfigs"> {
-    return Object.assign(this, { spriteConfigs: spriteConfigs });
+    return Object.assign(this, { spriteConfigs });
   }
 
   withIntroDialogue(dialogue: MysteryEncounterDialogue["intro"] = []): this {
@@ -703,7 +703,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @returns
    */
   withEncounterTier(encounterTier: MysteryEncounterTier): this & Pick<IMysteryEncounter, "encounterTier"> {
-    return Object.assign(this, { encounterTier: encounterTier });
+    return Object.assign(this, { encounterTier });
   }
 
   /**
@@ -753,7 +753,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   withContinuousEncounter(
     continuousEncounter: boolean,
   ): this & Required<Pick<IMysteryEncounter, "continuousEncounter">> {
-    return Object.assign(this, { continuousEncounter: continuousEncounter });
+    return Object.assign(this, { continuousEncounter });
   }
 
   /**
@@ -807,7 +807,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   withMaxAllowedEncounters(
     maxAllowedEncounters: number,
   ): this & Required<Pick<IMysteryEncounter, "maxAllowedEncounters">> {
-    return Object.assign(this, { maxAllowedEncounters: maxAllowedEncounters });
+    return Object.assign(this, { maxAllowedEncounters });
   }
 
   /**
@@ -821,7 +821,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
     requirement: EncounterSceneRequirement,
   ): this & Required<Pick<IMysteryEncounter, "requirements">> {
     if (requirement instanceof EncounterPokemonRequirement) {
-      Error("Incorrectly added pokemon requirement as scene requirement.");
+      new Error("Incorrectly added pokemon requirement as scene requirement.");
     }
     this.requirements.push(requirement);
     return this;
@@ -864,7 +864,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
     requirement: EncounterPokemonRequirement,
   ): this & Required<Pick<IMysteryEncounter, "primaryPokemonRequirements">> {
     if (requirement instanceof EncounterSceneRequirement) {
-      Error("Incorrectly added scene requirement as pokemon requirement.");
+      new Error("Incorrectly added scene requirement as pokemon requirement.");
     }
 
     this.primaryPokemonRequirements.push(requirement);
@@ -917,7 +917,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
     excludePrimaryFromSecondaryRequirements = false,
   ): this & Required<Pick<IMysteryEncounter, "secondaryPokemonRequirements">> {
     if (requirement instanceof EncounterSceneRequirement) {
-      Error("Incorrectly added scene requirement as pokemon requirement.");
+      new Error("Incorrectly added scene requirement as pokemon requirement.");
     }
 
     this.secondaryPokemonRequirements.push(requirement);
@@ -939,7 +939,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @returns
    */
   withRewards(doEncounterRewards: () => boolean): this & Required<Pick<IMysteryEncounter, "doEncounterRewards">> {
-    return Object.assign(this, { doEncounterRewards: doEncounterRewards });
+    return Object.assign(this, { doEncounterRewards });
   }
 
   /**
@@ -953,7 +953,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @returns
    */
   withExp(doEncounterExp: () => boolean): this & Required<Pick<IMysteryEncounter, "doEncounterExp">> {
-    return Object.assign(this, { doEncounterExp: doEncounterExp });
+    return Object.assign(this, { doEncounterExp });
   }
 
   /**
@@ -974,7 +974,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @returns
    */
   withOnVisualsStart(onVisualsStart: () => boolean): this & Required<Pick<IMysteryEncounter, "onVisualsStart">> {
-    return Object.assign(this, { onVisualsStart: onVisualsStart });
+    return Object.assign(this, { onVisualsStart });
   }
 
   /**
@@ -984,7 +984,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @returns
    */
   withCatchAllowed(catchAllowed: boolean): this & Required<Pick<IMysteryEncounter, "catchAllowed">> {
-    return Object.assign(this, { catchAllowed: catchAllowed });
+    return Object.assign(this, { catchAllowed });
   }
 
   /**
@@ -1004,7 +1004,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
     hideBattleIntroMessage: boolean,
   ): this & Required<Pick<IMysteryEncounter, "hideBattleIntroMessage">> {
     return Object.assign(this, {
-      hideBattleIntroMessage: hideBattleIntroMessage,
+      hideBattleIntroMessage,
     });
   }
 
@@ -1015,7 +1015,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   withAutoHideIntroVisuals(
     autoHideIntroVisuals: boolean,
   ): this & Required<Pick<IMysteryEncounter, "autoHideIntroVisuals">> {
-    return Object.assign(this, { autoHideIntroVisuals: autoHideIntroVisuals });
+    return Object.assign(this, { autoHideIntroVisuals });
   }
 
   /**
@@ -1027,7 +1027,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
     enterIntroVisualsFromRight: boolean,
   ): this & Required<Pick<IMysteryEncounter, "enterIntroVisualsFromRight">> {
     return Object.assign(this, {
-      enterIntroVisualsFromRight: enterIntroVisualsFromRight,
+      enterIntroVisualsFromRight,
     });
   }
 

@@ -1,16 +1,16 @@
 import type { AnySound } from "#app/battle-scene";
+import { EVOLVE_MOVE } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { Phase } from "#app/phase";
 import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { FusionSpeciesFormEvolution } from "#balance/pokemon-evolutions";
-import { EVOLVE_MOVE } from "#balance/pokemon-level-moves";
 import { getTypeRgb } from "#data/type";
 import { LearnMoveSituation } from "#enums/learn-move-situation";
 import { UiMode } from "#enums/ui-mode";
 import { cos, sin } from "#field/anims";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
-import type { EvolutionSceneHandler } from "#ui/evolution-scene-handler";
+import type { EvolutionSceneUiHandler } from "#ui/evolution-scene-ui-handler";
 import { fixedInt, getFrameMs, randInt } from "#utils/common";
 import i18next from "i18next";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
@@ -29,7 +29,7 @@ export class EvolutionPhase extends Phase {
   private evolution: SpeciesFormEvolution | null;
   private fusionSpeciesEvolved: boolean; // Whether the evolution is of the fused species
   private evolutionBgm: AnySound | null;
-  private evolutionHandler: EvolutionSceneHandler;
+  private evolutionHandler: EvolutionSceneUiHandler;
 
   /** Container for all assets used by the scene. When the scene is cleared, the children within this are destroyed. */
   protected evolutionContainer: Phaser.GameObjects.Container;
@@ -79,7 +79,7 @@ export class EvolutionPhase extends Phase {
    *
    */
   private setupEvolutionAssets(): void {
-    this.evolutionHandler = globalScene.ui.getHandler() as EvolutionSceneHandler;
+    this.evolutionHandler = globalScene.ui.getHandler() as EvolutionSceneUiHandler;
     this.evolutionContainer = this.evolutionHandler.evolutionContainer;
     this.evolutionBaseBg = globalScene.add.image(0, 0, "default_bg").setOrigin(0);
 

@@ -1,4 +1,3 @@
-import { CudChewConsumeBerryAbAttr } from "#abilities/ability";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { AbilityId } from "#enums/ability-id";
@@ -6,7 +5,6 @@ import { BerryType } from "#enums/berry-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { Pokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
 import i18next from "i18next";
 import Phaser from "phaser";
@@ -99,7 +97,7 @@ describe("Abilities - Cud Chew", () => {
       expect(abDisplaySpy.mock.calls[1][2]).toBe(false);
 
       // should display messgae
-      expect(game.textInterceptor.getLatestMessage()).toBe(
+      expect(game).toHaveShownMessage(
         i18next.t("battle:hpIsFull", {
           pokemonName: getPokemonNameWithAffix(farigiraf),
         }),
@@ -111,7 +109,6 @@ describe("Abilities - Cud Chew", () => {
 
     it("can store multiple berries across 2 turns with teatime", async () => {
       // always eat first berry for stuff cheeks & company
-      vi.spyOn(Pokemon.prototype, "randBattleSeedInt").mockReturnValue(0);
       game.override
         .startingHeldItems([
           { name: "BERRY", type: BerryType.PETAYA, count: 3 },
@@ -121,7 +118,10 @@ describe("Abilities - Cud Chew", () => {
       await game.classicMode.startBattle([SpeciesId.FARIGIRAF]);
 
       const farigiraf = game.field.getPlayerPokemon();
+      const enemy = game.field.getEnemyPokemon();
       farigiraf.hp = 1; // needed to allow berry procs
+      vi.spyOn(farigiraf, "randBattleSeedInt").mockReturnValue(0);
+      vi.spyOn(enemy, "randBattleSeedInt").mockReturnValue(0);
 
       game.move.select(MoveId.STUFF_CHEEKS);
       await game.toNextTurn();
@@ -196,10 +196,10 @@ describe("Abilities - Cud Chew", () => {
 
   describe("regurgiates berries", () => {
     it("re-triggers effects on eater without pushing to array", async () => {
-      const apply = vi.spyOn(CudChewConsumeBerryAbAttr.prototype, "apply");
       await game.classicMode.startBattle([SpeciesId.FARIGIRAF]);
 
       const farigiraf = game.field.getPlayerPokemon();
+      const apply = vi.spyOn(farigiraf.getAbilityAttrs("CudChewConsumeBerryAbAttr")[0], "apply");
       farigiraf.hp = 1;
 
       game.move.select(MoveId.SPLASH);

@@ -11,7 +11,8 @@ import type { TimeOfDay } from "#enums/time-of-day";
 import { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
 import type { PokemonFormChangeItemModifier } from "#modifiers/modifier";
-import { type Constructor, coerceArray } from "#utils/common";
+import type { Constructor } from "#types/common";
+import { coerceArray } from "#utils/array";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
@@ -82,10 +83,10 @@ export class SpeciesFormChangeItemTrigger extends SpeciesFormChangeTrigger {
       // Assume that if m has the `formChangeItem` property, then it is a PokemonFormChangeItemModifier
       const m = r as PokemonFormChangeItemModifier;
       return (
-        "formChangeItem" in m &&
-        m.pokemonId === pokemon.id &&
-        m.formChangeItem === this.item &&
-        m.active === this.active
+        "formChangeItem" in m
+        && m.pokemonId === pokemon.id
+        && m.formChangeItem === this.item
+        && m.active === this.active
       );
     });
   }
@@ -121,7 +122,7 @@ export class SpeciesFormChangeActiveTrigger extends SpeciesFormChangeTrigger {
 }
 
 export class SpeciesFormChangeStatusEffectTrigger extends SpeciesFormChangeTrigger {
-  public statusEffects: StatusEffect[];
+  public readonly statusEffects: readonly StatusEffect[];
   public invert: boolean;
 
   constructor(statusEffects: StatusEffect | StatusEffect[], invert = false) {
@@ -155,7 +156,7 @@ export class SpeciesFormChangeMoveLearnedTrigger extends SpeciesFormChangeTrigge
   }
 
   canChange(pokemon: Pokemon): boolean {
-    return !!pokemon.moveset.filter(m => m.moveId === this.move).length === this.known;
+    return pokemon.moveset.filter(m => m.moveId === this.move).length > 0 === this.known;
   }
 }
 
@@ -182,7 +183,7 @@ export class SpeciesFormChangePostMoveTrigger extends SpeciesFormChangeMoveTrigg
   description = i18next.t("pokemonEvolutions:forms.postMove");
   canChange(pokemon: Pokemon): boolean {
     return (
-      pokemon.summonData && !!pokemon.getLastXMoves(1).filter(m => this.movePredicate(m.move)).length === this.used
+      pokemon.summonData && pokemon.getLastXMoves(1).filter(m => this.movePredicate(m.move)).length > 0 === this.used
     );
   }
 }
@@ -211,9 +212,10 @@ export class SpeciesDefaultFormMatchTrigger extends SpeciesFormChangeTrigger {
 
   canChange(pokemon: Pokemon): boolean {
     return (
-      this.formKey ===
-      pokemon.species.forms[globalScene.getSpeciesFormIndex(pokemon.species, pokemon.gender, pokemon.getNature(), true)]
-        .formKey
+      this.formKey
+      === pokemon.species.forms[
+        globalScene.getSpeciesFormIndex(pokemon.species, pokemon.gender, pokemon.getNature(), true)
+      ].formKey
     );
   }
 }
@@ -238,9 +240,9 @@ export class SpeciesFormChangeWeatherTrigger extends SpeciesFormChangeTrigger {
   /** The ability that  triggers the form change */
   public ability: AbilityId;
   /** The list of weathers that trigger the form change */
-  public weathers: WeatherType[];
+  public readonly weathers: readonly WeatherType[];
 
-  constructor(ability: AbilityId, weathers: WeatherType[]) {
+  constructor(ability: AbilityId, weathers: readonly WeatherType[]) {
     super();
     this.ability = ability;
     this.weathers = weathers;
@@ -259,10 +261,10 @@ export class SpeciesFormChangeWeatherTrigger extends SpeciesFormChangeTrigger {
     const isAbilitySuppressed = pokemon.summonData.abilitySuppressed;
 
     return (
-      !isAbilitySuppressed &&
-      !isWeatherSuppressed &&
-      pokemon.hasAbility(this.ability) &&
-      this.weathers.includes(currentWeather)
+      !isAbilitySuppressed
+      && !isWeatherSuppressed
+      && pokemon.hasAbility(this.ability)
+      && this.weathers.includes(currentWeather)
     );
   }
 }
@@ -276,9 +278,9 @@ export class SpeciesFormChangeRevertWeatherFormTrigger extends SpeciesFormChange
   /** The ability that triggers the form change*/
   public ability: AbilityId;
   /** The list of weathers that will also trigger a form change to original form */
-  public weathers: WeatherType[];
+  public readonly weathers: readonly WeatherType[];
 
-  constructor(ability: AbilityId, weathers: WeatherType[]) {
+  constructor(ability: AbilityId, weathers: readonly WeatherType[]) {
     super();
     this.ability = ability;
     this.weathers = weathers;
@@ -288,7 +290,7 @@ export class SpeciesFormChangeRevertWeatherFormTrigger extends SpeciesFormChange
   /**
    * Checks if the Pokemon has the required ability and the weather is one that will revert
    * the Pokemon to its original form or the weather or ability is suppressed
-   * @param {Pokemon} pokemon the pokemon that is trying to do the form change
+   * @param pokemon the pokemon that is trying to do the form change
    * @returns `true` if the Pokemon will revert to its original form, `false` otherwise
    */
   canChange(pokemon: Pokemon): boolean {
@@ -308,9 +310,10 @@ export class SpeciesFormChangeRevertWeatherFormTrigger extends SpeciesFormChange
 }
 
 export function getSpeciesFormChangeMessage(pokemon: Pokemon, formChange: SpeciesFormChange, preName: string): string {
-  const isMega = formChange.formKey.indexOf(SpeciesFormKey.MEGA) > -1;
-  const isGmax = formChange.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1;
-  const isEmax = formChange.formKey.indexOf(SpeciesFormKey.ETERNAMAX) > -1;
+  const formKey = formChange.formKey;
+  const isMega = formKey.indexOf(SpeciesFormKey.MEGA) > -1;
+  const isGmax = formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1;
+  const isEmax = formKey.indexOf(SpeciesFormKey.ETERNAMAX) > -1;
   const isRevert = !isMega && formChange.formKey === pokemon.species.forms[0].formKey;
   if (isMega) {
     return i18next.t("battlePokemonForm:megaChange", {

@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
 {
   "compilerOptions": {
     "target": "ES2023",
@@ -11,60 +16,74 @@
       "DOM.AsyncIterable",
       "DOM.Iterable",
       "ScriptHost",
-      "WebWorker.ImportScripts"
+      "WebWorker.ImportScripts",
+      "ES2024.Object",
+      // NOTE: Be *very* mindful of these when updating typescript versions,
+      // as their definitions may change in breaking ways
+      "ESNext.Iterator",
+      "ESNext.Collection"
     ],
+    "skipLibCheck": true, // Safe and almost always beneficial
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "strictNullChecks": true,
     "sourceMap": false,
-    "checkJs": true,
     "strict": false, // TODO: Enable this eventually
     "rootDir": ".",
-    "baseUrl": "./src",
-    "paths": {
-      "#abilities/*": ["./data/abilities/*.ts"],
-      "#api/*": ["./plugins/api/*.ts"],
-      "#balance/*": ["./data/balance/*.ts"],
-      "#enums/*": ["./enums/*.ts"],
-      "#events/*": ["./events/*.ts"],
-      "#field/*": ["./field/*.ts"],
-      "#inputs/*": ["./configs/inputs/*.ts"],
-      "#modifiers/*": ["./modifier/*.ts"],
-      "#moves/*": ["./data/moves/*.ts"],
-      "#mystery-encounters/*": [
-        "./data/mystery-encounters/utils/*.ts",
-        "./data/mystery-encounters/encounters/*.ts",
-        "./data/mystery-encounters/requirements/*.ts",
-        "./data/mystery-encounters/*.ts"
-      ],
-      "#package.json": ["../package.json"],
-      "#phases/*": ["./phases/*.ts"],
-      "#plugins/*": ["./plugins/vite/*.ts", "./plugins/*.ts"],
-      "#sprites/*": ["./sprites/*.ts"],
-      "#system/*": [
-        "./system/settings/*.ts",
-        "./system/version-migration/versions/*.ts",
-        "./system/version-migration/*.ts",
-        "./system/*.ts"
-      ],
-      "#trainers/*": ["./data/trainers/*.ts"],
-      "#types/*": ["./@types/helpers/*.ts", "./@types/*.ts", "./typings/phaser/*.ts"],
-      "#ui/*": ["./ui/battle-info/*.ts", "./ui/settings/*.ts", "./ui/*.ts"],
-      "#utils/*": ["./utils/*.ts"],
-      "#data/*": ["./data/pokemon-forms/*.ts", "./data/pokemon/*.ts", "./data/*.ts"],
-      "#test/*": ["../test/*.ts"],
-      "#app/*": ["*.ts"]
-    },
     "outDir": "./build",
-    "noEmit": true
+    "noEmit": true,
+    "paths": {
+      "#abilities/*": ["./src/data/abilities/*.ts"],
+      "#api/*": ["./src/plugins/api/*.ts"],
+      "#balance/*": ["./src/data/balance/*.ts"],
+      "#constants/*": ["./src/constants/*.ts"],
+      "#enums/*": ["./src/enums/*.ts"],
+      "#events/*": ["./src/events/*.ts"],
+      "#field/*": ["./src/field/*.ts"],
+      "#inputs/*": ["./src/configs/inputs/*.ts"],
+      "#modifiers/*": ["./src/modifier/*.ts"],
+      "#moves/*": ["./src/data/moves/*.ts"],
+      "#mystery-encounters/*": [
+        "./src/data/mystery-encounters/utils/*.ts",
+        "./src/data/mystery-encounters/encounters/*.ts",
+        "./src/data/mystery-encounters/requirements/*.ts",
+        "./src/data/mystery-encounters/*.ts"
+      ],
+      "#package.json": ["./package.json"],
+      "#phases/*": ["./src/phases/*.ts"],
+      "#plugins/*": ["./src/plugins/vite/*.ts", "./src/plugins/*.ts"],
+      "#sprites/*": ["./src/sprites/*.ts"],
+      "#system/*": [
+        "./src/system/settings/*.ts",
+        "./src/system/version-migration/versions/*.ts",
+        "./src/system/version-migration/*.ts",
+        "./src/system/*.ts"
+      ],
+      "#trainers/*": ["./src/data/trainers/*.ts"],
+      "#types/*": ["./src/@types/helpers/*.ts", "./src/@types/*.ts", "./src/typings/phaser/*.ts"],
+      "#ui/*": [
+        "./src/ui/battle-info/*.ts",
+        "./src/ui/containers/*.ts",
+        "./src/ui/handlers/*.ts",
+        "./src/ui/settings/*.ts",
+        "./src/ui/utils/*.ts",
+        "./src/ui/*.ts"
+      ],
+      "#utils/*": ["./src/utils/*.ts"],
+      "#data/*": ["./src/data/pokemon-forms/*.ts", "./src/data/pokemon/*.ts", "./src/data/*.ts"],
+      "#test/*": ["./test/*.ts"],
+      "#app/*": ["./src/*.ts"]
+    }
   },
+  // Exclude checking for script JS files as those are covered by the folder's `jsconfig.json`
+  "include": ["**/*.ts", "**/*.d.ts"],
   "exclude": [
     "node_modules",
     "dist",
     "vite.config.ts",
     "vitest.config.ts",
     "vitest.workspace.ts",
-    "public/service-worker.js"
+    "assets/service-worker.js"
   ]
 }

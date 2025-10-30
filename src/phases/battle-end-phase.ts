@@ -18,28 +18,16 @@ export class BattleEndPhase extends BattlePhase {
     super.start();
 
     // cull any extra `BattleEnd` phases from the queue.
-    globalScene.phaseManager.phaseQueue = globalScene.phaseManager.phaseQueue.filter(phase => {
-      if (phase.is("BattleEndPhase")) {
-        this.isVictory ||= phase.isVictory;
-        return false;
-      }
-      return true;
-    });
-    // `phaseQueuePrepend` is private, so we have to use this inefficient loop.
-    while (
-      globalScene.phaseManager.tryRemoveUnshiftedPhase(phase => {
-        if (phase.is("BattleEndPhase")) {
-          this.isVictory ||= phase.isVictory;
-          return true;
-        }
-        return false;
-      })
-    ) {}
+    this.isVictory ||= globalScene.phaseManager.hasPhaseOfType(
+      "BattleEndPhase",
+      (phase: BattleEndPhase) => phase.isVictory,
+    );
+    globalScene.phaseManager.removeAllPhasesOfType("BattleEndPhase");
 
     globalScene.gameData.gameStats.battles++;
     if (
-      globalScene.gameMode.isEndless &&
-      globalScene.currentBattle.waveIndex + 1 > globalScene.gameData.gameStats.highestEndlessWave
+      globalScene.gameMode.isEndless
+      && globalScene.currentBattle.waveIndex + 1 > globalScene.gameData.gameStats.highestEndlessWave
     ) {
       globalScene.gameData.gameStats.highestEndlessWave = globalScene.currentBattle.waveIndex + 1;
     }

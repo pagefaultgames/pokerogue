@@ -12,7 +12,7 @@ import type { CommandPhase } from "#phases/command-phase";
 import type { EnemyCommandPhase } from "#phases/enemy-command-phase";
 import { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
-import { coerceArray } from "#utils/common";
+import { coerceArray } from "#utils/array";
 import { toTitleCase } from "#utils/strings";
 import type { MockInstance } from "vitest";
 import { expect, vi } from "vitest";
@@ -67,9 +67,10 @@ export class MoveHelper extends GameManagerHelper {
     const movePosition = this.getMovePosition(pkmIndex, move);
     if (movePosition === -1) {
       expect.fail(
-        `MoveHelper.select called with move '${toTitleCase(MoveId[move])}' not in moveset!` +
-          `\nBattler Index: ${toTitleCase(BattlerIndex[pkmIndex])}` +
-          `\nMoveset: [${this.game.scene
+        // biome-ignore lint/complexity/noUselessStringConcat: Biome does not currently detect this as multiline (BUG)
+        `MoveHelper.select called with move '${toTitleCase(MoveId[move])}' not in moveset!`
+          + `\nBattler Index: ${toTitleCase(BattlerIndex[pkmIndex])}`
+          + `\nMoveset: [${this.game.scene
             .getPlayerParty()
             [pkmIndex].getMoveset()
             .map(pm => toTitleCase(MoveId[pm.moveId]))
@@ -111,9 +112,10 @@ export class MoveHelper extends GameManagerHelper {
     const movePosition = this.getMovePosition(pkmIndex, move);
     if (movePosition === -1) {
       expect.fail(
-        `MoveHelper.selectWithTera called with move '${toTitleCase(MoveId[move])}' not in moveset!` +
-          `\nBattler Index: ${toTitleCase(BattlerIndex[pkmIndex])}` +
-          `\nMoveset: [${this.game.scene
+        // biome-ignore lint/complexity/noUselessStringConcat: Biome does not currently detect this as multiline (BUG)
+        `MoveHelper.selectWithTera called with move '${toTitleCase(MoveId[move])}' not in moveset!`
+          + `\nBattler Index: ${toTitleCase(BattlerIndex[pkmIndex])}`
+          + `\nMoveset: [${this.game.scene
             .getPlayerParty()
             [pkmIndex].getMoveset()
             .map(pm => toTitleCase(MoveId[pm.moveId]))
@@ -227,11 +229,9 @@ export class MoveHelper extends GameManagerHelper {
         vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([]);
         console.warn("Player moveset override disabled due to use of `game.move.changeMoveset`!");
       }
-    } else {
-      if (coerceArray(Overrides.ENEMY_MOVESET_OVERRIDE).length > 0) {
-        vi.spyOn(Overrides, "ENEMY_MOVESET_OVERRIDE", "get").mockReturnValue([]);
-        console.warn("Enemy moveset override disabled due to use of `game.move.changeMoveset`!");
-      }
+    } else if (coerceArray(Overrides.ENEMY_MOVESET_OVERRIDE).length > 0) {
+      vi.spyOn(Overrides, "ENEMY_MOVESET_OVERRIDE", "get").mockReturnValue([]);
+      console.warn("Enemy moveset override disabled due to use of `game.move.changeMoveset`!");
     }
     moveset = coerceArray(moveset);
     expect(moveset.length, "Cannot assign more than 4 moves to a moveset!").toBeLessThanOrEqual(4);

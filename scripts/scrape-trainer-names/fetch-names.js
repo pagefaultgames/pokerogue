@@ -1,3 +1,10 @@
+/*
+ * SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+ * SPDX-FileContributor: Bertie690
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 /**
  * @import { parsedNames } from "./types.js";
  */
@@ -31,11 +38,11 @@ export function fetchNames(trainerListHeader, knownFemale = false) {
 
   // Grab all the trainer name tables sorted by generation
   const tables = elements.slice(startChildIndex, endChildIndex).filter(
-    /** @type {(t: ChildNode) => t is Element} */
+    /** @type {(t: ChildNode) => t is HTMLTableElement} */
     (
       t =>
         // Only grab expandable tables within the header block
-        t.nodeName === "TABLE" && t["className"] === "expandable"
+        t.nodeName === "TABLE" && /** @type {HTMLTableElement} */ (t)["className"] === "expandable"
     ),
   );
 
@@ -48,7 +55,7 @@ export function fetchNames(trainerListHeader, knownFemale = false) {
 
 /**
  * Parse the table in question.
- * @param {Element[]} tables - The array of Elements forming the current table
+ * @param {HTMLTableElement[]} tables - The array of Elements forming the current table
  * @param {boolean} isFemale - Whether the trainer is known to be female or not
  * @param {Set<string>} trainerNames A Set containing the male trainer names
  * @param {Set<string>} femaleTrainerNames - A Set containing the female trainer names
@@ -56,7 +63,7 @@ export function fetchNames(trainerListHeader, knownFemale = false) {
 function parseTable(tables, isFemale, trainerNames, femaleTrainerNames) {
   for (const table of tables) {
     // Grab all rows past the first header with exactly 9 children in them (Name, Battle, Winnings, 6 party slots)
-    const trainerRows = [...table.querySelectorAll("tr:not(:first-child)")].filter(r => r.children.length === 9);
+    const trainerRows = [...table.rows].slice(1).filter(r => r.children.length === 9);
     for (const row of trainerRows) {
       const content = row.firstElementChild?.innerHTML;
       // Skip empty elements & ones without anchors

@@ -6,46 +6,72 @@ on:
       - main
       - beta
       - release
-      - 'hotfix*'
+      - "hotfix*"
   pull_request:
     branches:
       - main
       - beta
       - release
-      - 'hotfix*'
+      - "hotfix*"
   merge_group:
     types: [checks_requested]
+  workflow_dispatch:
 
 jobs:
   run-linters:
-    name: Run linters
+    name: Run all linters
+    timeout-minutes: 10
     runs-on: ubuntu-latest
 
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v4
         with:
-          submodules: 'recursive'
+          submodules: "recursive"
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
-      - name: Set up Node.js
+      - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
-          cache: 'pnpm'
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
 
-      - name: Install Node.js dependencies
+      - name: Install Node modules
         run: pnpm i
 
+      # Lint files with Biome-Lint - https://biomejs.dev/linter/
       - name: Lint with Biome
         run: pnpm biome-ci
+        if: ${{ !cancelled() }}
 
-      - name: Check dependencies with depcruise
+      # Validate dependencies with dependency-cruiser - https://github.com/sverweij/dependency-cruiser
+      - name: Run Dependency Cruiser
         run: pnpm depcruise
-      
-      - name: Lint with ls-lint
-        run: pnpm ls-lint
+        if: ${{ !cancelled() }}
+
+      # Validate types with tsc - https://www.typescriptlang.org/docs/handbook/compiler-options.html#using-the-cli
+      - name: Run Typecheck
+        run: pnpm typecheck
+        id: typecheck
+        if: ${{ !cancelled() }}
+
+      # Run tsc again on the scripts folder.
+      # Required in order to use separate rules for script js files and regular ts files
+      - name: Run Typecheck (scripts)
+        run: pnpm typecheck:scripts
+        id: typecheck-scripts
+        if: ${{ !cancelled() }}
+
+      # NOTE: These steps *must* be ran last for the moment due to deleting files in `assets/`.
+      # Some asset files do not yet have full licensing information, and thus must be removed 
+      # before checking for REUSE compliance
+      - name: Prepare for REUSE compliance
+        run: rm -rf assets/* LICENSES/LicenseRef-*
+        if: ${{ !cancelled() }}
+
+      - name: Check for REUSE compliance
+        id: reuse-lint
+        uses: fsfe/reuse-action@v5
+        if: ${{ !cancelled() }}

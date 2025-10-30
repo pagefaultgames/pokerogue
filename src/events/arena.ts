@@ -16,56 +16,47 @@ export enum ArenaEventType {
   TAG_REMOVED = "onTagRemoved",
 }
 
-/**
- * Base container class for all {@linkcode ArenaEventType} events
- * @extends Event
- */
+/** Base container class for all {@linkcode ArenaEventType} events */
 export class ArenaEvent extends Event {
   /** The total duration of the {@linkcode ArenaEventType} */
   public duration: number;
-  constructor(eventType: ArenaEventType, duration: number) {
+  /** The maximum duration of the {@linkcode ArenaEventType} */
+  public maxDuration: number;
+  constructor(eventType: ArenaEventType, duration: number, maxDuration: number = duration) {
     super(eventType);
 
     this.duration = duration;
+    this.maxDuration = maxDuration;
   }
 }
-/**
- * Container class for {@linkcode ArenaEventType.WEATHER_CHANGED} events
- * @extends ArenaEvent
- */
+/** Container class for {@linkcode ArenaEventType.WEATHER_CHANGED} events */
 export class WeatherChangedEvent extends ArenaEvent {
   /** The {@linkcode WeatherType} being overridden */
   public oldWeatherType: WeatherType;
   /** The {@linkcode WeatherType} being set */
   public newWeatherType: WeatherType;
-  constructor(oldWeatherType: WeatherType, newWeatherType: WeatherType, duration: number) {
-    super(ArenaEventType.WEATHER_CHANGED, duration);
+  constructor(oldWeatherType: WeatherType, newWeatherType: WeatherType, duration: number, maxDuration?: number) {
+    super(ArenaEventType.WEATHER_CHANGED, duration, maxDuration);
 
     this.oldWeatherType = oldWeatherType;
     this.newWeatherType = newWeatherType;
   }
 }
-/**
- * Container class for {@linkcode ArenaEventType.TERRAIN_CHANGED} events
- * @extends ArenaEvent
- */
+/** Container class for {@linkcode ArenaEventType.TERRAIN_CHANGED} events */
 export class TerrainChangedEvent extends ArenaEvent {
   /** The {@linkcode TerrainType} being overridden */
   public oldTerrainType: TerrainType;
   /** The {@linkcode TerrainType} being set */
   public newTerrainType: TerrainType;
-  constructor(oldTerrainType: TerrainType, newTerrainType: TerrainType, duration: number) {
-    super(ArenaEventType.TERRAIN_CHANGED, duration);
+  constructor(oldTerrainType: TerrainType, newTerrainType: TerrainType, duration: number, maxDuration?: number) {
+    super(ArenaEventType.TERRAIN_CHANGED, duration, maxDuration);
 
     this.oldTerrainType = oldTerrainType;
     this.newTerrainType = newTerrainType;
   }
 }
 
-/**
- * Container class for {@linkcode ArenaEventType.TAG_ADDED} events
- * @extends ArenaEvent
- */
+/** Container class for {@linkcode ArenaEventType.TAG_ADDED} events */
 export class TagAddedEvent extends ArenaEvent {
   /** The {@linkcode ArenaTagType} being added */
   public arenaTagType: ArenaTagType;
@@ -80,10 +71,11 @@ export class TagAddedEvent extends ArenaEvent {
     arenaTagType: ArenaTagType,
     arenaTagSide: ArenaTagSide,
     duration: number,
+    maxDuration?: number,
     arenaTagLayers?: number,
     arenaTagMaxLayers?: number,
   ) {
-    super(ArenaEventType.TAG_ADDED, duration);
+    super(ArenaEventType.TAG_ADDED, duration, maxDuration);
 
     this.arenaTagType = arenaTagType;
     this.arenaTagSide = arenaTagSide;
@@ -91,10 +83,7 @@ export class TagAddedEvent extends ArenaEvent {
     this.arenaTagMaxLayers = arenaTagMaxLayers!; // TODO: is this bang correct?
   }
 }
-/**
- * Container class for {@linkcode ArenaEventType.TAG_REMOVED} events
- * @extends ArenaEvent
- */
+/** Container class for {@linkcode ArenaEventType.TAG_REMOVED} events */
 export class TagRemovedEvent extends ArenaEvent {
   /** The {@linkcode ArenaTagType} being removed */
   public arenaTagType: ArenaTagType;

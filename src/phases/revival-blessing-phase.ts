@@ -5,7 +5,7 @@ import type { PlayerPokemon } from "#field/pokemon";
 import { BattlePhase } from "#phases/battle-phase";
 import type { PartyOption } from "#ui/party-ui-handler";
 import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
-import { isNullOrUndefined, toDmgValue } from "#utils/common";
+import { toDmgValue } from "#utils/common";
 import i18next from "i18next";
 
 /**
@@ -42,11 +42,7 @@ export class RevivalBlessingPhase extends BattlePhase {
           );
 
           const allyPokemon = this.user.getAlly();
-          if (
-            globalScene.currentBattle.double &&
-            globalScene.getPlayerParty().length > 1 &&
-            !isNullOrUndefined(allyPokemon)
-          ) {
+          if (globalScene.currentBattle.double && globalScene.getPlayerParty().length > 1 && allyPokemon != null) {
             if (slotIndex <= 1) {
               // Revived ally pokemon
               globalScene.phaseManager.unshiftNew(

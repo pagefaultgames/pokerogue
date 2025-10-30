@@ -3,12 +3,17 @@ import "#app/polyfills";
 
 import { InvertPostFX } from "#app/pipelines/invert";
 import { initI18n } from "#app/plugins/i18n";
+import { isBeta, isDev } from "#constants/app-constants";
 import { version } from "#package.json";
 import Phaser from "phaser";
 import BBCodeTextPlugin from "phaser3-rex-plugins/plugins/bbcodetext-plugin";
 import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin";
 import TransitionImagePackPlugin from "phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin";
 import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
+
+if (isBeta || isDev) {
+  document.title += " (Beta)";
+}
 
 // Catch global errors and display them in an alert so users can report the issue.
 window.onerror = (_message, _source, _lineno, _colno, error) => {
@@ -27,13 +32,25 @@ window.addEventListener("unhandledrejection", event => {
 });
 
 /**
- * Sets this object's position relative to another object with a given offset
+ * Set this object's position relative to another object with a given offset.
+ * @param guideObject - The object to base this object's position off of; must have defined
+ * x/y co-ordinates, an origin and width/height
+ * @param x - The X-position to set, relative to `guideObject`'s `x` value
+ * @param y - The Y-position to set, relative to `guideObject`'s `y` value
+ * @returns `this`
  */
-const setPositionRelative = function (guideObject: Phaser.GameObjects.GameObject, x: number, y: number) {
+function setPositionRelative<T extends Phaser.GameObjects.Components.Transform>(
+  this: T,
+  guideObject: Pick<Phaser.GameObjects.Components.ComputedSize, "width" | "height"> &
+    Pick<Phaser.GameObjects.Components.Transform, "x" | "y"> &
+    Pick<Phaser.GameObjects.Components.Origin, "originX" | "originY">,
+  x: number,
+  y: number,
+): T {
   const offsetX = guideObject.width * (-0.5 + (0.5 - guideObject.originX));
   const offsetY = guideObject.height * (-0.5 + (0.5 - guideObject.originY));
   return this.setPosition(guideObject.x + offsetX + x, guideObject.y + offsetY + y);
-};
+}
 
 Phaser.GameObjects.Container.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Sprite.prototype.setPositionRelative = setPositionRelative;
@@ -43,9 +60,9 @@ Phaser.GameObjects.Text.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative;
 
 document.fonts.load("16px emerald").then(() => document.fonts.load("10px pkmnems"));
-// biome-ignore lint/suspicious/noImplicitAnyLet: TODO
+// biome-ignore lint: TODO
 let game;
-// biome-ignore lint/suspicious/noImplicitAnyLet: TODO
+// biome-ignore lint: TODO
 let manifest;
 
 const startGame = async () => {
@@ -101,7 +118,7 @@ const startGame = async () => {
     antialias: false,
     pipeline: [InvertPostFX] as unknown as Phaser.Types.Core.PipelineConfig,
     scene: [LoadingScene, BattleScene],
-    version: version,
+    version,
   });
   game.sound.pauseOnBlur = false;
   if (manifest) {

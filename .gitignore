@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2024-2025 NONE
+#
+# SPDX-License-Identifier: CC0-1.0
+
 # Logs
 logs
 *.log
@@ -11,11 +15,13 @@ node_modules
 dist
 dist-ssr
 *.local
+build
 
 # Editor directories and files (excluding `extensions.json` for devcontainer)
 *.code-workspace
 .vscode/*
 !.vscode/extensions.json
+!.vscode/spdx.code-snippets
 .idea
 .DS_Store
 *.suo
@@ -24,13 +30,13 @@ dist-ssr
 *.sln
 *.sw?
 
-public/images/trainer/convert/*
-public/images/battle_anims/input/*.png
-public/images/pokemon/input/*.png
-public/images/pokemon/input/output/*
-public/images/pokemon/icons/input/*.png
-public/images/pokemon/icons/input/output/*
-public/images/character/*/
+assets/images/trainer/convert/*
+assets/images/battle_anims/input/*.png
+assets/images/pokemon/input/*.png
+assets/images/pokemon/input/output/*
+assets/images/pokemon/icons/input/*.png
+assets/images/pokemon/icons/input/output/*
+assets/images/character/*/
 src/data/battle-anim-raw-data*.ts
 src/data/battle-anim-data.ts
 src/overrides.ts

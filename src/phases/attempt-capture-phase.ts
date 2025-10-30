@@ -1,6 +1,8 @@
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
+import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
+import { isBeta, isDev } from "#constants/app-constants";
 import { SubstituteTag } from "#data/battler-tags";
 import { Gender } from "#data/gender";
 import {
@@ -64,9 +66,26 @@ export class AttemptCapturePhase extends PokemonPhase {
     const catchRate = pokemon.species.catchRate;
     const pokeballMultiplier = getPokeballCatchMultiplier(this.pokeballType);
     const statusMultiplier = pokemon.status ? getStatusEffectCatchRateMultiplier(pokemon.status.effect) : 1;
-    const modifiedCatchRate = Math.round((((_3m - _2h) * catchRate * pokeballMultiplier) / _3m) * statusMultiplier);
+    const shinyMultiplier = pokemon.isShiny() ? timedEventManager.getShinyCatchMultiplier() : 1;
+    const modifiedCatchRate = Math.round(
+      (((_3m - _2h) * catchRate * pokeballMultiplier) / _3m) * statusMultiplier * shinyMultiplier,
+    );
     const shakeProbability = Math.round(65536 / Math.pow(255 / modifiedCatchRate, 0.1875)); // Formula taken from gen 6
     const criticalCaptureChance = getCriticalCaptureChance(modifiedCatchRate);
+
+    if ((isBeta || isDev) && import.meta.env.NODE_ENV !== "test") {
+      console.log(
+        "Base Catch Rate: %d\nBall Mult: %d\nStatus Mult: %d\nShiny Bonus: %d\nModified Catch Rate: %d\nShake Probability: %d\nCritical Catch Chance: %d",
+        catchRate,
+        pokeballMultiplier,
+        statusMultiplier,
+        shinyMultiplier,
+        modifiedCatchRate,
+        shakeProbability,
+        criticalCaptureChance,
+      );
+    }
+
     const isCritical = pokemon.randBattleSeedInt(256) < criticalCaptureChance;
     const fpOffset = pokemon.getFieldPositionOffset();
 
@@ -136,10 +155,10 @@ export class AttemptCapturePhase extends PokemonPhase {
                   } else if (shakeCount++ < (isCritical ? 1 : 3)) {
                     // Shake check (skip check for critical or guaranteed captures, but still play the sound)
                     if (
-                      pokeballMultiplier === -1 ||
-                      isCritical ||
-                      modifiedCatchRate >= 255 ||
-                      pokemon.randBattleSeedInt(65536) < shakeProbability
+                      pokeballMultiplier === -1
+                      || isCritical
+                      || modifiedCatchRate >= 255
+                      || pokemon.randBattleSeedInt(65536) < shakeProbability
                     ) {
                       globalScene.playSound("se/pb_move");
                     } else {
@@ -231,8 +250,9 @@ export class AttemptCapturePhase extends PokemonPhase {
     const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
 
     if (
-      speciesForm.abilityHidden &&
-      (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1
+      speciesForm.abilityHidden
+      && (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex)
+        === speciesForm.getAbilityCount() - 1
     ) {
       globalScene.validateAchv(achvs.HIDDEN_ABILITY);
     }

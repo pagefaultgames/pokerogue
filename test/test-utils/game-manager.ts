@@ -28,8 +28,9 @@ import type { SelectTargetPhase } from "#phases/select-target-phase";
 import { TurnEndPhase } from "#phases/turn-end-phase";
 import { TurnInitPhase } from "#phases/turn-init-phase";
 import { TurnStartPhase } from "#phases/turn-start-phase";
+import { GameData } from "#system/game-data";
 import { ErrorInterceptor } from "#test/test-utils/error-interceptor";
-import { generateStarter } from "#test/test-utils/game-manager-utils";
+import { generateStarters } from "#test/test-utils/game-manager-utils";
 import { GameWrapper } from "#test/test-utils/game-wrapper";
 import { ChallengeModeHelper } from "#test/test-utils/helpers/challenge-mode-helper";
 import { ClassicModeHelper } from "#test/test-utils/helpers/classic-mode-helper";
@@ -44,6 +45,7 @@ import type { InputsHandler } from "#test/test-utils/inputs-handler";
 import { MockFetch } from "#test/test-utils/mocks/mock-fetch";
 import { PhaseInterceptor } from "#test/test-utils/phase-interceptor";
 import { TextInterceptor } from "#test/test-utils/text-interceptor";
+import type { PhaseClass, PhaseString } from "#types/phase-types";
 import type { BallUiHandler } from "#ui/ball-ui-handler";
 import type { BattleMessageUiHandler } from "#ui/battle-message-ui-handler";
 import type { CommandUiHandler } from "#ui/command-ui-handler";
@@ -51,7 +53,6 @@ import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import type { PartyUiHandler } from "#ui/party-ui-handler";
 import type { StarterSelectUiHandler } from "#ui/starter-select-ui-handler";
 import type { TargetSelectUiHandler } from "#ui/target-select-ui-handler";
-import { isNullOrUndefined } from "#utils/common";
 import fs from "node:fs";
 import { AES, enc } from "crypto-js";
 import { expect, vi } from "vitest";
@@ -160,7 +161,7 @@ export class GameManager {
    * End the currently running phase immediately.
    */
   endPhase() {
-    this.scene.phaseManager.getCurrentPhase()?.end();
+    this.scene.phaseManager.getCurrentPhase().end();
   }
 
   /**
@@ -215,7 +216,7 @@ export class GameManager {
 
     this.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       this.scene.gameMode = getGameMode(mode);
-      const starters = generateStarter(this.scene, species);
+      const starters = generateStarters(this.scene, species);
       const selectStarterPhase = new SelectStarterPhase();
       this.scene.phaseManager.pushPhase(new EncounterPhase(false));
       selectStarterPhase.initBattle(starters);
@@ -239,7 +240,7 @@ export class GameManager {
    * @returns A Promise that resolves when the EncounterPhase ends.
    */
   async runToMysteryEncounter(encounterType?: MysteryEncounterType, species?: SpeciesId[]) {
-    if (!isNullOrUndefined(encounterType)) {
+    if (encounterType != null) {
       this.override.disableTrainerWaves();
       this.override.mysteryEncounter(encounterType);
     }
@@ -251,7 +252,7 @@ export class GameManager {
       UiMode.TITLE,
       () => {
         this.scene.gameMode = getGameMode(GameModes.CLASSIC);
-        const starters = generateStarter(this.scene, species);
+        const starters = generateStarters(this.scene, species);
         const selectStarterPhase = new SelectStarterPhase();
         this.scene.phaseManager.pushPhase(new EncounterPhase(false));
         selectStarterPhase.initBattle(starters);
@@ -271,7 +272,7 @@ export class GameManager {
     );
 
     await this.phaseInterceptor.to("EncounterPhase");
-    if (!isNullOrUndefined(encounterType)) {
+    if (encounterType != null) {
       expect(this.scene.currentBattle?.mysteryEncounter?.encounterType).toBe(encounterType);
     }
   }
@@ -305,10 +306,10 @@ export class GameManager {
         handler.processInput(Button.ACTION);
       },
       () =>
-        this.isCurrentPhase(CommandPhase) ||
-        this.isCurrentPhase(MovePhase) ||
-        this.isCurrentPhase(TurnStartPhase) ||
-        this.isCurrentPhase(TurnEndPhase),
+        this.isCurrentPhase(CommandPhase)
+        || this.isCurrentPhase(MovePhase)
+        || this.isCurrentPhase(TurnStartPhase)
+        || this.isCurrentPhase(TurnEndPhase),
     );
   }
 
@@ -330,9 +331,9 @@ export class GameManager {
         handler.processInput(Button.CANCEL);
       },
       () =>
-        this.isCurrentPhase(CommandPhase) ||
-        this.isCurrentPhase(NewBattlePhase) ||
-        this.isCurrentPhase(CheckSwitchPhase),
+        this.isCurrentPhase(CommandPhase)
+        || this.isCurrentPhase(NewBattlePhase)
+        || this.isCurrentPhase(CheckSwitchPhase),
       true,
     );
 
@@ -344,9 +345,9 @@ export class GameManager {
         handler.processInput(Button.ACTION);
       },
       () =>
-        this.isCurrentPhase(CommandPhase) ||
-        this.isCurrentPhase(NewBattlePhase) ||
-        this.isCurrentPhase(CheckSwitchPhase),
+        this.isCurrentPhase(CommandPhase)
+        || this.isCurrentPhase(NewBattlePhase)
+        || this.isCurrentPhase(CheckSwitchPhase),
     );
   }
 
@@ -412,10 +413,11 @@ export class GameManager {
    * Checks if the current phase matches the target phase.
    * @param phaseTarget - The target phase.
    * @returns Whether the current phase matches the target phase
+   * @todo Remove `phaseClass` from signature
    */
-  isCurrentPhase(phaseTarget) {
+  isCurrentPhase(phaseTarget: PhaseClass | PhaseString) {
     const targetName = typeof phaseTarget === "string" ? phaseTarget : phaseTarget.name;
-    return this.scene.phaseManager.getCurrentPhase()?.constructor.name === targetName;
+    return this.scene.phaseManager.getCurrentPhase().phaseName === targetName;
   }
 
   /**
@@ -450,7 +452,7 @@ export class GameManager {
     const dataRaw = fs.readFileSync(path, { encoding: "utf8", flag: "r" });
     let dataStr = AES.decrypt(dataRaw, saveKey).toString(enc.Utf8);
     dataStr = this.scene.gameData.convertSystemDataStr(dataStr);
-    const systemData = this.scene.gameData.parseSystemData(dataStr);
+    const systemData = GameData.parseSystemData(dataStr);
     const valid = !!systemData.dexData && !!systemData.timestamp;
     if (valid) {
       await updateUserInfo();
@@ -463,6 +465,9 @@ export class GameManager {
    * Faint a player or enemy pokemon instantly by setting their HP to 0.
    * @param pokemon - The player/enemy pokemon being fainted
    * @returns A Promise that resolves once the fainted pokemon's FaintPhase finishes running.
+   * @remarks
+   * This method *pushes* a FaintPhase and runs until it's finished. This may cause a turn to play out unexpectedly
+   * @todo Consider whether running the faint phase immediately can be done
    */
   async killPokemon(pokemon: PlayerPokemon | EnemyPokemon) {
     pokemon.hp = 0;
@@ -532,7 +537,7 @@ export class GameManager {
   }
 
   /**
-   * Intercepts `TurnStartPhase` and mocks {@linkcode TurnStartPhase.getSpeedOrder}'s return value.
+   * Modifies the queue manager to return move phases in a particular order
    * Used to manually modify Pokemon turn order.
    * Note: This *DOES NOT* account for priority.
    * @param order - The turn order to set as an array of {@linkcode BattlerIndex}es.
@@ -544,7 +549,7 @@ export class GameManager {
   async setTurnOrder(order: BattlerIndex[]): Promise<void> {
     await this.phaseInterceptor.to("TurnStartPhase", false);
 
-    vi.spyOn(this.scene.phaseManager.getCurrentPhase() as TurnStartPhase, "getSpeedOrder").mockReturnValue(order);
+    this.scene.phaseManager.dynamicQueueManager.setMoveOrder(order);
   }
 
   /**

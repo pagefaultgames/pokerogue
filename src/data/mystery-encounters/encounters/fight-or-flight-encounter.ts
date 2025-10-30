@@ -12,7 +12,7 @@ import { getPlayerModifierTypeOptions, regenerateModifierPoolThresholds } from "
 import { queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
-  getRandomEncounterSpecies,
+  getRandomEncounterPokemon,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
   setEncounterExp,
@@ -58,12 +58,17 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder.
 
     // Calculate boss mon
     const level = getEncounterPokemonLevelForWave(STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
-    const bossPokemon = getRandomEncounterSpecies(level, true);
+    const bossPokemon = getRandomEncounterPokemon({
+      level,
+      isBoss: true,
+      eventShinyRerolls: 2,
+      eventHiddenRerolls: 1,
+    });
     encounter.setDialogueToken("enemyPokemon", bossPokemon.getNameToRender());
     const config: EnemyPartyConfig = {
       pokemonConfigs: [
         {
-          level: level,
+          level,
           species: bossPokemon.species,
           dataSource: new PokemonData(bossPokemon),
           isBoss: true,
@@ -120,8 +125,8 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder.
         disableAnimation: true,
       },
       {
-        spriteKey: spriteKey,
-        fileRoot: fileRoot,
+        spriteKey,
+        fileRoot,
         hasShadow: true,
         tint: 0.25,
         x: -5,

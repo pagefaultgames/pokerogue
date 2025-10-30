@@ -3,21 +3,55 @@ import type { Pokemon } from "#field/pokemon";
 /* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
 
 import { getPokemonNameWithAffix } from "#app/messages";
+import type { BattlerTagTypeMap } from "#data/battler-tags";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { getEnumStr } from "#test/test-utils/string-utils";
+import type { OneOther } from "#test/@types/test-helpers";
+import { getEnumStr, getOnelineDiffStr } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
+import type { BattlerTagDataMap, SerializableBattlerTagType } from "#types/battler-tags";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
+// intersection required to preserve T for inferences
+
 /**
- * Matcher that checks if a {@linkcode Pokemon} has a specific {@linkcode BattlerTagType}.
+ * Helper type for serializable battler tag options. Allows for caching of the type to avoid
+ * instantiation each time typescript encounters the type. (dramatically speeds up typechecking)
+ * @internal
+ */
+type SerializableTagOptions<B extends SerializableBattlerTagType> = OneOther<BattlerTagDataMap[B], "tagType"> & {
+  tagType: B;
+};
+
+/**
+ * Helper type for non-serializable battler tag options.
+ * @internal
+ */
+type NonSerializableTagOptions<B extends BattlerTagType> = OneOther<BattlerTagTypeMap[B], "tagType"> & {
+  tagType: B;
+};
+
+/**
+ * Options type for {@linkcode toHaveBattlerTag}.
+ * @typeParam B - The {@linkcode BattlerTagType} being checked
+ * @remarks
+ * If B corresponds to a serializable `BattlerTag`, only properties allowed to be serialized
+ * (i.e. can change across instances) will be present and able to be checked.
+ */
+export type toHaveBattlerTagOptions<B extends BattlerTagType> = B extends SerializableBattlerTagType
+  ? SerializableTagOptions<B>
+  : NonSerializableTagOptions<B>;
+
+/**
+ * Matcher that checks if a {@linkcode Pokemon} has a specific {@linkcode BattlerTag}.
  * @param received - The object to check. Should be a {@linkcode Pokemon}
- * @param expectedBattlerTagType - The {@linkcode BattlerTagType} to check for
+ * @param expectedTag - The `BattlerTagType` of the desired tag, or a partially-filled object
+ * containing the desired properties
  * @returns Whether the matcher passed
  */
-export function toHaveBattlerTag(
+export function toHaveBattlerTag<B extends BattlerTagType>(
   this: MatcherState,
   received: unknown,
-  expectedBattlerTagType: BattlerTagType,
+  expectedTag: B | toHaveBattlerTagOptions<B>,
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
     return {
@@ -26,18 +60,44 @@ export function toHaveBattlerTag(
     };
   }
 
-  const pass = !!received.getTag(expectedBattlerTagType);
   const pkmName = getPokemonNameWithAffix(received);
-  // "BattlerTagType.SEEDED (=1)"
-  const expectedTagStr = getEnumStr(BattlerTagType, expectedBattlerTagType, { prefix: "BattlerTagType." });
 
+  // Coerce lone `tagType`s into objects
+  const etag = typeof expectedTag === "object" ? expectedTag : { tagType: expectedTag };
+  const gotTag = received.getTag(etag.tagType);
+
+  // If checking exclusively tag type OR no tags were found, break out early.
+  if (typeof expectedTag !== "object" || !gotTag) {
+    const pass = !!gotTag;
+    // "BattlerTagType.SEEDED (=1)"
+    const expectedTagStr = getEnumStr(BattlerTagType, etag.tagType, { prefix: "BattlerTagType." });
+
+    return {
+      pass,
+      message: () =>
+        pass
+          ? `Expected ${pkmName} to NOT have a tag of type ${expectedTagStr}, but it did!`
+          : `Expected ${pkmName} to have a tag of type ${expectedTagStr}, but it didn't!`,
+      expected: expectedTag,
+      actual: received.summonData.tags.map(t => t.tagType),
+    };
+  }
+
+  // Check for equality with the provided tag
+  const pass = this.equals(gotTag, etag, [
+    ...this.customTesters,
+    this.utils.subsetEquality,
+    this.utils.iterableEquality,
+  ]);
+
+  const expectedStr = getOnelineDiffStr.call(this, expectedTag);
   return {
     pass,
     message: () =>
       pass
-        ? `Expected ${pkmName} to NOT have ${expectedTagStr}, but it did!`
-        : `Expected ${pkmName} to have ${expectedTagStr}, but it didn't!`,
-    expected: expectedBattlerTagType,
-    actual: received.summonData.tags.map(t => t.tagType),
+        ? `Expected ${pkmName} to NOT have a tag matching ${expectedStr}, but it did!`
+        : `Expected ${pkmName} to have a tag matching ${expectedStr}, but it didn't!`,
+    expected: expectedTag,
+    actual: gotTag,
   };
 }

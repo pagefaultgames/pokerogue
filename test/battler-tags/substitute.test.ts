@@ -49,7 +49,7 @@ describe("BattlerTag - SubstituteTag", () => {
 
       vi.spyOn(messages, "getPokemonNameWithAffix").mockReturnValue("");
       vi.spyOn(mockPokemon.scene as BattleScene, "getPokemonById").mockImplementation(pokemonId =>
-        mockPokemon.id === pokemonId ? mockPokemon : null,
+        mockPokemon.id === pokemonId ? mockPokemon : undefined,
       );
     });
 
@@ -142,7 +142,7 @@ describe("BattlerTag - SubstituteTag", () => {
       vi.spyOn(messages, "getPokemonNameWithAffix").mockReturnValue("");
     });
 
-    it("PRE_MOVE lapse triggers pre-move animation", async () => {
+    it("MOVE lapse triggers pre-move animation", async () => {
       const subject = new SubstituteTag(MoveId.SUBSTITUTE, mockPokemon.id);
 
       vi.spyOn(mockPokemon.scene as BattleScene, "triggerPokemonBattleAnim").mockImplementation(
@@ -154,7 +154,7 @@ describe("BattlerTag - SubstituteTag", () => {
 
       vi.spyOn((mockPokemon.scene as BattleScene).phaseManager, "queueMessage").mockReturnValue();
 
-      expect(subject.lapse(mockPokemon, BattlerTagLapseType.PRE_MOVE)).toBeTruthy();
+      expect(subject.lapse(mockPokemon, BattlerTagLapseType.MOVE)).toBeTruthy();
 
       expect(subject.sourceInFocus).toBeTruthy();
       expect((mockPokemon.scene as BattleScene).triggerPokemonBattleAnim).toHaveBeenCalledTimes(1);

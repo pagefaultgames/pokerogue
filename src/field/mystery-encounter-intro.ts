@@ -5,7 +5,6 @@ import { getSpriteKeysFromSpecies } from "#mystery-encounters/encounter-pokemon-
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { loadPokemonVariantAssets } from "#sprites/pokemon-sprite";
 import type { Variant } from "#sprites/variant";
-import { isNullOrUndefined } from "#utils/common";
 import type { GameObjects } from "phaser";
 
 type PlayAnimationConfig = Phaser.Types.Animations.PlayAnimationConfig;
@@ -37,7 +36,7 @@ type KnownFileRoot =
 export class MysteryEncounterSpriteConfig {
   /** The sprite key (which is the image file name). e.g. "ace_trainer_f" */
   spriteKey: string;
-  /** Refer to [/public/images](../../public/images) directorty for all folder names */
+  /** Refer to [/assets/images](../../assets/images) directorty for all folder names */
   fileRoot: (KnownFileRoot & string) | string;
   /** Optional replacement for `spriteKey`/`fileRoot`. Just know this defaults to male/genderless, form 0, no shiny */
   species?: SpeciesId;
@@ -87,6 +86,7 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
     variant: Variant;
   }[];
 
+  // TODO: Refactor
   constructor(encounter: MysteryEncounter) {
     super(globalScene, -72, 76);
     this.encounter = encounter;
@@ -97,7 +97,7 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
         ...config,
       };
 
-      if (!isNullOrUndefined(result.species)) {
+      if (result.species != null) {
         const keys = getSpriteKeysFromSpecies(result.species, undefined, undefined, result.isShiny, result.variant);
         result.spriteKey = keys.spriteKey;
         result.fileRoot = keys.fileRoot;
@@ -193,25 +193,23 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
           sprite.setPosition(sprite.x, sprite.y + y);
           tintSprite.setPosition(tintSprite.x, tintSprite.y + y);
         }
-      } else {
         // Single sprite
-        if (this.spriteConfigs.length === 1) {
-          sprite.x = origin;
-          tintSprite.x = origin;
-        } else {
-          // Do standard sprite spacing (not including offset sprites)
-          sprite.x = minX + (n + 0.5) * spacingValue + origin;
-          tintSprite.x = minX + (n + 0.5) * spacingValue + origin;
-          n++;
-        }
+      } else if (this.spriteConfigs.length === 1) {
+        sprite.x = origin;
+        tintSprite.x = origin;
+      } else {
+        // Do standard sprite spacing (not including offset sprites)
+        sprite.x = minX + (n + 0.5) * spacingValue + origin;
+        tintSprite.x = minX + (n + 0.5) * spacingValue + origin;
+        n++;
       }
 
-      if (!isNullOrUndefined(pokemonShinySparkle)) {
+      if (pokemonShinySparkle != null) {
         // Offset the sparkle to match the Pokemon's position
         pokemonShinySparkle.setPosition(sprite.x, sprite.y);
       }
 
-      if (!isNullOrUndefined(alpha)) {
+      if (alpha != null) {
         sprite.setAlpha(alpha);
         tintSprite.setAlpha(alpha);
       }
@@ -235,7 +233,7 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
       this.spriteConfigs.forEach(config => {
         if (config.isPokemon) {
           globalScene.loadPokemonAtlas(config.spriteKey, config.fileRoot);
-          if (config.isShiny && !isNullOrUndefined(config.variant)) {
+          if (config.isShiny && config.variant != null) {
             shinyPromises.push(loadPokemonVariantAssets(config.spriteKey, config.fileRoot, config.variant));
           }
         } else if (config.isItem) {
@@ -457,7 +455,7 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
       globalScene.tweens.add({
         targets: sprite,
         alpha: alpha || 1,
-        duration: duration,
+        duration,
         ease: ease || "Linear",
       });
     } else {
@@ -490,7 +488,7 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
       globalScene.tweens.add({
         targets: sprite,
         alpha: 0,
-        duration: duration,
+        duration,
         ease: ease || "Linear",
         onComplete: () => {
           sprite.setVisible(false);

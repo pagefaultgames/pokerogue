@@ -111,8 +111,8 @@ export class PhaseInterceptor {
   private intervalRun: NodeJS.Timeout;
   private prompts: PromptHandler[];
   private inProgress?: InProgressStub;
-  private originalSetMode: UI["setMode"];
-  private originalSuperEnd: Phase["end"];
+  private originalSetMode: typeof UI.prototype.setMode;
+  private originalSuperEnd: typeof Phase.prototype.end;
 
   /**
    * List of phases with their corresponding start methods.
@@ -237,7 +237,7 @@ export class PhaseInterceptor {
       ErrorInterceptor.getInstance().add(this);
       const targetName = typeof phaseTo === "string" ? phaseTo : phaseTo.name;
       this.intervalRun = setInterval(async () => {
-        const currentPhase = this.onHold?.length && this.onHold[0];
+        const currentPhase = this.onHold?.length > 0 && this.onHold[0];
         if (!currentPhase) {
           // No current phase means the manager either hasn't started yet
           // or we were interrupted by prompt; wait for phase to finish
@@ -382,20 +382,21 @@ export class PhaseInterceptor {
    */
   startPromptHandler() {
     this.promptInterval = setInterval(() => {
-      if (this.prompts.length) {
+      if (this.prompts.length > 0) {
         const actionForNextPrompt = this.prompts[0];
         const expireFn = actionForNextPrompt.expireFn?.();
         const currentMode = this.scene.ui.getMode();
-        const currentPhase = this.scene.phaseManager.getCurrentPhase()?.constructor.name;
+        const currentPhase = this.scene.phaseManager.getCurrentPhase().phaseName;
         const currentHandler = this.scene.ui.getHandler();
         if (expireFn) {
           this.prompts.shift();
         } else if (
-          currentMode === actionForNextPrompt.mode &&
-          currentPhase === actionForNextPrompt.phaseTarget &&
-          currentHandler.active &&
-          (!actionForNextPrompt.awaitingActionInput ||
-            (actionForNextPrompt.awaitingActionInput && (currentHandler as AwaitableUiHandler)["awaitingActionInput"]))
+          currentMode === actionForNextPrompt.mode
+          && currentPhase === actionForNextPrompt.phaseTarget
+          && currentHandler.active
+          && (!actionForNextPrompt.awaitingActionInput
+            || (actionForNextPrompt.awaitingActionInput
+              && (currentHandler as AwaitableUiHandler)["awaitingActionInput"]))
         ) {
           const prompt = this.prompts.shift();
           if (prompt?.callback) {

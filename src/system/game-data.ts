@@ -1,15 +1,14 @@
 import { pokerogueApi } from "#api/pokerogue-api";
 import { clientSessionId, loggedInUser, updateUserInfo } from "#app/account";
-import type { PokeballCounts } from "#app/battle-scene";
 import { defaultStarterSpecies, saveKey } from "#app/constants";
 import { getGameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
-import { bypassLogin } from "#app/global-vars/bypass-login";
 import Overrides from "#app/overrides";
 import { Tutorial } from "#app/tutorial";
 import { speciesEggMoves } from "#balance/egg-moves";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { speciesStarterCosts } from "#balance/starters";
+import { bypassLogin, isBeta, isDev } from "#constants/app-constants";
 import { EntryHazardTag } from "#data/arena-tag";
 import { allMoves, allSpecies } from "#data/data-lists";
 import type { Egg } from "#data/egg";
@@ -24,11 +23,9 @@ import { Device } from "#enums/devices";
 import { DexAttr } from "#enums/dex-attr";
 import { GameDataType } from "#enums/game-data-type";
 import { GameModes } from "#enums/game-modes";
-import type { MoveId } from "#enums/move-id";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
 import { PlayerGender } from "#enums/player-gender";
-import type { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { TrainerVariant } from "#enums/trainer-variant";
@@ -62,13 +59,25 @@ import {
 import { VoucherType, vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { DexData, DexEntry } from "#types/dex-data";
+import type {
+  AchvUnlocks,
+  DexAttrProps,
+  RunHistoryData,
+  SeenDialogues,
+  SessionSaveData,
+  StarterData,
+  SystemSaveData,
+  TutorialFlags,
+  Unlocks,
+  VoucherCounts,
+  VoucherUnlocks,
+} from "#types/save-data";
 import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
-import { executeIf, fixedInt, isLocal, NumberHolder, randInt, randSeedItem } from "#utils/common";
+import { executeIf, fixedInt, NumberHolder, randInt, randSeedItem } from "#utils/common";
 import { decrypt, encrypt } from "#utils/data";
 import { getEnumKeys } from "#utils/enums";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
-import { isBeta } from "#utils/utility-vars";
 import { AES, enc } from "crypto-js";
 import i18next from "i18next";
 
@@ -92,132 +101,6 @@ function getDataTypeKey(dataType: GameDataType, slotId = 0): string {
     case GameDataType.RUN_HISTORY:
       return "runHistoryData";
   }
-}
-
-// TODO: Move all these exported interfaces to @types
-export interface SystemSaveData {
-  trainerId: number;
-  secretId: number;
-  gender: PlayerGender;
-  dexData: DexData;
-  starterData: StarterData;
-  gameStats: GameStats;
-  unlocks: Unlocks;
-  achvUnlocks: AchvUnlocks;
-  voucherUnlocks: VoucherUnlocks;
-  voucherCounts: VoucherCounts;
-  eggs: EggData[];
-  gameVersion: string;
-  timestamp: number;
-  eggPity: number[];
-  unlockPity: number[];
-}
-
-export interface SessionSaveData {
-  seed: string;
-  playTime: number;
-  gameMode: GameModes;
-  party: PokemonData[];
-  enemyParty: PokemonData[];
-  modifiers: PersistentModifierData[];
-  enemyModifiers: PersistentModifierData[];
-  arena: ArenaData;
-  pokeballCounts: PokeballCounts;
-  money: number;
-  score: number;
-  waveIndex: number;
-  battleType: BattleType;
-  trainer: TrainerData;
-  gameVersion: string;
-  /** The player-chosen name of the run */
-  name: string;
-  timestamp: number;
-  challenges: ChallengeData[];
-  mysteryEncounterType: MysteryEncounterType | -1; // Only defined when current wave is ME,
-  mysteryEncounterSaveData: MysteryEncounterSaveData;
-  /**
-   * Counts the amount of pokemon fainted in your party during the current arena encounter.
-   */
-  playerFaints: number;
-}
-
-interface Unlocks {
-  [key: number]: boolean;
-}
-
-export interface AchvUnlocks {
-  [key: string]: number;
-}
-
-export interface VoucherUnlocks {
-  [key: string]: number;
-}
-
-export interface VoucherCounts {
-  [type: string]: number;
-}
-
-export type StarterMoveset = [MoveId] | [MoveId, MoveId] | [MoveId, MoveId, MoveId] | [MoveId, MoveId, MoveId, MoveId];
-
-export interface StarterFormMoveData {
-  [key: number]: StarterMoveset;
-}
-
-export interface StarterMoveData {
-  [key: number]: StarterMoveset | StarterFormMoveData;
-}
-
-export interface StarterAttributes {
-  nature?: number;
-  ability?: number;
-  variant?: number;
-  form?: number;
-  female?: boolean;
-  shiny?: boolean;
-  favorite?: boolean;
-  nickname?: string;
-  tera?: PokemonType;
-}
-
-export interface DexAttrProps {
-  shiny: boolean;
-  female: boolean;
-  variant: Variant;
-  formIndex: number;
-}
-
-export type RunHistoryData = Record<number, RunEntry>;
-
-export interface RunEntry {
-  entry: SessionSaveData;
-  isVictory: boolean;
-  /*Automatically set to false at the moment - implementation TBD*/
-  isFavorite: boolean;
-}
-
-export interface StarterDataEntry {
-  moveset: StarterMoveset | StarterFormMoveData | null;
-  eggMoves: number;
-  candyCount: number;
-  friendship: number;
-  abilityAttr: number;
-  passiveAttr: number;
-  valueReduction: number;
-  classicWinCount: number;
-}
-
-export interface StarterData {
-  [key: number]: StarterDataEntry;
-}
-
-// TODO: Rework into a bitmask
-export type TutorialFlags = {
-  [key in Tutorial]: boolean;
-};
-
-// TODO: Rework into a bitmask
-export interface SeenDialogues {
-  [key: string]: boolean;
 }
 
 const systemShortKeys = {
@@ -262,12 +145,20 @@ export class GameData {
   public eggPity: number[];
   public unlockPity: number[];
 
-  constructor() {
-    this.loadSettings();
-    this.loadGamepadSettings();
-    this.loadMappingConfigs();
-    this.trainerId = randInt(65536);
-    this.secretId = randInt(65536);
+  /**
+   * @param fromRaw - If true, will skip initialization of fields that are normally randomized on new game start. Used for the admin panel; default `false`
+   */
+  constructor(fromRaw = false) {
+    if (fromRaw) {
+      this.trainerId = 0;
+      this.secretId = 0;
+    } else {
+      this.loadSettings();
+      this.loadGamepadSettings();
+      this.loadMappingConfigs();
+      this.trainerId = randInt(65536);
+      this.secretId = randInt(65536);
+    }
     this.starterData = {};
     this.gameStats = new GameStats();
     this.runHistory = {};
@@ -368,10 +259,10 @@ export class GameData {
       if (!bypassLogin) {
         pokerogueApi.savedata.system.get({ clientSessionId }).then(saveDataOrErr => {
           if (
-            typeof saveDataOrErr === "number" ||
-            !saveDataOrErr ||
-            saveDataOrErr.length === 0 ||
-            saveDataOrErr[0] !== "{"
+            typeof saveDataOrErr === "number"
+            || !saveDataOrErr
+            || saveDataOrErr.length === 0
+            || saveDataOrErr[0] !== "{"
           ) {
             if (saveDataOrErr === 404) {
               globalScene.phaseManager.queueMessage(
@@ -404,13 +295,115 @@ export class GameData {
     });
   }
 
+  /**
+   *
+   * @param dataStr - The raw JSON string of the `SystemSaveData`
+   * @returns - A new `GameData` instance initialized with the parsed `SystemSaveData`
+   */
+  public static fromRawSystem(dataStr: string): GameData {
+    const gameData = new GameData(true);
+    const systemData = GameData.parseSystemData(dataStr);
+    gameData.initParsedSystem(systemData);
+    return gameData;
+  }
+
+  /**
+   * Initialize system data _after_ it has been parsed from JSON.
+   * @param systemData The parsed `SystemSaveData` to initialize from
+   */
+  private initParsedSystem(systemData: SystemSaveData): void {
+    applySystemVersionMigration(systemData);
+
+    this.trainerId = systemData.trainerId;
+    this.secretId = systemData.secretId;
+
+    this.gender = systemData.gender;
+
+    this.saveSetting(SettingKeys.Player_Gender, systemData.gender === PlayerGender.FEMALE ? 1 : 0);
+
+    if (systemData.starterData) {
+      this.starterData = systemData.starterData;
+    } else {
+      this.initStarterData();
+
+      if (systemData["starterMoveData"]) {
+        const starterMoveData = systemData["starterMoveData"];
+        for (const s of Object.keys(starterMoveData)) {
+          this.starterData[s].moveset = starterMoveData[s];
+        }
+      }
+
+      if (systemData["starterEggMoveData"]) {
+        const starterEggMoveData = systemData["starterEggMoveData"];
+        for (const s of Object.keys(starterEggMoveData)) {
+          this.starterData[s].eggMoves = starterEggMoveData[s];
+        }
+      }
+
+      this.migrateStarterAbilities(systemData, this.starterData);
+
+      const starterIds = Object.keys(this.starterData).map(s => Number.parseInt(s) as SpeciesId);
+      for (const s of starterIds) {
+        this.starterData[s].candyCount += systemData.dexData[s].caughtCount;
+        this.starterData[s].candyCount += systemData.dexData[s].hatchedCount * 2;
+        if (systemData.dexData[s].caughtAttr & DexAttr.SHINY) {
+          this.starterData[s].candyCount += 4;
+        }
+      }
+    }
+
+    if (systemData.gameStats) {
+      this.gameStats = systemData.gameStats;
+    }
+
+    if (systemData.unlocks) {
+      for (const key of Object.keys(systemData.unlocks)) {
+        if (this.unlocks.hasOwnProperty(key)) {
+          this.unlocks[key] = systemData.unlocks[key];
+        }
+      }
+    }
+
+    if (systemData.achvUnlocks) {
+      for (const a of Object.keys(systemData.achvUnlocks)) {
+        if (achvs.hasOwnProperty(a)) {
+          this.achvUnlocks[a] = systemData.achvUnlocks[a];
+        }
+      }
+    }
+
+    if (systemData.voucherUnlocks) {
+      for (const v of Object.keys(systemData.voucherUnlocks)) {
+        if (vouchers.hasOwnProperty(v)) {
+          this.voucherUnlocks[v] = systemData.voucherUnlocks[v];
+        }
+      }
+    }
+
+    if (systemData.voucherCounts) {
+      getEnumKeys(VoucherType).forEach(key => {
+        const index = VoucherType[key];
+        this.voucherCounts[index] = systemData.voucherCounts[index] || 0;
+      });
+    }
+
+    this.eggs = systemData.eggs ? systemData.eggs.map(e => e.toEgg()) : [];
+
+    this.eggPity = systemData.eggPity ? systemData.eggPity.slice(0) : [0, 0, 0, 0];
+    this.unlockPity = systemData.unlockPity ? systemData.unlockPity.slice(0) : [0, 0, 0, 0];
+
+    this.dexData = Object.assign(this.dexData, systemData.dexData);
+    this.consolidateDexData(this.dexData);
+    this.defaultDexData = null;
+  }
+
   public initSystem(systemDataStr: string, cachedSystemDataStr?: string): Promise<boolean> {
     const { promise, resolve } = Promise.withResolvers<boolean>();
     try {
-      let systemData = this.parseSystemData(systemDataStr);
+      let systemData = GameData.parseSystemData(systemDataStr);
 
       if (cachedSystemDataStr) {
-        const cachedSystemData = this.parseSystemData(cachedSystemDataStr);
+        const cachedSystemData = GameData.parseSystemData(cachedSystemDataStr);
         if (cachedSystemData.timestamp > systemData.timestamp) {
           console.debug("Use cached system");
           systemData = cachedSystemData;
@@ -420,10 +413,12 @@ export class GameData {
         }
       }
 
-      if (isLocal || isBeta) {
+      if (isBeta || isDev) {
         try {
           console.debug(
-            this.parseSystemData(JSON.stringify(systemData, (_, v: any) => (typeof v === "bigint" ? v.toString() : v))),
+            GameData.parseSystemData(
+              JSON.stringify(systemData, (_, v: any) => (typeof v === "bigint" ? v.toString() : v)),
+            ),
           );
         } catch (err) {
           console.debug("Attempt to log system data failed:", err);
@@ -438,90 +433,7 @@ export class GameData {
         localStorage.setItem(lsItemKey, "");
       }
 
-      applySystemVersionMigration(systemData);
-
-      this.trainerId = systemData.trainerId;
-      this.secretId = systemData.secretId;
-
-      this.gender = systemData.gender;
-
-      this.saveSetting(SettingKeys.Player_Gender, systemData.gender === PlayerGender.FEMALE ? 1 : 0);
-
-      if (!systemData.starterData) {
-        this.initStarterData();
-
-        if (systemData["starterMoveData"]) {
-          const starterMoveData = systemData["starterMoveData"];
-          for (const s of Object.keys(starterMoveData)) {
-            this.starterData[s].moveset = starterMoveData[s];
-          }
-        }
-
-        if (systemData["starterEggMoveData"]) {
-          const starterEggMoveData = systemData["starterEggMoveData"];
-          for (const s of Object.keys(starterEggMoveData)) {
-            this.starterData[s].eggMoves = starterEggMoveData[s];
-          }
-        }
-
-        this.migrateStarterAbilities(systemData, this.starterData);
-
-        const starterIds = Object.keys(this.starterData).map(s => Number.parseInt(s) as SpeciesId);
-        for (const s of starterIds) {
-          this.starterData[s].candyCount += systemData.dexData[s].caughtCount;
-          this.starterData[s].candyCount += systemData.dexData[s].hatchedCount * 2;
-          if (systemData.dexData[s].caughtAttr & DexAttr.SHINY) {
-            this.starterData[s].candyCount += 4;
-          }
-        }
-      } else {
-        this.starterData = systemData.starterData;
-      }
-
-      if (systemData.gameStats) {
-        this.gameStats = systemData.gameStats;
-      }
-
-      if (systemData.unlocks) {
-        for (const key of Object.keys(systemData.unlocks)) {
-          if (this.unlocks.hasOwnProperty(key)) {
-            this.unlocks[key] = systemData.unlocks[key];
-          }
-        }
-      }
-
-      if (systemData.achvUnlocks) {
-        for (const a of Object.keys(systemData.achvUnlocks)) {
-          if (achvs.hasOwnProperty(a)) {
-            this.achvUnlocks[a] = systemData.achvUnlocks[a];
-          }
-        }
-      }
-
-      if (systemData.voucherUnlocks) {
-        for (const v of Object.keys(systemData.voucherUnlocks)) {
-          if (vouchers.hasOwnProperty(v)) {
-            this.voucherUnlocks[v] = systemData.voucherUnlocks[v];
-          }
-        }
-      }
-
-      if (systemData.voucherCounts) {
-        getEnumKeys(VoucherType).forEach(key => {
-          const index = VoucherType[key];
-          this.voucherCounts[index] = systemData.voucherCounts[index] || 0;
-        });
-      }
-
-      this.eggs = systemData.eggs ? systemData.eggs.map(e => e.toEgg()) : [];
-
-      this.eggPity = systemData.eggPity ? systemData.eggPity.slice(0) : [0, 0, 0, 0];
-      this.unlockPity = systemData.unlockPity ? systemData.unlockPity.slice(0) : [0, 0, 0, 0];
-
-      this.dexData = Object.assign(this.dexData, systemData.dexData);
-      this.consolidateDexData(this.dexData);
-      this.defaultDexData = null;
-
+      this.initParsedSystem(systemData);
       resolve(true);
     } catch (err) {
       console.error(err);
@@ -534,36 +446,8 @@ export class GameData {
    * Retrieves current run history data, organized by time stamp.
    * At the moment, only retrievable from locale cache
    */
+  // TODO: save run history data to server?
   async getRunHistoryData(): Promise<RunHistoryData> {
-    if (!isLocal) {
-      /**
-       * Networking Code DO NOT DELETE!
-       * Note: Might have to be migrated to `pokerogue-api.ts`
-       *
-      const response = await Utils.apiFetch("savedata/runHistory", true);
-      const data = await response.json();
-      */
-      const lsItemKey = `runHistoryData_${loggedInUser?.username}`;
-      const lsItem = localStorage.getItem(lsItemKey);
-      if (lsItem) {
-        const cachedResponse = lsItem;
-        if (cachedResponse) {
-          const runHistory = JSON.parse(decrypt(cachedResponse, bypassLogin));
-          return runHistory;
-        }
-        return {};
-        // check to see whether cachedData or serverData is more up-to-date
-        /**
-       * Networking Code DO NOT DELETE!
-       *
-        if ( Object.keys(cachedRHData).length >= Object.keys(data).length ) {
-          return cachedRHData;
-        }
-        */
-      }
-      localStorage.setItem(`runHistoryData_${loggedInUser?.username}`, "");
-      return {};
-    }
     const lsItemKey = `runHistoryData_${loggedInUser?.username}`;
     const lsItem = localStorage.getItem(lsItemKey);
     if (lsItem) {
@@ -584,6 +468,7 @@ export class GameData {
    * @param isVictory: result of the run
    * Arbitrary limit of 25 runs per player - Will delete runs, starting with the oldest one, if needed
    */
+  // TODO: save run history data to server?
   async saveRunHistory(runEntry: SessionSaveData, isVictory: boolean): Promise<boolean> {
     const runHistoryData = await this.getRunHistoryData();
     // runHistoryData should always return run history or {} empty object
@@ -599,31 +484,17 @@ export class GameData {
     const timestamp = runEntry.timestamp.toString();
     runHistoryData[timestamp] = {
       entry: runEntry,
-      isVictory: isVictory,
+      isVictory,
       isFavorite: false,
     };
     localStorage.setItem(
       `runHistoryData_${loggedInUser?.username}`,
       encrypt(JSON.stringify(runHistoryData), bypassLogin),
     );
-    /**
-     * Networking Code DO NOT DELETE
-     *
-    if (!Utils.isLocal) {
-      try {
-        await Utils.apiPost("savedata/runHistory", JSON.stringify(runHistoryData), undefined, true);
-        return true;
-      } catch (err) {
-        console.log("savedata/runHistory POST failed : ", err);
-        return false;
-      }
-    }
-    NOTE: should be adopted to `pokerogue-api.ts`
-    */
     return true;
   }
 
-  parseSystemData(dataStr: string): SystemSaveData {
+  static parseSystemData(dataStr: string): SystemSaveData {
     return JSON.parse(dataStr, (k: string, v: any) => {
       if (k === "gameStats") {
         return new GameStats(v);
@@ -1042,7 +913,7 @@ export class GameData {
     const { promise, resolve, reject } = Promise.withResolvers<boolean>();
     try {
       const initSessionFromData = (fromSession: SessionSaveData) => {
-        if (isLocal || isBeta) {
+        if (isBeta || isDev) {
           try {
             console.debug(
               this.parseSessionData(
@@ -1137,6 +1008,7 @@ export class GameData {
             WeatherType.NONE,
             globalScene.arena.weather?.weatherType!,
             globalScene.arena.weather?.turnsLeft!,
+            globalScene.arena.weather?.maxDuration!,
           ),
         ); // TODO: is this bang correct?
 
@@ -1146,6 +1018,7 @@ export class GameData {
             TerrainType.NONE,
             globalScene.arena.terrain?.terrainType!,
             globalScene.arena.terrain?.turnsLeft!,
+            globalScene.arena.terrain?.maxDuration!,
           ),
         ); // TODO: is this bang correct?
 
@@ -1155,12 +1028,14 @@ export class GameData {
         if (globalScene.arena.tags) {
           for (const tag of globalScene.arena.tags) {
             if (tag instanceof EntryHazardTag) {
-              const { tagType, side, turnCount, layers, maxLayers } = tag as EntryHazardTag;
+              const { tagType, side, turnCount, maxDuration, layers, maxLayers } = tag as EntryHazardTag;
               globalScene.arena.eventTarget.dispatchEvent(
-                new TagAddedEvent(tagType, side, turnCount, layers, maxLayers),
+                new TagAddedEvent(tagType, side, turnCount, maxDuration, layers, maxLayers),
               );
             } else {
-              globalScene.arena.eventTarget.dispatchEvent(new TagAddedEvent(tag.tagType, tag.side, tag.turnCount));
+              globalScene.arena.eventTarget.dispatchEvent(
+                new TagAddedEvent(tag.tagType, tag.side, tag.turnCount, tag.maxDuration),
+              );
             }
           }
         }
@@ -1169,7 +1044,7 @@ export class GameData {
           loadPositionalTag(tag),
         );
 
-        if (globalScene.modifiers.length) {
+        if (globalScene.modifiers.length > 0) {
           console.warn("Existing modifiers not cleared on session load, deleting...");
           globalScene.modifiers = [];
         }
@@ -1347,8 +1222,8 @@ export class GameData {
             }
 
             if (
-              md instanceof Modifier.EnemyAttackStatusEffectChanceModifier &&
-              (md.effect === StatusEffect.FREEZE || md.effect === StatusEffect.SLEEP)
+              md instanceof Modifier.EnemyAttackStatusEffectChanceModifier
+              && (md.effect === StatusEffect.FREEZE || md.effect === StatusEffect.SLEEP)
             ) {
               // Discard any old "sleep/freeze chance tokens".
               // TODO: make this migrate script
@@ -1408,14 +1283,14 @@ export class GameData {
           : this.getSessionSaveData();
         const maxIntAttrValue = 0x80000000;
         const systemData = useCachedSystem
-          ? this.parseSystemData(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, bypassLogin))
+          ? GameData.parseSystemData(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, bypassLogin))
           : this.getSystemSaveData(); // TODO: is this bang correct?
 
         const request = {
           system: systemData,
           session: sessionData,
           sessionSlotId: globalScene.sessionSlotId,
-          clientSessionId: clientSessionId,
+          clientSessionId,
         };
 
         localStorage.setItem(
@@ -1491,8 +1366,9 @@ export class GameData {
           });
         }
 
+        // TODO: this is a really shit way of checking JSON validity
         promise.then(response => {
-          if (typeof response === "number" || !response?.length || response[0] !== "{") {
+          if (typeof response !== "string" || response.length === 0 || response.charAt(0) !== "{") {
             console.error(response);
             resolve(false);
             return;
@@ -1536,7 +1412,8 @@ export class GameData {
             switch (dataType) {
               case GameDataType.SYSTEM: {
                 dataStr = this.convertSystemDataStr(dataStr);
-                const systemData = this.parseSystemData(dataStr);
+                dataStr = dataStr.replace(/"playTime":\d+/, `"playTime":${this.gameStats.playTime + 60}`);
+                const systemData = GameData.parseSystemData(dataStr);
                 valid = !!systemData.dexData && !!systemData.timestamp;
                 break;
               }
@@ -1666,7 +1543,7 @@ export class GameData {
     globalScene.executeWithSeedOffset(
       () => {
         const neutralNatures = [Nature.HARDY, Nature.DOCILE, Nature.SERIOUS, Nature.BASHFUL, Nature.QUIRKY];
-        for (let s = 0; s < defaultStarterSpecies.length; s++) {
+        for (const _ of defaultStarterSpecies) {
           defaultStarterNatures.push(randSeedItem(neutralNatures));
         }
       },
@@ -1712,8 +1589,8 @@ export class GameData {
   setPokemonSeen(pokemon: Pokemon, incrementCount = true, trainer = false): void {
     // Some Mystery Encounters block updates to these stats
     if (
-      globalScene.currentBattle?.isBattleMysteryEncounter() &&
-      globalScene.currentBattle.mysteryEncounter?.preventGameStatsUpdates
+      globalScene.currentBattle?.isBattleMysteryEncounter()
+      && globalScene.currentBattle.mysteryEncounter?.preventGameStatsUpdates
     ) {
       return;
     }
@@ -1993,16 +1870,14 @@ export class GameData {
       let message = prependSpeciesToMessage ? species.getName() + " " : "";
       message +=
         eggMoveIndex === 3
-          ? i18next.t("egg:rareEggMoveUnlock", { moveName: moveName })
-          : i18next.t("egg:eggMoveUnlock", { moveName: moveName });
+          ? i18next.t("egg:rareEggMoveUnlock", { moveName })
+          : i18next.t("egg:eggMoveUnlock", { moveName });
 
       globalScene.ui.showText(message, null, () => resolve(true), null, true);
     });
   }
 
-  /**
-   * Checks whether the root species of a given {@PokemonSpecies} has been unlocked in the dex
-   */
+  /** Return whether the root species of a given `PokemonSpecies` has been unlocked in the dex */
   isRootSpeciesUnlocked(species: PokemonSpecies): boolean {
     return !!this.dexData[species.getRootSpeciesId()]?.caughtAttr;
   }
@@ -2217,9 +2092,9 @@ export class GameData {
     for (const s of starterIds) {
       const dexAttr = dexData[s].caughtAttr;
       starterData[s].abilityAttr =
-        (dexAttr & DexAttr.DEFAULT_VARIANT ? AbilityAttr.ABILITY_1 : 0) |
-        (dexAttr & DexAttr.VARIANT_2 ? AbilityAttr.ABILITY_2 : 0) |
-        (dexAttr & DexAttr.VARIANT_3 ? AbilityAttr.ABILITY_HIDDEN : 0);
+        (dexAttr & DexAttr.DEFAULT_VARIANT ? AbilityAttr.ABILITY_1 : 0)
+        | (dexAttr & DexAttr.VARIANT_2 ? AbilityAttr.ABILITY_2 : 0)
+        | (dexAttr & DexAttr.VARIANT_3 ? AbilityAttr.ABILITY_HIDDEN : 0);
       if (dexAttr) {
         if (!(dexAttr & DexAttr.DEFAULT_VARIANT)) {
           dexData[s].caughtAttr ^= DexAttr.DEFAULT_VARIANT;

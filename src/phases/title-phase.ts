@@ -1,9 +1,12 @@
+import { pokerogueApi } from "#api/pokerogue-api";
 import { loggedInUser } from "#app/account";
 import { GameMode, getGameMode } from "#app/game-mode";
+import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { Phase } from "#app/phase";
-import { fetchDailyRunSeed, getDailyRunStarters } from "#data/daily-run";
+import { bypassLogin } from "#constants/app-constants";
+import { getDailyRunStarters } from "#data/daily-run";
 import { modifierTypes } from "#data/data-lists";
 import { Gender } from "#data/gender";
 import { BattleType } from "#enums/battle-type";
@@ -14,11 +17,12 @@ import { Unlockables } from "#enums/unlockables";
 import { getBiomeKey } from "#field/arena";
 import type { Modifier } from "#modifiers/modifier";
 import { getDailyRunStarterModifiers, regenerateModifierPoolThresholds } from "#modifiers/modifier-type";
-import type { SessionSaveData } from "#system/game-data";
 import { vouchers } from "#system/voucher";
+import type { SessionSaveData } from "#types/save-data";
 import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { SaveSlotUiMode } from "#ui/save-slot-select-ui-handler";
-import { isLocal, isLocalServerConnected, isNullOrUndefined } from "#utils/common";
+import { isLocalServerConnected } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 export class TitlePhase extends Phase {
@@ -125,7 +129,7 @@ export class TitlePhase extends Phase {
           });
           globalScene.ui.showText(i18next.t("menu:selectGameMode"), null, () =>
             globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
-              options: options,
+              options,
             }),
           );
           return true;
@@ -161,7 +165,7 @@ export class TitlePhase extends Phase {
       },
     );
     const config: OptionSelectConfig = {
-      options: options,
+      options,
       noCancel: true,
       yOffset: 47,
     };
@@ -215,49 +219,56 @@ export class TitlePhase extends Phase {
         const starters = getDailyRunStarters(seed);
         const startingLevel = globalScene.gameMode.getStartingLevel();
 
+        // TODO: Dedupe this
         const party = globalScene.getPlayerParty();
         const loadPokemonAssets: Promise<void>[] = [];
         for (const starter of starters) {
-          const starterProps = globalScene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
-          const starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
+          const species = getPokemonSpecies(starter.speciesId);
+          const starterFormIndex = starter.formIndex;
           const starterGender =
-            starter.species.malePercent !== null
-              ? !starterProps.female
-                ? Gender.MALE
-                : Gender.FEMALE
-              : Gender.GENDERLESS;
+            species.malePercent !== null ? (starter.female ? Gender.FEMALE : Gender.MALE) : Gender.GENDERLESS;
           const starterPokemon = globalScene.addPlayerPokemon(
-            starter.species,
+            species,
             startingLevel,
             starter.abilityIndex,
             starterFormIndex,
             starterGender,
-            starterProps.shiny,
-            starterProps.variant,
-            undefined,
+            starter.shiny,
+            starter.variant,
+            starter.ivs,
             starter.nature,
           );
           starterPokemon.setVisible(false);
+          if (starter.moveset) {
+            // avoid validating daily run starter movesets which are pre-populated already
+            starterPokemon.tryPopulateMoveset(starter.moveset, true);
+          }
+
           party.push(starterPokemon);
           loadPokemonAssets.push(starterPokemon.loadAssets());
         }
 
         regenerateModifierPoolThresholds(party, ModifierPoolType.DAILY_STARTER);
 
-        const modifiers: Modifier[] = Array(3)
+        const modifiers: Modifier[] = new Array(3)
           .fill(null)
           .map(() => modifierTypes.EXP_SHARE().withIdFromFunc(modifierTypes.EXP_SHARE).newModifier())
           .concat(
-            Array(3)
+            new Array(3)
               .fill(null)
               .map(() => modifierTypes.GOLDEN_EXP_CHARM().withIdFromFunc(modifierTypes.GOLDEN_EXP_CHARM).newModifier()),
           )
           .concat([modifierTypes.MAP().withIdFromFunc(modifierTypes.MAP).newModifier()])
+          .concat([modifierTypes.ABILITY_CHARM().withIdFromFunc(modifierTypes.ABILITY_CHARM).newModifier()])
+          .concat([modifierTypes.SHINY_CHARM().withIdFromFunc(modifierTypes.SHINY_CHARM).newModifier()])
           .concat(getDailyRunStarterModifiers(party))
           .filter(m => m !== null);
 
         for (const m of modifiers) {
           globalScene.addModifier(m, true, false, false, true);
+        }
+        for (const m of timedEventManager.getEventDailyStartingItems()) {
+          globalScene.addModifier(modifierTypes[m]().newModifier(), true, false, false, true);
         }
         globalScene.updateModifiers(true, true);
 
@@ -274,8 +285,9 @@ export class TitlePhase extends Phase {
       };
 
       // If Online, calls seed fetch from db to generate daily run. If Offline, generates a daily run based on current date.
-      if (!isLocal || isLocalServerConnected) {
-        fetchDailyRunSeed()
+      if (!bypassLogin || isLocalServerConnected) {
+        pokerogueApi.daily
+          .getSeed()
           .then(seed => {
             if (seed) {
               generateDaily(seed);
@@ -289,7 +301,7 @@ export class TitlePhase extends Phase {
       } else {
         // Grab first 10 chars of ISO date format (YYYY-MM-DD) and convert to base64
         let seed: string = btoa(new Date().toISOString().substring(0, 10));
-        if (!isNullOrUndefined(Overrides.DAILY_RUN_SEED_OVERRIDE)) {
+        if (Overrides.DAILY_RUN_SEED_OVERRIDE != null) {
           seed = Overrides.DAILY_RUN_SEED_OVERRIDE;
         }
         generateDaily(seed);
@@ -322,8 +334,8 @@ export class TitlePhase extends Phase {
       }
 
       if (
-        globalScene.currentBattle.battleType !== BattleType.TRAINER &&
-        (globalScene.currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily)
+        globalScene.currentBattle.battleType !== BattleType.TRAINER
+        && (globalScene.currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily)
       ) {
         const minPartySize = globalScene.currentBattle.double ? 2 : 1;
         if (availablePartyMembers > minPartySize) {

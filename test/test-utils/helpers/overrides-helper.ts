@@ -1,7 +1,9 @@
 /** biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
 import type { NewArenaEvent } from "#events/battle-scene";
+
 /** biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
 
+import { OVERRIDES_COLOR } from "#app/constants/colors";
 import type { BattleStyle, RandomTrainerOverride } from "#app/overrides";
 import Overrides from "#app/overrides";
 import { AbilityId } from "#enums/ability-id";
@@ -18,7 +20,9 @@ import { WeatherType } from "#enums/weather-type";
 import type { ModifierOverride } from "#modifiers/modifier-type";
 import type { Variant } from "#sprites/variant";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
-import { coerceArray, shiftCharCodes } from "#utils/common";
+import { coerceArray } from "#utils/array";
+import { shiftCharCodes } from "#utils/common";
+import chalk from "chalk";
 import { vi } from "vitest";
 
 /**
@@ -48,7 +52,8 @@ export class OverridesHelper extends GameManagerHelper {
 
   /**
    * Override the starting biome
-   * @warning Any event listeners that are attached to {@linkcode NewArenaEvent} may need to be handled down the line
+   *
+   * ⚠️ Any event listeners that are attached to {@linkcode NewArenaEvent} may need to be handled down the line
    * @param biome - The biome to set
    */
   public startingBiome(biome: BiomeId): this {
@@ -338,7 +343,11 @@ export class OverridesHelper extends GameManagerHelper {
   /**
    * Force random critical hit rolls to always or never suceed.
    * @param crits - `true` to guarantee crits on eligible moves, `false` to force rolls to fail, `null` to disable override
-   * @remarks This does not bypass effects that guarantee or block critical hits; it merely mocks the chance-based rolls.
+   * @remarks
+   * This does not change any effects that guarantee or block critical hits;
+   * it merely mocks any chance-based rolls not already at 100%. \
+   * For instance, a Pokemon at +3 crit stages will still critically hit with the override set to `false`,
+   * whereas one at +2 crit stages (a 50% chance) will not.
    * @returns `this`
    */
   public criticalHits(crits: boolean | null): this {
@@ -665,6 +674,6 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   private log(...params: any[]) {
-    console.log("Overrides:", ...params);
+    console.log(chalk.hex(OVERRIDES_COLOR)(...params));
   }
 }
