@@ -55,7 +55,7 @@ describe("Daily Mode", () => {
       expect(moves2, stringifyEnumArray(MoveId, moves2)).toEqual([
         MoveId.AERIAL_ACE,
         MoveId.PAY_DAY,
-        expect.anything(),
+        expect.anything(), // make sure it doesn't replace normal moveset gen
         expect.anything(),
       ]);
       expect(moves3, stringifyEnumArray(MoveId, moves3)).toEqual([

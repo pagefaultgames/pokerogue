@@ -193,6 +193,8 @@ function setDailyRunEventStarterMovesets(seed: string, starters: StarterTuple): 
     return;
   }
 
+  console.log(moveMatch);
+
   if (!isBetween(moveMatch.length, 1, 3)) {
     console.error(
       "Invalid custom seeded moveset used for daily run seed!\nSeed: %s\nMatch contents: %s",
@@ -203,8 +205,13 @@ function setDailyRunEventStarterMovesets(seed: string, starters: StarterTuple): 
   }
 
   const moveIds = getEnumValues(MoveId);
-  for (const [i, starter] of starters.entries()) {
-    const parsedMoveIds = chunkString(moveMatch[i], MOVE_ID_STRING_LENGTH).map(m => Number.parseInt(m) as MoveId);
+  for (const [i, moveStr] of moveMatch.entries()) {
+    if (!moveStr) {
+      // Fallback for empty capture groups from omitted entries
+      continue;
+    }
+    const starter = starters[i];
+    const parsedMoveIds = chunkString(moveStr, MOVE_ID_STRING_LENGTH).map(m => Number.parseInt(m) as MoveId);
 
     if (parsedMoveIds.some(f => !moveIds.includes(f))) {
       console.error("Invalid move IDs used for custom daily run seed moveset on starter %d: ", i, parsedMoveIds);
