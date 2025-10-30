@@ -520,7 +520,6 @@ const SLOT_5_FINAL = [
   SpeciesId.DRAGAPULT,
   SpeciesId.KINGAMBIT,
   SpeciesId.BAXCALIBUR,
-  SpeciesId.GHOLDENGO,
   SpeciesId.ARCHALUDON,
   SpeciesId.HYDRAPPLE,
   SpeciesId.HISUI_GOODRA,
