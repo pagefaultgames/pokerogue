@@ -272,9 +272,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
           // Randomly generate a Wonder Trade pokemon
           const tradePokemon = getRandomEncounterPokemon({
             level: pokemon.level,
-            speciesFunction: () => {
-              return generateTradeOption(globalScene.getPlayerParty().map(p => p.species));
-            },
+            speciesFunction: () => generateTradeOption(globalScene.getPlayerParty().map(p => p.species)),
             isBoss: false,
             eventChance: 100,
             shinyRerolls: 1,
