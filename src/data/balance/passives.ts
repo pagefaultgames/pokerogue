@@ -753,7 +753,7 @@ export const starterPassiveAbilities: StarterPassiveAbilities = {
   [SpeciesId.NOIVERN]: { 0: AbilityId.PUNK_ROCK },
   [SpeciesId.XERNEAS]: { 0: AbilityId.HARVEST, 1: AbilityId.HARVEST },
   [SpeciesId.YVELTAL]: { 0: AbilityId.SOUL_HEART },
-  [SpeciesId.ZYGARDE]: { 0: AbilityId.TERAFORM_ZERO, 1: AbilityId.MOXIE, 2: AbilityId.TERAFORM_ZERO, 3: AbilityId.MOXIE, 4: AbilityId.ADAPTABILITY, 5: AbilityId.ADAPTABILITY },
+  [SpeciesId.ZYGARDE]: { 0: AbilityId.UNNERVE, 1: AbilityId.MOXIE, 2: AbilityId.UNNERVE, 3: AbilityId.MOXIE, 4: AbilityId.ADAPTABILITY, 5: AbilityId.ADAPTABILITY },
   [SpeciesId.DIANCIE]: { 0: AbilityId.SOLID_ROCK, 1: AbilityId.PRISM_ARMOR },
   [SpeciesId.HOOPA]: { 0: AbilityId.OPPORTUNIST, 1: AbilityId.OPPORTUNIST },
   [SpeciesId.VOLCANION]: { 0: AbilityId.NEUTRALIZING_GAS },
