@@ -57,7 +57,6 @@ export function getDailyRunStarters(seed: string): StarterTuple {
   );
 
   setDailyRunEventStarterMovesets(seed, starters as StarterTuple);
-  console.log(starters.map(s => s.moveset));
 
   return starters as StarterTuple;
 }
@@ -192,8 +191,6 @@ function setDailyRunEventStarterMovesets(seed: string, starters: StarterTuple): 
   if (moveMatch.length === 0) {
     return;
   }
-
-  console.log(moveMatch);
 
   if (!isBetween(moveMatch.length, 1, 3)) {
     console.error(
