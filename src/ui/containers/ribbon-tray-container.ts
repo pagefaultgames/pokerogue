@@ -115,10 +115,17 @@ export class RibbonTray extends Phaser.GameObjects.Container {
     const availableRibbons = getAvailableRibbons(species);
     const availableOrderedRibbons = orderedRibbons.filter(r => availableRibbons.includes(r));
 
-    const hasWonClassic = globalScene.gameData.starterData[species.speciesId]?.classicWinCount > 0;
+    // Classic win count (always 0 for evolutions)
+    const classicWinCount = globalScene.gameData.starterData[species.speciesId]?.classicWinCount ?? 0;
 
     for (const ribbon of availableOrderedRibbons) {
-      const hasRibbon = this.ribbonData.has(ribbon) || (ribbon === RibbonData.CLASSIC && hasWonClassic);
+      // TODO: eventually, write a save migrator to fix the ribbon save data and get rid of these two conditions
+      // Display classic ribbons for starters with at least one classic win
+      const overrideClassicRibbon = ribbon === RibbonData.CLASSIC && classicWinCount > 0;
+      // Display no heal and no shop ribbons for mons that have the no support ribbon
+      const overrideNoSupportRibbons =
+        (ribbon === RibbonData.NO_HEAL || ribbon === RibbonData.NO_SHOP) && this.ribbonData.has(RibbonData.NO_SUPPORT);
+      const hasRibbon = this.ribbonData.has(ribbon) || overrideClassicRibbon || overrideNoSupportRibbons;
 
       if (!hasRibbon && !globalScene.dexForDevs && !globalScene.showMissingRibbons) {
         continue;
