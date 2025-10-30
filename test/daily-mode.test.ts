@@ -37,7 +37,7 @@ describe("Daily Mode", () => {
       expect(pkm.level).toBe(20);
       expect(pkm.moveset.length).toBeGreaterThan(0);
     });
-    expect(game.scene.getModifiers(MapModifier).length).toBeGreaterThan(0);
+    expect(game.scene.getModifiers(MapModifier).length).toBe(1);
   });
 
   describe("Custom Seeds", () => {
@@ -66,7 +66,7 @@ describe("Daily Mode", () => {
       ]);
     });
 
-    it("should allow omitting starters", async () => {
+    it("should allow omitting movesets for some starters", async () => {
       vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue("/moves0001000200030004");
       await game.dailyMode.startBattle();
 

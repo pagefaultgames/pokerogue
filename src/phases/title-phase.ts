@@ -1,3 +1,4 @@
+import { pokerogueApi } from "#api/pokerogue-api";
 import { loggedInUser } from "#app/account";
 import { GameMode, getGameMode } from "#app/game-mode";
 import { timedEventManager } from "#app/global-event-manager";
@@ -5,7 +6,7 @@ import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { Phase } from "#app/phase";
 import { bypassLogin } from "#constants/app-constants";
-import { fetchDailyRunSeed, getDailyRunStarters } from "#data/daily-run";
+import { getDailyRunStarters } from "#data/daily-run";
 import { modifierTypes } from "#data/data-lists";
 import { Gender } from "#data/gender";
 import { BattleType } from "#enums/battle-type";
@@ -285,7 +286,8 @@ export class TitlePhase extends Phase {
 
       // If Online, calls seed fetch from db to generate daily run. If Offline, generates a daily run based on current date.
       if (!bypassLogin || isLocalServerConnected) {
-        fetchDailyRunSeed()
+        pokerogueApi.daily
+          .getSeed()
           .then(seed => {
             if (seed) {
               generateDaily(seed);

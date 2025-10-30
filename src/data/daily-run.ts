@@ -1,4 +1,3 @@
-import { pokerogueApi } from "#api/pokerogue-api";
 import { globalScene } from "#app/global-scene";
 import { speciesStarterCosts } from "#balance/starters";
 import type { PokemonSpeciesForm } from "#data/pokemon-species";
@@ -18,10 +17,6 @@ export interface DailyRunConfig {
   starters: Starter;
 }
 type StarterTuple = [Starter, Starter, Starter];
-
-export function fetchDailyRunSeed(): Promise<string | null> {
-  return pokerogueApi.daily.getSeed();
-}
 
 export function getDailyRunStarters(seed: string): StarterTuple {
   const starters: Starter[] = [];
@@ -176,18 +171,18 @@ export function isDailyEventSeed(seed: string): boolean {
  * Must be updated whenever the `MoveId` enum gets a new digit!
  */
 const MOVE_ID_STRING_LENGTH = 4;
-// TODO: should i make this a regex literal or notttt
+
 const MOVE_ID_SEED_REGEX = /(?<=\/moves)((?:\d{4}){0,4})(?:,((?:\d{4}){0,4}))?(?:,((?:\d{4}){0,4}))?/;
 
 /**
- * Perform moveset post-processing on Daily run starters.
+ * Perform moveset post-processing on Daily run starters. \
  * If the seed matches {@linkcode MOVE_ID_SEED_REGEX},
  * the extracted Move IDs will be used to populate the starters' moveset instead.
  * @param seed - The daily run seed
  * @param starters - The previously generated starters; will have movesets mutated in place
  */
 function setDailyRunEventStarterMovesets(seed: string, starters: StarterTuple): void {
-  const moveMatch: string[] = MOVE_ID_SEED_REGEX.exec(seed)?.slice(1) ?? [];
+  const moveMatch: readonly string[] = MOVE_ID_SEED_REGEX.exec(seed)?.slice(1) ?? [];
   if (moveMatch.length === 0) {
     return;
   }
@@ -211,7 +206,7 @@ function setDailyRunEventStarterMovesets(seed: string, starters: StarterTuple): 
     const parsedMoveIds = chunkString(moveStr, MOVE_ID_STRING_LENGTH).map(m => Number.parseInt(m) as MoveId);
 
     if (parsedMoveIds.some(f => !moveIds.includes(f))) {
-      console.error("Invalid move IDs used for custom daily run seed moveset on starter %d: ", i, parsedMoveIds);
+      console.error("Invalid move IDs used for custom daily run seed moveset on starter %d:", i, parsedMoveIds);
       continue;
     }
 
@@ -247,7 +242,7 @@ export function getDailyEventSeedStarters(seed: string): StarterTuple | null {
     const formIndex = Number.parseInt(speciesMatch[2 * i + 1]);
 
     if (!speciesIds.includes(speciesId)) {
-      console.error("Invalid species ID used for custom daily run seed starter: ", speciesId);
+      console.error("Invalid species ID used for custom daily run seed starter:", speciesId);
       return null;
     }
 
