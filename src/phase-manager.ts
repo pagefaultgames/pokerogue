@@ -15,7 +15,6 @@ import { PhaseTree } from "#app/phase-tree";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import type { Pokemon } from "#field/pokemon";
 import type { PokemonMove } from "#moves/pokemon-move";
-import { ActivatePriorityQueuePhase } from "#phases/activate-priority-queue-phase";
 import { AddEnemyTokenPhase } from "#phases/add-enemy-token-phase";
 import { AttemptCapturePhase } from "#phases/attempt-capture-phase";
 import { AttemptRunPhase } from "#phases/attempt-run-phase";
@@ -124,7 +123,6 @@ import type { PhaseConditionFunc, PhaseMap, PhaseString } from "#types/phase-typ
  * This allows for easy creation of new phases without needing to import each phase individually.
  */
 const PHASES = Object.freeze({
-  ActivatePriorityQueuePhase,
   AddEnemyTokenPhase,
   AttemptCapturePhase,
   AttemptRunPhase,
