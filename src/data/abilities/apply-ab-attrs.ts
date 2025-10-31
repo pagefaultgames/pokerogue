@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import type { PokemonSpeciesForm } from "#data/pokemon-species";
+import type { Pokemon } from "#field/pokemon";
 import type {
   AbAttrBaseParams,
   AbAttrMap,
@@ -150,6 +151,7 @@ export function applyPostFormChangeAbAttrs(
 
   const { pokemon } = params;
   const [activeChanged, passiveChanged] = hasDifferentFormAbilities(pokemon, formChange);
+
   if (activeChanged) {
     applyAbAttrsInternal(
       "PostSummonAbAttr",
@@ -185,7 +187,7 @@ export function applyOnLoseAbAttrs(params: AbAttrBaseParams): void {
  * Used when re-triggering on-gain abilities.
  * @param pokemon - The {@linkcode Pokemon} having changed forms
  * @param prevForm - The previous form `pokemon` had prior to changing forms
- * @returns A 1-2 length tuple containing whether `pokemon`'s active/passive ability have changed from its previous form.
+ * @returns A 2-length tuple containing whether `pokemon`'s active/passive abilities have changed from its previous form.
  * If `pokemon` does not have its passive enabled, it will count as not changing.
  * @remarks
  * Does _not_ check for ability-overridding effects.
@@ -193,7 +195,7 @@ export function applyOnLoseAbAttrs(params: AbAttrBaseParams): void {
 function hasDifferentFormAbilities(
   pokemon: Pokemon,
   prevForm: PokemonSpeciesForm,
-): [active: AbilityId, passive: AbilityId] {
+): [active: boolean, passive: boolean] {
   const { abilityIndex, species } = pokemon;
 
   const diffActive = species.getAbility(abilityIndex) !== prevForm.getAbility(abilityIndex);
