@@ -108,7 +108,6 @@ export class EggGachaUiHandler extends MessageUiHandler {
           let xOffset = 0;
           const pokemonIcon = globalScene.add.sprite(pokemonIconX, pokemonIconY, "pokemon_icons_0");
 
-          // Intentionally left as "array includes" instead of an equality check to allow for future languages to reuse
           if (["pt-BR", "tr"].includes(currentLanguage)) {
             xOffset = 2;
             pokemonIcon.setX(pokemonIconX - 2);
