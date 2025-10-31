@@ -27,7 +27,7 @@ import { TmReward } from "#items/tm";
 import { BattlePhase } from "#phases/battle-phase";
 import { PartyOption, PartyUiHandler, PartyUiMode, type PokemonMoveSelectFilter } from "#ui/party-ui-handler";
 import { type RewardSelectUiHandler, SHOP_OPTIONS_ROW_LIMIT } from "#ui/reward-select-ui-handler";
-import { isNullOrUndefined, NumberHolder } from "#utils/common";
+import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
 
 export type RewardSelectCallback = (rowCursor: number, cursor: number) => boolean;
@@ -423,7 +423,7 @@ export class SelectRewardPhase extends BattlePhase {
     }
 
     let multiplier = 1;
-    if (!isNullOrUndefined(this.customRewardSettings?.rerollMultiplier)) {
+    if (this.customRewardSettings?.rerollMultiplier != null) {
       if (this.customRewardSettings.rerollMultiplier < 0) {
         // Completely overrides reroll cost to -1 and early exits
         return -1;

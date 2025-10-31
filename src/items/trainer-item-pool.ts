@@ -4,7 +4,7 @@ import { RarityTier } from "#enums/reward-tier";
 import type { TrainerItemId } from "#enums/trainer-item-id";
 import type { TrainerItemManager } from "#items/trainer-item-manager";
 import type { TrainerItemPool, TrainerItemTieredPool } from "#types/trainer-item-data-types";
-import { isNullOrUndefined, pickWeightedIndex } from "#utils/common";
+import { pickWeightedIndex } from "#utils/common";
 
 export const enemyBuffTokenPool: TrainerItemTieredPool = {};
 
@@ -21,7 +21,7 @@ export function getNewTrainerItemFromPool(pool: TrainerItemPool, manager: Traine
   const weights = getPoolWeights(pool, manager);
 
   const pickedIndex = pickWeightedIndex(weights);
-  if (isNullOrUndefined(pickedIndex)) {
+  if (pickedIndex == null) {
     return 0;
   }
   const entry = pool[pickedIndex].entry;

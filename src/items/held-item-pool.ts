@@ -20,7 +20,7 @@ import {
   isHeldItemPool,
   isHeldItemSpecs,
 } from "#types/held-item-data-types";
-import { coerceArray, isNullOrUndefined, pickWeightedIndex, randSeedInt } from "#utils/common";
+import { coerceArray, pickWeightedIndex, randSeedInt } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 
 export const wildHeldItemPool: HeldItemTieredPool = {};
@@ -158,7 +158,7 @@ export function getNewVitaminHeldItem(customWeights: HeldItemWeights = {}, targe
   const items = PERMANENT_STATS.map(s => permanentStatToHeldItem[s]);
   const weights = items.map(t => (target?.heldItemManager.isMaxStack(t) ? 0 : (customWeights[t] ?? 1)));
   const pickedIndex = pickWeightedIndex(weights);
-  return !isNullOrUndefined(pickedIndex) ? items[pickedIndex] : 0;
+  return pickedIndex != null ? items[pickedIndex] : 0;
 }
 
 export function getNewBerryHeldItem(customWeights: HeldItemWeights = {}, target?: Pokemon): HeldItemId {
@@ -175,7 +175,7 @@ export function getNewBerryHeldItem(customWeights: HeldItemWeights = {}, target?
   );
 
   const pickedIndex = pickWeightedIndex(weights);
-  return !isNullOrUndefined(pickedIndex) ? items[pickedIndex] : 0;
+  return pickedIndex != null ? items[pickedIndex] : 0;
 }
 
 export function getNewAttackTypeBoosterHeldItem(
@@ -213,7 +213,7 @@ export function getNewAttackTypeBoosterHeldItem(
   );
 
   const pickedIndex = pickWeightedIndex(weights);
-  return !isNullOrUndefined(pickedIndex) ? attackTypeToHeldItem[types[pickedIndex]] : 0;
+  return pickedIndex != null ? attackTypeToHeldItem[types[pickedIndex]] : 0;
 }
 
 export function getNewHeldItemFromCategory(
@@ -256,7 +256,7 @@ function getNewHeldItemFromPool(pool: HeldItemPool, pokemon: Pokemon, party?: Po
   const weights = getPoolWeights(pool, pokemon);
 
   const pickedIndex = pickWeightedIndex(weights);
-  if (isNullOrUndefined(pickedIndex)) {
+  if (pickedIndex == null) {
     return 0;
   }
   const entry = pool[pickedIndex].entry;

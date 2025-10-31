@@ -4,7 +4,7 @@ import { RewardPoolType } from "#enums/reward-pool-type";
 import { RarityTier } from "#enums/reward-tier";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { RewardPool, RewardPoolWeights, RewardSpecs } from "#types/rewards";
-import { isNullOrUndefined, pickWeightedIndex, randSeedInt } from "#utils/common";
+import { pickWeightedIndex, randSeedInt } from "#utils/common";
 import { getPartyLuckValue } from "#utils/party";
 import type { RewardOption } from "./reward";
 import { rewardPool, rewardPoolWeights } from "./reward-pools";
@@ -253,10 +253,10 @@ function getNewRewardOption(
   allowLuckUpgrades = true,
 ): RewardOption | null {
   let tier = 0;
-  if (isNullOrUndefined(baseTier)) {
+  if (baseTier == null) {
     baseTier = randomBaseTier();
   }
-  if (isNullOrUndefined(upgradeCount)) {
+  if (upgradeCount == null) {
     upgradeCount = allowLuckUpgrades ? getRarityUpgradeCount(pool, baseTier, party) : 0;
     tier = baseTier + upgradeCount;
   } else {

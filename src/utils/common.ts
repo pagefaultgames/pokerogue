@@ -516,6 +516,22 @@ export function coerceArray<T>(input: T): T | [T] {
   return Array.isArray(input) ? input : [input];
 }
 
+export function pickWeightedIndex(weights: number[]): number | undefined {
+  const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+  if (totalWeight <= 0) {
+    return;
+  }
+
+  let r = randSeedFloat() * totalWeight;
+  for (let i = 0; i < weights.length; i++) {
+    if (r < weights[i]) {
+      return i;
+    }
+    r -= weights[i];
+  }
+  return;
+}
+
 export function getBiomeName(biome: BiomeId | -1) {
   if (biome === -1) {
     return i18next.t("biome:unknownLocation");

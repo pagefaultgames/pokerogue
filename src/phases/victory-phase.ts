@@ -86,7 +86,7 @@ export class VictoryPhase extends PokemonPhase {
             globalScene.phaseManager.pushNew("RewardPhase", TrainerItemId.EXP_SHARE);
           }
           if (gameMode.isClassic && currentWaveIndex === 10) {
-            globalScene.phaseManager.pushNew("ModifierRewardPhase", modifierTypes.EXP_CHARM);
+            globalScene.phaseManager.pushNew("RewardPhase", TrainerItemId.EXP_CHARM);
           }
           if (currentWaveIndex <= 750 && (currentWaveIndex <= 500 || currentWaveIndex % 30 === superExpWave)) {
             globalScene.phaseManager.pushNew(

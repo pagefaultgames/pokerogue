@@ -17,7 +17,6 @@ import type { Pokemon } from "#field/pokemon";
 import { rewardPool } from "#items/reward-pools";
 import type { TurnEndStatusHeldItem } from "#items/turn-end-status";
 import type { WeightedRewardWeightFunc } from "#types/rewards";
-import { isNullOrUndefined } from "#utils/common";
 
 /**
  * Initialize the common modifier pool
@@ -362,7 +361,7 @@ function initUltraRewardPool() {
           if (!isHoldingOrb) {
             const moveset = p
               .getMoveset(true)
-              .filter(m => !isNullOrUndefined(m))
+              .filter(m => m != null)
               .map(m => m.moveId);
             const canSetStatus = p.canSetStatus(StatusEffect.TOXIC, true, true, null, true);
 
@@ -408,7 +407,7 @@ function initUltraRewardPool() {
           if (!isHoldingOrb) {
             const moveset = p
               .getMoveset(true)
-              .filter(m => !isNullOrUndefined(m))
+              .filter(m => m != null)
               .map(m => m.moveId);
             const canSetStatus = p.canSetStatus(StatusEffect.BURN, true, true, null, true);
 
