@@ -101,7 +101,7 @@ import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { canSpeciesTera, willTerastallize } from "#utils/pokemon-utils";
 import type { ReadonlyGenericUint8Array } from "#types/typed-arrays";
-import { MovePriorityModifier } from "#enums/move-priority-modifier";
+import { MovePriorityInBracket } from "#enums/move-priority-modifier";
 
 /**
  * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.
@@ -1069,10 +1069,10 @@ export abstract class Move implements Localizable {
 
   public getPriorityModifier(user: Pokemon, simulated = true) {
     if (user.getTag(BattlerTagType.BYPASS_SPEED)) {
-      return MovePriorityModifier.FIRST_IN_BRACKET;
+      return MovePriorityInBracket.FIRST;
     }
-    const modifierHolder = new NumberHolder(MovePriorityModifier.NORMAL);
-    applyAbAttrs("ChangeMovePriorityModifierAbAttr", { pokemon: user, simulated, move: this, priority: modifierHolder });
+    const modifierHolder = new NumberHolder(MovePriorityInBracket.NORMAL);
+    applyAbAttrs("ChangeMovePriorityInBracketAbAttr", { pokemon: user, simulated, move: this, priority: modifierHolder });
     return modifierHolder.value;
   }
 

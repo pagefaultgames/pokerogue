@@ -34,7 +34,7 @@ import { MoveCategory } from "#enums/move-category";
 import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
-import { MovePriorityModifier } from "#enums/move-priority-modifier";
+import { MovePriorityInBracket } from "#enums/move-priority-modifier";
 import { MoveResult } from "#enums/move-result";
 import { MoveTarget } from "#enums/move-target";
 import { MoveUseMode } from "#enums/move-use-mode";
@@ -4143,11 +4143,11 @@ export class ChangeMovePriorityAbAttr extends AbAttr {
   }
 }
 
-export class ChangeMovePriorityModifierAbAttr extends AbAttr {
-  private readonly newModifier: MovePriorityModifier;
+export class ChangeMovePriorityInBracketAbAttr extends AbAttr {
+  private readonly newModifier: MovePriorityInBracket;
   private readonly moveFunc: (pokemon: Pokemon, move: Move) => boolean;
 
-  constructor(moveFunc: (pokemon: Pokemon, move: Move) => boolean, newModifier: MovePriorityModifier) {
+  constructor(moveFunc: (pokemon: Pokemon, move: Move) => boolean, newModifier: MovePriorityInBracket) {
     super(false);
     this.newModifier = newModifier;
     this.moveFunc = moveFunc;
@@ -6741,7 +6741,7 @@ const AbilityAttrs = Object.freeze({
   BlockStatusDamageAbAttr,
   BlockOneHitKOAbAttr,
   ChangeMovePriorityAbAttr,
-  ChangeMovePriorityModifierAbAttr,
+  ChangeMovePriorityInBracketAbAttr,
   IgnoreContactAbAttr,
   PreWeatherEffectAbAttr,
   PreWeatherDamageAbAttr,
@@ -7259,7 +7259,7 @@ export function initAbilities() {
       .attr(DoubleBattleChanceAbAttr)
       .build(),
     new AbBuilder(AbilityId.STALL, 4)
-      .attr(ChangeMovePriorityModifierAbAttr, (_pokemon, _move: Move) => true, MovePriorityModifier.LAST_IN_BRACKET)
+      .attr(ChangeMovePriorityInBracketAbAttr, (_pokemon, _move: Move) => true, MovePriorityInBracket.LAST)
       .build(),
     new AbBuilder(AbilityId.TECHNICIAN, 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => {
@@ -8206,7 +8206,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.MYCELIUM_MIGHT, 9)
-      .attr(ChangeMovePriorityModifierAbAttr, (_pokemon, move) => move.category === MoveCategory.STATUS, MovePriorityModifier.LAST_IN_BRACKET)
+      .attr(ChangeMovePriorityInBracketAbAttr, (_pokemon, move) => move.category === MoveCategory.STATUS, MovePriorityInBracket.LAST)
       .attr(PreventBypassSpeedChanceAbAttr, (_pokemon, move) => move.category === MoveCategory.STATUS)
       .attr(MoveAbilityBypassAbAttr, (_pokemon, move: Move) => move.category === MoveCategory.STATUS)
       .build(),
