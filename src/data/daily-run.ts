@@ -71,7 +71,6 @@ function getDailyRunStarter(starterSpeciesForm: PokemonSpeciesForm, startingLeve
     variant != null,
     variant,
   );
-  console.log(`%c${pokemon.shiny} ${variant} ${variant != null}`, "color:blue");
   const starter: Starter = {
     speciesId: starterSpecies.speciesId,
     shiny: pokemon.shiny,
@@ -271,7 +270,7 @@ function getDailyEventSeedStarters(seed: string): StarterTuple | null {
   const speciesIds = getEnumValues(SpeciesId);
   const starters: Starter[] = [];
 
-  for (const [i, match] of speciesConfigurations.entries()) {
+  for (const match of speciesConfigurations) {
     const { groups } = match;
     if (!groups) {
       console.error("Invalid seed used for custom daily run starter:", match);
