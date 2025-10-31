@@ -11,7 +11,7 @@ import { sortInSpeedOrder } from "#app/utils/speed-order";
  */
 export class PostSummonPhasePriorityQueue extends PokemonPhasePriorityQueue<PostSummonPhase> {
   protected override reorder(): void {
-    this.queue = sortInSpeedOrder(this.queue, false);
+    this.queue = sortInSpeedOrder(this.queue);
     this.queue.sort((phaseA, phaseB) => phaseB.getPriority() - phaseA.getPriority());
   }
 
