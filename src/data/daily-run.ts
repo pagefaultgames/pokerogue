@@ -233,12 +233,12 @@ function setDailyRunEventStarterMovesets(seed: string, starters: StarterTuple): 
  */
 // TODO: Rework this setup into JSON or similar - this is quite hard to maintain
 function getDailyEventSeedStarters(seed: string): StarterTuple | null {
-  const speciesCongigurations =
+  const speciesConfigurations =
     /starters(?<species1>s\d{4})(?:(?<form1>f\d{2})(?<variant1>v\d{2})?|(?<variant1>v\d{2})(?<form1>f\d{2})?)?(?<species2>s\d{4})(?:(?<form2>f\d{2})(?<variant2>v\d{2})?|(?<variant2>v\d{2})(?<form2>f\d{2})?)?(?<species3>s\d{4})(?:(?<form3>f\d{2})(?<variant3>v\d{2})?|(?<variant3>v\d{2})(?<form3>f\d{2})?)?/.exec(
       seed,
     )?.groups;
 
-  if (!speciesCongigurations) {
+  if (!speciesConfigurations) {
     const legacyStarters = getDailyEventSeedStartersLegay(seed);
     if (legacyStarters != null) {
       console.log("Using lecacy starter parsing for daily run seed.");
@@ -247,15 +247,15 @@ function getDailyEventSeedStarters(seed: string): StarterTuple | null {
     console.error("Invalid starters used for custom daily run seed!");
     return null;
   }
-  console.log(speciesCongigurations);
+  console.log(speciesConfigurations);
 
   const speciesIds = getEnumValues(SpeciesId);
 
   const starters: Starter[] = [];
   for (let i = 0; i < 3; i++) {
-    const speciesId = Number.parseInt(speciesCongigurations[`species${i + 1}`].slice(1)) as SpeciesId;
-    const formIndex = Number.parseInt(speciesCongigurations[`form${i + 1}`]?.slice(1) ?? "00");
-    let variant: Variant | undefined = Number.parseInt(speciesCongigurations[`variant${i + 1}`]?.slice(1)) as Variant;
+    const speciesId = Number.parseInt(speciesConfigurations[`species${i + 1}`].slice(1)) as SpeciesId;
+    const formIndex = Number.parseInt(speciesConfigurations[`form${i + 1}`]?.slice(1) ?? "00");
+    let variant: Variant | undefined = Number.parseInt(speciesConfigurations[`variant${i + 1}`]?.slice(1)) as Variant;
 
     if (!speciesIds.includes(speciesId)) {
       console.error("Invalid species ID used for custom daily run seed starter:", speciesId);
