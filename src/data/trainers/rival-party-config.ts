@@ -253,7 +253,7 @@ const SLOT_3_FIGHT_2 = [
   SpeciesId.MACHOP,
   SpeciesId.GASTLY,
   SpeciesId.MAGNEMITE,
-  SpeciesId.RHYDON,
+  SpeciesId.RHYHORN,
   SpeciesId.TANGELA,
   SpeciesId.PORYGON,
   SpeciesId.ELEKID,
