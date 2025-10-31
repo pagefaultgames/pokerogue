@@ -68,9 +68,10 @@ function getDailyRunStarter(starterSpeciesForm: PokemonSpeciesForm, startingLeve
     undefined,
     formIndex,
     undefined,
-    variant !== undefined ? true : undefined,
+    variant != null,
     variant,
   );
+  console.log(`%c${pokemon.shiny} ${variant} ${variant != null}`, "color:blue");
   const starter: Starter = {
     speciesId: starterSpecies.speciesId,
     shiny: pokemon.shiny,
@@ -180,7 +181,11 @@ export function isDailyEventSeed(seed: string): boolean {
  * Must be updated whenever the `MoveId` enum gets a new digit!
  */
 const MOVE_ID_STRING_LENGTH = 4;
-
+/**
+ * The regex literal used to parse daily run custom movesets.
+ * @privateRemarks
+ * Intentionally does not use the `g` flag to avoid altering `lastIndex` after each match.
+ */
 const MOVE_ID_SEED_REGEX = /(?<=\/moves)((?:\d{4}){0,4})(?:,((?:\d{4}){0,4}))?(?:,((?:\d{4}){0,4}))?/;
 
 /**
@@ -223,53 +228,90 @@ function setDailyRunEventStarterMovesets(seed: string, starters: StarterTuple): 
   }
 }
 
+/** The regex literal string used to extract the content of the "starters" block of Daily Run custom seeds. */
+const STARTER_SEED_PREFIX_REGEX = /\/starters(.*?)(?:\/|$)/;
 /**
- * Expects the seed to contain `starters` followed by 3 `s{\d{4}}` for the starters. The 4 digits are the species ID. \
- * Each starter can optionally be followed by `f{\d{2}}` for the form index and `v{\d{2}}` for the variant. \
- * The order of `f` and `v` does not matter.
- * @example `/starterss0003f01s0025v01s0150f02v02`
+ * The regex literal used to parse daily run custom starter information for a single starter. \
+ * Contains a 4-digit species ID, as well as an optional 2-digit form index and 1-digit variant.
+ *
+ * If either of form index or variant are omitted, the starter will default to its species' base form/
+ * not be shiny, respectively.
+ */
+const STARTER_SEED_MATCH_REGEX = /(?:s(?<species>\d{4}))(?:f(?<form>\d{2}))?(?:v(?<variant>\d))?/g;
+
+/**
+ * Parse a custom daily run seed into a set of pre-defined starters.
+ * @see {@linkcode STARTER_SEED_MATCH_REGEX}
  * @param seed - The daily run seed
- * @returns An array of {@linkcode Starter}s, or `null` if no valid match.
+ * @returns An array of {@linkcode Starter}s, or `null` if it did not match.
  */
 // TODO: Rework this setup into JSON or similar - this is quite hard to maintain
 function getDailyEventSeedStarters(seed: string): StarterTuple | null {
-  const speciesRegex = i =>
-    `(?<species${i}>s\\d{4})(?:(?<form${i}>f\\d{2})(?<variant${i}>v\\d{2})?|(?<variant${i}>v\\d{2})(?<form${i}>f\\d{2})?)?`;
+  if (!isDailyEventSeed(seed)) {
+    return null;
+  }
 
-  const matcher = new RegExp(`starters${speciesRegex(1)}${speciesRegex(2)}${speciesRegex(3)}`);
+  const seedAfterPrefix = seed.split(STARTER_SEED_PREFIX_REGEX)[1] as string | undefined;
+  if (!seedAfterPrefix) {
+    return null;
+  }
 
-  const speciesConfigurations = matcher.exec(seed)?.groups;
+  const speciesConfigurations = [...seedAfterPrefix.matchAll(STARTER_SEED_MATCH_REGEX)];
 
-  if (!speciesConfigurations) {
+  if (speciesConfigurations.length !== 3) {
+    // TODO: Remove legacy fallback code after next hotfix version - this is needed for Oct 31's daily to function
     const legacyStarters = getDailyEventSeedStartersLegacy(seed);
-    if (legacyStarters != null) {
-      console.log("Using legacy starter parsing for daily run seed.");
+    if (legacyStarters == null) {
       return legacyStarters;
     }
-    console.error("Invalid starters used for custom daily run seed!");
+    console.error("Invalid starters used for custom daily run seed!", seed);
     return null;
   }
 
   const speciesIds = getEnumValues(SpeciesId);
-
   const starters: Starter[] = [];
-  for (let i = 0; i < 3; i++) {
-    const speciesId = Number.parseInt(speciesConfigurations[`species${i + 1}`].slice(1)) as SpeciesId;
-    const formIndex = Number.parseInt(speciesConfigurations[`form${i + 1}`]?.slice(1) ?? "00");
-    let variant: Variant | undefined = Number.parseInt(speciesConfigurations[`variant${i + 1}`]?.slice(1)) as Variant;
 
-    if (!speciesIds.includes(speciesId)) {
-      console.error("Invalid species ID used for custom daily run seed starter:", speciesId);
+  for (const [i, match] of speciesConfigurations.entries()) {
+    const { groups } = match;
+    if (!groups) {
+      console.error("Invalid seed used for custom daily run starter:", match);
+      return null;
+    }
+
+    const { species: speciesStr, form: formStr, variant: variantStr } = groups;
+
+    const speciesId = Number.parseInt(speciesStr) as SpeciesId;
+
+    // NB: We check the parsed integer here to exclude SpeciesID.NONE as well as invalid values;
+    // other fields only check the string to permit 0 as valid inputs
+    if (!speciesId || !speciesIds.includes(speciesId)) {
+      console.error("Invalid species ID used for custom daily run starter:", speciesStr);
       return null;
     }
 
     const starterSpecies = getPokemonSpecies(speciesId);
-    if (Number.isNaN(variant) || variant > 2 || (!starterSpecies.hasVariants() && variant !== 0)) {
-      console.error("Invalid variant used for custom daily run seed starter:", variant);
+    // Omitted form index = use base form
+    const starterForm = formStr ? starterSpecies.forms[Number.parseInt(formStr)] : starterSpecies;
+
+    if (!starterForm) {
+      console.log(starterSpecies.name);
+      console.error("Invalid form index used for custom daily run starter:", formStr);
+      return null;
+    }
+
+    // Get and validate variant
+    let variant = (variantStr ? Number.parseInt(variantStr) : undefined) as Variant | undefined;
+    if (!isBetween(variant ?? 0, 0, 2)) {
+      console.error("Variant used for custom daily run seed starter out of bounds:", variantStr);
+      return null;
+    }
+
+    // Fall back to default variant if none exists
+    if (!starterSpecies.hasVariants() && !!variant) {
+      console.warn("Variant for custom daily run seed starter does not exist, using base variant...", variant);
       variant = undefined;
     }
 
-    const starterForm = getPokemonSpeciesForm(speciesId, formIndex);
     const startingLevel = globalScene.gameMode.getStartingLevel();
     const starter = getDailyRunStarter(starterForm, startingLevel, variant);
     starters.push(starter);
