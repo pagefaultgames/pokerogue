@@ -40,13 +40,10 @@ describe.each<{ name: string; ability: AbilityId; stat: BattleStat }>([
 
   // NB: Our impl of Embody Aspect is a simple "on entrance" ability w/o any fancy shenanigans
   it(`should raise the user's ${statName} by 1 stage on entry`, async () => {
-    await game.classicMode.runToSummon([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const feebas = game.field.getPlayerPokemon();
     expect(feebas).toHaveAbilityApplied(ability);
-
-    await game.phaseInterceptor.to("CommandPhase");
-
     expect(feebas).toHaveStatStage(stat, 1);
   });
 });

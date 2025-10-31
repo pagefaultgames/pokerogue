@@ -2260,7 +2260,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Return the ability priorities of the pokemon's ability and, if enabled, its passive ability
    * @returns A tuple containing the ability priorities of the pokemon
    */
-  public getAbilityPriorities(): [activePriority: number, passivePriority?: number] {
+  public getAbilityPriorities(): [activePriority: number] | [activePriority: number, passivePriority: number] {
     const abilityPriority = this.getAbility().postSummonPriority;
     if (this.hasPassive()) {
       return [abilityPriority, this.getPassiveAbility().postSummonPriority];
@@ -4419,8 +4419,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const abilityCount = this.getSpeciesForm().getAbilityCount();
     if (this.abilityIndex >= abilityCount) {
-      // biome-ignore lint/complexity/noUselessStringConcat: spurious and fixed in biome v2.3.2
       console.warn(
+        // biome-ignore lint/complexity/noUselessStringConcat: spurious and fixed in biome v2.3.2
         "Pokemon ability index out of bounds!"
           + `Name: ${this.name}`
           + `Old Ability Index: ${this.abilityIndex}`
