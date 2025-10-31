@@ -7,11 +7,11 @@ import type { TrainerItemConfiguration } from "./trainer-item-data-types";
 
 export type PartyTemplateFunc = () => TrainerPartyTemplate;
 export type PartyMemberFunc = (level: number, strength: PartyMemberStrength) => EnemyPokemon;
-export type GenTrainerItemsFunc = (party: EnemyPokemon[]) => TrainerItemConfiguration;
-export type GenAIFunc = (party: EnemyPokemon[]) => void;
+export type GenTrainerItemsFunc = (party: readonly EnemyPokemon[]) => TrainerItemConfiguration;
+export type GenAIFunc = (party: readonly EnemyPokemon[]) => void;
 
 export interface TrainerTierPools {
-  [key: number]: SpeciesId[];
+  [key: number]: (SpeciesId | SpeciesId[])[];
 }
 export interface TrainerConfigs {
   [key: number]: TrainerConfig;

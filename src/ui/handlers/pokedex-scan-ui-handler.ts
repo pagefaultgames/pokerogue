@@ -6,7 +6,6 @@ import { FilterTextRow } from "#ui/filter-text";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
 import type { ModalConfig } from "#ui/modal-ui-handler";
-import { isNullOrUndefined } from "#utils/common";
 import i18next from "i18next";
 
 export class PokedexScanUiHandler extends FormModalUiHandler {
@@ -132,7 +131,7 @@ export class PokedexScanUiHandler extends FormModalUiHandler {
           return {
             label: value,
             handler: () => {
-              if (!isNullOrUndefined(evt.data) || evt.inputType?.toLowerCase() === "deletecontentbackward") {
+              if (evt.data != null || evt.inputType?.toLowerCase() === "deletecontentbackward") {
                 inputObject.setText(value);
               }
               ui.revertMode();
@@ -158,6 +157,8 @@ export class PokedexScanUiHandler extends FormModalUiHandler {
 
       const inputWidth = label.width < 420 ? 200 : 200 - (label.width - 420) / 5.75;
       this.inputs[0].resize(inputWidth * 5.75, 116);
+      // @ts-expect-error: TODO Resolve
+      // TODO: Figure out what the type of `this.inputContainers.list` is
       this.inputContainers[0].list[0].width = inputWidth;
       if (args[1] && typeof (args[1] as PlayerPokemon).getNameToRender === "function") {
         this.inputs[0].text = (args[1] as PlayerPokemon).getNameToRender();

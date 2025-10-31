@@ -2,18 +2,18 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { HeldItemCategoryId, HeldItemId, isCategoryId } from "#enums/held-item-id";
 // biome-ignore lint/correctness/noUnusedImports: TSDoc
 import type { Pokemon } from "#field/pokemon";
-import type { HeldItemSpecs } from "#items/held-item-data-types";
-import type { OneOther } from "#test/@types/test-helpers";
+import type { PartialWith } from "#test/@types/test-helpers";
 import { getOnelineDiffStr, stringifyEnumArray } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
+import type { HeldItemSpecs } from "#types/held-item-data-types";
 import { enumValueToKey } from "#utils/enums";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
-export type expectedHeldItemType = HeldItemId | HeldItemCategoryId | OneOther<HeldItemSpecs, "id" | "stack">;
+export type expectedHeldItemType = HeldItemId | HeldItemCategoryId | PartialWith<HeldItemSpecs, "id" | "stack">;
 
 /**
- * Matcher that checks if a {@linkcode Pokemon} has a given held item.
- * @param received - The object to check. Should be a {@linkcode Pokemon}.
+ * Matcher that checks if a {@linkcode Pokemon} has the given held item.
+ * @param received - The object to check. Should be a {@linkcode Pokemon}
  * @param expectedItem - A {@linkcode HeldItemId} or {@linkcode HeldItemCategoryId} to check, or a partially filled
  * {@linkcode HeldItemSpecs} containing the desired values
  * @returns Whether the matcher passed
@@ -21,8 +21,7 @@ export type expectedHeldItemType = HeldItemId | HeldItemCategoryId | OneOther<He
 export function toHaveHeldItem(
   this: MatcherState,
   received: unknown,
-  // Simplified typing; full one is in overloads
-  expectedItem: HeldItemId | HeldItemCategoryId | (Partial<HeldItemSpecs> & { id: HeldItemId }),
+  expectedItem: expectedHeldItemType,
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
     return {
@@ -33,7 +32,7 @@ export function toHaveHeldItem(
 
   const pkmName = getPokemonNameWithAffix(received);
 
-  // If a category was requested OR we lack the item in question, show an error message.
+  // If a category was requested OR we lack the item in question, show `an error message.
   if (typeof expectedItem === "number" || !received.heldItemManager.hasItem(expectedItem.id)) {
     expectedItem = typeof expectedItem === "number" ? expectedItem : expectedItem.id;
 

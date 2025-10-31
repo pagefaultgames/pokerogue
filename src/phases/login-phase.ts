@@ -1,8 +1,8 @@
 import { updateUserInfo } from "#app/account";
 import { globalScene } from "#app/global-scene";
-import { bypassLogin } from "#app/global-vars/bypass-login";
 import { Phase } from "#app/phase";
 import { handleTutorial, Tutorial } from "#app/tutorial";
+import { bypassLogin } from "#constants/app-constants";
 import { UiMode } from "#enums/ui-mode";
 import { executeIf, sessionIdKey } from "#utils/common";
 import { getCookie, removeCookie } from "#utils/cookies";
@@ -33,7 +33,7 @@ export class LoginPhase extends Phase {
             globalScene.ui.showText(i18next.t("menu:logInOrCreateAccount"));
           }
 
-          globalScene.playSound("menu_open");
+          globalScene.playSound("ui/menu_open");
 
           const loadData = () => {
             updateUserInfo().then(success => {
@@ -53,7 +53,7 @@ export class LoginPhase extends Phase {
                 loadData();
               },
               () => {
-                globalScene.playSound("menu_open");
+                globalScene.playSound("ui/menu_open");
                 globalScene.ui.setMode(UiMode.REGISTRATION_FORM, {
                   buttonActions: [
                     () => {

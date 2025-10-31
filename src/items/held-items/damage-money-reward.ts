@@ -12,12 +12,10 @@ export class DamageMoneyRewardHeldItem extends HeldItem<[typeof HeldItemEffect.D
    * Applies {@linkcode DamageMoneyRewardModifier}
    * @returns always `true`
    */
-  apply(_effect: typeof HeldItemEffect.DAMAGE_MONEY_REWARD, { pokemon, damage }: DamageMoneyRewardParams): boolean {
+  apply(_effect: typeof HeldItemEffect.DAMAGE_MONEY_REWARD, { pokemon, damage }: DamageMoneyRewardParams): void {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     const moneyAmount = new NumberHolder(Math.floor(damage * (0.5 * stackCount)));
     globalScene.applyPlayerItems(TrainerItemEffect.MONEY_MULTIPLIER, { numberHolder: moneyAmount });
     globalScene.addMoney(moneyAmount.value);
-
-    return true;
   }
 }

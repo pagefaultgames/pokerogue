@@ -14,7 +14,7 @@ import type { OptionSelectSettings } from "#mystery-encounters/encounter-phase-u
 import { transitionMysteryEncounterIntroVisuals } from "#mystery-encounters/encounter-phase-utils";
 import type { MysteryEncounterOption, OptionPhaseCallback } from "#mystery-encounters/mystery-encounter-option";
 import { SeenEncounterData } from "#mystery-encounters/mystery-encounter-save-data";
-import { isNullOrUndefined, randSeedItem } from "#utils/common";
+import { randSeedItem } from "#utils/common";
 import i18next from "i18next";
 
 /**
@@ -48,7 +48,6 @@ export class MysteryEncounterPhase extends Phase {
 
     // Clears out queued phases that are part of standard battle
     globalScene.phaseManager.clearPhaseQueue();
-    globalScene.phaseManager.clearPhaseQueueSplice();
 
     const encounter = globalScene.currentBattle.mysteryEncounter!;
     encounter.updateSeedOffset();
@@ -93,7 +92,7 @@ export class MysteryEncounterPhase extends Phase {
     if (option.onPreOptionPhase) {
       globalScene.executeWithSeedOffset(async () => {
         return await option.onPreOptionPhase!().then(result => {
-          if (isNullOrUndefined(result) || result) {
+          if (result == null || result) {
             this.continueEncounter();
           }
         });
@@ -233,9 +232,7 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
     });
 
     // Remove any status tick phases
-    while (globalScene.phaseManager.findPhase(p => p.is("PostTurnStatusEffectPhase"))) {
-      globalScene.phaseManager.tryRemovePhase(p => p.is("PostTurnStatusEffectPhase"));
-    }
+    globalScene.phaseManager.removeAllPhasesOfType("PostTurnStatusEffectPhase");
 
     // The total number of Pokemon in the player's party that can legally fight
     const legalPlayerPokemon = globalScene.getPokemonAllowedInBattle();
@@ -258,6 +255,10 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
     // THEN, if is a double battle, and player only has 1 summoned pokemon, center pokemon on field
     if (globalScene.currentBattle.double && legalPlayerPokemon.length === 1 && legalPlayerPartyPokemon.length === 0) {
       globalScene.phaseManager.unshiftNew("ToggleDoublePositionPhase", true);
+    }
+
+    for (const pokemon of globalScene.getField(true)) {
+      pokemon.resetTurnData();
     }
 
     this.end();
@@ -442,6 +443,7 @@ export class MysteryEncounterBattlePhase extends Phase {
       }
     }
 
+    globalScene.phaseManager.pushNew("InitEncounterPhase");
     this.end();
   }
 
@@ -540,7 +542,7 @@ export class MysteryEncounterRewardsPhase extends Phase {
     if (encounter.doEncounterRewards) {
       encounter.doEncounterRewards();
     } else if (this.addHealPhase) {
-      globalScene.phaseManager.tryRemovePhase(p => p.is("SelectRewardPhase"));
+      globalScene.phaseManager.removeAllPhasesOfType("SelectRewardPhase");
       globalScene.phaseManager.unshiftNew("SelectRewardPhase", 0, undefined, {
         fillRemaining: false,
         rerollMultiplier: -1,
@@ -578,7 +580,7 @@ export class PostMysteryEncounterPhase extends Phase {
     if (this.onPostOptionSelect) {
       globalScene.executeWithSeedOffset(async () => {
         return await this.onPostOptionSelect!().then(result => {
-          if (isNullOrUndefined(result) || result) {
+          if (result == null || result) {
             this.continueEncounter();
           }
         });

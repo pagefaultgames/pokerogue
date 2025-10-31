@@ -25,7 +25,8 @@ import {
   StatusEffectRequirement,
   WaveRangeRequirement,
 } from "#mystery-encounters/mystery-encounter-requirements";
-import { coerceArray, isNullOrUndefined, randSeedInt } from "#utils/common";
+import { coerceArray } from "#utils/array";
+import { randSeedInt } from "#utils/common";
 import { capitalizeFirstLetter } from "#utils/strings";
 
 export interface EncounterStartOfBattleEffect {
@@ -275,7 +276,7 @@ export class MysteryEncounter implements IMysteryEncounter {
   private seedOffset?: any;
 
   constructor(encounter: IMysteryEncounter | null) {
-    if (!isNullOrUndefined(encounter)) {
+    if (encounter != null) {
       Object.assign(this, encounter);
     }
     this.encounterTier = this.encounterTier ?? MysteryEncounterTier.COMMON;

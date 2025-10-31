@@ -1,5 +1,4 @@
 import { globalScene } from "#app/global-scene";
-import { getBiomeName } from "#balance/biomes";
 import { allHeldItems, allTrainerItems } from "#data/data-lists";
 import { getNatureName, getNatureStatMultiplier } from "#data/nature";
 import { getPokeballAtlasKey } from "#data/pokeball";
@@ -24,7 +23,7 @@ import type { SessionSaveData } from "#types/save-data";
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
-import { formatFancyLargeNumber, formatLargeNumber, formatMoney, getPlayTimeString } from "#utils/common";
+import { formatFancyLargeNumber, formatLargeNumber, formatMoney, getBiomeName, getPlayTimeString } from "#utils/common";
 import { getLuckString, getLuckTextTint } from "#utils/party";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";

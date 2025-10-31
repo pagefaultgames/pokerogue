@@ -5,11 +5,7 @@ import { HeldItem } from "#items/held-item";
 import type { AttackTypeBoostParams } from "#types/held-item-parameter";
 import i18next from "i18next";
 
-interface AttackTypeToHeldItemMap {
-  [key: number]: HeldItemId;
-}
-
-export const attackTypeToHeldItem: AttackTypeToHeldItemMap = {
+export const attackTypeToHeldItem = {
   [PokemonType.NORMAL]: HeldItemId.SILK_SCARF,
   [PokemonType.FIGHTING]: HeldItemId.BLACK_BELT,
   [PokemonType.FLYING]: HeldItemId.SHARP_BEAK,
@@ -28,7 +24,7 @@ export const attackTypeToHeldItem: AttackTypeToHeldItemMap = {
   [PokemonType.DRAGON]: HeldItemId.DRAGON_FANG,
   [PokemonType.DARK]: HeldItemId.BLACK_GLASSES,
   [PokemonType.FAIRY]: HeldItemId.FAIRY_FEATHER,
-};
+} as const;
 
 export class AttackTypeBoosterHeldItem extends HeldItem<[typeof HeldItemEffect.ATTACK_TYPE_BOOST]> {
   public readonly effects = [HeldItemEffect.ATTACK_TYPE_BOOST] as const;
@@ -56,13 +52,19 @@ export class AttackTypeBoosterHeldItem extends HeldItem<[typeof HeldItemEffect.A
     return `${HeldItemNames[this.type]?.toLowerCase()}`;
   }
 
-  apply(
+  public override shouldApply(
     _effect: typeof HeldItemEffect.ATTACK_TYPE_BOOST,
-    { pokemon, moveType, movePower }: AttackTypeBoostParams,
+    { moveType, movePower }: AttackTypeBoostParams,
+  ): boolean {
+    // TODO: Investigate why there's a check against movePower being less than 1
+    return moveType === this.moveType && movePower.value >= 1;
+  }
+
+  public override apply(
+    _effect: typeof HeldItemEffect.ATTACK_TYPE_BOOST,
+    { pokemon, movePower }: AttackTypeBoostParams,
   ): void {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
-    if (moveType === this.moveType && movePower.value >= 1) {
-      movePower.value = Math.floor(movePower.value * (1 + stackCount * this.powerBoost));
-    }
+    movePower.value = Math.floor(movePower.value * (1 + stackCount * this.powerBoost));
   }
 }

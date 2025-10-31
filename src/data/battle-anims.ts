@@ -7,7 +7,9 @@ import { AnimBlendType, AnimFocus, AnimFrameTarget, ChargeAnim, CommonAnim } fro
 import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
 import type { Pokemon } from "#field/pokemon";
-import { coerceArray, getFrameMs, isNullOrUndefined, type nil } from "#utils/common";
+import type { nil } from "#types/common";
+import { coerceArray } from "#utils/array";
+import { getFrameMs } from "#utils/common";
 import { getEnumKeys, getEnumValues } from "#utils/enums";
 import { toKebabCase } from "#utils/strings";
 import Phaser from "phaser";
@@ -388,7 +390,7 @@ class AnimTimedAddBgEvent extends AnimTimedBgEvent {
     moveAnim.bgSprite.setAlpha(this.opacity / 255);
     globalScene.field.add(moveAnim.bgSprite);
     const fieldPokemon = globalScene.getEnemyPokemon(false) ?? globalScene.getPlayerPokemon(false);
-    if (!isNullOrUndefined(priority)) {
+    if (priority != null) {
       globalScene.field.moveTo(moveAnim.bgSprite as Phaser.GameObjects.GameObject, priority);
     } else if (fieldPokemon?.isOnField()) {
       globalScene.field.moveBelow(moveAnim.bgSprite as Phaser.GameObjects.GameObject, fieldPokemon);
@@ -524,7 +526,7 @@ export async function initEncounterAnims(encounterAnim: EncounterAnim | Encounte
   const encounterAnimNames = getEnumKeys(EncounterAnim);
   const encounterAnimFetches: Promise<Map<EncounterAnim, AnimConfig>>[] = [];
   for (const anim of anims) {
-    if (encounterAnims.has(anim) && !isNullOrUndefined(encounterAnims.get(anim))) {
+    if (encounterAnims.has(anim) && encounterAnims.get(anim) != null) {
       continue;
     }
     encounterAnimFetches.push(
@@ -1240,7 +1242,7 @@ export abstract class BattleAnim {
 
           const graphicIndex = graphicFrameCount++;
           const moveSprite = sprites[graphicIndex];
-          if (!isNullOrUndefined(frame.priority)) {
+          if (frame.priority != null) {
             const setSpritePriority = (priority: number) => {
               if (existingFieldSprites.length > priority) {
                 // Move to specified priority index

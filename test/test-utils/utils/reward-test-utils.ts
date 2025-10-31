@@ -6,7 +6,7 @@ import { HeldItemReward, type Reward, RewardGenerator, TrainerItemReward } from 
 import { isHeldItemId, isTrainerItemId } from "#items/reward-utils";
 import type { RewardPoolId, RewardSpecs } from "#types/rewards";
 
-// Type used to convert allRewards into a type
+// Type used to pares allRewards and convert generators into their return values
 type allRewardsRewardType = {
   [k in keyof allRewardsType]: allRewardsType[k] extends RewardGenerator
     ? ReturnType<allRewardsType[k]["generateReward"]>

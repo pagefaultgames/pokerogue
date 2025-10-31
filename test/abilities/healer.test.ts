@@ -6,7 +6,6 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import type { Pokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
-import { isNullOrUndefined } from "#utils/common";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -37,7 +36,7 @@ describe("Abilities - Healer", () => {
 
     // Mock healer to have a 100% chance of healing its ally
     vi.spyOn(allAbilities[AbilityId.HEALER].getAttrs("PostTurnResetStatusAbAttr")[0], "getCondition").mockReturnValue(
-      (pokemon: Pokemon) => !isNullOrUndefined(pokemon.getAlly()),
+      (pokemon: Pokemon) => pokemon.getAlly() != null,
     );
   });
 

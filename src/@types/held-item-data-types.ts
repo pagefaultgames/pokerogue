@@ -1,7 +1,9 @@
-// TODO: move all types to `src/@types/` and all functions to a utility place
 import type { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import type { RarityTier } from "#enums/reward-tier";
 import type { Pokemon } from "#field/pokemon";
+import type { AllHeldItems } from "#items/all-held-items";
+import type { CosmeticHeldItem } from "#items/held-item";
+import type { InferKeys } from "#types/helpers/type-helpers";
 
 export type HeldItemData = {
   /**
@@ -74,3 +76,9 @@ export type PokemonItemMap = {
 };
 
 export type HeldItemSaveData = HeldItemSpecs[];
+
+/** Union type of all `HeldItemId`s whose corresponding items cannot be applied. */
+type CosmeticHeldItemId = InferKeys<AllHeldItems, CosmeticHeldItem>;
+
+/** Union type of all `HeldItemId`s whose corresponding items can be applied. */
+export type ApplicableHeldItemId = Exclude<keyof AllHeldItems, CosmeticHeldItemId>;

@@ -8,8 +8,8 @@ import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { WeatherType } from "#enums/weather-type";
 import { TurnEndEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
-import { applyHeldItems } from "#items/all-held-items";
 import { FieldPhase } from "#phases/field-phase";
+import { applyHeldItems } from "#utils/items";
 import i18next from "i18next";
 
 export class TurnEndPhase extends FieldPhase {
@@ -21,6 +21,7 @@ export class TurnEndPhase extends FieldPhase {
 
     globalScene.currentBattle.incrementTurn();
     globalScene.eventTarget.dispatchEvent(new TurnEndEvent(globalScene.currentBattle.turn));
+    globalScene.phaseManager.dynamicQueueManager.clearLastTurnOrder();
 
     globalScene.phaseManager.hideAbilityBar();
 

@@ -34,7 +34,7 @@ import { HeldItemRequirement, MoveRequirement } from "#mystery-encounters/myster
 import { CHARMING_MOVES } from "#mystery-encounters/requirement-groups";
 import { PokemonData } from "#system/pokemon-data";
 import type { HeldItemSpecs } from "#types/held-item-data-types";
-import { isNullOrUndefined, pickWeightedIndex, randSeedInt } from "#utils/common";
+import { pickWeightedIndex, randSeedInt } from "#utils/common";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/uncommonBreed";
@@ -169,7 +169,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
       const encounter = globalScene.currentBattle.mysteryEncounter!;
 
       const eggMove = encounter.misc.eggMove;
-      if (!isNullOrUndefined(eggMove)) {
+      if (eggMove != null) {
         // Check what type of move the egg move is to determine target
         const pokemonMove = new PokemonMove(eggMove);
         const move = pokemonMove.getMove();

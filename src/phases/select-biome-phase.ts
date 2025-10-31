@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { biomeLinks, getBiomeName } from "#balance/biomes";
+import { biomeLinks } from "#balance/biomes";
 import { BiomeId } from "#enums/biome-id";
 import { ChallengeType } from "#enums/challenge-type";
 import { TrainerItemId } from "#enums/trainer-item-id";
@@ -7,7 +7,7 @@ import { UiMode } from "#enums/ui-mode";
 import { BattlePhase } from "#phases/battle-phase";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
-import { BooleanHolder, randSeedInt } from "#utils/common";
+import { BooleanHolder, getBiomeName, randSeedInt } from "#utils/common";
 
 export class SelectBiomePhase extends BattlePhase {
   public readonly phaseName = "SelectBiomePhase";

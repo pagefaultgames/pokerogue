@@ -9,18 +9,7 @@ import i18next from "i18next";
  */
 export class MachoBraceHeldItem extends HeldItem<[typeof HeldItemEffect.MACHO_BRACE]> {
   public readonly effects = [HeldItemEffect.MACHO_BRACE] as const;
-  public isTransferable = false;
-
-  /**
-   * Checks if the {@linkcode PokemonIncrementingStatModifier} should be applied to the {@linkcode Pokemon}.
-   * @param pokemon The {@linkcode Pokemon} that holds the item
-   * @param stat The affected {@linkcode Stat}
-   * @param statHolder The {@linkcode NumberHolder} that holds the stat
-   * @returns `true` if the {@linkcode PokemonBaseStatFlatModifier} should be applied
-   */
-  //  override shouldApply(pokemon?: Pokemon, stat?: Stat, statHolder?: NumberHolder): boolean {
-  //    return super.shouldApply(pokemon, stat, statHolder) && !!statHolder;
-  //  }
+  public readonly isTransferable = false;
 
   get name(): string {
     return i18next.t("modifierType:ModifierType.MYSTERY_ENCOUNTER_MACHO_BRACE.name") + " (new)";
@@ -30,29 +19,16 @@ export class MachoBraceHeldItem extends HeldItem<[typeof HeldItemEffect.MACHO_BR
     return i18next.t("modifierType:ModifierType.MYSTERY_ENCOUNTER_MACHO_BRACE.description");
   }
 
-  /**
-   * Applies the {@linkcode PokemonIncrementingStatModifier}
-   * @returns always `true`
-   */
-  apply(_effect: typeof HeldItemEffect.MACHO_BRACE, { pokemon, statHolder, stat }: StatBoostParams): boolean {
+  apply(_effect: typeof HeldItemEffect.MACHO_BRACE, { pokemon, statHolder, stat }: StatBoostParams): void {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
 
     // Modifies the passed in stat number holder by +2 per stack for HP, +1 per stack for other stats
     // If the Macho Brace is at max stacks (50), adds additional 10% to total HP and 5% to other stats
     const isHp = stat === Stat.HP;
 
-    if (isHp) {
-      statHolder.value += 2 * stackCount;
-      if (stackCount === this.maxStackCount) {
-        statHolder.value = Math.floor(statHolder.value * 1.1);
-      }
-    } else {
-      statHolder.value += stackCount;
-      if (stackCount === this.maxStackCount) {
-        statHolder.value = Math.floor(statHolder.value * 1.05);
-      }
+    statHolder.value += isHp ? 2 * stackCount : stackCount;
+    if (stackCount === this.maxStackCount) {
+      statHolder.value = Math.floor(statHolder.value * (isHp ? 1.1 : 1.05));
     }
-
-    return true;
   }
 }

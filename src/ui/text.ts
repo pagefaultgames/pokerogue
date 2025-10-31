@@ -340,8 +340,8 @@ export function getTextStyleOptions(
           styleOptions.fontSize = defaultFontSize - 38;
           styleOptions.padding = { top: 4, left: 6 };
           break;
-        case "zh-CN":
-        case "zh-TW":
+        case "zh-Hans":
+        case "zh-Hant":
           styleOptions.fontSize = defaultFontSize - 42;
           styleOptions.padding = { top: 5, left: 14 };
           break;

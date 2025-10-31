@@ -26,7 +26,7 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { PokemonData } from "#system/pokemon-data";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
-import { isNullOrUndefined, randSeedShuffle } from "#utils/common";
+import { randSeedShuffle } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import i18next from "i18next";
 
@@ -309,7 +309,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
             // Only update the fusion's dex data if the Pokemon is already caught in dex (ignore rentals)
             const rootFusionSpecies = playerPokemon.fusionSpecies?.getRootSpeciesId();
             if (
-              !isNullOrUndefined(rootFusionSpecies)
+              rootFusionSpecies != null
               && speciesStarterCosts.hasOwnProperty(rootFusionSpecies)
               && !!globalScene.gameData.dexData[rootFusionSpecies].caughtAttr
             ) {

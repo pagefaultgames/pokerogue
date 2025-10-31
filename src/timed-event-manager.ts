@@ -8,10 +8,9 @@ import { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { WeatherType } from "#enums/weather-type";
+import type { nil } from "#types/common";
 import type { SilentReward } from "#types/rewards";
 import { addTextObject } from "#ui/text";
-import type { nil } from "#utils/common";
-import { isNullOrUndefined } from "#utils/common";
 import i18next from "i18next";
 
 export enum EventType {
@@ -21,59 +20,59 @@ export enum EventType {
 }
 
 interface EventBanner {
-  bannerKey?: string;
-  xOffset?: number;
-  yOffset?: number;
-  scale?: number;
-  availableLangs?: string[];
+  readonly bannerKey?: string;
+  readonly xOffset?: number;
+  readonly yOffset?: number;
+  readonly scale?: number;
+  readonly availableLangs?: readonly string[];
 }
 
 interface EventEncounter {
-  species: SpeciesId;
-  blockEvolution?: boolean;
-  formIndex?: number;
+  readonly species: SpeciesId;
+  readonly blockEvolution?: boolean;
+  readonly formIndex?: number;
 }
 
 interface EventMysteryEncounterTier {
-  mysteryEncounter: MysteryEncounterType;
-  tier?: MysteryEncounterTier;
-  disable?: boolean;
+  readonly mysteryEncounter: MysteryEncounterType;
+  readonly tier?: MysteryEncounterTier;
+  readonly disable?: boolean;
 }
 
 interface EventWaveReward {
-  wave: number;
-  type: SilentReward;
+  readonly wave: number;
+  readonly type: SilentReward;
 }
 
-type EventMusicReplacement = [string, string];
+type EventMusicReplacement = readonly [string, string];
 
 interface EventChallenge {
-  challenge: Challenges;
-  value: number;
+  readonly challenge: Challenges;
+  readonly value: number;
 }
 
 interface TimedEvent extends EventBanner {
-  name: string;
-  eventType: EventType;
-  shinyMultiplier?: number;
-  classicFriendshipMultiplier?: number;
-  luckBoost?: number;
-  upgradeUnlockedVouchers?: boolean;
-  startDate: Date;
-  endDate: Date;
-  eventEncounters?: EventEncounter[];
-  delibirdyBuff?: TrainerItemId[];
-  weather?: WeatherPoolEntry[];
-  mysteryEncounterTierChanges?: EventMysteryEncounterTier[];
-  luckBoostedSpecies?: SpeciesId[];
-  boostFusions?: boolean; //MODIFIER REWORK PLEASE
-  classicWaveRewards?: EventWaveReward[]; // Rival battle rewards
-  trainerShinyChance?: number; // Odds over 65536 of trainer mon generating as shiny
-  music?: EventMusicReplacement[];
-  dailyRunChallenges?: EventChallenge[];
+  readonly name: string;
+  readonly eventType: EventType;
+  readonly shinyMultiplier?: number;
+  readonly classicFriendshipMultiplier?: number;
+  readonly luckBoost?: number;
+  readonly upgradeUnlockedVouchers?: boolean;
+  readonly startDate: Date;
+  readonly endDate: Date;
+  readonly eventEncounters?: readonly EventEncounter[];
+  readonly delibirdyBuff?: readonly TrainerItemId[];
+  readonly weather?: readonly WeatherPoolEntry[];
+  readonly mysteryEncounterTierChanges?: readonly EventMysteryEncounterTier[];
+  readonly luckBoostedSpecies?: readonly SpeciesId[];
+  readonly boostFusions?: boolean; //MODIFIER REWORK PLEASE
+  readonly classicWaveRewards?: readonly EventWaveReward[]; // Rival battle rewards
+  readonly trainerShinyChance?: number; // Odds over 65536 of trainer mon generating as shiny
+  readonly music?: readonly EventMusicReplacement[];
+  readonly dailyRunChallenges?: readonly EventChallenge[];
 }
 
-const timedEvents: TimedEvent[] = [
+const timedEvents: readonly TimedEvent[] = [
   {
     name: "Winter Holiday Update",
     eventType: EventType.SHINY,
@@ -83,7 +82,7 @@ const timedEvents: TimedEvent[] = [
     endDate: new Date(Date.UTC(2025, 0, 4, 0)),
     bannerKey: "winter_holidays2024-event",
     scale: 0.21,
-    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-Hans"],
     eventEncounters: [
       { species: SpeciesId.GIMMIGHOUL, blockEvolution: true },
       { species: SpeciesId.DELIBIRD },
@@ -146,7 +145,7 @@ const timedEvents: TimedEvent[] = [
     endDate: new Date(Date.UTC(2025, 1, 3, 0)),
     bannerKey: "yearofthesnakeevent",
     scale: 0.21,
-    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-Hans"],
     eventEncounters: [
       { species: SpeciesId.EKANS },
       { species: SpeciesId.ONIX },
@@ -218,7 +217,7 @@ const timedEvents: TimedEvent[] = [
     shinyMultiplier: 2,
     bannerKey: "valentines2025event",
     scale: 0.21,
-    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-Hans"],
     eventEncounters: [
       { species: SpeciesId.NIDORAN_F },
       { species: SpeciesId.NIDORAN_M },
@@ -257,7 +256,7 @@ const timedEvents: TimedEvent[] = [
     classicFriendshipMultiplier: 4,
     bannerKey: "pkmnday2025event",
     scale: 0.21,
-    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-Hans"],
     eventEncounters: [
       { species: SpeciesId.PIKACHU, formIndex: 1, blockEvolution: true }, // Partner Form
       { species: SpeciesId.EEVEE, formIndex: 1, blockEvolution: true }, // Partner Form
@@ -307,7 +306,7 @@ const timedEvents: TimedEvent[] = [
     endDate: new Date(Date.UTC(2025, 3, 3)),
     bannerKey: "aprf25",
     scale: 0.21,
-    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-MX", "pt-BR", "zh-CN"],
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-419", "pt-BR", "zh-Hans"],
     trainerShinyChance: 13107, // 13107/65536 = 1/5
     music: [
       ["title", "title_afd"],
@@ -327,7 +326,7 @@ const timedEvents: TimedEvent[] = [
     endDate: new Date(Date.UTC(2025, 4, 13)),
     bannerKey: "spr25event",
     scale: 0.21,
-    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-MX", "pt-BR", "zh-CN"],
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-419", "pt-BR", "zh-Hans"],
     shinyMultiplier: 2,
     upgradeUnlockedVouchers: true,
     eventEncounters: [
@@ -368,7 +367,7 @@ const timedEvents: TimedEvent[] = [
     endDate: new Date(Date.UTC(2025, 5, 30)),
     bannerKey: "pride2025",
     scale: 0.105,
-    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-MX", "pt-BR", "zh-CN", "zh-TW"],
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-419", "pt-BR", "zh-Hans", "zh-Hant"],
     shinyMultiplier: 2,
     eventEncounters: [
       { species: SpeciesId.CHARMANDER },
@@ -395,7 +394,8 @@ const timedEvents: TimedEvent[] = [
 
 export class TimedEventManager {
   isActive(event: TimedEvent) {
-    return event.startDate < new Date() && new Date() < event.endDate;
+    const now = new Date();
+    return event.startDate < now && now < event.endDate;
   }
 
   activeEvent(): TimedEvent | undefined {
@@ -437,19 +437,17 @@ export class TimedEventManager {
 
   getEventBannerLangs(): string[] {
     const ret: string[] = [];
-    ret.push(...timedEvents.find(te => this.isActive(te) && !isNullOrUndefined(te.availableLangs))?.availableLangs!);
+    ret.push(...(timedEvents.find(te => this.isActive(te) && te.availableLangs != null)?.availableLangs ?? []));
     return ret;
   }
 
   getEventEncounters(): EventEncounter[] {
     const ret: EventEncounter[] = [];
-    timedEvents
-      .filter(te => this.isActive(te))
-      .map(te => {
-        if (!isNullOrUndefined(te.eventEncounters)) {
-          ret.push(...te.eventEncounters);
-        }
-      });
+    for (const te of timedEvents) {
+      if (this.isActive(te) && te.eventEncounters != null) {
+        ret.push(...te.eventEncounters);
+      }
+    }
     return ret;
   }
 
@@ -461,7 +459,7 @@ export class TimedEventManager {
     let multiplier = CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER;
     const classicFriendshipEvents = timedEvents.filter(te => this.isActive(te));
     for (const fe of classicFriendshipEvents) {
-      if (!isNullOrUndefined(fe.classicFriendshipMultiplier) && fe.classicFriendshipMultiplier > multiplier) {
+      if (fe.classicFriendshipMultiplier != null && fe.classicFriendshipMultiplier > multiplier) {
         multiplier = fe.classicFriendshipMultiplier;
       }
     }
@@ -482,13 +480,11 @@ export class TimedEventManager {
    */
   getDelibirdyBuff(): TrainerItemId[] {
     const ret: TrainerItemId[] = [];
-    timedEvents
-      .filter(te => this.isActive(te))
-      .map(te => {
-        if (!isNullOrUndefined(te.delibirdyBuff)) {
-          ret.push(...te.delibirdyBuff);
-        }
-      });
+    for (const te of timedEvents) {
+      if (this.isActive(te) && te.delibirdyBuff != null) {
+        ret.push(...te.delibirdyBuff);
+      }
+    }
     return ret;
   }
 
@@ -498,39 +494,35 @@ export class TimedEventManager {
    */
   getWeather(): WeatherPoolEntry[] {
     const ret: WeatherPoolEntry[] = [];
-    timedEvents
-      .filter(te => this.isActive(te))
-      .map(te => {
-        if (!isNullOrUndefined(te.weather)) {
-          ret.push(...te.weather);
-        }
-      });
+    for (const te of timedEvents) {
+      if (this.isActive(te) && te.weather != null) {
+        ret.push(...te.weather);
+      }
+    }
     return ret;
   }
 
   getAllMysteryEncounterChanges(): EventMysteryEncounterTier[] {
     const ret: EventMysteryEncounterTier[] = [];
-    timedEvents
-      .filter(te => this.isActive(te))
-      .map(te => {
-        if (!isNullOrUndefined(te.mysteryEncounterTierChanges)) {
-          ret.push(...te.mysteryEncounterTierChanges);
-        }
-      });
+    for (const te of timedEvents) {
+      if (this.isActive(te) && te.mysteryEncounterTierChanges != null) {
+        ret.push(...te.mysteryEncounterTierChanges);
+      }
+    }
     return ret;
   }
 
   getEventMysteryEncountersDisabled(): MysteryEncounterType[] {
     const ret: MysteryEncounterType[] = [];
-    timedEvents
-      .filter(te => this.isActive(te) && !isNullOrUndefined(te.mysteryEncounterTierChanges))
-      .map(te => {
-        te.mysteryEncounterTierChanges?.map(metc => {
+    for (const te of timedEvents) {
+      if (this.isActive(te) && te.mysteryEncounterTierChanges != null) {
+        for (const metc of te.mysteryEncounterTierChanges) {
           if (metc.disable) {
             ret.push(metc.mysteryEncounter);
           }
-        });
-      });
+        }
+      }
+    }
     return ret;
   }
 
@@ -539,21 +531,21 @@ export class TimedEventManager {
     normal: MysteryEncounterTier,
   ): MysteryEncounterTier {
     let ret = normal;
-    timedEvents
-      .filter(te => this.isActive(te) && !isNullOrUndefined(te.mysteryEncounterTierChanges))
-      .map(te => {
-        te.mysteryEncounterTierChanges?.map(metc => {
+    for (const te of timedEvents) {
+      if (this.isActive(te) && te.mysteryEncounterTierChanges != null) {
+        for (const metc of te.mysteryEncounterTierChanges) {
           if (metc.mysteryEncounter === encounterType) {
             ret = metc.tier ?? normal;
           }
-        });
-      });
+        }
+      }
+    }
     return ret;
   }
 
   getEventLuckBoost(): number {
     let ret = 0;
-    const luckEvents = timedEvents.filter(te => this.isActive(te) && !isNullOrUndefined(te.luckBoost));
+    const luckEvents = timedEvents.filter(te => this.isActive(te) && te.luckBoost != null);
     for (const le of luckEvents) {
       ret += le.luckBoost!;
     }
@@ -561,15 +553,16 @@ export class TimedEventManager {
   }
 
   getEventLuckBoostedSpecies(): SpeciesId[] {
-    const ret: SpeciesId[] = [];
-    timedEvents
-      .filter(te => this.isActive(te))
-      .map(te => {
-        if (!isNullOrUndefined(te.luckBoostedSpecies)) {
-          ret.push(...te.luckBoostedSpecies.filter(s => !ret.includes(s)));
+    const ret = new Set<SpeciesId>();
+
+    for (const te of timedEvents) {
+      if (this.isActive(te) && te.luckBoostedSpecies != null) {
+        for (const s of te.luckBoostedSpecies) {
+          ret.add(s);
         }
-      });
-    return ret;
+      }
+    }
+    return Array.from(ret);
   }
 
   areFusionsBoosted(): boolean {
@@ -584,45 +577,50 @@ export class TimedEventManager {
    */
   getFixedBattleEventRewards(wave: number): SilentReward[] {
     const ret: SilentReward[] = [];
-    timedEvents
-      .filter(te => this.isActive(te) && !isNullOrUndefined(te.classicWaveRewards))
-      .map(te => {
-        ret.push(...te.classicWaveRewards!.filter(cwr => cwr.wave === wave).map(cwr => cwr.type));
-      });
+    for (const te of timedEvents) {
+      if (this.isActive(te) && te.classicWaveRewards != null) {
+        ret.push(...te.classicWaveRewards.filter(cwr => cwr.wave === wave).map(cwr => cwr.type));
+      }
+    }
     return ret;
   }
 
-  // Gets the extra shiny chance for trainers due to event (odds/65536)
+  /**
+   * Get the extra shiny chance for trainers due to event
+   */
   getClassicTrainerShinyChance(): number {
     let ret = 0;
-    const tsEvents = timedEvents.filter(te => this.isActive(te) && !isNullOrUndefined(te.trainerShinyChance));
-    tsEvents.map(t => (ret += t.trainerShinyChance!));
+    for (const te of timedEvents) {
+      const shinyChance = te.trainerShinyChance;
+      if (shinyChance && this.isActive(te)) {
+        ret += shinyChance;
+      }
+    }
     return ret;
   }
 
   getEventBgmReplacement(bgm: string): string {
     let ret = bgm;
-    timedEvents.map(te => {
-      if (this.isActive(te) && !isNullOrUndefined(te.music)) {
-        te.music.map(mr => {
+    for (const te of timedEvents) {
+      if (this.isActive(te) && te.music != null) {
+        for (const mr of te.music) {
           if (mr[0] === bgm) {
             console.log(`it is ${te.name} so instead of ${mr[0]} we play ${mr[1]}`);
             ret = mr[1];
           }
-        });
+        }
       }
-    });
+    }
     return ret;
   }
 
   /**
-   * Activates any challenges on {@linkcode globalScene.gameMode} for the currently active event
+   * Activate any challenges on {@linkcode globalScene.gameMode} for the currently active event
    */
   startEventChallenges(): void {
-    const challenges = this.activeEvent()?.dailyRunChallenges;
-    challenges?.forEach((eventChal: EventChallenge) =>
-      globalScene.gameMode.setChallengeValue(eventChal.challenge, eventChal.value),
-    );
+    for (const eventChal of this.activeEvent()?.dailyRunChallenges ?? []) {
+      globalScene.gameMode.setChallengeValue(eventChal.challenge, eventChal.value);
+    }
   }
 }
 

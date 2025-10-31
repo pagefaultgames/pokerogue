@@ -118,7 +118,7 @@ export class EncounterPhase extends BattlePhase {
             !!globalScene.getEncounterBossSegments(battle.waveIndex, level, enemySpecies),
           );
           if (globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
-            battle.enemyParty[e].ivs = new Array(6).fill(31);
+            battle.enemyParty[e].ivs.fill(31);
           }
           globalScene
             .getPlayerParty()
@@ -281,7 +281,10 @@ export class EncounterPhase extends BattlePhase {
       }
 
       globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
-        if (!this.loaded) {
+        if (this.loaded) {
+          this.doEncounter();
+          globalScene.resetSeed();
+        } else {
           this.trySetWeatherIfNewBiome(); // Set weather before session gets saved
           // Game syncs to server on waves X1 and X6 (As of 1.2.0)
           globalScene.gameData
@@ -294,9 +297,6 @@ export class EncounterPhase extends BattlePhase {
               this.doEncounter();
               globalScene.resetSeed();
             });
-        } else {
-          this.doEncounter();
-          globalScene.resetSeed();
         }
       });
     });
@@ -480,36 +480,25 @@ export class EncounterPhase extends BattlePhase {
           this.end();
         };
 
-        if (showEncounterMessage) {
-          const introDialogue = encounter.dialogue.intro;
-          if (!introDialogue) {
-            doShowEncounterOptions();
-          } else {
-            const FIRST_DIALOGUE_PROMPT_DELAY = 750;
-            let i = 0;
-            const showNextDialogue = () => {
-              const nextAction = i === introDialogue.length - 1 ? doShowEncounterOptions : showNextDialogue;
-              const dialogue = introDialogue[i];
-              const title = getEncounterText(dialogue?.speaker);
-              const text = getEncounterText(dialogue.text)!;
-              i++;
-              if (title) {
-                globalScene.ui.showDialogue(
-                  text,
-                  title,
-                  null,
-                  nextAction,
-                  0,
-                  i === 1 ? FIRST_DIALOGUE_PROMPT_DELAY : 0,
-                );
-              } else {
-                globalScene.ui.showText(text, null, nextAction, i === 1 ? FIRST_DIALOGUE_PROMPT_DELAY : 0, true);
-              }
-            };
-
-            if (introDialogue.length > 0) {
-              showNextDialogue();
+        const introDialogue = encounter.dialogue.intro;
+        if (showEncounterMessage && introDialogue) {
+          const FIRST_DIALOGUE_PROMPT_DELAY = 750;
+          let i = 0;
+          const showNextDialogue = () => {
+            const nextAction = i === introDialogue.length - 1 ? doShowEncounterOptions : showNextDialogue;
+            const dialogue = introDialogue[i];
+            const title = getEncounterText(dialogue?.speaker);
+            const text = getEncounterText(dialogue.text)!;
+            i++;
+            if (title) {
+              globalScene.ui.showDialogue(text, title, null, nextAction, 0, i === 1 ? FIRST_DIALOGUE_PROMPT_DELAY : 0);
+            } else {
+              globalScene.ui.showText(text, null, nextAction, i === 1 ? FIRST_DIALOGUE_PROMPT_DELAY : 0, true);
             }
+          };
+
+          if (introDialogue.length > 0) {
+            showNextDialogue();
           }
         } else {
           doShowEncounterOptions();
@@ -518,13 +507,13 @@ export class EncounterPhase extends BattlePhase {
 
       const encounterMessage = i18next.t("battle:mysteryEncounterAppeared");
 
-      if (!encounterMessage) {
-        doEncounter();
-      } else {
+      if (encounterMessage) {
         doTrainerExclamation();
         globalScene.ui.showDialogue(encounterMessage, "???", null, () => {
           globalScene.charSprite.hide().then(() => globalScene.hideFieldOverlay(250).then(() => doEncounter()));
         });
+      } else {
+        doEncounter();
       }
     }
   }
@@ -538,33 +527,13 @@ export class EncounterPhase extends BattlePhase {
       }
     });
 
-    if (![BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType)) {
-      enemyField.map(p =>
-        globalScene.phaseManager.pushConditionalPhase(
-          globalScene.phaseManager.create("PostSummonPhase", p.getBattlerIndex()),
-          () => {
-            // if there is not a player party, we can't continue
-            if (globalScene.getPlayerParty().length === 0) {
-              return false;
-            }
-            // how many player pokemon are on the field ?
-            const pokemonsOnFieldCount = globalScene.getPlayerParty().filter(p => p.isOnField()).length;
-            // if it's a 2vs1, there will never be a 2nd pokemon on our field even
-            const requiredPokemonsOnField = Math.min(
-              globalScene.getPlayerParty().filter(p => !p.isFainted()).length,
-              2,
-            );
-            // if it's a double, there should be 2, otherwise 1
-            if (globalScene.currentBattle.double) {
-              return pokemonsOnFieldCount === requiredPokemonsOnField;
-            }
-            return pokemonsOnFieldCount === 1;
-          },
-        ),
-      );
-      if (globalScene.trainerItems.hasItem(TrainerItemId.IV_SCANNER)) {
-        enemyField.map(p => globalScene.phaseManager.pushNew("ScanIvsPhase", p.getBattlerIndex()));
-      }
+    if (
+      ![BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType)
+      && globalScene.trainerItems.hasItem(TrainerItemId.IV_SCANNER)
+    ) {
+      enemyField.forEach(p => {
+        globalScene.phaseManager.pushNew("ScanIvsPhase", p.getBattlerIndex());
+      });
     }
 
     if (!this.loaded) {
@@ -602,6 +571,8 @@ export class EncounterPhase extends BattlePhase {
       }
     }
     handleTutorial(Tutorial.Access_Menu).then(() => super.end());
+
+    globalScene.phaseManager.pushNew("InitEncounterPhase");
   }
 
   tryOverrideForBattleSpec(): boolean {

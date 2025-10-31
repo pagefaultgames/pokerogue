@@ -127,12 +127,12 @@ export const classicFixedBattles: FixedBattleConfigs = {
     .setGetTrainerFunc(
       getRandomTrainerFunc(
         [
-          [TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON, TrainerType.PETREL],
+          TrainerType.PETREL,
           [TrainerType.TABITHA, TrainerType.COURTNEY],
           [TrainerType.MATT, TrainerType.SHELLY],
           [TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN],
           [TrainerType.ZINZOLIN, TrainerType.COLRESS],
-          [TrainerType.XEROSIC, TrainerType.BRYONY],
+          TrainerType.BRYONY,
           TrainerType.FABA,
           TrainerType.PLUMERIA,
           TrainerType.OLEANA,
@@ -180,12 +180,12 @@ export const classicFixedBattles: FixedBattleConfigs = {
     .setGetTrainerFunc(
       getRandomTrainerFunc(
         [
-          [TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON, TrainerType.PETREL],
+          [TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON],
           [TrainerType.TABITHA, TrainerType.COURTNEY],
           [TrainerType.MATT, TrainerType.SHELLY],
           [TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN],
-          [TrainerType.ZINZOLIN, TrainerType.COLRESS],
-          [TrainerType.XEROSIC, TrainerType.BRYONY],
+          TrainerType.ZINZOLIN,
+          TrainerType.XEROSIC,
           TrainerType.FABA,
           TrainerType.PLUMERIA,
           TrainerType.OLEANA,
@@ -229,6 +229,27 @@ export const classicFixedBattles: FixedBattleConfigs = {
       guaranteedRarityTiers: [RarityTier.ROGUE, RarityTier.ROGUE, RarityTier.ROGUE, RarityTier.ULTRA, RarityTier.ULTRA],
       allowLuckUpgrades: false,
     }),
+  [ClassicFixedBossWaves.EVIL_ADMIN_3]: new FixedBattleConfig()
+    .setBattleType(BattleType.TRAINER)
+    .setSeedOffsetWave(ClassicFixedBossWaves.EVIL_GRUNT_1)
+    .setGetTrainerFunc(
+      getRandomTrainerFunc(
+        [
+          [TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON],
+          [TrainerType.TABITHA, TrainerType.COURTNEY],
+          [TrainerType.MATT, TrainerType.SHELLY],
+          [TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN],
+          [TrainerType.ZINZOLIN, TrainerType.COLRESS],
+          [TrainerType.XEROSIC, TrainerType.BRYONY],
+          TrainerType.FABA,
+          TrainerType.PLUMERIA,
+          TrainerType.OLEANA,
+          [TrainerType.GIACOMO, TrainerType.MELA, TrainerType.ATTICUS, TrainerType.ORTEGA, TrainerType.ERI],
+        ],
+        true,
+        2,
+      ),
+    ),
   [ClassicFixedBossWaves.EVIL_BOSS_2]: new FixedBattleConfig()
     .setBattleType(BattleType.TRAINER)
     .setSeedOffsetWave(ClassicFixedBossWaves.EVIL_GRUNT_1)

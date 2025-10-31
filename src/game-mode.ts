@@ -14,7 +14,7 @@ import { SpeciesId } from "#enums/species-id";
 import type { Arena } from "#field/arena";
 import { classicFixedBattles, type FixedBattleConfigs } from "#trainers/fixed-battle-configs";
 import { applyChallenges } from "#utils/challenge-utils";
-import { BooleanHolder, isNullOrUndefined, randSeedInt, randSeedItem } from "#utils/common";
+import { BooleanHolder, randSeedInt, randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
@@ -146,7 +146,7 @@ export class GameMode implements GameModeConfig {
    * - Town
    */
   getStartingBiome(): BiomeId {
-    if (!isNullOrUndefined(Overrides.STARTING_BIOME_OVERRIDE)) {
+    if (Overrides.STARTING_BIOME_OVERRIDE != null) {
       return Overrides.STARTING_BIOME_OVERRIDE;
     }
 
@@ -234,7 +234,7 @@ export class GameMode implements GameModeConfig {
   getOverrideSpecies(waveIndex: number): PokemonSpecies | null {
     if (this.isDaily && this.isWaveFinal(waveIndex)) {
       const eventBoss = getDailyEventSeedBoss(globalScene.seed);
-      if (!isNullOrUndefined(eventBoss)) {
+      if (eventBoss != null) {
         // Cannot set form index here, it will be overriden when adding it as enemy pokemon.
         return getPokemonSpecies(eventBoss.speciesId);
       }

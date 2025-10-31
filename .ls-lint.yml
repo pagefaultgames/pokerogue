@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+# SPDX-FileContributor: SirzBenjie
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
 # Base settings to use
 # Note that the `_cfg` key isn't part of ls-lint's configuration, it's just a YAML anchor for reuse.
 _cfg: &cfg
@@ -24,6 +29,8 @@ ignore:
    - .vscode
    - .github
    - .git
-   - public
+   - assets
+   - locales
    - dist
    - .devcontainer
+   - "LICENSES"

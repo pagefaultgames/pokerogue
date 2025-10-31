@@ -1,7 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import { BATTLE_STATS } from "#enums/stat";
 import { ConsumableHeldItem } from "#items/held-item";
 import type { ResetNegativeStatStageParams } from "#types/held-item-parameter";
 import i18next from "i18next";
@@ -28,32 +27,37 @@ export class ResetNegativeStatStageHeldItem extends ConsumableHeldItem<
   get iconName(): string {
     return "white_herb";
   }
-  /**
-   * Goes through the holder's stat stages and, if any are negative, resets that
-   * stat stage back to 0.
-   * @returns `true` if any stat stages were reset, false otherwise
-   */
-  apply(_effect: typeof HeldItemEffect.RESET_NEGATIVE_STAT_STAGE, { pokemon }: ResetNegativeStatStageParams): boolean {
-    let statRestored = false;
 
-    for (const s of BATTLE_STATS) {
-      if (pokemon.getStatStage(s) < 0) {
-        pokemon.setStatStage(s, 0);
-        statRestored = true;
+  public override shouldApply(
+    _effect: typeof HeldItemEffect.RESET_NEGATIVE_STAT_STAGE,
+    { pokemon }: ResetNegativeStatStageParams,
+  ): boolean {
+    for (const s of pokemon.getStatStages()) {
+      if (s < 0) {
+        return true;
       }
     }
 
-    if (statRestored) {
-      globalScene.phaseManager.queueMessage(
-        i18next.t("modifier:resetNegativeStatStageApply", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          typeName: this.name,
-        }),
-      );
+    return false;
+  }
 
-      this.consume(pokemon, true, false);
-    }
+  /**
+   * Goes through the holder's stat stages and, if any are negative, resets that
+   * stat stage back to 0.
+   */
+  public override apply(
+    _effect: typeof HeldItemEffect.RESET_NEGATIVE_STAT_STAGE,
+    { pokemon }: ResetNegativeStatStageParams,
+  ): void {
+    pokemon.summonData.statStages.fill(0);
 
-    return statRestored;
+    globalScene.phaseManager.queueMessage(
+      i18next.t("modifier:resetNegativeStatStageApply", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+        typeName: this.name,
+      }),
+    );
+
+    this.consume(pokemon, true, false);
   }
 }

@@ -19,9 +19,7 @@ import i18next from "i18next";
 export abstract class ItemTransferHeldItem<T extends EffectTuple> extends HeldItem<T> {
   /**
    * Steals an item, chosen randomly, from a set of target Pokemon.
-   * @param pokemon The {@linkcode Pokemon} holding this item
-   * @param target The {@linkcode Pokemon} to steal from (optional)
-   * @param _args N/A
+   * @param __namedParameters.pokemon - Needed for proper typedoc rendering
    * @returns `true` if an item was stolen; false otherwise.
    */
   // TODO: This works but can perhaps be done more elegantly
@@ -84,7 +82,7 @@ export class TurnEndItemStealHeldItem extends ItemTransferHeldItem<[typeof HeldI
     return i18next.t("modifierType:ModifierType.TurnHeldItemTransferModifierType.description");
   }
 
-  apply(_effect: typeof HeldItemEffect.TURN_END_ITEM_STEAL, params: ItemStealParams) {
+  apply(_effect: typeof HeldItemEffect.TURN_END_ITEM_STEAL, params: ItemStealParams): void {
     super.applySteal(params);
   }
 
@@ -146,8 +144,8 @@ export class ContactItemStealChanceHeldItem extends ItemTransferHeldItem<
 
   /**
    * Determines the target to steal items from when this applies.
-   * @param _holderPokemon The {@linkcode Pokemon} holding this item
-   * @param targetPokemon The {@linkcode Pokemon} the holder is targeting with an attack
+   * @param _holderPokemon - The {@linkcode Pokemon} holding this item
+   * @param targetPokemon - The {@linkcode Pokemon} the holder is targeting with an attack
    * @returns The target {@linkcode Pokemon} as array for further use in `apply` implementations
    */
   getTargets({ target }: ItemStealParams): Pokemon[] {

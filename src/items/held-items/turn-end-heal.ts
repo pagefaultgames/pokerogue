@@ -10,11 +10,12 @@ import i18next from "i18next";
 export class TurnEndHealHeldItem extends HeldItem<[typeof HeldItemEffect.TURN_END_HEAL]> {
   public readonly effects = [HeldItemEffect.TURN_END_HEAL] as const;
 
-  apply(_effect: typeof HeldItemEffect.TURN_END_HEAL, { pokemon }: TurnEndHealParams): boolean {
+  override shouldApply(_effect: typeof HeldItemEffect.TURN_END_HEAL, { pokemon }: TurnEndHealParams): boolean {
+    return !pokemon.isFullHp();
+  }
+
+  apply(_effect: typeof HeldItemEffect.TURN_END_HEAL, { pokemon }: TurnEndHealParams): void {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
-    if (pokemon.isFullHp()) {
-      return false;
-    }
     globalScene.phaseManager.unshiftPhase(
       new PokemonHealPhase(
         pokemon.getBattlerIndex(),
@@ -26,6 +27,5 @@ export class TurnEndHealHeldItem extends HeldItem<[typeof HeldItemEffect.TURN_EN
         true,
       ),
     );
-    return true;
   }
 }

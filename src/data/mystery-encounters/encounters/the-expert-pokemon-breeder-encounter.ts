@@ -494,7 +494,14 @@ function getPartyConfig(): EnemyPartyConfig {
         nature: Nature.ADAMANT,
         moveSet: [MoveId.FIRE_PUNCH, MoveId.ICE_PUNCH, MoveId.THUNDER_PUNCH, MoveId.METEOR_MASH],
         ivs: [31, 31, 31, 31, 31, 31],
+        heldItemConfig: [
+          {
+            entry: HeldItemId.SOOTHE_BELL,
+            count: 3,
+          },
+        ],
         tera: PokemonType.FAIRY,
+        friendship: 255,
       },
     ],
   };
@@ -514,6 +521,13 @@ function getPartyConfig(): EnemyPartyConfig {
         nature: Nature.MODEST,
         moveSet: [MoveId.DAZZLING_GLEAM, MoveId.MYSTICAL_FIRE, MoveId.ICE_BEAM, MoveId.THUNDERBOLT], // Make this one have an item gimmick when we have more items/finish implementations
         ivs: [31, 31, 31, 31, 31, 31],
+        heldItemConfig: [
+          {
+            entry: HeldItemId.SOOTHE_BELL,
+            count: 3,
+          },
+        ],
+        friendship: 255,
       },
       {
         nickname: i18next.t(`${namespace}:cleffa3Nickname`, {
@@ -527,6 +541,13 @@ function getPartyConfig(): EnemyPartyConfig {
         nature: Nature.BOLD,
         moveSet: [MoveId.TRI_ATTACK, MoveId.STORED_POWER, MoveId.CALM_MIND, MoveId.MOONLIGHT],
         ivs: [31, 31, 31, 31, 31, 31],
+        heldItemConfig: [
+          {
+            entry: HeldItemId.SOOTHE_BELL,
+            count: 3,
+          },
+        ],
+        friendship: 255,
       },
     );
   } else {
@@ -539,12 +560,22 @@ function getPartyConfig(): EnemyPartyConfig {
       {
         species: getPokemonSpecies(pool1Species),
         isBoss: false,
-        ivs: [31, 31, 31, 31, 31, 31],
+        heldItemConfig: [
+          {
+            entry: HeldItemId.SOOTHE_BELL,
+            count: 3,
+          },
+        ],
       },
       {
         species: getPokemonSpecies(pool2Species),
         isBoss: false,
-        ivs: [31, 31, 31, 31, 31, 31],
+        heldItemConfig: [
+          {
+            entry: HeldItemId.SOOTHE_BELL,
+            count: 3,
+          },
+        ],
       },
     );
   }
@@ -661,7 +692,6 @@ function onGameOver() {
 
   // Clear any leftover battle phases
   globalScene.phaseManager.clearPhaseQueue();
-  globalScene.phaseManager.clearPhaseQueueSplice();
 
   // Return enemy Pokemon
   const pokemon = globalScene.getEnemyPokemon();

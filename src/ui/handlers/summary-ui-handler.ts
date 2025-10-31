@@ -2,7 +2,6 @@ import type { Ability } from "#abilities/ability";
 import { loggedInUser } from "#app/account";
 import { globalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
-import { getBiomeName } from "#balance/biomes";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#balance/starters";
 import { allHeldItems } from "#data/data-lists";
 import { getLevelRelExp, getLevelTotalExp } from "#data/exp";
@@ -31,9 +30,9 @@ import { UiHandler } from "#ui/ui-handler";
 import {
   fixedInt,
   formatStat,
+  getBiomeName,
   getLocalizedSpriteKey,
   getShinyDescriptor,
-  isNullOrUndefined,
   padInt,
   rgbHexToRgba,
 } from "#utils/common";
@@ -896,10 +895,7 @@ export class SummaryUiHandler extends UiHandler {
           profileContainer.add(luckText);
         }
 
-        if (
-          globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id)
-          && !isNullOrUndefined(this.pokemon)
-        ) {
+        if (globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id) && this.pokemon != null) {
           const teraIcon = globalScene.add.sprite(123, 26, "button_tera");
           teraIcon.setName("terastallize-icon");
           teraIcon.setFrame(PokemonType[this.pokemon.getTeraType()].toLowerCase());

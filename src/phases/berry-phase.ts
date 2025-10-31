@@ -6,10 +6,10 @@ import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemCategoryId, isItemInCategory } from "#enums/held-item-id";
 import { CommonAnim } from "#enums/move-anims-common";
 import type { Pokemon } from "#field/pokemon";
-import { applyHeldItems } from "#items/all-held-items";
 import type { BerryHeldItem } from "#items/berry";
 import { FieldPhase } from "#phases/field-phase";
 import { BooleanHolder } from "#utils/common";
+import { applyHeldItems } from "#utils/items";
 import i18next from "i18next";
 
 /**

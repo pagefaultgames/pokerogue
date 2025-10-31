@@ -1,6 +1,5 @@
 import type { BattlerTag } from "#data/battler-tags";
 import { loadBattlerTag, SerializableBattlerTag } from "#data/battler-tags";
-import { allSpecies } from "#data/data-lists";
 import type { Gender } from "#data/gender";
 import { PokemonMove } from "#data/moves/pokemon-move";
 import type { PokemonSpeciesForm } from "#data/pokemon-species";
@@ -16,8 +15,7 @@ import type { AttackMoveResult } from "#types/attack-move-result";
 import type { IllusionData } from "#types/illusion-data";
 import type { TurnMove } from "#types/turn-move";
 import type { CoerceNullPropertiesToUndefined } from "#types/type-helpers";
-import { isNullOrUndefined } from "#utils/common";
-import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 /**
  * The type that {@linkcode PokemonSpeciesForm} is converted to when an object containing it serializes it.
@@ -64,14 +62,14 @@ function deserializePokemonSpeciesForm(value: SerializedSpeciesForm | PokemonSpe
   // @ts-expect-error: We may be deserializing a PokemonSpeciesForm, but we catch later on
   let { id, formIdx } = value;
 
-  if (isNullOrUndefined(id) || isNullOrUndefined(formIdx)) {
+  if (id == null || formIdx == null) {
     // @ts-expect-error: Typescript doesn't know that in block, `value` must be a PokemonSpeciesForm
     id = value.speciesId;
     // @ts-expect-error: Same as above (plus we are accessing a protected property)
     formIdx = value._formIndex;
   }
   // If for some reason either of these fields are null/undefined, we cannot reconstruct the species form
-  if (isNullOrUndefined(id) || isNullOrUndefined(formIdx)) {
+  if (id == null || formIdx == null) {
     return null;
   }
   return getPokemonSpeciesForm(id, formIdx);
@@ -151,13 +149,13 @@ export class PokemonSummonData {
   public moveHistory: TurnMove[] = [];
 
   constructor(source?: PokemonSummonData | SerializedPokemonSummonData) {
-    if (isNullOrUndefined(source)) {
+    if (source == null) {
       return;
     }
 
     // TODO: Rework this into an actual generic function for use elsewhere
     for (const [key, value] of Object.entries(source)) {
-      if (isNullOrUndefined(value) && this.hasOwnProperty(key)) {
+      if (value == null && this.hasOwnProperty(key)) {
         continue;
       }
 
@@ -171,13 +169,13 @@ export class PokemonSummonData {
         const illusionData = {
           ...value,
         };
-        if (!isNullOrUndefined(illusionData.fusionSpecies)) {
+        if (illusionData.fusionSpecies != null) {
           switch (typeof illusionData.fusionSpecies) {
             case "object":
-              illusionData.fusionSpecies = allSpecies[illusionData.fusionSpecies.speciesId];
+              illusionData.fusionSpecies = getPokemonSpecies(illusionData.fusionSpecies.speciesId);
               break;
             case "number":
-              illusionData.fusionSpecies = allSpecies[illusionData.fusionSpecies];
+              illusionData.fusionSpecies = getPokemonSpecies(illusionData.fusionSpecies);
               break;
             default:
               illusionData.fusionSpecies = undefined;
@@ -224,18 +222,18 @@ export class PokemonSummonData {
         CoerceNullPropertiesToUndefined<PokemonSummonData>,
         "speciesForm" | "fusionSpeciesForm" | "illusion"
       >),
-      speciesForm: isNullOrUndefined(speciesForm)
-        ? undefined
-        : { id: speciesForm.speciesId, formIdx: speciesForm.formIndex },
-      fusionSpeciesForm: isNullOrUndefined(fusionSpeciesForm)
-        ? undefined
-        : { id: fusionSpeciesForm.speciesId, formIdx: fusionSpeciesForm.formIndex },
-      illusion: isNullOrUndefined(illusion)
-        ? undefined
-        : {
-            ...(this.illusion as Omit<typeof illusion, "fusionSpecies">),
-            fusionSpecies: illusionSpeciesForm?.speciesId,
-          },
+      speciesForm: speciesForm == null ? undefined : { id: speciesForm.speciesId, formIdx: speciesForm.formIndex },
+      fusionSpeciesForm:
+        fusionSpeciesForm == null
+          ? undefined
+          : { id: fusionSpeciesForm.speciesId, formIdx: fusionSpeciesForm.formIndex },
+      illusion:
+        illusion == null
+          ? undefined
+          : {
+              ...(this.illusion as Omit<typeof illusion, "fusionSpecies">),
+              fusionSpecies: illusionSpeciesForm?.speciesId,
+            },
     };
     // Replace `null` with `undefined`, as `undefined` never gets serialized
     for (const [key, value] of Object.entries(t)) {
@@ -278,7 +276,7 @@ export class PokemonBattleData {
   public berriesEaten: BerryType[] = [];
 
   constructor(source?: PokemonBattleData | Partial<PokemonBattleData>) {
-    if (!isNullOrUndefined(source)) {
+    if (source != null) {
       this.hitCount = source.hitCount ?? 0;
       this.hasEatenBerry = source.hasEatenBerry ?? false;
       this.berriesEaten = source.berriesEaten ?? [];
@@ -324,7 +322,9 @@ export class PokemonTurnData {
   public statStagesDecreased = false;
   public moveEffectiveness: TypeDamageMultiplier | null = null;
   public combiningPledge?: MoveId;
+  /** The Pokemon was brought in this turn by a switch action (not an intial encounter/summon) */
   public switchedInThisTurn = false;
+  public summonedThisTurn = false;
   public failedRunAway = false;
   public joinedRound = false;
   /** Tracker for a pending status effect
