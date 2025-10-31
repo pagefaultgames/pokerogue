@@ -6388,12 +6388,14 @@ export class EnemyPokemon extends Pokemon {
       }
 
       const eventBossVariant = getDailyEventSeedBossVariant(globalScene.seed);
-      if (eventBossVariant != null && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex)) {
+      const eventBossVariantEnabled =
+        eventBossVariant != null && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex);
+      if (eventBossVariantEnabled) {
         this.shiny = true;
       }
 
       if (this.shiny) {
-        this.variant = eventBossVariant ?? this.generateShinyVariant();
+        this.variant = eventBossVariantEnabled ? eventBossVariant : this.generateShinyVariant();
         if (Overrides.ENEMY_VARIANT_OVERRIDE !== null) {
           this.variant = Overrides.ENEMY_VARIANT_OVERRIDE;
         }
