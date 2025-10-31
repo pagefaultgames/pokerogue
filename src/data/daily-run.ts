@@ -233,10 +233,12 @@ function setDailyRunEventStarterMovesets(seed: string, starters: StarterTuple): 
  */
 // TODO: Rework this setup into JSON or similar - this is quite hard to maintain
 function getDailyEventSeedStarters(seed: string): StarterTuple | null {
-  const speciesConfigurations =
-    /starters(?<species1>s\d{4})(?:(?<form1>f\d{2})(?<variant1>v\d{2})?|(?<variant1>v\d{2})(?<form1>f\d{2})?)?(?<species2>s\d{4})(?:(?<form2>f\d{2})(?<variant2>v\d{2})?|(?<variant2>v\d{2})(?<form2>f\d{2})?)?(?<species3>s\d{4})(?:(?<form3>f\d{2})(?<variant3>v\d{2})?|(?<variant3>v\d{2})(?<form3>f\d{2})?)?/.exec(
-      seed,
-    )?.groups;
+  const speciesRegex = i =>
+    `(?<species${i}>s\\d{4})(?:(?<form${i}>f\\d{2})(?<variant${i}>v\\d{2})?|(?<variant${i}>v\\d{2})(?<form${i}>f\\d{2})?)?`;
+
+  const matcher = new RegExp(`starters${speciesRegex(1)}${speciesRegex(2)}${speciesRegex(3)}`);
+
+  const speciesConfigurations = matcher.exec(seed)?.groups;
 
   if (!speciesConfigurations) {
     const legacyStarters = getDailyEventSeedStartersLegay(seed);
