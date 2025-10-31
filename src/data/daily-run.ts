@@ -58,11 +58,19 @@ export function getDailyRunStarters(seed: string): StarterTuple {
 }
 
 // TODO: Refactor this unmaintainable mess
-function getDailyRunStarter(starterSpeciesForm: PokemonSpeciesForm, startingLevel: number): Starter {
+function getDailyRunStarter(starterSpeciesForm: PokemonSpeciesForm, startingLevel: number, variant?: Variant): Starter {
   const starterSpecies =
     starterSpeciesForm instanceof PokemonSpecies ? starterSpeciesForm : getPokemonSpecies(starterSpeciesForm.speciesId);
   const formIndex = starterSpeciesForm instanceof PokemonSpecies ? undefined : starterSpeciesForm.formIndex;
-  const pokemon = globalScene.addPlayerPokemon(starterSpecies, startingLevel, undefined, formIndex);
+  const pokemon = globalScene.addPlayerPokemon(
+    starterSpecies,
+    startingLevel,
+    undefined,
+    formIndex,
+    undefined,
+    variant !== undefined ? true : undefined,
+    variant,
+  );
   const starter: Starter = {
     speciesId: starterSpecies.speciesId,
     shiny: pokemon.shiny,
@@ -216,13 +224,67 @@ function setDailyRunEventStarterMovesets(seed: string, starters: StarterTuple): 
 }
 
 /**
+ * Expects the seed to contain `starters` followed by 3 `s{\d{4}}` for the starters. The 4 digits are the species ID. \
+ * Each starter can optionally be followed by `f{\d{2}}` for the form index and `v{\d{2}}` for the variant. \
+ * The order of `f` and `v` does not matter.
+ * @example `/starterss0003f01s0025v01s0150f02v02`
+ * @param seed - The daily run seed
+ * @returns An array of {@linkcode Starter}s, or `null` if no valid match.
+ */
+// TODO: Rework this setup into JSON or similar - this is quite hard to maintain
+function getDailyEventSeedStarters(seed: string): StarterTuple | null {
+  const speciesCongigurations =
+    /starters(?<species1>s\d{4})(?:(?<form1>f\d{2})(?<variant1>v\d{2})?|(?<variant1>v\d{2})(?<form1>f\d{2})?)?(?<species2>s\d{4})(?:(?<form2>f\d{2})(?<variant2>v\d{2})?|(?<variant2>v\d{2})(?<form2>f\d{2})?)?(?<species3>s\d{4})(?:(?<form3>f\d{2})(?<variant3>v\d{2})?|(?<variant3>v\d{2})(?<form3>f\d{2})?)?/.exec(
+      seed,
+    )?.groups;
+
+  if (!speciesCongigurations) {
+    const legacyStarters = getDailyEventSeedStartersLegay(seed);
+    if (legacyStarters != null) {
+      console.log("Using lecacy starter parsing for daily run seed.");
+      return legacyStarters;
+    }
+    console.error("Invalid starters used for custom daily run seed!");
+    return null;
+  }
+  console.log(speciesCongigurations);
+
+  const speciesIds = getEnumValues(SpeciesId);
+
+  const starters: Starter[] = [];
+  for (let i = 0; i < 3; i++) {
+    const speciesId = Number.parseInt(speciesCongigurations[`species${i + 1}`].slice(1)) as SpeciesId;
+    const formIndex = Number.parseInt(speciesCongigurations[`form${i + 1}`]?.slice(1) ?? "00");
+    let variant: Variant | undefined = Number.parseInt(speciesCongigurations[`variant${i + 1}`]?.slice(1)) as Variant;
+
+    if (!speciesIds.includes(speciesId)) {
+      console.error("Invalid species ID used for custom daily run seed starter:", speciesId);
+      return null;
+    }
+
+    const starterSpecies = getPokemonSpecies(speciesId);
+    if (Number.isNaN(variant) || variant > 2 || (!starterSpecies.hasVariants() && variant !== 0)) {
+      console.error("Invalid variant used for custom daily run seed starter:", variant);
+      variant = undefined;
+    }
+
+    const starterForm = getPokemonSpeciesForm(speciesId, formIndex);
+    const startingLevel = globalScene.gameMode.getStartingLevel();
+    const starter = getDailyRunStarter(starterForm, startingLevel, variant);
+    starters.push(starter);
+  }
+
+  return starters as StarterTuple;
+}
+
+/**
  * Expects the seed to contain `/starters\d{18}/`
  * where the digits alternate between 4 digits for the species ID and 2 digits for the form index
  * (left padded with `0`s as necessary).
  * @returns An array of {@linkcode Starter}s, or `null` if no valid match.
  */
-// TODO: Rework this setup into JSON or similar - this is quite hard to maintain
-export function getDailyEventSeedStarters(seed: string): StarterTuple | null {
+// TODO: Can be removed after october 31st 2025
+function getDailyEventSeedStartersLegay(seed: string): StarterTuple | null {
   if (!isDailyEventSeed(seed)) {
     return null;
   }
