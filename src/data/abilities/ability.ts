@@ -7440,17 +7440,18 @@ export function initAbilities() {
         1.3)
       .build(),
     new AbBuilder(AbilityId.ILLUSION, 5)
-      // The Pokemon generate an illusion if it's available
-      .attr(IllusionPreSummonAbAttr, false)
-      .attr(IllusionBreakAbAttr)
-      // The Pokemon loses its illusion when damaged by a move
-      .attr(PostDefendIllusionBreakAbAttr, true)
-      // Disable Illusion in fusions
-      .attr(NoFusionAbilityAbAttr)
-      // Illusion is available again after a battle
-      .conditionalAttr((pokemon) => pokemon.isAllowedInBattle(), IllusionPostBattleAbAttr, false)
-      .uncopiable()
-      .bypassFaint()
+      // // The Pokemon generate an illusion if it's available
+      // .attr(IllusionPreSummonAbAttr, false)
+      // .attr(IllusionBreakAbAttr)
+      // // The Pokemon loses its illusion when damaged by a move
+      // .attr(PostDefendIllusionBreakAbAttr, true)
+      // // Disable Illusion in fusions
+      // .attr(NoFusionAbilityAbAttr)
+      // // Illusion is available again after a battle
+      // .conditionalAttr((pokemon) => pokemon.isAllowedInBattle(), IllusionPostBattleAbAttr, false)
+      // .uncopiable()
+      // .bypassFaint()
+      .unimplemented() // TODO reimplement Illusion properly
       .build(),
     new AbBuilder(AbilityId.IMPOSTER, 5)
       .attr(PostSummonTransformAbAttr)
