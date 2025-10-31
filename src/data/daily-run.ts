@@ -241,7 +241,7 @@ function getDailyEventSeedStarters(seed: string): StarterTuple | null {
   const speciesConfigurations = matcher.exec(seed)?.groups;
 
   if (!speciesConfigurations) {
-    const legacyStarters = getDailyEventSeedStartersLegay(seed);
+    const legacyStarters = getDailyEventSeedStartersLegacy(seed);
     if (legacyStarters != null) {
       console.log("Using legacy starter parsing for daily run seed.");
       return legacyStarters;
@@ -285,7 +285,7 @@ function getDailyEventSeedStarters(seed: string): StarterTuple | null {
  * @returns An array of {@linkcode Starter}s, or `null` if no valid match.
  */
 // TODO: Can be removed after october 31st 2025
-function getDailyEventSeedStartersLegay(seed: string): StarterTuple | null {
+function getDailyEventSeedStartersLegacy(seed: string): StarterTuple | null {
   if (!isDailyEventSeed(seed)) {
     return null;
   }
