@@ -298,7 +298,7 @@ const SLOT_3_FIGHT_3 = [
   SpeciesId.RHYDON,
   SpeciesId.TANGROWTH,
   SpeciesId.PORYGON2,
-  SpeciesId.ELECTIVIRE,
+  SpeciesId.ELECTABUZZ,
   SpeciesId.MAGMAR,
   SpeciesId.AZUMARILL,
   SpeciesId.URSARING,
