@@ -72,7 +72,7 @@ describe("Arena - Psychic Terrain", () => {
     await game.phaseInterceptor.to("MovePhase", false);
 
     const feebas = game.field.getPlayerPokemon();
-    expect(allMoves[MoveId.POUND].getPriority(feebas)).toBe(0.2);
+    expect(allMoves[MoveId.POUND].getPriority(feebas)).toBe(0);
 
     await game.toEndOfTurn();
 
@@ -93,7 +93,7 @@ describe("Arena - Psychic Terrain", () => {
     await game.phaseInterceptor.to("MovePhase", false);
 
     const feebas = game.field.getPlayerPokemon();
-    expect(allMoves[MoveId.QUICK_ATTACK].getPriority(feebas)).toBe(1.2);
+    expect(allMoves[MoveId.QUICK_ATTACK].getPriority(feebas)).toBe(1);
 
     await game.toEndOfTurn();
 
