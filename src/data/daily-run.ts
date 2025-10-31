@@ -241,13 +241,12 @@ function getDailyEventSeedStarters(seed: string): StarterTuple | null {
   if (!speciesConfigurations) {
     const legacyStarters = getDailyEventSeedStartersLegay(seed);
     if (legacyStarters != null) {
-      console.log("Using lecacy starter parsing for daily run seed.");
+      console.log("Using legacy starter parsing for daily run seed.");
       return legacyStarters;
     }
     console.error("Invalid starters used for custom daily run seed!");
     return null;
   }
-  console.log(speciesConfigurations);
 
   const speciesIds = getEnumValues(SpeciesId);
 
