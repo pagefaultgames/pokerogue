@@ -37,7 +37,7 @@ export class EggHatchSceneUiHandler extends UiHandler {
 
     this.getUi().showText("", 0);
 
-    globalScene.setModifiersVisible(false);
+    globalScene.setItemsVisible(false);
 
     return true;
   }

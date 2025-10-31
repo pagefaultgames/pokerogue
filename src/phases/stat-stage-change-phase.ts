@@ -8,12 +8,13 @@ import { OctolockTag } from "#data/battler-tags";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import type { BattlerIndex } from "#enums/battler-index";
+import { HeldItemEffect } from "#enums/held-item-effect";
 import { type BattleStat, getStatKey, getStatStageChangeDescriptionKey, Stat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
-import { ResetNegativeStatStageModifier } from "#modifiers/modifier";
 import { PokemonPhase } from "#phases/pokemon-phase";
 import type { ConditionalUserFieldProtectStatAbAttrParams, PreStatStageChangeAbAttrParams } from "#types/ability-types";
 import { BooleanHolder, NumberHolder } from "#utils/common";
+import { applyHeldItems } from "#utils/items";
 import i18next from "i18next";
 
 export type StatStageChangeCallback = (
@@ -225,16 +226,7 @@ export class StatStageChangePhase extends PokemonPhase {
       // Look for any other stat change phases; if this is the last one, do White Herb check
       if (!globalScene.phaseManager.hasPhaseOfType("StatStageChangePhase", p => p.battlerIndex === this.battlerIndex)) {
         // Apply White Herb if needed
-        const whiteHerb = globalScene.applyModifier(
-          ResetNegativeStatStageModifier,
-          this.player,
-          pokemon,
-        ) as ResetNegativeStatStageModifier;
-        // If the White Herb was applied, consume it
-        if (whiteHerb) {
-          pokemon.loseHeldItem(whiteHerb);
-          globalScene.updateModifiers(this.player);
-        }
+        applyHeldItems(HeldItemEffect.RESET_NEGATIVE_STAT_STAGE, { pokemon });
       }
 
       pokemon.updateInfo();

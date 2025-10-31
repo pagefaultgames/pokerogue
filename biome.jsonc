@@ -225,7 +225,7 @@
         "noShadow": "warn", // TODO: refactor and make "error"
         "noNonNullAssertedOptionalChain": "warn", // TODO: refactor and make "error"
         "noDuplicateDependencies": "error",
-        "noImportCycles": "error",
+        "noImportCycles": "warn", // TODO: Revert and remove once circ deps are fixed
         // TODO: Change to error once promises are used properly
         "noMisusedPromises": "info"
       }

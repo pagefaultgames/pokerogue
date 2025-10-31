@@ -1,6 +1,6 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { modifierTypes } from "#data/data-lists";
+import { allHeldItems } from "#data/data-lists";
 import { getNatureName } from "#data/nature";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -8,9 +8,9 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { Nature } from "#enums/nature";
 import { SpeciesId } from "#enums/species-id";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
+import { getNewVitaminHeldItem } from "#items/held-item-pool";
 import { getEncounterText, queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
 import {
-  generateModifierType,
   leaveEncounterWithoutBattle,
   selectPokemonForOption,
   setEncounterExp,
@@ -18,7 +18,6 @@ import {
 } from "#mystery-encounters/encounter-phase-utils";
 import {
   applyDamageToPokemon,
-  applyModifierTypeToPlayerPokemon,
   isPokemonValidForEncounterOptionSelection,
 } from "#mystery-encounters/encounter-pokemon-utils";
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
@@ -96,15 +95,12 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
           // Update money
           updatePlayerMoney(-(encounter.options[0].requirements[0] as MoneyRequirement).requiredMoney);
           // Calculate modifiers and dialogue tokens
-          const modifiers = [
-            generateModifierType(modifierTypes.BASE_STAT_BOOSTER)!,
-            generateModifierType(modifierTypes.BASE_STAT_BOOSTER)!,
-          ];
-          encounter.setDialogueToken("boost1", modifiers[0].name);
-          encounter.setDialogueToken("boost2", modifiers[1].name);
+          const items = [getNewVitaminHeldItem(), getNewVitaminHeldItem()];
+          encounter.setDialogueToken("boost1", allHeldItems[items[0]].name);
+          encounter.setDialogueToken("boost2", allHeldItems[items[1]].name);
           encounter.misc = {
             chosenPokemon: pokemon,
-            modifiers,
+            items,
           };
         };
 
@@ -131,10 +127,10 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
         // Choose Cheap Option
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         const chosenPokemon = encounter.misc.chosenPokemon;
-        const modifiers = encounter.misc.modifiers;
+        const items = encounter.misc.items;
 
-        for (const modType of modifiers) {
-          await applyModifierTypeToPlayerPokemon(chosenPokemon, modType);
+        for (const item of items) {
+          chosenPokemon.heldItemManager.add(item);
         }
 
         leaveEncounterWithoutBattle(true);
@@ -179,15 +175,12 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
           // Update money
           updatePlayerMoney(-(encounter.options[1].requirements[0] as MoneyRequirement).requiredMoney);
           // Calculate modifiers and dialogue tokens
-          const modifiers = [
-            generateModifierType(modifierTypes.BASE_STAT_BOOSTER)!,
-            generateModifierType(modifierTypes.BASE_STAT_BOOSTER)!,
-          ];
-          encounter.setDialogueToken("boost1", modifiers[0].name);
-          encounter.setDialogueToken("boost2", modifiers[1].name);
+          const items = [getNewVitaminHeldItem(), getNewVitaminHeldItem()];
+          encounter.setDialogueToken("boost1", allHeldItems[items[0]].name);
+          encounter.setDialogueToken("boost2", allHeldItems[items[1]].name);
           encounter.misc = {
             chosenPokemon: pokemon,
-            modifiers,
+            items,
           };
         };
 
@@ -202,10 +195,10 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
         // Choose Expensive Option
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         const chosenPokemon = encounter.misc.chosenPokemon;
-        const modifiers = encounter.misc.modifiers;
+        const items = encounter.misc.items;
 
-        for (const modType of modifiers) {
-          await applyModifierTypeToPlayerPokemon(chosenPokemon, modType);
+        for (const item of items) {
+          chosenPokemon.heldItemManager.add(item);
         }
 
         leaveEncounterWithoutBattle(true);

@@ -1,9 +1,11 @@
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { modifierTypes } from "#data/data-lists";
 import { BattleType } from "#enums/battle-type";
 import type { BattlerIndex } from "#enums/battler-index";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
+import { RewardId } from "#enums/reward-id";
+import { TrainerItemId } from "#enums/trainer-item-id";
+import type { CustomRewardSettings } from "#items/reward-pool-utils";
 import { handleMysteryEncounterVictory } from "#mystery-encounters/encounter-phase-utils";
 import { PokemonPhase } from "#phases/pokemon-phase";
 
@@ -58,53 +60,51 @@ export class VictoryPhase extends PokemonPhase {
               // Get event modifiers for this wave
               timedEventManager
                 .getFixedBattleEventRewards(currentWaveIndex)
-                .map(r => globalScene.phaseManager.pushNew("ModifierRewardPhase", modifierTypes[r]));
+                .map(r => globalScene.phaseManager.pushNew("RewardPhase", r));
               break;
             case ClassicFixedBossWaves.EVIL_BOSS_2:
-              // Should get Lock Capsule on 165 before shop phase so it can be used in the rewards shop
-              globalScene.phaseManager.pushNew("ModifierRewardPhase", modifierTypes.LOCK_CAPSULE);
+              // Should get Lock Capsule on 165 before shop phase so it can be used in the reward shop
+              globalScene.phaseManager.pushNew("RewardPhase", TrainerItemId.LOCK_CAPSULE);
               break;
           }
         }
         if (currentWaveIndex % 10) {
           globalScene.phaseManager.pushNew(
-            "SelectModifierPhase",
+            "SelectRewardPhase",
             undefined,
             undefined,
-            gameMode.isFixedBattle(currentWaveIndex)
-              ? gameMode.getFixedBattle(currentWaveIndex).customModifierRewardSettings
-              : undefined,
+            this.getFixedBattleCustomRewards(),
           );
         } else if (gameMode.isDaily) {
-          globalScene.phaseManager.pushNew("ModifierRewardPhase", modifierTypes.EXP_CHARM);
+          globalScene.phaseManager.pushNew("RewardPhase", TrainerItemId.EXP_CHARM);
           if (currentWaveIndex > 10 && !gameMode.isWaveFinal(currentWaveIndex)) {
-            globalScene.phaseManager.pushNew("ModifierRewardPhase", modifierTypes.GOLDEN_POKEBALL);
+            globalScene.phaseManager.pushNew("RewardPhase", TrainerItemId.GOLDEN_POKEBALL);
           }
         } else {
           const superExpWave = !gameMode.isEndless ? (globalScene.offsetGym ? 0 : 20) : 10;
           if (gameMode.isEndless && currentWaveIndex === 10) {
-            globalScene.phaseManager.pushNew("ModifierRewardPhase", modifierTypes.EXP_SHARE);
+            globalScene.phaseManager.pushNew("RewardPhase", TrainerItemId.EXP_SHARE);
           }
           if (gameMode.isClassic && currentWaveIndex === 10) {
-            globalScene.phaseManager.pushNew("ModifierRewardPhase", modifierTypes.EXP_CHARM);
+            globalScene.phaseManager.pushNew("RewardPhase", TrainerItemId.EXP_CHARM);
           }
           if (currentWaveIndex <= 750 && (currentWaveIndex <= 500 || currentWaveIndex % 30 === superExpWave)) {
             globalScene.phaseManager.pushNew(
-              "ModifierRewardPhase",
+              "RewardPhase",
               currentWaveIndex % 30 !== superExpWave || currentWaveIndex > 250
-                ? modifierTypes.EXP_CHARM
-                : modifierTypes.SUPER_EXP_CHARM,
+                ? TrainerItemId.EXP_CHARM
+                : TrainerItemId.SUPER_EXP_CHARM,
             );
           }
           if (currentWaveIndex <= 150 && !(currentWaveIndex % 50)) {
-            globalScene.phaseManager.pushNew("ModifierRewardPhase", modifierTypes.GOLDEN_POKEBALL);
+            globalScene.phaseManager.pushNew("RewardPhase", TrainerItemId.GOLDEN_POKEBALL);
           }
           if (gameMode.isEndless && !(currentWaveIndex % 50)) {
             globalScene.phaseManager.pushNew(
-              "ModifierRewardPhase",
-              !(currentWaveIndex % 250) ? modifierTypes.VOUCHER_PREMIUM : modifierTypes.VOUCHER_PLUS,
+              "RewardPhase",
+              !(currentWaveIndex % 250) ? RewardId.VOUCHER_PREMIUM : RewardId.VOUCHER_PLUS,
             );
-            globalScene.phaseManager.pushNew("AddEnemyBuffModifierPhase");
+            globalScene.phaseManager.pushNew("AddEnemyTokenPhase");
           }
         }
 
@@ -122,5 +122,19 @@ export class VictoryPhase extends PokemonPhase {
     }
 
     this.end();
+  }
+
+  /**
+   * If this wave is a fixed battle with special custom rewards,
+   * will pass those settings to the upcoming {@linkcode SelectRewardPhase}`.
+   */
+  getFixedBattleCustomRewards(): CustomRewardSettings | undefined {
+    const gameMode = globalScene.gameMode;
+    const waveIndex = globalScene.currentBattle.waveIndex;
+    if (gameMode.isFixedBattle(waveIndex)) {
+      return gameMode.getFixedBattle(waveIndex).customRewardSettings;
+    }
+
+    return;
   }
 }

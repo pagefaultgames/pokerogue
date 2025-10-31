@@ -1,23 +1,18 @@
 import type { BattleScene } from "#app/battle-scene";
 import * as BattleAnims from "#data/battle-anims";
-import { modifierTypes } from "#data/data-lists";
 import { BiomeId } from "#enums/biome-id";
-import { ModifierTier } from "#enums/modifier-tier";
+import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
-import { HealShopCostModifier, HitHealModifier, TurnHealModifier } from "#modifiers/modifier";
-import type { PokemonHeldItemModifierType } from "#modifiers/modifier-type";
 import { PokemonMove } from "#moves/pokemon-move";
+import type { EnemyPartyConfig, EnemyPokemonConfig } from "#mystery-encounters/encounter-phase-utils";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
-import {
-  type EnemyPartyConfig,
-  type EnemyPokemonConfig,
-  generateModifierType,
-} from "#mystery-encounters/encounter-phase-utils";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { TrashToTreasureEncounter } from "#mystery-encounters/trash-to-treasure-encounter";
 import { MovePhase } from "#phases/move-phase";
@@ -27,8 +22,9 @@ import {
 } from "#test/mystery-encounter/encounter-test-utils";
 import { GameManager } from "#test/test-utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
-import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import * as Utils from "#utils/common";
+import { randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -99,41 +95,13 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       formIndex: 1, // Gmax
       bossSegmentModifier: 1, // +1 Segment from normal
       moveSet: [MoveId.GUNK_SHOT, MoveId.STOMPING_TANTRUM, MoveId.HAMMER_ARM, MoveId.PAYBACK],
-      modifierConfigs: [
-        {
-          modifier: generateModifierType(modifierTypes.BERRY) as PokemonHeldItemModifierType,
-        },
-        {
-          modifier: generateModifierType(modifierTypes.BERRY) as PokemonHeldItemModifierType,
-        },
-        {
-          modifier: generateModifierType(modifierTypes.BERRY) as PokemonHeldItemModifierType,
-        },
-        {
-          modifier: generateModifierType(modifierTypes.BERRY) as PokemonHeldItemModifierType,
-        },
-        {
-          modifier: generateModifierType(modifierTypes.BASE_STAT_BOOSTER) as PokemonHeldItemModifierType,
-        },
-        {
-          modifier: generateModifierType(modifierTypes.BASE_STAT_BOOSTER) as PokemonHeldItemModifierType,
-        },
-        {
-          modifier: generateModifierType(modifierTypes.TOXIC_ORB) as PokemonHeldItemModifierType,
-          stackCount: Utils.randSeedInt(2, 0),
-        },
-        {
-          modifier: generateModifierType(modifierTypes.SOOTHE_BELL) as PokemonHeldItemModifierType,
-          stackCount: Utils.randSeedInt(2, 1),
-        },
-        {
-          modifier: generateModifierType(modifierTypes.LUCKY_EGG) as PokemonHeldItemModifierType,
-          stackCount: Utils.randSeedInt(3, 1),
-        },
-        {
-          modifier: generateModifierType(modifierTypes.GOLDEN_EGG) as PokemonHeldItemModifierType,
-          stackCount: Utils.randSeedInt(2, 0),
-        },
+      heldItemConfig: [
+        { entry: HeldItemCategoryId.BERRY, count: 4 },
+        { entry: HeldItemCategoryId.BASE_STAT_BOOST, count: 2 },
+        { entry: HeldItemId.TOXIC_ORB, count: randSeedInt(2, 0) },
+        { entry: HeldItemId.SOOTHE_BELL, count: randSeedInt(2, 1) },
+        { entry: HeldItemId.LUCKY_EGG, count: randSeedInt(3, 1) },
+        { entry: HeldItemId.GOLDEN_EGG, count: randSeedInt(2, 0) },
       ],
     };
     const config: EnemyPartyConfig = {
@@ -191,35 +159,74 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       expect(movePhases.filter(p => (p as MovePhase).move.moveId === MoveId.STOCKPILE).length).toBe(1);
     });
 
-    it("should have 2 Rogue, 1 Ultra, 1 Great in rewards", async () => {
+    it("should have 2 Rogue, 1 Ultra, 1 Great in allRewards", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to("SelectModifierPhase", false);
-      expect(game).toBeAtPhase("SelectModifierPhase");
-      await game.phaseInterceptor.to("SelectModifierPhase");
+      await game.phaseInterceptor.to("SelectRewardPhase", false);
+      expect(game).toBeAtPhase("SelectRewardPhase");
+      await game.phaseInterceptor.to("SelectRewardPhase");
 
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(4);
+      expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+      const rewardSelectHandler = scene.ui.handlers.find(
+        h => h instanceof RewardSelectUiHandler,
+      ) as RewardSelectUiHandler;
+      expect(rewardSelectHandler.options.length).toEqual(4);
       expect(
-        modifierSelectHandler.options[0].modifierTypeOption.type.tier
-          - modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
-      ).toEqual(ModifierTier.ROGUE);
+        rewardSelectHandler.options[0].rewardOption.type.tier
+          - rewardSelectHandler.options[0].rewardOption.upgradeCount,
+      ).toEqual(RarityTier.ROGUE);
       expect(
-        modifierSelectHandler.options[1].modifierTypeOption.type.tier
-          - modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
-      ).toEqual(ModifierTier.ROGUE);
+        rewardSelectHandler.options[1].rewardOption.type.tier
+          - rewardSelectHandler.options[1].rewardOption.upgradeCount,
+      ).toEqual(RarityTier.ROGUE);
       expect(
-        modifierSelectHandler.options[2].modifierTypeOption.type.tier
-          - modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
-      ).toEqual(ModifierTier.ULTRA);
+        rewardSelectHandler.options[2].rewardOption.type.tier
+          - rewardSelectHandler.options[2].rewardOption.upgradeCount,
+      ).toEqual(RarityTier.ULTRA);
       expect(
-        modifierSelectHandler.options[3].modifierTypeOption.type.tier
-          - modifierSelectHandler.options[3].modifierTypeOption.upgradeCount,
-      ).toEqual(ModifierTier.GREAT);
+        rewardSelectHandler.options[3].rewardOption.type.tier
+          - rewardSelectHandler.options[3].rewardOption.upgradeCount,
+      ).toEqual(RarityTier.GREAT);
+    });
+  });
+
+  describe("Option 2 - Dig for Valuables", () => {
+    it("should have the correct properties", () => {
+      const option1 = TrashToTreasureEncounter.options[1];
+      expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
+      expect(option1.dialogue).toBeDefined();
+      expect(option1.dialogue).toStrictEqual({
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
+        selected: [
+          {
+            text: `${namespace}:option.2.selected`,
+          },
+        ],
+      });
+    });
+
+    it("should give 1 Leftovers, 1 Shell Bell, and Black Sludge", async () => {
+      await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
+      await runMysteryEncounterToEnd(game, 2);
+      expect(game).toBeAtPhase("SelectRewardPhase");
+      await game.phaseInterceptor.to("SelectRewardPhase");
+
+      expect(scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.LEFTOVERS)).toBe(1);
+
+      expect(scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.SHELL_BELL)).toBe(1);
+
+      expect(scene.trainerItems.getStack(TrainerItemId.BLACK_SLUDGE)).toBe(1);
+    });
+
+    it("should leave encounter without battle", async () => {
+      const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
+
+      await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
+      await runMysteryEncounterToEnd(game, 2);
+
+      expect(leaveEncounterWithoutBattleSpy).toBeCalled();
     });
   });
 

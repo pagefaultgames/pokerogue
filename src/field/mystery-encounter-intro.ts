@@ -334,7 +334,7 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
   tryPlaySprite(
     sprite: Phaser.GameObjects.Sprite,
     tintSprite: Phaser.GameObjects.Sprite,
-    animConfig: Phaser.Types.Animations.PlayAnimationConfig,
+    animConfig: PlayAnimationConfig,
   ): boolean {
     // Show an error in the console if there isn't a texture loaded
     if (sprite.texture.key === "__MISSING") {

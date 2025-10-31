@@ -9,10 +9,10 @@ import { UiMode } from "#enums/ui-mode";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import { FieldTripEncounter } from "#mystery-encounters/field-trip-encounter";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
-import { SelectModifierPhase } from "#phases/select-modifier-phase";
+import { SelectRewardPhase } from "#phases/select-reward-phase";
 import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
 import { GameManager } from "#test/test-utils/game-manager";
-import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import i18next from "i18next";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -85,38 +85,38 @@ describe("Field Trip - Mystery Encounter", () => {
     it("Should give no reward on incorrect option", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIELD_TRIP, defaultParty);
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1, optionNo: 2 });
-      await game.phaseInterceptor.to(SelectModifierPhase);
+      await game.phaseInterceptor.to(SelectRewardPhase);
 
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(0);
+      expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+      const rewardSelectHandler = scene.ui.handlers.find(
+        h => h instanceof RewardSelectUiHandler,
+      ) as RewardSelectUiHandler;
+      expect(rewardSelectHandler.options.length).toEqual(0);
     });
 
-    it("Should give proper rewards on correct Physical move option", async () => {
+    it("Should give proper allRewards on correct Physical move option", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIELD_TRIP, defaultParty);
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1, optionNo: 1 });
-      await game.phaseInterceptor.to(SelectModifierPhase);
+      await game.phaseInterceptor.to(SelectRewardPhase);
 
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(5);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.name).toBe(
+      expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+      const rewardSelectHandler = scene.ui.handlers.find(
+        h => h instanceof RewardSelectUiHandler,
+      ) as RewardSelectUiHandler;
+      expect(rewardSelectHandler.options.length).toEqual(5);
+      expect(rewardSelectHandler.options[0].rewardOption.type.name).toBe(
         i18next.t("modifierType:TempStatStageBoosterItem.x_attack"),
       );
-      expect(modifierSelectHandler.options[1].modifierTypeOption.type.name).toBe(
+      expect(rewardSelectHandler.options[1].rewardOption.type.name).toBe(
         i18next.t("modifierType:TempStatStageBoosterItem.x_defense"),
       );
-      expect(modifierSelectHandler.options[2].modifierTypeOption.type.name).toBe(
+      expect(rewardSelectHandler.options[2].rewardOption.type.name).toBe(
         i18next.t("modifierType:TempStatStageBoosterItem.x_speed"),
       );
-      expect(modifierSelectHandler.options[3].modifierTypeOption.type.name).toBe(
+      expect(rewardSelectHandler.options[3].rewardOption.type.name).toBe(
         i18next.t("modifierType:ModifierType.DIRE_HIT.name"),
       );
-      expect(modifierSelectHandler.options[4].modifierTypeOption.type.name).toBe(
+      expect(rewardSelectHandler.options[4].rewardOption.type.name).toBe(
         i18next.t("modifierType:ModifierType.RARER_CANDY.name"),
       );
     });
@@ -146,38 +146,38 @@ describe("Field Trip - Mystery Encounter", () => {
     it("Should give no reward on incorrect option", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIELD_TRIP, defaultParty);
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 1 });
-      await game.phaseInterceptor.to(SelectModifierPhase);
+      await game.phaseInterceptor.to(SelectRewardPhase);
 
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(0);
+      expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+      const rewardSelectHandler = scene.ui.handlers.find(
+        h => h instanceof RewardSelectUiHandler,
+      ) as RewardSelectUiHandler;
+      expect(rewardSelectHandler.options.length).toEqual(0);
     });
 
-    it("Should give proper rewards on correct Special move option", async () => {
+    it("Should give proper allRewards on correct Special move option", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIELD_TRIP, defaultParty);
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 2 });
-      await game.phaseInterceptor.to(SelectModifierPhase);
+      await game.phaseInterceptor.to(SelectRewardPhase);
 
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(5);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.name).toBe(
+      expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+      const rewardSelectHandler = scene.ui.handlers.find(
+        h => h instanceof RewardSelectUiHandler,
+      ) as RewardSelectUiHandler;
+      expect(rewardSelectHandler.options.length).toEqual(5);
+      expect(rewardSelectHandler.options[0].rewardOption.type.name).toBe(
         i18next.t("modifierType:TempStatStageBoosterItem.x_sp_atk"),
       );
-      expect(modifierSelectHandler.options[1].modifierTypeOption.type.name).toBe(
+      expect(rewardSelectHandler.options[1].rewardOption.type.name).toBe(
         i18next.t("modifierType:TempStatStageBoosterItem.x_sp_def"),
       );
-      expect(modifierSelectHandler.options[2].modifierTypeOption.type.name).toBe(
+      expect(rewardSelectHandler.options[2].rewardOption.type.name).toBe(
         i18next.t("modifierType:TempStatStageBoosterItem.x_speed"),
       );
-      expect(modifierSelectHandler.options[3].modifierTypeOption.type.name).toBe(
+      expect(rewardSelectHandler.options[3].rewardOption.type.name).toBe(
         i18next.t("modifierType:ModifierType.DIRE_HIT.name"),
       );
-      expect(modifierSelectHandler.options[4].modifierTypeOption.type.name).toBe(
+      expect(rewardSelectHandler.options[4].rewardOption.type.name).toBe(
         i18next.t("modifierType:ModifierType.RARER_CANDY.name"),
       );
     });
@@ -207,33 +207,33 @@ describe("Field Trip - Mystery Encounter", () => {
     it("Should give no reward on incorrect option", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIELD_TRIP, defaultParty);
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
-      await game.phaseInterceptor.to(SelectModifierPhase);
+      await game.phaseInterceptor.to(SelectRewardPhase);
 
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(0);
+      expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+      const rewardSelectHandler = scene.ui.handlers.find(
+        h => h instanceof RewardSelectUiHandler,
+      ) as RewardSelectUiHandler;
+      expect(rewardSelectHandler.options.length).toEqual(0);
     });
 
-    it("Should give proper rewards on correct Special move option", async () => {
+    it("Should give proper allRewards on correct Special move option", async () => {
       vi.spyOn(i18next, "t");
       await game.runToMysteryEncounter(MysteryEncounterType.FIELD_TRIP, defaultParty);
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 3 });
-      await game.phaseInterceptor.to(SelectModifierPhase);
+      await game.phaseInterceptor.to(SelectRewardPhase);
 
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(5);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.name).toBe(
+      expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+      const rewardSelectHandler = scene.ui.handlers.find(
+        h => h instanceof RewardSelectUiHandler,
+      ) as RewardSelectUiHandler;
+      expect(rewardSelectHandler.options.length).toEqual(5);
+      expect(rewardSelectHandler.options[0].rewardOption.type.name).toBe(
         i18next.t("modifierType:TempStatStageBoosterItem.x_accuracy"),
       );
-      expect(modifierSelectHandler.options[1].modifierTypeOption.type.name).toBe(
+      expect(rewardSelectHandler.options[1].rewardOption.type.name).toBe(
         i18next.t("modifierType:TempStatStageBoosterItem.x_speed"),
       );
-      expect(modifierSelectHandler.options[2].modifierTypeOption.type.name).toBe(
+      expect(rewardSelectHandler.options[2].rewardOption.type.name).toBe(
         i18next.t("modifierType:ModifierType.AddPokeballModifierType.name", {
           modifierCount: 5,
           pokeballName: i18next.t("pokeball:greatBall"),
@@ -243,10 +243,10 @@ describe("Field Trip - Mystery Encounter", () => {
         "modifierType:ModifierType.AddPokeballModifierType.name",
         expect.objectContaining({ modifierCount: 5 }),
       );
-      expect(modifierSelectHandler.options[3].modifierTypeOption.type.name).toBe(
+      expect(rewardSelectHandler.options[3].rewardOption.type.name).toBe(
         i18next.t("modifierType:ModifierType.IV_SCANNER.name"),
       );
-      expect(modifierSelectHandler.options[4].modifierTypeOption.type.name).toBe(
+      expect(rewardSelectHandler.options[4].rewardOption.type.name).toBe(
         i18next.t("modifierType:ModifierType.RARER_CANDY.name"),
       );
     });

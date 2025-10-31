@@ -11,7 +11,7 @@ import type { MoveId } from "#enums/move-id";
 import type { MoveSourceType } from "#enums/move-source-type";
 import type { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
-import type { ModifierTypeOption } from "#modifiers/modifier-type";
+import type { RewardOption } from "#items/reward";
 import type { DexEntry } from "#types/dex-data";
 import type { DexAttrProps, StarterDataEntry } from "#types/save-data";
 import { BooleanHolder, type NumberHolder } from "./common";
@@ -247,7 +247,7 @@ export function applyChallenges(
  */
 export function applyChallenges(
   challengeType: ChallengeType.SHOP_ITEM,
-  shopItem: ModifierTypeOption | null,
+  shopItem: RewardOption | null,
   status: BooleanHolder,
 ): boolean;
 
@@ -260,7 +260,7 @@ export function applyChallenges(
  */
 export function applyChallenges(
   challengeType: ChallengeType.WAVE_REWARD,
-  reward: ModifierTypeOption | null,
+  reward: RewardOption | null,
   status: BooleanHolder,
 ): boolean;
 

@@ -9,8 +9,8 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PlayerGender } from "#enums/player-gender";
 import { PokeballType } from "#enums/pokeball";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import type { EnemyPokemon } from "#field/pokemon";
-import { IvScannerModifier } from "#modifiers/modifier";
 import { getEncounterText, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import {
   getRandomEncounterPokemon,
@@ -339,8 +339,7 @@ async function summonSafariPokemon() {
   // shows up and the IV scanner breaks. For now, we place the IV scanner code
   // separately so that at least the IV scanner works.
 
-  const ivScannerModifier = globalScene.findModifier(m => m instanceof IvScannerModifier);
-  if (ivScannerModifier) {
+  if (globalScene.trainerItems.hasItem(TrainerItemId.IV_SCANNER)) {
     globalScene.phaseManager.pushNew("ScanIvsPhase", pokemon.getBattlerIndex());
   }
 }

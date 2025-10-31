@@ -3,7 +3,6 @@ import { BattleScene } from "#app/battle-scene";
 import { getGameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import overrides from "#app/overrides";
-import { modifierTypes } from "#data/data-lists";
 import { BattlerIndex } from "#enums/battler-index";
 import { Button } from "#enums/buttons";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
@@ -12,11 +11,12 @@ import { GameModes } from "#enums/game-modes";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PlayerGender } from "#enums/player-gender";
 import type { PokeballType } from "#enums/pokeball";
+import { RewardId } from "#enums/reward-id";
 import type { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import type { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
-import { ModifierTypeOption } from "#modifiers/modifier-type";
+import { allRewards } from "#items/all-rewards";
 import { CheckSwitchPhase } from "#phases/check-switch-phase";
 import { CommandPhase } from "#phases/command-phase";
 import { EncounterPhase } from "#phases/encounter-phase";
@@ -49,7 +49,6 @@ import type { PhaseClass, PhaseString } from "#types/phase-types";
 import type { BallUiHandler } from "#ui/ball-ui-handler";
 import type { BattleMessageUiHandler } from "#ui/battle-message-ui-handler";
 import type { CommandUiHandler } from "#ui/command-ui-handler";
-import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import type { PartyUiHandler } from "#ui/party-ui-handler";
 import type { StarterSelectUiHandler } from "#ui/starter-select-ui-handler";
 import type { TargetSelectUiHandler } from "#ui/target-select-ui-handler";
@@ -321,13 +320,13 @@ export class GameManager {
     }
   }
 
-  /** Queue up button presses to skip taking an item on the next {@linkcode SelectModifierPhase} */
+  /** Queue up button presses to skip taking an item on the next {@linkcode SelectRewardPhase} */
   doSelectModifier() {
     this.onNextPrompt(
-      "SelectModifierPhase",
-      UiMode.MODIFIER_SELECT,
+      "SelectRewardPhase",
+      UiMode.REWARD_SELECT,
       () => {
-        const handler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
+        const handler = this.scene.ui.getHandler() as RewardSelectUiHandler;
         handler.processInput(Button.CANCEL);
       },
       () =>
@@ -338,10 +337,10 @@ export class GameManager {
     );
 
     this.onNextPrompt(
-      "SelectModifierPhase",
+      "SelectRewardPhase",
       UiMode.CONFIRM,
       () => {
-        const handler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
+        const handler = this.scene.ui.getHandler() as RewardSelectUiHandler;
         handler.processInput(Button.ACTION);
       },
       () =>
@@ -379,7 +378,7 @@ export class GameManager {
   }
 
   /**
-   * Queue up button presses to skip taking an item on the next {@linkcode SelectModifierPhase},
+   * Queue up button presses to skip taking an item on the next {@linkcode SelectRewardPhase},
    * and then transition to the next {@linkcode CommandPhase}.
    */
   async toNextWave() {
@@ -495,9 +494,8 @@ export class GameManager {
    */
   doRevivePokemon(pokemonIndex: number) {
     const party = this.scene.getPlayerParty();
-    const candidate = new ModifierTypeOption(modifierTypes.MAX_REVIVE(), 0);
-    const modifier = candidate.type!.newModifier(party[pokemonIndex]);
-    this.scene.addModifier(modifier, false);
+    const reward = allRewards[RewardId.MAX_REVIVE];
+    reward.apply({ pokemon: party[pokemonIndex] });
   }
 
   /**
@@ -556,8 +554,7 @@ export class GameManager {
    * Removes all held items from enemy pokemon.
    */
   removeEnemyHeldItems(): void {
-    this.scene.clearEnemyHeldItemModifiers();
-    this.scene.clearEnemyModifiers();
+    this.scene.clearEnemyItems();
     console.log("Enemy held items removed");
   }
 }

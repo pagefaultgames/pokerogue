@@ -1,23 +1,22 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { modifierTypes } from "#data/data-lists";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { RewardId } from "#enums/reward-id";
+import { RewardPoolType } from "#enums/reward-pool-type";
 import { PERMANENT_STATS, Stat } from "#enums/stat";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
-import { BerryModifier } from "#modifiers/modifier";
-import type { BerryModifierType, ModifierTypeOption } from "#modifiers/modifier-type";
-import { regenerateModifierPoolThresholds } from "#modifiers/modifier-type";
+import { berryTypeToHeldItem } from "#items/berry";
+import type { RewardOption } from "#items/reward";
+import { generateRewardPoolWeights, getRewardPoolForType } from "#items/reward-pool-utils";
+import { generateRewardOptionFromId } from "#items/reward-utils";
 import { queueEncounterMessage, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
-  generateModifierType,
-  generateModifierTypeOption,
   getRandomEncounterPokemon,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
@@ -25,7 +24,6 @@ import {
   setEncounterRewards,
 } from "#mystery-encounters/encounter-phase-utils";
 import {
-  applyModifierTypeToPlayerPokemon,
   getEncounterPokemonLevelForWave,
   getHighestStatPlayerPokemon,
   getSpriteKeysFromPokemon,
@@ -95,7 +93,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
           : globalScene.currentBattle.waveIndex > 40
             ? 4
             : 2;
-    regenerateModifierPoolThresholds(globalScene.getPlayerParty(), ModifierPoolType.PLAYER, 0);
+    generateRewardPoolWeights(getRewardPoolForType(RewardPoolType.PLAYER), globalScene.getPlayerParty(), 0);
     encounter.misc = { numBerries };
 
     const { spriteKey, fileRoot } = getSpriteKeysFromPokemon(bossPokemon);
@@ -166,20 +164,16 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
         }
       };
 
-      const shopOptions: ModifierTypeOption[] = [];
+      const shopOptions: RewardOption[] = [];
       for (let i = 0; i < 5; i++) {
         // Generate shop berries
-        const mod = generateModifierTypeOption(modifierTypes.BERRY);
+        const mod = generateRewardOptionFromId(RewardId.BERRY);
         if (mod) {
           shopOptions.push(mod);
         }
       }
 
-      setEncounterRewards(
-        { guaranteedModifierTypeOptions: shopOptions, fillRemaining: false },
-        undefined,
-        doBerryRewards,
-      );
+      setEncounterRewards({ guaranteedRewardOptions: shopOptions, fillRemaining: false }, undefined, doBerryRewards);
       await initBattleWithEnemyConfig(globalScene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0]);
     },
   )
@@ -197,10 +191,10 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
         const speedDiff = fastestPokemon.getStat(Stat.SPD) / (enemySpeed * 1.1);
         const numBerries: number = encounter.misc.numBerries;
 
-        const shopOptions: ModifierTypeOption[] = [];
+        const shopOptions: RewardOption[] = [];
         for (let i = 0; i < 5; i++) {
           // Generate shop berries
-          const mod = generateModifierTypeOption(modifierTypes.BERRY);
+          const mod = generateRewardOptionFromId(RewardId.BERRY);
           if (mod) {
             shopOptions.push(mod);
           }
@@ -253,7 +247,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
           };
           setEncounterRewards(
             {
-              guaranteedModifierTypeOptions: shopOptions,
+              guaranteedRewardOptions: shopOptions,
               fillRemaining: false,
             },
             undefined,
@@ -286,7 +280,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
         setEncounterExp(fastestPokemon.id, encounter.enemyPartyConfigs[0].pokemonConfigs![0].species.baseExp);
         setEncounterRewards(
           {
-            guaranteedModifierTypeOptions: shopOptions,
+            guaranteedRewardOptions: shopOptions,
             fillRemaining: false,
           },
           undefined,
@@ -317,35 +311,17 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
 
 function tryGiveBerry(prioritizedPokemon?: PlayerPokemon) {
   const berryType = randSeedItem(getEnumValues(BerryType));
-  const berry = generateModifierType(modifierTypes.BERRY, [berryType]) as BerryModifierType;
+  const berry = berryTypeToHeldItem[berryType];
 
   const party = globalScene.getPlayerParty();
 
-  // Will try to apply to prioritized pokemon first, then do normal application method if it fails
-  if (prioritizedPokemon) {
-    const heldBerriesOfType = globalScene.findModifier(
-      m =>
-        m instanceof BerryModifier
-        && m.pokemonId === prioritizedPokemon.id
-        && (m as BerryModifier).berryType === berryType,
-      true,
-    ) as BerryModifier;
-
-    if (!heldBerriesOfType || heldBerriesOfType.getStackCount() < heldBerriesOfType.getMaxStackCount()) {
-      applyModifierTypeToPlayerPokemon(prioritizedPokemon, berry);
-      return;
-    }
+  // Will give the berry to a Pokemon, starting from the prioritized one
+  if (prioritizedPokemon?.heldItemManager.add(berry)) {
+    return;
   }
 
-  // Iterate over the party until berry was successfully given
   for (const pokemon of party) {
-    const heldBerriesOfType = globalScene.findModifier(
-      m => m instanceof BerryModifier && m.pokemonId === pokemon.id && (m as BerryModifier).berryType === berryType,
-      true,
-    ) as BerryModifier;
-
-    if (!heldBerriesOfType || heldBerriesOfType.getStackCount() < heldBerriesOfType.getMaxStackCount()) {
-      applyModifierTypeToPlayerPokemon(pokemon, berry);
+    if (pokemon.heldItemManager.add(berry)) {
       return;
     }
   }

@@ -1,10 +1,10 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { ModifierTier } from "#enums/modifier-tier";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { queueEncounterMessage, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
@@ -141,7 +141,7 @@ export const MysteriousChestEncounter: MysteryEncounter = MysteryEncounterBuilde
         if (roll >= RAND_LENGTH - COMMON_REWARDS_PERCENT) {
           // Choose between 2 COMMON / 2 GREAT tier items (20%)
           setEncounterRewards({
-            guaranteedModifierTiers: [ModifierTier.COMMON, ModifierTier.COMMON, ModifierTier.GREAT, ModifierTier.GREAT],
+            guaranteedRarityTiers: [RarityTier.COMMON, RarityTier.COMMON, RarityTier.GREAT, RarityTier.GREAT],
           });
           // Display result message then proceed to rewards
           queueEncounterMessage(`${namespace}:option.1.normal`);
@@ -149,7 +149,7 @@ export const MysteriousChestEncounter: MysteryEncounter = MysteryEncounterBuilde
         } else if (roll >= RAND_LENGTH - COMMON_REWARDS_PERCENT - ULTRA_REWARDS_PERCENT) {
           // Choose between 3 ULTRA tier items (30%)
           setEncounterRewards({
-            guaranteedModifierTiers: [ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA],
+            guaranteedRarityTiers: [RarityTier.ULTRA, RarityTier.ULTRA, RarityTier.ULTRA],
           });
           // Display result message then proceed to rewards
           queueEncounterMessage(`${namespace}:option.1.good`);
@@ -157,7 +157,7 @@ export const MysteriousChestEncounter: MysteryEncounter = MysteryEncounterBuilde
         } else if (roll >= RAND_LENGTH - COMMON_REWARDS_PERCENT - ULTRA_REWARDS_PERCENT - ROGUE_REWARDS_PERCENT) {
           // Choose between 2 ROGUE tier items (10%)
           setEncounterRewards({
-            guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ROGUE],
+            guaranteedRarityTiers: [RarityTier.ROGUE, RarityTier.ROGUE],
           });
           // Display result message then proceed to rewards
           queueEncounterMessage(`${namespace}:option.1.great`);
@@ -172,7 +172,7 @@ export const MysteriousChestEncounter: MysteryEncounter = MysteryEncounterBuilde
         ) {
           // Choose 1 MASTER tier item (5%)
           setEncounterRewards({
-            guaranteedModifierTiers: [ModifierTier.MASTER],
+            guaranteedRarityTiers: [RarityTier.MASTER],
           });
           // Display result message then proceed to rewards
           queueEncounterMessage(`${namespace}:option.1.amazing`);

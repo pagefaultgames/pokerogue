@@ -5,8 +5,8 @@ import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { BerryType } from "#enums/berry-type";
 import { Command } from "#enums/command";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
@@ -296,7 +296,7 @@ describe("Moves - Substitute", () => {
   });
 
   it("should prevent the user's items from being stolen", async () => {
-    game.override.enemyMoveset(MoveId.THIEF).startingHeldItems([{ name: "BERRY", type: BerryType.SITRUS }]);
+    game.override.enemyMoveset(MoveId.THIEF).startingHeldItems([{ entry: HeldItemId.SITRUS_BERRY }]);
     vi.spyOn(allMoves[MoveId.THIEF], "attrs", "get").mockReturnValue([new StealHeldItemChanceAttr(1.0)]); // give Thief 100% steal rate
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
@@ -313,7 +313,7 @@ describe("Moves - Substitute", () => {
   });
 
   it("should prevent the user's items from being removed", async () => {
-    game.override.moveset([MoveId.KNOCK_OFF]).enemyHeldItems([{ name: "BERRY", type: BerryType.SITRUS }]);
+    game.override.moveset([MoveId.KNOCK_OFF]).enemyHeldItems([{ entry: HeldItemId.SITRUS_BERRY }]);
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
@@ -330,7 +330,7 @@ describe("Moves - Substitute", () => {
   });
 
   it("move effect should prevent the user's berries from being stolen and eaten", async () => {
-    game.override.enemyMoveset(MoveId.BUG_BITE).startingHeldItems([{ name: "BERRY", type: BerryType.SITRUS }]);
+    game.override.enemyMoveset(MoveId.BUG_BITE).startingHeldItems([{ entry: HeldItemId.SITRUS_BERRY }]);
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 

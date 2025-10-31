@@ -3,11 +3,11 @@ import { clientSessionId } from "#app/account";
 import { globalScene } from "#app/global-scene";
 import { pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { bypassLogin } from "#constants/app-constants";
-import { modifierTypes } from "#data/data-lists";
 import { getCharVariantFromDialogue } from "#data/dialogue";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { BattleType } from "#enums/battle-type";
 import { PlayerGender } from "#enums/player-gender";
+import { RewardId } from "#enums/reward-id";
 import { TrainerType } from "#enums/trainer-type";
 import { UiMode } from "#enums/ui-mode";
 import { Unlockables } from "#enums/unlockables";
@@ -17,7 +17,6 @@ import type { EndCardPhase } from "#phases/end-card-phase";
 import { achvs, ChallengeAchv } from "#system/achv";
 import { ArenaData } from "#system/arena-data";
 import { ChallengeData } from "#system/challenge-data";
-import { ModifierData as PersistentModifierData } from "#system/modifier-data";
 import { PokemonData } from "#system/pokemon-data";
 import { RibbonData, type RibbonFlag } from "#system/ribbons/ribbon-data";
 import { awardRibbonsToSpeciesLine } from "#system/ribbons/ribbon-methods";
@@ -197,10 +196,10 @@ export class GameOverPhase extends BattlePhase {
               this.handleUnlocks();
 
               for (const species of this.firstRibbons) {
-                globalScene.phaseManager.unshiftNew("RibbonModifierRewardPhase", modifierTypes.VOUCHER_PLUS, species);
+                globalScene.phaseManager.unshiftNew("RibbonRewardPhase", RewardId.VOUCHER_PLUS, species);
               }
               if (!firstClear) {
-                globalScene.phaseManager.unshiftNew("GameOverModifierRewardPhase", modifierTypes.VOUCHER_PREMIUM);
+                globalScene.phaseManager.unshiftNew("GameOverRewardPhase", RewardId.VOUCHER_PREMIUM);
               }
             }
             this.getRunHistoryEntry().then(runHistoryEntry => {
@@ -328,12 +327,10 @@ export class GameOverPhase extends BattlePhase {
       gameMode: globalScene.gameMode.modeId,
       party: globalScene.getPlayerParty().map(p => new PokemonData(p)),
       enemyParty: globalScene.getEnemyParty().map(p => new PokemonData(p)),
-      modifiers: preWaveSessionData
-        ? preWaveSessionData.modifiers
-        : globalScene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
-      enemyModifiers: preWaveSessionData
-        ? preWaveSessionData.enemyModifiers
-        : globalScene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
+      trainerItems: preWaveSessionData ? preWaveSessionData.trainerItems : globalScene.trainerItems.generateSaveData(),
+      enemyTrainerItems: preWaveSessionData
+        ? preWaveSessionData.enemyTrainerItems
+        : globalScene.enemyTrainerItems.generateSaveData(),
       arena: new ArenaData(globalScene.arena),
       pokeballCounts: globalScene.pokeballCounts,
       money: Math.floor(globalScene.money),

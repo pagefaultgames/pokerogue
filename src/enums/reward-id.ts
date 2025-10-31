@@ -1,0 +1,98 @@
+import type { ObjectValues } from "#types/type-helpers";
+
+export const RewardId = {
+  NONE: 0x0000,
+
+  POKEBALL: 0x2001,
+  GREAT_BALL: 0x2002,
+  ULTRA_BALL: 0x2003,
+  ROGUE_BALL: 0x2004,
+  MASTER_BALL: 0x2005,
+
+  VOUCHER: 0x2101,
+  VOUCHER_PLUS: 0x2102,
+  VOUCHER_PREMIUM: 0x2103,
+
+  NUGGET: 0x2201,
+  BIG_NUGGET: 0x2202,
+  RELIC_GOLD: 0x2203,
+
+  RARE_CANDY: 0x2301,
+  RARER_CANDY: 0x2302,
+
+  EVOLUTION_ITEM: 0x2401,
+  RARE_EVOLUTION_ITEM: 0x2402,
+
+  POTION: 0x2501,
+  SUPER_POTION: 0x2502,
+  HYPER_POTION: 0x2503,
+  MAX_POTION: 0x2504,
+  FULL_HEAL: 0x2505,
+  FULL_RESTORE: 0x2506,
+
+  REVIVE: 0x2601,
+  MAX_REVIVE: 0x2602,
+  SACRED_ASH: 0x2603,
+
+  ETHER: 0x2701,
+  MAX_ETHER: 0x2702,
+
+  ELIXIR: 0x2801,
+  MAX_ELIXIR: 0x2802,
+
+  PP_UP: 0x2901,
+  PP_MAX: 0x2902,
+
+  TM_COMMON: 0x2a01,
+  TM_GREAT: 0x2a02,
+  TM_ULTRA: 0x2a03,
+
+  MINT: 0x2b01,
+  TERA_SHARD: 0x2b02,
+  MEMORY_MUSHROOM: 0x2b03,
+  DNA_SPLICERS: 0x2b04,
+
+  SPECIES_STAT_BOOSTER: 0x2c01,
+  RARE_SPECIES_STAT_BOOSTER: 0x2c02,
+  VITAMIN: 0x2c03,
+  ATTACK_TYPE_BOOSTER: 0x2c04,
+  BERRY: 0x2c05,
+
+  TEMP_STAT_STAGE_BOOSTER: 0x2d01,
+  DIRE_HIT: 0x2d02,
+  LURE: 0x2d03,
+  SUPER_LURE: 0x2d04,
+  MAX_LURE: 0x2d05,
+
+  FORM_CHANGE_ITEM: 0x2e01,
+  RARE_FORM_CHANGE_ITEM: 0x2e02,
+} as const;
+
+export type RewardId = ObjectValues<typeof RewardId>;
+
+export const RewardCategoryId = {
+  NONE: 0x0000,
+  POKEBALL: 0x0100,
+  VOUCHER: 0x0200,
+  MONEY: 0x0300,
+  CANDY: 0x0400,
+  EVOLUTION_ITEM: 0x0500,
+  HEALING: 0x0600,
+  REVIVE: 0x0700,
+  ETHER: 0x0800,
+  ELIXIR: 0x0900,
+  PP_UP: 0x0a00,
+  TM: 0x0b00,
+  OTHER: 0x0c00,
+  HELD_ITEM: 0x0d00,
+  TRAINER_ITEM: 0x0e00,
+  FORM_CHANGE_ITEM: 0x0f00,
+} as const;
+
+export type RewardCategoryId = ObjectValues<typeof RewardCategoryId>;
+
+const ITEM_CATEGORY_MASK = 0xff00;
+
+export function getRewardCategory(itemId: RewardId): RewardCategoryId {
+  return (itemId & ITEM_CATEGORY_MASK) as RewardCategoryId;
+}

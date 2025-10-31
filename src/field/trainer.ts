@@ -12,11 +12,11 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import type { EnemyPokemon } from "#field/pokemon";
-import type { PersistentModifier } from "#modifiers/modifier";
 import { getIsInitialized, initI18n } from "#plugins/i18n";
 import type { TrainerConfig } from "#trainers/trainer-config";
 import { trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, type TrainerPartyTemplate } from "#trainers/trainer-party-template";
+import type { TrainerItemConfiguration } from "#types/trainer-item-data-types";
 import { randSeedInt, randSeedItem } from "#utils/common";
 import { getRandomLocaleEntry } from "#utils/i18n";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
@@ -629,7 +629,7 @@ export class Trainer extends Phaser.GameObjects.Container {
     return maxScorePartyMemberIndexes[0];
   }
 
-  getPartyMemberModifierChanceMultiplier(index: number): number {
+  getPartyMemberItemChanceMultiplier(index: number): number {
     switch (this.getPartyTemplate().getStrength(index)) {
       case PartyMemberStrength.WEAKER:
         return 0.75;
@@ -642,14 +642,14 @@ export class Trainer extends Phaser.GameObjects.Container {
       case PartyMemberStrength.STRONGER:
         return 0.375;
       default:
-        console.warn("getPartyMemberModifierChanceMultiplier not defined. Using default 0");
+        console.warn("getPartyMemberItemChanceMultiplier not defined. Using default 0");
         return 0;
     }
   }
 
-  genModifiers(party: readonly EnemyPokemon[]): PersistentModifier[] {
-    if (this.config.genModifiersFunc) {
-      return this.config.genModifiersFunc(party);
+  genTrainerItems(party: readonly EnemyPokemon[]): TrainerItemConfiguration {
+    if (this.config.genTrainerItemsFunc) {
+      return this.config.genTrainerItemsFunc(party);
     }
     return [];
   }

@@ -42,7 +42,12 @@
       "#events/*": ["./src/events/*.ts"],
       "#field/*": ["./src/field/*.ts"],
       "#inputs/*": ["./src/configs/inputs/*.ts"],
-      "#modifiers/*": ["./src/modifier/*.ts"],
+      "#items/*": [
+        "./src/items/held-items/*.ts",
+        "./src/items/trainer-items/*.ts",
+        "./src/items/rewards/*.ts",
+        "./src/items/*.ts"
+      ],
       "#moves/*": ["./src/data/moves/*.ts"],
       "#mystery-encounters/*": [
         "./src/data/mystery-encounters/utils/*.ts",
@@ -73,6 +78,7 @@
       "#utils/*": ["./src/utils/*.ts"],
       "#data/*": ["./src/data/pokemon-forms/*.ts", "./src/data/pokemon/*.ts", "./src/data/*.ts"],
       "#test/*": ["./test/*.ts"],
+      "#test/test-utils/*": ["./test/test-utils/utils/*.ts", "./test/test-utils/*.ts"],
       "#app/*": ["./src/*.ts"]
     }
   },

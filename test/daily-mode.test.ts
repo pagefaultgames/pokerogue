@@ -2,11 +2,11 @@ import { pokerogueApi } from "#api/pokerogue-api";
 import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
-import { MapModifier } from "#modifiers/modifier";
 import { GameManager } from "#test/test-utils/game-manager";
 import { stringifyEnumArray } from "#test/test-utils/string-utils";
-import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Daily Mode", () => {
@@ -37,7 +37,7 @@ describe("Daily Mode", () => {
       expect(pkm.level).toBe(20);
       expect(pkm.moveset.length).toBeGreaterThan(0);
     });
-    expect(game.scene.getModifiers(MapModifier).length).toBe(1);
+    expect(game.scene.trainerItems.getStack(TrainerItemId.MAP)).toBe(1);
   });
 
   describe("Custom Seeds", () => {
@@ -125,8 +125,8 @@ describe("Shop modifications", async () => {
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.phaseInterceptor.to("BattleEndPhase");
-    game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, () => {
-      expect(game.scene.ui.getHandler()).toBeInstanceOf(ModifierSelectUiHandler);
+    game.onNextPrompt("SelectRewardPhase", UiMode.REWARD_SELECT, () => {
+      expect(game.scene.ui.getHandler()).toBeInstanceOf(RewardSelectUiHandler);
       game.modifiers.testCheck("EVIOLITE", false).testCheck("MINI_BLACK_HOLE", false);
     });
   });
@@ -136,8 +136,8 @@ describe("Shop modifications", async () => {
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.phaseInterceptor.to("BattleEndPhase");
-    game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, () => {
-      expect(game.scene.ui.getHandler()).toBeInstanceOf(ModifierSelectUiHandler);
+    game.onNextPrompt("SelectRewardPhase", UiMode.REWARD_SELECT, () => {
+      expect(game.scene.ui.getHandler()).toBeInstanceOf(RewardSelectUiHandler);
       game.modifiers.testCheck("EVIOLITE", true).testCheck("MINI_BLACK_HOLE", true);
     });
   });

@@ -11,13 +11,14 @@ import { BattleType } from "#enums/battle-type";
 import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { HeldItemEffect } from "#enums/held-item-effect";
 import { HitResult } from "#enums/hit-result";
 import { StatusEffect } from "#enums/status-effect";
 import { SwitchType } from "#enums/switch-type";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
-import { PokemonInstantReviveModifier } from "#modifiers/modifier";
 import { PokemonMove } from "#moves/pokemon-move";
 import { PokemonPhase } from "#phases/pokemon-phase";
+import { applyHeldItems } from "#utils/items";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import i18next from "i18next";
 
@@ -53,17 +54,7 @@ export class FaintPhase extends PokemonPhase {
     faintPokemon.resetSummonData();
 
     if (!this.preventInstantRevive) {
-      const instantReviveModifier = globalScene.applyModifier(
-        PokemonInstantReviveModifier,
-        this.player,
-        faintPokemon,
-      ) as PokemonInstantReviveModifier;
-
-      if (instantReviveModifier) {
-        faintPokemon.loseHeldItem(instantReviveModifier);
-        globalScene.updateModifiers(this.player);
-        return this.end();
-      }
+      applyHeldItems(HeldItemEffect.INSTANT_REVIVE, { pokemon: faintPokemon });
     }
 
     /**

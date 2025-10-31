@@ -2,9 +2,11 @@ import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
+import { attackTypeToHeldItem } from "#items/attack-type-booster";
 import { GameManager } from "#test/test-utils/game-manager";
 import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
@@ -189,7 +191,7 @@ describe.each([
   });
 
   it("should not be affected by silk scarf after changing the move's type", async () => {
-    game.override.startingHeldItems([{ name: "ATTACK_TYPE_BOOSTER", count: 1, type: PokemonType.NORMAL }]);
+    game.override.startingHeldItems([{ entry: HeldItemId.SILK_SCARF }]);
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const testMoveInstance = allMoves[MoveId.TACKLE];
@@ -208,7 +210,7 @@ describe.each([
   });
 
   it("should be affected by the type boosting item after changing the move's type", async () => {
-    game.override.startingHeldItems([{ name: "ATTACK_TYPE_BOOSTER", count: 1, type: ty }]);
+    game.override.startingHeldItems([{ entry: attackTypeToHeldItem[ty] }]);
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     // get the power boost from the ability so we can compare it to the item

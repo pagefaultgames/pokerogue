@@ -16,13 +16,12 @@ import { EvolutionPhase } from "#phases/evolution-phase";
 import { ExpPhase } from "#phases/exp-phase";
 import { FaintPhase } from "#phases/faint-phase";
 import { FormChangePhase } from "#phases/form-change-phase";
-import { GameOverModifierRewardPhase } from "#phases/game-over-modifier-reward-phase";
 import { GameOverPhase } from "#phases/game-over-phase";
+import { GameOverRewardPhase } from "#phases/game-over-reward-phase";
 import { LearnMovePhase } from "#phases/learn-move-phase";
 import { LevelCapPhase } from "#phases/level-cap-phase";
 import { LoginPhase } from "#phases/login-phase";
 import { MessagePhase } from "#phases/message-phase";
-import { ModifierRewardPhase } from "#phases/modifier-reward-phase";
 import { MoveEffectPhase } from "#phases/move-effect-phase";
 import { MoveEndPhase } from "#phases/move-end-phase";
 import { MovePhase } from "#phases/move-phase";
@@ -45,10 +44,11 @@ import { PostGameOverPhase } from "#phases/post-game-over-phase";
 import { PostSummonPhase } from "#phases/post-summon-phase";
 import { QuietFormChangePhase } from "#phases/quiet-form-change-phase";
 import { RevivalBlessingPhase } from "#phases/revival-blessing-phase";
-import { RibbonModifierRewardPhase } from "#phases/ribbon-modifier-reward-phase";
+import { RewardPhase } from "#phases/reward-phase";
+import { RibbonRewardPhase } from "#phases/ribbon-reward-phase";
 import { SelectBiomePhase } from "#phases/select-biome-phase";
 import { SelectGenderPhase } from "#phases/select-gender-phase";
-import { SelectModifierPhase } from "#phases/select-modifier-phase";
+import { SelectRewardPhase } from "#phases/select-reward-phase";
 import { SelectStarterPhase } from "#phases/select-starter-phase";
 import { SelectTargetPhase } from "#phases/select-target-phase";
 import { ShinySparklePhase } from "#phases/shiny-sparkle-phase";
@@ -146,7 +146,7 @@ export class PhaseInterceptor {
     TurnEndPhase,
     BattleEndPhase,
     EggLapsePhase,
-    SelectModifierPhase,
+    SelectRewardPhase,
     NextEncounterPhase,
     NewBattlePhase,
     VictoryPhase,
@@ -173,9 +173,9 @@ export class PhaseInterceptor {
     MysteryEncounterBattlePhase,
     MysteryEncounterRewardsPhase,
     PostMysteryEncounterPhase,
-    RibbonModifierRewardPhase,
-    GameOverModifierRewardPhase,
-    ModifierRewardPhase,
+    RibbonRewardPhase,
+    GameOverRewardPhase,
+    RewardPhase,
     PartyExpPhase,
     ExpPhase,
     EncounterPhase,
@@ -192,7 +192,7 @@ export class PhaseInterceptor {
     SelectGenderPhase,
     CommandPhase,
     SelectStarterPhase,
-    SelectModifierPhase,
+    SelectRewardPhase,
     MysteryEncounterPhase,
     PostMysteryEncounterPhase,
   ];

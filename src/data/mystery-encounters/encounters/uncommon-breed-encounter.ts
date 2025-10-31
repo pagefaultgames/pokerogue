@@ -2,6 +2,7 @@ import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { HeldItemCategoryId, type HeldItemId } from "#enums/held-item-id";
 import type { MoveId } from "#enums/move-id";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -10,7 +11,7 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokeballType } from "#enums/pokeball";
 import { Stat } from "#enums/stat";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
-import { BerryModifier } from "#modifiers/modifier";
+import { getPartyBerries } from "#items/item-utility";
 import { PokemonMove } from "#moves/pokemon-move";
 import { queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
@@ -29,10 +30,11 @@ import {
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
-import { MoveRequirement, PersistentModifierRequirement } from "#mystery-encounters/mystery-encounter-requirements";
+import { HeldItemRequirement, MoveRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { CHARMING_MOVES } from "#mystery-encounters/requirement-groups";
 import { PokemonData } from "#system/pokemon-data";
-import { randSeedInt } from "#utils/common";
+import type { HeldItemSpecs } from "#types/held-item-data-types";
+import { pickWeightedIndex, randSeedInt } from "#utils/common";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/uncommonBreed";
@@ -192,7 +194,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
   )
   .withOption(
     MysteryEncounterOptionBuilder.newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
-      .withSceneRequirement(new PersistentModifierRequirement("BerryModifier", 4)) // Will set option2PrimaryName and option2PrimaryMove dialogue tokens automatically
+      .withSceneRequirement(new HeldItemRequirement(HeldItemCategoryId.BERRY, 4)) // Will set option2PrimaryName and option2PrimaryMove dialogue tokens automatically
       .withDialogue({
         buttonLabel: `${namespace}:option.2.label`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
@@ -207,20 +209,16 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
         // Give it some food
 
         // Remove 4 random berries from player's party
-        // Get all player berry items, remove from party, and store reference
-        const berryItems: BerryModifier[] = globalScene.findModifiers(
-          m => m instanceof BerryModifier,
-        ) as BerryModifier[];
+        const berryMap = getPartyBerries();
+
         for (let i = 0; i < 4; i++) {
-          const index = randSeedInt(berryItems.length);
-          const randBerry = berryItems[index];
-          randBerry.stackCount--;
-          if (randBerry.stackCount === 0) {
-            globalScene.removeModifier(randBerry);
-            berryItems.splice(index, 1);
-          }
+          const berryWeights = berryMap.map(b => (b.item as HeldItemSpecs).stack);
+          const index = pickWeightedIndex(berryWeights) ?? 0;
+          const randBerry = berryMap[index];
+          globalScene.getPokemonById(randBerry.pokemonId)?.heldItemManager.remove(randBerry.item.id as HeldItemId);
+          (randBerry.item as HeldItemSpecs).stack -= 1;
         }
-        await globalScene.updateModifiers(true, true);
+        await globalScene.updateItems(true);
 
         // Pokemon joins the team, with 2 egg moves
         const encounter = globalScene.currentBattle.mysteryEncounter!;

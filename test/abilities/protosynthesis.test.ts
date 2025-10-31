@@ -4,6 +4,7 @@ import { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -37,7 +38,7 @@ describe("Abilities - Protosynthesis", () => {
   it("should not consider temporary items when determining which stat to boost", async () => {
     // Mew has uniform base stats
     game.override
-      .startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.DEF }])
+      .startingTrainerItems([{ entry: TrainerItemId.X_DEFENSE }])
       .enemyMoveset(MoveId.SUNNY_DAY)
       .startingLevel(100)
       .enemyLevel(100);

@@ -361,7 +361,7 @@ export class GameMode implements GameModeConfig {
     }
   }
 
-  getEnemyModifierChance(isBoss: boolean): number {
+  getEnemyItemChance(isBoss: boolean): number {
     switch (this.modeId) {
       case GameModes.CLASSIC:
       case GameModes.CHALLENGE:

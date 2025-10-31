@@ -4,8 +4,8 @@ import { globalScene } from "#app/global-scene";
 import { randSeedInt } from "#app/utils/common";
 import { BattleType } from "#enums/battle-type";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
-import { ModifierTier } from "#enums/modifier-tier";
 import { PlayerGender } from "#enums/player-gender";
+import { RarityTier } from "#enums/reward-tier";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 
@@ -45,8 +45,8 @@ export const classicFixedBattles: FixedBattleConfigs = {
           globalScene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT,
         ),
     )
-    .setCustomModifierRewards({
-      guaranteedModifierTiers: [ModifierTier.ULTRA, ModifierTier.GREAT, ModifierTier.GREAT],
+    .setCustomRewards({
+      guaranteedRarityTiers: [RarityTier.ULTRA, RarityTier.GREAT, RarityTier.GREAT],
       allowLuckUpgrades: false,
     }),
   [ClassicFixedBossWaves.EVIL_GRUNT_1]: new FixedBattleConfig()
@@ -77,8 +77,8 @@ export const classicFixedBattles: FixedBattleConfigs = {
           globalScene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT,
         ),
     )
-    .setCustomModifierRewards({
-      guaranteedModifierTiers: [ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.GREAT, ModifierTier.GREAT],
+    .setCustomRewards({
+      guaranteedRarityTiers: [RarityTier.ULTRA, RarityTier.ULTRA, RarityTier.GREAT, RarityTier.GREAT],
       allowLuckUpgrades: false,
     }),
   [ClassicFixedBossWaves.EVIL_GRUNT_2]: new FixedBattleConfig()
@@ -150,8 +150,8 @@ export const classicFixedBattles: FixedBattleConfigs = {
           globalScene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT,
         ),
     )
-    .setCustomModifierRewards({
-      guaranteedModifierTiers: [ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA],
+    .setCustomRewards({
+      guaranteedRarityTiers: [RarityTier.ULTRA, RarityTier.ULTRA, RarityTier.ULTRA, RarityTier.ULTRA],
       allowLuckUpgrades: false,
     }),
   [ClassicFixedBossWaves.EVIL_GRUNT_4]: new FixedBattleConfig()
@@ -212,14 +212,8 @@ export const classicFixedBattles: FixedBattleConfigs = {
         TrainerType.PENNY,
       ]),
     )
-    .setCustomModifierRewards({
-      guaranteedModifierTiers: [
-        ModifierTier.ROGUE,
-        ModifierTier.ROGUE,
-        ModifierTier.ULTRA,
-        ModifierTier.ULTRA,
-        ModifierTier.ULTRA,
-      ],
+    .setCustomRewards({
+      guaranteedRarityTiers: [RarityTier.ROGUE, RarityTier.ROGUE, RarityTier.ULTRA, RarityTier.ULTRA, RarityTier.ULTRA],
       allowLuckUpgrades: false,
     }),
   [ClassicFixedBossWaves.RIVAL_5]: new FixedBattleConfig()
@@ -231,14 +225,8 @@ export const classicFixedBattles: FixedBattleConfigs = {
           globalScene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT,
         ),
     )
-    .setCustomModifierRewards({
-      guaranteedModifierTiers: [
-        ModifierTier.ROGUE,
-        ModifierTier.ROGUE,
-        ModifierTier.ROGUE,
-        ModifierTier.ULTRA,
-        ModifierTier.ULTRA,
-      ],
+    .setCustomRewards({
+      guaranteedRarityTiers: [RarityTier.ROGUE, RarityTier.ROGUE, RarityTier.ROGUE, RarityTier.ULTRA, RarityTier.ULTRA],
       allowLuckUpgrades: false,
     }),
   [ClassicFixedBossWaves.EVIL_ADMIN_3]: new FixedBattleConfig()
@@ -279,14 +267,14 @@ export const classicFixedBattles: FixedBattleConfigs = {
         TrainerType.PENNY_2,
       ]),
     )
-    .setCustomModifierRewards({
-      guaranteedModifierTiers: [
-        ModifierTier.ROGUE,
-        ModifierTier.ROGUE,
-        ModifierTier.ULTRA,
-        ModifierTier.ULTRA,
-        ModifierTier.ULTRA,
-        ModifierTier.ULTRA,
+    .setCustomRewards({
+      guaranteedRarityTiers: [
+        RarityTier.ROGUE,
+        RarityTier.ROGUE,
+        RarityTier.ULTRA,
+        RarityTier.ULTRA,
+        RarityTier.ULTRA,
+        RarityTier.ULTRA,
       ],
       allowLuckUpgrades: false,
     }),
@@ -383,14 +371,14 @@ export const classicFixedBattles: FixedBattleConfigs = {
           globalScene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT,
         ),
     )
-    .setCustomModifierRewards({
-      guaranteedModifierTiers: [
-        ModifierTier.ROGUE,
-        ModifierTier.ROGUE,
-        ModifierTier.ULTRA,
-        ModifierTier.ULTRA,
-        ModifierTier.GREAT,
-        ModifierTier.GREAT,
+    .setCustomRewards({
+      guaranteedRarityTiers: [
+        RarityTier.ROGUE,
+        RarityTier.ROGUE,
+        RarityTier.ULTRA,
+        RarityTier.ULTRA,
+        RarityTier.GREAT,
+        RarityTier.GREAT,
       ],
       allowLuckUpgrades: false,
     }),

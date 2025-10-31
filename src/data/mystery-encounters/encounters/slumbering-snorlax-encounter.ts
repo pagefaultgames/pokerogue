@@ -1,9 +1,8 @@
 import { globalScene } from "#app/global-scene";
-import { modifierTypes } from "#data/data-lists";
 import { CustomPokemonData } from "#data/pokemon-data";
 import { AiType } from "#enums/ai-type";
 import { BattlerIndex } from "#enums/battler-index";
-import { BerryType } from "#enums/berry-type";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -11,14 +10,11 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
 import { SpeciesId } from "#enums/species-id";
-import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
-import type { PokemonHeldItemModifierType } from "#modifiers/modifier-type";
 import { PokemonMove } from "#moves/pokemon-move";
 import { queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig, EnemyPokemonConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
-  generateModifierType,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
   loadCustomMovesForEncounter,
@@ -78,24 +74,12 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
       status: [StatusEffect.SLEEP, 6], // Extra turns on timer for Snorlax's start of fight moves
       nature: Nature.DOCILE,
       moveSet: [MoveId.BODY_SLAM, MoveId.CRUNCH, MoveId.SLEEP_TALK, MoveId.REST],
-      modifierConfigs: [
-        {
-          modifier: generateModifierType(modifierTypes.BERRY, [BerryType.SITRUS]) as PokemonHeldItemModifierType,
-        },
-        {
-          modifier: generateModifierType(modifierTypes.BERRY, [BerryType.ENIGMA]) as PokemonHeldItemModifierType,
-        },
-        {
-          modifier: generateModifierType(modifierTypes.BASE_STAT_BOOSTER, [Stat.HP]) as PokemonHeldItemModifierType,
-        },
-        {
-          modifier: generateModifierType(modifierTypes.SOOTHE_BELL) as PokemonHeldItemModifierType,
-          stackCount: randSeedInt(2, 0),
-        },
-        {
-          modifier: generateModifierType(modifierTypes.LUCKY_EGG) as PokemonHeldItemModifierType,
-          stackCount: randSeedInt(2, 0),
-        },
+      heldItemConfig: [
+        { entry: HeldItemId.SITRUS_BERRY, count: 1 },
+        { entry: HeldItemId.ENIGMA_BERRY, count: 1 },
+        { entry: HeldItemId.HP_UP, count: 1 },
+        { entry: HeldItemId.SOOTHE_BELL, count: randSeedInt(2, 0) },
+        { entry: HeldItemId.LUCKY_EGG, count: randSeedInt(2, 0) },
       ],
       customPokemonData: new CustomPokemonData({ spriteScale: 1.25 }),
       aiType: AiType.SMART, // Required to ensure Snorlax uses Sleep Talk while it is asleep
@@ -131,7 +115,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
       // Pick battle
       const encounter = globalScene.currentBattle.mysteryEncounter!;
       setEncounterRewards({
-        guaranteedModifierTypeFuncs: [modifierTypes.LEFTOVERS],
+        guaranteedRewardSpecs: [HeldItemId.LEFTOVERS],
         fillRemaining: true,
       });
       encounter.startOfBattleEffects.push({
@@ -178,7 +162,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
         // Steal the Snorlax's Leftovers
         const instance = globalScene.currentBattle.mysteryEncounter!;
         setEncounterRewards({
-          guaranteedModifierTypeFuncs: [modifierTypes.LEFTOVERS],
+          guaranteedRewardSpecs: [HeldItemId.LEFTOVERS],
           fillRemaining: false,
         });
         // Snorlax exp to Pokemon that did the stealing

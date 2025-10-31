@@ -1,13 +1,11 @@
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
-import { BerryType } from "#enums/berry-type";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import type { Pokemon } from "#field/pokemon";
-import type { ContactHeldItemTransferChanceModifier } from "#modifiers/modifier";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Items - Grip Claw", () => {
   let phaserGame: Phaser.Game;
@@ -29,14 +27,14 @@ describe("Items - Grip Claw", () => {
     game.override
       .battleStyle("double")
       .moveset([MoveId.TACKLE, MoveId.SPLASH, MoveId.ATTRACT])
-      .startingHeldItems([{ name: "GRIP_CLAW", count: 1 }])
+      .startingHeldItems([{ entry: HeldItemId.GRIP_CLAW }])
       .enemySpecies(SpeciesId.SNORLAX)
       .enemyAbility(AbilityId.UNNERVE)
       .ability(AbilityId.UNNERVE)
       .enemyMoveset(MoveId.SPLASH)
       .enemyHeldItems([
-        { name: "BERRY", type: BerryType.SITRUS, count: 2 },
-        { name: "BERRY", type: BerryType.LUM, count: 2 },
+        { entry: HeldItemId.SITRUS_BERRY, count: 2 },
+        { entry: HeldItemId.LUM_BERRY, count: 2 },
       ])
       .enemyLevel(100);
   });
@@ -45,15 +43,12 @@ describe("Items - Grip Claw", () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
 
     const playerPokemon = game.field.getPlayerPokemon();
-
-    const gripClaw = playerPokemon.getHeldItems()[0] as ContactHeldItemTransferChanceModifier;
-    vi.spyOn(gripClaw, "chance", "get").mockReturnValue(100);
-
     const enemyPokemon = game.scene.getEnemyField();
+    playerPokemon.heldItemManager.setStack(HeldItemId.GRIP_CLAW, 10);
 
-    const playerHeldItemCount = getHeldItemCount(playerPokemon);
-    const enemy1HeldItemCount = getHeldItemCount(enemyPokemon[0]);
-    const enemy2HeldItemCount = getHeldItemCount(enemyPokemon[1]);
+    const playerHeldItemCount = playerPokemon.heldItemManager.getHeldItemCount();
+    const enemy1HeldItemCount = enemyPokemon[0].heldItemManager.getHeldItemCount();
+    const enemy2HeldItemCount = enemyPokemon[1].heldItemManager.getHeldItemCount();
     expect(enemy2HeldItemCount).toBeGreaterThan(0);
 
     game.move.select(MoveId.TACKLE, 0, BattlerIndex.ENEMY_2);
@@ -61,9 +56,9 @@ describe("Items - Grip Claw", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    const playerHeldItemCountAfter = getHeldItemCount(playerPokemon);
-    const enemy1HeldItemCountsAfter = getHeldItemCount(enemyPokemon[0]);
-    const enemy2HeldItemCountsAfter = getHeldItemCount(enemyPokemon[1]);
+    const playerHeldItemCountAfter = playerPokemon.heldItemManager.getHeldItemCount();
+    const enemy1HeldItemCountsAfter = enemyPokemon[0].heldItemManager.getHeldItemCount();
+    const enemy2HeldItemCountsAfter = enemyPokemon[1].heldItemManager.getHeldItemCount();
 
     expect(playerHeldItemCountAfter).toBe(playerHeldItemCount + 1);
     expect(enemy1HeldItemCountsAfter).toBe(enemy1HeldItemCount);
@@ -74,15 +69,11 @@ describe("Items - Grip Claw", () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
 
     const playerPokemon = game.field.getPlayerPokemon();
-
-    const gripClaw = playerPokemon.getHeldItems()[0] as ContactHeldItemTransferChanceModifier;
-    vi.spyOn(gripClaw, "chance", "get").mockReturnValue(100);
-
     const enemyPokemon = game.scene.getEnemyField();
 
-    const playerHeldItemCount = getHeldItemCount(playerPokemon);
-    const enemy1HeldItemCount = getHeldItemCount(enemyPokemon[0]);
-    const enemy2HeldItemCount = getHeldItemCount(enemyPokemon[1]);
+    const playerHeldItemCount = playerPokemon.heldItemManager.getHeldItemCount();
+    const enemy1HeldItemCount = enemyPokemon[0].heldItemManager.getHeldItemCount();
+    const enemy2HeldItemCount = enemyPokemon[1].heldItemManager.getHeldItemCount();
     expect(enemy2HeldItemCount).toBeGreaterThan(0);
 
     game.move.select(MoveId.ATTRACT, 0, BattlerIndex.ENEMY_2);
@@ -90,9 +81,9 @@ describe("Items - Grip Claw", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    const playerHeldItemCountAfter = getHeldItemCount(playerPokemon);
-    const enemy1HeldItemCountsAfter = getHeldItemCount(enemyPokemon[0]);
-    const enemy2HeldItemCountsAfter = getHeldItemCount(enemyPokemon[1]);
+    const playerHeldItemCountAfter = playerPokemon.heldItemManager.getHeldItemCount();
+    const enemy1HeldItemCountsAfter = enemyPokemon[0].heldItemManager.getHeldItemCount();
+    const enemy2HeldItemCountsAfter = enemyPokemon[1].heldItemManager.getHeldItemCount();
 
     expect(playerHeldItemCountAfter).toBe(playerHeldItemCount);
     expect(enemy1HeldItemCountsAfter).toBe(enemy1HeldItemCount);
@@ -103,31 +94,19 @@ describe("Items - Grip Claw", () => {
     game.override
       .battleStyle("double")
       .moveset([MoveId.POLLEN_PUFF, MoveId.ENDURE])
-      .startingHeldItems([
-        { name: "GRIP_CLAW", count: 1 },
-        { name: "BERRY", type: BerryType.LUM, count: 1 },
-      ]);
+      .startingHeldItems([{ entry: HeldItemId.GRIP_CLAW }, { entry: HeldItemId.LUM_BERRY }]);
     await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.OMANYTE]);
 
     const [leftPokemon, rightPokemon] = game.scene.getPlayerField();
+    leftPokemon.heldItemManager.setStack(HeldItemId.GRIP_CLAW, 10);
 
-    const gripClaw = leftPokemon.getHeldItems()[0] as ContactHeldItemTransferChanceModifier;
-    vi.spyOn(gripClaw, "chance", "get").mockReturnValue(100);
-
-    const heldItemCountBefore = getHeldItemCount(rightPokemon);
+    const heldItemCountBefore = rightPokemon.heldItemManager.getHeldItemCount();
 
     game.move.select(MoveId.POLLEN_PUFF, 0, BattlerIndex.PLAYER_2);
     game.move.select(MoveId.ENDURE, 1);
 
     await game.toNextTurn();
 
-    expect(getHeldItemCount(rightPokemon)).toBe(heldItemCountBefore);
+    expect(rightPokemon.heldItemManager.getHeldItemCount()).toBe(heldItemCountBefore);
   });
 });
-
-/*
- * Gets the total number of items a Pokemon holds
- */
-function getHeldItemCount(pokemon: Pokemon) {
-  return pokemon.getHeldItems().reduce((currentTotal, item) => currentTotal + item.getStackCount(), 0);
-}

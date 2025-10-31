@@ -1,10 +1,11 @@
-import { modifierTypes } from "#data/data-lists";
+import { HeldItemEffect } from "#enums/held-item-effect";
+import { HeldItemId } from "#enums/held-item-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { SpeciesStatBoosterModifier } from "#modifiers/modifier";
 import i18next from "#plugins/i18n";
 import { GameManager } from "#test/test-utils/game-manager";
 import { NumberHolder, randInt } from "#utils/common";
+import { applyHeldItems } from "#utils/items";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -29,7 +30,7 @@ describe("Items - Thick Club", () => {
   });
 
   it("THICK_CLUB activates in battle correctly", async () => {
-    game.override.startingHeldItems([{ name: "RARE_SPECIES_STAT_BOOSTER", type: "THICK_CLUB" }]);
+    game.override.startingHeldItems([{ entry: HeldItemId.THICK_CLUB }]);
     const consoleSpy = vi.spyOn(console, "log");
     await game.classicMode.startBattle([SpeciesId.CUBONE]);
 
@@ -90,16 +91,13 @@ describe("Items - Thick Club", () => {
 
     // Making sure modifier is not applied without holding item
     const atkValue = new NumberHolder(atkStat);
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
 
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    await game.scene.addModifier(
-      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["THICK_CLUB"])!.newModifier(partyMember),
-      true,
-    );
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
+    partyMember.heldItemManager.add(HeldItemId.THICK_CLUB);
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
 
     expect(atkValue.value / atkStat).toBe(2);
   });
@@ -113,16 +111,13 @@ describe("Items - Thick Club", () => {
 
     // Making sure modifier is not applied without holding item
     const atkValue = new NumberHolder(atkStat);
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
 
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    await game.scene.addModifier(
-      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["THICK_CLUB"])!.newModifier(partyMember),
-      true,
-    );
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
+    partyMember.heldItemManager.add(HeldItemId.THICK_CLUB);
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
 
     expect(atkValue.value / atkStat).toBe(2);
   });
@@ -136,16 +131,13 @@ describe("Items - Thick Club", () => {
 
     // Making sure modifier is not applied without holding item
     const atkValue = new NumberHolder(atkStat);
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
 
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    await game.scene.addModifier(
-      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["THICK_CLUB"])!.newModifier(partyMember),
-      true,
-    );
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
+    partyMember.heldItemManager.add(HeldItemId.THICK_CLUB);
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
 
     expect(atkValue.value / atkStat).toBe(2);
   });
@@ -172,16 +164,13 @@ describe("Items - Thick Club", () => {
 
     // Making sure modifier is not applied without holding item
     const atkValue = new NumberHolder(atkStat);
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
 
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    await game.scene.addModifier(
-      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["THICK_CLUB"])!.newModifier(partyMember),
-      true,
-    );
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
+    partyMember.heldItemManager.add(HeldItemId.THICK_CLUB);
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
 
     expect(atkValue.value / atkStat).toBe(2);
   });
@@ -208,16 +197,13 @@ describe("Items - Thick Club", () => {
 
     // Making sure modifier is not applied without holding item
     const atkValue = new NumberHolder(atkStat);
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
 
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    await game.scene.addModifier(
-      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["THICK_CLUB"])!.newModifier(partyMember),
-      true,
-    );
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
+    partyMember.heldItemManager.add(HeldItemId.THICK_CLUB);
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
 
     expect(atkValue.value / atkStat).toBe(2);
   });
@@ -231,16 +217,13 @@ describe("Items - Thick Club", () => {
 
     // Making sure modifier is not applied without holding item
     const atkValue = new NumberHolder(atkStat);
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
 
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    await game.scene.addModifier(
-      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["THICK_CLUB"])!.newModifier(partyMember),
-      true,
-    );
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
+    partyMember.heldItemManager.add(HeldItemId.THICK_CLUB);
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
 
     expect(atkValue.value / atkStat).toBe(1);
   });

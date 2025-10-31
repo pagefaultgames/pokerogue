@@ -10,18 +10,18 @@ import { Challenges } from "#enums/challenges";
 import { TypeColor, TypeShadow } from "#enums/color";
 import { DexAttr } from "#enums/dex-attr";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
-import { ModifierTier } from "#enums/modifier-tier";
 import { MoveId } from "#enums/move-id";
 import type { MoveSourceType } from "#enums/move-source-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
 import { PokemonType } from "#enums/pokemon-type";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
-import type { ModifierTypeOption } from "#modifiers/modifier-type";
+import type { RewardOption } from "#items/reward";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { GameData } from "#system/game-data";
 import { RibbonData, type RibbonFlag } from "#system/ribbons/ribbon-data";
@@ -418,7 +418,7 @@ export abstract class Challenge {
    * @param _status - Whether the item should be added to the shop or not
    * @returns Whether this function did anything
    */
-  applyShopItem(_shopItem: ModifierTypeOption | null, _status: BooleanHolder): boolean {
+  applyShopItem(_shopItem: RewardOption | null, _status: BooleanHolder): boolean {
     return false;
   }
 
@@ -428,7 +428,7 @@ export abstract class Challenge {
    * @param _status - Whether the reward should be added to the reward options or not
    * @returns Whether this function did anything
    */
-  applyWaveReward(_reward: ModifierTypeOption | null, _status: BooleanHolder): boolean {
+  applyWaveReward(_reward: RewardOption | null, _status: BooleanHolder): boolean {
     return false;
   }
 
@@ -606,13 +606,13 @@ export class SingleGenerationChallenge extends Challenge {
           .setBattleType(BattleType.TRAINER)
           .setSeedOffsetWave(ClassicFixedBossWaves.EVIL_GRUNT_1)
           .setGetTrainerFunc(getRandomTrainerFunc(trainerTypes, true))
-          .setCustomModifierRewards({
-            guaranteedModifierTiers: [
-              ModifierTier.ROGUE,
-              ModifierTier.ROGUE,
-              ModifierTier.ULTRA,
-              ModifierTier.ULTRA,
-              ModifierTier.ULTRA,
+          .setCustomRewards({
+            guaranteedRarityTiers: [
+              RarityTier.ROGUE,
+              RarityTier.ROGUE,
+              RarityTier.ULTRA,
+              RarityTier.ULTRA,
+              RarityTier.ULTRA,
             ],
             allowLuckUpgrades: false,
           });
@@ -623,14 +623,14 @@ export class SingleGenerationChallenge extends Challenge {
           .setBattleType(BattleType.TRAINER)
           .setSeedOffsetWave(ClassicFixedBossWaves.EVIL_GRUNT_1)
           .setGetTrainerFunc(getRandomTrainerFunc(trainerTypes, true))
-          .setCustomModifierRewards({
-            guaranteedModifierTiers: [
-              ModifierTier.ROGUE,
-              ModifierTier.ROGUE,
-              ModifierTier.ULTRA,
-              ModifierTier.ULTRA,
-              ModifierTier.ULTRA,
-              ModifierTier.ULTRA,
+          .setCustomRewards({
+            guaranteedRarityTiers: [
+              RarityTier.ROGUE,
+              RarityTier.ROGUE,
+              RarityTier.ULTRA,
+              RarityTier.ULTRA,
+              RarityTier.ULTRA,
+              RarityTier.ULTRA,
             ],
             allowLuckUpgrades: false,
           });
@@ -1199,12 +1199,12 @@ export class HardcoreChallenge extends Challenge {
     return false;
   }
 
-  override applyShopItem(shopItem: ModifierTypeOption | null, status: BooleanHolder): boolean {
+  override applyShopItem(shopItem: RewardOption | null, status: BooleanHolder): boolean {
     status.value = shopItem?.type.group !== "revive";
     return true;
   }
 
-  override applyWaveReward(reward: ModifierTypeOption | null, status: BooleanHolder): boolean {
+  override applyWaveReward(reward: RewardOption | null, status: BooleanHolder): boolean {
     return this.applyShopItem(reward, status);
   }
 

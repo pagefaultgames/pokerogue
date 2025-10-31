@@ -24,7 +24,7 @@ export type toHaveArenaTagOptions<A extends ArenaTagType> = OneOther<
 };
 
 /**
- * Matcher to check if the {@linkcode Arena} has a given {@linkcode ArenaTag} active.
+ * Matcher to check if the {@linkcode Arena} contains the given {@linkcode ArenaTag}.
  * @param received - The object to check. Should be the current {@linkcode GameManager}.
  * @param expectedTag - The `ArenaTagType` of the desired tag, or a partially-filled object
  * containing the desired properties

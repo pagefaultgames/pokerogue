@@ -1,5 +1,6 @@
 import { Gender } from "#data/gender";
 import { AbilityId } from "#enums/ability-id";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { PokeballType } from "#enums/pokeball";
 import { SpeciesId } from "#enums/species-id";
@@ -28,9 +29,9 @@ describe("Abilities - Illusion", () => {
       .enemySpecies(SpeciesId.ZORUA)
       .enemyAbility(AbilityId.ILLUSION)
       .enemyMoveset(MoveId.TACKLE)
-      .enemyHeldItems([{ name: "WIDE_LENS", count: 3 }])
+      .enemyHeldItems([{ entry: HeldItemId.WIDE_LENS, count: 3 }])
       .moveset([MoveId.WORRY_SEED, MoveId.SOAK, MoveId.TACKLE])
-      .startingHeldItems([{ name: "WIDE_LENS", count: 3 }]);
+      .startingHeldItems([{ entry: HeldItemId.WIDE_LENS, count: 3 }]);
   });
 
   it("creates illusion at the start", async () => {

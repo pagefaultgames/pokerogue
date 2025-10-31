@@ -1,14 +1,17 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
-import { ModifierTier } from "#enums/modifier-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { RewardPoolType } from "#enums/reward-pool-type";
+import { RarityTier } from "#enums/reward-tier";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import type { Pokemon } from "#field/pokemon";
-import type { ModifierTypeOption } from "#modifiers/modifier-type";
-import { getPlayerModifierTypeOptions, regenerateModifierPoolThresholds } from "#modifiers/modifier-type";
+import type { RewardOption } from "#items/reward";
+import { generatePlayerRewardOptions, generateRewardPoolWeights, getRewardPoolForType } from "#items/reward-pool-utils";
+import { isTmReward } from "#items/reward-utils";
+import type { TrainerItemReward } from "#items/trainer-item-reward";
 import { queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
@@ -94,18 +97,18 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder.
     // Waves 10-40 GREAT, 60-120 ULTRA, 120-160 ROGUE, 160-180 MASTER
     const tier =
       globalScene.currentBattle.waveIndex > 160
-        ? ModifierTier.MASTER
+        ? RarityTier.MASTER
         : globalScene.currentBattle.waveIndex > 120
-          ? ModifierTier.ROGUE
+          ? RarityTier.ROGUE
           : globalScene.currentBattle.waveIndex > 40
-            ? ModifierTier.ULTRA
-            : ModifierTier.GREAT;
-    regenerateModifierPoolThresholds(globalScene.getPlayerParty(), ModifierPoolType.PLAYER, 0);
-    let item: ModifierTypeOption | null = null;
+            ? RarityTier.ULTRA
+            : RarityTier.GREAT;
+    generateRewardPoolWeights(getRewardPoolForType(RewardPoolType.PLAYER), globalScene.getPlayerParty(), 0);
+    let item: RewardOption | null = null;
     // TMs and Candy Jar excluded from possible rewards as they're too swingy in value for a singular item reward
-    while (!item || item.type.id.includes("TM_") || item.type.id === "CANDY_JAR") {
-      item = getPlayerModifierTypeOptions(1, globalScene.getPlayerParty(), [], {
-        guaranteedModifierTiers: [tier],
+    while (!item || isTmReward(item.type) || (item.type as TrainerItemReward).itemId === TrainerItemId.CANDY_JAR) {
+      item = generatePlayerRewardOptions(1, globalScene.getPlayerParty(), [], {
+        guaranteedRarityTiers: [tier],
         allowLuckUpgrades: false,
       })[0];
     }
@@ -156,9 +159,9 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder.
     async () => {
       // Pick battle
       // Pokemon will randomly boost 1 stat by 2 stages
-      const item = globalScene.currentBattle.mysteryEncounter!.misc as ModifierTypeOption;
+      const item = globalScene.currentBattle.mysteryEncounter!.misc as RewardOption;
       setEncounterRewards({
-        guaranteedModifierTypeOptions: [item],
+        guaranteedRewardOptions: [item],
         fillRemaining: false,
       });
       await initBattleWithEnemyConfig(globalScene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0]);
@@ -180,9 +183,9 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder.
       .withOptionPhase(async () => {
         // Pick steal
         const encounter = globalScene.currentBattle.mysteryEncounter!;
-        const item = globalScene.currentBattle.mysteryEncounter!.misc as ModifierTypeOption;
+        const item = globalScene.currentBattle.mysteryEncounter!.misc as RewardOption;
         setEncounterRewards({
-          guaranteedModifierTypeOptions: [item],
+          guaranteedRewardOptions: [item],
           fillRemaining: false,
         });
 

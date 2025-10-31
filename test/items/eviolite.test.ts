@@ -1,8 +1,10 @@
+import { HeldItemEffect } from "#enums/held-item-effect";
+import { HeldItemId } from "#enums/held-item-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { StatBoosterModifier } from "#modifiers/modifier";
 import { GameManager } from "#test/test-utils/game-manager";
 import { NumberHolder, randItem } from "#utils/common";
+import { applyHeldItems } from "#utils/items";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -22,7 +24,7 @@ describe("Items - Eviolite", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleStyle("single").startingHeldItems([{ name: "EVIOLITE" }]);
+    game.override.battleStyle("single").startingHeldItems([{ entry: HeldItemId.EVIOLITE }]);
   });
 
   it("should provide 50% boost to DEF and SPDEF for unevolved, unfused pokemon", async () => {
@@ -32,9 +34,7 @@ describe("Items - Eviolite", () => {
 
     vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
       const statValue = new NumberHolder(partyMember.getStat(stat, false));
-      game.scene.applyModifiers(StatBoosterModifier, partyMember.isPlayer(), partyMember, stat, statValue);
-
-      // Ignore other calculations for simplicity
+      applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat, statValue });
 
       return Math.floor(statValue.value);
     });
@@ -53,7 +53,7 @@ describe("Items - Eviolite", () => {
 
     vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
       const statValue = new NumberHolder(partyMember.getStat(stat, false));
-      game.scene.applyModifiers(StatBoosterModifier, partyMember.isPlayer(), partyMember, stat, statValue);
+      applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat, statValue });
 
       // Ignore other calculations for simplicity
 
@@ -83,7 +83,7 @@ describe("Items - Eviolite", () => {
 
     vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
       const statValue = new NumberHolder(partyMember.getStat(stat, false));
-      game.scene.applyModifiers(StatBoosterModifier, partyMember.isPlayer(), partyMember, stat, statValue);
+      applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat, statValue });
 
       // Ignore other calculations for simplicity
 
@@ -113,7 +113,7 @@ describe("Items - Eviolite", () => {
 
     vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
       const statValue = new NumberHolder(partyMember.getStat(stat, false));
-      game.scene.applyModifiers(StatBoosterModifier, partyMember.isPlayer(), partyMember, stat, statValue);
+      applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat, statValue });
 
       // Ignore other calculations for simplicity
 
@@ -143,7 +143,7 @@ describe("Items - Eviolite", () => {
 
     vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
       const statValue = new NumberHolder(partyMember.getStat(stat, false));
-      game.scene.applyModifiers(StatBoosterModifier, partyMember.isPlayer(), partyMember, stat, statValue);
+      applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat, statValue });
 
       // Ignore other calculations for simplicity
 
@@ -173,7 +173,7 @@ describe("Items - Eviolite", () => {
 
     vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
       const statValue = new NumberHolder(partyMember.getStat(stat, false));
-      game.scene.applyModifiers(StatBoosterModifier, partyMember.isPlayer(), partyMember, stat, statValue);
+      applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat, statValue });
 
       // Ignore other calculations for simplicity
 
@@ -203,7 +203,7 @@ describe("Items - Eviolite", () => {
 
     vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
       const statValue = new NumberHolder(partyMember.getStat(stat, false));
-      game.scene.applyModifiers(StatBoosterModifier, partyMember.isPlayer(), partyMember, stat, statValue);
+      applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat, statValue });
 
       // Ignore other calculations for simplicity
 

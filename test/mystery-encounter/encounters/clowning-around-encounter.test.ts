@@ -1,26 +1,22 @@
 import type { BattleScene } from "#app/battle-scene";
 import * as BattleAnims from "#data/battle-anims";
-import { modifierTypes } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { BerryType } from "#enums/berry-type";
 import { BiomeId } from "#enums/biome-id";
 import { Button } from "#enums/buttons";
-import { ModifierTier } from "#enums/modifier-tier";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokemonType } from "#enums/pokemon-type";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { UiMode } from "#enums/ui-mode";
-import type { Pokemon } from "#field/pokemon";
-import type { PokemonHeldItemModifier } from "#modifiers/modifier";
-import type { PokemonHeldItemModifierType } from "#modifiers/modifier-type";
+import { getHeldItemTier } from "#items/held-item-default-tiers";
 import { PokemonMove } from "#moves/pokemon-move";
 import { ClowningAroundEncounter } from "#mystery-encounters/clowning-around-encounter";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
-import { generateModifierType } from "#mystery-encounters/encounter-phase-utils";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { MovePhase } from "#phases/move-phase";
 import {
@@ -259,48 +255,32 @@ describe("Clowning Around - Mystery Encounter", () => {
       game.move.changeMoveset(game.field.getPlayerPokemon(), [MoveId.TACKLE, MoveId.THIEF]);
 
       // 2 Sitrus Berries on lead
-      scene.modifiers = [];
-      let itemType = generateModifierType(modifierTypes.BERRY, [BerryType.SITRUS]) as PokemonHeldItemModifierType;
-      await addItemToPokemon(scene, game.field.getPlayerPokemon(), 2, itemType);
-      // 2 Ganlon Berries on lead
-      itemType = generateModifierType(modifierTypes.BERRY, [BerryType.GANLON]) as PokemonHeldItemModifierType;
-      await addItemToPokemon(scene, game.field.getPlayerPokemon(), 2, itemType);
-      // 5 Golden Punch on lead (ultra)
-      itemType = generateModifierType(modifierTypes.GOLDEN_PUNCH) as PokemonHeldItemModifierType;
-      await addItemToPokemon(scene, game.field.getPlayerPokemon(), 5, itemType);
-      // 5 Lucky Egg on lead (ultra)
-      itemType = generateModifierType(modifierTypes.LUCKY_EGG) as PokemonHeldItemModifierType;
-      await addItemToPokemon(scene, game.field.getPlayerPokemon(), 5, itemType);
-      // 3 Soothe Bell on lead (great tier, but counted as ultra by this ME)
-      itemType = generateModifierType(modifierTypes.SOOTHE_BELL) as PokemonHeldItemModifierType;
-      await addItemToPokemon(scene, game.field.getPlayerPokemon(), 3, itemType);
-      // 5 Soul Dew on lead (rogue)
-      itemType = generateModifierType(modifierTypes.SOUL_DEW) as PokemonHeldItemModifierType;
-      await addItemToPokemon(scene, game.field.getPlayerPokemon(), 5, itemType);
-      // 2 Golden Egg on lead (rogue)
-      itemType = generateModifierType(modifierTypes.GOLDEN_EGG) as PokemonHeldItemModifierType;
-      await addItemToPokemon(scene, game.field.getPlayerPokemon(), 2, itemType);
+      scene.clearAllItems();
+      scene.getPlayerParty()[0].heldItemManager.add(HeldItemId.SITRUS_BERRY, 2);
+      scene.getPlayerParty()[0].heldItemManager.add(HeldItemId.GANLON_BERRY, 2);
+      scene.getPlayerParty()[0].heldItemManager.add(HeldItemId.GOLDEN_PUNCH, 5);
+      scene.getPlayerParty()[0].heldItemManager.add(HeldItemId.LUCKY_EGG, 5);
+      scene.getPlayerParty()[0].heldItemManager.add(HeldItemId.SOOTHE_BELL, 3);
+      scene.getPlayerParty()[0].heldItemManager.add(HeldItemId.SOUL_DEW, 5);
+      scene.getPlayerParty()[0].heldItemManager.add(HeldItemId.GOLDEN_EGG, 2);
 
-      // 5 Soul Dew on second party pokemon (these should not change)
-      itemType = generateModifierType(modifierTypes.SOUL_DEW) as PokemonHeldItemModifierType;
-      await addItemToPokemon(scene, scene.getPlayerParty()[1], 5, itemType);
+      scene.getPlayerParty()[1].heldItemManager.add(HeldItemId.SOUL_DEW, 5);
 
       await runMysteryEncounterToEnd(game, 2);
 
       const leadItemsAfter = game.field.getPlayerPokemon().getHeldItems();
       const ultraCountAfter = leadItemsAfter
-        .filter(m => m.type.tier === ModifierTier.ULTRA)
-        .reduce((a, b) => a + b.stackCount, 0);
+        .filter(m => getHeldItemTier(m) === RarityTier.ULTRA)
+        .reduce((a, b) => a + scene.getPlayerParty()[0].heldItemManager.getStack(b), 0);
       const rogueCountAfter = leadItemsAfter
-        .filter(m => m.type.tier === ModifierTier.ROGUE)
-        .reduce((a, b) => a + b.stackCount, 0);
+        .filter(m => getHeldItemTier(m) === RarityTier.ROGUE)
+        .reduce((a, b) => a + scene.getPlayerParty()[0].heldItemManager.getStack(b), 0);
       expect(ultraCountAfter).toBe(13);
       expect(rogueCountAfter).toBe(7);
 
       const secondItemsAfter = scene.getPlayerParty()[1].getHeldItems();
       expect(secondItemsAfter.length).toBe(1);
-      expect(secondItemsAfter[0].type.id).toBe("SOUL_DEW");
-      expect(secondItemsAfter[0]?.stackCount).toBe(5);
+      expect(scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.SOUL_DEW)).toBe(5);
     });
 
     it("should leave encounter without battle", async () => {
@@ -374,15 +354,3 @@ describe("Clowning Around - Mystery Encounter", () => {
     });
   });
 });
-
-async function addItemToPokemon(
-  scene: BattleScene,
-  pokemon: Pokemon,
-  stackCount: number,
-  itemType: PokemonHeldItemModifierType,
-) {
-  const itemMod = itemType.newModifier(pokemon) as PokemonHeldItemModifier;
-  itemMod.stackCount = stackCount;
-  scene.addModifier(itemMod, true, false, false, true);
-  await scene.updateModifiers(true);
-}

@@ -1,9 +1,9 @@
 import type { BattleScene } from "#app/battle-scene";
 import { BiomeId } from "#enums/biome-id";
-import { ModifierTier } from "#enums/modifier-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
@@ -16,7 +16,7 @@ import {
 } from "#test/mystery-encounter/encounter-test-utils";
 import { GameManager } from "#test/test-utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
-import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/weirdDream";
@@ -114,8 +114,8 @@ describe("Weird Dream - Mystery Encounter", () => {
       const bstsPrior = pokemonPrior.map(species => species.getSpeciesForm().getBaseStatTotal());
 
       await runMysteryEncounterToEnd(game, 1);
-      expect(game).toBeAtPhase("SelectModifierPhase");
-      await game.phaseInterceptor.to("SelectModifierPhase");
+      expect(game).toBeAtPhase("SelectRewardPhase");
+      await game.phaseInterceptor.to("SelectRewardPhase");
 
       const pokemonAfter = scene.getPlayerParty();
       const bstsAfter = pokemonAfter.map(pokemon => pokemon.getSpeciesForm().getBaseStatTotal());
@@ -134,24 +134,24 @@ describe("Weird Dream - Mystery Encounter", () => {
       expect(plus40To50.length).toBe(1);
     });
 
-    it("should have 1 Memory Mushroom, 5 Rogue Balls, and 3 Mints in rewards", async () => {
+    it("should have 1 Memory Mushroom, 5 Rogue Balls, and 3 Mints in allRewards", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.WEIRD_DREAM, defaultParty);
       await runMysteryEncounterToEnd(game, 1);
-      await game.phaseInterceptor.to("SelectModifierPhase", false);
-      expect(game).toBeAtPhase("SelectModifierPhase");
-      await game.phaseInterceptor.to("SelectModifierPhase");
+      await game.phaseInterceptor.to("SelectRewardPhase", false);
+      expect(game).toBeAtPhase("SelectRewardPhase");
+      await game.phaseInterceptor.to("SelectRewardPhase");
 
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(6);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toEqual("MEMORY_MUSHROOM");
-      expect(modifierSelectHandler.options[1].modifierTypeOption.type.id).toEqual("ROGUE_BALL");
-      expect(modifierSelectHandler.options[2].modifierTypeOption.type.id).toEqual("MINT");
-      expect(modifierSelectHandler.options[3].modifierTypeOption.type.id).toEqual("MINT");
-      expect(modifierSelectHandler.options[4].modifierTypeOption.type.id).toEqual("MINT");
-      expect(modifierSelectHandler.options[5].modifierTypeOption.type.id).toEqual("MINT");
+      expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+      const rewardSelectHandler = scene.ui.handlers.find(
+        h => h instanceof RewardSelectUiHandler,
+      ) as RewardSelectUiHandler;
+      expect(rewardSelectHandler.options.length).toEqual(6);
+      expect(rewardSelectHandler.options[0].rewardOption.type.id).toEqual("MEMORY_MUSHROOM");
+      expect(rewardSelectHandler.options[1].rewardOption.type.id).toEqual("ROGUE_BALL");
+      expect(rewardSelectHandler.options[2].rewardOption.type.id).toEqual("MINT");
+      expect(rewardSelectHandler.options[3].rewardOption.type.id).toEqual("MINT");
+      expect(rewardSelectHandler.options[4].rewardOption.type.id).toEqual("MINT");
+      expect(rewardSelectHandler.options[5].rewardOption.type.id).toEqual("MINT");
     });
 
     it("should leave encounter without battle", async () => {
@@ -190,43 +190,43 @@ describe("Weird Dream - Mystery Encounter", () => {
       expect(scene.getEnemyParty().length).toBe(scene.getPlayerParty().length);
     });
 
-    it("should have 2 Rogue/2 Ultra/2 Great items in rewards", async () => {
+    it("should have 2 Rogue/2 Ultra/2 Great items in allRewards", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.WEIRD_DREAM, defaultParty);
       await runMysteryEncounterToEnd(game, 2, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to("SelectModifierPhase", false);
-      expect(game).toBeAtPhase("SelectModifierPhase");
-      await game.phaseInterceptor.to("SelectModifierPhase");
+      await game.phaseInterceptor.to("SelectRewardPhase", false);
+      expect(game).toBeAtPhase("SelectRewardPhase");
+      await game.phaseInterceptor.to("SelectRewardPhase");
 
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(6);
+      expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+      const rewardSelectHandler = scene.ui.handlers.find(
+        h => h instanceof RewardSelectUiHandler,
+      ) as RewardSelectUiHandler;
+      expect(rewardSelectHandler.options.length).toEqual(6);
       expect(
-        modifierSelectHandler.options[0].modifierTypeOption.type.tier
-          - modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
-      ).toEqual(ModifierTier.ROGUE);
+        rewardSelectHandler.options[0].rewardOption.type.tier
+          - rewardSelectHandler.options[0].rewardOption.upgradeCount,
+      ).toEqual(RarityTier.ROGUE);
       expect(
-        modifierSelectHandler.options[1].modifierTypeOption.type.tier
-          - modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
-      ).toEqual(ModifierTier.ROGUE);
+        rewardSelectHandler.options[1].rewardOption.type.tier
+          - rewardSelectHandler.options[1].rewardOption.upgradeCount,
+      ).toEqual(RarityTier.ROGUE);
       expect(
-        modifierSelectHandler.options[2].modifierTypeOption.type.tier
-          - modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
-      ).toEqual(ModifierTier.ULTRA);
+        rewardSelectHandler.options[2].rewardOption.type.tier
+          - rewardSelectHandler.options[2].rewardOption.upgradeCount,
+      ).toEqual(RarityTier.ULTRA);
       expect(
-        modifierSelectHandler.options[3].modifierTypeOption.type.tier
-          - modifierSelectHandler.options[3].modifierTypeOption.upgradeCount,
-      ).toEqual(ModifierTier.ULTRA);
+        rewardSelectHandler.options[3].rewardOption.type.tier
+          - rewardSelectHandler.options[3].rewardOption.upgradeCount,
+      ).toEqual(RarityTier.ULTRA);
       expect(
-        modifierSelectHandler.options[4].modifierTypeOption.type.tier
-          - modifierSelectHandler.options[4].modifierTypeOption.upgradeCount,
-      ).toEqual(ModifierTier.GREAT);
+        rewardSelectHandler.options[4].rewardOption.type.tier
+          - rewardSelectHandler.options[4].rewardOption.upgradeCount,
+      ).toEqual(RarityTier.GREAT);
       expect(
-        modifierSelectHandler.options[5].modifierTypeOption.type.tier
-          - modifierSelectHandler.options[5].modifierTypeOption.upgradeCount,
-      ).toEqual(ModifierTier.GREAT);
+        rewardSelectHandler.options[5].rewardOption.type.tier
+          - rewardSelectHandler.options[5].rewardOption.upgradeCount,
+      ).toEqual(RarityTier.GREAT);
     });
   });
 

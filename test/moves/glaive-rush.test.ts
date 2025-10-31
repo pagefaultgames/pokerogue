@@ -1,5 +1,6 @@
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
@@ -60,7 +61,7 @@ describe("Moves - Glaive Rush", () => {
   });
 
   it("interacts properly with multi-lens", async () => {
-    game.override.startingHeldItems([{ name: "MULTI_LENS", count: 2 }]).enemyMoveset([MoveId.AVALANCHE]);
+    game.override.startingHeldItems([{ entry: HeldItemId.MULTI_LENS, count: 2 }]).enemyMoveset([MoveId.AVALANCHE]);
     await game.classicMode.startBattle([SpeciesId.KLINK]);
 
     const player = game.field.getPlayerPokemon();

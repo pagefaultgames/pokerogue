@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { ExpBoosterModifier } from "#modifiers/modifier";
+import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { PlayerPartyMemberPokemonPhase } from "#phases/player-party-member-pokemon-phase";
 import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
@@ -20,7 +20,7 @@ export class ExpPhase extends PlayerPartyMemberPokemonPhase {
 
     const pokemon = this.getPokemon();
     const exp = new NumberHolder(this.expValue);
-    globalScene.applyModifiers(ExpBoosterModifier, true, exp);
+    globalScene.applyPlayerItems(TrainerItemEffect.EXP_BOOSTER, { numberHolder: exp });
     exp.value = Math.floor(exp.value);
     globalScene.ui.showText(
       i18next.t("battle:expGain", {

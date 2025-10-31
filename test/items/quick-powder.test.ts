@@ -1,10 +1,11 @@
-import { modifierTypes } from "#data/data-lists";
+import { HeldItemEffect } from "#enums/held-item-effect";
+import { HeldItemId } from "#enums/held-item-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { SpeciesStatBoosterModifier } from "#modifiers/modifier";
 import i18next from "#plugins/i18n";
 import { GameManager } from "#test/test-utils/game-manager";
 import { NumberHolder } from "#utils/common";
+import { applyHeldItems } from "#utils/items";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -29,7 +30,7 @@ describe("Items - Quick Powder", () => {
   });
 
   it("QUICK_POWDER activates in battle correctly", async () => {
-    game.override.startingHeldItems([{ name: "RARE_SPECIES_STAT_BOOSTER", type: "QUICK_POWDER" }]);
+    game.override.startingHeldItems([{ entry: HeldItemId.QUICK_POWDER }]);
     const consoleSpy = vi.spyOn(console, "log");
     await game.classicMode.startBattle([SpeciesId.DITTO]);
 
@@ -90,16 +91,13 @@ describe("Items - Quick Powder", () => {
 
     // Making sure modifier is not applied without holding item
     const spdValue = new NumberHolder(spdStat);
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPD, spdValue);
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPD, statValue: spdValue });
 
     expect(spdValue.value / spdStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    await game.scene.addModifier(
-      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["QUICK_POWDER"])!.newModifier(partyMember),
-      true,
-    );
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPD, spdValue);
+    partyMember.heldItemManager.add(HeldItemId.QUICK_POWDER);
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPD, statValue: spdValue });
 
     expect(spdValue.value / spdStat).toBe(2);
   });
@@ -122,16 +120,13 @@ describe("Items - Quick Powder", () => {
 
     // Making sure modifier is not applied without holding item
     const spdValue = new NumberHolder(spdStat);
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPD, spdValue);
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPD, statValue: spdValue });
 
     expect(spdValue.value / spdStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    await game.scene.addModifier(
-      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["QUICK_POWDER"])!.newModifier(partyMember),
-      true,
-    );
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPD, spdValue);
+    partyMember.heldItemManager.add(HeldItemId.QUICK_POWDER);
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPD, statValue: spdValue });
 
     expect(spdValue.value / spdStat).toBe(2);
   });
@@ -154,16 +149,13 @@ describe("Items - Quick Powder", () => {
 
     // Making sure modifier is not applied without holding item
     const spdValue = new NumberHolder(spdStat);
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPD, spdValue);
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPD, statValue: spdValue });
 
     expect(spdValue.value / spdStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    await game.scene.addModifier(
-      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["QUICK_POWDER"])!.newModifier(partyMember),
-      true,
-    );
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPD, spdValue);
+    partyMember.heldItemManager.add(HeldItemId.QUICK_POWDER);
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPD, statValue: spdValue });
 
     expect(spdValue.value / spdStat).toBe(2);
   });
@@ -177,16 +169,13 @@ describe("Items - Quick Powder", () => {
 
     // Making sure modifier is not applied without holding item
     const spdValue = new NumberHolder(spdStat);
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPD, spdValue);
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPD, statValue: spdValue });
 
     expect(spdValue.value / spdStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
-    await game.scene.addModifier(
-      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["QUICK_POWDER"])!.newModifier(partyMember),
-      true,
-    );
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPD, spdValue);
+    partyMember.heldItemManager.add(HeldItemId.QUICK_POWDER);
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPD, statValue: spdValue });
 
     expect(spdValue.value / spdStat).toBe(1);
   });

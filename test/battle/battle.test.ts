@@ -3,7 +3,7 @@ import { AbilityId } from "#enums/ability-id";
 import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { Stat } from "#enums/stat";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
 import { CommandPhase } from "#phases/command-phase";
 import { NextEncounterPhase } from "#phases/next-encounter-phase";
@@ -169,7 +169,7 @@ describe("Phase - Battle Phase", () => {
       .startingLevel(100)
       .moveset([moveToUse])
       .enemyMoveset(MoveId.SPLASH)
-      .startingHeldItems([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }]);
+      .startingTrainerItems([{ entry: TrainerItemId.X_ACCURACY }]);
 
     await game.classicMode.startBattle();
     game.field.getPlayerPokemon().hp = 1;

@@ -1,5 +1,6 @@
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
@@ -88,7 +89,7 @@ describe("Moves - Fell Stinger", () => {
   });
 
   it("should not grant stat boost if enemy is saved by Reviver Seed", async () => {
-    game.override.enemyAbility(AbilityId.BALL_FETCH).enemyHeldItems([{ name: "REVIVER_SEED" }]);
+    game.override.enemyAbility(AbilityId.BALL_FETCH).enemyHeldItems([{ entry: HeldItemId.REVIVER_SEED }]);
 
     await game.classicMode.startBattle([SpeciesId.LEAVANNY]);
     const leadPokemon = game.field.getPlayerPokemon();

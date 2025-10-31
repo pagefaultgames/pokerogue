@@ -40,8 +40,6 @@ export class AttemptRunPhase extends FieldPhase {
         onComplete: () => enemyField.forEach(enemyPokemon => enemyPokemon.destroy()),
       });
 
-      globalScene.clearEnemyHeldItemModifiers();
-
       enemyField.forEach(enemyPokemon => {
         enemyPokemon.hideInfo().then(() => enemyPokemon.destroy());
         enemyPokemon.hp = 0;

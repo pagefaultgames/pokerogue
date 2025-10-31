@@ -189,7 +189,7 @@ input:-internal-autofill-selected {
 /* Show #apadStats only in battle and shop */
 #touchControls:not([data-ui-mode="COMMAND"]):not([data-ui-mode="FIGHT"]):not(
     [data-ui-mode="BALL"]
-  ):not([data-ui-mode="TARGET_SELECT"]):not([data-ui-mode="MODIFIER_SELECT"])
+  ):not([data-ui-mode="TARGET_SELECT"]):not([data-ui-mode="REWARD_SELECT"])
   #apadStats {
   display: none;
 }

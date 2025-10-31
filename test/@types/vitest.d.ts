@@ -3,6 +3,7 @@ import "vitest";
 import type Overrides from "#app/overrides";
 import type { Phase } from "#app/phase";
 import type { ArenaTag } from "#data/arena-tag";
+import type { PositionalTag } from "#data/positional-tags/positional-tag";
 import type { TerrainType } from "#data/terrain";
 import type { AbilityId } from "#enums/ability-id";
 import type { ArenaTagSide } from "#enums/arena-tag-side";
@@ -10,7 +11,6 @@ import type { ArenaTagType } from "#enums/arena-tag-type";
 import type { BattlerTagType } from "#enums/battler-tag-type";
 import type { MoveId } from "#enums/move-id";
 import type { PokemonType } from "#enums/pokemon-type";
-import type { PositionalTag } from "#data/positional-tags/positional-tag";
 import type { PositionalTagType } from "#enums/positional-tag-type";
 import type { BattleStat, EffectiveStat } from "#enums/stat";
 import type { WeatherType } from "#enums/weather-type";
@@ -19,9 +19,11 @@ import type { GameManager } from "#test/test-utils/game-manager";
 import type { toHaveArenaTagOptions } from "#test/test-utils/matchers/to-have-arena-tag";
 import type { toHaveBattlerTagOptions } from "#test/test-utils/matchers/to-have-battler-tag";
 import type { toHaveEffectiveStatOptions } from "#test/test-utils/matchers/to-have-effective-stat";
+import type { expectedHeldItemType } from "#test/test-utils/matchers/to-have-held-item";
 import type { toHavePositionalTagOptions } from "#test/test-utils/matchers/to-have-positional-tag";
 import type { expectedStatusType } from "#test/test-utils/matchers/to-have-status-effect";
 import type { toHaveTypesOptions } from "#test/test-utils/matchers/to-have-types";
+import type { ApplicableHeldItemId, allHeldItemsType } from "#types/held-item-data-types";
 import type { PhaseString } from "#types/phase-types";
 import type { TurnMove } from "#types/turn-move";
 import type { AtLeastOne } from "#types/type-helpers";
@@ -141,6 +143,19 @@ interface ArenaMatchers {
 // #region Pokemon Matchers
 interface PokemonMatchers {
   /**
+   * Check whether a {@linkcode Pokemon} has applied the given {@linkcode HeldItem}.
+   * Used during unit tests to ensure effects were applied correctly.
+   * @param id - The {@linkcode HeldItemId} of the item being applied
+   * @param effect - One of `item`'s applicable {@linkcode HeldItemEffect} to check application of
+   * @param options - A partially-filled parameters object used to query the arguments `item` was called with
+   */
+  toHaveAppliedItem<T extends ApplicableHeldItemId, E extends allHeldItemsType[T]["effects"][number]>(
+    id: T,
+    effect: E,
+    options?: toHaveAppliedItemOptions<E>,
+  ): void;
+
+  /**
    * Check whether a {@linkcode Pokemon}'s current typing includes the given types.
    * @param expectedTypes - The expected {@linkcode PokemonType}s to check against; must have length `>0`
    * @param options - The {@linkcode toHaveTypesOptions | options} passed to the matcher
@@ -234,5 +249,13 @@ interface PokemonMatchers {
    * or does not contain exactly one copy of `moveId`, this will fail the test.
    */
   toHaveUsedPP(moveId: MoveId, ppUsed: number | "all"): void;
+
+  /**
+   * Check whether a {@linkcode Pokemon} has the given held item.
+   * @param received - The object to check. Should be a {@linkcode Pokemon}.
+   * @param expectedItem - A {@linkcode HeldItemId} or {@linkcode HeldItemCategoryId} to check, or a partially filled
+   * {@linkcode HeldItemSpecs} containing the desired values
+   */
+  toHaveHeldItem(expected: expectedHeldItemType): void;
 }
 // #endregion Pokemon Matchers

@@ -1,6 +1,7 @@
 import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
@@ -57,9 +58,7 @@ describe("Abilities - Normalize", () => {
   });
 
   it("should not apply the old type boost item after changing a move's type", async () => {
-    game.override
-      .startingHeldItems([{ name: "ATTACK_TYPE_BOOSTER", count: 1, type: PokemonType.GRASS }])
-      .moveset([MoveId.LEAFAGE]);
+    game.override.startingHeldItems([{ entry: HeldItemId.MIRACLE_SEED }]).moveset([MoveId.LEAFAGE]);
 
     const powerSpy = vi.spyOn(allMoves[MoveId.LEAFAGE], "calculateBattlePower");
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
@@ -71,9 +70,7 @@ describe("Abilities - Normalize", () => {
   });
 
   it("should apply silk scarf's power boost after changing a move's type", async () => {
-    game.override
-      .startingHeldItems([{ name: "ATTACK_TYPE_BOOSTER", count: 1, type: PokemonType.NORMAL }])
-      .moveset([MoveId.LEAFAGE]);
+    game.override.startingHeldItems([{ entry: HeldItemId.SILK_SCARF }]).moveset([MoveId.LEAFAGE]);
 
     const powerSpy = vi.spyOn(allMoves[MoveId.LEAFAGE], "calculateBattlePower");
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);

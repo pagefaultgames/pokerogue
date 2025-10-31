@@ -1,12 +1,13 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { EncounterBattleAnim } from "#data/battle-anims";
-import { allAbilities, modifierTypes } from "#data/data-lists";
+import { allAbilities, allHeldItems } from "#data/data-lists";
 import { Gender } from "#data/gender";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { EncounterAnim } from "#enums/encounter-anims";
+import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -18,12 +19,11 @@ import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
-import type { AttackTypeBoosterModifierType } from "#modifiers/modifier-type";
+import { getNewHeldItemFromCategory } from "#items/held-item-pool";
 import { PokemonMove } from "#moves/pokemon-move";
 import { queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
-  generateModifierType,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
   loadCustomMovesForEncounter,
@@ -31,11 +31,7 @@ import {
   setEncounterRewards,
   transitionMysteryEncounterIntroVisuals,
 } from "#mystery-encounters/encounter-phase-utils";
-import {
-  applyAbilityOverrideToPokemon,
-  applyDamageToPokemon,
-  applyModifierTypeToPlayerPokemon,
-} from "#mystery-encounters/encounter-pokemon-utils";
+import { applyAbilityOverrideToPokemon, applyDamageToPokemon } from "#mystery-encounters/encounter-pokemon-utils";
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
@@ -255,7 +251,6 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
         }
       }
 
-      // No rewards
       leaveEncounterWithoutBattle(true);
     },
   )
@@ -300,19 +295,17 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
 
 function giveLeadPokemonAttackTypeBoostItem() {
   // Give first party pokemon attack type boost item for free at end of battle
-  const leadPokemon = globalScene.getPlayerParty()?.[0];
+  const leadPokemon = globalScene.getPlayerParty()[0];
   if (leadPokemon) {
     // Generate type booster held item, default to Charcoal if item fails to generate
-    let boosterModifierType = generateModifierType(modifierTypes.ATTACK_TYPE_BOOSTER) as AttackTypeBoosterModifierType;
-    if (!boosterModifierType) {
-      boosterModifierType = generateModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, [
-        PokemonType.FIRE,
-      ]) as AttackTypeBoosterModifierType;
+    let item = getNewHeldItemFromCategory(HeldItemCategoryId.TYPE_ATTACK_BOOSTER, leadPokemon);
+    if (!item) {
+      item = HeldItemId.CHARCOAL;
     }
-    applyModifierTypeToPlayerPokemon(leadPokemon, boosterModifierType);
+    leadPokemon.heldItemManager.add(item);
 
     const encounter = globalScene.currentBattle.mysteryEncounter!;
-    encounter.setDialogueToken("itemName", boosterModifierType.name);
+    encounter.setDialogueToken("itemName", allHeldItems[item].name);
     encounter.setDialogueToken("leadPokemon", leadPokemon.getNameToRender());
     queueEncounterMessage(`${namespace}:foundItem`);
   }

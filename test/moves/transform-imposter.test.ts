@@ -3,7 +3,7 @@ import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { BerryType } from "#enums/berry-type";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { PokemonType } from "#enums/pokemon-type";
@@ -128,7 +128,7 @@ describe("Transforming Effects", () => {
     it.todo("should copy the target's rage fist hit count");
 
     it("should not copy friendship, held items, nickname, level or non-volatile status effects", async () => {
-      game.override.enemyHeldItems([{ name: "BERRY", count: 1, type: BerryType.SITRUS }]);
+      game.override.enemyHeldItems([{ entry: HeldItemId.SITRUS_BERRY }]);
       await game.classicMode.startBattle([SpeciesId.DITTO]);
 
       const ditto = game.field.getPlayerPokemon();

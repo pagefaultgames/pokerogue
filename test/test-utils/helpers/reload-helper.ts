@@ -46,16 +46,6 @@ export class ReloadHelper extends GameManagerHelper {
     scene.phaseManager.unshiftPhase(titlePhase);
     this.game.endPhase(); // End the currently ongoing battle
 
-    // remove all persistent mods before loading
-    // TODO: Look into why these aren't removed before load
-    if (this.game.scene.modifiers.length > 0) {
-      console.log(
-        "Removing %d modifiers from scene on load...",
-        this.game.scene.modifiers.length,
-        this.game.scene.modifiers,
-      );
-      this.game.scene.modifiers = [];
-    }
     titlePhase.loadSaveSlot(-1); // Load the desired session data
     this.game.phaseInterceptor.shiftPhase(); // Loading the save slot also ended TitlePhase, clean it up
 

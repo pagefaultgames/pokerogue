@@ -3,17 +3,13 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { TerrainType } from "#data/terrain";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
+import { HeldItemEffect } from "#enums/held-item-effect";
+import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { WeatherType } from "#enums/weather-type";
 import { TurnEndEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
-import {
-  EnemyStatusEffectHealChanceModifier,
-  EnemyTurnHealModifier,
-  TurnHealModifier,
-  TurnHeldItemTransferModifier,
-  TurnStatusEffectModifier,
-} from "#modifiers/modifier";
 import { FieldPhase } from "#phases/field-phase";
+import { applyHeldItems } from "#utils/items";
 import i18next from "i18next";
 
 export class TurnEndPhase extends FieldPhase {
@@ -33,7 +29,7 @@ export class TurnEndPhase extends FieldPhase {
       if (!pokemon.switchOutStatus) {
         pokemon.lapseTags(BattlerTagLapseType.TURN_END);
 
-        globalScene.applyModifiers(TurnHealModifier, pokemon.isPlayer(), pokemon);
+        applyHeldItems(HeldItemEffect.TURN_END_HEAL, { pokemon });
 
         if (globalScene.arena.terrain?.terrainType === TerrainType.GRASSY && pokemon.isGrounded()) {
           globalScene.phaseManager.unshiftNew(
@@ -48,15 +44,16 @@ export class TurnEndPhase extends FieldPhase {
         }
 
         if (!pokemon.isPlayer()) {
-          globalScene.applyModifiers(EnemyTurnHealModifier, false, pokemon);
-          globalScene.applyModifier(EnemyStatusEffectHealChanceModifier, false, pokemon);
+          globalScene.applyPlayerItems(TrainerItemEffect.ENEMY_HEAL, { pokemon });
+          globalScene.applyPlayerItems(TrainerItemEffect.ENEMY_STATUS_HEAL_CHANCE, { pokemon });
         }
 
         applyAbAttrs("PostTurnAbAttr", { pokemon });
       }
 
-      globalScene.applyModifiers(TurnStatusEffectModifier, pokemon.isPlayer(), pokemon);
-      globalScene.applyModifiers(TurnHeldItemTransferModifier, pokemon.isPlayer(), pokemon);
+      applyHeldItems(HeldItemEffect.TURN_END_STATUS, { pokemon });
+
+      applyHeldItems(HeldItemEffect.TURN_END_ITEM_STEAL, { pokemon });
 
       pokemon.tempSummonData.turnCount++;
       pokemon.tempSummonData.waveTurnCount++;

@@ -1,7 +1,7 @@
 import { AbilityId } from "#enums/ability-id";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { Stat } from "#enums/stat";
 import { WeatherType } from "#enums/weather-type";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
@@ -48,7 +48,7 @@ describe("Ability Activation Order", () => {
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.DROUGHT)
       .ability(AbilityId.DRIZZLE)
-      .startingHeldItems([{ name: "BASE_STAT_BOOSTER", type: Stat.SPD, count: 100 }]);
+      .startingHeldItems([{ entry: HeldItemId.CARBOS, count: 100 }]);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SUNNY);
@@ -61,7 +61,7 @@ describe("Ability Activation Order", () => {
       .enemySpecies(SpeciesId.DITTO)
       .enemyAbility(AbilityId.DROUGHT)
       .ability(AbilityId.DRIZZLE)
-      .startingHeldItems([{ name: "SPECIES_STAT_BOOSTER", type: "QUICK_POWDER" }]);
+      .startingHeldItems([{ entry: HeldItemId.QUICK_POWDER }]);
 
     await game.classicMode.startBattle([SpeciesId.DITTO]);
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SUNNY);

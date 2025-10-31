@@ -1,5 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
@@ -87,7 +88,7 @@ describe("Moves - Beak Blast", () => {
   });
 
   it("should only hit twice with Multi-Lens", async () => {
-    game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
+    game.override.startingHeldItems([{ entry: HeldItemId.MULTI_LENS }]);
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 

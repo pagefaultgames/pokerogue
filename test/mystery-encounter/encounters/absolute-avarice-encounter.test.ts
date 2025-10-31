@@ -1,23 +1,21 @@
 import type { BattleScene } from "#app/battle-scene";
-import { BerryType } from "#enums/berry-type";
 import { BiomeId } from "#enums/biome-id";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
-import { BerryModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
 import { AbsoluteAvariceEncounter } from "#mystery-encounters/absolute-avarice-encounter";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { MovePhase } from "#phases/move-phase";
-import { SelectModifierPhase } from "#phases/select-modifier-phase";
+import { SelectRewardPhase } from "#phases/select-reward-phase";
 import {
   runMysteryEncounterToEnd,
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/mystery-encounter/encounter-test-utils";
 import { GameManager } from "#test/test-utils/game-manager";
-import i18next from "i18next";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/absoluteAvarice";
@@ -76,8 +74,6 @@ describe("Absolute Avarice - Mystery Encounter", () => {
   });
 
   it("should not spawn if player does not have enough berries", async () => {
-    scene.modifiers = [];
-
     await game.runToMysteryEncounter();
 
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.ABSOLUTE_AVARICE);
@@ -85,9 +81,9 @@ describe("Absolute Avarice - Mystery Encounter", () => {
 
   it("should spawn if player has enough berries", async () => {
     game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT).startingHeldItems([
-      { name: "BERRY", count: 2, type: BerryType.SITRUS },
-      { name: "BERRY", count: 3, type: BerryType.GANLON },
-      { name: "BERRY", count: 2, type: BerryType.APICOT },
+      { entry: HeldItemId.SITRUS_BERRY, count: 2 },
+      { entry: HeldItemId.GANLON_BERRY, count: 3 },
+      { entry: HeldItemId.APICOT_BERRY, count: 2 },
     ]);
 
     await game.runToMysteryEncounter();
@@ -97,15 +93,15 @@ describe("Absolute Avarice - Mystery Encounter", () => {
 
   it("should remove all player's berries at the start of the encounter", async () => {
     game.override.startingHeldItems([
-      { name: "BERRY", count: 2, type: BerryType.SITRUS },
-      { name: "BERRY", count: 3, type: BerryType.GANLON },
-      { name: "BERRY", count: 2, type: BerryType.APICOT },
+      { entry: HeldItemId.SITRUS_BERRY, count: 2 },
+      { entry: HeldItemId.GANLON_BERRY, count: 3 },
+      { entry: HeldItemId.APICOT_BERRY, count: 2 },
     ]);
 
     await game.runToMysteryEncounter(MysteryEncounterType.ABSOLUTE_AVARICE, defaultParty);
 
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).toBe(MysteryEncounterType.ABSOLUTE_AVARICE);
-    expect(scene.modifiers?.length).toBe(0);
+    expect(scene.getPlayerParty()[0].getHeldItems().length).toBe(0);
   });
 
   describe("Option 1 - Fight the Greedent", () => {
@@ -146,20 +142,11 @@ describe("Absolute Avarice - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.ABSOLUTE_AVARICE, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(game).toBeAtPhase("SelectModifierPhase");
+      await game.phaseInterceptor.to(SelectRewardPhase, false);
+      expect(game).toBeAtPhase("SelectRewardPhase");
 
       for (const partyPokemon of scene.getPlayerParty()) {
-        const pokemonId = partyPokemon.id;
-        const pokemonItems = scene.findModifiers(
-          m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).pokemonId === pokemonId,
-          true,
-        ) as PokemonHeldItemModifier[];
-        const revSeed = pokemonItems.find(
-          i => i.type.name === i18next.t("modifierType:ModifierType.REVIVER_SEED.name"),
-        );
-        expect(revSeed).toBeDefined;
-        expect(revSeed?.stackCount).toBe(1);
+        expect(partyPokemon.heldItemManager.getStack(HeldItemId.REVIVER_SEED)).toBe(1);
       }
     });
   });
@@ -182,42 +169,36 @@ describe("Absolute Avarice - Mystery Encounter", () => {
 
     it("Should return 3 (2/5ths floored) berries if 8 were stolen", { retry: 5 }, async () => {
       game.override.startingHeldItems([
-        { name: "BERRY", count: 2, type: BerryType.SITRUS },
-        { name: "BERRY", count: 3, type: BerryType.GANLON },
-        { name: "BERRY", count: 3, type: BerryType.APICOT },
+        { entry: HeldItemId.SITRUS_BERRY, count: 2 },
+        { entry: HeldItemId.GANLON_BERRY, count: 3 },
+        { entry: HeldItemId.APICOT_BERRY, count: 3 },
       ]);
 
       await game.runToMysteryEncounter(MysteryEncounterType.ABSOLUTE_AVARICE, defaultParty);
 
       expect(scene.currentBattle?.mysteryEncounter?.encounterType).toBe(MysteryEncounterType.ABSOLUTE_AVARICE);
-      expect(scene.modifiers?.length).toBe(0);
+      expect(scene.getPlayerParty()[0].getHeldItems().length).toBe(0);
 
       await runMysteryEncounterToEnd(game, 2);
 
-      const berriesAfter = scene.findModifiers(m => m instanceof BerryModifier);
-      const berryCountAfter = berriesAfter.reduce((a, b) => a + b.stackCount, 0);
-      expect(berriesAfter).toBeDefined();
-      expect(berryCountAfter).toBe(3);
+      expect(scene.getPlayerParty()[0].heldItemManager.getHeldItemCount()).toBe(3);
     });
 
     it("Should return 2 (2/5ths floored) berries if 7 were stolen", { retry: 5 }, async () => {
       game.override.startingHeldItems([
-        { name: "BERRY", count: 2, type: BerryType.SITRUS },
-        { name: "BERRY", count: 3, type: BerryType.GANLON },
-        { name: "BERRY", count: 2, type: BerryType.APICOT },
+        { entry: HeldItemId.SITRUS_BERRY, count: 2 },
+        { entry: HeldItemId.GANLON_BERRY, count: 3 },
+        { entry: HeldItemId.APICOT_BERRY, count: 2 },
       ]);
 
       await game.runToMysteryEncounter(MysteryEncounterType.ABSOLUTE_AVARICE, defaultParty);
 
       expect(scene.currentBattle?.mysteryEncounter?.encounterType).toBe(MysteryEncounterType.ABSOLUTE_AVARICE);
-      expect(scene.modifiers?.length).toBe(0);
+      expect(scene.getPlayerParty()[0].getHeldItems().length).toBe(0);
 
       await runMysteryEncounterToEnd(game, 2);
 
-      const berriesAfter = scene.findModifiers(m => m instanceof BerryModifier);
-      const berryCountAfter = berriesAfter.reduce((a, b) => a + b.stackCount, 0);
-      expect(berriesAfter).toBeDefined();
-      expect(berryCountAfter).toBe(2);
+      expect(scene.getPlayerParty()[0].heldItemManager.getHeldItemCount()).toBe(2);
     });
 
     it("should leave encounter without battle", async () => {

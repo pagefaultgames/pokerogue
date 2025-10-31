@@ -1,13 +1,13 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { speciesStarterCosts } from "#balance/starters";
-import { modifierTypes } from "#data/data-lists";
+import { allTrainerItems } from "#data/data-lists";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import {
-  generateModifierType,
   leaveEncounterWithoutBattle,
   setEncounterExp,
   updatePlayerMoney,
@@ -109,8 +109,8 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter = MysteryEncounterB
       }
     }
 
-    const shinyCharm = generateModifierType(modifierTypes.SHINY_CHARM);
-    encounter.setDialogueToken("itemName", shinyCharm?.name ?? i18next.t("modifierType:ModifierType.SHINY_CHARM.name"));
+    const name = allTrainerItems[TrainerItemId.SHINY_CHARM].name;
+    encounter.setDialogueToken("itemName", name ?? i18next.t("modifierType:ModifierType.SHINY_CHARM.name"));
     encounter.setDialogueToken("liepardName", getPokemonSpecies(SpeciesId.LIEPARD).getName());
 
     return true;
@@ -136,7 +136,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter = MysteryEncounterB
       })
       .withOptionPhase(async () => {
         // Give the player a Shiny Charm
-        globalScene.phaseManager.unshiftNew("ModifierRewardPhase", modifierTypes.SHINY_CHARM);
+        globalScene.phaseManager.unshiftNew("RewardPhase", TrainerItemId.SHINY_CHARM);
         leaveEncounterWithoutBattle(true);
       })
       .build(),

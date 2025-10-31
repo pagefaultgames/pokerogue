@@ -1,27 +1,24 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { modifierTypes } from "#data/data-lists";
 import { SpeciesFormChangeAbilityTrigger } from "#data/form-change-triggers";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { BerryType } from "#enums/berry-type";
-import { ModifierTier } from "#enums/modifier-tier";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
-import { PokemonType } from "#enums/pokemon-type";
+import { RewardId } from "#enums/reward-id";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
-import { Stat } from "#enums/stat";
 import { TrainerType } from "#enums/trainer-type";
-import type { PokemonHeldItemModifierType } from "#modifiers/modifier-type";
+import type { Reward } from "#items/reward";
+import { generateRewardOptionFromId } from "#items/reward-utils";
 import { showEncounterDialogue, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
-  generateModifierType,
-  generateModifierTypeOption,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
   setEncounterRewards,
@@ -31,6 +28,8 @@ import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
+
+// TODO: make all items unstealable
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/theWinstrateChallenge";
@@ -144,7 +143,7 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter = MysteryEncounter
       // Refuse the challenge, they full heal the party and give the player a Rarer Candy
       globalScene.phaseManager.unshiftNew("PartyHealPhase", true);
       setEncounterRewards({
-        guaranteedModifierTypeFuncs: [modifierTypes.RARER_CANDY],
+        guaranteedRewardSpecs: [RewardId.RARER_CANDY],
         fillRemaining: false,
       });
       leaveEncounterWithoutBattle();
@@ -160,17 +159,17 @@ async function spawnNextTrainerOrEndEncounter() {
     await showEncounterDialogue(`${namespace}:victory`, `${namespace}:speaker`);
 
     // Give 10x Voucher
-    const newModifier = modifierTypes.VOUCHER_PREMIUM().newModifier();
-    globalScene.addModifier(newModifier);
+    const reward = generateRewardOptionFromId(RewardId.VOUCHER_PREMIUM).type;
+    globalScene.applyReward(reward as Reward, {});
     globalScene.playSound("item_fanfare");
-    await showEncounterText(i18next.t("battle:rewardGain", { modifierName: newModifier?.type.name }));
+    await showEncounterText(i18next.t("battle:rewardGain", { modifierName: (reward as Reward).name }));
 
     await showEncounterDialogue(`${namespace}:victory2`, `${namespace}:speaker`);
     globalScene.ui.clearText(); // Clears "Winstrate" title from screen as rewards get animated in
-    const machoBrace = generateModifierTypeOption(modifierTypes.MYSTERY_ENCOUNTER_MACHO_BRACE)!;
-    machoBrace.type.tier = ModifierTier.MASTER;
+    const machoBrace = generateRewardOptionFromId(HeldItemId.MACHO_BRACE)!;
+    machoBrace.type.tier = RarityTier.MASTER;
     setEncounterRewards({
-      guaranteedModifierTypeOptions: [machoBrace],
+      guaranteedRewardOptions: [machoBrace],
       fillRemaining: false,
     });
     encounter.doContinueEncounter = undefined;
@@ -260,16 +259,9 @@ function getVictorTrainerConfig(): EnemyPartyConfig {
         abilityIndex: 0, // Guts
         nature: Nature.ADAMANT,
         moveSet: [MoveId.FACADE, MoveId.BRAVE_BIRD, MoveId.PROTECT, MoveId.QUICK_ATTACK],
-        modifierConfigs: [
-          {
-            modifier: generateModifierType(modifierTypes.FLAME_ORB) as PokemonHeldItemModifierType,
-            isTransferable: false,
-          },
-          {
-            modifier: generateModifierType(modifierTypes.FOCUS_BAND) as PokemonHeldItemModifierType,
-            stackCount: 2,
-            isTransferable: false,
-          },
+        heldItemConfig: [
+          { entry: HeldItemId.FLAME_ORB, count: 1 },
+          { entry: HeldItemId.FOCUS_BAND, count: 2 },
         ],
       },
       {
@@ -278,16 +270,9 @@ function getVictorTrainerConfig(): EnemyPartyConfig {
         abilityIndex: 1, // Guts
         nature: Nature.ADAMANT,
         moveSet: [MoveId.FACADE, MoveId.OBSTRUCT, MoveId.NIGHT_SLASH, MoveId.FIRE_PUNCH],
-        modifierConfigs: [
-          {
-            modifier: generateModifierType(modifierTypes.FLAME_ORB) as PokemonHeldItemModifierType,
-            isTransferable: false,
-          },
-          {
-            modifier: generateModifierType(modifierTypes.LEFTOVERS) as PokemonHeldItemModifierType,
-            stackCount: 2,
-            isTransferable: false,
-          },
+        heldItemConfig: [
+          { entry: HeldItemId.FLAME_ORB, count: 1 },
+          { entry: HeldItemId.LEFTOVERS, count: 2 },
         ],
       },
     ],
@@ -304,16 +289,9 @@ function getVictoriaTrainerConfig(): EnemyPartyConfig {
         abilityIndex: 0, // Natural Cure
         nature: Nature.CALM,
         moveSet: [MoveId.SYNTHESIS, MoveId.SLUDGE_BOMB, MoveId.GIGA_DRAIN, MoveId.SLEEP_POWDER],
-        modifierConfigs: [
-          {
-            modifier: generateModifierType(modifierTypes.SOUL_DEW) as PokemonHeldItemModifierType,
-            isTransferable: false,
-          },
-          {
-            modifier: generateModifierType(modifierTypes.QUICK_CLAW) as PokemonHeldItemModifierType,
-            stackCount: 2,
-            isTransferable: false,
-          },
+        heldItemConfig: [
+          { entry: HeldItemId.SOUL_DEW, count: 1 },
+          { entry: HeldItemId.QUICK_CLAW, count: 2 },
         ],
       },
       {
@@ -322,21 +300,9 @@ function getVictoriaTrainerConfig(): EnemyPartyConfig {
         formIndex: 1,
         nature: Nature.TIMID,
         moveSet: [MoveId.PSYSHOCK, MoveId.MOONBLAST, MoveId.SHADOW_BALL, MoveId.WILL_O_WISP],
-        modifierConfigs: [
-          {
-            modifier: generateModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, [
-              PokemonType.PSYCHIC,
-            ]) as PokemonHeldItemModifierType,
-            stackCount: 1,
-            isTransferable: false,
-          },
-          {
-            modifier: generateModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, [
-              PokemonType.FAIRY,
-            ]) as PokemonHeldItemModifierType,
-            stackCount: 1,
-            isTransferable: false,
-          },
+        heldItemConfig: [
+          { entry: HeldItemId.TWISTED_SPOON, count: 1 },
+          { entry: HeldItemId.FAIRY_FEATHER, count: 1 },
         ],
       },
     ],
@@ -353,17 +319,9 @@ function getViviTrainerConfig(): EnemyPartyConfig {
         abilityIndex: 3, // Lightning Rod
         nature: Nature.ADAMANT,
         moveSet: [MoveId.WATERFALL, MoveId.MEGAHORN, MoveId.KNOCK_OFF, MoveId.REST],
-        modifierConfigs: [
-          {
-            modifier: generateModifierType(modifierTypes.BERRY, [BerryType.LUM]) as PokemonHeldItemModifierType,
-            stackCount: 2,
-            isTransferable: false,
-          },
-          {
-            modifier: generateModifierType(modifierTypes.BASE_STAT_BOOSTER, [Stat.HP]) as PokemonHeldItemModifierType,
-            stackCount: 4,
-            isTransferable: false,
-          },
+        heldItemConfig: [
+          { entry: HeldItemId.LUM_BERRY, count: 2 },
+          { entry: HeldItemId.HP_UP, count: 4 },
         ],
       },
       {
@@ -372,16 +330,9 @@ function getViviTrainerConfig(): EnemyPartyConfig {
         abilityIndex: 1, // Poison Heal
         nature: Nature.JOLLY,
         moveSet: [MoveId.SPORE, MoveId.SWORDS_DANCE, MoveId.SEED_BOMB, MoveId.DRAIN_PUNCH],
-        modifierConfigs: [
-          {
-            modifier: generateModifierType(modifierTypes.BASE_STAT_BOOSTER, [Stat.HP]) as PokemonHeldItemModifierType,
-            stackCount: 4,
-            isTransferable: false,
-          },
-          {
-            modifier: generateModifierType(modifierTypes.TOXIC_ORB) as PokemonHeldItemModifierType,
-            isTransferable: false,
-          },
+        heldItemConfig: [
+          { entry: HeldItemId.HP_UP, count: 4 },
+          { entry: HeldItemId.TOXIC_ORB, count: 1 },
         ],
       },
       {
@@ -390,13 +341,7 @@ function getViviTrainerConfig(): EnemyPartyConfig {
         formIndex: 1,
         nature: Nature.CALM,
         moveSet: [MoveId.EARTH_POWER, MoveId.FIRE_BLAST, MoveId.YAWN, MoveId.PROTECT],
-        modifierConfigs: [
-          {
-            modifier: generateModifierType(modifierTypes.QUICK_CLAW) as PokemonHeldItemModifierType,
-            stackCount: 3,
-            isTransferable: false,
-          },
-        ],
+        heldItemConfig: [{ entry: HeldItemId.QUICK_CLAW, count: 3 }],
       },
     ],
   };
@@ -412,12 +357,7 @@ function getVickyTrainerConfig(): EnemyPartyConfig {
         formIndex: 1,
         nature: Nature.IMPISH,
         moveSet: [MoveId.AXE_KICK, MoveId.ICE_PUNCH, MoveId.ZEN_HEADBUTT, MoveId.BULLET_PUNCH],
-        modifierConfigs: [
-          {
-            modifier: generateModifierType(modifierTypes.SHELL_BELL) as PokemonHeldItemModifierType,
-            isTransferable: false,
-          },
-        ],
+        heldItemConfig: [{ entry: HeldItemId.SHELL_BELL, count: 1 }],
       },
     ],
   };
@@ -433,13 +373,7 @@ function getVitoTrainerConfig(): EnemyPartyConfig {
         abilityIndex: 0, // Soundproof
         nature: Nature.MODEST,
         moveSet: [MoveId.THUNDERBOLT, MoveId.GIGA_DRAIN, MoveId.FOUL_PLAY, MoveId.THUNDER_WAVE],
-        modifierConfigs: [
-          {
-            modifier: generateModifierType(modifierTypes.BASE_STAT_BOOSTER, [Stat.SPD]) as PokemonHeldItemModifierType,
-            stackCount: 2,
-            isTransferable: false,
-          },
-        ],
+        heldItemConfig: [{ entry: HeldItemId.ZINC, count: 2 }],
       },
       {
         species: getPokemonSpecies(SpeciesId.SWALOT),
@@ -447,51 +381,18 @@ function getVitoTrainerConfig(): EnemyPartyConfig {
         abilityIndex: 2, // Gluttony
         nature: Nature.QUIET,
         moveSet: [MoveId.SLUDGE_BOMB, MoveId.GIGA_DRAIN, MoveId.ICE_BEAM, MoveId.EARTHQUAKE],
-        modifierConfigs: [
-          {
-            modifier: generateModifierType(modifierTypes.BERRY, [BerryType.SITRUS]) as PokemonHeldItemModifierType,
-            stackCount: 2,
-          },
-          {
-            modifier: generateModifierType(modifierTypes.BERRY, [BerryType.APICOT]) as PokemonHeldItemModifierType,
-            stackCount: 2,
-          },
-          {
-            modifier: generateModifierType(modifierTypes.BERRY, [BerryType.GANLON]) as PokemonHeldItemModifierType,
-            stackCount: 2,
-          },
-          {
-            modifier: generateModifierType(modifierTypes.BERRY, [BerryType.STARF]) as PokemonHeldItemModifierType,
-            stackCount: 2,
-          },
-          {
-            modifier: generateModifierType(modifierTypes.BERRY, [BerryType.SALAC]) as PokemonHeldItemModifierType,
-            stackCount: 2,
-          },
-          {
-            modifier: generateModifierType(modifierTypes.BERRY, [BerryType.LUM]) as PokemonHeldItemModifierType,
-            stackCount: 2,
-          },
-          {
-            modifier: generateModifierType(modifierTypes.BERRY, [BerryType.LANSAT]) as PokemonHeldItemModifierType,
-            stackCount: 2,
-          },
-          {
-            modifier: generateModifierType(modifierTypes.BERRY, [BerryType.LIECHI]) as PokemonHeldItemModifierType,
-            stackCount: 2,
-          },
-          {
-            modifier: generateModifierType(modifierTypes.BERRY, [BerryType.PETAYA]) as PokemonHeldItemModifierType,
-            stackCount: 2,
-          },
-          {
-            modifier: generateModifierType(modifierTypes.BERRY, [BerryType.ENIGMA]) as PokemonHeldItemModifierType,
-            stackCount: 2,
-          },
-          {
-            modifier: generateModifierType(modifierTypes.BERRY, [BerryType.LEPPA]) as PokemonHeldItemModifierType,
-            stackCount: 2,
-          },
+        heldItemConfig: [
+          { entry: HeldItemId.SITRUS_BERRY, count: 2 },
+          { entry: HeldItemId.APICOT_BERRY, count: 2 },
+          { entry: HeldItemId.GANLON_BERRY, count: 2 },
+          { entry: HeldItemId.STARF_BERRY, count: 2 },
+          { entry: HeldItemId.SALAC_BERRY, count: 2 },
+          { entry: HeldItemId.LUM_BERRY, count: 2 },
+          { entry: HeldItemId.LANSAT_BERRY, count: 2 },
+          { entry: HeldItemId.LIECHI_BERRY, count: 2 },
+          { entry: HeldItemId.PETAYA_BERRY, count: 2 },
+          { entry: HeldItemId.ENIGMA_BERRY, count: 2 },
+          { entry: HeldItemId.LEPPA_BERRY, count: 2 },
         ],
       },
       {
@@ -500,13 +401,7 @@ function getVitoTrainerConfig(): EnemyPartyConfig {
         abilityIndex: 2, // Tangled Feet
         nature: Nature.JOLLY,
         moveSet: [MoveId.DRILL_PECK, MoveId.QUICK_ATTACK, MoveId.THRASH, MoveId.KNOCK_OFF],
-        modifierConfigs: [
-          {
-            modifier: generateModifierType(modifierTypes.KINGS_ROCK) as PokemonHeldItemModifierType,
-            stackCount: 2,
-            isTransferable: false,
-          },
-        ],
+        heldItemConfig: [{ entry: HeldItemId.KINGS_ROCK, count: 2 }],
       },
       {
         species: getPokemonSpecies(SpeciesId.ALAKAZAM),
@@ -514,13 +409,7 @@ function getVitoTrainerConfig(): EnemyPartyConfig {
         formIndex: 1,
         nature: Nature.BOLD,
         moveSet: [MoveId.PSYCHIC, MoveId.SHADOW_BALL, MoveId.FOCUS_BLAST, MoveId.THUNDERBOLT],
-        modifierConfigs: [
-          {
-            modifier: generateModifierType(modifierTypes.WIDE_LENS) as PokemonHeldItemModifierType,
-            stackCount: 2,
-            isTransferable: false,
-          },
-        ],
+        heldItemConfig: [{ entry: HeldItemId.WIDE_LENS, count: 2 }],
       },
       {
         species: getPokemonSpecies(SpeciesId.DARMANITAN),
@@ -528,13 +417,7 @@ function getVitoTrainerConfig(): EnemyPartyConfig {
         abilityIndex: 0, // Sheer Force
         nature: Nature.IMPISH,
         moveSet: [MoveId.EARTHQUAKE, MoveId.U_TURN, MoveId.FLARE_BLITZ, MoveId.ROCK_SLIDE],
-        modifierConfigs: [
-          {
-            modifier: generateModifierType(modifierTypes.QUICK_CLAW) as PokemonHeldItemModifierType,
-            stackCount: 2,
-            isTransferable: false,
-          },
-        ],
+        heldItemConfig: [{ entry: HeldItemId.QUICK_CLAW, count: 2 }],
       },
     ],
   };

@@ -2,12 +2,12 @@ import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { BerryType } from "#enums/berry-type";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import type { Pokemon } from "#field/pokemon";
-import type { ContactHeldItemTransferChanceModifier } from "#modifiers/modifier";
 import { StealHeldItemChanceAttr } from "#moves/move";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
@@ -21,7 +21,7 @@ describe("Abilities - Unburden", () => {
    * Count the number of held items a Pokemon has, accounting for stacks of multiple items.
    */
   function getHeldItemCount(pokemon: Pokemon): number {
-    const stackCounts = pokemon.getHeldItems().map(m => m.getStackCount());
+    const stackCounts = pokemon.getHeldItems().map(t => pokemon.heldItemManager.getStack(t));
     return stackCounts.reduce((a, b) => a + b, 0);
   }
 
@@ -43,19 +43,16 @@ describe("Abilities - Unburden", () => {
       .ability(AbilityId.UNBURDEN)
       .moveset([MoveId.SPLASH, MoveId.KNOCK_OFF, MoveId.PLUCK, MoveId.FALSE_SWIPE])
       .startingHeldItems([
-        { name: "BERRY", count: 1, type: BerryType.SITRUS },
-        { name: "BERRY", count: 2, type: BerryType.APICOT },
-        { name: "BERRY", count: 2, type: BerryType.LUM },
+        { entry: HeldItemId.SITRUS_BERRY },
+        { entry: HeldItemId.APICOT_BERRY, count: 2 },
+        { entry: HeldItemId.LUM_BERRY, count: 2 },
       ])
       .enemySpecies(SpeciesId.NINJASK)
       .enemyLevel(100)
       .enemyMoveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.UNBURDEN)
       .enemyPassiveAbility(AbilityId.NO_GUARD)
-      .enemyHeldItems([
-        { name: "BERRY", type: BerryType.SITRUS, count: 1 },
-        { name: "BERRY", type: BerryType.LUM, count: 1 },
-      ]);
+      .enemyHeldItems([{ entry: HeldItemId.SITRUS_BERRY }, { entry: HeldItemId.LUM_BERRY }]);
     // For the various tests that use Thief, give it a 100% steal rate
     vi.spyOn(allMoves[MoveId.THIEF], "attrs", "get").mockReturnValue([new StealHeldItemChanceAttr(1.0)]);
   });
@@ -77,7 +74,9 @@ describe("Abilities - Unburden", () => {
   });
 
   it("should activate when a berry is eaten, even if Berry Pouch preserves the berry", async () => {
-    game.override.enemyMoveset(MoveId.FALSE_SWIPE).startingModifier([{ name: "BERRY_POUCH", count: 5850 }]);
+    game.override
+      .enemyMoveset(MoveId.FALSE_SWIPE)
+      .startingTrainerItems([{ entry: TrainerItemId.BERRY_POUCH, count: 5850 }]);
     await game.classicMode.startBattle([SpeciesId.TREECKO]);
 
     const playerPokemon = game.field.getPlayerPokemon();
@@ -174,12 +173,8 @@ describe("Abilities - Unburden", () => {
   });
 
   it("should activate when an item is stolen via grip claw", async () => {
-    game.override.startingHeldItems([{ name: "GRIP_CLAW", count: 1 }]);
+    game.override.startingHeldItems([{ entry: HeldItemId.GRIP_CLAW, count: 10 }]);
     await game.classicMode.startBattle([SpeciesId.TREECKO]);
-
-    const playerPokemon = game.field.getPlayerPokemon();
-    const gripClaw = playerPokemon.getHeldItems()[0] as ContactHeldItemTransferChanceModifier;
-    vi.spyOn(gripClaw, "chance", "get").mockReturnValue(100);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     const enemyHeldItemCt = getHeldItemCount(enemyPokemon);
@@ -267,7 +262,7 @@ describe("Abilities - Unburden", () => {
   });
 
   it("should not activate when passing a baton to a teammate switching in", async () => {
-    game.override.startingHeldItems([{ name: "BATON" }]).moveset(MoveId.BATON_PASS);
+    game.override.startingHeldItems([{ entry: HeldItemId.BATON }]).moveset(MoveId.BATON_PASS);
     await game.classicMode.startBattle([SpeciesId.TREECKO, SpeciesId.PURRLOIN]);
 
     const [treecko, purrloin] = game.scene.getPlayerParty();
@@ -314,7 +309,7 @@ describe("Abilities - Unburden", () => {
   });
 
   it("should activate when a reviver seed is used", async () => {
-    game.override.startingHeldItems([{ name: "REVIVER_SEED" }]).enemyMoveset([MoveId.WING_ATTACK]);
+    game.override.startingHeldItems([{ entry: HeldItemId.REVIVER_SEED }]).enemyMoveset([MoveId.WING_ATTACK]);
     await game.classicMode.startBattle([SpeciesId.TREECKO]);
 
     const playerPokemon = game.field.getPlayerPokemon();
@@ -359,7 +354,7 @@ describe("Abilities - Unburden", () => {
       .battleStyle("double")
       .enemyMoveset([MoveId.SPLASH, MoveId.THIEF])
       .moveset([MoveId.SPLASH, MoveId.REVIVAL_BLESSING])
-      .startingHeldItems([{ name: "WIDE_LENS" }]);
+      .startingHeldItems([{ entry: HeldItemId.WIDE_LENS }]);
     await game.classicMode.startBattle([SpeciesId.TREECKO, SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
 
     const treecko = game.field.getPlayerPokemon();

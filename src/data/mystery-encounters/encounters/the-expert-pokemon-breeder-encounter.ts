@@ -1,12 +1,12 @@
 import { globalScene } from "#app/global-scene";
 import { speciesStarterCosts } from "#balance/starters";
-import { modifierTypes } from "#data/data-lists";
 import type { IEggOptions } from "#data/egg";
 import { getPokeballTintColor } from "#data/pokeball";
 import { BiomeId } from "#enums/biome-id";
 import { Challenges } from "#enums/challenges";
 import { EggSourceType } from "#enums/egg-source-types";
 import { EggTier } from "#enums/egg-type";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -16,11 +16,9 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import type { PlayerPokemon } from "#field/pokemon";
-import type { PokemonHeldItemModifierType } from "#modifiers/modifier-type";
 import { getEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
-  generateModifierType,
   handleMysteryEncounterBattleFailed,
   initBattleWithEnemyConfig,
   setEncounterRewards,
@@ -306,7 +304,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
         const eggOptions = getEggOptions(pokemon1CommonEggs, pokemon1RareEggs);
         setEncounterRewards(
           {
-            guaranteedModifierTypeFuncs: [modifierTypes.SOOTHE_BELL],
+            guaranteedRewardSpecs: [HeldItemId.SOOTHE_BELL],
             fillRemaining: true,
           },
           eggOptions,
@@ -365,7 +363,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
         const eggOptions = getEggOptions(pokemon2CommonEggs, pokemon2RareEggs);
         setEncounterRewards(
           {
-            guaranteedModifierTypeFuncs: [modifierTypes.SOOTHE_BELL],
+            guaranteedRewardSpecs: [HeldItemId.SOOTHE_BELL],
             fillRemaining: true,
           },
           eggOptions,
@@ -424,7 +422,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
         const eggOptions = getEggOptions(pokemon3CommonEggs, pokemon3RareEggs);
         setEncounterRewards(
           {
-            guaranteedModifierTypeFuncs: [modifierTypes.SOOTHE_BELL],
+            guaranteedRewardSpecs: [HeldItemId.SOOTHE_BELL],
             fillRemaining: true,
           },
           eggOptions,
@@ -496,10 +494,10 @@ function getPartyConfig(): EnemyPartyConfig {
         nature: Nature.ADAMANT,
         moveSet: [MoveId.FIRE_PUNCH, MoveId.ICE_PUNCH, MoveId.THUNDER_PUNCH, MoveId.METEOR_MASH],
         ivs: [31, 31, 31, 31, 31, 31],
-        modifierConfigs: [
+        heldItemConfig: [
           {
-            modifier: generateModifierType(modifierTypes.SOOTHE_BELL) as PokemonHeldItemModifierType,
-            stackCount: 3,
+            entry: HeldItemId.SOOTHE_BELL,
+            count: 3,
           },
         ],
         tera: PokemonType.FAIRY,
@@ -523,10 +521,10 @@ function getPartyConfig(): EnemyPartyConfig {
         nature: Nature.MODEST,
         moveSet: [MoveId.DAZZLING_GLEAM, MoveId.MYSTICAL_FIRE, MoveId.ICE_BEAM, MoveId.THUNDERBOLT], // Make this one have an item gimmick when we have more items/finish implementations
         ivs: [31, 31, 31, 31, 31, 31],
-        modifierConfigs: [
+        heldItemConfig: [
           {
-            modifier: generateModifierType(modifierTypes.SOOTHE_BELL) as PokemonHeldItemModifierType,
-            stackCount: 3,
+            entry: HeldItemId.SOOTHE_BELL,
+            count: 3,
           },
         ],
         friendship: 255,
@@ -543,10 +541,10 @@ function getPartyConfig(): EnemyPartyConfig {
         nature: Nature.BOLD,
         moveSet: [MoveId.TRI_ATTACK, MoveId.STORED_POWER, MoveId.CALM_MIND, MoveId.MOONLIGHT],
         ivs: [31, 31, 31, 31, 31, 31],
-        modifierConfigs: [
+        heldItemConfig: [
           {
-            modifier: generateModifierType(modifierTypes.SOOTHE_BELL) as PokemonHeldItemModifierType,
-            stackCount: 3,
+            entry: HeldItemId.SOOTHE_BELL,
+            count: 3,
           },
         ],
         friendship: 255,
@@ -562,20 +560,20 @@ function getPartyConfig(): EnemyPartyConfig {
       {
         species: getPokemonSpecies(pool1Species),
         isBoss: false,
-        modifierConfigs: [
+        heldItemConfig: [
           {
-            modifier: generateModifierType(modifierTypes.SOOTHE_BELL) as PokemonHeldItemModifierType,
-            stackCount: 3,
+            entry: HeldItemId.SOOTHE_BELL,
+            count: 3,
           },
         ],
       },
       {
         species: getPokemonSpecies(pool2Species),
         isBoss: false,
-        modifierConfigs: [
+        heldItemConfig: [
           {
-            modifier: generateModifierType(modifierTypes.SOOTHE_BELL) as PokemonHeldItemModifierType,
-            stackCount: 3,
+            entry: HeldItemId.SOOTHE_BELL,
+            count: 3,
           },
         ],
       },
@@ -657,7 +655,6 @@ function removePokemonFromPartyAndStoreHeldItems(encounter: MysteryEncounter, ch
   party[chosenIndex] = party[0];
   party[0] = chosenPokemon;
   encounter.misc.originalParty = globalScene.getPlayerParty().slice(1);
-  encounter.misc.originalPartyHeldItems = encounter.misc.originalParty.map(p => p.getHeldItems());
   globalScene["party"] = [chosenPokemon];
 }
 
@@ -666,14 +663,7 @@ function restorePartyAndHeldItems() {
   // Restore original party
   globalScene.getPlayerParty().push(...encounter.misc.originalParty);
 
-  // Restore held items
-  const originalHeldItems = encounter.misc.originalPartyHeldItems;
-  for (const pokemonHeldItemsList of originalHeldItems) {
-    for (const heldItem of pokemonHeldItemsList) {
-      globalScene.addModifier(heldItem, true, false, false, true);
-    }
-  }
-  globalScene.updateModifiers(true);
+  globalScene.updateItems(true);
 }
 
 function onGameOver() {

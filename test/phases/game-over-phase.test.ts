@@ -36,7 +36,7 @@ describe("Game Over Phase", () => {
       .startingLevel(10000);
   });
 
-  it("winning a run should give rewards", async () => {
+  it("winning a run should give allRewards", async () => {
     await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
     vi.spyOn(game.scene, "validateAchv");
 
@@ -53,13 +53,13 @@ describe("Game Over Phase", () => {
     // so the best we can do is to check that their reward phases occurred.
     expect(game.phaseInterceptor.log.includes("GameOverPhase")).toBe(true);
     expect(game.phaseInterceptor.log.includes("UnlockPhase")).toBe(true);
-    expect(game.phaseInterceptor.log.includes("RibbonModifierRewardPhase")).toBe(true);
+    expect(game.phaseInterceptor.log.includes("RibbonRewardPhase")).toBe(true);
     expect(game.scene.gameData.unlocks[Unlockables.ENDLESS_MODE]).toBe(true);
     expect(game.scene.validateAchv).toHaveBeenCalledWith(achvs.CLASSIC_VICTORY);
     expect(game.scene.gameData.achvUnlocks[achvs.CLASSIC_VICTORY.id]).toBeTruthy();
   });
 
-  it("losing a run should not give rewards", async () => {
+  it("losing a run should not give allRewards", async () => {
     await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
     vi.spyOn(game.scene, "validateAchv");
 
@@ -68,8 +68,8 @@ describe("Game Over Phase", () => {
 
     expect(game.phaseInterceptor.log.includes("GameOverPhase")).toBe(true);
     expect(game.phaseInterceptor.log.includes("UnlockPhase")).toBe(false);
-    expect(game.phaseInterceptor.log.includes("RibbonModifierRewardPhase")).toBe(false);
-    expect(game.phaseInterceptor.log.includes("GameOverModifierRewardPhase")).toBe(false);
+    expect(game.phaseInterceptor.log.includes("RibbonRewardPhase")).toBe(false);
+    expect(game.phaseInterceptor.log.includes("GameOverRewardPhase")).toBe(false);
     expect(game.scene.gameData.unlocks[Unlockables.ENDLESS_MODE]).toBe(false);
     expect(game.scene.validateAchv).not.toHaveBeenCalledWith(achvs.CLASSIC_VICTORY);
     expect(game.scene.gameData.achvUnlocks[achvs.CLASSIC_VICTORY.id]).toBeFalsy();

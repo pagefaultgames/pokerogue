@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { ArenaTagType } from "#enums/arena-tag-type";
-import { MoneyMultiplierModifier } from "#modifiers/modifier";
+import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { BattlePhase } from "#phases/battle-phase";
 import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
@@ -18,7 +18,7 @@ export class MoneyRewardPhase extends BattlePhase {
   start() {
     const moneyAmount = new NumberHolder(globalScene.getWaveMoneyAmount(this.moneyMultiplier));
 
-    globalScene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
+    globalScene.applyPlayerItems(TrainerItemEffect.MONEY_MULTIPLIER, { numberHolder: moneyAmount });
 
     if (globalScene.arena.getTag(ArenaTagType.HAPPY_HOUR)) {
       moneyAmount.value *= 2;

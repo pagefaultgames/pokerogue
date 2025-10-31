@@ -1,3 +1,4 @@
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { TurnEndPhase } from "#phases/turn-end-phase";
@@ -26,7 +27,7 @@ describe("Items - Scope Lens", () => {
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyMoveset(MoveId.SPLASH)
       .moveset([MoveId.POUND])
-      .startingHeldItems([{ name: "SCOPE_LENS" }])
+      .startingHeldItems([{ entry: HeldItemId.SCOPE_LENS }])
       .battleStyle("single");
   });
 

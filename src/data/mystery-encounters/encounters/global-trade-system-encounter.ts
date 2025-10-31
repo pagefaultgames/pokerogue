@@ -1,27 +1,28 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { allSpecies } from "#data/data-lists";
+import { allHeldItems, allSpecies } from "#data/data-lists";
 import { Gender, getGenderSymbol } from "#data/gender";
+import { getHeldItemTier } from "#data/items/held-item-default-tiers";
 import { getNatureName } from "#data/nature";
 import { getPokeballAtlasKey, getPokeballTintColor } from "#data/pokeball";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { getTypeRgb } from "#data/type";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
-import { ModifierTier } from "#enums/modifier-tier";
+import { HeldItemCategoryId, type HeldItemId, isItemInCategory } from "#enums/held-item-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { PokeballType } from "#enums/pokeball";
+import { RewardPoolType } from "#enums/reward-pool-type";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { doShinySparkleAnim } from "#field/anims";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { EnemyPokemon } from "#field/pokemon";
-import type { PokemonHeldItemModifier } from "#modifiers/modifier";
-import { PokemonFormChangeItemModifier, SpeciesStatBoosterModifier } from "#modifiers/modifier";
-import type { ModifierTypeOption } from "#modifiers/modifier-type";
-import { getPlayerModifierTypeOptions, regenerateModifierPoolThresholds } from "#modifiers/modifier-type";
+import type { RewardOption } from "#items/reward";
+import { generatePlayerRewardOptions, generateRewardPoolWeights, getRewardPoolForType } from "#items/reward-pool-utils";
+import { isTmReward } from "#items/reward-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import { getEncounterText, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import {
@@ -209,9 +210,9 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         const tradedPokemon: PlayerPokemon = encounter.misc.tradedPokemon;
         const receivedPokemonData: EnemyPokemon = encounter.misc.receivedPokemon;
-        const modifiers = tradedPokemon
-          .getHeldItems()
-          .filter(m => !(m instanceof PokemonFormChangeItemModifier) && !(m instanceof SpeciesStatBoosterModifier));
+        const heldItemConfig = tradedPokemon.heldItemManager
+          .generateHeldItemConfiguration()
+          .filter(ic => !isItemInCategory(ic.entry as HeldItemId, HeldItemCategoryId.SPECIES_STAT_BOOSTER));
 
         // Generate a trainer name
         const traderName = generateRandomTraderName();
@@ -235,15 +236,11 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
           dataSource.variant,
           dataSource.ivs,
           dataSource.nature,
+          heldItemConfig,
           dataSource,
         );
         globalScene.getPlayerParty().push(newPlayerPokemon);
         await newPlayerPokemon.loadAssets();
-
-        for (const mod of modifiers) {
-          mod.pokemonId = newPlayerPokemon.id;
-          globalScene.addModifier(mod, true, false, false, true);
-        }
 
         // Show the trade animation
         await showTradeBackground();
@@ -314,9 +311,9 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         const tradedPokemon: PlayerPokemon = encounter.misc.tradedPokemon;
         const receivedPokemonData: EnemyPokemon = encounter.misc.receivedPokemon;
-        const modifiers = tradedPokemon
-          .getHeldItems()
-          .filter(m => !(m instanceof PokemonFormChangeItemModifier) && !(m instanceof SpeciesStatBoosterModifier));
+        const heldItemConfig = tradedPokemon.heldItemManager
+          .generateHeldItemConfiguration()
+          .filter(ic => !isItemInCategory(ic.entry as HeldItemId, HeldItemCategoryId.SPECIES_STAT_BOOSTER));
 
         // Generate a trainer name
         const traderName = generateRandomTraderName();
@@ -339,15 +336,11 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
           dataSource.variant,
           dataSource.ivs,
           dataSource.nature,
+          heldItemConfig,
           dataSource,
         );
         globalScene.getPlayerParty().push(newPlayerPokemon);
         await newPlayerPokemon.loadAssets();
-
-        for (const mod of modifiers) {
-          mod.pokemonId = newPlayerPokemon.id;
-          globalScene.addModifier(mod, true, false, false, true);
-        }
 
         // Show the trade animation
         await showTradeBackground();
@@ -373,17 +366,15 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           // Get Pokemon held items and filter for valid ones
-          const validItems = pokemon.getHeldItems().filter(it => {
-            return it.isTransferable;
-          });
+          const validItems = pokemon.heldItemManager.getTransferableHeldItems();
 
-          return validItems.map((modifier: PokemonHeldItemModifier) => {
+          return validItems.map((id: HeldItemId) => {
             const option: OptionSelectItem = {
-              label: modifier.type.name,
+              label: allHeldItems[id].name,
               handler: () => {
                 // Pokemon and item selected
-                encounter.setDialogueToken("chosenItem", modifier.type.name);
-                encounter.misc.chosenModifier = modifier;
+                encounter.setDialogueToken("chosenItem", allHeldItems[id].name);
+                encounter.misc.chosenHeldItem = id;
                 encounter.misc.chosenPokemon = pokemon;
                 return true;
               },
@@ -394,10 +385,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
 
         const selectableFilter = (pokemon: Pokemon) => {
           // If pokemon has items to trade
-          const meetsReqs =
-            pokemon.getHeldItems().filter(it => {
-              return it.isTransferable;
-            }).length > 0;
+          const meetsReqs = pokemon.heldItemManager.getTransferableHeldItems().length > 0;
           if (!meetsReqs) {
             return getEncounterText(`${namespace}:option.3.invalidSelection`) ?? null;
           }
@@ -409,44 +397,36 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
       })
       .withOptionPhase(async () => {
         const encounter = globalScene.currentBattle.mysteryEncounter!;
-        const modifier = encounter.misc.chosenModifier as PokemonHeldItemModifier;
+        const heldItemId = encounter.misc.chosenHeldItem as HeldItemId;
         const party = globalScene.getPlayerParty();
         const chosenPokemon: PlayerPokemon = encounter.misc.chosenPokemon;
 
         // Check tier of the traded item, the received item will be one tier up
-        const type = modifier.type.withTierFromPool(ModifierPoolType.PLAYER, party);
-        let tier = type.tier ?? ModifierTier.GREAT;
-        // Eggs and White Herb are not in the pool
-        if (type.id === "WHITE_HERB") {
-          tier = ModifierTier.GREAT;
-        } else if (type.id === "LUCKY_EGG") {
-          tier = ModifierTier.ULTRA;
-        } else if (type.id === "GOLDEN_EGG") {
-          tier = ModifierTier.ROGUE;
-        }
+        let tier = getHeldItemTier(heldItemId) ?? RarityTier.GREAT;
+
         // Increment tier by 1
-        if (tier < ModifierTier.MASTER) {
+        if (tier < RarityTier.MASTER) {
           tier++;
         }
 
-        regenerateModifierPoolThresholds(party, ModifierPoolType.PLAYER, 0);
-        let item: ModifierTypeOption | null = null;
+        generateRewardPoolWeights(getRewardPoolForType(RewardPoolType.PLAYER), party, 0);
+        let item: RewardOption | null = null;
         // TMs excluded from possible rewards
-        while (!item || item.type.id.includes("TM_")) {
-          item = getPlayerModifierTypeOptions(1, party, [], {
-            guaranteedModifierTiers: [tier],
+        while (!item || isTmReward(item.type)) {
+          item = generatePlayerRewardOptions(1, party, [], {
+            guaranteedRarityTiers: [tier],
             allowLuckUpgrades: false,
           })[0];
         }
 
         encounter.setDialogueToken("itemName", item.type.name);
         setEncounterRewards({
-          guaranteedModifierTypeOptions: [item],
+          guaranteedRewardOptions: [item],
           fillRemaining: false,
         });
 
-        chosenPokemon.loseHeldItem(modifier, false);
-        await globalScene.updateModifiers(true, true);
+        chosenPokemon.heldItemManager.remove(heldItemId);
+        await globalScene.updateItems(true);
 
         // Generate a trainer name
         const traderName = generateRandomTraderName();
