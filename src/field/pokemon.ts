@@ -2928,11 +2928,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param maxThreshold The maximum threshold allowed after applying modifiers
    * @returns Whether this Pokémon was set to shiny
    */
-  public trySetShinySeed(
-    thresholdOverride?: number,
-    applyItemsToOverride?: boolean,
-    maxThreshold?: number,
-  ): boolean {
+  public trySetShinySeed(thresholdOverride?: number, applyItemsToOverride?: boolean, maxThreshold?: number): boolean {
     if (!this.shiny) {
       const shinyThreshold = new NumberHolder(thresholdOverride ?? BASE_SHINY_CHANCE);
       if (applyItemsToOverride) {

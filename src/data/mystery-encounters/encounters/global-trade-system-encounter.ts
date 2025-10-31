@@ -15,7 +15,6 @@ import type { PokeballType } from "#enums/pokeball";
 import { RewardPoolType } from "#enums/reward-pool-type";
 import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
-import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { doShinySparkleAnim } from "#field/anims";

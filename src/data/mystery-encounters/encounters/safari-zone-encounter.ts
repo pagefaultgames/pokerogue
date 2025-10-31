@@ -9,7 +9,6 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PlayerGender } from "#enums/player-gender";
 import { PokeballType } from "#enums/pokeball";
-import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import type { EnemyPokemon } from "#field/pokemon";
 import { getEncounterText, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
