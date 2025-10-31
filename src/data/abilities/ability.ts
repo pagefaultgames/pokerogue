@@ -34,7 +34,7 @@ import { MoveCategory } from "#enums/move-category";
 import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
-import { MovePriorityInBracket } from "#enums/move-priority-modifier";
+import { MovePriorityInBracket } from "#enums/move-priority-in-bracket";
 import { MoveResult } from "#enums/move-result";
 import { MoveTarget } from "#enums/move-target";
 import { MoveUseMode } from "#enums/move-use-mode";

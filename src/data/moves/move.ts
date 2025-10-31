@@ -101,7 +101,7 @@ import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { canSpeciesTera, willTerastallize } from "#utils/pokemon-utils";
 import type { ReadonlyGenericUint8Array } from "#types/typed-arrays";
-import { MovePriorityInBracket } from "#enums/move-priority-modifier";
+import { MovePriorityInBracket } from "#enums/move-priority-in-bracket";
 
 /**
  * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.
