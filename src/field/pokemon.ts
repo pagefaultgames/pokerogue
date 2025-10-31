@@ -3262,7 +3262,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Gets the Pokémon on the opposing field.
    *
-   * @returns An array of Pokémon on the opposite side of the field..
+   * @returns An array of Pokémon on the opposite side of the field.
    */
   public getOpposingField(): Pokemon[] {
     return this.isPlayer() ? globalScene.getEnemyField() : globalScene.getPlayerField();
@@ -6908,12 +6908,12 @@ export class EnemyPokemon extends Pokemon {
   }
 
   // TODO: Fix typing on this
-  public getBattlerIndex(): BattlerIndex {
+  public getBattlerIndex(): FieldBattlerIndex {
     const fieldIndex = this.getFieldIndex();
     if (fieldIndex === -1) {
-      return BattlerIndex.ATTACKER;
+      return BattlerIndex.ATTACKER as unknown as FieldBattlerIndex;
     }
-    return BattlerIndex.ENEMY + this.getFieldIndex();
+    return (BattlerIndex.ENEMY + this.getFieldIndex()) as FieldBattlerIndex;
   }
 
   /**
