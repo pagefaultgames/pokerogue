@@ -506,7 +506,7 @@ export const starterPassiveAbilities: StarterPassiveAbilities = {
   [SpeciesId.SNOVER]: { 0: AbilityId.SLUSH_RUSH },
   [SpeciesId.ABOMASNOW]: { 0: AbilityId.SLUSH_RUSH, 1: AbilityId.SEED_SOWER },
   [SpeciesId.ROTOM]: { 0: AbilityId.HADRON_ENGINE, 1: AbilityId.HADRON_ENGINE, 2: AbilityId.HADRON_ENGINE, 3: AbilityId.HADRON_ENGINE, 4: AbilityId.HADRON_ENGINE, 5: AbilityId.HADRON_ENGINE },
-  [SpeciesId.UXIE]: { 0: AbilityId.ILLUSION },
+  [SpeciesId.UXIE]: { 0: AbilityId.MAGIC_BOUNCE },
   [SpeciesId.MESPRIT]: { 0: AbilityId.MOODY },
   [SpeciesId.AZELF]: { 0: AbilityId.NEUROFORCE },
   [SpeciesId.DIALGA]: { 0: AbilityId.BERSERK, 1: AbilityId.BERSERK },
