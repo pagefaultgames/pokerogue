@@ -1,15 +1,12 @@
 import { globalScene } from "#app/global-scene";
-import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId } from "#enums/held-item-id";
 import type { SpeciesId } from "#enums/species-id";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import type { Pokemon } from "#field/pokemon";
-import { HeldItem } from "#items/held-item";
+import { CosmeticHeldItem } from "#items/held-item";
 import i18next from "i18next";
 
-export class EvoTrackerHeldItem extends HeldItem<[typeof HeldItemEffect.EVO_TRACKER]> {
-  public readonly effects = [HeldItemEffect.EVO_TRACKER] as const;
-
+export class EvoTrackerHeldItem extends CosmeticHeldItem {
   protected species: SpeciesId;
   protected required: number;
   public isTransferable = false;

@@ -48,8 +48,6 @@ export interface DamageMoneyRewardParams extends DefaultHeldItemParams {
   damage: number;
 }
 
-export interface EvoTrackerParams extends DefaultHeldItemParams {}
-
 export interface ExpBoostParams extends DefaultHeldItemParams {
   /** Holds the amount of experience gained, which may be modified after item application */
   expAmount: NumberHolder;
@@ -144,7 +142,6 @@ export type HeldItemEffectParamMap = {
   [HeldItemEffect.TURN_END_ITEM_STEAL]: ItemStealParams;
   [HeldItemEffect.BASE_STAT_ADD]: BaseStatParams;
   [HeldItemEffect.MACHO_BRACE]: StatBoostParams;
-  [HeldItemEffect.EVO_TRACKER]: EvoTrackerParams;
 };
 
 /**

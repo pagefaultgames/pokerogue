@@ -29,7 +29,6 @@ export const HeldItemEffect = {
   BATON: 22,
   TURN_END_ITEM_STEAL: 23,
   CONTACT_ITEM_STEAL_CHANCE: 24,
-  EVO_TRACKER: 40,
   BASE_STAT_ADD: 50,
   MACHO_BRACE: 51,
 } as const;
