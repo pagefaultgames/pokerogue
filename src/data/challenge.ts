@@ -525,36 +525,36 @@ export class SingleGenerationChallenge extends Challenge {
         [TrainerType.MATT, TrainerType.SHELLY],
       ],
       [TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN],
-      [TrainerType.ZINZOLIN, TrainerType.COLRESS],
+      [TrainerType.COLRESS],
       [TrainerType.BRYONY],
       [TrainerType.FABA, TrainerType.PLUMERIA],
       [TrainerType.OLEANA],
       [TrainerType.GIACOMO, TrainerType.MELA, TrainerType.ATTICUS, TrainerType.ORTEGA, TrainerType.ERI],
     ];
     const evilAdminFight2 = [
-      [TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON],
-      [TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON],
+      [TrainerType.PROTON],
+      [TrainerType.PROTON],
       [
         [TrainerType.TABITHA, TrainerType.COURTNEY],
         [TrainerType.MATT, TrainerType.SHELLY],
       ],
       [TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN],
       [TrainerType.ZINZOLIN],
-      [TrainerType.XEROSIC],
+      [TrainerType.BRYONY, TrainerType.XEROSIC],
       [TrainerType.FABA, TrainerType.PLUMERIA],
       [TrainerType.OLEANA],
       [TrainerType.GIACOMO, TrainerType.MELA, TrainerType.ATTICUS, TrainerType.ORTEGA, TrainerType.ERI],
     ];
     const evilAdminFight3 = [
-      [TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON],
-      [TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON],
+      [TrainerType.ARCHER, TrainerType.ARIANA],
+      [TrainerType.ARCHER, TrainerType.ARIANA],
       [
         [TrainerType.TABITHA, TrainerType.COURTNEY],
         [TrainerType.MATT, TrainerType.SHELLY],
       ],
       [TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN],
-      [TrainerType.ZINZOLIN, TrainerType.COLRESS],
-      [TrainerType.XEROSIC, TrainerType.BRYONY],
+      [TrainerType.COLRESS],
+      [TrainerType.XEROSIC],
       [TrainerType.FABA, TrainerType.PLUMERIA],
       [TrainerType.OLEANA],
       [TrainerType.GIACOMO, TrainerType.MELA, TrainerType.ATTICUS, TrainerType.ORTEGA, TrainerType.ERI],
@@ -1109,7 +1109,16 @@ export class LowerStarterPointsChallenge extends Challenge {
  */
 export class LimitedSupportChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
-    return this.value ? ((RibbonData.NO_HEAL << (BigInt(this.value) - 1n)) as RibbonFlag) : 0n;
+    switch (this.value) {
+      case 1:
+        return RibbonData.NO_HEAL as RibbonFlag;
+      case 2:
+        return RibbonData.NO_SHOP as RibbonFlag;
+      case 3:
+        return (RibbonData.NO_HEAL | RibbonData.NO_SHOP | RibbonData.NO_SUPPORT) as RibbonFlag;
+      default:
+        return 0n as RibbonFlag;
+    }
   }
   constructor() {
     super(Challenges.LIMITED_SUPPORT, 3);

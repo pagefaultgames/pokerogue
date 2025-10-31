@@ -1,5 +1,4 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
-import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { allHeldItems, allSpecies } from "#data/data-lists";
 import { Gender, getGenderSymbol } from "#data/gender";
@@ -28,6 +27,7 @@ import { isTmReward } from "#items/reward-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import { getEncounterText, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import {
+  getRandomEncounterPokemon,
   leaveEncounterWithoutBattle,
   selectPokemonForOption,
   setEncounterRewards,
@@ -40,7 +40,7 @@ import { PartySizeRequirement } from "#mystery-encounters/mystery-encounter-requ
 import { PokemonData } from "#system/pokemon-data";
 import { MusicPreference } from "#system/settings";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
-import { NumberHolder, randInt, randSeedInt, randSeedItem, randSeedShuffle } from "#utils/common";
+import { randInt, randSeedInt, randSeedItem, randSeedShuffle } from "#utils/common";
 import { getEnumKeys } from "#utils/enums";
 import { getRandomLocaleEntry } from "#utils/i18n";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
@@ -54,6 +54,8 @@ const namespace = "mysteryEncounters/globalTradeSystem";
 const WONDER_TRADE_SHINY_CHANCE = 512;
 /** Max shiny chance of 4096/65536 -> 1/16 odds. */
 const MAX_WONDER_TRADE_SHINY_CHANCE = 4096;
+
+const WONDER_TRADE_HIDDEN_ABILITY_CHANCE = 64;
 
 const LEGENDARY_TRADE_POOLS = {
   1: [SpeciesId.RATTATA, SpeciesId.PIDGEY, SpeciesId.WEEDLE],
@@ -266,40 +268,23 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           // Randomly generate a Wonder Trade pokemon
-          const randomTradeOption = generateTradeOption(globalScene.getPlayerParty().map(p => p.species));
-          const tradePokemon = new EnemyPokemon(randomTradeOption, pokemon.level, TrainerSlot.NONE, false);
-          // Extra shiny roll at 1/128 odds (boosted by events and charms)
-          if (!tradePokemon.shiny) {
-            const shinyThreshold = new NumberHolder(WONDER_TRADE_SHINY_CHANCE);
-            if (timedEventManager.isEventActive()) {
-              shinyThreshold.value *= timedEventManager.getShinyMultiplier();
-            }
-            globalScene.applyPlayerItems(TrainerItemEffect.SHINY_RATE_BOOSTER, { numberHolder: shinyThreshold });
-
-            // Base shiny chance of 512/65536 -> 1/128, affected by events and Shiny Charms
-            // Maximum shiny chance of 4096/65536 -> 1/16, cannot improve further after that
-            const shinyChance = Math.min(shinyThreshold.value, MAX_WONDER_TRADE_SHINY_CHANCE);
-
-            tradePokemon.trySetShinySeed(shinyChance, false);
-          }
-
-          // Extra HA roll at base 1/64 odds (boosted by events and charms)
-          const hiddenIndex = tradePokemon.species.ability2 ? 2 : 1;
-          if (tradePokemon.species.abilityHidden && tradePokemon.abilityIndex < hiddenIndex) {
-            const hiddenAbilityChance = new NumberHolder(64);
-            globalScene.applyPlayerItems(TrainerItemEffect.HIDDEN_ABILITY_CHANCE_BOOSTER, {
-              numberHolder: hiddenAbilityChance,
-            });
-
-            const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
-
-            if (hasHiddenAbility) {
-              tradePokemon.abilityIndex = hiddenIndex;
-            }
-          }
+          const tradePokemon = getRandomEncounterPokemon({
+            level: pokemon.level,
+            speciesFunction: () => generateTradeOption(globalScene.getPlayerParty().map(p => p.species)),
+            isBoss: false,
+            eventChance: 100,
+            shinyRerolls: 1,
+            hiddenRerolls: 1,
+            eventShinyRerolls: 1,
+            eventHiddenRerolls: 1,
+            hiddenAbilityChance: WONDER_TRADE_HIDDEN_ABILITY_CHANCE,
+            shinyChance: WONDER_TRADE_SHINY_CHANCE,
+            maxShinyChance: MAX_WONDER_TRADE_SHINY_CHANCE,
+            speciesFilter: s => !globalScene.getPlayerParty().some(p => p.species === s),
+          });
 
           // If Pokemon is still not shiny or with HA, give the Pokemon a random Common egg move in its moveset
-          if (!tradePokemon.shiny && (!tradePokemon.species.abilityHidden || tradePokemon.abilityIndex < hiddenIndex)) {
+          if (!tradePokemon.shiny && (!tradePokemon.species.abilityHidden || tradePokemon.abilityIndex < 2)) {
             const eggMoves = tradePokemon.getEggMoves();
             if (eggMoves) {
               // Cannot gen the rare egg move, only 1 of the first 3 common moves

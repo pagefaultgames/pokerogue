@@ -1,10 +1,12 @@
+import { pokerogueApi } from "#api/pokerogue-api";
 import { loggedInUser } from "#app/account";
 import { GameMode, getGameMode } from "#app/game-mode";
+import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { Phase } from "#app/phase";
 import { bypassLogin } from "#constants/app-constants";
-import { fetchDailyRunSeed, getDailyRunStarters } from "#data/daily-run";
+import { getDailyRunStarters } from "#data/daily-run";
 import { Gender } from "#data/gender";
 import { BattleType } from "#enums/battle-type";
 import { GameModes } from "#enums/game-modes";
@@ -215,6 +217,7 @@ export class TitlePhase extends Phase {
         const starters = getDailyRunStarters(seed);
         const startingLevel = globalScene.gameMode.getStartingLevel();
 
+        // TODO: Dedupe this
         const party = globalScene.getPlayerParty();
         const loadPokemonAssets: Promise<void>[] = [];
         for (const starter of starters) {
@@ -234,6 +237,11 @@ export class TitlePhase extends Phase {
             starter.nature,
           );
           starterPokemon.setVisible(false);
+          if (starter.moveset) {
+            // avoid validating daily run starter movesets which are pre-populated already
+            starterPokemon.tryPopulateMoveset(starter.moveset, true);
+          }
+
           party.push(starterPokemon);
           loadPokemonAssets.push(starterPokemon.loadAssets());
         }
@@ -241,6 +249,8 @@ export class TitlePhase extends Phase {
         globalScene.trainerItems.add(TrainerItemId.EXP_SHARE, 3);
         globalScene.trainerItems.add(TrainerItemId.GOLDEN_EXP_CHARM, 3);
         globalScene.trainerItems.add(TrainerItemId.MAP);
+        globalScene.trainerItems.add(TrainerItemId.ABILITY_CHARM);
+        globalScene.trainerItems.add(TrainerItemId.SHINY_CHARM);
 
         assignDailyRunStarterHeldItems(party);
 
@@ -260,7 +270,8 @@ export class TitlePhase extends Phase {
 
       // If Online, calls seed fetch from db to generate daily run. If Offline, generates a daily run based on current date.
       if (!bypassLogin || isLocalServerConnected) {
-        fetchDailyRunSeed()
+        pokerogueApi.daily
+          .getSeed()
           .then(seed => {
             if (seed) {
               generateDaily(seed);

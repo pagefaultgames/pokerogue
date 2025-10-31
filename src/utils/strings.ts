@@ -11,7 +11,7 @@ const SPLIT_LOWER_UPPER_RE = /([\p{Ll}\d])(\p{Lu})/gu;
 const SPLIT_UPPER_UPPER_RE = /(\p{Lu})([\p{Lu}][\p{Ll}])/gu;
 /** Regexp involved with stripping non-word delimiters from the result. */
 const DELIM_STRIP_REGEXP = /[-_ ]+/giu;
-// The replacement value for splits.
+/** The replacement value for splits. */
 const SPLIT_REPLACE_VALUE = "$1\0$2";
 
 /**
@@ -56,8 +56,6 @@ function trimFromStartAndEnd(str: string, charToTrim: string): string {
   }
   return str.slice(start, end);
 }
-
-// #endregion Split String code
 
 /**
  * Capitalize the first letter of a string.
@@ -178,4 +176,27 @@ export function toPascalSnakeCase(str: string) {
   return splitWords(str)
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join("_");
+}
+// #endregion Split String code
+
+/**
+ * Chunk a string into an array, creating a new element every `length` characters.
+ * @param str - The string to chunk
+ * @param length - The length of each chunk; should be a non-negative integer
+ * @returns The result of splitting `str` after every instance of `length` characters.
+ * @example
+ * ```ts
+ * console.log(chunkString("123456789abc", 4)); // Output: ["1234", "5678", "9abc"]
+ * console.log(chunkString("1234567890", 4)); // Output: ["1234", "5678", "90"]
+ * ```
+ */
+export function chunkString(str: string, length: number): string[] {
+  const numChunks = Math.ceil(str.length / length);
+  const chunks = new Array(numChunks);
+
+  for (let i = 0; i < numChunks; i++) {
+    chunks[i] = str.substring(i * length, (i + 1) * length);
+  }
+
+  return chunks;
 }

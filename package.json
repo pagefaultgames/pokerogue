@@ -1,7 +1,7 @@
 {
   "name": "pokemon-rogue-battle",
   "private": true,
-  "version": "1.10.7",
+  "version": "1.11.1",
   "type": "module",
   "scripts": {
     "start:prod": "vite --mode production",
@@ -27,7 +27,7 @@
     "biome-ci": "biome ci --diagnostic-level=error --reporter=github --no-errors-on-unmatched",
     "typedoc": "typedoc",
     "depcruise": "depcruise src test",
-    "postinstall": "lefthook install; git config --local recurse.submodules true",
+    "postinstall": "lefthook install; git config --local fetch.recurseSubmodules true",
     "update-version:patch": "pnpm version patch --force --no-git-tag-version",
     "update-version:minor": "pnpm version minor --force --no-git-tag-version",
     "update-locales": "git submodule update --progress --init --recursive --depth 1 locales",
@@ -80,5 +80,5 @@
   "engines": {
     "node": ">=24.9.0"
   },
-  "packageManager": "pnpm@10.18.0"
+  "packageManager": "pnpm@10.19.0"
 }

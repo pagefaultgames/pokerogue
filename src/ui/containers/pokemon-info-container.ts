@@ -473,10 +473,15 @@ export class PokemonInfoContainer extends Phaser.GameObjects.Container {
     const xPosition = fromCatch
       ? this.initialX - this.infoWindowWidth - 67
       : this.initialX - this.infoWindowWidth - ConfirmUiHandler.windowWidth;
+
+    const infoTween = globalScene.tweens.getTweensOf(this)[0];
+    const duration = Math.max(infoTween ? infoTween.duration - infoTween.elapsed : 0, 150);
+    infoTween?.destroy();
+
     return new Promise<void>(resolve => {
       globalScene.tweens.add({
         targets: this,
-        duration: fixedInt(Math.floor(150 / speedMultiplier)),
+        duration: fixedInt(Math.floor(duration / speedMultiplier)),
         ease: "Cubic.easeInOut",
         x: xPosition,
         onComplete: () => {

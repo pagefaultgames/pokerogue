@@ -211,7 +211,7 @@ export class StatStageChangePhase extends PokemonPhase {
       }
 
       if (stages.value > 0 && this.canBeCopied) {
-        for (const opponent of pokemon.getOpponents()) {
+        for (const opponent of pokemon.getOpponentsGenerator()) {
           applyAbAttrs("StatStageChangeCopyAbAttr", { pokemon: opponent, stats: this.stats, numStages: stages.value });
         }
       }

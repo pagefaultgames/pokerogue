@@ -131,7 +131,7 @@ export const classicFixedBattles: FixedBattleConfigs = {
           [TrainerType.TABITHA, TrainerType.COURTNEY],
           [TrainerType.MATT, TrainerType.SHELLY],
           [TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN],
-          [TrainerType.ZINZOLIN, TrainerType.COLRESS],
+          TrainerType.COLRESS,
           TrainerType.BRYONY,
           TrainerType.FABA,
           TrainerType.PLUMERIA,
@@ -180,12 +180,12 @@ export const classicFixedBattles: FixedBattleConfigs = {
     .setGetTrainerFunc(
       getRandomTrainerFunc(
         [
-          [TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON],
+          TrainerType.PROTON,
           [TrainerType.TABITHA, TrainerType.COURTNEY],
           [TrainerType.MATT, TrainerType.SHELLY],
           [TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN],
           TrainerType.ZINZOLIN,
-          TrainerType.XEROSIC,
+          [TrainerType.BRYONY, TrainerType.XEROSIC],
           TrainerType.FABA,
           TrainerType.PLUMERIA,
           TrainerType.OLEANA,
@@ -235,12 +235,12 @@ export const classicFixedBattles: FixedBattleConfigs = {
     .setGetTrainerFunc(
       getRandomTrainerFunc(
         [
-          [TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON],
+          [TrainerType.ARCHER, TrainerType.ARIANA],
           [TrainerType.TABITHA, TrainerType.COURTNEY],
           [TrainerType.MATT, TrainerType.SHELLY],
           [TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN],
-          [TrainerType.ZINZOLIN, TrainerType.COLRESS],
-          [TrainerType.XEROSIC, TrainerType.BRYONY],
+          TrainerType.COLRESS,
+          TrainerType.XEROSIC,
           TrainerType.FABA,
           TrainerType.PLUMERIA,
           TrainerType.OLEANA,
