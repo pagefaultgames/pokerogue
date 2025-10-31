@@ -7,7 +7,7 @@ import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("Abilities - Illusion", () => {
+describe.todo("Abilities - Illusion", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -33,7 +33,7 @@ describe("Abilities - Illusion", () => {
       .startingHeldItems([{ name: "WIDE_LENS", count: 3 }]);
   });
 
-  it.todo("creates illusion at the start", async () => {
+  it("creates illusion at the start", async () => {
     await game.classicMode.startBattle([SpeciesId.ZOROARK, SpeciesId.FEEBAS]);
     const zoroark = game.field.getPlayerPokemon();
     const zorua = game.field.getEnemyPokemon();
@@ -42,7 +42,7 @@ describe("Abilities - Illusion", () => {
     expect(!!zorua.summonData.illusion).equals(true);
   });
 
-  it.todo("break after receiving damaging move", async () => {
+  it("break after receiving damaging move", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
     game.move.select(MoveId.TACKLE);
 
@@ -54,7 +54,7 @@ describe("Abilities - Illusion", () => {
     expect(zorua.name).equals("Zorua");
   });
 
-  it.todo("break after getting ability changed", async () => {
+  it("break after getting ability changed", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
     game.move.select(MoveId.WORRY_SEED);
 
@@ -65,7 +65,7 @@ describe("Abilities - Illusion", () => {
     expect(!!zorua.summonData.illusion).equals(false);
   });
 
-  it.todo("breaks with neutralizing gas", async () => {
+  it("breaks with neutralizing gas", async () => {
     game.override.enemyAbility(AbilityId.NEUTRALIZING_GAS);
     await game.classicMode.startBattle([SpeciesId.KOFFING]);
 
@@ -74,7 +74,7 @@ describe("Abilities - Illusion", () => {
     expect(!!zorua.summonData.illusion).equals(false);
   });
 
-  it.todo("does not activate if neutralizing gas is active", async () => {
+  it("does not activate if neutralizing gas is active", async () => {
     game.override
       .enemyAbility(AbilityId.NEUTRALIZING_GAS)
       .ability(AbilityId.ILLUSION)
@@ -88,38 +88,35 @@ describe("Abilities - Illusion", () => {
     expect(game.field.getPlayerPokemon().summonData.illusion).toBeFalsy();
   });
 
-  it.todo(
-    "causes enemy AI to consider the illusion's type instead of the actual type when considering move effectiveness",
-    async () => {
-      game.override.enemyMoveset([MoveId.FLAMETHROWER, MoveId.PSYCHIC, MoveId.TACKLE]);
-      await game.classicMode.startBattle([SpeciesId.ZOROARK, SpeciesId.FEEBAS]);
+  it("causes enemy AI to consider the illusion's type instead of the actual type when considering move effectiveness", async () => {
+    game.override.enemyMoveset([MoveId.FLAMETHROWER, MoveId.PSYCHIC, MoveId.TACKLE]);
+    await game.classicMode.startBattle([SpeciesId.ZOROARK, SpeciesId.FEEBAS]);
 
-      const enemy = game.field.getEnemyPokemon();
-      const zoroark = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
+    const zoroark = game.field.getPlayerPokemon();
 
-      const flameThrower = enemy.getMoveset()[0]!.getMove();
-      const psychic = enemy.getMoveset()[1]!.getMove();
-      const flameThrowerEffectiveness = zoroark.getAttackTypeEffectiveness(
-        flameThrower.type,
-        enemy,
-        undefined,
-        undefined,
-        flameThrower,
-        true,
-      );
-      const psychicEffectiveness = zoroark.getAttackTypeEffectiveness(
-        psychic.type,
-        enemy,
-        undefined,
-        undefined,
-        psychic,
-        true,
-      );
-      expect(psychicEffectiveness).above(flameThrowerEffectiveness);
-    },
-  );
+    const flameThrower = enemy.getMoveset()[0]!.getMove();
+    const psychic = enemy.getMoveset()[1]!.getMove();
+    const flameThrowerEffectiveness = zoroark.getAttackTypeEffectiveness(
+      flameThrower.type,
+      enemy,
+      undefined,
+      undefined,
+      flameThrower,
+      true,
+    );
+    const psychicEffectiveness = zoroark.getAttackTypeEffectiveness(
+      psychic.type,
+      enemy,
+      undefined,
+      undefined,
+      psychic,
+      true,
+    );
+    expect(psychicEffectiveness).above(flameThrowerEffectiveness);
+  });
 
-  it.todo("should not break from indirect damage from status, weather or recoil", async () => {
+  it("should not break from indirect damage from status, weather or recoil", async () => {
     game.override.enemySpecies(SpeciesId.GIGALITH).enemyAbility(AbilityId.SAND_STREAM);
 
     await game.classicMode.startBattle([SpeciesId.ZOROARK, SpeciesId.AZUMARILL]);
@@ -132,7 +129,7 @@ describe("Abilities - Illusion", () => {
     expect(!!zoroark.summonData.illusion).equals(true);
   });
 
-  it.todo("copies the the name, nickname, gender, shininess, and pokeball from the illusion source", async () => {
+  it("copies the the name, nickname, gender, shininess, and pokeball from the illusion source", async () => {
     game.override.enemyMoveset(MoveId.SPLASH);
     await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.ZOROARK, SpeciesId.AXEW]);
 
@@ -155,7 +152,7 @@ describe("Abilities - Illusion", () => {
     expect(zoroark.getPokeball(true)).equals(PokeballType.GREAT_BALL);
   });
 
-  it.todo("breaks when suppressed", async () => {
+  it("breaks when suppressed", async () => {
     game.override.moveset(MoveId.GASTRO_ACID);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     const zorua = game.field.getEnemyPokemon();

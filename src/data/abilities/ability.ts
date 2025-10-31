@@ -7449,7 +7449,7 @@ export function initAbilities() {
       // .attr(NoFusionAbilityAbAttr)
       // // Illusion is available again after a battle
       // .conditionalAttr((pokemon) => pokemon.isAllowedInBattle(), IllusionPostBattleAbAttr, false)
-      // .uncopiable()
+      .uncopiable()
       // .bypassFaint()
       .unimplemented() // TODO reimplement Illusion properly
       .build(),
