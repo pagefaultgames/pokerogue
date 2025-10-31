@@ -241,7 +241,7 @@ interface BattlerSwitchOutInit {
   /**
    * The index of the Pokemon being newly switched in.
    * If set to `-1`, will determine the replacement during the {@linkcode SummonPhase}
-   * by consulting the player/enemy AI.
+   * by showing the player party modal or prompting the enemy AI.
    * @defaultValue `-1`
    */
   switchInIndex?: number;
@@ -290,7 +290,7 @@ export class PhaseManager {
 
   /**
    * Unshift a sequence of phases to switch out a Pokemon on the field.
-   * @param battlerIndex - The {@linkcode BattlerIndex} of the Pokemon to switch out
+   * @param battlerIndex - The {@linkcode FieldBattlerIndex} of the Pokemon to switch out
    * @param __namedParameters - Needed for Typedoc to function
    */
   public queueBattlerSwitchOut(
