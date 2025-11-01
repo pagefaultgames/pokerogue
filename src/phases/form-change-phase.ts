@@ -1,4 +1,6 @@
 import { globalScene } from "#app/global-scene";
+// biome-ignore lint/correctness/noUnusedImports: TSDoc
+import type { Animation } from "#app/animations";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { getSpeciesFormChangeMessage } from "#data/form-change-triggers";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
@@ -100,10 +102,10 @@ export class FormChangePhase extends EvolutionPhase {
   }
 
   /**
-   * Commence the animations that occur once the form change evolution cycle ({@linkcode doCycle}) is complete
+   * Commence the animations that occur once the form change evolution cycle is complete
    *
    * @privateRemarks
-   * This would prefer {@linkcode doCycle} to be refactored and de-promisified so this can be moved into {@linkcode beginTweens}
+   * This would prefer {@linkcode Animations.doCycle | doCycle} to be refactored and de-promisified so this can be moved into {@linkcode beginTweens}
    * @param preName - The name of the Pokemon before the evolution
    * @param transformedPokemon - The Pokemon being transformed into
    */
@@ -174,7 +176,7 @@ export class FormChangePhase extends EvolutionPhase {
         globalScene.time.delayedCall(1000, () => {
           this.pokemonEvoTintSprite.setScale(0.25).setVisible(true);
           globalScene.animations
-            .doCycle(1, 1, this.evolutionBaseBg, this.evolutionContainer)
+            .doCycle(1, 1, this.pokemonTintSprite, this.pokemonNewFormTintSprite)
             .then(() => this.afterCycle(preName, transformedPokemon));
         });
       },
