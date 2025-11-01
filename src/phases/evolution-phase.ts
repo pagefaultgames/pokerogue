@@ -245,7 +245,7 @@ export class EvolutionPhase extends Phase {
         this.pokemonSprite.setVisible(false);
         globalScene.time.delayedCall(1100, () => {
           globalScene.playSound("se/beam");
-          globalScene.animations.doArcDownward();
+          globalScene.animations.doArcDownward(this.evolutionBaseBg, this.container);
           this.prepareForCycle(evolvedPokemon);
         });
       },
