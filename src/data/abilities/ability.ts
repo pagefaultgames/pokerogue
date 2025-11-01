@@ -3345,6 +3345,7 @@ export class CommanderAbAttr extends AbAttr {
 /**
  * Base class for ability attributes that apply their effect when their user switches out.
  */
+// TODO: Clarify the differences between this and `PreLeaveFieldAbAttr`
 export abstract class PreSwitchOutAbAttr extends AbAttr {
   constructor(showAbility = true) {
     super(showAbility);
@@ -3374,65 +3375,6 @@ export class PreSwitchOutResetStatusAbAttr extends PreSwitchOutAbAttr {
       pokemon.resetStatus();
       pokemon.updateInfo();
     }
-  }
-}
-
-/**
- * Clears Desolate Land/Primordial Sea/Delta Stream upon the Pokemon switching out.
- */
-export class PreSwitchOutClearWeatherAbAttr extends PreSwitchOutAbAttr {
-  override apply({ pokemon, simulated }: AbAttrBaseParams): boolean {
-    // TODO: Evaluate why this is returning a boolean rather than relay
-    const weatherType = globalScene.arena.weather?.weatherType;
-    let turnOffWeather = false;
-
-    // Clear weather only if user's ability matches the weather and no other pokemon has the ability.
-    switch (weatherType) {
-      case WeatherType.HARSH_SUN:
-        if (
-          pokemon.hasAbility(AbilityId.DESOLATE_LAND)
-          && globalScene
-            .getField(true)
-            .filter(p => p !== pokemon)
-            .filter(p => p.hasAbility(AbilityId.DESOLATE_LAND)).length === 0
-        ) {
-          turnOffWeather = true;
-        }
-        break;
-      case WeatherType.HEAVY_RAIN:
-        if (
-          pokemon.hasAbility(AbilityId.PRIMORDIAL_SEA)
-          && globalScene
-            .getField(true)
-            .filter(p => p !== pokemon)
-            .filter(p => p.hasAbility(AbilityId.PRIMORDIAL_SEA)).length === 0
-        ) {
-          turnOffWeather = true;
-        }
-        break;
-      case WeatherType.STRONG_WINDS:
-        if (
-          pokemon.hasAbility(AbilityId.DELTA_STREAM)
-          && globalScene
-            .getField(true)
-            .filter(p => p !== pokemon)
-            .filter(p => p.hasAbility(AbilityId.DELTA_STREAM)).length === 0
-        ) {
-          turnOffWeather = true;
-        }
-        break;
-    }
-
-    if (simulated) {
-      return turnOffWeather;
-    }
-
-    if (turnOffWeather) {
-      globalScene.arena.trySetWeather(WeatherType.NONE);
-      return true;
-    }
-
-    return false;
   }
 }
 
@@ -3488,48 +3430,32 @@ export class PreLeaveFieldAbAttr extends AbAttr {
 }
 
 /**
- * Clears Desolate Land/Primordial Sea/Delta Stream upon the Pokemon switching out.
+ * Ability attribute to clear the given {@linkcode WeatherType} upon this Pokemon switching out.
  */
 export class PreLeaveFieldClearWeatherAbAttr extends PreLeaveFieldAbAttr {
+  private readonly weatherType: Exclude<WeatherType, WeatherType.NONE>;
+  constructor(weatherType: Exclude<WeatherType, WeatherType.NONE>) {
+    super(false);
+    this.weatherType = weatherType;
+  }
+
   override canApply({ pokemon }: AbAttrBaseParams): boolean {
-    const weatherType = globalScene.arena.weather?.weatherType;
-    // Clear weather only if user's ability matches the weather and no other pokemon has the ability.
-    switch (weatherType) {
-      case WeatherType.HARSH_SUN:
-        if (
-          pokemon.hasAbility(AbilityId.DESOLATE_LAND)
-          && globalScene
-            .getField(true)
-            .filter(p => p !== pokemon)
-            .filter(p => p.hasAbility(AbilityId.DESOLATE_LAND)).length === 0
-        ) {
-          return true;
-        }
-        break;
-      case WeatherType.HEAVY_RAIN:
-        if (
-          pokemon.hasAbility(AbilityId.PRIMORDIAL_SEA)
-          && globalScene
-            .getField(true)
-            .filter(p => p !== pokemon)
-            .filter(p => p.hasAbility(AbilityId.PRIMORDIAL_SEA)).length === 0
-        ) {
-          return true;
-        }
-        break;
-      case WeatherType.STRONG_WINDS:
-        if (
-          pokemon.hasAbility(AbilityId.DELTA_STREAM)
-          && globalScene
-            .getField(true)
-            .filter(p => p !== pokemon)
-            .filter(p => p.hasAbility(AbilityId.DELTA_STREAM)).length === 0
-        ) {
-          return true;
-        }
-        break;
+    const weatherType = globalScene.arena.getWeatherType();
+    if (weatherType !== this.weatherType) {
+      return false;
     }
-    return false;
+
+    if (!globalScene.arena.weather?.isImmutable()) {
+      return true;
+    }
+    // Clear immutable weather only if no other Pokemon with this attribute for the given weather type exists
+    return !globalScene
+      .getField(true)
+      .some(
+        p =>
+          p !== pokemon
+          && p.getAbilityAttrs("PreLeaveFieldClearWeatherAbAttr").some(attr => attr.weatherType === this.weatherType),
+      );
   }
 
   override apply({ simulated }: AbAttrBaseParams): void {
@@ -6712,7 +6638,6 @@ const AbilityAttrs = Object.freeze({
   CommanderAbAttr,
   PreSwitchOutAbAttr,
   PreSwitchOutResetStatusAbAttr,
-  PreSwitchOutClearWeatherAbAttr,
   PreSwitchOutHealAbAttr,
   PreSwitchOutFormChangeAbAttr,
   PreLeaveFieldAbAttr,
@@ -7656,19 +7581,19 @@ export function initAbilities() {
     new AbBuilder(AbilityId.PRIMORDIAL_SEA, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
-      .attr(PreLeaveFieldClearWeatherAbAttr)
+      .attr(PreLeaveFieldClearWeatherAbAttr, WeatherType.HEAVY_RAIN)
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.DESOLATE_LAND, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HARSH_SUN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HARSH_SUN)
-      .attr(PreLeaveFieldClearWeatherAbAttr)
+      .attr(PreLeaveFieldClearWeatherAbAttr, WeatherType.HARSH_SUN)
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.DELTA_STREAM, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.STRONG_WINDS)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.STRONG_WINDS)
-      .attr(PreLeaveFieldClearWeatherAbAttr)
+      .attr(PreLeaveFieldClearWeatherAbAttr, WeatherType.STRONG_WINDS)
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.STAMINA, 7)
