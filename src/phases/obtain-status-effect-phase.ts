@@ -6,6 +6,7 @@ import { SpeciesFormChangeStatusEffectTrigger } from "#data/form-change-triggers
 import { getStatusEffectObtainText } from "#data/status-effect";
 import type { BattlerIndex } from "#enums/battler-index";
 import { CommonAnim } from "#enums/move-anims-common";
+import { MoveId } from "#enums/move-id";
 import { StatusEffect } from "#enums/status-effect";
 import type { Pokemon } from "#field/pokemon";
 import { PokemonPhase } from "#phases/pokemon-phase";
@@ -60,6 +61,16 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
           effect: this.statusEffect,
           sourcePokemon: this.sourcePokemon ?? undefined,
         });
+        // Trigger ConfusionOnStatusEffectAbAttr (e.g., Poison Puppeteer) when status is applied
+        //Before this, Poison Puppeteer didn't work with Toxic Chain.
+        if (this.sourcePokemon) {
+          applyAbAttrs("ConfusionOnStatusEffectAbAttr", {
+            pokemon: this.sourcePokemon,
+            opponent: pokemon,
+            move: { id: MoveId.NONE } as any, // Use NONE move since this is Ability/Passive trigger.
+            effect: this.statusEffect,
+          });
+        }
       }
       this.end();
     });
