@@ -259,7 +259,9 @@ export class EvolutionPhase extends Phase {
     globalScene.time.delayedCall(1500, () => {
       this.pokemonEvoTintSprite.setScale(0.25).setVisible(true);
       this.evolutionHandler.canCancel = this.canCancel;
-      globalScene.animations.doCycle(1, undefined, () => {
+      globalScene.animations
+        .doCycle(1, undefined, this.pokemonTintSprite, this.pokemonNewFoTintSprite)
+        .then(() => {
         if (this.evolutionHandler.cancelled) {
           this.handleFailedEvolution(evolvedPokemon);
         } else {
