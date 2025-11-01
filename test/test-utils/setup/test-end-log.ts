@@ -64,7 +64,7 @@ function getResultStr(result: RunnerTaskResult | undefined): string {
     return "Unknown";
   }
 
-  // Add variant selector codepoint to force rendering as thin version
+  // Variant selector codepoint (`\u{FE0E}`) used to force rendering as thin version
   const resultStr =
     result.state === "pass"
       ? chalk.green.bold("✔\u{FE0E} Passed")
