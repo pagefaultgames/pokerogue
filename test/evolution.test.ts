@@ -1,4 +1,4 @@
-import { pokemonEvolutions, SpeciesFormEvolution, SpeciesWildEvolutionDelay } from "#balance/pokemon-evolutions";
+import { pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -85,12 +85,6 @@ describe("Evolution", () => {
     expect(shedinja.gender).toBe(-1);
     // Regression test for https://github.com/pagefaultgames/pokerogue/issues/3842
     expect(shedinja.metBiome).toBe(-1);
-  });
-
-  it("should set wild delay to NONE by default", () => {
-    const speciesFormEvo = new SpeciesFormEvolution(SpeciesId.ABRA, null, null, 1000, null, null);
-
-    expect(speciesFormEvo.wildDelay).toBe(SpeciesWildEvolutionDelay.NONE);
   });
 
   it("should increase both HP and max HP when evolving", async () => {

@@ -1515,11 +1515,8 @@ export class PartyUiHandler extends MessageUiHandler {
           );
         }
         this.addCommonOptions(pokemon);
-        if (this.partyUiMode === PartyUiMode.SWITCH) {
-          if (pokemon.isFusion()) {
-            this.options.push(PartyOption.UNSPLICE);
-          }
-          this.options.push(PartyOption.RELEASE);
+        if (this.partyUiMode === PartyUiMode.SWITCH && pokemon.isFusion()) {
+          this.options.push(PartyOption.UNSPLICE);
         }
         break;
       case PartyUiMode.REVIVAL_BLESSING:
@@ -1554,6 +1551,7 @@ export class PartyUiHandler extends MessageUiHandler {
       case PartyUiMode.CHECK:
         this.addCommonOptions(pokemon);
         if (globalScene.phaseManager.getCurrentPhase().is("SelectModifierPhase")) {
+          this.options.push(PartyOption.RELEASE);
           const formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
           for (let i = 0; i < formChangeItemModifiers.length; i++) {
             this.options.push(PartyOption.FORM_CHANGE_ITEM + i);
@@ -1588,9 +1586,8 @@ export class PartyUiHandler extends MessageUiHandler {
         this.updateOptionsWithModifierTransferMode(pokemon);
         break;
       case PartyUiMode.SWITCH:
-        this.options.push(PartyOption.RELEASE);
-        break;
       case PartyUiMode.RELEASE:
+      case PartyUiMode.CHECK:
         this.options.push(PartyOption.RELEASE);
         break;
     }

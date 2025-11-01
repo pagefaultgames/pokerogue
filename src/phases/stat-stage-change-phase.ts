@@ -25,20 +25,20 @@ export type StatStageChangeCallback = (
 // TODO: Refactor this mess of a phase
 export class StatStageChangePhase extends PokemonPhase {
   public readonly phaseName = "StatStageChangePhase";
-  private stats: BattleStat[];
-  private selfTarget: boolean;
-  private stages: number;
-  private showMessage: boolean;
-  private ignoreAbilities: boolean;
-  private canBeCopied: boolean;
-  private onChange: StatStageChangeCallback | null;
-  private comingFromMirrorArmorUser: boolean;
-  private comingFromStickyWeb: boolean;
+  private readonly stats: readonly BattleStat[];
+  private readonly selfTarget: boolean;
+  private readonly stages: number;
+  private readonly showMessage: boolean;
+  private readonly ignoreAbilities: boolean;
+  private readonly canBeCopied: boolean;
+  private readonly onChange: StatStageChangeCallback | null;
+  private readonly comingFromMirrorArmorUser: boolean;
+  private readonly comingFromStickyWeb: boolean;
 
   constructor(
     battlerIndex: BattlerIndex,
     selfTarget: boolean,
-    stats: BattleStat[],
+    stats: readonly BattleStat[],
     stages: number,
     showMessage = true,
     ignoreAbilities = false,
@@ -210,7 +210,7 @@ export class StatStageChangePhase extends PokemonPhase {
       }
 
       if (stages.value > 0 && this.canBeCopied) {
-        for (const opponent of pokemon.getOpponents()) {
+        for (const opponent of pokemon.getOpponentsGenerator()) {
           applyAbAttrs("StatStageChangeCopyAbAttr", { pokemon: opponent, stats: this.stats, numStages: stages.value });
         }
       }
@@ -294,7 +294,7 @@ export class StatStageChangePhase extends PokemonPhase {
     }
   }
 
-  getStatStageChangeMessages(stats: BattleStat[], stages: number, relStages: number[]): string[] {
+  getStatStageChangeMessages(stats: readonly BattleStat[], stages: number, relStages: number[]): string[] {
     const messages: string[] = [];
 
     const relStageStatIndexes = {};

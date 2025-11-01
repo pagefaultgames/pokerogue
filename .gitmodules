@@ -2,6 +2,12 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-[submodule "public/locales"]
-	path = public/locales
-	url = https://github.com/pagefaultgames/pokerogue-locales
+
+[submodule "assets"]
+	path = assets
+	url = https://github.com/pagefaultgames/pokerogue-assets.git
+	branch = beta
+[submodule "locales"]
+	path = locales
+	url = https://github.com/pagefaultgames/pokerogue-locales.git
+	branch = main
