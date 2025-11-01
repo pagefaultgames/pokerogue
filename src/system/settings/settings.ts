@@ -183,6 +183,9 @@ export const SettingKeys = {
   Show_Missing_Ribbons: "SHOW_MISSING_RIBBONS",
   Move_Touch_Controls: "MOVE_TOUCH_CONTROLS",
   Shop_Overlay_Opacity: "SHOP_OVERLAY_OPACITY",
+  Difficulty_Exp_Rate: "DIFFICULTY_EXP_RATE",
+  Difficulty_Enemy_Level: "DIFFICULTY_ENEMY_LEVEL",
+  Difficulty_Luck_Rate: "DIFFICULTY_LUCK_RATE",
 };
 
 export enum MusicPreference {
@@ -721,6 +724,28 @@ export const Setting: Array<Setting> = [
     default: 7,
     type: SettingType.DISPLAY,
     requireReload: false,
+  },
+  // --- Difficulty Section ---
+  {
+    key: SettingKeys.Difficulty_Exp_Rate,
+    label: "EXP Earning Rate",
+    options: require("./difficulty-options").DIFFICULTY_EXP_RATE_OPTIONS,
+    default: 2, // 1x (Normal)
+    type: SettingType.GENERAL,
+  },
+  {
+    key: SettingKeys.Difficulty_Enemy_Level,
+    label: "Enemy's Pokemon Level Multiplier",
+    options: require("./difficulty-options").DIFFICULTY_ENEMY_LEVEL_OPTIONS,
+    default: 2, // 1x (Normal)
+    type: SettingType.GENERAL,
+  },
+  {
+    key: SettingKeys.Difficulty_Luck_Rate,
+    label: "Luck Rate Multiplier",
+    options: require("./difficulty-options").DIFFICULTY_LUCK_RATE_OPTIONS,
+    default: 2, // 1x (Normal)
+    type: SettingType.GENERAL,
   },
 ];
 
