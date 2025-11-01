@@ -226,7 +226,7 @@ export class EvolutionPhase extends Phase {
             this.evolutionBg.setVisible(true).play();
           });
           globalScene.playSound("se/charge");
-          globalScene.animations.doSpiralUpward(this.evolutionBaseBg, this.container);
+          globalScene.animations.doSpiralUpward(this.evolutionBaseBg, this.evolutionContainer);
           this.fadeOutPokemonSprite(evolvedPokemon);
         },
       });
@@ -245,7 +245,7 @@ export class EvolutionPhase extends Phase {
         this.pokemonSprite.setVisible(false);
         globalScene.time.delayedCall(1100, () => {
           globalScene.playSound("se/beam");
-          globalScene.animations.doArcDownward(this.evolutionBaseBg, this.container);
+          globalScene.animations.doArcDownward(this.evolutionBaseBg, this.evolutionContainer);
           this.prepareForCycle(evolvedPokemon);
         });
       },
@@ -259,9 +259,7 @@ export class EvolutionPhase extends Phase {
     globalScene.time.delayedCall(1500, () => {
       this.pokemonEvoTintSprite.setScale(0.25).setVisible(true);
       this.evolutionHandler.canCancel = this.canCancel;
-      globalScene.animations
-        .doCycle(1, undefined, this.pokemonTintSprite, this.pokemonNewFoTintSprite)
-        .then(() => {
+      globalScene.animations.doCycle(1, 15, this.pokemonTintSprite, this.pokemonEvoTintSprite).then(() => {
         if (this.evolutionHandler.cancelled) {
           this.handleFailedEvolution(evolvedPokemon);
         } else {
@@ -460,7 +458,7 @@ export class EvolutionPhase extends Phase {
   private handleSuccessEvolution(evolvedPokemon: Pokemon): void {
     globalScene.playSound("se/sparkle");
     this.pokemonEvoSprite.setVisible(true);
-    globalScene.animations.doCircleInward();
+    globalScene.animations.doCircleInward(this.evolutionBaseBg, this.evolutionContainer);
 
     globalScene.time.delayedCall(900, () => {
       this.evolutionHandler.canCancel = this.canCancel;

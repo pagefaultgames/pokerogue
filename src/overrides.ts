@@ -45,7 +45,15 @@ import { Variant } from "#sprites/variant";
  * }
  * ```
  */
-const overrides = {} satisfies Partial<InstanceType<OverridesType>>;
+const overrides = {
+  STARTER_SPECIES_OVERRIDE: SpeciesId.TYROGUE,
+  ENEMY_SPECIES_OVERRIDE: SpeciesId.GEODUDE,
+  ENEMY_MOVESET_OVERRIDE: MoveId.MEMENTO,
+  STARTING_LEVEL_OVERRIDE: 19,
+  ENEMY_LEVEL_OVERRIDE: 100,
+  LEVEL_CAP_OVERRIDE: -1,
+  MOVESET_OVERRIDE: MoveId.LOW_KICK,
+} satisfies Partial<InstanceType<OverridesType>>;
 
 /**
  * If you need to add Overrides values for local testing do that inside {@linkcode overrides}

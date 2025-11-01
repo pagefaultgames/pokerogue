@@ -1,6 +1,6 @@
-import { globalScene } from "#app/global-scene";
 // biome-ignore lint/correctness/noUnusedImports: TSDoc
 import type { Animation } from "#app/animations";
+import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { getSpeciesFormChangeMessage } from "#data/form-change-triggers";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
@@ -176,7 +176,7 @@ export class FormChangePhase extends EvolutionPhase {
         globalScene.time.delayedCall(1000, () => {
           this.pokemonEvoTintSprite.setScale(0.25).setVisible(true);
           globalScene.animations
-            .doCycle(1, 1, this.pokemonTintSprite, this.pokemonNewFormTintSprite)
+            .doCycle(1, 1, this.pokemonTintSprite, this.pokemonEvoSprite)
             .then(() => this.afterCycle(preName, transformedPokemon));
         });
       },
