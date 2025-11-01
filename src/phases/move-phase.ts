@@ -286,7 +286,7 @@ export class MovePhase extends PokemonPhase {
 
     // Apply queenly majesty / dazzling
     if (!failed) {
-      const defendingSidePlayField = user.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
+      const defendingSidePlayField = user.isPlayer() ? globalScene.getEnemyField() : globalScene.getPlayerField();
       const cancelled = new BooleanHolder(false);
       defendingSidePlayField.forEach((pokemon: Pokemon) => {
         applyAbAttrs("FieldPriorityMoveImmunityAbAttr", {

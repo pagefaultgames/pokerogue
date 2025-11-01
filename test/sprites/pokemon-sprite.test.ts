@@ -190,7 +190,7 @@ describe("check if every variant's sprite are correctly set", () => {
     if (errors.length > 0) {
       console.log("errors", errors);
     }
-    expect(errors.length).toBe(0);
+    expect(errors).toEqual([]);
   });
 
   it("check exp back male variant files", () => {
@@ -270,7 +270,7 @@ describe("check if every variant's sprite are correctly set", () => {
     if (errors.length > 0) {
       console.log("errors for ", dirPath, errors);
     }
-    expect(errors.length).toBe(0);
+    expect(errors).toEqual([]);
   });
 
   it("look over every file in variant exp female and check if present in masterlist", () => {
