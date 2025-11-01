@@ -34,11 +34,12 @@ export interface SpeciesDetails {
 /**
  * Determines if a passive upgrade is available for the given species ID
  * @param speciesId The ID of the species to check the passive of
+ * @param starterData Optional custom starter data, defaults to the data in globalScene
  * @returns true if the user has enough candies and a passive has not been unlocked already
  */
-export function isPassiveAvailable(speciesId: number): boolean {
+export function isPassiveAvailable(speciesId: number, starterData?: StarterDataEntry): boolean {
   // Get this species ID's starter data
-  const starterData = globalScene.gameData.starterData[speciesId];
+  starterData ??= globalScene.gameData.starterData[speciesId];
 
   return (
     starterData.candyCount >= getPassiveCandyCount(speciesStarterCosts[speciesId])
@@ -49,11 +50,12 @@ export function isPassiveAvailable(speciesId: number): boolean {
 /**
  * Determines if a value reduction upgrade is available for the given species ID
  * @param speciesId The ID of the species to check the value reduction of
+ * @param starterData Optional custom starter data, defaults to the data in globalScene
  * @returns true if the user has enough candies and all value reductions have not been unlocked already
  */
-export function isValueReductionAvailable(speciesId: number): boolean {
+export function isValueReductionAvailable(speciesId: number, starterData?: StarterDataEntry): boolean {
   // Get this species ID's starter data
-  const starterData = globalScene.gameData.starterData[speciesId];
+  starterData ??= globalScene.gameData.starterData[speciesId];
 
   return (
     starterData.candyCount >= getValueReductionCandyCounts(speciesStarterCosts[speciesId])[starterData.valueReduction]
@@ -64,11 +66,12 @@ export function isValueReductionAvailable(speciesId: number): boolean {
 /**
  * Determines if an same species egg can be bought for the given species ID
  * @param speciesId The ID of the species to check the value reduction of
+ * @param starterData Optional custom starter data, defaults to the data in globalScene
  * @returns true if the user has enough candies
  */
-export function isSameSpeciesEggAvailable(speciesId: number): boolean {
+export function isSameSpeciesEggAvailable(speciesId: number, starterData?: StarterDataEntry): boolean {
   // Get this species ID's starter data
-  const starterData = globalScene.gameData.starterData[speciesId];
+  starterData ??= globalScene.gameData.starterData[speciesId];
 
   return starterData.candyCount >= getSameSpeciesEggCandyCounts(speciesStarterCosts[speciesId]);
 }

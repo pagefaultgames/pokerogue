@@ -851,19 +851,16 @@ export class PokedexUiHandler extends MessageUiHandler {
   }
 
   //TODO: Fix redundancy
-  
+
   /**
    * Determines if a passive upgrade is available for the given species ID
    * @param speciesId The ID of the species to check the passive of
    * @returns true if the user has enough candies and a passive has not been unlocked already
    */
   isPassiveAvailable(speciesId: number): boolean {
-    // Get this species ID's starter data
-    const starterData = this.gameData.starterData[this.getStarterSpeciesId(speciesId)];
-
-    return (
-      starterData.candyCount >= getPassiveCandyCount(speciesStarterCosts[this.getStarterSpeciesId(speciesId)])
-      && !(starterData.passiveAttr & PassiveAttr.UNLOCKED)
+    return isPassiveAvailable(
+      this.getStarterSpeciesId(speciesId),
+      this.gameData.starterData[this.getStarterSpeciesId(speciesId)],
     );
   }
 
@@ -873,14 +870,9 @@ export class PokedexUiHandler extends MessageUiHandler {
    * @returns true if the user has enough candies and all value reductions have not been unlocked already
    */
   isValueReductionAvailable(speciesId: number): boolean {
-    // Get this species ID's starter data
-    const starterData = this.gameData.starterData[this.getStarterSpeciesId(speciesId)];
-
-    return (
-      starterData.candyCount
-        >= getValueReductionCandyCounts(speciesStarterCosts[this.getStarterSpeciesId(speciesId)])[
-          starterData.valueReduction
-        ] && starterData.valueReduction < valueReductionMax
+    return isValueReductionAvailable(
+      this.getStarterSpeciesId(speciesId),
+      this.gameData.starterData[this.getStarterSpeciesId(speciesId)],
     );
   }
 
@@ -890,11 +882,9 @@ export class PokedexUiHandler extends MessageUiHandler {
    * @returns true if the user has enough candies
    */
   isSameSpeciesEggAvailable(speciesId: number): boolean {
-    // Get this species ID's starter data
-    const starterData = this.gameData.starterData[this.getStarterSpeciesId(speciesId)];
-
-    return (
-      starterData.candyCount >= getSameSpeciesEggCandyCounts(speciesStarterCosts[this.getStarterSpeciesId(speciesId)])
+    return isSameSpeciesEggAvailable(
+      this.getStarterSpeciesId(speciesId),
+      this.gameData.starterData[this.getStarterSpeciesId(speciesId)],
     );
   }
 
