@@ -118,11 +118,9 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
 }
 
 export function getPokemonSpeciesForm(species: SpeciesId, formIndex: number): PokemonSpeciesForm {
-  const retSpecies: PokemonSpecies =
-    species >= 2000
-      ? allSpecies.find(s => s.speciesId === species)! // TODO: is the bang correct?
-      : allSpecies[species - 1];
-  if (formIndex < retSpecies.forms?.length) {
+  const retSpecies: PokemonSpecies = getPokemonSpecies(species);
+
+  if (formIndex < retSpecies.forms.length) {
     return retSpecies.forms[formIndex];
   }
   return retSpecies;
