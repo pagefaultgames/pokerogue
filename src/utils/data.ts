@@ -1,6 +1,6 @@
 import { loggedInUser } from "#app/account";
 import { saveKey } from "#app/constants";
-import type { StarterAttributes } from "#types/save-data";
+import type { StarterPreferences } from "#types/save-data";
 import { AES, enc } from "crypto-js";
 
 /**
@@ -79,19 +79,19 @@ export function isBareObject(obj: any): boolean {
 const StarterPrefers_DEFAULT: string = "{}";
 let StarterPrefers_private_latest: string = StarterPrefers_DEFAULT;
 
-export interface StarterPreferences {
-  [key: number]: StarterAttributes | undefined;
+export interface AllStarterPreferences {
+  [key: number]: StarterPreferences | undefined;
 }
-// called on starter selection show once
 
-export function loadStarterPreferences(): StarterPreferences {
+// called on starter selection show once
+export function loadStarterPreferences(): AllStarterPreferences {
   return JSON.parse(
     (StarterPrefers_private_latest =
       localStorage.getItem(`starterPrefs_${loggedInUser?.username}`) || StarterPrefers_DEFAULT),
   );
 }
 
-export function saveStarterPreferences(prefs: StarterPreferences): void {
+export function saveStarterPreferences(prefs: AllStarterPreferences): void {
   // Fastest way to check if an object has any properties (does no allocation)
   if (isBareObject(prefs)) {
     console.warn("Refusing to save empty starter preferences");

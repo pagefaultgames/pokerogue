@@ -109,6 +109,11 @@ export const FAKE_TITLE_LOGO_CHANCE = 10000;
 export const RARE_CANDY_FRIENDSHIP_CAP = 200;
 
 /**
+ * The maximum number of cost reduction upgrades that can be bought with candy.
+ */
+export const VALUE_REDUCTION_MAX = 2;
+
+/**
  * The maximum number of times a player can Terastallize in a single arena run
  */
 export const MAX_TERAS_PER_ARENA = 1;
