@@ -414,6 +414,30 @@ export function getDailyEventSeedLuck(seed: string): number | null {
 }
 
 /**
+ * Expects the seed to contain the `money` property.
+ * @see {@linkcode CustomDailyRunConfig}
+ * @returns The custom money value or `null` if there is no money property.
+ */
+export function getDailyStartingMoney(seed: string): number | null {
+  if (!isDailyEventSeed(seed)) {
+    return null;
+  }
+
+  const startingMoney = parseDailySeed(seed)?.money;
+
+  if (startingMoney == null) {
+    return null;
+  }
+
+  if (startingMoney < 0) {
+    console.warn("Invalid starting money value used for custom daily run seed:", startingMoney);
+    return null;
+  }
+
+  return startingMoney;
+}
+
+/**
  * Attempt to parse the seed as a custom daily run seed.
  * @returns The parsed {@linkcode CustomDailyRunConfig}, or `null` if it can't be parsed into json.
  */

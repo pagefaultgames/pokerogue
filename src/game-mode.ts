@@ -3,7 +3,7 @@ import { CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES, CLASSIC_MODE_MYSTERY_ENCOUNTER_
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { allChallenges, type Challenge, copyChallenge } from "#data/challenge";
-import { getDailyEventSeedBoss, getDailyStartingBiome } from "#data/daily-run";
+import { getDailyEventSeedBoss, getDailyStartingBiome, getDailyStartingMoney } from "#data/daily-run";
 import { allSpecies } from "#data/data-lists";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { BiomeId } from "#enums/biome-id";
@@ -136,7 +136,20 @@ export class GameMode implements GameModeConfig {
    * - 1000
    */
   getStartingMoney(): number {
-    return Overrides.STARTING_MONEY_OVERRIDE || 1000;
+    if (Overrides.STARTING_MONEY_OVERRIDE > 0) {
+      return Overrides.STARTING_MONEY_OVERRIDE;
+    }
+    switch (this.modeId) {
+      case GameModes.DAILY: {
+        const dailyStartingMoney = getDailyStartingMoney(globalScene.seed);
+        if (dailyStartingMoney != null) {
+          return dailyStartingMoney;
+        }
+        return 1000;
+      }
+      default:
+        return 1000;
+    }
   }
 
   /**
