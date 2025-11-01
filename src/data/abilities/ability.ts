@@ -55,7 +55,6 @@ import { applyMoveAttrs } from "#moves/apply-attrs";
 import { noAbilityTypeOverrideMoves } from "#moves/invalid-moves";
 import type { Move } from "#moves/move";
 import type { PokemonMove } from "#moves/pokemon-move";
-import type { StatStageChangePhase } from "#phases/stat-stage-change-phase";
 import type {
   AbAttrCondition,
   AbAttrMap,
@@ -558,70 +557,6 @@ export class PostBattleInitFormChangeAbAttr extends PostBattleInitAbAttr {
 
   override apply({ pokemon }: AbAttrBaseParams): void {
     globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger, false);
-  }
-}
-
-/**
- * Abstract class containing all abilities that trigger after Terastallization.
- *
- * Will trigger either during {@linkcode TeraPhase} or {@linkcode QuietFormChangePhase},
- * depending on whether the species has a Tera-related form change or not.
- */
-export abstract class PostTeraAbAttr extends AbAttr {
-  private declare readonly _: never;
-}
-
-export class PostTeraFormChangeStatChangeAbAttr extends PostTeraAbAttr {
-  private readonly stats: readonly BattleStat[];
-  private readonly stages: number;
-
-  constructor(stats: BattleStat[], stages: number) {
-    super();
-
-    this.stats = stats;
-    this.stages = stages;
-  }
-
-  override apply({ pokemon, simulated }: AbAttrBaseParams): void {
-    const statStageChangePhases: StatStageChangePhase[] = [];
-
-    if (!simulated) {
-      const phaseManager = globalScene.phaseManager;
-      statStageChangePhases.push(
-        phaseManager.create("StatStageChangePhase", pokemon.getBattlerIndex(), true, this.stats, this.stages),
-      );
-
-      for (const statStageChangePhase of statStageChangePhases) {
-        phaseManager.unshiftPhase(statStageChangePhase);
-      }
-    }
-  }
-}
-
-export class PostTeraClearWeatherAbAttr extends PostTeraAbAttr {
-  override canApply(_: AbAttrBaseParams): boolean {
-    return globalScene.arena.canSetWeather(WeatherType.NONE);
-  }
-
-  override apply({ pokemon, simulated }: AbAttrBaseParams): void {
-    if (!simulated) {
-      globalScene.arena.trySetWeather(WeatherType.NONE, pokemon);
-    }
-  }
-}
-
-/**
- * Clears all terrain when a Pokemon Terastallizes.
- */
-export class PostTeraClearTerrainAbAttr extends AbAttr {
-  override canApply(_: AbAttrBaseParams): boolean {
-    return globalScene.arena.canSetTerrain(TerrainType.NONE);
-  }
-
-  public override apply({ pokemon, simulated }: AbAttrBaseParams): void {
-    if (!simulated) {
-      globalScene.arena.trySetTerrain(TerrainType.NONE, true, pokemon);
-    }
   }
 }
 
@@ -6609,10 +6544,6 @@ const AbilityAttrs = Object.freeze({
   DoubleBattleChanceAbAttr,
   PostBattleInitAbAttr,
   PostBattleInitFormChangeAbAttr,
-  PostTeraAbAttr,
-  PostTeraFormChangeStatChangeAbAttr,
-  PostTeraClearWeatherAbAttr,
-  PostTeraClearTerrainAbAttr,
   PreDefendAbAttr,
   PreDefendFullHpEndureAbAttr,
   BlockItemTheftAbAttr,
