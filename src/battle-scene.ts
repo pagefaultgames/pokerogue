@@ -452,9 +452,17 @@ export class BattleScene extends SceneBase {
       true,
     );
 
-    //@ts-expect-error (the defined types in the package are incromplete...)
+    // TODO: fix the typing in a `.d.ts` file so the `ts-ignore` is no longer necessary
+    /* biome-ignore lint/suspicious/noTsIgnore: ts-ignore is necessary because `tsc` and `tsgo` require the directive to be on different lines,
+     *   meaning `@ts-expect-error` is guaranteed to emit a diagnostic on one of the lines depending on which one is used
+     */
+    // @ts-ignore
     transition.transit({
       mode: "blinds",
+      /* biome-ignore lint/suspicious/noTsIgnore: ts-ignore is necessary because `tsc` and `tsgo` require the directive to be on different lines,
+       *   meaning `@ts-expect-error` is guaranteed to emit a diagnostic on one of the lines depending on which one is used
+       */
+      // @ts-ignore
       ease: "Cubic.easeInOut",
       duration: 1250,
     });
@@ -803,6 +811,10 @@ export class BattleScene extends SceneBase {
    * @param activeOnly - Whether to consider only active pokemon (as described by {@linkcode Pokemon.isActive()}); default `false`.
    * If `true`, will also remove all `null` values from the array.
    * @returns An array of {@linkcode Pokemon}, as described above.
+   *
+   * @remarks
+   * This should *only* be used in instances where speed order is not relevant.
+   * If speed order matters, use {@linkcode inSpeedOrder}.
    */
   public getField(activeOnly = false): Pokemon[] {
     const ret: Pokemon[] = new Array(4).fill(null);
@@ -1621,6 +1633,7 @@ export class BattleScene extends SceneBase {
       case SpeciesId.UNOWN:
       case SpeciesId.SHELLOS:
       case SpeciesId.GASTRODON:
+      case SpeciesId.ROTOM:
       case SpeciesId.BASCULIN:
       case SpeciesId.DEERLING:
       case SpeciesId.SAWSBUCK:
@@ -1640,11 +1653,10 @@ export class BattleScene extends SceneBase {
       case SpeciesId.TATSUGIRI:
       case SpeciesId.PALDEA_TAUROS:
         return randSeedInt(species.forms.length);
-      case SpeciesId.MAUSHOLD:
-      case SpeciesId.DUDUNSPARCE:
-        return !randSeedInt(4) ? 1 : 0;
       case SpeciesId.SINISTEA:
       case SpeciesId.POLTEAGEIST:
+      case SpeciesId.MAUSHOLD:
+      case SpeciesId.DUDUNSPARCE:
       case SpeciesId.POLTCHAGEIST:
       case SpeciesId.SINISTCHA:
         return !randSeedInt(16) ? 1 : 0;
@@ -1714,7 +1726,6 @@ export class BattleScene extends SceneBase {
       switch (species.speciesId) {
         case SpeciesId.BURMY:
         case SpeciesId.WORMADAM:
-        case SpeciesId.ROTOM:
         case SpeciesId.LYCANROC:
           return randSeedInt(species.forms.length);
       }

@@ -65,7 +65,7 @@ export function getAvailableRibbons(species: PokemonSpecies): RibbonFlag[] {
       data |= getRibbonForType(checkingSpecies.type2);
     }
 
-    for (const form of species.forms) {
+    for (const form of checkingSpecies.forms) {
       data |= getRibbonForType(form.type1);
       if (form.type2 != null) {
         data |= getRibbonForType(form.type2);
@@ -170,3 +170,47 @@ export function getRibbonKey(flag: RibbonFlag): string {
       return "";
   }
 }
+
+/**
+ * This list is used to determined the display order of ribbons in the Pokédex.
+ */
+export const orderedRibbons: RibbonFlag[] = [
+  RibbonData.CLASSIC,
+  RibbonData.FRIENDSHIP,
+  RibbonData.FRESH_START,
+  RibbonData.HARDCORE,
+  RibbonData.LIMITED_CATCH,
+  RibbonData.NUZLOCKE,
+  RibbonData.NO_HEAL,
+  RibbonData.NO_SHOP,
+  RibbonData.NO_SUPPORT,
+  RibbonData.MONO_GEN_1,
+  RibbonData.MONO_GEN_2,
+  RibbonData.MONO_GEN_3,
+  RibbonData.MONO_GEN_4,
+  RibbonData.MONO_GEN_5,
+  RibbonData.MONO_GEN_6,
+  RibbonData.MONO_GEN_7,
+  RibbonData.MONO_GEN_8,
+  RibbonData.MONO_GEN_9,
+  RibbonData.MONO_NORMAL,
+  RibbonData.MONO_FIGHTING,
+  RibbonData.MONO_FLYING,
+  RibbonData.MONO_POISON,
+  RibbonData.MONO_GROUND,
+  RibbonData.MONO_ROCK,
+  RibbonData.MONO_BUG,
+  RibbonData.MONO_GHOST,
+  RibbonData.MONO_STEEL,
+  RibbonData.MONO_FIRE,
+  RibbonData.MONO_WATER,
+  RibbonData.MONO_GRASS,
+  RibbonData.MONO_ELECTRIC,
+  RibbonData.MONO_PSYCHIC,
+  RibbonData.MONO_ICE,
+  RibbonData.MONO_DRAGON,
+  RibbonData.MONO_DARK,
+  RibbonData.MONO_FAIRY,
+  RibbonData.INVERSE,
+  RibbonData.FLIP_STATS,
+];
