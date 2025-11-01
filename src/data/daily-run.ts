@@ -446,8 +446,7 @@ function parseDailySeed(seed: string): CustomDailyRunConfig | null {
     const config = JSON.parse(seed) as CustomDailyRunConfig;
     console.log(config);
     return config;
-    // biome-ignore lint/correctness/noUnusedVariables: Not a custom event seed.
-  } catch (e) {
+  } catch {
     return null;
   }
 }
