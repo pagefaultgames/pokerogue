@@ -11,8 +11,9 @@ import { type BooleanHolder, getFrameMs, randGauss, randInt } from "#utils/commo
  * Class for handling general animations such as particle effects.
  * For battle animations, see {@linkcode BattleAnim}.
  */
-// TODO: Can this be made into an interface?
+// TODO: Can this be made into an interface/POJO?
 // TODO: Rename to not conflict with built-in `animation` class
+// TODO: Clean up a lot of the animation code to be more maintainable
 export class Animation {
   /**
    * Animates particles that "spiral" upwards at start of transform animation
