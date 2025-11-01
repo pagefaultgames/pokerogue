@@ -79,7 +79,7 @@ describe("Moves - Sleep Talk", () => {
     game.move.select(MoveId.SLEEP_TALK);
     await game.toNextTurn();
 
-    expect(feebas).toHaveUsedMove({ result: MoveResult.FAIL });
+    expect(feebas).toHaveUsedMove({ move: MoveId.SLEEP_TALK, result: MoveResult.FAIL });
   });
 
   it("should fail if the user has no valid moves", async () => {
