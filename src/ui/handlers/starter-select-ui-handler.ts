@@ -155,6 +155,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   tr: {
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
+    starterInfoXPos: 34,
   },
   ro: {
     starterInfoTextSize: "56px",

@@ -8,9 +8,9 @@ pre-commit:
     - rebase
   commands:
     biome-lint:
-      # Disable colors as certain IDEs don't support it in the output pane.
+      # Disable colors as certain IDEs (such as VSCode) don't support it in the output pane.
       # Summary mode looks decent in plain ASCII anyhow
-      run: pnpm exec biome check --write --colors=off --reporter=summary --staged --no-errors-on-unmatched --diagnostic-level=error
+      run: pnpm biome:staged --colors=off --reporter=summary
       stage_fixed: true
     ls-lint:
       run: pnpm exec ls-lint
