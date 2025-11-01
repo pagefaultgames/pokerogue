@@ -377,7 +377,7 @@ export function getDailyEventSeedBiome(seed: string): BiomeId | null {
 
   const startingBiome = parseDailySeed(seed)?.biome;
 
-  if (!startingBiome) {
+  if (startingBiome == null) {
     return null;
   }
 
@@ -401,7 +401,11 @@ export function getDailyEventSeedLuck(seed: string): number | null {
 
   const luck = parseDailySeed(seed)?.luck;
 
-  if (!luck || luck < 0 || luck > 14) {
+  if (luck == null) {
+    return null;
+  }
+
+  if (luck < 0 || luck > 14) {
     console.warn("Invalid luck value used for custom daily run seed:", luck);
     return null;
   }
