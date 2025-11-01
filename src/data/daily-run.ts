@@ -7,6 +7,7 @@ import { MoveId } from "#enums/move-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { SpeciesId } from "#enums/species-id";
 import type { Variant } from "#sprites/variant";
+import type { CustomDailyRunConfig } from "#types/daily-run";
 import type { Starter, StarterMoveset } from "#types/save-data";
 import { isBetween, randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
@@ -119,13 +120,11 @@ export function getDailyStartingBiome(): BiomeId {
 }
 
 /**
- * If this is Daily Mode and the seed is longer than a default seed
- * then it has been modified and could contain a custom event seed. \
- * Default seeds are always exactly 24 characters.
+ * If this is Daily Mode and the seed can be parsed into json it is a Daily Event Seed.
  * @returns `true` if it is a Daily Event Seed.
  */
 export function isDailyEventSeed(seed: string): boolean {
-  return globalScene.gameMode.isDaily && seed.length > 24;
+  return globalScene.gameMode.isDaily && parseDailySeed(seed) != null;
 }
 
 /**
@@ -367,7 +366,8 @@ export function getDailyEventSeedBossVariant(seed: string): Variant | null {
 }
 
 /**
- * Expects the seed to contain `/biome\d{2}/` where the 2 digits are a biome ID (left padded with `0` if necessary).
+ * Expects the seed to contain the `biome` property.
+ * @see {@linkcode CustomDailyRunConfig}
  * @returns The biome to use or `null` if no valid match.
  */
 export function getDailyEventSeedBiome(seed: string): BiomeId | null {
@@ -375,12 +375,11 @@ export function getDailyEventSeedBiome(seed: string): BiomeId | null {
     return null;
   }
 
-  const match = /biome(\d{2})/g.exec(seed);
-  if (!match || match.length !== 2) {
+  const startingBiome = parseDailySeed(seed)?.biome;
+
+  if (!startingBiome) {
     return null;
   }
-
-  const startingBiome = Number.parseInt(match[1]) as BiomeId;
 
   if (!getEnumValues(BiomeId).includes(startingBiome)) {
     console.warn("Invalid biome ID used for custom daily run seed:", startingBiome);
@@ -391,26 +390,36 @@ export function getDailyEventSeedBiome(seed: string): BiomeId | null {
 }
 
 /**
- * Expects the seed to contain `/luck\d{2}/` where the 2 digits are a number between `0` and `14`
- * (left padded with `0` if necessary).
- * @returns The custom luck value or `null` if no valid match.
+ * Expects the seed to contain the `luck` property.
+ * @see {@linkcode CustomDailyRunConfig}
+ * @returns The custom luck value or `null` if there is no luck property.
  */
 export function getDailyEventSeedLuck(seed: string): number | null {
   if (!isDailyEventSeed(seed)) {
     return null;
   }
 
-  const match = /luck(\d{2})/g.exec(seed);
-  if (!match || match.length !== 2) {
-    return null;
-  }
+  const luck = parseDailySeed(seed)?.luck;
 
-  const luck = Number.parseInt(match[1]);
-
-  if (luck < 0 || luck > 14) {
+  if (!luck || luck < 0 || luck > 14) {
     console.warn("Invalid luck value used for custom daily run seed:", luck);
     return null;
   }
 
   return luck;
+}
+
+/**
+ * Attempt to parse the seed as a custom daily run seed.
+ * @returns The parsed {@linkcode CustomDailyRunConfig}, or `null` if it can't be parsed into json.
+ */
+function parseDailySeed(seed: string): CustomDailyRunConfig | null {
+  try {
+    const config = JSON.parse(seed) as CustomDailyRunConfig;
+    console.log(config);
+    return config;
+    // biome-ignore lint/correctness/noUnusedVariables: Not a custom event seed.
+  } catch (e) {
+    return null;
+  }
 }
