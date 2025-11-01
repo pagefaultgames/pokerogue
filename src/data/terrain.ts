@@ -67,7 +67,7 @@ export class Terrain {
         return (
           !isFieldTargeted(move)
           && !isSpreadMove(move)
-          && move.getPriority(user) > 0.2 // fractional priority is used by quick claw etc and is not blocked by terrain
+          && move.getPriority(user) > 0
           && user.getOpponents(true).some(o => targets.includes(o.getBattlerIndex()) && o.isGrounded())
         );
     }

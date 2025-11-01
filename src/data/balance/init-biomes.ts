@@ -3547,7 +3547,7 @@ export function initBiomes() {
     ],
     [SpeciesId.NOIBAT, PokemonType.FLYING, PokemonType.DRAGON, [
       [BiomeId.CAVE, BiomePoolTier.UNCOMMON],
-      [BiomeId.GRASS, BiomePoolTier.UNCOMMON, [TimeOfDay.DUSK, TimeOfDay.NIGHT]]
+      [BiomeId.GRASS, BiomePoolTier.RARE, [TimeOfDay.DUSK, TimeOfDay.NIGHT]]
     ]
     ],
     [SpeciesId.NOIVERN, PokemonType.FLYING, PokemonType.DRAGON, [
