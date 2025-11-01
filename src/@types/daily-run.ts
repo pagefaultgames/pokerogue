@@ -16,7 +16,7 @@ interface DailySeedStarter {
 
 type DailySeedStarterTuple = [DailySeedStarter, DailySeedStarter, DailySeedStarter];
 
-export interface DailyRunConfig {
+export interface CustomDailyRunConfig {
   starters?: DailySeedStarterTuple;
   boss?: DailySeedStarter;
   biome?: BiomeId;
