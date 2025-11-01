@@ -3448,6 +3448,7 @@ export class PreLeaveFieldClearWeatherAbAttr extends PreLeaveFieldAbAttr {
     if (!globalScene.arena.weather?.isImmutable()) {
       return true;
     }
+
     // Clear immutable weather only if no other Pokemon with this attribute for the given weather type exists
     return !globalScene
       .getField(true)
