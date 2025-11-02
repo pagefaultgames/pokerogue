@@ -1,20 +1,29 @@
 import { MAX_TERAS_PER_ARENA } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
+import { getPokeballName } from "#data/pokeball";
 import { getTypeRgb } from "#data/type";
+import { BattleType } from "#enums/battle-type";
 import { Button } from "#enums/buttons";
 import { Command } from "#enums/command";
 import { PokemonType } from "#enums/pokemon-type";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { CommandPhase } from "#phases/command-phase";
+import { SettingKeyboard } from "#system/settings-keyboard";
 import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { canTerastallize } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
+const OPTION_BUTTON_YPOSITION = -62;
+
 export class CommandUiHandler extends UiHandler {
+  private throwBallTextContainer: Phaser.GameObjects.Container;
+  private throwBallText: Phaser.GameObjects.Text;
+  private restartBattleTextContainer: Phaser.GameObjects.Container;
+  private restartBattleText: Phaser.GameObjects.Text;
   private commandsContainer: Phaser.GameObjects.Container;
   private cursorObj: Phaser.GameObjects.Image | null;
 
@@ -63,14 +72,54 @@ export class CommandUiHandler extends UiHandler {
       commandText.setName(commands[c]);
       this.commandsContainer.add(commandText);
     }
+
+    this.throwBallTextContainer = globalScene.add
+      .container(16, OPTION_BUTTON_YPOSITION)
+      .setName("throwBall-txt")
+      .setVisible(false);
+    ui.add(this.throwBallTextContainer);
+
+    const cycleShinyKey = globalScene.inputController?.getKeyForLatestInputRecorded(SettingKeyboard.Button_Cycle_Shiny);
+    const throwBallKey = globalScene.enableHotkeyTips && cycleShinyKey ? `(${cycleShinyKey}) ` : "";
+    const lastPokeball =
+      " "
+      + getPokeballName(globalScene.lastPokeballType)
+      + " x"
+      + globalScene.pokeballCounts[globalScene.lastPokeballType];
+    this.throwBallText = addTextObject(
+      -4,
+      -2,
+      i18next.t("commandUiHandler:throwBall", { throwBallKey, lastPokeball }),
+      TextStyle.PARTY,
+    )
+      .setName("text-reroll-btn")
+      .setOrigin(0);
+    this.throwBallTextContainer.add(this.throwBallText);
+
+    this.restartBattleTextContainer = globalScene.add.container(16, OPTION_BUTTON_YPOSITION);
+    this.restartBattleTextContainer.setVisible(false);
+    ui.add(this.restartBattleTextContainer);
+
+    const cycleAbilityKey = globalScene.inputController?.getKeyForLatestInputRecorded(
+      SettingKeyboard.Button_Cycle_Ability,
+    );
+    const retryBattleKey = globalScene.enableHotkeyTips && cycleAbilityKey ? `(${cycleAbilityKey}) ` : "";
+    this.restartBattleText = addTextObject(
+      -4,
+      -2,
+      i18next.t("commandUiHandler:retryBattle", { retryBattleKey }),
+      TextStyle.PARTY,
+    ) //
+      .setOrigin(0);
+    this.restartBattleTextContainer.add(this.restartBattleText);
   }
 
   show(args: any[]): boolean {
     super.show(args);
-
     this.fieldIndex = args.length > 0 ? (args[0] as number) : 0;
 
     this.commandsContainer.setVisible(true);
+    this.updateTipsText();
 
     let commandPhase: CommandPhase;
     const currentPhase = globalScene.phaseManager.getCurrentPhase();
@@ -187,6 +236,77 @@ export class CommandUiHandler extends UiHandler {
             this.toggleTeraButton();
           }
           break;
+        case Button.CYCLE_SHINY: {
+          /**
+           * When the Cycle Shiny button is pressed,
+           * the last pokeball will be thrown.
+           * This can only be used in the UiMode.COMMAND.
+           */
+          const commandPhase = globalScene.phaseManager.getCurrentPhase() as CommandPhase;
+          if (
+            globalScene.currentBattle.battleType === BattleType.WILD
+            && globalScene.pokeballCounts[globalScene.lastPokeballType]
+            && commandPhase.handleCommand(Command.BALL, globalScene.lastPokeballType)
+          ) {
+            globalScene.ui.setMode(UiMode.COMMAND, commandPhase.getFieldIndex());
+            globalScene.ui.setMode(UiMode.MESSAGE);
+            success = true;
+          } else {
+            ui.playError();
+          }
+          break;
+        }
+        case Button.CYCLE_ABILITY:
+          /**
+           * When the Cycle Ability button is pressed,
+           * the UI will request the user if they would like
+           * to restart the battle. This can only be used in
+           * the UiMode.COMMAND.
+           */
+          if (!globalScene.enableRetries) {
+            break;
+          }
+          globalScene.ui.setMode(UiMode.MESSAGE);
+          globalScene.ui.showText(i18next.t("battle:retryBattle"), null, () => {
+            globalScene.ui.setMode(
+              UiMode.CONFIRM,
+              () => {
+                globalScene.ui.fadeOut(1250).then(() => {
+                  globalScene.reset();
+                  globalScene.phaseManager.clearPhaseQueue();
+                  globalScene.gameData.loadSession(globalScene.sessionSlotId).then(() => {
+                    globalScene.phaseManager.pushNew("EncounterPhase", true);
+
+                    const availablePartyMembers = globalScene.getPokemonAllowedInBattle().length;
+
+                    globalScene.phaseManager.pushNew("SummonPhase", 0);
+                    if (globalScene.currentBattle.double && availablePartyMembers > 1) {
+                      globalScene.phaseManager.pushNew("SummonPhase", 1);
+                    }
+                    if (
+                      globalScene.currentBattle.waveIndex > 1
+                      && globalScene.currentBattle.battleType !== BattleType.TRAINER
+                    ) {
+                      globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
+                      if (globalScene.currentBattle.double && availablePartyMembers > 1) {
+                        globalScene.phaseManager.pushNew("CheckSwitchPhase", 1, globalScene.currentBattle.double);
+                      }
+                    }
+                    globalScene.ui.fadeIn(1250);
+                    globalScene.phaseManager.shiftPhase();
+                  });
+                });
+              },
+              () => {
+                globalScene.ui.setMode(UiMode.COMMAND);
+              },
+              false,
+              0,
+              0,
+              1000,
+            );
+          });
+          break;
       }
     }
 
@@ -217,16 +337,16 @@ export class CommandUiHandler extends UiHandler {
   }
 
   getCursor(): number {
-    return !this.fieldIndex ? this.cursor : this.cursor2;
+    return this.fieldIndex ? this.cursor2 : this.cursor;
   }
 
   setCursor(cursor: number): boolean {
     const changed = this.getCursor() !== cursor;
     if (changed) {
-      if (!this.fieldIndex) {
-        this.cursor = cursor;
-      } else {
+      if (this.fieldIndex) {
         this.cursor2 = cursor;
+      } else {
+        this.cursor = cursor;
       }
     }
 
@@ -249,6 +369,8 @@ export class CommandUiHandler extends UiHandler {
     super.clear();
     this.getUi().getMessageHandler().commandWindow.setVisible(false);
     this.commandsContainer.setVisible(false);
+    this.throwBallTextContainer.setVisible(false);
+    this.restartBattleTextContainer.setVisible(false);
     this.getUi().getMessageHandler().clearText();
     this.eraseCursor();
   }
@@ -258,5 +380,35 @@ export class CommandUiHandler extends UiHandler {
       this.cursorObj.destroy();
     }
     this.cursorObj = null;
+  }
+
+  /**
+   * To update text in the command when globalScene.enableHotkeyTips
+   * is turned off or when action keys are changed.
+   */
+  override updateTipsText(): void {
+    const cycleShinyKey = globalScene.inputController?.getKeyForLatestInputRecorded(SettingKeyboard.Button_Cycle_Shiny);
+    const throwBallKey = globalScene.enableHotkeyTips && cycleShinyKey ? `(${cycleShinyKey}) ` : "";
+    const lastPokeball =
+      " "
+      + getPokeballName(globalScene.lastPokeballType)
+      + " x"
+      + globalScene.pokeballCounts[globalScene.lastPokeballType];
+    this.throwBallText.setText(i18next.t("commandUiHandler:throwBall", { throwBallKey, lastPokeball }));
+    const cycleAbilityKey = globalScene.inputController?.getKeyForLatestInputRecorded(
+      SettingKeyboard.Button_Cycle_Ability,
+    );
+    const retryBattleKey = globalScene.enableHotkeyTips && cycleAbilityKey ? `(${cycleAbilityKey}) ` : "";
+    this.restartBattleText.setText(i18next.t("commandUiHandler:retryBattle", { retryBattleKey }));
+    this.throwBallTextContainer.setVisible(
+      !globalScene.enableHotkeyTips && globalScene.currentBattle.battleType === BattleType.WILD,
+    );
+    this.restartBattleTextContainer
+      .setVisible(!globalScene.enableHotkeyTips)
+      .setPositionRelative(
+        this.throwBallTextContainer,
+        0,
+        globalScene.currentBattle.battleType === BattleType.WILD ? -12 : 0,
+      );
   }
 }

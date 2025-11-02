@@ -3,7 +3,9 @@ import type { InputsController } from "#app/inputs-controller";
 import { Button } from "#enums/buttons";
 import { UiMode } from "#enums/ui-mode";
 import { Setting, SettingKeys, settingIndex } from "#system/settings";
+import { CommandUiHandler } from "#ui/handlers/command-ui-handler";
 import type { MessageUiHandler } from "#ui/message-ui-handler";
+import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { PokedexPageUiHandler } from "#ui/pokedex-page-ui-handler";
 import { PokedexUiHandler } from "#ui/pokedex-ui-handler";
 import { RunInfoUiHandler } from "#ui/run-info-ui-handler";
@@ -85,8 +87,8 @@ export class UiInputs {
       [Button.LEFT]: () => this.buttonDirection(Button.LEFT),
       [Button.RIGHT]: () => this.buttonDirection(Button.RIGHT),
       [Button.SUBMIT]: () => this.buttonTouch(),
-      [Button.ACTION]: () => this.buttonAb(Button.ACTION),
-      [Button.CANCEL]: () => this.buttonAb(Button.CANCEL),
+      [Button.ACTION]: () => this.buttonAB(Button.ACTION),
+      [Button.CANCEL]: () => this.buttonAB(Button.CANCEL),
       [Button.MENU]: () => this.buttonMenu(),
       [Button.STATS]: () => this.buttonGoToFilter(Button.STATS),
       [Button.CYCLE_SHINY]: () => this.buttonCycleOption(Button.CYCLE_SHINY),
@@ -130,7 +132,18 @@ export class UiInputs {
     this.doVibration(inputSuccess, vibrationLength);
   }
 
-  buttonAb(button: Button): void {
+  buttonAB(button: Button): void {
+    if (this.isInSettings()) {
+      /**
+       * When exiting the settings menu, this function
+       * will update the the UI to update the text.
+       * Eg: (E) Throw Poke ball -> (Shift) Throw Poke ball
+       */
+      const whiteListUIModes: UiMode[] = [UiMode.MODIFIER_SELECT, UiMode.COMMAND];
+      for (const uiMode of whiteListUIModes) {
+        globalScene.ui.handlers[uiMode].updateTipsText();
+      }
+    }
     globalScene.ui.processInput(button);
   }
 
@@ -213,6 +226,8 @@ export class UiInputs {
       SettingsAudioUiHandler,
       SettingsGamepadUiHandler,
       SettingsKeyboardUiHandler,
+      CommandUiHandler,
+      ModifierSelectUiHandler,
     ];
     const uiHandler = globalScene.ui?.getHandler();
     if (whitelist.some(handler => uiHandler instanceof handler)) {
@@ -245,5 +260,16 @@ export class UiInputs {
     if (globalScene.ui?.getMode() === UiMode.SETTINGS) {
       (globalScene.ui.getHandler() as SettingsUiHandler).show([]);
     }
+  }
+
+  private isInSettings(): boolean {
+    const settingsModes: readonly UiMode[] = [
+      UiMode.SETTINGS,
+      UiMode.SETTINGS_AUDIO,
+      UiMode.SETTINGS_DISPLAY,
+      UiMode.SETTINGS_GAMEPAD,
+      UiMode.SETTINGS_KEYBOARD,
+    ] as const;
+    return settingsModes.includes(globalScene.ui?.getMode());
   }
 }

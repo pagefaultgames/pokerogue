@@ -4,7 +4,13 @@ import { Button } from "#enums/buttons";
 import { Device } from "#enums/devices";
 import { UiMode } from "#enums/ui-mode";
 import cfg_keyboard_qwerty from "#inputs/cfg-keyboard-qwerty";
-import { assign, getButtonWithKeycode, getIconForLatestInput, swap } from "#inputs/config-handler";
+import {
+  assign,
+  getButtonWithKeycode,
+  getIconForLatestInput,
+  getKeyForLatestInput,
+  swap,
+} from "#inputs/config-handler";
 import pad_dualshock from "#inputs/pad-dualshock";
 import pad_generic from "#inputs/pad-generic";
 import pad_procon from "#inputs/pad-procon";
@@ -538,6 +544,13 @@ export class InputsController {
       this.ensureKeyboardIsInit();
     }
     return getIconForLatestInput(this.configs, this.lastSource, this.selectedDevice, settingName);
+  }
+
+  getKeyForLatestInputRecorded(settingName) {
+    if (this.lastSource === "keyboard") {
+      this.ensureKeyboardIsInit();
+    }
+    return getKeyForLatestInput(this.configs, this.lastSource, this.selectedDevice, settingName);
   }
 
   getLastSourceDevice(): Device {
