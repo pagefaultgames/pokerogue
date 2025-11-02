@@ -134,7 +134,7 @@ function doFanOutParticle(
     }
     particle.x = x + sin(trigIndex, f * xSpeed);
     particle.y = y + cos(trigIndex, f * ySpeed);
-    trigIndex = trigIndex + angle;
+    trigIndex += angle;
     f++;
   };
 

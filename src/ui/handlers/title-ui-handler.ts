@@ -47,6 +47,10 @@ export class TitleUiHandler extends OptionSelectUiHandler {
     return i18next.t("menu:loggedInAs", { username: displayName });
   }
 
+  updateUsername() {
+    this.usernameLabel.setText(this.getUsername());
+  }
+
   constructor(mode: UiMode = UiMode.TITLE) {
     super(mode);
   }
@@ -166,6 +170,8 @@ export class TitleUiHandler extends OptionSelectUiHandler {
 
     const scaledHeight = globalScene.scaledCanvas.height;
     const windowHeight = this.getWindowHeight();
+
+    this.updateUsername();
 
     // Moving username and player count to top of the menu
     // and sorting it, to display the shorter one on top
