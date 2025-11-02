@@ -81,7 +81,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
     let pokemonIconX = -20;
     let pokemonIconY = 6;
 
-    if (["de", "es-ES", "es-419", "fr", "ko", "pt-BR", "ja", "ru"].includes(currentLanguage)) {
+    if (["de", "es-ES", "es-419", "fr", "ko", "pt-BR", "ja", "ru", "tr"].includes(currentLanguage)) {
       gachaTextStyle = TextStyle.SMALLER_WINDOW_ALT;
       gachaX = 2;
       gachaY = 2;
@@ -89,7 +89,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
 
     let legendaryLabelX = gachaX;
     let legendaryLabelY = gachaY;
-    if (["de", "es-ES", "es-419"].includes(currentLanguage)) {
+    if (["de", "es-ES", "es-419", "tr"].includes(currentLanguage)) {
       pokemonIconX = -25;
       pokemonIconY = 10;
       legendaryLabelX = -6;
@@ -108,8 +108,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
           let xOffset = 0;
           const pokemonIcon = globalScene.add.sprite(pokemonIconX, pokemonIconY, "pokemon_icons_0");
 
-          // Intentionally left as "array includes" instead of an equality check to allow for future languages to reuse
-          if (["pt-BR"].includes(currentLanguage)) {
+          if (["pt-BR", "tr"].includes(currentLanguage)) {
             xOffset = 2;
             pokemonIcon.setX(pokemonIconX - 2);
           }
@@ -120,14 +119,14 @@ export class EggGachaUiHandler extends MessageUiHandler {
         }
         break;
       case GachaType.MOVE:
-        if (["de", "es-ES", "fr", "pt-BR", "ru"].includes(currentLanguage)) {
+        if (["de", "es-ES", "fr", "pt-BR", "ru", "tr"].includes(currentLanguage)) {
           gachaUpLabel.setAlign("center").setY(0);
         }
 
         gachaUpLabel.setText(i18next.t("egg:moveUpGacha")).setX(0).setOrigin(0.5, 0);
         break;
       case GachaType.SHINY:
-        if (["de", "fr", "ko", "ru"].includes(currentLanguage)) {
+        if (["de", "fr", "ko", "ru", "tr"].includes(currentLanguage)) {
           gachaUpLabel.setAlign("center").setY(0);
         }
 
