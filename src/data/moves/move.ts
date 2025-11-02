@@ -103,6 +103,9 @@ import { canSpeciesTera, willTerastallize } from "#utils/pokemon-utils";
 import type { ReadonlyGenericUint8Array } from "#types/typed-arrays";
 import { MovePriorityInBracket } from "#enums/move-priority-in-bracket";
 
+// TODO: Make these (and all condition functions actually)
+// take interfaces instead of plain parameters
+// to aid in assignability constraints
 /**
  * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.
  * Conventionally returns `true` for success and `false` for failure.
@@ -10700,7 +10703,8 @@ export function initMoves() {
       .attr(HealOnAllyAttr, 0.5, true, false)
       .ballBombMove()
       // Fail if used against an ally that is affected by heal block, during the second failure check
-      .condition((user, target) => target.isOpponent(user) || !!target.getTag(BattlerTagType.HEAL_BLOCK), 2),
+      // TODO: Make into a target-based move restriction
+      .condition((user, target) => target.isOpponent(user) || !target.getTag(BattlerTagType.HEAL_BLOCK), 2),
     new AttackMove(MoveId.ANCHOR_SHOT, PokemonType.STEEL, MoveCategory.PHYSICAL, 80, 100, 20, 100, 0, 7)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1, 1, true),
     new StatusMove(MoveId.PSYCHIC_TERRAIN, PokemonType.PSYCHIC, -1, 10, -1, 0, 7)
