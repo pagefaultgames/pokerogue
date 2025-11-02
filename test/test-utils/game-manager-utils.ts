@@ -1,7 +1,7 @@
 import { Battle } from "#app/battle";
 import type { BattleScene } from "#app/battle-scene";
 import { getGameMode } from "#app/game-mode";
-import { getDailyRunStarters } from "#data/daily-run";
+import { getDailyRunStarters } from "#data/daily-seed/daily-run";
 import { Gender } from "#data/gender";
 import { BattleType } from "#enums/battle-type";
 import { GameModes } from "#enums/game-modes";

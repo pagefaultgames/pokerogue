@@ -3,7 +3,7 @@ import { CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES, CLASSIC_MODE_MYSTERY_ENCOUNTER_
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { allChallenges, type Challenge, copyChallenge } from "#data/challenge";
-import { getDailyEventSeedBoss, getDailyStartingBiome, getDailyStartingMoney } from "#data/daily-run";
+import { getDailyEventSeedBoss, getDailyStartingBiome, getDailyStartingMoney } from "#data/daily-seed/daily-run";
 import { allSpecies } from "#data/data-lists";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { BiomeId } from "#enums/biome-id";

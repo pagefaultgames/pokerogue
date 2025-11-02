@@ -9,13 +9,14 @@ import { Nature } from "#enums/nature";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { SpeciesId } from "#enums/species-id";
 import type { Variant } from "#sprites/variant";
-import type { CustomDailyRunConfig, DailySeedBoss } from "#types/daily-run";
+import type { DailySeedBoss } from "#types/daily-run";
 import type { Starter, StarterMoveset } from "#types/save-data";
 import { isBetween, randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { chunkString } from "#utils/strings";
 import { dailyBiomeWeights } from "./daily-biome-weights";
+import { isDailyEventSeed, parseDailySeed } from "./daily-seed-utils";
 
 export interface DailyRunConfig {
   seed: number;
@@ -119,14 +120,6 @@ export function getDailyStartingBiome(): BiomeId {
   // Fallback in case something went wrong
   // TODO: should this use `randSeedItem`?
   return biomes[randSeedInt(biomes.length)];
-}
-
-/**
- * If this is Daily Mode and the seed can be parsed into json it is a Daily Event Seed.
- * @returns `true` if it is a Daily Event Seed.
- */
-export function isDailyEventSeed(seed: string): boolean {
-  return globalScene.gameMode.isDaily && parseDailySeed(seed) != null;
 }
 
 /**
@@ -387,19 +380,4 @@ export function getDailyStartingMoney(seed: string): number | null {
   }
 
   return startingMoney;
-}
-
-/**
- * Attempt to parse the seed as a custom daily run seed.
- * @returns The parsed {@linkcode CustomDailyRunConfig}, or `null` if it can't be parsed into json.
- */
-function parseDailySeed(seed: string): CustomDailyRunConfig | null {
-  try {
-    const config = JSON.parse(seed) as CustomDailyRunConfig;
-    // todo: remove this later since it gets logged a lot
-    console.log("Using a custom config for the daily run:", config);
-    return config;
-  } catch {
-    return null;
-  }
 }
