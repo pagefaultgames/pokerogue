@@ -1,3 +1,6 @@
+import type { ArenaTag, ArenaTagTypeMap } from "#data/arena-tag";
+import type { NonSerializableArenaTagType, SerializableArenaTagType } from "#types/arena-tags";
+
 /**
  * Enum representing all different types of {@linkcode ArenaTag}s.
  * @privateRemarks
@@ -34,4 +37,5 @@ export enum ArenaTagType {
   GRASS_WATER_PLEDGE = "GRASS_WATER_PLEDGE",
   FAIRY_LOCK = "FAIRY_LOCK",
   NEUTRALIZING_GAS = "NEUTRALIZING_GAS",
+  PENDING_HEAL = "PENDING_HEAL",
 }

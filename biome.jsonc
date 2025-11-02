@@ -1,5 +1,11 @@
+/*
+ * SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 {
-  "$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.2.5/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -21,7 +27,8 @@
       "**",
       "!**/dist",
       "!**/coverage",
-      "!**/public",
+      "!**/assets",
+      "!**/locales",
       "!**/.github",
       "!**/node_modules",
       "!**/typedoc",
@@ -31,7 +38,7 @@
       // TODO: enable linting this file
       "!**/src/data/moves/move.ts",
       // this file is too big
-      "!**/src/data/balance/tms.ts"
+      "!**/src/data/balance/tm-species-map.ts"
     ]
   },
   "assist": {
@@ -53,6 +60,7 @@
       "recommended": true,
       "correctness": {
         "noUndeclaredVariables": "error",
+        "useParseIntRadix": "off",
         "noUnusedVariables": "error",
         "noSwitchDeclarations": "error",
         "noVoidTypeReturn": "error",
@@ -108,7 +116,17 @@
         },
         "useCollapsedIf": "error",
         "useCollapsedElseIf": "error",
-
+        "useDeprecatedReason": "error",
+        "useConsistentArrayType": {
+          "level": "error",
+          "fix": "safe",
+          "options": {}
+        },
+        "useShorthandAssign": {
+          "level": "error",
+          "fix": "safe",
+          "options": {}
+        },
         "noSubstr": "error",
         "noYodaExpression": "error",
         "useForOf": "error",
@@ -197,7 +215,7 @@
         "noForEach": "off", // Foreach vs for of is not that simple.
         "noUselessSwitchCase": "off", // Explicit > Implicit
         "noUselessConstructor": "error",
-        "noBannedTypes": "warn", // TODO: Refactor and make this an error
+        "noBannedTypes": "error",
         "noThisInStatic": "error",
         "noUselessThisAlias": "error",
         "noUselessTernary": "error",
@@ -254,16 +272,9 @@
     },
 
     // Overrides to prevent unused import removal inside `overrides.ts`, enums & `.d.ts` files (for TSDoc linkcodes),
-    // as well as inside script boilerplate files.
+    // as well as inside script boilerplate files (whose imports will _presumably_ be used in the generated file).
     {
-      // TODO: Rename existing boilerplates in the folder and remove this last alias
-      "includes": [
-        "**/src/overrides.ts",
-        "**/src/enums/**/*",
-        "**/*.d.ts",
-        "scripts/**/*.boilerplate.ts",
-        "**/boilerplates/*.ts"
-      ],
+      "includes": ["**/src/overrides.ts", "**/src/enums/**/*", "**/*.d.ts", "scripts/**/*.boilerplate.ts"],
       "linter": {
         "rules": {
           "correctness": {

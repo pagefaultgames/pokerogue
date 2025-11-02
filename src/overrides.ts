@@ -18,6 +18,7 @@ import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
+import { TrainerVariant } from "#enums/trainer-variant";
 import { Unlockables } from "#enums/unlockables";
 import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
@@ -158,7 +159,7 @@ class DefaultOverrides {
   readonly HAS_PASSIVE_ABILITY_OVERRIDE: boolean | null = null;
   readonly STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly GENDER_OVERRIDE: Gender | null = null;
-  readonly MOVESET_OVERRIDE: MoveId | Array<MoveId> = [];
+  readonly MOVESET_OVERRIDE: MoveId | MoveId[] = [];
   readonly SHINY_OVERRIDE: boolean | null = null;
   readonly VARIANT_OVERRIDE: Variant | null = null;
   /**
@@ -185,7 +186,7 @@ class DefaultOverrides {
   readonly ENEMY_HAS_PASSIVE_ABILITY_OVERRIDE: boolean | null = null;
   readonly ENEMY_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly ENEMY_GENDER_OVERRIDE: Gender | null = null;
-  readonly ENEMY_MOVESET_OVERRIDE: MoveId | Array<MoveId> = [];
+  readonly ENEMY_MOVESET_OVERRIDE: MoveId | MoveId[] = [];
   readonly ENEMY_SHINY_OVERRIDE: boolean | null = null;
   readonly ENEMY_VARIANT_OVERRIDE: Variant | null = null;
 
@@ -311,8 +312,12 @@ export type BattleStyle = "double" | "single" | "even-doubles" | "odd-doubles";
 export type RandomTrainerOverride = {
   /** The Type of trainer to force */
   trainerType: Exclude<TrainerType, TrainerType.UNKNOWN>;
-  /* If the selected trainer type has a double version, it will always use its double version. */
-  alwaysDouble?: boolean;
+  /**
+   * The {@linkcode TrainerVariant} to force.
+   * @remarks
+   * `TrainerVariant.DOUBLE` cannot be forced on the first wave of a game due to issues with trainer party generation.
+   */
+  trainerVariant?: TrainerVariant;
 };
 
 /** The type of the {@linkcode DefaultOverrides} class */

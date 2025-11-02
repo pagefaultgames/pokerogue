@@ -567,7 +567,7 @@ function doBerryBounce(berrySprites: Phaser.GameObjects.Sprite[], yd: number, ba
         bouncePower = bouncePower > 0.01 ? bouncePower * 0.5 : 0;
 
         if (bouncePower) {
-          bounceYOffset = bounceYOffset * bouncePower;
+          bounceYOffset *= bouncePower;
 
           globalScene.tweens.add({
             targets: berrySprites,

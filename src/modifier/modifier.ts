@@ -13,7 +13,6 @@ import { getStatusEffectHealText } from "#data/status-effect";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import { Color, ShadowColor } from "#enums/color";
-import { Command } from "#enums/command";
 import type { FormChangeItem } from "#enums/form-change-item";
 import { LearnMoveType } from "#enums/learn-move-type";
 import type { MoveId } from "#enums/move-id";
@@ -480,7 +479,7 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
   override apply(doubleBattleChance: NumberHolder): boolean {
     // This is divided because the chance is generated as a number from 0 to doubleBattleChance.value using randSeedInt
     // A double battle will initiate if the generated number is 0
-    doubleBattleChance.value = doubleBattleChance.value / 4;
+    doubleBattleChance.value /= 4;
 
     return true;
   }
@@ -503,7 +502,7 @@ export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
     this.stat = stat;
     // Note that, because we want X Accuracy to maintain its original behavior,
     // it will increment as it did previously, directly to the stat stage.
-    this.boost = stat !== Stat.ACC ? 0.3 : 1;
+    this.boost = stat !== Stat.ACC ? 0.2 : 1;
   }
 
   match(modifier: Modifier): boolean {
@@ -1543,29 +1542,15 @@ export class BypassSpeedChanceModifier extends PokemonHeldItemModifier {
   }
 
   /**
-   * Checks if {@linkcode BypassSpeedChanceModifier} should be applied
-   * @param pokemon the {@linkcode Pokemon} that holds the item
-   * @param doBypassSpeed {@linkcode BooleanHolder} that is `true` if speed should be bypassed
-   * @returns `true` if {@linkcode BypassSpeedChanceModifier} should be applied
-   */
-  override shouldApply(pokemon?: Pokemon, doBypassSpeed?: BooleanHolder): boolean {
-    return super.shouldApply(pokemon, doBypassSpeed) && !!doBypassSpeed;
-  }
-
-  /**
    * Applies {@linkcode BypassSpeedChanceModifier}
    * @param pokemon the {@linkcode Pokemon} that holds the item
-   * @param doBypassSpeed {@linkcode BooleanHolder} that is `true` if speed should be bypassed
    * @returns `true` if {@linkcode BypassSpeedChanceModifier} has been applied
    */
-  override apply(pokemon: Pokemon, doBypassSpeed: BooleanHolder): boolean {
-    if (!doBypassSpeed.value && pokemon.randBattleSeedInt(10) < this.getStackCount()) {
-      doBypassSpeed.value = true;
-      const isCommandFight =
-        globalScene.currentBattle.turnCommands[pokemon.getBattlerIndex()]?.command === Command.FIGHT;
+  override apply(pokemon: Pokemon): boolean {
+    if (pokemon.randBattleSeedInt(10) < this.getStackCount() && pokemon.addTag(BattlerTagType.BYPASS_SPEED)) {
       const hasQuickClaw = this.type.is("PokemonHeldItemModifierType") && this.type.id === "QUICK_CLAW";
 
-      if (isCommandFight && hasQuickClaw) {
+      if (hasQuickClaw) {
         globalScene.phaseManager.queueMessage(
           i18next.t("modifier:bypassSpeedChanceApply", {
             pokemonName: getPokemonNameWithAffix(pokemon),
@@ -1930,9 +1915,7 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
     // Remove the Pokemon's FAINT status
     pokemon.resetStatus(true, false, true, false);
 
-    // Reapply Commander on the Pokemon's side of the field, if applicable
-    const field = pokemon.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
-    for (const p of field) {
+    for (const p of pokemon.getAlliesGenerator()) {
       applyAbAttrs("CommanderAbAttr", { pokemon: p });
     }
     return true;
@@ -2701,7 +2684,7 @@ export class PokemonMoveAccuracyBoosterModifier extends PokemonHeldItemModifier 
    * @returns always `true`
    */
   override apply(_pokemon: Pokemon, moveAccuracy: NumberHolder): boolean {
-    moveAccuracy.value = moveAccuracy.value + this.accuracyAmount * this.getStackCount();
+    moveAccuracy.value += this.accuracyAmount * this.getStackCount();
 
     return true;
   }

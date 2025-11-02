@@ -7,7 +7,7 @@ import Overrides from "#app/overrides";
 import { MoveId } from "#enums/move-id";
 import { getEnumStr } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
-import { coerceArray } from "#utils/common";
+import { coerceArray } from "#utils/array";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**

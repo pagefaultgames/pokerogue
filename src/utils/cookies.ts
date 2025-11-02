@@ -1,4 +1,4 @@
-import { isBeta } from "#utils/utility-vars";
+import { isBeta } from "#constants/app-constants";
 
 export function setCookie(cName: string, cValue: string): void {
   const expiration = new Date();
@@ -17,17 +17,17 @@ export function removeCookie(cName: string): void {
 
 export function getCookie(cName: string): string {
   // check if there are multiple cookies with the same name and delete them
-  if (document.cookie.split(";").filter(c => c.includes(cName)).length > 1) {
+  if (document.cookie.split(";").filter(c => c.trim().includes(cName)).length > 1) {
     removeCookie(cName);
     return "";
   }
   const name = `${cName}=`;
-  const ca = document.cookie.split(";");
+  const cookieArray = document.cookie.split(";");
   // Check all cookies in the document and see if any of them match, grabbing the first one whose value lines up
-  for (const c of ca) {
-    const cTrimmed = c.trim();
-    if (cTrimmed.startsWith(name)) {
-      return c.slice(name.length, c.length);
+  for (const cookie of cookieArray) {
+    const cookieTrimmed = cookie.trim();
+    if (cookieTrimmed.startsWith(name)) {
+      return cookieTrimmed.slice(name.length, cookieTrimmed.length);
     }
   }
   return "";

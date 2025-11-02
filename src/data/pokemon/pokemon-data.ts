@@ -1,6 +1,5 @@
 import type { BattlerTag } from "#data/battler-tags";
 import { loadBattlerTag, SerializableBattlerTag } from "#data/battler-tags";
-import { allSpecies } from "#data/data-lists";
 import type { Gender } from "#data/gender";
 import { PokemonMove } from "#data/moves/pokemon-move";
 import type { PokemonSpeciesForm } from "#data/pokemon-species";
@@ -14,17 +13,10 @@ import type { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import type { AttackMoveResult } from "#types/attack-move-result";
 import type { IllusionData } from "#types/illusion-data";
+import type { SerializedSpeciesForm } from "#types/pokemon-common";
 import type { TurnMove } from "#types/turn-move";
 import type { CoerceNullPropertiesToUndefined } from "#types/type-helpers";
-import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
-
-/**
- * The type that {@linkcode PokemonSpeciesForm} is converted to when an object containing it serializes it.
- */
-type SerializedSpeciesForm = {
-  id: SpeciesId;
-  formIdx: number;
-};
+import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 /**
  * Permanent data that can customize a Pokemon in non-standard ways from its Species.
@@ -173,10 +165,10 @@ export class PokemonSummonData {
         if (illusionData.fusionSpecies != null) {
           switch (typeof illusionData.fusionSpecies) {
             case "object":
-              illusionData.fusionSpecies = allSpecies[illusionData.fusionSpecies.speciesId];
+              illusionData.fusionSpecies = getPokemonSpecies(illusionData.fusionSpecies.speciesId);
               break;
             case "number":
-              illusionData.fusionSpecies = allSpecies[illusionData.fusionSpecies];
+              illusionData.fusionSpecies = getPokemonSpecies(illusionData.fusionSpecies);
               break;
             default:
               illusionData.fusionSpecies = undefined;
@@ -323,7 +315,9 @@ export class PokemonTurnData {
   public statStagesDecreased = false;
   public moveEffectiveness: TypeDamageMultiplier | null = null;
   public combiningPledge?: MoveId;
+  /** The Pokemon was brought in this turn by a switch action (not an intial encounter/summon) */
   public switchedInThisTurn = false;
+  public summonedThisTurn = false;
   public failedRunAway = false;
   public joinedRound = false;
   /** Tracker for a pending status effect

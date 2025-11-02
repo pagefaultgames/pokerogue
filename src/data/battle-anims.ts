@@ -7,7 +7,9 @@ import { AnimBlendType, AnimFocus, AnimFrameTarget, ChargeAnim, CommonAnim } fro
 import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
 import type { Pokemon } from "#field/pokemon";
-import { coerceArray, getFrameMs, type nil } from "#utils/common";
+import type { nil } from "#types/common";
+import { coerceArray } from "#utils/array";
+import { getFrameMs } from "#utils/common";
 import { getEnumKeys, getEnumValues } from "#utils/enums";
 import { toKebabCase } from "#utils/strings";
 import Phaser from "phaser";
@@ -819,7 +821,7 @@ export abstract class BattleAnim {
               frame.target === AnimFrameTarget.GRAPHIC
               && isReversed(this.srcLine[0], this.srcLine[2], this.dstLine[0], this.dstLine[2])
             ) {
-              scaleX = scaleX * -1;
+              scaleX *= -1;
             }
           }
           break;
@@ -833,7 +835,7 @@ export abstract class BattleAnim {
   }
 
   // biome-ignore lint/complexity/noBannedTypes: callback is used liberally
-  play(onSubstitute?: boolean, callback?: Function) {
+  play(onSubstitute?: boolean, callback?: () => void) {
     const isOppAnim = this.isOppAnim();
     const user = isOppAnim ? this.target! : this.user!;
     const target = isOppAnim ? this.user! : this.target!; // TODO: These bangs are LITERALLY not correct at all
@@ -1177,7 +1179,7 @@ export abstract class BattleAnim {
     frameTimeMult: number,
     frameTimedEventPriority?: 0 | 1 | 3 | 5,
     // biome-ignore lint/complexity/noBannedTypes: callback is used liberally
-    callback?: Function,
+    callback?: () => void,
   ) {
     const spriteCache: SpriteCache = {
       [AnimFrameTarget.GRAPHIC]: [],

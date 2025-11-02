@@ -64,7 +64,7 @@ describe("Abilities - Magic Bounce", () => {
     game.move.use(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
 
-    const user = game.scene.getPlayerField()[0];
+    const user = game.field.getPlayerPokemon();
     expect(user.getStatStage(Stat.ATK)).toBe(-2);
   });
 
@@ -307,7 +307,7 @@ describe("Abilities - Magic Bounce", () => {
     expect(
       game.scene.arena
         .getTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER)
-        ?.getSourcePokemon()
+        ?.["getSourcePokemon"]()
         ?.getBattlerIndex(),
     ).toBe(BattlerIndex.ENEMY);
     game.scene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER, true);
@@ -319,7 +319,7 @@ describe("Abilities - Magic Bounce", () => {
     expect(
       game.scene.arena
         .getTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER)
-        ?.getSourcePokemon()
+        ?.["getSourcePokemon"]()
         ?.getBattlerIndex(),
     ).toBe(BattlerIndex.ENEMY);
   });

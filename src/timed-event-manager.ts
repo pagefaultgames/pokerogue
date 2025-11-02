@@ -1,5 +1,7 @@
 import { globalScene } from "#app/global-scene";
+import { SHINY_CATCH_RATE_MULTIPLIER } from "#balance/rates";
 import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER } from "#balance/starters";
+import type { PokemonSpeciesFilter } from "#data/pokemon-species";
 import type { WeatherPoolEntry } from "#data/weather";
 import { Challenges } from "#enums/challenges";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -7,8 +9,10 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { WeatherType } from "#enums/weather-type";
+import type { ModifierTypeKeys } from "#modifiers/modifier-type";
+import type { nil } from "#types/common";
 import { addTextObject } from "#ui/text";
-import type { nil } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 export enum EventType {
@@ -18,69 +22,75 @@ export enum EventType {
 }
 
 interface EventBanner {
-  bannerKey?: string;
-  xOffset?: number;
-  yOffset?: number;
-  scale?: number;
-  availableLangs?: string[];
+  readonly bannerKey?: string;
+  readonly xOffset?: number;
+  readonly yOffset?: number;
+  readonly scale?: number;
+  readonly availableLangs?: readonly string[];
 }
 
-interface EventEncounter {
-  species: SpeciesId;
-  blockEvolution?: boolean;
-  formIndex?: number;
+export interface EventEncounter {
+  readonly species: SpeciesId;
+  readonly blockEvolution?: boolean;
+  readonly formIndex?: number;
 }
 
 interface EventMysteryEncounterTier {
-  mysteryEncounter: MysteryEncounterType;
-  tier?: MysteryEncounterTier;
-  disable?: boolean;
+  readonly mysteryEncounter: MysteryEncounterType;
+  readonly tier?: MysteryEncounterTier;
+  readonly disable?: boolean;
 }
 
 interface EventWaveReward {
-  wave: number;
-  type: string;
+  /**
+   * The wave at which the reward should be given.
+   * {@linkcode ClassicFixedBossWaves.RIVAL1} and {@linkcode ClassicFixedBossWaves.RIVAL2} are currently the only waves that give fixed rewards.
+   */
+  readonly wave: number;
+  readonly type: ModifierTypeKeys;
 }
 
-type EventMusicReplacement = [string, string];
+type EventMusicReplacement = readonly [string, string];
 
 interface EventChallenge {
-  challenge: Challenges;
-  value: number;
+  readonly challenge: Challenges;
+  readonly value: number;
 }
 
 interface TimedEvent extends EventBanner {
-  name: string;
-  eventType: EventType;
-  shinyMultiplier?: number;
-  classicFriendshipMultiplier?: number;
-  luckBoost?: number;
-  upgradeUnlockedVouchers?: boolean;
-  startDate: Date;
-  endDate: Date;
-  eventEncounters?: EventEncounter[];
-  delibirdyBuff?: string[];
-  weather?: WeatherPoolEntry[];
-  mysteryEncounterTierChanges?: EventMysteryEncounterTier[];
-  luckBoostedSpecies?: SpeciesId[];
-  boostFusions?: boolean; //MODIFIER REWORK PLEASE
-  classicWaveRewards?: EventWaveReward[]; // Rival battle rewards
-  trainerShinyChance?: number; // Odds over 65536 of trainer mon generating as shiny
-  music?: EventMusicReplacement[];
-  dailyRunChallenges?: EventChallenge[];
+  readonly name: string;
+  readonly eventType: EventType;
+  readonly shinyEncounterMultiplier?: number;
+  readonly shinyCatchMultiplier?: number;
+  readonly classicFriendshipMultiplier?: number;
+  readonly luckBoost?: number;
+  readonly upgradeUnlockedVouchers?: boolean;
+  readonly startDate: Date;
+  readonly endDate: Date;
+  readonly eventEncounters?: readonly EventEncounter[];
+  readonly delibirdyBuff?: readonly string[];
+  readonly weather?: readonly WeatherPoolEntry[];
+  readonly mysteryEncounterTierChanges?: readonly EventMysteryEncounterTier[];
+  readonly luckBoostedSpecies?: readonly SpeciesId[];
+  readonly boostFusions?: boolean; //MODIFIER REWORK PLEASE
+  readonly classicWaveRewards?: readonly EventWaveReward[]; // Rival battle rewards
+  readonly trainerShinyChance?: number; // Odds over 65536 of trainer mon generating as shiny
+  readonly music?: readonly EventMusicReplacement[];
+  readonly dailyRunChallenges?: readonly EventChallenge[];
+  readonly dailyRunStartingItems?: readonly ModifierTypeKeys[];
 }
 
-const timedEvents: TimedEvent[] = [
+const timedEvents: readonly TimedEvent[] = [
   {
     name: "Winter Holiday Update",
     eventType: EventType.SHINY,
-    shinyMultiplier: 2,
+    shinyEncounterMultiplier: 2,
     upgradeUnlockedVouchers: true,
     startDate: new Date(Date.UTC(2024, 11, 21, 0)),
     endDate: new Date(Date.UTC(2025, 0, 4, 0)),
     bannerKey: "winter_holidays2024-event",
     scale: 0.21,
-    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-Hans"],
     eventEncounters: [
       { species: SpeciesId.GIMMIGHOUL, blockEvolution: true },
       { species: SpeciesId.DELIBIRD },
@@ -136,7 +146,7 @@ const timedEvents: TimedEvent[] = [
     endDate: new Date(Date.UTC(2025, 1, 3, 0)),
     bannerKey: "yearofthesnakeevent",
     scale: 0.21,
-    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-Hans"],
     eventEncounters: [
       { species: SpeciesId.EKANS },
       { species: SpeciesId.ONIX },
@@ -205,10 +215,10 @@ const timedEvents: TimedEvent[] = [
     startDate: new Date(Date.UTC(2025, 1, 10)),
     endDate: new Date(Date.UTC(2025, 1, 21)),
     boostFusions: true,
-    shinyMultiplier: 2,
+    shinyEncounterMultiplier: 2,
     bannerKey: "valentines2025event",
     scale: 0.21,
-    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-Hans"],
     eventEncounters: [
       { species: SpeciesId.NIDORAN_F },
       { species: SpeciesId.NIDORAN_M },
@@ -247,7 +257,7 @@ const timedEvents: TimedEvent[] = [
     classicFriendshipMultiplier: 4,
     bannerKey: "pkmnday2025event",
     scale: 0.21,
-    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-Hans"],
     eventEncounters: [
       { species: SpeciesId.PIKACHU, formIndex: 1, blockEvolution: true }, // Partner Form
       { species: SpeciesId.EEVEE, formIndex: 1, blockEvolution: true }, // Partner Form
@@ -297,7 +307,7 @@ const timedEvents: TimedEvent[] = [
     endDate: new Date(Date.UTC(2025, 3, 3)),
     bannerKey: "aprf25",
     scale: 0.21,
-    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-MX", "pt-BR", "zh-CN"],
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-419", "pt-BR", "zh-Hans"],
     trainerShinyChance: 13107, // 13107/65536 = 1/5
     music: [
       ["title", "title_afd"],
@@ -317,8 +327,8 @@ const timedEvents: TimedEvent[] = [
     endDate: new Date(Date.UTC(2025, 4, 13)),
     bannerKey: "spr25event",
     scale: 0.21,
-    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-MX", "pt-BR", "zh-CN"],
-    shinyMultiplier: 2,
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-419", "pt-BR", "zh-Hans"],
+    shinyEncounterMultiplier: 2,
     upgradeUnlockedVouchers: true,
     eventEncounters: [
       { species: SpeciesId.HOPPIP },
@@ -358,8 +368,8 @@ const timedEvents: TimedEvent[] = [
     endDate: new Date(Date.UTC(2025, 5, 30)),
     bannerKey: "pride2025",
     scale: 0.105,
-    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-MX", "pt-BR", "zh-CN", "zh-TW"],
-    shinyMultiplier: 2,
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-419", "pt-BR", "zh-Hans", "zh-Hant"],
+    shinyEncounterMultiplier: 2,
     eventEncounters: [
       { species: SpeciesId.CHARMANDER },
       { species: SpeciesId.SANDILE },
@@ -380,14 +390,63 @@ const timedEvents: TimedEvent[] = [
       { wave: 8, type: "CATCHING_CHARM" },
       { wave: 25, type: "SHINY_CHARM" },
     ],
+    dailyRunStartingItems: ["SHINY_CHARM", "ABILITY_CHARM"],
+  },
+  {
+    name: "Halloween 25",
+    eventType: EventType.SHINY,
+    startDate: new Date(Date.UTC(2025, 9, 30)),
+    endDate: new Date(Date.UTC(2025, 10, 10)),
+    bannerKey: "halloween2025",
+    scale: 0.19,
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-419", "pt-BR", "zh-Hans", "zh-Hant", "da", "ru"],
+    shinyEncounterMultiplier: 2,
+    shinyCatchMultiplier: 3,
+    eventEncounters: [
+      { species: SpeciesId.CATERPIE },
+      { species: SpeciesId.SPEAROW },
+      { species: SpeciesId.PARAS },
+      { species: SpeciesId.LICKITUNG },
+      { species: SpeciesId.AERODACTYL },
+      { species: SpeciesId.SMOOCHUM },
+      { species: SpeciesId.RALTS },
+      { species: SpeciesId.GULPIN },
+      { species: SpeciesId.FEEBAS },
+      { species: SpeciesId.WYNAUT },
+      { species: SpeciesId.CLAMPERL },
+      { species: SpeciesId.BUDEW },
+      { species: SpeciesId.DEOXYS },
+      { species: SpeciesId.CHINGLING },
+      { species: SpeciesId.DWEBBLE },
+      { species: SpeciesId.TIRTOUGA },
+      { species: SpeciesId.LARVESTA },
+      { species: SpeciesId.SPRITZEE },
+      { species: SpeciesId.SWIRLIX },
+      { species: SpeciesId.BINACLE },
+      { species: SpeciesId.PUMPKABOO },
+      { species: SpeciesId.SANDYGAST },
+    ],
+    classicWaveRewards: [
+      { wave: 8, type: "SHINY_CHARM" },
+      { wave: 8, type: "ABILITY_CHARM" },
+      { wave: 8, type: "CATCHING_CHARM" },
+      { wave: 25, type: "SHINY_CHARM" },
+      { wave: 25, type: "CANDY_JAR" },
+    ],
+    dailyRunStartingItems: ["ABILITY_CHARM", "SHINY_CHARM", "CANDY_JAR"],
   },
 ];
 
 export class TimedEventManager {
   isActive(event: TimedEvent) {
-    return event.startDate < new Date() && new Date() < event.endDate;
+    const now = new Date();
+    return event.startDate < now && now < event.endDate;
   }
 
+  /**
+   * For getting the active event
+   * @returns The first active {@linkcode TimedEvent} or `undefined` if there are no active events
+   */
   activeEvent(): TimedEvent | undefined {
     return timedEvents.find((te: TimedEvent) => this.isActive(te));
   }
@@ -397,65 +456,68 @@ export class TimedEventManager {
   }
 
   /**
-   * Check whether the current event is active and for April Fools.
+   * Check whether the current {@linkcode TimedEvent} is active and for April Fools.
    * @returns Whether the April Fools event is currently active.
    */
   isAprilFoolsActive(): boolean {
-    return timedEvents.some(
-      te => this.isActive(te) && te.hasOwnProperty("bannerKey") && te.bannerKey!.startsWith("aprf"),
-    );
+    return this.activeEvent()?.bannerKey?.startsWith("aprf") ?? false;
   }
 
   activeEventHasBanner(): boolean {
-    const activeEvents = timedEvents.filter(te => this.isActive(te) && te.hasOwnProperty("bannerKey"));
-    return activeEvents.length > 0;
+    return this.activeEvent()?.bannerKey != null;
   }
 
-  getShinyMultiplier(): number {
-    let multiplier = 1;
-    const shinyEvents = timedEvents.filter(te => te.eventType === EventType.SHINY && this.isActive(te));
-    for (const se of shinyEvents) {
-      multiplier *= se.shinyMultiplier ?? 1;
-    }
+  /**
+   * Get the multiplier for shiny encounters during a shiny {@linkcode TimedEvent}
+   * @returns the shiny encounter multiplier
+   */
+  getShinyEncounterMultiplier(): number {
+    return this.activeEvent()?.shinyEncounterMultiplier ?? 1;
+  }
 
-    return multiplier;
+  /**
+   * Get the multiplier for shiny catches during a shiny {@linkcode TimedEvent}
+   * @returns the shiny catch multiplier
+   */
+  getShinyCatchMultiplier(): number {
+    return this.activeEvent()?.shinyCatchMultiplier ?? SHINY_CATCH_RATE_MULTIPLIER;
   }
 
   getEventBannerFilename(): string {
-    return timedEvents.find((te: TimedEvent) => this.isActive(te))?.bannerKey ?? "";
+    return this.activeEvent()?.bannerKey ?? "";
   }
 
   getEventBannerLangs(): string[] {
-    const ret: string[] = [];
-    ret.push(...timedEvents.find(te => this.isActive(te) && te.availableLangs != null)?.availableLangs!);
-    return ret;
+    return [...(this.activeEvent()?.availableLangs ?? [])];
   }
 
   getEventEncounters(): EventEncounter[] {
-    const ret: EventEncounter[] = [];
-    timedEvents
-      .filter(te => this.isActive(te))
-      .map(te => {
-        if (te.eventEncounters != null) {
-          ret.push(...te.eventEncounters);
-        }
-      });
-    return ret;
+    return [...(this.activeEvent()?.eventEncounters ?? [])];
+  }
+
+  getAllValidEventEncounters(
+    allowSubLegendary = true,
+    allowLegendary = true,
+    allowMythical = true,
+    speciesFilter: PokemonSpeciesFilter,
+  ): EventEncounter[] {
+    return this.getEventEncounters().filter(enc => {
+      const species = getPokemonSpecies(enc.species);
+      return (
+        (allowSubLegendary || !species.subLegendary)
+        && (allowLegendary || !species.legendary)
+        && (allowMythical || !species.mythical)
+        && speciesFilter(species)
+      );
+    });
   }
 
   /**
    * For events that change the classic candy friendship multiplier
-   * @returns The highest classic friendship multiplier among the active events, or the default CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER
+   * @returns The classic friendship multiplier of the active {@linkcode TimedEvent}, or the default {@linkcode CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER}
    */
   getClassicFriendshipMultiplier(): number {
-    let multiplier = CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER;
-    const classicFriendshipEvents = timedEvents.filter(te => this.isActive(te));
-    for (const fe of classicFriendshipEvents) {
-      if (fe.classicFriendshipMultiplier != null && fe.classicFriendshipMultiplier > multiplier) {
-        multiplier = fe.classicFriendshipMultiplier;
-      }
-    }
-    return multiplier;
+    return this.activeEvent()?.classicFriendshipMultiplier ?? CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER;
   }
 
   /**
@@ -463,7 +525,7 @@ export class TimedEventManager {
    * @returns Whether vouchers should be upgraded
    */
   getUpgradeUnlockedVouchers(): boolean {
-    return timedEvents.some(te => this.isActive(te) && (te.upgradeUnlockedVouchers ?? false));
+    return this.activeEvent()?.upgradeUnlockedVouchers ?? false;
   }
 
   /**
@@ -471,15 +533,7 @@ export class TimedEventManager {
    * @returns list of ids of {@linkcode ModifierType}s that Delibirdy hands out as a bonus
    */
   getDelibirdyBuff(): string[] {
-    const ret: string[] = [];
-    timedEvents
-      .filter(te => this.isActive(te))
-      .map(te => {
-        if (te.delibirdyBuff != null) {
-          ret.push(...te.delibirdyBuff);
-        }
-      });
-    return ret;
+    return [...(this.activeEvent()?.delibirdyBuff ?? [])];
   }
 
   /**
@@ -487,40 +541,27 @@ export class TimedEventManager {
    * @returns Event weathers for town
    */
   getWeather(): WeatherPoolEntry[] {
-    const ret: WeatherPoolEntry[] = [];
-    timedEvents
-      .filter(te => this.isActive(te))
-      .map(te => {
-        if (te.weather != null) {
-          ret.push(...te.weather);
-        }
-      });
-    return ret;
+    return [...(this.activeEvent()?.weather ?? [])];
   }
 
   getAllMysteryEncounterChanges(): EventMysteryEncounterTier[] {
     const ret: EventMysteryEncounterTier[] = [];
-    timedEvents
-      .filter(te => this.isActive(te))
-      .map(te => {
-        if (te.mysteryEncounterTierChanges != null) {
-          ret.push(...te.mysteryEncounterTierChanges);
-        }
-      });
+    for (const te of timedEvents) {
+      if (this.isActive(te) && te.mysteryEncounterTierChanges != null) {
+        ret.push(...te.mysteryEncounterTierChanges);
+      }
+    }
     return ret;
   }
 
   getEventMysteryEncountersDisabled(): MysteryEncounterType[] {
     const ret: MysteryEncounterType[] = [];
-    timedEvents
-      .filter(te => this.isActive(te) && te.mysteryEncounterTierChanges != null)
-      .map(te => {
-        te.mysteryEncounterTierChanges?.map(metc => {
-          if (metc.disable) {
-            ret.push(metc.mysteryEncounter);
-          }
-        });
-      });
+    const metChanges = this.activeEvent()?.mysteryEncounterTierChanges ?? [];
+    for (const metc of metChanges) {
+      if (metc.disable) {
+        ret.push(metc.mysteryEncounter);
+      }
+    }
     return ret;
   }
 
@@ -528,42 +569,25 @@ export class TimedEventManager {
     encounterType: MysteryEncounterType,
     normal: MysteryEncounterTier,
   ): MysteryEncounterTier {
-    let ret = normal;
-    timedEvents
-      .filter(te => this.isActive(te) && te.mysteryEncounterTierChanges != null)
-      .map(te => {
-        te.mysteryEncounterTierChanges?.map(metc => {
-          if (metc.mysteryEncounter === encounterType) {
-            ret = metc.tier ?? normal;
-          }
-        });
-      });
-    return ret;
+    const metChanges = this.activeEvent()?.mysteryEncounterTierChanges ?? [];
+    for (const metc of metChanges) {
+      if (metc.mysteryEncounter === encounterType) {
+        return metc.tier ?? normal;
+      }
+    }
+    return normal;
   }
 
   getEventLuckBoost(): number {
-    let ret = 0;
-    const luckEvents = timedEvents.filter(te => this.isActive(te) && te.luckBoost != null);
-    for (const le of luckEvents) {
-      ret += le.luckBoost!;
-    }
-    return ret;
+    return this.activeEvent()?.luckBoost ?? 0;
   }
 
   getEventLuckBoostedSpecies(): SpeciesId[] {
-    const ret: SpeciesId[] = [];
-    timedEvents
-      .filter(te => this.isActive(te))
-      .map(te => {
-        if (te.luckBoostedSpecies != null) {
-          ret.push(...te.luckBoostedSpecies.filter(s => !ret.includes(s)));
-        }
-      });
-    return ret;
+    return [...(this.activeEvent()?.luckBoostedSpecies ?? [])];
   }
 
   areFusionsBoosted(): boolean {
-    return timedEvents.some(te => this.isActive(te) && te.boostFusions);
+    return this.activeEvent()?.boostFusions ?? false;
   }
 
   /**
@@ -572,47 +596,43 @@ export class TimedEventManager {
    * @param wave the wave to check for associated rewards
    * @returns array of strings of the event modifier reward types
    */
-  getFixedBattleEventRewards(wave: number): string[] {
-    const ret: string[] = [];
-    timedEvents
-      .filter(te => this.isActive(te) && te.classicWaveRewards != null)
-      .map(te => {
-        ret.push(...te.classicWaveRewards!.filter(cwr => cwr.wave === wave).map(cwr => cwr.type));
-      });
-    return ret;
-  }
-
-  // Gets the extra shiny chance for trainers due to event (odds/65536)
-  getClassicTrainerShinyChance(): number {
-    let ret = 0;
-    const tsEvents = timedEvents.filter(te => this.isActive(te) && te.trainerShinyChance != null);
-    tsEvents.map(t => (ret += t.trainerShinyChance!));
-    return ret;
-  }
-
-  getEventBgmReplacement(bgm: string): string {
-    let ret = bgm;
-    timedEvents.map(te => {
-      if (this.isActive(te) && te.music != null) {
-        te.music.map(mr => {
-          if (mr[0] === bgm) {
-            console.log(`it is ${te.name} so instead of ${mr[0]} we play ${mr[1]}`);
-            ret = mr[1];
-          }
-        });
-      }
-    });
-    return ret;
+  getFixedBattleEventRewards(wave: number): ModifierTypeKeys[] {
+    return (
+      this.activeEvent()
+        ?.classicWaveRewards?.filter(cwr => cwr.wave === wave)
+        .map(cwr => cwr.type) ?? []
+    );
   }
 
   /**
-   * Activates any challenges on {@linkcode globalScene.gameMode} for the currently active event
+   * Get the extra shiny chance for trainers due to event
+   */
+  getClassicTrainerShinyChance(): number {
+    return this.activeEvent()?.trainerShinyChance ?? 0;
+  }
+
+  getEventBgmReplacement(bgm: string): string {
+    const eventMusicReplacements = this.activeEvent()?.music ?? [];
+    for (const emr of eventMusicReplacements) {
+      if (emr[0] === bgm) {
+        console.log(`it is ${this.activeEvent()?.name} so instead of ${emr[0]} we play ${emr[1]}`);
+        return emr[1];
+      }
+    }
+    return bgm;
+  }
+
+  /**
+   * Activate any challenges on {@linkcode globalScene.gameMode} for the currently active event
    */
   startEventChallenges(): void {
-    const challenges = this.activeEvent()?.dailyRunChallenges;
-    challenges?.forEach((eventChal: EventChallenge) =>
-      globalScene.gameMode.setChallengeValue(eventChal.challenge, eventChal.value),
-    );
+    for (const eventChal of this.activeEvent()?.dailyRunChallenges ?? []) {
+      globalScene.gameMode.setChallengeValue(eventChal.challenge, eventChal.value);
+    }
+  }
+
+  getEventDailyStartingItems(): readonly ModifierTypeKeys[] {
+    return this.activeEvent()?.dailyRunStartingItems ?? [];
   }
 }
 
