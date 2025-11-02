@@ -79,7 +79,7 @@ import {
   PreserveBerryModifier,
 } from "#modifiers/modifier";
 import { applyMoveAttrs } from "#moves/apply-attrs";
-import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSketchMoves, invalidSleepTalkMoves } from "#moves/invalid-moves";
+import { invalidAssistMoves, invalidCopycatMoves, invalidInstructMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSketchMoves, invalidSleepTalkMoves } from "#moves/invalid-moves";
 import { consecutiveUseRestriction, counterAttackConditionBoth, counterAttackConditionPhysical, counterAttackConditionSpecial, failAgainstFinalBossCondition, FailIfInsufficientHpCondition, failIfTargetNotAttackingCondition, failTeleportCondition, FirstMoveCondition, gravityUseRestriction, lastResortCondition, MoveCondition, MoveRestriction, upperHandCondition } from "#moves/move-condition";
 import { frenzyMissFunc, getCounterAttackTarget, getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
@@ -817,20 +817,9 @@ export abstract class Move implements Localizable {
           return true;
         }
         break;
-      case MoveFlags.REFLECTABLE:
-        // If the target is not semi-invulnerable and either has magic coat active or an unignored magic bounce ability
-        if (
-          target?.getTag(SemiInvulnerableTag) ||
-          !(target?.getTag(BattlerTagType.MAGIC_COAT) ||
-            (!this.doesFlagEffectApply({ flag: MoveFlags.IGNORE_ABILITIES, user, target }) &&
-              target?.hasAbilityWithAttr("ReflectStatusMoveAbAttr")))
-        ) {
-          return false;
-        }
-        break;
     }
 
-    return !!(this.flags & flag);
+    return this.hasFlag(flag)
   }
 
   /**
@@ -7332,10 +7321,11 @@ export class CopyMoveAttr extends CallMoveAttr {
  * Attribute used for moves that cause the target to repeat their last used move.
  *
  * Used by {@linkcode MoveId.INSTRUCT | Instruct}.
- * @see [Instruct on Bulbapedia](https://bulbapedia.bulbagarden.net/wiki/Instruct_(move))
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Instruct_(move) | Instruct on Bulbapedia}
 */
 export class RepeatMoveAttr extends MoveEffectAttr {
   private movesetMove: PokemonMove;
+  private lastMoveTargets: BattlerIndex[];
   constructor() {
     super(false, { trigger: MoveEffectTrigger.POST_APPLY }); // needed to ensure correct protect interaction
   }
@@ -7347,17 +7337,14 @@ export class RepeatMoveAttr extends MoveEffectAttr {
    * @returns `true` if the move succeeds
    */
   apply(user: Pokemon, target: Pokemon): boolean {
-    // get the last move used (excluding status based failures) as well as the corresponding moveset slot
-    // bangs are justified as Instruct fails if no prior move or moveset move exists
-    // TODO: How does instruct work when copying a move called via Copycat that the user itself knows?
-    const lastMove = target.getLastNonVirtualMove()!;
-    const movesetMove = target.getMoveset().find(m => m.moveId === lastMove?.move)!
-
     // If the last move used can hit more than one target or has variable targets,
     // re-compute the targets for the attack (mainly for alternating double/single battles)
     // Rampaging moves (e.g. Outrage) are not included due to being incompatible with Instruct,
     // nor is Dragon Darts (due to its smart targeting bypassing normal target selection)
-    let moveTargets = this.movesetMove.getMove().isMultiTarget() ? getMoveTargets(target, this.movesetMove.moveId).targets : lastMove.targets;
+    // TODO: Revisit this once target computation is moved to mid-use
+    let moveTargets = this.movesetMove.getMove().isMultiTarget()
+      ? getMoveTargets(target, this.movesetMove.moveId).targets
+      : this.lastMoveTargets;
 
     // In the event the instructed move's only target is a fainted opponent, redirect it to an alive ally if possible.
     // Normally, all yet-unexecuted move phases would swap targets after any foe faints or flees (see `redirectPokemonMoves` in `battle-scene.ts`),
@@ -7375,94 +7362,40 @@ export class RepeatMoveAttr extends MoveEffectAttr {
       }
     }
 
+    // If the target is currently affected by Encore, increase its duration by 1 (to offset decrease during move use)
+    // TODO: There might be a better way of doing this...
+    const targetEncore = target.getTag(BattlerTagType.ENCORE) as EncoreTag | undefined;
+    if (targetEncore) {
+      targetEncore.turnCount++
+    }
+
     globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:instructingMove", {
       userPokemonName: getPokemonNameWithAffix(user),
       targetPokemonName: getPokemonNameWithAffix(target)
     }));
     target.turnData.extraTurns++;
-    globalScene.phaseManager.unshiftNew("MovePhase", target, moveTargets, movesetMove, MoveUseMode.NORMAL, MovePhaseTimingModifier.FIRST);
+    globalScene.phaseManager.unshiftNew("MovePhase", target, moveTargets, this.movesetMove, MoveUseMode.NORMAL, MovePhaseTimingModifier.FIRST);
     return true;
   }
 
   getCondition(): MoveConditionFunc {
     return (_user, target, _move) => {
       // TODO: Check instruct behavior with struggle - ignore, fail or success
+      // TODO: How does instruct work when copying a move called via Copycat that the user itself knows?
       const lastMove = target.getLastNonVirtualMove();
       const movesetMove = target.getMoveset().find(m => m.moveId === lastMove?.move);
-      const uninstructableMoves = [
-        // Locking/Continually Executed moves
-        MoveId.OUTRAGE,
-        MoveId.RAGING_FURY,
-        MoveId.ROLLOUT,
-        MoveId.PETAL_DANCE,
-        MoveId.THRASH,
-        MoveId.ICE_BALL,
-        MoveId.UPROAR,
-        // Multi-turn Moves
-        MoveId.BIDE,
-        MoveId.SHELL_TRAP,
-        MoveId.BEAK_BLAST,
-        MoveId.FOCUS_PUNCH,
-        // "First Turn Only" moves
-        MoveId.FAKE_OUT,
-        MoveId.FIRST_IMPRESSION,
-        MoveId.MAT_BLOCK,
-        // Moves with a recharge turn
-        MoveId.HYPER_BEAM,
-        MoveId.ETERNABEAM,
-        MoveId.FRENZY_PLANT,
-        MoveId.BLAST_BURN,
-        MoveId.HYDRO_CANNON,
-        MoveId.GIGA_IMPACT,
-        MoveId.PRISMATIC_LASER,
-        MoveId.ROAR_OF_TIME,
-        MoveId.ROCK_WRECKER,
-        MoveId.METEOR_ASSAULT,
-        // Charging & 2-turn moves
-        MoveId.DIG,
-        MoveId.FLY,
-        MoveId.BOUNCE,
-        MoveId.SHADOW_FORCE,
-        MoveId.PHANTOM_FORCE,
-        MoveId.DIVE,
-        MoveId.ELECTRO_SHOT,
-        MoveId.ICE_BURN,
-        MoveId.GEOMANCY,
-        MoveId.FREEZE_SHOCK,
-        MoveId.SKY_DROP,
-        MoveId.SKY_ATTACK,
-        MoveId.SKULL_BASH,
-        MoveId.SOLAR_BEAM,
-        MoveId.SOLAR_BLADE,
-        MoveId.METEOR_BEAM,
-        // Copying/Move-Calling moves
-        MoveId.ASSIST,
-        MoveId.COPYCAT,
-        MoveId.ME_FIRST,
-        MoveId.METRONOME,
-        MoveId.MIRROR_MOVE,
-        MoveId.NATURE_POWER,
-        MoveId.SLEEP_TALK,
-        MoveId.SNATCH,
-        MoveId.INSTRUCT,
-        // Misc moves
-        MoveId.KINGS_SHIELD,
-        MoveId.SKETCH,
-        MoveId.TRANSFORM,
-        MoveId.MIMIC,
-        MoveId.STRUGGLE,
-        // TODO: Add Max/G-Max/Z-Move blockage if or when they are implemented
-      ];
 
-      if (!lastMove?.move // no move to instruct
+      if (
+        !lastMove?.move // no move to instruct
         || !movesetMove // called move not in target's moveset (forgetting the move, etc.)
-        || movesetMove.ppUsed === movesetMove.getMovePp() // move out of pp
-        // TODO: This next line is likely redundant as all charging moves are in the above list
-        || allMoves[lastMove.move].isChargingMove() // called move is a charging/recharging move
-        || uninstructableMoves.includes(lastMove.move)) { // called move is in the banlist
+        || movesetMove.isOutOfPp() // move out of pp
+        || invalidInstructMoves.has(lastMove.move) // called move is in the banlist
+      ) {
         return false;
       }
+
       this.movesetMove = movesetMove;
+      this.lastMoveTargets = lastMove.targets;
       return true;
     };
   }
@@ -9256,11 +9189,11 @@ export function initMoves() {
       .hidesUser(),
     new StatusMove(MoveId.ENCORE, PokemonType.NORMAL, 100, 5, -1, 0, 2)
       .attr(AddBattlerTagAttr, BattlerTagType.ENCORE, false, true)
-      .ignoresSubstitute()
       .condition((user, target, move) => new EncoreTag(user.id).canAdd(target))
+      .ignoresSubstitute()
       .reflectable()
-      // Can lock infinitely into struggle; has incorrect interactions with Blood Moon/Gigaton Hammer
-      // Also may or may not incorrectly select targets for replacement move (needs verification)
+      // has incorrect interactions with Blood Moon/Gigaton Hammer
+      // TODO: Verify if Encore's duration decreases during status based move failures
       .edgeCase(),
     new AttackMove(MoveId.PURSUIT, PokemonType.DARK, MoveCategory.PHYSICAL, 40, 100, 20, -1, 0, 2)
       .partial(), // No effect implemented
@@ -9441,10 +9374,8 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.DEF ], -1, true),
     new SelfStatusMove(MoveId.MAGIC_COAT, PokemonType.PSYCHIC, -1, 15, -1, 4, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.MAGIC_COAT, true, true, 0)
-      .condition(failIfLastCondition, 3)
-      // Interactions with stomping tantrum, instruct, and other moves that
-      // rely on move history
-      // Also will not reflect roar / whirlwind if the target has ForceSwitchOutImmunityAbAttr
+      .condition(failIfLastCondition)
+      // Should reflect moves that would otherwise fail
       .edgeCase(),
     new SelfStatusMove(MoveId.RECYCLE, PokemonType.NORMAL, -1, 10, -1, 0, 3)
       .unimplemented(),
@@ -9455,9 +9386,11 @@ export function initMoves() {
     new StatusMove(MoveId.YAWN, PokemonType.NORMAL, -1, 10, -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.DROWSY, false, true)
       .condition((user, target, move) => !target.status && !target.isSafeguarded(user))
-      .reflectable(),
-    new AttackMove(MoveId.KNOCK_OFF, PokemonType.DARK, MoveCategory.PHYSICAL, 65, 100, 20, -1, 0, 3)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => target.getHeldItems().filter(i => i.isTransferable).length > 0 ? 1.5 : 1)
+      .reflectable()
+      // Does not count as failed for terrain-based failures; should not check Safeguard when triggering drowsiness
+      .edgeCase(),
+  new AttackMove(MoveId.KNOCK_OFF, PokemonType.DARK, MoveCategory.PHYSICAL, 65, 100, 20, -1, 0, 3)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => target.getHeldItems().some(i => i.isTransferable) ? 1.5 : 1)
       .attr(RemoveHeldItemAttr, false)
       .edgeCase(),
       // Should not be able to remove held item if user faints due to Rough Skin, Iron Barbs, etc.
@@ -10748,11 +10681,10 @@ export function initMoves() {
     new AttackMove(MoveId.TROP_KICK, PokemonType.GRASS, MoveCategory.PHYSICAL, 70, 100, 15, 100, 0, 7)
       .attr(StatStageChangeAttr, [ Stat.ATK ], -1),
     new StatusMove(MoveId.INSTRUCT, PokemonType.PSYCHIC, -1, 15, -1, 0, 7)
-      .ignoresSubstitute()
       .attr(RepeatMoveAttr)
+      .ignoresSubstitute()
       /*
        * Incorrect interactions with Gigaton Hammer, Blood Moon & Torment due to them _failing on use_, not merely being unselectable.
-       * Incorrectly ticks down Encore's fail counter
        * TODO: Verify whether Instruct can repeat Struggle
        * TODO: Verify whether Instruct can fail when using a copied move also in one's own moveset
        */

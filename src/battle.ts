@@ -74,9 +74,22 @@ export class Battle {
   public lastMove: MoveId;
   public battleSeed: string = randomString(16, true);
   private battleSeedState: string | null = null;
+
+  /**
+   * The amount of coins scattered during the current battle
+   * by moves like {@linkcode MoveId.PAY_DAY | Pay Day}.
+   * Converted into money when the battle ends.
+   */
   public moneyScattered = 0;
-  /** Primarily for double battles, keeps track of last enemy and player pokemon that triggered its ability or used a move */
+  // TODO: These trackers are only used for Sticky Web + Mirror Armor edge cases
+  // and are abhorrently janky.
+  /**
+   * Primarily for double battles, keeps track of last enemy pokemon that triggered its ability or used a move
+   */
   public lastEnemyInvolved: number;
+  /**
+   * Primarily for double battles, keeps track of last  player pokemon that triggered its ability or used a move
+   */
   public lastPlayerInvolved: number;
   public lastUsedPokeball: PokeballType | null = null;
   /**

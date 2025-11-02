@@ -10,7 +10,10 @@ export const MovePhaseTimingModifier = Object.freeze({
   /** Used when moves go last regardless of speed and priority (i.e. Quash) */
   LAST: 0,
   NORMAL: 1,
-  /** Used to trigger moves immediately (i.e. ones that were called through Instruct). */
+  /**
+   * Used to trigger moves immediately.
+   * This includes moves called via Instruct as well as reaction-based ones from Magic Coat/etc.
+   */
   FIRST: 2,
 });
 export type MovePhaseTimingModifier = ObjectValues<typeof MovePhaseTimingModifier>;

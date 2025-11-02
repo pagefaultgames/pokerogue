@@ -13,6 +13,8 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @param received - The object to check. Should be a {@linkcode Pokemon}
  * @param expectedAbility - The {@linkcode AbilityId} to check for
  * @returns Whether the matcher passed
+ * @remarks
+ * This will clear the Pokemon's `abilitiesApplied` set to allow for repeated calls on the same Pokemon.
  */
 export function toHaveAbilityApplied(
   this: MatcherState,
@@ -27,7 +29,7 @@ export function toHaveAbilityApplied(
   }
 
   const pass = received.waveData.abilitiesApplied.has(expectedAbilityId);
-
+  received.waveData.abilitiesApplied.clear();
   const pkmName = getPokemonNameWithAffix(received);
   const expectedAbilityStr = getEnumStr(AbilityId, expectedAbilityId);
 
