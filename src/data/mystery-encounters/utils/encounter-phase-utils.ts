@@ -4,6 +4,7 @@ import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { biomeLinks } from "#balance/biomes";
+import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE } from "#balance/rates";
 import { initMoveAnim, loadMoveAnimAssets } from "#data/battle-anims";
 import { modifierTypes } from "#data/data-lists";
 import type { IEggOptions } from "#data/egg";
@@ -47,11 +48,12 @@ import type { PokemonData } from "#system/pokemon-data";
 import type { TrainerConfig } from "#trainers/trainer-config";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
+import type { RandomEncounterParams } from "#types/pokemon-common";
 import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import type { PartyOption, PokemonSelectFilter } from "#ui/party-ui-handler";
 import { PartyUiMode } from "#ui/party-ui-handler";
 import { coerceArray } from "#utils/array";
-import { randomString, randSeedInt, randSeedItem } from "#utils/common";
+import { BooleanHolder, randomString, randSeedInt, randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
@@ -990,19 +992,39 @@ export function handleMysteryEncounterTurnStartEffects(): boolean {
 
 /**
  * Helper function for encounters such as {@linkcode UncommonBreedEncounter} which call for a random species including event encounters.
- * If the mon is from the event encounter list, it will do an extra shiny roll.
- * @param level the level of the mon, which differs between MEs
- * @param isBoss whether the mon should be a Boss
- * @param rerollHidden whether the mon should get an extra roll for Hidden Ability
- * @returns for the requested encounter
+ * If the mon is from the event encounter list, it may do an extra shiny or HA roll.
+ * @param params - The {@linkcode RandomEncounterParams} used to configure the encounter
+ * @returns The generated {@linkcode EnemyPokemon} for the requested encounter
  */
-export function getRandomEncounterSpecies(level: number, isBoss = false, rerollHidden = false): EnemyPokemon {
+export function getRandomEncounterPokemon(params: RandomEncounterParams): EnemyPokemon {
+  let {
+    level,
+    speciesFunction,
+    isBoss = false,
+    includeSubLegendary = true,
+    includeLegendary = true,
+    includeMythical = true,
+    eventChance = 50,
+    hiddenRerolls = 0,
+    shinyRerolls = 0,
+    eventHiddenRerolls = 0,
+    eventShinyRerolls = 0,
+    hiddenAbilityChance = BASE_HIDDEN_ABILITY_CHANCE,
+    shinyChance = BASE_SHINY_CHANCE,
+    maxShinyChance = 0,
+    speciesFilter = () => true,
+    isEventEncounter = new BooleanHolder(false),
+  } = params;
   let bossSpecies: PokemonSpecies;
-  let isEventEncounter = false;
-  const eventEncounters = timedEventManager.getEventEncounters();
+  const eventEncounters = timedEventManager.getAllValidEventEncounters(
+    includeSubLegendary,
+    includeLegendary,
+    includeMythical,
+    speciesFilter,
+  );
   let formIndex: number | undefined;
 
-  if (eventEncounters.length > 0 && randSeedInt(2) === 1) {
+  if (eventChance && eventEncounters.length > 0 && (eventChance === 100 || randSeedInt(100) < eventChance)) {
     const eventEncounter = randSeedItem(eventEncounters);
     const levelSpecies = getPokemonSpecies(eventEncounter.species).getWildSpeciesForLevel(
       level,
@@ -1010,9 +1032,13 @@ export function getRandomEncounterSpecies(level: number, isBoss = false, rerollH
       isBoss,
       globalScene.gameMode,
     );
-    isEventEncounter = true;
+    if (params.isEventEncounter) {
+      params.isEventEncounter.value = true;
+    }
     bossSpecies = getPokemonSpecies(levelSpecies);
     formIndex = eventEncounter.formIndex;
+  } else if (speciesFunction) {
+    bossSpecies = speciesFunction();
   } else {
     bossSpecies = globalScene.arena.randomSpecies(
       globalScene.currentBattle.waveIndex,
@@ -1027,13 +1053,19 @@ export function getRandomEncounterSpecies(level: number, isBoss = false, rerollH
     ret.formIndex = formIndex;
   }
 
-  //Reroll shiny or variant for event encounters
-  if (isEventEncounter) {
-    ret.trySetShinySeed();
+  if (isEventEncounter.value) {
+    hiddenRerolls += eventHiddenRerolls;
+    shinyRerolls += eventShinyRerolls;
   }
-  //Reroll hidden ability
-  if (rerollHidden && ret.abilityIndex !== 2 && ret.species.abilityHidden) {
-    ret.tryRerollHiddenAbilitySeed();
+
+  while (shinyRerolls > 0) {
+    ret.trySetShinySeed(shinyChance, true, maxShinyChance);
+    shinyRerolls--;
+  }
+
+  while (hiddenRerolls > 0) {
+    ret.tryRerollHiddenAbilitySeed(hiddenAbilityChance, true);
+    hiddenRerolls--;
   }
 
   return ret;

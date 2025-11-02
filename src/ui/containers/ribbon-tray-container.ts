@@ -1,11 +1,11 @@
 import { globalScene } from "#app/global-scene";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { Button } from "#enums/buttons";
-import type { RibbonData, RibbonFlag } from "#system/ribbons/ribbon-data";
+import { RibbonData, type RibbonFlag } from "#system/ribbons/ribbon-data";
 import { ribbonFlagToAssetKey } from "#system/ribbons/ribbon-methods";
 import type { MessageUiHandler } from "#ui/message-ui-handler";
 import { addWindow } from "#ui/ui-theme";
-import { getAvailableRibbons, getRibbonKey } from "#utils/ribbon-utils";
+import { getAvailableRibbons, getRibbonKey, orderedRibbons } from "#utils/ribbon-utils";
 import i18next from "i18next";
 
 export class RibbonTray extends Phaser.GameObjects.Container {
@@ -111,8 +111,22 @@ export class RibbonTray extends Phaser.GameObjects.Container {
 
     this.trayIcons = [];
     let index = 0;
-    for (const ribbon of getAvailableRibbons(species)) {
-      const hasRibbon = this.ribbonData.has(ribbon);
+
+    const availableRibbons = getAvailableRibbons(species);
+    const availableOrderedRibbons = orderedRibbons.filter(r => availableRibbons.includes(r));
+
+    // Classic win count (always 0 for evolutions)
+    const classicWinCount = globalScene.gameData.starterData[species.speciesId]?.classicWinCount ?? 0;
+
+    for (const ribbon of availableOrderedRibbons) {
+      // TODO: eventually, write a save migrator to fix the ribbon save data and get rid of these two conditions
+      // Display classic ribbons for starters with at least one classic win
+      const overrideClassicRibbon = ribbon === RibbonData.CLASSIC && classicWinCount > 0;
+      // Display no heal and no shop ribbons for mons that have the no support ribbon
+      const overrideNoSupportRibbons =
+        (ribbon === RibbonData.NO_HEAL || ribbon === RibbonData.NO_SHOP) && this.ribbonData.has(RibbonData.NO_SUPPORT);
+      const hasRibbon = this.ribbonData.has(ribbon) || overrideClassicRibbon || overrideNoSupportRibbons;
+
       if (!hasRibbon && !globalScene.dexForDevs && !globalScene.showMissingRibbons) {
         continue;
       }

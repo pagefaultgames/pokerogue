@@ -110,8 +110,10 @@ import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { areAllies, canSpeciesTera, willTerastallize } from "#utils/pokemon-utils";
+import { inSpeedOrder } from "#utils/speed-order-generator";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
+import { MovePriorityInBracket } from "#enums/move-priority-in-bracket";
 
 /**
  * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.
@@ -1089,9 +1091,8 @@ export abstract class Move implements Localizable {
       aura.apply({ pokemon: source, simulated, opponent: target, move: this, power });
     }
 
-    const alliedField: Pokemon[] = source.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
-    for (const p of alliedField) {
-      applyAbAttrs("UserFieldMoveTypePowerBoostAbAttr", { pokemon: p, opponent: target, move: this, simulated, power });
+    for (const p of source.getAlliesGenerator()) {
+      applyAbAttrs("UserFieldMoveTypePowerBoostAbAttr", {pokemon: p, opponent: target, move: this, simulated, power});
     }
 
     power.value *= typeChangeMovePowerMultiplier.value;
@@ -1119,15 +1120,19 @@ export abstract class Move implements Localizable {
 
   getPriority(user: Pokemon, simulated = true) {
     const priority = new NumberHolder(this.priority);
-
     applyMoveAttrs("IncrementMovePriorityAttr", user, null, this, priority);
     applyAbAttrs("ChangeMovePriorityAbAttr", { pokemon: user, simulated, move: this, priority });
 
-    if (user.getTag(BattlerTagType.BYPASS_SPEED)) {
-      priority.value += 0.2;
+    return priority.value;
     }
 
-    return priority.value;
+  public getPriorityModifier(user: Pokemon, simulated = true) {
+    if (user.getTag(BattlerTagType.BYPASS_SPEED)) {
+      return MovePriorityInBracket.FIRST;
+  }
+    const modifierHolder = new NumberHolder(MovePriorityInBracket.NORMAL);
+    applyAbAttrs("ChangeMovePriorityInBracketAbAttr", { pokemon: user, simulated, move: this, priority: modifierHolder });
+    return modifierHolder.value;
   }
 
   /**
@@ -6545,9 +6550,10 @@ export class RemoveAllSubstitutesAttr extends MoveEffectAttr {
       return false;
     }
 
-    for (const pokemon of globalScene.getField(true)) {
+    for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
       pokemon.findAndRemoveTags(tag => tag.tagType === BattlerTagType.SUBSTITUTE);
     }
+
     return true;
   }
 }
@@ -8685,9 +8691,9 @@ const failIfDampCondition: MoveConditionFunc = (user, _target, move) => {
   // temporary workaround to prevent displaying the message during enemy command phase
   // TODO: either move this, or make the move condition func have a `simulated` param
   const simulated = globalScene.phaseManager.getCurrentPhase()?.is("EnemyCommandPhase");
-  globalScene
-    .getField(true)
-    .map(p => applyAbAttrs("FieldPreventExplosiveMovesAbAttr", { pokemon: p, cancelled, simulated }));
+  for (const p of inSpeedOrder(ArenaTagSide.BOTH)) {
+    applyAbAttrs("FieldPreventExplosiveMovesAbAttr", {pokemon: p, cancelled, simulated});
+  }
   // Queue a message if an ability prevented usage of the move
   if (!simulated && cancelled.value) {
     globalScene.phaseManager.queueMessage(
