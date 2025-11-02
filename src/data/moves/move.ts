@@ -10829,17 +10829,13 @@ export function initMoves() {
       .condition((_user, target, _move) => !target.turnData.acted)
       .attr(ForceLastAttr),
     new AttackMove(MoveId.ACROBATICS, PokemonType.FLYING, MoveCategory.PHYSICAL, 55, 100, 15, -1, 0, 5) //
-      .attr(MovePowerMultiplierAttr, (user, _target, _move) =>
-        Math.max(
-          1,
-          2
-            - 0.2
-              * user
-                .getHeldItems()
-                .filter(i => i.isTransferable)
-                .reduce((v, m) => v + m.stackCount, 0),
-        ),
-      ),
+      .attr(MovePowerMultiplierAttr, (user, _target, _move) => {
+        const itemCount = user
+          .getHeldItems()
+          .filter(i => i.isTransferable)
+          .reduce((v, m) => v + m.stackCount, 0);
+        return Math.max(1, 2 - 0.2 * itemCount);
+      }),
     new StatusMove(MoveId.REFLECT_TYPE, PokemonType.NORMAL, -1, 15, -1, 0, 5) //
       .ignoresSubstitute()
       .attr(CopyTypeAttr),
@@ -11240,17 +11236,8 @@ export function initMoves() {
       .unimplemented(),
     new AttackMove(MoveId.ALL_OUT_PUMMELING__SPECIAL, PokemonType.FIGHTING, MoveCategory.SPECIAL, -1, -1, 1, -1, 0, 7) //
       .unimplemented(),
-    new AttackMove(
-      MoveId.SUPERSONIC_SKYSTRIKE__PHYSICAL,
-      PokemonType.FLYING,
-      MoveCategory.PHYSICAL,
-      -1,
-      -1,
-      1,
-      -1,
-      0,
-      7,
-    ) //
+    // biome-ignore format: slightly too long
+    new AttackMove(MoveId.SUPERSONIC_SKYSTRIKE__PHYSICAL, PokemonType.FLYING, MoveCategory.PHYSICAL, -1, -1, 1, -1, 0, 7)
       .unimplemented(),
     new AttackMove(MoveId.SUPERSONIC_SKYSTRIKE__SPECIAL, PokemonType.FLYING, MoveCategory.SPECIAL, -1, -1, 1, -1, 0, 7) //
       .unimplemented(),
@@ -11270,17 +11257,8 @@ export function initMoves() {
       .unimplemented(),
     new AttackMove(MoveId.SAVAGE_SPIN_OUT__SPECIAL, PokemonType.BUG, MoveCategory.SPECIAL, -1, -1, 1, -1, 0, 7) //
       .unimplemented(),
-    new AttackMove(
-      MoveId.NEVER_ENDING_NIGHTMARE__PHYSICAL,
-      PokemonType.GHOST,
-      MoveCategory.PHYSICAL,
-      -1,
-      -1,
-      1,
-      -1,
-      0,
-      7,
-    ) //
+    // biome-ignore format: slightly too long
+    new AttackMove(MoveId.NEVER_ENDING_NIGHTMARE__PHYSICAL, PokemonType.GHOST, MoveCategory.PHYSICAL, -1, -1, 1, -1, 0, 7)
       .unimplemented(),
     new AttackMove(MoveId.NEVER_ENDING_NIGHTMARE__SPECIAL, PokemonType.GHOST, MoveCategory.SPECIAL, -1, -1, 1, -1, 0, 7) //
       .unimplemented(),
@@ -11562,17 +11540,8 @@ export function initMoves() {
     new AttackMove(MoveId.MULTI_ATTACK, PokemonType.NORMAL, MoveCategory.PHYSICAL, 120, 100, 10, -1, 0, 7) //
       .attr(FormChangeItemTypeAttr),
     /* Unused */
-    new AttackMove(
-      MoveId.TEN_MILLION_VOLT_THUNDERBOLT,
-      PokemonType.ELECTRIC,
-      MoveCategory.SPECIAL,
-      195,
-      -1,
-      1,
-      -1,
-      0,
-      7,
-    ) //
+    // biome-ignore format: slightly too long
+    new AttackMove(MoveId.TEN_MILLION_VOLT_THUNDERBOLT, PokemonType.ELECTRIC, MoveCategory.SPECIAL, 195, -1, 1, -1, 0, 7)
       .unimplemented()
       .edgeCase(), // I assume it's because it needs thunderbolt and pikachu in a cap
     /* End Unused */
@@ -11657,16 +11626,12 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (_user, target, _move) => {
         // Move is only stronger against overleveled foes.
         if (target.level > globalScene.getMaxExpLevel()) {
-          const dynamaxCannonPercentMarginBeforeFullDamage = 0.05; // How much % above MaxExpLevel of wave will the target need to be to take full damage.
+          // How much % above MaxExpLevel of wave will the target need to be to take full damage.
+          const dynamaxCannonPercentMarginBeforeFullDamage = 0.05;
+          const overLevel = target.level - globalScene.getMaxExpLevel();
+          const damageFactor = globalScene.getMaxExpLevel() * dynamaxCannonPercentMarginBeforeFullDamage;
           // The move's power scales as the margin is approached, reaching double power when it does or goes over it.
-          return (
-            1
-            + Math.min(
-              1,
-              (target.level - globalScene.getMaxExpLevel())
-                / (globalScene.getMaxExpLevel() * dynamaxCannonPercentMarginBeforeFullDamage),
-            )
-          );
+          return 1 + Math.min(1, overLevel / damageFactor);
         }
         return 1;
       }),
@@ -12377,7 +12342,7 @@ export function initMoves() {
           ? MoveTarget.ALL_NEAR_ENEMIES
           : MoveTarget.NEAR_OTHER,
       )
-      .partial() /** Does not ignore abilities that affect stats, relevant in determining the move's category {@see TeraMoveCategoryAttr} */,
+      .partial(), // Does not ignore abilities that affect stats, relevant in determining the move's category (cf `TeraMoveCategoryAttr`)
     new AttackMove(MoveId.FICKLE_BEAM, PokemonType.DRAGON, MoveCategory.SPECIAL, 80, 100, 5, -1, 0, 9)
       .attr(PreMoveMessageAttr, doublePowerChanceMessageFunc(30))
       .attr(DoublePowerChanceAttr, 30),
