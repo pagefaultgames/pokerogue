@@ -3648,12 +3648,7 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
 
     // Display the move animation to foresee an attack
     globalScene.phaseManager.unshiftNew("MoveAnimPhase", new MoveChargeAnim(this.chargeAnim, move.id, user));
-    globalScene.phaseManager.queueMessage(
-      i18next.t(
-        this.chargeKey,
-        { pokemonName: getPokemonNameWithAffix(user) }
-      )
-    )
+    globalScene.phaseManager.queueMessage(i18next.t(this.chargeKey, { pokemonName: getPokemonNameWithAffix(user) }));
 
     user.pushMoveHistory({
       move: move.id,
