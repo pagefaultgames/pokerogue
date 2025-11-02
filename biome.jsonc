@@ -114,7 +114,17 @@
         },
         "useCollapsedIf": "error",
         "useCollapsedElseIf": "error",
-
+        "useDeprecatedReason": "error",
+        "useConsistentArrayType": {
+          "level": "error",
+          "fix": "safe",
+          "options": {}
+        },
+        "useShorthandAssign": {
+          "level": "error",
+          "fix": "safe",
+          "options": {}
+        },
         "noSubstr": "error",
         "noYodaExpression": "error",
         "useForOf": "error",
@@ -203,7 +213,7 @@
         "noForEach": "off", // Foreach vs for of is not that simple.
         "noUselessSwitchCase": "off", // Explicit > Implicit
         "noUselessConstructor": "error",
-        "noBannedTypes": "warn", // TODO: Refactor and make this an error
+        "noBannedTypes": "error",
         "noThisInStatic": "error",
         "noUselessThisAlias": "error",
         "noUselessTernary": "error",
