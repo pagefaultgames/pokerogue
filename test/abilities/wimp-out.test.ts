@@ -420,7 +420,8 @@ describe("Abilities - Wimp Out", () => {
 
     game.move.select(MoveId.ENDURE);
     game.doSelectPartyPokemon(1);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.phaseInterceptor.to("MoveEndPhase");
+    await game.phaseInterceptor.to("MoveEndPhase", false);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     expect(enemyPokemon.turnData.hitsLeft).toBe(0);
@@ -436,7 +437,8 @@ describe("Abilities - Wimp Out", () => {
 
     game.move.select(MoveId.ENDURE);
     game.doSelectPartyPokemon(1);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.phaseInterceptor.to("MoveEndPhase");
+    await game.phaseInterceptor.to("MoveEndPhase", false);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     expect(enemyPokemon.turnData.hitsLeft).toBe(0);
@@ -451,7 +453,8 @@ describe("Abilities - Wimp Out", () => {
 
     game.move.select(MoveId.ENDURE);
     game.doSelectPartyPokemon(1);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.phaseInterceptor.to("MoveEndPhase");
+    await game.phaseInterceptor.to("MoveEndPhase", false);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     expect(enemyPokemon.turnData.hitsLeft).toBe(0);

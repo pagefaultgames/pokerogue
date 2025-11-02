@@ -179,7 +179,8 @@ describe("Moves - Protect", () => {
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.PROTECT);
-    await game.phaseInterceptor.to("BerryPhase", false);
+    await game.phaseInterceptor.to("MoveEndPhase");
+    await game.phaseInterceptor.to("MoveEndPhase", false);
 
     expect(charizard.hp).toBe(charizard.getMaxHp());
     expect(enemyPokemon.turnData.hitCount).toBe(1);

@@ -124,12 +124,17 @@ export class PokemonSummonData {
   public stats: number[] = [0, 0, 0, 0, 0, 0];
   public moveset: PokemonMove[] | null;
 
-  // If not initialized this value will not be populated from save data.
   public types: PokemonType[] = [];
   public addedType: PokemonType | null = null;
 
-  /** Data pertaining to this pokemon's illusion. */
+  /** Data pertaining to this pokemon's Illusion, if it has one. */
   public illusion: IllusionData | null = null;
+  /**
+   * Whether this Pokemon's illusion has been broken since switching out.
+   * @defaultValue `false`
+   */
+  // TODO: Since Illusion applies on switch in, and this entire class is reset on switch-in,
+  // this may be replaceable with a check for `pokemon.summonData.illusionData !== null`
   public illusionBroken = false;
 
   /** Array containing all berries eaten in the last turn; used by {@linkcode AbilityId.CUD_CHEW} */
@@ -139,6 +144,7 @@ export class PokemonSummonData {
    * An array of all moves this pokemon has used since entering the battle.
    * Used for most moves and abilities that check prior move usage or copy already-used moves.
    */
+  // TODO: Rework this into a sort of "global move history" that also allows checking execution order (for Fusion Bolt/Flare)
   public moveHistory: TurnMove[] = [];
 
   constructor(source?: PokemonSummonData | SerializedPokemonSummonData) {
@@ -302,8 +308,10 @@ export class PokemonTurnData {
   /** How many times the current move should hit the target(s) */
   public hitCount = 0;
   /**
-   * - `-1` = Calculate how many hits are left
-   * - `0` = Move is finished
+   * - `-1`: Calculate how many hits are left
+   * - `0`: Move is finished
+   * - `>0`: Move is in process of hitting targets
+   * @defaultValue `-1`
    */
   public hitsLeft = -1;
   public totalDamageDealt = 0;
@@ -320,20 +328,17 @@ export class PokemonTurnData {
   public summonedThisTurn = false;
   public failedRunAway = false;
   public joinedRound = false;
-  /** Tracker for a pending status effect
+  /**
+   * Tracker for a pending status effect.
    *
    * @remarks
    * Set whenever {@linkcode Pokemon#trySetStatus} succeeds in order to prevent subsequent status effects
-   * from being applied. Necessary because the status is not actually set until the {@linkcode ObtainStatusEffectPhase} runs,
+   * from being applied. \
+   * Necessary because the status is not actually set until the {@linkcode ObtainStatusEffectPhase} runs,
    * which may not happen before another status effect is attempted to be applied.
+   * @defaultValue `StatusEffect.NONE`
    */
   public pendingStatus: StatusEffect = StatusEffect.NONE;
-  /**
-   * The amount of times this Pokemon has acted again and used a move in the current turn.
-   * Used to make sure multi-hits occur properly when the user is
-   * forced to act again in the same turn, and **must be incremented** by any effects that grant extra actions.
-   */
-  public extraTurns = 0;
   /**
    * All berries eaten by this pokemon in this turn.
    * Saved into {@linkcode PokemonSummonData | SummonData} by {@linkcode AbilityId.CUD_CHEW} on turn end.

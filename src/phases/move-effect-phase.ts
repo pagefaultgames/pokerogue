@@ -133,6 +133,7 @@ export class MoveEffectPhase extends PokemonPhase {
     if (anySuccess) {
       this.moveHistoryEntry.result = MoveResult.SUCCESS;
     } else {
+      // If the move failed to impact all targets, disable all subsequent multi-hits
       user.turnData.hitCount = 1;
       user.turnData.hitsLeft = 1;
       this.moveHistoryEntry.result = allMiss ? MoveResult.MISS : MoveResult.FAIL;
@@ -257,14 +258,6 @@ export class MoveEffectPhase extends PokemonPhase {
 
     // Lapse `MOVE_EFFECT` effects (i.e. semi-invulnerability) when applicable
     user.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
-
-    // If the user is acting again (such as due to Instruct or Dancer), reset hitsLeft/hitCount and
-    // recalculate hit count for multi-hit moves.
-    if (user.turnData.hitsLeft === 0 && user.turnData.hitCount > 0 && user.turnData.extraTurns > 0) {
-      user.turnData.hitsLeft = -1;
-      user.turnData.hitCount = 0;
-      user.turnData.extraTurns--;
-    }
 
     /**
      * If this phase is for the first hit of the invoked move,

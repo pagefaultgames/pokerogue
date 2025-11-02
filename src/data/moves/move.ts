@@ -1764,12 +1764,14 @@ export class TargetHalfHpDamageAttr extends FixedDamageAttr {
     super(0);
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: [NumberHolder, ...any[]]): boolean {
+    const [dmg] = args;
+
     // first, determine if the hit is coming from multi lens or not
     const lensCount = user.getHeldItems().find(i => i instanceof PokemonMultiHitModifier)?.getStackCount() ?? 0;
     if (lensCount <= 0) {
       // no multi lenses; we can just halve the target's hp and call it a day
-      (args[0] as NumberHolder).value = toDmgValue(target.hp / 2);
+      dmg.value = toDmgValue(target.hp / 2);
       return true;
     }
 
@@ -1780,11 +1782,11 @@ export class TargetHalfHpDamageAttr extends FixedDamageAttr {
         this.initialHp = target.hp;
       default:
         // multi lens added hit; use initialHp tracker to ensure correct damage
-        (args[0] as NumberHolder).value = toDmgValue(this.initialHp / 2);
+        dmg.value = toDmgValue(this.initialHp / 2);
         return true;
       case lensCount + 1:
         // parental bond added hit; calc damage as normal
-        (args[0] as NumberHolder).value = toDmgValue(target.hp / 2);
+        dmg.value = toDmgValue(target.hp / 2);
         return true;
     }
   }
@@ -3474,7 +3476,7 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
 
 /**
  * Attribute to queue a {@linkcode WishTag} to activate in 2 turns.
- * The tag whill heal
+ * The tag will heal 50% of the user's maximum HP to whichever Pokemon is active when it triggers.
  */
 export class WishAttr extends MoveEffectAttr {
   public override apply(user: Pokemon, target: Pokemon, _move: Move): boolean {
@@ -7379,7 +7381,6 @@ export class RepeatMoveAttr extends MoveEffectAttr {
       userPokemonName: getPokemonNameWithAffix(user),
       targetPokemonName: getPokemonNameWithAffix(target)
     }));
-    target.turnData.extraTurns++;
     globalScene.phaseManager.unshiftNew("MovePhase", target, moveTargets, movesetMove, MoveUseMode.NORMAL, MovePhaseTimingModifier.FIRST);
     return true;
   }
