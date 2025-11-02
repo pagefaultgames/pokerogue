@@ -132,7 +132,7 @@ export class Ability {
   }
 
   /**
-   * Whether this ability retains its effects after the user faints.
+   * Whether this ability can activate even if the user faints.
    * @remarks
    * If `true`, the ability will also activate when revived via Reviver Seed.
    */
