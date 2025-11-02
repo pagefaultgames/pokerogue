@@ -98,11 +98,15 @@ export class MoveHelper extends GameManagerHelper {
   }
 
   /**
-   * Select a move _already in the player's moveset_ to be used during the next {@linkcode CommandPhase}, **which will also terastallize on this turn**.
+   * Select a move _already in the player's moveset_ to be used during the next {@linkcode CommandPhase},
+   * **which will also terastallize on this turn**.
+   * Activates all relevant abilities and effects on Terastallizing (equivalent to inputting the command manually)
    * @param move - The {@linkcode MoveId} to use.
    * @param pkmIndex - The {@linkcode BattlerIndex} of the player Pokemon using the move. Relevant for double battles only and defaults to {@linkcode BattlerIndex.PLAYER} if not specified.
    * @param targetIndex - The {@linkcode BattlerIndex} of the Pokemon to target for single-target moves; should be omitted for multi-target moves.
    * If set to `null`, will forgo normal target selection entirely (useful for UI tests)
+   * @remarks
+   * Will fail the current test if the move being selected is not in the user's moveset.
    */
   public selectWithTera(
     move: MoveId,
