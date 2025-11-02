@@ -215,7 +215,7 @@
         "noForEach": "off", // Foreach vs for of is not that simple.
         "noUselessSwitchCase": "off", // Explicit > Implicit
         "noUselessConstructor": "error",
-        "noBannedTypes": "error", // TODO: Refactor and make this an error
+        "noBannedTypes": "error",
         "noThisInStatic": "error",
         "noUselessThisAlias": "error",
         "noUselessTernary": "error",
