@@ -165,35 +165,36 @@ export class LoginFormUiHandler extends FormModalUiHandler {
     const config = args[0] as ModalConfig;
     this.processExternalProvider(config);
     const originalLoginAction = this.submitAction;
-    this.submitAction = _ => {
-      if (globalScene.tweens.getTweensOf(this.modalContainer).length === 0) {
-        // Prevent overlapping overrides on action modification
-        this.submitAction = originalLoginAction;
-        this.sanitizeInputs();
-        globalScene.ui.setMode(UiMode.LOADING, { buttonActions: [] });
-        const onFail = error => {
-          globalScene.ui.setMode(UiMode.LOGIN_FORM, Object.assign(config, { errorMessage: error?.trim() }));
-          globalScene.ui.playError();
-        };
-        if (!this.inputs[0].text) {
-          return onFail(i18next.t("menu:emptyUsername"));
-        }
-
-        const [usernameInput, passwordInput] = this.inputs;
-
-        pokerogueApi.account
-          .login({
-            username: usernameInput.text,
-            password: passwordInput.text,
-          })
-          .then(error => {
-            if (!error && originalLoginAction) {
-              originalLoginAction();
-            } else {
-              onFail(error);
-            }
-          });
+    this.submitAction = () => {
+      if (globalScene.tweens.getTweensOf(this.modalContainer).length > 0) {
+        return;
       }
+      // Prevent overlapping overrides on action modification
+      this.submitAction = originalLoginAction;
+      this.sanitizeInputs();
+      globalScene.ui.setMode(UiMode.LOADING, { buttonActions: [] });
+      const onFail = error => {
+        globalScene.ui.setMode(UiMode.LOGIN_FORM, Object.assign(config, { errorMessage: error?.trim() }));
+        globalScene.ui.playError();
+      };
+      if (!this.inputs[0].text) {
+        return onFail(i18next.t("menu:emptyUsername"));
+      }
+
+      const [usernameInput, passwordInput] = this.inputs;
+
+      pokerogueApi.account
+        .login({
+          username: usernameInput.text,
+          password: passwordInput.text,
+        })
+        .then(error => {
+          if (!error && originalLoginAction) {
+            originalLoginAction();
+          } else {
+            onFail(error);
+          }
+        });
     };
 
     return true;

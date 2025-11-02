@@ -37,7 +37,7 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
   showText(
     text: string,
     delay?: number | null,
-    callback?: Function | null,
+    callback?: (() => void) | null,
     callbackDelay?: number | null,
     prompt?: boolean | null,
     promptDelay?: number | null,
@@ -49,7 +49,7 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
     text: string,
     _name?: string,
     delay?: number | null,
-    callback?: Function | null,
+    callback?: (() => void) | null,
     callbackDelay?: number | null,
     prompt?: boolean | null,
     promptDelay?: number | null,
@@ -60,7 +60,7 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
   private showTextInternal(
     text: string,
     delay?: number | null,
-    callback?: Function | null,
+    callback?: (() => void) | null,
     callbackDelay?: number | null,
     prompt?: boolean | null,
     promptDelay?: number | null,
@@ -219,7 +219,7 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
     }
   }
 
-  showPrompt(callback?: Function | null, callbackDelay?: number | null) {
+  showPrompt(callback?: (() => void) | null, callbackDelay?: number | null) {
     const wrappedTextLines = this.message.runWordWrap(this.message.text).split(/\n/g);
     const textLinesCount = wrappedTextLines.length;
     const lastTextLine = wrappedTextLines.at(-1) ?? "";

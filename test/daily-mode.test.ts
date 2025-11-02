@@ -5,6 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { MapModifier } from "#modifiers/modifier";
 import { GameManager } from "#test/test-utils/game-manager";
+import { stringifyEnumArray } from "#test/test-utils/string-utils";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -20,7 +21,8 @@ describe("Daily Mode", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue("test-seed");
+
+    game.override.disableShinies = false;
   });
 
   afterEach(() => {
@@ -28,6 +30,7 @@ describe("Daily Mode", () => {
   });
 
   it("should initialize properly", async () => {
+    vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue("test-seed");
     await game.dailyMode.startBattle();
 
     const party = game.scene.getPlayerParty();
@@ -36,7 +39,90 @@ describe("Daily Mode", () => {
       expect(pkm.level).toBe(20);
       expect(pkm.moveset.length).toBeGreaterThan(0);
     });
-    expect(game.scene.getModifiers(MapModifier).length).toBeGreaterThan(0);
+    expect(game.scene.getModifiers(MapModifier).length).toBe(1);
+  });
+
+  describe("Custom Seeds", () => {
+    describe("Moves", () => {
+      it("should support custom moves", async () => {
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue("/moves0001000200030004,03320006,01300919");
+        await game.dailyMode.startBattle();
+
+        const [moves1, moves2, moves3] = game.scene.getPlayerParty().map(p => p.moveset.map(pm => pm.moveId));
+        expect(moves1, stringifyEnumArray(MoveId, moves1)).toEqual([
+          MoveId.POUND,
+          MoveId.KARATE_CHOP,
+          MoveId.DOUBLE_SLAP,
+          MoveId.COMET_PUNCH,
+        ]);
+        expect(moves2, stringifyEnumArray(MoveId, moves2)).toEqual([
+          MoveId.AERIAL_ACE,
+          MoveId.PAY_DAY,
+          expect.anything(), // make sure it doesn't replace normal moveset gen
+          expect.anything(),
+        ]);
+        expect(moves3, stringifyEnumArray(MoveId, moves3)).toEqual([
+          MoveId.SKULL_BASH,
+          MoveId.MALIGNANT_CHAIN,
+          expect.anything(),
+          expect.anything(),
+        ]);
+      });
+
+      it("should allow omitting movesets for some starters", async () => {
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue("/moves0001000200030004");
+        await game.dailyMode.startBattle();
+
+        const [moves1, moves2, moves3] = game.scene.getPlayerParty().map(p => p.moveset.map(pm => pm.moveId));
+        expect(moves1, stringifyEnumArray(MoveId, moves1)).toEqual([
+          MoveId.POUND,
+          MoveId.KARATE_CHOP,
+          MoveId.DOUBLE_SLAP,
+          MoveId.COMET_PUNCH,
+        ]);
+        expect(moves2, "was not a random moveset").toHaveLength(4);
+        expect(moves3, "was not a random moveset").toHaveLength(4);
+      });
+
+      it("should skip invalid move IDs", async () => {
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue("/moves9999,,0919");
+        await game.dailyMode.startBattle();
+
+        const moves = game.field.getPlayerPokemon().moveset.map(pm => pm.moveId);
+        expect(moves, "invalid move was in moveset").not.toContain(MoveId[9999]);
+      });
+    });
+
+    describe("Starters", () => {
+      it("should support custom species IDs", async () => {
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue("foo/starterss0001s0113s1024");
+        await game.dailyMode.startBattle();
+
+        const party = game.scene.getPlayerParty().map(p => p.species.speciesId);
+        expect(party, stringifyEnumArray(SpeciesId, party)).toEqual([
+          SpeciesId.BULBASAUR,
+          SpeciesId.CHANSEY,
+          SpeciesId.TERAPAGOS,
+        ]);
+      });
+
+      it("should support custom forms and variants", async () => {
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue("/starterss0006f01v2s0113v0s1024f02");
+        await game.dailyMode.startBattle();
+
+        const party = game.scene.getPlayerParty().map(p => ({
+          speciesId: p.species.speciesId,
+          variant: p.getVariant(),
+          form: p.formIndex,
+          shiny: p.isShiny(),
+        }));
+        expect(party).toEqual<typeof party>([
+          { speciesId: SpeciesId.CHARIZARD, variant: 2, form: 1, shiny: true },
+          { speciesId: SpeciesId.CHANSEY, variant: 0, form: 0, shiny: true },
+          { speciesId: SpeciesId.TERAPAGOS, variant: expect.anything(), form: 2, shiny: false },
+        ]);
+      });
+    });
   });
 });
 

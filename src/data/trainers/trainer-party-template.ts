@@ -186,6 +186,7 @@ export const trainerPartyTemplates = {
     new TrainerPartyTemplate(1, PartyMemberStrength.STRONG, undefined, undefined, EvoLevelThresholdKind.STRONG),
     new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER, undefined, undefined, EvoLevelThresholdKind.STRONG),
   ),
+  /** 3 Average 2 Strong 1 Stronger */
   GYM_LEADER_5: new TrainerPartyCompoundTemplate(
     new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE, undefined, undefined, EvoLevelThresholdKind.STRONG),
     new TrainerPartyTemplate(2, PartyMemberStrength.STRONG, undefined, undefined, EvoLevelThresholdKind.STRONG),
@@ -254,7 +255,7 @@ export function getEvilGruntPartyTemplate(): TrainerPartyTemplate {
     return trainerPartyTemplates.TWO_AVG_ONE_STRONG;
   }
   if (waveIndex <= ClassicFixedBossWaves.EVIL_ADMIN_1) {
-    return trainerPartyTemplates.GYM_LEADER_4; // 3avg 1 strong 1 stronger
+    return trainerPartyTemplates.GYM_LEADER_5; // 3avg 2 strong 1 stronger
   }
   return trainerPartyTemplates.GYM_LEADER_5; // 3 avg 2 strong 1 stronger
 }

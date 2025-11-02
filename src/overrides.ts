@@ -159,7 +159,7 @@ class DefaultOverrides {
   readonly HAS_PASSIVE_ABILITY_OVERRIDE: boolean | null = null;
   readonly STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly GENDER_OVERRIDE: Gender | null = null;
-  readonly MOVESET_OVERRIDE: MoveId | Array<MoveId> = [];
+  readonly MOVESET_OVERRIDE: MoveId | MoveId[] = [];
   readonly SHINY_OVERRIDE: boolean | null = null;
   readonly VARIANT_OVERRIDE: Variant | null = null;
   /**
@@ -186,7 +186,7 @@ class DefaultOverrides {
   readonly ENEMY_HAS_PASSIVE_ABILITY_OVERRIDE: boolean | null = null;
   readonly ENEMY_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly ENEMY_GENDER_OVERRIDE: Gender | null = null;
-  readonly ENEMY_MOVESET_OVERRIDE: MoveId | Array<MoveId> = [];
+  readonly ENEMY_MOVESET_OVERRIDE: MoveId | MoveId[] = [];
   readonly ENEMY_SHINY_OVERRIDE: boolean | null = null;
   readonly ENEMY_VARIANT_OVERRIDE: Variant | null = null;
 
