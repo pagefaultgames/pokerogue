@@ -1,10 +1,11 @@
 import { Button } from "#enums/buttons";
 import { SettingGamepad } from "#system/settings-gamepad";
+import type { DualshockButtons, PadConfig } from "#types/configs/inputs";
 
 /**
  * Dualshock mapping
  */
-const pad_dualshock = {
+export const PAD_DUALSHOCK: PadConfig<DualshockButtons> = {
   padID: "Dualshock",
   padType: "dualshock",
   deviceMapping: {
@@ -84,5 +85,3 @@ const pad_dualshock = {
     TOUCH: SettingGamepad.Button_Submit,
   },
 };
-
-export default pad_dualshock;

@@ -35,7 +35,7 @@ export default defineConfig(({ mode }) => ({
     },
     typecheck: {
       tsconfig: "tsconfig.json",
-      include: ["./test/types/**/*.{test,spec}{-|.}d.ts"],
+      include: ["./test/types/**/*.{test,spec}-d.ts"],
     },
     threads: false,
     trace: true,

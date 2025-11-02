@@ -83,7 +83,12 @@ function setupStubs(): void {
    * @param x - The relative x position
    * @param y - The relative y position
    */
-  const setPositionRelative = function (guideObject: any, x: number, y: number): any {
+  const setPositionRelative = function <T extends Phaser.GameObjects.Components.Transform>(
+    this: T,
+    guideObject: any,
+    x: number,
+    y: number,
+  ): any {
     const offsetX = guideObject.width * (-0.5 + (0.5 - guideObject.originX));
     const offsetY = guideObject.height * (-0.5 + (0.5 - guideObject.originY));
     return this.setPosition(guideObject.x + offsetX + x, guideObject.y + offsetY + y);

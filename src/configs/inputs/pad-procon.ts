@@ -1,10 +1,11 @@
 import { Button } from "#enums/buttons";
 import { SettingGamepad } from "#system/settings-gamepad";
+import type { PadConfig, ProconButtons } from "#types/configs/inputs";
 
 /**
  * Nintendo Pro Controller mapping
  */
-const pad_procon = {
+export const PAD_PROCON: PadConfig<ProconButtons> = {
   padID: "Pro Controller",
   padType: "xbox",
   deviceMapping: {
@@ -79,7 +80,6 @@ const pad_procon = {
     RT: SettingGamepad.Button_Cycle_Ability,
     LS: SettingGamepad.Button_Speed_Up,
     RS: SettingGamepad.Button_Slow_Down,
+    MENU: -1, // Home button unbound by default
   },
 };
-
-export default pad_procon;

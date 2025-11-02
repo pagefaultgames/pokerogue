@@ -317,7 +317,7 @@ function initGreatModifierPool() {
     ),
     new WeightedModifierType(
       modifierTypes.DNA_SPLICERS,
-      (party: Pokemon[]) => {
+      (party: readonly Pokemon[]) => {
         if (party.filter(p => !p.fusionSpecies).length > 1) {
           if (globalScene.gameMode.isSplicedOnly) {
             return 4;
@@ -332,7 +332,7 @@ function initGreatModifierPool() {
     ),
     new WeightedModifierType(
       modifierTypes.VOUCHER,
-      (_party: Pokemon[], rerollCount: number) => (!globalScene.gameMode.isDaily ? Math.max(1 - rerollCount, 0) : 0),
+      (_party: readonly Pokemon[], rerollCount) => (!globalScene.gameMode.isDaily ? Math.max(1 - rerollCount, 0) : 0),
       1,
     ),
   ].map(m => {

@@ -12,12 +12,12 @@ import type { Starter, StarterMoveset } from "#types/save-data";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 /** Function to convert Blob to string */
-export function blobToString(blob) {
+export function blobToString(blob: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 
     reader.onloadend = () => {
-      resolve(reader.result);
+      resolve(reader.result as string);
     };
 
     reader.onerror = () => {

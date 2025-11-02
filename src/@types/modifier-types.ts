@@ -6,7 +6,9 @@ import type { ModifierType, WeightedModifierType } from "#modifiers/modifier-typ
 import type { ObjectValues } from "#types/type-helpers";
 
 export type ModifierTypeFunc = () => ModifierType;
-export type WeightedModifierTypeWeightFunc = (party: Pokemon[], rerollCount?: number) => number;
+export type WeightedModifierTypeWeightFunc =
+  | ((party: Pokemon[], rerollCount?: number) => number)
+  | ((party: Pokemon[], rerollCount: number) => number);
 
 export type { ModifierConstructorMap } from "#modifiers/modifier";
 

@@ -35,7 +35,7 @@ export class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
     return globalScene.inputController?.selectedDevice[Device.KEYBOARD];
   }
 
-  onKeyDown(event): void {
+  onKeyDown(event: KeyboardEvent): void {
     const blacklist = [
       Phaser.Input.Keyboard.KeyCodes.UP,
       Phaser.Input.Keyboard.KeyCodes.DOWN,
@@ -51,9 +51,9 @@ export class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
     if (!this.listening || this.buttonPressed !== null || blacklist.includes(key)) {
       return;
     }
-    const activeConfig = globalScene.inputController.getActiveConfig(Device.KEYBOARD);
-    const _key = getKeyWithKeycode(activeConfig, key);
-    const buttonIcon = activeConfig.icons[_key];
+    const activeConfig = globalScene.inputController.getActiveConfig(Device.KEYBOARD)!;
+    const pressedKey = getKeyWithKeycode(activeConfig, key);
+    const buttonIcon = activeConfig.icons[pressedKey! as keyof typeof activeConfig.icons];
     if (!buttonIcon) {
       return;
     }
@@ -64,7 +64,11 @@ export class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
 
   swapAction(): boolean {
     const activeConfig = globalScene.inputController.getActiveConfig(Device.KEYBOARD);
-    if (globalScene.inputController.assignBinding(activeConfig, this.target, this.buttonPressed)) {
+    if (
+      activeConfig != null
+      && this.buttonPressed != null
+      && globalScene.inputController.assignBinding(activeConfig, this.target, this.buttonPressed)
+    ) {
       globalScene.gameData.saveMappingConfigs(this.getSelectedDevice(), activeConfig);
       return true;
     }

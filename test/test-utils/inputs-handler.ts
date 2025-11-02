@@ -1,7 +1,7 @@
 import type { BattleScene } from "#app/battle-scene";
 import type { InputsController } from "#app/inputs-controller";
 import { TouchControl } from "#app/touch-controls";
-import pad_xbox360 from "#inputs/pad-xbox360";
+import { PAD_XBOX360 } from "#inputs/pad-xbox360";
 import { holdOn } from "#test/test-utils/game-manager-utils";
 import fs from "node:fs";
 import { JSDOM } from "jsdom";
@@ -24,7 +24,7 @@ export class InputsHandler {
   constructor(scene: BattleScene) {
     this.scene = scene;
     this.inputController = this.scene.inputController;
-    this.fakePad = new Fakepad(pad_xbox360);
+    this.fakePad = new Fakepad(PAD_XBOX360);
     this.fakeMobile = new FakeMobile();
     this.scene.input.gamepad?.gamepads.push(this.fakePad);
     this.init();

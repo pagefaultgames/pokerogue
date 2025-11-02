@@ -1,9 +1,8 @@
 import { globalScene } from "#app/global-scene";
-import type { InterfaceConfig } from "#app/inputs-controller";
 import { Device } from "#enums/devices";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
-import cfg_keyboard_qwerty from "#inputs/cfg-keyboard-qwerty";
+import { CFG_KEYBOARD_QWERTY } from "#inputs/cfg-keyboard-qwerty";
 import { deleteBind } from "#inputs/config-handler";
 import {
   SettingKeyboard,
@@ -12,6 +11,7 @@ import {
   settingKeyboardDefaults,
   settingKeyboardOptions,
 } from "#system/settings-keyboard";
+import type { InterfaceConfig } from "#types/configs/inputs";
 import { AbstractControlSettingsUiHandler } from "#ui/abstract-control-settings-ui-handler";
 import { NavigationManager } from "#ui/navigation-menu";
 import { addTextObject } from "#ui/text";
@@ -32,7 +32,7 @@ export class SettingsKeyboardUiHandler extends AbstractControlSettingsUiHandler 
     this.setting = SettingKeyboard;
     this.settingDeviceDefaults = settingKeyboardDefaults;
     this.settingDeviceOptions = settingKeyboardOptions;
-    this.configs = [cfg_keyboard_qwerty];
+    this.configs = [CFG_KEYBOARD_QWERTY];
     this.commonSettingsCount = 0;
     this.textureOverride = "keyboard";
     this.localStoragePropertyName = "settingsKeyboard";
@@ -101,7 +101,7 @@ export class SettingsKeyboardUiHandler extends AbstractControlSettingsUiHandler 
     const key = toPascalSnakeCase(selection);
     const settingName = SettingKeyboard[key];
     const activeConfig = this.getActiveConfig();
-    const success = deleteBind(this.getActiveConfig(), settingName);
+    const success = activeConfig != null && deleteBind(activeConfig, settingName);
     if (success) {
       this.saveCustomKeyboardMappingToLocalStorage(activeConfig);
       this.updateBindings();

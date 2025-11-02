@@ -10,13 +10,6 @@ declare global {
    * To set up your own server in a test see `game-data.test.ts`
    */
   var server: SetupServerApi;
-
-  // Overloads for `Function.apply` and `Function.call` to add type safety on matching argument types
-  interface Function {
-    apply<T extends AnyFn>(this: T, thisArg: ThisParameterType<T>, argArray: Parameters<T>): ReturnType<T>;
-
-    call<T extends AnyFn>(this: T, thisArg: ThisParameterType<T>, ...argArray: Parameters<T>): ReturnType<T>;
-  }
 }
 
 // Global augments for `typedoc` to prevent TS from erroring when editing the config JS file
