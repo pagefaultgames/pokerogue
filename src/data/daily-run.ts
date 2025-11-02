@@ -210,11 +210,6 @@ function getDailyEventSeedStarters(seed: string): StarterTuple | null {
   const speciesConfigurations = [...seedAfterPrefix.matchAll(STARTER_SEED_MATCH_REGEX)];
 
   if (speciesConfigurations.length !== 3) {
-    // TODO: Remove legacy fallback code after next hotfix version - this is needed for Oct 31's daily to function
-    const legacyStarters = getDailyEventSeedStartersLegacy(seed);
-    if (legacyStarters == null) {
-      return legacyStarters;
-    }
     console.error("Invalid starters used for custom daily run seed!", seed);
     return null;
   }
@@ -265,47 +260,6 @@ function getDailyEventSeedStarters(seed: string): StarterTuple | null {
 
     const startingLevel = globalScene.gameMode.getStartingLevel();
     const starter = getDailyRunStarter(starterForm, startingLevel, variant);
-    starters.push(starter);
-  }
-
-  return starters as StarterTuple;
-}
-
-/**
- * Expects the seed to contain `/starters\d{18}/`
- * where the digits alternate between 4 digits for the species ID and 2 digits for the form index
- * (left padded with `0`s as necessary).
- * @returns An array of {@linkcode Starter}s, or `null` if no valid match.
- */
-// TODO: Can be removed after october 31st 2025
-function getDailyEventSeedStartersLegacy(seed: string): StarterTuple | null {
-  if (!isDailyEventSeed(seed)) {
-    return null;
-  }
-
-  const starters: Starter[] = [];
-  const speciesMatch = /starters(\d{4})(\d{2})(\d{4})(\d{2})(\d{4})(\d{2})/g.exec(seed)?.slice(1);
-
-  if (!speciesMatch || speciesMatch.length !== 6) {
-    return null;
-  }
-
-  // TODO: Move these to server-side validation
-  const speciesIds = getEnumValues(SpeciesId);
-
-  // generate each starter in turn
-  for (let i = 0; i < 3; i++) {
-    const speciesId = Number.parseInt(speciesMatch[2 * i]) as SpeciesId;
-    const formIndex = Number.parseInt(speciesMatch[2 * i + 1]);
-
-    if (!speciesIds.includes(speciesId)) {
-      console.error("Invalid species ID used for custom daily run seed starter:", speciesId);
-      return null;
-    }
-
-    const starterForm = getPokemonSpeciesForm(speciesId, formIndex);
-    const startingLevel = globalScene.gameMode.getStartingLevel();
-    const starter = getDailyRunStarter(starterForm, startingLevel);
     starters.push(starter);
   }
 
