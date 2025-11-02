@@ -82,7 +82,6 @@ import type { Move } from "#moves/move";
 import type { MoveEffectPhase } from "#phases/move-effect-phase";
 import type { MovePhase } from "#phases/move-phase";
 import type { StatStageChangeCallback } from "#phases/stat-stage-change-phase";
-import i18next from "#plugins/i18n";
 import type {
   AbilityBattlerTagType,
   BattlerTagData,
@@ -103,6 +102,7 @@ import type { Mutable } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
 import { BooleanHolder, getFrameMs, NumberHolder, toDmgValue } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
+import i18next from "i18next";
 
 /** Interface containing the serializable fields of `BattlerTag` */
 interface BaseBattlerTag {
