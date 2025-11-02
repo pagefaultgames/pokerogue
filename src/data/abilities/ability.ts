@@ -1833,13 +1833,11 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
 }
 
 /**
- * Parameters for abilities that modify the hit count and damage of a move
+ * Parameters for abilities that modify the hit count of a move.
  */
 export interface AddSecondStrikeAbAttrParams extends Omit<AugmentMoveInteractionAbAttrParams, "opponent"> {
-  /** Holder for the number of hits. May be modified by ability application */
-  hitCount?: NumberHolder;
-  /** Holder for the damage multiplier _of the current hit_ */
-  multiplier?: NumberHolder;
+  /** Holder for the number of hits. Modified by ability application */
+  hitCount: NumberHolder;
 }
 
 /**
@@ -1847,35 +1845,12 @@ export interface AddSecondStrikeAbAttrParams extends Omit<AugmentMoveInteraction
  * Used by {@linkcode MoveId.PARENTAL_BOND | Parental Bond}.
  */
 export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
-  /** The damage multiplier for the second strike, relative to the first */
-  private readonly damageMultiplier: number;
-  /**
-   * @param damageMultiplier - The damage multiplier for the second strike, relative to the first
-   */
-  constructor(damageMultiplier: number) {
-    super(false);
-    this.damageMultiplier = damageMultiplier;
-  }
-
-  /**
-   * Return whether the move can be multi-strike enhanced.
-   */
   override canApply({ pokemon, move }: AddSecondStrikeAbAttrParams): boolean {
     return move.canBeMultiStrikeEnhanced(pokemon, true);
   }
 
-  /**
-   * Add one to the move's hit count, and, if the pokemon has only one hit left, sets the damage multiplier
-   * to the damage multiplier of this ability.
-   */
-  override apply({ hitCount, multiplier, pokemon }: AddSecondStrikeAbAttrParams): void {
-    if (hitCount?.value) {
-      hitCount.value += 1;
-    }
-
-    if (multiplier?.value && pokemon.turnData.hitsLeft === 1) {
-      multiplier.value = this.damageMultiplier;
-    }
+  override apply({ hitCount }: AddSecondStrikeAbAttrParams): void {
+    hitCount.value += 1;
   }
 }
 
@@ -1895,10 +1870,12 @@ export interface PreAttackModifyDamageAbAttrParams extends AugmentMoveInteractio
  * @param damageMultiplier the amount to multiply the damage by
  * @param condition the condition for this ability to be applied
  */
-export class DamageBoostAbAttr extends PreAttackAbAttr {
+export class MoveDamageBoostAbAttr extends PreAttackAbAttr {
   private readonly damageMultiplier: number;
   private readonly condition: PokemonAttackCondition;
 
+  // TODO: This should not take a `PokemonAttackCondition` (with nullish parameters)
+  // as it's effectively offloading nullishness checks to its child attributes
   constructor(damageMultiplier: number, condition: PokemonAttackCondition) {
     super(false);
     this.damageMultiplier = damageMultiplier;
@@ -3345,6 +3322,7 @@ export class CommanderAbAttr extends AbAttr {
 /**
  * Base class for ability attributes that apply their effect when their user switches out.
  */
+// TODO: Clarify the differences between this and `PreLeaveFieldAbAttr`
 export abstract class PreSwitchOutAbAttr extends AbAttr {
   constructor(showAbility = true) {
     super(showAbility);
@@ -3374,65 +3352,6 @@ export class PreSwitchOutResetStatusAbAttr extends PreSwitchOutAbAttr {
       pokemon.resetStatus();
       pokemon.updateInfo();
     }
-  }
-}
-
-/**
- * Clears Desolate Land/Primordial Sea/Delta Stream upon the Pokemon switching out.
- */
-export class PreSwitchOutClearWeatherAbAttr extends PreSwitchOutAbAttr {
-  override apply({ pokemon, simulated }: AbAttrBaseParams): boolean {
-    // TODO: Evaluate why this is returning a boolean rather than relay
-    const weatherType = globalScene.arena.weather?.weatherType;
-    let turnOffWeather = false;
-
-    // Clear weather only if user's ability matches the weather and no other pokemon has the ability.
-    switch (weatherType) {
-      case WeatherType.HARSH_SUN:
-        if (
-          pokemon.hasAbility(AbilityId.DESOLATE_LAND)
-          && globalScene
-            .getField(true)
-            .filter(p => p !== pokemon)
-            .filter(p => p.hasAbility(AbilityId.DESOLATE_LAND)).length === 0
-        ) {
-          turnOffWeather = true;
-        }
-        break;
-      case WeatherType.HEAVY_RAIN:
-        if (
-          pokemon.hasAbility(AbilityId.PRIMORDIAL_SEA)
-          && globalScene
-            .getField(true)
-            .filter(p => p !== pokemon)
-            .filter(p => p.hasAbility(AbilityId.PRIMORDIAL_SEA)).length === 0
-        ) {
-          turnOffWeather = true;
-        }
-        break;
-      case WeatherType.STRONG_WINDS:
-        if (
-          pokemon.hasAbility(AbilityId.DELTA_STREAM)
-          && globalScene
-            .getField(true)
-            .filter(p => p !== pokemon)
-            .filter(p => p.hasAbility(AbilityId.DELTA_STREAM)).length === 0
-        ) {
-          turnOffWeather = true;
-        }
-        break;
-    }
-
-    if (simulated) {
-      return turnOffWeather;
-    }
-
-    if (turnOffWeather) {
-      globalScene.arena.trySetWeather(WeatherType.NONE);
-      return true;
-    }
-
-    return false;
   }
 }
 
@@ -3488,48 +3407,33 @@ export class PreLeaveFieldAbAttr extends AbAttr {
 }
 
 /**
- * Clears Desolate Land/Primordial Sea/Delta Stream upon the Pokemon switching out.
+ * Ability attribute to clear the given {@linkcode WeatherType} upon this Pokemon switching out.
  */
 export class PreLeaveFieldClearWeatherAbAttr extends PreLeaveFieldAbAttr {
+  private readonly weatherType: Exclude<WeatherType, WeatherType.NONE>;
+  constructor(weatherType: Exclude<WeatherType, WeatherType.NONE>) {
+    super(false);
+    this.weatherType = weatherType;
+  }
+
   override canApply({ pokemon }: AbAttrBaseParams): boolean {
-    const weatherType = globalScene.arena.weather?.weatherType;
-    // Clear weather only if user's ability matches the weather and no other pokemon has the ability.
-    switch (weatherType) {
-      case WeatherType.HARSH_SUN:
-        if (
-          pokemon.hasAbility(AbilityId.DESOLATE_LAND)
-          && globalScene
-            .getField(true)
-            .filter(p => p !== pokemon)
-            .filter(p => p.hasAbility(AbilityId.DESOLATE_LAND)).length === 0
-        ) {
-          return true;
-        }
-        break;
-      case WeatherType.HEAVY_RAIN:
-        if (
-          pokemon.hasAbility(AbilityId.PRIMORDIAL_SEA)
-          && globalScene
-            .getField(true)
-            .filter(p => p !== pokemon)
-            .filter(p => p.hasAbility(AbilityId.PRIMORDIAL_SEA)).length === 0
-        ) {
-          return true;
-        }
-        break;
-      case WeatherType.STRONG_WINDS:
-        if (
-          pokemon.hasAbility(AbilityId.DELTA_STREAM)
-          && globalScene
-            .getField(true)
-            .filter(p => p !== pokemon)
-            .filter(p => p.hasAbility(AbilityId.DELTA_STREAM)).length === 0
-        ) {
-          return true;
-        }
-        break;
+    const weatherType = globalScene.arena.getWeatherType();
+    if (weatherType !== this.weatherType) {
+      return false;
     }
-    return false;
+
+    if (!globalScene.arena.weather?.isImmutable()) {
+      return true;
+    }
+
+    // Clear immutable weather only if no other Pokemon with this attribute for the given weather type exists
+    return !globalScene
+      .getField(true)
+      .some(
+        p =>
+          p !== pokemon
+          && p.getAbilityAttrs("PreLeaveFieldClearWeatherAbAttr").some(attr => attr.weatherType === this.weatherType),
+      );
   }
 
   override apply({ simulated }: AbAttrBaseParams): void {
@@ -6657,7 +6561,7 @@ const AbilityAttrs = Object.freeze({
   MoveTypeChangeAbAttr,
   PokemonTypeChangeAbAttr,
   AddSecondStrikeAbAttr,
-  DamageBoostAbAttr,
+  MoveDamageBoostAbAttr,
   MovePowerBoostAbAttr,
   MoveTypePowerBoostAbAttr,
   LowHpMoveTypePowerBoostAbAttr,
@@ -6712,7 +6616,6 @@ const AbilityAttrs = Object.freeze({
   CommanderAbAttr,
   PreSwitchOutAbAttr,
   PreSwitchOutResetStatusAbAttr,
-  PreSwitchOutClearWeatherAbAttr,
   PreSwitchOutHealAbAttr,
   PreSwitchOutFormChangeAbAttr,
   PreLeaveFieldAbAttr,
@@ -7298,7 +7201,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.TINTED_LENS, 4)
-      .attr(DamageBoostAbAttr, 2, (user, target, move) => (target?.getMoveEffectiveness(user!, move) ?? 1) <= 0.5)
+      .attr(MoveDamageBoostAbAttr, 2, (user, target, move) => (target?.getMoveEffectiveness(user!, move) ?? 1) <= 0.5)
       .build(),
     new AbBuilder(AbilityId.FILTER, 4)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => target.getMoveEffectiveness(user, move) >= 2, 0.75)
@@ -7636,7 +7539,15 @@ export function initAbilities() {
       .attr(MoveTypeChangeAbAttr, PokemonType.FLYING, 1.2, (_user, _target, move) => move.type === PokemonType.NORMAL)
       .build(),
     new AbBuilder(AbilityId.PARENTAL_BOND, 6)
-      .attr(AddSecondStrikeAbAttr, 0.25)
+      .attr(AddSecondStrikeAbAttr)
+      // Only multiply damage on the last strike of multi-strike moves
+      .attr(MoveDamageBoostAbAttr, 0.25, (user, _target, move) => (
+          !!user
+          && user.turnData.hitCount > 1 // move was originally multi hit
+          && user.turnData.hitsLeft === 1 // move was used against the user
+          && move.canBeMultiStrikeEnhanced(user, true)
+        )
+      )
       .build(),
     new AbBuilder(AbilityId.DARK_AURA, 6)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonDarkAura", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
@@ -7656,19 +7567,19 @@ export function initAbilities() {
     new AbBuilder(AbilityId.PRIMORDIAL_SEA, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
-      .attr(PreLeaveFieldClearWeatherAbAttr)
+      .attr(PreLeaveFieldClearWeatherAbAttr, WeatherType.HEAVY_RAIN)
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.DESOLATE_LAND, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HARSH_SUN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HARSH_SUN)
-      .attr(PreLeaveFieldClearWeatherAbAttr)
+      .attr(PreLeaveFieldClearWeatherAbAttr, WeatherType.HARSH_SUN)
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.DELTA_STREAM, 6)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.STRONG_WINDS)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.STRONG_WINDS)
-      .attr(PreLeaveFieldClearWeatherAbAttr)
+      .attr(PreLeaveFieldClearWeatherAbAttr, WeatherType.STRONG_WINDS)
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.STAMINA, 7)

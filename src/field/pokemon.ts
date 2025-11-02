@@ -1173,14 +1173,15 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     this.setScale(this.getSpriteScale());
   }
 
-  updateSpritePipelineData(): void {
+  // TODO: Use declaration merging to make this type safe maybe?
+  async updateSpritePipelineData(): Promise<void> {
     [this.getSprite(), this.getTintSprite()]
       .filter(s => !!s)
-      .map(s => {
+      .forEach(s => {
         s.pipelineData["teraColor"] = getTypeRgb(this.getTeraType());
         s.pipelineData["isTerastallized"] = this.isTerastallized;
       });
-    this.updateInfo(true);
+    await this.updateInfo(true);
   }
 
   initShinySparkle(): void {
@@ -3675,15 +3676,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       multiStrikeEnhancementMultiplier,
     );
 
-    if (!ignoreSourceAbility) {
-      applyAbAttrs("AddSecondStrikeAbAttr", {
-        pokemon: source,
-        move,
-        simulated,
-        multiplier: multiStrikeEnhancementMultiplier,
-      });
-    }
-
     /** Doubles damage if this Pokemon's last move was Glaive Rush */
     const glaiveRushMultiplier = new NumberHolder(1);
     if (this.getTag(BattlerTagType.RECEIVE_DOUBLE_DAMAGE)) {
@@ -3772,9 +3764,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         * mistyTerrainMultiplier,
     );
 
-    /** Doubles damage if the attacker has Tinted Lens and is using a resisted move */
     if (!ignoreSourceAbility) {
-      applyAbAttrs("DamageBoostAbAttr", {
+      applyAbAttrs("MoveDamageBoostAbAttr", {
         pokemon: source,
         opponent: this,
         move,
