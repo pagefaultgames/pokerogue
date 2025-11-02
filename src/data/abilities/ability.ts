@@ -97,7 +97,7 @@ const AB_FLAG_UNSWAPPABLE = AB_FLAG_UNCOPIABLE | AB_FLAG_UNREPLACEABLE;
 export class Ability {
   /** The ability's unique identifier */
   public readonly id: AbilityId;
-  /** The locales key used to localize the ability's name */
+  /** The locales key for the ability's name. */
   private readonly i18nKey: string;
   /**
    * The localized ability name.
