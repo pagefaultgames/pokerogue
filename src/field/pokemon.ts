@@ -3144,6 +3144,29 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
+   * Attempt to populate this Pokemon's moveset based on those from a Starter
+   * @param moveset - The {@linkcode StarterMoveset} to use; will override corresponding slots
+   * of this Pokemon's moveset
+   * @param ignoreValidate - Whether to ignore validating the passed-in moveset; default `false`
+   */
+  tryPopulateMoveset(moveset: StarterMoveset, ignoreValidate = false): void {
+    // TODO: Why do we need to re-validate starter movesets after picking them?
+    if (
+      !ignoreValidate
+      && !this.getSpeciesForm().validateStarterMoveset(
+        moveset,
+        globalScene.gameData.starterData[this.species.getRootSpeciesId()].eggMoves,
+      )
+    ) {
+      return;
+    }
+
+    moveset.forEach((m, i) => {
+      this.moveset[i] = new PokemonMove(m);
+    });
+  }
+
+  /**
    * Attempt to select the move at the move index.
    * @param moveIndex - The index of the move to select
    * @param ignorePp - Whether to ignore PP when checking if the move is usable (defaults to false)
@@ -5859,29 +5882,6 @@ export class PlayerPokemon extends Pokemon {
   }
 
   /**
-   * Attempt to populate this Pokemon's moveset based on those from a Starter
-   * @param moveset - The {@linkcode StarterMoveset} to use; will override corresponding slots
-   * of this Pokemon's moveset
-   * @param ignoreValidate - Whether to ignore validating the passed-in moveset; default `false`
-   */
-  tryPopulateMoveset(moveset: StarterMoveset, ignoreValidate = false): void {
-    // TODO: Why do we need to re-validate starter movesets after picking them?
-    if (
-      !ignoreValidate
-      && !this.getSpeciesForm().validateStarterMoveset(
-        moveset,
-        globalScene.gameData.starterData[this.species.getRootSpeciesId()].eggMoves,
-      )
-    ) {
-      return;
-    }
-
-    moveset.forEach((m, i) => {
-      this.moveset[i] = new PokemonMove(m);
-    });
-  }
-
-  /**
    * Cause this Pokémon to leave the field (via {@linkcode leaveField}) and then
    * open the party switcher UI to switch in a new Pokémon
    * @param switchType - The type of this switch-out. If this is
@@ -6403,6 +6403,10 @@ export class EnemyPokemon extends Pokemon {
 
       if (eventBoss?.nature != null) {
         this.setNature(eventBoss.nature);
+      }
+
+      if (eventBoss?.moveset != null) {
+        this.tryPopulateMoveset(eventBoss.moveset, true);
       }
 
       if (this.hasTrainer() && globalScene.currentBattle) {

@@ -1,15 +1,15 @@
 import type { AbilityId } from "#enums/ability-id";
 import type { BiomeId } from "#enums/biome-id";
-import type { MoveId } from "#enums/move-id";
 import type { Nature } from "#enums/nature";
 import type { SpeciesId } from "#enums/species-id";
 import type { Variant } from "#sprites/variant";
+import type { StarterMoveset } from "./save-data";
 
 interface DailySeedStarter {
   speciesId: SpeciesId;
   formIndex?: number;
   variant?: Variant;
-  moveset?: MoveId[];
+  moveset?: StarterMoveset;
   nature?: Nature;
   ability?: AbilityId;
   passive?: AbilityId;
