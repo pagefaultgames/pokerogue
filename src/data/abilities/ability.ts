@@ -90,7 +90,7 @@ const AB_FLAG_UNSWAPPABLE = AB_FLAG_UNCOPIABLE | AB_FLAG_UNREPLACEABLE;
 //#endregion Bit sets
 
 /**
- * An Ability is a class representing the various Abilities Pokemon may have.
+ * An Ability is a class representing the various Abilities Pokemon may have. \
  * Each has one or more {@linkcode AbAttr | attributes} that can apply independently
  * of one another.
  */
