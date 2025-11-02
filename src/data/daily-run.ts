@@ -4,6 +4,7 @@ import type { PokemonSpeciesForm } from "#data/pokemon-species";
 import { PokemonSpecies } from "#data/pokemon-species";
 import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
+import { Nature } from "#enums/nature";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { SpeciesId } from "#enums/species-id";
 import type { Variant } from "#sprites/variant";
@@ -294,6 +295,11 @@ export function getDailyEventSeedBoss(seed: string): DailySeedBoss | null {
   if (bossConfig.variant != null && !isBetween(bossConfig.variant, 0, 2)) {
     console.warn("Invalid variant used for custom daily run seed boss:", bossConfig.variant);
     bossConfig.variant = undefined;
+  }
+
+  if (bossConfig.nature != null && !getEnumValues(Nature).includes(bossConfig.nature)) {
+    console.warn("Invalid nature used for custom daily run seed boss:", bossConfig.nature);
+    bossConfig.nature = undefined;
   }
 
   return bossConfig;

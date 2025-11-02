@@ -6384,7 +6384,8 @@ export class EnemyPokemon extends Pokemon {
         this.initShinySparkle();
       }
 
-      const eventBossVariant = getDailyEventSeedBoss(globalScene.seed)?.variant;
+      const eventBoss = getDailyEventSeedBoss(globalScene.seed);
+      const eventBossVariant = eventBoss?.variant;
       const eventBossVariantEnabled =
         eventBossVariant != null && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex);
       if (eventBossVariantEnabled) {
@@ -6399,6 +6400,10 @@ export class EnemyPokemon extends Pokemon {
       }
 
       this.luck = (this.shiny ? this.variant + 1 : 0) + (this.fusionShiny ? this.fusionVariant + 1 : 0);
+
+      if (eventBoss?.nature != null) {
+        this.setNature(eventBoss.nature);
+      }
 
       if (this.hasTrainer() && globalScene.currentBattle) {
         const { waveIndex } = globalScene.currentBattle;
