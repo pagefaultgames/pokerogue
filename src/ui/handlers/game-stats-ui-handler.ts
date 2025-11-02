@@ -7,7 +7,6 @@ import { PlayerGender } from "#enums/player-gender";
 import { TextStyle } from "#enums/text-style";
 import { UiTheme } from "#enums/ui-theme";
 import type { GameData } from "#system/game-data";
-import type { AnyFn } from "#types/type-helpers";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
@@ -244,7 +243,7 @@ export class GameStatsUiHandler extends UiHandler {
   private gameData: GameData;
 
   /** A callback invoked when {@linkcode clear} is called */
-  private exitCallback?: AnyFn | undefined;
+  private exitCallback?: (() => void) | undefined;
 
   /** Whether the UI is single column mode */
   private get singleCol(): boolean {
@@ -402,7 +401,7 @@ export class GameStatsUiHandler extends UiHandler {
     this.gameStatsContainer.setVisible(false);
   }
 
-  show([username, data, callback]: [] | [username: string, data: GameData, callback?: AnyFn]): boolean {
+  show([username, data, callback]: [] | [username: string, data: GameData, callback?: () => void]): boolean {
     super.show([]);
 
     if (username != null && data != null) {

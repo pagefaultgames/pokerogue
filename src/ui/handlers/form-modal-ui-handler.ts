@@ -1,7 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
-import type { AnyFn } from "#types/type-helpers";
 import type { ModalConfig } from "#ui/modal-ui-handler";
 import { ModalUiHandler } from "#ui/modal-ui-handler";
 import { addTextInputObject, addTextObject, getTextColor } from "#ui/text";
@@ -18,7 +17,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
   protected inputContainers: Phaser.GameObjects.Container[] = [];
   protected inputs: InputText[] = [];
   protected errorMessage: Phaser.GameObjects.Text;
-  protected submitAction: AnyFn | undefined;
+  protected submitAction: (() => void) | undefined;
   protected cancelAction: (() => void) | undefined;
   protected tween: Phaser.Tweens.Tween | undefined;
   protected formLabels: Phaser.GameObjects.Text[] = [];
