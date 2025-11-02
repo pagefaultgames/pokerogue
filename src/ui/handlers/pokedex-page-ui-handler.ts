@@ -147,6 +147,10 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoYOffset: 0.5,
     starterInfoXPos: 26,
   },
+  "nb-NO": {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "38px",
+  },
 };
 
 const valueReductionMax = 2;
