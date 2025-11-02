@@ -384,4 +384,23 @@ describe("Abilities - Parental Bond", () => {
     // TODO: Update hit count to 1 once Future Sight is fixed to not activate abilities if user is off the field
     expect(enemyPokemon.damageAndUpdate).toHaveBeenCalledTimes(2);
   });
+
+  it("should not reduce damage against the remaining target if the first one faints", async () => {
+    game.override.battleStyle("double").enemySpecies(SpeciesId.MAGIKARP);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+
+    const feebas = game.field.getPlayerPokemon();
+    const [karp1, karp2] = game.scene.getEnemyField();
+
+    // Mock base damage for both mons to add a base case
+    vi.spyOn(karp1, "getBaseDamage").mockReturnValue(100);
+    vi.spyOn(karp2, "getBaseDamage").mockReturnValue(100);
+    karp1.hp = 100;
+
+    game.move.use(MoveId.SURF);
+    await game.toEndOfTurn();
+
+    expect(karp1).toHaveFainted();
+    expect(karp2).toHaveTakenDamage(100);
+  });
 });
