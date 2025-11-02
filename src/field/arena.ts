@@ -292,7 +292,7 @@ export class Arena {
 
   /** Returns weather or not the weather can be changed to {@linkcode weather} */
   canSetWeather(weather: WeatherType): boolean {
-    return !(this.weather?.weatherType === (weather || undefined));
+    return this.getWeatherType() !== weather;
   }
 
   /**
@@ -393,7 +393,7 @@ export class Arena {
 
   /** Returns whether or not the terrain can be set to {@linkcode terrain} */
   canSetTerrain(terrain: TerrainType): boolean {
-    return !(this.terrain?.terrainType === (terrain || undefined));
+    return this.getTerrainType() !== terrain;
   }
 
   /**
