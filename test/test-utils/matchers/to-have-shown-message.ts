@@ -6,7 +6,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
  * Matcher to check if the {@linkcode GameManager} has shown the given message at least once.
- * @param received - The object to check. Should be the current {@linkcode GameManager}.
+ * @param received - The object to check. Should be the current {@linkcode GameManager}
  * @param expectedMessage - The expected message
  * @returns The result of the matching
  */
@@ -35,8 +35,8 @@ export function toHaveShownMessage(
     pass,
     message: () =>
       pass
-        ? `Expected the GameManager to NOT have shown the message ${truncateString(expectedMessage, 30)}, but it did!`
-        : `Expected the GameManager to have shown the message ${truncateString(expectedMessage, 30)}, but it didn't!`,
+        ? `Expected the GameManager to NOT have shown the message "${truncateString(expectedMessage, 30)}", but it did!`
+        : `Expected the GameManager to have shown the message "${truncateString(expectedMessage, 30)}", but it didn't!`,
     expected: expectedMessage,
     actual: received.textInterceptor.logs,
   };

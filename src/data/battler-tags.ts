@@ -1111,18 +1111,16 @@ export class SeedTag extends SerializableBattlerTag {
     );
 
     // Damage the target and restore our HP (or take damage in the case of liquid ooze)
+    // TODO: Liquid ooze should queue a damage anim phase directly
     const damage = pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 8), { result: HitResult.INDIRECT });
     const reverseDrain = pokemon.hasAbilityWithAttr("ReverseDrainAbAttr", false);
-    globalScene.phaseManager.unshiftNew(
-      "PokemonHealPhase",
-      source.getBattlerIndex(),
-      reverseDrain ? -damage : damage,
-      i18next.t(reverseDrain ? "battlerTags:seededLapseShed" : "battlerTags:seededLapse", {
+    globalScene.phaseManager.unshiftNew("PokemonHealPhase", source.getBattlerIndex(), reverseDrain ? -damage : damage, {
+      message: i18next.t(reverseDrain ? "battlerTags:seededLapseShed" : "battlerTags:seededLapse", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       }),
-      false,
-      true,
-    );
+      showFullHpMessage: false,
+      skipAnim: true,
+    });
     return true;
   }
 
@@ -1401,10 +1399,11 @@ export class IngrainTag extends TrappedTag {
         "PokemonHealPhase",
         pokemon.getBattlerIndex(),
         toDmgValue(pokemon.getMaxHp() / 16),
-        i18next.t("battlerTags:ingrainLapse", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        }),
-        true,
+        {
+          message: i18next.t("battlerTags:ingrainLapse", {
+            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+          }),
+        },
       );
     }
 
@@ -1474,11 +1473,12 @@ export class AquaRingTag extends SerializableBattlerTag {
         "PokemonHealPhase",
         pokemon.getBattlerIndex(),
         toDmgValue(pokemon.getMaxHp() / 16),
-        i18next.t("battlerTags:aquaRingLapse", {
-          moveName: this.getMoveName(),
-          pokemonName: getPokemonNameWithAffix(pokemon),
-        }),
-        true,
+        {
+          message: i18next.t("battlerTags:aquaRingLapse", {
+            moveName: this.getMoveName(),
+            pokemonName: getPokemonNameWithAffix(pokemon),
+          }),
+        },
       );
     }
 
@@ -2712,29 +2712,30 @@ export class StockpilingTag extends SerializableBattlerTag {
    * For each stat, an internal counter is incremented (by 1) if the stat was successfully changed.
    */
   onAdd(pokemon: Pokemon): void {
-    if (this.stockpiledCount < 3) {
-      this.stockpiledCount++;
-
-      globalScene.phaseManager.queueMessage(
-        i18next.t("battlerTags:stockpilingOnAdd", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          stockpiledCount: this.stockpiledCount,
-        }),
-      );
-
-      // Attempt to increase DEF and SPDEF by one stage, keeping track of successful changes.
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        true,
-        [Stat.SPDEF, Stat.DEF],
-        1,
-        true,
-        false,
-        true,
-        this.onStatStagesChanged.bind(this),
-      );
+    if (this.stockpiledCount >= 3) {
+      return;
     }
+    this.stockpiledCount++;
+
+    globalScene.phaseManager.queueMessage(
+      i18next.t("battlerTags:stockpilingOnAdd", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+        stockpiledCount: this.stockpiledCount,
+      }),
+    );
+
+    // Attempt to increase DEF and SPDEF by one stage, keeping track of successful changes.
+    globalScene.phaseManager.unshiftNew(
+      "StatStageChangePhase",
+      pokemon.getBattlerIndex(),
+      true,
+      [Stat.SPDEF, Stat.DEF],
+      1,
+      true,
+      false,
+      true,
+      this.onStatStagesChanged.bind(this),
+    );
   }
 
   onOverlap(pokemon: Pokemon): void {
@@ -2888,8 +2889,8 @@ export class ExposedTag extends SerializableBattlerTag {
  */
 export class HealBlockTag extends MoveRestrictionBattlerTag {
   public override readonly tagType = BattlerTagType.HEAL_BLOCK;
-  constructor(turnCount: number, sourceMove: MoveId) {
-    super(BattlerTagType.HEAL_BLOCK, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
+  constructor(turnCount: number) {
+    super(BattlerTagType.HEAL_BLOCK, BattlerTagLapseType.TURN_END, turnCount);
   }
 
   onActivation(pokemon: Pokemon): string {
@@ -3866,7 +3867,7 @@ export function getBattlerTag(
     case BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON:
       return new MysteryEncounterPostSummonTag();
     case BattlerTagType.HEAL_BLOCK:
-      return new HealBlockTag(turnCount, sourceMove);
+      return new HealBlockTag(turnCount);
     case BattlerTagType.TORMENT:
       return new TormentTag(sourceId);
     case BattlerTagType.TAUNT:

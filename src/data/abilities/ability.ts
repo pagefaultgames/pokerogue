@@ -820,11 +820,12 @@ export class TypeImmunityHealAbAttr extends TypeImmunityAbAttr {
         "PokemonHealPhase",
         pokemon.getBattlerIndex(),
         toDmgValue(pokemon.getMaxHp() / 4),
-        i18next.t("abilityTriggers:typeImmunityHeal", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          abilityName,
-        }),
-        true,
+        {
+          message: i18next.t("abilityTriggers:typeImmunityHeal", {
+            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+            abilityName,
+          }),
+        },
       );
       cancelled.value = true; // Suppresses "No Effect" message
     }
@@ -1068,16 +1069,11 @@ export class ReverseDrainAbAttr extends PostDefendAbAttr {
     if (simulated) {
       return;
     }
-    const damageAmount = move.getAttrs<"HitHealAttr">("HitHealAttr")[0].getHealAmount(opponent, pokemon);
+    const damageAmount = move.getAttrs("HitHealAttr")[0].getHealAmount(opponent, pokemon);
     pokemon.turnData.damageTaken += damageAmount;
-    globalScene.phaseManager.unshiftNew(
-      "PokemonHealPhase",
-      opponent.getBattlerIndex(),
-      -damageAmount,
-      null,
-      false,
-      true,
-    );
+    globalScene.phaseManager.unshiftNew("PokemonHealPhase", opponent.getBattlerIndex(), -damageAmount, {
+      skipAnim: true,
+    });
   }
 
   public override getTriggerMessage({ opponent }: PostMoveInteractionAbAttrParams): string | null {
@@ -1619,6 +1615,48 @@ export abstract class PreAttackAbAttr extends AbAttr {
   private declare readonly _: never;
 }
 
+export interface MoveHealBoostAbAttrParams extends AugmentMoveInteractionAbAttrParams {
+  /** The base amount of HP being healed, as a fraction of the recipient's maximum HP. */
+  healRatio: NumberHolder;
+}
+
+/**
+ * Ability attribute to boost the healing potency of the user's moves.
+ * Used by {@linkcode AbilityId.MEGA_LAUNCHER} to implement Heal Pulse boosting.
+ */
+export class MoveHealBoostAbAttr extends AbAttr {
+  /**
+   * The amount to boost the healing by, as a multiplier of the base amount.
+   */
+  private healMulti: number;
+  /**
+   * A lambda function determining whether to boost the heal amount.
+   * The ability will not be applied if this evaluates to `false`.
+   */
+  // TODO: Use a `MoveConditionFunc` maybe?
+  private boostCondition: (user: Pokemon, target: Pokemon, move: Move) => boolean;
+
+  constructor(
+    boostCondition: (user: Pokemon, target: Pokemon, move: Move) => boolean,
+    healMulti: number,
+    showAbility = false,
+  ) {
+    super(showAbility);
+
+    this.healMulti = healMulti;
+    this.boostCondition = boostCondition;
+  }
+
+  override canApply({ pokemon: user, opponent: target, move }: MoveHealBoostAbAttrParams): boolean {
+    // TODO: Should this support optional conditions?
+    return this.boostCondition(user, target, move);
+  }
+
+  override apply({ healRatio }: MoveHealBoostAbAttrParams): void {
+    healRatio.value *= this.healMulti;
+  }
+}
+
 export interface ModifyMoveEffectChanceAbAttrParams extends AbAttrBaseParams {
   /** The move being used by the attacker */
   move: Move;
@@ -1763,7 +1801,7 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
    */
   override canApply({ pokemon, opponent: target, move }: MoveTypeChangeAbAttrParams): boolean {
     return (
-      (!this.condition || this.condition(pokemon, target, move))
+      (this.condition?.(pokemon, target, move) ?? true)
       && !noAbilityTypeOverrideMoves.has(move.id)
       && !(
         pokemon.isTerastallized
@@ -2905,12 +2943,13 @@ export class PostSummonAllyHealAbAttr extends PostSummonAbAttr {
         "PokemonHealPhase",
         target.getBattlerIndex(),
         toDmgValue(pokemon.getMaxHp() / this.healRatio),
-        i18next.t("abilityTriggers:postSummonAllyHeal", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(target),
-          pokemonName: pokemon.name,
-        }),
-        true,
-        !this.showAnim,
+        {
+          message: i18next.t("abilityTriggers:postSummonAllyHeal", {
+            pokemonNameWithAffix: getPokemonNameWithAffix(target),
+            pokemonName: pokemon.name,
+          }),
+          skipAnim: !this.showAnim,
+        },
       );
     }
   }
@@ -4587,11 +4626,12 @@ export class PostWeatherLapseHealAbAttr extends PostWeatherLapseAbAttr {
         "PokemonHealPhase",
         pokemon.getBattlerIndex(),
         toDmgValue(pokemon.getMaxHp() / (16 / this.healFactor)),
-        i18next.t("abilityTriggers:postWeatherLapseHeal", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          abilityName,
-        }),
-        true,
+        {
+          message: i18next.t("abilityTriggers:postWeatherLapseHeal", {
+            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+            abilityName,
+          }),
+        },
       );
     }
   }
@@ -4706,8 +4746,12 @@ export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
         "PokemonHealPhase",
         pokemon.getBattlerIndex(),
         toDmgValue(pokemon.getMaxHp() / 8),
-        i18next.t("abilityTriggers:poisonHeal", { pokemonName: getPokemonNameWithAffix(pokemon), abilityName }),
-        true,
+        {
+          message: i18next.t("abilityTriggers:poisonHeal", {
+            pokemonName: getPokemonNameWithAffix(pokemon),
+            abilityName,
+          }),
+        },
       );
     }
   }
@@ -4956,11 +5000,12 @@ export class PostTurnHealAbAttr extends PostTurnAbAttr {
         "PokemonHealPhase",
         pokemon.getBattlerIndex(),
         toDmgValue(pokemon.getMaxHp() / 16),
-        i18next.t("abilityTriggers:postTurnHeal", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          abilityName,
-        }),
-        true,
+        {
+          message: i18next.t("abilityTriggers:postTurnHeal", {
+            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+            abilityName,
+          }),
+        },
       );
     }
   }
@@ -5333,11 +5378,12 @@ export class HealFromBerryUseAbAttr extends AbAttr {
       "PokemonHealPhase",
       pokemon.getBattlerIndex(),
       toDmgValue(pokemon.getMaxHp() * this.healPercent),
-      i18next.t("abilityTriggers:healFromBerryUse", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        abilityName,
-      }),
-      true,
+      {
+        message: i18next.t("abilityTriggers:healFromBerryUse", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+          abilityName,
+        }),
+      },
     );
   }
 }
@@ -6649,6 +6695,7 @@ const AbilityAttrs = Object.freeze({
   PostDefendMoveDisableAbAttr,
   PostStatStageChangeStatStageChangeAbAttr,
   PreAttackAbAttr,
+  MoveHealBoostAbAttr,
   MoveEffectChanceMultiplierAbAttr,
   IgnoreMoveEffectsAbAttr,
   VariableMovePowerAbAttr,
@@ -7614,6 +7661,7 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.MEGA_LAUNCHER, 6)
       .attr(MovePowerBoostAbAttr, (_user, _target, move) => move.hasFlag(MoveFlags.PULSE_MOVE), 1.5)
+      .attr(MoveHealBoostAbAttr, (_user, _target, move) => move.hasFlag(MoveFlags.PULSE_MOVE), 1.5)
       .build(),
     new AbBuilder(AbilityId.GRASS_PELT, 6)
       .conditionalAttr(getTerrainCondition(TerrainType.GRASSY), StatMultiplierAbAttr, Stat.DEF, 1.5)
