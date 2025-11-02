@@ -7,7 +7,7 @@ import { MoveId } from "#enums/move-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { SpeciesId } from "#enums/species-id";
 import type { Variant } from "#sprites/variant";
-import type { CustomDailyRunConfig } from "#types/daily-run";
+import type { CustomDailyRunConfig, DailySeedBoss } from "#types/daily-run";
 import type { Starter, StarterMoveset } from "#types/save-data";
 import { isBetween, randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
@@ -313,56 +313,36 @@ function getDailyEventSeedStartersLegacy(seed: string): StarterTuple | null {
 }
 
 /**
- * Expects the seed to contain `/boss\d{4}\d{2}/`
- * where the first 4 digits are the species ID and the next 2 digits are the form index
- * (left padded with `0`s as necessary).
- * @returns A {@linkcode PokemonSpeciesForm} to be used for the boss, or `null` if no valid match.
+ * Expects the seed to contain the `boss` property.
+ * @see {@linkcode CustomDailyRunConfig}
+ * @returns The {@linkcode DailySeedBoss} to use or `null` if there is no boss config or the {@linkcode SpeciesId} is invalid.
  */
-export function getDailyEventSeedBoss(seed: string): PokemonSpeciesForm | null {
+export function getDailyEventSeedBoss(seed: string): DailySeedBoss | null {
   if (!isDailyEventSeed(seed)) {
     return null;
   }
 
-  const match = /boss(\d{4})(\d{2})/g.exec(seed);
-  if (!match || match.length !== 3) {
+  const bossConfig = parseDailySeed(seed)?.boss;
+  if (!bossConfig) {
     return null;
   }
 
-  const speciesId = Number.parseInt(match[1]) as SpeciesId;
-  const formIndex = Number.parseInt(match[2]);
-
-  if (!getEnumValues(SpeciesId).includes(speciesId)) {
-    console.warn("Invalid species ID used for custom daily run seed boss:", speciesId);
+  if (!getEnumValues(SpeciesId).includes(bossConfig.speciesId)) {
+    console.warn("Invalid species ID used for custom daily run seed boss:", bossConfig.speciesId);
     return null;
   }
 
-  const starterForm = getPokemonSpeciesForm(speciesId, formIndex);
-  return starterForm;
-}
-
-/**
- * Expects the seed to contain `/boss\d{4}\d{2}\d{2}/`
- * where the first 4 digits are the species ID, the next 2 digits are the form index, and the last 2 digits are the variant.
- * Only the last 2 digits matter for the variant, and it is clamped to 0-2.
- * (left padded with `0`s as necessary).
- * @returns A {@linkcode Variant} to be used for the boss, or `null` if no valid match.
- */
-export function getDailyEventSeedBossVariant(seed: string): Variant | null {
-  if (!isDailyEventSeed(seed)) {
-    return null;
+  if (bossConfig.formIndex != null) {
+    const speciesForm = getPokemonSpeciesForm(bossConfig.speciesId, bossConfig.formIndex);
+    bossConfig.formIndex = speciesForm.formIndex;
   }
 
-  const match = /boss\d{6}(\d{2})/g.exec(seed);
-  if (!match || match.length !== 2) {
-    return null;
+  if (bossConfig.variant != null && !isBetween(bossConfig.variant, 0, 2)) {
+    console.warn("Invalid variant used for custom daily run seed boss:", bossConfig.variant);
+    bossConfig.variant = undefined;
   }
 
-  const variant = Number.parseInt(match[1]) as Variant;
-  if (variant > 2) {
-    return null;
-  }
-
-  return variant;
+  return bossConfig;
 }
 
 /**
