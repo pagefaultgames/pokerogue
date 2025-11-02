@@ -167,7 +167,7 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.MOVE_TYPE:
           return pokemon.moveset.some(m => m.getMove().type === cond.pkmnType);
         case EvoCondKey.PARTY_TYPE:
-          return globalScene.getPlayerParty().some(p => p.getTypes(false, false, true).includes(cond.pkmnType))
+          return globalScene.getPlayerParty().some(p => p.isOfType(cond.pkmnType, false, false, true))
         case EvoCondKey.EVO_TREASURE_TRACKER:
           return pokemon.getHeldItems().some(m =>
             m.is("EvoTrackerModifier") &&

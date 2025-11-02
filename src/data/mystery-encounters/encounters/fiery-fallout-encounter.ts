@@ -228,7 +228,7 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
       const encounter = globalScene.currentBattle.mysteryEncounter!;
       const nonFireTypes = globalScene
         .getPlayerParty()
-        .filter(p => p.isAllowedInBattle() && !p.getTypes().includes(PokemonType.FIRE));
+        .filter(p => p.isAllowedInBattle() && !p.isOfType(PokemonType.FIRE, false, false));
 
       for (const pkm of nonFireTypes) {
         const percentage = DAMAGE_PERCENTAGE / 100;
