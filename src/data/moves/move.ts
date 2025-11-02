@@ -3576,7 +3576,10 @@ export class WeatherInstantChargeAttr extends InstantChargeAttr {
   }
 }
 
-export class OverrideMoveEffectAttr extends MoveAttr {
+/**
+ * Abstract class used for `MoveAttr`s whose effect application can override normal move effect processing.
+ */
+abstract class OverrideMoveEffectAttr extends MoveAttr {
   /** This field does not exist at runtime and must not be used.
    * Its sole purpose is to ensure that typescript is able to properly narrow when the `is` method is called.
    */
@@ -3607,19 +3610,24 @@ export class OverrideMoveEffectAttr extends MoveAttr {
  * activating against the given slot after the given turn count has elapsed.
  */
 export class DelayedAttackAttr extends OverrideMoveEffectAttr {
-  public chargeAnim: ChargeAnim;
-  private readonly chargeText: string;
-
   /**
-   * @param chargeAnim - The {@linkcode ChargeAnim | charging animation} used for the move's charging phase.
-   * @param chargeKey - The `i18next` locales **key** to show when the delayed attack is used.
+   * The {@linkcode ChargeAnim | charging animation} used for the move's charging phase.
+   *
+   * Rendered public to allow for charge animation code to function
+   */
+  public readonly chargeAnim: ChargeAnim;
+  /**
+   * The `i18next` locales key to show when the delayed attack is queued
+   * (**not** when it activates)! \
    * In the displayed text, `{{pokemonName}}` will be populated with the user's name.
    */
+  private readonly chargeKey: string;
+
   constructor(chargeAnim: ChargeAnim, chargeKey: string) {
     super();
 
     this.chargeAnim = chargeAnim;
-    this.chargeText = chargeKey;
+    this.chargeKey = chargeKey;
   }
 
   public override apply(
@@ -3631,6 +3639,7 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
     const useMode = args[1];
     if (useMode === MoveUseMode.DELAYED_ATTACK) {
       // don't trigger if already queueing an indirect attack
+      // TODO: There should be a cleaner way of doing this...
       return false;
     }
 
@@ -3639,7 +3648,12 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
 
     // Display the move animation to foresee an attack
     globalScene.phaseManager.unshiftNew("MoveAnimPhase", new MoveChargeAnim(this.chargeAnim, move.id, user));
-    globalScene.phaseManager.queueMessage(i18next.t(this.chargeText, { pokemonName: getPokemonNameWithAffix(user) }));
+    globalScene.phaseManager.queueMessage(
+      i18next.t(
+        this.chargeKey,
+        { pokemonName: getPokemonNameWithAffix(user) }
+      )
+    )
 
     user.pushMoveHistory({
       move: move.id,
@@ -3648,8 +3662,8 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
       useMode,
       turn: globalScene.currentBattle.turn,
     });
-    // Queue up an attack on the given slot.
-    globalScene.arena.positionalTagManager.addTag<PositionalTagType.DELAYED_ATTACK>({
+    // Queue up an attack on the given slot
+    globalScene.arena.positionalTagManager.addTag({
       tagType: PositionalTagType.DELAYED_ATTACK,
       sourceId: user.id,
       targetIndex: target.getBattlerIndex(),
@@ -3668,11 +3682,12 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
 
 /**
  * Attribute to queue a {@linkcode WishTag} to activate in 2 turns.
- * The tag whill heal
+ * The tag will heal whichever Pokemon remains in the given slot for 50% of the user's
+ * maximum HP.
  */
 export class WishAttr extends MoveEffectAttr {
-  public override apply(user: Pokemon, target: Pokemon, _move: Move): boolean {
-    globalScene.arena.positionalTagManager.addTag<PositionalTagType.WISH>({
+  public override apply(user: Pokemon, target: Pokemon): boolean {
+    globalScene.arena.positionalTagManager.addTag({
       tagType: PositionalTagType.WISH,
       healHp: toDmgValue(user.getMaxHp() / 2),
       targetIndex: target.getBattlerIndex(),
@@ -3683,7 +3698,7 @@ export class WishAttr extends MoveEffectAttr {
   }
 
   public override getCondition(): MoveConditionFunc {
-    // Check the arena if another wish is active and affecting the same slot
+    // Check the arena if another similar move is active and affecting the same slot
     return (_user, target) =>
       globalScene.arena.positionalTagManager.canAddTag(PositionalTagType.WISH, target.getBattlerIndex());
   }
