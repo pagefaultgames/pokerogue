@@ -12,7 +12,7 @@ import { getLocalizedSpriteKey } from "#utils/common";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
 
-export class EnemyBattleInfo extends BattleInfo {
+export class EnemyBattleInfo extends BattleInfo<EnemyPokemon> {
   protected player: false = false;
   protected championRibbon: Phaser.GameObjects.Sprite;
   protected ownedIcon: Phaser.GameObjects.Sprite;
@@ -233,12 +233,8 @@ export class EnemyBattleInfo extends BattleInfo {
     super.updateStatusIcon(pokemon, (this.ownedIcon.visible ? 8 : 0) + (this.championRibbon.visible ? 8 : 0));
   }
 
-  protected override updatePokemonHp(
-    pokemon: EnemyPokemon,
-    resolve: (r: void | PromiseLike<void>) => void,
-    instant?: boolean,
-  ): void {
-    super.updatePokemonHp(pokemon, resolve, instant);
+  protected override async updatePokemonHp(pokemon: EnemyPokemon, instant?: boolean): Promise<void> {
+    await super.updatePokemonHp(pokemon, instant);
     this.lastHp = pokemon.hp;
   }
 }

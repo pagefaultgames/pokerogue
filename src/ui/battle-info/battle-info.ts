@@ -9,6 +9,7 @@ import { UiTheme } from "#enums/ui-theme";
 import type { Pokemon } from "#field/pokemon";
 import { getVariantTint } from "#sprites/variant";
 import { addTextObject } from "#ui/text";
+import { playTween } from "#utils/anim-utils";
 import { fixedInt, getLocalizedSpriteKey, getShinyDescriptor } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
@@ -40,7 +41,7 @@ export type BattleInfoParamList = {
   };
 };
 
-export abstract class BattleInfo extends Phaser.GameObjects.Container {
+export abstract class BattleInfo<P extends Pokemon> extends Phaser.GameObjects.Container {
   public static readonly EXP_GAINS_DURATION_BASE = 1650;
 
   protected baseY: number;
@@ -287,7 +288,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
 
   //#region Initialization methods
 
-  initSplicedIcon(pokemon: Pokemon, baseWidth: number) {
+  initSplicedIcon(pokemon: P, baseWidth: number) {
     this.splicedIcon.setPositionRelative(
       this.nameText,
       baseWidth + this.genderText.displayWidth + 1 + (this.teraIcon.visible ? this.teraIcon.displayWidth + 1 : 0),
@@ -310,7 +311,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
    * @param baseXOffset - The x offset to use for the shiny icon
    * @param doubleShiny - Whether the pokemon is shiny and its fusion species is also shiny
    */
-  protected initShinyIcon(pokemon: Pokemon, xOffset: number, doubleShiny: boolean) {
+  protected initShinyIcon(pokemon: P, xOffset: number, doubleShiny: boolean) {
     const baseVariant = !doubleShiny ? pokemon.getVariant(true) : pokemon.variant;
 
     this.shinyIcon.setPositionRelative(
@@ -345,7 +346,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     }
   }
 
-  initInfo(pokemon: Pokemon) {
+  initInfo(pokemon: P) {
     this.updateNameText(pokemon);
     const nameTextWidth = this.nameText.displayWidth;
 
@@ -440,7 +441,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
    * @param pokemon - The pokemon object attached to this battle info
    * @param xOffset - The offset from the name text
    */
-  updateStatusIcon(pokemon: Pokemon, xOffset = 0) {
+  updateStatusIcon(pokemon: P, xOffset = 0) {
     if (this.lastStatus !== (pokemon.status?.effect || StatusEffect.NONE)) {
       this.lastStatus = pokemon.status?.effect || StatusEffect.NONE;
 
@@ -453,7 +454,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
   }
 
   /** Update the pokemon name inside the container */
-  protected updateName(pokemon: Pokemon): boolean {
+  protected updateName(pokemon: P): boolean {
     const name = pokemon.getNameToRender();
     if (this.lastName === name) {
       return false;
@@ -540,18 +541,22 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
    * Called by every frame in the hp animation tween created in {@linkcode updatePokemonHp}
    * @param _pokemon - The pokemon the battle-info bar belongs to
    */
-  protected onHpTweenUpdate(_pokemon: Pokemon): void {
+  protected onHpTweenUpdate(_pokemon: P): void {
     this.updateHpFrame();
   }
 
-  /** Update the pokemonHp bar */
-  protected updatePokemonHp(pokemon: Pokemon, resolve: (r: void | PromiseLike<void>) => void, instant?: boolean): void {
-    let duration = !instant ? Phaser.Math.Clamp(Math.abs(this.lastHp - pokemon.hp) * 5, 250, 5000) : 0;
+  /**
+   * Update the pokemonHp bar.
+   * @param pokemon - The `Pokemon` to which this bar is attached
+   * @param instant - Whether to instantly update the bar; default `false`
+   */
+  protected async updatePokemonHp(pokemon: P, instant = false): Promise<void> {
+    let duration = instant ? 0 : Phaser.Math.Clamp(Math.abs(this.lastHp - pokemon.hp) * 5, 250, 5000);
     const speed = globalScene.hpBarSpeed;
     if (speed) {
       duration = speed >= 3 ? 0 : duration / Math.pow(2, speed);
     }
-    globalScene.tweens.add({
+    await playTween({
       targets: this.hpBar,
       ease: "Sine.easeOut",
       scaleX: pokemon.getHpRatio(true),
@@ -559,25 +564,22 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
       onUpdate: () => {
         this.onHpTweenUpdate(pokemon);
       },
-      onComplete: () => {
-        this.updateHpFrame();
-        resolve();
-      },
     });
+    this.updateHpFrame();
     this.lastMaxHp = pokemon.getMaxHp();
   }
 
   //#endregion
 
-  async updateInfo(pokemon: Pokemon, instant?: boolean): Promise<void> {
-    let resolve: (r: void | PromiseLike<void>) => void = () => {};
-    const promise = new Promise<void>(r => (resolve = r));
+  // TODO: Consider copying the relevant variables from the Pokemon to avoid improper updates
+  // when multiple damage instances occur in a row -
+  public async updateInfo(pokemon: P, instant?: boolean): Promise<void> {
+    // TODO: Is this fallback needed?
     if (!globalScene) {
-      return resolve();
+      return;
     }
 
-    const gender: Gender = pokemon.summonData?.illusion?.gender ?? pokemon.gender;
-
+    const gender = pokemon.summonData?.illusion?.gender ?? pokemon.gender;
     this.genderText.setText(getGenderSymbol(gender)).setColor(getGenderColor(gender));
 
     const nameUpdated = this.updateName(pokemon);
@@ -585,7 +587,6 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     const teraTypeUpdated = this.updateTeraType(pokemon.isTerastallized ? pokemon.getTeraType() : PokemonType.UNKNOWN);
 
     const isFusion = pokemon.isFusion(true);
-
     if (nameUpdated || teraTypeUpdated) {
       this.updateIconDisplay(isFusion);
     }
@@ -595,8 +596,9 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     this.setTypes(pokemon.getTypes(true, false, undefined, true));
 
     if (this.lastHp !== pokemon.hp || this.lastMaxHp !== pokemon.getMaxHp()) {
-      this.updatePokemonHp(pokemon, resolve, instant);
+      this.updatePokemonHp(pokemon, instant);
     }
+
     if (!this.player && this.lastLevel !== pokemon.level) {
       this.setLevel(pokemon.level);
       this.lastLevel = pokemon.level;
@@ -613,20 +615,16 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     this.shinyIcon.setVisible(pokemon.isShiny(true));
 
     const doubleShiny = isFusion && pokemon.shiny && pokemon.fusionShiny;
-    const baseVariant = !doubleShiny ? pokemon.getVariant(true) : pokemon.variant;
+    const baseVariant = doubleShiny ? pokemon.variant : pokemon.getVariant(true);
     this.shinyIcon.setTint(getVariantTint(baseVariant));
 
     this.fusionShinyIcon.setVisible(doubleShiny).setPosition(this.shinyIcon.x, this.shinyIcon.y);
     if (isFusion) {
       this.fusionShinyIcon.setTint(getVariantTint(pokemon.fusionVariant));
     }
-
-    resolve();
-    await promise;
   }
-  //#endregion
 
-  updateNameText(pokemon: Pokemon): void {
+  updateNameText(pokemon: P): void {
     let displayName = pokemon.getNameToRender().replace(/[♂♀]/g, "");
     let nameTextWidth: number;
 
