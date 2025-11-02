@@ -1,4 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import { Animation } from "#app/animations";
 import type { FixedBattleConfig } from "#app/battle";
 import { Battle } from "#app/battle";
 import {
@@ -332,6 +333,9 @@ export class BattleScene extends SceneBase {
    * - {@linkcode BattleSceneEventType.NEW_ARENA} {@linkcode NewArenaEvent}
    */
   public readonly eventTarget: EventTarget = new EventTarget();
+
+  /** A helper class containing several animation-related functions. */
+  public readonly animations: Animation = new Animation();
 
   constructor() {
     super("battle");
