@@ -2771,7 +2771,7 @@ export const trainerConfigs: TrainerConfigs = {
         if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
           p.setBoss(true, 2);
         }
-        p.abilityIndex = 0; // Weak Armor
+        p.abilityIndex = 1; // Weak Armor
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
       }),
@@ -6078,7 +6078,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setMoneyMultiplier(3)
     .setEncounterBgm(TrainerType.ACE_TRAINER)
     .setLocalizedName("Expert Pokemon Breeder")
-    .setPartyTemplates(new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE)),
+    .setPartyTemplates(new TrainerPartyTemplate(3, PartyMemberStrength.WEAK)),
   [TrainerType.FUTURE_SELF_M]: new TrainerConfig(++t)
     .setMoneyMultiplier(0)
     .setEncounterBgm("mystery_encounter_weird_dream")
