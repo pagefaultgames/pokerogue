@@ -5,16 +5,13 @@ import type { ObjectValues } from "#types/type-helpers";
 
 /**
  * Load the attributes of a {@linkcode PositionalTag}.
- * @param tagType - The {@linkcode PositionalTagType} to create
- * @param args - The arguments needed to instantize the given tag
+ * @param data - An object containing the {@linkcode PositionalTagType} to create,
+ * as well as the arguments needed to instantize the given tag
  * @returns The newly created tag.
  * @remarks
  * This function does not perform any checking if the added tag is valid.
  */
-export function loadPositionalTag<T extends PositionalTagType>({
-  tagType,
-  ...args
-}: serializedPosTagMap[T]): posTagInstanceMap[T];
+export function loadPositionalTag<T extends PositionalTagType>(data: serializedPosTagMap[T]): posTagInstanceMap[T];
 /**
  * Load the attributes of a {@linkcode PositionalTag}.
  * @param tag - The {@linkcode SerializedPositionalTag} to instantiate
@@ -23,17 +20,10 @@ export function loadPositionalTag<T extends PositionalTagType>({
  * This function does not perform any checking if the added tag is valid.
  */
 export function loadPositionalTag(tag: SerializedPositionalTag): PositionalTag;
-export function loadPositionalTag<T extends PositionalTagType>({
-  tagType,
-  ...rest
-}: serializedPosTagMap[T]): posTagInstanceMap[T] {
-  // Note: We need 2 type assertions here:
-  // 1 because TS doesn't narrow the type of TagClass correctly based on `T`.
-  // It converts it into `new (DelayedAttackTag | WishTag) => DelayedAttackTag & WishTag`
-  const tagClass = posTagConstructorMap[tagType] as new (args: posTagParamMap[T]) => posTagInstanceMap[T];
-  // 2 because TS doesn't narrow the type of `rest` correctly
-  // (from `Omit<serializedPosTagParamMap[T], "tagType"> into `posTagParamMap[T]`)
-  return new tagClass(rest as unknown as posTagParamMap[T]);
+export function loadPositionalTag({ tagType, ...rest }: SerializedPositionalTag): PositionalTag {
+  const tagClass = posTagConstructorMap[tagType];
+  // @ts-expect-error - tagType always corresponds to the proper constructor for `rest`
+  return new tagClass(rest);
 }
 
 /** Const object mapping tag types to their constructors. */
@@ -42,7 +32,7 @@ const posTagConstructorMap = Object.freeze({
   [PositionalTagType.WISH]: WishTag,
 }) satisfies {
   // NB: This `satisfies` block ensures that all tag types have corresponding entries in the map.
-  [k in PositionalTagType]: Constructor<PositionalTag & { tagType: k }>;
+  [k in PositionalTagType]: Constructor<PositionalTag & { readonly tagType: k }>;
 };
 
 /** Type mapping positional tag types to their constructors. */
@@ -59,11 +49,12 @@ type posTagParamMap = {
 };
 
 /**
- * Type mapping all positional tag types to their constructors' parameters, alongside the `tagType` selector.
+ * Type mapping all positional tag types to their constructors' parameters, alongside the `tagType` selector. \
  * Equivalent to their serialized representations.
+ * @interface
  */
 export type serializedPosTagMap = {
-  [k in PositionalTagType]: posTagParamMap[k] & { tagType: k };
+  [k in PositionalTagType]: posTagParamMap[k] & Pick<posTagInstanceMap[k], "tagType">;
 };
 
 /** Union type containing all serialized {@linkcode PositionalTag}s. */
