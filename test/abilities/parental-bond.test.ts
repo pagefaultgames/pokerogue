@@ -392,15 +392,16 @@ describe("Abilities - Parental Bond", () => {
     const feebas = game.field.getPlayerPokemon();
     const [karp1, karp2] = game.scene.getEnemyField();
 
-    // Mock base damage for both mons to add a base case
+    // Mock base damage for both mons for consistent results
     vi.spyOn(karp1, "getBaseDamage").mockReturnValue(100);
     vi.spyOn(karp2, "getBaseDamage").mockReturnValue(100);
-    karp1.hp = 100;
+    karp1.hp = 1;
 
-    game.move.use(MoveId.SURF);
+    game.move.use(MoveId.HYPER_VOICE);
     await game.toEndOfTurn();
 
     expect(karp1).toHaveFainted();
+    expect(feebas).not.toHaveAbilityApplied(AbilityId.PARENTAL_BOND);
     expect(karp2).toHaveTakenDamage(100);
   });
 });
