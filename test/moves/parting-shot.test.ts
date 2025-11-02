@@ -73,31 +73,9 @@ describe("Moves - Parting Shot", () => {
         SpeciesId.ABRA,
       ]);
 
-      // use Memento 3 times to debuff enemy
-      game.move.select(MoveId.MEMENTO);
-      await game.phaseInterceptor.to("FaintPhase");
-      expect(game.field.getPlayerPokemon().isFainted()).toBe(true);
-      game.doSelectPartyPokemon(1);
-
-      await game.phaseInterceptor.to("TurnInitPhase", false);
-      game.move.select(MoveId.MEMENTO);
-      await game.phaseInterceptor.to("FaintPhase");
-      expect(game.field.getPlayerPokemon().isFainted()).toBe(true);
-      game.doSelectPartyPokemon(2);
-
-      await game.phaseInterceptor.to("TurnInitPhase", false);
-      game.move.select(MoveId.MEMENTO);
-      await game.phaseInterceptor.to("FaintPhase");
-      expect(game.field.getPlayerPokemon().isFainted()).toBe(true);
-      game.doSelectPartyPokemon(3);
-
-      // set up done
-      await game.phaseInterceptor.to("TurnInitPhase", false);
       const enemyPokemon = game.field.getEnemyPokemon();
-      expect(enemyPokemon).toBeDefined();
-
-      expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-6);
-      expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(-6);
+      enemyPokemon.setStatStage(Stat.ATK, -6);
+      enemyPokemon.setStatStage(Stat.SPATK, -6);
 
       // now parting shot should fail
       game.move.select(MoveId.PARTING_SHOT);
@@ -136,7 +114,6 @@ describe("Moves - Parting Shot", () => {
       await game.classicMode.startBattle([SpeciesId.SNORLAX, SpeciesId.MEOWTH]);
 
       const enemyPokemon = game.field.getEnemyPokemon();
-      expect(enemyPokemon).toBeDefined();
 
       game.move.select(MoveId.PARTING_SHOT);
 

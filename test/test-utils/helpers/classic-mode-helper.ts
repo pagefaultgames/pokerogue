@@ -110,7 +110,10 @@ export class ClassicModeHelper extends GameManagerHelper {
    * Queue inputs to switch at the start of the next battle, and then start it.
    * @param pokemonIndex - The 0-indexed position of the party pokemon to switch to.
    * Should never be called with 0 as that will select the currently active pokemon and freeze
-   * @returns A Promise that resolves once the battle has been started and the switch prompt resolved
+   * @returns A Promise that resolves once the battle has been started and the switch prompt resolved.
+   * @remarks
+   * This will temporarily set the current {@linkcode BattleStyle} to `SWITCH` for the duration
+   * of the `CheckSwitchPhase`.
    * @todo Make this work for double battles
    * @example
    * ```ts
@@ -119,7 +122,7 @@ export class ClassicModeHelper extends GameManagerHelper {
    * ```
    */
   public async startBattleWithSwitch(pokemonIndex: number): Promise<void> {
-    this.game.scene.battleStyle = BattleStyle.SWITCH;
+    this.game.settings.battleStyle(BattleStyle.SWITCH);
     this.game.onNextPrompt(
       "CheckSwitchPhase",
       UiMode.CONFIRM,
@@ -133,5 +136,6 @@ export class ClassicModeHelper extends GameManagerHelper {
 
     await this.game.phaseInterceptor.to("CommandPhase");
     console.log("==================[New Battle (Initial Switch)]==================");
+    this.game.settings.battleStyle(BattleStyle.SET);
   }
 }
