@@ -2049,6 +2049,17 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns The non-passive {@linkcode Ability} of this Pokemon.
    */
   public getAbility(ignoreOverride = false): Ability {
+    if (
+      this.isBoss()
+      && globalScene.gameMode.isDaily
+      && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex)
+    ) {
+      const eventBoss = getDailyEventSeedBoss(globalScene.seed);
+      if (eventBoss?.ability != null) {
+        return allAbilities[eventBoss.ability];
+      }
+    }
+
     if (!ignoreOverride && this.summonData.ability) {
       return allAbilities[this.summonData.ability];
     }
@@ -2082,6 +2093,17 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns The passive {@linkcode Ability} of the pokemon
    */
   public getPassiveAbility(): Ability {
+    if (
+      this.isBoss()
+      && globalScene.gameMode.isDaily
+      && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex)
+    ) {
+      const eventBoss = getDailyEventSeedBoss(globalScene.seed);
+      if (eventBoss?.passive != null) {
+        return allAbilities[eventBoss.passive];
+      }
+    }
+
     if (Overrides.PASSIVE_ABILITY_OVERRIDE && this.isPlayer()) {
       return allAbilities[Overrides.PASSIVE_ABILITY_OVERRIDE];
     }

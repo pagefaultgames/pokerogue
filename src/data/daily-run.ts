@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { speciesStarterCosts } from "#balance/starters";
 import type { PokemonSpeciesForm } from "#data/pokemon-species";
 import { PokemonSpecies } from "#data/pokemon-species";
+import { AbilityId } from "#enums/ability-id";
 import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
@@ -282,6 +283,7 @@ export function getDailyEventSeedBoss(seed: string): DailySeedBoss | null {
     return null;
   }
 
+  // todo: move validation to own function since also needed for starters
   if (!getEnumValues(SpeciesId).includes(bossConfig.speciesId)) {
     console.warn("Invalid species ID used for custom daily run seed boss:", bossConfig.speciesId);
     return null;
@@ -300,6 +302,16 @@ export function getDailyEventSeedBoss(seed: string): DailySeedBoss | null {
   if (bossConfig.nature != null && !getEnumValues(Nature).includes(bossConfig.nature)) {
     console.warn("Invalid nature used for custom daily run seed boss:", bossConfig.nature);
     bossConfig.nature = undefined;
+  }
+
+  if (bossConfig.ability != null && !getEnumValues(AbilityId).includes(bossConfig.ability)) {
+    console.warn("Invalid ability used for custom daily run seed boss:", bossConfig.ability);
+    bossConfig.ability = undefined;
+  }
+
+  if (bossConfig.passive != null && !getEnumValues(AbilityId).includes(bossConfig.passive)) {
+    console.warn("Invalid passive used for custom daily run seed boss:", bossConfig.passive);
+    bossConfig.passive = undefined;
   }
 
   return bossConfig;
@@ -384,6 +396,7 @@ export function getDailyStartingMoney(seed: string): number | null {
 function parseDailySeed(seed: string): CustomDailyRunConfig | null {
   try {
     const config = JSON.parse(seed) as CustomDailyRunConfig;
+    // todo: remove this later since it gets logged a lot
     console.log("Using a custom config for the daily run:", config);
     return config;
   } catch {
