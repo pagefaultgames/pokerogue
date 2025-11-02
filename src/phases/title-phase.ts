@@ -302,7 +302,7 @@ export class TitlePhase extends Phase {
         // Grab first 10 chars of ISO date format (YYYY-MM-DD) and convert to base64
         let seed: string = btoa(new Date().toISOString().substring(0, 10));
         if (Overrides.DAILY_RUN_SEED_OVERRIDE != null) {
-          seed = Overrides.DAILY_RUN_SEED_OVERRIDE;
+          seed = JSON.stringify(Overrides.DAILY_RUN_SEED_OVERRIDE);
         }
         generateDaily(seed);
       }

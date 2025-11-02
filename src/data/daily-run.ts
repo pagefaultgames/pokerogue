@@ -378,7 +378,7 @@ export function getDailyStartingMoney(seed: string): number | null {
 function parseDailySeed(seed: string): CustomDailyRunConfig | null {
   try {
     const config = JSON.parse(seed) as CustomDailyRunConfig;
-    console.log(config);
+    console.log("Using a custom config for the daily run:", config);
     return config;
   } catch {
     return null;

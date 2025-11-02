@@ -24,6 +24,7 @@ import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
 import type { ModifierOverride } from "#modifiers/modifier-type";
 import { Variant } from "#sprites/variant";
+import type { CustomDailyRunConfig } from "#types/daily-run";
 
 /**
  * This comment block exists to prevent IDEs from automatically removing unused imports
@@ -60,7 +61,8 @@ class DefaultOverrides {
   // -----------------
   /** a specific seed (default: a random string of 24 characters) */
   readonly SEED_OVERRIDE: string = "";
-  readonly DAILY_RUN_SEED_OVERRIDE: string | null = null;
+  /** a {@linkcode CustomDailyRunConfig} */
+  readonly DAILY_RUN_SEED_OVERRIDE: CustomDailyRunConfig | null = null;
   readonly WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
   /**
    * If `null`, ignore this override.
