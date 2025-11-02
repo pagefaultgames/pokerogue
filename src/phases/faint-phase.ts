@@ -5,6 +5,7 @@ import { FRIENDSHIP_LOSS_FROM_FAINT } from "#balance/starters";
 import { allMoves } from "#data/data-lists";
 import { battleSpecDialogue } from "#data/dialogue";
 import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { BattleSpec } from "#enums/battle-spec";
 import { BattleType } from "#enums/battle-type";
 import type { BattlerIndex } from "#enums/battler-index";
@@ -17,6 +18,7 @@ import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { PokemonInstantReviveModifier } from "#modifiers/modifier";
 import { PokemonMove } from "#moves/pokemon-move";
 import { PokemonPhase } from "#phases/pokemon-phase";
+import { inSpeedOrder } from "#utils/speed-order-generator";
 import i18next from "i18next";
 
 export class FaintPhase extends PokemonPhase {
@@ -126,8 +128,7 @@ export class FaintPhase extends PokemonPhase {
       applyAbAttrs("PostFaintAbAttr", { pokemon });
     }
 
-    const alivePlayField = globalScene.getField(true);
-    for (const p of alivePlayField) {
+    for (const p of inSpeedOrder(ArenaTagSide.BOTH)) {
       applyAbAttrs("PostKnockOutAbAttr", { pokemon: p, victim: pokemon });
     }
     if (pokemon.turnData.attacksReceived?.length > 0) {

@@ -92,9 +92,16 @@ export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase>
       });
 
       const timingModifiers = [a, b].map(movePhase => movePhase.timingModifier);
+      const priorityModifiers = [a, b].map(movePhase =>
+        movePhase.move.getMove().getPriorityModifier(movePhase.pokemon),
+      );
 
       if (timingModifiers[0] !== timingModifiers[1]) {
         return timingModifiers[1] - timingModifiers[0];
+      }
+
+      if (priority[0] === priority[1] && priorityModifiers[0] !== priorityModifiers[1]) {
+        return priorityModifiers[1] - priorityModifiers[0];
       }
 
       return priority[1] - priority[0];
