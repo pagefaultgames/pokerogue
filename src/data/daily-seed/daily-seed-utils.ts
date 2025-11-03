@@ -5,7 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import type { CustomDailyRunConfig, DailySeedStarter } from "#types/daily-run";
 import { isBetween } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
-import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 /**
  * If this is Daily Mode and the seed can be parsed into json it is a Daily Event Seed.
@@ -39,7 +39,7 @@ export function validateDailyPokemonConfig(config: DailySeedStarter | undefined)
     return null;
   }
 
-  if (!getEnumValues(SpeciesId).includes(config.speciesId)) {
+  if (!config.speciesId || !getEnumValues(SpeciesId).includes(config.speciesId)) {
     console.warn("Invalid species ID used for custom daily run seed boss:", config.speciesId);
     return null;
   }
@@ -52,6 +52,13 @@ export function validateDailyPokemonConfig(config: DailySeedStarter | undefined)
   if (config.variant != null && !isBetween(config.variant, 0, 2)) {
     console.warn("Invalid variant used for custom daily run seed boss:", config.variant);
     config.variant = undefined;
+  }
+
+  // Fall back to default variant if none exists
+  const starterSpecies = getPokemonSpecies(config.speciesId);
+  if (config.variant != null && !starterSpecies.hasVariants()) {
+    console.warn("Variant for custom daily run seed boss does not exist, using base variant...", config.variant);
+    config.variant = 0;
   }
 
   if (config.nature != null && !getEnumValues(Nature).includes(config.nature)) {

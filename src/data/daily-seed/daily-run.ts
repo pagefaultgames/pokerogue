@@ -5,8 +5,7 @@ import { PokemonSpecies } from "#data/pokemon-species";
 import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
-import { SpeciesId } from "#enums/species-id";
-import type { Variant } from "#sprites/variant";
+import type { SpeciesId } from "#enums/species-id";
 import type { DailySeedBoss } from "#types/daily-run";
 import type { Starter, StarterMoveset } from "#types/save-data";
 import { isBetween, randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
@@ -57,19 +56,11 @@ export function getDailyRunStarters(seed: string): StarterTuple {
 }
 
 // TODO: Refactor this unmaintainable mess
-function getDailyRunStarter(starterSpeciesForm: PokemonSpeciesForm, startingLevel: number, variant?: Variant): Starter {
+function getDailyRunStarter(starterSpeciesForm: PokemonSpeciesForm, startingLevel: number): Starter {
   const starterSpecies =
     starterSpeciesForm instanceof PokemonSpecies ? starterSpeciesForm : getPokemonSpecies(starterSpeciesForm.speciesId);
   const formIndex = starterSpeciesForm instanceof PokemonSpecies ? undefined : starterSpeciesForm.formIndex;
-  const pokemon = globalScene.addPlayerPokemon(
-    starterSpecies,
-    startingLevel,
-    undefined,
-    formIndex,
-    undefined,
-    variant != null,
-    variant,
-  );
+  const pokemon = globalScene.addPlayerPokemon(starterSpecies, startingLevel, undefined, formIndex);
   const starter: Starter = {
     speciesId: starterSpecies.speciesId,
     shiny: pokemon.shiny,
@@ -186,43 +177,43 @@ function getDailyEventSeedStarters(seed: string): StarterTuple | null {
     return null;
   }
 
-  const speciesIds = getEnumValues(SpeciesId);
   const starters: Starter[] = [];
 
-  for (const species of speciesConfigurations) {
-    const speciesId = species.speciesId;
-
-    if (!speciesId || !speciesIds.includes(speciesId)) {
-      console.error("Invalid species ID used for custom daily run starter:", speciesId);
+  for (const speciesConfig of speciesConfigurations) {
+    const starterSpecies = validateDailyPokemonConfig(speciesConfig);
+    if (!starterSpecies) {
       return null;
-    }
-
-    const starterSpecies = getPokemonSpecies(speciesId);
-    // Omitted form index = use base form
-    const starterForm = species.formIndex != null ? starterSpecies.forms[species.formIndex] : starterSpecies;
-
-    if (!starterForm) {
-      console.log(starterSpecies.name);
-      console.error("Invalid form index used for custom daily run starter:", species.formIndex);
-      return null;
-    }
-
-    // Get and validate variant
-    let variant = species.variant;
-    if (variant != null && !isBetween(variant ?? 0, 0, 2)) {
-      console.error("Variant used for custom daily run seed starter out of bounds:", variant);
-      return null;
-    }
-
-    // Fall back to default variant if none exists
-    if (!starterSpecies.hasVariants() && variant !== 0) {
-      console.warn("Variant for custom daily run seed starter does not exist, using base variant...", variant);
-      variant = undefined;
     }
 
     const startingLevel = globalScene.gameMode.getStartingLevel();
-    const starter = getDailyRunStarter(starterForm, startingLevel, variant);
+    const species = getPokemonSpecies(starterSpecies.speciesId);
+
+    const starterPokemon = globalScene.addPlayerPokemon(
+      species,
+      startingLevel,
+      undefined,
+      starterSpecies.formIndex,
+      undefined,
+      starterSpecies.variant != null,
+      starterSpecies.variant,
+      undefined,
+      starterSpecies.nature,
+    );
+
+    const starter: Starter = {
+      speciesId: species.speciesId,
+      formIndex: starterPokemon.formIndex,
+      shiny: starterPokemon.shiny,
+      variant: starterPokemon.variant,
+      ivs: starterPokemon.ivs,
+      abilityIndex: starterPokemon.abilityIndex,
+      passive: false,
+      nature: starterPokemon.getNature(),
+      pokerus: starterPokemon.pokerus,
+    };
+
     starters.push(starter);
+    starterPokemon.destroy();
   }
 
   return starters as StarterTuple;
