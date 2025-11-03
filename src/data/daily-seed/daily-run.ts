@@ -18,10 +18,6 @@ import { chunkString } from "#utils/strings";
 import { dailyBiomeWeights } from "./daily-biome-weights";
 import { isDailyEventSeed, parseDailySeed } from "./daily-seed-utils";
 
-export interface DailyRunConfig {
-  seed: number;
-  starters: Starter;
-}
 type StarterTuple = [Starter, Starter, Starter];
 
 export function getDailyRunStarters(seed: string): StarterTuple {
@@ -174,37 +170,20 @@ function setDailyRunEventStarterMovesets(seed: string, starters: StarterTuple): 
   }
 }
 
-/** The regex literal string used to extract the content of the "starters" block of Daily Run custom seeds. */
-const STARTER_SEED_PREFIX_REGEX = /\/starters(.*?)(?:\/|$)/;
-/**
- * The regex literal used to parse daily run custom starter information for a single starter. \
- * Contains a 4-digit species ID, as well as an optional 2-digit form index and 1-digit variant.
- *
- * If either of form index or variant are omitted, the starter will default to its species' base form/
- * not be shiny, respectively.
- */
-const STARTER_SEED_MATCH_REGEX = /(?:s(?<species>\d{4}))(?:f(?<form>\d{2}))?(?:v(?<variant>\d))?/g;
-
 /**
  * Parse a custom daily run seed into a set of pre-defined starters.
- * @see {@linkcode STARTER_SEED_MATCH_REGEX}
+ * @see {@linkcode CustomDailyRunConfig}
  * @param seed - The daily run seed
- * @returns An array of {@linkcode Starter}s, or `null` if it did not match.
+ * @returns An array of {@linkcode Starter}s, or `null` if the config is invalid.
  */
-// TODO: Rework this setup into JSON or similar - this is quite hard to maintain
 function getDailyEventSeedStarters(seed: string): StarterTuple | null {
   if (!isDailyEventSeed(seed)) {
     return null;
   }
 
-  const seedAfterPrefix = seed.split(STARTER_SEED_PREFIX_REGEX)[1] as string | undefined;
-  if (!seedAfterPrefix) {
-    return null;
-  }
+  const speciesConfigurations = parseDailySeed(seed)?.starters;
 
-  const speciesConfigurations = [...seedAfterPrefix.matchAll(STARTER_SEED_MATCH_REGEX)];
-
-  if (speciesConfigurations.length !== 3) {
+  if (speciesConfigurations == null || speciesConfigurations.length !== 3) {
     console.error("Invalid starters used for custom daily run seed!", seed);
     return null;
   }
@@ -212,43 +191,33 @@ function getDailyEventSeedStarters(seed: string): StarterTuple | null {
   const speciesIds = getEnumValues(SpeciesId);
   const starters: Starter[] = [];
 
-  for (const match of speciesConfigurations) {
-    const { groups } = match;
-    if (!groups) {
-      console.error("Invalid seed used for custom daily run starter:", match);
-      return null;
-    }
+  for (const species of speciesConfigurations) {
+    const speciesId = species.speciesId;
 
-    const { species: speciesStr, form: formStr, variant: variantStr } = groups;
-
-    const speciesId = Number.parseInt(speciesStr) as SpeciesId;
-
-    // NB: We check the parsed integer here to exclude SpeciesID.NONE as well as invalid values;
-    // other fields only check the string to permit 0 as valid inputs
     if (!speciesId || !speciesIds.includes(speciesId)) {
-      console.error("Invalid species ID used for custom daily run starter:", speciesStr);
+      console.error("Invalid species ID used for custom daily run starter:", speciesId);
       return null;
     }
 
     const starterSpecies = getPokemonSpecies(speciesId);
     // Omitted form index = use base form
-    const starterForm = formStr ? starterSpecies.forms[Number.parseInt(formStr)] : starterSpecies;
+    const starterForm = species.formIndex != null ? starterSpecies.forms[species.formIndex] : starterSpecies;
 
     if (!starterForm) {
       console.log(starterSpecies.name);
-      console.error("Invalid form index used for custom daily run starter:", formStr);
+      console.error("Invalid form index used for custom daily run starter:", species.formIndex);
       return null;
     }
 
     // Get and validate variant
-    let variant = (variantStr ? Number.parseInt(variantStr) : undefined) as Variant | undefined;
-    if (!isBetween(variant ?? 0, 0, 2)) {
-      console.error("Variant used for custom daily run seed starter out of bounds:", variantStr);
+    let variant = species.variant;
+    if (variant != null && !isBetween(variant ?? 0, 0, 2)) {
+      console.error("Variant used for custom daily run seed starter out of bounds:", variant);
       return null;
     }
 
     // Fall back to default variant if none exists
-    if (!starterSpecies.hasVariants() && !!variant) {
+    if (!starterSpecies.hasVariants() && variant !== 0) {
       console.warn("Variant for custom daily run seed starter does not exist, using base variant...", variant);
       variant = undefined;
     }
