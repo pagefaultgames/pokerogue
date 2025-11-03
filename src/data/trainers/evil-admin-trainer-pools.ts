@@ -223,28 +223,27 @@ const PLASMA_COLRESS: TrainerTierPools = {
 
 const FLARE: TrainerTierPools = {
   [TrainerPoolTier.COMMON]: [
-    SpeciesId.FOONGUS,
     SpeciesId.SCRAGGY,
+    SpeciesId.FOONGUS,
     SpeciesId.BUNNELBY,
     SpeciesId.FLETCHLING,
     SpeciesId.PANCHAM,
     SpeciesId.ESPURR,
-    SpeciesId.CLAUNCHER,
     SpeciesId.SKRELP,
-    SpeciesId.PUMPKABOO,
-    SpeciesId.PHANTUMP,
+    SpeciesId.CLAUNCHER,
     SpeciesId.KLEFKI,
+    SpeciesId.PHANTUMP,
+    SpeciesId.PUMPKABOO,
   ],
   [TrainerPoolTier.UNCOMMON]: [
     SpeciesId.LITWICK,
     SpeciesId.HEATMOR,
     SpeciesId.BINACLE,
     SpeciesId.HELIOPTILE,
-    SpeciesId.SKRELP,
-    SpeciesId.BERGMITE,
+    SpeciesId.AVALUGG,
     SpeciesId.CAPSAKID,
   ],
-  [TrainerPoolTier.RARE]: [SpeciesId.AERODACTYL, SpeciesId.GOOMY],
+  [TrainerPoolTier.RARE]: [SpeciesId.AERODACTYL, SpeciesId.HONEDGE, SpeciesId.GOOMY],
 };
 
 const FLARE_XEROSIC: TrainerTierPools = {
@@ -253,8 +252,8 @@ const FLARE_XEROSIC: TrainerTierPools = {
     SpeciesId.LITWICK,
     SpeciesId.PANCHAM,
     SpeciesId.BINACLE,
+    [SpeciesId.SKRELP, SpeciesId.CLAUNCHER],
     SpeciesId.HELIOPTILE,
-    [SpeciesId.CLAUNCHER, SpeciesId.SKRELP],
     SpeciesId.KLEFKI,
   ],
   [TrainerPoolTier.UNCOMMON]: [
