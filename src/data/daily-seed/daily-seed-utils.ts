@@ -1,5 +1,11 @@
 import { globalScene } from "#app/global-scene";
-import type { CustomDailyRunConfig } from "#types/daily-run";
+import { AbilityId } from "#enums/ability-id";
+import { Nature } from "#enums/nature";
+import { SpeciesId } from "#enums/species-id";
+import type { CustomDailyRunConfig, DailySeedStarter } from "#types/daily-run";
+import { isBetween } from "#utils/common";
+import { getEnumValues } from "#utils/enums";
+import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 /**
  * If this is Daily Mode and the seed can be parsed into json it is a Daily Event Seed.
@@ -26,4 +32,42 @@ export function parseDailySeed(seed: string): CustomDailyRunConfig | null {
 
 export function isDailyFinalBoss() {
   return globalScene.gameMode.isDaily && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex);
+}
+
+export function validateDailyPokemonConfig(config: DailySeedStarter | undefined): DailySeedStarter | null {
+  if (config == null) {
+    return null;
+  }
+
+  if (!getEnumValues(SpeciesId).includes(config.speciesId)) {
+    console.warn("Invalid species ID used for custom daily run seed boss:", config.speciesId);
+    return null;
+  }
+
+  if (config.formIndex != null) {
+    const speciesForm = getPokemonSpeciesForm(config.speciesId, config.formIndex);
+    config.formIndex = speciesForm.formIndex;
+  }
+
+  if (config.variant != null && !isBetween(config.variant, 0, 2)) {
+    console.warn("Invalid variant used for custom daily run seed boss:", config.variant);
+    config.variant = undefined;
+  }
+
+  if (config.nature != null && !getEnumValues(Nature).includes(config.nature)) {
+    console.warn("Invalid nature used for custom daily run seed boss:", config.nature);
+    config.nature = undefined;
+  }
+
+  if (config.ability != null && !getEnumValues(AbilityId).includes(config.ability)) {
+    console.warn("Invalid ability used for custom daily run seed boss:", config.ability);
+    config.ability = undefined;
+  }
+
+  if (config.passive != null && !getEnumValues(AbilityId).includes(config.passive)) {
+    console.warn("Invalid passive used for custom daily run seed boss:", config.passive);
+    config.passive = undefined;
+  }
+
+  return config;
 }

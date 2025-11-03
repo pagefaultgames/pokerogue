@@ -2,10 +2,8 @@ import { globalScene } from "#app/global-scene";
 import { speciesStarterCosts } from "#balance/starters";
 import type { PokemonSpeciesForm } from "#data/pokemon-species";
 import { PokemonSpecies } from "#data/pokemon-species";
-import { AbilityId } from "#enums/ability-id";
 import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
-import { Nature } from "#enums/nature";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { SpeciesId } from "#enums/species-id";
 import type { Variant } from "#sprites/variant";
@@ -13,10 +11,10 @@ import type { DailySeedBoss } from "#types/daily-run";
 import type { Starter, StarterMoveset } from "#types/save-data";
 import { isBetween, randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
-import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { chunkString } from "#utils/strings";
 import { dailyBiomeWeights } from "./daily-biome-weights";
-import { isDailyEventSeed, parseDailySeed } from "./daily-seed-utils";
+import { isDailyEventSeed, parseDailySeed, validateDailyPokemonConfig } from "./daily-seed-utils";
 
 type StarterTuple = [Starter, Starter, Starter];
 
@@ -240,40 +238,9 @@ export function getDailyEventSeedBoss(seed: string): DailySeedBoss | null {
     return null;
   }
 
-  const bossConfig = parseDailySeed(seed)?.boss;
+  const bossConfig = validateDailyPokemonConfig(parseDailySeed(seed)?.boss);
   if (!bossConfig) {
     return null;
-  }
-
-  // todo: move validation to own function since also needed for starters
-  if (!getEnumValues(SpeciesId).includes(bossConfig.speciesId)) {
-    console.warn("Invalid species ID used for custom daily run seed boss:", bossConfig.speciesId);
-    return null;
-  }
-
-  if (bossConfig.formIndex != null) {
-    const speciesForm = getPokemonSpeciesForm(bossConfig.speciesId, bossConfig.formIndex);
-    bossConfig.formIndex = speciesForm.formIndex;
-  }
-
-  if (bossConfig.variant != null && !isBetween(bossConfig.variant, 0, 2)) {
-    console.warn("Invalid variant used for custom daily run seed boss:", bossConfig.variant);
-    bossConfig.variant = undefined;
-  }
-
-  if (bossConfig.nature != null && !getEnumValues(Nature).includes(bossConfig.nature)) {
-    console.warn("Invalid nature used for custom daily run seed boss:", bossConfig.nature);
-    bossConfig.nature = undefined;
-  }
-
-  if (bossConfig.ability != null && !getEnumValues(AbilityId).includes(bossConfig.ability)) {
-    console.warn("Invalid ability used for custom daily run seed boss:", bossConfig.ability);
-    bossConfig.ability = undefined;
-  }
-
-  if (bossConfig.passive != null && !getEnumValues(AbilityId).includes(bossConfig.passive)) {
-    console.warn("Invalid passive used for custom daily run seed boss:", bossConfig.passive);
-    bossConfig.passive = undefined;
   }
 
   return bossConfig;

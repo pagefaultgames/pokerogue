@@ -5,7 +5,7 @@ import type { SpeciesId } from "#enums/species-id";
 import type { Variant } from "#sprites/variant";
 import type { StarterMoveset } from "./save-data";
 
-interface DailySeedStarter {
+export interface DailySeedStarter {
   speciesId: SpeciesId;
   formIndex?: number;
   variant?: Variant;
