@@ -257,7 +257,7 @@ const FLARE_XEROSIC: TrainerTierPools = {
     SpeciesId.KLEFKI,
   ],
   [TrainerPoolTier.UNCOMMON]: [
-    SpeciesId.ROTOM,
+    SpeciesId.ROTOM, // Always Rotom-Heat, Xerosic has their specialty type set to fire
     [SpeciesId.TYRUNT, SpeciesId.AMAURA],
     SpeciesId.NOIBAT,
     SpeciesId.SIZZLIPEDE,
