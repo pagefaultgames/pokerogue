@@ -40,6 +40,7 @@ import {
   TypeImmuneTag,
 } from "#data/battler-tags";
 import { getDailyEventSeedBoss } from "#data/daily-seed/daily-run";
+import { isDailyFinalBoss } from "#data/daily-seed/daily-seed-utils";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import {
@@ -2049,11 +2050,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns The non-passive {@linkcode Ability} of this Pokemon.
    */
   public getAbility(ignoreOverride = false): Ability {
-    if (
-      this.isBoss()
-      && globalScene.gameMode.isDaily
-      && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex)
-    ) {
+    if (this.isBoss() && isDailyFinalBoss()) {
       const eventBoss = getDailyEventSeedBoss(globalScene.seed);
       if (eventBoss?.ability != null) {
         return allAbilities[eventBoss.ability];
@@ -2093,11 +2090,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns The passive {@linkcode Ability} of the pokemon
    */
   public getPassiveAbility(): Ability {
-    if (
-      this.isBoss()
-      && globalScene.gameMode.isDaily
-      && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex)
-    ) {
+    if (this.isBoss() && isDailyFinalBoss()) {
       const eventBoss = getDailyEventSeedBoss(globalScene.seed);
       if (eventBoss?.passive != null) {
         return allAbilities[eventBoss.passive];
@@ -6386,7 +6379,7 @@ export class EnemyPokemon extends Pokemon {
       && this.species.forms[Overrides.ENEMY_FORM_OVERRIDES[speciesId]]
     ) {
       this.formIndex = Overrides.ENEMY_FORM_OVERRIDES[speciesId];
-    } else if (globalScene.gameMode.isDaily && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex)) {
+    } else if (isDailyFinalBoss()) {
       const eventBoss = getDailyEventSeedBoss(globalScene.seed);
       if (eventBoss?.formIndex != null) {
         this.formIndex = eventBoss.formIndex;
@@ -6408,8 +6401,7 @@ export class EnemyPokemon extends Pokemon {
 
       const eventBoss = getDailyEventSeedBoss(globalScene.seed);
       const eventBossVariant = eventBoss?.variant;
-      const eventBossVariantEnabled =
-        eventBossVariant != null && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex);
+      const eventBossVariantEnabled = eventBossVariant != null && isDailyFinalBoss();
       if (eventBossVariantEnabled) {
         this.shiny = true;
       }
