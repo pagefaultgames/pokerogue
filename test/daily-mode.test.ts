@@ -45,7 +45,9 @@ describe("Daily Mode", () => {
   describe("Custom Seeds", () => {
     describe("Moves", () => {
       it("should support custom moves", async () => {
-        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue("/moves0001000200030004,03320006,01300919");
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+          '{"starters":[{"speciesId":150,"moveset":[1,2,3,4]},{"speciesId":150,"moveset":[332,6]},{"speciesId":150,"moveset":[130,919]}]}',
+        );
         await game.dailyMode.startBattle();
 
         const [moves1, moves2, moves3] = game.scene.getPlayerParty().map(p => p.moveset.map(pm => pm.moveId));
@@ -70,7 +72,9 @@ describe("Daily Mode", () => {
       });
 
       it("should allow omitting movesets for some starters", async () => {
-        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue("/moves0001000200030004");
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+          '{"starters":[{"speciesId":349,"moveset":[1,2,3,4]}]}',
+        );
         await game.dailyMode.startBattle();
 
         const [moves1, moves2, moves3] = game.scene.getPlayerParty().map(p => p.moveset.map(pm => pm.moveId));
