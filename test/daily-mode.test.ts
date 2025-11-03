@@ -99,7 +99,9 @@ describe("Daily Mode", () => {
 
     describe("Starters", () => {
       it("should support custom species IDs", async () => {
-        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue("foo/starterss0001s0113s1024");
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+          '{"starters":[{"speciesId":1},{"speciesId":113},{"speciesId":1024}]}',
+        );
         await game.dailyMode.startBattle();
 
         const party = game.scene.getPlayerParty().map(p => p.species.speciesId);
@@ -111,7 +113,9 @@ describe("Daily Mode", () => {
       });
 
       it("should support custom forms and variants", async () => {
-        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue("/starterss0006f01v2s0113v0s1024f02");
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+          '{"starters":[{"speciesId":6,"formIndex":1,"variant":2},{"speciesId":113,"variant":0},{"speciesId":1024,"formIndex":2}]}',
+        );
         await game.dailyMode.startBattle();
 
         const party = game.scene.getPlayerParty().map(p => ({
