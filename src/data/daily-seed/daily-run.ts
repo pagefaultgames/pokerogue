@@ -9,7 +9,6 @@ import type { Starter, StarterMoveset } from "#types/save-data";
 import { isBetween, randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
-import { chunkString } from "#utils/strings";
 import { dailyBiomeWeights } from "./daily-biome-weights";
 import { getDailyRunStarter, isDailyEventSeed, parseDailySeed, validateDailyPokemonConfig } from "./daily-seed-utils";
 
@@ -85,54 +84,48 @@ export function getDailyStartingBiome(): BiomeId {
 }
 
 /**
- * The length of a single numeric Move ID string.
- * Must be updated whenever the `MoveId` enum gets a new digit!
- */
-const MOVE_ID_STRING_LENGTH = 4;
-/**
- * The regex literal used to parse daily run custom movesets.
- * @privateRemarks
- * Intentionally does not use the `g` flag to avoid altering `lastIndex` after each match.
- */
-const MOVE_ID_SEED_REGEX = /(?<=\/moves)((?:\d{4}){0,4})(?:,((?:\d{4}){0,4}))?(?:,((?:\d{4}){0,4}))?/;
-
-/**
  * Perform moveset post-processing on Daily run starters. \
- * If the seed matches {@linkcode MOVE_ID_SEED_REGEX},
- * the extracted Move IDs will be used to populate the starters' moveset instead.
+ * If the {@linkcode CustomDailyRunConfig} has the `starters` property with a `moveset` property,
+ * the movesets will be overwritten.
  * @param seed - The daily run seed
  * @param starters - The previously generated starters; will have movesets mutated in place
  */
 function setDailyRunEventStarterMovesets(seed: string, starters: StarterTuple): void {
-  const moveMatch: readonly string[] = MOVE_ID_SEED_REGEX.exec(seed)?.slice(1) ?? [];
-  if (moveMatch.length === 0) {
+  const movesets = parseDailySeed(seed)?.starters?.map(s => s.moveset);
+
+  if (movesets == null) {
     return;
   }
 
-  if (!isBetween(moveMatch.length, 1, 3)) {
+  if (!isBetween(movesets.length, 1, 3)) {
     console.error(
       "Invalid custom seeded moveset used for daily run seed!\nSeed: %s\nMatch contents: %s",
       seed,
-      moveMatch,
+      movesets,
     );
     return;
   }
 
   const moveIds = getEnumValues(MoveId);
-  for (const [i, moveStr] of moveMatch.entries()) {
-    if (!moveStr) {
-      // Fallback for empty capture groups from omitted entries
+  for (const moveset of movesets) {
+    if (moveset == null) {
       continue;
     }
-    const starter = starters[i];
-    const parsedMoveIds = chunkString(moveStr, MOVE_ID_STRING_LENGTH).map(m => Number.parseInt(m) as MoveId);
-
-    if (parsedMoveIds.some(f => !moveIds.includes(f))) {
-      console.error("Invalid move IDs used for custom daily run seed moveset on starter %d:", i, parsedMoveIds);
-      continue;
+    if (moveset.length > 4) {
+      console.error(
+        "Invalid custom seeded moveset used for daily run seed!\nSeed: %s\nMatch contents: %s",
+        seed,
+        moveset,
+      );
+      return;
+    }
+    if (moveset.some(f => !moveIds.includes(f))) {
+      console.error("Invalid move IDs used for custom daily run seed moveset:", moveset);
+      return;
     }
 
-    starter.moveset = parsedMoveIds as StarterMoveset;
+    const starter = starters[movesets.indexOf(moveset)];
+    starter.moveset = moveset as StarterMoveset;
   }
 }
 
