@@ -1,7 +1,5 @@
 import { globalScene } from "#app/global-scene";
 import { speciesStarterCosts } from "#balance/starters";
-import type { PokemonSpeciesForm } from "#data/pokemon-species";
-import { PokemonSpecies } from "#data/pokemon-species";
 import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
@@ -13,7 +11,7 @@ import { getEnumValues } from "#utils/enums";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { chunkString } from "#utils/strings";
 import { dailyBiomeWeights } from "./daily-biome-weights";
-import { isDailyEventSeed, parseDailySeed, validateDailyPokemonConfig } from "./daily-seed-utils";
+import { getDailyRunStarter, isDailyEventSeed, parseDailySeed, validateDailyPokemonConfig } from "./daily-seed-utils";
 
 type StarterTuple = [Starter, Starter, Starter];
 
@@ -43,7 +41,7 @@ export function getDailyRunStarters(seed: string): StarterTuple {
         const starterSpecies = getPokemonSpecies(
           randPkmSpecies.getTrainerSpeciesForLevel(startingLevel, true, PartyMemberStrength.STRONGER),
         );
-        starters.push(getDailyRunStarter(starterSpecies, startingLevel));
+        starters.push(getDailyRunStarter(starterSpecies));
       }
     },
     0,
@@ -53,27 +51,6 @@ export function getDailyRunStarters(seed: string): StarterTuple {
   setDailyRunEventStarterMovesets(seed, starters as StarterTuple);
 
   return starters as StarterTuple;
-}
-
-// TODO: Refactor this unmaintainable mess
-function getDailyRunStarter(starterSpeciesForm: PokemonSpeciesForm, startingLevel: number): Starter {
-  const starterSpecies =
-    starterSpeciesForm instanceof PokemonSpecies ? starterSpeciesForm : getPokemonSpecies(starterSpeciesForm.speciesId);
-  const formIndex = starterSpeciesForm instanceof PokemonSpecies ? undefined : starterSpeciesForm.formIndex;
-  const pokemon = globalScene.addPlayerPokemon(starterSpecies, startingLevel, undefined, formIndex);
-  const starter: Starter = {
-    speciesId: starterSpecies.speciesId,
-    shiny: pokemon.shiny,
-    variant: pokemon.variant,
-    formIndex: pokemon.formIndex,
-    ivs: pokemon.ivs,
-    abilityIndex: pokemon.abilityIndex,
-    passive: false,
-    nature: pokemon.getNature(),
-    pokerus: pokemon.pokerus,
-  };
-  pokemon.destroy();
-  return starter;
 }
 
 export function getDailyStartingBiome(): BiomeId {
@@ -180,40 +157,16 @@ function getDailyEventSeedStarters(seed: string): StarterTuple | null {
   const starters: Starter[] = [];
 
   for (const speciesConfig of speciesConfigurations) {
-    const starterSpecies = validateDailyPokemonConfig(speciesConfig);
-    if (!starterSpecies) {
+    const starterConfig = validateDailyPokemonConfig(speciesConfig);
+    if (!starterConfig) {
       return null;
     }
 
-    const startingLevel = globalScene.gameMode.getStartingLevel();
-    const species = getPokemonSpecies(starterSpecies.speciesId);
+    const species = getPokemonSpecies(starterConfig.speciesId);
 
-    const starterPokemon = globalScene.addPlayerPokemon(
-      species,
-      startingLevel,
-      undefined,
-      starterSpecies.formIndex,
-      undefined,
-      starterSpecies.variant != null,
-      starterSpecies.variant,
-      undefined,
-      starterSpecies.nature,
-    );
-
-    const starter: Starter = {
-      speciesId: species.speciesId,
-      formIndex: starterPokemon.formIndex,
-      shiny: starterPokemon.shiny,
-      variant: starterPokemon.variant,
-      ivs: starterPokemon.ivs,
-      abilityIndex: starterPokemon.abilityIndex,
-      passive: false,
-      nature: starterPokemon.getNature(),
-      pokerus: starterPokemon.pokerus,
-    };
+    const starter = getDailyRunStarter(species, starterConfig);
 
     starters.push(starter);
-    starterPokemon.destroy();
   }
 
   return starters as StarterTuple;

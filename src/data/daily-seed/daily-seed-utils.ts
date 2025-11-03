@@ -1,8 +1,10 @@
 import { globalScene } from "#app/global-scene";
+import type { PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import { Nature } from "#enums/nature";
 import { SpeciesId } from "#enums/species-id";
 import type { CustomDailyRunConfig, DailySeedStarter } from "#types/daily-run";
+import type { Starter } from "#types/save-data";
 import { isBetween } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
@@ -77,4 +79,34 @@ export function validateDailyPokemonConfig(config: DailySeedStarter | undefined)
   }
 
   return config;
+}
+
+export function getDailyRunStarter(species: PokemonSpecies, config?: DailySeedStarter): Starter {
+  const startingLevel = globalScene.gameMode.getStartingLevel();
+
+  const isShiny = config?.variant != null;
+  const pokemon = globalScene.addPlayerPokemon(
+    species,
+    startingLevel,
+    undefined,
+    config?.formIndex,
+    undefined,
+    isShiny,
+    config?.variant,
+    undefined,
+    config?.nature,
+  );
+  const starter: Starter = {
+    speciesId: species.speciesId,
+    shiny: pokemon.shiny,
+    variant: pokemon.variant,
+    formIndex: pokemon.formIndex,
+    ivs: pokemon.ivs,
+    abilityIndex: pokemon.abilityIndex,
+    passive: false,
+    nature: pokemon.getNature(),
+    pokerus: pokemon.pokerus,
+  };
+  pokemon.destroy();
+  return starter;
 }
