@@ -11,6 +11,7 @@ import { UiMode } from "#enums/ui-mode";
 import { HealShopCostModifier, LockModifierTiersModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
 import { getPlayerShopModifierTypeOptionsForWave, TmModifierType } from "#modifiers/modifier-type";
+import type { ModifierSelectCallback } from "#phases/select-modifier-phase";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { addTextObject, getModifierTierTextTint, getTextColor, getTextStyleOptions } from "#ui/text";
@@ -34,6 +35,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
   private lockRarityButtonText: Phaser.GameObjects.Text;
   private moveInfoOverlay: MoveInfoOverlay;
   private moveInfoOverlayActive = false;
+  protected declare onActionInput: ModifierSelectCallback | null;
 
   private rowCursor = 0;
   private player: boolean;
@@ -424,7 +426,8 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
           const originalOnActionInput = this.onActionInput;
           this.awaitingActionInput = false;
           this.onActionInput = null;
-          originalOnActionInput(-1);
+          // TODO: What is a good fallback to pass to this?
+          originalOnActionInput(-1, -1);
           this.moveInfoOverlayActive = this.moveInfoOverlay.active;
           this.moveInfoOverlay.setVisible(false);
           this.moveInfoOverlay.active = false; // don't clear here as we might need to restore the UI in case the user cancels the action

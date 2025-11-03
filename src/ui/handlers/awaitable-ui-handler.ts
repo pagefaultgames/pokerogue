@@ -1,11 +1,14 @@
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import type { UiMode } from "#enums/ui-mode";
+import type { AnyFn } from "#types/type-helpers";
 import { UiHandler } from "#ui/ui-handler";
 
+// TODO: Why does this class exist?
 export abstract class AwaitableUiHandler extends UiHandler {
   protected awaitingActionInput: boolean;
-  protected onActionInput: Function | null;
+  // TODO: Add strong typing for subclasses rather than using `AnyFn`
+  protected onActionInput: AnyFn | null;
   public tutorialActive = false;
   public tutorialOverlay: Phaser.GameObjects.Rectangle;
 
