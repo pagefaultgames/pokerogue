@@ -4385,7 +4385,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.TOGEKISS], TrainerSlot.TRAINER, true, p => {
         p.abilityIndex = 1; // Serene Grace
         p.generateAndPopulateMoveset();
-        p.moveset[0] = new PokemonMove(MoveId.MOONBLAST);
+        p.moveset[0] = new PokemonMove(MoveId.DAZZLING_GLEAM);
         p.moveset[1] = new PokemonMove(MoveId.AIR_SLASH);
         p.teraType = p.species.type1;
       }),
@@ -5522,11 +5522,11 @@ export const trainerConfigs: TrainerConfigs = {
       5,
       getRandomPartyMemberFunc([SpeciesId.NECROZMA], TrainerSlot.TRAINER, true, p => {
         p.setBoss(true, 2);
+        p.pokeball = PokeballType.MASTER_BALL;
         p.generateAndPopulateMoveset();
         if (!p.moveset.some(move => move != null && move.moveId === MoveId.PHOTON_GEYSER)) {
           // Check if Photon Geyser is in the moveset, if not, replace the first move with Photon Geyser.
           p.moveset[0] = new PokemonMove(MoveId.PHOTON_GEYSER);
-          p.pokeball = PokeballType.MASTER_BALL;
         }
       }),
     ),
@@ -5546,9 +5546,8 @@ export const trainerConfigs: TrainerConfigs = {
         p.generateAndPopulateMoveset();
       }),
     )
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.HERACROSS]))
     .setPartyMemberFunc(
-      2,
+      1,
       getRandomPartyMemberFunc([SpeciesId.SCIZOR, SpeciesId.KLEAVOR], TrainerSlot.TRAINER, true, p => {
         if (p.species.speciesId === SpeciesId.SCIZOR) {
           p.abilityIndex = 1; // Technician
@@ -5558,6 +5557,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.generateAndPopulateMoveset();
       }),
     )
+    .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.HERACROSS]))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.GALVANTULA, SpeciesId.VIKAVOLT]))
     .setPartyMemberFunc(
       4,
@@ -5572,11 +5572,11 @@ export const trainerConfigs: TrainerConfigs = {
       5,
       getRandomPartyMemberFunc([SpeciesId.GOLISOPOD], TrainerSlot.TRAINER, true, p => {
         p.setBoss(true, 2);
+        p.gender = Gender.MALE;
         p.generateAndPopulateMoveset();
         if (!p.moveset.some(move => move != null && move.moveId === MoveId.FIRST_IMPRESSION)) {
           // Check if First Impression is in the moveset, if not, replace the third move with First Impression.
           p.moveset[2] = new PokemonMove(MoveId.FIRST_IMPRESSION);
-          p.gender = Gender.MALE;
         }
       }),
     ),
@@ -5626,12 +5626,12 @@ export const trainerConfigs: TrainerConfigs = {
       4,
       getRandomPartyMemberFunc([SpeciesId.GOLISOPOD], TrainerSlot.TRAINER, true, p => {
         p.setBoss(true, 2);
+        p.abilityIndex = 2; // Anticipation
+        p.gender = Gender.MALE;
         p.generateAndPopulateMoveset();
         if (!p.moveset.some(move => move != null && move.moveId === MoveId.FIRST_IMPRESSION)) {
           // Check if First Impression is in the moveset, if not, replace the third move with First Impression.
           p.moveset[2] = new PokemonMove(MoveId.FIRST_IMPRESSION);
-          p.abilityIndex = 2; // Anticipation
-          p.gender = Gender.MALE;
         }
       }),
     )
