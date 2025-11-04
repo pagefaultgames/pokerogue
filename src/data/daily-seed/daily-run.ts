@@ -10,7 +10,13 @@ import { isBetween, randSeedGauss, randSeedInt, randSeedItem } from "#utils/comm
 import { getEnumValues } from "#utils/enums";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { dailyBiomeWeights } from "./daily-biome-weights";
-import { getDailyRunStarter, isDailyEventSeed, parseDailySeed, validateDailyPokemonConfig } from "./daily-seed-utils";
+import {
+  getDailyRunStarter,
+  isDailyEventSeed,
+  parseDailySeed,
+  validateDailyBossConfig,
+  validateDailyStarterConfig,
+} from "./daily-seed-utils";
 
 type StarterTuple = [Starter, Starter, Starter];
 
@@ -150,7 +156,7 @@ function getDailyEventSeedStarters(seed: string): StarterTuple | null {
   const starters: Starter[] = [];
 
   for (const speciesConfig of speciesConfigurations) {
-    const starterConfig = validateDailyPokemonConfig(speciesConfig);
+    const starterConfig = validateDailyStarterConfig(speciesConfig);
     if (!starterConfig) {
       return null;
     }
@@ -175,7 +181,7 @@ export function getDailyEventSeedBoss(seed: string): DailySeedBoss | null {
     return null;
   }
 
-  const bossConfig = validateDailyPokemonConfig(parseDailySeed(seed)?.boss);
+  const bossConfig = validateDailyBossConfig(parseDailySeed(seed)?.boss);
   if (!bossConfig) {
     return null;
   }

@@ -36,15 +36,18 @@ export function isDailyFinalBoss() {
   return globalScene.gameMode.isDaily && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex);
 }
 
-export function validateDailyPokemonConfig(
-  config: DailySeedStarter | DailySeedBoss | undefined,
-): DailySeedStarter | DailySeedBoss | null {
+/**
+ * Validate the {@linkcode DailySeedStarter | config} for a custom daily starter.
+ * @param config - The {@linkcode DailySeedStarter | config} to validate.
+ * @returns The validated {@linkcode DailySeedStarter | config} or `null` if it is invalid.
+ */
+export function validateDailyStarterConfig(config: DailySeedStarter | undefined): DailySeedStarter | null {
   if (config == null) {
     return null;
   }
 
   if (!config.speciesId || !getEnumValues(SpeciesId).includes(config.speciesId)) {
-    console.warn("Invalid species ID used for custom daily run seed starter/boss:", config.speciesId);
+    console.warn("Invalid species ID used for custom daily run seed starter:", config.speciesId);
     return null;
   }
 
@@ -54,40 +57,73 @@ export function validateDailyPokemonConfig(
   }
 
   if (config.variant != null && !isBetween(config.variant, 0, 2)) {
-    console.warn("Invalid variant used for custom daily run seed starter/boss:", config.variant);
+    console.warn("Invalid variant used for custom daily run seed starter:", config.variant);
     config.variant = undefined;
   }
 
   // Fall back to default variant if none exists
   const starterSpecies = getPokemonSpecies(config.speciesId);
   if (config.variant != null && !starterSpecies.hasVariants()) {
-    console.warn(
-      "Variant for custom daily run seed starter/boss does not exist, using base variant...",
-      config.variant,
-    );
+    console.warn("Variant for custom daily run seed starter does not exist, using base variant...", config.variant);
     config.variant = 0;
   }
 
   if (config.nature != null && !getEnumValues(Nature).includes(config.nature)) {
-    console.warn("Invalid nature used for custom daily run seed starter/boss:", config.nature);
+    console.warn("Invalid nature used for custom daily run seed starter:", config.nature);
     config.nature = undefined;
   }
 
-  // TODO: Split boss and starter validation or use the abilityIndex/abilityId for both
-  // validate boss ability
-  if ("ability" in config && config.ability != null && !getEnumValues(AbilityId).includes(config.ability)) {
-    console.warn("Invalid ability used for custom daily run seed boss:", config.ability);
-    config.ability = undefined;
-  }
-
-  // validate starter ability index
-  if ("abilityIndex" in config && config.abilityIndex != null && !isBetween(config.abilityIndex, 0, 2)) {
+  if (config.abilityIndex != null && !isBetween(config.abilityIndex, 0, 2)) {
     console.warn("Invalid ability index used for custom daily run seed starter:", config.abilityIndex);
     config.abilityIndex = undefined;
   }
 
-  // validate boss passive
-  if ("passive" in config && config.passive != null && !getEnumValues(AbilityId).includes(config.passive)) {
+  return config;
+}
+
+/**
+ * Validate the {@linkcode DailySeedBoss | config} for a custom daily boss.
+ * @param config - The {@linkcode DailySeedBoss | config} to validate.
+ * @returns The validated {@linkcode DailySeedBoss | config} or `null` if it is invalid.
+ */
+export function validateDailyBossConfig(config: DailySeedBoss | undefined): DailySeedBoss | null {
+  if (config == null) {
+    return null;
+  }
+
+  if (!config.speciesId || !getEnumValues(SpeciesId).includes(config.speciesId)) {
+    console.warn("Invalid species ID used for custom daily run seed boss:", config.speciesId);
+    return null;
+  }
+
+  if (config.formIndex != null) {
+    const speciesForm = getPokemonSpeciesForm(config.speciesId, config.formIndex);
+    config.formIndex = speciesForm.formIndex;
+  }
+
+  if (config.variant != null && !isBetween(config.variant, 0, 2)) {
+    console.warn("Invalid variant used for custom daily run seed boss:", config.variant);
+    config.variant = undefined;
+  }
+
+  // Fall back to default variant if none exists
+  const starterSpecies = getPokemonSpecies(config.speciesId);
+  if (config.variant != null && !starterSpecies.hasVariants()) {
+    console.warn("Variant for custom daily run seed boss does not exist, using base variant...", config.variant);
+    config.variant = 0;
+  }
+
+  if (config.nature != null && !getEnumValues(Nature).includes(config.nature)) {
+    console.warn("Invalid nature used for custom daily run seed boss:", config.nature);
+    config.nature = undefined;
+  }
+
+  if (config.ability != null && !getEnumValues(AbilityId).includes(config.ability)) {
+    console.warn("Invalid ability used for custom daily run seed boss:", config.ability);
+    config.ability = undefined;
+  }
+
+  if (config.passive != null && !getEnumValues(AbilityId).includes(config.passive)) {
     console.warn("Invalid passive used for custom daily run seed boss:", config.passive);
     config.passive = undefined;
   }
