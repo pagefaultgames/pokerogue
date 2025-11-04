@@ -2070,7 +2070,6 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.SUPER_RARE]: [SpeciesId.DRATINI, SpeciesId.LARVITAR],
     }),
   [TrainerType.ARCHER]: new TrainerConfig(++t)
-    .setMoneyMultiplier(1.5)
     .initForEvilTeamAdmin("rocket_admin", "rocket_archer")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
@@ -2091,7 +2090,6 @@ export const trainerConfigs: TrainerConfigs = {
       }),
     ),
   [TrainerType.ARIANA]: new TrainerConfig(++t)
-    .setMoneyMultiplier(1.5)
     .initForEvilTeamAdmin("rocket_admin_female", "rocket_ariana")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
@@ -2112,7 +2110,6 @@ export const trainerConfigs: TrainerConfigs = {
       }),
     ),
   [TrainerType.PROTON]: new TrainerConfig(++t)
-    .setMoneyMultiplier(1.5)
     .initForEvilTeamAdmin("rocket_admin", "rocket_proton")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
@@ -2132,7 +2129,6 @@ export const trainerConfigs: TrainerConfigs = {
       }),
     ),
   [TrainerType.PETREL]: new TrainerConfig(++t)
-    .setMoneyMultiplier(1.5)
     .initForEvilTeamAdmin("rocket_admin", "rocket_petrel")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
@@ -2188,7 +2184,6 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.SUPER_RARE]: [SpeciesId.RHYHORN, SpeciesId.ARON],
     }),
   [TrainerType.TABITHA]: new TrainerConfig(++t)
-    .setMoneyMultiplier(1.5)
     .initForEvilTeamAdmin("magma_admin", "magma")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
@@ -2209,7 +2204,6 @@ export const trainerConfigs: TrainerConfigs = {
       }),
     ),
   [TrainerType.COURTNEY]: new TrainerConfig(++t)
-    .setMoneyMultiplier(1.5)
     .initForEvilTeamAdmin("magma_admin_female", "magma")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
@@ -2273,7 +2267,6 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.SUPER_RARE]: [SpeciesId.FEEBAS, SpeciesId.DONDOZO],
     }),
   [TrainerType.MATT]: new TrainerConfig(++t)
-    .setMoneyMultiplier(1.5)
     .initForEvilTeamAdmin("aqua_admin", "aqua")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
@@ -2293,7 +2286,6 @@ export const trainerConfigs: TrainerConfigs = {
       }),
     ),
   [TrainerType.SHELLY]: new TrainerConfig(++t)
-    .setMoneyMultiplier(1.5)
     .initForEvilTeamAdmin("aqua_admin_female", "aqua")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
@@ -2354,7 +2346,6 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.SUPER_RARE]: [SpeciesId.SPIRITOMB, SpeciesId.ROTOM],
     }),
   [TrainerType.JUPITER]: new TrainerConfig(++t)
-    .setMoneyMultiplier(1.5)
     .initForEvilTeamAdmin("galactic_commander_female", "galactic_jupiter")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
@@ -2374,7 +2365,6 @@ export const trainerConfigs: TrainerConfigs = {
       }),
     ),
   [TrainerType.MARS]: new TrainerConfig(++t)
-    .setMoneyMultiplier(1.5)
     .initForEvilTeamAdmin("galactic_commander_female", "galactic_mars")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
@@ -2395,7 +2385,6 @@ export const trainerConfigs: TrainerConfigs = {
       }),
     ),
   [TrainerType.SATURN]: new TrainerConfig(++t)
-    .setMoneyMultiplier(1.5)
     .initForEvilTeamAdmin("galactic_commander", "galactic_saturn")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
@@ -2460,7 +2449,6 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.SUPER_RARE]: [SpeciesId.AXEW, SpeciesId.DRUDDIGON, SpeciesId.DEINO, SpeciesId.HISUI_ZORUA],
     }),
   [TrainerType.ZINZOLIN]: new TrainerConfig(++t)
-    .setMoneyMultiplier(1.5)
     .initForEvilTeamAdmin("plasma_sage", "plasma_zinzolin")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
@@ -2477,7 +2465,6 @@ export const trainerConfigs: TrainerConfigs = {
       }),
     ),
   [TrainerType.COLRESS]: new TrainerConfig(++t)
-    .setMoneyMultiplier(1.5)
     .initForEvilTeamAdmin("plasma_boss", "plasma_colress")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_colress")
@@ -2537,7 +2524,6 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.SUPER_RARE]: [SpeciesId.GOOMY, SpeciesId.HONEDGE],
     }),
   [TrainerType.BRYONY]: new TrainerConfig(++t)
-    .setMoneyMultiplier(1.5)
     .initForEvilTeamAdmin("flare_admin_female", "flare")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
@@ -2553,7 +2539,6 @@ export const trainerConfigs: TrainerConfigs = {
       }),
     ),
   [TrainerType.XEROSIC]: new TrainerConfig(++t)
-    .setMoneyMultiplier(1.5)
     .initForEvilTeamAdmin("flare_admin", "flare_xerosic", PokemonType.FIRE)
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
@@ -2624,7 +2609,6 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.SUPER_RARE]: [SpeciesId.PORYGON, SpeciesId.JANGMO_O],
     }),
   [TrainerType.FABA]: new TrainerConfig(++t)
-    .setMoneyMultiplier(1.5)
     .initForEvilTeamAdmin("aether_admin", "aether")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
@@ -2691,7 +2675,6 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.SUPER_RARE]: [SpeciesId.PAWNIARD, SpeciesId.GRUBBIN],
     }),
   [TrainerType.PLUMERIA]: new TrainerConfig(++t)
-    .setMoneyMultiplier(1.5)
     .initForEvilTeamAdmin("skull_admin", "skull")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
@@ -2756,7 +2739,6 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.SUPER_RARE]: [SpeciesId.DURALUDON, SpeciesId.DREEPY],
     }),
   [TrainerType.OLEANA]: new TrainerConfig(++t)
-    .setMoneyMultiplier(1.5)
     .initForEvilTeamAdmin("macro_admin", "macro_cosmos")
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
@@ -2836,7 +2818,6 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.SUPER_RARE]: [SpeciesId.DONDOZO, SpeciesId.GIMMIGHOUL],
     }),
   [TrainerType.GIACOMO]: new TrainerConfig(++t)
-    .setMoneyMultiplier(1.5)
     .initForEvilTeamAdmin("star_admin", "star_dark", PokemonType.DARK)
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
@@ -2863,7 +2844,6 @@ export const trainerConfigs: TrainerConfigs = {
       }),
     ),
   [TrainerType.MELA]: new TrainerConfig(++t)
-    .setMoneyMultiplier(1.5)
     .initForEvilTeamAdmin("star_admin", "star_fire", PokemonType.FIRE)
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
@@ -2890,7 +2870,6 @@ export const trainerConfigs: TrainerConfigs = {
       }),
     ),
   [TrainerType.ATTICUS]: new TrainerConfig(++t)
-    .setMoneyMultiplier(1.5)
     .initForEvilTeamAdmin("star_admin", "star_poison", PokemonType.POISON)
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
@@ -2917,7 +2896,6 @@ export const trainerConfigs: TrainerConfigs = {
       }),
     ),
   [TrainerType.ORTEGA]: new TrainerConfig(++t)
-    .setMoneyMultiplier(1.5)
     .initForEvilTeamAdmin("star_admin", "star_fairy", PokemonType.FAIRY)
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
@@ -2944,7 +2922,6 @@ export const trainerConfigs: TrainerConfigs = {
       }),
     ),
   [TrainerType.ERI]: new TrainerConfig(++t)
-    .setMoneyMultiplier(1.5)
     .initForEvilTeamAdmin("star_admin", "star_fighting", PokemonType.FIGHTING)
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")

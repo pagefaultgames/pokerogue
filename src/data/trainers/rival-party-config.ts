@@ -420,7 +420,7 @@ const SLOT_4_FIGHT_3 = [
   SpeciesId.GOLISOPOD,
   SpeciesId.MIMIKYU,
   SpeciesId.DHELMISE,
-  [SpeciesId.POLTEAGEIST,SpeciesId.SINISTCHA],
+  [SpeciesId.POLTEAGEIST, SpeciesId.SINISTCHA],
   SpeciesId.COPPERAJAH,
   SpeciesId.KLEAVOR,
   SpeciesId.BASCULIN,
@@ -484,7 +484,7 @@ const SLOT_4_FINAL = [
   SpeciesId.GOLISOPOD,
   SpeciesId.MIMIKYU,
   SpeciesId.DHELMISE,
-  [SpeciesId.POLTEAGEIST,SpeciesId.SINISTCHA],
+  [SpeciesId.POLTEAGEIST, SpeciesId.SINISTCHA],
   SpeciesId.COPPERAJAH,
   SpeciesId.KLEAVOR,
   SpeciesId.BASCULEGION, // Ensure gender does not change
