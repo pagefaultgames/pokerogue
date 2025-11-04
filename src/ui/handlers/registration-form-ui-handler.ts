@@ -76,7 +76,7 @@ export class RegistrationFormUiHandler extends FormModalUiHandler {
       const config = args[0] as ModalConfig;
 
       const originalRegistrationAction = this.submitAction;
-      this.submitAction = _ => {
+      this.submitAction = () => {
         if (globalScene.tweens.getTweensOf(this.modalContainer).length === 0) {
           // Prevent overlapping overrides on action modification
           this.submitAction = originalRegistrationAction;

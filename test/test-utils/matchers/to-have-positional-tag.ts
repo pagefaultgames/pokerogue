@@ -4,7 +4,7 @@ import type { PositionalTag } from "#data/positional-tags/positional-tag";
 import type { GameManager } from "#test/test-utils/game-manager";
 // biome-ignore-end lint/correctness/noUnusedImports: TSDoc
 
-import type { serializedPosTagMap } from "#data/positional-tags/load-positional-tag";
+import type { toSerializedPosTag } from "#data/positional-tags/load-positional-tag";
 import type { PositionalTagType } from "#enums/positional-tag-type";
 import type { OneOther } from "#test/@types/test-helpers";
 import { getOnelineDiffStr } from "#test/test-utils/string-utils";
@@ -12,9 +12,10 @@ import { isGameManagerInstance, receivedStr } from "#test/test-utils/test-utils"
 import { toTitleCase } from "#utils/strings";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
-export type toHavePositionalTagOptions<P extends PositionalTagType> = OneOther<serializedPosTagMap[P], "tagType"> & {
-  tagType: P;
-};
+/**
+ * Options type for {@linkcode toHavePositionalTag}.
+ */
+export type toHavePositionalTagOptions<P extends PositionalTagType> = OneOther<toSerializedPosTag<P>, "tagType">;
 
 /**
  * Matcher to check if the {@linkcode Arena} has a certain number of {@linkcode PositionalTag}s active.

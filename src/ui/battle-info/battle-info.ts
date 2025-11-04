@@ -595,7 +595,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     this.setTypes(pokemon.getTypes(true, false, undefined, true));
 
     if (this.lastHp !== pokemon.hp || this.lastMaxHp !== pokemon.getMaxHp()) {
-      return this.updatePokemonHp(pokemon, resolve, instant);
+      this.updatePokemonHp(pokemon, resolve, instant);
     }
     if (!this.player && this.lastLevel !== pokemon.level) {
       this.setLevel(pokemon.level);

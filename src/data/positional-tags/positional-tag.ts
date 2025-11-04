@@ -22,7 +22,7 @@ import i18next from "i18next";
  * and should refrain from adding extra serializable fields not contained in said interface.
  * This ensures that all tags truly "become" their respective interfaces when converted to and from JSON.
  */
-export interface PositionalTagBaseArgs {
+interface PositionalTagBaseArgs {
   /**
    * The number of turns remaining until this tag's activation. \
    * Decremented by 1 at the end of each turn until reaching 0, at which point it will
@@ -37,7 +37,7 @@ export interface PositionalTagBaseArgs {
 
 /**
  * A {@linkcode PositionalTag} is a variant of an {@linkcode ArenaTag} that targets a single *slot* of the battlefield.
- * Each tag can last one or more turns, triggering various effects on removal.
+ * Each tag can last one or more turns, triggering various effects on removal. \
  * Multiple tags of the same kind can stack with one another, provided they are affecting different targets.
  */
 export abstract class PositionalTag implements PositionalTagBaseArgs {
@@ -90,6 +90,7 @@ interface DelayedAttackArgs extends PositionalTagBaseArgs {
  */
 export class DelayedAttackTag extends PositionalTag implements DelayedAttackArgs {
   public override readonly tagType = PositionalTagType.DELAYED_ATTACK;
+
   public readonly sourceMove: MoveId;
   public readonly sourceId: number;
 

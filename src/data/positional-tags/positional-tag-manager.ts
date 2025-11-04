@@ -1,4 +1,4 @@
-import { loadPositionalTag } from "#data/positional-tags/load-positional-tag";
+import { loadPositionalTag, type toSerializedPosTag } from "#data/positional-tags/load-positional-tag";
 import type { PositionalTag } from "#data/positional-tags/positional-tag";
 import type { BattlerIndex } from "#enums/battler-index";
 import type { PositionalTagType } from "#enums/positional-tag-type";
@@ -16,7 +16,7 @@ export class PositionalTagManager {
    * @remarks
    * This function does not perform any checking if the added tag is valid.
    */
-  public addTag<T extends PositionalTagType = never>(tag: Parameters<typeof loadPositionalTag<T>>[0]): void {
+  public addTag<T extends PositionalTagType>(tag: toSerializedPosTag<T>): void {
     this.tags.push(loadPositionalTag(tag));
   }
 
