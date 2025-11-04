@@ -2795,9 +2795,11 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
         if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_1) {
           p.formIndex = 0;
+          p.gender = Gender.GENDERLESS;
           p.generateAndPopulateMoveset();
         } else {
           p.formIndex = 1; // Segin Starmobile
+          p.gender = Gender.GENDERLESS;
           p.moveset = [
             new PokemonMove(MoveId.WICKED_TORQUE),
             new PokemonMove(MoveId.SPIN_OUT),
@@ -2822,9 +2824,11 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
         if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_1) {
           p.formIndex = 0;
+          p.gender = Gender.GENDERLESS;
           p.generateAndPopulateMoveset();
         } else {
           p.formIndex = 2; // Schedar Starmobile
+          p.gender = Gender.GENDERLESS;
           p.moveset = [
             new PokemonMove(MoveId.BLAZING_TORQUE),
             new PokemonMove(MoveId.SPIN_OUT),
@@ -2849,9 +2853,11 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
         if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_1) {
           p.formIndex = 0;
+          p.gender = Gender.GENDERLESS;
           p.generateAndPopulateMoveset();
         } else {
           p.formIndex = 3; // Navi Starmobile
+          p.gender = Gender.GENDERLESS;
           p.moveset = [
             new PokemonMove(MoveId.NOXIOUS_TORQUE),
             new PokemonMove(MoveId.SPIN_OUT),
@@ -2876,9 +2882,11 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
         if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_1) {
           p.formIndex = 0;
+          p.gender = Gender.GENDERLESS;
           p.generateAndPopulateMoveset();
         } else {
           p.formIndex = 4; // Ruchbah Starmobile
+          p.gender = Gender.GENDERLESS;
           p.moveset = [
             new PokemonMove(MoveId.MAGICAL_TORQUE),
             new PokemonMove(MoveId.SPIN_OUT),
@@ -2903,9 +2911,11 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
         if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_1) {
           p.formIndex = 0;
+          p.gender = Gender.GENDERLESS;
           p.generateAndPopulateMoveset();
         } else {
           p.formIndex = 5; // Caph Starmobile
+          p.gender = Gender.GENDERLESS;
           p.moveset = [
             new PokemonMove(MoveId.COMBAT_TORQUE),
             new PokemonMove(MoveId.SPIN_OUT),
@@ -5770,6 +5780,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
         p.setBoss(true, 2);
         p.formIndex = randSeedInt(5, 1); // Random Starmobile form
+        p.gender = Gender.GENDERLESS;
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ROGUE_BALL;
       }),
