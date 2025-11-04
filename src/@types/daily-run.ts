@@ -11,13 +11,21 @@ export interface DailySeedStarter {
   variant?: Variant;
   moveset?: StarterMoveset;
   nature?: Nature;
-  ability?: AbilityId;
+  abilityIndex?: number;
   passive?: AbilityId;
 }
 
 type DailySeedStarterTuple = [DailySeedStarter, DailySeedStarter, DailySeedStarter];
 // todo: make this its own type when needed
-export type DailySeedBoss = DailySeedStarter;
+export type DailySeedBoss = {
+  speciesId: SpeciesId;
+  formIndex?: number;
+  variant?: Variant;
+  moveset?: StarterMoveset;
+  nature?: Nature;
+  ability?: AbilityId;
+  passive?: AbilityId;
+};
 
 export interface CustomDailyRunConfig {
   starters?: DailySeedStarterTuple;
