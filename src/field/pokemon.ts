@@ -142,7 +142,6 @@ import type { AbAttrMap, AbAttrString, TypeMultiplierAbAttrParams } from "#types
 import type { Constructor } from "#types/common";
 import type { getAttackDamageParams, getBaseDamageParams } from "#types/damage-params";
 import type { DamageCalculationResult, DamageResult } from "#types/damage-result";
-import type { IllusionData } from "#types/illusion-data";
 import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { TurnMove } from "#types/turn-move";
@@ -5118,14 +5117,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * in preparation for switching pokemon, as well as removing any relevant on-switch tags.
    */
   public resetSummonData(): void {
-    const illusion: IllusionData | null = this.summonData.illusion;
     if (this.summonData.speciesForm) {
       this.summonData.speciesForm = null;
       this.updateFusionPalette();
     }
     this.summonData = new PokemonSummonData();
     this.tempSummonData = new PokemonTempSummonData();
-    this.summonData.illusion = illusion;
     this.updateInfo();
   }
 
