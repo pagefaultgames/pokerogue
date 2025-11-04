@@ -4385,6 +4385,8 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.TOGEKISS], TrainerSlot.TRAINER, true, p => {
         p.abilityIndex = 1; // Serene Grace
         p.generateAndPopulateMoveset();
+        p.moveset[0] = new PokemonMove(MoveId.MOONBLAST);
+        p.moveset[1] = new PokemonMove(MoveId.AIR_SLASH);
         p.teraType = p.species.type1;
       }),
     )
@@ -4401,9 +4403,13 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.GARCHOMP], TrainerSlot.TRAINER, true, p => {
         p.setBoss(true, 2);
         p.formIndex = 1; // Mega Garchomp
-        p.generateAndPopulateMoveset();
         p.generateName();
         p.gender = Gender.FEMALE;
+        p.generateAndPopulateMoveset();
+        if (!p.moveset.some(move => move != null && move.moveId === MoveId.SANDSTORM)) {
+          // Check if Sandstorm is in the moveset, if not, replace the fourth move with Sandstorm.
+          p.moveset[3] = new PokemonMove(MoveId.SANDSTORM);
+        }
       }),
     )
     .setInstantTera(2), // Tera Fairy Togekiss
@@ -4559,16 +4565,10 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setPartyMemberFunc(
       2,
-      getRandomPartyMemberFunc(
-        [SpeciesId.TORNADUS, SpeciesId.THUNDURUS, SpeciesId.LANDORUS],
-        TrainerSlot.TRAINER,
-        true,
-        p => {
-          p.formIndex = 1; // Therian Formes
-          p.generateAndPopulateMoveset();
-          p.pokeball = PokeballType.ROGUE_BALL;
-        },
-      ),
+      getRandomPartyMemberFunc([SpeciesId.SNORLAX], TrainerSlot.TRAINER, true, p => {
+        p.formIndex = 1; // G-Max
+        p.generateAndPopulateMoveset();
+      }),
     )
     .setPartyMemberFunc(
       3,
@@ -4580,9 +4580,9 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setPartyMemberFunc(
       4,
-      getRandomPartyMemberFunc([SpeciesId.SNORLAX], TrainerSlot.TRAINER, true, p => {
-        p.formIndex = 1; // G-Max Snorlax
+      getRandomPartyMemberFunc([SpeciesId.LUNALA], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.MASTER_BALL;
       }),
     )
     .setPartyMemberFunc(
@@ -5522,9 +5522,12 @@ export const trainerConfigs: TrainerConfigs = {
       5,
       getRandomPartyMemberFunc([SpeciesId.NECROZMA], TrainerSlot.TRAINER, true, p => {
         p.setBoss(true, 2);
-        p.formIndex = 2; // Dawn Wings
         p.generateAndPopulateMoveset();
-        p.pokeball = PokeballType.MASTER_BALL;
+        if (!p.moveset.some(move => move != null && move.moveId === MoveId.PHOTON_GEYSER)) {
+          // Check if Photon Geyser is in the moveset, if not, replace the first move with Photon Geyser.
+          p.moveset[0] = new PokemonMove(MoveId.PHOTON_GEYSER);
+          p.pokeball = PokeballType.MASTER_BALL;
+        }
       }),
     ),
   [TrainerType.GUZMA]: new TrainerConfig(++t)
@@ -5584,28 +5587,31 @@ export const trainerConfigs: TrainerConfigs = {
     .setVictoryBgm("victory_team_plasma")
     .setPartyMemberFunc(
       0,
-      getRandomPartyMemberFunc([SpeciesId.GOLISOPOD], TrainerSlot.TRAINER, true, p => {
-        p.setBoss(true, 2);
-        p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.FIRST_IMPRESSION)) {
-          // Check if First Impression is in the moveset, if not, replace the third move with First Impression.
-          p.moveset[2] = new PokemonMove(MoveId.FIRST_IMPRESSION);
-          p.abilityIndex = 2; // Anticipation
-          p.gender = Gender.MALE;
-        }
-      }),
-    )
-    .setPartyMemberFunc(
-      1,
       getRandomPartyMemberFunc([SpeciesId.BUZZWOLE], TrainerSlot.TRAINER, true, p => {
+        p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ROGUE_BALL;
       }),
     )
     .setPartyMemberFunc(
+      1,
+      getRandomPartyMemberFunc([SpeciesId.SCIZOR, SpeciesId.KLEAVOR], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+        if (p.species.speciesId === SpeciesId.SCIZOR) {
+          p.abilityIndex = 1; // Technician
+          p.moveset[0] = new PokemonMove(MoveId.BUG_BITE);
+          p.moveset[1] = new PokemonMove(MoveId.BULLET_PUNCH);
+        } else if (p.species.speciesId === SpeciesId.KLEAVOR) {
+          p.abilityIndex = 2; // Sharpness
+          p.moveset[0] = new PokemonMove(MoveId.X_SCISSOR);
+          p.moveset[1] = new PokemonMove(MoveId.STONE_AXE);
+        }
+      }),
+    )
+    .setPartyMemberFunc(
       2,
-      getRandomPartyMemberFunc([SpeciesId.CRAWDAUNT, SpeciesId.HISUI_SAMUROTT], TrainerSlot.TRAINER, true, p => {
-        p.abilityIndex = 2; // Sharpness Hisuian Samurott, Adaptability Crawdaunt
+      getRandomPartyMemberFunc([SpeciesId.TOXAPEX], TrainerSlot.TRAINER, true, p => {
+        p.abilityIndex = 2; // Regenerator
         p.generateAndPopulateMoveset();
       }),
     )
@@ -5618,14 +5624,14 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setPartyMemberFunc(
       4,
-      getRandomPartyMemberFunc([SpeciesId.GENESECT], TrainerSlot.TRAINER, true, p => {
+      getRandomPartyMemberFunc([SpeciesId.GOLISOPOD], TrainerSlot.TRAINER, true, p => {
         p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
-        p.pokeball = PokeballType.ROGUE_BALL;
-        p.formIndex = randSeedInt(4, 1); // Shock, Burn, Chill, or Douse Drive
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.TECHNO_BLAST)) {
-          // Check if Techno Blast is in the moveset, if not, replace the third move with Techno Blast.
-          p.moveset[2] = new PokemonMove(MoveId.TECHNO_BLAST);
+        if (!p.moveset.some(move => move != null && move.moveId === MoveId.FIRST_IMPRESSION)) {
+          // Check if First Impression is in the moveset, if not, replace the third move with First Impression.
+          p.moveset[2] = new PokemonMove(MoveId.FIRST_IMPRESSION);
+          p.abilityIndex = 2; // Anticipation
+          p.gender = Gender.MALE;
         }
       }),
     )
