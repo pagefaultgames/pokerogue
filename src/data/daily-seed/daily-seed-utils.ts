@@ -44,7 +44,7 @@ export function validateDailyPokemonConfig(
   }
 
   if (!config.speciesId || !getEnumValues(SpeciesId).includes(config.speciesId)) {
-    console.warn("Invalid species ID used for custom daily run seed boss:", config.speciesId);
+    console.warn("Invalid species ID used for custom daily run seed starter/boss:", config.speciesId);
     return null;
   }
 
@@ -54,23 +54,26 @@ export function validateDailyPokemonConfig(
   }
 
   if (config.variant != null && !isBetween(config.variant, 0, 2)) {
-    console.warn("Invalid variant used for custom daily run seed boss:", config.variant);
+    console.warn("Invalid variant used for custom daily run seed starter/boss:", config.variant);
     config.variant = undefined;
   }
 
   // Fall back to default variant if none exists
   const starterSpecies = getPokemonSpecies(config.speciesId);
   if (config.variant != null && !starterSpecies.hasVariants()) {
-    console.warn("Variant for custom daily run seed boss does not exist, using base variant...", config.variant);
+    console.warn(
+      "Variant for custom daily run seed starter/boss does not exist, using base variant...",
+      config.variant,
+    );
     config.variant = 0;
   }
 
   if (config.nature != null && !getEnumValues(Nature).includes(config.nature)) {
-    console.warn("Invalid nature used for custom daily run seed boss:", config.nature);
+    console.warn("Invalid nature used for custom daily run seed starter/boss:", config.nature);
     config.nature = undefined;
   }
 
-  // TODO: Split boss and starter validation if there are more diescrepancies
+  // TODO: Split boss and starter validation or use the abilityIndex/abilityId for both
   // validate boss ability
   if ("ability" in config && config.ability != null && !getEnumValues(AbilityId).includes(config.ability)) {
     console.warn("Invalid ability used for custom daily run seed boss:", config.ability);
@@ -92,6 +95,11 @@ export function validateDailyPokemonConfig(
   return config;
 }
 
+/**
+ * Creates a {@linkcode Starter}.
+ * @param species - The species of the starter.
+ * @param config - The {@linkcode DailySeedStarter | custom config} for the starter.
+ */
 export function getDailyRunStarter(species: PokemonSpecies, config?: DailySeedStarter): Starter {
   const startingLevel = globalScene.gameMode.getStartingLevel();
 
@@ -107,6 +115,7 @@ export function getDailyRunStarter(species: PokemonSpecies, config?: DailySeedSt
     undefined,
     config?.nature,
   );
+
   const starter: Starter = {
     speciesId: species.speciesId,
     shiny: pokemon.shiny,

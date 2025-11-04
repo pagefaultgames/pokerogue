@@ -134,6 +134,7 @@ export class GameMode implements GameModeConfig {
    * @returns either:
    * - override from overrides.ts
    * - 1000
+   * - override from a custom daily seed
    */
   getStartingMoney(): number {
     if (Overrides.STARTING_MONEY_OVERRIDE > 0) {

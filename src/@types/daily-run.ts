@@ -15,7 +15,7 @@ export interface DailySeedStarter {
 }
 
 type DailySeedStarterTuple = [DailySeedStarter, DailySeedStarter, DailySeedStarter];
-// todo: make this its own type when needed
+
 export type DailySeedBoss = {
   speciesId: SpeciesId;
   formIndex?: number;
