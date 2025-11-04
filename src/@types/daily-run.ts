@@ -12,7 +12,6 @@ export interface DailySeedStarter {
   moveset?: StarterMoveset;
   nature?: Nature;
   abilityIndex?: number;
-  passive?: AbilityId;
 }
 
 type DailySeedStarterTuple = [DailySeedStarter, DailySeedStarter, DailySeedStarter];

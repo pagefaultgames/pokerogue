@@ -3,7 +3,7 @@ import type { PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import { Nature } from "#enums/nature";
 import { SpeciesId } from "#enums/species-id";
-import type { CustomDailyRunConfig, DailySeedStarter } from "#types/daily-run";
+import type { CustomDailyRunConfig, DailySeedBoss, DailySeedStarter } from "#types/daily-run";
 import type { Starter } from "#types/save-data";
 import { isBetween } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
@@ -36,7 +36,9 @@ export function isDailyFinalBoss() {
   return globalScene.gameMode.isDaily && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex);
 }
 
-export function validateDailyPokemonConfig(config: DailySeedStarter | undefined): DailySeedStarter | null {
+export function validateDailyPokemonConfig(
+  config: DailySeedStarter | DailySeedBoss | undefined,
+): DailySeedStarter | DailySeedBoss | null {
   if (config == null) {
     return null;
   }
@@ -68,12 +70,21 @@ export function validateDailyPokemonConfig(config: DailySeedStarter | undefined)
     config.nature = undefined;
   }
 
-  if (config.ability != null && !getEnumValues(AbilityId).includes(config.ability)) {
+  // TODO: Split boss and starter validation if there are more diescrepancies
+  // validate boss ability
+  if ("ability" in config && config.ability != null && !getEnumValues(AbilityId).includes(config.ability)) {
     console.warn("Invalid ability used for custom daily run seed boss:", config.ability);
     config.ability = undefined;
   }
 
-  if (config.passive != null && !getEnumValues(AbilityId).includes(config.passive)) {
+  // validate starter ability index
+  if ("abilityIndex" in config && config.abilityIndex != null && !isBetween(config.abilityIndex, 0, 2)) {
+    console.warn("Invalid ability index used for custom daily run seed starter:", config.abilityIndex);
+    config.abilityIndex = undefined;
+  }
+
+  // validate boss passive
+  if ("passive" in config && config.passive != null && !getEnumValues(AbilityId).includes(config.passive)) {
     console.warn("Invalid passive used for custom daily run seed boss:", config.passive);
     config.passive = undefined;
   }
@@ -88,7 +99,7 @@ export function getDailyRunStarter(species: PokemonSpecies, config?: DailySeedSt
   const pokemon = globalScene.addPlayerPokemon(
     species,
     startingLevel,
-    undefined,
+    config?.abilityIndex,
     config?.formIndex,
     undefined,
     isShiny,
