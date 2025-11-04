@@ -2795,7 +2795,6 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
         if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_1) {
           p.formIndex = 0;
-          p.gender = Gender.GENDERLESS;
           p.generateAndPopulateMoveset();
         } else {
           p.formIndex = 1; // Segin Starmobile
@@ -2824,7 +2823,6 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
         if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_1) {
           p.formIndex = 0;
-          p.gender = Gender.GENDERLESS;
           p.generateAndPopulateMoveset();
         } else {
           p.formIndex = 2; // Schedar Starmobile
@@ -2853,7 +2851,6 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
         if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_1) {
           p.formIndex = 0;
-          p.gender = Gender.GENDERLESS;
           p.generateAndPopulateMoveset();
         } else {
           p.formIndex = 3; // Navi Starmobile
@@ -2882,7 +2879,6 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
         if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_1) {
           p.formIndex = 0;
-          p.gender = Gender.GENDERLESS;
           p.generateAndPopulateMoveset();
         } else {
           p.formIndex = 4; // Ruchbah Starmobile
@@ -2911,7 +2907,6 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
         if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_1) {
           p.formIndex = 0;
-          p.gender = Gender.GENDERLESS;
           p.generateAndPopulateMoveset();
         } else {
           p.formIndex = 5; // Caph Starmobile
