@@ -5563,7 +5563,7 @@ export const trainerConfigs: TrainerConfigs = {
       4,
       getRandomPartyMemberFunc([SpeciesId.BUZZWOLE], TrainerSlot.TRAINER, true, p => {
         p.setBoss(true, 2);
-        p.gender = PokeballType.ROGUE_BALL;
+        p.pokeball = PokeballType.ROGUE_BALL;
         p.level = 150; // Made lower level due to not being an ace
         p.generateAndPopulateMoveset();
       }),
