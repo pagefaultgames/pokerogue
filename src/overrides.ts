@@ -61,8 +61,8 @@ class DefaultOverrides {
   // -----------------
   /** a specific seed (default: a random string of 24 characters) */
   readonly SEED_OVERRIDE: string = "";
-  /** a {@linkcode CustomDailyRunConfig} */
-  readonly DAILY_RUN_SEED_OVERRIDE: CustomDailyRunConfig | null = null;
+  /** a {@linkcode CustomDailyRunConfig} or a stringified version of it */
+  readonly DAILY_RUN_SEED_OVERRIDE: CustomDailyRunConfig | string | null = null;
   readonly WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
   /**
    * If `null`, ignore this override.
