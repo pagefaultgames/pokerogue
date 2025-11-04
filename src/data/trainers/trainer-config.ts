@@ -5514,10 +5514,16 @@ export const trainerConfigs: TrainerConfigs = {
     .setVictoryBgm("victory_team_plasma")
     .setPartyMemberFunc(
       0,
-      getRandomPartyMemberFunc([SpeciesId.BUZZWOLE], TrainerSlot.TRAINER, true, p => {
+      getRandomPartyMemberFunc([SpeciesId.GOLISOPOD], TrainerSlot.TRAINER, true, p => {
         p.setBoss(true, 2);
+        p.abilityIndex = 2; // Anticipation
+        p.gender = Gender.MALE;
+        p.level = 153; // Made higher level due to being an ace
         p.generateAndPopulateMoveset();
-        p.pokeball = PokeballType.ROGUE_BALL;
+        if (!p.moveset.some(move => move != null && move.moveId === MoveId.FIRST_IMPRESSION)) {
+          // Check if First Impression is in the moveset, if not, replace the third move with First Impression.
+          p.moveset[2] = new PokemonMove(MoveId.FIRST_IMPRESSION);
+        }
       }),
     )
     .setPartyMemberFunc(
@@ -5540,6 +5546,10 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.TOXAPEX], TrainerSlot.TRAINER, true, p => {
         p.abilityIndex = 2; // Regenerator
         p.generateAndPopulateMoveset();
+        if (!p.moveset.some(move => move != null && move.moveId === MoveId.BANEFUL_BUNKER)) {
+          // Check if Baneful Bunker is in the moveset, if not, replace the fourth move with Baneful Bunker.
+          p.moveset[3] = new PokemonMove(MoveId.BANEFUL_BUNKER);
+        }
       }),
     )
     .setPartyMemberFunc(
@@ -5551,15 +5561,11 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setPartyMemberFunc(
       4,
-      getRandomPartyMemberFunc([SpeciesId.GOLISOPOD], TrainerSlot.TRAINER, true, p => {
+      getRandomPartyMemberFunc([SpeciesId.BUZZWOLE], TrainerSlot.TRAINER, true, p => {
         p.setBoss(true, 2);
-        p.abilityIndex = 2; // Anticipation
-        p.gender = Gender.MALE;
+        p.gender = PokeballType.ROGUE_BALL;
+        p.level = 150; // Made lower level due to not being an ace
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.FIRST_IMPRESSION)) {
-          // Check if First Impression is in the moveset, if not, replace the third move with First Impression.
-          p.moveset[2] = new PokemonMove(MoveId.FIRST_IMPRESSION);
-        }
       }),
     )
     .setPartyMemberFunc(
