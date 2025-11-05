@@ -1532,6 +1532,11 @@ export class SuppressAbilitiesTag extends SerializableArenaTag {
       const setter = globalScene
         .getField(true)
         .filter(p => p.hasAbilityWithAttr("PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr", false))[0];
+      // Setter may not exist if both NG Pokemon faint simultaneously
+      if (setter == null) {
+        return;
+      }
+
       applyOnGainAbAttrs({
         pokemon: setter,
         passive: setter.getAbility().hasAttr("PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr"),
