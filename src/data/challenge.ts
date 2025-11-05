@@ -933,7 +933,7 @@ export class FreshStartChallenge extends Challenge {
   }
 
   applyStarterModify(pokemon: Pokemon): boolean {
-    pokemon.abilityIndex = pokemon.abilityIndex % 2; // Always base ability, if you set it to hidden it wraps to first ability
+    pokemon.abilityIndex %= 2; // Always base ability, if you set it to hidden it wraps to first ability
     pokemon.passive = false; // Passive isn't unlocked
     let validMoves = pokemon.species
       .getLevelMoves()

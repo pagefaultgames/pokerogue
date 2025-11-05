@@ -171,7 +171,7 @@ export class BattleMessageUiHandler extends MessageUiHandler {
   showText(
     text: string,
     delay?: number | null,
-    callback?: Function | null,
+    callback?: (() => void) | null,
     callbackDelay?: number | null,
     prompt?: boolean | null,
     promptDelay?: number | null,
@@ -184,7 +184,7 @@ export class BattleMessageUiHandler extends MessageUiHandler {
     text: string,
     name?: string,
     delay?: number | null,
-    callback?: Function,
+    callback?: () => void,
     callbackDelay?: number,
     prompt?: boolean,
     promptDelay?: number,
