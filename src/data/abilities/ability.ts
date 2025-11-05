@@ -1838,6 +1838,8 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
 export interface AddSecondStrikeAbAttrParams extends Omit<AugmentMoveInteractionAbAttrParams, "opponent"> {
   /** Holder for the number of hits. Modified by ability application */
   hitCount: NumberHolder;
+  /** The Pokemon on the other side of this interaction */
+  opponent: Pokemon | undefined;
 }
 
 /**
@@ -1845,8 +1847,8 @@ export interface AddSecondStrikeAbAttrParams extends Omit<AugmentMoveInteraction
  * Used by {@linkcode MoveId.PARENTAL_BOND | Parental Bond}.
  */
 export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
-  override canApply({ pokemon, move }: AddSecondStrikeAbAttrParams): boolean {
-    return move.canBeMultiStrikeEnhanced(pokemon, true);
+  override canApply({ pokemon, opponent, move }: AddSecondStrikeAbAttrParams): boolean {
+    return move.canBeMultiStrikeEnhanced(pokemon, true, opponent);
   }
 
   override apply({ hitCount }: AddSecondStrikeAbAttrParams): void {
@@ -7615,11 +7617,11 @@ export function initAbilities() {
     new AbBuilder(AbilityId.PARENTAL_BOND, 6)
       .attr(AddSecondStrikeAbAttr)
       // Only multiply damage on the last strike of multi-strike moves
-      .attr(MoveDamageBoostAbAttr, 0.25, (user, _target, move) => (
+      .attr(MoveDamageBoostAbAttr, 0.25, (user, target, move) => (
           !!user
           && user.turnData.hitCount > 1 // move was originally multi hit
           && user.turnData.hitsLeft === 1 // move is on its final strike
-          && move.canBeMultiStrikeEnhanced(user, true)
+          && move.canBeMultiStrikeEnhanced(user, true, target)
         )
       )
       .build(),

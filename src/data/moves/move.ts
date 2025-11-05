@@ -100,7 +100,6 @@ import i18next from "i18next";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { canSpeciesTera, willTerastallize } from "#utils/pokemon-utils";
-import type { ReadonlyGenericUint8Array } from "#types/typed-arrays";
 import { MovePriorityInBracket } from "#enums/move-priority-in-bracket";
 
 /**
@@ -1124,7 +1123,7 @@ export abstract class Move implements Localizable {
    * @param restrictSpread - Whether the enhancing effect should ignore multi-target moves; default `false`
    * @returns Whether this Move can be given additional strikes.
    */
-  public canBeMultiStrikeEnhanced(user: Pokemon, restrictSpread: boolean = false): boolean {
+  public canBeMultiStrikeEnhanced(user: Pokemon, restrictSpread: boolean = false, target?: Pokemon | null): boolean {
     // Multi-strike enhancers...
 
     // ...cannot enhance charging or 2-turn moves
@@ -1139,8 +1138,11 @@ export abstract class Move implements Localizable {
     };
 
     // ...cannot enhance status moves, including ally-targeting Pollen Puff
-    const target = globalScene.getField()[targets[0]];
-    if (user.getMoveCategory(target, this) === MoveCategory.STATUS) {
+    if (target != null) {
+      if (user.getMoveCategory(target, this) === MoveCategory.STATUS) {
+        return false;
+      }
+    } else if (this.category === MoveCategory.STATUS) {
       return false;
     }
 
