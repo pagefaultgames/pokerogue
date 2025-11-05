@@ -1123,6 +1123,7 @@ export abstract class Move implements Localizable {
    * @param restrictSpread - Whether the enhancing effect should ignore multi-target moves; default `false`
    * @returns Whether this Move can be given additional strikes.
    */
+  // TODO: Remove target parameter used solely to circumvent Pollen Puff shenanigans - the entire move needs to be fixed anyhow
   public canBeMultiStrikeEnhanced(user: Pokemon, restrictSpread: boolean = false, target?: Pokemon | null): boolean {
     // Multi-strike enhancers...
 
@@ -1138,11 +1139,9 @@ export abstract class Move implements Localizable {
     };
 
     // ...cannot enhance status moves, including ally-targeting Pollen Puff
-    if (target != null) {
-      if (user.getMoveCategory(target, this) === MoveCategory.STATUS) {
-        return false;
-      }
-    } else if (this.category === MoveCategory.STATUS) {
+    if (
+        this.category === MoveCategory.STATUS 
+        || (target != null && user.getMoveCategory(target, this) === MoveCategory.STATUS)) {
       return false;
     }
 
