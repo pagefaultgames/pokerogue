@@ -205,7 +205,7 @@ export class MovePhase extends PokemonPhase {
       user.cureStatus(
         StatusEffect.FREEZE,
         i18next.t("statusEffect:freeze.healByMove", {
-          pokemonName: getPokemonNameWithAffix(user),
+          pokemonNameWithAffix: getPokemonNameWithAffix(user),
           moveName: this.move.getMove().name,
         }),
       );
