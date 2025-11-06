@@ -1441,7 +1441,7 @@ export class BattleScene extends SceneBase {
     // Check for mystery encounter
     // Can only occur in place of a standard (non-boss) wild battle, waves 10-180
     // NB: battle type checks are offloaded to `isWaveMysteryEncounter`
-    if (Overrides.BATTLE_TYPE_OVERRIDE != null && this.isWaveMysteryEncounter(resolved.battleType, waveIndex)) {
+    if (this.isWaveMysteryEncounter(resolved.battleType, waveIndex)) {
       resolved.battleType = BattleType.MYSTERY_ENCOUNTER;
       // Reset to base spawn weight
       this.mysteryEncounterSaveData.encounterSpawnChance = BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
