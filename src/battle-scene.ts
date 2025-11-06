@@ -1500,7 +1500,7 @@ export class BattleScene extends SceneBase {
     // Disallow using double battle overrides on trainer waves (need `RANDOM_TRAINER_OVERRIDE` instead)
     // TODO: Rework logic later on to make sense - if wave 1 doubles cause crashes then why do we check it before everything else
     const overriddenDouble = this.doCheckDoubleOverride(waveIndex);
-    if (overriddenDouble === true || (trainer != null && overriddenDouble === false)) {
+    if (overriddenDouble === true || (battleType !== BattleType.TRAINER && overriddenDouble === false)) {
       return overriddenDouble;
     }
 
@@ -1544,6 +1544,9 @@ export class BattleScene extends SceneBase {
         return waveIndex % 2 === 0;
       case "odd-doubles":
         return waveIndex % 2 === 1;
+      default:
+        Overrides.BATTLE_STYLE_OVERRIDE satisfies null;
+        return;
     }
   }
 
