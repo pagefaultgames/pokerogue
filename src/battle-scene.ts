@@ -1304,7 +1304,6 @@ export class BattleScene extends SceneBase {
 
     // TODO: Address this during an RNG overhaul
     this.resetSeed(waveIndex);
-    console.log("INITIAL:", resolved);
 
     // Set attributes of the `resolved` object based on the type of battle being created.
     if (this.gameMode.isFixedBattle(waveIndex)) {
@@ -1314,7 +1313,6 @@ export class BattleScene extends SceneBase {
     } else {
       this.handleNonFixedBattle(resolved);
     }
-    console.log("BEFORE DOUBLE:", resolved);
 
     if (resolved.battleType == null) {
       throw new Error("Whoopsie! I guess my type checks were wrong");
@@ -1335,8 +1333,6 @@ export class BattleScene extends SceneBase {
         p.lapseTag(BattlerTagType.COMMANDED);
       }
     }
-
-    console.log("AFTER DOUBLE:", resolved);
 
     // NB: Type assertion is fine as resolved should always be populated at this point
     this.executeWithSeedOffset(
@@ -1497,10 +1493,17 @@ export class BattleScene extends SceneBase {
 
   /**
    * Sub-method of `newBattle` that returns whether the new battle is a double battle.
-   * @param __namedParameters - filler text for typedoc to shut up
+   * @param __namedParameters - Needed for typedoc to function
    * @returns Whether the battle should be a double battle.
    */
   private checkIsDouble({ double, battleType, waveIndex, trainer }: NewBattleConstructedProps): boolean {
+    // Disallow using double battle overrides on trainer waves (need `RANDOM_TRAINER_OVERRIDE` instead)
+    // TODO: Rework logic later on to make sense - if wave 1 doubles cause crashes then why do we check it before everything else
+    const overriddenDouble = this.doCheckDoubleOverride(waveIndex);
+    if (overriddenDouble === true || (trainer != null && overriddenDouble === false)) {
+      return overriddenDouble;
+    }
+
     // Edge cases
     if (
       // Wave 1 doubles cause crashes
@@ -1515,12 +1518,6 @@ export class BattleScene extends SceneBase {
 
     if (double != null) {
       return double;
-    }
-
-    // Disallow using double battle overrides on trainer waves (need `RANDOM_TRAINER_OVERRIDE` instead)
-    const overriddenDouble = this.doCheckDoubleOverride(waveIndex);
-    if (trainer != null && overriddenDouble != null) {
-      return overriddenDouble;
     }
 
     // Standard wild battle chance
