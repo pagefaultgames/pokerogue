@@ -50,6 +50,11 @@ async function main() {
     return process.exit(0);
   }
 
+  if (process.argv.includes("--edit") || process.argv.includes("-e")) {
+    const config = await promptEdit();
+    Object.assign(customSeedConfig, config);
+  }
+
   console.group(chalk.grey(`🌱 Daily Seed Generator - v${SCRIPT_VERSION}\n`));
 
   try {

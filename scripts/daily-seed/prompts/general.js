@@ -87,12 +87,18 @@ export async function promptEdit() {
             JSON.parse(value);
             return true;
           } catch {
+            if (value.trim() === "") {
+              return true;
+            }
             return "Invalid JSON";
           }
         },
       },
     ])
     .then(answer => {
+      if (answer.config.trim() === "") {
+        return {};
+      }
       return JSON.parse(answer.config);
     });
 }
