@@ -31,7 +31,7 @@ export interface CustomDailyRunConfig {
   boss?: DailySeedBoss;
   biome?: BiomeId;
   luck?: number;
-  money?: number;
+  startingMoney?: number;
   /** Used to vary the seed while keeping the same config */
   seedVariation?: string;
 }

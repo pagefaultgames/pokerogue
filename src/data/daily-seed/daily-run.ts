@@ -247,7 +247,7 @@ export function getDailyStartingMoney(seed: string): number | null {
     return null;
   }
 
-  const startingMoney = parseDailySeed(seed)?.money;
+  const startingMoney = parseDailySeed(seed)?.startingMoney;
 
   if (startingMoney == null) {
     return null;
