@@ -65,7 +65,7 @@ describe("Abilities - Volt Absorb", () => {
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.THUNDERBOLT);
-    enemyPokemon.hp = enemyPokemon.hp - 1;
+    enemyPokemon.hp -= 1;
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
@@ -86,7 +86,7 @@ describe("Abilities - Volt Absorb", () => {
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.THUNDERBOLT);
-    enemyPokemon.hp = enemyPokemon.hp - 1;
+    enemyPokemon.hp -= 1;
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("BerryPhase", false);
