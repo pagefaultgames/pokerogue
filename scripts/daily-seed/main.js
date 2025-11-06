@@ -121,8 +121,8 @@ async function handleAnswer(answer) {
 }
 
 function finish() {
-  console.log("🌱 Your custom seed config is:");
-  console.log(`${JSON.stringify(customSeedConfig)}`);
+  console.log(chalk.cyan("\n🌱 Your custom seed config is:"));
+  console.log(chalk.green(`${JSON.stringify(customSeedConfig)}`));
   process.exit(0);
 }
 
