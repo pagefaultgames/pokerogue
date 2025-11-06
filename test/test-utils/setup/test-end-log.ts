@@ -7,7 +7,7 @@
 
 // biome-ignore lint/correctness/noUnusedImports: TSDoc
 import type CustomDefaultReporter from "#test/test-utils/reporters/custom-default-reporter";
-import { basename, join, relative } from "path";
+import { join, relative } from "path";
 import chalk from "chalk";
 import type { RunnerTask, RunnerTaskResult, RunnerTestCase } from "vitest";
 
