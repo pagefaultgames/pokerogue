@@ -25,6 +25,7 @@ export async function promptSpeciesId() {
         name: "speciesId",
         message: "speciesId:\n",
         min: 1,
+        max: Math.max(...SPECIES_IDS),
         validate: input => {
           if (!input || !SPECIES_IDS.includes(input)) {
             return "Invalid speciesId";
@@ -116,11 +117,10 @@ export async function promptMoveset() {
           type: "number",
           name: "move",
           message: "Add a move to the moveset: (press ENTER to finish)\n",
-          min: 0,
+          min: 1,
           max: MAX_MOVE_ID,
         },
       ])
-
       .then(async answer => {
         if (!answer.move) {
           return;
@@ -149,7 +149,7 @@ export async function promptAbility(passive = false) {
         type: "number",
         name: "ability",
         message: `${passive ? "passive" : "ability"} of the boss:\n`,
-        min: 0,
+        min: 1,
         max: MAX_ABILITY_ID,
       },
     ])
