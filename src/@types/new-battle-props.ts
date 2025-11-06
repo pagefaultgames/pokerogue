@@ -13,6 +13,8 @@ import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { Trainer } from "#field/trainer";
 import type { TrainerData } from "#system/trainer-data";
 
+type MakeRequired<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>;
+
 /** Interface representing the base type of a new battle config, used for DRY. */
 interface NewBattleBaseProps {
   /** The type of battle to create. */
@@ -51,28 +53,27 @@ interface NewBattleBaseProps {
  * when converting session data into a new battle.
  * @interface
  */
-export type NewBattleProps = Omit<NewBattleBaseProps, "trainer">;
+export interface NewBattleProps extends Omit<NewBattleBaseProps, "trainer"> {}
 
 /**
- * Interface representing the type of a new battle.
+ * Interface representing the type of a new battle config as it is constructed.
  *
  * @interface
  * @privateRemarks
  * The reason all "missing" properties are marked as `Partial` rather than simply being `undefined`
  * is to allow assignment during function calls.
  */
-export type NewBattleInitialProps = Partial<NewBattleResolvedProps> & Pick<NewBattleResolvedProps, "waveIndex">;
+export interface NewBattleInitialProps extends MakeRequired<Partial<NewBattleResolvedProps>, "waveIndex"> {}
 
 /**
  * Interface representing the type of a partially resolved new battle config, used when passing stuff around during double battle generation.
  * Only contains properties known to be present after all 3 sub-methods finish execution.
  * @interface
  */
-export type NewBattleConstructedProps = Partial<NewBattleResolvedProps> &
-  Pick<NewBattleResolvedProps, "waveIndex" | "battleType">;
+export type NewBattleConstructedProps = MakeRequired<NewBattleInitialProps, "battleType">;
 
 /**
  * Interface representing the fully resolved type of a new battle config, used to create a new Battle instance.
  * @interface
  */
-export type NewBattleResolvedProps = Omit<NewBattleBaseProps, "trainerConfig" | "trainerData">;
+export type NewBattleResolvedProps = Omit<NewBattleBaseProps, "trainerData">;

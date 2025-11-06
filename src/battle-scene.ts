@@ -1319,7 +1319,7 @@ export class BattleScene extends SceneBase {
     }
     resolved.double = this.checkIsDouble(resolved as NewBattleConstructedProps);
 
-    const lastBattle: Battle | undefined = this.currentBattle;
+    const lastBattle: Battle | null = this.currentBattle;
     const maxExpLevel = this.getMaxExpLevel();
 
     this.lastEnemyTrainer = lastBattle?.trainer ?? null;
@@ -1370,7 +1370,7 @@ export class BattleScene extends SceneBase {
     const battleType = fromSession.battleType;
     const mysteryEncounterType = fromSession.mysteryEncounterType !== -1 ? fromSession.mysteryEncounterType : undefined;
 
-    const waveIndex = fromSession.waveIndex + 1;
+    const waveIndex = fromSession.waveIndex;
     const trainerData = fromSession.trainer;
     let fixedDouble: boolean;
     switch (battleType) {
@@ -1421,6 +1421,9 @@ export class BattleScene extends SceneBase {
     resolved.battleType = props.battleType;
     resolved.double = props.double;
     resolved.trainer = props.trainerData?.toTrainer();
+    if (resolved.trainer) {
+      this.field.add(resolved.trainer);
+    }
   }
 
   /**
@@ -1437,6 +1440,7 @@ export class BattleScene extends SceneBase {
 
     // Check for mystery encounter
     // Can only occur in place of a standard (non-boss) wild battle, waves 10-180
+    // NB: battle type checks are offloaded to `isWaveMysteryEncounter`
     if (Overrides.BATTLE_TYPE_OVERRIDE != null && this.isWaveMysteryEncounter(resolved.battleType, waveIndex)) {
       resolved.battleType = BattleType.MYSTERY_ENCOUNTER;
       // Reset to base spawn weight
