@@ -6,7 +6,7 @@
  */
 
 import inquirer from "inquirer";
-import { SPECIES_IDS } from "../constants.js";
+import { NATURES, SPECIES_IDS } from "../constants.js";
 
 /**
  * @typedef {0 | 1 | 2} Variant
@@ -89,15 +89,15 @@ export async function promptNature() {
   return await inquirer
     .prompt([
       {
-        type: "number",
+        type: "list",
         name: "nature",
         message: "nature:\n",
-        min: 0,
-        max: 24,
+        choices: [...Object.keys(NATURES)],
+        pageSize: 10,
       },
     ])
     .then(answer => {
-      return answer.nature;
+      return NATURES[/** @type {keyof typeof NATURES} */ (answer.nature)];
     });
 }
 
