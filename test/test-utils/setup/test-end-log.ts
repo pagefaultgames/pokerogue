@@ -1,7 +1,7 @@
 /**
  * Code to add markers to the beginning and end of tests.
  * Intended for use with {@linkcode CustomDefaultReporter}, and placed inside test hooks
- * (rather than as part of the reporter) to ensure Vitest waits for the log messages to be printed.
+ * (rather than as part of the reporter) to ensure Vitest waits for the log messages to be printed before beginning subsequent cases.
  * @module
  */
 
@@ -18,7 +18,12 @@ const TEST_END_BARRIER = chalk.bold.hex("#ff7c7cff")("==================");
 const TEST_NAME_COLOR = "#008886ff" as const;
 const VITEST_PINK_COLOR = "#c162de" as const;
 
-const testRoot = join(import.meta.dirname, "..", "..", "..");
+/** 
+ * The root directory of the `test` folder. 
+ * @privateRemarks
+ * Will have to be altered if this file is moved!
+ */
+const testRoot = join(import.meta.dirname, "..", "..");
 
 /**
  * Log the testfile name and path upon a case starting. \
@@ -56,7 +61,7 @@ export function logTestEnd(task: RunnerTestCase): void {
  * @returns The relative path with `test/` appended to it.
  */
 function getPathFromTest(abs: string): string {
-  return join(basename(testRoot), relative(testRoot, abs));
+  return relative(testRoot, abs);
 }
 
 function getResultStr(result: RunnerTaskResult | undefined): string {
