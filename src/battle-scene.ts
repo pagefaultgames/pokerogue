@@ -1441,7 +1441,8 @@ export class BattleScene extends SceneBase {
     // Check for mystery encounter
     // Can only occur in place of a standard (non-boss) wild battle, waves 10-180
     // NB: battle type checks are offloaded to `isWaveMysteryEncounter`
-    if (this.isWaveMysteryEncounter(resolved.battleType, waveIndex)) {
+    // TODO: This means MEs can generate when the override is set to `BattleType.WILD`
+    if (!Overrides.BATTLE_TYPE_OVERRIDE && this.isWaveMysteryEncounter(resolved.battleType, waveIndex)) {
       resolved.battleType = BattleType.MYSTERY_ENCOUNTER;
       // Reset to base spawn weight
       this.mysteryEncounterSaveData.encounterSpawnChance = BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
@@ -3596,24 +3597,6 @@ export class BattleScene extends SceneBase {
   }
 
   /**
-   * Returns if a wave COULD spawn a {@linkcode MysteryEncounter}.
-   * @param battleType - The {@linkcode BattleType} of the newly created battle
-   * @param waveIndex - The wave number of the newly spawned wave
-   * @returns Whether an ME could legally spawn on the given wave.
-   * @see {@linkcode BattleScene.isWaveMysteryEncounter} - Function that rolls for ME creation on new wave start
-   */
-  isMysteryEncounterValidForWave(battleType: BattleType, waveIndex: number): boolean {
-    const [lowestMysteryEncounterWave, highestMysteryEncounterWave] = this.gameMode.getMysteryEncounterLegalWaves();
-    return (
-      this.gameMode.hasMysteryEncounters
-      && battleType === BattleType.WILD
-      && !this.gameMode.isBoss(waveIndex)
-      && waveIndex % 10 !== 1
-      && isBetween(waveIndex, lowestMysteryEncounterWave, highestMysteryEncounterWave, true)
-    );
-  }
-
-  /**
    * Determine whether a wave should randomly generate a {@linkcode MysteryEncounter}.
    * Currently, the only modes that MEs are allowed in are Classic and Challenge.
    * Additionally, MEs cannot spawn outside of waves 10-180 in those modes
@@ -3659,6 +3642,24 @@ export class BattleScene extends SceneBase {
       roll = randSeedInt(MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT);
     }, waveIndex * 3000);
     return roll < successRate;
+  }
+
+  /**
+   * Returns if a wave COULD spawn a {@linkcode MysteryEncounter}.
+   * @param battleType - The {@linkcode BattleType} of the newly created battle
+   * @param waveIndex - The wave number of the newly spawned wave
+   * @returns Whether an ME can legally spawn on the given wave.
+   * @see {@linkcode BattleScene.isWaveMysteryEncounter} - Function that rolls for ME creation on new wave start
+   */
+  isMysteryEncounterValidForWave(battleType: BattleType, waveIndex: number): boolean {
+    const [lowestMysteryEncounterWave, highestMysteryEncounterWave] = this.gameMode.getMysteryEncounterLegalWaves();
+    return (
+      this.gameMode.hasMysteryEncounters
+      && battleType === BattleType.WILD
+      && !this.gameMode.isBoss(waveIndex)
+      && waveIndex % 10 !== 1
+      && isBetween(waveIndex, lowestMysteryEncounterWave, highestMysteryEncounterWave, true)
+    );
   }
 
   /**
