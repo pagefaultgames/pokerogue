@@ -19,11 +19,11 @@ const TEST_NAME_COLOR = "#008886ff" as const;
 const VITEST_PINK_COLOR = "#c162de" as const;
 
 /** 
- * The root directory of the `test` folder. 
+ * The root directory of the project, used when constructing relative paths.
  * @privateRemarks
  * Will have to be altered if this file is moved!
  */
-const testRoot = join(import.meta.dirname, "..", "..");
+const rootDir = join(import.meta.dirname, "..", "..", "..");
 
 /**
  * Log the testfile name and path upon a case starting. \
@@ -51,17 +51,18 @@ export function logTestEnd(task: RunnerTestCase): void {
     Name: ${chalk.hex(TEST_NAME_COLOR)(getTestName(task))}
     Result: ${resultStr}${durationStr}
     File: ${chalk.hex("#d29b0eff")(
-      getPathFromTest(task.file.filepath) + (task.location ? `:${task.location.line}:${task.location.column}` : ""),
+      // Formatting used to allow for IDE Ctrl+click shortcuts
+      getRelativePath(task.file.filepath) + (task.location ? `:${task.location.line}:${task.location.column}` : ""),
     )}`);
 }
 
 /**
- * Get the path of the current test file relative to the `test` directory.
+ * Get the path of the current test file relative to the project root.
  * @param abs - The absolute path to the file
- * @returns The relative path with `test/` appended to it.
+ * @returns The path relative to the project root folder.
  */
-function getPathFromTest(abs: string): string {
-  return relative(testRoot, abs);
+function getRelativePath(abs: string): string {
+  return relative(rootDir, abs);
 }
 
 function getResultStr(result: RunnerTaskResult | undefined): string {
