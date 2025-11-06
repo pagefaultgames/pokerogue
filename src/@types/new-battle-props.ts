@@ -64,7 +64,7 @@ export type NewBattleProps = Omit<NewBattleBaseProps, "trainer">;
 export type NewBattleInitialProps = Partial<NewBattleResolvedProps> & Pick<NewBattleResolvedProps, "waveIndex">;
 
 /**
- * Interface representing the type of a partially resolved new battle config, used when passing stuff around midway through.
+ * Interface representing the type of a partially resolved new battle config, used when passing stuff around during double battle generation.
  * Only contains properties known to be present after all 3 sub-methods finish execution.
  * @interface
  */

@@ -204,92 +204,95 @@ export class TitlePhase extends Phase {
       globalScene.phaseManager.clearPhaseQueue();
       globalScene.sessionSlotId = slotId;
 
-      let seed = "";
-      // If Online, calls seed fetch from db to generate daily run. If Offline, generates a daily run based on current date.
-      // TODO: Make local runs use an algorithm consistent with the server's generation algorithm
-      if (!bypassLogin || isLocalServerConnected) {
-        try {
-          seed = (await fetchDailyRunSeed()) ?? "";
-          if (!seed) {
-            throw new Error("Daily run seed is null!");
-          }
-        } catch (err) {
-          // TODO: Find a better fallback for bad daily run loads
-          console.error("Failed to load daily run:\n", err);
+      const generateDaily = (seed: string) => {
+        globalScene.gameMode = getGameMode(GameModes.DAILY);
+        // Daily runs don't support all challenges yet (starter select restrictions aren't considered)
+        globalScene.eventManager.startEventChallenges();
+
+        globalScene.setSeed(seed);
+        globalScene.resetSeed();
+
+        globalScene.money = globalScene.gameMode.getStartingMoney();
+
+        const starters = getDailyRunStarters(seed);
+        const startingLevel = globalScene.gameMode.getStartingLevel();
+
+        const party = globalScene.getPlayerParty();
+        const loadPokemonAssets: Promise<void>[] = [];
+        for (const starter of starters) {
+          const species = getPokemonSpecies(starter.speciesId);
+          const starterFormIndex = starter.formIndex;
+          const starterGender =
+            species.malePercent !== null ? (starter.female ? Gender.FEMALE : Gender.MALE) : Gender.GENDERLESS;
+          const starterPokemon = globalScene.addPlayerPokemon(
+            species,
+            startingLevel,
+            starter.abilityIndex,
+            starterFormIndex,
+            starterGender,
+            starter.shiny,
+            starter.variant,
+            starter.ivs,
+            starter.nature,
+          );
+          starterPokemon.setVisible(false);
+          party.push(starterPokemon);
+          loadPokemonAssets.push(starterPokemon.loadAssets());
         }
+
+        regenerateModifierPoolThresholds(party, ModifierPoolType.DAILY_STARTER);
+
+        const modifiers: Modifier[] = new Array(3)
+          .fill(null)
+          .map(() => modifierTypes.EXP_SHARE().withIdFromFunc(modifierTypes.EXP_SHARE).newModifier())
+          .concat(
+            new Array(3)
+              .fill(null)
+              .map(() => modifierTypes.GOLDEN_EXP_CHARM().withIdFromFunc(modifierTypes.GOLDEN_EXP_CHARM).newModifier()),
+          )
+          .concat([modifierTypes.MAP().withIdFromFunc(modifierTypes.MAP).newModifier()])
+          .concat(getDailyRunStarterModifiers(party))
+          .filter(m => m !== null);
+
+        for (const m of modifiers) {
+          globalScene.addModifier(m, true, false, false, true);
+        }
+        globalScene.updateModifiers(true, true);
+
+        Promise.all(loadPokemonAssets).then(() => {
+          globalScene.time.delayedCall(500, () => globalScene.playBgm());
+          globalScene.gameData.gameStats.dailyRunSessionsPlayed++;
+          globalScene.newArena(globalScene.gameMode.getStartingBiome());
+          globalScene.newBattle();
+          globalScene.arena.init();
+          globalScene.sessionPlayTime = 0;
+          globalScene.lastSavePlayTime = 0;
+          this.end();
+        });
+      };
+
+      // If Online, calls seed fetch from db to generate daily run. If Offline, generates a daily run based on current date.
+      if (!bypassLogin || isLocalServerConnected) {
+        fetchDailyRunSeed()
+          .then(seed => {
+            if (seed) {
+              generateDaily(seed);
+            } else {
+              throw new Error("Daily run seed is null!");
+            }
+          })
+          .catch(err => {
+            console.error("Failed to load daily run:\n", err);
+          });
       } else {
         // Grab first 10 chars of ISO date format (YYYY-MM-DD) and convert to base64
-        // TODO: Remove deprecated btoa
-        seed = Overrides.DAILY_RUN_SEED_OVERRIDE ?? btoa(new Date().toISOString().substring(0, 10));
+        let seed: string = btoa(new Date().toISOString().substring(0, 10));
+        if (Overrides.DAILY_RUN_SEED_OVERRIDE != null) {
+          seed = Overrides.DAILY_RUN_SEED_OVERRIDE;
+        }
+        generateDaily(seed);
       }
-      await this.generateDaily(seed);
     });
-  }
-
-  private async generateDaily(seed: string): Promise<void> {
-    globalScene.gameMode = getGameMode(GameModes.DAILY);
-    // Daily runs don't support all challenges yet (starter select restrictions aren't considered)
-    globalScene.eventManager.startEventChallenges();
-
-    globalScene.setSeed(seed);
-    globalScene.resetSeed();
-
-    globalScene.money = globalScene.gameMode.getStartingMoney();
-
-    const starters = getDailyRunStarters(seed);
-    const startingLevel = globalScene.gameMode.getStartingLevel();
-
-    const party = globalScene.getPlayerParty();
-    const loadPokemonAssets: Promise<void>[] = [];
-    for (const starter of starters) {
-      const species = getPokemonSpecies(starter.speciesId);
-      const starterFormIndex = starter.formIndex;
-      const starterGender =
-        species.malePercent !== null ? (starter.female ? Gender.FEMALE : Gender.MALE) : Gender.GENDERLESS;
-      const starterPokemon = globalScene.addPlayerPokemon(
-        species,
-        startingLevel,
-        starter.abilityIndex,
-        starterFormIndex,
-        starterGender,
-        starter.shiny,
-        starter.variant,
-        starter.ivs,
-        starter.nature,
-      );
-      starterPokemon.setVisible(false);
-      party.push(starterPokemon);
-      loadPokemonAssets.push(starterPokemon.loadAssets());
-    }
-
-    regenerateModifierPoolThresholds(party, ModifierPoolType.DAILY_STARTER);
-
-    const modifiers: Modifier[] = new Array(3)
-      .fill(null)
-      .map(() => modifierTypes.EXP_SHARE().withIdFromFunc(modifierTypes.EXP_SHARE).newModifier())
-      .concat(
-        new Array(3)
-          .fill(null)
-          .map(() => modifierTypes.GOLDEN_EXP_CHARM().withIdFromFunc(modifierTypes.GOLDEN_EXP_CHARM).newModifier()),
-      )
-      .concat([modifierTypes.MAP().withIdFromFunc(modifierTypes.MAP).newModifier()])
-      .concat(getDailyRunStarterModifiers(party))
-      .filter(m => m !== null);
-
-    for (const m of modifiers) {
-      globalScene.addModifier(m, true, false, false, true);
-    }
-    globalScene.updateModifiers(true, true);
-
-    await Promise.all(loadPokemonAssets);
-    globalScene.time.delayedCall(500, () => globalScene.playBgm());
-    globalScene.gameData.gameStats.dailyRunSessionsPlayed++;
-    globalScene.newArena(globalScene.gameMode.getStartingBiome());
-    globalScene.newBattle();
-    globalScene.arena.init();
-    globalScene.sessionPlayTime = 0;
-    globalScene.lastSavePlayTime = 0;
-    this.end();
   }
 
   end(): void {

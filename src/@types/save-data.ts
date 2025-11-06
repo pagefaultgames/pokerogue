@@ -51,12 +51,14 @@ export interface SessionSaveData {
   score: number;
   waveIndex: number;
   battleType: BattleType;
+  // TODO: This being nullable NEEDS to be reflected in the type signature
   trainer: TrainerData;
   gameVersion: string;
   /** The player-chosen name of the run */
   name: string;
   timestamp: number;
   challenges: ChallengeData[];
+  // TODO: Change default value to `undefined` to both save space and ease nullishness checks
   mysteryEncounterType: MysteryEncounterType | -1; // Only defined when current wave is ME,
   mysteryEncounterSaveData: MysteryEncounterSaveData;
   /**

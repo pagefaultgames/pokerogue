@@ -58,7 +58,7 @@ export class Battle {
   public waveIndex: number;
   public battleType: BattleType;
   public battleSpec: BattleSpec;
-  public trainer: Trainer | undefined;
+  public trainer: Trainer | null;
   public enemyLevels: number[] | undefined;
   public enemyParty: EnemyPokemon[] = [];
   public seenEnemyPartyMemberIds: Set<number> = new Set<number>();
@@ -108,15 +108,18 @@ export class Battle {
     this.gameMode = gameMode;
     this.waveIndex = waveIndex;
     this.battleType = battleType;
-    this.trainer = trainer;
+    this.trainer = trainer ?? null;
     this.mysteryEncounterType = mysteryEncounterType;
     this.double = double;
 
     this.initBattleSpec();
     this.enemyLevels =
-      battleType !== BattleType.TRAINER
-        ? new Array(double ? 2 : 1).fill(null).map(() => this.getLevelForWave())
-        : trainer?.getPartyLevels(this.waveIndex);
+      battleType === BattleType.TRAINER
+        ? trainer?.getPartyLevels(this.waveIndex)
+        : // TODO: Remove array.fill.map
+          new Array(double ? 2 : 1)
+            .fill(null)
+            .map(() => this.getLevelForWave());
   }
 
   private initBattleSpec(): void {
