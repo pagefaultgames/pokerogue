@@ -319,7 +319,11 @@ export class MistTag extends SerializableArenaTag {
     cancelled.value = true;
 
     if (!simulated) {
-      globalScene.phaseManager.queueMessage(i18next.t("arenaTag:mistApply"));
+      globalScene.phaseManager.queueMessage(
+        i18next.t("arenaTag:mistApply", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(this.getSourcePokemon()),
+        }),
+      );
     }
 
     return true;
