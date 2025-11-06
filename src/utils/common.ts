@@ -478,7 +478,7 @@ export function getLocalizedSpriteKey(baseKey: string) {
  * @param min - The minimum value
  * @param max - The maximum value
  * @param exclusive - Whether to exclusively check boundedness; default `false` (inclusive)
- * @returns Whether `num` is no less than `min` and no greater than `max`
+ * @returns Whether `num` is no less than `min` and no greater than `max`.
  */
 export function isBetween(num: number, min: number, max: number, exclusive = false): boolean {
   if (exclusive) {
