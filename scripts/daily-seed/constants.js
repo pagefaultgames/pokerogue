@@ -15,6 +15,9 @@ const SPECIAL_SPECIES_IDS = [
 
 export const SPECIES_IDS = [...Array.from({ length: MAX_SPECIES_ID }, (_, i) => i + 1), ...SPECIAL_SPECIES_IDS];
 
+export const MAX_MOVE_ID = 919;
+export const MAX_ABILITY_ID = 310;
+
 export const BIOMES = {
   TOWN: 0,
   PLAINS: 1,

@@ -6,7 +6,7 @@
  */
 
 import inquirer from "inquirer";
-import { NATURES, SPECIES_IDS } from "../constants.js";
+import { MAX_ABILITY_ID, MAX_MOVE_ID, NATURES, SPECIES_IDS } from "../constants.js";
 
 /**
  * @typedef {0 | 1 | 2} Variant
@@ -117,8 +117,7 @@ export async function promptMoveset() {
           name: "move",
           message: "Add a move to the moveset: (press ENTER to finish)\n",
           min: 0,
-          // todo: move these to a constants file
-          max: 919,
+          max: MAX_MOVE_ID,
         },
       ])
 
@@ -151,7 +150,7 @@ export async function promptAbility(passive = false) {
         name: "ability",
         message: `${passive ? "passive" : "ability"} of the boss:\n`,
         min: 0,
-        max: 310,
+        max: MAX_ABILITY_ID,
       },
     ])
     .then(answer => {
