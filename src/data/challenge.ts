@@ -503,6 +503,7 @@ export class SingleGenerationChallenge extends Challenge {
       ClassicFixedBossWaves.EVIL_GRUNT_4,
       ClassicFixedBossWaves.EVIL_ADMIN_2,
       ClassicFixedBossWaves.EVIL_BOSS_1,
+      ClassicFixedBossWaves.EVIL_ADMIN_3,
       ClassicFixedBossWaves.EVIL_BOSS_2,
     ];
     const evilTeamGrunts = [
@@ -516,16 +517,44 @@ export class SingleGenerationChallenge extends Challenge {
       [TrainerType.MACRO_GRUNT],
       [TrainerType.STAR_GRUNT],
     ];
-    const evilTeamAdmins = [
-      [TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON, TrainerType.PETREL],
-      [TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON, TrainerType.PETREL],
+    const evilAdminFight1 = [
+      [TrainerType.PETREL],
+      [TrainerType.PETREL],
       [
         [TrainerType.TABITHA, TrainerType.COURTNEY],
         [TrainerType.MATT, TrainerType.SHELLY],
       ],
       [TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN],
-      [TrainerType.ZINZOLIN, TrainerType.COLRESS],
-      [TrainerType.XEROSIC, TrainerType.BRYONY],
+      [TrainerType.COLRESS],
+      [TrainerType.BRYONY],
+      [TrainerType.FABA, TrainerType.PLUMERIA],
+      [TrainerType.OLEANA],
+      [TrainerType.GIACOMO, TrainerType.MELA, TrainerType.ATTICUS, TrainerType.ORTEGA, TrainerType.ERI],
+    ];
+    const evilAdminFight2 = [
+      [TrainerType.PROTON],
+      [TrainerType.PROTON],
+      [
+        [TrainerType.TABITHA, TrainerType.COURTNEY],
+        [TrainerType.MATT, TrainerType.SHELLY],
+      ],
+      [TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN],
+      [TrainerType.ZINZOLIN],
+      [TrainerType.BRYONY, TrainerType.XEROSIC],
+      [TrainerType.FABA, TrainerType.PLUMERIA],
+      [TrainerType.OLEANA],
+      [TrainerType.GIACOMO, TrainerType.MELA, TrainerType.ATTICUS, TrainerType.ORTEGA, TrainerType.ERI],
+    ];
+    const evilAdminFight3 = [
+      [TrainerType.ARCHER, TrainerType.ARIANA],
+      [TrainerType.ARCHER, TrainerType.ARIANA],
+      [
+        [TrainerType.TABITHA, TrainerType.COURTNEY],
+        [TrainerType.MATT, TrainerType.SHELLY],
+      ],
+      [TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN],
+      [TrainerType.COLRESS],
+      [TrainerType.XEROSIC],
       [TrainerType.FABA, TrainerType.PLUMERIA],
       [TrainerType.OLEANA],
       [TrainerType.GIACOMO, TrainerType.MELA, TrainerType.ATTICUS, TrainerType.ORTEGA, TrainerType.ERI],
@@ -563,8 +592,13 @@ export class SingleGenerationChallenge extends Challenge {
         trainerTypes = evilTeamGrunts[this.value - 1];
         break;
       case ClassicFixedBossWaves.EVIL_ADMIN_1:
+        trainerTypes = evilAdminFight1[this.value - 1];
+        break;
       case ClassicFixedBossWaves.EVIL_ADMIN_2:
-        trainerTypes = evilTeamAdmins[this.value - 1];
+        trainerTypes = evilAdminFight2[this.value - 1];
+        break;
+      case ClassicFixedBossWaves.EVIL_ADMIN_3:
+        trainerTypes = evilAdminFight3[this.value - 1];
         break;
       case ClassicFixedBossWaves.EVIL_BOSS_1:
         trainerTypes = evilTeamBosses[this.value - 1];
@@ -899,7 +933,7 @@ export class FreshStartChallenge extends Challenge {
   }
 
   applyStarterModify(pokemon: Pokemon): boolean {
-    pokemon.abilityIndex = pokemon.abilityIndex % 2; // Always base ability, if you set it to hidden it wraps to first ability
+    pokemon.abilityIndex %= 2; // Always base ability, if you set it to hidden it wraps to first ability
     pokemon.passive = false; // Passive isn't unlocked
     let validMoves = pokemon.species
       .getLevelMoves()
@@ -1075,7 +1109,16 @@ export class LowerStarterPointsChallenge extends Challenge {
  */
 export class LimitedSupportChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
-    return this.value ? ((RibbonData.NO_HEAL << (BigInt(this.value) - 1n)) as RibbonFlag) : 0n;
+    switch (this.value) {
+      case 1:
+        return RibbonData.NO_HEAL as RibbonFlag;
+      case 2:
+        return RibbonData.NO_SHOP as RibbonFlag;
+      case 3:
+        return (RibbonData.NO_HEAL | RibbonData.NO_SHOP | RibbonData.NO_SUPPORT) as RibbonFlag;
+      default:
+        return 0n as RibbonFlag;
+    }
   }
   constructor() {
     super(Challenges.LIMITED_SUPPORT, 3);
