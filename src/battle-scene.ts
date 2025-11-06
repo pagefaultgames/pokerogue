@@ -1304,6 +1304,7 @@ export class BattleScene extends SceneBase {
 
     // TODO: Address this during an RNG overhaul
     this.resetSeed(waveIndex);
+    console.log("INITIAL:", resolved);
 
     // Set attributes of the `resolved` object based on the type of battle being created.
     if (this.gameMode.isFixedBattle(waveIndex)) {
@@ -1313,6 +1314,7 @@ export class BattleScene extends SceneBase {
     } else {
       this.handleNonFixedBattle(resolved);
     }
+    console.log("BEFORE DOUBLE:", resolved);
 
     if (resolved.battleType == null) {
       throw new Error("Whoopsie! I guess my type checks were wrong");
@@ -1333,6 +1335,8 @@ export class BattleScene extends SceneBase {
         p.lapseTag(BattlerTagType.COMMANDED);
       }
     }
+
+    console.log("AFTER DOUBLE:", resolved);
 
     // NB: Type assertion is fine as resolved should always be populated at this point
     this.executeWithSeedOffset(
