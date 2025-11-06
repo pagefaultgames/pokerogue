@@ -1483,6 +1483,7 @@ export class BattleScene extends SceneBase {
     // Edge cases
     if (
       // Wave 1 doubles cause crashes
+      // TODO: Investigate why this occurs and fix it for good - this is a constant PITA while testing and doing local dev
       waveIndex === 1
       || this.gameMode.isWaveFinal(waveIndex)
       || this.gameMode.isEndlessBoss(waveIndex)

@@ -77,8 +77,7 @@ class DefaultOverrides {
    * or the `"single"` rule on even wave numbers.
    * @defaultValue `null`
    * @privateRemarks
-   * Due to strange idiosyncrasies in our testing code, this is checked _before_ other relevant
-   * effects during Vitest test runs.
+   * Does not work on trainer battles - use {@linkcode RANDOM_TRAINER_OVERRIDE} instead
    */
   readonly BATTLE_STYLE_OVERRIDE: BattleStyle | null = null;
   /**

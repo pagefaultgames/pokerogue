@@ -64,7 +64,7 @@ export class OverridesHelper extends GameManagerHelper {
 
   /**
    * Override the starting wave index.
-   * @param wave - The wave to set, or `null` to disable the override.
+   * @param wave - The wave to set, or `null` to disable the override
    * @returns `this`
    */
   public startingWave(wave: number | null): this {

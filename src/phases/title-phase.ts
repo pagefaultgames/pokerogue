@@ -195,7 +195,7 @@ export class TitlePhase extends Phase {
 
   initDailyRun(): void {
     globalScene.ui.clearText();
-    globalScene.ui.setMode(UiMode.SAVE_SLOT, SaveSlotUiMode.SAVE, async (slotId: number) => {
+    globalScene.ui.setMode(UiMode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: number) => {
       if (slotId === -1) {
         globalScene.phaseManager.toTitleScreen();
         super.end();
