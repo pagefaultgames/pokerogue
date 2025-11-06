@@ -18,7 +18,7 @@ const TEST_END_BARRIER = chalk.bold.hex("#ff7c7cff")("==================");
 const TEST_NAME_COLOR = "#008886ff" as const;
 const VITEST_PINK_COLOR = "#c162de" as const;
 
-/** 
+/**
  * The root directory of the project, used when constructing relative paths.
  * @privateRemarks
  * Will have to be altered if this file is moved!
