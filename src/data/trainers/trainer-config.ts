@@ -5475,13 +5475,10 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setPartyMemberFunc(
       1,
-      getRandomPartyMemberFunc([SpeciesId.SCIZOR, SpeciesId.KLEAVOR], TrainerSlot.TRAINER, true, p => {
-        if (p.species.speciesId === SpeciesId.SCIZOR) {
-          p.abilityIndex = 1; // Technician
-        } else if (p.species.speciesId === SpeciesId.KLEAVOR) {
-          p.abilityIndex = 2; // Sharpness
-        }
+      getRandomPartyMemberFunc([SpeciesId.SCIZOR], TrainerSlot.TRAINER, true, p => {
+        p.abilityIndex = 1; // Technician
         p.generateAndPopulateMoveset();
+        p.gender = Gender.MALE;
       }),
     )
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.HERACROSS]))
@@ -5492,6 +5489,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.formIndex = 1; // Mega Pinsir
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
+        p.gender = Gender.MALE;
         p.generateName();
       }),
     )
@@ -5518,7 +5516,6 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
         p.abilityIndex = 2; // Anticipation
         p.gender = Gender.MALE;
-        p.level = 153; // Made higher level due to being an ace
         p.generateAndPopulateMoveset();
         if (!p.moveset.some(move => move != null && move.moveId === MoveId.FIRST_IMPRESSION)) {
           // Check if First Impression is in the moveset, if not, replace the third move with First Impression.
@@ -5528,27 +5525,24 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setPartyMemberFunc(
       1,
-      getRandomPartyMemberFunc([SpeciesId.SCIZOR, SpeciesId.KLEAVOR], TrainerSlot.TRAINER, true, p => {
+      getRandomPartyMemberFunc([SpeciesId.SCIZOR], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
-        if (p.species.speciesId === SpeciesId.SCIZOR) {
-          p.abilityIndex = 1; // Technician
-          p.moveset[0] = new PokemonMove(MoveId.BUG_BITE);
-          p.moveset[1] = new PokemonMove(MoveId.BULLET_PUNCH);
-        } else if (p.species.speciesId === SpeciesId.KLEAVOR) {
-          p.abilityIndex = 2; // Sharpness
-          p.moveset[0] = new PokemonMove(MoveId.X_SCISSOR);
-          p.moveset[1] = new PokemonMove(MoveId.STONE_AXE);
-        }
+        p.abilityIndex = 1; // Technician
+        p.moveset[0] = new PokemonMove(MoveId.BUG_BITE);
+        p.moveset[1] = new PokemonMove(MoveId.BULLET_PUNCH);
+        p.gender = Gender.MALE;
+        p.pokeball = PokeballType.ULTRA_BALL;
       }),
     )
     .setPartyMemberFunc(
       2,
-      getRandomPartyMemberFunc([SpeciesId.TOXAPEX], TrainerSlot.TRAINER, true, p => {
-        p.abilityIndex = 2; // Regenerator
+      getRandomPartyMemberFunc([SpeciesId.CRAWDAUNT, SpeciesId.HISUI_SAMUROTT], TrainerSlot.TRAINER, true, p => {
+        p.abilityIndex = 2; // Adaptability Crawdaunt, Sharpness Samurott
+        p.pokeball = PokeballType.ULTRA_BALL;
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.BANEFUL_BUNKER)) {
-          // Check if Baneful Bunker is in the moveset, if not, replace the fourth move with Baneful Bunker.
-          p.moveset[3] = new PokemonMove(MoveId.BANEFUL_BUNKER);
+        if (!p.moveset.some(move => move != null && move.moveId === MoveId.AQUA_JET)) {
+          // Check if Aqua Jet is in the moveset, if not, replace the third move with Aqua Jet.
+          p.moveset[2] = new PokemonMove(MoveId.AQUA_JET);
         }
       }),
     )
@@ -5561,21 +5555,21 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setPartyMemberFunc(
       4,
-      getRandomPartyMemberFunc([SpeciesId.BUZZWOLE], TrainerSlot.TRAINER, true, p => {
-        p.setBoss(true, 2);
-        p.pokeball = PokeballType.ROGUE_BALL;
-        p.level = 150; // Made lower level due to not being an ace
-        p.generateAndPopulateMoveset();
-      }),
-    )
-    .setPartyMemberFunc(
-      5,
       getRandomPartyMemberFunc([SpeciesId.PINSIR], TrainerSlot.TRAINER, true, p => {
         p.setBoss(true, 2);
         p.formIndex = 1; // Mega Pinsir
         p.generateAndPopulateMoveset();
         p.generateName();
+        p.gender = Gender.MALE;
         p.pokeball = PokeballType.ULTRA_BALL;
+      }),
+    )
+    .setPartyMemberFunc(
+      5,
+      getRandomPartyMemberFunc([SpeciesId.BUZZWOLE], TrainerSlot.TRAINER, true, p => {
+        p.setBoss(true, 2);
+        p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ROGUE_BALL;
       }),
     ),
   [TrainerType.ROSE]: new TrainerConfig(++t)
