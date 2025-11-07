@@ -1294,7 +1294,7 @@ export class BattleScene extends SceneBase {
   /**
    * Create and initialize a new battle.
    * @param fromSession - The {@linkcode SessionSaveData} being used to seed the battle.
-   * Should be omitted if not loading a new save file.
+   * Should be omitted if not loading a save file.
    * @returns The newly created `Battle` instance.
    */
   public newBattle(fromSession?: SessionSaveData): Battle {
