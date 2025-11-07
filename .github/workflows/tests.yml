@@ -61,6 +61,8 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v4.2.2
+        with:
+          recurse-submodules: true
   
       - name: Install pnpm
         uses: pnpm/action-setup@v4
