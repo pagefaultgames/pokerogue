@@ -5,8 +5,15 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+import { Ajv } from "ajv";
 import inquirer from "inquirer";
 import { BIOMES } from "../constants.js";
+import { customDailyRunSchema } from "../schema.js";
+
+const ajv = new Ajv({
+  allErrors: true,
+});
+const validate = ajv.compile(customDailyRunSchema);
 
 /**
  * Prompts the user to enter a starting money value.
@@ -81,10 +88,15 @@ export async function promptEdit() {
       {
         type: "input",
         name: "config",
-        message: "The stringified config:\n",
+        message: "The stringified config to edit:\n",
         validate: value => {
           try {
-            JSON.parse(value);
+            const config = JSON.parse(value);
+
+            if (!validate(config)) {
+              return "Invalid config:\n" + validate.errors?.map(e => `${e.instancePath} ${e.message}`).join("\n");
+            }
+
             return true;
           } catch {
             if (value.trim() === "") {

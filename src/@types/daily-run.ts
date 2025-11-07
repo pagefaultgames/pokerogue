@@ -5,6 +5,13 @@ import type { SpeciesId } from "#enums/species-id";
 import type { Variant } from "#sprites/variant";
 import type { StarterMoveset } from "./save-data";
 
+/**
+ * Configuration for a custom daily run starter Pokémon.
+ * @privateRemarks
+ * When updating this interface, also update:
+ * - `src/data/daily-seed/schema.ts`
+ * - `scripts/daily-seed/schema.js`
+ */
 export interface DailySeedStarter {
   speciesId: SpeciesId;
   formIndex?: number;
@@ -16,6 +23,13 @@ export interface DailySeedStarter {
 
 type DailySeedStarterTuple = [DailySeedStarter, DailySeedStarter, DailySeedStarter];
 
+/**
+ * Configuration for a custom daily run boss Pokémon.
+ * @privateRemarks
+ * When updating this interface, also update:
+ * - `src/data/daily-seed/schema.ts`
+ * - `scripts/daily-seed/schema.js`
+ */
 export type DailySeedBoss = {
   speciesId: SpeciesId;
   formIndex?: number;
@@ -26,6 +40,13 @@ export type DailySeedBoss = {
   passive?: AbilityId;
 };
 
+/**
+ * Configuration for a custom daily run seed.
+ * @privateRemarks
+ * When updating this interface, also update:
+ * - `src/data/daily-seed/schema.ts`
+ * - `scripts/daily-seed/schema.js`
+ */
 export interface CustomDailyRunConfig {
   starters?: DailySeedStarterTuple;
   boss?: DailySeedBoss;

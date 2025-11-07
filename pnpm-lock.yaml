@@ -11,6 +11,9 @@ importers:
       '@material/material-color-utilities':
         specifier: ^0.3.0
         version: 0.3.0
+      ajv:
+        specifier: ^8.17.1
+        version: 8.17.1
       compare-versions:
         specifier: ^6.1.1
         version: 6.1.1

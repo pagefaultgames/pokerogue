@@ -71,7 +71,7 @@ function promptOptions() {
       {
         type: "list",
         name: "selectedConfig",
-        message: "Select the config you want to :",
+        message: "Select the config you want to configure:",
         choices: [...options, "finish", "exit"],
         pageSize: 10,
       },
@@ -127,6 +127,7 @@ async function handleAnswer(answer) {
 }
 
 function finish() {
+  // todo: do we also need to validate here?
   console.log(chalk.cyan("\n🌱 Your custom seed config is:"));
   console.log(chalk.green(`${JSON.stringify(customSeedConfig)}`));
   process.exit(0);

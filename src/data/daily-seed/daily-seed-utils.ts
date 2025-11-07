@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { isBeta, isDev } from "#constants/app-constants";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import { Nature } from "#enums/nature";
@@ -8,6 +9,13 @@ import type { Starter } from "#types/save-data";
 import { isBetween } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import Ajv from "ajv";
+import { customDailyRunSchema } from "./schema";
+
+const ajv = new Ajv({
+  allErrors: true,
+});
+const validate = ajv.compile(customDailyRunSchema);
 
 /**
  * If this is Daily Mode and the seed can be parsed into json it is a Daily Event Seed.
@@ -19,11 +27,19 @@ export function isDailyEventSeed(seed: string): boolean {
 
 /**
  * Attempt to parse the seed as a custom daily run seed.
- * @returns The parsed {@linkcode CustomDailyRunConfig}, or `null` if it can't be parsed into json.
+ * @returns The parsed {@linkcode CustomDailyRunConfig}, or `null` if it can't be parsed into json or is invalid.
  */
 export function parseDailySeed(seed: string): CustomDailyRunConfig | null {
   try {
     const config = JSON.parse(seed) as CustomDailyRunConfig;
+
+    if (!validate(config)) {
+      if (isBeta || isDev) {
+        console.warn("Invalid custom daily run config:", validate.errors);
+      }
+      return null;
+    }
+
     // todo: remove this later since it gets logged a lot
     console.log("Using a custom config for the daily run:", config);
     return config;
