@@ -137,16 +137,16 @@ describe("Moves - Dig", () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const feebas = game.field.getPlayerPokemon();
-    const karp2 = game.scene.getEnemyField()[1];
+    const enemy2 = game.scene.getEnemyField()[1];
 
     // use dig and make the targeted enemy faint post charge
     game.move.use(MoveId.DIG, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2);
     await game.toEndOfTurn();
-    await game.killPokemon(karp2);
-    await game.toNextTurn();
+    await game.killPokemon(enemy2);
+    await game.phaseInterceptor.to("CommandPhase");
 
     expect(feebas.getMoveQueue()[0]?.targets).toEqual([BattlerIndex.ENEMY_2]);
-    expect(karp2).toHaveFainted();
+    expect(enemy2).toHaveFainted();
 
     await game.toEndOfTurn();
 
