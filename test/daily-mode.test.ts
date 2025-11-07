@@ -73,7 +73,7 @@ describe("Daily Mode", () => {
 
       it("should allow omitting movesets for some starters", async () => {
         vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
-          '{"starters":[{"speciesId":349,"moveset":[1,2,3,4]}]}',
+          '{"starters":[{"speciesId":349,"moveset":[1,2,3,4]},{"speciesId":150},{"speciesId":150}]}',
         );
         await game.dailyMode.startBattle();
 
@@ -89,7 +89,9 @@ describe("Daily Mode", () => {
       });
 
       it("should skip invalid move IDs", async () => {
-        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue("/moves9999,,0919");
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+          '{"starters":[{"speciesId":349,"moveset":[9999]},{"speciesId":150, "moveset":[]},{"speciesId":150}]}',
+        );
         await game.dailyMode.startBattle();
 
         const moves = game.field.getPlayerPokemon().moveset.map(pm => pm.moveId);

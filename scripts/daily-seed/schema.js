@@ -1,3 +1,10 @@
+/*
+ * SPDX-FileCopyrightText: 2025 Pagefault Games
+ * SPDX-FileContributor: Fabske0
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 export const customDailyRunSchema = {
   title: "Custom daily seeds schema",
   description: "A schema for validating custom daily seeds.",
