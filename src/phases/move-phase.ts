@@ -509,6 +509,9 @@ export class MovePhase extends PokemonPhase {
     ) {
       this.showFailedText();
       this.fail();
+      // clear out 2 turn moves
+      // TODO: Make a helper for this atp
+      this.pokemon.getMoveQueue().shift();
       this.pokemon.pushMoveHistory(this.moveHistoryEntry);
       return true;
     }
