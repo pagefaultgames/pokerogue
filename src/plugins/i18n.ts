@@ -201,9 +201,7 @@ await i18next
       postProcess: ["korean-postposition"],
     },
     async () => {
-      if (i18next.services.formatter) {
-        i18next.services.formatter.add("money", i18nMoneyFormatter);
-      }
+      i18next.services.formatter?.add("money", i18nMoneyFormatter);
       await initFonts(localStorage.getItem("prLang") ?? undefined);
     },
   );
