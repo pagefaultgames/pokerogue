@@ -110,7 +110,7 @@ describe("Abilities - Rattled", () => {
     }
   });
 
-  // TODO: This is also flaky 
+  // TODO: This is also flaky
   it.todo("should activate after Intimidate from enemy switch", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.BULBASAUR]);
 
@@ -118,7 +118,7 @@ describe("Abilities - Rattled", () => {
     const feebas = game.field.getPlayerPokemon();
     feebas.setStatStage(Stat.ATK, 0);
     feebas.setStatStage(Stat.SPD, 0);
-    
+
     game.move.use(MoveId.SPLASH);
     game.forceEnemyToSwitch();
     await game.phaseInterceptor.to("StatStageChangePhase");
