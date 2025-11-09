@@ -42,7 +42,7 @@ export async function promptSpeciesId() {
 /**
  * Prompts the user to enter a formIndex.
  * @returns {Promise<number>} The formIndex
- * @remarks This does´n **NOT** validate the formIndex, since we can't access the pokemon data here.
+ * @remarks This does **NOT** validate the formIndex, since we can't access the pokemon data here.
  */
 export async function promptFormIndex() {
   return await inquirer

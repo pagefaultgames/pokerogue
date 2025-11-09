@@ -113,7 +113,7 @@ async function handleAnswer(answer) {
       customSeedConfig.seedVariation = await promptSeedVariation();
       break;
     case "exit":
-      console.log(chalk.gray("exiting..."));
+      console.log(chalk.gray("Exiting..."));
       process.exit(0);
   }
   if (answer !== "edit") {
