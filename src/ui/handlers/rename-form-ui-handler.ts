@@ -42,7 +42,7 @@ export class RenameFormUiHandler extends FormModalUiHandler {
       } else {
         this.inputs[0].text = args[1];
       }
-      this.submitAction = _ => {
+      this.submitAction = () => {
         this.sanitizeInputs();
         const sanitizedName = btoa(unescape(encodeURIComponent(this.inputs[0].text)));
         config.buttonActions[0](sanitizedName);

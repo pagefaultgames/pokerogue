@@ -47,7 +47,8 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
   MysteryEncounterType.TRASH_TO_TREASURE,
 )
   .withEncounterTier(MysteryEncounterTier.ULTRA)
-  .withSceneWaveRangeRequirement(60, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
+  .withSceneWaveRangeRequirement(100, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
+  .withScenePartySizeRequirement(3, 6)
   .withMaxAllowedEncounters(1)
   .withFleeAllowed(false)
   .withIntroSpriteConfigs([
@@ -148,6 +149,48 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
           },
         ],
       })
+      .withOptionPhase(async () => {
+        // Investigate garbage, battle Gmax Garbodor
+        globalScene.setFieldScale(0.75);
+        await showEncounterText(`${namespace}:option.1.selected2`);
+        await transitionMysteryEncounterIntroVisuals();
+
+        const encounter = globalScene.currentBattle.mysteryEncounter!;
+
+        setEncounterRewards({
+          guaranteedModifierTypeFuncs: [modifierTypes.LEFTOVERS],
+          guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.GREAT],
+          fillRemaining: true,
+        });
+        encounter.startOfBattleEffects.push(
+          {
+            sourceBattlerIndex: BattlerIndex.ENEMY,
+            targets: [BattlerIndex.PLAYER],
+            move: new PokemonMove(MoveId.TOXIC),
+            useMode: MoveUseMode.IGNORE_PP,
+          },
+          {
+            sourceBattlerIndex: BattlerIndex.ENEMY,
+            targets: [BattlerIndex.ENEMY],
+            move: new PokemonMove(MoveId.STOCKPILE),
+            useMode: MoveUseMode.IGNORE_PP,
+          },
+        );
+        await initBattleWithEnemyConfig(encounter.enemyPartyConfigs[0]);
+      })
+      .build(),
+  )
+  .withOption(
+    MysteryEncounterOptionBuilder.newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
+      .withDialogue({
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
+        selected: [
+          {
+            text: `${namespace}:option.2.selected`,
+          },
+        ],
+      })
       .withPreOptionPhase(async () => {
         // Play Dig2 and then Venom Drench sfx
         doGarbageDig();
@@ -177,48 +220,6 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
         }
 
         leaveEncounterWithoutBattle(true);
-      })
-      .build(),
-  )
-  .withOption(
-    MysteryEncounterOptionBuilder.newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
-      .withDialogue({
-        buttonLabel: `${namespace}:option.2.label`,
-        buttonTooltip: `${namespace}:option.2.tooltip`,
-        selected: [
-          {
-            text: `${namespace}:option.2.selected`,
-          },
-        ],
-      })
-      .withOptionPhase(async () => {
-        // Investigate garbage, battle Gmax Garbodor
-        globalScene.setFieldScale(0.75);
-        await showEncounterText(`${namespace}:option.2.selected2`);
-        await transitionMysteryEncounterIntroVisuals();
-
-        const encounter = globalScene.currentBattle.mysteryEncounter!;
-
-        setEncounterRewards({
-          guaranteedModifierTypeFuncs: [modifierTypes.LEFTOVERS],
-          guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.GREAT],
-          fillRemaining: true,
-        });
-        encounter.startOfBattleEffects.push(
-          {
-            sourceBattlerIndex: BattlerIndex.ENEMY,
-            targets: [BattlerIndex.PLAYER],
-            move: new PokemonMove(MoveId.TOXIC),
-            useMode: MoveUseMode.IGNORE_PP,
-          },
-          {
-            sourceBattlerIndex: BattlerIndex.ENEMY,
-            targets: [BattlerIndex.ENEMY],
-            move: new PokemonMove(MoveId.STOCKPILE),
-            useMode: MoveUseMode.IGNORE_PP,
-          },
-        );
-        await initBattleWithEnemyConfig(encounter.enemyPartyConfigs[0]);
       })
       .build(),
   )
