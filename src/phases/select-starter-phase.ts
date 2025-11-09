@@ -71,7 +71,9 @@ export class SelectStarterPhase extends Phase {
         starter.ivs,
         starter.nature,
       );
-      starter.moveset && starterPokemon.tryPopulateMoveset(starter.moveset);
+      if (starter.moveset) {
+        starterPokemon.tryPopulateMoveset(starter.moveset);
+      }
       if (starter.passive) {
         starterPokemon.passive = true;
       }

@@ -13,17 +13,10 @@ import type { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import type { AttackMoveResult } from "#types/attack-move-result";
 import type { IllusionData } from "#types/illusion-data";
+import type { SerializedSpeciesForm } from "#types/pokemon-common";
 import type { TurnMove } from "#types/turn-move";
 import type { CoerceNullPropertiesToUndefined } from "#types/type-helpers";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
-
-/**
- * The type that {@linkcode PokemonSpeciesForm} is converted to when an object containing it serializes it.
- */
-type SerializedSpeciesForm = {
-  id: SpeciesId;
-  formIdx: number;
-};
 
 /**
  * Permanent data that can customize a Pokemon in non-standard ways from its Species.
