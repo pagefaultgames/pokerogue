@@ -27,8 +27,8 @@ type DailySeedStarterTuple = [DailySeedStarter, DailySeedStarter, DailySeedStart
  * Configuration for a custom daily run boss Pokémon.
  * @privateRemarks
  * When updating this interface, also update:
- * - `src/data/daily-seed/schema.ts`
- * - `scripts/daily-seed/schema.js`
+ * - `src/data/daily-seed/schema.json`
+ * - `scripts/daily-seed/schema.json`
  */
 export type DailySeedBoss = {
   speciesId: SpeciesId;

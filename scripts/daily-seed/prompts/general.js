@@ -8,7 +8,7 @@
 import { Ajv } from "ajv";
 import inquirer from "inquirer";
 import { BIOMES } from "../constants.js";
-import { customDailyRunSchema } from "../schema.js";
+import customDailyRunSchema from "../schema.json" with { type: "json" };
 
 const ajv = new Ajv({
   allErrors: true,

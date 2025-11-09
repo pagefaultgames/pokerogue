@@ -10,7 +10,7 @@ import { isBetween } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import Ajv from "ajv";
-import { customDailyRunSchema } from "./schema";
+import customDailyRunSchema from "./schema.json";
 
 const ajv = new Ajv({
   allErrors: true,
