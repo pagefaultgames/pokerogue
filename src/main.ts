@@ -1,6 +1,4 @@
-import "#app/polyfills";
-
-// All polyfills MUST be loaded first for side effects
+import "#app/polyfills"; // All polyfills MUST be loaded first for side effects
 
 import { BattleScene } from "#app/battle-scene";
 import { LoadingScene } from "#app/loading-scene";
