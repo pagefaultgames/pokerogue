@@ -774,7 +774,7 @@ export class RunInfoUiHandler extends UiHandler {
         abilityLabel = abilityLabel.charAt(0);
       }
       const pPassiveInfo = pokemon.passive ? passiveLabel + ": " + pokemon.getPassiveAbility().name : "";
-      const pAbilityInfo = abilityLabel + ": " + pokemon.getAbility().name;
+      const pAbilityInfo = abilityLabel + ": " + pokemon.getAbility(true).name;
       // Japanese is set to a greater line spacing of 35px in addBBCodeTextObject() if lineSpacing < 12.
       const lineSpacing = i18next.resolvedLanguage === "ja" ? 3 : 3;
       const pokeInfoText = addBBCodeTextObject(0, 0, pName, TextStyle.SUMMARY, {
@@ -859,7 +859,7 @@ export class RunInfoUiHandler extends UiHandler {
 
       // Pokemon Moveset
       // Need to check if dynamically typed moves
-      const pokemonMoveset = pokemon.getMoveset();
+      const pokemonMoveset = pokemon.getMoveset(true);
       const movesetContainer = globalScene.add.container(70, -29);
       const pokemonMoveBgs: Phaser.GameObjects.NineSlice[] = [];
       const pokemonMoveLabels: Phaser.GameObjects.Text[] = [];

@@ -74,7 +74,7 @@ describe("Abilities - Shields Down", () => {
 
     minior.hp = 0;
     minior.status = new Status(StatusEffect.FAINT);
-    expect(minior.isFainted()).toBe(true);
+    expect(minior).toHaveFainted();
 
     game.move.use(MoveId.SPLASH);
     await game.doKillOpponents();
@@ -176,15 +176,15 @@ describe("Abilities - Shields Down", () => {
     expect(game.field.getPlayerPokemon()).toHaveBattlerTag(BattlerTagType.CONFUSED);
   });
 
-  // TODO: The `NoTransformAbilityAbAttr` attribute is not checked anywhere, so this test cannot pass.
-  // TODO: Move this to a transform test
-  it.todo("should not activate when transformed", async () => {
+  it("should not activate when transformed", async () => {
     game.override.enemyAbility(AbilityId.IMPOSTER);
     await game.classicMode.startBattle([SpeciesId.MINIOR]);
 
     game.move.use(MoveId.SPORE);
     await game.toEndOfTurn();
 
-    expect(game.field.getEnemyPokemon()).toHaveStatusEffect(StatusEffect.SLEEP);
+    const karp = game.field.getEnemyPokemon();
+    expect(karp).not.toHaveAbilityApplied(AbilityId.SHIELDS_DOWN);
+    expect(karp).toHaveStatusEffect(StatusEffect.SLEEP);
   });
 });
