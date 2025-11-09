@@ -222,7 +222,4 @@ export function getIsInitialized(): boolean {
   return isInitialized;
 }
 
-// biome-ignore lint/style/noDefaultExport: necessary for i18next usage
-export default i18next;
-
 //#endregion

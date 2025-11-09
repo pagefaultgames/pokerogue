@@ -35,7 +35,6 @@ import {
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
-import i18next from "#plugins/i18n";
 import { achvs } from "#system/achv";
 import { PokemonData } from "#system/pokemon-data";
 import { trainerConfigs } from "#trainers/trainer-config";
@@ -43,6 +42,7 @@ import { TrainerPartyTemplate } from "#trainers/trainer-party-template";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import { NumberHolder, randSeedInt, randSeedShuffle } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import i18next from "i18next";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounters/weirdDream";

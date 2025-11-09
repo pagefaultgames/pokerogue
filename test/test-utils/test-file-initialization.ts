@@ -1,6 +1,5 @@
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
 import { initializeGame } from "#app/init/init";
-import { initI18n } from "#plugins/i18n";
 import { blobToString } from "#test/test-utils/game-manager-utils";
 import { manageListeners } from "#test/test-utils/listeners-manager";
 import { MockConsole } from "#test/test-utils/mocks/mock-console/mock-console";
@@ -8,6 +7,7 @@ import { mockContext } from "#test/test-utils/mocks/mock-context-canvas";
 import { mockLocalStorage } from "#test/test-utils/mocks/mock-local-storage";
 import { MockImage } from "#test/test-utils/mocks/mocks-container/mock-image";
 import { setCookie } from "#utils/cookies";
+import { initI18n } from "i18next";
 import Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
