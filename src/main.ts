@@ -63,7 +63,6 @@ Phaser.GameObjects.NineSlice.prototype.setPositionRelative = setPositionRelative
 Phaser.GameObjects.Text.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative;
 
-// biome-ignore lint: TODO
 async function startGame(manifest?: Record<string, string>): Promise<void> {
   await initI18n();
   const game = new Phaser.Game({
