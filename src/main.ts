@@ -128,7 +128,7 @@ try {
 } catch (err) {
   // Manifest not found (likely local build or path error on live)
   // TODO: Do we want actual error handling here?
-  console.log(`Manifest not found: ${err}`);
+  console.log("Manifest not found:", err);
 } finally {
   await startGame(manifest);
 }
