@@ -117,7 +117,7 @@ async function startGame(manifest?: Record<string, string>): Promise<void> {
     version,
   });
   game.sound.pauseOnBlur = false;
-  game.manifest = manifest;
+  game.manifest = gameManifest;
 }
 
 let manifest: Record<string, string> | undefined;
