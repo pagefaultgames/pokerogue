@@ -2766,61 +2766,62 @@ export class BattleScene extends SceneBase {
     }
   }
 
-  generateEnemyItems(heldItemConfigs?: HeldItemConfiguration[]): Promise<void> {
-    return new Promise(resolve => {
-      if (this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
-        return resolve();
+  generateEnemyItems(heldItemConfigs?: HeldItemConfiguration[]): void {
+    if (this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
+      return;
+    }
+
+    // TODO: Explain this logic and math
+    const difficultyWaveIndex = this.gameMode.getWaveForDifficulty(this.currentBattle.waveIndex);
+    const isFinalBoss = this.gameMode.isWaveFinal(this.currentBattle.waveIndex);
+    let chances = Math.ceil(difficultyWaveIndex / 10);
+    if (isFinalBoss) {
+      chances = Math.ceil(chances * 2.5);
+    }
+
+    const party = this.getEnemyParty();
+
+    if (this.currentBattle.trainer) {
+      const trainerItemConfig = this.currentBattle.trainer.genTrainerItems(party);
+      this.assignTrainerItemsFromConfiguration(trainerItemConfig, false);
+    }
+
+    for (const [i, enemyPokemon] of party.entries()) {
+      if (heldItemConfigs && heldItemConfigs[i]) {
+        assignItemsFromConfiguration(heldItemConfigs[i], enemyPokemon);
+        continue;
       }
-      const difficultyWaveIndex = this.gameMode.getWaveForDifficulty(this.currentBattle.waveIndex);
-      const isFinalBoss = this.gameMode.isWaveFinal(this.currentBattle.waveIndex);
-      let chances = Math.ceil(difficultyWaveIndex / 10);
+
+      const isBoss =
+        enemyPokemon.isBoss()
+        || (this.currentBattle.battleType === BattleType.TRAINER && !!this.currentBattle.trainer?.config.isBoss);
+      let upgradeChance = 32;
+      if (isBoss) {
+        upgradeChance /= 2;
+      }
       if (isFinalBoss) {
-        chances = Math.ceil(chances * 2.5);
+        upgradeChance /= 8;
       }
-
-      const party = this.getEnemyParty();
-
-      if (this.currentBattle.trainer) {
-        const trainerItemConfig = this.currentBattle.trainer.genTrainerItems(party);
-        this.assignTrainerItemsFromConfiguration(trainerItemConfig, false);
-      }
-
-      party.forEach((enemyPokemon: EnemyPokemon, i: number) => {
-        if (heldItemConfigs && i < heldItemConfigs.length && heldItemConfigs[i]) {
-          assignItemsFromConfiguration(heldItemConfigs[i], enemyPokemon);
-        } else {
-          const isBoss =
-            enemyPokemon.isBoss()
-            || (this.currentBattle.battleType === BattleType.TRAINER && !!this.currentBattle.trainer?.config.isBoss);
-          let upgradeChance = 32;
-          if (isBoss) {
-            upgradeChance /= 2;
-          }
-          if (isFinalBoss) {
-            upgradeChance /= 8;
-          }
-          let count = 0;
-          for (let c = 0; c < chances; c++) {
-            if (!randSeedInt(this.gameMode.getEnemyItemChance(isBoss))) {
-              count++;
-            }
-          }
-          if (isBoss) {
-            count = Math.max(count, Math.floor(chances / 2));
-          }
-          assignEnemyHeldItemsForWave(
-            difficultyWaveIndex,
-            count,
-            enemyPokemon,
-            this.currentBattle.battleType === BattleType.TRAINER ? HeldItemPoolType.TRAINER : HeldItemPoolType.WILD,
-            upgradeChance,
-          );
+      let count = 0;
+      // TODO: Move this to some utility function - this is just a stock binomial distribution
+      const enemyItemChance = this.gameMode.getEnemyItemChance(isBoss);
+      for (let c = 0; c < chances; c++) {
+        if (!randSeedInt(enemyItemChance)) {
+          count++;
         }
-        return true;
-      });
-      this.updateItems(false);
-      resolve();
-    });
+      }
+      if (isBoss) {
+        count = Math.max(count, Math.floor(chances / 2));
+      }
+      assignEnemyHeldItemsForWave(
+        difficultyWaveIndex,
+        count,
+        enemyPokemon,
+        this.currentBattle.battleType === BattleType.TRAINER ? HeldItemPoolType.TRAINER : HeldItemPoolType.WILD,
+        upgradeChance,
+      );
+    }
+    this.updateItems(false);
   }
 
   /**

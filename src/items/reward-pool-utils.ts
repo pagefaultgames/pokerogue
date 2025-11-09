@@ -112,16 +112,18 @@ function randomBaseTier(): RarityTier {
  * return {@linkcode RarityTier}
  */
 function getRarityUpgradeCount(pool: RewardPool, baseTier: RarityTier, party: Pokemon[]): RarityTier {
+  if (baseTier === RarityTier.MASTER) {
+    return 0;
+  }
+
   let upgradeCount = 0;
-  if (baseTier < RarityTier.MASTER) {
-    const partyLuckValue = getPartyLuckValue(party);
-    const upgradeOdds = Math.floor(128 / ((partyLuckValue + 4) / 4));
-    while (pool.hasOwnProperty(baseTier + upgradeCount + 1) && pool[baseTier + upgradeCount + 1].length > 0) {
-      if (randSeedInt(upgradeOdds) < 4) {
-        upgradeCount++;
-      } else {
-        break;
-      }
+  const partyLuckValue = getPartyLuckValue(party);
+  const upgradeOdds = Math.floor(128 / ((partyLuckValue + 4) / 4));
+  while (pool.hasOwnProperty(baseTier + upgradeCount + 1) && pool[baseTier + upgradeCount + 1].length > 0) {
+    if (randSeedInt(upgradeOdds) < 4) {
+      upgradeCount++;
+    } else {
+      break;
     }
   }
   return upgradeCount;
