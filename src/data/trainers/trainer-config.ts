@@ -1092,6 +1092,15 @@ export const trainerConfigs: TrainerConfigs = {
         trainerPartyTemplates.SIX_WEAK_BALANCED,
       ),
     ),
+  [TrainerType.AROMA_LADY]: new TrainerConfig(++t)
+    .setMoneyMultiplier(1.25)
+    .setEncounterBgm(TrainerType.PARASOL_LADY)
+    .setPartyTemplates(
+      trainerPartyTemplates.TWO_AVG,
+      trainerPartyTemplates.THREE_WEAK,
+      trainerPartyTemplates.TWO_WEAK_ONE_AVG,
+    )
+    .setSpeciesFilter(s => s.isOfType(PokemonType.GRASS)),
   [TrainerType.ARTIST]: new TrainerConfig(++t)
     .setEncounterBgm(TrainerType.RICH)
     .setPartyTemplates(trainerPartyTemplates.ONE_STRONG, trainerPartyTemplates.TWO_AVG, trainerPartyTemplates.THREE_AVG)
@@ -1241,6 +1250,17 @@ export const trainerConfigs: TrainerConfigs = {
       ],
       [TrainerPoolTier.RARE]: [SpeciesId.VAROOM, SpeciesId.CYCLIZAR],
     }),
+  [TrainerType.BIRD_KEEPER]: new TrainerConfig(++t)
+    .setMoneyMultiplier(1.4)
+    .setEncounterBgm(TrainerType.POKEFAN)
+    .setHasGenders("Bird Keeper Female")
+    .setPartyTemplates(
+      trainerPartyTemplates.TWO_AVG,
+      trainerPartyTemplates.ONE_AVG_ONE_STRONG,
+      trainerPartyTemplates.THREE_AVG,
+      trainerPartyTemplates.TWO_STRONG,
+    )
+    .setSpeciesFilter(s => s.isOfType(PokemonType.FLYING)),
   [TrainerType.BLACK_BELT]: new TrainerConfig(++t)
     .setHasGenders("Battle Girl", TrainerType.PSYCHIC)
     .setHasDouble("Crush Kin")
@@ -1352,6 +1372,27 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.HISUI_ZORUA,
       ],
     }),
+  [TrainerType.BUG_CATCHER]: new TrainerConfig(++t)
+    .setMoneyMultiplier(0.9)
+    .setEncounterBgm(TrainerType.YOUNGSTER)
+    .setPartyTemplates(
+      trainerPartyTemplates.THREE_WEAK,
+      trainerPartyTemplates.THREE_WEAK_SAME,
+      trainerPartyTemplates.THREE_AVG,
+      trainerPartyTemplates.THREE_AVG_SAME,
+    )
+    .setSpeciesFilter(s => s.isOfType(PokemonType.BUG)),
+  [TrainerType.CAMPER]: new TrainerConfig(++t)
+    .setHasGenders("Picnicker", "lass")
+    .setMoneyMultiplier(1.1)
+    .setEncounterBgm(TrainerType.YOUNGSTER)
+    .setPartyTemplates(
+      trainerPartyTemplates.THREE_WEAK,
+      trainerPartyTemplates.TWO_WEAK_ONE_AVG,
+      trainerPartyTemplates.THREE_AVG,
+      trainerPartyTemplates.TWO_AVG_ONE_STRONG,
+    )
+    .setSpeciesFilter(s => s.isOfType(PokemonType.NORMAL)),
   [TrainerType.CLERK]: new TrainerConfig(++t)
     .setHasGenders("Clerk Female")
     .setHasDouble("Colleagues")
@@ -1381,6 +1422,16 @@ export const trainerConfigs: TrainerConfigs = {
       ],
       [TrainerPoolTier.RARE]: [SpeciesId.BUIZEL, SpeciesId.SNEASEL, SpeciesId.KLEFKI, SpeciesId.INDEEDEE],
     }),
+  [TrainerType.COLLECTOR]: new TrainerConfig(++t)
+    .setMoneyMultiplier(1.35)
+    .setEncounterBgm(TrainerType.PSYCHIC)
+    .setPartyTemplates(
+      trainerPartyTemplates.THREE_WEAK,
+      trainerPartyTemplates.TWO_WEAK_ONE_AVG,
+      trainerPartyTemplates.THREE_AVG,
+      trainerPartyTemplates.TWO_AVG_ONE_STRONG,
+    )
+    .setSpeciesFilter(s => s.isRegional()),
   [TrainerType.CYCLIST]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.3)
     .setHasGenders("Cyclist Female")
@@ -1443,6 +1494,27 @@ export const trainerConfigs: TrainerConfigs = {
     .setMoneyMultiplier(3)
     .setEncounterBgm(TrainerType.CLERK)
     .setSpeciesFilter(s => !!s.getLevelMoves().find(plm => plm[1] === MoveId.HEAL_PULSE)),
+  [TrainerType.DRAGON_TAMER]: new TrainerConfig(++t)
+    .setMoneyMultiplier(1.65)
+    .setEncounterBgm(TrainerType.ACE_TRAINER)
+    .setPartyTemplates(
+      trainerPartyTemplates.THREE_AVG,
+      trainerPartyTemplates.TWO_STRONG,
+      trainerPartyTemplates.TWO_AVG_ONE_STRONG,
+      trainerPartyTemplates.TWO_AVG_SAME_ONE_STRONG,
+    )
+    .setSpeciesFilter(s => s.isOfType(PokemonType.DRAGON)),
+  [TrainerType.FAIRY_TALE_GIRL]: new TrainerConfig(++t)
+    .setMoneyMultiplier(1.2)
+    .setEncounterBgm(TrainerType.PSYCHIC)
+    .setPartyTemplates(
+      trainerPartyTemplates.TWO_AVG,
+      trainerPartyTemplates.ONE_AVG_ONE_STRONG,
+      trainerPartyTemplates.TWO_AVG_SAME_ONE_AVG,
+      trainerPartyTemplates.THREE_AVG,
+      trainerPartyTemplates.TWO_STRONG,
+    )
+    .setSpeciesFilter(s => s.isOfType(PokemonType.FAIRY)),
   [TrainerType.FIREBREATHER]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.4)
     .setEncounterBgm(TrainerType.ROUGHNECK)
@@ -1503,6 +1575,17 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.HARLEQUIN]: new TrainerConfig(++t)
     .setEncounterBgm(TrainerType.PSYCHIC)
     .setSpeciesFilter(s => tmSpecies[MoveId.TRICK_ROOM].indexOf(s.speciesId) > -1),
+  [TrainerType.HEX_MANIAC]: new TrainerConfig(++t)
+    .setMoneyMultiplier(1.5)
+    .setEncounterBgm(TrainerType.PSYCHIC)
+    .setPartyTemplates(
+      trainerPartyTemplates.TWO_AVG,
+      trainerPartyTemplates.ONE_AVG_ONE_STRONG,
+      trainerPartyTemplates.TWO_AVG_SAME_ONE_AVG,
+      trainerPartyTemplates.THREE_AVG,
+      trainerPartyTemplates.TWO_STRONG,
+    )
+    .setSpeciesFilter(s => s.isOfType(PokemonType.GHOST) || s.isOfType(PokemonType.PSYCHIC)),
   [TrainerType.HIKER]: new TrainerConfig(++t)
     .setEncounterBgm(TrainerType.BACKPACKER)
     .setPartyTemplates(
@@ -1562,6 +1645,18 @@ export const trainerConfigs: TrainerConfigs = {
     .setSpeciesFilter(s => s.isOfType(PokemonType.POISON) || s.isOfType(PokemonType.DARK)),
   [TrainerType.HOOPSTER]: new TrainerConfig(++t).setMoneyMultiplier(1.2).setEncounterBgm(TrainerType.CYCLIST),
   [TrainerType.INFIELDER]: new TrainerConfig(++t).setMoneyMultiplier(1.2).setEncounterBgm(TrainerType.CYCLIST),
+  [TrainerType.INTERVIEWERS]: new TrainerConfig(++t)
+    .setDoubleOnly()
+    .setMoneyMultiplier(1.75)
+    .setEncounterBgm(TrainerType.CYCLIST)
+    .setPartyTemplateFunc(() =>
+      getWavePartyTemplate(
+        trainerPartyTemplates.TWO_WEAK,
+        trainerPartyTemplates.TWO_AVG,
+        trainerPartyTemplates.ONE_AVG_ONE_STRONG,
+      ),
+    )
+    .setSpeciesFilter(s => s.isOfType(PokemonType.NORMAL) || s.isOfType(PokemonType.ELECTRIC)),
   [TrainerType.JANITOR]: new TrainerConfig(++t).setMoneyMultiplier(1.1).setEncounterBgm(TrainerType.CLERK),
   [TrainerType.LINEBACKER]: new TrainerConfig(++t).setMoneyMultiplier(1.2).setEncounterBgm(TrainerType.CYCLIST),
   [TrainerType.MAID]: new TrainerConfig(++t).setMoneyMultiplier(1.6).setEncounterBgm(TrainerType.RICH),
@@ -1574,17 +1669,18 @@ export const trainerConfigs: TrainerConfigs = {
       trainerPartyTemplates.TWO_AVG,
     )
     .setSpeciesFilter(s => !!s.getLevelMoves().find(plm => plm[1] === MoveId.SING)),
-  [TrainerType.HEX_MANIAC]: new TrainerConfig(++t)
-    .setMoneyMultiplier(1.5)
-    .setEncounterBgm(TrainerType.PSYCHIC)
-    .setPartyTemplates(
-      trainerPartyTemplates.TWO_AVG,
-      trainerPartyTemplates.ONE_AVG_ONE_STRONG,
-      trainerPartyTemplates.TWO_AVG_SAME_ONE_AVG,
-      trainerPartyTemplates.THREE_AVG,
-      trainerPartyTemplates.TWO_STRONG,
+  [TrainerType.MYSTERIOUS_SISTERS]: new TrainerConfig(++t)
+    .setDoubleOnly()
+    .setMoneyMultiplier(1.6)
+    .setEncounterBgm(TrainerType.ROUGHNECK)
+    .setPartyTemplateFunc(() =>
+      getWavePartyTemplate(
+        trainerPartyTemplates.TWO_WEAK,
+        trainerPartyTemplates.TWO_AVG,
+        trainerPartyTemplates.ONE_AVG_ONE_STRONG,
+      ),
     )
-    .setSpeciesFilter(s => s.isOfType(PokemonType.GHOST) || s.isOfType(PokemonType.PSYCHIC)),
+    .setSpeciesFilter(s => s.isOfType(PokemonType.GHOST) || s.isOfType(PokemonType.FAIRY)),
   [TrainerType.NURSERY_AIDE]: new TrainerConfig(++t).setMoneyMultiplier(1.3).setEncounterBgm("lass"),
   [TrainerType.OFFICER]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.55)
@@ -1804,6 +1900,56 @@ export const trainerConfigs: TrainerConfigs = {
     .setMoneyMultiplier(1.4)
     .setEncounterBgm(TrainerType.ROUGHNECK)
     .setSpeciesFilter(s => s.isOfType(PokemonType.DARK)),
+  [TrainerType.RUIN_MANIAC]: new TrainerConfig(++t)
+    .setMoneyMultiplier(1.45)
+    .setEncounterBgm(TrainerType.BACKPACKER)
+    .setPartyTemplates(
+      trainerPartyTemplates.TWO_AVG,
+      trainerPartyTemplates.ONE_AVG_ONE_STRONG,
+      trainerPartyTemplates.TWO_AVG_ONE_STRONG,
+      trainerPartyTemplates.THREE_AVG,
+      trainerPartyTemplates.TWO_STRONG,
+    )
+    .setSpeciesPools({
+      [TrainerPoolTier.COMMON]: [
+        SpeciesId.SANDSHREW,
+        SpeciesId.GEODUDE,
+        SpeciesId.ARON,
+        SpeciesId.NOSEPASS,
+        SpeciesId.BALTOY,
+        SpeciesId.TRAPINCH,
+        SpeciesId.BRONZOR,
+        SpeciesId.HIPPOPOTAS,
+        SpeciesId.YAMASK,
+      ],
+      [TrainerPoolTier.UNCOMMON]: [
+        SpeciesId.RHYHORN,
+        SpeciesId.SWINUB,
+        SpeciesId.SHIELDON,
+        SpeciesId.CRANIDOS,
+        SpeciesId.SIGILYPH,
+        SpeciesId.GOLETT,
+        SpeciesId.NACLI,
+        SpeciesId.GALAR_YAMASK,
+      ],
+      [TrainerPoolTier.RARE]: [
+        SpeciesId.OMANYTE,
+        SpeciesId.KABUTO,
+        SpeciesId.AERODACTYL,
+        [SpeciesId.SCIZOR, SpeciesId.KLEAVOR],
+        [SpeciesId.LUNATONE, SpeciesId.SOLROCK],
+        SpeciesId.LILEEP,
+        SpeciesId.ANORITH,
+        SpeciesId.RELICANTH,
+        SpeciesId.TIRTOUGA,
+        SpeciesId.ARCHEN,
+        SpeciesId.TYRUNT,
+        SpeciesId.AMAURA,
+        SpeciesId.STONJOURNER,
+        SpeciesId.GIMMIGHOUL,
+      ],
+      [TrainerPoolTier.SUPER_RARE]: [SpeciesId.GIBLE, SpeciesId.LARVITAR, SpeciesId.HISUI_SLIGGOO],
+    }),
   [TrainerType.SAILOR]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.4)
     .setEncounterBgm(TrainerType.BACKPACKER)
@@ -1855,7 +2001,32 @@ export const trainerConfigs: TrainerConfigs = {
       ],
       [TrainerPoolTier.ULTRA_RARE]: [SpeciesId.ROTOM, SpeciesId.MELTAN],
     }),
+  [TrainerType.SCUBA_DIVER]: new TrainerConfig(++t)
+    .setHasGenders("Free Diver")
+    .setHasDouble("Divers")
+    .setMoneyMultiplier(1.5)
+    .setEncounterBgm(TrainerType.PARASOL_LADY)
+    .setPartyTemplates(
+      trainerPartyTemplates.TWO_WEAK,
+      trainerPartyTemplates.TWO_AVG,
+      trainerPartyTemplates.THREE_WEAK,
+      trainerPartyTemplates.FOUR_WEAK,
+    )
+    .setSpeciesFilter(s => s.isOfType(PokemonType.WATER)),
   [TrainerType.SMASHER]: new TrainerConfig(++t).setMoneyMultiplier(1.2).setEncounterBgm(TrainerType.CYCLIST),
+  [TrainerType.SNOW_ACE_TRAINER]: new TrainerConfig(++t)
+    .setHasGenders("Snow Ace Trainer Female")
+    .setHasDouble("Ace Duo")
+    .setMoneyMultiplier(2.25)
+    .setEncounterBgm(TrainerType.ACE_TRAINER)
+    .setPartyTemplateFunc(() =>
+      getWavePartyTemplate(
+        trainerPartyTemplates.THREE_WEAK_BALANCED,
+        trainerPartyTemplates.FOUR_WEAK_BALANCED,
+        trainerPartyTemplates.FIVE_WEAK_BALANCED,
+        trainerPartyTemplates.SIX_WEAK_BALANCED,
+      ),
+    ),
   [TrainerType.SNOW_WORKER]: new TrainerConfig(++t)
     .setName("Worker")
     .setHasDouble("Workers")
@@ -1961,7 +2132,13 @@ export const trainerConfigs: TrainerConfigs = {
     .setHasDouble("Veteran Duo")
     .setMoneyMultiplier(2.5)
     .setEncounterBgm(TrainerType.ACE_TRAINER)
-    .setSpeciesFilter(s => s.isOfType(PokemonType.DRAGON)),
+    .setPartyTemplates(
+      trainerPartyTemplates.THREE_AVG,
+      trainerPartyTemplates.TWO_AVG_ONE_STRONG,
+      trainerPartyTemplates.TWO_WEAK_ONE_STRONG,
+      trainerPartyTemplates.FOUR_WEAK,
+    )
+    .setSpeciesFilter(s => s.baseTotal >= 500),
   [TrainerType.WAITER]: new TrainerConfig(++t)
     .setHasGenders("Waitress")
     .setHasDouble("Restaurant Staff")
@@ -1985,6 +2162,47 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.CLERK)
     .setMoneyMultiplier(1.7)
     .setSpeciesFilter(s => s.isOfType(PokemonType.ROCK) || s.isOfType(PokemonType.STEEL)),
+  [TrainerType.YOUNG_COUPLE]: new TrainerConfig(++t)
+    .setDoubleOnly()
+    .setEncounterBgm(TrainerType.POKEFAN)
+    .setMoneyMultiplier(1.25)
+    .setUseSameSeedForAllMembers()
+    .setPartyTemplateFunc(() =>
+      getWavePartyTemplate(
+        trainerPartyTemplates.TWO_WEAK,
+        trainerPartyTemplates.TWO_AVG,
+        trainerPartyTemplates.TWO_STRONG,
+      ),
+    )
+    .setPartyMemberFunc(
+      0,
+      getRandomPartyMemberFunc([
+        SpeciesId.NIDORAN_F,
+        SpeciesId.MILTANK,
+        SpeciesId.SILCOON,
+        SpeciesId.SKITTY,
+        SpeciesId.ILLUMISE,
+        SpeciesId.LUVDISC,
+        SpeciesId.ALOLA_VULPIX,
+        SpeciesId.GALAR_PONYTA,
+      ]),
+    )
+    .setPartyMemberFunc(
+      1,
+      getRandomPartyMemberFunc(
+        [
+          SpeciesId.NIDORAN_M,
+          SpeciesId.TAUROS,
+          SpeciesId.CASCOON,
+          SpeciesId.ELECTRIKE,
+          SpeciesId.VOLBEAT,
+          SpeciesId.LUVDISC,
+          SpeciesId.VULPIX,
+          SpeciesId.PONYTA,
+        ],
+        TrainerSlot.TRAINER_PARTNER,
+      ),
+    ),
   [TrainerType.YOUNGSTER]: new TrainerConfig(++t)
     .setMoneyMultiplier(0.5)
     .setEncounterBgm(TrainerType.YOUNGSTER)
