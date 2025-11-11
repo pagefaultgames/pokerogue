@@ -25,7 +25,7 @@ export class SceneBase extends Phaser.Scene {
 
     // TODO: This is inconsistent with how the battle scene cached fetch
     // uses the manifest
-   const timestamp = manifest[`/${url}`];
+    const timestamp = manifest[`/${url}`];
     if (timestamp) {
       url += `?t=${timestamp}`;
     }
