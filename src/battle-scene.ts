@@ -1315,7 +1315,10 @@ export class BattleScene extends SceneBase {
     }
 
     if (resolved.battleType == null) {
-      throw new Error("BattleScene.newBattle lacked battle type information inside new battle config!\nData:" + JSON.stringify(resolved));
+      throw new Error(
+        "BattleScene.newBattle lacked battle type information inside new battle config!\nData: "
+          + JSON.stringify(resolved),
+      );
     }
     resolved.double = this.checkIsDouble(resolved as NewBattleConstructedProps);
 
