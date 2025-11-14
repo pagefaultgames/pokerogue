@@ -276,9 +276,9 @@ export class PhaseManager {
   }
 
   /**
-   * Adds one or more Phases to the end of the queue.
+   * Add one or more Phases to the end of the queue.
    * They will run once all phases already in the queue have ended.
-   * @param phases - One or more `Phase`s to add
+   * @param phases - One or more {@linkcode Phase}s to add
    */
   public pushPhase(...phases: NonEmptyTuple<Phase>): void {
     for (const phase of phases) {
@@ -287,13 +287,15 @@ export class PhaseManager {
   }
 
   /**
-   * Queue a phase to be run immediately after the current phase finishes. \
+   * Queue one or more phases to be run immediately after the current phase finishes. \
    * Unshifted phases are run in FIFO order if multiple are queued during a single phase's execution.
    * @param phases - One or more {@linkcode Phase}s to add
    * @privateRemarks
    * Any newly-unshifted `MovePhase`s will be queued after the next `MoveEndPhase`.
    */
-  public unshiftPhase(...phases: [MovePhase] | NonEmptyTuple<Phase>): void {
+  // NB: I'd like to restrict this to only allow passing 1 `MovePhase` at a time, but this causes TS to
+  // flip the hell out with `Parameters`...
+  public unshiftPhase(...phases: NonEmptyTuple<Phase>): void {
     for (const phase of phases) {
       const toAdd = this.checkDynamic(phase);
       if (phase.is("MovePhase")) {
