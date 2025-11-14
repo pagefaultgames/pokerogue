@@ -2707,6 +2707,7 @@ export class PostSummonAddArenaTagAbAttr extends PostSummonAbAttr {
   private readonly turnCount: number;
   private readonly side?: ArenaTagSide;
   private readonly quiet?: boolean;
+  // TODO: This should not need to track the source ID in a tempvar
   private sourceId: number;
 
   constructor(showAbility: boolean, tagType: ArenaTagType, turnCount: number, side?: ArenaTagSide, quiet?: boolean) {
@@ -2741,6 +2742,7 @@ export class PostSummonMessageAbAttr extends PostSummonAbAttr {
   }
 }
 
+// TODO: This should be merged with message func
 export class PostSummonUnnamedMessageAbAttr extends PostSummonAbAttr {
   //Attr doesn't force pokemon name on the message
   private readonly message: string;
@@ -2811,13 +2813,13 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
   private readonly selfTarget: boolean;
   private readonly intimidate: boolean;
 
-  constructor(stats: readonly BattleStat[], stages: number, selfTarget?: boolean, intimidate?: boolean) {
+  constructor(stats: readonly BattleStat[], stages: number, selfTarget = false, intimidate = true) {
     super(true);
 
     this.stats = stats;
     this.stages = stages;
-    this.selfTarget = !!selfTarget;
-    this.intimidate = !!intimidate;
+    this.selfTarget = selfTarget;
+    this.intimidate = intimidate;
   }
 
   override apply({ pokemon, simulated }: AbAttrBaseParams): void {
@@ -5012,25 +5014,26 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
  */
 export class FetchBallAbAttr extends PostTurnAbAttr {
   override canApply({ simulated, pokemon }: AbAttrBaseParams): boolean {
-    return !simulated && globalScene.currentBattle.lastUsedPokeball != null && !!pokemon.isPlayer;
+    return !simulated && globalScene.currentBattle.lastUsedPokeball != null && pokemon.isPlayer();
   }
 
   /**
    * Adds the last used Pokeball back into the player's inventory
    */
   override apply({ pokemon }: AbAttrBaseParams): void {
-    const lastUsed = globalScene.currentBattle.lastUsedPokeball;
-    globalScene.pokeballCounts[lastUsed!]++;
+    const lastUsed = globalScene.currentBattle.lastUsedPokeball!;
+    globalScene.pokeballCounts[lastUsed]++;
     globalScene.currentBattle.lastUsedPokeball = null;
     globalScene.phaseManager.queueMessage(
       i18next.t("abilityTriggers:fetchBall", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        pokeballName: getPokeballName(lastUsed!),
+        pokeballName: getPokeballName(lastUsed),
       }),
     );
   }
 }
 
+// TODO: Remove this and just replace it with applying `PostSummonChangeTerrainAbAttr` again
 export class PostBiomeChangeAbAttr extends AbAttr {
   private declare readonly _: never;
 }
@@ -5055,6 +5058,7 @@ export class PostBiomeChangeWeatherChangeAbAttr extends PostBiomeChangeAbAttr {
   }
 }
 
+// TODO: Remove this and just replace it with applying `PostSummonChangeTerrainAbAttr` again
 /** @sealed */
 export class PostBiomeChangeTerrainChangeAbAttr extends PostBiomeChangeAbAttr {
   private readonly terrainType: TerrainType;
