@@ -319,7 +319,11 @@ export class MistTag extends SerializableArenaTag {
     cancelled.value = true;
 
     if (!simulated) {
-      globalScene.phaseManager.queueMessage(i18next.t("arenaTag:mistApply"));
+      globalScene.phaseManager.queueMessage(
+        i18next.t("arenaTag:mistApply", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(this.getSourcePokemon()),
+        }),
+      );
     }
 
     return true;
@@ -1532,6 +1536,11 @@ export class SuppressAbilitiesTag extends SerializableArenaTag {
       const setter = globalScene
         .getField(true)
         .filter(p => p.hasAbilityWithAttr("PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr", false))[0];
+      // Setter may not exist if both NG Pokemon faint simultaneously
+      if (setter == null) {
+        return;
+      }
+
       applyOnGainAbAttrs({
         pokemon: setter,
         passive: setter.getAbility().hasAttr("PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr"),

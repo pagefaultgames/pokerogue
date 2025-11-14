@@ -2233,7 +2233,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Check whether a pokemon has the specified ability in effect, either as a normal or passive ability.
    * Accounts for all the various effects which can disable or modify abilities.
-   * @param ability - The {@linkcode Abilities | Ability} to check for
+   * @param ability - The {@linkcode AbilityId | Ability} to check for
    * @param canApply - Whether to check if the ability is currently active; default `true`
    * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
    * @returns Whether this {@linkcode Pokemon} has the given ability
@@ -3676,15 +3676,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       multiStrikeEnhancementMultiplier,
     );
 
-    if (!ignoreSourceAbility) {
-      applyAbAttrs("AddSecondStrikeAbAttr", {
-        pokemon: source,
-        move,
-        simulated,
-        multiplier: multiStrikeEnhancementMultiplier,
-      });
-    }
-
     /** Doubles damage if this Pokemon's last move was Glaive Rush */
     const glaiveRushMultiplier = new NumberHolder(1);
     if (this.getTag(BattlerTagType.RECEIVE_DOUBLE_DAMAGE)) {
@@ -3773,9 +3764,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         * mistyTerrainMultiplier,
     );
 
-    /** Doubles damage if the attacker has Tinted Lens and is using a resisted move */
     if (!ignoreSourceAbility) {
-      applyAbAttrs("DamageBoostAbAttr", {
+      applyAbAttrs("MoveDamageBoostAbAttr", {
         pokemon: source,
         opponent: this,
         move,
