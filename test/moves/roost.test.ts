@@ -159,7 +159,6 @@ describe("Moves - Roost", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
     game.move.select(MoveId.ROOST);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     // Should only be typeless type after roost and is grounded
@@ -195,7 +194,6 @@ describe("Moves - Roost", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
     game.move.select(MoveId.ROOST);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     // Should only be typeless type after roost and is grounded

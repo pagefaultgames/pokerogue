@@ -85,7 +85,6 @@ describe("Moves - Rage Fist", () => {
     // remove substitute and get confused
     game.move.select(MoveId.TIDY_UP);
     await game.move.selectEnemyMove(MoveId.CONFUSE_RAY);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
     game.move.select(MoveId.RAGE_FIST);
@@ -108,7 +107,6 @@ describe("Moves - Rage Fist", () => {
     expect(game.field.getPlayerPokemon().battleData.hitCount).toBe(2);
 
     game.move.select(MoveId.RAGE_FIST);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(game.field.getPlayerPokemon().battleData.hitCount).toBe(4);
@@ -147,7 +145,6 @@ describe("Moves - Rage Fist", () => {
     await game.toNextTurn();
 
     game.move.select(MoveId.RAGE_FIST);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(move.calculateBattlePower).toHaveLastReturnedWith(150);

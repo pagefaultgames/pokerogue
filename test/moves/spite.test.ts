@@ -49,7 +49,6 @@ describe("Moves - Spite", () => {
 
     game.move.use(MoveId.SPITE);
     await game.move.selectEnemyMove(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
     expect(karp).toHaveUsedPP(MoveId.TACKLE, 4 + 1);

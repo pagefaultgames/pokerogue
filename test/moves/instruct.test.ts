@@ -343,7 +343,6 @@ describe("Moves - Instruct", () => {
     expect(player.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
 
     game.move.select(MoveId.INSTRUCT);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
     expect(player.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
