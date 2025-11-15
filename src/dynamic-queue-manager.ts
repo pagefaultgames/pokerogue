@@ -1,7 +1,6 @@
 import type { DynamicPhase, PhaseConditionFunc, PhaseString } from "#app/@types/phase-types";
 import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type { Pokemon } from "#app/field/pokemon";
-import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
 import type { MovePhase } from "#app/phases/move-phase";
 import { MovePhasePriorityQueue } from "#app/queues/move-phase-priority-queue";
@@ -55,9 +54,6 @@ export class DynamicQueueManager {
     for (const queue of this.dynamicPhaseMap.values()) {
       queue.clear();
     }
-    // TODO: Remove in a later PR - this is both unwieldly for tests
-    // and would force MEs to reset the turn order at start of every single turn (which is dumb)
-    globalScene.turnCommandManager.resetTurnOrder();
   }
 
   /**

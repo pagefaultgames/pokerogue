@@ -1509,6 +1509,7 @@ export class BattleScene extends SceneBase {
       }
     }
 
+    this.turnCommandManager.resetTurnOrder();
     return this.currentBattle;
   }
 

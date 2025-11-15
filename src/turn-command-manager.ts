@@ -8,7 +8,10 @@ export class TurnCommandManager {
    */
   public setOrder: readonly BattlerIndex[] | undefined;
 
-  /** Reset a prior set turn order. */
+  /**
+   * Reset a prior set turn order.
+   * Called automatically upon resetting the game or a new battle starting.
+   */
   public resetTurnOrder(): void {
     this.setOrder = undefined;
   }
