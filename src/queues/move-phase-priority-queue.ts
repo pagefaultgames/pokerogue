@@ -98,6 +98,7 @@ export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase>
   }
 
   public override clear(): void {
+    this.setOrder = undefined;
     this.lastTurnOrder = [];
     super.clear();
   }
