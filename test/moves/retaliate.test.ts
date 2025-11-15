@@ -134,5 +134,10 @@ describe("Moves - Retaliate", () => {
     await game.reload.reloadSession();
 
     expect(game.scene.arena.playerFaintedLastTurn).toBe(true);
+
+    game.move.use(MoveId.RETALIATE);
+    await game.toEndOfTurn();
+
+    expect(powerSpy).toHaveLastReturnedWith(140);
   });
 });
