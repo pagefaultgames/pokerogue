@@ -105,7 +105,7 @@ describe("Moves - Last Respects", () => {
     expect(move.calculateBattlePower).toHaveReturnedWith(basePower + 3 * 50);
   });
 
-  it("should maintain its power for the player during the next battle if it is within the same arena encounter", async () => {
+  it("should maintain its power for the player during the next battle if it is within the same arena encounter, even on reload", async () => {
     game.override
       .enemySpecies(SpeciesId.MAGIKARP)
       .startingWave(1)
@@ -129,6 +129,11 @@ describe("Moves - Last Respects", () => {
     game.move.select(MoveId.LAST_RESPECTS);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextWave();
+
+    expect(game.scene.arena.playerFaints).toBe(1);
+
+    await game.reload.reloadSession();
+
     expect(game.scene.arena.playerFaints).toBe(1);
 
     game.move.select(MoveId.LAST_RESPECTS);
