@@ -1833,13 +1833,13 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
 }
 
 /**
- * Parameters for abilities that modify the hit count and damage of a move
+ * Parameters for abilities that modify the hit count of a move.
  */
 export interface AddSecondStrikeAbAttrParams extends Omit<AugmentMoveInteractionAbAttrParams, "opponent"> {
-  /** Holder for the number of hits. May be modified by ability application */
-  hitCount?: NumberHolder;
-  /** Holder for the damage multiplier _of the current hit_ */
-  multiplier?: NumberHolder;
+  /** Holder for the number of hits. Modified by ability application */
+  hitCount: NumberHolder;
+  /** The Pokemon on the other side of this interaction */
+  opponent: Pokemon | undefined;
 }
 
 /**
@@ -1847,35 +1847,12 @@ export interface AddSecondStrikeAbAttrParams extends Omit<AugmentMoveInteraction
  * Used by {@linkcode MoveId.PARENTAL_BOND | Parental Bond}.
  */
 export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
-  /** The damage multiplier for the second strike, relative to the first */
-  private readonly damageMultiplier: number;
-  /**
-   * @param damageMultiplier - The damage multiplier for the second strike, relative to the first
-   */
-  constructor(damageMultiplier: number) {
-    super(false);
-    this.damageMultiplier = damageMultiplier;
+  override canApply({ pokemon, opponent, move }: AddSecondStrikeAbAttrParams): boolean {
+    return move.canBeMultiStrikeEnhanced(pokemon, true, opponent);
   }
 
-  /**
-   * Return whether the move can be multi-strike enhanced.
-   */
-  override canApply({ pokemon, move }: AddSecondStrikeAbAttrParams): boolean {
-    return move.canBeMultiStrikeEnhanced(pokemon, true);
-  }
-
-  /**
-   * Add one to the move's hit count, and, if the pokemon has only one hit left, sets the damage multiplier
-   * to the damage multiplier of this ability.
-   */
-  override apply({ hitCount, multiplier, pokemon }: AddSecondStrikeAbAttrParams): void {
-    if (hitCount?.value) {
-      hitCount.value += 1;
-    }
-
-    if (multiplier?.value && pokemon.turnData.hitsLeft === 1) {
-      multiplier.value = this.damageMultiplier;
-    }
+  override apply({ hitCount }: AddSecondStrikeAbAttrParams): void {
+    hitCount.value += 1;
   }
 }
 
@@ -1895,10 +1872,12 @@ export interface PreAttackModifyDamageAbAttrParams extends AugmentMoveInteractio
  * @param damageMultiplier the amount to multiply the damage by
  * @param condition the condition for this ability to be applied
  */
-export class DamageBoostAbAttr extends PreAttackAbAttr {
+export class MoveDamageBoostAbAttr extends PreAttackAbAttr {
   private readonly damageMultiplier: number;
   private readonly condition: PokemonAttackCondition;
 
+  // TODO: This should not take a `PokemonAttackCondition` (with nullish parameters)
+  // as it's effectively offloading nullishness checks to its child attributes
   constructor(damageMultiplier: number, condition: PokemonAttackCondition) {
     super(false);
     this.damageMultiplier = damageMultiplier;
@@ -2728,6 +2707,7 @@ export class PostSummonAddArenaTagAbAttr extends PostSummonAbAttr {
   private readonly turnCount: number;
   private readonly side?: ArenaTagSide;
   private readonly quiet?: boolean;
+  // TODO: This should not need to track the source ID in a tempvar
   private sourceId: number;
 
   constructor(showAbility: boolean, tagType: ArenaTagType, turnCount: number, side?: ArenaTagSide, quiet?: boolean) {
@@ -2762,6 +2742,7 @@ export class PostSummonMessageAbAttr extends PostSummonAbAttr {
   }
 }
 
+// TODO: This should be merged with message func
 export class PostSummonUnnamedMessageAbAttr extends PostSummonAbAttr {
   //Attr doesn't force pokemon name on the message
   private readonly message: string;
@@ -2832,13 +2813,13 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
   private readonly selfTarget: boolean;
   private readonly intimidate: boolean;
 
-  constructor(stats: readonly BattleStat[], stages: number, selfTarget?: boolean, intimidate?: boolean) {
+  constructor(stats: readonly BattleStat[], stages: number, selfTarget = false, intimidate = true) {
     super(true);
 
     this.stats = stats;
     this.stages = stages;
-    this.selfTarget = !!selfTarget;
-    this.intimidate = !!intimidate;
+    this.selfTarget = selfTarget;
+    this.intimidate = intimidate;
   }
 
   override apply({ pokemon, simulated }: AbAttrBaseParams): void {
@@ -5033,25 +5014,26 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
  */
 export class FetchBallAbAttr extends PostTurnAbAttr {
   override canApply({ simulated, pokemon }: AbAttrBaseParams): boolean {
-    return !simulated && globalScene.currentBattle.lastUsedPokeball != null && !!pokemon.isPlayer;
+    return !simulated && globalScene.currentBattle.lastUsedPokeball != null && pokemon.isPlayer();
   }
 
   /**
    * Adds the last used Pokeball back into the player's inventory
    */
   override apply({ pokemon }: AbAttrBaseParams): void {
-    const lastUsed = globalScene.currentBattle.lastUsedPokeball;
-    globalScene.pokeballCounts[lastUsed!]++;
+    const lastUsed = globalScene.currentBattle.lastUsedPokeball!;
+    globalScene.pokeballCounts[lastUsed]++;
     globalScene.currentBattle.lastUsedPokeball = null;
     globalScene.phaseManager.queueMessage(
       i18next.t("abilityTriggers:fetchBall", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        pokeballName: getPokeballName(lastUsed!),
+        pokeballName: getPokeballName(lastUsed),
       }),
     );
   }
 }
 
+// TODO: Remove this and just replace it with applying `PostSummonChangeTerrainAbAttr` again
 export class PostBiomeChangeAbAttr extends AbAttr {
   private declare readonly _: never;
 }
@@ -5076,6 +5058,7 @@ export class PostBiomeChangeWeatherChangeAbAttr extends PostBiomeChangeAbAttr {
   }
 }
 
+// TODO: Remove this and just replace it with applying `PostSummonChangeTerrainAbAttr` again
 /** @sealed */
 export class PostBiomeChangeTerrainChangeAbAttr extends PostBiomeChangeAbAttr {
   private readonly terrainType: TerrainType;
@@ -6657,7 +6640,7 @@ const AbilityAttrs = Object.freeze({
   MoveTypeChangeAbAttr,
   PokemonTypeChangeAbAttr,
   AddSecondStrikeAbAttr,
-  DamageBoostAbAttr,
+  MoveDamageBoostAbAttr,
   MovePowerBoostAbAttr,
   MoveTypePowerBoostAbAttr,
   LowHpMoveTypePowerBoostAbAttr,
@@ -7298,7 +7281,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.TINTED_LENS, 4)
-      .attr(DamageBoostAbAttr, 2, (user, target, move) => (target?.getMoveEffectiveness(user!, move) ?? 1) <= 0.5)
+      .attr(MoveDamageBoostAbAttr, 2, (user, target, move) => (target?.getMoveEffectiveness(user!, move) ?? 1) <= 0.5)
       .build(),
     new AbBuilder(AbilityId.FILTER, 4)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => target.getMoveEffectiveness(user, move) >= 2, 0.75)
@@ -7636,7 +7619,15 @@ export function initAbilities() {
       .attr(MoveTypeChangeAbAttr, PokemonType.FLYING, 1.2, (_user, _target, move) => move.type === PokemonType.NORMAL)
       .build(),
     new AbBuilder(AbilityId.PARENTAL_BOND, 6)
-      .attr(AddSecondStrikeAbAttr, 0.25)
+      .attr(AddSecondStrikeAbAttr)
+      // Only multiply damage on the last strike of multi-strike moves
+      .attr(MoveDamageBoostAbAttr, 0.25, (user, target, move) => (
+          !!user
+          && user.turnData.hitCount > 1 // move was originally multi hit
+          && user.turnData.hitsLeft === 1 // move is on its final strike
+          && move.canBeMultiStrikeEnhanced(user, true, target)
+        )
+      )
       .build(),
     new AbBuilder(AbilityId.DARK_AURA, 6)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonDarkAura", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
