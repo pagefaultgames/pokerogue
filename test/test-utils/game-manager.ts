@@ -543,8 +543,7 @@ export class GameManager {
   /**
    * Override the turn order of the battle's current combatants.
    *
-   * Affects all processes that check speed order,
-   * and will last until the `BattleScene` is reset (or this function is called again).
+   * Affects all processes that check speed order.
    * @param order - The turn order to set, as an array of {@linkcode BattlerIndex}es
    * @example
    * ```ts
