@@ -4,7 +4,7 @@ import { getGameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import overrides from "#app/overrides";
 import { modifierTypes } from "#data/data-lists";
-import { BattlerIndex, type FieldBattlerIndex } from "#enums/battler-index";
+import { BattlerIndex } from "#enums/battler-index";
 import { Button } from "#enums/buttons";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { ExpNotification } from "#enums/exp-notification";
@@ -553,8 +553,8 @@ export class GameManager {
    * (for the purposes of Electro Ball, etc).
    */
   // TODO: Move to `FieldHelper`
-  // TODO: Remove `await`s from existing test files in a follow-up PR
-  public setTurnOrder(order: FieldBattlerIndex[]): void {
+  // TODO: Bulk-remove `await`s from existing test files in a follow-up PR
+  public setTurnOrder(order: BattlerIndex[]): void {
     expect(order, "Turn order passed to `setTurnOrder` lacked values for one or more Pokemon!").toEqualUnsorted(
       this.scene.getField(true).map(p => p.getBattlerIndex()),
     );

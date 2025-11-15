@@ -5,7 +5,7 @@ import type { globalScene } from "#app/global-scene";
 import type { Ability } from "#abilities/ability";
 import { allAbilities } from "#data/data-lists";
 import type { AbilityId } from "#enums/ability-id";
-import type { BattlerIndex, FieldBattlerIndex } from "#enums/battler-index";
+import type { BattlerIndex } from "#enums/battler-index";
 import type { PokemonType } from "#enums/pokemon-type";
 import { Stat } from "#enums/stat";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
@@ -82,7 +82,7 @@ export class FieldHelper extends GameManagerHelper {
    * default `true`
    * @returns An array containing the {@linkcode BattlerIndex}es of all on-field `Pokemon` in order of **descending** Speed. \
    */
-  public getSpeedOrder(indices: true, ignoreOverride?: boolean): FieldBattlerIndex[];
+  public getSpeedOrder(indices: true, ignoreOverride?: boolean): BattlerIndex[];
   public getSpeedOrder(indices = false, ignoreOverride = true): BattlerIndex[] | Pokemon[] {
     let ret = this.game.scene.getField(true);
     if (ignoreOverride) {
