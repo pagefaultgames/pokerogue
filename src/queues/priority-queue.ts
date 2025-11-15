@@ -1,19 +1,24 @@
 /**
- * Stores a list of elements.
+ * Abstract class representing a {@link https://en.wikipedia.org/wiki/Priority_queue#Min-priority_queue | Min-priority queue}.
  *
- * Dynamically updates ordering to always pop the highest "priority", based on implementation of {@linkcode reorder}.
+ * Dynamically updates ordering to always return the highest "priority" item,
+ * based on the implementation of {@linkcode reorder}.
  */
 export abstract class PriorityQueue<T> {
+  /** The items in the queue. */
   protected queue: T[] = [];
 
   /**
-   * Sorts the elements in the queue
+   * Abstract function to sort the elements in the queue.
+   * @remarks
+   * When sorting, earlier elements will be accessed before later ones.
    */
   protected abstract reorder(): void;
 
   /**
-   * Calls {@linkcode reorder} and shifts the queue
-   * @returns The front element of the queue after sorting, or `undefined` if the queue is empty
+   * Reorder the queue before removing and returning the highest priority element.
+   * @returns The front-most element of the queue after sorting,
+   * or `undefined` if the queue is empty.
    * @sealed
    */
   public pop(): T | undefined {
@@ -26,15 +31,15 @@ export abstract class PriorityQueue<T> {
   }
 
   /**
-   * Adds an element to the queue
-   * @param element The element to add
+   * Add an element to the queue.
+   * @param element - The element to add
    */
   public push(element: T): void {
     this.queue.push(element);
   }
 
   /**
-   * Removes all elements from the queue
+   * Remove all elements from the queue.
    * @sealed
    */
   public clear(): void {
@@ -50,10 +55,11 @@ export abstract class PriorityQueue<T> {
   }
 
   /**
-   * Removes the first element matching the condition
-   * @param condition - An optional condition function (defaults to a function that always returns `true`)
+   * Remove the first element matching the condition
+   * @param condition - If provided, will restrict the removal to only entries matching the given condition
    * @returns Whether a removal occurred
    */
+  // TODO: This using `find` vs `filter` goes against the order-agnosticness of priority queues
   public remove(condition: (t: T) => boolean = () => true): boolean {
     // Reorder to remove the first element
     this.reorder();
@@ -67,12 +73,12 @@ export abstract class PriorityQueue<T> {
   }
 
   /** @returns An element matching the condition function */
-  public find(condition?: (t: T) => boolean): T | undefined {
-    return this.queue.find(e => !condition || condition(e));
+  public find(condition: (t: T) => boolean): T | undefined {
+    return this.queue.find(condition);
   }
 
   /** @returns Whether an element matching the condition function exists */
-  public has(condition?: (t: T) => boolean): boolean {
-    return this.queue.some(e => !condition || condition(e));
+  public has(condition: (t: T) => boolean): boolean {
+    return this.queue.some(condition);
   }
 }
