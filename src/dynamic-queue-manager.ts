@@ -7,6 +7,7 @@ import { MovePhasePriorityQueue } from "#app/queues/move-phase-priority-queue";
 import { PokemonPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";
 import { PostSummonPhasePriorityQueue } from "#app/queues/post-summon-phase-priority-queue";
 import type { PriorityQueue } from "#app/queues/priority-queue";
+import type { BattlerIndex } from "#enums/battler-index";
 import type { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 
 // TODO: might be easier to define which phases should be dynamic instead

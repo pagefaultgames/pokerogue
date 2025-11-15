@@ -1058,7 +1058,7 @@ export abstract class Move implements Localizable {
     return power.value;
   }
 
-  getPriority(user: Pokemon, simulated: boolean = true) {
+  getPriority(user: Pokemon, simulated = true): number {
     const priority = new NumberHolder(this.priority);
     applyMoveAttrs("IncrementMovePriorityAttr", user, null, this, priority);
     applyAbAttrs("ChangeMovePriorityAbAttr", {pokemon: user, simulated, move: this, priority});
@@ -1066,13 +1066,13 @@ export abstract class Move implements Localizable {
     return priority.value;
   }
 
-  public getPriorityModifier(user: Pokemon, simulated = true) {
+  public getPriorityModifier(user: Pokemon, simulated = true): MovePriorityInBracket {
     if (user.getTag(BattlerTagType.BYPASS_SPEED)) {
       return MovePriorityInBracket.FIRST;
     }
     const modifierHolder = new NumberHolder(MovePriorityInBracket.NORMAL);
     applyAbAttrs("ChangeMovePriorityInBracketAbAttr", { pokemon: user, simulated, move: this, priority: modifierHolder });
-    return modifierHolder.value;
+    return modifierHolder.value as MovePriorityInBracket;
   }
 
   /**
