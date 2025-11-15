@@ -6,7 +6,7 @@ import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { biomePokemonPools, biomeTrainerPools } from "#balance/biomes";
-import type { ArenaTag } from "#data/arena-tag";
+import type { ArenaTag, ArenaTagTypeMap } from "#data/arena-tag";
 import { EntryHazardTag, getArenaTag } from "#data/arena-tag";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -40,6 +40,7 @@ import type { Constructor } from "#types/common";
 import type { AbstractConstructor } from "#types/type-helpers";
 import { NumberHolder, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { inSpeedOrder } from "#utils/speed-order-generator";
 
 export class Arena {
   public biomeType: BiomeId;
@@ -248,20 +249,6 @@ export class Arena {
             return 2;
         }
         break;
-      case SpeciesId.ROTOM:
-        switch (this.biomeType) {
-          case BiomeId.VOLCANO:
-            return 1;
-          case BiomeId.SEA:
-            return 2;
-          case BiomeId.ICE_CAVE:
-            return 3;
-          case BiomeId.MOUNTAIN:
-            return 4;
-          case BiomeId.TALL_GRASS:
-            return 5;
-        }
-        break;
       case SpeciesId.LYCANROC: {
         const timeOfDay = this.getTimeOfDay();
         switch (timeOfDay) {
@@ -358,15 +345,12 @@ export class Arena {
       globalScene.phaseManager.queueMessage(getWeatherClearMessage(oldWeatherType)!); // TODO: is this bang correct?
     }
 
-    globalScene
-      .getField(true)
-      .filter(p => p.isOnField())
-      .map(pokemon => {
-        pokemon.findAndRemoveTags(
-          t => "weatherTypes" in t && !(t.weatherTypes as WeatherType[]).find(t => t === weather),
-        );
-        applyAbAttrs("PostWeatherChangeAbAttr", { pokemon, weather });
-      });
+    for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
+      pokemon.findAndRemoveTags(
+        tag => "weatherTypes" in tag && !(tag.weatherTypes as WeatherType[]).find(t => t === weather),
+      );
+      applyAbAttrs("PostWeatherChangeAbAttr", { pokemon, weather });
+    }
 
     return true;
   }
@@ -376,11 +360,11 @@ export class Arena {
    * @param source - The Pokemon causing the changes by removing itself from the field
    */
   triggerWeatherBasedFormChanges(source?: Pokemon): void {
-    globalScene.getField(true).forEach(p => {
+    for (const p of inSpeedOrder(ArenaTagSide.BOTH)) {
       // TODO - This is a bandaid. Abilities leaving the field needs a better approach than
       // calling this method for every switch out that happens
       if (p === source) {
-        return;
+        continue;
       }
       const isCastformWithForecast = p.hasAbility(AbilityId.FORECAST) && p.species.speciesId === SpeciesId.CASTFORM;
       const isCherrimWithFlowerGift = p.hasAbility(AbilityId.FLOWER_GIFT) && p.species.speciesId === SpeciesId.CHERRIM;
@@ -388,23 +372,23 @@ export class Arena {
       if (isCastformWithForecast || isCherrimWithFlowerGift) {
         globalScene.triggerPokemonFormChange(p, SpeciesFormChangeWeatherTrigger);
       }
-    });
+    }
   }
 
   /**
    * Function to trigger all weather based form changes back into their normal forms
    */
   triggerWeatherBasedFormChangesToNormal(): void {
-    globalScene.getField(true).forEach(p => {
+    for (const p of inSpeedOrder(ArenaTagSide.BOTH)) {
       const isCastformWithForecast =
         p.hasAbility(AbilityId.FORECAST, false, true) && p.species.speciesId === SpeciesId.CASTFORM;
       const isCherrimWithFlowerGift =
         p.hasAbility(AbilityId.FLOWER_GIFT, false, true) && p.species.speciesId === SpeciesId.CHERRIM;
 
       if (isCastformWithForecast || isCherrimWithFlowerGift) {
-        return globalScene.triggerPokemonFormChange(p, SpeciesFormChangeRevertWeatherFormTrigger);
+        globalScene.triggerPokemonFormChange(p, SpeciesFormChangeRevertWeatherFormTrigger);
       }
-    });
+    }
   }
 
   /** Returns whether or not the terrain can be set to {@linkcode terrain} */
@@ -453,16 +437,13 @@ export class Arena {
       globalScene.phaseManager.queueMessage(getTerrainClearMessage(oldTerrainType));
     }
 
-    globalScene
-      .getField(true)
-      .filter(p => p.isOnField())
-      .map(pokemon => {
-        pokemon.findAndRemoveTags(
-          t => "terrainTypes" in t && !(t.terrainTypes as TerrainType[]).find(t => t === terrain),
-        );
-        applyAbAttrs("PostTerrainChangeAbAttr", { pokemon, terrain });
-        applyAbAttrs("TerrainEventTypeChangeAbAttr", { pokemon });
-      });
+    for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
+      pokemon.findAndRemoveTags(
+        t => "terrainTypes" in t && !(t.terrainTypes as TerrainType[]).find(t => t === terrain),
+      );
+      applyAbAttrs("PostTerrainChangeAbAttr", { pokemon, terrain });
+      applyAbAttrs("TerrainEventTypeChangeAbAttr", { pokemon });
+    }
 
     return true;
   }
@@ -653,16 +634,33 @@ export class Arena {
 
   /**
    * Applies each `ArenaTag` in this Arena, based on which side (self, enemy, or both) is passed in as a parameter
-   * @param tagType Either an {@linkcode ArenaTagType} string, or an actual {@linkcode ArenaTag} class to filter which ones to apply
-   * @param side {@linkcode ArenaTagSide} which side's arena tags to apply
-   * @param simulated if `true`, this applies arena tags without changing game state
-   * @param args array of parameters that the called upon tags may need
+   * @param tagType - A constructor of an ArenaTag to filter tags by
+   * @param side - The {@linkcode ArenaTagSide} dictating which side's arena tags to apply
+   * @param args - Parameters for the tag
+   * @privateRemarks
+   * If you get errors mentioning incompatibility with overload signatures, review the arguments being passed
+   * to ensure they are correct for the tag being used.
    */
-  applyTagsForSide(
-    tagType: ArenaTagType | Constructor<ArenaTag> | AbstractConstructor<ArenaTag>,
+  applyTagsForSide<T extends ArenaTag>(
+    tagType: Constructor<T> | AbstractConstructor<T>,
     side: ArenaTagSide,
-    simulated: boolean,
-    ...args: unknown[]
+    ...args: Parameters<T["apply"]>
+  ): void;
+  /**
+   * Applies each `ArenaTag` in this Arena, based on which side (self, enemy, or both) is passed in as a parameter
+   * @param tagType - The {@linkcode ArenaTagType} of the desired tag
+   * @param side - The {@linkcode ArenaTagSide} dictating which side's arena tags to apply
+   * @param args - Parameters for the tag
+   */
+  applyTagsForSide<T extends ArenaTagType>(
+    tagType: T,
+    side: ArenaTagSide,
+    ...args: Parameters<ArenaTagTypeMap[T]["apply"]>
+  ): void;
+  applyTagsForSide<T extends ArenaTag>(
+    tagType: T["tagType"] | Constructor<T> | AbstractConstructor<T>,
+    side: ArenaTagSide,
+    ...args: Parameters<T["apply"]>
   ): void {
     let tags =
       typeof tagType === "string"
@@ -671,22 +669,33 @@ export class Arena {
     if (side !== ArenaTagSide.BOTH) {
       tags = tags.filter(t => t.side === side);
     }
-    tags.forEach(t => t.apply(this, simulated, ...args));
+    tags.forEach(t => t.apply(...args));
   }
 
   /**
    * Applies the specified tag to both sides (ie: both user and trainer's tag that match the Tag specified)
    * by calling {@linkcode applyTagsForSide()}
-   * @param tagType Either an {@linkcode ArenaTagType} string, or an actual {@linkcode ArenaTag} class to filter which ones to apply
-   * @param simulated if `true`, this applies arena tags without changing game state
-   * @param args array of parameters that the called upon tags may need
+   * @param tagType - The {@linkcode ArenaTagType} of the desired tag
+   * @param args - Parameters for the tag
    */
-  applyTags(
-    tagType: ArenaTagType | Constructor<ArenaTag> | AbstractConstructor<ArenaTag>,
-    simulated: boolean,
-    ...args: unknown[]
-  ): void {
-    this.applyTagsForSide(tagType, ArenaTagSide.BOTH, simulated, ...args);
+  applyTags<T extends ArenaTagType>(tagType: T, ...args: Parameters<ArenaTagTypeMap[T]["apply"]>): void;
+  /**
+   * Applies the specified tag to both sides (ie: both user and trainer's tag that match the Tag specified)
+   * by calling {@linkcode applyTagsForSide()}
+   * @param tagType - A constructor of an ArenaTag to filter tags by
+   * @param args - Parameters for the tag
+   * @deprecated Use an `ArenaTagType` for `tagType` instead of an `ArenaTag` constructor
+   */
+  applyTags<T extends ArenaTag>(
+    tagType: Constructor<T> | AbstractConstructor<T>,
+    ...args: Parameters<T["apply"]>
+  ): void;
+  applyTags<T extends ArenaTag>(
+    tagType: T["tagType"] | Constructor<T> | AbstractConstructor<T>,
+    ...args: Parameters<T["apply"]>
+  ) {
+    // @ts-expect-error - Overload resolution
+    this.applyTagsForSide(tagType, ArenaTagSide.BOTH, ...args);
   }
 
   /**
@@ -710,7 +719,7 @@ export class Arena {
   ): boolean {
     const existingTag = this.getTagOnSide(tagType, side);
     if (existingTag) {
-      existingTag.onOverlap(this, globalScene.getPokemonById(sourceId));
+      existingTag.onOverlap(globalScene.getPokemonById(sourceId));
 
       if (existingTag instanceof EntryHazardTag) {
         const { tagType, side, turnCount, maxDuration, layers, maxLayers } = existingTag as EntryHazardTag;
@@ -723,7 +732,7 @@ export class Arena {
     // creates a new tag object
     const newTag = getArenaTag(tagType, turnCount, sourceMove, sourceId, side);
     if (newTag) {
-      newTag.onAdd(this, quiet);
+      newTag.onAdd(quiet);
       this.tags.push(newTag);
 
       const { layers = 0, maxLayers = 0 } = newTag instanceof EntryHazardTag ? newTag : {};
@@ -803,9 +812,9 @@ export class Arena {
 
   lapseTags(): void {
     this.tags
-      .filter(t => !t.lapse(this))
+      .filter(t => !t.lapse())
       .forEach(t => {
-        t.onRemove(this);
+        t.onRemove();
         this.tags.splice(this.tags.indexOf(t), 1);
 
         this.eventTarget.dispatchEvent(new TagRemovedEvent(t.tagType, t.side, t.turnCount));
@@ -816,7 +825,7 @@ export class Arena {
     const tags = this.tags;
     const tag = tags.find(t => t.tagType === tagType);
     if (tag) {
-      tag.onRemove(this);
+      tag.onRemove();
       tags.splice(tags.indexOf(tag), 1);
 
       this.eventTarget.dispatchEvent(new TagRemovedEvent(tag.tagType, tag.side, tag.turnCount));
@@ -827,7 +836,7 @@ export class Arena {
   removeTagOnSide(tagType: ArenaTagType, side: ArenaTagSide, quiet = false): boolean {
     const tag = this.getTagOnSide(tagType, side);
     if (tag) {
-      tag.onRemove(this, quiet);
+      tag.onRemove(quiet);
       this.tags.splice(this.tags.indexOf(tag), 1);
 
       this.eventTarget.dispatchEvent(new TagRemovedEvent(tag.tagType, tag.side, tag.turnCount));
@@ -855,7 +864,7 @@ export class Arena {
         continue;
       }
 
-      tag.onRemove(this, quiet);
+      tag.onRemove(quiet);
     }
 
     this.tags = leftoverTags;
@@ -863,7 +872,7 @@ export class Arena {
 
   removeAllTags(): void {
     while (this.tags.length > 0) {
-      this.tags[0].onRemove(this);
+      this.tags[0].onRemove();
       this.eventTarget.dispatchEvent(
         new TagRemovedEvent(this.tags[0].tagType, this.tags[0].side, this.tags[0].turnCount),
       );
@@ -959,7 +968,7 @@ export class Arena {
       case BiomeId.SLUM:
         return 0.0;
       case BiomeId.SNOWY_FOREST:
-        return 3.047;
+        return 3.814;
       case BiomeId.END:
         return 17.153;
       default:

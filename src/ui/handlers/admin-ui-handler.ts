@@ -1,6 +1,6 @@
 import { pokerogueApi } from "#api/pokerogue-api";
 import { globalScene } from "#app/global-scene";
-import { bypassLogin } from "#app/global-vars/bypass-login";
+import { bypassLogin } from "#constants/app-constants";
 import { AdminMode } from "#enums/admin-mode";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";

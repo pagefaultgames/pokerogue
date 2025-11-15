@@ -34,6 +34,7 @@ import { MoveCategory } from "#enums/move-category";
 import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
+import { MovePriorityInBracket } from "#enums/move-priority-in-bracket";
 import { MoveResult } from "#enums/move-result";
 import { MoveTarget } from "#enums/move-target";
 import { MoveUseMode } from "#enums/move-use-mode";
@@ -66,6 +67,7 @@ import type { Constructor } from "#types/common";
 import type { Closed, Exact } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
 import { BooleanHolder, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
+import { inSpeedOrder } from "#utils/speed-order-generator";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
@@ -1235,10 +1237,7 @@ export class PostDefendApplyArenaTrapTagAbAttr extends PostDefendAbAttr {
 
   override canApply({ pokemon, opponent: attacker, move }: PostMoveInteractionAbAttrParams): boolean {
     const tag = globalScene.arena.getTag(this.arenaTagType) as EntryHazardTag;
-    return (
-      this.condition(pokemon, attacker, move)
-      && (!globalScene.arena.getTag(this.arenaTagType) || tag.layers < tag.maxLayers)
-    );
+    return this.condition(pokemon, attacker, move) && (!tag || tag.canAdd());
   }
 
   override apply({ simulated, pokemon }: PostMoveInteractionAbAttrParams): void {
@@ -1788,9 +1787,7 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
     super(false);
     this.newType = newType;
     this.powerMultiplier = powerMultiplier;
-    if (this.condition != null) {
-      this.condition = condition;
-    }
+    this.condition = condition;
   }
 
   /**
@@ -1874,13 +1871,13 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
 }
 
 /**
- * Parameters for abilities that modify the hit count and damage of a move
+ * Parameters for abilities that modify the hit count of a move.
  */
 export interface AddSecondStrikeAbAttrParams extends Omit<AugmentMoveInteractionAbAttrParams, "opponent"> {
-  /** Holder for the number of hits. May be modified by ability application */
-  hitCount?: NumberHolder;
-  /** Holder for the damage multiplier _of the current hit_ */
-  multiplier?: NumberHolder;
+  /** Holder for the number of hits. Modified by ability application */
+  hitCount: NumberHolder;
+  /** The Pokemon on the other side of this interaction */
+  opponent: Pokemon | undefined;
 }
 
 /**
@@ -1888,35 +1885,12 @@ export interface AddSecondStrikeAbAttrParams extends Omit<AugmentMoveInteraction
  * Used by {@linkcode MoveId.PARENTAL_BOND | Parental Bond}.
  */
 export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
-  /** The damage multiplier for the second strike, relative to the first */
-  private readonly damageMultiplier: number;
-  /**
-   * @param damageMultiplier - The damage multiplier for the second strike, relative to the first
-   */
-  constructor(damageMultiplier: number) {
-    super(false);
-    this.damageMultiplier = damageMultiplier;
+  override canApply({ pokemon, opponent, move }: AddSecondStrikeAbAttrParams): boolean {
+    return move.canBeMultiStrikeEnhanced(pokemon, true, opponent);
   }
 
-  /**
-   * Return whether the move can be multi-strike enhanced.
-   */
-  override canApply({ pokemon, move }: AddSecondStrikeAbAttrParams): boolean {
-    return move.canBeMultiStrikeEnhanced(pokemon, true);
-  }
-
-  /**
-   * Add one to the move's hit count, and, if the pokemon has only one hit left, sets the damage multiplier
-   * to the damage multiplier of this ability.
-   */
-  override apply({ hitCount, multiplier, pokemon }: AddSecondStrikeAbAttrParams): void {
-    if (hitCount?.value) {
-      hitCount.value += 1;
-    }
-
-    if (multiplier?.value && pokemon.turnData.hitsLeft === 1) {
-      multiplier.value = this.damageMultiplier;
-    }
+  override apply({ hitCount }: AddSecondStrikeAbAttrParams): void {
+    hitCount.value += 1;
   }
 }
 
@@ -1936,10 +1910,12 @@ export interface PreAttackModifyDamageAbAttrParams extends AugmentMoveInteractio
  * @param damageMultiplier the amount to multiply the damage by
  * @param condition the condition for this ability to be applied
  */
-export class DamageBoostAbAttr extends PreAttackAbAttr {
+export class MoveDamageBoostAbAttr extends PreAttackAbAttr {
   private readonly damageMultiplier: number;
   private readonly condition: PokemonAttackCondition;
 
+  // TODO: This should not take a `PokemonAttackCondition` (with nullish parameters)
+  // as it's effectively offloading nullishness checks to its child attributes
   constructor(damageMultiplier: number, condition: PokemonAttackCondition) {
     super(false);
     this.damageMultiplier = damageMultiplier;
@@ -2769,6 +2745,7 @@ export class PostSummonAddArenaTagAbAttr extends PostSummonAbAttr {
   private readonly turnCount: number;
   private readonly side?: ArenaTagSide;
   private readonly quiet?: boolean;
+  // TODO: This should not need to track the source ID in a tempvar
   private sourceId: number;
 
   constructor(showAbility: boolean, tagType: ArenaTagType, turnCount: number, side?: ArenaTagSide, quiet?: boolean) {
@@ -2803,6 +2780,7 @@ export class PostSummonMessageAbAttr extends PostSummonAbAttr {
   }
 }
 
+// TODO: This should be merged with message func
 export class PostSummonUnnamedMessageAbAttr extends PostSummonAbAttr {
   //Attr doesn't force pokemon name on the message
   private readonly message: string;
@@ -2873,13 +2851,13 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
   private readonly selfTarget: boolean;
   private readonly intimidate: boolean;
 
-  constructor(stats: readonly BattleStat[], stages: number, selfTarget?: boolean, intimidate?: boolean) {
+  constructor(stats: readonly BattleStat[], stages: number, selfTarget = false, intimidate = true) {
     super(true);
 
     this.stats = stats;
     this.stages = stages;
-    this.selfTarget = !!selfTarget;
-    this.intimidate = !!intimidate;
+    this.selfTarget = selfTarget;
+    this.intimidate = intimidate;
   }
 
   override apply({ pokemon, simulated }: AbAttrBaseParams): void {
@@ -2900,7 +2878,7 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
       return;
     }
 
-    for (const opponent of pokemon.getOpponents()) {
+    for (const opponent of pokemon.getOpponentsGenerator()) {
       const cancelled = new BooleanHolder(false);
       if (this.intimidate) {
         const params: AbAttrParamsWithCancel = { pokemon: opponent, cancelled, simulated };
@@ -3211,10 +3189,8 @@ export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAtt
     if (simulated) {
       return;
     }
-    const party = pokemon.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
-    const allowedParty = party.filter(p => p.isAllowedInBattle());
 
-    for (const partyPokemon of allowedParty) {
+    for (const partyPokemon of pokemon.getAlliesGenerator()) {
       if (partyPokemon.status && this.statusEffect.includes(partyPokemon.status.effect)) {
         globalScene.phaseManager.queueMessage(
           getStatusEffectHealText(partyPokemon.status.effect, getPokemonNameWithAffix(partyPokemon)),
@@ -4186,6 +4162,25 @@ export class ChangeMovePriorityAbAttr extends AbAttr {
   }
 }
 
+export class ChangeMovePriorityInBracketAbAttr extends AbAttr {
+  private readonly newModifier: MovePriorityInBracket;
+  private readonly moveFunc: (pokemon: Pokemon, move: Move) => boolean;
+
+  constructor(moveFunc: (pokemon: Pokemon, move: Move) => boolean, newModifier: MovePriorityInBracket) {
+    super(false);
+    this.newModifier = newModifier;
+    this.moveFunc = moveFunc;
+  }
+
+  override canApply({ pokemon, move }: ChangeMovePriorityAbAttrParams): boolean {
+    return this.moveFunc(pokemon, move);
+  }
+
+  override apply({ priority }: ChangeMovePriorityAbAttrParams): void {
+    priority.value = this.newModifier;
+  }
+}
+
 export class IgnoreContactAbAttr extends AbAttr {
   private declare readonly _: never;
 }
@@ -4257,28 +4252,26 @@ export class SuppressWeatherEffectAbAttr extends PreWeatherEffectAbAttr {
 /**
  * Condition function to applied to abilities related to Sheer Force.
  * Checks if last move used against target was affected by a Sheer Force user and:
- * Disables: Color Change, Pickpocket, Berserk, Anger Shell
+ * Disables: Color Change, Pickpocket, Berserk, Anger Shell, Wimp Out, Emergency Exit
  * @returns An {@linkcode AbAttrCondition} to disable the ability under the proper conditions.
  */
-function getSheerForceHitDisableAbCondition(): AbAttrCondition {
-  return (pokemon: Pokemon) => {
-    const lastReceivedAttack = pokemon.turnData.attacksReceived[0];
-    if (!lastReceivedAttack) {
-      return true;
-    }
+const sheerForceHitDisableAbCondition: AbAttrCondition = (pokemon: Pokemon) => {
+  const lastReceivedAttack = pokemon.turnData.attacksReceived[0];
+  if (!lastReceivedAttack) {
+    return true;
+  }
 
-    const lastAttacker = pokemon.getOpponents().find(p => p.id === lastReceivedAttack.sourceId);
-    if (!lastAttacker) {
-      return true;
-    }
+  const lastAttacker = pokemon.getOpponents().find(p => p.id === lastReceivedAttack.sourceId);
+  if (!lastAttacker) {
+    return true;
+  }
 
-    /** `true` if the last move's chance is above 0 and the last attacker's ability is sheer force */
-    const SheerForceAffected =
-      allMoves[lastReceivedAttack.move].chance >= 0 && lastAttacker.hasAbility(AbilityId.SHEER_FORCE);
+  /** `true` if the last move's chance is above 0 and the last attacker's ability is sheer force */
+  const sheerForceAffected =
+    allMoves[lastReceivedAttack.move].chance >= 0 && lastAttacker.hasAbility(AbilityId.SHEER_FORCE);
 
-    return !SheerForceAffected;
-  };
-}
+  return !sheerForceAffected;
+};
 
 function getWeatherCondition(...weatherTypes: WeatherType[]): AbAttrCondition {
   return () => {
@@ -4368,6 +4361,11 @@ function getOncePerBattleCondition(ability: AbilityId): AbAttrCondition {
 }
 
 /**
+ * Ability attribute used by {@linkcode AbilityId.FOREWARN}.
+ *
+ * Displays a message on switch-in containing the highest power Move known by the user's opponents,
+ * picking randomly in the case of a tie.
+ * @see {@link https://www.smogon.com/dex/sv/abilities/forewarn/}
  * @sealed
  */
 export class ForewarnAbAttr extends PostSummonAbAttr {
@@ -4375,45 +4373,79 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
     super(true);
   }
 
+  override canApply({ pokemon }: AbAttrBaseParams): boolean {
+    return pokemon.getOpponents().some(opp => opp.getMoveset().length > 0);
+  }
+
   override apply({ simulated, pokemon }: AbAttrBaseParams): void {
-    if (!simulated) {
+    if (simulated) {
       return;
     }
+
     let maxPowerSeen = 0;
-    let maxMove = "";
-    let movePower = 0;
-    for (const opponent of pokemon.getOpponents()) {
-      for (const move of opponent.moveset) {
-        if (move?.getMove().is("StatusMove")) {
-          movePower = 1;
-        } else if (move?.getMove().hasAttr("OneHitKOAttr")) {
-          movePower = 150;
-        } else if (
-          move?.getMove().id === MoveId.COUNTER
-          || move?.getMove().id === MoveId.MIRROR_COAT
-          || move?.getMove().id === MoveId.METAL_BURST
-        ) {
-          movePower = 120;
-        } else if (move?.getMove().power === -1) {
-          movePower = 80;
-        } else {
-          movePower = move?.getMove().power ?? 0;
+    const movesAtMaxPower: string[] = [];
+
+    // Record all moves in all opponents' movesets seen at our max power threshold, clearing it if a new "highest power" is found
+    // TODO: Change to `pokemon.getOpponents().flatMap(p => p.getMoveset())` if or when we upgrade to ES2025
+    for (const opp of pokemon.getOpponents()) {
+      for (const oppMove of opp.getMoveset()) {
+        const move = oppMove.getMove();
+        const movePower = getForewarnPower(move);
+        if (movePower < maxPowerSeen) {
+          continue;
         }
 
-        if (movePower > maxPowerSeen) {
-          maxPowerSeen = movePower;
-          maxMove = move?.getName() ?? "";
+        // Another move at current max found; add to tiebreaker array
+        if (movePower === maxPowerSeen) {
+          movesAtMaxPower.push(move.name);
+          continue;
         }
+
+        // New max reached; clear prior results and update tracker
+        maxPowerSeen = movePower;
+        movesAtMaxPower.splice(0, movesAtMaxPower.length, move.name);
       }
     }
 
+    // Pick a random move in our list.
+    if (movesAtMaxPower.length === 0) {
+      return;
+    }
+    const chosenMove = movesAtMaxPower[pokemon.randBattleSeedInt(movesAtMaxPower.length)];
     globalScene.phaseManager.queueMessage(
       i18next.t("abilityTriggers:forewarn", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        moveName: maxMove,
+        moveName: chosenMove,
       }),
     );
   }
+}
+
+/**
+ * Helper function to return the estimated power used by Forewarn's "highest power" ranking.
+ * @param move - The `Move` being checked
+ * @returns The "forewarned" power of the move.
+ * @see {@link https://www.smogon.com/dex/sv/abilities/forewarn/}
+ */
+function getForewarnPower(move: Move): number {
+  if (move.is("StatusMove")) {
+    return 1;
+  }
+
+  if (move.hasAttr("OneHitKOAttr")) {
+    return 150;
+  }
+
+  // NB: Mainline doesn't count Comeuppance in its "counter move exceptions" list, which is dumb
+  if (move.hasAttr("CounterDamageAttr")) {
+    return 120;
+  }
+
+  // All damaging moves with unlisted powers use 80 as a fallback
+  if (move.power === -1) {
+    return 80;
+  }
+  return move.power;
 }
 
 /**
@@ -4427,7 +4459,7 @@ export class FriskAbAttr extends PostSummonAbAttr {
 
   override apply({ simulated, pokemon }: AbAttrBaseParams): void {
     if (!simulated) {
-      for (const opponent of pokemon.getOpponents()) {
+      for (const opponent of pokemon.getOpponentsGenerator()) {
         globalScene.phaseManager.queueMessage(
           i18next.t("abilityTriggers:frisk", {
             pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
@@ -4996,7 +5028,7 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
       return;
     }
 
-    for (const opp of pokemon.getOpponents()) {
+    for (const opp of pokemon.getOpponentsGenerator()) {
       if ((opp.status?.effect !== StatusEffect.SLEEP && !opp.hasAbility(AbilityId.COMATOSE)) || opp.switchOutStatus) {
         continue;
       }
@@ -5020,25 +5052,26 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
  */
 export class FetchBallAbAttr extends PostTurnAbAttr {
   override canApply({ simulated, pokemon }: AbAttrBaseParams): boolean {
-    return !simulated && globalScene.currentBattle.lastUsedPokeball != null && !!pokemon.isPlayer;
+    return !simulated && globalScene.currentBattle.lastUsedPokeball != null && pokemon.isPlayer();
   }
 
   /**
    * Adds the last used Pokeball back into the player's inventory
    */
   override apply({ pokemon }: AbAttrBaseParams): void {
-    const lastUsed = globalScene.currentBattle.lastUsedPokeball;
-    globalScene.pokeballCounts[lastUsed!]++;
+    const lastUsed = globalScene.currentBattle.lastUsedPokeball!;
+    globalScene.pokeballCounts[lastUsed]++;
     globalScene.currentBattle.lastUsedPokeball = null;
     globalScene.phaseManager.queueMessage(
       i18next.t("abilityTriggers:fetchBall", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        pokeballName: getPokeballName(lastUsed!),
+        pokeballName: getPokeballName(lastUsed),
       }),
     );
   }
 }
 
+// TODO: Remove this and just replace it with applying `PostSummonChangeTerrainAbAttr` again
 export class PostBiomeChangeAbAttr extends AbAttr {
   private declare readonly _: never;
 }
@@ -5063,6 +5096,7 @@ export class PostBiomeChangeWeatherChangeAbAttr extends PostBiomeChangeAbAttr {
   }
 }
 
+// TODO: Remove this and just replace it with applying `PostSummonChangeTerrainAbAttr` again
 /** @sealed */
 export class PostBiomeChangeTerrainChangeAbAttr extends PostBiomeChangeAbAttr {
   private readonly terrainType: TerrainType;
@@ -5549,10 +5583,9 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
     }
 
     const cancelled = new BooleanHolder(false);
-    // TODO: This should be in speed order
-    globalScene
-      .getField(true)
-      .forEach(p => applyAbAttrs("FieldPreventExplosiveMovesAbAttr", { pokemon: p, cancelled, simulated }));
+    for (const p of inSpeedOrder(ArenaTagSide.BOTH)) {
+      applyAbAttrs("FieldPreventExplosiveMovesAbAttr", { pokemon: p, cancelled, simulated });
+    }
 
     if (cancelled.value) {
       return false;
@@ -6645,7 +6678,7 @@ const AbilityAttrs = Object.freeze({
   MoveTypeChangeAbAttr,
   PokemonTypeChangeAbAttr,
   AddSecondStrikeAbAttr,
-  DamageBoostAbAttr,
+  MoveDamageBoostAbAttr,
   MovePowerBoostAbAttr,
   MoveTypePowerBoostAbAttr,
   LowHpMoveTypePowerBoostAbAttr,
@@ -6729,6 +6762,7 @@ const AbilityAttrs = Object.freeze({
   BlockStatusDamageAbAttr,
   BlockOneHitKOAbAttr,
   ChangeMovePriorityAbAttr,
+  ChangeMovePriorityInBracketAbAttr,
   IgnoreContactAbAttr,
   PreWeatherEffectAbAttr,
   PreWeatherDamageAbAttr,
@@ -6912,7 +6946,7 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.COLOR_CHANGE, 3)
       .attr(PostDefendTypeChangeAbAttr)
-      .condition(getSheerForceHitDisableAbCondition())
+      .condition(sheerForceHitDisableAbCondition)
       .build(),
     new AbBuilder(AbilityId.IMMUNITY, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
@@ -7246,7 +7280,7 @@ export function initAbilities() {
       .attr(DoubleBattleChanceAbAttr)
       .build(),
     new AbBuilder(AbilityId.STALL, 4)
-      .attr(ChangeMovePriorityAbAttr, (_pokemon, _move: Move) => true, -0.2)
+      .attr(ChangeMovePriorityInBracketAbAttr, (_pokemon, _move: Move) => true, MovePriorityInBracket.LAST)
       .build(),
     new AbBuilder(AbilityId.TECHNICIAN, 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => {
@@ -7285,7 +7319,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.TINTED_LENS, 4)
-      .attr(DamageBoostAbAttr, 2, (user, target, move) => (target?.getMoveEffectiveness(user!, move) ?? 1) <= 0.5)
+      .attr(MoveDamageBoostAbAttr, 2, (user, target, move) => (target?.getMoveEffectiveness(user!, move) ?? 1) <= 0.5)
       .build(),
     new AbBuilder(AbilityId.FILTER, 4)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => target.getMoveEffectiveness(user, move) >= 2, 0.75)
@@ -7348,7 +7382,7 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.PICKPOCKET, 5)
       .attr(PostDefendStealHeldItemAbAttr, (target, user, move) => move.doesFlagEffectApply({flag: MoveFlags.MAKES_CONTACT, user, target}))
-      .condition(getSheerForceHitDisableAbCondition())
+      .condition(sheerForceHitDisableAbCondition)
       .build(),
     new AbBuilder(AbilityId.SHEER_FORCE, 5)
       .attr(MovePowerBoostAbAttr, (_user, _target, move) => move.chance >= 1, 1.3)
@@ -7448,17 +7482,18 @@ export function initAbilities() {
         1.3)
       .build(),
     new AbBuilder(AbilityId.ILLUSION, 5)
-      // The Pokemon generate an illusion if it's available
-      .attr(IllusionPreSummonAbAttr, false)
-      .attr(IllusionBreakAbAttr)
-      // The Pokemon loses its illusion when damaged by a move
-      .attr(PostDefendIllusionBreakAbAttr, true)
-      // Disable Illusion in fusions
-      .attr(NoFusionAbilityAbAttr)
-      // Illusion is available again after a battle
-      .conditionalAttr((pokemon) => pokemon.isAllowedInBattle(), IllusionPostBattleAbAttr, false)
+      // // The Pokemon generate an illusion if it's available
+      // .attr(IllusionPreSummonAbAttr, false)
+      // .attr(IllusionBreakAbAttr)
+      // // The Pokemon loses its illusion when damaged by a move
+      // .attr(PostDefendIllusionBreakAbAttr, true)
+      // // Disable Illusion in fusions
+      // .attr(NoFusionAbilityAbAttr)
+      // // Illusion is available again after a battle
+      // .conditionalAttr((pokemon) => pokemon.isAllowedInBattle(), IllusionPostBattleAbAttr, false)
       .uncopiable()
-      .bypassFaint()
+      // .bypassFaint()
+      .unimplemented() // TODO reimplement Illusion properly
       .build(),
     new AbBuilder(AbilityId.IMPOSTER, 5)
       .attr(PostSummonTransformAbAttr)
@@ -7622,7 +7657,15 @@ export function initAbilities() {
       .attr(MoveTypeChangeAbAttr, PokemonType.FLYING, 1.2, (_user, _target, move) => move.type === PokemonType.NORMAL)
       .build(),
     new AbBuilder(AbilityId.PARENTAL_BOND, 6)
-      .attr(AddSecondStrikeAbAttr, 0.25)
+      .attr(AddSecondStrikeAbAttr)
+      // Only multiply damage on the last strike of multi-strike moves
+      .attr(MoveDamageBoostAbAttr, 0.25, (user, target, move) => (
+          !!user
+          && user.turnData.hitCount > 1 // move was originally multi hit
+          && user.turnData.hitsLeft === 1 // move is on its final strike
+          && move.canBeMultiStrikeEnhanced(user, true, target)
+        )
+      )
       .build(),
     new AbBuilder(AbilityId.DARK_AURA, 6)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonDarkAura", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
@@ -7662,10 +7705,12 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.WIMP_OUT, 7)
       .attr(PostDamageForceSwitchAbAttr)
+      .condition(sheerForceHitDisableAbCondition)
       .edgeCase() // Should not trigger when hurting itself in confusion, causes Fake Out to fail turn 1 and succeed turn 2 if pokemon is switched out before battle start via playing in Switch Mode
       .build(),
     new AbBuilder(AbilityId.EMERGENCY_EXIT, 7)
       .attr(PostDamageForceSwitchAbAttr)
+      .condition(sheerForceHitDisableAbCondition)
       .edgeCase() // Should not trigger when hurting itself in confusion, causes Fake Out to fail turn 1 and succeed turn 2 if pokemon is switched out before battle start via playing in Switch Mode
       .build(),
     new AbBuilder(AbilityId.WATER_COMPACTION, 7)
@@ -7705,7 +7750,7 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.BERSERK, 7)
       .attr(PostDefendHpGatedStatStageChangeAbAttr, (_target, _user, move) => move.category !== MoveCategory.STATUS, 0.5, [ Stat.SPATK ], 1)
-      .condition(getSheerForceHitDisableAbCondition())
+      .condition(sheerForceHitDisableAbCondition)
       .build(),
     new AbBuilder(AbilityId.SLUSH_RUSH, 7)
       .attr(StatMultiplierAbAttr, Stat.SPD, 2)
@@ -8065,7 +8110,7 @@ export function initAbilities() {
     new AbBuilder(AbilityId.ANGER_SHELL, 9)
       .attr(PostDefendHpGatedStatStageChangeAbAttr, (_target, _user, move) => move.category !== MoveCategory.STATUS, 0.5, [ Stat.ATK, Stat.SPATK, Stat.SPD ], 1)
       .attr(PostDefendHpGatedStatStageChangeAbAttr, (_target, _user, move) => move.category !== MoveCategory.STATUS, 0.5, [ Stat.DEF, Stat.SPDEF ], -1)
-      .condition(getSheerForceHitDisableAbCondition())
+      .condition(sheerForceHitDisableAbCondition)
       .build(),
     new AbBuilder(AbilityId.PURIFYING_SALT, 9)
       .attr(StatusEffectImmunityAbAttr)
@@ -8191,7 +8236,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.MYCELIUM_MIGHT, 9)
-      .attr(ChangeMovePriorityAbAttr, (_pokemon, move) => move.category === MoveCategory.STATUS, -0.2)
+      .attr(ChangeMovePriorityInBracketAbAttr, (_pokemon, move) => move.category === MoveCategory.STATUS, MovePriorityInBracket.LAST)
       .attr(PreventBypassSpeedChanceAbAttr, (_pokemon, move) => move.category === MoveCategory.STATUS)
       .attr(MoveAbilityBypassAbAttr, (_pokemon, move: Move) => move.category === MoveCategory.STATUS)
       .build(),

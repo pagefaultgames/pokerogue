@@ -39,7 +39,7 @@ import {
   TrappedTag,
   TypeImmuneTag,
 } from "#data/battler-tags";
-import { getDailyEventSeedBoss } from "#data/daily-run";
+import { getDailyEventSeedBoss, getDailyEventSeedBossVariant } from "#data/daily-run";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import {
@@ -143,7 +143,6 @@ import type { AbAttrMap, AbAttrString, TypeMultiplierAbAttrParams } from "#types
 import type { Constructor } from "#types/common";
 import type { getAttackDamageParams, getBaseDamageParams } from "#types/damage-params";
 import type { DamageCalculationResult, DamageResult } from "#types/damage-result";
-import type { IllusionData } from "#types/illusion-data";
 import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { TurnMove } from "#types/turn-move";
@@ -173,6 +172,7 @@ import {
 import { calculateBossSegmentDamage } from "#utils/damage";
 import { getEnumValues } from "#utils/enums";
 import { getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { inSpeedOrder } from "#utils/speed-order-generator";
 import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
 import i18next from "i18next";
 import Phaser from "phaser";
@@ -604,20 +604,18 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /** Generate `abilityIndex` based on species and hidden ability if not pre-defined. */
   private generateAbilityIndex(): number {
-    // Roll for hidden ability chance, applying any ability charms for enemy mons
     const hiddenAbilityChance = new NumberHolder(BASE_HIDDEN_ABILITY_CHANCE);
+    // Ability Charms should only affect wild Pokemon
+    // TODO: move this `if` check into the ability charm code
     if (!this.hasTrainer()) {
       globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
     }
 
-    // If the roll succeeded and we have one, use HA; otherwise pick a random ability
-    const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
-    if (this.species.abilityHidden && hasHiddenAbility) {
-      return 2;
-    }
+    // Neither RNG roll depends on the outcome of the other, so that Ability Charms do not affect RNG.
+    const regularAbility = this.species.ability2 !== this.species.ability1 ? randSeedInt(2) : 0;
+    const useHiddenAbility = this.species.abilityHidden ? !randSeedInt(hiddenAbilityChance.value) : false;
 
-    // only use random ability if species has a second ability
-    return this.species.ability2 !== this.species.ability1 ? randSeedInt(2) : 0;
+    return useHiddenAbility ? 2 : regularAbility;
   }
 
   /**
@@ -1849,20 +1847,20 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns An array of {@linkcode PokemonMove}, as described above.
    */
   getMoveset(ignoreOverride = false): PokemonMove[] {
-    // Overrides moveset based on arrays specified in overrides.ts
-    let overrideArray: MoveId | Array<MoveId> = this.isPlayer()
-      ? Overrides.MOVESET_OVERRIDE
-      : Overrides.ENEMY_MOVESET_OVERRIDE;
-    overrideArray = coerceArray(overrideArray);
-    if (overrideArray.length > 0) {
-      if (!this.isPlayer()) {
-        this.moveset = [];
-      }
-      overrideArray.forEach((move: MoveId, index: number) => {
-        const ppUsed = this.moveset[index]?.ppUsed ?? 0;
-        this.moveset[index] = new PokemonMove(move, Math.min(ppUsed, allMoves[move].pp));
-      });
+    // Override moveset based on arrays specified in overrides.ts
+    const overrideArray = coerceArray(this.isPlayer() ? Overrides.MOVESET_OVERRIDE : Overrides.ENEMY_MOVESET_OVERRIDE);
+    if (overrideArray.length === 0) {
+      return !ignoreOverride && this.summonData.moveset ? this.summonData.moveset : this.moveset;
     }
+
+    if (!this.isPlayer()) {
+      this.moveset = [];
+    }
+    // TODO: Preserve PP used while the moveset override is active
+    overrideArray.forEach((move: MoveId, index: number) => {
+      const ppUsed = this.moveset[index]?.ppUsed ?? 0;
+      this.moveset[index] = new PokemonMove(move, Math.min(ppUsed, allMoves[move].pp));
+    });
 
     return !ignoreOverride && this.summonData.moveset ? this.summonData.moveset : this.moveset;
   }
@@ -2202,6 +2200,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.isFusion() && ability.hasAttr("NoFusionAbilityAbAttr")) {
       return false;
     }
+    if (this.isTransformed() && ability.hasAttr("NoTransformAbilityAbAttr")) {
+      return false;
+    }
     const arena = globalScene?.arena;
     if (arena.ignoreAbilities && arena.ignoringEffectSource !== this.getBattlerIndex() && ability.ignorable) {
       return false;
@@ -2231,7 +2232,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Check whether a pokemon has the specified ability in effect, either as a normal or passive ability.
    * Accounts for all the various effects which can disable or modify abilities.
-   * @param ability - The {@linkcode Abilities | Ability} to check for
+   * @param ability - The {@linkcode AbilityId | Ability} to check for
    * @param canApply - Whether to check if the ability is currently active; default `true`
    * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
    * @returns Whether this {@linkcode Pokemon} has the given ability
@@ -2349,15 +2350,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     /** Holds whether the pokemon is trapped due to an ability */
     const trapped = new BooleanHolder(false);
-    /**
-     * Contains opposing Pokemon (Enemy/Player Pokemon) depending on perspective
-     * Afterwards, it filters out Pokemon that have been switched out of the field so trapped abilities/moves do not trigger
-     */
-    const opposingFieldUnfiltered = this.isPlayer() ? globalScene.getEnemyField() : globalScene.getPlayerField();
-    const opposingField = opposingFieldUnfiltered.filter(enemyPkm => enemyPkm.switchOutStatus === false);
-
-    for (const opponent of opposingField) {
-      applyAbAttrs("CheckTrappedAbAttr", { pokemon: opponent, trapped, opponent: this, simulated }, trappedAbMessages);
+    for (const opponent of inSpeedOrder(this.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER)) {
+      if (opponent.switchOutStatus === false) {
+        applyAbAttrs(
+          "CheckTrappedAbAttr",
+          { pokemon: opponent, trapped, opponent: this, simulated },
+          trappedAbMessages,
+        );
+      }
     }
 
     const side = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
@@ -2398,7 +2398,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return moveTypeHolder.value as PokemonType;
     }
 
-    globalScene.arena.applyTags(ArenaTagType.ION_DELUGE, simulated, moveTypeHolder);
+    globalScene.arena.applyTags(ArenaTagType.ION_DELUGE, moveTypeHolder);
     if (this.getTag(BattlerTagType.ELECTRIFIED)) {
       moveTypeHolder.value = PokemonType.ELECTRIC;
     }
@@ -2470,8 +2470,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       // Do not check queenly majesty unless this is being simulated
       // This is because the move effect phase should not check queenly majesty, as that is handled by the move phase
       if (simulated && !cancelledHolder.value) {
-        const defendingSidePlayField = this.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
-        defendingSidePlayField.forEach((p: (typeof defendingSidePlayField)[0]) => {
+        for (const p of this.getAlliesGenerator()) {
           applyAbAttrs("FieldPriorityMoveImmunityAbAttr", {
             pokemon: p,
             opponent: source,
@@ -2479,7 +2478,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
             cancelled: cancelledHolder,
             simulated,
           });
-        });
+        }
       }
     }
 
@@ -2659,10 +2658,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         hpDiffRatio = 1 - hpRatio + (outspeed ? 0.2 : 0.1);
       }
     } else if (outspeed) {
-      hpDiffRatio = hpDiffRatio * 1.25;
+      hpDiffRatio *= 1.25;
     } else if (hpRatio > 0.2 && hpRatio <= 0.4) {
       // Might be considered to be switched because it's not in low enough health
-      hpDiffRatio = hpDiffRatio * 0.5;
+      hpDiffRatio *= 0.5;
     }
     return (atkScore + defScore) * Math.min(hpDiffRatio, 1);
   }
@@ -2906,12 +2905,15 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (thresholdOverride === undefined) {
       if (timedEventManager.isEventActive()) {
         const tchance = timedEventManager.getClassicTrainerShinyChance();
-        shinyThreshold.value *= timedEventManager.getShinyMultiplier();
-        if (this.hasTrainer() && tchance > 0) {
+        if (this.isEnemy() && this.hasTrainer() && tchance > 0) {
           shinyThreshold.value = Math.max(tchance, shinyThreshold.value); // Choose the higher boost
+        } else {
+          // Wild shiny event multiplier
+          shinyThreshold.value *= timedEventManager.getShinyEncounterMultiplier();
         }
       }
-      if (!this.hasTrainer()) {
+      if (this.isPlayer() || !this.hasTrainer()) {
+        // Apply shiny modifiers only to Player or wild mons
         globalScene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
       }
     } else {
@@ -2935,18 +2937,27 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * If it rolls shiny, or if it's already shiny, also sets a random variant and give the Pokemon the associated luck.
    *
    * The base shiny odds are {@linkcode BASE_SHINY_CHANCE} / `65536`
-   * @param thresholdOverride - number that is divided by `2^16` (`65536`) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
-   * @param applyModifiersToOverride - If {@linkcode thresholdOverride} is set and this is true, will apply Shiny Charm and event modifiers to {@linkcode thresholdOverride}
+   * @param thresholdOverride number that is divided by `2^16` (`65536`) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
+   * @param applyModifiersToOverride If {@linkcode thresholdOverride} is set and this is true, will apply Shiny Charm and event modifiers to {@linkcode thresholdOverride}
+   * @param maxThreshold The maximum threshold allowed after applying modifiers
    * @returns Whether this Pokémon was set to shiny
    */
-  public trySetShinySeed(thresholdOverride?: number, applyModifiersToOverride?: boolean): boolean {
+  public trySetShinySeed(
+    thresholdOverride?: number,
+    applyModifiersToOverride?: boolean,
+    maxThreshold?: number,
+  ): boolean {
     if (!this.shiny) {
       const shinyThreshold = new NumberHolder(thresholdOverride ?? BASE_SHINY_CHANCE);
       if (applyModifiersToOverride) {
         if (timedEventManager.isEventActive()) {
-          shinyThreshold.value *= timedEventManager.getShinyMultiplier();
+          shinyThreshold.value *= timedEventManager.getShinyEncounterMultiplier();
         }
         globalScene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
+      }
+
+      if (maxThreshold && maxThreshold > 0) {
+        shinyThreshold.value = Math.min(maxThreshold, shinyThreshold.value);
       }
 
       this.shiny = randSeedInt(65536) < shinyThreshold.value;
@@ -3152,8 +3163,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       const otherBattleInfo = globalScene.fieldUI
         .getAll()
         .slice(0, 4)
-        .filter(ui => ui instanceof BattleInfo && (ui as BattleInfo) instanceof PlayerBattleInfo === this.isPlayer())
-        .find(() => true);
+        .find(ui => ui instanceof BattleInfo && (ui as BattleInfo) instanceof PlayerBattleInfo === this.isPlayer());
       if (!otherBattleInfo || !this.getFieldIndex()) {
         globalScene.fieldUI.sendToBack(this.battleInfo);
         globalScene.sendTextToBack(); // Push the top right text objects behind everything else
@@ -3246,7 +3256,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Returns the pokemon that oppose this one and are active
+   * Returns the pokemon that oppose this one and are active in non-speed order
    *
    * @param onField - whether to also check if the pokemon is currently on the field (defaults to true)
    */
@@ -3254,6 +3264,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return (this.isPlayer() ? globalScene.getEnemyField() : globalScene.getPlayerField()).filter(p =>
       p.isActive(onField),
     );
+  }
+
+  /**
+   * @returns A generator of pokemon that oppose this one in speed order
+   */
+  public getOpponentsGenerator(): Generator<Pokemon, number> {
+    return inSpeedOrder(this.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER);
   }
 
   getOpponentDescriptor(): string {
@@ -3265,12 +3282,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Gets the Pokémon on the allied field.
-   *
-   * @returns An array of Pokémon on the allied field.
+   * @returns A generator of Pokémon on the allied field in speed order.
    */
-  getAlliedField(): Pokemon[] {
-    return this.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
+  getAlliesGenerator(): Generator<Pokemon, number> {
+    return inSpeedOrder(this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
   }
 
   /**
@@ -3660,15 +3675,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       multiStrikeEnhancementMultiplier,
     );
 
-    if (!ignoreSourceAbility) {
-      applyAbAttrs("AddSecondStrikeAbAttr", {
-        pokemon: source,
-        move,
-        simulated,
-        multiplier: multiStrikeEnhancementMultiplier,
-      });
-    }
-
     /** Doubles damage if this Pokemon's last move was Glaive Rush */
     const glaiveRushMultiplier = new NumberHolder(1);
     if (this.getTag(BattlerTagType.RECEIVE_DOUBLE_DAMAGE)) {
@@ -3714,14 +3720,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     // Critical hits should bypass screens
     if (!isCritical) {
-      globalScene.arena.applyTagsForSide(
-        WeakenMoveScreenTag,
-        defendingSide,
-        simulated,
-        source,
-        moveCategory,
-        screenMultiplier,
-      );
+      globalScene.arena.applyTagsForSide(WeakenMoveScreenTag, defendingSide, source, moveCategory, screenMultiplier);
     }
 
     /**
@@ -3764,9 +3763,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         * mistyTerrainMultiplier,
     );
 
-    /** Doubles damage if the attacker has Tinted Lens and is using a resisted move */
     if (!ignoreSourceAbility) {
-      applyAbAttrs("DamageBoostAbAttr", {
+      applyAbAttrs("MoveDamageBoostAbAttr", {
         pokemon: source,
         opponent: this,
         move,
@@ -3859,11 +3857,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     // apply crit block effects from lucky chant & co., overriding previous effects
     const blockCrit = new BooleanHolder(false);
     applyAbAttrs("BlockCritAbAttr", { pokemon: this, blockCrit });
-    const blockCritTag = globalScene.arena.getTagOnSide(
+    globalScene.arena.applyTagsForSide(
       NoCritTag,
       this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY,
+      blockCrit,
     );
-    isCritical &&= !blockCritTag && !blockCrit.value; // need to roll a crit and not be blocked by either crit prevention effect
+    isCritical &&= !blockCrit.value; // need to roll a crit and not be blocked by either crit prevention effect
 
     return isCritical;
   }
@@ -3900,7 +3899,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     damage = Math.min(damage, this.hp);
-    this.hp = this.hp - damage;
+    this.hp -= damage;
     if (this.isFainted() && !ignoreFaintPhase) {
       globalScene.phaseManager.queueFaintPhase(this.getBattlerIndex(), preventEndure);
       this.destroySubstitute();
@@ -4029,16 +4028,15 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const cancelled = new BooleanHolder(false);
     applyAbAttrs("BattlerTagImmunityAbAttr", { pokemon: this, tag: stubTag, cancelled, simulated: true });
 
-    const userField = this.getAlliedField();
-    userField.forEach(pokemon =>
+    for (const pokemon of this.getAlliesGenerator()) {
       applyAbAttrs("UserFieldBattlerTagImmunityAbAttr", {
         pokemon,
         tag: stubTag,
         cancelled,
         simulated: true,
         target: this,
-      }),
-    );
+      });
+    }
 
     return !cancelled.value;
   }
@@ -4072,7 +4070,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return false;
     }
 
-    for (const pokemon of this.getAlliedField()) {
+    for (const pokemon of this.getAlliesGenerator()) {
       applyAbAttrs("UserFieldBattlerTagImmunityAbAttr", { pokemon, tag: newTag, cancelled, target: this });
       if (cancelled.value) {
         return false;
@@ -4820,7 +4818,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return false;
     }
 
-    for (const pokemon of this.getAlliedField()) {
+    for (const pokemon of this.getAlliesGenerator()) {
       applyAbAttrs("UserFieldStatusEffectImmunityAbAttr", {
         pokemon,
         effect,
@@ -5113,14 +5111,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * in preparation for switching pokemon, as well as removing any relevant on-switch tags.
    */
   public resetSummonData(): void {
-    const illusion: IllusionData | null = this.summonData.illusion;
     if (this.summonData.speciesForm) {
       this.summonData.speciesForm = null;
       this.updateFusionPalette();
     }
     this.summonData = new PokemonSummonData();
     this.tempSummonData = new PokemonTempSummonData();
-    this.summonData.illusion = illusion;
     this.updateInfo();
   }
 
@@ -5628,10 +5624,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   leaveField(clearEffects = true, hideInfo = true, destroy = false) {
     this.resetSprite();
     this.resetTurnData();
-    globalScene
-      .getField(true)
-      .filter(p => p !== this)
-      .forEach(p => p.removeTagsBySourceId(this.id));
+    for (const p of inSpeedOrder(ArenaTagSide.BOTH)) {
+      if (p !== this) {
+        p.removeTagsBySourceId(this.id);
+      }
+    }
 
     if (clearEffects) {
       this.destroySubstitute();
@@ -5854,19 +5851,27 @@ export class PlayerPokemon extends Pokemon {
     }
   }
 
-  tryPopulateMoveset(moveset: StarterMoveset): boolean {
+  /**
+   * Attempt to populate this Pokemon's moveset based on those from a Starter
+   * @param moveset - The {@linkcode StarterMoveset} to use; will override corresponding slots
+   * of this Pokemon's moveset
+   * @param ignoreValidate - Whether to ignore validating the passed-in moveset; default `false`
+   */
+  tryPopulateMoveset(moveset: StarterMoveset, ignoreValidate = false): void {
+    // TODO: Why do we need to re-validate starter movesets after picking them?
     if (
-      !this.getSpeciesForm().validateStarterMoveset(
+      !ignoreValidate
+      && !this.getSpeciesForm().validateStarterMoveset(
         moveset,
         globalScene.gameData.starterData[this.species.getRootSpeciesId()].eggMoves,
       )
     ) {
-      return false;
+      return;
     }
 
-    this.moveset = moveset.map(m => new PokemonMove(m));
-
-    return true;
+    moveset.forEach((m, i) => {
+      this.moveset[i] = new PokemonMove(m);
+    });
   }
 
   /**
@@ -6372,8 +6377,15 @@ export class EnemyPokemon extends Pokemon {
         this.initShinySparkle();
       }
 
+      const eventBossVariant = getDailyEventSeedBossVariant(globalScene.seed);
+      const eventBossVariantEnabled =
+        eventBossVariant != null && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex);
+      if (eventBossVariantEnabled) {
+        this.shiny = true;
+      }
+
       if (this.shiny) {
-        this.variant = this.generateShinyVariant();
+        this.variant = eventBossVariantEnabled ? eventBossVariant : this.generateShinyVariant();
         if (Overrides.ENEMY_VARIANT_OVERRIDE !== null) {
           this.variant = Overrides.ENEMY_VARIANT_OVERRIDE;
         }
