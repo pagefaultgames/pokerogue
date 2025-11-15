@@ -63,7 +63,6 @@ describe("Moves - Last Respects", () => {
     await game.toNextTurn();
 
     game.move.select(MoveId.LAST_RESPECTS);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(move.calculateBattlePower).toHaveReturnedWith(basePower + 2 * 50);
@@ -92,7 +91,6 @@ describe("Moves - Last Respects", () => {
      * Bulbasur faints twice
      */
     game.move.select(MoveId.EXPLOSION);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     game.doSelectPartyPokemon(2);
     await game.toNextTurn();
 
@@ -162,7 +160,6 @@ describe("Moves - Last Respects", () => {
     game.removeEnemyHeldItems();
 
     game.move.select(MoveId.LAST_RESPECTS);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(move.calculateBattlePower).toHaveLastReturnedWith(50);

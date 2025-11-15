@@ -89,7 +89,6 @@ describe("Moves - Rage Fist", () => {
 
     game.move.select(MoveId.RAGE_FIST);
     await game.move.selectEnemyMove(MoveId.CONFUSE_RAY);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceConfusionActivation(true);
     await game.toNextTurn();
 
