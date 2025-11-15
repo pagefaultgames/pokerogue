@@ -10204,8 +10204,8 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (user) => {
         const { playerFaintedLastTurn } = globalScene.arena;
         const { enemyFaintedLastTurn } = globalScene.currentBattle;
-        const faintedLastTurn = user.isPlayer() ? playerFaintedLastTurn : enemyFaintedLastTurn;
-        return faintedLastTurn ? 2 : 1;
+        const allyFaintedLastTurn = user.isPlayer() ? playerFaintedLastTurn : enemyFaintedLastTurn;
+        return allyFaintedLastTurn ? 2 : 1;
       }),
     new AttackMove(MoveId.FINAL_GAMBIT, PokemonType.FIGHTING, MoveCategory.SPECIAL, -1, 100, 5, -1, 0, 5)
       .attr(UserHpDamageAttr)

@@ -1043,6 +1043,7 @@ export class GameData {
         globalScene.arena.positionalTagManager.tags = fromSession.arena.positionalTags.map(tag =>
           loadPositionalTag(tag),
         );
+        globalScene.arena.playerFaintedLastTurn = fromSession.arena.playerFaintedLastTurn;
 
         if (globalScene.modifiers.length > 0) {
           console.warn("Existing modifiers not cleared on session load, deleting...");
