@@ -542,6 +542,9 @@ export class GameManager {
 
   /**
    * Override the turn order of the battle's current combatants.
+   *
+   * Affects all processes that check speed order,
+   * and will last until the `BattleScene` is reset (or this function is called again).
    * @param order - The turn order to set, as an array of {@linkcode BattlerIndex}es
    * @example
    * ```ts
@@ -549,8 +552,8 @@ export class GameManager {
    * ```
    * @throws Fails test immediately if `order` does not contain all non-fainted combatants' `BattlerIndex`es.
    * @remarks
-   * This does not account for priority, nor does it change the battlers' speed stats
-   * (for the purposes of Electro Ball, etc).
+   * This does not affect other relative orderings like move priority, nor does it change
+   * the battlers' innate speed stats (for the purposes of Electro Ball, etc).
    */
   // TODO: Move to `FieldHelper`
   // TODO: Bulk-remove `await`s from existing test files in a follow-up PR
