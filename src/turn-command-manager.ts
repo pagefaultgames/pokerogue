@@ -6,7 +6,7 @@ export class TurnCommandManager {
   /**
    * A preset order of {@linkcode BattlerIndex}es, used by tests and MEs to "fix" speed order-related effects.
    */
-  public setOrder: readonly FieldBattlerIndex[] | undefined;
+  public setOrder: readonly BattlerIndex[] | undefined;
 
   /** Reset a prior set turn order. */
   public resetTurnOrder(): void {
