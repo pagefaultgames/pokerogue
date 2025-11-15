@@ -4,7 +4,7 @@ import { getGameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import overrides from "#app/overrides";
 import { modifierTypes } from "#data/data-lists";
-import { BattlerIndex } from "#enums/battler-index";
+import { BattlerIndex, type FieldBattlerIndex } from "#enums/battler-index";
 import { Button } from "#enums/buttons";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { ExpNotification } from "#enums/exp-notification";
@@ -541,19 +541,25 @@ export class GameManager {
   }
 
   /**
-   * Modifies the queue manager to return move phases in a particular order
-   * Used to manually modify Pokemon turn order.
-   * Note: This *DOES NOT* account for priority.
-   * @param order - The turn order to set as an array of {@linkcode BattlerIndex}es.
+   * Override the turn order of the battle's current combatants.
+   * @param order - The turn order to set, as an array of {@linkcode BattlerIndex}es
    * @example
    * ```ts
-   * await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
+   * game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
    * ```
+   * @throws Fails test immediately if `order` does not contain all non-fainted combatants' `BattlerIndex`es.
+   * @remarks
+   * This does not account for priority, nor does it change the battlers' speed stats
+   * (for the purposes of Electro Ball, etc).
    */
-  async setTurnOrder(order: BattlerIndex[]): Promise<void> {
-    await this.phaseInterceptor.to("TurnStartPhase", false);
+  // TODO: Move to `FieldHelper`
+  // TODO: Remove `await`s from existing test files in a follow-up PR
+  public setTurnOrder(order: FieldBattlerIndex[]): void {
+    expect(order, "Turn order passed to `setTurnOrder` lacked values for one or more Pokemon!").toEqualUnsorted(
+      this.scene.getField(true).map(p => p.getBattlerIndex()),
+    );
 
-    this.scene.phaseManager.dynamicQueueManager.setMoveOrder(order);
+    this.scene.turnCommandManager.setOrder = order;
   }
 
   /**

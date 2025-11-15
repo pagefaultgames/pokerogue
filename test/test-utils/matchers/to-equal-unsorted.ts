@@ -7,8 +7,15 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @param received - The received value. Should be an array of elements
  * @param expected - The array to check equality with
  * @returns Whether the matcher passed
+ * @privateRemarks
+ * Since this function can receive both readonly and non-readonly arrays, we restrict ourselves
+ * to only using methods that do not mutate the passed in arguments.
  */
-export function toEqualUnsorted(this: MatcherState, received: unknown, expected: unknown[]): SyncExpectationResult {
+export function toEqualUnsorted<T>(
+  this: MatcherState,
+  received: readonly T[],
+  expected: readonly T[],
+): SyncExpectationResult {
   if (!Array.isArray(received)) {
     return {
       pass: this.isNot,
