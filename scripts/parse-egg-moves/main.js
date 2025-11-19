@@ -18,7 +18,7 @@ import { showHelpText } from "./help-message.js";
 import { runInteractive } from "./interactive.js";
 import { parseEggMoves } from "./parse.js";
 
-const version = "1.0.0";
+const version = "1.0.1";
 
 // Get the directory name of the current module file
 const __filename = fileURLToPath(import.meta.url);
