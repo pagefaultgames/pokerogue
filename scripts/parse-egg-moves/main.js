@@ -54,8 +54,8 @@ async function start() {
 
   let csv = "";
   const inputType = await parseArguments();
-  if (process.exitCode) {
-    // If exit code is non-zero, return to allow it to propagate it up the chain.
+  // If exit code was set, return to allow it to propagate it up the chain.
+  if (process.exitCode != null) {
     return;
   }
   switch (inputType.type) {
@@ -66,7 +66,6 @@ async function start() {
       csv = await fs.promises.readFile(inputType.value, "utf-8");
       break;
     case "Exit":
-      // Help screen triggered; break out
       return;
   }
 
@@ -80,8 +79,10 @@ async function start() {
 async function parseArguments() {
   const args = process.argv.slice(2); // first 2 args are node and script name (irrelevant)
 
+  // Yoink everything up to the first "=" to get the raw command, using nullish coaclescing to convert
+  // "no args" into "undefined"
   /** @type {string | undefined}  */
-  const arg = args[0]?.split("=")[0]; // Yoink everything up to the first "=" to get the raw command
+  const arg = args[0]?.split("=")[0];
   switch (arg) {
     case "-f":
     case "--file":
