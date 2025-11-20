@@ -24,7 +24,7 @@ const version = "1.0.0";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.join(__dirname, "..", "..");
-const templatePath = path.join(__dirname, "egg-move-template.ts");
+const templatePath = path.join(__dirname, "egg-move-template.boilerplate.ts");
 // TODO: Do we want this to be configurable?
 const eggMoveTargetPath = path.join(projectRoot, "src/data/balance/egg-moves.ts");
 
