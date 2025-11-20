@@ -12,8 +12,8 @@
 
 import fs from "node:fs";
 import path, { join } from "node:path";
+import { input, select } from "@inquirer/prompts";
 import chalk from "chalk";
-import inquirer from "inquirer";
 
 //#region Constants
 
@@ -61,16 +61,10 @@ function getTestFolderPath(...folders) {
  */
 async function promptTestType() {
   /** @type {choiceType | "EXIT"} */
-  const choice = (
-    await inquirer.prompt([
-      {
-        type: "list",
-        name: "selectedOption",
-        message: "What type of test would you like to create?",
-        choices: [...choices, "EXIT"],
-      },
-    ])
-  ).selectedOption;
+  const choice = await select({
+    message: "What type of test would you like to create?",
+    choices: [...choices, "EXIT"],
+  });
 
   if (choice === "EXIT") {
     console.log("Exiting...");
@@ -87,15 +81,9 @@ async function promptTestType() {
  */
 async function promptFileName(selectedType) {
   /** @type {string} */
-  const fileNameAnswer = (
-    await inquirer.prompt([
-      {
-        type: "input",
-        name: "userInput",
-        message: `Please provide the name of the ${selectedType}.`,
-      },
-    ])
-  ).userInput;
+  const fileNameAnswer = await input({
+    message: `Please provide the name of the ${selectedType}.`,
+  });
 
   if (fileNameAnswer.trim().length === 0) {
     console.error("Please provide a valid file name!");
