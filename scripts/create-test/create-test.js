@@ -82,13 +82,14 @@ async function promptTestType() {
 async function promptFileName(selectedType) {
   /** @type {string} */
   const fileNameAnswer = await input({
+    validate: fileName => {
+      if (fileName.trim().length === 0) {
+        return "File name cannot be empty!";
+      }
+      return true;
+    },
     message: `Please provide the name of the ${selectedType}.`,
   });
-
-  if (fileNameAnswer.trim().length === 0) {
-    console.error("Please provide a valid file name!");
-    return await promptFileName(selectedType);
-  }
 
   return fileNameAnswer;
 }
