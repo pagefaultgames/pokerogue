@@ -1,5 +1,3 @@
-export const HELP_FLAGS = /** @type {const} */ (["-h", "-help", "--help"]);
-
 /**
  * Array containing all valid options for the type of test file to create.
  * @package
