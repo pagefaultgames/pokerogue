@@ -1446,12 +1446,7 @@ export class GameData {
             globalScene.ui.showText(error, null, () => globalScene.ui.showText("", 0), fixedInt(1500));
 
           if (!valid) {
-            return globalScene.ui.showText(
-              `Your ${dataName} data could not be loaded. It may be corrupted.`,
-              null,
-              () => globalScene.ui.showText("", 0),
-              fixedInt(1500),
-            );
+            return displayError(i18next.t("menuUiHandler:importCorrupt", { dataName }));
           }
 
           globalScene.ui.showText(i18next.t("menuUiHandler:confirmImport", { dataName }), null, () => {
@@ -1463,7 +1458,7 @@ export class GameData {
                 if (!bypassLogin && dataType < GameDataType.SETTINGS) {
                   updateUserInfo().then(success => {
                     if (!success[0]) {
-                      return displayError(`Could not contact the server. Your ${dataName} data could not be imported.`);
+                      return displayError(i18next.t("menuUiHandler:importNoServer", { dataName }));
                     }
                     const { trainerId, secretId } = this;
                     let updatePromise: Promise<string | null>;
@@ -1486,9 +1481,7 @@ export class GameData {
                     updatePromise.then(error => {
                       if (error) {
                         console.error(error);
-                        return displayError(
-                          `An error occurred while updating ${dataName} data. Please contact the administrator.`,
-                        );
+                        return displayError(i18next.t("menuUiHandler:importError", { dataName }));
                       }
                       window.location.reload();
                     });
