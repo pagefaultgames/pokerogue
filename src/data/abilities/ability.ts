@@ -836,8 +836,8 @@ export class AttackTypeImmunityAbAttr extends TypeImmunityAbAttr {
   override canApply(params: TypeMultiplierAbAttrParams): boolean {
     const { move } = params;
     return (
-      move.category !== MoveCategory.STATUS
-      && !move.hasAttr("NeutralDamageAgainstFlyingTypeMultiplierAttr")
+      move.category !== MoveCategory.STATUS // TODO: make thousand arrows ignore levitate in a different manner
+      && !move.hasAttr("NeutralDamageAgainstFlyingTypeAttr")
       && super.canApply(params)
     );
   }
@@ -4281,71 +4281,42 @@ function getWeatherCondition(...weatherTypes: WeatherType[]): AbAttrCondition {
     if (globalScene.arena.weather?.isEffectSuppressed()) {
       return false;
     }
-    const weatherType = globalScene.arena.weather?.weatherType;
-    return !!weatherType && weatherTypes.indexOf(weatherType) > -1;
+    return weatherTypes.includes(globalScene.arena.getWeatherType());
   };
 }
 
-function getAnticipationCondition(): AbAttrCondition {
-  return (pokemon: Pokemon) => {
-    for (const opponent of pokemon.getOpponents()) {
-      for (const move of opponent.moveset) {
-        // ignore null/undefined moves
-        if (!move) {
-          continue;
-        }
-        // the move's base type (not accounting for variable type changes) is super effective
-        if (
-          move.getMove().is("AttackMove")
-          && pokemon.getAttackTypeEffectiveness(move.getMove().type, opponent, true, undefined, move.getMove()) >= 2
-        ) {
-          return true;
-        }
-        // move is a OHKO
-        if (move.getMove().hasAttr("OneHitKOAttr")) {
-          return true;
-        }
-        // edge case for hidden power, type is computed
-        if (move.getMove().id === MoveId.HIDDEN_POWER) {
-          const iv_val = Math.floor(
-            (((opponent.ivs[Stat.HP] & 1)
-              + (opponent.ivs[Stat.ATK] & 1) * 2
-              + (opponent.ivs[Stat.DEF] & 1) * 4
-              + (opponent.ivs[Stat.SPD] & 1) * 8
-              + (opponent.ivs[Stat.SPATK] & 1) * 16
-              + (opponent.ivs[Stat.SPDEF] & 1) * 32)
-              * 15)
-              / 63,
-          );
-
-          const type = [
-            PokemonType.FIGHTING,
-            PokemonType.FLYING,
-            PokemonType.POISON,
-            PokemonType.GROUND,
-            PokemonType.ROCK,
-            PokemonType.BUG,
-            PokemonType.GHOST,
-            PokemonType.STEEL,
-            PokemonType.FIRE,
-            PokemonType.WATER,
-            PokemonType.GRASS,
-            PokemonType.ELECTRIC,
-            PokemonType.PSYCHIC,
-            PokemonType.ICE,
-            PokemonType.DRAGON,
-            PokemonType.DARK,
-          ][iv_val];
-
-          if (pokemon.getAttackTypeEffectiveness(type, opponent) >= 2) {
-            return true;
-          }
-        }
+/**
+ * Condition used by {@linkcode AbilityId.ANTICIPATION} to show a message if any opponent knows a
+ * "dangerous" move.
+ * @param pokemon - The {@linkcode Pokemon} with this ability
+ * @returns Whether the message should be shown
+ */
+const anticipationCondition: AbAttrCondition = (pokemon: Pokemon) =>
+  pokemon.getOpponents().some(opponent =>
+    opponent.moveset.some(movesetMove => {
+      // ignore non-attacks
+      const move = movesetMove.getMove();
+      if (!move.is("AttackMove")) {
+        return false;
       }
-    }
-    return false;
-  };
-}
+
+      if (move.hasAttr("OneHitKOAttr")) {
+        return true;
+      }
+
+      // Check whether the move's base type (not accounting for variable type changes) is super effective
+      // Edge case for hidden power, type is computed
+      const typeHolder = new NumberHolder(move.type);
+      applyMoveAttrs("HiddenPowerTypeAttr", opponent, pokemon, move, typeHolder);
+
+      const eff = pokemon.getAttackTypeEffectiveness(typeHolder.value, {
+        source: opponent,
+        ignoreStrongWinds: true,
+        move,
+      });
+      return eff >= 2;
+    }),
+  );
 
 /**
  * Creates an ability condition that causes the ability to fail if that ability
@@ -7309,7 +7280,7 @@ export function initAbilities() {
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.ANTICIPATION, 4)
-      .conditionalAttr(getAnticipationCondition(), PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonAnticipation", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
+      .conditionalAttr(anticipationCondition, PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonAnticipation", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
       .build(),
     new AbBuilder(AbilityId.FOREWARN, 4)
       .attr(ForewarnAbAttr)
