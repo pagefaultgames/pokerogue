@@ -24,6 +24,7 @@ import { coerceArray } from "#utils/array";
 import { shiftCharCodes } from "#utils/common";
 import chalk from "chalk";
 import { vi } from "vitest";
+import { Gender, getGenderSymbol } from "#data/gender";
 
 /**
  * Helper to handle overrides in tests
@@ -233,13 +234,25 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player pokemon's initial {@linkcode StatusEffect | status-effect},
+   * Override the player pokemon's initial {@linkcode StatusEffect | status-effect}
    * @param statusEffect - The {@linkcode StatusEffect | status-effect} to set
    * @returns `this`
    */
   public statusEffect(statusEffect: StatusEffect): this {
     vi.spyOn(Overrides, "STATUS_OVERRIDE", "get").mockReturnValue(statusEffect);
     this.log(`Player Pokemon status-effect set to ${StatusEffect[statusEffect]} (=${statusEffect})!`);
+    return this;
+  }
+
+  /**
+   * Override the player's pokemon's initial gender
+   * @param gender - The gender to set
+   * @returns `this`
+   */
+  public playerGender(gender: Gender): this {
+    vi.spyOn(Overrides, "GENDER_OVERRIDE", "get").mockReturnValue(gender);
+    const genderStr = getGenderSymbol(gender);
+    this.log(`Player Pokemon gender set to ${genderStr}!`);
     return this;
   }
 
@@ -510,6 +523,18 @@ export class OverridesHelper extends GameManagerHelper {
   public enemyStatusEffect(statusEffect: StatusEffect): this {
     vi.spyOn(Overrides, "ENEMY_STATUS_OVERRIDE", "get").mockReturnValue(statusEffect);
     this.log(`Enemy Pokemon status-effect set to ${StatusEffect[statusEffect]} (=${statusEffect})!`);
+    return this;
+  }
+
+  /**
+   * Override the enemy's pokemon's initial gender
+   * @param gender - The gender to set
+   * @returns `this`
+   */
+  public enemyGender(gender: Gender): this {
+    vi.spyOn(Overrides, "ENEMY_GENDER_OVERRIDE", "get").mockReturnValue(gender);
+    const genderStr = getGenderSymbol(gender);
+    this.log(`Enemy Pokemon gender set to ${genderStr}!`);
     return this;
   }
 
