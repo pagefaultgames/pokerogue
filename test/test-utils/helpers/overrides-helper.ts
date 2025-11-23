@@ -6,6 +6,7 @@ import type { NewArenaEvent } from "#events/battle-scene";
 import { OVERRIDES_COLOR } from "#app/constants/colors";
 import type { BattleStyle, RandomTrainerOverride } from "#app/overrides";
 import Overrides from "#app/overrides";
+import { type Gender, getGenderSymbol } from "#data/gender";
 import { AbilityId } from "#enums/ability-id";
 import type { BattleType } from "#enums/battle-type";
 import { BiomeId } from "#enums/biome-id";
@@ -24,7 +25,6 @@ import { coerceArray } from "#utils/array";
 import { shiftCharCodes } from "#utils/common";
 import chalk from "chalk";
 import { vi } from "vitest";
-import { Gender, getGenderSymbol } from "#data/gender";
 
 /**
  * Helper to handle overrides in tests
