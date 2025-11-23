@@ -6925,6 +6925,7 @@ export function initAbilities() {
     new AbBuilder(AbilityId.OBLIVIOUS, 3)
       .attr(BattlerTagImmunityAbAttr, [ BattlerTagType.INFATUATED, BattlerTagType.TAUNT ])
       .attr(PostSummonRemoveBattlerTagAbAttr, BattlerTagType.INFATUATED, BattlerTagType.TAUNT)
+      .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => move.id === MoveId.CAPTIVATE)
       .attr(IntimidateImmunityAbAttr)
       .ignorable()
       .build(),
