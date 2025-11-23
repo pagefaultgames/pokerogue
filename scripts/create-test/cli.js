@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 import chalk from "chalk";
 import { cliAliases, validTestTypes } from "./constants.js";
 import { promptFileName, promptTestType } from "./interactive.js";
