@@ -17,7 +17,7 @@ const projectRoot = join(__dirname, "..", "..");
 
 /**
  * Const object matching all {@linkcode testType}s to any custom boilerplate files
- * they may be asosciated with.
+ * they may be associated with.
  * @type {Readonly<Partial<Record<testType, string>>>}
  */
 const customBoilerplates = {
