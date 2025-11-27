@@ -21,7 +21,7 @@ const projectRoot = join(__dirname, "..", "..");
  * @type {Readonly<Partial<Record<testType, string>>>}
  */
 const customBoilerplates = {
-  Reward: "boilerplates/reward.boilerplate.ts",
+  // Reward: "boilerplates/reward.boilerplate.ts", // Todo: Boilerplate is added in the modifier rework
 };
 
 const DEFAULT_BOILERPLATE_PATH = "boilerplates/default.boilerplate.ts";
