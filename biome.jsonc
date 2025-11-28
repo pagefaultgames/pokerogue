@@ -252,6 +252,16 @@
   },
   "overrides": [
     {
+      "includes": ["**/scripts/**/*.js"],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "noFloatingPromises": "error"
+          }
+        }
+      }
+    },
+    {
       "includes": ["**/test/**/*.test.ts"],
       "linter": {
         "rules": {
