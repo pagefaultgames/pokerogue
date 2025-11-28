@@ -1446,71 +1446,58 @@ export class GameData {
             globalScene.ui.showText(error, null, () => globalScene.ui.showText("", 0), fixedInt(1500));
 
           if (!valid) {
-            return globalScene.ui.showText(
-              `Your ${dataName} data could not be loaded. It may be corrupted.`,
-              null,
-              () => globalScene.ui.showText("", 0),
-              fixedInt(1500),
-            );
+            return displayError(i18next.t("menuUiHandler:importCorrupt", { dataName }));
           }
 
-          globalScene.ui.showText(
-            `Your ${dataName} data will be overridden and the page will reload. Proceed?`,
-            null,
-            () => {
-              globalScene.ui.setOverlayMode(
-                UiMode.CONFIRM,
-                () => {
-                  localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
+          globalScene.ui.showText(i18next.t("menuUiHandler:confirmImport", { dataName }), null, () => {
+            globalScene.ui.setOverlayMode(
+              UiMode.CONFIRM,
+              () => {
+                localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
 
-                  if (!bypassLogin && dataType < GameDataType.SETTINGS) {
-                    updateUserInfo().then(success => {
-                      if (!success[0]) {
-                        return displayError(
-                          `Could not contact the server. Your ${dataName} data could not be imported.`,
-                        );
+                if (!bypassLogin && dataType < GameDataType.SETTINGS) {
+                  updateUserInfo().then(success => {
+                    if (!success[0]) {
+                      return displayError(i18next.t("menuUiHandler:importNoServer", { dataName }));
+                    }
+                    const { trainerId, secretId } = this;
+                    let updatePromise: Promise<string | null>;
+                    if (dataType === GameDataType.SESSION) {
+                      updatePromise = pokerogueApi.savedata.session.update(
+                        {
+                          slot: slotId,
+                          trainerId,
+                          secretId,
+                          clientSessionId,
+                        },
+                        dataStr,
+                      );
+                    } else {
+                      updatePromise = pokerogueApi.savedata.system.update(
+                        { trainerId, secretId, clientSessionId },
+                        dataStr,
+                      );
+                    }
+                    updatePromise.then(error => {
+                      if (error) {
+                        console.error(error);
+                        return displayError(i18next.t("menuUiHandler:importError", { dataName }));
                       }
-                      const { trainerId, secretId } = this;
-                      let updatePromise: Promise<string | null>;
-                      if (dataType === GameDataType.SESSION) {
-                        updatePromise = pokerogueApi.savedata.session.update(
-                          {
-                            slot: slotId,
-                            trainerId,
-                            secretId,
-                            clientSessionId,
-                          },
-                          dataStr,
-                        );
-                      } else {
-                        updatePromise = pokerogueApi.savedata.system.update(
-                          { trainerId, secretId, clientSessionId },
-                          dataStr,
-                        );
-                      }
-                      updatePromise.then(error => {
-                        if (error) {
-                          console.error(error);
-                          return displayError(
-                            `An error occurred while updating ${dataName} data. Please contact the administrator.`,
-                          );
-                        }
-                        window.location.reload();
-                      });
+                      window.location.reload();
                     });
-                  } else {
-                    window.location.reload();
-                  }
-                },
-                () => {
-                  globalScene.ui.revertMode();
-                  globalScene.ui.showText("", 0);
-                },
-                false,
-                -98,
-              );
-            },
-          );
+                  });
+                } else {
+                  window.location.reload();
+                }
+              },
+              () => {
+                globalScene.ui.revertMode();
+                globalScene.ui.showText("", 0);
+              },
+              false,
+              -98,
+            );
+          });
         };
       })((e.target as any).files[0]);
 

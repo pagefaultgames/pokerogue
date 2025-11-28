@@ -184,7 +184,7 @@ export class Arena {
       ret = getPokemonSpecies(species!);
 
       if (ret.subLegendary || ret.legendary || ret.mythical) {
-        const waveDifficulty = globalScene.gameMode.getWaveForDifficulty(waveIndex);
+        const waveDifficulty = globalScene.gameMode.getWaveForDifficulty(waveIndex, true);
         if (ret.baseTotal >= 660) {
           regen = waveDifficulty < 80; // Wave 50+ in daily (however, max Daily wave is 50 currently so not possible)
         } else {
