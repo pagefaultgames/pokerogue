@@ -373,7 +373,8 @@ export class EggHatchPhase extends Phase {
           globalScene.animations.doShinySparkleAnim(this.pokemonShinySparkle, this.pokemon.variant);
         });
       }
-      const duration = isShiny ? 250 : 750 + (this.skipped ? 1000 : 0);
+      const skipDuration = this.skipped ? 0 : 1000;
+      const duration = (isShiny ? 750 : 250) + skipDuration;
       globalScene.time.delayedCall(fixedInt(duration), () => {
         this.infoContainer.show(this.pokemon, false, this.skipped ? 2 : 1);
 
