@@ -77,22 +77,21 @@ export class Animation {
 
   /**
    * Animates the transformation between the old pokemon form and new pokemon form
-   * @param l - Variable to track how many cycles have been run and also how long the delay is
-   * @param lastCycle - Number representing how many times to recursively cycle the animation
+   * @param currentCycle - Variable to track how many cycles have been run and also how long the delay is
+   * @param finalCycle - Number representing how many times to recursively cycle the animation
    * @param pokemonTintSprite - The tinted sprite of the Pokemon
    * @param pokemonNewFormTintSprite - The tinted sprite of the Pokemon's new form
    * @param cancelled - If its value is set to `true` by external code during the animation, then cancel the animation.
    */
-  // TODO: Can we rename this to something other than `l`
   public doCycle(
-    l: number,
-    lastCycle: number,
+    currentCycle: number,
+    finalCycle: number,
     pokemonTintSprite: Phaser.GameObjects.Sprite,
     pokemonNewFormTintSprite: Phaser.GameObjects.Sprite,
     cancelled?: BooleanHolder,
   ): Promise<void> {
-    const isLastCycle = l === lastCycle;
-    const duration = 500 / l;
+    const isFinalCycle = currentCycle === finalCycle;
+    const duration = 500 / currentCycle;
 
     return new Promise(resolve => {
       globalScene.tweens.add({
@@ -100,24 +99,26 @@ export class Animation {
         scale: 0.25,
         ease: "Cubic.easeInOut",
         duration,
-        yoyo: !isLastCycle,
+        yoyo: !isFinalCycle,
       });
       globalScene.tweens.add({
         targets: pokemonNewFormTintSprite,
         scale: 1,
         ease: "Cubic.easeInOut",
         duration,
-        yoyo: !isLastCycle,
+        yoyo: !isFinalCycle,
         onComplete: () => {
           if (cancelled?.value) {
             return resolve();
           }
-          if (isLastCycle) {
+          if (isFinalCycle) {
             pokemonTintSprite.setVisible(false);
             return resolve();
           }
           // TODO: Explain or refactor away the recursion
-          this.doCycle(l + 0.5, lastCycle, pokemonTintSprite, pokemonNewFormTintSprite, cancelled).then(resolve);
+          this.doCycle(currentCycle + 0.5, finalCycle, pokemonTintSprite, pokemonNewFormTintSprite, cancelled).then(
+            resolve,
+          );
         },
       });
     });
