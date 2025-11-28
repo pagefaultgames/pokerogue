@@ -50,7 +50,7 @@ describe("Moves - Burning Jealousy", () => {
   });
 
   it("should still burn the opponent if their stat stages were both raised and lowered in the same turn", async () => {
-    game.override.starterSpecies(0).battleStyle("double");
+    game.override.starterSpecies(null).battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.ABRA]);
 
     const enemy = game.field.getEnemyPokemon();

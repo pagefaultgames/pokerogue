@@ -149,16 +149,21 @@ class DefaultOverrides {
   /** @defaultValue `20` for Daily and `5` for all other modes */
   readonly STARTING_LEVEL_OVERRIDE: number = 0;
   /** Will override the species of your pokemon when starting a new run */
-  readonly STARTER_SPECIES_OVERRIDE: SpeciesId | 0 = 0;
+  readonly STARTER_SPECIES_OVERRIDE: SpeciesId | null = null;
   /** This will force your starter to be a random fusion */
   readonly STARTER_FUSION_OVERRIDE: boolean = false;
   /** This will override the species of the fusion */
-  readonly STARTER_FUSION_SPECIES_OVERRIDE: SpeciesId | 0 = 0;
+  readonly STARTER_FUSION_SPECIES_OVERRIDE: SpeciesId | null = null;
   readonly ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
   readonly PASSIVE_ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
   readonly HAS_PASSIVE_ABILITY_OVERRIDE: boolean | null = null;
   readonly STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly GENDER_OVERRIDE: Gender | null = null;
+  /**
+   * If set and non-empty, will override the moveset of every Pokemon in the player's party.
+   * @defaultValue `[]`
+   */
+  // TODO: Make the zero value something like `null` instead of an empty array
   readonly MOVESET_OVERRIDE: MoveId | MoveId[] = [];
   readonly SHINY_OVERRIDE: boolean | null = null;
   readonly VARIANT_OVERRIDE: Variant | null = null;
@@ -168,18 +173,18 @@ class DefaultOverrides {
    * - If set to an array, set the IVs of all player pokemon to that array. Array length must be exactly `6`!
    * - If set to `null`, disable the override.
    */
-  readonly IVS_OVERRIDE: number | number[] | null = null;
+  readonly IVS_OVERRIDE: number | [number, number, number, number, number, number] | null = null;
   /** Override the nature of all player pokemon to the specified nature. Disabled if `null`. */
   readonly NATURE_OVERRIDE: Nature | null = null;
 
   // --------------------------
   // OPPONENT / ENEMY OVERRIDES
   // --------------------------
-  readonly ENEMY_SPECIES_OVERRIDE: SpeciesId | number = 0;
+  readonly ENEMY_SPECIES_OVERRIDE: SpeciesId | null = null;
   /** This will make all enemies fused Pokemon */
   readonly ENEMY_FUSION_OVERRIDE: boolean = false;
   /** This will override the species of the fusion only when the enemy is already a fusion */
-  readonly ENEMY_FUSION_SPECIES_OVERRIDE: SpeciesId | number = 0;
+  readonly ENEMY_FUSION_SPECIES_OVERRIDE: SpeciesId | null = null;
   readonly ENEMY_LEVEL_OVERRIDE: number = 0;
   readonly ENEMY_ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
   readonly ENEMY_PASSIVE_ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
@@ -196,7 +201,7 @@ class DefaultOverrides {
    * - If set to an array, set the IVs of all enemy pokemon to that array. Array length must be exactly `6`!
    * - If set to `null`, disable the override.
    */
-  readonly ENEMY_IVS_OVERRIDE: number | number[] | null = null;
+  readonly ENEMY_IVS_OVERRIDE: number | [number, number, number, number, number, number] | null = null;
   /** Override the nature of all enemy pokemon to the specified nature. Disabled if `null`. */
   readonly ENEMY_NATURE_OVERRIDE: Nature | null = null;
   readonly ENEMY_FORM_OVERRIDES: Partial<Record<SpeciesId, number>> = {};
