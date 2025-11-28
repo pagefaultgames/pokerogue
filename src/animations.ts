@@ -15,6 +15,8 @@ import { type BooleanHolder, getFrameMs, randGauss, randInt } from "#utils/commo
 // TODO: Rename to not conflict with built-in `animation` class
 // TODO: Clean up a lot of the animation code to be more maintainable and add better docs
 export class Animation {
+  // #region Public Methods
+
   /**
    * Animates particles that "spiral" upwards at start of transform animation
    * @param transformationBaseBg - The background image to animate.
@@ -49,56 +51,6 @@ export class Animation {
   }
 
   /**
-   * Helper function for {@linkcode doSpiralUpward}, handles a single particle
-   * @param trigIndex - Starting offset for particle
-   * @param transformationBaseBg - The background image
-   * @param transformationContainer - The phaser container
-   * @param xOffset - The x offset
-   * @param yOffset - The y offset
-   */
-  private doSpiralUpwardParticle(
-    trigIndex: number,
-    transformationBaseBg: Phaser.GameObjects.Image,
-    transformationContainer: Phaser.GameObjects.Container,
-    xOffset: number,
-    yOffset: number,
-  ): void {
-    const initialX = transformationBaseBg.displayWidth / 2 + xOffset;
-    const particle = globalScene.add.image(initialX, 0, "evo_sparkle");
-    transformationContainer.add(particle);
-
-    let f = 0;
-    let amp = 48;
-
-    const particleTimer = globalScene.tweens.addCounter({
-      repeat: -1,
-      duration: getFrameMs(1),
-      onRepeat: () => {
-        updateParticle();
-      },
-    });
-
-    const updateParticle = () => {
-      if (!f || particle.y > 8) {
-        particle.setPosition(initialX, 88 - (f * f) / 80 + yOffset);
-        particle.y += this.sin(trigIndex, amp) / 4;
-        particle.x += this.cos(trigIndex, amp);
-        particle.setScale(1 - f / 80);
-        trigIndex += 4;
-        if (f % 2 === 1) {
-          amp--;
-        }
-        f++;
-      } else {
-        particle.destroy();
-        particleTimer.remove();
-      }
-    };
-
-    updateParticle();
-  }
-
-  /**
    * Animates particles that arc downwards after the upwards spiral for evolution/form change animations.
    * @param transformationBaseBg - The background image to animate
    * @param transformationContainer - The {@linkcode Phaser.GameObjects.Container | Container}
@@ -121,54 +73,6 @@ export class Animation {
         }
       },
     });
-  }
-
-  /**
-   * Helper function for {@linkcode doArcDownward}, handles a single particle
-   * @param trigIndex - Starting offset for particle
-   * @param transformationBaseBg - The background image
-   * @param transformationContainer - The phaser container
-   * @param xOffset - The x offset
-   * @param yOffset - The y offset
-   */
-  private doArcDownParticle(
-    trigIndex: number,
-    transformationBaseBg: Phaser.GameObjects.Image,
-    transformationContainer: Phaser.GameObjects.Container,
-    xOffset: number,
-    yOffset: number,
-  ): void {
-    const initialX = transformationBaseBg.displayWidth / 2 + xOffset;
-    const particle = globalScene.add.image(initialX, 0, "evo_sparkle");
-    particle.setScale(0.5);
-    transformationContainer.add(particle);
-
-    let f = 0;
-    let amp = 8;
-
-    // TODO: This repeats infinitely, which is bad
-    const particleTimer = globalScene.tweens.addCounter({
-      repeat: -1,
-      duration: getFrameMs(1),
-      onRepeat: () => {
-        updateParticle();
-      },
-    });
-
-    const updateParticle = () => {
-      if (!f || particle.y < 88) {
-        particle.setPosition(initialX, 8 + (f * f) / 5 + yOffset);
-        particle.y += this.sin(trigIndex, amp) / 4;
-        particle.x += this.cos(trigIndex, amp);
-        amp = 8 + this.sin(f * 4, 40);
-        f++;
-      } else {
-        particle.destroy();
-        particleTimer.remove();
-      }
-    };
-
-    updateParticle();
   }
 
   /**
@@ -248,54 +152,6 @@ export class Animation {
     });
   }
 
-  /**
-   * Helper function for {@linkcode doCircleInward}, handles a single particle
-   * @param trigIndex - Starting offset for particle
-   * @param speed - How much the amplitude slows down by each cycle
-   * @param transformationBaseBg - The background image
-   * @param transformationContainer - The phaser container
-   * @param xOffset - The x offset
-   * @param yOffset - The y offset
-   */
-  private doCircleInwardParticle(
-    trigIndex: number,
-    speed: number,
-    transformationBaseBg: Phaser.GameObjects.Image,
-    transformationContainer: Phaser.GameObjects.Container,
-    xOffset: number,
-    yOffset: number,
-  ): void {
-    const initialX = transformationBaseBg.displayWidth / 2 + xOffset;
-    const initialY = transformationBaseBg.displayHeight / 2 + yOffset;
-    const particle = globalScene.add.image(initialX, initialY, "evo_sparkle");
-    transformationContainer.add(particle);
-
-    let amp = 120;
-
-    const particleTimer = globalScene.tweens.addCounter({
-      repeat: -1,
-      duration: getFrameMs(1),
-      onRepeat: () => {
-        updateParticle();
-      },
-    });
-
-    const updateParticle = () => {
-      if (amp > 8) {
-        particle.setPosition(initialX, initialY);
-        particle.y += this.sin(trigIndex, amp);
-        particle.x += this.cos(trigIndex, amp);
-        amp -= speed;
-        trigIndex += 4;
-      } else {
-        particle.destroy();
-        particleTimer.remove();
-      }
-    };
-
-    updateParticle();
-  }
-
   public doSpray(
     transformationBaseBg: Phaser.GameObjects.Image,
     transformationContainer: Phaser.GameObjects.Container,
@@ -318,50 +174,6 @@ export class Animation {
     });
   }
 
-  private doSprayParticle(
-    trigIndex: number,
-    transformationBaseBg: Phaser.GameObjects.Image,
-    transformationContainer: Phaser.GameObjects.Container,
-  ): void {
-    const initialX = transformationBaseBg.displayWidth / 2;
-    const initialY = transformationBaseBg.displayHeight / 2;
-    const particle = globalScene.add.image(initialX, initialY, "evo_sparkle");
-    transformationContainer.add(particle);
-
-    let f = 0;
-    let yOffset = 0;
-    const speed = 3 - randInt(8);
-    const amp = 48 + randInt(64);
-
-    const particleTimer = globalScene.tweens.addCounter({
-      repeat: -1,
-      duration: getFrameMs(1),
-      onRepeat: () => {
-        updateParticle();
-      },
-    });
-
-    const updateParticle = () => {
-      if (!(f & 3)) {
-        yOffset++;
-      }
-      if (trigIndex < 128) {
-        particle.setPosition(initialX + (speed * f) / 3, initialY + yOffset);
-        particle.y += -this.sin(trigIndex, amp);
-        if (f > 108) {
-          particle.setScale(1 - (f - 108) / 20);
-        }
-        trigIndex++;
-        f++;
-      } else {
-        particle.destroy();
-        particleTimer.remove();
-      }
-    };
-
-    updateParticle();
-  }
-
   public addPokeballOpenParticles(x: number, y: number, pokeballType: PokeballType): void {
     switch (pokeballType) {
       case PokeballType.POKEBALL:
@@ -378,6 +190,90 @@ export class Animation {
         break;
     }
   }
+
+  public addPokeballCaptureStars(pokeball: Phaser.GameObjects.Sprite): void {
+    const addParticle = (): void => {
+      const particle = globalScene.add.sprite(pokeball.x, pokeball.y, "pb_particles", "4.png");
+      particle.setOrigin(pokeball.originX, pokeball.originY);
+      particle.setAlpha(0.5);
+      globalScene.field.add(particle);
+
+      globalScene.tweens.add({
+        targets: particle,
+        y: pokeball.y - 10,
+        ease: "Sine.easeOut",
+        duration: 250,
+        onComplete: () => {
+          globalScene.tweens.add({
+            targets: particle,
+            y: pokeball.y,
+            alpha: 0,
+            ease: "Sine.easeIn",
+            duration: 250,
+          });
+        },
+      });
+
+      const dist = randGauss(25);
+      globalScene.tweens.add({
+        targets: particle,
+        x: pokeball.x + dist,
+        duration: 500,
+      });
+
+      globalScene.tweens.add({
+        targets: particle,
+        alpha: 0,
+        delay: 425,
+        duration: 75,
+        onComplete: () => particle.destroy(),
+      });
+    };
+
+    const numStars = 3;
+    for (let i = 0; i < numStars; i++) {
+      addParticle();
+    }
+  }
+
+  /**
+   * Play the shiny sparkle animation and sound effect for the given sprite
+   * First ensures that the animation has been properly initialized
+   * @param sparkleSprite the Sprite to play the animation on
+   * @param variant which shiny {@linkcode variant} to play the animation for
+   */
+  public doShinySparkleAnim(sparkleSprite: Phaser.GameObjects.Sprite, variant: Variant): void {
+    const keySuffix = variant ? `_${variant + 1}` : "";
+    const spriteKey = `shiny${keySuffix}`;
+    const animationKey = `sparkle${keySuffix}`;
+
+    // Make sure the animation exists, and create it if not
+    if (!globalScene.anims.exists(animationKey)) {
+      const frameNames = globalScene.anims.generateFrameNames(spriteKey, { suffix: ".png", end: 34 });
+      globalScene.anims.create({
+        key: `sparkle${keySuffix}`,
+        frames: frameNames,
+        frameRate: 32,
+        showOnStart: true,
+        hideOnComplete: true,
+      });
+    }
+
+    // Play the animation
+    sparkleSprite.play(animationKey);
+    globalScene.playSound("se/sparkle");
+  }
+
+  public cos(index: number, amplitude: number): number {
+    return amplitude * Math.cos(index * (Math.PI / 128));
+  }
+
+  public sin(index: number, amplitude: number): number {
+    return amplitude * Math.sin(index * (Math.PI / 128));
+  }
+
+  // #endregion
+  // #region Private Methods
 
   private doDefaultPbOpenParticles(x: number, y: number, radius: number): void {
     const pbOpenParticlesFrameNames = globalScene.anims.generateFrameNames("pb_particles", {
@@ -505,84 +401,195 @@ export class Animation {
     return particle;
   }
 
-  public addPokeballCaptureStars(pokeball: Phaser.GameObjects.Sprite): void {
-    const addParticle = (): void => {
-      const particle = globalScene.add.sprite(pokeball.x, pokeball.y, "pb_particles", "4.png");
-      particle.setOrigin(pokeball.originX, pokeball.originY);
-      particle.setAlpha(0.5);
-      globalScene.field.add(particle);
+  private doSprayParticle(
+    trigIndex: number,
+    transformationBaseBg: Phaser.GameObjects.Image,
+    transformationContainer: Phaser.GameObjects.Container,
+  ): void {
+    const initialX = transformationBaseBg.displayWidth / 2;
+    const initialY = transformationBaseBg.displayHeight / 2;
+    const particle = globalScene.add.image(initialX, initialY, "evo_sparkle");
+    transformationContainer.add(particle);
 
-      globalScene.tweens.add({
-        targets: particle,
-        y: pokeball.y - 10,
-        ease: "Sine.easeOut",
-        duration: 250,
-        onComplete: () => {
-          globalScene.tweens.add({
-            targets: particle,
-            y: pokeball.y,
-            alpha: 0,
-            ease: "Sine.easeIn",
-            duration: 250,
-          });
-        },
-      });
+    let f = 0;
+    let yOffset = 0;
+    const speed = 3 - randInt(8);
+    const amp = 48 + randInt(64);
 
-      const dist = randGauss(25);
-      globalScene.tweens.add({
-        targets: particle,
-        x: pokeball.x + dist,
-        duration: 500,
-      });
+    const particleTimer = globalScene.tweens.addCounter({
+      repeat: -1,
+      duration: getFrameMs(1),
+      onRepeat: () => {
+        updateParticle();
+      },
+    });
 
-      globalScene.tweens.add({
-        targets: particle,
-        alpha: 0,
-        delay: 425,
-        duration: 75,
-        onComplete: () => particle.destroy(),
-      });
+    const updateParticle = () => {
+      if (!(f & 3)) {
+        yOffset++;
+      }
+      if (trigIndex < 128) {
+        particle.setPosition(initialX + (speed * f) / 3, initialY + yOffset);
+        particle.y += -this.sin(trigIndex, amp);
+        if (f > 108) {
+          particle.setScale(1 - (f - 108) / 20);
+        }
+        trigIndex++;
+        f++;
+      } else {
+        particle.destroy();
+        particleTimer.remove();
+      }
     };
 
-    const numStars = 3;
-    for (let i = 0; i < numStars; i++) {
-      addParticle();
-    }
+    updateParticle();
   }
 
   /**
-   * Play the shiny sparkle animation and sound effect for the given sprite
-   * First ensures that the animation has been properly initialized
-   * @param sparkleSprite the Sprite to play the animation on
-   * @param variant which shiny {@linkcode variant} to play the animation for
+   * Helper function for {@linkcode doSpiralUpward}, handles a single particle
+   * @param trigIndex - Starting offset for particle
+   * @param transformationBaseBg - The background image
+   * @param transformationContainer - The phaser container
+   * @param xOffset - The x offset
+   * @param yOffset - The y offset
    */
-  public doShinySparkleAnim(sparkleSprite: Phaser.GameObjects.Sprite, variant: Variant): void {
-    const keySuffix = variant ? `_${variant + 1}` : "";
-    const spriteKey = `shiny${keySuffix}`;
-    const animationKey = `sparkle${keySuffix}`;
+  private doSpiralUpwardParticle(
+    trigIndex: number,
+    transformationBaseBg: Phaser.GameObjects.Image,
+    transformationContainer: Phaser.GameObjects.Container,
+    xOffset: number,
+    yOffset: number,
+  ): void {
+    const initialX = transformationBaseBg.displayWidth / 2 + xOffset;
+    const particle = globalScene.add.image(initialX, 0, "evo_sparkle");
+    transformationContainer.add(particle);
 
-    // Make sure the animation exists, and create it if not
-    if (!globalScene.anims.exists(animationKey)) {
-      const frameNames = globalScene.anims.generateFrameNames(spriteKey, { suffix: ".png", end: 34 });
-      globalScene.anims.create({
-        key: `sparkle${keySuffix}`,
-        frames: frameNames,
-        frameRate: 32,
-        showOnStart: true,
-        hideOnComplete: true,
-      });
-    }
+    let f = 0;
+    let amp = 48;
 
-    // Play the animation
-    sparkleSprite.play(animationKey);
-    globalScene.playSound("se/sparkle");
+    const particleTimer = globalScene.tweens.addCounter({
+      repeat: -1,
+      duration: getFrameMs(1),
+      onRepeat: () => {
+        updateParticle();
+      },
+    });
+
+    const updateParticle = () => {
+      if (!f || particle.y > 8) {
+        particle.setPosition(initialX, 88 - (f * f) / 80 + yOffset);
+        particle.y += this.sin(trigIndex, amp) / 4;
+        particle.x += this.cos(trigIndex, amp);
+        particle.setScale(1 - f / 80);
+        trigIndex += 4;
+        if (f % 2 === 1) {
+          amp--;
+        }
+        f++;
+      } else {
+        particle.destroy();
+        particleTimer.remove();
+      }
+    };
+
+    updateParticle();
   }
 
-  public cos(index: number, amplitude: number): number {
-    return amplitude * Math.cos(index * (Math.PI / 128));
+  /**
+   * Helper function for {@linkcode doArcDownward}, handles a single particle
+   * @param trigIndex - Starting offset for particle
+   * @param transformationBaseBg - The background image
+   * @param transformationContainer - The phaser container
+   * @param xOffset - The x offset
+   * @param yOffset - The y offset
+   */
+  private doArcDownParticle(
+    trigIndex: number,
+    transformationBaseBg: Phaser.GameObjects.Image,
+    transformationContainer: Phaser.GameObjects.Container,
+    xOffset: number,
+    yOffset: number,
+  ): void {
+    const initialX = transformationBaseBg.displayWidth / 2 + xOffset;
+    const particle = globalScene.add.image(initialX, 0, "evo_sparkle");
+    particle.setScale(0.5);
+    transformationContainer.add(particle);
+
+    let f = 0;
+    let amp = 8;
+
+    // TODO: This repeats infinitely, which is bad
+    const particleTimer = globalScene.tweens.addCounter({
+      repeat: -1,
+      duration: getFrameMs(1),
+      onRepeat: () => {
+        updateParticle();
+      },
+    });
+
+    const updateParticle = () => {
+      if (!f || particle.y < 88) {
+        particle.setPosition(initialX, 8 + (f * f) / 5 + yOffset);
+        particle.y += this.sin(trigIndex, amp) / 4;
+        particle.x += this.cos(trigIndex, amp);
+        amp = 8 + this.sin(f * 4, 40);
+        f++;
+      } else {
+        particle.destroy();
+        particleTimer.remove();
+      }
+    };
+
+    updateParticle();
   }
 
-  public sin(index: number, amplitude: number): number {
-    return amplitude * Math.sin(index * (Math.PI / 128));
+  /**
+   * Helper function for {@linkcode doCircleInward}, handles a single particle
+   * @param trigIndex - Starting offset for particle
+   * @param speed - How much the amplitude slows down by each cycle
+   * @param transformationBaseBg - The background image
+   * @param transformationContainer - The phaser container
+   * @param xOffset - The x offset
+   * @param yOffset - The y offset
+   */
+  private doCircleInwardParticle(
+    trigIndex: number,
+    speed: number,
+    transformationBaseBg: Phaser.GameObjects.Image,
+    transformationContainer: Phaser.GameObjects.Container,
+    xOffset: number,
+    yOffset: number,
+  ): void {
+    const initialX = transformationBaseBg.displayWidth / 2 + xOffset;
+    const initialY = transformationBaseBg.displayHeight / 2 + yOffset;
+    const particle = globalScene.add.image(initialX, initialY, "evo_sparkle");
+    transformationContainer.add(particle);
+
+    let amp = 120;
+
+    const particleTimer = globalScene.tweens.addCounter({
+      repeat: -1,
+      duration: getFrameMs(1),
+      onRepeat: () => {
+        updateParticle();
+      },
+    });
+
+    const updateParticle = () => {
+      if (amp > 8) {
+        particle.setPosition(initialX, initialY);
+        particle.y += this.sin(trigIndex, amp);
+        particle.x += this.cos(trigIndex, amp);
+        amp -= speed;
+        trigIndex += 4;
+      } else {
+        particle.destroy();
+        particleTimer.remove();
+      }
+    };
+
+    updateParticle();
   }
+
+  // #endregion
 }
