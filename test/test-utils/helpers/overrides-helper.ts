@@ -151,7 +151,7 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override whether starter Pokemon will be fused with random pokemon.
+   * Override whether starter Pokemon will be fused with random Pokemon.
    * @returns `this`
    */
   public enableStarterFusion(): this {
