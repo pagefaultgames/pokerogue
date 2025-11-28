@@ -682,7 +682,7 @@ export class OverridesHelper extends GameManagerHelper {
   /**
    * Override enemy Pokemon to have the given amount of boss health segments.
    * @param healthSegments - The number of segments to give, as follows:
-   * - `0`: Boss segments will be computed normally based on wave and enemy level.
+   * - `0`: Boss segments will be computed normally based on wave and enemy level
    * - `1`: The Pokemon will not be a boss
    * - `2`+: The Pokemon will be a boss with the given number of health segments
    * @returns `this`
