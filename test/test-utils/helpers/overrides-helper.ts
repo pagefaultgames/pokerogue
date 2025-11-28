@@ -257,7 +257,6 @@ export class OverridesHelper extends GameManagerHelper {
    * While kept for legacy reasons, new tests should prefer using
    * {@linkcode MoveHelper.use} in nearly all cases.
    */
-  public moveset(moveset: MoveId | [MoveId, ...MoveId[]]): this;
   public moveset(moveset: MoveId | MoveId[]): this {
     moveset = coerceArray(moveset);
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue(moveset);
@@ -549,7 +548,7 @@ export class OverridesHelper extends GameManagerHelper {
    * in most cases, though a global override can still be convenient to
    * "disable" enemies globally.
    */
-  public enemyMoveset(moveset: MoveId | [MoveId, ...MoveId[]]): this;
+  // TODO: Make the default value for the override actually sensible and forbid 1-length arrays
   public enemyMoveset(moveset: MoveId | MoveId[]): this {
     vi.spyOn(Overrides, "ENEMY_MOVESET_OVERRIDE", "get").mockReturnValue(moveset);
     moveset = coerceArray(moveset);
