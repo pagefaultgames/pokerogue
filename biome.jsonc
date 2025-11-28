@@ -38,6 +38,8 @@
       // this file is too big
       "!src/data/balance/tm-species-map.ts",
       // there's some sort of bug when Biome parses this file
+      // relating to recursive variable assignment
+      // cf https://github.com/biomejs/biome/issues/8204
       // TODO: remove this exclusion when the bug is fixed
       "!!test/test-utils/setup/test-end-log.ts"
     ]
