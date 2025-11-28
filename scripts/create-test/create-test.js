@@ -43,6 +43,7 @@ async function runInteractive() {
   if (HELP_FLAGS.some(h => args.includes(h))) {
     return showHelpText();
   }
+
   const testType = await getTestType(args[0]);
   if (process.exitCode || !testType) {
     return;
@@ -58,11 +59,14 @@ async function runInteractive() {
   } catch (err) {
     console.error(chalk.red("✗ Error: ", err));
   }
+  console.groupEnd();
 }
 
 /**
- * @param {testType} testType
- * @param {string} fileNameAnswer
+ * Helper function to create the test file.
+ * @param {testType} testType - The type of test to create
+ * @param {string} fileNameAnswer - The name of the file to create
+ * @returns {void}
  */
 function doCreateFile(testType, fileNameAnswer) {
   // Convert file name to kebab-case, formatting the description in Title Case
@@ -70,17 +74,11 @@ function doCreateFile(testType, fileNameAnswer) {
   const formattedName = toTitleCase(fileNameAnswer);
   const description = `${testType} - ${formattedName}`;
 
-  // Define the content template
   const content = fs.readFileSync(getBoilerplatePath(testType), "utf8").replace("{{description}}", description);
-
-  // Determine the directory based on test type
   const filePath = getTestFileFullPath(testType, fileName);
-
-  // Write the template content to the file
   writeFileSafe(filePath, content, "utf8");
 
   console.log(chalk.green.bold(`✔ File created at: ${filePath.replace(`${projectRoot}/`, "")}\n`));
-  console.groupEnd();
 }
 
 //#endregion
