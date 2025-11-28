@@ -10992,7 +10992,8 @@ export function initMoves() {
     new AttackMove(MoveId.DRAGON_DARTS, PokemonType.DRAGON, MoveCategory.PHYSICAL, 50, 100, 10, -1, 0, 8)
       .attr(MultiHitAttr, MultiHitType._2)
       .makesContact(false)
-      .target(MoveTarget.DRAGON_DARTS),
+      .target(MoveTarget.DRAGON_DARTS)
+      .edgeCase(), // see `dragon_darts.test.ts` for documented edge cases
     new StatusMove(MoveId.TEATIME, PokemonType.NORMAL, -1, 10, -1, 0, 8)
       .attr(EatBerryAttr, false)
       .target(MoveTarget.ALL),
