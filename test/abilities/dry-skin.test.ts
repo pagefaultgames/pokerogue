@@ -148,7 +148,7 @@ describe("Abilities - Dry Skin", () => {
     const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.WATER_GUN);
-    enemy.hp = enemy.hp - 1;
+    enemy.hp -= 1;
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     await game.move.forceMiss();

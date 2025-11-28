@@ -151,7 +151,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
     expect(onInitResult).toBe(true);
   });
 
-  describe("Option 1 - Dig for Valuables", () => {
+  describe("Option 1 - Battle Garbodor", () => {
     it("should have the correct properties", () => {
       const option1 = TrashToTreasureEncounter.options[0];
       expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
@@ -167,56 +167,11 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       });
     });
 
-    it("should give 1 Leftovers, 1 Shell Bell, and Black Sludge", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
-      await runMysteryEncounterToEnd(game, 1);
-      expect(game).toBeAtPhase("SelectModifierPhase");
-      await game.phaseInterceptor.to("SelectModifierPhase");
-
-      const leftovers = scene.findModifier(m => m instanceof TurnHealModifier) as TurnHealModifier;
-      expect(leftovers).toBeDefined();
-      expect(leftovers?.stackCount).toBe(1);
-
-      const shellBell = scene.findModifier(m => m instanceof HitHealModifier) as HitHealModifier;
-      expect(shellBell).toBeDefined();
-      expect(shellBell?.stackCount).toBe(1);
-
-      const blackSludge = scene.findModifier(m => m instanceof HealShopCostModifier) as HealShopCostModifier;
-      expect(blackSludge).toBeDefined();
-      expect(blackSludge?.stackCount).toBe(1);
-    });
-
-    it("should leave encounter without battle", async () => {
-      const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
-
-      await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
-      await runMysteryEncounterToEnd(game, 1);
-
-      expect(leaveEncounterWithoutBattleSpy).toBeCalled();
-    });
-  });
-
-  describe("Option 2 - Battle Garbodor", () => {
-    it("should have the correct properties", () => {
-      const option1 = TrashToTreasureEncounter.options[1];
-      expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
-      expect(option1.dialogue).toBeDefined();
-      expect(option1.dialogue).toStrictEqual({
-        buttonLabel: `${namespace}:option.2.label`,
-        buttonTooltip: `${namespace}:option.2.tooltip`,
-        selected: [
-          {
-            text: `${namespace}:option.2.selected`,
-          },
-        ],
-      });
-    });
-
     it("should start battle against Garbodor", async () => {
       const phaseSpy = vi.spyOn(scene.phaseManager, "pushPhase");
 
       await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
-      await runMysteryEncounterToEnd(game, 2, undefined, true);
+      await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       const enemyField = scene.getEnemyField();
       expect(game).toBeAtPhase("CommandPhase");
@@ -238,7 +193,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
 
     it("should have 2 Rogue, 1 Ultra, 1 Great in rewards", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
-      await runMysteryEncounterToEnd(game, 2, undefined, true);
+      await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to("SelectModifierPhase", false);
       expect(game).toBeAtPhase("SelectModifierPhase");
@@ -265,6 +220,51 @@ describe("Trash to Treasure - Mystery Encounter", () => {
         modifierSelectHandler.options[3].modifierTypeOption.type.tier
           - modifierSelectHandler.options[3].modifierTypeOption.upgradeCount,
       ).toEqual(ModifierTier.GREAT);
+    });
+  });
+
+  describe("Option 2 - Dig for Valuables", () => {
+    it("should have the correct properties", () => {
+      const option1 = TrashToTreasureEncounter.options[1];
+      expect(option1.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
+      expect(option1.dialogue).toBeDefined();
+      expect(option1.dialogue).toStrictEqual({
+        buttonLabel: `${namespace}:option.2.label`,
+        buttonTooltip: `${namespace}:option.2.tooltip`,
+        selected: [
+          {
+            text: `${namespace}:option.2.selected`,
+          },
+        ],
+      });
+    });
+
+    it("should give 1 Leftovers, 1 Shell Bell, and Black Sludge", async () => {
+      await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
+      await runMysteryEncounterToEnd(game, 2);
+      expect(game).toBeAtPhase("SelectModifierPhase");
+      await game.phaseInterceptor.to("SelectModifierPhase");
+
+      const leftovers = scene.findModifier(m => m instanceof TurnHealModifier) as TurnHealModifier;
+      expect(leftovers).toBeDefined();
+      expect(leftovers?.stackCount).toBe(1);
+
+      const shellBell = scene.findModifier(m => m instanceof HitHealModifier) as HitHealModifier;
+      expect(shellBell).toBeDefined();
+      expect(shellBell?.stackCount).toBe(1);
+
+      const blackSludge = scene.findModifier(m => m instanceof HealShopCostModifier) as HealShopCostModifier;
+      expect(blackSludge).toBeDefined();
+      expect(blackSludge?.stackCount).toBe(1);
+    });
+
+    it("should leave encounter without battle", async () => {
+      const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
+
+      await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
+      await runMysteryEncounterToEnd(game, 2);
+
+      expect(leaveEncounterWithoutBattleSpy).toBeCalled();
     });
   });
 });
