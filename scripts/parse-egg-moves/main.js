@@ -171,4 +171,4 @@ function badArgs() {
   process.exitCode = 1;
 }
 
-start();
+await start();
