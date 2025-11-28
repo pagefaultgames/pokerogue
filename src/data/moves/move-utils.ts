@@ -116,9 +116,6 @@ export function getMoveTargets(user: Pokemon, move: MoveId, replaceTarget?: Move
         set = user.getTypes(true).includes(PokemonType.GHOST) ? opponents.concat(extraTargets) : [user];
       }
       break;
-    case MoveTarget.SMART: {
-      //Implement smart targeting for Dragon Darts
-    }
   }
 
   return {

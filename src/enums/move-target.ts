@@ -26,5 +26,5 @@ export enum MoveTarget {
   BOTH_SIDES,
   PARTY,
   CURSE,
-  SMART,
+  DRAGON_DARTS,
 }

@@ -48,7 +48,10 @@ export type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
 export class MoveEffectPhase extends PokemonPhase {
   public readonly phaseName = "MoveEffectPhase";
   public move: Move;
+  /** The original targets of the move */
   protected targets: BattlerIndex[];
+  /** The targets of the move after dynamic adjustments, e.g. from Dragon Darts */
+  private adjustedTargets: BattlerIndex[] | null = null;
   protected useMode: MoveUseMode;
 
   /** The result of the hit check against each target */
@@ -284,9 +287,40 @@ export class MoveEffectPhase extends PokemonPhase {
       user.turnData.hitsLeft = hitCount.value;
     }
 
+    /**
+     * If the move has smart targeting (i.e. the move is Dragon Darts),
+     * and the move is being used in a double battle,
+     * alternate the base target on every second hit.
+     */
+    if (this.canApplySmartTargeting() && user.turnData.hitsLeft % 2 === 1) {
+      const targetAlly = this.getTargets()[0].getAlly();
+      if (targetAlly?.isActive(true)) {
+        this.getTargets()[0] = targetAlly;
+        this.adjustedTargets = [targetAlly.getBattlerIndex()];
+      }
+    }
+
+    // Update hit checks for each target
+    //this.getTargets().forEach((t, i) => (this.hitChecks[i] = this.hitCheck(t, this.canApplySmartTargeting())));
+
+    /**
+     * If the move has smart targeting (i.e. the move is Dragon Darts),
+     * the move is being used in a double battle,
+     * and the move's current target was not successfully hit,
+     * try to hit the target's ally.
+     */
+    if (this.canApplySmartTargeting() && this.hitChecks[0][0] !== HitCheckResult.HIT) {
+      const targetAlly = this.getTargets[0].getAlly();
+      if (targetAlly.isActive(true)) {
+        this.getTargets()[0] = targetAlly;
+        this.adjustedTargets = [targetAlly.getBattlerIndex()];
+        this.hitChecks[0] = this.hitCheck(this.getTargets()[0]);
+      }
+    }
+
     this.moveHistoryEntry = {
       move: this.move.id,
-      targets: this.targets,
+      targets: this.adjustedTargets ?? this.targets,
       result: MoveResult.PENDING,
       useMode: this.useMode,
     };
@@ -353,6 +387,22 @@ export class MoveEffectPhase extends PokemonPhase {
     if (!user) {
       super.end();
       return;
+    }
+
+    /**
+     * If the move has smart targeting (e.g. Dragon Darts),
+     * and the original target fainted due to the first hit,
+     * redirect the next strike to the original target's ally.
+     * Note: We do NOT use `canApplySmartTargeting()` here,
+     * due to a quirk where `getFirstTarget()` returns `undefined` if the target is fainted.
+     */
+    if (this.move.moveTarget === MoveTarget.DRAGON_DARTS) {
+      //const ogTarget = globalScene.getPokemonByBattlerIndex(this.getTargets()[0]);
+      const ogTarget = this.getTargets()[0];
+      const allyPokemon = ogTarget?.getAlly();
+      if (ogTarget?.isFainted() && allyPokemon?.isActive(true) && allyPokemon.id !== this.getUserPokemon()?.id) {
+        this.targets = [allyPokemon.getBattlerIndex()];
+      }
     }
 
     /**
@@ -431,6 +481,20 @@ export class MoveEffectPhase extends PokemonPhase {
     }
   }
 
+  /** Determines if this phase's move can be redirected by smart targeting */
+  public canApplySmartTargeting(): boolean {
+    const target = this.getFirstTarget();
+    const targetAlly = target?.getAlly();
+
+    return (
+      this.move.moveTarget === MoveTarget.DRAGON_DARTS
+      && targetAlly != null
+      && targetAlly.isActive(true)
+      && target !== this.getUserPokemon()
+      && !target?.getTag(BattlerTagType.CENTER_OF_ATTENTION)
+    );
+  }
+
   /** Return whether the target is protected by protect or a relevant conditional protection
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - {@linkcode Pokemon} the target to check for protection
@@ -483,6 +547,7 @@ export class MoveEffectPhase extends PokemonPhase {
    * 7. type effectiveness calculation, including immunities from abilities and typing
    * 9. if accuracy is checked, whether the roll passes the accuracy check
    * @param target - The {@linkcode Pokemon} targeted by the invoked move
+   * @param simulated - If `true`, does not change game state during calculation (default `false`)
    * @returns a {@linkcode HitCheckEntry} containing the attack's {@linkcode HitCheckResult}
    *  and {@linkcode TypeDamageMultiplier | effectiveness} against the target.
    */
@@ -611,7 +676,8 @@ export class MoveEffectPhase extends PokemonPhase {
     // TODO: Fix lock on / mind reader check.
     if (
       user.getTag(BattlerTagType.IGNORE_ACCURACY)
-      && (user.getLastXMoves().find(() => true)?.targets || []).indexOf(target.getBattlerIndex()) !== -1
+      && //&& (user.getLastXMoves().find(() => true)?.targets || []).indexOf(target.getBattlerIndex()) !== -1
+      (user.getLastXMoves()[0]?.targets || []).indexOf(target.getBattlerIndex()) !== -1
     ) {
       return true;
     }
@@ -654,7 +720,8 @@ export class MoveEffectPhase extends PokemonPhase {
    * - Targeted by this phase's invoked move
    */
   public getTargets(): Pokemon[] {
-    return globalScene.getField(true).filter(p => this.targets.indexOf(p.getBattlerIndex()) > -1);
+    const targets = this.adjustedTargets ?? this.targets;
+    return globalScene.getField(true).filter(p => targets.indexOf(p.getBattlerIndex()) > -1);
   }
 
   /** @returns The first active, non-fainted target of this phase's invoked move. */
@@ -901,7 +968,6 @@ export class MoveEffectPhase extends PokemonPhase {
     // Force `lastHit` to be true if this is a multi hit move with hits left
     // `hitsLeft` must be left as-is in order for the message displaying the number of hits
     // to display the proper number.
-    // Note: When Dragon Darts' smart targeting is implemented, this logic may need to be adjusted.
     if (!this.lastHit && user.turnData.hitsLeft > 1) {
       this.lastHit = true;
     }

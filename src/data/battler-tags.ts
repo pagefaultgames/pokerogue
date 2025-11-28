@@ -194,6 +194,21 @@ export class BattlerTag implements BaseBattlerTag {
     return --this.turnCount > 0;
   }
 
+  /**
+   * Applies effects from this tag outside of the pre-defined
+   * {@linkcode BattlerTagLapseType | lapse types} and without advancing the tag's
+   * {@linkcode turnCount turn counter}. This should only be invoked
+   * via {@linkcode applyBattlerTags}.
+   * @param pokemon the {@linkcode Pokemon} with the tag
+   * @param simulated if `true`, suppresses changes to game state while applying
+   * @param args any additional arguments for the tag's application.
+   * @returns `true` to prevent other tags under the same {@linkcode BattlerTagType}
+   * from applying.
+   */
+  apply(_pokemon: Pokemon, _simulated: boolean, ..._args: unknown[]): boolean {
+    return true;
+  }
+
   getDescriptor(): string {
     return "";
   }
