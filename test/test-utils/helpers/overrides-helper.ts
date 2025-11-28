@@ -466,7 +466,7 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override whether enemy Pokemon will be fused with random pokemon.
+   * Override whether enemy Pokemon will be fused with random Pokemon.
    * @returns `this`
    */
   public enableEnemyFusion(): this {
