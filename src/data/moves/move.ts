@@ -343,7 +343,7 @@ export abstract class Move implements Localizable {
    * Getter function that returns if the move hits multiple targets
    * @returns boolean
    */
-  isMultiTarget(): boolean {
+  isMultiTarget(): boolean { // Might need to add the SMART MoveTarget enum here...
     switch (this.moveTarget) {
       case MoveTarget.ALL_OTHERS:
       case MoveTarget.ALL_NEAR_OTHERS:
@@ -5614,6 +5614,12 @@ export class MatchUserTypeAttr extends VariableMoveTypeAttr {
     return [user.getTypes(false, true, true, false)[0] ?? move.type];
   }
 }
+
+/**
+ * Implements smart targeting for the move Dragon Darts
+ */
+
+
 
 /**
  * Changes the type of a Pledge move based on the Pledge move combined with it.
@@ -10986,6 +10992,7 @@ export function initMoves() {
     new AttackMove(MoveId.DRAGON_DARTS, PokemonType.DRAGON, MoveCategory.PHYSICAL, 50, 100, 10, -1, 0, 8)
       .attr(MultiHitAttr, MultiHitType._2)
       .makesContact(false)
+      .target(MoveTarget.SMART)
       .partial(), // smart targetting is unimplemented
     new StatusMove(MoveId.TEATIME, PokemonType.NORMAL, -1, 10, -1, 0, 8)
       .attr(EatBerryAttr, false)
