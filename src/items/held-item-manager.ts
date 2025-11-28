@@ -45,15 +45,13 @@ export class HeldItemManager {
   generateSaveData(): HeldItemSaveData {
     const saveData: HeldItemSaveData = [];
     for (const [id, item] of this.heldItems) {
-      // TODO: Is this check needed?
-      if (item) {
-        const specs: HeldItemSpecs = { ...item, id };
-        saveData.push(specs);
-      }
+      const specs: HeldItemSpecs = { ...item, id };
+      saveData.push(specs);
     }
     return saveData;
   }
 
+  // TODO: These functions should return iterators rather than less efficient arrays
   getHeldItems(): HeldItemId[] {
     return Array.from(this.heldItems.keys());
   }
@@ -83,7 +81,7 @@ export class HeldItemManager {
         id => isItemInCategory(id, itemType as HeldItemCategoryId) && allHeldItems[id].isTransferable,
       );
     }
-    return this.heldItems.has(itemType as HeldItemId) && allHeldItems[itemType as HeldItemId].isTransferable;
+    return this.heldItems.has(itemType) && allHeldItems[itemType].isTransferable;
   }
 
   // TODO: Consider renaming?
@@ -93,7 +91,7 @@ export class HeldItemManager {
   }
 
   // Use for tests if necessary to go over stack limit
-  // TODO: Do we need this? We can just use overrides
+  // TODO: Do we need this? This is solely used for grip claw
   setStack(itemType: HeldItemId, stack: number): void {
     const item = this.heldItems.get(itemType);
     if (item) {
@@ -103,9 +101,11 @@ export class HeldItemManager {
 
   isMaxStack(itemType: HeldItemId): boolean {
     const item = this.heldItems.get(itemType);
-    return item ? item.stack >= allHeldItems[itemType].getMaxStackCount() : false;
+    return !!item && item.stack >= allHeldItems[itemType].getMaxStackCount();
   }
 
+  add(itemType: HeldItemSpecs): boolean;
+  add(itemType: HeldItemId | HeldItemSpecs, addStack?: number): boolean;
   add(itemType: HeldItemId | HeldItemSpecs, addStack = 1): boolean {
     if (isHeldItemSpecs(itemType)) {
       return this.addItemWithSpecs(itemType);
@@ -114,14 +114,14 @@ export class HeldItemManager {
     const maxStack = allHeldItems[itemType].getMaxStackCount();
     const item = this.heldItems.get(itemType);
 
-    if (item) {
-      // TODO: We may want an error message of some kind instead
-      if (item.stack < maxStack) {
-        item.stack = Math.min(item.stack + addStack, maxStack);
-        return true;
-      }
-    } else {
+    if (!item) {
       this.heldItems.set(itemType, { stack: Math.min(addStack, maxStack) });
+      return true;
+    }
+
+    // TODO: We may want an error message of some kind instead
+    if (item.stack < maxStack) {
+      item.stack = Math.min(item.stack + addStack, maxStack);
       return true;
     }
 
@@ -143,15 +143,17 @@ export class HeldItemManager {
     return true;
   }
 
+  // TODO: Merge `removeStack` and `all` into 1 parameter to avoid passing useless values for the former
   remove(itemType: HeldItemId, removeStack = 1, all = false) {
     const item = this.heldItems.get(itemType);
 
-    if (item) {
-      item.stack -= removeStack;
+    if (!item) {
+      return;
+    }
+    item.stack -= removeStack;
 
-      if (all || item.stack <= 0) {
-        this.heldItems.delete(itemType);
-      }
+    if (all || item.stack <= 0) {
+      this.heldItems.delete(itemType);
     }
   }
 
@@ -162,19 +164,11 @@ export class HeldItemManager {
   }
 
   getHeldItemCount(): number {
-    let total = 0;
-    for (const specs of this.heldItems.values()) {
-      total += specs?.stack ?? 0;
-    }
-    return total;
+    return this.heldItems.values().reduce((acc, { stack }) => acc + stack, 0);
   }
 
   hasActiveFormChangeItem(id: FormChangeItemId): boolean {
-    const item = this.heldItems.get(id);
-    if (item) {
-      return !!item.active;
-    }
-    return false;
+    return !!this.heldItems.get(id)?.active;
   }
 
   getFormChangeItems(): FormChangeItemId[] {
@@ -184,14 +178,17 @@ export class HeldItemManager {
     ) as FormChangeItemId[];
   }
 
-  toggleActive(id: FormChangeItemId) {
+  toggleActive(id: FormChangeItemId): void {
     const item = this.heldItems.get(id);
     if (item) {
-      item.active = !item?.active;
+      item.active = !item.active;
     }
   }
 
-  clearItems() {
+  /**
+   * Remove all item data from the manager.
+   */
+  clearItems(): void {
     this.heldItems.clear();
   }
 }
