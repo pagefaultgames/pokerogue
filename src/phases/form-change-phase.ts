@@ -105,7 +105,7 @@ export class FormChangePhase extends EvolutionPhase {
    * Commence the animations that occur once the form change evolution cycle is complete
    *
    * @privateRemarks
-   * This would prefer {@linkcode Animations.doCycle | doCycle} to be refactored and de-promisified so this can be moved into {@linkcode beginTweens}
+   * This would prefer {@linkcode Animation.doCycle | doCycle} to be refactored and de-promisified so this can be moved into {@linkcode beginTweens}
    * @param preName - The name of the Pokemon before the evolution
    * @param transformedPokemon - The Pokemon being transformed into
    */
