@@ -127,7 +127,7 @@ export class OverridesHelper extends GameManagerHelper {
    */
   public startingHeldItems(items: ModifierOverride[]): this {
     vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue(items);
-    this.log("player Pokemon starting held items set to:", items);
+    this.log("Player Pokemon starting held items set to:", items);
     return this;
   }
 
@@ -166,7 +166,7 @@ export class OverridesHelper extends GameManagerHelper {
    * @returns `this`
    * @remarks
    * Does nothing if {@linkcode Overrides.STARTER_FUSION_OVERRIDE} is not enabled
-   * {@see {@linkcode enableStarterFusions}}
+   * @see {@linkcode enableStarterFusions}
    */
   // TODO: Should we just bundle these 2 together?
   public starterFusionSpecies(species: SpeciesId | null): this {
@@ -242,7 +242,7 @@ export class OverridesHelper extends GameManagerHelper {
   public hasPassiveAbility(hasPassive: boolean | null): this {
     vi.spyOn(Overrides, "HAS_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(hasPassive);
     if (hasPassive === null) {
-      this.log("player Pokemon passive ability override disabled!");
+      this.log("Player Pokemon passive ability override disabled!");
     } else {
       this.log(`Player Pokemon passive ability forcibly ${hasPassive ? "enabled" : "disabled"}!`);
     }
@@ -292,7 +292,7 @@ export class OverridesHelper extends GameManagerHelper {
     this.normalizeIVs = false;
     vi.spyOn(Overrides, "IVS_OVERRIDE", "get").mockReturnValue(ivs);
     if (ivs === null) {
-      this.log("player Pokemon IVs override disabled!");
+      this.log("Player Pokemon IVs override disabled!");
     } else {
       this.log(`Player Pokemon IVs set to ${ivs}!`);
     }
@@ -308,7 +308,7 @@ export class OverridesHelper extends GameManagerHelper {
     this.normalizeNatures = false;
     vi.spyOn(Overrides, "NATURE_OVERRIDE", "get").mockReturnValue(nature);
     if (nature === null) {
-      this.log("player Pokemon Nature override disabled!");
+      this.log("Player Pokemon Nature override disabled!");
     } else {
       this.log(`Player Pokemon Natures set to ${getEnumStr(Nature, nature)}!`);
     }
