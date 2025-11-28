@@ -80,7 +80,7 @@ export class OverridesHelper extends GameManagerHelper {
    * @param level - The level to set
    * @returns `this`
    */
-  public startingLevel(level: SpeciesId | number): this {
+  public startingLevel(level: number): this {
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(level);
     this.log(`Player Pokemon starting level set to ${level}!`);
     return this;
