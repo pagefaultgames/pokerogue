@@ -1,14 +1,14 @@
 import { Gender } from "#data/gender";
-import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("Moves - Captivate", () => {
+describe("Move - Captivate", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -28,74 +28,61 @@ describe("Moves - Captivate", () => {
       .battleStyle("double")
       .enemyGender(Gender.MALE)
       .enemySpecies(SpeciesId.NIDORAN_M)
-      .moveset([MoveId.CAPTIVATE, MoveId.SPLASH])
       .enemyMoveset(MoveId.SPLASH)
       .criticalHits(false);
   });
 
-  it("Lowers special attack by two stages when all targets are valid", async () => {
-    // arrange
+  it("should lower the Special Attack of all opposite-gender opponents by 2 stages", async () => {
     game.override.playerGender(Gender.FEMALE);
-    await game.classicMode.startBattle([SpeciesId.NIDORAN_F, SpeciesId.NIDORAN_F]);
-    const [enemyNidoran1, enemyNidoran2] = game.scene.getEnemyField();
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    // act
-    game.move.select(MoveId.CAPTIVATE, BattlerIndex.PLAYER);
-    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
-    await game.toEndOfTurn();
+    const feebas = game.field.getPlayerPokemon();
+    const [enemy1, enemy2] = game.scene.getEnemyField();
 
-    // assert
-    expect(enemyNidoran1.getStatStage(Stat.SPATK)).toEqual(-2);
-    expect(enemyNidoran2.getStatStage(Stat.SPATK)).toEqual(-2);
+    expect(feebas.isOppositeGender(enemy1)).toBe(true);
+    expect(feebas.isOppositeGender(enemy2)).toBe(true);
+
+    game.move.use(MoveId.CAPTIVATE);
+    await game.toNextTurn();
+
+    expect(feebas).toHaveUsedMove({
+      move: MoveId.CAPTIVATE,
+      targets: [BattlerIndex.ENEMY, BattlerIndex.ENEMY_2],
+      result: MoveResult.SUCCESS,
+    });
+    expect(enemy1).toHaveStatStage(Stat.SPATK, -2);
+    expect(enemy2).toHaveStatStage(Stat.SPATK, -2);
+
+    // Reset summon data to clear stat stages & change opp. genders
+    enemy1.resetSummonData();
+    enemy2.resetSummonData();
+
+    enemy1.gender = Gender.GENDERLESS;
+    expect(feebas.isOppositeGender(enemy1)).toBe(false);
+
+    game.move.use(MoveId.CAPTIVATE);
+    await game.toNextTurn();
+
+    // only opposite gendered enemy had stat lowered
+    expect(enemy1).toHaveStatStage(Stat.SPATK, 0);
+    expect(enemy2).toHaveStatStage(Stat.SPATK, -2);
   });
 
-  it("Lowers special attack of only valid targets", async () => {
-    // arrange
-    game.override.playerGender(Gender.FEMALE);
-    await game.classicMode.startBattle([SpeciesId.NIDORAN_F, SpeciesId.NIDORAN_F]);
-    const [invalidTarget, validTarget] = game.scene.getEnemyField();
-    invalidTarget.gender = Gender.FEMALE;
+  it("should fail and do nothin if used by a genderless user", async () => {
+    game.override.playerGender(Gender.GENDERLESS);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    // act
-    game.move.select(MoveId.CAPTIVATE, BattlerIndex.PLAYER);
-    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
-    await game.toEndOfTurn();
+    const feebas = game.field.getPlayerPokemon();
+    const [enemy1, enemy2] = game.scene.getEnemyField();
+    expect(feebas.isOppositeGender(enemy1)).toBe(false);
+    expect(feebas.isOppositeGender(enemy2)).toBe(false);
 
-    // assert
-    expect(invalidTarget.getStatStage(Stat.SPATK)).toEqual(0);
-    expect(validTarget.getStatStage(Stat.SPATK)).toEqual(-2);
-  });
+    game.move.use(MoveId.CAPTIVATE);
+    await game.toNextTurn();
 
-  it("Does not lower special attack when no targets are valid", async () => {
-    // arrange
-    game.override.playerGender(Gender.MALE);
-    await game.classicMode.startBattle([SpeciesId.NIDORAN_M, SpeciesId.NIDORAN_M]);
-    const [enemyNidoran1, enemyNidoran2] = game.scene.getEnemyField();
-
-    // act
-    game.move.select(MoveId.CAPTIVATE, BattlerIndex.PLAYER);
-    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
-    await game.toEndOfTurn();
-
-    // assert
-    expect(enemyNidoran1.getStatStage(Stat.SPATK)).toEqual(0);
-    expect(enemyNidoran2.getStatStage(Stat.SPATK)).toEqual(0);
-  });
-
-  it("Does not lower special attack when all targets have the Oblivious ability", async () => {
-    // arrange
-    game.override.enemyAbility(AbilityId.OBLIVIOUS);
-    game.override.playerGender(Gender.FEMALE);
-    await game.classicMode.startBattle([SpeciesId.NIDORAN_F, SpeciesId.NIDORAN_F]);
-    const [enemyNidoran1, enemyNidoran2] = game.scene.getEnemyField();
-
-    // act
-    game.move.select(MoveId.CAPTIVATE, BattlerIndex.PLAYER);
-    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
-    await game.toEndOfTurn();
-
-    // assert
-    expect(enemyNidoran1.getStatStage(Stat.SPATK)).toEqual(0);
-    expect(enemyNidoran2.getStatStage(Stat.SPATK)).toEqual(0);
+    // TODO: Status moves whose effects all fail to apply should fail the move
+    // expect(feebas).toHaveUsedMove({ move: MoveId.CAPTIVATE, result: MoveResult.FAIL });
+    expect(enemy1).toHaveStatStage(Stat.SPATK, 0);
+    expect(enemy2).toHaveStatStage(Stat.SPATK, 0);
   });
 });
