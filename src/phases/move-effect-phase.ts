@@ -292,7 +292,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
     const hasSmartTargeting = this.canApplySmartTargeting();
 
-    /**
+    /*
      * If the move has smart targeting (i.e. the move is Dragon Darts),
      * and the move is being used in a double battle,
      * alternate the base target (the one being checked) on every other hit.
