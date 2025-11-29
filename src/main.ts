@@ -1,7 +1,5 @@
 import "#app/polyfills"; // All polyfills MUST be loaded first for side effects
 
-import { BattleScene } from "#app/battle-scene";
-import { LoadingScene } from "#app/loading-scene";
 import { InvertPostFX } from "#app/pipelines/invert";
 import { initI18n } from "#app/plugins/i18n";
 import { isBeta, isDev } from "#constants/app-constants";
@@ -65,6 +63,8 @@ Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative
 
 async function startGame(gameManifest?: Record<string, string>): Promise<void> {
   await initI18n();
+  const LoadingScene = (await import("./loading-scene")).LoadingScene;
+  const BattleScene = (await import("./battle-scene")).BattleScene;
   const game = new Phaser.Game({
     type: Phaser.WEBGL,
     parent: "app",
