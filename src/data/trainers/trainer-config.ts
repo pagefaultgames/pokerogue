@@ -1957,7 +1957,7 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.CRANIDOS,
         SpeciesId.GOLETT,
         SpeciesId.NACLI,
-        SpeciesId.GALAR_YAMASK,
+        [SpeciesId.YAMASK, SpeciesId.GALAR_YAMASK],
       ],
       [TrainerPoolTier.RARE]: [
         SpeciesId.OMANYTE,
@@ -1968,14 +1968,20 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.LILEEP,
         SpeciesId.ANORITH,
         SpeciesId.RELICANTH,
+        SpeciesId.SIGILYPH,
         SpeciesId.TIRTOUGA,
         SpeciesId.ARCHEN,
         SpeciesId.TYRUNT,
         SpeciesId.AMAURA,
         SpeciesId.STONJOURNER,
       ],
-      [TrainerPoolTier.SUPER_RARE]: [SpeciesId.GIBLE, SpeciesId.LARVITAR, SpeciesId.HISUI_SLIGGOO],
-      [TrainerPoolTier.ULTRA_RARE]: [SpeciesId.GIMMIGHOUL, SpeciesId.UNOWN],
+      [TrainerPoolTier.SUPER_RARE]: [
+        SpeciesId.GIBLE,
+        SpeciesId.LARVITAR,
+        SpeciesId.GIMMIGHOUL,
+        SpeciesId.HISUI_SLIGGOO,
+      ],
+      [TrainerPoolTier.ULTRA_RARE]: [SpeciesId.UNOWN],
     }),
   [TrainerType.SAILOR]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.4)
