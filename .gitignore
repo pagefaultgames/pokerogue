@@ -16,6 +16,7 @@ dist
 dist-ssr
 *.local
 build
+.pnpm-store
 
 # Editor directories and files (excluding `extensions.json` for devcontainer)
 *.code-workspace
