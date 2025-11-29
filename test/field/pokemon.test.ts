@@ -234,7 +234,7 @@ describe("Spec - Pokemon", () => {
 
   describe("Friendship", () => {
     it("should cap friendship at 255", async () => {
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+      await game.classicMode.runToSummon([SpeciesId.FEEBAS]);
 
       const feebas = game.field.getPlayerPokemon();
       feebas.addFriendship(999);
@@ -243,7 +243,7 @@ describe("Spec - Pokemon", () => {
     });
 
     it("should not go below 0 friendship", async () => {
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+      await game.classicMode.runToSummon([SpeciesId.FEEBAS]);
 
       const feebas = game.field.getPlayerPokemon();
       feebas.addFriendship(-999);
@@ -252,7 +252,7 @@ describe("Spec - Pokemon", () => {
     });
 
     it("should respect Rare Candy friendship gain cap", async () => {
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+      await game.classicMode.runToSummon([SpeciesId.FEEBAS]);
 
       const feebas = game.field.getPlayerPokemon();
       feebas.addFriendship(999, true);
@@ -261,7 +261,7 @@ describe("Spec - Pokemon", () => {
     });
 
     it("should get 3x candy friendship in classic mode", async () => {
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+      await game.classicMode.runToSummon([SpeciesId.FEEBAS]);
 
       const feebas = game.field.getPlayerPokemon();
       const pokemonData = globalScene.gameData.starterData[SpeciesId.FEEBAS];
@@ -275,7 +275,7 @@ describe("Spec - Pokemon", () => {
     });
 
     it("should carry over excess friendship into next candy, even if capped", async () => {
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+      await game.classicMode.runToSummon([SpeciesId.FEEBAS]);
 
       const feebas = game.field.getPlayerPokemon();
       const pokemonData = globalScene.gameData.starterData[SpeciesId.FEEBAS];
@@ -296,7 +296,7 @@ describe("Spec - Pokemon", () => {
   });
 
   it("should allow gaining candy for uncaught Pokémon", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.runToSummon([SpeciesId.FEEBAS]);
 
     const feebas = game.field.getPlayerPokemon();
     const pokemonData = globalScene.gameData.starterData[SpeciesId.FEEBAS];
