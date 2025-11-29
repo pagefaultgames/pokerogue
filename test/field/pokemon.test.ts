@@ -288,8 +288,8 @@ describe("Spec - Pokemon", () => {
 
       // Friendship gain was capped, but candy friendship overflowed several times over
       expect(feebas.friendship).toBe(RARE_CANDY_FRIENDSHIP_CAP);
-      expect(pokemonData.friendship).toBe(Math.floor(2015 / cap));
-      expect(pokemonData.candyCount).toBe(2000 % cap);
+      expect(pokemonData.friendship).toBe(6015 % cap);
+      expect(pokemonData.candyCount).toBe(Math.floor(6015 / cap));
     });
   });
 
