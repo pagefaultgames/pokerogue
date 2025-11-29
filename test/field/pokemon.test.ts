@@ -234,19 +234,21 @@ describe("Spec - Pokemon", () => {
 
   describe("Friendship", () => {
     it("should cap friendship at 255", async () => {
-      await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-      const pokemon = game.field.getPlayerParty()[0];
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-      pokemon.addFriendship(999);
-      expect(pokemon.friendship).toBe(255);
+      const feebas = game.field.getPlayerPokemon();
+      feebas.addFriendship(999);
+
+      expect(feebas.friendship).toBe(255);
     });
 
     it("should not go below 0 friendship", async () => {
-      await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-      const pokemon = game.field.getPlayerParty()[0];
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-      pokemon.addFriendship(-999);
-      expect(pokemon.friendship).toBe(0);
+      const feebas = game.field.getPlayerPokemon();
+      feebas.addFriendship(-999);
+
+      expect(feebas.friendship).toBe(0);
     });
 
     it("should respect Rare Candy friendship gain cap", async () => {
