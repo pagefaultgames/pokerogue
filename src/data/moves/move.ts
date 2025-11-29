@@ -5616,12 +5616,6 @@ export class MatchUserTypeAttr extends VariableMoveTypeAttr {
 }
 
 /**
- * Implements smart targeting for the move Dragon Darts
- */
-
-
-
-/**
  * Changes the type of a Pledge move based on the Pledge move combined with it.
  */
 export class CombinedPledgeTypeAttr extends VariableMoveTypeAttr {
