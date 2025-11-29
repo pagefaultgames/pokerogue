@@ -26,7 +26,7 @@ export async function runInteractive() {
 
   if (answer === "Exit") {
     console.log("Exiting...");
-    process.exitCode = 1;
+    process.exitCode = 0;
     return { type: "Exit" };
   }
 

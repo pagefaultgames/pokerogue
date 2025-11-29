@@ -291,4 +291,4 @@ async function promptExisting(outFile) {
   });
 }
 
-main();
+await main();
