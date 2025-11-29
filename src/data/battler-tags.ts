@@ -1828,7 +1828,6 @@ export abstract class ContactProtectedTag extends ProtectedTag {
 
     const moveData = getMoveEffectPhaseData(pokemon);
     if (
-      //lapseType === BattlerTagLapseType.CUSTOM
       !simulated
       && moveData
       && moveData.move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: moveData.attacker, target: pokemon })
