@@ -305,7 +305,7 @@ export class MoveEffectPhase extends PokemonPhase {
     // Update hit checks for each target
     this.hitChecks = this.getTargets().map(t => this.hitCheck(t, hasSmartTargeting));
 
-    /**
+    /*
      * If the move has smart targeting and the move's current target
      * was not successfully hit, try to hit the target's ally instead.
      */
