@@ -1782,8 +1782,6 @@ export class ProtectedTag extends BattlerTag {
     );
   }
 
-  // lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-  //   if (lapseType === BattlerTagLapseType.CUSTOM) {
   apply(pokemon: Pokemon, simulated: boolean, ..._args: unknown[]): boolean {
     if (!simulated) {
       new CommonBattleAnim(CommonAnim.PROTECT, pokemon).play();
