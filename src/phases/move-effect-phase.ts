@@ -3,7 +3,7 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { ConditionalProtectTag } from "#data/arena-tag";
 import { MoveAnim } from "#data/battle-anims";
-import { DamageProtectedTag, ProtectedTag, SemiInvulnerableTag, SubstituteTag, TypeBoostTag } from "#data/battler-tags";
+import { ProtectedTag, SemiInvulnerableTag, SubstituteTag, TypeBoostTag } from "#data/battler-tags";
 import { SpeciesFormChangePostMoveTrigger } from "#data/form-change-triggers";
 import type { TypeDamageMultiplier } from "#data/type";
 import { ArenaTagSide } from "#enums/arena-tag-side";
@@ -292,7 +292,11 @@ export class MoveEffectPhase extends PokemonPhase {
      * and the move is being used in a double battle,
      * alternate the base target on every second hit.
      */
-    if (this.canApplySmartTargeting() && user.turnData.hitsLeft % 2 === 1) {
+    if (
+      this.canApplySmartTargeting()
+      && user.turnData.hitsLeft % 2 === 1
+      && this.getFirstTarget()?.getAlly()?.isActive(true)
+    ) {
       const targetAlly = this.getTargets()[0].getAlly();
       if (targetAlly?.isActive(true)) {
         this.getTargets()[0] = targetAlly;
@@ -301,7 +305,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     // Update hit checks for each target
-    //this.getTargets().forEach((t, i) => (this.hitChecks[i] = this.hitCheck(t, this.canApplySmartTargeting())));
+    this.getTargets().forEach((t, i) => (this.hitChecks[i] = this.hitCheck(t, this.canApplySmartTargeting())));
 
     /**
      * If the move has smart targeting (i.e. the move is Dragon Darts),
@@ -309,9 +313,9 @@ export class MoveEffectPhase extends PokemonPhase {
      * and the move's current target was not successfully hit,
      * try to hit the target's ally.
      */
-    if (this.canApplySmartTargeting() && this.hitChecks[0][0] !== HitCheckResult.HIT) {
-      const targetAlly = this.getTargets[0].getAlly();
-      if (targetAlly.isActive(true)) {
+    if (this.canApplySmartTargeting() && this.hitChecks[0]?.[0] !== HitCheckResult.HIT) {
+      const targetAlly = this.getFirstTarget()?.getAlly();
+      if (targetAlly?.isActive(true)) {
         this.getTargets()[0] = targetAlly;
         this.adjustedTargets = [targetAlly.getBattlerIndex()];
         this.hitChecks[0] = this.hitCheck(this.getTargets()[0]);
@@ -397,8 +401,7 @@ export class MoveEffectPhase extends PokemonPhase {
      * due to a quirk where `getFirstTarget()` returns `undefined` if the target is fainted.
      */
     if (this.move.moveTarget === MoveTarget.DRAGON_DARTS) {
-      //const ogTarget = globalScene.getPokemonByBattlerIndex(this.getTargets()[0]);
-      const ogTarget = this.getTargets()[0];
+      const ogTarget = globalScene.getField()?.find(p => p?.getBattlerIndex() === this.targets[0]);
       const allyPokemon = ogTarget?.getAlly();
       if (ogTarget?.isFainted() && allyPokemon?.isActive(true) && allyPokemon.id !== this.getUserPokemon()?.id) {
         this.targets = [allyPokemon.getBattlerIndex()];
@@ -490,7 +493,7 @@ export class MoveEffectPhase extends PokemonPhase {
       this.move.moveTarget === MoveTarget.DRAGON_DARTS
       && targetAlly != null
       && targetAlly.isActive(true)
-      && target !== this.getUserPokemon()
+      && targetAlly !== this.getUserPokemon()
       && !target?.getTag(BattlerTagType.CENTER_OF_ATTENTION)
     );
   }
@@ -499,9 +502,10 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - {@linkcode Pokemon} the target to check for protection
    * @param move - The {@linkcode Move} being used
+   * @param simulated - If `true`, does not change game state during calculation (default `false`)
    * @returns Whether the pokemon was protected
    */
-  private protectedCheck(user: Pokemon, target: Pokemon): boolean {
+  private protectedCheck(user: Pokemon, target: Pokemon, simulated = false): boolean {
     /** The {@linkcode ArenaTagSide} to which the target belongs */
     const targetSide = target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
     /** Has the invoked move been cancelled by conditional protection (e.g Quick Guard)? */
@@ -513,7 +517,7 @@ export class MoveEffectPhase extends PokemonPhase {
       globalScene.arena.applyTagsForSide(
         ConditionalProtectTag,
         targetSide,
-        false,
+        simulated,
         hasConditionalProtectApplied,
         user,
         target,
@@ -527,10 +531,7 @@ export class MoveEffectPhase extends PokemonPhase {
       ![MoveTarget.ENEMY_SIDE, MoveTarget.BOTH_SIDES].includes(this.move.moveTarget)
       && (bypassIgnoreProtect.value || !this.move.doesFlagEffectApply({ flag: MoveFlags.IGNORE_PROTECT, user, target }))
       && (hasConditionalProtectApplied.value
-        || (target.findTags(t => t instanceof DamageProtectedTag).length === 0
-          && target.findTags(t => t instanceof ProtectedTag).some(t => target.lapseTag(t.tagType)))
-        || (this.move.category !== MoveCategory.STATUS
-          && target.findTags(t => t instanceof DamageProtectedTag).some(t => target.lapseTag(t.tagType))))
+        || target.findTags(t => t instanceof ProtectedTag)[0]?.apply(target, simulated, user, this.move))
     );
   }
 
@@ -551,7 +552,7 @@ export class MoveEffectPhase extends PokemonPhase {
    * @returns a {@linkcode HitCheckEntry} containing the attack's {@linkcode HitCheckResult}
    *  and {@linkcode TypeDamageMultiplier | effectiveness} against the target.
    */
-  public hitCheck(target: Pokemon): HitCheckEntry {
+  public hitCheck(target: Pokemon, simulated = false): HitCheckEntry {
     const user = this.getUserPokemon();
     const move = this.move;
 
@@ -587,7 +588,7 @@ export class MoveEffectPhase extends PokemonPhase {
       return [HitCheckResult.MISS, 0];
     }
 
-    if (!fieldTargeted && this.protectedCheck(user, target)) {
+    if (!fieldTargeted && this.protectedCheck(user, target, simulated)) {
       return [HitCheckResult.PROTECTED, 0];
     }
 
@@ -607,7 +608,7 @@ export class MoveEffectPhase extends PokemonPhase {
      * The effectiveness of the move against the given target.
      * Accounts for type and move immunities from defensive typing, abilities, and other effects.
      */
-    const effectiveness = target.getMoveEffectiveness(user, move, false, false, cancelNoEffectMessage);
+    const effectiveness = target.getMoveEffectiveness(user, move, false, simulated, cancelNoEffectMessage);
     if (effectiveness === 0) {
       return [
         cancelNoEffectMessage.value ? HitCheckResult.NO_EFFECT_NO_MESSAGE : HitCheckResult.NO_EFFECT,
@@ -676,8 +677,7 @@ export class MoveEffectPhase extends PokemonPhase {
     // TODO: Fix lock on / mind reader check.
     if (
       user.getTag(BattlerTagType.IGNORE_ACCURACY)
-      && //&& (user.getLastXMoves().find(() => true)?.targets || []).indexOf(target.getBattlerIndex()) !== -1
-      (user.getLastXMoves()[0]?.targets || []).indexOf(target.getBattlerIndex()) !== -1
+      && (user.getLastXMoves()[0]?.targets ?? []).indexOf(target.getBattlerIndex()) !== -1
     ) {
       return true;
     }
