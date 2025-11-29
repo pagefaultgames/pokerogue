@@ -1782,8 +1782,10 @@ export class ProtectedTag extends BattlerTag {
     );
   }
 
-  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    if (lapseType === BattlerTagLapseType.CUSTOM) {
+  // lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+  //   if (lapseType === BattlerTagLapseType.CUSTOM) {
+  apply(pokemon: Pokemon, simulated: boolean, ..._args: unknown[]): boolean {
+    if (!simulated) {
       new CommonBattleAnim(CommonAnim.PROTECT, pokemon).play();
       globalScene.phaseManager.queueMessage(
         i18next.t("battlerTags:protectedLapse", {
@@ -1799,7 +1801,8 @@ export class ProtectedTag extends BattlerTag {
       return true;
     }
 
-    return super.lapse(pokemon, lapseType);
+    //return super.lapse(pokemon, lapseType);
+    return true;
   }
 }
 
@@ -1821,19 +1824,23 @@ export abstract class ContactProtectedTag extends ProtectedTag {
    * @param lapseType - The type of lapse to apply. If this is not {@linkcode BattlerTagLapseType.CUSTOM CUSTOM}, no effect will be applied.
    * @returns Whether the tag continues to exist after the lapse.
    */
-  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    const ret = super.lapse(pokemon, lapseType);
+  apply(pokemon: Pokemon, simulated: boolean, attacker: Pokemon, move: Move): boolean {
+    if (!super.apply(pokemon, simulated, attacker, move)) {
+      return false;
+    }
 
     const moveData = getMoveEffectPhaseData(pokemon);
     if (
-      lapseType === BattlerTagLapseType.CUSTOM
+      //lapseType === BattlerTagLapseType.CUSTOM
+      !simulated
       && moveData
       && moveData.move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: moveData.attacker, target: pokemon })
     ) {
       this.onContact(moveData.attacker, pokemon);
     }
 
-    return ret;
+    //return ret;
+    return true;
   }
 }
 
@@ -1871,6 +1878,12 @@ export class ContactDamageProtectedTag extends ContactProtectedTag {
 /** Base class for `BattlerTag`s that block damaging moves but not status moves */
 export abstract class DamageProtectedTag extends ContactProtectedTag {
   public declare readonly tagType: DamageProtectedTagType;
+  apply(pokemon: Pokemon, simulated: boolean, attacker: Pokemon, move: Move): boolean {
+    if (attacker.getMoveCategory(pokemon, move) !== MoveCategory.STATUS) {
+      return super.apply(pokemon, simulated, attacker, move);
+    }
+    return false;
+  }
 }
 
 export class ContactSetStatusProtectedTag extends DamageProtectedTag {
