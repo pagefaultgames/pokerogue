@@ -11701,9 +11701,9 @@ export function initMoves() {
       .attr(MultiHitAttr, MultiHitType._2)
       .makesContact(false)
       .target(MoveTarget.DRAGON_DARTS)
-      .edgeCase(), 
       // see `dragon_darts.test.ts` for documented edge cases
       // when both enemies use protect, both hits go into the ally of the current target
+      .edgeCase(),
     new StatusMove(MoveId.TEATIME, PokemonType.NORMAL, -1, 10, -1, 0, 8)
       .attr(EatBerryAttr, false)
       .target(MoveTarget.ALL),
