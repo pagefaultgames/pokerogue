@@ -1,4 +1,5 @@
 import "#app/polyfills"; // All polyfills MUST be loaded first for side effects
+import "#plugins/i18n"; // Initializes i18n on import
 
 import { InvertPostFX } from "#app/pipelines/invert";
 import { isBeta, isDev } from "#constants/app-constants";
