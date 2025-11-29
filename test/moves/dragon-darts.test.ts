@@ -257,7 +257,7 @@ describe("Moves - Dragon Darts", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     playerPokemon.forEach(p => expect(p.isFullHp()).toBeTruthy());
-    expect(enemy1.getLastXMoves()[0]?.result).toBe(MoveResult.FAIL);
+    expect(enemy1.getLastXMoves()[0]?.result).toBe(MoveResult.MISS);
   });
 
   it("should not trigger ability effects when redirecting", async () => {
