@@ -251,7 +251,7 @@ describe("Spec - Pokemon", () => {
 
     it("should respect Rare Candy friendship gain cap", async () => {
       await game.classicMode.startBattle([SpeciesId.FEEBAS]);
-      
+
       const feebas = game.field.getPlayerPokemon();
       feebas.addFriendship(999, true);
 
@@ -281,7 +281,7 @@ describe("Spec - Pokemon", () => {
       pokemonData.friendship = 15;
       pokemonData.candyCount = 0;
 
-      const ca = getStarterValueFriendshipCap(speciesStarterCosts[SpeciesId.FEEBAS]);
+      const cap = getStarterValueFriendshipCap(speciesStarterCosts[SpeciesId.FEEBAS]);
       expect(cap).toBeLessThan(2015);
 
       feebas.addFriendship(2000, true);
