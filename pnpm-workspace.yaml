@@ -5,3 +5,5 @@ onlyBuiltDependencies:
   - msw
 
 shellEmulator: true
+
+minimumReleaseAge: 1440
