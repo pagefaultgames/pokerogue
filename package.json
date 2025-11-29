@@ -39,8 +39,8 @@
     "update-submodules:remote": "pnpm update-locales:remote && pnpm update-assets:remote"
   },
   "devDependencies": {
-    "@inquirer/prompts": "^8.0.1",
     "@biomejs/biome": "2.3.2",
+    "@inquirer/prompts": "^8.0.1",
     "@ls-lint/ls-lint": "2.3.1",
     "@types/crypto-js": "^4.2.2",
     "@types/jsdom": "^27.0.0",
