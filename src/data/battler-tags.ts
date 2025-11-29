@@ -1835,7 +1835,6 @@ export abstract class ContactProtectedTag extends ProtectedTag {
       this.onContact(moveData.attacker, pokemon);
     }
 
-    //return ret;
     return true;
   }
 }
