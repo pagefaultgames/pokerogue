@@ -832,7 +832,7 @@ export class BattleScene extends SceneBase {
    * @param battlerIndex - The {@linkcode BattlerIndex} to search for.
    */
   public getPokemonByBattlerIndex(battlerIndex: BattlerIndex): Pokemon | undefined {
-    return this.getField().find(p => p.getBattlerIndex() === battlerIndex);
+    return this.getField()[battlerIndex] ?? undefined;
   }
 
   /**

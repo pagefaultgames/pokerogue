@@ -343,7 +343,8 @@ export abstract class Move implements Localizable {
    * Getter function that returns if the move hits multiple targets
    * @returns boolean
    */
-  isMultiTarget(): boolean { // Might need to add the SMART MoveTarget enum here...
+  isMultiTarget(): boolean {
+    // TODO: Do we need to add Dragon Darts here?
     switch (this.moveTarget) {
       case MoveTarget.ALL_OTHERS:
       case MoveTarget.ALL_NEAR_OTHERS:
@@ -1141,7 +1142,7 @@ export abstract class Move implements Localizable {
     if (this.isChargingMove()) {
       return false;
     }
-    
+
     // ...cannot enhance moves hitting multiple targets unless specified
     const { targets, multiple } = getMoveTargets(user, this.id);
     if (restrictSpread && multiple && targets.length > 1) {
@@ -1150,7 +1151,7 @@ export abstract class Move implements Localizable {
 
     // ...cannot enhance status moves, including ally-targeting Pollen Puff
     if (
-        this.category === MoveCategory.STATUS 
+        this.category === MoveCategory.STATUS
         || (target != null && user.getMoveCategory(target, this) === MoveCategory.STATUS)) {
       return false;
     }

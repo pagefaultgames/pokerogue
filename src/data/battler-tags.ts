@@ -197,15 +197,16 @@ export class BattlerTag implements BaseBattlerTag {
   /**
    * Applies effects from this tag outside of the pre-defined
    * {@linkcode BattlerTagLapseType | lapse types} and without advancing the tag's
-   * {@linkcode turnCount turn counter}. This should only be invoked
-   * via {@linkcode applyBattlerTags}.
-   * @param pokemon the {@linkcode Pokemon} with the tag
-   * @param simulated if `true`, suppresses changes to game state while applying
-   * @param args any additional arguments for the tag's application.
-   * @returns `true` to prevent other tags under the same {@linkcode BattlerTagType}
-   * from applying.
+   * {@linkcode turnCount turn counter}.
+   * @param _pokemon - The {@linkcode Pokemon} to whom this Tag is attached
+   * @param _args - Any additional arguments used for the tag's application
+   * @returns Whether other tags of this type should be prevented from
+   * from applying after this; default `true`
    */
-  apply(_pokemon: Pokemon, _simulated: boolean, ..._args: unknown[]): boolean {
+  // TODO: This really should be abstract
+  // TODO: Rework tags with lapse types that don't decrement their turn count
+  // to use this method instead
+  apply(_pokemon: Pokemon, ..._args: unknown[]): boolean {
     return true;
   }
 
@@ -1782,23 +1783,23 @@ export class ProtectedTag extends BattlerTag {
     );
   }
 
-  apply(pokemon: Pokemon, simulated: boolean, ..._args: unknown[]): boolean {
-    if (!simulated) {
-      new CommonBattleAnim(CommonAnim.PROTECT, pokemon).play();
-      globalScene.phaseManager.queueMessage(
-        i18next.t("battlerTags:protectedLapse", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        }),
-      );
-
-      // Stop multi-hit moves early
-      const effectPhase = globalScene.phaseManager.getCurrentPhase();
-      if (effectPhase.is("MoveEffectPhase")) {
-        effectPhase.stopMultiHit(pokemon);
-      }
+  apply(pokemon: Pokemon, simulated: boolean, _attacker: Pokemon, _move: Move): boolean {
+    if (simulated) {
       return true;
     }
 
+    new CommonBattleAnim(CommonAnim.PROTECT, pokemon).play();
+    globalScene.phaseManager.queueMessage(
+      i18next.t("battlerTags:protectedLapse", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      }),
+    );
+
+    // Stop multi-hit moves early
+    const effectPhase = globalScene.phaseManager.getCurrentPhase();
+    if (effectPhase.is("MoveEffectPhase")) {
+      effectPhase.stopMultiHit(pokemon);
+    }
     return true;
   }
 }
@@ -1874,10 +1875,10 @@ export class ContactDamageProtectedTag extends ContactProtectedTag {
 export abstract class DamageProtectedTag extends ContactProtectedTag {
   public declare readonly tagType: DamageProtectedTagType;
   apply(pokemon: Pokemon, simulated: boolean, attacker: Pokemon, move: Move): boolean {
-    if (attacker.getMoveCategory(pokemon, move) !== MoveCategory.STATUS) {
-      return super.apply(pokemon, simulated, attacker, move);
+    if (attacker.getMoveCategory(pokemon, move) === MoveCategory.STATUS) {
+      return false;
     }
-    return false;
+    return super.apply(pokemon, simulated, attacker, move);
   }
 }
 

@@ -26,5 +26,9 @@ export enum MoveTarget {
   BOTH_SIDES,
   PARTY,
   CURSE,
+  /**
+   * Move target to implement Dragon Darts' smart targeting.
+   * Has no special logic in and of itself, but is handled separately during the move effect phase.
+   */
   DRAGON_DARTS,
 }

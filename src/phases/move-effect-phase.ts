@@ -50,7 +50,10 @@ export class MoveEffectPhase extends PokemonPhase {
   public move: Move;
   /** The original targets of the move */
   protected targets: BattlerIndex[];
-  /** The targets of the move after dynamic adjustments, e.g. from Dragon Darts */
+  /**
+   * The targets of the move after dynamic adjustments.
+   * Used by Dragon Darts to alternate checks against either target Pokemon if not immune.
+   */
   private adjustedTargets: BattlerIndex[] | null = null;
   protected useMode: MoveUseMode;
 
@@ -287,39 +290,29 @@ export class MoveEffectPhase extends PokemonPhase {
       user.turnData.hitsLeft = hitCount.value;
     }
 
+    const hasSmartTargeting = this.canApplySmartTargeting();
+
     /**
      * If the move has smart targeting (i.e. the move is Dragon Darts),
      * and the move is being used in a double battle,
-     * alternate the base target on every second hit.
+     * alternate the base target (the one being checked) on every other hit.
      */
-    if (
-      this.canApplySmartTargeting()
-      && user.turnData.hitsLeft % 2 === 1
-      && this.getFirstTarget()?.getAlly()?.isActive(true)
-    ) {
-      const targetAlly = this.getTargets()[0].getAlly();
-      if (targetAlly?.isActive(true)) {
-        this.getTargets()[0] = targetAlly;
-        this.adjustedTargets = [targetAlly.getBattlerIndex()];
-      }
+    if (hasSmartTargeting && user.turnData.hitsLeft % 2 === 1) {
+      const targetAlly = this.getFirstTarget()!.getAlly()!;
+      this.adjustedTargets = [targetAlly.getBattlerIndex()];
     }
 
     // Update hit checks for each target
-    this.getTargets().forEach((t, i) => (this.hitChecks[i] = this.hitCheck(t, this.canApplySmartTargeting())));
+    this.hitChecks = this.getTargets().map(t => this.hitCheck(t, hasSmartTargeting));
 
     /**
-     * If the move has smart targeting (i.e. the move is Dragon Darts),
-     * the move is being used in a double battle,
-     * and the move's current target was not successfully hit,
-     * try to hit the target's ally.
+     * If the move has smart targeting and the move's current target
+     * was not successfully hit, try to hit the target's ally instead.
      */
-    if (this.canApplySmartTargeting() && this.hitChecks[0]?.[0] !== HitCheckResult.HIT) {
-      const targetAlly = this.getFirstTarget()?.getAlly();
-      if (targetAlly?.isActive(true)) {
-        this.getTargets()[0] = targetAlly;
-        this.adjustedTargets = [targetAlly.getBattlerIndex()];
-        this.hitChecks[0] = this.hitCheck(this.getTargets()[0]);
-      }
+    if (hasSmartTargeting && this.hitChecks[0][0] !== HitCheckResult.HIT) {
+      const targetAlly = this.getFirstTarget()!.getAlly()!;
+      this.adjustedTargets = [targetAlly.getBattlerIndex()];
+      this.hitChecks[0] = this.hitCheck(targetAlly);
     }
 
     this.moveHistoryEntry = {
@@ -396,14 +389,14 @@ export class MoveEffectPhase extends PokemonPhase {
     /**
      * If the move has smart targeting (e.g. Dragon Darts),
      * and the original target fainted due to the first hit,
-     * redirect the next strike to the original target's ally.
+     * redirect remaining strikes to the original target's ally.
      * Note: We do NOT use `canApplySmartTargeting()` here,
      * due to a quirk where `getFirstTarget()` returns `undefined` if the target is fainted.
      */
     if (this.move.moveTarget === MoveTarget.DRAGON_DARTS) {
-      const ogTarget = globalScene.getField()?.find(p => p?.getBattlerIndex() === this.targets[0]);
+      const ogTarget = globalScene.getPokemonByBattlerIndex(this.targets[0]);
       const allyPokemon = ogTarget?.getAlly();
-      if (ogTarget?.isFainted() && allyPokemon?.isActive(true) && allyPokemon.id !== this.getUserPokemon()?.id) {
+      if (ogTarget?.isFainted() && allyPokemon?.isActive(true) && allyPokemon !== user) {
         this.targets = [allyPokemon.getBattlerIndex()];
       }
     }
@@ -484,17 +477,18 @@ export class MoveEffectPhase extends PokemonPhase {
     }
   }
 
-  /** Determines if this phase's move can be redirected by smart targeting */
-  public canApplySmartTargeting(): boolean {
+  /**
+   * @returns Whether this phase's move can be redirected by smart targeting from Dragon Darts.
+   */
+  private canApplySmartTargeting(): boolean {
     const target = this.getFirstTarget();
     const targetAlly = target?.getAlly();
 
     return (
       this.move.moveTarget === MoveTarget.DRAGON_DARTS
-      && targetAlly != null
-      && targetAlly.isActive(true)
+      && this.targets.length > 1
+      && !!targetAlly?.isActive(true)
       && targetAlly !== this.getUserPokemon()
-      && !target?.getTag(BattlerTagType.CENTER_OF_ATTENTION)
     );
   }
 
@@ -502,7 +496,7 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - {@linkcode Pokemon} the target to check for protection
    * @param move - The {@linkcode Move} being used
-   * @param simulated - If `true`, does not change game state during calculation (default `false`)
+   * @param simulated - Whether to prevent changes to game state during calculations; default `false`
    * @returns Whether the pokemon was protected
    */
   private protectedCheck(user: Pokemon, target: Pokemon, simulated = false): boolean {
@@ -531,7 +525,7 @@ export class MoveEffectPhase extends PokemonPhase {
       ![MoveTarget.ENEMY_SIDE, MoveTarget.BOTH_SIDES].includes(this.move.moveTarget)
       && (bypassIgnoreProtect.value || !this.move.doesFlagEffectApply({ flag: MoveFlags.IGNORE_PROTECT, user, target }))
       && (hasConditionalProtectApplied.value
-        || target.findTags(t => t instanceof ProtectedTag)[0]?.apply(target, simulated, user, this.move))
+        || !!target.getTag(ProtectedTag)?.apply(target, simulated, user, this.move))
     );
   }
 
@@ -721,7 +715,7 @@ export class MoveEffectPhase extends PokemonPhase {
    */
   public getTargets(): Pokemon[] {
     const targets = this.adjustedTargets ?? this.targets;
-    return globalScene.getField(true).filter(p => targets.indexOf(p.getBattlerIndex()) > -1);
+    return globalScene.getField(true).filter(p => targets.includes(p.getBattlerIndex()));
   }
 
   /** @returns The first active, non-fainted target of this phase's invoked move. */
