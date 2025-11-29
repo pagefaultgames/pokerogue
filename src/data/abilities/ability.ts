@@ -852,6 +852,8 @@ export class TypeImmunityHealAbAttr extends TypeImmunityAbAttr {
   override apply(params: TypeMultiplierAbAttrParams): void {
     super.apply(params);
     const { pokemon, cancelled, simulated, passive } = params;
+    cancelled.value = true; // Suppresses "No Effect" message
+
     if (!pokemon.isFullHp() && !simulated) {
       const abilityName = (passive ? pokemon.getPassiveAbility() : pokemon.getAbility()).name;
       globalScene.phaseManager.unshiftNew(
@@ -864,7 +866,6 @@ export class TypeImmunityHealAbAttr extends TypeImmunityAbAttr {
         }),
         true,
       );
-      cancelled.value = true; // Suppresses "No Effect" message
     }
   }
 }
