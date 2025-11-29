@@ -386,7 +386,7 @@ export class MoveEffectPhase extends PokemonPhase {
       return;
     }
 
-    /**
+    /*
      * If the move has smart targeting (e.g. Dragon Darts),
      * and the original target fainted due to the first hit,
      * redirect remaining strikes to the original target's ally.
