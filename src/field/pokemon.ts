@@ -5958,8 +5958,8 @@ export class PlayerPokemon extends Pokemon {
       sd.friendship = (sd.friendship || 0) + candyFriendshipAmount;
       const friendshipCap = getStarterValueFriendshipCap(speciesStarterCosts[id]);
       if (sd.friendship >= friendshipCap) {
-        globalScene.gameData.addStarterCandy(getPokemonSpecies(id), 1);
-        sd.friendship -= friendshipCap;
+        globalScene.gameData.addStarterCandy(getPokemonSpecies(id), Math.floor(sd.friendship / friendshipCap));
+        sd.friendship %= friendshipCap;
       }
     });
   }
