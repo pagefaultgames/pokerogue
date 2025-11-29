@@ -115,8 +115,7 @@ export function doPokeballBounceAnim(
   y1: number,
   y2: number,
   baseBounceDuration: number,
-  // biome-ignore lint/complexity/noBannedTypes: TODO
-  callback: Function,
+  callback: () => void,
   isCritical = false,
 ) {
   let bouncePower = 1;

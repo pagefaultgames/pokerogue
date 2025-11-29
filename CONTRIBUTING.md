@@ -103,7 +103,7 @@ You've just made a change - how can you check if it works? You have two areas to
 
 > This will likely be your first stop. After making a change, you'll want to spin the game up and make sure everything is as you expect. To do this, you will need a way to manipulate the game to produce the situation you're looking to test.
 
-[src/overrides.ts](../src/overrides.ts) contains overrides for most values you'll need to change for testing, controlled through the `overrides` object.
+[src/overrides.ts](./src/overrides.ts) contains overrides for most values you'll need to change for testing, controlled through the `overrides` object.
 For example, here is how you could test a scenario where the player Pokemon has the ability Drought and the enemy Pokemon has the move Water Gun:
 
 ```typescript

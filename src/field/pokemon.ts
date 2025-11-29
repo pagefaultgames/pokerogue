@@ -1848,20 +1848,20 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns An array of {@linkcode PokemonMove}, as described above.
    */
   getMoveset(ignoreOverride = false): PokemonMove[] {
-    // Overrides moveset based on arrays specified in overrides.ts
-    let overrideArray: MoveId | Array<MoveId> = this.isPlayer()
-      ? Overrides.MOVESET_OVERRIDE
-      : Overrides.ENEMY_MOVESET_OVERRIDE;
-    overrideArray = coerceArray(overrideArray);
-    if (overrideArray.length > 0) {
-      if (!this.isPlayer()) {
-        this.moveset = [];
-      }
-      overrideArray.forEach((move: MoveId, index: number) => {
-        const ppUsed = this.moveset[index]?.ppUsed ?? 0;
-        this.moveset[index] = new PokemonMove(move, Math.min(ppUsed, allMoves[move].pp));
-      });
+    // Override moveset based on arrays specified in overrides.ts
+    const overrideArray = coerceArray(this.isPlayer() ? Overrides.MOVESET_OVERRIDE : Overrides.ENEMY_MOVESET_OVERRIDE);
+    if (overrideArray.length === 0) {
+      return !ignoreOverride && this.summonData.moveset ? this.summonData.moveset : this.moveset;
     }
+
+    if (!this.isPlayer()) {
+      this.moveset = [];
+    }
+    // TODO: Preserve PP used while the moveset override is active
+    overrideArray.forEach((move: MoveId, index: number) => {
+      const ppUsed = this.moveset[index]?.ppUsed ?? 0;
+      this.moveset[index] = new PokemonMove(move, Math.min(ppUsed, allMoves[move].pp));
+    });
 
     return !ignoreOverride && this.summonData.moveset ? this.summonData.moveset : this.moveset;
   }
@@ -2201,6 +2201,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.isFusion() && ability.hasAttr("NoFusionAbilityAbAttr")) {
       return false;
     }
+    if (this.isTransformed() && ability.hasAttr("NoTransformAbilityAbAttr")) {
+      return false;
+    }
     const arena = globalScene?.arena;
     if (arena.ignoreAbilities && arena.ignoringEffectSource !== this.getBattlerIndex() && ability.ignorable) {
       return false;
@@ -2230,7 +2233,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Check whether a pokemon has the specified ability in effect, either as a normal or passive ability.
    * Accounts for all the various effects which can disable or modify abilities.
-   * @param ability - The {@linkcode Abilities | Ability} to check for
+   * @param ability - The {@linkcode AbilityId | Ability} to check for
    * @param canApply - Whether to check if the ability is currently active; default `true`
    * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
    * @returns Whether this {@linkcode Pokemon} has the given ability
@@ -2656,10 +2659,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         hpDiffRatio = 1 - hpRatio + (outspeed ? 0.2 : 0.1);
       }
     } else if (outspeed) {
-      hpDiffRatio = hpDiffRatio * 1.25;
+      hpDiffRatio *= 1.25;
     } else if (hpRatio > 0.2 && hpRatio <= 0.4) {
       // Might be considered to be switched because it's not in low enough health
-      hpDiffRatio = hpDiffRatio * 0.5;
+      hpDiffRatio *= 0.5;
     }
     return (atkScore + defScore) * Math.min(hpDiffRatio, 1);
   }
@@ -3673,15 +3676,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       multiStrikeEnhancementMultiplier,
     );
 
-    if (!ignoreSourceAbility) {
-      applyAbAttrs("AddSecondStrikeAbAttr", {
-        pokemon: source,
-        move,
-        simulated,
-        multiplier: multiStrikeEnhancementMultiplier,
-      });
-    }
-
     /** Doubles damage if this Pokemon's last move was Glaive Rush */
     const glaiveRushMultiplier = new NumberHolder(1);
     if (this.getTag(BattlerTagType.RECEIVE_DOUBLE_DAMAGE)) {
@@ -3770,9 +3764,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         * mistyTerrainMultiplier,
     );
 
-    /** Doubles damage if the attacker has Tinted Lens and is using a resisted move */
     if (!ignoreSourceAbility) {
-      applyAbAttrs("DamageBoostAbAttr", {
+      applyAbAttrs("MoveDamageBoostAbAttr", {
         pokemon: source,
         opponent: this,
         move,
@@ -3907,7 +3900,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     damage = Math.min(damage, this.hp);
-    this.hp = this.hp - damage;
+    this.hp -= damage;
     if (this.isFainted() && !ignoreFaintPhase) {
       globalScene.phaseManager.queueFaintPhase(this.getBattlerIndex(), preventEndure);
       this.destroySubstitute();

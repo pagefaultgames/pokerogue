@@ -1,7 +1,7 @@
 {
   "name": "pokemon-rogue-battle",
   "private": true,
-  "version": "1.11.2",
+  "version": "1.11.3",
   "type": "module",
   "scripts": {
     "start:prod": "vite --mode production",
@@ -23,6 +23,7 @@
     "typecheck": "tsc --noEmit",
     "typecheck:scripts": "tsc -p scripts/jsconfig.json",
     "biome": "biome check --write --changed --no-errors-on-unmatched --diagnostic-level=error",
+    "biome:staged": "biome check --write --staged --no-errors-on-unmatched --diagnostic-level=error",
     "biome:all": "biome check --write --no-errors-on-unmatched --diagnostic-level=error",
     "biome-ci": "biome ci --diagnostic-level=error --reporter=github --no-errors-on-unmatched",
     "typedoc": "typedoc",

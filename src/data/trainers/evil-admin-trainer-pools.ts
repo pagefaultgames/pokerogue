@@ -223,57 +223,47 @@ const PLASMA_COLRESS: TrainerTierPools = {
 
 const FLARE: TrainerTierPools = {
   [TrainerPoolTier.COMMON]: [
-    SpeciesId.FOONGUS,
     SpeciesId.SCRAGGY,
-    SpeciesId.DRUDDIGON,
+    SpeciesId.FOONGUS,
     SpeciesId.BUNNELBY,
     SpeciesId.FLETCHLING,
     SpeciesId.PANCHAM,
     SpeciesId.ESPURR,
-    SpeciesId.PUMPKABOO,
-    SpeciesId.PHANTUMP,
+    SpeciesId.SKRELP,
     SpeciesId.CLAUNCHER,
-    SpeciesId.HELIOPTILE,
     SpeciesId.KLEFKI,
+    SpeciesId.PHANTUMP,
+    SpeciesId.PUMPKABOO,
   ],
   [TrainerPoolTier.UNCOMMON]: [
     SpeciesId.LITWICK,
     SpeciesId.HEATMOR,
     SpeciesId.BINACLE,
-    SpeciesId.SKRELP,
-    SpeciesId.BERGMITE,
+    SpeciesId.HELIOPTILE,
+    SpeciesId.AVALUGG,
     SpeciesId.CAPSAKID,
   ],
-  [TrainerPoolTier.RARE]: [SpeciesId.GOODRA, SpeciesId.HONEDGE],
+  [TrainerPoolTier.RARE]: [SpeciesId.AERODACTYL, SpeciesId.HONEDGE, SpeciesId.GOOMY],
 };
 
 const FLARE_XEROSIC: TrainerTierPools = {
   [TrainerPoolTier.COMMON]: [
+    SpeciesId.EKANS,
+    SpeciesId.LITWICK,
     SpeciesId.PANCHAM,
     SpeciesId.BINACLE,
+    [SpeciesId.SKRELP, SpeciesId.CLAUNCHER],
     SpeciesId.HELIOPTILE,
-    SpeciesId.CLAUNCHER,
-    SpeciesId.BUNNELBY,
-    SpeciesId.FLETCHLING,
-    SpeciesId.LITLEO,
-    SpeciesId.PANGORO,
-    SpeciesId.ESPURR,
-    SpeciesId.INKAY,
-    SpeciesId.CLAUNCHER,
-    SpeciesId.HELIOPTILE,
+    SpeciesId.KLEFKI,
   ],
   [TrainerPoolTier.UNCOMMON]: [
-    [SpeciesId.AMAURA, SpeciesId.TYRUNT],
-    SpeciesId.SNEASEL,
-    SpeciesId.LITWICK,
-    SpeciesId.LITLEO,
-    SpeciesId.BINACLE,
-    SpeciesId.SKRELP,
+    SpeciesId.ROTOM, // Always Rotom-Heat, Xerosic has their specialty type set to fire
+    [SpeciesId.TYRUNT, SpeciesId.AMAURA],
     SpeciesId.NOIBAT,
-    SpeciesId.PHANTUMP,
-    SpeciesId.PUMPKABOO,
+    SpeciesId.SIZZLIPEDE,
+    SpeciesId.CAPSAKID,
   ],
-  [TrainerPoolTier.RARE]: [SpeciesId.HISUI_GOODRA, SpeciesId.HONEDGE],
+  [TrainerPoolTier.RARE]: [SpeciesId.BELDUM, SpeciesId.HISUI_SLIGGOO, SpeciesId.HISUI_AVALUGG],
 };
 
 const AETHER: TrainerTierPools = {

@@ -100,7 +100,6 @@ import i18next from "i18next";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { canSpeciesTera, willTerastallize } from "#utils/pokemon-utils";
-import type { ReadonlyGenericUint8Array } from "#types/typed-arrays";
 import { MovePriorityInBracket } from "#enums/move-priority-in-bracket";
 
 /**
@@ -1117,20 +1116,34 @@ export abstract class Move implements Localizable {
   }
 
   /**
-   * Returns `true` if this move can be given additional strikes
-   * by enhancing effects.
+   * Check whether this Move can be given additional strikes from enhancing effects.
    * Currently used for {@link https://bulbapedia.bulbagarden.net/wiki/Parental_Bond_(Ability) | Parental Bond}
-   * and {@linkcode PokemonMultiHitModifier | Multi-Lens}.
-   * @param user The {@linkcode Pokemon} using the move
-   * @param restrictSpread `true` if the enhancing effect
-   * should not affect multi-target moves (default `false`)
+   * and {@linkcode PokemonMultiHitModifier | Multi Lens}.
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param restrictSpread - Whether the enhancing effect should ignore multi-target moves; default `false`
+   * @returns Whether this Move can be given additional strikes.
    */
-  canBeMultiStrikeEnhanced(user: Pokemon, restrictSpread: boolean = false): boolean {
+  // TODO: Remove target parameter used solely to circumvent Pollen Puff shenanigans - the entire move needs to be fixed anyhow
+  public canBeMultiStrikeEnhanced(user: Pokemon, restrictSpread: boolean = false, target?: Pokemon | null): boolean {
     // Multi-strike enhancers...
 
-    // ...cannot enhance moves that hit multiple targets
+    // ...cannot enhance charging or 2-turn moves
+    if (this.isChargingMove()) {
+      return false;
+    }
+    
+    // ...cannot enhance moves hitting multiple targets unless specified
     const { targets, multiple } = getMoveTargets(user, this.id);
-    const isMultiTarget = multiple && targets.length > 1;
+    if (restrictSpread && multiple && targets.length > 1) {
+      return false;
+    };
+
+    // ...cannot enhance status moves, including ally-targeting Pollen Puff
+    if (
+        this.category === MoveCategory.STATUS 
+        || (target != null && user.getMoveCategory(target, this) === MoveCategory.STATUS)) {
+      return false;
+    }
 
     // ...cannot enhance multi-hit or sacrificial moves
     const exceptAttrs: MoveAttrString[] = [
@@ -1138,6 +1151,9 @@ export abstract class Move implements Localizable {
       "SacrificialAttr",
       "SacrificialAttrOnHit"
     ];
+    if (exceptAttrs.some(attr => this.hasAttr(attr))) {
+      return false;
+    }
 
     // ...and cannot enhance these specific moves
     const exceptMoves: MoveId[] = [
@@ -1147,17 +1163,11 @@ export abstract class Move implements Localizable {
       MoveId.ICE_BALL,
       MoveId.ENDEAVOR
     ];
+    if (exceptMoves.includes(this.id)) {
+      return false;
+    }
 
-    // ...and cannot enhance Pollen Puff when targeting an ally.
-    const ally = user.getAlly();
-    const exceptPollenPuffAlly: boolean = this.id === MoveId.POLLEN_PUFF && ally != null && targets.includes(ally.getBattlerIndex())
-
-    return (!restrictSpread || !isMultiTarget)
-      && !this.isChargingMove()
-      && !exceptAttrs.some(attr => this.hasAttr(attr))
-      && !exceptMoves.some(id => this.id === id)
-      && !exceptPollenPuffAlly
-      && this.category !== MoveCategory.STATUS;
+    return true;
   }
 }
 
@@ -3384,7 +3394,10 @@ export class WeatherInstantChargeAttr extends InstantChargeAttr {
   }
 }
 
-export class OverrideMoveEffectAttr extends MoveAttr {
+/**
+ * Abstract class used for `MoveAttr`s whose effect application can override normal move effect processing.
+ */
+abstract class OverrideMoveEffectAttr extends MoveAttr {
   /** This field does not exist at runtime and must not be used.
    * Its sole purpose is to ensure that typescript is able to properly narrow when the `is` method is called.
    */
@@ -3404,41 +3417,37 @@ export class OverrideMoveEffectAttr extends MoveAttr {
   }
 }
 
-/** Abstract class for moves that add {@linkcode PositionalTag}s to the field. */
-abstract class AddPositionalTagAttr extends OverrideMoveEffectAttr {
-  protected abstract readonly tagType: PositionalTagType;
-
-  public override getCondition(): MoveConditionFunc {
-    // Check the arena if another similar positional tag is active and affecting the same slot
-    return (_user, target, move) => globalScene.arena.positionalTagManager.canAddTag(this.tagType, target.getBattlerIndex())
-  }
-}
-
 /**
  * Attribute to implement delayed attacks, such as {@linkcode MoveId.FUTURE_SIGHT} or {@linkcode MoveId.DOOM_DESIRE}.
  * Delays the attack's effect with a {@linkcode DelayedAttackTag},
  * activating against the given slot after the given turn count has elapsed.
  */
 export class DelayedAttackAttr extends OverrideMoveEffectAttr {
-  public chargeAnim: ChargeAnim;
-  private chargeText: string;
-
   /**
-   * @param chargeAnim - The {@linkcode ChargeAnim | charging animation} used for the move's charging phase.
-   * @param chargeKey - The `i18next` locales **key** to show when the delayed attack is used.
+   * The {@linkcode ChargeAnim | charging animation} used for the move's charging phase.
+   *
+   * Rendered public to allow for charge animation code to function
+   */
+  public readonly chargeAnim: ChargeAnim;
+  /**
+   * The `i18next` locales key to show when the delayed attack is queued
+   * (**not** when it activates)! \
    * In the displayed text, `{{pokemonName}}` will be populated with the user's name.
    */
+  private readonly chargeKey: string;
+
   constructor(chargeAnim: ChargeAnim, chargeKey: string) {
     super();
 
     this.chargeAnim = chargeAnim;
-    this.chargeText = chargeKey;
+    this.chargeKey = chargeKey;
   }
 
   public override apply(user: Pokemon, target: Pokemon, move: Move, args: [overridden: BooleanHolder, useMode: MoveUseMode]): boolean {
     const useMode = args[1];
     if (useMode === MoveUseMode.DELAYED_ATTACK) {
       // don't trigger if already queueing an indirect attack
+      // TODO: There should be a cleaner way of doing this...
       return false;
     }
 
@@ -3449,14 +3458,14 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
     globalScene.phaseManager.unshiftNew("MoveAnimPhase", new MoveChargeAnim(this.chargeAnim, move.id, user));
     globalScene.phaseManager.queueMessage(
       i18next.t(
-        this.chargeText,
+        this.chargeKey,
         { pokemonName: getPokemonNameWithAffix(user) }
       )
     )
 
     user.pushMoveHistory({move: move.id, targets: [target.getBattlerIndex()], result: MoveResult.OTHER, useMode, turn: globalScene.currentBattle.turn})
-    // Queue up an attack on the given slot.
-    globalScene.arena.positionalTagManager.addTag<PositionalTagType.DELAYED_ATTACK>({
+    // Queue up an attack on the given slot
+    globalScene.arena.positionalTagManager.addTag({
       tagType: PositionalTagType.DELAYED_ATTACK,
       sourceId: user.id,
       targetIndex: target.getBattlerIndex(),
@@ -3474,11 +3483,12 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
 
 /**
  * Attribute to queue a {@linkcode WishTag} to activate in 2 turns.
- * The tag whill heal
+ * The tag will heal whichever Pokemon remains in the given slot for 50% of the user's
+ * maximum HP.
  */
 export class WishAttr extends MoveEffectAttr {
-  public override apply(user: Pokemon, target: Pokemon, _move: Move): boolean {
-    globalScene.arena.positionalTagManager.addTag<PositionalTagType.WISH>({
+  public override apply(user: Pokemon, target: Pokemon): boolean {
+    globalScene.arena.positionalTagManager.addTag({
       tagType: PositionalTagType.WISH,
       healHp: toDmgValue(user.getMaxHp() / 2),
       targetIndex: target.getBattlerIndex(),
@@ -3489,7 +3499,7 @@ export class WishAttr extends MoveEffectAttr {
   }
 
   public override getCondition(): MoveConditionFunc {
-    // Check the arena if another wish is active and affecting the same slot
+    // Check the arena if another similar move is active and affecting the same slot
     return (_user, target) => globalScene.arena.positionalTagManager.canAddTag(PositionalTagType.WISH, target.getBattlerIndex())
   }
 }
@@ -9033,7 +9043,7 @@ export function initMoves() {
     new AttackMove(MoveId.STRUGGLE, PokemonType.NORMAL, MoveCategory.PHYSICAL, 50, -1, 1, -1, 0, 1)
       .attr(RecoilAttr, true, 0.25, true)
       .attr(TypelessAttr)
-      .attr(PreMoveMessageAttr, (user: Pokemon) => i18next.t("moveTriggers:struggleMessage", { pokemonName: getPokemonNameWithAffix(user) }))
+      .attr(PreMoveMessageAttr, (user: Pokemon) => i18next.t("moveTriggers:struggle", { pokemonName: getPokemonNameWithAffix(user) }))
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new StatusMove(MoveId.SKETCH, PokemonType.NORMAL, -1, 1, -1, 0, 2)
       .ignoresSubstitute()
@@ -10700,7 +10710,7 @@ export function initMoves() {
       .attr(HealOnAllyAttr, 0.5, true, false)
       .ballBombMove()
       // Fail if used against an ally that is affected by heal block, during the second failure check
-      .condition((user, target) => target.isOpponent(user) || !!target.getTag(BattlerTagType.HEAL_BLOCK), 2),
+      .condition((user, target) => target == null || target.isOpponent(user) || !target.getTag(BattlerTagType.HEAL_BLOCK), 2),
     new AttackMove(MoveId.ANCHOR_SHOT, PokemonType.STEEL, MoveCategory.PHYSICAL, 80, 100, 20, 100, 0, 7)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1, 1, true),
     new StatusMove(MoveId.PSYCHIC_TERRAIN, PokemonType.PSYCHIC, -1, 10, -1, 0, 7)
