@@ -78,6 +78,7 @@ export function getMoveTargets(user: Pokemon, move: MoveId, replaceTarget?: Move
       break;
     case MoveTarget.NEAR_OTHER:
     case MoveTarget.OTHER:
+    case MoveTarget.DRAGON_DARTS:
     case MoveTarget.ALL_NEAR_OTHERS:
     case MoveTarget.ALL_OTHERS:
       set = ally != null ? opponents.concat([ally]) : opponents;
