@@ -1799,7 +1799,6 @@ export class ProtectedTag extends BattlerTag {
       return true;
     }
 
-    //return super.lapse(pokemon, lapseType);
     return true;
   }
 }
