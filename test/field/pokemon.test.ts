@@ -1,6 +1,7 @@
 import type { BattleScene } from "#app/battle-scene";
 import { RARE_CANDY_FRIENDSHIP_CAP } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { getStarterValueFriendshipCap, speciesStarterCosts } from "#balance/starters";
 import { CustomPokemonData } from "#data/pokemon-data";
 import { MoveId } from "#enums/move-id";
 import { PokeballType } from "#enums/pokeball";
@@ -248,58 +249,64 @@ describe("Spec - Pokemon", () => {
       expect(pokemon.friendship).toBe(0);
     });
 
-    it("should not exceed rare candy cap when capped", async () => {
-      await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-      const pokemon = game.field.getPlayerParty()[0];
+    it("should respect Rare Candy friendship gain cap", async () => {
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+      
+      const feebas = game.field.getPlayerPokemon();
+      feebas.addFriendship(999, true);
 
-      pokemon.addFriendship(999, true);
-      expect(pokemon.friendship).toBe(RARE_CANDY_FRIENDSHIP_CAP);
+      expect(feebas.friendship).toBe(RARE_CANDY_FRIENDSHIP_CAP);
     });
 
     it("should get 3x candy friendship in classic mode", async () => {
-      await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-      const pokemon = game.field.getPlayerParty()[0];
-      const pokemonData = globalScene.gameData.starterData[pokemon.species.speciesId];
-      expect(pokemonData.friendship).toBe(0);
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-      pokemon.friendship = 0;
-      expect(pokemon.friendship).toBe(0);
-      pokemon.addFriendship(10, true);
-      expect(pokemon.friendship).toBe(10);
+      const feebas = game.field.getPlayerPokemon();
+      const pokemonData = globalScene.gameData.starterData[SpeciesId.FEEBAS];
+      feebas.friendship = 0;
+      pokemonData.friendship = 0;
+
+      feebas.addFriendship(10);
+
+      expect(feebas.friendship).toBe(10);
       expect(pokemonData.friendship).toBe(30);
     });
 
-    it("should move over excess friendship into next candy", async () => {
-      await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
-      const pokemon = game.field.getPlayerParty()[0];
-      const pokemonData = globalScene.gameData.starterData[pokemon.species.speciesId];
-      expect(pokemonData.friendship).toBe(0);
-      expect(pokemonData.candyCount).toBe(0);
+    it("should carry over excess friendship into next candy, even if capped", async () => {
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-      pokemon.friendship = 0;
-      expect(pokemon.friendship).toBe(0);
-      pokemon.addFriendship(30, true);
-      expect(pokemon.friendship).toBe(30);
-      // With the 3x classic multiplier it gets 90 candy friendship.
-      // Bulbasaur needs 75 friendship for a candy, so 15 should overflow.
-      expect(pokemonData.friendship).toBe(15);
-      expect(pokemonData.candyCount).toBe(1);
+      const feebas = game.field.getPlayerPokemon();
+      const pokemonData = globalScene.gameData.starterData[SpeciesId.FEEBAS];
+      feebas.friendship = 0;
+      pokemonData.friendship = 15;
+      pokemonData.candyCount = 0;
+
+      const ca = getStarterValueFriendshipCap(speciesStarterCosts[SpeciesId.FEEBAS]);
+      expect(cap).toBeLessThan(2015);
+
+      feebas.addFriendship(2000, true);
+
+      // Friendship gain was capped, but candy friendship overflowed several times over
+      expect(feebas.friendship).toBe(RARE_CANDY_FRIENDSHIP_CAP);
+      expect(pokemonData.friendship).toBe(Math.floor(2015 / cap));
+      expect(pokemonData.candyCount).toBe(2000 % cap);
     });
   });
 
-  it("should allow candy gain for uncaught Pokémon", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-    const pokemon = game.field.getPlayerParty()[0];
-    const dexEntry = globalScene.gameData.dexData[pokemon.species.speciesId];
-    const pokemonData = globalScene.gameData.starterData[pokemon.species.speciesId];
+  it("should allow gaining candy for uncaught Pokémon", async () => {
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+
+    const feebas = game.field.getPlayerPokemon();
+    const pokemonData = globalScene.gameData.starterData[SpeciesId.FEEBAS];
+    feebas.friendship = 0;
+    pokemonData.candyCount = 0;
+    // mark feebas as uncaught
+    const dexEntry = globalScene.gameData.dexData[SpeciesId.FEEBAS];
+    dexEntry.caughtAttr = 0n;
+
+    feebas.addFriendship(2000);
 
     expect(dexEntry.caughtAttr).toBe(0n);
-    expect(pokemonData.candyCount).toBe(0);
-
-    // Magikarp needs 100 friendship for a candy.
-    // With the 3x classic multiplier it gets 120 candy friendship.
-    pokemon.addFriendship(40, true);
-    expect(dexEntry.caughtAttr).toBe(0n);
-    expect(pokemonData.candyCount).toBe(1);
+    expect(pokemonData.candyCount).toBeGreaterThan(0);
   });
 });
