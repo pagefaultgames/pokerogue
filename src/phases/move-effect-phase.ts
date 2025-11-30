@@ -290,29 +290,8 @@ export class MoveEffectPhase extends PokemonPhase {
       user.turnData.hitsLeft = hitCount.value;
     }
 
-    const hasSmartTargeting = this.canApplySmartTargeting();
-
-    /*
-     * If the move has smart targeting (i.e. the move is Dragon Darts),
-     * and the move is being used in a double battle,
-     * alternate the base target (the one being checked) on every other hit.
-     */
-    if (hasSmartTargeting && user.turnData.hitsLeft % 2 === 1) {
-      const targetAlly = this.getFirstTarget()!.getAlly()!;
-      this.adjustedTargets = [targetAlly.getBattlerIndex()];
-    }
-
-    // Update hit checks for each target
-    this.hitChecks = this.getTargets().map(t => this.hitCheck(t, hasSmartTargeting));
-
-    /*
-     * If the move has smart targeting and the move's current target
-     * was not successfully hit, try to hit the target's ally instead.
-     */
-    if (hasSmartTargeting && this.hitChecks[0][0] !== HitCheckResult.HIT) {
-      const targetAlly = this.getFirstTarget()!.getAlly()!;
-      this.adjustedTargets = [targetAlly.getBattlerIndex()];
-      this.hitChecks[0] = this.hitCheck(targetAlly);
+    if (this.canApplySmartTargeting()) {
+      this.processSmartTargeting();
     }
 
     this.moveHistoryEntry = {
@@ -346,6 +325,22 @@ export class MoveEffectPhase extends PokemonPhase {
       return;
     }
     this.postAnimCallback(user, targets);
+  }
+
+  /**
+   * Helper method to handle smart targeting for Dragon Darts.
+   * This will simulate the hit result against the intended target, swapping to its ally
+   * in the event it is blocked.
+   */
+  private processSmartTargeting(): void {
+    // bangs are justified as prior code ensures these will never be nullish
+    const firstTarget = this.getFirstTarget()!;
+    const targetImmune = this.hitCheck(firstTarget, true)[0] !== HitCheckResult.HIT;
+
+    if (targetImmune) {
+      const targetAlly = firstTarget.getAlly()!;
+      this.targets = [targetAlly.getBattlerIndex()];
+    }
   }
 
   /**
@@ -384,21 +379,6 @@ export class MoveEffectPhase extends PokemonPhase {
     if (!user) {
       super.end();
       return;
-    }
-
-    /*
-     * If the move has smart targeting (e.g. Dragon Darts),
-     * and the original target fainted due to the first hit,
-     * redirect remaining strikes to the original target's ally.
-     * Note: We do NOT use `canApplySmartTargeting()` here,
-     * due to a quirk where `getFirstTarget()` returns `undefined` if the target is fainted.
-     */
-    if (this.move.moveTarget === MoveTarget.DRAGON_DARTS) {
-      const ogTarget = globalScene.getPokemonByBattlerIndex(this.targets[0]);
-      const allyPokemon = ogTarget?.getAlly();
-      if (ogTarget?.isFainted() && allyPokemon?.isActive(true) && allyPokemon !== user) {
-        this.targets = [allyPokemon.getBattlerIndex()];
-      }
     }
 
     /**
@@ -481,14 +461,14 @@ export class MoveEffectPhase extends PokemonPhase {
    * @returns Whether this phase's move can be redirected by smart targeting from Dragon Darts.
    */
   private canApplySmartTargeting(): boolean {
-    const target = this.getFirstTarget();
-    const targetAlly = target?.getAlly();
+    const target = globalScene.getPokemonByBattlerIndex(this.targets[0]);
+    const ally = target?.getAlly();
 
     return (
       this.move.moveTarget === MoveTarget.DRAGON_DARTS
       && this.targets.length > 1
-      && !!targetAlly?.isActive(true)
-      && targetAlly !== this.getUserPokemon()
+      && !!ally?.isActive(true)
+      && ally !== this.getUserPokemon()
     );
   }
 
@@ -760,6 +740,11 @@ export class MoveEffectPhase extends PokemonPhase {
    * Used to queue the next hit of multi-strike moves.
    */
   protected addNextHitPhase(): void {
+    if (this.canApplySmartTargeting()) {
+      // Alternate initial target for dragon darts after each hit
+      this.targets = [this.getFirstTarget()!.getAlly()!];
+    }
+
     globalScene.phaseManager.unshiftNew("MoveEffectPhase", this.battlerIndex, this.targets, this.move, this.useMode);
   }
 
@@ -959,10 +944,13 @@ export class MoveEffectPhase extends PokemonPhase {
     target.destroySubstitute();
     target.lapseTag(BattlerTagType.COMMANDED);
 
-    // Force `lastHit` to be true if this is a multi hit move with hits left
-    // `hitsLeft` must be left as-is in order for the message displaying the number of hits
-    // to display the proper number.
-    if (!this.lastHit && user.turnData.hitsLeft > 1) {
+    if (this.canApplySmartTargeting()) {
+      // Redirect KOing dragon darts to an ally if possible
+      this.targets = [target.getAlly()!.getBattlerIndex()];
+    } else if (!this.lastHit && user.turnData.hitsLeft > 1) {
+      // Force `lastHit` to be true if this is a multi hit move with hits left
+      // `hitsLeft` must be left as-is in order for the message displaying the number of hits
+      // to display the proper number.
       this.lastHit = true;
     }
   }
