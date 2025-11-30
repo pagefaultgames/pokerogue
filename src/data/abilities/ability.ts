@@ -51,8 +51,6 @@ import { applyMoveAttrs } from "#moves/apply-attrs";
 import { noAbilityTypeOverrideMoves } from "#moves/invalid-moves";
 import type { Move } from "#moves/move";
 import type { PokemonMove } from "#moves/pokemon-move";
-import type { QuietFormChangePhase } from "#phases/quiet-form-change-phase";
-import type { TeraPhase } from "#phases/tera-phase";
 import type {
   AbAttrCondition,
   AbAttrMap,
