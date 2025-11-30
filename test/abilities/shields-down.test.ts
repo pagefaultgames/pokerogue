@@ -35,33 +35,31 @@ describe("Abilities - Shields Down", () => {
       .enemyMoveset(MoveId.SPLASH);
   });
 
-  it.each([0, 1, 2, 3, 4, 5, 6])(
-    "should change from Meteor Form to Core Form on entry/turn end based on HP - form index %i",
-    async meteorIndex => {
-      game.override.starterForms({
-        // Start in meteor form
-        [SpeciesId.MINIOR]: meteorIndex,
-      });
+  it.each([0, 1, 2, 3, 4, 5, 6])(//
+  "should change from Meteor Form to Core Form on entry/turn end based on HP - form index %i", async meteorIndex => {
+    game.override.starterForms({
+      // Start in meteor form
+      [SpeciesId.MINIOR]: meteorIndex,
+    });
 
-      await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MINIOR]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MINIOR]);
 
-      const minior = game.scene.getPlayerParty()[1];
-      expect(minior.formIndex).toBe(meteorIndex);
-      minior.hp *= 0.49;
+    const minior = game.scene.getPlayerParty()[1];
+    expect(minior.formIndex).toBe(meteorIndex);
+    minior.hp *= 0.49;
 
-      // Switch to minior - should change to Core due to being <50% HP
-      game.doSwitchPokemon(1);
-      await game.toNextTurn();
+    // Switch to minior - should change to Core due to being <50% HP
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
 
-      expect(minior.formIndex).toBe(meteorIndex + 7);
+    expect(minior.formIndex).toBe(meteorIndex + 7);
 
-      // Use roost to regain 50% HP; should transform back into Meteor Form at turn end
-      game.move.use(MoveId.ROOST);
-      await game.toNextTurn();
+    // Use roost to regain 50% HP; should transform back into Meteor Form at turn end
+    game.move.use(MoveId.ROOST);
+    await game.toNextTurn();
 
-      expect(minior.formIndex).toBe(meteorIndex);
-    },
-  );
+    expect(minior.formIndex).toBe(meteorIndex);
+  });
 
   it("should revert to base form on arena reset, even when fainted", async () => {
     game.override.startingWave(4).starterForms({

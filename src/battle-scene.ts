@@ -721,12 +721,10 @@ export class BattleScene extends SceneBase {
   }
 
   cachedFetch(url: string, init?: RequestInit): Promise<Response> {
-    const manifest = this.game["manifest"];
-    if (manifest) {
-      const timestamp = manifest[`/${url.replace("./", "")}`];
-      if (timestamp) {
-        url += `?t=${timestamp}`;
-      }
+    const { manifest } = this.game;
+    const timestamp = manifest?.[`/${url.replace("./", "")}`];
+    if (timestamp) {
+      url += `?t=${timestamp}`;
     }
     return fetch(url, init);
   }
