@@ -1,8 +1,5 @@
-/* biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
-import type { globalScene } from "#app/global-scene";
-/* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
-
 import type { Ability } from "#abilities/ability";
+import type { globalScene } from "#app/global-scene";
 import { allAbilities } from "#data/data-lists";
 import type { AbilityId } from "#enums/ability-id";
 import type { BattlerIndex } from "#enums/battler-index";

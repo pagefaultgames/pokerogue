@@ -1,10 +1,7 @@
-/* biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
-import type { Status } from "#data/status-effect";
-import type { Pokemon } from "#field/pokemon";
-/* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
-
 import { getPokemonNameWithAffix } from "#app/messages";
+import type { Status } from "#data/status-effect";
 import { StatusEffect } from "#enums/status-effect";
+import type { Pokemon } from "#field/pokemon";
 import { getEnumStr, getOnelineDiffStr } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
