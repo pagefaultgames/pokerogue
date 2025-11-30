@@ -39,7 +39,7 @@ import {
   TrappedTag,
   TypeImmuneTag,
 } from "#data/battler-tags";
-import { getDailyEventSeedBoss } from "#data/daily-run";
+import { getDailyEventSeedBoss, getDailyEventSeedBossVariant } from "#data/daily-run";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import {
@@ -143,7 +143,6 @@ import type { AbAttrMap, AbAttrString, TypeMultiplierAbAttrParams } from "#types
 import type { Constructor } from "#types/common";
 import type { getAttackDamageParams, getBaseDamageParams } from "#types/damage-params";
 import type { DamageCalculationResult, DamageResult } from "#types/damage-result";
-import type { IllusionData } from "#types/illusion-data";
 import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { TurnMove } from "#types/turn-move";
@@ -1849,20 +1848,20 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns An array of {@linkcode PokemonMove}, as described above.
    */
   getMoveset(ignoreOverride = false): PokemonMove[] {
-    // Overrides moveset based on arrays specified in overrides.ts
-    let overrideArray: MoveId | Array<MoveId> = this.isPlayer()
-      ? Overrides.MOVESET_OVERRIDE
-      : Overrides.ENEMY_MOVESET_OVERRIDE;
-    overrideArray = coerceArray(overrideArray);
-    if (overrideArray.length > 0) {
-      if (!this.isPlayer()) {
-        this.moveset = [];
-      }
-      overrideArray.forEach((move: MoveId, index: number) => {
-        const ppUsed = this.moveset[index]?.ppUsed ?? 0;
-        this.moveset[index] = new PokemonMove(move, Math.min(ppUsed, allMoves[move].pp));
-      });
+    // Override moveset based on arrays specified in overrides.ts
+    const overrideArray = coerceArray(this.isPlayer() ? Overrides.MOVESET_OVERRIDE : Overrides.ENEMY_MOVESET_OVERRIDE);
+    if (overrideArray.length === 0) {
+      return !ignoreOverride && this.summonData.moveset ? this.summonData.moveset : this.moveset;
     }
+
+    if (!this.isPlayer()) {
+      this.moveset = [];
+    }
+    // TODO: Preserve PP used while the moveset override is active
+    overrideArray.forEach((move: MoveId, index: number) => {
+      const ppUsed = this.moveset[index]?.ppUsed ?? 0;
+      this.moveset[index] = new PokemonMove(move, Math.min(ppUsed, allMoves[move].pp));
+    });
 
     return !ignoreOverride && this.summonData.moveset ? this.summonData.moveset : this.moveset;
   }
@@ -2205,6 +2204,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.isFusion() && ability.hasAttr("NoFusionAbilityAbAttr")) {
       return false;
     }
+    if (this.isTransformed() && ability.hasAttr("NoTransformAbilityAbAttr")) {
+      return false;
+    }
     const arena = globalScene?.arena;
     if (arena.ignoreAbilities && arena.ignoringEffectSource !== this.getBattlerIndex() && ability.ignorable) {
       return false;
@@ -2234,7 +2236,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Check whether a pokemon has the specified ability in effect, either as a normal or passive ability.
    * Accounts for all the various effects which can disable or modify abilities.
-   * @param ability - The {@linkcode Abilities | Ability} to check for
+   * @param ability - The {@linkcode AbilityId | Ability} to check for
    * @param canApply - Whether to check if the ability is currently active; default `true`
    * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
    * @returns Whether this {@linkcode Pokemon} has the given ability
@@ -2660,10 +2662,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         hpDiffRatio = 1 - hpRatio + (outspeed ? 0.2 : 0.1);
       }
     } else if (outspeed) {
-      hpDiffRatio = hpDiffRatio * 1.25;
+      hpDiffRatio *= 1.25;
     } else if (hpRatio > 0.2 && hpRatio <= 0.4) {
       // Might be considered to be switched because it's not in low enough health
-      hpDiffRatio = hpDiffRatio * 0.5;
+      hpDiffRatio *= 0.5;
     }
     return (atkScore + defScore) * Math.min(hpDiffRatio, 1);
   }
@@ -2907,12 +2909,15 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (thresholdOverride === undefined) {
       if (timedEventManager.isEventActive()) {
         const tchance = timedEventManager.getClassicTrainerShinyChance();
-        shinyThreshold.value *= timedEventManager.getShinyEncounterMultiplier();
-        if (this.hasTrainer() && tchance > 0) {
+        if (this.isEnemy() && this.hasTrainer() && tchance > 0) {
           shinyThreshold.value = Math.max(tchance, shinyThreshold.value); // Choose the higher boost
+        } else {
+          // Wild shiny event multiplier
+          shinyThreshold.value *= timedEventManager.getShinyEncounterMultiplier();
         }
       }
-      if (!this.hasTrainer()) {
+      if (this.isPlayer() || !this.hasTrainer()) {
+        // Apply shiny modifiers only to Player or wild mons
         globalScene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
       }
     } else {
@@ -2936,11 +2941,16 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * If it rolls shiny, or if it's already shiny, also sets a random variant and give the Pokemon the associated luck.
    *
    * The base shiny odds are {@linkcode BASE_SHINY_CHANCE} / `65536`
-   * @param thresholdOverride - number that is divided by `2^16` (`65536`) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
-   * @param applyModifiersToOverride - If {@linkcode thresholdOverride} is set and this is true, will apply Shiny Charm and event modifiers to {@linkcode thresholdOverride}
+   * @param thresholdOverride number that is divided by `2^16` (`65536`) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
+   * @param applyModifiersToOverride If {@linkcode thresholdOverride} is set and this is true, will apply Shiny Charm and event modifiers to {@linkcode thresholdOverride}
+   * @param maxThreshold The maximum threshold allowed after applying modifiers
    * @returns Whether this Pokémon was set to shiny
    */
-  public trySetShinySeed(thresholdOverride?: number, applyModifiersToOverride?: boolean): boolean {
+  public trySetShinySeed(
+    thresholdOverride?: number,
+    applyModifiersToOverride?: boolean,
+    maxThreshold?: number,
+  ): boolean {
     if (!this.shiny) {
       const shinyThreshold = new NumberHolder(thresholdOverride ?? BASE_SHINY_CHANCE);
       if (applyModifiersToOverride) {
@@ -2948,6 +2958,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
           shinyThreshold.value *= timedEventManager.getShinyEncounterMultiplier();
         }
         globalScene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
+      }
+
+      if (maxThreshold && maxThreshold > 0) {
+        shinyThreshold.value = Math.min(maxThreshold, shinyThreshold.value);
       }
 
       this.shiny = randSeedInt(65536) < shinyThreshold.value;
@@ -3684,15 +3698,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       multiStrikeEnhancementMultiplier,
     );
 
-    if (!ignoreSourceAbility) {
-      applyAbAttrs("AddSecondStrikeAbAttr", {
-        pokemon: source,
-        move,
-        simulated,
-        multiplier: multiStrikeEnhancementMultiplier,
-      });
-    }
-
     /** Doubles damage if this Pokemon's last move was Glaive Rush */
     const glaiveRushMultiplier = new NumberHolder(1);
     if (this.getTag(BattlerTagType.RECEIVE_DOUBLE_DAMAGE)) {
@@ -3781,9 +3786,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         * mistyTerrainMultiplier,
     );
 
-    /** Doubles damage if the attacker has Tinted Lens and is using a resisted move */
     if (!ignoreSourceAbility) {
-      applyAbAttrs("DamageBoostAbAttr", {
+      applyAbAttrs("MoveDamageBoostAbAttr", {
         pokemon: source,
         opponent: this,
         move,
@@ -3918,7 +3922,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     damage = Math.min(damage, this.hp);
-    this.hp = this.hp - damage;
+    this.hp -= damage;
     if (this.isFainted() && !ignoreFaintPhase) {
       globalScene.phaseManager.queueFaintPhase(this.getBattlerIndex(), preventEndure);
       this.destroySubstitute();
@@ -5130,14 +5134,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * in preparation for switching pokemon, as well as removing any relevant on-switch tags.
    */
   public resetSummonData(): void {
-    const illusion: IllusionData | null = this.summonData.illusion;
     if (this.summonData.speciesForm) {
       this.summonData.speciesForm = null;
       this.updateFusionPalette();
     }
     this.summonData = new PokemonSummonData();
     this.tempSummonData = new PokemonTempSummonData();
-    this.summonData.illusion = illusion;
     this.updateInfo();
   }
 
@@ -5872,19 +5874,27 @@ export class PlayerPokemon extends Pokemon {
     }
   }
 
-  tryPopulateMoveset(moveset: StarterMoveset): boolean {
+  /**
+   * Attempt to populate this Pokemon's moveset based on those from a Starter
+   * @param moveset - The {@linkcode StarterMoveset} to use; will override corresponding slots
+   * of this Pokemon's moveset
+   * @param ignoreValidate - Whether to ignore validating the passed-in moveset; default `false`
+   */
+  tryPopulateMoveset(moveset: StarterMoveset, ignoreValidate = false): void {
+    // TODO: Why do we need to re-validate starter movesets after picking them?
     if (
-      !this.getSpeciesForm().validateStarterMoveset(
+      !ignoreValidate
+      && !this.getSpeciesForm().validateStarterMoveset(
         moveset,
         globalScene.gameData.starterData[this.species.getRootSpeciesId()].eggMoves,
       )
     ) {
-      return false;
+      return;
     }
 
-    this.moveset = moveset.map(m => new PokemonMove(m));
-
-    return true;
+    moveset.forEach((m, i) => {
+      this.moveset[i] = new PokemonMove(m);
+    });
   }
 
   /**
@@ -6390,8 +6400,15 @@ export class EnemyPokemon extends Pokemon {
         this.initShinySparkle();
       }
 
+      const eventBossVariant = getDailyEventSeedBossVariant(globalScene.seed);
+      const eventBossVariantEnabled =
+        eventBossVariant != null && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex);
+      if (eventBossVariantEnabled) {
+        this.shiny = true;
+      }
+
       if (this.shiny) {
-        this.variant = this.generateShinyVariant();
+        this.variant = eventBossVariantEnabled ? eventBossVariant : this.generateShinyVariant();
         if (Overrides.ENEMY_VARIANT_OVERRIDE !== null) {
           this.variant = Overrides.ENEMY_VARIANT_OVERRIDE;
         }
@@ -6591,11 +6608,10 @@ export class EnemyPokemon extends Pokemon {
            */
           const moveScores = movePool.map(() => 0);
           const moveTargets = Object.fromEntries(movePool.map(m => [m.moveId, this.getNextTargets(m.moveId)]));
-          for (const m in movePool) {
-            const pokemonMove = movePool[m];
+          movePool.forEach((pokemonMove, moveIndex) => {
             const move = pokemonMove.getMove();
 
-            let moveScore = moveScores[m];
+            let moveScore = moveScores[moveIndex];
             const targetScores: number[] = [];
 
             for (const mt of moveTargets[move.id]) {
@@ -6617,10 +6633,7 @@ export class EnemyPokemon extends Pokemon {
                 console.error(`Move ${move.name} returned score of NaN`);
                 targetScore = 0;
               }
-              /**
-               * If this move is unimplemented, or the move is known to fail when used, set its
-               * target score to -20
-               */
+              // If this move is unimplemented, or the move is known to fail when used, set its target score to -20
               if (
                 (move.name.endsWith(" (N)") || !move.applyConditions(this, target, -1))
                 && ![MoveId.SUCKER_PUNCH, MoveId.UPPER_HAND, MoveId.THUNDERCLAP].includes(move.id)
@@ -6651,7 +6664,7 @@ export class EnemyPokemon extends Pokemon {
                     targetScore /= 1.5;
                   }
                 }
-                /** If a move has a base benefit score of 0, its benefit score is assumed to be unimplemented at this point */
+                // If a move has a base benefit score of 0, its benefit score is assumed to be unimplemented at this point
                 if (!targetScore) {
                   targetScore = -20;
                 }
@@ -6662,10 +6675,8 @@ export class EnemyPokemon extends Pokemon {
             moveScore += Math.max(...targetScores);
 
             // could make smarter by checking opponent def/spdef
-            moveScores[m] = moveScore;
-          }
-
-          console.log(moveScores);
+            moveScores[moveIndex] = moveScore;
+          });
 
           // Sort the move pool in decreasing order of move score
           const sortedMovePool = movePool.slice(0);
@@ -6674,37 +6685,42 @@ export class EnemyPokemon extends Pokemon {
             const scoreB = moveScores[movePool.indexOf(b)];
             return scoreA < scoreB ? 1 : scoreA > scoreB ? -1 : 0;
           });
-          let r = 0;
+          let chosenMoveIndex = 0;
           if (this.aiType === AiType.SMART_RANDOM) {
             // Has a 5/8 chance to select the best move, and a 3/8 chance to advance to the next best move (and repeat this roll)
-            while (r < sortedMovePool.length - 1 && globalScene.randBattleSeedInt(8) >= 5) {
-              r++;
+            while (chosenMoveIndex < sortedMovePool.length - 1 && globalScene.randBattleSeedInt(8) >= 5) {
+              chosenMoveIndex++;
             }
           } else if (this.aiType === AiType.SMART) {
             // The chance to advance to the next best move increases when the compared moves' scores are closer to each other.
             while (
-              r < sortedMovePool.length - 1
-              && moveScores[movePool.indexOf(sortedMovePool[r + 1])] / moveScores[movePool.indexOf(sortedMovePool[r])]
+              chosenMoveIndex < sortedMovePool.length - 1
+              && moveScores[movePool.indexOf(sortedMovePool[chosenMoveIndex + 1])]
+                / moveScores[movePool.indexOf(sortedMovePool[chosenMoveIndex])]
                 >= 0
               && globalScene.randBattleSeedInt(100)
                 < Math.round(
-                  (moveScores[movePool.indexOf(sortedMovePool[r + 1])]
-                    / moveScores[movePool.indexOf(sortedMovePool[r])])
+                  (moveScores[movePool.indexOf(sortedMovePool[chosenMoveIndex + 1])]
+                    / moveScores[movePool.indexOf(sortedMovePool[chosenMoveIndex])])
                     * 50,
                 )
             ) {
-              r++;
+              chosenMoveIndex++;
             }
           }
-          console.log(
-            movePool.map(m => m.getName()),
-            moveScores,
-            r,
-            sortedMovePool.map(m => m.getName()),
-          );
+
+          const chosenMove = sortedMovePool[chosenMoveIndex];
+
+          // biome-ignore format: For some reason this gets broken into multiple lines
+          console.log("Move Pool:", movePool.map((m) => m.getName()));
+          console.log("Move Scores:", moveScores);
+          // biome-ignore format: For some reason this gets broken into multiple lines
+          console.log("Sorted Move Pool:", sortedMovePool.map((m) => m.getName()));
+          console.log("Chosen Move:", chosenMove.getName());
+
           return {
-            move: sortedMovePool[r]!.moveId,
-            targets: moveTargets[sortedMovePool[r]!.moveId],
+            move: chosenMove.moveId,
+            targets: moveTargets[chosenMove.moveId],
             useMode: MoveUseMode.NORMAL,
           };
         }

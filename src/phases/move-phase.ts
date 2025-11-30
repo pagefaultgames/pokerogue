@@ -1,7 +1,3 @@
-// biome-ignore-start lint/correctness/noUnusedImports: Used in a tsdoc comment
-import type { Move, PreUseInterruptAttr } from "#types/move-types";
-// biome-ignore-end lint/correctness/noUnusedImports: Used in a tsdoc comment
-
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -32,6 +28,7 @@ import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import { frenzyMissFunc } from "#moves/move-utils";
 import type { PokemonMove } from "#moves/pokemon-move";
+import type { Move, PreUseInterruptAttr } from "#types/move-types";
 import type { TurnMove } from "#types/turn-move";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, NumberHolder } from "#utils/common";
@@ -205,7 +202,7 @@ export class MovePhase extends PokemonPhase {
       user.cureStatus(
         StatusEffect.FREEZE,
         i18next.t("statusEffect:freeze.healByMove", {
-          pokemonName: getPokemonNameWithAffix(user),
+          pokemonNameWithAffix: getPokemonNameWithAffix(user),
           moveName: this.move.getMove().name,
         }),
       );
@@ -286,7 +283,7 @@ export class MovePhase extends PokemonPhase {
 
     // Apply queenly majesty / dazzling
     if (!failed) {
-      const defendingSidePlayField = user.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
+      const defendingSidePlayField = user.isPlayer() ? globalScene.getEnemyField() : globalScene.getPlayerField();
       const cancelled = new BooleanHolder(false);
       defendingSidePlayField.forEach((pokemon: Pokemon) => {
         applyAbAttrs("FieldPriorityMoveImmunityAbAttr", {
@@ -509,6 +506,9 @@ export class MovePhase extends PokemonPhase {
     ) {
       this.showFailedText();
       this.fail();
+      // clear out 2 turn moves
+      // TODO: Make a helper for this atp
+      this.pokemon.getMoveQueue().shift();
       this.pokemon.pushMoveHistory(this.moveHistoryEntry);
       return true;
     }

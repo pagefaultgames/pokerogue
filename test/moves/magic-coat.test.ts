@@ -219,30 +219,27 @@ describe("Moves - Magic Coat", () => {
   });
 
   // TODO: stomping tantrum should consider moves that were bounced.
-  it.todo(
-    "should properly cause the enemy's stomping tantrum to be doubled in power after bouncing and failing",
-    async () => {
-      game.override.enemyMoveset([MoveId.STOMPING_TANTRUM, MoveId.SPLASH, MoveId.CHARM]);
-      await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
+  it.todo("should properly cause the enemy's stomping tantrum to be doubled in power after bouncing and failing", async () => {
+    game.override.enemyMoveset([MoveId.STOMPING_TANTRUM, MoveId.SPLASH, MoveId.CHARM]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
-      const stomping_tantrum = allMoves[MoveId.STOMPING_TANTRUM];
-      const enemy = game.field.getEnemyPokemon();
-      vi.spyOn(stomping_tantrum, "calculateBattlePower");
+    const stomping_tantrum = allMoves[MoveId.STOMPING_TANTRUM];
+    const enemy = game.field.getEnemyPokemon();
+    vi.spyOn(stomping_tantrum, "calculateBattlePower");
 
-      game.move.select(MoveId.SPORE);
-      await game.move.selectEnemyMove(MoveId.CHARM);
-      await game.phaseInterceptor.to("TurnEndPhase");
-      expect(enemy.getLastXMoves(1)[0].result).toBe("success");
+    game.move.select(MoveId.SPORE);
+    await game.move.selectEnemyMove(MoveId.CHARM);
+    await game.phaseInterceptor.to("TurnEndPhase");
+    expect(enemy.getLastXMoves(1)[0].result).toBe("success");
 
-      await game.phaseInterceptor.to("BerryPhase");
-      expect(stomping_tantrum.calculateBattlePower).toHaveReturnedWith(75);
+    await game.phaseInterceptor.to("BerryPhase");
+    expect(stomping_tantrum.calculateBattlePower).toHaveReturnedWith(75);
 
-      await game.toNextTurn();
-      game.move.select(MoveId.GROWL);
-      await game.phaseInterceptor.to("BerryPhase");
-      expect(stomping_tantrum.calculateBattlePower).toHaveReturnedWith(75);
-    },
-  );
+    await game.toNextTurn();
+    game.move.select(MoveId.GROWL);
+    await game.phaseInterceptor.to("BerryPhase");
+    expect(stomping_tantrum.calculateBattlePower).toHaveReturnedWith(75);
+  });
 
   it("should respect immunities when bouncing a move", async () => {
     vi.spyOn(allMoves[MoveId.THUNDER_WAVE], "accuracy", "get").mockReturnValue(100);

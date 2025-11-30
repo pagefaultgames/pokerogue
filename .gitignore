@@ -16,10 +16,12 @@ dist
 dist-ssr
 *.local
 build
+.pnpm-store
 
 # Editor directories and files (excluding `extensions.json` for devcontainer)
 *.code-workspace
 .vscode/*
+.zed
 !.vscode/extensions.json
 !.vscode/spdx.code-snippets
 .idea
@@ -39,7 +41,6 @@ assets/images/pokemon/icons/input/output/*
 assets/images/character/*/
 src/data/battle-anim-raw-data*.ts
 src/data/battle-anim-data.ts
-src/overrides.ts
 
 coverage
 /.vs
@@ -49,7 +50,6 @@ coverage
 
 /dependency-graph.svg
 /.vs
-
 
 # Script outputs
 ./*.csv
