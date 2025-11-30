@@ -79,17 +79,14 @@ describe.each<{ name: string; ability: AbilityId; status: StatusEffect }>([
   });
 
   // TODO: This does not propagate failures currently
-  it.todo(
-    `should cause status moves inflicting ${statusStr} to count as failed if no other effects can be applied`,
-    async () => {
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+  it.todo(`should cause status moves inflicting ${statusStr} to count as failed if no other effects can be applied`, async () => {
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-      game.move.use(MoveId.SPORE);
-      await game.toEndOfTurn();
+    game.move.use(MoveId.SPORE);
+    await game.toEndOfTurn();
 
-      const karp = game.field.getEnemyPokemon();
-      expect(karp.status?.effect).toBeUndefined();
-      expect(game.field.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    },
-  );
+    const karp = game.field.getEnemyPokemon();
+    expect(karp.status?.effect).toBeUndefined();
+    expect(game.field.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+  });
 });

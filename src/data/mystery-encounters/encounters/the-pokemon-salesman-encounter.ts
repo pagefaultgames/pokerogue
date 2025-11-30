@@ -77,6 +77,8 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
   .withOnInit(() => {
     const encounter = globalScene.currentBattle.mysteryEncounter!;
 
+    let isEventEncounter = false;
+
     let species = getSalesmanSpeciesOffer();
     let tries = 0;
 
@@ -88,16 +90,12 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
 
     const r = randSeedInt(SHINY_MAGIKARP_WEIGHT);
 
-    const validEventEncounters = timedEventManager
-      .getEventEncounters()
-      .filter(
-        s =>
-          !getPokemonSpecies(s.species).legendary
-          && !getPokemonSpecies(s.species).subLegendary
-          && !getPokemonSpecies(s.species).mythical
-          && !NON_LEGEND_PARADOX_POKEMON.includes(s.species)
-          && !NON_LEGEND_ULTRA_BEASTS.includes(s.species),
-      );
+    const validEventEncounters = timedEventManager.getAllValidEventEncounters(
+      false,
+      false,
+      false,
+      s => !NON_LEGEND_PARADOX_POKEMON.includes(s.speciesId) && !NON_LEGEND_ULTRA_BEASTS.includes(s.speciesId),
+    );
 
     let pokemon: PlayerPokemon;
     /**
@@ -122,7 +120,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
     ) {
       tries = 0;
       do {
-        // If you roll 20%, give event encounter with 3 extra shiny rolls and its HA, if it has one
+        // If you roll 50%, give event encounter with 3 extra shiny rolls and its HA, if it has one
         const enc = randSeedItem(validEventEncounters);
         species = getPokemonSpecies(enc.species);
         pokemon = new PlayerPokemon(
@@ -135,6 +133,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
         pokemon.trySetShinySeed();
         pokemon.trySetShinySeed();
         if (pokemon.shiny || pokemon.abilityIndex === 2) {
+          isEventEncounter = true;
           break;
         }
         tries++;
@@ -149,6 +148,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
           pokemon.trySetShinySeed();
           pokemon.trySetShinySeed();
           pokemon.trySetShinySeed();
+          isEventEncounter = true;
         } else {
           // If there's, and this would never happen, no eligible event encounters with a hidden ability, just do Magikarp
           species = getPokemonSpecies(SpeciesId.MAGIKARP);
@@ -177,7 +177,9 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
     if (pokemon.shiny) {
       // Always max price for shiny (flip HA back to normal), and add special messaging
       priceMultiplier = MAX_POKEMON_PRICE_MULTIPLIER;
-      pokemon.abilityIndex = 0;
+      if (!isEventEncounter) {
+        pokemon.abilityIndex = 0;
+      }
       encounter.dialogue.encounterOptionsDialogue!.description = `${namespace}:descriptionShiny`;
       encounter.options[0].dialogue!.buttonTooltip = `${namespace}:option.1.tooltipShiny`;
     }

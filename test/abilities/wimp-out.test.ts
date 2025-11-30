@@ -199,29 +199,26 @@ describe("Abilities - Wimp Out", () => {
   // TODO: Enable when this behavior is fixed (currently Shell Bell won't activate if Wimp Out activates because
   // the pokemon is removed from the field before the Shell Bell modifier is applied, so it can't see the
   // damage dealt and doesn't heal the pokemon)
-  it.todo(
-    "If it falls below half and recovers back above half from a Shell Bell, Wimp Out will activate even after the Shell Bell recovery",
-    async () => {
-      game.override
-        .moveset([MoveId.DOUBLE_EDGE])
-        .enemyMoveset([MoveId.SPLASH])
-        .startingHeldItems([{ name: "SHELL_BELL", count: 4 }]);
-      await game.classicMode.startBattle([SpeciesId.WIMPOD, SpeciesId.TYRUNT]);
+  it.todo("If it falls below half and recovers back above half from a Shell Bell, Wimp Out will activate even after the Shell Bell recovery", async () => {
+    game.override
+      .moveset([MoveId.DOUBLE_EDGE])
+      .enemyMoveset([MoveId.SPLASH])
+      .startingHeldItems([{ name: "SHELL_BELL", count: 4 }]);
+    await game.classicMode.startBattle([SpeciesId.WIMPOD, SpeciesId.TYRUNT]);
 
-      const wimpod = game.field.getPlayerPokemon();
+    const wimpod = game.field.getPlayerPokemon();
 
-      wimpod.damageAndUpdate(toDmgValue(wimpod.getMaxHp() * 0.4));
+    wimpod.damageAndUpdate(toDmgValue(wimpod.getMaxHp() * 0.4));
 
-      game.move.select(MoveId.DOUBLE_EDGE);
-      game.doSelectPartyPokemon(1);
-      await game.phaseInterceptor.to("TurnEndPhase");
+    game.move.select(MoveId.DOUBLE_EDGE);
+    game.doSelectPartyPokemon(1);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
-      expect(game.scene.getPlayerParty()[1]).toBe(wimpod);
-      expect(wimpod.hp).toBeGreaterThan(toDmgValue(wimpod.getMaxHp() / 2));
-      expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
-      expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.TYRUNT);
-    },
-  );
+    expect(game.scene.getPlayerParty()[1]).toBe(wimpod);
+    expect(wimpod.hp).toBeGreaterThan(toDmgValue(wimpod.getMaxHp() / 2));
+    expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
+    expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.TYRUNT);
+  });
 
   it("Wimp Out will activate due to weather damage", async () => {
     game.override.weather(WeatherType.HAIL).enemyMoveset([MoveId.SPLASH]);
@@ -460,26 +457,23 @@ describe("Abilities - Wimp Out", () => {
   });
 
   // TODO: This interaction is not implemented yet
-  it.todo(
-    "Wimp Out will not activate if the Pokémon's HP falls below half due to hurting itself in confusion",
-    async () => {
-      game.override.moveset([MoveId.SWORDS_DANCE]).enemyMoveset([MoveId.SWAGGER]);
-      await game.classicMode.startBattle([SpeciesId.WIMPOD, SpeciesId.TYRUNT]);
-      const playerPokemon = game.field.getPlayerPokemon();
-      playerPokemon.hp *= 0.51;
-      playerPokemon.setStatStage(Stat.ATK, 6);
-      playerPokemon.addTag(BattlerTagType.CONFUSED);
+  it.todo("Wimp Out will not activate if the Pokémon's HP falls below half due to hurting itself in confusion", async () => {
+    game.override.moveset([MoveId.SWORDS_DANCE]).enemyMoveset([MoveId.SWAGGER]);
+    await game.classicMode.startBattle([SpeciesId.WIMPOD, SpeciesId.TYRUNT]);
+    const playerPokemon = game.field.getPlayerPokemon();
+    playerPokemon.hp *= 0.51;
+    playerPokemon.setStatStage(Stat.ATK, 6);
+    playerPokemon.addTag(BattlerTagType.CONFUSED);
 
-      // TODO: add helper function to force confusion self-hits
+    // TODO: add helper function to force confusion self-hits
 
-      while (playerPokemon.getHpRatio() > 0.49) {
-        game.move.select(MoveId.SWORDS_DANCE);
-        await game.phaseInterceptor.to("TurnEndPhase");
-      }
+    while (playerPokemon.getHpRatio() > 0.49) {
+      game.move.select(MoveId.SWORDS_DANCE);
+      await game.phaseInterceptor.to("TurnEndPhase");
+    }
 
-      confirmNoSwitch();
-    },
-  );
+    confirmNoSwitch();
+  });
 
   it("should not activate on wave X0 bosses", async () => {
     game.override.enemyAbility(AbilityId.WIMP_OUT).startingLevel(5850).startingWave(10);

@@ -1,5 +1,7 @@
 import { globalScene } from "#app/global-scene";
+import { SHINY_CATCH_RATE_MULTIPLIER } from "#balance/rates";
 import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER } from "#balance/starters";
+import type { PokemonSpeciesFilter } from "#data/pokemon-species";
 import type { WeatherPoolEntry } from "#data/weather";
 import { Challenges } from "#enums/challenges";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -10,6 +12,7 @@ import { WeatherType } from "#enums/weather-type";
 import type { ModifierTypeKeys } from "#modifiers/modifier-type";
 import type { nil } from "#types/common";
 import { addTextObject } from "#ui/text";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 export enum EventType {
@@ -26,7 +29,7 @@ interface EventBanner {
   readonly availableLangs?: readonly string[];
 }
 
-interface EventEncounter {
+export interface EventEncounter {
   readonly species: SpeciesId;
   readonly blockEvolution?: boolean;
   readonly formIndex?: number;
@@ -74,6 +77,7 @@ interface TimedEvent extends EventBanner {
   readonly trainerShinyChance?: number; // Odds over 65536 of trainer mon generating as shiny
   readonly music?: readonly EventMusicReplacement[];
   readonly dailyRunChallenges?: readonly EventChallenge[];
+  readonly dailyRunStartingItems?: readonly ModifierTypeKeys[];
 }
 
 const timedEvents: readonly TimedEvent[] = [
@@ -386,6 +390,50 @@ const timedEvents: readonly TimedEvent[] = [
       { wave: 8, type: "CATCHING_CHARM" },
       { wave: 25, type: "SHINY_CHARM" },
     ],
+    dailyRunStartingItems: ["SHINY_CHARM", "ABILITY_CHARM"],
+  },
+  {
+    name: "Halloween 25",
+    eventType: EventType.SHINY,
+    startDate: new Date(Date.UTC(2025, 9, 30)),
+    endDate: new Date(Date.UTC(2025, 10, 12)),
+    bannerKey: "halloween2025",
+    scale: 0.19,
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-419", "pt-BR", "zh-Hans", "zh-Hant", "da", "ru"],
+    shinyEncounterMultiplier: 2,
+    shinyCatchMultiplier: 3,
+    eventEncounters: [
+      { species: SpeciesId.CATERPIE },
+      { species: SpeciesId.SPEAROW },
+      { species: SpeciesId.PARAS },
+      { species: SpeciesId.LICKITUNG },
+      { species: SpeciesId.AERODACTYL },
+      { species: SpeciesId.SMOOCHUM },
+      { species: SpeciesId.RALTS },
+      { species: SpeciesId.GULPIN },
+      { species: SpeciesId.FEEBAS },
+      { species: SpeciesId.WYNAUT },
+      { species: SpeciesId.CLAMPERL },
+      { species: SpeciesId.BUDEW },
+      { species: SpeciesId.DEOXYS },
+      { species: SpeciesId.CHINGLING },
+      { species: SpeciesId.DWEBBLE },
+      { species: SpeciesId.TIRTOUGA },
+      { species: SpeciesId.LARVESTA },
+      { species: SpeciesId.SPRITZEE },
+      { species: SpeciesId.SWIRLIX },
+      { species: SpeciesId.BINACLE },
+      { species: SpeciesId.PUMPKABOO },
+      { species: SpeciesId.SANDYGAST },
+    ],
+    classicWaveRewards: [
+      { wave: 8, type: "SHINY_CHARM" },
+      { wave: 8, type: "ABILITY_CHARM" },
+      { wave: 8, type: "CATCHING_CHARM" },
+      { wave: 25, type: "SHINY_CHARM" },
+      { wave: 25, type: "CANDY_JAR" },
+    ],
+    dailyRunStartingItems: ["ABILITY_CHARM", "SHINY_CHARM", "CANDY_JAR"],
   },
 ];
 
@@ -432,7 +480,7 @@ export class TimedEventManager {
    * @returns the shiny catch multiplier
    */
   getShinyCatchMultiplier(): number {
-    return this.activeEvent()?.shinyCatchMultiplier ?? 1;
+    return this.activeEvent()?.shinyCatchMultiplier ?? SHINY_CATCH_RATE_MULTIPLIER;
   }
 
   getEventBannerFilename(): string {
@@ -445,6 +493,23 @@ export class TimedEventManager {
 
   getEventEncounters(): EventEncounter[] {
     return [...(this.activeEvent()?.eventEncounters ?? [])];
+  }
+
+  getAllValidEventEncounters(
+    allowSubLegendary = true,
+    allowLegendary = true,
+    allowMythical = true,
+    speciesFilter: PokemonSpeciesFilter,
+  ): EventEncounter[] {
+    return this.getEventEncounters().filter(enc => {
+      const species = getPokemonSpecies(enc.species);
+      return (
+        (allowSubLegendary || !species.subLegendary)
+        && (allowLegendary || !species.legendary)
+        && (allowMythical || !species.mythical)
+        && speciesFilter(species)
+      );
+    });
   }
 
   /**
@@ -564,6 +629,10 @@ export class TimedEventManager {
     for (const eventChal of this.activeEvent()?.dailyRunChallenges ?? []) {
       globalScene.gameMode.setChallengeValue(eventChal.challenge, eventChal.value);
     }
+  }
+
+  getEventDailyStartingItems(): readonly ModifierTypeKeys[] {
+    return this.activeEvent()?.dailyRunStartingItems ?? [];
   }
 }
 
