@@ -50,11 +50,6 @@ export class MoveEffectPhase extends PokemonPhase {
   public move: Move;
   /** The original targets of the move */
   protected targets: BattlerIndex[];
-  /**
-   * The targets of the move after dynamic adjustments.
-   * Used by Dragon Darts to alternate checks against either target Pokemon if not immune.
-   */
-  private adjustedTargets: BattlerIndex[] | null = null;
   protected useMode: MoveUseMode;
 
   /** The result of the hit check against each target */
@@ -296,7 +291,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
     this.moveHistoryEntry = {
       move: this.move.id,
-      targets: this.adjustedTargets ?? this.targets,
+      targets: this.targets,
       result: MoveResult.PENDING,
       useMode: this.useMode,
     };
@@ -466,8 +461,10 @@ export class MoveEffectPhase extends PokemonPhase {
 
     return (
       this.move.moveTarget === MoveTarget.DRAGON_DARTS
-      && this.targets.length > 1
       && !!ally?.isActive(true)
+      && // TODO: This should check for whether the move was redirected during the MovePhase to ensure
+      // correct Stalwart interactions, but will have to wait until a move-in-flight refactor
+      !target?.getTag(BattlerTagType.CENTER_OF_ATTENTION)
       && ally !== this.getUserPokemon()
     );
   }
@@ -694,8 +691,7 @@ export class MoveEffectPhase extends PokemonPhase {
    * - Targeted by this phase's invoked move
    */
   public getTargets(): Pokemon[] {
-    const targets = this.adjustedTargets ?? this.targets;
-    return globalScene.getField(true).filter(p => targets.includes(p.getBattlerIndex()));
+    return globalScene.getField(true).filter(p => this.targets.includes(p.getBattlerIndex()));
   }
 
   /** @returns The first active, non-fainted target of this phase's invoked move. */
@@ -742,7 +738,7 @@ export class MoveEffectPhase extends PokemonPhase {
   protected addNextHitPhase(): void {
     if (this.canApplySmartTargeting()) {
       // Alternate initial target for dragon darts after each hit
-      this.targets = [this.getFirstTarget()!.getAlly()!];
+      this.targets = [globalScene.getPokemonByBattlerIndex(this.targets[0])!.getAlly()!.getBattlerIndex()];
     }
 
     globalScene.phaseManager.unshiftNew("MoveEffectPhase", this.battlerIndex, this.targets, this.move, this.useMode);

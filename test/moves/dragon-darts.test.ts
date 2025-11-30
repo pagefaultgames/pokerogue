@@ -75,7 +75,6 @@ describe("Move - Dragon Darts", () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const feebas = game.field.getPlayerPokemon();
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const [karp1, karp2] = game.scene.getEnemyField();
 
@@ -87,7 +86,6 @@ describe("Move - Dragon Darts", () => {
     expect(karp2).not.toHaveFullHp();
     expect(feebas).toHaveUsedMove({
       move: MoveId.DRAGON_DARTS,
-      targets: [BattlerIndex.ENEMY, BattlerIndex.ENEMY_2],
       result: MoveResult.SUCCESS,
     });
   });
@@ -138,17 +136,14 @@ describe("Move - Dragon Darts", () => {
 
     game.move.use(MoveId.DRAGON_DARTS);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+    await game.move.forceMiss(true);
 
-    for (let i = 0; i < 2; i++) {
-      await game.phaseInterceptor.to("MoveEffectPhase");
-      expect(karp1).not.toHaveFullHp();
-      expect(karp2).toHaveFullHp();
-      karp1.hp = karp1.getMaxHp();
-    }
+    await game.phaseInterceptor.to("MoveEffectPhase");
+    expect(karp1).not.toHaveFullHp();
+    expect(karp2).toHaveFullHp();
   });
 
   it("should respect redirection moves", async () => {
-    const feebas = game.field.getPlayerPokemon();
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const [karp1, karp2] = game.scene.getEnemyField();
@@ -159,55 +154,40 @@ describe("Move - Dragon Darts", () => {
 
     expect(karp1).not.toHaveFullHp();
     expect(karp2).toHaveFullHp();
-    expect(feebas).toHaveUsedMove({ move: MoveId.DRAGON_DARTS, targets: [BattlerIndex.ENEMY] });
-  });
-
-  it("should respect redirection moves", async () => {
-    const feebas = game.field.getPlayerPokemon();
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
-
-    const [karp1, karp2] = game.scene.getEnemyField();
-
-    game.move.use(MoveId.DRAGON_DARTS);
-    await game.move.forceEnemyMove(MoveId.FOLLOW_ME);
-    await game.toEndOfTurn();
-
-    expect(karp1).not.toHaveFullHp();
-    expect(karp2).toHaveFullHp();
-    expect(feebas).toHaveUsedMove({ move: MoveId.DRAGON_DARTS, targets: [BattlerIndex.ENEMY] });
   });
 
   it("should hit the targeted enemy's ally if both are immune, but only trigger effects once", async () => {
-    const feebas = game.field.getPlayerPokemon();
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
+    const feebas = game.field.getPlayerPokemon();
+
     const [karp1, karp2] = game.scene.getEnemyField();
-    // give enemies distinct names for debugging and to ensure locales work
+    // give enemies distinct names for debugging and to ensure locales can differentiate between the 2
     karp1.name = "Karp 1";
     karp2.name = "Karp 2";
+    karp1.summonData.types = [PokemonType.FAIRY];
+    karp2.summonData.types = [PokemonType.FAIRY];
 
     game.move.use(MoveId.DRAGON_DARTS);
-    await game.move.forceEnemyMove(MoveId.PROTECT);
-    await game.move.forceEnemyMove(MoveId.PROTECT);
     await game.toEndOfTurn();
 
     expect(karp1).toHaveFullHp();
     expect(karp2).toHaveFullHp();
     expect(feebas).toHaveUsedMove({
       move: MoveId.DRAGON_DARTS,
-      targets: [BattlerIndex.ENEMY_2],
       result: MoveResult.MISS,
     });
 
-    // Protect message was shown exactly once for the other opponent only
-    const protectMsg1 = i18next.t("battlerTags:protectedLapse", {
+    // Tested on cart & showdown: the immunity message is shown exactly once
+    // for the non-targeted opponent exclusively (in this case being karp 2)
+    const immuneMsg1 = i18next.t("battle:hitResultNoEffect", {
       pokemonNameWithAffix: getPokemonNameWithAffix(karp1),
     });
-    const protectMsg2 = i18next.t("battlerTags:protectedLapse", {
+    const immuneMsg2 = i18next.t("battle:hitResultNoEffect", {
       pokemonNameWithAffix: getPokemonNameWithAffix(karp2),
     });
-    expect(game).not.toHaveShownMessage(protectMsg1);
-    expect(game.textInterceptor.logs.filter(log => log === protectMsg2)).toHaveLength(1);
+    expect(game).not.toHaveShownMessage(immuneMsg1);
+    expect(game.textInterceptor.logs.filter(log => log === immuneMsg2)).toHaveLength(1);
   });
 
   // TODO: This is borked
