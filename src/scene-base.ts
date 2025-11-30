@@ -18,12 +18,16 @@ export class SceneBase extends Phaser.Scene {
   };
 
   getCachedUrl(url: string): string {
-    const manifest = this.game["manifest"];
-    if (manifest) {
-      const timestamp = manifest[`/${url}`];
-      if (timestamp) {
-        url += `?t=${timestamp}`;
-      }
+    const manifest = this.game.manifest;
+    if (!manifest) {
+      return url;
+    }
+
+    // TODO: This is inconsistent with how the battle scene cached fetch
+    // uses the manifest
+    const timestamp = manifest[`/${url}`];
+    if (timestamp) {
+      url += `?t=${timestamp}`;
     }
     return url;
   }
@@ -40,10 +44,7 @@ export class SceneBase extends Phaser.Scene {
     }
   }
 
-  loadSpritesheet(key: string, folder: string, size: number, filename?: string) {
-    if (!filename) {
-      filename = `${key}.png`;
-    }
+  loadSpritesheet(key: string, folder: string, size: number, filename = `${key}.png`) {
     this.load.spritesheet(key, this.getCachedUrl(`images/${folder}/${filename}`), {
       frameWidth: size,
       frameHeight: size,
@@ -58,10 +59,7 @@ export class SceneBase extends Phaser.Scene {
     }
   }
 
-  loadAtlas(key: string, folder: string, filenameRoot?: string) {
-    if (!filenameRoot) {
-      filenameRoot = key;
-    }
+  loadAtlas(key: string, folder: string, filenameRoot = key) {
     if (folder) {
       folder += "/";
     }

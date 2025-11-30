@@ -1,9 +1,5 @@
-/* biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
-import type { BattleScene } from "#app/battle-scene";
-import type { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-change-triggers";
-/* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
-
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import type { BattleScene } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { EntryHazardTag, SuppressAbilitiesTag } from "#data/arena-tag";
@@ -11,6 +7,7 @@ import type { BattlerTag } from "#data/battler-tags";
 import { GroundedTag } from "#data/battler-tags";
 import { getBerryEffectFunc } from "#data/berry";
 import { allAbilities, allMoves } from "#data/data-lists";
+import type { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-change-triggers";
 import { SpeciesFormChangeAbilityTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
 import { Gender } from "#data/gender";
 import { getPokeballName } from "#data/pokeball";
