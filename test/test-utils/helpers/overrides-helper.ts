@@ -211,7 +211,11 @@ export class OverridesHelper extends GameManagerHelper {
    */
   public ability(ability: AbilityId): this {
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(ability);
-    this.log(`Player Pokemon ability set to ${getEnumStr(AbilityId, ability)}!`);
+    if (ability === AbilityId.NONE) {
+      this.log("Player Pokemon ability override disabled!");
+    } else {
+      this.log(`Player Pokemon ability set to ${getEnumStr(AbilityId, ability)}!`);
+    }
     return this;
   }
 
@@ -226,7 +230,11 @@ export class OverridesHelper extends GameManagerHelper {
   // TODO: Review uses and make sure callers aren't mistakedly passing `AbilityId.NONE`
   public passiveAbility(passive: AbilityId): this {
     vi.spyOn(Overrides, "PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(passive);
-    this.log(`Player Pokemon passive ability set to ${getEnumStr(AbilityId, passive)}!`);
+    if (passive === AbilityId.NONE) {
+      this.log("Player Pokemon passive ability override disabled!");
+    } else {
+      this.log(`Player Pokemon passive ability set to ${getEnumStr(AbilityId, passive)}!`);
+    }
     return this;
   }
 
@@ -501,7 +509,11 @@ export class OverridesHelper extends GameManagerHelper {
    */
   public enemyAbility(ability: AbilityId): this {
     vi.spyOn(Overrides, "ENEMY_ABILITY_OVERRIDE", "get").mockReturnValue(ability);
-    this.log(`Enemy Pokemon ability set to ${getEnumStr(AbilityId, ability)}!`);
+    if (ability === AbilityId.NONE) {
+      this.log("Enemy Pokemon ability override disabled!");
+    } else {
+      this.log(`Enemy Pokemon ability set to ${getEnumStr(AbilityId, ability)}!`);
+    }
     return this;
   }
 
@@ -516,7 +528,11 @@ export class OverridesHelper extends GameManagerHelper {
   // TODO: Review uses and make sure callers aren't mistakedly passing `AbilityId.NONE`
   public enemyPassiveAbility(passive: AbilityId): this {
     vi.spyOn(Overrides, "ENEMY_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(passive);
-    this.log(`Enemy Pokemon passive ability set to ${getEnumStr(AbilityId, passive)}!`);
+    if (passive === AbilityId.NONE) {
+      this.log("Enemy Pokemon passive ability override disabled!");
+    } else {
+      this.log(`Enemy Pokemon passive ability set to ${getEnumStr(AbilityId, passive)}!`);
+    }
     return this;
   }
 
