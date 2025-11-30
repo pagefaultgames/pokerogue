@@ -10,6 +10,8 @@
  * Usage: `pnpm daily-seed` or `node scripts/daily-seed/main.js`
  */
 
+import { existsSync, writeFileSync } from "fs";
+import { join } from "path";
 import chalk from "chalk";
 import inquirer from "inquirer";
 import { promptBoss } from "./prompts/boss.js";
@@ -21,6 +23,8 @@ import { promptStarters } from "./prompts/starter.js";
  * @type {string}
  */
 const SCRIPT_VERSION = "1.0.0";
+
+const rootDir = join(import.meta.dirname, "..", "..");
 
 /**
  * @typedef {Object} CustomSeedConfig
@@ -130,7 +134,39 @@ function finish() {
   // todo: do we also need to validate here?
   console.log(chalk.cyan("\n🌱 Your custom seed config is:"));
   console.log(chalk.green(`${JSON.stringify(customSeedConfig)}`));
+
+  const outfileArg = process.argv.find(
+    arg => arg.toLowerCase().startsWith("--outfile=") || arg.toLowerCase().startsWith("-o="),
+  );
+  if (outfileArg) {
+    const outfilePath = outfileArg.split("=")[1];
+    createOutputFile(outfilePath);
+  }
+
   process.exit(0);
+}
+/**
+ * @param {string} path
+ */
+function createOutputFile(path) {
+  if (!path) {
+    return;
+  }
+  if (!path.endsWith(".json")) {
+    path = `${path}.json`;
+  }
+  try {
+    if (existsSync(path)) {
+      console.warn(chalk.hex("#ffa500")("\nOutput file already exists, overwriting...\n"));
+    }
+    const fullPath = join(rootDir, path);
+
+    writeFileSync(fullPath, JSON.stringify(customSeedConfig, null, 2));
+    console.log(chalk.green(`✔ Output written to ${fullPath} successfully!`));
+  } catch (err) {
+    console.error(chalk.red(`✗ Error while writing output file: ${err}`));
+    process.exitCode = 1;
+  }
 }
 
 main();
