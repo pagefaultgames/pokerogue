@@ -1,5 +1,6 @@
 import type {
   AbilityBattlerTag,
+  BattlerTagTypeMap,
   DamageOverTimeTag,
   SerializableBattlerTag,
   TrappedTag,
