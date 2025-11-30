@@ -1,4 +1,3 @@
-// biome-ignore lint/correctness/noUnusedImports: Used in TSDoc comment
 import type { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import type { SpeciesId } from "#enums/species-id";
 

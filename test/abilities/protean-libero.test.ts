@@ -120,6 +120,7 @@ describe("Abilities - Protean/Libero", () => {
     expectTypeChange(bulbasaur);
   });
 
+  // biome-ignore format: prefer pre-2.3.6 formatting
   it.each<{ category: string; move?: MoveId; passive?: AbilityId; enemyMove?: MoveId }>([
     { category: "Variable type Moves'", move: MoveId.WEATHER_BALL, passive: AbilityId.DROUGHT },
     { category: "Type Change Abilities'", passive: AbilityId.REFRIGERATE },
@@ -145,6 +146,7 @@ describe("Abilities - Protean/Libero", () => {
     },
   );
 
+  // biome-ignore format: prefer pre-2.3.6 formatting
   it.each<{ cause: string; move?: MoveId; passive?: AbilityId; enemyMove?: MoveId }>([
     { cause: "misses", move: MoveId.FOCUS_BLAST },
     { cause: "is protected against", enemyMove: MoveId.PROTECT },

@@ -1,17 +1,13 @@
-// biome-ignore-start lint/correctness/noUnusedImports: TSDoc
 import type {
   AbilityBattlerTag,
-  BattlerTagTypeMap,
   DamageOverTimeTag,
   SerializableBattlerTag,
   TrappedTag,
   TypeBoostTag,
 } from "#data/battler-tags";
 import type { AbilityId } from "#enums/ability-id";
-import type { SessionSaveData } from "#types/save-data";
-// biome-ignore-end lint/correctness/noUnusedImports: TSDoc
-
 import type { BattlerTagType } from "#enums/battler-tag-type";
+import type { SessionSaveData } from "#types/save-data";
 import type { InferKeys, ObjectValues } from "#types/type-helpers";
 
 /**
