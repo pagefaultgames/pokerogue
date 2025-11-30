@@ -132,12 +132,7 @@ describe("Moves - Last Respects", () => {
   });
 
   it("should reset enemyFaints count on progressing to the next wave.", async () => {
-    game.override
-      .enemySpecies(SpeciesId.MAGIKARP)
-      .startingWave(1)
-      .enemyLevel(1)
-      .startingLevel(100)
-      .enemyMoveset(MoveId.SPLASH);
+    game.override.enemySpecies(SpeciesId.MAGIKARP).startingWave(1).enemyLevel(1).startingLevel(100);
 
     await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
 
@@ -159,6 +154,7 @@ describe("Moves - Last Respects", () => {
     game.removeEnemyHeldItems();
 
     game.move.use(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.LAST_RESPECTS);
     await game.toEndOfTurn();
 
     expect(move.calculateBattlePower).toHaveLastReturnedWith(50);
