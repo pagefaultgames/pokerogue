@@ -1,8 +1,5 @@
-/** biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports */
-import type { GameManager } from "#test/test-utils/game-manager";
-/** biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports */
-
 import { WeatherType } from "#enums/weather-type";
+import type { GameManager } from "#test/test-utils/game-manager";
 import { isGameManagerInstance, receivedStr } from "#test/test-utils/test-utils";
 import { toTitleCase } from "#utils/strings";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
