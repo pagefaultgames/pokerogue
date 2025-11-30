@@ -80,8 +80,8 @@ function promptOptions() {
         pageSize: 10,
       },
     ])
-    .then(answers => {
-      handleAnswer(answers.selectedConfig);
+    .then(async answers => {
+      await handleAnswer(answers.selectedConfig);
     });
 }
 
@@ -171,4 +171,4 @@ function createOutputFile(path) {
   }
 }
 
-main();
+await main();
