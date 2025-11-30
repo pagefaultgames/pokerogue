@@ -1,5 +1,5 @@
 {
-  "title": "Custom daily seeds schema",
+  "title": "Custom daily seed schema",
   "description": "A schema for validating custom daily seeds.",
   "type": "object",
   "properties": {

@@ -9,8 +9,7 @@ import type { StarterMoveset } from "./save-data";
  * Configuration for a custom daily run starter Pokémon.
  * @privateRemarks
  * When updating this interface, also update:
- * - `src/data/daily-seed/schema.ts`
- * - `scripts/daily-seed/schema.js`
+ * - `src/data/daily-seed/schema.json`
  */
 export interface DailySeedStarter {
   speciesId: SpeciesId;
@@ -28,7 +27,6 @@ type DailySeedStarterTuple = [DailySeedStarter, DailySeedStarter, DailySeedStart
  * @privateRemarks
  * When updating this interface, also update:
  * - `src/data/daily-seed/schema.json`
- * - `scripts/daily-seed/schema.json`
  */
 export type DailySeedBoss = {
   speciesId: SpeciesId;
@@ -44,8 +42,7 @@ export type DailySeedBoss = {
  * Configuration for a custom daily run seed.
  * @privateRemarks
  * When updating this interface, also update:
- * - `src/data/daily-seed/schema.ts`
- * - `scripts/daily-seed/schema.js`
+ * - `src/data/daily-seed/schema.json`
  */
 export interface CustomDailyRunConfig {
   starters?: DailySeedStarterTuple;
