@@ -1,6 +1,5 @@
 import type { ArenaTagTypeMap } from "#data/arena-tag";
 import type { ArenaTagType } from "#enums/arena-tag-type";
-// biome-ignore lint/correctness/noUnusedImports: TSDocs
 import type { SessionSaveData } from "#types/save-data";
 import type { ObjectValues } from "#types/type-helpers";
 

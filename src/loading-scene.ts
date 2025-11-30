@@ -25,7 +25,6 @@ export class LoadingScene extends SceneBase {
 
   preload() {
     localPing();
-    this.load["manifest"] = this.game["manifest"];
 
     this.loadImage("loading_bg", "arenas");
     this.loadImage("logo", "");

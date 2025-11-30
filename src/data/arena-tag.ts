@@ -44,14 +44,11 @@
  * @module
  */
 
-/** biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports */
-import type { BattlerTag } from "#app/data/battler-tags";
-/** biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports */
-
 import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { CommonBattleAnim } from "#data/battle-anims";
+import type { BattlerTag } from "#data/battler-tags";
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
@@ -320,7 +317,11 @@ export class MistTag extends SerializableArenaTag {
     cancelled.value = true;
 
     if (!simulated) {
-      globalScene.phaseManager.queueMessage(i18next.t("arenaTag:mistApply"));
+      globalScene.phaseManager.queueMessage(
+        i18next.t("arenaTag:mistApply", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(this.getSourcePokemon()),
+        }),
+      );
     }
 
     return true;
@@ -1536,6 +1537,11 @@ export class SuppressAbilitiesTag extends SerializableArenaTag {
       const setter = globalScene
         .getField(true)
         .filter(p => p.hasAbilityWithAttr("PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr", false))[0];
+      // Setter may not exist if both NG Pokemon faint simultaneously
+      if (setter == null) {
+        return;
+      }
+
       applyOnGainAbAttrs({
         pokemon: setter,
         passive: setter.getAbility().hasAttr("PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr"),
