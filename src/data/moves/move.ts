@@ -6457,8 +6457,8 @@ export class CurseAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) =>
-      this.getAttr(user).getCondition()?.(user, target, move) ?? true;
+    return (user, target, move) => this.getAttr(user).getCondition()?.(user, target, move) ?? true;
+  }
 }
 
 /**
@@ -6479,8 +6479,8 @@ class CurseGhostAttr extends AddBattlerTagAttr {
     globalScene.phaseManager.queueMessage(
       i18next.t("battlerTags:cursedOnAdd", {
         pokemonNameWithAffix: getPokemonNameWithAffix(user),
-        pokemonName: getPokemonNameWithAffix(target)
-      })
+        pokemonName: getPokemonNameWithAffix(target),
+      }),
     );
 
     return true;
@@ -6490,17 +6490,19 @@ class CurseGhostAttr extends AddBattlerTagAttr {
 // TODO: This should extend from `StatStageChangeAttr` once the former allows for multiple stat changes with variable amounts
 class CurseNonGhostAttr extends MoveEffectAttr {
   constructor() {
-    super(false)
+    super(false);
   }
 
   apply(user: Pokemon): boolean {
-    globalScene.phaseManager.unshiftNew("StatStageChangePhase", user.getBattlerIndex(), true, [ Stat.ATK, Stat.DEF ], 1);
-    globalScene.phaseManager.unshiftNew("StatStageChangePhase", user.getBattlerIndex(), true, [ Stat.SPD ], -1);
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", user.getBattlerIndex(), true, [Stat.ATK, Stat.DEF], 1);
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", user.getBattlerIndex(), true, [Stat.SPD], -1);
     return true;
   }
 
   // needed to show TS that this is null by default
-  override getCondition(): null {return null};
+  override getCondition(): null {
+    return null;
+  }
 }
 
 /**
