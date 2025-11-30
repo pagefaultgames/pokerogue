@@ -32,7 +32,7 @@ describe("Move - Dragon Darts", () => {
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("double")
       .criticalHits(false)
-      .enemySpecies(SpeciesId.FEEBAS)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH)
       .startingLevel(100)
