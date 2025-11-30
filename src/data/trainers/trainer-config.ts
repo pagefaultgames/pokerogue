@@ -811,26 +811,19 @@ export class TrainerConfig {
   getTitle(trainerSlot: TrainerSlot = TrainerSlot.NONE, variant: TrainerVariant): string {
     const ret = this.name;
 
-    // Check if the variant is double and the name for double exists
     if (!trainerSlot && variant === TrainerVariant.DOUBLE && this.nameDouble) {
       return this.nameDouble;
     }
 
-    // Female variant
     if (this.hasGenders) {
-      // If the name is already set
       if (this.nameFemale) {
-        // Check if the variant is either female or this is for the partner in a double battle
         if (
           variant === TrainerVariant.FEMALE
           || (variant === TrainerVariant.DOUBLE && trainerSlot === TrainerSlot.TRAINER_PARTNER)
         ) {
           return this.nameFemale;
         }
-      }
-      // Check if !variant is true, if so return the name, else return the name with _female appended
-      // Check if the female version exists in the i18n file
-      else if (variant && i18next.exists(`trainerClasses:${toCamelCase(this.name)}Female`)) {
+      } else if (variant && i18next.exists(`trainerClasses:${toCamelCase(this.name)}Female`)) {
         return ret + "Female";
       }
     }
