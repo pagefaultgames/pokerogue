@@ -5,7 +5,6 @@
  * @module
  */
 
-// biome-ignore lint/correctness/noUnusedImports: TSDoc
 import type CustomDefaultReporter from "#test/test-utils/reporters/custom-default-reporter";
 import { join, relative } from "path";
 import chalk from "chalk";
