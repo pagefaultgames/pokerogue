@@ -1,10 +1,6 @@
-// biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports
-import type { PhaseManager } from "#app/@types/phase-types";
-import type { DynamicPhaseMarker } from "#phases/dynamic-phase-marker";
-// biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports
-
-import type { PhaseMap, PhaseString } from "#app/@types/phase-types";
+import type { PhaseManager, PhaseMap, PhaseString } from "#app/@types/phase-types";
 import type { Phase } from "#app/phase";
+import type { DynamicPhaseMarker } from "#phases/dynamic-phase-marker";
 import type { PhaseConditionFunc } from "#types/phase-types";
 
 /**
@@ -32,6 +28,9 @@ export class PhaseTree {
    * @throws Error if `level` is out of legal bounds
    */
   private add(phase: Phase, level: number): void {
+    if (level === this.currentLevel + 1 && level === this.levels.length) {
+      this.levels.push([]);
+    }
     const addLevel = this.levels[level];
     if (addLevel == null) {
       throw new Error("Attempted to add a phase to a nonexistent level of the PhaseTree!\nLevel: " + level.toString());
@@ -57,8 +56,9 @@ export class PhaseTree {
     if (defer && !this.deferredActive) {
       this.deferredActive = true;
       this.levels.splice(-1, 0, []);
+      this.currentLevel += 1;
     }
-    this.add(phase, this.levels.length - 1 - +defer);
+    this.add(phase, this.currentLevel + 1 - +defer);
   }
 
   /**
@@ -107,8 +107,6 @@ export class PhaseTree {
       this.currentLevel--;
     }
 
-    // TODO: right now, this is preventing properly marking when one set of unshifted phases ends
-    this.levels.push([]);
     return this.levels[this.currentLevel].shift();
   }
 
@@ -155,6 +153,7 @@ export class PhaseTree {
    */
   public clear(leaveFirstLevel = false) {
     this.levels = [leaveFirstLevel ? (this.levels.at(-1) ?? []) : []];
+    this.currentLevel = 0;
   }
 
   /**

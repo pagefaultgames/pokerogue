@@ -1,5 +1,4 @@
 import { getPokemonNameWithAffix } from "#app/messages";
-import { allMoves } from "#data/data-lists";
 import type { TypeDamageMultiplier } from "#data/type";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
@@ -147,7 +146,7 @@ describe("Moves - Entry Hazards", () => {
     it.each<{ name: string; layers: number; status: StatusEffect }>([
       { name: "Poison", layers: 1, status: StatusEffect.POISON },
       { name: "Toxic", layers: 2, status: StatusEffect.TOXIC },
-    ])("should apply $name at $layers without displaying neutralization msg", async ({ layers, status }) => {
+    ])("should apply $name at $layers", async ({ layers, status }) => {
       for (let i = 0; i < layers; i++) {
         game.scene.arena.addTag(ArenaTagType.TOXIC_SPIKES, 0, undefined, 0, ArenaTagSide.ENEMY);
       }
@@ -155,31 +154,20 @@ describe("Moves - Entry Hazards", () => {
 
       const enemy = game.field.getEnemyPokemon();
       expect(enemy).toHaveStatusEffect(status);
-      expect(game.textInterceptor.logs).not.toContain(
-        i18next.t("arenaTag:toxicSpikesActivateTrapPoison", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(enemy),
-          moveName: allMoves[MoveId.TOXIC_SPIKES].name,
-        }),
-      );
     });
   });
 
-  it("should be removed without triggering upon a grounded Poison-type switching in", async () => {
+  it("should be removed upon a grounded Poison-type switching in", async () => {
     await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.EKANS]);
 
-    game.scene.arena.addTag(ArenaTagType.TOXIC_SPIKES, 0, undefined, 0, ArenaTagSide.ENEMY);
+    game.scene.arena.addTag(ArenaTagType.TOXIC_SPIKES, 0, undefined, 0, ArenaTagSide.PLAYER);
 
     game.doSwitchPokemon(1);
     await game.toNextTurn();
 
     const ekans = game.field.getPlayerPokemon();
     expect(game).not.toHaveArenaTag(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.PLAYER);
-    expect(game.textInterceptor.logs).not.toContain(
-      i18next.t("arenaTag:toxicSpikesActivateTrapPoison", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(ekans),
-        moveName: allMoves[MoveId.TOXIC_SPIKES].name,
-      }),
-    );
+    expect(game.textInterceptor.logs).toContain(i18next.t("arenaTag:toxicSpikesOnRemovePlayer"));
     expect(ekans).not.toHaveStatusEffect(StatusEffect.POISON);
   });
 
@@ -225,7 +213,7 @@ describe("Moves - Entry Hazards", () => {
       expect(enemy).toHaveStatStage(Stat.SPD, -1);
       expect(game.textInterceptor.logs).toContain(
         i18next.t("arenaTag:stickyWebActivateTrap", {
-          pokemonName: enemy.getNameToRender(),
+          pokemonNameWithAffix: getPokemonNameWithAffix(enemy),
         }),
       );
     });

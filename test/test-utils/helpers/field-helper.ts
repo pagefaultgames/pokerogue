@@ -1,9 +1,5 @@
-/* biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
-import type { globalScene } from "#app/global-scene";
-import type { MoveHelper } from "#test/test-utils/helpers/move-helper";
-/* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
-
 import type { Ability } from "#abilities/ability";
+import type { globalScene } from "#app/global-scene";
 import { allAbilities } from "#data/data-lists";
 import type { AbilityId } from "#enums/ability-id";
 import type { BattlerIndex } from "#enums/battler-index";
@@ -11,6 +7,7 @@ import type { PokemonType } from "#enums/pokemon-type";
 import { Stat } from "#enums/stat";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
+import type { MoveHelper } from "#test/test-utils/helpers/move-helper";
 import { expect, type MockInstance, vi } from "vitest";
 
 /** Helper to manage pokemon */
