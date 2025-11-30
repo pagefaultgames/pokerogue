@@ -401,7 +401,7 @@ export abstract class Move implements Localizable {
     return false;
   }
 
-    isFieldTarget(): boolean {
+  isFieldTarget(): boolean {
     switch (this.moveTarget) {
       case MoveTarget.BOTH_SIDES:
       case MoveTarget.USER_SIDE:
