@@ -190,8 +190,7 @@ describe("Move - Dragon Darts", () => {
     expect(game.textInterceptor.logs.filter(log => log === immuneMsg2)).toHaveLength(1);
   });
 
-  // TODO: This is borked
-  it.todo("should not trigger ability effects when redirecting", async () => {
+  it("should not trigger ability effects when redirecting", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
 
     const [karp1, karp2] = game.scene.getEnemyField();
