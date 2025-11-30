@@ -653,7 +653,6 @@ export class MoveEffectPhase extends PokemonPhase {
     return result;
   }
 
-
   /**
    * Sub-method of {@linkcode applyMoveDamage} that applies damage to the target.
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
