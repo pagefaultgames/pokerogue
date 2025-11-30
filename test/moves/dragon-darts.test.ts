@@ -181,10 +181,10 @@ describe("Move - Dragon Darts", () => {
     // Tested on cart & showdown: the immunity message is shown exactly once
     // for the non-targeted opponent exclusively (in this case being karp 2)
     const immuneMsg1 = i18next.t("battle:hitResultNoEffect", {
-      pokemonNameWithAffix: getPokemonNameWithAffix(karp1),
+      pokemonName: getPokemonNameWithAffix(karp1),
     });
     const immuneMsg2 = i18next.t("battle:hitResultNoEffect", {
-      pokemonNameWithAffix: getPokemonNameWithAffix(karp2),
+      pokemonName: getPokemonNameWithAffix(karp2),
     });
     expect(game).not.toHaveShownMessage(immuneMsg1);
     expect(game.textInterceptor.logs.filter(log => log === immuneMsg2)).toHaveLength(1);
