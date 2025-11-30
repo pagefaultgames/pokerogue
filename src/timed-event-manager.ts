@@ -396,7 +396,7 @@ const timedEvents: readonly TimedEvent[] = [
     name: "Halloween 25",
     eventType: EventType.SHINY,
     startDate: new Date(Date.UTC(2025, 9, 30)),
-    endDate: new Date(Date.UTC(2025, 10, 10)),
+    endDate: new Date(Date.UTC(2025, 10, 12)),
     bannerKey: "halloween2025",
     scale: 0.19,
     availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-419", "pt-BR", "zh-Hans", "zh-Hant", "da", "ru"],

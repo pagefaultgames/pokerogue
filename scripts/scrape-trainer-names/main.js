@@ -297,4 +297,4 @@ async function promptExisting(outFile) {
   ).continue;
 }
 
-main();
+await main();
