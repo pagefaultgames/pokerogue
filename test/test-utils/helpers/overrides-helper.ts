@@ -1,11 +1,3 @@
-/** biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
-import type { NewArenaEvent } from "#events/battle-scene";
-import type { ClassicModeHelper } from "#test/test-utils/helpers/classic-mode-helper";
-import type { FieldHelper } from "#test/test-utils/helpers/field-helper";
-import type { MoveHelper } from "#test/test-utils/helpers/move-helper";
-
-/** biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
-
 import { OVERRIDES_COLOR } from "#app/constants/colors";
 import type { BattleStyle, RandomTrainerOverride } from "#app/overrides";
 import Overrides from "#app/overrides";
@@ -20,8 +12,12 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import type { Unlockables } from "#enums/unlockables";
 import { WeatherType } from "#enums/weather-type";
+import type { NewArenaEvent } from "#events/battle-scene";
 import type { ModifierOverride } from "#modifiers/modifier-type";
 import type { Variant } from "#sprites/variant";
+import type { ClassicModeHelper } from "#test/test-utils/helpers/classic-mode-helper";
+import type { FieldHelper } from "#test/test-utils/helpers/field-helper";
+import type { MoveHelper } from "#test/test-utils/helpers/move-helper";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
 import { coerceArray } from "#utils/array";
 import { shiftCharCodes } from "#utils/common";
