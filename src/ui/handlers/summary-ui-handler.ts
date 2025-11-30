@@ -126,7 +126,7 @@ export class SummaryUiHandler extends UiHandler {
   private playerParty: boolean;
   /**This is set to false when checking the summary of a freshly caught Pokemon as it is not part of a player's party yet but still needs to display its items*/
   private newMove: Move | null;
-  private moveSelectFunction: Function | null;
+  private moveSelectFunction: ((cursor: number) => void) | null;
   private transitioning: boolean;
   private statusVisible: boolean;
   private moveEffectsVisible: boolean;
@@ -134,7 +134,7 @@ export class SummaryUiHandler extends UiHandler {
   private moveSelect: boolean;
   private moveCursor: number;
   private selectedMoveIndex: number;
-  private selectCallback: Function | null;
+  private selectCallback: ((cursor: number) => void) | null;
 
   constructor() {
     super(UiMode.SUMMARY);
@@ -335,18 +335,44 @@ export class SummaryUiHandler extends UiHandler {
     return `summary_${Page[page].toLowerCase()}`;
   }
 
-  show(args: any[]): boolean {
+  show(
+    args: [
+      pokemon: PlayerPokemon,
+      uiMode?: SummaryUiMode.DEFAULT,
+      startPage?: Page,
+      selectCallback?: (cursor: number) => void,
+      player?: boolean,
+    ],
+  ): boolean;
+  show(
+    args: [
+      pokemon: PlayerPokemon,
+      uiMode: SummaryUiMode.LEARN_MOVE,
+      move?: Move,
+      moveSelectCallback?: (cursor: number) => void,
+      player?: boolean,
+    ],
+  ): boolean;
+  show(
+    args: [
+      pokemon: PlayerPokemon,
+      uiMode?: SummaryUiMode,
+      startPage?: Page | Move,
+      callback?: (cursor: number) => void,
+      player?: boolean,
+    ],
+  ): boolean {
     super.show(args);
 
     /* args[] information
      * args[0] : the Pokemon displayed in the Summary-UI
      * args[1] : the summaryUiMode (defaults to 0)
-     * args[2] : the start page (defaults to Page.PROFILE)
+     * args[2] : the start page (defaults to Page.PROFILE), or the move being selected
      * args[3] : contains the function executed when the user exits out of Summary UI
      * args[4] : optional boolean used to determine if the Pokemon is part of the player's party or not (defaults to true, necessary for PR #2921 to display all relevant information)
      */
     this.pokemon = args[0] as PlayerPokemon;
-    this.summaryUiMode = args.length > 1 ? (args[1] as SummaryUiMode) : SummaryUiMode.DEFAULT;
+    this.summaryUiMode = (args[1] as SummaryUiMode) ?? SummaryUiMode.DEFAULT;
     this.playerParty = args[4] ?? true;
     globalScene.ui.bringToTop(this.summaryContainer);
 
@@ -486,17 +512,15 @@ export class SummaryUiHandler extends UiHandler {
 
     switch (this.summaryUiMode) {
       case SummaryUiMode.DEFAULT: {
-        const page = args.length < 2 ? Page.PROFILE : (args[2] as Page);
+        const page = (args[2] as Page) ?? Page.PROFILE;
         this.hideMoveEffect(true);
         this.setCursor(page);
-        if (args.length > 3) {
-          this.selectCallback = args[3];
-        }
+        this.selectCallback = args[3] ?? null;
         break;
       }
       case SummaryUiMode.LEARN_MOVE:
         this.newMove = args[2] as Move;
-        this.moveSelectFunction = args[3] as Function;
+        this.moveSelectFunction = args[3] ?? null;
 
         this.showMoveEffect(true);
         this.setCursor(Page.MOVES);
@@ -615,7 +639,7 @@ export class SummaryUiHandler extends UiHandler {
         if (this.selectCallback instanceof Function) {
           const selectCallback = this.selectCallback;
           this.selectCallback = null;
-          selectCallback();
+          selectCallback(-1);
         }
 
         if (!fromPartyMode) {

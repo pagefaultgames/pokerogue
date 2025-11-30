@@ -158,7 +158,7 @@ export function getRandomStatus(statusA: Status | null, statusB: Status | null):
  * Gets all non volatile status effects
  * @returns A list containing all non volatile status effects
  */
-export function getNonVolatileStatusEffects(): Array<StatusEffect> {
+export function getNonVolatileStatusEffects(): StatusEffect[] {
   return [
     StatusEffect.POISON,
     StatusEffect.TOXIC,
