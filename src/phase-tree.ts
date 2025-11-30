@@ -1,10 +1,6 @@
-// biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports
-import type { PhaseManager } from "#app/@types/phase-types";
-import type { DynamicPhaseMarker } from "#phases/dynamic-phase-marker";
-// biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports
-
-import type { PhaseMap, PhaseString } from "#app/@types/phase-types";
+import type { PhaseManager, PhaseMap, PhaseString } from "#app/@types/phase-types";
 import type { Phase } from "#app/phase";
+import type { DynamicPhaseMarker } from "#phases/dynamic-phase-marker";
 import type { PhaseConditionFunc } from "#types/phase-types";
 
 /**
