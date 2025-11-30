@@ -1,4 +1,3 @@
-// biome-ignore lint/correctness/noUnusedImports: Used in a TSDoc comment
 import type { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";

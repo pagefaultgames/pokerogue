@@ -40,6 +40,7 @@ describe("Moves - Order Up", () => {
     vi.spyOn(game.scene, "triggerPokemonBattleAnim").mockReturnValue(true);
   });
 
+  // biome-ignore format: prefer pre-2.3.6 formatting
   it.each([
     { formIndex: 0, formName: "Curly", stat: Stat.ATK, statName: "Attack" },
     { formIndex: 1, formName: "Droopy", stat: Stat.DEF, statName: "Defense" },
