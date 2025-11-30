@@ -134,13 +134,13 @@ describe("Move - Dragon Darts", () => {
 
     const [karp1, karp2] = game.scene.getEnemyField();
 
-    game.move.use(MoveId.DRAGON_DARTS);
+    game.move.use(MoveId.DRAGON_DARTS, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.move.forceMiss(true);
 
     await game.phaseInterceptor.to("MoveEffectPhase");
-    expect(karp1).not.toHaveFullHp();
-    expect(karp2).toHaveFullHp();
+    expect(karp1).toHaveFullHp();
+    expect(karp2).not.toHaveFullHp();
   });
 
   it("should respect redirection moves", async () => {
