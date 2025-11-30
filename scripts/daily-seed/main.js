@@ -157,10 +157,12 @@ function createOutputFile(path) {
   }
   try {
     if (existsSync(path)) {
+      // todo: add confirm once #6789 is in
       console.warn(chalk.hex("#ffa500")("\nOutput file already exists, overwriting...\n"));
     }
     const fullPath = join(rootDir, path);
 
+    // todo: should this be prettified?
     writeFileSync(fullPath, JSON.stringify(customSeedConfig, null, 2));
     console.log(chalk.green(`✔ Output written to ${fullPath} successfully!`));
   } catch (err) {
