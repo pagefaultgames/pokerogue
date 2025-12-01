@@ -50,7 +50,7 @@ describe("Moves - Doodle", () => {
     game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getPlayerField()[0].getAbility().id).toBe(AbilityId.BALL_FETCH);
+    expect(game.field.getPlayerPokemon().getAbility().id).toBe(AbilityId.BALL_FETCH);
     expect(game.scene.getPlayerField()[1].getAbility().id).toBe(AbilityId.BALL_FETCH);
   });
 

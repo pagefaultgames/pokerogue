@@ -39,7 +39,7 @@ describe("Abilities - Own Tempo", () => {
       .moveset(MoveId.SKILL_SWAP)
       .enemyMoveset(MoveId.SPLASH);
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
-    const enemy = game.scene.getEnemyPokemon();
+    const enemy = game.field.getEnemyPokemon();
     enemy?.addTag(BattlerTagType.CONFUSED);
     expect(enemy?.getTag(BattlerTagType.CONFUSED)).toBeTruthy();
 

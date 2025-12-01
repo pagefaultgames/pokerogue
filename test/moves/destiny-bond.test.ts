@@ -198,9 +198,9 @@ describe("Moves - Destiny Bond", () => {
     game.override.moveset([MoveId.GRASS_PLEDGE, MoveId.WATER_PLEDGE]).battleStyle("double");
     await game.classicMode.startBattle(defaultParty);
 
-    const enemyPokemon0 = game.scene.getEnemyField()[0];
+    const enemyPokemon0 = game.field.getEnemyPokemon();
     const enemyPokemon1 = game.scene.getEnemyField()[1];
-    const playerPokemon0 = game.scene.getPlayerField()[0];
+    const playerPokemon0 = game.field.getPlayerPokemon();
     const playerPokemon1 = game.scene.getPlayerField()[1];
 
     game.move.select(MoveId.GRASS_PLEDGE, 0, BattlerIndex.ENEMY);

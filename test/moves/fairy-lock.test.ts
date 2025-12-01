@@ -79,7 +79,7 @@ describe("Moves - Fairy Lock", () => {
 
     await game.toNextTurn();
 
-    expect(game.scene.getPlayerField()[0].isTrapped()).toEqual(false);
+    expect(game.field.getPlayerPokemon().isTrapped()).toEqual(false);
     expect(game.scene.getPlayerField()[1].isTrapped()).toEqual(false);
 
     game.move.select(MoveId.SPLASH);
@@ -115,7 +115,7 @@ describe("Moves - Fairy Lock", () => {
     await game.phaseInterceptor.to("BerryPhase");
     await game.toNextTurn();
 
-    expect(game.scene.getPlayerField()[0].species.speciesId).not.toBe(SpeciesId.KLEFKI);
+    expect(game.field.getPlayerPokemon().species.speciesId).not.toBe(SpeciesId.KLEFKI);
     expect(game.scene.getPlayerField()[1].species.speciesId).not.toBe(SpeciesId.TYRUNT);
   });
 
@@ -138,15 +138,15 @@ describe("Moves - Fairy Lock", () => {
     await game.move.selectEnemyMove(MoveId.SPLASH, 1);
     await game.move.selectEnemyMove(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.getPlayerField()[0].isTrapped()).toEqual(true);
+    expect(game.field.getPlayerPokemon().isTrapped()).toEqual(true);
     expect(game.scene.getPlayerField()[1].isTrapped()).toEqual(true);
-    expect(game.scene.getEnemyField()[0].isTrapped()).toEqual(true);
+    expect(game.field.getEnemyPokemon().isTrapped()).toEqual(true);
     expect(game.scene.getEnemyField()[1].isTrapped()).toEqual(true);
 
     await game.toNextTurn();
-    expect(game.scene.getPlayerField()[0].isTrapped()).toEqual(false);
+    expect(game.field.getPlayerPokemon().isTrapped()).toEqual(false);
     expect(game.scene.getPlayerField()[1].isTrapped()).toEqual(false);
-    expect(game.scene.getEnemyField()[0].isTrapped()).toEqual(false);
+    expect(game.field.getEnemyPokemon().isTrapped()).toEqual(false);
     expect(game.scene.getEnemyField()[1].isTrapped()).toEqual(false);
   });
 });
