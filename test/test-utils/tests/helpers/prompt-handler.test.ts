@@ -3,10 +3,10 @@ import { UiMode } from "#enums/ui-mode";
 import type { GameManager } from "#test/test-utils/game-manager";
 import { PromptHandler } from "#test/test-utils/helpers/prompt-handler";
 import type { PhaseInterceptor } from "#test/test-utils/phase-interceptor";
-import type { PhaseString } from "#types/phase-types";
+import type { PhaseManager, PhaseString } from "#types/phase-types";
 import type { AwaitableUiHandler } from "#ui/handlers/awaitable-ui-handler";
 import type { UI } from "#ui/ui";
-import { beforeAll, beforeEach, describe, expect, it, type Mock, vi } from "vitest";
+import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 
 describe("Test Utils - PromptHandler", () => {
   let promptHandler: PromptHandler;
@@ -17,17 +17,15 @@ describe("Test Utils - PromptHandler", () => {
   let setModeCallback: Mock;
   let checkModeCallback: Mock;
 
-  beforeAll(() => {
-    setModeCallback = vi.fn();
-    checkModeCallback = vi.fn();
+  beforeEach(() => {
+    setModeCallback = vi.fn(() => console.log("set mode called!")).mockName("set mode callback");
+    checkModeCallback = vi.fn(() => console.log("check mode called!")).mockName("check mode callback 2");
     callback1 = vi.fn(() => console.log("callback 1 called!")).mockName("callback 1");
     callback2 = vi.fn(() => console.log("callback 2 called!")).mockName("callback 2");
-  });
 
-  beforeEach(() => {
     handler = {
       active: true,
-      show: () => {},
+      show: () => true,
       awaitingActionInput: true,
     } as unknown as AwaitableUiHandler;
 
@@ -44,9 +42,9 @@ describe("Test Utils - PromptHandler", () => {
         phaseManager: {
           getCurrentPhase: () =>
             ({
-              phaseName: "testDialoguePhase",
-            }) as unknown as Phase,
-        },
+              phaseName: "testDialoguePhase" as unknown as PhaseString,
+            }) as Phase,
+        } as PhaseManager,
       },
       phaseInterceptor: {
         checkMode: () => {
@@ -87,8 +85,8 @@ describe("Test Utils - PromptHandler", () => {
 
   describe("doPromptCheck", () => {
     it("should check and remove the first prompt matching criteria", () => {
-      onNextPrompt("testDialoguePhase", UiMode.TEST_DIALOGUE, () => callback1());
-      onNextPrompt("testDialoguePhase", UiMode.TEST_DIALOGUE, () => callback2());
+      onNextPrompt("testDialoguePhase", UiMode.TEST_DIALOGUE, callback1);
+      onNextPrompt("testDialoguePhase", UiMode.TEST_DIALOGUE, callback2);
       promptHandler["doPromptCheck"]();
 
       expect(callback1).toHaveBeenCalled();
@@ -99,29 +97,29 @@ describe("Test Utils - PromptHandler", () => {
     it.each<{ reason: string; callback: () => void }>([
       {
         reason: "wrong UI mode",
-        callback: () => onNextPrompt("testDialoguePhase", UiMode.ACHIEVEMENTS, () => callback1()),
+        callback: () => onNextPrompt("testDialoguePhase", UiMode.ACHIEVEMENTS, callback1),
       },
       {
         reason: "wrong phase",
-        callback: () => onNextPrompt("wrong phase", UiMode.TEST_DIALOGUE, () => callback1()),
+        callback: () => onNextPrompt("wrong phase", UiMode.TEST_DIALOGUE, callback1),
       },
       {
         reason: "UI handler is inactive",
         callback: () => {
           handler.active = false;
-          onNextPrompt("testDialoguePhase", UiMode.TEST_DIALOGUE, () => callback1());
+          onNextPrompt("testDialoguePhase", UiMode.TEST_DIALOGUE, callback1);
         },
       },
       {
         reason: "UI handler is not awaiting input",
         callback: () => {
           handler["awaitingActionInput"] = false;
-          onNextPrompt("testDialoguePhase", UiMode.TEST_DIALOGUE, () => callback1(), undefined, true);
+          onNextPrompt("testDialoguePhase", UiMode.TEST_DIALOGUE, callback1, undefined, true);
         },
       },
     ])("should skip callback and keep in queue if $reason", ({ callback }) => {
       callback();
-      onNextPrompt("testDialoguePhase", UiMode.TEST_DIALOGUE, () => callback2);
+      onNextPrompt("testDialoguePhase", UiMode.TEST_DIALOGUE, callback2);
       promptHandler["doPromptCheck"]();
 
       expect(callback1).not.toHaveBeenCalled();
@@ -130,18 +128,8 @@ describe("Test Utils - PromptHandler", () => {
     });
 
     it("should remove expired prompts without blocking", () => {
-      onNextPrompt(
-        "testDialoguePhase",
-        UiMode.TEST_DIALOGUE,
-        () => callback1(),
-        () => true,
-      );
-      onNextPrompt(
-        "testDialoguePhase",
-        UiMode.TEST_DIALOGUE,
-        () => callback2(),
-        () => false,
-      );
+      onNextPrompt("testDialoguePhase", UiMode.TEST_DIALOGUE, callback1, () => true);
+      onNextPrompt("testDialoguePhase", UiMode.TEST_DIALOGUE, callback2, () => false);
       promptHandler["doPromptCheck"]();
 
       expect(callback1).not.toHaveBeenCalled();

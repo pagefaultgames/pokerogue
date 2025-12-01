@@ -1,3 +1,4 @@
+import { PROMPT_HANDLER_COLOR } from "#constants/colors";
 import { UiMode } from "#enums/ui-mode";
 import type { GameManager } from "#test/test-utils/game-manager";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
@@ -33,7 +34,7 @@ interface UIPrompt {
  * @todo This is an extremely unintuitive solution that only works on a select few phases
  * and does not account for UI handlers not accepting input
  */
-const endBySetMode: ReadonlyArray<PhaseString> = [
+const endBySetMode: readonly PhaseString[] = [
   "CommandPhase",
   "TitlePhase",
   "SelectGenderPhase",
@@ -50,9 +51,9 @@ const endBySetMode: ReadonlyArray<PhaseString> = [
  */
 export class PromptHandler extends GameManagerHelper {
   /** An array of {@linkcode UIPrompt | prompts} with associated callbacks. */
-  private prompts: UIPrompt[] = [];
+  private readonly prompts: UIPrompt[] = [];
   /** The original `setModeInternal` function, stored for use in {@linkcode setMode}. */
-  private originalSetModeInternal: (typeof this.game.scene.ui)["setModeInternal"];
+  private readonly originalSetModeInternal: (typeof this.game.scene.ui)["setModeInternal"];
 
   /** A {@linkcode NodeJS.Timeout | Timeout} containing an interval used to check prompts. */
   public static runInterval?: NodeJS.Timeout;
@@ -63,7 +64,7 @@ export class PromptHandler extends GameManagerHelper {
     this.originalSetModeInternal = this.game.scene.ui["setModeInternal"];
     // `any` assertion needed as we are mocking private property
     vi.spyOn(
-      this.game.scene.ui as UI & Pick<{ setModeInternal: UI["setModeInternal"] }, "setModeInternal">,
+      this.game.scene.ui as unknown as Pick<{ setModeInternal: UI["setModeInternal"] }, "setModeInternal">,
       "setModeInternal",
     ).mockImplementation((...args) => this.setMode(args));
 
@@ -114,7 +115,7 @@ export class PromptHandler extends GameManagerHelper {
       return;
     }
 
-    const currentPhase = this.game.scene.phaseManager.getCurrentPhase()?.phaseName;
+    const currentPhase = this.game.scene.phaseManager.getCurrentPhase().phaseName;
     const currentHandler = this.game.scene.ui.getHandler();
     const mode = this.game.scene.ui.getMode();
 
@@ -142,6 +143,7 @@ export class PromptHandler extends GameManagerHelper {
    * @remarks
    * If multiple prompts are queued up in succession, each will be checked in turn **until the first prompt that neither expires nor matches**.
    * @todo Review all uses of this function to check if they can be made synchronous
+   * and if `AwaitableUiHandler`s can be stubbed to always be active
    */
   public addToNextPrompt(
     phaseTarget: PhaseString,
@@ -165,6 +167,6 @@ export class PromptHandler extends GameManagerHelper {
    */
   // TODO: Move this to colors.ts & change color after mock console PR
   private doLog(...args: unknown[]): void {
-    console.log(chalk.hex("#008B8B")(...args));
+    console.log(chalk.hex(PROMPT_HANDLER_COLOR)(...args));
   }
 }
