@@ -4,7 +4,6 @@
 # To set this file as the default ignore file for git blame, run:
 #   $ git config --local blame.ignoreRevsFile .git-blame-ignore-revs
 
-
 # ESLint - The Essential Linter and Formatter for JavaScript and TypeScript (#1224)
 bac6c22
 
