@@ -933,7 +933,7 @@ export class FreshStartChallenge extends Challenge {
   }
 
   applyStarterModify(pokemon: Pokemon): boolean {
-    pokemon.abilityIndex = pokemon.abilityIndex % 2; // Always base ability, if you set it to hidden it wraps to first ability
+    pokemon.abilityIndex %= 2; // Always base ability, if you set it to hidden it wraps to first ability
     pokemon.passive = false; // Passive isn't unlocked
     let validMoves = pokemon.species
       .getLevelMoves()
@@ -1109,7 +1109,16 @@ export class LowerStarterPointsChallenge extends Challenge {
  */
 export class LimitedSupportChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
-    return this.value ? ((RibbonData.NO_HEAL << (BigInt(this.value) - 1n)) as RibbonFlag) : 0n;
+    switch (this.value) {
+      case 1:
+        return RibbonData.NO_HEAL as RibbonFlag;
+      case 2:
+        return RibbonData.NO_SHOP as RibbonFlag;
+      case 3:
+        return (RibbonData.NO_HEAL | RibbonData.NO_SHOP | RibbonData.NO_SUPPORT) as RibbonFlag;
+      default:
+        return 0n as RibbonFlag;
+    }
   }
   constructor() {
     super(Challenges.LIMITED_SUPPORT, 3);

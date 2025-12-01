@@ -1,13 +1,12 @@
 /**
  * Code to add markers to the beginning and end of tests.
  * Intended for use with {@linkcode CustomDefaultReporter}, and placed inside test hooks
- * (rather than as part of the reporter) to ensure Vitest waits for the log messages to be printed.
+ * (rather than as part of the reporter) to ensure Vitest waits for the log messages to be printed before beginning subsequent cases.
  * @module
  */
 
-// biome-ignore lint/correctness/noUnusedImports: TSDoc
 import type CustomDefaultReporter from "#test/test-utils/reporters/custom-default-reporter";
-import { basename, join, relative } from "path";
+import { join, relative } from "path";
 import chalk from "chalk";
 import type { RunnerTask, RunnerTaskResult, RunnerTestCase } from "vitest";
 
@@ -18,7 +17,12 @@ const TEST_END_BARRIER = chalk.bold.hex("#ff7c7cff")("==================");
 const TEST_NAME_COLOR = "#008886ff" as const;
 const VITEST_PINK_COLOR = "#c162de" as const;
 
-const testRoot = join(import.meta.dirname, "..", "..", "..");
+/**
+ * The root directory of the project, used when constructing relative paths.
+ * @privateRemarks
+ * Will have to be altered if this file is moved!
+ */
+const rootDir = join(import.meta.dirname, "..", "..", "..");
 
 /**
  * Log the testfile name and path upon a case starting. \
@@ -46,17 +50,18 @@ export function logTestEnd(task: RunnerTestCase): void {
     Name: ${chalk.hex(TEST_NAME_COLOR)(getTestName(task))}
     Result: ${resultStr}${durationStr}
     File: ${chalk.hex("#d29b0eff")(
-      getPathFromTest(task.file.filepath) + (task.location ? `:${task.location.line}:${task.location.column}` : ""),
+      // Formatting used to allow for IDE Ctrl+click shortcuts
+      getRelativePath(task.file.filepath) + (task.location ? `:${task.location.line}:${task.location.column}` : ""),
     )}`);
 }
 
 /**
- * Get the path of the current test file relative to the `test` directory.
+ * Get the path of the current test file relative to the project root.
  * @param abs - The absolute path to the file
- * @returns The relative path with `test/` appended to it.
+ * @returns The path relative to the project root folder.
  */
-function getPathFromTest(abs: string): string {
-  return join(basename(testRoot), relative(testRoot, abs));
+function getRelativePath(abs: string): string {
+  return relative(rootDir, abs);
 }
 
 function getResultStr(result: RunnerTaskResult | undefined): string {
@@ -66,8 +71,8 @@ function getResultStr(result: RunnerTaskResult | undefined): string {
 
   const resultStr =
     result.state === "pass"
-      ? chalk.green.bold("✔ Passed")
-      : (result?.duration ?? 0) > 2
+      ? chalk.green.bold("✓ Passed")
+      : (result?.duration ?? 0) > 20_000
         ? chalk.cyan.bold("◴ Timed out")
         : chalk.red.bold("✗ Failed");
 

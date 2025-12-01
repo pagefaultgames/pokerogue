@@ -278,6 +278,7 @@ export class MenuUiHandler extends MessageUiHandler {
     manageDataOptions.push({
       label: i18next.t("menuUiHandler:importRunHistory"),
       handler: () => {
+        ui.revertMode();
         globalScene.gameData.importData(GameDataType.RUN_HISTORY);
         return true;
       },
@@ -781,7 +782,7 @@ export class MenuUiHandler extends MessageUiHandler {
   showText(
     text: string,
     delay?: number,
-    callback?: Function,
+    callback?: () => void,
     callbackDelay?: number,
     prompt?: boolean,
     promptDelay?: number,
