@@ -1,0 +1,84 @@
+# This file lists revisions of large-scale formatting, style and code movement changes so that
+# they can be excluded from git blame results.
+#
+# To set this file as the default ignore file for git blame, run:
+#   $ git config --local blame.ignoreRevsFile .git-blame-ignore-revs
+
+
+# ESLint - The Essential Linter and Formatter for JavaScript and TypeScript (#1224)
+bac6c22
+
+# [Refactor] use typescript strict-null (#3259)
+a07d2c5
+
+# [Test] Replace `doAttack()` with `move.select()` in tests (#3567)
+8288973
+
+# [Misc] Add eslint rule to enforce indenting of `case` statements (#4692)
+39abac6
+
+# [Refactor] Create global scene variable (#4766)
+0107b1d
+
+# [Misc][Refactor][GitHub] Ditch eslint for biome, and add a formatter (#5495)
+408b66f
+
+# [Biome] Add and apply `lint/style/noNamespaceImport` (#5650)
+6f56dce
+
+# [Test] Remove deprecated test funcs (#5906)
+a33638a
+
+# [Test] Remove redundant entries and `Array.fill()` in moveset overrides (#5907)
+cdda539
+
+# [Test] Condensed all `game.override` calls into 1 chained line where possible (#5926)
+061c987
+
+# [Test] Remove unneeded `mockRestore` and `testTimeout` calls in tests (#5927)
+0918985
+
+# [Misc] Improve enum naming (#5933)
+9dcb904
+
+# [Dev] Enable Biome checking of `ability.ts` (#5948)
+75beec1
+
+# [Dev] Enable Biome import sorting (#6052)
+8cf1b9f
+
+# [Misc] Standardize-file-names (#6137)
+51d4c33
+
+# [Test] Cleaned up tests to use updated test utils; part 1 (#6176)
+8734062
+
+# [Test] Replaced all instances of `game.scene.getXXXPokemon()!` inside tests with `game.field.getXXXPokemon()` (#6178)
+8da02ba
+
+# [Refactor] Remove `null` from `PhaseManager.currentPhase` signature (#6243)
+d5e6670
+
+# [Dev] Migrated to Biome 2.2.3, added more rules (#6259)
+c0da686
+
+# [Misc] Make the repo REUSE compliant (#6474)
+6766940
+
+# [Test] Updated more uses of `game.scene.getEnemyField` and `game.scene.getPlayerField` to use updated test utils (#6524)
+3d9e493
+
+# [Refactor] Remove `isNullOrUndefined` in favor of loose check against null (#6549)
+c7a2c66
+
+# [Refactor][Dev] Move public to its own submodule (#6590)
+c695df7
+
+# [Dev] Improve typescript performance and version bump node and dependencies (#6627)
+f4456f6
+
+# [Dev] Enable linting of `move.ts` and update Biome to 2.3.2 (#6688)
+d0ddcaa
+
+# [Dev] Update Biome from `2.3.2` to `2.3.8` (#6799)
+b6bd956
