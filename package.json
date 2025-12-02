@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.8",
+    "@inquirer/prompts": "^8.0.1",
     "@ls-lint/ls-lint": "2.3.1",
     "@types/crypto-js": "^4.2.2",
     "@types/jsdom": "^27.0.0",
@@ -49,7 +50,6 @@
     "@vitest/utils": "^4.0.14",
     "chalk": "^5.6.2",
     "dependency-cruiser": "^17.3.1",
-    "inquirer": "^13.0.1",
     "jsdom": "^27.2.0",
     "lefthook": "^2.0.4",
     "msw": "^2.12.3",
