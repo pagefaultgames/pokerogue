@@ -12,7 +12,7 @@
 
 import { existsSync, writeFileSync } from "fs";
 import { join } from "path";
-import { select } from "@inquirer/prompts";
+import { confirm, select } from "@inquirer/prompts";
 import chalk from "chalk";
 import { promptBoss } from "./prompts/boss.js";
 import { promptBiome, promptEdit, promptLuck, promptMoney, promptSeedVariation } from "./prompts/general.js";
@@ -83,7 +83,7 @@ async function promptOptions() {
 async function handleAnswer(answer) {
   switch (answer) {
     case "finish":
-      finish();
+      await finish();
       break;
     case "edit": {
       const config = await promptEdit();
@@ -122,7 +122,7 @@ async function handleAnswer(answer) {
   await promptOptions();
 }
 
-function finish() {
+async function finish() {
   // todo: do we also need to validate here?
   console.log(chalk.cyan("\n🌱 Your custom seed config is:"));
   console.log(chalk.green(`${JSON.stringify(customSeedConfig)}`));
@@ -132,7 +132,7 @@ function finish() {
   );
   if (outfileArg) {
     const outfilePath = outfileArg.split("=")[1];
-    createOutputFile(outfilePath);
+    await createOutputFile(outfilePath);
   }
 
   process.exit(0);
@@ -140,7 +140,7 @@ function finish() {
 /**
  * @param {string} path
  */
-function createOutputFile(path) {
+async function createOutputFile(path) {
   if (!path) {
     return;
   }
@@ -150,7 +150,13 @@ function createOutputFile(path) {
   try {
     if (existsSync(path)) {
       // todo: add confirm once #6789 is in
-      console.warn(chalk.hex("#ffa500")("\nOutput file already exists, overwriting...\n"));
+      const overwrite = await confirm({
+        message: chalk.hex("#ffa500")(`File ${chalk.blue(path)} already exists! Do you want to overwrite it?`),
+      });
+      if (!overwrite) {
+        console.log(chalk.gray("Cancelled."));
+        return;
+      }
     }
     const fullPath = join(rootDir, path);
 
