@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+import { input, number, select } from "@inquirer/prompts";
 import { Ajv } from "ajv";
-import inquirer from "inquirer";
 import customDailyRunSchema from "../../../src/data/daily-seed/schema.json" with { type: "json" };
 import { BIOMES } from "../constants.js";
 
@@ -20,19 +20,12 @@ const validate = ajv.compile(customDailyRunSchema);
  * @returns {Promise<number>} The starting money value.
  */
 export async function promptMoney() {
-  return await inquirer
-    .prompt([
-      {
-        type: "number",
-        name: "startingMoney",
-        message: "starting money (press TAB to edit the placeholder):\n",
-        default: 1000,
-        min: 0,
-      },
-    ])
-    .then(answer => {
-      return answer.startingMoney;
-    });
+  return await number({
+    message: "starting money (press TAB to edit the placeholder):",
+    default: 1000,
+    min: 0,
+    required: true,
+  });
 }
 
 /**
@@ -41,19 +34,12 @@ export async function promptMoney() {
  * @returns {Promise<number>} The luck value.
  */
 export async function promptLuck() {
-  return await inquirer
-    .prompt([
-      {
-        type: "number",
-        name: "luck",
-        message: "Daily run luck:\n",
-        min: 0,
-        max: 14,
-      },
-    ])
-    .then(answer => {
-      return answer.luck;
-    });
+  return await number({
+    message: "Daily run luck:",
+    min: 0,
+    max: 14,
+    required: true,
+  });
 }
 
 /**
@@ -61,19 +47,12 @@ export async function promptLuck() {
  * @returns {Promise<number>} The starting biome number.
  */
 export async function promptBiome() {
-  return await inquirer
-    .prompt([
-      {
-        type: "list",
-        name: "startingBiome",
-        message: "Starting biome:\n",
-        choices: [...Object.keys(BIOMES)],
-        pageSize: 10,
-      },
-    ])
-    .then(answer => {
-      return BIOMES[/** @type {keyof typeof BIOMES} */ (answer.startingBiome)];
-    });
+  const biome = await select({
+    message: "Starting biome:",
+    choices: [...Object.keys(BIOMES)],
+    pageSize: 10,
+  });
+  return BIOMES[/** @type {keyof typeof BIOMES} */ (biome)];
 }
 
 /**
@@ -83,36 +62,30 @@ export async function promptBiome() {
  * @remarks The input is not validated.
  */
 export async function promptEdit() {
-  return await inquirer
-    .prompt([
-      {
-        type: "input",
-        name: "config",
-        message: "The stringified config to edit:\n",
-        validate: value => {
-          try {
-            const config = JSON.parse(value);
+  return await input({
+    message: "The stringified config to edit:",
+    validate: value => {
+      try {
+        const config = JSON.parse(value);
 
-            if (!validate(config)) {
-              return "Invalid config:\n" + validate.errors?.map(e => `${e.instancePath} ${e.message}`).join("\n");
-            }
+        if (!validate(config)) {
+          return "Invalid config:\n" + validate.errors?.map(e => `${e.instancePath} ${e.message}`).join("\n");
+        }
 
-            return true;
-          } catch {
-            if (value.trim() === "") {
-              return true;
-            }
-            return "Invalid JSON";
-          }
-        },
-      },
-    ])
-    .then(answer => {
-      if (answer.config.trim() === "") {
-        return {};
+        return true;
+      } catch {
+        if (value.trim() === "") {
+          return true;
+        }
+        return "Invalid JSON";
       }
-      return JSON.parse(answer.config);
-    });
+    },
+  }).then(config => {
+    if (config.trim() === "") {
+      return {};
+    }
+    return JSON.parse(config);
+  });
 }
 
 /**
@@ -122,21 +95,13 @@ export async function promptEdit() {
  * @returns {Promise<string>} The seed variation.
  */
 export async function promptSeedVariation() {
-  return await inquirer
-    .prompt([
-      {
-        type: "input",
-        name: "seedVariation",
-        message: "Seed variation:\n",
-        validate: value => {
-          if (value.trim() === "") {
-            return "Seed variation cannot be empty!";
-          }
-          return true;
-        },
-      },
-    ])
-    .then(answer => {
-      return answer.seedVariation;
-    });
+  return await input({
+    message: "Seed variation:",
+    validate: value => {
+      if (value.trim() === "") {
+        return "Seed variation cannot be empty!";
+      }
+      return true;
+    },
+  });
 }

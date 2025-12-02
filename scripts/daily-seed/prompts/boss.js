@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import inquirer from "inquirer";
+import { select } from "@inquirer/prompts";
 import { BOSS_OPTIONS } from "../constants.js";
 import {
   promptAbility,
@@ -57,39 +57,36 @@ const bossOptions = [...BOSS_OPTIONS];
  * @returns {Promise<BossConfig>}
  */
 async function promptBossOptions() {
-  return await inquirer
-    .prompt([
-      {
-        type: "list",
-        name: "option",
-        message: "Select the option you want to configure:",
-        choices: [...bossOptions],
-      },
-    ])
-    .then(async answer => {
-      switch (answer.option) {
-        case "formIndex":
-          bossConfig.formIndex = await promptFormIndex();
-          break;
-        case "variant":
-          bossConfig.variant = await promptVariant();
-          break;
-        case "moveset":
-          bossConfig.moveset = await promptMoveset();
-          break;
-        case "nature":
-          bossConfig.nature = await promptNature();
-          break;
-        case "ability":
-          bossConfig.ability = await promptAbility();
-          break;
-        case "passive":
-          bossConfig.passive = await promptAbility(true);
-          break;
-        case "finish":
-          return bossConfig;
-      }
-      bossOptions.splice(bossOptions.indexOf(answer.option), 1);
-      return await promptBossOptions();
-    });
+  if (bossOptions.length === 1) {
+    return bossConfig;
+  }
+  const option = await select({
+    message: "Select the option you want to configure:",
+    choices: [...bossOptions],
+  });
+
+  switch (option) {
+    case "formIndex":
+      bossConfig.formIndex = await promptFormIndex();
+      break;
+    case "variant":
+      bossConfig.variant = await promptVariant();
+      break;
+    case "moveset":
+      bossConfig.moveset = await promptMoveset();
+      break;
+    case "nature":
+      bossConfig.nature = await promptNature();
+      break;
+    case "ability":
+      bossConfig.ability = await promptAbility();
+      break;
+    case "passive":
+      bossConfig.passive = await promptAbility(true);
+      break;
+    case "finish":
+      return bossConfig;
+  }
+  bossOptions.splice(bossOptions.indexOf(option), 1);
+  return await promptBossOptions();
 }

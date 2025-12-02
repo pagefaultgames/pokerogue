@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import inquirer from "inquirer";
+import { select } from "@inquirer/prompts";
 import { STARTER_OPTIONS } from "../constants.js";
 import {
   promptAbilityIndex,
@@ -57,38 +57,32 @@ const starterOptions = [...STARTER_OPTIONS];
  * @param {StarterConfig} starterConfig
  */
 async function promptStarterOptions(starterConfig) {
-  await inquirer
-    .prompt([
-      {
-        type: "list",
-        name: "option",
-        message: "Select the option you want to configure:",
-        choices: [...starterOptions],
-      },
-    ])
-    .then(async answer => {
-      switch (answer.option) {
-        case "formIndex":
-          starterConfig.formIndex = await promptFormIndex();
-          break;
-        case "variant":
-          starterConfig.variant = await promptVariant();
-          break;
-        case "moveset":
-          starterConfig.moveset = await promptMoveset();
-          break;
-        case "nature":
-          starterConfig.nature = await promptNature();
-          break;
-        case "abilityIndex":
-          starterConfig.abilityIndex = await promptAbilityIndex();
-          break;
-        case "finish":
-          // Re-add all used options for next starter
-          starterOptions.splice(0, starterOptions.length, ...STARTER_OPTIONS);
-          return;
-      }
-      starterOptions.splice(starterOptions.indexOf(answer.option), 1);
-      await promptStarterOptions(starterConfig);
-    });
+  await select({
+    message: "Select the option you want to configure:",
+    choices: [...starterOptions],
+  }).then(async answer => {
+    switch (answer.option) {
+      case "formIndex":
+        starterConfig.formIndex = await promptFormIndex();
+        break;
+      case "variant":
+        starterConfig.variant = await promptVariant();
+        break;
+      case "moveset":
+        starterConfig.moveset = await promptMoveset();
+        break;
+      case "nature":
+        starterConfig.nature = await promptNature();
+        break;
+      case "abilityIndex":
+        starterConfig.abilityIndex = await promptAbilityIndex();
+        break;
+      case "finish":
+        // Re-add all used options for next starter
+        starterOptions.splice(0, starterOptions.length, ...STARTER_OPTIONS);
+        return;
+    }
+    starterOptions.splice(starterOptions.indexOf(answer.option), 1);
+    await promptStarterOptions(starterConfig);
+  });
 }

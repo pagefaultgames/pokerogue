@@ -12,8 +12,8 @@
 
 import { existsSync, writeFileSync } from "fs";
 import { join } from "path";
+import { select } from "@inquirer/prompts";
 import chalk from "chalk";
-import inquirer from "inquirer";
 import { promptBoss } from "./prompts/boss.js";
 import { promptBiome, promptEdit, promptLuck, promptMoney, promptSeedVariation } from "./prompts/general.js";
 import { promptStarters } from "./prompts/starter.js";
@@ -63,26 +63,18 @@ async function main() {
   console.group(chalk.grey(`🌱 Daily Seed Generator - v${SCRIPT_VERSION}\n`));
 
   try {
-    promptOptions();
+    await promptOptions();
   } catch (err) {
     console.error(chalk.red("✗ Error: ", err));
   }
 }
 
-function promptOptions() {
-  inquirer
-    .prompt([
-      {
-        type: "list",
-        name: "selectedConfig",
-        message: "Select the config you want to configure:",
-        choices: [...options, "finish", "exit"],
-        pageSize: 10,
-      },
-    ])
-    .then(async answers => {
-      await handleAnswer(answers.selectedConfig);
-    });
+async function promptOptions() {
+  const option = await select({
+    message: "Select the config you want to configure:",
+    choices: [...options, "finish", "exit"],
+  });
+  await handleAnswer(option);
 }
 
 /**
@@ -127,7 +119,7 @@ async function handleAnswer(answer) {
     // always remove "edit" option
     options.splice(options.indexOf("edit"), 1);
   }
-  promptOptions();
+  await promptOptions();
 }
 
 function finish() {
