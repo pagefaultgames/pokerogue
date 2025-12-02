@@ -149,7 +149,6 @@ async function createOutputFile(path) {
   }
   try {
     if (existsSync(path)) {
-      // todo: add confirm once #6789 is in
       const overwrite = await confirm({
         message: chalk.hex("#ffa500")(`File ${chalk.blue(path)} already exists! Do you want to overwrite it?`),
       });
