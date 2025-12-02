@@ -145,10 +145,10 @@ describe("Abilities - Sheer Force", () => {
     await game.classicMode.startBattle([SpeciesId.MELOETTA]);
 
     const playerPokemon = game.field.getPlayerPokemon();
-    const formKeyStart = playerPokemon?.getFormKey();
+    const formKeyStart = playerPokemon.getFormKey();
 
     game.move.select(MoveId.RELIC_SONG);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(formKeyStart).toBe(playerPokemon?.getFormKey());
+    expect(formKeyStart).toBe(playerPokemon.getFormKey());
   });
 });

@@ -198,20 +198,17 @@ describe("Moves - Destiny Bond", () => {
     game.override.moveset([MoveId.GRASS_PLEDGE, MoveId.WATER_PLEDGE]).battleStyle("double");
     await game.classicMode.startBattle(defaultParty);
 
-    const enemyPokemon0 = game.field.getEnemyPokemon();
-    const enemyPokemon1 = game.scene.getEnemyField()[1];
-    const playerPokemon0 = game.field.getPlayerPokemon();
-    const playerPokemon1 = game.scene.getPlayerField()[1];
+    const [playerPokemon0, playerPokemon1, enemyPokemon0, enemyPokemon1] = game.scene.getField();
 
     game.move.select(MoveId.GRASS_PLEDGE, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.WATER_PLEDGE, 1, BattlerIndex.ENEMY);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2]);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemyPokemon0?.isFainted()).toBe(true);
-    expect(enemyPokemon1?.isFainted()).toBe(false);
-    expect(playerPokemon0?.isFainted()).toBe(false);
-    expect(playerPokemon1?.isFainted()).toBe(true);
+    expect(enemyPokemon0.isFainted()).toBe(true);
+    expect(enemyPokemon1.isFainted()).toBe(false);
+    expect(playerPokemon0.isFainted()).toBe(false);
+    expect(playerPokemon1.isFainted()).toBe(true);
 
     // Pledge secondary effect should still activate
     const tagAfter = game.scene.arena.getTagOnSide(
