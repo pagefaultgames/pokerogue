@@ -1803,17 +1803,12 @@ export class GameData {
 
   /**
    * Adds a candy to the player's game data for a given {@linkcode PokemonSpecies}.
-   * Will do nothing if the player does not have the Pokemon owned in their system save data.
    * @param species
    * @param count
    */
   addStarterCandy(species: PokemonSpecies, count: number): void {
-    // Only gain candies if the Pokemon has already been marked as caught in dex (ignore "rental" pokemon)
-    const speciesRootForm = species.getRootSpeciesId();
-    if (globalScene.gameData.dexData[speciesRootForm].caughtAttr) {
-      globalScene.candyBar.showStarterSpeciesCandy(species.speciesId, count);
-      this.starterData[species.speciesId].candyCount += count;
-    }
+    globalScene.candyBar.showStarterSpeciesCandy(species.speciesId, count);
+    this.starterData[species.speciesId].candyCount += count;
   }
 
   /**
