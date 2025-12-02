@@ -79,8 +79,9 @@ describe("Moves - Fairy Lock", () => {
 
     await game.toNextTurn();
 
-    expect(game.field.getPlayerPokemon().isTrapped()).toEqual(false);
-    expect(game.scene.getPlayerField()[1].isTrapped()).toEqual(false);
+    const [player1, player2] = game.scene.getPlayerField();
+    expect(player1.isTrapped()).toEqual(false);
+    expect(player2.isTrapped()).toEqual(false);
 
     game.move.select(MoveId.SPLASH);
     game.doSwitchPokemon(2);
@@ -89,7 +90,7 @@ describe("Moves - Fairy Lock", () => {
     await game.phaseInterceptor.to("BerryPhase");
     await game.toNextTurn();
 
-    expect(game.scene.getPlayerField()[1].species.speciesId).not.toBe(SpeciesId.GENGAR);
+    expect(player2.species.speciesId).not.toBe(SpeciesId.GENGAR);
   });
 
   it("Phasing moves will still switch out", async () => {
@@ -115,8 +116,9 @@ describe("Moves - Fairy Lock", () => {
     await game.phaseInterceptor.to("BerryPhase");
     await game.toNextTurn();
 
-    expect(game.field.getPlayerPokemon().species.speciesId).not.toBe(SpeciesId.KLEFKI);
-    expect(game.scene.getPlayerField()[1].species.speciesId).not.toBe(SpeciesId.TYRUNT);
+    const [player1, player2] = game.scene.getPlayerField();
+    expect(player1.species.speciesId).not.toBe(SpeciesId.KLEFKI);
+    expect(player2.species.speciesId).not.toBe(SpeciesId.TYRUNT);
   });
 
   it("If a Pokemon faints and is replaced the replacement is also trapped", async () => {
@@ -138,15 +140,17 @@ describe("Moves - Fairy Lock", () => {
     await game.move.selectEnemyMove(MoveId.SPLASH, 1);
     await game.move.selectEnemyMove(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.field.getPlayerPokemon().isTrapped()).toEqual(true);
-    expect(game.scene.getPlayerField()[1].isTrapped()).toEqual(true);
-    expect(game.field.getEnemyPokemon().isTrapped()).toEqual(true);
-    expect(game.scene.getEnemyField()[1].isTrapped()).toEqual(true);
+
+    const [player1, player2] = game.scene.getPlayerField();
+    expect(player1.isTrapped()).toBe(true);
+    expect(player2.isTrapped()).toBe(true);
+    expect(player1.isTrapped()).toBe(true);
+    expect(player2.isTrapped()).toBe(true);
 
     await game.toNextTurn();
-    expect(game.field.getPlayerPokemon().isTrapped()).toEqual(false);
-    expect(game.scene.getPlayerField()[1].isTrapped()).toEqual(false);
-    expect(game.field.getEnemyPokemon().isTrapped()).toEqual(false);
-    expect(game.scene.getEnemyField()[1].isTrapped()).toEqual(false);
+    expect(player1.isTrapped()).toBe(false);
+    expect(player2.isTrapped()).toBe(false);
+    expect(player1.isTrapped()).toBe(false);
+    expect(player2.isTrapped()).toBe(false);
   });
 });
