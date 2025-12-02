@@ -153,7 +153,7 @@ describe("Moves - Fell Stinger", () => {
 
     await game.classicMode.startBattle([SpeciesId.LEAVANNY]);
     const leadPokemon = game.field.getPlayerPokemon();
-    const leftEnemy = game.field.getEnemyPokemon()!;
+    const leftEnemy = game.field.getEnemyPokemon();
 
     // Turn 1: set Leech Seed, enemy splashes and does nothing
     game.move.select(MoveId.LEECH_SEED, 0, leftEnemy.getBattlerIndex());
