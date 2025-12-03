@@ -99,7 +99,7 @@ If this feature requires new text, the text should be integrated into the code w
     - You should also [notify the current Head of Translation](#notifying-translation) to ensure a fast response.
 3. At this point, you may begin [testing locales integration in your main PR](#documenting-locales-changes).
 4. The Translation Team will approve the locales PR (after corrections, if necessary), then merge it into `pokerogue-locales`.
-5. The Dev Team will approve your main PR for your feature, then merge it into PokéRogue's beta environment[^3].
+5. The Dev Team will approve your main PR for your feature, then merge it into PokéRogue's beta environment.
 
 [^2]: For those wondering, the reason for choosing English specifically is due to it being the master language set in Pontoon (the program used by the Translation Team to perform locale updates).
 If a key is present in any language _except_ the master language, it won't appear anywhere else in the translation tool, rendering missing English keys quite a hassle.
@@ -133,7 +133,7 @@ The basic procedure is roughly as follows:
     ```
 2. Set some of the [in-game overrides](../CONTRIBUTING.md#1---manual-testing) inside `overrides.ts` to values corresponding to the interactions being tested.
 3. Start a local dev server (`pnpm start:dev`) and open localhost in your browser.
-4. Take screenshots or record a video of the locales changes being displayed in-game using the software of your choice[^2].
+4. Take screenshots or record a video of the locales changes being displayed in-game using the software of your choice[^3].
 
 [^3]: For those lacking a screen capture device, [OBS Studio](https://obsproject.com) is a popular open-source option.
 
