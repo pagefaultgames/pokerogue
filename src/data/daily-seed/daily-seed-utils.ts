@@ -2,10 +2,11 @@ import { globalScene } from "#app/global-scene";
 import { isBeta, isDev } from "#constants/app-constants";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
 import { SpeciesId } from "#enums/species-id";
 import type { CustomDailyRunConfig, DailySeedBoss, DailySeedStarter } from "#types/daily-run";
-import type { Starter } from "#types/save-data";
+import type { Starter, StarterMoveset } from "#types/save-data";
 import { isBetween } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
@@ -132,6 +133,17 @@ export function validateDailyBossConfig(config: DailySeedBoss | undefined): Dail
   if (config.nature != null && !getEnumValues(Nature).includes(config.nature)) {
     console.warn("Invalid nature used for custom daily run seed boss:", config.nature);
     config.nature = undefined;
+  }
+
+  if (config.moveset != null) {
+    const validMoveIds = getEnumValues(MoveId);
+    config.moveset = config.moveset.filter(moveId => {
+      if (!validMoveIds.includes(moveId)) {
+        console.warn("Invalid move ID used for custom daily run boss:", moveId);
+        return false;
+      }
+      return true;
+    }) as StarterMoveset;
   }
 
   if (config.ability != null && !getEnumValues(AbilityId).includes(config.ability)) {
