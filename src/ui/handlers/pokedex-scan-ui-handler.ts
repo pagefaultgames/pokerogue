@@ -165,7 +165,7 @@ export class PokedexScanUiHandler extends FormModalUiHandler {
       } else {
         this.inputs[0].text = args[1];
       }
-      this.submitAction = _ => {
+      this.submitAction = () => {
         if (ui.getMode() === UiMode.POKEDEX_SCAN) {
           this.sanitizeInputs();
           const outputName = this.reducedKeys.includes(this.inputs[0].text) ? this.inputs[0].text : "";

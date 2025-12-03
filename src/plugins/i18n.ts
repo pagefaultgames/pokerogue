@@ -11,7 +11,7 @@ import { namespaceMap } from "./utils-plugins";
 interface LoadingFontFaceProperty {
   face: FontFace;
   extraOptions?: { [key: string]: any };
-  only?: Array<string>;
+  only?: string[];
 }
 
 //#region Constants
@@ -24,6 +24,8 @@ const unicodeRanges = {
   kana: "U+3040-30FF",
   CJKCommon: "U+2E80-2EFF,U+3000-303F,U+31C0-31EF,U+3200-32FF,U+3400-4DBF,U+F900-FAFF,U+FE30-FE4F",
   CJKIdeograph: "U+4E00-9FFF",
+  devanagari: "U+0900-097F",
+  thai: "U+0E00-0E7F",
   specialCharacters: "U+266A,U+2605,U+2665,U+2663", //♪.★,♥,♣
 };
 
@@ -35,7 +37,7 @@ const rangesByLanguage = {
   ),
 };
 
-const fonts: Array<LoadingFontFaceProperty> = [
+const fonts: LoadingFontFaceProperty[] = [
   // unicode (special character from PokePT)
   {
     face: new FontFace("emerald", "url(./fonts/PokePT_Wansung.woff2)", {
@@ -87,6 +89,28 @@ const fonts: Array<LoadingFontFaceProperty> = [
       unicodeRange: rangesByLanguage.japanese,
     }),
     only: ["en", "es", "fr", "it", "de", "pt", "ko", "ja", "ca", "da", "tr", "ro", "ru", "tl"],
+  },
+  // devanagari
+  {
+    face: new FontFace("emerald", "url(./fonts/8-bit-devanagari.ttf)", {
+      unicodeRange: unicodeRanges.devanagari,
+    }),
+  },
+  {
+    face: new FontFace("pkmnems", "url(./fonts/8-bit-devanagari.ttf)", {
+      unicodeRange: unicodeRanges.devanagari,
+    }),
+  },
+  // thai
+  {
+    face: new FontFace("emerald", "url(./fonts/fsrebellion.otf)", {
+      unicodeRange: unicodeRanges.thai,
+    }),
+  },
+  {
+    face: new FontFace("pkmnems", "url(./fonts/terrible-thaifix.ttf)", {
+      unicodeRange: unicodeRanges.thai,
+    }),
   },
 ];
 

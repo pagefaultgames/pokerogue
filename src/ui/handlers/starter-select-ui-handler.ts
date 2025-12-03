@@ -155,6 +155,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   tr: {
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
+    starterInfoXPos: 34,
   },
   ro: {
     starterInfoTextSize: "56px",
@@ -1337,7 +1338,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   showText(
     text: string,
     delay?: number,
-    callback?: Function,
+    callback?: () => void,
     callbackDelay?: number,
     prompt?: boolean,
     promptDelay?: number,

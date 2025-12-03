@@ -780,7 +780,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
           || (this.tmMoves.length === 0 && o === MenuOptions.TM_MOVES)
           || (!globalScene.gameData.dexData[this.species.speciesId].ribbons.getRibbons()
             && o === MenuOptions.RIBBONS
-            && !globalScene.showMissingRibbons);
+            && !globalScene.showMissingRibbons
+            && !globalScene.gameData.starterData[this.species.speciesId]?.classicWinCount);
         const color = getTextColor(isDark ? TextStyle.SHADOW_TEXT : TextStyle.SETTINGS_VALUE, false);
         const shadow = getTextColor(isDark ? TextStyle.SHADOW_TEXT : TextStyle.SETTINGS_VALUE, true);
         return `[shadow=${shadow}][color=${color}]${label}[/color][/shadow]`;
@@ -1088,7 +1089,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
   showText(
     text: string,
     delay?: number,
-    callback?: Function,
+    callback?: () => void,
     callbackDelay?: number,
     prompt?: boolean,
     promptDelay?: number,
@@ -1782,6 +1783,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
             } else if (
               !globalScene.gameData.dexData[this.species.speciesId].ribbons.getRibbons()
               && !globalScene.showMissingRibbons
+              && !globalScene.gameData.starterData[this.species.speciesId]?.classicWinCount
             ) {
               ui.showText(i18next.t("pokedexUiHandler:noRibbons"));
               error = true;

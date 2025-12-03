@@ -1,3 +1,4 @@
+import { pokerogueApi } from "#api/pokerogue-api";
 import { loggedInUser } from "#app/account";
 import { GameMode, getGameMode } from "#app/game-mode";
 import { timedEventManager } from "#app/global-event-manager";
@@ -5,7 +6,7 @@ import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { Phase } from "#app/phase";
 import { bypassLogin } from "#constants/app-constants";
-import { fetchDailyRunSeed, getDailyRunStarters } from "#data/daily-run";
+import { getDailyRunStarters } from "#data/daily-run";
 import { modifierTypes } from "#data/data-lists";
 import { Gender } from "#data/gender";
 import { BattleType } from "#enums/battle-type";
@@ -218,6 +219,7 @@ export class TitlePhase extends Phase {
         const starters = getDailyRunStarters(seed);
         const startingLevel = globalScene.gameMode.getStartingLevel();
 
+        // TODO: Dedupe this
         const party = globalScene.getPlayerParty();
         const loadPokemonAssets: Promise<void>[] = [];
         for (const starter of starters) {
@@ -237,6 +239,11 @@ export class TitlePhase extends Phase {
             starter.nature,
           );
           starterPokemon.setVisible(false);
+          if (starter.moveset) {
+            // avoid validating daily run starter movesets which are pre-populated already
+            starterPokemon.tryPopulateMoveset(starter.moveset, true);
+          }
+
           party.push(starterPokemon);
           loadPokemonAssets.push(starterPokemon.loadAssets());
         }
@@ -261,7 +268,13 @@ export class TitlePhase extends Phase {
           globalScene.addModifier(m, true, false, false, true);
         }
         for (const m of timedEventManager.getEventDailyStartingItems()) {
-          globalScene.addModifier(modifierTypes[m]().newModifier(), true, false, false, true);
+          globalScene.addModifier(
+            modifierTypes[m]().withIdFromFunc(modifierTypes[m]).newModifier(),
+            true,
+            false,
+            false,
+            true,
+          );
         }
         globalScene.updateModifiers(true, true);
 
@@ -279,7 +292,8 @@ export class TitlePhase extends Phase {
 
       // If Online, calls seed fetch from db to generate daily run. If Offline, generates a daily run based on current date.
       if (!bypassLogin || isLocalServerConnected) {
-        fetchDailyRunSeed()
+        pokerogueApi.daily
+          .getSeed()
           .then(seed => {
             if (seed) {
               generateDaily(seed);

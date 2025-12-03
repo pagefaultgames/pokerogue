@@ -127,8 +127,9 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
 )
   .withEncounterTier(MysteryEncounterTier.ROGUE)
   .withDisallowedChallenges(Challenges.SINGLE_TYPE, Challenges.SINGLE_GENERATION)
-  // TODO: should reset minimum wave to 10 when there are more Rogue tiers in pool. Matching Dark Deal minimum for now.
   .withSceneWaveRangeRequirement(30, 140)
+  .withScenePartySizeRequirement(3, 6)
+  .withMaxAllowedEncounters(1)
   .withIntroSpriteConfigs([
     {
       spriteKey: "weird_dream_woman",
@@ -462,7 +463,7 @@ async function doNewTeamPostProcess(transformations: PokemonTransformation[]) {
     // Any pokemon that is below 570 BST gets +20 permanent BST to 3 stats
     if (shouldGetOldGateau(newPokemon)) {
       const modType = modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU();
-      const modifier = modType?.newModifier(newPokemon);
+      const modifier = modType.withIdFromFunc(modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU).newModifier(newPokemon);
       if (modifier) {
         globalScene.addModifier(modifier, false, false, false, true);
       }

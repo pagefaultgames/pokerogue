@@ -277,7 +277,7 @@ export class UI extends Phaser.GameObjects.Container {
   showText(
     text: string,
     delay?: number | null,
-    callback?: Function | null,
+    callback?: (() => void) | null,
     callbackDelay?: number | null,
     prompt?: boolean | null,
     promptDelay?: number | null,
@@ -316,7 +316,7 @@ export class UI extends Phaser.GameObjects.Container {
     keyOrText: string,
     name: string | undefined,
     delay: number | null = 0,
-    callback: Function,
+    callback: () => void,
     callbackDelay?: number,
     promptDelay?: number,
   ): void {

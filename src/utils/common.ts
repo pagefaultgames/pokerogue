@@ -474,7 +474,7 @@ export function getLocalizedSpriteKey(baseKey: string) {
 }
 
 /**
- * Check if a number is **inclusively** between two numbers
+ * Check if a number is **inclusively** between two numbers.
  * @param num - the number to check
  * @param min - the minimum value (inclusive)
  * @param max - the maximum value (inclusive)

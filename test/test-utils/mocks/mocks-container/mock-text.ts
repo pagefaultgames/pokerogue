@@ -82,7 +82,7 @@ export class MockText implements MockGameObject {
   showText(
     text: string,
     _delay?: number | null,
-    callback?: Function | null,
+    callback?: (() => void) | null,
     _callbackDelay?: number | null,
     _prompt?: boolean | null,
     _promptDelay?: number | null,
@@ -98,7 +98,7 @@ export class MockText implements MockGameObject {
     keyOrText: string,
     name: string,
     _delay: number | null,
-    callback: Function,
+    callback: () => void,
     _callbackDelay?: number,
     _promptDelay?: number,
   ) {
@@ -354,7 +354,7 @@ export class MockText implements MockGameObject {
   }
 
   // biome-ignore lint/complexity/noBannedTypes: This matches the signature of the class this mocks
-  on(_event: string | symbol, _fn: Function, _context?: any) {}
+  on(_event: string | symbol, _fn: () => void, _context?: any) {}
 
   setActive(_active: boolean): this {
     return this;
