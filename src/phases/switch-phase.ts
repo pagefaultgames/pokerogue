@@ -37,10 +37,7 @@ export class SwitchPhase extends BattlePhase {
     super.start();
 
     // Skip modal switch if impossible (no remaining party members that aren't in battle)
-    if (
-      this.isModal
-      && globalScene.getPlayerParty().filter(p => p.isAllowedInBattle() && !p.isActive(true)).length === 0
-    ) {
+    if (this.isModal && globalScene.getBackupPartyMemberIndices(true).length === 0) {
       return super.end();
     }
 
@@ -55,11 +52,10 @@ export class SwitchPhase extends BattlePhase {
       return super.end();
     }
 
-    // Check if there is any space still in field
+    // Check if there is any space still in field.
     if (
       this.isModal
-      && globalScene.getPlayerField().filter(p => p.isAllowedInBattle() && p.isActive(true)).length
-        >= globalScene.currentBattle.getBattlerCount()
+      && globalScene.getPlayerField().filter(p => p.isActive(true)).length > globalScene.currentBattle.getBattlerCount()
     ) {
       return super.end();
     }

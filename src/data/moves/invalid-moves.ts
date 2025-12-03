@@ -1,3 +1,9 @@
+/**
+ * @module
+ * File containing move banlists for various moves, abilities and other effects.
+ */
+
+import type { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 
 /** Set of moves that cannot be called by {@linkcode MoveId.METRONOME | Metronome}. */
@@ -279,4 +285,21 @@ export const invalidEncoreMoves: ReadonlySet<MoveId> = new Set([
   MoveId.SKETCH,
   MoveId.SLEEP_TALK,
   MoveId.ENCORE,
+]);
+
+/**
+ * Set of all moves that cannot cause {@linkcode AbilityId.WIMP_OUT} and {@linkcode AbilityId.EMERGENCY_EXIT}
+ * to switch out upon dealing damage.
+ *
+ * Includes both HP cutting moves and target-switching ones (which trigger before the ability activates).
+ */
+export const invalidWimpOutMoves: ReadonlySet<MoveId> = new Set<MoveId>([
+  MoveId.CURSE,
+  MoveId.BELLY_DRUM,
+  MoveId.SUBSTITUTE,
+  MoveId.PAIN_SPLIT,
+  MoveId.CLANGOROUS_SOUL,
+  MoveId.FILLET_AWAY,
+  MoveId.DRAGON_TAIL,
+  MoveId.CIRCLE_THROW,
 ]);
