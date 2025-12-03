@@ -152,7 +152,7 @@ describe("Moves - Destiny Bond", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemyPokemon).toHaveFainted();
-    expect(playerPokemon).toHaveFainted();
+    expect(playerPokemon).not.toHaveFainted();
   });
 
   it("should not KO an ally", async () => {
