@@ -35623,7 +35623,6 @@ export const tmSpecies = {
     SpeciesId.BASCULEGION,
     SpeciesId.CETODDLE,
     SpeciesId.CETITAN,
-    SpeciesId.VELUZA,
     SpeciesId.IRON_BUNDLE,
     SpeciesId.FRIGIBAX,
     SpeciesId.ARCTIBAX,
@@ -35638,6 +35637,7 @@ export const tmSpecies = {
     SpeciesId.GALAR_MR_MIME,
     SpeciesId.GALAR_SLOWKING,
     SpeciesId.GALAR_CORSOLA,
+    SpeciesId.HISUI_AVALUGG,
     [
       SpeciesId.CALYREX,
       "ice",
