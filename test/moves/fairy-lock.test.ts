@@ -90,7 +90,7 @@ describe("Moves - Fairy Lock", () => {
     await game.phaseInterceptor.to("BerryPhase");
     await game.toNextTurn();
 
-    expect(player2.species.speciesId).not.toBe(SpeciesId.GENGAR);
+    expect(game.scene.getPlayerField()[1].species.speciesId).not.toBe(SpeciesId.GENGAR);
   });
 
   it("Phasing moves will still switch out", async () => {
@@ -141,16 +141,16 @@ describe("Moves - Fairy Lock", () => {
     await game.move.selectEnemyMove(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
 
-    const [player1, player2] = game.scene.getPlayerField();
+    const [player1, player2, enemy1, enemy2] = game.scene.getField();
     expect(player1.isTrapped()).toBe(true);
     expect(player2.isTrapped()).toBe(true);
-    expect(player1.isTrapped()).toBe(true);
-    expect(player2.isTrapped()).toBe(true);
+    expect(enemy1.isTrapped()).toBe(true);
+    expect(enemy2.isTrapped()).toBe(true);
 
     await game.toNextTurn();
     expect(player1.isTrapped()).toBe(false);
     expect(player2.isTrapped()).toBe(false);
-    expect(player1.isTrapped()).toBe(false);
-    expect(player2.isTrapped()).toBe(false);
+    expect(enemy1.isTrapped()).toBe(false);
+    expect(enemy2.isTrapped()).toBe(false);
   });
 });
