@@ -461,10 +461,8 @@ export class MoveEffectPhase extends PokemonPhase {
 
     return (
       this.move.moveTarget === MoveTarget.DRAGON_DARTS
-      && !!ally?.isActive(true)
-      && // TODO: This should check for whether the move was redirected during the MovePhase to ensure
-      // correct Stalwart interactions, but will have to wait until a move-in-flight refactor
-      !target?.getTag(BattlerTagType.CENTER_OF_ATTENTION)
+      && !!ally?.isActive(true) // TODO: This should check for whether the move was redirected during the MovePhase to ensure // correct Stalwart interactions, but will have to wait until a move-in-flight refactor
+      && !target?.getTag(BattlerTagType.CENTER_OF_ATTENTION)
       && ally !== this.getUserPokemon()
     );
   }
