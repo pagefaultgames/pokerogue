@@ -106,10 +106,13 @@ If a key is present in any language _except_ the master language, it won't appea
 
 > [!IMPORTANT]
 > The Dev and Translation teams have strict requirements for ensuring consistency of newly added locales entries.
->
+> PRs failing these requirements **will not be mergeable into `locales`**!  
 > - File names should be in `kebab-case`. Example: `trainer-names.json`
 > - Key names should be in `camelCase`. Example: `aceTrainer`
->    - If you make use of i18next's inbuilt [context support](https://www.i18next.com/translation-function/context), you need to use `snake_case` for the context key. Example: `aceTrainer_male`
+> - Keys making use of i18next's inbuilt [context support](https://www.i18next.com/translation-function/context) must use `snake_case` for the context extension[^3]. Example: `aceTrainer_male`
+
+[^3]: If your PR introduces a new context extension not already used in the codebase, the validation workflow will be unable to detect it and flag it as invalid. \
+To fix this, update the [`i18nextKeyExtensions`](https://github.com/pagefaultgames/pokerogue-locales/blob/main/.github/scripts/locales-format-checker/constants.js#L30) array with the new entries.
 
 ### Requirements for Modifying Translated Text
 
