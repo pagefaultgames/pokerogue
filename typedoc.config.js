@@ -4,12 +4,16 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
+
+// @ts-check
+/// <reference path="./global.d.ts" />
+
 import { globSync } from "node:fs";
 
 const dryRun = !!process.env.DRY_RUN?.match(/true/gi);
 
 /**
- * <!-- @type {Partial<import("typedoc").TypeDocOptions>} -->
+ * <!-- @satisfies {Partial<import("typedoc").TypeDocOptions>} -->
  */
 const config = {
   entryPoints: ["./src", "./test/test-utils"],
