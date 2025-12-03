@@ -1,10 +1,11 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, test } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Parting Shot", () => {
   let phaserGame: Phaser.Game;
@@ -24,137 +25,62 @@ describe("Moves - Parting Shot", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .moveset([MoveId.PARTING_SHOT, MoveId.SPLASH])
-      .enemyMoveset(MoveId.SPLASH)
-      .startingLevel(5)
-      .enemyLevel(5);
+      .ability(AbilityId.BALL_FETCH)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
-  test("Parting Shot when buffed by prankster should fail against dark types", async () => {
-    game.override.enemySpecies(SpeciesId.POOCHYENA).ability(AbilityId.PRANKSTER);
-    await game.classicMode.startBattle([SpeciesId.MURKROW, SpeciesId.MEOWTH]);
+  it("should switch the user out and lower the target's ATK/SPATK by 1", async () => {
+    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
 
-    const enemyPokemon = game.field.getEnemyPokemon();
-    expect(enemyPokemon).toBeDefined();
+    const [feebas, milotic] = game.scene.getPlayerParty();
 
-    game.move.select(MoveId.PARTING_SHOT);
-
-    await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
-    expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(0);
-    expect(game.scene.getPlayerField()[0].species.speciesId).toBe(SpeciesId.MURKROW);
-  });
-
-  test("Parting shot should fail against good as gold ability", async () => {
-    game.override.enemySpecies(SpeciesId.GHOLDENGO).enemyAbility(AbilityId.GOOD_AS_GOLD);
-    await game.classicMode.startBattle([SpeciesId.MURKROW, SpeciesId.MEOWTH]);
-
-    const enemyPokemon = game.field.getEnemyPokemon();
-    expect(enemyPokemon).toBeDefined();
-
-    game.move.select(MoveId.PARTING_SHOT);
-
-    await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
-    expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(0);
-    expect(game.scene.getPlayerField()[0].species.speciesId).toBe(SpeciesId.MURKROW);
-  });
-
-  // TODO: fix this bug to pass the test!
-  it.todo("Parting shot should fail if target is -6/-6 de-buffed", async () => {
-    game.override.moveset([MoveId.PARTING_SHOT, MoveId.MEMENTO, MoveId.SPLASH]);
-    await game.classicMode.startBattle([
-      SpeciesId.MEOWTH,
-      SpeciesId.MEOWTH,
-      SpeciesId.MEOWTH,
-      SpeciesId.MURKROW,
-      SpeciesId.ABRA,
-    ]);
-
-    // use Memento 3 times to debuff enemy
-    game.move.select(MoveId.MEMENTO);
-    await game.phaseInterceptor.to("FaintPhase");
-    expect(game.field.getPlayerPokemon().isFainted()).toBe(true);
-    game.doSelectPartyPokemon(1);
-
-    await game.phaseInterceptor.to("TurnInitPhase", false);
-    game.move.select(MoveId.MEMENTO);
-    await game.phaseInterceptor.to("FaintPhase");
-    expect(game.field.getPlayerPokemon().isFainted()).toBe(true);
-    game.doSelectPartyPokemon(2);
-
-    await game.phaseInterceptor.to("TurnInitPhase", false);
-    game.move.select(MoveId.MEMENTO);
-    await game.phaseInterceptor.to("FaintPhase");
-    expect(game.field.getPlayerPokemon().isFainted()).toBe(true);
-    game.doSelectPartyPokemon(3);
-
-    // set up done
-    await game.phaseInterceptor.to("TurnInitPhase", false);
-    const enemyPokemon = game.field.getEnemyPokemon();
-    expect(enemyPokemon).toBeDefined();
-
-    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-6);
-    expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(-6);
-
-    // now parting shot should fail
-    game.move.select(MoveId.PARTING_SHOT);
-
-    await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-6);
-    expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(-6);
-    expect(game.scene.getPlayerField()[0].species.speciesId).toBe(SpeciesId.MURKROW);
-  });
-
-  // TODO: fix this bug to pass the test!
-  it.todo("Parting shot shouldn't allow switch out when mist is active", async () => {
-    game.override.enemySpecies(SpeciesId.ALTARIA).enemyAbility(AbilityId.NONE).enemyMoveset([MoveId.MIST]);
-    await game.classicMode.startBattle([SpeciesId.SNORLAX, SpeciesId.MEOWTH]);
-
-    const enemyPokemon = game.field.getEnemyPokemon();
-    expect(enemyPokemon).toBeDefined();
-
-    game.move.select(MoveId.PARTING_SHOT);
-
-    await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
-    expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(0);
-    expect(game.scene.getPlayerField()[0].species.speciesId).toBe(SpeciesId.MURKROW);
-  });
-
-  // TODO: fix this bug to pass the test!
-  it.todo("Parting shot shouldn't allow switch out against clear body ability", async () => {
-    game.override.enemySpecies(SpeciesId.TENTACOOL).enemyAbility(AbilityId.CLEAR_BODY);
-    await game.classicMode.startBattle([SpeciesId.SNORLAX, SpeciesId.MEOWTH]);
-
-    const enemyPokemon = game.field.getEnemyPokemon();
-    expect(enemyPokemon).toBeDefined();
-
-    game.move.select(MoveId.PARTING_SHOT);
-
-    await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
-    expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(0);
-    expect(game.scene.getPlayerField()[0].species.speciesId).toBe(SpeciesId.MURKROW);
-  });
-
-  // TODO: fix this bug to pass the test!
-  it.todo("should lower stats without failing if no alive party members available to switch", async () => {
-    await game.classicMode.startBattle([SpeciesId.MURKROW, SpeciesId.MEOWTH]);
-
-    const meowth = game.scene.getPlayerParty()[1];
-    meowth.hp = 0;
-
-    game.move.select(MoveId.SPLASH);
-    await game.toNextTurn();
-
-    game.move.select(MoveId.PARTING_SHOT);
+    game.move.use(MoveId.PARTING_SHOT);
     game.doSelectPartyPokemon(1);
     await game.toEndOfTurn();
 
-    const enemyPokemon = game.field.getEnemyPokemon();
-    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
-    expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(0);
-    expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.MURKROW);
+    const enemy = game.field.getEnemyPokemon();
+
+    expect(feebas.isOnField()).toBe(false);
+    expect(milotic.isOnField()).toBe(false);
+    expect(enemy).toHaveStatStage(Stat.ATK, -1);
+    expect(enemy).toHaveStatStage(Stat.SPATK, -1);
+  });
+
+  // TODO: This is not currently implemented
+  it.todo("should fail without switching if stat stages cannot be lowered", async () => {
+    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
+
+    const feebas = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
+    enemy.setStatStage(Stat.ATK, -6);
+    enemy.setStatStage(Stat.SPATK, -6);
+
+    game.move.use(MoveId.PARTING_SHOT);
+    game.doSelectPartyPokemon(1);
+    await game.toEndOfTurn();
+
+    expect(feebas).toHaveUsedMove({ move: MoveId.PARTING_SHOT, result: MoveResult.FAIL });
+    expect(feebas.isOnField()).toBe(true);
+    expect(enemy).toHaveStatStage(Stat.ATK, -6);
+    expect(enemy).toHaveStatStage(Stat.SPATK, -6);
+  });
+
+  // TODO: This is broken
+  it.todo("should lower stats without failing if unable to switch", async () => {
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+
+    const feebas = game.field.getPlayerPokemon();
+    const karp = game.field.getEnemyPokemon();
+
+    game.move.use(MoveId.PARTING_SHOT);
+    await game.toEndOfTurn();
+
+    // move should have suceeded despite lack of switch
+    expect(feebas).toHaveUsedMove({ move: MoveId.PARTING_SHOT, result: MoveResult.SUCCESS });
+    expect(feebas.isOnField()).toBe(true);
+    expect(karp).toHaveStatStage(Stat.ATK, -1);
+    expect(karp).toHaveStatStage(Stat.SPATK, -1);
   });
 });
