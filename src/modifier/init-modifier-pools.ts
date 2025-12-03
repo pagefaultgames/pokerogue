@@ -1,7 +1,3 @@
-/* biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
-import type { initModifierTypes } from "#modifiers/modifier-type";
-/* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
-
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { pokemonEvolutions } from "#balance/pokemon-evolutions";
@@ -29,6 +25,7 @@ import {
   trainerModifierPool,
   wildModifierPool,
 } from "#modifiers/modifier-pools";
+import type { initModifierTypes } from "#modifiers/modifier-type";
 import { WeightedModifierType } from "#modifiers/modifier-type";
 import type { WeightedModifierTypeWeightFunc } from "#types/modifier-types";
 

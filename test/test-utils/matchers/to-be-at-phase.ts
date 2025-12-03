@@ -1,8 +1,5 @@
-/** biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports */
 import type { Phase } from "#app/phase";
 import type { GameManager } from "#test/test-utils/game-manager";
-// biome-ignore-end lint/correctness/noUnusedImports: TSDoc
-
 import { isGameManagerInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { PhaseString } from "#types/phase-types";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
