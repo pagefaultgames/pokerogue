@@ -4,7 +4,6 @@ import "phaser";
 
 /**
  * Interface representing an object that can be passed to {@linkcode setPositionRelative}.
- * @interface
  */
 interface GuideObject
   extends Pick<Phaser.GameObjects.Components.ComputedSize, "width" | "height">,
