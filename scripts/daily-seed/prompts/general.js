@@ -13,6 +13,9 @@ import { BIOMES } from "../constants.js";
 const ajv = new Ajv({
   allErrors: true,
 });
+/**
+ * The validator for the {@linkcode CustomDailyRunConfig}.
+ */
 const validate = ajv.compile(customDailyRunSchema);
 
 /**
@@ -91,7 +94,7 @@ export async function promptEdit() {
 /**
  * Prompts the user to enter a seed variation.
  * This can be anything and is only used to \
- * differentiate between multiple seeds with the same config.
+ * have the same config but with a different seed.
  * @returns {Promise<string>} The seed variation.
  */
 export async function promptSeedVariation() {

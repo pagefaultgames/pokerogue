@@ -16,6 +16,9 @@ import customDailyRunSchema from "./schema.json";
 const ajv = new Ajv({
   allErrors: true,
 });
+/**
+ * The validator for the {@linkcode CustomDailyRunConfig}.
+ */
 const validate = ajv.compile(customDailyRunSchema);
 
 /**
@@ -41,7 +44,7 @@ export function parseDailySeed(seed: string): CustomDailyRunConfig | null {
       return null;
     }
 
-    // todo: remove this later since it gets logged a lot
+    // todo: remove this later since it gets logged a lot. Or lock behind `isDev`
     console.log("Using a custom config for the daily run:", config);
     return config;
   } catch {

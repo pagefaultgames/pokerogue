@@ -50,6 +50,9 @@ export async function promptStarters() {
   return starters;
 }
 
+/**
+ * The list of valid options for the current starter.
+ */
 const starterOptions = [...STARTER_OPTIONS];
 
 /**

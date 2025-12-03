@@ -36,6 +36,7 @@ const rootDir = join(import.meta.dirname, "..", "..");
  * @property {string} [seedVariation]
  */
 /**
+ * The config for the custom daily run seed.
  * @type {CustomSeedConfig}
  */
 const customSeedConfig = {
@@ -78,6 +79,7 @@ async function promptOptions() {
 }
 
 /**
+ * Handle the selected option from the main menu.
  * @param {string} answer
  */
 async function handleAnswer(answer) {
@@ -138,6 +140,7 @@ async function finish() {
   process.exit(0);
 }
 /**
+ * Write the seed config to a file.
  * @param {string} path
  */
 async function createOutputFile(path) {

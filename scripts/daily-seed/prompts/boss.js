@@ -27,6 +27,7 @@ import {
  * @property {number} [passive]
  */
 /**
+ * The config for the daily run boss.
  * @type {BossConfig}
  */
 let bossConfig = {

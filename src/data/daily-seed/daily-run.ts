@@ -20,6 +20,11 @@ import {
 
 type StarterTuple = [Starter, Starter, Starter];
 
+/**
+ * Generate the daily run starters.
+ * @param seed - The daily run seed
+ * @returns A tuple of 3 {@linkcode Starter}s
+ */
 export function getDailyRunStarters(seed: string): StarterTuple {
   const starters: Starter[] = [];
 
@@ -58,6 +63,10 @@ export function getDailyRunStarters(seed: string): StarterTuple {
   return starters as StarterTuple;
 }
 
+/**
+ * Get daily run starting biome.
+ * @returns The {@linkcode BiomeId}
+ */
 export function getDailyStartingBiome(): BiomeId {
   const eventBiome = getDailyEventSeedBiome(globalScene.seed);
   if (eventBiome != null) {
@@ -84,7 +93,6 @@ export function getDailyStartingBiome(): BiomeId {
     }
   }
 
-  // Fallback in case something went wrong
   // TODO: should this use `randSeedItem`?
   return biomes[randSeedInt(biomes.length)];
 }
