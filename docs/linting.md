@@ -18,7 +18,7 @@ For the most part, Biome attempts to stay "out of your hair", letting you write 
 On the other hand, if Biome complains about a piece of code, **there's probably a good reason why**. Disable comments should be used sparingly or when readabilty demands it - your first instinct should be to fix the code in question, not disable the rule.
 
 ## Editor Integration
-Biome has integration with many popular code editors. See [these](https://biomejs.dev/guides/editors/first-party-extensions/) [pages](https://biomejs.dev/guides/editors/third-party-extensions/) for information about enabling Biome in your editor of choice.
+Biome has integrations with many popular code editors. See [these](https://biomejs.dev/guides/editors/first-party-extensions/) [pages](https://biomejs.dev/guides/editors/third-party-extensions/) for information about enabling Biome in your editor of choice.
 
 ## Automated Runs
 Generally speaking, most users shouldn't need to run Biome directly; in addition to editor integration, a [pre-commit hook](../lefthook.yml) will automatically format and lint all staged files before each commit.
@@ -54,8 +54,9 @@ We primarily use Biome's [recommended ruleset](https://biomejs.dev/linter/rules/
 
 Some things to consider:
 
-- We have disabled rules that prioritize style over performance, such as `useTemplate`.
-- Some rules are currently marked as warnings (`warn`) to allow for gradual refactoring without blocking development. **Do not write new code that triggers these rules!**
+- We have disabled rules that prioritize style over performance (such as `useTemplate`),
+as well as ones that risk introducing accidental errors (such as `useExponentiationOperator`).
+- Some rules are currently marked as `info` or `warn` to allow for gradual refactoring without blocking development. **Do not write new code that triggers these rules!**
 - The linter is configured to ignore specific files and folders (such as excessively large files or ones in need of refactoring) to improve performance and focus on actionable areas.
 
 Any questions about linting rules can be brought up in the `#dev-corner` channel in the community Discord.

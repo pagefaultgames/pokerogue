@@ -26,9 +26,9 @@ If you use any external code, please make sure to follow its licensing informati
 
 ## 🛠️ Development Basics
 
-PokéRogue is built with [Typescript](https://www.typescriptlang.org/docs/handbook/intro.html), using the [Phaser](https://github.com/phaserjs/phaser) game framework.
+PokéRogue is built with [TypeScript](https://www.typescriptlang.org/docs/handbook/intro.html), using the [Phaser](https://github.com/phaserjs/phaser) game framework.
 
-If you have the motivation and experience with Typescript/Javascript (or are willing to learn), you can contribute by forking the repository and making pull requests with contributions.
+If you have the motivation and experience with TypeScript/JavaScript (or are willing to learn), you can contribute by forking the repository and making pull requests with contributions.
 
 ## 💻 Environment Setup
 
@@ -90,7 +90,7 @@ Notable topics include:
 - [Commenting your code](./docs/comments.md)
 - [Linting & Formatting](./docs/linting.md)
 - [Localization](./docs/localization.md)
-- [Enemy AI move selection](./docs/enemy-ai.md) 
+- [Enemy AI move selection](./docs/enemy-ai.md)
 - [Running with Podman](./docs/podman.md)
 
 Again, if you have unanswered questions please feel free to ask!
