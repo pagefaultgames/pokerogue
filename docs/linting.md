@@ -32,7 +32,7 @@ We also have a [Github Action](../.github/workflows/linting.yml) to verify code 
 These are effectively the same commands as run by Lefthook, merely on a project-wide scale.
 
 ## Running Biome via CLI
-To run you Biome on your files manually, you have 2 main options:
+To run Biome on your files manually, you have 2 main options:
 1. Run the scripts included in `package.json` (`pnpm biome` and `pnpm biome:all`). \
     These have sensible defaults for command-line options, but do not allow altering certain flags (as some cannot be specified twice in the same command)
 
@@ -50,15 +50,11 @@ A full list of flags and options can be found on [their website](https://biomejs
 
 ## Linting Rules
 
-We primarily use Biome's [recommended ruleset](https://biomejs.dev/linter/rules/) for linting JS/TS files, with some customizations to better suit our project's needs[^1].
+We primarily use Biome's [recommended ruleset](https://biomejs.dev/linter/rules/) for linting JS/TS files, with some customizations to better suit our project's needs. \
+A complete list of rules can be found in the [`biome.jsonc`](../biome.jsonc) file in the project root. Most rules are accompanied by comments explaining the reasons for their inclusion/exclusion.
 
-Some things to consider:
-
-- We have disabled rules that prioritize style over performance (such as `useTemplate`),
-as well as ones that risk introducing accidental errors (such as `useExponentiationOperator`).
-- Some rules are currently marked as `info` or `warn` to allow for gradual refactoring without blocking development. **Do not write new code that triggers these rules!**
-- The linter is configured to ignore specific files and folders (such as excessively large files or ones in need of refactoring) to improve performance and focus on actionable areas.
+> [!IMPORTANT]
+> Certain lint rules may be marked as `info` or `warn` to allow for gradual refactoring without blocking development.
+> **Do not write new code that triggers these rules!**
 
 Any questions about linting rules can be brought up in the `#dev-corner` channel in the community Discord.
-
-[^1]: A complete list of rules can be found in the [`biome.jsonc`](../biome.jsonc) file in the project root. Many rules are accompanied by comments explaining the reasons for their inclusion (or lack thereof).
