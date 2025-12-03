@@ -1789,10 +1789,6 @@ packages:
     resolution: {integrity: sha512-xxCJm+Bckc6kQBknN7i9fnP/xobQRsRQxR01CztFkp/h++yfVxUUcmMgfR2HttJx/dpWjS9ubVuyspJv24Q9DA==}
     engines: {node: '>=20'}
 
-  type-fest@5.2.0:
-    resolution: {integrity: sha512-xxCJm+Bckc6kQBknN7i9fnP/xobQRsRQxR01CztFkp/h++yfVxUUcmMgfR2HttJx/dpWjS9ubVuyspJv24Q9DA==}
-    engines: {node: '>=20'}
-
   typedoc-github-theme@0.3.1:
     resolution: {integrity: sha512-j6PmkAGmf/MGCzYjQcUH6jS9djPsNl/IoTXooxC+MoeMkBhbmPyKJlpR6Lw12BLoe2OYpYA2J1KMktUJXp/8Sw==}
     engines: {node: '>=18.0.0'}
@@ -3530,8 +3526,6 @@ snapshots:
 
   tapable@2.3.0: {}
 
-  tapable@2.3.0: {}
-
   tinybench@2.9.0: {}
 
   tinyexec@0.3.2: {}
@@ -3577,10 +3571,6 @@ snapshots:
       strip-bom: 3.0.0
 
   tslib@2.8.1: {}
-
-  type-fest@5.2.0:
-    dependencies:
-      tagged-tag: 1.0.0
 
   type-fest@5.2.0:
     dependencies:
