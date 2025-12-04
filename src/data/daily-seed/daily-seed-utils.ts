@@ -25,6 +25,7 @@ const validate = ajv.compile(customDailyRunSchema);
  * If this is Daily Mode and the seed can be parsed into json it is a Daily Event Seed.
  * @returns `true` if it is a Daily Event Seed.
  */
+// todo: should there be a flag set on load to avoid revalidating the seed every time?
 export function isDailyEventSeed(seed: string): boolean {
   return globalScene.gameMode.isDaily && parseDailySeed(seed) != null;
 }
