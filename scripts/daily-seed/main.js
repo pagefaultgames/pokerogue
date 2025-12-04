@@ -7,7 +7,7 @@
 
 /*
  * Interactive CLI to create a custom daily run seed.
- * Usage: `pnpm daily-seed` or `node scripts/daily-seed/main.js`
+ * Usage: `pnpm dailySeed:create` or `node scripts/daily-seed/main.js`
  */
 
 import { existsSync, writeFileSync } from "fs";
