@@ -25,4 +25,6 @@ post-merge:
 post-checkout:
   commands:
     update-packages:
-      run: pnpm i
+      # cf https://git-scm.com/docs/githooks#_post_checkout:
+      # The 3rd argument is 1 for branch checkouts and 0 for file checkouts.
+      run: if test {3} -eq "1"; then pnpm i; fi
