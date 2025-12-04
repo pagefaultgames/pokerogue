@@ -47,11 +47,18 @@ This Linux environment comes with all required dependencies needed to start work
 [codespaces-link]: <https://github.com/codespaces/new?hide_repo_select=true&repo=620476224&ref=beta>
 [devcontainer-ext]: <https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers>
 
+> [!IMPORTANT]
+> Due to quirks of devcontainer port forwarding, you must use **`pnpm start:podman`** to start a local dev server from within a devcontainer.
+> All other instructions remain the same as local development.
+
+### Podman
+For those who prefer Docker containers, see [this instructions page](./docs/podman.md) for information on how to setup a development environment with Podman.
+
 ### Local Development
 
 #### Prerequisites
 
-- node: >=22.14.0 - [manage with pnpm](https://pnpm.io/cli/env) | [manage with fnm](https://github.com/Schniz/fnm) | [manage with nvm](https://github.com/nvm-sh/nvm) | [manage with volta.sh](https://volta.sh/)
+- node: >=24.9.0 - [manage with pnpm](https://pnpm.io/cli/env) | [manage with fnm](https://github.com/Schniz/fnm) | [manage with nvm](https://github.com/nvm-sh/nvm) | [manage with volta.sh](https://volta.sh/)
 - pnpm: 10.x - [how to install](https://pnpm.io/installation) (not recommended to install via `npm` on Windows native) | [alternate method - volta.sh](https://volta.sh/)
 - The repository [forked](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) and [cloned](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) locally on your device
 
@@ -91,7 +98,6 @@ Notable topics include:
 - [Linting & Formatting](./docs/linting.md)
 - [Localization](./docs/localization.md)
 - [Enemy AI move selection](./docs/enemy-ai.md) 
-- [Running with Podman](./docs/podman.md)
 
 Again, if you have unanswered questions please feel free to ask!
 
