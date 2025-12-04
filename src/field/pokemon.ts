@@ -6373,11 +6373,6 @@ export class EnemyPokemon extends Pokemon {
       && this.species.forms[Overrides.ENEMY_FORM_OVERRIDES[speciesId]]
     ) {
       this.formIndex = Overrides.ENEMY_FORM_OVERRIDES[speciesId];
-    } else if (isDailyFinalBoss()) {
-      const eventBoss = getDailyEventSeedBoss(globalScene.seed);
-      if (eventBoss?.formIndex != null) {
-        this.formIndex = eventBoss.formIndex;
-      }
     }
 
     if (!dataSource) {
@@ -6393,15 +6388,8 @@ export class EnemyPokemon extends Pokemon {
         this.initShinySparkle();
       }
 
-      const eventBoss = getDailyEventSeedBoss(globalScene.seed);
-      const eventBossVariant = eventBoss?.variant;
-      const eventBossVariantEnabled = eventBossVariant != null && isDailyFinalBoss();
-      if (eventBossVariantEnabled) {
-        this.shiny = true;
-      }
-
       if (this.shiny) {
-        this.variant = eventBossVariantEnabled ? eventBossVariant : this.generateShinyVariant();
+        this.variant = this.generateShinyVariant();
         if (Overrides.ENEMY_VARIANT_OVERRIDE !== null) {
           this.variant = Overrides.ENEMY_VARIANT_OVERRIDE;
         }
@@ -6409,13 +6397,7 @@ export class EnemyPokemon extends Pokemon {
 
       this.luck = (this.shiny ? this.variant + 1 : 0) + (this.fusionShiny ? this.fusionVariant + 1 : 0);
 
-      if (eventBoss?.nature != null) {
-        this.setNature(eventBoss.nature);
-      }
-
-      if (eventBoss?.moveset != null) {
-        this.tryPopulateMoveset(eventBoss.moveset, true);
-      }
+      this.applyCustomDailyBossConfig();
 
       if (this.hasTrainer() && globalScene.currentBattle) {
         const { waveIndex } = globalScene.currentBattle;
@@ -6459,6 +6441,37 @@ export class EnemyPokemon extends Pokemon {
       bossSegments
       ?? globalScene.getEncounterBossSegments(globalScene.currentBattle.waveIndex, this.level, this.species, true);
     this.bossSegmentIndex = this.bossSegments - 1;
+  }
+
+  /**
+   * Helper method to apply the custom daily boss config to this pokemon.
+   */
+  applyCustomDailyBossConfig(): void {
+    if (!isDailyFinalBoss()) {
+      return;
+    }
+
+    const bossConfig = getDailyEventSeedBoss(globalScene.seed);
+    if (!bossConfig) {
+      return;
+    }
+
+    if (bossConfig.formIndex != null) {
+      this.formIndex = bossConfig.formIndex;
+    }
+
+    if (bossConfig.variant != null) {
+      this.shiny = true;
+      this.variant = bossConfig.variant;
+    }
+
+    if (bossConfig.nature != null) {
+      this.setNature(bossConfig.nature);
+    }
+
+    if (bossConfig.moveset != null) {
+      this.tryPopulateMoveset(bossConfig.moveset, true);
+    }
   }
 
   generateAndPopulateMoveset(formIndex?: number): void {
