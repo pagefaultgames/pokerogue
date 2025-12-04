@@ -46,11 +46,11 @@ jobs:
       # don't stop upon 1 shard failing
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4, 5]
+        shard: [1, 2, 3, 4]
     uses: ./.github/workflows/test-shard-template.yml
     with:
       shard: ${{ matrix.shard }}
-      totalShards: 5
+      totalShards: 4
 
   check-results:
     name: Check Test Results
@@ -62,7 +62,10 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v4.2.2
         with:
-          submodules: "recursive"
+          sparse-checkout: |
+            test/
+          sparse-checkout-cone-mode: false
+          
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -84,4 +87,4 @@ jobs:
           merge-multiple: true
 
       - name: Merge blobs
-        run: pnpm test:silent --merge-reports=test-results
+        run: pnpm test:merge-reports
