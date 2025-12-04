@@ -52,7 +52,7 @@ This Linux environment comes with all required dependencies needed to start work
 > All other instructions remain the same as local development.
 
 ### Podman
-For those who prefer Docker containers,see [this instructions page](./docs/podman.md) for information on how to setup a development environment with Podman.
+For those who prefer Docker containers, see [this instructions page](./docs/podman.md) for information on how to setup a development environment with Podman.
 
 ### Local Development
 
