@@ -35,7 +35,7 @@ describe("Abilities - Victory Star", () => {
   it("should increase the accuracy of its user", async () => {
     await game.classicMode.startBattle([SpeciesId.VICTINI, SpeciesId.MAGIKARP]);
 
-    const user = game.scene.getPlayerField()[0];
+    const user = game.field.getPlayerPokemon();
 
     vi.spyOn(user, "getAccuracyMultiplier");
     game.move.select(MoveId.TACKLE, 0, BattlerIndex.ENEMY);
@@ -48,7 +48,7 @@ describe("Abilities - Victory Star", () => {
   it("should increase the accuracy of its user's ally", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.VICTINI]);
 
-    const ally = game.scene.getPlayerField()[0];
+    const ally = game.field.getPlayerPokemon();
     vi.spyOn(ally, "getAccuracyMultiplier");
 
     game.move.select(MoveId.TACKLE, 0, BattlerIndex.ENEMY);
