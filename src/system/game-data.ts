@@ -78,6 +78,7 @@ import { executeIf, fixedInt, NumberHolder, randInt, randSeedItem } from "#utils
 import { decrypt, encrypt } from "#utils/data";
 import { getEnumKeys } from "#utils/enums";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { toCamelCase } from "#utils/strings";
 import { AES, enc } from "crypto-js";
 import i18next from "i18next";
 
@@ -1405,7 +1406,7 @@ export class GameData {
 
       reader.onload = (_ => {
         return e => {
-          let dataName = GameDataType[dataType].toLowerCase();
+          const dataName = i18next.t(`gameData:${toCamelCase(GameDataType[dataType])}`);
           let dataStr = AES.decrypt(e.target?.result?.toString()!, saveKey).toString(enc.Utf8); // TODO: is this bang correct?
           let valid = false;
           try {
@@ -1425,7 +1426,6 @@ export class GameData {
               case GameDataType.RUN_HISTORY: {
                 const data = JSON.parse(dataStr);
                 const keys = Object.keys(data);
-                dataName = i18next.t("menuUiHandler:RUN_HISTORY").toLowerCase();
                 keys.forEach(key => {
                   const entryKeys = Object.keys(data[key]);
                   valid =

@@ -35,8 +35,8 @@ describe("Moves - Baneful Bunker", () => {
   });
 
   function expectProtected() {
-    expect(game.scene.getEnemyPokemon()?.hp).toBe(game.scene.getEnemyPokemon()?.getMaxHp());
-    expect(game.scene.getPlayerPokemon()?.status?.effect).toBe(StatusEffect.POISON);
+    expect(game.field.getEnemyPokemon().hp).toBe(game.field.getEnemyPokemon().getMaxHp());
+    expect(game.field.getPlayerPokemon().status?.effect).toBe(StatusEffect.POISON);
   }
 
   it("should protect the user and poison attackers that make contact", async () => {
