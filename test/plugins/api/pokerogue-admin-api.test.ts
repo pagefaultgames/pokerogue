@@ -1,12 +1,7 @@
 import { PokerogueAdminApi } from "#api/pokerogue-admin-api";
 import { initServerForApiTests } from "#test/test-utils/test-file-initialization";
 import { getApiBaseUrl } from "#test/test-utils/test-utils";
-import type {
-  DiscordRequest,
-  GoogleRequest,
-  SearchAccountRequest,
-  SearchAccountResponse,
-} from "#types/api/pokerogue-admin-api";
+import type { DiscordRequest, GoogleRequest, SearchAccountRequest, SearchAccountResponse } from "#types/api";
 import { HttpResponse, http } from "msw";
 import type { SetupServerApi } from "msw/node";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
