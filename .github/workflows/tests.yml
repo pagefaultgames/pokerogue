@@ -46,11 +46,11 @@ jobs:
       # don't stop upon 1 shard failing
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4]
+        shard: [1, 2, 3, 4, 5]
     uses: ./.github/workflows/test-shard-template.yml
     with:
       shard: ${{ matrix.shard }}
-      totalShards: 4
+      totalShards: 5
 
   check-results:
     name: Check Test Results
