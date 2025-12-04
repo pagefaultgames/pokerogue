@@ -47,6 +47,13 @@ This Linux environment comes with all required dependencies needed to start work
 [codespaces-link]: <https://github.com/codespaces/new?hide_repo_select=true&repo=620476224&ref=beta>
 [devcontainer-ext]: <https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers>
 
+> [!IMPORTANT]
+> Due to quirks of devcontainer port forwarding, you must use **`pnpm start:podman`** to start a local dev server from within a devcontainer.
+> All other instructions remain the same as local development.
+
+### Podman
+For those who prefer Docker containers,see [this instructions page](./docs/podman.md) for information on how to setup a development environment with Podman.
+
 ### Local Development
 
 #### Prerequisites
@@ -91,7 +98,6 @@ Notable topics include:
 - [Linting & Formatting](./docs/linting.md)
 - [Localization](./docs/localization.md)
 - [Enemy AI move selection](./docs/enemy-ai.md) 
-- [Running with Podman](./docs/podman.md)
 
 Again, if you have unanswered questions please feel free to ask!
 
