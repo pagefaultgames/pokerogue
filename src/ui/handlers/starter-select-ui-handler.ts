@@ -4681,7 +4681,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   /**
    * Truncate the Pokémon name so it won't overlap into the starters.
    */
-  truncateName() {
+  private truncateName() {
     const name = this.pokemonNameText.text;
     if (name.length > 15) {
       this.pokemonNameText.setText(truncateString(name, 15));
