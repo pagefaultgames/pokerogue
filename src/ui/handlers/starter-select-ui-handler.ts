@@ -4683,8 +4683,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
    */
   private truncateName() {
     const name = this.pokemonNameText.text;
-    if (name.length > 15) {
-      this.pokemonNameText.setText(truncateString(name, 15));
-    }
+    this.pokemonNameText.setText(truncateString(name, 15));
   }
 }
