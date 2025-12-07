@@ -25,21 +25,12 @@ jobs:
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: "recursive"
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
 
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: ".nvmrc"
-          cache: "pnpm"
-
-      - name: Install Node modules
-        run: pnpm i
+      - uses: ./.github/actions/setup-deps
 
       # Lint files with Biome-Lint - https://biomejs.dev/linter/
       - name: Lint with Biome
@@ -62,13 +53,6 @@ jobs:
       - name: Run Typecheck (scripts)
         run: pnpm typecheck:scripts
         id: typecheck-scripts
-        if: ${{ !cancelled() }}
-
-      # NOTE: These steps *must* be ran last for the moment due to deleting files in `assets/`.
-      # Some asset files do not yet have full licensing information, and thus must be removed 
-      # before checking for REUSE compliance
-      - name: Prepare for REUSE compliance
-        run: rm -rf assets/* LICENSES/LicenseRef-*
         if: ${{ !cancelled() }}
 
       - name: Check for REUSE compliance

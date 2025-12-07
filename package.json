@@ -17,6 +17,7 @@
     "test:cov": "vitest run --coverage --no-isolate",
     "test:watch": "vitest watch --coverage --no-isolate",
     "test:silent": "vitest run --silent='passed-only' --no-isolate",
+    "test:merge-reports": "MERGE_REPORTS=1 vitest run --merge-reports=test-results --silent=passed-only --configLoader runner",
     "test:create": "node scripts/create-test/create-test.js",
     "eggMoves:parse": "node scripts/parse-egg-moves/main.js",
     "scrape-trainers": "node scripts/scrape-trainer-names/main.js",
