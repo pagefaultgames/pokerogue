@@ -1392,7 +1392,7 @@ export const trainerConfigs: TrainerConfigs = {
       trainerPartyTemplates.THREE_AVG,
       trainerPartyTemplates.TWO_AVG_ONE_STRONG,
     )
-    .setSpeciesFilter(s => s.isOfType(PokemonType.NORMAL)),
+    .setSpeciesFilter(s => s.isOfType(PokemonType.NORMAL) || s.isOfType(PokemonType.GROUND)),
   [TrainerType.CLERK]: new TrainerConfig(++t)
     .setHasGenders("Clerk Female")
     .setHasDouble("Colleagues")
@@ -1887,7 +1887,36 @@ export const trainerConfigs: TrainerConfigs = {
       trainerPartyTemplates.TWO_WEAK_ONE_AVG,
       trainerPartyTemplates.THREE_AVG,
     )
-    .setSpeciesFilter(s => s.isOfType(PokemonType.NORMAL) || s.isOfType(PokemonType.ELECTRIC)),
+    .setSpeciesPools({
+      [TrainerPoolTier.COMMON]: [
+        SpeciesId.MEOWTH,
+        SpeciesId.GROWLITHE,
+        SpeciesId.PONYTA,
+        SpeciesId.SKITTY,
+        SpeciesId.ELECTRIKE,
+        SpeciesId.SPOINK,
+        SpeciesId.BUDEW,
+      ],
+      [TrainerPoolTier.UNCOMMON]: [
+        SpeciesId.SNUBBULL,
+        SpeciesId.SABLEYE,
+        SpeciesId.CHATOT,
+        SpeciesId.FURFROU,
+        SpeciesId.CARBINK,
+        SpeciesId.POLTEAGEIST,
+        SpeciesId.INDEEDEE,
+      ],
+      [TrainerPoolTier.RARE]: [
+        SpeciesId.FARFETCHD,
+        SpeciesId.SHELLDER,
+        SpeciesId.EEVEE,
+        SpeciesId.MURKROW,
+        SpeciesId.CLAMPERL,
+        SpeciesId.HONEDGE,
+        SpeciesId.GALAR_PONYTA,
+      ],
+      [TrainerPoolTier.SUPER_RARE]: [SpeciesId.DRATINI, SpeciesId.GOOMY, SpeciesId.GIMMIGHOUL],
+    }),
   [TrainerType.RICH_KID]: new TrainerConfig(++t)
     .setMoneyMultiplier(2.5)
     .setName("Rich Boy")
@@ -1920,17 +1949,15 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.TRAPINCH,
         SpeciesId.BRONZOR,
         SpeciesId.HIPPOPOTAS,
-        SpeciesId.YAMASK,
       ],
       [TrainerPoolTier.UNCOMMON]: [
         SpeciesId.RHYHORN,
         SpeciesId.SWINUB,
         SpeciesId.SHIELDON,
         SpeciesId.CRANIDOS,
-        SpeciesId.SIGILYPH,
         SpeciesId.GOLETT,
         SpeciesId.NACLI,
-        SpeciesId.GALAR_YAMASK,
+        [SpeciesId.YAMASK, SpeciesId.GALAR_YAMASK],
       ],
       [TrainerPoolTier.RARE]: [
         SpeciesId.OMANYTE,
@@ -1941,14 +1968,20 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.LILEEP,
         SpeciesId.ANORITH,
         SpeciesId.RELICANTH,
+        SpeciesId.SIGILYPH,
         SpeciesId.TIRTOUGA,
         SpeciesId.ARCHEN,
         SpeciesId.TYRUNT,
         SpeciesId.AMAURA,
         SpeciesId.STONJOURNER,
-        SpeciesId.GIMMIGHOUL,
       ],
-      [TrainerPoolTier.SUPER_RARE]: [SpeciesId.GIBLE, SpeciesId.LARVITAR, SpeciesId.HISUI_SLIGGOO],
+      [TrainerPoolTier.SUPER_RARE]: [
+        SpeciesId.GIBLE,
+        SpeciesId.LARVITAR,
+        SpeciesId.GIMMIGHOUL,
+        SpeciesId.HISUI_SLIGGOO,
+      ],
+      [TrainerPoolTier.ULTRA_RARE]: [SpeciesId.UNOWN],
     }),
   [TrainerType.SAILOR]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.4)
