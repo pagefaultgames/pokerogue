@@ -15,6 +15,11 @@ import {
   isHeldItemSpecs,
 } from "#types/held-item-data-types";
 
+/**
+ * The `HeldItemManager` is a manager for a {@linkcode Pokemon}'s held items. \
+ * It stores data about the items its associated `Pokemon` is holding,
+ * with methods to query, retrieve and alter them as needed.
+ */
 export class HeldItemManager {
   // TODO: There should be a way of making these private...
   public heldItems: HeldItemDataMap = new Map();
@@ -30,11 +35,14 @@ export class HeldItemManager {
     } as HeldItemSpecs;
   }
 
+  // TODO: This is never called with a restricted ID array ever
+  // TODO: Would an array of `HeldItemSpecs` make more sense as a return value?
+  // We're literally just bundling these into objects with counts of 1 apiece
   generateHeldItemConfiguration(restrictedIds?: HeldItemId[]): HeldItemConfiguration {
     const config: HeldItemConfiguration = [];
     for (const [id, item] of this.heldItems) {
       // TODO: `in` breaks with arrays
-      if (item && (!restrictedIds || id in restrictedIds)) {
+      if (!restrictedIds || restrictedIds.includes(id)) {
         const specs: HeldItemSpecs = { ...item, id };
         config.push({ entry: specs, count: 1 });
       }
@@ -51,6 +59,8 @@ export class HeldItemManager {
     return saveData;
   }
 
+  // TODO: Condense these all into a single generic function that takes an arbitrary predicate,
+  // and then export several pre-made predicates for use
   // TODO: These functions should return iterators rather than less efficient arrays
   getHeldItems(): HeldItemId[] {
     return Array.from(this.heldItems.keys());
