@@ -56,6 +56,12 @@ export class TargetSelectUiHandler extends UiHandler {
 
     this.enemyModifiers = globalScene.getModifierBar(true);
 
+    const defaultTargets = args[3] as BattlerIndex[] | undefined;
+    if (defaultTargets && defaultTargets.length > 0 && this.targets.includes(defaultTargets[0])) {
+      this.setCursor(defaultTargets[0]);
+      return true;
+    }
+
     if (this.fieldIndex === BattlerIndex.PLAYER) {
       this.resetCursor(this.cursor0, user);
     } else if (this.fieldIndex === BattlerIndex.PLAYER_2) {

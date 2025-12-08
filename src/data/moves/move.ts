@@ -796,6 +796,16 @@ export abstract class Move implements Localizable {
   }
 
   /**
+   * Sets the {@linkcode MoveFlags.ALLY_TARGET_DEFAULT} flag for the calling Move.
+   * @see {@linkcode MoveId.INSTRUCT}
+   * @returns The {@linkcode Move} that called this function
+   */
+  targetsAllyDefault(): this {
+    this.setFlag(MoveFlags.ALLY_TARGET_DEFAULT, true);
+    return this;
+  }
+
+  /**
    * Checks if the move flag applies to the pokemon(s) using/receiving the move
    *
    * This method will take the `user`'s ability into account when reporting flags, e.g.
@@ -10781,7 +10791,8 @@ export function initMoves() {
       .ignoresSubstitute()
       .target(MoveTarget.NEAR_OTHER)
       .condition(failIfSingleBattle)
-      .condition((_user, target, _move) => !target.turnData.acted)
+      .condition((user, target, move) => !target.turnData.acted)
+      .targetsAllyDefault()
       .attr(AfterYouAttr),
     new AttackMove(MoveId.ROUND, PokemonType.NORMAL, MoveCategory.SPECIAL, 60, 100, 15, -1, 0, 5)
       .attr(CueNextRoundAttr)
@@ -10812,6 +10823,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [Stat.DEF, Stat.SPDEF], -1, true),
     new StatusMove(MoveId.HEAL_PULSE, PokemonType.PSYCHIC, -1, 10, -1, 0, 5)
       .attr(HealAttr, 0.5, false, false)
+      .targetsAllyDefault()
       .pulseMove()
       .triageMove()
       .reflectable(),
@@ -11464,6 +11476,7 @@ export function initMoves() {
        * TODO: Verify whether Instruct can repeat Struggle
        * TODO: Verify whether Instruct can fail when using a copied move also in one's own moveset
        */
+      .targetsAllyDefault()
       .edgeCase(),
     new AttackMove(MoveId.BEAK_BLAST, PokemonType.FLYING, MoveCategory.PHYSICAL, 100, 100, 15, -1, -3, 7)
       .attr(BeakBlastHeaderAttr)
@@ -11781,7 +11794,8 @@ export function initMoves() {
     new AttackMove(MoveId.BODY_PRESS, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 8) //
       .attr(DefAtkAttr),
     new StatusMove(MoveId.DECORATE, PokemonType.FAIRY, -1, 15, -1, 0, 8)
-      .attr(StatStageChangeAttr, [Stat.ATK, Stat.SPATK], 2)
+      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], 2)
+      .targetsAllyDefault()
       .ignoresProtect(),
     new AttackMove(MoveId.DRUM_BEATING, PokemonType.GRASS, MoveCategory.PHYSICAL, 80, 100, 10, 100, 0, 8)
       .attr(StatStageChangeAttr, [Stat.SPD], -1)
