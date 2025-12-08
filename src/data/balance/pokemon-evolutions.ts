@@ -1,4 +1,3 @@
-// biome-ignore lint/correctness/noUnusedImports: Used in TSDoc comments
 import type { determineEnemySpecies } from "#app/ai/ai-species-gen";
 import { defaultStarterSpecies } from "#app/constants";
 import { globalScene } from "#app/global-scene";

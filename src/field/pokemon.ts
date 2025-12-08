@@ -5957,9 +5957,10 @@ export class PlayerPokemon extends Pokemon {
     // Add to candy progress for this mon's starter species and its fused species (if it has one)
     starterData.forEach(([sd, id]: [StarterDataEntry, SpeciesId]) => {
       sd.friendship = (sd.friendship || 0) + candyFriendshipAmount;
-      if (sd.friendship >= getStarterValueFriendshipCap(speciesStarterCosts[id])) {
-        globalScene.gameData.addStarterCandy(getPokemonSpecies(id), 1);
-        sd.friendship = 0;
+      const friendshipCap = getStarterValueFriendshipCap(speciesStarterCosts[id]);
+      if (sd.friendship >= friendshipCap) {
+        globalScene.gameData.addStarterCandy(getPokemonSpecies(id), Math.floor(sd.friendship / friendshipCap));
+        sd.friendship %= friendshipCap;
       }
     });
   }
@@ -6586,11 +6587,10 @@ export class EnemyPokemon extends Pokemon {
            */
           const moveScores = movePool.map(() => 0);
           const moveTargets = Object.fromEntries(movePool.map(m => [m.moveId, this.getNextTargets(m.moveId)]));
-          for (const m in movePool) {
-            const pokemonMove = movePool[m];
+          movePool.forEach((pokemonMove, moveIndex) => {
             const move = pokemonMove.getMove();
 
-            let moveScore = moveScores[m];
+            let moveScore = moveScores[moveIndex];
             const targetScores: number[] = [];
 
             for (const mt of moveTargets[move.id]) {
@@ -6612,10 +6612,7 @@ export class EnemyPokemon extends Pokemon {
                 console.error(`Move ${move.name} returned score of NaN`);
                 targetScore = 0;
               }
-              /**
-               * If this move is unimplemented, or the move is known to fail when used, set its
-               * target score to -20
-               */
+              // If this move is unimplemented, or the move is known to fail when used, set its target score to -20
               if (
                 (move.name.endsWith(" (N)") || !move.applyConditions(this, target, -1))
                 && ![MoveId.SUCKER_PUNCH, MoveId.UPPER_HAND, MoveId.THUNDERCLAP].includes(move.id)
@@ -6646,7 +6643,7 @@ export class EnemyPokemon extends Pokemon {
                     targetScore /= 1.5;
                   }
                 }
-                /** If a move has a base benefit score of 0, its benefit score is assumed to be unimplemented at this point */
+                // If a move has a base benefit score of 0, its benefit score is assumed to be unimplemented at this point
                 if (!targetScore) {
                   targetScore = -20;
                 }
@@ -6657,10 +6654,8 @@ export class EnemyPokemon extends Pokemon {
             moveScore += Math.max(...targetScores);
 
             // could make smarter by checking opponent def/spdef
-            moveScores[m] = moveScore;
-          }
-
-          console.log(moveScores);
+            moveScores[moveIndex] = moveScore;
+          });
 
           // Sort the move pool in decreasing order of move score
           const sortedMovePool = movePool.slice(0);
@@ -6669,37 +6664,42 @@ export class EnemyPokemon extends Pokemon {
             const scoreB = moveScores[movePool.indexOf(b)];
             return scoreA < scoreB ? 1 : scoreA > scoreB ? -1 : 0;
           });
-          let r = 0;
+          let chosenMoveIndex = 0;
           if (this.aiType === AiType.SMART_RANDOM) {
             // Has a 5/8 chance to select the best move, and a 3/8 chance to advance to the next best move (and repeat this roll)
-            while (r < sortedMovePool.length - 1 && globalScene.randBattleSeedInt(8) >= 5) {
-              r++;
+            while (chosenMoveIndex < sortedMovePool.length - 1 && globalScene.randBattleSeedInt(8) >= 5) {
+              chosenMoveIndex++;
             }
           } else if (this.aiType === AiType.SMART) {
             // The chance to advance to the next best move increases when the compared moves' scores are closer to each other.
             while (
-              r < sortedMovePool.length - 1
-              && moveScores[movePool.indexOf(sortedMovePool[r + 1])] / moveScores[movePool.indexOf(sortedMovePool[r])]
+              chosenMoveIndex < sortedMovePool.length - 1
+              && moveScores[movePool.indexOf(sortedMovePool[chosenMoveIndex + 1])]
+                / moveScores[movePool.indexOf(sortedMovePool[chosenMoveIndex])]
                 >= 0
               && globalScene.randBattleSeedInt(100)
                 < Math.round(
-                  (moveScores[movePool.indexOf(sortedMovePool[r + 1])]
-                    / moveScores[movePool.indexOf(sortedMovePool[r])])
+                  (moveScores[movePool.indexOf(sortedMovePool[chosenMoveIndex + 1])]
+                    / moveScores[movePool.indexOf(sortedMovePool[chosenMoveIndex])])
                     * 50,
                 )
             ) {
-              r++;
+              chosenMoveIndex++;
             }
           }
-          console.log(
-            movePool.map(m => m.getName()),
-            moveScores,
-            r,
-            sortedMovePool.map(m => m.getName()),
-          );
+
+          const chosenMove = sortedMovePool[chosenMoveIndex];
+
+          // biome-ignore format: For some reason this gets broken into multiple lines
+          console.log("Move Pool:", movePool.map((m) => m.getName()));
+          console.log("Move Scores:", moveScores);
+          // biome-ignore format: For some reason this gets broken into multiple lines
+          console.log("Sorted Move Pool:", sortedMovePool.map((m) => m.getName()));
+          console.log("Chosen Move:", chosenMove.getName());
+
           return {
-            move: sortedMovePool[r]!.moveId,
-            targets: moveTargets[sortedMovePool[r]!.moveId],
+            move: chosenMove.moveId,
+            targets: moveTargets[chosenMove.moveId],
             useMode: MoveUseMode.NORMAL,
           };
         }

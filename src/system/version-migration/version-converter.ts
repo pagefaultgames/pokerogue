@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/performance/noNamespaceImport: Convenience */
+/* biome-ignore-all lint/performance/noNamespaceImport: Convenience */
 
 import { version } from "#package.json";
 import type { SessionSaveData, SystemSaveData } from "#types/save-data";
