@@ -16,6 +16,7 @@ const config = {
   entryPointStrategy: "expand",
   exclude: [
     "src/polyfills.ts",
+    "src/extensions.ts",
     "src/vite.env.d.ts",
     "**/*+.test.ts",
     "test/test-utils/setup",
