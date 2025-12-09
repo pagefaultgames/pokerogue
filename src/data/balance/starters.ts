@@ -676,3 +676,15 @@ export function getSameSpeciesEggCandyCounts(starterCost: number, hatchCount: nu
   return starterCandyCosts.eggCosts[eggCostIndex];
 }
 
+/**
+ * ⚠️ This is used for internal testing purposes only and will not be populated outside of the test environment.
+ * @internal
+ */
+export const __TEST_allStarterCandyCosts: readonly StarterCandyCosts[] = [];
+
+if (import.meta.env.NODE_ENV === "test") {
+  for (const starterCandyCosts of allStarterCandyCosts) {
+    // @ts-expect-error: done this way to keep it `readonly`
+    __TEST_allStarterCandyCosts.push(starterCandyCosts);
+  }
+}
