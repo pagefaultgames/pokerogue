@@ -2,9 +2,7 @@
  * A collection of custom utility types that aid in type checking and ensuring strict type conformity
  */
 
-// biome-ignore-start lint/correctness/noUnusedImports: Used in a tsdoc comment
 import type { AbAttr } from "#abilities/ability";
-// biome-ignore-end lint/correctness/noUnusedImports: Used in a tsdoc comment
 
 /**
  * Exactly matches the type of the argument, preventing adding additional properties.

@@ -2,7 +2,6 @@ import type { ArenaTag, ArenaTagTypeMap } from "#data/arena-tag";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import type { ArenaTagType } from "#enums/arena-tag-type";
 import type { OneOther } from "#test/@types/test-helpers";
-// biome-ignore lint/correctness/noUnusedImports: TSDoc
 import type { GameManager } from "#test/test-utils/game-manager";
 import { getOnelineDiffStr } from "#test/test-utils/string-utils";
 import { isGameManagerInstance, receivedStr } from "#test/test-utils/test-utils";

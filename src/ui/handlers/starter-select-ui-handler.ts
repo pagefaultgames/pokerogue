@@ -70,6 +70,7 @@ import {
   padInt,
   randIntRange,
   rgbHexToRgba,
+  truncateString,
 } from "#utils/common";
 import type { StarterPreferences } from "#utils/data";
 import { deepCopy, loadStarterPreferences, saveStarterPreferences } from "#utils/data";
@@ -168,6 +169,10 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoXPos: 26,
   },
   tl: {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "38px",
+  },
+  "nb-NO": {
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
   },
@@ -2163,6 +2168,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                       } else {
                         this.pokemonNameText.setText(this.lastSpecies.name);
                       }
+                      this.truncateName();
                       ui.setMode(UiMode.STARTER_SELECT);
                     },
                     () => {
@@ -3550,6 +3556,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       } else {
         this.pokemonNameText.setText(species.name);
       }
+      this.truncateName();
 
       if (this.speciesStarterDexEntry?.caughtAttr) {
         const colorScheme = starterColors[species.speciesId];
@@ -4669,5 +4676,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   clearStarterPreferences() {
     this.starterPreferences = {};
     this.originalStarterPreferences = {};
+  }
+
+  /**
+   * Truncate the Pokémon name so it won't overlap into the starters.
+   */
+  private truncateName() {
+    const name = this.pokemonNameText.text;
+    this.pokemonNameText.setText(truncateString(name, 15));
   }
 }

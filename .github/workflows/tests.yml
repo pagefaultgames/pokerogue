@@ -26,8 +26,8 @@ jobs:
     outputs:
       all: ${{ steps.filter.outputs.all }}
     steps:
-      - name: checkout
-        uses: actions/checkout@v4
+      - name: Checkout GitHub repository
+        uses: actions/checkout@v6
         with:
           sparse-checkout: |
             .github/test-filters.yml
@@ -41,6 +41,7 @@ jobs:
   run-tests:
     name: Run Tests
     needs: check-path-change-filter
+    if: ${{ needs.check-path-change-filter.outputs.all == 'true'}}
     strategy:
       # don't stop upon 1 shard failing
       fail-fast: false
@@ -48,7 +49,33 @@ jobs:
         shard: [1, 2, 3, 4, 5]
     uses: ./.github/workflows/test-shard-template.yml
     with:
-      project: main
       shard: ${{ matrix.shard }}
       totalShards: 5
-      skip: ${{ needs.check-path-change-filter.outputs.all != 'true'}}
+
+  check-results:
+    name: Check Test Results
+    timeout-minutes: 8
+    needs: run-tests
+    runs-on: ubuntu-latest
+    if: ${{ needs.run-tests.result != 'skipped' && needs.run-tests.result != 'cancelled' }}
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            .github/actions/setup-deps/action.yml
+            test/setup
+            test/test-utils/reporters/custom-default-reporter.ts
+
+
+      - uses: ./.github/actions/setup-deps
+
+      - name: Download blob artifacts
+        uses: actions/download-artifact@v6
+        with:
+          pattern: shard-?-blob
+          path: test-results
+          merge-multiple: true
+
+      - name: Merge blobs
+        run: pnpm test:merge-reports
