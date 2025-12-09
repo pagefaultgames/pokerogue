@@ -28,7 +28,7 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
   constructor(
     battlerIndex: BattlerIndex,
     private statusEffect: StatusEffect,
-    private sourcePokemon: Pokemon | null = null,
+    private sourcePokemon?: Pokemon,
     private sleepTurnsRemaining?: number,
     sourceText: string | null = null, // TODO: This should take `undefined` instead of `null`
     private statusMessage = "",
@@ -58,8 +58,15 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
         applyAbAttrs("PostSetStatusAbAttr", {
           pokemon,
           effect: this.statusEffect,
-          sourcePokemon: this.sourcePokemon ?? undefined,
+          sourcePokemon: this.sourcePokemon,
         });
+        if (this.sourcePokemon) {
+          applyAbAttrs("ConfusionOnStatusEffectAbAttr", {
+            pokemon: this.sourcePokemon,
+            opponent: pokemon,
+            effect: this.statusEffect,
+          });
+        }
       }
       this.end();
     });
