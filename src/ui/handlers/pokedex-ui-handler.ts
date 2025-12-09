@@ -893,11 +893,11 @@ export class PokedexUiHandler extends MessageUiHandler {
    */
   isSameSpeciesEggAvailable(speciesId: number): boolean {
     // Get this species ID's starter data
-    const starterData = this.gameData.starterData[this.getStarterSpeciesId(speciesId)];
+    const starterId = this.getStarterSpeciesId(speciesId);
+    const starterData = this.gameData.starterData[starterId];
+    const hatchCount = this.gameData.dexData[starterId].hatchedCount;
 
-    return (
-      starterData.candyCount >= getSameSpeciesEggCandyCounts(speciesStarterCosts[this.getStarterSpeciesId(speciesId)])
-    );
+    return starterData.candyCount >= getSameSpeciesEggCandyCounts(speciesStarterCosts[starterId], hatchCount);
   }
 
   /**

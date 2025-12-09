@@ -1417,8 +1417,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   isSameSpeciesEggAvailable(speciesId: number): boolean {
     // Get this species ID's starter data
     const starterData = globalScene.gameData.starterData[speciesId];
+    const hatchedCount = globalScene.gameData.dexData[speciesId].hatchedCount;
 
-    return starterData.candyCount >= getSameSpeciesEggCandyCounts(speciesStarterCosts[speciesId]);
+    return starterData.candyCount >= getSameSpeciesEggCandyCounts(speciesStarterCosts[speciesId], hatchedCount);
   }
 
   /**
@@ -2265,7 +2266,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             }
 
             // Same species egg menu option.
-            const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarterCosts[this.lastSpecies.speciesId]);
+            const hatchedCount = globalScene.gameData.dexData[this.lastSpecies.speciesId].hatchedCount;
+            const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(
+              speciesStarterCosts[this.lastSpecies.speciesId],
+              hatchedCount,
+            );
             options.push({
               label: `×${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
               handler: () => {
