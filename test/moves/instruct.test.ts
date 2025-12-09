@@ -108,7 +108,7 @@ describe("Moves - Instruct", () => {
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
     instructSuccess(shuckle, MoveId.SONIC_BOOM);
-    expect(game.scene.getEnemyField()[0].getInverseHp()).toBe(40);
+    expect(game.field.getEnemyPokemon().getInverseHp()).toBe(40);
   });
 
   // TODO: Enable test case once gigaton hammer (and blood moon) are reworked
@@ -251,7 +251,7 @@ describe("Moves - Instruct", () => {
     // fiery dance triggered dancer successfully for a total of 4 hits
     // Enemy level is set to a high value so that it does not faint even after all 4 hits
     instructSuccess(volcarona, MoveId.FIERY_DANCE);
-    expect(game.scene.getEnemyField()[0].turnData.attacksReceived.length).toBe(4);
+    expect(game.field.getEnemyPokemon().turnData.attacksReceived.length).toBe(4);
   });
 
   it("should not repeat move when switching out", async () => {
