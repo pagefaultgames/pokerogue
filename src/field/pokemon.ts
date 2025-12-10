@@ -4864,7 +4864,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   public trySetStatus(
     effect: StatusEffect,
-    sourcePokemon: Pokemon | null = null,
+    sourcePokemon?: Pokemon,
     sleepTurnsRemaining?: number,
     sourceText: string | null = null,
     overrideStatus?: boolean,
