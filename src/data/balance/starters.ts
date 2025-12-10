@@ -619,7 +619,7 @@ export const speciesStarterCosts = {
   [SpeciesId.BLOODMOON_URSALUNA]: 5,
 };
 
-type StarterCandyCosts = {
+interface StarterCandyCosts {
   /** The candy cost to unlock the starter's passive ability */
   readonly passive: number;
   /** The candy costs to reduce the starter's point cost */
