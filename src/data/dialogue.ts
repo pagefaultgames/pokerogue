@@ -1,7 +1,7 @@
 import { BattleSpec } from "#enums/battle-spec";
 import { TrainerType } from "#enums/trainer-type";
 import { trainerConfigs } from "#trainers/trainer-config";
-import { capitalizeFirstLetter } from "#utils/strings";
+import { capitalizeFirstLetter } from "#utils/string-utils";
 
 export interface TrainerTypeMessages {
   encounter?: string | string[];

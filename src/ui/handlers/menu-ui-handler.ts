@@ -2,7 +2,7 @@ import { pokerogueApi } from "#api/pokerogue-api";
 import { loggedInUser, updateUserInfo } from "#app/account";
 import { globalScene } from "#app/global-scene";
 import { handleTutorial, Tutorial } from "#app/tutorial";
-import { bypassLogin, isApp, isBeta, isDev } from "#constants/app-constants";
+import { BYPASS_LOGIN, IS_APP, IS_BETA, IS_DEV, SESSION_ID_KEY } from "#constants/app-constants";
 import { AdminMode, getAdminModeName } from "#enums/admin-mode";
 import { Button } from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
@@ -14,10 +14,10 @@ import { BgmBar } from "#ui/bgm-bar";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addTextObject, getTextStyleOptions } from "#ui/text";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
-import { fixedInt, sessionIdKey } from "#utils/common";
-import { getCookie } from "#utils/cookies";
-import { getEnumValues } from "#utils/enums";
-import { toCamelCase } from "#utils/strings";
+import { fixedInt } from "#utils/common-utils";
+import { getCookie } from "#utils/cookie-utils";
+import { getEnumValues } from "#utils/enum-utils";
+import { toCamelCase } from "#utils/string-utils";
 import i18next from "i18next";
 
 enum MenuOptions {
@@ -75,7 +75,7 @@ export class MenuUiHandler extends MessageUiHandler {
         condition: [UiMode.COMMAND, UiMode.TITLE].includes(mode ?? UiMode.TITLE),
         options: [MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST],
       },
-      { condition: bypassLogin, options: [MenuOptions.LOG_OUT] },
+      { condition: BYPASS_LOGIN, options: [MenuOptions.LOG_OUT] },
     ];
 
     this.menuOptions = getEnumValues(MenuOptions).filter(m => {
@@ -128,7 +128,7 @@ export class MenuUiHandler extends MessageUiHandler {
         condition: globalScene.phaseManager.getCurrentPhase().is("SelectModifierPhase"),
         options: [MenuOptions.EGG_GACHA],
       },
-      { condition: bypassLogin, options: [MenuOptions.LOG_OUT] },
+      { condition: BYPASS_LOGIN, options: [MenuOptions.LOG_OUT] },
     ];
 
     this.menuOptions = getEnumValues(MenuOptions).filter(m => {
@@ -237,7 +237,7 @@ export class MenuUiHandler extends MessageUiHandler {
       });
     };
 
-    if (isBeta || isDev || isApp) {
+    if (IS_BETA || IS_DEV || IS_APP) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importSession"),
         handler: () => {
@@ -292,7 +292,7 @@ export class MenuUiHandler extends MessageUiHandler {
       },
       keepOpen: true,
     });
-    if (isBeta || isDev || isApp) {
+    if (IS_BETA || IS_DEV || IS_APP) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importData"),
         handler: () => {
@@ -339,7 +339,7 @@ export class MenuUiHandler extends MessageUiHandler {
         keepOpen: true,
       },
     );
-    if (isBeta || isDev) {
+    if (IS_BETA || IS_DEV) {
       manageDataOptions.push({
         label: "Test Dialogue",
         handler: () => {
@@ -451,7 +451,7 @@ export class MenuUiHandler extends MessageUiHandler {
         keepOpen: true,
       },
     ];
-    if (bypassLogin || loggedInUser?.hasAdminRole) {
+    if (BYPASS_LOGIN || loggedInUser?.hasAdminRole) {
       communityOptions.push({
         label: "Admin",
         handler: () => {
@@ -598,7 +598,7 @@ export class MenuUiHandler extends MessageUiHandler {
           break;
         case MenuOptions.MANAGE_DATA:
           if (
-            !bypassLogin
+            !BYPASS_LOGIN
             && !this.manageDataConfig.options.some(
               o =>
                 o.label === i18next.t("menuUiHandler:linkDiscord")
@@ -615,7 +615,7 @@ export class MenuUiHandler extends MessageUiHandler {
                     : i18next.t("menuUiHandler:unlinkDiscord"),
                 handler: () => {
                   if (loggedInUser?.discordId === "") {
-                    const token = getCookie(sessionIdKey);
+                    const token = getCookie(SESSION_ID_KEY);
                     const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/discord/callback`);
                     const discordId = import.meta.env.VITE_DISCORD_CLIENT_ID;
                     const discordUrl = `https://discord.com/api/oauth2/authorize?client_id=${discordId}&redirect_uri=${redirectUri}&response_type=code&scope=identify&state=${token}&prompt=none`;
@@ -635,7 +635,7 @@ export class MenuUiHandler extends MessageUiHandler {
                     : i18next.t("menuUiHandler:unlinkGoogle"),
                 handler: () => {
                   if (loggedInUser?.googleId === "") {
-                    const token = getCookie(sessionIdKey);
+                    const token = getCookie(SESSION_ID_KEY);
                     const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/google/callback`);
                     const googleId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
                     const googleUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${googleId}&response_type=code&redirect_uri=${redirectUri}&scope=openid&state=${token}`;

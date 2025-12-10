@@ -1,4 +1,3 @@
-import * as Messages from "#app/messages";
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
@@ -6,6 +5,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { GameManager } from "#test/test-utils/game-manager";
+import * as i18nUtils from "#utils/i18n-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
@@ -19,7 +19,7 @@ function testMoveEffectiveness(
   teraType?: PokemonType,
 ): void {
   // Suppress getPokemonNameWithAffix because it calls on a null battle spec
-  vi.spyOn(Messages, "getPokemonNameWithAffix").mockReturnValue("");
+  vi.spyOn(i18nUtils, "getPokemonNameWithAffix").mockReturnValue("");
   game.override.enemyAbility(targetAbility);
 
   const user = game.scene.addPlayerPokemon(getPokemonSpecies(SpeciesId.SNORLAX), 5);

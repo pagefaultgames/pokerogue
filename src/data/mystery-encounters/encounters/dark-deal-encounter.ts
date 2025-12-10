@@ -1,5 +1,5 @@
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { ME_CLASSIC_MODE_WAVES } from "#constants/mystery-encounter-constants";
 import { modifierTypes } from "#data/data-lists";
 import { Challenges } from "#enums/challenges";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -15,8 +15,8 @@ import { getRandomPlayerPokemon, getRandomSpeciesByStarterCost } from "#mystery-
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
-import { randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { randSeedInt } from "#utils/rng-utils";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounters/darkDeal";
@@ -122,7 +122,7 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
       text: `${namespace}:introDialogue`,
     },
   ])
-  .withSceneWaveRangeRequirement(30, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
+  .withSceneWaveRangeRequirement(30, ME_CLASSIC_MODE_WAVES[1])
   .withScenePartySizeRequirement(2, 6, true) // Must have at least 2 pokemon in party
   .withCatchAllowed(true)
   .setLocalizationKey(`${namespace}`)

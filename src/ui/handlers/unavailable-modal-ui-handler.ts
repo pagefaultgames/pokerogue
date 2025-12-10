@@ -1,12 +1,12 @@
 import { updateUserInfo } from "#app/account";
 import { globalScene } from "#app/global-scene";
+import { SESSION_ID_KEY } from "#constants/app-constants";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
 import type { ModalConfig } from "#ui/modal-ui-handler";
 import { ModalUiHandler } from "#ui/modal-ui-handler";
 import { addTextObject } from "#ui/text";
-import { sessionIdKey } from "#utils/common";
-import { removeCookie } from "#utils/cookies";
+import { removeCookie } from "#utils/cookie-utils";
 import i18next from "i18next";
 
 export class UnavailableModalUiHandler extends ModalUiHandler {
@@ -65,7 +65,7 @@ export class UnavailableModalUiHandler extends ModalUiHandler {
         globalScene.playSound("se/pb_bounce_1");
         this.reconnectCallback();
       } else if (response[1] === 401) {
-        removeCookie(sessionIdKey);
+        removeCookie(SESSION_ID_KEY);
         globalScene.reset(true, true);
       } else {
         this.reconnectDuration = Math.min(this.reconnectDuration * 2, this.maxTime); // Set a max delay so it isn't infinite

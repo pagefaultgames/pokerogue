@@ -3,8 +3,8 @@ import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
 import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
-import { fixedInt } from "#utils/common";
-import { toCamelCase } from "#utils/strings";
+import { fixedInt } from "#utils/common-utils";
+import { toCamelCase } from "#utils/string-utils";
 import i18next from "i18next";
 
 interface BaseStatsOverlaySettings {

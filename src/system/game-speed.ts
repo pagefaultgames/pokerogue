@@ -1,6 +1,6 @@
 import type { BattleScene } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
-import { FixedInt } from "#utils/common";
+import { FixedInt } from "#utils/common-utils";
 import type FadeIn from "phaser3-rex-plugins/plugins/audio/fade/FadeIn";
 import type FadeOut from "phaser3-rex-plugins/plugins/audio/fade/FadeOut";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";

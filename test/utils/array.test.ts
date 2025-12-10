@@ -1,5 +1,5 @@
 import type { ReadonlyUint8Array } from "#types/typed-arrays";
-import { coerceArray, isTypedArray, setTypedArray, subArray } from "#utils/array";
+import { coerceArray, isTypedArray, setTypedArray, subArray } from "#utils/array-utils";
 import { describe, expect, expectTypeOf, it } from "vitest";
 
 /**

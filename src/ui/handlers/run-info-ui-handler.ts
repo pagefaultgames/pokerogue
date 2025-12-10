@@ -24,8 +24,9 @@ import type { SessionSaveData } from "#types/save-data";
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
-import { formatFancyLargeNumber, formatLargeNumber, formatMoney, getBiomeName, getPlayTimeString } from "#utils/common";
-import { toCamelCase } from "#utils/strings";
+import { formatFancyLargeNumber, formatMoney, getPlayTimeString } from "#utils/common-utils";
+import { formatLargeNumber, getBiomeName } from "#utils/i18n-utils";
+import { toCamelCase } from "#utils/string-utils";
 import i18next from "i18next";
 import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";
 

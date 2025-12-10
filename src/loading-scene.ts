@@ -1,5 +1,4 @@
-import { timedEventManager } from "#app/global-event-manager";
-import { initializeGame } from "#app/init/init";
+import { initializeGame } from "#app/init";
 import { SceneBase } from "#app/scene-base";
 import { isMobile } from "#app/touch-controls";
 import { BiomeId } from "#enums/biome-id";
@@ -7,10 +6,12 @@ import { GachaType } from "#enums/gacha-types";
 import { getBiomeHasProps } from "#field/arena";
 import { CacheBustedLoaderPlugin } from "#plugins/cache-busted-loader-plugin";
 import { getWindowVariantSuffix, WindowVariant } from "#ui/ui-theme";
-import { hasAllLocalizedSprites, localPing } from "#utils/common";
-import { getEnumValues } from "#utils/enums";
+import { localPing } from "#utils/common-utils";
+import { getEnumValues } from "#utils/enum-utils";
+import { hasAllLocalizedSprites } from "#utils/i18n-utils";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
+import { timedEventManager } from "./timed-event-manager";
 
 export class LoadingScene extends SceneBase {
   public static readonly KEY = "loading";

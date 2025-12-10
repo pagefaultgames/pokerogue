@@ -1,7 +1,7 @@
 import { getStatKey, type Stat } from "#enums/stat";
 import type { EnumOrObject, NormalEnum } from "#types/enum-types";
-import { enumValueToKey } from "#utils/enums";
-import { toTitleCase } from "#utils/strings";
+import { enumValueToKey } from "#utils/enum-utils";
+import { toTitleCase } from "#utils/string-utils";
 import type { MatcherState } from "@vitest/expect";
 import i18next from "i18next";
 

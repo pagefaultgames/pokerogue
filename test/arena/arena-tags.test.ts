@@ -1,4 +1,3 @@
-import { getPokemonNameWithAffix } from "#app/messages";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -7,8 +6,9 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import { getEnumStr } from "#test/test-utils/string-utils";
-import { getEnumValues } from "#utils/enums";
-import { toTitleCase } from "#utils/strings";
+import { getEnumValues } from "#utils/enum-utils";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
+import { toTitleCase } from "#utils/string-utils";
 import i18next from "i18next";
 import Phaser from "phaser";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

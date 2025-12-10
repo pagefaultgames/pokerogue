@@ -4,7 +4,7 @@
  * @module
  */
 
-import { EVOLVE_MOVE, RELEARN_MOVE } from "#app/constants";
+import { EVOLVE_MOVE, RELEARN_MOVE } from "#constants/move-constants";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import type { PokemonSpeciesFormLevelMoves, PokemonSpeciesLevelMoves } from "#types/pokemon-level-moves";

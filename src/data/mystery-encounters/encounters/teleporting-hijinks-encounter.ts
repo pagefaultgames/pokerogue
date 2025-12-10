@@ -1,6 +1,5 @@
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
+import { ME_CLASSIC_MODE_WAVES } from "#constants/mystery-encounter-constants";
 import { modifierTypes } from "#data/data-lists";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
@@ -33,7 +32,8 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { MoneyRequirement, WaveModulusRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { PokemonData } from "#system/pokemon-data";
-import { randSeedInt } from "#utils/common";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
+import { randSeedInt } from "#utils/rng-utils";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/teleportingHijinks";
@@ -58,7 +58,7 @@ export const TeleportingHijinksEncounter: MysteryEncounter = MysteryEncounterBui
   MysteryEncounterType.TELEPORTING_HIJINKS,
 )
   .withEncounterTier(MysteryEncounterTier.COMMON)
-  .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+  .withSceneWaveRangeRequirement(...ME_CLASSIC_MODE_WAVES)
   .withSceneRequirement(new WaveModulusRequirement([2, 3, 4], 10)) // Must be in first 3 waves after boss wave
   .withSceneRequirement(new MoneyRequirement(0, MONEY_COST_MULTIPLIER)) // Must be able to pay teleport cost
   .withAutoHideIntroVisuals(false)

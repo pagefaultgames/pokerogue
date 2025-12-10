@@ -1,14 +1,14 @@
 import type { Ability } from "#abilities/ability";
 import { loggedInUser } from "#app/account";
 import { globalScene } from "#app/global-scene";
-import { starterColors } from "#app/global-vars/starter-colors";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#balance/starters";
+import { starterColors } from "#data/data-lists";
 import { getLevelRelExp, getLevelTotalExp } from "#data/exp";
-import { getGenderColor, getGenderSymbol } from "#data/gender";
 import { getNatureName, getNatureStatMultiplier } from "#data/nature";
 import { getPokeballAtlasKey } from "#data/pokeball";
 import { getTypeRgb } from "#data/type";
 import { Button } from "#enums/buttons";
+import { getGenderColor, getGenderSymbol } from "#enums/gender";
 import { MoveCategory } from "#enums/move-category";
 import { Nature } from "#enums/nature";
 import { PlayerGender } from "#enums/player-gender";
@@ -26,17 +26,11 @@ import { getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
 import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
-import {
-  fixedInt,
-  formatStat,
-  getBiomeName,
-  getLocalizedSpriteKey,
-  getShinyDescriptor,
-  padInt,
-  rgbHexToRgba,
-} from "#utils/common";
-import { getEnumValues } from "#utils/enums";
-import { toCamelCase, toTitleCase } from "#utils/strings";
+import { rgbHexToRgba } from "#utils/color-utils";
+import { fixedInt, formatStat, padInt } from "#utils/common-utils";
+import { getEnumValues } from "#utils/enum-utils";
+import { getBiomeName, getLocalizedSpriteKey, getShinyDescriptor } from "#utils/i18n-utils";
+import { toCamelCase, toTitleCase } from "#utils/string-utils";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 

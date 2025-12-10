@@ -10,8 +10,8 @@ import type { GameData } from "#system/game-data";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
-import { formatFancyLargeNumber, getPlayTimeString } from "#utils/common";
-import { toTitleCase } from "#utils/strings";
+import { formatFancyLargeNumber, getPlayTimeString } from "#utils/common-utils";
+import { toTitleCase } from "#utils/string-utils";
 import i18next from "i18next";
 import Phaser from "phaser";
 

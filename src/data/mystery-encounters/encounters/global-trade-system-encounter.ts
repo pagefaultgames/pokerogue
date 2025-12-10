@@ -1,11 +1,11 @@
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { ME_CLASSIC_MODE_WAVES } from "#constants/mystery-encounter-constants";
 import { allSpecies } from "#data/data-lists";
-import { Gender, getGenderSymbol } from "#data/gender";
 import { getNatureName } from "#data/nature";
 import { getPokeballAtlasKey, getPokeballTintColor } from "#data/pokeball";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { getTypeRgb } from "#data/type";
+import { Gender, getGenderSymbol } from "#enums/gender";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { ModifierTier } from "#enums/modifier-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -38,11 +38,11 @@ import { PartySizeRequirement } from "#mystery-encounters/mystery-encounter-requ
 import { PokemonData } from "#system/pokemon-data";
 import { MusicPreference } from "#system/settings";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
-import { randInt, randSeedInt, randSeedItem, randSeedShuffle } from "#utils/common";
-import { getEnumKeys } from "#utils/enums";
-import { getRandomLocaleEntry } from "#utils/i18n";
+import { getEnumKeys } from "#utils/enum-utils";
+import { getRandomLocaleEntry } from "#utils/i18n-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
-import { toCamelCase } from "#utils/strings";
+import { randInt, randSeedInt, randSeedItem, randSeedShuffle } from "#utils/rng-utils";
+import { toCamelCase } from "#utils/string-utils";
 import i18next from "i18next";
 
 /** the i18n namespace for the encounter */
@@ -100,7 +100,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
   MysteryEncounterType.GLOBAL_TRADE_SYSTEM,
 )
   .withEncounterTier(MysteryEncounterTier.COMMON)
-  .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+  .withSceneWaveRangeRequirement(...ME_CLASSIC_MODE_WAVES)
   .withAutoHideIntroVisuals(false)
   .withIntroSpriteConfigs([
     {

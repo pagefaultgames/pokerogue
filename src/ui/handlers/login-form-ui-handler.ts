@@ -9,7 +9,7 @@ import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
 import type { ModalConfig } from "#ui/modal-ui-handler";
 import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
-import { fixedInt } from "#utils/common";
+import { fixedInt } from "#utils/common-utils";
 import i18next from "i18next";
 import JSZip from "jszip";
 

@@ -10,7 +10,7 @@ import { ScrollBar } from "#ui/scroll-bar";
 import { addTextObject, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
-import { toCamelCase } from "#utils/strings";
+import { toCamelCase } from "#utils/string-utils";
 import i18next from "i18next";
 
 export interface InputsIcons {

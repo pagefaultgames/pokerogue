@@ -1,10 +1,10 @@
 import type { determineEnemySpecies } from "#app/ai/ai-species-gen";
-import { defaultStarterSpecies } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { speciesStarterCosts } from "#balance/starters";
+import { DEFAULT_STARTER_SPECIES } from "#constants/game-constants";
 import { allMoves } from "#data/data-lists";
-import { Gender, getGenderSymbol } from "#data/gender";
 import { BiomeId } from "#enums/biome-id";
+import { Gender, getGenderSymbol } from "#enums/gender";
 import { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
 import { PokeballType } from "#enums/pokeball";
@@ -16,10 +16,10 @@ import { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
 import type { SpeciesStatBoosterItem, SpeciesStatBoosterModifierType } from "#modifiers/modifier-type";
 import type { EvoLevelThreshold } from "#types/species-gen-types";
-import { coerceArray } from "#utils/array";
-import { randSeedInt } from "#utils/common";
+import { coerceArray } from "#utils/array-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
-import { toCamelCase } from "#utils/strings";
+import { randSeedInt } from "#utils/rng-utils";
+import { toCamelCase } from "#utils/string-utils";
 import i18next from "i18next";
 
 export enum EvolutionItem {
@@ -1888,7 +1888,7 @@ export const pokemonStarters: PokemonPrevolutions = {};
 /**
  * The default species and all their evolutions
  */
-export const defaultStarterSpeciesAndEvolutions: SpeciesId[] = defaultStarterSpecies.flatMap(id => {
+export const defaultStarterSpeciesAndEvolutions: SpeciesId[] = DEFAULT_STARTER_SPECIES.flatMap(id => {
   const stage2ids = pokemonEvolutions[id]?.map(e => e.speciesId) ?? [];
   const stage3ids = stage2ids.flatMap(s2id => pokemonEvolutions[s2id]?.map(e => e.speciesId) ?? []);
   return [id, ...stage2ids, ...stage3ids];

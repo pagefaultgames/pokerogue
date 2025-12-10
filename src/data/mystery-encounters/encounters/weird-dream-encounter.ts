@@ -41,8 +41,9 @@ import { PokemonData } from "#system/pokemon-data";
 import { trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyTemplate } from "#trainers/trainer-party-template";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
-import { NumberHolder, randSeedInt, randSeedShuffle } from "#utils/common";
+import { NumberHolder } from "#utils/common-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { randSeedInt, randSeedShuffle } from "#utils/rng-utils";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounters/weirdDream";

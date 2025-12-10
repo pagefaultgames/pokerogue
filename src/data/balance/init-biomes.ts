@@ -15,8 +15,8 @@ import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
 import type { Mutable } from "#types/type-helpers";
-import { randSeedInt } from "#utils/common";
-import { getEnumValues } from "#utils/enums";
+import { getEnumValues } from "#utils/enum-utils";
+import { randSeedInt } from "#utils/rng-utils";
 
 export function initBiomes() {
   const pokemonBiomes = [

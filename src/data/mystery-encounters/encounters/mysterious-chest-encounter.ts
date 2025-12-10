@@ -1,5 +1,5 @@
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { ME_CLASSIC_MODE_WAVES } from "#constants/mystery-encounter-constants";
 import { ModifierTier } from "#enums/modifier-tier";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -18,8 +18,8 @@ import { getHighestLevelPlayerPokemon, koPlayerPokemon } from "#mystery-encounte
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
-import { randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { randSeedInt } from "#utils/rng-utils";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounters/mysteriousChest";
@@ -40,7 +40,7 @@ export const MysteriousChestEncounter: MysteryEncounter = MysteryEncounterBuilde
   MysteryEncounterType.MYSTERIOUS_CHEST,
 )
   .withEncounterTier(MysteryEncounterTier.COMMON)
-  .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+  .withSceneWaveRangeRequirement(...ME_CLASSIC_MODE_WAVES)
   .withScenePartySizeRequirement(2, 6, true)
   .withAutoHideIntroVisuals(false)
   .withCatchAllowed(true)

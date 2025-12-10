@@ -1,6 +1,5 @@
 import type { TurnCommand } from "#app/battle";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { speciesStarterCosts } from "#balance/starters";
 import { TrappedTag } from "#data/battler-tags";
 import { AbilityId } from "#enums/ability-id";
@@ -21,6 +20,7 @@ import type { MoveTargetSet } from "#moves/move";
 import { getMoveTargets } from "#moves/move-utils";
 import { FieldPhase } from "#phases/field-phase";
 import type { TurnMove } from "#types/turn-move";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import i18next from "i18next";
 
 export class CommandPhase extends FieldPhase {

@@ -6,7 +6,8 @@ import { TextStyle } from "#enums/text-style";
 import type { Move } from "#moves/move";
 import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
-import { fixedInt, getLocalizedSpriteKey } from "#utils/common";
+import { fixedInt } from "#utils/common-utils";
+import { getLocalizedSpriteKey } from "#utils/i18n-utils";
 import i18next from "i18next";
 
 export interface MoveInfoOverlaySettings {

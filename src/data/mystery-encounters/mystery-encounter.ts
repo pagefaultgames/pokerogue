@@ -25,9 +25,9 @@ import {
   StatusEffectRequirement,
   WaveRangeRequirement,
 } from "#mystery-encounters/mystery-encounter-requirements";
-import { coerceArray } from "#utils/array";
-import { randSeedInt } from "#utils/common";
-import { capitalizeFirstLetter } from "#utils/strings";
+import { coerceArray } from "#utils/array-utils";
+import { randSeedInt } from "#utils/rng-utils";
+import { capitalizeFirstLetter } from "#utils/string-utils";
 
 export interface EncounterStartOfBattleEffect {
   sourcePokemon?: Pokemon;

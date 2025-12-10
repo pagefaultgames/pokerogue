@@ -1,5 +1,5 @@
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { ME_CLASSIC_MODE_WAVES } from "#constants/mystery-encounter-constants";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { ModifierTier } from "#enums/modifier-tier";
@@ -29,7 +29,7 @@ import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encou
 import { MoveRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { STEALING_MOVES } from "#mystery-encounters/requirement-groups";
 import { PokemonData } from "#system/pokemon-data";
-import { randSeedInt } from "#utils/common";
+import { randSeedInt } from "#utils/rng-utils";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/fightOrFlight";
@@ -43,7 +43,7 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder.
   MysteryEncounterType.FIGHT_OR_FLIGHT,
 )
   .withEncounterTier(MysteryEncounterTier.COMMON)
-  .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+  .withSceneWaveRangeRequirement(...ME_CLASSIC_MODE_WAVES)
   .withCatchAllowed(true)
   .withHideWildIntroMessage(true)
   .withFleeAllowed(false)

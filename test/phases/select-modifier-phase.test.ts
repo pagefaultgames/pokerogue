@@ -13,8 +13,8 @@ import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
-import { shiftCharCodes } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { shiftCharCodes } from "#utils/rng-utils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

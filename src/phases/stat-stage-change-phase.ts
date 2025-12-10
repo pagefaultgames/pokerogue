@@ -1,6 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import type { ArenaTag } from "#data/arena-tag";
 import { MistTag } from "#data/arena-tag";
@@ -13,7 +12,8 @@ import type { Pokemon } from "#field/pokemon";
 import { ResetNegativeStatStageModifier } from "#modifiers/modifier";
 import { PokemonPhase } from "#phases/pokemon-phase";
 import type { ConditionalUserFieldProtectStatAbAttrParams, PreStatStageChangeAbAttrParams } from "#types/ability-types";
-import { BooleanHolder, NumberHolder } from "#utils/common";
+import { BooleanHolder, NumberHolder } from "#utils/common-utils";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import i18next from "i18next";
 
 export type StatStageChangeCallback = (

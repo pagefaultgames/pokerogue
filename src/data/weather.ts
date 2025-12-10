@@ -1,14 +1,14 @@
 import type { SuppressWeatherEffectAbAttr } from "#abilities/ability";
-import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
+import { timedEventManager } from "#app/timed-event-manager";
 import { BiomeId } from "#enums/biome-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { WeatherType } from "#enums/weather-type";
 import type { Arena } from "#field/arena";
 import type { Pokemon } from "#field/pokemon";
 import type { Move } from "#moves/move";
-import { randSeedInt } from "#utils/common";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
+import { randSeedInt } from "#utils/rng-utils";
 import i18next from "i18next";
 
 export interface SerializedWeather {

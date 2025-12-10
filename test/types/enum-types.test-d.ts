@@ -1,6 +1,6 @@
-import type { enumValueToKey, getEnumKeys, getEnumValues } from "#app/utils/enums";
 import type { EnumOrObject, NormalEnum, TSNumericEnum } from "#types/enum-types";
 import type { ObjectValues } from "#types/type-helpers";
+import type { enumValueToKey, getEnumKeys, getEnumValues } from "#utils/enum-utils";
 import { describe, expectTypeOf, it } from "vitest";
 
 enum testEnumNum {

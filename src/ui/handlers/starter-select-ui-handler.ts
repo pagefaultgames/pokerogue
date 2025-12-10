@@ -1,7 +1,5 @@
 import type { Ability } from "#abilities/ability";
-import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { starterColors } from "#app/global-vars/starter-colors";
 import Overrides from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { speciesEggMoves } from "#balance/egg-moves";
@@ -15,10 +13,10 @@ import {
   POKERUS_STARTER_COUNT,
   speciesStarterCosts,
 } from "#balance/starters";
-import { allAbilities, allMoves, allSpecies } from "#data/data-lists";
+import { PLAYER_PARTY_MAX_SIZE } from "#constants/game-constants";
+import { allAbilities, allMoves, allSpecies, starterColors } from "#data/data-lists";
 import { Egg, getEggTierForSpecies } from "#data/egg";
 import { GrowthRate, getGrowthRateColor } from "#data/exp";
-import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
 import { getNatureName } from "#data/nature";
 import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -32,6 +30,7 @@ import { DexAttr } from "#enums/dex-attr";
 import { DropDownColumn } from "#enums/drop-down-column";
 import { EggSourceType } from "#enums/egg-source-types";
 import { GameModes } from "#enums/game-modes";
+import { Gender, getGenderColor, getGenderSymbol } from "#enums/gender";
 import type { MoveId } from "#enums/move-id";
 import type { Nature } from "#enums/nature";
 import { Passive as PassiveAttr } from "#enums/passive";
@@ -62,20 +61,14 @@ import { StatsContainer } from "#ui/stats-container";
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";
-import {
-  BooleanHolder,
-  fixedInt,
-  getLocalizedSpriteKey,
-  NumberHolder,
-  padInt,
-  randIntRange,
-  rgbHexToRgba,
-  truncateString,
-} from "#utils/common";
-import type { StarterPreferences } from "#utils/data";
-import { deepCopy, loadStarterPreferences, saveStarterPreferences } from "#utils/data";
+import { rgbHexToRgba } from "#utils/color-utils";
+import { BooleanHolder, fixedInt, NumberHolder, padInt } from "#utils/common-utils";
+import type { StarterPreferences } from "#utils/data-utils";
+import { deepCopy, loadStarterPreferences, saveStarterPreferences } from "#utils/data-utils";
+import { getLocalizedSpriteKey } from "#utils/i18n-utils";
 import { getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
-import { toCamelCase, toTitleCase } from "#utils/strings";
+import { randIntRange } from "#utils/rng-utils";
+import { toCamelCase, toTitleCase, truncateString } from "#utils/string-utils";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";

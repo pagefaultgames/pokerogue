@@ -5,7 +5,7 @@ import type { ModalConfig } from "#ui/modal-ui-handler";
 import { ModalUiHandler } from "#ui/modal-ui-handler";
 import { addTextInputObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
-import { fixedInt } from "#utils/common";
+import { fixedInt } from "#utils/common-utils";
 import type InputText from "phaser3-rex-plugins/plugins/inputtext";
 
 export interface FormModalConfig extends ModalConfig {

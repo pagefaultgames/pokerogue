@@ -1,4 +1,4 @@
-import { isBeta } from "#constants/app-constants";
+import { IS_BETA } from "#constants/app-constants";
 
 // 90 days
 const COOKIE_EXPIRATION_BUFFER = 3600000 * 24 * 30 * 3;
@@ -10,7 +10,7 @@ export function setCookie(cName: string, cValue: string): void {
 }
 
 export function removeCookie(cName: string): void {
-  if (isBeta) {
+  if (IS_BETA) {
     document.cookie = `${cName}=;Secure;SameSite=Strict;Domain=pokerogue.net;Path=/;Max-Age=-1`; // we need to remove the cookie from the main domain as well
   }
 

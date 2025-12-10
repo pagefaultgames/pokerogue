@@ -3,7 +3,7 @@ import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
 import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
-import { fixedInt } from "#utils/common";
+import { fixedInt } from "#utils/common-utils";
 
 export interface PokedexInfoOverlaySettings {
   delayVisibility?: boolean; // if true, showing the overlay will only set it to active and populate the fields and the handler using this field has to manually call setVisible later.

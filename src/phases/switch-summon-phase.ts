@@ -1,6 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { SubstituteTag } from "#data/battler-tags";
 import { allMoves } from "#data/data-lists";
 import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
@@ -12,6 +11,7 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import type { Pokemon } from "#field/pokemon";
 import { SwitchEffectTransferModifier } from "#modifiers/modifier";
 import { SummonPhase } from "#phases/summon-phase";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import i18next from "i18next";
 

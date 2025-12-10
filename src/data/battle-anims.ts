@@ -8,10 +8,10 @@ import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
 import type { Pokemon } from "#field/pokemon";
 import type { nil } from "#types/common";
-import { coerceArray } from "#utils/array";
-import { getFrameMs } from "#utils/common";
-import { getEnumKeys, getEnumValues } from "#utils/enums";
-import { toKebabCase } from "#utils/strings";
+import { coerceArray } from "#utils/array-utils";
+import { getFrameMs } from "#utils/common-utils";
+import { getEnumKeys, getEnumValues } from "#utils/enum-utils";
+import { toKebabCase } from "#utils/string-utils";
 import Phaser from "phaser";
 
 export class AnimConfig {

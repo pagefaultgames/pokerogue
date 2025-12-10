@@ -1,9 +1,9 @@
-import { getPokemonNameWithAffix } from "#app/messages";
 import type { Status } from "#data/status-effect";
 import { StatusEffect } from "#enums/status-effect";
 import type { Pokemon } from "#field/pokemon";
 import { getEnumStr, getOnelineDiffStr } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 export type expectedStatusType =

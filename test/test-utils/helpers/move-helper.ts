@@ -12,8 +12,8 @@ import type { CommandPhase } from "#phases/command-phase";
 import type { EnemyCommandPhase } from "#phases/enemy-command-phase";
 import { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
-import { coerceArray } from "#utils/array";
-import { toTitleCase } from "#utils/strings";
+import { coerceArray } from "#utils/array-utils";
+import { toTitleCase } from "#utils/string-utils";
 import type { MockInstance } from "vitest";
 import { expect, vi } from "vitest";
 

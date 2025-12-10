@@ -1,7 +1,7 @@
 import type { Ability } from "#abilities/ability";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { speciesStarterCosts } from "#balance/starters";
+import { ME_CLASSIC_MODE_WAVES } from "#constants/mystery-encounter-constants";
 import { allAbilities } from "#data/data-lists";
 import { getNatureName } from "#data/nature";
 import { AbilityAttr } from "#enums/ability-attr";
@@ -28,8 +28,8 @@ import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encou
 import { PokemonData } from "#system/pokemon-data";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
-import { randSeedShuffle } from "#utils/common";
-import { getEnumValues } from "#utils/enums";
+import { getEnumValues } from "#utils/enum-utils";
+import { randSeedShuffle } from "#utils/rng-utils";
 import i18next from "i18next";
 
 /** The i18n namespace for the encounter */
@@ -44,7 +44,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
   MysteryEncounterType.TRAINING_SESSION,
 )
   .withEncounterTier(MysteryEncounterTier.ULTRA)
-  .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+  .withSceneWaveRangeRequirement(...ME_CLASSIC_MODE_WAVES)
   .withScenePartySizeRequirement(2, 6, true) // Must have at least 2 unfainted pokemon in party
   .withFleeAllowed(false)
   .withHideWildIntroMessage(true)

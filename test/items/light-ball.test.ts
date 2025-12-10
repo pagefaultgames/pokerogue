@@ -4,7 +4,7 @@ import { Stat } from "#enums/stat";
 import { SpeciesStatBoosterModifier } from "#modifiers/modifier";
 import i18next from "#plugins/i18n";
 import { GameManager } from "#test/test-utils/game-manager";
-import { NumberHolder } from "#utils/common";
+import { NumberHolder } from "#utils/common-utils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

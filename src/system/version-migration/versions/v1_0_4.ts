@@ -1,4 +1,4 @@
-import { defaultStarterSpecies } from "#app/constants";
+import { DEFAULT_STARTER_SPECIES } from "#constants/game-constants";
 import { allSpecies } from "#data/data-lists";
 import { CustomPokemonData } from "#data/pokemon-data";
 import { AbilityAttr } from "#enums/ability-attr";
@@ -80,7 +80,7 @@ const fixStarterData: SystemSaveMigrator = {
   version: "1.0.4",
   migrate: (data: SystemSaveData): void => {
     if (data.starterData != null) {
-      for (const starterId of defaultStarterSpecies) {
+      for (const starterId of DEFAULT_STARTER_SPECIES) {
         if (data.starterData[starterId]?.abilityAttr) {
           data.starterData[starterId].abilityAttr |= AbilityAttr.ABILITY_1;
         }

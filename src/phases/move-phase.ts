@@ -1,6 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { CenterOfAttentionTag } from "#data/battler-tags";
@@ -31,8 +30,9 @@ import type { PokemonMove } from "#moves/pokemon-move";
 import type { Move, PreUseInterruptAttr } from "#types/move-types";
 import type { TurnMove } from "#types/turn-move";
 import { applyChallenges } from "#utils/challenge-utils";
-import { BooleanHolder, NumberHolder } from "#utils/common";
-import { enumValueToKey } from "#utils/enums";
+import { BooleanHolder, NumberHolder } from "#utils/common-utils";
+import { enumValueToKey } from "#utils/enum-utils";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import i18next from "i18next";
 

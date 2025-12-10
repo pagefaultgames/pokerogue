@@ -1,5 +1,5 @@
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { ME_CLASSIC_MODE_WAVES } from "#constants/mystery-encounter-constants";
 import { modifierTypes } from "#data/data-lists";
 import { ModifierTier } from "#enums/modifier-tier";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -15,7 +15,7 @@ import {
   TrainerPartyTemplate,
   trainerPartyTemplates,
 } from "#trainers/trainer-party-template";
-import { randSeedInt } from "#utils/common";
+import { randSeedInt } from "#utils/rng-utils";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/mysteriousChallengers";
@@ -29,7 +29,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter = MysteryEncounter
   MysteryEncounterType.MYSTERIOUS_CHALLENGERS,
 )
   .withEncounterTier(MysteryEncounterTier.GREAT)
-  .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+  .withSceneWaveRangeRequirement(...ME_CLASSIC_MODE_WAVES)
   .withIntroSpriteConfigs([]) // These are set in onInit()
   .withIntroDialogue([
     {

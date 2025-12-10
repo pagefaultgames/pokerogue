@@ -14,7 +14,7 @@ import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
 import type { DexEntry } from "#types/dex-data";
 import type { DexAttrProps, StarterDataEntry } from "#types/save-data";
-import { BooleanHolder, type NumberHolder } from "./common";
+import { BooleanHolder, type NumberHolder } from "./common-utils";
 import { getPokemonSpecies } from "./pokemon-utils";
 
 /**

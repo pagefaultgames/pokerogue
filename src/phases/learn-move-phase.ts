@@ -1,5 +1,4 @@
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { initMoveAnim, loadMoveAnimAssets } from "#data/battle-anims";
 import { allMoves } from "#data/data-lists";
@@ -12,6 +11,7 @@ import type { Move } from "#moves/move";
 import { PlayerPartyMemberPokemonPhase } from "#phases/player-party-member-pokemon-phase";
 import { EvolutionSceneUiHandler } from "#ui/evolution-scene-ui-handler";
 import { SummaryUiMode } from "#ui/summary-ui-handler";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import i18next from "i18next";
 
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {

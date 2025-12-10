@@ -1,16 +1,16 @@
 import { pokerogueApi } from "#api/pokerogue-api";
 import { loggedInUser } from "#app/account";
 import { GameMode, getGameMode } from "#app/game-mode";
-import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { Phase } from "#app/phase";
-import { bypassLogin } from "#constants/app-constants";
+import { timedEventManager } from "#app/timed-event-manager";
+import { BYPASS_LOGIN } from "#constants/app-constants";
 import { getDailyRunStarters } from "#data/daily-run";
 import { modifierTypes } from "#data/data-lists";
-import { Gender } from "#data/gender";
 import { BattleType } from "#enums/battle-type";
 import { GameModes } from "#enums/game-modes";
+import { Gender } from "#enums/gender";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { UiMode } from "#enums/ui-mode";
 import { Unlockables } from "#enums/unlockables";
@@ -21,7 +21,7 @@ import { vouchers } from "#system/voucher";
 import type { SessionSaveData } from "#types/save-data";
 import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { SaveSlotUiMode } from "#ui/save-slot-select-ui-handler";
-import { isLocalServerConnected } from "#utils/common";
+import { isLocalServerConnected } from "#utils/common-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
@@ -291,7 +291,7 @@ export class TitlePhase extends Phase {
       };
 
       // If Online, calls seed fetch from db to generate daily run. If Offline, generates a daily run based on current date.
-      if (!bypassLogin || isLocalServerConnected) {
+      if (!BYPASS_LOGIN || isLocalServerConnected) {
         pokerogueApi.daily
           .getSeed()
           .then(seed => {

@@ -8,7 +8,7 @@ import type { Pokemon } from "#field/pokemon";
 import type { ModifierBar } from "#modifiers/modifier";
 import { getMoveTargets } from "#moves/move-utils";
 import { UiHandler } from "#ui/ui-handler";
-import { fixedInt } from "#utils/common";
+import { fixedInt } from "#utils/common-utils";
 
 export type TargetSelectCallback = (targets: BattlerIndex[]) => void;
 

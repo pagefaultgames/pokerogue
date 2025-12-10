@@ -28,8 +28,8 @@ import {
 import { GameManager } from "#test/test-utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
-import * as Utils from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import * as RngUtils from "#utils/rng-utils";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/trashToTreasure";
@@ -78,7 +78,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
   });
 
   it("should initialize fully", async () => {
-    vi.spyOn(Utils, "randSeedInt").mockImplementation((range, min = 0) => min + range - 1);
+    vi.spyOn(RngUtils, "randSeedInt").mockImplementation((range, min = 0) => min + range - 1);
     initSceneWithoutEncounterPhase(scene, defaultParty);
     scene.currentBattle.mysteryEncounter = TrashToTreasureEncounter;
     const moveInitSpy = vi.spyOn(BattleAnims, "initMoveAnim");
@@ -120,19 +120,19 @@ describe("Trash to Treasure - Mystery Encounter", () => {
         },
         {
           modifier: generateModifierType(modifierTypes.TOXIC_ORB) as PokemonHeldItemModifierType,
-          stackCount: Utils.randSeedInt(2, 0),
+          stackCount: RngUtils.randSeedInt(2, 0),
         },
         {
           modifier: generateModifierType(modifierTypes.SOOTHE_BELL) as PokemonHeldItemModifierType,
-          stackCount: Utils.randSeedInt(2, 1),
+          stackCount: RngUtils.randSeedInt(2, 1),
         },
         {
           modifier: generateModifierType(modifierTypes.LUCKY_EGG) as PokemonHeldItemModifierType,
-          stackCount: Utils.randSeedInt(3, 1),
+          stackCount: RngUtils.randSeedInt(3, 1),
         },
         {
           modifier: generateModifierType(modifierTypes.GOLDEN_EGG) as PokemonHeldItemModifierType,
-          stackCount: Utils.randSeedInt(2, 0),
+          stackCount: RngUtils.randSeedInt(2, 0),
         },
       ],
     };

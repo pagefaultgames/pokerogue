@@ -12,7 +12,8 @@ import { achvs } from "#system/achv";
 import { EggCounterContainer } from "#ui/egg-counter-container";
 import type { EggHatchSceneUiHandler } from "#ui/egg-hatch-scene-ui-handler";
 import { PokemonInfoContainer } from "#ui/pokemon-info-container";
-import { fixedInt, getFrameMs, randInt } from "#utils/common";
+import { fixedInt, getFrameMs } from "#utils/common-utils";
+import { randInt } from "#utils/rng-utils";
 import i18next from "i18next";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 

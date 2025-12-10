@@ -4,7 +4,7 @@ import { MysteryEncounterIntroVisuals } from "#field/mystery-encounter-intro";
 import { Pokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
 import { variantColorCache } from "#sprites/variant";
-import { rgbHexToRgba } from "#utils/common";
+import { rgbHexToRgba } from "#utils/color-utils";
 import spriteFragShader from "./glsl/sprite-frag-shader.frag?raw";
 import spriteVertShader from "./glsl/sprite-shader.vert?raw";
 

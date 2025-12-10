@@ -4,7 +4,7 @@ import { SpeciesId } from "#enums/species-id";
 import { EFFECTIVE_STATS, Stat } from "#enums/stat";
 import type { EnemyPokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
-import { toDmgValue } from "#utils/common";
+import { toDmgValue } from "#utils/common-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 

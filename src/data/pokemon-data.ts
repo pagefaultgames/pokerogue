@@ -1,11 +1,11 @@
 import type { BattlerTag } from "#data/battler-tags";
 import { loadBattlerTag, SerializableBattlerTag } from "#data/battler-tags";
-import type { Gender } from "#data/gender";
 import { PokemonMove } from "#data/moves/pokemon-move";
 import type { PokemonSpeciesForm } from "#data/pokemon-species";
 import type { TypeDamageMultiplier } from "#data/type";
 import type { AbilityId } from "#enums/ability-id";
 import type { BerryType } from "#enums/berry-type";
+import type { Gender } from "#enums/gender";
 import type { MoveId } from "#enums/move-id";
 import type { Nature } from "#enums/nature";
 import type { PokemonType } from "#enums/pokemon-type";

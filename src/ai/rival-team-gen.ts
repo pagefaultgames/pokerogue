@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { isBeta, isDev } from "#constants/app-constants";
+import { IS_BETA, IS_DEV } from "#constants/app-constants";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { getTypeDamageMultiplier } from "#data/type";
 import { AbilityId } from "#enums/ability-id";
@@ -11,9 +11,10 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import type { EnemyPokemon } from "#field/pokemon";
 import { RIVAL_6_POOL, type RivalPoolConfig } from "#trainers/rival-party-config";
 import { applyChallenges } from "#utils/challenge-utils";
-import { NumberHolder, randSeedItem } from "#utils/common";
-import { getEnumValues } from "#utils/enums";
+import { NumberHolder } from "#utils/common-utils";
+import { getEnumValues } from "#utils/enum-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { randSeedItem } from "#utils/rng-utils";
 
 /**
  * The maximum number of shared weaknesses to tolerate when balancing weakness
@@ -279,7 +280,7 @@ export function getRandomRivalPartyMemberFunc(
 ): (level: number, strength: PartyMemberStrength) => EnemyPokemon {
   // Protect against out of range slots.
   // Only care about this in dev to be caught during development; it will be excluded in production builds.
-  if ((isBeta || isDev) && slot > config.length) {
+  if ((IS_BETA || IS_DEV) && slot > config.length) {
     throw new Error(`Slot ${slot} is out of range for the provided config of length ${config.length}`);
   }
   return (level: number, _strength: PartyMemberStrength) => {

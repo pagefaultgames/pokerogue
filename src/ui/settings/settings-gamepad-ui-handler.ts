@@ -15,7 +15,7 @@ import {
 } from "#system/settings-gamepad";
 import { AbstractControlSettingsUiHandler } from "#ui/abstract-control-settings-ui-handler";
 import { addTextObject } from "#ui/text";
-import { truncateString } from "#utils/common";
+import { truncateString } from "#utils/string-utils";
 import i18next from "i18next";
 
 /** Class representing the settings UI handler for gamepads */

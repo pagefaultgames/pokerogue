@@ -1,5 +1,5 @@
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { ME_CLASSIC_MODE_WAVES } from "#constants/mystery-encounter-constants";
 import { modifierTypes } from "#data/data-lists";
 import { BattlerIndex } from "#enums/battler-index";
 import { ModifierTier } from "#enums/modifier-tier";
@@ -27,8 +27,8 @@ import { applyModifierTypeToPlayerPokemon } from "#mystery-encounters/encounter-
 import { type MysteryEncounter, MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import i18next from "#plugins/i18n";
-import { randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { randSeedInt } from "#utils/rng-utils";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/trashToTreasure";
@@ -47,7 +47,7 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
   MysteryEncounterType.TRASH_TO_TREASURE,
 )
   .withEncounterTier(MysteryEncounterTier.ULTRA)
-  .withSceneWaveRangeRequirement(100, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
+  .withSceneWaveRangeRequirement(100, ME_CLASSIC_MODE_WAVES[1])
   .withScenePartySizeRequirement(3, 6)
   .withMaxAllowedEncounters(1)
   .withFleeAllowed(false)

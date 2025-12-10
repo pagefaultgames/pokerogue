@@ -1,7 +1,6 @@
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { NON_LEGEND_PARADOX_POKEMON } from "#balance/special-species-groups";
+import { ME_CLASSIC_MODE_WAVES } from "#constants/mystery-encounter-constants";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { BattlerIndex } from "#enums/battler-index";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -30,8 +29,10 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import type { MysteryEncounterOption } from "#mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { MoneyRequirement } from "#mystery-encounters/mystery-encounter-requirements";
-import { BooleanHolder, NumberHolder, randSeedInt } from "#utils/common";
+import { BooleanHolder, NumberHolder } from "#utils/common-utils";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { randSeedInt } from "#utils/rng-utils";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/safariZone";
@@ -54,7 +55,7 @@ export const SafariZoneEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
   MysteryEncounterType.SAFARI_ZONE,
 )
   .withEncounterTier(MysteryEncounterTier.GREAT)
-  .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+  .withSceneWaveRangeRequirement(...ME_CLASSIC_MODE_WAVES)
   .withSceneRequirement(new MoneyRequirement(0, SAFARI_MONEY_MULTIPLIER)) // Cost equal to 1 Max Revive
   .withAutoHideIntroVisuals(false)
   .withIntroSpriteConfigs([

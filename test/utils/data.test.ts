@@ -1,4 +1,4 @@
-import { deepCopy, isBareObject } from "#utils/data";
+import { deepCopy, isBareObject } from "#utils/data-utils";
 import { describe, expect, it } from "vitest";
 
 describe("Utils - Data", () => {

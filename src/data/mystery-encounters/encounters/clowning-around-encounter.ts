@@ -1,5 +1,5 @@
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { ME_CLASSIC_MODE_WAVES } from "#constants/mystery-encounter-constants";
 import { EncounterBattleAnim } from "#data/battle-anims";
 import { allAbilities, modifierTypes } from "#data/data-lists";
 import { CustomPokemonData } from "#data/pokemon-data";
@@ -46,8 +46,8 @@ import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encou
 import { trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/trainer-party-template";
 import type { OptionSelectConfig } from "#ui/abstract-option-select-ui-handler";
-import { randSeedInt, randSeedShuffle } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { randSeedInt, randSeedShuffle } from "#utils/rng-utils";
 import i18next from "i18next";
 
 /** the i18n namespace for the encounter */
@@ -81,7 +81,7 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
 )
   .withEncounterTier(MysteryEncounterTier.ULTRA)
   .withDisallowedChallenges(Challenges.SINGLE_TYPE)
-  .withSceneWaveRangeRequirement(80, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
+  .withSceneWaveRangeRequirement(80, ME_CLASSIC_MODE_WAVES[1])
   .withAnimations(EncounterAnim.SMOKESCREEN)
   .withAutoHideIntroVisuals(false)
   .withIntroSpriteConfigs([

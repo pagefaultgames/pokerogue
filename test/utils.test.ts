@@ -1,5 +1,6 @@
-import { padInt, randomString } from "#utils/common";
-import { deepMergeSpriteData } from "#utils/data";
+import { padInt } from "#utils/common-utils";
+import { deepMergeSpriteData } from "#utils/data-utils";
+import { randomString } from "#utils/string-utils";
 import Phaser from "phaser";
 import { beforeAll, describe, expect, it } from "vitest";
 

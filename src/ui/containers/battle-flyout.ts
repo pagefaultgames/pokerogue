@@ -1,5 +1,4 @@
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { BerryType } from "#enums/berry-type";
 import { MoveId } from "#enums/move-id";
 import { TextStyle } from "#enums/text-style";
@@ -9,7 +8,8 @@ import { BattleSceneEventType } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import type { Move } from "#moves/move";
 import { addTextObject } from "#ui/text";
-import { fixedInt } from "#utils/common";
+import { fixedInt } from "#utils/common-utils";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 
 /** Container for info about a {@linkcode Move} */
 interface MoveInfo {

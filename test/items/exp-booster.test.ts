@@ -1,7 +1,7 @@
 import { AbilityId } from "#enums/ability-id";
 import { PokemonExpBoosterModifier } from "#modifiers/modifier";
 import { GameManager } from "#test/test-utils/game-manager";
-import { NumberHolder } from "#utils/common";
+import { NumberHolder } from "#utils/common-utils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 

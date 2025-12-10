@@ -1,17 +1,27 @@
 /**
- * Rates for shinies and other random properties are defined in this file.
- * CHANCE is defined as x/65536
- * RATE is defined as 1/x
+ * Rates for shinies and eggs are defined in this file.
+ * `CHANCE` is defined as `x/65536`
+ * `RATE` is defined as `1/x`
+ * @module
  */
 
-// #region Encounterable properties
+// #region Shinies
+
 /** `64/65536 -> 1/1024` */
 export const BASE_SHINY_CHANCE = 64;
 
 /** `256/65536 -> 1/256` */
 export const BASE_HIDDEN_ABILITY_CHANCE = 256;
 
-// #region Egg properties
+// The chance x/10 of a shiny being a variant, then of being specifically an epic variant
+export const SHINY_VARIANT_CHANCE = 4;
+export const SHINY_EPIC_CHANCE = 1;
+
+// The catch rate bonus for shiny mons, introduced in Z-A. Can be boosted in events.
+export const SHINY_CATCH_RATE_MULTIPLIER = 2;
+
+// #endregion
+// #region Eggs
 
 // Threshold x at which a gacha egg is determined to be a certain tier
 // Specifically, the tier is determined by the highest threshold a random value between 0-255 meets or exceeds
@@ -42,15 +52,12 @@ export const SAME_SPECIES_EGG_HA_RATE = 8;
 export const MANAPHY_EGG_MANAPHY_RATE = 8;
 export const GACHA_EGG_HA_RATE = 192;
 
+// #endregion
+// #region Egg Moves
+
 // Odds are 1/x
 // [COMMON, RARE, EPIC/MANAPHY, LEGEND]
 export const RARE_EGGMOVE_RATES: readonly number[] = [48, 24, 12, 6];
 export const BOOSTED_RARE_EGGMOVE_RATES: readonly number[] = [16, 12, 6, 3];
 
-// #region Variant properties
-// The chance x/10 of a shiny being a variant, then of being specifically an epic variant
-export const SHINY_VARIANT_CHANCE = 4;
-export const SHINY_EPIC_CHANCE = 1;
-
-// The catch rate bonus for shiny mons, introduced in Z-A. Can be boosted in events.
-export const SHINY_CATCH_RATE_MULTIPLIER = 2;
+// #endregion

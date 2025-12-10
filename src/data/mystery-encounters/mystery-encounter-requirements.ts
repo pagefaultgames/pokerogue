@@ -15,7 +15,7 @@ import { WeatherType } from "#enums/weather-type";
 import type { PlayerPokemon } from "#field/pokemon";
 import { AttackTypeBoosterModifier } from "#modifiers/modifier";
 import type { AttackTypeBoosterModifierType } from "#modifiers/modifier-type";
-import { coerceArray } from "#utils/array";
+import { coerceArray } from "#utils/array-utils";
 
 export interface EncounterRequirement {
   meetsRequirement(): boolean; // Boolean to see if a requirement is met

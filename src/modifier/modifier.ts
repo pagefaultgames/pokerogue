@@ -1,14 +1,13 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { FusionSpeciesFormEvolution, pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#balance/starters";
+import { MAX_PER_TYPE_POKEBALLS } from "#constants/game-constants";
 import { getBerryEffectFunc, getBerryPredicate } from "#data/berry";
 import { allMoves, modifierTypes } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
-import { MAX_PER_TYPE_POKEBALLS } from "#data/pokeball";
 import { getStatusEffectHealText } from "#data/status-effect";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
@@ -41,8 +40,11 @@ import type {
 import type { VoucherType } from "#system/voucher";
 import type { ModifierInstanceMap, ModifierString } from "#types/modifier-types";
 import { addTextObject } from "#ui/text";
-import { BooleanHolder, hslToHex, NumberHolder, randSeedFloat, toDmgValue } from "#utils/common";
+import { hslToHex } from "#utils/color-utils";
+import { BooleanHolder, NumberHolder, toDmgValue } from "#utils/common-utils";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import { getModifierType } from "#utils/modifier-utils";
+import { randSeedFloat } from "#utils/rng-utils";
 import i18next from "i18next";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;

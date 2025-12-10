@@ -1,6 +1,5 @@
 import { pokerogueApi } from "#api/pokerogue-api";
 import { clientSessionId, loggedInUser, updateUserInfo } from "#app/account";
-import { defaultStarterSpecies, saveKey } from "#app/constants";
 import { getGameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
@@ -8,14 +7,14 @@ import { Tutorial } from "#app/tutorial";
 import { speciesEggMoves } from "#balance/egg-moves";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { speciesStarterCosts } from "#balance/starters";
-import { bypassLogin, isBeta, isDev } from "#constants/app-constants";
+import { BYPASS_LOGIN, IS_BETA, IS_DEV, SAVE_KEY } from "#constants/app-constants";
+import { DEFAULT_STARTER_SPECIES } from "#constants/game-constants";
 import { EntryHazardTag } from "#data/arena-tag";
 import { allMoves, allSpecies } from "#data/data-lists";
 import type { Egg } from "#data/egg";
 import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { loadPositionalTag } from "#data/positional-tags/load-positional-tag";
-import { TerrainType } from "#data/terrain";
 import { AbilityAttr } from "#enums/ability-attr";
 import { BattleType } from "#enums/battle-type";
 import { ChallengeType } from "#enums/challenge-type";
@@ -28,6 +27,7 @@ import { Nature } from "#enums/nature";
 import { PlayerGender } from "#enums/player-gender";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
+import { TerrainType } from "#enums/terrain-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import { UiMode } from "#enums/ui-mode";
 import { Unlockables } from "#enums/unlockables";
@@ -74,11 +74,12 @@ import type {
 } from "#types/save-data";
 import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
-import { executeIf, fixedInt, NumberHolder, randInt, randSeedItem } from "#utils/common";
-import { decrypt, encrypt } from "#utils/data";
-import { getEnumKeys } from "#utils/enums";
+import { executeIf, fixedInt, NumberHolder } from "#utils/common-utils";
+import { decrypt, encrypt } from "#utils/data-utils";
+import { getEnumKeys } from "#utils/enum-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
-import { toCamelCase } from "#utils/strings";
+import { randInt, randSeedItem } from "#utils/rng-utils";
+import { toCamelCase } from "#utils/string-utils";
 import { AES, enc } from "crypto-js";
 import i18next from "i18next";
 
@@ -226,9 +227,9 @@ export class GameData {
         typeof v === "bigint" ? (v <= maxIntAttrValue ? Number(v) : v.toString()) : v,
       );
 
-      localStorage.setItem(`data_${loggedInUser?.username}`, encrypt(systemData, bypassLogin));
+      localStorage.setItem(`data_${loggedInUser?.username}`, encrypt(systemData, BYPASS_LOGIN));
 
-      if (!bypassLogin) {
+      if (!BYPASS_LOGIN) {
         pokerogueApi.savedata.system.update({ clientSessionId }, systemData).then(error => {
           globalScene.ui.savingIcon.hide();
           if (error) {
@@ -253,11 +254,11 @@ export class GameData {
     return new Promise<boolean>(resolve => {
       console.log("Client Session:", clientSessionId);
 
-      if (bypassLogin && !localStorage.getItem(`data_${loggedInUser?.username}`)) {
+      if (BYPASS_LOGIN && !localStorage.getItem(`data_${loggedInUser?.username}`)) {
         return resolve(false);
       }
 
-      if (!bypassLogin) {
+      if (!BYPASS_LOGIN) {
         pokerogueApi.savedata.system.get({ clientSessionId }).then(saveDataOrErr => {
           if (
             typeof saveDataOrErr === "number"
@@ -287,11 +288,11 @@ export class GameData {
           const cachedSystem = localStorage.getItem(`data_${loggedInUser?.username}`);
           this.initSystem(
             saveDataOrErr,
-            cachedSystem ? AES.decrypt(cachedSystem, saveKey).toString(enc.Utf8) : undefined,
+            cachedSystem ? AES.decrypt(cachedSystem, SAVE_KEY).toString(enc.Utf8) : undefined,
           ).then(resolve);
         });
       } else {
-        this.initSystem(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, bypassLogin)).then(resolve); // TODO: is this bang correct?
+        this.initSystem(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, BYPASS_LOGIN)).then(resolve); // TODO: is this bang correct?
       }
     });
   }
@@ -414,7 +415,7 @@ export class GameData {
         }
       }
 
-      if (isBeta || isDev) {
+      if (IS_BETA || IS_DEV) {
         try {
           console.debug(
             GameData.parseSystemData(
@@ -426,7 +427,7 @@ export class GameData {
         }
       }
 
-      localStorage.setItem(`data_${loggedInUser?.username}`, encrypt(systemDataStr, bypassLogin));
+      localStorage.setItem(`data_${loggedInUser?.username}`, encrypt(systemDataStr, BYPASS_LOGIN));
 
       const lsItemKey = `runHistoryData_${loggedInUser?.username}`;
       const lsItem = localStorage.getItem(lsItemKey);
@@ -454,7 +455,7 @@ export class GameData {
     if (lsItem) {
       const cachedResponse = lsItem;
       if (cachedResponse) {
-        const runHistory: RunHistoryData = JSON.parse(decrypt(cachedResponse, bypassLogin));
+        const runHistory: RunHistoryData = JSON.parse(decrypt(cachedResponse, BYPASS_LOGIN));
         return runHistory;
       }
       return {};
@@ -490,7 +491,7 @@ export class GameData {
     };
     localStorage.setItem(
       `runHistoryData_${loggedInUser?.username}`,
-      encrypt(JSON.stringify(runHistoryData), bypassLogin),
+      encrypt(JSON.stringify(runHistoryData), BYPASS_LOGIN),
     );
     return true;
   }
@@ -535,7 +536,7 @@ export class GameData {
   }
 
   public async verify(): Promise<boolean> {
-    if (bypassLogin) {
+    if (BYPASS_LOGIN) {
       return true;
     }
 
@@ -554,7 +555,7 @@ export class GameData {
   }
 
   public clearLocalData(): void {
-    if (bypassLogin) {
+    if (BYPASS_LOGIN) {
       return;
     }
     localStorage.removeItem(`data_${loggedInUser?.username}`);
@@ -842,7 +843,7 @@ export class GameData {
       }
     };
 
-    if (!bypassLogin && !localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`)) {
+    if (!BYPASS_LOGIN && !localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`)) {
       const response = await pokerogueApi.savedata.session.get({ slot: slotId, clientSessionId });
 
       if (!response || response?.length === 0 || response?.[0] !== "{") {
@@ -853,7 +854,7 @@ export class GameData {
 
       localStorage.setItem(
         `sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`,
-        encrypt(response, bypassLogin),
+        encrypt(response, BYPASS_LOGIN),
       );
 
       await handleSessionData(response);
@@ -861,7 +862,7 @@ export class GameData {
     }
     const sessionData = localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
     if (sessionData) {
-      await handleSessionData(decrypt(sessionData, bypassLogin));
+      await handleSessionData(decrypt(sessionData, BYPASS_LOGIN));
       return promise;
     }
     resolve(null);
@@ -885,14 +886,14 @@ export class GameData {
     // update timestamp by 1 to ensure the session is saved
     sessionData.timestamp += 1;
     const updatedDataStr = JSON.stringify(sessionData);
-    const encrypted = encrypt(updatedDataStr, bypassLogin);
+    const encrypted = encrypt(updatedDataStr, BYPASS_LOGIN);
     const secretId = this.secretId;
     const trainerId = this.trainerId;
 
-    if (bypassLogin) {
+    if (BYPASS_LOGIN) {
       localStorage.setItem(
         `sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`,
-        encrypt(updatedDataStr, bypassLogin),
+        encrypt(updatedDataStr, BYPASS_LOGIN),
       );
       return true;
     }
@@ -914,7 +915,7 @@ export class GameData {
     const { promise, resolve, reject } = Promise.withResolvers<boolean>();
     try {
       const initSessionFromData = (fromSession: SessionSaveData) => {
-        if (isBeta || isDev) {
+        if (IS_BETA || IS_DEV) {
           try {
             console.debug(
               this.parseSessionData(
@@ -1095,7 +1096,7 @@ export class GameData {
    */
   deleteSession(slotId: number): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      if (bypassLogin) {
+      if (BYPASS_LOGIN) {
         localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
         return resolve(true);
       }
@@ -1160,7 +1161,7 @@ export class GameData {
   async tryClearSession(slotId: number): Promise<[success: boolean, newClear: boolean]> {
     let result: [boolean, boolean] = [false, false];
 
-    if (bypassLogin) {
+    if (BYPASS_LOGIN) {
       localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
       result = [true, true];
     } else {
@@ -1278,13 +1279,13 @@ export class GameData {
                 localStorage.getItem(
                   `sessionData${globalScene.sessionSlotId ? globalScene.sessionSlotId : ""}_${loggedInUser?.username}`,
                 )!,
-                bypassLogin,
+                BYPASS_LOGIN,
               ),
             ) // TODO: is this bang correct?
           : this.getSessionSaveData();
         const maxIntAttrValue = 0x80000000;
         const systemData = useCachedSystem
-          ? GameData.parseSystemData(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, bypassLogin))
+          ? GameData.parseSystemData(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, BYPASS_LOGIN))
           : this.getSystemSaveData(); // TODO: is this bang correct?
 
         const request = {
@@ -1300,17 +1301,17 @@ export class GameData {
             JSON.stringify(systemData, (_k: any, v: any) =>
               typeof v === "bigint" ? (v <= maxIntAttrValue ? Number(v) : v.toString()) : v,
             ),
-            bypassLogin,
+            BYPASS_LOGIN,
           ),
         );
         localStorage.setItem(
           `sessionData${globalScene.sessionSlotId ? globalScene.sessionSlotId : ""}_${loggedInUser?.username}`,
-          encrypt(JSON.stringify(sessionData), bypassLogin),
+          encrypt(JSON.stringify(sessionData), BYPASS_LOGIN),
         );
 
         console.debug("Session data saved!");
 
-        if (!bypassLogin && sync) {
+        if (!BYPASS_LOGIN && sync) {
           pokerogueApi.savedata.updateAll(request).then(error => {
             if (sync) {
               globalScene.lastSavePlayTime = 0;
@@ -1345,7 +1346,7 @@ export class GameData {
             dataStr = this.convertSystemDataStr(dataStr, true);
             break;
         }
-        const encryptedData = AES.encrypt(dataStr, saveKey);
+        const encryptedData = AES.encrypt(dataStr, SAVE_KEY);
         const blob = new Blob([encryptedData.toString()], {
           type: "text/json",
         });
@@ -1355,7 +1356,7 @@ export class GameData {
         link.click();
         link.remove();
       };
-      if (!bypassLogin && dataType < GameDataType.SETTINGS) {
+      if (!BYPASS_LOGIN && dataType < GameDataType.SETTINGS) {
         let promise: Promise<string | null | number> = Promise.resolve(null);
 
         if (dataType === GameDataType.SYSTEM) {
@@ -1381,7 +1382,7 @@ export class GameData {
       } else {
         const data = localStorage.getItem(dataKey);
         if (data) {
-          handleData(decrypt(data, bypassLogin));
+          handleData(decrypt(data, BYPASS_LOGIN));
         }
         resolve(!!data);
       }
@@ -1407,7 +1408,7 @@ export class GameData {
       reader.onload = (_ => {
         return e => {
           const dataName = i18next.t(`gameData:${toCamelCase(GameDataType[dataType])}`);
-          let dataStr = AES.decrypt(e.target?.result?.toString()!, saveKey).toString(enc.Utf8); // TODO: is this bang correct?
+          let dataStr = AES.decrypt(e.target?.result?.toString()!, SAVE_KEY).toString(enc.Utf8); // TODO: is this bang correct?
           let valid = false;
           try {
             switch (dataType) {
@@ -1453,9 +1454,9 @@ export class GameData {
             globalScene.ui.setOverlayMode(
               UiMode.CONFIRM,
               () => {
-                localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
+                localStorage.setItem(dataKey, encrypt(dataStr, BYPASS_LOGIN));
 
-                if (!bypassLogin && dataType < GameDataType.SETTINGS) {
+                if (!BYPASS_LOGIN && dataType < GameDataType.SETTINGS) {
                   updateUserInfo().then(success => {
                     if (!success[0]) {
                       return displayError(i18next.t("menuUiHandler:importNoServer", { dataName }));
@@ -1530,7 +1531,7 @@ export class GameData {
     globalScene.executeWithSeedOffset(
       () => {
         const neutralNatures = [Nature.HARDY, Nature.DOCILE, Nature.SERIOUS, Nature.BASHFUL, Nature.QUIRKY];
-        for (const _ of defaultStarterSpecies) {
+        for (const _ of DEFAULT_STARTER_SPECIES) {
           defaultStarterNatures.push(randSeedItem(neutralNatures));
         }
       },
@@ -1538,8 +1539,8 @@ export class GameData {
       "default",
     );
 
-    for (let ds = 0; ds < defaultStarterSpecies.length; ds++) {
-      const entry = data[defaultStarterSpecies[ds]] as DexEntry;
+    for (let ds = 0; ds < DEFAULT_STARTER_SPECIES.length; ds++) {
+      const entry = data[DEFAULT_STARTER_SPECIES[ds]] as DexEntry;
       entry.seenAttr = defaultStarterAttr;
       entry.caughtAttr = defaultStarterAttr;
       entry.natureAttr = 1 << (defaultStarterNatures[ds] + 1);
@@ -1563,7 +1564,7 @@ export class GameData {
         eggMoves: 0,
         candyCount: 0,
         friendship: 0,
-        abilityAttr: defaultStarterSpecies.includes(speciesId) ? AbilityAttr.ABILITY_1 : 0,
+        abilityAttr: DEFAULT_STARTER_SPECIES.includes(speciesId) ? AbilityAttr.ABILITY_1 : 0,
         passiveAttr: 0,
         valueReduction: 0,
         classicWinCount: 0,

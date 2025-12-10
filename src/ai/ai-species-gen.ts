@@ -5,8 +5,8 @@ import type { PokemonSpecies } from "#data/pokemon-species";
 import { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import type { SpeciesId } from "#enums/species-id";
-import { randSeedIntRange, randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { randSeedIntRange, randSeedItem } from "#utils/rng-utils";
 
 /**
  * Controls the maximum level difference that a Pokémon spawned with

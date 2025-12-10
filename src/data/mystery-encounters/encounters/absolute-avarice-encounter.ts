@@ -36,8 +36,8 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { PersistentModifierRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
-import { randInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { randInt } from "#utils/rng-utils";
 import i18next from "i18next";
 
 /** the i18n namespace for this encounter */

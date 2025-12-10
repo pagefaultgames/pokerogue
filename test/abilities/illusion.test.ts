@@ -1,5 +1,5 @@
-import { Gender } from "#data/gender";
 import { AbilityId } from "#enums/ability-id";
+import { Gender } from "#enums/gender";
 import { MoveId } from "#enums/move-id";
 import { PokeballType } from "#enums/pokeball";
 import { SpeciesId } from "#enums/species-id";

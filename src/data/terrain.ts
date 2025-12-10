@@ -1,18 +1,11 @@
-import { getPokemonNameWithAffix } from "#app/messages";
 import type { BattlerIndex } from "#enums/battler-index";
 import { PokemonType } from "#enums/pokemon-type";
+import { TerrainType } from "#enums/terrain-type";
 import type { Pokemon } from "#field/pokemon";
 import type { Move } from "#moves/move";
 import { isFieldTargeted, isSpreadMove } from "#moves/move-utils";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import i18next from "i18next";
-
-export enum TerrainType {
-  NONE,
-  MISTY,
-  ELECTRIC,
-  GRASSY,
-  PSYCHIC,
-}
 
 export interface SerializedTerrain {
   terrainType: TerrainType;

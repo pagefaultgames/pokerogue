@@ -15,8 +15,7 @@ import {
 import { AbstractControlSettingsUiHandler } from "#ui/abstract-control-settings-ui-handler";
 import { NavigationManager } from "#ui/navigation-menu";
 import { addTextObject } from "#ui/text";
-import { truncateString } from "#utils/common";
-import { toPascalSnakeCase } from "#utils/strings";
+import { toPascalSnakeCase, truncateString } from "#utils/string-utils";
 import i18next from "i18next";
 
 /** Class representing the settings UI handler for keyboards */

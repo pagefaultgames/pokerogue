@@ -1,10 +1,10 @@
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { BattleStyle } from "#enums/battle-style";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { SwitchType } from "#enums/switch-type";
 import { UiMode } from "#enums/ui-mode";
 import { BattlePhase } from "#phases/battle-phase";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import i18next from "i18next";
 
 export class CheckSwitchPhase extends BattlePhase {

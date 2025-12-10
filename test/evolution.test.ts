@@ -3,7 +3,7 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
-import * as Utils from "#utils/common";
+import * as RngUtils from "#utils/rng-utils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -160,11 +160,11 @@ describe("Evolution", () => {
     await game.classicMode.startBattle([SpeciesId.TANDEMAUS]); // starts us off with a tandemaus
     const playerPokemon = game.field.getPlayerPokemon();
     playerPokemon.level = 25; // tandemaus evolves at level 25
-    vi.spyOn(Utils, "randSeedInt").mockReturnValue(0); // setting the random generator to be 0 to force a three family maushold
+    vi.spyOn(RngUtils, "randSeedInt").mockReturnValue(0); // setting the random generator to be 0 to force a three family maushold
     const threeForm = playerPokemon.getEvolution()!;
     expect(threeForm.evoFormKey).toBe("three"); // as per pokemon-forms, the evoFormKey for 3 family mausholds is "three"
     for (let f = 1; f < 4; f++) {
-      vi.spyOn(Utils, "randSeedInt").mockReturnValue(f); // setting the random generator to 1, 2 and 3 to force 4 family mausholds
+      vi.spyOn(RngUtils, "randSeedInt").mockReturnValue(f); // setting the random generator to 1, 2 and 3 to force 4 family mausholds
       const fourForm = playerPokemon.getEvolution()!;
       expect(fourForm.evoFormKey).toBe("four"); // meanwhile, according to the pokemon-forms, the evoFormKey for a 4 family maushold is "four"
     }

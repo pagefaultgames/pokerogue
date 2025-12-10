@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { coerceArray } from "#utils/array";
+import { coerceArray } from "#utils/array-utils";
 
 export class CacheBustedLoaderPlugin extends Phaser.Loader.LoaderPlugin {
   addFile(files: Phaser.Loader.File | Phaser.Loader.File[]): void {

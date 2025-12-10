@@ -30,8 +30,8 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { MoveRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { STEALING_MOVES } from "#mystery-encounters/requirement-groups";
-import { randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { randSeedInt } from "#utils/rng-utils";
 
 /** i18n namespace for the encounter */
 const namespace = "mysteryEncounters/slumberingSnorlax";

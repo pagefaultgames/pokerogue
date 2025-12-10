@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
-import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
 import { getTypeRgb } from "#data/type";
+import { Gender, getGenderColor, getGenderSymbol } from "#enums/gender";
 import { PokemonType } from "#enums/pokemon-type";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
@@ -9,8 +9,9 @@ import { UiTheme } from "#enums/ui-theme";
 import type { Pokemon } from "#field/pokemon";
 import { getVariantTint } from "#sprites/variant";
 import { addTextObject } from "#ui/text";
-import { fixedInt, getLocalizedSpriteKey, getShinyDescriptor } from "#utils/common";
-import { toCamelCase } from "#utils/strings";
+import { fixedInt } from "#utils/common-utils";
+import { getLocalizedSpriteKey, getShinyDescriptor } from "#utils/i18n-utils";
+import { toCamelCase } from "#utils/string-utils";
 import i18next from "i18next";
 
 /**

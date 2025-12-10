@@ -1,5 +1,4 @@
 import type { BattleScene } from "#app/battle-scene";
-import * as messages from "#app/messages";
 import { BindTag, SubstituteTag } from "#data/battler-tags";
 import { allMoves } from "#data/data-lists";
 import type { PokemonTurnData } from "#data/pokemon-data";
@@ -11,6 +10,7 @@ import type { Pokemon } from "#field/pokemon";
 import type { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import type { TurnMove } from "#types/turn-move";
+import * as i18nUtils from "#utils/i18n-utils";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("BattlerTag - SubstituteTag", () => {
@@ -47,7 +47,7 @@ describe("BattlerTag - SubstituteTag", () => {
         }) as Pokemon["findAndRemoveTags"],
       } as unknown as Pokemon;
 
-      vi.spyOn(messages, "getPokemonNameWithAffix").mockReturnValue("");
+      vi.spyOn(i18nUtils, "getPokemonNameWithAffix").mockReturnValue("");
       vi.spyOn(mockPokemon.scene as BattleScene, "getPokemonById").mockImplementation(pokemonId =>
         mockPokemon.id === pokemonId ? mockPokemon : undefined,
       );
@@ -102,7 +102,7 @@ describe("BattlerTag - SubstituteTag", () => {
         isFainted: vi.fn().mockReturnValue(false) as Pokemon["isFainted"],
       } as unknown as Pokemon;
 
-      vi.spyOn(messages, "getPokemonNameWithAffix").mockReturnValue("");
+      vi.spyOn(i18nUtils, "getPokemonNameWithAffix").mockReturnValue("");
     });
 
     it("triggers on-remove animation and message", async () => {
@@ -139,7 +139,7 @@ describe("BattlerTag - SubstituteTag", () => {
           ]) as Pokemon["getLastXMoves"],
       } as unknown as Pokemon;
 
-      vi.spyOn(messages, "getPokemonNameWithAffix").mockReturnValue("");
+      vi.spyOn(i18nUtils, "getPokemonNameWithAffix").mockReturnValue("");
     });
 
     it("MOVE lapse triggers pre-move animation", async () => {

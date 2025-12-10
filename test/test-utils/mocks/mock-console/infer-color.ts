@@ -1,4 +1,4 @@
-import { hslToHex } from "#utils/common";
+import { hslToHex } from "#utils/color-utils";
 import chalk, { type ChalkInstance, type ForegroundColorName, foregroundColorNames } from "chalk";
 import colorMap from "./color-map.json";
 

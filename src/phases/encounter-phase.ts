@@ -1,9 +1,9 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
-import { PLAYER_PARTY_MAX_SIZE, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
+import { PLAYER_PARTY_MAX_SIZE } from "#constants/game-constants";
+import { ME_WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#constants/mystery-encounter-constants";
 import { initEncounterAnims, loadEncounterAnimAssets } from "#data/battle-anims";
 import { getCharVariantFromDialogue } from "#data/dialogue";
 import { getNatureName } from "#data/nature";
@@ -34,7 +34,8 @@ import { doTrainerExclamation } from "#mystery-encounters/encounter-phase-utils"
 import { getGoldenBugNetSpecies } from "#mystery-encounters/encounter-pokemon-utils";
 import { BattlePhase } from "#phases/battle-phase";
 import { achvs } from "#system/achv";
-import { randSeedInt, randSeedItem } from "#utils/common";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
+import { randSeedInt, randSeedItem } from "#utils/rng-utils";
 import i18next from "i18next";
 
 export class EncounterPhase extends BattlePhase {
@@ -325,7 +326,7 @@ export class EncounterPhase extends BattlePhase {
     ) {
       // Increment ME spawn chance if an ME could have spawned but did not
       // Only do this AFTER session has been saved to avoid duplicating increments
-      globalScene.mysteryEncounterSaveData.encounterSpawnChance += WEIGHT_INCREMENT_ON_SPAWN_MISS;
+      globalScene.mysteryEncounterSaveData.encounterSpawnChance += ME_WEIGHT_INCREMENT_ON_SPAWN_MISS;
     }
 
     for (const pokemon of globalScene.getPlayerParty()) {

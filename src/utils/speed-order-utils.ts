@@ -1,8 +1,9 @@
 import type { Pokemon } from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
-import { BooleanHolder, randSeedShuffle } from "#app/utils/common";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Stat } from "#enums/stat";
+import { BooleanHolder } from "#utils/common-utils";
+import { randSeedShuffle } from "./rng-utils";
 
 /** Interface representing an object associated with a specific Pokemon */
 interface hasPokemon {

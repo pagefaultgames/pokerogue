@@ -1,6 +1,5 @@
-import { MAX_TERAS_PER_ARENA } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
+import { MAX_TERAS_PER_ARENA } from "#constants/game-constants";
 import { getTypeRgb } from "#data/type";
 import { Button } from "#enums/buttons";
 import { Command } from "#enums/command";
@@ -11,6 +10,7 @@ import type { CommandPhase } from "#phases/command-phase";
 import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import { canTerastallize } from "#utils/pokemon-utils";
 import i18next from "i18next";
 

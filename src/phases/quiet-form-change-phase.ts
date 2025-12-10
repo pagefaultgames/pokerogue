@@ -1,6 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { SemiInvulnerableTag } from "#data/battler-tags";
 import { getSpeciesFormChangeMessage, SpeciesFormChangeTeraTrigger } from "#data/form-change-triggers";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
@@ -9,6 +8,7 @@ import { BattleSpec } from "#enums/battle-spec";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import type { Pokemon } from "#field/pokemon";
 import { BattlePhase } from "#phases/battle-phase";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 
 export class QuietFormChangePhase extends BattlePhase {
   public readonly phaseName = "QuietFormChangePhase";

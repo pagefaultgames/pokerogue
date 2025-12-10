@@ -1,5 +1,5 @@
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { ME_CLASSIC_MODE_WAVES } from "#constants/mystery-encounter-constants";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import type { MoveId } from "#enums/move-id";
@@ -32,7 +32,7 @@ import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encou
 import { MoveRequirement, PersistentModifierRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { CHARMING_MOVES } from "#mystery-encounters/requirement-groups";
 import { PokemonData } from "#system/pokemon-data";
-import { randSeedInt } from "#utils/common";
+import { randSeedInt } from "#utils/rng-utils";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/uncommonBreed";
@@ -46,7 +46,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
   MysteryEncounterType.UNCOMMON_BREED,
 )
   .withEncounterTier(MysteryEncounterTier.COMMON)
-  .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+  .withSceneWaveRangeRequirement(...ME_CLASSIC_MODE_WAVES)
   .withCatchAllowed(true)
   .withHideWildIntroMessage(true)
   .withFleeAllowed(false)

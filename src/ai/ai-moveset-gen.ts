@@ -1,4 +1,3 @@
-import { EVOLVE_MOVE, RELEARN_MOVE } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { speciesEggMoves } from "#balance/egg-moves";
 import {
@@ -21,7 +20,8 @@ import {
   ULTRA_TM_MOVESET_WEIGHT,
 } from "#balance/moveset-generation";
 import { speciesTmMoves, tmPoolTiers } from "#balance/tms";
-import { isBeta, isDev } from "#constants/app-constants";
+import { IS_BETA, IS_DEV } from "#constants/app-constants";
+import { EVOLVE_MOVE, RELEARN_MOVE } from "#constants/move-constants";
 import { allMoves } from "#data/data-lists";
 import { ModifierTier } from "#enums/modifier-tier";
 import { MoveCategory } from "#enums/move-category";
@@ -31,8 +31,9 @@ import type { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import { PokemonMove } from "#moves/pokemon-move";
-import { NumberHolder, randSeedInt } from "#utils/common";
+import { NumberHolder } from "#utils/common-utils";
 import { willTerastallize } from "#utils/pokemon-utils";
+import { randSeedInt } from "#utils/rng-utils";
 
 /**
  * Compute and assign a weight to the level-up moves currently available to the Pokémon
@@ -633,7 +634,7 @@ function fillInRemainingMovesetSlots(
  * @param note - Short note to include in the log for context
  */
 function debugMoveWeights(pokemon: Pokemon, pool: Map<MoveId, number>, note: string): void {
-  if ((isBeta || isDev) && import.meta.env.NODE_ENV !== "test") {
+  if ((IS_BETA || IS_DEV) && import.meta.env.NODE_ENV !== "test") {
     const moveNameToWeightMap = new Map<string, number>();
     const sortedByValue = Array.from(pool.entries()).sort((a, b) => b[1] - a[1]);
     for (const [moveId, weight] of sortedByValue) {

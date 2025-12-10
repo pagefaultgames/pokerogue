@@ -5,7 +5,7 @@ import { ArenaTagSide } from "#enums/arena-tag-side";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { FieldPhase } from "#phases/field-phase";
-import { NumberHolder } from "#utils/common";
+import { NumberHolder } from "#utils/common-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import i18next from "i18next";
 

@@ -15,3 +15,5 @@ export const modifierTypes = {} as ModifierTypes;
 export const catchableSpecies: CatchableSpecies = {};
 export const biomeDepths: BiomeDepths = {};
 export const uncatchableSpecies: SpeciesId[] = [];
+
+export const starterColors: { [key: string]: [string, string] } = {};

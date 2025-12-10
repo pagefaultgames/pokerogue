@@ -1,6 +1,6 @@
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { speciesStarterCosts } from "#balance/starters";
+import { ME_CLASSIC_MODE_WAVES } from "#constants/mystery-encounter-constants";
 import { modifierTypes } from "#data/data-lists";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -45,7 +45,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter = MysteryEncounterB
   MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE,
 )
   .withEncounterTier(MysteryEncounterTier.GREAT)
-  .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+  .withSceneWaveRangeRequirement(...ME_CLASSIC_MODE_WAVES)
   .withScenePartySizeRequirement(2, 6, true) // Must have at least 2 pokemon in party
   .withIntroSpriteConfigs([
     {

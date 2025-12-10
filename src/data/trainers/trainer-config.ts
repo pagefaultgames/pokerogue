@@ -4,10 +4,10 @@ import { signatureSpecies } from "#balance/signature-species";
 import { tmSpecies } from "#balance/tm-species-map";
 import { modifierTypes } from "#data/data-lists";
 import { doubleBattleDialogue } from "#data/double-battle-dialogue";
-import { Gender } from "#data/gender";
 import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
+import { Gender } from "#enums/gender";
 import { MoveId } from "#enums/move-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { PokeballType } from "#enums/pokeball";
@@ -51,10 +51,10 @@ import type {
   TrainerTierPools,
 } from "#types/trainer-funcs";
 import type { Mutable } from "#types/type-helpers";
-import { coerceArray } from "#utils/array";
-import { randSeedInt, randSeedIntRange, randSeedItem } from "#utils/common";
+import { coerceArray } from "#utils/array-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
-import { toCamelCase, toTitleCase } from "#utils/strings";
+import { randSeedInt, randSeedIntRange, randSeedItem } from "#utils/rng-utils";
+import { toCamelCase, toTitleCase } from "#utils/string-utils";
 import i18next from "i18next";
 
 /** Minimum BST for Pokemon generated onto the Elite Four's teams */

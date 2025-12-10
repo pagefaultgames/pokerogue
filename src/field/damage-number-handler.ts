@@ -5,7 +5,7 @@ import { TextStyle } from "#enums/text-style";
 import type { Pokemon } from "#field/pokemon";
 import type { DamageResult } from "#types/damage-result";
 import { addTextObject } from "#ui/text";
-import { fixedInt, formatStat } from "#utils/common";
+import { fixedInt, formatStat } from "#utils/common-utils";
 
 type TextAndShadowArr = [string | null, string | null];
 

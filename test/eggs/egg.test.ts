@@ -7,7 +7,7 @@ import { SpeciesId } from "#enums/species-id";
 import { VariantTier } from "#enums/variant-tier";
 import { EggData } from "#system/egg-data";
 import { GameManager } from "#test/test-utils/game-manager";
-import * as Utils from "#utils/common";
+import * as RngUtils from "#utils/rng-utils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -384,7 +384,7 @@ describe("Egg Generation Tests", () => {
     expect(scene.gameData.gameStats.legendaryEggsPulled).toBe(startingLegendaryEggsPulled + 1);
   });
   it("should increase legendary egg rate", () => {
-    vi.spyOn(Utils, "randInt").mockReturnValue(1);
+    vi.spyOn(RngUtils, "randInt").mockReturnValue(1);
 
     const scene = game.scene;
     const expectedTier1 = EggTier.LEGENDARY;

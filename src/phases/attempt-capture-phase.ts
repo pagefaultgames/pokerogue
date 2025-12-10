@@ -1,10 +1,8 @@
-import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
-import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
-import { isBeta, isDev } from "#constants/app-constants";
+import { timedEventManager } from "#app/timed-event-manager";
+import { IS_BETA, IS_DEV } from "#constants/app-constants";
+import { PLAYER_PARTY_MAX_SIZE } from "#constants/game-constants";
 import { SubstituteTag } from "#data/battler-tags";
-import { Gender } from "#data/gender";
 import {
   doPokeballBounceAnim,
   getCriticalCaptureChance,
@@ -15,6 +13,7 @@ import {
 import { getStatusEffectCatchRateMultiplier } from "#data/status-effect";
 import { BattlerIndex } from "#enums/battler-index";
 import { ChallengeType } from "#enums/challenge-type";
+import { Gender } from "#enums/gender";
 import type { PokeballType } from "#enums/pokeball";
 import { StatusEffect } from "#enums/status-effect";
 import { UiMode } from "#enums/ui-mode";
@@ -27,7 +26,8 @@ import type { PartyOption } from "#ui/party-ui-handler";
 import { PartyUiMode } from "#ui/party-ui-handler";
 import { SummaryUiMode } from "#ui/summary-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
-import { BooleanHolder } from "#utils/common";
+import { BooleanHolder } from "#utils/common-utils";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import i18next from "i18next";
 
 // TODO: Refactor and split up to allow for overriding capture chance
@@ -73,7 +73,7 @@ export class AttemptCapturePhase extends PokemonPhase {
     const shakeProbability = Math.round(65536 / Math.pow(255 / modifiedCatchRate, 0.1875)); // Formula taken from gen 6
     const criticalCaptureChance = getCriticalCaptureChance(modifiedCatchRate);
 
-    if ((isBeta || isDev) && import.meta.env.NODE_ENV !== "test") {
+    if ((IS_BETA || IS_DEV) && import.meta.env.NODE_ENV !== "test") {
       console.log(
         "Base Catch Rate: %d\nBall Mult: %d\nStatus Mult: %d\nShiny Bonus: %d\nModified Catch Rate: %d\nShake Probability: %d\nCritical Catch Chance: %d",
         catchRate,

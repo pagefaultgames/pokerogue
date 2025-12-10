@@ -15,7 +15,7 @@ import type { ModifierSelectCallback } from "#phases/select-modifier-phase";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { addTextObject, getModifierTierTextTint, getTextColor, getTextStyleOptions } from "#ui/text";
-import { formatMoney, NumberHolder } from "#utils/common";
+import { formatMoney, NumberHolder } from "#utils/common-utils";
 import i18next from "i18next";
 import Phaser from "phaser";
 

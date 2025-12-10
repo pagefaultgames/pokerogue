@@ -1,6 +1,5 @@
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
+import { ME_CLASSIC_MODE_WAVES } from "#constants/mystery-encounter-constants";
 import { modifierTypes } from "#data/data-lists";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
@@ -36,8 +35,9 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import i18next from "#plugins/i18n";
 import { PokemonData } from "#system/pokemon-data";
-import { randSeedItem } from "#utils/common";
-import { getEnumValues } from "#utils/enums";
+import { getEnumValues } from "#utils/enum-utils";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
+import { randSeedItem } from "#utils/rng-utils";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/berriesAbound";
@@ -51,7 +51,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
   MysteryEncounterType.BERRIES_ABOUND,
 )
   .withEncounterTier(MysteryEncounterTier.COMMON)
-  .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+  .withSceneWaveRangeRequirement(...ME_CLASSIC_MODE_WAVES)
   .withCatchAllowed(true)
   .withHideWildIntroMessage(true)
   .withFleeAllowed(false)

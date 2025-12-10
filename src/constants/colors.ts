@@ -1,5 +1,4 @@
 /**
- *
  * A big file storing colors used in logging.
  * Minified by Terser during production builds, so has no overhead.
  * @module

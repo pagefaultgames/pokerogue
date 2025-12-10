@@ -5,7 +5,7 @@ import { Stat } from "#enums/stat";
 import type { PlayerPokemon } from "#field/pokemon";
 import type { BattleInfoParamList } from "#ui/battle-info";
 import { BattleInfo } from "#ui/battle-info";
-import { getLocalizedSpriteKey } from "#utils/common";
+import { getLocalizedSpriteKey } from "#utils/i18n-utils";
 
 export class PlayerBattleInfo extends BattleInfo {
   protected player: true = true;

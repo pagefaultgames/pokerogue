@@ -5,7 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
-import { toDmgValue } from "#utils/common";
+import { toDmgValue } from "#utils/common-utils";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Disguise", () => {

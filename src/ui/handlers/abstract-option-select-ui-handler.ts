@@ -5,7 +5,8 @@ import { UiMode } from "#enums/ui-mode";
 import { addBBCodeTextObject, getTextColor, getTextStyleOptions } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
-import { fixedInt, rgbHexToRgba } from "#utils/common";
+import { rgbHexToRgba } from "#utils/color-utils";
+import { fixedInt } from "#utils/common-utils";
 import { argbFromRgba } from "@material/material-color-utilities";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 

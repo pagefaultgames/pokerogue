@@ -1,10 +1,10 @@
 import type { BattleScene } from "#app/battle-scene";
 import * as BattleAnims from "#data/battle-anims";
-import { Gender } from "#data/gender";
 import { Status } from "#data/status-effect";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
+import { Gender } from "#enums/gender";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";

@@ -16,8 +16,8 @@ import type { NewArenaEvent } from "#events/battle-scene";
 import type { ModifierOverride } from "#modifiers/modifier-type";
 import type { Variant } from "#sprites/variant";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
-import { coerceArray } from "#utils/array";
-import { shiftCharCodes } from "#utils/common";
+import { coerceArray } from "#utils/array-utils";
+import { shiftCharCodes } from "#utils/rng-utils";
 import chalk from "chalk";
 import { vi } from "vitest";
 

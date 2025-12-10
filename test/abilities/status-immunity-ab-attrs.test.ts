@@ -6,7 +6,7 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { StatusEffectAttr } from "#moves/move";
 import { GameManager } from "#test/test-utils/game-manager";
-import { toTitleCase } from "#utils/strings";
+import { toTitleCase } from "#utils/string-utils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

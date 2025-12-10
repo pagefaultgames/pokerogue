@@ -3,7 +3,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
-import { sortInSpeedOrder } from "#utils/speed-order";
+import { sortInSpeedOrder } from "#utils/speed-order-utils";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Utils - Speed Order", () => {

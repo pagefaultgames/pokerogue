@@ -1,5 +1,5 @@
 import { StatusEffect } from "#enums/status-effect";
-import { randIntRange } from "#utils/common";
+import { randIntRange } from "#utils/rng-utils";
 import type { ParseKeys } from "i18next";
 import i18next from "i18next";
 

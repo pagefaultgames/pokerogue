@@ -1,5 +1,4 @@
 import { globalScene } from "#app/global-scene";
-import { starterColors } from "#app/global-vars/starter-colors";
 import { speciesEggMoves } from "#balance/egg-moves";
 import { pokemonStarters } from "#balance/pokemon-evolutions";
 import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#balance/pokemon-level-moves";
@@ -12,7 +11,7 @@ import {
   speciesStarterCosts,
 } from "#balance/starters";
 import { speciesTmMoves } from "#balance/tms";
-import { allAbilities, allMoves, allSpecies, catchableSpecies } from "#data/data-lists";
+import { allAbilities, allMoves, allSpecies, catchableSpecies, starterColors } from "#data/data-lists";
 import type { PokemonForm, PokemonSpecies } from "#data/pokemon-species";
 import { normalForm } from "#data/pokemon-species";
 import { AbilityAttr } from "#enums/ability-attr";
@@ -44,11 +43,14 @@ import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/pokemon-icon-ani
 import { ScrollBar } from "#ui/scroll-bar";
 import { addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
-import { BooleanHolder, fixedInt, getLocalizedSpriteKey, padInt, randIntRange, rgbHexToRgba } from "#utils/common";
-import type { StarterPreferences } from "#utils/data";
-import { loadStarterPreferences } from "#utils/data";
+import { rgbHexToRgba } from "#utils/color-utils";
+import { BooleanHolder, fixedInt, padInt } from "#utils/common-utils";
+import type { StarterPreferences } from "#utils/data-utils";
+import { loadStarterPreferences } from "#utils/data-utils";
+import { getLocalizedSpriteKey } from "#utils/i18n-utils";
 import { getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
-import { toCamelCase } from "#utils/strings";
+import { randIntRange } from "#utils/rng-utils";
+import { toCamelCase } from "#utils/string-utils";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 

@@ -1,6 +1,6 @@
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
-import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import { timedEventManager } from "#app/timed-event-manager";
+import { ME_CLASSIC_MODE_WAVES } from "#constants/mystery-encounter-constants";
 import { modifierTypes } from "#data/data-lists";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -34,8 +34,8 @@ import {
 } from "#mystery-encounters/mystery-encounter-requirements";
 import i18next from "#plugins/i18n";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
-import { randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { randSeedItem } from "#utils/rng-utils";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/delibirdy";
@@ -80,7 +80,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   MysteryEncounterType.DELIBIRDY,
 )
   .withEncounterTier(MysteryEncounterTier.GREAT)
-  .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+  .withSceneWaveRangeRequirement(...ME_CLASSIC_MODE_WAVES)
   .withSceneRequirement(new MoneyRequirement(0, DELIBIRDY_MONEY_PRICE_MULTIPLIER)) // Must have enough money for it to spawn at the very least
   .withPrimaryPokemonRequirement(
     CombinationPokemonRequirement.Some(

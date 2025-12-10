@@ -29,8 +29,8 @@ import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { trainerConfigs } from "#trainers/trainer-config";
-import { randSeedShuffle } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { randSeedShuffle } from "#utils/rng-utils";
 import i18next from "i18next";
 
 /** the i18n namespace for the encounter */

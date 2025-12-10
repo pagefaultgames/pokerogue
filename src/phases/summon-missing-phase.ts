@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { SummonPhase } from "#phases/summon-phase";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import i18next from "i18next";
 
 export class SummonMissingPhase extends SummonPhase {

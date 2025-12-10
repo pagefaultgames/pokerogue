@@ -1,6 +1,6 @@
 import type { MockGameObject } from "#test/test-utils/mocks/mock-game-object";
 import type { MockTextureManager } from "#test/test-utils/mocks/mock-texture-manager";
-import { coerceArray } from "#utils/array";
+import { coerceArray } from "#utils/array-utils";
 
 // TODO: Make this implement Phaser.GameObjects.Container
 export class MockContainer implements MockGameObject {

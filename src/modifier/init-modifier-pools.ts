@@ -1,8 +1,8 @@
-import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import { timedEventManager } from "#app/timed-event-manager";
 import { pokemonEvolutions } from "#balance/pokemon-evolutions";
+import { MAX_PER_TYPE_POKEBALLS } from "#constants/game-constants";
 import { modifierTypes } from "#data/data-lists";
-import { MAX_PER_TYPE_POKEBALLS } from "#data/pokeball";
 import { AbilityId } from "#enums/ability-id";
 import { BerryType } from "#enums/berry-type";
 import { ModifierTier } from "#enums/modifier-tier";

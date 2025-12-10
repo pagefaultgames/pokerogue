@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
-import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
 import { getNatureName } from "#data/nature";
 import { DexAttr } from "#enums/dex-attr";
+import { Gender, getGenderColor, getGenderSymbol } from "#enums/gender";
 import { PokemonType } from "#enums/pokemon-type";
 import { TextStyle } from "#enums/text-style";
 import type { Pokemon } from "#field/pokemon";
@@ -11,7 +11,8 @@ import type { StarterDataEntry } from "#types/save-data";
 import { ConfirmUiHandler } from "#ui/confirm-ui-handler";
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
-import { fixedInt, getShinyDescriptor } from "#utils/common";
+import { fixedInt } from "#utils/common-utils";
+import { getShinyDescriptor } from "#utils/i18n-utils";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { StatsContainer } from "./stats-container";

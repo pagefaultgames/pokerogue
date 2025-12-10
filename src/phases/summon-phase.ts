@@ -1,6 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
 import { getPokeballAtlasKey, getPokeballTintColor } from "#data/pokeball";
 import { BattleType } from "#enums/battle-type";
@@ -11,6 +10,7 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { addPokeballOpenParticles } from "#field/anims";
 import type { Pokemon } from "#field/pokemon";
 import { PartyMemberPokemonPhase } from "#phases/party-member-pokemon-phase";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import i18next from "i18next";
 
 export class SummonPhase extends PartyMemberPokemonPhase {

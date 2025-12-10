@@ -1,4 +1,4 @@
-import * as Constants from "#app/constants";
+import * as AppConstants from "#constants/app-constants";
 import { getSplashMessages } from "#data/splash-messages";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -15,7 +15,7 @@ describe("Data - Splash Messages", () => {
 
   describe("Seasonal", () => {
     beforeEach(() => {
-      vi.spyOn(Constants, "USE_SEASONAL_SPLASH_MESSAGES", "get").mockReturnValue(true);
+      vi.spyOn(AppConstants, "USE_SEASONAL_SPLASH_MESSAGES", "get").mockReturnValue(true);
     });
 
     afterEach(() => {
