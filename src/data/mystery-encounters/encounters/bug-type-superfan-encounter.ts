@@ -698,7 +698,8 @@ function getTrainerConfigForWave(waveIndex: number) {
 function doBugTypeMoveTutor(): Promise<void> {
   // biome-ignore lint/suspicious/noAsyncPromiseExecutor: TODO explain
   return new Promise<void>(async resolve => {
-    const moveOptions = globalScene.currentBattle.mysteryEncounter!.misc.moveTutorOptions;
+    const encounter = globalScene.currentBattle.mysteryEncounter!;
+    const moveOptions = encounter.misc.moveTutorOptions;
     await showEncounterDialogue(`${namespace}:battleWon`, `${namespace}:speaker`);
 
     const moveInfoOverlay = new MoveInfoOverlay({
@@ -715,6 +716,7 @@ function doBugTypeMoveTutor(): Promise<void> {
       const option: OptionSelectItem = {
         label: move.getName(),
         handler: () => {
+          encounter.misc.selectedMoveId = move.moveId;
           moveInfoOverlay.active = false;
           moveInfoOverlay.setVisible(false);
           return true;
@@ -732,10 +734,19 @@ function doBugTypeMoveTutor(): Promise<void> {
       moveInfoOverlay.setVisible(false);
     };
 
+    // Pokemon that already know the selected move cannot be selected
+    const selectablePokemonFilter = (pokemon: Pokemon) => {
+      const selectedMoveId = encounter.misc.selectedMoveId;
+      if (pokemon.moveset.some(m => m.moveId === selectedMoveId)) {
+        return getEncounterText(`${namespace}:alreadyKnowsMove`) ?? null;
+      }
+      return null;
+    };
+
     const result = await selectOptionThenPokemon(
       optionSelectItems,
       `${namespace}:teachMovePrompt`,
-      undefined,
+      selectablePokemonFilter,
       onHoverOverCancel,
     );
     // let forceExit = !!result;
