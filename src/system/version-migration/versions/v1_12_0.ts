@@ -1,5 +1,5 @@
 import type { SessionSaveData } from "#types/save-data";
-import type { SessionSaveMigrator } from "#types/session-save-migrator";
+import type { SessionSaveMigrator } from "#types/save-migrators";
 
 /**
  * Shift the form change item values upward to account for newly added Mega Stones.
