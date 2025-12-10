@@ -51,7 +51,7 @@
     "@vitest/utils": "^4.0.14",
     "chalk": "^5.6.2",
     "dependency-cruiser": "^17.3.1",
-    "jsdom": "^27.2.0",
+    "jsdom": "^27.3.0",
     "lefthook": "^2.0.4",
     "msw": "^2.12.3",
     "phaser3spectorjs": "^0.0.8",
