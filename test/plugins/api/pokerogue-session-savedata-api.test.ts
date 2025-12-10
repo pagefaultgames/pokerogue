@@ -8,7 +8,7 @@ import type {
   GetSessionSavedataRequest,
   NewClearSessionSavedataRequest,
   UpdateSessionSavedataRequest,
-} from "#types/api/pokerogue-session-save-data-api";
+} from "#types/api";
 import type { SessionSaveData } from "#types/save-data";
 import { HttpResponse, http } from "msw";
 import type { SetupServerApi } from "msw/node";
