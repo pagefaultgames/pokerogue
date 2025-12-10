@@ -1919,11 +1919,11 @@ export class BattleScene extends SceneBase {
   updateBiomeWaveText(): void {
     const isBoss = !(this.currentBattle.waveIndex % 10);
     const biomeString: string = getBiomeName(this.arena.biomeType);
-    this.fieldUI
-      .moveAbove(this.biomeWaveText, this.luckText)
+    this.fieldUI.moveAbove(this.biomeWaveText, this.luckText);
+    this.biomeWaveText
       .setText(biomeString + " - " + this.currentBattle.waveIndex.toString())
-      .setColor(!isBoss ? "#ffffff" : "#f89890")
-      .setShadowColor(!isBoss ? "#636363" : "#984038")
+      .setColor(isBoss ? "#f89890" : "#ffffff")
+      .setShadowColor(isBoss ? "#984038" : "#636363")
       .setVisible(true);
   }
 
@@ -1943,7 +1943,7 @@ export class BattleScene extends SceneBase {
     if (this.tweens.getTweensOf(this.moneyText).length > 0) {
       return;
     }
-    const deltaScale = this.moneyText.scale * 0.14 * (positiveChange ? 1 : -1);
+    const deltaScale = this.moneyText.scale * 0.14 * +positiveChange;
     this.moneyText.setShadowColor(positiveChange ? "#008000" : "#FF0000");
     this.tweens.add({
       targets: this.moneyText,
@@ -1956,8 +1956,8 @@ export class BattleScene extends SceneBase {
   }
 
   updateScoreText(): void {
-    this.scoreText.setText(`Score: ${this.score.toString()}`);
-    this.scoreText.setVisible(this.gameMode.isDaily);
+    // TODO: Localize this
+    this.scoreText.setText(`Score: ${this.score.toString()}`).setVisible(this.gameMode.isDaily);
   }
 
   /**
