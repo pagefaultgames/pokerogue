@@ -1,7 +1,7 @@
 import { FixedBattleConfig } from "#app/battle";
-import { CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
+import { ME_CHALLENGE_MODE_WAVES, ME_CLASSIC_MODE_WAVES } from "#constants/mystery-encounter-constants";
 import { allChallenges, type Challenge, copyChallenge } from "#data/challenge";
 import { getDailyEventSeedBoss, getDailyStartingBiome } from "#data/daily-run";
 import { allSpecies } from "#data/data-lists";
@@ -14,8 +14,9 @@ import { SpeciesId } from "#enums/species-id";
 import type { Arena } from "#field/arena";
 import { classicFixedBattles, type FixedBattleConfigs } from "#trainers/fixed-battle-configs";
 import { applyChallenges } from "#utils/challenge-utils";
-import { BooleanHolder, randSeedInt, randSeedItem } from "#utils/common";
+import { BooleanHolder } from "#utils/common-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { randSeedInt, randSeedItem } from "#utils/rng-utils";
 import i18next from "i18next";
 
 interface GameModeConfig {
@@ -394,9 +395,9 @@ export class GameMode implements GameModeConfig {
   getMysteryEncounterLegalWaves(): [number, number] {
     switch (this.modeId) {
       case GameModes.CLASSIC:
-        return CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES;
+        return ME_CLASSIC_MODE_WAVES;
       case GameModes.CHALLENGE:
-        return CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES;
+        return ME_CHALLENGE_MODE_WAVES;
       default:
         return [0, 0];
     }

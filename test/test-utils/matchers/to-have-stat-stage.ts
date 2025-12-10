@@ -1,8 +1,8 @@
-import { getPokemonNameWithAffix } from "#app/messages";
 import type { BattleStat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
 import { getStatName } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**

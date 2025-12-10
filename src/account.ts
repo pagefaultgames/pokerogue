@@ -1,7 +1,7 @@
 import { pokerogueApi } from "#api/pokerogue-api";
-import { bypassLogin } from "#constants/app-constants";
+import { BYPASS_LOGIN } from "#constants/app-constants";
 import type { UserInfo } from "#types/api";
-import { randomString } from "#utils/common";
+import { randomString } from "#utils/string-utils";
 
 export let loggedInUser: UserInfo | null = null;
 // This is a random string that is used to identify the client session - unique per session (tab or window) so that the game will only save on the one that the server is expecting
@@ -18,7 +18,7 @@ export function initLoggedInUser(): void {
 }
 
 export async function updateUserInfo(): Promise<[boolean, number]> {
-  if (bypassLogin) {
+  if (BYPASS_LOGIN) {
     loggedInUser = {
       username: "Guest",
       lastSessionSlot: -1,

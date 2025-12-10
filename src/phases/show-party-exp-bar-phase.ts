@@ -3,7 +3,7 @@ import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { ExpNotification } from "#enums/exp-notification";
 import { ExpBoosterModifier } from "#modifiers/modifier";
 import { PlayerPartyMemberPokemonPhase } from "#phases/player-party-member-pokemon-phase";
-import { NumberHolder } from "#utils/common";
+import { NumberHolder } from "#utils/common-utils";
 
 export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
   public readonly phaseName = "ShowPartyExpBarPhase";

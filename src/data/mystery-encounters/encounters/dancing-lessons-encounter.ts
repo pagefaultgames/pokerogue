@@ -1,5 +1,5 @@
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { ME_CLASSIC_MODE_WAVES } from "#constants/mystery-encounter-constants";
 import { EncounterBattleAnim } from "#data/battle-anims";
 import { modifierTypes } from "#data/data-lists";
 import { BattlerIndex } from "#enums/battler-index";
@@ -97,7 +97,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
   MysteryEncounterType.DANCING_LESSONS,
 )
   .withEncounterTier(MysteryEncounterTier.GREAT)
-  .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+  .withSceneWaveRangeRequirement(...ME_CLASSIC_MODE_WAVES)
   .withIntroSpriteConfigs([]) // Uses a real Pokemon sprite instead of ME Intro Visuals
   .withAnimations(EncounterAnim.DANCE)
   .withHideWildIntroMessage(true)

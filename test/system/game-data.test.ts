@@ -33,13 +33,13 @@ describe("System - Game Data", () => {
 
   describe("tryClearSession", () => {
     beforeEach(() => {
-      vi.spyOn(appConstants, "bypassLogin", "get").mockReturnValue(false);
+      vi.spyOn(appConstants, "BYPASS_LOGIN", "get").mockReturnValue(false);
       vi.spyOn(game.scene.gameData, "getSessionSaveData").mockReturnValue({} as SessionSaveData);
       vi.spyOn(account, "updateUserInfo").mockImplementation(async () => [true, 1]);
     });
 
     it("should return [true, true] if bypassLogin is true", async () => {
-      vi.spyOn(appConstants, "bypassLogin", "get").mockReturnValue(true);
+      vi.spyOn(appConstants, "BYPASS_LOGIN", "get").mockReturnValue(true);
 
       const result = await game.scene.gameData.tryClearSession(0);
 

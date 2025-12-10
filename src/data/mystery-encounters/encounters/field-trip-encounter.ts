@@ -1,5 +1,5 @@
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { ME_CLASSIC_MODE_WAVES } from "#constants/mystery-encounter-constants";
 import { modifierTypes } from "#data/data-lists";
 import { MoveCategory } from "#enums/move-category";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -33,7 +33,7 @@ export const FieldTripEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   MysteryEncounterType.FIELD_TRIP,
 )
   .withEncounterTier(MysteryEncounterTier.COMMON)
-  .withSceneWaveRangeRequirement(CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[0], 100)
+  .withSceneWaveRangeRequirement(ME_CLASSIC_MODE_WAVES[0], 100)
   .withIntroSpriteConfigs([
     {
       spriteKey: "preschooler_m",

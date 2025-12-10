@@ -1,10 +1,10 @@
 import { allMoves } from "#data/data-lists";
-import { TerrainType } from "#data/terrain";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
+import { TerrainType } from "#enums/terrain-type";
 import { RandomMoveAttr } from "#moves/move";
 import { MoveEndPhase } from "#phases/move-end-phase";
 import { TurnEndPhase } from "#phases/turn-end-phase";

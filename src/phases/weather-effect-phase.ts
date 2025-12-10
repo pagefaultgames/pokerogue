@@ -8,7 +8,7 @@ import { CommonAnim } from "#enums/move-anims-common";
 import { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
 import { CommonAnimPhase } from "#phases/common-anim-phase";
-import { BooleanHolder, toDmgValue } from "#utils/common";
+import { BooleanHolder, toDmgValue } from "#utils/common-utils";
 
 export class WeatherEffectPhase extends CommonAnimPhase {
   public readonly phaseName = "WeatherEffectPhase";

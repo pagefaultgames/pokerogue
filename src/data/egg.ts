@@ -25,7 +25,7 @@ import {
   SAME_SPECIES_EGG_SHINY_RATE,
   SHINY_EPIC_CHANCE,
   SHINY_VARIANT_CHANCE,
-} from "#balance/rates";
+} from "#balance/shiny-and-egg-rates";
 import { speciesEggTiers } from "#balance/species-egg-tiers";
 import { speciesStarterCosts } from "#balance/starters";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -34,8 +34,9 @@ import { EggTier } from "#enums/egg-type";
 import { SpeciesId } from "#enums/species-id";
 import { VariantTier } from "#enums/variant-tier";
 import type { PlayerPokemon } from "#field/pokemon";
-import { getIvsFromId, randInt, randomString, randSeedInt } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { getIvsFromId, getPokemonSpecies } from "#utils/pokemon-utils";
+import { randInt, randSeedInt } from "#utils/rng-utils";
+import { randomString } from "#utils/string-utils";
 import i18next from "i18next";
 
 export const EGG_SEED = 1073741824;

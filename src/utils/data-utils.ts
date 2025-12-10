@@ -1,5 +1,5 @@
 import { loggedInUser } from "#app/account";
-import { saveKey } from "#app/constants";
+import { SAVE_KEY } from "#constants/app-constants";
 import type { StarterAttributes } from "#types/save-data";
 import { AES, enc } from "crypto-js";
 
@@ -48,14 +48,14 @@ export function encrypt(data: string, bypassLogin: boolean): string {
   if (bypassLogin) {
     return btoa(encodeURIComponent(data));
   }
-  return AES.encrypt(data, saveKey).toString();
+  return AES.encrypt(data, SAVE_KEY).toString();
 }
 
 export function decrypt(data: string, bypassLogin: boolean): string {
   if (bypassLogin) {
     return decodeURIComponent(atob(data));
   }
-  return AES.decrypt(data, saveKey).toString(enc.Utf8);
+  return AES.decrypt(data, SAVE_KEY).toString(enc.Utf8);
 }
 
 /**

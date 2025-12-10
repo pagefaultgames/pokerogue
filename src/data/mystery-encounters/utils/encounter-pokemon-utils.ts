@@ -1,9 +1,7 @@
-import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
+import { timedEventManager } from "#app/timed-event-manager";
 import { speciesStarterCosts } from "#balance/starters";
 import { modifierTypes } from "#data/data-lists";
-import { Gender } from "#data/gender";
 import {
   doPokeballBounceAnim,
   getPokeballAtlasKey,
@@ -15,6 +13,7 @@ import type { PokemonSpecies } from "#data/pokemon-species";
 import { getStatusEffectCatchRateMultiplier } from "#data/status-effect";
 import type { AbilityId } from "#enums/ability-id";
 import { ChallengeType } from "#enums/challenge-type";
+import { Gender } from "#enums/gender";
 import { PlayerGender } from "#enums/player-gender";
 import type { PokeballType } from "#enums/pokeball";
 import type { PokemonType } from "#enums/pokemon-type";
@@ -36,8 +35,10 @@ import type { PartyOption } from "#ui/party-ui-handler";
 import { PartyUiMode } from "#ui/party-ui-handler";
 import { SummaryUiMode } from "#ui/summary-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
-import { BooleanHolder, randSeedInt } from "#utils/common";
+import { BooleanHolder } from "#utils/common-utils";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { randSeedInt } from "#utils/rng-utils";
 import i18next from "i18next";
 
 /** Will give +1 level every 10 waves */

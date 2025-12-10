@@ -2,7 +2,8 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { StatBoosterModifier } from "#modifiers/modifier";
 import { GameManager } from "#test/test-utils/game-manager";
-import { NumberHolder, randItem } from "#utils/common";
+import { NumberHolder } from "#utils/common-utils";
+import { randItem } from "#utils/rng-utils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

@@ -9,7 +9,7 @@ import { applyMoveChargeAttrs } from "#moves/apply-attrs";
 import type { PokemonMove } from "#moves/pokemon-move";
 import { PokemonPhase } from "#phases/pokemon-phase";
 import type { ChargingMove } from "#types/move-types";
-import { BooleanHolder } from "#utils/common";
+import { BooleanHolder } from "#utils/common-utils";
 
 /**
  * Phase for the "charging turn" of two-turn moves (e.g. Dig).

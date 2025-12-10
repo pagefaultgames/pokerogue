@@ -1,6 +1,5 @@
 import type { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { TrappedTag } from "#data/battler-tags";
 import { allMoves } from "#data/data-lists";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -12,6 +11,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import type { Pokemon } from "#field/pokemon";
 import type { Move, MoveConditionFunc, UserMoveConditionFunc } from "#moves/move";
 import { getCounterAttackTarget } from "#moves/move-utils";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import i18next from "i18next";
 
 /**

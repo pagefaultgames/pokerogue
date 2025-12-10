@@ -13,12 +13,13 @@ import {
 import { speciesStarterCosts } from "#balance/starters";
 import { uncatchableSpecies } from "#data/data-lists";
 import type { GrowthRate } from "#data/exp";
-import { Gender } from "#data/gender";
 import { AbilityId } from "#enums/ability-id";
 import { DexAttr } from "#enums/dex-attr";
 import { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
+import { Gender } from "#enums/gender";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import type { PokemonType } from "#enums/pokemon-type";
+import { Region } from "#enums/region";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import type { Stat } from "#enums/stat";
@@ -30,19 +31,11 @@ import type { Localizable } from "#types/locales";
 import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { StarterMoveset } from "#types/save-data";
 import type { EvolutionLevel, EvolutionLevelWithThreshold } from "#types/species-gen-types";
-import { randSeedFloat, randSeedGauss } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
-import { toCamelCase, toPascalCase } from "#utils/strings";
+import { randSeedFloat, randSeedGauss } from "#utils/rng-utils";
+import { toCamelCase, toPascalCase } from "#utils/string-utils";
 import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
 import i18next from "i18next";
-
-export enum Region {
-  NORMAL,
-  ALOLA,
-  GALAR,
-  HISUI,
-  PALDEA,
-}
 
 // TODO: this is horrible and will need to be removed once a refactor/cleanup of forms is executed.
 export const normalForm: SpeciesId[] = [

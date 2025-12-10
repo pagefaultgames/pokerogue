@@ -1,5 +1,4 @@
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import type { ArenaTag } from "#data/arena-tag";
 import { allMoves } from "#data/data-lists";
 import type { BattlerIndex } from "#enums/battler-index";
@@ -7,6 +6,7 @@ import type { MoveId } from "#enums/move-id";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { PositionalTagType } from "#enums/positional-tag-type";
 import type { Pokemon } from "#field/pokemon";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import i18next from "i18next";
 
 /**

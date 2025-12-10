@@ -17,13 +17,15 @@ module.exports = {
     {
       name: "only-type-imports",
       severity: "error",
-      comment: "Files in 'enums/' and '@types/' must only use type imports.",
+      comment:
+        "Files in `src/constants/`, `src/enums/` and `src/@types/` must only use type-only imports or safe imports.",
       from: {
-        path: ["(^|/)src/@types", "(^|/)src/enums"],
+        path: ["(^|/)src/constants", "(^|/)src/enums", "(^|/)src/@types"],
         pathNot: ["(^|/)src/@types/phaser[.]d[.]ts"],
       },
       to: {
         dependencyTypesNot: ["type-only"],
+        pathNot: ["(^|/)src/constants", "(^|/)src/enums"],
       },
     },
     {

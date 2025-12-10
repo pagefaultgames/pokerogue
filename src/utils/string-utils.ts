@@ -1,5 +1,7 @@
 // TODO: Standardize file and path casing to remove the need for all these different casing methods
 
+import { randSeedInt } from "./rng-utils";
+
 // #region Split string code
 
 // Regexps involved with splitting words in various case formats.
@@ -199,4 +201,33 @@ export function chunkString(str: string, length: number): string[] {
   }
 
   return chunks;
+}
+
+export function randomString(length: number, seeded = false) {
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = seeded ? randSeedInt(characters.length) : Math.floor(Math.random() * characters.length);
+    result += characters[randomIndex];
+  }
+
+  return result;
+}
+
+/**
+ * Truncate a string to a specified maximum length and add an ellipsis if it exceeds that length.
+ *
+ * @param str - The string to be truncated.
+ * @param maxLength - The maximum length of the truncated string, defaults to 10.
+ * @returns The truncated string with an ellipsis if it was longer than maxLength.
+ */
+export function truncateString(str: string, maxLength = 10) {
+  // Check if the string length exceeds the maximum length
+  if (str.length > maxLength) {
+    // Truncate the string and add an ellipsis
+    return str.slice(0, maxLength - 3) + "..."; // Subtract 3 to accommodate the ellipsis
+  }
+  // Return the original string if it does not exceed the maximum length
+  return str;
 }

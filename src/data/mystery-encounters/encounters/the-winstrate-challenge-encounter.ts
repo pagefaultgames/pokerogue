@@ -1,6 +1,6 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { ME_CLASSIC_MODE_WAVES } from "#constants/mystery-encounter-constants";
 import { modifierTypes } from "#data/data-lists";
 import { SpeciesFormChangeAbilityTrigger } from "#data/form-change-triggers";
 import { AbilityId } from "#enums/ability-id";
@@ -44,7 +44,7 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter = MysteryEncounter
   MysteryEncounterType.THE_WINSTRATE_CHALLENGE,
 )
   .withEncounterTier(MysteryEncounterTier.ROGUE)
-  .withSceneWaveRangeRequirement(100, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
+  .withSceneWaveRangeRequirement(100, ME_CLASSIC_MODE_WAVES[1])
   .withScenePartySizeRequirement(3, 6)
   .withMaxAllowedEncounters(1)
   .withIntroSpriteConfigs([

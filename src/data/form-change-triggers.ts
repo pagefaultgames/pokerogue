@@ -1,5 +1,4 @@
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
 import { AbilityId } from "#enums/ability-id";
 import { Challenges } from "#enums/challenges";
@@ -12,8 +11,9 @@ import { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
 import type { PokemonFormChangeItemModifier } from "#modifiers/modifier";
 import type { Constructor } from "#types/common";
-import { coerceArray } from "#utils/array";
-import { toCamelCase } from "#utils/strings";
+import { coerceArray } from "#utils/array-utils";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
+import { toCamelCase } from "#utils/string-utils";
 import i18next from "i18next";
 
 export abstract class SpeciesFormChangeTrigger {

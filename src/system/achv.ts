@@ -14,8 +14,8 @@ import { getShortenedStatKey, Stat } from "#enums/stat";
 import { TurnHeldItemTransferModifier } from "#modifiers/modifier";
 import type { ConditionFn } from "#types/common";
 import { isNuzlockeChallenge } from "#utils/challenge-utils";
-import { NumberHolder } from "#utils/common";
-import { toCamelCase } from "#utils/strings";
+import { NumberHolder } from "#utils/common-utils";
+import { toCamelCase } from "#utils/string-utils";
 import i18next from "i18next";
 import type { Modifier } from "typescript";
 

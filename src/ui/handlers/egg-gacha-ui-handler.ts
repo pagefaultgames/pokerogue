@@ -12,9 +12,10 @@ import { getVoucherTypeIcon, VoucherType } from "#system/voucher";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addTextObject, getEggTierTextTint, getTextStyleOptions } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
-import { fixedInt, randSeedShuffle } from "#utils/common";
-import { getEnumValues } from "#utils/enums";
+import { fixedInt } from "#utils/common-utils";
+import { getEnumValues } from "#utils/enum-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { randSeedShuffle } from "#utils/rng-utils";
 import i18next from "i18next";
 
 export class EggGachaUiHandler extends MessageUiHandler {

@@ -1,12 +1,12 @@
 import type { PokeballCounts } from "#app/battle-scene";
 import { EvolutionItem } from "#balance/pokemon-evolutions";
-import { Gender } from "#data/gender";
 import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
 import { BerryType } from "#enums/berry-type";
 import { BiomeId } from "#enums/biome-id";
 import { EggTier } from "#enums/egg-type";
 import { FormChangeItem } from "#enums/form-change-item";
+import { Gender } from "#enums/gender";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";

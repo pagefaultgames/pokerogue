@@ -9,7 +9,7 @@ import type { Pokemon } from "#field/pokemon";
 import type { Move } from "#moves/move";
 import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
-import { NumberHolder } from "#utils/common";
+import { NumberHolder } from "#utils/common-utils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 

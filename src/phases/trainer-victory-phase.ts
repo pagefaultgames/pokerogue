@@ -1,5 +1,5 @@
-import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import { timedEventManager } from "#app/timed-event-manager";
 import { modifierTypes } from "#data/data-lists";
 import { getCharVariantFromDialogue } from "#data/dialogue";
 import { BiomeId } from "#enums/biome-id";
@@ -8,7 +8,7 @@ import { TrainerType } from "#enums/trainer-type";
 import { BattlePhase } from "#phases/battle-phase";
 import { achvs } from "#system/achv";
 import { vouchers } from "#system/voucher";
-import { randSeedItem } from "#utils/common";
+import { randSeedItem } from "#utils/rng-utils";
 import i18next from "i18next";
 
 export class TrainerVictoryPhase extends BattlePhase {

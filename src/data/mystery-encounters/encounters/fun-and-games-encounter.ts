@@ -1,6 +1,5 @@
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
+import { ME_CLASSIC_MODE_WAVES } from "#constants/mystery-encounter-constants";
 import { modifierTypes } from "#data/data-lists";
 import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
 import { getPokeballAtlasKey, getPokeballTintColor } from "#data/pokeball";
@@ -27,6 +26,7 @@ import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { MoneyRequirement } from "#mystery-encounters/mystery-encounter-requirements";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
@@ -42,7 +42,7 @@ export const FunAndGamesEncounter: MysteryEncounter = MysteryEncounterBuilder.wi
   MysteryEncounterType.FUN_AND_GAMES,
 )
   .withEncounterTier(MysteryEncounterTier.GREAT)
-  .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+  .withSceneWaveRangeRequirement(...ME_CLASSIC_MODE_WAVES)
   .withSceneRequirement(new MoneyRequirement(0, 1.5)) // Cost equal to 1 Max Potion to play
   .withAutoHideIntroVisuals(false)
   // The Wobbuffet won't use moves

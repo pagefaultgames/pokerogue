@@ -1,6 +1,6 @@
 import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species";
 import type { SpeciesId } from "#enums/species-id";
-import type { BooleanHolder } from "#utils/common";
+import type { BooleanHolder } from "#utils/common-utils";
 
 /**
  * The type that {@linkcode PokemonSpeciesForm} is converted to when an object containing it serializes it.

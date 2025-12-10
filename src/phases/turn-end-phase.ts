@@ -1,8 +1,7 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
-import { TerrainType } from "#data/terrain";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
+import { TerrainType } from "#enums/terrain-type";
 import { WeatherType } from "#enums/weather-type";
 import { TurnEndEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
@@ -14,6 +13,7 @@ import {
   TurnStatusEffectModifier,
 } from "#modifiers/modifier";
 import { FieldPhase } from "#phases/field-phase";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import i18next from "i18next";
 
 export class TurnEndPhase extends FieldPhase {

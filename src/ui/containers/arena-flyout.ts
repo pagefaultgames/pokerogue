@@ -1,8 +1,8 @@
 import { globalScene } from "#app/global-scene";
 import { EntryHazardTag } from "#data/arena-tag";
-import { TerrainType } from "#data/terrain";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
+import { TerrainType } from "#enums/terrain-type";
 import { TextStyle } from "#enums/text-style";
 import { WeatherType } from "#enums/weather-type";
 import type { ArenaEvent } from "#events/arena";
@@ -18,8 +18,8 @@ import { BattleSceneEventType } from "#events/battle-scene";
 import { addTextObject } from "#ui/text";
 import { TimeOfDayWidget } from "#ui/time-of-day-widget";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
-import { fixedInt } from "#utils/common";
-import { toCamelCase, toTitleCase } from "#utils/strings";
+import { fixedInt } from "#utils/common-utils";
+import { toCamelCase, toTitleCase } from "#utils/string-utils";
 import type { ParseKeys } from "i18next";
 import i18next from "i18next";
 

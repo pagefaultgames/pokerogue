@@ -1,10 +1,8 @@
 import { pokerogueApi } from "#api/pokerogue-api";
 import { loggedInUser } from "#app/account";
-import { FAKE_TITLE_LOGO_CHANCE } from "#app/constants";
-import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { TimedEventDisplay } from "#app/timed-event-manager";
-import { isBeta, isDev } from "#constants/app-constants";
+import { TimedEventDisplay, timedEventManager } from "#app/timed-event-manager";
+import { FAKE_TITLE_LOGO_CHANCE, IS_BETA, IS_DEV } from "#constants/app-constants";
 import { getSplashMessages } from "#data/splash-messages";
 import { PlayerGender } from "#enums/player-gender";
 import type { SpeciesId } from "#enums/species-id";
@@ -13,8 +11,9 @@ import { UiMode } from "#enums/ui-mode";
 import { version } from "#package.json";
 import { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
 import { addTextObject } from "#ui/text";
-import { fixedInt, randInt, randItem } from "#utils/common";
+import { fixedInt } from "#utils/common-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { randInt, randItem } from "#utils/rng-utils";
 import i18next from "i18next";
 
 export class TitleUiHandler extends OptionSelectUiHandler {
@@ -130,7 +129,7 @@ export class TitleUiHandler extends OptionSelectUiHandler {
         }
       })
       .catch(err => {
-        if (!isDev) {
+        if (!IS_DEV) {
           console.error("Failed to fetch title stats:\n", err);
         }
       });
@@ -193,7 +192,7 @@ export class TitleUiHandler extends OptionSelectUiHandler {
       }),
     );
 
-    const betaText = isBeta || isDev ? " (Beta)" : "";
+    const betaText = IS_BETA || IS_DEV ? " (Beta)" : "";
     this.appVersionText.setText("v" + version + betaText);
 
     const ui = this.getUi();

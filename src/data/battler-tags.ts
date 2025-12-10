@@ -51,13 +51,11 @@
 
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { CommonBattleAnim, MoveChargeAnim } from "#data/battle-anims";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { SpeciesFormChangeAbilityTrigger } from "#data/form-change-triggers";
 import { getStatusEffectHealText } from "#data/status-effect";
-import { TerrainType } from "#data/terrain";
 import { AbilityId } from "#enums/ability-id";
 import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType, type NonCustomBattlerTagLapseType } from "#enums/battler-tag-lapse-type";
@@ -74,6 +72,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { type BattleStat, EFFECTIVE_STATS, type EffectiveStat, getStatKey, Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
+import { TerrainType } from "#enums/terrain-type";
 import { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
@@ -100,9 +99,10 @@ import type {
   TypeBoostTagType,
 } from "#types/battler-tags";
 import type { Mutable } from "#types/type-helpers";
-import { coerceArray } from "#utils/array";
-import { BooleanHolder, getFrameMs, NumberHolder, toDmgValue } from "#utils/common";
-import { toCamelCase } from "#utils/strings";
+import { coerceArray } from "#utils/array-utils";
+import { BooleanHolder, getFrameMs, NumberHolder, toDmgValue } from "#utils/common-utils";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
+import { toCamelCase } from "#utils/string-utils";
 
 /** Interface containing the serializable fields of `BattlerTag` */
 interface BaseBattlerTag {

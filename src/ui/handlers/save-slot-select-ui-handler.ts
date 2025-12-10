@@ -1,6 +1,6 @@
 import { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
-import { isBeta, isDev } from "#constants/app-constants";
+import { IS_BETA, IS_DEV } from "#constants/app-constants";
 import { Button } from "#enums/buttons";
 import { GameModes } from "#enums/game-modes";
 import { TextStyle } from "#enums/text-style";
@@ -14,7 +14,8 @@ import { MessageUiHandler } from "#ui/message-ui-handler";
 import { RunDisplayMode } from "#ui/run-info-ui-handler";
 import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
-import { fixedInt, formatLargeNumber, getPlayTimeString } from "#utils/common";
+import { fixedInt, getPlayTimeString } from "#utils/common-utils";
+import { formatLargeNumber } from "#utils/i18n-utils";
 import i18next from "i18next";
 
 const SESSION_SLOTS_COUNT = 5;
@@ -203,7 +204,7 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
                       false,
                       0,
                       19,
-                      isBeta || isDev ? 300 : 2000,
+                      IS_BETA || IS_DEV ? 300 : 2000,
                     );
                   });
                   return true;
@@ -252,7 +253,7 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
                     false,
                     0,
                     19,
-                    isBeta || isDev ? 300 : 2000,
+                    IS_BETA || IS_DEV ? 300 : 2000,
                   );
                 });
               } else if (this.sessionSlots[cursor].hasData === false) {

@@ -2,11 +2,9 @@ import type { Ability, PreAttackModifyDamageAbAttrParams } from "#abilities/abil
 import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
 import { generateMoveset } from "#app/ai/ai-moveset-gen";
 import type { AnySound, BattleScene } from "#app/battle-scene";
-import { EVOLVE_MOVE, PLAYER_PARTY_MAX_SIZE, RARE_CANDY_FRIENDSHIP_CAP, RELEARN_MOVE } from "#app/constants";
-import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
+import { timedEventManager } from "#app/timed-event-manager";
 import { speciesEggMoves } from "#balance/egg-moves";
 import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import {
@@ -15,10 +13,17 @@ import {
   pokemonPrevolutions,
   validateShedinjaEvo,
 } from "#balance/pokemon-evolutions";
-import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY_VARIANT_CHANCE } from "#balance/rates";
+import {
+  BASE_HIDDEN_ABILITY_CHANCE,
+  BASE_SHINY_CHANCE,
+  SHINY_EPIC_CHANCE,
+  SHINY_VARIANT_CHANCE,
+} from "#balance/shiny-and-egg-rates";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#balance/starters";
 import { tmSpecies } from "#balance/tm-species-map";
 import { reverseCompatibleTms } from "#balance/tms";
+import { PLAYER_PARTY_MAX_SIZE, RARE_CANDY_FRIENDSHIP_CAP } from "#constants/game-constants";
+import { EVOLVE_MOVE, RELEARN_MOVE } from "#constants/move-constants";
 import type { SuppressAbilitiesTag } from "#data/arena-tag";
 import { NoCritTag, WeakenMoveScreenTag } from "#data/arena-tag";
 import {
@@ -48,7 +53,6 @@ import {
   SpeciesFormChangeMoveLearnedTrigger,
   SpeciesFormChangePostMoveTrigger,
 } from "#data/form-change-triggers";
-import { Gender } from "#data/gender";
 import { getNatureStatMultiplier } from "#data/nature";
 import {
   CustomPokemonData,
@@ -62,7 +66,7 @@ import type { SpeciesFormChange } from "#data/pokemon-forms";
 import type { PokemonSpeciesForm } from "#data/pokemon-species";
 import { PokemonSpecies } from "#data/pokemon-species";
 import { getRandomStatus, getStatusEffectHealText, getStatusEffectOverlapText, Status } from "#data/status-effect";
-import { getTerrainBlockMessage, TerrainType } from "#data/terrain";
+import { getTerrainBlockMessage } from "#data/terrain";
 import type { TypeDamageMultiplier } from "#data/type";
 import { getTypeDamageMultiplier, getTypeRgb } from "#data/type";
 import { AbilityId } from "#enums/ability-id";
@@ -79,6 +83,7 @@ import { ChallengeType } from "#enums/challenge-type";
 import { Challenges } from "#enums/challenges";
 import { DexAttr } from "#enums/dex-attr";
 import { FieldPosition } from "#enums/field-position";
+import { Gender } from "#enums/gender";
 import { HitResult } from "#enums/hit-result";
 import { LearnMoveSituation } from "#enums/learn-move-situation";
 import { MoveCategory } from "#enums/move-category";
@@ -103,6 +108,7 @@ import {
 } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { SwitchType } from "#enums/switch-type";
+import { TerrainType } from "#enums/terrain-type";
 import type { TrainerSlot } from "#enums/trainer-slot";
 import { UiMode } from "#enums/ui-mode";
 import { WeatherType } from "#enums/weather-type";
@@ -151,27 +157,15 @@ import { EnemyBattleInfo } from "#ui/enemy-battle-info";
 import type { PartyOption } from "#ui/party-ui-handler";
 import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import { PlayerBattleInfo } from "#ui/player-battle-info";
-import { coerceArray } from "#utils/array";
+import { coerceArray } from "#utils/array-utils";
 import { applyChallenges } from "#utils/challenge-utils";
-import {
-  BooleanHolder,
-  deltaRgb,
-  fixedInt,
-  getIvsFromId,
-  isBetween,
-  NumberHolder,
-  randSeedFloat,
-  randSeedInt,
-  randSeedIntRange,
-  randSeedItem,
-  rgbaToInt,
-  rgbHexToRgba,
-  rgbToHsv,
-  toDmgValue,
-} from "#utils/common";
-import { calculateBossSegmentDamage } from "#utils/damage";
-import { getEnumValues } from "#utils/enums";
-import { getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { deltaRgb, rgbaToInt, rgbHexToRgba, rgbToHsv } from "#utils/color-utils";
+import { BooleanHolder, fixedInt, isBetween, NumberHolder, toDmgValue } from "#utils/common-utils";
+import { calculateBossSegmentDamage } from "#utils/damage-utils";
+import { getEnumValues } from "#utils/enum-utils";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
+import { getFusedSpeciesName, getIvsFromId, getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { randSeedFloat, randSeedInt, randSeedIntRange, randSeedItem } from "#utils/rng-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
 import i18next from "i18next";

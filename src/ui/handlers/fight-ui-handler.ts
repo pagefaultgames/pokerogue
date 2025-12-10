@@ -15,7 +15,8 @@ import type { CommandPhase } from "#phases/command-phase";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { addTextObject, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
-import { fixedInt, getLocalizedSpriteKey, padInt } from "#utils/common";
+import { fixedInt, padInt } from "#utils/common-utils";
+import { getLocalizedSpriteKey } from "#utils/i18n-utils";
 import i18next from "i18next";
 
 export class FightUiHandler extends UiHandler implements InfoToggle {

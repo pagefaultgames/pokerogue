@@ -1,6 +1,6 @@
 import { stringifyEnumArray } from "#test/test-utils/string-utils";
 import type { EnumOrObject } from "#types/enum-types";
-import { splitWords } from "#utils/strings";
+import { splitWords } from "#utils/string-utils";
 import { describe, expect, it } from "vitest";
 
 describe("Utils - Strings", () => {

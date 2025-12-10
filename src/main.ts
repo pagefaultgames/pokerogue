@@ -2,7 +2,7 @@ import "#app/polyfills"; // All polyfills MUST be loaded first for side effects
 
 import { InvertPostFX } from "#app/pipelines/invert";
 import { initI18n } from "#app/plugins/i18n";
-import { isBeta, isDev } from "#constants/app-constants";
+import { IS_BETA, IS_DEV } from "#constants/app-constants";
 import { version } from "#package.json";
 import Phaser from "phaser";
 import BBCodeTextPlugin from "phaser3-rex-plugins/plugins/bbcodetext-plugin";
@@ -10,7 +10,7 @@ import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin";
 import TransitionImagePackPlugin from "phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin";
 import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 
-if (isBeta || isDev) {
+if (IS_BETA || IS_DEV) {
   document.title += " (Beta)";
 }
 

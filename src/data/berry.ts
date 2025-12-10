@@ -1,13 +1,14 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { getStatusEffectHealText } from "#data/status-effect";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import { HitResult } from "#enums/hit-result";
 import { type BattleStat, Stat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
-import { NumberHolder, randSeedInt, toDmgValue } from "#utils/common";
+import { NumberHolder, toDmgValue } from "#utils/common-utils";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
+import { randSeedInt } from "#utils/rng-utils";
 import i18next from "i18next";
 
 export function getBerryName(berryType: BerryType): string {

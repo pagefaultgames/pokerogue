@@ -1,4 +1,4 @@
-import { getCookie } from "#utils/cookies";
+import { getCookie } from "#utils/cookie-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Unit Tests - cookies.ts", () => {

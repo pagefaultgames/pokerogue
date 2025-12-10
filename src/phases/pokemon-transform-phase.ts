@@ -1,11 +1,11 @@
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
 import { PokemonMove } from "#moves/pokemon-move";
 import { PokemonPhase } from "#phases/pokemon-phase";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import i18next from "i18next";
 
 /**

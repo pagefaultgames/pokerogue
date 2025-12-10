@@ -27,10 +27,11 @@ import type { GameData } from "#system/game-data";
 import { RibbonData, type RibbonFlag } from "#system/ribbons/ribbon-data";
 import type { DexEntry } from "#types/dex-data";
 import type { DexAttrProps, StarterDataEntry } from "#types/save-data";
-import { type BooleanHolder, isBetween, type NumberHolder, randSeedItem } from "#utils/common";
-import { deepCopy } from "#utils/data";
+import { type BooleanHolder, isBetween, type NumberHolder } from "#utils/common-utils";
+import { deepCopy } from "#utils/data-utils";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
-import { toCamelCase } from "#utils/strings";
+import { randSeedItem } from "#utils/rng-utils";
+import { toCamelCase } from "#utils/string-utils";
 import i18next from "i18next";
 
 /** A constant for the default max cost of the starting party before a run */

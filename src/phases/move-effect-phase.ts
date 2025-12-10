@@ -1,6 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { ConditionalProtectTag } from "#data/arena-tag";
 import { MoveAnim } from "#data/battle-anims";
 import { DamageProtectedTag, ProtectedTag, SemiInvulnerableTag, SubstituteTag, TypeBoostTag } from "#data/battler-tags";
@@ -40,7 +39,8 @@ import { DamageAchv } from "#system/achv";
 import type { nil } from "#types/common";
 import type { DamageResult } from "#types/damage-result";
 import type { TurnMove } from "#types/turn-move";
-import { BooleanHolder, NumberHolder } from "#utils/common";
+import { BooleanHolder, NumberHolder } from "#utils/common-utils";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import i18next from "i18next";
 
 export type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];

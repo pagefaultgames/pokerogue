@@ -1,9 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { PokeballType } from "#enums/pokeball";
-import { NumberHolder } from "#utils/common";
+import { NumberHolder } from "#utils/common-utils";
 import i18next from "i18next";
-
-export const MAX_PER_TYPE_POKEBALLS: number = 99;
 
 export function getPokeballAtlasKey(type: PokeballType): string {
   switch (type) {

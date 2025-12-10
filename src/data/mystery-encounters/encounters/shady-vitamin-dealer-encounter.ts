@@ -1,5 +1,5 @@
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { ME_CLASSIC_MODE_WAVES } from "#constants/mystery-encounter-constants";
 import { modifierTypes } from "#data/data-lists";
 import { getNatureName } from "#data/nature";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -25,7 +25,7 @@ import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { MoneyRequirement } from "#mystery-encounters/mystery-encounter-requirements";
-import { randSeedInt } from "#utils/common";
+import { randSeedInt } from "#utils/rng-utils";
 import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
@@ -43,7 +43,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
   MysteryEncounterType.SHADY_VITAMIN_DEALER,
 )
   .withEncounterTier(MysteryEncounterTier.COMMON)
-  .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+  .withSceneWaveRangeRequirement(...ME_CLASSIC_MODE_WAVES)
   .withSceneRequirement(new MoneyRequirement(0, VITAMIN_DEALER_CHEAP_PRICE_MULTIPLIER)) // Must have the money for at least the cheap deal
   .withPrimaryPokemonHealthRatioRequirement([0.51, 1]) // At least 1 Pokemon must have above half HP
   .withIntroSpriteConfigs([

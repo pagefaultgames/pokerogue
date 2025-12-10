@@ -1,6 +1,6 @@
 import type { BattleScene } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
-import { Gender } from "#data/gender";
+import { Gender } from "#enums/gender";
 import type { Pokemon } from "#field/pokemon";
 import { hasExpSprite } from "#sprites/sprite-utils";
 import type { Variant, VariantSet } from "#sprites/variant";

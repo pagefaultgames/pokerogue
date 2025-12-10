@@ -1,5 +1,5 @@
-import { SESSION_ID_COOKIE_NAME } from "#app/constants";
-import { getCookie } from "#utils/cookies";
+import { SESSION_ID_COOKIE_NAME } from "#constants/app-constants";
+import { getCookie } from "#utils/cookie-utils";
 
 type DataType = "json" | "form-urlencoded";
 

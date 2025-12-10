@@ -1,4 +1,4 @@
-import { USE_SEASONAL_SPLASH_MESSAGES } from "#app/constants";
+import { USE_SEASONAL_SPLASH_MESSAGES } from "#constants/app-constants";
 
 //#region Interfaces/Types
 
@@ -41,6 +41,7 @@ interface Season {
   messages: string[];
 }
 
+//#endregion
 //#region Constants
 
 /** The weight multiplier for the battles-won splash message */
@@ -50,6 +51,7 @@ const POKEMON_NAMES_WEIGHT_MULTIPLIER = 10;
 /** The weight multiplier for the seasonal splash messages */
 const SEASONAL_WEIGHT_MULTIPLIER = 15;
 
+//#endregion
 //#region Common Messages
 
 const commonSplashMessages = [
@@ -217,6 +219,7 @@ const commonSplashMessages = [
   "folksThisIsInsane",
 ];
 
+//#endregion
 //#region Seasonal Messages
 
 const seasonalSplashMessages: Season[] = [

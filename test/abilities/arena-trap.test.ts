@@ -1,4 +1,3 @@
-import { getPokemonNameWithAffix } from "#app/messages";
 import { allAbilities } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { Button } from "#enums/buttons";
@@ -7,6 +6,7 @@ import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/test-utils/game-manager";
 import type { PartyUiHandler } from "#ui/party-ui-handler";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";

@@ -1,5 +1,5 @@
-import type { Gender } from "#data/gender";
 import type { PokemonSpecies } from "#data/pokemon-species";
+import type { Gender } from "#enums/gender";
 import type { PokeballType } from "#enums/pokeball";
 import type { SpeciesId } from "#enums/species-id";
 import type { Variant } from "#sprites/variant";

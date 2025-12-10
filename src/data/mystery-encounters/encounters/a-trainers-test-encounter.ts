@@ -1,5 +1,5 @@
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { ME_CLASSIC_MODE_WAVES } from "#constants/mystery-encounter-constants";
 import { modifierTypes } from "#data/data-lists";
 import type { IEggOptions } from "#data/egg";
 import { EggSourceType } from "#enums/egg-source-types";
@@ -20,7 +20,7 @@ import { getSpriteKeysFromSpecies } from "#mystery-encounters/encounter-pokemon-
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { trainerConfigs } from "#trainers/trainer-config";
-import { randSeedInt } from "#utils/common";
+import { randSeedInt } from "#utils/rng-utils";
 import i18next from "i18next";
 
 /** the i18n namespace for the encounter */
@@ -35,7 +35,7 @@ export const ATrainersTestEncounter: MysteryEncounter = MysteryEncounterBuilder.
   MysteryEncounterType.A_TRAINERS_TEST,
 )
   .withEncounterTier(MysteryEncounterTier.ROGUE)
-  .withSceneWaveRangeRequirement(100, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
+  .withSceneWaveRangeRequirement(100, ME_CLASSIC_MODE_WAVES[1])
   .withIntroSpriteConfigs([]) // These are set in onInit()
   .withIntroDialogue([
     {

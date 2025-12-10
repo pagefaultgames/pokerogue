@@ -6,7 +6,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManager } from "#test/test-utils/game-manager";
-import { NumberHolder } from "#utils/common";
+import { NumberHolder } from "#utils/common-utils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 

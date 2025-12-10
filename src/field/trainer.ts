@@ -17,10 +17,10 @@ import { getIsInitialized, initI18n } from "#plugins/i18n";
 import type { TrainerConfig } from "#trainers/trainer-config";
 import { trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, type TrainerPartyTemplate } from "#trainers/trainer-party-template";
-import { randSeedInt, randSeedItem } from "#utils/common";
-import { getRandomLocaleEntry } from "#utils/i18n";
+import { getRandomLocaleEntry } from "#utils/i18n-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
-import { toCamelCase } from "#utils/strings";
+import { randSeedInt, randSeedItem } from "#utils/rng-utils";
+import { toCamelCase } from "#utils/string-utils";
 import i18next from "i18next";
 
 export class Trainer extends Phaser.GameObjects.Container {

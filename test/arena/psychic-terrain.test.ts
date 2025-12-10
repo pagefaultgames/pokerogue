@@ -1,9 +1,9 @@
 import { allMoves } from "#data/data-lists";
-import { TerrainType } from "#data/terrain";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
+import { TerrainType } from "#enums/terrain-type";
 import { WeatherType } from "#enums/weather-type";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";

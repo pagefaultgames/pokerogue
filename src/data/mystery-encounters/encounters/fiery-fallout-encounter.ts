@@ -1,12 +1,12 @@
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { ME_CLASSIC_MODE_WAVES } from "#constants/mystery-encounter-constants";
 import { EncounterBattleAnim } from "#data/battle-anims";
 import { allAbilities, modifierTypes } from "#data/data-lists";
-import { Gender } from "#data/gender";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { EncounterAnim } from "#enums/encounter-anims";
+import { Gender } from "#enums/gender";
 import { MoveId } from "#enums/move-id";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -45,8 +45,8 @@ import {
   TypeRequirement,
 } from "#mystery-encounters/mystery-encounter-requirements";
 import { FIRE_RESISTANT_ABILITIES } from "#mystery-encounters/requirement-groups";
-import { randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { randSeedInt } from "#utils/rng-utils";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/fieryFallout";
@@ -67,7 +67,7 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
   MysteryEncounterType.FIERY_FALLOUT,
 )
   .withEncounterTier(MysteryEncounterTier.COMMON)
-  .withSceneWaveRangeRequirement(40, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
+  .withSceneWaveRangeRequirement(40, ME_CLASSIC_MODE_WAVES[1])
   .withCatchAllowed(true)
   .withIntroSpriteConfigs([]) // Set in onInit()
   .withAnimations(EncounterAnim.MAGMA_BG, EncounterAnim.MAGMA_SPOUT)

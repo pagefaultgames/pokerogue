@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { SHINY_CATCH_RATE_MULTIPLIER } from "#balance/rates";
+import { SHINY_CATCH_RATE_MULTIPLIER } from "#balance/shiny-and-egg-rates";
 import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER } from "#balance/starters";
 import type { PokemonSpeciesFilter } from "#data/pokemon-species";
 import type { WeatherPoolEntry } from "#data/weather";
@@ -751,3 +751,5 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
     }
   }
 }
+
+export const timedEventManager = new TimedEventManager();

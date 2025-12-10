@@ -1,8 +1,8 @@
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
-import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import { timedEventManager } from "#app/timed-event-manager";
 import { NON_LEGEND_PARADOX_POKEMON, NON_LEGEND_ULTRA_BEASTS } from "#balance/special-species-groups";
 import { speciesStarterCosts } from "#balance/starters";
+import { ME_CLASSIC_MODE_WAVES } from "#constants/mystery-encounter-constants";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -28,8 +28,8 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { MoneyRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { PokemonData } from "#system/pokemon-data";
-import { randSeedInt, randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { randSeedInt, randSeedItem } from "#utils/rng-utils";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/thePokemonSalesman";
@@ -51,7 +51,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
   MysteryEncounterType.THE_POKEMON_SALESMAN,
 )
   .withEncounterTier(MysteryEncounterTier.ULTRA)
-  .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+  .withSceneWaveRangeRequirement(...ME_CLASSIC_MODE_WAVES)
   .withSceneRequirement(new MoneyRequirement(0, MAX_POKEMON_PRICE_MULTIPLIER)) // Some costs may not be as significant, this is the max you'd pay
   .withAutoHideIntroVisuals(false)
   .withIntroSpriteConfigs([

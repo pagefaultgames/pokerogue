@@ -1,7 +1,7 @@
 import { WeatherType } from "#enums/weather-type";
 import type { GameManager } from "#test/test-utils/game-manager";
 import { isGameManagerInstance, receivedStr } from "#test/test-utils/test-utils";
-import { toTitleCase } from "#utils/strings";
+import { toTitleCase } from "#utils/string-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**

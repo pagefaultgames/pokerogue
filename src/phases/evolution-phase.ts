@@ -1,17 +1,18 @@
 import type { AnySound } from "#app/battle-scene";
-import { EVOLVE_MOVE } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { Phase } from "#app/phase";
 import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { FusionSpeciesFormEvolution } from "#balance/pokemon-evolutions";
+import { EVOLVE_MOVE } from "#constants/move-constants";
 import { getTypeRgb } from "#data/type";
 import { LearnMoveSituation } from "#enums/learn-move-situation";
 import { UiMode } from "#enums/ui-mode";
 import { cos, sin } from "#field/anims";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { EvolutionSceneUiHandler } from "#ui/evolution-scene-ui-handler";
-import { fixedInt, getFrameMs, randInt } from "#utils/common";
+import { fixedInt, getFrameMs } from "#utils/common-utils";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
+import { randInt } from "#utils/rng-utils";
 import i18next from "i18next";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 

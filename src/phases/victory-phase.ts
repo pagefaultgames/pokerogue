@@ -1,5 +1,5 @@
-import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import { timedEventManager } from "#app/timed-event-manager";
 import { modifierTypes } from "#data/data-lists";
 import { BattleType } from "#enums/battle-type";
 import type { BattlerIndex } from "#enums/battler-index";

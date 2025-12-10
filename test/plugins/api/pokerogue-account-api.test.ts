@@ -1,10 +1,10 @@
 import { PokerogueAccountApi } from "#api/pokerogue-account-api";
-import { SESSION_ID_COOKIE_NAME } from "#app/constants";
+import { SESSION_ID_COOKIE_NAME } from "#constants/app-constants";
 import { initServerForApiTests } from "#test/test-utils/test-file-initialization";
 import { getApiBaseUrl } from "#test/test-utils/test-utils";
 import type { AccountInfoResponse } from "#types/api";
-import * as CookieUtils from "#utils/cookies";
-import * as cookies from "#utils/cookies";
+import * as CookieUtils from "#utils/cookie-utils";
+import * as cookies from "#utils/cookie-utils";
 import { HttpResponse, http } from "msw";
 import type { SetupServerApi } from "msw/node";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

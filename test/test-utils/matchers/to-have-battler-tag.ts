@@ -1,4 +1,3 @@
-import { getPokemonNameWithAffix } from "#app/messages";
 import type { BattlerTagTypeMap } from "#data/battler-tags";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import type { Pokemon } from "#field/pokemon";
@@ -6,6 +5,7 @@ import type { OneOther } from "#test/@types/test-helpers";
 import { getEnumStr, getOnelineDiffStr } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { BattlerTagDataMap, SerializableBattlerTagType } from "#types/battler-tags";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 // intersection required to preserve T for inferences

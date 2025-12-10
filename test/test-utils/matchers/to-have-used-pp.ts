@@ -1,10 +1,10 @@
-import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { MoveId } from "#enums/move-id";
 import type { Pokemon } from "#field/pokemon";
 import { getEnumStr } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
-import { coerceArray } from "#utils/array";
+import { coerceArray } from "#utils/array-utils";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**

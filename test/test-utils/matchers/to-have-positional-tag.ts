@@ -4,7 +4,7 @@ import type { OneOther } from "#test/@types/test-helpers";
 import type { GameManager } from "#test/test-utils/game-manager";
 import { getOnelineDiffStr } from "#test/test-utils/string-utils";
 import { isGameManagerInstance, receivedStr } from "#test/test-utils/test-utils";
-import { toTitleCase } from "#utils/strings";
+import { toTitleCase } from "#utils/string-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**

@@ -1,5 +1,4 @@
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import type { HealBlockTag } from "#data/battler-tags";
 import { getStatusEffectHealText } from "#data/status-effect";
 import type { BattlerIndex } from "#enums/battler-index";
@@ -10,7 +9,8 @@ import { StatusEffect } from "#enums/status-effect";
 import { HealingBoosterModifier } from "#modifiers/modifier";
 import { CommonAnimPhase } from "#phases/common-anim-phase";
 import { HealAchv } from "#system/achv";
-import { NumberHolder } from "#utils/common";
+import { NumberHolder } from "#utils/common-utils";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import i18next from "i18next";
 
 // TODO: Refactor this - it has far too many arguments

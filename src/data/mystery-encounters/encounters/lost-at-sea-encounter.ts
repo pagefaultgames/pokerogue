@@ -1,5 +1,5 @@
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { ME_CLASSIC_MODE_WAVES } from "#constants/mystery-encounter-constants";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -33,7 +33,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   MysteryEncounterType.LOST_AT_SEA,
 )
   .withEncounterTier(MysteryEncounterTier.COMMON)
-  .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+  .withSceneWaveRangeRequirement(...ME_CLASSIC_MODE_WAVES)
   .withIntroSpriteConfigs([
     {
       spriteKey: "lost_at_sea_buoy",

@@ -1,5 +1,4 @@
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { getSpeciesFormChangeMessage } from "#data/form-change-triggers";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -9,7 +8,8 @@ import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { EvolutionPhase } from "#phases/evolution-phase";
 import { achvs } from "#system/achv";
 import type { PartyUiHandler } from "#ui/party-ui-handler";
-import { fixedInt } from "#utils/common";
+import { fixedInt } from "#utils/common-utils";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 
 export class FormChangePhase extends EvolutionPhase {
   public readonly phaseName = "FormChangePhase";

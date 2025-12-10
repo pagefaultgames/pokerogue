@@ -1,17 +1,9 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import type { FixedBattleConfig } from "#app/battle";
 import { Battle } from "#app/battle";
-import {
-  ANTI_VARIANCE_WEIGHT_MODIFIER,
-  AVERAGE_ENCOUNTERS_PER_RUN_TARGET,
-  BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT,
-  MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT,
-} from "#app/constants";
 import type { GameMode } from "#app/game-mode";
 import { getGameMode } from "#app/game-mode";
-import { timedEventManager } from "#app/global-event-manager";
 import { initGlobalScene } from "#app/global-scene";
-import { starterColors } from "#app/global-vars/starter-colors";
 import { InputsController } from "#app/inputs-controller";
 import { LoadingScene } from "#app/loading-scene";
 import Overrides from "#app/overrides";
@@ -22,16 +14,21 @@ import { InvertPostFX } from "#app/pipelines/invert";
 import { SpritePipeline } from "#app/pipelines/sprite";
 import { SceneBase } from "#app/scene-base";
 import { startingWave } from "#app/starting-wave";
-import { TimedEventManager } from "#app/timed-event-manager";
+import { TimedEventManager, timedEventManager } from "#app/timed-event-manager";
 import { UiInputs } from "#app/ui-inputs";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#balance/starters";
+import {
+  ME_ANTI_VARIANCE_WEIGHT_MODIFIER,
+  ME_AVERAGE_ENCOUNTERS_PER_RUN_TARGET,
+  ME_BASE_SPAWN_WEIGHT,
+  ME_MAX_SPAWN_WEIGHT,
+} from "#constants/mystery-encounter-constants";
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets } from "#data/battle-anims";
-import { allMoves, allSpecies, biomeDepths, modifierTypes } from "#data/data-lists";
+import { allMoves, allSpecies, biomeDepths, modifierTypes, starterColors } from "#data/data-lists";
 import { battleSpecDialogue } from "#data/dialogue";
 import type { SpeciesFormChangeTrigger } from "#data/form-change-triggers";
 import { SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger } from "#data/form-change-triggers";
-import { Gender } from "#data/gender";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
 import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species";
@@ -46,6 +43,7 @@ import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { ExpNotification } from "#enums/exp-notification";
 import { FormChangeItem } from "#enums/form-change-item";
 import { GameModes } from "#enums/game-modes";
+import { Gender } from "#enums/gender";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { MoneyFormat } from "#enums/money-format";
 import { MoveId } from "#enums/move-id";
@@ -65,6 +63,7 @@ import type { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import { UiTheme } from "#enums/ui-theme";
+import type { BattleSceneEventType, MoveUsedEvent, TurnEndEvent, TurnInitEvent } from "#events/battle-scene";
 import { NewArenaEvent } from "#events/battle-scene";
 import { Arena, ArenaBase } from "#field/arena";
 import { DamageNumberHandler } from "#field/damage-number-handler";
@@ -130,22 +129,14 @@ import { PokemonInfoContainer } from "#ui/pokemon-info-container";
 import { addTextObject, getTextColor } from "#ui/text";
 import { UI } from "#ui/ui";
 import { addUiThemeOverrides } from "#ui/ui-theme";
-import {
-  BooleanHolder,
-  fixedInt,
-  formatMoney,
-  getBiomeName,
-  getIvsFromId,
-  isBetween,
-  NumberHolder,
-  randomString,
-  randSeedInt,
-  shiftCharCodes,
-} from "#utils/common";
-import { deepMergeSpriteData } from "#utils/data";
-import { getEnumValues } from "#utils/enums";
+import { BooleanHolder, fixedInt, formatMoney, isBetween, NumberHolder } from "#utils/common-utils";
+import { deepMergeSpriteData } from "#utils/data-utils";
+import { getEnumValues } from "#utils/enum-utils";
+import { getBiomeName } from "#utils/i18n-utils";
 import { getModifierPoolForType, getModifierType } from "#utils/modifier-utils";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { getIvsFromId, getPokemonSpecies } from "#utils/pokemon-utils";
+import { randSeedInt, shiftCharCodes } from "#utils/rng-utils";
+import { randomString } from "#utils/string-utils";
 import i18next from "i18next";
 import Phaser from "phaser";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
@@ -247,7 +238,7 @@ export class BattleScene extends SceneBase {
   public sessionSlotId: number;
 
   /** Manager for the phases active in the battle scene */
-  public readonly phaseManager: PhaseManager;
+  public readonly phaseManager: PhaseManager = new PhaseManager();
   public field: Phaser.GameObjects.Container;
   public fieldUI: Phaser.GameObjects.Container;
   public charSprite: CharSprite;
@@ -310,7 +301,7 @@ export class BattleScene extends SceneBase {
 
   private bgm: AnySound;
   private bgmResumeTimer: Phaser.Time.TimerEvent | null;
-  private bgmCache: Set<string> = new Set();
+  private readonly bgmCache: Set<string> = new Set();
   private playTimeTimer: Phaser.Time.TimerEvent;
 
   public rngCounter = 0;
@@ -318,9 +309,9 @@ export class BattleScene extends SceneBase {
   public rngOffset = 0;
 
   public inputMethod: string;
-  private infoToggles: InfoToggle[] = [];
+  private readonly infoToggles: InfoToggle[] = [];
 
-  public eventManager: TimedEventManager;
+  public eventManager: TimedEventManager = new TimedEventManager();
 
   /**
    * Allows subscribers to listen for events
@@ -335,8 +326,6 @@ export class BattleScene extends SceneBase {
 
   constructor() {
     super("battle");
-    this.phaseManager = new PhaseManager();
-    this.eventManager = new TimedEventManager();
     this.updateGameInfo();
     initGlobalScene(this);
   }
@@ -1364,7 +1353,7 @@ export class BattleScene extends SceneBase {
       ) {
         newBattleType = BattleType.MYSTERY_ENCOUNTER;
         // Reset to base spawn weight
-        this.mysteryEncounterSaveData.encounterSpawnChance = BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
+        this.mysteryEncounterSaveData.encounterSpawnChance = ME_BASE_SPAWN_WEIGHT;
       }
     }
 
@@ -3535,12 +3524,12 @@ export class BattleScene extends SceneBase {
       // Reduces occurrence of runs with total encounters significantly different from AVERAGE_ENCOUNTERS_PER_RUN_TARGET
       // Favored rate changes can never exceed 50%. So if base rate is 15/256 and favored rate would add 200/256, result will be (15 + 128)/256
       const expectedEncountersByFloor =
-        (AVERAGE_ENCOUNTERS_PER_RUN_TARGET / (highestMysteryEncounterWave - lowestMysteryEncounterWave))
+        (ME_AVERAGE_ENCOUNTERS_PER_RUN_TARGET / (highestMysteryEncounterWave - lowestMysteryEncounterWave))
         * (waveIndex - lowestMysteryEncounterWave);
       const currentRunDiffFromAvg = expectedEncountersByFloor - encounteredEvents.length;
       const favoredEncounterRate =
         sessionEncounterRate
-        + Math.min(currentRunDiffFromAvg * ANTI_VARIANCE_WEIGHT_MODIFIER, MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT / 2);
+        + Math.min(currentRunDiffFromAvg * ME_ANTI_VARIANCE_WEIGHT_MODIFIER, ME_MAX_SPAWN_WEIGHT / 2);
 
       const successRate = Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE ?? favoredEncounterRate;
 
@@ -3548,11 +3537,11 @@ export class BattleScene extends SceneBase {
       const canSpawn = encounteredEvents.length === 0 || waveIndex - encounteredEvents.at(-1)!.waveIndex > 3;
 
       if (canSpawn || Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE !== null) {
-        let roll = MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT;
+        let roll = ME_MAX_SPAWN_WEIGHT;
         // Always rolls the check on the same offset to ensure no RNG changes from reloading session
         this.executeWithSeedOffset(
           () => {
-            roll = randSeedInt(MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT);
+            roll = randSeedInt(ME_MAX_SPAWN_WEIGHT);
           },
           waveIndex * 3 * 1000,
         );

@@ -1,15 +1,16 @@
 import type { Battle } from "#app/battle";
-import { AVERAGE_ENCOUNTERS_PER_RUN_TARGET, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/constants";
-import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
+import { timedEventManager } from "#app/timed-event-manager";
 import { biomeLinks } from "#balance/biomes";
-import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE } from "#balance/rates";
+import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE } from "#balance/shiny-and-egg-rates";
+import {
+  ME_AVERAGE_ENCOUNTERS_PER_RUN_TARGET,
+  ME_WEIGHT_INCREMENT_ON_SPAWN_MISS,
+} from "#constants/mystery-encounter-constants";
 import { initMoveAnim, loadMoveAnimAssets } from "#data/battle-anims";
 import { modifierTypes } from "#data/data-lists";
 import type { IEggOptions } from "#data/egg";
 import { Egg } from "#data/egg";
-import type { Gender } from "#data/gender";
 import { getNatureName } from "#data/nature";
 import type { CustomPokemonData } from "#data/pokemon-data";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -20,6 +21,7 @@ import type { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
 import { BiomePoolTier } from "#enums/biome-pool-tier";
 import { FieldPosition } from "#enums/field-position";
+import type { Gender } from "#enums/gender";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import type { MoveId } from "#enums/move-id";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
@@ -52,9 +54,12 @@ import type { RandomEncounterParams } from "#types/pokemon-common";
 import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import type { PartyOption, PokemonSelectFilter } from "#ui/party-ui-handler";
 import { PartyUiMode } from "#ui/party-ui-handler";
-import { coerceArray } from "#utils/array";
-import { BooleanHolder, randomString, randSeedInt, randSeedItem } from "#utils/common";
+import { coerceArray } from "#utils/array-utils";
+import { BooleanHolder } from "#utils/common-utils";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { randSeedInt, randSeedItem } from "#utils/rng-utils";
+import { randomString } from "#utils/string-utils";
 import i18next from "i18next";
 
 /**
@@ -1156,7 +1161,7 @@ export function calculateMEAggregateStats(baseSpawnWeight: number): void {
 
       // If total number of encounters is lower than expected for the run, slightly favor a new encounter
       // Do the reverse as well
-      const expectedEncountersByFloor = (AVERAGE_ENCOUNTERS_PER_RUN_TARGET / (180 - 10)) * (i - 10);
+      const expectedEncountersByFloor = (ME_AVERAGE_ENCOUNTERS_PER_RUN_TARGET / (180 - 10)) * (i - 10);
       const currentRunDiffFromAvg = expectedEncountersByFloor - numEncounters.reduce((a, b) => a + b);
       const favoredEncounterRate = encounterRate + currentRunDiffFromAvg * 15;
 
@@ -1190,7 +1195,7 @@ export function calculateMEAggregateStats(baseSpawnWeight: number): void {
               : ++numEncounters[3];
         encountersByBiome.set(BiomeId[currentBiome], (encountersByBiome.get(BiomeId[currentBiome]) ?? 0) + 1);
       } else {
-        encounterRate += WEIGHT_INCREMENT_ON_SPAWN_MISS;
+        encounterRate += ME_WEIGHT_INCREMENT_ON_SPAWN_MISS;
       }
     }
 

@@ -1,4 +1,4 @@
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { ME_CLASSIC_MODE_WAVES } from "#constants/mystery-encounter-constants";
 import { modifierTypes } from "#data/data-lists";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -7,7 +7,7 @@ import { leaveEncounterWithoutBattle, setEncounterRewards } from "#mystery-encou
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import type { ModifierTypeFunc } from "#types/modifier-types";
-import { randSeedInt } from "#utils/common";
+import { randSeedInt } from "#utils/rng-utils";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounters/departmentStoreSale";
@@ -21,7 +21,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
   MysteryEncounterType.DEPARTMENT_STORE_SALE,
 )
   .withEncounterTier(MysteryEncounterTier.COMMON)
-  .withSceneWaveRangeRequirement(CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[0], 100)
+  .withSceneWaveRangeRequirement(ME_CLASSIC_MODE_WAVES[0], 100)
   .withIntroSpriteConfigs([
     {
       spriteKey: "department_store_sale_lady",

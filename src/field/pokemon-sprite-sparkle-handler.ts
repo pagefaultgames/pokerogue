@@ -1,7 +1,8 @@
 import { globalScene } from "#app/global-scene";
 import { Pokemon } from "#field/pokemon";
-import { coerceArray } from "#utils/array";
-import { fixedInt, randInt } from "#utils/common";
+import { coerceArray } from "#utils/array-utils";
+import { fixedInt } from "#utils/common-utils";
+import { randInt } from "#utils/rng-utils";
 
 export class PokemonSpriteSparkleHandler {
   private sprites: Set<Phaser.GameObjects.Sprite>;

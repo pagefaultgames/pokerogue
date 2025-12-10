@@ -1,8 +1,8 @@
-import { timedEventManager } from "#app/global-event-manager";
+import { timedEventManager } from "#app/timed-event-manager";
 import { PokeballType } from "#enums/pokeball";
 import { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon } from "#field/pokemon";
-import { randSeedIntRange, randSeedItem } from "#utils/common";
+import { randSeedIntRange, randSeedItem } from "#utils/rng-utils";
 
 //#region constants
 

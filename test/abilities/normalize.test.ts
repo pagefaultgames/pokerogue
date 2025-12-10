@@ -1,11 +1,11 @@
-import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
+import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#constants/item-constants";
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
-import { toDmgValue } from "#utils/common";
+import { toDmgValue } from "#utils/common-utils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

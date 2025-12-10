@@ -8,7 +8,7 @@ import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrig
 import type { PokemonSpecies } from "#data/pokemon-species";
 import type { PositionalTag } from "#data/positional-tags/positional-tag";
 import { PositionalTagManager } from "#data/positional-tags/positional-tag-manager";
-import { getTerrainClearMessage, getTerrainStartMessage, Terrain, TerrainType } from "#data/terrain";
+import { getTerrainClearMessage, getTerrainStartMessage, Terrain } from "#data/terrain";
 import {
   getLegendaryWeatherContinuesMessage,
   getWeatherClearMessage,
@@ -25,6 +25,7 @@ import { CommonAnim } from "#enums/move-anims-common";
 import type { MoveId } from "#enums/move-id";
 import type { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
+import { TerrainType } from "#enums/terrain-type";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
 import { WeatherType } from "#enums/weather-type";
@@ -35,8 +36,9 @@ import type { Move } from "#moves/move";
 import type { BiomeTierTrainerPools, PokemonPools } from "#types/biomes";
 import type { Constructor } from "#types/common";
 import type { AbstractConstructor } from "#types/type-helpers";
-import { NumberHolder, randSeedInt } from "#utils/common";
+import { NumberHolder } from "#utils/common-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { randSeedInt } from "#utils/rng-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 
 export class Arena {

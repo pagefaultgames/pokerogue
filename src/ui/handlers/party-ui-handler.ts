@@ -1,14 +1,13 @@
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { allMoves } from "#data/data-lists";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
-import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
 import { Button } from "#enums/buttons";
 import { ChallengeType } from "#enums/challenge-type";
 import { Challenges } from "#enums/challenges";
 import { Command } from "#enums/command";
 import { FormChangeItem } from "#enums/form-change-item";
+import { Gender, getGenderColor, getGenderSymbol } from "#enums/gender";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
@@ -27,8 +26,10 @@ import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/pokemon-icon-ani
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { applyChallenges } from "#utils/challenge-utils";
-import { BooleanHolder, getLocalizedSpriteKey, randInt } from "#utils/common";
-import { toCamelCase, toTitleCase } from "#utils/strings";
+import { BooleanHolder } from "#utils/common-utils";
+import { getLocalizedSpriteKey, getPokemonNameWithAffix } from "#utils/i18n-utils";
+import { randInt } from "#utils/rng-utils";
+import { toCamelCase, toTitleCase } from "#utils/string-utils";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 

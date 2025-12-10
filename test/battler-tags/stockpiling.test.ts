@@ -1,14 +1,14 @@
-import * as messages from "#app/messages";
 import { StockpilingTag } from "#data/battler-tags";
 import { PokemonSummonData } from "#data/pokemon-data";
 import { Stat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
 import { StatStageChangePhase } from "#phases/stat-stage-change-phase";
 import { GameManager } from "#test/test-utils/game-manager";
+import * as i18nUtils from "#utils/i18n-utils";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 beforeEach(() => {
-  vi.spyOn(messages, "getPokemonNameWithAffix").mockImplementation(() => "");
+  vi.spyOn(i18nUtils, "getPokemonNameWithAffix").mockImplementation(() => "");
 });
 
 describe("BattlerTag - StockpilingTag", () => {

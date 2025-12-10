@@ -8,7 +8,7 @@
  * @module
  */
 
-import { toDmgValue } from "#utils/common";
+import { toDmgValue } from "#utils/common-utils";
 
 /**
  * Calculate the adjusted damage and number of boss segments bypassed for a damage interaction

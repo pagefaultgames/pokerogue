@@ -1,5 +1,5 @@
 import pkg from "#package.json";
-import { toKebabCase } from "#utils/strings";
+import { toKebabCase } from "#utils/string-utils";
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import HttpBackend from "i18next-http-backend";

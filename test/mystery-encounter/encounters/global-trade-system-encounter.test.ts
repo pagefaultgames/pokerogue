@@ -16,7 +16,7 @@ import { CIVILIZATION_ENCOUNTER_BIOMES } from "#mystery-encounters/mystery-encou
 import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
 import { GameManager } from "#test/test-utils/game-manager";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
-import * as Utils from "#utils/common";
+import * as RngUtils from "#utils/rng-utils";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/globalTradeSystem";
@@ -180,7 +180,7 @@ describe("Global Trade System - Mystery Encounter", () => {
 
       await game.runToMysteryEncounter(MysteryEncounterType.GLOBAL_TRADE_SYSTEM, defaultParty);
 
-      vi.spyOn(Utils, "randSeedInt").mockReturnValue(1); // force shiny on reroll
+      vi.spyOn(RngUtils, "randSeedInt").mockReturnValue(1); // force shiny on reroll
 
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1 });
 

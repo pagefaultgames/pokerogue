@@ -1,4 +1,4 @@
-import { TerrainType } from "#app/data/terrain";
+import { TerrainType } from "#enums/terrain-type";
 import type { GameManager } from "#test/test-utils/game-manager";
 import { getEnumStr } from "#test/test-utils/string-utils";
 import { isGameManagerInstance, receivedStr } from "#test/test-utils/test-utils";

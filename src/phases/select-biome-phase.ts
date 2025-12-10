@@ -7,7 +7,9 @@ import { MapModifier, MoneyInterestModifier } from "#modifiers/modifier";
 import { BattlePhase } from "#phases/battle-phase";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
-import { BooleanHolder, getBiomeName, randSeedInt } from "#utils/common";
+import { BooleanHolder } from "#utils/common-utils";
+import { getBiomeName } from "#utils/i18n-utils";
+import { randSeedInt } from "#utils/rng-utils";
 
 export class SelectBiomePhase extends BattlePhase {
   public readonly phaseName = "SelectBiomePhase";

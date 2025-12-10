@@ -4,7 +4,7 @@ import type { BattlerIndex } from "#enums/battler-index";
 import { HitResult } from "#enums/hit-result";
 import { PokemonPhase } from "#phases/pokemon-phase";
 import type { DamageResult } from "#types/damage-result";
-import { fixedInt } from "#utils/common";
+import { fixedInt } from "#utils/common-utils";
 
 export class DamageAnimPhase extends PokemonPhase {
   public readonly phaseName = "DamageAnimPhase";

@@ -3,7 +3,7 @@ import { Button } from "#enums/buttons";
 import { UiMode } from "#enums/ui-mode";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { SettingsGamepadUiHandler } from "#ui/settings-gamepad-ui-handler";
-import { truncateString } from "#utils/common";
+import { truncateString } from "#utils/string-utils";
 import i18next from "i18next";
 
 export enum SettingGamepad {

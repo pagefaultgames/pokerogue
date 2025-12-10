@@ -8,7 +8,7 @@ import type { UiMode } from "#enums/ui-mode";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
-import { getLocalizedSpriteKey } from "#utils/common";
+import { getLocalizedSpriteKey } from "#utils/i18n-utils";
 import i18next from "i18next";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 

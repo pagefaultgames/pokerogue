@@ -1,6 +1,6 @@
 import { getIconForLatestInput, getSettingNameWithKeycode } from "#inputs/config-handler";
 import { SettingKeyboard } from "#system/settings-keyboard";
-import { toPascalSnakeCase } from "#utils/strings";
+import { toPascalSnakeCase } from "#utils/string-utils";
 import { expect } from "vitest";
 
 export class InGameManip {

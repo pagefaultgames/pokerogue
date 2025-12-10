@@ -1,6 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { FRIENDSHIP_LOSS_FROM_FAINT } from "#balance/starters";
 import { allMoves } from "#data/data-lists";
 import { battleSpecDialogue } from "#data/dialogue";
@@ -18,6 +17,7 @@ import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { PokemonInstantReviveModifier } from "#modifiers/modifier";
 import { PokemonMove } from "#moves/pokemon-move";
 import { PokemonPhase } from "#phases/pokemon-phase";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import i18next from "i18next";
 

@@ -1,6 +1,6 @@
-import { getPokemonNameWithAffix } from "#app/messages";
 import type { Pokemon } from "#field/pokemon";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**

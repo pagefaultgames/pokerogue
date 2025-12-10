@@ -6,7 +6,7 @@ import { getKeyWithKeycode, getKeyWithSettingName } from "#inputs/config-handler
 import { SettingKeyboard } from "#system/settings-keyboard";
 import { InGameManip } from "#test/setting-menu/helpers/in-game-manip";
 import { MenuManip } from "#test/setting-menu/helpers/menu-manip";
-import { deepCopy } from "#utils/data";
+import { deepCopy } from "#utils/data-utils";
 import { beforeEach, describe, expect, it } from "vitest";
 
 describe("Test Rebinding", () => {

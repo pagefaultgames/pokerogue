@@ -12,7 +12,8 @@ import { MessageUiHandler } from "#ui/message-ui-handler";
 import { RunDisplayMode } from "#ui/run-info-ui-handler";
 import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
-import { fixedInt, formatLargeNumber } from "#utils/common";
+import { fixedInt } from "#utils/common-utils";
+import { formatLargeNumber } from "#utils/i18n-utils";
 import i18next from "i18next";
 
 export type RunSelectCallback = (cursor: number) => void;

@@ -1,5 +1,5 @@
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { ME_CLASSIC_MODE_WAVES } from "#constants/mystery-encounter-constants";
 import { allMoves, modifierTypes } from "#data/data-lists";
 import { ModifierTier } from "#enums/modifier-tier";
 import { MoveId } from "#enums/move-id";
@@ -48,7 +48,7 @@ import { getRandomPartyMemberFunc, trainerConfigs } from "#trainers/trainer-conf
 import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/trainer-party-template";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
-import { randSeedInt, randSeedShuffle } from "#utils/common";
+import { randSeedInt, randSeedShuffle } from "#utils/rng-utils";
 import i18next from "i18next";
 
 /** the i18n namespace for the encounter */
@@ -174,7 +174,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
     ),
   )
   .withMaxAllowedEncounters(1)
-  .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+  .withSceneWaveRangeRequirement(...ME_CLASSIC_MODE_WAVES)
   .withScenePartySizeRequirement(3, 6)
   .withMaxAllowedEncounters(1)
   .withIntroSpriteConfigs([]) // These are set in onInit()

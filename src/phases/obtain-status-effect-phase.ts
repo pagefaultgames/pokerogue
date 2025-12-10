@@ -1,6 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { CommonBattleAnim } from "#data/battle-anims";
 import { SpeciesFormChangeStatusEffectTrigger } from "#data/form-change-triggers";
 import { getStatusEffectObtainText } from "#data/status-effect";
@@ -9,6 +8,7 @@ import { CommonAnim } from "#enums/move-anims-common";
 import { StatusEffect } from "#enums/status-effect";
 import type { Pokemon } from "#field/pokemon";
 import { PokemonPhase } from "#phases/pokemon-phase";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 
 export class ObtainStatusEffectPhase extends PokemonPhase {
   public readonly phaseName = "ObtainStatusEffectPhase";

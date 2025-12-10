@@ -33,7 +33,7 @@ describe("System - Rename Run", () => {
 
   describe("renameSession", () => {
     beforeEach(() => {
-      vi.spyOn(appConstants, "bypassLogin", "get").mockReturnValue(false);
+      vi.spyOn(appConstants, "BYPASS_LOGIN", "get").mockReturnValue(false);
       vi.spyOn(account, "updateUserInfo").mockImplementation(async () => [true, 1]);
     });
 
@@ -52,7 +52,7 @@ describe("System - Rename Run", () => {
     });
 
     it("should return true if bypassLogin is true", async () => {
-      vi.spyOn(appConstants, "bypassLogin", "get").mockReturnValue(true);
+      vi.spyOn(appConstants, "BYPASS_LOGIN", "get").mockReturnValue(true);
       vi.spyOn(game.scene.gameData, "getSession").mockResolvedValue({} as SessionSaveData);
 
       const result = await game.scene.gameData.renameSession(0, "Named Run");

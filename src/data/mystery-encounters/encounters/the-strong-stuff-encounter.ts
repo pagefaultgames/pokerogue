@@ -1,5 +1,5 @@
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { ME_CLASSIC_MODE_WAVES } from "#constants/mystery-encounter-constants";
 import { modifierTypes } from "#data/data-lists";
 import { CustomPokemonData } from "#data/pokemon-data";
 import { BattlerIndex } from "#enums/battler-index";
@@ -46,7 +46,7 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
   MysteryEncounterType.THE_STRONG_STUFF,
 )
   .withEncounterTier(MysteryEncounterTier.COMMON)
-  .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+  .withSceneWaveRangeRequirement(...ME_CLASSIC_MODE_WAVES)
   .withScenePartySizeRequirement(3, 6) // Must have at least 3 pokemon in party
   .withMaxAllowedEncounters(1)
   .withHideWildIntroMessage(true)

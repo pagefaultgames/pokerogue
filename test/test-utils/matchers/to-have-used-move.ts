@@ -1,10 +1,10 @@
-import { getPokemonNameWithAffix } from "#app/messages";
 import type { MoveId } from "#enums/move-id";
 import type { Pokemon } from "#field/pokemon";
 import { getOnelineDiffStr, getOrdinal } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { TurnMove } from "#types/turn-move";
 import type { AtLeastOne } from "#types/type-helpers";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**

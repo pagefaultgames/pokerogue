@@ -1,12 +1,12 @@
-import { MAX_TERAS_PER_ARENA } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { POKERUS_STARTER_COUNT, speciesStarterCosts } from "#balance/starters";
+import { MAX_TERAS_PER_ARENA } from "#constants/game-constants";
 import { allSpecies } from "#data/data-lists";
 import type { PokemonSpecies, PokemonSpeciesForm } from "#data/pokemon-species";
 import { BattlerIndex } from "#enums/battler-index";
 import { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
-import { randSeedItem } from "./common";
+import { randSeedItem } from "./rng-utils";
 
 /**
  * Gets the {@linkcode PokemonSpecies} object associated with the {@linkcode SpeciesId} enum given
@@ -189,4 +189,22 @@ export function canSpeciesTera(pokemon: Pokemon): boolean {
 export function canTerastallize(pokemon: PlayerPokemon): boolean {
   const hasAvailableTeras = globalScene.arena.playerTerasUsed < MAX_TERAS_PER_ARENA;
   return hasAvailableTeras && canSpeciesTera(pokemon);
+}
+
+/**
+ * Generates IVs from a given {@linkcode id} by extracting 5 bits at a time
+ * starting from the least significant bit up to the 30th most significant bit.
+ * @param id 32-bit number
+ * @returns An array of six numbers corresponding to 5-bit chunks from {@linkcode id}
+ * @deprecated No mainline game does this, to be replaced with basic random number generation
+ */
+export function getIvsFromId(id: number): [number, number, number, number, number, number] {
+  return [
+    (id & 0x3e000000) >>> 25,
+    (id & 0x01f00000) >>> 20,
+    (id & 0x000f8000) >>> 15,
+    (id & 0x00007c00) >>> 10,
+    (id & 0x000003e0) >>> 5,
+    id & 0x0000001f,
+  ];
 }

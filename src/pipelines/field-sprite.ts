@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
-import { getTerrainColor, TerrainType } from "#data/terrain";
-import { getCurrentTime } from "#utils/common";
+import { getTerrainColor } from "#data/terrain";
+import { TerrainType } from "#enums/terrain-type";
+import { getCurrentTime } from "#utils/common-utils";
 import Phaser from "phaser";
 import fieldSpriteFragShader from "./glsl/field-sprite-frag-shader.frag?raw";
 import spriteVertShader from "./glsl/sprite-shader.vert?raw";

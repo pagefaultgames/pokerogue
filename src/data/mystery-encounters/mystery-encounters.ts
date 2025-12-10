@@ -32,7 +32,7 @@ import { TrainingSessionEncounter } from "#mystery-encounters/training-session-e
 import { TrashToTreasureEncounter } from "#mystery-encounters/trash-to-treasure-encounter";
 import { UncommonBreedEncounter } from "#mystery-encounters/uncommon-breed-encounter";
 import { WeirdDreamEncounter } from "#mystery-encounters/weird-dream-encounter";
-import { getBiomeName } from "#utils/common";
+import { getBiomeName } from "#utils/i18n-utils";
 
 export const EXTREME_ENCOUNTER_BIOMES = [
   BiomeId.SEA,

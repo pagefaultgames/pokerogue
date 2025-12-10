@@ -15,7 +15,7 @@ import type { OptionSelectSettings } from "#mystery-encounters/encounter-phase-u
 import { transitionMysteryEncounterIntroVisuals } from "#mystery-encounters/encounter-phase-utils";
 import type { MysteryEncounterOption, OptionPhaseCallback } from "#mystery-encounters/mystery-encounter-option";
 import { SeenEncounterData } from "#mystery-encounters/mystery-encounter-save-data";
-import { randSeedItem } from "#utils/common";
+import { randSeedItem } from "#utils/rng-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import i18next from "i18next";
 

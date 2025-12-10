@@ -10,7 +10,7 @@ import { SpeciesId } from "#enums/species-id";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { EnemyPokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
-import { NumberHolder } from "#utils/common";
+import { NumberHolder } from "#utils/common-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { afterEach } from "node:test";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";

@@ -1,12 +1,12 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { CommonAnim } from "#enums/move-anims-common";
 import { BerryUsedEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
 import { BerryModifier } from "#modifiers/modifier";
 import { FieldPhase } from "#phases/field-phase";
-import { BooleanHolder } from "#utils/common";
+import { BooleanHolder } from "#utils/common-utils";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import i18next from "i18next";
 
 /**

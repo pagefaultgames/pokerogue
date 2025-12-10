@@ -3,7 +3,7 @@ import "vitest";
 import type Overrides from "#app/overrides";
 import type { Phase } from "#app/phase";
 import type { ArenaTag } from "#data/arena-tag";
-import type { TerrainType } from "#data/terrain";
+import type { TerrainType } from "#enums/terrain-type";
 import type { AbilityId } from "#enums/ability-id";
 import type { ArenaTagSide } from "#enums/arena-tag-side";
 import type { ArenaTagType } from "#enums/arena-tag-type";
@@ -25,7 +25,7 @@ import type { toHaveTypesOptions } from "#test/test-utils/matchers/to-have-types
 import type { PhaseString } from "#types/phase-types";
 import type { TurnMove } from "#types/turn-move";
 import type { AtLeastOne } from "#types/type-helpers";
-import type { toDmgValue } from "#utils/common";
+import type { toDmgValue } from "#utils/common-utils";
 import type { expect } from "vitest";
 
 // #region Boilerplate/Helpers

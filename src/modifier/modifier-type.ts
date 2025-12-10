@@ -1,11 +1,10 @@
-import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
-import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
+import { timedEventManager } from "#app/timed-event-manager";
 import { EvolutionItem, pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { tmSpecies } from "#balance/tm-species-map";
 import { tmPoolTiers } from "#balance/tms";
+import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#constants/item-constants";
 import { getBerryEffectDescription, getBerryName } from "#data/berry";
 import { getDailyEventSeedLuck } from "#data/daily-run";
 import { allMoves, modifierTypes } from "#data/data-lists";
@@ -120,10 +119,12 @@ import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import { getModifierTierTextTint } from "#ui/text";
 import { applyChallenges } from "#utils/challenge-utils";
-import { BooleanHolder, formatMoney, NumberHolder, padInt, randSeedInt, randSeedItem } from "#utils/common";
-import { getEnumKeys, getEnumValues } from "#utils/enums";
+import { BooleanHolder, formatMoney, NumberHolder, padInt } from "#utils/common-utils";
+import { getEnumKeys, getEnumValues } from "#utils/enum-utils";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import { getModifierPoolForType, getModifierType } from "#utils/modifier-utils";
-import { toCamelCase } from "#utils/strings";
+import { randSeedInt, randSeedItem } from "#utils/rng-utils";
+import { toCamelCase } from "#utils/string-utils";
 import i18next from "i18next";
 
 const outputModifierData = false;

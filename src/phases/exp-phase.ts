@@ -1,8 +1,8 @@
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { ExpBoosterModifier } from "#modifiers/modifier";
 import { PlayerPartyMemberPokemonPhase } from "#phases/player-party-member-pokemon-phase";
-import { NumberHolder } from "#utils/common";
+import { NumberHolder } from "#utils/common-utils";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import i18next from "i18next";
 
 export class ExpPhase extends PlayerPartyMemberPokemonPhase {

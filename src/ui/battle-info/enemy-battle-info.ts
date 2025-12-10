@@ -8,7 +8,7 @@ import type { BattleInfoParamList } from "#ui/battle-info";
 import { BattleInfo } from "#ui/battle-info";
 import { addTextObject } from "#ui/text";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
-import { getLocalizedSpriteKey } from "#utils/common";
+import { getLocalizedSpriteKey } from "#utils/i18n-utils";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
 

@@ -13,7 +13,7 @@ import { PartyUiMode } from "#ui/party-ui-handler";
 import { addBBCodeTextObject, getBBCodeFrag } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
-import { fixedInt } from "#utils/common";
+import { fixedInt } from "#utils/common-utils";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 

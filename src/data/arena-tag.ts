@@ -47,7 +47,6 @@
 import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
 import type { BattlerTag } from "#app/data/battler-tags";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { CommonBattleAnim } from "#data/battle-anims";
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
@@ -74,7 +73,8 @@ import type {
   SerializableArenaTagType,
 } from "#types/arena-tags";
 import type { Mutable } from "#types/type-helpers";
-import { BooleanHolder, type NumberHolder, toDmgValue } from "#utils/common";
+import { BooleanHolder, type NumberHolder, toDmgValue } from "#utils/common-utils";
+import { getPokemonNameWithAffix } from "#utils/i18n-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import i18next from "i18next";
 

@@ -1,4 +1,4 @@
-import { calculateBossSegmentDamage } from "#utils/damage";
+import { calculateBossSegmentDamage } from "#utils/damage-utils";
 import { describe, expect, it } from "vitest";
 
 describe("Unit Test - calculateBossSegmentDamage", () => {

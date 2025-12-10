@@ -4,7 +4,7 @@ import { MoveId } from "#enums/move-id";
 import type { Pokemon } from "#field/pokemon";
 import type { Move } from "#moves/move";
 import { applyChallenges } from "#utils/challenge-utils";
-import { BooleanHolder, toDmgValue } from "#utils/common";
+import { BooleanHolder, toDmgValue } from "#utils/common-utils";
 import i18next from "i18next";
 
 /**

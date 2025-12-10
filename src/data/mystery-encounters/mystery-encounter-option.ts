@@ -12,7 +12,7 @@ import {
   MoneyRequirement,
   TypeRequirement,
 } from "#mystery-encounters/mystery-encounter-requirements";
-import { randSeedInt } from "#utils/common";
+import { randSeedInt } from "#utils/rng-utils";
 
 // biome-ignore lint/suspicious/noConfusingVoidType: void unions in callbacks are OK
 export type OptionPhaseCallback = () => Promise<void | boolean>;
