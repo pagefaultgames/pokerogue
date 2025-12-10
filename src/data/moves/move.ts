@@ -10791,7 +10791,7 @@ export function initMoves() {
       .ignoresSubstitute()
       .target(MoveTarget.NEAR_OTHER)
       .condition(failIfSingleBattle)
-      .condition((user, target, move) => !target.turnData.acted)
+      .condition((_user, target, _move) => !target.turnData.acted)
       .targetsAllyDefault()
       .attr(AfterYouAttr),
     new AttackMove(MoveId.ROUND, PokemonType.NORMAL, MoveCategory.SPECIAL, 60, 100, 15, -1, 0, 5)
