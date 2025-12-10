@@ -7,13 +7,16 @@
 
 /*
  * Interactive CLI to create a custom daily run seed.
- * Usage: `pnpm dailySeed:create` or `node scripts/daily-seed/main.js`
+ * Usage: `pnpm dailySeed:create`
  */
 
-import { existsSync, writeFileSync } from "fs";
+import { existsSync } from "fs";
 import { join } from "path";
-import { confirm, select } from "@inquirer/prompts";
+import { select } from "@inquirer/prompts";
 import chalk from "chalk";
+import { getPropertyValue } from "../helpers/arguments.js";
+import { toTitleCase } from "../helpers/casing.js";
+import { promptOverwrite, writeFileSafe } from "../helpers/file.js";
 import { promptBoss } from "./prompts/boss.js";
 import { promptBiome, promptEdit, promptLuck, promptMoney, promptSeedVariation } from "./prompts/general.js";
 import { promptStarters } from "./prompts/starter.js";
@@ -27,17 +30,24 @@ const SCRIPT_VERSION = "1.0.0";
 const rootDir = join(import.meta.dirname, "..", "..");
 
 /**
- * @typedef {Object} CustomSeedConfig
- * @property {import("./prompts/starter.js").StarterConfig[]} [starters]
- * @property {import("./prompts/boss.js").BossConfig} [boss]
- * @property {number} [biome]
- * @property {number} [luck]
- * @property {number} [startingMoney]
- * @property {string} [seedVariation]
+ * @import { BossConfig } from "./prompts/boss.js"
+ * @import {StarterConfig} from "./prompts/starter.js"
  */
+
+/**
+ * @typedef {Object} CustomSeedConfig
+ */
+
 /**
  * The config for the custom daily run seed.
- * @type {CustomSeedConfig}
+ * @type {{
+ *   starters?: StarterConfig[],
+ *   boss?: BossConfig,
+ *   biome?: number,
+ *   luck?: number,
+ *   startingMoney?: number,
+ *   seedVariation?: string
+ * }}
  */
 const customSeedConfig = {
   starters: undefined,
@@ -47,12 +57,22 @@ const customSeedConfig = {
   startingMoney: undefined,
 };
 
+/**
+ * All valid options for the config.
+ * @type {string[]}
+ */
 const options = ["starters", "boss", "biome", "luck", "starting money", "seed variation", "edit"];
 
+/**
+ * Run the `dailySeed:create` script.
+ * @returns {Promise<void>}
+ */
 async function main() {
+  // TODO: Add help text
+  console.group(chalk.grey(`🌱 Daily Seed Generator - v${SCRIPT_VERSION}\n`));
+
   if (process.argv.includes("--version") || process.argv.includes("-v")) {
-    console.log(`Daily Seed Generator - v${SCRIPT_VERSION}`);
-    return process.exit(0);
+    return;
   }
 
   if (process.argv.includes("--edit") || process.argv.includes("-e")) {
@@ -61,32 +81,36 @@ async function main() {
     options.splice(options.indexOf("edit"), 1);
   }
 
-  console.group(chalk.grey(`🌱 Daily Seed Generator - v${SCRIPT_VERSION}\n`));
-
   try {
     await promptOptions();
+    if (process.exitCode != null) {
+      return;
+    }
   } catch (err) {
-    console.error(chalk.red("✗ Error: ", err));
+    console.error(chalk.red.bold("✗ Error: ", err));
   }
 }
 
 async function promptOptions() {
-  const option = await select({
-    message: "Select the config you want to configure:",
-    choices: [...options, "finish", "exit"],
-  });
-  await handleAnswer(option);
+  const option = /** @type {string} */ (
+    await select({
+      message: "Please select the option you would like to configure.",
+      choices: [...options, "finish", "exit"].map(toTitleCase),
+    })
+  );
+  await handleAnswer(option.toLowerCase());
 }
 
 /**
  * Handle the selected option from the main menu.
- * @param {string} answer
+ * @param {string} answer - The selected answer.
+ * @returns {Promise<void>}
  */
 async function handleAnswer(answer) {
   switch (answer) {
     case "finish":
       await finish();
-      break;
+      return;
     case "edit": {
       const config = await promptEdit();
       Object.assign(customSeedConfig, config);
@@ -112,59 +136,56 @@ async function handleAnswer(answer) {
       break;
     case "exit":
       console.log(chalk.gray("Exiting..."));
-      process.exit(0);
+      process.exitCode = 0;
+      return;
   }
   if (answer !== "edit") {
     options.splice(options.indexOf(answer), 1);
   }
   if (options.includes("edit")) {
-    // always remove "edit" option
+    // always remove "edit" option after first action
     options.splice(options.indexOf("edit"), 1);
   }
   await promptOptions();
 }
 
+const OUTFILE_ALIASES = /** @type {const} */ (["-o", "--outfile", "--outFile"]);
+
+/**
+ * @returns {Promise<void>}
+ */
 async function finish() {
-  // todo: do we also need to validate here?
-  console.log(chalk.cyan("\n🌱 Your custom seed config is:"));
-  console.log(chalk.green(`${JSON.stringify(customSeedConfig)}`));
+  // TODO: do we also need to validate here?
 
-  const outfileArg = process.argv.find(
-    arg => arg.toLowerCase().startsWith("--outfile=") || arg.toLowerCase().startsWith("-o="),
-  );
-  if (outfileArg) {
-    const outfilePath = outfileArg.split("=")[1];
-    await createOutputFile(outfilePath);
+  const outFile = getPropertyValue(process.argv.slice(2), OUTFILE_ALIASES);
+  if (outFile) {
+    console.log(chalk.hex("#ffa500")(`Using outfile: ${chalk.blue(outFile)}`));
+    await createOutputFile(outFile);
+  } else {
+    console.log(chalk.hex("#ffa500")("No outfile detected, logging to stdout..."));
+    console.log(chalk.cyan("\n🌱 Your custom daily seed config is:"));
+    console.log(chalk.green(`${JSON.stringify(customSeedConfig, null, 2)}`));
   }
-
-  process.exit(0);
 }
+
 /**
  * Write the seed config to a file.
- * @param {string} path
+ * @param {string} outFile
  */
-async function createOutputFile(path) {
-  if (!path) {
-    return;
-  }
-  if (!path.endsWith(".json")) {
-    path = `${path}.json`;
+async function createOutputFile(outFile) {
+  if (!outFile.endsWith(".json")) {
+    outFile = `${outFile}.json`;
   }
   try {
-    if (existsSync(path)) {
-      const overwrite = await confirm({
-        message: chalk.hex("#ffa500")(`File ${chalk.blue(path)} already exists! Do you want to overwrite it?`),
-      });
-      if (!overwrite) {
-        console.log(chalk.gray("Cancelled."));
-        return;
-      }
+    if (existsSync(outFile) && !(await promptOverwrite(outFile))) {
+      console.log(chalk.gray("Cancelled."));
+      return;
     }
-    const fullPath = join(rootDir, path);
+    const fullPath = join(rootDir, outFile);
 
-    // todo: should this be prettified?
-    writeFileSync(fullPath, JSON.stringify(customSeedConfig, null, 2));
-    console.log(chalk.green(`✔ Output written to ${fullPath} successfully!`));
+    // TODO: should this be prettified?
+    writeFileSafe(fullPath, JSON.stringify(customSeedConfig, null, 2));
+    console.log(chalk.green(`✔ Output written to ${chalk.blue(outFile)} successfully!`));
   } catch (err) {
     console.error(chalk.red(`✗ Error while writing output file: ${err}`));
     process.exitCode = 1;

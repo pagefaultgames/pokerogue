@@ -16,6 +16,7 @@ import customDailyRunSchema from "./schema.json";
 const ajv = new Ajv({
   allErrors: true,
 });
+
 /**
  * The validator for the {@linkcode CustomDailyRunConfig}.
  */

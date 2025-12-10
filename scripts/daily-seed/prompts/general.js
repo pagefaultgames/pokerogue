@@ -7,7 +7,9 @@
 
 import { input, number, select } from "@inquirer/prompts";
 import { Ajv } from "ajv";
+import chalk from "chalk";
 import customDailyRunSchema from "../../../src/data/daily-seed/schema.json" with { type: "json" };
+import { toTitleCase, toUpperSnakeCase } from "../../helpers/casing.js";
 import { BIOMES } from "../constants.js";
 
 const ajv = new Ajv({
@@ -24,7 +26,7 @@ const validate = ajv.compile(customDailyRunSchema);
  */
 export async function promptMoney() {
   return await number({
-    message: "starting money (press TAB to edit the placeholder):",
+    message: "Please enter starting money amount.",
     default: 1000,
     min: 0,
     required: true,
@@ -38,7 +40,7 @@ export async function promptMoney() {
  */
 export async function promptLuck() {
   return await number({
-    message: "Daily run luck:",
+    message: "Please enter initial luck value.",
     min: 0,
     max: 14,
     required: true,
@@ -50,29 +52,34 @@ export async function promptLuck() {
  * @returns {Promise<number>} The starting biome number.
  */
 export async function promptBiome() {
-  const biome = await select({
-    message: "Starting biome:",
-    choices: [...Object.keys(BIOMES)],
-    pageSize: 10,
-  });
-  return BIOMES[/** @type {keyof typeof BIOMES} */ (biome)];
+  const biome = /** @type {string} */ (
+    await select({
+      message: "Please enter starting biome.",
+      choices: [...Object.keys(BIOMES).map(toTitleCase)],
+      pageSize: 10,
+    })
+  );
+  return BIOMES[/** @type {keyof typeof BIOMES} */ (toUpperSnakeCase(biome))];
 }
 
 /**
  * Prompts the user to enter a custom config.
  * The input is a JSON stringified version of the {@linkcode CustomSeedConfig} object.
  * @returns {Promise<import("../main.js").CustomSeedConfig>} The parsed {@linkcode CustomSeedConfig}.
- * @remarks The input is not validated.
+ * @remarks The input is not validated to be a proper config.
  */
 export async function promptEdit() {
-  return await input({
-    message: "The stringified config to edit:",
+  const config = await input({
+    message: chalk.blue("Enter a custom config to use."),
     validate: value => {
       try {
-        const config = JSON.parse(value);
+        const parsed = JSON.parse(value);
 
-        if (!validate(config)) {
-          return "Invalid config:\n" + validate.errors?.map(e => `${e.instancePath} ${e.message}`).join("\n");
+        if (!validate(parsed)) {
+          return (
+            chalk.red.bold("Invalid config file specified!\n")
+            + validate.errors?.map(e => `${e.instancePath} ${e.message}`).join("\n")
+          );
         }
 
         return true;
@@ -80,15 +87,15 @@ export async function promptEdit() {
         if (value.trim() === "") {
           return true;
         }
-        return "Invalid JSON";
+        return chalk.red.bold("Invalid JSON!");
       }
     },
-  }).then(config => {
-    if (config.trim() === "") {
-      return {};
-    }
-    return JSON.parse(config);
   });
+
+  if (config.trim() === "") {
+    return {};
+  }
+  return JSON.parse(config);
 }
 
 /**
@@ -99,10 +106,10 @@ export async function promptEdit() {
  */
 export async function promptSeedVariation() {
   return await input({
-    message: "Seed variation:",
+    message: "Please enter seed variation.",
     validate: value => {
       if (value.trim() === "") {
-        return "Seed variation cannot be empty!";
+        return chalk.red.bold("Seed variation cannot be empty!");
       }
       return true;
     },

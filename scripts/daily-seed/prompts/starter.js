@@ -6,6 +6,7 @@
  */
 
 import { select } from "@inquirer/prompts";
+import { toCamelCase, toTitleCase } from "../../helpers/casing.js";
 import { STARTER_OPTIONS } from "../constants.js";
 import {
   promptAbilityIndex,
@@ -16,20 +17,23 @@ import {
   promptVariant,
 } from "./pokemon.js";
 
+/** @import {Variant} from "./pokemon.js"; */
+
 /**
- * @typedef {Object} StarterConfig
- * @property {number} speciesId
- * @property {number} [formIndex]
- * @property {import("./pokemon.js").Variant} [variant]
- * @property {number[]} [moveset]
- * @property {number} [nature]
- * @property {number} [abilityIndex]
+ * @typedef {{
+ *   speciesId?: number,
+ *   formIndex?: number,
+ *   variant?: Variant,
+ *   moveset?: number[],
+ *   nature?: number,
+ *   abilityIndex?: number,
+ * }} StarterConfig
  */
 
 /**
  * Prompts the user to configure the daily run starters.
  * @returns {Promise<StarterConfig[]>}
- * @remarks All 3 **must** be configured with at least a speciesId.
+ * @remarks All 3 **must** be configured with at least a SpeciesId.
  */
 export async function promptStarters() {
   /** @type {StarterConfig[]} */
@@ -52,6 +56,7 @@ export async function promptStarters() {
 
 /**
  * The list of valid options for the current starter.
+ * @type {string[]}
  */
 const starterOptions = [...STARTER_OPTIONS];
 
@@ -63,10 +68,14 @@ async function promptStarterOptions(starterConfig) {
   if (starterOptions.length === 1) {
     return;
   }
-  const option = await select({
-    message: "Select the option you want to configure:",
-    choices: [...starterOptions],
-  });
+  const option = toCamelCase(
+    /** @type {string} */ (
+      await select({
+        message: "Please select the starter option you would like to configure.",
+        choices: [...starterOptions].map(toTitleCase),
+      })
+    ),
+  );
   switch (option) {
     case "formIndex":
       starterConfig.formIndex = await promptFormIndex();

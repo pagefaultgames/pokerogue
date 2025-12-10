@@ -6,6 +6,8 @@
  */
 
 import { number, select } from "@inquirer/prompts";
+import chalk from "chalk";
+import { toTitleCase, toUpperSnakeCase } from "../../helpers/casing.js";
 import { MAX_ABILITY_ID, MAX_MOVE_ID, NATURES, SPECIES_IDS } from "../constants.js";
 
 /**
@@ -19,13 +21,13 @@ import { MAX_ABILITY_ID, MAX_MOVE_ID, NATURES, SPECIES_IDS } from "../constants.
  */
 export async function promptSpeciesId() {
   return await number({
-    message: "speciesId:",
+    message: "Please enter the SpeciesId to set.",
     min: 1,
     max: Math.max(...SPECIES_IDS),
     required: true,
     validate: input => {
       if (!input || !SPECIES_IDS.includes(input)) {
-        return "Invalid speciesId";
+        return chalk.red.bold("Invalid SpeciesId specified!");
       }
       return true;
     },
@@ -39,7 +41,7 @@ export async function promptSpeciesId() {
  */
 export async function promptFormIndex() {
   return await number({
-    message: "formIndex:",
+    message: "Please enter the form index to set.",
     min: 0,
     required: true,
   });
@@ -54,7 +56,7 @@ export async function promptFormIndex() {
 export async function promptVariant() {
   return /** @type {Variant} */ (
     await number({
-      message: "variant:",
+      message: "Please enter the variant to set.",
       min: 0,
       max: 2,
       required: true,
@@ -68,13 +70,14 @@ export async function promptVariant() {
  * @returns {Promise<number>} The nature
  */
 export async function promptNature() {
-  return await select({
-    message: "nature:",
-    choices: [...Object.keys(NATURES)],
-    pageSize: 10,
-  }).then(nature => {
-    return NATURES[/** @type {keyof typeof NATURES} */ (nature)];
-  });
+  const nature = /** @type {string} */ (
+    await select({
+      message: "Please enter the nature to set.",
+      choices: [...Object.keys(NATURES).map(toTitleCase)],
+      pageSize: 10,
+    })
+  );
+  return NATURES[/** @type {keyof typeof NATURES} */ (toUpperSnakeCase(nature))];
 }
 
 /**
@@ -87,7 +90,7 @@ export async function promptMoveset() {
 
   async function addMove() {
     await number({
-      message: "Add a move to the moveset: (press ENTER to finish)",
+      message: "Please enter the move to add to the moveset.\nPressing ENTER will end the prompt early.",
       min: 1,
       max: MAX_MOVE_ID,
     }).then(async move => {
@@ -113,7 +116,7 @@ export async function promptMoveset() {
  */
 export async function promptAbility(passive = false) {
   return await number({
-    message: `${passive ? "passive" : "ability"} of the boss:`,
+    message: `Please enter the ${passive ? "passive" : "normal"} ability of the final boss.`,
     min: 1,
     max: MAX_ABILITY_ID,
     required: true,
@@ -128,7 +131,7 @@ export async function promptAbility(passive = false) {
  */
 export async function promptAbilityIndex() {
   return await number({
-    message: "abilityIndex:",
+    message: `Please enter the starter's ability index.`,
     min: 0,
     max: 2,
     required: true,

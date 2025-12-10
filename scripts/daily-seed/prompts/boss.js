@@ -6,6 +6,8 @@
  */
 
 import { select } from "@inquirer/prompts";
+import chalk from "chalk";
+import { toCamelCase, toTitleCase } from "../../helpers/casing.js";
 import { BOSS_OPTIONS } from "../constants.js";
 import {
   promptAbility,
@@ -16,16 +18,21 @@ import {
   promptVariant,
 } from "./pokemon.js";
 
+/** @import {Variant} from "./pokemon.js"; */
+
 /**
- * @typedef {Object} BossConfig
- * @property {number} [speciesId]
- * @property {number} [formIndex]
- * @property {import("./pokemon.js").Variant} [variant]
- * @property {number[]} [moveset]
- * @property {number} [nature]
- * @property {number} [ability]
- * @property {number} [passive]
+ * @typedef {{
+ *   speciesId?: number,
+ *   formIndex?: number,
+ *   variant?: Variant,
+ *   moveset?: number[],
+ *   nature?: number,
+ *   ability?: number,
+ *   passive?: number
+ * }} BossConfig - The config for a single boss pokemon.
+ *
  */
+
 /**
  * The config for the daily run boss.
  * @type {BossConfig}
@@ -43,7 +50,7 @@ let bossConfig = {
 /**
  * Prompts the user to configure the daily run boss.
  * @returns {Promise<BossConfig>} The {@linkcode BossConfig}
- * @remarks The boss **must** be configured with at least a speciesId.
+ * @remarks The boss **must** be configured with at least a SpeciesId.
  */
 export async function promptBoss() {
   const speciesId = await promptSpeciesId();
@@ -51,6 +58,10 @@ export async function promptBoss() {
   return await promptBossOptions();
 }
 
+/**
+ * The list of valid options for the final boss.
+ * @type {string[]}
+ */
 const bossOptions = [...BOSS_OPTIONS];
 
 /**
@@ -61,10 +72,14 @@ async function promptBossOptions() {
   if (bossOptions.length === 1) {
     return bossConfig;
   }
-  const option = await select({
-    message: "Select the option you want to configure:",
-    choices: [...bossOptions],
-  });
+  const option = toCamelCase(
+    /** @type {string} */ (
+      await select({
+        message: chalk.blue("Please select the final boss option you would like to configure."),
+        choices: [...bossOptions].map(toTitleCase),
+      })
+    ),
+  );
 
   switch (option) {
     case "formIndex":

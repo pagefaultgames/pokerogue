@@ -13,16 +13,17 @@ const SPECIAL_SPECIES_IDS = [
   6058, 6059, 6100, 6101, 6157, 6211, 6215, 6503, 6549, 6570, 6571, 6628, 6705, 6706, 6713, 6724, 8128, 8194, 8901,
 ];
 
-/** A list of all valid speciesIds. */
+/** A list of all valid `SpeciesId`s. */
 export const SPECIES_IDS = [...Array.from({ length: MAX_SPECIES_ID }, (_, i) => i + 1), ...SPECIAL_SPECIES_IDS];
 
-/** The maximum valid moveId. */
+/** The maximum valid `MoveId`. */
 export const MAX_MOVE_ID = 919;
-/** The maximum valid abilityId. */
+/** The maximum valid `AbilityId`. */
 export const MAX_ABILITY_ID = 310;
 
 /**
  * A mapping of biome names to their corresponding IDs.
+ * @enum {number}
  */
 export const BIOMES = {
   TOWN: 0,
@@ -64,6 +65,7 @@ export const BIOMES = {
 
 /**
  * A mapping of nature names to their corresponding IDs.
+ * @enum {number}
  */
 export const NATURES = {
   HARDY: 0,
@@ -94,6 +96,21 @@ export const NATURES = {
 };
 
 /** A list of all valid options for the boss. */
-export const BOSS_OPTIONS = ["formIndex", "variant", "moveset", "nature", "ability", "passive", "finish"];
+export const BOSS_OPTIONS = /** @type {const} */ ([
+  "formIndex",
+  "variant",
+  "moveset",
+  "nature",
+  "ability",
+  "passive",
+  "finish",
+]);
 /** A list of all valid options for a starter pokemon. */
-export const STARTER_OPTIONS = ["formIndex", "variant", "moveset", "nature", "abilityIndex", "finish"];
+export const STARTER_OPTIONS = /** @type {const} */ ([
+  "formIndex",
+  "variant",
+  "moveset",
+  "nature",
+  "abilityIndex",
+  "finish",
+]);

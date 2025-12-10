@@ -7,6 +7,8 @@
 
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
+import { confirm } from "@inquirer/prompts";
+import chalk from "chalk";
 
 /**
  * @import {PathOrFileDescriptor, WriteFileOptions} from "node:fs"
@@ -33,4 +35,16 @@ export function writeFileSafe(file, content, options) {
   }
 
   writeFileSync(file, content, options);
+}
+
+/**
+ * Confirm overwriting an already-existing file.
+ * @param {string} outFile - The file name to override
+ * @returns {Promise<boolean>} Whether "Yes" or "No" was selected.
+ */
+export async function promptOverwrite(outFile) {
+  return await confirm({
+    message: chalk.hex("#ffa500")(`File ${chalk.blue(outFile)} already exists!\nDo you want to replace it?`),
+    default: false,
+  });
 }
