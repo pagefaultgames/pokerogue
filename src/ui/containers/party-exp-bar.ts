@@ -17,18 +17,16 @@ export class PartyExpBar extends Phaser.GameObjects.Container {
     super(globalScene, globalScene.scaledCanvas.width, -globalScene.scaledCanvas.height + 15);
   }
 
-  setup(): void {
-    this.bg = globalScene.add.nineslice(0, 0, "party_exp_bar", undefined, 8, 18, 21, 5, 6, 4);
-    this.bg.setOrigin(0, 0);
+  setup(): this {
+    this.bg = globalScene.add.nineslice(0, 0, "party_exp_bar", undefined, 8, 18, 21, 5, 6, 4).setOrigin(0, 0);
 
-    this.add(this.bg);
-
-    this.expText = addTextObject(22, 4, "", TextStyle.BATTLE_INFO);
-    this.expText.setOrigin(0, 0);
-    this.add(this.expText);
+    this.expText = addTextObject(22, 4, "", TextStyle.BATTLE_INFO).setOrigin(0, 0);
+    this.add([this.bg, this.expText]);
 
     this.setVisible(false);
     this.shown = false;
+
+    return this;
   }
 
   showPokemonExp(pokemon: Pokemon, expValue: number, showOnlyLevelUp: boolean, newLevel: number): Promise<void> {
