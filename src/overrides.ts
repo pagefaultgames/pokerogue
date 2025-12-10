@@ -71,13 +71,14 @@ class DefaultOverrides {
    * to be a double battle.
    *
    * If `"even-doubles"`, follow the `"double"` rule on even wave numbers,
-   * or the `"single"` rule on odd wave numbers.
+   * and the `"single"` rule on odd wave numbers.
    *
    * If `"odd-doubles"`, follow the `"double"` rule on odd wave numbers,
-   * or the `"single"` rule on even wave numbers.
+   * and the `"single"` rule on even wave numbers.
    * @defaultValue `null`
    * @privateRemarks
-   * Does not work on trainer battles - use {@linkcode RANDOM_TRAINER_OVERRIDE} instead
+   * Prefer using {@linkcode RANDOM_TRAINER_OVERRIDE} to override trainer battles.
+   * This override's ability to override trainer battles is inconsistent and may be removed in a future PR.
    */
   readonly BATTLE_STYLE_OVERRIDE: BattleStyle | null = null;
   /**

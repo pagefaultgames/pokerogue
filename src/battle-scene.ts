@@ -22,7 +22,7 @@ import { SpritePipeline } from "#app/pipelines/sprite";
 import { SceneBase } from "#app/scene-base";
 import { TimedEventManager } from "#app/timed-event-manager";
 import { UiInputs } from "#app/ui-inputs";
-import { startingWave } from "#balance/misc";
+import { STARTING_WAVE } from "#balance/misc";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#balance/starters";
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets } from "#data/battle-anims";
@@ -549,7 +549,7 @@ export class BattleScene extends SceneBase {
     this.candyBar.setup();
     this.fieldUI.add(this.candyBar);
 
-    this.biomeWaveText = addTextObject(this.scaledCanvas.width - 2, 0, startingWave.toString(), TextStyle.BATTLE_INFO);
+    this.biomeWaveText = addTextObject(this.scaledCanvas.width - 2, 0, STARTING_WAVE.toString(), TextStyle.BATTLE_INFO);
     this.biomeWaveText.setName("text-biome-wave");
     this.biomeWaveText.setOrigin(1, 0.5);
     this.fieldUI.add(this.biomeWaveText);
@@ -1195,7 +1195,7 @@ export class BattleScene extends SceneBase {
     console.log("Seed:", this.seed);
     this.resetSeed();
 
-    this.biomeWaveText.setText(startingWave.toString());
+    this.biomeWaveText.setText(STARTING_WAVE.toString());
     this.biomeWaveText.setVisible(false);
 
     this.updateMoneyText();
@@ -1364,7 +1364,7 @@ export class BattleScene extends SceneBase {
         waveIndex:
           this.currentBattle != null
             ? this.currentBattle.waveIndex + 1
-            : (Overrides.STARTING_WAVE_OVERRIDE ?? startingWave),
+            : (Overrides.STARTING_WAVE_OVERRIDE ?? STARTING_WAVE),
       };
     }
 
@@ -3663,7 +3663,7 @@ export class BattleScene extends SceneBase {
       && battleType === BattleType.WILD
       && !this.gameMode.isBoss(waveIndex)
       && waveIndex % 10 !== 1
-      && isBetween(waveIndex, lowestMysteryEncounterWave, highestMysteryEncounterWave, true)
+      && isBetween(waveIndex, lowestMysteryEncounterWave, highestMysteryEncounterWave)
     );
   }
 

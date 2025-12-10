@@ -6,7 +6,6 @@
  * @module
  */
 
-// biome-ignore lint/correctness/noUnusedImports: TSDoc
 import type { BattleScene } from "#app/battle-scene";
 import type { BattleType } from "#enums/battle-type";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
