@@ -207,6 +207,7 @@ export async function initI18n(): Promise<void> {
       "ro",
       "ru",
       "tl",
+      "nb-NO",
     ],
     backend: {
       loadPath(lng: string, [ns]: string[]) {

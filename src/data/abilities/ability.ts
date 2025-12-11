@@ -3627,8 +3627,6 @@ export class ProtectStatAbAttr extends PreStatStageChangeAbAttr {
 export interface ConfusionOnStatusEffectAbAttrParams extends AbAttrBaseParams {
   /** The status effect that was applied */
   effect: StatusEffect;
-  /** The move that applied the status effect */
-  move: Move;
   /** The opponent that was inflicted with the status effect */
   opponent: Pokemon;
 }
@@ -3657,9 +3655,9 @@ export class ConfusionOnStatusEffectAbAttr extends AbAttr {
   /**
    * Applies confusion to the target pokemon.
    */
-  override apply({ opponent, simulated, pokemon, move }: ConfusionOnStatusEffectAbAttrParams): void {
+  override apply({ opponent, simulated, pokemon }: ConfusionOnStatusEffectAbAttrParams): void {
     if (!simulated) {
-      opponent.addTag(BattlerTagType.CONFUSED, pokemon.randBattleSeedIntRange(2, 5), move.id, opponent.id);
+      opponent.addTag(BattlerTagType.CONFUSED, pokemon.randBattleSeedIntRange(2, 5), undefined, opponent.id);
     }
   }
 }

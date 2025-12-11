@@ -27,7 +27,7 @@ jobs:
       all: ${{ steps.filter.outputs.all }}
     steps:
       - name: Checkout GitHub repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           sparse-checkout: |
             .github/test-filters.yml
@@ -60,28 +60,22 @@ jobs:
     if: ${{ needs.run-tests.result != 'skipped' && needs.run-tests.result != 'cancelled' }}
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v6
         with:
-          submodules: "recursive"
+          sparse-checkout: |
+            .github/actions/setup-deps/action.yml
+            test/setup
+            test/test-utils/reporters/custom-default-reporter.ts
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: ".nvmrc"
-          cache: "pnpm"
-
-      - name: Install Packages
-        run: pnpm i
+      - uses: ./.github/actions/setup-deps
 
       - name: Download blob artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           pattern: shard-?-blob
           path: test-results
           merge-multiple: true
 
       - name: Merge blobs
-        run: pnpm test:silent --merge-reports=test-results
+        run: pnpm test:merge-reports
