@@ -142,7 +142,7 @@ describe("Daily Mode", () => {
           await game.dailyMode.startBattle();
 
           const moves = game.field.getPlayerPokemon().moveset.map(pm => pm.moveId);
-          expect(moves, "invalid move was in moveset").not.toContain(MoveId[9999]);
+          expect(moves, "invalid move was in moveset").not.toContain(9999);
         });
       });
     });
@@ -203,7 +203,7 @@ describe("Daily Mode", () => {
           await game.dailyMode.startBattle();
 
           const moves = game.field.getPlayerPokemon().moveset.map(pm => pm.moveId);
-          expect(moves, "invalid move was in moveset").not.toContain(MoveId[9999]);
+          expect(moves, "invalid move was in moveset").not.toContain(9999);
         });
       });
 
@@ -228,7 +228,7 @@ describe("Daily Mode", () => {
         await game.dailyMode.startBattle();
 
         const ability = game.field.getEnemyPokemon().getAbility();
-        expect(ability.id).not.toBe(AbilityId[9999]);
+        expect(ability.id).not.toBe(9999);
       });
 
       it("should not allow invalid passive IDs", async () => {
@@ -236,7 +236,7 @@ describe("Daily Mode", () => {
         await game.dailyMode.startBattle();
 
         const ability = game.field.getEnemyPokemon().getPassiveAbility();
-        expect(ability.id).not.toBe(AbilityId[9999]);
+        expect(ability.id).not.toBe(9999);
       });
 
       it("should support custom nature", async () => {
@@ -252,7 +252,7 @@ describe("Daily Mode", () => {
         await game.dailyMode.startBattle();
 
         const nature = game.field.getEnemyPokemon().getNature();
-        expect(nature).not.toBe(Nature[9999]);
+        expect(nature).not.toBe(9999);
       });
     });
 
