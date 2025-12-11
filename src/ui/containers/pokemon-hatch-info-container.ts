@@ -102,7 +102,8 @@ export class PokemonHatchInfoContainer extends PokemonInfoContainer {
       this.pokemonEggMoveBgs.push(eggMoveBg);
       this.pokemonEggMoveLabels.push(eggMoveLabel);
 
-      eggMoveContainer.add([eggMoveBg, eggMoveLabel]) //
+      eggMoveContainer
+        .add([eggMoveBg, eggMoveLabel]) //
         .setScale(0.44);
 
       this.pokemonEggMoveContainers.push(eggMoveContainer);
