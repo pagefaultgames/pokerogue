@@ -25,13 +25,21 @@ export class CandyBar extends Phaser.GameObjects.Container {
   setup(): this {
     this.bg = globalScene.add.nineslice(0, 0, "party_exp_bar", undefined, 8, 18, 21, 5, 6, 4).setOrigin(0, 0);
 
-    this.candyIcon = globalScene.add.sprite(14, 0, "items", "candy").setOrigin(0.5, 0).setScale(0.5);
+    this.candyIcon = globalScene.add //
+      .sprite(14, 0, "items", "candy")
+      .setOrigin(0.5, 0)
+      .setScale(0.5);
 
-    this.candyOverlayIcon = globalScene.add.sprite(14, 0, "items", "candy_overlay").setOrigin(0.5, 0).setScale(0.5);
+    this.candyOverlayIcon = globalScene.add //
+      .sprite(14, 0, "items", "candy_overlay")
+      .setOrigin(0.5, 0)
+      .setScale(0.5);
 
-    this.countText = addTextObject(22, 4, "", TextStyle.BATTLE_INFO).setOrigin(0, 0);
+    this.countText = addTextObject(22, 4, "", TextStyle.BATTLE_INFO) //
+      .setOrigin(0);
 
-    this.add([this.bg, this.candyIcon, this.candyOverlayIcon, this.countText]).setVisible(false);
+    this.add([this.bg, this.candyIcon, this.candyOverlayIcon, this.countText]) //
+      .setVisible(false);
     this.shown = false;
 
     return this;

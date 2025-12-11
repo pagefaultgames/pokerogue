@@ -14,8 +14,13 @@ export class CharSprite extends Phaser.GameObjects.Container {
   }
 
   setup(): this {
-    this.sprite = globalScene.add.sprite(0, 0, "", "").setOrigin(0.5, 1);
-    this.transitionSprite = globalScene.add.sprite(0, 0, "", "").setOrigin(0.5, 1).setVisible(false);
+    this.sprite = globalScene.add //
+      .sprite(0, 0, "", "")
+      .setOrigin(0.5, 1);
+    this.transitionSprite = globalScene.add //
+      .sprite(0, 0, "", "")
+      .setOrigin(0.5, 1)
+      .setVisible(false);
     this.add([this.sprite, this.transitionSprite]);
 
     this.setVisible(false);

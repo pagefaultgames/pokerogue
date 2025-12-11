@@ -18,9 +18,12 @@ export class PartyExpBar extends Phaser.GameObjects.Container {
   }
 
   setup(): this {
-    this.bg = globalScene.add.nineslice(0, 0, "party_exp_bar", undefined, 8, 18, 21, 5, 6, 4).setOrigin(0, 0);
+    this.bg = globalScene.add //
+      .nineslice(0, 0, "party_exp_bar", undefined, 8, 18, 21, 5, 6, 4)
+      .setOrigin(0);
 
-    this.expText = addTextObject(22, 4, "", TextStyle.BATTLE_INFO).setOrigin(0, 0);
+    this.expText = addTextObject(22, 4, "", TextStyle.BATTLE_INFO) //
+      .setOrigin(0);
     this.add([this.bg, this.expText]);
 
     this.setVisible(false);

@@ -23,7 +23,10 @@ export class AbilityBar extends Phaser.GameObjects.Container {
 
   setup(): this {
     for (const key of ["ability_bar_right", "ability_bar_left"]) {
-      const bar = globalScene.add.image(0, 0, key).setOrigin(0, 0).setVisible(false);
+      const bar = globalScene.add //
+        .image(0, 0, key)
+        .setOrigin(0)
+        .setVisible(false);
       this.add(bar);
       this.abilityBars.push(bar);
     }
@@ -31,11 +34,13 @@ export class AbilityBar extends Phaser.GameObjects.Container {
     this.abilityBarText = addTextObject(15, 3, "", TextStyle.MESSAGE, {
       fontSize: "72px",
     })
-      .setOrigin(0, 0)
+      .setOrigin(0)
       .setWordWrapWidth(600, true);
 
-    this.add(this.abilityBarText).bringToTop(this.abilityBarText).setVisible(false);
-    this.setX(-barWidth); // start hidden (right edge of bar at x=0)
+    this.add(this.abilityBarText) //
+      .bringToTop(this.abilityBarText)
+      .setVisible(false)
+      .setX(-barWidth); // start hidden (right edge of bar at x=0)
 
     return this;
   }

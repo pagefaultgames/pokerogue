@@ -434,8 +434,15 @@ export class BattleScene extends SceneBase {
       .setSize(320, 240)
       .setVisible(false);
 
-    this.field = this.add.container(0, 0).setName("field").setScale(6);
-    this.fieldUI = this.add.container(0, this.game.canvas.height).setName("field-ui").setDepth(1).setScale(6);
+    this.field = this.add //
+      .container(0, 0)
+      .setName("field")
+      .setScale(6);
+    this.fieldUI = this.add //
+      .container(0, this.game.canvas.height)
+      .setName("field-ui")
+      .setDepth(1)
+      .setScale(6);
 
     const transition = this.make.rexTransitionImagePack(
       {
@@ -467,7 +474,11 @@ export class BattleScene extends SceneBase {
     });
     this.add.existing(transition);
 
-    this.uiContainer = this.add.container(0, 0).setName("ui").setDepth(2).setScale(6);
+    this.uiContainer = this.add //
+      .container(0, 0)
+      .setName("ui")
+      .setDepth(2)
+      .setScale(6);
 
     const overlayWidth = this.scaledCanvas.width;
     const overlayHeight = this.scaledCanvas.height - 48;
@@ -485,19 +496,33 @@ export class BattleScene extends SceneBase {
     this.modifiers = [];
     this.enemyModifiers = [];
 
-    this.modifierBar = new ModifierBar().setName("modifier-bar");
+    this.modifierBar = new ModifierBar() //
+      .setName("modifier-bar");
     this.add.existing(this.modifierBar);
 
-    this.enemyModifierBar = new ModifierBar(true).setName("enemy-modifier-bar");
+    this.enemyModifierBar = new ModifierBar(true) //
+      .setName("enemy-modifier-bar");
     this.add.existing(this.enemyModifierBar);
 
-    this.charSprite = new CharSprite().setName("sprite-char").setup();
-    this.pbTray = new PokeballTray(true).setName("pb-tray").setup();
-    this.pbTrayEnemy = new PokeballTray(false).setName("enemy-pb-tray").setup();
-    this.abilityBar = new AbilityBar().setName("ability-bar").setup();
-    this.partyExpBar = new PartyExpBar().setName("party-exp-bar").setup();
+    this.charSprite = new CharSprite() //
+      .setName("sprite-char")
+      .setup();
+    this.pbTray = new PokeballTray(true) //
+      .setName("pb-tray")
+      .setup();
+    this.pbTrayEnemy = new PokeballTray(false) //
+      .setName("enemy-pb-tray")
+      .setup();
+    this.abilityBar = new AbilityBar() //
+      .setName("ability-bar")
+      .setup();
+    this.partyExpBar = new PartyExpBar() //
+      .setName("party-exp-bar")
+      .setup();
 
-    this.candyBar = new CandyBar().setName("candy-bar").setup();
+    this.candyBar = new CandyBar() //
+      .setName("candy-bar")
+      .setup();
 
     this.biomeWaveText = addTextObject(this.scaledCanvas.width - 2, 0, startingWave.toString(), TextStyle.BATTLE_INFO)
       .setName("text-biome-wave")
@@ -527,14 +552,13 @@ export class BattleScene extends SceneBase {
       .setVisible(false);
 
     this.arenaFlyout = new ArenaFlyout();
-    this.pokemonInfoContainer = new PokemonInfoContainer(
-      this.scaledCanvas.width + 52,
-      -this.scaledCanvas.height + 66,
-    ).setup();
+    this.pokemonInfoContainer = new PokemonInfoContainer(this.scaledCanvas.width + 52, -this.scaledCanvas.height + 66) //
+      .setup();
     this.updateUIPositions();
 
     this.damageNumberHandler = new DamageNumberHandler();
-    this.spriteSparkleHandler = new PokemonSpriteSparkleHandler().setup();
+    this.spriteSparkleHandler = new PokemonSpriteSparkleHandler() //
+      .setup();
 
     this.fieldUI
       .add([
@@ -560,10 +584,16 @@ export class BattleScene extends SceneBase {
 
     this.party = [];
 
-    this.arenaPlayer = new ArenaBase(true).setName("arena-player");
-    this.arenaPlayerTransition = new ArenaBase(true).setName("arena-player-transition").setVisible(false);
-    this.arenaEnemy = new ArenaBase(false).setName("arena-enemy");
-    this.arenaNextEnemy = new ArenaBase(false).setName("arena-next-enemy").setVisible(false);
+    this.arenaPlayer = new ArenaBase(true) //
+      .setName("arena-player");
+    this.arenaPlayerTransition = new ArenaBase(true) //
+      .setName("arena-player-transition")
+      .setVisible(false);
+    this.arenaEnemy = new ArenaBase(false) //
+      .setName("arena-enemy");
+    this.arenaNextEnemy = new ArenaBase(false) //
+      .setName("arena-next-enemy")
+      .setVisible(false);
     this.field.add([this.arenaPlayer, this.arenaPlayerTransition, this.arenaEnemy, this.arenaNextEnemy]);
 
     this.trainer = this.addFieldSprite(0, 0, `trainer_${this.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`)
