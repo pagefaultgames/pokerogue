@@ -66,7 +66,6 @@ export async function promptBiome() {
  * Prompts the user to enter a custom config.
  * The input is a JSON stringified version of the {@linkcode CustomSeedConfig} object.
  * @returns {Promise<import("../main.js").CustomSeedConfig>} The parsed {@linkcode CustomSeedConfig}.
- * @remarks The input is not validated to be a proper config.
  */
 export async function promptEdit() {
   const config = await input({
