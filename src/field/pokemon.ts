@@ -2050,13 +2050,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns The non-passive {@linkcode Ability} of this Pokemon.
    */
   public getAbility(ignoreOverride = false): Ability {
-    if (this.isBoss() && isDailyFinalBoss()) {
-      const eventBoss = getDailyEventSeedBoss(globalScene.seed);
-      if (eventBoss?.ability != null) {
-        return allAbilities[eventBoss.ability];
-      }
-    }
-
     if (!ignoreOverride && this.summonData.ability) {
       return allAbilities[this.summonData.ability];
     }
@@ -2075,6 +2068,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.customPokemonData.ability != null && this.customPokemonData.ability !== -1) {
       return allAbilities[this.customPokemonData.ability];
     }
+    if (this.isBoss() && isDailyFinalBoss()) {
+      const eventBoss = getDailyEventSeedBoss(globalScene.seed);
+      if (eventBoss?.ability != null) {
+        return allAbilities[eventBoss.ability];
+      }
+    }
     let abilityId = this.getSpeciesForm(ignoreOverride).getAbility(this.abilityIndex);
     if (abilityId === AbilityId.NONE) {
       abilityId = this.species.ability1;
@@ -2090,13 +2089,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns The passive {@linkcode Ability} of the pokemon
    */
   public getPassiveAbility(): Ability {
-    if (this.isBoss() && isDailyFinalBoss()) {
-      const eventBoss = getDailyEventSeedBoss(globalScene.seed);
-      if (eventBoss?.passive != null) {
-        return allAbilities[eventBoss.passive];
-      }
-    }
-
     if (Overrides.PASSIVE_ABILITY_OVERRIDE && this.isPlayer()) {
       return allAbilities[Overrides.PASSIVE_ABILITY_OVERRIDE];
     }
@@ -2105,6 +2097,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     if (this.customPokemonData.passive != null && this.customPokemonData.passive !== -1) {
       return allAbilities[this.customPokemonData.passive];
+    }
+    if (this.isBoss() && isDailyFinalBoss()) {
+      const eventBoss = getDailyEventSeedBoss(globalScene.seed);
+      if (eventBoss?.passive != null) {
+        return allAbilities[eventBoss.passive];
+      }
     }
 
     return allAbilities[this.species.getPassiveAbility(this.formIndex)];
