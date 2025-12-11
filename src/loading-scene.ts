@@ -316,7 +316,7 @@ export class LoadingScene extends SceneBase {
       .loadAtlas("dualshock", "inputs")
       .loadAtlas("xbox", "inputs")
       .loadAtlas("keyboard", "inputs")
-      // sound effects!!!
+      // sound effects
       .loadSe("select", "ui")
       .loadSe("menu_open", "ui")
       .loadSe("error", "ui")

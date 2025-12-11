@@ -1023,7 +1023,8 @@ export class BattleScene extends SceneBase {
     const icon = this.add
       .sprite(0, 0, pokemon.getIconAtlasKey(ignoreOverride, useIllusion))
       .setName(`sprite-${pokemon.name}-icon`)
-      .setFrame(pokemon.getIconId(ignoreOverride, useIllusion));
+      .setFrame(pokemon.getIconId(ignoreOverride, useIllusion))
+      .setOrigin(0.5, 0);
     // Temporary fix to show pokemon's default icon if variant icon doesn't exist
     if (icon.frame.name !== pokemon.getIconId(ignoreOverride, useIllusion)) {
       console.log(`${pokemon.name}'s variant icon does not exist. Replacing with default.`);
@@ -1040,9 +1041,9 @@ export class BattleScene extends SceneBase {
     if (pokemon.isFusion(useIllusion)) {
       const fusionIcon = this.add
         .sprite(0, 0, pokemon.getFusionIconAtlasKey(ignoreOverride, useIllusion))
-        .setName("sprite-fusion-icon");
-      fusionIcon.setOrigin(0.5, 0);
-      fusionIcon.setFrame(pokemon.getFusionIconId(ignoreOverride, useIllusion));
+        .setName("sprite-fusion-icon")
+        .setOrigin(0.5, 0)
+        .setFrame(pokemon.getFusionIconId(ignoreOverride, useIllusion));
 
       const originalWidth = icon.width;
       const originalHeight = icon.height;
