@@ -562,25 +562,25 @@ export class BattleScene extends SceneBase {
 
     this.fieldUI
       .add([
-        this.partyExpBar,
-        this.candyBar,
         this.fieldOverlay,
         this.shopOverlay,
-        this.modifierBar,
-        this.enemyModifierBar,
         this.charSprite,
         this.pbTray,
         this.pbTrayEnemy,
         this.abilityBar,
+        this.partyExpBar,
+        this.candyBar,
         this.biomeWaveText,
         this.moneyText,
-        this.luckText,
         this.scoreText,
+        this.luckText,
         this.luckLabelText,
         this.arenaFlyout,
         this.pokemonInfoContainer,
       ])
       .moveBelow<Phaser.GameObjects.GameObject>(this.arenaFlyout, this.fieldOverlay);
+
+    this.uiContainer.add([this.modifierBar, this.enemyModifierBar]);
 
     this.party = [];
 

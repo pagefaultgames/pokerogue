@@ -71,13 +71,13 @@ export class PokemonHatchInfoContainer extends PokemonInfoContainer {
       .setOrigin(0);
 
     this.pokemonListContainer.add([
+      this.currentPokemonSprite,
+      this.pokemonNumberText,
+      this.pokemonNameText,
       this.pokemonHatchedIcon,
       this.pokemonCandyIcon,
       this.pokemonCandyOverlayIcon,
-      this.pokemonNameText,
       this.pokemonCandyCountText,
-      this.currentPokemonSprite,
-      this.pokemonNumberText,
     ]);
 
     // setup egg moves
