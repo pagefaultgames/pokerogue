@@ -156,7 +156,8 @@ export class SpritePipeline extends FieldSpritePipeline {
         }
       }
 
-      this.set4fv("baseVariantColors", flatBaseColors.flat()).set4fv("variantColors", flatVariantColors.flat());
+      this.set4fv("baseVariantColors", flatBaseColors.flat()) //
+        .set4fv("variantColors", flatVariantColors.flat());
     }
 
     super.onBatch(gameObject);
