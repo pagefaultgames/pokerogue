@@ -13,7 +13,7 @@ export class MockTimedEventManager extends TimedEventManager {
   override getClassicFriendshipMultiplier(): number {
     return CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER;
   }
-  override getShinyMultiplier(): number {
+  override getShinyEncounterMultiplier(): number {
     return 1;
   }
 }

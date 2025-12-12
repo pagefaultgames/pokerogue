@@ -30,7 +30,7 @@ describe("Learn Move Phase", () => {
     game.override.moveset([MoveId.SPLASH]);
     await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
     const pokemon = game.field.getPlayerPokemon();
-    const newMovePos = pokemon?.getMoveset().length;
+    const newMovePos = pokemon.getMoveset().length;
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.phaseInterceptor.to(LearnMovePhase);
@@ -38,7 +38,7 @@ describe("Learn Move Phase", () => {
     const levelReq = levelMove[0];
     const levelMoveId = levelMove[1];
     expect(pokemon.level).toBeGreaterThanOrEqual(levelReq);
-    expect(pokemon?.moveset[newMovePos]?.moveId).toBe(levelMoveId);
+    expect(pokemon.moveset[newMovePos]?.moveId).toBe(levelMoveId);
   });
 
   it("If a pokemon has 4 move slots filled, the chosen move will be deleted and replaced", async () => {

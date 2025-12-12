@@ -525,36 +525,36 @@ export class SingleGenerationChallenge extends Challenge {
         [TrainerType.MATT, TrainerType.SHELLY],
       ],
       [TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN],
-      [TrainerType.ZINZOLIN, TrainerType.COLRESS],
+      [TrainerType.COLRESS],
       [TrainerType.BRYONY],
       [TrainerType.FABA, TrainerType.PLUMERIA],
       [TrainerType.OLEANA],
       [TrainerType.GIACOMO, TrainerType.MELA, TrainerType.ATTICUS, TrainerType.ORTEGA, TrainerType.ERI],
     ];
     const evilAdminFight2 = [
-      [TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON],
-      [TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON],
+      [TrainerType.PROTON],
+      [TrainerType.PROTON],
       [
         [TrainerType.TABITHA, TrainerType.COURTNEY],
         [TrainerType.MATT, TrainerType.SHELLY],
       ],
       [TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN],
       [TrainerType.ZINZOLIN],
-      [TrainerType.XEROSIC],
+      [TrainerType.BRYONY, TrainerType.XEROSIC],
       [TrainerType.FABA, TrainerType.PLUMERIA],
       [TrainerType.OLEANA],
       [TrainerType.GIACOMO, TrainerType.MELA, TrainerType.ATTICUS, TrainerType.ORTEGA, TrainerType.ERI],
     ];
     const evilAdminFight3 = [
-      [TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON],
-      [TrainerType.ARCHER, TrainerType.ARIANA, TrainerType.PROTON],
+      [TrainerType.ARCHER, TrainerType.ARIANA],
+      [TrainerType.ARCHER, TrainerType.ARIANA],
       [
         [TrainerType.TABITHA, TrainerType.COURTNEY],
         [TrainerType.MATT, TrainerType.SHELLY],
       ],
       [TrainerType.JUPITER, TrainerType.MARS, TrainerType.SATURN],
-      [TrainerType.ZINZOLIN, TrainerType.COLRESS],
-      [TrainerType.XEROSIC, TrainerType.BRYONY],
+      [TrainerType.COLRESS],
+      [TrainerType.XEROSIC],
       [TrainerType.FABA, TrainerType.PLUMERIA],
       [TrainerType.OLEANA],
       [TrainerType.GIACOMO, TrainerType.MELA, TrainerType.ATTICUS, TrainerType.ORTEGA, TrainerType.ERI],
@@ -790,22 +790,14 @@ export class SingleTypeChallenge extends Challenge {
   applyStarterSelectModify(speciesId: SpeciesId, dexEntry: DexEntry, _starterDataEntry: StarterDataEntry): boolean {
     const type = this.value - 1;
 
-    if (speciesId === SpeciesId.RALTS) {
-      if (type === PokemonType.FIGHTING) {
-        dexEntry.caughtAttr &= ~DexAttr.FEMALE;
-      }
-      if (type === PokemonType.FAIRY) {
-        dexEntry.caughtAttr &= ~DexAttr.MALE;
-      }
-    }
-    if (speciesId === SpeciesId.SNORUNT && type === PokemonType.GHOST) {
+    if (speciesId === SpeciesId.RALTS && type === PokemonType.FIGHTING) {
+      dexEntry.caughtAttr &= ~DexAttr.FEMALE;
+    } else if (speciesId === SpeciesId.SNORUNT && type === PokemonType.GHOST) {
       dexEntry.caughtAttr &= ~DexAttr.MALE;
-    }
-    if (speciesId === SpeciesId.BURMY) {
+    } else if (speciesId === SpeciesId.BURMY) {
       if (type === PokemonType.FLYING) {
         dexEntry.caughtAttr &= ~DexAttr.FEMALE;
-      }
-      if ([PokemonType.GRASS, PokemonType.GROUND, PokemonType.STEEL].includes(type)) {
+      } else if ([PokemonType.GRASS, PokemonType.GROUND, PokemonType.STEEL].includes(type)) {
         dexEntry.caughtAttr &= ~DexAttr.MALE;
       }
     }
@@ -933,7 +925,7 @@ export class FreshStartChallenge extends Challenge {
   }
 
   applyStarterModify(pokemon: Pokemon): boolean {
-    pokemon.abilityIndex = pokemon.abilityIndex % 2; // Always base ability, if you set it to hidden it wraps to first ability
+    pokemon.abilityIndex %= 2; // Always base ability, if you set it to hidden it wraps to first ability
     pokemon.passive = false; // Passive isn't unlocked
     let validMoves = pokemon.species
       .getLevelMoves()
@@ -1109,7 +1101,16 @@ export class LowerStarterPointsChallenge extends Challenge {
  */
 export class LimitedSupportChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
-    return this.value ? ((RibbonData.NO_HEAL << (BigInt(this.value) - 1n)) as RibbonFlag) : 0n;
+    switch (this.value) {
+      case 1:
+        return RibbonData.NO_HEAL as RibbonFlag;
+      case 2:
+        return RibbonData.NO_SHOP as RibbonFlag;
+      case 3:
+        return (RibbonData.NO_HEAL | RibbonData.NO_SHOP | RibbonData.NO_SUPPORT) as RibbonFlag;
+      default:
+        return 0n as RibbonFlag;
+    }
   }
   constructor() {
     super(Challenges.LIMITED_SUPPORT, 3);

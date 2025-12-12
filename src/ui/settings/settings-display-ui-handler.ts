@@ -111,6 +111,12 @@ export class SettingsDisplayUiHandler extends AbstractSettingsUiHandler {
             label: "Dansk (Needs Help)",
           };
           break;
+        case "nb-NO":
+          this.settings[languageIndex].options[0] = {
+            value: "Norsk bokmål",
+            label: "Norsk bokmål (Needs Help)",
+          };
+          break;
         case "ro":
           this.settings[languageIndex].options[0] = {
             value: "Română",

@@ -78,6 +78,7 @@ import { executeIf, fixedInt, NumberHolder, randInt, randSeedItem } from "#utils
 import { decrypt, encrypt } from "#utils/data";
 import { getEnumKeys } from "#utils/enums";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { toCamelCase } from "#utils/strings";
 import { AES, enc } from "crypto-js";
 import i18next from "i18next";
 
@@ -1405,7 +1406,7 @@ export class GameData {
 
       reader.onload = (_ => {
         return e => {
-          let dataName = GameDataType[dataType].toLowerCase();
+          const dataName = i18next.t(`gameData:${toCamelCase(GameDataType[dataType])}`);
           let dataStr = AES.decrypt(e.target?.result?.toString()!, saveKey).toString(enc.Utf8); // TODO: is this bang correct?
           let valid = false;
           try {
@@ -1425,7 +1426,6 @@ export class GameData {
               case GameDataType.RUN_HISTORY: {
                 const data = JSON.parse(dataStr);
                 const keys = Object.keys(data);
-                dataName = i18next.t("menuUiHandler:RUN_HISTORY").toLowerCase();
                 keys.forEach(key => {
                   const entryKeys = Object.keys(data[key]);
                   valid =
@@ -1446,71 +1446,58 @@ export class GameData {
             globalScene.ui.showText(error, null, () => globalScene.ui.showText("", 0), fixedInt(1500));
 
           if (!valid) {
-            return globalScene.ui.showText(
-              `Your ${dataName} data could not be loaded. It may be corrupted.`,
-              null,
-              () => globalScene.ui.showText("", 0),
-              fixedInt(1500),
-            );
+            return displayError(i18next.t("menuUiHandler:importCorrupt", { dataName }));
           }
 
-          globalScene.ui.showText(
-            `Your ${dataName} data will be overridden and the page will reload. Proceed?`,
-            null,
-            () => {
-              globalScene.ui.setOverlayMode(
-                UiMode.CONFIRM,
-                () => {
-                  localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
+          globalScene.ui.showText(i18next.t("menuUiHandler:confirmImport", { dataName }), null, () => {
+            globalScene.ui.setOverlayMode(
+              UiMode.CONFIRM,
+              () => {
+                localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
 
-                  if (!bypassLogin && dataType < GameDataType.SETTINGS) {
-                    updateUserInfo().then(success => {
-                      if (!success[0]) {
-                        return displayError(
-                          `Could not contact the server. Your ${dataName} data could not be imported.`,
-                        );
+                if (!bypassLogin && dataType < GameDataType.SETTINGS) {
+                  updateUserInfo().then(success => {
+                    if (!success[0]) {
+                      return displayError(i18next.t("menuUiHandler:importNoServer", { dataName }));
+                    }
+                    const { trainerId, secretId } = this;
+                    let updatePromise: Promise<string | null>;
+                    if (dataType === GameDataType.SESSION) {
+                      updatePromise = pokerogueApi.savedata.session.update(
+                        {
+                          slot: slotId,
+                          trainerId,
+                          secretId,
+                          clientSessionId,
+                        },
+                        dataStr,
+                      );
+                    } else {
+                      updatePromise = pokerogueApi.savedata.system.update(
+                        { trainerId, secretId, clientSessionId },
+                        dataStr,
+                      );
+                    }
+                    updatePromise.then(error => {
+                      if (error) {
+                        console.error(error);
+                        return displayError(i18next.t("menuUiHandler:importError", { dataName }));
                       }
-                      const { trainerId, secretId } = this;
-                      let updatePromise: Promise<string | null>;
-                      if (dataType === GameDataType.SESSION) {
-                        updatePromise = pokerogueApi.savedata.session.update(
-                          {
-                            slot: slotId,
-                            trainerId,
-                            secretId,
-                            clientSessionId,
-                          },
-                          dataStr,
-                        );
-                      } else {
-                        updatePromise = pokerogueApi.savedata.system.update(
-                          { trainerId, secretId, clientSessionId },
-                          dataStr,
-                        );
-                      }
-                      updatePromise.then(error => {
-                        if (error) {
-                          console.error(error);
-                          return displayError(
-                            `An error occurred while updating ${dataName} data. Please contact the administrator.`,
-                          );
-                        }
-                        window.location.reload();
-                      });
+                      window.location.reload();
                     });
-                  } else {
-                    window.location.reload();
-                  }
-                },
-                () => {
-                  globalScene.ui.revertMode();
-                  globalScene.ui.showText("", 0);
-                },
-                false,
-                -98,
-              );
-            },
-          );
+                  });
+                } else {
+                  window.location.reload();
+                }
+              },
+              () => {
+                globalScene.ui.revertMode();
+                globalScene.ui.showText("", 0);
+              },
+              false,
+              -98,
+            );
+          });
         };
       })((e.target as any).files[0]);
 
@@ -1816,17 +1803,12 @@ export class GameData {
 
   /**
    * Adds a candy to the player's game data for a given {@linkcode PokemonSpecies}.
-   * Will do nothing if the player does not have the Pokemon owned in their system save data.
    * @param species
    * @param count
    */
   addStarterCandy(species: PokemonSpecies, count: number): void {
-    // Only gain candies if the Pokemon has already been marked as caught in dex (ignore "rental" pokemon)
-    const speciesRootForm = species.getRootSpeciesId();
-    if (globalScene.gameData.dexData[speciesRootForm].caughtAttr) {
-      globalScene.candyBar.showStarterSpeciesCandy(species.speciesId, count);
-      this.starterData[species.speciesId].candyCount += count;
-    }
+    globalScene.candyBar.showStarterSpeciesCandy(species.speciesId, count);
+    this.starterData[species.speciesId].candyCount += count;
   }
 
   /**

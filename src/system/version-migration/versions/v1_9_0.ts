@@ -2,7 +2,7 @@ import { MoveId } from "#enums/move-id";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { PokemonData } from "#system/pokemon-data";
 import type { SessionSaveData } from "#types/save-data";
-import type { SessionSaveMigrator } from "#types/session-save-migrator";
+import type { SessionSaveMigrator } from "#types/save-migrators";
 
 /**
  * Migrate all lingering rage fist data inside `CustomPokemonData`,

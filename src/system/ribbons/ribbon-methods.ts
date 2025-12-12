@@ -22,8 +22,12 @@ export function ribbonFlagToAssetKey(flag: RibbonFlag): Phaser.GameObjects.Sprit
   let imageKey: string;
   switch (flag) {
     // biome-ignore-start lint/suspicious/noFallthroughSwitchClause: intentional
+    case RibbonData.CLASSIC:
+      imageKey ??= "classic_ribbon_default";
+    case RibbonData.FRIENDSHIP:
+      imageKey ??= "ribbon_friendship";
     case RibbonData.MONO_GEN_1:
-      imageKey = "ribbon_gen1";
+      imageKey ??= "ribbon_gen1";
     case RibbonData.MONO_GEN_2:
       imageKey ??= "ribbon_gen2";
     case RibbonData.MONO_GEN_3:
@@ -40,20 +44,45 @@ export function ribbonFlagToAssetKey(flag: RibbonFlag): Phaser.GameObjects.Sprit
       imageKey ??= "ribbon_gen8";
     case RibbonData.MONO_GEN_9:
       imageKey ??= "ribbon_gen9";
+    case RibbonData.MONO_NORMAL:
+      imageKey ??= "ribbon_normal";
+    case RibbonData.MONO_FIGHTING:
+      imageKey ??= "ribbon_fighting";
+    case RibbonData.MONO_FLYING:
+      imageKey ??= "ribbon_flying";
+    case RibbonData.MONO_POISON:
+      imageKey ??= "ribbon_poison";
+    case RibbonData.MONO_GROUND:
+      imageKey ??= "ribbon_ground";
+    case RibbonData.MONO_ROCK:
+      imageKey ??= "ribbon_rock";
+    case RibbonData.MONO_BUG:
+      imageKey ??= "ribbon_bug";
+    case RibbonData.MONO_GHOST:
+      imageKey ??= "ribbon_ghost";
+    case RibbonData.MONO_STEEL:
+      imageKey ??= "ribbon_steel";
+    case RibbonData.MONO_FIRE:
+      imageKey ??= "ribbon_fire";
+    case RibbonData.MONO_WATER:
+      imageKey ??= "ribbon_water";
+    case RibbonData.MONO_GRASS:
+      imageKey ??= "ribbon_grass";
+    case RibbonData.MONO_ELECTRIC:
+      imageKey ??= "ribbon_electric";
+    case RibbonData.MONO_PSYCHIC:
+      imageKey ??= "ribbon_psychic";
+    case RibbonData.MONO_ICE:
+      imageKey ??= "ribbon_ice";
+    case RibbonData.MONO_DRAGON:
+      imageKey ??= "ribbon_dragon";
+    case RibbonData.MONO_DARK:
+      imageKey ??= "ribbon_dark";
+    case RibbonData.MONO_FAIRY:
+      imageKey ??= "ribbon_fairy";
+    default:
+      imageKey ??= "ribbon_typeless";
       return globalScene.add.image(0, 0, "items", imageKey).setDisplaySize(16, 16);
     // biome-ignore-end lint/suspicious/noFallthroughSwitchClause: done with fallthrough
-    // Ribbons that don't use the items atlas
-    // biome-ignore-start lint/suspicious/noFallthroughSwitchClause: Another fallthrough block
-    case RibbonData.NUZLOCKE:
-      imageKey = "champion_ribbon_emerald";
-    default:
-      imageKey ??= "champion_ribbon";
-      {
-        const img = globalScene.add.image(0, 0, imageKey);
-        const target = 12;
-        const scale = Math.min(target / img.width, target / img.height);
-        return img.setScale(scale);
-      }
-    // biome-ignore-end lint/suspicious/noFallthroughSwitchClause: End fallthrough block
   }
 }
