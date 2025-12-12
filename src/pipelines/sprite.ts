@@ -107,7 +107,8 @@ export class SpritePipeline extends FieldSpritePipeline {
         );
       }
 
-      this.set4fv("spriteColors", flatSpriteColors.flat()).set4iv("fusionSpriteColors", flatFusionSpriteColors.flat());
+      this.set4fv("spriteColors", flatSpriteColors.flat()) //
+        .set4iv("fusionSpriteColors", flatFusionSpriteColors.flat());
     }
   }
 
