@@ -79,8 +79,9 @@ describe("Moves - Fairy Lock", () => {
 
     await game.toNextTurn();
 
-    expect(game.scene.getPlayerField()[0].isTrapped()).toEqual(false);
-    expect(game.scene.getPlayerField()[1].isTrapped()).toEqual(false);
+    const [player1, player2] = game.scene.getPlayerField();
+    expect(player1.isTrapped()).toEqual(false);
+    expect(player2.isTrapped()).toEqual(false);
 
     game.move.select(MoveId.SPLASH);
     game.doSwitchPokemon(2);
@@ -115,8 +116,9 @@ describe("Moves - Fairy Lock", () => {
     await game.phaseInterceptor.to("BerryPhase");
     await game.toNextTurn();
 
-    expect(game.scene.getPlayerField()[0].species.speciesId).not.toBe(SpeciesId.KLEFKI);
-    expect(game.scene.getPlayerField()[1].species.speciesId).not.toBe(SpeciesId.TYRUNT);
+    const [player1, player2] = game.scene.getPlayerField();
+    expect(player1.species.speciesId).not.toBe(SpeciesId.KLEFKI);
+    expect(player2.species.speciesId).not.toBe(SpeciesId.TYRUNT);
   });
 
   it("If a Pokemon faints and is replaced the replacement is also trapped", async () => {
@@ -138,15 +140,17 @@ describe("Moves - Fairy Lock", () => {
     await game.move.selectEnemyMove(MoveId.SPLASH, 1);
     await game.move.selectEnemyMove(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.getPlayerField()[0].isTrapped()).toEqual(true);
-    expect(game.scene.getPlayerField()[1].isTrapped()).toEqual(true);
-    expect(game.scene.getEnemyField()[0].isTrapped()).toEqual(true);
-    expect(game.scene.getEnemyField()[1].isTrapped()).toEqual(true);
+
+    const [player1, player2, enemy1, enemy2] = game.scene.getField();
+    expect(player1.isTrapped()).toBe(true);
+    expect(player2.isTrapped()).toBe(true);
+    expect(enemy1.isTrapped()).toBe(true);
+    expect(enemy2.isTrapped()).toBe(true);
 
     await game.toNextTurn();
-    expect(game.scene.getPlayerField()[0].isTrapped()).toEqual(false);
-    expect(game.scene.getPlayerField()[1].isTrapped()).toEqual(false);
-    expect(game.scene.getEnemyField()[0].isTrapped()).toEqual(false);
-    expect(game.scene.getEnemyField()[1].isTrapped()).toEqual(false);
+    expect(player1.isTrapped()).toBe(false);
+    expect(player2.isTrapped()).toBe(false);
+    expect(enemy1.isTrapped()).toBe(false);
+    expect(enemy2.isTrapped()).toBe(false);
   });
 });
