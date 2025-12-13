@@ -82,13 +82,13 @@ const fonts: LoadingFontFaceProperty[] = [
     face: new FontFace("emerald", "url(./fonts/pokemon-bw.ttf)", {
       unicodeRange: rangesByLanguage.japanese,
     }),
-    only: ["en", "es", "fr", "it", "de", "pt", "ko", "ja", "ca", "da", "tr", "ro", "ru", "tl"],
+    only: ["en", "es", "fr", "it", "de", "pt", "ko", "ja", "ca", "da", "tr", "ro", "ru", "id", "hi", "tl"],
   },
   {
     face: new FontFace("pkmnems", "url(./fonts/pokemon-bw.ttf)", {
       unicodeRange: rangesByLanguage.japanese,
     }),
-    only: ["en", "es", "fr", "it", "de", "pt", "ko", "ja", "ca", "da", "tr", "ro", "ru", "tl"],
+    only: ["en", "es", "fr", "it", "de", "pt", "ko", "ja", "ca", "da", "tr", "ro", "ru", "id", "hi", "tl"],
   },
   // devanagari
   {
@@ -206,6 +206,8 @@ export async function initI18n(): Promise<void> {
       "tr",
       "ro",
       "ru",
+      "id",
+      "hi",
       "tl",
       "nb-NO",
     ],
