@@ -3,7 +3,7 @@ import { PokerogueAccountApi } from "#api/pokerogue-account-api";
 import { PokerogueAdminApi } from "#api/pokerogue-admin-api";
 import { PokerogueDailyApi } from "#api/pokerogue-daily-api";
 import { PokerogueSavedataApi } from "#api/pokerogue-savedata-api";
-import type { TitleStatsResponse } from "#types/api/pokerogue-api-types";
+import type { TitleStatsResponse } from "#types/api";
 
 /**
  * A wrapper for PokéRogue API requests.
