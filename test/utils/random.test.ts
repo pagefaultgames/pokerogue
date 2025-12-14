@@ -4,6 +4,7 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
+
 import { GameManager } from "#test/test-utils/game-manager";
 import { randSeedUniqueItem } from "#utils/random";
 import Phaser from "phaser";
