@@ -11794,7 +11794,7 @@ export function initMoves() {
     new AttackMove(MoveId.BODY_PRESS, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 8) //
       .attr(DefAtkAttr),
     new StatusMove(MoveId.DECORATE, PokemonType.FAIRY, -1, 15, -1, 0, 8)
-      .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], 2)
+      .attr(StatStageChangeAttr, [Stat.ATK, Stat.SPATK], 2)
       .targetsAllyDefault()
       .ignoresProtect(),
     new AttackMove(MoveId.DRUM_BEATING, PokemonType.GRASS, MoveCategory.PHYSICAL, 80, 100, 10, 100, 0, 8)
