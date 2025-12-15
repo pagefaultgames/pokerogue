@@ -13,11 +13,11 @@ export class LoginOrRegisterUiHandler extends LoginRegisterInfoContainerUiHandle
   }
 
   public override getWidth(): number {
-    return 130;
+    return 100;
   }
 
   public override getHeight(): number {
-    return 30;
+    return 32;
   }
 
   public override getMargin(): [number, number, number, number] {
@@ -37,7 +37,7 @@ export class LoginOrRegisterUiHandler extends LoginRegisterInfoContainerUiHandle
     super.setup();
 
     this.logo = globalScene.add //
-      .image(-10, -52, "logo")
+      .image(-27, -52, "logo")
       .setOrigin(0);
 
     this.modalContainer.add(this.logo);
