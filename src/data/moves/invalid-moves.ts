@@ -259,15 +259,10 @@ export const noAbilityTypeOverrideMoves: ReadonlySet<MoveId> = new Set([
 /** Set of all moves that cannot be copied by {@linkcode MoveId.SKETCH}. */
 export const invalidSketchMoves: ReadonlySet<MoveId> = new Set([
   MoveId.NONE,
-  MoveId.CHATTER,
   MoveId.MIRROR_MOVE,
   MoveId.SLEEP_TALK,
   MoveId.STRUGGLE,
   MoveId.SKETCH,
-  MoveId.REVIVAL_BLESSING,
-  MoveId.TERA_STARSTORM,
-  MoveId.BREAKNECK_BLITZ__PHYSICAL,
-  MoveId.BREAKNECK_BLITZ__SPECIAL,
 ]);
 
 /** Set of all moves that cannot be locked into by {@linkcode MoveId.ENCORE}. */
