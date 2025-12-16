@@ -20,6 +20,7 @@ import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import { MoveResult } from "#enums/move-result";
+import { MoveTarget } from "#enums/move-target";
 import { isIgnorePP, isIgnoreStatus, isReflected, isVirtual, MoveUseMode } from "#enums/move-use-mode";
 import { PokemonType } from "#enums/pokemon-type";
 import { StatusEffect } from "#enums/status-effect";
@@ -501,7 +502,9 @@ export class MovePhase extends PokemonPhase {
     const moveQueue = this.pokemon.getMoveQueue();
 
     if (
-      (targets.length === 0 && !this.move.getMove().hasAttr("AddArenaTrapTagAttr"))
+      (targets.length === 0
+        && this.move.getMove().moveTarget !== MoveTarget.NEAR_ALLY
+        && !this.move.getMove().hasAttr("AddArenaTrapTagAttr"))
       || (moveQueue.length > 0 && moveQueue[0].move === MoveId.NONE)
     ) {
       this.showFailedText();
@@ -663,7 +666,10 @@ export class MovePhase extends PokemonPhase {
     const usability = new BooleanHolder(false);
     if (moveName.endsWith(" (N)")) {
       failedText = i18next.t("battle:moveNotImplemented", { moveName: moveName.replace(" (N)", "") });
-    } else if (moveId === MoveId.NONE || this.targets.length === 0) {
+    } else if (
+      moveId === MoveId.NONE
+      || (this.targets.length === 0 && move.getMove().moveTarget !== MoveTarget.NEAR_ALLY)
+    ) {
       this.cancel();
 
       const pokemonName = this.pokemon.name;

@@ -104,4 +104,15 @@ describe("Move - Dragon Cheer", () => {
     expect(dragonair).toHaveUsedMove({ move: MoveId.DRAGON_CHEER, result: MoveResult.FAIL });
     expect(magikarp).toHaveBattlerTag(tagType);
   });
+
+  it("should fail properly on single battles", async () => {
+    game.override.battleStyle("single");
+    await game.classicMode.startBattle([SpeciesId.DRAGONAIR]);
+
+    game.move.use(MoveId.DRAGON_CHEER, BattlerIndex.PLAYER);
+    await game.toEndOfTurn();
+
+    const lastMove = game.field.getPlayerPokemon().getLastXMoves(1);
+    expect(lastMove[0].result).toBe(MoveResult.FAIL);
+  });
 });
