@@ -29,7 +29,7 @@ jobs:
 
     steps:
       - name: Checkout repository for Typedoc
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: pokerogue_docs
 
@@ -42,7 +42,7 @@ jobs:
           rm -rf assets
 
       - name: Checkout asset submodule
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: 'pagefaultgames/pokerogue-assets'
           ref: ${{ steps.asset-submodule-ref.asset_ref }}
@@ -59,13 +59,13 @@ jobs:
           version: 10
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: "pokerogue_docs/.nvmrc"
 
       - name: Checkout repository for Github Pages
         if: github.event_name == 'push'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: pokerogue_gh
           ref: gh-pages

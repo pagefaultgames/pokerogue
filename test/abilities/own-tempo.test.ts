@@ -39,13 +39,14 @@ describe("Abilities - Own Tempo", () => {
       .moveset(MoveId.SKILL_SWAP)
       .enemyMoveset(MoveId.SPLASH);
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
-    const enemy = game.scene.getEnemyPokemon();
-    enemy?.addTag(BattlerTagType.CONFUSED);
-    expect(enemy?.getTag(BattlerTagType.CONFUSED)).toBeTruthy();
+
+    const enemy = game.field.getEnemyPokemon();
+    enemy.addTag(BattlerTagType.CONFUSED);
+    expect(enemy).toHaveBattlerTag(BattlerTagType.CONFUSED);
 
     game.move.select(MoveId.SKILL_SWAP);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemy?.getTag(BattlerTagType.CONFUSED)).toBeFalsy();
+    expect(enemy).not.toHaveBattlerTag(BattlerTagType.CONFUSED);
   });
 });

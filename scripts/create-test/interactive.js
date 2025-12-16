@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+import { input, select } from "@inquirer/prompts";
 import chalk from "chalk";
-import inquirer from "inquirer";
 import { validTestTypes } from "./constants.js";
 
 /**
@@ -17,16 +17,10 @@ import { validTestTypes } from "./constants.js";
  */
 export async function promptTestType() {
   /** @type {testType | "EXIT"} */
-  const choice = (
-    await inquirer.prompt([
-      {
-        type: "list",
-        name: "selectedOption",
-        message: "What type of test would you like to create?",
-        choices: [...validTestTypes, "EXIT"],
-      },
-    ])
-  ).selectedOption;
+  const choice = await select({
+    message: "What type of test would you like to create?",
+    choices: [...validTestTypes, "EXIT"],
+  });
 
   if (choice === "EXIT") {
     console.log("Exiting...");
@@ -44,22 +38,16 @@ export async function promptTestType() {
  */
 export async function promptFileName(selectedType) {
   /** @type {string} */
-  const fileNameAnswer = (
-    await inquirer.prompt([
-      {
-        type: "input",
-        name: "userInput",
-        message: `Please provide the name of the ${selectedType}.`,
-        validate: name => {
-          const nameProcessed = name.trim().replace(".test.ts", "");
-          if (nameProcessed.length === 0) {
-            return chalk.red.bold("✗ Cannot use an empty string as a file name!");
-          }
-          return true;
-        },
-      },
-    ])
-  ).userInput;
+  const fileNameAnswer = await input({
+    message: `Please provide the name of the ${selectedType}.`,
+    validate: name => {
+      const nameProcessed = name.trim().replace(".test.ts", "");
+      if (nameProcessed.length === 0) {
+        return chalk.red.bold("✗ Cannot use an empty string as a file name!");
+      }
+      return true;
+    },
+  });
 
   // Trim whitespace and any extension suffixes
   return fileNameAnswer.trim().replace(".test.ts", "");

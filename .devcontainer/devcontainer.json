@@ -9,7 +9,7 @@
 {
   "name": "Node.js & TypeScript",
   // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:4-24-bookworm",
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {
       "installDirectlyFromGitHubRelease": true,
@@ -18,6 +18,9 @@
     "ghcr.io/devcontainers-extra/features/pnpm:2": {
       "version": "latest"
     }
+  },
+  "containerEnv": {
+    "PORT": "8000"
   },
   "customizations": {
     "vscode": {
