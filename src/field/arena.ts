@@ -1,11 +1,5 @@
-// biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports
-
-import type { Battle } from "#app/battle";
-import type { PositionalTag } from "#data/positional-tags/positional-tag";
-import type { PlayerPokemon } from "#field/pokemon";
-// biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports
-
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import type { Battle } from "#app/battle";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { biomePokemonPools, biomeTrainerPools } from "#balance/biomes";
@@ -13,6 +7,7 @@ import type { ArenaTag, ArenaTagTypeMap } from "#data/arena-tag";
 import { EntryHazardTag, getArenaTag } from "#data/arena-tag";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
 import type { PokemonSpecies } from "#data/pokemon-species";
+import type { PositionalTag } from "#data/positional-tags/positional-tag";
 import { PositionalTagManager } from "#data/positional-tags/positional-tag-manager";
 import { getTerrainClearMessage, getTerrainStartMessage, Terrain, TerrainType } from "#data/terrain";
 import {
@@ -224,7 +219,7 @@ export class Arena {
       ret = getPokemonSpecies(species!);
 
       if (ret.subLegendary || ret.legendary || ret.mythical) {
-        const waveDifficulty = globalScene.gameMode.getWaveForDifficulty(waveIndex);
+        const waveDifficulty = globalScene.gameMode.getWaveForDifficulty(waveIndex, true);
         if (ret.baseTotal >= 660) {
           regen = waveDifficulty < 80; // Wave 50+ in daily (however, max Daily wave is 50 currently so not possible)
         } else {

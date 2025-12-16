@@ -44,11 +44,8 @@
  * @module
  */
 
-// biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports
-import type { BattlerTag } from "#app/data/battler-tags";
-// biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports
-
 import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
+import type { BattlerTag } from "#app/data/battler-tags";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { CommonBattleAnim } from "#data/battle-anims";
@@ -995,7 +992,7 @@ class ToxicSpikesTag extends EntryHazardTag {
 
     // Attempt to poison the target, suppressing any status effect messages
     const effect = this.layers === 1 ? StatusEffect.POISON : StatusEffect.TOXIC;
-    return pokemon.trySetStatus(effect, null, 0, this.getMoveName(), false, true);
+    return pokemon.trySetStatus(effect, undefined, 0, this.getMoveName(), false, true);
   }
 
   getMatchupScoreMultiplier(pokemon: Pokemon): number {

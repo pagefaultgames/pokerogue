@@ -133,7 +133,7 @@ export type RunHistoryData = Record<number, RunEntry>;
 export interface RunEntry {
   entry: SessionSaveData;
   isVictory: boolean;
-  /*Automatically set to false at the moment - implementation TBD*/
+  /** Automatically set to false at the moment - implementation TBD */
   isFavorite: boolean;
 }
 
