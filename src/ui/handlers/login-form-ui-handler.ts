@@ -28,7 +28,7 @@ export class LoginFormUiHandler extends OAuthProvidersUiHandler {
   }
 
   public override getMargin(): [number, number, number, number] {
-    return [0, 50, 48, 0];
+    return [0, 20, 48, 0];
   }
 
   public override getButtonLabels(): string[] {

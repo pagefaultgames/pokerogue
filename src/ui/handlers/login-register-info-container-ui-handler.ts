@@ -76,8 +76,8 @@ export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHan
   }
 
   private buildInfoContainer() {
-    this.usernameInfoImage = this.buildInteractableImage("settings_icon", "username-info-icon", { x: 20, scale: 0.5 });
-    this.saveDownloadImage = this.buildInteractableImage("saving_icon", "save-download-icon", { x: 0, scale: 0.75 });
+    this.usernameInfoImage = this.buildInteractableImage("settings_icon", "username-info-icon", { x: 0, scale: 0.5 });
+    this.saveDownloadImage = this.buildInteractableImage("saving_icon", "save-download-icon", { x: 20, scale: 0.75 });
     this.changeLanguageImage = this.buildInteractableImage("language_icon", "change-language-icon", {
       x: 40,
       scale: 0.5,

@@ -81,12 +81,20 @@ export class LoginPhase extends Phase {
       this.end();
     };
 
-    const loginButton = async () => {
+    const checkUserInfo = async (): Promise<boolean> => {
       ui.playSelect();
       const success = await updateUserInfo();
       if (!success[0]) {
         removeCookie(sessionIdKey);
         globalScene.reset(true, true);
+        return false;
+      }
+      return true;
+    };
+
+    const loginButton = async () => {
+      const success = await checkUserInfo();
+      if (!success) {
         return;
       }
       await gameData.loadSystem();
@@ -94,11 +102,8 @@ export class LoginPhase extends Phase {
     };
 
     const registerButton = async () => {
-      ui.playSelect();
-      const success = await updateUserInfo();
-      if (!success[0]) {
-        removeCookie(sessionIdKey);
-        globalScene.reset(true, true);
+      const success = await checkUserInfo();
+      if (!success) {
         return;
       }
       this.end();

@@ -5,7 +5,7 @@ import type { ModalConfig } from "#ui/modal-ui-handler";
 import { ModalUiHandler } from "#ui/modal-ui-handler";
 import { addTextInputObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
-import { fixedInt } from "#utils/common";
+import { fixedInt, truncateString } from "#utils/common";
 import type Phaser from "phaser";
 import type InputText from "phaser3-rex-plugins/plugins/inputtext";
 
@@ -81,8 +81,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       const labelY = (hasTitle ? 31 : 5) + 20 * f;
       // The Pokédex Scan Window uses width `300` instead of `160` like the other forms
       // Therefore, the label does not need to be shortened
-      const labelContent =
-        config.label.length > 25 && this.getWidth() < 200 ? config.label.slice(0, 20) + "..." : config.label;
+      const labelContent = this.getWidth() < 200 ? truncateString(config.label, 25) : config.label;
       const label = addTextObject(10, labelY, labelContent, TextStyle.TOOLTIP_CONTENT);
       label.name = "formLabel" + f;
 
