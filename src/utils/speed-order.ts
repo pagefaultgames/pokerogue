@@ -76,7 +76,7 @@ function sortBySpeed<T extends Pokemon | hasPokemon>(groupedPokemonList: T[][]):
  * @returns A 2-dimensional array where every instance of consecutive actions from the same Pokemon
  * have been grouped together.
  */
-function groupPokemon<T extends Pokemon | hasPokemon>(pokemonList: T[]): T[][] {
+function groupPokemon<T extends Pokemon | hasPokemon>(pokemonList: readonly T[]): T[][] {
   const runs: T[][] = [];
   for (const pkmn of pokemonList) {
     const pokemon = getPokemon(pkmn);
