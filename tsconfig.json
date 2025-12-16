@@ -61,7 +61,7 @@
         "./src/system/*.ts"
       ],
       "#trainers/*": ["./src/data/trainers/*.ts"],
-      "#types/*": ["./src/@types/helpers/*.ts", "./src/@types/*.ts", "./src/typings/phaser/*.ts"],
+      "#types/*": ["./src/@types/*.ts"],
       "#ui/*": [
         "./src/ui/battle-info/*.ts",
         "./src/ui/containers/*.ts",
