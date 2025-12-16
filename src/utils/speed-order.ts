@@ -18,7 +18,7 @@ interface hasPokemon {
  * @remarks
  * Unlike {@linkcode Array.sort}, this does _not_ mutate `pokemonList` in place.
  */
-export function sortInSpeedOrder<T extends Pokemon | hasPokemon>(pokemonList: T[]): T[] {
+export function sortInSpeedOrder<T extends Pokemon | hasPokemon>(pokemonList: readonly T[]): T[] {
   const grouped = groupPokemon(pokemonList);
   shufflePokemonList(grouped);
   sortBySpeed(grouped);
