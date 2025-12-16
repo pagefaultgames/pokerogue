@@ -28,7 +28,6 @@ export function sortInSpeedOrder<T extends Pokemon | hasPokemon>(pokemonList: re
 /**
  * Helper function to randomly shuffle an array of Pokemon.
  * @param pokemonList - The array of Pokemon or objects containing Pokemon to shuffle
- * @returns A reference to the same array, now shuffled in place
  */
 function shufflePokemonList<T extends Pokemon | hasPokemon>(pokemonList: T[][]): void {
   // This is seeded with the current turn to prevent an inconsistency where it
