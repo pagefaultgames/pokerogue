@@ -4,12 +4,16 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
+
+// @ts-check
+/// <reference path="./global.d.ts" />
+
 import { globSync } from "node:fs";
 
 const dryRun = !!process.env.DRY_RUN?.match(/true/gi);
 
 /**
- * <!-- @type {Partial<import("typedoc").TypeDocOptions>} -->
+ * <!-- @satisfies {Partial<import("typedoc").TypeDocOptions>} -->
  */
 const config = {
   entryPoints: ["./src", "./test/test-utils"],
@@ -48,6 +52,7 @@ const config = {
   out: process.env.CI ? "/tmp/docs" : "./typedoc",
   name: "PokéRogue",
   readme: "./README.md",
+  projectDocuments: ["docs/*.md, CONTRIBUTING.md"],
   coverageLabel: "Documented",
   coverageSvgWidth: 120, // Increased from 104 baseline due to adding 2 extra letters
   favicon: "./favicon.ico",
