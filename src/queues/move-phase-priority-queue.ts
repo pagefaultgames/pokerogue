@@ -27,8 +27,11 @@ export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase>
       if (b.timingModifier !== a.timingModifier) {
         return b.timingModifier - a.timingModifier;
       }
-      if (getPriorityForMP(b) !== getPriorityForMP(a)) {
-        return getPriorityForMP(b) - getPriorityForMP(a);
+
+      const aPriority = getPriorityForMP(a);
+      const bPriority = getPriorityForMP(b);
+      if (aPriority !== bPriority) {
+        return bPriority - aPriority;
       }
       return getPriorityModifiersForMP(b) - getPriorityModifiersForMP(a);
     });
