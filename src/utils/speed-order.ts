@@ -51,7 +51,7 @@ function getPokemon(p: Pokemon | hasPokemon): Pokemon {
 }
 
 /**
- * Sort an array of {@linkcode Pokemon} or objects containing them) in speed order, without shuffling.
+ * Sort an array of {@linkcode Pokemon} (or objects containing them) in speed order, without shuffling.
  * @param groupedPokemonList - A grouped array of objects to sort; will be mutated in place
  */
 function sortBySpeed<T extends Pokemon | hasPokemon>(groupedPokemonList: T[][]): void {
