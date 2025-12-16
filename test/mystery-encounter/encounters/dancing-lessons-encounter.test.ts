@@ -159,7 +159,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       game.field.getPlayerPokemon().moveset = [];
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1 });
 
-      const movePhases = phaseSpy.mock.calls.filter(p => p.some(i => i instanceof LearnMovePhase)).map(p => p[0]);
+      const movePhases = phaseSpy.mock.calls.filter(p => p.some(i => i.is("LearnMovePhase"))).map(p => p[0]);
       expect(movePhases.length).toBe(1);
       expect(movePhases.filter(p => (p as LearnMovePhase)["moveId"] === MoveId.REVELATION_DANCE).length).toBe(1); // Revelation Dance taught to pokemon
     });
