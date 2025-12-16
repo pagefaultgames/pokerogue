@@ -13,7 +13,8 @@ export class LoginOrRegisterUiHandler extends LoginRegisterInfoContainerUiHandle
   }
 
   public override getWidth(): number {
-    return 100;
+    const buttonWidth = this.buttonLabels.reduce((sum, label) => sum + label.width, 0) / 6;
+    return buttonWidth + 50;
   }
 
   public override getHeight(): number {
