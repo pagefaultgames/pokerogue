@@ -80,6 +80,11 @@ export class Battle {
   public lastPlayerInvolved: number;
   public lastUsedPokeball: PokeballType | null = null;
   /**
+   * The number of times an enemy Pokemon has Terastallized in the current battle.
+   * @defaultValue `0`
+   */
+  public enemyTerasUsed = 0;
+  /**
    * Saves the number of times a Pokemon on the enemy's side has fainted during this battle.
    * This is saved here since we encounter a new enemy every wave.
    * {@linkcode globalScene.arena.playerFaints} is the corresponding faint counter for the player and needs to be save across waves (reset every arena encounter).

@@ -1,3 +1,4 @@
+import { MAX_TERAS_PER_ARENA } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { signatureSpecies } from "#balance/signature-species";
@@ -789,14 +790,11 @@ export class Trainer extends Phaser.GameObjects.Container {
    * @returns boolean Whether the EnemyPokemon should Terastalize this turn
    */
   shouldTera(pokemon: EnemyPokemon): boolean {
-    if (
+    return (
       this.config.trainerAI.teraMode === TeraAIMode.INSTANT_TERA
       && !pokemon.isTerastallized
       && this.config.trainerAI.instantTeras.includes(pokemon.initialTeamIndex)
-      && !globalScene.currentBattle.enemyFaintsHistory.some(f => f.pokemon.id === pokemon.id)
-    ) {
-      return true;
-    }
-    return false;
+      && globalScene.currentBattle.enemyTerasUsed < MAX_TERAS_PER_ARENA
+    );
   }
 }

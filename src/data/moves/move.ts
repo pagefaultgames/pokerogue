@@ -10854,7 +10854,7 @@ export function initMoves() {
       .ignoresSubstitute()
       .attr(CopyTypeAttr),
     new AttackMove(MoveId.RETALIATE, PokemonType.NORMAL, MoveCategory.PHYSICAL, 70, 100, 5, -1, 0, 5) //
-      .attr(MovePowerMultiplierAttr, (user) => {
+      .attr(MovePowerMultiplierAttr, user => {
         const { playerFaintedLastTurn } = globalScene.arena;
         const { enemyFaintedLastTurn } = globalScene.currentBattle;
         const allyFaintedLastTurn = user.isPlayer() ? playerFaintedLastTurn : enemyFaintedLastTurn;
