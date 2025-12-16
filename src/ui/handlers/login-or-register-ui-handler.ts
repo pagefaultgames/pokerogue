@@ -37,8 +37,9 @@ export class LoginOrRegisterUiHandler extends LoginRegisterInfoContainerUiHandle
   public override setup(): void {
     super.setup();
 
+    // logo width is 150
     this.logo = globalScene.add //
-      .image(-27, -52, "logo")
+      .image(-((150 - this.getWidth()) / 2), -52, "logo")
       .setOrigin(0);
 
     this.modalContainer.add(this.logo);
