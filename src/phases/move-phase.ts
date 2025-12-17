@@ -41,8 +41,11 @@ export class MovePhase extends PokemonPhase {
   protected _pokemon: Pokemon;
   public move: PokemonMove;
   protected _targets: BattlerIndex[];
-  public readonly useMode: MoveUseMode; // Made public for quash
-  /** The timing modifier of the move, used b */
+  public readonly useMode: MoveUseMode;
+  /**
+   * The move's {@linkcode MovePhaseTimingModifier | timing modifier}.
+   * @defaultValue {@linkcode MovePhaseTimingModifier.NORMAL}
+   */
   public timingModifier: MovePhaseTimingModifier;
   /** Whether the current move should fail but still use PP. */
   protected failed = false;
@@ -82,7 +85,7 @@ export class MovePhase extends PokemonPhase {
    * @param move - The {@linkcode PokemonMove} to use
    * @param useMode - The {@linkcode MoveUseMode} corresponding to this move's means of execution (usually `MoveUseMode.NORMAL`).
    * Not marked optional to ensure callers correctly pass on `useModes`.
-   * @param timingModifier - The {@linkcode MovePhaseTimingModifier} for the move; Default {@linkcode MovePhaseTimingModifier.NORMAL}
+   * @param timingModifier - (Default `MovePhaseTimingModifier.NORMAL`) The {@linkcode MovePhaseTimingModifier | timing modifier} of the move
    */
   constructor(
     pokemon: Pokemon,

@@ -9,8 +9,10 @@ import type { PhaseManager, PhaseString } from "#types/phase-types";
  */
 export class DynamicPhaseMarker extends Phase {
   public override readonly phaseName = "DynamicPhaseMarker";
-
-  /** The name of the `Phase` being tracked. */
+  /**
+   * The name of the {@linkcode Phase} being tracked. \
+   * Will be executed when this Phase would otherwise be ran.
+   */
   public readonly phaseType: PhaseString;
 
   constructor(type: PhaseString) {

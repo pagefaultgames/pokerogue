@@ -12,9 +12,14 @@ import type { PhaseConditionFunc, PhaseManager, PhaseMap, PhaseString } from "#t
  * are not guaranteed to run FIFO (otherwise, they would not be dynamic)
  */
 export class PhaseTree {
-  /** Storage for all levels in the tree. This is a simple array because only one Phase may have "children" at a time. */
+  /**
+   * Storage for all levels in the tree.
+   * This is a simple array because only one Phase may run and have "children" at a time.
+   * @remarks
+   * This does _not_ include the currently-running Phase, which is removed prior to being ran.
+   */
   private levels: Phase[][] = [[]];
-  /** The level of the currently running {@linkcode Phase} in the Tree (note that such phase is not actually in the Tree while it is running) */
+  /** The level of the currently-running {@linkcode Phase} in the Tree. */
   private currentLevel = 0;
   /**
    * True if a "deferred" level exists
@@ -26,7 +31,8 @@ export class PhaseTree {
    * Internal helper method to add a {@linkcode Phase} to the specified level.
    * @param phase - The `Phase` to add
    * @param level - The numeric level to add the phase
-   * @throws Error if `level` is out of legal bounds
+   * @throws {@linkcode Error}
+   * Error if `level` is out of legal bounds
    */
   private add(phase: Phase, level: number): void {
     // Add a new level if trying to push to non-initialized layer

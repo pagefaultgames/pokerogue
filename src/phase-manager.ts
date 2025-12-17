@@ -244,7 +244,7 @@ export class PhaseManager {
   /** Holds priority queues for dynamically ordered phases */
   public dynamicQueueManager = new DynamicQueueManager();
 
-  /** The currently-running phase */
+  /** The currently-running {@linkcode Phase}. */
   private currentPhase: Phase;
   /** The phase put on standby if {@linkcode overridePhase} is called */
   private standbyPhase: Phase | null = null;
@@ -334,7 +334,6 @@ export class PhaseManager {
 
     let nextPhase = this.phaseQueue.getNextPhase();
 
-    // If a phase marker would be started, start the kind of phase it marks for instead
     if (nextPhase?.is("DynamicPhaseMarker")) {
       nextPhase = this.dynamicQueueManager.popNextPhase(nextPhase.phaseType);
     }
