@@ -75,6 +75,6 @@ describe("Moves - Metal Burst", () => {
 
     expect(enemy1.isFainted()).toBe(true);
     expect(enemy2.isFainted()).toBe(true);
-    expect(game.scene.getPlayerField()[0].getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
+    expect(game.field.getPlayerPokemon().getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
   });
 });
