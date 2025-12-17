@@ -255,9 +255,7 @@ async function tryWriteFile(outFile, output) {
     console.log(chalk.green.bold(`✔ Output written to ${chalk.blue(outFile)} successfully!`));
   } catch (e) {
     let /** @type {string} */ errStr;
-    if (!(e instanceof Error)) {
-      errStr = format("Unknown error occurred: ", e);
-    } else {
+    if (e instanceof Error) {
       // @ts-expect-error - Node.JS file errors always have codes
       switch (e.code) {
         case "ENOENT":
@@ -272,6 +270,8 @@ async function tryWriteFile(outFile, output) {
         default:
           errStr = `Error writing file: ${e.message}`;
       }
+    } else {
+      errStr = format("Unknown error occurred: ", e);
     }
     console.error(chalk.red.bold(errStr));
     process.exitCode = 1;
