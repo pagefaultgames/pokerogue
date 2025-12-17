@@ -286,26 +286,6 @@ export async function localPing(): Promise<void> {
   }
 }
 
-export class BooleanHolder {
-  public value: boolean;
-
-  constructor(value: boolean) {
-    this.value = value;
-  }
-}
-
-export class NumberHolder {
-  public value: number;
-
-  constructor(value: number) {
-    this.value = value;
-  }
-
-  valueOf(): number {
-    return this.value;
-  }
-}
-
 export class FixedInt {
   public readonly value: number;
 
