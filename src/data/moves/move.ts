@@ -1234,6 +1234,7 @@ export class AttackMove extends Move {
    */
   private declare _: never;
 
+  // biome-ignore lint/nursery/useMaxParams: moves have a lot of independent params
   constructor(
     id: MoveId,
     type: PokemonType,

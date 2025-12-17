@@ -1,7 +1,6 @@
-import type { PhaseManager, PhaseMap, PhaseString } from "#app/@types/phase-types";
 import type { Phase } from "#app/phase";
 import type { DynamicPhaseMarker } from "#phases/dynamic-phase-marker";
-import type { PhaseConditionFunc } from "#types/phase-types";
+import type { PhaseConditionFunc, PhaseManager, PhaseMap, PhaseString } from "#types/phase-types";
 
 /**
  * The PhaseTree is the central storage location for {@linkcode Phase}s by the {@linkcode PhaseManager}.

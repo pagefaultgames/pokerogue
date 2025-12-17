@@ -1,7 +1,7 @@
 /**
  * Abstract class representing a {@link https://en.wikipedia.org/wiki/Priority_queue#Min-priority_queue | Min-priority queue}.
  *
- * Dynamically updates ordering to always return the highest "priority" item,
+ * Dynamically updates ordering to always return the "highest priority" item,
  * based on the implementation of {@linkcode reorder}.
  */
 export abstract class PriorityQueue<T> {
@@ -9,9 +9,9 @@ export abstract class PriorityQueue<T> {
   protected queue: T[] = [];
 
   /**
-   * Abstract function to sort the elements in the queue.
-   * @remarks
-   * When sorting, earlier elements will be accessed before later ones.
+   * Sort the elements currently in the queue.
+   * @privateRemarks
+   * When sorting, earlier elements should be placed **before** later ones.
    */
   protected abstract reorder(): void;
 
@@ -55,12 +55,11 @@ export abstract class PriorityQueue<T> {
   }
 
   /**
-   * Remove the first element matching the condition
+   * Remove the first element in the queue matching a given condition.
    * @param condition - If provided, will restrict the removal to only entries matching the given condition
    * @returns Whether a removal occurred
    */
-  // TODO: This using `find` vs `filter` goes against the order-agnosticness of priority queues
-  public remove(condition: (t: T) => boolean = () => true): boolean {
+  public remove(condition: (t: T) => boolean): boolean {
     // Reorder to remove the first element
     this.reorder();
     const index = this.queue.findIndex(condition);

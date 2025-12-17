@@ -1,7 +1,7 @@
-import type { DynamicPhase } from "#app/@types/phase-types";
 import { PriorityQueue } from "#app/queues/priority-queue";
 import { sortInSpeedOrder } from "#app/utils/speed-order";
 import type { BattlerIndex } from "#enums/battler-index";
+import type { DynamicPhase } from "#types/phase-types";
 
 /** A generic speed-based priority queue of {@linkcode DynamicPhase}s. */
 export class PokemonPhasePriorityQueue<T extends DynamicPhase> extends PriorityQueue<T> {

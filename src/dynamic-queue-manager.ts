@@ -1,4 +1,3 @@
-import type { DynamicPhase, PhaseConditionFunc, PhaseString } from "#app/@types/phase-types";
 import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type { Pokemon } from "#app/field/pokemon";
 import type { Phase } from "#app/phase";
@@ -9,6 +8,7 @@ import { PostSummonPhasePriorityQueue } from "#app/queues/post-summon-phase-prio
 import type { PriorityQueue } from "#app/queues/priority-queue";
 import type { BattlerIndex } from "#enums/battler-index";
 import type { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
+import type { DynamicPhase, PhaseConditionFunc, PhaseString } from "#types/phase-types";
 
 // TODO: might be easier to define which phases should be dynamic instead
 /** All phases which have defined a `getPokemon` method but should not be sorted dynamically */
@@ -96,10 +96,10 @@ export class DynamicQueueManager {
   /**
    * Finds and removes a single queued {@linkcode Phase}
    * @param name - The {@linkcode PhaseString | name} of the Phase to search for
-   * @param phaseFilter - A {@linkcode PhaseConditionFunc} to specify conditions for the phase
+   * @param phaseFilter - An optional {@linkcode PhaseConditionFunc} to specify conditions for the phase
    * @returns Whether a removal occurred
    */
-  public removePhase<T extends PhaseString>(name: T, condition?: PhaseConditionFunc<T>): boolean {
+  public removePhase<T extends PhaseString>(name: T, condition: PhaseConditionFunc<T> = () => true): boolean {
     return !!this.dynamicPhaseMap.get(name)?.remove(condition);
   }
 
