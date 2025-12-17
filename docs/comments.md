@@ -23,11 +23,11 @@ This document is intended to serve as a guide for how to (and not to) document c
 
 ## 📄 Table of Contents
 
-- [General Guideliens](#general-guidelines)
+- [General Guidelines](#general-guidelines)
 - [TSDoc](#tsdoc)
-- [What not to do](#what-not-to-do)
-- [Inheritance and Moves/Abilities](#inheritance-and-documentation)
-- [Summary](#summary)
+  - [Example](#Example)
+  - [TSDoc Comment guidelines](#tsdoc-comment-guidelines)
+- [Inheritance and Documentation](#inheritance-and-documentation)
 
 ## General Guidelines
 **DO**:
@@ -65,6 +65,9 @@ Note that certain features (like the "Go to Main/Beta" navigation bar links) are
 
 ### Example
 For an example of how TSDoc comments work, here are some comments taken from `src/data/moves/move.ts`:
+<details>
+<summary>Reference Example</summary>
+
 ```ts
 /**
  * Attribute to put in a {@link https://bulbapedia.bulbagarden.net/wiki/Substitute_(doll) | Substitute Doll} for the user.
@@ -110,8 +113,9 @@ export class AddSubstituteAttr extends MoveEffectAttr {
     // code removed
   }
 }
-
 ```
+
+</details>
 
 Looking at the example given, you may notice certain terms are annotated with `{@linkcode XYZ}` tags. This provides a clickable hyperlink to the referenced type or object in most modern IDEs[^3]. \
 Also notice the dashes (` - `) between the parameter names and descriptions - these are **required** under the TSDoc spec.
@@ -185,8 +189,8 @@ With all these in mind, here are a few TSDoc-specific guidelines to ensure reada
 
 
 ## Inheritance and Documentation
-While most class methods should be fully documented, the main exception comes with class/interface inheritance -
-classes and interfaces will inherit documentation comments from any other classes/interfaces they extend or implement, **provided that no doc comment is present on inherited symbols**.
+While most class methods should be fully documented, the main exception comes with inheritance -
+classes and interfaces will inherit documentation comments from any other classes/interfaces they extend/implement, **provided no other comments are present on inherited symbols**.
 
-As such, _do not_ document properties or methods in base classes that do not substantially differ from the parent class' implementation.
+As such, _do not_ document properties or methods in sub-classes that do not substantially differ from the superclass' implementation.
 - Any properties or methods unique to the class **must still be documented**!
