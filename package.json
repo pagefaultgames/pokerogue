@@ -26,7 +26,7 @@
     "biome": "biome check --write --changed --no-errors-on-unmatched --diagnostic-level=error",
     "biome:staged": "biome check --write --staged --no-errors-on-unmatched --diagnostic-level=error",
     "biome:all": "biome check --write --no-errors-on-unmatched --diagnostic-level=error",
-    "biome-ci": "biome check --write --diagnostic-level=error --reporter=github --no-errors-on-unmatched",
+    "biome:ci": "biome check --write --no-errors-on-unmatched --diagnostic-level=error --reporter=github",
     "typedoc": "typedoc",
     "depcruise": "depcruise src test",
     "postinstall": "lefthook install; git config --local fetch.recurseSubmodules true; git config --local blame.ignoreRevsFile .git-blame-ignore-revs",
