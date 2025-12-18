@@ -1,4 +1,7 @@
 import type { BattleScene } from "#app/battle-scene";
+import { RARE_CANDY_FRIENDSHIP_CAP } from "#app/constants";
+import { globalScene } from "#app/global-scene";
+import { getStarterValueFriendshipCap, speciesStarterCosts } from "#balance/starters";
 import { CustomPokemonData } from "#data/pokemon-data";
 import { MoveId } from "#enums/move-id";
 import { PokeballType } from "#enums/pokeball";
@@ -199,19 +202,17 @@ describe("Spec - Pokemon", () => {
     });
   });
 
-  it.each([5, 25, 55, 95, 145, 195])(
-    "should set minimum IVs for enemy trainer pokemon based on wave (%i)",
-    async wave => {
-      game.override.startingWave(wave);
-      await game.classicMode.runToSummon([SpeciesId.FEEBAS]);
+  it.each([5, 25, 55, 95, 145, 195])(//
+  "should set minimum IVs for enemy trainer pokemon based on wave (%i)", async wave => {
+    game.override.startingWave(wave);
+    await game.classicMode.runToSummon([SpeciesId.FEEBAS]);
 
-      for (const pokemon of game.field.getEnemyParty()) {
-        for (const iv of pokemon.ivs) {
-          expect(iv).toBeGreaterThanOrEqual(Math.floor(wave / 10));
-        }
+    for (const pokemon of game.field.getEnemyParty()) {
+      for (const iv of pokemon.ivs) {
+        expect(iv).toBeGreaterThanOrEqual(Math.floor(wave / 10));
       }
-    },
-  );
+    }
+  });
 
   it.each([
     { wave: 5, friendship: 6 },
@@ -227,5 +228,85 @@ describe("Spec - Pokemon", () => {
     for (const pokemon of game.field.getEnemyParty()) {
       expect(pokemon.friendship).toBe(friendship);
     }
+  });
+
+  describe("Friendship", () => {
+    it("should cap friendship at 255", async () => {
+      await game.classicMode.runToSummon([SpeciesId.FEEBAS]);
+
+      const feebas = game.field.getPlayerPokemon();
+      feebas.addFriendship(999);
+
+      expect(feebas.friendship).toBe(255);
+    });
+
+    it("should not go below 0 friendship", async () => {
+      await game.classicMode.runToSummon([SpeciesId.FEEBAS]);
+
+      const feebas = game.field.getPlayerPokemon();
+      feebas.addFriendship(-999);
+
+      expect(feebas.friendship).toBe(0);
+    });
+
+    it("should respect Rare Candy friendship gain cap", async () => {
+      await game.classicMode.runToSummon([SpeciesId.FEEBAS]);
+
+      const feebas = game.field.getPlayerPokemon();
+      feebas.addFriendship(999, true);
+
+      expect(feebas.friendship).toBe(RARE_CANDY_FRIENDSHIP_CAP);
+    });
+
+    it("should get 3x candy friendship in classic mode", async () => {
+      await game.classicMode.runToSummon([SpeciesId.FEEBAS]);
+
+      const feebas = game.field.getPlayerPokemon();
+      const pokemonData = globalScene.gameData.starterData[SpeciesId.FEEBAS];
+      feebas.friendship = 0;
+      pokemonData.friendship = 0;
+
+      feebas.addFriendship(10);
+
+      expect(feebas.friendship).toBe(10);
+      expect(pokemonData.friendship).toBe(30);
+    });
+
+    it("should carry over excess friendship into next candy, even if capped", async () => {
+      await game.classicMode.runToSummon([SpeciesId.FEEBAS]);
+
+      const feebas = game.field.getPlayerPokemon();
+      const pokemonData = globalScene.gameData.starterData[SpeciesId.FEEBAS];
+      feebas.friendship = 0;
+      pokemonData.friendship = 15;
+      pokemonData.candyCount = 0;
+
+      const cap = getStarterValueFriendshipCap(speciesStarterCosts[SpeciesId.FEEBAS]);
+      expect(cap).toBeLessThan(2015);
+
+      feebas.addFriendship(2000, true);
+
+      // Friendship gain was capped, but candy friendship overflowed several times over
+      expect(feebas.friendship).toBe(RARE_CANDY_FRIENDSHIP_CAP);
+      expect(pokemonData.friendship).toBe(6015 % cap);
+      expect(pokemonData.candyCount).toBe(Math.floor(6015 / cap));
+    });
+  });
+
+  it("should allow gaining candy for uncaught Pokémon", async () => {
+    await game.classicMode.runToSummon([SpeciesId.FEEBAS]);
+
+    const feebas = game.field.getPlayerPokemon();
+    const pokemonData = globalScene.gameData.starterData[SpeciesId.FEEBAS];
+    feebas.friendship = 0;
+    pokemonData.candyCount = 0;
+    // mark feebas as uncaught
+    const dexEntry = globalScene.gameData.dexData[SpeciesId.FEEBAS];
+    dexEntry.caughtAttr = 0n;
+
+    feebas.addFriendship(2000);
+
+    expect(dexEntry.caughtAttr).toBe(0n);
+    expect(pokemonData.candyCount).toBeGreaterThan(0);
   });
 });

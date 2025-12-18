@@ -282,7 +282,13 @@ export class TitlePhase extends Phase {
           globalScene.addModifier(m, true, false, false, true);
         }
         for (const m of timedEventManager.getEventDailyStartingItems()) {
-          globalScene.addModifier(modifierTypes[m]().newModifier(), true, false, false, true);
+          globalScene.addModifier(
+            modifierTypes[m]().withIdFromFunc(modifierTypes[m]).newModifier(),
+            true,
+            false,
+            false,
+            true,
+          );
         }
         globalScene.updateModifiers(true, true);
 
