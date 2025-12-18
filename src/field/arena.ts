@@ -52,7 +52,7 @@ export class Arena {
   public positionalTagManager: PositionalTagManager = new PositionalTagManager();
 
   public bgm: string;
-  public ignoreAbilities: boolean;
+  public ignoreAbilities = false;
   public ignoringEffectSource: BattlerIndex | null;
   public playerTerasUsed = 0;
   /**
@@ -624,6 +624,8 @@ export class Arena {
     }
   }
 
+  setIgnoreAbilities(ignoreAbilities: true, ignoringEffectSource: BattlerIndex): void;
+  setIgnoreAbilities(ignoreAbilities: false): void;
   setIgnoreAbilities(ignoreAbilities: boolean, ignoringEffectSource: BattlerIndex | null = null): void {
     this.ignoreAbilities = ignoreAbilities;
     this.ignoringEffectSource = ignoreAbilities ? ignoringEffectSource : null;

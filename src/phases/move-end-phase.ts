@@ -7,6 +7,10 @@ import { PokemonPhase } from "#phases/pokemon-phase";
 
 export class MoveEndPhase extends PokemonPhase {
   public readonly phaseName = "MoveEndPhase";
+  /**
+   * Whether the current move was a follow-up attack or not.
+   * Used to prevent ticking down Encore and similar effects when copying moves.
+   */
   private wasFollowUp: boolean;
 
   /** Targets from the preceding MovePhase */

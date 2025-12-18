@@ -125,7 +125,7 @@ describe("Moves - Focus Punch", () => {
     await game.phaseInterceptor.to("MoveEndPhase", true);
     await game.phaseInterceptor.to("MessagePhase", false);
     await game.phaseInterceptor.to("MoveEndPhase", true);
-    expect(game.textInterceptor.logs).toContain(i18next.t("moveTriggers:lostFocus", { pokemonName: "Charizard" }));
+    expect(game).toHaveShownMessage(i18next.t("moveTriggers:lostFocus", { pokemonName: "Charizard" }));
     expect(game.textInterceptor.logs).not.toContain(i18next.t("battle:attackFailed"));
   });
 });
