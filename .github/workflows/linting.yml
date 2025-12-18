@@ -17,45 +17,57 @@ on:
     types: [checks_requested]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   run-linters:
     name: Run all linters
+    # Don't re-run on autofix CI runs
+    if: ${{ github.event_name != 'push' || github.actor != 'autofix-ci[bot]' }}
     timeout-minutes: 10
     runs-on: ubuntu-latest
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           submodules: "recursive"
 
-
-      - uses: ./.github/actions/setup-deps
+      - name: Setup deps
+        id: setup-deps
+        uses: ./.github/actions/setup-deps
 
       # Lint files with Biome-Lint - https://biomejs.dev/linter/
       - name: Lint with Biome
+        id: biome
         run: pnpm biome-ci
-        if: ${{ !cancelled() }}
+        if: ${{ steps.setup-deps.outcome == 'success' && !cancelled() }}
 
       # Validate dependencies with dependency-cruiser - https://github.com/sverweij/dependency-cruiser
       - name: Run Dependency Cruiser
+        id: depcruise
         run: pnpm depcruise
-        if: ${{ !cancelled() }}
+        if: ${{ steps.setup-deps.outcome == 'success' && !cancelled() }}
 
       # Validate types with tsc - https://www.typescriptlang.org/docs/handbook/compiler-options.html#using-the-cli
       - name: Run Typecheck
-        run: pnpm typecheck
         id: typecheck
-        if: ${{ !cancelled() }}
+        run: pnpm typecheck
+        if: ${{ steps.setup-deps.outcome == 'success' && !cancelled() }}
 
       # Run tsc again on the scripts folder.
       # Required in order to use separate rules for script js files and regular ts files
       - name: Run Typecheck (scripts)
-        run: pnpm typecheck:scripts
         id: typecheck-scripts
-        if: ${{ !cancelled() }}
+        run: pnpm typecheck:scripts
+        if: ${{ steps.setup-deps.outcome == 'success' && !cancelled() }}
 
       - name: Check for REUSE compliance
         id: reuse-lint
         uses: fsfe/reuse-action@v5
-        if: ${{ !cancelled() }}
+        if: ${{ steps.setup-deps.outcome == 'success' && !cancelled() }}
+
+      - name: Autofix linting errors
+        if: ${{ steps.biome.outcome == 'failure' && !cancelled() }}
+        uses: autofix-ci/action@635ffb0c9798bd160680f18fd73371e355b85f27 # 1.2.3
