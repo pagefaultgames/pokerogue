@@ -45,12 +45,12 @@ export class LoginOrRegisterUiHandler extends LoginRegisterInfoContainerUiHandle
     this.modalContainer.add(this.logo);
   }
 
-  public override show(args: any[]): boolean {
+  public override show(args: [ModalConfig, ...any[]]): boolean {
     this.logo //
       .setVisible(true)
       .setActive(true);
 
-    const config = args[0] as ModalConfig;
+    const config = args[0];
     this.showInfoContainer(config);
 
     return super.show(args);

@@ -11,6 +11,11 @@ import i18next, { t } from "i18next";
 export class LoginPhase extends Phase {
   public readonly phaseName = "LoginPhase";
 
+  /**
+   * Whether to load the "login or register" text.
+   * Only `true` the first time the phase runs, the text stays on screen after that.
+   * @defaultValue `true`
+   */
   private readonly showText: boolean;
 
   constructor(showText = true) {
@@ -29,7 +34,7 @@ export class LoginPhase extends Phase {
     ui.setMode(UiMode.LOADING, { buttonActions: [] });
 
     const response = await executeIf(bypassLogin || hasSession, updateUserInfo);
-    const success = response ? response[0] : false;
+    const success = response?.[0] ?? false;
     const statusCode = response ? response[1] : null;
 
     if (!success) {

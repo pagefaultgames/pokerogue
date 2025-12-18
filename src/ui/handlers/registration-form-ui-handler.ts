@@ -71,11 +71,12 @@ export class RegistrationFormUiHandler extends LoginRegisterInfoContainerUiHandl
     this.modalContainer.add(label);
   }
 
-  public override show(args: any[]): boolean {
+  public override show(args: [ModalConfig, ...any[]]): boolean {
     if (!super.show(args)) {
       return false;
     }
-    const config = args[0] as ModalConfig;
+
+    const config = args[0];
     this.showInfoContainer(config);
 
     const originalRegistrationAction = this.submitAction;
