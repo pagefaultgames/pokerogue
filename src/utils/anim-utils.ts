@@ -1,22 +1,19 @@
 import { globalScene } from "#app/global-scene";
 import type { SceneBase } from "#app/scene-base";
+import type { OmitIndexSignature, PickIndexSignature } from "type-fest";
+
+type OmitWithoutIndex<O extends object, K extends keyof O> = PickIndexSignature<O> & Omit<OmitIndexSignature<O>, K>;
+
+interface PlayTweenConfig
+  extends OmitWithoutIndex<Phaser.Types.Tweens.TweenBuilderConfig, "onComplete" | "onCompleteParams"> {}
 
 /**
- * Plays a Tween animation, resolving once the animation completes.
+ * Play a Tween animation and wait for its animation to complete.
  * @param config - The config for a single Tween
- * @param scene - The {@linkcode SceneBase} on which the Tween plays; default {@linkcode globalScene}
+ * @param scene - (Default {@linkcode globalScene}) The {@linkcode SceneBase} on which the Tween plays
  * @returns A Promise that resolves once the Tween has been played.
- *
- * @privateRemarks
- * The `config` input should not include an `onComplete` field as that callback is
- * used to resolve the Promise containing the Tween animation.
- * However, `config`'s type cannot be changed to something like `Omit<TweenBuilderConfig, "onComplete">`
- * due to how the type for `TweenBuilderConfig` is defined.
  */
-export async function playTween(
-  config: Phaser.Types.Tweens.TweenBuilderConfig,
-  scene: SceneBase = globalScene,
-): Promise<void> {
+export async function playTween(config: PlayTweenConfig, scene: SceneBase = globalScene): Promise<void> {
   await new Promise(resolve =>
     scene.tweens.add({
       ...config,

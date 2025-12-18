@@ -374,9 +374,10 @@ export class GameManager {
 
   /**
    * Transition to the {@linkcode TurnEndPhase | end of the current turn}.
-   * @param endTurn - Whether to run the TurnEndPhase or not; default `true`
+   * @param endTurn - Whether to run the `TurnEndPhase` or not; default `true`
+   * @returns A Promise that resolves once the current turn has ended.
    */
-  async toEndOfTurn(endTurn = true) {
+  async toEndOfTurn(endTurn = true): Promise<void> {
     await this.phaseInterceptor.to("TurnEndPhase", endTurn);
     console.log("==================[End of Turn]==================");
   }

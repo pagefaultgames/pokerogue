@@ -6,11 +6,15 @@
 
 import { defineConfig, loadEnv, type Rollup, type UserConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
-import { LocaleNamespace } from "./src/plugins/vite/namespaces-i18n-plugin";
-import { minifyJsonPlugin } from "./src/plugins/vite/vite-minify-json-plugin";
 
 export const defaultConfig: UserConfig = {
-  plugins: [tsconfigPaths(), minifyJsonPlugin(["images", "battle-anims"], true), LocaleNamespace()],
+  plugins: process.env.MERGE_REPORTS
+    ? []
+    : [
+        tsconfigPaths(),
+        require("./src/plugins/vite/vite-minify-json-plugin").minifyJsonPlugin(["images", "battle-anims"], true),
+        require("./src/plugins/vite/namespaces-i18n-plugin").LocaleNamespace(),
+      ],
   clearScreen: false,
   appType: "mpa",
   build: {
@@ -41,7 +45,7 @@ export default defineConfig(({ mode, command }) => {
       keepNames: true,
     },
     server: {
-      port: !Number.isNaN(envPort) ? envPort : 8000,
+      port: Number.isNaN(envPort) ? 8000 : envPort,
     },
   };
 });

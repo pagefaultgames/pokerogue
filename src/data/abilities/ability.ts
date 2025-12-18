@@ -1,9 +1,5 @@
-/* biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
-import type { BattleScene } from "#app/battle-scene";
-import type { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-change-triggers";
-/* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
-
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import type { BattleScene } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { EntryHazardTag, SuppressAbilitiesTag } from "#data/arena-tag";
@@ -11,6 +7,7 @@ import type { BattlerTag } from "#data/battler-tags";
 import { GroundedTag } from "#data/battler-tags";
 import { getBerryEffectFunc } from "#data/berry";
 import { allAbilities, allMoves } from "#data/data-lists";
+import type { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-change-triggers";
 import { SpeciesFormChangeAbilityTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
 import { Gender } from "#data/gender";
 import { getPokeballName } from "#data/pokeball";
@@ -71,32 +68,40 @@ import { inSpeedOrder } from "#utils/speed-order-generator";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
+//#region Bit sets
 /** Bit set for an ability's `bypass faint` flag */
-const AB_FLAG_BYPASS_FAINT = 1;
+const AB_FLAG_BYPASS_FAINT = 1 << 0;
 /** Bit set for an ability's `ignorable` flag */
-const AB_FLAG_IGNORABLE = 2;
+const AB_FLAG_IGNORABLE = 1 << 1;
 /** Bit set for an ability's `suppressable` flag */
-const AB_FLAG_UNSUPPRESSABLE = 4;
+const AB_FLAG_UNSUPPRESSABLE = 1 << 2;
 /** Bit set for an ability's `uncopiable` flag */
-const AB_FLAG_UNCOPIABLE = 8;
+const AB_FLAG_UNCOPIABLE = 1 << 3;
 /** Bit set for an ability's `unreplaceable` flag */
-const AB_FLAG_UNREPLACEABLE = 16;
+const AB_FLAG_UNREPLACEABLE = 1 << 4;
 /** Bit set for an ability's `unimplemented` flag */
-const AB_FLAG_UNIMPLEMENTED = 32;
+const AB_FLAG_UNIMPLEMENTED = 1 << 5;
 /** Bit set for an ability's `partial` flag */
-const AB_FLAG_PARTIAL = 64;
-
-/** Bits set for a swappable ability */
+const AB_FLAG_PARTIAL = 1 << 6;
+/** Bit set for an unswappable ability */
 const AB_FLAG_UNSWAPPABLE = AB_FLAG_UNCOPIABLE | AB_FLAG_UNREPLACEABLE;
 
+//#endregion Bit sets
+
+/**
+ * An Ability is a class representing the various Abilities Pokemon may have. \
+ * Each has one or more {@linkcode AbAttr | attributes} that can apply independently
+ * of one another.
+ */
 export class Ability {
   /** The ability's unique identifier */
   public readonly id: AbilityId;
-  /** Key used to localize the ability's name */
+  /** The locales key for the ability's name. */
   private readonly i18nKey: string;
-  /** The localized ability name
+  /**
+   * The localized ability name.
    * @remarks
-   * Includes The (P) or (N) suffix, if the ability is partial/unimplemented
+   * Includes the `"(P)"` or `"(N)"` suffix if the ability is partial/unimplemented
    */
   public get name(): string {
     if (this.id === AbilityId.NONE) {
@@ -124,35 +129,65 @@ export class Ability {
     }
     return i18next.t(`ability:${this.i18nKey}.description`);
   }
-  /** Whether the retains its effects through a faint */
+
+  /**
+   * Whether this ability can activate even if the user faints.
+   * @remarks
+   * If `true`, the ability will also activate when revived via Reviver Seed.
+   */
   public get bypassFaint(): boolean {
     return (this.flags & AB_FLAG_BYPASS_FAINT) !== 0;
   }
-  /** Whether the ability is ignorable by mold breaker like effects */
+  /**
+   * Whether this ability can be ignored by effects like
+   * {@linkcode MoveId.SUNSTEEL_STRIKE | Sunsteel Strike} or {@linkcode AbilityId.MOLD_BREAKER | Mold Breaker}.
+   */
   public get ignorable(): boolean {
     return (this.flags & AB_FLAG_IGNORABLE) !== 0;
   }
-  /** Whether the ability can be suppressed by gastro acid and neutralizing gas */
+  /**
+   * Whether this ability can be suppressed by effects like
+   * {@linkcode MoveId.GASTRO_ACID | Gastro Acid} or {@linkcode AbilityId.NEUTRALIZING_GAS | Neutralizing Gas}.
+   */
   public get suppressable(): boolean {
     return !(this.flags & AB_FLAG_UNSUPPRESSABLE);
   }
-  /** Whether the ability can be copied, such as via trace */
+  /**
+   * Whether this ability can be copied by effects like
+   * {@linkcode MoveId.ROLE_PLAY | Role Play} or {@linkcode AbilityId.TRACE | Trace}.
+   */
   public get copiable(): boolean {
     return !(this.flags & AB_FLAG_UNCOPIABLE);
   }
-  /** Whether the ability can be replaced, such as via entrainment */
+  /**
+   * Whether this ability can be replaced by effects like
+   * {@linkcode MoveId.SIMPLE_BEAM | Simple Beam} or {@linkcode MoveId.ENTRAINMENT | Entrainment}.
+   */
   public get replaceable(): boolean {
     return !(this.flags & AB_FLAG_UNREPLACEABLE);
   }
-  /** Whether the ability is partially implemented. Mutually exclusive with {@linkcode unimplemented} */
+  /**
+   * Whether this ability is partially implemented.
+   * @remarks
+   * Mutually exclusive with {@linkcode unimplemented}
+   */
   public get partial(): boolean {
     return (this.flags & AB_FLAG_PARTIAL) !== 0;
   }
-  /** Whether the ability is unimplemented. Mutually exclusive with {@linkcode partial} */
+  /**
+   * Whether this ability is unimplemented.
+   * @remarks
+   * Mutually exclusive with {@linkcode partial}
+   */
   public get unimplemented(): boolean {
     return (this.flags & AB_FLAG_UNIMPLEMENTED) !== 0;
   }
-  /** Whether this ability can be swapped via moves like skill swap */
+  /**
+   * Whether this ability can be swapped via effects like {@linkcode MoveId.SKILL_SWAP | Skill Swap}.
+   * @remarks
+   * Logically equivalent to `this.copiable && this.replaceable`, albeit slightly faster
+   * due to using a pre-computed bitmask.
+   */
   public get swappable(): boolean {
     return !(this.flags & AB_FLAG_UNSWAPPABLE);
   }
@@ -238,8 +273,8 @@ class AbBuilder {
    * @param args - The arguments needed to instantiate the given class.
    * @returns `this`
    */
-  attr<T extends Constructor<AbAttr>>(AttrType: T, ...args: ConstructorParameters<T>): this {
-    const attr = new AttrType(...args);
+  attr<T extends Constructor<AbAttr>>(attrType: T, ...args: ConstructorParameters<T>): this {
+    const attr = new attrType(...args);
     this.attrs.push(attr);
 
     return this;
@@ -2745,6 +2780,7 @@ export class PostSummonAddArenaTagAbAttr extends PostSummonAbAttr {
   private readonly turnCount: number;
   private readonly side?: ArenaTagSide;
   private readonly quiet?: boolean;
+  // TODO: This should not need to track the source ID in a tempvar
   private sourceId: number;
 
   constructor(showAbility: boolean, tagType: ArenaTagType, turnCount: number, side?: ArenaTagSide, quiet?: boolean) {
@@ -2779,6 +2815,7 @@ export class PostSummonMessageAbAttr extends PostSummonAbAttr {
   }
 }
 
+// TODO: This should be merged with message func
 export class PostSummonUnnamedMessageAbAttr extends PostSummonAbAttr {
   //Attr doesn't force pokemon name on the message
   private readonly message: string;
@@ -2849,13 +2886,13 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
   private readonly selfTarget: boolean;
   private readonly intimidate: boolean;
 
-  constructor(stats: readonly BattleStat[], stages: number, selfTarget?: boolean, intimidate?: boolean) {
+  constructor(stats: readonly BattleStat[], stages: number, selfTarget = false, intimidate = true) {
     super(true);
 
     this.stats = stats;
     this.stages = stages;
-    this.selfTarget = !!selfTarget;
-    this.intimidate = !!intimidate;
+    this.selfTarget = selfTarget;
+    this.intimidate = intimidate;
   }
 
   override apply({ pokemon, simulated }: AbAttrBaseParams): void {
@@ -3363,6 +3400,7 @@ export class CommanderAbAttr extends AbAttr {
 /**
  * Base class for ability attributes that apply their effect when their user switches out.
  */
+// TODO: Clarify the differences between this and `PreLeaveFieldAbAttr`
 export abstract class PreSwitchOutAbAttr extends AbAttr {
   constructor(showAbility = true) {
     super(showAbility);
@@ -3392,65 +3430,6 @@ export class PreSwitchOutResetStatusAbAttr extends PreSwitchOutAbAttr {
       pokemon.resetStatus();
       pokemon.updateInfo();
     }
-  }
-}
-
-/**
- * Clears Desolate Land/Primordial Sea/Delta Stream upon the Pokemon switching out.
- */
-export class PreSwitchOutClearWeatherAbAttr extends PreSwitchOutAbAttr {
-  override apply({ pokemon, simulated }: AbAttrBaseParams): boolean {
-    // TODO: Evaluate why this is returning a boolean rather than relay
-    const weatherType = globalScene.arena.weather?.weatherType;
-    let turnOffWeather = false;
-
-    // Clear weather only if user's ability matches the weather and no other pokemon has the ability.
-    switch (weatherType) {
-      case WeatherType.HARSH_SUN:
-        if (
-          pokemon.hasAbility(AbilityId.DESOLATE_LAND)
-          && globalScene
-            .getField(true)
-            .filter(p => p !== pokemon)
-            .filter(p => p.hasAbility(AbilityId.DESOLATE_LAND)).length === 0
-        ) {
-          turnOffWeather = true;
-        }
-        break;
-      case WeatherType.HEAVY_RAIN:
-        if (
-          pokemon.hasAbility(AbilityId.PRIMORDIAL_SEA)
-          && globalScene
-            .getField(true)
-            .filter(p => p !== pokemon)
-            .filter(p => p.hasAbility(AbilityId.PRIMORDIAL_SEA)).length === 0
-        ) {
-          turnOffWeather = true;
-        }
-        break;
-      case WeatherType.STRONG_WINDS:
-        if (
-          pokemon.hasAbility(AbilityId.DELTA_STREAM)
-          && globalScene
-            .getField(true)
-            .filter(p => p !== pokemon)
-            .filter(p => p.hasAbility(AbilityId.DELTA_STREAM)).length === 0
-        ) {
-          turnOffWeather = true;
-        }
-        break;
-    }
-
-    if (simulated) {
-      return turnOffWeather;
-    }
-
-    if (turnOffWeather) {
-      globalScene.arena.trySetWeather(WeatherType.NONE);
-      return true;
-    }
-
-    return false;
   }
 }
 
@@ -3687,8 +3666,6 @@ export class ProtectStatAbAttr extends PreStatStageChangeAbAttr {
 export interface ConfusionOnStatusEffectAbAttrParams extends AbAttrBaseParams {
   /** The status effect that was applied */
   effect: StatusEffect;
-  /** The move that applied the status effect */
-  move: Move;
   /** The opponent that was inflicted with the status effect */
   opponent: Pokemon;
 }
@@ -3717,9 +3694,9 @@ export class ConfusionOnStatusEffectAbAttr extends AbAttr {
   /**
    * Applies confusion to the target pokemon.
    */
-  override apply({ opponent, simulated, pokemon, move }: ConfusionOnStatusEffectAbAttrParams): void {
+  override apply({ opponent, simulated, pokemon }: ConfusionOnStatusEffectAbAttrParams): void {
     if (!simulated) {
-      opponent.addTag(BattlerTagType.CONFUSED, pokemon.randBattleSeedIntRange(2, 5), move.id, opponent.id);
+      opponent.addTag(BattlerTagType.CONFUSED, pokemon.randBattleSeedIntRange(2, 5), undefined, opponent.id);
     }
   }
 }
@@ -5057,25 +5034,26 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
  */
 export class FetchBallAbAttr extends PostTurnAbAttr {
   override canApply({ simulated, pokemon }: AbAttrBaseParams): boolean {
-    return !simulated && globalScene.currentBattle.lastUsedPokeball != null && !!pokemon.isPlayer;
+    return !simulated && globalScene.currentBattle.lastUsedPokeball != null && pokemon.isPlayer();
   }
 
   /**
    * Adds the last used Pokeball back into the player's inventory
    */
   override apply({ pokemon }: AbAttrBaseParams): void {
-    const lastUsed = globalScene.currentBattle.lastUsedPokeball;
-    globalScene.pokeballCounts[lastUsed!]++;
+    const lastUsed = globalScene.currentBattle.lastUsedPokeball!;
+    globalScene.pokeballCounts[lastUsed]++;
     globalScene.currentBattle.lastUsedPokeball = null;
     globalScene.phaseManager.queueMessage(
       i18next.t("abilityTriggers:fetchBall", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        pokeballName: getPokeballName(lastUsed!),
+        pokeballName: getPokeballName(lastUsed),
       }),
     );
   }
 }
 
+// TODO: Remove this and just replace it with applying `PostSummonChangeTerrainAbAttr` again
 export class PostBiomeChangeAbAttr extends AbAttr {
   private declare readonly _: never;
 }
@@ -5100,6 +5078,7 @@ export class PostBiomeChangeWeatherChangeAbAttr extends PostBiomeChangeAbAttr {
   }
 }
 
+// TODO: Remove this and just replace it with applying `PostSummonChangeTerrainAbAttr` again
 /** @sealed */
 export class PostBiomeChangeTerrainChangeAbAttr extends PostBiomeChangeAbAttr {
   private readonly terrainType: TerrainType;
@@ -6738,7 +6717,6 @@ const AbilityAttrs = Object.freeze({
   CommanderAbAttr,
   PreSwitchOutAbAttr,
   PreSwitchOutResetStatusAbAttr,
-  PreSwitchOutClearWeatherAbAttr,
   PreSwitchOutHealAbAttr,
   PreSwitchOutFormChangeAbAttr,
   PreLeaveFieldAbAttr,
