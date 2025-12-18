@@ -205,10 +205,10 @@ function endTrainerBattleAndShowDialogue(): Promise<void> {
     } else {
       globalScene.arena.resetArenaEffects();
       const playerField = globalScene.getPlayerField();
-      for (const pokemon of playerField) {
+      playerField.forEach((pokemon, i) => {
         pokemon.lapseTag(BattlerTagType.COMMANDED);
-      }
-      playerField.forEach((_, p) => globalScene.phaseManager.unshiftNew("ReturnPhase", p));
+        globalScene.phaseManager.unshiftNew("RecallPhase", i);
+      });
 
       for (const pokemon of globalScene.getPlayerParty()) {
         // Only trigger form change when Eiscue is in Noice form

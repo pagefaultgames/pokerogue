@@ -76,8 +76,9 @@ export function padInt(value: number, length: number, padWith?: string): string 
  * @param min - The minimum number to pick; default `0`
  * @returns A psuedo-random, unseeded integer within the interval [min, min+range].
  * @remarks
- * This should not be used for battles or other outwards-facing randomness;
+ * This should not be used for battle logic or other outwards-facing randomness;
  * battles are intended to be seeded and deterministic.
+ * (Purely visual effects and similar are allowed.)
  */
 export function randInt(range: number, min = 0): number {
   if (range <= 1) {

@@ -2,6 +2,7 @@ import type { PhaseManager, PhaseMap, PhaseString } from "#app/@types/phase-type
 import type { Phase } from "#app/phase";
 import type { DynamicPhaseMarker } from "#phases/dynamic-phase-marker";
 import type { PhaseConditionFunc } from "#types/phase-types";
+import type { NonEmptyTuple } from "type-fest";
 
 /**
  * The PhaseTree is the central storage location for {@linkcode Phase}s by the {@linkcode PhaseManager}.
@@ -79,12 +80,13 @@ export class PhaseTree {
   }
 
   /**
-   * Unshifts a {@linkcode Phase} to the current level.
-   * This is effectively the same as if the phase were added immediately after the currently-running phase, before it started.
-   * @param phase - The {@linkcode Phase} to be added
+   * Unshift one or more {@linkcode Phase}s to the current level.
+   * This is effectively the same as if the phases were added immediately _after_ the currently-running phase,
+   * before it started.
+   * @param phase - One or more {@linkcode Phase}s to be added
    */
-  public unshiftToCurrent(phase: Phase): void {
-    this.levels[this.currentLevel].unshift(phase);
+  public unshiftToCurrent(...phases: NonEmptyTuple<Phase>): void {
+    this.levels[this.currentLevel].unshift(...phases);
   }
 
   /**
