@@ -179,40 +179,40 @@ await i18next
         "es-419": ["es-ES", "en"],
         default: ["en"],
       },
-    supportedLngs: [
-      "en",
-      "es-ES",
-      "es-419", // LATAM Spanish
-      "fr",
-      "it",
-      "de",
-      "zh-Hans",
-      "zh-Hant",
-      "pt-BR",
-      "ko",
-      "ja",
-      "ca",
-      "da",
-      "tr",
-      "ro",
-      "ru",
-      "tl",
-      "nb-NO",
-    ],
-    backend: {
-      loadPath(lng: string, [ns]: string[]) {
-        // Use namespace maps where required
-        let fileName: string;
-        if (namespaceMap[ns]) {
-          fileName = namespaceMap[ns];
-        } else if (ns.startsWith("mysteryEncounters/")) {
-          fileName = toKebabCase(ns + "-dialogue"); // mystery-encounters/a-trainers-test-dialogue
-        } else {
-          fileName = toKebabCase(ns);
-        }
-        // ex: "./locales/en/move-anims"
-        return `./locales/${lng}/${fileName}.json?v=${pkg.version}`;
-        }
+      supportedLngs: [
+        "en",
+        "es-ES",
+        "es-419", // LATAM Spanish
+        "fr",
+        "it",
+        "de",
+        "zh-Hans",
+        "zh-Hant",
+        "pt-BR",
+        "ko",
+        "ja",
+        "ca",
+        "da",
+        "tr",
+        "ro",
+        "ru",
+        "tl",
+        "nb-NO",
+      ],
+      backend: {
+        loadPath(lng: string, [ns]: string[]) {
+          // Use namespace maps where required
+          let fileName: string;
+          if (namespaceMap[ns]) {
+            fileName = namespaceMap[ns];
+          } else if (ns.startsWith("mysteryEncounters/")) {
+            fileName = toKebabCase(ns + "-dialogue"); // mystery-encounters/a-trainers-test-dialogue
+          } else {
+            fileName = toKebabCase(ns);
+          }
+          // ex: "./locales/en/move-anims"
+          return `./locales/${lng}/${fileName}.json?v=${pkg.version}`;
+        },
       },
       defaultNS: "menu",
       detection: {
