@@ -85,13 +85,7 @@ export class FailIfInsufficientHpCondition extends MoveCondition {
  */
 export const failTeleportCondition = new MoveCondition(user => {
   if (user.hasTrainer()) {
-    const party = user.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
-    for (const pokemon of party) {
-      if (!pokemon.isOnField() && pokemon.isAllowedInBattle()) {
-        return true;
-      }
-    }
-    return false;
+    return globalScene.getBackupPartyMemberIndices(user).length > 0;
   }
 
   // Wild pokemon

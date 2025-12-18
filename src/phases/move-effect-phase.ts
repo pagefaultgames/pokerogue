@@ -771,15 +771,16 @@ export class MoveEffectPhase extends PokemonPhase {
     if (!this.move.hitsSubstitute(user, target)) {
       this.applyOnTargetEffects(user, target, hitResult, firstTarget, dmg, wasCritical);
     }
-    if (this.lastHit) {
-      globalScene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
 
-      // Multi-hit check for Wimp Out/Emergency Exit
-      if (user.turnData.hitCount > 1) {
-        // TODO: Investigate why 0 is being passed for damage amount here
-        // and then determing if refactoring `applyMove` to return the damage dealt is appropriate.
-        applyAbAttrs("PostDamageAbAttr", { pokemon: target, damage: 0, source: user });
-      }
+    if (this.lastHit) {
+      // Trigger form changes on the final hit, alongside Wimp Out/Emergency Exit
+      globalScene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
+      applyAbAttrs("PostDamageAbAttr", {
+        pokemon: target,
+        damage: user.turnData.lastMoveDamageDealt[target.getBattlerIndex()],
+        simulated: false,
+        source: user,
+      });
     }
   }
 
@@ -847,7 +848,6 @@ export class MoveEffectPhase extends PokemonPhase {
           ignoreFaintPhase: true,
           ignoreSegments: isOneHitKo,
           isCritical,
-          source: user,
         });
 
     if (isCritical) {
@@ -867,6 +867,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     user.turnData.totalDamageDealt += damage;
+    user.turnData.lastMoveDamageDealt[target.getBattlerIndex()] += damage;
     user.turnData.singleHitDamageDealt = damage;
     target.battleData.hitCount++;
     target.turnData.damageTaken += damage;

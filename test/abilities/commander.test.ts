@@ -168,26 +168,17 @@ describe("Abilities - Commander", () => {
     expect(tatsugiri.isFullHp()).toBeFalsy();
   });
 
-  it("should make Dondozo immune to being forced out", async () => {
-    game.override.enemyMoveset([MoveId.SPLASH, MoveId.WHIRLWIND]);
+  it("should prevent the user from being forcibly switched out", async () => {
+    await game.classicMode.startBattle([SpeciesId.DONDOZO, SpeciesId.TATSUGIRI]);
 
-    await game.classicMode.startBattle([SpeciesId.TATSUGIRI, SpeciesId.DONDOZO]);
+    const dondozo = game.field.getPlayerPokemon();
 
-    const [tatsugiri, dondozo] = game.scene.getPlayerField();
+    game.move.use(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.DRAGON_TAIL, BattlerIndex.PLAYER);
+    await game.toEndOfTurn();
 
-    expect(game.scene.triggerPokemonBattleAnim).toHaveBeenLastCalledWith(tatsugiri, PokemonAnimType.COMMANDER_APPLY);
-    expect(dondozo.getTag(BattlerTagType.COMMANDED)).toBeDefined();
-
-    game.move.select(MoveId.SPLASH, 1);
-
-    expect(game.scene.currentBattle.turnCommands[0]?.skip).toBeTruthy();
-
-    await game.move.selectEnemyMove(MoveId.WHIRLWIND, BattlerIndex.PLAYER_2);
-    await game.move.selectEnemyMove(MoveId.SPLASH);
-
-    // Test may time out here if Whirlwind forced out a Pokemon
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(dondozo.isActive(true)).toBeTruthy();
+    expect(dondozo.isOnField()).toBe(true);
+    expect(dondozo).not.toHaveFullHp();
   });
 
   it("should interrupt the source's semi-invulnerability", async () => {

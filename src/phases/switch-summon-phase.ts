@@ -2,11 +2,9 @@ import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { SubstituteTag } from "#data/battler-tags";
-import { allMoves } from "#data/data-lists";
 import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
 import { getPokeballTintColor } from "#data/pokeball";
 import { ArenaTagSide } from "#enums/arena-tag-side";
-import { Command } from "#enums/command";
 import { SwitchType } from "#enums/switch-type";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type { Pokemon } from "#field/pokemon";
@@ -15,6 +13,7 @@ import { SummonPhase } from "#phases/summon-phase";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import i18next from "i18next";
 
+// TODO: This and related phases desperately need to be refactored
 export class SwitchSummonPhase extends SummonPhase {
   public readonly phaseName: "SwitchSummonPhase" | "ReturnPhase" = "SwitchSummonPhase";
   private readonly switchType: SwitchType;
@@ -44,6 +43,8 @@ export class SwitchSummonPhase extends SummonPhase {
   }
 
   preSummon(): void {
+    const pokemon = this.getPokemon();
+
     if (!this.player) {
       if (this.slotIndex === -1) {
         //@ts-expect-error
@@ -62,6 +63,13 @@ export class SwitchSummonPhase extends SummonPhase {
       || (this.slotIndex !== -1
         && !(this.player ? globalScene.getPlayerParty() : globalScene.getEnemyParty())[this.slotIndex])
     ) {
+      // If the target is still on-field, remove it and/or hide its info container.
+      // Effects are kept to be transferred to the new Pokemon later on.
+      // TODO: fix in switch out logic refactor
+      if (pokemon.isOnField()) {
+        pokemon.leaveField(false, pokemon.getBattleInfo().visible);
+      }
+
       if (this.player) {
         this.switchAndSummon();
         return;
@@ -70,7 +78,6 @@ export class SwitchSummonPhase extends SummonPhase {
       return;
     }
 
-    const pokemon = this.getPokemon();
     for (const enemyPokemon of inSpeedOrder(this.player ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER)) {
       enemyPokemon.removeTagsBySourceId(pokemon.id);
     }
@@ -202,48 +209,35 @@ export class SwitchSummonPhase extends SummonPhase {
   onEnd(): void {
     super.onEnd();
 
-    const pokemon = this.getPokemon();
+    const activePokemon = this.getPokemon();
 
-    const moveId = globalScene.currentBattle.lastMove;
-    const lastUsedMove = moveId ? allMoves[moveId] : undefined;
-
-    const currentCommand = globalScene.currentBattle.turnCommands[this.fieldIndex]?.command;
-    const lastPokemonIsForceSwitchedAndNotFainted =
-      lastUsedMove?.hasAttr("ForceSwitchOutAttr") && !this.lastPokemon.isFainted();
-    const lastPokemonHasForceSwitchAbAttr =
-      this.lastPokemon.hasAbilityWithAttr("PostDamageForceSwitchAbAttr") && !this.lastPokemon.isFainted();
-
-    // Compensate for turn spent summoning/forced switch if switched out pokemon is not fainted.
+    // If not switching at start of battle, reset turn counts and temp data on the newly sent in Pokemon
     // Needed as we increment turn counters in `TurnEndPhase`.
-    if (
-      currentCommand === Command.POKEMON
-      || lastPokemonIsForceSwitchedAndNotFainted
-      || lastPokemonHasForceSwitchAbAttr
-    ) {
-      pokemon.tempSummonData.turnCount--;
-      pokemon.tempSummonData.waveTurnCount--;
+    if (this.switchType !== SwitchType.INITIAL_SWITCH) {
+      // No need to reset turn/summon data for initial switch
+      // (since both get initialized to defaults on object creation)
+      activePokemon.resetTurnData();
+      activePokemon.resetSummonData();
+      activePokemon.tempSummonData.turnCount--;
+      activePokemon.tempSummonData.waveTurnCount--;
+      activePokemon.turnData.switchedInThisTurn = true;
     }
 
-    if (this.switchType === SwitchType.BATON_PASS && pokemon) {
-      pokemon.transferSummon(this.lastPokemon);
-    } else if (this.switchType === SwitchType.SHED_TAIL && pokemon) {
+    // Baton Pass over any eligible effects or substitutes before resetting the last pokemon's temporary data.
+    if (this.switchType === SwitchType.BATON_PASS) {
+      activePokemon.transferSummon(this.lastPokemon);
+    } else if (this.switchType === SwitchType.SHED_TAIL) {
       const subTag = this.lastPokemon.getTag(SubstituteTag);
       if (subTag) {
-        pokemon.summonData.tags.push(subTag);
+        activePokemon.summonData.tags.push(subTag);
       }
     }
-
-    // Reset turn data if not initial switch (since it gets initialized to an empty object on turn start)
-    if (this.switchType !== SwitchType.INITIAL_SWITCH) {
-      pokemon.resetTurnData();
-      pokemon.turnData.switchedInThisTurn = true;
-    }
-
+    this.lastPokemon.resetTurnData();
     this.lastPokemon.resetSummonData();
 
-    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
+    globalScene.triggerPokemonFormChange(activePokemon, SpeciesFormChangeActiveTrigger, true);
     // Reverts to weather-based forms when weather suppressors (Cloud Nine/Air Lock) are switched out
-    globalScene.arena.triggerWeatherBasedFormChanges(pokemon);
+    globalScene.arena.triggerWeatherBasedFormChanges(activePokemon);
   }
 
   queuePostSummon(): void {

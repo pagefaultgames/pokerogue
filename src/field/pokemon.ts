@@ -1235,7 +1235,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @see {@linkcode SubstituteTag}
    * @see {@linkcode getFieldPositionOffset}
    */
-  getSubstituteOffset(): [number, number] {
+  getSubstituteOffset(): [x: number, y: number] {
     return this.isPlayer() ? [-30, 10] : [30, -10];
   }
 
@@ -1661,10 +1661,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Return the ratio of this Pokémon's current HP to its maximum HP
-   * @param precise - Whether to return the exact HP ratio (e.g. `0.54321`), or one rounded to the nearest %; default `false`
-   * @returns The current HP ratio
+   * Return this Pokemon's current HP as a fraction of its maximum HP.
+   * @param precise - Whether to return the exact HP ratio (e.g. `0.54321`)
+   * or rounded to the nearest 1%; default `false`
+   * @returns This pokemon's current HP ratio (current / max).
    */
+  // TODO: Make `precise` default to `true`
   getHpRatio(precise = false): number {
     return precise ? this.hp / this.getMaxHp() : Math.round((this.hp / this.getMaxHp()) * 100) / 100;
   }
@@ -3914,8 +3916,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @remarks
    * Checks for {@linkcode HitResult.INDIRECT | Indirect} hits to account for Endure/Reviver Seed applying correctly
    * @param damage - The damage to inflict on this Pokémon
-   * @param __namedParameters.source - Needed for proper typedoc rendering
-   * @returns Amount of damage actually done
+   * @param __namedParameters.result - Needed for proper typedoc rendering
+   * @returns The amount of damage actually dealt.
+   * @remarks
+   * This will not trigger "on damage" effects for direct damage moves, instead occuring at the end of the `MoveEffectPhase`.
    */
   damageAndUpdate(
     damage: number,
@@ -3924,20 +3928,17 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       isCritical = false,
       ignoreSegments = false,
       ignoreFaintPhase = false,
-      source,
     }: {
       /**
-       * An enum if it's super effective, not very effective, etc; default {@linkcode HitResult.EFFECTIVE}
+       * The {@linkcode HitResult} of the damage instance; default `HitResult.EFFECTIVE`
        */
       result?: DamageResult;
-      /** Whether the attack was a critical hit */
+      /** Whether the move being used (if any) was a critical hit; default `false` */
       isCritical?: boolean;
-      /** Whether to ignore boss segments */
+      /** ignoreSegments - Whether to ignore boss segments for enemy pokemon; default `false` */
       ignoreSegments?: boolean;
-      /** Whether to ignore adding a FaintPhase if this damage causes a faint; default `false` */
+      /** Whether to ignore adding a `FaintPhase` if this damage causes a faint; default `false` */
       ignoreFaintPhase?: boolean;
-      /** The Pokémon inflicting the damage, or undefined if not caused by a Pokémon */
-      source?: Pokemon;
     } = {},
   ): number {
     const isIndirectDamage = [HitResult.INDIRECT, HitResult.INDIRECT_KO].includes(result);
@@ -3945,22 +3946,24 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       "DamageAnimPhase",
       this.getBattlerIndex(),
       damage,
-      result as DamageResult,
+      result,
       isCritical,
     );
     globalScene.phaseManager.unshiftPhase(damagePhase);
-    if (this.switchOutStatus && source) {
+
+    // Prevent enemies not on field from taking damage.
+    // TODO: Review if wimp out actually needs this anymore
+    if (this.switchOutStatus) {
       damage = 0;
     }
+
     damage = this.damage(damage, ignoreSegments, isIndirectDamage, ignoreFaintPhase);
     // Damage amount may have changed, but needed to be queued before calling damage function
     damagePhase.updateAmount(damage);
-    /**
-     * Run PostDamageAbAttr from any source of damage that is not from a multi-hit
-     * Multi-hits are handled in move-effect-phase.ts for PostDamageAbAttr
-     */
-    if (!source || source.turnData.hitCount <= 1) {
-      applyAbAttrs("PostDamageAbAttr", { pokemon: this, damage, source });
+
+    // Trigger PostDamageAbAttr (ie wimp out) for indirect, non-confusion damage instances.
+    if (isIndirectDamage && result !== HitResult.CONFUSION) {
+      applyAbAttrs("PostDamageAbAttr", { pokemon: this, damage });
     }
     return damage;
   }
@@ -4243,6 +4246,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     for (const tag of source.summonData.tags) {
+      // Skip non-Baton Passable tags (or telekinesis for mega gengar; cf. https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move))
       if (
         !tag.isBatonPassable
         || (tag.tagType === BattlerTagType.TELEKINESIS
@@ -5081,15 +5085,16 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Perform miscellaneous setup for when the Pokemon is summoned, like generating the substitute sprite
    * @param resetSummonData - Whether to additionally reset the Pokemon's summon data (default: `false`)
    */
-  public fieldSetup(resetSummonData?: boolean): void {
+  public fieldSetup(resetSummonData = false): void {
     this.switchOutStatus = false;
     if (globalScene) {
       globalScene.triggerPokemonFormChange(this, SpeciesFormChangePostMoveTrigger, true);
     }
     // If this Pokemon has a Substitute when loading in, play an animation to add its sprite
-    if (this.getTag(SubstituteTag)) {
+    const subTag = this.getTag(BattlerTagType.SUBSTITUTE) as SubstituteTag | undefined;
+    if (subTag) {
       globalScene.triggerPokemonBattleAnim(this, PokemonAnimType.SUBSTITUTE_ADD);
-      this.getTag(SubstituteTag)!.sourceInFocus = false;
+      subTag.sourceInFocus = false;
     }
 
     // If this Pokemon has Commander and Dondozo as an active ally, hide this Pokemon's sprite.
@@ -5109,6 +5114,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Reset this Pokemon's {@linkcode PokemonSummonData | SummonData} and {@linkcode PokemonTempSummonData | TempSummonData}
    * in preparation for switching pokemon, as well as removing any relevant on-switch tags.
+   * @remarks
+   * This **SHOULD NOT** be called when {@linkcode leaveField} is already being called,
+   * which already calls this function.
    */
   public resetSummonData(): void {
     if (this.summonData.speciesForm) {
@@ -5615,15 +5623,17 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Causes a Pokemon to leave the field (such as in preparation for a switch out/escape).
-   * @param clearEffects - Indicates if effects should be cleared (true) or passed
-   *    to the next pokemon, such as during a baton pass (false)
-   * @param hideInfo - Indicates if this should also play the animation to hide the Pokemon's
-   * info container.
+   * Cause this {@linkcode Pokemon} to leave the field (such as in preparation for a switch out/escape).
+   * @param clearEffects - Whether to clear (`true`) or transfer (`false`) transient effects upon switching; default `true`
+   * @param hideInfo - Whether to play the animation to hide the Pokemon's info container; default `true`.
+   * @param destroy - Whether to destroy this Pokemon once it leaves the field; default `false`
+   * @remarks
+   * This **SHOULD NOT** be called with `clearEffects=true` when a `SummonPhase` or `SwitchSummonPhase` is already being added,
+   * both of which also clear effects and can lead to premature/duplicate resetting of {@linkcode turnData} and {@linkcode summonData}.
+   * @todo: Review where this is being called and where it is necessary to be called
    */
   leaveField(clearEffects = true, hideInfo = true, destroy = false) {
     this.resetSprite();
-    this.resetTurnData();
     for (const p of inSpeedOrder(ArenaTagSide.BOTH)) {
       if (p !== this) {
         p.removeTagsBySourceId(this.id);
@@ -5633,6 +5643,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (clearEffects) {
       this.destroySubstitute();
       this.resetSummonData();
+      this.resetTurnData();
     }
     if (hideInfo) {
       this.hideInfo();

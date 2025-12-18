@@ -14,3 +14,6 @@ export enum SwitchType {
   /** Force switchout to a random party member */
   FORCE_SWITCH,
 }
+
+/** Union type of all "normal" switch types that can be used by force switch moves. */
+export type NormalSwitchType = Exclude<SwitchType, SwitchType.INITIAL_SWITCH>;

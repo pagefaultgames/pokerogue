@@ -396,6 +396,7 @@ export class MovePhase extends PokemonPhase {
     // For the purposes of payback and kin, the pokemon is considered to have acted
     // if it attempted to move at all.
     user.turnData.acted = true;
+    this.pokemon.turnData.lastMoveDamageDealt = new Array(4).fill(0);
     const useMode = this.useMode;
     const ignoreStatus = isIgnoreStatus(useMode);
     const isFollowUp = useMode === MoveUseMode.FOLLOW_UP;
