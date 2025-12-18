@@ -463,7 +463,7 @@ async function doNewTeamPostProcess(transformations: PokemonTransformation[]) {
     // Any pokemon that is below 570 BST gets +20 permanent BST to 3 stats
     if (shouldGetOldGateau(newPokemon)) {
       const modType = modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU();
-      const modifier = modType?.newModifier(newPokemon);
+      const modifier = modType.withIdFromFunc(modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU).newModifier(newPokemon);
       if (modifier) {
         globalScene.addModifier(modifier, false, false, false, true);
       }

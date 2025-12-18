@@ -33,7 +33,8 @@ export function initTests(): void {
  * @todo Investigate why this resets on new test suite start
  */
 function setupStubs(): void {
-  Object.defineProperties(global, {
+  // TODO: Make this type safe
+  Object.defineProperties(globalThis, {
     localStorage: {
       value: mockLocalStorage(),
     },
@@ -67,25 +68,6 @@ function setupStubs(): void {
   };
   navigator.getGamepads = () => [];
   setCookie(SESSION_ID_COOKIE_NAME, "fake_token");
-
-  /**
-   * Sets this object's position relative to another object with a given offset
-   * @param guideObject - The {@linkcode Phaser.GameObjects.GameObject} to base the position off of
-   * @param x - The relative x position
-   * @param y - The relative y position
-   */
-  const setPositionRelative = function (guideObject: any, x: number, y: number): any {
-    const offsetX = guideObject.width * (-0.5 + (0.5 - guideObject.originX));
-    const offsetY = guideObject.height * (-0.5 + (0.5 - guideObject.originY));
-    return this.setPosition(guideObject.x + offsetX + x, guideObject.y + offsetY + y);
-  };
-
-  Phaser.GameObjects.Container.prototype.setPositionRelative = setPositionRelative;
-  Phaser.GameObjects.Sprite.prototype.setPositionRelative = setPositionRelative;
-  Phaser.GameObjects.Image.prototype.setPositionRelative = setPositionRelative;
-  Phaser.GameObjects.NineSlice.prototype.setPositionRelative = setPositionRelative;
-  Phaser.GameObjects.Text.prototype.setPositionRelative = setPositionRelative;
-  Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative;
   HTMLCanvasElement.prototype.getContext = () => mockContext;
 }
 

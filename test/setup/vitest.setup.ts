@@ -44,7 +44,7 @@ vi.mock(import("i18next"), async importOriginal => {
         }
         return HttpResponse.json(json);
       } catch (err) {
-        console.log(`Failed to load locale ${filename}!`, err);
+        console.error(`Failed to load locale ${filename}\n`, err);
         return HttpResponse.json({});
       }
     }),

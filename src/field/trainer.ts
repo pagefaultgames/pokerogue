@@ -787,6 +787,7 @@ export class Trainer extends Phaser.GameObjects.Container {
       this.config.trainerAI.teraMode === TeraAIMode.INSTANT_TERA
       && !pokemon.isTerastallized
       && this.config.trainerAI.instantTeras.includes(pokemon.initialTeamIndex)
+      && !globalScene.currentBattle.enemyFaintsHistory.some(f => f.pokemon.id === pokemon.id)
     ) {
       return true;
     }
