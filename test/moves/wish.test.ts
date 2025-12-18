@@ -79,7 +79,7 @@ describe("Move - Wish", () => {
     await game.toEndOfTurn();
 
     expect(alomomola.hp).toBe(toDmgValue(alomomola.getMaxHp() / 2) + 1);
-    expect(alomomola).toHaveUsedMove({ result: MoveResult.FAIL });
+    expect(alomomola).toHaveUsedMove({ move: MoveId.WISH, result: MoveResult.FAIL });
   });
 
   it("should function independently of Future Sight", async () => {

@@ -57,7 +57,7 @@ describe("Moves - Protect", () => {
   ])("should have a 1/$chance success rate after $numTurns successful uses", async ({ numTurns, chance }) => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const charizard = game.scene.getPlayerPokemon()!;
+    const charizard = game.field.getPlayerPokemon();
 
     // mock RNG roll to suceed unless exactly the desired chance is hit
     vi.spyOn(charizard, "randBattleSeedInt").mockImplementation(range => (range !== chance ? 0 : 1));
@@ -106,7 +106,7 @@ describe("Moves - Protect", () => {
   it("should reset fail chance on move failure", async () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const charizard = game.scene.getPlayerPokemon()!;
+    const charizard = game.field.getPlayerPokemon();
     // force protect to always fail if RNG roll attempt is made
     vi.spyOn(charizard, "randBattleSeedInt").mockReturnValue(1);
 
@@ -126,7 +126,7 @@ describe("Moves - Protect", () => {
   it("should reset fail chance on using another move", async () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const charizard = game.scene.getPlayerPokemon()!;
+    const charizard = game.field.getPlayerPokemon();
     // force protect to always fail if RNG roll attempt is made
     vi.spyOn(charizard, "randBattleSeedInt").mockReturnValue(1);
 
@@ -164,7 +164,7 @@ describe("Moves - Protect", () => {
     game.override.ability(AbilityId.PSYCHIC_SURGE);
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const charizard = game.scene.getPlayerPokemon()!;
+    const charizard = game.field.getPlayerPokemon();
     game.move.select(MoveId.PROTECT);
     await game.toNextTurn();
 
@@ -204,7 +204,7 @@ describe("Moves - Protect", () => {
     game.override.enemyMoveset([MoveId.FUTURE_SIGHT, MoveId.MIGHTY_CLEAVE, MoveId.SPORE]);
     await game.classicMode.startBattle([SpeciesId.AGGRON]);
 
-    const aggron = game.scene.getPlayerPokemon()!;
+    const aggron = game.field.getPlayerPokemon();
     vi.spyOn(aggron, "randBattleSeedInt").mockReturnValue(0);
 
     // Turn 1: setup future sight
