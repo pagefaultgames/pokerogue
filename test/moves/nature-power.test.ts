@@ -57,7 +57,7 @@ describe("Move - Nature Power", () => {
 
     const player = game.field.getPlayerPokemon();
     expect(player.getLastXMoves(-1).map(m => m.move)).toEqual([move, MoveId.NATURE_POWER]);
-    expect(game.textInterceptor.logs).toContain(
+    expect(game).toHaveShownMessage(
       i18next.t("moveTriggers:naturePowerUse", {
         pokemonName: getPokemonNameWithAffix(player),
         moveName: allMoves[move].name,
@@ -82,5 +82,11 @@ describe("Move - Nature Power", () => {
 
     const player = game.field.getPlayerPokemon();
     expect(player.getLastXMoves(-1).map(m => m.move)).toEqual([move, MoveId.NATURE_POWER]);
+    expect(game).toHaveShownMessage(
+      i18next.t("moveTriggers:naturePowerUse", {
+        pokemonName: getPokemonNameWithAffix(player),
+        moveName: allMoves[move].name,
+      }),
+    );
   });
 });
