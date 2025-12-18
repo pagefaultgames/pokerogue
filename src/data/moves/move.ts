@@ -6098,9 +6098,7 @@ export class MissEffectAttr extends MoveAttr {
     this.missEffectFunc = missEffectFunc;
   }
 
-  apply(user: Pokemon, _target: Pokemon, move: Move, _args: any[]): boolean {
-    this.missEffectFunc(user, move);
-    return true;
+  apply(user: Pokemon, _target: Pokemon, move: Move, _args: any[]): boolean {this.missEffectFunc(user, move);return true;
   }
 }
 
