@@ -2020,7 +2020,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
               }
 
               // Same species egg menu option.
-              const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarterCosts[this.starterId]);
+              const hatchCount = globalScene.gameData.dexData[this.starterId].hatchedCount;
+              const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarterCosts[this.starterId], hatchCount);
               options.push({
                 label: `×${sameSpeciesEggCost} ${i18next.t("pokedexUiHandler:sameSpeciesEgg")}`,
                 handler: () => {
@@ -2367,8 +2368,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
   isSameSpeciesEggAvailable(): boolean {
     // Get this species ID's starter data
     const starterData = globalScene.gameData.starterData[this.starterId];
+    const hatchCount = globalScene.gameData.dexData[this.starterId].hatchedCount;
 
-    return starterData.candyCount >= getSameSpeciesEggCandyCounts(speciesStarterCosts[this.starterId]);
+    return starterData.candyCount >= getSameSpeciesEggCandyCounts(speciesStarterCosts[this.starterId], hatchCount);
   }
 
   setSpecies() {

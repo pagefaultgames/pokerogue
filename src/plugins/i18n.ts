@@ -3,7 +3,7 @@ import { toKebabCase } from "#utils/strings";
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import HttpBackend from "i18next-http-backend";
-import processor, { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
+import processor from "i18next-korean-postposition-processor";
 import { namespaceMap } from "./utils-plugins";
 
 //#region Interfaces/Types
@@ -15,8 +15,6 @@ interface LoadingFontFaceProperty {
 }
 
 //#region Constants
-
-let isInitialized = false;
 
 const unicodeRanges = {
   fullwidth: "U+FF00-FFEF",
@@ -147,107 +145,90 @@ function i18nMoneyFormatter(amount: any): string {
   return `@[MONEY]{${i18next.t("common:money", { amount })}}`;
 }
 
+// assigned during post-processing in #app/plugins/vite/namespaces-i18n-plugin.ts
 const nsEn: string[] = [];
 
 //#region Exports
 
-/**
- * Initialize i18n with fonts
+/*
+ * i18next is a localization library for maintaining and using translation resources.
+ *
+ * Q: How do I add a new language?
+ * A: To add a new language, create a new folder in the locales directory with the language code.
+ *    Each language folder should contain a file for each namespace (ex. menu.ts) with the translations.
+ *    Don't forget to declare new language in `supportedLngs` i18next initializer
+ *
+ * Q: How do I add a new namespace?
+ * A: To add a new namespace, create a new file .json in each language folder with the translations.
+ *    The expected format for the file-name is kebab-case {@link https://developer.mozilla.org/en-US/docs/Glossary/Kebab_case}
+ *    If you want the namespace name to be different from the file name, configure it in namespace-map.ts.
+ *    Then update the config file for that language in its locale directory
+ *    and the CustomTypeOptions interface in the @types/i18next.d.ts file.
+ *
+ * Q: How do I make a language selectable in the settings?
+ * A: In src/system/settings.ts, add a new case to the Setting.Language switch statement.
  */
-export async function initI18n(): Promise<void> {
-  // Prevent reinitialization
-  if (isInitialized) {
-    return;
-  }
-  isInitialized = true;
 
-  /**
-   * i18next is a localization library for maintaining and using translation resources.
-   *
-   * Q: How do I add a new language?
-   * A: To add a new language, create a new folder in the locales directory with the language code.
-   *    Each language folder should contain a file for each namespace (ex. menu.ts) with the translations.
-   *    Don't forget to declare new language in `supportedLngs` i18next initializer
-   *
-   * Q: How do I add a new namespace?
-   * A: To add a new namespace, create a new file .json in each language folder with the translations.
-   *    The expected format for the file-name is kebab-case {@link https://developer.mozilla.org/en-US/docs/Glossary/Kebab_case}
-   *    If you want the namespace name to be different from the file name, configure it in namespacemap.ts.
-   *    Then update the config file for that language in its locale directory
-   *    and the CustomTypeOptions interface in the @types/i18next.d.ts file.
-   *
-   * Q: How do I make a language selectable in the settings?
-   * A: In src/system/settings.ts, add a new case to the Setting.Language switch statement.
-   */
-
-  i18next.use(HttpBackend);
-  i18next.use(LanguageDetector);
-  i18next.use(processor);
-  i18next.use(new KoreanPostpositionProcessor());
-  await i18next.init({
-    fallbackLng: {
-      "es-419": ["es-ES", "en"],
-      default: ["en"],
-    },
-    supportedLngs: [
-      "en",
-      "es-ES",
-      "es-419", // LATAM Spanish
-      "fr",
-      "it",
-      "de",
-      "zh-Hans",
-      "zh-Hant",
-      "pt-BR",
-      "ko",
-      "ja",
-      "ca",
-      "da",
-      "tr",
-      "ro",
-      "ru",
-      "tl",
-      "nb-NO",
-    ],
-    backend: {
-      loadPath(lng: string, [ns]: string[]) {
-        // Use namespace maps where required
-        let fileName: string;
-        if (namespaceMap[ns]) {
-          fileName = namespaceMap[ns];
-        } else if (ns.startsWith("mysteryEncounters/")) {
-          fileName = toKebabCase(ns + "-dialogue"); // mystery-encounters/a-trainers-test-dialogue
-        } else {
-          fileName = toKebabCase(ns);
-        }
-        // ex: "./locales/en/move-anims"
-        return `./locales/${lng}/${fileName}.json?v=${pkg.version}`;
+await i18next
+  .use(HttpBackend)
+  .use(LanguageDetector)
+  .use(processor)
+  .init(
+    {
+      fallbackLng: {
+        "es-419": ["es-ES", "en"],
+        default: ["en"],
       },
+      supportedLngs: [
+        "en",
+        "es-ES",
+        "es-419", // LATAM Spanish
+        "fr",
+        "it",
+        "de",
+        "zh-Hans",
+        "zh-Hant",
+        "pt-BR",
+        "ko",
+        "ja",
+        "ca",
+        "da",
+        "tr",
+        "ro",
+        "ru",
+        "tl",
+        "nb-NO",
+      ],
+      backend: {
+        loadPath(lng: string, [ns]: string[]) {
+          // Use namespace maps where required
+          let fileName: string;
+          if (namespaceMap[ns]) {
+            fileName = namespaceMap[ns];
+          } else if (ns.startsWith("mysteryEncounters/")) {
+            fileName = toKebabCase(ns + "-dialogue"); // mystery-encounters/a-trainers-test-dialogue
+          } else {
+            fileName = toKebabCase(ns);
+          }
+          // ex: "./locales/en/move-anims"
+          return `./locales/${lng}/${fileName}.json?v=${pkg.version}`;
+        },
+      },
+      defaultNS: "menu",
+      detection: {
+        lookupLocalStorage: "prLang",
+      },
+      ns: nsEn,
+      debug: import.meta.env.VITE_I18N_DEBUG === "1",
+      interpolation: {
+        escapeValue: false,
+      },
+      postProcess: ["korean-postposition"],
     },
-    defaultNS: "menu",
-    ns: nsEn, // assigned with #app/plugins/vite/namespaces-i18n-plugin.ts
-    detection: {
-      lookupLocalStorage: "prLang",
+    async () => {
+      i18next.services.formatter?.add("money", i18nMoneyFormatter);
+      await initFonts(localStorage.getItem("prLang") ?? undefined);
     },
-    debug: Number(import.meta.env.VITE_I18N_DEBUG) === 1,
-    interpolation: {
-      escapeValue: false,
-    },
-    postProcess: ["korean-postposition"],
-  });
-
-  if (i18next.services.formatter) {
-    i18next.services.formatter.add("money", i18nMoneyFormatter);
-  }
-
-  await initFonts(localStorage.getItem("prLang") ?? undefined);
-}
-
-export function getIsInitialized(): boolean {
-  return isInitialized;
-}
-
-// biome-ignore lint/style/noDefaultExport: necessary for i18next usage
-export default i18next;
+  );
 
 //#endregion
