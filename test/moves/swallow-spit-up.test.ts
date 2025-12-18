@@ -44,33 +44,33 @@ describe("Moves - Swallow & Spit Up - ", () => {
       { stackCount: 1, healPercent: 25 },
       { stackCount: 2, healPercent: 50 },
       { stackCount: 3, healPercent: 100 },
-    ])(
-      "should heal the user by $healPercent% max HP when consuming $stackCount stockpile stacks",
-      async ({ stackCount, healPercent }) => {
-        await game.classicMode.startBattle([SpeciesId.SWALOT]);
+    ])("should heal the user by $healPercent% max HP when consuming $stackCount stockpile stacks", async ({
+      stackCount,
+      healPercent,
+    }) => {
+      await game.classicMode.startBattle([SpeciesId.SWALOT]);
 
-        const swalot = game.field.getPlayerPokemon();
-        swalot.hp = 1;
+      const swalot = game.field.getPlayerPokemon();
+      swalot.hp = 1;
 
-        for (let i = 0; i < stackCount; i++) {
-          swalot.addTag(BattlerTagType.STOCKPILING);
-        }
+      for (let i = 0; i < stackCount; i++) {
+        swalot.addTag(BattlerTagType.STOCKPILING);
+      }
 
-        const stockpilingTag = swalot.getTag(StockpilingTag)!;
-        expect(stockpilingTag).toBeDefined();
-        expect(stockpilingTag.stockpiledCount).toBe(stackCount);
+      const stockpilingTag = swalot.getTag(StockpilingTag)!;
+      expect(stockpilingTag).toBeDefined();
+      expect(stockpilingTag.stockpiledCount).toBe(stackCount);
 
-        game.move.use(MoveId.SWALLOW);
-        await game.toEndOfTurn();
+      game.move.use(MoveId.SWALLOW);
+      await game.toEndOfTurn();
 
-        if (healPercent === 100) {
-          expect(swalot).toHaveFullHp();
-        } else {
-          expect(swalot).toHaveHp((swalot.getMaxHp() * healPercent) / 100 + 1, { rounding: "half up" });
-        }
-        expect(swalot).not.toHaveBattlerTag(BattlerTagType.STOCKPILING);
-      },
-    );
+      if (healPercent === 100) {
+        expect(swalot).toHaveFullHp();
+      } else {
+        expect(swalot).toHaveHp((swalot.getMaxHp() * healPercent) / 100 + 1, { rounding: "half up" });
+      }
+      expect(swalot).not.toHaveBattlerTag(BattlerTagType.STOCKPILING);
+    });
 
     it("should fail without Stockpile stacks", async () => {
       await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
