@@ -1,6 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
 import { SpeciesId } from "#enums/species-id";
-import i18next from "#plugins/i18n";
 import { GameManager } from "#test/test-utils/game-manager";
 import i18next from "i18next";
 import Phaser from "phaser";
