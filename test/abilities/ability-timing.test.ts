@@ -4,8 +4,8 @@ import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { CommandPhase } from "#phases/command-phase";
 import { TurnInitPhase } from "#phases/turn-init-phase";
-import i18next from "#plugins/i18n";
 import { GameManager } from "#test/test-utils/game-manager";
+import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

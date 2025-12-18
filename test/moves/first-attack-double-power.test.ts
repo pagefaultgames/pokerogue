@@ -97,7 +97,7 @@ describe("Moves - Fishious Rend & Bolt Beak", () => {
   it.each<{ type: string; allyMove: MoveId }>([
     { type: "a Dancer-induced", allyMove: MoveId.FIERY_DANCE },
     { type: "an Instructed", allyMove: MoveId.INSTRUCT },
-  ])("should double power if $type move is used as the target's first action that turn", async ({ allyMove }) => {
+  ])("should not double power if $type move is used as the target's first action that turn", async ({ allyMove }) => {
     game.override.battleStyle("double").enemyAbility(AbilityId.DANCER);
     const powerSpy = vi.spyOn(allMoves[MoveId.FISHIOUS_REND], "calculateBattlePower");
     await game.classicMode.startBattle([SpeciesId.DRACOVISH, SpeciesId.ARCTOZOLT]);

@@ -3,44 +3,42 @@ name: Test Template
 on:
   workflow_call:
     inputs:
-      project:
-        required: true
-        type: string
       shard:
         required: true
         type: number
       totalShards:
         required: true
         type: number
-      skip:
-        required: true
-        type: boolean
-        default: false
 
 jobs:
   test:
-    # We can't use dynmically named jobs until https://github.com/orgs/community/discussions/13261 is implemented
+    # We can't use dynamically named jobs until https://github.com/orgs/community/discussions/13261 is implemented
     name: Shard
     timeout-minutes: 10
     runs-on: ubuntu-latest
-    if: ${{ !inputs.skip }}
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v6
         with:
           submodules: "recursive"
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: ".nvmrc"
-          cache: "pnpm"
-
-      - name: Install Node.js dependencies
-        run: pnpm i
-
+      - uses: ./.github/actions/setup-deps
+      
       - name: Run tests
-        run: pnpm test:silent --shard=${{ inputs.shard }}/${{ inputs.totalShards }}
+        run: >
+          pnpm test:silent
+          --shard=${{ inputs.shard }}/${{ inputs.totalShards }}
+          --reporter=blob
+          --outputFile=test-results/blob-${{ inputs.shard }}.json || true
+
+      # NB: This CANNOT be made into a job output due to not being extractable from the matrix:
+      # https://github.com/orgs/community/discussions/17245
+      - name: Upload test result blobs
+        uses: actions/upload-artifact@v4
+        with:
+          name: shard-${{ inputs.shard }}-blob
+          path: test-results/blob-${{ inputs.shard }}.json
+          retention-days: 1 # don't need to keep for very long since they get merged afterwards
+          overwrite: true
+          if-no-files-found: error
+        if: ${{ !cancelled() }}

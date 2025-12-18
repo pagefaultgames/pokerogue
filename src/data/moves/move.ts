@@ -2958,14 +2958,9 @@ export class StatusEffectAttr extends MoveEffectAttr {
       return false;
     }
 
-    // non-status moves don't play sound effects for failures
     const quiet = move.category !== MoveCategory.STATUS;
 
-    if (target.trySetStatus(this.effect, user, undefined, null, false, quiet)) {
-      applyAbAttrs("ConfusionOnStatusEffectAbAttr", { pokemon: user, opponent: target, move, effect: this.effect });
-      return true;
-    }
-    return false;
+    return target.trySetStatus(this.effect, user, undefined, null, false, quiet);
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {

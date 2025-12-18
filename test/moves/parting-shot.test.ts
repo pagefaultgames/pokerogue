@@ -42,7 +42,7 @@ describe("Moves - Parting Shot", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
     expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(0);
-    expect(game.scene.getPlayerField()[0].species.speciesId).toBe(SpeciesId.MURKROW);
+    expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.MURKROW);
   });
 
   test("Parting shot should fail against good as gold ability", async () => {
@@ -57,7 +57,7 @@ describe("Moves - Parting Shot", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
     expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(0);
-    expect(game.scene.getPlayerField()[0].species.speciesId).toBe(SpeciesId.MURKROW);
+    expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.MURKROW);
   });
 
   // TODO: fix this bug to pass the test!
@@ -103,7 +103,7 @@ describe("Moves - Parting Shot", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-6);
     expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(-6);
-    expect(game.scene.getPlayerField()[0].species.speciesId).toBe(SpeciesId.MURKROW);
+    expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.MURKROW);
   });
 
   // TODO: fix this bug to pass the test!
@@ -119,7 +119,7 @@ describe("Moves - Parting Shot", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
     expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(0);
-    expect(game.scene.getPlayerField()[0].species.speciesId).toBe(SpeciesId.MURKROW);
+    expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.MURKROW);
   });
 
   // TODO: fix this bug to pass the test!
@@ -135,7 +135,7 @@ describe("Moves - Parting Shot", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
     expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(0);
-    expect(game.scene.getPlayerField()[0].species.speciesId).toBe(SpeciesId.MURKROW);
+    expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.MURKROW);
   });
 
   // TODO: fix this bug to pass the test!
