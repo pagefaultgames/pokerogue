@@ -41,7 +41,7 @@ jobs:
       # Lint files with Biome-Lint - https://biomejs.dev/linter/
       - name: Lint with Biome
         id: biome
-        run: pnpm biome-ci
+        run: pnpm biome:ci
         if: ${{ steps.setup-deps.outcome == 'success' && !cancelled() }}
 
       # Validate dependencies with dependency-cruiser - https://github.com/sverweij/dependency-cruiser
