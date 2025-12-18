@@ -25,7 +25,7 @@ This document is intended to serve as a guide for how to (and not to) document c
 
 - [General Guidelines](#general-guidelines)
 - [TSDoc](#tsdoc)
-  - [Example](#Example)
+  - [Example](#example)
   - [TSDoc Comment guidelines](#tsdoc-comment-guidelines)
 - [Inheritance and Documentation](#inheritance-and-documentation)
 
