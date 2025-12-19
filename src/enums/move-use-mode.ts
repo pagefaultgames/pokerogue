@@ -59,6 +59,7 @@ export const MoveUseMode = {
    * **cannot be reflected by other reflecting effects**.
    */
   REFLECTED: 5,
+
   /**
    * This "move" was created by a transparent effect that **does not count as using a move**,
    * such as {@linkcode DelayedAttackAttr | Future Sight/Doom Desire}.
