@@ -21,7 +21,6 @@ import { TrainerVariant } from "#enums/trainer-variant";
 import type { EnemyPokemon } from "#field/pokemon";
 import type { SpeciesStatBoosterModifier } from "#modifiers/modifier";
 import { PokemonMove } from "#moves/pokemon-move";
-import { getIsInitialized, initI18n } from "#plugins/i18n";
 import type { EvilTeam } from "#trainers/evil-admin-trainer-pools";
 import { evilAdminTrainerPools } from "#trainers/evil-admin-trainer-pools";
 import {
@@ -211,14 +210,8 @@ export class TrainerConfig {
   setName(name: string): TrainerConfig {
     if (name === "Finn") {
       // Give the rival a localized name
-      // First check if i18n is initialized
-      if (!getIsInitialized()) {
-        initI18n();
-      }
       // This is only the male name, because the female name is handled in a different function (setHasGenders)
-      if (name === "Finn") {
-        name = i18next.t("trainerNames:rival");
-      }
+      name = i18next.t("trainerNames:rival");
     }
 
     this.name = name;
@@ -235,11 +228,6 @@ export class TrainerConfig {
   }
 
   setTitle(title: string): TrainerConfig {
-    // First check if i18n is initialized
-    if (!getIsInitialized()) {
-      initI18n();
-    }
-
     title = toCamelCase(title);
 
     // Get the title from the i18n file
@@ -328,11 +316,6 @@ export class TrainerConfig {
   setHasGenders(nameFemale?: string, femaleEncounterBgm?: TrainerType | string): TrainerConfig {
     // If the female name is 'Ivy' (the rival), assign a localized name.
     if (nameFemale === "Ivy") {
-      // Check if the internationalization (i18n) system is initialized.
-      if (!getIsInitialized()) {
-        // Initialize the i18n system if it is not already initialized.
-        initI18n();
-      }
       // Set the localized name for the female rival.
       this.nameFemale = i18next.t("trainerNames:rivalFemale");
     } else {
@@ -406,11 +389,6 @@ export class TrainerConfig {
    * @returns The updated TrainerConfig instance.
    */
   setDoubleTitle(titleDouble: string): TrainerConfig {
-    // First check if i18n is initialized
-    if (!getIsInitialized()) {
-      initI18n();
-    }
-
     titleDouble = toCamelCase(titleDouble);
 
     // Get the title from the i18n file
@@ -595,10 +573,6 @@ export class TrainerConfig {
    * @returns The updated TrainerConfig instance.
    */
   initForEvilTeamAdmin(title: string, poolName: EvilTeam, specialtyType?: PokemonType): TrainerConfig {
-    if (!getIsInitialized()) {
-      initI18n();
-    }
-
     if (specialtyType != null) {
       this.setSpecialtyType(specialtyType);
     }
@@ -627,10 +601,6 @@ export class TrainerConfig {
    * @returns The updated TrainerConfig instance.
    */
   initForStatTrainer(_isMale = false): TrainerConfig {
-    if (!getIsInitialized()) {
-      initI18n();
-    }
-
     this.setPartyTemplates(trainerPartyTemplates.ELITE_FOUR);
 
     const nameForCall = toCamelCase(this.name);
@@ -659,9 +629,6 @@ export class TrainerConfig {
     rematch = false,
     specialtyType?: PokemonType,
   ): TrainerConfig {
-    if (!getIsInitialized()) {
-      initI18n();
-    }
     if (rematch) {
       this.setPartyTemplates(trainerPartyTemplates.ELITE_FOUR);
     } else {
@@ -703,11 +670,6 @@ export class TrainerConfig {
     ignoreMinTeraWave = false,
     teraSlot?: number,
   ): TrainerConfig {
-    // Check if the internationalization (i18n) system is initialized.
-    if (!getIsInitialized()) {
-      initI18n();
-    }
-
     // Set the function to generate the Gym Leader's party template.
     this.setPartyTemplateFunc(getGymLeaderPartyTemplate);
 
@@ -760,11 +722,6 @@ export class TrainerConfig {
     specialtyType?: PokemonType,
     teraSlot?: number,
   ): TrainerConfig {
-    // Check if the internationalization (i18n) system is initialized.
-    if (!getIsInitialized()) {
-      initI18n();
-    }
-
     // Set the party templates for the Elite Four.
     this.setPartyTemplates(trainerPartyTemplates.ELITE_FOUR);
 
@@ -811,11 +768,6 @@ export class TrainerConfig {
    * @returns The updated TrainerConfig instance.
    */
   initForChampion(isMale: boolean): TrainerConfig {
-    // Check if the internationalization (i18n) system is initialized.
-    if (!getIsInitialized()) {
-      initI18n();
-    }
-
     // Set the party templates for the Champion.
     this.setPartyTemplates(trainerPartyTemplates.CHAMPION);
 
@@ -846,10 +798,6 @@ export class TrainerConfig {
    * @returns The updated TrainerConfig instance.
    */
   setLocalizedName(name: string): TrainerConfig {
-    // Check if the internationalization (i18n) system is initialized.
-    if (!getIsInitialized()) {
-      initI18n();
-    }
     this.name = i18next.t(`trainerNames:${toCamelCase(name)}`);
     return this;
   }
@@ -863,33 +811,20 @@ export class TrainerConfig {
   getTitle(trainerSlot: TrainerSlot = TrainerSlot.NONE, variant: TrainerVariant): string {
     const ret = this.name;
 
-    // Check if the variant is double and the name for double exists
     if (!trainerSlot && variant === TrainerVariant.DOUBLE && this.nameDouble) {
       return this.nameDouble;
     }
 
-    // Female variant
     if (this.hasGenders) {
-      // If the name is already set
       if (this.nameFemale) {
-        // Check if the variant is either female or this is for the partner in a double battle
         if (
           variant === TrainerVariant.FEMALE
           || (variant === TrainerVariant.DOUBLE && trainerSlot === TrainerSlot.TRAINER_PARTNER)
         ) {
           return this.nameFemale;
         }
-      }
-      // Check if !variant is true, if so return the name, else return the name with _female appended
-      else if (variant) {
-        if (!getIsInitialized()) {
-          initI18n();
-        }
-        // Check if the female version exists in the i18n file
-        if (i18next.exists(`trainerClasses:${toCamelCase(this.name)}Female`)) {
-          // If it does, return
-          return ret + "Female";
-        }
+      } else if (variant && i18next.exists(`trainerClasses:${toCamelCase(this.name)}Female`)) {
+        return ret + "Female";
       }
     }
 
