@@ -1126,18 +1126,13 @@ export abstract class Move implements Localizable {
     return priority.value;
   }
 
-  public getPriorityModifier(user: Pokemon, simulated = true) {
+  public getPriorityModifier(user: Pokemon, simulated = true): MovePriorityInBracket {
     if (user.getTag(BattlerTagType.BYPASS_SPEED)) {
       return MovePriorityInBracket.FIRST;
     }
     const modifierHolder = new NumberHolder(MovePriorityInBracket.NORMAL);
-    applyAbAttrs("ChangeMovePriorityInBracketAbAttr", {
-      pokemon: user,
-      simulated,
-      move: this,
-      priority: modifierHolder,
-    });
-    return modifierHolder.value;
+    applyAbAttrs("ChangeMovePriorityInBracketAbAttr", { pokemon: user, simulated, move: this, priority: modifierHolder });
+    return modifierHolder.value as MovePriorityInBracket;
   }
 
   /**
@@ -1195,15 +1190,15 @@ export abstract class Move implements Localizable {
       return false;
     }
 
+    // ...cannot enhance moves hitting multiple targets unless specified
     const { targets, multiple } = getMoveTargets(user, this.id);
     if (restrictSpread && multiple && targets.length > 1) {
       return false;
     }
 
     if (
-      this.category === MoveCategory.STATUS
-      || (target != null && user.getMoveCategory(target, this) === MoveCategory.STATUS)
-    ) {
+        this.category === MoveCategory.STATUS
+        || (target != null && user.getMoveCategory(target, this) === MoveCategory.STATUS)) {
       return false;
     }
 

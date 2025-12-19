@@ -70,7 +70,7 @@ describe("Moves - Entry Hazards", () => {
       game.move.use(move);
       await game.toNextTurn();
 
-      // Tag should've been added to the opposing side of the field
+      // Tag should've been added to the _opposing_ side of the field
       expect(game).not.toHaveArenaTag(tagType, ArenaTagSide.PLAYER);
       expect(game).toHaveArenaTag(tagType, ArenaTagSide.ENEMY);
     });
@@ -87,18 +87,18 @@ describe("Moves - Entry Hazards", () => {
       await game.doKillOpponents();
       await game.toEndOfTurn();
 
-      expect(enemy1.isFainted()).toBe(true);
-      expect(enemy2.isFainted()).toBe(true);
+      expect(enemy1).toHaveFainted();
+      expect(enemy2).toHaveFainted();
       expect(game).toHaveArenaTag(tagType, ArenaTagSide.ENEMY);
     });
 
     const maxLayers = tagType === ArenaTagType.SPIKES ? 3 : tagType === ArenaTagType.TOXIC_SPIKES ? 2 : 1;
-    const msgText =
+    const caseText =
       maxLayers === 1
         ? "should fail if added while already present"
         : `can be added up to ${maxLayers} times in a row before failing`;
 
-    it(msgText, async () => {
+    it(caseText, async () => {
       await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
       const feebas = game.field.getPlayerPokemon();
@@ -123,7 +123,7 @@ describe("Moves - Entry Hazards", () => {
   describe("Spikes", () => {
     it.each<{ layers: number; damage: number }>([
       { layers: 1, damage: 12.5 },
-      { layers: 2, damage: 100 / 6 },
+      { layers: 2, damage: 100 / 6 }, // 18.33...
       { layers: 3, damage: 25 },
     ])("should play message and deal $damage% of the target's max HP at $layers", async ({ layers, damage }) => {
       for (let i = 0; i < layers; i++) {
@@ -134,7 +134,7 @@ describe("Moves - Entry Hazards", () => {
 
       const enemy = game.field.getEnemyPokemon();
       expect(enemy).toHaveTakenDamage((enemy.getMaxHp() * damage) / 100);
-      expect(game.textInterceptor.logs).toContain(
+      expect(game).toHaveShownMessage(
         i18next.t("arenaTag:spikesActivateTrap", {
           pokemonNameWithAffix: getPokemonNameWithAffix(enemy),
         }),
@@ -165,9 +165,9 @@ describe("Moves - Entry Hazards", () => {
     game.doSwitchPokemon(1);
     await game.toNextTurn();
 
-    const ekans = game.field.getPlayerPokemon();
     expect(game).not.toHaveArenaTag(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.PLAYER);
-    expect(game.textInterceptor.logs).toContain(i18next.t("arenaTag:toxicSpikesOnRemovePlayer"));
+    expect(game).toHaveShownMessage(i18next.t("arenaTag:toxicSpikesOnRemovePlayer"));
+    const ekans = game.field.getPlayerPokemon();
     expect(ekans).not.toHaveStatusEffect(StatusEffect.POISON);
   });
 
@@ -186,7 +186,7 @@ describe("Moves - Entry Hazards", () => {
       const enemy = game.field.getEnemyPokemon();
       expect(enemy.getAttackTypeEffectiveness(PokemonType.ROCK, undefined, true)).toBe(multi);
       expect(enemy).toHaveTakenDamage(enemy.getMaxHp() * 0.125 * multi);
-      expect(game.textInterceptor.logs).toContain(
+      expect(game).toHaveShownMessage(
         i18next.t("arenaTag:stealthRockActivateTrap", {
           pokemonNameWithAffix: getPokemonNameWithAffix(enemy),
         }),
