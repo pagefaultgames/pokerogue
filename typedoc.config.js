@@ -57,7 +57,7 @@ const config = {
   coverageSvgWidth: 120, // Increased from 104 baseline due to adding 2 extra letters
   favicon: "./favicon.ico",
   theme: "typedoc-github-theme",
-  customFooterHtml: "<p>Copyright <strong>Pagefault Games</strong> 2025</p>",
+  customFooterHtml: `<p>Copyright <strong>Pagefault Games</strong> ${new Date().getFullYear() === 2025 ? "2025" : "2025 - " + new Date().getFullYear()}</p>`,
   customFooterHtmlDisableWrapper: true,
   navigationLinks: {
     GitHub: "https://github.com/pagefaultgames/pokerogue",
