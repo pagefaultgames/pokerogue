@@ -39,6 +39,7 @@ describe("Terrain -", () => {
       .startingLevel(100)
       .enemyLevel(100)
       .enemySpecies(SpeciesId.SHUCKLE)
+      .enemyMoveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.STURDY)
       .passiveAbility(AbilityId.NO_GUARD);
   });
@@ -148,6 +149,8 @@ describe("Terrain -", () => {
       expect(shuckle.getHpRatio()).toBeCloseTo(0.5, 1);
     });
 
+    // TODO: Move to Earthquake & co.'s test files if/when they get one
+    // (maybe merge with Rising Voltage)
     it.each<{ name: string; move: MoveId; basePower?: number }>([
       { name: "Bulldoze", move: MoveId.BULLDOZE },
       { name: "Earthquake", move: MoveId.EARTHQUAKE },
@@ -171,11 +174,11 @@ describe("Terrain -", () => {
       expect(powerSpy).toHaveLastReturnedWith(basePower / 2);
       powerSpy.mockClear();
 
-      // Turn 2: Make enemy semi-invulnerable; 1x (hits due to passive no guard)
+      // Turn 2: Make shuckle semi-invulnerable & hit through No Guard; 1x
       game.move.use(move);
-      await game.move.forceEnemyMove(MoveId.FLY);
+      await game.move.forceEnemyMove(MoveId.DIG);
       await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-      await game.toNextTurn();
+      await game.toEndOfTurn();
 
       expect(powerSpy).toHaveLastReturnedWith(basePower);
     });
@@ -213,6 +216,7 @@ describe("Terrain -", () => {
       vi.spyOn(allMoves[MoveId.RELIC_SONG], "chance", "get").mockReturnValue(100);
       await game.classicMode.startBattle([SpeciesId.BLISSEY]);
 
+      const blissey = game.field.getPlayerPokemon();
       const shuckle = game.field.getEnemyPokemon();
       const statusSpy = vi.spyOn(shuckle, "canSetStatus");
 
@@ -220,7 +224,6 @@ describe("Terrain -", () => {
       await game.move.forceEnemyMove(MoveId.SPLASH);
       await game.toEndOfTurn();
 
-      const blissey = game.field.getPlayerPokemon();
       expect(shuckle).toHaveStatusEffect(StatusEffect.NONE);
       expect(statusSpy).toHaveLastReturnedWith(false);
       expect(blissey).toHaveUsedMove({ move: MoveId.RELIC_SONG, result: MoveResult.SUCCESS });
@@ -248,7 +251,6 @@ describe("Terrain -", () => {
 
       const blissey = game.field.getPlayerPokemon();
       const shuckle = game.field.getEnemyPokemon();
-
       // blissey is grounded & protected, shuckle isn't
       expect(blissey).toHaveStatusEffect(StatusEffect.NONE);
       expect(shuckle).toHaveStatusEffect(StatusEffect.TOXIC);
@@ -273,7 +275,6 @@ describe("Terrain -", () => {
 
       const blissey = game.field.getPlayerPokemon();
       const shuckle = game.field.getEnemyPokemon();
-
       // blissey is grounded & protected, shuckle isn't
       expect(blissey).not.toHaveBattlerTag(BattlerTagType.CONFUSED);
       expect(shuckle).toHaveBattlerTag(BattlerTagType.CONFUSED);
@@ -303,7 +304,6 @@ describe("Terrain -", () => {
 
       const blissey = game.field.getPlayerPokemon();
       const shuckle = game.field.getEnemyPokemon();
-
       // Blissey was grounded and protected from effect, but still took damage
       expect(blissey).not.toHaveFullHp();
       expect(blissey).not.toHaveBattlerTag(BattlerTagType.CONFUSED);
