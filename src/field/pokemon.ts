@@ -5007,7 +5007,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * resets it, and updates the info display.
    * @param effect - The effect to cure. If this does not match the current status, nothing happens.
    * @param msg - If provided, will override the default message displayed when removing status.
-   *   Used for moves that thaw the user out
+   * Used for moves that thaw the user out
    */
   // TODO: Distinguish this more from `resetStatus`
   public cureStatus(effect: StatusEffect, msg = getStatusEffectHealText(effect, getPokemonNameWithAffix(this))): void {

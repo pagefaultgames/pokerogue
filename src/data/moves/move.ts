@@ -874,7 +874,7 @@ export abstract class Move implements Localizable {
    * Apply this move's conditions prior to move effect application.
    * @param user - The {@linkcode Pokemon} using this move
    * @param target - The {@linkcode Pokemon} targeted by this move
-   * @param sequence - The sequence number where the condition check occurs, or `-1` to check all; default `4`
+   * @param sequence - (Default `4`) The sequence number where the condition check occurs, or `-1` to check all
    * @returns Whether all conditions passed
    * @remarks
    * Only applies conditions intrinsic to the particular move being used.
