@@ -84,7 +84,7 @@ const timedEvents: readonly TimedEvent[] = [
   {
     name: "Winter 25",
     eventType: EventType.SHINY,
-    startDate: new Date(Date.UTC(2025, 11, 18)),
+    startDate: new Date(Date.UTC(2025, 11, 19)),
     endDate: new Date(Date.UTC(2026, 0, 5)),
     bannerKey: "winter2025",
     scale: 0.19,
@@ -103,7 +103,6 @@ const timedEvents: readonly TimedEvent[] = [
       { species: SpeciesId.PIPLUP },
       { species: SpeciesId.CHINGLING },
       { species: SpeciesId.LITWICK },
-      { species: SpeciesId.PAWNIARD },
       { species: SpeciesId.CHESPIN },
       { species: SpeciesId.AMAURA },
       { species: SpeciesId.COMFEY },
