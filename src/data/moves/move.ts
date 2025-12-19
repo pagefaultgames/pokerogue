@@ -1863,7 +1863,9 @@ export class TargetHalfHpDamageAttr extends FixedDamageAttr {
     super(0);
   }
 
-  apply(user: Pokemon, target: Pokemon, _move: Move, args: any[]): boolean {
+  apply(user: Pokemon, target: Pokemon, _move: Move, args: [NumberHolder, ...any[]]): boolean {
+    const [dmg] = args;
+
     // first, determine if the hit is coming from multi lens or not
     const lensCount =
       user
@@ -1872,23 +1874,23 @@ export class TargetHalfHpDamageAttr extends FixedDamageAttr {
         ?.getStackCount() ?? 0;
     if (lensCount <= 0) {
       // no multi lenses; we can just halve the target's hp and call it a day
-      (args[0] as NumberHolder).value = toDmgValue(target.hp / 2);
+      dmg.value = toDmgValue(target.hp / 2);
       return true;
     }
 
     // figure out what hit # we're on
     switch (user.turnData.hitCount - user.turnData.hitsLeft) {
       case lensCount + 1:
-        // parental bond added hit; calc damage as normal
-        (args[0] as NumberHolder).value = toDmgValue(target.hp / 2);
+        // parental bond added hit; halve target's hp as normal
+        dmg.value = toDmgValue(target.hp / 2);
         return true;
-      // biome-ignore lint/suspicious/noFallthroughSwitchClause: intentional?
+      // biome-ignore lint/suspicious/noFallthroughSwitchClause: intentional
       case 0:
-        // first hit of move; update initialHp tracker
+        // first hit of move; update initialHp tracker for first hit
         this.initialHp = target.hp;
       default:
         // multi lens added hit; use initialHp tracker to ensure correct damage
-        (args[0] as NumberHolder).value = toDmgValue(this.initialHp / 2);
+        dmg.value = toDmgValue(this.initialHp / 2);
         return true;
     }
   }
@@ -2958,14 +2960,9 @@ export class StatusEffectAttr extends MoveEffectAttr {
       return false;
     }
 
-    // non-status moves don't play sound effects for failures
     const quiet = move.category !== MoveCategory.STATUS;
 
-    if (target.trySetStatus(this.effect, user, undefined, null, false, quiet)) {
-      applyAbAttrs("ConfusionOnStatusEffectAbAttr", { pokemon: user, opponent: target, move, effect: this.effect });
-      return true;
-    }
-    return false;
+    return target.trySetStatus(this.effect, user, undefined, null, false, quiet);
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
@@ -7910,7 +7907,6 @@ export class RepeatMoveAttr extends MoveEffectAttr {
         targetPokemonName: getPokemonNameWithAffix(target),
       }),
     );
-    target.turnData.extraTurns++;
     globalScene.phaseManager.unshiftNew(
       "MovePhase",
       target,

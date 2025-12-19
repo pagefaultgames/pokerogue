@@ -20,6 +20,7 @@ module.exports = {
       comment: "Files in 'enums/' and '@types/' must only use type imports.",
       from: {
         path: ["(^|/)src/@types", "(^|/)src/enums"],
+        pathNot: ["(^|/)src/@types/phaser[.]d[.]ts"],
       },
       to: {
         dependencyTypesNot: ["type-only"],
