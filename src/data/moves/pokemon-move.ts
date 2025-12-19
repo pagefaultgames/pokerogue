@@ -94,7 +94,7 @@ export class PokemonMove {
 
   /**
    * Consume up to `count` PP from this move (up to its maximum PP).
-   * @param count - The amount of PP to use; default `1`
+   * @param count - (Default `1`) The amount of PP to use
    */
   public usePp(count = 1): void {
     this.ppUsed = Math.min(this.ppUsed + count, this.getMovePp());
