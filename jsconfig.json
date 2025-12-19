@@ -6,7 +6,7 @@
  */
 {
   "include": ["**/*.js"],
-  "exclude": ["assets/**"],
+  "exclude": ["assets/**", "typedoc/**"],
   "compilerOptions": {
     "target": "esnext",
     "module": "nodenext",
