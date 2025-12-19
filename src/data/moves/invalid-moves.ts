@@ -1,4 +1,5 @@
 import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 
 /** Set of moves that cannot be called by {@linkcode MoveId.METRONOME | Metronome}. */
 export const invalidMetronomeMoves: ReadonlySet<MoveId> = new Set([
@@ -274,4 +275,23 @@ export const invalidEncoreMoves: ReadonlySet<MoveId> = new Set([
   MoveId.SKETCH,
   MoveId.SLEEP_TALK,
   MoveId.ENCORE,
+]);
+
+/**
+ * Set of all {@linkcode SpeciesId}s that {@linkcode MoveId.TELEKINESIS} cannot directly affect.
+ * They can still receive the effect from Baton Passing, however.
+ *
+ * @remarks
+ * Not included here is Gengar, which is only forbidden in its Mega form and which
+ * _cannot_ receive either of Telekinesis' effects via Baton Pass.
+ */
+export const invalidTelekinesisSpecies: ReadonlySet<SpeciesId> = new Set([
+  SpeciesId.DIGLETT,
+  SpeciesId.DUGTRIO,
+  SpeciesId.ALOLA_DIGLETT,
+  SpeciesId.ALOLA_DUGTRIO,
+  SpeciesId.SANDYGAST,
+  SpeciesId.PALOSSAND,
+  SpeciesId.WIGLETT,
+  SpeciesId.WUGTRIO,
 ]);

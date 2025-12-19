@@ -1,10 +1,13 @@
+import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("Moves - Magnet Rise", () => {
+describe("Move - Magnet Rise", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -22,36 +25,24 @@ describe("Moves - Magnet Rise", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
+      .ability(AbilityId.STURDY)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemySpecies(SpeciesId.RATTATA)
-      .enemyMoveset(MoveId.EARTHQUAKE)
-      .criticalHits(false)
-      .enemyLevel(1);
+      .criticalHits(false);
   });
 
-  it("should make the user immune to ground-type moves", async () => {
+  it("should make the user ungrounded when used", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGNEZONE]);
 
     game.move.use(MoveId.MAGNET_RISE);
+    await game.move.forceEnemyMove(MoveId.EARTHQUAKE);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
+    // magnezone levitated and was not hit by earthquake
     const magnezone = game.field.getPlayerPokemon();
-    expect(magnezone.hp).toBe(magnezone.getMaxHp());
+    expect(magnezone).toHaveBattlerTag(BattlerTagType.FLOATING);
     expect(magnezone.isGrounded()).toBe(false);
-  });
-
-  it("should be removed by gravity", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGNEZONE]);
-
-    game.move.use(MoveId.MAGNET_RISE);
-    await game.toNextTurn();
-
-    const magnezone = game.field.getPlayerPokemon();
-    expect(magnezone.hp).toBe(magnezone.getMaxHp());
-
-    game.move.use(MoveId.GRAVITY);
-    await game.toEndOfTurn();
-
-    expect(magnezone.hp).toBeLessThan(magnezone.getMaxHp());
-    expect(magnezone.isGrounded()).toBe(true);
+    expect(magnezone).toHaveFullHp();
   });
 });

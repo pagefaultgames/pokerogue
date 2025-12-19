@@ -4,7 +4,6 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { EntryHazardTag, SuppressAbilitiesTag } from "#data/arena-tag";
 import type { BattlerTag } from "#data/battler-tags";
-import { GroundedTag } from "#data/battler-tags";
 import { getBerryEffectFunc } from "#data/berry";
 import { allAbilities, allMoves } from "#data/data-lists";
 import type { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-change-triggers";
@@ -536,6 +535,9 @@ abstract class CancelInteractionAbAttr extends AbAttr {
   }
 }
 
+/** @sealed */
+export class UngroundedAbAttr extends CancelInteractionAbAttr {}
+
 export class BlockRecoilDamageAttr extends CancelInteractionAbAttr {
   private declare readonly _: never;
   constructor() {
@@ -821,22 +823,6 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
 
   override getCondition(): AbAttrCondition | null {
     return this.condition;
-  }
-}
-
-export class AttackTypeImmunityAbAttr extends TypeImmunityAbAttr {
-  // biome-ignore lint/complexity/noUselessConstructor: Changes the type of `immuneType`
-  constructor(immuneType: PokemonType, condition?: AbAttrCondition) {
-    super(immuneType, condition);
-  }
-
-  override canApply(params: TypeMultiplierAbAttrParams): boolean {
-    const { move } = params;
-    return (
-      move.category !== MoveCategory.STATUS
-      && !move.hasAttr("NeutralDamageAgainstFlyingTypeMultiplierAttr")
-      && super.canApply(params)
-    );
   }
 }
 
@@ -6562,6 +6548,7 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
  * Map of all ability attribute constructors, for use with the `.is` method.
  */
 const AbilityAttrs = Object.freeze({
+  UngroundedAbAttr,
   BlockRecoilDamageAttr,
   DoubleBattleChanceAbAttr,
   PostBattleInitAbAttr,
@@ -6577,7 +6564,6 @@ const AbilityAttrs = Object.freeze({
   AlliedFieldDamageReductionAbAttr,
   ReceivedTypeDamageMultiplierAbAttr,
   TypeImmunityAbAttr,
-  AttackTypeImmunityAbAttr,
   TypeImmunityHealAbAttr,
   NonSuperEffectiveImmunityAbAttr,
   FullHpResistTypeAbAttr,
@@ -6922,7 +6908,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.LEVITATE, 3)
-      .attr(AttackTypeImmunityAbAttr, PokemonType.GROUND, (pokemon: Pokemon) => !pokemon.getTag(GroundedTag) && !globalScene.arena.getTag(ArenaTagType.GRAVITY))
+      .attr(UngroundedAbAttr)
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.EFFECT_SPORE, 3)
