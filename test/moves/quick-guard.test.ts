@@ -74,7 +74,7 @@ describe("Moves - Quick Guard", () => {
     game.override.battleStyle("single");
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const charizard = game.scene.getPlayerPokemon()!;
+    const charizard = game.field.getPlayerPokemon();
     // force protect to fail on anything >0 uses
     vi.spyOn(charizard, "randBattleSeedInt").mockReturnValue(1);
 

@@ -5,7 +5,7 @@ import type {
   PokerogueAdminApiParams,
   SearchAccountRequest,
   SearchAccountResponse,
-} from "#types/api/pokerogue-admin-api";
+} from "#types/api";
 
 export class PokerogueAdminApi extends ApiBase {
   public readonly ERR_USERNAME_NOT_FOUND: string = "Username not found!";
