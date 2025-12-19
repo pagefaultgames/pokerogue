@@ -347,7 +347,7 @@ export class MysteryEncounter implements IMysteryEncounter {
       if (activeMon.length > 0) {
         this.primaryPokemon = activeMon[0];
       } else {
-        this.primaryPokemon = globalScene.getPlayerParty().filter(p => p.isAllowedInBattle())[0];
+        this.primaryPokemon = globalScene.getPlayerParty().find(p => p.isAllowedInBattle());
       }
       return true;
     }

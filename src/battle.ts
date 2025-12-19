@@ -18,7 +18,6 @@ import { Trainer } from "#field/trainer";
 import { MoneyMultiplierModifier, type PokemonHeldItemModifier } from "#modifiers/modifier";
 import type { CustomModifierSettings } from "#modifiers/modifier-type";
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
-import i18next from "#plugins/i18n";
 import { MusicPreference } from "#system/settings";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { TurnMove } from "#types/turn-move";
@@ -33,6 +32,7 @@ import {
 } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { randSeedUniqueItem } from "#utils/random";
+import i18next from "i18next";
 
 export interface TurnCommand {
   command: Command;

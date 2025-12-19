@@ -6087,7 +6087,7 @@ export class PlayerPokemon extends Pokemon {
         });
       };
       if (preEvolution.speciesId === SpeciesId.GIMMIGHOUL) {
-        const evotracker = this.getHeldItems().filter(m => m instanceof EvoTrackerModifier)[0] ?? null;
+        const evotracker = this.getHeldItems().find(m => m instanceof EvoTrackerModifier) ?? null;
         if (evotracker) {
           globalScene.removeModifier(evotracker);
         }
