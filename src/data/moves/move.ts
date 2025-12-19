@@ -1195,7 +1195,6 @@ export abstract class Move implements Localizable {
       return false;
     }
 
-    // ...cannot enhance moves hitting multiple targets unless specified
     const { targets, multiple } = getMoveTargets(user, this.id);
     if (restrictSpread && multiple && targets.length > 1) {
       return false;
