@@ -5394,10 +5394,7 @@ export function initBiomes() {
     ],
     [TrainerType.HOOPSTER, []],
     [TrainerType.INFIELDER, []],
-    [TrainerType.INTERVIEWERS, [
-      [BiomeId.METROPOLIS, BiomePoolTier.UNCOMMON]
-    ]
-    ],
+    [TrainerType.INTERVIEWERS, []],
     [TrainerType.JANITOR, []],
     [TrainerType.LINEBACKER, []],
     [TrainerType.MAID, []],

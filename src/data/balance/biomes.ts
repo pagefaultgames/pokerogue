@@ -1602,7 +1602,7 @@ export const biomeTrainerPools: BiomeTrainerPools = {
   },
   [BiomeId.METROPOLIS]: {
     [BiomePoolTier.COMMON]: [ TrainerType.BEAUTY, TrainerType.CLERK, TrainerType.CYCLIST, TrainerType.OFFICER, TrainerType.WAITER ],
-    [BiomePoolTier.UNCOMMON]: [ TrainerType.BREEDER, TrainerType.DEPOT_AGENT, TrainerType.GUITARIST, TrainerType.INTERVIEWERS ],
+    [BiomePoolTier.UNCOMMON]: [ TrainerType.BREEDER, TrainerType.DEPOT_AGENT, TrainerType.GUITARIST ],
     [BiomePoolTier.RARE]: [ TrainerType.ARTIST, TrainerType.RICH_KID ],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
