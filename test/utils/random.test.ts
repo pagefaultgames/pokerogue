@@ -30,7 +30,7 @@ describe("Utils - Random", () => {
       game = new GameManager(phaserGame);
     });
 
-    it("should prevent when provided with different offsets", async () => {
+    it("should prevent duplicates when provided with different offsets", async () => {
       const choices = ["a", "b", "c", "d"];
       const choice1 = randSeedUniqueItem(choices, 0);
       const choice2 = randSeedUniqueItem(choices, 1);
