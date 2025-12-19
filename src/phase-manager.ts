@@ -113,6 +113,7 @@ import { UnlockPhase } from "#phases/unlock-phase";
 import { VictoryPhase } from "#phases/victory-phase";
 import { WeatherEffectPhase } from "#phases/weather-effect-phase";
 import type { PhaseConditionFunc, PhaseMap, PhaseString } from "#types/phase-types";
+import type { NonEmptyTuple } from "type-fest";
 
 /**
  * Object that holds all of the phase constructors.
@@ -275,21 +276,34 @@ export class PhaseManager {
   }
 
   /**
-   * Adds a phase to the end of the queue
-   * @param phase - The {@linkcode Phase} to add
+   * Add one or more Phases to the end of the queue.
+   * They will run once all phases already in the queue have ended.
+   * @param phases - One or more {@linkcode Phase}s to add
    */
-  public pushPhase(phase: Phase): void {
-    this.phaseQueue.pushPhase(this.checkDynamic(phase));
+  public pushPhase(...phases: NonEmptyTuple<Phase>): void {
+    for (const phase of phases) {
+      this.phaseQueue.pushPhase(this.checkDynamic(phase));
+    }
   }
 
   /**
-   * Queue a phase to be run immediately after the current phase finishes. \
+   * Queue one or more phases to be run immediately after the current phase finishes. \
    * Unshifted phases are run in FIFO order if multiple are queued during a single phase's execution.
-   * @param phase - The {@linkcode Phase} to add
+   * @param phases - One or more {@linkcode Phase}s to add
+   * @privateRemarks
+   * Any newly-unshifted `MovePhase`s will be queued after the next `MoveEndPhase`.
    */
-  public unshiftPhase(phase: Phase): void {
-    const toAdd = this.checkDynamic(phase);
-    phase.is("MovePhase") ? this.phaseQueue.addAfter(toAdd, "MoveEndPhase") : this.phaseQueue.addPhase(toAdd);
+  // NB: I'd like to restrict this to only allow passing 1 `MovePhase` at a time, but this causes TS to
+  // flip the hell out with `Parameters`...
+  public unshiftPhase(...phases: NonEmptyTuple<Phase>): void {
+    for (const phase of phases) {
+      const toAdd = this.checkDynamic(phase);
+      if (phase.is("MovePhase")) {
+        this.phaseQueue.addAfter(toAdd, "MoveEndPhase");
+      } else {
+        this.phaseQueue.addPhase(toAdd);
+      }
+    }
   }
 
   /**
