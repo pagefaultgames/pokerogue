@@ -1877,6 +1877,10 @@ export class TargetHalfHpDamageAttr extends FixedDamageAttr {
 
     // figure out what hit # we're on
     switch (user.turnData.hitCount - user.turnData.hitsLeft) {
+      case lensCount + 1:
+        // parental bond added hit; halve target's hp as normal
+        dmg.value = toDmgValue(target.hp / 2);
+        return true;
       // biome-ignore lint/suspicious/noFallthroughSwitchClause: intentional
       case 0:
         // first hit of move; update initialHp tracker for first hit
@@ -1884,10 +1888,6 @@ export class TargetHalfHpDamageAttr extends FixedDamageAttr {
       default:
         // multi lens added hit; use initialHp tracker to ensure correct damage
         dmg.value = toDmgValue(this.initialHp / 2);
-        return true;
-      case lensCount + 1:
-        // parental bond added hit; halve target's hp as normal
-        dmg.value = toDmgValue(target.hp / 2);
         return true;
     }
   }
