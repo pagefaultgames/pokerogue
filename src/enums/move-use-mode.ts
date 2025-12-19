@@ -80,7 +80,8 @@ export type MoveUseMode = ObjectValues<typeof MoveUseMode>;
 /**
  * Check if a given {@linkcode MoveUseMode} is virtual (i.e. called by another move or effect).
  * Virtual moves are ignored by most moveset-related effects due to not being executed directly.
- * @returns Whether {@linkcode useMode} is virtual.
+ * @param useMode - The {@linkcode MoveUseMode} to check
+ * @returns Whether `useMode` is virtual.
  * @remarks
  * This function is equivalent to the following truth table:
  *
@@ -100,8 +101,8 @@ export function isVirtual(useMode: MoveUseMode): boolean {
 /**
  * Check if a given {@linkcode MoveUseMode} should ignore pre-move cancellation checks
  * from {@linkcode StatusEffect.PARALYSIS} and {@linkcode BattlerTagLapseType.MOVE}-type effects.
- * @param useMode - The {@linkcode MoveUseMode} to check.
- * @returns Whether {@linkcode useMode} should ignore status and otehr cancellation checks.
+ * @param useMode - The {@linkcode MoveUseMode} to check
+ * @returns Whether `useMode` should ignore status and other cancellation checks.
  * @remarks
  * This function is equivalent to the following truth table:
  *
@@ -121,8 +122,8 @@ export function isIgnoreStatus(useMode: MoveUseMode): boolean {
 /**
  * Check if a given {@linkcode MoveUseMode} should ignore PP.
  * PP-ignoring moves will ignore normal PP consumption as well as associated failure checks.
- * @param useMode - The {@linkcode MoveUseMode} to check.
- * @returns Whether {@linkcode useMode} ignores PP.
+ * @param useMode - The {@linkcode MoveUseMode} to check
+ * @returns Whether `useMode` ignores PP consumption.
  * @remarks
  * This function is equivalent to the following truth table:
  *
@@ -143,8 +144,8 @@ export function isIgnorePP(useMode: MoveUseMode): boolean {
  * Check if a given {@linkcode MoveUseMode} is reflected.
  * Reflected moves cannot be reflected, copied, or cancelled by status effects,
  * nor will they trigger {@linkcode PostDancingMoveAbAttr | Dancer}.
- * @param useMode - The {@linkcode MoveUseMode} to check.
- * @returns Whether {@linkcode useMode} is reflected.
+ * @param useMode - The {@linkcode MoveUseMode} to check
+ * @returns Whether `useMode` is reflected.
  * @remarks
  * This function is equivalent to the following truth table:
  *
