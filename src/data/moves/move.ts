@@ -1131,7 +1131,12 @@ export abstract class Move implements Localizable {
       return MovePriorityInBracket.FIRST;
     }
     const modifierHolder = new NumberHolder(MovePriorityInBracket.NORMAL);
-    applyAbAttrs("ChangeMovePriorityInBracketAbAttr", { pokemon: user, simulated, move: this, priority: modifierHolder });
+    applyAbAttrs("ChangeMovePriorityInBracketAbAttr", {
+      pokemon: user,
+      simulated,
+      move: this,
+      priority: modifierHolder,
+    });
     return modifierHolder.value as MovePriorityInBracket;
   }
 
@@ -1197,8 +1202,9 @@ export abstract class Move implements Localizable {
     }
 
     if (
-        this.category === MoveCategory.STATUS
-        || (target != null && user.getMoveCategory(target, this) === MoveCategory.STATUS)) {
+      this.category === MoveCategory.STATUS
+      || (target != null && user.getMoveCategory(target, this) === MoveCategory.STATUS)
+    ) {
       return false;
     }
 

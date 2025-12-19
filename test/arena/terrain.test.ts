@@ -5,6 +5,7 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
+import { MovePriorityInBracket } from "#enums/move-priority-in-bracket";
 import { MoveResult } from "#enums/move-result";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
@@ -15,7 +16,6 @@ import { toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { MovePriorityInBracket } from "#enums/move-priority-in-bracket";
 
 describe("Terrain -", () => {
   let phaserGame: Phaser.Game;
@@ -169,7 +169,7 @@ describe("Terrain -", () => {
       await game.toNextTurn();
 
       expect(powerSpy).toHaveLastReturnedWith(basePower / 2);
-      powerSpy.mockClear()
+      powerSpy.mockClear();
 
       // Turn 2: Make enemy semi-invulnerable; 1x (hits due to passive no guard)
       game.move.use(move);
@@ -332,8 +332,8 @@ describe("Terrain -", () => {
 
       const blissey = game.field.getPlayerPokemon();
       const shuckle = game.field.getEnemyPokemon();
-      expect(blissey).toHaveUsedMove({move: MoveId.QUICK_ATTACK, result: MoveResult.FAIL});
-      expect(shuckle).toHaveUsedMove({move: MoveId.WIDE_GUARD, result: MoveResult.SUCCESS});
+      expect(blissey).toHaveUsedMove({ move: MoveId.QUICK_ATTACK, result: MoveResult.FAIL });
+      expect(shuckle).toHaveUsedMove({ move: MoveId.WIDE_GUARD, result: MoveResult.SUCCESS });
       expect(game).toHaveShownMessage(
         i18next.t("terrain:defaultBlockMessage", {
           pokemonNameWithAffix: getPokemonNameWithAffix(shuckle),
@@ -343,7 +343,7 @@ describe("Terrain -", () => {
     });
 
     it("should affect moves that only become priority due to abilities", async () => {
-      game.override.ability(AbilityId.PRANKSTER).enemyAbility(AbilityId.PRANKSTER)
+      game.override.ability(AbilityId.PRANKSTER).enemyAbility(AbilityId.PRANKSTER);
       await game.classicMode.startBattle([SpeciesId.BLISSEY]);
 
       game.move.use(MoveId.FEATHER_DANCE);
@@ -352,8 +352,8 @@ describe("Terrain -", () => {
 
       const blissey = game.field.getPlayerPokemon();
       const shuckle = game.field.getEnemyPokemon();
-      expect(blissey).toHaveUsedMove({move: MoveId.FEATHER_DANCE, result: MoveResult.FAIL});
-      expect(shuckle).toHaveUsedMove({move: MoveId.SWORDS_DANCE, result: MoveResult.SUCCESS});
+      expect(blissey).toHaveUsedMove({ move: MoveId.FEATHER_DANCE, result: MoveResult.FAIL });
+      expect(shuckle).toHaveUsedMove({ move: MoveId.SWORDS_DANCE, result: MoveResult.SUCCESS });
       expect(game).toHaveShownMessage(
         i18next.t("terrain:defaultBlockMessage", {
           pokemonNameWithAffix: getPokemonNameWithAffix(shuckle),
@@ -385,7 +385,7 @@ describe("Terrain -", () => {
       await game.toEndOfTurn();
 
       const blissey = game.field.getPlayerPokemon();
-      expect(blissey).toHaveUsedMove({move, result: MoveResult.SUCCESS});
+      expect(blissey).toHaveUsedMove({ move, result: MoveResult.SUCCESS });
       effect();
     });
 
