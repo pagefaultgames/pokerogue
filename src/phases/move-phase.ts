@@ -906,7 +906,7 @@ export class MovePhase extends PokemonPhase {
       this.pokemon.getBattlerIndex(),
       this.targets[0],
       this.move,
-      this.useMode,
+      this.useMode === MoveUseMode.NORMAL ? MoveUseMode.IGNORE_PP : this.useMode,
     );
   }
 
