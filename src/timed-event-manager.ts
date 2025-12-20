@@ -86,7 +86,7 @@ const timedEvents: readonly TimedEvent[] = [
     eventType: EventType.SHINY,
     startDate: new Date(Date.UTC(2025, 11, 19)),
     endDate: new Date(Date.UTC(2026, 0, 5)),
-    bannerKey: "winter2025",
+    bannerKey: "winter_holidays2025-event",
     scale: 0.19,
     availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-419", "pt-BR", "zh-Hans", "zh-Hant", "da", "ru"],
     shinyEncounterMultiplier: 2,
@@ -491,7 +491,16 @@ const timedEvents: readonly TimedEvent[] = [
 ];
 
 export class TimedEventManager {
+  /**
+   * Whether the timed event manager is disabled.
+   * Used to disable events in testing.
+   */
+  private disabled: boolean;
+
   isActive(event: TimedEvent) {
+    if (this.disabled) {
+      return false;
+    }
     const now = new Date();
     return event.startDate < now && now < event.endDate;
   }
@@ -687,6 +696,15 @@ export class TimedEventManager {
   getEventDailyStartingItems(): readonly ModifierTypeKeys[] {
     return this.activeEvent()?.dailyRunStartingItems ?? [];
   }
+
+  /**
+   * Disable the timed event manager. Used for testing.
+   */
+  public disable(): void {
+    this.disabled = true;
+  }
+
+  // todo: add option to enable to aloow for testing timed events
 }
 
 export class TimedEventDisplay extends Phaser.GameObjects.Container {
