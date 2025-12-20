@@ -491,7 +491,19 @@ const timedEvents: readonly TimedEvent[] = [
 ];
 
 export class TimedEventManager {
+  private disabled = false;
+
+  /**
+   * Disables events for the purpose of tests
+   */
+  disableEvents() {
+    this.disabled = true;
+  }
+
   isActive(event: TimedEvent) {
+    if (this.disabled) {
+      return false;
+    }
     const now = new Date();
     return event.startDate < now && now < event.endDate;
   }
@@ -505,7 +517,7 @@ export class TimedEventManager {
   }
 
   isEventActive(): boolean {
-    return timedEvents.some((te: TimedEvent) => this.isActive(te));
+    return !this.disabled && timedEvents.some((te: TimedEvent) => this.isActive(te));
   }
 
   /**
