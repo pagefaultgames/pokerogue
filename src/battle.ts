@@ -426,14 +426,18 @@ export class Battle {
             case SpeciesId.IRON_THORNS:
             case SpeciesId.ROARING_MOON:
             case SpeciesId.IRON_VALIANT:
-            case SpeciesId.KORAIDON:
-            case SpeciesId.MIRAIDON:
             case SpeciesId.WALKING_WAKE:
             case SpeciesId.IRON_LEAVES:
             case SpeciesId.GOUGING_FIRE:
             case SpeciesId.RAGING_BOLT:
             case SpeciesId.IRON_BOULDER:
+            // biome-ignore lint/suspicious/noFallthroughSwitchClause: intentional
             case SpeciesId.IRON_CROWN:
+              if (this.gameMode.isEndless) {
+                break;
+              }
+            case SpeciesId.KORAIDON:
+            case SpeciesId.MIRAIDON:
               return "battle_legendary_kor_mir";
             case SpeciesId.OKIDOGI:
             case SpeciesId.MUNKIDORI:
