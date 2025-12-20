@@ -4,6 +4,7 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
 import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
+import { BiomeId } from "#enums/biome-id";
 import type { Command } from "#enums/command";
 import type { MoveId } from "#enums/move-id";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
@@ -270,7 +271,7 @@ export class Battle {
         pokemon.species.legendary
         || pokemon.species.subLegendary
         || pokemon.species.mythical
-        || pokemon.species.category.startsWith("Paradox")
+        || (pokemon.species.category.startsWith("Paradox") && globalScene.arena.biomeType !== BiomeId.END)
       ) {
         if (globalScene.musicPreference === MusicPreference.GENFIVE) {
           switch (pokemon.species.speciesId) {
@@ -431,11 +432,7 @@ export class Battle {
             case SpeciesId.GOUGING_FIRE:
             case SpeciesId.RAGING_BOLT:
             case SpeciesId.IRON_BOULDER:
-            // biome-ignore lint/suspicious/noFallthroughSwitchClause: intentional
             case SpeciesId.IRON_CROWN:
-              if (this.gameMode.isEndless) {
-                break;
-              }
             case SpeciesId.KORAIDON:
             case SpeciesId.MIRAIDON:
               return "battle_legendary_kor_mir";
