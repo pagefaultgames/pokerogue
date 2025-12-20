@@ -12,7 +12,6 @@ import { DynamicQueueManager } from "#app/dynamic-queue-manager";
 import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
 import { PhaseTree } from "#app/phase-tree";
-import { BattleType } from "#enums/battle-type";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import type { Pokemon } from "#field/pokemon";
 import type { PokemonMove } from "#moves/pokemon-move";
@@ -43,6 +42,7 @@ import { GameOverModifierRewardPhase } from "#phases/game-over-modifier-reward-p
 import { GameOverPhase } from "#phases/game-over-phase";
 import { HideAbilityPhase } from "#phases/hide-ability-phase";
 import { HidePartyExpBarPhase } from "#phases/hide-party-exp-bar-phase";
+import { InitEncounterPhase } from "#phases/init-encounter-phase";
 import { LearnMovePhase } from "#phases/learn-move-phase";
 import { LevelCapPhase } from "#phases/level-cap-phase";
 import { LevelUpPhase } from "#phases/level-up-phase";
@@ -113,6 +113,7 @@ import { UnlockPhase } from "#phases/unlock-phase";
 import { VictoryPhase } from "#phases/victory-phase";
 import { WeatherEffectPhase } from "#phases/weather-effect-phase";
 import type { PhaseConditionFunc, PhaseMap, PhaseString } from "#types/phase-types";
+import type { NonEmptyTuple } from "type-fest";
 
 /**
  * Object that holds all of the phase constructors.
@@ -150,6 +151,7 @@ const PHASES = Object.freeze({
   GameOverModifierRewardPhase,
   HideAbilityPhase,
   HidePartyExpBarPhase,
+  InitEncounterPhase,
   LearnMovePhase,
   LevelCapPhase,
   LevelUpPhase,
@@ -274,21 +276,34 @@ export class PhaseManager {
   }
 
   /**
-   * Adds a phase to the end of the queue
-   * @param phase - The {@linkcode Phase} to add
+   * Add one or more Phases to the end of the queue.
+   * They will run once all phases already in the queue have ended.
+   * @param phases - One or more {@linkcode Phase}s to add
    */
-  public pushPhase(phase: Phase): void {
-    this.phaseQueue.pushPhase(this.checkDynamic(phase));
+  public pushPhase(...phases: NonEmptyTuple<Phase>): void {
+    for (const phase of phases) {
+      this.phaseQueue.pushPhase(this.checkDynamic(phase));
+    }
   }
 
   /**
-   * Queue a phase to be run immediately after the current phase finishes. \
+   * Queue one or more phases to be run immediately after the current phase finishes. \
    * Unshifted phases are run in FIFO order if multiple are queued during a single phase's execution.
-   * @param phase - The {@linkcode Phase} to add
+   * @param phases - One or more {@linkcode Phase}s to add
+   * @privateRemarks
+   * Any newly-unshifted `MovePhase`s will be queued after the next `MoveEndPhase`.
    */
-  public unshiftPhase(phase: Phase): void {
-    const toAdd = this.checkDynamic(phase);
-    phase.is("MovePhase") ? this.phaseQueue.addAfter(toAdd, "MoveEndPhase") : this.phaseQueue.addPhase(toAdd);
+  // NB: I'd like to restrict this to only allow passing 1 `MovePhase` at a time, but this causes TS to
+  // flip the hell out with `Parameters`...
+  public unshiftPhase(...phases: NonEmptyTuple<Phase>): void {
+    for (const phase of phases) {
+      const toAdd = this.checkDynamic(phase);
+      if (phase.is("MovePhase")) {
+        this.phaseQueue.addAfter(toAdd, "MoveEndPhase");
+      } else {
+        this.phaseQueue.addPhase(toAdd);
+      }
+    }
   }
 
   /**
@@ -508,23 +523,6 @@ export class PhaseManager {
    */
   public queueFaintPhase(...args: ConstructorParameters<PhaseConstructorMap["FaintPhase"]>): void {
     this.phaseQueue.addPhase(this.create("FaintPhase", ...args), true);
-  }
-
-  /**
-   * Attempts to add {@linkcode PostSummonPhase}s for the enemy pokemon
-   *
-   * This is used to ensure that wild pokemon (which have no {@linkcode SummonPhase}) do not queue a {@linkcode PostSummonPhase}
-   * until all pokemon are on the field.
-   */
-  public tryAddEnemyPostSummonPhases(): void {
-    if (
-      ![BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType)
-      && !this.phaseQueue.exists("SummonPhase")
-    ) {
-      globalScene.getEnemyField().forEach(p => {
-        this.pushPhase(new PostSummonPhase(p.getBattlerIndex(), "SummonPhase"));
-      });
-    }
   }
 
   /**

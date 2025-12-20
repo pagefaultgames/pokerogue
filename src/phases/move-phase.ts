@@ -1,7 +1,3 @@
-// biome-ignore-start lint/correctness/noUnusedImports: Used in a tsdoc comment
-import type { Move, PreUseInterruptAttr } from "#types/move-types";
-// biome-ignore-end lint/correctness/noUnusedImports: Used in a tsdoc comment
-
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -13,6 +9,7 @@ import { getStatusEffectActivationText } from "#data/status-effect";
 import { getTerrainBlockMessage } from "#data/terrain";
 import { getWeatherBlockMessage } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
@@ -31,10 +28,12 @@ import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import { frenzyMissFunc } from "#moves/move-utils";
 import type { PokemonMove } from "#moves/pokemon-move";
+import type { Move, PreUseInterruptAttr } from "#types/move-types";
 import type { TurnMove } from "#types/turn-move";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, NumberHolder } from "#utils/common";
 import { enumValueToKey } from "#utils/enums";
+import { inSpeedOrder } from "#utils/speed-order-generator";
 import i18next from "i18next";
 
 export class MovePhase extends PokemonPhase {
@@ -203,7 +202,7 @@ export class MovePhase extends PokemonPhase {
       user.cureStatus(
         StatusEffect.FREEZE,
         i18next.t("statusEffect:freeze.healByMove", {
-          pokemonName: getPokemonNameWithAffix(user),
+          pokemonNameWithAffix: getPokemonNameWithAffix(user),
           moveName: this.move.getMove().name,
         }),
       );
@@ -284,7 +283,7 @@ export class MovePhase extends PokemonPhase {
 
     // Apply queenly majesty / dazzling
     if (!failed) {
-      const defendingSidePlayField = user.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
+      const defendingSidePlayField = user.isPlayer() ? globalScene.getEnemyField() : globalScene.getPlayerField();
       const cancelled = new BooleanHolder(false);
       defendingSidePlayField.forEach((pokemon: Pokemon) => {
         applyAbAttrs("FieldPriorityMoveImmunityAbAttr", {
@@ -321,17 +320,16 @@ export class MovePhase extends PokemonPhase {
 
     // check move redirection abilities of every pokemon *except* the user.
     // TODO: Make storm drain, lightning rod, etc, redirect at this point for type changing moves
-    globalScene
-      .getField(true)
-      .filter(p => p !== this.pokemon)
-      .forEach(pokemon => {
+    for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
+      if (pokemon !== this.pokemon) {
         applyAbAttrs("RedirectMoveAbAttr", {
           pokemon,
           moveId: this.move.moveId,
           targetIndex: redirectTarget,
           sourcePokemon: this.pokemon,
         });
-      });
+      }
+    }
 
     /** `true` if an Ability is responsible for redirecting the move to another target; `false` otherwise */
     let redirectedByAbility = currentTarget !== redirectTarget.value;
@@ -424,13 +422,6 @@ export class MovePhase extends PokemonPhase {
       this.doThawCheck();
     }
 
-    // Reset hit-related turn data when starting follow-up moves (e.g. Metronomed moves, Dancer repeats)
-    if (isVirtual(useMode)) {
-      const turnData = user.turnData;
-      turnData.hitsLeft = -1;
-      turnData.hitCount = 0;
-    }
-
     const pokemonMove = this.move;
 
     // Check move to see if arena.ignoreAbilities should be true.
@@ -508,6 +499,9 @@ export class MovePhase extends PokemonPhase {
     ) {
       this.showFailedText();
       this.fail();
+      // clear out 2 turn moves
+      // TODO: Make a helper for this atp
+      this.pokemon.getMoveQueue().shift();
       this.pokemon.pushMoveHistory(this.moveHistoryEntry);
       return true;
     }
@@ -848,9 +842,9 @@ export class MovePhase extends PokemonPhase {
     // TODO: This needs to go at the end of `MoveEffectPhase` to check move results
     const dancerModes: MoveUseMode[] = [MoveUseMode.INDIRECT, MoveUseMode.REFLECTED] as const;
     if (this.move.getMove().hasFlag(MoveFlags.DANCE_MOVE) && !dancerModes.includes(this.useMode)) {
-      globalScene.getField(true).forEach(pokemon => {
+      for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
         applyAbAttrs("PostMoveUsedAbAttr", { pokemon, move: this.move, source: user, targets });
-      });
+      }
     }
   }
 
@@ -912,7 +906,7 @@ export class MovePhase extends PokemonPhase {
       this.pokemon.getBattlerIndex(),
       this.targets[0],
       this.move,
-      this.useMode,
+      this.useMode === MoveUseMode.NORMAL ? MoveUseMode.IGNORE_PP : this.useMode,
     );
   }
 

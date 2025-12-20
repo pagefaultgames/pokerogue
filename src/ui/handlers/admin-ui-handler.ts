@@ -1,16 +1,12 @@
 import { pokerogueApi } from "#api/pokerogue-api";
 import { globalScene } from "#app/global-scene";
-import { bypassLogin } from "#app/global-vars/bypass-login";
+import { bypassLogin } from "#constants/app-constants";
 import { AdminMode } from "#enums/admin-mode";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { GameData } from "#system/game-data";
-import type {
-  AdminUiHandlerService,
-  AdminUiHandlerServiceMode,
-  SearchAccountResponse,
-} from "#types/api/pokerogue-admin-api";
+import type { AdminUiHandlerService, AdminUiHandlerServiceMode, SearchAccountResponse } from "#types/api";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
 import type { ModalConfig } from "#ui/modal-ui-handler";
@@ -199,7 +195,9 @@ export class AdminUiHandler extends FormModalUiHandler {
       this.inputs[i].setText(adminResult[aR]);
       if (aR === "discordId" || aR === "googleId") {
         // this is here to add the icons for linking/unlinking of google/discord IDs
-        const nineSlice = this.inputContainers[i].list.find(iC => iC.type === "NineSlice");
+        const nineSlice = this.inputContainers[i].list.find(
+          (iC): iC is Phaser.GameObjects.NineSlice => iC.type === "NineSlice",
+        );
         const img = globalScene.add.image(
           this.inputContainers[i].x + nineSlice!.width + this.buttonGap,
           this.inputContainers[i].y + Math.floor(nineSlice!.height / 2),

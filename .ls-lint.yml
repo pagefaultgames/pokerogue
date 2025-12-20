@@ -25,6 +25,7 @@ ls:
       <<: *cfg
    test: *src
 ignore:
+   - .pnpm-store
    - node_modules
    - .vscode
    - .github

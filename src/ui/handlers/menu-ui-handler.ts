@@ -1,8 +1,8 @@
 import { pokerogueApi } from "#api/pokerogue-api";
 import { loggedInUser, updateUserInfo } from "#app/account";
 import { globalScene } from "#app/global-scene";
-import { bypassLogin } from "#app/global-vars/bypass-login";
 import { handleTutorial, Tutorial } from "#app/tutorial";
+import { bypassLogin, isApp, isBeta, isDev } from "#constants/app-constants";
 import { AdminMode, getAdminModeName } from "#enums/admin-mode";
 import { Button } from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
@@ -237,7 +237,7 @@ export class MenuUiHandler extends MessageUiHandler {
       });
     };
 
-    if (import.meta.env.DEV) {
+    if (isBeta || isDev || isApp) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importSession"),
         handler: () => {
@@ -278,6 +278,7 @@ export class MenuUiHandler extends MessageUiHandler {
     manageDataOptions.push({
       label: i18next.t("menuUiHandler:importRunHistory"),
       handler: () => {
+        ui.revertMode();
         globalScene.gameData.importData(GameDataType.RUN_HISTORY);
         return true;
       },
@@ -291,7 +292,7 @@ export class MenuUiHandler extends MessageUiHandler {
       },
       keepOpen: true,
     });
-    if (import.meta.env.DEV) {
+    if (isBeta || isDev || isApp) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importData"),
         handler: () => {
@@ -338,8 +339,7 @@ export class MenuUiHandler extends MessageUiHandler {
         keepOpen: true,
       },
     );
-    if (import.meta.env.DEV) {
-      // this should make sure we don't have this option in live
+    if (isBeta || isDev) {
       manageDataOptions.push({
         label: "Test Dialogue",
         handler: () => {
@@ -782,7 +782,7 @@ export class MenuUiHandler extends MessageUiHandler {
   showText(
     text: string,
     delay?: number,
-    callback?: Function,
+    callback?: () => void,
     callbackDelay?: number,
     prompt?: boolean,
     promptDelay?: number,

@@ -12,7 +12,7 @@ import type { CommandPhase } from "#phases/command-phase";
 import type { EnemyCommandPhase } from "#phases/enemy-command-phase";
 import { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
-import { coerceArray } from "#utils/common";
+import { coerceArray } from "#utils/array";
 import { toTitleCase } from "#utils/strings";
 import type { MockInstance } from "vitest";
 import { expect, vi } from "vitest";
@@ -67,7 +67,6 @@ export class MoveHelper extends GameManagerHelper {
     const movePosition = this.getMovePosition(pkmIndex, move);
     if (movePosition === -1) {
       expect.fail(
-        // biome-ignore lint/complexity/noUselessStringConcat: Biome does not currently detect this as multiline (BUG)
         `MoveHelper.select called with move '${toTitleCase(MoveId[move])}' not in moveset!`
           + `\nBattler Index: ${toTitleCase(BattlerIndex[pkmIndex])}`
           + `\nMoveset: [${this.game.scene
@@ -112,7 +111,6 @@ export class MoveHelper extends GameManagerHelper {
     const movePosition = this.getMovePosition(pkmIndex, move);
     if (movePosition === -1) {
       expect.fail(
-        // biome-ignore lint/complexity/noUselessStringConcat: Biome does not currently detect this as multiline (BUG)
         `MoveHelper.selectWithTera called with move '${toTitleCase(MoveId[move])}' not in moveset!`
           + `\nBattler Index: ${toTitleCase(BattlerIndex[pkmIndex])}`
           + `\nMoveset: [${this.game.scene

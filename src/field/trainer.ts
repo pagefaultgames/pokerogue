@@ -13,7 +13,6 @@ import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import type { EnemyPokemon } from "#field/pokemon";
 import type { PersistentModifier } from "#modifiers/modifier";
-import { getIsInitialized, initI18n } from "#plugins/i18n";
 import type { TrainerConfig } from "#trainers/trainer-config";
 import { trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, type TrainerPartyTemplate } from "#trainers/trainer-party-template";
@@ -174,11 +173,6 @@ export class Trainer extends Phaser.GameObjects.Container {
     if (this.name) {
       // If the title should be included.
       if (includeTitle) {
-        // Check if the internationalization (i18n) system is initialized.
-        if (!getIsInitialized()) {
-          // Initialize the i18n system if it is not already initialized.
-          initI18n();
-        }
         // Get the localized trainer class name from the i18n file and set it as the title.
         // This is used for trainer class names, not titles like "Elite Four, Champion, etc."
         title = i18next.t(`trainerClasses:${toCamelCase(name)}`);
@@ -452,20 +446,21 @@ export class Trainer extends Phaser.GameObjects.Container {
   genNewPartyMemberSpecies(level: number, strength: PartyMemberStrength, attempt?: number): PokemonSpecies {
     const battle = globalScene.currentBattle;
     const template = this.getPartyTemplate();
-
     let baseSpecies: PokemonSpecies;
     if (this.config.speciesPools) {
       const tierValue = randSeedInt(512);
-      let tier =
-        tierValue >= 156
-          ? TrainerPoolTier.COMMON
-          : tierValue >= 32
-            ? TrainerPoolTier.UNCOMMON
-            : tierValue >= 6
-              ? TrainerPoolTier.RARE
-              : tierValue >= 1
-                ? TrainerPoolTier.SUPER_RARE
-                : TrainerPoolTier.ULTRA_RARE;
+      let tier: TrainerPoolTier;
+      if (tierValue >= 156) {
+        tier = TrainerPoolTier.COMMON;
+      } else if (tierValue >= 32) {
+        tier = TrainerPoolTier.UNCOMMON;
+      } else if (tierValue >= 6) {
+        tier = TrainerPoolTier.RARE;
+      } else if (tierValue >= 1) {
+        tier = TrainerPoolTier.SUPER_RARE;
+      } else {
+        tier = TrainerPoolTier.ULTRA_RARE;
+      }
       console.log(TrainerPoolTier[tier]);
       while (!this.config.speciesPools.hasOwnProperty(tier) || this.config.speciesPools[tier].length === 0) {
         console.log(
@@ -474,7 +469,11 @@ export class Trainer extends Phaser.GameObjects.Container {
         tier--;
       }
       const tierPool = this.config.speciesPools[tier];
-      baseSpecies = getPokemonSpecies(randSeedItem(tierPool));
+      let rolledSpecies = randSeedItem(tierPool);
+      while (typeof rolledSpecies !== "number") {
+        rolledSpecies = randSeedItem(tierPool);
+      }
+      baseSpecies = getPokemonSpecies(rolledSpecies);
     } else {
       baseSpecies = globalScene.randomSpecies(battle.waveIndex, level, false, this.config.speciesFilter);
     }
@@ -642,14 +641,14 @@ export class Trainer extends Phaser.GameObjects.Container {
     }
   }
 
-  genModifiers(party: EnemyPokemon[]): PersistentModifier[] {
+  genModifiers(party: readonly EnemyPokemon[]): PersistentModifier[] {
     if (this.config.genModifiersFunc) {
       return this.config.genModifiersFunc(party);
     }
     return [];
   }
 
-  genAI(party: EnemyPokemon[]) {
+  genAI(party: readonly EnemyPokemon[]) {
     if (this.config.genAIFuncs) {
       this.config.genAIFuncs.forEach(f => f(party));
     }
@@ -788,6 +787,7 @@ export class Trainer extends Phaser.GameObjects.Container {
       this.config.trainerAI.teraMode === TeraAIMode.INSTANT_TERA
       && !pokemon.isTerastallized
       && this.config.trainerAI.instantTeras.includes(pokemon.initialTeamIndex)
+      && !globalScene.currentBattle.enemyFaintsHistory.some(f => f.pokemon.id === pokemon.id)
     ) {
       return true;
     }

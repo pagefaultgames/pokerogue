@@ -278,7 +278,7 @@ export class ModifierType {
   }
 }
 
-type ModifierTypeGeneratorFunc = (party: Pokemon[], pregenArgs?: any[]) => ModifierType | null;
+type ModifierTypeGeneratorFunc = (party: readonly Pokemon[], pregenArgs?: any[]) => ModifierType | null;
 
 export class ModifierTypeGenerator extends ModifierType {
   private genTypeFunc: ModifierTypeGeneratorFunc;
@@ -288,7 +288,7 @@ export class ModifierTypeGenerator extends ModifierType {
     this.genTypeFunc = genTypeFunc;
   }
 
-  generateType(party: Pokemon[], pregenArgs?: any[]) {
+  generateType(party: readonly Pokemon[], pregenArgs?: any[]) {
     const ret = this.genTypeFunc(party, pregenArgs);
     if (ret) {
       ret.id = this.id;
@@ -2355,7 +2355,11 @@ const tierWeights = [768 / 1024, 195 / 1024, 48 / 1024, 12 / 1024, 1 / 1024];
  */
 export const itemPoolChecks: Map<ModifierTypeKeys, boolean | undefined> = new Map();
 
-export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: ModifierPoolType, rerollCount = 0) {
+export function regenerateModifierPoolThresholds(
+  party: readonly Pokemon[],
+  poolType: ModifierPoolType,
+  rerollCount = 0,
+) {
   const pool = getModifierPoolForType(poolType);
   itemPoolChecks.forEach((_v, k) => {
     itemPoolChecks.set(k, false);
@@ -2901,7 +2905,7 @@ export class ModifierTypeOption {
  * @param party The player's party.
  * @returns A number between 0 and 14 based on the party's total luck value, or a random number between 0 and 14 if the player is in Daily Run mode.
  */
-export function getPartyLuckValue(party: Pokemon[]): number {
+export function getPartyLuckValue(party: readonly Pokemon[]): number {
   if (globalScene.gameMode.isDaily) {
     const DailyLuck = new NumberHolder(0);
     globalScene.executeWithSeedOffset(

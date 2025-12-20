@@ -2,17 +2,15 @@
  * A collection of custom utility types that aid in type checking and ensuring strict type conformity
  */
 
-// biome-ignore-start lint/correctness/noUnusedImports: Used in a tsdoc comment
 import type { AbAttr } from "#abilities/ability";
-// biome-ignore-end lint/correctness/noUnusedImports: Used in a tsdoc comment
 
 /**
  * Exactly matches the type of the argument, preventing adding additional properties.
  *
  * ⚠️ Should never be used with `extends`, as this will nullify the exactness of the type.
  *
- * As an example, used to ensure that the parameters of {@linkcode AbAttr.canApply} and {@linkcode AbAttr.getTriggerMessage} are compatible with
- * the type of its {@linkcode AbAttr.apply | apply} method.
+ * As an example, used to ensure that the parameters of {@linkcode AbAttr.canApply} and {@linkcode AbAttr.getTriggerMessage}
+ * are compatible with the type of its {@linkcode AbAttr.apply | apply} method.
  *
  * @typeParam T - The type to match exactly
  */
@@ -27,16 +25,17 @@ export type Exact<T> = {
 export type Closed<X> = X;
 
 /**
- * Remove `readonly` from all properties of the provided type.
- * @typeParam T - The type to make mutable.
+ * Helper type to strip `readonly` from all properties of the provided type.
+ * Inverse of {@linkcode Readonly}
+ * @typeParam T - The type to make mutable
  */
 export type Mutable<T> = {
   -readonly [P in keyof T]: T[P];
 };
 
 /**
- * Type helper to obtain the keys associated with a given value inside an object.
- * Acts similar to {@linkcode Pick}, except checking the object's values instead of its keys.
+ * Type helper to obtain the keys associated with a given value inside an object. \
+ * Functions similarly to `Pick`, but checking assignability of values instead of keys.
  * @typeParam O - The type of the object
  * @typeParam V - The type of one of O's values.
  */
@@ -47,6 +46,7 @@ export type InferKeys<O extends object, V> = {
 /**
  * Utility type to obtain a union of the values of a given object. \
  * Functions similar to `keyof E`, except producing the values instead of the keys.
+ * @typeParam E - The type of the object
  * @remarks
  * This can be used to convert an `enum` interface produced by `typeof Enum` into the union type representing its members.
  */
@@ -83,6 +83,7 @@ export type NonFunctionPropertiesRecursive<Class> = {
       : Class[K];
 };
 
+/** Utility type for an abstract constructor. */
 export type AbstractConstructor<T> = abstract new (...args: any[]) => T;
 
 /**
@@ -101,11 +102,12 @@ export type CoerceNullPropertiesToUndefined<T extends object> = {
  * of its properties be present.
  *
  * Distinct from {@linkcode Partial} as this requires at least 1 property to _not_ be undefined.
- * @typeParam T - The type to render partial
+ * @typeParam T - The object type to render partial
  */
 export type AtLeastOne<T extends object> = Partial<T> & ObjectValues<{ [K in keyof T]: Pick<Required<T>, K> }>;
 
-/** Type helper that adds a brand to a type, used for nominal typing.
+/**
+ * Type helper that adds a brand to a type, used for nominal typing.
  *
  * @remarks
  * Brands should be either a string or unique symbol. This prevents overlap with other types.
