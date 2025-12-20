@@ -491,7 +491,16 @@ const timedEvents: readonly TimedEvent[] = [
 ];
 
 export class TimedEventManager {
+  /**
+   * Whether the timed event manager is disabled.
+   * Used to disable events in testing.
+   */
+  private disabled: boolean;
+
   isActive(event: TimedEvent) {
+    if (this.disabled) {
+      return false;
+    }
     const now = new Date();
     return event.startDate < now && now < event.endDate;
   }
@@ -687,6 +696,15 @@ export class TimedEventManager {
   getEventDailyStartingItems(): readonly ModifierTypeKeys[] {
     return this.activeEvent()?.dailyRunStartingItems ?? [];
   }
+
+  /**
+   * Disable the timed event manager. Used for testing.
+   */
+  public disable(): void {
+    this.disabled = true;
+  }
+
+  // todo: add option to enable to aloow for testing timed events
 }
 
 export class TimedEventDisplay extends Phaser.GameObjects.Container {

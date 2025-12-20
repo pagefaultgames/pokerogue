@@ -357,8 +357,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       });
     });
 
-    // TODO: fix mocking of events (and remove `BattleScene#eventManager`)
-    it.skip("Should decrease held item stacks and give the player a Healing Charm", async () => {
+    it("Should decrease held item stacks and give the player a Healing Charm", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DELIBIRDY, defaultParty);
 
       // Set 2 Soul Dew on party lead
