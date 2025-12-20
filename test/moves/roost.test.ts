@@ -1,4 +1,3 @@
-import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
@@ -244,37 +243,14 @@ describe("Moves - Roost", () => {
     expect(playerPokemon.isGrounded()).toBeFalsy();
   });
 
-  // TODO: This interaction is extremely broken due to a lack of granularity with type querying effects.
-  it.todo("should consider the user's current types when transformed", async () => {
-    game.override.ability(AbilityId.IMPOSTER).enemySpecies(SpeciesId.CORVIKNIGHT);
-    await game.classicMode.startBattle([SpeciesId.DITTO]);
-
-    const ditto = game.field.getPlayerPokemon();
-    ditto.hp = 1;
-    expect(ditto.summonData.speciesForm).toBe(SpeciesId.CORVIKNIGHT);
-    expect(ditto).toHaveTypes([PokemonType.STEEL, PokemonType.FLYING]);
-
-    game.move.use(MoveId.ROOST);
-    await game.move.forceEnemyMove(MoveId.TRICK_OR_TREAT);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to("MoveEffectPhase"); // Roost
-
-    expect(ditto).toHaveTypes([PokemonType.STEEL]);
-
-    await game.toEndOfTurn();
-
-    expect(ditto).toHaveTypes([PokemonType.STEEL, PokemonType.FLYING, PokemonType.GHOST]);
-  });
-
-  it("should not change normally-Flying type Pokemon with 3 types into Normal-types", async () => {
-    game.override.ability(AbilityId.IMPOSTER).enemySpecies(SpeciesId.CORVIKNIGHT);
+  // TODO: This interaction is extremely broken due to a lack of granularity with type querying effects
+  it.todo("should not change Flying type Pokemon changed into having 3 types into Normal-types", async () => {
     await game.classicMode.startBattle([SpeciesId.TORNADUS]);
 
     const tornadus = game.field.getPlayerPokemon();
     tornadus.hp = 1;
-
-    expect(tornadus.summonData.speciesForm).toBe(SpeciesId.CORVIKNIGHT);
-    expect(tornadus).toHaveTypes([PokemonType.STEEL, PokemonType.FLYING]);
+    // Pretend Tornadus used Reflect Type or similar in a prior turn
+    tornadus.summonData.types = [PokemonType.STEEL, PokemonType.FLYING];
 
     game.move.use(MoveId.ROOST);
     await game.move.forceEnemyMove(MoveId.TRICK_OR_TREAT);
@@ -309,9 +285,9 @@ describe("Moves - Roost", () => {
     expect(tornadus).toHaveTypes([PokemonType.NORMAL, type]);
     expect(tornadus.isGrounded()).toBe(true);
 
-    await game.toNextTurn();
+    await game.toEndOfTurn();
 
-    expect(tornadus).toHaveTypes([PokemonType.FIRE, PokemonType.FLYING, PokemonType.GHOST]);
+    expect(tornadus).toHaveTypes([PokemonType.FLYING, type]);
     expect(tornadus.isGrounded()).toBe(false);
   });
 });

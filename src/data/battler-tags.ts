@@ -2514,6 +2514,7 @@ export class RoostedTag extends BattlerTag {
   // TODO: The determination of this parameter's value is flat-out wrong in a myriad of ways -
   // most notably, it ignores all type changes that occurred before the user used Roost.
   // This breaks Soak -> Roost and similar interactions.
+  // Instead, a much easier approach would be to cache the original types in their entirety.
   private isBasePureFlying = false;
 
   constructor() {
