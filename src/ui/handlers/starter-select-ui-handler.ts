@@ -172,7 +172,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoTextSize: "48px",
     instructionTextSize: "42px",
     starterInfoYOffset: 0.5,
-    starterInfoXPos: 36,
+    starterInfoXPos: 37,
   },
   hi: {
     starterInfoTextSize: "56px",
