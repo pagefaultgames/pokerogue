@@ -150,13 +150,6 @@ export class MovePhase extends PokemonPhase {
       this.doThawCheck();
     }
 
-    // Reset hit-related turn data when starting follow-up moves (e.g. Metronomed moves, Dancer repeats)
-    if (isVirtual(useMode)) {
-      const turnData = user.turnData;
-      turnData.hitsLeft = -1;
-      turnData.hitCount = 0;
-    }
-
     const pokemonMove = this.move;
 
     // Check move to see if arena.ignoreAbilities should be true.
@@ -904,7 +897,7 @@ export class MovePhase extends PokemonPhase {
       this.pokemon.getBattlerIndex(),
       this.targets[0],
       this.move,
-      this.useMode,
+      this.useMode === MoveUseMode.NORMAL ? MoveUseMode.IGNORE_PP : this.useMode,
     );
   }
 
