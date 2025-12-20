@@ -871,14 +871,15 @@ export abstract class Move implements Localizable {
   }
 
   /**
-   * Applies each {@linkcode MoveCondition} function of this move to the params, determines if the move can be used prior to calling each attribute's apply()
-   * @param user - {@linkcode Pokemon} to apply conditions to
-   * @param target - {@linkcode Pokemon} to apply conditions to
-   * @param move - {@linkcode Move} to apply conditions to
-   * @param sequence - The sequence number where the condition check occurs, or `-1` to check all; defaults to 4. Pass -1 to check all
-   * @returns boolean: false if any of the apply()'s return false, else true
+   * Apply this move's conditions prior to move effect application.
+   * @param user - The {@linkcode Pokemon} using this move
+   * @param target - The {@linkcode Pokemon} targeted by this move
+   * @param sequence - (Default `4`) The sequence number where the condition check occurs, or `-1` to check all
+   * @returns Whether all conditions passed
+   * @remarks
+   * Only applies conditions intrinsic to the particular move being used.
    */
-  applyConditions(user: Pokemon, target: Pokemon, sequence: -1 | 2 | 3 | 4 = 4): boolean {
+  public applyConditions(user: Pokemon, target: Pokemon, sequence: -1 | 2 | 3 | 4 = 4): boolean {
     let conditionsArray: MoveCondition[];
     switch (sequence) {
       case -1:
