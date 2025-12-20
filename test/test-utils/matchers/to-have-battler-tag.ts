@@ -8,22 +8,21 @@ import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { BattlerTagDataMap, SerializableBattlerTagType } from "#types/battler-tags";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
-// intersection required to preserve T for inferences
-
 /**
- * Helper type for serializable battler tag options. Allows for caching of the type to avoid
- * instantiation each time typescript encounters the type. (dramatically speeds up typechecking)
+ * Helper type for serializable battler tag options.
+ * Allows for caching to avoid repeated instantiation and faster typechecking.
  * @internal
  */
-type SerializableTagOptions<B extends SerializableBattlerTagType> = OneOther<BattlerTagDataMap[B], "tagType"> & {
+type SerializableBattlerTagOptions<B extends SerializableBattlerTagType> = OneOther<BattlerTagDataMap[B], "tagType"> & {
   tagType: B;
 };
 
 /**
  * Helper type for non-serializable battler tag options.
+ * Allows for caching to avoid repeated instantiation and faster typechecking.
  * @internal
  */
-type NonSerializableTagOptions<B extends BattlerTagType> = OneOther<BattlerTagTypeMap[B], "tagType"> & {
+type NonSerializableBattlerTagOptions<B extends BattlerTagType> = OneOther<BattlerTagTypeMap[B], "tagType"> & {
   tagType: B;
 };
 
@@ -34,9 +33,9 @@ type NonSerializableTagOptions<B extends BattlerTagType> = OneOther<BattlerTagTy
  * If B corresponds to a serializable `BattlerTag`, only properties allowed to be serialized
  * (i.e. can change across instances) will be present and able to be checked.
  */
-export type toHaveBattlerTagOptions<B extends BattlerTagType> = B extends SerializableBattlerTagType
-  ? SerializableTagOptions<B>
-  : NonSerializableTagOptions<B>;
+export type toHaveBattlerTagOptions<B extends BattlerTagType> = [B] extends [SerializableBattlerTagType]
+  ? SerializableBattlerTagOptions<B>
+  : NonSerializableBattlerTagOptions<B>;
 
 /**
  * Matcher that checks if a {@linkcode Pokemon} has a specific {@linkcode BattlerTag}.
