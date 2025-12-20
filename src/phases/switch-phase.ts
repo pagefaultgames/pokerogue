@@ -22,7 +22,8 @@ export class SwitchPhase extends BattlePhase {
    * @param isModal Indicates if the switch should be forced (true) or is
    * optional (false).
    * @param doReturn Indicates if the party member on the field should be
-   * recalled to ball or has already left the field. Passed to {@linkcode SwitchSummonPhase}.
+   * recalled to ball or has already left the field. Passed to {@linkcode SwitchSummonPhase},
+   * and is (ostensibly) only set to `false` from `FaintPhase`.
    */
   constructor(switchType: SwitchType, fieldIndex: number, isModal: boolean, doReturn: boolean) {
     super();
@@ -48,6 +49,8 @@ export class SwitchPhase extends BattlePhase {
      * if the mon should have already been returned but is still alive and well
      * on the field. see also; battle.test.ts
      */
+    // TODO: If a Phasing move kills its own user, when does said user appear on field?
+    // Is it after the user faints
     if (this.isModal && !this.doReturn && !globalScene.getPlayerParty()[this.fieldIndex].isFainted()) {
       return super.end();
     }
