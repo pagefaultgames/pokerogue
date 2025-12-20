@@ -1,4 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
@@ -115,6 +116,24 @@ describe("Moves - U-turn", () => {
     await game.toEndOfTurn();
 
     expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.FEEBAS);
+    expect(player1).toHaveFainted();
+  });
+
+  it("should not crash when enemy used destiny bond and U-turn KO's the opponent", async () => {
+    game.override.startingLevel(1000);
+    await game.classicMode.startBattle([SpeciesId.RAICHU, SpeciesId.SHUCKLE]);
+    const player1 = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
+
+    game.move.use(MoveId.U_TURN);
+    game.doSelectPartyPokemon(1);
+    await game.move.forceEnemyMove(MoveId.DESTINY_BOND);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+
+    await game.toEndOfTurn();
+
+    expect(enemy).toHaveFainted();
+    expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.SHUCKLE);
     expect(player1).toHaveFainted();
   });
 });
