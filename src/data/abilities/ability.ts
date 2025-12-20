@@ -2352,7 +2352,7 @@ export class PostAttackApplyBattlerTagAbAttr extends PostAttackAbAttr {
 
   override canApply(params: PostMoveInteractionAbAttrParams): boolean {
     const { pokemon, move, opponent } = params;
-    /**Battler tags inflicted by abilities post attacking are also considered additional effects.*/
+    // Battler tags inflicted by abilities post attacking are also considered additional effects.
     return (
       super.canApply(params)
       && !opponent.hasAbilityWithAttr("IgnoreMoveEffectsAbAttr")
@@ -5100,7 +5100,6 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
    */
   override apply({ source, pokemon, move, targets, simulated }: PostMoveUsedAbAttrParams): void {
     if (!simulated) {
-      pokemon.turnData.extraTurns++;
       // If the move is an AttackMove or a StatusMove the Dancer must replicate the move on the source of the Dance
       if (move.getMove().is("AttackMove") || move.getMove().is("StatusMove")) {
         const target = this.getTarget(pokemon, source, targets);
@@ -5792,10 +5791,10 @@ export interface MoveAbilityBypassAbAttrParams extends AbAttrBaseParams {
 export class MoveAbilityBypassAbAttr extends AbAttr {
   private readonly moveIgnoreFunc: (pokemon: Pokemon, move: Move) => boolean;
 
-  constructor(moveIgnoreFunc?: (pokemon: Pokemon, move: Move) => boolean) {
+  constructor(moveIgnoreFunc: (pokemon: Pokemon, move: Move) => boolean = () => true) {
     super(false);
 
-    this.moveIgnoreFunc = moveIgnoreFunc || ((_pokemon, _move) => true);
+    this.moveIgnoreFunc = moveIgnoreFunc;
   }
 
   override canApply({ pokemon, move, cancelled }: MoveAbilityBypassAbAttrParams): boolean {
@@ -7133,8 +7132,8 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.RIVALRY, 4)
-      .attr(MovePowerBoostAbAttr, (user, target, _move) => user?.gender !== Gender.GENDERLESS && target?.gender !== Gender.GENDERLESS && user?.gender === target?.gender, 1.25)
-      .attr(MovePowerBoostAbAttr, (user, target, _move) => user?.gender !== Gender.GENDERLESS && target?.gender !== Gender.GENDERLESS && user?.gender !== target?.gender, 0.75)
+      .attr(MovePowerBoostAbAttr, (user, target, _move) => user.gender !== Gender.GENDERLESS && target?.gender !== Gender.GENDERLESS && user.gender === target?.gender, 1.25)
+      .attr(MovePowerBoostAbAttr, (user, target, _move) => user.gender !== Gender.GENDERLESS && target?.gender !== Gender.GENDERLESS && user.gender !== target?.gender, 0.75)
       .build(),
     new AbBuilder(AbilityId.STEADFAST, 4)
       .attr(FlinchStatStageChangeAbAttr, [ Stat.SPD ], 1)
@@ -7367,10 +7366,10 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.TOXIC_BOOST, 5)
-      .attr(MovePowerBoostAbAttr, (user, _target, move) => move.category === MoveCategory.PHYSICAL && (user?.status?.effect === StatusEffect.POISON || user?.status?.effect === StatusEffect.TOXIC), 1.5)
+      .attr(MovePowerBoostAbAttr, (user, _target, move) => move.category === MoveCategory.PHYSICAL && (user.status?.effect === StatusEffect.POISON || user.status?.effect === StatusEffect.TOXIC), 1.5)
       .build(),
     new AbBuilder(AbilityId.FLARE_BOOST, 5)
-      .attr(MovePowerBoostAbAttr, (user, _target, move) => move.category === MoveCategory.SPECIAL && user?.status?.effect === StatusEffect.BURN, 1.5)
+      .attr(MovePowerBoostAbAttr, (user, _target, move) => move.category === MoveCategory.SPECIAL && user.status?.effect === StatusEffect.BURN, 1.5)
       .build(),
     new AbBuilder(AbilityId.HARVEST, 5)
       .attr(
@@ -7414,7 +7413,7 @@ export function initAbilities() {
     new AbBuilder(AbilityId.ANALYTIC, 5)
       .attr(MovePowerBoostAbAttr, (user) =>
         // Boost power if all other Pokemon have already moved (no other moves are slated to execute)
-        !globalScene.phaseManager.hasPhaseOfType("MovePhase", phase => phase.pokemon.id !== user?.id),
+        !globalScene.phaseManager.hasPhaseOfType("MovePhase", phase => phase.pokemon.id !== user.id),
         1.3)
       .build(),
     new AbBuilder(AbilityId.ILLUSION, 5)
@@ -7596,8 +7595,7 @@ export function initAbilities() {
       .attr(AddSecondStrikeAbAttr)
       // Only multiply damage on the last strike of multi-strike moves
       .attr(MoveDamageBoostAbAttr, 0.25, (user, target, move) => (
-          !!user
-          && user.turnData.hitCount > 1 // move was originally multi hit
+          user.turnData.hitCount > 1 // move was originally multi hit
           && user.turnData.hitsLeft === 1 // move is on its final strike
           && move.canBeMultiStrikeEnhanced(user, true, target)
         )
@@ -7857,7 +7855,7 @@ export function initAbilities() {
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => target.getMoveEffectiveness(user, move) >= 2, 0.75)
       .build(),
     new AbBuilder(AbilityId.NEUROFORCE, 7)
-      .attr(MovePowerBoostAbAttr, (user, target, move) => (target?.getMoveEffectiveness(user!, move) ?? 1) >= 2, 1.25)
+      .attr(MovePowerBoostAbAttr, (user, target, move) => (target?.getMoveEffectiveness(user, move) ?? 1) >= 2, 1.25)
       .build(),
     new AbBuilder(AbilityId.INTREPID_SWORD, 8)
       .attr(PostSummonStatStageChangeAbAttr, [ Stat.ATK ], 1, true)
