@@ -1926,23 +1926,22 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const shouldUseTeraType = !(forDefend && teraType === PokemonType.STELLAR);
     if (includeTeraType && this.isTerastallized && shouldUseTeraType) {
       // Offensively, add the tera to the original types for STAB;
-      // defensively, become purely the tera type (if not stellar).
+      // defensively, become purely the tera type and nothing else
       types.add(teraType);
       if (forDefend) {
         return Array.from(types);
       }
+      // TODO: This being in an `else` block is odd and contradicts the "add attack types to original types for STAB" statement
     } else {
       // biome-ignore lint/suspicious/useIterableCallbackReturn: benign
       this.getOriginalTyping(ignoreOverride, useIllusion).forEach(s => types.add(s));
     }
 
-    // check type added to Pokemon from moves like Forest's Curse or Trick Or Treat.
+    // check type added to Pokemon from moves like Forest's Curse or Trick Or Treat
     if (!ignoreOverride && this.summonData.addedType) {
       types.add(this.summonData.addedType);
     }
 
-    // become UNKNOWN (ypeless) if no types are present,
-    // or remove it if other types are present
     if (types.size === 0) {
       types.add(PokemonType.UNKNOWN);
     } else if (types.size > 1) {
@@ -1954,6 +1953,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Helper function to return this Pokemon's original typing before applying effects.
+   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}/etc
+   * @param useIllusion - Whether to consider an active illusion
+   * @returns This Pokemon's original typing based solely on type overrides and its current form.
    */
   private getOriginalTyping(ignoreOverride: boolean, useIllusion: boolean): PokemonType[] {
     if (!ignoreOverride && this.summonData.types.length > 0 && (!this.summonData.illusion || !useIllusion)) {
@@ -1974,15 +1976,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     // Second type
     let secondType: PokemonType = PokemonType.UNKNOWN;
-    if (!fusionSpeciesForm) {
-      // If not a fusion, just get the second type from the species, checking for permanent changes from ME
-      secondType =
-        hasCustomTypes
-        && this.customPokemonData.types.length > 1
-        && this.customPokemonData.types[1] !== PokemonType.UNKNOWN
-          ? this.customPokemonData.types[1]
-          : (speciesForm.type2 ?? PokemonType.UNKNOWN);
-    } else {
+    if (fusionSpeciesForm) {
       // Check if the fusion Pokemon also has permanent changes from ME when determining the fusion types
       const fusionType1 =
         this.fusionCustomPokemonData?.types
@@ -2013,6 +2007,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
             ? this.customPokemonData.types[1]
             : (speciesForm.type2 ?? PokemonType.UNKNOWN);
       }
+    } else {
+      // If not a fusion, just get the second type from the species, checking for permanent changes from ME
+      secondType =
+        hasCustomTypes
+        && this.customPokemonData.types.length > 1
+        && this.customPokemonData.types[1] !== PokemonType.UNKNOWN
+          ? this.customPokemonData.types[1]
+          : (speciesForm.type2 ?? PokemonType.UNKNOWN);
     }
 
     if (secondType !== PokemonType.UNKNOWN) {
