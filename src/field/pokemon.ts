@@ -1937,15 +1937,15 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       this.getOriginalTyping(ignoreOverride, useIllusion).forEach(s => types.add(s));
     }
 
-    // check type added to Pokemon from moves like Forest's Curse or Trick Or Treat
-    if (!ignoreOverride && this.summonData.addedType) {
-      types.add(this.summonData.addedType);
-    }
-
     if (types.size === 0) {
       types.add(PokemonType.UNKNOWN);
     } else if (types.size > 1) {
       types.delete(PokemonType.UNKNOWN);
+    }
+
+    // check type added to Pokemon from moves like Forest's Curse or Trick Or Treat
+    if (!ignoreOverride && this.summonData.addedType) {
+      types.add(this.summonData.addedType);
     }
 
     return Array.from(types);
