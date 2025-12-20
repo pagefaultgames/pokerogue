@@ -94,6 +94,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
     /** The Pokemon using this phase's invoked move */
     const user = this.getUserPokemon();
+
     if (!user) {
       super.end();
       return;
@@ -224,7 +225,6 @@ export class MoveEffectPhase extends PokemonPhase {
     if (anySuccess) {
       this.moveHistoryEntry.result = MoveResult.SUCCESS;
     } else {
-      // If the move failed to impact all targets, disable all subsequent multi-hits
       user.turnData.hitCount = 1;
       user.turnData.hitsLeft = 1;
       this.moveHistoryEntry.result = allMiss ? MoveResult.MISS : MoveResult.FAIL;
@@ -615,8 +615,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
   }
 
-  /**
-   * Apply the result of this phase's move to the given target
+  /** Apply the result of this phase's move to the given target
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - The {@linkcode Pokemon} struck by the move
    * @param effectiveness - The effectiveness of the move against the target
