@@ -37,7 +37,12 @@ export class TitlePhase extends Phase {
     globalScene.ui.clearText();
     globalScene.ui.fadeIn(250);
 
-    globalScene.playBgm("title", true);
+    const now = new Date();
+    if (now.getMonth() === 11 || (now.getMonth() === 0 && now.getDate() <= 15)) {
+      globalScene.playBgm("winter_title", true);
+    } else {
+      globalScene.playBgm("title", true);
+    }
 
     globalScene.gameData
       .getSession(loggedInUser?.lastSessionSlot ?? -1)
