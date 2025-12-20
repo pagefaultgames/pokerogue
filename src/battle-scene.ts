@@ -2376,6 +2376,8 @@ export class BattleScene extends SceneBase {
     switch (bgmName) {
       case "title": //Firel PokéRogue Title
         return 46.5;
+      case "winter_title": //Andr06 Winter Title
+        return 20.57;
       case "battle_kanto_champion": //B2W2 Kanto Champion Battle
         return 13.95;
       case "battle_johto_champion": //B2W2 Johto Champion Battle

@@ -70,6 +70,7 @@ import {
   padInt,
   randIntRange,
   rgbHexToRgba,
+  truncateString,
 } from "#utils/common";
 import type { StarterPreferences } from "#utils/data";
 import { deepCopy, loadStarterPreferences, saveStarterPreferences } from "#utils/data";
@@ -167,7 +168,19 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoYOffset: 0.5,
     starterInfoXPos: 26,
   },
+  id: {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "38px",
+  },
+  hi: {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "38px",
+  },
   tl: {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "38px",
+  },
+  "nb-NO": {
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
   },
@@ -1412,8 +1425,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   isSameSpeciesEggAvailable(speciesId: number): boolean {
     // Get this species ID's starter data
     const starterData = globalScene.gameData.starterData[speciesId];
+    const hatchedCount = globalScene.gameData.dexData[speciesId].hatchedCount;
 
-    return starterData.candyCount >= getSameSpeciesEggCandyCounts(speciesStarterCosts[speciesId]);
+    return starterData.candyCount >= getSameSpeciesEggCandyCounts(speciesStarterCosts[speciesId], hatchedCount);
   }
 
   /**
@@ -2163,6 +2177,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                       } else {
                         this.pokemonNameText.setText(this.lastSpecies.name);
                       }
+                      this.truncateName();
                       ui.setMode(UiMode.STARTER_SELECT);
                     },
                     () => {
@@ -2259,7 +2274,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             }
 
             // Same species egg menu option.
-            const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarterCosts[this.lastSpecies.speciesId]);
+            const lastSpeciesId = this.lastSpecies.speciesId;
+            const hatchedCount = globalScene.gameData.dexData[lastSpeciesId].hatchedCount;
+            const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarterCosts[lastSpeciesId], hatchedCount);
             options.push({
               label: `×${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
               handler: () => {
@@ -3550,6 +3567,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       } else {
         this.pokemonNameText.setText(species.name);
       }
+      this.truncateName();
 
       if (this.speciesStarterDexEntry?.caughtAttr) {
         const colorScheme = starterColors[species.speciesId];
@@ -4669,5 +4687,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   clearStarterPreferences() {
     this.starterPreferences = {};
     this.originalStarterPreferences = {};
+  }
+
+  /**
+   * Truncate the Pokémon name so it won't overlap into the starters.
+   */
+  private truncateName() {
+    const name = this.pokemonNameText.text;
+    this.pokemonNameText.setText(truncateString(name, 15));
   }
 }

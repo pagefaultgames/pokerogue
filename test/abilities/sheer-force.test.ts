@@ -94,7 +94,7 @@ describe("Abilities - Sheer Force", () => {
       .enemyAbility(AbilityId.COLOR_CHANGE);
 
     await game.classicMode.startBattle([SpeciesId.PIDGEOT]);
-    const enemyPokemon = game.scene.getEnemyPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
     const headbuttMove = allMoves[MoveId.HEADBUTT];
     vi.spyOn(headbuttMove, "calculateBattlePower");
     const headbuttFlinchAttr = headbuttMove.getAttrs("FlinchAttr")[0];
@@ -106,7 +106,7 @@ describe("Abilities - Sheer Force", () => {
     await game.move.forceHit();
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(enemyPokemon?.getTypes()[0]).toBe(PokemonType.WATER);
+    expect(enemyPokemon.getTypes()[0]).toBe(PokemonType.WATER);
     expect(headbuttMove.calculateBattlePower).toHaveLastReturnedWith(headbuttMove.power * SHEER_FORCE_MULT);
     expect(headbuttFlinchAttr.getMoveChance).toHaveLastReturnedWith(0);
   });
@@ -144,11 +144,11 @@ describe("Abilities - Sheer Force", () => {
       .enemyLevel(100);
     await game.classicMode.startBattle([SpeciesId.MELOETTA]);
 
-    const playerPokemon = game.scene.getPlayerPokemon();
-    const formKeyStart = playerPokemon?.getFormKey();
+    const playerPokemon = game.field.getPlayerPokemon();
+    const formKeyStart = playerPokemon.getFormKey();
 
     game.move.select(MoveId.RELIC_SONG);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(formKeyStart).toBe(playerPokemon?.getFormKey());
+    expect(formKeyStart).toBe(playerPokemon.getFormKey());
   });
 });

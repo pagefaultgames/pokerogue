@@ -50,8 +50,9 @@ describe("Moves - Doodle", () => {
     game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getPlayerField()[0].getAbility().id).toBe(AbilityId.BALL_FETCH);
-    expect(game.scene.getPlayerField()[1].getAbility().id).toBe(AbilityId.BALL_FETCH);
+    const [player1, player2] = game.scene.getPlayerField();
+    expect(player1.getAbility().id).toBe(AbilityId.BALL_FETCH);
+    expect(player2.getAbility().id).toBe(AbilityId.BALL_FETCH);
   });
 
   it("should activate post-summon abilities", async () => {
