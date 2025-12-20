@@ -86,7 +86,7 @@ const timedEvents: readonly TimedEvent[] = [
     eventType: EventType.SHINY,
     startDate: new Date(Date.UTC(2025, 11, 19)),
     endDate: new Date(Date.UTC(2026, 0, 5)),
-    bannerKey: "winter2025",
+    bannerKey: "winter_holidays2025-event",
     scale: 0.19,
     availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-419", "pt-BR", "zh-Hans", "zh-Hant", "da", "ru"],
     shinyEncounterMultiplier: 2,
