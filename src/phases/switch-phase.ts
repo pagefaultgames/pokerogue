@@ -36,11 +36,8 @@ export class SwitchPhase extends BattlePhase {
   start() {
     super.start();
 
-    // Skip modal switch if impossible (no remaining party members that aren't in battle)
-    if (
-      this.isModal
-      && globalScene.getPlayerParty().filter(p => p.isAllowedInBattle() && !p.isActive(true)).length === 0
-    ) {
+    // Skip modal switch if impossible (no remaining party members that aren't already in battle)
+    if (this.isModal && globalScene.getPokemonAllowedInBattle().every(p => p.isOnField())) {
       return super.end();
     }
 
@@ -56,11 +53,7 @@ export class SwitchPhase extends BattlePhase {
     }
 
     // Check if there is any space still in field
-    if (
-      this.isModal
-      && globalScene.getPlayerField().filter(p => p.isAllowedInBattle() && p.isActive(true)).length
-        >= globalScene.currentBattle.getBattlerCount()
-    ) {
+    if (this.isModal && globalScene.getPlayerField(true).length > globalScene.currentBattle.getBattlerCount()) {
       return super.end();
     }
 
