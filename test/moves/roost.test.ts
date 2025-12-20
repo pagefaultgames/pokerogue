@@ -1,3 +1,4 @@
+import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
@@ -7,7 +8,7 @@ import { MoveEffectPhase } from "#phases/move-effect-phase";
 import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, test } from "vitest";
 
 describe("Moves - Roost", () => {
   let phaserGame: Phaser.Game;
@@ -241,5 +242,76 @@ describe("Moves - Roost", () => {
     expect(playerPokemonTypes.filter(type => type === PokemonType.GHOST)).toHaveLength(1);
     expect(playerPokemonTypes.length === 3).toBeTruthy();
     expect(playerPokemon.isGrounded()).toBeFalsy();
+  });
+
+  // TODO: This interaction is extremely broken due to a lack of granularity with type querying effects.
+  it.todo("should consider the user's current types when transformed", async () => {
+    game.override.ability(AbilityId.IMPOSTER).enemySpecies(SpeciesId.CORVIKNIGHT);
+    await game.classicMode.startBattle([SpeciesId.DITTO]);
+
+    const ditto = game.field.getPlayerPokemon();
+    ditto.hp = 1;
+    expect(ditto.summonData.speciesForm).toBe(SpeciesId.CORVIKNIGHT);
+    expect(ditto).toHaveTypes([PokemonType.STEEL, PokemonType.FLYING]);
+
+    game.move.use(MoveId.ROOST);
+    await game.move.forceEnemyMove(MoveId.TRICK_OR_TREAT);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.phaseInterceptor.to("MoveEffectPhase"); // Roost
+
+    expect(ditto).toHaveTypes([PokemonType.STEEL]);
+
+    await game.toEndOfTurn();
+
+    expect(ditto).toHaveTypes([PokemonType.STEEL, PokemonType.FLYING, PokemonType.GHOST]);
+  });
+
+  it("should not change normally-Flying type Pokemon with 3 types into Normal-types", async () => {
+    game.override.ability(AbilityId.IMPOSTER).enemySpecies(SpeciesId.CORVIKNIGHT);
+    await game.classicMode.startBattle([SpeciesId.TORNADUS]);
+
+    const tornadus = game.field.getPlayerPokemon();
+    tornadus.hp = 1;
+
+    expect(tornadus.summonData.speciesForm).toBe(SpeciesId.CORVIKNIGHT);
+    expect(tornadus).toHaveTypes([PokemonType.STEEL, PokemonType.FLYING]);
+
+    game.move.use(MoveId.ROOST);
+    await game.move.forceEnemyMove(MoveId.TRICK_OR_TREAT);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.phaseInterceptor.to("MoveEffectPhase"); // Trick or treat
+
+    expect(tornadus).toHaveTypes([PokemonType.STEEL, PokemonType.FLYING, PokemonType.GHOST]);
+
+    await game.phaseInterceptor.to("MoveEffectPhase"); // Roost
+
+    expect(tornadus).toHaveTypes([PokemonType.STEEL, PokemonType.GHOST]);
+
+    await game.toEndOfTurn();
+
+    expect(tornadus).toHaveTypes([PokemonType.STEEL, PokemonType.FLYING, PokemonType.GHOST]);
+  });
+
+  it.each<{ name: string; move: MoveId; type: PokemonType }>([
+    { name: "Trick-or-Treat", move: MoveId.TRICK_OR_TREAT, type: PokemonType.GHOST },
+    { name: "Forest's Curse", move: MoveId.FORESTS_CURSE, type: PokemonType.GRASS },
+  ])("should ignore added types from $name when changing Flying to Normal type", async ({ move, type }) => {
+    await game.classicMode.startBattle([SpeciesId.TORNADUS]);
+
+    const tornadus = game.field.getPlayerPokemon();
+    tornadus.hp = 1;
+
+    game.move.use(MoveId.ROOST);
+    await game.move.forceEnemyMove(move);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.toEndOfTurn(false);
+
+    expect(tornadus).toHaveTypes([PokemonType.NORMAL, type]);
+    expect(tornadus.isGrounded()).toBe(true);
+
+    await game.toNextTurn();
+
+    expect(tornadus).toHaveTypes([PokemonType.FIRE, PokemonType.FLYING, PokemonType.GHOST]);
+    expect(tornadus.isGrounded()).toBe(false);
   });
 });
