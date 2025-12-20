@@ -103,4 +103,15 @@ describe("Moves - U-turn", () => {
     expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
     expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.SHUCKLE);
   });
+
+  it("should not crash when killing the user from a reactive effect", async () => {
+    game.override.enemyAbility(AbilityId.ROUGH_SKIN);
+    await game.classicMode.startBattle([SpeciesId.SHEDINJA, SpeciesId.FEEBAS]);
+
+    game.move.use(MoveId.U_TURN);
+    game.doSelectPartyPokemon(1);
+    await game.toEndOfTurn();
+
+    expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.FEEBAS);
+  });
 });
