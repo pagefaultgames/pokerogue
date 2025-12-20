@@ -111,7 +111,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
 
   /**
    * Queue healing animations for the Pokemon affected by this Phase.
-   * @returns A Promise that resolved once the healing completes.
+   * @returns A Promise that resolves once the healing completes.
    */
   private async heal(): Promise<void> {
     const pokemon = this.getPokemon();
@@ -122,7 +122,6 @@ export class PokemonHealPhase extends CommonAnimPhase {
       return;
     }
 
-    // Check for heal block, ending the phase early if healing was prevented
     // TODO: Heal Block should probably be checked via `applyTags`
     const healBlock = pokemon.getTag(BattlerTagType.HEAL_BLOCK);
     if (healBlock && this.hpHealed > 0) {
@@ -132,22 +131,19 @@ export class PokemonHealPhase extends CommonAnimPhase {
 
     this.doHealPokemon();
 
-    // Cure status as applicable
-    // TODO: This should not be the job of the healing phase
+    // TODO: Curing status should arguably not be the job of this phase
     if (this.healStatus && pokemon.status) {
       this.message = getStatusEffectHealText(pokemon.status.effect, getPokemonNameWithAffix(pokemon));
       pokemon.resetStatus();
     }
 
-    // Restore PP
-    // TODO: This should not be the job of the healing phase
+    // TODO: Restoring PP should arguably not be the job of this phase
     if (this.fullRestorePP) {
       pokemon.getMoveset().forEach(m => {
         m.ppUsed = 0;
       });
     }
 
-    // Show message, update info boxes and then wrap up.
     if (this.message) {
       globalScene.phaseManager.queueMessage(this.message);
     }
