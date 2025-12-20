@@ -108,10 +108,13 @@ describe("Moves - U-turn", () => {
     game.override.enemyAbility(AbilityId.ROUGH_SKIN);
     await game.classicMode.startBattle([SpeciesId.SHEDINJA, SpeciesId.FEEBAS]);
 
+    const player1 = game.field.getPlayerPokemon();
+
     game.move.use(MoveId.U_TURN);
     game.doSelectPartyPokemon(1);
     await game.toEndOfTurn();
 
     expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.FEEBAS);
+    expect(player1).toHaveFainted();
   });
 });
