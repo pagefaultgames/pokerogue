@@ -93,6 +93,12 @@ export class PokemonHealPhase extends CommonAnimPhase {
   }
 
   public override start(): void {
+    if (this.hpHealed <= 0) {
+      console.warn("PokemonHealPhase HP healed was <=0!");
+      super.end();
+      return;
+    }
+
     // Only play animation if not skipped and target is not at full HP
     if (!this.skipAnim && !this.getPokemon().isFullHp()) {
       super.start();
@@ -125,7 +131,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
     // Check for heal block, ending the phase early if healing was prevented
     // TODO: Heal Block should probably be checked via `applyTags`
     const healBlock = pokemon.getTag(BattlerTagType.HEAL_BLOCK);
-    if (healBlock && this.hpHealed > 0) {
+    if (healBlock) {
       globalScene.phaseManager.queueMessage(healBlock.onActivation(pokemon));
       return;
     }
@@ -158,10 +164,10 @@ export class PokemonHealPhase extends CommonAnimPhase {
    * Heal the Pokemon affected by this Phase.
    */
   private doHealPokemon(): void {
-    const pokemon = this.getPokemon()!;
+    const pokemon = this.getPokemon();
 
     // If we would heal the user past full HP, don't.
-    if (this.hpHealed > 0 && pokemon.isFullHp()) {
+    if (pokemon.isFullHp()) {
       if (this.showFullHpMessage) {
         this.message = i18next.t("battle:hpIsFull", {
           pokemonName: getPokemonNameWithAffix(pokemon),
@@ -172,14 +178,6 @@ export class PokemonHealPhase extends CommonAnimPhase {
 
     const healAmount = this.getHealAmount();
 
-    if (healAmount < 0) {
-      // If Liquid Ooze is active, damage the user for the healing amount, then return.
-      // TODO: Consider refactoring liquid ooze to not use a heal phase to do damage
-      pokemon.damageAndUpdate(-healAmount, { result: HitResult.INDIRECT });
-      return;
-    }
-
-    // Heal the pokemon, then show damage numbers and validate achievements.
     pokemon.heal(healAmount);
     globalScene.damageNumberHandler.add(pokemon, healAmount, HitResult.HEAL);
     if (pokemon.isPlayer()) {
@@ -202,10 +200,8 @@ export class PokemonHealPhase extends CommonAnimPhase {
 
     // Apply the effect of healing charms for non-revival items before rounding down and capping at max HP
     // (or 1 below max for healing tokens).
-    // Liquid Ooze damage (being negative) remains uncapped as normal.
     const healMulti = new NumberHolder(1);
     globalScene.applyModifiers(HealingBoosterModifier, this.player, healMulti);
-    // TODO: we need to round liquid ooze dmg towards 0, not down
     return Math.min(Math.floor(this.hpHealed * healMulti.value), this.getPokemon().getMaxHp() - +this.preventFullHeal);
   }
 }

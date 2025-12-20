@@ -1063,7 +1063,7 @@ export class SeedTag extends SerializableBattlerTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.isOfType(PokemonType.GRASS);
+    return !pokemon.isOfType(PokemonType.GRASS, true, true);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -1083,39 +1083,37 @@ export class SeedTag extends SerializableBattlerTag {
     (this as Mutable<this>).sourceIndex = source.getBattlerIndex();
   }
 
-  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
-
-    if (!ret) {
-      return false;
-    }
-
+  lapse(pokemon: Pokemon): boolean {
     // Check which opponent to restore HP to
-    const source = pokemon.getOpponents().find(o => o.getBattlerIndex() === this.sourceIndex);
-    if (!source) {
-      return true;
-    }
-
-    const cancelled = new BooleanHolder(false);
-    applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon, cancelled });
-
-    if (cancelled.value) {
+    const healedPokemon = pokemon.getOpponents().find(o => o.getBattlerIndex() === this.sourceIndex);
+    // TODO: Verify whether lacking an opponent in 2v1 scenarios prevents the opponent from taking damage
+    if (!healedPokemon) {
       return true;
     }
 
     globalScene.phaseManager.unshiftNew(
       "CommonAnimPhase",
-      source.getBattlerIndex(),
+      healedPokemon.getBattlerIndex(),
       pokemon.getBattlerIndex(),
       CommonAnim.LEECH_SEED,
     );
 
-    // Damage the target and restore our HP (or take damage in the case of liquid ooze)
-    // TODO: Liquid ooze should queue a damage anim phase directly
-    const damage = pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 8), { result: HitResult.INDIRECT });
-    const reverseDrain = pokemon.hasAbilityWithAttr("ReverseDrainAbAttr", false);
-    globalScene.phaseManager.unshiftNew("PokemonHealPhase", source.getBattlerIndex(), reverseDrain ? -damage : damage, {
-      message: i18next.t(reverseDrain ? "battlerTags:seededLapseShed" : "battlerTags:seededLapse", {
+    // Damage the target and restore our HP, applying Liquid Ooze to reverse the healing if necessary.
+    const damageDealt = pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 8), { result: HitResult.INDIRECT });
+
+    const reverseDrained = new BooleanHolder(false);
+    applyAbAttrs("ReverseDrainAbAttr", {
+      pokemon,
+      opponent: healedPokemon,
+      cancelled: reverseDrained,
+      healAmount: damageDealt,
+    });
+    if (reverseDrained.value) {
+      return true;
+    }
+
+    globalScene.phaseManager.unshiftNew("PokemonHealPhase", healedPokemon.getBattlerIndex(), damageDealt, {
+      message: i18next.t("battlerTags:seededLapse", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       }),
       showFullHpMessage: false,

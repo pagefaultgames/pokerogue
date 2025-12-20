@@ -2658,22 +2658,21 @@ export class HitHealAttr extends MoveEffectAttr {
     this.healRatio = healRatio ?? 0.5;
     this.healStat = healStat ?? null;
   }
-  /**
-   * Heals the user the determined amount and possibly displays a message about regaining health.
-   * If the target has the {@linkcode ReverseDrainAbAttr}, all healing is instead converted
-   * to damage to the user.
-   * @param user {@linkcode Pokemon} using this move
-   * @param target {@linkcode Pokemon} target of this move
-   * @param move {@linkcode Move} being used
-   * @param args N/A
-   * @returns true if the function succeeds
-   */
-  apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
-    if (target.hasAbilityWithAttr("ReverseDrainAbAttr")) {
+
+  apply(user: Pokemon, target: Pokemon): boolean {
+    const healAmount = this.getHealAmount(user, target);
+
+    const reverseDrained = new BooleanHolder(false);
+    applyAbAttrs("ReverseDrainAbAttr", {
+      pokemon: target,
+      opponent: user,
+      cancelled: reverseDrained,
+      healAmount,
+    });
+    if (reverseDrained.value) {
       return false;
     }
 
-    const healAmount = this.getHealAmount(user, target);
     let message: string;
     if (this.healStat !== null) {
       message = i18next.t("battle:drainMessage", { pokemonName: getPokemonNameWithAffix(target) });

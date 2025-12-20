@@ -45,7 +45,7 @@ import { SwitchType } from "#enums/switch-type";
 import { WeatherType } from "#enums/weather-type";
 import { BerryUsedEvent } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
-import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
+import { BerryModifier, HealingBoosterModifier, HitHealModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
 import { BerryModifierType } from "#modifiers/modifier-type";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import { noAbilityTypeOverrideMoves } from "#moves/invalid-moves";
@@ -1087,31 +1087,44 @@ export class PostDefendAbAttr extends AbAttr {
   override apply(_params: PostMoveInteractionAbAttrParams): void {}
 }
 
-/** Class for abilities that make drain moves deal damage to user instead of healing them. */
-export class ReverseDrainAbAttr extends PostDefendAbAttr {
-  override canApply({ move, opponent, simulated }: PostMoveInteractionAbAttrParams): boolean {
-    const cancelled = new BooleanHolder(false);
-    applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon: opponent, cancelled, simulated });
-    return !cancelled.value && move.hasAttr("HitHealAttr");
-  }
+interface ReverseDrainAbAttrParams extends AbAttrParamsWithCancel {
+  /** The amount of healing done, before applying multipliers from Healing Charm. */
+  healAmount: number;
+  /** The opponent that initiated the healing effect. */
+  opponent: Pokemon;
+}
 
-  /**
-   * Determines if a damage and draining move was used to check if this ability should stop the healing.
-   * Examples include: Absorb, Draining Kiss, Bitter Blade, etc.
-   * Also displays a message to show this ability was activated.
-   */
-  override apply({ move, simulated, opponent, pokemon }: PostMoveInteractionAbAttrParams): void {
+/**
+ * Ability attribute that reverses the effect of opposing HP-draining moves, making them
+ * deal damage to the user instead of healing them.
+ */
+export class ReverseDrainAbAttr extends CancelInteractionAbAttr {
+  override apply({ simulated, healAmount, opponent, pokemon, cancelled }: ReverseDrainAbAttrParams): void {
     if (simulated) {
       return;
     }
-    const damageAmount = move.getAttrs("HitHealAttr")[0].getHealAmount(opponent, pokemon);
-    pokemon.turnData.damageTaken += damageAmount;
-    globalScene.phaseManager.unshiftNew("PokemonHealPhase", opponent.getBattlerIndex(), -damageAmount, {
-      skipAnim: true,
-    });
+
+    cancelled.value = true;
+
+    const indirectImmune = new BooleanHolder(false);
+    applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon: opponent, cancelled, simulated });
+    // TODO: Does this show a flyout?
+    if (indirectImmune.value) {
+      return;
+    }
+
+    // Round down the effect of Healing Charms for parity with mainline Big Root.
+    const healMulti = new NumberHolder(1);
+    globalScene.applyModifiers(HealingBoosterModifier, pokemon.isPlayer(), healMulti);
+
+    const dmg = toDmgValue(healAmount * healMulti.value);
+    opponent.turnData.damageTaken += dmg;
+    opponent.damageAndUpdate(dmg, { result: HitResult.INDIRECT, source: pokemon });
+    // TODO: Propagate the pokemon's current HP counts to `updateInfo`
+    globalScene.phaseManager.unshiftNew("UpdateInfoPhase", opponent);
   }
 
-  public override getTriggerMessage({ opponent }: PostMoveInteractionAbAttrParams): string | null {
+  public override getTriggerMessage({ opponent }: ReverseDrainAbAttrParams): string {
     return i18next.t("abilityTriggers:reverseDrain", { pokemonNameWithAffix: getPokemonNameWithAffix(opponent) });
   }
 }
