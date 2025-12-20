@@ -85,12 +85,10 @@ describe("Moves - Rage Fist", () => {
     // remove substitute and get confused
     game.move.select(MoveId.TIDY_UP);
     await game.move.selectEnemyMove(MoveId.CONFUSE_RAY);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
     game.move.select(MoveId.RAGE_FIST);
     await game.move.selectEnemyMove(MoveId.CONFUSE_RAY);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceConfusionActivation(true);
     await game.toNextTurn();
 
@@ -98,59 +96,56 @@ describe("Moves - Rage Fist", () => {
     expect(game.field.getPlayerPokemon().battleData.hitCount).toBe(0);
   });
 
-  it("should maintain hits recieved between wild waves", async () => {
+  it("should maintain hits received between wild waves", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    game.move.select(MoveId.RAGE_FIST);
+    game.move.use(MoveId.RAGE_FIST);
+    await game.move.forceEnemyMove(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.toEndOfTurn();
+
+    const feebas = game.field.getPlayerPokemon();
+    expect(feebas.battleData.hitCount).toBe(1);
+
     await game.toNextWave();
 
-    expect(game.field.getPlayerPokemon().battleData.hitCount).toBe(2);
-
-    game.move.select(MoveId.RAGE_FIST);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.phaseInterceptor.to("TurnEndPhase");
-
-    expect(game.field.getPlayerPokemon().battleData.hitCount).toBe(4);
-    expect(move.calculateBattlePower).toHaveLastReturnedWith(250);
+    expect(game.scene.currentBattle.waveIndex).toBe(2);
+    expect(feebas.battleData.hitCount).toBe(1);
   });
 
-  it("should reset hits recieved before trainer battles", async () => {
-    await game.classicMode.startBattle([SpeciesId.IRON_HANDS]);
+  it("should reset hits received before trainer battles", async () => {
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const ironHands = game.field.getPlayerPokemon();
-    expect(ironHands).toBeDefined();
+    const feebas = game.field.getPlayerPokemon();
 
-    // beat up a magikarp
-    game.move.select(MoveId.RAGE_FIST);
-    await game.move.selectEnemyMove(MoveId.DOUBLE_KICK);
+    game.move.use(MoveId.RAGE_FIST);
+    await game.move.forceEnemyMove(MoveId.DOUBLE_KICK);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.toEndOfTurn();
 
     expect(game.isVictory()).toBe(true);
-    expect(ironHands.battleData.hitCount).toBe(2);
+    expect(feebas.battleData.hitCount).toBe(2);
     expect(move.calculateBattlePower).toHaveLastReturnedWith(150);
 
     game.override.battleType(BattleType.TRAINER);
     await game.toNextWave();
 
-    expect(ironHands.battleData.hitCount).toBe(0);
+    expect(game.scene.currentBattle.waveIndex).toBe(2);
+    expect(feebas.battleData.hitCount).toBe(0);
   });
 
-  it("should reset hits recieved before new biome", async () => {
-    game.override.enemySpecies(SpeciesId.MAGIKARP).startingWave(10);
+  it("should reset hits received before new biome", async () => {
+    game.override.startingWave(10);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    game.move.select(MoveId.RAGE_FIST);
+    const feebas = game.field.getPlayerPokemon();
+    game.move.use(MoveId.RAGE_FIST);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    game.move.select(MoveId.RAGE_FIST);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.phaseInterceptor.to("BerryPhase", false);
-
-    expect(move.calculateBattlePower).toHaveLastReturnedWith(150);
+    expect(game.scene.currentBattle.waveIndex).toBe(11);
+    expect(feebas.battleData.hitCount).toBe(0);
   });
 
   it("should not reset if switched out or on reload", async () => {

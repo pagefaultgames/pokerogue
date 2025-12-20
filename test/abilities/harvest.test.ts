@@ -166,7 +166,6 @@ describe("Abilities - Harvest", () => {
     // heal up so harvest doesn't proc and kill enemy
     game.move.select(MoveId.EARTHQUAKE);
     await game.move.selectEnemyMove(MoveId.HEAL_PULSE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextWave();
 
     expectBerriesContaining({ name: "BERRY", count: 1, type: BerryType.PETAYA });

@@ -166,7 +166,6 @@ describe("Moves - Pledge Moves", () => {
 
     game.move.select(MoveId.FIERY_DANCE, 0, BattlerIndex.ENEMY_2);
     game.move.select(MoveId.SPLASH, 1);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
     // Rainbow effect should increase Fiery Dance's chance of raising Sp. Atk to 100%

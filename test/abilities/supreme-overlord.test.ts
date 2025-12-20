@@ -53,12 +53,10 @@ describe("Abilities - Supreme Overlord", () => {
     await game.toNextTurn();
 
     game.move.select(MoveId.EXPLOSION);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     game.doSelectPartyPokemon(2);
     await game.toNextTurn();
 
     game.move.select(MoveId.TACKLE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(move.calculateBattlePower).toHaveReturnedWith(basePower * 1.2);
@@ -80,7 +78,6 @@ describe("Abilities - Supreme Overlord", () => {
      */
     game.doRevivePokemon(1);
     game.move.select(MoveId.EXPLOSION);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
 
@@ -88,12 +85,10 @@ describe("Abilities - Supreme Overlord", () => {
      * Bulbasur faints twice
      */
     game.move.select(MoveId.EXPLOSION);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     game.doSelectPartyPokemon(2);
     await game.toNextTurn();
 
     game.move.select(MoveId.TACKLE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(move.calculateBattlePower).toHaveReturnedWith(basePower * 1.3);
@@ -116,7 +111,6 @@ describe("Abilities - Supreme Overlord", () => {
      * Enemy Pokemon faints and new wave is entered.
      */
     game.move.select(MoveId.TACKLE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextWave();
 
     game.move.select(MoveId.TACKLE);
@@ -137,7 +131,6 @@ describe("Abilities - Supreme Overlord", () => {
     await game.toNextTurn();
 
     game.move.select(MoveId.TACKLE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextWave();
 
     game.move.select(MoveId.TACKLE);
@@ -158,7 +151,6 @@ describe("Abilities - Supreme Overlord", () => {
     await game.toNextTurn();
 
     game.move.select(MoveId.TACKLE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextWave();
 
     game.move.select(MoveId.TACKLE);

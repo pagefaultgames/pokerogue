@@ -71,7 +71,6 @@ describe("Moves - Sketch", () => {
 
     await game.toNextTurn();
     game.move.select(MoveId.SKETCH);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.move.forceStatusActivation(true);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);

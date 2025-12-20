@@ -120,7 +120,6 @@ describe("Abilities - Neutralizing Gas", () => {
     game.move.select(MoveId.SPLASH, 1);
     await game.move.selectEnemyMove(MoveId.ENTRAINMENT, BattlerIndex.PLAYER_2);
     await game.move.selectEnemyMove(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("BerryPhase");
     expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeUndefined(); // No neut gas users are left
   });

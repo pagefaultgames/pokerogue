@@ -78,8 +78,9 @@ describe("Moves - Encore", () => {
 
       game.move.select(MoveId.ENCORE);
 
-      const turnOrder = delay ? [BattlerIndex.PLAYER, BattlerIndex.ENEMY] : [BattlerIndex.ENEMY, BattlerIndex.PLAYER];
-      await game.setTurnOrder(turnOrder);
+      await game.setTurnOrder(
+        delay ? [BattlerIndex.PLAYER, BattlerIndex.ENEMY] : [BattlerIndex.ENEMY, BattlerIndex.PLAYER],
+      );
 
       await game.phaseInterceptor.to("BerryPhase", false);
       expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
@@ -88,25 +89,22 @@ describe("Moves - Encore", () => {
   });
 
   it("Pokemon under both Encore and Torment should alternate between Struggle and restricted move", async () => {
-    const turnOrder = [BattlerIndex.ENEMY, BattlerIndex.PLAYER];
     game.override.moveset([MoveId.ENCORE, MoveId.TORMENT, MoveId.SPLASH]);
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     game.move.select(MoveId.ENCORE);
-    await game.setTurnOrder(turnOrder);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase");
     expect(enemyPokemon.getTag(BattlerTagType.ENCORE)).toBeDefined();
 
     await game.toNextTurn();
     game.move.select(MoveId.TORMENT);
-    await game.setTurnOrder(turnOrder);
     await game.phaseInterceptor.to("BerryPhase");
     expect(enemyPokemon.getTag(BattlerTagType.TORMENT)).toBeDefined();
 
     await game.toNextTurn();
     game.move.select(MoveId.SPLASH);
-    await game.setTurnOrder(turnOrder);
     await game.phaseInterceptor.to("BerryPhase");
     const lastMove = enemyPokemon.getLastXMoves()[0];
     expect(lastMove?.move).toBe(MoveId.STRUGGLE);

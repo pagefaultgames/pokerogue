@@ -59,12 +59,10 @@ describe("Moves - Last Respects", () => {
      * Charmander faints once
      */
     game.move.select(MoveId.EXPLOSION);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     game.doSelectPartyPokemon(2);
     await game.toNextTurn();
 
     game.move.select(MoveId.LAST_RESPECTS);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(move.calculateBattlePower).toHaveReturnedWith(basePower + 2 * 50);
@@ -86,7 +84,6 @@ describe("Moves - Last Respects", () => {
      */
     game.doRevivePokemon(1);
     game.move.select(MoveId.EXPLOSION);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
 
@@ -94,12 +91,10 @@ describe("Moves - Last Respects", () => {
      * Bulbasur faints twice
      */
     game.move.select(MoveId.EXPLOSION);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     game.doSelectPartyPokemon(2);
     await game.toNextTurn();
 
     game.move.select(MoveId.LAST_RESPECTS);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(move.calculateBattlePower).toHaveReturnedWith(basePower + 3 * 50);
@@ -127,7 +122,6 @@ describe("Moves - Last Respects", () => {
      * Enemy Pokemon faints and new wave is entered.
      */
     game.move.select(MoveId.LAST_RESPECTS);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextWave();
     expect(game.scene.arena.playerFaints).toBe(1);
 
@@ -138,37 +132,30 @@ describe("Moves - Last Respects", () => {
   });
 
   it("should reset enemyFaints count on progressing to the next wave.", async () => {
-    game.override
-      .enemySpecies(SpeciesId.MAGIKARP)
-      .startingWave(1)
-      .enemyLevel(1)
-      .startingLevel(100)
-      .enemyMoveset(MoveId.LAST_RESPECTS)
-      .moveset([MoveId.LUNAR_DANCE, MoveId.LAST_RESPECTS, MoveId.SPLASH]);
+    game.override.enemySpecies(SpeciesId.MAGIKARP).startingWave(1).enemyLevel(1).startingLevel(100);
 
     await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
 
     /**
-     * The first Pokemon faints and another Pokemon in the party is selected.
-     */
-    game.move.select(MoveId.LUNAR_DANCE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    game.doSelectPartyPokemon(1);
-    await game.toNextTurn();
-
-    /**
      * Enemy Pokemon faints and new wave is entered.
      */
-    game.move.select(MoveId.LAST_RESPECTS);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.move.use(MoveId.GUILLOTINE);
+    await game.toEndOfTurn();
+
+    expect(game.scene.currentBattle.enemyFaints).toBe(1);
+
     await game.toNextWave();
+
+    // reset on new wave
+    expect(game.scene.currentBattle.waveIndex).toBe(2);
     expect(game.scene.currentBattle.enemyFaints).toBe(0);
 
+    // TODO: Do this automatically on load and remove this call
     game.removeEnemyHeldItems();
 
-    game.move.select(MoveId.LAST_RESPECTS);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.phaseInterceptor.to("MoveEndPhase");
+    game.move.use(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.LAST_RESPECTS);
+    await game.toEndOfTurn();
 
     expect(move.calculateBattlePower).toHaveLastReturnedWith(50);
   });
@@ -184,7 +171,6 @@ describe("Moves - Last Respects", () => {
     await game.toNextTurn();
 
     game.move.select(MoveId.LAST_RESPECTS);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextWave();
 
     game.move.select(MoveId.LAST_RESPECTS);
@@ -205,7 +191,6 @@ describe("Moves - Last Respects", () => {
     await game.toNextTurn();
 
     game.move.select(MoveId.LAST_RESPECTS);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextWave();
 
     game.move.select(MoveId.LAST_RESPECTS);

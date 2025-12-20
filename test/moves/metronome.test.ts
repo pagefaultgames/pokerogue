@@ -95,15 +95,14 @@ describe("Moves - Metronome", () => {
 
     game.move.select(MoveId.METRONOME);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.toNextTurn();
 
     expect(player.getTag(BattlerTagType.CHARGING)).toBeTruthy();
     const turn1PpUsed = metronomeMove.ppUsed;
     expect.soft(turn1PpUsed).toBeGreaterThan(1);
     expect(solarBeamMove.ppUsed).toBe(0);
 
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.toNextTurn();
+    await game.toEndOfTurn();
 
     expect(player.getTag(BattlerTagType.CHARGING)).toBeFalsy();
     const turn2PpUsed = metronomeMove.ppUsed - turn1PpUsed;
