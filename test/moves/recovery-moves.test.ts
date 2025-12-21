@@ -162,7 +162,7 @@ describe("Moves - Healing Moves", () => {
         move: MoveId.HEAL_PULSE,
         percent: 3 / 4,
         ability: AbilityId.MEGA_LAUNCHER,
-        condText: "user has Mega Launcher",
+        condText: "the user has Mega Launcher",
       },
       {
         name: "Floral Healing",
@@ -216,6 +216,13 @@ describe("Moves - Healing Moves", () => {
         const chansey = game.field.getEnemyPokemon();
         chansey.hp = 1;
 
+        game.move.use(move);
+        await game.toNextTurn();
+
+        expect(chansey).toHaveHp(percent * chansey.getMaxHp() + 1, { rounding: "half up" });
+
+        // Do it again to make sure healing amounts stay consistent
+        chansey.hp = 1;
         game.move.use(move);
         await game.toEndOfTurn();
 
