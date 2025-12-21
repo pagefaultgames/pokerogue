@@ -26,9 +26,9 @@ If you use any external code, please make sure to follow its licensing informati
 
 ## 🛠️ Development Basics
 
-PokéRogue is built with [Typescript](https://www.typescriptlang.org/docs/handbook/intro.html), using the [Phaser](https://github.com/phaserjs/phaser) game framework.
+PokéRogue is built with [TypeScript](https://www.typescriptlang.org/docs/handbook/intro.html), using the [Phaser](https://github.com/phaserjs/phaser) game framework.
 
-If you have the motivation and experience with Typescript/Javascript (or are willing to learn), you can contribute by forking the repository and making pull requests with contributions.
+If you have the motivation and experience with TypeScript/JavaScript (or are willing to learn), you can contribute by forking the repository and making pull requests with contributions.
 
 ## 💻 Environment Setup
 
@@ -47,11 +47,18 @@ This Linux environment comes with all required dependencies needed to start work
 [codespaces-link]: <https://github.com/codespaces/new?hide_repo_select=true&repo=620476224&ref=beta>
 [devcontainer-ext]: <https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers>
 
+> [!IMPORTANT]
+> Due to quirks of devcontainer port forwarding, you must use **`pnpm start:podman`** to start a local dev server from within a devcontainer.
+> All other instructions remain the same as local development.
+
+### Podman
+For those who prefer Docker containers, see [this instructions page](./docs/podman.md) for information on how to setup a development environment with Podman.
+
 ### Local Development
 
 #### Prerequisites
 
-- node: >=22.14.0 - [manage with pnpm](https://pnpm.io/cli/env) | [manage with fnm](https://github.com/Schniz/fnm) | [manage with nvm](https://github.com/nvm-sh/nvm) | [manage with volta.sh](https://volta.sh/)
+- node: >=24.9.0 - [manage with pnpm](https://pnpm.io/cli/env) | [manage with fnm](https://github.com/Schniz/fnm) | [manage with nvm](https://github.com/nvm-sh/nvm) | [manage with volta.sh](https://volta.sh/)
 - pnpm: 10.x - [how to install](https://pnpm.io/installation) (not recommended to install via `npm` on Windows native) | [alternate method - volta.sh](https://volta.sh/)
 - The repository [forked](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) and [cloned](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) locally on your device
 
@@ -90,7 +97,7 @@ Notable topics include:
 - [Commenting your code](./docs/comments.md)
 - [Linting & Formatting](./docs/linting.md)
 - [Localization](./docs/localization.md)
-- [Enemy AI move selection](./docs/enemy-ai.md) 
+- [Enemy AI move selection](./docs/enemy-ai.md)
 - [Running with Podman](./docs/podman.md)
 
 Again, if you have unanswered questions please feel free to ask!
@@ -103,7 +110,7 @@ You've just made a change - how can you check if it works? You have two areas to
 
 > This will likely be your first stop. After making a change, you'll want to spin the game up and make sure everything is as you expect. To do this, you will need a way to manipulate the game to produce the situation you're looking to test.
 
-[src/overrides.ts](../src/overrides.ts) contains overrides for most values you'll need to change for testing, controlled through the `overrides` object.
+[src/overrides.ts](./src/overrides.ts) contains overrides for most values you'll need to change for testing, controlled through the `overrides` object.
 For example, here is how you could test a scenario where the player Pokemon has the ability Drought and the enemy Pokemon has the move Water Gun:
 
 ```typescript
