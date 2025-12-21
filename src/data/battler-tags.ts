@@ -1814,12 +1814,13 @@ export abstract class ContactProtectedTag extends ProtectedTag {
   abstract onContact(_attacker: Pokemon, _user: Pokemon): void;
 
   /**
-   * Lapse the tag and apply `onContact` if the move makes contact and
-   * `lapseType` is custom, respecting the move's flags and the pokemon's
-   * abilities, and whether the lapseType is custom.
+   * Apply the `onContact` effect if the move makes contact,
+   * respecting the move's flags and the pokemon's abilities
    *
-   * @param pokemon - The pokemon with the tag
-   * @param lapseType - The type of lapse to apply. If this is not {@linkcode BattlerTagLapseType.CUSTOM CUSTOM}, no effect will be applied.
+   * @param pokemon - {@linkcode Pokemon} the target to check for protection
+   * @param simulated - Whether to prevent changes to game state during calculations; default `false`
+   * @param attacker - The {@linkcode Pokemon} using this phase's invoked move
+   * @param move - The {@linkcode Move} being used
    * @returns Whether the tag continues to exist after the lapse.
    */
   apply(pokemon: Pokemon, simulated: boolean, attacker: Pokemon, move: Move): boolean {
