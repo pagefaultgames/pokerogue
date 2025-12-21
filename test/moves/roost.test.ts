@@ -244,7 +244,7 @@ describe("Moves - Roost", () => {
   });
 
   // TODO: This interaction is extremely broken due to a lack of granularity with type querying effects
-  it.todo("should not change Flying type Pokemon changed into having 3 types into Normal-types", async () => {
+  it.todo("should respect prior type change effects when determining the user's new typing", async () => {
     await game.classicMode.startBattle([SpeciesId.TORNADUS]);
 
     const tornadus = game.field.getPlayerPokemon();
