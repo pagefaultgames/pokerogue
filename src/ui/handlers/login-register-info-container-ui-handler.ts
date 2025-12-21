@@ -258,9 +258,13 @@ export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHan
     this.setMouseCursorStyle("default");
   }
 
+  /**
+   * Enable or disable interactivity on all input fields.
+   * @param active - Whether to enable or disable interactivity
+   */
   private setInteractiveInputs(active: boolean): void {
     if (active) {
-      // `setFocus` doesn't foxus without a timeout
+      // `setFocus` doesn't focus without a timeout
       setTimeout(() => {
         this.lastFocusedInput?.setFocus();
         this.lastFocusedInput = null;
