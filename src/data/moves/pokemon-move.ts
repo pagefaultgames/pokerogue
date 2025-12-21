@@ -55,7 +55,7 @@ export class PokemonMove {
 
     // TODO: Add Sky Drop's 1 turn stall
     if (this.moveId === MoveId.NONE || move.name.endsWith(" (N)")) {
-      return [false, i18next.t("battle:moveNotImplemented", moveName.replace(" (N)", ""))];
+      return [false, i18next.t("battle:moveNotImplemented", { moveName: moveName.replace(" (N)", "") })];
     }
 
     if (!ignorePp && move.pp !== -1 && this.ppUsed >= this.getMovePp()) {

@@ -9,6 +9,7 @@ version = 1
 [[annotations]]
 path = [
     "workflows/**/*.yml",
+    "actions/**/*.yml",
     "ISSUE_TEMPLATE/**/*.yml",
     "FUNDING.yml",
     "CODEOWNERS",

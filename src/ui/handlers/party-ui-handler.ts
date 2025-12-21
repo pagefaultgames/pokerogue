@@ -602,7 +602,7 @@ export class PartyUiHandler extends MessageUiHandler {
           );
         }
         const hasMatchingModifier = matchingModifiers.some(m => m !== undefined); // checks if any items match
-        const partySlot = this.partySlots.filter(m => m.getPokemon() === newPokemon)[0]; // this gets pokemon [p] for us
+        const partySlot = this.partySlots.find(m => m.getPokemon() === newPokemon)!; // this gets pokemon [p] for us
         if (p !== this.transferCursor) {
           // this skips adding the able/not able labels on the pokemon doing the transfer
           if (hasMatchingModifier) {
@@ -1289,7 +1289,7 @@ export class PartyUiHandler extends MessageUiHandler {
   showText(
     text: string,
     delay?: number | null,
-    callback?: Function | null,
+    callback?: (() => void) | null,
     callbackDelay?: number | null,
     prompt?: boolean | null,
     promptDelay?: number | null,

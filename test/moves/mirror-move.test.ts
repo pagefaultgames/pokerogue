@@ -45,7 +45,7 @@ describe("Moves - Mirror Move", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    expect(game.scene.getEnemyField()[0].isFullHp()).toBeFalsy();
+    expect(game.field.getEnemyPokemon().isFullHp()).toBeFalsy();
   });
 
   it("should apply secondary effects of a move", async () => {

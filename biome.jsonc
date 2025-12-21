@@ -5,7 +5,7 @@
  */
 
 {
-  "$schema": "https://biomejs.dev/schemas/2.2.5/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.8/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -16,7 +16,7 @@
     "enabled": true,
     "useEditorconfig": true,
     "indentStyle": "space",
-    "includes": ["**", "!**/src/data/balance/**"],
+    "includes": ["**", "!src/data/balance/**"], // TODO: enable formatting of balance folder
     "lineWidth": 120
   },
   "files": {
@@ -25,20 +25,23 @@
     // and having to verify whether each individual file is ignored
     "includes": [
       "**",
-      "!**/dist",
-      "!**/coverage",
-      "!**/assets",
-      "!**/locales",
-      "!**/.github",
-      "!**/node_modules",
-      "!**/typedoc",
+      "!!.github",
+      "!!assets",
+      "!!coverage",
+      "!!dist",
+      "!!docs",
+      "!!locales",
+      "!!typedoc",
       // TODO: lint css and html?
-      "!**/*.css",
-      "!**/*.html",
-      // TODO: enable linting this file
-      "!**/src/data/moves/move.ts",
+      "!!*.css",
+      "!!*.html",
       // this file is too big
-      "!**/src/data/balance/tm-species-map.ts"
+      "!src/data/balance/tm-species-map.ts",
+      // there's some sort of bug when Biome parses this file
+      // relating to recursive variable assignment
+      // cf https://github.com/biomejs/biome/issues/8204
+      // TODO: remove this exclusion when the bug is fixed
+      "!!test/test-utils/setup/test-end-log.ts"
     ]
   },
   "assist": {
@@ -116,7 +119,17 @@
         },
         "useCollapsedIf": "error",
         "useCollapsedElseIf": "error",
-
+        "useDeprecatedReason": "error",
+        "useConsistentArrayType": {
+          "level": "error",
+          "fix": "safe",
+          "options": {}
+        },
+        "useShorthandAssign": {
+          "level": "error",
+          "fix": "safe",
+          "options": {}
+        },
         "noSubstr": "error",
         "noYodaExpression": "error",
         "useForOf": "error",
@@ -194,7 +207,8 @@
         "noDocumentCookie": "off", // Firefox has minimal support for the "Cookie Store API"
         "noConstantBinaryExpressions": "error",
         "noTsIgnore": "error",
-        "useIterableCallbackReturn": "warn" // TODO: Refactor and change to error
+        "useIterableCallbackReturn": "warn", // TODO: Refactor and change to error
+        "noNonNullAssertedOptionalChain": "warn" // TODO: Refactor and change to error
       },
       "complexity": {
         "useWhile": "error",
@@ -205,7 +219,7 @@
         "noForEach": "off", // Foreach vs for of is not that simple.
         "noUselessSwitchCase": "off", // Explicit > Implicit
         "noUselessConstructor": "error",
-        "noBannedTypes": "warn", // TODO: Refactor and make this an error
+        "noBannedTypes": "error",
         "noThisInStatic": "error",
         "noUselessThisAlias": "error",
         "noUselessTernary": "error",
@@ -217,13 +231,14 @@
         "noBarrelFile": "error"
       },
       "nursery": {
+        "noProto": "error",
+        "useFind": "error",
         "noUselessUndefined": "error",
         "useMaxParams": {
           "level": "info", // TODO: Change to "error"... eventually...
           "options": { "max": 7 }
         },
         "noShadow": "warn", // TODO: refactor and make "error"
-        "noNonNullAssertedOptionalChain": "warn", // TODO: refactor and make "error"
         "noDuplicateDependencies": "error",
         "noImportCycles": "error",
         // TODO: Change to error once promises are used properly
@@ -243,6 +258,16 @@
     }
   },
   "overrides": [
+    {
+      "includes": ["**/scripts/**/*.js"],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "noFloatingPromises": "error"
+          }
+        }
+      }
+    },
     {
       "includes": ["**/test/**/*.test.ts"],
       "linter": {

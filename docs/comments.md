@@ -38,28 +38,37 @@ For an example of how TSDoc comments work, here are some TSDoc comments taken fr
  * Attribute to put in a {@link https://bulbapedia.bulbagarden.net/wiki/Substitute_(doll) | Substitute Doll} for the user.
  */
 export class AddSubstituteAttr extends MoveEffectAttr {
-  /** The ratio of the user's max HP that is required to apply this effect */
-  private hpCost: number;
-  /** Whether the damage taken should be rounded up (Shed Tail rounds up) */
-  private roundUp: boolean;
+  /** The percentage of the user's maximum HP that is required to apply this effect. */
+  private readonly hpCost: number;
+  /** Whether the damage taken should be rounded up (Shed Tail rounds up). */
+  private readonly roundUp: boolean;
 
   constructor(hpCost: number, roundUp: boolean) {
     // code removed
   }
 
   /**
-   * Removes 1/4 of the user's maximum HP (rounded down) to create a substitute for the user
-   * @param user - The {@linkcode Pokemon} that used the move.
-   * @param target - n/a
-   * @param move - The {@linkcode Move} with this attribute.
-   * @param args - n/a
-   * @returns `true` if the attribute successfully applies, `false` otherwise
+   * Helper function to compute the amount of HP required to create a substitute.
+   * @param user - The {@linkcode Pokemon} using the move
+   * @returns The amount of HP that required to create a substitute.
    */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  private getHpCost(user: Pokemon): number {
     // code removed
   }
 
-  getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
+  /**
+   * Remove a fraction of the user's maximum HP to create a 25% HP substitute doll.
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param target - n/a
+   * @param move - The {@linkcode Move} being used
+   * @param args - n/a
+   * @returns Whether the attribute successfully applied.
+   */
+  public override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    // code removed
+  }
+
+  public override getUserBenefitScore(user: Pokemon, _target: Pokemon, _move: Move): number {
     // code removed
   }
 
@@ -67,12 +76,7 @@ export class AddSubstituteAttr extends MoveEffectAttr {
     // code removed
   }
 
-  /**
-   * Get the substitute-specific failure message if one should be displayed.
-   * @param user - The pokemon using the move.
-   * @returns The substitute-specific failure message if the conditions apply, otherwise `undefined`
-   */
-  getFailedText(user: Pokemon, _target: Pokemon, _move: Move): string | undefined {
+  public override getFailedText(user: Pokemon): string | undefined {
     // code removed
   }
 }

@@ -1,6 +1,7 @@
 // @ts-nocheck - TODO: remove this
 
 import { BattleScene } from "#app/battle-scene";
+import { timedEventManager } from "#app/global-event-manager";
 // biome-ignore lint/performance/noNamespaceImport: Necessary in order to mock the var
 import * as appConstants from "#constants/app-constants";
 import { MoveAnim } from "#data/battle-anims";
@@ -10,7 +11,6 @@ import { MockClock } from "#test/test-utils/mocks/mock-clock";
 import { MockGameObjectCreator } from "#test/test-utils/mocks/mock-game-object-creator";
 import { MockLoader } from "#test/test-utils/mocks/mock-loader";
 import { MockTextureManager } from "#test/test-utils/mocks/mock-texture-manager";
-import { MockTimedEventManager } from "#test/test-utils/mocks/mock-timed-event-manager";
 import { MockContainer } from "#test/test-utils/mocks/mocks-container/mock-container";
 import { PokedexMonContainer } from "#ui/pokedex-mon-container";
 import fs from "node:fs";
@@ -182,26 +182,21 @@ export class GameWrapper {
     this.scene.scene = this.scene;
     this.scene.input.keyboard = new KeyboardPlugin(this.scene);
     this.scene.input.gamepad = new GamepadPlugin(this.scene);
-    this.scene.cachedFetch = (url, _init) => {
-      return new Promise(resolve => {
-        // need to remove that if later we want to test battle-anims
-        const newUrl = url.includes("./battle-anims/") ? prependPath("./battle-anims/tackle.json") : prependPath(url);
-        // biome-ignore lint/suspicious/noImplicitAnyLet: TODO
-        let raw;
-        try {
-          raw = fs.readFileSync(newUrl, { encoding: "utf8", flag: "r" });
-        } catch (_e) {
-          return resolve(createFetchBadResponse({}));
-        }
-        const data = JSON.parse(raw);
-        const response = createFetchResponse(data);
-        return resolve(response);
-      });
+    this.scene.cachedFetch = async (url, _init): Promise<Response> => {
+      // Replace all battle anim fetches solely with the tackle anim to save time.
+      // TODO: This effectively bars us from testing battle animation related code ever
+      const newUrl = url.includes("./battle-anims/") ? prependPath("./battle-anims/tackle.json") : prependPath(url);
+      try {
+        const raw = fs.readFileSync(newUrl, { encoding: "utf8", flag: "r" });
+        return createFetchResponse(JSON.parse(raw));
+      } catch {
+        return createFetchBadResponse({});
+      }
     };
     this.scene.make = new MockGameObjectCreator(mockTextureManager);
     this.scene.time = new MockClock(this.scene);
     this.scene.remove = vi.fn(); // TODO: this should be stubbed differently
-    this.scene.eventManager = new MockTimedEventManager(); // Disable Timed Events
+    timedEventManager.disable();
   }
 }
 
@@ -213,7 +208,7 @@ function prependPath(originalPath) {
   return originalPath;
 }
 // Simulate fetch response
-function createFetchResponse(data) {
+function createFetchResponse(data: unknown): Response {
   return {
     ok: true,
     status: 200,
@@ -223,7 +218,7 @@ function createFetchResponse(data) {
   };
 }
 // Simulate fetch response
-function createFetchBadResponse(data) {
+function createFetchBadResponse(data: unknown): Response {
   return {
     ok: false,
     status: 404,

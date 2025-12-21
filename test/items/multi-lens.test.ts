@@ -37,6 +37,7 @@ describe("Items - Multi Lens", () => {
       .enemyLevel(99);
   });
 
+  // biome-ignore format: prefer pre-2.3.6 formatting
   it.each([
     { stackCount: 1, firstHitDamage: 0.75 },
     { stackCount: 2, firstHitDamage: 0.5 },
@@ -54,7 +55,7 @@ describe("Items - Multi Lens", () => {
       game.move.select(MoveId.TACKLE);
       await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
-      await game.phaseInterceptor.to("MoveEndPhase");
+      await game.phaseInterceptor.to("MoveEndPhase", false);
       const damageResults = spy.mock.results.map(result => result.value?.damage);
 
       expect(damageResults).toHaveLength(1 + stackCount);
@@ -73,7 +74,7 @@ describe("Items - Multi Lens", () => {
     game.move.select(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
-    await game.phaseInterceptor.to("MoveEndPhase");
+    await game.phaseInterceptor.to("MoveEndPhase", false);
     expect(playerPokemon.turnData.hitCount).toBe(3);
   });
 
@@ -111,7 +112,7 @@ describe("Items - Multi Lens", () => {
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
-    await game.phaseInterceptor.to("MoveEndPhase");
+    await game.phaseInterceptor.to("MoveEndPhase", false);
 
     expect(magikarp.turnData.hitCount).toBe(2);
   });
@@ -128,7 +129,7 @@ describe("Items - Multi Lens", () => {
     game.move.select(MoveId.SEISMIC_TOSS);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
-    await game.phaseInterceptor.to("MoveEndPhase");
+    await game.phaseInterceptor.to("MoveEndPhase", false);
     const damageResults = spy.mock.results.map(result => result.value?.damage);
 
     expect(damageResults).toHaveLength(2);

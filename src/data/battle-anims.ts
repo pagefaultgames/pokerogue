@@ -14,6 +14,8 @@ import { getEnumKeys, getEnumValues } from "#utils/enums";
 import { toKebabCase } from "#utils/strings";
 import Phaser from "phaser";
 
+// TODO: Split up this entire file - it has way WAY too much stuff for its own good.
+// (Also happens to be positively spaghetti, but that's besides the point)
 export class AnimConfig {
   public id: number;
   public graphic: string;
@@ -821,7 +823,7 @@ export abstract class BattleAnim {
               frame.target === AnimFrameTarget.GRAPHIC
               && isReversed(this.srcLine[0], this.srcLine[2], this.dstLine[0], this.dstLine[2])
             ) {
-              scaleX = scaleX * -1;
+              scaleX *= -1;
             }
           }
           break;
@@ -835,7 +837,7 @@ export abstract class BattleAnim {
   }
 
   // biome-ignore lint/complexity/noBannedTypes: callback is used liberally
-  play(onSubstitute?: boolean, callback?: Function) {
+  play(onSubstitute?: boolean, callback?: () => void) {
     const isOppAnim = this.isOppAnim();
     const user = isOppAnim ? this.target! : this.user!;
     const target = isOppAnim ? this.user! : this.target!; // TODO: These bangs are LITERALLY not correct at all
@@ -1179,7 +1181,7 @@ export abstract class BattleAnim {
     frameTimeMult: number,
     frameTimedEventPriority?: 0 | 1 | 3 | 5,
     // biome-ignore lint/complexity/noBannedTypes: callback is used liberally
-    callback?: Function,
+    callback?: () => void,
   ) {
     const spriteCache: SpriteCache = {
       [AnimFrameTarget.GRAPHIC]: [],

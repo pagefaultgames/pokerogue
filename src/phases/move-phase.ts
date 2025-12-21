@@ -1,7 +1,3 @@
-// biome-ignore-start lint/correctness/noUnusedImports: Used in a tsdoc comment
-import type { Move, PreUseInterruptAttr } from "#types/move-types";
-// biome-ignore-end lint/correctness/noUnusedImports: Used in a tsdoc comment
-
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -32,6 +28,7 @@ import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import { frenzyMissFunc } from "#moves/move-utils";
 import type { PokemonMove } from "#moves/pokemon-move";
+import type { Move, PreUseInterruptAttr } from "#types/move-types";
 import type { TurnMove } from "#types/turn-move";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, NumberHolder } from "#utils/common";
@@ -423,13 +420,6 @@ export class MovePhase extends PokemonPhase {
     // If the first failure check passes (and this is not a sub-move) then thaw the user if its move will thaw it.
     if (!isFollowUp) {
       this.doThawCheck();
-    }
-
-    // Reset hit-related turn data when starting follow-up moves (e.g. Metronomed moves, Dancer repeats)
-    if (isVirtual(useMode)) {
-      const turnData = user.turnData;
-      turnData.hitsLeft = -1;
-      turnData.hitCount = 0;
     }
 
     const pokemonMove = this.move;
@@ -916,7 +906,7 @@ export class MovePhase extends PokemonPhase {
       this.pokemon.getBattlerIndex(),
       this.targets[0],
       this.move,
-      this.useMode,
+      this.useMode === MoveUseMode.NORMAL ? MoveUseMode.IGNORE_PP : this.useMode,
     );
   }
 
