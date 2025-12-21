@@ -1933,8 +1933,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       // TODO: This being in an `else` block is odd and contradicts the "add attack types to original types for STAB" statement
     } else {
-      // biome-ignore lint/suspicious/useIterableCallbackReturn: benign
-      this.getOriginalTyping(ignoreOverride, useIllusion).forEach(s => types.add(s));
+      this.getOriginalTyping(ignoreOverride, useIllusion).forEach(type => {
+        types.add(type);
+      });
     }
 
     if (types.size === 0) {
