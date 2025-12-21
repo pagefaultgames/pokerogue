@@ -2302,6 +2302,7 @@ export class HealAttr extends MoveEffectAttr {
    * The percentage of {@linkcode Stat.HP} to heal, relative to the user/target's maximum.
    * @defaultValue `1`
    */
+  // TODO: Remove default value for explicitness - I don't think anything but Rest would use it
   protected healRatio: number;
   /**
    * Whether to display a healing animation upon healing the target.
@@ -2328,31 +2329,29 @@ export class HealAttr extends MoveEffectAttr {
       return false;
     }
 
-    // Apply any boosts to healing amounts (e.g. Heal Pulse + Mega Launcher).
-    const hp = new NumberHolder(this.healRatio);
+    const healRatio = new NumberHolder(this.healRatio);
     applyAbAttrs("MoveHealBoostAbAttr", {
       pokemon: user,
       opponent: target,
       move,
-      healRatio: hp,
+      healRatio,
     });
-    this.healRatio = hp.value;
-
-    this.addHealPhase(this.selfTarget ? user : target);
+    this.addHealPhase(this.selfTarget ? user : target, healRatio.value);
     return true;
   }
 
   /**
-   * Creates a new {@linkcode PokemonHealPhase}.
-   * This heals the target and shows the appropriate message.
+   * Helper function to create a new {@linkcode PokemonHealPhase}.
+   * @param healedPokemon - The {@linkcode Pokemon} being healed
+   * @param healRatio - The percentage of HP to heal
    */
-  protected addHealPhase(healedPokemon: Pokemon) {
+  protected addHealPhase(healedPokemon: Pokemon, healRatio: number): void {
     globalScene.phaseManager.unshiftNew(
       "PokemonHealPhase",
       healedPokemon.getBattlerIndex(),
-      // Healing moves always round UP
-      // (unlike most other sources which round down)
-      Math.round(healedPokemon.getMaxHp() * this.healRatio),
+      // NB: Healing moves always round their base amounts half up
+      // (unlike most other sources of damage which round down).
+      Math.round(healedPokemon.getMaxHp() * healRatio),
       {
         message: i18next.t("moveTriggers:healHp", { pokemonName: getPokemonNameWithAffix(healedPokemon) }),
         showFullHpMessage: true,
@@ -2409,6 +2408,7 @@ export class RestAttr extends HealAttr {
   }
 
   override addHealPhase(user: Pokemon): void {
+    // omit message
     globalScene.phaseManager.unshiftNew("PokemonHealPhase", user.getBattlerIndex(), user.getMaxHp());
   }
 
