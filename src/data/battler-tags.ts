@@ -2485,8 +2485,9 @@ export class CursedTag extends SerializableBattlerTag {
 /**
  * Battler tag for attacks that remove a type post use.
  */
-// TODO: Remove this "tag" - it is solely used to communicate type changes from Burn Up/Double Shock to Roost,
-// and does so extremely poorly to boot
+// TODO: Remove this "tag" - it is solely used to communicate type changes from Burn Up/Double Shock to Roost.
+// This is a hacky way to add the bare minimum amount of granularity
+// when a more comprehensive system would likely be preferred.
 export class RemovedTypeTag extends SerializableBattlerTag {
   public declare readonly tagType: RemovedTypeTagType;
   constructor(tagType: RemovedTypeTagType, lapseType: BattlerTagLapseType, sourceMove: MoveId) {
