@@ -6304,7 +6304,6 @@ class ForceSwitchOutHelper {
       }
 
       if (switchOutTarget.hp > 0) {
-        switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
         globalScene.phaseManager.queueDeferred(
           "SwitchPhase",
           this.switchType,
@@ -6323,7 +6322,6 @@ class ForceSwitchOutHelper {
         return false;
       }
       if (switchOutTarget.hp > 0) {
-        switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
         const summonIndex = globalScene.currentBattle.trainer
           ? globalScene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot)
           : 0;
