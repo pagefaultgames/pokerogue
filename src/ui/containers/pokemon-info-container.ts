@@ -11,6 +11,7 @@ import type { StarterDataEntry } from "#types/save-data";
 import { ConfirmUiHandler } from "#ui/confirm-ui-handler";
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
+import { playTween } from "#utils/anim-utils";
 import { fixedInt, getShinyDescriptor } from "#utils/common";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
@@ -66,8 +67,6 @@ export class PokemonInfoContainer extends Phaser.GameObjects.Container {
   private movesContainerInitialX: number;
 
   public statsContainer: StatsContainer;
-
-  public shown: boolean;
 
   constructor(x = 372, y = 66) {
     super(globalScene, x, y);
@@ -434,7 +433,6 @@ export class PokemonInfoContainer extends Phaser.GameObjects.Container {
       }
 
       this.setVisible(true);
-      this.shown = true;
       globalScene.hideEnemyModifierBar();
     });
   }
@@ -469,58 +467,47 @@ export class PokemonInfoContainer extends Phaser.GameObjects.Container {
     this.pokemonMovesContainer.setVisible(false);
   }
 
-  makeRoomForConfirmUi(speedMultiplier = 1, fromCatch = false): Promise<void> {
-    const xPosition = fromCatch
-      ? this.initialX - this.infoWindowWidth - 67
-      : this.initialX - this.infoWindowWidth - ConfirmUiHandler.windowWidth;
+  async makeRoomForConfirmUi(speedMultiplier = 1, fromCatch = false): Promise<void> {
+    const xPosition = this.initialX - this.infoWindowWidth - (fromCatch ? 67 : ConfirmUiHandler.windowWidth);
 
     const infoTween = globalScene.tweens.getTweensOf(this)[0];
     const duration = Math.max(infoTween ? infoTween.duration - infoTween.elapsed : 0, 150);
     infoTween?.destroy();
 
-    return new Promise<void>(resolve => {
-      globalScene.tweens.add({
-        targets: this,
-        duration: fixedInt(Math.floor(duration / speedMultiplier)),
-        ease: "Cubic.easeInOut",
-        x: xPosition,
-        onComplete: () => {
-          resolve();
-        },
-      });
+    await playTween({
+      targets: this,
+      duration: fixedInt(Math.floor(duration / speedMultiplier)),
+      ease: "Cubic.easeInOut",
+      x: xPosition,
     });
   }
 
-  hide(speedMultiplier = 1): Promise<void> {
-    return new Promise(resolve => {
-      if (!this.shown) {
-        globalScene.showEnemyModifierBar();
-        return resolve();
-      }
+  async hide(speedMultiplier = 1): Promise<void> {
+    if (!this.visible) {
+      globalScene.showEnemyModifierBar();
+    }
 
-      globalScene.tweens.add({
+    // TODO: Wait for this to complete
+
+    await Promise.all([
+      playTween({
         targets: this.pokemonMovesContainer,
         duration: fixedInt(Math.floor(750 / speedMultiplier)),
         ease: "Cubic.easeInOut",
         x: this.movesContainerInitialX,
-      });
-
-      globalScene.tweens.add({
+      }),
+      playTween({
         targets: this,
         duration: fixedInt(Math.floor(750 / speedMultiplier)),
         ease: "Cubic.easeInOut",
         x: this.initialX,
-        onComplete: () => {
-          this.setVisible(false);
-          this.pokemonShinyIcon.off("pointerover");
-          this.pokemonShinyIcon.off("pointerout");
-          globalScene.ui.hideTooltip();
-          globalScene.showEnemyModifierBar();
-          resolve();
-        },
-      });
+      }),
+    ]);
 
-      this.shown = false;
-    });
+    this.setVisible(false);
+    this.pokemonShinyIcon.off("pointerover");
+    this.pokemonShinyIcon.off("pointerout");
+    globalScene.ui.hideTooltip();
+    globalScene.showEnemyModifierBar();
   }
 }

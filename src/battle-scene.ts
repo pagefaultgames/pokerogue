@@ -129,6 +129,7 @@ import { PokemonInfoContainer } from "#ui/pokemon-info-container";
 import { addTextObject, getTextColor } from "#ui/text";
 import { UI } from "#ui/ui";
 import { addUiThemeOverrides } from "#ui/ui-theme";
+import { playTween } from "#utils/anim-utils";
 import {
   BooleanHolder,
   fixedInt,
@@ -1904,28 +1905,28 @@ export class BattleScene extends SceneBase {
     this.arenaFlyout.toggleFlyout(pressed);
   }
 
-  showFieldOverlay(duration: number): Promise<void> {
-    return new Promise(resolve => {
-      this.tweens.add({
+  public async showFieldOverlay(duration: number): Promise<void> {
+    await playTween(
+      {
         targets: this.fieldOverlay,
         alpha: 0.5,
         ease: "Sine.easeOut",
         duration,
-        onComplete: () => resolve(),
-      });
-    });
+      },
+      this,
+    );
   }
 
-  hideFieldOverlay(duration: number): Promise<void> {
-    return new Promise(resolve => {
-      this.tweens.add({
+  public async hideFieldOverlay(duration: number): Promise<void> {
+    await playTween(
+      {
         targets: this.fieldOverlay,
         alpha: 0,
         duration,
         ease: "Cubic.easeIn",
-        onComplete: () => resolve(),
-      });
-    });
+      },
+      this,
+    );
   }
 
   updateShopOverlayOpacity(value: number): void {
@@ -1936,29 +1937,23 @@ export class BattleScene extends SceneBase {
     }
   }
 
-  showShopOverlay(duration: number): Promise<void> {
+  public async showShopOverlay(duration: number): Promise<void> {
     this.shopOverlayShown = true;
-    return new Promise(resolve => {
-      this.tweens.add({
-        targets: this.shopOverlay,
-        alpha: this.shopOverlayOpacity,
-        ease: "Sine.easeOut",
-        duration,
-        onComplete: () => resolve(),
-      });
+    await playTween({
+      targets: this.shopOverlay,
+      alpha: this.shopOverlayOpacity,
+      ease: "Sine.easeOut",
+      duration,
     });
   }
 
-  hideShopOverlay(duration: number): Promise<void> {
+  public async hideShopOverlay(duration: number): Promise<void> {
     this.shopOverlayShown = false;
-    return new Promise(resolve => {
-      this.tweens.add({
-        targets: this.shopOverlay,
-        alpha: 0,
-        duration,
-        ease: "Cubic.easeIn",
-        onComplete: () => resolve(),
-      });
+    await playTween({
+      targets: this.shopOverlay,
+      alpha: 0,
+      duration,
+      ease: "Cubic.easeIn",
     });
   }
 
