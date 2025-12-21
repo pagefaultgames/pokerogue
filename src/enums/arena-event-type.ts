@@ -1,5 +1,4 @@
 import type { ArenaTag } from "#data/arena-tag";
-import type { PositionalTag } from "#data/positional-tags/positional-tag";
 import type { TerrainType } from "#data/terrain";
 import type { WeatherType } from "#enums/weather-type";
 import type { ArenaEvent } from "#events/arena";
@@ -28,6 +27,5 @@ export type ArenaEventType = ObjectValues<typeof ArenaEventType>;
   Doc comment removal prevention block
   {@linkcode WeatherType}
   {@linkcode TerrainType}
-  {@linkcode PositionalTag}
   {@linkcode ArenaTag}
 */
