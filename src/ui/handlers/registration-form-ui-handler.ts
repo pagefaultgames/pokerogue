@@ -109,18 +109,25 @@ export class RegistrationFormUiHandler extends LoginRegisterInfoContainerUiHandl
             if (registerError) {
               onFail(registerError);
             } else {
-              pokerogueApi.account
-                .login({
-                  username: usernameInput.text,
-                  password: passwordInput.text,
-                })
-                .then(loginError => {
-                  if (loginError) {
-                    onFail(loginError);
-                  } else {
-                    originalRegistrationAction?.();
-                  }
-                });
+              const username = usernameInput.text;
+              const password = passwordInput.text;
+              pokerogueApi.account.login({ username, password }).then(loginError => {
+                if (loginError) {
+                  // retry once if the first attempt fails
+                  const retryLogin = () => {
+                    pokerogueApi.account.login({ username, password }).then(error => {
+                      if (error) {
+                        onFail(error);
+                      } else {
+                        originalRegistrationAction?.();
+                      }
+                    });
+                  };
+                  globalScene.time.delayedCall(2000, retryLogin);
+                } else {
+                  originalRegistrationAction?.();
+                }
+              });
             }
           });
       }
