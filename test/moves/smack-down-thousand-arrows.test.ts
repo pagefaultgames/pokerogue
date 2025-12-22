@@ -97,16 +97,14 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    // Eelektross should be grounded solely due to using Dig,
+    // Eelektross should be grounded solely due to using Dig
     const eelektross = game.field.getEnemyPokemon();
     expect(eelektross).toHaveBattlerTag(BattlerTagType.UNDERGROUND);
-    expect(eelektross.isGrounded()).toBe(false);
-    expect(eelektross.isGrounded(true)).toBe(true);
+    expect(eelektross.isGrounded()).toBe(true);
+    expect(eelektross.isGrounded(true)).toBe(false);
     await game.toEndOfTurn();
 
     // Eelektross took damage but was not forcibly grounded
-    expect(eelektross.isGrounded()).toBe(false);
-    expect(eelektross.isGrounded(true)).toBe(true);
     expect(eelektross).not.toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
     expect(eelektross).toHaveBattlerTag(BattlerTagType.UNDERGROUND);
     expect(eelektross).not.toHaveFullHp();

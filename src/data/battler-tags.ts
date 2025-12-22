@@ -2264,13 +2264,14 @@ export class SemiInvulnerableTag extends SerializableBattlerTag {
 export class FloatingTag extends SerializableBattlerTag {
   public override readonly tagType = BattlerTagType.FLOATING;
   constructor(turnCount: number) {
-    super(BattlerTagType.FLOATING, undefined, turnCount);
+    super(BattlerTagType.FLOATING, BattlerTagLapseType.TURN_END, turnCount);
   }
 
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
-    // TODO: This is still needed due to Telekinesis formerly sharing this tag.
+    // TODO: This is still needed due to Telekinesis formerly sharing this tag,
+    // and should be removed once save migration can cull all tags with telekinesis' move ID.
     if (this.sourceMove === MoveId.MAGNET_RISE) {
       globalScene.phaseManager.queueMessage(
         i18next.t("battlerTags:magnetRisenOnAdd", {
@@ -2301,7 +2302,7 @@ export class FloatingTag extends SerializableBattlerTag {
 export class TelekinesisTag extends SerializableBattlerTag {
   public override readonly tagType = BattlerTagType.TELEKINESIS;
   constructor() {
-    super(BattlerTagType.TELEKINESIS, 3);
+    super(BattlerTagType.TELEKINESIS, BattlerTagLapseType.TURN_END, 3);
   }
 
   override onAdd(pokemon: Pokemon) {

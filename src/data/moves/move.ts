@@ -407,12 +407,15 @@ export abstract class Move implements Localizable {
   }
 
   /**
-   * Checks if the target is immune to this Move's type.
-   * Currently looks at cases of Grass types with powder moves and Dark types with moves affected by Prankster.
+   * Checks if the target is immune to this Move, based on one of its types.
+   * Currently looks at cases of:
+   * - Grass types with powder moves
+   * - Dark types with moves affected by Prankster
+   * - Ground type moves against Pokemon currently in the air
    * @param user - The {@linkcode Pokemon} using this move
    * @param target - The {@linkcode Pokemon} targeted by this move
-   * @param type - The {@linkcode PokemonType} of the target
-   * @returns Whether the move is blocked by the target's type.
+   * @param type - The {@linkcode PokemonType} of the oppoennt that is being checked
+   * @returns Whether the move is blocked due to the target's typing.
    * Self-targeted moves will return `false` regardless of circumstances.
    */
   isTypeImmune(user: Pokemon, target: Pokemon, type: PokemonType): boolean {
@@ -5982,23 +5985,21 @@ export class CombinedPledgeTypeAttr extends VariableMoveTypeAttr {
 }
 
 export class VariableMoveTypeMultiplierAttr extends MoveAttr {
-  apply(_user: Pokemon, _target: Pokemon, _move: Move, _args: any[]): boolean {
+  apply(_user: Pokemon, _target: Pokemon, _move: Move, _args: [NumberHolder]): boolean {
     return false;
   }
 }
 
 export class NeutralDamageAgainstFlyingTypeMultiplierAttr extends VariableMoveTypeMultiplierAttr {
-  apply(_user: Pokemon, target: Pokemon, _move: Move, args: any[]): boolean {
-    if (!target.getTag(BattlerTagType.IGNORE_FLYING)) {
-      const multiplier = args[0] as NumberHolder;
-      //When a flying type is hit, the first hit is always 1x multiplier.
-      if (target.isOfType(PokemonType.FLYING)) {
-        multiplier.value = 1;
-      }
-      return true;
+  apply(_user: Pokemon, target: Pokemon, _move: Move, args: [NumberHolder]): boolean {
+    // When a flying type is hit, the first hit is always 1x multiplier
+    if (target.isGrounded(true) || !target.isOfType(PokemonType.FLYING)) {
+      return false;
     }
 
-    return false;
+    const multiplier = args[0];
+    multiplier.value = 1;
+    return true;
   }
 }
 
