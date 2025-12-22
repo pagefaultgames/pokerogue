@@ -3,9 +3,9 @@ import type { SceneBase } from "#app/scene-base";
 import type { Except } from "type-fest";
 
 /**
- * Argument type of a config object {@linkcode playTween},
+ * Argument type for {@linkcode playTween},
  * containing all attributes of {@linkcode Phaser.Types.Tweens.TweenBuilderConfig | TweenBuilderConfig}
- * save for completion-related ones.
+ * save for ones related to the `onComplete` callback.
  * @internal
  */
 interface PlayTweenConfig
