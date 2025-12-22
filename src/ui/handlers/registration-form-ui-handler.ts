@@ -86,7 +86,7 @@ export class RegistrationFormUiHandler extends LoginRegisterInfoContainerUiHandl
         this.submitAction = originalRegistrationAction;
         this.sanitizeInputs();
         globalScene.ui.setMode(UiMode.LOADING, { buttonActions: [] });
-        const onFail = error => {
+        const onFail = (error: string) => {
           globalScene.ui.setMode(UiMode.REGISTRATION_FORM, Object.assign(config, { errorMessage: error?.trim() }));
           globalScene.ui.playError();
         };
