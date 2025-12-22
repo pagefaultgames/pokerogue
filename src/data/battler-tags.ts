@@ -2961,7 +2961,9 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
 
 /**
  * Tag that doubles the type effectiveness of Fire-type moves.
+ * Used by {@linkcode MoveId.TAR_SHOT}.
  */
+// TODO: Rework to use an `apply` method
 export class TarShotTag extends SerializableBattlerTag {
   public override readonly tagType = BattlerTagType.TAR_SHOT;
   constructor() {
