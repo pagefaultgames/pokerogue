@@ -2348,26 +2348,24 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return forceGrounded;
     }
 
-    const airborneHolder = new BooleanHolder(false);
-    applyAbAttrs("UngroundedAbAttr", { pokemon: this, cancelled: airborneHolder, simulated: useIllusion });
-
-    return (
-      airborneHolder.value
-      || (!ignoreSemiInvulnerable && !!this.getTag(SemiInvulnerableTag))
+    // Flying-type and semi-invuln are the only remaining things that can make the user grounded
+    return !(
+      (!ignoreSemiInvulnerable && !!this.getTag(SemiInvulnerableTag))
       || !this.isOfType(PokemonType.FLYING, true, true, undefined, useIllusion)
     );
   }
 
   /**
    * Internal helper to return whether this Pokemon is forcibly airborne or forcibly grounded
-   * by an effect _not intrinsic to the Pokemon itself_.
+   * by an effect _other than typing or semi-invulnerability_.
    * @returns One of:
    * - `true`: This Pokemon is forcibly grounded by an effect like Smack Down, Ingrain or Gravity.
-   * - `false`: This Pokemon is forcibly lifted off the ground by an effect like Magnet Rise.
+   * - `false`: This Pokemon is forcibly lifted off the ground by an effect like Magnet Rise or an active Levitate ability.
    * - `undefined`: Neither of the above effects applies.
-   * @remarks
-   * This intentionally does not account for typing, Levitate or semi-invulnerability,
-   * all of which may potentially render this Pokemon airborne.
+   *
+   * @privateRemarks
+   * This method does not account for typing or semi-invulnerability as it is also used to determine
+   * whether Ground-type moves should be nullified against Flying-types (which takes into account neither one).
    * @see {@linkcode isGrounded} - Main function that uses this
    */
   private isForciblyGrounded(): boolean | undefined {
@@ -2375,7 +2373,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return true;
     }
 
-    if (this.getTag(BattlerTagType.FLOATING)) {
+    if (this.getTag(BattlerTagType.FLOATING) || this.getTag(BattlerTagType.TELEKINESIS)) {
+      return false;
+    }
+
+    const forcedAirborne = new BooleanHolder(false);
+    applyAbAttrs("UngroundedAbAttr", { pokemon: this, cancelled: forcedAirborne });
+    if (forcedAirborne.value) {
       return false;
     }
   }
@@ -2568,13 +2572,18 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const types = this.getTypes(true, true, undefined, useIllusion);
     const { arena } = globalScene;
 
-    // Ground type moves cannot affect Pokemon forcibly sent airborne by a move effect or ability.
-    // NB: We explicitly avoid calling `isGrounded` as that checks things we do not want to handle here.
-    // Semi-invulnerability is ignored for the purposes of Ground type matchups, Flying-types will lose their Ground immunity in Inverse Battles.
-    // and Levitate does not apply specifically for Thousand Arrows.
-    // All of these have hooks later on in the move effect pipeline,
+    // Ground type moves cannot affect Pokemon forcibly sent airborne by a move effect or ability,
+    // unless Thousand Arrows is being used.
+    // We explicitly avoid calling `isGrounded` as that checks extra things we do not want to handle here;
+    // semi-invulnerability is ignored for the purposes of Ground type matchups and
+    // Flying-types will lose their Ground immunity in Inverse Battles.
     const forciblyGrounded = this.isForciblyGrounded();
-    if (moveType === PokemonType.GROUND && forciblyGrounded === false) {
+    // TODO: I still dislike the explicit check for `NeutralDamageAgainstFlyingTypeMultiplierAttr`, but it's kinda w/e??
+    if (
+      moveType === PokemonType.GROUND
+      && forciblyGrounded === false
+      && !move?.hasAttr("NeutralDamageAgainstFlyingTypeMultiplierAttr")
+    ) {
       return 0;
     }
 

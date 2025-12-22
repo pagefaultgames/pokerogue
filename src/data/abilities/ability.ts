@@ -832,27 +832,6 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
   }
 }
 
-/**
- * Attribute to provide an immunity to exclusively attacking moves of a given type.
- * Used to implement Levitate's ground immunity.
- */
-export class AttackTypeImmunityAbAttr extends TypeImmunityAbAttr {
-  // biome-ignore lint/complexity/noUselessConstructor: Changes the type of parameters
-  constructor(immuneType: PokemonType) {
-    super(immuneType);
-  }
-
-  override canApply(params: TypeMultiplierAbAttrParams): boolean {
-    const { move } = params;
-    return (
-      move.category !== MoveCategory.STATUS
-      && // TODO: Don't hardcode the Thousand Arrows interaction perhaps?
-      !move.hasAttr("NeutralDamageAgainstFlyingTypeMultiplierAttr")
-      && super.canApply(params)
-    );
-  }
-}
-
 export class TypeImmunityHealAbAttr extends TypeImmunityAbAttr {
   // biome-ignore lint/complexity/noUselessConstructor: Changes the type of `immuneType`
   constructor(immuneType: PokemonType) {
@@ -6584,7 +6563,6 @@ const AbilityAttrs = Object.freeze({
   AlliedFieldDamageReductionAbAttr,
   ReceivedTypeDamageMultiplierAbAttr,
   TypeImmunityAbAttr,
-  AttackTypeImmunityAbAttr,
   TypeImmunityHealAbAttr,
   NonSuperEffectiveImmunityAbAttr,
   FullHpResistTypeAbAttr,
@@ -6930,7 +6908,6 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.LEVITATE, 3)
       .attr(UngroundedAbAttr)
-      .attr(AttackTypeImmunityAbAttr, PokemonType.GROUND)
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.EFFECT_SPORE, 3)
