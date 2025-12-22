@@ -31,7 +31,6 @@ const MAX_SAVES_FOR_USERNAME_PANEL = 7;
 const ERR_NO_SAVES: string = "No save files found";
 const ERR_TOO_MANY_SAVES: string = "Too many save files found";
 
-// TODO: use mixins
 export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHandler {
   private usernameInfoImage: Phaser.GameObjects.Image;
   private saveDownloadImage: Phaser.GameObjects.Image;

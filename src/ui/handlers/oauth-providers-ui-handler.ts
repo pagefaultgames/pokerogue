@@ -6,7 +6,6 @@ import { addWindow } from "#ui/ui-theme";
 import { fixedInt } from "#utils/common";
 import i18next from "i18next";
 
-// TODO: use mixins
 export abstract class OAuthProvidersUiHandler extends LoginRegisterInfoContainerUiHandler {
   private discordImage: Phaser.GameObjects.Image;
   private googleImage: Phaser.GameObjects.Image;
