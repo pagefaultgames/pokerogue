@@ -117,7 +117,7 @@ export class RegistrationFormUiHandler extends LoginRegisterInfoContainerUiHandl
                   const retryLogin = () => {
                     pokerogueApi.account.login({ username, password }).then(error => {
                       if (error) {
-                        onFail(error);
+                        onFail("Registration successful! " + error);
                       } else {
                         originalRegistrationAction?.();
                       }
