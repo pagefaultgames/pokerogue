@@ -56,6 +56,18 @@ export abstract class OAuthProvidersUiHandler extends LoginRegisterInfoContainer
     this.getUi().add(this.externalPartyContainer);
   }
 
+  public override setInteractive(active: boolean): void {
+    super.setInteractive(active);
+    const externalPartyIcons = this.externalPartyContainer.list.filter(obj => obj instanceof Phaser.GameObjects.Image);
+    for (const obj of externalPartyIcons) {
+      if (active) {
+        obj.setInteractive();
+      } else {
+        obj.disableInteractive();
+      }
+    }
+  }
+
   protected processExternalProvider(): void {
     const titleX = 22;
     this.externalPartyTitle
