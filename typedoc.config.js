@@ -5,7 +5,6 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-// @ts-check
 /// <reference path="./global.d.ts" />
 
 import { globSync } from "node:fs";
