@@ -61,45 +61,6 @@ describe("Moves - Tar Shot", () => {
     expect(spy).toHaveLastReturnedWith(2 * getTypeDamageMultiplier(PokemonType.FIRE, PokemonType.WATER));
   });
 
-  it("should work if the target has Normalize", async () => {
-    game.override.enemyAbility(AbilityId.NORMALIZE);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
-
-    const karp = game.field.getEnemyPokemon();
-    karp.addTag(BattlerTagType.TAR_SHOT);
-    const spy = vi.spyOn(karp, "getMoveEffectiveness");
-
-    game.move.use(MoveId.FIRE_PUNCH);
-    await game.toEndOfTurn();
-
-    expect(spy).toHaveLastReturnedWith(2 * getTypeDamageMultiplier(PokemonType.FIRE, PokemonType.WATER));
-  });
-
-  it("should lower the target's Speed by 1 stage and double the effectiveness of incoming Fire-type moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
-
-    const karp = game.field.getEnemyPokemon();
-    const spy = vi.spyOn(karp, "getMoveEffectiveness");
-
-    game.move.use(MoveId.TAR_SHOT);
-    await game.toNextTurn();
-
-    const feebas = game.field.getPlayerPokemon();
-    expect(feebas).toHaveUsedMove({ move: MoveId.TAR_SHOT, result: MoveResult.SUCCESS });
-    expect(karp).toHaveStatStage(Stat.SPD, -1);
-    expect(karp).toHaveBattlerTag(BattlerTagType.TAR_SHOT);
-    expect(game).toHaveShownMessage(
-      i18next.t("battlerTags:tarShotOnAdd", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(karp),
-      }),
-    );
-
-    game.move.use(MoveId.FIRE_PUNCH);
-    await game.toEndOfTurn();
-
-    expect(spy).toHaveLastReturnedWith(2 * getTypeDamageMultiplier(PokemonType.FIRE, PokemonType.WATER));
-  });
-
   it("should still lower speed if tag cannot be applied", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
@@ -154,5 +115,20 @@ describe("Moves - Tar Shot", () => {
     await game.toEndOfTurn();
 
     expect(spy).toHaveLastReturnedWith(2 * getTypeDamageMultiplier(PokemonType.FIRE, PokemonType.BUG));
+  });
+
+  // Regression test - Tar Shot used to check the target's type change abilities instead of the user's
+  it("should work if the target has Normalize", async () => {
+    game.override.enemyAbility(AbilityId.NORMALIZE);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+
+    const karp = game.field.getEnemyPokemon();
+    karp.addTag(BattlerTagType.TAR_SHOT);
+    const spy = vi.spyOn(karp, "getMoveEffectiveness");
+
+    game.move.use(MoveId.FIRE_PUNCH);
+    await game.toEndOfTurn();
+
+    expect(spy).toHaveLastReturnedWith(2 * getTypeDamageMultiplier(PokemonType.FIRE, PokemonType.WATER));
   });
 });
