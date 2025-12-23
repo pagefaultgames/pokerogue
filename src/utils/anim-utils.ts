@@ -60,7 +60,6 @@ export async function* playNumberTween(
     });
   });
 
-  // wait and repeatedly yield values
   while (!done) {
     while (queue.length > 0) {
       yield queue.shift()!;
