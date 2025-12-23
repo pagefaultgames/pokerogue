@@ -6,6 +6,7 @@ import type { LoginPhase } from "#phases/login-phase";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
 import type { ModalConfig } from "#ui/modal-ui-handler";
 import { addTextObject } from "#ui/text";
+import { fixedInt } from "#utils/common";
 import i18next from "i18next";
 import { LoginRegisterInfoContainerUiHandler } from "./login-register-info-container-ui-handler";
 
@@ -124,7 +125,7 @@ export class RegistrationFormUiHandler extends LoginRegisterInfoContainerUiHandl
                       }
                     });
                   };
-                  globalScene.time.delayedCall(2000, retryLogin);
+                  globalScene.time.delayedCall(fixedInt(2000), retryLogin);
                 } else {
                   originalRegistrationAction?.();
                 }
