@@ -2,6 +2,7 @@ import { pokerogueApi } from "#api/pokerogue-api";
 import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
+import type { LoginPhase } from "#phases/login-phase";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
 import type { ModalConfig } from "#ui/modal-ui-handler";
 import { addTextObject } from "#ui/text";
@@ -117,7 +118,7 @@ export class RegistrationFormUiHandler extends LoginRegisterInfoContainerUiHandl
                   const retryLogin = () => {
                     pokerogueApi.account.login({ username, password }).then(error => {
                       if (error) {
-                        onFail("Registration successful! " + error);
+                        (globalScene.phaseManager.getCurrentPhase() as LoginPhase).goToLogin();
                       } else {
                         originalRegistrationAction?.();
                       }
