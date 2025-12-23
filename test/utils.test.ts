@@ -1,11 +1,15 @@
-import { padInt, randomString } from "#utils/common";
+import { playNumberTween } from "#utils/anim-utils";
+import { getFrameMs, padInt, randomString } from "#utils/common";
 import { deepMergeSpriteData } from "#utils/data";
 import Phaser from "phaser";
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { GameManager } from "./test-utils/game-manager";
 
 describe("utils", () => {
+  let phaserGame: Phaser.Game;
+
   beforeAll(() => {
-    new Phaser.Game({
+    phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
   });
@@ -74,6 +78,34 @@ describe("utils", () => {
       const source = { a: 3, b: [{ c: [4, 5] }, { p: [7, 8] }], e: 4 };
       deepMergeSpriteData(dest, source);
       expect(dest).toEqual({ a: 3, b: [{ c: [4, 5] }, { p: [7, 8] }] });
+    });
+  });
+
+  // TODO: Figure out how to test this thing without stubbing out half a dozen random Phaser functions from GameWrapper
+  // and/or timing out from LoginPhase jank
+  describe.todo("Animation Utils", () => {
+    beforeEach(() => {
+      new GameManager(phaserGame);
+    });
+    describe("playNumberTween", () => {
+      it("should yield the values of a tween", async () => {
+        const iter = playNumberTween({
+          duration: getFrameMs(1),
+          ease: "linear",
+        });
+
+        let i = 0;
+        for await (const val of iter) {
+          expect(val).toBeGreaterThan(0);
+          expect(val).toBeLessThan(1);
+          console.log(`${i}th value: ${val}`);
+          i++;
+        }
+
+        // ensure at least 1 value was yielded
+        // TODO: Remove after `expect.requireAssertions` is enabled
+        expect(i).toBeGreaterThan(0);
+      });
     });
   });
 });
