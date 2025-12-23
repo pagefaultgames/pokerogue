@@ -1,6 +1,5 @@
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
 import { initializeGame } from "#app/init/init";
-import { initI18n } from "#plugins/i18n";
 import { blobToString } from "#test/test-utils/game-manager-utils";
 import { manageListeners } from "#test/test-utils/listeners-manager";
 import { MockConsole } from "#test/test-utils/mocks/mock-console/mock-console";
@@ -15,24 +14,16 @@ import InputText from "phaser3-rex-plugins/plugins/inputtext";
 let wasInitialized = false;
 
 /**
- * Run initialization code upon starting a new file, both per-suite and per-instance oncess.
+ * Run initialization code upon starting a new file, both per-suite and per-instance ones.
  */
 export function initTests(): void {
   setupStubs();
   if (!wasInitialized) {
-    initTestFile();
+    initializeGame();
     wasInitialized = true;
   }
 
   manageListeners();
-}
-
-/**
- * Initialize various values at the beginning of each testing instance.
- */
-function initTestFile(): void {
-  initI18n();
-  initializeGame();
 }
 
 /**

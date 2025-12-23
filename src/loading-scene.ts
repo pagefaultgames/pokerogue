@@ -33,6 +33,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("loading_bg", "arenas")
       .loadImage("logo", "")
       .loadImage("logo_fake", "")
+      .loadImage("snow", "")
       .loadAtlas("bg", "ui")
       .loadAtlas("prompt", "ui")
       .loadImage("candy", "ui")
