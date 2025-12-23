@@ -9,7 +9,7 @@ import { ATrainersTestEncounter } from "#mystery-encounters/a-trainers-test-enco
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { HUMAN_TRANSITABLE_BIOMES } from "#mystery-encounters/mystery-encounters";
-import { PartyHealPhase } from "#phases/party-heal-phase";
+import type { PartyHealPhase } from "#phases/party-heal-phase";
 import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import {
   runMysteryEncounterToEnd,
@@ -165,8 +165,8 @@ describe("A Trainer's Test - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.A_TRAINERS_TEST, defaultParty);
       await runMysteryEncounterToEnd(game, 2);
 
-      const partyHealPhases = phaseSpy.mock.calls.filter(p => p[0] instanceof PartyHealPhase).map(p => p[0]);
-      expect(partyHealPhases.length).toBe(1);
+      const partyHealPhases = phaseSpy.mock.calls.flat().filter((p): p is PartyHealPhase => p.is("PartyHealPhase"));
+      expect(partyHealPhases).toHaveLength(1);
     });
 
     it("Should reward the player with a Rare egg", async () => {

@@ -83,8 +83,20 @@ export const languageOptions = [
     handler: () => changeLocaleHandler("ru"),
   },
   {
+    label: "Bahasa Indonesia (Needs Help)",
+    handler: () => changeLocaleHandler("id"),
+  },
+  {
+    label: "हिन्दी (Needs Help)",
+    handler: () => changeLocaleHandler("hi"),
+  },
+  {
     label: "Dansk (Needs Help)",
     handler: () => changeLocaleHandler("da"),
+  },
+  {
+    label: "Norsk bokmål (Needs Help)",
+    handler: () => changeLocaleHandler("nb-NO"),
   },
   {
     label: "Română (Needs Help)",
