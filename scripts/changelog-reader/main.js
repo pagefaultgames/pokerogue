@@ -1,3 +1,10 @@
+/*
+ * SPDX-FileCopyrightText: 2025 Pagefault Games
+ * SPDX-FileContributor: Fabske0
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 import "dotenv/config";
 import { writeFileSync } from "node:fs";
 import { Octokit } from "octokit";
