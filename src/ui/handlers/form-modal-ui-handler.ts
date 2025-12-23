@@ -5,7 +5,8 @@ import type { ModalConfig } from "#ui/modal-ui-handler";
 import { ModalUiHandler } from "#ui/modal-ui-handler";
 import { addTextInputObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
-import { fixedInt } from "#utils/common";
+import { fixedInt, truncateString } from "#utils/common";
+import type Phaser from "phaser";
 import type InputText from "phaser3-rex-plugins/plugins/inputtext";
 
 export interface FormModalConfig extends ModalConfig {
@@ -24,30 +25,35 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
 
   /**
    * Get configuration for all fields that should be part of the modal
+   * @remarks
    * Gets used by {@linkcode updateFields} to add the proper text inputs and labels to the view
    * @returns array of {@linkcode InputFieldConfig}
    */
   abstract getInputFieldConfigs(): InputFieldConfig[];
 
-  getHeight(config?: ModalConfig): number {
+  public override getHeight(config?: FormModalConfig): number {
     return (
       20 * this.getInputFieldConfigs().length
       + (this.getModalTitle() ? 26 : 0)
-      + ((config as FormModalConfig)?.errorMessage ? 12 : 0)
+      + (config?.errorMessage ? 12 : 0)
       + this.getButtonTopMargin()
       + 28
     );
   }
 
-  getReadableErrorMessage(error: string): string {
-    if (error?.indexOf("connection refused") > -1) {
+  public getReadableErrorMessage(error: string): string {
+    if (!error) {
+      return "";
+    }
+
+    if (error.includes("connection refused")) {
       return "Could not connect to the server";
     }
 
     return error;
   }
 
-  setup(): void {
+  public override setup(): void {
     super.setup();
 
     const config = this.getInputFieldConfigs();
@@ -58,16 +64,9 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       this.updateFields(config, hasTitle);
     }
 
-    this.errorMessage = addTextObject(
-      10,
-      (hasTitle ? 31 : 5) + 20 * (config.length - 1) + 16 + this.getButtonTopMargin(),
-      "",
-      TextStyle.TOOLTIP_CONTENT,
-      {
-        fontSize: "42px",
-        wordWrap: { width: 850 },
-      },
-    )
+    const errorMessageY = (hasTitle ? 31 : 5) + 20 * (config.length - 1) + 16 + this.getButtonTopMargin();
+    const errorMessageOptions: Phaser.Types.GameObjects.Text.TextStyle = { fontSize: "42px", wordWrap: { width: 850 } };
+    this.errorMessage = addTextObject(10, errorMessageY, "", TextStyle.TOOLTIP_CONTENT, errorMessageOptions)
       .setColor(getTextColor(TextStyle.SUMMARY_PINK))
       .setShadowColor(getTextColor(TextStyle.SUMMARY_PINK, true))
       .setVisible(false);
@@ -75,21 +74,18 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
   }
 
   protected updateFields(fieldsConfig: InputFieldConfig[], hasTitle: boolean) {
-    const inputContainers = (this.inputContainers = new Array(fieldsConfig.length));
-    const inputs = (this.inputs = new Array(fieldsConfig.length));
-    const formLabels = (this.formLabels = new Array(fieldsConfig.length));
+    this.inputContainers = new Array(fieldsConfig.length);
+    this.inputs = new Array(fieldsConfig.length);
+    this.formLabels = new Array(fieldsConfig.length);
     for (const [f, config] of fieldsConfig.entries()) {
+      const labelY = (hasTitle ? 31 : 5) + 20 * f;
       // The Pokédex Scan Window uses width `300` instead of `160` like the other forms
       // Therefore, the label does not need to be shortened
-      const label = addTextObject(
-        10,
-        (hasTitle ? 31 : 5) + 20 * f,
-        config.label.length > 25 && this.getWidth() < 200 ? config.label.slice(0, 20) + "..." : config.label,
-        TextStyle.TOOLTIP_CONTENT,
-      );
+      const labelContent = this.getWidth() < 200 ? truncateString(config.label, 25) : config.label;
+      const label = addTextObject(10, labelY, labelContent, TextStyle.TOOLTIP_CONTENT);
       label.name = "formLabel" + f;
 
-      formLabels[f] = label;
+      this.formLabels[f] = label;
       this.modalContainer.add(label);
 
       const inputWidth = label.width < 320 ? 80 : 80 - (label.width - 320) / 5.5;
@@ -109,14 +105,14 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
 
       inputContainer.add([inputBg, input]);
 
-      inputContainers[f] = inputContainer;
+      this.inputContainers[f] = inputContainer;
       this.modalContainer.add(inputContainer);
 
-      inputs[f] = input;
+      this.inputs[f] = input;
     }
   }
 
-  override show(args: any[]): boolean {
+  public override show(args: any[]): boolean {
     if (super.show(args)) {
       for (const ic of this.inputContainers) {
         ic.setActive(true).setVisible(true);
@@ -129,7 +125,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
 
       // Auto focus the first input field after a short delay, to prevent accidental inputs
       setTimeout(() => {
-        this.inputs[0].setFocus();
+        this.inputs[0]?.setFocus();
       }, 50);
 
       // #region: Override button pointerDown
@@ -170,7 +166,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
     return false;
   }
 
-  processInput(button: Button): boolean {
+  public override processInput(button: Button): boolean {
     if (button === Button.SUBMIT && this.submitAction) {
       this.submitAction();
       return true;
@@ -179,13 +175,13 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
     return false;
   }
 
-  sanitizeInputs(): void {
+  public sanitizeInputs(): void {
     for (const input of this.inputs) {
       input.text = input.text.trim();
     }
   }
 
-  updateContainer(config?: ModalConfig): void {
+  public override updateContainer(config?: ModalConfig): void {
     super.updateContainer(config);
 
     this.errorMessage
@@ -193,21 +189,21 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       .setVisible(!!this.errorMessage.text);
   }
 
-  hide(): void {
+  public hide(): void {
     this.modalContainer.setVisible(false).setActive(false);
     for (const ic of this.inputContainers) {
       ic.setVisible(false).setActive(false);
     }
   }
 
-  unhide(): void {
+  public unhide(): void {
     this.modalContainer.setActive(true).setVisible(true);
     for (const ic of this.inputContainers) {
       ic.setActive(true).setVisible(true);
     }
   }
 
-  clear(): void {
+  public override clear(): void {
     super.clear();
     this.modalContainer.setVisible(false);
 
