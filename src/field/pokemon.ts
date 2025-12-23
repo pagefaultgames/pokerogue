@@ -2332,11 +2332,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * - Be {@linkcode BattlerTagType.IGNORE_FLYING | forcibly grounded} from an effect like Smack Down or Ingrain
    * - Be under the effects of {@linkcode ArenaTagType.GRAVITY | harsh gravity}
    * - **Not** be any of the following things:
-   *   - {@linkcode PokemonType.FLYING | Flying-type} with `ignoreFlyingType` set to `false`
-   *   - {@linkcode AbilityId.LEVITATE | Levitating}
    *   - Floating from {@linkcode BattlerTagType.FLOATING | Magnet Rise} or
    *     {@linkcode BattlerTagType.TELEKINESIS | Telekinesis}
    *   - {@linkcode SemiInvulnerableTag | Semi-invulnerable} with `ignoreSemiInvulnerable` set to `false`
+   *   - {@linkcode PokemonType.FLYING | Flying-type}
+   *   - {@linkcode AbilityId.LEVITATE | Levitating} from an unsuppressed Levitate ability
    * @param ignoreSemiInvulnerable - (Default `false`) Whether to ignore the target's semi-invulnerable state when determining groundedness
    * @param useIllusion - (Default `false`) Whether to use this Pokemon's illusion for typing-related calculations
    * @returns Whether this Pokemon is currently grounded, as described above.
@@ -2348,25 +2348,22 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return forceGrounded;
     }
 
-    // Flying-type and semi-invuln are the only remaining things that can make the user grounded
-    return !(
-      (!ignoreSemiInvulnerable && !!this.getTag(SemiInvulnerableTag))
-      || !this.isOfType(PokemonType.FLYING, true, true, undefined, useIllusion)
-    );
+    // Flying-type and semi-invuln are the only remaining things that can make the user ungrounded
+    const semiInvuln = !ignoreSemiInvulnerable && !!this.getTag(SemiInvulnerableTag);
+    return !semiInvuln && !this.isOfType(PokemonType.FLYING, true, true, false, useIllusion);
   }
 
   /**
-   * Internal helper to return whether this Pokemon is forcibly airborne or forcibly grounded
-   * by an effect _other than typing or semi-invulnerability_.
+   * Internal helper to return whether this Pokemon is either forcibly sent airborne or forcibly grounded.
    * @returns One of:
    * - `true`: This Pokemon is forcibly grounded by an effect like Smack Down, Ingrain or Gravity.
    * - `false`: This Pokemon is forcibly lifted off the ground by an effect like Magnet Rise or an active Levitate ability.
    * - `undefined`: Neither of the above effects applies.
    *
+   * @see {@linkcode isGrounded} - Main function that uses this
    * @privateRemarks
    * This method does not account for typing or semi-invulnerability as it is also used to determine
-   * whether Ground-type moves should be nullified against Flying-types (which takes into account neither one).
-   * @see {@linkcode isGrounded} - Main function that uses this
+   * whether Ground-type moves should be nullified against airborne defenders.
    */
   private isForciblyGrounded(): boolean | undefined {
     if (this.getTag(BattlerTagType.IGNORE_FLYING) || globalScene.arena.hasTag(ArenaTagType.GRAVITY)) {

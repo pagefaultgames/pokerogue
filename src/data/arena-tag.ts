@@ -1218,6 +1218,8 @@ export class GravityTag extends SerializableArenaTag {
       }
     });
   }
+
+  // TODO: Move accuracy boost to an `apply` method
 }
 
 /**
