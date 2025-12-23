@@ -6,8 +6,8 @@
  */
 
 import "dotenv/config";
-import { writeFileSync } from "node:fs";
 import { Octokit } from "octokit";
+import { writeFileSafe } from "../helpers/file.js";
 
 const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,
@@ -31,56 +31,77 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
   timeZoneName: "short",
 });
 
-async function getPrDescription() {
-  try {
-    console.log(
-      `Fetching PRs to ${CONFIG.REPO_OWNER}/${CONFIG.REPO_NAME}/${
-        CONFIG.REPO_BRANCH
-      } since ${dateFormatter.format(new Date(CONFIG.SINCE))}...`,
-    );
+async function getPullRequests() {
+  console.log(
+    `Fetching PRs to ${CONFIG.REPO_OWNER}/${CONFIG.REPO_NAME}/${
+      CONFIG.REPO_BRANCH
+    } since ${dateFormatter.format(new Date(CONFIG.SINCE))}...`,
+  );
 
-    const pullRequests = await octokit.rest.pulls.list({
+  const allPRs = await octokit.rest.pulls.list({
+    owner: CONFIG.REPO_OWNER,
+    repo: CONFIG.REPO_NAME,
+    base: CONFIG.REPO_BRANCH,
+    state: "closed",
+    sort: "updated",
+    direction: "desc",
+  });
+
+  // filter old and closed PRs that were not merged
+  const filteredPullRequests = allPRs.data.filter(async pr => {
+    return pr.updated_at > CONFIG.SINCE && (await isPullRequestMerged(pr.number));
+  });
+
+  return filteredPullRequests;
+}
+
+/**
+ * Check if the pull request got succesfully merged
+ * @param {number} pullNumber
+ */
+async function isPullRequestMerged(pullNumber) {
+  return await octokit.rest.pulls
+    .checkIfMerged({
       owner: CONFIG.REPO_OWNER,
       repo: CONFIG.REPO_NAME,
-      base: CONFIG.REPO_BRANCH,
-      state: "closed",
-      sort: "updated",
-      direction: "desc",
+      pull_number: pullNumber,
+    })
+    .then(_ => {
+      return true;
+    })
+    .catch(_ => {
+      return false;
     });
+}
 
-    console.log(`Found ${pullRequests.data.length} PRs`);
+async function getChangelogs() {
+  const pullRequests = await getPullRequests();
+  console.log(`Found ${pullRequests.length} PRs`);
 
-    const filteredPullRequests = pullRequests.data.filter(pr => {
-      return pr.updated_at > CONFIG.SINCE;
-    });
+  let output = "";
 
-    let output = "";
-
-    for (const pr of filteredPullRequests) {
-      if (!pr.body) {
-        console.log(`\x1b[31mDescription missing for PR: ${pr.title} (${pr.number})\x1b[0m\n`);
-        return;
-      }
-      const section = getSection(pr.body);
-      if (section) {
-        output += `PR: ${pr.title} (${pr.number})\n${getSection(pr.body)}\n\n`;
-      } else {
-        console.log(`\x1b[31mChangelog missing for PR: ${pr.title} (${pr.number})\x1b[0m\n`);
-        output += `PR: ${pr.title} (${pr.number})\nChangelog missing\n\n`;
-      }
+  for (const pr of pullRequests) {
+    if (!pr.body) {
+      console.log(`\x1b[31mDescription missing for PR: ${pr.title} (${pr.number})\x1b[0m\n`);
+      return;
     }
-
-    writeFileSync(CONFIG.OUTPUT_FILE, output, "utf8");
-    console.log(`Results written to ${CONFIG.OUTPUT_FILE}`);
-  } catch (error) {
-    console.error(error);
+    const section = getChangelogSection(pr.body);
+    if (section) {
+      output += `PR: ${pr.title} (${pr.number})\n${getChangelogSection(pr.body)}\n\n`;
+    } else {
+      console.log(`\x1b[31mChangelog missing for PR: ${pr.title} (${pr.number})\x1b[0m\n`);
+      output += `PR: ${pr.title} (${pr.number})\nChangelog missing\n\n`;
+    }
   }
+
+  writeFileSafe(CONFIG.OUTPUT_FILE, output, "utf8");
+  console.log(`Results written to ${CONFIG.OUTPUT_FILE}`);
 }
 
 /**
  * @param {string} description - The description to get the section from
  */
-function getSection(description) {
+function getChangelogSection(description) {
   const regex = new RegExp(`${CONFIG.CHANGELOG_SECTION}([\\s\\S]*?)(?=##)`, "i");
   const match = description.match(regex);
 
@@ -104,9 +125,13 @@ function getSection(description) {
 }
 
 async function main() {
-  const login = await octokit.rest.users.getAuthenticated();
-  console.log(`Hello, ${login.data.login}!`);
-  await getPrDescription();
+  try {
+    const login = await octokit.rest.users.getAuthenticated();
+    console.log(`Hello, ${login.data.login}!`);
+    await getChangelogs();
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 await main();
