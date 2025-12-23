@@ -22,6 +22,7 @@ const CONFIG = {
   OUTPUT_FILE: "pr_descriptions.txt",
   CHANGELOG_SECTION: "## What are the changes the user will see?",
   FILTER: ["n/a"],
+  PER_PAGE: 50,
 };
 
 const dateFormatter = new Intl.DateTimeFormat("en", {
@@ -40,7 +41,9 @@ async function main() {
     console.log(`Hello, ${login.data.login}!`);
     const cutoffDate = await getCutoffDate();
     if (!cutoffDate) {
-      throw new Error("Failed to get cutoff date");
+      process.exitCode = 1;
+      console.error("\x1b[31mFailed to get cutoff date)\x1b[0m");
+      return;
     }
     console.log(`Cutoff date: ${cutoffDate}`);
     CONFIG.SINCE = cutoffDate;
@@ -58,28 +61,64 @@ async function getPullRequests() {
     } since ${dateFormatter.format(new Date(CONFIG.SINCE))}...`,
   );
 
-  const allPRs = await octokit.rest.pulls.list({
-    owner: CONFIG.REPO_OWNER,
-    repo: CONFIG.REPO_NAME,
-    base: CONFIG.REPO_BRANCH,
-    state: "closed",
-    sort: "updated",
-    direction: "desc",
-  });
+  return await getPullRequestPage();
+}
+
+/**
+ * Fetch a page of PRs
+ * @param {number} page
+ * @returns {Promise<import("@octokit/types").Endpoints["GET /repos/{owner}/{repo}/pulls"]["response"]["data"] | undefined>}
+ */
+async function getPullRequestPage(page = 1) {
+  /**
+   * @type {import("@octokit/types").Endpoints["GET /repos/{owner}/{repo}/pulls"]["response"]["data"]}
+   */
+  const allPRs = [];
+  console.log(`Fetching page ${page}...`);
+  const pagePRs = await octokit.rest.pulls
+    .list({
+      owner: CONFIG.REPO_OWNER,
+      repo: CONFIG.REPO_NAME,
+      base: CONFIG.REPO_BRANCH,
+      state: "closed",
+      sort: "updated",
+      direction: "desc",
+      per_page: CONFIG.PER_PAGE,
+      page,
+    })
+    .then(res => res.data);
 
   // filter old and closed PRs that were not merged
-  const filteredPullRequests = allPRs.data.filter(pr => {
+  const filteredPullRequests = pagePRs.filter(pr => {
     if (!pr.merged_at) {
       return false;
     }
     return pr.merged_at > CONFIG.SINCE;
   });
 
-  return filteredPullRequests;
+  if (filteredPullRequests.length === 0) {
+    return allPRs;
+  }
+  allPRs.push(...filteredPullRequests);
+
+  // fetch next page if we have reached the page limit
+  if (pagePRs.length === CONFIG.PER_PAGE) {
+    const nextPage = await getPullRequestPage(page + 1);
+    if (!nextPage) {
+      return allPRs;
+    }
+    allPRs.push(...nextPage);
+  }
+  return allPRs;
 }
 
 async function getChangelogs() {
   const pullRequests = await getPullRequests();
+  if (!pullRequests) {
+    console.log("No PRs found");
+    process.exitCode = 1;
+    return;
+  }
   console.log(`Found ${pullRequests.length} PRs`);
 
   let output = "";
