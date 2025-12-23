@@ -17,11 +17,13 @@ const CONFIG = {
   REPO_OWNER: "pagefaultgames",
   REPO_NAME: "pokerogue",
   REPO_BRANCH: "beta",
+  CUTOFF_BRANCH: "main",
   SINCE: "2025-12-10T00:00:00+00:00",
   OUTPUT_FILE: "pr_descriptions.txt",
   CHANGELOG_SECTION: "## What are the changes the user will see?",
   FILTER: ["n/a"],
 };
+
 const dateFormatter = new Intl.DateTimeFormat("en", {
   year: "numeric",
   month: "long",
@@ -30,6 +32,24 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
   minute: "numeric",
   timeZoneName: "short",
 });
+
+async function main() {
+  try {
+    // TODO: Remove. Just for testing
+    const login = await octokit.rest.users.getAuthenticated();
+    console.log(`Hello, ${login.data.login}!`);
+    const cutoffDate = await getCutoffDate();
+    if (!cutoffDate) {
+      throw new Error("Failed to get cutoff date");
+    }
+    console.log(`Cutoff date: ${cutoffDate}`);
+    CONFIG.SINCE = cutoffDate;
+
+    await getChangelogs();
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 async function getPullRequests() {
   console.log(
@@ -48,30 +68,14 @@ async function getPullRequests() {
   });
 
   // filter old and closed PRs that were not merged
-  const filteredPullRequests = allPRs.data.filter(async pr => {
-    return pr.updated_at > CONFIG.SINCE && (await isPullRequestMerged(pr.number));
+  const filteredPullRequests = allPRs.data.filter(pr => {
+    if (!pr.merged_at) {
+      return false;
+    }
+    return pr.merged_at > CONFIG.SINCE;
   });
 
   return filteredPullRequests;
-}
-
-/**
- * Check if the pull request got succesfully merged
- * @param {number} pullNumber
- */
-async function isPullRequestMerged(pullNumber) {
-  return await octokit.rest.pulls
-    .checkIfMerged({
-      owner: CONFIG.REPO_OWNER,
-      repo: CONFIG.REPO_NAME,
-      pull_number: pullNumber,
-    })
-    .then(_ => {
-      return true;
-    })
-    .catch(_ => {
-      return false;
-    });
 }
 
 async function getChangelogs() {
@@ -96,6 +100,7 @@ async function getChangelogs() {
 
   writeFileSafe(CONFIG.OUTPUT_FILE, output, "utf8");
   console.log(`Results written to ${CONFIG.OUTPUT_FILE}`);
+  await updateDescription(output);
 }
 
 /**
@@ -124,14 +129,35 @@ function getChangelogSection(description) {
   return result.trim() !== "" ? result : null;
 }
 
-async function main() {
-  try {
-    const login = await octokit.rest.users.getAuthenticated();
-    console.log(`Hello, ${login.data.login}!`);
-    await getChangelogs();
-  } catch (error) {
-    console.error(error);
-  }
+/**
+ * Write the generated changelog to the update PR description
+ * @param {string} changelog
+ */
+async function updateDescription(changelog) {
+  changelog += `\n---------------------------\n**This changelog was auto generated at ${dateFormatter.format(new Date())}.**`;
+  await octokit.rest.pulls.update({
+    // todo: Update owner and PR number
+    owner: "fabske0",
+    repo: CONFIG.REPO_NAME,
+    pull_number: 2,
+    body: changelog,
+  });
+}
+
+/**
+ * Get the date of the last commit to the main branch.
+ * @returns {Promise<string | undefined>} ISO 8601 date string
+ */
+async function getCutoffDate() {
+  const commits = await octokit.rest.repos.listCommits({
+    owner: CONFIG.REPO_OWNER,
+    repo: CONFIG.REPO_NAME,
+    sha: CONFIG.CUTOFF_BRANCH,
+    per_page: 1,
+  });
+
+  const date = commits.data[0].commit.committer?.date;
+  return date;
 }
 
 await main();
