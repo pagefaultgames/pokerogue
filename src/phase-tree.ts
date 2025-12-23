@@ -79,15 +79,6 @@ export class PhaseTree {
   }
 
   /**
-   * Unshifts a {@linkcode Phase} to the current level.
-   * This is effectively the same as if the phase were added immediately after the currently-running phase, before it started.
-   * @param phase - The {@linkcode Phase} to be added
-   */
-  public unshiftToCurrent(phase: Phase): void {
-    this.levels[this.currentLevel].unshift(phase);
-  }
-
-  /**
    * Pushes a {@linkcode Phase} to the last level of the queue. It will run only after all previously queued phases have been executed.
    * @param phase - The {@linkcode Phase} to be added
    */
