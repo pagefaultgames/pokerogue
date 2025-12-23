@@ -9,8 +9,8 @@ import { UiMode } from "#enums/ui-mode";
 import { DancingLessonsEncounter } from "#mystery-encounters/dancing-lessons-encounter";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
-import { LearnMovePhase } from "#phases/learn-move-phase";
-import { MovePhase } from "#phases/move-phase";
+import type { LearnMovePhase } from "#phases/learn-move-phase";
+import type { MovePhase } from "#phases/move-phase";
 import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
 import {
   runMysteryEncounterToEnd,
@@ -110,9 +110,9 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       const moveset = enemyField[0].moveset.map(m => m.moveId);
       expect(moveset.some(m => m === MoveId.REVELATION_DANCE)).toBeTruthy();
 
-      const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
-      expect(movePhases.length).toBe(1);
-      expect(movePhases.filter(p => (p as MovePhase).move.moveId === MoveId.REVELATION_DANCE).length).toBe(1); // Revelation Dance used before battle
+      const movePhases = phaseSpy.mock.calls.flat().filter((p): p is MovePhase => p.is("MovePhase"));
+      expect(movePhases).toHaveLength(1);
+      expect(movePhases[0].move.moveId).toBe(MoveId.REVELATION_DANCE); // Revelation Dance used before battle
     });
 
     it("should have a Baton in the rewards after battle", async () => {
@@ -159,7 +159,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       game.field.getPlayerPokemon().moveset = [];
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1 });
 
-      const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof LearnMovePhase).map(p => p[0]);
+      const movePhases = phaseSpy.mock.calls.filter(p => p.some(i => i.is("LearnMovePhase"))).map(p => p[0]);
       expect(movePhases.length).toBe(1);
       expect(movePhases.filter(p => (p as LearnMovePhase)["moveId"] === MoveId.REVELATION_DANCE).length).toBe(1); // Revelation Dance taught to pokemon
     });
