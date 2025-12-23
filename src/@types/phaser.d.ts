@@ -7,6 +7,17 @@ declare module "phaser" {
       weightedPick<T>(array: ArrayLike<T>): T;
     }
   }
+  namespace Time {
+    interface Clock {
+      delayedCall(delay: number, callback: () => void): Phaser.Time.TimerEvent;
+      delayedCall<T, A extends any[]>(
+        delay: number,
+        callback: (this: T, ...args: A) => void,
+        args: A,
+        callbackScope: T,
+      ): Phaser.Time.TimerEvent;
+    }
+  }
 
   namespace Input {
     namespace Gamepad {
