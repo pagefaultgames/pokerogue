@@ -42,7 +42,6 @@ export async function* playNumberTween(
   let done = false;
   let waitFunc: (() => void) | null = null;
 
-  // make the tween & wait for it to start, hooking into its update/completion commands
   await new Promise<Phaser.Tweens.Tween>(resolve => {
     scene.tweens.addCounter({
       ...config,
