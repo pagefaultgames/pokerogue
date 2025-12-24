@@ -1,10 +1,6 @@
-// biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports
-import type { PhaseManager } from "#app/@types/phase-types";
-import type { DynamicPhaseMarker } from "#phases/dynamic-phase-marker";
-// biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports
-
-import type { PhaseMap, PhaseString } from "#app/@types/phase-types";
+import type { PhaseManager, PhaseMap, PhaseString } from "#app/@types/phase-types";
 import type { Phase } from "#app/phase";
+import type { DynamicPhaseMarker } from "#phases/dynamic-phase-marker";
 import type { PhaseConditionFunc } from "#types/phase-types";
 
 /**
@@ -80,15 +76,6 @@ export class PhaseTree {
     }
 
     this.addPhase(phase);
-  }
-
-  /**
-   * Unshifts a {@linkcode Phase} to the current level.
-   * This is effectively the same as if the phase were added immediately after the currently-running phase, before it started.
-   * @param phase - The {@linkcode Phase} to be added
-   */
-  public unshiftToCurrent(phase: Phase): void {
-    this.levels[this.currentLevel].unshift(phase);
   }
 
   /**

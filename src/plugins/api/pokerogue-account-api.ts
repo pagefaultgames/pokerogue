@@ -6,7 +6,7 @@ import type {
   AccountLoginRequest,
   AccountLoginResponse,
   AccountRegisterRequest,
-} from "#types/api/pokerogue-account-api";
+} from "#types/api";
 import { removeCookie, setCookie } from "#utils/cookies";
 
 /**

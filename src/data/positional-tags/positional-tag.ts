@@ -1,8 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-// biome-ignore-start lint/correctness/noUnusedImports: TSDoc
 import type { ArenaTag } from "#data/arena-tag";
-// biome-ignore-end lint/correctness/noUnusedImports: TSDoc
 import { allMoves } from "#data/data-lists";
 import type { BattlerIndex } from "#enums/battler-index";
 import type { MoveId } from "#enums/move-id";
@@ -101,10 +99,8 @@ export class DelayedAttackTag extends PositionalTag implements DelayedAttackArgs
   public override trigger(): void {
     // Bangs are justified as the `shouldTrigger` method will queue the tag for removal
     // if the source or target no longer exist
-    const source = globalScene.getPokemonById(this.sourceId)!;
     const target = this.getTarget()!;
 
-    source.turnData.extraTurns++;
     globalScene.phaseManager.queueMessage(
       i18next.t("moveTriggers:tookMoveAttack", {
         pokemonName: getPokemonNameWithAffix(target),
@@ -114,7 +110,9 @@ export class DelayedAttackTag extends PositionalTag implements DelayedAttackArgs
 
     globalScene.phaseManager.unshiftNew(
       "MoveEffectPhase",
-      this.sourceId, // TODO: Find an alternate method of passing the source pokemon without a source ID
+      // TODO: Find an alternate method of passing the (currently off-field) source pokemon
+      // instead of relying on pokemon getter jank
+      this.sourceId,
       [this.targetIndex],
       allMoves[this.sourceMove],
       MoveUseMode.DELAYED_ATTACK,

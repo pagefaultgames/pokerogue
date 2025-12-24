@@ -203,6 +203,11 @@ export class TitleUiHandler extends OptionSelectUiHandler {
       this.eventDisplay.show();
     }
 
+    const now = new Date();
+    if (now.getMonth() === 11 || (now.getMonth() === 0 && now.getDate() <= 15)) {
+      this.getSnow();
+    }
+
     this.randomPokemon();
     this.genderSplash();
 
@@ -248,5 +253,32 @@ export class TitleUiHandler extends OptionSelectUiHandler {
     // Invert spawn chances on april fools
     const aprilFools = timedEventManager.isAprilFoolsActive();
     return aprilFools === !!randInt(FAKE_TITLE_LOGO_CHANCE) ? "logo_fake" : "logo";
+  }
+
+  private snow: Phaser.GameObjects.TileSprite;
+
+  /** Adds a snow effect on the title screen during the winter season. */
+  private getSnow(): void {
+    const width = globalScene.scaledCanvas.width;
+    const height = globalScene.scaledCanvas.height;
+    this.snow = globalScene.add.tileSprite(width, height, width, height, "snow");
+    this.snow.setOrigin(1, 1);
+
+    globalScene.tweens.add({
+      targets: this.snow,
+      tilePositionX: { from: 0, to: -512 },
+      tilePositionY: { from: 0, to: -512 },
+      duration: 100000,
+      repeat: -1,
+      yoyo: false,
+      ease: "Linear",
+      onUpdate: () => {
+        if (this.snow) {
+          this.snow.tilePositionX -= 0.5;
+          this.snow.tilePositionY -= 0.5;
+        }
+      },
+    });
+    this.titleContainer.addAt(this.snow, 0);
   }
 }
