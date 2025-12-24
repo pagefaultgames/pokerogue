@@ -1,4 +1,3 @@
-import type { EntryHazardTag } from "#data/arena-tag";
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
@@ -152,8 +151,8 @@ describe("Moves - Destiny Bond", () => {
     await game.setTurnOrder(enemyFirst);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemyPokemon.isFainted()).toBe(true);
-    expect(playerPokemon.isFainted()).toBe(false);
+    expect(enemyPokemon).toHaveFainted();
+    expect(playerPokemon).not.toHaveFainted();
   });
 
   it("should not KO an ally", async () => {
@@ -167,10 +166,10 @@ describe("Moves - Destiny Bond", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemyPokemon0.isFainted()).toBe(false);
-    expect(enemyPokemon1.isFainted()).toBe(false);
-    expect(playerPokemon0.isFainted()).toBe(true);
-    expect(playerPokemon1.isFainted()).toBe(false);
+    expect(enemyPokemon0).not.toHaveFainted();
+    expect(enemyPokemon1).not.toHaveFainted();
+    expect(playerPokemon0).toHaveFainted();
+    expect(playerPokemon1).not.toHaveFainted();
   });
 
   it("should not cause a crash if the user is KO'd by Ceaseless Edge", async () => {
@@ -187,8 +186,8 @@ describe("Moves - Destiny Bond", () => {
     await game.setTurnOrder(enemyFirst);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemyPokemon.isFainted()).toBe(true);
-    expect(playerPokemon.isFainted()).toBe(true);
+    expect(enemyPokemon).toHaveFainted();
+    expect(playerPokemon).toHaveFainted();
 
     // Ceaseless Edge spikes effect should still activate
     expect(game).toHaveArenaTag({ tagType: ArenaTagType.SPIKES, side: ArenaTagSide.ENEMY, layers: 1 });
@@ -198,27 +197,20 @@ describe("Moves - Destiny Bond", () => {
     game.override.moveset([MoveId.GRASS_PLEDGE, MoveId.WATER_PLEDGE]).battleStyle("double");
     await game.classicMode.startBattle(defaultParty);
 
-    const enemyPokemon0 = game.scene.getEnemyField()[0];
-    const enemyPokemon1 = game.scene.getEnemyField()[1];
-    const playerPokemon0 = game.scene.getPlayerField()[0];
-    const playerPokemon1 = game.scene.getPlayerField()[1];
+    const [playerPokemon0, playerPokemon1, enemyPokemon0, enemyPokemon1] = game.scene.getField();
 
     game.move.select(MoveId.GRASS_PLEDGE, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.WATER_PLEDGE, 1, BattlerIndex.ENEMY);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2]);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemyPokemon0?.isFainted()).toBe(true);
-    expect(enemyPokemon1?.isFainted()).toBe(false);
-    expect(playerPokemon0?.isFainted()).toBe(false);
-    expect(playerPokemon1?.isFainted()).toBe(true);
+    expect(enemyPokemon0).toHaveFainted();
+    expect(enemyPokemon1).not.toHaveFainted();
+    expect(playerPokemon0).not.toHaveFainted();
+    expect(playerPokemon1).toHaveFainted();
 
     // Pledge secondary effect should still activate
-    const tagAfter = game.scene.arena.getTagOnSide(
-      ArenaTagType.GRASS_WATER_PLEDGE,
-      ArenaTagSide.ENEMY,
-    ) as EntryHazardTag;
-    expect(tagAfter.tagType).toBe(ArenaTagType.GRASS_WATER_PLEDGE);
+    expect(game).toHaveArenaTag(ArenaTagType.GRASS_WATER_PLEDGE, ArenaTagSide.ENEMY);
   });
 
   /**

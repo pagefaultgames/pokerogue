@@ -24,10 +24,10 @@ import {
   HoldingItemRequirement,
   MoneyRequirement,
 } from "#mystery-encounters/mystery-encounter-requirements";
-import i18next from "#plugins/i18n";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/delibirdy";
@@ -79,6 +79,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   MysteryEncounterType.DELIBIRDY,
 )
   .withEncounterTier(MysteryEncounterTier.GREAT)
+  .withMaxAllowedEncounters(4)
   .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
   .withSceneRequirement(new MoneyRequirement(0, DELIBIRDY_MONEY_PRICE_MULTIPLIER)) // Must have enough money for it to spawn at the very least
   .withPrimaryPokemonRequirement(

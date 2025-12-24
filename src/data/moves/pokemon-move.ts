@@ -55,7 +55,7 @@ export class PokemonMove {
 
     // TODO: Add Sky Drop's 1 turn stall
     if (this.moveId === MoveId.NONE || move.name.endsWith(" (N)")) {
-      return [false, i18next.t("battle:moveNotImplemented", moveName.replace(" (N)", ""))];
+      return [false, i18next.t("battle:moveNotImplemented", { moveName: moveName.replace(" (N)", "") })];
     }
 
     if (!ignorePp && move.pp !== -1 && this.ppUsed >= this.getMovePp()) {
@@ -93,19 +93,28 @@ export class PokemonMove {
   }
 
   /**
-   * Sets {@link ppUsed} for this move and ensures the value does not exceed {@link getMovePp}
-   * @param count Amount of PP to use
+   * Consume up to `count` PP from this move (up to its maximum PP).
+   * @param count - (Default `1`) The amount of PP to use
    */
-  usePp(count = 1) {
+  public usePp(count = 1): void {
     this.ppUsed = Math.min(this.ppUsed + count, this.getMovePp());
   }
 
+  // TODO: Rename to `getMaxPP`; the current name is obscure and frankly stupid
   getMovePp(): number {
     return this.maxPpOverride || this.getMove().pp + this.ppUp * toDmgValue(this.getMove().pp / 5);
   }
 
   getPpRatio(): number {
     return 1 - this.ppUsed / this.getMovePp();
+  }
+
+  /**
+   * @returns Whether this move is out of PP.
+   */
+  // TODO: Replace checks comparing `getPpRatio` with 0 to use this instead
+  public isOutOfPp(): boolean {
+    return this.getMovePp() !== -1 && this.ppUsed >= this.getMovePp();
   }
 
   getName(): string {

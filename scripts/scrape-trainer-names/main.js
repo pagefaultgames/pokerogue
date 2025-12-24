@@ -7,8 +7,8 @@
 
 import { existsSync, writeFileSync } from "node:fs";
 import { format, inspect } from "node:util";
+import { confirm } from "@inquirer/prompts";
 import chalk from "chalk";
-import inquirer from "inquirer";
 import { JSDOM } from "jsdom";
 import { toCamelCase, toPascalSnakeCase, toTitleCase } from "../helpers/strings.js";
 import { checkGenderAndType } from "./check-gender.js";
@@ -285,16 +285,10 @@ async function tryWriteFile(outFile, output) {
  * @returns {Promise<boolean>} Whether "Yes" or "No" was selected.
  */
 async function promptExisting(outFile) {
-  return (
-    await inquirer.prompt([
-      {
-        type: "confirm",
-        name: "continue",
-        message: `File ${chalk.blue(outFile)} already exists!\nDo you want to replace it?`,
-        default: false,
-      },
-    ])
-  ).continue;
+  return await confirm({
+    message: `File ${chalk.blue(outFile)} already exists!\nDo you want to replace it?`,
+    default: false,
+  });
 }
 
-main();
+await main();

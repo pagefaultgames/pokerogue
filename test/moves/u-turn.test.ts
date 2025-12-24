@@ -1,4 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
@@ -24,7 +25,7 @@ describe("Moves - U-turn", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemySpecies(SpeciesId.GENGAR)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .startingLevel(90)
       .startingWave(97)
       .moveset([MoveId.U_TURN])
@@ -102,5 +103,43 @@ describe("Moves - U-turn", () => {
     // Check that U-Turn forced a switch
     expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
     expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.SHUCKLE);
+  });
+
+  it("should not crash when KOing the user from a reactive effect", async () => {
+    game.override.enemyAbility(AbilityId.ROUGH_SKIN);
+    await game.classicMode.startBattle([SpeciesId.SHEDINJA, SpeciesId.FEEBAS]);
+
+    const player1 = game.field.getPlayerPokemon();
+
+    game.move.use(MoveId.U_TURN);
+    game.doSelectPartyPokemon(1);
+    await game.toEndOfTurn();
+
+    expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.FEEBAS);
+    expect(player1).toHaveFainted();
+  });
+
+  it("should not crash when KOing the user via Destiny Bond", async () => {
+    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
+
+    const feebas = game.field.getPlayerPokemon();
+    const karp = game.field.getEnemyPokemon();
+    karp.hp = 1;
+
+    game.move.use(MoveId.U_TURN);
+    game.doSelectPartyPokemon(1);
+    await game.move.forceEnemyMove(MoveId.DESTINY_BOND);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.toEndOfTurn();
+
+    expect(karp).toHaveFainted();
+    expect(feebas).toHaveFainted();
+    expect(feebas.isOnField()).toBe(false);
+
+    // Make sure feebas' faint phase runs before being switched out (since that was the root cause of the crash)
+    const logs = game.phaseInterceptor.log;
+    expect(logs).toContain("SwitchSummonPhase");
+    expect(logs).toContain("FaintPhase");
+    expect(logs.indexOf("SwitchSummonPhase")).toBeGreaterThan(logs.indexOf("FaintPhase"));
   });
 });

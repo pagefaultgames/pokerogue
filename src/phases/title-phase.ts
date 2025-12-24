@@ -34,7 +34,12 @@ export class TitlePhase extends Phase {
     globalScene.ui.clearText();
     globalScene.ui.fadeIn(250);
 
-    globalScene.playBgm("title", true);
+    const now = new Date();
+    if (now.getMonth() === 11 || (now.getMonth() === 0 && now.getDate() <= 15)) {
+      globalScene.playBgm("winter_title", true);
+    } else {
+      globalScene.playBgm("title", true);
+    }
 
     globalScene.gameData
       .getSession(loggedInUser?.lastSessionSlot ?? -1)
@@ -206,7 +211,7 @@ export class TitlePhase extends Phase {
       const generateDaily = (seed: string) => {
         globalScene.gameMode = getGameMode(GameModes.DAILY);
         // Daily runs don't support all challenges yet (starter select restrictions aren't considered)
-        globalScene.eventManager.startEventChallenges();
+        timedEventManager.startEventChallenges();
 
         globalScene.setSeed(seed);
         globalScene.resetSeed();
@@ -251,6 +256,7 @@ export class TitlePhase extends Phase {
         globalScene.trainerItems.add(TrainerItemId.ABILITY_CHARM);
         globalScene.trainerItems.add(TrainerItemId.SHINY_CHARM);
 
+        // TODO: This needs to account for timed event manager fixed items
         assignDailyRunStarterHeldItems(party);
 
         globalScene.updateItems(true);

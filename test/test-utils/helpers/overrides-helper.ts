@@ -1,9 +1,3 @@
-/** biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
-import type { NewArenaEvent } from "#events/battle-scene";
-
-/** biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
-
-import type { PokeballCounts } from "#app/battle-scene";
 import { OVERRIDES_COLOR } from "#app/constants/colors";
 import type { BattleStyle, RandomTrainerOverride } from "#app/overrides";
 import Overrides from "#app/overrides";
@@ -20,6 +14,7 @@ import type { Unlockables } from "#enums/unlockables";
 import { WeatherType } from "#enums/weather-type";
 import type { HeldItemConfiguration } from "#items/held-item-data-types";
 import type { TrainerItemConfiguration } from "#items/trainer-item-data-types";
+import type { NewArenaEvent } from "#events/battle-scene";
 import type { Variant } from "#sprites/variant";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
 import type { RewardSpecs } from "#types/rewards";
@@ -81,7 +76,7 @@ export class OverridesHelper extends GameManagerHelper {
    * @param level - The level to set
    * @returns `this`
    */
-  public startingLevel(level: SpeciesId | number): this {
+  public startingLevel(level: number): this {
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(level);
     this.log(`Player Pokemon starting level set to ${level}!`);
     return this;

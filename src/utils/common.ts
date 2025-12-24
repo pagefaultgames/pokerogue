@@ -422,7 +422,10 @@ export function hasAllLocalizedSprites(lang?: string): boolean {
     case "ja":
     case "ca":
     case "ru":
+    case "id":
+    case "hi":
     case "tl":
+    case "nb-NO":
       return true;
     default:
       return false;

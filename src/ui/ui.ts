@@ -26,6 +26,7 @@ import { GamepadBindingUiHandler } from "#ui/gamepad-binding-ui-handler";
 import { KeyboardBindingUiHandler } from "#ui/keyboard-binding-ui-handler";
 import { LoadingModalUiHandler } from "#ui/loading-modal-ui-handler";
 import { LoginFormUiHandler } from "#ui/login-form-ui-handler";
+import { LoginOrRegisterUiHandler } from "#ui/login-or-register-ui-handler";
 import { MenuUiHandler } from "#ui/menu-ui-handler";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { MysteryEncounterUiHandler } from "#ui/mystery-encounter-ui-handler";
@@ -163,6 +164,7 @@ export class UI extends Phaser.GameObjects.Container {
       new PokedexUiHandler(),
       new PokedexScanUiHandler(UiMode.TEST_DIALOGUE),
       new PokedexPageUiHandler(),
+      new LoginOrRegisterUiHandler(),
       new LoginFormUiHandler(),
       new RegistrationFormUiHandler(),
       new LoadingModalUiHandler(),
@@ -277,7 +279,7 @@ export class UI extends Phaser.GameObjects.Container {
   showText(
     text: string,
     delay?: number | null,
-    callback?: Function | null,
+    callback?: (() => void) | null,
     callbackDelay?: number | null,
     prompt?: boolean | null,
     promptDelay?: number | null,
@@ -316,7 +318,7 @@ export class UI extends Phaser.GameObjects.Container {
     keyOrText: string,
     name: string | undefined,
     delay: number | null = 0,
-    callback: Function,
+    callback: () => void,
     callbackDelay?: number,
     promptDelay?: number,
   ): void {

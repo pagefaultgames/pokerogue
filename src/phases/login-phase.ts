@@ -10,7 +10,13 @@ import i18next, { t } from "i18next";
 
 export class LoginPhase extends Phase {
   public readonly phaseName = "LoginPhase";
-  private showText: boolean;
+
+  /**
+   * Whether to load the "login or register" text.
+   * Only `true` the first time the phase runs, the text stays on screen after that.
+   * @defaultValue `true`
+   */
+  private readonly showText: boolean;
 
   constructor(showText = true) {
     super();
@@ -18,103 +24,114 @@ export class LoginPhase extends Phase {
     this.showText = showText;
   }
 
-  start(): void {
+  public override async start(): Promise<void> {
+    const { gameData, ui } = globalScene;
+
     super.start();
 
     const hasSession = !!getCookie(sessionIdKey);
 
-    globalScene.ui.setMode(UiMode.LOADING, { buttonActions: [] });
-    executeIf(bypassLogin || hasSession, updateUserInfo).then(response => {
-      const success = response ? response[0] : false;
-      const statusCode = response ? response[1] : null;
-      if (!success) {
-        if (!statusCode || statusCode === 400) {
-          if (this.showText) {
-            globalScene.ui.showText(i18next.t("menu:logInOrCreateAccount"));
-          }
+    ui.setMode(UiMode.LOADING, { buttonActions: [] });
 
-          globalScene.playSound("ui/menu_open");
+    const response = await executeIf(bypassLogin || hasSession, updateUserInfo);
+    const success = response?.[0] ?? false;
+    const statusCode = response ? response[1] : null;
 
-          const loadData = () => {
-            updateUserInfo().then(success => {
-              if (!success[0]) {
-                removeCookie(sessionIdKey);
-                globalScene.reset(true, true);
-                return;
-              }
-              globalScene.gameData.loadSystem().then(() => this.end());
-            });
-          };
+    if (!success) {
+      this.checkStatus(statusCode);
+      return;
+    }
 
-          globalScene.ui.setMode(UiMode.LOGIN_FORM, {
-            buttonActions: [
-              () => {
-                globalScene.ui.playSelect();
-                loadData();
-              },
-              () => {
-                globalScene.playSound("ui/menu_open");
-                globalScene.ui.setMode(UiMode.REGISTRATION_FORM, {
-                  buttonActions: [
-                    () => {
-                      globalScene.ui.playSelect();
-                      updateUserInfo().then(success => {
-                        if (!success[0]) {
-                          removeCookie(sessionIdKey);
-                          globalScene.reset(true, true);
-                          return;
-                        }
-                        this.end();
-                      });
-                    },
-                    () => {
-                      globalScene.phaseManager.unshiftNew("LoginPhase", false);
-                      this.end();
-                    },
-                  ],
-                });
-              },
-              () => {
-                const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/discord/callback`);
-                const discordId = import.meta.env.VITE_DISCORD_CLIENT_ID;
-                const discordUrl = `https://discord.com/api/oauth2/authorize?client_id=${discordId}&redirect_uri=${redirectUri}&response_type=code&scope=identify&prompt=none`;
-                window.open(discordUrl, "_self");
-              },
-              () => {
-                const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/google/callback`);
-                const googleId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-                const googleUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${googleId}&redirect_uri=${redirectUri}&response_type=code&scope=openid`;
-                window.open(googleUrl, "_self");
-              },
-            ],
-          });
-        } else if (statusCode === 401) {
-          removeCookie(sessionIdKey);
-          globalScene.reset(true, true);
-        } else {
-          globalScene.phaseManager.unshiftNew("UnavailablePhase");
-          super.end();
-        }
-        return null;
-      }
-      globalScene.gameData.loadSystem().then(success => {
-        if (success || bypassLogin) {
-          this.end();
-        } else {
-          globalScene.ui.setMode(UiMode.MESSAGE);
-          globalScene.ui.showText(t("menu:failedToLoadSaveData"));
-        }
-      });
-    });
+    await gameData.loadSystem();
+    if (success || bypassLogin) {
+      await this.end();
+      return;
+    }
+    ui.setMode(UiMode.MESSAGE);
+    ui.showText(t("menu:failedToLoadSaveData"));
   }
 
-  end(): void {
+  public override async end(): Promise<void> {
     globalScene.ui.setMode(UiMode.MESSAGE);
 
     if (!globalScene.gameData.gender) {
       globalScene.phaseManager.unshiftNew("SelectGenderPhase");
     }
 
-    handleTutorial(Tutorial.Intro).then(() => super.end());
+    await handleTutorial(Tutorial.Intro);
+    super.end();
+  }
+
+  private checkStatus(statusCode: number | null): void {
+    if (!statusCode || statusCode === 400) {
+      this.showLoginRegister();
+      return;
+    }
+
+    if (statusCode === 401) {
+      removeCookie(sessionIdKey);
+      globalScene.reset(true, true);
+      return;
+    }
+
+    globalScene.phaseManager.unshiftNew("UnavailablePhase");
+    super.end();
+  }
+
+  private showLoginRegister(): void {
+    const { gameData, phaseManager, ui } = globalScene;
+
+    const backButton = () => {
+      phaseManager.unshiftNew("LoginPhase", false);
+      this.end();
+    };
+
+    const checkUserInfo = async (): Promise<boolean> => {
+      ui.playSelect();
+      const success = await updateUserInfo();
+      if (!success[0]) {
+        removeCookie(sessionIdKey);
+        globalScene.reset(true, true);
+        return false;
+      }
+      return true;
+    };
+
+    const loginButton = async () => {
+      const success = await checkUserInfo();
+      if (!success) {
+        return;
+      }
+      await gameData.loadSystem();
+      this.end();
+    };
+
+    const registerButton = async () => {
+      const success = await checkUserInfo();
+      if (!success) {
+        return;
+      }
+      this.end();
+    };
+
+    const goToLoginButton = () => {
+      globalScene.playSound("ui/menu_open");
+
+      ui.setMode(UiMode.LOGIN_FORM, { buttonActions: [loginButton, backButton] });
+    };
+
+    const goToRegistrationButton = () => {
+      globalScene.playSound("ui/menu_open");
+
+      ui.setMode(UiMode.REGISTRATION_FORM, { buttonActions: [registerButton, backButton] });
+    };
+
+    if (this.showText) {
+      ui.showText(i18next.t("menu:logInOrCreateAccount"));
+    }
+
+    globalScene.playSound("ui/menu_open");
+
+    ui.setMode(UiMode.LOGIN_OR_REGISTER, { buttonActions: [goToLoginButton, goToRegistrationButton] });
   }
 }

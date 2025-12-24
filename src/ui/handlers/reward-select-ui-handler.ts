@@ -12,6 +12,7 @@ import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
 import type { RewardOption } from "#items/reward";
 import { getPlayerShopRewardOptionsForWave, isTmReward } from "#items/reward-utils";
+import type { RewardSelectCallback } from "#phases/select-reward-phase";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { addTextObject, getRarityTierTextTint, getTextColor, getTextStyleOptions } from "#ui/text";
@@ -35,6 +36,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
   private lockRarityButtonText: Phaser.GameObjects.Text;
   private moveInfoOverlay: MoveInfoOverlay;
   private moveInfoOverlayActive = false;
+  protected declare onActionInput: RewardSelectCallback | null;
 
   private rowCursor = 0;
   private player: boolean;
@@ -426,7 +428,8 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
           const originalOnActionInput = this.onActionInput;
           this.awaitingActionInput = false;
           this.onActionInput = null;
-          originalOnActionInput(-1);
+          // TODO: What is a good fallback to pass to this?
+          originalOnActionInput(-1, -1);
           this.moveInfoOverlayActive = this.moveInfoOverlay.active;
           this.moveInfoOverlay.setVisible(false);
           this.moveInfoOverlay.active = false; // don't clear here as we might need to restore the UI in case the user cancels the action

@@ -15,6 +15,7 @@ import type { PositionalTagType } from "#enums/positional-tag-type";
 import type { BattleStat, EffectiveStat } from "#enums/stat";
 import type { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
+import type { OneOther } from "#test/@types/test-helpers";
 import type { GameManager } from "#test/test-utils/game-manager";
 import type { toHaveArenaTagOptions } from "#test/test-utils/matchers/to-have-arena-tag";
 import type { toHaveBattlerTagOptions } from "#test/test-utils/matchers/to-have-battler-tag";
@@ -26,7 +27,6 @@ import type { toHaveTypesOptions } from "#test/test-utils/matchers/to-have-types
 import type { ApplicableHeldItemId, allHeldItemsType } from "#types/held-item-data-types";
 import type { PhaseString } from "#types/phase-types";
 import type { TurnMove } from "#types/turn-move";
-import type { AtLeastOne } from "#types/type-helpers";
 import type { toDmgValue } from "#utils/common";
 import type { expect } from "vitest";
 
@@ -169,7 +169,7 @@ interface PokemonMatchers {
    * @param index - The index of the move history entry to check, in order from most recent to least recent; default `0`
    * @see {@linkcode Pokemon.getLastXMoves}
    */
-  toHaveUsedMove(expectedMove: MoveId | AtLeastOne<TurnMove>, index?: number): void;
+  toHaveUsedMove(expectedMove: MoveId | OneOther<TurnMove, "move">, index?: number): void;
 
   /**
    * Check whether a {@linkcode Pokemon}'s effective stat is as expected

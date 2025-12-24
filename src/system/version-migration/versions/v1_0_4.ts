@@ -5,9 +5,7 @@ import { AbilityAttr } from "#enums/ability-attr";
 import { DexAttr } from "#enums/dex-attr";
 import { SettingKeys } from "#system/settings";
 import type { SessionSaveData, SystemSaveData } from "#types/save-data";
-import type { SessionSaveMigrator } from "#types/session-save-migrator";
-import type { SettingsSaveMigrator } from "#types/settings-save-migrator";
-import type { SystemSaveMigrator } from "#types/system-save-migrator";
+import type { SessionSaveMigrator, SettingsSaveMigrator, SystemSaveMigrator } from "#types/save-migrators";
 
 /**
  * Migrate ability starter data if empty for caught species.

@@ -70,6 +70,10 @@ export class TurnStartPhase extends FieldPhase {
 
     const phaseManager = globalScene.phaseManager;
     for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
+      if (globalScene.currentBattle.turnCommands[pokemon.getBattlerIndex()]?.command !== Command.FIGHT) {
+        continue;
+      }
+
       applyAbAttrs("BypassSpeedChanceAbAttr", { pokemon });
       applyHeldItems(HeldItemEffect.BYPASS_SPEED_CHANCE, { pokemon });
     }

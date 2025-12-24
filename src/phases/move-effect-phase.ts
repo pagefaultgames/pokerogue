@@ -127,6 +127,7 @@ export class MoveEffectPhase extends PokemonPhase {
     if (anySuccess) {
       this.moveHistoryEntry.result = MoveResult.SUCCESS;
     } else {
+      // If the move failed to impact all targets, disable all subsequent multi-hits
       user.turnData.hitCount = 1;
       user.turnData.hitsLeft = 1;
       this.moveHistoryEntry.result = allMiss ? MoveResult.MISS : MoveResult.FAIL;
@@ -252,14 +253,6 @@ export class MoveEffectPhase extends PokemonPhase {
     // Lapse `MOVE_EFFECT` effects (i.e. semi-invulnerability) when applicable
     user.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
 
-    // If the user is acting again (such as due to Instruct or Dancer), reset hitsLeft/hitCount and
-    // recalculate hit count for multi-hit moves.
-    if (user.turnData.hitsLeft === 0 && user.turnData.hitCount > 0 && user.turnData.extraTurns > 0) {
-      user.turnData.hitsLeft = -1;
-      user.turnData.hitCount = 0;
-      user.turnData.extraTurns--;
-    }
-
     /**
      * If this phase is for the first hit of the invoked move,
      * resolve the move's total hit count. This block combines the
@@ -270,7 +263,7 @@ export class MoveEffectPhase extends PokemonPhase {
       // Assume single target for multi hit
       applyMoveAttrs("MultiHitAttr", user, this.getFirstTarget() ?? null, move, hitCount);
       // If Parental Bond is applicable, add another hit
-      applyAbAttrs("AddSecondStrikeAbAttr", { pokemon: user, move, hitCount });
+      applyAbAttrs("AddSecondStrikeAbAttr", { pokemon: user, move, hitCount, opponent: this.getFirstTarget() });
       // If Multi-Lens is applicable, add hits equal to the number of held Multi-Lenses
       applyHeldItems(HeldItemEffect.MULTI_HIT_COUNT, { pokemon: user, moveId: move.id, count: hitCount });
       // Set the user's relevant turnData fields to reflect the final hit count

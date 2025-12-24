@@ -2,10 +2,10 @@ import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId } from "#enums/held-item-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import i18next from "#plugins/i18n";
 import { GameManager } from "#test/test-utils/game-manager";
 import { NumberHolder, randInt } from "#utils/common";
 import { applyHeldItems } from "#utils/items";
+import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

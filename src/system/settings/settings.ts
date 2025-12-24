@@ -199,7 +199,7 @@ for (let i = 0; i < 5; i++) {
 /**
  * All Settings not related to controls
  */
-export const Setting: Array<Setting> = [
+export const Setting: Setting[] = [
   {
     key: SettingKeys.Game_Speed,
     label: i18next.t("settings:gameSpeed"),

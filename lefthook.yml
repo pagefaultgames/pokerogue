@@ -8,9 +8,9 @@ pre-commit:
     - rebase
   commands:
     biome-lint:
-      # Disable colors as certain IDEs don't support it in the output pane.
+      # Disable colors as certain IDEs (such as VSCode) don't support it in the output pane.
       # Summary mode looks decent in plain ASCII anyhow
-      run: pnpm exec biome check --write --colors=off --reporter=summary --staged --no-errors-on-unmatched --diagnostic-level=error
+      run: pnpm biome:staged --colors=off --reporter=summary
       stage_fixed: true
     ls-lint:
       run: pnpm exec ls-lint
@@ -19,3 +19,12 @@ post-merge:
   commands:
     update-submodules:
       run: pnpm update-submodules
+    update-packages:
+      run: pnpm i
+
+post-checkout:
+  commands:
+    update-packages:
+      # cf https://git-scm.com/docs/githooks#_post_checkout:
+      # The 3rd argument is 1 for branch checkouts and 0 for file checkouts.
+      run: if test {3} -eq "1"; then pnpm i; fi

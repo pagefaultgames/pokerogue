@@ -790,22 +790,14 @@ export class SingleTypeChallenge extends Challenge {
   applyStarterSelectModify(speciesId: SpeciesId, dexEntry: DexEntry, _starterDataEntry: StarterDataEntry): boolean {
     const type = this.value - 1;
 
-    if (speciesId === SpeciesId.RALTS) {
-      if (type === PokemonType.FIGHTING) {
-        dexEntry.caughtAttr &= ~DexAttr.FEMALE;
-      }
-      if (type === PokemonType.FAIRY) {
-        dexEntry.caughtAttr &= ~DexAttr.MALE;
-      }
-    }
-    if (speciesId === SpeciesId.SNORUNT && type === PokemonType.GHOST) {
+    if (speciesId === SpeciesId.RALTS && type === PokemonType.FIGHTING) {
+      dexEntry.caughtAttr &= ~DexAttr.FEMALE;
+    } else if (speciesId === SpeciesId.SNORUNT && type === PokemonType.GHOST) {
       dexEntry.caughtAttr &= ~DexAttr.MALE;
-    }
-    if (speciesId === SpeciesId.BURMY) {
+    } else if (speciesId === SpeciesId.BURMY) {
       if (type === PokemonType.FLYING) {
         dexEntry.caughtAttr &= ~DexAttr.FEMALE;
-      }
-      if ([PokemonType.GRASS, PokemonType.GROUND, PokemonType.STEEL].includes(type)) {
+      } else if ([PokemonType.GRASS, PokemonType.GROUND, PokemonType.STEEL].includes(type)) {
         dexEntry.caughtAttr &= ~DexAttr.MALE;
       }
     }
@@ -933,7 +925,7 @@ export class FreshStartChallenge extends Challenge {
   }
 
   applyStarterModify(pokemon: Pokemon): boolean {
-    pokemon.abilityIndex = pokemon.abilityIndex % 2; // Always base ability, if you set it to hidden it wraps to first ability
+    pokemon.abilityIndex %= 2; // Always base ability, if you set it to hidden it wraps to first ability
     pokemon.passive = false; // Passive isn't unlocked
     let validMoves = pokemon.species
       .getLevelMoves()
