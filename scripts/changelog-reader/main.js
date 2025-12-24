@@ -173,13 +173,17 @@ function getChangelogSection(description) {
  * @param {string} changelog
  */
 async function updateDescription(changelog) {
-  changelog += `\n---------------------------\n**This changelog was auto generated at ${dateFormatter.format(new Date())}.**`;
+  const description =
+    `**Changelog:** ${CONFIG.REPO_BRANCH} ---> ${CONFIG.CUTOFF_BRANCH}\n---------------------------\n`
+    + changelog
+    + `\n---------------------------\n**This changelog was auto generated at ${dateFormatter.format(new Date())}.**`;
+
   await octokit.rest.pulls.update({
     // todo: Update owner and PR number
     owner: "fabske0",
     repo: CONFIG.REPO_NAME,
     pull_number: 2,
-    body: changelog,
+    body: description,
   });
 }
 
