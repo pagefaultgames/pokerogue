@@ -91,13 +91,13 @@ describe("Items - Thick Club", () => {
 
     // Making sure modifier is not applied without holding item
     const atkValue = new NumberHolder(atkStat);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statHolder: atkValue });
 
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
     partyMember.heldItemManager.add(HeldItemId.THICK_CLUB);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statHolder: atkValue });
 
     expect(atkValue.value / atkStat).toBe(2);
   });
@@ -111,13 +111,13 @@ describe("Items - Thick Club", () => {
 
     // Making sure modifier is not applied without holding item
     const atkValue = new NumberHolder(atkStat);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statHolder: atkValue });
 
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
     partyMember.heldItemManager.add(HeldItemId.THICK_CLUB);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statHolder: atkValue });
 
     expect(atkValue.value / atkStat).toBe(2);
   });
@@ -131,13 +131,13 @@ describe("Items - Thick Club", () => {
 
     // Making sure modifier is not applied without holding item
     const atkValue = new NumberHolder(atkStat);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statHolder: atkValue });
 
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
     partyMember.heldItemManager.add(HeldItemId.THICK_CLUB);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statHolder: atkValue });
 
     expect(atkValue.value / atkStat).toBe(2);
   });
@@ -164,13 +164,13 @@ describe("Items - Thick Club", () => {
 
     // Making sure modifier is not applied without holding item
     const atkValue = new NumberHolder(atkStat);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statHolder: atkValue });
 
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
     partyMember.heldItemManager.add(HeldItemId.THICK_CLUB);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statHolder: atkValue });
 
     expect(atkValue.value / atkStat).toBe(2);
   });
@@ -197,13 +197,13 @@ describe("Items - Thick Club", () => {
 
     // Making sure modifier is not applied without holding item
     const atkValue = new NumberHolder(atkStat);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statHolder: atkValue });
 
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
     partyMember.heldItemManager.add(HeldItemId.THICK_CLUB);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statHolder: atkValue });
 
     expect(atkValue.value / atkStat).toBe(2);
   });
@@ -217,13 +217,13 @@ describe("Items - Thick Club", () => {
 
     // Making sure modifier is not applied without holding item
     const atkValue = new NumberHolder(atkStat);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statHolder: atkValue });
 
     expect(atkValue.value / atkStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
     partyMember.heldItemManager.add(HeldItemId.THICK_CLUB);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statHolder: atkValue });
 
     expect(atkValue.value / atkStat).toBe(1);
   });

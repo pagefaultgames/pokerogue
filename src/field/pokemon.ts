@@ -1155,6 +1155,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     this.setScale(this.getSpriteScale());
   }
 
+  // TODO: Review uses of this function - callers should try to use the held item manager's utils where possible
   getHeldItems(): HeldItemId[] {
     return this.heldItemManager.getHeldItems();
   }

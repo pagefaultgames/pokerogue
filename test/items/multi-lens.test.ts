@@ -140,7 +140,7 @@ describe("Items - Multi Lens", () => {
 
   it.each([1, 2])("should result in original damage for HP-cutting attacks with %d lenses", async lensCount => {
     game.override
-      .startingHeldItems([{ entry: HeldItemId.MULTI_LENS }])
+      .startingHeldItems([{ entry: HeldItemId.MULTI_LENS, count: lensCount }])
       .enemyLevel(1000)
       .enemySpecies(SpeciesId.BLISSEY); // allows for unrealistically high levels of accuracy
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
@@ -155,7 +155,7 @@ describe("Items - Multi Lens", () => {
 
   it("should result in original damage for HP-cutting attacks with 2 lenses + Parental Bond", async () => {
     game.override
-      .startingHeldItems([{ name: "MULTI_LENS", count: 2 }])
+      .startingHeldItems([{ entry: HeldItemId.MULTI_LENS }])
       .ability(AbilityId.PARENTAL_BOND)
       .enemyLevel(1000)
       .enemySpecies(SpeciesId.BLISSEY); // allows for unrealistically high levels of accuracy

@@ -3,7 +3,7 @@ import type { RarityTier } from "#enums/reward-tier";
 import type { Pokemon } from "#field/pokemon";
 import type { AllHeldItems } from "#items/all-held-items";
 import type { CosmeticHeldItem } from "#items/held-item";
-import type { InferKeys } from "#types/helpers/type-helpers";
+import type { InferKeys } from "#types/type-helpers";
 
 export interface HeldItemData {
   /**
@@ -62,6 +62,11 @@ export type HeldItemTieredPool = Partial<Record<RarityTier, HeldItemPool>>;
 
 interface HeldItemConfigurationEntry {
   entry: HeldItemId | HeldItemCategoryId | HeldItemCategoryEntry | HeldItemSpecs | HeldItemPool;
+  /**
+   * The number of items to obtain, either as a numeric count or a function returning one.
+   * Must be an integer value!
+   * @defaultValue `1`
+   */
   count?: number | (() => number);
 }
 

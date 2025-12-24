@@ -2,6 +2,7 @@ import type { ObjectValues } from "#types/type-helpers";
 import { FormChangeItemId } from "./form-change-item-id";
 
 // TODO: make category the lower 2 bytes
+// TODO: Create subsets of HeldItemId for different types of items
 export const HeldItemId = {
   NONE: 0x0000,
 

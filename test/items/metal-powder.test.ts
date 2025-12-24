@@ -4,6 +4,8 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import { NumberHolder } from "#utils/common";
+import { applyHeldItems } from "#utils/items";
+import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -89,13 +91,13 @@ describe("Items - Metal Powder", () => {
 
     // Making sure modifier is not applied without holding item
     const defValue = new NumberHolder(defStat);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.DEF, statValue: defValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.DEF, statHolder: defValue });
 
     expect(defValue.value / defStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
     partyMember.heldItemManager.add(HeldItemId.METAL_POWDER);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.DEF, statValue: defValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.DEF, statHolder: defValue });
 
     expect(defValue.value / defStat).toBe(2);
   });
@@ -118,13 +120,13 @@ describe("Items - Metal Powder", () => {
 
     // Making sure modifier is not applied without holding item
     const defValue = new NumberHolder(defStat);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.DEF, statValue: defValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.DEF, statHolder: defValue });
 
     expect(defValue.value / defStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
     partyMember.heldItemManager.add(HeldItemId.METAL_POWDER);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.DEF, statValue: defValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.DEF, statHolder: defValue });
 
     expect(defValue.value / defStat).toBe(2);
   });
@@ -147,13 +149,13 @@ describe("Items - Metal Powder", () => {
 
     // Making sure modifier is not applied without holding item
     const defValue = new NumberHolder(defStat);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.DEF, statValue: defValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.DEF, statHolder: defValue });
 
     expect(defValue.value / defStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
     partyMember.heldItemManager.add(HeldItemId.METAL_POWDER);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.DEF, statValue: defValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.DEF, statHolder: defValue });
 
     expect(defValue.value / defStat).toBe(2);
   });
@@ -167,13 +169,13 @@ describe("Items - Metal Powder", () => {
 
     // Making sure modifier is not applied without holding item
     const defValue = new NumberHolder(defStat);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.DEF, statValue: defValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.DEF, statHolder: defValue });
 
     expect(defValue.value / defStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
     partyMember.heldItemManager.add(HeldItemId.METAL_POWDER);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.DEF, statValue: defValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.DEF, statHolder: defValue });
 
     expect(defValue.value / defStat).toBe(1);
   });

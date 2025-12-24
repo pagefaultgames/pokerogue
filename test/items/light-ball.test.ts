@@ -92,17 +92,17 @@ describe("Items - Light Ball", () => {
 
     // Making sure modifier is not applied without holding item
     const atkValue = new NumberHolder(atkStat);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.DEF, statValue: atkValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.DEF, statHolder: atkValue });
     const spAtkValue = new NumberHolder(spAtkStat);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPDEF, statValue: spAtkValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPDEF, statHolder: spAtkValue });
     expect(atkValue.value / atkStat).toBe(1);
     expect(spAtkValue.value / spAtkStat).toBe(1);
 
     // Giving Light Ball to party member and testing if it applies
     partyMember.heldItemManager.add(HeldItemId.LIGHT_BALL);
 
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPATK, statValue: spAtkValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statHolder: atkValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPATK, statHolder: spAtkValue });
 
     expect(atkValue.value / atkStat).toBe(2);
     expect(spAtkValue.value / spAtkStat).toBe(2);
@@ -127,9 +127,9 @@ describe("Items - Light Ball", () => {
 
     // Making sure modifier is not applied without holding item
     const atkValue = new NumberHolder(atkStat);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.DEF, statValue: atkValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.DEF, statHolder: atkValue });
     const spAtkValue = new NumberHolder(spAtkStat);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPDEF, statValue: spAtkValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPDEF, statHolder: spAtkValue });
 
     expect(atkValue.value / atkStat).toBe(1);
     expect(spAtkValue.value / spAtkStat).toBe(1);
@@ -137,8 +137,8 @@ describe("Items - Light Ball", () => {
     // Giving Light Ball to party member and testing if it applies
     partyMember.heldItemManager.add(HeldItemId.LIGHT_BALL);
 
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPATK, statValue: spAtkValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statHolder: atkValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPATK, statHolder: spAtkValue });
 
     expect(atkValue.value / atkStat).toBe(2);
     expect(spAtkValue.value / spAtkStat).toBe(2);
@@ -163,9 +163,9 @@ describe("Items - Light Ball", () => {
 
     // Making sure modifier is not applied without holding item
     const atkValue = new NumberHolder(atkStat);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.DEF, statValue: atkValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.DEF, statHolder: atkValue });
     const spAtkValue = new NumberHolder(spAtkStat);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPDEF, statValue: spAtkValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPDEF, statHolder: spAtkValue });
 
     expect(atkValue.value / atkStat).toBe(1);
     expect(spAtkValue.value / spAtkStat).toBe(1);
@@ -173,8 +173,8 @@ describe("Items - Light Ball", () => {
     // Giving Light Ball to party member and testing if it applies
     partyMember.heldItemManager.add(HeldItemId.LIGHT_BALL);
 
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPATK, statValue: spAtkValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statHolder: atkValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPATK, statHolder: spAtkValue });
 
     expect(atkValue.value / atkStat).toBe(2);
     expect(spAtkValue.value / spAtkStat).toBe(2);
@@ -190,17 +190,17 @@ describe("Items - Light Ball", () => {
 
     // Making sure modifier is not applied without holding item
     const atkValue = new NumberHolder(atkStat);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.DEF, statValue: atkValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.DEF, statHolder: atkValue });
     const spAtkValue = new NumberHolder(spAtkStat);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPDEF, statValue: spAtkValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPDEF, statHolder: spAtkValue });
 
     expect(atkValue.value / atkStat).toBe(1);
     expect(spAtkValue.value / spAtkStat).toBe(1);
 
     // Giving Light Ball to party member and testing if it applies
     partyMember.heldItemManager.add(HeldItemId.LIGHT_BALL);
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
-    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPATK, statValue: spAtkValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statHolder: atkValue });
+    applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPATK, statHolder: spAtkValue });
 
     expect(atkValue.value / atkStat).toBe(1);
     expect(spAtkValue.value / spAtkStat).toBe(1);

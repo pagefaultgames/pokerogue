@@ -13,12 +13,10 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 import { type MockInstance, vi } from "vitest";
 
 /** Options type for {@linkcode toHaveAppliedItem}. */
-export type toHaveAppliedItemOptions<E extends HeldItemEffect> = Omit<
-  HeldItemEffectParamMap[E],
-  "pokemon"
-> extends Record<string, never>
-  ? never
-  : AtLeastOne<Omit<HeldItemEffectParamMap[E], "pokemon">>;
+export type toHaveAppliedItemOptions<E extends HeldItemEffect> =
+  Omit<HeldItemEffectParamMap[E], "pokemon"> extends Record<string, never>
+    ? never
+    : AtLeastOne<Omit<HeldItemEffectParamMap[E], "pokemon">>;
 
 /**
  * Matcher that checks if a {@linkcode Pokemon} has applied the given {@linkcode HeldItem}.

@@ -116,8 +116,8 @@ describe("Abilities - Harvest", () => {
   });
 
   it("remembers berries eaten array across waves", async () => {
-    game.override;
-    game.override.startingHeldItems([{ entry: HeldItemId.PETAYA_BERRY, count: 2 }]).ability(AbilityId.BALL_FETCH); // don't actually need harvest for this test
+    // don't actually need harvest for this test
+    game.override.startingHeldItems([{ entry: HeldItemId.PETAYA_BERRY, count: 2 }]).ability(AbilityId.BALL_FETCH);
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
 
     const regieleki = game.field.getPlayerPokemon();
