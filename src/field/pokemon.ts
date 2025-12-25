@@ -5685,7 +5685,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns Whether the item was removed successfully.
    */
   public loseHeldItem(heldItemId: HeldItemId, forBattle = true): boolean {
-    // TODO: What does a -1 pokemon id mean?
     if (!this.heldItemManager.hasItem(heldItemId)) {
       return false;
     }

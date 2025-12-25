@@ -22,6 +22,7 @@ import {
 } from "#data/battler-tags";
 import { getBerryEffectFunc } from "#data/berry";
 import { allAbilities, allHeldItems, allMoves } from "#data/data-lists";
+import { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-change-triggers";
 import { DelayedAttackTag } from "#data/positional-tags/positional-tag";
 import { getNonVolatileStatusEffects, getStatusEffectHealText, isNonVolatileStatusEffect } from "#data/status-effect";
 import { TerrainType } from "#data/terrain";
@@ -36,6 +37,7 @@ import { BiomeId } from "#enums/biome-id";
 import { ChallengeType } from "#enums/challenge-type";
 import { Command } from "#enums/command";
 import { FieldPosition } from "#enums/field-position";
+import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
 import { HitResult } from "#enums/hit-result";
 import { ChargeAnim } from "#enums/move-anims-common";
@@ -54,7 +56,11 @@ import { PositionalTagType } from "#enums/positional-tag-type";
 import { SpeciesId } from "#enums/species-id";
 import { BATTLE_STATS, type BattleStat, type EffectiveStat, getStatKey, Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
+import { SwitchType } from "#enums/switch-type";
+import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { WeatherType } from "#enums/weather-type";
+import { MoveUsedEvent } from "#events/battle-scene";
+import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import { type BerryHeldItem, berryTypeToHeldItem } from "#items/berry";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import {
@@ -100,15 +106,11 @@ import { coerceArray } from "#utils/array";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
+import { applyHeldItems } from "#utils/items";
 import { areAllies, canSpeciesTera, willTerastallize } from "#utils/pokemon-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
-import { SwitchType } from "#enums/switch-type";
-import type {EnemyPokemon, Pokemon } from "#field/pokemon";
-import { applyHeldItems } from "#utils/items";
-import { HeldItemEffect } from "#enums/held-item-effect";
-import { TrainerItemEffect } from "#enums/trainer-item-effect";
 
 /**
  * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.
@@ -2386,10 +2388,8 @@ export class RestAttr extends HealAttr {
   // TODO: change after HealAttr is changed to fail move
   override getCondition(): MoveConditionFunc {
     return (user, target, move) =>
-      super.canApply(user, target, move, [])
-      && // Intentionally suppress messages here as we display generic fail msg
-      // // TODO: This might have order-of-operation jank
-      user.canSetStatus(StatusEffect.SLEEP, true, true, user);
+      super.canApply(user, target, move, []) // Intentionally suppress messages here as we display generic fail msg // // TODO: This might have order-of-operation jank
+      && user.canSetStatus(StatusEffect.SLEEP, true, true, user);
   }
 }
 
@@ -3105,6 +3105,8 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
  * "If the user faints due to the target's Ability (Rough Skin or Iron Barbs) or held Rocky Helmet, it cannot remove the target's held item."
  * "If the Pokémon is knocked out by the attack, Sticky Hold does not protect the held item."
  */
+// TODO: Split up into a separate abstract class for Incinerate vs Knock Off,
+// rather than using a single class for both
 export class RemoveHeldItemAttr extends MoveEffectAttr {
   /** Optional restriction for item pool to berries only; i.e. Incinerate */
   private readonly berriesOnly: boolean;
@@ -3228,7 +3230,12 @@ export class EatBerryAttr extends MoveEffectAttr {
     return true;
   }
 
-  getTargetHeldBerries(target: Pokemon): HeldItemId[] {
+  protected reduceBerryItem(target: Pokemon) {
+    target.loseHeldItem(this.chosenBerry);
+    globalScene.updateItems(target.isPlayer());
+  }
+
+  protected getTargetHeldBerries(target: Pokemon): HeldItemId[] {
     return target.getHeldItems().filter(m => isItemInCategory(m, HeldItemCategoryId.BERRY));
   }
 
@@ -10797,13 +10804,15 @@ export function initMoves() {
       .condition(failIfSingleBattle)
       .condition((_user, target, _move) => !target.turnData.acted)
       .attr(ForceLastAttr),
-    new AttackMove(MoveId.ACROBATICS, PokemonType.FLYING, MoveCategory.PHYSICAL, 55, 100, 15, -1, 0, 5).attr(
-      MovePowerMultiplierAttr,
-      (user, _target, _move) => {
-        const itemCount = user.filter(i => i.isTransferable).reduce((v, m) => v + m.stackCount, 0);
-        return Math.max(1, 2 - 0.2 * itemCount);
-      },
-    ),
+    new AttackMove(MoveId.ACROBATICS, PokemonType.FLYING, MoveCategory.PHYSICAL, 55, 100, 15, -1, 0, 5) //
+      .attr(MovePowerMultiplierAttr, user => {
+        // Scale linearly from 2x-1x power with 0-5+ held items
+        const { heldItemManager } = user;
+        const stackCounts = heldItemManager
+          .getTransferableHeldItems()
+          .reduce((acc, id) => acc + heldItemManager.getStack(id), 0);
+        return Math.max(1, 2 - 0.2 * stackCounts);
+      }),
     new StatusMove(MoveId.REFLECT_TYPE, PokemonType.NORMAL, -1, 15, -1, 0, 5) //
       .ignoresSubstitute()
       .attr(CopyTypeAttr),

@@ -1,8 +1,8 @@
 import type { Ability } from "#abilities/ability";
 import type { PokemonSpecies } from "#data/pokemon-species";
+import type { HeldItemId } from "#enums/held-item-id";
 import type { SpeciesId } from "#enums/species-id";
 import type { TrainerItemId } from "#enums/trainer-item-id";
-// biome-ignore lint/correctness/noUnusedImports: used in TSDoc comment
 import type { AllHeldItems } from "#items/all-held-items";
 import type { TrainerItem } from "#items/trainer-item";
 import type { Move } from "#moves/move";
@@ -21,7 +21,8 @@ export const biomeDepths: BiomeDepths = {};
 export const uncatchableSpecies: SpeciesId[] = [];
 
 /**
- * Map of all held items, indexed by their {@linkcode ItemID}
+ * Map of all held items, indexed by their {@linkcode HeldItemId | ID}.
  * @see {@linkcode AllHeldItems}
  */
-export const allHeldItems = {};
+// @ts-expect-error - initialized inside `all-held-items.ts` to avoid circular imports
+export const allHeldItems: AllHeldItems = {};

@@ -50,6 +50,7 @@ export class HeldItemManager {
     return config;
   }
 
+  // TODO: Rename to "getAllItemSpecs" or similar
   generateSaveData(): HeldItemSaveData {
     const saveData: HeldItemSaveData = [];
     for (const [id, item] of this.heldItems) {
@@ -60,7 +61,7 @@ export class HeldItemManager {
   }
 
   // TODO: Condense these all into a single generic function that takes an arbitrary predicate,
-  // and then export several pre-made predicates for use
+  // and then export several pre-made predicates ready for use
   // TODO: These functions should return iterators rather than less efficient arrays
   getHeldItems(): HeldItemId[] {
     return Array.from(this.heldItems.keys());
@@ -80,7 +81,7 @@ export class HeldItemManager {
 
   hasItem(itemType: HeldItemId | HeldItemCategoryId): boolean {
     if (isCategoryId(itemType)) {
-      return this.getHeldItems().some(id => isItemInCategory(id, itemType as HeldItemCategoryId));
+      return this.getHeldItems().some(id => isItemInCategory(id, itemType));
     }
     return this.heldItems.has(itemType);
   }

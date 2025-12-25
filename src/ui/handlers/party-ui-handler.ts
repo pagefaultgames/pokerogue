@@ -586,7 +586,8 @@ export class PartyUiHandler extends MessageUiHandler {
           matchingItems.push(allItems[this.transferOptionCursor]);
         }
         const hasMatchingItem = matchingItems.length > 0; // checks if any items match
-        const partySlot = this.partySlots.filter(m => m.getPokemon() === newPokemon)[0]; // this gets pokemon [p] for us
+        // TODO: Bang is bad
+        const partySlot = this.partySlots.find(m => m.getPokemon() === newPokemon)!; // this gets pokemon [p] for us
         if (p !== this.transferCursor) {
           // this skips adding the able/not able labels on the pokemon doing the transfer
           if (hasMatchingItem) {

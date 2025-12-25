@@ -84,3 +84,11 @@ type CosmeticHeldItemId = InferKeys<AllHeldItems, CosmeticHeldItem>;
 
 /** Union type of all `HeldItemId`s whose corresponding items can be applied. */
 export type ApplicableHeldItemId = Exclude<keyof AllHeldItems, CosmeticHeldItemId>;
+
+/**
+ * Dummy, TypeScript-only type to ensure that {@linkcode HeldItemId} and {@linkcode HeldItemCategoryId}
+ * have 0 overlap between allowed IDs.
+ *
+ * ⚠️ Does not actually exist at runtime, so it must not be used!
+ */
+declare const EnsureHeldItemIDsAreDisjointFromCategories: (HeldItemId & HeldItemCategoryEntry) & never;

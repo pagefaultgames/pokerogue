@@ -31,8 +31,7 @@ export const heldItemSortFunc = (a: HeldItemId, b: HeldItemId): number => {
 // Iterate over the party until an item is successfully given
 export function assignItemToFirstFreePokemon(item: HeldItemId, party: Pokemon[]): void {
   for (const pokemon of party) {
-    const stack = pokemon.heldItemManager.getStack(item);
-    if (stack < allHeldItems[item].getMaxStackCount()) {
+    if (!pokemon.heldItemManager.isMaxStack(item)) {
       pokemon.heldItemManager.add(item);
       return;
     }

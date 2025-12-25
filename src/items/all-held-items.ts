@@ -41,7 +41,8 @@ import { TurnEndStatusHeldItem } from "#items/turn-end-status";
 import { getEnumValues } from "#utils/enums";
 
 // TODO: Move these to wherever the "XYZ enum to held item id" utils are eventually placed
-// and convert the existing objects to functions for reduced memory footprint
+// and convert the existing objects to functions for reduced memory footprint.
+// TODO: Export these as "subsets" of `HeldItemId` for use inside type declarations
 type BaseStatItemId =
   | typeof HeldItemId.HP_UP
   | typeof HeldItemId.PROTEIN
