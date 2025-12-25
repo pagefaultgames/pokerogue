@@ -1,27 +1,30 @@
 import { getPokemonNameWithAffix } from "#app/messages";
-import { HeldItemCategoryId, HeldItemId, isCategoryId } from "#enums/held-item-id";
-// biome-ignore lint/correctness/noUnusedImports: TSDoc
+import { HeldItemCategoryId, HeldItemId, isCategoryId, isItemInCategory } from "#enums/held-item-id";
 import type { Pokemon } from "#field/pokemon";
-import type { PartialWith } from "#test/@types/test-helpers";
-import { getOnelineDiffStr, stringifyEnumArray } from "#test/test-utils/string-utils";
+import type { OneOther } from "#test/@types/test-helpers";
+import { getEnumStr, getOnelineDiffStr, stringifyEnumArray } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { HeldItemSpecs } from "#types/held-item-data-types";
-import { enumValueToKey } from "#utils/enums";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
-export type expectedHeldItemType = HeldItemId | HeldItemCategoryId | PartialWith<HeldItemSpecs, "id" | "stack">;
+/**
+ * Options type for {@linkcode toHaveHeldItem}.
+ */
+export type expectedHeldItemType = OneOther<HeldItemSpecs, "id" | "stack">;
 
 /**
  * Matcher that checks if a {@linkcode Pokemon} has the given held item.
  * @param received - The object to check. Should be a {@linkcode Pokemon}
- * @param expectedItem - A {@linkcode HeldItemId} or {@linkcode HeldItemCategoryId} to check, or a partially filled
+ * @param expectedItem - Either a {@linkcode HeldItemId} or {@linkcode HeldItemCategoryId} to check, or a partially filled
  * {@linkcode HeldItemSpecs} containing the desired values
+ * @param count - The expected number of items to have been passed; unused if a `HeldItemSpecs` is passed
  * @returns Whether the matcher passed
  */
 export function toHaveHeldItem(
   this: MatcherState,
   received: unknown,
-  expectedItem: expectedHeldItemType,
+  expectedItem: HeldItemId | HeldItemCategoryId | expectedHeldItemType,
+  count = 1,
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
     return {
@@ -32,42 +35,60 @@ export function toHaveHeldItem(
 
   const pkmName = getPokemonNameWithAffix(received);
 
-  // If a category was requested OR we lack the item in question, show `an error message.
-  if (typeof expectedItem === "number" || !received.heldItemManager.hasItem(expectedItem.id)) {
-    expectedItem = typeof expectedItem === "number" ? expectedItem : expectedItem.id;
+  const id = typeof expectedItem === "number" ? expectedItem : expectedItem.id;
 
-    const pass = received.heldItemManager.hasItem(expectedItem);
+  // fast track for lacking item at all
+  if (!received.heldItemManager.hasItem(id)) {
+    const actualStr = stringifyEnumArray(HeldItemId, received.heldItemManager.getHeldItems(), { base: 16 });
+    const expectedStr = itemIdToString(id);
 
-    const actualStr = stringifyEnumArray(HeldItemId, received.heldItemManager.getHeldItems(), toHexStr);
-    const expectedStr = itemIdToString(expectedItem);
+    return {
+      pass: false,
+      // "Expected Magikarp to have an item with category HeldItemCategory.BERRY (=0xADAD), but it didn't!"
+      message: () => `Expected ${pkmName} to have an item with ${expectedStr}, but it didn't!`,
+      expected: expectedStr,
+      actual: actualStr,
+    };
+  }
+
+  const items = received.heldItemManager.generateSaveData();
+  const itemsReadable = items.map(specs => ({
+    ...specs,
+    id: getEnumStr(HeldItemId, specs.id),
+  }));
+
+  if (typeof expectedItem === "number") {
+    const matchingItems = items.filter(data => itemMatches(data.id, id));
+    const pass = matchingItems.length === count;
+
+    const expectedStr = {
+      id: itemIdToString(id),
+      stack: count,
+    };
+    const amtStr = count === 1 ? "an item" : `${count} items`;
 
     return {
       pass,
       // "Expected Magikarp to have an item with category HeldItemCategory.BERRY (=0xADAD), but it didn't!"
       message: () =>
         pass
-          ? `Expected ${pkmName} to NOT have an item with ${expectedStr}, but it did!`
-          : `Expected ${pkmName} to have an item with ${expectedStr}, but it didn't!`,
+          ? `Expected ${pkmName} to NOT have ${amtStr} with ${expectedStr}, but it did!`
+          : `Expected ${pkmName} to have ${amtStr} with ${expectedStr}, but got ${matchingItems.length} instead!`,
       expected: expectedStr,
-      actual: actualStr,
+      actual: itemsReadable,
     };
   }
 
   // Check the properties of the requested held item
-  const items = Object.values(received.heldItemManager["heldItems"]);
   const pass = items.some(d =>
     this.equals(d, expectedItem, [...this.customTesters, this.utils.subsetEquality, this.utils.iterableEquality]),
   );
 
-  // Convert item IDs in the diff into actual numbers
+  // Convert item IDs in the diff into readable strings instead of arbitrary numbers
   const expectedReadable = {
     ...expectedItem,
-    id: toHexStr(expectedItem.id),
+    id: itemIdToString(expectedItem.id, false),
   };
-  const actualReadable = received.heldItemManager["getHeldItemEntries"]().map(([id, spec]) => ({
-    ...spec,
-    id: toHexStr(id),
-  }));
   const expectedStr = getOnelineDiffStr.call(this, expectedReadable);
 
   return {
@@ -77,26 +98,34 @@ export function toHaveHeldItem(
         ? `Expected ${pkmName} to NOT have an item matching ${expectedStr}, but it did!`
         : `Expected ${pkmName} to have an item matching ${expectedStr}, but it didn't!`,
     expected: expectedReadable,
-    actual: actualReadable,
+    actual: itemsReadable,
   };
 }
 
-const PADDING = 4;
-
 /**
- * Convert a number into a readable hexadecimal format.
- * @param num - The number to convert
- * @returns The hex string
+ * Utility function to compare 2 item IDs or categories and report whether the two match.
+ * @param id1 - The first id  or category
+ * @param id2 - The second id or category
+ * @returns Whether id1 matches id2
  */
-function toHexStr(num: number): string {
-  return `0x${num.toString(16).padStart(PADDING, "0")}`;
+function itemMatches(id1: HeldItemId | HeldItemCategoryId, id2: HeldItemId | HeldItemCategoryId): boolean {
+  if (isCategoryId(id1) === isCategoryId(id2)) {
+    return id1 === id2;
+  }
+  // TS doesn't recognize that id2 is narrowed here as well by the prior If statement...
+  if (isCategoryId(id1)) {
+    return isItemInCategory(id2 as HeldItemId, id1);
+  }
+  return isItemInCategory(id1, id2 as HeldItemCategoryId);
 }
 
-function itemIdToString(id: HeldItemId | HeldItemCategoryId): string {
-  if (isCategoryId(id)) {
-    const catStr = enumValueToKey(HeldItemCategoryId, id);
-    return `catgeory HeldItemCategory.${catStr} (=${toHexStr(id)})`;
-  }
-  const idStr = enumValueToKey(HeldItemId, id);
-  return `ID HeldItemId.${idStr} (=${toHexStr(id)})`;
+/**
+ * Helper function to convert an arbitrary held item ID or category into a string.
+ * @param id - The {@linkcode HeldItemId} or {@linkcode HeldItemCategoryId} to stringify
+ * @param usePrefix - (Default `true`) Whether to include a corresponding prefix in the output
+ * @returns The resulting string.
+ */
+function itemIdToString(id: HeldItemId | HeldItemCategoryId, usePrefix = true): string {
+  const options = { base: 16, prefix: usePrefix ? undefined : isCategoryId(id) ? "category " : "ID " };
+  return isCategoryId(id) ? getEnumStr(HeldItemCategoryId, id, options) : getEnumStr(HeldItemId, id, options);
 }

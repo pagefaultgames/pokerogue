@@ -249,20 +249,14 @@ describe("Trash to Treasure - Mystery Encounter", () => {
     it("should give 1 Leftovers, 1 Shell Bell, and Black Sludge", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
       await runMysteryEncounterToEnd(game, 2);
-      expect(game).toBeAtPhase("SelectModifierPhase");
-      await game.phaseInterceptor.to("SelectModifierPhase");
+      expect(game).toBeAtPhase("SelectRewardPhase");
+      await game.phaseInterceptor.to("SelectRewardPhase");
 
-      const leftovers = scene.findModifier(m => m instanceof TurnHealModifier) as TurnHealModifier;
-      expect(leftovers).toBeDefined();
-      expect(leftovers?.stackCount).toBe(1);
-
-      const shellBell = scene.findModifier(m => m instanceof HitHealModifier) as HitHealModifier;
-      expect(shellBell).toBeDefined();
-      expect(shellBell?.stackCount).toBe(1);
-
-      const blackSludge = scene.findModifier(m => m instanceof HealShopCostModifier) as HealShopCostModifier;
-      expect(blackSludge).toBeDefined();
-      expect(blackSludge?.stackCount).toBe(1);
+      const player = game.field.getPlayerPokemon();
+      expect(player).toHaveHeldItem(HeldItemId.LEFTOVERS);
+      expect(player).toHaveHeldItem(HeldItemId.SHELL_BELL);
+      // TODO: Make a matcher for this and pass it `1` as the count
+      expect(scene.trainerItems.hasItem(TrainerItemId.BLACK_SLUDGE)).toBe(true);
     });
 
     it("should leave encounter without battle", async () => {

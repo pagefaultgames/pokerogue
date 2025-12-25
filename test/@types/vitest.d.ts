@@ -9,6 +9,7 @@ import type { AbilityId } from "#enums/ability-id";
 import type { ArenaTagSide } from "#enums/arena-tag-side";
 import type { ArenaTagType } from "#enums/arena-tag-type";
 import type { BattlerTagType } from "#enums/battler-tag-type";
+import type { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import type { MoveId } from "#enums/move-id";
 import type { PokemonType } from "#enums/pokemon-type";
 import type { PositionalTagType } from "#enums/positional-tag-type";
@@ -251,11 +252,17 @@ interface PokemonMatchers {
   toHaveUsedPP(moveId: MoveId, ppUsed: number | "all"): void;
 
   /**
-   * Check whether a {@linkcode Pokemon} has the given held item.
-   * @param received - The object to check. Should be a {@linkcode Pokemon}.
-   * @param expectedItem - A {@linkcode HeldItemId} or {@linkcode HeldItemCategoryId} to check, or a partially filled
-   * {@linkcode HeldItemSpecs} containing the desired values
+   * Check whether a {@linkcode Pokemon} has a given held item.
+   * @param received - The object to check. Should be a {@linkcode Pokemon}
+   * @param expectedId - The {@linkcode HeldItemId} or {@linkcode HeldItemCategoryId} to check
+   * @param count - (Default `1`) The number of items that should be present
    */
-  toHaveHeldItem(expected: expectedHeldItemType): void;
+  toHaveHeldItem(expectedId: HeldItemId | HeldItemCategoryId, count?: number): void;
+  /**
+   * Check whether a {@linkcode Pokemon} has a given held item.
+   * @param received - The object to check. Should be a {@linkcode Pokemon}
+   * @param expectedSpecs - A partially-filled {@linkcode HeldItemSpecs} containing the desired values
+   */
+  toHaveHeldItem(expectedSpecs: expectedHeldItemType): void;
 }
 // #endregion Pokemon Matchers
