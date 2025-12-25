@@ -1,7 +1,7 @@
 {
   "name": "pokemon-rogue-battle",
   "private": true,
-  "version": "1.11.3",
+  "version": "1.11.5",
   "type": "module",
   "scripts": {
     "start:prod": "vite --mode production",
@@ -22,7 +22,7 @@
     "eggMoves:parse": "node scripts/parse-egg-moves/main.js",
     "scrape-trainers": "node scripts/scrape-trainer-names/main.js",
     "typecheck": "tsc --noEmit",
-    "typecheck:scripts": "tsc -p scripts/jsconfig.json",
+    "typecheck:js": "tsc -p jsconfig.json",
     "biome": "biome check --write --changed --no-errors-on-unmatched --diagnostic-level=error",
     "biome:staged": "biome check --write --staged --no-errors-on-unmatched --diagnostic-level=error",
     "biome:all": "biome check --write --no-errors-on-unmatched --diagnostic-level=error",
@@ -60,6 +60,7 @@
     "typedoc-github-theme": "^0.3.1",
     "typedoc-plugin-coverage": "^4.0.2",
     "typedoc-plugin-mdn-links": "^5.0.10",
+    "typedoc-plugin-missing-exports": "^4.1.2",
     "typescript": "^5.9.3",
     "vite": "^7.2.7",
     "vite-tsconfig-paths": "^5.1.4",

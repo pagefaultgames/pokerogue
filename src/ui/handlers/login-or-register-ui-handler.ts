@@ -29,7 +29,6 @@ export class LoginOrRegisterUiHandler extends LoginRegisterInfoContainerUiHandle
     return [i18next.t("menu:login"), i18next.t("menu:register")];
   }
 
-  // TODO: use mixins so it's not necessary to inherit from `FormModalUiHandler`
   public override getInputFieldConfigs(): InputFieldConfig[] {
     return [];
   }

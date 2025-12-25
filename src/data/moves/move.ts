@@ -6982,7 +6982,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
       if (switchOutTarget.hp > 0) {
         if (this.switchType === SwitchType.FORCE_SWITCH) {
-          switchOutTarget.leaveField(true);
           const slotIndex = eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)];
           globalScene.phaseManager.queueDeferred(
             "SwitchSummonPhase",
@@ -7027,7 +7026,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
       if (switchOutTarget.hp > 0) {
         if (this.switchType === SwitchType.FORCE_SWITCH) {
-          switchOutTarget.leaveField(true);
           const slotIndex = eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)];
           globalScene.phaseManager.queueDeferred(
             "SwitchSummonPhase",
@@ -7038,7 +7036,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
             false,
           );
         } else {
-          switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
           globalScene.phaseManager.queueDeferred(
             "SwitchSummonPhase",
             this.switchType,
