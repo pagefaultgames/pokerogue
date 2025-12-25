@@ -1039,7 +1039,6 @@ export abstract class Move implements Localizable {
 
     applyMoveAttrs("VariablePowerAttr", source, target, this, power);
 
-    const typeChangeMovePowerMultiplier = new NumberHolder(1);
     const typeChangeHolder = new NumberHolder(this.type);
 
     applyAbAttrs("MoveTypeChangeAbAttr", {
@@ -1048,7 +1047,6 @@ export abstract class Move implements Localizable {
       move: this,
       simulated: true,
       moveType: typeChangeHolder,
-      power: typeChangeMovePowerMultiplier,
     });
 
     const abAttrParams: PreAttackModifyPowerAbAttrParams = {
@@ -1065,9 +1063,8 @@ export abstract class Move implements Localizable {
       applyAbAttrs("AllyMoveCategoryPowerBoostAbAttr", { ...abAttrParams, pokemon: ally });
     }
 
-    // Non-priority, single-hit moves of the user's Tera Type are always a bare minimum of 60 power
-
     const sourceTeraType = source.getTeraType();
+    // Non-priority, single-hit moves of the user's Tera Type are always a minimum of 60 power
     if (
       source.isTerastallized
       && sourceTeraType === this.type
@@ -1095,8 +1092,6 @@ export abstract class Move implements Localizable {
     for (const p of source.getAlliesGenerator()) {
       applyAbAttrs("UserFieldMoveTypePowerBoostAbAttr", { pokemon: p, opponent: target, move: this, simulated, power });
     }
-
-    power.value *= typeChangeMovePowerMultiplier.value;
 
     const typeBoost = source.findTag(
       t => t instanceof TypeBoostTag && t.boostedType === typeChangeHolder.value,

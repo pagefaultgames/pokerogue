@@ -2378,15 +2378,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     applyMoveAttrs("VariableMoveTypeAttr", this, null, move, moveTypeHolder);
 
-    const power = new NumberHolder(move.power);
-    applyAbAttrs("MoveTypeChangeAbAttr", {
-      pokemon: this,
-      move,
-      simulated,
-      moveType: moveTypeHolder,
-      power,
-      opponent: this,
-    });
+    applyAbAttrs("MoveTypeChangeAbAttr", { pokemon: this, move, simulated, moveType: moveTypeHolder, opponent: this });
 
     // If the user is terastallized and the move is tera blast, or tera starstorm that is stellar type,
     // then bypass the check for ion deluge and electrify
