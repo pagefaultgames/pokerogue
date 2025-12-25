@@ -107,7 +107,7 @@ export interface StatBoostParams extends DefaultHeldItemParams {
 }
 
 export interface SurviveChanceParams extends DefaultHeldItemParams {
-  /** The chance of survival */
+  /** Whether damage is endured */
   surviveDamage: BooleanHolder;
 }
 
@@ -145,8 +145,8 @@ export type HeldItemEffectParamMap = {
 };
 
 /**
- * Dummy, Typescript-only constant to ensure that all {@linkcode HeldItemEffect}s have an entry in {@linkcode HeldItemEffectParamMap}.
- * If any are missing, Typescript will throw an error on this line.
+ * Dummy, TypeScript-only constant to ensure that all {@linkcode HeldItemEffect}s have an entry in {@linkcode HeldItemEffectParamMap}.
+ * If any are missing, TypeScript will throw an error on this line.
  * @remarks
  * ⚠️ Does not exist at runtime, so it must not be used!
  */

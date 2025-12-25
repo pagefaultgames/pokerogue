@@ -111,7 +111,7 @@ const POOL_3_POKEMON = [
 
 const POOL_4_POKEMON = [SpeciesId.GENESECT, SpeciesId.SLITHER_WING, SpeciesId.BUZZWOLE, SpeciesId.PHEROMOSA] as const;
 
-const REQUIRED_ITEMS = [HeldItemId.QUICK_CLAW, HeldItemId.GRIP_CLAW, HeldItemId.SILVER_POWDER];
+const REQUIRED_ITEMS: readonly HeldItemId[] = [HeldItemId.QUICK_CLAW, HeldItemId.GRIP_CLAW, HeldItemId.SILVER_POWDER];
 
 const PHYSICAL_TUTOR_MOVES = [
   MoveId.MEGAHORN,
@@ -409,7 +409,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
 
         const selectableFilter = (pokemon: Pokemon) => {
           // If pokemon has valid item, it can be selected
-          const hasValidItem = pokemon.getHeldItems().some(item => REQUIRED_ITEMS.some(i => i === item));
+          const hasValidItem = pokemon.getHeldItems().some(item => REQUIRED_ITEMS.includes(item));
           if (!hasValidItem) {
             return getEncounterText(`${namespace}:option.3.invalidSelection`) ?? null;
           }

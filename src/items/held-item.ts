@@ -5,13 +5,31 @@ import { type HeldItemId, HeldItemNames } from "#enums/held-item-id";
 import type { Pokemon } from "#field/pokemon";
 import type { UniqueArray } from "#types/common";
 import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
+import type { Mutable } from "#types/type-helpers";
 import i18next from "i18next";
 
+/**
+ * Base class for all held items, both functional and cosmetic.
+ */
 export abstract class HeldItemBase {
-  public type: HeldItemId;
+  // TODO: Renme parameter to `id` or similar
+  public readonly type: HeldItemId;
   public readonly maxStackCount: number;
+  // TODO: Consider converting these to a bitmask for efficiency
+  /**
+   * Whether this item can be transferred to another {@linkcode Pokemon}.
+   * @defaultValue `true`
+   */
   public isTransferable = true;
+  /**
+   * Whether this item can be stolen by another {@linkcode Pokemon}.
+   * @defaultValue `true`
+   */
   public isStealable = true;
+  /**
+   * Whether this item's effect can be suppressed by a move or ability.
+   * @defaultValue `true`
+   */
   public isSuppressable = true;
 
   constructor(type: HeldItemId, maxStackCount = 1) {
@@ -95,7 +113,7 @@ export abstract class HeldItemBase {
   }
 
   untransferable(): this {
-    this.isTransferable = false;
+    (this as Mutable<this>).isTransferable = false;
     return this;
   }
 
@@ -111,7 +129,7 @@ export abstract class HeldItemBase {
 }
 
 /** Tuple type containing >1 `HeldItemEffect`s */
-export type EffectTuple = Readonly<[HeldItemEffect, ...HeldItemEffect[]]>;
+export type EffectTuple = readonly [HeldItemEffect, ...HeldItemEffect[]];
 
 /**
  * Abstract class for all non-cosmetic held items (i.e. ones that can have their effects applied).
@@ -120,7 +138,7 @@ export abstract class HeldItem<T extends EffectTuple = EffectTuple> extends Held
   /**
    * A readonly tuple containing all {@linkcode HeldItemEffect | effects} that this class can apply.
    * @privateRemarks
-   * Please sort entries in ascending numerical order (for my sanity and yours)
+   * Please sort entries in ascending numerical order (for consistency)
    */
   public abstract readonly effects: UniqueArray<T>;
 

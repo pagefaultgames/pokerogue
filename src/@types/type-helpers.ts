@@ -1,8 +1,10 @@
-/*
- * A collection of custom utility types that aid in type checking and ensuring strict type conformity
+/**
+ * A collection of custom utility types that aid in type checking and ensuring strict type conformity.
+ * @module
  */
 
 import type { AbAttr } from "#abilities/ability";
+import type { RequireAtLeastOne } from "type-fest";
 
 /**
  * Exactly matches the type of the argument, preventing adding additional properties.
@@ -104,7 +106,7 @@ export type CoerceNullPropertiesToUndefined<T extends object> = {
  * Distinct from {@linkcode Partial} as this requires at least 1 property to _not_ be undefined.
  * @typeParam T - The object type to render partial
  */
-export type AtLeastOne<T extends object> = Partial<T> & ObjectValues<{ [K in keyof T]: Pick<Required<T>, K> }>;
+export type AtLeastOne<T extends object> = RequireAtLeastOne<T, keyof T>;
 
 /**
  * Type helper that adds a brand to a type, used for nominal typing.
@@ -112,6 +114,7 @@ export type AtLeastOne<T extends object> = Partial<T> & ObjectValues<{ [K in key
  * @remarks
  * Brands should be either a string or unique symbol. This prevents overlap with other types.
  */
+// TODO: Replace with `type-fest`'s Tag system
 export declare class Brander<B> {
   private __brand: B;
 }

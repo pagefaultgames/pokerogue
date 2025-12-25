@@ -788,13 +788,13 @@ export class CanFormChangeWithItemRequirement extends EncounterPokemonRequiremen
 }
 
 export class HoldingItemRequirement extends EncounterPokemonRequirement {
-  requiredHeldItems: (HeldItemId | HeldItemCategoryId)[];
+  requiredHeldItems: readonly (HeldItemId | HeldItemCategoryId)[];
   minNumberOfPokemon: number;
   invertQuery: boolean;
   requireTransferable: boolean;
 
   constructor(
-    heldItem: HeldItemId | HeldItemCategoryId | (HeldItemId | HeldItemCategoryId)[],
+    heldItem: HeldItemId | HeldItemCategoryId | readonly (HeldItemId | HeldItemCategoryId)[],
     minNumberOfPokemon = 1,
     invertQuery = false,
     requireTransferable = true,

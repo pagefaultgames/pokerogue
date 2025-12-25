@@ -60,6 +60,9 @@ export function isHeldItemPool(value: any): value is HeldItemPool {
 
 export type HeldItemTieredPool = Partial<Record<RarityTier, HeldItemPool>>;
 
+// TODO: Since this can contain a `HeldItemSpecs`, this has the potential to have 2 different "count" statistics
+// (which is useless and redundant).
+// Why this should be able to hold specs is dubious at best.
 interface HeldItemConfigurationEntry {
   entry: HeldItemId | HeldItemCategoryId | HeldItemCategoryEntry | HeldItemSpecs | HeldItemPool;
   /**

@@ -9,6 +9,7 @@ import {
 } from "#types/trainer-item-data-types";
 import { getTypedEntries, getTypedKeys } from "#utils/common";
 
+// TODO: Merge similar methods with those from `HeldItemManager` and move them into a shared subclass
 export class TrainerItemManager {
   public trainerItems: TrainerItemDataMap;
 
@@ -60,7 +61,7 @@ export class TrainerItemManager {
 
   getStack(itemType: TrainerItemId): number {
     const item = this.trainerItems[itemType];
-    return item ? item.stack : 0;
+    return item?.stack ?? 0;
   }
 
   isMaxStack(itemType: TrainerItemId): boolean {

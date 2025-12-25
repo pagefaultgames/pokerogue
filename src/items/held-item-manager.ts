@@ -32,7 +32,7 @@ export class HeldItemManager {
     return {
       ...item,
       id,
-    } as HeldItemSpecs;
+    };
   }
 
   // TODO: This is never called with a restricted ID array ever

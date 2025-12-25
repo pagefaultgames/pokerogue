@@ -9,9 +9,8 @@ import { toDmgValue } from "#utils/common";
 import i18next from "i18next";
 
 /**
- * Modifier used for held items, namely Reviver Seed, that revive a fainted
- * {@linkcode Pokemon} immediately when it faints to direct damage
- * @see {@linkcode apply}
+ * Class used for held items (Reviver Seed) that revive a fainted
+ * {@linkcode Pokemon} immediately when it faints to direct damage.
  */
 export class InstantReviveHeldItem extends ConsumableHeldItem<[typeof HeldItemEffect.INSTANT_REVIVE]> {
   public readonly effects = [HeldItemEffect.INSTANT_REVIVE] as const;
@@ -27,8 +26,10 @@ export class InstantReviveHeldItem extends ConsumableHeldItem<[typeof HeldItemEf
   get iconName(): string {
     return "reviver_seed";
   }
+
   apply(_effect: typeof HeldItemEffect.INSTANT_REVIVE, { pokemon }: InstantReviveParams): void {
-    // Restore the Pokemon to half HP
+    // TODO: Since this should be the only place `revive=true` is passed to `PokemonHealPhase`, we can remove it
+    // later on
     globalScene.phaseManager.unshiftPhase(
       new PokemonHealPhase(
         pokemon.getBattlerIndex(),

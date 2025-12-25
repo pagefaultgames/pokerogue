@@ -7,11 +7,10 @@ import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { BerryUsedEvent } from "#events/battle-scene";
 import { ConsumableHeldItem } from "#items/held-item";
 import type { BerryParams } from "#types/held-item-parameter";
-import type { ObjectValues } from "#types/type-helpers";
 import { BooleanHolder } from "#utils/common";
 
 type BerryTypeToHeldItemMap = {
-  [key in ObjectValues<typeof BerryType>]: HeldItemId;
+  [key in BerryType]: HeldItemId;
 };
 
 // TODO: Rework this to use a bitwise XOR
@@ -53,25 +52,11 @@ export class BerryHeldItem extends ConsumableHeldItem<[typeof HeldItemEffect.BER
     return `${BerryType[this.berryType].toLowerCase()}_berry`;
   }
 
-  /**
-   * Determine whether the Berry can be applied
-   * @param pokemon - The user with the berry
-   * @returns Whether the {@linkcode BerryModifier} should be applied
-   */
   shouldApply(_effect: typeof HeldItemEffect.BERRY, { pokemon }: BerryParams): boolean {
     return getBerryPredicate(this.berryType)(pokemon);
   }
 
-  /**
-   * Applies {@linkcode BerryHeldItem}
-   * @returns always `true`
-   */
   apply(_effect: typeof HeldItemEffect.BERRY, { pokemon }: BerryParams): void {
-    // TODO: This call should not be here?
-    //    if (!this.shouldApply(pokemon)) {
-    //      return false;
-    //    }
-
     const preserve = new BooleanHolder(false);
     globalScene.applyPlayerItems(TrainerItemEffect.PRESERVE_BERRY, { pokemon, doPreserve: preserve });
     const consumed = !preserve.value;

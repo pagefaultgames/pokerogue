@@ -4,8 +4,6 @@ import { FormChangeItemId } from "./form-change-item-id";
 // TODO: make category the lower 2 bytes
 // TODO: Create subsets of HeldItemId for different types of items
 export const HeldItemId = {
-  NONE: 0x0000,
-
   // Berries
   SITRUS_BERRY: 0x0101,
   LUM_BERRY: 0x0102,

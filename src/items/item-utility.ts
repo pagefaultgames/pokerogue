@@ -50,3 +50,5 @@ export function getPartyBerries(): PokemonItemMap[] {
   });
   return pokemonItems;
 }
+
+// TODO: Add a helper function to return all held items in a given category

@@ -40,6 +40,7 @@ import { TurnEndHealHeldItem } from "#items/turn-end-heal";
 import { TurnEndStatusHeldItem } from "#items/turn-end-status";
 import { getEnumValues } from "#utils/enums";
 
+// #region Types
 // TODO: Move these to wherever the "XYZ enum to held item id" utils are eventually placed
 // and convert the existing objects to functions for reduced memory footprint.
 // TODO: Export these as "subsets" of `HeldItemId` for use inside type declarations
@@ -84,10 +85,13 @@ type BerryItemId =
   | typeof HeldItemId.STARF_BERRY
   | typeof HeldItemId.LEPPA_BERRY;
 
-// Berries
+//#endregion Types
+
+// #region Berries
+const twoStackBerryTypes: readonly BerryType[] = [BerryType.LUM, BerryType.LEPPA, BerryType.SITRUS, BerryType.ENIGMA];
 const berryItems = getEnumValues(BerryType).reduce(
   (ret, berry) => {
-    const maxStackCount = [BerryType.LUM, BerryType.LEPPA, BerryType.SITRUS, BerryType.ENIGMA].includes(berry) ? 2 : 3;
+    const maxStackCount = twoStackBerryTypes.includes(berry) ? 2 : 3;
     const berryId = berryTypeToHeldItem[berry];
     berryId satisfies BerryItemId;
     ret[berryId] = new BerryHeldItem(berry, maxStackCount);
@@ -95,8 +99,9 @@ const berryItems = getEnumValues(BerryType).reduce(
   },
   {} as Record<BerryItemId, BerryHeldItem>,
 );
+//#endregion Berries
 
-// Type boosters
+//#region Type Boosters
 const typeBoostHeldItems = (
   getEnumValues(PokemonType).slice(1, -1) as Exclude<PokemonType, PokemonType.UNKNOWN | PokemonType.STELLAR>[]
 ).reduce(
@@ -108,8 +113,9 @@ const typeBoostHeldItems = (
   },
   {} as Record<TypeBoostItemId, AttackTypeBoosterHeldItem>,
 );
+//#endregion Type Boosters
 
-// vitamins
+//#region Vitamins
 const vitaminItems = PERMANENT_STATS.reduce(
   (ret, stat) => {
     const id = permanentStatToHeldItem[stat];
@@ -120,7 +126,9 @@ const vitaminItems = PERMANENT_STATS.reduce(
   {} as Record<BaseStatItemId, BaseStatMultiplyHeldItem>,
 );
 
-// Form change items
+//#endregion Vitamins
+
+//#region Form change items
 // TODO: Do we want these in a separate object?
 const formChangeItems = Object.values(FormChangeItemId).reduce(
   (ret, id) => {
@@ -129,7 +137,9 @@ const formChangeItems = Object.values(FormChangeItemId).reduce(
   },
   {} as Record<FormChangeItemId, FormChangeHeldItem>,
 );
+//#endregion Form change items
 
+//#region Initialization
 const heldItems = Object.freeze({
   ...berryItems,
   ...typeBoostHeldItems,
@@ -157,7 +167,7 @@ const heldItems = Object.freeze({
     SpeciesId.CLAMPERL,
   ]),
 
-  // Items that boost the crit rate
+  // crit rate boosters
   [HeldItemId.SCOPE_LENS]: new CritBoostHeldItem(HeldItemId.SCOPE_LENS, 1, 1),
   [HeldItemId.LEEK]: new SpeciesCritBoostHeldItem(HeldItemId.LEEK, 1, 2, [
     SpeciesId.FARFETCHD,
@@ -211,12 +221,15 @@ const heldItems = Object.freeze({
     SpeciesId.GIMMIGHOUL,
     10,
   ),
-} satisfies Record<Exclude<HeldItemId, typeof HeldItemId.NONE>, CosmeticHeldItem | HeldItem<any>>);
+} satisfies Record<HeldItemId, CosmeticHeldItem | HeldItem<any>>);
 
 /**
- * @see {@linkcode heldItems}
+ * Resolved type of {@linkcode allHeldItems}.
+ * Declared in a separate file to avoid circular imports.
  */
 export type AllHeldItems = typeof heldItems;
 
 Object.assign(allHeldItems, heldItems);
 Object.freeze(allHeldItems);
+
+//#endregion Initialization
