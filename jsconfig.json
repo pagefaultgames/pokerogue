@@ -6,13 +6,14 @@
  */
 {
   "include": ["**/*.js"],
+  "exclude": ["assets", "dist", "node_modules", "typedoc"],
   "compilerOptions": {
-    "allowJs": true,
-    "checkJs": true,
-    "rootDir": ".",
     "target": "esnext",
     "module": "nodenext",
     "moduleResolution": "nodenext",
+    "allowJs": true,
+    "checkJs": true,
+    "rootDir": ".",
     "erasableSyntaxOnly": true,
     "strict": true,
     "noEmit": true,
