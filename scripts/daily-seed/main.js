@@ -183,8 +183,7 @@ async function createOutputFile(outFile) {
     }
     const fullPath = join(rootDir, outFile);
 
-    // TODO: should this be prettified?
-    writeFileSafe(fullPath, JSON.stringify(customSeedConfig, null, 2));
+    writeFileSafe(fullPath, JSON.stringify(customSeedConfig));
     console.log(chalk.green(`✔ Output written to ${chalk.blue(outFile)} successfully!`));
   } catch (err) {
     console.error(chalk.red(`✗ Error while writing output file: ${err}`));
