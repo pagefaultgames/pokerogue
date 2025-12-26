@@ -164,7 +164,7 @@ async function finish() {
   } else {
     console.log(chalk.hex("#ffa500")("No outfile detected, logging to stdout..."));
     console.log(chalk.cyan("\n🌱 Your custom daily seed config is:"));
-    console.log(chalk.green(`${JSON.stringify(customSeedConfig, null, 2)}`));
+    console.log(chalk.green(`${JSON.stringify(customSeedConfig)}`));
   }
 }
 
