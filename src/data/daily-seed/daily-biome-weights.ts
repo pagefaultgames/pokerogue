@@ -1,12 +1,9 @@
 import { BiomeId } from "#enums/biome-id";
 
-interface BiomeWeights {
-  [key: number]: number;
-}
 // Initially weighted by amount of exits each biome has
 // Town and End are set to 0 however
 // And some other biomes were balanced +1/-1 based on average size of the total daily.
-export const dailyBiomeWeights: BiomeWeights = {
+export const dailyBiomeWeights = {
   [BiomeId.CAVE]: 3,
   [BiomeId.LAKE]: 3,
   [BiomeId.PLAINS]: 3,
@@ -45,4 +42,4 @@ export const dailyBiomeWeights: BiomeWeights = {
 
   [BiomeId.TOWN]: 0,
   [BiomeId.END]: 0,
-};
+} satisfies Record<BiomeId, number>;
