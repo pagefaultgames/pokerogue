@@ -65,7 +65,7 @@
     },
     "biome": {
       "type": "integer",
-      "exclusiveMinimum": 0
+      "minimum": 0
     },
     "luck": {
       "type": "integer",
@@ -98,7 +98,7 @@
     "nature": {
       "type": "integer",
       "minimum": 0,
-      "maximum": 25
+      "maximum": 24
     },
     "ability": {
       "type": "integer",
