@@ -8083,7 +8083,6 @@ export function initAbilities() {
       .attr(CommanderAbAttr)
       .attr(DoubleBattleChanceAbAttr)
       .uncopiable()
-      .unreplaceable()
       .edgeCase() // Encore, Frenzy, and other non-`TURN_END` tags don't lapse correctly on the commanding Pokemon.
       .build(),
     new AbBuilder(AbilityId.ELECTROMORPHOSIS, 9)
@@ -8226,19 +8225,16 @@ export function initAbilities() {
     new AbBuilder(AbilityId.TERA_SHELL, 9)
       .attr(FullHpResistTypeAbAttr)
       .uncopiable()
-      .unreplaceable()
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.TERAFORM_ZERO, 9)
       .attr(ClearWeatherAbAttr)
       .attr(ClearTerrainAbAttr)
       .uncopiable()
-      .unreplaceable()
       .condition(getOncePerBattleCondition(AbilityId.TERAFORM_ZERO))
       .build(),
     new AbBuilder(AbilityId.POISON_PUPPETEER, 9)
       .uncopiable()
-      .unreplaceable() // TODO is this true?
       .attr(ConfusionOnStatusEffectAbAttr, StatusEffect.POISON, StatusEffect.TOXIC).build()
   );
 }
