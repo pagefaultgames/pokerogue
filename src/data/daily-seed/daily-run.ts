@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { dailyBiomeWeights } from "#balance/daily-biome-weights";
 import { speciesStarterCosts } from "#balance/starters";
 import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
@@ -9,7 +10,6 @@ import type { Starter, StarterMoveset } from "#types/save-data";
 import { isBetween, randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
-import { dailyBiomeWeights } from "./daily-biome-weights";
 import {
   getDailyRunStarter,
   isDailyEventSeed,
