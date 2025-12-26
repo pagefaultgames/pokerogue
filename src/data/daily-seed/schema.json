@@ -68,7 +68,7 @@
       "exclusiveMinimum": 0
     },
     "luck": {
-      "type": "number",
+      "type": "integer",
       "minimum": 0,
       "maximum": 14
     },

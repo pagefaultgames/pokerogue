@@ -152,12 +152,13 @@ export function validateDailyBossConfig(config: DailySeedBoss | undefined): Dail
     }) as StarterMoveset;
   }
 
-  if (config.ability != null && !getEnumValues(AbilityId).includes(config.ability)) {
+  const abilityIds = getEnumValues(AbilityId);
+  if (config.ability != null && !abilityIds.includes(config.ability)) {
     console.warn("Invalid ability used for custom daily run seed boss:", config.ability);
     config.ability = undefined;
   }
 
-  if (config.passive != null && !getEnumValues(AbilityId).includes(config.passive)) {
+  if (config.passive != null && !abilityIds.includes(config.passive)) {
     console.warn("Invalid passive used for custom daily run seed boss:", config.passive);
     config.passive = undefined;
   }

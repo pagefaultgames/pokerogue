@@ -107,14 +107,14 @@ describe("Daily Mode", () => {
           expect(moves2, stringifyEnumArray(MoveId, moves2)).toEqual([
             MoveId.AERIAL_ACE,
             MoveId.PAY_DAY,
-            expect.anything(), // make sure it doesn't replace normal moveset gen
-            expect.anything(),
+            expect.any(Number), // make sure it doesn't replace normal moveset gen
+            expect.any(Number),
           ]);
           expect(moves3, stringifyEnumArray(MoveId, moves3)).toEqual([
             MoveId.SKULL_BASH,
             MoveId.MALIGNANT_CHAIN,
-            expect.anything(),
-            expect.anything(),
+            expect.any(Number),
+            expect.any(Number),
           ]);
         });
 
@@ -193,8 +193,8 @@ describe("Daily Mode", () => {
           expect(moves, stringifyEnumArray(MoveId, moves)).toEqual([
             MoveId.POUND,
             MoveId.KARATE_CHOP,
-            expect.anything(),
-            expect.anything(),
+            expect.any(Number),
+            expect.any(Number),
           ]);
         });
 

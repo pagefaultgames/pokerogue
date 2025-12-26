@@ -93,12 +93,12 @@ export function getDailyStartingBiome(): BiomeId {
     }
   }
 
-  // TODO: should this use `randSeedItem`?
-  return biomes[randSeedInt(biomes.length)];
+  return randSeedItem(biomes);
 }
 
 /**
- * Perform moveset post-processing on Daily run starters. \
+ * Perform moveset post-processing on Daily run starters.
+ * @remarks
  * If the {@linkcode CustomDailyRunConfig} has the `starters` property with a `moveset` property,
  * the movesets will be overwritten.
  * @param seed - The daily run seed
@@ -180,7 +180,7 @@ function getDailyEventSeedStarters(seed: string): StarterTuple | null {
 }
 
 /**
- * Expects the seed to contain the `boss` property.
+ * Sets a custom boss for the daily run if specified in the config.
  * @see {@linkcode CustomDailyRunConfig}
  * @returns The {@linkcode DailySeedBoss} to use or `null` if there is no boss config or the {@linkcode SpeciesId} is invalid.
  */
@@ -198,7 +198,7 @@ export function getDailyEventSeedBoss(seed: string): DailySeedBoss | null {
 }
 
 /**
- * Expects the seed to contain the `biome` property.
+ * Sets a custom starting biome for the daily run if specified in the config.
  * @see {@linkcode CustomDailyRunConfig}
  * @returns The biome to use or `null` if no valid match.
  */
@@ -222,7 +222,7 @@ export function getDailyEventSeedBiome(seed: string): BiomeId | null {
 }
 
 /**
- * Expects the seed to contain the `luck` property.
+ * Sets a custom luck value for the daily run if specified in the config.
  * @see {@linkcode CustomDailyRunConfig}
  * @returns The custom luck value or `null` if there is no luck property.
  */
@@ -246,7 +246,7 @@ export function getDailyEventSeedLuck(seed: string): number | null {
 }
 
 /**
- * Expects the seed to contain the `money` property.
+ * Sets a custom starting money value for the daily run if specified in the config.
  * @see {@linkcode CustomDailyRunConfig}
  * @returns The custom money value or `null` if there is no money property.
  */
