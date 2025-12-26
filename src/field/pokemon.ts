@@ -173,7 +173,7 @@ import { calculateBossSegmentDamage } from "#utils/damage";
 import { getEnumValues } from "#utils/enums";
 import { getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
-import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
+import { argbFromRgba, clampInt, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
 import i18next from "i18next";
 import Phaser from "phaser";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
@@ -4870,7 +4870,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   public trySetStatus(
     effect: StatusEffect,
-    sourcePokemon: Pokemon | null = null,
+    sourcePokemon?: Pokemon,
     sleepTurnsRemaining?: number,
     sourceText: string | null = null,
     overrideStatus?: boolean,
@@ -5010,20 +5010,24 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Queue the status cure message, reset the status, and update the info display
+   * Helper function for the Move phase that queues the status cure message,
+   * resets it, and updates the info display.
    * @param effect - The effect to cure. If this does not match the current status, nothing happens.
-   * @param msg - A custom message to display when curing the status effect (used for curing freeze due to move use)
+   * @param msg - If provided, will override the default message displayed when removing status.
+   * Used for moves that thaw the user out
    */
-  public cureStatus(effect: StatusEffect, msg?: string): void {
+  // TODO: Distinguish this more from `resetStatus`
+  public cureStatus(effect: StatusEffect, msg = getStatusEffectHealText(effect, getPokemonNameWithAffix(this))): void {
     if (effect !== this.status?.effect) {
       return;
     }
-    // Freeze healed by move uses its own msg
-    globalScene.phaseManager.queueMessage(msg ?? getStatusEffectHealText(effect, getPokemonNameWithAffix(this)));
-    // cannot use `asPhase=true` as it will cause status to be reset _after_ this phase ends
+
+    globalScene.phaseManager.queueMessage(msg);
+    // cannot use `asPhase=true` as it will cause status to be reset _after_ the move phase ends
     this.resetStatus(undefined, undefined, undefined, false);
     this.updateInfo();
   }
+
   /**
    * Reset this Pokémon's status
    * @param revive - Whether revive should be cured; default `true`
@@ -5963,9 +5967,10 @@ export class PlayerPokemon extends Pokemon {
     // Add to candy progress for this mon's starter species and its fused species (if it has one)
     starterData.forEach(([sd, id]: [StarterDataEntry, SpeciesId]) => {
       sd.friendship = (sd.friendship || 0) + candyFriendshipAmount;
-      if (sd.friendship >= getStarterValueFriendshipCap(speciesStarterCosts[id])) {
-        globalScene.gameData.addStarterCandy(getPokemonSpecies(id), 1);
-        sd.friendship = 0;
+      const friendshipCap = getStarterValueFriendshipCap(speciesStarterCosts[id]);
+      if (sd.friendship >= friendshipCap) {
+        globalScene.gameData.addStarterCandy(getPokemonSpecies(id), Math.floor(sd.friendship / friendshipCap));
+        sd.friendship %= friendshipCap;
       }
     });
   }
@@ -6093,7 +6098,7 @@ export class PlayerPokemon extends Pokemon {
         });
       };
       if (preEvolution.speciesId === SpeciesId.GIMMIGHOUL) {
-        const evotracker = this.getHeldItems().filter(m => m instanceof EvoTrackerModifier)[0] ?? null;
+        const evotracker = this.getHeldItems().find(m => m instanceof EvoTrackerModifier) ?? null;
         if (evotracker) {
           globalScene.removeModifier(evotracker);
         }
@@ -6407,7 +6412,7 @@ export class EnemyPokemon extends Pokemon {
           ivs.push(randSeedIntRange(Math.floor(waveIndex / 10), 31));
         }
         this.ivs = ivs;
-        this.friendship = Math.round(255 * (waveIndex / 200));
+        this.friendship = clampInt(50, 255, Math.round(255 * (waveIndex / 145)));
       }
     }
 

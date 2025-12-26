@@ -2,7 +2,7 @@ import { PokerogueAccountApi } from "#api/pokerogue-account-api";
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
 import { initServerForApiTests } from "#test/test-utils/test-file-initialization";
 import { getApiBaseUrl } from "#test/test-utils/test-utils";
-import type { AccountInfoResponse } from "#types/api/pokerogue-account-api";
+import type { AccountInfoResponse } from "#types/api";
 import * as CookieUtils from "#utils/cookies";
 import * as cookies from "#utils/cookies";
 import { HttpResponse, http } from "msw";
@@ -85,12 +85,12 @@ describe("Pokerogue Account API", () => {
       expect(error).toBe("Username is already taken");
     });
 
-    it('should return "Unknown error" and report a warning on ERROR', async () => {
+    it('should return "Unknown registration error!" and report a warning on ERROR', async () => {
       server.use(http.post(`${apiBase}/account/register`, () => HttpResponse.error()));
 
       const error = await accountApi.register(registerParams);
 
-      expect(error).toBe("Unknown error!");
+      expect(error).toBe("Unknown registration error!");
       expect(console.warn).toHaveBeenCalledWith("Register failed!", expect.any(Error));
     });
   });
@@ -119,12 +119,12 @@ describe("Pokerogue Account API", () => {
       expect(console.warn).toHaveBeenCalledWith("Login failed!", 401, "Unauthorized");
     });
 
-    it('should return "Unknown error" and report a warning on ERROR', async () => {
+    it('should return "Unknown login error!" and report a warning on ERROR', async () => {
       server.use(http.post(`${apiBase}/account/login`, () => HttpResponse.error()));
 
       const error = await accountApi.login(loginParams);
 
-      expect(error).toBe("Unknown error!");
+      expect(error).toBe("Unknown login error!");
       expect(console.warn).toHaveBeenCalledWith("Login failed!", expect.any(Error));
     });
   });

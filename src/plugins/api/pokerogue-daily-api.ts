@@ -1,13 +1,11 @@
 import { ApiBase } from "#api/api-base";
-import type { GetDailyRankingsPageCountRequest, GetDailyRankingsRequest } from "#types/api/pokerogue-daily-api";
+import type { GetDailyRankingsPageCountRequest, GetDailyRankingsRequest } from "#types/pokerogue-daily-api";
 import type { RankingEntry } from "#ui/daily-run-scoreboard";
 
 /**
  * A wrapper for daily-run PokéRogue API requests.
  */
 export class PokerogueDailyApi extends ApiBase {
-  //#region Public
-
   /**
    * Request the daily-run seed.
    * @returns The active daily-run seed as `string`.
@@ -25,6 +23,7 @@ export class PokerogueDailyApi extends ApiBase {
   /**
    * Get the daily rankings for a {@linkcode ScoreboardCategory}.
    * @param params The {@linkcode GetDailyRankingsRequest} to send
+   * @deprecated
    */
   public async getRankings(params: GetDailyRankingsRequest) {
     try {
@@ -41,6 +40,7 @@ export class PokerogueDailyApi extends ApiBase {
   /**
    * Get the page count of the daily rankings for a {@linkcode ScoreboardCategory}.
    * @param params The {@linkcode GetDailyRankingsPageCountRequest} to send.
+   * @deprecated
    */
   public async getRankingsPageCount(params: GetDailyRankingsPageCountRequest) {
     try {

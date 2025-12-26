@@ -231,6 +231,8 @@
         "noBarrelFile": "error"
       },
       "nursery": {
+        "noProto": "error",
+        "useFind": "error",
         "noUselessUndefined": "error",
         "useMaxParams": {
           "level": "info", // TODO: Change to "error"... eventually...
