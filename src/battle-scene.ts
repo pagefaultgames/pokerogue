@@ -20,7 +20,7 @@ import { FieldSpritePipeline } from "#app/pipelines/field-sprite";
 import { InvertPostFX } from "#app/pipelines/invert";
 import { SpritePipeline } from "#app/pipelines/sprite";
 import { SceneBase } from "#app/scene-base";
-import { TimedEventManager } from "#app/timed-event-manager";
+import { startingWave } from "#app/starting-wave";
 import { UiInputs } from "#app/ui-inputs";
 import { STARTING_WAVE } from "#balance/misc";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
@@ -321,7 +321,7 @@ export class BattleScene extends SceneBase {
 
   private bgm: AnySound;
   private bgmResumeTimer: Phaser.Time.TimerEvent | null;
-  private bgmCache: Set<string> = new Set();
+  private readonly bgmCache: Set<string> = new Set();
   private playTimeTimer: Phaser.Time.TimerEvent;
 
   public rngCounter = 0;
@@ -329,9 +329,7 @@ export class BattleScene extends SceneBase {
   public rngOffset = 0;
 
   public inputMethod: string;
-  private infoToggles: InfoToggle[] = [];
-
-  public eventManager: TimedEventManager;
+  private readonly infoToggles: InfoToggle[] = [];
 
   /**
    * Allows subscribers to listen for events
@@ -347,7 +345,6 @@ export class BattleScene extends SceneBase {
   constructor() {
     super("battle");
     this.phaseManager = new PhaseManager();
-    this.eventManager = new TimedEventManager();
     this.updateGameInfo();
     initGlobalScene(this);
   }
@@ -2477,6 +2474,8 @@ export class BattleScene extends SceneBase {
     switch (bgmName) {
       case "title": //Firel PokéRogue Title
         return 46.5;
+      case "winter_title": //Andr06 Winter Title
+        return 20.57;
       case "battle_kanto_champion": //B2W2 Kanto Champion Battle
         return 13.95;
       case "battle_johto_champion": //B2W2 Johto Champion Battle
@@ -3753,7 +3752,7 @@ export class BattleScene extends SceneBase {
 
     let availableEncounters: MysteryEncounter[] = [];
     const previousEncounter = this.mysteryEncounterSaveData.encounteredEvents.at(-1)?.type ?? null; // TODO: This being `null` is a bit weird
-    const disabledEncounters = this.eventManager.getEventMysteryEncountersDisabled();
+    const disabledEncounters = timedEventManager.getEventMysteryEncountersDisabled();
     const biomeMysteryEncounters =
       mysteryEncountersByBiome.get(this.arena.biomeType)?.filter(enc => !disabledEncounters.includes(enc)) ?? [];
     // If no valid encounters exist at tier, checks next tier down, continuing until there are some encounters available
@@ -3765,7 +3764,7 @@ export class BattleScene extends SceneBase {
             return false;
           }
           if (
-            this.eventManager.getMysteryEncounterTierForEvent(encounterType, encounterCandidate.encounterTier) !== tier
+            timedEventManager.getMysteryEncounterTierForEvent(encounterType, encounterCandidate.encounterTier) !== tier
           ) {
             return false;
           }
