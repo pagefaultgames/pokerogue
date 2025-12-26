@@ -708,7 +708,7 @@ export class TimedEventManager {
 }
 
 export class TimedEventDisplay extends Phaser.GameObjects.Container {
-  private event: TimedEvent | nil;
+  private readonly event: TimedEvent | nil;
   private eventTimerText: Phaser.GameObjects.Text;
   private banner: Phaser.GameObjects.Image;
   private availableWidth: number;
@@ -725,7 +725,7 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
    * Set the width that can be used to display the event timer and banner. By default
    * these elements get centered horizontally in that space, in the bottom left of the screen
    */
-  setWidth(width: number) {
+  public setWidth(width: number): void {
     if (width !== this.availableWidth) {
       this.availableWidth = width;
       const xPosition = this.availableWidth / 2 + (this.event?.xOffset ?? 0);
@@ -738,7 +738,7 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
     }
   }
 
-  setup() {
+  public setup(): void {
     const lang = i18next.resolvedLanguage;
     if (this.event?.bannerKey) {
       let key = this.event.bannerKey;
@@ -775,7 +775,7 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
     }
   }
 
-  show() {
+  public show(): void {
     this.setVisible(true);
     this.updateCountdown();
 
@@ -784,13 +784,13 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
     }, 1000);
   }
 
-  clear() {
+  public clear(): void {
     this.setVisible(false);
     this.eventTimer && clearInterval(this.eventTimer);
     this.eventTimer = null;
   }
 
-  private timeToGo(date: Date) {
+  private timeToGo(date: Date): string {
     // Utility to add leading zero
     function z(n) {
       return (n < 10 ? "0" : "") + n;
@@ -816,8 +816,8 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
     });
   }
 
-  updateCountdown() {
-    if (this.event && this.event.eventType !== EventType.NO_TIMER_DISPLAY) {
+  private updateCountdown(): void {
+    if (this.event && this.event.eventType !== EventType.NO_TIMER_DISPLAY && this.eventTimerText.visible) {
       this.eventTimerText.setText(this.timeToGo(this.event.endDate));
     }
   }
