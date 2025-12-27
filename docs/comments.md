@@ -32,10 +32,11 @@ This document is intended to serve as a guide for how to (and not to) document c
 ## General Guidelines
 **DO**:
 - Keep comments meaningful
-  - Comments should **NOT** repeat _what_ code _does_[^1] or explain concepts obvious to someone with a basic understanding of the language at hand. Instead, focus on explaining _why_ a line or block of code exists - a _post hoc_ understanding of the _reasons_ is infinitely more useful.
+  - Focus on explaining _why_ a line or block of code exists - a _post hoc_ understanding of the _reasons_ is infinitely more useful.
+  - Comments should **NOT** repeat _what_ code _does_[^1] or explain concepts obvious to someone with a basic understanding of the language at hand.
 - Keep comments readable
   - A comment's verbosity should roughly scale with the complexity of its subject matter. Some people naturally write shorter or longer comments, but summarizing a 300-line function with "does a thing" is about as good as writing nothing.
-  Conversely, writing a paragraph-level response where a basic one-liner would suffice is no less undesirable.
+  Conversely, writing a paragraph-level response where a basic one-liner would suffice is just as undesirable.
   - Long comments should be broken into multiple lines at around **100-120 characters** to avoid unnecessary scrolling in terminals and IDEs.
 - **Make sure comments exist on Functions, Classes, Methods, and Properties**.
   - These tend to be the most important things to comment. When someone goes to use a function/class/method/etc., having a comment reduces the need to flip back and forth between files to figure out what XYZ does. Peek Definition is great until you're three nesting levels deep.
@@ -157,7 +158,7 @@ With all these in mind, here are a few TSDoc-specific guidelines to ensure reada
 
   TypeScript displays no information about default values in IDEs, so mentioning defaults inside doc comments is the easiest way to inform callers about a given property or parameter's default values.
   - Classes & interfaces can make use of the `@defaultValue` tag to annotate property initial values.
-  As for function and method arguments, our codebase opts to include default value information immediately following the `@param` tag. This ensures the information is prominently visible in IDEs and similar tools[^4].
+  As for function and method arguments, our codebase opts to include default value information immediately following the `@param` tag. This ensures the information is prominently visible in IDEs and similar tools.
 
   Example:
   ```ts
@@ -184,7 +185,6 @@ With all these in mind, here are a few TSDoc-specific guidelines to ensure reada
   function printLorem(charCount = 1000): string {};
   ```
 
-  [^4]: Note that annotations for `@param` tags are removed in Typedoc rendered output, given the site is perfectly capable of rendering default parameter values as-is.
   </details>
 
 
@@ -193,4 +193,6 @@ While most class methods should be fully documented, the main exception comes wi
 classes and interfaces will inherit documentation comments from any other classes/interfaces they extend/implement, **provided no other comments are present on inherited symbols**.
 
 As such, _do not_ document properties or methods in sub-classes that do not substantially differ from the superclass' implementation.
-- Any properties or methods unique to the class **must still be documented**!
+
+> [!IMPORTANT]
+> Any properties or methods unique to the class **must still be documented**!
