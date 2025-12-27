@@ -233,7 +233,8 @@ interface PokemonMatchers {
    * Check whether a {@linkcode Pokemon} has consumed the given amount of PP for one of its moves.
    * @param moveId - The {@linkcode MoveId} corresponding to the {@linkcode PokemonMove} that should have consumed PP
    * @param ppUsed - The numerical amount of PP that should have been consumed,
-   * or `all` to indicate the move should be _out_ of PP
+   * or `all` to check that the move is _out_ of PP.
+   * Negative values will count backwards from the move's maximum PP.
    * @remarks
    * If the Pokemon's moveset has been set via {@linkcode Overrides.MOVESET_OVERRIDE}/{@linkcode Overrides.ENEMY_MOVESET_OVERRIDE}
    * or does not contain exactly one copy of `moveId`, this will fail the test.
