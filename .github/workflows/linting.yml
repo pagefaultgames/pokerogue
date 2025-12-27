@@ -43,16 +43,16 @@ jobs:
         if: ${{ !cancelled() }}
 
       # Validate types with tsc - https://www.typescriptlang.org/docs/handbook/compiler-options.html#using-the-cli
-      - name: Run Typecheck
+      - name: Run Typecheck (TS files)
         run: pnpm typecheck
         id: typecheck
         if: ${{ !cancelled() }}
 
-      # Run tsc again on the scripts folder.
-      # Required in order to use separate rules for script js files and regular ts files
-      - name: Run Typecheck (scripts)
-        run: pnpm typecheck:scripts
-        id: typecheck-scripts
+      # Run tsc again on all JS files.
+      # Required in order to use separate rules for different types of files
+      - name: Run Typecheck (JS files)
+        run: pnpm typecheck:js
+        id: typecheck-js
         if: ${{ !cancelled() }}
 
       - name: Check for REUSE compliance
