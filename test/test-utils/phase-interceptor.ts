@@ -6,7 +6,6 @@ import { UiMode } from "#enums/ui-mode";
 import type { GameManager } from "#test/test-utils/game-manager";
 import type { PromptHandler } from "#test/test-utils/helpers/prompt-handler";
 import type { Constructor } from "#types/common";
-// biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports
 import { inspect } from "util";
 import chalk from "chalk";
 import { vi } from "vitest";
