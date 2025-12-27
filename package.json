@@ -53,7 +53,6 @@
     "@vitest/utils": "^4.0.15",
     "chalk": "^5.6.2",
     "dependency-cruiser": "^17.3.2",
-    "dotenv": "^17.2.3",
     "jsdom": "^27.3.0",
     "lefthook": "^2.0.9",
     "msw": "^2.12.4",

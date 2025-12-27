@@ -81,9 +81,6 @@ importers:
       dependency-cruiser:
         specifier: ^17.3.2
         version: 17.3.2
-      dotenv:
-        specifier: ^17.2.3
-        version: 17.2.3
       jsdom:
         specifier: ^27.3.0
         version: 27.3.0(postcss@8.5.6)
@@ -1176,10 +1173,6 @@ packages:
     resolution: {integrity: sha512-1xx1Q1i7WuW85W1x1cLFcl4L5bjW5bT+qBm6kwnAdIHDA87x/gU7NWKknpBWMilX2lQphxtB1VeU3GVOj3wYqw==}
     engines: {node: ^20.12||^22||>=24}
     hasBin: true
-
-  dotenv@17.2.3:
-    resolution: {integrity: sha512-JVUnt+DUIzu87TABbhPmNfVdBDt18BLOWjMUFJMSi/Qqg7NTYtabbvSNJGOJ7afbRuv9D/lngizHtP7QyLQ+9w==}
-    engines: {node: '>=12'}
 
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
@@ -3125,8 +3118,6 @@ snapshots:
       semver: 7.7.3
       tsconfig-paths-webpack-plugin: 4.2.0
       watskeburt: 5.0.0
-
-  dotenv@17.2.3: {}
 
   dunder-proto@1.0.1:
     dependencies:

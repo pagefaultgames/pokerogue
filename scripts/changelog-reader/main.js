@@ -5,7 +5,6 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import "dotenv/config";
 import { Octokit } from "octokit";
 import { writeFileSafe } from "../helpers/file.js";
 
