@@ -109,7 +109,8 @@ export class ClassicModeHelper extends GameManagerHelper {
   /**
    * Queue inputs to switch at the start of the next battle, and then start it.
    * @param pokemonIndex - The 0-indexed position of the party pokemon to switch to.
-   * Should never be called with 0 as that will select the currently active pokemon and freeze
+   * @throws {@linkcode Error}
+   * Fails test if `pokemonIndex` is out of valid bounds
    * @returns A Promise that resolves once the battle has been started and the switch prompt resolved.
    * @remarks
    * This will temporarily set the current {@linkcode BattleStyle} to `SWITCH` for the duration
