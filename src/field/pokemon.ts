@@ -5118,7 +5118,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       this.updateFusionPalette();
     }
 
-    // Emit an event to reset all temporary moveset overrides due to Mimic/Transform wearing off.
     globalScene.eventTarget.dispatchEvent(new SummonDataResetEvent(this.id));
 
     this.summonData = new PokemonSummonData();

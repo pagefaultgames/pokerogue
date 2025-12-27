@@ -1,4 +1,3 @@
-// biome-ignore lint/correctness/noUnusedImports: TSDoc
 import type { PokemonSummonData } from "#data/pokemon-data";
 import type { PokemonMove } from "#moves/pokemon-move";
 
@@ -46,8 +45,8 @@ export enum BattleSceneEventType {
  * Abstract container class for all {@linkcode BattleSceneEventType} events.
  */
 abstract class BattleSceneEvent extends Event {
-  public declare abstract readonly type: BattleSceneEventType; // that's a mouthful!
-  // biome-ignore lint/complexity/noUselessConstructor: changes the type of the type field
+  public declare abstract readonly type: BattleSceneEventType;
+  // biome-ignore lint/complexity/noUselessConstructor: Restricts the type of the type field
   constructor(type: BattleSceneEventType) {
     super(type);
   }

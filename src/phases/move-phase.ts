@@ -766,10 +766,11 @@ export class MovePhase extends PokemonPhase {
     if (isIgnorePP(this.useMode)) {
       return;
     }
-    const move = this.move;
+
+    const { move } = this;
     const ppUsed = 1 + this.getPpIncreaseFromPressure(this.getActiveTargetPokemon());
     move.usePp(ppUsed);
-    globalScene.eventTarget.dispatchEvent(new MovesetChangedEvent(this.pokemon.id, this.move));
+    globalScene.eventTarget.dispatchEvent(new MovesetChangedEvent(this.pokemon.id, move));
   }
 
   /**

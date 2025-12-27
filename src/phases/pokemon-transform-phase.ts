@@ -92,16 +92,16 @@ export class PokemonTransformPhase extends PokemonPhase {
 
   /**
    * Emit an event upon transforming and changing movesets.
-   * @param origMovee - The target's original {@linkcode PokemonMove} being copied
+   * @param origMove - The target's original {@linkcode PokemonMove} from the target's moveset
    * @param copiedMove - The new {@linkcode PokemonMove} being added to the user's moveset
    */
   private emitMovesetChange(origMove: PokemonMove, copiedMove: PokemonMove): void {
     const user = this.getPokemon();
     const target = globalScene.getField()[this.targetIndex];
 
-    // Dispatch an event for the user's moveset temporarily changing.
     globalScene.eventTarget.dispatchEvent(new MovesetChangedEvent(user.id, copiedMove));
-    // If the user is a player having transformed into an enemy, permanently reveal the corresponding move in their moveset.
+    // If a player pokemon transforms into an enemy, permanently reveal all moves in their moveset.
+    // TODO: This can be extended to the enemy AI once a record of "seen moves" is added
     if (user.isPlayer() && target.isEnemy()) {
       globalScene.eventTarget.dispatchEvent(new MovesetChangedEvent(target.id, origMove));
     }

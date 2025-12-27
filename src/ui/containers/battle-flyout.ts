@@ -7,10 +7,10 @@ import type { MovesetChangedEvent, SummonDataResetEvent } from "#events/battle-s
 import { BattleSceneEventType } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
 import type { PokemonMove } from "#moves/pokemon-move";
-// biome-ignore lint/correctness/noUnusedImports: TSDoc
 import type { BattleInfo } from "#ui/battle-info";
 import { addTextObject } from "#ui/text";
 import { fixedInt } from "#utils/common";
+import type { TupleOf } from "type-fest";
 
 /** Container for info about a given {@linkcode PokemonMove} having been used */
 interface MoveInfo {
@@ -24,7 +24,7 @@ interface MoveInfo {
  * A 4-length tuple consisting of all moves that each {@linkcode Pokemon} has used in the given battle.
  * Entries that are `undefined` indicate moves which have not been used yet.
  */
-type MoveInfoTuple = [MoveInfo?, MoveInfo?, MoveInfo?, MoveInfo?];
+type MoveInfoTuple = Partial<TupleOf<4, MoveInfo>>;
 
 /**
  * A Flyout Menu attached to each Pokemon's {@linkcode BattleInfo} object,
@@ -153,20 +153,19 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Set and formats the text property for all {@linkcode Phaser.GameObjects.Text} in the flyoutText array.
+   * Set and format the text of a given {@linkcode Phaser.GameObjects.Text} in the `flyoutText` array.
    * @param index - The 0-indexed position of the flyout text object to update
    */
   private updateText(index: number): void {
-    // Use temp move info if present, or else the regular move info.
     const moveInfo = this.tempMoveInfo[index] ?? this.moveInfo[index];
-    if (!moveInfo) {
+    if (moveInfo == null) {
       return;
     }
 
     const flyoutText = this.flyoutText[index];
-    const maxPP = moveInfo.move.getMovePp();
-    const currentPp = -moveInfo.move.ppUsed;
-    flyoutText.text = `${moveInfo.name}  ${currentPp}/${maxPP}`;
+    const maxPp = moveInfo.move.getMovePp();
+    const currentPp = maxPp - moveInfo.move.ppUsed;
+    flyoutText.text = `${moveInfo.name}  ${currentPp}/${maxPp}`;
   }
 
   /**
@@ -174,7 +173,6 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
    * @param event - The {@linkcode MovesetChangedEvent} having been emitted
    */
   private onMovesetChanged(event: MovesetChangedEvent): void {
-    // Ignore other Pokemon's moves as well as Struggle and MoveId.NONE
     if (
       event.pokemonId !== this.pokemon.id
       || event.move.moveId === MoveId.NONE
@@ -189,10 +187,14 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
 
     const index = this.pokemon.getMoveset(isPermanent).indexOf(event.move);
     if (index === -1) {
-      throw new Error("Updated move passed to move flyout was not found in moveset!");
+      console.warn(
+        "Updated move passed to move flyout was not found in moveset!",
+        event.move.getName(),
+        this.pokemon.getMoveset(isPermanent).map(p => p.getName()),
+      );
+      return;
     }
 
-    // Update the corresponding slot in the info array with either a new entry or an updated PP reading.
     if (infoArray[index]) {
       infoArray[index].move = event.move;
     } else {
@@ -211,7 +213,6 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
    */
   private onSummonDataReset(event: SummonDataResetEvent): void {
     if (event.pokemonId !== this.pokemon.id) {
-      // Wrong pokemon
       return;
     }
 
@@ -220,7 +221,7 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
 
   /**
    * Animate the flyout to either show or hide the modal.
-   * @param visible - Whether the the flyout should be shown
+   * @param visible - Whether the flyout should be shown
    */
   public toggleFlyout(visible: boolean): void {
     this.flyoutVisible = visible;
