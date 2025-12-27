@@ -57,11 +57,11 @@ describe("Utils - Phase Interceptor - Unit", () => {
   });
 
   /**
-   * Helper function to set the phase manager's phases to the specified values and start the first one.
-   * @param phases - An array of constructors to {@linkcode MockPhase}s to set.
+   * Helper function to set the phase manager's phases array to the specified values and start the first one.
+   * @param phases - One or more constructors of {@linkcode MockPhase}s to set
    * Constructors must have no arguments.
    */
-  function setPhases(...phases: [Constructor<MockPhase>, ...Constructor<MockPhase>[]]) {
+  function setPhases(...phases: NonEmptyTuple<Constructor<MockPhase>>): void {
     game.scene.phaseManager.clearAllPhases();
     for (const phase of phases) {
       game.scene.phaseManager.unshiftPhase(new phase());
