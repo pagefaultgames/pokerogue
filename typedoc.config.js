@@ -5,7 +5,6 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-// @ts-check
 /// <reference path="./global.d.ts" />
 
 import { globSync } from "node:fs";
@@ -45,6 +44,7 @@ const config = {
     "typedoc-github-theme",
     "typedoc-plugin-coverage",
     "typedoc-plugin-mdn-links",
+    "typedoc-plugin-missing-exports",
     ...globSync("./typedoc-plugins/**/*.js").map(plugin => "./" + plugin),
   ],
   // Avoid emitting docs for branches other than main/beta
@@ -57,11 +57,13 @@ const config = {
   coverageSvgWidth: 120, // Increased from 104 baseline due to adding 2 extra letters
   favicon: "./favicon.ico",
   theme: "typedoc-github-theme",
-  customFooterHtml: "<p>Copyright <strong>Pagefault Games</strong> 2025</p>",
+  customFooterHtml: `<p>Copyright <strong>Pagefault Games</strong> ${new Date().getFullYear() === 2025 ? "2025" : "2025 - " + new Date().getFullYear()}</p>`,
   customFooterHtmlDisableWrapper: true,
   navigationLinks: {
     GitHub: "https://github.com/pagefaultgames/pokerogue",
   },
+  includeDocCommentReferences: true,
+  placeInternalsInOwningModule: true,
 };
 
 // If generating docs for main/beta, check the ref name and add an appropriate navigation header
