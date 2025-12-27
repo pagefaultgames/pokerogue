@@ -13,8 +13,8 @@ class ApplePhase extends MockPhase {
   public readonly phaseName = "ApplePhase";
 }
 
-class ApplePhase extends MockPhase {
-  public readonly phaseName = "ApplePhase";
+class BananaPhase extends MockPhase {
+  public readonly phaseName = "BananaPhase";
 }
 
 class CoconutPhase extends MockPhase {
@@ -35,7 +35,7 @@ class UnshifterPhase extends MockPhase {
   public readonly phaseName = "UnshifterPhase";
   override start() {
     globalScene.phaseManager.unshiftPhase(new ApplePhase() as unknown as Phase);
-    globalScene.phaseManager.unshiftPhase(new ApplePhase() as unknown as Phase);
+    globalScene.phaseManager.unshiftPhase(new BananaPhase() as unknown as Phase);
     globalScene.phaseManager.unshiftPhase(new CoconutPhase() as unknown as Phase);
     this.end();
   }
@@ -53,7 +53,7 @@ describe("Utils - Phase Interceptor - Unit", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    setPhases(ApplePhase, ApplePhase, CoconutPhase, ApplePhase, CoconutPhase);
+    setPhases(ApplePhase, BananaPhase, CoconutPhase, ApplePhase, CoconutPhase);
   });
 
   /**
@@ -112,7 +112,7 @@ describe("Utils - Phase Interceptor - Unit", () => {
 
       expectAtPhase("ApplePhase");
       expect(getQueuedPhases()).toEqual(["CoconutPhase"]);
-      expect(game.phaseInterceptor.log).toEqual(["ApplePhase", "ApplePhase", "CoconutPhase"]);
+      expect(game.phaseInterceptor.log).toEqual(["ApplePhase", "BananaPhase", "CoconutPhase"]);
     });
 
     it("should work on newly unshifted phases", async () => {
@@ -143,7 +143,7 @@ describe("Utils - Phase Interceptor - Unit", () => {
 
       game.phaseInterceptor.shiftPhase();
 
-      expectAtPhase("ApplePhase");
+      expectAtPhase("BananaPhase");
       expect(getQueuedPhases()).toEqual(["CoconutPhase", "ApplePhase", "CoconutPhase"]);
       expect(startSpy).not.toHaveBeenCalled();
       expect(game.phaseInterceptor.log).toEqual([]);
