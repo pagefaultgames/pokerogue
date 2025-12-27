@@ -3,7 +3,6 @@ import type { BattleScene } from "#app/battle-scene";
 import { PHASE_INTERCEPTOR_COLOR, PHASE_START_COLOR } from "#app/constants/colors";
 import type { Phase } from "#app/phase";
 import { UiMode } from "#enums/ui-mode";
-// biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports
 import type { GameManager } from "#test/test-utils/game-manager";
 import type { PromptHandler } from "#test/test-utils/helpers/prompt-handler";
 import type { Constructor } from "#types/common";
