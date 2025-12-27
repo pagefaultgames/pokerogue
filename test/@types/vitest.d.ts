@@ -15,6 +15,7 @@ import type { PositionalTagType } from "#enums/positional-tag-type";
 import type { BattleStat, EffectiveStat } from "#enums/stat";
 import type { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
+import type { PokemonMove } from "#moves/pokemon-move";
 import type { OneOther } from "#test/@types/test-helpers";
 import type { GameManager } from "#test/test-utils/game-manager";
 import type { toHaveArenaTagOptions } from "#test/test-utils/matchers/to-have-arena-tag";
@@ -34,7 +35,19 @@ declare module "vitest" {
     extends GenericMatchers<T>,
       RestrictMatcher<GameManagerMatchers, T, GameManager>,
       RestrictMatcher<ArenaMatchers, T, GameManager>,
-      RestrictMatcher<PokemonMatchers, T, Pokemon> {}
+      RestrictMatcher<PokemonMatchers, T, Pokemon> {
+    /**
+     * Invert a matcher's conditions, causing it to error whenever it would normally succeed
+     * (and vice versa).
+     * @privateRemarks
+     * Matchers with custom "invalid" conditions can (and should) ignore this in case of invalid input.
+     * @example
+     * ```ts
+     * expect(1).not.toBe(2);
+     * ```
+     */
+    not: Assertion<T>;
+  }
 }
 
 /**
