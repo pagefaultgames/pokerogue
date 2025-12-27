@@ -1,4 +1,3 @@
-// biome-ignore lint/correctness/noUnusedImports: TSDoc
 import type { Animation } from "#app/animations";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
