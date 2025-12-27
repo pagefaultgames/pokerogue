@@ -92,7 +92,7 @@ export class PromptHandler extends GameManagerHelper {
     // TODO: Add `await` to this
     const ret = this.originalSetModeInternal.apply(this.game.scene.ui, args);
 
-    const currentPhase = this.game.scene.phaseManager.getCurrentPhase()?.phaseName!;
+    const currentPhase = this.game.scene.phaseManager.getCurrentPhase().phaseName;
     if (endBySetMode.includes(currentPhase)) {
       this.game.phaseInterceptor.checkMode();
     }
