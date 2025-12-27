@@ -1281,22 +1281,21 @@ export class FrenzyTag extends SerializableBattlerTag {
  */
 export class EncoreTag extends MoveRestrictionBattlerTag {
   public override readonly tagType = BattlerTagType.ENCORE;
+  /**
+   * Internal tracker for whether this Tag was added this turn, used to override the attached Pokemon's pending move. \
+   * Removed from serialization as this is set to `false` at or before turn end.
+   */
   #addedThisTurn = true;
 
   /** The {@linkcode MoveId} the tag holder is locked into using. */
   public readonly moveId: MoveId;
 
   constructor(sourceId: number) {
-    // Encore ends at the end of the 3rd turn it procs.
+    // Encore ends at the end of the 3rd turn during which it procs.
     // If used on turn X when faster, it ends at the end of turn X+2.
     // If used on turn X when slower, it ends at the end of turn X+3.
-    super(
-      BattlerTagType.ENCORE,
-      [BattlerTagLapseType.AFTER_MOVE, BattlerTagLapseType.TURN_END],
-      3,
-      MoveId.ENCORE,
-      sourceId,
-    );
+    // NB: The reason we don't tick down the duration in an `AFTER_MOVE` trigger is to ensure proper Instruct timings
+    super(BattlerTagType.ENCORE, [BattlerTagLapseType.TURN_END], 4, MoveId.ENCORE, sourceId);
   }
 
   public override loadTag(source: BaseBattlerTag & Pick<EncoreTag, "tagType" | "moveId">): void {
@@ -1345,6 +1344,9 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
       return;
     }
 
+    // Tick down Encore's duration when overridding pending move
+    this.turnCount--;
+    this.#addedThisTurn = false;
     return [movesetMove, this.getTargets(pokemon)];
   }
 
@@ -1364,17 +1366,10 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
   }
 
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    // If the encored move has run out of PP or the tag's turn count has elapsed,
-    // Encore ends at the END of the turn.
-    // Otherwise, Encore's duration reduces when the target attempts to use a move.
-    if (lapseType === BattlerTagLapseType.AFTER_MOVE) {
-      this.turnCount--;
-      return true;
-    }
-
     this.#addedThisTurn = false;
+
     const hasEncoredMove = pokemon.getMoveset().some(m => m.moveId === this.moveId && !m.isOutOfPp());
-    return hasEncoredMove && this.turnCount > 0;
+    return hasEncoredMove && super.lapse(pokemon, lapseType);
   }
 
   public override isMoveRestricted(move: MoveId): boolean {

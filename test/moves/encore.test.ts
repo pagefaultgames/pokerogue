@@ -39,26 +39,30 @@ describe("Move - Encore", () => {
       .enemyLevel(100);
   });
 
-  it("should prevent the target from using any move except the last used move for 3 turns", async () => {
+  it("should lock the target into its last used move for 3 turns", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     game.move.use(MoveId.ENCORE);
     await game.move.forceEnemyMove(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.toEndOfTurn();
+    await game.toEndOfTurn(false);
 
+    const feebas = game.field.getPlayerPokemon();
     const karp = game.field.getEnemyPokemon();
+    expect(feebas).toHaveUsedMove({ move: MoveId.ENCORE, result: MoveResult.SUCCESS });
+    expect(karp).toHaveBattlerTag({ tagType: BattlerTagType.ENCORE, moveId: MoveId.TACKLE, turnCount: 3 });
     expect(game).toHaveShownMessage(
       i18next.t("battlerTags:encoreOnAdd", {
         pokemonNameWithAffix: getPokemonNameWithAffix(karp),
       }),
     );
 
-    expect(karp).toHaveBattlerTag({ tagType: BattlerTagType.ENCORE, moveId: MoveId.TACKLE, turnCount: 3 });
+    // should only be able to select tackle
     expect(karp.hasRestrictingTag(MoveId.SPLASH)).toBe(true);
     expect(karp.hasRestrictingTag(MoveId.TACKLE)).toBe(false);
   });
 
+  // Source: https://play.pokemonshowdown.com/battle-gen9nationaldex-2507329086
   it("should be removed at the end of the 3rd turn it triggers, ignoring Instruct", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
@@ -67,23 +71,20 @@ describe("Move - Encore", () => {
 
     game.move.use(MoveId.ENCORE);
     await game.move.forceEnemyMove(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    expect(karp).toHaveBattlerTag({ tagType: BattlerTagType.ENCORE, turnCount: 2 });
+    expect(karp).toHaveBattlerTag({ tagType: BattlerTagType.ENCORE, turnCount: 3 });
 
     game.move.use(MoveId.INSTRUCT);
     await game.toNextTurn();
 
     // Should have ticked down only once, even with encore
-    expect(karp).toHaveBattlerTag({ tagType: BattlerTagType.ENCORE, turnCount: 1 });
+    expect(karp).toHaveBattlerTag({ tagType: BattlerTagType.ENCORE, turnCount: 2 });
 
     game.move.use(MoveId.INSTRUCT);
-    await game.toEndOfTurn(false);
-
-    // Tag should still be present until the `TurnEndPhase` ticks it down
-    expect(karp).toHaveBattlerTag(BattlerTagType.ENCORE);
-
+    await game.toNextTurn();
+    game.move.use(MoveId.INSTRUCT);
     await game.toNextTurn();
 
     expect(karp).not.toHaveBattlerTag(BattlerTagType.ENCORE);
@@ -94,7 +95,8 @@ describe("Move - Encore", () => {
     );
   });
 
-  it("should override the target's upcoming move with the Encored move while still consuming PP", async () => {
+  // TODO: Verify the turn count behavior on mainline svp.
+  it("should override the target's upcoming move if used first, ending 1 turn sooner if it occurs", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     // Fake enemy having used tackle the turn prior
@@ -105,14 +107,23 @@ describe("Move - Encore", () => {
     game.move.use(MoveId.ENCORE);
     await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.toEndOfTurn();
+    await game.toNextTurn();
 
-    // Encore overrode the selected Splash with a tackle
+    // Encore overrode the selected Splash with a tackle, ticking down an additional time
+    expect(karp).toHaveBattlerTag({ tagType: BattlerTagType.ENCORE, turnCount: 2 });
     expect(karp).toHaveUsedMove({ move: MoveId.TACKLE, targets: [BattlerIndex.PLAYER], useMode: MoveUseMode.NORMAL });
     expect(karp).toHaveUsedPP(MoveId.TACKLE, 1);
+
+    game.move.use(MoveId.SPLASH);
+    await game.toNextTurn();
+    game.move.use(MoveId.SPLASH);
+    await game.toEndOfTurn(false);
+
+    // Tag is removed at the end of turn X+2
+    expect(karp).toHaveBattlerTag({ tagType: BattlerTagType.ENCORE, turnCount: 1 });
   });
 
-  // TODO: These interactions are implemented, but somewhat
+  // TODO: These interactions are implemented, but somewhat hard to test atm
   it.todo("should choose targets for overridden move randomly if multiple are eligible");
 
   // TODO: Write test
@@ -122,7 +133,7 @@ describe("Move - Encore", () => {
     { reason: "the target lacks the Encored move", callback: enemy => game.move.changeMoveset(enemy, [MoveId.SPLASH]) },
     {
       reason: "the Encored move runs out of PP",
-      callback: enemy => (enemy.moveset[1].ppUsed = enemy.moveset[1].getMovePp() - 1),
+      callback: enemy => (enemy.moveset[1].ppUsed = enemy.moveset[1].getMovePp()),
     },
   ])("should be removed at turn end if $reason", async ({ callback }) => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
@@ -143,31 +154,6 @@ describe("Move - Encore", () => {
     await game.toEndOfTurn();
 
     expect(karp).not.toHaveBattlerTag(BattlerTagType.ENCORE);
-  });
-
-  it("should be removed at turn end if the Encored move runs out of PP", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
-
-    // Fake enemy having used tackle the turn prior
-    const enemy = game.field.getEnemyPokemon();
-    game.move.changeMoveset(enemy, [MoveId.SPLASH, MoveId.TACKLE]);
-    enemy.pushMoveHistory({ move: MoveId.TACKLE, targets: [BattlerIndex.PLAYER], useMode: MoveUseMode.NORMAL });
-    enemy.moveset[1].ppUsed = enemy.moveset[1].getMovePp() - 2;
-
-    game.move.use(MoveId.ENCORE);
-    await game.move.selectEnemyMove(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.toNextTurn();
-
-    expect(enemy).toHaveUsedMove({ move: MoveId.TACKLE, targets: [BattlerIndex.PLAYER], useMode: MoveUseMode.NORMAL });
-    expect(enemy).toHaveUsedPP(MoveId.TACKLE, -1);
-    expect(enemy).toHaveBattlerTag(BattlerTagType.ENCORE);
-
-    game.move.use(MoveId.SPLASH);
-    await game.toEndOfTurn();
-
-    expect(enemy).toHaveUsedPP(MoveId.TACKLE, "all");
-    expect(enemy).not.toHaveBattlerTag(BattlerTagType.ENCORE);
   });
 
   const invalidMoves = [...invalidEncoreMoves].map(m => ({
@@ -194,38 +180,37 @@ describe("Move - Encore", () => {
   it("should fail if the target has not made a move", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const player = game.field.getPlayerPokemon();
-    const enemy = game.field.getEnemyPokemon();
-
     game.move.use(MoveId.ENCORE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
-    expect(player).toHaveUsedMove({ move: MoveId.ENCORE, result: MoveResult.FAIL });
-    expect(enemy).not.toHaveBattlerTag(BattlerTagType.ENCORE);
+    const feebas = game.field.getPlayerPokemon();
+    const karp = game.field.getEnemyPokemon();
+    expect(feebas).toHaveUsedMove({ move: MoveId.ENCORE, result: MoveResult.FAIL });
+    expect(karp).not.toHaveBattlerTag(BattlerTagType.ENCORE);
   });
 
   it("should force a Tormented target to alternate between Struggle and the Encored move", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
-
-    const enemy = game.field.getEnemyPokemon();
 
     game.move.use(MoveId.ENCORE);
     await game.move.forceEnemyMove(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    expect(enemy).toHaveBattlerTag(BattlerTagType.ENCORE);
+    const karp = game.field.getEnemyPokemon();
+    expect(karp).toHaveBattlerTag(BattlerTagType.ENCORE);
 
     game.move.use(MoveId.TORMENT);
     await game.toNextTurn();
 
-    expect(enemy).toHaveBattlerTag(BattlerTagType.ENCORE);
-    expect(enemy).toHaveBattlerTag(BattlerTagType.TORMENT);
+    expect(karp).toHaveUsedMove(MoveId.TACKLE);
+    expect(karp).toHaveBattlerTag(BattlerTagType.ENCORE);
+    expect(karp).toHaveBattlerTag(BattlerTagType.TORMENT);
 
     game.move.use(MoveId.SPLASH);
     await game.toEndOfTurn();
 
-    expect(enemy).toHaveUsedMove(MoveId.STRUGGLE);
+    expect(karp).toHaveUsedMove(MoveId.STRUGGLE);
   });
 });
