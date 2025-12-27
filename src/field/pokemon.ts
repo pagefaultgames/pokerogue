@@ -173,7 +173,7 @@ import { calculateBossSegmentDamage } from "#utils/damage";
 import { getEnumValues } from "#utils/enums";
 import { getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
-import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
+import { argbFromRgba, clampInt, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
 import i18next from "i18next";
 import Phaser from "phaser";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
@@ -2232,7 +2232,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Check whether a pokemon has the specified ability in effect, either as a normal or passive ability.
    * Accounts for all the various effects which can disable or modify abilities.
-   * @param ability - The {@linkcode Abilities | Ability} to check for
+   * @param ability - The {@linkcode AbilityId | Ability} to check for
    * @param canApply - Whether to check if the ability is currently active; default `true`
    * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
    * @returns Whether this {@linkcode Pokemon} has the given ability
@@ -3675,15 +3675,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       multiStrikeEnhancementMultiplier,
     );
 
-    if (!ignoreSourceAbility) {
-      applyAbAttrs("AddSecondStrikeAbAttr", {
-        pokemon: source,
-        move,
-        simulated,
-        multiplier: multiStrikeEnhancementMultiplier,
-      });
-    }
-
     /** Doubles damage if this Pokemon's last move was Glaive Rush */
     const glaiveRushMultiplier = new NumberHolder(1);
     if (this.getTag(BattlerTagType.RECEIVE_DOUBLE_DAMAGE)) {
@@ -3772,9 +3763,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         * mistyTerrainMultiplier,
     );
 
-    /** Doubles damage if the attacker has Tinted Lens and is using a resisted move */
     if (!ignoreSourceAbility) {
-      applyAbAttrs("DamageBoostAbAttr", {
+      applyAbAttrs("MoveDamageBoostAbAttr", {
         pokemon: source,
         opponent: this,
         move,
@@ -4873,7 +4863,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   public trySetStatus(
     effect: StatusEffect,
-    sourcePokemon: Pokemon | null = null,
+    sourcePokemon?: Pokemon,
     sleepTurnsRemaining?: number,
     sourceText: string | null = null,
     overrideStatus?: boolean,
@@ -5013,20 +5003,24 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Queue the status cure message, reset the status, and update the info display
+   * Helper function for the Move phase that queues the status cure message,
+   * resets it, and updates the info display.
    * @param effect - The effect to cure. If this does not match the current status, nothing happens.
-   * @param msg - A custom message to display when curing the status effect (used for curing freeze due to move use)
+   * @param msg - If provided, will override the default message displayed when removing status.
+   * Used for moves that thaw the user out
    */
-  public cureStatus(effect: StatusEffect, msg?: string): void {
+  // TODO: Distinguish this more from `resetStatus`
+  public cureStatus(effect: StatusEffect, msg = getStatusEffectHealText(effect, getPokemonNameWithAffix(this))): void {
     if (effect !== this.status?.effect) {
       return;
     }
-    // Freeze healed by move uses its own msg
-    globalScene.phaseManager.queueMessage(msg ?? getStatusEffectHealText(effect, getPokemonNameWithAffix(this)));
-    // cannot use `asPhase=true` as it will cause status to be reset _after_ this phase ends
+
+    globalScene.phaseManager.queueMessage(msg);
+    // cannot use `asPhase=true` as it will cause status to be reset _after_ the move phase ends
     this.resetStatus(undefined, undefined, undefined, false);
     this.updateInfo();
   }
+
   /**
    * Reset this Pokémon's status
    * @param revive - Whether revive should be cured; default `true`
@@ -5966,9 +5960,10 @@ export class PlayerPokemon extends Pokemon {
     // Add to candy progress for this mon's starter species and its fused species (if it has one)
     starterData.forEach(([sd, id]: [StarterDataEntry, SpeciesId]) => {
       sd.friendship = (sd.friendship || 0) + candyFriendshipAmount;
-      if (sd.friendship >= getStarterValueFriendshipCap(speciesStarterCosts[id])) {
-        globalScene.gameData.addStarterCandy(getPokemonSpecies(id), 1);
-        sd.friendship = 0;
+      const friendshipCap = getStarterValueFriendshipCap(speciesStarterCosts[id]);
+      if (sd.friendship >= friendshipCap) {
+        globalScene.gameData.addStarterCandy(getPokemonSpecies(id), Math.floor(sd.friendship / friendshipCap));
+        sd.friendship %= friendshipCap;
       }
     });
   }
@@ -6096,7 +6091,7 @@ export class PlayerPokemon extends Pokemon {
         });
       };
       if (preEvolution.speciesId === SpeciesId.GIMMIGHOUL) {
-        const evotracker = this.getHeldItems().filter(m => m instanceof EvoTrackerModifier)[0] ?? null;
+        const evotracker = this.getHeldItems().find(m => m instanceof EvoTrackerModifier) ?? null;
         if (evotracker) {
           globalScene.removeModifier(evotracker);
         }
@@ -6410,7 +6405,7 @@ export class EnemyPokemon extends Pokemon {
           ivs.push(randSeedIntRange(Math.floor(waveIndex / 10), 31));
         }
         this.ivs = ivs;
-        this.friendship = Math.round(255 * (waveIndex / 200));
+        this.friendship = clampInt(50, 255, Math.round(255 * (waveIndex / 145)));
       }
     }
 
@@ -6595,11 +6590,10 @@ export class EnemyPokemon extends Pokemon {
            */
           const moveScores = movePool.map(() => 0);
           const moveTargets = Object.fromEntries(movePool.map(m => [m.moveId, this.getNextTargets(m.moveId)]));
-          for (const m in movePool) {
-            const pokemonMove = movePool[m];
+          movePool.forEach((pokemonMove, moveIndex) => {
             const move = pokemonMove.getMove();
 
-            let moveScore = moveScores[m];
+            let moveScore = moveScores[moveIndex];
             const targetScores: number[] = [];
 
             for (const mt of moveTargets[move.id]) {
@@ -6621,10 +6615,7 @@ export class EnemyPokemon extends Pokemon {
                 console.error(`Move ${move.name} returned score of NaN`);
                 targetScore = 0;
               }
-              /**
-               * If this move is unimplemented, or the move is known to fail when used, set its
-               * target score to -20
-               */
+              // If this move is unimplemented, or the move is known to fail when used, set its target score to -20
               if (
                 (move.name.endsWith(" (N)") || !move.applyConditions(this, target, -1))
                 && ![MoveId.SUCKER_PUNCH, MoveId.UPPER_HAND, MoveId.THUNDERCLAP].includes(move.id)
@@ -6655,7 +6646,7 @@ export class EnemyPokemon extends Pokemon {
                     targetScore /= 1.5;
                   }
                 }
-                /** If a move has a base benefit score of 0, its benefit score is assumed to be unimplemented at this point */
+                // If a move has a base benefit score of 0, its benefit score is assumed to be unimplemented at this point
                 if (!targetScore) {
                   targetScore = -20;
                 }
@@ -6666,10 +6657,8 @@ export class EnemyPokemon extends Pokemon {
             moveScore += Math.max(...targetScores);
 
             // could make smarter by checking opponent def/spdef
-            moveScores[m] = moveScore;
-          }
-
-          console.log(moveScores);
+            moveScores[moveIndex] = moveScore;
+          });
 
           // Sort the move pool in decreasing order of move score
           const sortedMovePool = movePool.slice(0);
@@ -6678,37 +6667,42 @@ export class EnemyPokemon extends Pokemon {
             const scoreB = moveScores[movePool.indexOf(b)];
             return scoreA < scoreB ? 1 : scoreA > scoreB ? -1 : 0;
           });
-          let r = 0;
+          let chosenMoveIndex = 0;
           if (this.aiType === AiType.SMART_RANDOM) {
             // Has a 5/8 chance to select the best move, and a 3/8 chance to advance to the next best move (and repeat this roll)
-            while (r < sortedMovePool.length - 1 && globalScene.randBattleSeedInt(8) >= 5) {
-              r++;
+            while (chosenMoveIndex < sortedMovePool.length - 1 && globalScene.randBattleSeedInt(8) >= 5) {
+              chosenMoveIndex++;
             }
           } else if (this.aiType === AiType.SMART) {
             // The chance to advance to the next best move increases when the compared moves' scores are closer to each other.
             while (
-              r < sortedMovePool.length - 1
-              && moveScores[movePool.indexOf(sortedMovePool[r + 1])] / moveScores[movePool.indexOf(sortedMovePool[r])]
+              chosenMoveIndex < sortedMovePool.length - 1
+              && moveScores[movePool.indexOf(sortedMovePool[chosenMoveIndex + 1])]
+                / moveScores[movePool.indexOf(sortedMovePool[chosenMoveIndex])]
                 >= 0
               && globalScene.randBattleSeedInt(100)
                 < Math.round(
-                  (moveScores[movePool.indexOf(sortedMovePool[r + 1])]
-                    / moveScores[movePool.indexOf(sortedMovePool[r])])
+                  (moveScores[movePool.indexOf(sortedMovePool[chosenMoveIndex + 1])]
+                    / moveScores[movePool.indexOf(sortedMovePool[chosenMoveIndex])])
                     * 50,
                 )
             ) {
-              r++;
+              chosenMoveIndex++;
             }
           }
-          console.log(
-            movePool.map(m => m.getName()),
-            moveScores,
-            r,
-            sortedMovePool.map(m => m.getName()),
-          );
+
+          const chosenMove = sortedMovePool[chosenMoveIndex];
+
+          // biome-ignore format: For some reason this gets broken into multiple lines
+          console.log("Move Pool:", movePool.map((m) => m.getName()));
+          console.log("Move Scores:", moveScores);
+          // biome-ignore format: For some reason this gets broken into multiple lines
+          console.log("Sorted Move Pool:", sortedMovePool.map((m) => m.getName()));
+          console.log("Chosen Move:", chosenMove.getName());
+
           return {
-            move: sortedMovePool[r]!.moveId,
-            targets: moveTargets[sortedMovePool[r]!.moveId],
+            move: chosenMove.moveId,
+            targets: moveTargets[chosenMove.moveId],
             useMode: MoveUseMode.NORMAL,
           };
         }

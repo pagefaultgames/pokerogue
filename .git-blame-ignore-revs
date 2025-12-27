@@ -1,0 +1,87 @@
+# SPDX-FileCopyrightText: 2024-2025 NONE
+#
+# SPDX-License-Identifier: CC0-1.0
+
+# This file lists revisions of large-scale formatting, style and code movement changes so that
+# they can be excluded from git blame results.
+#
+# To set this file as the default ignore file for git blame, run:
+#   $ git config --local blame.ignoreRevsFile .git-blame-ignore-revs
+
+# ESLint - The Essential Linter and Formatter for JavaScript and TypeScript (#1224)
+bac6c22973fedff868e73a989443035c672e8f57
+
+# [Refactor] use typescript strict-null (#3259)
+a07d2c57a44361f4ad48e024067c9b7638c0d84d
+
+# [Test] Replace `doAttack()` with `move.select()` in tests (#3567)
+828897316e089ba390bc5fd3503e9175c7f45e8e
+
+# [Misc] Add eslint rule to enforce indenting of `case` statements (#4692)
+39abac65be26c2004ea1ca9a686cc8d7b35efb65
+
+# [Refactor] Create global scene variable (#4766)
+0107b1d47ea4a898f39dd3534fcccd4241c03470
+
+# [Misc][Refactor][GitHub] Ditch eslint for biome, and add a formatter (#5495)
+408b66f9135004e128d7d737904facc30529c771
+
+# [Biome] Add and apply `lint/style/noNamespaceImport` (#5650)
+6f56dce7712c609dc78f7ff11650eb6a34f8f661
+
+# [Test] Remove deprecated test funcs (#5906)
+a33638a7a36b01935e40ea876532c770b53f0994
+
+# [Test] Remove redundant entries and `Array.fill()` in moveset overrides (#5907)
+cdda539ac5609c1f0fa5da0114ee51d5bff82bf5
+
+# [Test] Condensed all `game.override` calls into 1 chained line where possible (#5926)
+061c9872658011c1eefba3c10b2de33bdff8a0b0
+
+# [Test] Remove unneeded `mockRestore` and `testTimeout` calls in tests (#5927)
+0918985a63cc8795bc9a45d8ceacdfaca5f12ee7
+
+# [Misc] Improve enum naming (#5933)
+9dcb904649474b9ccec52b7d1251ee731b5edabf
+
+# [Dev] Enable Biome checking of `ability.ts` (#5948)
+75beec12a892d28b51d8cbd859a28fc793617736
+
+# [Dev] Enable Biome import sorting (#6052)
+8cf1b9f766051bd610ac803222272d6e7287571d
+
+# [Misc] Standardize-file-names (#6137)
+51d4c33de056dad78990b82aedd9f1b527d05d6d
+
+# [Test] Cleaned up tests to use updated test utils; part 1 (#6176)
+87340624011bc8a68a9181ac2917cddb81eb073c
+
+# [Test] Replaced all instances of `game.scene.getXXXPokemon()!` inside tests with `game.field.getXXXPokemon()` (#6178)
+8da02bad50995077243c8036aeef215ef42b42d4
+
+# [Refactor] Remove `null` from `PhaseManager.currentPhase` signature (#6243)
+d5e6670456acf3af98fac5bf7a20dc6cb3854c98
+
+# [Dev] Migrated to Biome 2.2.3, added more rules (#6259)
+c0da686ba0da1b08b56e4117839d9d45ed95e69a
+
+# [Misc] Make the repo REUSE compliant (#6474)
+6766940fa15202c9995f2fed7287bf85939d9816
+
+# [Test] Updated more uses of `game.scene.getEnemyField` and `game.scene.getPlayerField` to use updated test utils (#6524)
+3d9e493e5f550ca933413c015bbb644398b1a8a7
+
+# [Refactor] Remove `isNullOrUndefined` in favor of loose check against null (#6549)
+c7a2c666af0009bb347616cefd9a767fb66b4b46
+
+# [Refactor][Dev] Move public to its own submodule (#6590)
+c695df777c041e9a2e747fd2767249cbb1235868
+
+# [Dev] Improve typescript performance and version bump node and dependencies (#6627)
+f4456f6c7cd77ecdb680517364b97fde9c07293f
+
+# [Dev] Enable linting of `move.ts` and update Biome to 2.3.2 (#6688)
+d0ddcaa7a3a9dd262577abf60e40dcc8834faf7b
+
+# [Dev] Update Biome from `2.3.2` to `2.3.8` (#6799)
+b6bd9566e24729e4677f1afb60da159425a9f60d
