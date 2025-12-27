@@ -215,12 +215,12 @@ describe("Spec - Pokemon", () => {
   });
 
   it.each([
-    { wave: 5, friendship: 6 },
-    { wave: 25, friendship: 32 },
-    { wave: 55, friendship: 70 },
-    { wave: 95, friendship: 121 },
-    { wave: 145, friendship: 185 },
-    { wave: 195, friendship: 249 },
+    { wave: 5, friendship: 50 },
+    { wave: 25, friendship: 50 },
+    { wave: 55, friendship: 97 },
+    { wave: 95, friendship: 167 },
+    { wave: 145, friendship: 255 },
+    { wave: 195, friendship: 255 },
   ])("should set friendship for enemy trainer pokemon based on wave ($wave)", async ({ wave, friendship }) => {
     game.override.startingWave(wave);
     await game.classicMode.runToSummon([SpeciesId.FEEBAS]);

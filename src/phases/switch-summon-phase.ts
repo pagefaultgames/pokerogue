@@ -126,6 +126,18 @@ export class SwitchSummonPhase extends SummonPhase {
     switchedInPokemon.resetSummonData();
     switchedInPokemon.loadAssets(true);
 
+    // Even more defensive programming: Some callers will or will not make their users leave the field
+    // before this phase starts.
+    // To account for this (and avoid crashes by leaving the field during move processing),
+    // forcibly ensure the the victim is off of the field if they have not already done so.
+    // TODO: This means the switch out will occur immediately from U-turn's effect if the U-Turn user faints
+    // (instead of happening at end of turn from an empty slot).
+    // That being said, this blemish becomes completely irrelevant
+    // once #6611 burns the entire system to the ground.
+    if (this.lastPokemon.isOnField()) {
+      this.lastPokemon.leaveField(this.switchType === SwitchType.SWITCH);
+    }
+
     applyAbAttrs("PreSummonAbAttr", { pokemon: switchedInPokemon });
     applyAbAttrs("PreSwitchOutAbAttr", { pokemon: this.lastPokemon });
     if (!switchedInPokemon) {

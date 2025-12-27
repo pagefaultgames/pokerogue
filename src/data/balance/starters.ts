@@ -7,6 +7,8 @@ export const CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER = 3;
 export const FRIENDSHIP_GAIN_FROM_BATTLE = 3;
 export const FRIENDSHIP_GAIN_FROM_RARE_CANDY = 6;
 export const FRIENDSHIP_LOSS_FROM_FAINT = 5;
+export const TRAINER_MAX_FRIENDSHIP_WAVE = 145;
+export const TRAINER_MIN_FRIENDSHIP = 50;
 // #endregion
 
 /**

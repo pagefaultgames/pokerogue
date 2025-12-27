@@ -74,6 +74,7 @@ export abstract class ApiBase {
       console.log(`Sending ${config.method ?? "GET"} request to: `, this.base + path, config);
     }
 
+    // TODO: need some sort of error handling here?
     return await fetch(this.base + path, config);
   }
 

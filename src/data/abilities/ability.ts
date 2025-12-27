@@ -1703,11 +1703,6 @@ export class IgnoreMoveEffectsAbAttr extends PreDefendAbAttr {
   }
 }
 
-export interface FieldPreventExplosiveMovesAbAttrParams extends AbAttrBaseParams {
-  /** Holds whether the explosive move should be prevented*/
-  cancelled: BooleanHolder;
-}
-
 export class FieldPreventExplosiveMovesAbAttr extends CancelInteractionAbAttr {}
 
 export interface FieldMultiplyStatAbAttrParams extends AbAttrBaseParams {
@@ -6103,7 +6098,7 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
         return false;
       }
     }
-    return !pokemon.summonData.illusionBroken;
+    return pokemon.summonData.illusion != null;
   }
 }
 
@@ -6113,29 +6108,25 @@ export class IllusionBreakAbAttr extends AbAttr {
   // TODO: Consider adding a `canApply` method that checks if the pokemon has an active illusion
   override apply({ pokemon }: AbAttrBaseParams): void {
     pokemon.breakIllusion();
-    pokemon.summonData.illusionBroken = true;
   }
 }
 
 /** @sealed */
 export class PostDefendIllusionBreakAbAttr extends PostDefendAbAttr {
-  /**
-   * Destroy the illusion upon taking damage
-   * @returns - Whether the illusion was destroyed.
-   */
   override apply({ pokemon }: PostMoveInteractionAbAttrParams): void {
     pokemon.breakIllusion();
-    pokemon.summonData.illusionBroken = true;
   }
 
   override canApply({ pokemon, hitResult }: PostMoveInteractionAbAttrParams): boolean {
-    const breakIllusion: HitResult[] = [
+    // TODO: I remember this or a derivative being declared elsewhere - merge the 2 into 1
+    // and store it somewhere globally accessible
+    const damagingHitResults: ReadonlySet<HitResult> = new Set([
       HitResult.EFFECTIVE,
       HitResult.SUPER_EFFECTIVE,
       HitResult.NOT_VERY_EFFECTIVE,
       HitResult.ONE_HIT_KO,
-    ];
-    return breakIllusion.includes(hitResult) && !!pokemon.summonData.illusion;
+    ]);
+    return damagingHitResults.has(hitResult) && pokemon.summonData.illusion != null;
   }
 }
 
@@ -6324,7 +6315,6 @@ class ForceSwitchOutHelper {
       }
 
       if (switchOutTarget.hp > 0) {
-        switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
         globalScene.phaseManager.queueDeferred(
           "SwitchPhase",
           this.switchType,
@@ -6343,7 +6333,6 @@ class ForceSwitchOutHelper {
         return false;
       }
       if (switchOutTarget.hp > 0) {
-        switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
         const summonIndex = globalScene.currentBattle.trainer
           ? globalScene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot)
           : 0;
@@ -8097,7 +8086,6 @@ export function initAbilities() {
       .attr(CommanderAbAttr)
       .attr(DoubleBattleChanceAbAttr)
       .uncopiable()
-      .unreplaceable()
       .edgeCase() // Encore, Frenzy, and other non-`TURN_END` tags don't lapse correctly on the commanding Pokemon.
       .build(),
     new AbBuilder(AbilityId.ELECTROMORPHOSIS, 9)
@@ -8240,19 +8228,16 @@ export function initAbilities() {
     new AbBuilder(AbilityId.TERA_SHELL, 9)
       .attr(FullHpResistTypeAbAttr)
       .uncopiable()
-      .unreplaceable()
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.TERAFORM_ZERO, 9)
       .attr(ClearWeatherAbAttr)
       .attr(ClearTerrainAbAttr)
       .uncopiable()
-      .unreplaceable()
       .condition(getOncePerBattleCondition(AbilityId.TERAFORM_ZERO))
       .build(),
     new AbBuilder(AbilityId.POISON_PUPPETEER, 9)
       .uncopiable()
-      .unreplaceable() // TODO is this true?
       .attr(ConfusionOnStatusEffectAbAttr, StatusEffect.POISON, StatusEffect.TOXIC).build()
   );
 }

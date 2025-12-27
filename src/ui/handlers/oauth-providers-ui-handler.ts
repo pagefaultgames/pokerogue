@@ -6,7 +6,6 @@ import { addWindow } from "#ui/ui-theme";
 import { fixedInt } from "#utils/common";
 import i18next from "i18next";
 
-// TODO: use mixins
 export abstract class OAuthProvidersUiHandler extends LoginRegisterInfoContainerUiHandler {
   private discordImage: Phaser.GameObjects.Image;
   private googleImage: Phaser.GameObjects.Image;
@@ -54,6 +53,18 @@ export abstract class OAuthProvidersUiHandler extends LoginRegisterInfoContainer
       .add([this.externalPartyBg, this.externalPartyTitle, this.discordImage, this.googleImage])
       .setVisible(false);
     this.getUi().add(this.externalPartyContainer);
+  }
+
+  public override setInteractive(active: boolean): void {
+    super.setInteractive(active);
+    const externalPartyIcons = this.externalPartyContainer.list.filter(obj => obj instanceof Phaser.GameObjects.Image);
+    for (const obj of externalPartyIcons) {
+      if (active) {
+        obj.setInteractive();
+      } else {
+        obj.disableInteractive();
+      }
+    }
   }
 
   protected processExternalProvider(): void {

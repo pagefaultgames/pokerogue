@@ -214,7 +214,7 @@ export class TitlePhase extends Phase {
       const generateDaily = (seed: string) => {
         globalScene.gameMode = getGameMode(GameModes.DAILY);
         // Daily runs don't support all challenges yet (starter select restrictions aren't considered)
-        globalScene.eventManager.startEventChallenges();
+        timedEventManager.startEventChallenges();
 
         globalScene.setSeed(seed);
         globalScene.resetSeed();

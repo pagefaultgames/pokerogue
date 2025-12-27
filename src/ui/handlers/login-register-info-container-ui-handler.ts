@@ -7,6 +7,7 @@ import type { ModalConfig } from "#ui/modal-ui-handler";
 import { fixedInt } from "#utils/common";
 import i18next from "i18next";
 import JSZip from "jszip";
+import type InputText from "phaser3-rex-plugins/plugins/inputtext";
 
 interface BuildInteractableImageOpts {
   scale?: number;
@@ -30,12 +31,12 @@ const MAX_SAVES_FOR_USERNAME_PANEL = 7;
 const ERR_NO_SAVES: string = "No save files found";
 const ERR_TOO_MANY_SAVES: string = "Too many save files found";
 
-// TODO: use mixins
 export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHandler {
   private usernameInfoImage: Phaser.GameObjects.Image;
   private saveDownloadImage: Phaser.GameObjects.Image;
   private changeLanguageImage: Phaser.GameObjects.Image;
   private infoContainer: Phaser.GameObjects.Container;
+  private lastFocusedInput: InputText | null = null;
 
   public override getReadableErrorMessage(error: string): string {
     if (!error) {
@@ -109,6 +110,7 @@ export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHan
     this.changeLanguageImage //
       .setPositionRelative(this.infoContainer, 40, 0)
       .on("pointerdown", () => {
+        this.setInteractive(false);
         globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
           options: languageOptions,
           maxOptions: 7,
@@ -154,6 +156,7 @@ export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHan
     const handler = () => {
       globalScene.ui.revertMode();
       this.infoContainer.disableInteractive();
+      this.setInteractive(true);
       return true;
     };
 
@@ -162,6 +165,7 @@ export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHan
     }
 
     globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, { options, delay: 1000 });
+    this.setInteractive(false);
     this.infoContainer.setInteractive(
       new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width, globalScene.game.canvas.height),
       Phaser.Geom.Rectangle.Contains,
@@ -229,5 +233,46 @@ export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHan
     this.addInteractionHoverEffect(img);
 
     return img;
+  }
+
+  /**
+   * Enable or disable interactivity on all interactive objects.
+   * @param active - Whether to enable or disable interactivity
+   */
+  public setInteractive(active: boolean): void {
+    const objects = [...this.buttonBgs, this.usernameInfoImage, this.saveDownloadImage, this.changeLanguageImage];
+
+    for (const obj of objects) {
+      if (active) {
+        obj.setInteractive();
+      } else {
+        obj.disableInteractive();
+        if (obj instanceof Phaser.GameObjects.Image) {
+          obj.clearTint();
+        }
+      }
+    }
+
+    this.setInteractiveInputs(active);
+    this.setMouseCursorStyle("default");
+  }
+
+  /**
+   * Enable or disable interactivity on all input fields.
+   * @param active - Whether to enable or disable interactivity
+   */
+  private setInteractiveInputs(active: boolean): void {
+    if (active) {
+      // `setFocus` doesn't focus without a timeout
+      setTimeout(() => {
+        this.lastFocusedInput?.setFocus();
+        this.lastFocusedInput = null;
+      }, 50);
+    } else {
+      this.lastFocusedInput = this.inputs.find(input => input.isFocused) ?? null;
+    }
+    for (const input of this.inputs) {
+      (input.node as HTMLInputElement).disabled = !active;
+    }
   }
 }

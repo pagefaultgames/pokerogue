@@ -1,6 +1,7 @@
 // @ts-nocheck - TODO: remove this
 
 import { BattleScene } from "#app/battle-scene";
+import { timedEventManager } from "#app/global-event-manager";
 // biome-ignore lint/performance/noNamespaceImport: Necessary in order to mock the var
 import * as appConstants from "#constants/app-constants";
 import { MoveAnim } from "#data/battle-anims";
@@ -10,7 +11,6 @@ import { MockClock } from "#test/test-utils/mocks/mock-clock";
 import { MockGameObjectCreator } from "#test/test-utils/mocks/mock-game-object-creator";
 import { MockLoader } from "#test/test-utils/mocks/mock-loader";
 import { MockTextureManager } from "#test/test-utils/mocks/mock-texture-manager";
-import { MockTimedEventManager } from "#test/test-utils/mocks/mock-timed-event-manager";
 import { MockContainer } from "#test/test-utils/mocks/mocks-container/mock-container";
 import { PokedexMonContainer } from "#ui/pokedex-mon-container";
 import fs from "node:fs";
@@ -196,7 +196,7 @@ export class GameWrapper {
     this.scene.make = new MockGameObjectCreator(mockTextureManager);
     this.scene.time = new MockClock(this.scene);
     this.scene.remove = vi.fn(); // TODO: this should be stubbed differently
-    this.scene.eventManager = new MockTimedEventManager(); // Disable Timed Events
+    timedEventManager.disable();
   }
 }
 

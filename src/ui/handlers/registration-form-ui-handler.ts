@@ -2,9 +2,11 @@ import { pokerogueApi } from "#api/pokerogue-api";
 import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
+import type { LoginPhase } from "#phases/login-phase";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
 import type { ModalConfig } from "#ui/modal-ui-handler";
 import { addTextObject } from "#ui/text";
+import { fixedInt } from "#utils/common";
 import i18next from "i18next";
 import { LoginRegisterInfoContainerUiHandler } from "./login-register-info-container-ui-handler";
 
@@ -86,7 +88,7 @@ export class RegistrationFormUiHandler extends LoginRegisterInfoContainerUiHandl
         this.submitAction = originalRegistrationAction;
         this.sanitizeInputs();
         globalScene.ui.setMode(UiMode.LOADING, { buttonActions: [] });
-        const onFail = error => {
+        const onFail = (error: string) => {
           globalScene.ui.setMode(UiMode.REGISTRATION_FORM, Object.assign(config, { errorMessage: error?.trim() }));
           globalScene.ui.playError();
         };
@@ -109,18 +111,25 @@ export class RegistrationFormUiHandler extends LoginRegisterInfoContainerUiHandl
             if (registerError) {
               onFail(registerError);
             } else {
-              pokerogueApi.account
-                .login({
-                  username: usernameInput.text,
-                  password: passwordInput.text,
-                })
-                .then(loginError => {
-                  if (loginError) {
-                    onFail(loginError);
-                  } else {
-                    originalRegistrationAction?.();
-                  }
-                });
+              const username = usernameInput.text;
+              const password = passwordInput.text;
+              pokerogueApi.account.login({ username, password }).then(loginError => {
+                if (loginError) {
+                  // retry once if the first attempt fails
+                  const retryLogin = () => {
+                    pokerogueApi.account.login({ username, password }).then(error => {
+                      if (error) {
+                        (globalScene.phaseManager.getCurrentPhase() as LoginPhase).goToLogin();
+                      } else {
+                        originalRegistrationAction?.();
+                      }
+                    });
+                  };
+                  globalScene.time.delayedCall(fixedInt(2000), retryLogin);
+                } else {
+                  originalRegistrationAction?.();
+                }
+              });
             }
           });
       }

@@ -79,51 +79,14 @@ export class LoginPhase extends Phase {
   }
 
   private showLoginRegister(): void {
-    const { gameData, phaseManager, ui } = globalScene;
-
-    const backButton = () => {
-      phaseManager.unshiftNew("LoginPhase", false);
-      this.end();
-    };
-
-    const checkUserInfo = async (): Promise<boolean> => {
-      ui.playSelect();
-      const success = await updateUserInfo();
-      if (!success[0]) {
-        removeCookie(sessionIdKey);
-        globalScene.reset(true, true);
-        return false;
-      }
-      return true;
-    };
-
-    const loginButton = async () => {
-      const success = await checkUserInfo();
-      if (!success) {
-        return;
-      }
-      await gameData.loadSystem();
-      this.end();
-    };
-
-    const registerButton = async () => {
-      const success = await checkUserInfo();
-      if (!success) {
-        return;
-      }
-      this.end();
-    };
+    const { ui } = globalScene;
 
     const goToLoginButton = () => {
-      globalScene.playSound("ui/menu_open");
-
-      ui.setMode(UiMode.LOGIN_FORM, { buttonActions: [loginButton, backButton] });
+      this.goToLogin();
     };
 
     const goToRegistrationButton = () => {
-      globalScene.playSound("ui/menu_open");
-
-      ui.setMode(UiMode.REGISTRATION_FORM, { buttonActions: [registerButton, backButton] });
+      this.goToRegister();
     };
 
     if (this.showText) {
@@ -133,5 +96,57 @@ export class LoginPhase extends Phase {
     globalScene.playSound("ui/menu_open");
 
     ui.setMode(UiMode.LOGIN_OR_REGISTER, { buttonActions: [goToLoginButton, goToRegistrationButton] });
+  }
+
+  private async checkUserInfo(): Promise<boolean> {
+    globalScene.ui.playSelect();
+    const success = await updateUserInfo();
+    if (!success[0]) {
+      removeCookie(sessionIdKey);
+      globalScene.reset(true, true);
+      return false;
+    }
+    return true;
+  }
+
+  public goToLogin(): void {
+    const { gameData, ui, phaseManager } = globalScene;
+
+    const backButton = () => {
+      phaseManager.unshiftNew("LoginPhase", false);
+      this.end();
+    };
+
+    const loginButton = async () => {
+      const success = await this.checkUserInfo();
+      if (!success) {
+        return;
+      }
+      await gameData.loadSystem();
+      this.end();
+    };
+    globalScene.playSound("ui/menu_open");
+
+    ui.setMode(UiMode.LOGIN_FORM, { buttonActions: [loginButton, backButton] });
+  }
+
+  public goToRegister(): void {
+    const { phaseManager, ui } = globalScene;
+
+    const backButton = () => {
+      phaseManager.unshiftNew("LoginPhase", false);
+      this.end();
+    };
+
+    const registerButton = async () => {
+      const success = await this.checkUserInfo();
+      if (!success) {
+        return;
+      }
+      this.end();
+    };
+    globalScene.playSound("ui/menu_open");
+
+    ui.setMode(UiMode.REGISTRATION_FORM, { buttonActions: [registerButton, backButton] });
   }
 }

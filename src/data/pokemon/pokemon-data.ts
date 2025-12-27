@@ -89,7 +89,6 @@ interface SerializedPokemonSummonData {
   types: PokemonType[];
   addedType?: PokemonType;
   illusion?: SerializedIllusionData;
-  illusionBroken: boolean;
   berriesEatenLast: BerryType[];
   moveHistory: TurnMove[];
 }
@@ -129,14 +128,6 @@ export class PokemonSummonData {
 
   /** Data pertaining to this pokemon's Illusion, if it has one. */
   public illusion: IllusionData | null = null;
-  /**
-   * Whether this Pokemon's illusion has been broken since switching out.
-   * @defaultValue `false`
-   */
-  // TODO: Since Illusion applies on switch in, and this entire class is reset on switch-in,
-  // this may be replaceable with a check for `pokemon.summonData.illusionData !== null`
-  public illusionBroken = false;
-
   /** Array containing all berries eaten in the last turn; used by {@linkcode AbilityId.CUD_CHEW} */
   public berriesEatenLast: BerryType[] = [];
 

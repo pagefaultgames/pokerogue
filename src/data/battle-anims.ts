@@ -14,6 +14,8 @@ import { getEnumKeys, getEnumValues } from "#utils/enums";
 import { toKebabCase } from "#utils/strings";
 import Phaser from "phaser";
 
+// TODO: Split up this entire file - it has way WAY too much stuff for its own good.
+// (Also happens to be positively spaghetti, but that's besides the point)
 export class AnimConfig {
   public id: number;
   public graphic: string;

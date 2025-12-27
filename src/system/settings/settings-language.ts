@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import type { LoginRegisterInfoContainerUiHandler } from "#ui/login-register-info-container-ui-handler";
 import type { SettingsDisplayUiHandler } from "#ui/settings-display-ui-handler";
 import i18next from "i18next";
 
@@ -8,6 +9,8 @@ const cancelHandler = () => {
   // Reset the cursor to the current language, if in the settings menu
   if (handler && typeof (handler as SettingsDisplayUiHandler).setOptionCursor === "function") {
     (handler as SettingsDisplayUiHandler).setOptionCursor(-1, 0, true);
+  } else if (handler && typeof (handler as LoginRegisterInfoContainerUiHandler).setInteractive === "function") {
+    (handler as LoginRegisterInfoContainerUiHandler).setInteractive(true);
   }
 };
 

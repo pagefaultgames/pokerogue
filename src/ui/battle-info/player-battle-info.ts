@@ -207,6 +207,7 @@ export class PlayerBattleInfo extends BattleInfo {
     this.lastLevelCapped = isLevelCapped;
 
     if (this.lastExp !== pokemon.exp || this.lastLevel !== pokemon.level) {
+      this.lastLevel = Math.min(this.lastLevel, pokemon.level);
       const durationMultiplier = Math.max(
         Phaser.Tweens.Builders.GetEaseFunction("Cubic.easeIn")(1 - Math.min(pokemon.level - this.lastLevel, 10) / 10),
         0.1,

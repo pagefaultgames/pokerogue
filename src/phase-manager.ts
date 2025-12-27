@@ -537,7 +537,7 @@ export class PhaseManager {
     phase: T,
     ...args: ConstructorParameters<PhaseConstructorMap[T]>
   ): void {
-    this.phaseQueue.unshiftToCurrent(this.create(phase, ...args));
+    this.phaseQueue.addPhase(this.create(phase, ...args), true);
   }
 
   /**
