@@ -70,9 +70,11 @@ export class GameWrapper {
   }
 
   /**
-   * Override this scene and stub out various properties to avoid crashes with headless games.
-   * @todo Review what parts of this are actually NEEDED
-   * @todo Overhaul this to work with a multi-scene project
+   * Override the scene and stub out various properties to avoid crashes.
+   * @todo This method is an unmaintainable mess and likely stems from us 
+   * never actually instantiating `BattleScene` via `Phaser.Game` correctly.
+   * Furthermore, this also makes testing any form of Phaser-related infrastructure absolutely
+   * infeasible, and must be revisited before a multi-scene breakup can be considered.
    */
   private injectMandatory(): void {
     this.game.config = {
