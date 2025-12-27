@@ -516,7 +516,7 @@ export class Animation {
     let f = 0;
     let amp = 8;
 
-    // TODO: This repeats infinitely, which is bad
+    // NB: While this would recurse infinitely, `addParticle` manually ends `particleTimer` once the particles descend enough.
     const particleTimer = globalScene.tweens.addCounter({
       repeat: -1,
       duration: getFrameMs(1),
