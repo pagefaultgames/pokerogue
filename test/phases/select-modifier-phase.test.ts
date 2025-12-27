@@ -118,7 +118,6 @@ describe("SelectModifierPhase", () => {
       scene.waveSeed = shiftCharCodes(scene.seed, 5);
       Phaser.Math.RND.sow([scene.waveSeed]);
       console.log("Wave Seed:", scene.waveSeed, 5);
-      scene.rngCounter = 0;
     });
 
     game.move.select(MoveId.FISSURE);
