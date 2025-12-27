@@ -191,7 +191,7 @@ export class PhaseTree {
    * @param phaseFilter - An optional `PhaseConditionFunc` to specify conditions for the phase
    * @returns Whether a matching phase exists
    */
-  public exists<P extends PhaseString>(phaseName: P, phaseFilter?: PhaseConditionFunc<P>): boolean {
-    return this.levels.some(level => level.some(phase => phase.is(phaseName) && (!phaseFilter || phaseFilter(phase))));
+  public exists<P extends PhaseString>(phaseName: P, phaseFilter: PhaseConditionFunc<P> = () => true): boolean {
+    return this.levels.some(level => level.some(phase => phase.is(phaseName) && phaseFilter(phase)));
   }
 }
