@@ -374,8 +374,13 @@ export class OverridesHelper extends GameManagerHelper {
    */
   public randomTrainer(trainer: RandomTrainerOverride | null): this {
     vi.spyOn(Overrides, "RANDOM_TRAINER_OVERRIDE", "get").mockReturnValue(trainer);
-    // TODO: Come up with a decent way of formatting the string for this
-    this.log("Random trainer battle set!");
+    if (trainer === null) {
+      this.log("Random trainer override disabled!");
+    } else {
+      this.log(
+        `Random trainer set to a ${trainer.trainerVariant ? `${getEnumStr(TrainerVariant, trainer.trainerVariant)} ` : ""}${getEnumStr(TrainerType, trainer.trainerType)}${trainer.trainerVariant === TrainerVariant.DOUBLE ? " battle" : ""}!`,
+      );
+    }
     return this;
   }
 
