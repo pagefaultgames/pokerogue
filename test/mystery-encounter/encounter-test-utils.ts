@@ -152,10 +152,7 @@ async function handleSecondaryOptionSelect(game: GameManager, pokemonNo: number,
  * @param game
  * @param runRewardsPhase
  */
-export async function skipBattleRunMysteryEncounterRewardsPhase(
-  game: GameManager,
-  runRewardsPhase?: false | undefined,
-) {
+export async function skipBattleRunMysteryEncounterRewardsPhase(game: GameManager, runRewardsPhase?: false) {
   game.scene.phaseManager.clearPhaseQueue();
   game.scene.getEnemyParty().forEach(p => {
     p.hp = 0;
