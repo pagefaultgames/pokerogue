@@ -16,7 +16,7 @@ export class PhaseTree {
    * Storage for all levels in the tree.
    * This is a simple array because only one Phase may run and have "children" at a time.
    * @remarks
-   * This does _not_ include the currently-running Phase, which is removed prior to being ran.
+   * This does _not_ include the currently-running Phase, which is removed prior to being run.
    */
   private levels: Phase[][] = [[]];
   /** The level of the currently-running {@linkcode Phase} in the Tree. */

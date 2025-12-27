@@ -11,7 +11,7 @@ export class DynamicPhaseMarker extends Phase {
   public override readonly phaseName = "DynamicPhaseMarker";
   /**
    * The name of the {@linkcode Phase} being tracked. \
-   * Will be executed when this Phase would otherwise be ran.
+   * Will be executed when this Phase would otherwise be run.
    */
   public readonly phaseType: PhaseString;
 
