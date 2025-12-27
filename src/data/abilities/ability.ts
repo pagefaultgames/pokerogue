@@ -1298,7 +1298,7 @@ export class PostDefendTypeChangeAbAttr extends PostDefendAbAttr {
     }
 
     this.type = attacker.getMoveType(move);
-    if (pokemon.getTypes(true, true).includes(this.type)) {
+    if (pokemon.isOfType(this.type, true, true)) {
       return false;
     }
 
