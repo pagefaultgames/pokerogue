@@ -87,7 +87,7 @@ describe("Utils - Phase Interceptor - Unit", () => {
     it("should start the specified phase and resolve after it ends", async () => {
       await to("ApplePhase");
 
-      expectAtPhase("ApplePhase");
+      expectAtPhase("BananaPhase");
       expect(getQueuedPhases()).toEqual(["CoconutPhase", "ApplePhase", "CoconutPhase"]);
       expect(game.phaseInterceptor.log).toEqual(["ApplePhase"]);
     });
@@ -96,7 +96,7 @@ describe("Utils - Phase Interceptor - Unit", () => {
       await to("ApplePhase", false);
 
       expectAtPhase("ApplePhase");
-      expect(getQueuedPhases()).toEqual(["ApplePhase", "CoconutPhase", "ApplePhase", "CoconutPhase"]);
+      expect(getQueuedPhases()).toEqual(["BananaPhase", "CoconutPhase", "ApplePhase", "CoconutPhase"]);
       expect(game.phaseInterceptor.log).toEqual([]);
 
       await to("ApplePhase", false);
