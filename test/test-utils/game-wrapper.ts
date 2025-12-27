@@ -71,7 +71,7 @@ export class GameWrapper {
 
   /**
    * Override the scene and stub out various properties to avoid crashes.
-   * @todo This method is an unmaintainable mess and likely stems from us 
+   * @todo This method is an unmaintainable mess and likely stems from us
    * never actually instantiating `BattleScene` via `Phaser.Game` correctly.
    * Furthermore, this also makes testing any form of Phaser-related infrastructure absolutely
    * infeasible, and must be revisited before a multi-scene breakup can be considered.
