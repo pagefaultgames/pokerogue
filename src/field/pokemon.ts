@@ -24,11 +24,11 @@ import { NoCritTag, WeakenMoveScreenTag } from "#data/arena-tag";
 import {
   AutotomizedTag,
   BattlerTag,
+  type BattlerTagTypeMap,
   CritBoostTag,
   EncoreTag,
   ExposedTag,
   GroundedTag,
-  type GrudgeTag,
   getBattlerTag,
   HighestStatBoostTag,
   MoveRestrictionBattlerTag,
@@ -4086,10 +4086,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return false;
   }
 
-  // TODO: Utilize a type map for these so we can avoid overloads
-  public getTag(tagType: BattlerTagType.GRUDGE): GrudgeTag | undefined;
-  public getTag(tagType: BattlerTagType.SUBSTITUTE): SubstituteTag | undefined;
-  public getTag(tagType: BattlerTagType): BattlerTag | undefined;
+  public getTag<T extends BattlerTagType>(tagType: T): BattlerTagTypeMap[T] | undefined;
   public getTag<T extends BattlerTag>(tagType: Constructor<T>): T | undefined;
   public getTag(tagType: BattlerTagType | Constructor<BattlerTag>): BattlerTag | undefined {
     return typeof tagType === "function"
@@ -6512,7 +6509,7 @@ export class EnemyPokemon extends Pokemon {
       }
       // If a move is forced because of Encore, use it.
       // Said moves are executed normally
-      const encoreTag = this.getTag(EncoreTag) as EncoreTag;
+      const encoreTag = this.getTag(EncoreTag);
       if (encoreTag) {
         const encoreMove = movePool.find(m => m.moveId === encoreTag.moveId);
         if (encoreMove) {

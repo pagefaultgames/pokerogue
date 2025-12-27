@@ -3,7 +3,7 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
-import { CenterOfAttentionTag } from "#data/battler-tags";
+import { CenterOfAttentionTag, type EncoreTag } from "#data/battler-tags";
 import { SpeciesFormChangePreMoveTrigger } from "#data/form-change-triggers";
 import { getStatusEffectActivationText } from "#data/status-effect";
 import { getTerrainBlockMessage } from "#data/terrain";
@@ -392,6 +392,13 @@ export class MovePhase extends PokemonPhase {
     user.removeTag(BattlerTagType.ALWAYS_GET_HIT);
     user.removeTag(BattlerTagType.RECEIVE_DOUBLE_DAMAGE);
     console.log(MoveId[this.move.moveId], enumValueToKey(MoveUseMode, this.useMode));
+
+    // Override the move being used if Encore was added to this Pokemon this turn.
+    const encoreTag = user.getTag(BattlerTagType.ENCORE) as EncoreTag | undefined;
+    const override = encoreTag?.tryOverrideMove(user);
+    if (override) {
+      [this.move, this.targets] = override;
+    }
 
     // For the purposes of payback and kin, the pokemon is considered to have acted
     // if it attempted to move at all.

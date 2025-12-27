@@ -175,11 +175,6 @@ export class CommandPhase extends FieldPhase {
 
     this.checkCommander();
 
-    const playerPokemon = this.getPokemon();
-
-    // Note: It is OK to call this if the target is not under the effect of encore; it will simply do nothing.
-    playerPokemon.lapseTag(BattlerTagType.ENCORE);
-
     if (globalScene.currentBattle.turnCommands[this.fieldIndex]?.skip) {
       this.end();
       return;
