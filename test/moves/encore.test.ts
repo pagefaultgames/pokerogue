@@ -45,7 +45,7 @@ describe("Move - Encore", () => {
     game.move.use(MoveId.ENCORE);
     await game.move.forceEnemyMove(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.toEndOfTurn(false);
+    await game.toEndOfTurn();
 
     const feebas = game.field.getPlayerPokemon();
     const karp = game.field.getEnemyPokemon();
