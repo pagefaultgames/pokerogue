@@ -899,7 +899,7 @@ export class GameData {
   /**
    * Load stored session data and re-initialize the game with its contents.
    * @param slotIndex - The 0-indexed position of the save slot to load.
-   *   Values `<= 0` are considered invalid.
+   *   Values `< 0` are considered invalid.
    * @returns A Promise that resolves with whether the session load succeeded
    * (i.e. whether a save in the given slot exists)
    */
