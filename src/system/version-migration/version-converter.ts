@@ -1,10 +1,8 @@
-/** biome-ignore-all lint/performance/noNamespaceImport: Convenience */
+/* biome-ignore-all lint/performance/noNamespaceImport: Convenience */
 
 import { version } from "#package.json";
 import type { SessionSaveData, SystemSaveData } from "#types/save-data";
-import type { SessionSaveMigrator } from "#types/session-save-migrator";
-import type { SettingsSaveMigrator } from "#types/settings-save-migrator";
-import type { SystemSaveMigrator } from "#types/system-save-migrator";
+import type { SessionSaveMigrator, SettingsSaveMigrator, SystemSaveMigrator } from "#types/save-migrators";
 import { compareVersions } from "compare-versions";
 
 /*

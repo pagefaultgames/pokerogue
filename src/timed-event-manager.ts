@@ -82,6 +82,59 @@ interface TimedEvent extends EventBanner {
 
 const timedEvents: readonly TimedEvent[] = [
   {
+    name: "Winter 25",
+    eventType: EventType.SHINY,
+    startDate: new Date(Date.UTC(2025, 11, 19)),
+    endDate: new Date(Date.UTC(2026, 0, 5)),
+    bannerKey: "winter_holidays2025-event",
+    scale: 0.19,
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-419", "pt-BR", "zh-Hans", "zh-Hant", "da", "ru"],
+    shinyEncounterMultiplier: 2,
+    shinyCatchMultiplier: 3,
+    upgradeUnlockedVouchers: true,
+    eventEncounters: [
+      { species: SpeciesId.CYNDAQUIL },
+      { species: SpeciesId.SENTRET },
+      { species: SpeciesId.DELIBIRD },
+      { species: SpeciesId.STANTLER },
+      { species: SpeciesId.SMOOCHUM },
+      { species: SpeciesId.BALTOY },
+      { species: SpeciesId.MAKUHITA },
+      { species: SpeciesId.PIPLUP },
+      { species: SpeciesId.CHINGLING },
+      { species: SpeciesId.LITWICK },
+      { species: SpeciesId.CHESPIN },
+      { species: SpeciesId.AMAURA },
+      { species: SpeciesId.COMFEY },
+      { species: SpeciesId.DHELMISE },
+      { species: SpeciesId.ROLYCOLY },
+      { species: SpeciesId.SMOLIV },
+      { species: SpeciesId.GIMMIGHOUL, blockEvolution: true },
+      { species: SpeciesId.IRON_BUNDLE },
+      { species: SpeciesId.ALOLA_VULPIX },
+      { species: SpeciesId.GALAR_DARUMAKA },
+    ],
+    classicWaveRewards: [
+      { wave: 8, type: "SHINY_CHARM" },
+      { wave: 8, type: "ABILITY_CHARM" },
+      { wave: 8, type: "CATCHING_CHARM" },
+      { wave: 25, type: "SHINY_CHARM" },
+    ],
+    delibirdyBuff: ["CATCHING_CHARM", "SHINY_CHARM", "ABILITY_CHARM", "EXP_CHARM", "SUPER_EXP_CHARM", "HEALING_CHARM"],
+    mysteryEncounterTierChanges: [
+      {
+        mysteryEncounter: MysteryEncounterType.DELIBIRDY,
+        tier: MysteryEncounterTier.COMMON,
+      },
+      { mysteryEncounter: MysteryEncounterType.PART_TIMER, disable: true },
+      {
+        mysteryEncounter: MysteryEncounterType.DEPARTMENT_STORE_SALE,
+        disable: true,
+      },
+    ],
+    dailyRunStartingItems: ["ABILITY_CHARM", "SHINY_CHARM"],
+  },
+  {
     name: "Winter Holiday Update",
     eventType: EventType.SHINY,
     shinyEncounterMultiplier: 2,
@@ -396,7 +449,7 @@ const timedEvents: readonly TimedEvent[] = [
     name: "Halloween 25",
     eventType: EventType.SHINY,
     startDate: new Date(Date.UTC(2025, 9, 30)),
-    endDate: new Date(Date.UTC(2025, 10, 10)),
+    endDate: new Date(Date.UTC(2025, 10, 12)),
     bannerKey: "halloween2025",
     scale: 0.19,
     availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-419", "pt-BR", "zh-Hans", "zh-Hant", "da", "ru"],
@@ -438,7 +491,16 @@ const timedEvents: readonly TimedEvent[] = [
 ];
 
 export class TimedEventManager {
+  /**
+   * Whether the timed event manager is disabled.
+   * Used to disable events in testing.
+   */
+  private disabled: boolean;
+
   isActive(event: TimedEvent) {
+    if (this.disabled) {
+      return false;
+    }
     const now = new Date();
     return event.startDate < now && now < event.endDate;
   }
@@ -634,10 +696,19 @@ export class TimedEventManager {
   getEventDailyStartingItems(): readonly ModifierTypeKeys[] {
     return this.activeEvent()?.dailyRunStartingItems ?? [];
   }
+
+  /**
+   * Disable the timed event manager. Used for testing.
+   */
+  public disable(): void {
+    this.disabled = true;
+  }
+
+  // todo: add option to enable to aloow for testing timed events
 }
 
 export class TimedEventDisplay extends Phaser.GameObjects.Container {
-  private event: TimedEvent | nil;
+  private readonly event: TimedEvent | nil;
   private eventTimerText: Phaser.GameObjects.Text;
   private banner: Phaser.GameObjects.Image;
   private availableWidth: number;
@@ -654,7 +725,7 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
    * Set the width that can be used to display the event timer and banner. By default
    * these elements get centered horizontally in that space, in the bottom left of the screen
    */
-  setWidth(width: number) {
+  public setWidth(width: number): void {
     if (width !== this.availableWidth) {
       this.availableWidth = width;
       const xPosition = this.availableWidth / 2 + (this.event?.xOffset ?? 0);
@@ -667,7 +738,7 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
     }
   }
 
-  setup() {
+  public setup(): void {
     const lang = i18next.resolvedLanguage;
     if (this.event?.bannerKey) {
       let key = this.event.bannerKey;
@@ -704,7 +775,7 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
     }
   }
 
-  show() {
+  public show(): void {
     this.setVisible(true);
     this.updateCountdown();
 
@@ -713,13 +784,13 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
     }, 1000);
   }
 
-  clear() {
+  public clear(): void {
     this.setVisible(false);
     this.eventTimer && clearInterval(this.eventTimer);
     this.eventTimer = null;
   }
 
-  private timeToGo(date: Date) {
+  private timeToGo(date: Date): string {
     // Utility to add leading zero
     function z(n) {
       return (n < 10 ? "0" : "") + n;
@@ -745,8 +816,8 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
     });
   }
 
-  updateCountdown() {
-    if (this.event && this.event.eventType !== EventType.NO_TIMER_DISPLAY) {
+  private updateCountdown(): void {
+    if (this.event && this.event.eventType !== EventType.NO_TIMER_DISPLAY && this.eventTimerText.visible) {
       this.eventTimerText.setText(this.timeToGo(this.event.endDate));
     }
   }
