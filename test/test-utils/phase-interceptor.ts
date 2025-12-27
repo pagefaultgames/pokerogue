@@ -34,10 +34,7 @@ export class PhaseInterceptor {
   public log: PhaseString[] = [];
   /**
    * The interceptor's current state.
-   * Possible values are the following:
-   * - `running`: The interceptor is currently running a phase.
-   * - `interrupted`: The interceptor has been interrupted by a UI prompt and is waiting for the caller to end it.
-   * - `idling`: The interceptor is not currently running a phase and is ready to start a new one.
+   * @see {@linkcode StateType}
    * @defaultValue `idling`
    */
   private state: StateType = "idling";
