@@ -13,12 +13,8 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * Allows for caching to avoid repeated instantiation and faster typechecking.
  * @internal
  */
-type SerializableArenaTagOptions<A extends SerializableArenaTagType> = OneOther<
-  ArenaTagDataMap[A],
-  "tagType" | "side"
-> & {
-  tagType: A;
-};
+type SerializableArenaTagOptions<A extends SerializableArenaTagType> = //
+  OneOther<ArenaTagDataMap[A], "tagType" | "side"> & { tagType: A };
 
 /**
  * Helper type for non-serializable arena tag options.
