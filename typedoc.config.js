@@ -22,8 +22,11 @@ const config = {
     "src/extensions.ts",
     "src/vite.env.d.ts",
     "**/*+.test.ts",
+    "**/*+.test-d.ts",
     "test/test-utils/setup",
     "test/test-utils/reporters",
+    "test/@types/matcher-helpers.d.ts",
+    "test/@types/vitest.d.ts",
   ],
   excludePrivate: false, // Private members are useful in the docs for contributors
   excludeReferences: true, // prevent documenting re-exports

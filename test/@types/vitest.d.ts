@@ -21,6 +21,7 @@ import type { GameManager } from "#test/test-utils/game-manager";
 import type { toHaveArenaTagOptions } from "#test/test-utils/matchers/to-have-arena-tag";
 import type { toHaveBattlerTagOptions } from "#test/test-utils/matchers/to-have-battler-tag";
 import type { toHaveEffectiveStatOptions } from "#test/test-utils/matchers/to-have-effective-stat";
+import type { toHaveHpOptions } from "#test/test-utils/matchers/to-have-hp";
 import type { toHavePositionalTagOptions } from "#test/test-utils/matchers/to-have-positional-tag";
 import type { expectedStatusType } from "#test/test-utils/matchers/to-have-status-effect";
 import type { toHaveTypesOptions } from "#test/test-utils/matchers/to-have-types";
@@ -28,45 +29,51 @@ import type { PhaseString } from "#types/phase-types";
 import type { TurnMove } from "#types/turn-move";
 import type { Negate } from "#types/type-helpers";
 import type { toDmgValue } from "#utils/common";
-import type { IntClosedRange, Integer, NonNegativeInteger, IsNumericLiteral, If } from "type-fest";
+import type { If, IntClosedRange, Integer, IsNumericLiteral, IsStringLiteral, NonNegativeInteger } from "type-fest";
 import type { expect } from "vitest";
+import type { GetMatchers, MatchersBase, RestrictMatcher } from "./matcher-helpers";
 
-// #region Boilerplate/Helpers
+// #region Helper Types
+
+/**
+ * Type helper to restrict a type to only numeric integer literals.
+ * @internal
+ */
+type IntLiteral<T extends number> = If<IsNumericLiteral<T>, NonNegativeInteger<T>, never>;
+/**
+ * Type helper to restrict a type to only non-numeric literals, of any form.
+ * @internal
+ */
+type NonNumericLiteral<T extends number> = If<IsNumericLiteral<T>, never, T>;
+// #endregion Helper Types
+
+/**
+ * Interface containing all additional Vitest test matchers.
+ * @internal
+ */
+interface ExtraAssertions<T, Negative extends boolean>
+  extends GenericMatchers<T>,
+    RestrictMatcher<GetMatchers<GameManagerMatchers, Negative>, GameManager, T>,
+    RestrictMatcher<GetMatchers<ArenaMatchers, Negative>, GameManager, T>,
+    RestrictMatcher<GetMatchers<PokemonMatchers, Negative>, Pokemon, T> {}
+
 declare module "vitest" {
-  interface Assertion<T>
-    extends GenericMatchers<T>,
-      RestrictMatcher<GameManagerMatchers, T, GameManager>,
-      RestrictMatcher<ArenaMatchers, T, GameManager>,
-      RestrictMatcher<PokemonMatchers, T, Pokemon> {
+  interface Assertion<T, Negative extends boolean = false> extends ExtraAssertions<T, Negative> {
     /**
      * Invert a matcher's conditions, causing it to fail whenever it would normally succeed
      * (and vice versa).
      * @privateRemarks
      * Matchers with custom "invalid" conditions can (and should) ignore this in case of invalid input.
+     * Certain others have different rules for negated assertions with respect to allowed parameters.
      * @example
      * ```ts
      * expect(1).not.toBe(2);
+     * expect(game).not.toHavePositionalTag(PositionalTagType.WISH);
      * ```
      */
-    not: Assertion<T>;
+    not: Assertion<T, true>;
   }
 }
-
-/**
- * Utility type to restrict matchers' properties based on the type of `T`.
- * If it does not extend `R`, all methods inside `M` will have their types resolved to `never`.
- * @typeParam M - The type of the matchers object to restrict
- * @typeParam T - The type parameter of the assertion
- * @typeParam R - The type to restrict `T` based off of
- * @privateRemarks
- * We cannot remove incompatible methods outright as TypeScript requires that
- * interfaces both contain and extend off of types with statically known members.
- * @internal
- */
-type RestrictMatcher<M extends object, T, R> = {
-  [k in keyof M]: T extends R ? M[k] : never;
-};
-// #endregion Boilerplate/Helpers
 
 // #region Generic Matchers
 interface GenericMatchers<T> {
@@ -118,7 +125,13 @@ interface GameManagerMatchers {
 // #endregion GameManager Matchers
 
 // #region Arena Matchers
-interface ArenaMatchers {
+declare class ArenaMatchers implements MatchersBase<keyof ArenaMatchersCommon> {
+  common: ArenaMatchersCommon;
+  negative: ArenaMatchersNegative;
+  positive: ArenaMatchersPositive;
+}
+
+interface ArenaMatchersCommon {
   /**
    * Check whether the current {@linkcode WeatherType} is as expected.
    * @param expectedWeatherType - The expected `WeatherType`
@@ -148,13 +161,25 @@ interface ArenaMatchers {
    * @param expectedTag - A partially-filled `PositionalTag` containing the desired properties
    */
   toHavePositionalTag<P extends PositionalTagType>(expectedTag: toHavePositionalTagOptions<P>): void;
+}
+
+interface ArenaMatchersPositive {
   /**
    * Check whether the current {@linkcode Arena} contains the given number of {@linkcode PositionalTag}s.
    * @param expectedType - The {@linkcode PositionalTagType} of the desired tag
    * @param count - (Default `1`) The number of instances of `expectedType` that should be active.
-   * Must be within the range `[0, 4]`.
+   * Must be within the range `[1, 4]`.
+   * @remarks
+   * If you want to check that a given tag is _not_ present on-field, use the negated form of this matcher instead.
    */
   toHavePositionalTag(expectedType: PositionalTagType, count?: IntClosedRange<1, 4>): void;
+}
+interface ArenaMatchersNegative {
+  /**
+   * Check whether the current {@linkcode Arena} contains **no** copies of a given {@linkcode PositionalTag}.
+   * @param expectedType - The {@linkcode PositionalTagType} of the tag whose absence is being checked
+   */
+  toHavePositionalTag(expectedType: PositionalTagType): void;
 }
 
 // #endregion Arena Matchers
@@ -280,3 +305,6 @@ interface PokemonMatchers {
   toHaveUsedPP<P extends number | "all">(moveId: MoveId, ppUsed: If<IsNumericLiteral<P>, Integer<P>, P>): void;
 }
 // #endregion Pokemon Matchers
+
+// biome-ignore lint/complexity/noUselessEmptyExport: Prevents exporting internal types (cf. https://github.com/microsoft/TypeScript/issues/57764)
+export {};

@@ -1,4 +1,5 @@
 import type { toSerializedPosTag } from "#data/positional-tags/load-positional-tag";
+import { PositionalTag } from "#data/positional-tags/positional-tag";
 import type { PositionalTagType } from "#enums/positional-tag-type";
 import type { OneOther } from "#test/@types/test-helpers";
 import type { GameManager } from "#test/test-utils/game-manager";
@@ -18,14 +19,15 @@ export type toHavePositionalTagOptions<P extends PositionalTagType> = OneOther<t
  * @param received - The object to check. Should be the current {@linkcode GameManager}
  * @param expectedTag - The {@linkcode PositionalTagType} of the desired tag, or a partially-filled {@linkcode PositionalTag}
  * containing the desired properties
- * @param count - The number of tags that should be active; defaults to `1` and must be within the range `[0, 4]`
+ * @param count - (Default `1`) The number of tags that should be active; must be an integer within the range `[1, 4]`.
+ * Negative matches will disregard this and instead assert that **no** tags were found.
  * @returns The result of the matching
  */
 export function toHavePositionalTag<P extends PositionalTagType>(
-  this: MatcherState,
+  this: Readonly<MatcherState>,
   received: unknown,
   expectedTag: P | toHavePositionalTagOptions<P>,
-  count = 1,
+  count = this.isNot ? 0 : 1,
 ): SyncExpectationResult {
   if (!isGameManagerInstance(received)) {
     return {
@@ -42,11 +44,18 @@ export function toHavePositionalTag<P extends PositionalTagType>(
     };
   }
 
-  // TODO: Increase limit if triple battles are added
-  if (!isBetween(count, 0, 4) || !Number.isSafeInteger(count)) {
+  const countValid = this.isNot
+    ? count === 0
+    : // TODO: Increase upper bound if triple battles are added
+      Number.isSafeInteger(count) && isBetween(count, 1, 4);
+
+  if (!countValid) {
     return {
       pass: this.isNot,
-      message: () => `Expected count to be an integer between 0 and 4, but got ${count} instead!`,
+      message: () =>
+        this.isNot
+          ? `Expected count to be 0 for negated matchers, but got ${count} instead!`
+          : `Expected count to be an integer between 1 and 4, but got ${count} instead!`,
     };
   }
 
@@ -54,17 +63,15 @@ export function toHavePositionalTag<P extends PositionalTagType>(
   const tagType = typeof expectedTag === "string" ? expectedTag : expectedTag.tagType;
   const matchingTags = allTags.filter(t => t.tagType === tagType);
 
-  // If checking exclusively tag type, check solely the number of matching tags on field
+  // If checking exclusively tag type, check solely the number of matching tags on field.
   if (typeof expectedTag === "string") {
-    const pass = matchingTags.length === count;
+    const hasTags = matchingTags.length === count;
     const expectedStr = getPosTagStr(expectedTag, count);
 
+    // Since vitest checks based off a local copy of `isNot` (see `@vitest/expect/index.js`), we adjust return manually to account for custom behaviour
     return {
-      pass,
-      message: () =>
-        pass
-          ? `Expected the Arena to NOT have ${expectedStr} active, but it did!`
-          : `Expected the Arena to have ${expectedStr} active, but got ${matchingTags.length} instead!`,
+      pass: hasTags !== this.isNot,
+      message: () => `Expected the Arena to have ${expectedStr} active, but got ${matchingTags.length} instead!`,
       expected: expectedTag,
       actual: allTags,
     };
@@ -104,8 +111,12 @@ export function toHavePositionalTag<P extends PositionalTagType>(
  */
 function getPosTagStr(tagType: PositionalTagType, count: number): string {
   const tagStr = toTitleCase(tagType) + "Tag";
-  if (count === 1) {
-    return `a single ${tagStr}`;
+  switch (count) {
+    case 0:
+      return `no ${tagStr}s`;
+    case 1:
+      return `a single ${tagStr}`;
+    default:
+      return `${count} ${tagStr}s`;
   }
-  return `${count} ${tagStr}s`;
 }
