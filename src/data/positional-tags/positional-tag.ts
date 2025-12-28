@@ -6,6 +6,7 @@ import type { BattlerIndex } from "#enums/battler-index";
 import type { MoveId } from "#enums/move-id";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { PositionalTagType } from "#enums/positional-tag-type";
+import type { Stat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
 import i18next from "i18next";
 

@@ -1,4 +1,5 @@
 import type { toSerializedPosTag } from "#data/positional-tags/load-positional-tag";
+import type { PositionalTag } from "#data/positional-tags/positional-tag";
 import type { PositionalTagType } from "#enums/positional-tag-type";
 import type { OneOther } from "#test/@types/test-helpers";
 import type { GameManager } from "#test/test-utils/game-manager";
@@ -15,8 +16,8 @@ export type toHavePositionalTagOptions<P extends PositionalTagType> = OneOther<t
 /**
  * Matcher to check if the {@linkcode Arena} has a certain number of {@linkcode PositionalTag}s active.
  * @param received - The object to check. Should be the current {@linkcode GameManager}
- * @param expectedTag - The {@linkcode PositionalTagType} of the desired tag, or a partially-filled {@linkcode PositionalTag}
- * containing the desired properties
+ * @param expectedTag - The {@linkcode PositionalTagType} of the desired tag, or a partially-filled
+ * {@linkcode PositionalTag} containing the desired properties
  * @param count - The number of tags that should be active; defaults to `1` and must be within the range `[0, 4]`
  * @returns The result of the matching
  */
