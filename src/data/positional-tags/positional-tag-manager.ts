@@ -50,6 +50,6 @@ export class PositionalTagManager {
         tag.trigger();
       }
     }
-    this.tags = leftoverTags;
+    this.tags.splice(0, this.tags.length, ...leftoverTags);
   }
 }

@@ -30,6 +30,7 @@ import { Variant } from "#sprites/variant";
  * {@linkcode BerryType}, {@linkcode EvolutionItem}, {@linkcode FormChangeItem}
  * {@linkcode Stat}, {@linkcode PokemonType}
  */
+
 /**
  * Overrides that are using when testing different in game situations
  *

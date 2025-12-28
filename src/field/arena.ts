@@ -49,7 +49,7 @@ export class Arena {
    * All currently-active {@linkcode PositionalTag}s on both sides of the field,
    * sorted by tag type.
    */
-  public positionalTagManager: PositionalTagManager = new PositionalTagManager();
+  public readonly positionalTagManager: PositionalTagManager = new PositionalTagManager();
 
   public bgm: string;
   public ignoreAbilities: boolean;
