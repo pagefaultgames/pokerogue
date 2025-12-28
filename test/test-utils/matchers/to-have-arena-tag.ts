@@ -13,7 +13,10 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * Allows for caching to avoid repeated instantiation and faster typechecking.
  * @internal
  */
-type SerializableArenaTagOptions<A extends SerializableArenaTagType> = OneOther<ArenaTagDataMap[A], "tagType"> & {
+type SerializableArenaTagOptions<A extends SerializableArenaTagType> = OneOther<
+  ArenaTagDataMap[A],
+  "tagType" | "side"
+> & {
   tagType: A;
 };
 
@@ -22,7 +25,7 @@ type SerializableArenaTagOptions<A extends SerializableArenaTagType> = OneOther<
  * Allows for caching to avoid repeated instantiation and faster typechecking.
  * @internal
  */
-type NonSerializableArenaTagOptions<A extends ArenaTagType> = OneOther<ArenaTagTypeMap[A], "tagType"> & {
+type NonSerializableArenaTagOptions<A extends ArenaTagType> = OneOther<ArenaTagTypeMap[A], "tagType" | "side"> & {
   tagType: A;
 };
 
@@ -68,9 +71,7 @@ export function toHaveArenaTag<A extends ArenaTagType>(
 
   // Coerce lone `tagType`s into objects
   // Bangs are ok as we enforce safety via overloads
-  // @ts-expect-error - Typescript is being stupid as tag type and side will always exist
-  const etag: Partial<ArenaTag> & { tagType: T; side: ArenaTagSide } =
-    typeof expectedTag === "object" ? expectedTag : { tagType: expectedTag, side };
+  const etag = typeof expectedTag === "object" ? expectedTag : { tagType: expectedTag, side };
 
   // If checking only tag type/side OR no tags were found, break out early.
   // We need to get all tags for the case of checking properties of a tag present on both sides of the arena
