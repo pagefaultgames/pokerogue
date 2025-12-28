@@ -64,7 +64,7 @@ export function toHaveBattlerTag<B extends BattlerTagType>(
 
   // Coerce lone `tagType`s into objects
   const eTag = typeof expectedTag === "object" ? expectedTag : { tagType: expectedTag };
-  const gotTag = received.getTag(eTag.tagType);
+  const gotTag = received.getTag(eTag.tagType as B);
 
   // If checking exclusively tag type OR no tags were found, break out early.
   if (typeof expectedTag !== "object" || !gotTag) {

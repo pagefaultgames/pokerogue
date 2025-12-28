@@ -3,6 +3,7 @@
  */
 
 import type { AbAttr } from "#abilities/ability";
+import type { NegativeInfinity, PositiveInfinity } from "type-fest";
 
 /**
  * Exactly matches the type of the argument, preventing adding additional properties.
@@ -112,6 +113,23 @@ export type AtLeastOne<T extends object> = Partial<T> & ObjectValues<{ [K in key
  * @remarks
  * Brands should be either a string or unique symbol. This prevents overlap with other types.
  */
-export declare class Brander<B> {
+export declare class Brander<B extends string | symbol> {
   private __brand: B;
 }
+
+/** Negate a number, converting its sign from positive to negative or vice versa. */
+export type Negate<N extends number> =
+  // Handle edge cases
+  N extends 0
+    ? 0
+    : N extends PositiveInfinity
+      ? NegativeInfinity
+      : N extends NegativeInfinity
+        ? PositiveInfinity
+        : // Handle negative numbers
+          `${N}` extends `-${infer P extends number}`
+          ? P
+          : // Handle positive numbers
+            `-${N}` extends `${infer R extends number}`
+            ? R
+            : never;

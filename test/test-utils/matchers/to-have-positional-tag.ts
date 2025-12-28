@@ -4,6 +4,7 @@ import type { OneOther } from "#test/@types/test-helpers";
 import type { GameManager } from "#test/test-utils/game-manager";
 import { getOnelineDiffStr } from "#test/test-utils/string-utils";
 import { isGameManagerInstance, receivedStr } from "#test/test-utils/test-utils";
+import { isBetween } from "#utils/common";
 import { toTitleCase } from "#utils/strings";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
@@ -42,7 +43,7 @@ export function toHavePositionalTag<P extends PositionalTagType>(
   }
 
   // TODO: Increase limit if triple battles are added
-  if (count < 0 || count > 4) {
+  if (!isBetween(count, 1, 4)) {
     return {
       pass: this.isNot,
       message: () => `Expected count to be between 0 and 4, but got ${count} instead!`,
