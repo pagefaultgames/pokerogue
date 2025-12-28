@@ -1,0 +1,21 @@
+name: Create Changelog
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  Create-changelog:
+    name: Generate Changelog
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - uses: ./.github/actions/setup-deps
+
+      - name: Generate Changelog
+        run: pnpm changelog
+        env:
+          CHANGELOG_TOKEN: ${{ secrets.CHANGELOG_TOKEN }}
+          PR_NUMBER: ${{ github.event.number }}

@@ -8,8 +8,14 @@
 import { Octokit } from "octokit";
 import { writeFileSafe } from "../helpers/file.js";
 
+/**
+ * The version of this script
+ * @type {string}
+ */
+const SCRIPT_VERSION = "1.0.0";
+
 const octokit = new Octokit({
-  auth: process.env.GITHUB_TOKEN,
+  auth: process.env.CHANGELOG_TOKEN,
 });
 
 const CONFIG = {
@@ -35,20 +41,19 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
 
 async function main() {
   try {
-    // TODO: Remove. Just for testing
-    const login = await octokit.rest.users.getAuthenticated();
-    console.log(`Hello, ${login.data.login}!`);
+    console.group(`📝 Changelog Reader v${SCRIPT_VERSION}`);
+
     const cutoffDate = await getCutoffDate();
     if (!cutoffDate) {
       process.exitCode = 1;
       console.error("\x1b[31mFailed to get cutoff date)\x1b[0m");
       return;
     }
-    console.log(`Cutoff date: ${cutoffDate}`);
     CONFIG.SINCE = cutoffDate;
 
     await getChangelogs();
   } catch (error) {
+    process.exitCode = 1;
     console.error(error);
   }
 }
@@ -125,7 +130,7 @@ async function getChangelogs() {
   for (const pr of pullRequests) {
     if (!pr.body) {
       console.log(`\x1b[31mDescription missing for PR: ${pr.title} (${pr.number})\x1b[0m\n`);
-      return;
+      continue;
     }
     const section = getChangelogSection(pr.body);
     if (section) {
@@ -136,8 +141,10 @@ async function getChangelogs() {
     }
   }
 
-  writeFileSafe(CONFIG.OUTPUT_FILE, output, "utf8");
-  console.log(`Results written to ${CONFIG.OUTPUT_FILE}`);
+  if (!process.env.GITHUB_ACTIONS) {
+    writeFileSafe(CONFIG.OUTPUT_FILE, output, "utf8");
+    console.log(`Results written to ${CONFIG.OUTPUT_FILE}`);
+  }
   await updateDescription(output);
 }
 
@@ -177,13 +184,22 @@ async function updateDescription(changelog) {
     + changelog
     + `\n---------------------------\n**This changelog was auto generated at ${dateFormatter.format(new Date())}.**`;
 
-  await octokit.rest.pulls.update({
-    // todo: Update owner and PR number
-    owner: "fabske0",
-    repo: CONFIG.REPO_NAME,
-    pull_number: 2,
-    body: description,
-  });
+  if (!process.env.PR_NUMBER) {
+    console.error("\x1b[31mPR_NUMBER not set. Could not update PR description.\x1b[0m");
+    process.exitCode = 1;
+    return;
+  }
+  await octokit.rest.pulls
+    .update({
+      // todo: Update owner
+      owner: "fabske0",
+      repo: CONFIG.REPO_NAME,
+      pull_number: Number(process.env.PR_NUMBER),
+      body: description,
+    })
+    .catch(err => {
+      console.error(`\x1b[31mFailed to update PR description: ${err}\x1b[0m`);
+    });
 }
 
 /**
