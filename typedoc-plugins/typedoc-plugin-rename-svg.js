@@ -4,15 +4,14 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-// @ts-check
-
-import { PageKind, Renderer } from "typedoc";
 
 /**
- * @module
  * Typedoc plugin to run post-processing on the `index.html` file and replace the coverage SVG
  * for Beta with the newly generated file for the current branch.
+ * @module
  */
+
+import { PageKind, Renderer } from "typedoc";
 
 /**
  * @param {import('typedoc').Application} app
