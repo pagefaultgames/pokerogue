@@ -110,18 +110,18 @@ describe("Utils - Phase Interceptor - Unit", () => {
     it("should run all phases between start and the first instance of target", async () => {
       await to("CoconutPhase");
 
-      expectAtPhase("BananaPhase");
+      expectAtPhase("ApplePhase");
       expect(getQueuedPhases()).toEqual(["CoconutPhase"]);
       expect(game.phaseInterceptor.log).toEqual(["ApplePhase", "BananaPhase", "CoconutPhase"]);
     });
 
     it("should work on newly unshifted phases", async () => {
-      setPhases(UnshifterPhase, CoconutPhase); // adds ApplePhase, ApplePhase and CoconutPhase to queue
-      await to("ApplePhase");
+      setPhases(UnshifterPhase, CoconutPhase); // adds ApplePhase, BananaPhase and CoconutPhase to queue
+      await to("BananaPhase");
 
       expectAtPhase("CoconutPhase");
       expect(getQueuedPhases()).toEqual(["CoconutPhase"]);
-      expect(game.phaseInterceptor.log).toEqual(["UnshifterPhase", "ApplePhase", "ApplePhase"]);
+      expect(game.phaseInterceptor.log).toEqual(["UnshifterPhase", "ApplePhase", "BananaPhase"]);
     });
 
     it("should wait for asynchronous phases to end", async () => {
