@@ -154,7 +154,7 @@ interface ArenaMatchers {
    * @param count - (Default `1`) The number of instances of `expectedType` that should be active.
    * Must be within the range `[0, 4]`.
    */
-  toHavePositionalTag(expectedType: PositionalTagType, count?: Exclude<IntClosedRange<0, 4>, 1>): void;
+  toHavePositionalTag(expectedType: PositionalTagType, count?: IntClosedRange<1, 4>): void;
 }
 
 // #endregion Arena Matchers
@@ -186,7 +186,7 @@ interface PokemonMatchers {
    * Check whether a {@linkcode Pokemon}'s effective stat is as expected
    * (checked after all stat value modifications).
    * @param stat - The {@linkcode EffectiveStat} to check
-   * @param expectedValue - The expected value of `stat`
+   * @param expectedValue - The expected value of `stat`; must be a non-negative integer
    * @param options - The {@linkcode toHaveEffectiveStatOptions | options} passed to the matcher
    * @remarks
    * If you want to check the stat **before** modifiers are applied, use {@linkcode Pokemon.getStat} instead.
@@ -200,14 +200,14 @@ interface PokemonMatchers {
   /**
    * Check whether a {@linkcode Pokemon} has a specific {@linkcode StatusEffect | non-volatile status effect}.
    * @param expectedStatusEffect - The {@linkcode StatusEffect} the Pokemon is expected to have,
-   * or a partially filled {@linkcode Status} containing the desired properties
+   * or a partially filled {@linkcode Status} object containing the desired properties
    */
   toHaveStatusEffect(expectedStatusEffect: expectedStatusType): void;
 
   /**
    * Check whether a {@linkcode Pokemon} has a specific {@linkcode Stat} stage.
    * @param stat - The {@linkcode BattleStat} to check
-   * @param ; must be within the interval `[-6, 6]`expectedStage - The expected stat stage value of `stat`
+   * @param expectedStage - The expected stat stage value of `stat`; must be within the interval `[-6, 6]`
    * @throws {@linkcode Error} \
    * Fails test if `level` is out of legal bounds.
    */
@@ -234,17 +234,26 @@ interface PokemonMatchers {
    * Check whether a {@linkcode Pokemon} has a specific amount of {@linkcode Stat.HP | HP}.
    * @param expectedHp - The expected amount of {@linkcode Stat.HP | HP} to have
    */
-  toHaveHp<H extends number>(expectedHp: If<IsNumericLiteral<H>, NonNegativeInteger<H>, H>): void;
+  toHaveHp<H extends number>(expectedHp: IntLiteral<H>): void;
+  /**
+   * Check whether a {@linkcode Pokemon} has a specific amount of {@linkcode Stat.HP | HP}.
+   * @param expectedHp - The expected amount of {@linkcode Stat.HP | HP} to have
+   * @param options - Options for the matcher; must be omitted if `expectedHp` is a numeric literal
+   */
+  toHaveHp<H extends number>(expectedHp: NonNumericLiteral<H>, options?: toHaveHpOptions): void;
 
   /**
    * Check whether a {@linkcode Pokemon} has taken a specific amount of damage.
    * @param expectedDamageTaken - The expected amount of damage taken
-   * @param roundDown - Whether to round down `expectedDamageTaken` with {@linkcode toDmgValue}; default `true`
    */
-  toHaveTakenDamage<D extends number>(
-    expectedDamageTaken: If<IsNumericLiteral<D>, NonNegativeInteger<D>, D>,
-    roundDown?: boolean,
-  ): void;
+  toHaveTakenDamage<D extends number>(expectedDamageTaken: IntLiteral<D>): void;
+  /**
+   * Check whether a {@linkcode Pokemon} has taken a specific amount of damage.
+   * @param expectedDamageTaken - The expected amount of damage taken
+   * @param roundDown - (Default `true`) Whether to round down `expectedDamageTaken` with {@linkcode toDmgValue};
+   * must be omitted if `expectedDamageTaken` is a numeric literal
+   */
+  toHaveTakenDamage<D extends number>(expectedDamageTaken: NonNumericLiteral<D>, roundDown?: false): void;
 
   /**
    * Check whether a {@linkcode Pokemon} is currently fainted (as determined by {@linkcode Pokemon.isFainted}).

@@ -43,10 +43,10 @@ export function toHavePositionalTag<P extends PositionalTagType>(
   }
 
   // TODO: Increase limit if triple battles are added
-  if (!isBetween(count, 1, 4)) {
+  if (!isBetween(count, 0, 4) || !Number.isSafeInteger(count)) {
     return {
       pass: this.isNot,
-      message: () => `Expected count to be between 0 and 4, but got ${count} instead!`,
+      message: () => `Expected count to be an integer between 0 and 4, but got ${count} instead!`,
     };
   }
 
