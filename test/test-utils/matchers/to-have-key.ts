@@ -8,7 +8,11 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @param expectedKey - The key whose inclusion in the map is being checked
  * @returns Whether the matcher passed
  */
-export function toHaveKey(this: MatcherState, received: unknown, expectedKey: unknown): SyncExpectationResult {
+export function toHaveKey(
+  this: Readonly<MatcherState>,
+  received: unknown,
+  expectedKey: unknown,
+): SyncExpectationResult {
   if (!(received instanceof Map)) {
     return {
       pass: this.isNot,

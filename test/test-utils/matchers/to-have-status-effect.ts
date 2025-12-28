@@ -19,7 +19,7 @@ export type expectedStatusType =
  * @returns Whether the matcher passed
  */
 export function toHaveStatusEffect(
-  this: MatcherState,
+  this: Readonly<MatcherState>,
   received: unknown,
   expectedStatus: expectedStatusType,
 ): SyncExpectationResult {

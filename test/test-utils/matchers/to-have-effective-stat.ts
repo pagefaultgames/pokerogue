@@ -34,7 +34,7 @@ export interface toHaveEffectiveStatOptions {
  * @returns Whether the matcher passed
  */
 export function toHaveEffectiveStat(
-  this: MatcherState,
+  this: Readonly<MatcherState>,
   received: unknown,
   stat: EffectiveStat,
   expectedValue: number,

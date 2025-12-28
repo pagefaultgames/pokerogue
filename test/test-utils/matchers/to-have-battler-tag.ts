@@ -49,7 +49,7 @@ export type toHaveBattlerTagOptions<B extends BattlerTagType> = [B] extends [Ser
  * @returns Whether the matcher passed
  */
 export function toHaveBattlerTag<B extends BattlerTagType>(
-  this: MatcherState,
+  this: Readonly<MatcherState>,
   received: unknown,
   expectedTag: B | toHaveBattlerTagOptions<B>,
 ): SyncExpectationResult {

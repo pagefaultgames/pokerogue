@@ -39,7 +39,7 @@ export interface toHaveTypesOptions {
  * @returns The result of the matching
  */
 export function toHaveTypes(
-  this: MatcherState,
+  this: Readonly<MatcherState>,
   received: unknown,
   expectedTypes: [PokemonType, ...PokemonType[]],
   { mode = "unordered", args = [] }: toHaveTypesOptions = {},

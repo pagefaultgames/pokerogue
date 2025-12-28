@@ -17,7 +17,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @returns Whether the matcher passed
  */
 export function toHaveUsedMove(
-  this: MatcherState,
+  this: Readonly<MatcherState>,
   received: unknown,
   expectedMove: MoveId | OneOther<TurnMove, "move">,
   index = 0,

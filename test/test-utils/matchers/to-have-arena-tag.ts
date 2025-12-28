@@ -45,7 +45,7 @@ export type toHaveArenaTagOptions<A extends ArenaTagType> = [A] extends [Seriali
  * @returns The result of the matching
  */
 export function toHaveArenaTag<A extends ArenaTagType>(
-  this: MatcherState,
+  this: Readonly<MatcherState>,
   received: unknown,
   expectedTag: A | toHaveArenaTagOptions<A>,
   side: ArenaTagSide = ArenaTagSide.BOTH,
