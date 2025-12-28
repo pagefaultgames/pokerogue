@@ -33,9 +33,11 @@ export function toHaveUsedMove(
   const pkmName = getPokemonNameWithAffix(received);
 
   if (historyMove === undefined) {
+    const indexStr = index === 0 ? "a move" : `${index + 1} moves`;
     return {
-      pass: this.isNot,
-      message: () => `Expected ${pkmName} to have used ${index + 1} moves, but it didn't!`,
+      pass: false,
+      message: () => `Expected ${pkmName} to have used ${indexStr}, but it didn't!`,
+      expected: expectedMove,
       actual: received.getLastXMoves(-1),
     };
   }

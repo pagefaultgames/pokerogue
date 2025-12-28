@@ -50,21 +50,21 @@ export function toHavePositionalTag<P extends PositionalTagType>(
     };
   }
 
-  const allTags = received.scene.arena.positionalTagManager.tags;
+  const { tags: allTags } = received.scene.arena.positionalTagManager;
   const tagType = typeof expectedTag === "string" ? expectedTag : expectedTag.tagType;
   const matchingTags = allTags.filter(t => t.tagType === tagType);
 
   // If checking exclusively tag type, check solely the number of matching tags on field
   if (typeof expectedTag === "string") {
     const pass = matchingTags.length === count;
-    const expectedStr = getPosTagStr(expectedTag);
+    const expectedStr = getPosTagStr(expectedTag, count);
 
     return {
       pass,
       message: () =>
         pass
-          ? `Expected the Arena to NOT have ${count} ${expectedStr} active, but it did!`
-          : `Expected the Arena to have ${count} ${expectedStr} active, but got ${matchingTags.length} instead!`,
+          ? `Expected the Arena to NOT have ${expectedStr} active, but it did!`
+          : `Expected the Arena to have ${expectedStr} active, but got ${matchingTags.length} instead!`,
       expected: expectedTag,
       actual: allTags,
     };
@@ -76,7 +76,7 @@ export function toHavePositionalTag<P extends PositionalTagType>(
       pass: false,
       message: () => `Expected the Arena to have a tag of type ${expectedTag.tagType}, but it didn't!`,
       expected: expectedTag.tagType,
-      actual: received.scene.arena.tags.map(t => t.tagType),
+      actual: allTags.map(t => t.tagType),
     };
   }
 
@@ -97,10 +97,15 @@ export function toHavePositionalTag<P extends PositionalTagType>(
   };
 }
 
-function getPosTagStr(pType: PositionalTagType, count = 1): string {
-  let ret = toTitleCase(pType) + "Tag";
-  if (count > 1) {
-    ret += "s";
+/**
+ * Helper function to coerce a {@linkcode PositionalTagType} into a string.
+ * @param tagType - The type of tag being stringified
+ * @param count - The expected number of said tag that should be active
+ */
+function getPosTagStr(tagType: PositionalTagType, count: number): string {
+  const tagStr = toTitleCase(tagType) + "Tag";
+  if (count === 1) {
+    return `a single ${tagStr}`;
   }
-  return ret;
+  return `${count} ${tagStr}s`;
 }

@@ -21,9 +21,8 @@ type SerializableArenaTagOptions<A extends SerializableArenaTagType> = //
  * Allows for caching to avoid repeated instantiation and faster typechecking.
  * @internal
  */
-type NonSerializableArenaTagOptions<A extends ArenaTagType> = OneOther<ArenaTagTypeMap[A], "tagType" | "side"> & {
-  tagType: A;
-};
+type NonSerializableArenaTagOptions<A extends ArenaTagType> = //
+  OneOther<ArenaTagTypeMap[A], "tagType" | "side"> & { tagType: A };
 
 /**
  * Options type for {@linkcode toHaveArenaTag}.
@@ -66,7 +65,6 @@ export function toHaveArenaTag<A extends ArenaTagType>(
   }
 
   // Coerce lone `tagType`s into objects
-  // Bangs are ok as we enforce safety via overloads
   const etag = typeof expectedTag === "object" ? expectedTag : { tagType: expectedTag, side };
 
   // If checking only tag type/side OR no tags were found, break out early.
