@@ -7,6 +7,8 @@
 
 import { Octokit } from "octokit";
 import { writeFileSafe } from "../helpers/file.js";
+import { formatChangelog } from "./format.js";
+import { CONFIG, dateFormatter } from "./utils.js";
 
 /**
  * The version of this script
@@ -16,27 +18,6 @@ const SCRIPT_VERSION = "1.0.0";
 
 const octokit = new Octokit({
   auth: process.env.CHANGELOG_TOKEN,
-});
-
-const CONFIG = {
-  REPO_OWNER: "pagefaultgames",
-  REPO_NAME: "pokerogue",
-  REPO_BRANCH: "beta",
-  CUTOFF_BRANCH: "main",
-  SINCE: "2025-12-10T00:00:00+00:00",
-  OUTPUT_FILE: "pr_descriptions.txt",
-  CHANGELOG_SECTION: "## What are the changes the user will see?",
-  FILTER: ["n/a"],
-  PER_PAGE: 50,
-};
-
-const dateFormatter = new Intl.DateTimeFormat("en", {
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-  hour: "numeric",
-  minute: "numeric",
-  timeZoneName: "short",
 });
 
 async function main() {
@@ -125,21 +106,37 @@ async function getChangelogs() {
   }
   console.log(`Found ${pullRequests.length} PRs`);
 
-  let output = "";
+  /** @type {import("./format.js").PullRequest[]} */
+  const changelog = [];
 
   for (const pr of pullRequests) {
     if (!pr.body) {
       console.log(`\x1b[31mDescription missing for PR: ${pr.title} (${pr.number})\x1b[0m\n`);
+      changelog.push({
+        number: pr.number,
+        title: pr.title,
+        body: null,
+      });
       continue;
     }
     const section = getChangelogSection(pr.body);
     if (section) {
-      output += `PR: ${pr.title} (${pr.number})\n${getChangelogSection(pr.body)}\n\n`;
+      changelog.push({
+        number: pr.number,
+        title: pr.title,
+        body: section,
+      });
     } else {
       console.log(`\x1b[31mChangelog missing for PR: ${pr.title} (${pr.number})\x1b[0m\n`);
-      output += `PR: ${pr.title} (${pr.number})\nChangelog missing\n\n`;
+      changelog.push({
+        number: pr.number,
+        title: pr.title,
+        body: null,
+      });
     }
   }
+
+  const output = formatChangelog(changelog);
 
   if (!process.env.GITHUB_ACTIONS) {
     writeFileSafe(CONFIG.OUTPUT_FILE, output, "utf8");
@@ -159,19 +156,7 @@ function getChangelogSection(description) {
     return null;
   }
 
-  let result;
-  // remove any comments (<!-- -->)
-  result = match[0].replace(/<!--[\s\S]*?-->/g, "");
-
-  // remove section header
-  result = result.replace(CONFIG.CHANGELOG_SECTION, "");
-
-  // remove filter words
-  for (const filter of CONFIG.FILTER) {
-    result = result.replace(new RegExp(filter, "i"), "");
-  }
-
-  return result.trim() !== "" ? result : null;
+  return match[0];
 }
 
 /**
@@ -184,6 +169,10 @@ async function updateDescription(changelog) {
     + changelog
     + `\n---------------------------\n**This changelog was auto generated at ${dateFormatter.format(new Date())}.**`;
 
+  if (!process.env.GITHUB_ACTIONS) {
+    console.log("Skipping PR description update.");
+    return;
+  }
   if (!process.env.PR_NUMBER) {
     console.error("\x1b[31mPR_NUMBER not set. Could not update PR description.\x1b[0m");
     process.exitCode = 1;
