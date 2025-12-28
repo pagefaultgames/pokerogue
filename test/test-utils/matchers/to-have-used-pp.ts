@@ -65,8 +65,8 @@ export function toHaveUsedPP(
       pass,
       message: () =>
         pass
-          ? `Expected ${pkmName}'s ${moveStr} to NOT have used PP, but it did!`
-          : `Expected ${pkmName}'s ${moveStr} to have used PP, but it didn't!`,
+          ? `Expected ${pkmName}'s ${moveStr} to have used PP, but it didn't!`
+          : `Expected ${pkmName}'s ${moveStr} to NOT have used PP, but got ${move.ppUsed} instead!`,
       expected: 0,
       actual: move.ppUsed,
     };
