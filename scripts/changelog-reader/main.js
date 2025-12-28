@@ -17,7 +17,7 @@ import { CONFIG, dateFormatter } from "./utils.js";
 const SCRIPT_VERSION = "1.0.0";
 
 const octokit = new Octokit({
-  auth: process.env.CHANGELOG_TOKEN,
+  auth: process.env.GITHUB_TOKEN,
 });
 
 async function main() {
@@ -180,13 +180,13 @@ async function updateDescription(changelog) {
   }
   await octokit.rest.pulls
     .update({
-      // todo: Update owner
-      owner: "fabske0",
+      owner: CONFIG.REPO_OWNER,
       repo: CONFIG.REPO_NAME,
       pull_number: Number(process.env.PR_NUMBER),
       body: description,
     })
     .catch(err => {
+      process.exitCode = 1;
       console.error(`\x1b[31mFailed to update PR description: ${err}\x1b[0m`);
     });
 }
