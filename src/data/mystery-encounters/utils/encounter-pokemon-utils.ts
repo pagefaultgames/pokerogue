@@ -257,6 +257,7 @@ export function getRandomSpeciesByStarterCost(
   allowSubLegendary = true,
   allowLegendary = true,
   allowMythical = true,
+  allowParadox = true,
 ): SpeciesId {
   let min = Array.isArray(starterTiers) ? starterTiers[0] : starterTiers;
   let max = Array.isArray(starterTiers) ? starterTiers[1] : starterTiers;
@@ -271,6 +272,7 @@ export function getRandomSpeciesByStarterCost(
         && (allowSubLegendary || !pokemonSpecies.subLegendary)
         && (allowLegendary || !pokemonSpecies.legendary)
         && (allowMythical || !pokemonSpecies.mythical)
+        && (allowParadox || !pokemonSpecies.isParadox())
       );
     })
     .map(s => [getPokemonSpecies(s[0]), s[1]]);

@@ -1,12 +1,18 @@
 import { MAX_TERAS_PER_ARENA } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import {
+  LEGENDARY_PARADOX_POKEMON,
+  LIGHT_TRIO,
+  NON_LEGEND_PARADOX_POKEMON,
+  NON_LEGEND_ULTRA_BEASTS,
+} from "#balance/special-species-groups";
 import { POKERUS_STARTER_COUNT, speciesStarterCosts } from "#balance/starters";
 import { allSpecies } from "#data/data-lists";
 import type { PokemonSpecies, PokemonSpeciesForm } from "#data/pokemon-species";
 import { BattlerIndex } from "#enums/battler-index";
 import { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
-import { randSeedItem } from "./common";
+import { isBetween, randSeedItem } from "./common";
 
 /**
  * Gets the {@linkcode PokemonSpecies} object associated with the {@linkcode SpeciesId} enum given
@@ -25,6 +31,18 @@ export function getPokemonSpecies(species: SpeciesId | SpeciesId[]): PokemonSpec
     return allSpecies.find(s => s.speciesId === species)!;
   }
   return allSpecies[species - 1];
+}
+
+export function isSpeciesUltraBeast(species: SpeciesId, includeLightTrio = false): boolean {
+  return NON_LEGEND_ULTRA_BEASTS.includes(species) || (includeLightTrio && LIGHT_TRIO.includes(species));
+}
+
+export function isSpeciesParadox(species: SpeciesId): boolean {
+  return NON_LEGEND_PARADOX_POKEMON.includes(species) || LEGENDARY_PARADOX_POKEMON.includes(species);
+}
+
+export function filterSpeciesBetweenBST(min: number, max: number, excludeLegendLike = false): PokemonSpecies[] {
+  return allSpecies.filter(s => (!excludeLegendLike || !s.isLegendLike()) && isBetween(s.getBaseStatTotal(), min, max));
 }
 
 /**

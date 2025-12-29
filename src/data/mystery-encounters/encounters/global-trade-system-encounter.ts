@@ -1,6 +1,5 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { allSpecies } from "#data/data-lists";
 import { Gender, getGenderSymbol } from "#data/gender";
 import { getNatureName } from "#data/nature";
 import { getPokeballAtlasKey, getPokeballTintColor } from "#data/pokeball";
@@ -41,7 +40,7 @@ import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { randInt, randSeedInt, randSeedItem, randSeedShuffle } from "#utils/common";
 import { getEnumKeys } from "#utils/enums";
 import { getRandomLocaleEntry } from "#utils/i18n";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { filterSpeciesBetweenBST, getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
@@ -66,30 +65,6 @@ const LEGENDARY_TRADE_POOLS = {
   8: [SpeciesId.SKWOVET, SpeciesId.WOOLOO, SpeciesId.ROOKIDEE],
   9: [SpeciesId.LECHONK, SpeciesId.FIDOUGH, SpeciesId.TAROUNTULA],
 };
-
-/** Exclude Paradox mons as they aren't considered legendary/mythical */
-const EXCLUDED_TRADE_SPECIES = [
-  SpeciesId.GREAT_TUSK,
-  SpeciesId.SCREAM_TAIL,
-  SpeciesId.BRUTE_BONNET,
-  SpeciesId.FLUTTER_MANE,
-  SpeciesId.SLITHER_WING,
-  SpeciesId.SANDY_SHOCKS,
-  SpeciesId.ROARING_MOON,
-  SpeciesId.WALKING_WAKE,
-  SpeciesId.GOUGING_FIRE,
-  SpeciesId.RAGING_BOLT,
-  SpeciesId.IRON_TREADS,
-  SpeciesId.IRON_BUNDLE,
-  SpeciesId.IRON_HANDS,
-  SpeciesId.IRON_JUGULIS,
-  SpeciesId.IRON_MOTH,
-  SpeciesId.IRON_THORNS,
-  SpeciesId.IRON_VALIANT,
-  SpeciesId.IRON_LEAVES,
-  SpeciesId.IRON_BOULDER,
-  SpeciesId.IRON_CROWN,
-];
 
 /**
  * Global Trade System encounter.
@@ -521,12 +496,7 @@ function generateTradeOption(alreadyUsedSpecies: PokemonSpecies[], originalBst?:
   }
   while (newSpecies == null) {
     // Get all non-legendary species that fall within the Bst range requirements
-    let validSpecies = allSpecies.filter(s => {
-      const isLegendaryOrMythical = s.legendary || s.subLegendary || s.mythical;
-      const speciesBst = s.getBaseStatTotal();
-      const bstInRange = speciesBst >= bstMin && speciesBst <= bstCap;
-      return !isLegendaryOrMythical && bstInRange && !EXCLUDED_TRADE_SPECIES.includes(s.speciesId);
-    });
+    let validSpecies = filterSpeciesBetweenBST(bstMin, bstCap, true);
 
     // There must be at least 20 species available before it will choose one
     if (validSpecies?.length > 20) {

@@ -1004,6 +1004,7 @@ export function getRandomEncounterPokemon(params: RandomEncounterParams): EnemyP
     includeSubLegendary = true,
     includeLegendary = true,
     includeMythical = true,
+    includeParadox = true,
     eventChance = 50,
     hiddenRerolls = 0,
     shinyRerolls = 0,
@@ -1020,6 +1021,7 @@ export function getRandomEncounterPokemon(params: RandomEncounterParams): EnemyP
     includeSubLegendary,
     includeLegendary,
     includeMythical,
+    includeParadox,
     speciesFilter,
   );
   let formIndex: number | undefined;

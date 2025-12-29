@@ -42,6 +42,12 @@ export interface RandomEncounterParams {
   includeMythical?: boolean;
 
   /**
+   * Whether Paradox Mons can be encountered
+   * @defaultValue `true`
+   */
+  includeParadox?: boolean;
+
+  /**
    * The chance out of 100 to pick an event encounter
    * @defaultValue `50`
    */

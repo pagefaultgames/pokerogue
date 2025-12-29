@@ -1,7 +1,6 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { NON_LEGEND_PARADOX_POKEMON, NON_LEGEND_ULTRA_BEASTS } from "#balance/special-species-groups";
 import { speciesStarterCosts } from "#balance/starters";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
@@ -90,12 +89,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
 
     const r = randSeedInt(SHINY_MAGIKARP_WEIGHT);
 
-    const validEventEncounters = timedEventManager.getAllValidEventEncounters(
-      false,
-      false,
-      false,
-      s => !NON_LEGEND_PARADOX_POKEMON.includes(s.speciesId) && !NON_LEGEND_ULTRA_BEASTS.includes(s.speciesId),
-    );
+    const validEventEncounters = timedEventManager.getAllValidEventEncounters(false, false, false, false, () => true);
 
     let pokemon: PlayerPokemon;
     /**
@@ -251,7 +245,5 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
  * @returns A random species that has at most 5 starter cost and is not Mythical, Paradox, etc.
  */
 export function getSalesmanSpeciesOffer(): PokemonSpecies {
-  return getPokemonSpecies(
-    getRandomSpeciesByStarterCost([0, 5], NON_LEGEND_PARADOX_POKEMON, undefined, false, false, false),
-  );
+  return getPokemonSpecies(getRandomSpeciesByStarterCost([0, 5], [], undefined, false, false, false, false));
 }

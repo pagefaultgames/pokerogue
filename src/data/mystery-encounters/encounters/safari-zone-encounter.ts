@@ -1,7 +1,6 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { NON_LEGEND_PARADOX_POKEMON } from "#balance/special-species-groups";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { BattlerIndex } from "#enums/battler-index";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -577,7 +576,5 @@ async function doEndTurn(cursorIndex: number) {
  * @returns A function to get a random species that has at most 5 starter cost and is not Mythical, Paradox, etc.
  */
 export function getSafariSpeciesSpawn(): PokemonSpecies {
-  return getPokemonSpecies(
-    getRandomSpeciesByStarterCost([0, 5], NON_LEGEND_PARADOX_POKEMON, undefined, false, false, false),
-  );
+  return getPokemonSpecies(getRandomSpeciesByStarterCost([0, 5], [], undefined, false, false, false, false));
 }

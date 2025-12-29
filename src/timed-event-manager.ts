@@ -561,6 +561,7 @@ export class TimedEventManager {
     allowSubLegendary = true,
     allowLegendary = true,
     allowMythical = true,
+    allowParadox = true,
     speciesFilter: PokemonSpeciesFilter,
   ): EventEncounter[] {
     return this.getEventEncounters().filter(enc => {
@@ -569,6 +570,7 @@ export class TimedEventManager {
         (allowSubLegendary || !species.subLegendary)
         && (allowLegendary || !species.legendary)
         && (allowMythical || !species.mythical)
+        && (allowParadox || !species.isParadox())
         && speciesFilter(species)
       );
     });

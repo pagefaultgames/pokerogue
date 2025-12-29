@@ -26,6 +26,11 @@ export const NON_LEGEND_PARADOX_POKEMON = [
   SpeciesId.IRON_CROWN,
 ];
 
+export const LEGENDARY_PARADOX_POKEMON = [
+  SpeciesId.KORAIDON,
+  SpeciesId.MIRAIDON,
+];
+
 /**
  * A list of all {@link https://bulbapedia.bulbagarden.net/wiki/Ultra_Beast | Ultra Beasts}, NOT including legendaries such as Necrozma or the Cosmog line.
  *
@@ -43,4 +48,12 @@ export const NON_LEGEND_ULTRA_BEASTS = [
   SpeciesId.NAGANADEL,
   SpeciesId.STAKATAKA,
   SpeciesId.BLACEPHALON,
+];
+
+export const LIGHT_TRIO = [
+  SpeciesId.COSMOG,
+  SpeciesId.COSMOEM,
+  SpeciesId.SOLGALEO,
+  SpeciesId.LUNALA,
+  SpeciesId.NECROZMA,
 ];
