@@ -1,4 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -24,37 +25,37 @@ describe("Moves - Defog", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([MoveId.MIST, MoveId.SAFEGUARD, MoveId.SPLASH])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .criticalHits(false)
       .enemySpecies(SpeciesId.SHUCKLE)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset([MoveId.DEFOG, MoveId.GROWL]);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
-  // TODO: Refactor these tests they suck ass
-  it("should not allow Safeguard to be active", async () => {
+  it("should not allow opponent Safeguard to be active", async () => {
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
 
-    game.scene.arena.addTag(ArenaTagType.SAFEGUARD, 0, 0, 0);
+    game.scene.arena.addTag(ArenaTagType.SAFEGUARD, 0, 0, game.field.getPlayerPokemon().id, ArenaTagSide.PLAYER);
+    game.scene.arena.addTag(ArenaTagType.SAFEGUARD, 0, 0, game.field.getEnemyPokemon().id, ArenaTagSide.ENEMY);
 
     game.move.use(MoveId.DEFOG);
     await game.toEndOfTurn();
 
-    expect(game).not.toHaveArenaTag(ArenaTagType.SAFEGUARD);
+    expect(game).toHaveArenaTag({ tagType: ArenaTagType.SAFEGUARD, side: ArenaTagSide.PLAYER });
+    expect(game).not.toHaveArenaTag({ tagType: ArenaTagType.SAFEGUARD, side: ArenaTagSide.ENEMY });
   });
 
-  it("should not allow Mist to be active", async () => {
+  it("should not allow opponent Mist to be active", async () => {
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
 
-    game.move.select(MoveId.MIST);
-    await game.move.selectEnemyMove(MoveId.DEFOG);
+    game.move.use(MoveId.MIST);
+    await game.move.forceEnemyMove(MoveId.DEFOG);
 
     await game.toNextTurn();
 
-    game.move.select(MoveId.SPLASH);
-    await game.move.selectEnemyMove(MoveId.GROWL);
+    game.move.use(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.GROWL);
 
     await game.phaseInterceptor.to("BerryPhase");
 

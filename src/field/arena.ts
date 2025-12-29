@@ -704,8 +704,8 @@ export class Arena {
    * @param side - The {@linkcode ArenaTagSide}(s) to which the tag should apply; default `ArenaTagSide.BOTH`.
    * @param quiet - Whether to suppress messages produced by tag addition; default `false`.
    * @returns `true` if the tag was successfully added without overlapping.
-  // TODO: Do we need the return value here? literally nothing uses it
    */
+  // TODO: Do we need the return value here? literally nothing uses it
   addTag(
     tagType: ArenaTagType,
     turnCount: number,

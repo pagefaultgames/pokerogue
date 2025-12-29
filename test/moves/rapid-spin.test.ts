@@ -5,16 +5,15 @@
  */
 
 import { AbilityId } from "#enums/ability-id";
-import { BattlerIndex } from "#enums/battler-index";
+import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaTagType } from "#enums/arena-tag-type";
 import { MoveId } from "#enums/move-id";
-import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
-import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("{{description}}", () => {
+describe("Move - Rapid Spin", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -41,18 +40,28 @@ describe("{{description}}", () => {
       .enemyLevel(100);
   });
 
-  // Find more awesome utility functions inside `#test/test-utils`!
-  it("should do XYZ", async () => {
+  it("should remove hazards from the user's side of the field", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const feebas = game.field.getPlayerPokemon();
+    game.scene.arena.addTag(
+      ArenaTagType.STEALTH_ROCK,
+      0,
+      undefined,
+      game.field.getEnemyPokemon().id,
+      ArenaTagSide.PLAYER,
+    );
+    game.scene.arena.addTag(
+      ArenaTagType.STEALTH_ROCK,
+      0,
+      undefined,
+      game.field.getPlayerPokemon().id,
+      ArenaTagSide.ENEMY,
+    );
 
-    game.move.use(MoveId.SPLASH);
-    await game.move.forceEnemyMove(MoveId.HOLD_HANDS);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.move.use(MoveId.RAPID_SPIN);
     await game.toEndOfTurn();
 
-    expect(feebas).toHaveUsedMove({ move: MoveId.SPLASH, result: MoveResult.SUCCESS });
-    expect(game).toHaveShownMessage(i18next.t("moveTriggers:splash"));
+    expect(game).not.toHaveArenaTag({ tagType: ArenaTagType.STEALTH_ROCK, side: ArenaTagSide.PLAYER });
+    expect(game).toHaveArenaTag({ tagType: ArenaTagType.STEALTH_ROCK, side: ArenaTagSide.ENEMY });
   });
 });

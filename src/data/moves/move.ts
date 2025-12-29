@@ -115,6 +115,8 @@ import { inSpeedOrder } from "#utils/speed-order-generator";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 
+type GetRemoveArenaTagSideFunc = (user: Pokemon) => ArenaTagSide;
+
 /**
  * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.
  * Conventionally returns `true` for success and `false` for failure.
@@ -6665,22 +6667,18 @@ export class AddArenaTagAttr extends MoveEffectAttr {
 export class RemoveArenaTagsAttr extends MoveEffectAttr {
   /** An array containing the tags to be removed. */
   private readonly tagTypes: readonly [ArenaTagType, ...ArenaTagType[]];
-  /**
-   * Whether to remove tags from both sides of the field (`true`) or
-   * the target's side of the field (`false`)
-   * @defaultValue `false`
-   */
-  private readonly removeAllTags: boolean;
+  /** A function which gets the side to remove `ArenaTag`s from */
+  private readonly getTagSideFunc: GetRemoveArenaTagSideFunc;
 
   constructor(
     tagTypes: readonly [ArenaTagType, ...ArenaTagType[]],
-    removeAllTags = false,
+    getTagSideFunc: GetRemoveArenaTagSideFunc,
     options?: MoveEffectAttrOptions,
   ) {
     super(true, options);
 
     this.tagTypes = tagTypes;
-    this.removeAllTags = removeAllTags;
+    this.getTagSideFunc = getTagSideFunc;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -6688,9 +6686,7 @@ export class RemoveArenaTagsAttr extends MoveEffectAttr {
       return false;
     }
 
-    const side = this.removeAllTags ? ArenaTagSide.BOTH : target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-
-    globalScene.arena.removeTagsOnSide(this.tagTypes, side);
+    globalScene.arena.removeTagsOnSide(this.tagTypes, this.getTagSideFunc(user));
 
     return true;
   }
@@ -6747,18 +6743,18 @@ const arenaTrapTags = [
 ] as const;
 
 export class RemoveArenaTrapAttr extends RemoveArenaTagsAttr {
-  constructor(targetBothSides = false) {
+  constructor(getTagSideFunc: GetRemoveArenaTagSideFunc) {
     // TODO: This triggers at a different time than `RemoveArenaTagsAbAttr`...
-    super(arenaTrapTags, targetBothSides, { trigger: MoveEffectTrigger.PRE_APPLY });
+    super(arenaTrapTags, getTagSideFunc, { trigger: MoveEffectTrigger.PRE_APPLY });
   }
 }
 
 const screenTags = [ArenaTagType.REFLECT, ArenaTagType.LIGHT_SCREEN, ArenaTagType.AURORA_VEIL] as const;
 
 export class RemoveScreensAttr extends RemoveArenaTagsAttr {
-  constructor(targetBothSides = false) {
+  constructor(getTagSideFunc: GetRemoveArenaTagSideFunc) {
     // TODO: This triggers at a different time than {@linkcode RemoveArenaTagsAbAttr}...
-    super(screenTags, targetBothSides, { trigger: MoveEffectTrigger.PRE_APPLY });
+    super(screenTags, getTagSideFunc, { trigger: MoveEffectTrigger.PRE_APPLY });
   }
 }
 
@@ -9863,7 +9859,7 @@ export function initMoves() {
         ],
         true,
       )
-      .attr(RemoveArenaTrapAttr),
+      .attr(RemoveArenaTrapAttr, user => (user.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)),
     new StatusMove(MoveId.SWEET_SCENT, PokemonType.NORMAL, 100, 20, -1, 0, 2)
       .attr(StatStageChangeAttr, [Stat.EVA], -2)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
@@ -10049,7 +10045,7 @@ export function initMoves() {
     new AttackMove(MoveId.REVENGE, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, -1, -4, 3) //
       .attr(TurnDamagedDoublePowerAttr),
     new AttackMove(MoveId.BRICK_BREAK, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 75, 100, 15, -1, 0, 3) //
-      .attr(RemoveScreensAttr),
+      .attr(RemoveScreensAttr, user => (user.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER)),
     new StatusMove(MoveId.YAWN, PokemonType.NORMAL, -1, 10, -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.DROWSY, false, true)
       .condition((user, target, _move) => !target.status && !target.isSafeguarded(user))
@@ -10351,7 +10347,7 @@ export function initMoves() {
       .attr(
         RemoveArenaTagsAttr,
         [ArenaTagType.QUICK_GUARD, ArenaTagType.WIDE_GUARD, ArenaTagType.MAT_BLOCK, ArenaTagType.CRAFTY_SHIELD],
-        false,
+        user => (user.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER),
       )
       .makesContact(false)
       .ignoresProtect(),
@@ -10557,9 +10553,11 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [Stat.EVA], -1)
       .attr(ClearWeatherAttr, WeatherType.FOG)
       .attr(ClearTerrainAttr)
-      .attr(RemoveScreensAttr, false)
-      .attr(RemoveArenaTrapAttr, true)
-      .attr(RemoveArenaTagsAttr, [ArenaTagType.MIST, ArenaTagType.SAFEGUARD], false)
+      .attr(RemoveScreensAttr, user => (user.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER))
+      .attr(RemoveArenaTrapAttr, () => ArenaTagSide.BOTH)
+      .attr(RemoveArenaTagsAttr, [ArenaTagType.MIST, ArenaTagType.SAFEGUARD], user =>
+        user.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER,
+      )
       .reflectable(),
     new StatusMove(MoveId.TRICK_ROOM, PokemonType.PSYCHIC, -1, 5, -1, -7, 4)
       .attr(AddArenaTagAttr, ArenaTagType.TRICK_ROOM, 5)
@@ -11520,7 +11518,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [Stat.SPATK], -2, true),
     new AttackMove(MoveId.PSYCHIC_FANGS, PokemonType.PSYCHIC, MoveCategory.PHYSICAL, 85, 100, 10, -1, 0, 7)
       .bitingMove()
-      .attr(RemoveScreensAttr),
+      .attr(RemoveScreensAttr, user => (user.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER)),
     new AttackMove(MoveId.STOMPING_TANTRUM, PokemonType.GROUND, MoveCategory.PHYSICAL, 75, 100, 10, -1, 0, 7)
       .attr(MovePowerMultiplierAttr, user => {
         // Stomping tantrum triggers on most failures (including sleep/freeze)
@@ -12203,7 +12201,7 @@ export function initMoves() {
         true,
       )
       .attr(StatusEffectAttr, StatusEffect.POISON)
-      .attr(RemoveArenaTrapAttr)
+      .attr(RemoveArenaTrapAttr, user => (user.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY))
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(MoveId.DOODLE, PokemonType.NORMAL, 100, 10, -1, 0, 9) //
       .attr(AbilityCopyAttr, true),
@@ -12223,7 +12221,7 @@ export function initMoves() {
       .danceMove(),
     new AttackMove(MoveId.RAGING_BULL, PokemonType.NORMAL, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 9)
       .attr(RagingBullTypeAttr)
-      .attr(RemoveScreensAttr),
+      .attr(RemoveScreensAttr, user => (user.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER)),
     new AttackMove(MoveId.MAKE_IT_RAIN, PokemonType.STEEL, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 9)
       .attr(MoneyAttr)
       .attr(StatStageChangeAttr, [Stat.SPATK], -1, true, { firstTargetOnly: true })
@@ -12269,7 +12267,7 @@ export function initMoves() {
       .attr(ChillyReceptionAttr, true),
     new SelfStatusMove(MoveId.TIDY_UP, PokemonType.NORMAL, -1, 10, -1, 0, 9)
       .attr(StatStageChangeAttr, [Stat.ATK, Stat.SPD], 1, true)
-      .attr(RemoveArenaTrapAttr, true)
+      .attr(RemoveArenaTrapAttr, () => ArenaTagSide.BOTH)
       .attr(RemoveAllSubstitutesAttr),
     new StatusMove(MoveId.SNOWSCAPE, PokemonType.ICE, -1, 10, -1, 0, 9)
       .attr(WeatherChangeAttr, WeatherType.SNOW)
