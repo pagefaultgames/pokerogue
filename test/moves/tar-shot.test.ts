@@ -67,7 +67,7 @@ describe("Moves - Tar Shot", () => {
     const karp = game.field.getEnemyPokemon();
     karp.addTag(BattlerTagType.TAR_SHOT);
     karp.setStatStage(Stat.SPD, -1);
-    const oldTag = karp.getTag(BattlerTagType.TAR_SHOT);
+    const oldTag = karp.getTag(BattlerTagType.TAR_SHOT)!;
 
     game.move.use(MoveId.TAR_SHOT);
     await game.toNextTurn();
