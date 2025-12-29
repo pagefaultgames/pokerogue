@@ -19,4 +19,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.number }}
-          PR_BRANCH: ${{ github.event.pull_request.base.label }}
+          PR_BRANCH: ${{ github.event.pull_request.head.label }}
