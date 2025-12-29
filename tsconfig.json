@@ -23,7 +23,7 @@
       "ESNext.Iterator",
       "ESNext.Collection"
     ],
-    "skipLibCheck": false, // Safe and almost always beneficial
+    "skipLibCheck": false,
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "esModuleInterop": true,
