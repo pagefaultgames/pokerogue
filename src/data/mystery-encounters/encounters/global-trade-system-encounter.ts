@@ -249,6 +249,13 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
             level: pokemon.level,
             speciesFunction: () => generateTradeOption(globalScene.getPlayerParty().map(p => p.species)),
             isBoss: false,
+            includeSpeciesGroups: {
+              subLegendary: false,
+              legendary: false,
+              mythical: false,
+              paradox: false,
+              ultraBeast: false,
+            },
             eventChance: 100,
             shinyRerolls: 1,
             hiddenRerolls: 1,

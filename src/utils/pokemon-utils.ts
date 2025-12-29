@@ -1,11 +1,6 @@
 import { MAX_TERAS_PER_ARENA } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import {
-  LEGENDARY_PARADOX_POKEMON,
-  LIGHT_TRIO,
-  NON_LEGEND_PARADOX_POKEMON,
-  NON_LEGEND_ULTRA_BEASTS,
-} from "#balance/special-species-groups";
+import { LIGHT_TRIO, NON_LEGEND_PARADOX_POKEMON, NON_LEGEND_ULTRA_BEASTS } from "#balance/special-species-groups";
 import { POKERUS_STARTER_COUNT, speciesStarterCosts } from "#balance/starters";
 import { allSpecies } from "#data/data-lists";
 import type { PokemonSpecies, PokemonSpeciesForm } from "#data/pokemon-species";
@@ -38,7 +33,7 @@ export function isSpeciesUltraBeast(species: SpeciesId, includeLightTrio = false
 }
 
 export function isSpeciesParadox(species: SpeciesId): boolean {
-  return NON_LEGEND_PARADOX_POKEMON.includes(species) || LEGENDARY_PARADOX_POKEMON.includes(species);
+  return NON_LEGEND_PARADOX_POKEMON.includes(species);
 }
 
 export function filterSpeciesBetweenBST(min: number, max: number, excludeLegendLike = false): PokemonSpecies[] {

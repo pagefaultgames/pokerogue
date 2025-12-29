@@ -290,9 +290,13 @@ async function summonSafariPokemon() {
       const fromEvent = new BooleanHolder(false);
       pokemon = getRandomEncounterPokemon({
         level: globalScene.currentBattle.getLevelForWave(),
-        includeLegendary: false,
-        includeSubLegendary: false,
-        includeMythical: false,
+        includeSpeciesGroups: {
+          subLegendary: false,
+          legendary: false,
+          mythical: false,
+          paradox: false,
+          ultraBeast: false,
+        },
         speciesFunction: getSafariSpeciesSpawn,
         shinyRerolls: 1,
         eventShinyRerolls: 1,
@@ -576,5 +580,13 @@ async function doEndTurn(cursorIndex: number) {
  * @returns A function to get a random species that has at most 5 starter cost and is not Mythical, Paradox, etc.
  */
 export function getSafariSpeciesSpawn(): PokemonSpecies {
-  return getPokemonSpecies(getRandomSpeciesByStarterCost([0, 5], [], undefined, false, false, false, false));
+  return getPokemonSpecies(
+    getRandomSpeciesByStarterCost([0, 5], undefined, undefined, {
+      subLegendary: false,
+      legendary: false,
+      mythical: false,
+      paradox: false,
+      ultraBeast: false,
+    }),
+  );
 }

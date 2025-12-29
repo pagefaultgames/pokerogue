@@ -89,7 +89,13 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
 
     const r = randSeedInt(SHINY_MAGIKARP_WEIGHT);
 
-    const validEventEncounters = timedEventManager.getAllValidEventEncounters(false, false, false, false, () => true);
+    const validEventEncounters = timedEventManager.getAllValidEventEncounters({
+      subLegendary: false,
+      legendary: false,
+      mythical: false,
+      paradox: false,
+      ultraBeast: false,
+    });
 
     let pokemon: PlayerPokemon;
     /**
@@ -245,5 +251,13 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
  * @returns A random species that has at most 5 starter cost and is not Mythical, Paradox, etc.
  */
 export function getSalesmanSpeciesOffer(): PokemonSpecies {
-  return getPokemonSpecies(getRandomSpeciesByStarterCost([0, 5], [], undefined, false, false, false, false));
+  return getPokemonSpecies(
+    getRandomSpeciesByStarterCost([0, 5], undefined, undefined, {
+      subLegendary: false,
+      legendary: false,
+      mythical: false,
+      paradox: false,
+      ultraBeast: false,
+    }),
+  );
 }

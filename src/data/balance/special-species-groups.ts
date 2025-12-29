@@ -26,13 +26,8 @@ export const NON_LEGEND_PARADOX_POKEMON = [
   SpeciesId.IRON_CROWN,
 ];
 
-export const LEGENDARY_PARADOX_POKEMON = [
-  SpeciesId.KORAIDON,
-  SpeciesId.MIRAIDON,
-];
-
 /**
- * A list of all {@link https://bulbapedia.bulbagarden.net/wiki/Ultra_Beast | Ultra Beasts}, NOT including legendaries such as Necrozma or the Cosmog line.
+ * A list of all {@link https://bulbapedia.bulbagarden.net/wiki/Ultra_Beast | Ultra Beasts}, which does NOT include legendaries such as Necrozma or the Cosmog line.
  *
  * Note that all of these Ultra Beasts are still considered Sub-Legendary.
  */

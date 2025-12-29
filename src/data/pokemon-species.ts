@@ -27,6 +27,7 @@ import { hasExpSprite } from "#sprites/sprite-utils";
 import type { Variant, VariantSet } from "#sprites/variant";
 import { populateVariantColorCache, variantColorCache, variantData } from "#sprites/variant";
 import type { Localizable } from "#types/locales";
+import type { IncludeSpecialSpeciesParams } from "#types/pokemon-common";
 import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { StarterMoveset } from "#types/save-data";
 import type { EvolutionLevel, EvolutionLevelWithThreshold } from "#types/species-gen-types";
@@ -760,7 +761,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
   }
 
   /**
-   * Finds whether this species is a paradox mon, including the Legendary Koraidon and Miraidon
+   * Finds whether this species is a Paradox mon, including the Legendary Koraidon and Miraidon
    * @returns Whether a species is a Paradox mon
    */
   isParadox(): boolean {
@@ -779,6 +780,16 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
 
   isLegendLike(): boolean {
     return this.mythical || this.subLegendary || this.legendary || this.isParadox() || this.isUltraBeast();
+  }
+
+  isIncludedSpeciesGroup(includeSpeciesGroups: IncludeSpecialSpeciesParams = {}): boolean {
+    return (
+      (includeSpeciesGroups.subLegendary || !this.subLegendary)
+      && (includeSpeciesGroups.legendary || !this.legendary)
+      && (includeSpeciesGroups.mythical || !this.mythical)
+      && (includeSpeciesGroups.paradox || !this.isParadox())
+      && (includeSpeciesGroups.ultraBeast || !this.isUltraBeast())
+    );
   }
 
   getName(formIndex?: number): string {

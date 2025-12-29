@@ -21,7 +21,7 @@ import { getPokemonSpecies } from "#utils/pokemon-utils";
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounters/darkDeal";
 
-/** Exclude Ultra Beasts (inludes Cosmog/Solgaleo/Lunala/Necrozma), Paradox (includes Miraidon/Koraidon), Eternatus, and Mythicals */
+/** Exclude Ultra Beasts, Paradox, Eternatus, and Mythicals */
 const excludedBosses = [SpeciesId.ETERNATUS];
 
 /**
@@ -116,7 +116,13 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
         const roll = randSeedInt(100);
         const starterTier: number | [number, number] = roll >= 65 ? 6 : roll >= 15 ? 7 : roll >= 5 ? 8 : [9, 10];
         const bossSpecies = getPokemonSpecies(
-          getRandomSpeciesByStarterCost(starterTier, excludedBosses, bossTypes, true, true, false, false),
+          getRandomSpeciesByStarterCost(starterTier, excludedBosses, bossTypes, {
+            legendary: true,
+            subLegendary: true,
+            ultraBeast: false,
+            paradox: false,
+            mythical: false,
+          }),
         );
         const pokemonConfig: EnemyPokemonConfig = {
           species: bossSpecies,

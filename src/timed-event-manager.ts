@@ -11,6 +11,7 @@ import { TextStyle } from "#enums/text-style";
 import { WeatherType } from "#enums/weather-type";
 import type { ModifierTypeKeys } from "#modifiers/modifier-type";
 import type { nil } from "#types/common";
+import type { IncludeSpecialSpeciesParams } from "#types/pokemon-common";
 import { addTextObject } from "#ui/text";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
@@ -558,21 +559,12 @@ export class TimedEventManager {
   }
 
   getAllValidEventEncounters(
-    allowSubLegendary = true,
-    allowLegendary = true,
-    allowMythical = true,
-    allowParadox = true,
-    speciesFilter: PokemonSpeciesFilter,
+    includeSpeciesGroups: IncludeSpecialSpeciesParams = {},
+    speciesFilter: PokemonSpeciesFilter = () => true,
   ): EventEncounter[] {
     return this.getEventEncounters().filter(enc => {
       const species = getPokemonSpecies(enc.species);
-      return (
-        (allowSubLegendary || !species.subLegendary)
-        && (allowLegendary || !species.legendary)
-        && (allowMythical || !species.mythical)
-        && (allowParadox || !species.isParadox())
-        && speciesFilter(species)
-      );
+      return species.isIncludedSpeciesGroup(includeSpeciesGroups) && speciesFilter(species);
     });
   }
 
