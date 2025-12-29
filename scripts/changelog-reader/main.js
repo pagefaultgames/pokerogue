@@ -217,7 +217,7 @@ async function loadConfig() {
   if (branch === CONFIG.CUTOFF_BRANCH) {
     throw new Error("PR branch is the same as the cutoff branch.");
   }
-  if (branch !== "beta" || !branch.startsWith("hotfix-")) {
+  if (branch !== "beta" && !branch.startsWith("hotfix-")) {
     throw new Error("PR branch must be 'beta' or start with 'hotfix-'.");
   }
 
