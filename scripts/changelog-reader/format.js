@@ -5,13 +5,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { CONFIG } from "./utils.js";
+import { CONFIG } from "./config.js";
 
 /**
  * @typedef {{
  *  number: number
  *  title: string
  *  body: string | null
+ *  labels: import("./config.js").Label[]
  * }} PullRequest
  */
 
@@ -22,24 +23,30 @@ import { CONFIG } from "./utils.js";
  */
 export function formatChangelog(changelog) {
   let output = "";
-  /** @type {PullRequest[]} */
-  const missingChangelog = [];
+  /** @type {Map<import("./config.js").Category["name"], string[]>} */
+  const categories = new Map();
+  for (const category of CONFIG.CATEGORIES) {
+    categories.set(category.name, []);
+  }
 
   for (const pr of changelog) {
     const formattedBody = formatPullRequest(pr);
     if (!formattedBody) {
-      missingChangelog.push(pr);
+      categories.set("Missing", [...(categories.get("Missing") || []), `- #${pr.number}\n`]);
       continue;
     }
-    output += formattedBody;
+
+    // Group PRs by category based on labels
+    const category = getCategoryFromLabels(pr.labels);
+    categories.set(category, [...(categories.get(category) || []), formattedBody]);
   }
 
-  // put missing changelogs at the end so the don't clutter the changelog.
-  if (missingChangelog.length > 0) {
-    output += "## Missing Changelogs\n";
-    for (const pr of missingChangelog) {
-      output += `- #${pr.number}\n`;
+  for (const [category, prs] of categories) {
+    if (prs.length === 0) {
+      continue;
     }
+    output += `## ${category}\n\n`;
+    output += prs.join("");
   }
 
   return output;
@@ -80,9 +87,27 @@ function sanatizeBody(body) {
   // remove section header
   result = result.replace(CONFIG.CHANGELOG_SECTION, "");
 
-  // remove filter words
   for (const filter of CONFIG.FILTER) {
-    result = result.replace(new RegExp(filter, "i"), "");
+    if (result.toLowerCase().includes(filter.toLowerCase())) {
+      return "";
+    }
   }
+
   return result.trim() || "";
+}
+
+/**
+ * Get the category based on the PRs labels.
+ * @param {import("./config.js").Label[]} labels
+ * @returns {import("./config.js").Category["name"]} The category for the PR.
+ * @remarks
+ * If a PR has labels that apply to different categories, the one that was defined first in {@linkcode CONFIG} takes precedence.
+ */
+function getCategoryFromLabels(labels) {
+  for (const category of CONFIG.CATEGORIES) {
+    if (labels.some(label => category.labels.includes(label))) {
+      return category.name;
+    }
+  }
+  return "Miscellaneous";
 }

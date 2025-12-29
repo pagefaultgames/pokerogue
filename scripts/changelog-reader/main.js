@@ -6,8 +6,9 @@
  */
 
 import { Octokit } from "octokit";
+import { writeFileSafe } from "../helpers/file.js";
+import { CONFIG } from "./config.js";
 import { formatChangelog } from "./format.js";
-import { CONFIG, dateFormatter } from "./utils.js";
 
 /**
  * The version of this script
@@ -17,6 +18,15 @@ const SCRIPT_VERSION = "1.0.0";
 
 const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,
+});
+
+const dateFormatter = new Intl.DateTimeFormat("en", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+  hour: "numeric",
+  minute: "numeric",
+  timeZoneName: "short",
 });
 
 async function main() {
@@ -112,28 +122,26 @@ async function getChangelogs() {
         number: pr.number,
         title: pr.title,
         body: null,
+        labels: [],
       });
       continue;
     }
     const section = getChangelogSection(pr.body);
-    if (section) {
-      changelog.push({
-        number: pr.number,
-        title: pr.title,
-        body: section,
-      });
-    } else {
-      console.log(`\x1b[31mChangelog missing for PR: ${pr.title} (${pr.number})\x1b[0m\n`);
-      changelog.push({
-        number: pr.number,
-        title: pr.title,
-        body: null,
-      });
-    }
+    changelog.push({
+      number: pr.number,
+      title: pr.title,
+      body: section,
+      labels: pr.labels.map(l => /** @type {import("./config.js").Label} */ (l.name)),
+    });
   }
 
   const output = formatChangelog(changelog);
-  await updateDescription(output);
+  if (process.env.GITHUB_ACTIONS) {
+    await updateDescription(output);
+  } else {
+    writeFileSafe(CONFIG.OUTPUT_FILE, output, "utf8");
+    console.log(`✔ Output written to ${CONFIG.OUTPUT_FILE} successfully!`);
+  }
 }
 
 /**
@@ -151,7 +159,7 @@ function getChangelogSection(description) {
 }
 
 /**
- * Write the generated changelog to the update PR description
+ * Write the generated changelog to the PR description.
  * @param {string} changelog
  */
 async function updateDescription(changelog) {
@@ -203,12 +211,15 @@ async function getCutoffDate() {
  * @returns {Promise<boolean>} Whether the config was loaded successfully.
  */
 async function loadConfig() {
-  if (!process.env.GITHUB_ACTIONS || !process.env.PR_BRANCH) {
-    console.error("Not running in GitHub Actions.");
+  if (!process.env.GITHUB_ACTIONS) {
+    loadLocalConfig();
+    return true;
+  }
+  if (!process.env.PR_BRANCH) {
+    console.error("PR branch env is undefined");
     process.exitCode = 1;
     return false;
   }
-
   const [_, branch] = process.env.PR_BRANCH.split(":");
   if (!branch) {
     console.error("Failed to parse PR branch.");
@@ -235,6 +246,20 @@ async function loadConfig() {
     return false;
   }
   return true;
+}
+
+/**
+ * Load the configuaration if running locally.
+ * @remarks
+ * For the cutoff date it sets the past 2 weeks.
+ */
+function loadLocalConfig() {
+  CONFIG.REPO_BRANCH = "beta";
+
+  const date = new Date();
+  date.setDate(date.getDate() - 14);
+
+  CONFIG.CUTOFF_DATE = date.toISOString();
 }
 
 await main();
