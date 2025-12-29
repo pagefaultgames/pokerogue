@@ -22,24 +22,42 @@ import { CONFIG } from "./utils.js";
  */
 export function formatChangelog(changelog) {
   let output = "";
+  /** @type {PullRequest[]} */
+  const missingChangelog = [];
+
   for (const pr of changelog) {
-    output += formatPullRequest(pr);
+    const formattedBody = formatPullRequest(pr);
+    if (!formattedBody) {
+      missingChangelog.push(pr);
+      continue;
+    }
+    output += formattedBody;
   }
+
+  // put missing changelogs at the end so the don't clutter the changelog.
+  if (missingChangelog.length > 0) {
+    output += "## Missing Changelogs";
+    for (const pr of missingChangelog) {
+      output += `- ${pr.number}\n`;
+    }
+  }
+
   return output;
 }
 
 /**
  * Format a single PR.
  * @param {PullRequest} pr - The PR to format
- * @returns {string} The formatted PR.
+ * @returns {string | null} The formatted PR or `null` if the PR is missing a changelog.
  */
 function formatPullRequest(pr) {
   let output = `- ${pr.title} (#${pr.number})\n`;
+
   const sanatizedBody = sanatizeBody(pr.body);
   if (sanatizedBody) {
     output += `  - ${sanatizedBody}\n`;
   } else {
-    output += "  - No changelog provided\n";
+    return null;
   }
   output += "\n";
   return output;
