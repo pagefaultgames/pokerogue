@@ -6,6 +6,7 @@ on:
 
 jobs:
   Create-changelog:
+    if: github.repository == 'pagefaultgames/pokerogue'
     name: Generate Changelog
     runs-on: ubuntu-latest
     steps:
