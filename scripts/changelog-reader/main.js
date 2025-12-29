@@ -24,13 +24,7 @@ async function main() {
   try {
     console.group(`📝 Changelog Reader v${SCRIPT_VERSION}`);
 
-    const cutoffDate = await getCutoffDate();
-    if (!cutoffDate) {
-      process.exitCode = 1;
-      console.error("\x1b[31mFailed to get cutoff date)\x1b[0m");
-      return;
-    }
-    CONFIG.SINCE = cutoffDate;
+    await loadConfig();
 
     await getChangelogs();
   } catch (error) {
@@ -43,7 +37,7 @@ async function getPullRequests() {
   console.log(
     `Fetching PRs to ${CONFIG.REPO_OWNER}/${CONFIG.REPO_NAME}/${
       CONFIG.REPO_BRANCH
-    } since ${dateFormatter.format(new Date(CONFIG.SINCE))}...`,
+    } since ${dateFormatter.format(new Date(CONFIG.CUTOFF_DATE))}...`,
   );
 
   return await getPullRequestPage();
@@ -78,7 +72,7 @@ async function getPullRequestPage(page = 1) {
     if (!pr.merged_at) {
       return false;
     }
-    return pr.merged_at > CONFIG.SINCE;
+    return pr.merged_at > CONFIG.CUTOFF_DATE;
   });
 
   if (filteredPullRequests.length === 0) {
@@ -193,7 +187,7 @@ async function updateDescription(changelog) {
 
 /**
  * Get the date of the last commit to the main branch.
- * @returns {Promise<string | undefined>} ISO 8601 date string
+ * @returns {Promise<string>} The ISO 8601 date string of the last commit.
  */
 async function getCutoffDate() {
   const commits = await octokit.rest.repos.listCommits({
@@ -204,24 +198,25 @@ async function getCutoffDate() {
   });
 
   const date = commits.data[0].commit.committer?.date;
-  return date;
+  return date || "";
 }
 
 /**
- * Get the branch of the PR if it's `beta` or `hotfix-*`
- * @returns {Promise<string | null>} The branch name or `null` if it's not `beta` or `hotfix-*`
+ * Load the configuration from the environment.
  */
-async function getBranch() {
-  if (!process.env.GITHUB_ACTIONS || !process.env.PR_NUMBER) {
-    throw new Error("Could not get PR number. Not running in GitHub Actions.");
+async function loadConfig() {
+  if (!process.env.GITHUB_ACTIONS || !process.env.PR_BRANCH) {
+    throw new Error("Not running in GitHub Actions.");
   }
-  const pr = await octokit.rest.pulls.get({
-    owner: CONFIG.REPO_OWNER,
-    repo: CONFIG.REPO_NAME,
-    pull_number: Number(process.env.PR_NUMBER),
-  });
-  const branch = pr.data.head.ref;
-  return branch;
+
+  const [owner, branch] = process.env.PR_BRANCH.split(":");
+  CONFIG.REPO_OWNER = owner;
+  CONFIG.REPO_BRANCH = branch;
+  CONFIG.CUTOFF_DATE = await getCutoffDate();
+
+  if (!CONFIG.CUTOFF_DATE || !CONFIG.REPO_OWNER || !CONFIG.REPO_BRANCH) {
+    throw new Error("Failed to load config.");
+  }
 }
-console.log("PR Branch: ", await getBranch());
+
 await main();
