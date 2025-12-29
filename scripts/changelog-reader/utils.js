@@ -6,12 +6,11 @@
  */
 
 export const CONFIG = {
-  REPO_OWNER: "",
+  REPO_OWNER: "pagefaultgames",
   REPO_NAME: "pokerogue",
   REPO_BRANCH: "",
   CUTOFF_BRANCH: "main",
   CUTOFF_DATE: "",
-  OUTPUT_FILE: "pr_descriptions.txt",
   CHANGELOG_SECTION: "## What are the changes the user will see?",
   FILTER: ["n/a"],
   PER_PAGE: 50,

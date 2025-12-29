@@ -6,7 +6,6 @@
  */
 
 import { Octokit } from "octokit";
-import { writeFileSafe } from "../helpers/file.js";
 import { formatChangelog } from "./format.js";
 import { CONFIG, dateFormatter } from "./utils.js";
 
@@ -24,7 +23,10 @@ async function main() {
   try {
     console.group(`📝 Changelog Reader v${SCRIPT_VERSION}`);
 
-    await loadConfig();
+    const success = await loadConfig();
+    if (!success) {
+      return;
+    }
 
     await getChangelogs();
   } catch (error) {
@@ -131,11 +133,6 @@ async function getChangelogs() {
   }
 
   const output = formatChangelog(changelog);
-
-  if (!process.env.GITHUB_ACTIONS) {
-    writeFileSafe(CONFIG.OUTPUT_FILE, output, "utf8");
-    console.log(`Results written to ${CONFIG.OUTPUT_FILE}`);
-  }
   await updateDescription(output);
 }
 
@@ -203,30 +200,41 @@ async function getCutoffDate() {
 
 /**
  * Load the configuration from the environment.
+ * @returns {Promise<boolean>} Whether the config was loaded successfully.
  */
 async function loadConfig() {
   if (!process.env.GITHUB_ACTIONS || !process.env.PR_BRANCH) {
-    throw new Error("Not running in GitHub Actions.");
+    console.error("Not running in GitHub Actions.");
+    process.exitCode = 1;
+    return false;
   }
 
-  const [owner, branch] = process.env.PR_BRANCH.split(":");
-  if (!owner || !branch) {
-    throw new Error("Failed to parse PR branch.");
+  const [_, branch] = process.env.PR_BRANCH.split(":");
+  if (!branch) {
+    console.error("Failed to parse PR branch.");
+    process.exitCode = 1;
+    return false;
   }
   if (branch === CONFIG.CUTOFF_BRANCH) {
-    throw new Error("PR branch is the same as the cutoff branch.");
+    console.error("PR branch is the same as the cutoff branch.");
+    process.exitCode = 1;
+    return false;
   }
   if (branch !== "beta" && !branch.startsWith("hotfix-")) {
-    throw new Error("PR branch must be 'beta' or start with 'hotfix-'.");
+    console.error("PR branch must be 'beta' or start with 'hotfix-'.");
+    process.exitCode = 1;
+    return false;
   }
 
-  CONFIG.REPO_OWNER = owner;
   CONFIG.REPO_BRANCH = branch;
   CONFIG.CUTOFF_DATE = await getCutoffDate();
 
-  if (!CONFIG.CUTOFF_DATE || !CONFIG.REPO_OWNER || !CONFIG.REPO_BRANCH) {
-    throw new Error("Failed to load config.");
+  if (!CONFIG.CUTOFF_DATE || !CONFIG.REPO_BRANCH) {
+    console.error("Failed to load config.");
+    process.exitCode = 1;
+    return false;
   }
+  return true;
 }
 
 await main();
