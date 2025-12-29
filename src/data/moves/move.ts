@@ -6689,7 +6689,10 @@ export class RemoveArenaTagsAttr extends MoveEffectAttr {
     }
 
     const side = this.removeAllTags ? ArenaTagSide.BOTH : target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-
+    
+    if (move.id == Move.RAPID_SPIN) 
+      side = ArenaTagSide.PLAYER;
+    
     globalScene.arena.removeTagsOnSide(this.tagTypes, side);
 
     return true;
