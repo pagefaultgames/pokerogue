@@ -36,9 +36,9 @@ export function formatChangelog(changelog) {
 
   // put missing changelogs at the end so the don't clutter the changelog.
   if (missingChangelog.length > 0) {
-    output += "## Missing Changelogs";
+    output += "## Missing Changelogs\n";
     for (const pr of missingChangelog) {
-      output += `- ${pr.number}\n`;
+      output += `- #${pr.number}\n`;
     }
   }
 
@@ -51,7 +51,7 @@ export function formatChangelog(changelog) {
  * @returns {string | null} The formatted PR or `null` if the PR is missing a changelog.
  */
 function formatPullRequest(pr) {
-  let output = `- ${pr.title} (#${pr.number})\n`;
+  let output = `- #${pr.number}\n`;
 
   const sanatizedBody = sanatizeBody(pr.body);
   if (sanatizedBody) {
