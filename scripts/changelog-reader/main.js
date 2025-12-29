@@ -210,7 +210,6 @@ async function loadConfig() {
   }
 
   const [owner, branch] = process.env.PR_BRANCH.split(":");
-  console.log(`PR Branch: ${owner}:${branch}`);
   if (!owner || !branch) {
     throw new Error("Failed to parse PR branch.");
   }
