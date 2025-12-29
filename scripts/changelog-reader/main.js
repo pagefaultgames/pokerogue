@@ -207,4 +207,21 @@ async function getCutoffDate() {
   return date;
 }
 
+/**
+ * Get the branch of the PR if it's `beta` or `hotfix-*`
+ * @returns {Promise<string | null>} The branch name or `null` if it's not `beta` or `hotfix-*`
+ */
+async function getBranch() {
+  if (!process.env.GITHUB_ACTIONS || !process.env.PR_NUMBER) {
+    throw new Error("Could not get PR number. Not running in GitHub Actions.");
+  }
+  const pr = await octokit.rest.pulls.get({
+    owner: CONFIG.REPO_OWNER,
+    repo: CONFIG.REPO_NAME,
+    pull_number: Number(process.env.PR_NUMBER),
+  });
+  const branch = pr.data.head.ref;
+  return branch;
+}
+console.log("PR Branch: ", await getBranch());
 await main();
