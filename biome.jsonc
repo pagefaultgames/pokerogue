@@ -286,7 +286,7 @@
       }
     },
 
-    // Prevent forcing type-only imports inside `overrides.d.ts` (where they serve as placeholders for actual runtime symbols)
+    // Prevent forcing type-only imports inside `overrides.ts` (where they serve as placeholders for actual runtime symbols)
     {
       "includes": ["**/src/overrides.ts"],
       "linter": {
