@@ -66,7 +66,7 @@ describe.each<{ moveId: MoveId; moveName: string }>([
 
   it.each<{ tagType: BattlerTagType; tagName: string }>([
     { tagType: BattlerTagType.SEEDED, tagName: "Leech Seed" },
-    { tagType: BattlerTagType.FIRE_SPIN, tagName: "Fire Spin" },
+    { tagType: BattlerTagType.FIRE_SPIN, tagName: "Binding effects" },
   ])("should remove $tagName from the user", async ({ tagType }) => {
     const player = game.field.getPlayerPokemon();
     player.addTag(tagType, 0, undefined, game.field.getEnemyPokemon().id);
@@ -77,6 +77,7 @@ describe.each<{ moveId: MoveId; moveName: string }>([
     expect(player).not.toHaveBattlerTag(tagType);
   });
 
+  // not using `it.runIf` because that causes unwanted and potentially confusing entries in the test list
   if (moveId === MoveId.RAPID_SPIN) {
     it("should increase the user's speed stage by 1", async () => {
       game.move.use(MoveId.RAPID_SPIN);

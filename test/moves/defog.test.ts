@@ -30,38 +30,9 @@ describe("Moves - Defog", () => {
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .criticalHits(false)
-      .enemySpecies(SpeciesId.SHUCKLE)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
-  });
-
-  it("should remove opponent Safeguard", async () => {
-    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
-
-    game.scene.arena.addTag(ArenaTagType.SAFEGUARD, 0, 0, game.field.getPlayerPokemon().id, ArenaTagSide.PLAYER);
-    game.scene.arena.addTag(ArenaTagType.SAFEGUARD, 0, 0, game.field.getEnemyPokemon().id, ArenaTagSide.ENEMY);
-
-    game.move.use(MoveId.DEFOG);
-    await game.toEndOfTurn();
-
-    expect(game).toHaveArenaTag({ tagType: ArenaTagType.SAFEGUARD, side: ArenaTagSide.PLAYER });
-    expect(game).not.toHaveArenaTag({ tagType: ArenaTagType.SAFEGUARD, side: ArenaTagSide.ENEMY });
-  });
-
-  it("should remove opponent Mist", async () => {
-    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
-
-    game.move.use(MoveId.MIST);
-    await game.move.forceEnemyMove(MoveId.DEFOG);
-
-    await game.toNextTurn();
-
-    game.move.use(MoveId.SPLASH);
-    await game.move.forceEnemyMove(MoveId.GROWL);
-
-    await game.phaseInterceptor.to("BerryPhase");
-
-    expect(game.field.getPlayerPokemon()).toHaveStatStage(Stat.ATK, -1);
   });
 
   it("should remove terrains", async () => {
@@ -92,7 +63,7 @@ describe("Moves - Defog", () => {
     { tagType: ArenaTagType.STEALTH_ROCK, tagName: "Stealth Rocks" },
     { tagType: ArenaTagType.TOXIC_SPIKES, tagName: "Toxic Spikes" },
     { tagType: ArenaTagType.STICKY_WEB, tagName: "Sticky Web" },
-  ])("should remove $tagName from the field", async ({ tagType }) => {
+  ])("should remove $tagName from both sides of the field", async ({ tagType }) => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     game.scene.arena.addTag(tagType, 0, undefined, game.field.getEnemyPokemon().id, ArenaTagSide.PLAYER);
@@ -109,6 +80,8 @@ describe("Moves - Defog", () => {
     { tagType: ArenaTagType.REFLECT, tagName: "Reflect" },
     { tagType: ArenaTagType.LIGHT_SCREEN, tagName: "Light Screen" },
     { tagType: ArenaTagType.AURORA_VEIL, tagName: "Aurora Veil" },
+    { tagType: ArenaTagType.SAFEGUARD, tagName: "Safeguard" },
+    { tagType: ArenaTagType.MIST, tagName: "Mist" },
   ])("should remove $tagName only from the target's side of the field", async ({ tagType }) => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 

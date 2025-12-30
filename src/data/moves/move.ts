@@ -115,6 +115,7 @@ import { inSpeedOrder } from "#utils/speed-order-generator";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 
+// TODO: fix properly https://github.com/Despair-Games/poketernity/pull/170
 type GetRemoveArenaTagSideFunc = (user: Pokemon) => ArenaTagSide;
 
 /**

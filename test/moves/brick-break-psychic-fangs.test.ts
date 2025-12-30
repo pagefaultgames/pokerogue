@@ -8,6 +8,7 @@ import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
@@ -69,6 +70,8 @@ describe.each([
     game.move.use(moveId);
     await game.toEndOfTurn();
 
+    const player = game.field.getPlayerPokemon();
+    expect(player).toHaveUsedMove({ move: moveId, result: MoveResult.MISS });
     expect(game).toHaveArenaTag({ tagType: ArenaTagType.REFLECT, side: ArenaTagSide.ENEMY });
   });
 });
