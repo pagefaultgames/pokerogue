@@ -62,7 +62,7 @@ export class PromptHandler extends GameManagerHelper {
     super(game);
 
     this.originalSetModeInternal = this.game.scene.ui["setModeInternal"];
-    // `any` assertion needed as we are mocking private property
+    // type assertion needed as we are mocking private property
     vi.spyOn(
       this.game.scene.ui as unknown as Pick<{ setModeInternal: UI["setModeInternal"] }, "setModeInternal">,
       "setModeInternal",
@@ -92,7 +92,7 @@ export class PromptHandler extends GameManagerHelper {
     // TODO: Add `await` to this
     const ret = this.originalSetModeInternal.apply(this.game.scene.ui, args);
 
-    const currentPhase = this.game.scene.phaseManager.getCurrentPhase()?.phaseName!;
+    const currentPhase = this.game.scene.phaseManager.getCurrentPhase().phaseName;
     if (endBySetMode.includes(currentPhase)) {
       this.game.phaseInterceptor.checkMode();
     }

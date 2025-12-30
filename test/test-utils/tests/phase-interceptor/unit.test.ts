@@ -1,28 +1,29 @@
 import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
 import { GameManager } from "#test/test-utils/game-manager";
-import { mockPhase } from "#test/test-utils/mocks/mock-phase";
+import { MockPhase } from "#test/test-utils/mocks/mock-phase";
 import type { Constructor } from "#types/common";
 import type { PhaseString } from "#types/phase-types";
 import Phaser from "phaser";
+import type { NonEmptyTuple } from "type-fest";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 // TODO: Move these to `mock-phase.ts` if/when unit tests for the phase manager are created
-class applePhase extends mockPhase {
-  public readonly phaseName = "applePhase";
+class ApplePhase extends MockPhase {
+  public readonly phaseName = "ApplePhase";
 }
 
-class bananaPhase extends mockPhase {
-  public readonly phaseName = "bananaPhase";
+class BananaPhase extends MockPhase {
+  public readonly phaseName = "BananaPhase";
 }
 
-class coconutPhase extends mockPhase {
-  public readonly phaseName = "coconutPhase";
+class CoconutPhase extends MockPhase {
+  public readonly phaseName = "CoconutPhase";
 }
 
-class oneSecTimerPhase extends mockPhase {
-  public readonly phaseName = "oneSecTimerPhase";
-  start() {
+class OneSecTimerPhase extends MockPhase {
+  public readonly phaseName = "OneSecTimerPhase";
+  override start() {
     setTimeout(() => {
       console.log("1 sec passed!");
       this.end();
@@ -30,12 +31,12 @@ class oneSecTimerPhase extends mockPhase {
   }
 }
 
-class unshifterPhase extends mockPhase {
-  public readonly phaseName = "unshifterPhase";
-  start() {
-    globalScene.phaseManager.unshiftPhase(new applePhase() as unknown as Phase);
-    globalScene.phaseManager.unshiftPhase(new bananaPhase() as unknown as Phase);
-    globalScene.phaseManager.unshiftPhase(new coconutPhase() as unknown as Phase);
+class UnshifterPhase extends MockPhase {
+  public readonly phaseName = "UnshifterPhase";
+  override start() {
+    globalScene.phaseManager.unshiftPhase(new ApplePhase() as unknown as Phase);
+    globalScene.phaseManager.unshiftPhase(new BananaPhase() as unknown as Phase);
+    globalScene.phaseManager.unshiftPhase(new CoconutPhase() as unknown as Phase);
     this.end();
   }
 }
@@ -52,20 +53,21 @@ describe("Utils - Phase Interceptor - Unit", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    setPhases(applePhase, bananaPhase, coconutPhase, bananaPhase, coconutPhase);
+    setPhases(ApplePhase, BananaPhase, CoconutPhase, ApplePhase, CoconutPhase);
   });
 
   /**
-   * Helper function to set the phase manager's phases to the specified values and start the first one.
-   * @param phases - An array of constructors to {@linkcode Phase}s to set.
+   * Helper function to set the phase manager's phases array to the specified values and start the first one.
+   * @param phases - One or more constructors of {@linkcode MockPhase}s to set
    * Constructors must have no arguments.
    */
-  function setPhases(...phases: [Constructor<mockPhase>, ...Constructor<mockPhase>[]]) {
+  function setPhases(...phases: NonEmptyTuple<Constructor<MockPhase>>): void {
     game.scene.phaseManager.clearAllPhases();
     for (const phase of phases) {
       game.scene.phaseManager.unshiftPhase(new phase());
     }
-    game.scene.phaseManager.shiftPhase(); // start the thing going
+    // start the thing going
+    game.scene.phaseManager.shiftPhase();
   }
 
   function getQueuedPhases(): string[] {
@@ -83,53 +85,53 @@ describe("Utils - Phase Interceptor - Unit", () => {
 
   describe("to", () => {
     it("should start the specified phase and resolve after it ends", async () => {
-      await to("applePhase");
+      await to("ApplePhase");
 
-      expectAtPhase("bananaPhase");
-      expect(getQueuedPhases()).toEqual(["coconutPhase", "bananaPhase", "coconutPhase"]);
-      expect(game.phaseInterceptor.log).toEqual(["applePhase"]);
+      expectAtPhase("BananaPhase");
+      expect(getQueuedPhases()).toEqual(["CoconutPhase", "ApplePhase", "CoconutPhase"]);
+      expect(game.phaseInterceptor.log).toEqual(["ApplePhase"]);
     });
 
     it("should run to the specified phase without starting/logging", async () => {
-      await to("applePhase", false);
+      await to("ApplePhase", false);
 
-      expectAtPhase("applePhase");
-      expect(getQueuedPhases()).toEqual(["bananaPhase", "coconutPhase", "bananaPhase", "coconutPhase"]);
+      expectAtPhase("ApplePhase");
+      expect(getQueuedPhases()).toEqual(["BananaPhase", "CoconutPhase", "ApplePhase", "CoconutPhase"]);
       expect(game.phaseInterceptor.log).toEqual([]);
 
-      await to("applePhase", false);
+      await to("ApplePhase", false);
 
       // should not do anything
-      expectAtPhase("applePhase");
-      expect(getQueuedPhases()).toEqual(["bananaPhase", "coconutPhase", "bananaPhase", "coconutPhase"]);
+      expectAtPhase("ApplePhase");
+      expect(getQueuedPhases()).toEqual(["BananaPhase", "CoconutPhase", "ApplePhase", "CoconutPhase"]);
       expect(game.phaseInterceptor.log).toEqual([]);
     });
 
     it("should run all phases between start and the first instance of target", async () => {
-      await to("coconutPhase");
+      await to("CoconutPhase");
 
-      expectAtPhase("bananaPhase");
-      expect(getQueuedPhases()).toEqual(["coconutPhase"]);
-      expect(game.phaseInterceptor.log).toEqual(["applePhase", "bananaPhase", "coconutPhase"]);
+      expectAtPhase("ApplePhase");
+      expect(getQueuedPhases()).toEqual(["CoconutPhase"]);
+      expect(game.phaseInterceptor.log).toEqual(["ApplePhase", "BananaPhase", "CoconutPhase"]);
     });
 
     it("should work on newly unshifted phases", async () => {
-      setPhases(unshifterPhase, coconutPhase); // adds applePhase, bananaPhase and coconutPhase to queue
-      await to("bananaPhase");
+      setPhases(UnshifterPhase, CoconutPhase); // adds ApplePhase, BananaPhase and CoconutPhase to queue
+      await to("BananaPhase");
 
-      expectAtPhase("coconutPhase");
-      expect(getQueuedPhases()).toEqual(["coconutPhase"]);
-      expect(game.phaseInterceptor.log).toEqual(["unshifterPhase", "applePhase", "bananaPhase"]);
+      expectAtPhase("CoconutPhase");
+      expect(getQueuedPhases()).toEqual(["CoconutPhase"]);
+      expect(game.phaseInterceptor.log).toEqual(["UnshifterPhase", "ApplePhase", "BananaPhase"]);
     });
 
     it("should wait for asynchronous phases to end", async () => {
-      setPhases(oneSecTimerPhase, coconutPhase);
+      setPhases(OneSecTimerPhase, CoconutPhase);
       const callback = vi.fn(() => console.log("fffffff"));
-      const spy = vi.spyOn(oneSecTimerPhase.prototype, "end");
+      const spy = vi.spyOn(OneSecTimerPhase.prototype, "end");
       setTimeout(() => {
         callback();
       }, 500);
-      await to("coconutPhase");
+      await to("CoconutPhase");
       expect(callback).toHaveBeenCalled();
       expect(spy).toHaveBeenCalled();
     });
@@ -137,12 +139,12 @@ describe("Utils - Phase Interceptor - Unit", () => {
 
   describe("shift", () => {
     it("should skip the next phase in line without starting it", async () => {
-      const startSpy = vi.spyOn(applePhase.prototype, "start");
+      const startSpy = vi.spyOn(ApplePhase.prototype, "start");
 
       game.phaseInterceptor.shiftPhase();
 
-      expectAtPhase("bananaPhase");
-      expect(getQueuedPhases()).toEqual(["coconutPhase", "bananaPhase", "coconutPhase"]);
+      expectAtPhase("BananaPhase");
+      expect(getQueuedPhases()).toEqual(["CoconutPhase", "ApplePhase", "CoconutPhase"]);
       expect(startSpy).not.toHaveBeenCalled();
       expect(game.phaseInterceptor.log).toEqual([]);
     });

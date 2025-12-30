@@ -3,11 +3,9 @@ import type { BattleScene } from "#app/battle-scene";
 import { PHASE_INTERCEPTOR_COLOR, PHASE_START_COLOR } from "#app/constants/colors";
 import type { Phase } from "#app/phase";
 import { UiMode } from "#enums/ui-mode";
-// biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports
 import type { GameManager } from "#test/test-utils/game-manager";
 import type { PromptHandler } from "#test/test-utils/helpers/prompt-handler";
 import type { Constructor } from "#types/common";
-// biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports
 import { inspect } from "util";
 import chalk from "chalk";
 import { vi } from "vitest";
@@ -36,10 +34,7 @@ export class PhaseInterceptor {
   public log: PhaseString[] = [];
   /**
    * The interceptor's current state.
-   * Possible values are the following:
-   * - `running`: The interceptor is currently running a phase.
-   * - `interrupted`: The interceptor has been interrupted by a UI prompt and is waiting for the caller to end it.
-   * - `idling`: The interceptor is not currently running a phase and is ready to start a new one.
+   * @see {@linkcode StateType}
    * @defaultValue `idling`
    */
   private state: StateType = "idling";

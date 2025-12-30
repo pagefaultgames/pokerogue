@@ -46,7 +46,7 @@ export class ReloadHelper extends GameManagerHelper {
       );
       this.game.scene.modifiers = [];
     }
-    await titlePhase["loadSaveSlot"](-1); // Load the desired session data
+    await titlePhase["loadSaveSlot"](0); // Load the desired session data
 
     await this.game.phaseInterceptor.to("CommandPhase");
     console.log("==================[New Turn (Reloaded)]==================");

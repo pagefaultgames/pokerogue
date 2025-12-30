@@ -12,24 +12,25 @@ import { SelectStarterPhase } from "#phases/select-starter-phase";
 import { TurnInitPhase } from "#phases/turn-init-phase";
 import { generateStarters } from "#test/test-utils/game-manager-utils";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
+import type { IntClosedRange } from "type-fest";
 
 /**
  * Helper to handle classic-mode specific operations.
  */
 export class ClassicModeHelper extends GameManagerHelper {
   /**
-   * Runs the classic game to the summon phase.
-   * @param species - An array of {@linkcode SpeciesId} to summon.
-   * @returns A promise that resolves when the summon phase is reached.
+   * Run the classic game to the summon phase.
+   * @param species - An array of {@linkcode SpeciesId} to summon
+   * @returns A Promise that resolves when the summon phase is reached.
    * @remarks
    * Do not use this when {@linkcode startBattle} can be used!
    */
   async runToSummon(species: SpeciesId[]): Promise<void>;
   /**
-   * Runs the classic game to the summon phase.
+   * Run the classic game to the summon phase.
    * Selects 3 daily run starters with a fixed seed of "test"
-   * (see `DailyRunConfig.getDailyRunStarters` in `daily-run.ts` for more info).
-   * @returns A promise that resolves when the summon phase is reached.
+   * (see `DailyRunConfig.getDailyRunStarters` in `daily-run.ts` for more info)
+   * @returns A Promise that resolves when the summon phase is reached.
    * @deprecated - Specifying the starters helps prevent inconsistencies from internal RNG changes.
    */
   // biome-ignore lint/style/useUnifiedTypeSignatures: Marks the overload for deprecation
@@ -64,15 +65,15 @@ export class ClassicModeHelper extends GameManagerHelper {
 
   /**
    * Transitions to the start of a battle.
-   * @param species - An array of {@linkcode SpeciesId} to start the battle with.
-   * @returns A promise that resolves when the battle is started.
+   * @param species - An array of {@linkcode SpeciesId}s with which to start the battle
+   * @returns A Promise that resolves when the battle is started.
    */
   async startBattle(species: SpeciesId[]): Promise<void>;
   /**
    * Transitions to the start of a battle.
    * Will select 3 daily run starters with a fixed seed of "test"
-   * (see `DailyRunConfig.getDailyRunStarters` in `daily-run.ts` for more info).
-   * @returns A promise that resolves when the battle is started.
+   * (see `DailyRunConfig.getDailyRunStarters` in `daily-run.ts` for more info)
+   * @returns A Promise that resolves when the battle is started.
    * @deprecated - Specifying the starters helps prevent inconsistencies from internal RNG changes.
    */
   // biome-ignore lint/style/useUnifiedTypeSignatures: Marks the overload for deprecation
@@ -109,7 +110,8 @@ export class ClassicModeHelper extends GameManagerHelper {
   /**
    * Queue inputs to switch at the start of the next battle, and then start it.
    * @param pokemonIndex - The 0-indexed position of the party pokemon to switch to.
-   * Should never be called with 0 as that will select the currently active pokemon and freeze
+   * @throws {@linkcode Error}
+   * Fails test if `pokemonIndex` is out of valid bounds
    * @returns A Promise that resolves once the battle has been started and the switch prompt resolved.
    * @remarks
    * This will temporarily set the current {@linkcode BattleStyle} to `SWITCH` for the duration
@@ -121,7 +123,7 @@ export class ClassicModeHelper extends GameManagerHelper {
    * await game.startBattleWithSwitch(1);
    * ```
    */
-  public async startBattleWithSwitch(pokemonIndex: number): Promise<void> {
+  public async startBattleWithSwitch(pokemonIndex: IntClosedRange<1, 5>): Promise<void> {
     this.game.settings.battleStyle(BattleStyle.SWITCH);
     this.game.onNextPrompt(
       "CheckSwitchPhase",

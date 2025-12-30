@@ -19,7 +19,7 @@ describe("Test Utils - PromptHandler", () => {
 
   beforeEach(() => {
     setModeCallback = vi.fn(() => console.log("set mode called!")).mockName("set mode callback");
-    checkModeCallback = vi.fn(() => console.log("check mode called!")).mockName("check mode callback 2");
+    checkModeCallback = vi.fn(() => console.log("check mode called!")).mockName("check mode callback");
     callback1 = vi.fn(() => console.log("callback 1 called!")).mockName("callback 1");
     callback2 = vi.fn(() => console.log("callback 2 called!")).mockName("callback 2");
 
@@ -74,7 +74,7 @@ describe("Test Utils - PromptHandler", () => {
       expect(setModeCallback).toHaveBeenCalledAfter(setModeSpy);
     });
 
-    it("should call PhaseInterceptor.checkMode if current phase in `endBySetMode`", async () => {
+    it("should call PhaseInterceptor.checkMode if current phase is in `endBySetMode`", async () => {
       promptHandler["game"]["scene"]["phaseManager"]["getCurrentPhase"] = () =>
         ({ phaseName: "CommandPhase" }) as Phase;
       await promptHandler["game"].scene.ui["setModeInternal"](UiMode.PARTY, false, false, false, []);
