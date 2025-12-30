@@ -1,5 +1,6 @@
 // Intentionally re-exports `ModifierConstructorMap` from `modifier.ts`
 
+import type { ModifierTier } from "#enums/modifier-tier";
 import type { Pokemon } from "#field/pokemon";
 import type { ModifierConstructorMap } from "#modifiers/modifier";
 import type { ModifierType, WeightedModifierType } from "#modifiers/modifier-type";
@@ -28,5 +29,5 @@ export type ModifierClass = ObjectValues<ModifierConstructorMap>;
 export type ModifierString = keyof ModifierConstructorMap;
 
 export type ModifierPool = {
-  [tier: string]: WeightedModifierType[];
+  [tier in ModifierTier]: WeightedModifierType[];
 };

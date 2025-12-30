@@ -5,12 +5,12 @@
 
 import type { ModifierPool } from "#types/modifier-types";
 
-export const modifierPool: ModifierPool = {};
+export const modifierPool = {} as ModifierPool;
 
-export const wildModifierPool: ModifierPool = {};
+export const wildModifierPool = {} as ModifierPool;
 
-export const trainerModifierPool: ModifierPool = {};
+export const trainerModifierPool = {} as ModifierPool;
 
-export const enemyBuffModifierPool: ModifierPool = {};
+export const enemyBuffModifierPool = {} as ModifierPool;
 
-export const dailyStarterModifierPool: ModifierPool = {};
+export const dailyStarterModifierPool = {} as ModifierPool;

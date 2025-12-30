@@ -3,6 +3,9 @@ import type { BiomePoolTier } from "#enums/biome-pool-tier";
 import type { SpeciesId } from "#enums/species-id";
 import type { TimeOfDay } from "#enums/time-of-day";
 import type { TrainerType } from "#enums/trainer-type";
+import type { ReadonlyDeep } from "type-fest";
+
+// TODO: These interfaces should specify what enum key they use instead of simply using `number`
 
 export interface BiomeLinks {
   [key: number]: BiomeId | (BiomeId | [BiomeId, number])[];
@@ -11,21 +14,8 @@ export interface BiomeLinks {
 export interface BiomeDepths {
   [key: number]: [number, number];
 }
-interface SpeciesTree {
-  readonly [key: number]: SpeciesId[];
-}
-
-export interface PokemonPools {
-  readonly [key: number]: (SpeciesId | SpeciesTree)[];
-}
-
-interface BiomeTierPokemonPools {
-  readonly [key: number]: PokemonPools;
-}
-
-export interface BiomePokemonPools {
-  readonly [key: number]: BiomeTierPokemonPools;
-}
+export interface BiomePokemonPools
+  extends ReadonlyDeep<Record<BiomeId, Record<BiomePoolTier, Record<TimeOfDay, SpeciesId[]>>>> {}
 
 export interface BiomeTierTod {
   biome: BiomeId;

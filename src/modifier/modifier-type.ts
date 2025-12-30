@@ -2355,6 +2355,13 @@ const tierWeights = [768 / 1024, 195 / 1024, 48 / 1024, 12 / 1024, 1 / 1024];
  */
 export const itemPoolChecks: Map<ModifierTypeKeys, boolean | undefined> = new Map();
 
+interface weightThing {
+  weight: number;
+  tier: ModifierTier | keyof typeof ModifierTier;
+  tierPercent: number;
+  totalPercent: number;
+}
+
 export function regenerateModifierPoolThresholds(
   party: readonly Pokemon[],
   poolType: ModifierPoolType,
@@ -2365,11 +2372,13 @@ export function regenerateModifierPoolThresholds(
     itemPoolChecks.set(k, false);
   });
 
-  const ignoredIndexes = {};
-  const modifierTableData = {};
+  // TODO: WHAT THE FUCK ARE THESE SUPPOSED TO BE?
+  const ignoredIndexes: Record<string, number[]> = {};
+  const modifierTableData: Record<string, weightThing> = {};
   const thresholds = Object.fromEntries(
     new Map(
-      Object.keys(pool).map(t => {
+      Object.keys(pool).map(tStr => {
+        const t = Number.parseInt(tStr) as ModifierTier;
         ignoredIndexes[t] = [];
         const thresholds = new Map();
         const tierModifierIds: string[] = [];
@@ -2401,7 +2410,7 @@ export function regenerateModifierPoolThresholds(
             const outputWeight = useMaxWeightForOutput ? weightedModifierType.maxWeight : weight;
             modifierTableData[modifierId] = {
               weight: outputWeight,
-              tier: Number.parseInt(t),
+              tier: t,
               tierPercent: 0,
               totalPercent: 0,
             };
@@ -2429,6 +2438,8 @@ export function regenerateModifierPoolThresholds(
   for (const id of Object.keys(modifierTableData)) {
     modifierTableData[id].totalPercent =
       Math.floor(modifierTableData[id].tierPercent * tierWeights[modifierTableData[id].tier] * 100) / 100;
+    // @ts-expect-error: This converts tier from always a `ModifierTier` to always a string,
+    // and i do not care enough about this shit code that is going away in a month or 2 to fix it
     modifierTableData[id].tier = ModifierTier[modifierTableData[id].tier];
   }
   if (outputModifierData) {
@@ -2958,9 +2969,7 @@ export function getLuckTextTint(luckValue: number): number {
 }
 
 export function initModifierTypes() {
-  for (const [key, value] of Object.entries(modifierTypeInitObj)) {
-    modifierTypes[key] = value;
-  }
+  Object.assign(modifierTypes, modifierTypeInitObj);
 }
 
 // TODO: If necessary, add the rest of the modifier types here.
