@@ -2074,7 +2074,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return allAbilities[this.customPokemonData.ability];
     }
     if (this.isBoss() && isDailyFinalBoss()) {
-      const eventBoss = getDailyEventSeedBoss(globalScene.seed);
+      const eventBoss = getDailyEventSeedBoss();
       if (eventBoss?.ability != null) {
         return allAbilities[eventBoss.ability];
       }
@@ -2104,7 +2104,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return allAbilities[this.customPokemonData.passive];
     }
     if (this.isBoss() && isDailyFinalBoss()) {
-      const eventBoss = getDailyEventSeedBoss(globalScene.seed);
+      const eventBoss = getDailyEventSeedBoss();
       if (eventBoss?.passive != null) {
         return allAbilities[eventBoss.passive];
       }
@@ -6463,7 +6463,7 @@ export class EnemyPokemon extends Pokemon {
       return;
     }
 
-    const bossConfig = getDailyEventSeedBoss(globalScene.seed);
+    const bossConfig = getDailyEventSeedBoss();
     if (!bossConfig) {
       return;
     }

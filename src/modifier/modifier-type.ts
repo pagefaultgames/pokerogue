@@ -2910,7 +2910,7 @@ export function getPartyLuckValue(party: readonly Pokemon[]): number {
     const DailyLuck = new NumberHolder(0);
     globalScene.executeWithSeedOffset(
       () => {
-        const eventLuck = getDailyEventSeedLuck(globalScene.seed);
+        const eventLuck = getDailyEventSeedLuck();
         if (eventLuck != null) {
           DailyLuck.value = eventLuck;
           return;

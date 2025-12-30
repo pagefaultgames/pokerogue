@@ -33,8 +33,8 @@ export function holdOn(ms: number) {
 }
 
 export function generateStarters(scene: BattleScene, speciesIds?: SpeciesId[]): Starter[] {
-  const seed = "test";
-  const starters = getTestRunStarters(seed, speciesIds);
+  scene.seed = "test";
+  const starters = getTestRunStarters(speciesIds);
   const startingLevel = scene.gameMode.getStartingLevel();
   for (const starter of starters) {
     const species = getPokemonSpecies(starter.speciesId);
@@ -61,9 +61,9 @@ export function generateStarters(scene: BattleScene, speciesIds?: SpeciesId[]): 
   return starters;
 }
 
-function getTestRunStarters(seed: string, speciesIds?: SpeciesId[]): Starter[] {
+function getTestRunStarters(speciesIds?: SpeciesId[]): Starter[] {
   if (!speciesIds || speciesIds.length === 0) {
-    return getDailyRunStarters(seed);
+    return getDailyRunStarters();
   }
   const starters: Starter[] = [];
   const startingLevel = getGameMode(GameModes.CLASSIC).getStartingLevel();

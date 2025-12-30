@@ -230,12 +230,14 @@ export class TitlePhase extends Phase {
         // Daily runs don't support all challenges yet (starter select restrictions aren't considered)
         timedEventManager.startEventChallenges();
 
+        seed = globalScene.gameMode.trySetCustomDailyConfig(seed);
+
         globalScene.setSeed(seed);
         globalScene.resetSeed();
 
         globalScene.money = globalScene.gameMode.getStartingMoney();
 
-        const starters = getDailyRunStarters(seed);
+        const starters = getDailyRunStarters();
         const startingLevel = globalScene.gameMode.getStartingLevel();
 
         // TODO: Dedupe this

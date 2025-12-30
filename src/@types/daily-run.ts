@@ -51,5 +51,5 @@ export interface CustomDailyRunConfig {
   luck?: number;
   startingMoney?: number;
   /** Used to vary the seed while keeping the same config */
-  seedVariation?: string;
+  seedVariation: string;
 }

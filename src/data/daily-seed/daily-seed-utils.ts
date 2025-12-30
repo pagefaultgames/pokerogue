@@ -27,15 +27,15 @@ const validate = ajv.compile(customDailyRunSchema);
  * @returns `true` if it is a Daily Event Seed.
  */
 // todo: should there be a flag set on load to avoid revalidating the seed every time?
-export function isDailyEventSeed(seed: string): boolean {
-  return globalScene.gameMode.isDaily && parseDailySeed(seed) != null;
+export function isDailyEventSeed(): boolean {
+  return globalScene.gameMode.isDaily && globalScene.gameMode.dailyConfig != null;
 }
 
 /**
  * Attempt to parse the seed as a custom daily run seed.
- * @returns The parsed {@linkcode CustomDailyRunConfig}, or `null` if it can't be parsed into json or is invalid.
+ * @returns The parsed {@linkcode CustomDailyRunConfig}, or `undefined` if it can't be parsed into json or is invalid.
  */
-export function parseDailySeed(seed: string): CustomDailyRunConfig | null {
+export function parseDailySeed(seed: string): CustomDailyRunConfig | undefined {
   try {
     const config = JSON.parse(seed) as CustomDailyRunConfig;
 
@@ -43,7 +43,7 @@ export function parseDailySeed(seed: string): CustomDailyRunConfig | null {
       if (isBeta || isDev) {
         console.warn("Invalid custom daily run config:", validate.errors);
       }
-      return null;
+      return;
     }
 
     if (isDev) {
@@ -51,7 +51,7 @@ export function parseDailySeed(seed: string): CustomDailyRunConfig | null {
     }
     return config;
   } catch {
-    return null;
+    return;
   }
 }
 

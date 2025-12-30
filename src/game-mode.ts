@@ -4,6 +4,7 @@ import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { allChallenges, type Challenge, copyChallenge } from "#data/challenge";
 import { getDailyEventSeedBoss, getDailyStartingBiome, getDailyStartingMoney } from "#data/daily-seed/daily-run";
+import { parseDailySeed } from "#data/daily-seed/daily-seed-utils";
 import { allSpecies } from "#data/data-lists";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { BiomeId } from "#enums/biome-id";
@@ -13,6 +14,7 @@ import { GameModes } from "#enums/game-modes";
 import { SpeciesId } from "#enums/species-id";
 import type { Arena } from "#field/arena";
 import { classicFixedBattles, type FixedBattleConfigs } from "#trainers/fixed-battle-configs";
+import type { CustomDailyRunConfig } from "#types/daily-run";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, randSeedInt, randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
@@ -37,6 +39,7 @@ export class GameMode implements GameModeConfig {
   public isClassic: boolean;
   public isEndless: boolean;
   public isDaily: boolean;
+  public dailyConfig?: CustomDailyRunConfig;
   public hasTrainers: boolean;
   public hasNoShop: boolean;
   public hasShortBiomes: boolean;
@@ -142,7 +145,7 @@ export class GameMode implements GameModeConfig {
     }
     switch (this.modeId) {
       case GameModes.DAILY: {
-        const dailyStartingMoney = getDailyStartingMoney(globalScene.seed);
+        const dailyStartingMoney = getDailyStartingMoney();
         if (dailyStartingMoney != null) {
           return dailyStartingMoney;
         }
@@ -247,7 +250,7 @@ export class GameMode implements GameModeConfig {
 
   getOverrideSpecies(waveIndex: number): PokemonSpecies | null {
     if (this.isDaily && this.isWaveFinal(waveIndex)) {
-      const eventBoss = getDailyEventSeedBoss(globalScene.seed);
+      const eventBoss = getDailyEventSeedBoss();
       if (eventBoss?.speciesId != null) {
         // Cannot set form index here, it will be overriden when adding it as enemy pokemon.
         return getPokemonSpecies(eventBoss.speciesId);
@@ -414,6 +417,18 @@ export class GameMode implements GameModeConfig {
       default:
         return [0, 0];
     }
+  }
+
+  /**
+   * Sets the daily config if the seed is a custom seed.
+   * @param seed - The seed to check
+   * @returns the `seed` to use.
+   * @remarks
+   * If it is not a custom seed, it will return the original seed.
+   */
+  public trySetCustomDailyConfig(seed: string): string {
+    this.dailyConfig = parseDailySeed(seed);
+    return this.dailyConfig?.seedVariation ?? seed;
   }
 
   static getModeName(modeId: GameModes): string {

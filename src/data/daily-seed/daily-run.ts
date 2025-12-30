@@ -13,7 +13,6 @@ import { getPokemonSpecies } from "#utils/pokemon-utils";
 import {
   getDailyRunStarter,
   isDailyEventSeed,
-  parseDailySeed,
   validateDailyBossConfig,
   validateDailyStarterConfig,
 } from "./daily-seed-utils";
@@ -22,15 +21,14 @@ type StarterTuple = [Starter, Starter, Starter];
 
 /**
  * Generate the daily run starters.
- * @param seed - The daily run seed
  * @returns A tuple of 3 {@linkcode Starter}s
  */
-export function getDailyRunStarters(seed: string): StarterTuple {
+export function getDailyRunStarters(): StarterTuple {
   const starters: Starter[] = [];
-
+  const seed = globalScene.seed;
   globalScene.executeWithSeedOffset(
     () => {
-      const eventStarters = getDailyEventSeedStarters(seed);
+      const eventStarters = getDailyEventSeedStarters();
       if (eventStarters != null) {
         starters.push(...eventStarters);
         return;
@@ -58,7 +56,7 @@ export function getDailyRunStarters(seed: string): StarterTuple {
     seed,
   );
 
-  setDailyRunEventStarterMovesets(seed, starters as StarterTuple);
+  setDailyRunEventStarterMovesets(starters as StarterTuple);
 
   return starters as StarterTuple;
 }
@@ -68,7 +66,7 @@ export function getDailyRunStarters(seed: string): StarterTuple {
  * @returns The {@linkcode BiomeId}
  */
 export function getDailyStartingBiome(): BiomeId {
-  const eventBiome = getDailyEventSeedBiome(globalScene.seed);
+  const eventBiome = getDailyEventSeedBiome();
   if (eventBiome != null) {
     return eventBiome;
   }
@@ -101,11 +99,10 @@ export function getDailyStartingBiome(): BiomeId {
  * @remarks
  * If the {@linkcode CustomDailyRunConfig} has the `starters` property with a `moveset` property,
  * the movesets will be overwritten.
- * @param seed - The daily run seed
  * @param starters - The previously generated starters; will have movesets mutated in place
  */
-function setDailyRunEventStarterMovesets(seed: string, starters: StarterTuple): void {
-  const movesets = parseDailySeed(seed)?.starters?.map(s => s.moveset);
+function setDailyRunEventStarterMovesets(starters: StarterTuple): void {
+  const movesets = globalScene.gameMode.dailyConfig?.starters?.map(s => s.moveset);
 
   if (movesets == null) {
     return;
@@ -113,8 +110,8 @@ function setDailyRunEventStarterMovesets(seed: string, starters: StarterTuple): 
 
   if (!isBetween(movesets.length, 1, 3)) {
     console.error(
-      "Invalid custom seeded moveset used for daily run seed!\nSeed: %s\nMatch contents: %s",
-      seed,
+      "Invalid custom seeded moveset used for daily run seed!\nConfig: %s\nMatch contents: %s",
+      movesets,
       movesets,
     );
     return;
@@ -127,8 +124,8 @@ function setDailyRunEventStarterMovesets(seed: string, starters: StarterTuple): 
     }
     if (moveset.length > 4) {
       console.error(
-        "Invalid custom seeded moveset used for daily run seed!\nSeed: %s\nMatch contents: %s",
-        seed,
+        "Invalid custom seeded moveset used for daily run seed!\nConfig: %s\nMatch contents: %s",
+        movesets,
         moveset,
       );
       return;
@@ -146,18 +143,17 @@ function setDailyRunEventStarterMovesets(seed: string, starters: StarterTuple): 
 /**
  * Parse a custom daily run seed into a set of pre-defined starters.
  * @see {@linkcode CustomDailyRunConfig}
- * @param seed - The daily run seed
  * @returns An array of {@linkcode Starter}s, or `null` if the config is invalid.
  */
-function getDailyEventSeedStarters(seed: string): StarterTuple | null {
-  if (!isDailyEventSeed(seed)) {
+function getDailyEventSeedStarters(): StarterTuple | null {
+  if (!isDailyEventSeed()) {
     return null;
   }
 
-  const speciesConfigurations = parseDailySeed(seed)?.starters;
+  const speciesConfigurations = globalScene.gameMode.dailyConfig?.starters;
 
   if (speciesConfigurations == null || speciesConfigurations.length !== 3) {
-    console.error("Invalid starters used for custom daily run seed!", seed);
+    console.error("Invalid starters used for custom daily run seed!", speciesConfigurations);
     return null;
   }
 
@@ -184,12 +180,12 @@ function getDailyEventSeedStarters(seed: string): StarterTuple | null {
  * @see {@linkcode CustomDailyRunConfig}
  * @returns The {@linkcode DailySeedBoss} to use or `null` if there is no boss config or the {@linkcode SpeciesId} is invalid.
  */
-export function getDailyEventSeedBoss(seed: string): DailySeedBoss | null {
-  if (!isDailyEventSeed(seed)) {
+export function getDailyEventSeedBoss(): DailySeedBoss | null {
+  if (!isDailyEventSeed()) {
     return null;
   }
 
-  const bossConfig = validateDailyBossConfig(parseDailySeed(seed)?.boss);
+  const bossConfig = validateDailyBossConfig(globalScene.gameMode.dailyConfig?.boss);
   if (!bossConfig) {
     return null;
   }
@@ -202,12 +198,12 @@ export function getDailyEventSeedBoss(seed: string): DailySeedBoss | null {
  * @see {@linkcode CustomDailyRunConfig}
  * @returns The biome to use or `null` if no valid match.
  */
-export function getDailyEventSeedBiome(seed: string): BiomeId | null {
-  if (!isDailyEventSeed(seed)) {
+export function getDailyEventSeedBiome(): BiomeId | null {
+  if (!isDailyEventSeed()) {
     return null;
   }
 
-  const startingBiome = parseDailySeed(seed)?.biome;
+  const startingBiome = globalScene.gameMode.dailyConfig?.biome;
 
   if (startingBiome == null) {
     return null;
@@ -226,12 +222,12 @@ export function getDailyEventSeedBiome(seed: string): BiomeId | null {
  * @see {@linkcode CustomDailyRunConfig}
  * @returns The custom luck value or `null` if there is no luck property.
  */
-export function getDailyEventSeedLuck(seed: string): number | null {
-  if (!isDailyEventSeed(seed)) {
+export function getDailyEventSeedLuck(): number | null {
+  if (!isDailyEventSeed()) {
     return null;
   }
 
-  const luck = parseDailySeed(seed)?.luck;
+  const luck = globalScene.gameMode.dailyConfig?.luck;
 
   if (luck == null) {
     return null;
@@ -250,12 +246,12 @@ export function getDailyEventSeedLuck(seed: string): number | null {
  * @see {@linkcode CustomDailyRunConfig}
  * @returns The custom money value or `null` if there is no money property.
  */
-export function getDailyStartingMoney(seed: string): number | null {
-  if (!isDailyEventSeed(seed)) {
+export function getDailyStartingMoney(): number | null {
+  if (!isDailyEventSeed()) {
     return null;
   }
 
-  const startingMoney = parseDailySeed(seed)?.startingMoney;
+  const startingMoney = globalScene.gameMode.dailyConfig?.startingMoney;
 
   if (startingMoney == null) {
     return null;
