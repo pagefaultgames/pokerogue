@@ -168,6 +168,7 @@ export class BattleScene extends SceneBase {
 
   public sessionPlayTime: number | null = null;
   public lastSavePlayTime: number | null = null;
+  // TODO: move these settings into a settings helper object
   public masterVolume = 0.5;
   public bgmVolume = 1;
   public fieldVolume = 1;
@@ -352,7 +353,11 @@ export class BattleScene extends SceneBase {
     );
   }
 
-  async preload() {
+  /**
+   * Load game assets necessary for the scene to run.
+   * Called by Phaser on new game start.
+   */
+  public async preload(): Promise<void> {
     /**
      * These moves serve as fallback animations for other moves without loaded animations, and
      * must be loaded prior to game start.
@@ -369,7 +374,11 @@ export class BattleScene extends SceneBase {
     });
   }
 
-  create() {
+  /**
+   * Create game objects with loaded assets.
+   * Called by Phaser on new game start.
+   */
+  public create(): void {
     this.scene.remove(LoadingScene.KEY);
     initGameSpeed.apply(this);
     this.inputController = new InputsController();
@@ -394,6 +403,7 @@ export class BattleScene extends SceneBase {
     this.ui?.update();
   }
 
+  // TODO: Split this up into multiple sub-methods
   launchBattle() {
     this.arenaBg = this.add.sprite(0, 0, "plains_bg");
     this.arenaBg.setName("sprite-arena-bg");
@@ -582,6 +592,8 @@ export class BattleScene extends SceneBase {
     this.arenaNextEnemy.setVisible(false);
 
     for (const a of [this.arenaPlayer, this.arenaPlayerTransition, this.arenaEnemy, this.arenaNextEnemy]) {
+      // TODO: This seems questionable - we just initialized the arena sprites and then have to manually check if they're a sprite?
+      // This is likely the result of either extreme laziness or confusion
       if (a instanceof Phaser.GameObjects.Sprite) {
         a.setOrigin(0, 0);
       }
@@ -1111,6 +1123,7 @@ export class BattleScene extends SceneBase {
     return this.currentBattle?.randSeedInt(range, min);
   }
 
+  // TODO: Break up function - this does far too much in 1 sitting
   reset(clearScene = false, clearData = false, reloadI18n = false): void {
     if (clearData) {
       this.gameData = new GameData();
@@ -1229,6 +1242,7 @@ export class BattleScene extends SceneBase {
           this.uiContainer.remove(this.ui, true);
           this.uiContainer.destroy();
           this.children.removeAll(true);
+          // TODO: Do we even need this?
           this.game.domContainer.innerHTML = "";
           // TODO: `launchBattle` calls `reset(false, false, true)`
           this.launchBattle();
