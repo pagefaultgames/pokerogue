@@ -32,9 +32,9 @@ import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEven
 import type { Pokemon } from "#field/pokemon";
 import { FieldEffectModifier } from "#modifiers/modifier";
 import type { Move } from "#moves/move";
-import type { BiomeTierTrainerPools } from "#types/biomes";
+import type { BiomeTierTrainerPools, SpeciesTree } from "#types/biomes";
 import type { Constructor } from "#types/common";
-import type { AbstractConstructor, Mutable } from "#types/type-helpers";
+import type { AbstractConstructor } from "#types/type-helpers";
 import { NumberHolder, randSeedInt, randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
@@ -63,7 +63,7 @@ export class Arena {
 
   private lastTimeOfDay: TimeOfDay;
 
-  private pokemonPool: Record<BiomePoolTier, SpeciesId[]>;
+  private pokemonPool: Record<BiomePoolTier, (SpeciesId | SpeciesTree)[]>;
   private trainerPool: BiomeTierTrainerPools;
 
   public readonly eventTarget: EventTarget = new EventTarget();
@@ -99,16 +99,14 @@ export class Arena {
     // TODO: Rework in 1.13 - This shallow clones the ENTIRE POKEMON POOL per time of day change
     const biomePool = biomePokemonPools[this.biomeType];
 
-    this.pokemonPool = Object.freeze(
-      Object.entries(biomePool).reduce(
-        (acc, [tier, tierPool]) => {
-          tier satisfies `${BiomePoolTier}`;
-          // Type assertion required due to TypeScript not liking us using stringified `BiomePoolTier`s as an index type
-          acc[tier as unknown as BiomePoolTier] = [...tierPool[TimeOfDay.ALL], ...tierPool[timeOfDay]];
-          return acc;
-        },
-        {} as Mutable<Record<BiomePoolTier, SpeciesId[]>>,
-      ),
+    this.pokemonPool = Object.entries(biomePool).reduce(
+      (acc, [tier, tierPool]) => {
+        tier satisfies `${BiomePoolTier}`;
+        // Type assertion required due to TypeScript not liking us using stringified `BiomePoolTier`s as an index type
+        acc[Number(tier)] = [...tierPool[TimeOfDay.ALL], ...tierPool[timeOfDay]];
+        return acc;
+      },
+      {} as typeof this.pokemonPool,
     );
     this.lastTimeOfDay = timeOfDay;
   }
@@ -161,7 +159,24 @@ export class Arena {
     console.log("Final rarity: ", BiomePoolTier[tier]);
 
     const entry = randSeedItem(tierPool);
-    const species = getPokemonSpecies(entry);
+    let speciesId: SpeciesId;
+    if (typeof entry === "number") {
+      speciesId = entry;
+    } else {
+      // TODO: This is scuffed
+      const levelThresholds = Object.keys(entry);
+      for (let l = levelThresholds.length - 1; l >= 0; l--) {
+        const levelThreshold = Number.parseInt(levelThresholds[l]);
+        if (level >= levelThreshold) {
+          const speciesIds = entry[levelThreshold];
+          speciesId = randSeedItem(speciesIds);
+          break;
+        }
+      }
+    }
+
+    // TODO: Resolve later
+    const species = getPokemonSpecies(speciesId!);
 
     // Attempt to retry up to 10 times if generating a high BST mon
     // TODO: These should be removed from the pool beforehand
