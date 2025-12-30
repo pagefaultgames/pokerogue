@@ -161,8 +161,6 @@ describe("Unit Tests - ai-moveset-gen.ts", () => {
   describe("", () => {
     //#region boilerplate
     let phaserGame: Phaser.Game;
-    // TODO: Can we remove this if nothing uses it?
-    let _game: GameManager;
     /**A pokemon object that will be cleaned up after every test */
     let pokemon: EnemyPokemon | null = null;
 
@@ -172,7 +170,9 @@ describe("Unit Tests - ai-moveset-gen.ts", () => {
       });
       // Game manager can be reused between tests as we are not really modifying the global state
       // So there is no need to put this in a beforeEach with cleanup in afterEach.
-      _game = new GameManager(phaserGame);
+      // TODO: Remove once we actually start games properly; this is only required to stub out properties on
+      // `phaserGame` that are never actually initialized properly (or at all)
+      new GameManager(phaserGame);
     });
 
     afterEach(() => {
