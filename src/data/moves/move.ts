@@ -11192,6 +11192,7 @@ export function initMoves() {
       .attr(MessageAttr, () => i18next.t("moveTriggers:celebrate", { playerName: loggedInUser?.username })),
     new StatusMove(MoveId.HOLD_HANDS, PokemonType.NORMAL, -1, 40, -1, 0, 6)
       .ignoresSubstitute()
+      .condition(failIfSingleBattle)
       .target(MoveTarget.NEAR_ALLY),
     new StatusMove(MoveId.BABY_DOLL_EYES, PokemonType.FAIRY, 100, 30, -1, 1, 6)
       .attr(StatStageChangeAttr, [Stat.ATK], -1)
@@ -12377,6 +12378,7 @@ export function initMoves() {
     new AttackMove(MoveId.HARD_PRESS, PokemonType.STEEL, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 9) //
       .attr(OpponentHighHpPowerAttr, 100),
     new StatusMove(MoveId.DRAGON_CHEER, PokemonType.DRAGON, -1, 15, -1, 0, 9)
+      .condition(failIfSingleBattle)
       .attr(AddBattlerTagAttr, BattlerTagType.DRAGON_CHEER, false, true)
       // TODO: Remove once dragon cheer & focus energy are merged into 1 tag
       .condition((_user, target) => !target.getTag(BattlerTagType.CRIT_BOOST))
