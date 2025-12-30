@@ -42,7 +42,7 @@ export const biomeLinks: BiomeLinks = {
   [BiomeId.LABORATORY]: BiomeId.CONSTRUCTION_SITE
 };
 
-export const biomePokemonPools = {
+export const biomePokemonPools: BiomePokemonPools = {
   [BiomeId.TOWN]: {
     [BiomePoolTier.COMMON]: {
       [TimeOfDay.DAWN]: [
@@ -1565,8 +1565,7 @@ export const biomePokemonPools = {
     [BiomePoolTier.BOSS_SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [] },
     [BiomePoolTier.BOSS_ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [] }
   }
-} satisfies BiomePokemonPools;
-
+};
 export const biomeTrainerPools: BiomeTrainerPools = {
   [BiomeId.TOWN]: {
     [BiomePoolTier.COMMON]: [ TrainerType.YOUNGSTER ],
