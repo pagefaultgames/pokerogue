@@ -38,6 +38,7 @@ import { getTypeRgb } from "#data/type";
 import { BattleSpec } from "#enums/battle-spec";
 import { BattleStyle } from "#enums/battle-style";
 import { BattleType } from "#enums/battle-type";
+import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
 import { EaseType } from "#enums/ease-type";
@@ -812,6 +813,20 @@ export class BattleScene extends SceneBase {
     ret.splice(0, playerField.length, ...playerField);
     ret.splice(2, enemyField.length, ...enemyField);
     return activeOnly ? ret.filter(p => p?.isActive()) : ret;
+  }
+
+  /**
+   * Return the on-field Pokemon with the given battler index,
+   * or `undefined` if no such Pokemon exists.
+   * @param battlerIndex - The {@linkcode BattlerIndex} to search for
+   * @returns The {@linkcode Pokemon} with the given battler index,
+   * or `undefined` if no such Pokemon exists.
+   * @remarks
+   * This function is allowed to return non-active (e.g., fainted) Pokemon.
+   */
+  // TODO: Replace prior indexing into `getField` with this abstraction
+  public getPokemonByBattlerIndex(battlerIndex: BattlerIndex): Pokemon | undefined {
+    return this.getField()[battlerIndex] ?? undefined;
   }
 
   /**

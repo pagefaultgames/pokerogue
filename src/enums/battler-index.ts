@@ -9,3 +9,5 @@ export enum BattlerIndex {
   ENEMY,
   ENEMY_2,
 }
+
+export type FieldBattlerIndex = Exclude<BattlerIndex, BattlerIndex.ATTACKER>;

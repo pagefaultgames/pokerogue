@@ -368,6 +368,7 @@ export abstract class Move implements Localizable {
    * @returns boolean
    */
   isMultiTarget(): boolean {
+    // TODO: Do we need to add Dragon Darts here?
     switch (this.moveTarget) {
       case MoveTarget.ALL_OTHERS:
       case MoveTarget.ALL_NEAR_OTHERS:
@@ -395,6 +396,16 @@ export abstract class Move implements Localizable {
       case MoveTarget.USER_OR_NEAR_ALLY:
       case MoveTarget.USER_AND_ALLIES:
       case MoveTarget.USER_SIDE:
+        return true;
+    }
+    return false;
+  }
+
+  isFieldTarget(): boolean {
+    switch (this.moveTarget) {
+      case MoveTarget.BOTH_SIDES:
+      case MoveTarget.USER_SIDE:
+      case MoveTarget.ENEMY_SIDE:
         return true;
     }
     return false;
@@ -11684,7 +11695,10 @@ export function initMoves() {
     new AttackMove(MoveId.DRAGON_DARTS, PokemonType.DRAGON, MoveCategory.PHYSICAL, 50, 100, 10, -1, 0, 8)
       .attr(MultiHitAttr, MultiHitType._2)
       .makesContact(false)
-      .partial(), // smart targetting is unimplemented
+      .target(MoveTarget.DRAGON_DARTS)
+      // see `dragon_darts.test.ts` for documented edge cases
+      // when both enemies use protect, both hits go into the ally of the current target
+      .edgeCase(),
     new StatusMove(MoveId.TEATIME, PokemonType.NORMAL, -1, 10, -1, 0, 8)
       .attr(EatBerryAttr, false)
       .target(MoveTarget.ALL),
