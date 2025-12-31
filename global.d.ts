@@ -15,7 +15,7 @@ import type {
 } from "type-fest";
 
 // #region Object-related types
-type getObjectKeys<Keys extends PropertyKey> = Stringify<Extract<Keys, Stringable>>[];
+type StringableKey = Stringable & PropertyKey;
 
 declare const origObjectTag: unique symbol;
 /**
@@ -24,14 +24,14 @@ declare const origObjectTag: unique symbol;
  */
 type getObjectEntries<O extends object> = Tagged<ObjectEntry<O>[], typeof origObjectTag, O>;
 
-type ObjectEntry<O extends object> = {
-  [K in Extract<keyof O, Stringable>]: [Stringify<K>, O[K]];
-}[Extract<keyof O, Stringable>];
+type ObjectEntry<O extends Record<StringableKey, unknown>> = {
+  [K in keyof O]: [Stringify<K>, O[K]];
+}[keyof O];
 
-type fromEntries<E extends Iterable<readonly [PropertyKey, unknown]>> =
+type fromEntries<E extends Iterable<readonly [StringableKey, unknown]>> =
   E extends Tagged<unknown, typeof origObjectTag, infer Base extends object>
     ? Base
-    : E extends Iterable<readonly [infer K extends PropertyKey, infer V]>
+    : E extends Iterable<readonly [infer K extends StringableKey, infer V]>
       ? Record<Unstringify<K>, V>
       : never;
 
@@ -58,9 +58,9 @@ declare global {
   // NOTE: These are technically unsound due to structural typing, but extremely useful nonetheless as the cases where we are using
   // these functions are ones where structural typing would be a hindrance.
   interface ObjectConstructor {
-    keys<K extends PropertyKey>(o: Record<K, unknown>): getObjectKeys<K>;
-    entries<O extends Record<PropertyKey, unknown>>(o: O): getObjectEntries<O>;
-    fromEntries<Entry extends readonly [PropertyKey, unknown], E extends Iterable<Entry>>(entries: E): fromEntries<E>;
+    keys<K extends StringableKey>(o: Record<K, unknown>): Stringify<K>[];
+    entries<O extends Record<StringableKey, unknown>>(o: O): getObjectEntries<O>;
+    fromEntries<Entry extends readonly [StringableKey, unknown], E extends Iterable<Entry>>(entries: E): fromEntries<E>;
   }
 
   // Coerce string-like numbers to strings inside `Number()` casts, and vice versa for base-10 `parseInt/toString` calls
