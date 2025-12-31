@@ -91,6 +91,7 @@ declare global {
   // Coerce string-like numbers to strings inside `Number()` casts, and vice versa for base-10 `parseInt/toString` calls
   interface NumberConstructor {
     new <S extends string>(value: S): S extends `${infer N extends number}` ? N : typeof NaN;
+    // biome-ignore lint/nursery/noShadow: bug in linter wrt. construct signatures
     <S extends string>(value: S): S extends `${infer N extends number}` ? N : typeof NaN;
 
     parseInt<N extends number>(string: `${N}`, radix?: 10): N;
