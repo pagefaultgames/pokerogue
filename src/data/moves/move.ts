@@ -11188,7 +11188,8 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new SelfStatusMove(MoveId.CELEBRATE, PokemonType.NORMAL, -1, 40, -1, 0, 6)
       // NB: This needs a lambda function as the user will not be logged in by the time the moves are initialized
-      .attr(MessageAttr, () => i18next.t("moveTriggers:celebrate", { playerName: loggedInUser?.username })),
+      .attr(MessageAttr, () => i18next.t("moveTriggers:celebrate", { playerName: loggedInUser?.username }))
+      .attr(MoneyAttr),
     new StatusMove(MoveId.HOLD_HANDS, PokemonType.NORMAL, -1, 40, -1, 0, 6)
       .ignoresSubstitute()
       .target(MoveTarget.NEAR_ALLY),
