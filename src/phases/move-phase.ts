@@ -728,7 +728,7 @@ export class MovePhase extends PokemonPhase {
 
   //#endregion Second Failure Check
 
-  //#region Third Failure Check
+  //#region Move Execution
 
   /**
    * Check for cancellation edge cases - no targets remaining, or `MoveId.NONE` is in the queue
