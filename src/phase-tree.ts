@@ -31,7 +31,7 @@ export class PhaseTree {
    * Internal helper method to add a {@linkcode Phase} to the specified level.
    * @param phase - The `Phase` to add
    * @param level - The numeric level to add the phase
-   * @throws {@linkcode Error}
+   * @throws {Error}
    * Error if `level` is out of legal bounds
    */
   private add(phase: Phase, level: number): void {
