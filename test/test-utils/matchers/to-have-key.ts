@@ -3,7 +3,7 @@ import { receivedStr } from "#test/test-utils/test-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
- * Matcher that checks if a {@linkcode Map} contains the given key, regardless of its value.
+ * Matcher that checks if a {@linkcode Map} contains the given key.
  * @param received - The received value. Should be a Map
  * @param expectedKey - The key whose inclusion is being checked
  * @param expectedValue - The desired value for the given key-value pair;
