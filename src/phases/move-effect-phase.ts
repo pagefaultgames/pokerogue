@@ -225,6 +225,7 @@ export class MoveEffectPhase extends PokemonPhase {
     if (anySuccess) {
       this.moveHistoryEntry.result = MoveResult.SUCCESS;
     } else {
+      // If the move failed to impact all targets, disable all subsequent multi-hits
       user.turnData.hitCount = 1;
       user.turnData.hitsLeft = 1;
       this.moveHistoryEntry.result = allMiss ? MoveResult.MISS : MoveResult.FAIL;
@@ -646,7 +647,8 @@ export class MoveEffectPhase extends PokemonPhase {
   }
 
   /**
-   * Sub-method of {@linkcode applyMoveDamage} that applies damage to the target.
+   * Sub-method of for {@linkcode applyMoveEffects} that applies damage to the target.
+   *
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - The {@linkcode Pokemon} targeted by the move
    * @param effectiveness - The effectiveness of the move against the target
@@ -716,7 +718,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     if (damage <= 0) {
-      return [result, false, 0];
+      return [result, isCritical, damage];
     }
 
     if (user.isPlayer()) {
@@ -763,7 +765,7 @@ export class MoveEffectPhase extends PokemonPhase {
         msg = i18next.t("battle:hitResultNotVeryEffective");
         break;
       case HitResult.ONE_HIT_KO:
-        msg = i18next.t("battle:hitResultOneHitKO");
+        msg = i18next.t("battle:hitResultOneHitKo");
         break;
     }
     if (msg) {
@@ -884,6 +886,10 @@ export class MoveEffectPhase extends PokemonPhase {
 
   public override end(): void {
     const user = this.getUserPokemon();
+    if (!user) {
+      super.end();
+      return;
+    }
 
     /**
      * If this phase isn't for the invoked move's last strike (and we still have something to hit),
@@ -915,13 +921,17 @@ export class MoveEffectPhase extends PokemonPhase {
   // #region Helpers
 
   /**
-   * @returns The {@linkcode Pokemon} using this phase's invoked move.
-   * Is never nullish during the move execution itself, as the `start` method
-   * ends the phase immediately if a source is missing.
+   * @todo Investigate why this doesn't use `BattlerIndex`
+   * @returns The {@linkcode Pokemon} using this phase's invoked move
    */
-  // TODO: Delete in favor of {@linkcode PokemonPhase.getPokemon}
-  public getUserPokemon(): Pokemon {
-    return super.getPokemon()!;
+  public getUserPokemon(): Pokemon | undefined {
+    // TODO: Make this purely a battler index
+    if (this.battlerIndex > BattlerIndex.ENEMY_2) {
+      return globalScene.getPokemonById(this.battlerIndex);
+    }
+    // TODO: Figure out why this uses `fieldIndex` instead of `BattlerIndex`
+    // TODO: Remove `?? undefined` once field pokemon getters are made sane
+    return (this.player ? globalScene.getPlayerField() : globalScene.getEnemyField())[this.fieldIndex] ?? undefined;
   }
 
   /**
@@ -960,6 +970,10 @@ export class MoveEffectPhase extends PokemonPhase {
       this.removeTarget(target);
     }
     const user = this.getUserPokemon();
+    if (!user) {
+      return;
+    }
+
     // If no target specified, or the specified target was the last of this move's
     // targets, completely cancel all subsequent strikes.
     if (!target || this.targets.length === 0) {
