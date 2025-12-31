@@ -12,7 +12,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 /**
  * Options type for {@linkcode toHavePositionalTag}.
  */
-export type toHavePositionalTagOptions<P extends PositionalTagType> = OneOther<toSerializedPosTag<P>, "tagType">;
+export type ToHavePositionalTagOptions<P extends PositionalTagType> = OneOther<toSerializedPosTag<P>, "tagType">;
 
 /**
  * Matcher to check if the {@linkcode Arena} has a certain number of {@linkcode PositionalTag}s active.
@@ -26,7 +26,7 @@ export type toHavePositionalTagOptions<P extends PositionalTagType> = OneOther<t
 export function toHavePositionalTag<P extends PositionalTagType>(
   this: Readonly<MatcherState>,
   received: unknown,
-  expectedTag: P | toHavePositionalTagOptions<P>,
+  expectedTag: P | ToHavePositionalTagOptions<P>,
   count = this.isNot ? 0 : 1,
 ): SyncExpectationResult {
   if (!isGameManagerInstance(received)) {

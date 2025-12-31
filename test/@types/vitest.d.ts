@@ -12,19 +12,19 @@ import type { BattlerTagType } from "#enums/battler-tag-type";
 import type { MoveId } from "#enums/move-id";
 import type { PokemonType } from "#enums/pokemon-type";
 import type { PositionalTagType } from "#enums/positional-tag-type";
-import type { BattleStat, EffectiveStat } from "#enums/stat";
+import type { BattleStat, EffectiveStat, StatStage } from "#enums/stat";
 import type { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
 import type { PokemonMove } from "#moves/pokemon-move";
 import type { OneOther } from "#test/@types/test-helpers";
 import type { GameManager } from "#test/test-utils/game-manager";
-import type { toHaveArenaTagOptions } from "#test/test-utils/matchers/to-have-arena-tag";
-import type { toHaveBattlerTagOptions } from "#test/test-utils/matchers/to-have-battler-tag";
-import type { toHaveEffectiveStatOptions } from "#test/test-utils/matchers/to-have-effective-stat";
-import type { toHaveHpOptions } from "#test/test-utils/matchers/to-have-hp";
-import type { toHavePositionalTagOptions } from "#test/test-utils/matchers/to-have-positional-tag";
-import type { expectedStatusType } from "#test/test-utils/matchers/to-have-status-effect";
-import type { toHaveTypesOptions } from "#test/test-utils/matchers/to-have-types";
+import type { ToHaveArenaTagOptions } from "#test/test-utils/matchers/to-have-arena-tag";
+import type { ToHaveBattlerTagOptions } from "#test/test-utils/matchers/to-have-battler-tag";
+import type { ToHaveEffectiveStatOptions } from "#test/test-utils/matchers/to-have-effective-stat";
+import type { ToHaveHpOptions } from "#test/test-utils/matchers/to-have-hp";
+import type { ToHavePositionalTagOptions } from "#test/test-utils/matchers/to-have-positional-tag";
+import type { ExpectedStatusType } from "#test/test-utils/matchers/to-have-status-effect";
+import type { ToHaveTypesOptions } from "#test/test-utils/matchers/to-have-types";
 import type { PhaseString } from "#types/phase-types";
 import type { TurnMove } from "#types/turn-move";
 import type { Negate } from "#types/type-helpers";
@@ -32,6 +32,9 @@ import type { toDmgValue } from "#utils/common";
 import type { If, IntClosedRange, Integer, IsNumericLiteral, IsStringLiteral, NonNegativeInteger } from "type-fest";
 import type { expect } from "vitest";
 import type { GetMatchers, MatchersBase, RestrictMatcher } from "./matcher-helpers";
+import { StatusEffect } from "#enums/status-effect";
+import { Status } from "#data/status-effect";
+import { Arena } from "#field/arena";
 
 // #region Helper Types
 
@@ -104,7 +107,7 @@ interface GenericMatchers<T> {
 // #region GameManager Matchers
 interface GameManagerMatchers {
   /**
-   * Check if the {@linkcode GameManager} has shown the given message at least once in the current test case.
+   * Check whether the {@linkcode GameManager} has shown the given message at least once in the current test case.
    * @param expectedMessage - The expected message to be displayed
    * @remarks
    * Strings consumed by this function should _always_ be produced by a call to `i18next.t`
@@ -117,7 +120,7 @@ interface GameManagerMatchers {
   toHaveShownMessage<T extends string>(expectedMessage: IsStringLiteral<T> extends true ? never : T): void;
 
   /**
-   * Check if the currently-running {@linkcode Phase} is of the given type.
+   * Check whether the currently-running {@linkcode Phase} is of the given type.
    * @param expectedPhase - The expected {@linkcode PhaseString | name of the phase}
    */
   toBeAtPhase(expectedPhase: PhaseString): void;
@@ -148,7 +151,7 @@ interface ArenaMatchersCommon {
    * Check whether the current {@linkcode Arena} contains the given {@linkcode ArenaTag}.
    * @param expectedTag - A partially-filled `ArenaTag` containing the desired properties
    */
-  toHaveArenaTag<A extends ArenaTagType>(expectedTag: toHaveArenaTagOptions<A>): void;
+  toHaveArenaTag<A extends ArenaTagType>(expectedTag: ToHaveArenaTagOptions<A>): void;
   /**
    * Check whether the current {@linkcode Arena} contains the given {@linkcode ArenaTag}.
    * @param expectedType - The {@linkcode ArenaTagType} of the desired tag
@@ -157,18 +160,18 @@ interface ArenaMatchersCommon {
   toHaveArenaTag(expectedType: ArenaTagType, side?: ArenaTagSide): void;
 
   /**
-   * Check whether the current {@linkcode Arena} contains the given {@linkcode PositionalTag}.
-   * @param expectedTag - A partially-filled `PositionalTag` containing the desired properties
+   * Check whether the current {@linkcode Arena} contains a {@linkcode PositionalTag} with the given properties.
+   * @param expectedTag - A partially-filled {@linkcode PositionalTag} containing the desired properties to check
    */
-  toHavePositionalTag<P extends PositionalTagType>(expectedTag: toHavePositionalTagOptions<P>): void;
+  toHavePositionalTag<P extends PositionalTagType>(expectedTag: ToHavePositionalTagOptions<P>): void;
 }
 
 interface ArenaMatchersPositive {
   /**
    * Check whether the current {@linkcode Arena} contains the given number of {@linkcode PositionalTag}s.
    * @param expectedType - The {@linkcode PositionalTagType} of the desired tag
-   * @param count - (Default `1`) The number of instances of `expectedType` that should be active.
-   * Must be within the range `[1, 4]`.
+   * @param count - (Default `1`) The number of instances of `expectedType` that should be active;
+   * must be within the range `[1, 4]`
    * @remarks
    * If you want to check that a given tag is _not_ present on-field, use the negated form of this matcher instead.
    */
@@ -189,17 +192,18 @@ interface PokemonMatchers {
   /**
    * Check whether a {@linkcode Pokemon}'s current typing includes the given types.
    * @param expectedTypes - The expected {@linkcode PokemonType}s to check against; must have length `>0`
-   * @param options - The {@linkcode toHaveTypesOptions | options} passed to the matcher
+   * @param options - The {@linkcode ToHaveTypesOptions | options} passed to the matcher
    */
   // TODO: Update typing once pokemon-related typing funcs are updated to return non-empty tuples.
   // The actual functions guarantee that the end result will never be empty, but the types do not reflect that at compile-time.
-  toHaveTypes(expectedTypes: readonly PokemonType[], options?: toHaveTypesOptions): void;
+  toHaveTypes(expectedTypes: readonly PokemonType[], options?: ToHaveTypesOptions): void;
 
   /**
    * Check whether a {@linkcode Pokemon} has used a move matching the given criteria.
    * @param expectedMove - The {@linkcode MoveId} the Pokemon is expected to have used,
-   * or a partially filled {@linkcode TurnMove} containing the desired properties to check
-   * @param index - The index of the move history entry to check, in order from most recent to least recent; default `0`
+   * or a partially-filled {@linkcode TurnMove} containing the desired properties to check
+   * @param index - (Default `0`) The index of the move history entry to check, in order from most recent to least recent;
+   * must be an non-negative integer
    * @see {@linkcode Pokemon.getLastXMoves}
    */
   toHaveUsedMove<I extends number>(
@@ -212,14 +216,14 @@ interface PokemonMatchers {
    * (checked after all stat value modifications).
    * @param stat - The {@linkcode EffectiveStat} to check
    * @param expectedValue - The expected value of `stat`; must be a non-negative integer
-   * @param options - The {@linkcode toHaveEffectiveStatOptions | options} passed to the matcher
+   * @param options - The {@linkcode ToHaveEffectiveStatOptions | options} passed to the matcher
    * @remarks
    * If you want to check the stat **before** modifiers are applied, use {@linkcode Pokemon.getStat} instead.
    */
   toHaveEffectiveStat<S extends number>(
     stat: EffectiveStat,
     expectedValue: If<IsNumericLiteral<S>, NonNegativeInteger<S>, S>,
-    options?: toHaveEffectiveStatOptions,
+    options?: ToHaveEffectiveStatOptions,
   ): void;
 
   /**
@@ -227,24 +231,29 @@ interface PokemonMatchers {
    * @param expectedStatusEffect - The {@linkcode StatusEffect} the Pokemon is expected to have,
    * or a partially filled {@linkcode Status} object containing the desired properties
    */
-  toHaveStatusEffect(expectedStatusEffect: expectedStatusType): void;
+  toHaveStatusEffect(expectedStatusEffect: ExpectedStatusType): void;
 
   /**
    * Check whether a {@linkcode Pokemon} has a specific {@linkcode Stat} stage.
    * @param stat - The {@linkcode BattleStat} to check
-   * @param expectedStage - The expected stat stage value of `stat`; must be within the interval `[-6, 6]`
+   * @param expectedStage - The expected {@linkcode StatStage} of `stat`; must be within the interval `[-6, 6]`
    * @throws {@linkcode Error} \
    * Fails test if `level` is out of legal bounds.
    */
-  toHaveStatStage(stat: BattleStat, expectedStage: IntClosedRange<0, 6> | Negate<IntClosedRange<0, 6>>): void;
+  toHaveStatStage(stat: BattleStat, expectedStage: StatStage): void;
 
   /**
-   * Check whether a {@linkcode Pokemon} has the given {@linkcode BattlerTag}.
-   * @param expectedTag - A fully or partially-filled {@linkcode BattlerTag} containing the desired properties
+   * Check whether a {@linkcode Pokemon} has a {@linkcode BattlerTag} with the given properties.
+   * @param expectedTag - A partially-filled {@linkcode BattlerTag} containing the desired properties to check
    */
-  toHaveBattlerTag<B extends BattlerTagType>(expectedTag: toHaveBattlerTagOptions<B>): void;
+  toHaveBattlerTag<B extends BattlerTagType>(expectedTag: ToHaveBattlerTagOptions<B>): void;
   /**
    * Check whether a {@linkcode Pokemon} has the given {@linkcode BattlerTag}.
+   * @param expectedTag - The {@linkcode BattlerTag} that the Pokemon is expected to possess
+   */
+  toHaveBattlerTag<B extends BattlerTagType>(expectedTag: BattlerTagTypeMap[B]): void;
+  /**
+   * Check whether a {@linkcode Pokemon} has a {@linkcode BattlerTag} of the given type.
    * @param expectedType - The expected {@linkcode BattlerTagType}
    */
   toHaveBattlerTag(expectedType: BattlerTagType): void;
@@ -263,9 +272,9 @@ interface PokemonMatchers {
   /**
    * Check whether a {@linkcode Pokemon} has a specific amount of {@linkcode Stat.HP | HP}.
    * @param expectedHp - The expected amount of {@linkcode Stat.HP | HP} to have
-   * @param options - The {@linkcode toHaveHpOptions | options} for the matcher; must be omitted if `expectedHp` is a numeric literal
+   * @param options - The {@linkcode ToHaveHpOptions | options} for the matcher; must be omitted if `expectedHp` is a numeric literal
    */
-  toHaveHp<H extends number>(expectedHp: NonNumericLiteral<H>, options?: toHaveHpOptions): void;
+  toHaveHp<H extends number>(expectedHp: NonNumericLiteral<H>, options?: ToHaveHpOptions): void;
 
   /**
    * Check whether a {@linkcode Pokemon} has taken a specific amount of damage.
@@ -298,9 +307,9 @@ interface PokemonMatchers {
    * @param moveId - The {@linkcode MoveId} corresponding to the {@linkcode PokemonMove} that should have consumed PP
    * @param ppUsed - The numerical amount of PP that should have been consumed,
    * or `all` to indicate the move should be _out_ of PP
-   * @remarks
-   * If the Pokemon's moveset has been set via {@linkcode Overrides.MOVESET_OVERRIDE}/{@linkcode Overrides.ENEMY_MOVESET_OVERRIDE}
-   * or does not contain exactly one copy of `moveId`, this will fail the test.
+   * @throws {Error}
+   * Fails test if the Pokemon's moveset has been set via {@linkcode Overrides.MOVESET_OVERRIDE}/{@linkcode Overrides.ENEMY_MOVESET_OVERRIDE}
+   * or does not contain exactly one copy of `moveId`.
    */
   toHaveUsedPP<P extends number | "all">(moveId: MoveId, ppUsed: If<IsNumericLiteral<P>, Integer<P>, P>): void;
 }

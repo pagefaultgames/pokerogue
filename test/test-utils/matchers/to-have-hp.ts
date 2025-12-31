@@ -4,8 +4,11 @@ import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import { toDmgValue } from "#utils/common";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
-/** Options type for {@linkcode toHaveHp} */
-export interface toHaveHpOptions {
+/**
+ * Options type for {@linkcode toHaveHp}.
+ * @sealed
+ */
+export interface ToHaveHpOptions {
   /**
    * The rounding method to use when coercing hp counts to an integer.
    * Possible values are `"down"` (for {@linkcode toDmgValue}) and `"half up"` (for "Math.round")
@@ -25,7 +28,7 @@ export function toHaveHp(
   this: MatcherState,
   received: unknown,
   expectedHp: number,
-  { rounding = "down" }: toHaveHpOptions = {},
+  { rounding = "down" }: ToHaveHpOptions = {},
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
     return {

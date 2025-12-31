@@ -6,7 +6,10 @@ import { getEnumStr, getOnelineDiffStr } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
-export type expectedStatusType =
+/**
+ * The type of a status effect expected by {@linkcode toHaveStatusEffect}.
+ */
+export type ExpectedStatusType =
   | StatusEffect
   | { effect: StatusEffect.TOXIC; toxicTurnCount: number }
   | { effect: StatusEffect.SLEEP; sleepTurnsRemaining: number };
@@ -21,7 +24,7 @@ export type expectedStatusType =
 export function toHaveStatusEffect(
   this: Readonly<MatcherState>,
   received: unknown,
-  expectedStatus: expectedStatusType,
+  expectedStatus: ExpectedStatusType,
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
     return {

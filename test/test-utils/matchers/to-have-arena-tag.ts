@@ -31,7 +31,7 @@ type NonSerializableArenaTagOptions<A extends ArenaTagType> = //
  * If `A` corresponds to a serializable `ArenaTag`, only properties allowed to be serialized
  * (i.e. can change across instances) will be present and able to be checked.
  */
-export type toHaveArenaTagOptions<A extends ArenaTagType> = [A] extends [SerializableArenaTagType]
+export type ToHaveArenaTagOptions<A extends ArenaTagType> = [A] extends [SerializableArenaTagType]
   ? SerializableArenaTagOptions<A>
   : NonSerializableArenaTagOptions<A>;
 
@@ -47,7 +47,7 @@ export type toHaveArenaTagOptions<A extends ArenaTagType> = [A] extends [Seriali
 export function toHaveArenaTag<A extends ArenaTagType>(
   this: Readonly<MatcherState>,
   received: unknown,
-  expectedTag: A | toHaveArenaTagOptions<A>,
+  expectedTag: A | ToHaveArenaTagOptions<A>,
   side: ArenaTagSide = ArenaTagSide.BOTH,
 ): SyncExpectationResult {
   if (!isGameManagerInstance(received)) {

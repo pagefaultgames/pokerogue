@@ -12,23 +12,21 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * Helper type for serializable battler tag options.
  * Allows for caching to avoid repeated instantiation and faster typechecking.
  * @internal
+ * @sealed
  */
-type SerializableBattlerTagOptions<B extends SerializableBattlerTagType> =
-  | BattlerTagTypeMap[B]
-  | (OneOther<BattlerTagDataMap[B], "tagType"> & {
-      tagType: B;
-    });
+type SerializableBattlerTagOptions<B extends SerializableBattlerTagType> = OneOther<BattlerTagDataMap[B], "tagType"> & {
+  tagType: B;
+};
 
 /**
  * Helper type for non-serializable battler tag options.
  * Allows for caching to avoid repeated instantiation and faster typechecking.
  * @internal
+ * @sealed
  */
-type NonSerializableBattlerTagOptions<B extends BattlerTagType> =
-  | BattlerTagTypeMap[B]
-  | (OneOther<BattlerTagTypeMap[B], "tagType"> & {
-      tagType: B;
-    });
+type NonSerializableBattlerTagOptions<B extends BattlerTagType> = OneOther<BattlerTagTypeMap[B], "tagType"> & {
+  tagType: B;
+};
 
 /**
  * Options type for {@linkcode toHaveBattlerTag}.
@@ -36,8 +34,9 @@ type NonSerializableBattlerTagOptions<B extends BattlerTagType> =
  * @remarks
  * If B corresponds to a serializable `BattlerTag`, only properties allowed to be serialized
  * (i.e. can change across instances) will be present and able to be checked.
+ * @sealed
  */
-export type toHaveBattlerTagOptions<B extends BattlerTagType> = [B] extends [SerializableBattlerTagType]
+export type ToHaveBattlerTagOptions<B extends BattlerTagType> = [B] extends [SerializableBattlerTagType]
   ? SerializableBattlerTagOptions<B>
   : NonSerializableBattlerTagOptions<B>;
 
@@ -51,7 +50,7 @@ export type toHaveBattlerTagOptions<B extends BattlerTagType> = [B] extends [Ser
 export function toHaveBattlerTag<B extends BattlerTagType>(
   this: Readonly<MatcherState>,
   received: unknown,
-  expectedTag: B | toHaveBattlerTagOptions<B>,
+  expectedTag: B | BattlerTagTypeMap[B] | ToHaveBattlerTagOptions<B>,
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
     return {
