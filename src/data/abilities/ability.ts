@@ -1777,17 +1777,19 @@ const anyTypeMoveConversionCondition: PokemonAttackCondition = (user, _target, m
     return false;
   }
 
-  if (user.isTerastallized) {
-    if (move.id === MoveId.TERA_BLAST) {
-      return false;
-    }
-    if (
-      move.id === MoveId.TERA_STARSTORM
-      && user.getTeraType() === PokemonType.STELLAR
-      && user.hasSpecies(SpeciesId.TERAPAGOS)
-    ) {
-      return false;
-    }
+  if (!user.isTerastallized) {
+    return true;
+  }
+
+  if (move.id === MoveId.TERA_BLAST) {
+    return false;
+  }
+  if (
+    move.id === MoveId.TERA_STARSTORM
+    && user.getTeraType() === PokemonType.STELLAR
+    && user.hasSpecies(SpeciesId.TERAPAGOS)
+  ) {
+    return false;
   }
 
   return true;
