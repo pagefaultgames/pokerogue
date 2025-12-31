@@ -115,6 +115,9 @@ import { inSpeedOrder } from "#utils/speed-order-generator";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 
+// TODO: Make these (and all condition functions actually)
+// take interfaces instead of plain parameters
+// to aid in assignability constraints
 /**
  * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.
  * Conventionally returns `true` for success and `false` for failure.
@@ -11398,6 +11401,7 @@ export function initMoves() {
       .attr(HealOnAllyAttr, 0.5, true, false)
       .ballBombMove()
       // Fail if used against an ally that is affected by heal block, during the second failure check
+      // TODO: Make into a target-based move restriction
       .condition(
         (user, target) => target == null || target.isOpponent(user) || !target.getTag(BattlerTagType.HEAL_BLOCK),
         2,
