@@ -54,7 +54,7 @@ export function toHavePositionalTag<P extends PositionalTagType>(
       pass: this.isNot,
       message: () =>
         this.isNot
-          ? `Expected count to be 0 for negated matchers, but got ${count} instead!`
+          ? `Expected count to be 0, but got ${count} instead!`
           : `Expected count to be an integer between 1 and 4, but got ${count} instead!`,
     };
   }

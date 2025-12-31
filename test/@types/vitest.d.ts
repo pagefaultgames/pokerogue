@@ -263,7 +263,7 @@ interface PokemonMatchers {
   /**
    * Check whether a {@linkcode Pokemon} has a specific amount of {@linkcode Stat.HP | HP}.
    * @param expectedHp - The expected amount of {@linkcode Stat.HP | HP} to have
-   * @param options - Options for the matcher; must be omitted if `expectedHp` is a numeric literal
+   * @param options - The {@linkcode toHaveHpOptions | options} for the matcher; must be omitted if `expectedHp` is a numeric literal
    */
   toHaveHp<H extends number>(expectedHp: NonNumericLiteral<H>, options?: toHaveHpOptions): void;
 
