@@ -2696,9 +2696,6 @@ export abstract class PostSummonAbAttr extends AbAttr {
     return true;
   }
 
-  /**
-   * Applies ability post summon (after switching in)
-   */
   apply(_params: Closed<AbAttrBaseParams>): void {}
 }
 
@@ -2707,13 +2704,16 @@ export abstract class PostSummonAbAttr extends AbAttr {
  */
 export abstract class PostSummonRemoveEffectAbAttr extends PostSummonAbAttr {}
 /**
- * Removes specified arena tags when a Pokemon is summoned.
+ * Attribute to remove the specified arena tags when a Pokemon is summoned.
  */
 export class PostSummonRemoveArenaTagAbAttr extends PostSummonAbAttr {
+  /**
+   * The arena tags that this attribute should remove.
+   */
   private readonly arenaTags: NonEmptyTuple<ArenaTagType>;
 
   /**
-   * @param tagTypes - The arena tags to be removed
+   * @param tagTypes - The arena tags that this attribute should remove
    */
   constructor(tagTypes: NonEmptyTuple<ArenaTagType>) {
     super(true);

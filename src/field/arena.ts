@@ -767,7 +767,7 @@ export class Arena {
    */
   hasTag(tagTypes: ArenaTagType | NonEmptyTuple<ArenaTagType>): boolean {
     tagTypes = coerceArray(tagTypes);
-    return tagTypes.some(t => this.hasTag(t));
+    return this.tags.some(tag => tagTypes.includes(tag.tagType));
   }
 
   /**
