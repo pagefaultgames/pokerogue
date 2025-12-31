@@ -48,7 +48,7 @@ describe("{{description}}", () => {
     const feebas = game.field.getPlayerPokemon();
 
     game.move.use(MoveId.SPLASH);
-    await game.move.forceEnemyMove(MoveId.CELEBRATE);
+    await game.move.forceEnemyMove(MoveId.HOLD_HANDS);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
