@@ -3563,8 +3563,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Calculates the damage of an attack made by another Pokemon against this Pokemon
    * @param __namedParameters.source - Needed for proper typedoc rendering
    * @returns The {@linkcode DamageCalculationResult}
-   * @todo Condense various multipliers into a single function
    */
+  // TODO: Condense various multipliers into a single function
   getAttackDamage({
     source,
     move,
