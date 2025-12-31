@@ -4103,6 +4103,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       : this.summonData.tags.find(t => t.tagType === tagType);
   }
 
+  findTag<T extends BattlerTag>(tagFilter: (tag: BattlerTag) => tag is T): T | undefined;
+  findTag(tagFilter: (tag: BattlerTag) => boolean): BattlerTag | undefined;
   /**
    * Find the first `BattlerTag` matching the specified predicate
    * @remarks
