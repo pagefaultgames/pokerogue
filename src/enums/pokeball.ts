@@ -4,5 +4,6 @@ export enum PokeballType {
   ULTRA_BALL,
   ROGUE_BALL,
   MASTER_BALL,
+  // TODO: REMOVE
   LUXURY_BALL,
 }

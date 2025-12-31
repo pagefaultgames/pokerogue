@@ -3,6 +3,7 @@
  */
 
 import type { AbAttr } from "#abilities/ability";
+import type { IsEqual } from "type-fest";
 
 /**
  * Exactly matches the type of the argument, preventing adding additional properties.
@@ -115,3 +116,24 @@ export type AtLeastOne<T extends object> = Partial<T> & ObjectValues<{ [K in key
 export declare class Brander<B> {
   private __brand: B;
 }
+
+/**
+ * Helper to check whether a key type is a literal (`string | number | symbol | bigint | boolean | symbol`).
+ * @remarks
+ * Unlike type-fest's similarly named type, this does not enforce that it is an actual literal value,
+ * so enums and unions will work for this.
+ */
+export type IsLiteral<T> =
+  IsEqual<T, number> extends true
+    ? false
+    : IsEqual<T, string> extends true
+      ? false
+      : IsEqual<T, symbol> extends true
+        ? false
+        : IsEqual<T, boolean> extends true
+          ? false
+          : IsEqual<T, bigint> extends true
+            ? false
+            : IsEqual<T, object> extends true
+              ? false
+              : true;

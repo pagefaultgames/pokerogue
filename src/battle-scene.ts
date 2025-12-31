@@ -151,9 +151,7 @@ import Phaser from "phaser";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import type UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 
-export interface PokeballCounts {
-  [pb: string]: number;
-}
+export interface PokeballCounts extends Record<Exclude<PokeballType, PokeballType.LUXURY_BALL>, number> {}
 
 export type AnySound = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.NoAudioSound;
 
@@ -1126,14 +1124,12 @@ export class BattleScene extends SceneBase {
 
     this.lockModifierTiers = false;
 
-    this.pokeballCounts = Object.fromEntries(
-      getEnumValues(PokeballType)
-        .filter(p => p <= PokeballType.MASTER_BALL)
-        .map(t => [t, 0]),
-    );
-    this.pokeballCounts[PokeballType.POKEBALL] += 5;
+    // TODO: This should
     if (Overrides.POKEBALL_OVERRIDE.active) {
       this.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
+    } else {
+      this.pokeballCounts = Object.fromEntries(getEnumValues(PokeballType).map(t => [t, 0] as const));
+      this.pokeballCounts[PokeballType.POKEBALL] = 5;
     }
 
     this.modifiers = [];

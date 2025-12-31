@@ -116,6 +116,7 @@ import {
 import type { PokemonMove } from "#moves/pokemon-move";
 import { getVoucherTypeIcon, getVoucherTypeName, VoucherType } from "#system/voucher";
 import type { ModifierTypeFunc, WeightedModifierTypeWeightFunc } from "#types/modifier-types";
+import type { ObjectValues } from "#types/type-helpers";
 import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import { getModifierTierTextTint } from "#ui/text";
@@ -1149,7 +1150,7 @@ export class TmModifierType extends PokemonModifierType {
 
   get name(): string {
     return i18next.t("modifierType:ModifierType.TmModifierType.name", {
-      moveId: padInt(Object.keys(tmSpecies).indexOf(this.moveId.toString()) + 1, 3),
+      moveId: padInt(Object.keys(tmSpecies).indexOf(this.moveId.toString() as `${number}`) + 1, 3),
       moveName: allMoves[this.moveId].name,
     });
   }
@@ -1429,15 +1430,15 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
       }
 
       // Get a pool of items based on the rarity.
-      const keys: (keyof SpeciesStatBoosterItem)[] = [];
-      const values: (typeof items)[keyof typeof items][] = [];
+      const keys: SpeciesStatBoosterItem[] = [];
+      const values: ObjectValues<typeof items>[] = [];
       const weights: number[] = [];
       for (const [key, val] of Object.entries(SpeciesStatBoosterModifierTypeGenerator.items)) {
         if (val.rare !== rare) {
           continue;
         }
         values.push(val);
-        keys.push(key as keyof SpeciesStatBoosterItem);
+        keys.push(key);
         weights.push(0);
       }
 

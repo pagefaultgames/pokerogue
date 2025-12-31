@@ -1,12 +1,41 @@
+import { PokeballCounts } from "#app/battle-scene";
+import { PokeballType } from "#enums/pokeball";
+import type { Stringable, Stringify, Unstringify } from "#types/strings";
 import type { AnyFn } from "#types/type-helpers";
-import type { SetupServerApi } from "msw/node";
 import { StringifyOptions } from "@vitest/utils";
-import type { Stringify, Stringable } from "#types/strings";
-import type { AbstractConstructor } from "type-fest";
+import type { SetupServerApi } from "msw/node";
+import type {
+  AbstractConstructor,
+  Entries,
+  IsEqual,
+  OmitIndexSignature,
+  Tagged,
+  TupleOf,
+  UnionToTuple,
+} from "type-fest";
 
-type getObjectEntries<O extends object> = {
+// #region Object-related types
+type getObjectKeys<Keys extends PropertyKey> = Stringify<Extract<Keys, Stringable>>[];
+
+declare const origObjectTag: unique symbol;
+/**
+ * Augmented type of {@linkcode Object.entries}.
+ * Uses a tagged union to allow {@linkcode fromEntries} to resolve the type correctly.
+ */
+type getObjectEntries<O extends object> = Tagged<ObjectEntry<O>[], typeof origObjectTag, O>;
+
+type ObjectEntry<O extends object> = {
   [K in Extract<keyof O, Stringable>]: [Stringify<K>, O[K]];
-}[Extract<keyof O, Stringable>][];
+}[Extract<keyof O, Stringable>];
+
+type fromEntries<E extends Iterable<readonly [PropertyKey, unknown]>> =
+  E extends Tagged<unknown, typeof origObjectTag, infer Base extends object>
+    ? Base
+    : E extends Iterable<readonly [infer K extends PropertyKey, infer V]>
+      ? Record<Unstringify<K>, V>
+      : never;
+
+// #endregion Object-related code
 
 declare global {
   /**
@@ -25,19 +54,25 @@ declare global {
     call<T extends AnyFn>(this: T, thisArg: ThisParameterType<T>, ...argArray: Parameters<T>): ReturnType<T>;
   }
 
-  // Overloads for `Object.keys` and company to return strongly typed keys on objects with known types.
-  // NOTE: These are technically unsound due to structural typing, but extremely useful nonetheless.
-  // (Technically, so is `Object.values` not returning `any[]`...)
+  // Overloads for `Object.keys` and company to return tuples of strongly typed keys on compatible objects.
+  // NOTE: These are technically unsound due to structural typing, but extremely useful nonetheless as the cases where we are using
+  // these functions are ones where structural typing would be a hindrance.
   interface ObjectConstructor {
-    keys<O extends Record<keyof any, unknown>>(o: O): Stringify<Extract<keyof O, Stringable>>[];
-    entries<O extends Record<keyof any, unknown>>(o: O): getObjectEntries<O>;
+    keys<K extends PropertyKey>(o: Record<K, unknown>): getObjectKeys<K>;
+    entries<O extends Record<PropertyKey, unknown>>(o: O): getObjectEntries<O>;
+    fromEntries<Entry extends readonly [PropertyKey, unknown], E extends Iterable<Entry>>(entries: E): fromEntries<E>;
   }
 
-  // Coerce string-like numbers to strings inside `Number()` casts
+  // Coerce string-like numbers to strings inside `Number()` casts, and vice versa for base-10 `parseInt/toString` calls
   interface NumberConstructor {
     new <S extends string>(value: S): S extends `${infer N extends number}` ? N : typeof NaN;
     <S extends string>(value: S): S extends `${infer N extends number}` ? N : typeof NaN;
+
+    parseInt<N extends number>(string: `${N}`, radix?: 10): N;
   }
+  // interface Number {
+  //   toString<T extends number>(this: T, radix?: 10): Stringify<T>;
+  // }
 }
 
 // Global augments for `typedoc` to prevent TS from erroring when editing the config JS file
