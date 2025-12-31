@@ -94,4 +94,23 @@ describe("Moves - Defog", () => {
     expect(game).toHaveArenaTag({ tagType, side: ArenaTagSide.PLAYER });
     expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.ENEMY });
   });
+
+  it.each<{ tagType: ArenaTagType; tagName: string }>([
+    { tagType: ArenaTagType.REFLECT, tagName: "Reflect" },
+    { tagType: ArenaTagType.LIGHT_SCREEN, tagName: "Light Screen" },
+    { tagType: ArenaTagType.AURORA_VEIL, tagName: "Aurora Veil" },
+    { tagType: ArenaTagType.SAFEGUARD, tagName: "Safeguard" },
+    { tagType: ArenaTagType.MIST, tagName: "Mist" },
+  ])("should remove $tagName from the target's side even if the target is the user's ally", async ({ tagType }) => {
+    game.override.battleStyle("double");
+    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
+
+    game.scene.arena.addTag(tagType, 0, undefined, game.field.getPlayerPokemon().id, ArenaTagSide.PLAYER);
+
+    game.move.use(MoveId.DEFOG, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2);
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    await game.toEndOfTurn();
+
+    expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.PLAYER });
+  });
 });

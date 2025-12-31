@@ -88,7 +88,7 @@ describe.each<{ moveId: MoveId; moveName: string }>([
   }
 
   if (moveId === MoveId.MORTAL_SPIN) {
-    it("should poison the opponent", async () => {
+    it("should poison the target", async () => {
       game.move.use(MoveId.MORTAL_SPIN);
       await game.toEndOfTurn();
 

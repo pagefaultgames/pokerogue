@@ -8,6 +8,7 @@ import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
@@ -57,6 +58,23 @@ describe("Move - Raging Bull", () => {
 
     expect(game).toHaveArenaTag({ tagType, side: ArenaTagSide.PLAYER });
     expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.ENEMY });
+  });
+
+  it.each<{ tagType: ArenaTagType; tagName: string }>([
+    { tagType: ArenaTagType.REFLECT, tagName: "Reflect" },
+    { tagType: ArenaTagType.LIGHT_SCREEN, tagName: "Light Screen" },
+    { tagType: ArenaTagType.AURORA_VEIL, tagName: "Aurora Veil" },
+  ])("should remove $tagName from the target's side even if the target is an ally", async ({ tagType }) => {
+    game.override.battleStyle("double");
+    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
+
+    game.scene.arena.addTag(tagType, 0, undefined, game.field.getPlayerPokemon().id, ArenaTagSide.PLAYER);
+
+    game.move.use(MoveId.RAGING_BULL, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2);
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    await game.toEndOfTurn();
+
+    expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.PLAYER });
   });
 
   it.each<{ speciesId: SpeciesId; formIndex?: number; moveType: PokemonType; testString: string }>([

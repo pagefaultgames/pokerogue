@@ -116,7 +116,7 @@ import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 
 // TODO: fix properly https://github.com/Despair-Games/poketernity/pull/170
-type GetRemoveArenaTagSideFunc = (user: Pokemon) => ArenaTagSide;
+type GetRemoveArenaTagSideFunc = (user: Pokemon, target: Pokemon) => ArenaTagSide;
 
 /**
  * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.
@@ -6687,7 +6687,7 @@ export class RemoveArenaTagsAttr extends MoveEffectAttr {
       return false;
     }
 
-    globalScene.arena.removeTagsOnSide(this.tagTypes, this.getTagSideFunc(user));
+    globalScene.arena.removeTagsOnSide(this.tagTypes, this.getTagSideFunc(user, target));
 
     return true;
   }
@@ -10046,7 +10046,7 @@ export function initMoves() {
     new AttackMove(MoveId.REVENGE, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, -1, -4, 3) //
       .attr(TurnDamagedDoublePowerAttr),
     new AttackMove(MoveId.BRICK_BREAK, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 75, 100, 15, -1, 0, 3) //
-      .attr(RemoveScreensAttr, user => (user.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER)),
+      .attr(RemoveScreensAttr, (_user, target) => (target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)),
     new StatusMove(MoveId.YAWN, PokemonType.NORMAL, -1, 10, -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.DROWSY, false, true)
       .condition((user, target, _move) => !target.status && !target.isSafeguarded(user))
@@ -10348,7 +10348,7 @@ export function initMoves() {
       .attr(
         RemoveArenaTagsAttr,
         [ArenaTagType.QUICK_GUARD, ArenaTagType.WIDE_GUARD, ArenaTagType.MAT_BLOCK, ArenaTagType.CRAFTY_SHIELD],
-        user => (user.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER),
+        (_user, target) => (target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY),
       )
       .makesContact(false)
       .ignoresProtect(),
@@ -10554,10 +10554,10 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [Stat.EVA], -1)
       .attr(ClearWeatherAttr, WeatherType.FOG)
       .attr(ClearTerrainAttr)
-      .attr(RemoveScreensAttr, user => (user.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER))
+      .attr(RemoveScreensAttr, (_user, target) => (target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY))
       .attr(RemoveArenaTrapAttr, () => ArenaTagSide.BOTH)
-      .attr(RemoveArenaTagsAttr, [ArenaTagType.MIST, ArenaTagType.SAFEGUARD], user =>
-        user.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER,
+      .attr(RemoveArenaTagsAttr, [ArenaTagType.MIST, ArenaTagType.SAFEGUARD], (_user, target) =>
+        target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY,
       )
       .reflectable(),
     new StatusMove(MoveId.TRICK_ROOM, PokemonType.PSYCHIC, -1, 5, -1, -7, 4)
@@ -11519,7 +11519,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [Stat.SPATK], -2, true),
     new AttackMove(MoveId.PSYCHIC_FANGS, PokemonType.PSYCHIC, MoveCategory.PHYSICAL, 85, 100, 10, -1, 0, 7)
       .bitingMove()
-      .attr(RemoveScreensAttr, user => (user.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER)),
+      .attr(RemoveScreensAttr, (_user, target) => (target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)),
     new AttackMove(MoveId.STOMPING_TANTRUM, PokemonType.GROUND, MoveCategory.PHYSICAL, 75, 100, 10, -1, 0, 7)
       .attr(MovePowerMultiplierAttr, user => {
         // Stomping tantrum triggers on most failures (including sleep/freeze)
@@ -12222,7 +12222,7 @@ export function initMoves() {
       .danceMove(),
     new AttackMove(MoveId.RAGING_BULL, PokemonType.NORMAL, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 9)
       .attr(RagingBullTypeAttr)
-      .attr(RemoveScreensAttr, user => (user.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER)),
+      .attr(RemoveScreensAttr, (_user, target) => (target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)),
     new AttackMove(MoveId.MAKE_IT_RAIN, PokemonType.STEEL, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 9)
       .attr(MoneyAttr)
       .attr(StatStageChangeAttr, [Stat.SPATK], -1, true, { firstTargetOnly: true })
