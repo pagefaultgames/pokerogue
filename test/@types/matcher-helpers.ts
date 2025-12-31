@@ -77,6 +77,3 @@ export type GetMatchers<
         : M["common"][key];
     }
   : M;
-
-// biome-ignore lint/complexity/noUselessEmptyExport: Prevents exporting internal types (cf. https://github.com/microsoft/TypeScript/issues/57764)
-export {};
