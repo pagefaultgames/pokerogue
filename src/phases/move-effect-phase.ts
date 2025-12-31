@@ -918,8 +918,8 @@ export class MoveEffectPhase extends PokemonPhase {
    * @returns The {@linkcode Pokemon} using this phase's invoked move.
    * Is never nullish during the move execution itself, as the `start` method
    * ends the phase immediately if a source is missing.
-   * @todo Delete in favor of {@linkcode PokemonPhase.getPokemon}
    */
+  // TODO: Delete in favor of {@linkcode PokemonPhase.getPokemon}
   public getUserPokemon(): Pokemon {
     return super.getPokemon()!;
   }
