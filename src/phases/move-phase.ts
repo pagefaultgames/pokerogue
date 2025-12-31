@@ -945,8 +945,7 @@ export class MovePhase extends PokemonPhase {
     }
 
     const moveHistoryEntry = this.moveHistoryEntry;
-    // TODO: probably redundant; everything that sete `failed/cancelled` changes
-    // the history entry
+    // TODO: probably redundant; everything that sets `failed/cancelled` changes the history entry
     moveHistoryEntry.result = MoveResult.FAIL;
     pokemon.pushMoveHistory(moveHistoryEntry);
 
