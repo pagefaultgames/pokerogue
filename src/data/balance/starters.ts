@@ -523,7 +523,7 @@ export const speciesStarterCosts = {
   [SpeciesId.GLASTRIER]: 6,
   [SpeciesId.SPECTRIER]: 8,
   [SpeciesId.CALYREX]: 8,
-  [SpeciesId.ENAMORUS]: 7,
+  [SpeciesId.ENAMORUS]: 6,
   [SpeciesId.GALAR_MEOWTH]: 3,
   [SpeciesId.GALAR_PONYTA]: 2,
   [SpeciesId.GALAR_SLOWPOKE]: 3,
