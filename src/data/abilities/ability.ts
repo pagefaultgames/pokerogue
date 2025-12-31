@@ -67,6 +67,7 @@ import { BooleanHolder, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, 
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
+import type { NonEmptyTuple } from "type-fest";
 
 //#region Bit sets
 /** Bit set for an ability's `bypass faint` flag */
@@ -2695,9 +2696,6 @@ export abstract class PostSummonAbAttr extends AbAttr {
     return true;
   }
 
-  /**
-   * Applies ability post summon (after switching in)
-   */
   apply(_params: Closed<AbAttrBaseParams>): void {}
 }
 
@@ -2705,32 +2703,32 @@ export abstract class PostSummonAbAttr extends AbAttr {
  * Base class for ability attributes which remove an effect on summon
  */
 export abstract class PostSummonRemoveEffectAbAttr extends PostSummonAbAttr {}
-
 /**
- * Removes specified arena tags when a Pokemon is summoned.
+ * Attribute to remove the specified arena tags when a Pokemon is summoned.
  */
 export class PostSummonRemoveArenaTagAbAttr extends PostSummonAbAttr {
-  private readonly arenaTags: readonly ArenaTagType[];
+  /**
+   * The arena tags that this attribute should remove.
+   */
+  private readonly arenaTags: NonEmptyTuple<ArenaTagType>;
 
   /**
-   * @param arenaTags - The arena tags to be removed
+   * @param tagTypes - The arena tags that this attribute should remove
    */
-  constructor(arenaTags: readonly ArenaTagType[]) {
+  constructor(tagTypes: NonEmptyTuple<ArenaTagType>) {
     super(true);
-
-    this.arenaTags = arenaTags;
+    this.arenaTags = tagTypes;
   }
 
   override canApply(_params: AbAttrBaseParams): boolean {
-    return globalScene.arena.tags.some(tag => this.arenaTags.includes(tag.tagType));
+    return globalScene.arena.hasTag(this.arenaTags);
   }
 
   override apply({ simulated }: AbAttrBaseParams): void {
-    if (!simulated) {
-      for (const arenaTag of this.arenaTags) {
-        globalScene.arena.removeTag(arenaTag);
-      }
+    if (simulated) {
+      return;
     }
+    globalScene.arena.removeTagsOnSide(this.arenaTags, ArenaTagSide.BOTH);
   }
 }
 
@@ -8083,7 +8081,6 @@ export function initAbilities() {
       .attr(CommanderAbAttr)
       .attr(DoubleBattleChanceAbAttr)
       .uncopiable()
-      .unreplaceable()
       .edgeCase() // Encore, Frenzy, and other non-`TURN_END` tags don't lapse correctly on the commanding Pokemon.
       .build(),
     new AbBuilder(AbilityId.ELECTROMORPHOSIS, 9)
@@ -8226,19 +8223,16 @@ export function initAbilities() {
     new AbBuilder(AbilityId.TERA_SHELL, 9)
       .attr(FullHpResistTypeAbAttr)
       .uncopiable()
-      .unreplaceable()
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.TERAFORM_ZERO, 9)
       .attr(ClearWeatherAbAttr)
       .attr(ClearTerrainAbAttr)
       .uncopiable()
-      .unreplaceable()
       .condition(getOncePerBattleCondition(AbilityId.TERAFORM_ZERO))
       .build(),
     new AbBuilder(AbilityId.POISON_PUPPETEER, 9)
       .uncopiable()
-      .unreplaceable() // TODO is this true?
       .attr(ConfusionOnStatusEffectAbAttr, StatusEffect.POISON, StatusEffect.TOXIC).build()
   );
 }

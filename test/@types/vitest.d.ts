@@ -188,6 +188,11 @@ interface PokemonMatchers {
   toHaveBattlerTag<B extends BattlerTagType>(expectedTag: toHaveBattlerTagOptions<B>): void;
   /**
    * Check whether a {@linkcode Pokemon} has the given {@linkcode BattlerTag}.
+   * @param expectedTag - The {@linkcode BattlerTag} that the Pokemon is expected to have
+   */
+  toHaveBattlerTag(expectedTag: BattlerTag): void;
+  /**
+   * Check whether a {@linkcode Pokemon} has the given {@linkcode BattlerTag}.
    * @param expectedType - The expected {@linkcode BattlerTagType}
    */
   toHaveBattlerTag(expectedType: BattlerTagType): void;
