@@ -106,7 +106,6 @@ export class MoveEffectPhase extends PokemonPhase {
 
     /** The Pokemon using this phase's invoked move */
     const user = this.getUserPokemon();
-
     if (!user) {
       super.end();
       return;
@@ -237,7 +236,6 @@ export class MoveEffectPhase extends PokemonPhase {
     if (anySuccess) {
       this.moveHistoryEntry.result = MoveResult.SUCCESS;
     } else {
-      // If the move failed to impact all targets, disable all subsequent multi-hits
       user.turnData.hitCount = 1;
       user.turnData.hitsLeft = 1;
       this.moveHistoryEntry.result = allMiss ? MoveResult.MISS : MoveResult.FAIL;
@@ -762,7 +760,7 @@ export class MoveEffectPhase extends PokemonPhase {
         msg = i18next.t("battle:hitResultNotVeryEffective");
         break;
       case HitResult.ONE_HIT_KO:
-        msg = i18next.t("battle:hitResultOneHitKo");
+        msg = i18next.t("battle:hitResultOneHitKO");
         break;
     }
     if (msg) {
@@ -904,11 +902,13 @@ export class MoveEffectPhase extends PokemonPhase {
   // #region Helpers
 
   /**
-   * @todo Investigate why this doesn't use `BattlerIndex`
-   * @returns The {@linkcode Pokemon} using this phase's invoked move
+   * @returns The {@linkcode Pokemon} using this phase's invoked move.
+   * Is guaranteed to be defined during move execution itself, as the `start` method
+   * ends this phase immediately if a source is missing.
    */
+  // TODO: Delete in favor of overridding {@linkcode PokemonPhase.getPokemon}
   public getUserPokemon(): Pokemon {
-    return super.getPokemon()!
+    return super.getPokemon()!;
   }
 
   /**
@@ -947,10 +947,6 @@ export class MoveEffectPhase extends PokemonPhase {
       this.removeTarget(target);
     }
     const user = this.getUserPokemon();
-    if (!user) {
-      return;
-    }
-
     // If no target specified, or the specified target was the last of this move's
     // targets, completely cancel all subsequent strikes.
     if (!target || this.targets.length === 0) {
@@ -967,14 +963,15 @@ export class MoveEffectPhase extends PokemonPhase {
     globalScene.phaseManager.unshiftNew("MoveEffectPhase", this.battlerIndex, this.targets, this.move, this.useMode);
   }
 
-  /** Removes all substitutes that were broken by this phase's invoked move */
+  /** Remove all substitutes that were broken by this phase's invoked move. */
   protected updateSubstitutes(): void {
     const targets = this.getTargets();
     for (const target of targets) {
       const substitute = target.getTag(SubstituteTag);
-      if (substitute && substitute.hp <= 0) {
-        target.lapseTag(BattlerTagType.SUBSTITUTE);
+      if (!substitute || substitute.hp > 0) {
+        continue;
       }
+      target.removeTag(BattlerTagType.SUBSTITUTE);
     }
   }
 
@@ -987,14 +984,18 @@ export class MoveEffectPhase extends PokemonPhase {
  * @param move - The {@linkcode Move} being used
  * @param target - The targeted {@linkcode Pokemon} attempting to reflect the move
  * @param useMode - The {@linkcode MoveUseMode} dictating how the move was used
- * @returns Whether {@linkcode target} can reflect {@linkcode move}.
+ * @returns Whether `target` can reflect `move`.
+ * @remarks
+ * To be reflectbale, this requires that:
+ * 1. `move` is both reflectable and was not just reflected
+ * 2. `target` is not semi invulnerable
+ * 3. `target` has a valid reflection effect active
  */
 function isMoveReflectableBy(move: Move, target: Pokemon, useMode: MoveUseMode): boolean {
   return (
-    // The move must not have just been reflected
-    !isReflected(useMode) // Reflections cannot occur while semi invulnerable
-    && !target.getTag(SemiInvulnerableTag) // Move must be reflectable
-    && move.hasFlag(MoveFlags.REFLECTABLE) // target must have a reflection effect active
+    !isReflected(useMode)
+    && !target.getTag(SemiInvulnerableTag)
+    && move.hasFlag(MoveFlags.REFLECTABLE)
     && (!!target.getTag(BattlerTagType.MAGIC_COAT) || target.hasAbilityWithAttr("ReflectStatusMoveAbAttr"))
   );
 }
