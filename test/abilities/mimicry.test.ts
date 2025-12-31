@@ -58,9 +58,7 @@ describe("Abilities - Mimicry", () => {
 
     expect(playerPokemon.getTypes()).toEqual([PokemonType.PSYCHIC]);
 
-    if (game.scene.arena.terrain) {
-      game.scene.arena.terrain.turnsLeft = 1;
-    }
+    game.scene.arena.terrain!.turnsLeft = 1;
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.SPLASH);

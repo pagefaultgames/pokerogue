@@ -92,15 +92,17 @@ interface GenericMatchers<T> {
   toEqualUnsorted: T extends readonly (infer U)[] ? (expected: readonly U[]) => void : never;
 
   /**
-   * Check whether a {@linkcode Map} contains the given key, disregarding its value.
+   * Check whether a {@linkcode Map} contains the given key.
    * @param expectedKey - The key whose inclusion is being checked
+   * @param expectedValue - The desired value for the given key-value pair;
+   * if omitted, will only check that the given key exists (disregarding its value)
    * @privateRemarks
    * While this functionality _could_ be simulated by writing
-   * `expect(x.get(y)).toBeDefined()` or
-   * `expect(x).toContain([y, expect.anything()])`,
-   * this is still preferred due to being more ergonomic and providing better error messsages.
+   * `expect(m.get(key)).toBe(y)` or
+   * `expect(m.get(key)).toBe(expect.anything())` or
+   * this is preferred due to being more ergonomic and providing better error handling.
    */
-  toHaveKey: T extends ReadonlyMap<infer K, unknown> ? (expectedKey: K) => void : never;
+  toHaveKey: T extends ReadonlyMap<infer K, infer V> ? (expectedKey: K, expectedValue?: V) => void : never;
 }
 // #endregion Generic Matchers
 
