@@ -884,7 +884,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
     /**
      * All hits of the move have resolved by now.
-     * Queue message for multi-strike moves before applying Shell Bell heals & proccing Dancer-like effects.
+     * Queue message for multi-strike moves before applying Shell Bell heals.
      */
     const hitsTotal = user.turnData.hitCount - Math.max(user.turnData.hitsLeft, 0);
     if (hitsTotal > 1 || user.turnData.hitsLeft > 0) {
@@ -927,13 +927,13 @@ export class MoveEffectPhase extends PokemonPhase {
   }
 
   /**
-   * Removes the given {@linkcode Pokemon} from this phase's target list
+   * Remove the given {@linkcode Pokemon} from this phase's target list
    * @param target - The {@linkcode Pokemon} to be removed
    */
   protected removeTarget(target: Pokemon): void {
     const targetIndex = this.targets.indexOf(target.getBattlerIndex());
     if (targetIndex !== -1) {
-      this.targets.splice(this.targets.indexOf(target.getBattlerIndex()), 1);
+      this.targets.splice(targetIndex, 1);
     }
   }
 
