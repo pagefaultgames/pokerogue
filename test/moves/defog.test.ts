@@ -72,8 +72,8 @@ describe("Moves - Defog", () => {
     game.move.use(MoveId.DEFOG);
     await game.toEndOfTurn();
 
-    expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.PLAYER });
-    expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.ENEMY });
+    expect(game).not.toHaveArenaTag(tagType, ArenaTagSide.PLAYER);
+    expect(game).not.toHaveArenaTag(tagType, ArenaTagSide.ENEMY);
   });
 
   it.each<{ tagType: ArenaTagType; tagName: string }>([
@@ -91,8 +91,8 @@ describe("Moves - Defog", () => {
     game.move.use(MoveId.DEFOG);
     await game.toEndOfTurn();
 
-    expect(game).toHaveArenaTag({ tagType, side: ArenaTagSide.PLAYER });
-    expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.ENEMY });
+    expect(game).toHaveArenaTag(tagType, ArenaTagSide.PLAYER);
+    expect(game).not.toHaveArenaTag(tagType, ArenaTagSide.ENEMY);
   });
 
   it.each<{ tagType: ArenaTagType; tagName: string }>([
@@ -111,6 +111,6 @@ describe("Moves - Defog", () => {
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.toEndOfTurn();
 
-    expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.PLAYER });
+    expect(game).not.toHaveArenaTag(tagType, ArenaTagSide.PLAYER);
   });
 });

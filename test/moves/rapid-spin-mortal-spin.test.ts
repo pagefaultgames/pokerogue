@@ -60,8 +60,8 @@ describe.each<{ moveId: MoveId; moveName: string }>([
     game.move.use(moveId);
     await game.toEndOfTurn();
 
-    expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.PLAYER });
-    expect(game).toHaveArenaTag({ tagType, side: ArenaTagSide.ENEMY });
+    expect(game).not.toHaveArenaTag(tagType, ArenaTagSide.PLAYER);
+    expect(game).toHaveArenaTag(tagType, ArenaTagSide.ENEMY);
   });
 
   it.each<{ tagType: BattlerTagType; tagName: string }>([

@@ -56,8 +56,8 @@ describe("Move - Raging Bull", () => {
     game.move.use(MoveId.RAGING_BULL);
     await game.toEndOfTurn();
 
-    expect(game).toHaveArenaTag({ tagType, side: ArenaTagSide.PLAYER });
-    expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.ENEMY });
+    expect(game).toHaveArenaTag(tagType, ArenaTagSide.PLAYER);
+    expect(game).not.toHaveArenaTag(tagType, ArenaTagSide.ENEMY);
   });
 
   it.each<{ tagType: ArenaTagType; tagName: string }>([
@@ -74,7 +74,7 @@ describe("Move - Raging Bull", () => {
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.toEndOfTurn();
 
-    expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.PLAYER });
+    expect(game).not.toHaveArenaTag(tagType, ArenaTagSide.PLAYER);
   });
 
   it.each<{ speciesId: SpeciesId; formIndex?: number; moveType: PokemonType; testString: string }>([
