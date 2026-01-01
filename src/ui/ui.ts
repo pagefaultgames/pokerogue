@@ -522,6 +522,7 @@ export class UI extends Phaser.GameObjects.Container {
   }
 
   private setModeInternal(
+    this: UI,
     mode: UiMode,
     clear: boolean,
     forceTransition: boolean,

@@ -3,7 +3,6 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import type { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
-import { DamageAnimPhase } from "#phases/damage-anim-phase";
 import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
@@ -50,7 +49,7 @@ describe("Moves - Fissure", () => {
     game.override.ability(AbilityId.NO_GUARD).enemyAbility(AbilityId.FUR_COAT);
 
     game.move.select(MoveId.FISSURE);
-    await game.phaseInterceptor.to(DamageAnimPhase, true);
+    await game.phaseInterceptor.to("DamageAnimPhase");
 
     expect(enemyPokemon.isFainted()).toBe(true);
   });

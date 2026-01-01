@@ -29,12 +29,14 @@ export class GameWrapper {
   public scene: BattleScene;
 
   constructor(phaserGame: Phaser.Game, bypassLogin: boolean) {
+    // TODO: Figure out how to actually set RNG states correctly
     Phaser.Math.RND.sow(["test"]);
     // vi.spyOn(Utils, "apiFetch", "get").mockReturnValue(fetch);
     if (bypassLogin) {
       vi.spyOn(appConstants, "bypassLogin", "get").mockReturnValue(true);
     }
     this.game = phaserGame;
+    // TODO: Move these mocks elsewhere
     MoveAnim.prototype.getAnim = () => ({
       frames: {},
     });
@@ -53,14 +55,28 @@ export class GameWrapper {
     PokedexMonContainer.prototype.remove = MockContainer.prototype.remove;
   }
 
-  setScene(scene: BattleScene) {
+  /**
+   * Initialize the given {@linkcode BattleScene} and override various properties to avoid crashes with headless games.
+   * @param scene - The {@linkcode BattleScene} to initialize
+   * @returns A Promise that resolves once the initialization process has completed.
+   * @todo Is loading files actually necessary for a headless renderer?
+   */
+  public async setScene(scene: BattleScene): Promise<void> {
     this.scene = scene;
     this.injectMandatory();
-    this.scene.preload?.();
+
+    this.scene.preload();
     this.scene.create();
   }
 
-  injectMandatory() {
+  /**
+   * Override the scene and stub out various properties to avoid crashes.
+   * @todo This method is an unmaintainable mess and likely stems from us
+   * never actually instantiating `BattleScene` via `Phaser.Game` correctly.
+   * Furthermore, this also makes testing any form of Phaser-related infrastructure absolutely
+   * infeasible, and must be revisited before a multi-scene breakup can be considered.
+   */
+  private injectMandatory(): void {
     this.game.config = {
       seed: ["test"],
       gameVersion: version,
@@ -128,6 +144,7 @@ export class GameWrapper {
       },
     };
 
+    // TODO: These stubs override phaser classes with ones of... different types?
     this.scene.anims = this.game.anims;
     this.scene.cache = this.game.cache;
     this.scene.plugins = this.game.plugins;
@@ -135,9 +152,12 @@ export class GameWrapper {
     this.scene.scale = this.game.scale;
     this.scene.textures = this.game.textures;
     this.scene.events = this.game.events;
+    // TODO: Why is this needed? The `manager` property isn't used anywhere
     this.scene.manager = new InputManager(this.game, {});
     this.scene.manager.keyboard = new KeyboardManager(this.scene);
     this.scene.pluginEvents = new EventEmitter();
+    this.game.domContainer = {} as HTMLDivElement;
+    // TODO: scenes don't have dom containers
     this.scene.domContainer = {} as HTMLDivElement;
     this.scene.spritePipeline = {};
     this.scene.fieldSpritePipeline = {};
@@ -179,7 +199,7 @@ export class GameWrapper {
     this.scene.sys.updateList = new UpdateList(this.scene);
     this.scene.systems = this.scene.sys;
     this.scene.input = this.game.input;
-    this.scene.scene = this.scene;
+    this.scene.scene = this.scene; // TODO: This seems wacky
     this.scene.input.keyboard = new KeyboardPlugin(this.scene);
     this.scene.input.gamepad = new GamepadPlugin(this.scene);
     this.scene.cachedFetch = async (url, _init): Promise<Response> => {

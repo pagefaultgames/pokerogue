@@ -122,9 +122,8 @@ describe("Moves - Focus Punch", () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
     game.move.select(MoveId.FOCUS_PUNCH);
-    await game.phaseInterceptor.to("MoveEndPhase", true);
-    await game.phaseInterceptor.to("MessagePhase", false);
-    await game.phaseInterceptor.to("MoveEndPhase", true);
+    await game.phaseInterceptor.to("MoveEndPhase");
+    await game.phaseInterceptor.to("MoveEndPhase");
     expect(game.textInterceptor.logs).toContain(i18next.t("moveTriggers:lostFocus", { pokemonName: "Charizard" }));
     expect(game.textInterceptor.logs).not.toContain(i18next.t("battle:attackFailed"));
   });

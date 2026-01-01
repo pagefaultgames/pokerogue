@@ -763,7 +763,7 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
           this.banner.x,
           this.banner.y + 2,
           this.timeToGo(this.event.endDate),
-          TextStyle.WINDOW,
+          TextStyle.MESSAGE,
         );
         this.eventTimerText.setName("text-event-timer");
         this.eventTimerText.setScale(0.15);
