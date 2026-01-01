@@ -313,11 +313,7 @@ export class EncounterPhase extends BattlePhase {
     });
   }
 
-  doEncounter() {
-    globalScene.playBgm(undefined, true);
-    globalScene.updateModifiers(false);
-    globalScene.setFieldScale(1);
-
+  private incrementMysteryEncounterChance(): void {
     const { battleType, waveIndex } = globalScene.currentBattle;
     if (
       globalScene.isMysteryEncounterValidForWave(battleType, waveIndex)
@@ -327,6 +323,12 @@ export class EncounterPhase extends BattlePhase {
       // Only do this AFTER session has been saved to avoid duplicating increments
       globalScene.mysteryEncounterSaveData.encounterSpawnChance += WEIGHT_INCREMENT_ON_SPAWN_MISS;
     }
+  }
+
+  doEncounter() {
+    globalScene.playBgm(undefined, true);
+    globalScene.updateModifiers(false);
+    globalScene.setFieldScale(1);
 
     for (const pokemon of globalScene.getPlayerParty()) {
       // Currently, a new wave is not considered a new battle if there is no arena reset
@@ -399,6 +401,8 @@ export class EncounterPhase extends BattlePhase {
   }
 
   doEncounterCommon(showEncounterMessage = true) {
+    this.incrementMysteryEncounterChance();
+
     const enemyField = globalScene.getEnemyField();
 
     if (globalScene.currentBattle.battleType === BattleType.WILD) {
