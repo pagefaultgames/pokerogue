@@ -364,7 +364,6 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       await skipBattleRunMysteryEncounterRewardsPhase(game, false);
 
       expect(game).toBeAtPhase("MysteryEncounterRewardsPhase");
-      game.phaseInterceptor["prompts"] = []; // Clear out prompt handlers
       game.onNextPrompt("MysteryEncounterRewardsPhase", UiMode.OPTION_SELECT, () => {
         game.endPhase();
       });
@@ -372,6 +371,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
 
       expect(selectOptionSpy).toHaveBeenCalledTimes(1);
       const optionData = selectOptionSpy.mock.calls[0][0];
+      // TODO: This is a bad way to check moves tests
       expect(PHYSICAL_TUTOR_MOVES.some(move => new PokemonMove(move).getName() === optionData[0].label)).toBe(true);
       expect(SPECIAL_TUTOR_MOVES.some(move => new PokemonMove(move).getName() === optionData[1].label)).toBe(true);
       expect(STATUS_TUTOR_MOVES.some(move => new PokemonMove(move).getName() === optionData[2].label)).toBe(true);
