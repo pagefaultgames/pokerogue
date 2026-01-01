@@ -25,7 +25,7 @@ const config = {
     "**/*+.test-d.ts",
     "test/test-utils/setup",
     "test/test-utils/reporters",
-    "test/@types/matcher-helpers.d.ts",
+    "test/@types/matcher-helpers.ts",
     "test/@types/vitest.d.ts",
   ],
   excludePrivate: false, // Private members are useful in the docs for contributors
