@@ -22,7 +22,7 @@ import { randSeedItem, randSeedShuffle } from "#utils/common";
  * If the seed offset is greater than the number of choices, this will just choose a random element
  *
  * @param choices - The array of items to choose from
- * @param seedOffset - The offset into the array
+ * @param seedOffset - The offset into the shuffled array
  * @param scene - (default {@linkcode globalScene}); The scene to use for random seeding
  * @returns A random item from the array that is guaranteed to be different from the previous result
  * @typeParam T - The type of items in the array

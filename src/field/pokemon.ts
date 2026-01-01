@@ -16,7 +16,12 @@ import {
   validateShedinjaEvo,
 } from "#balance/pokemon-evolutions";
 import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY_VARIANT_CHANCE } from "#balance/rates";
-import { getStarterValueFriendshipCap, speciesStarterCosts } from "#balance/starters";
+import {
+  getStarterValueFriendshipCap,
+  speciesStarterCosts,
+  TRAINER_MAX_FRIENDSHIP_WAVE,
+  TRAINER_MIN_FRIENDSHIP,
+} from "#balance/starters";
 import { tmSpecies } from "#balance/tm-species-map";
 import { reverseCompatibleTms } from "#balance/tms";
 import type { SuppressAbilitiesTag } from "#data/arena-tag";
@@ -2446,7 +2451,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       typeMultiplier.value = 0;
     }
 
-    if (this.getTag(TarShotTag) && this.getMoveType(move) === PokemonType.FIRE) {
+    // TODO: Rework to use an apply method specific to Tar Shot
+    if (this.getTag(TarShotTag) && moveType === PokemonType.FIRE) {
       typeMultiplier.value *= 2;
     }
 
@@ -5004,20 +5010,24 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Queue the status cure message, reset the status, and update the info display
+   * Helper function for the Move phase that queues the status cure message,
+   * resets it, and updates the info display.
    * @param effect - The effect to cure. If this does not match the current status, nothing happens.
-   * @param msg - A custom message to display when curing the status effect (used for curing freeze due to move use)
+   * @param msg - If provided, will override the default message displayed when removing status.
+   * Used for moves that thaw the user out
    */
-  public cureStatus(effect: StatusEffect, msg?: string): void {
+  // TODO: Distinguish this more from `resetStatus`
+  public cureStatus(effect: StatusEffect, msg = getStatusEffectHealText(effect, getPokemonNameWithAffix(this))): void {
     if (effect !== this.status?.effect) {
       return;
     }
-    // Freeze healed by move uses its own msg
-    globalScene.phaseManager.queueMessage(msg ?? getStatusEffectHealText(effect, getPokemonNameWithAffix(this)));
-    // cannot use `asPhase=true` as it will cause status to be reset _after_ this phase ends
+
+    globalScene.phaseManager.queueMessage(msg);
+    // cannot use `asPhase=true` as it will cause status to be reset _after_ the move phase ends
     this.resetStatus(undefined, undefined, undefined, false);
     this.updateInfo();
   }
+
   /**
    * Reset this Pokémon's status
    * @param revive - Whether revive should be cured; default `true`
@@ -6402,7 +6412,11 @@ export class EnemyPokemon extends Pokemon {
           ivs.push(randSeedIntRange(Math.floor(waveIndex / 10), 31));
         }
         this.ivs = ivs;
-        this.friendship = Math.round(255 * (waveIndex / 200));
+        this.friendship = Phaser.Math.Clamp(
+          Math.round(255 * (waveIndex / TRAINER_MAX_FRIENDSHIP_WAVE)),
+          TRAINER_MIN_FRIENDSHIP,
+          255,
+        );
       }
     }
 
