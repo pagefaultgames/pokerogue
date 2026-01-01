@@ -30,8 +30,7 @@ describe("Abilities - Screen Cleaner", () => {
       .weather(WeatherType.SNOW);
   });
 
-  // TODO: Screen cleaner doesn't remove both sides' tags if both players have them (as do a LOT of other things)
-  it.todo.each([
+  it.each([
     { name: "Reflect", tagType: ArenaTagType.REFLECT },
     { name: "Light Screen", tagType: ArenaTagType.LIGHT_SCREEN },
     { name: "Aurora Veil", tagType: ArenaTagType.AURORA_VEIL },
