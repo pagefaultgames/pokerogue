@@ -121,7 +121,7 @@ export class MovePhase extends PokemonPhase {
       return;
     }
 
-    const useMode = this.useMode;
+    const { useMode } = this;
     const ignoreStatus = isIgnoreStatus(useMode);
     const isFollowUp = useMode === MoveUseMode.FOLLOW_UP;
 
