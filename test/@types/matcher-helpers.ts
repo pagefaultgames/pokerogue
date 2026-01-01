@@ -44,7 +44,17 @@ export type MatcherInterface<K extends string> = Record<K, AnyFn<never, void>>;
  * **DO NOT EXTEND OFF OF THIS INTERFACE!!** \
  * Instead, implement it with a `declare class` statement - this provides IDE autocomplete without adding additional properties.
  *
- * This is required as there's no clean way to ensure that 2 interfaces are assignable inside a `.d.ts` file without using `extends`e
+ * This is required as there's no clean way to ensure that 2 interfaces are assignable inside a `.d.ts` file without using `extends`.
+ * @example
+ * ```ts
+ * declare class MyCustomMatchers implements MatchersBase<keyof MyCustomMatchersCommon> {
+ *   common: MyCustomMatchersCommon,
+ *   positive: MyCustomMatchersPositive,
+ *   negative: MyCustomMatchersNegative,
+ * }
+ *
+ * interface MyCustomMatchersCommon
+ * ```
  */
 export interface MatchersBase<K extends string> {
   /** Signatures common to both positive and negative assertions. */

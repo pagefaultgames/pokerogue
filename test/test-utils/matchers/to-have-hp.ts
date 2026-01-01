@@ -10,8 +10,9 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  */
 export interface ToHaveHpOptions {
   /**
-   * The rounding method to use when coercing hp counts to an integer.
-   * Possible values are `"down"` (for {@linkcode toDmgValue}) and `"half up"` (for "Math.round")
+   * The rounding method to use when coercing HP counts to an integer. \
+   * Possible values are `"down"` (using {@linkcode toDmgValue} and enforcing a minimum value of `1`)
+   * and `"half up"` (using {@linkcode Math.round})
    * @defaultValue `"down"`
    */
   rounding?: "down" | "half up";
@@ -20,7 +21,7 @@ export interface ToHaveHpOptions {
 /**
  * Matcher that checks if a Pokemon has a specific amount of HP.
  * @param received - The object to check. Should be a {@linkcode Pokemon}
- * @param expectedHp - The expected amount of HP the {@linkcode Pokemon} is expected to have;
+ * @param expectedHp - The expected amount of HP the {@linkcode Pokemon} is expected to have
  * @param __namedParameters - Needed for Typedoc to function
  * @returns Whether the matcher passed
  */

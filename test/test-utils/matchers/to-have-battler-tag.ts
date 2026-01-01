@@ -14,9 +14,8 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @internal
  * @sealed
  */
-type SerializableBattlerTagOptions<B extends SerializableBattlerTagType> = OneOther<BattlerTagDataMap[B], "tagType"> & {
-  tagType: B;
-};
+type SerializableBattlerTagOptions<B extends SerializableBattlerTagType> = //
+  OneOther<BattlerTagDataMap[B], "tagType"> & { tagType: B };
 
 /**
  * Helper type for non-serializable battler tag options.
@@ -24,9 +23,8 @@ type SerializableBattlerTagOptions<B extends SerializableBattlerTagType> = OneOt
  * @internal
  * @sealed
  */
-type NonSerializableBattlerTagOptions<B extends BattlerTagType> = OneOther<BattlerTagTypeMap[B], "tagType"> & {
-  tagType: B;
-};
+type NonSerializableBattlerTagOptions<B extends BattlerTagType> = //
+  OneOther<BattlerTagTypeMap[B], "tagType"> & { tagType: B };
 
 /**
  * Options type for {@linkcode toHaveBattlerTag}.

@@ -31,7 +31,7 @@ import type { Negate } from "#types/type-helpers";
 import type { toDmgValue } from "#utils/common";
 import type { If, IntClosedRange, Integer, IsNumericLiteral, IsStringLiteral, NonNegativeInteger } from "type-fest";
 import type { expect } from "vitest";
-import type { GetMatchers, MatchersBase, RestrictMatcher } from "./matcher-helpers";
+import type { GetMatchers, MatcherInterface, MatchersBase, RestrictMatcher } from "./matcher-helpers";
 import { StatusEffect } from "#enums/status-effect";
 import { Status } from "#data/status-effect";
 import { Arena } from "#field/arena";
@@ -162,7 +162,7 @@ interface ArenaMatchersCommon {
   toHaveArenaTag(expectedType: ArenaTagType, side?: ArenaTagSide): void;
 
   /**
-   * Check whether the current {@linkcode Arena} contains a {@linkcode PositionalTag} with the given properties.
+   * Check whether the current {@linkcode Arena} contains a `PositionalTag` with the given properties.
    * @param expectedTag - A partially-filled {@linkcode PositionalTag} containing the desired properties to check
    */
   toHavePositionalTag<P extends PositionalTagType>(expectedTag: ToHavePositionalTagOptions<P>): void;
@@ -196,8 +196,8 @@ interface PokemonMatchers {
    * @param expectedTypes - The expected {@linkcode PokemonType}s to check against; must have length `>0`
    * @param options - The {@linkcode ToHaveTypesOptions | options} passed to the matcher
    */
-  // TODO: Update typing once pokemon-related typing funcs are updated to return non-empty tuples.
-  // The actual functions guarantee that the end result will never be empty, but the types do not reflect that at compile-time.
+  // TODO: Update typing to a non empty tuple once pokemon-related typing funcs are updated to return non-empty tuples.
+  // The actual functions guarantee that the end result will never be empty at runtime, but the types do not reflect that at compile-time.
   toHaveTypes(expectedTypes: readonly PokemonType[], options?: ToHaveTypesOptions): void;
 
   /**
@@ -205,7 +205,7 @@ interface PokemonMatchers {
    * @param expectedMove - The {@linkcode MoveId} the Pokemon is expected to have used,
    * or a partially-filled {@linkcode TurnMove} containing the desired properties to check
    * @param index - (Default `0`) The index of the move history entry to check, in order from most recent to least recent;
-   * must be an non-negative integer
+   * must be a non-negative integer
    * @see {@linkcode Pokemon.getLastXMoves}
    */
   toHaveUsedMove<I extends number>(
@@ -229,14 +229,14 @@ interface PokemonMatchers {
   ): void;
 
   /**
-   * Check whether a {@linkcode Pokemon} has a specific {@linkcode StatusEffect | non-volatile status effect}.
+   * Check whether a {@linkcode Pokemon} has a specific non-volatile status effect.
    * @param expectedStatusEffect - The {@linkcode StatusEffect} the Pokemon is expected to have,
    * or a partially filled {@linkcode Status} object containing the desired properties
    */
   toHaveStatusEffect(expectedStatusEffect: ExpectedStatusType): void;
 
   /**
-   * Check whether a {@linkcode Pokemon} has a specific {@linkcode Stat} stage.
+   * Check whether a {@linkcode Pokemon} has a specific {@linkcode StatStage | stat stage}.
    * @param stat - The {@linkcode BattleStat} to check
    * @param expectedStage - The expected {@linkcode StatStage} of `stat`; must be within the interval `[-6, 6]`
    * @throws {@linkcode Error} \
@@ -246,12 +246,12 @@ interface PokemonMatchers {
 
   /**
    * Check whether a {@linkcode Pokemon} has a {@linkcode BattlerTag} with the given properties.
-   * @param expectedTag - A partially-filled {@linkcode BattlerTag} containing the desired properties to check
+   * @param expectedTag - A partially-filled `BattlerTag` containing the desired properties to check
    */
   toHaveBattlerTag<B extends BattlerTagType>(expectedTag: ToHaveBattlerTagOptions<B>): void;
   /**
    * Check whether a {@linkcode Pokemon} has the given {@linkcode BattlerTag}.
-   * @param expectedTag - The {@linkcode BattlerTag} that the Pokemon is expected to possess
+   * @param expectedTag - The `BattlerTag` that the Pokemon is expected to possess
    */
   toHaveBattlerTag<B extends BattlerTagType>(expectedTag: BattlerTagTypeMap[B]): void;
   /**
@@ -267,12 +267,12 @@ interface PokemonMatchers {
   toHaveAbilityApplied(expectedAbilityId: AbilityId): void;
 
   /**
-   * Check whether a {@linkcode Pokemon} has a specific amount of {@linkcode Stat.HP | HP}.
+   * Check whether a {@linkcode Pokemon} has a specific amount of HP.
    * @param expectedHp - The expected amount of {@linkcode Stat.HP | HP} to have
    */
   toHaveHp<H extends number>(expectedHp: IntLiteral<H>): void;
   /**
-   * Check whether a {@linkcode Pokemon} has a specific amount of {@linkcode Stat.HP | HP}.
+   * Check whether a {@linkcode Pokemon} has a specific amount of HP.
    * @param expectedHp - The expected amount of {@linkcode Stat.HP | HP} to have
    * @param options - The {@linkcode ToHaveHpOptions | options} for the matcher; must be omitted if `expectedHp` is a numeric literal
    */
