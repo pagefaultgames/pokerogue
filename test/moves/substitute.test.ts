@@ -509,4 +509,18 @@ describe("Moves - Substitute", () => {
 
     expect(playerPokemon.getTag(BattlerTagType.SEEDED)).toBeUndefined();
   });
+
+  it("should fail if the user has 1 max HP", async () => {
+    await game.classicMode.startBattle([SpeciesId.SHEDINJA]);
+
+    const player = game.field.getPlayerPokemon();
+
+    game.move.use(MoveId.SUBSTITUTE);
+    await game.toEndOfTurn();
+
+    expect(player).toHaveUsedMove({ move: MoveId.SUBSTITUTE, result: MoveResult.FAIL });
+    expect(player).not.toHaveBattlerTag(BattlerTagType.SUBSTITUTE);
+    expect(player).toHaveFullHp();
+    expect(player).toHaveHp(1);
+  });
 });
