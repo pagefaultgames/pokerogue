@@ -99,7 +99,7 @@ interface GenericMatchers<T> {
    * @privateRemarks
    * While this functionality _could_ be simulated by writing
    * `expect(m.get(key)).toBe(y)` or
-   * `expect(m.get(key)).toBe(expect.anything())` or
+   * `expect(m.get(key)).toBe(expect.anything())`,
    * this is preferred due to being more ergonomic and providing better error handling.
    */
   toHaveKey: T extends ReadonlyMap<infer K, infer V> ? (expectedKey: K, expectedValue?: V) => void : never;
