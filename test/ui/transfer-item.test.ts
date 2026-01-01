@@ -20,9 +20,7 @@ describe("UI - Transfer Items", () => {
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
+  afterEach(() => {});
 
   beforeEach(async () => {
     game = new GameManager(phaserGame);

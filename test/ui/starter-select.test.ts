@@ -27,9 +27,7 @@ describe.todo("UI - Starter select", () => {
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
+  afterEach(() => {});
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
