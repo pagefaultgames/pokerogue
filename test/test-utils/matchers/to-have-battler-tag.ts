@@ -9,46 +9,48 @@ import type { BattlerTagDataMap, SerializableBattlerTagType } from "#types/battl
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
- * Helper type for serializable battler tag options.
- * Allows for caching to avoid repeated instantiation and faster typechecking.
+ * Helper type for a partially-filled serializable {@linkcode BattlerTag}.
+ * Allows for caching to avoid repeated instantiation and speed up typechecking.
+ * @typeParam B - The {@linkcode BattlerTagType} being checked
  * @internal
  * @sealed
  */
-type SerializableBattlerTagOptions<B extends SerializableBattlerTagType> = //
+type PartiallyFilledSerializableBattlerTag<B extends SerializableBattlerTagType> = //
   OneOther<BattlerTagDataMap[B], "tagType"> & { tagType: B };
 
 /**
- * Helper type for non-serializable battler tag options.
- * Allows for caching to avoid repeated instantiation and faster typechecking.
+ * Helper type for a partially-filled non-serializable battler tag.
+ * Allows for caching to avoid repeated instantiation and speed up typechecking.
+ * @typeParam B - The {@linkcode BattlerTagType} being checked
  * @internal
  * @sealed
  */
-type NonSerializableBattlerTagOptions<B extends BattlerTagType> = //
+type PartiallyFilledNonSerializableBattlerTag<B extends BattlerTagType> = //
   OneOther<BattlerTagTypeMap[B], "tagType"> & { tagType: B };
 
 /**
- * Options type for {@linkcode toHaveBattlerTag}.
+ * Parameter type for {@linkcode toHaveBattlerTag}, accepting a partially filled {@linkcode BattlerTag} of the given type.
  * @typeParam B - The {@linkcode BattlerTagType} being checked
  * @remarks
- * If B corresponds to a serializable `BattlerTag`, only properties allowed to be serialized
+ * If `B` corresponds to a {@linkcode SerializableBattlerTagType | serializable `BattlerTag`}, only properties allowed to be serialized
  * (i.e. can change across instances) will be present and able to be checked.
  * @sealed
  */
-export type ToHaveBattlerTagOptions<B extends BattlerTagType> = [B] extends [SerializableBattlerTagType]
-  ? SerializableBattlerTagOptions<B>
-  : NonSerializableBattlerTagOptions<B>;
+export type PartiallyFilledBattlerTag<B extends BattlerTagType> = [B] extends [SerializableBattlerTagType]
+  ? PartiallyFilledSerializableBattlerTag<B>
+  : PartiallyFilledNonSerializableBattlerTag<B>;
 
 /**
  * Matcher that checks if a {@linkcode Pokemon} has a specific {@linkcode BattlerTag}.
  * @param received - The object to check. Should be a {@linkcode Pokemon}
- * @param expectedTag - The `BattlerTagType` of the desired tag, or a partially-filled object
- * containing the desired properties
+ * @param expectedTag - The `BattlerTagType` of the desired tag, an existing `BattlerTag` to verify ownership of,
+ * or a partially-filled object containing the desired properties
  * @returns Whether the matcher passed
  */
 export function toHaveBattlerTag<B extends BattlerTagType>(
   this: Readonly<MatcherState>,
   received: unknown,
-  expectedTag: B | BattlerTagTypeMap[B] | ToHaveBattlerTagOptions<B>,
+  expectedTag: B | BattlerTagTypeMap[B] | PartiallyFilledBattlerTag<B>,
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
     return {

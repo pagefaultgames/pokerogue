@@ -12,8 +12,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @param received - The actual value received. Should be a {@linkcode Pokemon}
  * @param expectedMove - The {@linkcode MoveId} the Pokemon is expected to have used,
  * or a partially filled {@linkcode TurnMove} containing the desired properties to check
- * @param index - The index of the move history entry to check, in order from most recent to least recent;
- * default `0` (last used move)
+ * @param index - (Default `0`) The index of the move history entry to check, in order from most recent to least recent
  * @returns Whether the matcher passed
  */
 export function toHaveUsedMove(

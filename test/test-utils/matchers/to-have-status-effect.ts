@@ -7,10 +7,10 @@ import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
- * The type of a status effect expected by {@linkcode toHaveStatusEffect}.
+ * Parameter type for {@linkcode toHaveStatusEffect}, accepting a partially filled {@linkcode Status} object.
+ * @sealed
  */
-export type ExpectedStatusType =
-  | StatusEffect
+export type PartiallyFilledStatus =
   | { effect: StatusEffect.TOXIC; toxicTurnCount: number }
   | { effect: StatusEffect.SLEEP; sleepTurnsRemaining: number };
 
@@ -18,13 +18,13 @@ export type ExpectedStatusType =
  * Matcher that checks if a Pokemon's {@linkcode StatusEffect} is as expected
  * @param received - The actual value received. Should be a {@linkcode Pokemon}
  * @param expectedStatus - The {@linkcode StatusEffect} the Pokemon is expected to have,
- * or a partially filled {@linkcode Status} containing the desired properties
+ * or a partially filled {@linkcode Status} object containing the desired properties
  * @returns Whether the matcher passed
  */
 export function toHaveStatusEffect(
   this: Readonly<MatcherState>,
   received: unknown,
-  expectedStatus: ExpectedStatusType,
+  expectedStatus: StatusEffect | PartiallyFilledStatus,
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
     return {

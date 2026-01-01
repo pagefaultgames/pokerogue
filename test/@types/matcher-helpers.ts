@@ -30,7 +30,7 @@ type AnyFn<Args extends readonly unknown[] = never, Return = unknown> = (...args
  * @interface
  * @internal
  */
-export type MatcherInterface<K extends string> = Record<K, AnyFn<never, void>>;
+type MatcherInterface<K extends string> = Record<K, AnyFn<never, void>>;
 
 /**
  * Interface describing the shape of a set of custom matchers, used to allow strongly typing both
@@ -41,19 +41,24 @@ export type MatcherInterface<K extends string> = Record<K, AnyFn<never, void>>;
  * @remarks
  * Consumers that do not need custom types for positive and negative assertions should instead use plain interfaces.
  * @privateRemarks
- * **DO NOT EXTEND OFF OF THIS INTERFACE!!** \
- * Instead, implement it with a `declare class` statement - this provides IDE autocomplete without adding additional properties.
+ * ⚠️ **DO NOT EXTEND OFF OF THIS INTERFACE!!** \
+ * Instead, implement it with a `declare class` statement - this provides IDE autocomplete & type safety without adding additional properties.
  *
  * This is required as there's no clean way to ensure that 2 interfaces are assignable inside a `.d.ts` file without using `extends`.
  * @example
  * ```ts
+ * // #region MyCustomMatchers
  * declare class MyCustomMatchers implements MatchersBase<keyof MyCustomMatchersCommon> {
  *   common: MyCustomMatchersCommon,
  *   positive: MyCustomMatchersPositive,
  *   negative: MyCustomMatchersNegative,
  * }
  *
- * interface MyCustomMatchersCommon
+ * interface MyCustomMatchersCommon {
+ *   // matchers go here
+ * }
+ *
+ * // #endregion MyCustomMatchers
  * ```
  */
 export interface MatchersBase<K extends string> {

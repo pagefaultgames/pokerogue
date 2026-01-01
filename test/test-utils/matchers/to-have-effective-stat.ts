@@ -8,22 +8,21 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
  * Options type for {@linkcode toHaveEffectiveStat}.
+ * @see {@linkcode Pokemon.getEffectiveStat}
  * @sealed
  */
+// TODO: Rework to simply use
 export interface ToHaveEffectiveStatOptions {
   /**
    * The target {@linkcode Pokemon}
-   * @see {@linkcode Pokemon.getEffectiveStat}
    */
   enemy?: Pokemon;
   /**
    * The {@linkcode Move} being used
-   * @see {@linkcode Pokemon.getEffectiveStat}
    */
   move?: Move;
   /**
    * Whether a critical hit occurred or not
-   * @see {@linkcode Pokemon.getEffectiveStat}
    * @defaultValue `false`
    */
   isCritical?: boolean;
@@ -33,7 +32,7 @@ export interface ToHaveEffectiveStatOptions {
  * Matcher that checks if a {@linkcode Pokemon}'s effective stat equals a certain value.
  * @param received - The object to check. Should be a {@linkcode Pokemon}
  * @param stat - The {@linkcode EffectiveStat} to check
- * @param expectedValue - The expected value of the {@linkcode stat}
+ * @param expectedValue - The expected value of `stat`; must be a non-negative integer
  * @param options - The {@linkcode ToHaveEffectiveStatOptions}
  * @returns Whether the matcher passed
  */

@@ -10,9 +10,12 @@ import { toTitleCase } from "#utils/strings";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
- * Options type for {@linkcode toHavePositionalTag}.
+ * Parameter type for {@linkcode toHavePositionalTag}, accepting a partially filled {@linkcode PositionalTag} of the given type.
+ * @typeParam P - The {@linkcode PositionalTagType} being checked
+ * @sealed
  */
-export type ToHavePositionalTagOptions<P extends PositionalTagType> = OneOther<toSerializedPosTag<P>, "tagType">;
+export type PartiallyFilledPositionalTag<P extends PositionalTagType> = //
+  OneOther<toSerializedPosTag<P>, "tagType">;
 
 /**
  * Matcher to check if the {@linkcode Arena} has a certain number of {@linkcode PositionalTag}s active.
@@ -26,7 +29,7 @@ export type ToHavePositionalTagOptions<P extends PositionalTagType> = OneOther<t
 export function toHavePositionalTag<P extends PositionalTagType>(
   this: Readonly<MatcherState>,
   received: unknown,
-  expectedTag: P | ToHavePositionalTagOptions<P>,
+  expectedTag: P | PartiallyFilledPositionalTag<P>,
   count = this.isNot ? 0 : 1,
 ): SyncExpectationResult {
   if (!isGameManagerInstance(received)) {

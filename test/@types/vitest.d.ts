@@ -3,8 +3,11 @@ import "vitest";
 import type Overrides from "#app/overrides";
 import type { Phase } from "#app/phase";
 import type { ArenaTag } from "#data/arena-tag";
+import type { BattlerTagTypeMap } from "#data/battler-tags";
 import type { PositionalTag } from "#data/positional-tags/positional-tag";
-import type { TerrainType } from "#data/terrain";
+import type { Status } from "#data/status-effect";
+import type { Terrain, TerrainType } from "#data/terrain";
+import { Weather } from "#data/weather";
 import type { AbilityId } from "#enums/ability-id";
 import type { ArenaTagSide } from "#enums/arena-tag-side";
 import type { ArenaTagType } from "#enums/arena-tag-type";
@@ -13,17 +16,19 @@ import type { MoveId } from "#enums/move-id";
 import type { PokemonType } from "#enums/pokemon-type";
 import type { PositionalTagType } from "#enums/positional-tag-type";
 import type { BattleStat, EffectiveStat, StatStage } from "#enums/stat";
+import type { StatusEffect } from "#enums/status-effect";
 import type { WeatherType } from "#enums/weather-type";
+import type { Arena } from "#field/arena";
 import type { Pokemon } from "#field/pokemon";
 import type { PokemonMove } from "#moves/pokemon-move";
 import type { OneOther } from "#test/@types/test-helpers";
 import type { GameManager } from "#test/test-utils/game-manager";
-import type { ToHaveArenaTagOptions } from "#test/test-utils/matchers/to-have-arena-tag";
-import type { ToHaveBattlerTagOptions } from "#test/test-utils/matchers/to-have-battler-tag";
+import type { PartiallyFilledArenaTag } from "#test/test-utils/matchers/to-have-arena-tag";
+import type { PartiallyFilledBattlerTag } from "#test/test-utils/matchers/to-have-battler-tag";
 import type { ToHaveEffectiveStatOptions } from "#test/test-utils/matchers/to-have-effective-stat";
 import type { ToHaveHpOptions } from "#test/test-utils/matchers/to-have-hp";
-import type { ToHavePositionalTagOptions } from "#test/test-utils/matchers/to-have-positional-tag";
-import type { ExpectedStatusType } from "#test/test-utils/matchers/to-have-status-effect";
+import type { PartiallyFilledPositionalTag } from "#test/test-utils/matchers/to-have-positional-tag";
+import type { PartiallyFilledStatus } from "#test/test-utils/matchers/to-have-status-effect";
 import type { ToHaveTypesOptions } from "#test/test-utils/matchers/to-have-types";
 import type { PhaseString } from "#types/phase-types";
 import type { TurnMove } from "#types/turn-move";
@@ -32,9 +37,6 @@ import type { toDmgValue } from "#utils/common";
 import type { If, IntClosedRange, Integer, IsNumericLiteral, IsStringLiteral, NonNegativeInteger } from "type-fest";
 import type { expect } from "vitest";
 import type { GetMatchers, MatcherInterface, MatchersBase, RestrictMatcher } from "./matcher-helpers";
-import { StatusEffect } from "#enums/status-effect";
-import { Status } from "#data/status-effect";
-import { Arena } from "#field/arena";
 
 // #region Helper Types
 
@@ -110,7 +112,7 @@ interface GenericMatchers<T> {
 interface GameManagerMatchers {
   /**
    * Check whether the {@linkcode GameManager} has shown the given message at least once in the current test case.
-   * @param expectedMessage - The expected message to be displayed
+   * @param expectedMessage - The message that should have been displayed
    * @remarks
    * Strings consumed by this function should _always_ be produced by a call to `i18next.t`
    * to avoid hardcoding locales text into test files.
@@ -119,11 +121,12 @@ interface GameManagerMatchers {
    * expect(game).toHaveShownMessage(i18next.t("moveTriggers:splash"));
    * ```
    */
+  // TODO: The typing for this can be refined further once i18next type safety is added
   toHaveShownMessage<T extends string>(expectedMessage: IsStringLiteral<T> extends true ? never : T): void;
 
   /**
    * Check whether the currently-running {@linkcode Phase} is of the given type.
-   * @param expectedPhase - The expected {@linkcode PhaseString | name of the phase}
+   * @param expectedPhase - The {@linkcode PhaseString | name} of the `Phase` that should be running
    */
   toBeAtPhase(expectedPhase: PhaseString): void;
 }
@@ -138,22 +141,22 @@ declare class ArenaMatchers implements MatchersBase<keyof ArenaMatchersCommon> {
 
 interface ArenaMatchersCommon {
   /**
-   * Check whether the current {@linkcode WeatherType} is as expected.
-   * @param expectedWeatherType - The expected `WeatherType`
+   * Check whether the currently active {@linkcode Weather} is of the specified type.
+   * @param expectedWeatherType - The {@linkcode WeatherType} that should be active
    */
   toHaveWeather(expectedWeatherType: WeatherType): void;
 
   /**
-   * Check whether the current {@linkcode TerrainType} is as expected.
-   * @param expectedTerrainType - The expected `TerrainType`
+   * Check whether the currently active {@linkcode Terrain} is of the specified type.
+   * @param expectedTerrainType - The {@linkcode TerrainType} that should be active
    */
   toHaveTerrain(expectedTerrainType: TerrainType): void;
 
   /**
-   * Check whether the current {@linkcode Arena} contains the given {@linkcode ArenaTag}.
-   * @param expectedTag - A partially-filled `ArenaTag` containing the desired properties
+   * Check whether the {@linkcode Arena} contains the given {@linkcode ArenaTag}.
+   * @param expectedTag - A partially-filled `ArenaTag` containing the desired properties to check
    */
-  toHaveArenaTag<A extends ArenaTagType>(expectedTag: ToHaveArenaTagOptions<A>): void;
+  toHaveArenaTag<A extends ArenaTagType>(expectedTag: PartiallyFilledArenaTag<A>): void;
   /**
    * Check whether the current {@linkcode Arena} contains the given {@linkcode ArenaTag}.
    * @param expectedType - The {@linkcode ArenaTagType} of the desired tag
@@ -165,7 +168,7 @@ interface ArenaMatchersCommon {
    * Check whether the current {@linkcode Arena} contains a `PositionalTag` with the given properties.
    * @param expectedTag - A partially-filled {@linkcode PositionalTag} containing the desired properties to check
    */
-  toHavePositionalTag<P extends PositionalTagType>(expectedTag: ToHavePositionalTagOptions<P>): void;
+  toHavePositionalTag<P extends PositionalTagType>(expectedTag: PartiallyFilledPositionalTag<P>): void;
 }
 
 interface ArenaMatchersPositive {
@@ -214,14 +217,15 @@ interface PokemonMatchers {
   ): void;
 
   /**
-   * Check whether a {@linkcode Pokemon}'s effective stat is as expected
-   * (checked after all stat value modifications).
+   * Check whether a {@linkcode Pokemon}'s effective stat equals a certain value.
    * @param stat - The {@linkcode EffectiveStat} to check
    * @param expectedValue - The expected value of `stat`; must be a non-negative integer
    * @param options - The {@linkcode ToHaveEffectiveStatOptions | options} passed to the matcher
    * @remarks
-   * If you want to check the stat **before** modifiers are applied, use {@linkcode Pokemon.getStat} instead.
+   * This checks the value after all stat value modifications have occured.
+   * If you want to query the raw stat value **before** modifiers are applied, use {@linkcode Pokemon.getStat} instead.
    */
+  // TODO: Rework into a "getStatMulti" function once better segregation of stat multipliers is achieved
   toHaveEffectiveStat<S extends number>(
     stat: EffectiveStat,
     expectedValue: If<IsNumericLiteral<S>, NonNegativeInteger<S>, S>,
@@ -231,16 +235,17 @@ interface PokemonMatchers {
   /**
    * Check whether a {@linkcode Pokemon} has a specific non-volatile status effect.
    * @param expectedStatusEffect - The {@linkcode StatusEffect} the Pokemon is expected to have,
-   * or a partially filled {@linkcode Status} object containing the desired properties
+   * or a partially filled {@linkcode Status} object containing the desired properties to check
    */
-  toHaveStatusEffect(expectedStatusEffect: ExpectedStatusType): void;
+  toHaveStatusEffect(expectedStatusEffect: StatusEffect | PartiallyFilledStatus): void;
 
   /**
    * Check whether a {@linkcode Pokemon} has a specific {@linkcode StatStage | stat stage}.
-   * @param stat - The {@linkcode BattleStat} to check
-   * @param expectedStage - The expected {@linkcode StatStage} of `stat`; must be within the interval `[-6, 6]`
-   * @throws {@linkcode Error} \
-   * Fails test if `level` is out of legal bounds.
+   * @param stat - The desired {@linkcode BattleStat} to check
+   * @param expectedStage - The {@linkcode StatStage | stage} that `stat` is expected to have reached;
+   * must be within the interval `[-6, 6]`
+   * @throws {Error}
+   * Fails test if `expectedStage` is out of legal bounds.
    */
   toHaveStatStage(stat: BattleStat, expectedStage: StatStage): void;
 
@@ -248,7 +253,8 @@ interface PokemonMatchers {
    * Check whether a {@linkcode Pokemon} has a {@linkcode BattlerTag} with the given properties.
    * @param expectedTag - A partially-filled `BattlerTag` containing the desired properties to check
    */
-  toHaveBattlerTag<B extends BattlerTagType>(expectedTag: ToHaveBattlerTagOptions<B>): void;
+  // biome-ignore lint/style/useUnifiedTypeSignatures: enable both options for the rule next major version
+  toHaveBattlerTag<B extends BattlerTagType>(expectedTag: PartiallyFilledBattlerTag<B>): void;
   /**
    * Check whether a {@linkcode Pokemon} has the given {@linkcode BattlerTag}.
    * @param expectedTag - The `BattlerTag` that the Pokemon is expected to possess
@@ -256,46 +262,49 @@ interface PokemonMatchers {
   toHaveBattlerTag<B extends BattlerTagType>(expectedTag: BattlerTagTypeMap[B]): void;
   /**
    * Check whether a {@linkcode Pokemon} has a {@linkcode BattlerTag} of the given type.
-   * @param expectedType - The expected {@linkcode BattlerTagType}
+   * @param expectedType - The {@linkcode BattlerTagType} that should be present
    */
   toHaveBattlerTag(expectedType: BattlerTagType): void;
 
   /**
    * Check whether a {@linkcode Pokemon} has applied a specific {@linkcode AbilityId}.
-   * @param expectedAbilityId - The `AbilityId` to check for
+   * @param expectedAbilityId - The `AbilityId` that should have been applied
    */
   toHaveAbilityApplied(expectedAbilityId: AbilityId): void;
 
   /**
    * Check whether a {@linkcode Pokemon} has a specific amount of HP.
-   * @param expectedHp - The expected amount of {@linkcode Stat.HP | HP} to have
+   * @param expectedHp - The amount of {@linkcode Stat.HP | HP} the Pokemon should have
    */
   toHaveHp<H extends number>(expectedHp: IntLiteral<H>): void;
   /**
    * Check whether a {@linkcode Pokemon} has a specific amount of HP.
-   * @param expectedHp - The expected amount of {@linkcode Stat.HP | HP} to have
-   * @param options - The {@linkcode ToHaveHpOptions | options} for the matcher; must be omitted if `expectedHp` is a numeric literal
+   * @param expectedHp - The amount of {@linkcode Stat.HP | HP} the Pokemon should have
+   * @param options - The {@linkcode ToHaveHpOptions | options} for the matcher;
+   * should be omitted if `expectedHp` is already an integer
    */
   toHaveHp<H extends number>(expectedHp: NonNumericLiteral<H>, options?: ToHaveHpOptions): void;
 
   /**
    * Check whether a {@linkcode Pokemon} has taken a specific amount of damage.
-   * @param expectedDamageTaken - The expected amount of damage taken
+   * @param expectedDamageTaken - The amount of damage that should have been taken
    */
+  // TODO: Consider renaming to "toHaveLostHp"
   toHaveTakenDamage<D extends number>(expectedDamageTaken: IntLiteral<D>): void;
   /**
    * Check whether a {@linkcode Pokemon} has taken a specific amount of damage.
-   * @param expectedDamageTaken - The expected amount of damage taken
+   * @param expectedDamageTaken - The amount of damage that should have been taken
    * @param roundDown - (Default `true`) Whether to round down `expectedDamageTaken` with {@linkcode toDmgValue};
-   * must be omitted if `expectedDamageTaken` is a numeric literal
+   * should be omitted if `expectedDamageTaken` is already an integer
    */
   toHaveTakenDamage<D extends number>(expectedDamageTaken: NonNumericLiteral<D>, roundDown?: false): void;
 
   /**
-   * Check whether a {@linkcode Pokemon} is currently fainted (as determined by {@linkcode Pokemon.isFainted}).
+   * Check whether a {@linkcode Pokemon} is currently fainted.
    * @remarks
    * When checking whether an enemy wild Pokemon is fainted, one must store a reference to it in a variable _before_ the fainting effect occurs.
    * Otherwise, the Pokemon will be removed from the field and garbage collected.
+   * @see {@linkcode Pokemon.isFainted}
    */
   toHaveFainted(): void;
 
@@ -307,7 +316,7 @@ interface PokemonMatchers {
   /**
    * Check whether a {@linkcode Pokemon} has consumed the given amount of PP for one of its moves.
    * @param moveId - The {@linkcode MoveId} corresponding to the {@linkcode PokemonMove} that should have consumed PP
-   * @param ppUsed - The numerical amount of PP that should have been consumed,
+   * @param ppUsed - The amount of PP that should have been consumed,
    * or `all` to indicate the move should be _out_ of PP
    * @throws {Error}
    * Fails test if the Pokemon's moveset has been set via {@linkcode Overrides.MOVESET_OVERRIDE}/{@linkcode Overrides.ENEMY_MOVESET_OVERRIDE}
