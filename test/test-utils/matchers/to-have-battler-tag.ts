@@ -1,7 +1,6 @@
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BattlerTag, type BattlerTagTypeMap } from "#data/battler-tags";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import type { Pokemon } from "#field/pokemon";
 import type { OneOther } from "#test/@types/test-helpers";
 import { getEnumStr, getOnelineDiffStr } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
@@ -9,7 +8,7 @@ import type { BattlerTagDataMap, SerializableBattlerTagType } from "#types/battl
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
- * Helper type for a partially-filled serializable {@linkcode BattlerTag}.
+ * Helper type for a partially filled serializable {@linkcode BattlerTag}.
  * Allows for caching to avoid repeated instantiation and speed up typechecking.
  * @typeParam B - The {@linkcode BattlerTagType} being checked
  * @internal
@@ -19,7 +18,7 @@ type PartiallyFilledSerializableBattlerTag<B extends SerializableBattlerTagType>
   OneOther<BattlerTagDataMap[B], "tagType"> & { tagType: B };
 
 /**
- * Helper type for a partially-filled non-serializable battler tag.
+ * Helper type for a partially filled non-serializable battler tag.
  * Allows for caching to avoid repeated instantiation and speed up typechecking.
  * @typeParam B - The {@linkcode BattlerTagType} being checked
  * @internal
@@ -38,13 +37,11 @@ type PartiallyFilledNonSerializableBattlerTag<B extends BattlerTagType> = //
  */
 export type PartiallyFilledBattlerTag<B extends BattlerTagType> = [B] extends [SerializableBattlerTagType]
   ? PartiallyFilledSerializableBattlerTag<B>
-  : PartiallyFilledNonSerializableBattlerTag<B>;
-
-/**
+  : PartiallyFilledNonSerializableBattlerTag<B>; /**
  * Matcher that checks if a {@linkcode Pokemon} has a specific {@linkcode BattlerTag}.
  * @param received - The object to check. Should be a {@linkcode Pokemon}
  * @param expectedTag - The `BattlerTagType` of the desired tag, an existing `BattlerTag` to verify ownership of,
- * or a partially-filled object containing the desired properties
+ * or a partially filled object containing the desired properties
  * @returns Whether the matcher passed
  */
 export function toHaveBattlerTag<B extends BattlerTagType>(

@@ -43,7 +43,7 @@ export type PartiallyFilledArenaTag<A extends ArenaTagType> = [A] extends [Seria
 /**
  * Matcher to check if the {@linkcode Arena} has a given {@linkcode ArenaTag} active.
  * @param received - The object to check. Should be the current {@linkcode GameManager}
- * @param expectedTag - The `ArenaTagType` of the desired tag, or a partially-filled object
+ * @param expectedTag - The `ArenaTagType` of the desired tag, or a partially filled object
  * containing the desired properties
  * @param side - (Default {@linkcode ArenaTagSide.BOTH}) The {@linkcode ArenaTagSide | side of the field} the tag should affect, or
  * {@linkcode ArenaTagSide.BOTH} to check both sides

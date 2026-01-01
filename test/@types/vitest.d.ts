@@ -154,7 +154,7 @@ interface ArenaMatchersCommon {
 
   /**
    * Check whether the {@linkcode Arena} contains the given {@linkcode ArenaTag}.
-   * @param expectedTag - A partially-filled `ArenaTag` containing the desired properties to check
+   * @param expectedTag - A partially filled `ArenaTag` containing the desired properties to check
    */
   toHaveArenaTag<A extends ArenaTagType>(expectedTag: PartiallyFilledArenaTag<A>): void;
   /**
@@ -166,7 +166,7 @@ interface ArenaMatchersCommon {
 
   /**
    * Check whether the current {@linkcode Arena} contains a `PositionalTag` with the given properties.
-   * @param expectedTag - A partially-filled {@linkcode PositionalTag} containing the desired properties to check
+   * @param expectedTag - A partially filled {@linkcode PositionalTag} containing the desired properties to check
    */
   toHavePositionalTag<P extends PositionalTagType>(expectedTag: PartiallyFilledPositionalTag<P>): void;
 }
@@ -206,7 +206,7 @@ interface PokemonMatchers {
   /**
    * Check whether a {@linkcode Pokemon} has used a move matching the given criteria.
    * @param expectedMove - The {@linkcode MoveId} the Pokemon is expected to have used,
-   * or a partially-filled {@linkcode TurnMove} containing the desired properties to check
+   * or a partially filled {@linkcode TurnMove} containing the desired properties to check
    * @param index - (Default `0`) The index of the move history entry to check, in order from most recent to least recent;
    * must be a non-negative integer
    * @see {@linkcode Pokemon.getLastXMoves}
@@ -251,7 +251,7 @@ interface PokemonMatchers {
 
   /**
    * Check whether a {@linkcode Pokemon} has a {@linkcode BattlerTag} with the given properties.
-   * @param expectedTag - A partially-filled `BattlerTag` containing the desired properties to check
+   * @param expectedTag - A partially filled `BattlerTag` containing the desired properties to check
    */
   // biome-ignore lint/style/useUnifiedTypeSignatures: enable both options for the rule next major version
   toHaveBattlerTag<B extends BattlerTagType>(expectedTag: PartiallyFilledBattlerTag<B>): void;

@@ -20,7 +20,7 @@ export type PartiallyFilledPositionalTag<P extends PositionalTagType> = //
 /**
  * Matcher to check if the {@linkcode Arena} has a certain number of {@linkcode PositionalTag}s active.
  * @param received - The object to check. Should be the current {@linkcode GameManager}
- * @param expectedTag - The {@linkcode PositionalTagType} of the desired tag, or a partially-filled {@linkcode PositionalTag}
+ * @param expectedTag - The {@linkcode PositionalTagType} of the desired tag, or a partially filled {@linkcode PositionalTag}
  * containing the desired properties
  * @param count - (Default `1`) The number of tags that should be active; must be an integer within the range `[1, 4]`.
  * Negative matches will disregard this and instead assert that **no** tags were found.
