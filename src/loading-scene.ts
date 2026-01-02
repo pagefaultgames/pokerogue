@@ -27,8 +27,8 @@ export class LoadingScene extends SceneBase {
     localPing();
 
     // TODO: Categorize these into sub-methods that make sense
-    // TODO: I'm 99.9% sure the order doesn't matter here, so we should organize these based on
-    // type more strongly
+    // I'm 99.9% sure the order doesn't matter here,
+    // so we should organize these based on type more strongly
     // Load menu images
     this.loadImage("loading_bg", "arenas")
       .loadImage("logo", "")
@@ -387,7 +387,11 @@ export class LoadingScene extends SceneBase {
   private loadLoadingScreen() {
     const mobile = isMobile();
 
-    const bg = this.add.image(0, 0, "").setOrigin(0, 0).setScale(6).setVisible(false);
+    const bg = this.add //
+      .image(0, 0, "")
+      .setOrigin(0)
+      .setScale(6)
+      .setVisible(false);
 
     const graphics = this.add //
       .graphics()
@@ -406,7 +410,11 @@ export class LoadingScene extends SceneBase {
     const midWidth = width / 2;
     const midHeight = height / 2;
 
-    const logo = this.add.image(midWidth, 240, "").setVisible(false).setOrigin(0.5, 0.5).setScale(4);
+    const logo = this.add //
+      .image(midWidth, 240, "")
+      .setVisible(false)
+      .setOrigin(0.5, 0.5)
+      .setScale(4);
 
     const percentText = this.make
       .text({
@@ -543,7 +551,10 @@ export class LoadingScene extends SceneBase {
 
   handleDestroy() {
     console.debug(`Destroying ${LoadingScene.KEY} scene`);
-    this.load.off(this.LOAD_EVENTS.PROGRESS).off(this.LOAD_EVENTS.FILE_COMPLETE).off(this.LOAD_EVENTS.COMPLETE);
+    this.load //
+      .off(this.LOAD_EVENTS.PROGRESS)
+      .off(this.LOAD_EVENTS.FILE_COMPLETE)
+      .off(this.LOAD_EVENTS.COMPLETE);
     // this.textures.remove("loading_bg"); is removed in BattleScene.launchBattle()
     this.children.removeAll(true);
     console.debug(`Destroyed ${LoadingScene.KEY} scene`);

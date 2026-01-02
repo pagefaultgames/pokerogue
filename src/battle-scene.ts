@@ -985,7 +985,9 @@ export class BattleScene extends SceneBase {
     ignoreOverride = true,
     useIllusion = false,
   ): Phaser.GameObjects.Container {
-    const container = this.add.container(x, y).setName(`${pokemon.name}-icon`);
+    const container = this.add //
+      .container(x, y)
+      .setName(`${pokemon.name}-icon`);
 
     const icon = this.add
       .sprite(0, 0, pokemon.getIconAtlasKey(ignoreOverride, useIllusion))
@@ -1827,7 +1829,9 @@ export class BattleScene extends SceneBase {
     frame?: string | number,
     terrainColorRatio = 0,
   ): Phaser.GameObjects.Sprite {
-    const ret = this.add.sprite(x, y, texture, frame).setPipeline(this.fieldSpritePipeline);
+    const ret = this.add //
+      .sprite(x, y, texture, frame)
+      .setPipeline(this.fieldSpritePipeline);
     if (terrainColorRatio) {
       ret.pipelineData["terrainColorRatio"] = terrainColorRatio;
     }
