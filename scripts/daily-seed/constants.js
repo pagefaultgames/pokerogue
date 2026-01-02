@@ -116,6 +116,8 @@ export const EDIT_OPTIONS = /** @type {const} */ ([
   "starting money",
   "seed",
   "edit",
+  "finish",
+  "exit",
 ]);
 
 /** All accepted options for configuring a boss Pokemon. */

@@ -99,7 +99,7 @@ async function main() {
 async function promptOptions() {
   const option = await select({
     message: "Please select the option you would like to configure.",
-    choices: [...editOptions, "finish", "exit"].map(toTitleCase),
+    choices: [...editOptions].map(toTitleCase),
   });
   await handleAnswer(/** @type {EditOption} */ (option.toLowerCase()));
 }
