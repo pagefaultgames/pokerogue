@@ -153,16 +153,11 @@ export class QuietFormChangePhase extends BattlePhase {
     this.pokemon.findAndRemoveTags(t => t.tagType === BattlerTagType.AUTOTOMIZED);
     if (globalScene?.currentBattle.battleSpec === BattleSpec.FINAL_BOSS && this.pokemon.isEnemy()) {
       globalScene.playBgm();
-      globalScene.phaseManager.unshiftNew(
-        "PokemonHealPhase",
-        this.pokemon.getBattlerIndex(),
-        this.pokemon.getMaxHp(),
-        null,
-        false,
-        false,
-        false,
-        true,
-      );
+      globalScene.phaseManager.unshiftNew("PokemonHealPhase", this.pokemon.getBattlerIndex(), this.pokemon.getMaxHp(), {
+        showFullHpMessage: false,
+        healStatus: true,
+        fullRestorePP: true,
+      });
       this.pokemon.findAndRemoveTags(() => true);
       this.pokemon.bossSegments = 5;
       this.pokemon.bossSegmentIndex = 4;

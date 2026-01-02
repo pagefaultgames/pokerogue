@@ -1652,7 +1652,6 @@ export class PendingHealTag extends SerializableArenaTag {
     }
 
     const healEffect = targetEffects.find(effect => this.canApply(effect, pokemon));
-
     if (healEffect == null) {
       return false;
     }
@@ -1670,22 +1669,15 @@ export class PendingHealTag extends SerializableArenaTag {
       return this.apply(simulated, pokemon);
     }
 
-    globalScene.phaseManager.unshiftNew(
-      "PokemonHealPhase",
-      targetIndex,
-      pokemon.getMaxHp(),
-      healMessage,
-      true,
-      false,
-      false,
-      true,
-      false,
-      restorePP,
-    );
-
+    globalScene.phaseManager.unshiftNew("PokemonHealPhase", targetIndex, pokemon.getMaxHp(), {
+      message: healMessage,
+      showFullHpMessage: false,
+      skipAnim: true,
+      healStatus: true,
+      fullRestorePP: restorePP,
+    });
     targetEffects.splice(targetEffects.indexOf(healEffect), 1);
-
-    return healEffect != null;
+    return true;
   }
 
   /**
