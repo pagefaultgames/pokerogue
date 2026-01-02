@@ -31,7 +31,7 @@ import {
  */
 
 /**
- * Prompts the user to configure the daily run starters.
+ * Prompt the user to configure the daily run starters.
  * @returns {Promise<StarterConfig[]>}
  * @remarks All 3 **must** be configured with at least a SpeciesId.
  */
@@ -61,7 +61,7 @@ export async function promptStarters() {
 const starterOptions = [...STARTER_OPTIONS];
 
 /**
- * Prompts the user to configure the individual starter pokemon
+ * Prompt the user to configure the individual starter pokemon
  * @param {StarterConfig} starterConfig
  */
 async function promptStarterOptions(starterConfig) {

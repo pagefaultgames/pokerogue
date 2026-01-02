@@ -21,7 +21,7 @@ const ajv = new Ajv({
 const validate = ajv.compile(customDailyRunSchema);
 
 /**
- * Prompts the user to enter a starting money value.
+ * Prompt the user to enter a starting money value.
  * @returns {Promise<number>} The starting money value.
  */
 export async function promptMoney() {
@@ -34,7 +34,7 @@ export async function promptMoney() {
 }
 
 /**
- * Prompts the user to enter a daily run luck value.
+ * Prompt the user to enter a daily run luck value.
  * Must be a number between 0 and 14.
  * @returns {Promise<number>} The luck value.
  */
@@ -48,7 +48,7 @@ export async function promptLuck() {
 }
 
 /**
- * Prompts the user to enter a starting biome.
+ * Prompt the user to enter a starting biome.
  * @returns {Promise<number>} The starting biome number.
  */
 export async function promptBiome() {
@@ -63,7 +63,7 @@ export async function promptBiome() {
 }
 
 /**
- * Prompts the user to enter a custom config.
+ * Prompt the user to enter a custom config.
  * The input is a JSON stringified version of the {@linkcode CustomSeedConfig} object.
  * @returns {Promise<import("../main.js").CustomSeedConfig>} The parsed {@linkcode CustomSeedConfig}.
  */
@@ -98,7 +98,7 @@ export async function promptEdit() {
 }
 
 /**
- * Prompts the user to enter a seed.
+ * Prompt the user to enter a seed.
  * This can be anything and is used as the actual daily run seed.
  * @returns {Promise<string>} The seed.
  */

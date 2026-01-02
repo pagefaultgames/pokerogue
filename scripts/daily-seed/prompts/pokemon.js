@@ -15,7 +15,7 @@ import { MAX_ABILITY_ID, MAX_MOVE_ID, NATURES, SPECIES_IDS } from "../constants.
  */
 
 /**
- * Prompts the user to enter a speciesId.
+ * Prompt the user to enter a speciesId.
  * @see {@linkcode SPECIES_IDS} for a list of valid speciesIds.
  * @returns {Promise<number>}
  */
@@ -35,7 +35,7 @@ export async function promptSpeciesId() {
 }
 
 /**
- * Prompts the user to enter a formIndex.
+ * Prompt the user to enter a formIndex.
  * @returns {Promise<number>} The formIndex
  * @remarks This does **NOT** validate the formIndex, since we can't access the pokemon data here.
  */
@@ -48,7 +48,7 @@ export async function promptFormIndex() {
 }
 
 /**
- * Prompts the user to enter a variant.
+ * Prompt the user to enter a variant.
  * Must be a number between 0 and 2.
  * @returns {Promise<Variant>} The {@linkcode Variant}
  * @remarks This does **NOT** validate that the variant exists for the given species.
@@ -65,7 +65,7 @@ export async function promptVariant() {
 }
 
 /**
- * Prompts the user to enter a nature.
+ * Prompt the user to enter a nature.
  * Must be a number between 0 and 24.
  * @returns {Promise<number>} The nature
  */
@@ -81,7 +81,7 @@ export async function promptNature() {
 }
 
 /**
- * Prompts the user to enter a moveset of up to 4 moves.
+ * Prompt the user to enter a moveset of up to 4 moves.
  * @returns {Promise<number[]>} The moveset.
  */
 export async function promptMoveset() {
@@ -109,9 +109,9 @@ export async function promptMoveset() {
 }
 
 /**
- * Prompts the user to enter an ability.
- * @param {boolean} [passive=false] Whether to prompt for a passive ability.
- * @returns {Promise<number>} The abilityId
+ * Prompt the user to enter an ability.
+ * @param {boolean} [passive=false] (Default `false`) Whether to prompt for a passive ability.
+ * @returns {Promise<number>} A Promise that resolves to
  * @remarks This is boss only for now, since the option for setting any ability is not yet implemented.
  */
 export async function promptAbility(passive = false) {
@@ -124,7 +124,7 @@ export async function promptAbility(passive = false) {
 }
 
 /**
- * Prompts the user to enter an abilityIndex.
+ * Prompt the user to enter an abilityIndex.
  * Must be a number between 0 and 2.
  * @returns {Promise<number>} The abilityIndex
  * @remarks This is starter only for now.

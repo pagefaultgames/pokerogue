@@ -48,7 +48,7 @@ let bossConfig = {
 };
 
 /**
- * Prompts the user to configure the daily run boss.
+ * Prompt the user to configure the daily run boss.
  * @returns {Promise<BossConfig>} The {@linkcode BossConfig}
  * @remarks The boss **must** be configured with at least a SpeciesId.
  */
@@ -65,7 +65,7 @@ export async function promptBoss() {
 const bossOptions = [...BOSS_OPTIONS];
 
 /**
- * Prompts the user to configure the boss pokemon.
+ * Prompt the user to configure the boss pokemon.
  * @returns {Promise<BossConfig>}
  */
 async function promptBossOptions() {
