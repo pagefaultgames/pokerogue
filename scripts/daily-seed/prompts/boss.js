@@ -60,7 +60,6 @@ export async function promptBoss() {
 
 /**
  * The list of valid options for the final boss.
- * @type {string[]}
  */
 const bossOptions = [...BOSS_OPTIONS];
 
@@ -72,13 +71,13 @@ async function promptBossOptions() {
   if (bossOptions.length === 1) {
     return bossConfig;
   }
-  const option = toCamelCase(
-    /** @type {string} */ (
+  const option = /** @type {typeof bossOptions[number] } */ (
+    toCamelCase(
       await select({
         message: chalk.blue("Please select the final boss option you would like to configure."),
         choices: [...bossOptions].map(toTitleCase),
-      })
-    ),
+      }),
+    )
   );
 
   switch (option) {

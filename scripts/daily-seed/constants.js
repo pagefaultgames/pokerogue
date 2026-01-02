@@ -5,15 +5,17 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+/** The maximum valid `SpeciesId` for normal species. */
 const MAX_SPECIES_ID = 1025;
 
+/** Array containing all regional and alternate form `SpeciesId`s. */
 const SPECIAL_SPECIES_IDS = [
   2019, 2020, 2026, 2027, 2028, 2037, 2038, 2050, 2051, 2052, 2053, 2074, 2075, 2076, 2088, 2089, 2103, 2105, 2670,
   4052, 4077, 4078, 4079, 4080, 4083, 4110, 4122, 4144, 4145, 4146, 4199, 4222, 4263, 4264, 4554, 4555, 4562, 4618,
   6058, 6059, 6100, 6101, 6157, 6211, 6215, 6503, 6549, 6570, 6571, 6628, 6705, 6706, 6713, 6724, 8128, 8194, 8901,
 ];
 
-/** A list of all valid `SpeciesId`s. */
+/** Array containing all valid `SpeciesId`s. */
 export const SPECIES_IDS = [...Array.from({ length: MAX_SPECIES_ID }, (_, i) => i + 1), ...SPECIAL_SPECIES_IDS];
 
 /** The maximum valid `MoveId`. */
@@ -105,6 +107,7 @@ export const BOSS_OPTIONS = /** @type {const} */ ([
   "passive",
   "finish",
 ]);
+
 /** A list of all valid options for a starter pokemon. */
 export const STARTER_OPTIONS = /** @type {const} */ ([
   "formIndex",
