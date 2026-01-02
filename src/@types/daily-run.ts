@@ -50,6 +50,6 @@ export interface CustomDailyRunConfig {
   biome?: BiomeId;
   luck?: number;
   startingMoney?: number;
-  /** Used to vary the seed while keeping the same config */
-  seedVariation: string;
+  /** The actual seed used for the daily run. */
+  seed: string;
 }

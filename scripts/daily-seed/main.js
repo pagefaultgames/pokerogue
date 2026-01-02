@@ -18,7 +18,7 @@ import { getPropertyValue } from "../helpers/arguments.js";
 import { toTitleCase } from "../helpers/casing.js";
 import { promptOverwrite, writeFileSafe } from "../helpers/file.js";
 import { promptBoss } from "./prompts/boss.js";
-import { promptBiome, promptEdit, promptLuck, promptMoney, promptSeedVariation } from "./prompts/general.js";
+import { promptBiome, promptEdit, promptLuck, promptMoney, promptSeed } from "./prompts/general.js";
 import { promptStarters } from "./prompts/starter.js";
 
 /**
@@ -46,7 +46,7 @@ const rootDir = join(import.meta.dirname, "..", "..");
  *   biome?: number,
  *   luck?: number,
  *   startingMoney?: number,
- *   seedVariation?: string
+ *   seed: string
  * }}
  */
 const customSeedConfig = {
@@ -55,13 +55,14 @@ const customSeedConfig = {
   biome: undefined,
   luck: undefined,
   startingMoney: undefined,
+  seed: "",
 };
 
 /**
  * All valid options for the config.
  * @type {string[]}
  */
-const options = ["starters", "boss", "biome", "luck", "starting money", "seed variation", "edit"];
+const options = ["starters", "boss", "biome", "luck", "starting money", "seed", "edit"];
 
 /**
  * Run the `dailySeed:create` script.
@@ -82,6 +83,8 @@ async function main() {
   }
 
   try {
+    // `seed` is required.
+    customSeedConfig.seed = await promptSeed();
     await promptOptions();
     if (process.exitCode != null) {
       return;
@@ -131,8 +134,8 @@ async function handleAnswer(answer) {
     case "starting money":
       customSeedConfig.startingMoney = await promptMoney();
       break;
-    case "seed variation":
-      customSeedConfig.seedVariation = await promptSeedVariation();
+    case "seed":
+      customSeedConfig.seed = await promptSeed();
       break;
     case "exit":
       console.log(chalk.gray("Exiting..."));

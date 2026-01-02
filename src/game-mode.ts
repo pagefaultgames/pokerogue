@@ -428,7 +428,7 @@ export class GameMode implements GameModeConfig {
    */
   public trySetCustomDailyConfig(seed: string): string {
     this.dailyConfig = parseDailySeed(seed);
-    return this.dailyConfig?.seedVariation ?? seed;
+    return this.dailyConfig?.seed ?? seed;
   }
 
   static getModeName(modeId: GameModes): string {

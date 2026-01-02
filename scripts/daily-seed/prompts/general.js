@@ -98,17 +98,16 @@ export async function promptEdit() {
 }
 
 /**
- * Prompts the user to enter a seed variation.
- * This can be anything and is only used to \
- * have the same config but with a different seed.
- * @returns {Promise<string>} The seed variation.
+ * Prompts the user to enter a seed.
+ * This can be anything and is used as the actual daily run seed.
+ * @returns {Promise<string>} The seed.
  */
-export async function promptSeedVariation() {
+export async function promptSeed() {
   return await input({
-    message: "Please enter seed variation.",
+    message: "Please enter seed.",
     validate: value => {
       if (value.trim() === "") {
-        return chalk.red.bold("Seed variation cannot be empty!");
+        return chalk.red.bold("Seed cannot be empty!");
       }
       return true;
     },

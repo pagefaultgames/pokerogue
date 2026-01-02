@@ -76,7 +76,7 @@
       "type": "integer",
       "minimum": 0
     },
-    "seedVariation": {
+    "seed": {
       "type": "string"
     },
     "additionalProperties": false
@@ -122,6 +122,6 @@
       "maxItems": 4
     }
   },
-  "additionalProperties": false,
-  "required": []
+  "required": ["seed"],
+  "additionalProperties": false
 }
