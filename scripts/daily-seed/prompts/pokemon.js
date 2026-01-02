@@ -16,8 +16,8 @@ import { MAX_ABILITY_ID, MAX_MOVE_ID, NATURES, SPECIES_IDS } from "../constants.
 
 /**
  * Prompt the user to enter a speciesId.
- * @see {@linkcode SPECIES_IDS} for a list of valid speciesIds.
- * @returns {Promise<number>}
+ * @see {@linkcode SPECIES_IDS} for a list of valid `SpeciesId`s.
+ * @returns {Promise<number>} A Promise that resolves with the chosen `SpeciesId`.
  */
 export async function promptSpeciesId() {
   return await number({
@@ -35,10 +35,10 @@ export async function promptSpeciesId() {
 }
 
 /**
- * Prompt the user to enter a formIndex.
- * @returns {Promise<number>} The formIndex
- * @remarks This does **NOT** validate the formIndex, since we can't access the pokemon data here.
+ * Prompt the user to enter a form index.
+ * @returns {Promise<number>} A Promise that resolves with the chosen form index.
  */
+// TODO: Validate the form indices based on the selected species if/when project references allow us to import main repo code
 export async function promptFormIndex() {
   return await number({
     message: "Please enter the form index to set.",
@@ -49,9 +49,9 @@ export async function promptFormIndex() {
 
 /**
  * Prompt the user to enter a variant.
- * Must be a number between 0 and 2.
- * @returns {Promise<Variant>} The {@linkcode Variant}
- * @remarks This does **NOT** validate that the variant exists for the given species.
+ * @returns {Promise<Variant>} A Promise that resolves with the chosen variant.
+ * @remarks
+ * This does **NOT** validate that the variant exists for the given species.
  */
 export async function promptVariant() {
   return /** @type {Variant} */ (
@@ -66,42 +66,38 @@ export async function promptVariant() {
 
 /**
  * Prompt the user to enter a nature.
- * Must be a number between 0 and 24.
- * @returns {Promise<number>} The nature
+ * @returns {Promise<number>} A Promise that resolves with the chosen nature.
  */
 export async function promptNature() {
-  const nature = /** @type {string} */ (
-    await select({
-      message: "Please enter the nature to set.",
-      choices: [...Object.keys(NATURES).map(toTitleCase)],
-      pageSize: 10,
-    })
-  );
+  const nature = await select({
+    message: "Please enter the nature to set.",
+    choices: [...Object.keys(NATURES).map(toTitleCase)],
+    pageSize: 10,
+  });
   return NATURES[/** @type {keyof typeof NATURES} */ (toUpperSnakeCase(nature))];
 }
 
 /**
  * Prompt the user to enter a moveset of up to 4 moves.
- * @returns {Promise<number[]>} The moveset.
+ * @returns {Promise<number[]>} A Promise that resolves with the chosen moveset.
  */
 export async function promptMoveset() {
   /** @type {number[]} */
   const moveset = [];
 
   async function addMove() {
-    await number({
+    const move = await number({
       message: "Please enter the move to add to the moveset.\nPressing ENTER will end the prompt early.",
       min: 1,
       max: MAX_MOVE_ID,
-    }).then(async move => {
-      if (!move) {
-        return;
-      }
-      moveset.push(move);
-      if (moveset.length < 4) {
-        await addMove();
-      }
     });
+    if (!move) {
+      return;
+    }
+    moveset.push(move);
+    if (moveset.length < 4) {
+      await addMove();
+    }
   }
 
   await addMove();
@@ -111,8 +107,9 @@ export async function promptMoveset() {
 /**
  * Prompt the user to enter an ability.
  * @param {boolean} [passive=false] (Default `false`) Whether to prompt for a passive ability.
- * @returns {Promise<number>} A Promise that resolves to
- * @remarks This is boss only for now, since the option for setting any ability is not yet implemented.
+ * @returns {Promise<number>} A Promise that resolves with the chosen ability.
+ * @remarks
+ * This is boss only for now, since the option for setting any ability is not yet implemented.
  */
 export async function promptAbility(passive = false) {
   return await number({
@@ -124,11 +121,11 @@ export async function promptAbility(passive = false) {
 }
 
 /**
- * Prompt the user to enter an abilityIndex.
- * Must be a number between 0 and 2.
- * @returns {Promise<number>} The abilityIndex
+ * Prompt the user to enter an ability index.
+ * @returns {Promise<number>} A Promise that resolves with the chosen ability index.
  * @remarks This is starter only for now.
  */
+// TODO: Validate the ability index & list the actual ability names based on main repo data
 export async function promptAbilityIndex() {
   return await number({
     message: `Please enter the starter's ability index.`,

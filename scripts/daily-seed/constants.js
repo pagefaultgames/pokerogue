@@ -5,6 +5,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+// #region Constants
 /** The maximum valid `SpeciesId` for normal species. */
 const MAX_SPECIES_ID = 1025;
 
@@ -16,7 +17,10 @@ const SPECIAL_SPECIES_IDS = [
 ];
 
 /** Array containing all valid `SpeciesId`s. */
-export const SPECIES_IDS = [...Array.from({ length: MAX_SPECIES_ID }, (_, i) => i + 1), ...SPECIAL_SPECIES_IDS];
+export const SPECIES_IDS = /** @type {SpeciesId} */ [
+  ...Array.from({ length: MAX_SPECIES_ID }, (_, i) => i + 1),
+  ...SPECIAL_SPECIES_IDS,
+];
 
 /** The maximum valid `MoveId`. */
 export const MAX_MOVE_ID = 919;
@@ -97,7 +101,24 @@ export const NATURES = {
   QUIRKY: 24,
 };
 
-/** A list of all valid options for the boss. */
+// #endregion Constants
+
+// #region Options
+
+/**
+ * All accepted options for editing the daily seed config directly.
+ */
+export const EDIT_OPTIONS = /** @type {const} */ ([
+  "starters",
+  "boss",
+  "biome",
+  "luck",
+  "starting money",
+  "seed",
+  "edit",
+]);
+
+/** All accepted options for configuring a boss Pokemon. */
 export const BOSS_OPTIONS = /** @type {const} */ ([
   "formIndex",
   "variant",
@@ -108,7 +129,7 @@ export const BOSS_OPTIONS = /** @type {const} */ ([
   "finish",
 ]);
 
-/** A list of all valid options for a starter pokemon. */
+/** All accepted options for configuring a starter Pokemon. */
 export const STARTER_OPTIONS = /** @type {const} */ ([
   "formIndex",
   "variant",
@@ -117,3 +138,5 @@ export const STARTER_OPTIONS = /** @type {const} */ ([
   "abilityIndex",
   "finish",
 ]);
+
+// #endregion Options

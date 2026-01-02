@@ -32,7 +32,7 @@ import {
 
 /**
  * Prompt the user to configure the daily run starters.
- * @returns {Promise<StarterConfig[]>}
+ * @returns {Promise<StarterConfig[]>} A Promise that resolves with the configured starter Pokemon.
  * @remarks All 3 **must** be configured with at least a SpeciesId.
  */
 export async function promptStarters() {
@@ -56,26 +56,28 @@ export async function promptStarters() {
 
 /**
  * The list of valid options for the current starter.
- * @type {string[]}
  */
 const starterOptions = [...STARTER_OPTIONS];
 
 /**
  * Prompt the user to configure the individual starter pokemon
- * @param {StarterConfig} starterConfig
+ * @param {StarterConfig} starterConfig - The starter config to configure; will be mutated in place
  */
 async function promptStarterOptions(starterConfig) {
   if (starterOptions.length === 1) {
+    // Only "finish" left
     return;
   }
-  const option = toCamelCase(
-    /** @type {string} */ (
+
+  const option = /** @type {(typeof starterOptions)[number]} */ (
+    toCamelCase(
       await select({
         message: "Please select the starter option you would like to configure.",
         choices: [...starterOptions].map(toTitleCase),
-      })
-    ),
+      }),
+    )
   );
+
   switch (option) {
     case "formIndex":
       starterConfig.formIndex = await promptFormIndex();

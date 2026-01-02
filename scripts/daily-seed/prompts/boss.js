@@ -50,7 +50,7 @@ let bossConfig = {
 /**
  * Prompt the user to configure the daily run boss.
  * @returns {Promise<BossConfig>} The {@linkcode BossConfig}
- * @remarks The boss **must** be configured with at least a SpeciesId.
+ * @remarks The boss **must** be configured with at least a `SpeciesId`.
  */
 export async function promptBoss() {
   const speciesId = await promptSpeciesId();

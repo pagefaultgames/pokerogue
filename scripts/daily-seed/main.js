@@ -17,6 +17,7 @@ import chalk from "chalk";
 import { getPropertyValue } from "../helpers/arguments.js";
 import { toTitleCase } from "../helpers/casing.js";
 import { promptOverwrite, writeFileSafe } from "../helpers/file.js";
+import { EDIT_OPTIONS } from "./constants.js";
 import { promptBoss } from "./prompts/boss.js";
 import { promptBiome, promptEdit, promptLuck, promptMoney, promptSeed } from "./prompts/general.js";
 import { promptStarters } from "./prompts/starter.js";
@@ -59,10 +60,11 @@ const customSeedConfig = {
 };
 
 /**
- * All valid options for the config.
- * @type {string[]}
+ * All valid options for editing the config.
  */
-const options = ["starters", "boss", "biome", "luck", "starting money", "seed", "edit"];
+const editOptions = [...EDIT_OPTIONS];
+
+/** @typedef {typeof editOptions[number]} EditOption */
 
 /**
  * Run the `dailySeed:create` script.
@@ -79,11 +81,11 @@ async function main() {
   if (process.argv.includes("--edit") || process.argv.includes("-e")) {
     const config = await promptEdit();
     Object.assign(customSeedConfig, config);
-    options.splice(options.indexOf("edit"), 1);
+    editOptions.splice(editOptions.indexOf("edit"), 1);
   }
 
   try {
-    // `seed` is required.
+    // `seed` is required
     customSeedConfig.seed = await promptSeed();
     await promptOptions();
     if (process.exitCode != null) {
@@ -95,18 +97,16 @@ async function main() {
 }
 
 async function promptOptions() {
-  const option = /** @type {string} */ (
-    await select({
-      message: "Please select the option you would like to configure.",
-      choices: [...options, "finish", "exit"].map(toTitleCase),
-    })
-  );
-  await handleAnswer(option.toLowerCase());
+  const option = await select({
+    message: "Please select the option you would like to configure.",
+    choices: [...editOptions, "finish", "exit"].map(toTitleCase),
+  });
+  await handleAnswer(/** @type {EditOption} */ (option.toLowerCase()));
 }
 
 /**
  * Handle the selected option from the main menu.
- * @param {string} answer - The selected answer.
+ * @param {EditOption} answer - The selected answer.
  * @returns {Promise<void>}
  */
 async function handleAnswer(answer) {
@@ -142,12 +142,13 @@ async function handleAnswer(answer) {
       process.exitCode = 0;
       return;
   }
+
   if (answer !== "edit") {
-    options.splice(options.indexOf(answer), 1);
+    editOptions.splice(editOptions.indexOf(answer), 1);
   }
-  if (options.includes("edit")) {
+  if (editOptions.includes("edit")) {
     // always remove "edit" option after first action
-    options.splice(options.indexOf("edit"), 1);
+    editOptions.splice(editOptions.indexOf("edit"), 1);
   }
   await promptOptions();
 }
@@ -158,6 +159,7 @@ const OUTFILE_ALIASES = /** @type {const} */ (["-o", "--outfile", "--outFile"]);
  * @returns {Promise<void>}
  */
 async function finish() {
+  console.groupEnd();
   // TODO: do we also need to validate here?
 
   const outFile = getPropertyValue(process.argv.slice(2), OUTFILE_ALIASES);
@@ -165,9 +167,11 @@ async function finish() {
     console.log(chalk.hex("#ffa500")(`Using outfile: ${chalk.blue(outFile)}`));
     await createOutputFile(outFile);
   } else {
-    console.log(chalk.hex("#ffa500")("No outfile detected, logging to stdout..."));
-    console.log(chalk.cyan("\n🌱 Your custom daily seed config is:"));
-    console.log(chalk.green(`${JSON.stringify(customSeedConfig)}`));
+    console.log(
+      chalk.hex("#ffa500")("No outfile detected, logging to stdout...")
+        + chalk.cyan("\n🌱 Your custom daily seed config is:")
+        + chalk.green(`\n${JSON.stringify(customSeedConfig)}`),
+    );
   }
 }
 

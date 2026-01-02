@@ -17,7 +17,7 @@ import chalk from "chalk";
 /**
  * "Safely" write to a file, creating any parent directories as required.
  * @param {PathOrFileDescriptor} file - The filename or file descriptor to open
- * @param {string | NodeJS.ArrayBufferView<ArrayBufferLike>} content - The content which will be written
+ * @param {string | NodeJS.ArrayBufferView<ArrayBufferLike>} content - The content that will be written
  * @param {WriteFileOptions} [options]
  * @returns {void}
  * @remarks
@@ -40,7 +40,7 @@ export function writeFileSafe(file, content, options) {
 /**
  * Confirm overwriting an already-existing file.
  * @param {string} outFile - The file name to override
- * @returns {Promise<boolean>} Whether "Yes" or "No" was selected.
+ * @returns {Promise<boolean>} A Promise that resolves with whether to overwrite the file.
  */
 export async function promptOverwrite(outFile) {
   return await confirm({

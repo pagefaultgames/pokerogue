@@ -22,11 +22,11 @@ const validate = ajv.compile(customDailyRunSchema);
 
 /**
  * Prompt the user to enter a starting money value.
- * @returns {Promise<number>} The starting money value.
+ * @returns {Promise<number>} A Promise that resolves with the starting money value.
  */
 export async function promptMoney() {
   return await number({
-    message: "Please enter starting money amount.",
+    message: "Please enter the starting money value to set.",
     default: 1000,
     min: 0,
     required: true,
@@ -34,13 +34,13 @@ export async function promptMoney() {
 }
 
 /**
- * Prompt the user to enter a daily run luck value.
+ * Prompt the user to enter a starting luck value.
  * Must be a number between 0 and 14.
- * @returns {Promise<number>} The luck value.
+ * @returns {Promise<number>} A Promise that resolves with the chosen luck value.
  */
 export async function promptLuck() {
   return await number({
-    message: "Please enter initial luck value.",
+    message: "Please enter the initial luck value to set.",
     min: 0,
     max: 14,
     required: true,
@@ -49,23 +49,21 @@ export async function promptLuck() {
 
 /**
  * Prompt the user to enter a starting biome.
- * @returns {Promise<number>} The starting biome number.
+ * @returns {Promise<number>} A Promise that resolves with the chosen biome.
  */
 export async function promptBiome() {
-  const biome = /** @type {string} */ (
-    await select({
-      message: "Please enter starting biome.",
-      choices: [...Object.keys(BIOMES).map(toTitleCase)],
-      pageSize: 10,
-    })
-  );
+  const biome = await select({
+    message: "Please enter the starting biome to set.",
+    choices: [...Object.keys(BIOMES).map(toTitleCase)],
+    pageSize: 10,
+  });
   return BIOMES[/** @type {keyof typeof BIOMES} */ (toUpperSnakeCase(biome))];
 }
 
 /**
  * Prompt the user to enter a custom config.
  * The input is a JSON stringified version of the {@linkcode CustomSeedConfig} object.
- * @returns {Promise<import("../main.js").CustomSeedConfig>} The parsed {@linkcode CustomSeedConfig}.
+ * @returns {Promise<import("../main.js").CustomSeedConfig>} A Promise that resolves with the parsed {@linkcode CustomSeedConfig}.
  */
 export async function promptEdit() {
   const config = await input({
@@ -100,7 +98,7 @@ export async function promptEdit() {
 /**
  * Prompt the user to enter a seed.
  * This can be anything and is used as the actual daily run seed.
- * @returns {Promise<string>} The seed.
+ * @returns {Promise<string>} A Promise that resolves with the chosen seed.
  */
 export async function promptSeed() {
   return await input({
