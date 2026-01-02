@@ -10,7 +10,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 /**
  * Default config object used for both Vitest and local dev runs.
  */
-export const defaultConfig: UserConfigFnPromise = async ({ mode }) => ({
+export const sharedConfig: UserConfigFnPromise = async ({ mode }) => ({
   // Avoid importing any plugins when merging reports (as they will not exist at runtime)
   plugins: process.env.MERGE_REPORTS
     ? []
@@ -47,7 +47,7 @@ export default defineConfig(async config => {
   const envPort = Number(loadEnv(mode, process.cwd()).VITE_PORT);
 
   return {
-    ...(await defaultConfig(config)),
+    ...(await sharedConfig(config)),
     base: "",
     publicDir: command === "serve" ? "assets" : false,
     server: {

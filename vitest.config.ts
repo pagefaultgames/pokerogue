@@ -4,55 +4,58 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+import type { UserConfig } from "vite";
 import { defineConfig } from "vitest/config";
 import { BaseSequencer, type TestSpecification } from "vitest/node";
-import { defaultConfig } from "./vite.config";
+import { sharedConfig } from "./vite.config";
 
 // biome-ignore lint/style/noDefaultExport: required for vitest
-export default defineConfig(async config => ({
-  ...(await defaultConfig(config)),
-  test: {
-    passWithNoTests: false,
-    reporters: process.env.GITHUB_ACTIONS
-      ? ["github-actions", "./test/test-utils/reporters/custom-default-reporter.ts"]
-      : ["./test/test-utils/reporters/custom-default-reporter.ts"],
-    env: {
-      TZ: "UTC",
-    },
-    testTimeout: 20_000,
-    slowTestThreshold: 10_000,
-    expect: {
-      requireAssertions: true,
-    },
-    setupFiles: ["./test/setup/font-face.setup.ts", "./test/setup/vitest.setup.ts", "./test/setup/matchers.setup.ts"],
-    sequence: {
-      sequencer: MySequencer,
-    },
-    hideSkippedTests: true,
-    includeTaskLocation: true,
-    environment: "jsdom",
-    environmentOptions: {
-      jsdom: {
-        resources: "usable",
+export default defineConfig(async config => {
+  const viteConfig = await sharedConfig(config);
+  const opts: UserConfig = {
+    ...viteConfig,
+    test: {
+      passWithNoTests: false,
+      reporters: process.env.GITHUB_ACTIONS
+        ? ["github-actions", "./test/test-utils/reporters/custom-default-reporter.ts"]
+        : ["./test/test-utils/reporters/custom-default-reporter.ts"],
+      env: {
+        TZ: "UTC",
       },
+      testTimeout: 20_000,
+      slowTestThreshold: 10_000,
+      expect: {
+        requireAssertions: true,
+      },
+      setupFiles: ["./test/setup/font-face.setup.ts", "./test/setup/vitest.setup.ts", "./test/setup/matchers.setup.ts"],
+      sequence: {
+        sequencer: MySequencer,
+      },
+      hideSkippedTests: true,
+      includeTaskLocation: true,
+      environment: "jsdom",
+      environmentOptions: {
+        jsdom: {
+          resources: "usable",
+        },
+      },
+      typecheck: {
+        tsconfig: "tsconfig.json",
+        include: ["./test/types/**/*.{test,spec}{-|.}d.ts"],
+      },
+      restoreMocks: true,
+      watch: false,
+      coverage: {
+        provider: "istanbul",
+        reportsDirectory: "coverage",
+        reporter: ["text-summary", "html"],
+      },
+      name: "PokéRogue",
+      include: ["./test/**/*.{test,spec}.ts"],
     },
-    typecheck: {
-      tsconfig: "tsconfig.json",
-      include: ["./test/types/**/*.{test,spec}{-|.}d.ts"],
-    },
-    threads: false,
-    trace: true,
-    restoreMocks: true,
-    watch: false,
-    coverage: {
-      provider: "istanbul",
-      reportsDirectory: "coverage",
-      reporters: ["text-summary", "html"],
-    },
-    name: "PokéRogue",
-    include: ["./test/**/*.{test,spec}.ts"],
-  } satisfies UserConfig,
-}));
+  };
+  return opts;
+});
 
 //#region Helpers
 
