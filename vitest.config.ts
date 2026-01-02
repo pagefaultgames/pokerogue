@@ -9,9 +9,10 @@ import { BaseSequencer, type TestSpecification } from "vitest/node";
 import { defaultConfig } from "./vite.config";
 
 // biome-ignore lint/style/noDefaultExport: required for vitest
-export default defineConfig(({ mode }) => ({
-  ...defaultConfig,
+export default defineConfig(async config => ({
+  ...(await defaultConfig(config)),
   test: {
+    passWithNoTests: false,
     reporters: process.env.GITHUB_ACTIONS
       ? ["github-actions", "./test/test-utils/reporters/custom-default-reporter.ts"]
       : ["./test/test-utils/reporters/custom-default-reporter.ts"],
@@ -20,14 +21,16 @@ export default defineConfig(({ mode }) => ({
     },
     testTimeout: 20_000,
     slowTestThreshold: 10_000,
-    // TODO: Consider enabling
-    // expect: {requireAssertions: true},
+    expect: {
+      requireAssertions: true,
+    },
     setupFiles: ["./test/setup/font-face.setup.ts", "./test/setup/vitest.setup.ts", "./test/setup/matchers.setup.ts"],
     sequence: {
       sequencer: MySequencer,
     },
+    hideSkippedTests: true,
     includeTaskLocation: true,
-    environment: "jsdom" as const,
+    environment: "jsdom",
     environmentOptions: {
       jsdom: {
         resources: "usable",
@@ -42,17 +45,13 @@ export default defineConfig(({ mode }) => ({
     restoreMocks: true,
     watch: false,
     coverage: {
-      provider: "istanbul" as const,
-      reportsDirectory: "coverage" as const,
+      provider: "istanbul",
+      reportsDirectory: "coverage",
       reporters: ["text-summary", "html"],
     },
-    name: "main",
+    name: "PokéRogue",
     include: ["./test/**/*.{test,spec}.ts"],
-  },
-  esbuild: {
-    pure: mode === "production" ? ["console.log"] : [],
-    keepNames: true,
-  },
+  } satisfies UserConfig,
 }));
 
 //#region Helpers
@@ -61,7 +60,7 @@ export default defineConfig(({ mode }) => ({
  * Class for sorting test files in the desired order.
  */
 class MySequencer extends BaseSequencer {
-  async sort(files: TestSpecification[]) {
+  public override async sort(files: TestSpecification[]) {
     files = await super.sort(files);
 
     return files.sort((a, b) => {
