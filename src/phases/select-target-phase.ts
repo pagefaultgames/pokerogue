@@ -45,7 +45,6 @@ export class SelectTargetPhase extends PokemonPhase {
 
     const defaultTargetArray = defaultTarget !== undefined ? [defaultTarget] : undefined;
 
-
     globalScene.ui.setMode(
       UiMode.TARGET_SELECT,
       this.fieldIndex,
