@@ -49,7 +49,7 @@ describe("Daily Mode", () => {
     describe("Starters", () => {
       it("should support custom species IDs", async () => {
         vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
-          '{"starters":[{"speciesId":1},{"speciesId":113},{"speciesId":1024}]}',
+          '{"starters":[{"speciesId":1},{"speciesId":113},{"speciesId":1024}],"seed":"test"}',
         );
         await game.dailyMode.startBattle();
 
@@ -63,7 +63,7 @@ describe("Daily Mode", () => {
 
       it("should support custom forms and variants", async () => {
         vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
-          '{"starters":[{"speciesId":6,"formIndex":1,"variant":2},{"speciesId":113,"variant":0},{"speciesId":1024,"formIndex":2}]}',
+          '{"starters":[{"speciesId":6,"formIndex":1,"variant":2},{"speciesId":113,"variant":0},{"speciesId":1024,"formIndex":2}],"seed":"test"}',
         );
         await game.dailyMode.startBattle();
 
@@ -82,7 +82,7 @@ describe("Daily Mode", () => {
 
       it("should support custom natures", async () => {
         vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
-          '{"starters":[{"speciesId":1,"nature":0},{"speciesId":113,"nature":1},{"speciesId":1024,"nature":2}]}',
+          '{"starters":[{"speciesId":1,"nature":0},{"speciesId":113,"nature":1},{"speciesId":1024,"nature":2}],"seed":"test"}',
         );
         await game.dailyMode.startBattle();
 
@@ -93,7 +93,7 @@ describe("Daily Mode", () => {
       describe("Moves", () => {
         it("should support custom moves", async () => {
           vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
-            '{"starters":[{"speciesId":150,"moveset":[1,2,3,4]},{"speciesId":150,"moveset":[332,6]},{"speciesId":150,"moveset":[130,919]}]}',
+            '{"starters":[{"speciesId":150,"moveset":[1,2,3,4]},{"speciesId":150,"moveset":[332,6]},{"speciesId":150,"moveset":[130,919]}],"seed":"test"}',
           );
           await game.dailyMode.startBattle();
 
@@ -120,7 +120,7 @@ describe("Daily Mode", () => {
 
         it("should allow omitting movesets for some starters", async () => {
           vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
-            '{"starters":[{"speciesId":349,"moveset":[1,2,3,4]},{"speciesId":150},{"speciesId":150}]}',
+            '{"starters":[{"speciesId":349,"moveset":[1,2,3,4]},{"speciesId":150},{"speciesId":150}],"seed":"test"}',
           );
           await game.dailyMode.startBattle();
 
@@ -137,7 +137,7 @@ describe("Daily Mode", () => {
 
         it("should skip invalid move IDs", async () => {
           vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
-            '{"starters":[{"speciesId":349,"moveset":[9999]},{"speciesId":150, "moveset":[]},{"speciesId":150}]}',
+            '{"starters":[{"speciesId":349,"moveset":[9999]},{"speciesId":150, "moveset":[]},{"speciesId":150}],"seed":"test"}',
           );
           await game.dailyMode.startBattle();
 
@@ -152,7 +152,7 @@ describe("Daily Mode", () => {
         game.override.startingWave(50);
       });
       it("should support custom species IDs", async () => {
-        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue('{"boss":{"speciesId":150}}');
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue('{"boss":{"speciesId":150},"seed":"test"}');
         await game.dailyMode.startBattle();
 
         const boss = game.field.getEnemyPokemon();
@@ -161,7 +161,7 @@ describe("Daily Mode", () => {
 
       it("should support custom forms and variants", async () => {
         vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
-          '{"boss":{"speciesId":150,"formIndex":1,"variant":2}}',
+          '{"boss":{"speciesId":150,"formIndex":1,"variant":2},"seed":"test"}',
         );
         await game.dailyMode.startBattle();
 
@@ -173,7 +173,9 @@ describe("Daily Mode", () => {
 
       describe("Moves", () => {
         it("should support custom moves", async () => {
-          vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue('{"boss":{"speciesId":150,"moveset":[1,2,3,4]}}');
+          vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+            '{"boss":{"speciesId":150,"moveset":[1,2,3,4]},"seed":"test"}',
+          );
           await game.dailyMode.startBattle();
 
           const moves = game.field.getEnemyPokemon().moveset.map(pm => pm.moveId);
@@ -186,7 +188,9 @@ describe("Daily Mode", () => {
         });
 
         it("should allow omitting some moves", async () => {
-          vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue('{"boss":{"speciesId":150,"moveset":[1,2]}}');
+          vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+            '{"boss":{"speciesId":150,"moveset":[1,2]},"seed":"test"}',
+          );
           await game.dailyMode.startBattle();
           const moves = game.field.getEnemyPokemon().moveset.map(pm => pm.moveId);
           expect(moves, "not enough moves").toHaveLength(4);
@@ -199,7 +203,9 @@ describe("Daily Mode", () => {
         });
 
         it("should skip invalid move IDs", async () => {
-          vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue('{"boss":{"speciesId":150,"moveset":[9999]}}');
+          vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+            '{"boss":{"speciesId":150,"moveset":[9999]},"seed":"test"}',
+          );
           await game.dailyMode.startBattle();
 
           const moves = game.field.getPlayerPokemon().moveset.map(pm => pm.moveId);
@@ -208,7 +214,9 @@ describe("Daily Mode", () => {
       });
 
       it("should support custom ability", async () => {
-        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue('{"boss":{"speciesId":150,"ability":1}}');
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+          '{"boss":{"speciesId":150,"ability":1},"seed":"test"}',
+        );
         await game.dailyMode.startBattle();
 
         const ability = game.field.getEnemyPokemon().getAbility();
@@ -216,7 +224,9 @@ describe("Daily Mode", () => {
       });
 
       it("should support custom passive", async () => {
-        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue('{"boss":{"speciesId":150,"passive":1}}');
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+          '{"boss":{"speciesId":150,"passive":1},"seed":"test"}',
+        );
         await game.dailyMode.startBattle();
 
         const ability = game.field.getEnemyPokemon().getPassiveAbility();
@@ -224,7 +234,9 @@ describe("Daily Mode", () => {
       });
 
       it("should not allow invalid ability IDs", async () => {
-        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue('{"boss":{"speciesId":150,"ability":9999}}');
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+          '{"boss":{"speciesId":150,"ability":9999},"seed":"test"}',
+        );
         await game.dailyMode.startBattle();
 
         const ability = game.field.getEnemyPokemon().getAbility();
@@ -232,7 +244,9 @@ describe("Daily Mode", () => {
       });
 
       it("should not allow invalid passive IDs", async () => {
-        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue('{"boss":{"speciesId":150,"passive":9999}}');
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+          '{"boss":{"speciesId":150,"passive":9999},"seed":"test"}',
+        );
         await game.dailyMode.startBattle();
 
         const ability = game.field.getEnemyPokemon().getPassiveAbility();
@@ -240,7 +254,9 @@ describe("Daily Mode", () => {
       });
 
       it("should support custom nature", async () => {
-        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue('{"boss":{"speciesId":150,"nature":0}}');
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+          '{"boss":{"speciesId":150,"nature":0},"seed":"test"}',
+        );
         await game.dailyMode.startBattle();
 
         const nature = game.field.getEnemyPokemon().getNature();
@@ -248,7 +264,9 @@ describe("Daily Mode", () => {
       });
 
       it("should not allow invalid nature IDs", async () => {
-        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue('{"boss":{"speciesId":150,"nature":9999}}');
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+          '{"boss":{"speciesId":150,"nature":9999},"seed":"test"}',
+        );
         await game.dailyMode.startBattle();
 
         const nature = game.field.getEnemyPokemon().getNature();
@@ -258,21 +276,21 @@ describe("Daily Mode", () => {
 
     describe("Misc", () => {
       it("should support custom biome", async () => {
-        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue('{"biome":40}');
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue('{"biome":40,"seed":"test"}');
         await game.dailyMode.startBattle();
 
         expect(game.scene.arena.biomeType).toBe(BiomeId.ISLAND);
       });
 
       it("should support custom starting money", async () => {
-        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue('{"startingMoney":1234567890}');
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue('{"startingMoney":1234567890,"seed":"test"}');
         await game.dailyMode.startBattle();
 
         expect(game.scene.money).toBe(1234567890);
       });
 
       it("should support custom luck", async () => {
-        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue('{"luck":14}');
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue('{"luck":14,"seed":"test"}');
         await game.dailyMode.startBattle();
 
         expect(getPartyLuckValue(game.field.getPlayerParty())).toBe(14);
