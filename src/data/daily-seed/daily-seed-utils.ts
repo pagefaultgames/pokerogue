@@ -5,7 +5,7 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
 import { SpeciesId } from "#enums/species-id";
-import type { CustomDailyRunConfig, DailySeedBoss, DailySeedStarter } from "#types/daily-run";
+import type { CustomDailyRunConfig, DailySeedBoss, DailySeedStarter, SerializedDailyRunConfig } from "#types/daily-run";
 import type { Starter, StarterMoveset } from "#types/save-data";
 import { isBetween } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
@@ -53,6 +53,24 @@ export function parseDailySeed(seed: string): CustomDailyRunConfig | undefined {
   } catch {
     return;
   }
+}
+
+/**
+ * Serialize the daily run config for saving.
+ * @returns The {@linkcode SerializedDailyRunConfig}, or `undefined` if it is not a daily event seed.
+ */
+export function getSerializedDailyRunConfig(): SerializedDailyRunConfig | undefined {
+  if (!isDailyEventSeed() || globalScene.gameMode.dailyConfig == null) {
+    return;
+  }
+
+  const serializedConfig: SerializedDailyRunConfig = {
+    seed: globalScene.gameMode.dailyConfig.seed,
+    boss: globalScene.gameMode.dailyConfig.boss,
+    luck: globalScene.gameMode.dailyConfig.luck,
+  };
+
+  return serializedConfig;
 }
 
 export function isDailyFinalBoss() {

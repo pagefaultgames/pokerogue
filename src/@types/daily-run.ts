@@ -53,3 +53,12 @@ export interface CustomDailyRunConfig {
   /** The actual seed used for the daily run. */
   seed: string;
 }
+
+/**
+ * The daily run config as it is serialized in the save data.
+ */
+export interface SerializedDailyRunConfig {
+  boss?: DailySeedBoss;
+  luck?: number;
+  seed: string;
+}

@@ -10,7 +10,7 @@ import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { speciesStarterCosts } from "#balance/starters";
 import { bypassLogin, isBeta, isDev } from "#constants/app-constants";
 import { EntryHazardTag } from "#data/arena-tag";
-import { parseDailySeed } from "#data/daily-seed/daily-seed-utils";
+import { getSerializedDailyRunConfig, parseDailySeed } from "#data/daily-seed/daily-seed-utils";
 import { allMoves, allSpecies } from "#data/data-lists";
 import type { Egg } from "#data/egg";
 import { pokemonFormChanges } from "#data/pokemon-forms";
@@ -805,7 +805,7 @@ export class GameData {
       seed: globalScene.seed,
       playTime: globalScene.sessionPlayTime,
       gameMode: globalScene.gameMode.modeId,
-      dailyConfig: globalScene.gameMode.dailyConfig,
+      dailyConfig: getSerializedDailyRunConfig(),
       party: globalScene.getPlayerParty().map(p => new PokemonData(p)),
       enemyParty: globalScene.getEnemyParty().map(p => new PokemonData(p)),
       modifiers: globalScene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
