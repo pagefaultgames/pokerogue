@@ -74,7 +74,7 @@ export class PokemonInfoContainer extends Phaser.GameObjects.Container {
     this.initialX = x;
   }
 
-  setup(): void {
+  setup(): this {
     this.setName("pkmn-info");
     const currentLanguage = i18next.resolvedLanguage!; // TODO: is this bang correct?
     const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage?.includes(lang))!; // TODO: is this bang correct?
@@ -247,6 +247,7 @@ export class PokemonInfoContainer extends Phaser.GameObjects.Container {
     this.add(this.pokemonFusionShinyIcon);
 
     this.setVisible(false);
+    return this;
   }
 
   show(

@@ -389,14 +389,17 @@ export class LoadingScene extends SceneBase {
 
     const bg = this.add.image(0, 0, "").setOrigin(0, 0).setScale(6).setVisible(false);
 
-    const graphics = this.add.graphics();
-
-    graphics.lineStyle(4, 0xff00ff, 1).setDepth(10);
+    const graphics = this.add //
+      .graphics()
+      .lineStyle(4, 0xff00ff, 1)
+      .setDepth(10);
 
     const progressBar = this.add.graphics();
-    const progressBox = this.add.graphics();
-    progressBox.lineStyle(5, 0xff00ff, 1.0);
-    progressBox.fillStyle(0x222222, 0.8);
+
+    const progressBox = this.add //
+      .graphics()
+      .lineStyle(5, 0xff00ff, 1.0)
+      .fillStyle(0x222222, 0.8);
 
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
@@ -473,21 +476,22 @@ export class LoadingScene extends SceneBase {
       });
     }
 
-    const intro = this.add.video(0, 0);
-    intro.once(Phaser.GameObjects.Events.VIDEO_COMPLETE, (video: Phaser.GameObjects.Video) => {
-      this.tweens.add({
-        targets: intro,
-        duration: 500,
-        alpha: 0,
-        ease: "Sine.easeIn",
-        onComplete: () => video.destroy(),
+    const intro = this.add
+      .video(0, 0)
+      .setOrigin(0)
+      .setScale(3)
+      .once(Phaser.GameObjects.Events.VIDEO_COMPLETE, (video: Phaser.GameObjects.Video) => {
+        this.tweens.add({
+          targets: intro,
+          duration: 500,
+          alpha: 0,
+          ease: "Sine.easeIn",
+          onComplete: () => video.destroy(),
+        });
+        for (const g of loadingGraphics) {
+          g.setVisible(true);
+        }
       });
-      for (const g of loadingGraphics) {
-        g.setVisible(true);
-      }
-    });
-    intro.setOrigin(0, 0);
-    intro.setScale(3);
 
     this.load
       .once(this.LOAD_EVENTS.START, () => {
