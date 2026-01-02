@@ -71,15 +71,18 @@ export function getDailyStartingBiome(): BiomeId {
     return eventBiome;
   }
 
-  const biomes = getEnumValues(BiomeId).filter(b => b !== BiomeId.TOWN && b !== BiomeId.END);
-
+  // TODO: make an actual weighted average utility function
+  const biomes = getEnumValues(BiomeId);
   let totalWeight = 0;
   const biomeThresholds: number[] = [];
-  for (const biome of biomes) {
-    // Keep track of the total weight
-    totalWeight += dailyBiomeWeights[biome];
+  for (const biome of getEnumValues(BiomeId)) {
+    const weight = dailyBiomeWeights[biome];
+    if (weight === 0) {
+      continue;
+    }
 
-    // Keep track of each biomes cumulative weight
+    // Keep track of the total weight & each biome's cumulative weight
+    totalWeight += weight;
     biomeThresholds.push(totalWeight);
   }
 
@@ -103,39 +106,40 @@ export function getDailyStartingBiome(): BiomeId {
  */
 function setDailyRunEventStarterMovesets(starters: StarterTuple): void {
   const movesets = globalScene.gameMode.dailyConfig?.starters?.map(s => s.moveset);
-
   if (movesets == null) {
     return;
   }
 
   if (!isBetween(movesets.length, 1, 3)) {
     console.error(
-      "Invalid custom seeded moveset used for daily run seed!\nConfig: %s\nMatch contents: %s",
-      movesets,
-      movesets,
+      `Invalid number of custom daily run starter movesets specified (${movesets.length})!\nMovesets: ${movesets}`,
     );
     return;
   }
 
   const moveIds = getEnumValues(MoveId);
-  for (const moveset of movesets) {
+  for (const [index, moveset] of movesets.entries()) {
     if (moveset == null) {
       continue;
     }
-    if (moveset.length > 4) {
+
+    if (moveset.some(f => !moveIds.includes(f))) {
       console.error(
-        "Invalid custom seeded moveset used for daily run seed!\nConfig: %s\nMatch contents: %s",
-        movesets,
-        moveset,
+        `Custom daily run starter #${index}'s moveset had one or more invalid Move IDs!`
+          + `\nStarter moveset: ${moveset}`,
       );
       return;
     }
-    if (moveset.some(f => !moveIds.includes(f))) {
-      console.error("Invalid move IDs used for custom daily run seed moveset:", moveset);
+
+    if (!isBetween(moveset.length, 0, 4)) {
+      console.error(
+        `Custom daily run starter #${index}'s moveset had incorrect length (${moveset.length})!`
+          + `\nStarter Moveset: ${moveset.map(m => MoveId[m]).join(", ")}`,
+      );
       return;
     }
 
-    const starter = starters[movesets.indexOf(moveset)];
+    const starter = starters[index];
     starter.moveset = moveset as StarterMoveset;
   }
 }
@@ -153,7 +157,7 @@ function getDailyEventSeedStarters(): StarterTuple | null {
   const speciesConfigurations = globalScene.gameMode.dailyConfig?.starters;
 
   if (speciesConfigurations == null || speciesConfigurations.length !== 3) {
-    console.error("Invalid starters used for custom daily run seed!", speciesConfigurations);
+    console.error(`Invalid starters used for custom daily run seed! ${speciesConfigurations}`);
     return null;
   }
 
@@ -177,19 +181,20 @@ function getDailyEventSeedStarters(): StarterTuple | null {
 
 /**
  * Sets a custom boss for the daily run if specified in the config.
+ * @returns The {@linkcode DailySeedBoss} to use, or `null` if there is no boss config or the {@linkcode SpeciesId} is invalid.
  * @see {@linkcode CustomDailyRunConfig}
- * @returns The {@linkcode DailySeedBoss} to use or `null` if there is no boss config or the {@linkcode SpeciesId} is invalid.
  */
 export function getDailyEventSeedBoss(): DailySeedBoss | null {
   if (!isDailyEventSeed()) {
     return null;
   }
 
-  const bossConfig = validateDailyBossConfig(globalScene.gameMode.dailyConfig?.boss);
-  if (!bossConfig) {
+  const { dailyConfig } = globalScene.gameMode;
+  if (!dailyConfig?.boss) {
     return null;
   }
 
+  const bossConfig = validateDailyBossConfig(dailyConfig.boss);
   return bossConfig;
 }
 
@@ -244,22 +249,21 @@ export function getDailyEventSeedLuck(): number | null {
 /**
  * Sets a custom starting money value for the daily run if specified in the config.
  * @see {@linkcode CustomDailyRunConfig}
- * @returns The custom money value or `null` if there is no money property.
+ * @returns The custom money value, or `undefined` if there is no money property.
  */
-export function getDailyStartingMoney(): number | null {
+export function getDailyStartingMoney(): number | undefined {
   if (!isDailyEventSeed()) {
-    return null;
+    return;
   }
 
-  const startingMoney = globalScene.gameMode.dailyConfig?.startingMoney;
-
+  const { startingMoney } = globalScene.gameMode.dailyConfig ?? {};
   if (startingMoney == null) {
-    return null;
+    return;
   }
 
-  if (startingMoney < 0) {
-    console.warn("Invalid starting money value used for custom daily run seed:", startingMoney);
-    return null;
+  if (startingMoney < 0 || !Number.isSafeInteger(startingMoney)) {
+    console.warn("Invalid starting money value used for custom daily run seed!\nMoney: ", startingMoney);
+    return;
   }
 
   return startingMoney;

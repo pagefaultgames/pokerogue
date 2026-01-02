@@ -6397,10 +6397,7 @@ export class EnemyPokemon extends Pokemon {
       }
 
       if (this.shiny) {
-        this.variant = this.generateShinyVariant();
-        if (Overrides.ENEMY_VARIANT_OVERRIDE !== null) {
-          this.variant = Overrides.ENEMY_VARIANT_OVERRIDE;
-        }
+        this.variant = Overrides.ENEMY_VARIANT_OVERRIDE ?? this.generateShinyVariant();
       }
 
       this.luck = (this.shiny ? this.variant + 1 : 0) + (this.fusionShiny ? this.fusionVariant + 1 : 0);
@@ -6458,7 +6455,7 @@ export class EnemyPokemon extends Pokemon {
   /**
    * Helper method to apply the custom daily boss config to this pokemon.
    */
-  applyCustomDailyBossConfig(): void {
+  private applyCustomDailyBossConfig(): void {
     if (!isDailyFinalBoss()) {
       return;
     }

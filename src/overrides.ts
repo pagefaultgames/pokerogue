@@ -61,7 +61,10 @@ class DefaultOverrides {
   // -----------------
   /** a specific seed (default: a random string of 24 characters) */
   readonly SEED_OVERRIDE: string = "";
-  /** a {@linkcode CustomDailyRunConfig} or a stringified version of it */
+  /**
+   * A {@linkcode CustomDailyRunConfig} or a stringified version thereof, used to customize
+
+   */
   readonly DAILY_RUN_SEED_OVERRIDE: CustomDailyRunConfig | string | null = null;
   readonly WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
   /**
@@ -94,6 +97,7 @@ class DefaultOverrides {
    */
   readonly CRITICAL_HIT_OVERRIDE: boolean | null = null;
   /** @defaultValue `1000` */
+  // TODO: Make default value something other than `0`
   readonly STARTING_MONEY_OVERRIDE: number = 0;
   /** Sets all shop item prices to 0 */
   readonly WAIVE_SHOP_FEES_OVERRIDE: boolean = false;

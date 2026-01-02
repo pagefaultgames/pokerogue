@@ -3,6 +3,7 @@ import type { BiomeId } from "#enums/biome-id";
 import type { Nature } from "#enums/nature";
 import type { SpeciesId } from "#enums/species-id";
 import type { Variant } from "#sprites/variant";
+import type { TupleOf } from "type-fest";
 import type { StarterMoveset } from "./save-data";
 
 /**
@@ -20,7 +21,7 @@ export interface DailySeedStarter {
   abilityIndex?: number;
 }
 
-type DailySeedStarterTuple = [DailySeedStarter, DailySeedStarter, DailySeedStarter];
+type DailySeedStarterTuple = TupleOf<3, DailySeedStarter>;
 
 /**
  * Configuration for a custom daily run boss Pokémon.
@@ -28,7 +29,7 @@ type DailySeedStarterTuple = [DailySeedStarter, DailySeedStarter, DailySeedStart
  * When updating this interface, also update:
  * - `src/data/daily-seed/schema.json`
  */
-export type DailySeedBoss = {
+export interface DailySeedBoss {
   speciesId: SpeciesId;
   formIndex?: number;
   variant?: Variant;
@@ -36,7 +37,7 @@ export type DailySeedBoss = {
   nature?: Nature;
   ability?: AbilityId;
   passive?: AbilityId;
-};
+}
 
 /**
  * Configuration for a custom daily run seed.

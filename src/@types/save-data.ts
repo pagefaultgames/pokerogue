@@ -42,7 +42,7 @@ export interface SessionSaveData {
   seed: string;
   playTime: number;
   gameMode: GameModes;
-  dailyConfig: SerializedDailyRunConfig;
+  dailyConfig?: SerializedDailyRunConfig;
   party: PokemonData[];
   enemyParty: PokemonData[];
   modifiers: ModifierData[];

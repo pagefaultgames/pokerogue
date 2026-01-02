@@ -143,13 +143,14 @@ export class GameMode implements GameModeConfig {
     if (Overrides.STARTING_MONEY_OVERRIDE > 0) {
       return Overrides.STARTING_MONEY_OVERRIDE;
     }
+
     switch (this.modeId) {
+      // biome-ignore lint/suspicious/noFallthroughSwitchClause: Intentional
       case GameModes.DAILY: {
         const dailyStartingMoney = getDailyStartingMoney();
         if (dailyStartingMoney != null) {
           return dailyStartingMoney;
         }
-        return 1000;
       }
       default:
         return 1000;
@@ -422,7 +423,7 @@ export class GameMode implements GameModeConfig {
   /**
    * Sets the daily config if the seed is a custom seed.
    * @param seed - The seed to check
-   * @returns the `seed` to use.
+   * @returns The seed to use.
    * @remarks
    * If it is not a custom seed, it will return the original seed.
    */

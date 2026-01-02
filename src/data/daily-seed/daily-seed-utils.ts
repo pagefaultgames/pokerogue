@@ -13,6 +13,7 @@ import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import Ajv from "ajv";
 import customDailyRunSchema from "./schema.json";
 
+// TODO: move to a common utils file if or when needed elsewhere
 const ajv = new Ajv({
   allErrors: true,
 });
@@ -33,6 +34,7 @@ export function isDailyEventSeed(): boolean {
 
 /**
  * Attempt to parse the seed as a custom daily run seed.
+ * @param seed - The seed string or {@linkcode CustomDailyRunConfig} to parse
  * @returns The parsed {@linkcode CustomDailyRunConfig}, or `undefined` if it can't be parsed into json or is invalid.
  */
 export function parseDailySeed(seed: string): CustomDailyRunConfig | undefined {
@@ -64,13 +66,12 @@ export function getSerializedDailyRunConfig(): SerializedDailyRunConfig | undefi
     return;
   }
 
-  const serializedConfig: SerializedDailyRunConfig = {
-    seed: globalScene.gameMode.dailyConfig.seed,
-    boss: globalScene.gameMode.dailyConfig.boss,
-    luck: globalScene.gameMode.dailyConfig.luck,
-  };
-
-  return serializedConfig;
+  const { seed, boss, luck } = globalScene.gameMode.dailyConfig;
+  return {
+    seed,
+    boss,
+    luck,
+  } satisfies SerializedDailyRunConfig;
 }
 
 export function isDailyFinalBoss() {
@@ -125,16 +126,17 @@ export function validateDailyStarterConfig(config: DailySeedStarter | undefined)
 /**
  * Validate the {@linkcode DailySeedBoss | config} for a custom daily boss.
  * @param config - The {@linkcode DailySeedBoss | config} to validate.
- * @returns The validated {@linkcode DailySeedBoss | config} or `null` if it is invalid.
+ * @returns The validated {@linkcode DailySeedBoss | config} or `undefined` if no config is found.
+ * Returns `undefined` if it is
  */
-export function validateDailyBossConfig(config: DailySeedBoss | undefined): DailySeedBoss | null {
+export function validateDailyBossConfig(config: DailySeedBoss | undefined): DailySeedBoss | undefined {
   if (config == null) {
-    return null;
+    return config;
   }
 
   if (!config.speciesId || !getEnumValues(SpeciesId).includes(config.speciesId)) {
     console.warn("Invalid species ID used for custom daily run seed boss:", config.speciesId);
-    return null;
+    return;
   }
 
   if (config.formIndex != null) {
