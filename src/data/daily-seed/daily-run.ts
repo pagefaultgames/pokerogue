@@ -157,7 +157,7 @@ function getDailyEventSeedStarters(): StarterTuple | null {
   const speciesConfigurations = globalScene.gameMode.dailyConfig?.starters;
 
   if (speciesConfigurations == null || speciesConfigurations.length !== 3) {
-    console.error(`Invalid starters used for custom daily run seed! ${speciesConfigurations}`);
+    console.error(`Invalid starters used for custom daily run seed!\nStarters:${speciesConfigurations}`);
     return null;
   }
 
