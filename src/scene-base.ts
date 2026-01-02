@@ -83,10 +83,10 @@ export class SceneBase extends Phaser.Scene {
     if (!filenames) {
       filenames = `${key}.wav`;
     }
-    if (!folder) {
-      folder = "se/";
-    } else {
+    if (folder) {
       folder += "/";
+    } else {
+      folder = "se/";
     }
     filenames = coerceArray(filenames);
     for (const f of filenames as string[]) {

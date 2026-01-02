@@ -292,10 +292,10 @@ export class EggHatchPhase extends Phase {
       return false;
     }
     this.skipped = true;
-    if (!this.hatched) {
-      this.doHatch();
-    } else {
+    if (this.hatched) {
       this.doReveal();
+    } else {
+      this.doHatch();
     }
     return true;
   }
@@ -374,7 +374,7 @@ export class EggHatchPhase extends Phase {
         });
       }
       const skipDuration = this.skipped ? 0 : 1000;
-      const duration = (isShiny ? 750 : 250) + skipDuration;
+      const duration = skipDuration + (isShiny ? 750 : 250);
       globalScene.time.delayedCall(fixedInt(duration), () => {
         this.infoContainer.show(this.pokemon, false, this.skipped ? 2 : 1);
 
@@ -433,7 +433,7 @@ export class EggHatchPhase extends Phase {
   doSprayParticle(trigIndex: number, offsetY: number) {
     const initialX = this.eggHatchBg.displayWidth / 2;
     const initialY = this.eggHatchBg.displayHeight / 2 + offsetY;
-    const shardKey = !this.egg.isManaphyEgg() ? this.egg.tier.toString() : "1";
+    const shardKey = this.egg.isManaphyEgg() ? "1" : this.egg.tier.toString();
     const particle = globalScene.add.image(initialX, initialY, "egg_shard", `${shardKey}_${Math.floor(trigIndex / 2)}`);
     this.eggHatchContainer.add(particle);
 

@@ -648,7 +648,7 @@ export async function catchPokemon(
   showCatchObtainMessage = true,
   isObtain = false,
 ): Promise<void> {
-  const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
+  const speciesForm = pokemon.fusionSpecies ? pokemon.getFusionSpeciesForm() : pokemon.getSpeciesForm();
 
   if (
     speciesForm.abilityHidden
@@ -986,7 +986,7 @@ export function getEncounterPokemonLevelForWave(levelAdditiveModifier = 0) {
 }
 
 export async function addPokemonDataToDexAndValidateAchievements(pokemon: PlayerPokemon) {
-  const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
+  const speciesForm = pokemon.fusionSpecies ? pokemon.getFusionSpeciesForm() : pokemon.getSpeciesForm();
 
   if (
     speciesForm.abilityHidden
