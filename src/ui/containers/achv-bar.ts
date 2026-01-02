@@ -52,9 +52,7 @@ export class AchvBar extends Phaser.GameObjects.Container {
       fontSize: "72px",
     });
     this.descriptionText.setOrigin(0).setWordWrapWidth(664).setLineSpacing(-5);
-    this.add(this.descriptionText);
-
-    this.setScale(0.5);
+    this.add(this.descriptionText).setScale(0.5);
 
     this.shown = false;
   }
