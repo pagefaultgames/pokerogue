@@ -293,10 +293,10 @@ export class EggHatchPhase extends Phase {
       return false;
     }
     this.skipped = true;
-    if (!this.hatched) {
-      this.doHatch();
-    } else {
+    if (this.hatched) {
       this.doReveal();
+    } else {
+      this.doHatch();
     }
     return true;
   }
@@ -374,7 +374,7 @@ export class EggHatchPhase extends Phase {
           doShinySparkleAnim(this.pokemonShinySparkle, this.pokemon.variant);
         });
       }
-      globalScene.time.delayedCall(fixedInt(!this.skipped ? (!isShiny ? 1250 : 1750) : !isShiny ? 250 : 750), () => {
+      globalScene.time.delayedCall(fixedInt(this.skipped ? (isShiny ? 750 : 250) : isShiny ? 1750 : 1250), () => {
         this.infoContainer.show(this.pokemon, false, this.skipped ? 2 : 1);
 
         globalScene.playSoundWithoutBgm("evolution_fanfare");
@@ -441,7 +441,7 @@ export class EggHatchPhase extends Phase {
   doSprayParticle(trigIndex: number, offsetY: number) {
     const initialX = this.eggHatchBg.displayWidth / 2;
     const initialY = this.eggHatchBg.displayHeight / 2 + offsetY;
-    const shardKey = !this.egg.isManaphyEgg() ? this.egg.tier.toString() : "1";
+    const shardKey = this.egg.isManaphyEgg() ? "1" : this.egg.tier.toString();
     const particle = globalScene.add.image(initialX, initialY, "egg_shard", `${shardKey}_${Math.floor(trigIndex / 2)}`);
     this.eggHatchContainer.add(particle);
 
