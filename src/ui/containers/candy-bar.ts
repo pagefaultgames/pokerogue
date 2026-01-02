@@ -23,7 +23,9 @@ export class CandyBar extends Phaser.GameObjects.Container {
   }
 
   setup(): this {
-    this.bg = globalScene.add.nineslice(0, 0, "party_exp_bar", undefined, 8, 18, 21, 5, 6, 4).setOrigin(0, 0);
+    this.bg = globalScene.add //
+      .nineslice(0, 0, "party_exp_bar", undefined, 8, 18, 21, 5, 6, 4)
+      .setOrigin(0, 0);
 
     this.candyIcon = globalScene.add //
       .sprite(14, 0, "items", "candy")

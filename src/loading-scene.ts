@@ -546,7 +546,7 @@ export class LoadingScene extends SceneBase {
 
     const intro = this.add
       .video(0, 0)
-      .setOrigin(0, 0)
+      .setOrigin(0)
       .setScale(3)
       .once(Phaser.GameObjects.Events.VIDEO_COMPLETE, (video: Phaser.GameObjects.Video) => {
         this.tweens.add({

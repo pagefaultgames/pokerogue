@@ -51,8 +51,10 @@ export class PokemonHatchInfoContainer extends PokemonInfoContainer {
       });
 
     // setup name and number
-    this.pokemonNumberText = addTextObject(84, 107, "0000", TextStyle.EGG_SUMMARY_DEX, { fontSize: 78 }).setOrigin(0);
-    this.pokemonNameText = addTextObject(7, 109, "", TextStyle.EGG_SUMMARY_NAME, { fontSize: 64 }).setOrigin(0, 0);
+    this.pokemonNumberText = addTextObject(84, 107, "0000", TextStyle.EGG_SUMMARY_DEX, { fontSize: 78 }) //
+      .setOrigin(0);
+    this.pokemonNameText = addTextObject(7, 109, "", TextStyle.EGG_SUMMARY_NAME, { fontSize: 64 }) //
+      .setOrigin(0);
 
     // setup egg icon and candy count
     this.pokemonHatchedIcon = globalScene.add //

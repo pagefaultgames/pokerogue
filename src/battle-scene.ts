@@ -474,12 +474,12 @@ export class BattleScene extends SceneBase {
     this.fieldOverlay = this.add
       .rectangle(0, overlayHeight * -1 - 48, overlayWidth, overlayHeight, 0x424242)
       .setName("rect-field-overlay")
-      .setOrigin(0, 0)
+      .setOrigin(0)
       .setAlpha(0);
     this.shopOverlay = this.add
       .rectangle(0, overlayHeight * -1 - 48, overlayWidth, overlayHeight, 0x070707)
       .setName("rect-shop-overlay")
-      .setOrigin(0, 0)
+      .setOrigin(0)
       .setAlpha(0);
 
     this.modifiers = [];
@@ -1973,7 +1973,9 @@ export class BattleScene extends SceneBase {
 
   updateScoreText(): void {
     // TODO: Localize this
-    this.scoreText.setText(`Score: ${this.score.toString()}`).setVisible(this.gameMode.isDaily);
+    this.scoreText //
+      .setText(`Score: ${this.score.toString()}`)
+      .setVisible(this.gameMode.isDaily);
   }
 
   /**
