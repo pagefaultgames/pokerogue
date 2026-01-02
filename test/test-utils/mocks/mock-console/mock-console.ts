@@ -4,6 +4,11 @@ import { coerceArray } from "#utils/array";
 import { type InspectOptions, inspect } from "node:util";
 import chalk, { type ChalkInstance } from "chalk";
 
+// Tell chalk we support truecolor
+// TODO: Find a reliable, easy way to determine whether the actual final output is being piped to a file WHILE CIRCUMVENTING VITEST,
+// and disable color if that is determined to be the case
+chalk.level = 3;
+
 // TODO: Review this
 const blacklist = [
   "variant icon does not exist", // Repetitive warnings about icons not found
