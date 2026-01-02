@@ -79,14 +79,14 @@ export class SceneBase extends Phaser.Scene {
     return this;
   }
 
-  loadSe(key: string, folder?: string, filenames: string | string[] = `${key}.wav`): this {
-    if (!folder) {
-      folder = "se/";
-    } else {
-      folder += "/";
+  loadSe(key: string, folder = "se/", filenames: string | string[] = `${key}.wav`): this {
+    if (folder.endsWith("/")) {
+      folder += "/"
     }
+
     filenames = coerceArray(filenames);
     for (const f of filenames as string[]) {
+      // TODO: Use actual path joining logic
       this.load.audio(folder + key, this.getCachedUrl(`audio/${folder}${f}`));
     }
     return this;
