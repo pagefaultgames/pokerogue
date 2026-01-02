@@ -129,7 +129,7 @@ export class EncounterPhase extends BattlePhase {
           }
           globalScene
             .getPlayerParty()
-            .slice(0, !battle.double ? 1 : 2)
+            .slice(0, battle.double ? 2 : 1)
             .reverse()
             .forEach(playerPokemon => {
               applyAbAttrs("SyncEncounterNatureAbAttr", { pokemon: playerPokemon, target: battle.enemyParty[e] });

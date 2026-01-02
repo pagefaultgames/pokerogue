@@ -170,24 +170,24 @@ export class LoadingScene extends SceneBase {
       const baseAKey = `${btKey}_a`;
       const baseBKey = `${btKey}_b`;
       this.loadImage(`${btKey}_bg`, "arenas");
-      if (!isBaseAnimated) {
-        this.loadImage(baseAKey, "arenas");
-      } else {
+      if (isBaseAnimated) {
         this.loadAtlas(baseAKey, "arenas");
-      }
-      if (!isBaseAnimated) {
-        this.loadImage(baseBKey, "arenas");
       } else {
+        this.loadImage(baseAKey, "arenas");
+      }
+      if (isBaseAnimated) {
         this.loadAtlas(baseBKey, "arenas");
+      } else {
+        this.loadImage(baseBKey, "arenas");
       }
       if (getBiomeHasProps(bt)) {
         for (let p = 1; p <= 3; p++) {
           const isPropAnimated = p === 3 && ["power_plant", "end"].find(b => b === btKey);
           const propKey = `${btKey}_b_${p}`;
-          if (!isPropAnimated) {
-            this.loadImage(propKey, "arenas");
-          } else {
+          if (isPropAnimated) {
             this.loadAtlas(propKey, "arenas");
+          } else {
+            this.loadImage(propKey, "arenas");
           }
         }
       }

@@ -101,10 +101,10 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     /** If an enemy used this move, set this as last enemy that used move or ability */
-    if (!user.isPlayer()) {
-      globalScene.currentBattle.lastEnemyInvolved = this.fieldIndex;
-    } else {
+    if (user.isPlayer()) {
       globalScene.currentBattle.lastPlayerInvolved = this.fieldIndex;
+    } else {
+      globalScene.currentBattle.lastEnemyInvolved = this.fieldIndex;
     }
 
     const move = this.move;
