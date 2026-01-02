@@ -35,19 +35,7 @@ declare module "vitest" {
     extends GenericMatchers<T>,
       RestrictMatcher<GameManagerMatchers, T, GameManager>,
       RestrictMatcher<ArenaMatchers, T, GameManager>,
-      RestrictMatcher<PokemonMatchers, T, Pokemon> {
-    /**
-     * Invert a matcher's conditions, causing it to error whenever it would normally succeed
-     * (and vice versa).
-     * @privateRemarks
-     * Matchers with custom "invalid" conditions can (and should) ignore this in case of invalid input.
-     * @example
-     * ```ts
-     * expect(1).not.toBe(2);
-     * ```
-     */
-    not: Assertion<T>;
-  }
+      RestrictMatcher<PokemonMatchers, T, Pokemon> {}
 }
 
 /**
