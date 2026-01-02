@@ -15,6 +15,7 @@ import type { PositionalTagType } from "#enums/positional-tag-type";
 import type { BattleStat, EffectiveStat } from "#enums/stat";
 import type { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
+import type { PokemonMove } from "#moves/pokemon-move";
 import type { OneOther } from "#test/@types/test-helpers";
 import type { GameManager } from "#test/test-utils/game-manager";
 import type { toHaveArenaTagOptions } from "#test/test-utils/matchers/to-have-arena-tag";
@@ -23,6 +24,7 @@ import type { toHaveEffectiveStatOptions } from "#test/test-utils/matchers/to-ha
 import type { toHavePositionalTagOptions } from "#test/test-utils/matchers/to-have-positional-tag";
 import type { expectedStatusType } from "#test/test-utils/matchers/to-have-status-effect";
 import type { toHaveTypesOptions } from "#test/test-utils/matchers/to-have-types";
+import type { toHaveHpOptions } from "#test/test-utils/matchers/to-have-hp";
 import type { PhaseString } from "#types/phase-types";
 import type { TurnMove } from "#types/turn-move";
 import type { toDmgValue } from "#utils/common";
@@ -208,8 +210,9 @@ interface PokemonMatchers {
   /**
    * Check whether a {@linkcode Pokemon} has a specific amount of {@linkcode Stat.HP | HP}.
    * @param expectedHp - The expected amount of {@linkcode Stat.HP | HP} to have
+   * @param options - Optional parameters taken by the matcher
    */
-  toHaveHp(expectedHp: number): void;
+  toHaveHp(expectedHp: number, options?: toHaveHpOptions): void;
 
   /**
    * Check whether a {@linkcode Pokemon} has taken a specific amount of damage.

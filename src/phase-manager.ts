@@ -110,6 +110,7 @@ import { TurnInitPhase } from "#phases/turn-init-phase";
 import { TurnStartPhase } from "#phases/turn-start-phase";
 import { UnavailablePhase } from "#phases/unavailable-phase";
 import { UnlockPhase } from "#phases/unlock-phase";
+import { UpdateInfoPhase } from "#phases/update-info-phase";
 import { VictoryPhase } from "#phases/victory-phase";
 import { WeatherEffectPhase } from "#phases/weather-effect-phase";
 import type { PhaseConditionFunc, PhaseMap, PhaseString } from "#types/phase-types";
@@ -215,6 +216,7 @@ const PHASES = Object.freeze({
   TurnEndPhase,
   TurnInitPhase,
   TurnStartPhase,
+  UpdateInfoPhase,
   UnavailablePhase,
   UnlockPhase,
   VictoryPhase,

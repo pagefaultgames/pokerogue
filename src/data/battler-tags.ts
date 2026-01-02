@@ -1063,7 +1063,7 @@ export class SeedTag extends SerializableBattlerTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
-    return !pokemon.isOfType(PokemonType.GRASS);
+    return !pokemon.isOfType(PokemonType.GRASS, true, true);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -1083,46 +1083,42 @@ export class SeedTag extends SerializableBattlerTag {
     (this as Mutable<this>).sourceIndex = source.getBattlerIndex();
   }
 
-  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
-
-    if (!ret) {
-      return false;
-    }
-
+  lapse(pokemon: Pokemon): boolean {
     // Check which opponent to restore HP to
-    const source = pokemon.getOpponents().find(o => o.getBattlerIndex() === this.sourceIndex);
-    if (!source) {
-      return true;
-    }
-
-    const cancelled = new BooleanHolder(false);
-    applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon, cancelled });
-
-    if (cancelled.value) {
+    const healedPokemon = pokemon.getOpponents().find(o => o.getBattlerIndex() === this.sourceIndex);
+    // TODO: Verify whether lacking an opponent in 2v1 scenarios prevents the opponent from taking damage
+    if (!healedPokemon) {
       return true;
     }
 
     globalScene.phaseManager.unshiftNew(
       "CommonAnimPhase",
-      source.getBattlerIndex(),
+      healedPokemon.getBattlerIndex(),
       pokemon.getBattlerIndex(),
       CommonAnim.LEECH_SEED,
     );
 
-    // Damage the target and restore our HP (or take damage in the case of liquid ooze)
-    const damage = pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 8), { result: HitResult.INDIRECT });
-    const reverseDrain = pokemon.hasAbilityWithAttr("ReverseDrainAbAttr", false);
-    globalScene.phaseManager.unshiftNew(
-      "PokemonHealPhase",
-      source.getBattlerIndex(),
-      reverseDrain ? -damage : damage,
-      i18next.t(reverseDrain ? "battlerTags:seededLapseShed" : "battlerTags:seededLapse", {
+    // Damage the target and restore our HP, applying Liquid Ooze to reverse the healing if necessary.
+    const damageDealt = pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 8), { result: HitResult.INDIRECT });
+
+    const reverseDrained = new BooleanHolder(false);
+    applyAbAttrs("ReverseDrainAbAttr", {
+      pokemon,
+      opponent: healedPokemon,
+      cancelled: reverseDrained,
+      healAmount: damageDealt,
+    });
+    if (reverseDrained.value) {
+      return true;
+    }
+
+    globalScene.phaseManager.unshiftNew("PokemonHealPhase", healedPokemon.getBattlerIndex(), damageDealt, {
+      message: i18next.t("battlerTags:seededLapse", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       }),
-      false,
-      true,
-    );
+      showFullHpMessage: false,
+      skipAnim: true,
+    });
     return true;
   }
 
@@ -1401,10 +1397,11 @@ export class IngrainTag extends TrappedTag {
         "PokemonHealPhase",
         pokemon.getBattlerIndex(),
         toDmgValue(pokemon.getMaxHp() / 16),
-        i18next.t("battlerTags:ingrainLapse", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        }),
-        true,
+        {
+          message: i18next.t("battlerTags:ingrainLapse", {
+            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+          }),
+        },
       );
     }
 
@@ -1474,11 +1471,12 @@ export class AquaRingTag extends SerializableBattlerTag {
         "PokemonHealPhase",
         pokemon.getBattlerIndex(),
         toDmgValue(pokemon.getMaxHp() / 16),
-        i18next.t("battlerTags:aquaRingLapse", {
-          moveName: this.getMoveName(),
-          pokemonName: getPokemonNameWithAffix(pokemon),
-        }),
-        true,
+        {
+          message: i18next.t("battlerTags:aquaRingLapse", {
+            moveName: this.getMoveName(),
+            pokemonName: getPokemonNameWithAffix(pokemon),
+          }),
+        },
       );
     }
 
@@ -2712,29 +2710,30 @@ export class StockpilingTag extends SerializableBattlerTag {
    * For each stat, an internal counter is incremented (by 1) if the stat was successfully changed.
    */
   onAdd(pokemon: Pokemon): void {
-    if (this.stockpiledCount < 3) {
-      this.stockpiledCount++;
-
-      globalScene.phaseManager.queueMessage(
-        i18next.t("battlerTags:stockpilingOnAdd", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          stockpiledCount: this.stockpiledCount,
-        }),
-      );
-
-      // Attempt to increase DEF and SPDEF by one stage, keeping track of successful changes.
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        true,
-        [Stat.SPDEF, Stat.DEF],
-        1,
-        true,
-        false,
-        true,
-        this.onStatStagesChanged.bind(this),
-      );
+    if (this.stockpiledCount >= 3) {
+      return;
     }
+    this.stockpiledCount++;
+
+    globalScene.phaseManager.queueMessage(
+      i18next.t("battlerTags:stockpilingOnAdd", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+        stockpiledCount: this.stockpiledCount,
+      }),
+    );
+
+    // Attempt to increase DEF and SPDEF by one stage, keeping track of successful changes.
+    globalScene.phaseManager.unshiftNew(
+      "StatStageChangePhase",
+      pokemon.getBattlerIndex(),
+      true,
+      [Stat.SPDEF, Stat.DEF],
+      1,
+      true,
+      false,
+      true,
+      this.onStatStagesChanged.bind(this),
+    );
   }
 
   onOverlap(pokemon: Pokemon): void {
@@ -2888,8 +2887,8 @@ export class ExposedTag extends SerializableBattlerTag {
  */
 export class HealBlockTag extends MoveRestrictionBattlerTag {
   public override readonly tagType = BattlerTagType.HEAL_BLOCK;
-  constructor(turnCount: number, sourceMove: MoveId) {
-    super(BattlerTagType.HEAL_BLOCK, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
+  constructor(turnCount: number) {
+    super(BattlerTagType.HEAL_BLOCK, BattlerTagLapseType.TURN_END, turnCount);
   }
 
   onActivation(pokemon: Pokemon): string {
@@ -3868,7 +3867,7 @@ export function getBattlerTag(
     case BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON:
       return new MysteryEncounterPostSummonTag();
     case BattlerTagType.HEAL_BLOCK:
-      return new HealBlockTag(turnCount, sourceMove);
+      return new HealBlockTag(turnCount);
     case BattlerTagType.TORMENT:
       return new TormentTag(sourceId);
     case BattlerTagType.TAUNT:

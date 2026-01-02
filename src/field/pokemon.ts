@@ -29,11 +29,11 @@ import { NoCritTag, WeakenMoveScreenTag } from "#data/arena-tag";
 import {
   AutotomizedTag,
   BattlerTag,
+  type BattlerTagTypeMap,
   CritBoostTag,
   EncoreTag,
   ExposedTag,
   GroundedTag,
-  type GrudgeTag,
   getBattlerTag,
   HighestStatBoostTag,
   MoveRestrictionBattlerTag,
@@ -1670,6 +1670,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param precise - Whether to return the exact HP ratio (e.g. `0.54321`), or one rounded to the nearest %; default `false`
    * @returns The current HP ratio
    */
+  // TODO: Make `precise` default to `true`
   getHpRatio(precise = false): number {
     return precise ? this.hp / this.getMaxHp() : Math.round((this.hp / this.getMaxHp()) * 100) / 100;
   }
@@ -4092,10 +4093,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return false;
   }
 
-  // TODO: Utilize a type map for these so we can avoid overloads
-  public getTag(tagType: BattlerTagType.GRUDGE): GrudgeTag | undefined;
-  public getTag(tagType: BattlerTagType.SUBSTITUTE): SubstituteTag | undefined;
-  public getTag(tagType: BattlerTagType): BattlerTag | undefined;
+  public getTag<T extends BattlerTagType>(tagType: T): BattlerTagTypeMap[T] | undefined;
   public getTag<T extends BattlerTag>(tagType: Constructor<T>): T | undefined;
   public getTag(tagType: BattlerTagType | Constructor<BattlerTag>): BattlerTag | undefined {
     return typeof tagType === "function"
@@ -4279,7 +4277,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   // TODO: Move this behavior into a matcher and expunge it from the codebase - we only use it for tests
   public hasRestrictingTag(moveId: MoveId): boolean {
-    return this.getRestrictingTag(moveId, this) !== null;
+    return this.getRestrictingTag(moveId) !== null;
   }
 
   /**
@@ -4294,7 +4292,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @see {@linkcode isMoveRestricted}
    */
   public isMoveSelectable(moveId: MoveId): [boolean, string] {
-    const restrictedTag = this.getRestrictingTag(moveId, this);
+    const restrictedTag = this.getRestrictingTag(moveId);
     if (restrictedTag) {
       return [false, restrictedTag.selectionDeniedText(this, moveId)];
     }
@@ -4302,19 +4300,17 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Get whether the given move is currently disabled for the user based on the player's target selection
-   *
-   * @param moveId - The ID of the move to check
-   * @param user - The move user
-   * @param target - The target of the move
-   *
-   * @returns `true` if the move is disabled for this Pokemon due to the player's target selection
-   *
+   * Return whether this Pokemon is restricted from using a move against the given target.
+   * @param moveId - The `MoveId` of the move being used
+   * @param target - The `Pokemon` being targeted by the move
+   * @returns Whether `moveId` is unable to target `target` due to a restricting effect
    * @see {@linkcode MoveRestrictionBattlerTag}
    */
-  isMoveTargetRestricted(moveId: MoveId, user: Pokemon, target: Pokemon): boolean {
+  // TODO: Expand `MoveRestriction`s to allow for target based stuff and
+  // refactor this entire line of functions
+  isMoveTargetRestricted(moveId: MoveId, target: Pokemon): boolean {
     for (const tag of this.findTags(t => t instanceof MoveRestrictionBattlerTag)) {
-      if ((tag as MoveRestrictionBattlerTag).isMoveTargetRestricted(moveId, user, target)) {
+      if ((tag as MoveRestrictionBattlerTag).isMoveTargetRestricted(moveId, this, target)) {
         return (tag as MoveRestrictionBattlerTag) !== null;
       }
     }
@@ -4322,19 +4318,19 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Get the {@link MoveRestrictionBattlerTag} that is restricting a move, if it exists.
+   * Get the {@link MoveRestrictionBattlerTag} that is restricting this Pokemon's move usage,
+   * if one exists.
    *
    * @param moveId - The ID of the move to check
-   * @param user - The move user, optional and used when the target is a factor in the move's restricted status
    * @param target - The target of the move; optional, and used when the target is a factor in the move's restricted status
    * @returns The first tag on this Pokemon that restricts the move, or `null` if the move is not restricted.
    */
-  getRestrictingTag(moveId: MoveId, user?: Pokemon, target?: Pokemon): MoveRestrictionBattlerTag | null {
+  getRestrictingTag(moveId: MoveId, target?: Pokemon): MoveRestrictionBattlerTag | null {
     for (const tag of this.findTags(t => t instanceof MoveRestrictionBattlerTag)) {
-      if ((tag as MoveRestrictionBattlerTag).isMoveRestricted(moveId, user)) {
+      if ((tag as MoveRestrictionBattlerTag).isMoveRestricted(moveId, this)) {
         return tag as MoveRestrictionBattlerTag;
       }
-      if (user && target && (tag as MoveRestrictionBattlerTag).isMoveTargetRestricted(moveId, user, target)) {
+      if (target && (tag as MoveRestrictionBattlerTag).isMoveTargetRestricted(moveId, this, target)) {
         return tag as MoveRestrictionBattlerTag;
       }
     }
@@ -4740,6 +4736,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   // TODO: Review and verify the message order precedence in mainline if multiple status-blocking effects are present at once
   // TODO: Make argument order consistent with `trySetStatus`
+  // TODO: Remove `overrideStatus` parameter used solely for rest
   public canSetStatus(
     effect: StatusEffect,
     quiet = false,
