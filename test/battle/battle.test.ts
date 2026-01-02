@@ -29,11 +29,22 @@ describe("Phase - Battle Phase", () => {
   it("do attack wave 3 - single battle - regular - OHKO", async () => {
     game.override.enemySpecies(SpeciesId.RATTATA).startingLevel(2000).battleStyle("single").startingWave(3);
     await game.classicMode.startBattle([SpeciesId.MEWTWO]);
+    game.move.use(MoveId.TACKLE);
+    await game.toNextWave();
+  });
 
-    expect(async () => {
-      game.move.use(MoveId.TACKLE);
-      await game.toNextWave();
-    }).not.toThrow();
+  it("do attack wave 3 - single battle - regular - NO OHKO with opponent using non damage attack", async () => {
+    game.override
+      .enemySpecies(SpeciesId.RATTATA)
+      .startingLevel(5)
+      .startingWave(3)
+      .moveset([MoveId.TACKLE])
+      .enemyAbility(AbilityId.HYDRATION)
+      .enemyMoveset([MoveId.TAIL_WHIP, MoveId.TAIL_WHIP, MoveId.TAIL_WHIP, MoveId.TAIL_WHIP])
+      .battleStyle("single");
+    await game.classicMode.startBattle([SpeciesId.MEWTWO]);
+    game.move.select(MoveId.TACKLE);
+    await game.phaseInterceptor.to("TurnInitPhase", false);
   });
 
   it("load 100% data file", async () => {
