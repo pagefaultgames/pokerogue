@@ -2,13 +2,19 @@ import { relative } from "node:path";
 import { parseStacktrace } from "@vitest/utils/source-map";
 import chalk from "chalk";
 import type { UserConsoleLog } from "vitest";
-import type { TestState } from "vitest/node";
+import type { TestState, Vitest } from "vitest/node";
 import { DefaultReporter } from "vitest/reporters";
 
 /**
  * Custom Vitest reporter to strip the current file names from the output.
  */
+// biome-ignore lint/style/noDefaultExport: Required by Vitest
 export default class CustomDefaultReporter extends DefaultReporter {
+  public override onInit(ctx: Vitest) {
+    // Use Vitest's (admittedly quite reliable) TTY detection to determine whether to suppress colors.
+    chalk.level = this.isTTY ? 3 : 0;
+    super.onInit(ctx);
+  }
   public override onUserConsoleLog(log: UserConsoleLog, taskState?: TestState): void {
     // This code is more or less copied verbatim from `vitest/reporters` source, with minor tweaks to use
     // dependencies we actually _have_ (i.e. chalk) rather than ones we don't (i.e. tinyrainbow).

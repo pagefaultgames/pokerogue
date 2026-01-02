@@ -4,9 +4,6 @@ import { coerceArray } from "#utils/array";
 import { type InspectOptions, inspect } from "node:util";
 import chalk, { type ChalkInstance } from "chalk";
 
-// Tell chalk we support truecolor
-chalk.level = 3;
-
 // TODO: Review this
 const blacklist = [
   "variant icon does not exist", // Repetitive warnings about icons not found
@@ -34,7 +31,7 @@ export class MockConsole implements Omit<Console, "Console"> {
    * The original `Console` object, preserved to avoid overwriting
    * Vitest's native `console.log` wrapping.
    */
-  private console = console;
+  private readonly console = console;
 
   //#region Static Properties
 
@@ -56,7 +53,7 @@ export class MockConsole implements Omit<Console, "Console"> {
     MockConsole.queuedWarnings.splice(0);
   }
 
-  //#endregion Private Properties
+  //#endregion Static Properties
 
   //#region Utilities
 

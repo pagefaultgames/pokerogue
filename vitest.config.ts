@@ -24,9 +24,11 @@ export default defineConfig(async config => {
       },
       testTimeout: 20_000,
       slowTestThreshold: 10_000,
-      expect: {
-        requireAssertions: true,
-      },
+      // TODO: Vitest's current framework produces spurious errors for type tests with this option enabled.
+      // We should move our type tests to a separate folder not covered by normal tests, and then enable the option.
+      // expect: {
+      //   requireAssertions: true,
+      // },
       setupFiles: ["./test/setup/font-face.setup.ts", "./test/setup/vitest.setup.ts", "./test/setup/matchers.setup.ts"],
       sequence: {
         sequencer: MySequencer,
