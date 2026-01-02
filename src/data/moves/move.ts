@@ -115,6 +115,9 @@ import { inSpeedOrder } from "#utils/speed-order-generator";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 
+// TODO: fix properly https://github.com/Despair-Games/poketernity/pull/170
+type GetRemoveArenaTagSideFunc = (user: Pokemon, target: Pokemon) => ArenaTagSide;
+
 /**
  * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.
  * Conventionally returns `true` for success and `false` for failure.
@@ -871,14 +874,15 @@ export abstract class Move implements Localizable {
   }
 
   /**
-   * Applies each {@linkcode MoveCondition} function of this move to the params, determines if the move can be used prior to calling each attribute's apply()
-   * @param user - {@linkcode Pokemon} to apply conditions to
-   * @param target - {@linkcode Pokemon} to apply conditions to
-   * @param move - {@linkcode Move} to apply conditions to
-   * @param sequence - The sequence number where the condition check occurs, or `-1` to check all; defaults to 4. Pass -1 to check all
-   * @returns boolean: false if any of the apply()'s return false, else true
+   * Apply this move's conditions prior to move effect application.
+   * @param user - The {@linkcode Pokemon} using this move
+   * @param target - The {@linkcode Pokemon} targeted by this move
+   * @param sequence - (Default `4`) The sequence number where the condition check occurs, or `-1` to check all
+   * @returns Whether all conditions passed
+   * @remarks
+   * Only applies conditions intrinsic to the particular move being used.
    */
-  applyConditions(user: Pokemon, target: Pokemon, sequence: -1 | 2 | 3 | 4 = 4): boolean {
+  public applyConditions(user: Pokemon, target: Pokemon, sequence: -1 | 2 | 3 | 4 = 4): boolean {
     let conditionsArray: MoveCondition[];
     switch (sequence) {
       case -1:
@@ -1860,7 +1864,9 @@ export class TargetHalfHpDamageAttr extends FixedDamageAttr {
     super(0);
   }
 
-  apply(user: Pokemon, target: Pokemon, _move: Move, args: any[]): boolean {
+  apply(user: Pokemon, target: Pokemon, _move: Move, args: [NumberHolder, ...any[]]): boolean {
+    const [dmg] = args;
+
     // first, determine if the hit is coming from multi lens or not
     const lensCount =
       user
@@ -1869,23 +1875,23 @@ export class TargetHalfHpDamageAttr extends FixedDamageAttr {
         ?.getStackCount() ?? 0;
     if (lensCount <= 0) {
       // no multi lenses; we can just halve the target's hp and call it a day
-      (args[0] as NumberHolder).value = toDmgValue(target.hp / 2);
+      dmg.value = toDmgValue(target.hp / 2);
       return true;
     }
 
     // figure out what hit # we're on
     switch (user.turnData.hitCount - user.turnData.hitsLeft) {
       case lensCount + 1:
-        // parental bond added hit; calc damage as normal
-        (args[0] as NumberHolder).value = toDmgValue(target.hp / 2);
+        // parental bond added hit; halve target's hp as normal
+        dmg.value = toDmgValue(target.hp / 2);
         return true;
-      // biome-ignore lint/suspicious/noFallthroughSwitchClause: intentional?
+      // biome-ignore lint/suspicious/noFallthroughSwitchClause: intentional
       case 0:
-        // first hit of move; update initialHp tracker
+        // first hit of move; update initialHp tracker for first hit
         this.initialHp = target.hp;
       default:
         // multi lens added hit; use initialHp tracker to ensure correct damage
-        (args[0] as NumberHolder).value = toDmgValue(this.initialHp / 2);
+        dmg.value = toDmgValue(this.initialHp / 2);
         return true;
     }
   }
@@ -2225,11 +2231,13 @@ export class HalfSacrificialAttr extends MoveEffectAttr {
 
 /**
  * Attribute to put in a {@link https://bulbapedia.bulbagarden.net/wiki/Substitute_(doll) | Substitute Doll} for the user.
+ *
+ * Used for {@linkcode MoveId.SUBSTITUTE} and {@linkcode MoveId.SHED_TAIL}.
  */
 export class AddSubstituteAttr extends MoveEffectAttr {
-  /** The ratio of the user's max HP that is required to apply this effect */
+  /** The percentage of the user's maximum HP that is required to apply this effect. */
   private readonly hpCost: number;
-  /** Whether the damage taken should be rounded up (Shed Tail rounds up) */
+  /** Whether the damage taken should be rounded up (Shed Tail rounds up). */
   private readonly roundUp: boolean;
 
   constructor(hpCost: number, roundUp: boolean) {
@@ -2240,50 +2248,49 @@ export class AddSubstituteAttr extends MoveEffectAttr {
   }
 
   /**
-   * Removes 1/4 of the user's maximum HP (rounded down) to create a substitute for the user
-   * @param user - The {@linkcode Pokemon} that used the move.
-   * @param target - n/a
-   * @param move - The {@linkcode Move} with this attribute.
-   * @param args - n/a
-   * @returns `true` if the attribute successfully applies, `false` otherwise
+   * Helper function to compute the amount of HP required to create a substitute.
+   * @param user - The {@linkcode Pokemon} using the move
+   * @returns The amount of HP that is required to create a substitute.
    */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  private getHpCost(user: Pokemon): number {
+    return (this.roundUp ? Math.ceil : toDmgValue)(user.getMaxHp() * this.hpCost);
+  }
+
+  /**
+   * Remove a fraction of the user's maximum HP to create a 25% HP substitute doll.
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param target - n/a
+   * @param move - The {@linkcode Move} being used
+   * @param args - n/a
+   * @returns Whether the attribute successfully applied
+   */
+  public override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
     }
 
-    const damageTaken = this.roundUp
-      ? Math.ceil(user.getMaxHp() * this.hpCost)
-      : Math.floor(user.getMaxHp() * this.hpCost);
-    user.damageAndUpdate(damageTaken, { result: HitResult.INDIRECT, ignoreSegments: true, ignoreFaintPhase: true });
+    const dmgTaken = this.getHpCost(user);
+    user.damageAndUpdate(dmgTaken, { result: HitResult.INDIRECT, ignoreSegments: true, ignoreFaintPhase: true });
     user.addTag(BattlerTagType.SUBSTITUTE, 0, move.id, user.id);
     return true;
   }
 
-  getUserBenefitScore(user: Pokemon, _target: Pokemon, _move: Move): number {
+  public override getUserBenefitScore(user: Pokemon, _target: Pokemon, _move: Move): number {
     if (user.isBoss()) {
       return -10;
     }
     return 5;
   }
 
-  getCondition(): MoveConditionFunc {
-    return (user, _target, _move) =>
-      !user.getTag(SubstituteTag)
-      && user.hp > (this.roundUp ? Math.ceil(user.getMaxHp() * this.hpCost) : Math.floor(user.getMaxHp() * this.hpCost))
-      && user.getMaxHp() > 1;
+  public override getCondition(): MoveConditionFunc {
+    return user => !user.getTag(SubstituteTag) && user.hp > this.getHpCost(user);
   }
 
-  /**
-   * Get the substitute-specific failure message if one should be displayed.
-   * @param user - The pokemon using the move.
-   * @returns The substitute-specific failure message if the conditions apply, otherwise `undefined`
-   */
-  getFailedText(user: Pokemon, _target: Pokemon, _move: Move): string | undefined {
+  public override getFailedText(user: Pokemon): string | undefined {
     if (user.getTag(SubstituteTag)) {
       return i18next.t("moveTriggers:substituteOnOverlap", { pokemonName: getPokemonNameWithAffix(user) });
     }
-    if (user.hp <= Math.floor(user.getMaxHp() / 4) || user.getMaxHp() === 1) {
+    if (user.hp <= this.getHpCost(user)) {
       return i18next.t("moveTriggers:substituteNotEnoughHp");
     }
   }
@@ -6661,22 +6668,18 @@ export class AddArenaTagAttr extends MoveEffectAttr {
 export class RemoveArenaTagsAttr extends MoveEffectAttr {
   /** An array containing the tags to be removed. */
   private readonly tagTypes: readonly [ArenaTagType, ...ArenaTagType[]];
-  /**
-   * Whether to remove tags from both sides of the field (`true`) or
-   * the target's side of the field (`false`)
-   * @defaultValue `false`
-   */
-  private readonly removeAllTags: boolean;
+  /** A function which gets the side to remove `ArenaTag`s from */
+  private readonly getTagSideFunc: GetRemoveArenaTagSideFunc;
 
   constructor(
     tagTypes: readonly [ArenaTagType, ...ArenaTagType[]],
-    removeAllTags = false,
+    getTagSideFunc: GetRemoveArenaTagSideFunc,
     options?: MoveEffectAttrOptions,
   ) {
     super(true, options);
 
     this.tagTypes = tagTypes;
-    this.removeAllTags = removeAllTags;
+    this.getTagSideFunc = getTagSideFunc;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -6684,9 +6687,7 @@ export class RemoveArenaTagsAttr extends MoveEffectAttr {
       return false;
     }
 
-    const side = this.removeAllTags ? ArenaTagSide.BOTH : target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-
-    globalScene.arena.removeTagsOnSide(this.tagTypes, side);
+    globalScene.arena.removeTagsOnSide(this.tagTypes, this.getTagSideFunc(user, target));
 
     return true;
   }
@@ -6743,18 +6744,18 @@ const arenaTrapTags = [
 ] as const;
 
 export class RemoveArenaTrapAttr extends RemoveArenaTagsAttr {
-  constructor(targetBothSides = false) {
+  constructor(getTagSideFunc: GetRemoveArenaTagSideFunc) {
     // TODO: This triggers at a different time than `RemoveArenaTagsAbAttr`...
-    super(arenaTrapTags, targetBothSides, { trigger: MoveEffectTrigger.PRE_APPLY });
+    super(arenaTrapTags, getTagSideFunc, { trigger: MoveEffectTrigger.PRE_APPLY });
   }
 }
 
 const screenTags = [ArenaTagType.REFLECT, ArenaTagType.LIGHT_SCREEN, ArenaTagType.AURORA_VEIL] as const;
 
 export class RemoveScreensAttr extends RemoveArenaTagsAttr {
-  constructor(targetBothSides = false) {
+  constructor(getTagSideFunc: GetRemoveArenaTagSideFunc) {
     // TODO: This triggers at a different time than {@linkcode RemoveArenaTagsAbAttr}...
-    super(screenTags, targetBothSides, { trigger: MoveEffectTrigger.PRE_APPLY });
+    super(screenTags, getTagSideFunc, { trigger: MoveEffectTrigger.PRE_APPLY });
   }
 }
 
@@ -6978,7 +6979,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
       if (switchOutTarget.hp > 0) {
         if (this.switchType === SwitchType.FORCE_SWITCH) {
-          switchOutTarget.leaveField(true);
           const slotIndex = eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)];
           globalScene.phaseManager.queueDeferred(
             "SwitchSummonPhase",
@@ -7023,7 +7023,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
       if (switchOutTarget.hp > 0) {
         if (this.switchType === SwitchType.FORCE_SWITCH) {
-          switchOutTarget.leaveField(true);
           const slotIndex = eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)];
           globalScene.phaseManager.queueDeferred(
             "SwitchSummonPhase",
@@ -7034,7 +7033,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
             false,
           );
         } else {
-          switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
           globalScene.phaseManager.queueDeferred(
             "SwitchSummonPhase",
             this.switchType,
@@ -7861,7 +7859,6 @@ export class RepeatMoveAttr extends MoveEffectAttr {
         targetPokemonName: getPokemonNameWithAffix(target),
       }),
     );
-    target.turnData.extraTurns++;
     globalScene.phaseManager.unshiftNew(
       "MovePhase",
       target,
@@ -9863,7 +9860,7 @@ export function initMoves() {
         ],
         true,
       )
-      .attr(RemoveArenaTrapAttr),
+      .attr(RemoveArenaTrapAttr, user => (user.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)),
     new StatusMove(MoveId.SWEET_SCENT, PokemonType.NORMAL, 100, 20, -1, 0, 2)
       .attr(StatStageChangeAttr, [Stat.EVA], -2)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
@@ -10049,7 +10046,7 @@ export function initMoves() {
     new AttackMove(MoveId.REVENGE, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, -1, -4, 3) //
       .attr(TurnDamagedDoublePowerAttr),
     new AttackMove(MoveId.BRICK_BREAK, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 75, 100, 15, -1, 0, 3) //
-      .attr(RemoveScreensAttr),
+      .attr(RemoveScreensAttr, (_user, target) => (target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)),
     new StatusMove(MoveId.YAWN, PokemonType.NORMAL, -1, 10, -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.DROWSY, false, true)
       .condition((user, target, _move) => !target.status && !target.isSafeguarded(user))
@@ -10351,7 +10348,7 @@ export function initMoves() {
       .attr(
         RemoveArenaTagsAttr,
         [ArenaTagType.QUICK_GUARD, ArenaTagType.WIDE_GUARD, ArenaTagType.MAT_BLOCK, ArenaTagType.CRAFTY_SHIELD],
-        false,
+        (_user, target) => (target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY),
       )
       .makesContact(false)
       .ignoresProtect(),
@@ -10557,9 +10554,11 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [Stat.EVA], -1)
       .attr(ClearWeatherAttr, WeatherType.FOG)
       .attr(ClearTerrainAttr)
-      .attr(RemoveScreensAttr, false)
-      .attr(RemoveArenaTrapAttr, true)
-      .attr(RemoveArenaTagsAttr, [ArenaTagType.MIST, ArenaTagType.SAFEGUARD], false)
+      .attr(RemoveScreensAttr, (_user, target) => (target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY))
+      .attr(RemoveArenaTrapAttr, () => ArenaTagSide.BOTH)
+      .attr(RemoveArenaTagsAttr, [ArenaTagType.MIST, ArenaTagType.SAFEGUARD], (_user, target) =>
+        target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY,
+      )
       .reflectable(),
     new StatusMove(MoveId.TRICK_ROOM, PokemonType.PSYCHIC, -1, 5, -1, -7, 4)
       .attr(AddArenaTagAttr, ArenaTagType.TRICK_ROOM, 5)
@@ -11189,7 +11188,8 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new SelfStatusMove(MoveId.CELEBRATE, PokemonType.NORMAL, -1, 40, -1, 0, 6)
       // NB: This needs a lambda function as the user will not be logged in by the time the moves are initialized
-      .attr(MessageAttr, () => i18next.t("moveTriggers:celebrate", { playerName: loggedInUser?.username })),
+      .attr(MessageAttr, () => i18next.t("moveTriggers:celebrate", { playerName: loggedInUser?.username }))
+      .attr(MoneyAttr),
     new StatusMove(MoveId.HOLD_HANDS, PokemonType.NORMAL, -1, 40, -1, 0, 6)
       .ignoresSubstitute()
       .target(MoveTarget.NEAR_ALLY),
@@ -11520,7 +11520,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [Stat.SPATK], -2, true),
     new AttackMove(MoveId.PSYCHIC_FANGS, PokemonType.PSYCHIC, MoveCategory.PHYSICAL, 85, 100, 10, -1, 0, 7)
       .bitingMove()
-      .attr(RemoveScreensAttr),
+      .attr(RemoveScreensAttr, (_user, target) => (target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)),
     new AttackMove(MoveId.STOMPING_TANTRUM, PokemonType.GROUND, MoveCategory.PHYSICAL, 75, 100, 10, -1, 0, 7)
       .attr(MovePowerMultiplierAttr, user => {
         // Stomping tantrum triggers on most failures (including sleep/freeze)
@@ -12203,7 +12203,7 @@ export function initMoves() {
         true,
       )
       .attr(StatusEffectAttr, StatusEffect.POISON)
-      .attr(RemoveArenaTrapAttr)
+      .attr(RemoveArenaTrapAttr, user => (user.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY))
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(MoveId.DOODLE, PokemonType.NORMAL, 100, 10, -1, 0, 9) //
       .attr(AbilityCopyAttr, true),
@@ -12223,7 +12223,7 @@ export function initMoves() {
       .danceMove(),
     new AttackMove(MoveId.RAGING_BULL, PokemonType.NORMAL, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 9)
       .attr(RagingBullTypeAttr)
-      .attr(RemoveScreensAttr),
+      .attr(RemoveScreensAttr, (_user, target) => (target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)),
     new AttackMove(MoveId.MAKE_IT_RAIN, PokemonType.STEEL, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 9)
       .attr(MoneyAttr)
       .attr(StatStageChangeAttr, [Stat.SPATK], -1, true, { firstTargetOnly: true })
@@ -12269,7 +12269,7 @@ export function initMoves() {
       .attr(ChillyReceptionAttr, true),
     new SelfStatusMove(MoveId.TIDY_UP, PokemonType.NORMAL, -1, 10, -1, 0, 9)
       .attr(StatStageChangeAttr, [Stat.ATK, Stat.SPD], 1, true)
-      .attr(RemoveArenaTrapAttr, true)
+      .attr(RemoveArenaTrapAttr, () => ArenaTagSide.BOTH)
       .attr(RemoveAllSubstitutesAttr),
     new StatusMove(MoveId.SNOWSCAPE, PokemonType.ICE, -1, 10, -1, 0, 9)
       .attr(WeatherChangeAttr, WeatherType.SNOW)

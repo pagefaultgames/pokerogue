@@ -86,7 +86,7 @@
         },
         "useAtIndex": "error",
         "noNegationElse": {
-          "level": "info", // TODO: Promote to error eventually
+          "level": "error",
           "fix": "unsafe", // duplicates else blocks
           "options": {}
         },
@@ -231,6 +231,8 @@
         "noBarrelFile": "error"
       },
       "nursery": {
+        "noProto": "error",
+        "useFind": "error",
         "noUselessUndefined": "error",
         "useMaxParams": {
           "level": "info", // TODO: Change to "error"... eventually...

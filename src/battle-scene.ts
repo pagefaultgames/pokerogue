@@ -22,7 +22,6 @@ import { InvertPostFX } from "#app/pipelines/invert";
 import { SpritePipeline } from "#app/pipelines/sprite";
 import { SceneBase } from "#app/scene-base";
 import { startingWave } from "#app/starting-wave";
-import { TimedEventManager } from "#app/timed-event-manager";
 import { UiInputs } from "#app/ui-inputs";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#balance/starters";
@@ -152,8 +151,6 @@ import Phaser from "phaser";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import type UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 
-const DEBUG_RNG = false;
-
 export interface PokeballCounts {
   [pb: string]: number;
 }
@@ -172,6 +169,7 @@ export class BattleScene extends SceneBase {
 
   public sessionPlayTime: number | null = null;
   public lastSavePlayTime: number | null = null;
+  // TODO: move these settings into a settings helper object
   public masterVolume = 0.5;
   public bgmVolume = 1;
   public fieldVolume = 1;
@@ -311,17 +309,14 @@ export class BattleScene extends SceneBase {
 
   private bgm: AnySound;
   private bgmResumeTimer: Phaser.Time.TimerEvent | null;
-  private bgmCache: Set<string> = new Set();
+  private readonly bgmCache: Set<string> = new Set();
   private playTimeTimer: Phaser.Time.TimerEvent;
 
-  public rngCounter = 0;
   public rngSeedOverride = "";
   public rngOffset = 0;
 
   public inputMethod: string;
-  private infoToggles: InfoToggle[] = [];
-
-  public eventManager: TimedEventManager;
+  private readonly infoToggles: InfoToggle[] = [];
 
   /**
    * Allows subscribers to listen for events
@@ -339,7 +334,6 @@ export class BattleScene extends SceneBase {
   constructor() {
     super("battle");
     this.phaseManager = new PhaseManager();
-    this.eventManager = new TimedEventManager();
     this.updateGameInfo();
     initGlobalScene(this);
   }
@@ -362,21 +356,11 @@ export class BattleScene extends SceneBase {
     );
   }
 
-  async preload() {
-    if (DEBUG_RNG) {
-      const originalRealInRange = Phaser.Math.RND.realInRange;
-      Phaser.Math.RND.realInRange = function (min: number, max: number): number {
-        const ret = originalRealInRange.apply(this, [min, max]);
-        const args = ["RNG", ++this.rngCounter, ret / (max - min), `min: ${min} / max: ${max}`];
-        args.push(`seed: ${this.rngSeedOverride || this.waveSeed || this.seed}`);
-        if (this.rngOffset) {
-          args.push(`offset: ${this.rngOffset}`);
-        }
-        console.log(...args);
-        return ret;
-      };
-    }
-
+  /**
+   * Load game assets necessary for the scene to run.
+   * Called by Phaser on new game start.
+   */
+  public async preload(): Promise<void> {
     /**
      * These moves serve as fallback animations for other moves without loaded animations, and
      * must be loaded prior to game start.
@@ -393,7 +377,11 @@ export class BattleScene extends SceneBase {
     });
   }
 
-  create() {
+  /**
+   * Create game objects with loaded assets.
+   * Called by Phaser on new game start.
+   */
+  public create(): void {
     this.scene.remove(LoadingScene.KEY);
     initGameSpeed.apply(this);
     this.inputController = new InputsController();
@@ -417,6 +405,7 @@ export class BattleScene extends SceneBase {
     this.ui?.update();
   }
 
+  // TODO: Split this up into multiple sub-methods
   launchBattle() {
     this.arenaBg = this.add
       .sprite(0, 0, "plains_bg")
@@ -1092,7 +1081,6 @@ export class BattleScene extends SceneBase {
 
   setSeed(seed: string): void {
     this.seed = seed;
-    this.rngCounter = 0;
     this.waveCycleOffset = this.getGeneratedWaveCycleOffset();
     this.offsetGym = this.gameMode.isClassic && this.getGeneratedOffsetGym();
   }
@@ -1111,6 +1099,7 @@ export class BattleScene extends SceneBase {
     return this.currentBattle?.randSeedInt(range, min);
   }
 
+  // TODO: Break up function - this does far too much in 1 sitting
   reset(clearScene = false, clearData = false, reloadI18n = false): void {
     if (clearData) {
       this.gameData = new GameData();
@@ -1229,6 +1218,7 @@ export class BattleScene extends SceneBase {
           this.uiContainer.remove(this.ui, true);
           this.uiContainer.destroy();
           this.children.removeAll(true);
+          // TODO: Do we even need this?
           this.game.domContainer.innerHTML = "";
           // TODO: `launchBattle` calls `reset(false, false, true)`
           this.launchBattle();
@@ -1635,7 +1625,7 @@ export class BattleScene extends SceneBase {
       case SpeciesId.DUDUNSPARCE:
       case SpeciesId.POLTCHAGEIST:
       case SpeciesId.SINISTCHA:
-        return !randSeedInt(16) ? 1 : 0;
+        return randSeedInt(16) ? 0 : 1;
       case SpeciesId.PIKACHU:
         if (this.currentBattle?.battleType === BattleType.TRAINER && this.currentBattle?.waveIndex < 30) {
           return 0; // Ban Cosplay and Partner Pika from Trainers before wave 30
@@ -1810,24 +1800,20 @@ export class BattleScene extends SceneBase {
     this.waveSeed = shiftCharCodes(this.seed, wave);
     Phaser.Math.RND.sow([this.waveSeed]);
     console.log("Wave Seed:", this.waveSeed, wave);
-    this.rngCounter = 0;
   }
 
   executeWithSeedOffset(func: () => void, offset: number, seedOverride?: string): void {
     if (!func) {
       return;
     }
-    const tempRngCounter = this.rngCounter;
     const tempRngOffset = this.rngOffset;
     const tempRngSeedOverride = this.rngSeedOverride;
     const state = Phaser.Math.RND.state();
     Phaser.Math.RND.sow([shiftCharCodes(seedOverride || this.seed, offset)]);
-    this.rngCounter = 0;
     this.rngOffset = offset;
     this.rngSeedOverride = seedOverride || "";
     func();
     Phaser.Math.RND.state(state);
-    this.rngCounter = tempRngCounter;
     this.rngOffset = tempRngOffset;
     this.rngSeedOverride = tempRngSeedOverride;
   }
@@ -2349,6 +2335,8 @@ export class BattleScene extends SceneBase {
     switch (bgmName) {
       case "title": //Firel PokéRogue Title
         return 46.5;
+      case "winter_title": //Andr06 Winter Title
+        return 20.57;
       case "battle_kanto_champion": //B2W2 Kanto Champion Battle
         return 13.95;
       case "battle_johto_champion": //B2W2 Johto Champion Battle
@@ -2655,12 +2643,12 @@ export class BattleScene extends SceneBase {
 
           const args: unknown[] = [];
           if (modifier instanceof PokemonHpRestoreModifier) {
-            if (!(modifier as PokemonHpRestoreModifier).fainted) {
+            if ((modifier as PokemonHpRestoreModifier).fainted) {
+              args.push(1);
+            } else {
               const hpRestoreMultiplier = new NumberHolder(1);
               this.applyModifiers(HealingBoosterModifier, true, hpRestoreMultiplier);
               args.push(hpRestoreMultiplier.value);
-            } else {
-              args.push(1);
             }
           } else if (modifier instanceof FusePokemonModifier) {
             args.push(this.getPokemonById(modifier.fusePokemonId) as PlayerPokemon);
@@ -3017,7 +3005,7 @@ export class BattleScene extends SceneBase {
   }
 
   hasModifier(modifier: PersistentModifier, enemy = false): boolean {
-    const modifiers = !enemy ? this.modifiers : this.enemyModifiers;
+    const modifiers = enemy ? this.enemyModifiers : this.modifiers;
     return modifiers.indexOf(modifier) > -1;
   }
 
@@ -3030,7 +3018,7 @@ export class BattleScene extends SceneBase {
    * @returns `true` if the item exists and was successfully removed, `false` otherwise
    */
   removeModifier(modifier: PersistentModifier, enemy = false): boolean {
-    const modifiers = !enemy ? this.modifiers : this.enemyModifiers;
+    const modifiers = enemy ? this.enemyModifiers : this.modifiers;
     const modifierIndex = modifiers.indexOf(modifier);
     if (modifierIndex > -1) {
       modifiers.splice(modifierIndex, 1);
@@ -3135,7 +3123,7 @@ export class BattleScene extends SceneBase {
     const appliedModifiers: T[] = [];
     for (const modifier of modifiers) {
       if (modifier.apply(...args)) {
-        console.log("Applied", modifier.type.name, !player ? "(enemy)" : "");
+        console.log("Applied", modifier.type.name, player ? "" : "(enemy)");
         appliedModifiers.push(modifier);
       }
     }
@@ -3160,7 +3148,7 @@ export class BattleScene extends SceneBase {
     );
     for (const modifier of modifiers) {
       if (modifier.apply(...args)) {
-        console.log("Applied", modifier.type.name, !player ? "(enemy)" : "");
+        console.log("Applied", modifier.type.name, player ? "" : "(enemy)");
         return modifier;
       }
     }
@@ -3622,7 +3610,7 @@ export class BattleScene extends SceneBase {
 
     let availableEncounters: MysteryEncounter[] = [];
     const previousEncounter = this.mysteryEncounterSaveData.encounteredEvents.at(-1)?.type ?? null; // TODO: This being `null` is a bit weird
-    const disabledEncounters = this.eventManager.getEventMysteryEncountersDisabled();
+    const disabledEncounters = timedEventManager.getEventMysteryEncountersDisabled();
     const biomeMysteryEncounters =
       mysteryEncountersByBiome.get(this.arena.biomeType)?.filter(enc => !disabledEncounters.includes(enc)) ?? [];
     // If no valid encounters exist at tier, checks next tier down, continuing until there are some encounters available
@@ -3634,7 +3622,7 @@ export class BattleScene extends SceneBase {
             return false;
           }
           if (
-            this.eventManager.getMysteryEncounterTierForEvent(encounterType, encounterCandidate.encounterTier) !== tier
+            timedEventManager.getMysteryEncounterTierForEvent(encounterType, encounterCandidate.encounterTier) !== tier
           ) {
             return false;
           }
