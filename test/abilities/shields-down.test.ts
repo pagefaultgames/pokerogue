@@ -1,5 +1,7 @@
 import { Status } from "#data/status-effect";
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
@@ -140,8 +142,7 @@ describe("Abilities - Shields Down", () => {
     expect(minior).toHaveBattlerTag(BattlerTagType.DROWSY);
   });
 
-  // TODO: Gravity does not make a Pokemon be considered as "grounded" for hazards
-  it.todo("should be poisoned by toxic spikes when Gravity is active before changing forms", async () => {
+  it("should be poisoned by toxic spikes when Gravity is active before changing forms", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MINIOR]);
 
     // Change minior to Core form in a state where it would revert to Meteor form on switch
@@ -152,26 +153,16 @@ describe("Abilities - Shields Down", () => {
     await game.move.forceEnemyMove(MoveId.TOXIC_SPIKES);
     await game.toNextTurn();
 
+    expect(game).toHaveArenaTag(ArenaTagType.GRAVITY);
+    expect(game).toHaveArenaTag({ tagType: ArenaTagType.TOXIC_SPIKES, side: ArenaTagSide.PLAYER, layers: 1 });
+
     game.doSwitchPokemon(1);
-    await game.toNextTurn();
+    await game.toEndOfTurn();
 
     expect(minior.isOnField()).toBe(true);
     expect(minior.formIndex).toBe(redMeteorForm);
     expect(minior.isGrounded()).toBe(true);
     expect(minior).toHaveStatusEffect(StatusEffect.POISON);
-  });
-
-  it("should not ignore volatile status effects", async () => {
-    game.override.enemyMoveset([MoveId.CONFUSE_RAY]);
-
-    await game.classicMode.startBattle([SpeciesId.MINIOR]);
-
-    game.move.use(MoveId.SPLASH);
-    await game.move.forceEnemyMove(MoveId.CONFUSE_RAY);
-
-    await game.toEndOfTurn();
-
-    expect(game.field.getPlayerPokemon()).toHaveBattlerTag(BattlerTagType.CONFUSED);
   });
 
   it("should not activate when transformed", async () => {

@@ -33,13 +33,16 @@ export class MoveHelper extends GameManagerHelper {
   }
 
   /**
-   * Intercepts {@linkcode MoveEffectPhase} and mocks the phase's move's accuracy
-   * to 0, guaranteeing a miss.
+   * Intercept the next upcoming {@linkcode MoveEffectPhase} and mocks the invoked move's accuracy
+   * to `0`, guaranteeing a miss.
    * @param firstTargetOnly - Whether to only force a miss on the first target hit; default `false`.
-   * @returns A promise that resolves once the next MoveEffectPhase has been reached (not run).
+   * @returns A Promise that resolves once the next `MoveEffectPhase` has been reached (not run).
+   * @remarks
+   * This is notably useful for testing guaranteed-hit granting effects, as it will ensure
+   * the attacking move misses if the effect does not apply.
    */
   public async forceMiss(firstTargetOnly = false): Promise<void> {
-    await this.game.phaseInterceptor.to(MoveEffectPhase, false);
+    await this.game.phaseInterceptor.to("MoveEffectPhase", false);
     const moveEffectPhase = this.game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase;
     const accuracy = vi.spyOn(moveEffectPhase.move, "calculateBattleAccuracy");
 

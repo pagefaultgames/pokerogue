@@ -83,7 +83,7 @@ function applyAbAttrsInternal<T extends CallableAbAttrString>(
 /**
  * @param attrType - The type of the ability attribute to apply. (note: may not be any attribute that extends PostSummonAbAttr)
  * @param params - The parameters to pass to the ability attribute's apply method
- * @param messages - An optional array to which ability trigger messges will be added
+ * @param messages - An optional array to which ability trigger messages will be added
  */
 export function applyAbAttrs<T extends CallableAbAttrString>(
   attrType: T,

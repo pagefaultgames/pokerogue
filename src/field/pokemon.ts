@@ -32,7 +32,6 @@ import {
   CritBoostTag,
   EncoreTag,
   ExposedTag,
-  GroundedTag,
   type GrudgeTag,
   getBattlerTag,
   HighestStatBoostTag,
@@ -42,7 +41,6 @@ import {
   SubstituteTag,
   TarShotTag,
   TrappedTag,
-  TypeImmuneTag,
 } from "#data/battler-tags";
 import { getDailyEventSeedBoss, getDailyEventSeedBossVariant } from "#data/daily-run";
 import { allAbilities, allMoves } from "#data/data-lists";
@@ -2038,10 +2036,17 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param includeTeraType - Whether to use this Pokemon's tera type if Terastallized; default `true`
    * @param forDefend - Whether this Pokemon is currently receiving an attack; default `false`
    * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
+   * @param useIllusion - Whether to consider an active illusion; default `false`
    * @returns Whether this Pokemon is of the specified type.
    */
-  public isOfType(type: PokemonType, includeTeraType = true, forDefend = false, ignoreOverride = false): boolean {
-    return this.getTypes(includeTeraType, forDefend, ignoreOverride).includes(type);
+  public isOfType(
+    type: PokemonType,
+    includeTeraType = true,
+    forDefend = false,
+    ignoreOverride = false,
+    useIllusion = false,
+  ): boolean {
+    return this.getTypes(includeTeraType, forDefend, ignoreOverride, useIllusion).includes(type);
   }
 
   /**
@@ -2325,14 +2330,60 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.teraType;
   }
 
-  public isGrounded(): boolean {
-    return (
-      !!this.getTag(GroundedTag)
-      || (!this.isOfType(PokemonType.FLYING, true, true)
-        && !this.hasAbility(AbilityId.LEVITATE)
-        && !this.getTag(BattlerTagType.FLOATING)
-        && !this.getTag(SemiInvulnerableTag))
-    );
+  /**
+   * Return whether this Pokemon is currently on the ground.
+   *
+   * To be considered grounded, a Pokemon must either:
+   * - Be {@linkcode BattlerTagType.IGNORE_FLYING | forcibly grounded} from an effect like Smack Down or Ingrain
+   * - Be under the effects of {@linkcode ArenaTagType.GRAVITY | harsh gravity}
+   * - **Not** be any of the following things:
+   *   - Floating from {@linkcode BattlerTagType.FLOATING | Magnet Rise} or
+   *     {@linkcode BattlerTagType.TELEKINESIS | Telekinesis}
+   *   - {@linkcode SemiInvulnerableTag | Semi-invulnerable} with `ignoreSemiInvulnerable` set to `false`
+   *   - {@linkcode PokemonType.FLYING | Flying-type}
+   *   - {@linkcode AbilityId.LEVITATE | Levitating} from an unsuppressed Levitate ability
+   * @param ignoreSemiInvulnerable - (Default `false`) Whether to ignore the target's semi-invulnerable state when determining groundedness
+   * @param useIllusion - (Default `false`) Whether to use this Pokemon's illusion for typing-related calculations
+   * @returns Whether this Pokemon is currently grounded, as described above.
+   */
+  // TODO: Make sure callers propagate `useIllusion` correctly
+  public isGrounded(ignoreSemiInvulnerable = false, useIllusion = false): boolean {
+    const forceGrounded = this.isForciblyGrounded();
+    if (forceGrounded !== undefined) {
+      return forceGrounded;
+    }
+
+    // Flying-type and semi-invuln are the only remaining things that can make the user ungrounded
+    const semiInvuln = !ignoreSemiInvulnerable && !!this.getTag(SemiInvulnerableTag);
+    return !semiInvuln && !this.isOfType(PokemonType.FLYING, true, true, false, useIllusion);
+  }
+
+  /**
+   * Internal helper to return whether this Pokemon is either forcibly sent airborne or forcibly grounded.
+   * @returns One of:
+   * - `true`: This Pokemon is forcibly grounded by an effect like Smack Down, Ingrain or Gravity.
+   * - `false`: This Pokemon is forcibly lifted off the ground by an effect like Magnet Rise or an active Levitate ability.
+   * - `undefined`: Neither of the above effects applies.
+   *
+   * @see {@linkcode isGrounded} - Main function that uses this
+   * @privateRemarks
+   * This method does not account for typing or semi-invulnerability as it is also used to determine
+   * whether Ground-type moves should be nullified against airborne defenders.
+   */
+  private isForciblyGrounded(): boolean | undefined {
+    if (this.getTag(BattlerTagType.IGNORE_FLYING) || globalScene.arena.hasTag(ArenaTagType.GRAVITY)) {
+      return true;
+    }
+
+    if (this.getTag(BattlerTagType.FLOATING) || this.getTag(BattlerTagType.TELEKINESIS)) {
+      return false;
+    }
+
+    const forcedAirborne = new BooleanHolder(false);
+    applyAbAttrs("UngroundedAbAttr", { pokemon: this, cancelled: forcedAirborne });
+    if (forcedAirborne.value) {
+      return false;
+    }
   }
 
   /**
@@ -2488,14 +2539,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
-    const immuneTags = this.findTags(tag => tag instanceof TypeImmuneTag && tag.immuneType === moveType);
-    for (const tag of immuneTags) {
-      if (move && !move.getAttrs("HitsTagAttr").some(attr => attr.tagType === tag.tagType)) {
-        typeMultiplier.value = 0;
-        break;
-      }
-    }
-
     // Apply Tera Shell's effect to attacks after all immunities are accounted for
     if (!ignoreAbility && move.category !== MoveCategory.STATUS) {
       applyAbAttrs("FullHpResistTypeAbAttr", commonAbAttrParams);
@@ -2530,21 +2573,37 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return this.isTerastallized ? 2 : 1;
     }
     const types = this.getTypes(true, true, undefined, useIllusion);
-    const arena = globalScene.arena;
+    const { arena } = globalScene;
 
-    // Handle flying v ground type immunity without removing flying type so effective types are still effective
-    // Related to https://github.com/pagefaultgames/pokerogue/issues/524
-    if (moveType === PokemonType.GROUND && (this.isGrounded() || arena.hasTag(ArenaTagType.GRAVITY))) {
-      const flyingIndex = types.indexOf(PokemonType.FLYING);
-      if (flyingIndex > -1) {
-        types.splice(flyingIndex, 1);
-      }
+    // Ground type moves cannot affect Pokemon forcibly sent airborne by a move effect or ability,
+    // unless Thousand Arrows is being used.
+    // We explicitly avoid calling `isGrounded` as that checks extra things we do not want to handle here;
+    // semi-invulnerability is ignored for the purposes of Ground type matchups and
+    // Flying-types will lose their Ground immunity in Inverse Battles.
+    const forciblyGrounded = this.isForciblyGrounded();
+    // TODO: I still dislike the explicit check for `NeutralDamageAgainstFlyingTypeMultiplierAttr`, but it's kinda w/e??
+    if (
+      moveType === PokemonType.GROUND
+      && forciblyGrounded === false
+      && !move?.hasAttr("NeutralDamageAgainstFlyingTypeMultiplierAttr")
+    ) {
+      return 0;
     }
 
     let multiplier = types
       .map(defenderType => {
         const multiplier = new NumberHolder(getTypeDamageMultiplier(moveType, defenderType));
         applyChallenges(ChallengeType.TYPE_EFFECTIVENESS, multiplier);
+        // Ignore flying immunity of forcibly grounded flying-types
+        if (
+          multiplier.value === 0
+          && defenderType === PokemonType.FLYING
+          && moveType === PokemonType.GROUND
+          && forciblyGrounded === true
+        ) {
+          multiplier.value = 1;
+        }
+
         if (move) {
           applyMoveAttrs("VariableMoveTypeChartAttr", null, this, move, multiplier, defenderType);
         }
@@ -3601,6 +3660,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const isPhysical = moveCategory === MoveCategory.PHYSICAL;
 
     /** Combined damage multiplier from field effects such as weather, terrain, etc. */
+    // TODO: The terrain portion of this should be applied directly to base power
     const arenaAttackTypeMultiplier = new NumberHolder(
       globalScene.arena.getAttackTypeMultiplier(moveType, source.isGrounded()),
     );
@@ -4232,12 +4292,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Transfer stat changes and Tags from another Pokémon
+   * Transfer stat changes and volatile status effects from another Pokemon
+   * to this one.
    *
    * @remarks
    * Used to implement Baton Pass and switching via the Baton item.
    *
-   * @param source - The pokemon whose stats/Tags are to be passed on from, ie: the Pokemon using Baton Pass
+   * @param source - The `Pokemon` whose stats/Tags are to be passed on from
+   * (i.e. the one having switched out)
    */
   public transferSummon(source: Pokemon): void {
     for (const s of BATTLE_STATS) {
@@ -4249,12 +4311,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     for (const tag of source.summonData.tags) {
-      if (
-        !tag.isBatonPassable
-        || (tag.tagType === BattlerTagType.TELEKINESIS
-          && this.species.speciesId === SpeciesId.GENGAR
-          && this.getFormKey() === "mega")
-      ) {
+      if (!tag.isBatonPassable(this)) {
         continue;
       }
 
