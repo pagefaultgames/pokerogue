@@ -10436,7 +10436,8 @@ export function initMoves() {
       .ignoresSubstitute()
       .target(MoveTarget.NEAR_ENEMY)
       .unimplemented(),
-    new SelfStatusMove(MoveId.COPYCAT, PokemonType.NORMAL, -1, 20, -1, 0, 4).attr(CopyMoveAttr, invalidCopycatMoves),
+    new SelfStatusMove(MoveId.COPYCAT, PokemonType.NORMAL, -1, 20, -1, 0, 4) //
+      .attr(CopyMoveAttr, invalidCopycatMoves),
     new StatusMove(MoveId.POWER_SWAP, PokemonType.PSYCHIC, -1, 10, 100, 0, 4)
       .attr(SwapStatStagesAttr, [Stat.ATK, Stat.SPATK])
       .ignoresSubstitute(),
