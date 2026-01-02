@@ -52,7 +52,7 @@ export default defineConfig(async config => {
         reportsDirectory: "coverage",
         reporter: ["text-summary", "html"],
       },
-      name: "PokéRogue",
+      name: "main",
       include: ["./test/**/*.{test,spec}.ts"],
     },
   };
