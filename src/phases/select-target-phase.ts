@@ -5,7 +5,7 @@ import { Command } from "#enums/command";
 import { MoveFlags } from "#enums/move-flags";
 import { UiMode } from "#enums/ui-mode";
 import { PokemonPhase } from "#phases/pokemon-phase";
-import i18next from "#plugins/i18n";
+import i18next from "i18next";
 
 export class SelectTargetPhase extends PokemonPhase {
   public readonly phaseName = "SelectTargetPhase";

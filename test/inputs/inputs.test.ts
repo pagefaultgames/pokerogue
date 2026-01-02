@@ -18,7 +18,6 @@ describe("Inputs", () => {
   });
 
   afterEach(() => {
-    game.phaseInterceptor.restoreOg();
     Object.defineProperty(window, "document", {
       value: originalDocument,
       configurable: true,
