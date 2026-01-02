@@ -18,10 +18,6 @@ describe("Moves - Disable", () => {
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     game.override

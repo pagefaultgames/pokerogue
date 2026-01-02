@@ -10,7 +10,7 @@ import { getEnumValues } from "#utils/enums";
 import { toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Move - Nature Power", () => {
   let phaserGame: Phaser.Game;
@@ -20,10 +20,6 @@ describe("Move - Nature Power", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {

@@ -17,7 +17,7 @@ import { getEnumValues } from "#utils/enums";
 import { toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
 
 describe("Moves - Move-calling Moves", () => {
   let phaserGame: Phaser.Game;
@@ -27,10 +27,6 @@ describe("Moves - Move-calling Moves", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
