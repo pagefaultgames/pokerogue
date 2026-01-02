@@ -27,7 +27,7 @@ import {
   runSelectMysteryEncounterOption,
 } from "#test/mystery-encounter/encounter-test-utils";
 import { GameManager } from "#test/test-utils/game-manager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/delibirdy";
 const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
@@ -55,10 +55,6 @@ describe("Delibird-y - Mystery Encounter", () => {
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<BiomeId, MysteryEncounterType[]>([[BiomeId.CAVE, [MysteryEncounterType.DELIBIRDY]]]),
     );
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   it("should have the correct properties", async () => {
@@ -357,8 +353,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       });
     });
 
-    // TODO: fix mocking of events (and remove `BattleScene#eventManager`)
-    it.skip("Should decrease held item stacks and give the player a Healing Charm", async () => {
+    it("Should decrease held item stacks and give the player a Healing Charm", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DELIBIRDY, defaultParty);
 
       // Set 2 Soul Dew on party lead
@@ -379,8 +374,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       expect(healingCharmAfter?.stackCount).toBe(1);
     });
 
-    // TODO: fix mocking of events (and remove `BattleScene#eventManager`)
-    it.todo("Should remove held item and give the player a Healing Charm", async () => {
+    it("Should remove held item and give the player a Healing Charm", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DELIBIRDY, defaultParty);
 
       // Set 1 Soul Dew on party lead
