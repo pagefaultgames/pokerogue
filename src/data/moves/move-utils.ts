@@ -1,5 +1,5 @@
 import { allMoves } from "#data/data-lists";
-import type { BattlerIndex } from "#enums/battler-index";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveCategory, type MoveDamageCategory } from "#enums/move-category";
 import type { MoveId } from "#enums/move-id";
@@ -52,30 +52,28 @@ export function isSpreadMove(move: Move): boolean {
 }
 
 export function getMoveTargets(user: Pokemon, move: MoveId, replaceTarget?: MoveTarget): MoveTargetSet {
-  const variableTarget = new NumberHolder(0);
+  const variableTarget = new NumberHolder(replaceTarget ?? allMoves[move].moveTarget);
   user.getOpponents(false).forEach(p => applyMoveAttrs("VariableTargetAttr", user, p, allMoves[move], variableTarget));
 
-  let moveTarget: MoveTarget | undefined;
-  if (allMoves[move].hasAttr("VariableTargetAttr")) {
-    moveTarget = variableTarget.value;
-  } else if (replaceTarget !== undefined) {
-    moveTarget = replaceTarget;
-  } else if (move) {
-    moveTarget = allMoves[move].moveTarget;
-  } else if (move === undefined) {
-    moveTarget = MoveTarget.NEAR_ENEMY;
-  }
+  const moveTarget: MoveTarget = variableTarget.value;
   const opponents = user.getOpponents(false);
 
   let set: Pokemon[] = [];
   let multiple = false;
   const ally: Pokemon | undefined = user.getAlly();
-
   switch (moveTarget) {
     case MoveTarget.USER:
     case MoveTarget.PARTY:
       set = [user];
       break;
+
+    // biome-ignore lint/suspicious/noFallthroughSwitchClause: intentional
+    case MoveTarget.CURSE:
+      // Non ghost-type Curse targets exclusively the user; ghost-type Curse targets any enemy
+      if (!user.isOfType(PokemonType.GHOST, true, true)) {
+        set = [user];
+        break;
+      }
     case MoveTarget.NEAR_OTHER:
     case MoveTarget.OTHER:
     case MoveTarget.ALL_NEAR_OTHERS:
@@ -94,7 +92,8 @@ export function getMoveTargets(user: Pokemon, move: MoveId, replaceTarget?: Move
       set = [opponents[user.randBattleSeedInt(opponents.length)]];
       break;
     case MoveTarget.ATTACKER:
-      return { targets: [-1 as BattlerIndex], multiple: false };
+      // TODO: Remove MoveTarget.ATTACKER and BattlerIndex.ATTACKER
+      return { targets: [BattlerIndex.ATTACKER], multiple: false };
     case MoveTarget.NEAR_ALLY:
     case MoveTarget.ALLY:
       set = ally != null ? [ally] : [];
@@ -109,12 +108,6 @@ export function getMoveTargets(user: Pokemon, move: MoveId, replaceTarget?: Move
     case MoveTarget.BOTH_SIDES:
       set = (ally != null ? [user, ally] : [user]).concat(opponents);
       multiple = true;
-      break;
-    case MoveTarget.CURSE:
-      {
-        const extraTargets = ally != null ? [ally] : [];
-        set = user.getTypes(true).includes(PokemonType.GHOST) ? opponents.concat(extraTargets) : [user];
-      }
       break;
   }
 
