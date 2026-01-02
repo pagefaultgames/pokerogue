@@ -7,7 +7,7 @@ import { GameManager } from "#test/test-utils/game-manager";
 import { type PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import type { RenameFormUiHandler } from "#ui/rename-form-ui-handler";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 // todo: Some tests fail when running all tests at once, but pass when running individually. Seams like it's always the 2nd and 4th (non todo) tests that fail.
 describe("UI - Transfer Item Options", () => {
@@ -19,8 +19,6 @@ describe("UI - Transfer Item Options", () => {
       type: Phaser.HEADLESS,
     });
   });
-
-  afterEach(() => {});
 
   beforeEach(async () => {
     game = new GameManager(phaserGame);

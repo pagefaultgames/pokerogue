@@ -14,7 +14,7 @@ import type { SaveSlotSelectUiHandler } from "#ui/save-slot-select-ui-handler";
 import type { StarterSelectUiHandler } from "#ui/starter-select-ui-handler";
 import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 // TODO: Resolve issues with UI test state corruption
 describe.todo("UI - Starter select", () => {
@@ -26,8 +26,6 @@ describe.todo("UI - Starter select", () => {
       type: Phaser.HEADLESS,
     });
   });
-
-  afterEach(() => {});
 
   beforeEach(() => {
     game = new GameManager(phaserGame);

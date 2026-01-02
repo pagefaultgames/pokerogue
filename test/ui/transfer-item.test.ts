@@ -8,7 +8,7 @@ import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import Phaser from "phaser";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("UI - Transfer Items", () => {
   let phaserGame: Phaser.Game;
@@ -19,8 +19,6 @@ describe("UI - Transfer Items", () => {
       type: Phaser.HEADLESS,
     });
   });
-
-  afterEach(() => {});
 
   beforeEach(async () => {
     game = new GameManager(phaserGame);
