@@ -343,13 +343,10 @@ function doSalesSfx() {
   });
 }
 
-function applyMoneyMultipliers(moneyMultiplier) {
+function applyMoneyMultipliers(moneyMultiplier: number): number {
   const moneyChange = new NumberHolder(globalScene.getWaveMoneyAmount(moneyMultiplier));
   globalScene.applyModifiers(MoneyMultiplierModifier, true, moneyChange);
   updatePlayerMoney(moneyChange.value, true, false);
 
-  const userLocale = navigator.language || "en-US";
-  const formattedMoneyAmount = moneyChange.value.toLocaleString(userLocale);
-
-  return formattedMoneyAmount;
+  return moneyChange.value;
 }
