@@ -1243,7 +1243,7 @@ export class GameData {
   saveAll(skipVerification = false, sync = false, useCachedSession = false, useCachedSystem = false): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       executeIf(!skipVerification, updateUserInfo).then(success => {
-        if (success != null) {
+        if (success != null && !success) {
           return resolve(false);
         }
         if (sync) {
