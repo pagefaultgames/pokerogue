@@ -13,9 +13,9 @@ export class SceneBase extends Phaser.Scene {
    * height: `180`
    */
   public readonly scaledCanvas = {
-    width: 1920 / 6,
-    height: 1080 / 6,
-  };
+    width: 320, // (1920 / 6)
+    height: 180, // (1080 / 6)
+  } as const;
 
   getCachedUrl(url: string): string {
     const manifest = this.game.manifest;
@@ -32,19 +32,17 @@ export class SceneBase extends Phaser.Scene {
     return url;
   }
 
-  loadImage(key: string, folder: string, filename?: string) {
-    if (!filename) {
-      filename = `${key}.png`;
-    }
+  loadImage(key: string, folder: string, filename = `${key}.png`): this {
     this.load.image(key, this.getCachedUrl(`images/${folder}/${filename}`));
     if (folder.startsWith("ui")) {
       legacyCompatibleImages.push(key);
       folder = folder.replace("ui", "ui/legacy");
       this.load.image(`${key}_legacy`, this.getCachedUrl(`images/${folder}/${filename}`));
     }
+    return this;
   }
 
-  loadSpritesheet(key: string, folder: string, size: number, filename = `${key}.png`) {
+  loadSpritesheet(key: string, folder: string, size: number, filename = `${key}.png`): this {
     this.load.spritesheet(key, this.getCachedUrl(`images/${folder}/${filename}`), {
       frameWidth: size,
       frameHeight: size,
@@ -57,9 +55,10 @@ export class SceneBase extends Phaser.Scene {
         frameHeight: size,
       });
     }
+    return this;
   }
 
-  loadAtlas(key: string, folder: string, filenameRoot = key) {
+  loadAtlas(key: string, folder: string, filenameRoot = key): this {
     if (folder) {
       folder += "/";
     }
@@ -77,27 +76,22 @@ export class SceneBase extends Phaser.Scene {
         this.getCachedUrl(`images/${folder}${filenameRoot}.json`),
       );
     }
+    return this;
   }
 
-  loadSe(key: string, folder?: string, filenames?: string | string[]) {
-    if (!filenames) {
-      filenames = `${key}.wav`;
-    }
-    if (folder) {
-      folder += "/";
-    } else {
-      folder = "se/";
-    }
+  loadSe(key: string, folder = "se", filenames: string | string[] = `${key}.wav`): this {
+    folder += "/";
+
     filenames = coerceArray(filenames);
     for (const f of filenames as string[]) {
+      // TODO: Use actual path joining logic
       this.load.audio(folder + key, this.getCachedUrl(`audio/${folder}${f}`));
     }
+    return this;
   }
 
-  loadBgm(key: string, filename?: string) {
-    if (!filename) {
-      filename = `${key}.mp3`;
-    }
+  loadBgm(key: string, filename = `${key}.mp3`): this {
     this.load.audio(key, this.getCachedUrl(`audio/bgm/${filename}`));
+    return this;
   }
 }
