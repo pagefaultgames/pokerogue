@@ -81,7 +81,7 @@ export class SceneBase extends Phaser.Scene {
 
   loadSe(key: string, folder = "se/", filenames: string | string[] = `${key}.wav`): this {
     if (folder.endsWith("/")) {
-      folder += "/"
+      folder += "/";
     }
 
     filenames = coerceArray(filenames);
