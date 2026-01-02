@@ -33,7 +33,6 @@ export default defineConfig(async config => {
       sequence: {
         sequencer: MySequencer,
       },
-      hideSkippedTests: true,
       includeTaskLocation: true,
       environment: "jsdom",
       environmentOptions: {
