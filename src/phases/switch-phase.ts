@@ -63,12 +63,7 @@ export class SwitchPhase extends PokemonPhase {
   }
 
   private resolvePlayerSwitchInIndex(): void {
-    globalScene.ui.setMode(
-      UiMode.PARTY,
-      PartyUiMode.MODAL_SWITCH,
-      this.fieldIndex,
-      (cursor: number, option: PartyOption) => this.onPartyModeSelection(cursor, option),
-    );
+    globalScene.ui.setMode(UiMode.PARTY, PartyUiMode.MODAL_SWITCH, this.fieldIndex, this.onPartyModeSelection);
   }
 
   private async onPartyModeSelection(cursor: number, option: PartyOption): Promise<void> {
@@ -83,7 +78,6 @@ export class SwitchPhase extends PokemonPhase {
 
   private resolveEnemySwitchInIndex(): void {
     const { trainer } = globalScene.currentBattle;
-
     if (!trainer) {
       throw new Error("SwitchPhase: Enemy Pokemon does not have a trainer!");
     }
@@ -110,7 +104,8 @@ export class SwitchPhase extends PokemonPhase {
     const switchedInPokemon = party[this.switchInIndex];
 
     // Apply pre-switch effects from abilities (e.g. Regenerator)
-    applyAbAttrs("PreSwitchOutAbAttr", { pokemon: activePokemon });
+    const params = { pokemon: activePokemon };
+    applyAbAttrs("PreSwitchOutAbAttr", params);
 
     // Remove all tags applied to the active Pokemon's opponents by the active Pokemon
     // (e.g. "binding" effects from Bind, Fire Spin, etc.)
@@ -143,7 +138,6 @@ export class SwitchPhase extends PokemonPhase {
     party[this.switchInIndex] = activePokemon;
     party[this.fieldIndex] = switchedInPokemon;
 
-    // Mark the switched in Pokemon as having switched in this turn
     if (this.switchType !== SwitchType.INITIAL_SWITCH) {
       switchedInPokemon.turnData.switchedInThisTurn = true;
     }

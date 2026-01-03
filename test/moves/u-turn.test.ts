@@ -134,8 +134,8 @@ describe("Moves - U-turn", () => {
 
     // Make sure feebas' faint phase runs before being switched out (since that was the root cause of the crash)
     const logs = game.phaseInterceptor.log;
-    expect(logs).toContain("SwitchSummonPhase");
+    expect(logs).toContain("SwitchPhase");
     expect(logs).toContain("FaintPhase");
-    expect(logs.indexOf("SwitchSummonPhase")).toBeGreaterThan(logs.indexOf("FaintPhase"));
+    expect(logs.indexOf("SwitchPhase")).toBeGreaterThan(logs.indexOf("FaintPhase"));
   });
 });

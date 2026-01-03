@@ -67,20 +67,13 @@ export abstract class PokemonPhase extends FieldPhase {
    * @returns the {@linkcode TrainerSlot} for this phase's {@linkcode getPokemon | Pokemon},
    * or {@linkcode TrainerSlot.NONE} if the Pokemon does not have a Trainer
    */
-  public getTrainerSlot(): TrainerSlot {
+  protected getTrainerSlot(): TrainerSlot {
     const pokemon = this.getPokemon();
 
-    if (!pokemon.isEnemy()) {
-      return TrainerSlot.NONE;
-    }
-    return pokemon.trainerSlot;
+    return pokemon.isEnemy() ? pokemon.trainerSlot : TrainerSlot.NONE;
   }
 
-  public getAlliedField(): Pokemon[] {
-    return this.player ? globalScene.getPlayerField() : globalScene.getEnemyField();
-  }
-
-  public getOpposingField(): Pokemon[] {
+  protected getOpposingField(): Pokemon[] {
     return this.player ? globalScene.getEnemyField() : globalScene.getPlayerField();
   }
 }

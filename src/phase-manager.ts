@@ -264,7 +264,7 @@ interface BattlerSwitchOutParams {
    * Possible values are:
    *  - `"eager"`: Adds the phase immediately via {@linkcode PhaseManager.unshiftPhase | unshiftPhase}
    *  - `"deferred"`: Adds the phase immediately after all phases queued during this Phase have resolved. \
-   *    Needed for switching moves.
+   *    Used by force switching moves and abilities to queue switch outs after the current move use ends.
    * @defaultValue `"eager"`
    */
   when?: "eager" | "deferred";
@@ -299,6 +299,8 @@ export class PhaseManager {
   /** The phase put on standby if {@linkcode overridePhase} is called */
   private standbyPhase: Phase | null = null;
 
+  // #region Phase Helper Functions
+
   /**
    * Clear all previously set phases, then add a new {@linkcode TitlePhase} to transition to the title screen.
    * @param addLogin - Whether to add a new {@linkcode LoginPhase} before the {@linkcode TitlePhase}
@@ -314,10 +316,8 @@ export class PhaseManager {
     this.unshiftNew("TitlePhase");
   }
 
-  /* Phase Functions */
-
   /**
-   * Unshift a sequence of phases to switch out a Pokemon on the field.
+   * Queue a sequence of phases to switch out a Pokemon on the field.
    * @param battlerIndex - The {@linkcode FieldBattlerIndex} of the Pokemon to switch out
    * @param __namedParameters - Needed for Typedoc to function
    */
@@ -337,7 +337,7 @@ export class PhaseManager {
         this.unshiftPhase(...phases);
         break;
       case "deferred":
-        this.phaseQueue.addPhase(...phases, true);
+        this.phaseQueue.addPhase(phases, true);
         break;
     }
   }
@@ -376,6 +376,8 @@ export class PhaseManager {
         break;
     }
   }
+
+  // #region Phase Helper Functions
 
   /** @returns The currently running {@linkcode Phase}. */
   getCurrentPhase(): Phase {

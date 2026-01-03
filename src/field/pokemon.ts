@@ -1220,7 +1220,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     this.tryPlaySprite(this.getSprite(), this.getTintSprite()!, this.getBattleSpriteKey()); // TODO: is the bang correct?
   }
 
-  getFieldPositionOffset(): [number, number] {
+  getFieldPositionOffset(): [x: number, y: number] {
     switch (this.fieldPosition) {
       case FieldPosition.CENTER:
         return [0, 0];
@@ -1278,9 +1278,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     this.fieldPosition = fieldPosition;
 
-    this.battleInfo //
-      .setMini(fieldPosition !== FieldPosition.CENTER)
-      .setOffset(fieldPosition === FieldPosition.RIGHT);
+    // TODO: These should method chain
+    this.battleInfo.setMini(fieldPosition !== FieldPosition.CENTER);
+    this.battleInfo.setOffset(fieldPosition === FieldPosition.RIGHT);
 
     const newOffset = this.getFieldPositionOffset();
 
@@ -3201,7 +3201,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       this["battleInfo"].expMaskRect.x -= 150;
     }
     this.battleInfo.setVisible(false);
-    this.battleInfo.setX(this.battleInfo.x - (this.isPlayer() ? 150 : !this.isBoss() ? -150 : -198));
+    this.battleInfo.setX(this.battleInfo.x - (this.isPlayer() ? 150 : this.isBoss() ? -198 : -150));
   }
 
   updateInfo(instant?: boolean): Promise<void> {
