@@ -16,7 +16,7 @@ import type { PositionalTagType } from "#enums/positional-tag-type";
 import type { BattleStat, EffectiveStat } from "#enums/stat";
 import type { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
-import { PokemonMove } from "#moves/pokemon-move";
+import type { PokemonMove } from "#moves/pokemon-move";
 import type { OneOther } from "#test/@types/test-helpers";
 import type { GameManager } from "#test/test-utils/game-manager";
 import type { toHaveArenaTagOptions } from "#test/test-utils/matchers/to-have-arena-tag";
@@ -68,15 +68,17 @@ interface GenericMatchers<T> {
   toEqualUnsorted: T extends (infer U)[] ? (expected: U[]) => void : never;
 
   /**
-   * Check whether a {@linkcode Map} contains the given key, disregarding its value.
+   * Check whether a {@linkcode Map} contains the given key.
    * @param expectedKey - The key whose inclusion is being checked
+   * @param expectedValue - The desired value for the given key-value pair;
+   * if omitted, will only check that the given key exists (disregarding its value)
    * @privateRemarks
    * While this functionality _could_ be simulated by writing
    * `expect(x.get(y)).toBeDefined()` or
    * `expect(x).toContain([y, expect.anything()])`,
-   * this is still preferred due to being more ergonomic and provides better error messsages.
+   * this is preferred due to being more ergonomic and providing better error handling.
    */
-  toHaveKey: T extends Map<infer K, unknown> ? (expectedKey: K) => void : never;
+  toHaveKey: T extends Map<infer K, infer V> ? (expectedKey: K, expectedValue?: V) => void : never;
 }
 // #endregion Generic Matchers
 

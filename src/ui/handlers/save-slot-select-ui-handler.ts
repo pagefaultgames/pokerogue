@@ -397,12 +397,12 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
       const hasData = session.hasData && !session.malformed;
       // If the session slot lacks session data, it does not move from its default, central position.
       // Only session slots with session data will move leftwards and have a visible arrow.
-      if (!hasData) {
-        this.cursorObj.setPosition(151, 20 + cursorIncrement);
-        this.sessionSlots[cursorPosition].setPosition(0, cursorIncrement);
-      } else {
+      if (hasData) {
         this.cursorObj.setPosition(145, 20 + cursorIncrement);
         this.sessionSlots[cursorPosition].setPosition(-6, cursorIncrement);
+      } else {
+        this.cursorObj.setPosition(151, 20 + cursorIncrement);
+        this.sessionSlots[cursorPosition].setPosition(0, cursorIncrement);
       }
       this.setArrowVisibility(hasData);
     }
