@@ -48,11 +48,11 @@ export class SwitchSummonPhase extends SummonPhase {
       if (this.slotIndex === -1) {
         //@ts-expect-error
         this.slotIndex = globalScene.currentBattle.trainer?.getNextSummonIndex(
-          !this.fieldIndex ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
+          this.fieldIndex ? TrainerSlot.TRAINER_PARTNER : TrainerSlot.TRAINER,
         ); // TODO: what would be the default trainer-slot fallback?
       }
       if (this.slotIndex > -1) {
-        this.showEnemyTrainer(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER);
+        this.showEnemyTrainer(this.fieldIndex % 2 ? TrainerSlot.TRAINER_PARTNER : TrainerSlot.TRAINER);
         globalScene.pbTrayEnemy.showPbTray(globalScene.getEnemyParty());
       }
     }
@@ -95,7 +95,7 @@ export class SwitchSummonPhase extends SummonPhase {
           })
         : i18next.t("battle:trainerComeBack", {
             trainerName: globalScene.currentBattle.trainer?.getName(
-              !(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
+              this.fieldIndex % 2 ? TrainerSlot.TRAINER_PARTNER : TrainerSlot.TRAINER,
             ),
             pokemonName: pokemon.getNameToRender(),
           }),
@@ -284,7 +284,7 @@ export class SwitchSummonPhase extends SummonPhase {
     // "Trainer sent out XYZ!"
     return i18next.t("battle:trainerGo", {
       trainerName: globalScene.currentBattle.trainer?.getName(
-        !(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
+        this.fieldIndex % 2 ? TrainerSlot.TRAINER_PARTNER : TrainerSlot.TRAINER,
       ),
       pokemonName: this.getPokemon().getNameToRender(),
     });

@@ -5,7 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe.each<{ name: string; move: MoveId; message: () => string }>([
   { name: "Splash", move: MoveId.SPLASH, message: () => i18next.t("moveTriggers:splash") },
@@ -22,10 +22,6 @@ describe.each<{ name: string; move: MoveId; message: () => string }>([
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {

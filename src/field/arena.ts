@@ -139,7 +139,7 @@ export class Arena {
         || globalScene.gameMode.isClassic
         || globalScene.gameMode.isWaveFinal(waveIndex));
 
-    // TODO: Rather than reducing the roll ceiling, scale boss
+    // TODO: Rather than reducing the roll ceiling, scaling boss numbers down proportionally would make this far more comprehensible
     const rollMax = isBossSpecies ? 64 : 512;
 
     // Luck reduces the RNG ceiling by 0.5x for bosses or 2x otherwise
@@ -277,9 +277,16 @@ export class Arena {
       this.trainerPool[BiomePoolTier.BOSS].length > 0
       && (globalScene.gameMode.isTrainerBoss(waveIndex, this.biomeType, globalScene.offsetGym) || isBoss);
     console.log(isBoss, this.trainerPool);
-    const tierValue = randSeedInt(!isTrainerBoss ? 512 : 64);
-    let tier = !isTrainerBoss
-      ? tierValue >= 156
+    const tierValue = randSeedInt(isTrainerBoss ? 64 : 512);
+    let tier = isTrainerBoss
+      ? tierValue >= 20
+        ? BiomePoolTier.BOSS
+        : tierValue >= 6
+          ? BiomePoolTier.BOSS_RARE
+          : tierValue >= 1
+            ? BiomePoolTier.BOSS_SUPER_RARE
+            : BiomePoolTier.BOSS_ULTRA_RARE
+      : tierValue >= 156
         ? BiomePoolTier.COMMON
         : tierValue >= 32
           ? BiomePoolTier.UNCOMMON
@@ -287,14 +294,7 @@ export class Arena {
             ? BiomePoolTier.RARE
             : tierValue >= 1
               ? BiomePoolTier.SUPER_RARE
-              : BiomePoolTier.ULTRA_RARE
-      : tierValue >= 20
-        ? BiomePoolTier.BOSS
-        : tierValue >= 6
-          ? BiomePoolTier.BOSS_RARE
-          : tierValue >= 1
-            ? BiomePoolTier.BOSS_SUPER_RARE
-            : BiomePoolTier.BOSS_ULTRA_RARE;
+              : BiomePoolTier.ULTRA_RARE;
     console.log(BiomePoolTier[tier]);
     while (tier && this.trainerPool[tier].length === 0) {
       console.log(`Downgraded trainer rarity tier from ${BiomePoolTier[tier]} to ${BiomePoolTier[tier - 1]}`);

@@ -1,4 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import { MOVE_COLOR } from "#app/constants/colors";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
@@ -109,24 +110,36 @@ export class MovePhase extends PokemonPhase {
   public start(): void {
     super.start();
 
-    if (!this.pokemon.isActive(true)) {
+    const user = this.pokemon;
+
+    // Fallback - end phase early if the user is removed from the field or faints
+    // before using a move.
+    // TODO: Cancel the user's queued `MovePhase`s when they leave the field -
+    // force switching a pokemon out and back in should not let them use a move
+    if (!user.isActive(true)) {
       this.end();
       return;
     }
 
-    const user = this.pokemon;
+    const { useMode } = this;
+    const ignoreStatus = isIgnoreStatus(useMode);
+    const isFollowUp = useMode === MoveUseMode.FOLLOW_UP;
 
-    // Removing Glaive Rush's two flags *always* happens first
+    console.log(
+      `%cUser: ${user.name}`
+        + `\nMove: ${MoveId[this.move.moveId]}`
+        + `\nUse Mode: ${enumValueToKey(MoveUseMode, this.useMode)}`,
+      `color:${MOVE_COLOR}`,
+    );
+
+    // Removing Glaive Rush's two flags happens before everything else
     user.removeTag(BattlerTagType.ALWAYS_GET_HIT);
     user.removeTag(BattlerTagType.RECEIVE_DOUBLE_DAMAGE);
-    console.log(MoveId[this.move.moveId], enumValueToKey(MoveUseMode, this.useMode));
 
     // For the purposes of payback and kin, the pokemon is considered to have acted
     // if it attempted to move at all.
     user.turnData.acted = true;
-    const useMode = this.useMode;
-    const ignoreStatus = isIgnoreStatus(useMode);
-    const isFollowUp = useMode === MoveUseMode.FOLLOW_UP;
+
     if (!ignoreStatus) {
       this.firstFailureCheck();
       user.lapseTags(BattlerTagLapseType.PRE_MOVE);
@@ -774,7 +787,6 @@ export class MovePhase extends PokemonPhase {
     }
 
     if (this.thirdFailureCheck()) {
-      console.log("Move failed during third failure check");
       return;
     }
 

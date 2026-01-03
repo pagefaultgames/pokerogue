@@ -290,7 +290,7 @@ export class MoveHelper extends GameManagerHelper {
    * Does not require the given move to be in the enemy's moveset beforehand,
    * but **overwrites the pokemon's moveset** and **disables any prior moveset overrides**!
    *
-   * @param moveId - The {@linkcode Move | move ID} the enemy will be forced to use.
+   * @param moveId - The {@linkcode MoveId | move ID} the enemy will be forced to use.
    * @param target - The {@linkcode BattlerIndex | target} against which the enemy will use the given move;
    * defaults to normal target selection priorities if omitted or not single-target.
    * @param tera - (Default `false`) If set to `true`, will also force the enemy to terastallize on their next action,

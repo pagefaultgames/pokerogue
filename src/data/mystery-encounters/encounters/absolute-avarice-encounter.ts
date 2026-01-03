@@ -188,8 +188,9 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
   .withOnInit(() => {
     const encounter = globalScene.currentBattle.mysteryEncounter!;
 
-    globalScene.loadSe("PRSFX- Bug Bite", "battle_anims", "PRSFX- Bug Bite.wav");
-    globalScene.loadSe("Follow Me", "battle_anims", "Follow Me.mp3");
+    globalScene
+      .loadSe("PRSFX- Bug Bite", "battle_anims", "PRSFX- Bug Bite.wav")
+      .loadSe("Follow Me", "battle_anims", "Follow Me.mp3");
 
     // Get all player berry items, remove from party, and store reference
     const berryItems = globalScene.findModifiers(m => m instanceof BerryModifier) as BerryModifier[];

@@ -6,7 +6,7 @@ import { GameManager } from "#test/test-utils/game-manager";
 import { NumberHolder, randInt } from "#utils/common";
 import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Items - Thick Club", () => {
   let phaserGame: Phaser.Game;
@@ -16,10 +16,6 @@ describe("Items - Thick Club", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {

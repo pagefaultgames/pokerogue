@@ -8,7 +8,7 @@ export class PokemonSpriteSparkleHandler {
 
   private counterTween?: Phaser.Tweens.Tween;
 
-  setup(): void {
+  setup(): this {
     this.sprites = new Set();
     this.counterTween = globalScene.tweens.addCounter({
       duration: fixedInt(200),
@@ -18,6 +18,7 @@ export class PokemonSpriteSparkleHandler {
       repeat: -1,
       onRepeat: () => this.onLapse(),
     });
+    return this;
   }
 
   onLapse(): void {

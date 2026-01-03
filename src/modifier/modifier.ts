@@ -218,10 +218,10 @@ export abstract class PersistentModifier extends Modifier {
 
   incrementStack(amount: number, virtual: boolean): boolean {
     if (this.getStackCount() + amount <= this.getMaxStackCount()) {
-      if (!virtual) {
-        this.stackCount += amount;
-      } else {
+      if (virtual) {
         this.virtualStackCount += amount;
+      } else {
+        this.stackCount += amount;
       }
       return true;
     }
@@ -694,9 +694,11 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
   }
 
   getIcon(forSummary?: boolean): Phaser.GameObjects.Container {
-    const container = !forSummary ? globalScene.add.container(0, 0) : super.getIcon();
+    const container = forSummary ? super.getIcon() : globalScene.add.container(0, 0);
 
-    if (!forSummary) {
+    if (forSummary) {
+      container.setScale(0.5);
+    } else {
       const pokemon = this.getPokemon();
       if (pokemon) {
         const pokemonIcon = globalScene.addPokemonIcon(pokemon, -2, 10, 0, 0.5, undefined, true);
@@ -719,8 +721,6 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
       if (virtualStackText) {
         container.add(virtualStackText);
       }
-    } else {
-      container.setScale(0.5);
     }
 
     return container;

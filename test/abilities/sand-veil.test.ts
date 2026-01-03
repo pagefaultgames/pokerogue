@@ -9,7 +9,7 @@ import { MoveEndPhase } from "#phases/move-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import type { StatMultiplierAbAttrParams } from "#types/ability-types";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("Abilities - Sand Veil", () => {
   let phaserGame: Phaser.Game;
@@ -19,10 +19,6 @@ describe("Abilities - Sand Veil", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {

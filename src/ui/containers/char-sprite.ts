@@ -13,18 +13,19 @@ export class CharSprite extends Phaser.GameObjects.Container {
     super(globalScene, globalScene.scaledCanvas.width + 32, -42);
   }
 
-  setup(): void {
-    [this.sprite, this.transitionSprite] = new Array(2).fill(null).map(() => {
-      const ret = globalScene.add.sprite(0, 0, "", "");
-      ret.setOrigin(0.5, 1);
-      this.add(ret);
-      return ret;
-    });
-
-    this.transitionSprite.setVisible(false);
+  setup(): this {
+    this.sprite = globalScene.add //
+      .sprite(0, 0, "", "")
+      .setOrigin(0.5, 1);
+    this.transitionSprite = globalScene.add //
+      .sprite(0, 0, "", "")
+      .setOrigin(0.5, 1)
+      .setVisible(false);
+    this.add([this.sprite, this.transitionSprite]);
 
     this.setVisible(false);
     this.shown = false;
+    return this;
   }
 
   showCharacter(key: string, variant: string): Promise<void> {

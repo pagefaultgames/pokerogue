@@ -7,7 +7,7 @@ import type { Pokemon } from "#field/pokemon";
 import type { ContactHeldItemTransferChanceModifier } from "#modifiers/modifier";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Items - Grip Claw", () => {
   let phaserGame: Phaser.Game;
@@ -17,10 +17,6 @@ describe("Items - Grip Claw", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {

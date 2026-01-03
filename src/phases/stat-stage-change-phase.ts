@@ -86,9 +86,7 @@ export class StatStageChangePhase extends PokemonPhase {
     /** Gets the position of last enemy or player pokemon that used ability or move, primarily for double battles involving Mirror Armor */
     if (pokemon.isPlayer()) {
       /** If this SSCP is not from sticky web, then we find the opponent pokemon that last did something */
-      if (!this.comingFromStickyWeb) {
-        opponentPokemon = globalScene.getEnemyField()[globalScene.currentBattle.lastEnemyInvolved];
-      } else {
+      if (this.comingFromStickyWeb) {
         /** If this SSCP is from sticky web, then check if pokemon that last sucessfully used sticky web is on field */
         const stickyTagID = globalScene.arena.findTagsOnSide(
           (t: ArenaTag) => t.tagType === ArenaTagType.STICKY_WEB,
@@ -99,10 +97,10 @@ export class StatStageChangePhase extends PokemonPhase {
             opponentPokemon = e;
           }
         });
+      } else {
+        opponentPokemon = globalScene.getEnemyField()[globalScene.currentBattle.lastEnemyInvolved];
       }
-    } else if (!this.comingFromStickyWeb) {
-      opponentPokemon = globalScene.getPlayerField()[globalScene.currentBattle.lastPlayerInvolved];
-    } else {
+    } else if (this.comingFromStickyWeb) {
       const stickyTagID = globalScene.arena.findTagsOnSide(
         (t: ArenaTag) => t.tagType === ArenaTagType.STICKY_WEB,
         ArenaTagSide.ENEMY,
@@ -112,6 +110,8 @@ export class StatStageChangePhase extends PokemonPhase {
           opponentPokemon = e;
         }
       });
+    } else {
+      opponentPokemon = globalScene.getPlayerField()[globalScene.currentBattle.lastPlayerInvolved];
     }
 
     if (!pokemon.isActive(true)) {

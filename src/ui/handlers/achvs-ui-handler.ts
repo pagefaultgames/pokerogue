@@ -211,7 +211,7 @@ export class AchvsUiHandler extends MessageUiHandler {
     const unlocked = achvUnlocks.hasOwnProperty(achv.id);
     const hidden = !unlocked && achv.secret && (!achv.parentId || !achvUnlocks.hasOwnProperty(achv.parentId));
     this.titleText.setText(unlocked ? achv.name : "???");
-    this.showText(!hidden ? achv.description : "");
+    this.showText(hidden ? "" : achv.description);
     this.scoreText.setText(`${achv.score}pt`);
     this.unlockText.setText(
       unlocked ? new Date(achvUnlocks[achv.id]).toLocaleDateString() : i18next.t("achv:locked.name"),
@@ -468,7 +468,7 @@ export class AchvsUiHandler extends MessageUiHandler {
         const achv = item as Achv;
         const hidden = !unlocked && achv.secret && (!achv.parentId || !unlocks.hasOwnProperty(achv.parentId));
         tinted &&= !hidden;
-        icon.setFrame(!hidden ? achv.iconImage : "unknown");
+        icon.setFrame(hidden ? "unknown" : achv.iconImage);
       } else {
         icon.setFrame(getVoucherTypeIcon((item as Voucher).voucherType));
       }

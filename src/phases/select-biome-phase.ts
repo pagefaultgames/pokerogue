@@ -54,7 +54,7 @@ export class SelectBiomePhase extends BattlePhase {
     } else if (Array.isArray(biomeLinks[currentBiome])) {
       const biomes: BiomeId[] = (biomeLinks[currentBiome] as (BiomeId | [BiomeId, number])[])
         .filter(b => !Array.isArray(b) || !randSeedInt(b[1]))
-        .map(b => (!Array.isArray(b) ? b : b[0]));
+        .map(b => (Array.isArray(b) ? b[0] : b));
 
       if (biomes.length > 1 && globalScene.findModifier(m => m instanceof MapModifier)) {
         const biomeSelectItems = biomes.map(b => {

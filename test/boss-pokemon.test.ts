@@ -6,7 +6,7 @@ import type { EnemyPokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
 import { toDmgValue } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Boss Pokemon / Shields", () => {
   let phaserGame: Phaser.Game;
@@ -16,10 +16,6 @@ describe("Boss Pokemon / Shields", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {

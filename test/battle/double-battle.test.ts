@@ -9,7 +9,7 @@ import { BattleEndPhase } from "#phases/battle-end-phase";
 import { TurnInitPhase } from "#phases/turn-init-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Double Battles", () => {
   const DOUBLE_CHANCE = 8; // Normal chance of double battle is 1/8
@@ -21,10 +21,6 @@ describe("Double Battles", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {

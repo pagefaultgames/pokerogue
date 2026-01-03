@@ -13,7 +13,7 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import { mockI18next } from "#test/test-utils/test-utils";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 const pokemonName = "PKM";
 const sourceText = "SOURCE";
@@ -308,10 +308,6 @@ describe("Status Effects", () => {
       });
     });
 
-    afterEach(() => {
-      game.phaseInterceptor.restoreOg();
-    });
-
     beforeEach(() => {
       game = new GameManager(phaserGame);
 
@@ -344,10 +340,6 @@ describe("Status Effects", () => {
       phaserGame = new Phaser.Game({
         type: Phaser.HEADLESS,
       });
-    });
-
-    afterEach(() => {
-      game.phaseInterceptor.restoreOg();
     });
 
     beforeEach(() => {
@@ -400,10 +392,6 @@ describe("Status Effects", () => {
       phaserGame = new Phaser.Game({
         type: Phaser.HEADLESS,
       });
-    });
-
-    afterEach(() => {
-      game.phaseInterceptor.restoreOg();
     });
 
     beforeEach(() => {

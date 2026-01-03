@@ -8,7 +8,7 @@ import { GameManager } from "#test/test-utils/game-manager";
 import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { type PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 // TODO: Resolve issues with UI test state corruption
 describe.todo("UI - Transfer Items", () => {
@@ -19,10 +19,6 @@ describe.todo("UI - Transfer Items", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(async () => {

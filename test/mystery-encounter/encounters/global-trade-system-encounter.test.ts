@@ -17,7 +17,7 @@ import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test
 import { GameManager } from "#test/test-utils/game-manager";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import * as Utils from "#utils/common";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/globalTradeSystem";
 const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
@@ -49,10 +49,6 @@ describe("Global Trade System - Mystery Encounter", () => {
       biomeMap.set(biome, [MysteryEncounterType.GLOBAL_TRADE_SYSTEM]);
     });
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(biomeMap);
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   it("should have the correct properties", async () => {

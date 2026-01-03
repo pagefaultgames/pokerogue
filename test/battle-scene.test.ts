@@ -1,6 +1,6 @@
 import { LoadingScene } from "#app/loading-scene";
 import { GameManager } from "#test/test-utils/game-manager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("BattleScene", () => {
   let phaserGame: Phaser.Game;
@@ -14,10 +14,6 @@ describe("BattleScene", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   it("should remove LoadingScene on create", () => {

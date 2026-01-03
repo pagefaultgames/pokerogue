@@ -7,7 +7,7 @@ import { ObtainStatusEffectPhase } from "#phases/obtain-status-effect-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import type { PostAttackContactApplyStatusEffectAbAttr } from "#types/ability-types";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("Status Effects - General", () => {
   let phaserGame: Phaser.Game;
@@ -17,10 +17,6 @@ describe("Status Effects - General", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {

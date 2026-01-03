@@ -5,7 +5,7 @@ import { Stat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
 import { StatStageChangePhase } from "#phases/stat-stage-change-phase";
 import { GameManager } from "#test/test-utils/game-manager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 beforeEach(() => {
   vi.spyOn(messages, "getPokemonNameWithAffix").mockImplementation(() => "");
@@ -20,10 +20,6 @@ describe("BattlerTag - StockpilingTag", () => {
       type: Phaser.HEADLESS,
     });
     game = new GameManager(phaserGame);
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   describe("onAdd", () => {

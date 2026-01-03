@@ -4,7 +4,7 @@ import { EggTier } from "#enums/egg-type";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Manaphy Eggs", () => {
   let phaserGame: Phaser.Game;
@@ -17,10 +17,6 @@ describe("Manaphy Eggs", () => {
       type: Phaser.HEADLESS,
     });
     game = new GameManager(phaserGame);
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(async () => {

@@ -112,7 +112,7 @@ export class PokemonSummonData {
   public tags: BattlerTag[] = [];
   public abilitySuppressed = false;
 
-  // Overrides for transform.
+  // Overrides for transform and company.
   // TODO: Move these into a separate class & add rage fist hit count
   public speciesForm: PokemonSpeciesForm | null = null;
   public fusionSpeciesForm: PokemonSpeciesForm | null = null;

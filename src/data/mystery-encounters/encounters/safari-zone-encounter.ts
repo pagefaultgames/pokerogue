@@ -102,11 +102,12 @@ export const SafariZoneEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         };
         updatePlayerMoney(-(encounter.options[0].requirements[0] as MoneyRequirement).requiredMoney);
         // Load bait/mud assets
-        globalScene.loadSe("PRSFX- Bug Bite", "battle_anims", "PRSFX- Bug Bite.wav");
-        globalScene.loadSe("PRSFX- Sludge Bomb2", "battle_anims", "PRSFX- Sludge Bomb2.wav");
-        globalScene.loadSe("PRSFX- Taunt2", "battle_anims", "PRSFX- Taunt2.wav");
-        globalScene.loadAtlas("safari_zone_bait", "mystery-encounters");
-        globalScene.loadAtlas("safari_zone_mud", "mystery-encounters");
+        globalScene
+          .loadSe("PRSFX- Bug Bite", "battle_anims", "PRSFX- Bug Bite.wav")
+          .loadSe("PRSFX- Sludge Bomb2", "battle_anims", "PRSFX- Sludge Bomb2.wav")
+          .loadSe("PRSFX- Taunt2", "battle_anims", "PRSFX- Taunt2.wav")
+          .loadAtlas("safari_zone_bait", "mystery-encounters")
+          .loadAtlas("safari_zone_mud", "mystery-encounters");
         // Clear enemy party
         globalScene.currentBattle.enemyParty = [];
         await transitionMysteryEncounterIntroVisuals();
@@ -210,10 +211,10 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
       tryChangeCatchStage(2);
       // 80% chance to increase flee stage +1
       const fleeChangeResult = tryChangeFleeStage(1, 8);
-      if (!fleeChangeResult) {
-        await showEncounterText(getEncounterText(`${namespace}:safari.busyEating`) ?? "", null, 1000, false);
-      } else {
+      if (fleeChangeResult) {
         await showEncounterText(getEncounterText(`${namespace}:safari.eating`) ?? "", null, 1000, false);
+      } else {
+        await showEncounterText(getEncounterText(`${namespace}:safari.busyEating`) ?? "", null, 1000, false);
       }
 
       await doEndTurn(1);
@@ -238,10 +239,10 @@ const safariZoneGameOptions: MysteryEncounterOption[] = [
       tryChangeFleeStage(-2);
       // 80% chance to decrease catch stage -1
       const catchChangeResult = tryChangeCatchStage(-1, 8);
-      if (!catchChangeResult) {
-        await showEncounterText(getEncounterText(`${namespace}:safari.besideItselfAngry`) ?? "", null, 1000, false);
-      } else {
+      if (catchChangeResult) {
         await showEncounterText(getEncounterText(`${namespace}:safari.angry`) ?? "", null, 1000, false);
+      } else {
+        await showEncounterText(getEncounterText(`${namespace}:safari.besideItselfAngry`) ?? "", null, 1000, false);
       }
 
       await doEndTurn(2);
