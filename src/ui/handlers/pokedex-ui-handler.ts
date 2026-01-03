@@ -1064,12 +1064,12 @@ export class PokedexUiHandler extends MessageUiHandler {
         error = true;
       }
     } else if (button === Button.CYCLE_SHINY) {
-      if (!this.showingTray) {
+      if (this.showingTray) {
+        error = true;
+      } else {
         this.showDecorations = !this.showDecorations;
         this.updateScroll();
         success = true;
-      } else {
-        error = true;
       }
     } else if (this.filterMode) {
       switch (button) {
@@ -1122,10 +1122,10 @@ export class PokedexUiHandler extends MessageUiHandler {
           }
           break;
         case Button.ACTION:
-          if (!this.filterBar.openDropDown) {
-            this.filterBar.toggleDropDown(this.filterBarCursor);
-          } else {
+          if (this.filterBar.openDropDown) {
             this.filterBar.toggleOptionState();
+          } else {
+            this.filterBar.toggleDropDown(this.filterBarCursor);
           }
           success = true;
           break;

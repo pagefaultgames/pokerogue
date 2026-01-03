@@ -2003,9 +2003,6 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.HOUNDOOM], TrainerSlot.TRAINER, true, p => {
-        if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
-          p.setBoss(true, 2);
-        }
         p.abilityIndex = 1; // Flash Fire
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
