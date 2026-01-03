@@ -220,8 +220,9 @@ export class EncounterPhase extends BattlePhase {
       // Load Mystery Encounter Exclamation bubble and sfx
       loadEnemyAssets.push(
         new Promise<void>(resolve => {
-          globalScene.loadSe("GEN8- Exclaim", "battle_anims", "GEN8- Exclaim.wav");
-          globalScene.loadImage("encounter_exclaim", "mystery-encounters");
+          globalScene
+            .loadSe("GEN8- Exclaim", "battle_anims", "GEN8- Exclaim.wav")
+            .loadImage("encounter_exclaim", "mystery-encounters");
           globalScene.load.once(Phaser.Loader.Events.COMPLETE, () => resolve());
           if (!globalScene.load.isLoading()) {
             globalScene.load.start();

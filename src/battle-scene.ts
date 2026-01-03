@@ -130,6 +130,7 @@ import { PokemonInfoContainer } from "#ui/pokemon-info-container";
 import { addTextObject, getTextColor } from "#ui/text";
 import { UI } from "#ui/ui";
 import { addUiThemeOverrides } from "#ui/ui-theme";
+import { playTween } from "#utils/anim-utils";
 import {
   BooleanHolder,
   fixedInt,
@@ -331,6 +332,7 @@ export class BattleScene extends SceneBase {
 
   /** A helper class containing several animation-related functions. */
   public readonly animations: Animation = new Animation();
+  declare renderer: Phaser.Renderer.WebGL.WebGLRenderer;
 
   constructor() {
     super("battle");
@@ -395,10 +397,9 @@ export class BattleScene extends SceneBase {
     this.load.setBaseURL();
 
     this.spritePipeline = new SpritePipeline(this.game);
-    (this.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.add("Sprite", this.spritePipeline);
-
+    this.renderer.pipelines.add("Sprite", this.spritePipeline);
     this.fieldSpritePipeline = new FieldSpritePipeline(this.game);
-    (this.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.add("FieldSprite", this.fieldSpritePipeline);
+    this.renderer.pipelines.add("FieldSprite", this.fieldSpritePipeline);
 
     this.launchBattle();
   }
@@ -409,30 +410,31 @@ export class BattleScene extends SceneBase {
 
   // TODO: Split this up into multiple sub-methods
   launchBattle() {
-    this.arenaBg = this.add.sprite(0, 0, "plains_bg");
-    this.arenaBg.setName("sprite-arena-bg");
-    this.arenaBgTransition = this.add.sprite(0, 0, "plains_bg");
-    this.arenaBgTransition.setName("sprite-arena-bg-transition");
+    this.arenaBg = this.add
+      .sprite(0, 0, "plains_bg")
+      .setName("sprite-arena-bg")
+      .setPipeline(this.fieldSpritePipeline)
+      .setScale(6)
+      .setOrigin(0)
+      .setSize(320, 240);
+    this.arenaBgTransition = this.add
+      .sprite(0, 0, "plains_bg")
+      .setName("sprite-arena-bg-transition")
+      .setPipeline(this.fieldSpritePipeline)
+      .setScale(6)
+      .setOrigin(0)
+      .setSize(320, 240)
+      .setVisible(false);
 
-    for (const a of [this.arenaBgTransition, this.arenaBg]) {
-      a.setPipeline(this.fieldSpritePipeline);
-      a.setScale(6);
-      a.setOrigin(0);
-      a.setSize(320, 240);
-    }
-
-    const field = this.add.container(0, 0);
-    field.setName("field");
-    field.setScale(6);
-
-    this.field = field;
-
-    const fieldUI = this.add.container(0, this.game.canvas.height);
-    fieldUI.setName("field-ui");
-    fieldUI.setDepth(1);
-    fieldUI.setScale(6);
-
-    this.fieldUI = fieldUI;
+    this.field = this.add //
+      .container(0, 0)
+      .setName("field")
+      .setScale(6);
+    this.fieldUI = this.add //
+      .container(0, this.game.canvas.height)
+      .setName("field-ui")
+      .setDepth(1)
+      .setScale(6);
 
     const transition = this.make.rexTransitionImagePack(
       {
@@ -462,95 +464,73 @@ export class BattleScene extends SceneBase {
     transition.once("complete", () => {
       transition.destroy();
     });
-
     this.add.existing(transition);
 
-    const uiContainer = this.add.container(0, 0);
-    uiContainer.setName("ui");
-    uiContainer.setDepth(2);
-    uiContainer.setScale(6);
-
-    this.uiContainer = uiContainer;
+    this.uiContainer = this.add //
+      .container(0, 0)
+      .setName("ui")
+      .setDepth(2)
+      .setScale(6);
 
     const overlayWidth = this.scaledCanvas.width;
     const overlayHeight = this.scaledCanvas.height - 48;
-    this.fieldOverlay = this.add.rectangle(0, overlayHeight * -1 - 48, overlayWidth, overlayHeight, 0x424242);
-    this.fieldOverlay.setName("rect-field-overlay");
-    this.fieldOverlay.setOrigin(0, 0);
-    this.fieldOverlay.setAlpha(0);
-    this.fieldUI.add(this.fieldOverlay);
-
-    this.shopOverlay = this.add.rectangle(0, overlayHeight * -1 - 48, overlayWidth, overlayHeight, 0x070707);
-    this.shopOverlay.setName("rect-shop-overlay");
-    this.shopOverlay.setOrigin(0, 0);
-    this.shopOverlay.setAlpha(0);
-    this.fieldUI.add(this.shopOverlay);
+    this.fieldOverlay = this.add
+      .rectangle(0, overlayHeight * -1 - 48, overlayWidth, overlayHeight, 0x424242)
+      .setName("rect-field-overlay")
+      .setOrigin(0)
+      .setAlpha(0);
+    this.shopOverlay = this.add
+      .rectangle(0, overlayHeight * -1 - 48, overlayWidth, overlayHeight, 0x070707)
+      .setName("rect-shop-overlay")
+      .setOrigin(0)
+      .setAlpha(0);
 
     this.modifiers = [];
     this.enemyModifiers = [];
 
-    this.modifierBar = new ModifierBar();
-    this.modifierBar.setName("modifier-bar");
+    this.modifierBar = new ModifierBar() //
+      .setName("modifier-bar");
     this.add.existing(this.modifierBar);
-    uiContainer.add(this.modifierBar);
 
-    this.enemyModifierBar = new ModifierBar(true);
-    this.enemyModifierBar.setName("enemy-modifier-bar");
+    this.enemyModifierBar = new ModifierBar(true) //
+      .setName("enemy-modifier-bar");
     this.add.existing(this.enemyModifierBar);
-    uiContainer.add(this.enemyModifierBar);
 
-    this.charSprite = new CharSprite();
-    this.charSprite.setName("sprite-char");
-    this.charSprite.setup();
+    this.charSprite = new CharSprite() //
+      .setName("sprite-char")
+      .setup();
+    this.pbTray = new PokeballTray(true) //
+      .setName("pb-tray")
+      .setup();
+    this.pbTrayEnemy = new PokeballTray(false) //
+      .setName("enemy-pb-tray")
+      .setup();
+    this.abilityBar = new AbilityBar() //
+      .setName("ability-bar")
+      .setup();
+    this.partyExpBar = new PartyExpBar() //
+      .setName("party-exp-bar")
+      .setup();
 
-    this.fieldUI.add(this.charSprite);
+    this.candyBar = new CandyBar() //
+      .setName("candy-bar")
+      .setup();
 
-    this.pbTray = new PokeballTray(true);
-    this.pbTray.setName("pb-tray");
-    this.pbTray.setup();
+    this.biomeWaveText = addTextObject(this.scaledCanvas.width - 2, 0, startingWave.toString(), TextStyle.BATTLE_INFO)
+      .setName("text-biome-wave")
+      .setOrigin(1, 0.5);
+    this.moneyText = addTextObject(this.scaledCanvas.width - 2, 0, "", TextStyle.MONEY)
+      .setName("text-money")
+      .setOrigin(1, 0.5);
 
-    this.pbTrayEnemy = new PokeballTray(false);
-    this.pbTrayEnemy.setName("enemy-pb-tray");
-    this.pbTrayEnemy.setup();
+    this.scoreText = addTextObject(this.scaledCanvas.width - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" })
+      .setName("text-score")
+      .setOrigin(1, 0.5);
 
-    this.fieldUI.add(this.pbTray);
-    this.fieldUI.add(this.pbTrayEnemy);
-
-    this.abilityBar = new AbilityBar();
-    this.abilityBar.setName("ability-bar");
-    this.abilityBar.setup();
-    this.fieldUI.add(this.abilityBar);
-
-    this.partyExpBar = new PartyExpBar();
-    this.partyExpBar.setName("party-exp-bar");
-    this.partyExpBar.setup();
-    this.fieldUI.add(this.partyExpBar);
-
-    this.candyBar = new CandyBar();
-    this.candyBar.setName("candy-bar");
-    this.candyBar.setup();
-    this.fieldUI.add(this.candyBar);
-
-    this.biomeWaveText = addTextObject(this.scaledCanvas.width - 2, 0, startingWave.toString(), TextStyle.BATTLE_INFO);
-    this.biomeWaveText.setName("text-biome-wave");
-    this.biomeWaveText.setOrigin(1, 0.5);
-    this.fieldUI.add(this.biomeWaveText);
-
-    this.moneyText = addTextObject(this.scaledCanvas.width - 2, 0, "", TextStyle.MONEY);
-    this.moneyText.setName("text-money");
-    this.moneyText.setOrigin(1, 0.5);
-    this.fieldUI.add(this.moneyText);
-
-    this.scoreText = addTextObject(this.scaledCanvas.width - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" });
-    this.scoreText.setName("text-score");
-    this.scoreText.setOrigin(1, 0.5);
-    this.fieldUI.add(this.scoreText);
-
-    this.luckText = addTextObject(this.scaledCanvas.width - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" });
-    this.luckText.setName("text-luck");
-    this.luckText.setOrigin(1, 0.5);
-    this.luckText.setVisible(false);
-    this.fieldUI.add(this.luckText);
+    this.luckText = addTextObject(this.scaledCanvas.width - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" })
+      .setName("text-luck")
+      .setOrigin(1, 0.5)
+      .setVisible(false);
 
     this.luckLabelText = addTextObject(
       this.scaledCanvas.width - 2,
@@ -558,63 +538,60 @@ export class BattleScene extends SceneBase {
       i18next.t("common:luckIndicator"),
       TextStyle.PARTY,
       { fontSize: "54px" },
-    );
-    this.luckLabelText.setName("text-luck-label");
-    this.luckLabelText.setOrigin(1, 0.5);
-    this.luckLabelText.setVisible(false);
-    this.fieldUI.add(this.luckLabelText);
+    )
+      .setName("text-luck-label")
+      .setOrigin(1, 0.5)
+      .setVisible(false);
 
     this.arenaFlyout = new ArenaFlyout();
-    this.fieldUI.add(this.arenaFlyout);
-    this.fieldUI.moveBelow<Phaser.GameObjects.GameObject>(this.arenaFlyout, this.fieldOverlay);
-
+    this.pokemonInfoContainer = new PokemonInfoContainer(this.scaledCanvas.width + 52, -this.scaledCanvas.height + 66) //
+      .setup();
     this.updateUIPositions();
 
     this.damageNumberHandler = new DamageNumberHandler();
+    this.spriteSparkleHandler = new PokemonSpriteSparkleHandler() //
+      .setup();
 
-    this.spriteSparkleHandler = new PokemonSpriteSparkleHandler();
-    this.spriteSparkleHandler.setup();
+    this.fieldUI
+      .add([
+        this.fieldOverlay,
+        this.shopOverlay,
+        this.charSprite,
+        this.pbTray,
+        this.pbTrayEnemy,
+        this.abilityBar,
+        this.partyExpBar,
+        this.candyBar,
+        this.biomeWaveText,
+        this.moneyText,
+        this.scoreText,
+        this.luckText,
+        this.luckLabelText,
+        this.arenaFlyout,
+        this.pokemonInfoContainer,
+      ])
+      .moveBelow<Phaser.GameObjects.GameObject>(this.arenaFlyout, this.fieldOverlay);
 
-    this.pokemonInfoContainer = new PokemonInfoContainer(this.scaledCanvas.width + 52, -this.scaledCanvas.height + 66);
-    this.pokemonInfoContainer.setup();
-
-    this.fieldUI.add(this.pokemonInfoContainer);
+    this.uiContainer.add([this.modifierBar, this.enemyModifierBar]);
 
     this.party = [];
 
-    this.arenaPlayer = new ArenaBase(true);
-    this.arenaPlayer.setName("arena-player");
-    this.arenaPlayerTransition = new ArenaBase(true);
-    this.arenaPlayerTransition.setName("arena-player-transition");
-    this.arenaEnemy = new ArenaBase(false);
-    this.arenaEnemy.setName("arena-enemy");
-    this.arenaNextEnemy = new ArenaBase(false);
-    this.arenaNextEnemy.setName("arena-next-enemy");
+    this.arenaPlayer = new ArenaBase(true) //
+      .setName("arena-player");
+    this.arenaPlayerTransition = new ArenaBase(true) //
+      .setName("arena-player-transition")
+      .setVisible(false);
+    this.arenaEnemy = new ArenaBase(false) //
+      .setName("arena-enemy");
+    this.arenaNextEnemy = new ArenaBase(false) //
+      .setName("arena-next-enemy")
+      .setVisible(false);
+    this.field.add([this.arenaPlayer, this.arenaPlayerTransition, this.arenaEnemy, this.arenaNextEnemy]);
 
-    this.arenaBgTransition.setVisible(false);
-    this.arenaPlayerTransition.setVisible(false);
-    this.arenaNextEnemy.setVisible(false);
-
-    for (const a of [this.arenaPlayer, this.arenaPlayerTransition, this.arenaEnemy, this.arenaNextEnemy]) {
-      // TODO: This seems questionable - we just initialized the arena sprites and then have to manually check if they're a sprite?
-      // This is likely the result of either extreme laziness or confusion
-      if (a instanceof Phaser.GameObjects.Sprite) {
-        a.setOrigin(0, 0);
-      }
-      field.add(a);
-    }
-
-    const trainer = this.addFieldSprite(
-      0,
-      0,
-      `trainer_${this.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`,
-    );
-    trainer.setOrigin(0.5, 1);
-    trainer.setName("sprite-trainer");
-
-    field.add(trainer);
-
-    this.trainer = trainer;
+    this.trainer = this.addFieldSprite(0, 0, `trainer_${this.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`)
+      .setOrigin(0.5, 1)
+      .setName("sprite-trainer");
+    this.field.add(this.trainer);
 
     this.anims.create({
       key: "prompt",
@@ -623,7 +600,6 @@ export class BattleScene extends SceneBase {
       repeat: -1,
       showOnStart: true,
     });
-
     this.anims.create({
       key: "tera_sparkle",
       frames: this.anims.generateFrameNumbers("tera_sparkle", {
@@ -639,10 +615,9 @@ export class BattleScene extends SceneBase {
     this.reset(false, false, true);
 
     // Initialize UI-related aspects and then start the login phase.
-    const ui = new UI();
-    this.uiContainer.add(ui);
-    this.ui = ui;
-    ui.setup();
+    this.ui = new UI();
+    this.uiContainer.add(this.ui);
+    this.ui.setup();
 
     this.phaseManager.toTitleScreen(true);
     this.phaseManager.shiftPhase();
@@ -1013,12 +988,15 @@ export class BattleScene extends SceneBase {
     ignoreOverride = true,
     useIllusion = false,
   ): Phaser.GameObjects.Container {
-    const container = this.add.container(x, y);
-    container.setName(`${pokemon.name}-icon`);
+    const container = this.add //
+      .container(x, y)
+      .setName(`${pokemon.name}-icon`);
 
-    const icon = this.add.sprite(0, 0, pokemon.getIconAtlasKey(ignoreOverride, useIllusion));
-    icon.setName(`sprite-${pokemon.name}-icon`);
-    icon.setFrame(pokemon.getIconId(ignoreOverride, useIllusion));
+    const icon = this.add
+      .sprite(0, 0, pokemon.getIconAtlasKey(ignoreOverride, useIllusion))
+      .setName(`sprite-${pokemon.name}-icon`)
+      .setFrame(pokemon.getIconId(ignoreOverride, useIllusion))
+      .setOrigin(0.5, 0);
     // Temporary fix to show pokemon's default icon if variant icon doesn't exist
     if (icon.frame.name !== pokemon.getIconId(ignoreOverride, useIllusion)) {
       console.log(`${pokemon.name}'s variant icon does not exist. Replacing with default.`);
@@ -1033,10 +1011,11 @@ export class BattleScene extends SceneBase {
     container.add(icon);
 
     if (pokemon.isFusion(useIllusion)) {
-      const fusionIcon = this.add.sprite(0, 0, pokemon.getFusionIconAtlasKey(ignoreOverride, useIllusion));
-      fusionIcon.setName("sprite-fusion-icon");
-      fusionIcon.setOrigin(0.5, 0);
-      fusionIcon.setFrame(pokemon.getFusionIconId(ignoreOverride, useIllusion));
+      const fusionIcon = this.add
+        .sprite(0, 0, pokemon.getFusionIconAtlasKey(ignoreOverride, useIllusion))
+        .setName("sprite-fusion-icon")
+        .setOrigin(0.5, 0)
+        .setFrame(pokemon.getFusionIconId(ignoreOverride, useIllusion));
 
       const originalWidth = icon.width;
       const originalHeight = icon.height;
@@ -1853,8 +1832,9 @@ export class BattleScene extends SceneBase {
     frame?: string | number,
     terrainColorRatio = 0,
   ): Phaser.GameObjects.Sprite {
-    const ret = this.add.sprite(x, y, texture, frame);
-    ret.setPipeline(this.fieldSpritePipeline);
+    const ret = this.add //
+      .sprite(x, y, texture, frame)
+      .setPipeline(this.fieldSpritePipeline);
     if (terrainColorRatio) {
       ret.pipelineData["terrainColorRatio"] = terrainColorRatio;
     }
@@ -1934,27 +1914,21 @@ export class BattleScene extends SceneBase {
 
   showShopOverlay(duration: number): Promise<void> {
     this.shopOverlayShown = true;
-    return new Promise(resolve => {
-      this.tweens.add({
-        targets: this.shopOverlay,
-        alpha: this.shopOverlayOpacity,
-        ease: "Sine.easeOut",
-        duration,
-        onComplete: () => resolve(),
-      });
+    return playTween({
+      targets: this.shopOverlay,
+      alpha: this.shopOverlayOpacity,
+      ease: "Sine.easeOut",
+      duration,
     });
   }
 
   hideShopOverlay(duration: number): Promise<void> {
     this.shopOverlayShown = false;
-    return new Promise(resolve => {
-      this.tweens.add({
-        targets: this.shopOverlay,
-        alpha: 0,
-        duration,
-        ease: "Cubic.easeIn",
-        onComplete: () => resolve(),
-      });
+    return playTween({
+      targets: this.shopOverlay,
+      alpha: 0,
+      duration,
+      ease: "Cubic.easeIn",
     });
   }
 
@@ -1970,10 +1944,11 @@ export class BattleScene extends SceneBase {
     const isBoss = !(this.currentBattle.waveIndex % 10);
     const biomeString: string = getBiomeName(this.arena.biomeType);
     this.fieldUI.moveAbove(this.biomeWaveText, this.luckText);
-    this.biomeWaveText.setText(biomeString + " - " + this.currentBattle.waveIndex.toString());
-    this.biomeWaveText.setColor(isBoss ? "#f89890" : "#ffffff");
-    this.biomeWaveText.setShadowColor(isBoss ? "#984038" : "#636363");
-    this.biomeWaveText.setVisible(true);
+    this.biomeWaveText
+      .setText(biomeString + " - " + this.currentBattle.waveIndex.toString())
+      .setColor(isBoss ? "#f89890" : "#ffffff")
+      .setShadowColor(isBoss ? "#984038" : "#636363")
+      .setVisible(true);
   }
 
   updateMoneyText(forceVisible = true): void {
@@ -1992,7 +1967,7 @@ export class BattleScene extends SceneBase {
     if (this.tweens.getTweensOf(this.moneyText).length > 0) {
       return;
     }
-    const deltaScale = this.moneyText.scale * 0.14 * (positiveChange ? 1 : -1);
+    const deltaScale = this.moneyText.scale * 0.14 * +positiveChange;
     this.moneyText.setShadowColor(positiveChange ? "#008000" : "#FF0000");
     this.tweens.add({
       targets: this.moneyText,
@@ -2005,8 +1980,10 @@ export class BattleScene extends SceneBase {
   }
 
   updateScoreText(): void {
-    this.scoreText.setText(`Score: ${this.score.toString()}`);
-    this.scoreText.setVisible(this.gameMode.isDaily);
+    // TODO: Localize this
+    this.scoreText //
+      .setText(`Score: ${this.score.toString()}`)
+      .setVisible(this.gameMode.isDaily);
   }
 
   /**
