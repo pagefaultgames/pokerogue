@@ -799,9 +799,11 @@ export abstract class Move implements Localizable {
   }
 
   /**
-   * Sets the {@linkcode MoveFlags.ALLY_TARGET_DEFAULT} flag for the calling Move.
+   * Set the {@linkcode MoveFlags.ALLY_TARGET_DEFAULT} flag for the calling Move, causing it to default to targeting the user's ally in Double Battles.
    * @see {@linkcode MoveId.INSTRUCT}
-   * @returns The {@linkcode Move} that called this function
+   * @returns `this`
+   * @remarks
+   * This should not be called for moves that can _only_ target allies (in which case it becomes moot.)
    */
   targetsAllyDefault(): this {
     this.setFlag(MoveFlags.ALLY_TARGET_DEFAULT, true);

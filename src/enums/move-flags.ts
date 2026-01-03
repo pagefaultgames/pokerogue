@@ -51,6 +51,6 @@ export enum MoveFlags {
   REFLECTABLE = 1 << 18,
   /** Indicates a move should fail when {@link https://bulbapedia.bulbagarden.net/wiki/Gravity_(move) | Gravity} is in effect */
   GRAVITY = 1 << 19,
-  /** Indicates a move default to selecting an ally target in double battles */
+  /** Indicates a move should default to targeting the user's ally in Double Battles, if one exists. */
   ALLY_TARGET_DEFAULT = 1 << 20,
 }
