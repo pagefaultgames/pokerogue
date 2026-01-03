@@ -47,6 +47,18 @@ function getPokemon(p: Pokemon | hasPokemon): Pokemon {
 
 /** Sorts an array of {@linkcode Pokemon} by speed (without shuffling) */
 function sortBySpeed<T extends Pokemon | hasPokemon>(groupedPokemonList: T[][]): void {
+  const { setOrder } = globalScene.turnCommandManager;
+
+  // If a set turn order was provided, use that in ascending order.
+  if (setOrder) {
+    groupedPokemonList.sort((a, b) => {
+      const aIndex = getPokemon(a[0]).getBattlerIndex();
+      const bIndex = getPokemon(b[0]).getBattlerIndex();
+      return setOrder.indexOf(aIndex) - setOrder.indexOf(bIndex);
+    });
+    return;
+  }
+
   groupedPokemonList.sort((a, b) => {
     const aSpeed = getPokemon(a[0]).getEffectiveStat(Stat.SPD);
     const bSpeed = getPokemon(b[0]).getEffectiveStat(Stat.SPD);

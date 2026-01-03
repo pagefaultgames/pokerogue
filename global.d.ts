@@ -17,6 +17,11 @@ declare global {
 
     call<T extends AnyFn>(this: T, thisArg: ThisParameterType<T>, ...argArray: Parameters<T>): ReturnType<T>;
   }
+
+  // Override for `Array.isArray` to not remove `readonly`-ness from arrays known to be readonly
+  interface ArrayConstructor {
+    isArray<T>(arg: readonly T[]): arg is readonly T[];
+  }
 }
 
 // Global augments for `typedoc` to prevent TS from erroring when editing the config JS file
