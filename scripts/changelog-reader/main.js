@@ -7,7 +7,7 @@
 
 import { Octokit } from "octokit";
 import { writeFileSafe } from "../helpers/file.js";
-import { COLORS, CONFIG, LOCAL_CONFIG } from "./config.js";
+import { COLORS, CONFIG } from "./config.js";
 import { formatChangelog } from "./format.js";
 
 /**
@@ -16,7 +16,7 @@ import { formatChangelog } from "./format.js";
  */
 
 /**
- * @typedef {import("@octokit/types").Endpoints["GET /repos/{owner}/{repo}/pulls"]["response"]["data"]} PullRequestResponse
+ * @typedef {import("@octokit/types").Endpoints["GET /repos/{owner}/{repo}/pulls"]["response"]["data"][number]} PullRequestResponse
  */
 
 /**
@@ -51,74 +51,23 @@ async function main() {
       return;
     }
 
-    await getChangelogs();
+    await getChangelog();
   } catch (error) {
     process.exitCode = 1;
     console.error(error);
   }
 }
 
-async function getPullRequests() {
-  console.log(
-    `Fetching PRs to ${CONFIG.REPO_OWNER}/${CONFIG.REPO_NAME}/${
-      CONFIG.REPO_BRANCH
-    } since ${dateFormatter.format(new Date(CONFIG.CUTOFF_DATE))}...`,
-  );
-
-  return await getPullRequestPage();
-}
-
-/**
- * Fetch a page of PRs
- * @param {number} page
- * @returns {Promise<PullRequestResponse | undefined>}
- */
-async function getPullRequestPage(page = 1) {
-  /**
-   * @type {PullRequestResponse}
-   */
-  const allPRs = [];
-  console.log(`Fetching page ${page}...`);
-  const pagePRs = await octokit.rest.pulls.list({
-    owner: CONFIG.REPO_OWNER,
-    repo: CONFIG.REPO_NAME,
-    base: CONFIG.REPO_BRANCH,
-    state: "closed",
-    sort: "updated",
-    direction: "desc",
-    per_page: CONFIG.PER_PAGE,
-    page,
-  });
-
-  // filter old and closed PRs that were not merged
-  const filteredPullRequests = pagePRs.data.filter(pr => {
-    if (!pr.merged_at) {
-      return false;
-    }
-    return pr.merged_at > CONFIG.CUTOFF_DATE;
-  });
-
-  if (filteredPullRequests.length === 0) {
-    return allPRs;
+async function getChangelog() {
+  const prs = await getDiff();
+  if (prs.size === 0) {
+    console.log("No commits found between branches");
+    return;
   }
-  allPRs.push(...filteredPullRequests);
 
-  // fetch next page if we have reached the page limit
-  if (pagePRs.data.length === CONFIG.PER_PAGE) {
-    const nextPage = await getPullRequestPage(page + 1);
-    if (!nextPage) {
-      return allPRs;
-    }
-    allPRs.push(...nextPage);
-  }
-  return allPRs;
-}
-
-async function getChangelogs() {
-  const pullRequests = await getPullRequests();
-  if (!pullRequests) {
+  const pullRequests = await getPullRequests(prs);
+  if (pullRequests.length === 0) {
     console.log("No PRs found");
-    process.exitCode = 1;
     return;
   }
   console.log(`Found ${pullRequests.length} PRs`);
@@ -154,13 +103,55 @@ async function getChangelogs() {
   }
 }
 
+/**
+ * Get a set of commit SHAs from the branch diff.
+ * @returns {Promise<Set<string>>} Set of commit SHAs
+ */
+async function getDiff() {
+  console.log(`Comparing ${CONFIG.CUTOFF_BRANCH}...${CONFIG.REPO_BRANCH}`);
+
+  const comparison = await octokit.rest.repos.compareCommitsWithBasehead({
+    owner: CONFIG.REPO_OWNER,
+    repo: CONFIG.REPO_NAME,
+    basehead: `${CONFIG.CUTOFF_BRANCH}...${CONFIG.REPO_BRANCH}`,
+    per_page: 100,
+  });
+
+  const commits = comparison.data.commits.map(c => c.sha);
+
+  return new Set(commits);
+}
+
+/**
+ * Get the pull requests for the given commits.
+ * @param {Set<string>} commits - The commit SHAs
+ * @returns {Promise<PullRequestResponse[]>} List of pull requests.
+ */
+async function getPullRequests(commits) {
+  /** @type {PullRequestResponse[]} */
+  const pullRequests = [];
+  for (const sha of commits) {
+    try {
+      const prs = await octokit.rest.repos.listPullRequestsAssociatedWithCommit({
+        owner: CONFIG.REPO_OWNER,
+        repo: CONFIG.REPO_NAME,
+        commit_sha: sha,
+      });
+      const pr = prs.data[0];
+      pullRequests.push(pr);
+    } catch (error) {
+      console.error(`Failed to get PR ${sha}: ${error}`);
+    }
+  }
+  return pullRequests.filter(Boolean);
+}
+
 const sectionRegex = new RegExp(`${CONFIG.CHANGELOG_SECTION}([\\s\\S]*?)(?=##)`, "i");
 /**
  * @param {string} description - The description to get the section from
  */
 function getChangelogSection(description) {
   const match = description.match(sectionRegex);
-
   return match?.[0];
 }
 
@@ -179,7 +170,7 @@ async function updateDescription(changelog) {
     return;
   }
   if (!process.env.PR_NUMBER) {
-    console.error("${COLORS.red}PR_NUMBER not set. Could not update PR description.${COLORS.reset}");
+    console.error(`${COLORS.red}PR_NUMBER not set. Could not update PR description.${COLORS.reset}`);
     process.exitCode = 1;
     return;
   }
@@ -197,28 +188,12 @@ async function updateDescription(changelog) {
 }
 
 /**
- * Get the date of the last commit to the main branch.
- * @returns {Promise<string>} The ISO 8601 date string of the last commit.
- */
-async function getCutoffDate() {
-  const commits = await octokit.rest.repos.listCommits({
-    owner: CONFIG.REPO_OWNER,
-    repo: CONFIG.REPO_NAME,
-    sha: CONFIG.CUTOFF_BRANCH,
-    per_page: 1,
-  });
-
-  const date = commits.data[0].commit.committer?.date;
-  return date ?? "";
-}
-
-/**
  * Load the configuration from the environment.
  * @returns {Promise<boolean>} Whether the config was loaded successfully.
  */
 async function loadConfig() {
   if (!process.env.GITHUB_ACTIONS) {
-    Object.assign(CONFIG, LOCAL_CONFIG);
+    CONFIG.REPO_BRANCH = "beta";
     return true;
   }
   if (!process.env.PR_BRANCH) {
@@ -244,13 +219,6 @@ async function loadConfig() {
   }
 
   CONFIG.REPO_BRANCH = branch;
-  CONFIG.CUTOFF_DATE = await getCutoffDate();
-
-  if (!CONFIG.CUTOFF_DATE || !CONFIG.REPO_BRANCH) {
-    console.error("Failed to load config.");
-    process.exitCode = 1;
-    return false;
-  }
   return true;
 }
 

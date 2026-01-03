@@ -24,7 +24,6 @@ export const CONFIG = {
   REPO_NAME: "pokerogue",
   REPO_BRANCH: "",
   CUTOFF_BRANCH: "main",
-  CUTOFF_DATE: "",
   CHANGELOG_SECTION: "## What are the changes the user will see?",
   PER_PAGE: 50,
   OUTPUT_FILE: "changelog.md",
@@ -47,14 +46,6 @@ export const CONFIG = {
     // Used for PRs that don't have a changelog section
     { name: "Missing", labels: [] },
   ],
-};
-
-const SECONDS_IN_DAY = 24 * 60 * 60 * 1000;
-
-export const LOCAL_CONFIG = {
-  ...CONFIG,
-  REPO_BRANCH: "beta",
-  CUTOFF_DATE: new Date(Date.now() - 14 * SECONDS_IN_DAY).toISOString(),
 };
 
 export const LABELS = /** @type {const} */ ([
