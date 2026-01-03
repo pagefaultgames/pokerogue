@@ -2,8 +2,10 @@ import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
 import type { FieldBattlerIndex } from "#enums/battler-index";
 import type { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
+import { IvScannerModifier } from "#modifiers/modifier";
 import type { CheckSwitchPhase } from "#phases/check-switch-phase";
 import type { PostSummonPhase } from "#phases/post-summon-phase";
+import type { ScanIvsPhase } from "#phases/scan-ivs-phase";
 import type { SummonPhase, SummonPhaseOptions } from "#phases/summon-phase";
 import type { NonEmptyTuple } from "type-fest";
 
@@ -20,8 +22,6 @@ interface BattlerEntranceParams extends SummonPhaseOptions {
    * Ignored when summoning `EnemyPokemon` (for whom `CheckSwitchPhase`s cannot be queued).
    */
   checkSwitch?: boolean;
-
-  
 
   /**
    * Whether to skip queueing opposing {@linkcode SummonPhase}s when summoning wild enemy Pokemon.
@@ -61,6 +61,7 @@ function getBattlerEntrancePhases(
   // Type assertion is valid as these will always unshift at least 1 phase
   const phases = [
     ...getSummonPhases(playerMons, enemyMons, params),
+    ...getIvScannerPhases(enemyMons),
     ...getPostSummonPhases([...playerMons, ...enemyMons], params),
   ] as unknown as NonEmptyTuple<Phase>;
 
@@ -78,6 +79,20 @@ function getSummonPhases(
   return mons.map((p, i) => {
     const index: FieldBattlerIndex = i + (p.isPlayer() ? 0 : 2);
     return phaseManager.create("SummonPhase", index, rest);
+  });
+}
+
+function getIvScannerPhases(enemyMons: EnemyPokemon[]): ScanIvsPhase[] {
+  const { phaseManager } = globalScene;
+
+  // do nothing if no IV Scanner is present
+  if (!globalScene.findModifier(m => m instanceof IvScannerModifier)) {
+    return [];
+  }
+
+  return enemyMons.map((_p, i) => {
+    const index: FieldBattlerIndex = i + 2;
+    return phaseManager.create("ScanIvsPhase", index);
   });
 }
 
