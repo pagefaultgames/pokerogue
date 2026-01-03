@@ -16,6 +16,10 @@ import { formatChangelog } from "./format.js";
  */
 
 /**
+ * @typedef {import("@octokit/types").Endpoints["GET /repos/{owner}/{repo}/pulls"]["response"]["data"]} PullRequestResponse
+ */
+
+/**
  * The version of this script
  * @type {string}
  */
@@ -67,11 +71,11 @@ async function getPullRequests() {
 /**
  * Fetch a page of PRs
  * @param {number} page
- * @returns {Promise<import("@octokit/types").Endpoints["GET /repos/{owner}/{repo}/pulls"]["response"]["data"] | undefined>}
+ * @returns {Promise<PullRequestResponse | undefined>}
  */
 async function getPullRequestPage(page = 1) {
   /**
-   * @type {import("@octokit/types").Endpoints["GET /repos/{owner}/{repo}/pulls"]["response"]["data"]}
+   * @type {PullRequestResponse}
    */
   const allPRs = [];
   console.log(`Fetching page ${page}...`);
