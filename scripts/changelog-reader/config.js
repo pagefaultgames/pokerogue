@@ -69,8 +69,3 @@ export const LABELS = /** @type {const} */ ([
   "P3 Bug",
   "Beta",
 ]);
-
-export const COLORS = {
-  red: "\x1b[31m",
-  reset: "\x1b[0m",
-};

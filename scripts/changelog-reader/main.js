@@ -5,10 +5,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+import chalk from "chalk";
 import { Octokit } from "octokit";
 import { writeFileSafe } from "../helpers/file.js";
-import { COLORS, CONFIG } from "./config.js";
+import { CONFIG } from "./config.js";
 import { formatChangelog } from "./format.js";
+
+chalk.level = 2;
 
 /**
  * @import {Label} from "./config.js"
@@ -147,20 +150,17 @@ function getChangelogSection(description) {
  * @param {string} changelog
  */
 async function updateDescription(changelog) {
+  if (!process.env.PR_NUMBER) {
+    console.error(chalk.red("PR_NUMBER not set. Could not update PR description."));
+    process.exitCode = 1;
+    return;
+  }
+
   const description =
     `**Changelog:** ${CONFIG.REPO_BRANCH} ---> ${CONFIG.CUTOFF_BRANCH}\n---------------------------\n`
     + changelog
     + `\n---------------------------\n**This changelog was auto generated at ${dateFormatter.format(new Date())}.**`;
 
-  if (!process.env.GITHUB_ACTIONS) {
-    console.log("Skipping PR description update.");
-    return;
-  }
-  if (!process.env.PR_NUMBER) {
-    console.error(`${COLORS.red}PR_NUMBER not set. Could not update PR description.${COLORS.reset}`);
-    process.exitCode = 1;
-    return;
-  }
   await octokit.rest.pulls
     .update({
       owner: CONFIG.REPO_OWNER,
@@ -170,7 +170,7 @@ async function updateDescription(changelog) {
     })
     .catch(err => {
       process.exitCode = 1;
-      console.error(`${COLORS.red}Failed to update PR description: ${err}${COLORS.reset}`);
+      console.error(chalk.red(`Failed to update PR description: ${err}`));
     });
 }
 
