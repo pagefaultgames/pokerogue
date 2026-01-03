@@ -16,10 +16,6 @@ import { formatChangelog } from "./format.js";
  */
 
 /**
- * @typedef {import("@octokit/types").Endpoints["GET /repos/{owner}/{repo}/pulls"]["response"]["data"][number]} PullRequestResponse
- */
-
-/**
  * The version of this script
  * @type {string}
  */
@@ -72,29 +68,7 @@ async function getChangelog() {
   }
   console.log(`Found ${pullRequests.length} PRs`);
 
-  /** @type {PullRequest[]} */
-  const changelog = [];
-
-  for (const pr of pullRequests) {
-    if (!pr.body) {
-      console.log(`${COLORS.red}Description missing for PR: ${pr.title} (${pr.number})${COLORS.reset}\n`);
-      changelog.push({
-        number: pr.number,
-        title: pr.title,
-        labels: [],
-      });
-      continue;
-    }
-    const section = getChangelogSection(pr.body);
-    changelog.push({
-      number: pr.number,
-      title: pr.title,
-      body: section,
-      labels: pr.labels.map(l => /** @type {Label} */ (l.name)),
-    });
-  }
-
-  const output = formatChangelog(changelog);
+  const output = formatChangelog(pullRequests);
   if (process.env.GITHUB_ACTIONS) {
     await updateDescription(output);
   } else {
@@ -125,10 +99,10 @@ async function getDiff() {
 /**
  * Get the pull requests for the given commits.
  * @param {Set<string>} commits - The commit SHAs
- * @returns {Promise<PullRequestResponse[]>} List of pull requests.
+ * @returns {Promise<PullRequest[]>} List of pull requests.
  */
 async function getPullRequests(commits) {
-  /** @type {PullRequestResponse[]} */
+  /** @type {PullRequest[]} */
   const pullRequests = [];
   for (const sha of commits) {
     try {
@@ -138,7 +112,18 @@ async function getPullRequests(commits) {
         commit_sha: sha,
       });
       const pr = prs.data[0];
-      pullRequests.push(pr);
+      if (!pr) {
+        continue;
+      }
+      const section = getChangelogSection(pr.body || "");
+      /** @type {PullRequest} */
+      const PullRequest = {
+        number: pr.number,
+        title: pr.title,
+        body: section,
+        labels: pr.labels.map(l => /** @type {Label} */ (l.name)),
+      };
+      pullRequests.push(PullRequest);
     } catch (error) {
       console.error(`Failed to get PR ${sha}: ${error}`);
     }
