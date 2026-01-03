@@ -9,7 +9,7 @@ const screenLeft = 0;
 const baseY = -116;
 
 export class AbilityBar extends Phaser.GameObjects.Container {
-  private abilityBars: Phaser.GameObjects.Image[];
+  private readonly abilityBars: Phaser.GameObjects.Image[];
   private abilityBarText: Phaser.GameObjects.Text;
   private player: boolean;
   private screenRight: number; // hold screenRight in case size changes between show and hide
@@ -22,25 +22,28 @@ export class AbilityBar extends Phaser.GameObjects.Container {
     this.shown = false;
   }
 
-  setup(): void {
+  setup(): this {
     for (const key of ["ability_bar_right", "ability_bar_left"]) {
-      const bar = globalScene.add.image(0, 0, key);
-      bar.setOrigin(0, 0);
-      bar.setVisible(false);
+      const bar = globalScene.add //
+        .image(0, 0, key)
+        .setOrigin(0)
+        .setVisible(false);
       this.add(bar);
       this.abilityBars.push(bar);
     }
 
     this.abilityBarText = addTextObject(15, 3, "", TextStyle.MESSAGE, {
       fontSize: "72px",
-    });
-    this.abilityBarText.setOrigin(0, 0);
-    this.abilityBarText.setWordWrapWidth(600, true);
-    this.add(this.abilityBarText);
-    this.bringToTop(this.abilityBarText);
+    })
+      .setOrigin(0)
+      .setWordWrapWidth(600, true);
 
-    this.setVisible(false);
-    this.setX(-barWidth); // start hidden (right edge of bar at x=0)
+    this.add(this.abilityBarText) //
+      .bringToTop(this.abilityBarText)
+      .setVisible(false)
+      .setX(-barWidth); // start hidden (right edge of bar at x=0)
+
+    return this;
   }
 
   public override setVisible(value: boolean): this {

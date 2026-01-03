@@ -73,7 +73,7 @@ export class PokemonInfoContainer extends Phaser.GameObjects.Container {
     this.initialX = x;
   }
 
-  setup(): void {
+  setup(): this {
     this.setName("pkmn-info");
     const currentLanguage = i18next.resolvedLanguage!; // TODO: is this bang correct?
     const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage?.includes(lang))!; // TODO: is this bang correct?
@@ -246,6 +246,7 @@ export class PokemonInfoContainer extends Phaser.GameObjects.Container {
     this.add(this.pokemonFusionShinyIcon);
 
     this.setVisible(false);
+    return this;
   }
 
   show(
@@ -325,12 +326,12 @@ export class PokemonInfoContainer extends Phaser.GameObjects.Container {
       // Check if the player owns ability for the root form
       const playerOwnsThisAbility = pokemon.checkIfPlayerHasAbilityOfStarter(starterEntry.abilityAttr);
 
-      if (!playerOwnsThisAbility) {
-        this.pokemonAbilityLabelText.setColor(getTextColor(TextStyle.SUMMARY_BLUE, false));
-        this.pokemonAbilityLabelText.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true));
-      } else {
+      if (playerOwnsThisAbility) {
         this.pokemonAbilityLabelText.setColor(getTextColor(TextStyle.WINDOW, false));
         this.pokemonAbilityLabelText.setShadowColor(getTextColor(TextStyle.WINDOW, true));
+      } else {
+        this.pokemonAbilityLabelText.setColor(getTextColor(TextStyle.SUMMARY_BLUE, false));
+        this.pokemonAbilityLabelText.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true));
       }
 
       this.pokemonNatureText.setText(getNatureName(pokemon.getNature(), true, false, false));
@@ -338,17 +339,17 @@ export class PokemonInfoContainer extends Phaser.GameObjects.Container {
       const dexNatures = dexEntry.natureAttr;
       const newNature = 1 << (pokemon.nature + 1);
 
-      if (!(dexNatures & newNature)) {
-        this.pokemonNatureLabelText.setColor(getTextColor(TextStyle.SUMMARY_BLUE, false));
-        this.pokemonNatureLabelText.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true));
-      } else {
+      if (dexNatures & newNature) {
         this.pokemonNatureLabelText.setColor(getTextColor(TextStyle.WINDOW, false));
         this.pokemonNatureLabelText.setShadowColor(getTextColor(TextStyle.WINDOW, true));
+      } else {
+        this.pokemonNatureLabelText.setColor(getTextColor(TextStyle.SUMMARY_BLUE, false));
+        this.pokemonNatureLabelText.setShadowColor(getTextColor(TextStyle.SUMMARY_BLUE, true));
       }
 
       const isFusion = pokemon.isFusion();
       const doubleShiny = isFusion && pokemon.shiny && pokemon.fusionShiny;
-      const baseVariant = !doubleShiny ? pokemon.getVariant() : pokemon.variant;
+      const baseVariant = doubleShiny ? pokemon.variant : pokemon.getVariant();
 
       this.pokemonShinyIcon.setTexture(`shiny_star${doubleShiny ? "_1" : ""}`);
       this.pokemonShinyIcon.setVisible(pokemon.isShiny());
