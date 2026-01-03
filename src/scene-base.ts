@@ -17,7 +17,7 @@ export class SceneBase extends Phaser.Scene {
     height: 180, // (1080 / 6)
   } as const;
 
-  init() {
+  public init(): void {
     this.load.on(Phaser.Loader.Events.FILE_LOAD, (file: Phaser.Loader.File) => {
       if (file.key.endsWith("_legacy")) {
         const fileKey = file.key.slice(0, -7);
