@@ -44,7 +44,7 @@ jobs:
 
       # Validate types with tsc - https://www.typescriptlang.org/docs/handbook/compiler-options.html#using-the-cli
       - name: Run Typecheck (TS files)
-        run: pnpm typecheck
+        run: pnpm typecheck --skipLibCheck false
         id: typecheck
         if: ${{ !cancelled() }}
 
