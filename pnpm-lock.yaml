@@ -54,9 +54,6 @@ importers:
       '@ls-lint/ls-lint':
         specifier: 2.3.1
         version: 2.3.1
-      '@octokit/types':
-        specifier: ^16.0.0
-        version: 16.0.0
       '@types/crypto-js':
         specifier: ^4.2.2
         version: 4.2.2
