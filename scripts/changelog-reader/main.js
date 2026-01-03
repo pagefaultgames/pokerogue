@@ -7,8 +7,13 @@
 
 import { Octokit } from "octokit";
 import { writeFileSafe } from "../helpers/file.js";
-import { CONFIG } from "./config.js";
+import { COLORS, CONFIG, LOCAL_CONFIG } from "./config.js";
 import { formatChangelog } from "./format.js";
+
+/**
+ * @import {Label} from "./config.js"
+ * @import {PullRequest} from "./format.js"
+ */
 
 /**
  * The version of this script
@@ -20,6 +25,10 @@ const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,
 });
 
+/**
+ * @example
+ * December 20, 2025 at 10:10 AM UTC
+ */
 const dateFormatter = new Intl.DateTimeFormat("en", {
   year: "numeric",
   month: "long",
@@ -27,12 +36,12 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
   hour: "numeric",
   minute: "numeric",
   timeZoneName: "short",
+  timeZone: "UTC",
 });
 
 async function main() {
+  console.group(`📝 Changelog Reader v${SCRIPT_VERSION}`);
   try {
-    console.group(`📝 Changelog Reader v${SCRIPT_VERSION}`);
-
     const success = await loadConfig();
     if (!success) {
       return;
@@ -66,21 +75,19 @@ async function getPullRequestPage(page = 1) {
    */
   const allPRs = [];
   console.log(`Fetching page ${page}...`);
-  const pagePRs = await octokit.rest.pulls
-    .list({
-      owner: CONFIG.REPO_OWNER,
-      repo: CONFIG.REPO_NAME,
-      base: CONFIG.REPO_BRANCH,
-      state: "closed",
-      sort: "updated",
-      direction: "desc",
-      per_page: CONFIG.PER_PAGE,
-      page,
-    })
-    .then(res => res.data);
+  const pagePRs = await octokit.rest.pulls.list({
+    owner: CONFIG.REPO_OWNER,
+    repo: CONFIG.REPO_NAME,
+    base: CONFIG.REPO_BRANCH,
+    state: "closed",
+    sort: "updated",
+    direction: "desc",
+    per_page: CONFIG.PER_PAGE,
+    page,
+  });
 
   // filter old and closed PRs that were not merged
-  const filteredPullRequests = pagePRs.filter(pr => {
+  const filteredPullRequests = pagePRs.data.filter(pr => {
     if (!pr.merged_at) {
       return false;
     }
@@ -93,7 +100,7 @@ async function getPullRequestPage(page = 1) {
   allPRs.push(...filteredPullRequests);
 
   // fetch next page if we have reached the page limit
-  if (pagePRs.length === CONFIG.PER_PAGE) {
+  if (pagePRs.data.length === CONFIG.PER_PAGE) {
     const nextPage = await getPullRequestPage(page + 1);
     if (!nextPage) {
       return allPRs;
@@ -112,16 +119,15 @@ async function getChangelogs() {
   }
   console.log(`Found ${pullRequests.length} PRs`);
 
-  /** @type {import("./format.js").PullRequest[]} */
+  /** @type {PullRequest[]} */
   const changelog = [];
 
   for (const pr of pullRequests) {
     if (!pr.body) {
-      console.log(`\x1b[31mDescription missing for PR: ${pr.title} (${pr.number})\x1b[0m\n`);
+      console.log(`${COLORS.red}Description missing for PR: ${pr.title} (${pr.number})${COLORS.reset}\n`);
       changelog.push({
         number: pr.number,
         title: pr.title,
-        body: null,
         labels: [],
       });
       continue;
@@ -131,7 +137,7 @@ async function getChangelogs() {
       number: pr.number,
       title: pr.title,
       body: section,
-      labels: pr.labels.map(l => /** @type {import("./config.js").Label} */ (l.name)),
+      labels: pr.labels.map(l => /** @type {Label} */ (l.name)),
     });
   }
 
@@ -144,18 +150,14 @@ async function getChangelogs() {
   }
 }
 
+const sectionRegex = new RegExp(`${CONFIG.CHANGELOG_SECTION}([\\s\\S]*?)(?=##)`, "i");
 /**
  * @param {string} description - The description to get the section from
  */
 function getChangelogSection(description) {
-  const regex = new RegExp(`${CONFIG.CHANGELOG_SECTION}([\\s\\S]*?)(?=##)`, "i");
-  const match = description.match(regex);
+  const match = description.match(sectionRegex);
 
-  if (!match) {
-    return null;
-  }
-
-  return match[0];
+  return match?.[0];
 }
 
 /**
@@ -173,7 +175,7 @@ async function updateDescription(changelog) {
     return;
   }
   if (!process.env.PR_NUMBER) {
-    console.error("\x1b[31mPR_NUMBER not set. Could not update PR description.\x1b[0m");
+    console.error("${COLORS.red}PR_NUMBER not set. Could not update PR description.${COLORS.reset}");
     process.exitCode = 1;
     return;
   }
@@ -186,7 +188,7 @@ async function updateDescription(changelog) {
     })
     .catch(err => {
       process.exitCode = 1;
-      console.error(`\x1b[31mFailed to update PR description: ${err}\x1b[0m`);
+      console.error(`${COLORS.red}Failed to update PR description: ${err}${COLORS.reset}`);
     });
 }
 
@@ -203,7 +205,7 @@ async function getCutoffDate() {
   });
 
   const date = commits.data[0].commit.committer?.date;
-  return date || "";
+  return date ?? "";
 }
 
 /**
@@ -212,7 +214,7 @@ async function getCutoffDate() {
  */
 async function loadConfig() {
   if (!process.env.GITHUB_ACTIONS) {
-    loadLocalConfig();
+    Object.assign(CONFIG, LOCAL_CONFIG);
     return true;
   }
   if (!process.env.PR_BRANCH) {
@@ -246,20 +248,6 @@ async function loadConfig() {
     return false;
   }
   return true;
-}
-
-/**
- * Load the configuaration if running locally.
- * @remarks
- * For the cutoff date it sets the past 2 weeks.
- */
-function loadLocalConfig() {
-  CONFIG.REPO_BRANCH = "beta";
-
-  const date = new Date();
-  date.setDate(date.getDate() - 14);
-
-  CONFIG.CUTOFF_DATE = date.toISOString();
 }
 
 await main();

@@ -5,14 +5,18 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+/**
+ * @import {Label, CategoryName} from "./config.js"
+ */
+
 import { CONFIG } from "./config.js";
 
 /**
  * @typedef {{
  *  number: number
  *  title: string
- *  body: string | null
- *  labels: import("./config.js").Label[]
+ *  body?: string
+ *  labels: Label[]
  * }} PullRequest
  */
 
@@ -23,7 +27,7 @@ import { CONFIG } from "./config.js";
  */
 export function formatChangelog(changelog) {
   let output = "";
-  /** @type {Map<import("./config.js").Category["name"], string[]>} */
+  /** @type {Map<CategoryName, string[]>} */
   const categories = new Map();
   for (const category of CONFIG.CATEGORIES) {
     categories.set(category.name, []);
@@ -45,8 +49,7 @@ export function formatChangelog(changelog) {
     if (prs.length === 0) {
       continue;
     }
-    output += `## ${category}\n\n`;
-    output += prs.join("");
+    output += `## ${category}\n\n${prs.join("")}`;
   }
 
   return output;
@@ -60,9 +63,13 @@ export function formatChangelog(changelog) {
 function formatPullRequest(pr) {
   let output = `- #${pr.number}\n`;
 
-  const sanatizedBody = sanatizeBody(pr.body);
-  if (sanatizedBody) {
-    output += `  - ${sanatizedBody}\n`;
+  if (!pr.body) {
+    return null;
+  }
+
+  const sanitizedBody = sanitizeBody(pr.body);
+  if (sanitizedBody) {
+    output += `  - ${sanitizedBody}\n`;
   } else {
     return null;
   }
@@ -71,15 +78,16 @@ function formatPullRequest(pr) {
 }
 
 /**
- * Sanatize the body of a PR.
- * @param {string | null} body - The body to sanatize
- * @returns {string} The sanatized body.
+ * sanitize the body of a PR.
+ * @param {string | null} body - The body to sanitize
+ * @returns {string} The sanitized body.
  */
-function sanatizeBody(body) {
+function sanitizeBody(body) {
   if (!body) {
     return "";
   }
 
+  /** @type {string} */
   let result;
   // remove any comments (<!-- -->)
   result = body.replace(/<!--[\s\S]*?-->/g, "");
@@ -93,13 +101,13 @@ function sanatizeBody(body) {
     }
   }
 
-  return result.trim() || "";
+  return result.trim();
 }
 
 /**
  * Get the category based on the PRs labels.
- * @param {import("./config.js").Label[]} labels
- * @returns {import("./config.js").Category["name"]} The category for the PR.
+ * @param {Label[]} labels
+ * @returns {CategoryName} The category for the PR.
  * @remarks
  * If a PR has labels that apply to different categories, the one that was defined first in {@linkcode CONFIG} takes precedence.
  */

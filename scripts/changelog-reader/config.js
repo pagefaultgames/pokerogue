@@ -6,7 +6,7 @@
  */
 
 /**
- * @typedef {"Documentation" | "Enhancement" | "Move" | "Ability" | "Localization" | "Item" | "Game Balance" | "Balance Team" | "Miscellaneous" |  "UI/UX" | "Sprite/Animation" | "Refactor" | "Challenges" | "Game Design" | "Mystery Encounter" | "P0 Bug" | "P1 Bug" | "P2 Bug" | "P3 Bug" | "Beta"} Label
+ * @typedef {LABELS[number]} Label
  */
 
 /**
@@ -49,8 +49,15 @@ export const CONFIG = {
   ],
 };
 
-/** @type {readonly Label[]} */
-export const LABELS = [
+const SECONDS_IN_DAY = 24 * 60 * 60 * 1000;
+
+export const LOCAL_CONFIG = {
+  ...CONFIG,
+  REPO_BRANCH: "beta",
+  CUTOFF_DATE: new Date(Date.now() - 14 * SECONDS_IN_DAY).toISOString(),
+};
+
+export const LABELS = /** @type {const} */ ([
   "Documentation",
   "Enhancement",
   "Move",
@@ -71,4 +78,9 @@ export const LABELS = [
   "P2 Bug",
   "P3 Bug",
   "Beta",
-];
+]);
+
+export const COLORS = {
+  red: "\x1b[31m",
+  reset: "\x1b[0m",
+};
