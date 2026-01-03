@@ -17,7 +17,16 @@ export class SceneBase extends Phaser.Scene {
     height: 180, // (1080 / 6)
   } as const;
 
-  getCachedUrl(url: string): string {
+  public init(): void {
+    this.load.on(Phaser.Loader.Events.FILE_LOAD, (file: Phaser.Loader.File) => {
+      if (file.key.endsWith("_legacy")) {
+        const fileKey = file.key.slice(0, -7);
+        legacyCompatibleImages.push(fileKey);
+      }
+    });
+  }
+
+  public getCachedUrl(url: string): string {
     const manifest = this.game.manifest;
     if (!manifest) {
       return url;
@@ -32,23 +41,21 @@ export class SceneBase extends Phaser.Scene {
     return url;
   }
 
-  loadImage(key: string, folder: string, filename = `${key}.png`): this {
+  public loadImage(key: string, folder: string, filename = `${key}.png`): this {
     this.load.image(key, this.getCachedUrl(`images/${folder}/${filename}`));
     if (folder.startsWith("ui")) {
-      legacyCompatibleImages.push(key);
       folder = folder.replace("ui", "ui/legacy");
       this.load.image(`${key}_legacy`, this.getCachedUrl(`images/${folder}/${filename}`));
     }
     return this;
   }
 
-  loadSpritesheet(key: string, folder: string, size: number, filename = `${key}.png`): this {
+  public loadSpritesheet(key: string, folder: string, size: number, filename = `${key}.png`): this {
     this.load.spritesheet(key, this.getCachedUrl(`images/${folder}/${filename}`), {
       frameWidth: size,
       frameHeight: size,
     });
     if (folder.startsWith("ui")) {
-      legacyCompatibleImages.push(key);
       folder = folder.replace("ui", "ui/legacy");
       this.load.spritesheet(`${key}_legacy`, this.getCachedUrl(`images/${folder}/${filename}`), {
         frameWidth: size,
@@ -58,7 +65,7 @@ export class SceneBase extends Phaser.Scene {
     return this;
   }
 
-  loadAtlas(key: string, folder: string, filenameRoot = key): this {
+  public loadAtlas(key: string, folder: string, filenameRoot = key): this {
     if (folder) {
       folder += "/";
     }
@@ -68,7 +75,6 @@ export class SceneBase extends Phaser.Scene {
       this.getCachedUrl(`images/${folder}${filenameRoot}.json`),
     );
     if (folder.startsWith("ui")) {
-      legacyCompatibleImages.push(key);
       folder = folder.replace("ui", "ui/legacy");
       this.load.atlas(
         `${key}_legacy`,
@@ -79,7 +85,7 @@ export class SceneBase extends Phaser.Scene {
     return this;
   }
 
-  loadSe(key: string, folder = "se", filenames: string | string[] = `${key}.wav`): this {
+  public loadSe(key: string, folder = "se", filenames: string | string[] = `${key}.wav`): this {
     folder += "/";
 
     filenames = coerceArray(filenames);
@@ -90,7 +96,7 @@ export class SceneBase extends Phaser.Scene {
     return this;
   }
 
-  loadBgm(key: string, filename = `${key}.mp3`): this {
+  public loadBgm(key: string, filename = `${key}.mp3`): this {
     this.load.audio(key, this.getCachedUrl(`audio/bgm/${filename}`));
     return this;
   }
