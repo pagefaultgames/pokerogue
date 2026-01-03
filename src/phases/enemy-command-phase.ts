@@ -3,6 +3,7 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Command } from "#enums/command";
+import type { EnemyPokemon } from "#field/pokemon";
 import { FieldPhase } from "#phases/field-phase";
 
 /**
@@ -89,7 +90,7 @@ export class EnemyCommandPhase extends FieldPhase {
     /** Select a move to use (and a target to use it against, if applicable) */
     const nextMove = enemyPokemon.getNextMove();
 
-    if (trainer?.shouldTera(enemyPokemon)) {
+    if (this.shouldTera(enemyPokemon)) {
       globalScene.currentBattle.preTurnCommands[this.fieldIndex + BattlerIndex.ENEMY] = { command: Command.TERA };
     }
 
@@ -102,6 +103,10 @@ export class EnemyCommandPhase extends FieldPhase {
     globalScene.currentBattle.enemySwitchCounter = Math.max(globalScene.currentBattle.enemySwitchCounter - 1, 0);
 
     this.end();
+  }
+
+  private shouldTera(pokemon: EnemyPokemon): boolean {
+    return !!globalScene.currentBattle.trainer?.shouldTera(pokemon);
   }
 
   getFieldIndex(): number {

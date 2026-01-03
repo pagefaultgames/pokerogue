@@ -25,7 +25,9 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
       applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon, cancelled });
       applyAbAttrs("BlockStatusDamageAbAttr", { pokemon, cancelled });
 
-      if (!cancelled.value) {
+      if (cancelled.value) {
+        this.end();
+      } else {
         globalScene.phaseManager.queueMessage(
           getStatusEffectActivationText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)),
         );
@@ -49,8 +51,6 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
           applyAbAttrs("PostDamageAbAttr", { pokemon, damage: damage.value });
         }
         new CommonBattleAnim(CommonAnim.POISON + (pokemon.status.effect - 1), pokemon).play(false, () => this.end());
-      } else {
-        this.end();
       }
     } else {
       this.end();

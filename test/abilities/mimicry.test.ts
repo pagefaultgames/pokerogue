@@ -4,7 +4,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Mimicry", () => {
   let phaserGame: Phaser.Game;
@@ -14,10 +14,6 @@ describe("Abilities - Mimicry", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -58,9 +54,7 @@ describe("Abilities - Mimicry", () => {
 
     expect(playerPokemon.getTypes()).toEqual([PokemonType.PSYCHIC]);
 
-    if (game.scene.arena.terrain) {
-      game.scene.arena.terrain.turnsLeft = 1;
-    }
+    game.scene.arena.terrain!.turnsLeft = 1;
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.SPLASH);

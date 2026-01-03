@@ -14,7 +14,7 @@ import {
 import { GameManager } from "#test/test-utils/game-manager";
 import { NumberHolder } from "#utils/common";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Achv", () => {
   let achv: Achv;
@@ -80,10 +80,6 @@ describe("MoneyAchv", () => {
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   beforeEach(() => {
     game = new GameManager(phaserGame);
     scene = game.scene;
@@ -115,10 +111,6 @@ describe("RibbonAchv", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {

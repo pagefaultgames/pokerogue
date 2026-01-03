@@ -8,7 +8,7 @@ import { StatusEffectAttr } from "#moves/move";
 import { GameManager } from "#test/test-utils/game-manager";
 import { toTitleCase } from "#utils/strings";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe.each<{ name: string; ability: AbilityId; status: StatusEffect }>([
   { name: "Vital Spirit", ability: AbilityId.VITAL_SPIRIT, status: StatusEffect.SLEEP },
@@ -27,10 +27,6 @@ describe.each<{ name: string; ability: AbilityId; status: StatusEffect }>([
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {

@@ -12,7 +12,7 @@ import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("{{description}}", () => {
   let phaserGame: Phaser.Game;
@@ -22,10 +22,6 @@ describe("{{description}}", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -48,7 +44,7 @@ describe("{{description}}", () => {
     const feebas = game.field.getPlayerPokemon();
 
     game.move.use(MoveId.SPLASH);
-    await game.move.forceEnemyMove(MoveId.CELEBRATE);
+    await game.move.forceEnemyMove(MoveId.HOLD_HANDS);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 

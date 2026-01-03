@@ -21,6 +21,8 @@ interface BattlerEntranceParams extends SummonPhaseOptions {
    */
   checkSwitch?: boolean;
 
+  
+
   /**
    * Whether to skip queueing opposing {@linkcode SummonPhase}s when summoning wild enemy Pokemon.
    * @defaultValue `true`

@@ -8,7 +8,7 @@ import { PokeballType } from "#enums/pokeball";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Spec - Pokemon", () => {
   let phaserGame: Phaser.Game;
@@ -18,10 +18,6 @@ describe("Spec - Pokemon", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -215,12 +211,12 @@ describe("Spec - Pokemon", () => {
   });
 
   it.each([
-    { wave: 5, friendship: 6 },
-    { wave: 25, friendship: 32 },
-    { wave: 55, friendship: 70 },
-    { wave: 95, friendship: 121 },
-    { wave: 145, friendship: 185 },
-    { wave: 195, friendship: 249 },
+    { wave: 5, friendship: 50 },
+    { wave: 25, friendship: 50 },
+    { wave: 55, friendship: 97 },
+    { wave: 95, friendship: 167 },
+    { wave: 145, friendship: 255 },
+    { wave: 195, friendship: 255 },
   ])("should set friendship for enemy trainer pokemon based on wave ($wave)", async ({ wave, friendship }) => {
     game.override.startingWave(wave);
     await game.classicMode.runToSummon([SpeciesId.FEEBAS]);

@@ -22,6 +22,14 @@ export class MoveEndPhase extends PokemonPhase {
     super.start();
 
     const pokemon = this.getPokemon();
+
+    // Reset hit-related temporary data.
+    // TODO: These properties should be stored inside a "move in flight" object,
+    // which this Phase would promptly destroy
+    if (pokemon) {
+      pokemon.turnData.hitsLeft = -1;
+    }
+
     if (!this.wasFollowUp && pokemon?.isActive(true)) {
       pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
     }

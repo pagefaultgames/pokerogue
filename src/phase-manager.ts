@@ -337,7 +337,7 @@ export class PhaseManager {
         this.unshiftPhase(...phases);
         break;
       case "deferred":
-        this.phaseQueue.unshiftToCurrent(...phases);
+        this.phaseQueue.addPhase(...phases, true);
         break;
     }
   }
@@ -387,9 +387,9 @@ export class PhaseManager {
   }
 
   /**
-   * Adds one or more Phases to the end of the queue.
+   * Add one or more Phases to the end of the queue.
    * They will run once all phases already in the queue have ended.
-   * @param phases - One or more `Phase`s to add
+   * @param phases - One or more {@linkcode Phase}s to add
    */
   public pushPhase(...phases: NonEmptyTuple<Phase>): void {
     for (const phase of phases) {
@@ -398,7 +398,7 @@ export class PhaseManager {
   }
 
   /**
-   * Queue a phase to be run immediately after the current phase finishes. \
+   * Queue one or more phases to be run immediately after the current phase finishes. \
    * Unshifted phases are run in FIFO order if multiple are queued during a single phase's execution.
    * @param phases - One or more {@linkcode Phase}s to add
    * @privateRemarks
@@ -470,6 +470,10 @@ export class PhaseManager {
   }
   /**
    * Helper method to start and log the current phase.
+   *
+   * @privateRemarks
+   * This is disabled during tests by `phase-interceptor.ts` to allow for pausing execution at specific phases.
+   * As such, **do not remove or split this method** as it will break integration tests.
    */
   private startCurrentPhase(): void {
     console.log(`%cStart Phase ${this.currentPhase.phaseName}`, `color:${PHASE_START_COLOR};`);

@@ -14,7 +14,7 @@ import type { EnemyPokemon } from "#field/pokemon";
 import { Pokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
 
 // TODO: Add more tests once Transform/Imposter are fully implemented
 describe("Transforming Effects", () => {
@@ -25,10 +25,6 @@ describe("Transforming Effects", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {

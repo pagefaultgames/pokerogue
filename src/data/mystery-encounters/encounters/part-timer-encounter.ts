@@ -1,5 +1,7 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { MoneyMultiplierModifier } from "#app/modifier/modifier";
+import { NumberHolder } from "#app/utils/common";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -63,18 +65,17 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   ])
   .withOnInit(() => {
     // Load sfx
-    globalScene.loadSe("PRSFX- Horn Drill1", "battle_anims", "PRSFX- Horn Drill1.wav");
-    globalScene.loadSe("PRSFX- Horn Drill3", "battle_anims", "PRSFX- Horn Drill3.wav");
-    globalScene.loadSe("PRSFX- Guillotine2", "battle_anims", "PRSFX- Guillotine2.wav");
-    globalScene.loadSe("PRSFX- Heavy Slam2", "battle_anims", "PRSFX- Heavy Slam2.wav");
-
-    globalScene.loadSe("PRSFX- Agility", "battle_anims", "PRSFX- Agility.wav");
-    globalScene.loadSe("PRSFX- Extremespeed1", "battle_anims", "PRSFX- Extremespeed1.wav");
-    globalScene.loadSe("PRSFX- Accelerock1", "battle_anims", "PRSFX- Accelerock1.wav");
-
-    globalScene.loadSe("PRSFX- Captivate", "battle_anims", "PRSFX- Captivate.wav");
-    globalScene.loadSe("PRSFX- Attract2", "battle_anims", "PRSFX- Attract2.wav");
-    globalScene.loadSe("PRSFX- Aurora Veil2", "battle_anims", "PRSFX- Aurora Veil2.wav");
+    globalScene
+      .loadSe("PRSFX- Horn Drill1", "battle_anims", "PRSFX- Horn Drill1.wav")
+      .loadSe("PRSFX- Horn Drill3", "battle_anims", "PRSFX- Horn Drill3.wav")
+      .loadSe("PRSFX- Guillotine2", "battle_anims", "PRSFX- Guillotine2.wav")
+      .loadSe("PRSFX- Heavy Slam2", "battle_anims", "PRSFX- Heavy Slam2.wav")
+      .loadSe("PRSFX- Agility", "battle_anims", "PRSFX- Agility.wav")
+      .loadSe("PRSFX- Extremespeed1", "battle_anims", "PRSFX- Extremespeed1.wav")
+      .loadSe("PRSFX- Accelerock1", "battle_anims", "PRSFX- Accelerock1.wav")
+      .loadSe("PRSFX- Captivate", "battle_anims", "PRSFX- Captivate.wav")
+      .loadSe("PRSFX- Attract2", "battle_anims", "PRSFX- Attract2.wav")
+      .loadSe("PRSFX- Aurora Veil2", "battle_anims", "PRSFX- Aurora Veil2.wav");
 
     return true;
   })
@@ -146,13 +147,9 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         } else {
           await showEncounterDialogue(`${namespace}:jobCompleteBad`, `${namespace}:speaker`);
         }
-        const moneyChange = globalScene.getWaveMoneyAmount(moneyMultiplier);
-        updatePlayerMoney(moneyChange, true, false);
-        await showEncounterText(
-          i18next.t("mysteryEncounterMessages:receiveMoney", {
-            amount: moneyChange,
-          }),
-        );
+
+        const formattedMoneyAmount = applyMoneyMultipliers(moneyMultiplier);
+        await showEncounterText(i18next.t("mysteryEncounterMessages:receiveMoney", { amount: formattedMoneyAmount }));
         await showEncounterText(`${namespace}:pokemonTired`);
 
         setEncounterRewards({ fillRemaining: true });
@@ -228,13 +225,9 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         } else {
           await showEncounterDialogue(`${namespace}:jobCompleteBad`, `${namespace}:speaker`);
         }
-        const moneyChange = globalScene.getWaveMoneyAmount(moneyMultiplier);
-        updatePlayerMoney(moneyChange, true, false);
-        await showEncounterText(
-          i18next.t("mysteryEncounterMessages:receiveMoney", {
-            amount: moneyChange,
-          }),
-        );
+
+        const formattedMoneyAmount = applyMoneyMultipliers(moneyMultiplier);
+        await showEncounterText(i18next.t("mysteryEncounterMessages:receiveMoney", { amount: formattedMoneyAmount }));
         await showEncounterText(`${namespace}:pokemonTired`);
 
         setEncounterRewards({ fillRemaining: true });
@@ -283,13 +276,9 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
 
         // Give money and do dialogue
         await showEncounterDialogue(`${namespace}:jobCompleteGood`, `${namespace}:speaker`);
-        const moneyChange = globalScene.getWaveMoneyAmount(2.5);
-        updatePlayerMoney(moneyChange, true, false);
-        await showEncounterText(
-          i18next.t("mysteryEncounterMessages:receiveMoney", {
-            amount: moneyChange,
-          }),
-        );
+
+        const formattedMoneyAmount = applyMoneyMultipliers(2.5);
+        await showEncounterText(i18next.t("mysteryEncounterMessages:receiveMoney", { amount: formattedMoneyAmount }));
         await showEncounterText(`${namespace}:pokemonTired`);
 
         setEncounterRewards({ fillRemaining: true });
@@ -352,4 +341,12 @@ function doSalesSfx() {
   globalScene.time.delayedCall(3000, () => {
     globalScene.playSound("battle_anims/PRSFX- Attract2");
   });
+}
+
+function applyMoneyMultipliers(moneyMultiplier: number): number {
+  const moneyChange = new NumberHolder(globalScene.getWaveMoneyAmount(moneyMultiplier));
+  globalScene.applyModifiers(MoneyMultiplierModifier, true, moneyChange);
+  updatePlayerMoney(moneyChange.value, true, false);
+
+  return moneyChange.value;
 }

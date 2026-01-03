@@ -232,10 +232,10 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
       if (button === Button.CANCEL) {
         if (this.config?.maxOptions && this.config.options.length > this.config.maxOptions) {
           this.setCursor(this.unskippedIndices.length - 1);
-        } else if (!this.config?.noCancel) {
-          this.setCursor(this.unskippedIndices.length - 1);
-        } else {
+        } else if (this.config?.noCancel) {
           return false;
+        } else {
+          this.setCursor(this.unskippedIndices.length - 1);
         }
       }
       const option = this.config?.options[this.unskippedIndices[this.fullCursor]];

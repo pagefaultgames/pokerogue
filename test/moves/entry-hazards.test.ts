@@ -15,7 +15,7 @@ import { GameManager } from "#test/test-utils/game-manager";
 import type { EntryHazardTagType } from "#types/arena-tags";
 import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Entry Hazards", () => {
   let phaserGame: Phaser.Game;
@@ -25,10 +25,6 @@ describe("Moves - Entry Hazards", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {

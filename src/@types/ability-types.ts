@@ -8,7 +8,7 @@ import type { Move } from "#moves/move";
 export type * from "#abilities/ability";
 
 export type AbAttrCondition = (pokemon: Pokemon) => boolean;
-export type PokemonAttackCondition = (user: Pokemon | null, target: Pokemon | null, move: Move) => boolean;
+export type PokemonAttackCondition = (user: Pokemon, target: Pokemon | null, move: Move) => boolean;
 export type PokemonDefendCondition = (target: Pokemon, user: Pokemon, move: Move) => boolean;
 export type PokemonStatStageChangeCondition = (
   target: Pokemon,

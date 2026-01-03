@@ -1754,7 +1754,7 @@ export class WeightedModifierType {
     this.modifierType = modifierTypeFunc();
     this.modifierType.id = Object.keys(modifierTypeInitObj).find(k => modifierTypeInitObj[k] === modifierTypeFunc)!; // TODO: is this bang correct?
     this.weight = weight;
-    this.maxWeight = maxWeight || (!(weight instanceof Function) ? weight : 0);
+    this.maxWeight = maxWeight || (weight instanceof Function ? 0 : weight);
   }
 
   setTier(tier: ModifierTier) {
@@ -2503,12 +2503,7 @@ export function getPlayerModifierTypeOptions(
 ): ModifierTypeOption[] {
   const options: ModifierTypeOption[] = [];
   const retryCount = Math.min(count * 5, 50);
-  if (!customModifierSettings) {
-    for (let i = 0; i < count; i++) {
-      const tier = modifierTiers && modifierTiers.length > i ? modifierTiers[i] : undefined;
-      options.push(getModifierTypeOptionWithRetry(options, retryCount, party, tier));
-    }
-  } else {
+  if (customModifierSettings) {
     // Guaranteed mod options first
     if (
       customModifierSettings?.guaranteedModifierTypeOptions
@@ -2553,6 +2548,11 @@ export function getPlayerModifierTypeOptions(
       while (options.length < count) {
         options.push(getModifierTypeOptionWithRetry(options, retryCount, party, undefined));
       }
+    }
+  } else {
+    for (let i = 0; i < count; i++) {
+      const tier = modifierTiers && modifierTiers.length > i ? modifierTiers[i] : undefined;
+      options.push(getModifierTypeOptionWithRetry(options, retryCount, party, tier));
     }
   }
 
@@ -2874,7 +2874,7 @@ function getNewModifierTypeOption(
     }
   }
 
-  console.log(modifierType, !player ? "(enemy)" : "");
+  console.log(modifierType, player ? "" : "(enemy)");
 
   return new ModifierTypeOption(modifierType as ModifierType, upgradeCount!); // TODO: is this bang correct?
 }

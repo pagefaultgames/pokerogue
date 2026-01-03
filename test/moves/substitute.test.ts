@@ -17,7 +17,7 @@ import { StealHeldItemChanceAttr } from "#moves/move";
 import type { CommandPhase } from "#phases/command-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Substitute", () => {
   let phaserGame: Phaser.Game;
@@ -27,10 +27,6 @@ describe("Moves - Substitute", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -508,5 +504,19 @@ describe("Moves - Substitute", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(playerPokemon.getTag(BattlerTagType.SEEDED)).toBeUndefined();
+  });
+
+  it("should fail if the user has 1 max HP", async () => {
+    await game.classicMode.startBattle([SpeciesId.SHEDINJA]);
+
+    const player = game.field.getPlayerPokemon();
+
+    game.move.use(MoveId.SUBSTITUTE);
+    await game.toEndOfTurn();
+
+    expect(player).toHaveUsedMove({ move: MoveId.SUBSTITUTE, result: MoveResult.FAIL });
+    expect(player).not.toHaveBattlerTag(BattlerTagType.SUBSTITUTE);
+    expect(player).toHaveFullHp();
+    expect(player).toHaveHp(1);
   });
 });

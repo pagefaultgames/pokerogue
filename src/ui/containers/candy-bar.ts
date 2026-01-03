@@ -22,30 +22,29 @@ export class CandyBar extends Phaser.GameObjects.Container {
     super(globalScene, globalScene.scaledCanvas.width, -globalScene.scaledCanvas.height + 15);
   }
 
-  setup(): void {
-    this.bg = globalScene.add.nineslice(0, 0, "party_exp_bar", undefined, 8, 18, 21, 5, 6, 4);
-    this.bg.setOrigin(0, 0);
+  setup(): this {
+    this.bg = globalScene.add //
+      .nineslice(0, 0, "party_exp_bar", undefined, 8, 18, 21, 5, 6, 4)
+      .setOrigin(0, 0);
 
-    this.add(this.bg);
+    this.candyIcon = globalScene.add //
+      .sprite(14, 0, "items", "candy")
+      .setOrigin(0.5, 0)
+      .setScale(0.5);
 
-    this.candyIcon = globalScene.add.sprite(14, 0, "items", "candy");
-    this.candyIcon.setOrigin(0.5, 0);
-    this.candyIcon.setScale(0.5);
+    this.candyOverlayIcon = globalScene.add //
+      .sprite(14, 0, "items", "candy_overlay")
+      .setOrigin(0.5, 0)
+      .setScale(0.5);
 
-    this.add(this.candyIcon);
+    this.countText = addTextObject(22, 4, "", TextStyle.BATTLE_INFO) //
+      .setOrigin(0);
 
-    this.candyOverlayIcon = globalScene.add.sprite(14, 0, "items", "candy_overlay");
-    this.candyOverlayIcon.setOrigin(0.5, 0);
-    this.candyOverlayIcon.setScale(0.5);
-
-    this.add(this.candyOverlayIcon);
-
-    this.countText = addTextObject(22, 4, "", TextStyle.BATTLE_INFO);
-    this.countText.setOrigin(0, 0);
-    this.add(this.countText);
-
-    this.setVisible(false);
+    this.add([this.bg, this.candyIcon, this.candyOverlayIcon, this.countText]) //
+      .setVisible(false);
     this.shown = false;
+
+    return this;
   }
 
   showStarterSpeciesCandy(starterSpeciesId: SpeciesId, count: number): Promise<void> {

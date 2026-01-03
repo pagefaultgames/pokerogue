@@ -8,7 +8,7 @@ import { Stat } from "#enums/stat";
 import type { Move, TeraMoveCategoryAttr } from "#moves/move";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Tera Blast", () => {
   let phaserGame: Phaser.Game;
@@ -23,10 +23,6 @@ describe("Moves - Tera Blast", () => {
     });
     moveToCheck = allMoves[MoveId.TERA_BLAST];
     teraBlastAttr = moveToCheck.getAttrs("TeraMoveCategoryAttr")[0];
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {

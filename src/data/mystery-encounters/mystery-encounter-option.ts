@@ -136,10 +136,10 @@ export class MysteryEncounterOption implements IMysteryEncounterOption {
       const truePrimaryPool: PlayerPokemon[] = [];
       const overlap: PlayerPokemon[] = [];
       for (const qp of qualified) {
-        if (!this.secondaryPokemon.includes(qp)) {
-          truePrimaryPool.push(qp);
-        } else {
+        if (this.secondaryPokemon.includes(qp)) {
           overlap.push(qp);
+        } else {
+          truePrimaryPool.push(qp);
         }
       }
       if (truePrimaryPool.length > 0) {

@@ -131,8 +131,9 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
     // Load animations/sfx for Garbodor fight start moves
     loadCustomMovesForEncounter([MoveId.TOXIC, MoveId.STOCKPILE]);
 
-    globalScene.loadSe("PRSFX- Dig2", "battle_anims", "PRSFX- Dig2.wav");
-    globalScene.loadSe("PRSFX- Venom Drench", "battle_anims", "PRSFX- Venom Drench.wav");
+    globalScene
+      .loadSe("PRSFX- Dig2", "battle_anims", "PRSFX- Dig2.wav")
+      .loadSe("PRSFX- Venom Drench", "battle_anims", "PRSFX- Venom Drench.wav");
 
     encounter.setDialogueToken("costMultiplier", SHOP_ITEM_COST_MULTIPLIER.toString());
 

@@ -9,7 +9,7 @@ import { CommandPhase } from "#phases/command-phase";
 import { NextEncounterPhase } from "#phases/next-encounter-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Phase - Battle Phase", () => {
   let phaserGame: Phaser.Game;
@@ -19,10 +19,6 @@ describe("Phase - Battle Phase", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {

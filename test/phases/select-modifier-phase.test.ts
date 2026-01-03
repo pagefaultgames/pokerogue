@@ -16,7 +16,7 @@ import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { shiftCharCodes } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("SelectModifierPhase", () => {
   let phaserGame: Phaser.Game;
@@ -38,10 +38,6 @@ describe("SelectModifierPhase", () => {
       .ability(AbilityId.NO_GUARD)
       .startingLevel(200)
       .enemySpecies(SpeciesId.MAGIKARP);
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   it("should start a select modifier phase", async () => {
@@ -118,7 +114,6 @@ describe("SelectModifierPhase", () => {
       scene.waveSeed = shiftCharCodes(scene.seed, 5);
       Phaser.Math.RND.sow([scene.waveSeed]);
       console.log("Wave Seed:", scene.waveSeed, 5);
-      scene.rngCounter = 0;
     });
 
     game.move.select(MoveId.FISSURE);

@@ -16,6 +16,8 @@ export const NEW_TURN_COLOR = "#ffad00ff" as const;
 export const UI_MSG_COLOR = "#009dffff" as const;
 export const OVERRIDES_COLOR = "#b0b01eff" as const;
 export const SETTINGS_COLOR = "#008844ff" as const;
+export const PHASE_INTERCEPTOR_COLOR = "#ff7f50" as const;
+export const PROMPT_HANDLER_COLOR = "#003cbdff" as const;
 
 // Colors used for Vitest-related test utils
 export const TEST_NAME_COLOR = "#008886ff" as const;

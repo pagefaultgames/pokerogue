@@ -52,7 +52,7 @@ export class PokerogueAccountApi extends ApiBase {
       console.warn("Register failed!", err);
     }
 
-    return "Unknown error!";
+    return "Unknown registration error!";
   }
 
   /**
@@ -76,7 +76,7 @@ export class PokerogueAccountApi extends ApiBase {
       console.warn("Login failed!", err);
     }
 
-    return "Unknown error!";
+    return "Unknown login error!";
   }
 
   /**
