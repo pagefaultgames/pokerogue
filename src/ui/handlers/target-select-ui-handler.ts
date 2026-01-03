@@ -34,7 +34,9 @@ export class TargetSelectUiHandler extends UiHandler {
 
   setup(): void {}
 
-  show(args: [fieldIndex: number, moveId: MoveId, callback: TargetSelectCallback, defaultTargets?: BattlerIndex[]]): boolean {
+  show(
+    args: [fieldIndex: number, moveId: MoveId, callback: TargetSelectCallback, defaultTargets?: BattlerIndex[]],
+  ): boolean {
     if (args.length < 3) {
       return false;
     }
