@@ -27,7 +27,10 @@ Please try to keep the PR self-contained (and small!)
 -->
 
 ## What are the changes the user will see?
-<!-- Summarize what are the changes from a user perspective on the application -->
+<!--
+Summarize what are the changes from a user perspective on the application.
+Try to keep it short in this section since this is used to generate a changelog.
+-->
 
 ## Why am I making these changes?
 <!--
@@ -62,18 +65,11 @@ Did you introduce any automated tests?
 Do the reviewers need to do something special in order to test your changes?
 -->
 
-## Changelog
-<!-- 
-Shortly summarize what the user-relevant changes are. 
-If you are unsure or there are no user-facing changes, you can leave this blank.
--->
-
 ## Checklist
 - [ ] **I'm using `beta` as my base branch**
 - [ ] There is no overlap with another PR?
 - [ ] The PR is self-contained and cannot be split into smaller PRs?
 - [ ] Have I provided a clear explanation of the changes?
-- [ ] Have i provided a changelog if necessary?
 - [ ] Have I tested the changes manually?
 - [ ] Are all unit tests still passing? (`pnpm test:silent`)
   - [ ] Have I created new automated tests (`pnpm test:create`) or updated existing tests related to the PR's changes?
