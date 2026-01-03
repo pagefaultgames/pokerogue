@@ -71,13 +71,12 @@ export class QuietFormChangePhase extends BattlePhase {
    */
   private async doChangeForm(): Promise<void> {
     // TODO: This will have ordering issues with on lose abilities' trigger messages showing after this Phase ends
-    // if any are given to a Pokemon with mid-battle form changes
+    // if any are given to a Pokemon with mid-battle form changes.
     // If this is desired later on, the animation/textual part of `QuietFormChangePhase` will need to be pulled out
-    // into a separate Phase
+    // into a separate Phase, though I doubt balence team will need to do this for a while...
     applyOnLoseAbAttrs({ pokemon: this.pokemon });
-    const prevForm = this.pokemon.getSpeciesForm();
     await this.pokemon.changeForm(this.formChange);
-    applyPostFormChangeAbAttrs({ pokemon: this.pokemon }, prevForm);
+    applyPostFormChangeAbAttrs({ pokemon: this.pokemon });
   }
 
   private async playFormChangeTween(): Promise<void> {

@@ -1,6 +1,4 @@
 import { globalScene } from "#app/global-scene";
-import type { PokemonSpeciesForm } from "#data/pokemon-species";
-import type { Pokemon } from "#field/pokemon";
 import type {
   AbAttrBaseParams,
   AbAttrMap,
@@ -136,44 +134,17 @@ export function applyOnGainAbAttrs(params: AbAttrBaseParams): void {
 }
 
 /**
- * Applies effects of abilities when they become active mid-turn from a Pokemon changing its form.
+ * Apply the effects of abilities when they become active mid-turn from a Pokemon changing its form.
  *
  * @param params - The parameters to pass to the ability attribute's `apply` method
- * @param formChange - The Pokemon's previous {@linkcode PokemonSpeciesForm | form change}
  * @remarks
- * Unlike {@linkcode applyOnGainAbAttrs}, this will only apply abilities or passives if
- * the prior form did not have that same ability/passive, and will NOT apply any attributes
- * that extend `PostSummonFormChangeAbAttr` under any circumstances.
+ * In keeping with mainline behavior (such as Mega Tyranitar re-applying Sand Stream on Mega Evolving),
+ * this will re-apply all relevant abilities **regardless** of whether the form change altered the ability or not.
+ * @privateRemarks
+ * This will not apply any attributes that extend off of `PostSummonFormChangeAbAttr` to prevent infinite loops.
  */
-export function applyPostFormChangeAbAttrs(
-  params: Omit<AbAttrBaseParams, "passive">,
-  formChange: PokemonSpeciesForm,
-): void {
-  // NB: This behavior of "only apply changed abilities" would diverge from mainline Mega Evolution behavior
-  // (e.g. Mega Tyranitar/Sand Stream);
-  // if such behavior is ever desired in future, this behavior must be reworked to allow that.
-
-  const { pokemon } = params;
-  const [activeChanged, passiveChanged] = hasDifferentFormAbilities(pokemon, formChange);
-
-  if (activeChanged) {
-    applyAbAttrsInternal(
-      "PostSummonAbAttr",
-      { ...params, passive: false },
-      {
-        attrFilter: attr => !attr.is("PostSummonFormChangeAbAttr"),
-      },
-    );
-  }
-  if (passiveChanged) {
-    applyAbAttrsInternal(
-      "PostSummonAbAttr",
-      { ...params, passive: true },
-      {
-        attrFilter: attr => !attr.is("PostSummonFormChangeAbAttr"),
-      },
-    );
-  }
+export function applyPostFormChangeAbAttrs(params: Omit<AbAttrBaseParams, "passive">): void {
+  applyAbAttrsInternal("PostSummonAbAttr", params, { attrFilter: attr => !attr.is("PostSummonFormChangeAbAttr") });
 }
 
 /**
@@ -196,13 +167,5 @@ export function applyOnLoseAbAttrs(params: AbAttrBaseParams): void {
  * @remarks
  * Does _not_ check for ability-overridding effects.
  */
-function hasDifferentFormAbilities(
-  pokemon: Pokemon,
-  prevForm: PokemonSpeciesForm,
-): [active: boolean, passive: boolean] {
-  const { abilityIndex, species } = pokemon;
-
-  const diffActive = species.getAbility(abilityIndex) !== prevForm.getAbility(abilityIndex);
-  const diffPassive = pokemon.hasPassive() && species.getPassiveAbility() !== prevForm.getPassiveAbility();
-  return [diffActive, diffPassive];
-}
+// NOTE: `hasDifferentFormAbilities` removed — applyPostFormChangeAbAttrs now
+// applies post-summon attributes regardless of whether the abilities changed.
