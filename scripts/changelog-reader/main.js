@@ -84,15 +84,17 @@ async function getChangelog() {
 async function getDiff() {
   console.log(`Comparing ${CONFIG.CUTOFF_BRANCH}...${CONFIG.REPO_BRANCH}`);
 
-  const comparison = await octokit.rest.repos.compareCommitsWithBasehead({
-    owner: CONFIG.REPO_OWNER,
-    repo: CONFIG.REPO_NAME,
-    basehead: `${CONFIG.CUTOFF_BRANCH}...${CONFIG.REPO_BRANCH}`,
-    per_page: 100,
-  });
-
-  const commits = comparison.data.commits.map(c => c.sha);
-
+  const commits = await octokit.paginate(
+    octokit.rest.repos.compareCommitsWithBasehead,
+    {
+      owner: CONFIG.REPO_OWNER,
+      repo: CONFIG.REPO_NAME,
+      basehead: `${CONFIG.CUTOFF_BRANCH}...${CONFIG.REPO_BRANCH}`,
+    },
+    response =>
+      // @ts-expect-error: `.paginate` doesn't give the right types
+      response.data.commits.map(c => c.sha),
+  );
   return new Set(commits);
 }
 

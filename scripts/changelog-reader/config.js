@@ -25,7 +25,6 @@ export const CONFIG = {
   REPO_BRANCH: "",
   CUTOFF_BRANCH: "main",
   CHANGELOG_SECTION: "## What are the changes the user will see?",
-  PER_PAGE: 50,
   OUTPUT_FILE: "changelog.md",
   /** @type {string[]} */
   FILTER: ["n/a"],
