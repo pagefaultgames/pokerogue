@@ -11,11 +11,7 @@ export class AddEnemyBuffModifierPhase extends Phase {
     super.start();
 
     const waveIndex = globalScene.currentBattle.waveIndex;
-    const tier = !(waveIndex % 1000)
-      ? ModifierTier.ULTRA
-      : !(waveIndex % 250)
-        ? ModifierTier.GREAT
-        : ModifierTier.COMMON;
+    const tier = waveIndex % 1000 ? (waveIndex % 250 ? ModifierTier.COMMON : ModifierTier.GREAT) : ModifierTier.ULTRA;
 
     regenerateModifierPoolThresholds(globalScene.getEnemyParty(), ModifierPoolType.ENEMY_BUFF);
 

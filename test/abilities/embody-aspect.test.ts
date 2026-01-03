@@ -5,7 +5,7 @@ import { type BattleStat, Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import { toTitleCase } from "#utils/strings";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe.each<{ name: string; ability: AbilityId; stat: BattleStat }>([
   { name: "Teal", ability: AbilityId.EMBODY_ASPECT_TEAL, stat: Stat.SPD },
@@ -20,10 +20,6 @@ describe.each<{ name: string; ability: AbilityId; stat: BattleStat }>([
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
