@@ -27,7 +27,7 @@ import {
   runSelectMysteryEncounterOption,
 } from "#test/mystery-encounter/encounter-test-utils";
 import { GameManager } from "#test/test-utils/game-manager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/delibirdy";
 const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
@@ -55,10 +55,6 @@ describe("Delibird-y - Mystery Encounter", () => {
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<BiomeId, MysteryEncounterType[]>([[BiomeId.CAVE, [MysteryEncounterType.DELIBIRDY]]]),
     );
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   it("should have the correct properties", async () => {

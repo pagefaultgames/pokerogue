@@ -14,7 +14,6 @@ import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import type { EnemyPokemon } from "#field/pokemon";
 import type { PersistentModifier } from "#modifiers/modifier";
-import { getIsInitialized, initI18n } from "#plugins/i18n";
 import type { TrainerConfig } from "#trainers/trainer-config";
 import { trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, type TrainerPartyTemplate } from "#trainers/trainer-party-template";
@@ -175,29 +174,24 @@ export class Trainer extends Phaser.GameObjects.Container {
     if (this.name) {
       // If the title should be included.
       if (includeTitle) {
-        // Check if the internationalization (i18n) system is initialized.
-        if (!getIsInitialized()) {
-          // Initialize the i18n system if it is not already initialized.
-          initI18n();
-        }
         // Get the localized trainer class name from the i18n file and set it as the title.
         // This is used for trainer class names, not titles like "Elite Four, Champion, etc."
         title = i18next.t(`trainerClasses:${toCamelCase(name)}`);
       }
 
       // If no specific trainer slot is set.
-      if (!trainerSlot) {
+      if (trainerSlot) {
+        // Assign the name based on the trainer slot:
+        // Use 'this.name' if 'trainerSlot' is TRAINER.
+        // Otherwise, use 'this.partnerName' if it exists, or 'this.name' if it doesn't.
+        name = trainerSlot === TrainerSlot.TRAINER ? this.name : this.partnerName || this.name;
+      } else {
         // Use the trainer's name.
         name = this.name;
         // If there is a partner name, concatenate it with the trainer's name using "&".
         if (this.partnerName) {
           name = `${name} & ${this.partnerName}`;
         }
-      } else {
-        // Assign the name based on the trainer slot:
-        // Use 'this.name' if 'trainerSlot' is TRAINER.
-        // Otherwise, use 'this.partnerName' if it exists, or 'this.name' if it doesn't.
-        name = trainerSlot === TrainerSlot.TRAINER ? this.name : this.partnerName || this.name;
       }
     }
 
@@ -232,32 +226,32 @@ export class Trainer extends Phaser.GameObjects.Container {
   }
 
   getEncounterBgm(): string {
-    return !this.variant
-      ? this.config.encounterBgm
-      : (this.variant === TrainerVariant.DOUBLE ? this.config.doubleEncounterBgm : this.config.femaleEncounterBgm)
-          || this.config.encounterBgm;
+    return this.variant
+      ? (this.variant === TrainerVariant.DOUBLE ? this.config.doubleEncounterBgm : this.config.femaleEncounterBgm)
+          || this.config.encounterBgm
+      : this.config.encounterBgm;
   }
 
   getEncounterMessages(): string[] {
-    return !this.variant
-      ? this.config.encounterMessages
-      : (this.variant === TrainerVariant.DOUBLE
+    return this.variant
+      ? (this.variant === TrainerVariant.DOUBLE
           ? this.config.doubleEncounterMessages
-          : this.config.femaleEncounterMessages) || this.config.encounterMessages;
+          : this.config.femaleEncounterMessages) || this.config.encounterMessages
+      : this.config.encounterMessages;
   }
 
   getVictoryMessages(): string[] {
-    return !this.variant
-      ? this.config.victoryMessages
-      : (this.variant === TrainerVariant.DOUBLE ? this.config.doubleVictoryMessages : this.config.femaleVictoryMessages)
-          || this.config.victoryMessages;
+    return this.variant
+      ? (this.variant === TrainerVariant.DOUBLE ? this.config.doubleVictoryMessages : this.config.femaleVictoryMessages)
+          || this.config.victoryMessages
+      : this.config.victoryMessages;
   }
 
   getDefeatMessages(): string[] {
-    return !this.variant
-      ? this.config.defeatMessages
-      : (this.variant === TrainerVariant.DOUBLE ? this.config.doubleDefeatMessages : this.config.femaleDefeatMessages)
-          || this.config.defeatMessages;
+    return this.variant
+      ? (this.variant === TrainerVariant.DOUBLE ? this.config.doubleDefeatMessages : this.config.femaleDefeatMessages)
+          || this.config.defeatMessages
+      : this.config.defeatMessages;
   }
 
   getPartyTemplate(): TrainerPartyTemplate {
@@ -444,7 +438,7 @@ export class Trainer extends Phaser.GameObjects.Container {
         ? this.config.getDerivedType() + ((index + 1) << 8)
         : globalScene.currentBattle.waveIndex
             + (this.config.getDerivedType() << 10)
-            + (((!this.config.useSameSeedForAllMembers ? index : 0) + 1) << 8),
+            + (((this.config.useSameSeedForAllMembers ? 0 : index) + 1) << 8),
     );
 
     return ret!; // TODO: is this bang correct?

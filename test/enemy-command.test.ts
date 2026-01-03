@@ -9,7 +9,7 @@ import type { EnemyPokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
 import { randSeedInt } from "#utils/common";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 let globalScene: BattleScene;
 const NUM_TRIALS = 300;
@@ -39,10 +39,6 @@ describe("Enemy Commands - Move Selection", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
