@@ -1,6 +1,6 @@
-/** 
+/**
  * File containing various banlists and other constants used by moves and their effects.
- * 
+ *
  * @remarks
  * Note that most exclusive moves are intentionally omitted from move banlists
  * unless they have some other reason for being excluded.
