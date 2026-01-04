@@ -117,19 +117,29 @@ export declare class Brander<B extends string | symbol> {
   private __brand: B;
 }
 
-/** Negate a number, converting its sign from positive to negative or vice versa. */
+/** 
+ * Negate a number, converting its sign from positive to negative or vice versa. 
+ * @typeParam N - The number to negate
+ * @privateRemarks
+ * This should be used sparingly due to being slow for TypeScript to validate. \
+ * Moreover, `tsc`'s limitations on "round-tripping" of numbers inside template literals
+ * will cause this to fail for numbers not already in "simplest form"
+ * (cf. https://github.com/microsoft/TypeScript/issues/57404).
+ */
 export type Negate<N extends number> =
   // Handle edge cases
-  N extends 0
-    ? 0
-    : N extends PositiveInfinity
-      ? NegativeInfinity
-      : N extends NegativeInfinity
-        ? PositiveInfinity
-        : // Handle negative numbers
-          `${N}` extends `-${infer P extends number}`
-          ? P
-          : // Handle positive numbers
-            `-${N}` extends `${infer R extends number}`
-            ? R
-            : never;
+  number extends N
+    ? number
+    : N extends 0
+      ? 0
+      : N extends PositiveInfinity
+        ? NegativeInfinity
+        : N extends NegativeInfinity
+          ? PositiveInfinity
+          : // Handle negative numbers
+            `${N}` extends `-${infer P extends number}`
+            ? P
+            : // Handle positive numbers
+              `-${N}` extends `${infer R extends number}`
+              ? R
+              : number;
