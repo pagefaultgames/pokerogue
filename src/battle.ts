@@ -1,3 +1,8 @@
+// biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports
+import type { Arena } from "#field/arena";
+
+// biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports
+
 import type { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -14,7 +19,7 @@ import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
-import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
+import type { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
 import { MoneyMultiplierModifier, type PokemonHeldItemModifier } from "#modifiers/modifier";
 import type { CustomModifierSettings } from "#modifiers/modifier-type";
@@ -43,11 +48,6 @@ export interface TurnCommand {
   targets?: BattlerIndex[];
   skip?: boolean;
   args?: any[];
-}
-
-export interface FaintLogEntry {
-  pokemon: Pokemon;
-  turn: number;
 }
 
 interface TurnCommands {
@@ -82,13 +82,35 @@ export class Battle {
   public lastPlayerInvolved: number;
   public lastUsedPokeball: PokeballType | null = null;
   /**
+   * The number of times an enemy Pokemon has Terastallized in the current battle.
+   * @defaultValue `0`
+   */
+  public enemyTerasUsed = 0;
+  /**
    * Saves the number of times a Pokemon on the enemy's side has fainted during this battle.
    * This is saved here since we encounter a new enemy every wave.
    * {@linkcode globalScene.arena.playerFaints} is the corresponding faint counter for the player and needs to be save across waves (reset every arena encounter).
    */
   public enemyFaints = 0;
-  public playerFaintsHistory: FaintLogEntry[] = [];
-  public enemyFaintsHistory: FaintLogEntry[] = [];
+  /**
+   * Whether an {@linkcode EnemyPokemon} fainted last turn in battle.
+   *
+   * Used for Retaliate's "double power" condition.
+   * @defaultValue `false`
+   * @see {@linkcode Arena.playerFaintedLastTurn} \
+   * The corresponding (non-serialized) tracker for player Pokemon (persists between waves)
+   */
+  public enemyFaintedLastTurn = false;
+  /**
+   * Whether an {@linkcode EnemyPokemon} fainted **this current** turn in battle.
+   *
+   * Not actually serialized into save data, but merely used to ensure `enemyFaintedLastTurn`
+   * does not reset during the turn it is set.
+   * @defaultValue `false`
+   * @see {@linkcode Arena.playerFaintedThisTurn} \
+   * The corresponding tracker for enemy Pokemon
+   */
+  public enemyFaintedThisTurn = false;
 
   public mysteryEncounterType?: MysteryEncounterType;
   /** If the current battle is a Mystery Encounter, this will always be defined */
@@ -163,6 +185,8 @@ export class Battle {
     this.turnCommands = Object.fromEntries(getEnumValues(BattlerIndex).map(bt => [bt, null]));
     this.preTurnCommands = Object.fromEntries(getEnumValues(BattlerIndex).map(bt => [bt, null]));
     this.battleSeedState = null;
+    this.enemyFaintedLastTurn = this.enemyFaintedThisTurn;
+    this.enemyFaintedThisTurn = false;
   }
 
   addParticipant(playerPokemon: PlayerPokemon): void {

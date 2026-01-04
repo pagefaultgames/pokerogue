@@ -1,4 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import type { Battle } from "#app/battle";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { biomePokemonPools, biomeTrainerPools } from "#balance/biomes";
@@ -58,10 +59,30 @@ export class Arena {
   public ignoringEffectSource: BattlerIndex | null;
   public playerTerasUsed = 0;
   /**
-   * Saves the number of times a party pokemon faints during a arena encounter.
-   * {@linkcode globalScene.currentBattle.enemyFaints} is the corresponding faint counter for the enemy (this resets every wave).
+   * Counter for the number of times a {@linkcode PlayerPokemon} has fainted during the current battle.
+   * @see {@linkcode Battle.enemyFaints} \
+   * The corresponding (non-serialized) faint counter for enemy Pokemon (resets each wave)
    */
   public playerFaints: number;
+  /**
+   * Whether a {@linkcode PlayerPokemon} fainted last turn in battle.
+   *
+   * Used for Retaliate's "double power" condition.
+   * @defaultValue `false`
+   * @see {@linkcode Battle.enemyFaintedLastTurn} \
+   * The corresponding (non-serialized) tracker for enemy Pokemon (resets each wave)
+   */
+  public playerFaintedLastTurn = false;
+  /**
+   * Whether a {@linkcode PlayerPokemon} fainted **this current** turn in battle.
+   *
+   * Not actually serialized into save data, and is used to ensure `playerFaintedLastTurn`
+   * does not reset during the turn it is set.
+   * @defaultValue `false`
+   * @see {@linkcode Battle.enemyFaintedThisTurn} \
+   * The corresponding tracker for enemy Pokemon
+   */
+  public playerFaintedThisTurn = false;
 
   private lastTimeOfDay: TimeOfDay;
 
@@ -103,6 +124,23 @@ export class Arena {
         );
       }
       this.lastTimeOfDay = timeOfDay;
+    }
+  }
+
+  /**
+   * Perform various effects at the end of each turn.
+   */
+  public performTurnEndEffects(): void {
+    this.playerFaintedLastTurn = this.playerFaintedThisTurn;
+    this.playerFaintedThisTurn = false;
+
+    if (this.weather && !this.weather.lapse()) {
+      this.trySetWeather(WeatherType.NONE);
+      this.triggerWeatherBasedFormChangesToNormal();
+    }
+
+    if (this.terrain && !this.terrain.lapse()) {
+      this.trySetTerrain(TerrainType.NONE);
     }
   }
 

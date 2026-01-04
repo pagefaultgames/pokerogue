@@ -40,6 +40,8 @@ export class TeraPhase extends BattlePhase {
 
     if (this.pokemon.isPlayer()) {
       globalScene.arena.playerTerasUsed += 1;
+    } else {
+      globalScene.currentBattle.enemyTerasUsed += 1;
     }
 
     globalScene.triggerPokemonFormChange(this.pokemon, SpeciesFormChangeTeraTrigger);
