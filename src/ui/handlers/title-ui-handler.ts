@@ -261,6 +261,7 @@ export class TitleUiHandler extends OptionSelectUiHandler {
   private getSnow(): void {
     const width = globalScene.scaledCanvas.width;
     const height = globalScene.scaledCanvas.height;
+    this.snow?.destroy(); // Ensures no duplicate snow layers
     this.snow = globalScene.add.tileSprite(width, height, width, height, "snow");
     this.snow.setOrigin(1, 1);
 

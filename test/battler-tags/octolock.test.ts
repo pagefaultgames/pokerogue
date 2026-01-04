@@ -4,7 +4,7 @@ import { Stat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
 import { StatStageChangePhase } from "#phases/stat-stage-change-phase";
 import { GameManager } from "#test/test-utils/game-manager";
-import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 
 describe("BattlerTag - OctolockTag", () => {
   describe("lapse behavior", () => {
@@ -16,10 +16,6 @@ describe("BattlerTag - OctolockTag", () => {
         type: Phaser.HEADLESS,
       });
       game = new GameManager(phaserGame);
-    });
-
-    afterEach(() => {
-      game.phaseInterceptor.restoreOg();
     });
 
     it("unshifts a StatStageChangePhase with expected stat stage changes", async () => {

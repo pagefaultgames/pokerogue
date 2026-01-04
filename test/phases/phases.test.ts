@@ -5,7 +5,7 @@ import { TitlePhase } from "#phases/title-phase";
 import { UnavailablePhase } from "#phases/unavailable-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Phases", () => {
   let phaserGame: Phaser.Game;
@@ -16,10 +16,6 @@ describe("Phases", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
