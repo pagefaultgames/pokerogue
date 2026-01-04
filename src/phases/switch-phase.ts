@@ -63,7 +63,12 @@ export class SwitchPhase extends PokemonPhase {
   }
 
   private resolvePlayerSwitchInIndex(): void {
-    globalScene.ui.setMode(UiMode.PARTY, PartyUiMode.MODAL_SWITCH, this.fieldIndex, this.onPartyModeSelection);
+    globalScene.ui.setMode(
+      UiMode.PARTY,
+      PartyUiMode.MODAL_SWITCH,
+      this.fieldIndex,
+      (cursor: number, option: PartyOption) => this.onPartyModeSelection(cursor, option),
+    );
   }
 
   private async onPartyModeSelection(cursor: number, option: PartyOption): Promise<void> {
