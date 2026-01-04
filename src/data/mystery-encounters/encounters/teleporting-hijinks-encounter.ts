@@ -255,12 +255,8 @@ async function animateBiomeChange(nextBiome: BiomeId): Promise<void> {
 
   const biomeKey = getBiomeKey(nextBiome);
   const bgTexture = `${biomeKey}_bg`;
-  globalScene.arenaBgTransition.setTexture(bgTexture);
-  globalScene.arenaBgTransition.setAlpha(0);
-  globalScene.arenaBgTransition.setVisible(true);
-  globalScene.arenaPlayerTransition.setBiome(nextBiome);
-  globalScene.arenaPlayerTransition.setAlpha(0);
-  globalScene.arenaPlayerTransition.setVisible(true);
+  globalScene.arenaBgTransition.setTexture(bgTexture).setAlpha(0).setVisible(true);
+  globalScene.arenaPlayerTransition.setBiome(nextBiome).setAlpha(0).setVisible(true);
 
   await playTween({
     targets: [globalScene.arenaPlayer, globalScene.arenaBgTransition, globalScene.arenaPlayerTransition],
