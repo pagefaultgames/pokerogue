@@ -5912,24 +5912,15 @@ export class TeraStarstormTypeAttr extends VariableMoveTypeAttr {
 }
 
 export class MatchUserTypeAttr extends VariableMoveTypeAttr {
-  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: [NumberHolder, ...any[]]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof NumberHolder)) {
+    const userTypes = user.getTypes(true, true);
+    if (userTypes.length === 0) {
       return false;
     }
-    const userTypes = user.getTypes(true);
 
-    if (userTypes.includes(PokemonType.STELLAR)) {
-      // will not change to stellar type
-      const nonTeraTypes = user.getTypes();
-      moveType.value = nonTeraTypes[0];
-      return true;
-    }
-    if (userTypes.length > 0) {
-      moveType.value = userTypes[0];
-      return true;
-    }
-    return false;
+    moveType.value = userTypes[0];
+    return true;
   }
 
   override getTypesForItemSpawn(user: Pokemon, move: Move): PokemonType[] {
@@ -7266,9 +7257,13 @@ export class CopyTypeAttr extends MoveEffectAttr {
       return false;
     }
 
-    const targetTypes = target.getTypes(true);
-    if (targetTypes.includes(PokemonType.UNKNOWN) && targetTypes.indexOf(PokemonType.UNKNOWN) > -1) {
-      targetTypes[targetTypes.indexOf(PokemonType.UNKNOWN)] = PokemonType.NORMAL;
+    const targetTypes = target.getTypes(true, true);
+    // Replace UNKNOWN with grass type
+    // TODO: `getTypes` arguably shouldn't include `UNKNOWN` if a type was added anyways,
+    // and this should DEFNINITELY get its own helper function for Roost and co.
+    const unknownIndex = targetTypes.indexOf(PokemonType.UNKNOWN);
+    if (unknownIndex !== -1) {
+      targetTypes[unknownIndex] = PokemonType.NORMAL;
     }
     user.summonData.types = targetTypes;
     user.updateInfo();
@@ -7284,8 +7279,9 @@ export class CopyTypeAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (_user, target, _move) =>
-      target.getTypes()[0] !== PokemonType.UNKNOWN || target.summonData.addedType !== null;
+    return (user, target) =>
+      !user.isTerastallized
+      && (!target.isOfType(PokemonType.UNKNOWN, true, true) || target.summonData.addedType !== null);
   }
 }
 
@@ -7434,7 +7430,7 @@ export class ChangeTypeAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (_user, target, _move) =>
+    return (_user, target) =>
       !target.isTerastallized
       && !target.hasAbility(AbilityId.MULTITYPE)
       && !target.hasAbility(AbilityId.RKS_SYSTEM)
@@ -7466,7 +7462,7 @@ export class AddTypeAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (_user, target, _move) => !target.isTerastallized && !target.getTypes().includes(this.type);
+    return (_user, target) => !target.isTerastallized && !target.isOfType(this.type);
   }
 }
 
@@ -7480,7 +7476,7 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
       return false;
     }
 
-    const firstMoveType = target.getMoveset()[0].getMove().type;
+    const firstMoveType = user.getMoveset()[0].getMove().type;
     user.summonData.types = [firstMoveType];
     globalScene.phaseManager.queueMessage(
       i18next.t("battle:transformedIntoType", {
@@ -7490,6 +7486,10 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
     );
 
     return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return user => !user.isTerastallized && !user.isOfType(user.getMoveset()[0].getMove().type);
   }
 }
 
@@ -8759,7 +8759,7 @@ const attackedByItemMessageFunc = (_user: Pokemon, target: Pokemon, _move: Move)
 export class HitsSameTypeAttr extends VariableMoveTypeMultiplierAttr {
   apply(user: Pokemon, target: Pokemon, _move: Move, args: any[]): boolean {
     const multiplier = args[0] as NumberHolder;
-    if (!user.getTypes(true).some(type => target.getTypes(true).includes(type))) {
+    if (!user.getTypes(true, true).some(type => target.isOfType(type, true, true))) {
       multiplier.value = 0;
       return true;
     }
@@ -8843,8 +8843,8 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
 
   getCondition(): MoveConditionFunc {
     // TODO: Does this count dancer?
-    return (_user, target, _move) => {
-      return target.getLastXMoves(-1).some(tm => tm.move !== MoveId.NONE);
+    return (user, target) => {
+      return !user.isTerastallized && target.getLastXMoves(-1).some(tm => tm.move !== MoveId.NONE);
     };
   }
 }
@@ -8883,8 +8883,7 @@ export class ExposedMoveAttr extends AddBattlerTagAttr {
   }
 }
 
-const unknownTypeCondition: MoveConditionFunc = (user, _target, _move) =>
-  !user.getTypes().includes(PokemonType.UNKNOWN);
+const unknownTypeCondition: MoveConditionFunc = user => !user.isOfType(PokemonType.UNKNOWN, true, true);
 
 export type MoveTargetSet = {
   targets: BattlerIndex[];
@@ -11086,11 +11085,17 @@ export function initMoves() {
       .attr(AddArenaTagAttr, ArenaTagType.CRAFTY_SHIELD, 1, true, true)
       .condition(failIfLastCondition, 3),
     new StatusMove(MoveId.FLOWER_SHIELD, PokemonType.FAIRY, -1, 10, -1, 0, 6)
-      .target(MoveTarget.ALL)
       .attr(StatStageChangeAttr, [Stat.DEF], 1, false, {
-        condition: (_user, target, _move) =>
-          target.getTypes().includes(PokemonType.GRASS) && !target.getTag(SemiInvulnerableTag),
-      }),
+        condition: (_user, target) =>
+          target.isOfType(PokemonType.GRASS, true, true) && !target.getTag(SemiInvulnerableTag),
+      })
+      .target(MoveTarget.ALL)
+      // fails if no non-invulnerable pokemon on field are grass-type
+      .condition(() =>
+        globalScene
+          .getField(true)
+          .some(p => p.isOfType(PokemonType.GRASS, true, true) && !p.getTag(SemiInvulnerableTag)),
+      ),
     new StatusMove(MoveId.GRASSY_TERRAIN, PokemonType.GRASS, -1, 10, -1, 0, 6)
       .attr(TerrainChangeAttr, TerrainType.GRASSY)
       .target(MoveTarget.BOTH_SIDES),
@@ -12138,7 +12143,7 @@ export function initMoves() {
       .attr(TeraBlastTypeAttr)
       .attr(TeraBlastPowerAttr)
       .attr(StatStageChangeAttr, [Stat.ATK, Stat.SPATK], -1, true, {
-        condition: (user, _target, _move) => user.isTerastallized && user.isOfType(PokemonType.STELLAR),
+        condition: user => user.isTerastallized && user.isOfType(PokemonType.STELLAR, true, false),
       }),
     new SelfStatusMove(MoveId.SILK_TRAP, PokemonType.BUG, -1, 10, -1, 4, 9)
       .attr(ProtectAttr, BattlerTagType.SILK_TRAP)

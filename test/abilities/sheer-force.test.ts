@@ -127,9 +127,9 @@ describe("Abilities - Sheer Force", () => {
     await game.toNextTurn();
 
     // Check that both Pokemon's Color Change activated
-    const expectedTypes = [allMoves[moveToUse].type];
-    expect(pidgeot.getTypes()).toStrictEqual(expectedTypes);
-    expect(onix.getTypes()).toStrictEqual(expectedTypes);
+    const expectedTypes = [allMoves[moveToUse].type] as const;
+    expect(pidgeot).toHaveTypes(expectedTypes);
+    expect(onix).toHaveTypes(expectedTypes);
   });
 
   it("Sheer Force should disable Meloetta's transformation from Relic Song", async () => {

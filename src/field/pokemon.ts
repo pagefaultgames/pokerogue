@@ -255,6 +255,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /** Whether this Pokémon is currently Terastallized */
   public isTerastallized: boolean;
   /** The set of Types that have been boosted by this Pokémon's Stellar Terastallization. */
+  // TODO: Make this an actual set that is serialized to/from an array
   public stellarTypesBoosted: PokemonType[];
 
   // TODO: Create a fusionData class / interface and move all fusion-related fields there, exposed via getters
@@ -1912,114 +1913,44 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Evaluate and return this Pokemon's typing.
-   * @param includeTeraType - Whether to use this Pokemon's tera type if Terastallized; default `false`
+   * @param includeTeraType - Whether to use this Pokemon's tera type if Terastallized; default `true`
    * @param forDefend - Whether this Pokemon is currently receiving an attack; default `false`
-   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
+   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform} and similar effects; default `false`
    * @param useIllusion - Whether to consider an active illusion; default `false`
-   * @returns An array of {@linkcode PokemonType}s corresponding to this Pokemon's typing (real or perceived).
+   * @returns A non-empty array of {@linkcode PokemonType}s corresponding to this Pokemon's typing (real or perceived).
    */
   public getTypes(
-    includeTeraType = false,
+    includeTeraType = true,
     forDefend = false,
     ignoreOverride = false,
     useIllusion = false,
-  ): PokemonType[] {
+  ): [PokemonType, ...PokemonType[]] {
     const types: PokemonType[] = [];
+    const teraType = this.getTeraType();
+    // Stellar tera does nothing defensively (uses original types)
+    const shouldUseTeraStellar = !(forDefend && teraType === PokemonType.STELLAR);
 
-    if (includeTeraType && this.isTerastallized) {
-      const teraType = this.getTeraType();
-      if (this.isTerastallized && !(forDefend && teraType === PokemonType.STELLAR)) {
-        // Stellar tera uses its original types defensively
-        types.push(teraType);
-        if (forDefend) {
-          return types;
-        }
+    if (includeTeraType && this.isTerastallized && shouldUseTeraStellar) {
+      // Defensive Teras override everything else
+      if (forDefend) {
+        return [teraType];
       }
-    }
-    if (types.length === 0 || !includeTeraType) {
-      if (
-        !ignoreOverride
-        && this.summonData.types
-        && this.summonData.types.length > 0
-        && (!this.summonData.illusion || !useIllusion)
-      ) {
-        this.summonData.types.forEach(t => types.push(t));
-      } else {
-        const speciesForm = this.getSpeciesForm(ignoreOverride, useIllusion);
-        const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOverride, useIllusion);
-        const customTypes = this.customPokemonData.types?.length > 0;
-
-        // First type, checking for "permanently changed" types from ME
-        const firstType =
-          customTypes && this.customPokemonData.types[0] !== PokemonType.UNKNOWN
-            ? this.customPokemonData.types[0]
-            : speciesForm.type1;
-        types.push(firstType);
-
-        // Second type
-        let secondType: PokemonType = PokemonType.UNKNOWN;
-
-        if (fusionSpeciesForm) {
-          // Check if the fusion Pokemon also has permanent changes from ME when determining the fusion types
-          const fusionType1 =
-            this.fusionCustomPokemonData?.types
-            && this.fusionCustomPokemonData.types.length > 0
-            && this.fusionCustomPokemonData.types[0] !== PokemonType.UNKNOWN
-              ? this.fusionCustomPokemonData.types[0]
-              : fusionSpeciesForm.type1;
-          const fusionType2 =
-            this.fusionCustomPokemonData?.types
-            && this.fusionCustomPokemonData.types.length > 1
-            && this.fusionCustomPokemonData.types[1] !== PokemonType.UNKNOWN
-              ? this.fusionCustomPokemonData.types[1]
-              : fusionSpeciesForm.type2;
-
-          // Assign second type if the fusion can provide one
-          if (fusionType2 !== null && fusionType2 !== types[0]) {
-            secondType = fusionType2;
-          } else if (fusionType1 !== types[0]) {
-            secondType = fusionType1;
-          }
-
-          if (secondType === PokemonType.UNKNOWN && fusionType2 == null) {
-            // If second pokemon was monotype and shared its primary type
-            secondType =
-              customTypes
-              && this.customPokemonData.types.length > 1
-              && this.customPokemonData.types[1] !== PokemonType.UNKNOWN
-                ? this.customPokemonData.types[1]
-                : (speciesForm.type2 ?? PokemonType.UNKNOWN);
-          }
-        } else {
-          // If not a fusion, just get the second type from the species, checking for permanent changes from ME
-          secondType =
-            customTypes
-            && this.customPokemonData.types.length > 1
-            && this.customPokemonData.types[1] !== PokemonType.UNKNOWN
-              ? this.customPokemonData.types[1]
-              : (speciesForm.type2 ?? PokemonType.UNKNOWN);
-        }
-
-        if (secondType !== PokemonType.UNKNOWN) {
-          types.push(secondType);
-        }
-      }
+      types.push(teraType);
+    } else {
+      types.push(...this.getNormalTyping(ignoreOverride, useIllusion));
     }
 
-    // become UNKNOWN if no types are present
+    // become UNKNOWN if no types are present, or remove it if other types are present
     if (types.length === 0) {
       types.push(PokemonType.UNKNOWN);
-    }
-
-    // remove UNKNOWN if other types are present
-    if (types.length > 1) {
+    } else if (types.length > 1) {
       const index = types.indexOf(PokemonType.UNKNOWN);
       if (index !== -1) {
         types.splice(index, 1);
       }
     }
 
-    // check type added to Pokemon from moves like Forest's Curse or Trick Or Treat
+    // check type added to Pokemon from moves like Forest's Curse or Trick Or Treat.
     if (!ignoreOverride && this.summonData.addedType && !types.includes(this.summonData.addedType)) {
       types.push(this.summonData.addedType);
     }
@@ -2027,6 +1958,78 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     // If both types are the same (can happen in weird custom typing scenarios), reduce to single type
     if (types.length > 1 && types[0] === types[1]) {
       types.splice(0, 1);
+    }
+
+    return types as [PokemonType, ...PokemonType[]];
+  }
+
+  /**
+   * Helper to {@linkcode getTypes} that handles computing a Pokemon's normal typing.
+   */
+  private getNormalTyping(ignoreOverride = false, useIllusion = false): PokemonType[] {
+    if (!ignoreOverride && this.summonData.types?.length > 0 && (!this.summonData.illusion || !useIllusion)) {
+      return this.summonData.types;
+    }
+
+    const types: PokemonType[] = [];
+
+    const speciesForm = this.getSpeciesForm(ignoreOverride, useIllusion);
+    const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOverride, useIllusion);
+    const hasCustomTypes = this.customPokemonData.types?.length > 0;
+
+    // First type, checking for "permanently changed" types from ME
+    const firstType =
+      hasCustomTypes && this.customPokemonData.types[0] !== PokemonType.UNKNOWN
+        ? this.customPokemonData.types[0]
+        : speciesForm.type1;
+    types.push(firstType);
+
+    // Second type
+    let secondType: PokemonType = PokemonType.UNKNOWN;
+
+    if (fusionSpeciesForm) {
+      // Check if the fusion Pokemon also has permanent changes from ME when determining the fusion types
+      const fusionType1 =
+        this.fusionCustomPokemonData?.types
+        && this.fusionCustomPokemonData.types.length > 0
+        && this.fusionCustomPokemonData.types[0] !== PokemonType.UNKNOWN
+          ? this.fusionCustomPokemonData.types[0]
+          : fusionSpeciesForm.type1;
+      const fusionType2 =
+        this.fusionCustomPokemonData?.types
+        && this.fusionCustomPokemonData.types.length > 1
+        && this.fusionCustomPokemonData.types[1] !== PokemonType.UNKNOWN
+          ? this.fusionCustomPokemonData.types[1]
+          : fusionSpeciesForm.type2;
+
+      // Assign second type if the fusion can provide one
+      if (fusionType2 !== null && fusionType2 !== types[0]) {
+        secondType = fusionType2;
+      } else if (fusionType1 !== types[0]) {
+        secondType = fusionType1;
+      }
+
+      if (secondType === PokemonType.UNKNOWN && fusionType2 == null) {
+        // If second pokemon was monotype and shared its primary type
+        secondType =
+          hasCustomTypes
+          && this.customPokemonData.types.length > 1
+          && this.customPokemonData.types[1] !== PokemonType.UNKNOWN
+            ? this.customPokemonData.types[1]
+            : (speciesForm.type2 ?? PokemonType.UNKNOWN);
+      }
+    } else {
+      // If not a fusion, just get the second type from the species, checking for permanent changes from ME
+      secondType =
+        hasCustomTypes
+        && this.customPokemonData.types.length > 1
+        && this.customPokemonData.types[1] !== PokemonType.UNKNOWN
+          ? this.customPokemonData.types[1]
+          : (speciesForm.type2 ?? PokemonType.UNKNOWN);
+    }
+
+    if (secondType !== PokemonType.UNKNOWN) {
+      types.push(secondType);
     }
 
     return types;
@@ -2037,9 +2040,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param type - The {@linkcode PokemonType} to check
    * @param includeTeraType - Whether to use this Pokemon's tera type if Terastallized; default `true`
    * @param forDefend - Whether this Pokemon is currently receiving an attack; default `false`
-   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
+   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform} and similar effects; default `false`
    * @returns Whether this Pokemon is of the specified type.
    */
+  // TODO: Make `forDefend` default to `true`
   public isOfType(type: PokemonType, includeTeraType = true, forDefend = false, ignoreOverride = false): boolean {
     return this.getTypes(includeTeraType, forDefend, ignoreOverride).includes(type);
   }
@@ -2629,7 +2633,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
       // Add STAB multiplier for attack type effectiveness.
       // For now, simply don't apply STAB to moves that may change type
-      if (this.getTypes(true).includes(moveType) && !move.getMove().hasAttr("VariableMoveTypeAttr")) {
+      if (this.isOfType(moveType, true) && !move.getMove().hasAttr("VariableMoveTypeAttr")) {
         thisScore *= 1.5;
       }
 
@@ -3524,16 +3528,19 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    *
    * @returns The STAB multiplier for the move used against this Pokemon
    */
+  // TODO: This uses nothing from this Pokemon AT ALL, so why is this called on the defender?
   calculateStabMultiplier(source: Pokemon, move: Move, ignoreSourceAbility: boolean, simulated: boolean): number {
     // If the move has the Typeless attribute, it doesn't get STAB (e.g. struggle)
     if (move.hasAttr("TypelessAttr")) {
       return 1;
     }
-    const sourceTypes = source.getTypes();
+    const sourceTypes = source.getTypes(false, false);
     const sourceTeraType = source.getTeraType();
     const moveType = source.getMoveType(move);
     const matchesSourceType = sourceTypes.includes(source.getMoveType(move));
+
     const stabMultiplier = new NumberHolder(1);
+
     if (matchesSourceType && moveType !== PokemonType.STELLAR) {
       stabMultiplier.value += 0.5;
     }
@@ -3544,19 +3551,35 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       applyAbAttrs("StabBoostAbAttr", { pokemon: source, simulated, multiplier: stabMultiplier });
     }
 
-    if (source.isTerastallized && sourceTeraType === moveType && moveType !== PokemonType.STELLAR) {
-      stabMultiplier.value += 0.5;
-    }
-
-    if (
-      source.isTerastallized
-      && source.getTeraType() === PokemonType.STELLAR
-      && (!source.stellarTypesBoosted.includes(moveType) || source.hasSpecies(SpeciesId.TERAPAGOS))
-    ) {
-      stabMultiplier.value += matchesSourceType ? 0.5 : 0.2;
+    // Compute tera boosts
+    if (source.isTerastallized) {
+      stabMultiplier.value += source.getTeraTypeBoost(sourceTeraType, moveType, matchesSourceType);
     }
 
     return Math.min(stabMultiplier.value, 2.25);
+  }
+
+  /**
+   * Helper function to {@linkcode calculateStabMultiplier} that handles computing boosts from a Pokemon being Terastallized.
+   * @param teraType - This Pokemon's Tera Type
+   * @param moveType - The type of the `Move` being used
+   * @param matchesSourceType - Whether the move type matches this Pokemon's base type
+   * @returns The computed STAB bonus from terastallization.
+   */
+  private getTeraTypeBoost(teraType: PokemonType, moveType: PokemonType, matchesSourceType: boolean): number {
+    // Non-stellar Teras give a 50% boost to their type exclusively
+    if (moveType !== PokemonType.STELLAR) {
+      return teraType === moveType ? 0.5 : 0;
+    }
+
+    // TODO: Instead of ignoring terapagos' tera stellar boosts when calling this,
+    // we should avoid pushing its usages to the array altogether to reduce save data size
+    const canBoostStellar = !this.stellarTypesBoosted.includes(moveType) || this.hasSpecies(SpeciesId.TERAPAGOS);
+    if (!canBoostStellar) {
+      return 0;
+    }
+    // Stellar gives 50% to original types and 20% to others, but once per move type
+    return matchesSourceType ? 0.5 : 0.2;
   }
 
   /**
