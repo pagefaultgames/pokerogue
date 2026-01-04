@@ -34,27 +34,35 @@ export class TargetSelectUiHandler extends UiHandler {
 
   setup(): void {}
 
-  show(args: any[]): boolean {
+  show(
+    args: [fieldIndex: number, moveId: MoveId, callback: TargetSelectCallback, defaultTargets?: BattlerIndex[]],
+  ): boolean {
     if (args.length < 3) {
       return false;
     }
 
     super.show(args);
 
-    this.fieldIndex = args[0] as number;
-    this.move = args[1] as MoveId;
-    this.targetSelectCallback = args[2] as TargetSelectCallback;
+    [this.fieldIndex, this.move, this.targetSelectCallback] = args;
     const user = globalScene.getPlayerField()[this.fieldIndex];
 
     const moveTargets = getMoveTargets(user, this.move);
     this.targets = moveTargets.targets;
-    this.isMultipleTargets = moveTargets.multiple ?? false;
+    this.isMultipleTargets = moveTargets.multiple;
 
     if (this.targets.length === 0) {
       return false;
     }
 
     this.enemyModifiers = globalScene.getModifierBar(true);
+
+    // If default targets are specified, use them instead
+    // TODO: This logic should emphatically _not_ be done inside a UI handler
+    const defaultTargets = args[3];
+    if (defaultTargets && defaultTargets.length > 0 && this.targets.includes(defaultTargets[0])) {
+      this.setCursor(defaultTargets[0]);
+      return true;
+    }
 
     if (this.fieldIndex === BattlerIndex.PLAYER) {
       this.resetCursor(this.cursor0, user);
