@@ -27,7 +27,7 @@ export const NON_LEGEND_PARADOX_POKEMON = [
 ];
 
 /**
- * A list of all {@link https://bulbapedia.bulbagarden.net/wiki/Ultra_Beast | Ultra Beasts}, NOT including legendaries such as Necrozma or the Cosmog line.
+ * A list of all {@link https://bulbapedia.bulbagarden.net/wiki/Ultra_Beast | Ultra Beasts}, which does NOT include legendaries such as Necrozma or the Cosmog line.
  *
  * Note that all of these Ultra Beasts are still considered Sub-Legendary.
  */
@@ -43,4 +43,12 @@ export const NON_LEGEND_ULTRA_BEASTS = [
   SpeciesId.NAGANADEL,
   SpeciesId.STAKATAKA,
   SpeciesId.BLACEPHALON,
+];
+
+export const LIGHT_TRIO = [
+  SpeciesId.COSMOG,
+  SpeciesId.COSMOEM,
+  SpeciesId.SOLGALEO,
+  SpeciesId.LUNALA,
+  SpeciesId.NECROZMA,
 ];

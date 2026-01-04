@@ -10,6 +10,34 @@ export type SerializedSpeciesForm = {
   formIdx: number;
 };
 
+export interface IncludeSpecialSpeciesParams {
+  /**
+   * Whether to include legendaries.
+   * @defaultValue `false`
+   */
+  legendary?: boolean;
+  /**
+   * Whether to include sub-legendaries.
+   * @defaultValue `false`
+   */
+  subLegendary?: boolean;
+  /**
+   * Whether to include mythicals.
+   * @defaultValue `false`
+   */
+  mythical?: boolean;
+  /**
+   * Whether to include Paradox Mons. Note that this does not include Koraidon/Miraidon.
+   * @defaultValue `false`
+   */
+  paradox?: boolean;
+  /**
+   * Whether to include Ultra Beasts. Note that the Cosmog line and Necrozma are NOT Ultra Beasts.
+   * @defaultValue `false`
+   */
+  ultraBeast?: boolean;
+}
+
 export interface RandomEncounterParams {
   /** The level of the mon */
   level: number;
@@ -23,23 +51,7 @@ export interface RandomEncounterParams {
    */
   isBoss?: boolean;
 
-  /**
-   * Whether Sub-legendaries can be encountered, mainly for event encounters
-   * @defaultValue `true`
-   */
-  includeSubLegendary?: boolean;
-
-  /**
-   * Whether Legendaries can be encountered
-   * @defaultValue `true`
-   */
-  includeLegendary?: boolean;
-
-  /**
-   * Whether Mythicals can be encountered
-   * @defaultValue `true`
-   */
-  includeMythical?: boolean;
+  includeSpeciesGroups?: IncludeSpecialSpeciesParams;
 
   /**
    * The chance out of 100 to pick an event encounter

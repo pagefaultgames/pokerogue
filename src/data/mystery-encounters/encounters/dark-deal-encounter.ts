@@ -21,74 +21,8 @@ import { getPokemonSpecies } from "#utils/pokemon-utils";
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounters/darkDeal";
 
-/** Exclude Ultra Beasts (inludes Cosmog/Solgaleo/Lunala/Necrozma), Paradox (includes Miraidon/Koraidon), Eternatus, and Mythicals */
-const excludedBosses = [
-  SpeciesId.ETERNATUS,
-  /** UBs */
-  SpeciesId.NIHILEGO,
-  SpeciesId.BUZZWOLE,
-  SpeciesId.PHEROMOSA,
-  SpeciesId.XURKITREE,
-  SpeciesId.CELESTEELA,
-  SpeciesId.KARTANA,
-  SpeciesId.GUZZLORD,
-  SpeciesId.POIPOLE,
-  SpeciesId.NAGANADEL,
-  SpeciesId.STAKATAKA,
-  SpeciesId.BLACEPHALON,
-  SpeciesId.COSMOG,
-  SpeciesId.COSMOEM,
-  SpeciesId.SOLGALEO,
-  SpeciesId.LUNALA,
-  SpeciesId.NECROZMA,
-  /** Paradox */
-  SpeciesId.GREAT_TUSK,
-  SpeciesId.SCREAM_TAIL,
-  SpeciesId.BRUTE_BONNET,
-  SpeciesId.FLUTTER_MANE,
-  SpeciesId.SLITHER_WING,
-  SpeciesId.SANDY_SHOCKS,
-  SpeciesId.ROARING_MOON,
-  SpeciesId.WALKING_WAKE,
-  SpeciesId.GOUGING_FIRE,
-  SpeciesId.RAGING_BOLT,
-  SpeciesId.KORAIDON,
-  SpeciesId.IRON_TREADS,
-  SpeciesId.IRON_BUNDLE,
-  SpeciesId.IRON_HANDS,
-  SpeciesId.IRON_JUGULIS,
-  SpeciesId.IRON_MOTH,
-  SpeciesId.IRON_THORNS,
-  SpeciesId.IRON_VALIANT,
-  SpeciesId.IRON_LEAVES,
-  SpeciesId.IRON_BOULDER,
-  SpeciesId.IRON_CROWN,
-  SpeciesId.MIRAIDON,
-  /** Mythical */
-  SpeciesId.MEW,
-  SpeciesId.CELEBI,
-  SpeciesId.JIRACHI,
-  SpeciesId.DEOXYS,
-  SpeciesId.PHIONE,
-  SpeciesId.MANAPHY,
-  SpeciesId.DARKRAI,
-  SpeciesId.SHAYMIN,
-  SpeciesId.ARCEUS,
-  SpeciesId.VICTINI,
-  SpeciesId.KELDEO,
-  SpeciesId.MELOETTA,
-  SpeciesId.GENESECT,
-  SpeciesId.DIANCIE,
-  SpeciesId.HOOPA,
-  SpeciesId.VOLCANION,
-  SpeciesId.MAGEARNA,
-  SpeciesId.MARSHADOW,
-  SpeciesId.ZERAORA,
-  SpeciesId.MELTAN,
-  SpeciesId.MELMETAL,
-  SpeciesId.ZARUDE,
-  SpeciesId.PECHARUNT,
-];
+/** Exclude Ultra Beasts, Paradox, Eternatus, and Mythicals */
+const excludedBosses = [SpeciesId.ETERNATUS];
 
 /**
  * Dark Deal encounter.
@@ -181,7 +115,15 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
         // Starter egg tier, 35/50/10/5 %odds for tiers 6/7/8/9+
         const roll = randSeedInt(100);
         const starterTier: number | [number, number] = roll >= 65 ? 6 : roll >= 15 ? 7 : roll >= 5 ? 8 : [9, 10];
-        const bossSpecies = getPokemonSpecies(getRandomSpeciesByStarterCost(starterTier, excludedBosses, bossTypes));
+        const bossSpecies = getPokemonSpecies(
+          getRandomSpeciesByStarterCost(starterTier, excludedBosses, bossTypes, {
+            legendary: true,
+            subLegendary: true,
+            ultraBeast: false,
+            paradox: false,
+            mythical: false,
+          }),
+        );
         const pokemonConfig: EnemyPokemonConfig = {
           species: bossSpecies,
           isBoss: true,

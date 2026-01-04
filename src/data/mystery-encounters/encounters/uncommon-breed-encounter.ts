@@ -67,6 +67,13 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
       isBoss: true,
       eventShinyRerolls: 2,
       eventHiddenRerolls: 1,
+      includeSpeciesGroups: {
+        subLegendary: true,
+        legendary: true,
+        mythical: true,
+        paradox: true,
+        ultraBeast: true,
+      },
     });
 
     // Pokemon will always have one of its egg moves in its moveset

@@ -1001,9 +1001,13 @@ export function getRandomEncounterPokemon(params: RandomEncounterParams): EnemyP
     level,
     speciesFunction,
     isBoss = false,
-    includeSubLegendary = true,
-    includeLegendary = true,
-    includeMythical = true,
+    includeSpeciesGroups = {
+      legendary: true,
+      subLegendary: true,
+      mythical: true,
+      paradox: true,
+      ultraBeast: true,
+    },
     eventChance = 50,
     hiddenRerolls = 0,
     shinyRerolls = 0,
@@ -1016,12 +1020,7 @@ export function getRandomEncounterPokemon(params: RandomEncounterParams): EnemyP
     isEventEncounter = new BooleanHolder(false),
   } = params;
   let bossSpecies: PokemonSpecies;
-  const eventEncounters = timedEventManager.getAllValidEventEncounters(
-    includeSubLegendary,
-    includeLegendary,
-    includeMythical,
-    speciesFilter,
-  );
+  const eventEncounters = timedEventManager.getAllValidEventEncounters(includeSpeciesGroups, speciesFilter);
   let formIndex: number | undefined;
 
   if (eventChance && eventEncounters.length > 0 && (eventChance === 100 || randSeedInt(100) < eventChance)) {
