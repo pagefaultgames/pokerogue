@@ -299,7 +299,11 @@ export class BattleScene extends SceneBase {
   public seed: string;
   public waveSeed: string;
   public waveCycleOffset: number;
-  public offsetGym: boolean;
+  /**
+   * Whether to offset Gym Leader waves by 10 (30, 50, 70 instead of 20, 40, 60).
+   * Determined at the start of the run, and is unused for non-Classic game modes.
+   */
+  public offsetGym = false;
 
   public damageNumberHandler: DamageNumberHandler;
   private spriteSparkleHandler: PokemonSpriteSparkleHandler;
