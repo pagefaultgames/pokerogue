@@ -18,7 +18,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * If the same move appears in the Pokemon's moveset multiple times, this will fail the test!
  */
 export function toHaveUsedPP(
-  this: MatcherState,
+  this: Readonly<MatcherState>,
   received: unknown,
   moveId: MoveId,
   ppUsed: number | "all",

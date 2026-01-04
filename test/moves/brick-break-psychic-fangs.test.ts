@@ -54,8 +54,8 @@ describe.each([
     game.move.use(moveId);
     await game.toEndOfTurn();
 
-    expect(game).toHaveArenaTag({ tagType, side: ArenaTagSide.PLAYER });
-    expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.ENEMY });
+    expect(game).toHaveArenaTag(tagType, ArenaTagSide.PLAYER);
+    expect(game).not.toHaveArenaTag(tagType, ArenaTagSide.ENEMY);
   });
 
   it.each<{ tagType: ArenaTagType; tagName: string }>([
@@ -72,7 +72,7 @@ describe.each([
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.toEndOfTurn();
 
-    expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.PLAYER });
+    expect(game).not.toHaveArenaTag(tagType, ArenaTagSide.PLAYER);
   });
 
   it("should not remove screens if the target is immune to the move", async () => {
@@ -86,6 +86,6 @@ describe.each([
 
     const player = game.field.getPlayerPokemon();
     expect(player).toHaveUsedMove({ move: moveId, result: MoveResult.MISS });
-    expect(game).toHaveArenaTag({ tagType: ArenaTagType.REFLECT, side: ArenaTagSide.ENEMY });
+    expect(game).toHaveArenaTag(ArenaTagType.REFLECT, ArenaTagSide.ENEMY);
   });
 });

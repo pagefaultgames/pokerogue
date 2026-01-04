@@ -12,12 +12,11 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @param received - The actual value received. Should be a {@linkcode Pokemon}
  * @param expectedMove - The {@linkcode MoveId} the Pokemon is expected to have used,
  * or a partially filled {@linkcode TurnMove} containing the desired properties to check
- * @param index - The index of the move history entry to check, in order from most recent to least recent;
- * default `0` (last used move)
+ * @param index - (Default `0`) The index of the move history entry to check, in order from most recent to least recent
  * @returns Whether the matcher passed
  */
 export function toHaveUsedMove(
-  this: MatcherState,
+  this: Readonly<MatcherState>,
   received: unknown,
   expectedMove: MoveId | OneOther<TurnMove, "move">,
   index = 0,
@@ -33,9 +32,11 @@ export function toHaveUsedMove(
   const pkmName = getPokemonNameWithAffix(received);
 
   if (historyMove === undefined) {
+    const indexStr = index === 0 ? "a move" : `${index + 1} moves`;
     return {
-      pass: this.isNot,
-      message: () => `Expected ${pkmName} to have used ${index + 1} moves, but it didn't!`,
+      pass: false,
+      message: () => `Expected ${pkmName} to have used ${indexStr}, but it didn't!`,
+      expected: expectedMove,
       actual: received.getLastXMoves(-1),
     };
   }

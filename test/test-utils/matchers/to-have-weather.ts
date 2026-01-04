@@ -11,7 +11,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @returns Whether the matcher passed
  */
 export function toHaveWeather(
-  this: MatcherState,
+  this: Readonly<MatcherState>,
   received: unknown,
   expectedWeatherType: WeatherType,
 ): SyncExpectationResult {

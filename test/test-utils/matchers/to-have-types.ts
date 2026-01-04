@@ -5,7 +5,10 @@ import { stringifyEnumArray } from "#test/test-utils/string-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 import { isPokemonInstance, receivedStr } from "../test-utils";
 
-export interface toHaveTypesOptions {
+/**
+ * Options type for {@linkcode toHaveTypes}.
+ */
+export interface ToHaveTypesOptions {
   /**
    * Value dictating the strength of the enforced typing match.
    *
@@ -39,10 +42,10 @@ export interface toHaveTypesOptions {
  * @returns The result of the matching
  */
 export function toHaveTypes(
-  this: MatcherState,
+  this: Readonly<MatcherState>,
   received: unknown,
   expectedTypes: [PokemonType, ...PokemonType[]],
-  { mode = "unordered", args = [] }: toHaveTypesOptions = {},
+  { mode = "unordered", args = [] }: ToHaveTypesOptions = {},
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
     return {

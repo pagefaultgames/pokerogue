@@ -12,7 +12,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @returns Whether the matcher passed
  */
 export function toHaveAbilityApplied(
-  this: MatcherState,
+  this: Readonly<MatcherState>,
   received: unknown,
   expectedAbilityId: AbilityId,
 ): SyncExpectationResult {
