@@ -454,6 +454,9 @@ export class Arena {
 
     // TODO: Add a flag for permanent terrains
     this.terrain = new Terrain(terrain, 0);
+    this.eventTarget.dispatchEvent(
+        new TerrainChangedEvent(TerrainType.NONE, this.terrain.terrainType, this.terrain.turnsLeft),
+    );
     globalScene.phaseManager.unshiftNew(
       "CommonAnimPhase",
       undefined,
