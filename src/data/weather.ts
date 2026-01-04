@@ -27,6 +27,10 @@ export class Weather {
     this.maxDuration = this.isImmutable() ? 0 : maxDuration;
   }
 
+  /**
+   * Tick down this weather's duration.
+   * @returns Whether the current weather should remain active (`turnsLeft > 0`)
+   */
   lapse(): boolean {
     if (this.isImmutable()) {
       return true;
@@ -129,6 +133,7 @@ export class Weather {
   }
 }
 
+// TODO: These functions should return empty strings instead of `null` - requires bangs
 export function getWeatherStartMessage(weatherType: WeatherType): string | null {
   switch (weatherType) {
     case WeatherType.SUNNY:

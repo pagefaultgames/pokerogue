@@ -1,4 +1,5 @@
 import { OVERRIDES_COLOR } from "#app/constants/colors";
+import { TerrainType } from "#app/data/terrain";
 import type { BattleStyle, RandomTrainerOverride } from "#app/overrides";
 import Overrides from "#app/overrides";
 import { AbilityId } from "#enums/ability-id";
@@ -16,6 +17,7 @@ import type { NewArenaEvent } from "#events/battle-scene";
 import type { ModifierOverride } from "#modifiers/modifier-type";
 import type { Variant } from "#sprites/variant";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
+import { getEnumStr } from "#test/test-utils/string-utils";
 import { coerceArray } from "#utils/array";
 import { shiftCharCodes } from "#utils/common";
 import chalk from "chalk";
@@ -361,6 +363,20 @@ export class OverridesHelper extends GameManagerHelper {
   public weather(type: WeatherType): this {
     vi.spyOn(Overrides, "WEATHER_OVERRIDE", "get").mockReturnValue(type);
     this.log(`Weather set to ${WeatherType[type]} (=${type})!`);
+    return this;
+  }
+
+  /**
+   * Override the starting {@linkcode TerrainType} that will be set on entering a new biome.
+   * @param type - The {@linkcode TerrainType} to set.
+   * @returns `this`
+   * @remarks
+   * The newly added terrain will be refreshed upon reaching
+   * a new biome, and will be overridden as normal if a new terrain is set.
+   */
+  public terrain(type: TerrainType): this {
+    vi.spyOn(Overrides, "STARTING_TERRAIN_OVERRIDE", "get").mockReturnValue(type);
+    this.log(`Starting terrain for next biome set to ${getEnumStr(TerrainType, type)}!`);
     return this;
   }
 
