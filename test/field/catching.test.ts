@@ -277,3 +277,67 @@ describe("Throwing balls at trainers", () => {
     await runPokeballTest(game, PokeballType.MASTER_BALL, "battle:noPokeballTrainer");
   });
 });
+
+describe("Throwing balls at bosses after weakening them", () => {
+  let phaserGame: Phaser.Game;
+  let game: GameManager;
+
+  beforeAll(() => {
+    phaserGame = new Phaser.Game({
+      type: Phaser.HEADLESS,
+    });
+  });
+
+  afterEach(() => {
+    game.phaseInterceptor.restoreOg();
+  });
+
+  beforeEach(() => {
+    game = new GameManager(phaserGame);
+    game.override
+      .battleType(BattleType.WILD)
+      .enemyMoveset(MoveId.SPLASH)
+      .enemySpecies(SpeciesId.CATERPIE)
+      .battleStyle("single")
+      .startingLevel(99999)
+      .startingWave(170);
+  });
+
+  it("weakening and catching a single boss", async () => {
+    await game.classicMode.startBattle([SpeciesId.KARTANA]);
+
+    const partyLength = game.scene.getPlayerParty().length;
+
+    const ball = PokeballType.ROGUE_BALL;
+    game.scene.pokeballCounts[ball] = 1;
+
+    game.move.use(MoveId.FALSE_SWIPE);
+    await game.toNextTurn();
+
+    const enemy = game.field.getEnemyPokemon();
+    expect(enemy.bossSegmentIndex).toBe(0); // last bar
+
+    game.doThrowPokeball(ball);
+    await game.toEndOfTurn();
+
+    expect(game.scene.getPlayerParty()).toHaveLength(partyLength + 1);
+  });
+
+  it("weakening and catching a boss in a double battle", async () => {
+    game.override.battleStyle("double");
+    await game.classicMode.startBattle([SpeciesId.KARTANA]);
+
+    const partyLength = game.scene.getPlayerParty().length;
+
+    const ball = PokeballType.ROGUE_BALL;
+    game.scene.pokeballCounts[ball] = 1;
+
+    // Kill 1 boss, knock other down to critical hp
+    game.move.use(MoveId.FALSE_SWIPE);
+    await game.killPokemon(game.scene.getEnemyField()[1]);
+    game.doThrowPokeball(ball);
+    await game.toEndOfTurn();
+
+    expect(game.scene.getPlayerParty()).toHaveLength(partyLength + 1);
+  });
+});
