@@ -506,8 +506,7 @@ export class PokemonInfoContainer extends Phaser.GameObjects.Container {
     ]);
 
     this.setVisible(false);
-    this.pokemonShinyIcon.off("pointerover");
-    this.pokemonShinyIcon.off("pointerout");
+    this.pokemonShinyIcon.off("pointerover").off("pointerout");
     globalScene.ui.hideTooltip();
     globalScene.showEnemyModifierBar();
   }
