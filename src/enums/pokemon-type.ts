@@ -1,4 +1,6 @@
 export enum PokemonType {
+  /** Also known as typelessness. */
+  // TODO: Rename this to `TYPELESS`
   UNKNOWN = -1,
   NORMAL = 0,
   FIGHTING,
