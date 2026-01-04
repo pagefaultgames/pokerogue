@@ -330,6 +330,7 @@ export class FusionSpeciesFormEvolution extends SpeciesFormEvolution {
 }
 
 interface PokemonEvolutions {
+  // TODO: Type this correctly as a SpeciesId
   [key: string]: SpeciesFormEvolution[]
 }
 
