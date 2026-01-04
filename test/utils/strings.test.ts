@@ -139,9 +139,12 @@ describe("Utils - Strings", () => {
 
         // @ts-expect-error - value props should not be providable if values aren't being included
         stringifyEnumArray(testEnumString, [testEnumString.testS1], { excludeValues: true, base: 10 });
-        // @ts-expect-error - should not be able to specify base on string enum
-        stringifyEnumArray(testEnumString, [testEnumString.testS1], { excludeValues: false, base: 10 });
+        // @ts-expect-error - should not be able to specify numeric base on string enum
+        stringifyEnumArray(testEnumString, [testEnumString.testS1], { excludeValues: false, base: 16 });
         stringifyEnumArray(testEnumString, [testEnumString.testS1], { excludeValues: true, suffix: "23" });
+
+        // Needed due to us "lacking" assertions
+        expect(true).toBeTruthy();
       });
     });
   });
