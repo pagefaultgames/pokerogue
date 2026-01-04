@@ -149,7 +149,6 @@ export const invalidCopycatMoves: ReadonlySet<MoveId> = new Set([
   MoveId.CELEBRATE,
   MoveId.CHATTER,
   MoveId.CIRCLE_THROW,
-  MoveId.COPYCAT,
   MoveId.COUNTER,
   MoveId.DESTINY_BOND,
   MoveId.DETECT,
