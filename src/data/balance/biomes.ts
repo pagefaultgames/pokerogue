@@ -1566,7 +1566,6 @@ export const biomePokemonPools: BiomePokemonPools = {
     [BiomePoolTier.BOSS_ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [] }
   }
 };
-
 export const biomeTrainerPools: BiomeTrainerPools = {
   [BiomeId.TOWN]: {
     [BiomePoolTier.COMMON]: [ TrainerType.YOUNGSTER ],

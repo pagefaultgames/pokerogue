@@ -116,6 +116,7 @@ import {
 import type { PokemonMove } from "#moves/pokemon-move";
 import { getVoucherTypeIcon, getVoucherTypeName, VoucherType } from "#system/voucher";
 import type { ModifierTypeFunc, WeightedModifierTypeWeightFunc } from "#types/modifier-types";
+import type { ObjectValues } from "#types/type-helpers";
 import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import { getModifierTierTextTint } from "#ui/text";
@@ -1149,7 +1150,7 @@ export class TmModifierType extends PokemonModifierType {
 
   get name(): string {
     return i18next.t("modifierType:ModifierType.TmModifierType.name", {
-      moveId: padInt(Object.keys(tmSpecies).indexOf(this.moveId.toString()) + 1, 3),
+      moveId: padInt((Object.keys(tmSpecies) as string[]).indexOf(this.moveId.toString()) + 1, 3),
       moveName: allMoves[this.moveId].name,
     });
   }
@@ -1429,15 +1430,15 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
       }
 
       // Get a pool of items based on the rarity.
-      const keys: (keyof SpeciesStatBoosterItem)[] = [];
-      const values: (typeof items)[keyof typeof items][] = [];
+      const keys: SpeciesStatBoosterItem[] = [];
+      const values: ObjectValues<typeof items>[] = [];
       const weights: number[] = [];
       for (const [key, val] of Object.entries(SpeciesStatBoosterModifierTypeGenerator.items)) {
         if (val.rare !== rare) {
           continue;
         }
         values.push(val);
-        keys.push(key as keyof SpeciesStatBoosterItem);
+        keys.push(key);
         weights.push(0);
       }
 
@@ -2355,6 +2356,13 @@ const tierWeights = [768 / 1024, 195 / 1024, 48 / 1024, 12 / 1024, 1 / 1024];
  */
 export const itemPoolChecks: Map<ModifierTypeKeys, boolean | undefined> = new Map();
 
+interface weightThing {
+  weight: number;
+  tier: ModifierTier | keyof typeof ModifierTier;
+  tierPercent: number;
+  totalPercent: number;
+}
+
 export function regenerateModifierPoolThresholds(
   party: readonly Pokemon[],
   poolType: ModifierPoolType,
@@ -2365,11 +2373,13 @@ export function regenerateModifierPoolThresholds(
     itemPoolChecks.set(k, false);
   });
 
-  const ignoredIndexes = {};
-  const modifierTableData = {};
+  // TODO: WHAT THE FUCK ARE THESE SUPPOSED TO BE?
+  const ignoredIndexes: Record<string, number[]> = {};
+  const modifierTableData: Record<string, weightThing> = {};
   const thresholds = Object.fromEntries(
     new Map(
-      Object.keys(pool).map(t => {
+      Object.keys(pool).map(tStr => {
+        const t = Number.parseInt(tStr) as ModifierTier;
         ignoredIndexes[t] = [];
         const thresholds = new Map();
         const tierModifierIds: string[] = [];
@@ -2401,7 +2411,7 @@ export function regenerateModifierPoolThresholds(
             const outputWeight = useMaxWeightForOutput ? weightedModifierType.maxWeight : weight;
             modifierTableData[modifierId] = {
               weight: outputWeight,
-              tier: Number.parseInt(t),
+              tier: t,
               tierPercent: 0,
               totalPercent: 0,
             };
@@ -2429,6 +2439,8 @@ export function regenerateModifierPoolThresholds(
   for (const id of Object.keys(modifierTableData)) {
     modifierTableData[id].totalPercent =
       Math.floor(modifierTableData[id].tierPercent * tierWeights[modifierTableData[id].tier] * 100) / 100;
+    // @ts-expect-error: This converts tier from always a `ModifierTier` to always a string,
+    // and i do not care enough about this shit code that is going away in a month or 2 to fix it
     modifierTableData[id].tier = ModifierTier[modifierTableData[id].tier];
   }
   if (outputModifierData) {
@@ -2958,9 +2970,7 @@ export function getLuckTextTint(luckValue: number): number {
 }
 
 export function initModifierTypes() {
-  for (const [key, value] of Object.entries(modifierTypeInitObj)) {
-    modifierTypes[key] = value;
-  }
+  Object.assign(modifierTypes, modifierTypeInitObj);
 }
 
 // TODO: If necessary, add the rest of the modifier types here.

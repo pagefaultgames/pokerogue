@@ -140,6 +140,7 @@ import {
   NumberHolder,
   randomString,
   randSeedInt,
+  randSeedItem,
   shiftCharCodes,
 } from "#utils/common";
 import { deepMergeSpriteData } from "#utils/data";
@@ -151,9 +152,7 @@ import Phaser from "phaser";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import type UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 
-export interface PokeballCounts {
-  [pb: string]: number;
-}
+export interface PokeballCounts extends Record<Exclude<PokeballType, PokeballType.LUXURY_BALL>, number> {}
 
 export type AnySound = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.NoAudioSound;
 
@@ -1118,14 +1117,12 @@ export class BattleScene extends SceneBase {
 
     this.lockModifierTiers = false;
 
-    this.pokeballCounts = Object.fromEntries(
-      getEnumValues(PokeballType)
-        .filter(p => p <= PokeballType.MASTER_BALL)
-        .map(t => [t, 0]),
-    );
-    this.pokeballCounts[PokeballType.POKEBALL] += 5;
+    // TODO: This should
     if (Overrides.POKEBALL_OVERRIDE.active) {
       this.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
+    } else {
+      this.pokeballCounts = Object.fromEntries(getEnumValues(PokeballType).map(t => [t, 0] as const));
+      this.pokeballCounts[PokeballType.POKEBALL] = 5;
     }
 
     this.modifiers = [];
@@ -1531,6 +1528,7 @@ export class BattleScene extends SceneBase {
     });
   }
 
+  // TODO: This species does way way WAY too much, as evinced by the checks for egg lapse phases
   getSpeciesFormIndex(species: PokemonSpecies, gender?: Gender, nature?: Nature, ignoreArena?: boolean): number {
     if (species.forms?.length === 0) {
       return 0;
@@ -2090,13 +2088,15 @@ export class BattleScene extends SceneBase {
   randomSpecies(
     waveIndex: number,
     level: number,
-    fromArenaPool?: boolean,
+    fromArenaPool = false,
     speciesFilter?: PokemonSpeciesFilter,
-    filterAllEvolutions?: boolean,
+    filterAllEvolutions = false,
   ): PokemonSpecies {
     if (fromArenaPool) {
-      return this.arena.randomSpecies(waveIndex, level, undefined, getPartyLuckValue(this.party));
+      return this.arena.randomSpecies(waveIndex, level, 0, getPartyLuckValue(this.party));
     }
+
+    // TODO: This is silly
     const filteredSpecies = speciesFilter
       ? [
           ...new Set(
@@ -2114,8 +2114,7 @@ export class BattleScene extends SceneBase {
           ),
         ]
       : allSpecies.filter(s => s.isCatchable());
-    // TODO: should this use `randSeedItem`?
-    return filteredSpecies[randSeedInt(filteredSpecies.length)];
+    return randSeedItem(filteredSpecies);
   }
 
   generateRandomBiome(waveIndex: number): BiomeId {

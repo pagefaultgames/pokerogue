@@ -329,6 +329,7 @@ export class FusionSpeciesFormEvolution extends SpeciesFormEvolution {
   }
 }
 
+// TODO: Turn on strict optional property access and make this a Readonly<Partial<Record<SpeciesId, SpeciesFormEvolution[]>>>
 interface PokemonEvolutions {
   [key: string]: SpeciesFormEvolution[]
 }

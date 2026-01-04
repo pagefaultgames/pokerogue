@@ -12,7 +12,9 @@ import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
+import { specialIconKeys, specialIcons } from "./special-icons";
 
+// TODO: Strongly type the index signature aside from simply being `string`
 export interface InputsIcons {
   [key: string]: Phaser.GameObjects.Sprite;
 }
@@ -333,7 +335,7 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
    */
   updateBindings(): void {
     // Hide the options container for all layouts to reset the UI visibility.
-    Object.keys(this.layout).forEach(key => this.layout[key].optionsContainer.setVisible(false));
+    this.layout.keys().forEach(key => this.layout[key].optionsContainer.setVisible(false));
     // Fetch the active gamepad configuration from the input controller.
     const activeConfig = this.getActiveConfig();
 
@@ -377,12 +379,8 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
   }
 
   updateNavigationDisplay() {
-    const specialIcons = {
-      BUTTON_HOME: "HOME.png",
-      BUTTON_DELETE: "DEL.png",
-    };
     for (const settingName of Object.keys(this.navigationIcons)) {
-      if (Object.keys(specialIcons).includes(settingName)) {
+      if (specialIconKeys.includes(settingName)) {
         this.navigationIcons[settingName].setTexture("keyboard");
         this.navigationIcons[settingName].setFrame(specialIcons[settingName]);
         this.navigationIcons[settingName].alpha = 1;
