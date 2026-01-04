@@ -114,6 +114,7 @@ import { VictoryPhase } from "#phases/victory-phase";
 import { WeatherEffectPhase } from "#phases/weather-effect-phase";
 import type { PhaseConditionFunc, PhaseMap, PhaseString } from "#types/phase-types";
 import { isEnemy } from "#utils/pokemon-utils";
+import type { queueBattlerEntrancePhases } from "#utils/switch-utils";
 import type { NonEmptyTuple } from "type-fest";
 
 //#region Constants
@@ -343,12 +344,14 @@ export class PhaseManager {
   }
 
   /**
-   * Queue a sequence of phases to add a Pokemon to the field.
+   * Queue a sequence of phases to add a single Pokemon to the field.
    * Encompasses both visual and logical elements.
    * @param battlerIndex - The {@linkcode FieldBattlerIndex} of the Pokemon to send in
    * @param params - Parameters used to customize switching behavior
    * @throws {Error}
-   * Thrown if `battlerIndex` corresponds to an enemy Pokemon with `checkSwitch` set to `true`
+   * Throws an error if `battlerIndex` corresponds to an enemy Pokemon with `checkSwitch` set to `true`
+   * @see {@linkcode queueBattlerEntrancePhases}
+   * Alternate helper function that queues phases for multiple Pokemon entering the field.
    */
   public queueBattlerEntrance<T extends FieldBattlerIndex>(
     battlerIndex: T,
@@ -377,7 +380,7 @@ export class PhaseManager {
     }
   }
 
-  // #region Phase Helper Functions
+  // #endregion Phase Helper Functions
 
   /** @returns The currently running {@linkcode Phase}. */
   getCurrentPhase(): Phase {

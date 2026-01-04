@@ -534,10 +534,13 @@ export class EncounterPhase extends BattlePhase {
   }
 
   end() {
+    const { currentBattle, gameMode } = globalScene;
+    const { battleType, waveIndex } = currentBattle;
     const enemyField = globalScene.getEnemyField();
 
     queueBattlerEntrancePhases({
       skipEnemySummon: !this.wasTrainer,
+      checkSwitch: battleType !== BattleType.TRAINER && (waveIndex > 1 || !gameMode.isDaily),
     });
 
     enemyField.forEach((enemyPokemon, e) => {

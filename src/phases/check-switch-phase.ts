@@ -14,7 +14,8 @@ import i18next from "i18next";
  *
  * If the prompt is confirmed, the corresponding Pokemon will be {@linkcode RecallPhase | recalled}
  * and the selected replacement {@linkcode SwitchPhase | switched in}.
- * If the prompt is denied, a {@linkcode PostSummonPhase} will be queued to trigger on-summon abilities and similar effects.
+ * If the prompt is denied or the conditions for it to appear are not met, a {@linkcode PostSummonPhase}
+ * will be queued to trigger on-summon abilities and similar effects.
  */
 export class CheckSwitchPhase extends BattlePhase {
   public readonly phaseName = "CheckSwitchPhase";
@@ -104,11 +105,7 @@ export class CheckSwitchPhase extends BattlePhase {
       }),
       null,
       () => {
-        globalScene.ui.setMode(
-          UiMode.CONFIRM,
-          () => this.onConfirm(),
-          () => this.onDeny(),
-        );
+        globalScene.ui.setMode(UiMode.CONFIRM, this.onConfirm, this.onDeny);
       },
     );
   }
@@ -132,15 +129,24 @@ export class CheckSwitchPhase extends BattlePhase {
     });
 
     await globalScene.ui.setMode(UiMode.MESSAGE);
+    this.end(true);
+  }
+
+  /**
+   * End the phase upon denying the switch prompt.
+   */
+  private async onDeny(): Promise<void> {
+    await globalScene.ui.setMode(UiMode.MESSAGE);
     this.end();
   }
 
   /**
-   * Queue a {@linkcode PostSummonPhase} and end the phase upon denying the switch prompt.
+   * @param success - Whether the switch out prompt was accepted; default `false`
    */
-  private async onDeny(): Promise<void> {
-    await globalScene.ui.setMode(UiMode.MESSAGE);
-    globalScene.phaseManager.pushNew("PostSummonPhase", this.fieldIndex);
-    this.end();
+  public override end(success?: true): void {
+    if (!success) {
+      globalScene.phaseManager.pushNew("PostSummonPhase", this.fieldIndex);
+    }
+    super.end();
   }
 }

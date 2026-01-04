@@ -6883,7 +6883,7 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
       phaseManager.tryRemovePhase("SwitchPhase", phase => phase.fieldIndex === slotIndex);
       // If the pokemon being revived was alive earlier in the turn, cancel its move
       // (revived pokemon can't move in the turn they're brought back)
-      // TODO: might make sense to move this to `FaintPhase` after checking for Rev Seed (rather than handling it in the move)
+      // TODO: move this to `FaintPhase` after checking for Rev Seed; to fix issues with repeated force switching
       phaseManager.getMovePhase((phase: MovePhase) => phase.pokemon === pokemon)?.cancel();
       if (user.fieldPosition === FieldPosition.CENTER) {
         user.setFieldPosition(FieldPosition.LEFT);

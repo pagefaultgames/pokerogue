@@ -76,16 +76,15 @@ export class GameOverPhase extends BattlePhase {
       globalScene.ui.showText(i18next.t("battle:retryBattle"), null, () => {
         globalScene.ui.setMode(
           UiMode.CONFIRM,
-          () => {
-            globalScene.ui.fadeOut(1250).then(() => {
-              globalScene.reset();
-              globalScene.phaseManager.clearPhaseQueue();
-              globalScene.gameData.loadSession(globalScene.sessionSlotId);
-              globalScene.phaseManager.pushNew("EncounterPhase", true);
+          async () => {
+            await globalScene.ui.fadeOut(1250);
+            globalScene.reset();
+            globalScene.phaseManager.clearPhaseQueue();
+            await globalScene.gameData.loadSession(globalScene.sessionSlotId);
+            globalScene.phaseManager.pushNew("EncounterPhase", true);
 
-              globalScene.ui.fadeIn(1250);
-              this.end();
-            });
+            globalScene.ui.fadeIn(1250);
+            this.end();
           },
           () => this.handleGameOver(),
           false,

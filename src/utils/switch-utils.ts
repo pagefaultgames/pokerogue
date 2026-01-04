@@ -1,6 +1,5 @@
 import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
-import type { FieldBattlerIndex } from "#enums/battler-index";
 import type { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
 import { IvScannerModifier } from "#modifiers/modifier";
 import type { CheckSwitchPhase } from "#phases/check-switch-phase";
@@ -21,13 +20,14 @@ interface BattlerEntranceParams extends SummonPhaseOptions {
    * @privateRemarks
    * Ignored when summoning `EnemyPokemon` (for whom `CheckSwitchPhase`s cannot be queued).
    */
-  checkSwitch?: boolean;
+  checkSwitch: boolean;
 
   /**
    * Whether to skip queueing opposing {@linkcode SummonPhase}s when summoning wild enemy Pokemon.
    * @defaultValue `true`
    * @privateRemarks
-   * Only used in `EncounterPhase` to circumvent its absolutely abhorrent code structure.
+   * Only used in `EncounterPhase` to circumvent its absolutely abhorrent code structure, as summoning wild Pokemon
+   * queues animations directly without an intermediate phase.
    */
   skipEnemySummon?: boolean;
 }
@@ -39,14 +39,14 @@ interface BattlerEntranceParams extends SummonPhaseOptions {
  * @param params - Parameters used to customize switching behavior.
  * Any excess parameters will be passed to the the queued `SummonPhase`s.
  */
-export function queueBattlerEntrancePhases(params: BattlerEntranceParams = {}): void {
+export function queueBattlerEntrancePhases(params: BattlerEntranceParams): void {
   const { double } = globalScene.currentBattle;
 
   const addPlayer2 = double && globalScene.getPlayerParty().filter(p => p.isAllowedInBattle()).length > 1;
   const addEnemy2 = double && globalScene.getEnemyParty().filter(p => p.isAllowedInBattle()).length > 1;
 
   const phases = getBattlerEntrancePhases(addPlayer2, addEnemy2, params);
-  globalScene.phaseManager.unshiftPhase(...phases);
+  globalScene.phaseManager.unshiftPhase(phases[0], ...phases.slice(1));
 }
 
 //#region Helpers
@@ -63,9 +63,13 @@ function getBattlerEntrancePhases(
     ...getSummonPhases(playerMons, enemyMons, params),
     ...getIvScannerPhases(enemyMons),
     ...getPostSummonPhases([...playerMons, ...enemyMons], params),
-  ] as unknown as NonEmptyTuple<Phase>;
+  ] as const;
 
-  return phases;
+  if (phases.length === 0) {
+    // This should never happen
+    throw new Error("No phases were queued for battler entrances!");
+  }
+  return phases as unknown as NonEmptyTuple<(typeof phases)[number]>;
 }
 
 function getSummonPhases(
@@ -76,10 +80,7 @@ function getSummonPhases(
   const { phaseManager } = globalScene;
   const mons = skipEnemySummon ? playerMons : [...playerMons, ...enemyMons];
 
-  return mons.map((p, i) => {
-    const index: FieldBattlerIndex = i + (p.isPlayer() ? 0 : 2);
-    return phaseManager.create("SummonPhase", index, rest);
-  });
+  return mons.map(p => phaseManager.create("SummonPhase", p.getBattlerIndex(), rest));
 }
 
 function getIvScannerPhases(enemyMons: EnemyPokemon[]): ScanIvsPhase[] {
@@ -90,10 +91,7 @@ function getIvScannerPhases(enemyMons: EnemyPokemon[]): ScanIvsPhase[] {
     return [];
   }
 
-  return enemyMons.map((_p, i) => {
-    const index: FieldBattlerIndex = i + 2;
-    return phaseManager.create("ScanIvsPhase", index);
-  });
+  return enemyMons.map(p => phaseManager.create("ScanIvsPhase", p.getBattlerIndex()));
 }
 
 function getPostSummonPhases(
@@ -102,10 +100,8 @@ function getPostSummonPhases(
 ): (CheckSwitchPhase | PostSummonPhase)[] {
   const { phaseManager } = globalScene;
 
-  // NB: this
-  return mons.map((p, i) => {
-    const index: FieldBattlerIndex = i + (p.isPlayer() ? 0 : 2);
-    return phaseManager.create(checkSwitch ? "CheckSwitchPhase" : "PostSummonPhase", index);
-  });
+  return mons.map(p =>
+    phaseManager.create(p.isPlayer() && checkSwitch ? "CheckSwitchPhase" : "PostSummonPhase", p.getBattlerIndex()),
+  );
 }
 //#endregion Helpers
