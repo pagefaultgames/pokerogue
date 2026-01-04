@@ -266,10 +266,8 @@ async function animateBiomeChange(nextBiome: BiomeId): Promise<void> {
   });
 
   globalScene.arenaBg.setTexture(bgTexture);
-  globalScene.arenaPlayer.setBiome(nextBiome);
-  globalScene.arenaPlayer.setAlpha(1);
-  globalScene.arenaEnemy.setBiome(nextBiome);
-  globalScene.arenaEnemy.setAlpha(1);
+  globalScene.arenaPlayer.setAlpha(1).setBiome(nextBiome);
+  globalScene.arenaEnemy.setAlpha(1).setBiome(nextBiome);
   globalScene.arenaNextEnemy.setBiome(nextBiome);
   globalScene.arenaBgTransition.setVisible(false);
   globalScene.arenaPlayerTransition.setVisible(false);
