@@ -53,6 +53,8 @@ import * as v1_8_3 from "#system/version-migration/versions/v1_8_3";
 import * as v1_9_0 from "#system/version-migration/versions/v1_9_0";
 import * as v1_10_0 from "#system/version-migration/versions/v1_10_0";
 
+//import * as v1_12_0 from "#system/version-migration/versions/v1_12_0";
+
 /** Current game version */
 const LATEST_VERSION = version;
 
@@ -76,6 +78,7 @@ sessionMigrators.push(...v1_0_4.sessionMigrators);
 sessionMigrators.push(...v1_7_0.sessionMigrators);
 sessionMigrators.push(...v1_9_0.sessionMigrators);
 sessionMigrators.push(...v1_10_0.sessionMigrators);
+//sessionMigrators.push(...v1_12_0.sessionMigrators);
 
 /** All settings migrators */
 const settingsMigrators: SettingsSaveMigrator[] = [];

@@ -2616,6 +2616,38 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       // Setting the category
       if (isFormCaught) {
         this.pokemonCategoryText.setText(species.category);
+        switch (species.speciesId) {
+          case SpeciesId.FERALIGATR:
+          case SpeciesId.DARKRAI:
+          case SpeciesId.MEOWSTIC:
+          case SpeciesId.DRAMPA:
+            if (this.species.forms[this.formIndex].formKey === "mega") {
+              this.pokemonCategoryText.setText(
+                i18next.t(`pokemonCategory:mega${toTitleCase(SpeciesId[species.speciesId])}Category`),
+              );
+            }
+            break;
+          case SpeciesId.HOOPA:
+            if (this.formIndex === 1) {
+              this.pokemonCategoryText.setText(i18next.t("pokemonCategory:hoopaUnboundCategory"));
+            }
+            break;
+          case SpeciesId.CALYREX:
+            if (this.formIndex > 0) {
+              this.pokemonCategoryText.setText(i18next.t("pokemonCategory:calyrexRiderCategory"));
+            }
+            break;
+          case SpeciesId.PALAFIN:
+            if (this.formIndex === 1) {
+              this.pokemonCategoryText.setText(i18next.t("pokemonCategory:palafinHeroCategory"));
+            }
+            break;
+          case SpeciesId.GIMMIGHOUL:
+            if (this.formIndex === 1) {
+              this.pokemonCategoryText.setText(i18next.t("pokemonCategory:gimmighoulRoamingCategory"));
+            }
+            break;
+        }
       } else {
         this.pokemonCategoryText.setText("");
       }

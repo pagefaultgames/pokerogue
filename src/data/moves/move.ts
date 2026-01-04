@@ -6062,6 +6062,22 @@ export class FreezeDryAttr extends VariableMoveTypeChartAttr {
   }
 }
 
+/**
+ * Attribute that forces Nihil Light to be neutral effectiveness against Fairy types.
+ */
+export class NihilLightAttr extends VariableMoveTypeChartAttr {
+  apply(_user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
+    const multiplier = args[0] as NumberHolder;
+    const defType = args[1] as PokemonType;
+
+    if (defType === PokemonType.FAIRY) {
+      multiplier.value = 1;
+      return true;
+    }
+    return false;
+  }
+}
+
 export class OneHitKOAccuracyAttr extends VariableAccuracyAttr {
   apply(user: Pokemon, target: Pokemon, _move: Move, args: any[]): boolean {
     const accuracy = args[0] as NumberHolder;
@@ -9039,6 +9055,7 @@ const MoveAttrs = Object.freeze({
   FlyingTypeMultiplierAttr,
   VariableMoveTypeChartAttr,
   FreezeDryAttr,
+  NihilLightAttr,
   OneHitKOAccuracyAttr,
   SheerColdAccuracyAttr,
   MissEffectAttr,
@@ -11138,7 +11155,10 @@ export function initMoves() {
     new AttackMove(MoveId.WATER_SHURIKEN, PokemonType.WATER, MoveCategory.SPECIAL, 15, 100, 20, -1, 1, 6)
       .attr(MultiHitAttr)
       .attr(WaterShurikenPowerAttr)
-      .attr(WaterShurikenMultiHitTypeAttr),
+      .attr(WaterShurikenMultiHitTypeAttr)
+      // This move gained new functionality in ZA when used by Mega Greninja
+      // It should deal 75 damage and be a regular, single hit attack
+      .edgeCase(),
     new AttackMove(MoveId.MYSTICAL_FIRE, PokemonType.FIRE, MoveCategory.SPECIAL, 75, 100, 10, 100, 0, 6) //
       .attr(StatStageChangeAttr, [Stat.SPATK], -1),
     new SelfStatusMove(MoveId.SPIKY_SHIELD, PokemonType.GRASS, -1, 10, -1, 4, 6)
@@ -12405,5 +12425,10 @@ export function initMoves() {
       .condition(upperHandCondition, 3),
     new AttackMove(MoveId.MALIGNANT_CHAIN, PokemonType.POISON, MoveCategory.SPECIAL, 100, 100, 5, 50, 0, 9) //
       .attr(StatusEffectAttr, StatusEffect.TOXIC),
+    new AttackMove(MoveId.NIHIL_LIGHT, PokemonType.DRAGON, MoveCategory.SPECIAL, 100, 100, 10, -1, 0, 9)
+      .attr(IgnoreOpponentStatStagesAttr)
+      .attr(NihilLightAttr)
+      .target(MoveTarget.ALL_NEAR_ENEMIES)
+      .edgeCase(), // Needs to replace the user's Core Enforcer if mega evolved (Zygarde-Complete to Mega Zygarde)
   );
 }

@@ -1872,4 +1872,6 @@ export enum MoveId {
   UPPER_HAND,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Malignant_Chain_(move) | Source} */
   MALIGNANT_CHAIN,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Nihil_Light_(move) | Source} */
+  NIHIL_LIGHT,
 }

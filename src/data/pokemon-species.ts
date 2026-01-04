@@ -283,6 +283,7 @@ export abstract class PokemonSpeciesForm {
       case SpeciesFormKey.MEGA:
       case SpeciesFormKey.MEGA_X:
       case SpeciesFormKey.MEGA_Y:
+      case SpeciesFormKey.MEGA_Z:
       case SpeciesFormKey.PRIMAL:
       case SpeciesFormKey.GIGANTAMAX:
       case SpeciesFormKey.ETERNAMAX:
@@ -439,6 +440,7 @@ export abstract class PokemonSpeciesForm {
         case SpeciesFormKey.MEGA:
         case SpeciesFormKey.MEGA_X:
         case SpeciesFormKey.MEGA_Y:
+        case SpeciesFormKey.MEGA_Z:
         case SpeciesFormKey.GIGANTAMAX:
         case SpeciesFormKey.GIGANTAMAX_SINGLE:
         case SpeciesFormKey.GIGANTAMAX_RAPID:
@@ -769,6 +771,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
         case SpeciesFormKey.ETERNAMAX:
         case SpeciesFormKey.MEGA_X:
         case SpeciesFormKey.MEGA_Y:
+        case SpeciesFormKey.MEGA_Z:
           key = form.formKey;
           break;
         default:
@@ -837,6 +840,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
         SpeciesFormKey.MEGA,
         SpeciesFormKey.MEGA_X,
         SpeciesFormKey.MEGA_Y,
+        SpeciesFormKey.MEGA_Z,
         SpeciesFormKey.PRIMAL,
         SpeciesFormKey.GIGANTAMAX,
         SpeciesFormKey.GIGANTAMAX_RAPID,
