@@ -1,9 +1,12 @@
 import { globalScene } from "#app/global-scene";
+import { BattlerIndex } from "#enums/battler-index";
+import { FieldPosition } from "#enums/field-position";
 import { SwitchType } from "#enums/switch-type";
 import { UiMode } from "#enums/ui-mode";
-import type { PlayerPokemon } from "#field/pokemon";
+import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { BattlePhase } from "#phases/battle-phase";
-import type { PartyOption } from "#ui/party-ui-handler";
+import type { FaintPhase } from "#phases/faint-phase";
+import type { TurnEndPhase } from "#phases/turn-end-phase";
 import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import { toDmgValue } from "#utils/common";
 import i18next from "i18next";
@@ -13,9 +16,14 @@ import i18next from "i18next";
  * when used by one of the player's Pokemon.
  */
 export class RevivalBlessingPhase extends BattlePhase {
-  public readonly phaseName = "RevivalBlessingPhase";
-  constructor(protected user: PlayerPokemon) {
+  public override readonly phaseName = "RevivalBlessingPhase";
+
+  protected readonly user: PlayerPokemon;
+
+  constructor(user: PlayerPokemon) {
     super();
+
+    this.user = user;
   }
 
   public override start(): void {
@@ -23,54 +31,72 @@ export class RevivalBlessingPhase extends BattlePhase {
       UiMode.PARTY,
       PartyUiMode.REVIVAL_BLESSING,
       this.user.getFieldIndex(),
-      (slotIndex: number, _option: PartyOption) => {
-        if (slotIndex >= 0 && slotIndex < 6) {
-          const pokemon = globalScene.getPlayerParty()[slotIndex];
-          if (!pokemon || !pokemon.isFainted()) {
-            return this.end();
-          }
-
-          pokemon.resetTurnData();
-          pokemon.resetStatus(true, false, false, false);
-          pokemon.heal(Math.min(toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
-          globalScene.phaseManager.queueMessage(
-            i18next.t("moveTriggers:revivalBlessing", {
-              pokemonName: pokemon.name,
-            }),
-            0,
-            true,
-          );
-
-          const allyPokemon = this.user.getAlly();
-          if (globalScene.currentBattle.double && globalScene.getPlayerParty().length > 1 && allyPokemon != null) {
-            if (slotIndex <= 1) {
-              // Revived ally pokemon
-              globalScene.phaseManager.unshiftNew(
-                "SwitchSummonPhase",
-                SwitchType.SWITCH,
-                pokemon.getFieldIndex(),
-                slotIndex,
-                false,
-                true,
-              );
-              globalScene.phaseManager.unshiftNew("ToggleDoublePositionPhase", true);
-            } else if (allyPokemon.isFainted()) {
-              // Revived party pokemon, and ally pokemon is fainted
-              globalScene.phaseManager.unshiftNew(
-                "SwitchSummonPhase",
-                SwitchType.SWITCH,
-                allyPokemon.getFieldIndex(),
-                slotIndex,
-                false,
-                true,
-              );
-              globalScene.phaseManager.unshiftNew("ToggleDoublePositionPhase", true);
-            }
-          }
-        }
-        globalScene.ui.setMode(UiMode.MESSAGE).then(() => this.end());
-      },
+      (slotIndex: number) => this.revivePokemonAtSlotIndex(slotIndex),
       PartyUiHandler.FilterFainted,
     );
+  }
+
+  /**
+   * Revives the {@linkcode Pokemon} at the given index in the Player's party.
+   * @param slotIndex - The party slot index of the Pokemon to revive
+   */
+  private async revivePokemonAtSlotIndex(slotIndex: number): Promise<void> {
+    const { currentBattle, phaseManager, ui } = globalScene;
+    const pokemon = globalScene.getPlayerParty()[slotIndex];
+    if (pokemon == null || !pokemon.isFainted()) {
+      this.end();
+      return;
+    }
+
+    pokemon.resetTurnData();
+    pokemon.resetStatus();
+    pokemon.heal(toDmgValue(0.5 * pokemon.getMaxHp()));
+
+    phaseManager.unshiftNew(
+      "MessagePhase",
+      i18next.t("moveTriggers:revivalBlessing", { pokemonName: pokemon.name }),
+      0,
+      true,
+    );
+
+    if (currentBattle.double) {
+      const ally = this.user.getAlly();
+      if (pokemon === ally) {
+        this.clearFaintSwitchPhase(pokemon);
+        phaseManager.unshiftNew("SummonPhase", pokemon.getBattlerIndex(), { playTrainerAnim: false });
+      } else if (ally?.isFainted()) {
+        this.clearFaintSwitchPhase(pokemon);
+        phaseManager.unshiftNew("SwitchPhase", ally.getBattlerIndex(), SwitchType.SWITCH, slotIndex);
+      }
+    }
+
+    await ui.setMode(UiMode.MESSAGE);
+    await this.user.setFieldPosition(this.getUserFinalFieldPosition(), 500);
+    this.end();
+  }
+
+  /**
+   * Clears the {@linkcode SwitchPhase} for the given fainted Pokemon
+   * from the phase queue.
+   * @param pokemon - The fainted {@linkcode Pokemon}
+   * @todo This is only required because {@linkcode FaintPhase} pushes `SwitchPhases`
+   * to fill vacant field slots even though a subsequent Revival Blessing
+   * can fill said field slots before the end of the turn. The pushed `SwitchPhases`
+   * should be scheduled in {@linkcode TurnEndPhase} instead to make this method obsolete.
+   */
+  private clearFaintSwitchPhase(pokemon: Pokemon): void {
+    globalScene.phaseManager.tryRemovePhase("SwitchPhase", phase => phase.getPokemon() === pokemon);
+  }
+
+  /**
+   * @returns The final {@linkcode FieldPosition} the user should move to
+   * when this use of Revival Blessing resolves.
+   */
+  private getUserFinalFieldPosition(): FieldPosition {
+    if (!globalScene.currentBattle.double) {
+      return FieldPosition.CENTER;
+    }
+
+    return this.user.getBattlerIndex() === BattlerIndex.PLAYER ? FieldPosition.LEFT : FieldPosition.RIGHT;
   }
 }

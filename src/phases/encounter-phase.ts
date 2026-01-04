@@ -23,7 +23,6 @@ import { EncounterPhaseEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
 import {
   BoostBugSpawnModifier,
-  IvScannerModifier,
   overrideHeldItems,
   overrideModifiers,
   TurnHeldItemTransferModifier,
@@ -35,12 +34,19 @@ import { getGoldenBugNetSpecies } from "#mystery-encounters/encounter-pokemon-ut
 import { BattlePhase } from "#phases/battle-phase";
 import { achvs } from "#system/achv";
 import { randSeedInt, randSeedItem } from "#utils/common";
+import { queueBattlerEntrancePhases } from "#utils/switch-utils";
 import i18next from "i18next";
 
 export class EncounterPhase extends BattlePhase {
   // Union type is necessary as this is subclassed, and typescript will otherwise complain
   public readonly phaseName: "EncounterPhase" | "NextEncounterPhase" | "NewBiomeEncounterPhase" = "EncounterPhase";
   private loaded: boolean;
+  /**
+   * Whether the enemies summoned came from a trainer (and thus need to have extra `SummonPhase`s loaded in)
+   * @defaultValue `false`
+   */
+  // TODO: This property addition is a fix for this phase doing far more than it has any right to do.
+  private wasTrainer = false;
 
   constructor(loaded = false) {
     super();
@@ -399,6 +405,8 @@ export class EncounterPhase extends BattlePhase {
         });
   }
 
+  // TODO: The code to handle wild Pokemon entrances
+  // should go in its own phase to massively simplify the logic of queueing `PostSummonPhase`s and similar effects
   doEncounterCommon(showEncounterMessage = true) {
     const enemyField = globalScene.getEnemyField();
 
@@ -429,11 +437,7 @@ export class EncounterPhase extends BattlePhase {
         globalScene.pbTrayEnemy.showPbTray(globalScene.getEnemyParty());
         const doTrainerSummon = () => {
           this.hideEnemyTrainer();
-          const availablePartyMembers = globalScene.getEnemyParty().filter(p => !p.isFainted()).length;
-          globalScene.phaseManager.unshiftNew("SummonPhase", 0, false);
-          if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-            globalScene.phaseManager.unshiftNew("SummonPhase", 1, false);
-          }
+          this.wasTrainer = true;
           this.end();
         };
         if (showEncounterMessage) {
@@ -530,12 +534,23 @@ export class EncounterPhase extends BattlePhase {
   }
 
   end() {
+    const { currentBattle, gameMode } = globalScene;
+    const { battleType, waveIndex } = currentBattle;
     const enemyField = globalScene.getEnemyField();
 
+    queueBattlerEntrancePhases({
+      skipEnemySummon: !this.wasTrainer,
+      checkSwitch: battleType !== BattleType.TRAINER && (waveIndex > 1 || !gameMode.isDaily),
+    });
+
     enemyField.forEach((enemyPokemon, e) => {
+      // TODO: This might result in multiple shiny sparkles being emitted for trainer fights
+      // (since `SummonPhase` also unshifts them as well)
       if (enemyPokemon.isShiny(true)) {
         globalScene.phaseManager.unshiftNew("ShinySparklePhase", BattlerIndex.ENEMY + e);
       }
+
+      // TODO: Move this anywhere but here
       /** This sets Eternatus' held item to be untransferrable, preventing it from being stolen */
       if (
         enemyPokemon.species.speciesId === SpeciesId.ETERNATUS
@@ -554,50 +569,7 @@ export class EncounterPhase extends BattlePhase {
       }
     });
 
-    if (![BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType)) {
-      const ivScannerModifier = globalScene.findModifier(m => m instanceof IvScannerModifier);
-      if (ivScannerModifier) {
-        enemyField.map(p => globalScene.phaseManager.pushNew("ScanIvsPhase", p.getBattlerIndex()));
-      }
-    }
-
-    if (!this.loaded) {
-      const availablePartyMembers = globalScene.getPokemonAllowedInBattle();
-
-      if (!availablePartyMembers[0].isOnField()) {
-        globalScene.phaseManager.pushNew("SummonPhase", 0);
-      }
-
-      if (globalScene.currentBattle.double) {
-        if (availablePartyMembers.length > 1) {
-          globalScene.phaseManager.pushNew("ToggleDoublePositionPhase", true);
-          if (!availablePartyMembers[1].isOnField()) {
-            globalScene.phaseManager.pushNew("SummonPhase", 1);
-          }
-        }
-      } else {
-        if (availablePartyMembers.length > 1 && availablePartyMembers[1].isOnField()) {
-          globalScene.phaseManager.pushNew("ReturnPhase", 1);
-        }
-        globalScene.phaseManager.pushNew("ToggleDoublePositionPhase", false);
-      }
-
-      if (
-        globalScene.currentBattle.battleType !== BattleType.TRAINER
-        && (globalScene.currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily)
-      ) {
-        const minPartySize = globalScene.currentBattle.double ? 2 : 1;
-        if (availablePartyMembers.length > minPartySize) {
-          globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
-          if (globalScene.currentBattle.double) {
-            globalScene.phaseManager.pushNew("CheckSwitchPhase", 1, globalScene.currentBattle.double);
-          }
-        }
-      }
-    }
     handleTutorial(Tutorial.Access_Menu).then(() => super.end());
-
-    globalScene.phaseManager.pushNew("InitEncounterPhase");
   }
 
   tryOverrideForBattleSpec(): boolean {

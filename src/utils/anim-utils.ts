@@ -1,6 +1,42 @@
 import { globalScene } from "#app/global-scene";
 import type { SceneBase } from "#app/scene-base";
+import type { AnimConfig } from "#data/battle-anims";
+import { ImagesFolder } from "#enums/images-folder";
 import type { OmitIndexSignature, PickIndexSignature } from "type-fest";
+
+export async function loadAnimAssets(anims: AnimConfig[], startLoad?: boolean): Promise<void> {
+  const backgrounds = new Set<string>();
+  const sounds = new Set<string>();
+  for (const a of anims) {
+    if (a.frames == null || a.frames.length === 0) {
+      continue;
+    }
+    const animSounds = a.getSoundResourceNames();
+    for (const ms of animSounds) {
+      sounds.add(ms);
+    }
+    const animBackgrounds = a.getBackgroundResourceNames();
+    for (const abg of animBackgrounds) {
+      backgrounds.add(abg);
+    }
+    if (a.graphic) {
+      globalScene.loadSpritesheet(a.graphic, ImagesFolder.BATTLE_ANIMS, 96);
+    }
+  }
+  for (const bg of backgrounds) {
+    globalScene.loadImage(bg, ImagesFolder.BATTLE_ANIMS);
+  }
+  for (const s of sounds) {
+    globalScene.loadSe(s, "battle_anims", s);
+  }
+
+  if (startLoad) {
+    await new Promise(resolve => globalScene.load.once(Phaser.Loader.Events.COMPLETE, resolve));
+    if (!globalScene.load.isLoading()) {
+      globalScene.load.start();
+    }
+  }
+}
 
 type OmitWithoutIndex<O extends object, K extends keyof O> = PickIndexSignature<O> & Omit<OmitIndexSignature<O>, K>;
 

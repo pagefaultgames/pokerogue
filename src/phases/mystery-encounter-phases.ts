@@ -3,13 +3,13 @@ import { Phase } from "#app/phase";
 import { getCharVariantFromDialogue } from "#data/dialogue";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { BattleSpec } from "#enums/battle-spec";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { SwitchType } from "#enums/switch-type";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { UiMode } from "#enums/ui-mode";
-import { IvScannerModifier } from "#modifiers/modifier";
 import { getEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { OptionSelectSettings } from "#mystery-encounters/encounter-phase-utils";
 import { transitionMysteryEncounterIntroVisuals } from "#mystery-encounters/encounter-phase-utils";
@@ -17,6 +17,7 @@ import type { MysteryEncounterOption, OptionPhaseCallback } from "#mystery-encou
 import { SeenEncounterData } from "#mystery-encounters/mystery-encounter-save-data";
 import { randSeedItem } from "#utils/common";
 import { inSpeedOrder } from "#utils/speed-order-generator";
+import { queueBattlerEntrancePhases } from "#utils/switch-utils";
 import i18next from "i18next";
 
 /**
@@ -250,7 +251,7 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
     const playerField = globalScene.getPlayerField();
     playerField.forEach((pokemon, i) => {
       if (!pokemon.isAllowedInBattle() && legalPlayerPartyPokemon.length > i) {
-        globalScene.phaseManager.unshiftNew("SwitchPhase", SwitchType.SWITCH, i, true, false);
+        globalScene.phaseManager.unshiftNew("SwitchPhase", i, SwitchType.SWITCH);
       }
     });
 
@@ -325,17 +326,14 @@ export class MysteryEncounterBattlePhase extends Phase {
   /**
    * Queue {@linkcode SummonPhase}s for the new battle and handle trainer animations/dialogue for Trainer battles
    */
+  // TODO: The code to handle wild Pokemon entrances (being ripped straight out of `EncounterPhase`)
+  // should go in its own phase to massively simplyify the logic of queueing `PostSummonPhase`s and similar
   private doMysteryEncounterBattle() {
     const encounterMode = globalScene.currentBattle.mysteryEncounter!.encounterMode;
     if (encounterMode === MysteryEncounterMode.WILD_BATTLE || encounterMode === MysteryEncounterMode.BOSS_BATTLE) {
       // Summons the wild/boss Pokemon
       if (encounterMode === MysteryEncounterMode.BOSS_BATTLE) {
         globalScene.playBgm();
-      }
-      const availablePartyMembers = globalScene.getEnemyParty().filter(p => !p.isFainted()).length;
-      globalScene.phaseManager.unshiftNew("SummonPhase", 0, false);
-      if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-        globalScene.phaseManager.unshiftNew("SummonPhase", 1, false);
       }
 
       if (globalScene.currentBattle.mysteryEncounter?.hideBattleIntroMessage) {
@@ -352,12 +350,7 @@ export class MysteryEncounterBattlePhase extends Phase {
         globalScene.pbTrayEnemy.showPbTray(globalScene.getEnemyParty());
         const doTrainerSummon = () => {
           this.hideEnemyTrainer();
-          const availablePartyMembers = globalScene.getEnemyParty().filter(p => !p.isFainted()).length;
-          globalScene.phaseManager.unshiftNew("SummonPhase", 0, false);
-          if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-            globalScene.phaseManager.unshiftNew("SummonPhase", 1, false);
-          }
-          this.endBattleSetup();
+          this.endBattleSetup(true);
         };
         if (globalScene.currentBattle.mysteryEncounter?.hideBattleIntroMessage) {
           doTrainerSummon();
@@ -400,54 +393,35 @@ export class MysteryEncounterBattlePhase extends Phase {
 
   /**
    * Initiate {@linkcode SummonPhase}s, {@linkcode ScanIvsPhase}, {@linkcode PostSummonPhase}s, etc.
+   * @param wasTrainer - Whether the enemies summoned came from a trainer (and thus need to have
+   * `SummonPhase`s loaded in); default `false`
    */
-  private endBattleSetup() {
-    const enemyField = globalScene.getEnemyField();
+  // TODO: This parameter is bad for the same reason as in EncounterPhase - this does way too much at once
+  private endBattleSetup(wasTrainer = false) {
     const encounterMode = globalScene.currentBattle.mysteryEncounter!.encounterMode;
 
-    // PostSummon and ShinySparkle phases are handled by SummonPhase
-
-    if (encounterMode !== MysteryEncounterMode.TRAINER_BATTLE) {
-      const ivScannerModifier = globalScene.findModifier(m => m instanceof IvScannerModifier);
-      if (ivScannerModifier) {
-        enemyField.map(p => globalScene.phaseManager.pushNew("ScanIvsPhase", p.getBattlerIndex()));
-      }
-    }
-
+    // PostSummon and ShinySparkle phases are handled by helper function
     const availablePartyMembers = globalScene.getPlayerParty().filter(p => p.isAllowedInBattle());
 
-    if (!availablePartyMembers[0].isOnField()) {
-      globalScene.phaseManager.pushNew("SummonPhase", 0);
-    }
+    queueBattlerEntrancePhases({
+      skipEnemySummon: !wasTrainer,
+      loaded: true,
+      checkSwitch: encounterMode !== MysteryEncounterMode.TRAINER_BATTLE && !this.disableSwitch,
+    });
 
-    if (globalScene.currentBattle.double) {
-      if (availablePartyMembers.length > 1) {
-        globalScene.phaseManager.pushNew("ToggleDoublePositionPhase", true);
-        if (!availablePartyMembers[1].isOnField()) {
-          globalScene.phaseManager.pushNew("SummonPhase", 1);
-        }
-      }
-    } else {
+    // If not a double battle, recall any prior 2nd pokemon and toggle the player mon to center.
+    // Otherwise, add the 2nd pokemon to the field (if one exists)
+    if (!globalScene.currentBattle.double) {
+      // TODO: Can we remove this fallback? There shouldn't be any pokemon on field when this fires
       if (availablePartyMembers.length > 1 && availablePartyMembers[1].isOnField()) {
         for (const pokemon of inSpeedOrder(ArenaTagSide.PLAYER)) {
           pokemon.lapseTag(BattlerTagType.COMMANDED);
         }
-        globalScene.phaseManager.pushNew("ReturnPhase", 1);
+        globalScene.phaseManager.unshiftNew("RecallPhase", BattlerIndex.PLAYER_2);
       }
-      globalScene.phaseManager.pushNew("ToggleDoublePositionPhase", false);
+      globalScene.phaseManager.unshiftNew("ToggleDoublePositionPhase", false);
     }
 
-    if (encounterMode !== MysteryEncounterMode.TRAINER_BATTLE && !this.disableSwitch) {
-      const minPartySize = globalScene.currentBattle.double ? 2 : 1;
-      if (availablePartyMembers.length > minPartySize) {
-        globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
-        if (globalScene.currentBattle.double) {
-          globalScene.phaseManager.pushNew("CheckSwitchPhase", 1, globalScene.currentBattle.double);
-        }
-      }
-    }
-
-    globalScene.phaseManager.pushNew("InitEncounterPhase");
     this.end();
   }
 
