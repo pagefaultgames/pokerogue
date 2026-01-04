@@ -12,13 +12,13 @@
 /**
  * An error code for a bad URL.
  */
-export const INVALID_URL = /** @type {const} */ ("bad_url_code");
+export const INVALID_URL = "bad_url_code";
 
 /**
  * Fetch a given trainer's names from the given HTML document.
  * @param {HTMLElement | null | undefined} trainerListHeader - The header containing the trainer lists
  * @param {boolean} [knownFemale=false] - Whether the class is known to be female; default `false`
- * @returns {parsedNames | INVALID_URL}
+ * @returns {parsedNames | typeof INVALID_URL}
  * An object containing the parsed names. \
  * Will instead return with {@linkcode INVALID_URL} if the data is invalid.
  */

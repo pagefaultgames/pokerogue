@@ -21,6 +21,7 @@
     "test:create": "node scripts/create-test/create-test.js",
     "eggMoves:parse": "node scripts/parse-egg-moves/main.js",
     "scrape-trainers": "node scripts/scrape-trainer-names/main.js",
+    "dailySeed:create": "node scripts/daily-seed/main.js",
     "typecheck": "tsc --noEmit",
     "typecheck:js": "tsc -p jsconfig.json",
     "biome": "biome check --write --changed --no-errors-on-unmatched --diagnostic-level=error",
@@ -41,7 +42,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.8",
-    "@inquirer/prompts": "^8.0.2",
+    "@inquirer/prompts": "^8.1.0",
     "@ls-lint/ls-lint": "2.3.1",
     "@types/crypto-js": "^4.2.2",
     "@types/jsdom": "^27.0.0",
@@ -69,6 +70,7 @@
   },
   "dependencies": {
     "@material/material-color-utilities": "^0.3.0",
+    "ajv": "^8.17.1",
     "compare-versions": "^6.1.1",
     "core-js": "^3.47.0",
     "crypto-js": "^4.2.0",
