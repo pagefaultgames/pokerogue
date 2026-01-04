@@ -10,7 +10,7 @@ import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-/**
+/*
  * Tests for abilities that change the type of normal moves to
  * a different type and boost their power
  *
@@ -191,9 +191,7 @@ describe.each([
     const testMoveInstance = allMoves[MoveId.TACKLE];
 
     // get the power boost from the ability so we can compare it to the item
-    // @ts-expect-error power multiplier is private
-    const boost = allAbilities[ab]?.getAttrs("MoveTypeChangeAbAttr")[0]?.powerMultiplier;
-    expect(boost, "power boost should be defined").toBeDefined();
+    const boost = allAbilities[ab].getAttrs("MovePowerBoostAbAttr")[0]["powerMultiplier"];
 
     const powerSpy = vi.spyOn(testMoveInstance, "calculateBattlePower");
     const typeSpy = vi.spyOn(game.field.getPlayerPokemon(), "getMoveType");
@@ -208,9 +206,7 @@ describe.each([
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     // get the power boost from the ability so we can compare it to the item
-    // @ts-expect-error power multiplier is private
-    const boost = allAbilities[ab]?.getAttrs("MoveTypeChangeAbAttr")[0]?.powerMultiplier;
-    expect(boost, "power boost should be defined").toBeDefined();
+    const boost = allAbilities[ab].getAttrs("MovePowerBoostAbAttr")[0]["powerMultiplier"];
 
     const tackle = allMoves[MoveId.TACKLE];
 
