@@ -64,6 +64,7 @@ import type { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import { UiTheme } from "#enums/ui-theme";
+import type { BattleSceneEvent } from "#events/battle-scene";
 import { NewArenaEvent } from "#events/battle-scene";
 import { Arena, ArenaBase } from "#field/arena";
 import { DamageNumberHandler } from "#field/damage-number-handler";
@@ -119,6 +120,7 @@ import { trainerConfigs } from "#trainers/trainer-config";
 import type { Constructor } from "#types/common";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import type { Localizable } from "#types/locales";
+import type { TypedEventTarget } from "#types/typed-event-target";
 import { AbilityBar } from "#ui/ability-bar";
 import { ArenaFlyout } from "#ui/arena-flyout";
 import { CandyBar } from "#ui/candy-bar";
@@ -319,15 +321,9 @@ export class BattleScene extends SceneBase {
   private readonly infoToggles: InfoToggle[] = [];
 
   /**
-   * Allows subscribers to listen for events
-   *
-   * Current Events:
-   * - {@linkcode BattleSceneEventType.MOVE_USED} {@linkcode MoveUsedEvent}
-   * - {@linkcode BattleSceneEventType.TURN_INIT} {@linkcode TurnInitEvent}
-   * - {@linkcode BattleSceneEventType.TURN_END} {@linkcode TurnEndEvent}
-   * - {@linkcode BattleSceneEventType.NEW_ARENA} {@linkcode NewArenaEvent}
+   * Allows subscribers to listen for events.
    */
-  public readonly eventTarget: EventTarget = new EventTarget();
+  public readonly eventTarget: TypedEventTarget<BattleSceneEvent> = new EventTarget();
 
   declare renderer: Phaser.Renderer.WebGL.WebGLRenderer;
 
