@@ -2,7 +2,6 @@ import { MoveId } from "#enums/move-id";
 
 /**
  * Array containing all move-calling moves, used for DRY when writing move banlists
- *
  */
 const moveCallingMoves = [
   MoveId.ASSIST,
