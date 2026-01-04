@@ -27,7 +27,10 @@ Please try to keep the PR self-contained (and small!)
 -->
 
 ## What are the changes the user will see?
-<!-- Summarize what are the changes from a user perspective on the application -->
+<!--
+Summarize what are the changes from a user perspective on the application.
+Try to keep it short in this section since this is used to generate a changelog.
+-->
 
 ## Why am I making these changes?
 <!--
