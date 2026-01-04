@@ -135,9 +135,9 @@ export function randSeedItem<T>(items: ArrayLike<T>): T {
 }
 
 /**
- * Shuffle a list in place using the seeded rng and the Fisher-Yates algorithm.
- * @param items - An array of items.
- * @returns The same `items` array, now shuffled in place.
+ * Shuffle an array using seeded RNG via the Fisher-Yates algorithm.
+ * @param items - The array to shuffle; will be mutated
+ * @returns A reference to the same `items` array, now shuffled in place.
  */
 export function randSeedShuffle<T>(items: T[]): T[] {
   for (let i = items.length - 1; i > 0; i--) {
