@@ -125,6 +125,7 @@ export const invalidSleepTalkMoves: ReadonlySet<MoveId> = new Set([
   MoveId.FOCUS_PUNCH,
   MoveId.GEOMANCY,
   MoveId.ICE_BURN,
+  MoveId.MIMIC,
   MoveId.PHANTOM_FORCE,
   MoveId.RAZOR_WIND,
   MoveId.SHADOW_FORCE,
