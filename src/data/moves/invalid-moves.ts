@@ -258,7 +258,7 @@ export const noAbilityTypeOverrideMoves: ReadonlySet<MoveId> = new Set([
   MoveId.HIDDEN_POWER,
 ]);
 
-/** Set of all moves that cannot be learnt by {@linkcode MoveId.SKETCH | Sketch}. */
+/** Set of all moves that cannot be learned by {@linkcode MoveId.SKETCH | Sketch}. */
 export const invalidSketchMoves: ReadonlySet<MoveId> = new Set([
   MoveId.NONE, // TODO: Remove from banlist and do explicit check
   MoveId.STRUGGLE,
