@@ -44,6 +44,7 @@ export const invalidMetronomeMoves: ReadonlySet<MoveId> = new Set([
   MoveId.INSTRUCT,
   MoveId.KINGS_SHIELD,
   MoveId.MAT_BLOCK,
+  MoveId.MIMIC,
   MoveId.MIRROR_COAT,
   // TODO: Add Metal Burst? Comeuppance is here so it's a little inconsistent
   MoveId.OBSTRUCT,
