@@ -11,7 +11,8 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @see {@linkcode Pokemon.getEffectiveStat}
  * @sealed
  */
-// TODO: Rework to simply use
+// TODO: Rework to simply use whatever config object is used for `Pokemon#getEffectiveStat`
+// once that has its params consolidated
 export interface ToHaveEffectiveStatOptions {
   /**
    * The target {@linkcode Pokemon}
