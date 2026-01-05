@@ -5,7 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import type { FlinchAttr, Move, StatStageChangeAttr } from "#moves/move";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Triple Arrows", () => {
   let phaserGame: Phaser.Game;
@@ -21,10 +21,6 @@ describe("Moves - Triple Arrows", () => {
     tripleArrows = allMoves[MoveId.TRIPLE_ARROWS];
     flinchAttr = tripleArrows.getAttrs("FlinchAttr")[0];
     defDropAttr = tripleArrows.getAttrs("StatStageChangeAttr")[0];
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {

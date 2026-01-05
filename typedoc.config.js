@@ -44,6 +44,7 @@ const config = {
     "typedoc-github-theme",
     "typedoc-plugin-coverage",
     "typedoc-plugin-mdn-links",
+    "typedoc-plugin-missing-exports",
     ...globSync("./typedoc-plugins/**/*.js").map(plugin => "./" + plugin),
   ],
   // Avoid emitting docs for branches other than main/beta
@@ -61,6 +62,8 @@ const config = {
   navigationLinks: {
     GitHub: "https://github.com/pagefaultgames/pokerogue",
   },
+  includeDocCommentReferences: true,
+  placeInternalsInOwningModule: true,
 };
 
 // If generating docs for main/beta, check the ref name and add an appropriate navigation header

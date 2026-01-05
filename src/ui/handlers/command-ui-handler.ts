@@ -217,16 +217,16 @@ export class CommandUiHandler extends UiHandler {
   }
 
   getCursor(): number {
-    return !this.fieldIndex ? this.cursor : this.cursor2;
+    return this.fieldIndex ? this.cursor2 : this.cursor;
   }
 
   setCursor(cursor: number): boolean {
     const changed = this.getCursor() !== cursor;
     if (changed) {
-      if (!this.fieldIndex) {
-        this.cursor = cursor;
-      } else {
+      if (this.fieldIndex) {
         this.cursor2 = cursor;
+      } else {
+        this.cursor = cursor;
       }
     }
 

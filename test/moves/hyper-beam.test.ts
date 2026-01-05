@@ -7,7 +7,7 @@ import { BerryPhase } from "#phases/berry-phase";
 import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Hyper Beam", () => {
   let phaserGame: Phaser.Game;
@@ -17,10 +17,6 @@ describe("Moves - Hyper Beam", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
