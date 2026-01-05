@@ -2,7 +2,6 @@ import { globalScene } from "#app/global-scene";
 import { allMoves } from "#data/data-lists";
 import type { BattlerIndex } from "#enums/battler-index";
 import { Command } from "#enums/command";
-import { MoveFlags } from "#enums/move-flags";
 import { UiMode } from "#enums/ui-mode";
 import { PokemonPhase } from "#phases/pokemon-phase";
 import i18next from "i18next";
@@ -32,7 +31,7 @@ export class SelectTargetPhase extends PokemonPhase {
     const ally = user.getAlly();
     const shouldDefaultToAlly =
       globalScene.currentBattle.double // formatting
-      && move.hasFlag(MoveFlags.ALLY_TARGET_DEFAULT)
+      && move.allyTargetDefault
       && ally != null
       && !ally.isFainted();
     const defaultTargets = shouldDefaultToAlly ? [ally.getBattlerIndex()] : undefined;

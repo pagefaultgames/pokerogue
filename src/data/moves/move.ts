@@ -199,6 +199,8 @@ export abstract class Move implements Localizable {
   private readonly restrictions: MoveRestriction[] = [];
   /** The move's {@linkcode MoveFlags} */
   private flags = 0;
+  /** Whether this move defaults to targeting an ally in double battles */
+  public allyTargetDefault = false;
   private nameAppend = "";
 
   /**
@@ -799,14 +801,15 @@ export abstract class Move implements Localizable {
   }
 
   /**
-   * Set the {@linkcode MoveFlags.ALLY_TARGET_DEFAULT} flag for the calling Move, causing it to default to targeting the user's ally in Double Battles.
-   * @see {@linkcode MoveId.INSTRUCT}
-   * @returns `this`
-   * @remarks
-   * This should not be called for moves that can _only_ target allies (in which case it becomes moot.)
-   */
+  * Set the allyTargetDefault property for the calling Move, causing it to default to targeting the user's ally in Double Battles.
+  * @see {@linkcode MoveId.INSTRUCT}
+  * @returns `this`
+  * @remarks
+  * This should not be called for moves that can _only_ target allies (in which case it becomes moot.)
+  * Manual switching to enemy targets is still allowed. 
+  */
   targetsAllyDefault(): this {
-    this.setFlag(MoveFlags.ALLY_TARGET_DEFAULT, true);
+    this.allyTargetDefault = true;
     return this;
   }
 
