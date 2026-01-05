@@ -31,7 +31,7 @@ type PartiallyFilledNonSerializableBattlerTag<B extends BattlerTagType> = //
  * Parameter type for {@linkcode toHaveBattlerTag}, accepting a partially filled {@linkcode BattlerTag} of the given type.
  * @typeParam B - The {@linkcode BattlerTagType} being checked
  * @remarks
- * If `B` corresponds to a {@linkcode SerializableBattlerTagType | serializable `BattlerTag`}, only properties allowed to be serialized
+ * If `B` corresponds to a {@linkcode SerializableBattlerTagType | serializable BattlerTag}, only properties allowed to be serialized
  * (i.e. can change across instances) will be present and able to be checked.
  * @sealed
  */
