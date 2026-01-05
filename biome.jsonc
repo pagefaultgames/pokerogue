@@ -86,7 +86,7 @@
         },
         "useAtIndex": "error",
         "noNegationElse": {
-          "level": "info", // TODO: Promote to error eventually
+          "level": "error",
           "fix": "unsafe", // duplicates else blocks
           "options": {}
         },

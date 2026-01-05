@@ -17,7 +17,7 @@ import { StealHeldItemChanceAttr } from "#moves/move";
 import type { CommandPhase } from "#phases/command-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Substitute", () => {
   let phaserGame: Phaser.Game;
@@ -27,10 +27,6 @@ describe("Moves - Substitute", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {

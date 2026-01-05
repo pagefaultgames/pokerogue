@@ -70,6 +70,7 @@ import { applyMoveAttrs } from "#moves/apply-attrs";
 import {
   invalidAssistMoves,
   invalidCopycatMoves,
+  invalidInstructMoves,
   invalidMetronomeMoves,
   invalidMirrorMoveMoves,
   invalidSketchMoves,
@@ -114,6 +115,9 @@ import { areAllies, canSpeciesTera, willTerastallize } from "#utils/pokemon-util
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
+
+// TODO: fix properly https://github.com/Despair-Games/poketernity/pull/170
+type GetRemoveArenaTagSideFunc = (user: Pokemon, target: Pokemon) => ArenaTagSide;
 
 /**
  * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.
@@ -1119,7 +1123,7 @@ export abstract class Move implements Localizable {
     return power.value;
   }
 
-  getPriority(user: Pokemon, simulated = true) {
+  getPriority(user: Pokemon, simulated = true): number {
     const priority = new NumberHolder(this.priority);
     applyMoveAttrs("IncrementMovePriorityAttr", user, null, this, priority);
     applyAbAttrs("ChangeMovePriorityAbAttr", { pokemon: user, simulated, move: this, priority });
@@ -1127,7 +1131,7 @@ export abstract class Move implements Localizable {
     return priority.value;
   }
 
-  public getPriorityModifier(user: Pokemon, simulated = true) {
+  public getPriorityModifier(user: Pokemon, simulated = true): MovePriorityInBracket {
     if (user.getTag(BattlerTagType.BYPASS_SPEED)) {
       return MovePriorityInBracket.FIRST;
     }
@@ -1138,7 +1142,7 @@ export abstract class Move implements Localizable {
       move: this,
       priority: modifierHolder,
     });
-    return modifierHolder.value;
+    return modifierHolder.value as MovePriorityInBracket;
   }
 
   /**
@@ -1235,6 +1239,7 @@ export class AttackMove extends Move {
    */
   private declare _: never;
 
+  // biome-ignore lint/nursery/useMaxParams: moves have a lot of independent params
   constructor(
     id: MoveId,
     type: PokemonType,
@@ -6665,22 +6670,18 @@ export class AddArenaTagAttr extends MoveEffectAttr {
 export class RemoveArenaTagsAttr extends MoveEffectAttr {
   /** An array containing the tags to be removed. */
   private readonly tagTypes: readonly [ArenaTagType, ...ArenaTagType[]];
-  /**
-   * Whether to remove tags from both sides of the field (`true`) or
-   * the target's side of the field (`false`)
-   * @defaultValue `false`
-   */
-  private readonly removeAllTags: boolean;
+  /** A function which gets the side to remove `ArenaTag`s from */
+  private readonly getTagSideFunc: GetRemoveArenaTagSideFunc;
 
   constructor(
     tagTypes: readonly [ArenaTagType, ...ArenaTagType[]],
-    removeAllTags = false,
+    getTagSideFunc: GetRemoveArenaTagSideFunc,
     options?: MoveEffectAttrOptions,
   ) {
     super(true, options);
 
     this.tagTypes = tagTypes;
-    this.removeAllTags = removeAllTags;
+    this.getTagSideFunc = getTagSideFunc;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -6688,9 +6689,7 @@ export class RemoveArenaTagsAttr extends MoveEffectAttr {
       return false;
     }
 
-    const side = this.removeAllTags ? ArenaTagSide.BOTH : target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-
-    globalScene.arena.removeTagsOnSide(this.tagTypes, side);
+    globalScene.arena.removeTagsOnSide(this.tagTypes, this.getTagSideFunc(user, target));
 
     return true;
   }
@@ -6747,18 +6746,18 @@ const arenaTrapTags = [
 ] as const;
 
 export class RemoveArenaTrapAttr extends RemoveArenaTagsAttr {
-  constructor(targetBothSides = false) {
+  constructor(getTagSideFunc: GetRemoveArenaTagSideFunc) {
     // TODO: This triggers at a different time than `RemoveArenaTagsAbAttr`...
-    super(arenaTrapTags, targetBothSides, { trigger: MoveEffectTrigger.PRE_APPLY });
+    super(arenaTrapTags, getTagSideFunc, { trigger: MoveEffectTrigger.PRE_APPLY });
   }
 }
 
 const screenTags = [ArenaTagType.REFLECT, ArenaTagType.LIGHT_SCREEN, ArenaTagType.AURORA_VEIL] as const;
 
 export class RemoveScreensAttr extends RemoveArenaTagsAttr {
-  constructor(targetBothSides = false) {
+  constructor(getTagSideFunc: GetRemoveArenaTagSideFunc) {
     // TODO: This triggers at a different time than {@linkcode RemoveArenaTagsAbAttr}...
-    super(screenTags, targetBothSides, { trigger: MoveEffectTrigger.PRE_APPLY });
+    super(screenTags, getTagSideFunc, { trigger: MoveEffectTrigger.PRE_APPLY });
   }
 }
 
@@ -7811,7 +7810,7 @@ export class CopyMoveAttr extends CallMoveAttr {
  * Attribute used for moves that cause the target to repeat their last used move.
  *
  * Used by {@linkcode MoveId.INSTRUCT | Instruct}.
- * @see [Instruct on Bulbapedia](https://bulbapedia.bulbagarden.net/wiki/Instruct_(move))
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Instruct_(move) | Instruct on Bulbapedia}
  */
 export class RepeatMoveAttr extends MoveEffectAttr {
   private movesetMove: PokemonMove;
@@ -7830,7 +7829,6 @@ export class RepeatMoveAttr extends MoveEffectAttr {
     // bangs are justified as Instruct fails if no prior move or moveset move exists
     // TODO: How does instruct work when copying a move called via Copycat that the user itself knows?
     const lastMove = target.getLastNonVirtualMove()!;
-    const movesetMove = target.getMoveset().find(m => m.moveId === lastMove?.move)!;
 
     // If the last move used can hit more than one target or has variable targets,
     // re-compute the targets for the attack (mainly for alternating double/single battles)
@@ -7866,7 +7864,7 @@ export class RepeatMoveAttr extends MoveEffectAttr {
       "MovePhase",
       target,
       moveTargets,
-      movesetMove,
+      this.movesetMove,
       MoveUseMode.NORMAL,
       MovePhaseTimingModifier.FIRST,
     );
@@ -7876,83 +7874,14 @@ export class RepeatMoveAttr extends MoveEffectAttr {
   getCondition(): MoveConditionFunc {
     return (_user, target, _move) => {
       // TODO: Check instruct behavior with struggle - ignore, fail or success
+      // TODO: How does instruct work when copying a move called via Copycat that the user itself knows?
       const lastMove = target.getLastNonVirtualMove();
       const movesetMove = target.getMoveset().find(m => m.moveId === lastMove?.move);
-      const uninstructableMoves = [
-        // Locking/Continually Executed moves
-        MoveId.OUTRAGE,
-        MoveId.RAGING_FURY,
-        MoveId.ROLLOUT,
-        MoveId.PETAL_DANCE,
-        MoveId.THRASH,
-        MoveId.ICE_BALL,
-        MoveId.UPROAR,
-        // Multi-turn Moves
-        MoveId.BIDE,
-        MoveId.SHELL_TRAP,
-        MoveId.BEAK_BLAST,
-        MoveId.FOCUS_PUNCH,
-        // "First Turn Only" moves
-        MoveId.FAKE_OUT,
-        MoveId.FIRST_IMPRESSION,
-        MoveId.MAT_BLOCK,
-        // Moves with a recharge turn
-        MoveId.HYPER_BEAM,
-        MoveId.ETERNABEAM,
-        MoveId.FRENZY_PLANT,
-        MoveId.BLAST_BURN,
-        MoveId.HYDRO_CANNON,
-        MoveId.GIGA_IMPACT,
-        MoveId.PRISMATIC_LASER,
-        MoveId.ROAR_OF_TIME,
-        MoveId.ROCK_WRECKER,
-        MoveId.METEOR_ASSAULT,
-        // Charging & 2-turn moves
-        MoveId.DIG,
-        MoveId.FLY,
-        MoveId.BOUNCE,
-        MoveId.SHADOW_FORCE,
-        MoveId.PHANTOM_FORCE,
-        MoveId.DIVE,
-        MoveId.ELECTRO_SHOT,
-        MoveId.ICE_BURN,
-        MoveId.GEOMANCY,
-        MoveId.FREEZE_SHOCK,
-        MoveId.SKY_DROP,
-        MoveId.SKY_ATTACK,
-        MoveId.SKULL_BASH,
-        MoveId.SOLAR_BEAM,
-        MoveId.SOLAR_BLADE,
-        MoveId.METEOR_BEAM,
-        // Copying/Move-Calling moves
-        MoveId.ASSIST,
-        MoveId.COPYCAT,
-        MoveId.ME_FIRST,
-        MoveId.METRONOME,
-        MoveId.MIRROR_MOVE,
-        MoveId.NATURE_POWER,
-        MoveId.SLEEP_TALK,
-        MoveId.SNATCH,
-        MoveId.INSTRUCT,
-        // Misc moves
-        MoveId.KINGS_SHIELD,
-        MoveId.SKETCH,
-        MoveId.TRANSFORM,
-        MoveId.MIMIC,
-        MoveId.STRUGGLE,
-        // TODO: Add Max/G-Max/Z-Move blockage if or when they are implemented
-      ];
 
-      if (
-        !lastMove?.move // no move to instruct
-        || !movesetMove // called move not in target's moveset (forgetting the move, etc.)
-        || movesetMove.ppUsed === movesetMove.getMovePp() // move out of pp // TODO: This next line is likely redundant as all charging moves are in the above list
-        || allMoves[lastMove.move].isChargingMove() // called move is a charging/recharging move
-        || uninstructableMoves.includes(lastMove.move)
-      ) {
-        // called move is in the banlist
+      if (!lastMove?.move || !movesetMove || movesetMove.isOutOfPp() || invalidInstructMoves.has(lastMove.move)) {
         return false;
       }
+
       this.movesetMove = movesetMove;
       return true;
     };
@@ -9863,7 +9792,7 @@ export function initMoves() {
         ],
         true,
       )
-      .attr(RemoveArenaTrapAttr),
+      .attr(RemoveArenaTrapAttr, user => (user.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)),
     new StatusMove(MoveId.SWEET_SCENT, PokemonType.NORMAL, 100, 20, -1, 0, 2)
       .attr(StatStageChangeAttr, [Stat.EVA], -2)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
@@ -10049,7 +9978,7 @@ export function initMoves() {
     new AttackMove(MoveId.REVENGE, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, -1, -4, 3) //
       .attr(TurnDamagedDoublePowerAttr),
     new AttackMove(MoveId.BRICK_BREAK, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 75, 100, 15, -1, 0, 3) //
-      .attr(RemoveScreensAttr),
+      .attr(RemoveScreensAttr, (_user, target) => (target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)),
     new StatusMove(MoveId.YAWN, PokemonType.NORMAL, -1, 10, -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.DROWSY, false, true)
       .condition((user, target, _move) => !target.status && !target.isSafeguarded(user))
@@ -10351,7 +10280,7 @@ export function initMoves() {
       .attr(
         RemoveArenaTagsAttr,
         [ArenaTagType.QUICK_GUARD, ArenaTagType.WIDE_GUARD, ArenaTagType.MAT_BLOCK, ArenaTagType.CRAFTY_SHIELD],
-        false,
+        (_user, target) => (target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY),
       )
       .makesContact(false)
       .ignoresProtect(),
@@ -10557,9 +10486,11 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [Stat.EVA], -1)
       .attr(ClearWeatherAttr, WeatherType.FOG)
       .attr(ClearTerrainAttr)
-      .attr(RemoveScreensAttr, false)
-      .attr(RemoveArenaTrapAttr, true)
-      .attr(RemoveArenaTagsAttr, [ArenaTagType.MIST, ArenaTagType.SAFEGUARD], false)
+      .attr(RemoveScreensAttr, (_user, target) => (target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY))
+      .attr(RemoveArenaTrapAttr, () => ArenaTagSide.BOTH)
+      .attr(RemoveArenaTagsAttr, [ArenaTagType.MIST, ArenaTagType.SAFEGUARD], (_user, target) =>
+        target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY,
+      )
       .reflectable(),
     new StatusMove(MoveId.TRICK_ROOM, PokemonType.PSYCHIC, -1, 5, -1, -7, 4)
       .attr(AddArenaTagAttr, ArenaTagType.TRICK_ROOM, 5)
@@ -11189,7 +11120,8 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new SelfStatusMove(MoveId.CELEBRATE, PokemonType.NORMAL, -1, 40, -1, 0, 6)
       // NB: This needs a lambda function as the user will not be logged in by the time the moves are initialized
-      .attr(MessageAttr, () => i18next.t("moveTriggers:celebrate", { playerName: loggedInUser?.username })),
+      .attr(MessageAttr, () => i18next.t("moveTriggers:celebrate", { playerName: loggedInUser?.username }))
+      .attr(MoneyAttr),
     new StatusMove(MoveId.HOLD_HANDS, PokemonType.NORMAL, -1, 40, -1, 0, 6)
       .ignoresSubstitute()
       .target(MoveTarget.NEAR_ALLY),
@@ -11520,7 +11452,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [Stat.SPATK], -2, true),
     new AttackMove(MoveId.PSYCHIC_FANGS, PokemonType.PSYCHIC, MoveCategory.PHYSICAL, 85, 100, 10, -1, 0, 7)
       .bitingMove()
-      .attr(RemoveScreensAttr),
+      .attr(RemoveScreensAttr, (_user, target) => (target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)),
     new AttackMove(MoveId.STOMPING_TANTRUM, PokemonType.GROUND, MoveCategory.PHYSICAL, 75, 100, 10, -1, 0, 7)
       .attr(MovePowerMultiplierAttr, user => {
         // Stomping tantrum triggers on most failures (including sleep/freeze)
@@ -12203,7 +12135,7 @@ export function initMoves() {
         true,
       )
       .attr(StatusEffectAttr, StatusEffect.POISON)
-      .attr(RemoveArenaTrapAttr)
+      .attr(RemoveArenaTrapAttr, user => (user.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY))
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(MoveId.DOODLE, PokemonType.NORMAL, 100, 10, -1, 0, 9) //
       .attr(AbilityCopyAttr, true),
@@ -12223,7 +12155,7 @@ export function initMoves() {
       .danceMove(),
     new AttackMove(MoveId.RAGING_BULL, PokemonType.NORMAL, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 9)
       .attr(RagingBullTypeAttr)
-      .attr(RemoveScreensAttr),
+      .attr(RemoveScreensAttr, (_user, target) => (target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)),
     new AttackMove(MoveId.MAKE_IT_RAIN, PokemonType.STEEL, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 9)
       .attr(MoneyAttr)
       .attr(StatStageChangeAttr, [Stat.SPATK], -1, true, { firstTargetOnly: true })
@@ -12269,7 +12201,7 @@ export function initMoves() {
       .attr(ChillyReceptionAttr, true),
     new SelfStatusMove(MoveId.TIDY_UP, PokemonType.NORMAL, -1, 10, -1, 0, 9)
       .attr(StatStageChangeAttr, [Stat.ATK, Stat.SPD], 1, true)
-      .attr(RemoveArenaTrapAttr, true)
+      .attr(RemoveArenaTrapAttr, () => ArenaTagSide.BOTH)
       .attr(RemoveAllSubstitutesAttr),
     new StatusMove(MoveId.SNOWSCAPE, PokemonType.ICE, -1, 10, -1, 0, 9)
       .attr(WeatherChangeAttr, WeatherType.SNOW)

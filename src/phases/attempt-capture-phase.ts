@@ -1,7 +1,6 @@
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { isBeta, isDev } from "#constants/app-constants";
 import { SubstituteTag } from "#data/battler-tags";
 import { Gender } from "#data/gender";
@@ -247,7 +246,7 @@ export class AttemptCapturePhase extends PokemonPhase {
   catch() {
     const pokemon = this.getPokemon() as EnemyPokemon;
 
-    const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
+    const speciesForm = pokemon.fusionSpecies ? pokemon.getFusionSpeciesForm() : pokemon.getSpeciesForm();
 
     if (
       speciesForm.abilityHidden
@@ -278,7 +277,7 @@ export class AttemptCapturePhase extends PokemonPhase {
 
     globalScene.ui.showText(
       i18next.t(addStatus.value ? "battle:pokemonCaught" : "battle:pokemonCaughtButChallenge", {
-        pokemonName: getPokemonNameWithAffix(pokemon),
+        pokemonName: pokemon.name,
       }),
       null,
       () => {

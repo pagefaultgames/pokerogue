@@ -25,12 +25,19 @@ declare global {
 }
 
 // Global augments for `typedoc` to prevent TS from erroring when editing the config JS file
+// TODO: This should be provided by the extensions in question, so why isn't TypeScript picking it up?
 declare module "typedoc" {
   export interface TypeDocOptionMap {
+    // typedoc-plugin-coverage
     coverageLabel: string;
     coverageColor: string;
     coverageOutputPath: string;
     coverageOutputType: "svg" | "json" | "all";
     coverageSvgWidth: number;
+    // typedoc-plugin-missing-exports
+    internalModule: string;
+    placeInternalsInOwningModule: boolean;
+    collapseInternalModule: boolean;
+    includeDocCommentReferences: boolean;
   }
 }
