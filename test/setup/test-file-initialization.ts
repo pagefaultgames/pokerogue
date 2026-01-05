@@ -1,5 +1,8 @@
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
+import { timedEventManager } from "#app/global-event-manager";
+import { initGlobalScene } from "#app/global-scene";
 import { initializeGame } from "#app/init/init";
+import { initializePhaserGame } from "#test/setup/phaser.setup";
 import { blobToString } from "#test/test-utils/game-manager-utils";
 import { manageListeners } from "#test/test-utils/listeners-manager";
 import { MockConsole } from "#test/test-utils/mocks/mock-console/mock-console";
@@ -16,10 +19,12 @@ let wasInitialized = false;
 /**
  * Run initialization code upon starting a new file, both per-suite and per-instance ones.
  */
-export function initTests(): void {
+export async function initTests(): Promise<void> {
   setupStubs();
   if (!wasInitialized) {
+    initGlobalScene(await initializePhaserGame());
     initializeGame();
+    timedEventManager.disable();
     wasInitialized = true;
   }
 
