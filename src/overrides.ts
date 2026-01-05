@@ -62,8 +62,8 @@ class DefaultOverrides {
   /** a specific seed (default: a random string of 24 characters) */
   readonly SEED_OVERRIDE: string = "";
   /**
-   * A {@linkcode CustomDailyRunConfig} or a stringified version thereof, used to customize
-
+   * A {@linkcode CustomDailyRunConfig} or a stringified version thereof
+   * used to customize the daily run (such as to use custom starters or final boss).
    */
   readonly DAILY_RUN_SEED_OVERRIDE: CustomDailyRunConfig | string | null = null;
   readonly WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
