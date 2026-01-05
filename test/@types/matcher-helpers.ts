@@ -46,7 +46,7 @@ type MatcherInterface<K extends string> = Record<K, AnyFn<never, void>>;
  *
  * This is required as there's no clean way to ensure that 2 interfaces are assignable inside a `.d.ts` file without using `extends`.
  * @example
- * ```ts
+ * ```
  * // #region MyCustomMatchers
  * declare class MyCustomMatchers implements MatchersBase<keyof MyCustomMatchersCommon> {
  *   common: MyCustomMatchersCommon,
