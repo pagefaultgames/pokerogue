@@ -235,16 +235,17 @@ const turnEndPhases: readonly PhaseString[] = [
 ] as const;
 
 /**
- * PhaseManager is responsible for managing the phases in the battle scene
+ * The `PhaseManager` is responsible for managing the phases in the Battle Scene.
  */
 export class PhaseManager {
-  /** PhaseQueue: dequeue/remove the first element to get the next phase */
+  /** A multi-dimensional queue of phases being run. */
+  // TODO: Consider renaming given this is no longer a simple queue
   private readonly phaseQueue: PhaseTree = new PhaseTree();
 
   /** Holds priority queues for dynamically ordered phases */
   public dynamicQueueManager = new DynamicQueueManager();
 
-  /** The currently-running phase */
+  /** The currently-running {@linkcode Phase}. */
   private currentPhase: Phase;
   /** The phase put on standby if {@linkcode overridePhase} is called */
   private standbyPhase: Phase | null = null;
@@ -264,7 +265,7 @@ export class PhaseManager {
     this.unshiftNew("TitlePhase");
   }
 
-  /* Phase Functions */
+  // #region Phase Functions
 
   /** @returns The currently running {@linkcode Phase}. */
   getCurrentPhase(): Phase {
@@ -319,14 +320,14 @@ export class PhaseManager {
   }
 
   /**
-   * Clears the phaseQueue
+   * Clear all Phases from the queue.
    * @param leaveUnshifted - If `true`, leaves the top level of the tree intact; default `false`
    */
   public clearPhaseQueue(leaveUnshifted = false): void {
     this.phaseQueue.clear(leaveUnshifted);
   }
 
-  /** Clears all phase queues and the standby phase */
+  /** Clear all phase queues and the standby phase. */
   public clearAllPhases(): void {
     this.clearPhaseQueue();
     this.dynamicQueueManager.clearQueues();
@@ -334,7 +335,7 @@ export class PhaseManager {
   }
 
   /**
-   * Determines the next phase to run and starts it.
+   * Determine the next phase to run and start it.
    * @privateRemarks
    * This is called by {@linkcode Phase.end} by default, and should not be called by other methods.
    */
@@ -359,8 +360,13 @@ export class PhaseManager {
 
     this.startCurrentPhase();
   }
+
   /**
    * Helper method to start and log the current phase.
+   *
+   * @privateRemarks
+   * This is disabled during tests by `phase-interceptor.ts` to allow for pausing execution at specific phases.
+   * As such, **do not remove or split this method** as it will break integration tests.
    */
   private startCurrentPhase(): void {
     console.log(`%cStart Phase ${this.currentPhase.phaseName}`, `color:${PHASE_START_COLOR};`);
@@ -368,7 +374,7 @@ export class PhaseManager {
   }
 
   /**
-   * Overrides the currently running phase with another
+   * Override the currently running phase with another
    * @param phase - The {@linkcode Phase} to override the current one with
    * @returns If the override succeeded
    *
@@ -388,41 +394,38 @@ export class PhaseManager {
 
   /**
    * Determine if there is a queued {@linkcode Phase} meeting the specified conditions.
-   * @param type - The {@linkcode PhaseString | type} of phase to search for
+   * @param name - The {@linkcode PhaseString | name} of the Phase to search for
    * @param condition - An optional {@linkcode PhaseConditionFunc} to add conditions to the search
    * @returns Whether a matching phase exists
    */
-  public hasPhaseOfType<T extends PhaseString>(type: T, condition?: PhaseConditionFunc<T>): boolean {
-    return this.dynamicQueueManager.exists(type, condition) || this.phaseQueue.exists(type, condition);
+  public hasPhaseOfType<T extends PhaseString>(name: T, condition?: PhaseConditionFunc<T>): boolean {
+    return this.dynamicQueueManager.exists(name, condition) || this.phaseQueue.exists(name, condition);
   }
 
   /**
-   * Attempt to find and remove the first queued {@linkcode Phase} matching the given conditions.
-   * @param type - The {@linkcode PhaseString | type} of phase to search for
+   * Attempt to find and remove the first queued {@linkcode Phase} meeting the given condition.
+   * @param name - The {@linkcode PhaseString | name} of the Phase to search for
    * @param phaseFilter - An optional {@linkcode PhaseConditionFunc} to add conditions to the search
    * @returns Whether a phase was successfully removed
    */
-  public tryRemovePhase<T extends PhaseString>(type: T, phaseFilter?: PhaseConditionFunc<T>): boolean {
-    if (this.dynamicQueueManager.removePhase(type, phaseFilter)) {
-      return true;
-    }
-    return this.phaseQueue.remove(type, phaseFilter);
+  public tryRemovePhase<T extends PhaseString>(name: T, phaseFilter?: PhaseConditionFunc<T>): boolean {
+    return this.dynamicQueueManager.removePhase(name, phaseFilter) || this.phaseQueue.remove(name, phaseFilter);
   }
 
   /**
-   * Removes all {@linkcode Phase}s of the given type from the queue
-   * @param phaseType - The {@linkcode PhaseString | type} of phase to search for
+   * Remove all instances of the given {@linkcode Phase}.
+   * @param name - The {@linkcode PhaseString | name} of the `Phase` to remove
    *
    * @remarks
    * This is not intended to be used with dynamically ordered phases, and does not operate on the dynamic queue. \
    * However, it does remove {@linkcode DynamicPhaseMarker}s and so would prevent such phases from activating.
    */
-  public removeAllPhasesOfType(type: PhaseString): void {
-    this.phaseQueue.removeAll(type);
+  public removeAllPhasesOfType(name: PhaseString): void {
+    this.phaseQueue.removeAll(name);
   }
 
   /**
-   * Adds a `MessagePhase` to the queue
+   * Add a `MessagePhase` to the queue.
    * @param message - string for MessagePhase
    * @param callbackDelay - optional param for MessagePhase constructor
    * @param prompt - optional param for MessagePhase constructor
@@ -447,7 +450,7 @@ export class PhaseManager {
   }
 
   /**
-   * Queues an ability bar flyout phase via {@linkcode unshiftPhase}
+   * Queue an ability bar flyout phase via {@linkcode unshiftPhase}
    * @param pokemon - The {@linkcode Pokemon} whose ability is being activated
    * @param passive - Whether the ability is a passive
    * @param show - If `true`, show the bar. Otherwise, hide it
@@ -457,7 +460,7 @@ export class PhaseManager {
   }
 
   /**
-   * Hides the ability bar if it is currently visible
+   * Hide the ability bar if it is currently visible.
    */
   public hideAbilityBar(): void {
     if (globalScene.abilityBar.isVisible()) {
@@ -466,7 +469,7 @@ export class PhaseManager {
   }
 
   /**
-   * Clear all dynamic queues and begin a new {@linkcode TurnInitPhase} for the new turn.
+   * Clear all dynamic queues and begin a new {@linkcode TurnInitPhase} for the current turn.
    * Called whenever the current phase queue is empty.
    */
   private turnStart(): void {
@@ -475,13 +478,13 @@ export class PhaseManager {
   }
 
   /**
-   * Dynamically create the named phase from the provided arguments
+   * Dynamically create the named phase from the provided arguments.
    *
-   * @remarks
-   * Used to avoid importing each phase individually, allowing for dynamic creation of phases.
    * @param phase - The name of the phase to create.
    * @param args - The arguments to pass to the phase constructor.
-   * @returns The requested phase instance
+   * @returns The created phase instance.
+   * @remarks
+   * Used to avoid importing each phase individually, allowing for dynamic creation of phases.
    */
   public create<T extends PhaseString>(phase: T, ...args: ConstructorParameters<PhaseConstructorMap[T]>): PhaseMap[T] {
     const PhaseClass = PHASES[phase];
@@ -495,7 +498,8 @@ export class PhaseManager {
   }
 
   /**
-   * Create a new phase and immediately push it to the phase queue. Equivalent to calling {@linkcode create} followed by {@linkcode pushPhase}.
+   * Create a new phase and immediately push it to the phase queue.
+   * Equivalent to calling {@linkcode create} followed by {@linkcode pushPhase}.
    * @param phase - The name of the phase to create
    * @param args - The arguments to pass to the phase constructor
    */
@@ -504,7 +508,8 @@ export class PhaseManager {
   }
 
   /**
-   * Create a new phase and immediately unshift it to the phase queue. Equivalent to calling {@linkcode create} followed by {@linkcode unshiftPhase}.
+   * Create a new phase and immediately unshift it to the phase queue.
+   * Equivalent to calling {@linkcode create} followed by {@linkcode unshiftPhase}.
    * @param phase - The name of the phase to create
    * @param args - The arguments to pass to the phase constructor
    */
@@ -513,12 +518,12 @@ export class PhaseManager {
   }
 
   /**
-   * Add a {@linkcode FaintPhase} to the queue
+   * Add a {@linkcode FaintPhase} to the queue.
    * @param args - The arguments to pass to the phase constructor
    *
    * @remarks
    *
-   * Faint phases are ordered in a special way to allow battle effects to settle before the pokemon faints.
+   * Faint phases are ordered in a special way to allow battle effects to settle before the Pokemon faints.
    * @see {@linkcode PhaseTree.addPhase}
    */
   public queueFaintPhase(...args: ConstructorParameters<PhaseConstructorMap["FaintPhase"]>): void {
@@ -536,45 +541,45 @@ export class PhaseManager {
     phase: T,
     ...args: ConstructorParameters<PhaseConstructorMap[T]>
   ): void {
-    this.phaseQueue.unshiftToCurrent(this.create(phase, ...args));
+    this.phaseQueue.addPhase(this.create(phase, ...args), true);
   }
 
   /**
-   * Finds the first {@linkcode MovePhase} meeting the condition
-   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function
-   * @returns The MovePhase, or `undefined` if it does not exist
+   * Find and return the first {@linkcode MovePhase} meeting the given condition.
+   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function used to retrieve the phase
+   * @returns The retrieved `MovePhase`, or `undefined` if none meet the criteria.
    */
   public getMovePhase(phaseCondition: PhaseConditionFunc<"MovePhase">): MovePhase | undefined {
     return this.dynamicQueueManager.getMovePhase(phaseCondition);
   }
 
   /**
-   * Finds and cancels the first {@linkcode MovePhase} meeting the condition
-   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function
+   * Find and cancel the first {@linkcode MovePhase} meeting the given condition.
+   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function used to retrieve the phase
    */
   public cancelMove(phaseCondition: PhaseConditionFunc<"MovePhase">): void {
     this.dynamicQueueManager.cancelMovePhase(phaseCondition);
   }
 
   /**
-   * Finds the first {@linkcode MovePhase} meeting the condition and forces it next
-   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function
+   * Find and forcibly reorder the first {@linkcode MovePhase} meeting the given condition to move next.
+   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function used to retrieve the phase
    */
   public forceMoveNext(phaseCondition: PhaseConditionFunc<"MovePhase">): void {
     this.dynamicQueueManager.setMoveTimingModifier(phaseCondition, MovePhaseTimingModifier.FIRST);
   }
 
   /**
-   * Finds the first {@linkcode MovePhase} meeting the condition and forces it last
-   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function
+   * Find and forcibly reorder the first {@linkcode MovePhase} meeting the given condition to move last.
+   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function used to retrieve the phase
    */
   public forceMoveLast(phaseCondition: PhaseConditionFunc<"MovePhase">): void {
     this.dynamicQueueManager.setMoveTimingModifier(phaseCondition, MovePhaseTimingModifier.LAST);
   }
 
   /**
-   * Finds the first {@linkcode MovePhase} meeting the condition and changes its move
-   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function
+   * Find and change the queued move of the first {@linkcode MovePhase} meeting the given condition.
+   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function used to retrieve the phase
    * @param move - The {@linkcode PokemonMove | move} to use in replacement
    */
   public changePhaseMove(phaseCondition: PhaseConditionFunc<"MovePhase">, move: PokemonMove): void {
@@ -582,7 +587,7 @@ export class PhaseManager {
   }
 
   /**
-   * Redirects moves which were targeted at a {@linkcode Pokemon} that has been removed
+   * Redirect moves which were targeted at a {@linkcode Pokemon} that has been removed
    * @param removedPokemon - The removed {@linkcode Pokemon}
    * @param allyPokemon - The ally of the removed pokemon
    */
@@ -590,22 +595,22 @@ export class PhaseManager {
     this.dynamicQueueManager.redirectMoves(removedPokemon, allyPokemon);
   }
 
-  /** Queues phases which run at the end of each turn */
+  /** Queue phases which run at the end of each turn. */
   public queueTurnEndPhases(): void {
     turnEndPhases.forEach(p => {
       this.pushNew(p);
     });
   }
 
-  /** Prevents end of turn effects from triggering when transitioning to a new biome on a X0 wave */
+  /** Prevent end of turn effects from triggering when transitioning to a new biome on a X0 wave. */
   public onInterlude(): void {
     const phasesToRemove: readonly PhaseString[] = [
       "WeatherEffectPhase",
       "BerryPhase",
       "CheckStatusEffectPhase",
     ] as const;
-    for (const phaseType of phasesToRemove) {
-      this.phaseQueue.removeAll(phaseType);
+    for (const phaseName of phasesToRemove) {
+      this.phaseQueue.removeAll(phaseName);
     }
 
     const turnEndPhase = this.phaseQueue.find("TurnEndPhase");
@@ -613,4 +618,5 @@ export class PhaseManager {
       turnEndPhase.upcomingInterlude = true;
     }
   }
+  // #endregion Phase Functions
 }
