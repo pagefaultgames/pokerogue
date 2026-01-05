@@ -32,7 +32,7 @@ type PartiallyFilledNonSerializableArenaTag<A extends ArenaTagType> = //
  * Parameter type for {@linkcode toHaveArenaTag}, accepting a partially filled {@linkcode ArenaTag} of the given type.
  * @typeParam A - The {@linkcode ArenaTagType} being checked
  * @remarks
- * If `A` corresponds to a {@linkcode SerializableArenaTagType | serializable `ArenaTag`}, only properties allowed to be serialized
+ * If `A` corresponds to a {@linkcode SerializableArenaTagType | serializable ArenaTag}, only properties allowed to be serialized
  * (i.e. can change across instances) will be present and able to be checked.
  * @sealed
  */
