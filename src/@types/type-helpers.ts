@@ -117,8 +117,8 @@ export declare class Brander<B extends string | symbol> {
   private __brand: B;
 }
 
-/** 
- * Negate a number, converting its sign from positive to negative or vice versa. 
+/**
+ * Negate a number, converting its sign from positive to negative or vice versa.
  * @typeParam N - The number to negate
  * @privateRemarks
  * This should be used sparingly due to being slow for TypeScript to validate. \
