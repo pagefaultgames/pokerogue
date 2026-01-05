@@ -801,13 +801,13 @@ export abstract class Move implements Localizable {
   }
 
   /**
-  * Set the allyTargetDefault property for the calling Move, causing it to default to targeting the user's ally in Double Battles.
-  * @see {@linkcode MoveId.INSTRUCT}
-  * @returns `this`
-  * @remarks
-  * This should not be called for moves that can _only_ target allies (in which case it becomes moot.)
-  * Manual switching to enemy targets is still allowed. 
-  */
+   * Set the allyTargetDefault property for the calling Move, causing it to default to targeting the user's ally in Double Battles.
+   * @see {@linkcode MoveId.INSTRUCT}
+   * @returns `this`
+   * @remarks
+   * This should not be called for moves that can _only_ target allies (in which case it becomes moot.)
+   * Manual switching to enemy targets is still allowed.
+   */
   targetsAllyDefault(): this {
     this.allyTargetDefault = true;
     return this;
