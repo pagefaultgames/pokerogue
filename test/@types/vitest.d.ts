@@ -240,7 +240,7 @@ interface PokemonMatchers {
   toHaveStatusEffect(expectedStatusEffect: StatusEffect | PartiallyFilledStatus): void;
 
   /**
-   * Check whether a {@linkcode Pokemon} has a specific {@linkcode StatStage | stat stage}.
+   * Check whether a {@linkcode Pokemon} has a specific stat stage.
    * @param stat - The desired {@linkcode BattleStat} to check
    * @param expectedStage - The {@linkcode StatStage | stage} that `stat` is expected to have reached;
    * must be within the interval `[-6, 6]`
