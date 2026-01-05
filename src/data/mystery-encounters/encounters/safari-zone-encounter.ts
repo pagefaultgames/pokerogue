@@ -102,11 +102,12 @@ export const SafariZoneEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         };
         updatePlayerMoney(-(encounter.options[0].requirements[0] as MoneyRequirement).requiredMoney);
         // Load bait/mud assets
-        globalScene.loadSe("PRSFX- Bug Bite", "battle_anims", "PRSFX- Bug Bite.wav");
-        globalScene.loadSe("PRSFX- Sludge Bomb2", "battle_anims", "PRSFX- Sludge Bomb2.wav");
-        globalScene.loadSe("PRSFX- Taunt2", "battle_anims", "PRSFX- Taunt2.wav");
-        globalScene.loadAtlas("safari_zone_bait", "mystery-encounters");
-        globalScene.loadAtlas("safari_zone_mud", "mystery-encounters");
+        globalScene
+          .loadSe("PRSFX- Bug Bite", "battle_anims", "PRSFX- Bug Bite.wav")
+          .loadSe("PRSFX- Sludge Bomb2", "battle_anims", "PRSFX- Sludge Bomb2.wav")
+          .loadSe("PRSFX- Taunt2", "battle_anims", "PRSFX- Taunt2.wav")
+          .loadAtlas("safari_zone_bait", "mystery-encounters")
+          .loadAtlas("safari_zone_mud", "mystery-encounters");
         // Clear enemy party
         globalScene.currentBattle.enemyParty = [];
         await transitionMysteryEncounterIntroVisuals();

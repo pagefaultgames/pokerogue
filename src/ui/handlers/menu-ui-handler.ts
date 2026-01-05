@@ -129,6 +129,7 @@ export class MenuUiHandler extends MessageUiHandler {
         options: [MenuOptions.EGG_GACHA],
       },
       { condition: bypassLogin, options: [MenuOptions.LOG_OUT] },
+      { condition: !globalScene.currentBattle, options: [MenuOptions.SAVE_AND_QUIT] },
     ];
 
     this.menuOptions = getEnumValues(MenuOptions).filter(m => {
@@ -657,42 +658,39 @@ export class MenuUiHandler extends MessageUiHandler {
           ui.setOverlayMode(UiMode.MENU_OPTION_SELECT, this.communityConfig);
           success = true;
           break;
-        case MenuOptions.SAVE_AND_QUIT:
-          if (globalScene.currentBattle) {
-            success = true;
-            const doSaveQuit = () => {
-              ui.setMode(UiMode.LOADING, {
-                buttonActions: [],
-                fadeOut: () =>
-                  globalScene.gameData.saveAll(true, true, true, true).then(() => {
-                    globalScene.reset(true);
-                  }),
-              });
-            };
-            if (globalScene.currentBattle.turn > 1) {
-              ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
-                if (!this.active) {
+        case MenuOptions.SAVE_AND_QUIT: {
+          success = true;
+          const doSaveQuit = () => {
+            ui.setMode(UiMode.LOADING, {
+              buttonActions: [],
+              fadeOut: () =>
+                globalScene.gameData.saveAll(true, true, true, true).then(() => {
+                  globalScene.reset(true);
+                }),
+            });
+          };
+          if (globalScene.currentBattle.turn > 1) {
+            ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
+              if (!this.active) {
+                this.showText("", 0);
+                return;
+              }
+              ui.setOverlayMode(
+                UiMode.CONFIRM,
+                doSaveQuit,
+                () => {
+                  ui.revertMode();
                   this.showText("", 0);
-                  return;
-                }
-                ui.setOverlayMode(
-                  UiMode.CONFIRM,
-                  doSaveQuit,
-                  () => {
-                    ui.revertMode();
-                    this.showText("", 0);
-                  },
-                  false,
-                  -98,
-                );
-              });
-            } else {
-              doSaveQuit();
-            }
+                },
+                false,
+                -98,
+              );
+            });
           } else {
-            error = true;
+            doSaveQuit();
           }
           break;
+        }
         case MenuOptions.LOG_OUT: {
           success = true;
           const doLogout = () => {
