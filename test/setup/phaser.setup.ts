@@ -2,6 +2,7 @@ import { BattleScene } from "#app/battle-scene";
 import { InvertPostFX } from "#app/pipelines/invert";
 import { MockClock } from "#test/test-utils/mocks/mock-clock";
 import { readFileSync } from "fs";
+import Phaser from "phaser";
 import BBCodeTextPlugin from "phaser3-rex-plugins/plugins/bbcodetext-plugin";
 import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin";
 import TransitionImagePackPlugin from "phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin";
