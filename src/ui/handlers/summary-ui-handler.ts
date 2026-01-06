@@ -403,7 +403,7 @@ export class SummaryUiHandler extends UiHandler {
       .setPipelineData("spriteKey", this.pokemon.getSpriteKey())
       .setPipelineData("shiny", this.pokemon.shiny)
       .setPipelineData("variant", this.pokemon.variant);
-    ["spriteColors", "fusionSpriteColors"].map(k => {
+    ["spriteColors", "fusionSpriteColors"].forEach(k => {
       delete this.pokemonSprite.pipelineData[`${k}Base`];
       if (this.pokemon?.summonData.speciesForm) {
         k += "Base";
@@ -412,7 +412,7 @@ export class SummaryUiHandler extends UiHandler {
     });
     this.pokemon.cry();
 
-    this.nameText.setText(this.pokemon.getNameToRender(false));
+    this.nameText.setText(this.pokemon.getNameToRender({ useIllusion: false }));
 
     const isFusion = this.pokemon.isFusion();
 
