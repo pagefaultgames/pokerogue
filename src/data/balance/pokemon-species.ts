@@ -826,7 +826,7 @@ export function initSpecies() {
     new PokemonSpecies(SpeciesId.TEPIG, 5, false, false, false, "Fire Pig Pokémon", PokemonType.FIRE, null, 0.5, 9.9, AbilityId.BLAZE, AbilityId.NONE, AbilityId.THICK_FAT, 308, 65, 63, 45, 45, 45, 45, 45, 70, 62, GrowthRate.MEDIUM_SLOW, 87.5, false),
     new PokemonSpecies(SpeciesId.PIGNITE, 5, false, false, false, "Fire Pig Pokémon", PokemonType.FIRE, PokemonType.FIGHTING, 1, 55.5, AbilityId.BLAZE, AbilityId.NONE, AbilityId.THICK_FAT, 418, 90, 93, 55, 70, 55, 55, 45, 70, 146, GrowthRate.MEDIUM_SLOW, 87.5, false),
     new PokemonSpecies(SpeciesId.EMBOAR, 5, false, false, false, "Mega Fire Pig Pokémon", PokemonType.FIRE, PokemonType.FIGHTING, 1.6, 150, AbilityId.BLAZE, AbilityId.NONE, AbilityId.RECKLESS, 528, 110, 123, 65, 100, 65, 65, 45, 70, 264, GrowthRate.MEDIUM_SLOW, 87.5, false, true,
-      new PokemonForm("Normal", "", PokemonType.FIRE, PokemonType.FIGHTING, 1.6, 150, AbilityId.BLAZE, AbilityId.NONE, AbilityId.THICK_FAT, 528, 110, 123, 65, 100, 65, 65, 45, 70, 264, false, null, true),
+      new PokemonForm("Normal", "", PokemonType.FIRE, PokemonType.FIGHTING, 1.6, 150, AbilityId.BLAZE, AbilityId.NONE, AbilityId.RECKLESS, 528, 110, 123, 65, 100, 65, 65, 45, 70, 264, false, null, true),
       new PokemonForm("Mega", SpeciesFormKey.MEGA, PokemonType.FIRE, PokemonType.FIGHTING, 1.8, 180.3, AbilityId.BLAZE, AbilityId.NONE, AbilityId.RECKLESS, 628, 110, 148, 75, 110, 110, 75, 75, 50, 168, false, "")
     ),
     new PokemonSpecies(SpeciesId.OSHAWOTT, 5, false, false, false, "Sea Otter Pokémon", PokemonType.WATER, null, 0.5, 5.9, AbilityId.TORRENT, AbilityId.NONE, AbilityId.SHELL_ARMOR, 308, 55, 55, 45, 63, 45, 45, 45, 70, 62, GrowthRate.MEDIUM_SLOW, 87.5, false),
