@@ -5,7 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import { WeatherType } from "#enums/weather-type";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Screen Cleaner", () => {
   let phaserGame: Phaser.Game;
@@ -17,10 +17,6 @@ describe("Abilities - Screen Cleaner", () => {
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
@@ -30,8 +26,7 @@ describe("Abilities - Screen Cleaner", () => {
       .weather(WeatherType.SNOW);
   });
 
-  // TODO: Screen cleaner doesn't remove both sides' tags if both players have them (as do a LOT of other things)
-  it.todo.each([
+  it.each([
     { name: "Reflect", tagType: ArenaTagType.REFLECT },
     { name: "Light Screen", tagType: ArenaTagType.LIGHT_SCREEN },
     { name: "Aurora Veil", tagType: ArenaTagType.AURORA_VEIL },

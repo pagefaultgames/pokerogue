@@ -1080,11 +1080,10 @@ export class PartyUiHandler extends MessageUiHandler {
 
     // Pressing return button
     if (this.cursor === 6) {
-      if (!this.allowCancel()) {
-        ui.playError();
-      } else {
+      if (this.allowCancel()) {
         return this.processInput(Button.CANCEL);
       }
+      ui.playError();
     }
     return true;
   }
@@ -1481,11 +1480,11 @@ export class PartyUiHandler extends MessageUiHandler {
         this.updateOptionsWithRememberMoveModifierMode(pokemon);
         break;
       case PartyUiMode.MODIFIER_TRANSFER:
-        if (!this.transferMode) {
-          this.updateOptionsWithModifierTransferMode(pokemon);
-        } else {
+        if (this.transferMode) {
           this.options.push(PartyOption.TRANSFER);
           this.addCommonOptions(pokemon);
+        } else {
+          this.updateOptionsWithModifierTransferMode(pokemon);
         }
         break;
       case PartyUiMode.DISCARD:
@@ -1575,11 +1574,11 @@ export class PartyUiHandler extends MessageUiHandler {
 
     switch (this.partyUiMode) {
       case PartyUiMode.MODIFIER_TRANSFER:
-        if (!this.transferMode) {
-          this.updateOptionsWithModifierTransferMode(pokemon);
-        } else {
+        if (this.transferMode) {
           this.options.push(PartyOption.TRANSFER);
           this.addCommonOptions(pokemon);
+        } else {
+          this.updateOptionsWithModifierTransferMode(pokemon);
         }
         break;
       case PartyUiMode.DISCARD:

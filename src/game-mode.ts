@@ -179,7 +179,7 @@ export class GameMode implements GameModeConfig {
   getWaveForDifficulty(waveIndex: number, ignoreCurveChanges = false): number {
     switch (this.modeId) {
       case GameModes.DAILY:
-        return waveIndex + 30 + (!ignoreCurveChanges ? Math.floor(waveIndex / 5) : 0);
+        return waveIndex + 30 + (ignoreCurveChanges ? 0 : Math.floor(waveIndex / 5));
       default:
         return waveIndex;
     }
@@ -211,7 +211,7 @@ export class GameMode implements GameModeConfig {
       if (trainerChance) {
         const waveBase = Math.floor(waveIndex / 10) * 10;
         // Stop generic trainers from spawning in within 2 waves of a fixed trainer battle
-        for (let w = Math.max(waveIndex - 2, waveBase + 2); w <= Math.min(waveIndex + 2, waveBase + 9); w++) {
+        for (let w = Math.max(waveIndex - 2, waveBase + 2); w <= Math.min(waveIndex + 2, waveBase + 10); w++) {
           if (w === waveIndex) {
             continue;
           }
@@ -384,10 +384,10 @@ export class GameMode implements GameModeConfig {
       case GameModes.CLASSIC:
       case GameModes.CHALLENGE:
       case GameModes.DAILY:
-        return !isBoss ? 18 : 6;
+        return isBoss ? 6 : 18;
       case GameModes.ENDLESS:
       case GameModes.SPLICED_ENDLESS:
-        return !isBoss ? 12 : 4;
+        return isBoss ? 4 : 12;
     }
   }
 

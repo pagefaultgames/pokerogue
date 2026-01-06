@@ -28,10 +28,6 @@ describe("Daily Mode", () => {
     game.override.disableShinies = false;
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   it("should initialize properly", async () => {
     vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue("test-seed");
     await game.dailyMode.startBattle();
@@ -324,7 +320,6 @@ describe("Shop modifications", async () => {
   });
 
   afterEach(() => {
-    game.phaseInterceptor.restoreOg();
     game.modifiers.clearChecks();
   });
 

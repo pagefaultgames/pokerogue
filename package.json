@@ -1,7 +1,7 @@
 {
   "name": "pokemon-rogue-battle",
   "private": true,
-  "version": "1.11.5",
+  "version": "1.11.6",
   "type": "module",
   "scripts": {
     "start:prod": "vite --mode production",
@@ -33,12 +33,12 @@
     "postinstall": "lefthook install; git config --local fetch.recurseSubmodules true; git config --local blame.ignoreRevsFile .git-blame-ignore-revs",
     "update-version:patch": "pnpm version patch --force --no-git-tag-version",
     "update-version:minor": "pnpm version minor --force --no-git-tag-version",
-    "update-locales": "git submodule update --progress --init --recursive --depth 1 locales",
-    "update-locales:remote": "git submodule update --progress --init --recursive --force --remote --depth 1 locales",
-    "update-assets": "git submodule update --progress --init --recursive --depth 1 assets",
-    "update-assets:remote": "git submodule update --progress --init --recursive --force --remote --depth 1 assets",
-    "update-submodules": "pnpm update-locales && pnpm update-assets",
-    "update-submodules:remote": "pnpm update-locales:remote && pnpm update-assets:remote"
+    "update-locales": "pnpm update-submodules locales",
+    "update-locales:remote": "pnpm update-submodules:remote locales",
+    "update-assets": "pnpm update-submodules assets",
+    "update-assets:remote": "pnpm update-submodules:remote assets",
+    "update-submodules": "git submodule update --progress --init --recursive --force --depth 1",
+    "update-submodules:remote": "pnpm update-submodules --remote"
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.8",
