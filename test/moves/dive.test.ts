@@ -7,7 +7,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Dive", () => {
   let phaserGame: Phaser.Game;
@@ -17,10 +17,6 @@ describe("Moves - Dive", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -74,7 +70,7 @@ describe("Moves - Dive", () => {
     expect(enemyPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
   });
 
-  it("should not expend PP when the attack phase is cancelled", async () => {
+  it("should expend PP when the attack phase is cancelled by sleep", async () => {
     game.override.enemyAbility(AbilityId.NO_GUARD).enemyMoveset(MoveId.SPORE);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
@@ -88,7 +84,7 @@ describe("Moves - Dive", () => {
     expect(playerPokemon.status?.effect).toBe(StatusEffect.SLEEP);
 
     const playerDive = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.DIVE);
-    expect(playerDive?.ppUsed).toBe(0);
+    expect(playerDive?.ppUsed).toBe(1);
   });
 
   it("should trigger on-contact post-defend ability effects", async () => {

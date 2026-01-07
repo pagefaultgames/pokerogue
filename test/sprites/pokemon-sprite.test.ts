@@ -2,8 +2,8 @@ import { getAppRootDir } from "#test/sprites/sprites-utils";
 import fs from "fs";
 import path from "path";
 import { beforeAll, describe, expect, it } from "vitest";
-import _exp_masterlist from "../../public/images/pokemon/variant/_exp_masterlist.json";
-import _masterlist from "../../public/images/pokemon/variant/_masterlist.json";
+import _exp_masterlist from "../../assets/images/pokemon/variant/_exp_masterlist.json";
+import _masterlist from "../../assets/images/pokemon/variant/_masterlist.json";
 
 type PokemonVariantMasterlist = typeof _masterlist;
 type PokemonExpVariantMasterlist = typeof _exp_masterlist;
@@ -20,7 +20,7 @@ describe("check if every variant's sprite are correctly set", () => {
   let rootDir: string;
 
   beforeAll(() => {
-    rootDir = `${getAppRootDir()}${path.sep}public${path.sep}images${path.sep}pokemon${path.sep}variant${path.sep}`;
+    rootDir = `${getAppRootDir()}${path.sep}assets${path.sep}images${path.sep}pokemon${path.sep}variant${path.sep}`;
     masterlist = deepCopy(_masterlist);
     expVariant = deepCopy(_exp_masterlist);
     femaleVariant = masterlist.female;
@@ -49,7 +49,8 @@ describe("check if every variant's sprite are correctly set", () => {
         const trimmedFilePath = `${trimmedDirpath}${filename}`;
         const ext = filename.split(".")[1];
         const name = filename.split(".")[0];
-        if (excludes.includes(name)) {
+        // skip REUSE.toml files
+        if (excludes.includes(name) || ext === "toml") {
           continue;
         }
         if (name.includes("_")) {
@@ -87,9 +88,7 @@ describe("check if every variant's sprite are correctly set", () => {
               }
             }
           }
-        } else if (!mlist.hasOwnProperty(name)) {
-          errors.push(`[${name}] - missing key ${name} in masterlist for ${trimmedFilePath}`);
-        } else {
+        } else if (mlist.hasOwnProperty(name)) {
           const raw = fs.readFileSync(filePath, { encoding: "utf8", flag: "r" });
           const data = JSON.parse(raw);
           for (const key of Object.keys(data)) {
@@ -104,6 +103,8 @@ describe("check if every variant's sprite are correctly set", () => {
               }
             }
           }
+        } else {
+          errors.push(`[${name}] - missing key ${name} in masterlist for ${trimmedFilePath}`);
         }
       }
     }
@@ -189,7 +190,7 @@ describe("check if every variant's sprite are correctly set", () => {
     if (errors.length > 0) {
       console.log("errors", errors);
     }
-    expect(errors.length).toBe(0);
+    expect(errors).toEqual([]);
   });
 
   it("check exp back male variant files", () => {
@@ -269,7 +270,7 @@ describe("check if every variant's sprite are correctly set", () => {
     if (errors.length > 0) {
       console.log("errors for ", dirPath, errors);
     }
-    expect(errors.length).toBe(0);
+    expect(errors).toEqual([]);
   });
 
   it("look over every file in variant exp female and check if present in masterlist", () => {

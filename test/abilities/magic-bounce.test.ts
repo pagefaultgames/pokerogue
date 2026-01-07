@@ -9,7 +9,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Magic Bounce", () => {
   let phaserGame: Phaser.Game;
@@ -19,10 +19,6 @@ describe("Abilities - Magic Bounce", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -64,7 +60,7 @@ describe("Abilities - Magic Bounce", () => {
     game.move.use(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
 
-    const user = game.scene.getPlayerField()[0];
+    const user = game.field.getPlayerPokemon();
     expect(user.getStatStage(Stat.ATK)).toBe(-2);
   });
 
@@ -307,7 +303,7 @@ describe("Abilities - Magic Bounce", () => {
     expect(
       game.scene.arena
         .getTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER)
-        ?.getSourcePokemon()
+        ?.["getSourcePokemon"]()
         ?.getBattlerIndex(),
     ).toBe(BattlerIndex.ENEMY);
     game.scene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER, true);
@@ -319,7 +315,7 @@ describe("Abilities - Magic Bounce", () => {
     expect(
       game.scene.arena
         .getTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER)
-        ?.getSourcePokemon()
+        ?.["getSourcePokemon"]()
         ?.getBattlerIndex(),
     ).toBe(BattlerIndex.ENEMY);
   });

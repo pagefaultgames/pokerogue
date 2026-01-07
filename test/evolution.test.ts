@@ -1,11 +1,11 @@
-import { pokemonEvolutions, SpeciesFormEvolution, SpeciesWildEvolutionDelay } from "#balance/pokemon-evolutions";
+import { pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import * as Utils from "#utils/common";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Evolution", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Evolution", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -85,12 +81,6 @@ describe("Evolution", () => {
     expect(shedinja.gender).toBe(-1);
     // Regression test for https://github.com/pagefaultgames/pokerogue/issues/3842
     expect(shedinja.metBiome).toBe(-1);
-  });
-
-  it("should set wild delay to NONE by default", () => {
-    const speciesFormEvo = new SpeciesFormEvolution(SpeciesId.ABRA, null, null, 1000, null, null);
-
-    expect(speciesFormEvo.wildDelay).toBe(SpeciesWildEvolutionDelay.NONE);
   });
 
   it("should increase both HP and max HP when evolving", async () => {

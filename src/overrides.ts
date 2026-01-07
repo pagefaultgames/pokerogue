@@ -24,6 +24,7 @@ import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
 import type { ModifierOverride } from "#modifiers/modifier-type";
 import { Variant } from "#sprites/variant";
+import type { CustomDailyRunConfig } from "#types/daily-run";
 
 /**
  * This comment block exists to prevent IDEs from automatically removing unused imports
@@ -60,7 +61,11 @@ class DefaultOverrides {
   // -----------------
   /** a specific seed (default: a random string of 24 characters) */
   readonly SEED_OVERRIDE: string = "";
-  readonly DAILY_RUN_SEED_OVERRIDE: string | null = null;
+  /**
+   * A {@linkcode CustomDailyRunConfig} or a stringified version thereof
+   * used to customize the daily run (such as to use custom starters or final boss).
+   */
+  readonly DAILY_RUN_SEED_OVERRIDE: CustomDailyRunConfig | string | null = null;
   readonly WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
   /**
    * If `null`, ignore this override.
@@ -92,6 +97,7 @@ class DefaultOverrides {
    */
   readonly CRITICAL_HIT_OVERRIDE: boolean | null = null;
   /** @defaultValue `1000` */
+  // TODO: Make default value something other than `0`
   readonly STARTING_MONEY_OVERRIDE: number = 0;
   /** Sets all shop item prices to 0 */
   readonly WAIVE_SHOP_FEES_OVERRIDE: boolean = false;
@@ -159,7 +165,7 @@ class DefaultOverrides {
   readonly HAS_PASSIVE_ABILITY_OVERRIDE: boolean | null = null;
   readonly STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly GENDER_OVERRIDE: Gender | null = null;
-  readonly MOVESET_OVERRIDE: MoveId | Array<MoveId> = [];
+  readonly MOVESET_OVERRIDE: MoveId | MoveId[] = [];
   readonly SHINY_OVERRIDE: boolean | null = null;
   readonly VARIANT_OVERRIDE: Variant | null = null;
   /**
@@ -186,7 +192,7 @@ class DefaultOverrides {
   readonly ENEMY_HAS_PASSIVE_ABILITY_OVERRIDE: boolean | null = null;
   readonly ENEMY_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly ENEMY_GENDER_OVERRIDE: Gender | null = null;
-  readonly ENEMY_MOVESET_OVERRIDE: MoveId | Array<MoveId> = [];
+  readonly ENEMY_MOVESET_OVERRIDE: MoveId | MoveId[] = [];
   readonly ENEMY_SHINY_OVERRIDE: boolean | null = null;
   readonly ENEMY_VARIANT_OVERRIDE: Variant | null = null;
 

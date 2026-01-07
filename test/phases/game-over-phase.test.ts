@@ -6,7 +6,7 @@ import { Unlockables } from "#enums/unlockables";
 import { achvs } from "#system/achv";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Game Over Phase", () => {
   let phaserGame: Phaser.Game;
@@ -16,10 +16,6 @@ describe("Game Over Phase", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {

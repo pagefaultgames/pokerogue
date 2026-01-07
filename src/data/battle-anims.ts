@@ -7,11 +7,15 @@ import { AnimBlendType, AnimFocus, AnimFrameTarget, ChargeAnim, CommonAnim } fro
 import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
 import type { Pokemon } from "#field/pokemon";
-import { coerceArray, getFrameMs, type nil } from "#utils/common";
+import type { nil } from "#types/common";
+import { coerceArray } from "#utils/array";
+import { getFrameMs } from "#utils/common";
 import { getEnumKeys, getEnumValues } from "#utils/enums";
 import { toKebabCase } from "#utils/strings";
 import Phaser from "phaser";
 
+// TODO: Split up this entire file - it has way WAY too much stuff for its own good.
+// (Also happens to be positively spaghetti, but that's besides the point)
 export class AnimConfig {
   public id: number;
   public graphic: string;
@@ -768,8 +772,8 @@ export abstract class BattleAnim {
     ]);
 
     const isOppAnim = this.isOppAnim();
-    const user = !isOppAnim ? this.user : this.target;
-    const target = !isOppAnim ? this.target : this.user;
+    const user = isOppAnim ? this.target : this.user;
+    const target = isOppAnim ? this.user : this.target;
 
     const targetSubstitute = onSubstitute && user !== target ? target!.getTag(BattlerTagType.SUBSTITUTE) : null;
 
@@ -788,7 +792,7 @@ export abstract class BattleAnim {
     for (const frame of frames) {
       let x = frame.x + 106;
       let y = frame.y + 116;
-      let scaleX = (frame.zoomX / 100) * (!frame.mirror ? 1 : -1);
+      let scaleX = (frame.zoomX / 100) * (frame.mirror ? -1 : 1);
       const scaleY = frame.zoomY / 100;
       switch (frame.focus) {
         case AnimFocus.TARGET:
@@ -819,7 +823,7 @@ export abstract class BattleAnim {
               frame.target === AnimFrameTarget.GRAPHIC
               && isReversed(this.srcLine[0], this.srcLine[2], this.dstLine[0], this.dstLine[2])
             ) {
-              scaleX = scaleX * -1;
+              scaleX *= -1;
             }
           }
           break;
@@ -833,7 +837,7 @@ export abstract class BattleAnim {
   }
 
   // biome-ignore lint/complexity/noBannedTypes: callback is used liberally
-  play(onSubstitute?: boolean, callback?: Function) {
+  play(onSubstitute?: boolean, callback?: () => void) {
     const isOppAnim = this.isOppAnim();
     const user = isOppAnim ? this.target! : this.user!;
     const target = isOppAnim ? this.user! : this.target!; // TODO: These bangs are LITERALLY not correct at all
@@ -863,16 +867,16 @@ export abstract class BattleAnim {
       userSprite.setAlpha(1);
       userSprite.pipelineData["tone"] = [0.0, 0.0, 0.0, 0.0];
       userSprite.setAngle(0);
-      if (!targetSubstitute) {
-        targetSprite.setPosition(0, 0);
-        targetSprite.setScale(1);
-        targetSprite.setAlpha(1);
-      } else {
+      if (targetSubstitute) {
         targetSprite.setPosition(
           target.x - target.getSubstituteOffset()[0],
           target.y - target.getSubstituteOffset()[1],
         );
         targetSprite.setScale(target.getSpriteScale() * (target.isPlayer() ? 0.5 : 1));
+        targetSprite.setAlpha(1);
+      } else {
+        targetSprite.setPosition(0, 0);
+        targetSprite.setScale(1);
         targetSprite.setAlpha(1);
       }
       targetSprite.pipelineData["tone"] = [0.0, 0.0, 0.0, 0.0];
@@ -1177,7 +1181,7 @@ export abstract class BattleAnim {
     frameTimeMult: number,
     frameTimedEventPriority?: 0 | 1 | 3 | 5,
     // biome-ignore lint/complexity/noBannedTypes: callback is used liberally
-    callback?: Function,
+    callback?: () => void,
   ) {
     const spriteCache: SpriteCache = {
       [AnimFrameTarget.GRAPHIC]: [],

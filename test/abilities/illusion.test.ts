@@ -5,9 +5,10 @@ import { PokeballType } from "#enums/pokeball";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("Abilities - Illusion", () => {
+// TODO: Rework and re-enable once Illusion is implemented again, however that may be
+describe.todo("Abilities - Illusion", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -15,10 +16,6 @@ describe("Abilities - Illusion", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {

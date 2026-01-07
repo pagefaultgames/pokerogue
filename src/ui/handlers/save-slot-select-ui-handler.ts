@@ -1,5 +1,6 @@
 import { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
+import { isBeta, isDev } from "#constants/app-constants";
 import { Button } from "#enums/buttons";
 import { GameModes } from "#enums/game-modes";
 import { TextStyle } from "#enums/text-style";
@@ -202,7 +203,7 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
                       false,
                       0,
                       19,
-                      import.meta.env.DEV ? 300 : 2000,
+                      isBeta || isDev ? 300 : 2000,
                     );
                   });
                   return true;
@@ -251,7 +252,7 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
                     false,
                     0,
                     19,
-                    import.meta.env.DEV ? 300 : 2000,
+                    isBeta || isDev ? 300 : 2000,
                   );
                 });
               } else if (this.sessionSlots[cursor].hasData === false) {
@@ -342,7 +343,7 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
   showText(
     text: string,
     delay?: number,
-    callback?: Function,
+    callback?: () => void,
     callbackDelay?: number,
     prompt?: boolean,
     promptDelay?: number,
@@ -396,12 +397,12 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
       const hasData = session.hasData && !session.malformed;
       // If the session slot lacks session data, it does not move from its default, central position.
       // Only session slots with session data will move leftwards and have a visible arrow.
-      if (!hasData) {
-        this.cursorObj.setPosition(151, 20 + cursorIncrement);
-        this.sessionSlots[cursorPosition].setPosition(0, cursorIncrement);
-      } else {
+      if (hasData) {
         this.cursorObj.setPosition(145, 20 + cursorIncrement);
         this.sessionSlots[cursorPosition].setPosition(-6, cursorIncrement);
+      } else {
+        this.cursorObj.setPosition(151, 20 + cursorIncrement);
+        this.sessionSlots[cursorPosition].setPosition(0, cursorIncrement);
       }
       this.setArrowVisibility(hasData);
     }

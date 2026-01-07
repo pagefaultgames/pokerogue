@@ -7,6 +7,7 @@ import { executeIf } from "#utils/common";
 import { getEnumKeys } from "#utils/enums";
 import i18next from "i18next";
 
+/** @deprecated */
 export interface RankingEntry {
   rank: number;
   username: string;
@@ -15,11 +16,13 @@ export interface RankingEntry {
 }
 
 // Don't forget to update translations when adding a new category
+/** @deprecated */
 export enum ScoreboardCategory {
   DAILY,
   WEEKLY,
 }
 
+/** @deprecated */
 export class DailyRunScoreboard extends Phaser.GameObjects.Container {
   private loadingLabel: Phaser.GameObjects.Text;
   private titleLabel: Phaser.GameObjects.Text;

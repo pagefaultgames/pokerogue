@@ -1,9 +1,15 @@
+/*
+ * SPDX-FileCopyrightText: 2025 Pagefault Games
+ * SPDX-FileContributor: Bertie690
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
 {
   "name": "Node.js & TypeScript",
   // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:4-24-bookworm",
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {
       "installDirectlyFromGitHubRelease": true,
@@ -12,6 +18,9 @@
     "ghcr.io/devcontainers-extra/features/pnpm:2": {
       "version": "latest"
     }
+  },
+  "containerEnv": {
+    "PORT": "8000"
   },
   "customizations": {
     "vscode": {

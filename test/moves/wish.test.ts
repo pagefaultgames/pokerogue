@@ -10,7 +10,7 @@ import { GameManager } from "#test/test-utils/game-manager";
 import { toDmgValue } from "#utils/common";
 import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Move - Wish", () => {
   let phaserGame: Phaser.Game;
@@ -20,10 +20,6 @@ describe("Move - Wish", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -79,7 +75,7 @@ describe("Move - Wish", () => {
     await game.toEndOfTurn();
 
     expect(alomomola.hp).toBe(toDmgValue(alomomola.getMaxHp() / 2) + 1);
-    expect(alomomola).toHaveUsedMove({ result: MoveResult.FAIL });
+    expect(alomomola).toHaveUsedMove({ move: MoveId.WISH, result: MoveResult.FAIL });
   });
 
   it("should function independently of Future Sight", async () => {
@@ -135,7 +131,7 @@ describe("Move - Wish", () => {
     // all wishes have activated and added healing phases
     expect(game).toHavePositionalTag(PositionalTagType.WISH, 0);
 
-    const healPhases = game.scene.phaseManager.phaseQueue.filter(p => p.is("PokemonHealPhase"));
+    const healPhases = game.scene.phaseManager["phaseQueue"].findAll("PokemonHealPhase");
     expect(healPhases).toHaveLength(4);
     expect.soft(healPhases.map(php => php.getPokemon())).toEqual(oldOrder);
 

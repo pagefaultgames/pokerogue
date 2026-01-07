@@ -7,7 +7,7 @@ import type { Pokemon } from "#field/pokemon";
 import type { ContactHeldItemTransferChanceModifier } from "#modifiers/modifier";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Items - Grip Claw", () => {
   let phaserGame: Phaser.Game;
@@ -17,10 +17,6 @@ describe("Items - Grip Claw", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -44,7 +40,7 @@ describe("Items - Grip Claw", () => {
   it("should steal items on contact and only from the attack target", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
 
-    const [playerPokemon] = game.scene.getPlayerField();
+    const playerPokemon = game.field.getPlayerPokemon();
 
     const gripClaw = playerPokemon.getHeldItems()[0] as ContactHeldItemTransferChanceModifier;
     vi.spyOn(gripClaw, "chance", "get").mockReturnValue(100);
@@ -73,7 +69,7 @@ describe("Items - Grip Claw", () => {
   it("should not steal items when using a targetted, non attack move", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
 
-    const [playerPokemon] = game.scene.getPlayerField();
+    const playerPokemon = game.field.getPlayerPokemon();
 
     const gripClaw = playerPokemon.getHeldItems()[0] as ContactHeldItemTransferChanceModifier;
     vi.spyOn(gripClaw, "chance", "get").mockReturnValue(100);

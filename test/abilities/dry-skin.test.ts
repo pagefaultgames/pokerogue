@@ -3,7 +3,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Dry Skin", () => {
   let phaserGame: Phaser.Game;
@@ -13,10 +13,6 @@ describe("Abilities - Dry Skin", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -148,7 +144,7 @@ describe("Abilities - Dry Skin", () => {
     const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.WATER_GUN);
-    enemy.hp = enemy.hp - 1;
+    enemy.hp -= 1;
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     await game.move.forceMiss();

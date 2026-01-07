@@ -1,17 +1,35 @@
-/* biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
-import type { Pokemon } from "#field/pokemon";
-/* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
-
 import { getPokemonNameWithAffix } from "#app/messages";
-import type { BattlerTagTypeMap } from "#data/battler-tags";
+import { BattlerTag, type BattlerTagTypeMap } from "#data/battler-tags";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import type { Pokemon } from "#field/pokemon";
 import type { OneOther } from "#test/@types/test-helpers";
 import { getEnumStr, getOnelineDiffStr } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { BattlerTagDataMap, SerializableBattlerTagType } from "#types/battler-tags";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
-// intersection required to preserve T for inferences
+/**
+ * Helper type for serializable battler tag options.
+ * Allows for caching to avoid repeated instantiation and faster typechecking.
+ * @internal
+ */
+type SerializableBattlerTagOptions<B extends SerializableBattlerTagType> =
+  | BattlerTagTypeMap[B]
+  | (OneOther<BattlerTagDataMap[B], "tagType"> & {
+      tagType: B;
+    });
+
+/**
+ * Helper type for non-serializable battler tag options.
+ * Allows for caching to avoid repeated instantiation and faster typechecking.
+ * @internal
+ */
+type NonSerializableBattlerTagOptions<B extends BattlerTagType> =
+  | BattlerTagTypeMap[B]
+  | (OneOther<BattlerTagTypeMap[B], "tagType"> & {
+      tagType: B;
+    });
+
 /**
  * Options type for {@linkcode toHaveBattlerTag}.
  * @typeParam B - The {@linkcode BattlerTagType} being checked
@@ -19,11 +37,9 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * If B corresponds to a serializable `BattlerTag`, only properties allowed to be serialized
  * (i.e. can change across instances) will be present and able to be checked.
  */
-export type toHaveBattlerTagOptions<B extends BattlerTagType> = (B extends SerializableBattlerTagType
-  ? OneOther<BattlerTagDataMap[B], "tagType">
-  : OneOther<BattlerTagTypeMap[B], "tagType">) & {
-  tagType: B;
-};
+export type toHaveBattlerTagOptions<B extends BattlerTagType> = [B] extends [SerializableBattlerTagType]
+  ? SerializableBattlerTagOptions<B>
+  : NonSerializableBattlerTagOptions<B>;
 
 /**
  * Matcher that checks if a {@linkcode Pokemon} has a specific {@linkcode BattlerTag}.
@@ -47,14 +63,14 @@ export function toHaveBattlerTag<B extends BattlerTagType>(
   const pkmName = getPokemonNameWithAffix(received);
 
   // Coerce lone `tagType`s into objects
-  const etag = typeof expectedTag === "object" ? expectedTag : { tagType: expectedTag };
-  const gotTag = received.getTag(etag.tagType);
+  const eTag = typeof expectedTag === "object" ? expectedTag : { tagType: expectedTag };
+  const gotTag = received.getTag(eTag.tagType);
 
   // If checking exclusively tag type OR no tags were found, break out early.
   if (typeof expectedTag !== "object" || !gotTag) {
     const pass = !!gotTag;
     // "BattlerTagType.SEEDED (=1)"
-    const expectedTagStr = getEnumStr(BattlerTagType, etag.tagType, { prefix: "BattlerTagType." });
+    const expectedTagStr = getEnumStr(BattlerTagType, eTag.tagType, { prefix: "BattlerTagType." });
 
     return {
       pass,
@@ -68,11 +84,10 @@ export function toHaveBattlerTag<B extends BattlerTagType>(
   }
 
   // Check for equality with the provided tag
-  const pass = this.equals(gotTag, etag, [
-    ...this.customTesters,
-    this.utils.subsetEquality,
-    this.utils.iterableEquality,
-  ]);
+  const pass =
+    eTag instanceof BattlerTag
+      ? gotTag === eTag
+      : this.equals(gotTag, eTag, [...this.customTesters, this.utils.subsetEquality, this.utils.iterableEquality]);
 
   const expectedStr = getOnelineDiffStr.call(this, expectedTag);
   return {

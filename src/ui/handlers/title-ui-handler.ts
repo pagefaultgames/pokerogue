@@ -1,8 +1,10 @@
 import { pokerogueApi } from "#api/pokerogue-api";
+import { loggedInUser } from "#app/account";
 import { FAKE_TITLE_LOGO_CHANCE } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { TimedEventDisplay } from "#app/timed-event-manager";
+import { isBeta, isDev } from "#constants/app-constants";
 import { getSplashMessages } from "#data/splash-messages";
 import { PlayerGender } from "#enums/player-gender";
 import type { SpeciesId } from "#enums/species-id";
@@ -20,6 +22,7 @@ export class TitleUiHandler extends OptionSelectUiHandler {
   private static readonly BATTLES_WON_FALLBACK: number = -1;
 
   private titleContainer: Phaser.GameObjects.Container;
+  private usernameLabel: Phaser.GameObjects.Text;
   private playerCountLabel: Phaser.GameObjects.Text;
   private splashMessage: string;
   private splashMessageText: Phaser.GameObjects.Text;
@@ -27,6 +30,26 @@ export class TitleUiHandler extends OptionSelectUiHandler {
   private appVersionText: Phaser.GameObjects.Text;
 
   private titleStatsTimer: NodeJS.Timeout | null;
+
+  /**
+   * Returns the username of logged in user. If the username is hidden, the trainer name based on gender will be displayed.
+   * @returns The username of logged in user
+   */
+  private getUsername(): string {
+    const usernameReplacement = i18next.t(
+      globalScene.gameData.gender === PlayerGender.FEMALE ? "trainerNames:playerF" : "trainerNames:playerM",
+    );
+
+    const displayName = globalScene.hideUsername
+      ? usernameReplacement
+      : (loggedInUser?.username ?? i18next.t("common:guest"));
+
+    return i18next.t("menu:loggedInAs", { username: displayName });
+  }
+
+  updateUsername() {
+    this.usernameLabel.setText(this.getUsername());
+  }
 
   constructor(mode: UiMode = UiMode.TITLE) {
     super(mode);
@@ -37,14 +60,18 @@ export class TitleUiHandler extends OptionSelectUiHandler {
 
     const ui = this.getUi();
 
-    this.titleContainer = globalScene.add.container(0, -globalScene.scaledCanvas.height);
-    this.titleContainer.setName("title");
-    this.titleContainer.setAlpha(0);
+    const scaledHeight = globalScene.scaledCanvas.height;
+    const scaledWidth = globalScene.scaledCanvas.width;
+
+    this.titleContainer = globalScene.add
+      .container(0, -scaledHeight) // formatting
+      .setName("title")
+      .setAlpha(0);
     ui.add(this.titleContainer);
 
-    const logo = globalScene.add.image(globalScene.scaledCanvas.width / 2, 8, this.getLogo());
-    logo.setOrigin(0.5, 0);
-    this.titleContainer.add(logo);
+    const logo = globalScene.add
+      .image(scaledWidth / 2, 8, this.getLogo()) // formatting
+      .setOrigin(0.5, 0);
 
     if (timedEventManager.isEventActive()) {
       this.eventDisplay = new TimedEventDisplay(0, 0, timedEventManager.activeEvent());
@@ -52,55 +79,60 @@ export class TitleUiHandler extends OptionSelectUiHandler {
       this.titleContainer.add(this.eventDisplay);
     }
 
-    this.playerCountLabel = addTextObject(
-      // Actual y position will be determined after the title menu has been populated with options
-      globalScene.scaledCanvas.width - 2,
-      0,
-      `? ${i18next.t("menu:playersOnline")}`,
-      TextStyle.MESSAGE,
-      { fontSize: "54px" },
-    );
-    this.playerCountLabel.setOrigin(1, 0);
-    this.titleContainer.add(this.playerCountLabel);
+    const labelPosX = scaledWidth - 2;
+    // Actual y positions will be determined after the title menu has been populated with options
+    this.usernameLabel = addTextObject(labelPosX, 0, this.getUsername(), TextStyle.MESSAGE, { fontSize: "54px" }) // formatting
+      .setOrigin(1, 0);
 
-    this.splashMessageText = addTextObject(logo.x + 64, logo.y + logo.displayHeight - 8, "", TextStyle.MONEY, {
+    this.playerCountLabel = addTextObject(labelPosX, 0, `? ${i18next.t("menu:playersOnline")}`, TextStyle.MESSAGE, {
+      // formatting
       fontSize: "54px",
-    });
-    this.splashMessageText.setOrigin(0.5, 0.5);
-    this.splashMessageText.setAngle(-20);
-    this.titleContainer.add(this.splashMessageText);
+    }).setOrigin(1, 0);
 
-    const originalSplashMessageScale = this.splashMessageText.scale;
+    const logoX = logo.x;
+    const logoHeight = logo.y + logo.displayHeight;
+
+    this.splashMessageText = addTextObject(logoX + 64, logoHeight - 8, "", TextStyle.MONEY, { fontSize: "54px" })
+      .setOrigin()
+      .setAngle(-20);
 
     globalScene.tweens.add({
       targets: this.splashMessageText,
       duration: fixedInt(350),
-      scale: originalSplashMessageScale * 1.25,
+      scale: "*=1.25",
       loop: -1,
       yoyo: true,
     });
 
-    this.appVersionText = addTextObject(logo.x - 60, logo.y + logo.displayHeight + 4, "", TextStyle.MONEY, {
-      fontSize: "54px",
-    });
-    this.appVersionText.setOrigin(0.5, 0.5);
-    this.appVersionText.setAngle(0);
-    this.titleContainer.add(this.appVersionText);
+    this.appVersionText = addTextObject(logoX - 60, logoHeight + 4, "", TextStyle.MONEY, { fontSize: "54px" }) // formatting
+      .setOrigin();
+
+    this.titleContainer.add([
+      logo,
+      this.usernameLabel,
+      this.playerCountLabel,
+      this.splashMessageText,
+      this.appVersionText,
+    ]);
   }
 
   updateTitleStats(): void {
     pokerogueApi
       .getGameTitleStats()
       .then(stats => {
-        if (stats) {
-          this.playerCountLabel.setText(`${stats.playerCount} ${i18next.t("menu:playersOnline")}`);
-          if (this.splashMessage === "splashMessages:battlesWon") {
-            this.splashMessageText.setText(i18next.t(this.splashMessage, { count: stats.battleCount }));
-          }
+        if (stats == null) {
+          return;
+        }
+        this.playerCountLabel.setText(`${stats.playerCount} ${i18next.t("menu:playersOnline")}`);
+        const splashMessage = this.splashMessage;
+        if (splashMessage === "splashMessages:battlesWon") {
+          this.splashMessageText.setText(i18next.t(splashMessage, { count: stats.battleCount }));
         }
       })
       .catch(err => {
-        console.error("Failed to fetch title stats:\n", err);
+        if (!isDev) {
+          console.error("Failed to fetch title stats:\n", err);
+        }
       });
   }
 
@@ -108,67 +140,91 @@ export class TitleUiHandler extends OptionSelectUiHandler {
   randomPokemon(): void {
     const rand = randInt(1025, 1);
     const pokemon = getPokemonSpecies(rand as SpeciesId);
+    const splashMessage = this.splashMessage;
     if (
       this.splashMessage === "splashMessages:underratedPokemon"
       || this.splashMessage === "splashMessages:dontTalkAboutThePokemonIncident"
       || this.splashMessage === "splashMessages:aWildPokemonAppeared"
       || this.splashMessage === "splashMessages:aprilFools.removedPokemon"
     ) {
-      this.splashMessageText.setText(i18next.t(this.splashMessage, { pokemonName: pokemon.name }));
+      this.splashMessageText.setText(i18next.t(splashMessage, { pokemonName: pokemon.name }));
     }
   }
 
   /** Used for a specific April Fools splash message. */
   genderSplash(): void {
+    const splashMessage = this.splashMessage;
     if (this.splashMessage === "splashMessages:aprilFools.helloKyleAmber") {
-      globalScene.gameData.gender === PlayerGender.MALE
-        ? this.splashMessageText.setText(i18next.t(this.splashMessage, { name: i18next.t("trainerNames:playerM") }))
-        : this.splashMessageText.setText(i18next.t(this.splashMessage, { name: i18next.t("trainerNames:playerF") }));
+      const splashMessageText = this.splashMessageText;
+      const text = globalScene.gameData.gender === PlayerGender.MALE ? "trainerNames:playerM" : "trainerNames:playerF";
+      splashMessageText.setText(i18next.t(splashMessage, { name: i18next.t(text) }));
     }
   }
 
   show(args: any[]): boolean {
     const ret = super.show(args);
 
-    if (ret) {
-      // Moving player count to top of the menu
-      this.playerCountLabel.setY(globalScene.scaledCanvas.height - 13 - this.getWindowHeight());
-
-      this.splashMessage = randItem(getSplashMessages());
-      this.splashMessageText.setText(
-        i18next.t(this.splashMessage, {
-          count: TitleUiHandler.BATTLES_WON_FALLBACK,
-        }),
-      );
-
-      const betaText = import.meta.env.DEV ? " (Beta)" : "";
-      this.appVersionText.setText("v" + version + betaText);
-
-      const ui = this.getUi();
-
-      if (timedEventManager.isEventActive()) {
-        this.eventDisplay.setWidth(globalScene.scaledCanvas.width - this.optionSelectBg.width - this.optionSelectBg.x);
-        this.eventDisplay.show();
-      }
-
-      this.randomPokemon();
-      this.genderSplash();
-
-      this.updateTitleStats();
-
-      this.titleStatsTimer = setInterval(() => {
-        this.updateTitleStats();
-      }, 60000);
-
-      globalScene.tweens.add({
-        targets: [this.titleContainer, ui.getMessageHandler().bg],
-        duration: fixedInt(325),
-        alpha: (target: any) => (target === this.titleContainer ? 1 : 0),
-        ease: "Sine.easeInOut",
-      });
+    if (!ret) {
+      return false;
     }
 
-    return ret;
+    const scaledHeight = globalScene.scaledCanvas.height;
+    const windowHeight = this.getWindowHeight();
+
+    this.updateUsername();
+
+    // Moving username and player count to top of the menu
+    // and sorting it, to display the shorter one on top
+    const UPPER_LABEL = scaledHeight - 23 - windowHeight;
+    const LOWER_LABEL = scaledHeight - 13 - windowHeight;
+
+    if (this.usernameLabel.width < this.playerCountLabel.width) {
+      this.usernameLabel.setY(UPPER_LABEL);
+      this.playerCountLabel.setY(LOWER_LABEL);
+    } else {
+      this.usernameLabel.setY(LOWER_LABEL);
+      this.playerCountLabel.setY(UPPER_LABEL);
+    }
+
+    this.splashMessage = randItem(getSplashMessages());
+    this.splashMessageText.setText(
+      i18next.t(this.splashMessage, {
+        count: TitleUiHandler.BATTLES_WON_FALLBACK,
+      }),
+    );
+
+    const betaText = isBeta || isDev ? " (Beta)" : "";
+    this.appVersionText.setText("v" + version + betaText);
+
+    const ui = this.getUi();
+
+    if (timedEventManager.isEventActive()) {
+      this.eventDisplay.setWidth(globalScene.scaledCanvas.width - this.optionSelectBg.width - this.optionSelectBg.x);
+      this.eventDisplay.show();
+    }
+
+    const now = new Date();
+    if (now.getMonth() === 11 || (now.getMonth() === 0 && now.getDate() <= 15)) {
+      this.getSnow();
+    }
+
+    this.randomPokemon();
+    this.genderSplash();
+
+    this.updateTitleStats();
+
+    this.titleStatsTimer = setInterval(() => {
+      this.updateTitleStats();
+    }, 60000);
+
+    globalScene.tweens.add({
+      targets: [this.titleContainer, ui.getMessageHandler().bg],
+      duration: fixedInt(325),
+      alpha: (target: any) => (target === this.titleContainer ? 1 : 0),
+      ease: "Sine.easeInOut",
+    });
+
+    return true;
   }
 
   clear(): void {
@@ -197,5 +253,33 @@ export class TitleUiHandler extends OptionSelectUiHandler {
     // Invert spawn chances on april fools
     const aprilFools = timedEventManager.isAprilFoolsActive();
     return aprilFools === !!randInt(FAKE_TITLE_LOGO_CHANCE) ? "logo_fake" : "logo";
+  }
+
+  private snow: Phaser.GameObjects.TileSprite;
+
+  /** Adds a snow effect on the title screen during the winter season. */
+  private getSnow(): void {
+    const width = globalScene.scaledCanvas.width;
+    const height = globalScene.scaledCanvas.height;
+    this.snow?.destroy(); // Ensures no duplicate snow layers
+    this.snow = globalScene.add.tileSprite(width, height, width, height, "snow");
+    this.snow.setOrigin(1, 1);
+
+    globalScene.tweens.add({
+      targets: this.snow,
+      tilePositionX: { from: 0, to: -512 },
+      tilePositionY: { from: 0, to: -512 },
+      duration: 100000,
+      repeat: -1,
+      yoyo: false,
+      ease: "Linear",
+      onUpdate: () => {
+        if (this.snow) {
+          this.snow.tilePositionX -= 0.5;
+          this.snow.tilePositionY -= 0.5;
+        }
+      },
+    });
+    this.titleContainer.addAt(this.snow, 0);
   }
 }

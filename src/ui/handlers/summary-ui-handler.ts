@@ -2,7 +2,6 @@ import type { Ability } from "#abilities/ability";
 import { loggedInUser } from "#app/account";
 import { globalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
-import { getBiomeName } from "#balance/biomes";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#balance/starters";
 import { getLevelRelExp, getLevelTotalExp } from "#data/exp";
 import { getGenderColor, getGenderSymbol } from "#data/gender";
@@ -28,7 +27,15 @@ import { achvs } from "#system/achv";
 import { ScrollingText } from "#ui/scrolling-text";
 import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
-import { fixedInt, formatStat, getLocalizedSpriteKey, getShinyDescriptor, padInt, rgbHexToRgba } from "#utils/common";
+import {
+  fixedInt,
+  formatStat,
+  getBiomeName,
+  getLocalizedSpriteKey,
+  getShinyDescriptor,
+  padInt,
+  rgbHexToRgba,
+} from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
@@ -120,7 +127,7 @@ export class SummaryUiHandler extends UiHandler {
   private playerParty: boolean;
   /**This is set to false when checking the summary of a freshly caught Pokemon as it is not part of a player's party yet but still needs to display its items*/
   private newMove: Move | null;
-  private moveSelectFunction: Function | null;
+  private moveSelectFunction: ((cursor: number) => void) | null;
   private transitioning: boolean;
   private statusVisible: boolean;
   private moveEffectsVisible: boolean;
@@ -128,7 +135,7 @@ export class SummaryUiHandler extends UiHandler {
   private moveSelect: boolean;
   private moveCursor: number;
   private selectedMoveIndex: number;
-  private selectCallback: Function | null;
+  private selectCallback: ((cursor: number) => void) | null;
 
   constructor() {
     super(UiMode.SUMMARY);
@@ -329,18 +336,44 @@ export class SummaryUiHandler extends UiHandler {
     return `summary_${Page[page].toLowerCase()}`;
   }
 
-  show(args: any[]): boolean {
+  show(
+    args: [
+      pokemon: PlayerPokemon,
+      uiMode?: SummaryUiMode.DEFAULT,
+      startPage?: Page,
+      selectCallback?: (cursor: number) => void,
+      player?: boolean,
+    ],
+  ): boolean;
+  show(
+    args: [
+      pokemon: PlayerPokemon,
+      uiMode: SummaryUiMode.LEARN_MOVE,
+      move?: Move,
+      moveSelectCallback?: (cursor: number) => void,
+      player?: boolean,
+    ],
+  ): boolean;
+  show(
+    args: [
+      pokemon: PlayerPokemon,
+      uiMode?: SummaryUiMode,
+      startPage?: Page | Move,
+      callback?: (cursor: number) => void,
+      player?: boolean,
+    ],
+  ): boolean {
     super.show(args);
 
     /* args[] information
      * args[0] : the Pokemon displayed in the Summary-UI
      * args[1] : the summaryUiMode (defaults to 0)
-     * args[2] : the start page (defaults to Page.PROFILE)
+     * args[2] : the start page (defaults to Page.PROFILE), or the move being selected
      * args[3] : contains the function executed when the user exits out of Summary UI
      * args[4] : optional boolean used to determine if the Pokemon is part of the player's party or not (defaults to true, necessary for PR #2921 to display all relevant information)
      */
     this.pokemon = args[0] as PlayerPokemon;
-    this.summaryUiMode = args.length > 1 ? (args[1] as SummaryUiMode) : SummaryUiMode.DEFAULT;
+    this.summaryUiMode = (args[1] as SummaryUiMode) ?? SummaryUiMode.DEFAULT;
     this.playerParty = args[4] ?? true;
     globalScene.ui.bringToTop(this.summaryContainer);
 
@@ -354,9 +387,9 @@ export class SummaryUiHandler extends UiHandler {
     this.candyOverlay.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
 
     this.numberText.setText(padInt(this.pokemon.species.speciesId, 4));
-    this.numberText.setColor(getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD));
+    this.numberText.setColor(getTextColor(this.pokemon.isShiny() ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY));
     this.numberText.setShadowColor(
-      getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD, true),
+      getTextColor(this.pokemon.isShiny() ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY, true),
     );
     const spriteKey = this.pokemon.getSpriteKey(true);
     try {
@@ -480,17 +513,15 @@ export class SummaryUiHandler extends UiHandler {
 
     switch (this.summaryUiMode) {
       case SummaryUiMode.DEFAULT: {
-        const page = args.length < 2 ? Page.PROFILE : (args[2] as Page);
+        const page = (args[2] as Page) ?? Page.PROFILE;
         this.hideMoveEffect(true);
         this.setCursor(page);
-        if (args.length > 3) {
-          this.selectCallback = args[3];
-        }
+        this.selectCallback = args[3] ?? null;
         break;
       }
       case SummaryUiMode.LEARN_MOVE:
         this.newMove = args[2] as Move;
-        this.moveSelectFunction = args[3] as Function;
+        this.moveSelectFunction = args[3] ?? null;
 
         this.showMoveEffect(true);
         this.setCursor(Page.MOVES);
@@ -609,13 +640,13 @@ export class SummaryUiHandler extends UiHandler {
         if (this.selectCallback instanceof Function) {
           const selectCallback = this.selectCallback;
           this.selectCallback = null;
-          selectCallback();
+          selectCallback(-1);
         }
 
-        if (!fromPartyMode) {
-          ui.setMode(UiMode.MESSAGE);
-        } else {
+        if (fromPartyMode) {
           ui.setMode(UiMode.PARTY);
+        } else {
+          ui.setMode(UiMode.MESSAGE);
         }
       }
       success = true;
@@ -814,9 +845,9 @@ export class SummaryUiHandler extends UiHandler {
           7,
           12,
           `${i18next.t("pokemonSummary:ot")}/${getBBCodeFrag(
-            !globalScene.hideUsername
-              ? loggedInUser?.username || i18next.t("pokemonSummary:unknown")
-              : usernameReplacement,
+            globalScene.hideUsername
+              ? usernameReplacement
+              : loggedInUser?.username || i18next.t("pokemonSummary:unknown"),
             otColor,
           )}`,
           TextStyle.SUMMARY_ALT,
@@ -838,9 +869,9 @@ export class SummaryUiHandler extends UiHandler {
 
         const getTypeIcon = (index: number, type: PokemonType, tera = false) => {
           const xCoord = typeLabel.width * typeLabel.scale + 9 + 34 * index;
-          const typeIcon = !tera
-            ? globalScene.add.sprite(xCoord, 42, getLocalizedSpriteKey("types"), PokemonType[type].toLowerCase())
-            : globalScene.add.sprite(xCoord, 42, "type_tera");
+          const typeIcon = tera
+            ? globalScene.add.sprite(xCoord, 42, "type_tera")
+            : globalScene.add.sprite(xCoord, 42, getLocalizedSpriteKey("types"), PokemonType[type].toLowerCase());
           if (tera) {
             typeIcon.setScale(0.5);
             const typeRgb = getTypeRgb(type);
@@ -901,7 +932,7 @@ export class SummaryUiHandler extends UiHandler {
           this.abilityPrompt = globalScene.add.image(
             0,
             0,
-            !globalScene.inputController?.gamepadSupport ? "summary_profile_prompt_z" : "summary_profile_prompt_a",
+            globalScene.inputController?.gamepadSupport ? "summary_profile_prompt_a" : "summary_profile_prompt_z",
           );
           this.abilityPrompt.setPosition(8, 43);
           this.abilityPrompt.setVisible(true);
@@ -1105,7 +1136,7 @@ export class SummaryUiHandler extends UiHandler {
         this.abilityPrompt = globalScene.add.image(
           0,
           0,
-          !globalScene.inputController?.gamepadSupport ? "summary_profile_prompt_z" : "summary_profile_prompt_a",
+          globalScene.inputController?.gamepadSupport ? "summary_profile_prompt_a" : "summary_profile_prompt_z",
         );
         this.abilityPrompt.setPosition(8, 47);
         this.abilityPrompt.setVisible(true);

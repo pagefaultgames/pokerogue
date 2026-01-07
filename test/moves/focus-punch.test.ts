@@ -3,13 +3,12 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { BerryPhase } from "#phases/berry-phase";
 import { MessagePhase } from "#phases/message-phase";
-import { MoveHeaderPhase } from "#phases/move-header-phase";
 import { SwitchSummonPhase } from "#phases/switch-summon-phase";
 import { TurnStartPhase } from "#phases/turn-start-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Focus Punch", () => {
   let phaserGame: Phaser.Game;
@@ -19,10 +18,6 @@ describe("Moves - Focus Punch", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -116,16 +111,15 @@ describe("Moves - Focus Punch", () => {
     await game.phaseInterceptor.to(TurnStartPhase);
 
     expect(game.scene.phaseManager.getCurrentPhase() instanceof SwitchSummonPhase).toBeTruthy();
-    expect(game.scene.phaseManager.phaseQueue.find(phase => phase instanceof MoveHeaderPhase)).toBeDefined();
+    expect(game.scene.phaseManager.hasPhaseOfType("MoveHeaderPhase")).toBe(true);
   });
   it("should replace the 'but it failed' text when the user gets hit", async () => {
     game.override.enemyMoveset([MoveId.TACKLE]);
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
     game.move.select(MoveId.FOCUS_PUNCH);
-    await game.phaseInterceptor.to("MoveEndPhase", true);
-    await game.phaseInterceptor.to("MessagePhase", false);
-    await game.phaseInterceptor.to("MoveEndPhase", true);
+    await game.phaseInterceptor.to("MoveEndPhase");
+    await game.phaseInterceptor.to("MoveEndPhase");
     expect(game.textInterceptor.logs).toContain(i18next.t("moveTriggers:lostFocus", { pokemonName: "Charizard" }));
     expect(game.textInterceptor.logs).not.toContain(i18next.t("battle:attackFailed"));
   });

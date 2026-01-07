@@ -8,7 +8,7 @@ import { MoveEndPhase } from "#phases/move-end-phase";
 import { MovePhase } from "#phases/move-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Shell Trap", () => {
   let phaserGame: Phaser.Game;
@@ -18,10 +18,6 @@ describe("Moves - Shell Trap", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -48,7 +44,7 @@ describe("Moves - Shell Trap", () => {
 
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2]);
 
-    await game.phaseInterceptor.to(MoveEndPhase);
+    await game.phaseInterceptor.to("MoveEndPhase");
 
     const movePhase = game.scene.phaseManager.getCurrentPhase();
     expect(movePhase instanceof MovePhase).toBeTruthy();

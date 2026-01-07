@@ -7,7 +7,7 @@ import type { Move } from "#moves/move";
 import type { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Fusion Flare and Fusion Bolt", () => {
   let phaserGame: Phaser.Game;
@@ -20,10 +20,6 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -166,8 +162,8 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
 
     // Mock stats by replacing entries in copy with desired values for specific stats
     const stats = {
-      enemy: [[...enemyParty[0].stats], [...enemyParty[1].stats]],
-      player: [[...party[0].stats], [...party[1].stats]],
+      enemy: [enemyParty[0].stats.slice(), enemyParty[1].stats.slice()],
+      player: [party[0].stats.slice(), party[1].stats.slice()],
     };
 
     // Ensure survival by reducing enemy Sp. Atk and boosting party Sp. Def
@@ -220,8 +216,8 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
 
     // Mock stats by replacing entries in copy with desired values for specific stats
     const stats = {
-      enemy: [[...enemyParty[0].stats], [...enemyParty[1].stats]],
-      player: [[...party[0].stats], [...party[1].stats]],
+      enemy: [enemyParty[0].stats.slice(), enemyParty[1].stats.slice()],
+      player: [party[0].stats.slice(), party[1].stats.slice()],
     };
 
     // Ensure survival by reducing enemy Sp. Atk and boosting party Sp. Def

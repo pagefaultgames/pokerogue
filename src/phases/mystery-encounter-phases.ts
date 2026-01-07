@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 import { getCharVariantFromDialogue } from "#data/dialogue";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { BattleSpec } from "#enums/battle-spec";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -15,6 +16,7 @@ import { transitionMysteryEncounterIntroVisuals } from "#mystery-encounters/enco
 import type { MysteryEncounterOption, OptionPhaseCallback } from "#mystery-encounters/mystery-encounter-option";
 import { SeenEncounterData } from "#mystery-encounters/mystery-encounter-save-data";
 import { randSeedItem } from "#utils/common";
+import { inSpeedOrder } from "#utils/speed-order-generator";
 import i18next from "i18next";
 
 /**
@@ -48,7 +50,6 @@ export class MysteryEncounterPhase extends Phase {
 
     // Clears out queued phases that are part of standard battle
     globalScene.phaseManager.clearPhaseQueue();
-    globalScene.phaseManager.clearPhaseQueueSplice();
 
     const encounter = globalScene.currentBattle.mysteryEncounter!;
     encounter.updateSeedOffset();
@@ -217,7 +218,7 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
 
     // Lapse any residual flinches/endures but ignore all other turn-end battle tags
     const includedLapseTags = [BattlerTagType.FLINCHED, BattlerTagType.ENDURING];
-    globalScene.getField(true).forEach(pokemon => {
+    for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
       const tags = pokemon.summonData.tags;
       tags
         .filter(
@@ -230,12 +231,10 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
           t.onRemove(pokemon);
           tags.splice(tags.indexOf(t), 1);
         });
-    });
+    }
 
     // Remove any status tick phases
-    while (globalScene.phaseManager.findPhase(p => p.is("PostTurnStatusEffectPhase"))) {
-      globalScene.phaseManager.tryRemovePhase(p => p.is("PostTurnStatusEffectPhase"));
-    }
+    globalScene.phaseManager.removeAllPhasesOfType("PostTurnStatusEffectPhase");
 
     // The total number of Pokemon in the player's party that can legally fight
     const legalPlayerPokemon = globalScene.getPokemonAllowedInBattle();
@@ -258,6 +257,10 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
     // THEN, if is a double battle, and player only has 1 summoned pokemon, center pokemon on field
     if (globalScene.currentBattle.double && legalPlayerPokemon.length === 1 && legalPlayerPartyPokemon.length === 0) {
       globalScene.phaseManager.unshiftNew("ToggleDoublePositionPhase", true);
+    }
+
+    for (const pokemon of globalScene.getField(true)) {
+      pokemon.resetTurnData();
     }
 
     this.end();
@@ -335,10 +338,10 @@ export class MysteryEncounterBattlePhase extends Phase {
         globalScene.phaseManager.unshiftNew("SummonPhase", 1, false);
       }
 
-      if (!globalScene.currentBattle.mysteryEncounter?.hideBattleIntroMessage) {
-        globalScene.ui.showText(this.getBattleMessage(), null, () => this.endBattleSetup(), 0);
-      } else {
+      if (globalScene.currentBattle.mysteryEncounter?.hideBattleIntroMessage) {
         this.endBattleSetup();
+      } else {
+        globalScene.ui.showText(this.getBattleMessage(), null, () => this.endBattleSetup(), 0);
       }
     } else if (encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
       this.showEnemyTrainer();
@@ -356,10 +359,10 @@ export class MysteryEncounterBattlePhase extends Phase {
           }
           this.endBattleSetup();
         };
-        if (!globalScene.currentBattle.mysteryEncounter?.hideBattleIntroMessage) {
-          globalScene.ui.showText(this.getBattleMessage(), null, doTrainerSummon, 1000, true);
-        } else {
+        if (globalScene.currentBattle.mysteryEncounter?.hideBattleIntroMessage) {
           doTrainerSummon();
+        } else {
+          globalScene.ui.showText(this.getBattleMessage(), null, doTrainerSummon, 1000, true);
         }
       };
 
@@ -426,7 +429,9 @@ export class MysteryEncounterBattlePhase extends Phase {
       }
     } else {
       if (availablePartyMembers.length > 1 && availablePartyMembers[1].isOnField()) {
-        globalScene.getPlayerField().forEach(pokemon => pokemon.lapseTag(BattlerTagType.COMMANDED));
+        for (const pokemon of inSpeedOrder(ArenaTagSide.PLAYER)) {
+          pokemon.lapseTag(BattlerTagType.COMMANDED);
+        }
         globalScene.phaseManager.pushNew("ReturnPhase", 1);
       }
       globalScene.phaseManager.pushNew("ToggleDoublePositionPhase", false);
@@ -442,6 +447,7 @@ export class MysteryEncounterBattlePhase extends Phase {
       }
     }
 
+    globalScene.phaseManager.pushNew("InitEncounterPhase");
     this.end();
   }
 
@@ -540,7 +546,7 @@ export class MysteryEncounterRewardsPhase extends Phase {
     if (encounter.doEncounterRewards) {
       encounter.doEncounterRewards();
     } else if (this.addHealPhase) {
-      globalScene.phaseManager.tryRemovePhase(p => p.is("SelectModifierPhase"));
+      globalScene.phaseManager.removeAllPhasesOfType("SelectModifierPhase");
       globalScene.phaseManager.unshiftNew("SelectModifierPhase", 0, undefined, {
         fillRemaining: false,
         rerollMultiplier: -1,

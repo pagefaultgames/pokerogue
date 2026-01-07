@@ -4,8 +4,10 @@ import type { BattleType } from "#enums/battle-type";
 import type { GameModes } from "#enums/game-modes";
 import type { MoveId } from "#enums/move-id";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import type { Nature } from "#enums/nature";
 import type { PlayerGender } from "#enums/player-gender";
 import type { PokemonType } from "#enums/pokemon-type";
+import type { SpeciesId } from "#enums/species-id";
 import type { MysteryEncounterSaveData } from "#mystery-encounters/mystery-encounter-save-data";
 import type { Variant } from "#sprites/variant";
 import type { ArenaData } from "#system/arena-data";
@@ -15,6 +17,7 @@ import type { GameStats } from "#system/game-stats";
 import type { ModifierData } from "#system/modifier-data";
 import type { PokemonData } from "#system/pokemon-data";
 import type { TrainerData } from "#system/trainer-data";
+import type { SerializedDailyRunConfig } from "./daily-run";
 import type { DexData } from "./dex-data";
 
 export interface SystemSaveData {
@@ -39,6 +42,7 @@ export interface SessionSaveData {
   seed: string;
   playTime: number;
   gameMode: GameModes;
+  dailyConfig?: SerializedDailyRunConfig;
   party: PokemonData[];
   enemyParty: PokemonData[];
   modifiers: ModifierData[];
@@ -108,12 +112,28 @@ export interface DexAttrProps {
   formIndex: number;
 }
 
+export interface Starter {
+  speciesId: SpeciesId;
+  shiny: boolean;
+  variant: Variant;
+  formIndex: number;
+  female?: boolean;
+  abilityIndex: number;
+  passive: boolean;
+  nature: Nature;
+  moveset?: StarterMoveset;
+  pokerus: boolean;
+  nickname?: string;
+  teraType?: PokemonType;
+  ivs: number[];
+}
+
 export type RunHistoryData = Record<number, RunEntry>;
 
 export interface RunEntry {
   entry: SessionSaveData;
   isVictory: boolean;
-  /*Automatically set to false at the moment - implementation TBD*/
+  /** Automatically set to false at the moment - implementation TBD */
   isFavorite: boolean;
 }
 

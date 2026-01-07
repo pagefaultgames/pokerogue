@@ -4,6 +4,7 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
 import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
+import { BiomeId } from "#enums/biome-id";
 import type { Command } from "#enums/command";
 import type { MoveId } from "#enums/move-id";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
@@ -18,11 +19,11 @@ import { Trainer } from "#field/trainer";
 import { MoneyMultiplierModifier, type PokemonHeldItemModifier } from "#modifiers/modifier";
 import type { CustomModifierSettings } from "#modifiers/modifier-type";
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
-import i18next from "#plugins/i18n";
 import { MusicPreference } from "#system/settings";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { TurnMove } from "#types/turn-move";
 import {
+  isBetween,
   NumberHolder,
   randInt,
   randomString,
@@ -32,6 +33,8 @@ import {
   shiftCharCodes,
 } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
+import { randSeedUniqueItem } from "#utils/random";
+import i18next from "i18next";
 
 export interface TurnCommand {
   command: Command;
@@ -96,8 +99,6 @@ export class Battle {
    * @defaultValue `false`
    */
   public failedRunAway = false;
-
-  private rngCounter = 0;
 
   constructor(gameMode: GameMode, waveIndex: number, battleType: BattleType, trainer?: Trainer, double = false) {
     this.gameMode = gameMode;
@@ -248,8 +249,13 @@ export class Battle {
       }
       return this.trainer?.getMixedBattleBgm() ?? null;
     }
-    if (this.gameMode.isClassic && this.waveIndex > 195 && this.battleSpec !== BattleSpec.FINAL_BOSS) {
-      return "end_summit";
+    if (this.gameMode.isClassic) {
+      if (isBetween(this.waveIndex, 191, 194)) {
+        return "end";
+      }
+      if (isBetween(this.waveIndex, 196, 199)) {
+        return "end_summit";
+      }
     }
     const wildOpponents = globalScene.getEnemyParty();
     for (const pokemon of wildOpponents) {
@@ -259,7 +265,12 @@ export class Battle {
         }
         return "battle_final_encounter";
       }
-      if (pokemon.species.legendary || pokemon.species.subLegendary || pokemon.species.mythical) {
+      if (
+        pokemon.species.legendary
+        || pokemon.species.subLegendary
+        || pokemon.species.mythical
+        || (pokemon.species.category.startsWith("Paradox") && globalScene.arena.biomeType !== BiomeId.END)
+      ) {
         if (globalScene.musicPreference === MusicPreference.GENFIVE) {
           switch (pokemon.species.speciesId) {
             case SpeciesId.REGIROCK:
@@ -400,6 +411,26 @@ export class Battle {
             case SpeciesId.TING_LU:
             case SpeciesId.CHI_YU:
               return "battle_legendary_ruinous";
+            case SpeciesId.GREAT_TUSK:
+            case SpeciesId.SCREAM_TAIL:
+            case SpeciesId.BRUTE_BONNET:
+            case SpeciesId.FLUTTER_MANE:
+            case SpeciesId.SLITHER_WING:
+            case SpeciesId.SANDY_SHOCKS:
+            case SpeciesId.IRON_TREADS:
+            case SpeciesId.IRON_BUNDLE:
+            case SpeciesId.IRON_HANDS:
+            case SpeciesId.IRON_JUGULIS:
+            case SpeciesId.IRON_MOTH:
+            case SpeciesId.IRON_THORNS:
+            case SpeciesId.ROARING_MOON:
+            case SpeciesId.IRON_VALIANT:
+            case SpeciesId.WALKING_WAKE:
+            case SpeciesId.IRON_LEAVES:
+            case SpeciesId.GOUGING_FIRE:
+            case SpeciesId.RAGING_BOLT:
+            case SpeciesId.IRON_BOULDER:
+            case SpeciesId.IRON_CROWN:
             case SpeciesId.KORAIDON:
             case SpeciesId.MIRAIDON:
               return "battle_legendary_kor_mir";
@@ -440,7 +471,6 @@ export class Battle {
     if (range <= 1) {
       return min;
     }
-    const tempRngCounter = globalScene.rngCounter;
     const tempSeedOverride = globalScene.rngSeedOverride;
     const state = Phaser.Math.RND.state();
     if (this.battleSeedState) {
@@ -449,12 +479,10 @@ export class Battle {
       Phaser.Math.RND.sow([shiftCharCodes(this.battleSeed, this.turn << 6)]);
       console.log("Battle Seed:", this.battleSeed);
     }
-    globalScene.rngCounter = this.rngCounter++;
     globalScene.rngSeedOverride = this.battleSeed;
     const ret = randSeedInt(range, min);
     this.battleSeedState = Phaser.Math.RND.state();
     Phaser.Math.RND.state(state);
-    globalScene.rngCounter = tempRngCounter;
     globalScene.rngSeedOverride = tempSeedOverride;
     return ret;
   }
@@ -523,29 +551,25 @@ export class FixedBattleConfig {
     return this;
   }
 }
-
 /**
  * Helper function to generate a random trainer for evil team trainers and the elite 4/champion
- * @param trainerPool The TrainerType or list of TrainerTypes that can possibly be generated
- * @param randomGender whether or not to randomly (50%) generate a female trainer (for use with evil team grunts)
- * @param seedOffset the seed offset to use for the random generation of the trainer
- * @returns the generated trainer
+ * @param trainerPool - The TrainerType or list of TrainerTypes that can possibly be generated
+ * @param randomGender - (default `false`); Whether or not to randomly (50%) generate a female trainer (for use with evil team grunts)
+ * @param seedOffset - (default `0`); A seed offset indicating the invocation count of the function to attempt to choose a random, but unique, trainer from the pool
+ * @returns A function to generate a random trainer
  */
 export function getRandomTrainerFunc(
-  trainerPool: (TrainerType | TrainerType[])[],
+  trainerPool: readonly (TrainerType | readonly TrainerType[])[],
   randomGender = false,
   seedOffset = 0,
 ): GetTrainerFunc {
   return () => {
-    const rand = randSeedInt(trainerPool.length);
-    const trainerTypes: TrainerType[] = [];
+    /** The chosen entry in the pool */
+    let choice = randSeedItem(trainerPool);
 
-    globalScene.executeWithSeedOffset(() => {
-      for (const trainerPoolEntry of trainerPool) {
-        const trainerType = Array.isArray(trainerPoolEntry) ? randSeedItem(trainerPoolEntry) : trainerPoolEntry;
-        trainerTypes.push(trainerType);
-      }
-    }, seedOffset);
+    if (typeof choice !== "number") {
+      choice = seedOffset === 0 ? randSeedItem(choice) : randSeedUniqueItem(choice, seedOffset);
+    }
 
     let trainerGender = TrainerVariant.DEFAULT;
     if (randomGender) {
@@ -565,12 +589,12 @@ export function getRandomTrainerFunc(
       TrainerType.MACRO_GRUNT,
       TrainerType.STAR_GRUNT,
     ];
-    const isEvilTeamGrunt = evilTeamGrunts.includes(trainerTypes[rand]);
+    const isEvilTeamGrunt = evilTeamGrunts.includes(choice);
 
-    if (trainerConfigs[trainerTypes[rand]].hasDouble && isEvilTeamGrunt) {
-      return new Trainer(trainerTypes[rand], randInt(3) === 0 ? TrainerVariant.DOUBLE : trainerGender);
+    if (trainerConfigs[choice].hasDouble && isEvilTeamGrunt) {
+      return new Trainer(choice, randInt(3) === 0 ? TrainerVariant.DOUBLE : trainerGender);
     }
 
-    return new Trainer(trainerTypes[rand], trainerGender);
+    return new Trainer(choice, trainerGender);
   };
 }

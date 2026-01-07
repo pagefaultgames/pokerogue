@@ -1,9 +1,17 @@
-import { existsSync, writeFileSync } from "node:fs";
+/*
+ * SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+ * SPDX-FileContributor: Bertie690
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 import { format, inspect } from "node:util";
 import chalk from "chalk";
-import inquirer from "inquirer";
 import { JSDOM } from "jsdom";
-import { toCamelCase, toPascalSnakeCase, toTitleCase } from "../helpers/strings.js";
+import { getPropertyValue } from "../helpers/arguments.js";
+import { toCamelCase, toPascalSnakeCase, toTitleCase } from "../helpers/casing.js";
+import { writeFileSafe } from "../helpers/file.js";
+import { normalizeDiacritics } from "../helpers/strings.js";
 import { checkGenderAndType } from "./check-gender.js";
 import { fetchNames, INVALID_URL } from "./fetch-names.js";
 import { showHelpText } from "./help-message.js";
@@ -20,7 +28,6 @@ import { showHelpText } from "./help-message.js";
  */
 
 const version = "1.0.0";
-const OUTFILE_ALIASES = /** @type {const} */ (["-o", "--outfile", "--outFile"]);
 
 /**
  * A large object mapping each "base" trainer name to a list of replacements.
@@ -34,11 +41,13 @@ const trainerNamesMap = {
   gentleman: ["rich"],
 };
 
+const OUTFILE_ALIASES = /** @type {const} */ (["-o", "--outfile", "--outFile"]);
+
 async function main() {
   console.log(chalk.hex("#FF7F50")(`🍳 Trainer Name Scraper v${version}`));
 
   const args = process.argv.slice(2);
-  const out = getOutfile(args);
+  const outFile = getPropertyValue(args, OUTFILE_ALIASES);
   // Break out if no args remain
   if (args.length === 0) {
     console.error(
@@ -52,33 +61,7 @@ async function main() {
   }
 
   const output = await scrapeTrainerNames(args);
-  await tryWriteFile(out, output);
-}
-
-/**
- * Get the outfile location from the args array.
- * @param {string[]} args - The command line arguments
- * @returns {string | undefined} The outfile location, or `undefined` if none is provided
- * @remarks
- * This will mutate the `args` array by removing the outfile from the list of arguments.
- */
-function getOutfile(args) {
-  let /** @type {string} */ outFile;
-  // Extract the outfile as either the form "-o=y" or "-o y".
-  const hasEquals = /^.*=(.+)$/g.exec(args[0]);
-  if (hasEquals) {
-    outFile = hasEquals[1];
-    args.splice(0, 1);
-  } else if (/** @type {readonly string[]} */ (OUTFILE_ALIASES).includes(args[0])) {
-    outFile = args[1];
-    args.splice(0, 2);
-  } else {
-    console.log(chalk.hex("#ffa500")("No outfile detected, logging to stdout..."));
-    return;
-  }
-
-  console.log(chalk.hex("#ffa500")(`Using outfile: ${chalk.blue(outFile)}`));
-  return outFile;
+  await tryWriteFile(outFile, output);
 }
 
 /**
@@ -217,40 +200,25 @@ async function doFetch(trainerClass, seenClasses) {
 }
 
 /**
- * Convert all diacritical marks within a string into their normalized variants.
- * @param {string} str - The string to parse
- * @returns {string} The string with normalized diacritics
- */
-function normalizeDiacritics(str) {
-  // Normalizing to NFKD splits all diacritics into the base letter + grapheme (à -> a + `),
-  // which are conveniently all in their own little Unicode block for easy removal
-  return str.normalize("NFKD").replace(/[\u0300-\u036f]/g, "");
-}
-
-/**
  * Try to write the output to a file (or log it to stdout, as the case may be).
  * @param {string | undefined} outFile - The outfile
  * @param {string} output - The scraped output to produce
  */
 async function tryWriteFile(outFile, output) {
   if (!outFile) {
+    console.log(chalk.hex("#ffa500")("No outfile detected, logging to stdout..."));
     console.log(output);
     return;
   }
 
-  if (existsSync(outFile) && !(await promptExisting(outFile))) {
-    process.exitCode = 1;
-    return;
-  }
+  console.log(chalk.hex("#ffa500")(`Using outfile: ${chalk.blue(outFile)}`));
 
   try {
-    writeFileSync(outFile, output);
+    writeFileSafe(outFile, output);
     console.log(chalk.green.bold(`✔ Output written to ${chalk.blue(outFile)} successfully!`));
   } catch (e) {
     let /** @type {string} */ errStr;
-    if (!(e instanceof Error)) {
-      errStr = format("Unknown error occurred: ", e);
-    } else {
+    if (e instanceof Error) {
       // @ts-expect-error - Node.JS file errors always have codes
       switch (e.code) {
         case "ENOENT":
@@ -265,6 +233,8 @@ async function tryWriteFile(outFile, output) {
         default:
           errStr = `Error writing file: ${e.message}`;
       }
+    } else {
+      errStr = format("Unknown error occurred: ", e);
     }
     console.error(chalk.red.bold(errStr));
     process.exitCode = 1;
@@ -272,22 +242,4 @@ async function tryWriteFile(outFile, output) {
   }
 }
 
-/**
- * Confirm overwriting an already-existing file.
- * @param {string} outFile - The outfile
- * @returns {Promise<boolean>} Whether "Yes" or "No" was selected.
- */
-async function promptExisting(outFile) {
-  return (
-    await inquirer.prompt([
-      {
-        type: "confirm",
-        name: "continue",
-        message: `File ${chalk.blue(outFile)} already exists!\nDo you want to replace it?`,
-        default: false,
-      },
-    ])
-  ).continue;
-}
-
-main();
+await main();

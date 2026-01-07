@@ -1,10 +1,14 @@
+import { TerrainType } from "#data/terrain";
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Defog", () => {
   let phaserGame: Phaser.Game;
@@ -16,54 +20,93 @@ describe("Moves - Defog", () => {
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([MoveId.MIST, MoveId.SAFEGUARD, MoveId.SPLASH])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .criticalHits(false)
-      .enemySpecies(SpeciesId.SHUCKLE)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset([MoveId.DEFOG, MoveId.GROWL]);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
-  it("should not allow Safeguard to be active", async () => {
-    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
+  it("should remove terrains", async () => {
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const playerPokemon = game.scene.getPlayerField();
-    const enemyPokemon = game.scene.getEnemyField();
+    game.move.use(MoveId.DEFOG);
+    await game.move.forceEnemyMove(MoveId.ELECTRIC_TERRAIN);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
-    game.move.select(MoveId.SAFEGUARD);
-    await game.move.selectEnemyMove(MoveId.DEFOG);
-    await game.phaseInterceptor.to("BerryPhase");
+    await game.phaseInterceptor.to("MoveEndPhase");
+    expect(game).toHaveTerrain(TerrainType.ELECTRIC);
 
-    expect(playerPokemon[0].isSafeguarded(enemyPokemon[0])).toBe(false);
-
-    expect(true).toBe(true);
+    await game.toEndOfTurn();
+    expect(game).not.toHaveTerrain(TerrainType.ELECTRIC);
   });
 
-  it("should not allow Mist to be active", async () => {
-    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
+  it("should lower opponent's evasion by 1 stage", async () => {
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const playerPokemon = game.scene.getPlayerField();
+    game.move.use(MoveId.DEFOG);
+    await game.toEndOfTurn();
 
-    game.move.select(MoveId.MIST);
-    await game.move.selectEnemyMove(MoveId.DEFOG);
+    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.EVA, -1);
+  });
 
-    await game.toNextTurn();
+  it.each<{ tagType: ArenaTagType; tagName: string }>([
+    { tagType: ArenaTagType.SPIKES, tagName: "Spikes" },
+    { tagType: ArenaTagType.STEALTH_ROCK, tagName: "Stealth Rocks" },
+    { tagType: ArenaTagType.TOXIC_SPIKES, tagName: "Toxic Spikes" },
+    { tagType: ArenaTagType.STICKY_WEB, tagName: "Sticky Web" },
+  ])("should remove $tagName from both sides of the field", async ({ tagType }) => {
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    game.move.select(MoveId.SPLASH);
-    await game.move.selectEnemyMove(MoveId.GROWL);
+    game.scene.arena.addTag(tagType, 0, undefined, game.field.getEnemyPokemon().id, ArenaTagSide.PLAYER);
+    game.scene.arena.addTag(tagType, 0, undefined, game.field.getPlayerPokemon().id, ArenaTagSide.ENEMY);
 
-    await game.phaseInterceptor.to("BerryPhase");
+    game.move.use(MoveId.DEFOG);
+    await game.toEndOfTurn();
 
-    expect(playerPokemon[0].getStatStage(Stat.ATK)).toBe(-1);
+    expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.PLAYER });
+    expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.ENEMY });
+  });
 
-    expect(true).toBe(true);
+  it.each<{ tagType: ArenaTagType; tagName: string }>([
+    { tagType: ArenaTagType.REFLECT, tagName: "Reflect" },
+    { tagType: ArenaTagType.LIGHT_SCREEN, tagName: "Light Screen" },
+    { tagType: ArenaTagType.AURORA_VEIL, tagName: "Aurora Veil" },
+    { tagType: ArenaTagType.SAFEGUARD, tagName: "Safeguard" },
+    { tagType: ArenaTagType.MIST, tagName: "Mist" },
+  ])("should remove $tagName only from the target's side of the field", async ({ tagType }) => {
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+
+    game.scene.arena.addTag(tagType, 0, undefined, game.field.getEnemyPokemon().id, ArenaTagSide.ENEMY);
+    game.scene.arena.addTag(tagType, 0, undefined, game.field.getPlayerPokemon().id, ArenaTagSide.PLAYER);
+
+    game.move.use(MoveId.DEFOG);
+    await game.toEndOfTurn();
+
+    expect(game).toHaveArenaTag({ tagType, side: ArenaTagSide.PLAYER });
+    expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.ENEMY });
+  });
+
+  it.each<{ tagType: ArenaTagType; tagName: string }>([
+    { tagType: ArenaTagType.REFLECT, tagName: "Reflect" },
+    { tagType: ArenaTagType.LIGHT_SCREEN, tagName: "Light Screen" },
+    { tagType: ArenaTagType.AURORA_VEIL, tagName: "Aurora Veil" },
+    { tagType: ArenaTagType.SAFEGUARD, tagName: "Safeguard" },
+    { tagType: ArenaTagType.MIST, tagName: "Mist" },
+  ])("should remove $tagName from the target's side even if the target is the user's ally", async ({ tagType }) => {
+    game.override.battleStyle("double");
+    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
+
+    game.scene.arena.addTag(tagType, 0, undefined, game.field.getPlayerPokemon().id, ArenaTagSide.PLAYER);
+
+    game.move.use(MoveId.DEFOG, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2);
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    await game.toEndOfTurn();
+
+    expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.PLAYER });
   });
 });

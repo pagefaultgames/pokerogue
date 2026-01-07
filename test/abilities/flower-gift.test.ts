@@ -8,7 +8,7 @@ import { WeatherType } from "#enums/weather-type";
 import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Flower Gift", () => {
   let phaserGame: Phaser.Game;
@@ -58,12 +58,12 @@ describe("Abilities - Flower Gift", () => {
     const ally_target = allyAttacker ? BattlerIndex.ENEMY : null;
 
     await game.classicMode.startBattle([SpeciesId.CHERRIM, SpeciesId.MAGIKARP]);
-    const target = allyAttacker ? game.scene.getEnemyField()[0] : game.scene.getPlayerField()[1];
+    const target = allyAttacker ? game.field.getEnemyPokemon() : game.scene.getPlayerField()[1];
     const initialHp = target.getMaxHp();
 
     // Override the ability for the target and attacker only
     vi.spyOn(game.scene.getPlayerField()[1], "getAbility").mockReturnValue(allAbilities[allyAbility]);
-    vi.spyOn(game.scene.getEnemyField()[0], "getAbility").mockReturnValue(allAbilities[enemyAbility]);
+    vi.spyOn(game.field.getEnemyPokemon(), "getAbility").mockReturnValue(allAbilities[enemyAbility]);
 
     // turn 1
     game.move.select(MoveId.SUNNY_DAY, 0);
@@ -93,10 +93,6 @@ describe("Abilities - Flower Gift", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {

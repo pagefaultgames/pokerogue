@@ -4,7 +4,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Ability-Ignoring Moves", () => {
   let phaserGame: Phaser.Game;
@@ -14,10 +14,6 @@ describe("Moves - Ability-Ignoring Moves", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -102,7 +98,7 @@ describe("Moves - Ability-Ignoring Moves", () => {
 
     // Both the initial and redirected instruct use ignored sturdy
     const [enemy1, enemy2] = game.scene.getEnemyField();
-    expect(enemy1.isFainted()).toBe(true);
-    expect(enemy2.isFainted()).toBe(true);
+    expect(enemy1).toHaveFainted();
+    expect(enemy2).toHaveFainted();
   });
 });

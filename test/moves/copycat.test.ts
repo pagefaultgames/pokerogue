@@ -7,7 +7,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Copycat", () => {
   let phaserGame: Phaser.Game;
@@ -17,10 +17,6 @@ describe("Moves - Copycat", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -35,7 +31,7 @@ describe("Moves - Copycat", () => {
       .enemyMoveset(MoveId.SPLASH);
   });
 
-  it("should copy the last move successfully executed", async () => {
+  it("should copy the last move executed across turns", async () => {
     game.override.enemyMoveset(MoveId.SUCKER_PUNCH);
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
@@ -43,6 +39,7 @@ describe("Moves - Copycat", () => {
     await game.toNextTurn();
 
     game.move.select(MoveId.COPYCAT); // Last successful move should be Swords Dance
+    await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
 
     expect(game.field.getPlayerPokemon().getStatStage(Stat.ATK)).toBe(4);

@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import type { LoginRegisterInfoContainerUiHandler } from "#ui/login-register-info-container-ui-handler";
 import type { SettingsDisplayUiHandler } from "#ui/settings-display-ui-handler";
 import i18next from "i18next";
 
@@ -8,6 +9,8 @@ const cancelHandler = () => {
   // Reset the cursor to the current language, if in the settings menu
   if (handler && typeof (handler as SettingsDisplayUiHandler).setOptionCursor === "function") {
     (handler as SettingsDisplayUiHandler).setOptionCursor(-1, 0, true);
+  } else if (handler && typeof (handler as LoginRegisterInfoContainerUiHandler).setInteractive === "function") {
+    (handler as LoginRegisterInfoContainerUiHandler).setInteractive(true);
   }
 };
 
@@ -36,7 +39,7 @@ export const languageOptions = [
   },
   {
     label: "Español (LATAM)",
-    handler: () => changeLocaleHandler("es-MX"),
+    handler: () => changeLocaleHandler("es-419"),
   },
   {
     label: "Français",
@@ -64,11 +67,11 @@ export const languageOptions = [
   },
   {
     label: "简体中文",
-    handler: () => changeLocaleHandler("zh-CN"),
+    handler: () => changeLocaleHandler("zh-Hans"),
   },
   {
     label: "繁體中文",
-    handler: () => changeLocaleHandler("zh-TW"),
+    handler: () => changeLocaleHandler("zh-Hant"),
   },
   {
     label: "Català (Needs Help)",
@@ -83,8 +86,20 @@ export const languageOptions = [
     handler: () => changeLocaleHandler("ru"),
   },
   {
+    label: "Bahasa Indonesia (Needs Help)",
+    handler: () => changeLocaleHandler("id"),
+  },
+  {
+    label: "हिन्दी (Needs Help)",
+    handler: () => changeLocaleHandler("hi"),
+  },
+  {
     label: "Dansk (Needs Help)",
     handler: () => changeLocaleHandler("da"),
+  },
+  {
+    label: "Norsk bokmål (Needs Help)",
+    handler: () => changeLocaleHandler("nb-NO"),
   },
   {
     label: "Română (Needs Help)",

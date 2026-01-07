@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
 {
   "compilerOptions": {
     "target": "ES2023",
@@ -11,8 +16,14 @@
       "DOM.AsyncIterable",
       "DOM.Iterable",
       "ScriptHost",
-      "WebWorker.ImportScripts"
+      "WebWorker.ImportScripts",
+      "ES2024.Object",
+      // NOTE: Be *very* mindful of these when updating typescript versions,
+      // as their definitions may change in breaking ways
+      "ESNext.Iterator",
+      "ESNext.Collection"
     ],
+    "skipLibCheck": true, // Safe and almost always beneficial
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "esModuleInterop": true,
@@ -26,6 +37,7 @@
       "#abilities/*": ["./src/data/abilities/*.ts"],
       "#api/*": ["./src/plugins/api/*.ts"],
       "#balance/*": ["./src/data/balance/*.ts"],
+      "#constants/*": ["./src/constants/*.ts"],
       "#enums/*": ["./src/enums/*.ts"],
       "#events/*": ["./src/events/*.ts"],
       "#field/*": ["./src/field/*.ts"],
@@ -49,7 +61,7 @@
         "./src/system/*.ts"
       ],
       "#trainers/*": ["./src/data/trainers/*.ts"],
-      "#types/*": ["./src/@types/helpers/*.ts", "./src/@types/*.ts", "./src/typings/phaser/*.ts"],
+      "#types/*": ["./src/@types/*.ts"],
       "#ui/*": [
         "./src/ui/battle-info/*.ts",
         "./src/ui/containers/*.ts",
@@ -66,12 +78,5 @@
   },
   // Exclude checking for script JS files as those are covered by the folder's `jsconfig.json`
   "include": ["**/*.ts", "**/*.d.ts"],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "vite.config.ts",
-    "vitest.config.ts",
-    "vitest.workspace.ts",
-    "public/service-worker.js"
-  ]
+  "exclude": ["node_modules", "dist"]
 }

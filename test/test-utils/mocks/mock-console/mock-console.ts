@@ -1,10 +1,12 @@
 import { DEBUG_COLOR, NEW_TURN_COLOR, TRACE_COLOR, UI_MSG_COLOR } from "#app/constants/colors";
 import { inferColorFormat } from "#test/test-utils/mocks/mock-console/infer-color";
-import { coerceArray } from "#utils/common";
+import { coerceArray } from "#utils/array";
 import { type InspectOptions, inspect } from "node:util";
 import chalk, { type ChalkInstance } from "chalk";
 
 // Tell chalk we support truecolor
+// TODO: Find a reliable, easy way to determine whether the actual final output is being piped to a file WHILE CIRCUMVENTING VITEST,
+// and disable color if that is determined to be the case
 chalk.level = 3;
 
 // TODO: Review this
@@ -34,7 +36,7 @@ export class MockConsole implements Omit<Console, "Console"> {
    * The original `Console` object, preserved to avoid overwriting
    * Vitest's native `console.log` wrapping.
    */
-  private console = console;
+  private readonly console = console;
 
   //#region Static Properties
 
@@ -56,7 +58,7 @@ export class MockConsole implements Omit<Console, "Console"> {
     MockConsole.queuedWarnings.splice(0);
   }
 
-  //#endregion Private Properties
+  //#endregion Static Properties
 
   //#region Utilities
 

@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+
+SPDX-License-Identifier: CC-BY-NC-SA-4.0
+-->
+
 # Localization 101
 
 PokéRogue's localization team puts immense effort into making the game accessible around the world, supporting over 12 different languages at the time of writing this document. \
@@ -15,23 +21,23 @@ This is the easiest way to keep in touch with both the Translation Team and othe
 # About the `pokerogue-locales` submodule
 
 PokéRogue's translations are managed under a separate dedicated repository, [`pokerogue-locales`](https://github.com/pagefaultgames/pokerogue-locales/).
-This repository is integrated into the main one as a [git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules) within the `public/locales` folder.
+This repository is integrated into the main one as a [git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules) within the `locales` folder.
 
 ## What Is a Submodule?
 
 In essence, a submodule is a way for one repository (i.e. `pokerogue`) to use another repository (i.e. `pokerogue-locales`) internally.
 The parent repo (the "superproject") houses a cloned version of the 2nd repository (the "submodule") inside it, making locales effectively a "repository within a repository", so to speak.
 
->[!TIP]
+> [!TIP]
 > Many popular IDEs have integrated `git` support with special handling around submodules:
 >
-> ![Image showing Visual Studio Code's `git` integration in the File Explorer. A blue "S" in the top right hand corner indicates the `public/locales` folder is a submodule.](https://github.com/user-attachments/assets/bd42d354-c65b-4cbe-8873-23d760dc1714 "What the `public/locales` submodule looks like in VS Code's File Explorer")
+> ![Image showing Visual Studio Code's `git` integration in the File Explorer. A blue "S" in the top right hand corner indicates the `locales` folder is a submodule.](https://github.com/user-attachments/assets/00674c3f-72ee-42f7-8b09-4008d466b263 "What the `locales` submodule looks like in VS Code's File Explorer")
 >
 > ![Image showing Visual Studio Code's Source Control tab. A separate dropdown can be seen for each individual submodule.](https://github.com/user-attachments/assets/8b4d3f64-aec1-4474-91df-03dc1252a2fa "Making commits on submodules without even changing directories!")
 
 ## Fetching Changes from Submodules
 
-The following command will initialize your branch's locales repository and update its HEAD:
+The following command will initialize your branch's `assets` and `locales` repository and update its HEAD:
 ```bash
 pnpm update-locales
 ```
@@ -40,11 +46,11 @@ pnpm update-locales
 > This command is run _automatically_ after cloning, merging or changing branches, so you should rarely have to run it manually.
 
 > [!IMPORTANT]
-> If you EVER run into issues with the `locales` submodule, try deleting the `.git/modules/public` and `public/locales` folders before re-initializing it again.
+> If you EVER run into issues with the `locales` submodule, try deleting the `.git/modules/locales` and `locales` folders before re-initializing it again.
 
 ## How Are Translations Integrated?
 
-This project uses the [i18next library](https://www.i18next.com/) to integrate translations from `public/locales` into the source code.
+This project uses the [i18next library](https://www.i18next.com/) to integrate translations from `locales` into the source code.
 The basic process for fetching translated text goes roughly as follows:
 1. The source code fetches text by a given key.
     ```ts
@@ -76,7 +82,7 @@ Since these two PRs aren't _technically_ linked, it's important to coordinate wi
 
 One perk of submodules is you don't actually _need_ to clone the locales repository to start contributing - `git` already does that for you on initialization.
 
-Given `pokerogue-locales` is a full-fledged `git` repository _inside_ `pokerogue`, making changes is roughly the same as normal, merely using `public/locales` as your root directory.
+Given `pokerogue-locales` is a full-fledged `git` repository _inside_ `pokerogue`, making changes is roughly the same as normal, merely using `locales` as your root directory.
 
 > [!WARNING]
 > Make sure to checkout or rebase onto `upstream/main` (`pnpm update-locales:remote`) **BEFORE** creating a locales PR!
@@ -91,16 +97,22 @@ If this feature requires new text, the text should be integrated into the code w
     - For any feature pulled from the mainline Pokémon games (e.g. a Move or Ability implementation), it's best practice to include a source link for any added text. \
     [Poké Corpus](https://abcboy101.github.io/poke-corpus/) is a great resource for finding text from the mainline games; otherwise, a video/picture showing the text being displayed should suffice.
     - You should also [notify the current Head of Translation](#notifying-translation) to ensure a fast response.
-3. Your locales should use the following format:
-  - File names should be in `kebab-case`. Example: `trainer-names.json`
-  - Key names should be in `camelCase`. Example: `aceTrainer`
-    - If you make use of i18next's inbuilt [context support](https://www.i18next.com/translation-function/context), you need to use `snake_case` for the context key. Example: `aceTrainer_male`
-4. At this point, you may begin [testing locales integration in your main PR](#documenting-locales-changes).
-5. The Translation Team will approve the locales PR (after corrections, if necessary), then merge it into `pokerogue-locales`.
-6. The Dev Team will approve your main PR for your feature, then merge it into PokéRogue's beta environment.
+3. At this point, you may begin [testing locales integration in your main PR](#documenting-locales-changes).
+4. The Translation Team will approve the locales PR (after corrections, if necessary), then merge it into `pokerogue-locales`.
+5. The Dev Team will approve your main PR for your feature, then merge it into PokéRogue's beta environment.
 
 [^2]: For those wondering, the reason for choosing English specifically is due to it being the master language set in Pontoon (the program used by the Translation Team to perform locale updates).
 If a key is present in any language _except_ the master language, it won't appear anywhere else in the translation tool, rendering missing English keys quite a hassle.
+
+> [!IMPORTANT]
+> The Dev and Translation teams have strict requirements for ensuring consistency of newly added locales entries.
+> PRs failing these requirements **will not be mergeable into `locales`**!  
+> - File names should be in `kebab-case`. Example: `trainer-names.json`
+> - Key names should be in `camelCase`. Example: `aceTrainer`
+> - Keys making use of i18next's inbuilt [context support](https://www.i18next.com/translation-function/context) must use `snake_case` for the context extension[^3]. Example: `aceTrainer_male`
+
+[^3]: If your PR introduces a new context extension not already used in the codebase, the validation workflow will be unable to detect it and flag it as invalid. \
+To fix this, update the [`i18nextKeyExtensions`](https://github.com/pagefaultgames/pokerogue-locales/blob/main/.github/scripts/locales-format-checker/constants.js#L30) array with the new entries.
 
 ### Requirements for Modifying Translated Text
 
@@ -119,14 +131,14 @@ The basic procedure is roughly as follows:
     Many IDEs with `git` integration support doing this from the GUI, \
     or you can simply do it via command-line:
     ```bash
-    cd public/locales
+    cd locales
     git checkout your-branch-name-here
     ```
 2. Set some of the [in-game overrides](../CONTRIBUTING.md#1---manual-testing) inside `overrides.ts` to values corresponding to the interactions being tested.
 3. Start a local dev server (`pnpm start:dev`) and open localhost in your browser.
-4. Take screenshots or record a video of the locales changes being displayed in-game using the software of your choice[^2].
+4. Take screenshots or record a video of the locales changes being displayed in-game using the software of your choice[^3].
 
-[^2]: For those lacking a screen capture device, [OBS Studio](https://obsproject.com) is a popular open-source option.
+[^3]: For those lacking a screen capture device, [OBS Studio](https://obsproject.com) is a popular open-source option.
 
 > [!NOTE]
 > For those aiming to film their changes, bear in mind that GitHub has a hard **10mB limit** on uploaded media content.

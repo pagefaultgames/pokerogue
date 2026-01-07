@@ -285,6 +285,12 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     switch (arenaEffectChangedEvent.constructor) {
       case TagAddedEvent: {
         const tagAddedEvent = arenaEffectChangedEvent as TagAddedEvent;
+
+        const excludedTags = [ArenaTagType.PENDING_HEAL];
+        if (excludedTags.includes(tagAddedEvent.arenaTagType)) {
+          return;
+        }
+
         const isArenaTrapTag = globalScene.arena.getTag(tagAddedEvent.arenaTagType) instanceof EntryHazardTag;
         let arenaEffectType: ArenaEffectType;
 
@@ -317,7 +323,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
         this.fieldEffectInfo.push({
           name,
           effectType: arenaEffectType,
-          maxDuration: tagAddedEvent.duration,
+          maxDuration: tagAddedEvent.maxDuration,
           duration: tagAddedEvent.duration,
           tagType: tagAddedEvent.arenaTagType,
         });
@@ -353,7 +359,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
           ),
           effectType:
             fieldEffectChangedEvent instanceof WeatherChangedEvent ? ArenaEffectType.WEATHER : ArenaEffectType.TERRAIN,
-          maxDuration: fieldEffectChangedEvent.duration,
+          maxDuration: fieldEffectChangedEvent.maxDuration,
           duration: fieldEffectChangedEvent.duration,
         };
 
@@ -362,10 +368,10 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
           if (newInfo.name !== undefined) {
             this.fieldEffectInfo.push(newInfo); // Adds the info to the array if it doesn't already exist and is defined
           }
-        } else if (!newInfo.name) {
-          this.fieldEffectInfo.splice(foundIndex, 1); // Removes the old info if the new one is undefined
+        } else if (newInfo.name) {
+          this.fieldEffectInfo[foundIndex] = newInfo; // Replace the old info
         } else {
-          this.fieldEffectInfo[foundIndex] = newInfo; // Otherwise, replace the old info
+          this.fieldEffectInfo.splice(foundIndex, 1); // Otherwise remove the old info if the new one is undefined
         }
         break;
       }

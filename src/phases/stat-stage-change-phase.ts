@@ -25,20 +25,20 @@ export type StatStageChangeCallback = (
 // TODO: Refactor this mess of a phase
 export class StatStageChangePhase extends PokemonPhase {
   public readonly phaseName = "StatStageChangePhase";
-  private stats: BattleStat[];
-  private selfTarget: boolean;
-  private stages: number;
-  private showMessage: boolean;
-  private ignoreAbilities: boolean;
-  private canBeCopied: boolean;
-  private onChange: StatStageChangeCallback | null;
-  private comingFromMirrorArmorUser: boolean;
-  private comingFromStickyWeb: boolean;
+  private readonly stats: readonly BattleStat[];
+  private readonly selfTarget: boolean;
+  private readonly stages: number;
+  private readonly showMessage: boolean;
+  private readonly ignoreAbilities: boolean;
+  private readonly canBeCopied: boolean;
+  private readonly onChange: StatStageChangeCallback | null;
+  private readonly comingFromMirrorArmorUser: boolean;
+  private readonly comingFromStickyWeb: boolean;
 
   constructor(
     battlerIndex: BattlerIndex,
     selfTarget: boolean,
-    stats: BattleStat[],
+    stats: readonly BattleStat[],
     stages: number,
     showMessage = true,
     ignoreAbilities = false,
@@ -86,9 +86,7 @@ export class StatStageChangePhase extends PokemonPhase {
     /** Gets the position of last enemy or player pokemon that used ability or move, primarily for double battles involving Mirror Armor */
     if (pokemon.isPlayer()) {
       /** If this SSCP is not from sticky web, then we find the opponent pokemon that last did something */
-      if (!this.comingFromStickyWeb) {
-        opponentPokemon = globalScene.getEnemyField()[globalScene.currentBattle.lastEnemyInvolved];
-      } else {
+      if (this.comingFromStickyWeb) {
         /** If this SSCP is from sticky web, then check if pokemon that last sucessfully used sticky web is on field */
         const stickyTagID = globalScene.arena.findTagsOnSide(
           (t: ArenaTag) => t.tagType === ArenaTagType.STICKY_WEB,
@@ -99,10 +97,10 @@ export class StatStageChangePhase extends PokemonPhase {
             opponentPokemon = e;
           }
         });
+      } else {
+        opponentPokemon = globalScene.getEnemyField()[globalScene.currentBattle.lastEnemyInvolved];
       }
-    } else if (!this.comingFromStickyWeb) {
-      opponentPokemon = globalScene.getPlayerField()[globalScene.currentBattle.lastPlayerInvolved];
-    } else {
+    } else if (this.comingFromStickyWeb) {
       const stickyTagID = globalScene.arena.findTagsOnSide(
         (t: ArenaTag) => t.tagType === ArenaTagType.STICKY_WEB,
         ArenaTagSide.ENEMY,
@@ -112,6 +110,8 @@ export class StatStageChangePhase extends PokemonPhase {
           opponentPokemon = e;
         }
       });
+    } else {
+      opponentPokemon = globalScene.getPlayerField()[globalScene.currentBattle.lastPlayerInvolved];
     }
 
     if (!pokemon.isActive(true)) {
@@ -210,7 +210,7 @@ export class StatStageChangePhase extends PokemonPhase {
       }
 
       if (stages.value > 0 && this.canBeCopied) {
-        for (const opponent of pokemon.getOpponents()) {
+        for (const opponent of pokemon.getOpponentsGenerator()) {
           applyAbAttrs("StatStageChangeCopyAbAttr", { pokemon: opponent, stats: this.stats, numStages: stages.value });
         }
       }
@@ -223,10 +223,7 @@ export class StatStageChangePhase extends PokemonPhase {
       });
 
       // Look for any other stat change phases; if this is the last one, do White Herb check
-      const existingPhase = globalScene.phaseManager.findPhase(
-        p => p.is("StatStageChangePhase") && p.battlerIndex === this.battlerIndex,
-      );
-      if (!existingPhase?.is("StatStageChangePhase")) {
+      if (!globalScene.phaseManager.hasPhaseOfType("StatStageChangePhase", p => p.battlerIndex === this.battlerIndex)) {
         // Apply White Herb if needed
         const whiteHerb = globalScene.applyModifier(
           ResetNegativeStatStageModifier,
@@ -297,50 +294,7 @@ export class StatStageChangePhase extends PokemonPhase {
     }
   }
 
-  aggregateStatStageChanges(): void {
-    const accEva: BattleStat[] = [Stat.ACC, Stat.EVA];
-    const isAccEva = accEva.some(s => this.stats.includes(s));
-    let existingPhase: StatStageChangePhase;
-    if (this.stats.length === 1) {
-      while (
-        (existingPhase = globalScene.phaseManager.findPhase(
-          p =>
-            p.is("StatStageChangePhase")
-            && p.battlerIndex === this.battlerIndex
-            && p.stats.length === 1
-            && p.stats[0] === this.stats[0]
-            && p.selfTarget === this.selfTarget
-            && p.showMessage === this.showMessage
-            && p.ignoreAbilities === this.ignoreAbilities,
-        ) as StatStageChangePhase)
-      ) {
-        this.stages += existingPhase.stages;
-
-        if (!globalScene.phaseManager.tryRemovePhase(p => p === existingPhase)) {
-          break;
-        }
-      }
-    }
-    while (
-      (existingPhase = globalScene.phaseManager.findPhase(
-        p =>
-          p.is("StatStageChangePhase")
-          && p.battlerIndex === this.battlerIndex
-          && p.selfTarget === this.selfTarget
-          && accEva.some(s => p.stats.includes(s)) === isAccEva
-          && p.stages === this.stages
-          && p.showMessage === this.showMessage
-          && p.ignoreAbilities === this.ignoreAbilities,
-      ) as StatStageChangePhase)
-    ) {
-      this.stats.push(...existingPhase.stats);
-      if (!globalScene.phaseManager.tryRemovePhase(p => p === existingPhase)) {
-        break;
-      }
-    }
-  }
-
-  getStatStageChangeMessages(stats: BattleStat[], stages: number, relStages: number[]): string[] {
+  getStatStageChangeMessages(stats: readonly BattleStat[], stages: number, relStages: number[]): string[] {
     const messages: string[] = [];
 
     const relStageStatIndexes = {};

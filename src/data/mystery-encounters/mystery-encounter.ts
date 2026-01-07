@@ -25,7 +25,8 @@ import {
   StatusEffectRequirement,
   WaveRangeRequirement,
 } from "#mystery-encounters/mystery-encounter-requirements";
-import { coerceArray, randSeedInt } from "#utils/common";
+import { coerceArray } from "#utils/array";
+import { randSeedInt } from "#utils/common";
 import { capitalizeFirstLetter } from "#utils/strings";
 
 export interface EncounterStartOfBattleEffect {
@@ -346,7 +347,7 @@ export class MysteryEncounter implements IMysteryEncounter {
       if (activeMon.length > 0) {
         this.primaryPokemon = activeMon[0];
       } else {
-        this.primaryPokemon = globalScene.getPlayerParty().filter(p => p.isAllowedInBattle())[0];
+        this.primaryPokemon = globalScene.getPlayerParty().find(p => p.isAllowedInBattle());
       }
       return true;
     }
@@ -368,10 +369,10 @@ export class MysteryEncounter implements IMysteryEncounter {
       const truePrimaryPool: PlayerPokemon[] = [];
       const overlap: PlayerPokemon[] = [];
       for (const qp of qualified) {
-        if (!this.secondaryPokemon.includes(qp)) {
-          truePrimaryPool.push(qp);
-        } else {
+        if (this.secondaryPokemon.includes(qp)) {
           overlap.push(qp);
+        } else {
+          truePrimaryPool.push(qp);
         }
       }
       if (truePrimaryPool.length > 0) {

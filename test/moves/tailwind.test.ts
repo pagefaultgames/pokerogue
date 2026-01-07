@@ -6,7 +6,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Tailwind", () => {
   let phaserGame: Phaser.Game;
@@ -16,10 +16,6 @@ describe("Moves - Tailwind", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -34,8 +30,7 @@ describe("Moves - Tailwind", () => {
 
   it("doubles the Speed stat of the Pokemons on its side", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MEOWTH]);
-    const magikarp = game.scene.getPlayerField()[0];
-    const meowth = game.scene.getPlayerField()[1];
+    const [magikarp, meowth] = game.scene.getPlayerField();
 
     const magikarpSpd = magikarp.getStat(Stat.SPD);
     const meowthSpd = meowth.getStat(Stat.SPD);

@@ -1,20 +1,15 @@
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
-import type { BattlerIndex } from "#enums/battler-index";
+import { ArenaTagSide } from "#enums/arena-tag-side";
+import { inSpeedOrder } from "#utils/speed-order-generator";
 
 export class CheckStatusEffectPhase extends Phase {
   public readonly phaseName = "CheckStatusEffectPhase";
-  private order: BattlerIndex[];
-  constructor(order: BattlerIndex[]) {
-    super();
-    this.order = order;
-  }
 
   start() {
-    const field = globalScene.getField();
-    for (const o of this.order) {
-      if (field[o].status?.isPostTurn()) {
-        globalScene.phaseManager.unshiftNew("PostTurnStatusEffectPhase", o);
+    for (const p of inSpeedOrder(ArenaTagSide.BOTH)) {
+      if (p.status?.isPostTurn()) {
+        globalScene.phaseManager.unshiftNew("PostTurnStatusEffectPhase", p.getBattlerIndex());
       }
     }
     this.end();

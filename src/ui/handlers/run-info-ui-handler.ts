@@ -1,5 +1,4 @@
 import { globalScene } from "#app/global-scene";
-import { getBiomeName } from "#balance/biomes";
 import { getNatureName, getNatureStatMultiplier } from "#data/nature";
 import { getPokeballAtlasKey } from "#data/pokeball";
 import { getTypeRgb } from "#data/type";
@@ -25,7 +24,7 @@ import type { SessionSaveData } from "#types/save-data";
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
-import { formatFancyLargeNumber, formatLargeNumber, formatMoney, getPlayTimeString } from "#utils/common";
+import { formatFancyLargeNumber, formatLargeNumber, formatMoney, getBiomeName, getPlayTimeString } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";
@@ -775,7 +774,7 @@ export class RunInfoUiHandler extends UiHandler {
         abilityLabel = abilityLabel.charAt(0);
       }
       const pPassiveInfo = pokemon.passive ? passiveLabel + ": " + pokemon.getPassiveAbility().name : "";
-      const pAbilityInfo = abilityLabel + ": " + pokemon.getAbility().name;
+      const pAbilityInfo = abilityLabel + ": " + pokemon.getAbility(true).name;
       // Japanese is set to a greater line spacing of 35px in addBBCodeTextObject() if lineSpacing < 12.
       const lineSpacing = i18next.resolvedLanguage === "ja" ? 3 : 3;
       const pokeInfoText = addBBCodeTextObject(0, 0, pName, TextStyle.SUMMARY, {
@@ -844,7 +843,7 @@ export class RunInfoUiHandler extends UiHandler {
         shinyStar.setOrigin(0, 0);
         shinyStar.setScale(0.65);
         shinyStar.setPositionRelative(pokeInfoTextContainer, 28, 0);
-        shinyStar.setTint(getVariantTint(!doubleShiny ? pokemon.getVariant() : pokemon.variant));
+        shinyStar.setTint(getVariantTint(doubleShiny ? pokemon.variant : pokemon.getVariant()));
         marksContainer.add(shinyStar);
         this.getUi().bringToTop(shinyStar);
         if (doubleShiny) {
@@ -860,7 +859,7 @@ export class RunInfoUiHandler extends UiHandler {
 
       // Pokemon Moveset
       // Need to check if dynamically typed moves
-      const pokemonMoveset = pokemon.getMoveset();
+      const pokemonMoveset = pokemon.getMoveset(true);
       const movesetContainer = globalScene.add.container(70, -29);
       const pokemonMoveBgs: Phaser.GameObjects.NineSlice[] = [];
       const pokemonMoveLabels: Phaser.GameObjects.Text[] = [];
@@ -1141,12 +1140,12 @@ export class RunInfoUiHandler extends UiHandler {
         break;
       case Button.CYCLE_SHINY:
         if (this.isVictory && this.pageMode !== RunInfoUiMode.ENDING_ART) {
-          if (!this.hallofFameContainer.visible) {
-            this.hallofFameContainer.setVisible(true);
-            this.pageMode = RunInfoUiMode.HALL_OF_FAME;
-          } else {
+          if (this.hallofFameContainer.visible) {
             this.hallofFameContainer.setVisible(false);
             this.pageMode = RunInfoUiMode.MAIN;
+          } else {
+            this.hallofFameContainer.setVisible(true);
+            this.pageMode = RunInfoUiMode.HALL_OF_FAME;
           }
         }
         break;

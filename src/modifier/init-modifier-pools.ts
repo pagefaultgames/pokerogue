@@ -1,7 +1,3 @@
-/* biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
-import type { initModifierTypes } from "#modifiers/modifier-type";
-/* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
-
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { pokemonEvolutions } from "#balance/pokemon-evolutions";
@@ -29,6 +25,7 @@ import {
   trainerModifierPool,
   wildModifierPool,
 } from "#modifiers/modifier-pools";
+import type { initModifierTypes } from "#modifiers/modifier-type";
 import { WeightedModifierType } from "#modifiers/modifier-type";
 import type { WeightedModifierTypeWeightFunc } from "#types/modifier-types";
 
@@ -332,7 +329,7 @@ function initGreatModifierPool() {
     ),
     new WeightedModifierType(
       modifierTypes.VOUCHER,
-      (_party: Pokemon[], rerollCount: number) => (!globalScene.gameMode.isDaily ? Math.max(1 - rerollCount, 0) : 0),
+      (_party: Pokemon[], rerollCount: number) => (globalScene.gameMode.isDaily ? 0 : Math.max(1 - rerollCount, 0)),
       1,
     ),
   ].map(m => {
@@ -555,9 +552,9 @@ function initUltraModifierPool() {
     new WeightedModifierType(
       modifierTypes.TERA_ORB,
       () =>
-        !globalScene.gameMode.isClassic
-          ? Math.min(Math.max(Math.floor(globalScene.currentBattle.waveIndex / 50) * 2, 1), 4)
-          : 0,
+        globalScene.gameMode.isClassic
+          ? 0
+          : Math.min(Math.max(Math.floor(globalScene.currentBattle.waveIndex / 50) * 2, 1), 4),
       4,
     ),
     new WeightedModifierType(modifierTypes.QUICK_CLAW, 3),
@@ -579,7 +576,7 @@ function initRogueModifierPool() {
     new WeightedModifierType(modifierTypes.SCOPE_LENS, 4),
     new WeightedModifierType(modifierTypes.BATON, 2),
     new WeightedModifierType(modifierTypes.SOUL_DEW, 7),
-    new WeightedModifierType(modifierTypes.CATCHING_CHARM, () => (!globalScene.gameMode.isClassic ? 4 : 0), 4),
+    new WeightedModifierType(modifierTypes.CATCHING_CHARM, () => (globalScene.gameMode.isClassic ? 0 : 4), 4),
     new WeightedModifierType(modifierTypes.ABILITY_CHARM, skipInClassicAfterWave(189, 6)),
     new WeightedModifierType(modifierTypes.FOCUS_BAND, 5),
     new WeightedModifierType(modifierTypes.KINGS_ROCK, 3),
@@ -602,8 +599,7 @@ function initRogueModifierPool() {
     ),
     new WeightedModifierType(
       modifierTypes.VOUCHER_PLUS,
-      (_party: Pokemon[], rerollCount: number) =>
-        !globalScene.gameMode.isDaily ? Math.max(3 - rerollCount * 1, 0) : 0,
+      (_party: Pokemon[], rerollCount: number) => (globalScene.gameMode.isDaily ? 0 : Math.max(3 - rerollCount * 1, 0)),
       3,
     ),
   ].map(m => {

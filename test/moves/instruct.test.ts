@@ -12,7 +12,7 @@ import type { MovePhase } from "#phases/move-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import type { TurnMove } from "#types/turn-move";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Instruct", () => {
   let phaserGame: Phaser.Game;
@@ -28,10 +28,6 @@ describe("Moves - Instruct", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -108,7 +104,7 @@ describe("Moves - Instruct", () => {
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
     instructSuccess(shuckle, MoveId.SONIC_BOOM);
-    expect(game.scene.getEnemyField()[0].getInverseHp()).toBe(40);
+    expect(game.field.getEnemyPokemon().getInverseHp()).toBe(40);
   });
 
   // TODO: Enable test case once gigaton hammer (and blood moon) are reworked
@@ -251,7 +247,7 @@ describe("Moves - Instruct", () => {
     // fiery dance triggered dancer successfully for a total of 4 hits
     // Enemy level is set to a high value so that it does not faint even after all 4 hits
     instructSuccess(volcarona, MoveId.FIERY_DANCE);
-    expect(game.scene.getEnemyField()[0].turnData.attacksReceived.length).toBe(4);
+    expect(game.field.getEnemyPokemon().turnData.attacksReceived.length).toBe(4);
   });
 
   it("should not repeat move when switching out", async () => {
@@ -498,7 +494,7 @@ describe("Moves - Instruct", () => {
       .enemyLevel(1);
     await game.classicMode.startBattle([SpeciesId.KORAIDON, SpeciesId.KLEFKI]);
 
-    const koraidon = game.scene.getPlayerField()[0]!;
+    const koraidon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.BREAKING_SWIPE);
     await game.phaseInterceptor.to("TurnEndPhase", false);
@@ -527,7 +523,7 @@ describe("Moves - Instruct", () => {
       .enemyLevel(1);
     await game.classicMode.startBattle([SpeciesId.KORAIDON, SpeciesId.KLEFKI]);
 
-    const koraidon = game.scene.getPlayerField()[0]!;
+    const koraidon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.BRUTAL_SWING);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -587,7 +583,7 @@ describe("Moves - Instruct", () => {
       .enemyLevel(5);
     await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.IVYSAUR]);
 
-    const [, ivysaur] = game.scene.getPlayerField();
+    const ivysaur = game.scene.getPlayerField()[1];
 
     game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER);
     game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);

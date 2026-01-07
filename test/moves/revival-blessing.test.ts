@@ -6,7 +6,7 @@ import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Revival Blessing", () => {
   let phaserGame: Phaser.Game;
@@ -16,10 +16,6 @@ describe("Moves - Revival Blessing", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -94,7 +90,7 @@ describe("Moves - Revival Blessing", () => {
       .enemyLevel(100);
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC, SpeciesId.GYARADOS]);
 
-    const feebas = game.scene.getPlayerField()[0];
+    const feebas = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.SPLASH);
     game.move.select(MoveId.REVIVAL_BLESSING, 1);
@@ -112,24 +108,23 @@ describe("Moves - Revival Blessing", () => {
 
     expect(feebas.isFainted()).toBe(false);
     expect(feebas.hp).toBe(toDmgValue(0.5 * feebas.getMaxHp()));
-    expect(game.scene.getPlayerField()[0]).toBe(feebas);
+    expect(game.field.getPlayerPokemon()).toBe(feebas);
   });
 
   it("should not summon multiple pokemon to the same slot when reviving the enemy ally in doubles", async () => {
     game.override
       .battleStyle("double")
       .enemyMoveset([MoveId.REVIVAL_BLESSING])
-      .moveset([MoveId.SPLASH])
+      .moveset([MoveId.SPLASH, MoveId.JUDGMENT])
+      .startingLevel(100)
       .startingWave(25); // 2nd rival battle - must have 3+ pokemon
     await game.classicMode.startBattle([SpeciesId.ARCEUS, SpeciesId.GIRATINA]);
 
-    const enemyFainting = game.scene.getEnemyField()[0];
+    const enemyFainting = game.field.getEnemyPokemon();
 
-    game.move.select(MoveId.SPLASH, 0);
+    game.move.use(MoveId.JUDGMENT, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, 1);
-    await game.killPokemon(enemyFainting);
 
-    await game.phaseInterceptor.to("BerryPhase");
     await game.toNextTurn();
     // If there are incorrectly two switch phases into this slot, the fainted pokemon will end up in slot 3
     // Make sure it's still in slot 1

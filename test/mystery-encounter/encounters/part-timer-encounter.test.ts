@@ -15,7 +15,7 @@ import {
   runSelectMysteryEncounterOption,
 } from "#test/mystery-encounter/encounter-test-utils";
 import { GameManager } from "#test/test-utils/game-manager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/partTimer";
 // Pyukumuku for lowest speed, Regieleki for highest speed, Feebas for lowest "bulk", Melmetal for highest "bulk"
@@ -48,10 +48,6 @@ describe("Part-Timer - Mystery Encounter", () => {
       biomeMap.set(biome, [MysteryEncounterType.PART_TIMER]);
     });
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(biomeMap);
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   it("should have the correct properties", async () => {
@@ -168,6 +164,7 @@ describe("Part-Timer - Mystery Encounter", () => {
       // Override party levels to 50 so stats can be fully reflective
       scene.getPlayerParty().forEach(p => {
         p.level = 50;
+        p.ivs = [0, 0, 0, 0, 0, 0];
         p.calculateStats();
       });
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 3 });

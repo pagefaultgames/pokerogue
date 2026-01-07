@@ -17,7 +17,7 @@ import { GameManager } from "#test/test-utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/anOfferYouCantRefuse";
 /** Gyarados for Indimidate */
@@ -51,10 +51,6 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
       biomeMap.set(biome, [MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE]);
     });
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(biomeMap);
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   it("should have the correct properties", async () => {

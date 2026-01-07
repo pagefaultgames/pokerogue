@@ -11,7 +11,7 @@ import { QuietFormChangePhase } from "#phases/quiet-form-change-phase";
 import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Forecast", () => {
   let phaserGame: Phaser.Game;
@@ -39,10 +39,6 @@ describe("Abilities - Forecast", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -76,7 +72,7 @@ describe("Abilities - Forecast", () => {
 
       vi.spyOn(game.scene.getPlayerParty()[5], "getAbility").mockReturnValue(allAbilities[AbilityId.CLOUD_NINE]);
 
-      const castform = game.scene.getPlayerField()[0];
+      const castform = game.field.getPlayerPokemon();
       expect(castform.formIndex).toBe(NORMAL_FORM);
 
       game.move.select(MoveId.RAIN_DANCE);

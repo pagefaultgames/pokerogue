@@ -1,3 +1,11 @@
+/*
+ * SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+ * SPDX-FileContributor: FlashfyreDev
+ * SPDX-FileContributor: SirzBenjie
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 precision mediump float;
 
 uniform mat4 uProjectionMatrix;

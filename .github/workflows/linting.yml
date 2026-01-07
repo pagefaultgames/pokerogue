@@ -6,15 +6,20 @@ on:
       - main
       - beta
       - release
-      - 'hotfix*'
+      - "hotfix*"
   pull_request:
     branches:
       - main
       - beta
       - release
-      - 'hotfix*'
+      - "hotfix*"
   merge_group:
     types: [checks_requested]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   run-linters:
@@ -24,86 +29,37 @@ jobs:
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: "recursive"
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
 
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: ".nvmrc"
-          cache: "pnpm"
-
-      - name: Install Node modules
-        run: pnpm i
+      - uses: ./.github/actions/setup-deps
 
       # Lint files with Biome-Lint - https://biomejs.dev/linter/
-      - name: Run Biome-Lint
+      - name: Lint with Biome
         run: pnpm biome-ci
-        id: biome_lint
-        continue-on-error: true
+        if: ${{ !cancelled() }}
 
       # Validate dependencies with dependency-cruiser - https://github.com/sverweij/dependency-cruiser
-      - name: Run Dependency-Cruise
+      - name: Run Dependency Cruiser
         run: pnpm depcruise
-        id: depcruise
-        continue-on-error: true
+        if: ${{ !cancelled() }}
 
       # Validate types with tsc - https://www.typescriptlang.org/docs/handbook/compiler-options.html#using-the-cli
-      - name: Run Typecheck
+      - name: Run Typecheck (TS files)
         run: pnpm typecheck
         id: typecheck
-        continue-on-error: true
+        if: ${{ !cancelled() }}
 
-      # The exact same thing
-      - name: Run Typecheck (scripts)
-        run: pnpm typecheck:scripts
-        id: typecheck-scripts
-        continue-on-error: true
+      # Run tsc again on all JS files.
+      # Required in order to use separate rules for different types of files
+      - name: Run Typecheck (JS files)
+        run: pnpm typecheck:js
+        id: typecheck-js
+        if: ${{ !cancelled() }}
 
-      - name: Evaluate for Errors
-        env:
-          BIOME_LINT_OUTCOME: ${{ steps.biome_lint.outcome }}
-          DEPCRUISE_OUTCOME: ${{ steps.depcruise.outcome }}
-          TYPECHECK_OUTCOME: ${{ steps.typecheck.outcome }}
-          TYPECHECK_SCRIPTS_OUTCOME: ${{ steps.typecheck-scripts.outcome }}
-        run: |
-            # Check for Errors
-
-            # Make text red.
-            red () {
-              printf "\e[31m%s\e[0m" "$1"
-            }
-
-            # Make text green.
-            green () {
-              printf "\e[32m%s\e[0m" "$1"
-            }
-
-            print_result() {
-              local name=$1
-              local outcome=$2
-              if [ "$outcome" == "success" ]; then
-                printf "$(green "✅ $name: $outcome")\n"
-              else
-                printf "$(red "❌ $name: $outcome")\n"
-              fi
-            }
-
-            print_result "Biome" "$BIOME_LINT_OUTCOME"
-            print_result "Depcruise" "$DEPCRUISE_OUTCOME"
-            print_result "Typecheck" "$TYPECHECK_OUTCOME"
-            print_result "Typecheck scripts" "$TYPECHECK_SCRIPTS_OUTCOME"
-
-            if [[ "$BIOME_LINT_OUTCOME" != "success" || \
-              "$DEPCRUISE_OUTCOME" != "success" || \
-              "$TYPECHECK_OUTCOME" != "success" || \
-              "$TYPECHECK_SCRIPTS_OUTCOME" != "success" ]]; then
-              printf "$(red "❌ One or more checks failed!")\n" >&2
-              exit 1
-            fi
-
-            printf "$(green "✅ All checks passed!")\n"
+      - name: Check for REUSE compliance
+        id: reuse-lint
+        uses: fsfe/reuse-action@v5
+        if: ${{ !cancelled() }}

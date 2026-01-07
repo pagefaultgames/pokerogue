@@ -11,7 +11,7 @@ import type { ContactHeldItemTransferChanceModifier } from "#modifiers/modifier"
 import { StealHeldItemChanceAttr } from "#moves/move";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Unburden", () => {
   let phaserGame: Phaser.Game;
@@ -29,10 +29,6 @@ describe("Abilities - Unburden", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -362,7 +358,7 @@ describe("Abilities - Unburden", () => {
       .startingHeldItems([{ name: "WIDE_LENS" }]);
     await game.classicMode.startBattle([SpeciesId.TREECKO, SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
 
-    const treecko = game.scene.getPlayerField()[0];
+    const treecko = game.field.getPlayerPokemon();
     const treeckoInitialHeldItems = getHeldItemCount(treecko);
     const initialSpeed = treecko.getStat(Stat.SPD);
 
@@ -374,7 +370,7 @@ describe("Abilities - Unburden", () => {
     game.doSelectPartyPokemon(0, "RevivalBlessingPhase");
     await game.toNextTurn();
 
-    expect(game.scene.getPlayerField()[0]).toBe(treecko);
+    expect(game.field.getPlayerPokemon()).toBe(treecko);
     expect(getHeldItemCount(treecko)).toBeLessThan(treeckoInitialHeldItems);
     expect(treecko.getEffectiveStat(Stat.SPD)).toBe(initialSpeed);
   });

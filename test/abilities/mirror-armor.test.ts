@@ -5,7 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 // TODO: When Magic Bounce is implemented, make a test for its interaction with mirror guard, use screech
 
@@ -17,10 +17,6 @@ describe("Ability - Mirror Armor", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -92,8 +88,7 @@ describe("Ability - Mirror Armor", () => {
     game.override.battleStyle("double").enemyAbility(AbilityId.MIRROR_ARMOR).ability(AbilityId.INTIMIDATE);
     await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER]);
 
-    const [enemy1, enemy2] = game.scene.getEnemyField();
-    const [player1, player2] = game.scene.getPlayerField();
+    const [player1, player2, enemy1, enemy2] = game.scene.getField();
 
     // Enemy has intimidate, enemy should lose -1 atk
     game.move.select(MoveId.SPLASH);

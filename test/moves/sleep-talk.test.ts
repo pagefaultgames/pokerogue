@@ -7,7 +7,7 @@ import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Sleep Talk", () => {
   let phaserGame: Phaser.Game;
@@ -17,10 +17,6 @@ describe("Moves - Sleep Talk", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -79,7 +75,7 @@ describe("Moves - Sleep Talk", () => {
     game.move.select(MoveId.SLEEP_TALK);
     await game.toNextTurn();
 
-    expect(feebas).toHaveUsedMove({ result: MoveResult.FAIL });
+    expect(feebas).toHaveUsedMove({ move: MoveId.SLEEP_TALK, result: MoveResult.FAIL });
   });
 
   it("should fail if the user has no valid moves", async () => {
@@ -97,9 +93,16 @@ describe("Moves - Sleep Talk", () => {
 
     game.move.select(MoveId.SLEEP_TALK);
     await game.toNextTurn();
+    expect(game.field.getPlayerPokemon().getStatStage(Stat.ATK));
+  });
 
-    const feebas = game.field.getPlayerPokemon();
-    expect(feebas.getStatStage(Stat.SPD)).toBe(1);
-    expect(feebas.getStatStage(Stat.DEF)).toBe(-1);
+  it("should apply secondary effects of a move", async () => {
+    game.override.moveset([MoveId.SLEEP_TALK, MoveId.DIG, MoveId.FLY, MoveId.WOOD_HAMMER]); // Dig and Fly are invalid moves, Wood Hammer should always be called
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+
+    game.move.select(MoveId.SLEEP_TALK);
+    await game.toNextTurn();
+
+    expect(game.field.getPlayerPokemon().isFullHp()).toBeFalsy(); // Wood Hammer recoil effect should be applied
   });
 });

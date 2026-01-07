@@ -22,13 +22,11 @@ import { InvertPostFX } from "#app/pipelines/invert";
 import { SpritePipeline } from "#app/pipelines/sprite";
 import { SceneBase } from "#app/scene-base";
 import { startingWave } from "#app/starting-wave";
-import { TimedEventManager } from "#app/timed-event-manager";
 import { UiInputs } from "#app/ui-inputs";
-import { biomeDepths, getBiomeName } from "#balance/biomes";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#balance/starters";
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets } from "#data/battle-anims";
-import { allAbilities, allMoves, allSpecies, modifierTypes } from "#data/data-lists";
+import { allMoves, allSpecies, biomeDepths, modifierTypes } from "#data/data-lists";
 import { battleSpecDialogue } from "#data/dialogue";
 import type { SpeciesFormChangeTrigger } from "#data/form-change-triggers";
 import { SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger } from "#data/form-change-triggers";
@@ -104,7 +102,6 @@ import {
 import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterSaveData } from "#mystery-encounters/mystery-encounter-save-data";
 import { allMysteryEncounters, mysteryEncountersByBiome } from "#mystery-encounters/mystery-encounters";
-import type { MovePhase } from "#phases/move-phase";
 import { expSpriteKeys } from "#sprites/sprite-keys";
 import { hasExpSprite } from "#sprites/sprite-utils";
 import type { Variant } from "#sprites/variant";
@@ -119,6 +116,7 @@ import type { TrainerData } from "#system/trainer-data";
 import type { Voucher } from "#system/voucher";
 import { vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-config";
+import type { Constructor } from "#types/common";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import type { Localizable } from "#types/locales";
 import { AbilityBar } from "#ui/ability-bar";
@@ -131,11 +129,12 @@ import { PokemonInfoContainer } from "#ui/pokemon-info-container";
 import { addTextObject, getTextColor } from "#ui/text";
 import { UI } from "#ui/ui";
 import { addUiThemeOverrides } from "#ui/ui-theme";
+import { playTween } from "#utils/anim-utils";
 import {
   BooleanHolder,
-  type Constructor,
   fixedInt,
   formatMoney,
+  getBiomeName,
   getIvsFromId,
   isBetween,
   NumberHolder,
@@ -151,8 +150,6 @@ import i18next from "i18next";
 import Phaser from "phaser";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import type UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
-
-const DEBUG_RNG = false;
 
 export interface PokeballCounts {
   [pb: string]: number;
@@ -172,6 +169,7 @@ export class BattleScene extends SceneBase {
 
   public sessionPlayTime: number | null = null;
   public lastSavePlayTime: number | null = null;
+  // TODO: move these settings into a settings helper object
   public masterVolume = 0.5;
   public bgmVolume = 1;
   public fieldVolume = 1;
@@ -183,6 +181,7 @@ export class BattleScene extends SceneBase {
   public shopCursorTarget: number = ShopCursorTarget.REWARDS;
   public commandCursorMemory = false;
   public dexForDevs = false;
+  public showMissingRibbons = false;
   public showMovesetFlyout = true;
   public showArenaFlyout = true;
   public showTimeOfDayWidget = true;
@@ -310,17 +309,14 @@ export class BattleScene extends SceneBase {
 
   private bgm: AnySound;
   private bgmResumeTimer: Phaser.Time.TimerEvent | null;
-  private bgmCache: Set<string> = new Set();
+  private readonly bgmCache: Set<string> = new Set();
   private playTimeTimer: Phaser.Time.TimerEvent;
 
-  public rngCounter = 0;
   public rngSeedOverride = "";
   public rngOffset = 0;
 
   public inputMethod: string;
-  private infoToggles: InfoToggle[] = [];
-
-  public eventManager: TimedEventManager;
+  private readonly infoToggles: InfoToggle[] = [];
 
   /**
    * Allows subscribers to listen for events
@@ -333,10 +329,11 @@ export class BattleScene extends SceneBase {
    */
   public readonly eventTarget: EventTarget = new EventTarget();
 
+  declare renderer: Phaser.Renderer.WebGL.WebGLRenderer;
+
   constructor() {
     super("battle");
     this.phaseManager = new PhaseManager();
-    this.eventManager = new TimedEventManager();
     this.updateGameInfo();
     initGlobalScene(this);
   }
@@ -359,21 +356,11 @@ export class BattleScene extends SceneBase {
     );
   }
 
-  async preload() {
-    if (DEBUG_RNG) {
-      const originalRealInRange = Phaser.Math.RND.realInRange;
-      Phaser.Math.RND.realInRange = function (min: number, max: number): number {
-        const ret = originalRealInRange.apply(this, [min, max]);
-        const args = ["RNG", ++this.rngCounter, ret / (max - min), `min: ${min} / max: ${max}`];
-        args.push(`seed: ${this.rngSeedOverride || this.waveSeed || this.seed}`);
-        if (this.rngOffset) {
-          args.push(`offset: ${this.rngOffset}`);
-        }
-        console.log(...args);
-        return ret;
-      };
-    }
-
+  /**
+   * Load game assets necessary for the scene to run.
+   * Called by Phaser on new game start.
+   */
+  public async preload(): Promise<void> {
     /**
      * These moves serve as fallback animations for other moves without loaded animations, and
      * must be loaded prior to game start.
@@ -390,7 +377,11 @@ export class BattleScene extends SceneBase {
     });
   }
 
-  create() {
+  /**
+   * Create game objects with loaded assets.
+   * Called by Phaser on new game start.
+   */
+  public create(): void {
     this.scene.remove(LoadingScene.KEY);
     initGameSpeed.apply(this);
     this.inputController = new InputsController();
@@ -403,10 +394,9 @@ export class BattleScene extends SceneBase {
     this.load.setBaseURL();
 
     this.spritePipeline = new SpritePipeline(this.game);
-    (this.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.add("Sprite", this.spritePipeline);
-
+    this.renderer.pipelines.add("Sprite", this.spritePipeline);
     this.fieldSpritePipeline = new FieldSpritePipeline(this.game);
-    (this.renderer as Phaser.Renderer.WebGL.WebGLRenderer).pipelines.add("FieldSprite", this.fieldSpritePipeline);
+    this.renderer.pipelines.add("FieldSprite", this.fieldSpritePipeline);
 
     this.launchBattle();
   }
@@ -415,31 +405,33 @@ export class BattleScene extends SceneBase {
     this.ui?.update();
   }
 
+  // TODO: Split this up into multiple sub-methods
   launchBattle() {
-    this.arenaBg = this.add.sprite(0, 0, "plains_bg");
-    this.arenaBg.setName("sprite-arena-bg");
-    this.arenaBgTransition = this.add.sprite(0, 0, "plains_bg");
-    this.arenaBgTransition.setName("sprite-arena-bg-transition");
+    this.arenaBg = this.add
+      .sprite(0, 0, "plains_bg")
+      .setName("sprite-arena-bg")
+      .setPipeline(this.fieldSpritePipeline)
+      .setScale(6)
+      .setOrigin(0)
+      .setSize(320, 240);
+    this.arenaBgTransition = this.add
+      .sprite(0, 0, "plains_bg")
+      .setName("sprite-arena-bg-transition")
+      .setPipeline(this.fieldSpritePipeline)
+      .setScale(6)
+      .setOrigin(0)
+      .setSize(320, 240)
+      .setVisible(false);
 
-    for (const a of [this.arenaBgTransition, this.arenaBg]) {
-      a.setPipeline(this.fieldSpritePipeline);
-      a.setScale(6);
-      a.setOrigin(0);
-      a.setSize(320, 240);
-    }
-
-    const field = this.add.container(0, 0);
-    field.setName("field");
-    field.setScale(6);
-
-    this.field = field;
-
-    const fieldUI = this.add.container(0, this.game.canvas.height);
-    fieldUI.setName("field-ui");
-    fieldUI.setDepth(1);
-    fieldUI.setScale(6);
-
-    this.fieldUI = fieldUI;
+    this.field = this.add //
+      .container(0, 0)
+      .setName("field")
+      .setScale(6);
+    this.fieldUI = this.add //
+      .container(0, this.game.canvas.height)
+      .setName("field-ui")
+      .setDepth(1)
+      .setScale(6);
 
     const transition = this.make.rexTransitionImagePack(
       {
@@ -452,104 +444,90 @@ export class BattleScene extends SceneBase {
       true,
     );
 
-    //@ts-expect-error (the defined types in the package are incromplete...)
+    // TODO: fix the typing in a `.d.ts` file so the `ts-ignore` is no longer necessary
+    /* biome-ignore lint/suspicious/noTsIgnore: ts-ignore is necessary because `tsc` and `tsgo` require the directive to be on different lines,
+     *   meaning `@ts-expect-error` is guaranteed to emit a diagnostic on one of the lines depending on which one is used
+     */
+    // @ts-ignore
     transition.transit({
       mode: "blinds",
+      /* biome-ignore lint/suspicious/noTsIgnore: ts-ignore is necessary because `tsc` and `tsgo` require the directive to be on different lines,
+       *   meaning `@ts-expect-error` is guaranteed to emit a diagnostic on one of the lines depending on which one is used
+       */
+      // @ts-ignore
       ease: "Cubic.easeInOut",
       duration: 1250,
     });
     transition.once("complete", () => {
       transition.destroy();
     });
-
     this.add.existing(transition);
 
-    const uiContainer = this.add.container(0, 0);
-    uiContainer.setName("ui");
-    uiContainer.setDepth(2);
-    uiContainer.setScale(6);
-
-    this.uiContainer = uiContainer;
+    this.uiContainer = this.add //
+      .container(0, 0)
+      .setName("ui")
+      .setDepth(2)
+      .setScale(6);
 
     const overlayWidth = this.scaledCanvas.width;
     const overlayHeight = this.scaledCanvas.height - 48;
-    this.fieldOverlay = this.add.rectangle(0, overlayHeight * -1 - 48, overlayWidth, overlayHeight, 0x424242);
-    this.fieldOverlay.setName("rect-field-overlay");
-    this.fieldOverlay.setOrigin(0, 0);
-    this.fieldOverlay.setAlpha(0);
-    this.fieldUI.add(this.fieldOverlay);
-
-    this.shopOverlay = this.add.rectangle(0, overlayHeight * -1 - 48, overlayWidth, overlayHeight, 0x070707);
-    this.shopOverlay.setName("rect-shop-overlay");
-    this.shopOverlay.setOrigin(0, 0);
-    this.shopOverlay.setAlpha(0);
-    this.fieldUI.add(this.shopOverlay);
+    this.fieldOverlay = this.add
+      .rectangle(0, overlayHeight * -1 - 48, overlayWidth, overlayHeight, 0x424242)
+      .setName("rect-field-overlay")
+      .setOrigin(0)
+      .setAlpha(0);
+    this.shopOverlay = this.add
+      .rectangle(0, overlayHeight * -1 - 48, overlayWidth, overlayHeight, 0x070707)
+      .setName("rect-shop-overlay")
+      .setOrigin(0)
+      .setAlpha(0);
 
     this.modifiers = [];
     this.enemyModifiers = [];
 
-    this.modifierBar = new ModifierBar();
-    this.modifierBar.setName("modifier-bar");
+    this.modifierBar = new ModifierBar() //
+      .setName("modifier-bar");
     this.add.existing(this.modifierBar);
-    uiContainer.add(this.modifierBar);
 
-    this.enemyModifierBar = new ModifierBar(true);
-    this.enemyModifierBar.setName("enemy-modifier-bar");
+    this.enemyModifierBar = new ModifierBar(true) //
+      .setName("enemy-modifier-bar");
     this.add.existing(this.enemyModifierBar);
-    uiContainer.add(this.enemyModifierBar);
 
-    this.charSprite = new CharSprite();
-    this.charSprite.setName("sprite-char");
-    this.charSprite.setup();
+    this.charSprite = new CharSprite() //
+      .setName("sprite-char")
+      .setup();
+    this.pbTray = new PokeballTray(true) //
+      .setName("pb-tray")
+      .setup();
+    this.pbTrayEnemy = new PokeballTray(false) //
+      .setName("enemy-pb-tray")
+      .setup();
+    this.abilityBar = new AbilityBar() //
+      .setName("ability-bar")
+      .setup();
+    this.partyExpBar = new PartyExpBar() //
+      .setName("party-exp-bar")
+      .setup();
 
-    this.fieldUI.add(this.charSprite);
+    this.candyBar = new CandyBar() //
+      .setName("candy-bar")
+      .setup();
 
-    this.pbTray = new PokeballTray(true);
-    this.pbTray.setName("pb-tray");
-    this.pbTray.setup();
+    this.biomeWaveText = addTextObject(this.scaledCanvas.width - 2, 0, startingWave.toString(), TextStyle.BATTLE_INFO)
+      .setName("text-biome-wave")
+      .setOrigin(1, 0.5);
+    this.moneyText = addTextObject(this.scaledCanvas.width - 2, 0, "", TextStyle.MONEY)
+      .setName("text-money")
+      .setOrigin(1, 0.5);
 
-    this.pbTrayEnemy = new PokeballTray(false);
-    this.pbTrayEnemy.setName("enemy-pb-tray");
-    this.pbTrayEnemy.setup();
+    this.scoreText = addTextObject(this.scaledCanvas.width - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" })
+      .setName("text-score")
+      .setOrigin(1, 0.5);
 
-    this.fieldUI.add(this.pbTray);
-    this.fieldUI.add(this.pbTrayEnemy);
-
-    this.abilityBar = new AbilityBar();
-    this.abilityBar.setName("ability-bar");
-    this.abilityBar.setup();
-    this.fieldUI.add(this.abilityBar);
-
-    this.partyExpBar = new PartyExpBar();
-    this.partyExpBar.setName("party-exp-bar");
-    this.partyExpBar.setup();
-    this.fieldUI.add(this.partyExpBar);
-
-    this.candyBar = new CandyBar();
-    this.candyBar.setName("candy-bar");
-    this.candyBar.setup();
-    this.fieldUI.add(this.candyBar);
-
-    this.biomeWaveText = addTextObject(this.scaledCanvas.width - 2, 0, startingWave.toString(), TextStyle.BATTLE_INFO);
-    this.biomeWaveText.setName("text-biome-wave");
-    this.biomeWaveText.setOrigin(1, 0.5);
-    this.fieldUI.add(this.biomeWaveText);
-
-    this.moneyText = addTextObject(this.scaledCanvas.width - 2, 0, "", TextStyle.MONEY);
-    this.moneyText.setName("text-money");
-    this.moneyText.setOrigin(1, 0.5);
-    this.fieldUI.add(this.moneyText);
-
-    this.scoreText = addTextObject(this.scaledCanvas.width - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" });
-    this.scoreText.setName("text-score");
-    this.scoreText.setOrigin(1, 0.5);
-    this.fieldUI.add(this.scoreText);
-
-    this.luckText = addTextObject(this.scaledCanvas.width - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" });
-    this.luckText.setName("text-luck");
-    this.luckText.setOrigin(1, 0.5);
-    this.luckText.setVisible(false);
-    this.fieldUI.add(this.luckText);
+    this.luckText = addTextObject(this.scaledCanvas.width - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" })
+      .setName("text-luck")
+      .setOrigin(1, 0.5)
+      .setVisible(false);
 
     this.luckLabelText = addTextObject(
       this.scaledCanvas.width - 2,
@@ -557,61 +535,60 @@ export class BattleScene extends SceneBase {
       i18next.t("common:luckIndicator"),
       TextStyle.PARTY,
       { fontSize: "54px" },
-    );
-    this.luckLabelText.setName("text-luck-label");
-    this.luckLabelText.setOrigin(1, 0.5);
-    this.luckLabelText.setVisible(false);
-    this.fieldUI.add(this.luckLabelText);
+    )
+      .setName("text-luck-label")
+      .setOrigin(1, 0.5)
+      .setVisible(false);
 
     this.arenaFlyout = new ArenaFlyout();
-    this.fieldUI.add(this.arenaFlyout);
-    this.fieldUI.moveBelow<Phaser.GameObjects.GameObject>(this.arenaFlyout, this.fieldOverlay);
-
+    this.pokemonInfoContainer = new PokemonInfoContainer(this.scaledCanvas.width + 52, -this.scaledCanvas.height + 66) //
+      .setup();
     this.updateUIPositions();
 
     this.damageNumberHandler = new DamageNumberHandler();
+    this.spriteSparkleHandler = new PokemonSpriteSparkleHandler() //
+      .setup();
 
-    this.spriteSparkleHandler = new PokemonSpriteSparkleHandler();
-    this.spriteSparkleHandler.setup();
+    this.fieldUI
+      .add([
+        this.fieldOverlay,
+        this.shopOverlay,
+        this.charSprite,
+        this.pbTray,
+        this.pbTrayEnemy,
+        this.abilityBar,
+        this.partyExpBar,
+        this.candyBar,
+        this.biomeWaveText,
+        this.moneyText,
+        this.scoreText,
+        this.luckText,
+        this.luckLabelText,
+        this.arenaFlyout,
+        this.pokemonInfoContainer,
+      ])
+      .moveBelow<Phaser.GameObjects.GameObject>(this.arenaFlyout, this.fieldOverlay);
 
-    this.pokemonInfoContainer = new PokemonInfoContainer(this.scaledCanvas.width + 52, -this.scaledCanvas.height + 66);
-    this.pokemonInfoContainer.setup();
-
-    this.fieldUI.add(this.pokemonInfoContainer);
+    this.uiContainer.add([this.modifierBar, this.enemyModifierBar]);
 
     this.party = [];
 
-    this.arenaPlayer = new ArenaBase(true);
-    this.arenaPlayer.setName("arena-player");
-    this.arenaPlayerTransition = new ArenaBase(true);
-    this.arenaPlayerTransition.setName("arena-player-transition");
-    this.arenaEnemy = new ArenaBase(false);
-    this.arenaEnemy.setName("arena-enemy");
-    this.arenaNextEnemy = new ArenaBase(false);
-    this.arenaNextEnemy.setName("arena-next-enemy");
+    this.arenaPlayer = new ArenaBase(true) //
+      .setName("arena-player");
+    this.arenaPlayerTransition = new ArenaBase(true) //
+      .setName("arena-player-transition")
+      .setVisible(false);
+    this.arenaEnemy = new ArenaBase(false) //
+      .setName("arena-enemy");
+    this.arenaNextEnemy = new ArenaBase(false) //
+      .setName("arena-next-enemy")
+      .setVisible(false);
+    this.field.add([this.arenaPlayer, this.arenaPlayerTransition, this.arenaEnemy, this.arenaNextEnemy]);
 
-    this.arenaBgTransition.setVisible(false);
-    this.arenaPlayerTransition.setVisible(false);
-    this.arenaNextEnemy.setVisible(false);
-
-    for (const a of [this.arenaPlayer, this.arenaPlayerTransition, this.arenaEnemy, this.arenaNextEnemy]) {
-      if (a instanceof Phaser.GameObjects.Sprite) {
-        a.setOrigin(0, 0);
-      }
-      field.add(a);
-    }
-
-    const trainer = this.addFieldSprite(
-      0,
-      0,
-      `trainer_${this.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`,
-    );
-    trainer.setOrigin(0.5, 1);
-    trainer.setName("sprite-trainer");
-
-    field.add(trainer);
-
-    this.trainer = trainer;
+    this.trainer = this.addFieldSprite(0, 0, `trainer_${this.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`)
+      .setOrigin(0.5, 1)
+      .setName("sprite-trainer");
+    this.field.add(this.trainer);
 
     this.anims.create({
       key: "prompt",
@@ -620,7 +597,6 @@ export class BattleScene extends SceneBase {
       repeat: -1,
       showOnStart: true,
     });
-
     this.anims.create({
       key: "tera_sparkle",
       frames: this.anims.generateFrameNumbers("tera_sparkle", {
@@ -636,10 +612,9 @@ export class BattleScene extends SceneBase {
     this.reset(false, false, true);
 
     // Initialize UI-related aspects and then start the login phase.
-    const ui = new UI();
-    this.uiContainer.add(ui);
-    this.ui = ui;
-    ui.setup();
+    this.ui = new UI();
+    this.uiContainer.add(this.ui);
+    this.ui.setup();
 
     this.phaseManager.toTitleScreen(true);
     this.phaseManager.shiftPhase();
@@ -712,12 +687,10 @@ export class BattleScene extends SceneBase {
   }
 
   cachedFetch(url: string, init?: RequestInit): Promise<Response> {
-    const manifest = this.game["manifest"];
-    if (manifest) {
-      const timestamp = manifest[`/${url.replace("./", "")}`];
-      if (timestamp) {
-        url += `?t=${timestamp}`;
-      }
+    const { manifest } = this.game;
+    const timestamp = manifest?.[`/${url.replace("./", "")}`];
+    if (timestamp) {
+      url += `?t=${timestamp}`;
     }
     return fetch(url, init);
   }
@@ -787,12 +760,14 @@ export class BattleScene extends SceneBase {
 
   /**
    * Returns an array of EnemyPokemon of length 1 or 2 depending on if in a double battle or not.
-   * Does not actually check if the pokemon are on the field or not.
+   * @param active - (Default `false`) Whether to consider only {@linkcode Pokemon.isActive | active} on-field pokemon
    * @returns array of {@linkcode EnemyPokemon}
    */
-  public getEnemyField(): EnemyPokemon[] {
+  public getEnemyField(active = false): EnemyPokemon[] {
     const party = this.getEnemyParty();
-    return party.slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1));
+    return party
+      .slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1))
+      .filter(p => !active || p.isActive());
   }
 
   /**
@@ -801,6 +776,10 @@ export class BattleScene extends SceneBase {
    * @param activeOnly - Whether to consider only active pokemon (as described by {@linkcode Pokemon.isActive()}); default `false`.
    * If `true`, will also remove all `null` values from the array.
    * @returns An array of {@linkcode Pokemon}, as described above.
+   *
+   * @remarks
+   * This should *only* be used in instances where speed order is not relevant.
+   * If speed order matters, use {@linkcode inSpeedOrder}.
    */
   public getField(activeOnly = false): Pokemon[] {
     const ret: Pokemon[] = new Array(4).fill(null);
@@ -817,25 +796,7 @@ export class BattleScene extends SceneBase {
    * @param allyPokemon - The {@linkcode Pokemon} allied with the removed Pokemon; will have moves redirected to it
    */
   redirectPokemonMoves(removedPokemon: Pokemon, allyPokemon: Pokemon): void {
-    // failsafe: if not a double battle just return
-    if (this.currentBattle.double === false) {
-      return;
-    }
-    if (allyPokemon?.isActive(true)) {
-      let targetingMovePhase: MovePhase;
-      do {
-        targetingMovePhase = this.phaseManager.findPhase(
-          mp =>
-            mp.is("MovePhase")
-            && mp.targets.length === 1
-            && mp.targets[0] === removedPokemon.getBattlerIndex()
-            && mp.pokemon.isPlayer() !== allyPokemon.isPlayer(),
-        ) as MovePhase;
-        if (targetingMovePhase && targetingMovePhase.targets[0] !== allyPokemon.getBattlerIndex()) {
-          targetingMovePhase.targets[0] = allyPokemon.getBattlerIndex();
-        }
-      } while (targetingMovePhase);
-    }
+    this.phaseManager.redirectMoves(removedPokemon, allyPokemon);
   }
 
   /**
@@ -1024,12 +985,15 @@ export class BattleScene extends SceneBase {
     ignoreOverride = true,
     useIllusion = false,
   ): Phaser.GameObjects.Container {
-    const container = this.add.container(x, y);
-    container.setName(`${pokemon.name}-icon`);
+    const container = this.add //
+      .container(x, y)
+      .setName(`${pokemon.name}-icon`);
 
-    const icon = this.add.sprite(0, 0, pokemon.getIconAtlasKey(ignoreOverride, useIllusion));
-    icon.setName(`sprite-${pokemon.name}-icon`);
-    icon.setFrame(pokemon.getIconId(ignoreOverride, useIllusion));
+    const icon = this.add
+      .sprite(0, 0, pokemon.getIconAtlasKey(ignoreOverride, useIllusion))
+      .setName(`sprite-${pokemon.name}-icon`)
+      .setFrame(pokemon.getIconId(ignoreOverride, useIllusion))
+      .setOrigin(0.5, 0);
     // Temporary fix to show pokemon's default icon if variant icon doesn't exist
     if (icon.frame.name !== pokemon.getIconId(ignoreOverride, useIllusion)) {
       console.log(`${pokemon.name}'s variant icon does not exist. Replacing with default.`);
@@ -1044,10 +1008,11 @@ export class BattleScene extends SceneBase {
     container.add(icon);
 
     if (pokemon.isFusion(useIllusion)) {
-      const fusionIcon = this.add.sprite(0, 0, pokemon.getFusionIconAtlasKey(ignoreOverride, useIllusion));
-      fusionIcon.setName("sprite-fusion-icon");
-      fusionIcon.setOrigin(0.5, 0);
-      fusionIcon.setFrame(pokemon.getFusionIconId(ignoreOverride, useIllusion));
+      const fusionIcon = this.add
+        .sprite(0, 0, pokemon.getFusionIconAtlasKey(ignoreOverride, useIllusion))
+        .setName("sprite-fusion-icon")
+        .setOrigin(0.5, 0)
+        .setFrame(pokemon.getFusionIconId(ignoreOverride, useIllusion));
 
       const originalWidth = icon.width;
       const originalHeight = icon.height;
@@ -1120,7 +1085,6 @@ export class BattleScene extends SceneBase {
 
   setSeed(seed: string): void {
     this.seed = seed;
-    this.rngCounter = 0;
     this.waveCycleOffset = this.getGeneratedWaveCycleOffset();
     this.offsetGym = this.gameMode.isClassic && this.getGeneratedOffsetGym();
   }
@@ -1139,6 +1103,7 @@ export class BattleScene extends SceneBase {
     return this.currentBattle?.randSeedInt(range, min);
   }
 
+  // TODO: Break up function - this does far too much in 1 sitting
   reset(clearScene = false, clearData = false, reloadI18n = false): void {
     if (clearData) {
       this.gameData = new GameData();
@@ -1228,7 +1193,6 @@ export class BattleScene extends SceneBase {
       const localizable: Localizable[] = [
         ...allSpecies,
         ...allMoves,
-        ...allAbilities,
         ...getEnumValues(ModifierPoolType)
           .map(mpt => getModifierPoolForType(mpt))
           .flatMap(mp =>
@@ -1258,6 +1222,7 @@ export class BattleScene extends SceneBase {
           this.uiContainer.remove(this.ui, true);
           this.uiContainer.destroy();
           this.children.removeAll(true);
+          // TODO: Do we even need this?
           this.game.domContainer.innerHTML = "";
           // TODO: `launchBattle` calls `reset(false, false, true)`
           this.launchBattle();
@@ -1433,7 +1398,7 @@ export class BattleScene extends SceneBase {
     }
 
     if (lastBattle?.double && !newDouble) {
-      this.phaseManager.tryRemovePhase((p: Phase) => p.is("SwitchPhase"));
+      this.phaseManager.tryRemovePhase("SwitchPhase");
       for (const p of this.getPlayerField()) {
         p.lapseTag(BattlerTagType.COMMANDED);
       }
@@ -1638,6 +1603,7 @@ export class BattleScene extends SceneBase {
       case SpeciesId.UNOWN:
       case SpeciesId.SHELLOS:
       case SpeciesId.GASTRODON:
+      case SpeciesId.ROTOM:
       case SpeciesId.BASCULIN:
       case SpeciesId.DEERLING:
       case SpeciesId.SAWSBUCK:
@@ -1657,14 +1623,13 @@ export class BattleScene extends SceneBase {
       case SpeciesId.TATSUGIRI:
       case SpeciesId.PALDEA_TAUROS:
         return randSeedInt(species.forms.length);
-      case SpeciesId.MAUSHOLD:
-      case SpeciesId.DUDUNSPARCE:
-        return !randSeedInt(4) ? 1 : 0;
       case SpeciesId.SINISTEA:
       case SpeciesId.POLTEAGEIST:
+      case SpeciesId.MAUSHOLD:
+      case SpeciesId.DUDUNSPARCE:
       case SpeciesId.POLTCHAGEIST:
       case SpeciesId.SINISTCHA:
-        return !randSeedInt(16) ? 1 : 0;
+        return randSeedInt(16) ? 0 : 1;
       case SpeciesId.PIKACHU:
         if (this.currentBattle?.battleType === BattleType.TRAINER && this.currentBattle?.waveIndex < 30) {
           return 0; // Ban Cosplay and Partner Pika from Trainers before wave 30
@@ -1731,7 +1696,6 @@ export class BattleScene extends SceneBase {
       switch (species.speciesId) {
         case SpeciesId.BURMY:
         case SpeciesId.WORMADAM:
-        case SpeciesId.ROTOM:
         case SpeciesId.LYCANROC:
           return randSeedInt(species.forms.length);
       }
@@ -1840,24 +1804,20 @@ export class BattleScene extends SceneBase {
     this.waveSeed = shiftCharCodes(this.seed, wave);
     Phaser.Math.RND.sow([this.waveSeed]);
     console.log("Wave Seed:", this.waveSeed, wave);
-    this.rngCounter = 0;
   }
 
   executeWithSeedOffset(func: () => void, offset: number, seedOverride?: string): void {
     if (!func) {
       return;
     }
-    const tempRngCounter = this.rngCounter;
     const tempRngOffset = this.rngOffset;
     const tempRngSeedOverride = this.rngSeedOverride;
     const state = Phaser.Math.RND.state();
     Phaser.Math.RND.sow([shiftCharCodes(seedOverride || this.seed, offset)]);
-    this.rngCounter = 0;
     this.rngOffset = offset;
     this.rngSeedOverride = seedOverride || "";
     func();
     Phaser.Math.RND.state(state);
-    this.rngCounter = tempRngCounter;
     this.rngOffset = tempRngOffset;
     this.rngSeedOverride = tempRngSeedOverride;
   }
@@ -1869,8 +1829,9 @@ export class BattleScene extends SceneBase {
     frame?: string | number,
     terrainColorRatio = 0,
   ): Phaser.GameObjects.Sprite {
-    const ret = this.add.sprite(x, y, texture, frame);
-    ret.setPipeline(this.fieldSpritePipeline);
+    const ret = this.add //
+      .sprite(x, y, texture, frame)
+      .setPipeline(this.fieldSpritePipeline);
     if (terrainColorRatio) {
       ret.pipelineData["terrainColorRatio"] = terrainColorRatio;
     }
@@ -1950,27 +1911,21 @@ export class BattleScene extends SceneBase {
 
   showShopOverlay(duration: number): Promise<void> {
     this.shopOverlayShown = true;
-    return new Promise(resolve => {
-      this.tweens.add({
-        targets: this.shopOverlay,
-        alpha: this.shopOverlayOpacity,
-        ease: "Sine.easeOut",
-        duration,
-        onComplete: () => resolve(),
-      });
+    return playTween({
+      targets: this.shopOverlay,
+      alpha: this.shopOverlayOpacity,
+      ease: "Sine.easeOut",
+      duration,
     });
   }
 
   hideShopOverlay(duration: number): Promise<void> {
     this.shopOverlayShown = false;
-    return new Promise(resolve => {
-      this.tweens.add({
-        targets: this.shopOverlay,
-        alpha: 0,
-        duration,
-        ease: "Cubic.easeIn",
-        onComplete: () => resolve(),
-      });
+    return playTween({
+      targets: this.shopOverlay,
+      alpha: 0,
+      duration,
+      ease: "Cubic.easeIn",
     });
   }
 
@@ -1986,10 +1941,11 @@ export class BattleScene extends SceneBase {
     const isBoss = !(this.currentBattle.waveIndex % 10);
     const biomeString: string = getBiomeName(this.arena.biomeType);
     this.fieldUI.moveAbove(this.biomeWaveText, this.luckText);
-    this.biomeWaveText.setText(biomeString + " - " + this.currentBattle.waveIndex.toString());
-    this.biomeWaveText.setColor(!isBoss ? "#ffffff" : "#f89890");
-    this.biomeWaveText.setShadowColor(!isBoss ? "#636363" : "#984038");
-    this.biomeWaveText.setVisible(true);
+    this.biomeWaveText
+      .setText(biomeString + " - " + this.currentBattle.waveIndex.toString())
+      .setColor(isBoss ? "#f89890" : "#ffffff")
+      .setShadowColor(isBoss ? "#984038" : "#636363")
+      .setVisible(true);
   }
 
   updateMoneyText(forceVisible = true): void {
@@ -2008,7 +1964,7 @@ export class BattleScene extends SceneBase {
     if (this.tweens.getTweensOf(this.moneyText).length > 0) {
       return;
     }
-    const deltaScale = this.moneyText.scale * 0.14 * (positiveChange ? 1 : -1);
+    const deltaScale = this.moneyText.scale * 0.14 * +positiveChange;
     this.moneyText.setShadowColor(positiveChange ? "#008000" : "#FF0000");
     this.tweens.add({
       targets: this.moneyText,
@@ -2021,8 +1977,10 @@ export class BattleScene extends SceneBase {
   }
 
   updateScoreText(): void {
-    this.scoreText.setText(`Score: ${this.score.toString()}`);
-    this.scoreText.setVisible(this.gameMode.isDaily);
+    // TODO: Localize this
+    this.scoreText //
+      .setText(`Score: ${this.score.toString()}`)
+      .setVisible(this.gameMode.isDaily);
   }
 
   /**
@@ -2384,6 +2342,8 @@ export class BattleScene extends SceneBase {
     switch (bgmName) {
       case "title": //Firel PokéRogue Title
         return 46.5;
+      case "winter_title": //Andr06 Winter Title
+        return 20.57;
       case "battle_kanto_champion": //B2W2 Kanto Champion Battle
         return 13.95;
       case "battle_johto_champion": //B2W2 Johto Champion Battle
@@ -2690,12 +2650,12 @@ export class BattleScene extends SceneBase {
 
           const args: unknown[] = [];
           if (modifier instanceof PokemonHpRestoreModifier) {
-            if (!(modifier as PokemonHpRestoreModifier).fainted) {
+            if ((modifier as PokemonHpRestoreModifier).fainted) {
+              args.push(1);
+            } else {
               const hpRestoreMultiplier = new NumberHolder(1);
               this.applyModifiers(HealingBoosterModifier, true, hpRestoreMultiplier);
               args.push(hpRestoreMultiplier.value);
-            } else {
-              args.push(1);
             }
           } else if (modifier instanceof FusePokemonModifier) {
             args.push(this.getPokemonById(modifier.fusePokemonId) as PlayerPokemon);
@@ -3052,7 +3012,7 @@ export class BattleScene extends SceneBase {
   }
 
   hasModifier(modifier: PersistentModifier, enemy = false): boolean {
-    const modifiers = !enemy ? this.modifiers : this.enemyModifiers;
+    const modifiers = enemy ? this.enemyModifiers : this.modifiers;
     return modifiers.indexOf(modifier) > -1;
   }
 
@@ -3065,7 +3025,7 @@ export class BattleScene extends SceneBase {
    * @returns `true` if the item exists and was successfully removed, `false` otherwise
    */
   removeModifier(modifier: PersistentModifier, enemy = false): boolean {
-    const modifiers = !enemy ? this.modifiers : this.enemyModifiers;
+    const modifiers = enemy ? this.enemyModifiers : this.modifiers;
     const modifierIndex = modifiers.indexOf(modifier);
     if (modifierIndex > -1) {
       modifiers.splice(modifierIndex, 1);
@@ -3170,7 +3130,7 @@ export class BattleScene extends SceneBase {
     const appliedModifiers: T[] = [];
     for (const modifier of modifiers) {
       if (modifier.apply(...args)) {
-        console.log("Applied", modifier.type.name, !player ? "(enemy)" : "");
+        console.log("Applied", modifier.type.name, player ? "" : "(enemy)");
         appliedModifiers.push(modifier);
       }
     }
@@ -3195,7 +3155,7 @@ export class BattleScene extends SceneBase {
     );
     for (const modifier of modifiers) {
       if (modifier.apply(...args)) {
-        console.log("Applied", modifier.type.name, !player ? "(enemy)" : "");
+        console.log("Applied", modifier.type.name, player ? "" : "(enemy)");
         return modifier;
       }
     }
@@ -3376,6 +3336,7 @@ export class BattleScene extends SceneBase {
             this.phaseManager.pushNew("ToggleDoublePositionPhase", true);
             if (!availablePartyMembers[1].isOnField()) {
               this.phaseManager.pushNew("SummonPhase", 1);
+              this.phaseManager.pushNew("PostSummonPhase", 1);
             }
           }
 
@@ -3630,9 +3591,9 @@ export class BattleScene extends SceneBase {
     // biome-ignore format: biome sucks at formatting this line
     for (const seenEncounterData of this.mysteryEncounterSaveData.encounteredEvents) {
       if (seenEncounterData.tier === MysteryEncounterTier.COMMON) {
-        tierWeights[0] = tierWeights[0] - 6;
+        tierWeights[0] -= 6;
       } else if (seenEncounterData.tier === MysteryEncounterTier.GREAT) {
-        tierWeights[1] = tierWeights[1] - 4;
+        tierWeights[1] -= 4;
       }
     }
 
@@ -3656,7 +3617,7 @@ export class BattleScene extends SceneBase {
 
     let availableEncounters: MysteryEncounter[] = [];
     const previousEncounter = this.mysteryEncounterSaveData.encounteredEvents.at(-1)?.type ?? null; // TODO: This being `null` is a bit weird
-    const disabledEncounters = this.eventManager.getEventMysteryEncountersDisabled();
+    const disabledEncounters = timedEventManager.getEventMysteryEncountersDisabled();
     const biomeMysteryEncounters =
       mysteryEncountersByBiome.get(this.arena.biomeType)?.filter(enc => !disabledEncounters.includes(enc)) ?? [];
     // If no valid encounters exist at tier, checks next tier down, continuing until there are some encounters available
@@ -3668,7 +3629,7 @@ export class BattleScene extends SceneBase {
             return false;
           }
           if (
-            this.eventManager.getMysteryEncounterTierForEvent(encounterType, encounterCandidate.encounterTier) !== tier
+            timedEventManager.getMysteryEncounterTierForEvent(encounterType, encounterCandidate.encounterTier) !== tier
           ) {
             return false;
           }

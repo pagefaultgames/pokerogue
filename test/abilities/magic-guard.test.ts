@@ -9,7 +9,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("AbilityId - Magic Guard", () => {
   let phaserGame: Phaser.Game;
@@ -19,10 +19,6 @@ describe("AbilityId - Magic Guard", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -55,6 +51,7 @@ describe("AbilityId - Magic Guard", () => {
     expect(magikarp.hp).toBe(magikarp.getMaxHp());
   });
 
+  // biome-ignore format: prefer pre-2.3.6 formatting
   it.each<{ abName: string; move?: MoveId; enemyMove?: MoveId; passive?: AbilityId; enemyAbility?: AbilityId }>([
     { abName: "Bad Dreams", enemyMove: MoveId.SPORE, enemyAbility: AbilityId.BAD_DREAMS },
     { abName: "Aftermath", move: MoveId.PSYCHIC_FANGS, enemyAbility: AbilityId.AFTERMATH },

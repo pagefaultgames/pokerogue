@@ -9,7 +9,7 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Dragon Tail", () => {
   let phaserGame: Phaser.Game;
@@ -19,10 +19,6 @@ describe("Moves - Dragon Tail", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -171,7 +167,7 @@ describe("Moves - Dragon Tail", () => {
     const enemy = game.field.getEnemyPokemon();
     expect(enemy).toBeDefined();
     expect(enemy.hp).toBe(Math.floor(enemy.getMaxHp() / 2));
-    expect(game.scene.getEnemyField().length).toBe(1);
+    expect(game.scene.getEnemyField()).toHaveLength(1);
   });
 
   it("should not cause a softlock when activating a player's reviver seed", async () => {

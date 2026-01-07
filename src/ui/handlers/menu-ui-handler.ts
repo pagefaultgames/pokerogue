@@ -1,8 +1,9 @@
 import { pokerogueApi } from "#api/pokerogue-api";
 import { loggedInUser, updateUserInfo } from "#app/account";
 import { globalScene } from "#app/global-scene";
-import { bypassLogin } from "#app/global-vars/bypass-login";
 import { handleTutorial, Tutorial } from "#app/tutorial";
+import { bypassLogin, isApp, isBeta, isDev } from "#constants/app-constants";
+import { AdminMode, getAdminModeName } from "#enums/admin-mode";
 import { Button } from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
 import { TextStyle } from "#enums/text-style";
@@ -13,13 +14,11 @@ import { BgmBar } from "#ui/bgm-bar";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addTextObject, getTextStyleOptions } from "#ui/text";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
-import { fixedInt, isLocal, sessionIdKey } from "#utils/common";
+import { fixedInt, sessionIdKey } from "#utils/common";
 import { getCookie } from "#utils/cookies";
 import { getEnumValues } from "#utils/enums";
 import { toCamelCase } from "#utils/strings";
-import { isBeta } from "#utils/utility-vars";
 import i18next from "i18next";
-import { AdminMode, getAdminModeName } from "./admin-ui-handler";
 
 enum MenuOptions {
   GAME_SETTINGS,
@@ -130,6 +129,7 @@ export class MenuUiHandler extends MessageUiHandler {
         options: [MenuOptions.EGG_GACHA],
       },
       { condition: bypassLogin, options: [MenuOptions.LOG_OUT] },
+      { condition: !globalScene.currentBattle, options: [MenuOptions.SAVE_AND_QUIT] },
     ];
 
     this.menuOptions = getEnumValues(MenuOptions).filter(m => {
@@ -238,7 +238,7 @@ export class MenuUiHandler extends MessageUiHandler {
       });
     };
 
-    if (isLocal || isBeta) {
+    if (isBeta || isDev || isApp) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importSession"),
         handler: () => {
@@ -279,6 +279,7 @@ export class MenuUiHandler extends MessageUiHandler {
     manageDataOptions.push({
       label: i18next.t("menuUiHandler:importRunHistory"),
       handler: () => {
+        ui.revertMode();
         globalScene.gameData.importData(GameDataType.RUN_HISTORY);
         return true;
       },
@@ -292,7 +293,7 @@ export class MenuUiHandler extends MessageUiHandler {
       },
       keepOpen: true,
     });
-    if (isLocal || isBeta) {
+    if (isBeta || isDev || isApp) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importData"),
         handler: () => {
@@ -339,8 +340,7 @@ export class MenuUiHandler extends MessageUiHandler {
         keepOpen: true,
       },
     );
-    if (isLocal || isBeta) {
-      // this should make sure we don't have this option in live
+    if (isBeta || isDev) {
       manageDataOptions.push({
         label: "Test Dialogue",
         handler: () => {
@@ -452,7 +452,7 @@ export class MenuUiHandler extends MessageUiHandler {
         keepOpen: true,
       },
     ];
-    if (!bypassLogin && loggedInUser?.hasAdminRole) {
+    if (bypassLogin || loggedInUser?.hasAdminRole) {
       communityOptions.push({
         label: "Admin",
         handler: () => {
@@ -658,42 +658,39 @@ export class MenuUiHandler extends MessageUiHandler {
           ui.setOverlayMode(UiMode.MENU_OPTION_SELECT, this.communityConfig);
           success = true;
           break;
-        case MenuOptions.SAVE_AND_QUIT:
-          if (globalScene.currentBattle) {
-            success = true;
-            const doSaveQuit = () => {
-              ui.setMode(UiMode.LOADING, {
-                buttonActions: [],
-                fadeOut: () =>
-                  globalScene.gameData.saveAll(true, true, true, true).then(() => {
-                    globalScene.reset(true);
-                  }),
-              });
-            };
-            if (globalScene.currentBattle.turn > 1) {
-              ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
-                if (!this.active) {
+        case MenuOptions.SAVE_AND_QUIT: {
+          success = true;
+          const doSaveQuit = () => {
+            ui.setMode(UiMode.LOADING, {
+              buttonActions: [],
+              fadeOut: () =>
+                globalScene.gameData.saveAll(true, true, true, true).then(() => {
+                  globalScene.reset(true);
+                }),
+            });
+          };
+          if (globalScene.currentBattle.turn > 1) {
+            ui.showText(i18next.t("menuUiHandler:losingProgressionWarning"), null, () => {
+              if (!this.active) {
+                this.showText("", 0);
+                return;
+              }
+              ui.setOverlayMode(
+                UiMode.CONFIRM,
+                doSaveQuit,
+                () => {
+                  ui.revertMode();
                   this.showText("", 0);
-                  return;
-                }
-                ui.setOverlayMode(
-                  UiMode.CONFIRM,
-                  doSaveQuit,
-                  () => {
-                    ui.revertMode();
-                    this.showText("", 0);
-                  },
-                  false,
-                  -98,
-                );
-              });
-            } else {
-              doSaveQuit();
-            }
+                },
+                false,
+                -98,
+              );
+            });
           } else {
-            error = true;
+            doSaveQuit();
           }
           break;
+        }
         case MenuOptions.LOG_OUT: {
           success = true;
           const doLogout = () => {
@@ -783,7 +780,7 @@ export class MenuUiHandler extends MessageUiHandler {
   showText(
     text: string,
     delay?: number,
-    callback?: Function,
+    callback?: () => void,
     callbackDelay?: number,
     prompt?: boolean,
     promptDelay?: number,
