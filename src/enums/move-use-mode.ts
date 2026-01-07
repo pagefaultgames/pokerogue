@@ -5,7 +5,7 @@ import type { ObjectValues } from "#types/type-helpers";
  * Each one inherits the properties (or exclusions) of all types preceding it.
  * Properties newly found on a given use mode will be **bolded**,
  * while oddities breaking a previous trend will be listed in _italics_.
-
+ *
  * Callers should refrain from performing non-equality checks on `MoveUseMode`s directly,
  * instead using the available helper functions
  * ({@linkcode isVirtual}, {@linkcode isIgnoreStatus}, {@linkcode isIgnorePP} and {@linkcode isReflected}).

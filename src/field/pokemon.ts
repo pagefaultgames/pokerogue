@@ -44,7 +44,8 @@ import {
   TrappedTag,
   TypeImmuneTag,
 } from "#data/battler-tags";
-import { getDailyEventSeedBoss, getDailyEventSeedBossVariant } from "#data/daily-run";
+import { getDailyEventSeedBoss } from "#data/daily-seed/daily-run";
+import { isDailyFinalBoss } from "#data/daily-seed/daily-seed-utils";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import {
@@ -2072,6 +2073,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.customPokemonData.ability != null && this.customPokemonData.ability !== -1) {
       return allAbilities[this.customPokemonData.ability];
     }
+    if (this.isBoss() && isDailyFinalBoss()) {
+      const eventBoss = getDailyEventSeedBoss();
+      if (eventBoss?.ability != null) {
+        return allAbilities[eventBoss.ability];
+      }
+    }
     let abilityId = this.getSpeciesForm(ignoreOverride).getAbility(this.abilityIndex);
     if (abilityId === AbilityId.NONE) {
       abilityId = this.species.ability1;
@@ -2095,6 +2102,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     if (this.customPokemonData.passive != null && this.customPokemonData.passive !== -1) {
       return allAbilities[this.customPokemonData.passive];
+    }
+    if (this.isBoss() && isDailyFinalBoss()) {
+      const eventBoss = getDailyEventSeedBoss();
+      if (eventBoss?.passive != null) {
+        return allAbilities[eventBoss.passive];
+      }
     }
 
     return allAbilities[this.species.getPassiveAbility(this.formIndex)];
@@ -2383,15 +2396,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     applyMoveAttrs("VariableMoveTypeAttr", this, null, move, moveTypeHolder);
 
-    const power = new NumberHolder(move.power);
-    applyAbAttrs("MoveTypeChangeAbAttr", {
-      pokemon: this,
-      move,
-      simulated,
-      moveType: moveTypeHolder,
-      power,
-      opponent: this,
-    });
+    applyAbAttrs("MoveTypeChangeAbAttr", { pokemon: this, move, simulated, moveType: moveTypeHolder, opponent: this });
 
     // If the user is terastallized and the move is tera blast, or tera starstorm that is stellar type,
     // then bypass the check for ion deluge and electrify
@@ -3153,6 +3158,29 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
+   * Attempt to populate this Pokemon's moveset based on those from a Starter
+   * @param moveset - The {@linkcode StarterMoveset} to use; will override corresponding slots
+   * of this Pokemon's moveset
+   * @param ignoreValidate - Whether to ignore validating the passed-in moveset; default `false`
+   */
+  tryPopulateMoveset(moveset: StarterMoveset, ignoreValidate = false): void {
+    // TODO: Why do we need to re-validate starter movesets after picking them?
+    if (
+      !ignoreValidate
+      && !this.getSpeciesForm().validateStarterMoveset(
+        moveset,
+        globalScene.gameData.starterData[this.species.getRootSpeciesId()].eggMoves,
+      )
+    ) {
+      return;
+    }
+
+    moveset.forEach((m, i) => {
+      this.moveset[i] = new PokemonMove(m);
+    });
+  }
+
+  /**
    * Attempt to select the move at the move index.
    * @param moveIndex - The index of the move to select
    * @param ignorePp - Whether to ignore PP when checking if the move is usable (defaults to false)
@@ -3564,6 +3592,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param __namedParameters.source - Needed for proper typedoc rendering
    * @returns The {@linkcode DamageCalculationResult}
    */
+  // TODO: Condense various multipliers into a single function
   getAttackDamage({
     source,
     move,
@@ -4343,8 +4372,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Return this Pokemon's move history.
-   * Entries are sorted in order of OLDEST to NEWEST
-   * @returns An array of {@linkcode TurnMove}, as described above.
+   * Entries are sorted in order of OLDEST to NEWEST.
+   * @returns An array of {@linkcode TurnMove}s, as described above.
    * @see {@linkcode getLastXMoves}
    */
   public getMoveHistory(): TurnMove[] {
@@ -4352,9 +4381,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Add a new entry to this Pokemon's move history
-   * @remarks
-   * Does nothing if this Pokemon is not currently on the field.
+   * Add a move to the end of this {@linkcode Pokemon}'s move history,
+   * used to record its most recently executed actions.
    * @param turnMove - The move to add to the history
    */
   public pushMoveHistory(turnMove: TurnMove): void {
@@ -5862,29 +5890,6 @@ export class PlayerPokemon extends Pokemon {
   }
 
   /**
-   * Attempt to populate this Pokemon's moveset based on those from a Starter
-   * @param moveset - The {@linkcode StarterMoveset} to use; will override corresponding slots
-   * of this Pokemon's moveset
-   * @param ignoreValidate - Whether to ignore validating the passed-in moveset; default `false`
-   */
-  tryPopulateMoveset(moveset: StarterMoveset, ignoreValidate = false): void {
-    // TODO: Why do we need to re-validate starter movesets after picking them?
-    if (
-      !ignoreValidate
-      && !this.getSpeciesForm().validateStarterMoveset(
-        moveset,
-        globalScene.gameData.starterData[this.species.getRootSpeciesId()].eggMoves,
-      )
-    ) {
-      return;
-    }
-
-    moveset.forEach((m, i) => {
-      this.moveset[i] = new PokemonMove(m);
-    });
-  }
-
-  /**
    * Cause this Pokémon to leave the field (via {@linkcode leaveField}) and then
    * open the party switcher UI to switch in a new Pokémon
    * @param switchType - The type of this switch-out. If this is
@@ -6369,11 +6374,6 @@ export class EnemyPokemon extends Pokemon {
       && this.species.forms[Overrides.ENEMY_FORM_OVERRIDES[speciesId]]
     ) {
       this.formIndex = Overrides.ENEMY_FORM_OVERRIDES[speciesId];
-    } else if (globalScene.gameMode.isDaily && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex)) {
-      const eventBoss = getDailyEventSeedBoss(globalScene.seed);
-      if (eventBoss != null) {
-        this.formIndex = eventBoss.formIndex;
-      }
     }
 
     if (!dataSource) {
@@ -6389,21 +6389,13 @@ export class EnemyPokemon extends Pokemon {
         this.initShinySparkle();
       }
 
-      const eventBossVariant = getDailyEventSeedBossVariant(globalScene.seed);
-      const eventBossVariantEnabled =
-        eventBossVariant != null && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex);
-      if (eventBossVariantEnabled) {
-        this.shiny = true;
-      }
-
       if (this.shiny) {
-        this.variant = eventBossVariantEnabled ? eventBossVariant : this.generateShinyVariant();
-        if (Overrides.ENEMY_VARIANT_OVERRIDE !== null) {
-          this.variant = Overrides.ENEMY_VARIANT_OVERRIDE;
-        }
+        this.variant = Overrides.ENEMY_VARIANT_OVERRIDE ?? this.generateShinyVariant();
       }
 
       this.luck = (this.shiny ? this.variant + 1 : 0) + (this.fusionShiny ? this.fusionVariant + 1 : 0);
+
+      this.applyCustomDailyBossConfig();
 
       if (this.hasTrainer() && globalScene.currentBattle) {
         const { waveIndex } = globalScene.currentBattle;
@@ -6451,6 +6443,37 @@ export class EnemyPokemon extends Pokemon {
       bossSegments
       ?? globalScene.getEncounterBossSegments(globalScene.currentBattle.waveIndex, this.level, this.species, true);
     this.bossSegmentIndex = this.bossSegments - 1;
+  }
+
+  /**
+   * Helper method to apply the custom daily boss config to this pokemon.
+   */
+  private applyCustomDailyBossConfig(): void {
+    if (!isDailyFinalBoss()) {
+      return;
+    }
+
+    const bossConfig = getDailyEventSeedBoss();
+    if (!bossConfig) {
+      return;
+    }
+
+    if (bossConfig.formIndex != null) {
+      this.formIndex = bossConfig.formIndex;
+    }
+
+    if (bossConfig.variant != null) {
+      this.shiny = true;
+      this.variant = bossConfig.variant;
+    }
+
+    if (bossConfig.nature != null) {
+      this.setNature(bossConfig.nature);
+    }
+
+    if (bossConfig.moveset != null) {
+      this.tryPopulateMoveset(bossConfig.moveset, true);
+    }
   }
 
   generateAndPopulateMoveset(formIndex?: number): void {

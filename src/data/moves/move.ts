@@ -70,6 +70,7 @@ import { applyMoveAttrs } from "#moves/apply-attrs";
 import {
   invalidAssistMoves,
   invalidCopycatMoves,
+  invalidInstructMoves,
   invalidMetronomeMoves,
   invalidMirrorMoveMoves,
   invalidSketchMoves,
@@ -1060,7 +1061,6 @@ export abstract class Move implements Localizable {
 
     applyMoveAttrs("VariablePowerAttr", source, target, this, power);
 
-    const typeChangeMovePowerMultiplier = new NumberHolder(1);
     const typeChangeHolder = new NumberHolder(this.type);
 
     applyAbAttrs("MoveTypeChangeAbAttr", {
@@ -1069,7 +1069,6 @@ export abstract class Move implements Localizable {
       move: this,
       simulated: true,
       moveType: typeChangeHolder,
-      power: typeChangeMovePowerMultiplier,
     });
 
     const abAttrParams: PreAttackModifyPowerAbAttrParams = {
@@ -1086,9 +1085,8 @@ export abstract class Move implements Localizable {
       applyAbAttrs("AllyMoveCategoryPowerBoostAbAttr", { ...abAttrParams, pokemon: ally });
     }
 
-    // Non-priority, single-hit moves of the user's Tera Type are always a bare minimum of 60 power
-
     const sourceTeraType = source.getTeraType();
+    // Non-priority, single-hit moves of the user's Tera Type are always a minimum of 60 power
     if (
       source.isTerastallized
       && sourceTeraType === this.type
@@ -1117,8 +1115,6 @@ export abstract class Move implements Localizable {
       applyAbAttrs("UserFieldMoveTypePowerBoostAbAttr", { pokemon: p, opponent: target, move: this, simulated, power });
     }
 
-    power.value *= typeChangeMovePowerMultiplier.value;
-
     const typeBoost = source.findTag(
       t => t instanceof TypeBoostTag && t.boostedType === typeChangeHolder.value,
     ) as TypeBoostTag;
@@ -1140,7 +1136,7 @@ export abstract class Move implements Localizable {
     return power.value;
   }
 
-  getPriority(user: Pokemon, simulated = true) {
+  getPriority(user: Pokemon, simulated = true): number {
     const priority = new NumberHolder(this.priority);
     applyMoveAttrs("IncrementMovePriorityAttr", user, null, this, priority);
     applyAbAttrs("ChangeMovePriorityAbAttr", { pokemon: user, simulated, move: this, priority });
@@ -1148,7 +1144,7 @@ export abstract class Move implements Localizable {
     return priority.value;
   }
 
-  public getPriorityModifier(user: Pokemon, simulated = true) {
+  public getPriorityModifier(user: Pokemon, simulated = true): MovePriorityInBracket {
     if (user.getTag(BattlerTagType.BYPASS_SPEED)) {
       return MovePriorityInBracket.FIRST;
     }
@@ -1159,7 +1155,7 @@ export abstract class Move implements Localizable {
       move: this,
       priority: modifierHolder,
     });
-    return modifierHolder.value;
+    return modifierHolder.value as MovePriorityInBracket;
   }
 
   /**
@@ -1256,6 +1252,7 @@ export class AttackMove extends Move {
    */
   private declare _: never;
 
+  // biome-ignore lint/nursery/useMaxParams: moves have a lot of independent params
   constructor(
     id: MoveId,
     type: PokemonType,
@@ -7826,7 +7823,7 @@ export class CopyMoveAttr extends CallMoveAttr {
  * Attribute used for moves that cause the target to repeat their last used move.
  *
  * Used by {@linkcode MoveId.INSTRUCT | Instruct}.
- * @see [Instruct on Bulbapedia](https://bulbapedia.bulbagarden.net/wiki/Instruct_(move))
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Instruct_(move) | Instruct on Bulbapedia}
  */
 export class RepeatMoveAttr extends MoveEffectAttr {
   private movesetMove: PokemonMove;
@@ -7845,7 +7842,6 @@ export class RepeatMoveAttr extends MoveEffectAttr {
     // bangs are justified as Instruct fails if no prior move or moveset move exists
     // TODO: How does instruct work when copying a move called via Copycat that the user itself knows?
     const lastMove = target.getLastNonVirtualMove()!;
-    const movesetMove = target.getMoveset().find(m => m.moveId === lastMove?.move)!;
 
     // If the last move used can hit more than one target or has variable targets,
     // re-compute the targets for the attack (mainly for alternating double/single battles)
@@ -7881,7 +7877,7 @@ export class RepeatMoveAttr extends MoveEffectAttr {
       "MovePhase",
       target,
       moveTargets,
-      movesetMove,
+      this.movesetMove,
       MoveUseMode.NORMAL,
       MovePhaseTimingModifier.FIRST,
     );
@@ -7891,83 +7887,14 @@ export class RepeatMoveAttr extends MoveEffectAttr {
   getCondition(): MoveConditionFunc {
     return (_user, target, _move) => {
       // TODO: Check instruct behavior with struggle - ignore, fail or success
+      // TODO: How does instruct work when copying a move called via Copycat that the user itself knows?
       const lastMove = target.getLastNonVirtualMove();
       const movesetMove = target.getMoveset().find(m => m.moveId === lastMove?.move);
-      const uninstructableMoves = [
-        // Locking/Continually Executed moves
-        MoveId.OUTRAGE,
-        MoveId.RAGING_FURY,
-        MoveId.ROLLOUT,
-        MoveId.PETAL_DANCE,
-        MoveId.THRASH,
-        MoveId.ICE_BALL,
-        MoveId.UPROAR,
-        // Multi-turn Moves
-        MoveId.BIDE,
-        MoveId.SHELL_TRAP,
-        MoveId.BEAK_BLAST,
-        MoveId.FOCUS_PUNCH,
-        // "First Turn Only" moves
-        MoveId.FAKE_OUT,
-        MoveId.FIRST_IMPRESSION,
-        MoveId.MAT_BLOCK,
-        // Moves with a recharge turn
-        MoveId.HYPER_BEAM,
-        MoveId.ETERNABEAM,
-        MoveId.FRENZY_PLANT,
-        MoveId.BLAST_BURN,
-        MoveId.HYDRO_CANNON,
-        MoveId.GIGA_IMPACT,
-        MoveId.PRISMATIC_LASER,
-        MoveId.ROAR_OF_TIME,
-        MoveId.ROCK_WRECKER,
-        MoveId.METEOR_ASSAULT,
-        // Charging & 2-turn moves
-        MoveId.DIG,
-        MoveId.FLY,
-        MoveId.BOUNCE,
-        MoveId.SHADOW_FORCE,
-        MoveId.PHANTOM_FORCE,
-        MoveId.DIVE,
-        MoveId.ELECTRO_SHOT,
-        MoveId.ICE_BURN,
-        MoveId.GEOMANCY,
-        MoveId.FREEZE_SHOCK,
-        MoveId.SKY_DROP,
-        MoveId.SKY_ATTACK,
-        MoveId.SKULL_BASH,
-        MoveId.SOLAR_BEAM,
-        MoveId.SOLAR_BLADE,
-        MoveId.METEOR_BEAM,
-        // Copying/Move-Calling moves
-        MoveId.ASSIST,
-        MoveId.COPYCAT,
-        MoveId.ME_FIRST,
-        MoveId.METRONOME,
-        MoveId.MIRROR_MOVE,
-        MoveId.NATURE_POWER,
-        MoveId.SLEEP_TALK,
-        MoveId.SNATCH,
-        MoveId.INSTRUCT,
-        // Misc moves
-        MoveId.KINGS_SHIELD,
-        MoveId.SKETCH,
-        MoveId.TRANSFORM,
-        MoveId.MIMIC,
-        MoveId.STRUGGLE,
-        // TODO: Add Max/G-Max/Z-Move blockage if or when they are implemented
-      ];
 
-      if (
-        !lastMove?.move // no move to instruct
-        || !movesetMove // called move not in target's moveset (forgetting the move, etc.)
-        || movesetMove.ppUsed === movesetMove.getMovePp() // move out of pp // TODO: This next line is likely redundant as all charging moves are in the above list
-        || allMoves[lastMove.move].isChargingMove() // called move is a charging/recharging move
-        || uninstructableMoves.includes(lastMove.move)
-      ) {
-        // called move is in the banlist
+      if (!lastMove?.move || !movesetMove || movesetMove.isOutOfPp() || invalidInstructMoves.has(lastMove.move)) {
         return false;
       }
+
       this.movesetMove = movesetMove;
       return true;
     };
