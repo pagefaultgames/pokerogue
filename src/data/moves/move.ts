@@ -200,11 +200,14 @@ export abstract class Move implements Localizable {
   private readonly restrictions: MoveRestriction[] = [];
   /** The move's {@linkcode MoveFlags} */
   private flags = 0;
+  private _allyTargetDefault = false;
   /**
    * Whether this move should default to targeting an ally in Double Battles.
    * @defaultValue `false`
    */
-  public allyTargetDefault = false;
+  public get allyTargetDefault() {
+    return this._allyTargetDefault;
+  }
   private nameAppend = "";
 
   /**
@@ -813,7 +816,7 @@ export abstract class Move implements Localizable {
    * Manual switching to enemy targets is still allowed.
    */
   targetsAllyDefault(): this {
-    this.allyTargetDefault = true;
+    this._allyTargetDefault = true;
     return this;
   }
 
