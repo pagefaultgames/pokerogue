@@ -200,8 +200,8 @@ export abstract class Move implements Localizable {
   private readonly restrictions: MoveRestriction[] = [];
   /** The move's {@linkcode MoveFlags} */
   private flags = 0;
-  /** 
-   * Whether this move should default to targeting an ally in Double Battles. 
+  /**
+   * Whether this move should default to targeting an ally in Double Battles.
    * @defaultValue `false`
    */
   public allyTargetDefault = false;
