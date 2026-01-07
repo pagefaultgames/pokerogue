@@ -5,8 +5,8 @@ import i18next from "i18next";
 
 /**
  * Retrieves the Pokemon's name, potentially with an affix indicating its role (wild or foe) in the current battle context, translated
- * @param pokemon - The {@linkcode Pokemon} to retrieve the name of. Will return "MissingNo." as a fallback if `undefined`
- * @param useIllusion - Whether we want the name of the illusion or not; default `true`
+ * @param pokemon - The {@linkcode Pokemon} to retrieve the name of. Will return `"MissingNo."` as a fallback if `undefined`
+ * @param useIllusion - (Default `true`) Whether we want the name of the illusion or not
  * @returns The localized name of `pokemon` complete with affix. Ex: "Wild Gengar", "Ectoplasma sauvage"
  */
 // TODO: this shouldn't accept `undefined`
@@ -17,15 +17,12 @@ export function getPokemonNameWithAffix(pokemon: Pokemon | undefined, useIllusio
   }
 
   const pokemonName = pokemon.getNameToRender({ useIllusion });
-
-  switch (globalScene.currentBattle.battleSpec) {
-    case BattleSpec.DEFAULT:
-      return pokemon.isEnemy()
-        ? pokemon.hasTrainer()
-          ? i18next.t("battle:foePokemonWithAffix", { pokemonName })
-          : i18next.t("battle:wildPokemonWithAffix", { pokemonName })
-        : pokemonName;
-    case BattleSpec.FINAL_BOSS:
-      return pokemon.isEnemy() ? i18next.t("battle:foePokemonWithAffix", { pokemonName }) : pokemonName;
+  if (!pokemon.isEnemy()) {
+    return pokemonName;
   }
+
+  // Even though the final boss is a "wild"/"trainerless" Pokemon, it uses "Foe" instead of "Wild"
+  const useFoePrefix = globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS || pokemon.hasTrainer();
+  const i18nkey = useFoePrefix ? "battle:foePokemonWithAffix" : "battle:wildPokemonWithAffix";
+  return i18next.t(i18nkey, { pokemonName });
 }
