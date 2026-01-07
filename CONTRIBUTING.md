@@ -208,6 +208,6 @@ fix(move): Future Sight no longer crashes
 - "ui" - UI/UX
 
 > [!IMPORTANT]
-> All scopes are valid when using the "feat", "fix", or "refactor" prefixes. \
+> All scopes are valid when using the "docs", "feat", "fix", "refactor" and "test" prefixes. \
 > All scopes except "audio", "battle", "graphics", and "ui" are valid when using the "balance" prefix. \
 > No other prefixes have valid scopes.

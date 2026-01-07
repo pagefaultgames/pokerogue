@@ -47,14 +47,14 @@ const PREFIX_SCOPE_MAP = {
   balance: ["ability", "ai", "biomes", "challenge", "encounter", "event", "item", "move"],
   chore: [],
   dev: [],
-  docs: [],
+  docs: ALL_SCOPES,
   feat: ALL_SCOPES,
   fix: ALL_SCOPES,
   github: [],
   i18n: [],
   misc: [],
   refactor: ALL_SCOPES,
-  test: [],
+  test: ALL_SCOPES,
 } as const satisfies Record<Prefixes, readonly AllScopes[]>;
 
 async function run(): Promise<void> {
