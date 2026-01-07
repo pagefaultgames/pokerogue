@@ -160,7 +160,7 @@ Most information related to submitting a pull request is contained in comments w
 however full documentation on the pull request title format is here to best utilize the space available.
 
 The pull request title must follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) format with a valid prefix and optionally a valid scope. \
-If a save migrator or version increase is part of the PR, a `!` must be added before the `:`.
+If a save migrator, version increase or other breaking change is part of the PR, a `!` must be added before the `:`.
 
 Try to keep the PR title to 72 characters or less (GitHub cuts off commit titles longer than this).
 
