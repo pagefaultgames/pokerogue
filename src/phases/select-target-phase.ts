@@ -39,12 +39,12 @@ export class SelectTargetPhase extends PokemonPhase {
     globalScene.ui.setMode(
       UiMode.TARGET_SELECT,
       this.fieldIndex,
-      moveId,
+      move.id,
       (targets: BattlerIndex[]) => {
         globalScene.ui.setMode(UiMode.MESSAGE);
         if (targets[0] && user.isMoveTargetRestricted(move.id, user, fieldSide[targets[0]])) {
           const errorMessage = user
-            .getRestrictingTag(moveId!, user, fieldSide[targets[0]])!
+            .getRestrictingTag(move.id, user, fieldSide[targets[0]])!
             .selectionDeniedText(user, move.id);
           globalScene.phaseManager.queueMessage(i18next.t(errorMessage, { moveName: move.name }), 0, true);
           targets = [];
