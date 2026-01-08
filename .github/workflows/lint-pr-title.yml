@@ -24,7 +24,9 @@ jobs:
           sparse-checkout: |
             package.json
             pnpm-lock.yaml
+            .nvmrc
             .github/scripts/pr-title.ts
+          sparse-checkout-cone-mode: false
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
