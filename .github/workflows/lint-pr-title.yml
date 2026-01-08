@@ -22,7 +22,6 @@ jobs:
           sparse-checkout: |
             package.json
             pnpm-lock.yaml
-            tsconfig.json
             .github/scripts/pr-title.ts
 
       - name: Install pnpm
@@ -35,9 +34,9 @@ jobs:
           cache: "pnpm"
 
       - name: Install Node.js dependencies
-        run: pnpm add @actions/core @actions/github tsx
+        run: pnpm add @actions/core @actions/github
 
       - name: Lint PR title
-        run: pnpm exec tsx ./.github/scripts/pr-title.ts
+        run: node ./.github/scripts/pr-title.ts
         env:
           INPUT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
