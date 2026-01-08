@@ -1620,7 +1620,6 @@ export class BattleScene extends SceneBase {
       case SpeciesId.MAGEARNA:
       case SpeciesId.ZARUDE:
       case SpeciesId.SQUAWKABILLY:
-      case SpeciesId.TATSUGIRI:
       case SpeciesId.PALDEA_TAUROS:
         return randSeedInt(species.forms.length);
       case SpeciesId.SINISTEA:
@@ -1653,6 +1652,8 @@ export class BattleScene extends SceneBase {
         return randSeedInt(2);
       case SpeciesId.URSHIFU:
         return randSeedInt(2);
+      case SpeciesId.TATSUGIRI:
+        return randSeedInt(3);
       case SpeciesId.ZYGARDE:
         return randSeedInt(4);
       case SpeciesId.MINIOR:
