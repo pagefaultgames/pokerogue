@@ -2401,7 +2401,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     }
 
     if (species && (this.isSeen() || this.isCaught())) {
-      this.pokemonNumberText.setText(padInt(species.speciesId, 4));
+      //mod 200 to not have regional forms have different numbers
+      this.pokemonNumberText.setText(padInt(species.speciesId % 2000, 4));
 
       if (this.isCaught()) {
         const defaultDexAttr = this.getCurrentDexProps(species.speciesId);
@@ -2447,7 +2448,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonSprite.setTint(0x808080);
       }
     } else {
-      this.pokemonNumberText.setText(species ? padInt(species.speciesId, 4) : "");
+      this.pokemonNumberText.setText(species ? padInt(species.speciesId % 2000, 4) : "");
       this.pokemonNameText.setText(species ? "???" : "");
       this.pokemonGrowthRateText.setText("");
       this.pokemonGrowthRateLabelText.setVisible(false);

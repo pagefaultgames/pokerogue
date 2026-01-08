@@ -2140,7 +2140,8 @@ export class PokedexUiHandler extends MessageUiHandler {
       species
       && (this.speciesStarterDexEntry?.seenAttr || this.speciesStarterDexEntry?.caughtAttr || globalScene.dexForDevs)
     ) {
-      this.pokemonNumberText.setText(i18next.t("pokedexUiHandler:pokemonNumber") + padInt(species.speciesId, 4));
+      //mod 2000 to keep the pokedex numbers for regionals normal
+      this.pokemonNumberText.setText(i18next.t("pokedexUiHandler:pokemonNumber") + padInt(species.speciesId % 2000, 4));
 
       this.pokemonNameText.setText(species.name);
 
@@ -2165,7 +2166,7 @@ export class PokedexUiHandler extends MessageUiHandler {
       }
     } else {
       this.pokemonNumberText.setText(
-        species ? i18next.t("pokedexUiHandler:pokemonNumber") + padInt(species.speciesId, 4) : "",
+        species ? i18next.t("pokedexUiHandler:pokemonNumber") + padInt(species.speciesId % 2000, 4) : "",
       );
       this.pokemonNameText.setText(species ? "???" : "");
       this.pokemonFormText.setText("");

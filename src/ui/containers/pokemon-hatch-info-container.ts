@@ -167,8 +167,8 @@ export class PokemonHatchInfoContainer extends PokemonInfoContainer {
     this.pokemonCandyOverlayIcon.setVisible(true);
     this.pokemonCandyCountText.setText(`×${globalScene.gameData.starterData[species.speciesId].candyCount}`);
     this.pokemonCandyCountText.setVisible(true);
-
-    this.pokemonNumberText.setText(padInt(species.speciesId, 4));
+    //mod 2000 to keep the regional forms normal
+    this.pokemonNumberText.setText(padInt(species.speciesId % 2000, 4));
     this.pokemonNameText.setText(species.name);
 
     const hasEggMoves = species && speciesEggMoves.hasOwnProperty(species.speciesId);

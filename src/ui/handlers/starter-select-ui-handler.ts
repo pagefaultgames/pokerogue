@@ -3558,7 +3558,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.lastSpecies = species!; // TODO: is this bang correct?
 
     if (species && (this.speciesStarterDexEntry?.seenAttr || this.speciesStarterDexEntry?.caughtAttr)) {
-      this.pokemonNumberText.setText(padInt(species.speciesId, 4));
+      //mod 2000 to keep the pokedex number normal for regional variants and Bloodmoon Ursaluna
+      this.pokemonNumberText.setText(padInt(species.speciesId % 2000, 4));
       if (starterAttributes?.nickname) {
         const name = decodeURIComponent(escape(atob(starterAttributes.nickname)));
         this.pokemonNameText.setText(name);
