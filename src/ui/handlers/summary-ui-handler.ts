@@ -386,9 +386,9 @@ export class SummaryUiHandler extends UiHandler {
     this.candyOverlay.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
 
     this.numberText.setText(padInt(this.pokemon.species.speciesId, 4));
-    this.numberText.setColor(getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD));
+    this.numberText.setColor(getTextColor(this.pokemon.isShiny() ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY));
     this.numberText.setShadowColor(
-      getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD, true),
+      getTextColor(this.pokemon.isShiny() ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY, true),
     );
     const spriteKey = this.pokemon.getSpriteKey(true);
     try {
@@ -642,10 +642,10 @@ export class SummaryUiHandler extends UiHandler {
           selectCallback(-1);
         }
 
-        if (!fromPartyMode) {
-          ui.setMode(UiMode.MESSAGE);
-        } else {
+        if (fromPartyMode) {
           ui.setMode(UiMode.PARTY);
+        } else {
+          ui.setMode(UiMode.MESSAGE);
         }
       }
       success = true;
@@ -860,9 +860,9 @@ export class SummaryUiHandler extends UiHandler {
           7,
           12,
           `${i18next.t("pokemonSummary:ot")}/${getBBCodeFrag(
-            !globalScene.hideUsername
-              ? loggedInUser?.username || i18next.t("pokemonSummary:unknown")
-              : usernameReplacement,
+            globalScene.hideUsername
+              ? usernameReplacement
+              : loggedInUser?.username || i18next.t("pokemonSummary:unknown"),
             otColor,
           )}`,
           TextStyle.SUMMARY_ALT,
@@ -884,9 +884,9 @@ export class SummaryUiHandler extends UiHandler {
 
         const getTypeIcon = (index: number, type: PokemonType, tera = false) => {
           const xCoord = typeLabel.width * typeLabel.scale + 9 + 34 * index;
-          const typeIcon = !tera
-            ? globalScene.add.sprite(xCoord, 42, getLocalizedSpriteKey("types"), PokemonType[type].toLowerCase())
-            : globalScene.add.sprite(xCoord, 42, "type_tera");
+          const typeIcon = tera
+            ? globalScene.add.sprite(xCoord, 42, "type_tera")
+            : globalScene.add.sprite(xCoord, 42, getLocalizedSpriteKey("types"), PokemonType[type].toLowerCase());
           if (tera) {
             typeIcon.setScale(0.5);
             const typeRgb = getTypeRgb(type);
@@ -947,7 +947,7 @@ export class SummaryUiHandler extends UiHandler {
           this.abilityPrompt = globalScene.add.image(
             0,
             0,
-            !globalScene.inputController?.gamepadSupport ? "summary_profile_prompt_z" : "summary_profile_prompt_a",
+            globalScene.inputController?.gamepadSupport ? "summary_profile_prompt_a" : "summary_profile_prompt_z",
           );
           this.abilityPrompt.setPosition(8, 43);
           this.abilityPrompt.setVisible(true);
@@ -1167,7 +1167,7 @@ export class SummaryUiHandler extends UiHandler {
         this.abilityPrompt = globalScene.add.image(
           0,
           0,
-          !globalScene.inputController?.gamepadSupport ? "summary_profile_prompt_z" : "summary_profile_prompt_a",
+          globalScene.inputController?.gamepadSupport ? "summary_profile_prompt_a" : "summary_profile_prompt_z",
         );
         this.abilityPrompt.setPosition(8, 47);
         this.abilityPrompt.setVisible(true);

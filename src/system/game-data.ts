@@ -10,6 +10,7 @@ import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { speciesStarterCosts } from "#balance/starters";
 import { bypassLogin, isBeta, isDev } from "#constants/app-constants";
 import { EntryHazardTag } from "#data/arena-tag";
+import { getSerializedDailyRunConfig, parseDailySeed } from "#data/daily-seed/daily-seed-utils";
 import { allMoves, allSpecies } from "#data/data-lists";
 import type { Egg } from "#data/egg";
 import { pokemonFormChanges } from "#data/pokemon-forms";
@@ -229,7 +230,11 @@ export class GameData {
 
       localStorage.setItem(`data_${loggedInUser?.username}`, encrypt(systemData, bypassLogin));
 
-      if (!bypassLogin) {
+      if (bypassLogin) {
+        globalScene.ui.savingIcon.hide();
+
+        resolve(true);
+      } else {
         pokerogueApi.savedata.system.update({ clientSessionId }, systemData).then(error => {
           globalScene.ui.savingIcon.hide();
           if (error) {
@@ -242,10 +247,6 @@ export class GameData {
           }
           resolve(true);
         });
-      } else {
-        globalScene.ui.savingIcon.hide();
-
-        resolve(true);
       }
     });
   }
@@ -258,7 +259,9 @@ export class GameData {
         return resolve(false);
       }
 
-      if (!bypassLogin) {
+      if (bypassLogin) {
+        this.initSystem(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, bypassLogin)).then(resolve); // TODO: is this bang correct?
+      } else {
         pokerogueApi.savedata.system.get({ clientSessionId }).then(saveDataOrErr => {
           if (
             typeof saveDataOrErr === "number"
@@ -291,8 +294,6 @@ export class GameData {
             cachedSystem ? AES.decrypt(cachedSystem, saveKey).toString(enc.Utf8) : undefined,
           ).then(resolve);
         });
-      } else {
-        this.initSystem(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, bypassLogin)).then(resolve); // TODO: is this bang correct?
       }
     });
   }
@@ -804,6 +805,7 @@ export class GameData {
       seed: globalScene.seed,
       playTime: globalScene.sessionPlayTime,
       gameMode: globalScene.gameMode.modeId,
+      dailyConfig: getSerializedDailyRunConfig(),
       party: globalScene.getPlayerParty().map(p => new PokemonData(p)),
       enemyParty: globalScene.getEnemyParty().map(p => new PokemonData(p)),
       modifiers: globalScene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
@@ -933,6 +935,8 @@ export class GameData {
     globalScene.resetSeed();
 
     console.log("Seed:", globalScene.seed);
+
+    globalScene.gameMode.trySetCustomDailyConfig(JSON.stringify(fromSession.dailyConfig));
 
     globalScene.sessionPlayTime = fromSession.playTime || 0;
     globalScene.lastSavePlayTime = 0;
@@ -1148,13 +1152,7 @@ export class GameData {
         sessionData,
       );
 
-      if (!jsonResponse?.error) {
-        result = [true, jsonResponse?.success ?? false];
-        if (loggedInUser) {
-          loggedInUser!.lastSessionSlot = -1;
-        }
-        localStorage.removeItem(getSaveDataLocalStorageKey(slotId));
-      } else {
+      if (jsonResponse?.error) {
         if (jsonResponse?.error?.startsWith("session out of date")) {
           globalScene.phaseManager.clearPhaseQueue();
           globalScene.phaseManager.unshiftNew("ReloadSessionPhase");
@@ -1162,6 +1160,12 @@ export class GameData {
 
         console.error(jsonResponse);
         result = [false, false];
+      } else {
+        result = [true, jsonResponse?.success ?? false];
+        if (loggedInUser) {
+          loggedInUser!.lastSessionSlot = -1;
+        }
+        localStorage.removeItem(getSaveDataLocalStorageKey(slotId));
       }
     }
 
@@ -1230,6 +1234,10 @@ export class GameData {
         case "mysteryEncounterSaveData":
           return new MysteryEncounterSaveData(v);
 
+        case "dailyConfig":
+          // make sure the config is valid
+          return parseDailySeed(JSON.stringify(v));
+
         default:
           return v;
       }
@@ -1243,7 +1251,7 @@ export class GameData {
   saveAll(skipVerification = false, sync = false, useCachedSession = false, useCachedSystem = false): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       executeIf(!skipVerification, updateUserInfo).then(success => {
-        if (success !== null && !success) {
+        if (success != null && !success) {
           return resolve(false);
         }
         if (sync) {
@@ -1670,20 +1678,7 @@ export class GameData {
       const hasNewAttr = (caughtAttr & dexAttr) !== dexAttr;
 
       if (incrementCount) {
-        if (!fromEgg) {
-          dexEntry.caughtCount++;
-          this.gameStats.pokemonCaught++;
-          if (pokemon.species.subLegendary) {
-            this.gameStats.subLegendaryPokemonCaught++;
-          } else if (pokemon.species.legendary) {
-            this.gameStats.legendaryPokemonCaught++;
-          } else if (pokemon.species.mythical) {
-            this.gameStats.mythicalPokemonCaught++;
-          }
-          if (pokemon.isShiny()) {
-            this.gameStats.shinyPokemonCaught++;
-          }
-        } else {
+        if (fromEgg) {
           dexEntry.hatchedCount++;
           this.gameStats.pokemonHatched++;
           if (pokemon.species.subLegendary) {
@@ -1695,6 +1690,19 @@ export class GameData {
           }
           if (pokemon.isShiny()) {
             this.gameStats.shinyPokemonHatched++;
+          }
+        } else {
+          dexEntry.caughtCount++;
+          this.gameStats.pokemonCaught++;
+          if (pokemon.species.subLegendary) {
+            this.gameStats.subLegendaryPokemonCaught++;
+          } else if (pokemon.species.legendary) {
+            this.gameStats.legendaryPokemonCaught++;
+          } else if (pokemon.species.mythical) {
+            this.gameStats.mythicalPokemonCaught++;
+          }
+          if (pokemon.isShiny()) {
+            this.gameStats.shinyPokemonCaught++;
           }
         }
 

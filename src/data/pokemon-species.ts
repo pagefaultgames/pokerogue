@@ -570,15 +570,15 @@ export abstract class PokemonSpeciesForm {
           end: 400,
         });
         console.warn = originalWarn;
-        if (!globalScene.anims.exists(spriteKey)) {
+        if (globalScene.anims.exists(spriteKey)) {
+          globalScene.anims.get(spriteKey).frameRate = 10;
+        } else {
           globalScene.anims.create({
             key: this.getSpriteKey(female, formIndex, shiny, variant, back),
             frames: frameNames,
             frameRate: 10,
             repeat: -1,
           });
-        } else {
-          globalScene.anims.get(spriteKey).frameRate = 10;
         }
         const spritePath = this.getSpriteAtlasPath(female, formIndex, shiny, variant, back)
           .replace("variant/", "")

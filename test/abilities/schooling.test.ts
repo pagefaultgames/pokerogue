@@ -6,7 +6,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { QuietFormChangePhase } from "#phases/quiet-form-change-phase";
 import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
-import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe("Abilities - SCHOOLING", () => {
   let phaserGame: Phaser.Game;
@@ -16,10 +16,6 @@ describe("Abilities - SCHOOLING", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {

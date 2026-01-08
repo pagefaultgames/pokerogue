@@ -8,7 +8,7 @@ import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/test-utils/game-manager";
 import type { MockClock } from "#test/test-utils/mocks/mock-clock";
 import type { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Reload", () => {
   let phaserGame: Phaser.Game;
@@ -18,10 +18,6 @@ describe("Reload", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {

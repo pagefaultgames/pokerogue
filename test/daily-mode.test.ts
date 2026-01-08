@@ -1,9 +1,12 @@
 import { pokerogueApi } from "#api/pokerogue-api";
+import { AbilityId } from "#enums/ability-id";
 import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
+import { Nature } from "#enums/nature";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { MapModifier } from "#modifiers/modifier";
+import { getPartyLuckValue } from "#modifiers/modifier-type";
 import { GameManager } from "#test/test-utils/game-manager";
 import { stringifyEnumArray } from "#test/test-utils/string-utils";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
@@ -25,10 +28,6 @@ describe("Daily Mode", () => {
     game.override.disableShinies = false;
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   it("should initialize properly", async () => {
     vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue("test-seed");
     await game.dailyMode.startBattle();
@@ -43,59 +42,11 @@ describe("Daily Mode", () => {
   });
 
   describe("Custom Seeds", () => {
-    describe("Moves", () => {
-      it("should support custom moves", async () => {
-        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue("/moves0001000200030004,03320006,01300919");
-        await game.dailyMode.startBattle();
-
-        const [moves1, moves2, moves3] = game.scene.getPlayerParty().map(p => p.moveset.map(pm => pm.moveId));
-        expect(moves1, stringifyEnumArray(MoveId, moves1)).toEqual([
-          MoveId.POUND,
-          MoveId.KARATE_CHOP,
-          MoveId.DOUBLE_SLAP,
-          MoveId.COMET_PUNCH,
-        ]);
-        expect(moves2, stringifyEnumArray(MoveId, moves2)).toEqual([
-          MoveId.AERIAL_ACE,
-          MoveId.PAY_DAY,
-          expect.anything(), // make sure it doesn't replace normal moveset gen
-          expect.anything(),
-        ]);
-        expect(moves3, stringifyEnumArray(MoveId, moves3)).toEqual([
-          MoveId.SKULL_BASH,
-          MoveId.MALIGNANT_CHAIN,
-          expect.anything(),
-          expect.anything(),
-        ]);
-      });
-
-      it("should allow omitting movesets for some starters", async () => {
-        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue("/moves0001000200030004");
-        await game.dailyMode.startBattle();
-
-        const [moves1, moves2, moves3] = game.scene.getPlayerParty().map(p => p.moveset.map(pm => pm.moveId));
-        expect(moves1, stringifyEnumArray(MoveId, moves1)).toEqual([
-          MoveId.POUND,
-          MoveId.KARATE_CHOP,
-          MoveId.DOUBLE_SLAP,
-          MoveId.COMET_PUNCH,
-        ]);
-        expect(moves2, "was not a random moveset").toHaveLength(4);
-        expect(moves3, "was not a random moveset").toHaveLength(4);
-      });
-
-      it("should skip invalid move IDs", async () => {
-        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue("/moves9999,,0919");
-        await game.dailyMode.startBattle();
-
-        const moves = game.field.getPlayerPokemon().moveset.map(pm => pm.moveId);
-        expect(moves, "invalid move was in moveset").not.toContain(MoveId[9999]);
-      });
-    });
-
     describe("Starters", () => {
       it("should support custom species IDs", async () => {
-        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue("foo/starterss0001s0113s1024");
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+          '{"starters":[{"speciesId":1},{"speciesId":113},{"speciesId":1024}],"seed":"test"}',
+        );
         await game.dailyMode.startBattle();
 
         const party = game.scene.getPlayerParty().map(p => p.species.speciesId);
@@ -107,7 +58,9 @@ describe("Daily Mode", () => {
       });
 
       it("should support custom forms and variants", async () => {
-        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue("/starterss0006f01v2s0113v0s1024f02");
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+          '{"starters":[{"speciesId":6,"formIndex":1,"variant":2},{"speciesId":113,"variant":0},{"speciesId":1024,"formIndex":2}],"seed":"test"}',
+        );
         await game.dailyMode.startBattle();
 
         const party = game.scene.getPlayerParty().map(p => ({
@@ -121,6 +74,222 @@ describe("Daily Mode", () => {
           { speciesId: SpeciesId.CHANSEY, variant: 0, form: 0, shiny: true },
           { speciesId: SpeciesId.TERAPAGOS, variant: expect.anything(), form: 2, shiny: false },
         ]);
+      });
+
+      it("should support custom natures", async () => {
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+          '{"starters":[{"speciesId":1,"nature":0},{"speciesId":113,"nature":1},{"speciesId":1024,"nature":2}],"seed":"test"}',
+        );
+        await game.dailyMode.startBattle();
+
+        const natures = game.scene.getPlayerParty().map(p => p.getNature());
+        expect(natures, stringifyEnumArray(Nature, natures)).toEqual([Nature.HARDY, Nature.LONELY, Nature.BRAVE]);
+      });
+
+      describe("Moves", () => {
+        it("should support custom moves", async () => {
+          vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+            '{"starters":[{"speciesId":150,"moveset":[1,2,3,4]},{"speciesId":150,"moveset":[332,6]},{"speciesId":150,"moveset":[130,919]}],"seed":"test"}',
+          );
+          await game.dailyMode.startBattle();
+
+          const [moves1, moves2, moves3] = game.scene.getPlayerParty().map(p => p.moveset.map(pm => pm.moveId));
+          expect(moves1, stringifyEnumArray(MoveId, moves1)).toEqual([
+            MoveId.POUND,
+            MoveId.KARATE_CHOP,
+            MoveId.DOUBLE_SLAP,
+            MoveId.COMET_PUNCH,
+          ]);
+          expect(moves2, stringifyEnumArray(MoveId, moves2)).toEqual([
+            MoveId.AERIAL_ACE,
+            MoveId.PAY_DAY,
+            expect.any(Number), // make sure it doesn't replace normal moveset gen
+            expect.any(Number),
+          ]);
+          expect(moves3, stringifyEnumArray(MoveId, moves3)).toEqual([
+            MoveId.SKULL_BASH,
+            MoveId.MALIGNANT_CHAIN,
+            expect.any(Number),
+            expect.any(Number),
+          ]);
+        });
+
+        it("should allow omitting movesets for some starters", async () => {
+          vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+            '{"starters":[{"speciesId":349,"moveset":[1,2,3,4]},{"speciesId":150},{"speciesId":150}],"seed":"test"}',
+          );
+          await game.dailyMode.startBattle();
+
+          const [moves1, moves2, moves3] = game.scene.getPlayerParty().map(p => p.moveset.map(pm => pm.moveId));
+          expect(moves1, stringifyEnumArray(MoveId, moves1)).toEqual([
+            MoveId.POUND,
+            MoveId.KARATE_CHOP,
+            MoveId.DOUBLE_SLAP,
+            MoveId.COMET_PUNCH,
+          ]);
+          expect(moves2, "was not a random moveset").toHaveLength(4);
+          expect(moves3, "was not a random moveset").toHaveLength(4);
+        });
+
+        it("should skip invalid move IDs", async () => {
+          vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+            '{"starters":[{"speciesId":349,"moveset":[9999]},{"speciesId":150, "moveset":[]},{"speciesId":150}],"seed":"test"}',
+          );
+          await game.dailyMode.startBattle();
+
+          const moves = game.field.getPlayerPokemon().moveset.map(pm => pm.moveId);
+          expect(moves, "invalid move was in moveset").not.toContain(9999);
+        });
+      });
+    });
+
+    describe("Boss", () => {
+      beforeEach(() => {
+        game.override.startingWave(50);
+      });
+      it("should support custom species IDs", async () => {
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue('{"boss":{"speciesId":150},"seed":"test"}');
+        await game.dailyMode.startBattle();
+
+        const boss = game.field.getEnemyPokemon();
+        expect(boss.species.speciesId).toBe(SpeciesId.MEWTWO);
+      });
+
+      it("should support custom forms and variants", async () => {
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+          '{"boss":{"speciesId":150,"formIndex":1,"variant":2},"seed":"test"}',
+        );
+        await game.dailyMode.startBattle();
+
+        const boss = game.field.getEnemyPokemon();
+        expect(boss.species.speciesId).toBe(SpeciesId.MEWTWO);
+        expect(boss.formIndex).toBe(1);
+        expect(boss.getVariant()).toBe(2);
+      });
+
+      describe("Moves", () => {
+        it("should support custom moves", async () => {
+          vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+            '{"boss":{"speciesId":150,"moveset":[1,2,3,4]},"seed":"test"}',
+          );
+          await game.dailyMode.startBattle();
+
+          const moves = game.field.getEnemyPokemon().moveset.map(pm => pm.moveId);
+          expect(moves, stringifyEnumArray(MoveId, moves)).toEqual([
+            MoveId.POUND,
+            MoveId.KARATE_CHOP,
+            MoveId.DOUBLE_SLAP,
+            MoveId.COMET_PUNCH,
+          ]);
+        });
+
+        it("should allow omitting some moves", async () => {
+          vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+            '{"boss":{"speciesId":150,"moveset":[1,2]},"seed":"test"}',
+          );
+          await game.dailyMode.startBattle();
+          const moves = game.field.getEnemyPokemon().moveset.map(pm => pm.moveId);
+          expect(moves, "not enough moves").toHaveLength(4);
+          expect(moves, stringifyEnumArray(MoveId, moves)).toEqual([
+            MoveId.POUND,
+            MoveId.KARATE_CHOP,
+            expect.any(Number),
+            expect.any(Number),
+          ]);
+        });
+
+        it("should skip invalid move IDs", async () => {
+          vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+            '{"boss":{"speciesId":150,"moveset":[9999]},"seed":"test"}',
+          );
+          await game.dailyMode.startBattle();
+
+          const moves = game.field.getPlayerPokemon().moveset.map(pm => pm.moveId);
+          expect(moves, "invalid move was in moveset").not.toContain(9999);
+        });
+      });
+
+      it("should support custom ability", async () => {
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+          '{"boss":{"speciesId":150,"ability":1},"seed":"test"}',
+        );
+        await game.dailyMode.startBattle();
+
+        const ability = game.field.getEnemyPokemon().getAbility();
+        expect(ability.id).toBe(AbilityId.STENCH);
+      });
+
+      it("should support custom passive", async () => {
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+          '{"boss":{"speciesId":150,"passive":1},"seed":"test"}',
+        );
+        await game.dailyMode.startBattle();
+
+        const ability = game.field.getEnemyPokemon().getPassiveAbility();
+        expect(ability.id).toBe(AbilityId.STENCH);
+      });
+
+      it("should not allow invalid ability IDs", async () => {
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+          '{"boss":{"speciesId":150,"ability":9999},"seed":"test"}',
+        );
+        await game.dailyMode.startBattle();
+
+        const ability = game.field.getEnemyPokemon().getAbility();
+        expect(ability.id).not.toBe(9999);
+      });
+
+      it("should not allow invalid passive IDs", async () => {
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+          '{"boss":{"speciesId":150,"passive":9999},"seed":"test"}',
+        );
+        await game.dailyMode.startBattle();
+
+        const ability = game.field.getEnemyPokemon().getPassiveAbility();
+        expect(ability.id).not.toBe(9999);
+      });
+
+      it("should support custom nature", async () => {
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+          '{"boss":{"speciesId":150,"nature":0},"seed":"test"}',
+        );
+        await game.dailyMode.startBattle();
+
+        const nature = game.field.getEnemyPokemon().getNature();
+        expect(nature).toBe(Nature.HARDY);
+      });
+
+      it("should not allow invalid nature IDs", async () => {
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue(
+          '{"boss":{"speciesId":150,"nature":9999},"seed":"test"}',
+        );
+        await game.dailyMode.startBattle();
+
+        const nature = game.field.getEnemyPokemon().getNature();
+        expect(nature).not.toBe(9999);
+      });
+    });
+
+    describe("Misc", () => {
+      it("should support custom biome", async () => {
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue('{"biome":40,"seed":"test"}');
+        await game.dailyMode.startBattle();
+
+        expect(game.scene.arena.biomeType).toBe(BiomeId.ISLAND);
+      });
+
+      it("should support custom starting money", async () => {
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue('{"startingMoney":1234567890,"seed":"test"}');
+        await game.dailyMode.startBattle();
+
+        expect(game.scene.money).toBe(1234567890);
+      });
+
+      it("should support custom luck", async () => {
+        vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue('{"luck":14,"seed":"test"}');
+        await game.dailyMode.startBattle();
+
+        expect(getPartyLuckValue(game.field.getPlayerParty())).toBe(14);
       });
     });
   });
@@ -151,7 +320,6 @@ describe("Shop modifications", async () => {
   });
 
   afterEach(() => {
-    game.phaseInterceptor.restoreOg();
     game.modifiers.clearChecks();
   });
 

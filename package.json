@@ -21,6 +21,7 @@
     "test:create": "node scripts/create-test/create-test.js",
     "eggMoves:parse": "node scripts/parse-egg-moves/main.js",
     "scrape-trainers": "node scripts/scrape-trainer-names/main.js",
+    "dailySeed:create": "node scripts/daily-seed/main.js",
     "typecheck": "tsc --noEmit",
     "typecheck:js": "tsc -p jsconfig.json",
     "biome": "biome check --write --changed --no-errors-on-unmatched --diagnostic-level=error",
@@ -32,16 +33,16 @@
     "postinstall": "lefthook install; git config --local fetch.recurseSubmodules true; git config --local blame.ignoreRevsFile .git-blame-ignore-revs",
     "update-version:patch": "pnpm version patch --force --no-git-tag-version",
     "update-version:minor": "pnpm version minor --force --no-git-tag-version",
-    "update-locales": "git submodule update --progress --init --recursive --depth 1 locales",
-    "update-locales:remote": "git submodule update --progress --init --recursive --force --remote --depth 1 locales",
-    "update-assets": "git submodule update --progress --init --recursive --depth 1 assets",
-    "update-assets:remote": "git submodule update --progress --init --recursive --force --remote --depth 1 assets",
-    "update-submodules": "pnpm update-locales && pnpm update-assets",
-    "update-submodules:remote": "pnpm update-locales:remote && pnpm update-assets:remote"
+    "update-locales": "pnpm update-submodules locales",
+    "update-locales:remote": "pnpm update-submodules:remote locales",
+    "update-assets": "pnpm update-submodules assets",
+    "update-assets:remote": "pnpm update-submodules:remote assets",
+    "update-submodules": "git submodule update --progress --init --recursive --force --depth 1",
+    "update-submodules:remote": "pnpm update-submodules --remote"
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.8",
-    "@inquirer/prompts": "^8.0.2",
+    "@inquirer/prompts": "^8.1.0",
     "@ls-lint/ls-lint": "2.3.1",
     "@types/crypto-js": "^4.2.2",
     "@types/jsdom": "^27.0.0",
@@ -69,6 +70,7 @@
   },
   "dependencies": {
     "@material/material-color-utilities": "^0.3.0",
+    "ajv": "^8.17.1",
     "compare-versions": "^6.1.1",
     "core-js": "^3.47.0",
     "crypto-js": "^4.2.0",
@@ -76,7 +78,6 @@
     "i18next-browser-languagedetector": "^8.2.0",
     "i18next-http-backend": "^3.0.2",
     "i18next-korean-postposition-processor": "^1.0.0",
-    "json-stable-stringify": "^1.3.0",
     "jszip": "^3.10.1",
     "phaser": "^3.90.0",
     "phaser3-rex-plugins": "^1.80.17"
