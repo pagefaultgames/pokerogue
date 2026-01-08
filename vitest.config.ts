@@ -16,12 +16,15 @@ export default defineConfig(async config => {
     ...viteConfig,
     test: {
       passWithNoTests: false,
-      reporters: process.env.GITHUB_ACTIONS
+      reporters: process.env.MERGE_REPORTS
         ? ["github-actions", "./test/test-utils/reporters/custom-default-reporter.ts"]
-        : ["./test/test-utils/reporters/custom-default-reporter.ts"],
+        : process.env.GITHUB_ACTIONS
+          ? ["blob", "./test/test-utils/reporters/custom-default-reporter.ts"]
+          : ["./test/test-utils/reporters/custom-default-reporter.ts"],
       env: {
         TZ: "UTC",
       },
+      isolate: false,
       testTimeout: 20_000,
       slowTestThreshold: 10_000,
       // TODO: Vitest's current framework produces spurious errors for type tests with this option enabled.
@@ -47,9 +50,10 @@ export default defineConfig(async config => {
       restoreMocks: true,
       watch: false,
       coverage: {
-        provider: "istanbul",
+        provider: "v8",
         reportsDirectory: "coverage",
-        reporter: ["text-summary", "html"],
+        reporter: process.env.MERGE_REPORTS ? ["text-summary", "json-summary"] : [],
+        exclude: ["public", "assets", "locales"],
       },
       name: "main",
       include: ["./test/**/*.{test,spec}.ts"],

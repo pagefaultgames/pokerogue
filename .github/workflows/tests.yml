@@ -21,6 +21,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  COVERAGE_DIR: coverage/coverage-summary.json
+
 jobs:
   check-path-change-filter:
     timeout-minutes: 5
@@ -55,6 +58,7 @@ jobs:
     with:
       shard: ${{ matrix.shard }}
       totalShards: 5
+      coverage: true
 
   check-results:
     name: Check Test Results
@@ -62,6 +66,13 @@ jobs:
     needs: run-tests
     runs-on: ubuntu-latest
     if: ${{ needs.run-tests.result != 'skipped' && needs.run-tests.result != 'cancelled' }}
+    # Only output coverage badges on pushes to beta, as that will allow us to access the gist coverage token.
+    env:
+      SHOULD_UPLOAD_COVERAGE: ${{github.event_name == 'push' && github.ref_name == 'beta'}}
+    outputs:
+      coverage_report: ${{ steps.output-coverage.outputs.report }}
+      should_upload_coverage: ${{ env.SHOULD_UPLOAD_COVERAGE }}
+
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v6
@@ -70,7 +81,6 @@ jobs:
             .github/actions/setup-deps/action.yml
             test/setup
             test/test-utils/reporters/custom-default-reporter.ts
-
 
       - uses: ./.github/actions/setup-deps
 
@@ -83,3 +93,60 @@ jobs:
 
       - name: Merge blobs
         run: pnpm test:merge-reports
+        id: merge-reports
+
+      - name: Output coverage report
+        id: output-coverage
+        if: ${{ env.SHOULD_UPLOAD_COVERAGE && success()}}
+        run: echo "report="$(cat ${{ env.COVERAGE_DIR }})"" >> $GITHUB_OUTPUT
+
+  upload-coverage:
+    name: Upload Test Coverage Badge
+    needs: check-results
+    if: ${{ needs.check-results.result != 'skipped' && needs.check-results.result != 'cancelled' && needs.check-results.outputs.should_upload_coverage == 'true' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Verify secret validity
+        run: |
+          if [ -z "${{ secrets.COVERAGE_GIST_ACCESS_TOKEN }}" ]; then
+            printf "COVERAGE_GIST_ACCESS_TOKEN secret is not set!\nAre you trying to run this from inside a fork?"
+            exit 1
+          fi
+          if [ -z "${{ vars.COVERAGE_BADGE_GIST_ID }}" ]; then
+            printf "COVERAGE_BADGE_GIST_ID variable is not set!\nAre you trying to run this from inside a fork?"
+            exit 1
+          fi
+
+      - name: Update failure README badge
+        uses: schneegans/dynamic-badges-action@e9a478b16159b4d31420099ba146cdc50f134483 # v1.7.0
+        if: ${{ needs.check-results.result == 'failure' && success() }}
+        with:
+          namedLogo: vitest
+          color: red
+          auth: ${{ secrets.COVERAGE_GIST_ACCESS_TOKEN }}
+          gistID: ${{ vars.COVERAGE_BADGE_GIST_ID }}
+          filename: coverage-badge.json
+          label: "Tests"
+          message: "failing"
+          forceUpdate: true
+
+      - name: Extract coverage percentage
+        run: echo "COVERAGE_PERCENTAGE=$(jq '.total.branches.pct' <<< "${{needs.check-results.outputs.coverage_report}}")" >> $GITHUB_ENV
+        if: ${{ needs.check-results.result == 'success' && success()}}
+
+      - name: Update coverage README badge
+        uses: schneegans/dynamic-badges-action@e9a478b16159b4d31420099ba146cdc50f134483 # v1.7.0
+        if: ${{ needs.check-results.result == 'success' && success() }}
+        with:
+          # Interpolate smoothly between red (0%) and green (90+%)
+          valColorRange: ${{ env.COVERAGE_PERCENTAGE }}
+          minColorRange: 0
+          maxColorRange: 90
+          message: "${{ env.COVERAGE_PERCENTAGE }}%"
+          namedLogo: vitest
+          auth: ${{ secrets.COVERAGE_GIST_ACCESS_TOKEN }}
+          gistID: ${{ vars.COVERAGE_BADGE_GIST_ID }}
+          filename: coverage-badge.json
+          label: "Test Coverage"
+          forceUpdate: true
