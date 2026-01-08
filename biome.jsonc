@@ -25,7 +25,7 @@
     // and having to verify whether each individual file is ignored
     "includes": [
       "**",
-      "!.github/**/*.*", // workaround due to bug, should be `"!.github"`
+      "!.github/**/*.*", // workaround due to bug/design limitation, should be `"!.github"`
       ".github/**/*.ts",
       "!!assets",
       "!!coverage",
