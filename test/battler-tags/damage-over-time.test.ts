@@ -1,5 +1,5 @@
 import { getPokemonNameWithAffix } from "#app/messages";
-import type { SaltCuredTag } from "#data/battler-tags";
+import type { DamagingBattlerTag, SaltCuredTag } from "#data/battler-tags";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -10,7 +10,7 @@ import type { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
 import type { DamagingBattlerTagType } from "#types/battler-tags";
 import i18next from "i18next";
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Battler Tags - Damage Over Time", () => {
   let phaserGame: Phaser.Game;
@@ -42,20 +42,16 @@ describe("Battler Tags - Damage Over Time", () => {
 
   beforeEach(() => {
     // spy on the message queue function to just show the message instantly
-    // TODO: Consider making a `textInterceptor` mock
+    // TODO: Consider making a `textInterceptor` function that does that for us
     vi.spyOn(game.scene.phaseManager, "queueMessage").mockImplementation(message => {
       game.textInterceptor.showText(message);
     });
   });
 
-  afterAll(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   afterEach(() => {
     feebas.hp = feebas.getMaxHp();
     feebas.resetSummonData();
-    game.field.getEnemyPokemon().resetSummonData();
+    karp.resetSummonData();
     game.scene.phaseManager.clearAllPhases();
   });
 
@@ -73,9 +69,8 @@ describe("Battler Tags - Damage Over Time", () => {
   ])("$name", ({ tagType }) => {
     it("should deal persistent max HP-based damage each turn and queue animations", async () => {
       feebas.addTag(tagType, 2, undefined, karp.id);
-      expect(feebas).toHaveBattlerTag(tagType);
 
-      const dotTag = feebas.getTag(tagType)!;
+      const dotTag = feebas.getTag(tagType) as DamagingBattlerTag;
       const dmgPercent = dotTag["getDamageHpRatio"](feebas);
       const anim = dotTag["animation"];
 

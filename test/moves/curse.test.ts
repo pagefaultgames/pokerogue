@@ -14,7 +14,7 @@ import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Move - Curse", () => {
   let phaserGame: Phaser.Game;
@@ -24,10 +24,6 @@ describe("Move - Curse", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -89,12 +85,11 @@ describe("Move - Curse", () => {
     // `test/battler-tags/damage-over-time.ts`
   });
 
-  it("should respect Terastallization", async () => {
+  it("should curse the target if Tera Ghost", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const feebas = game.field.getPlayerPokemon();
     const karp = game.field.getEnemyPokemon();
-
     game.field.forceTera(feebas, PokemonType.GHOST);
 
     game.move.use(MoveId.CURSE);
@@ -109,14 +104,11 @@ describe("Move - Curse", () => {
 
     const shuppet = game.field.getPlayerPokemon();
     const karp = game.field.getEnemyPokemon();
-
     game.field.forceTera(shuppet, PokemonType.STELLAR);
 
     game.move.use(MoveId.CURSE);
     await game.toEndOfTurn(false);
 
-    // NB: We need both checks here to ensure Curse's targeting _also_ respects Tera Stellar
-    // (i.e. we didn't cast it on ourselves)
     expect(shuppet.getHpRatio(true)).toBeCloseTo(0.5);
     expect(karp).toHaveBattlerTag(BattlerTagType.CURSED);
   });

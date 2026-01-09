@@ -9,7 +9,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, it } from "vitest";
+import { beforeAll, beforeEach, describe, it } from "vitest";
 
 describe("Moves - Trapping Moves", () => {
   let phaserGame: Phaser.Game;
@@ -19,10 +19,6 @@ describe("Moves - Trapping Moves", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -42,7 +38,7 @@ describe("Moves - Trapping Moves", () => {
   it.todo("should prevent player Pokemon from fleeing");
 
   // TODO: Write tests
-  it.todo("should not be able to overlap");
+  it.todo("should not be able to overlap with other trapping effects");
 
   it.todo("should be bypassable by Ghost-types or Pokemon with Run Away");
 

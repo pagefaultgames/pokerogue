@@ -835,6 +835,7 @@ export abstract class DamagingTrapTag extends DamagingBattlerTag(TrappedTag) {
   }
   // NB: This being an overriddable getter with a `pokemon` parameter
   // makes it really easy to parametrize it (such as for adding something like Binding Band)
+  /** @sealed */
   protected override getDamageHpRatio() {
     return 0.125;
   }
@@ -2351,6 +2352,7 @@ function DamagingBattlerTag<TagBase extends AbstractConstructor<SerializableBatt
      *
      * Handles checking for Magic Guard, queueing animations, and other assorted checks.
      * @param pokemon - The {@linkcode Pokemon} to whom this Tag is attached
+     * @sealed
      */
     protected damage(pokemon: Pokemon): void {
       // TODO: Verify on cartridge whether Magic Guard blocking Curse-like DoT effects
@@ -2376,8 +2378,15 @@ function DamagingBattlerTag<TagBase extends AbstractConstructor<SerializableBatt
     }
   }
 
-  return DoTTag;
+  return DoTTag as AbstractConstructor<DoTTag> & TagBase;
 }
+
+/**
+ * Type representing a damaging battler tag mixed with {@linkcode DamagingBattlerTag}.
+ */
+export type DamagingBattlerTag<Tag extends SerializableBattlerTag = SerializableBattlerTag> = InstanceType<
+  ReturnType<typeof DamagingBattlerTag<AbstractConstructor<Tag>>>
+>;
 
 /**
  * Abstract class to damage the attached Pokemon at the end of each turn.
@@ -2439,7 +2448,7 @@ export class SaltCuredTag extends DamageOverTimeTag {
     return "battlerTags:saltCuredLapse";
   }
 
-  override getDamageHpRatio(pokemon: Pokemon): number {
+  protected override getDamageHpRatio(pokemon: Pokemon): number {
     const types = pokemon.getTypes(true, true);
     // Slightly faster than doing an `includes`
     const waterOrSteel = types.some(t => t === PokemonType.WATER || t === PokemonType.STEEL);
@@ -2460,15 +2469,15 @@ export class CursedTag extends DamageOverTimeTag {
   // Disable on add message due to being handled in the move itself.
   // This is done primarily to reduce save data size to avoid needing to keep a reference to `sourceId`
   // TODO: There should be a way to track the source ID just for the on add call
-  override get onAddMessageKey() {
+  protected override get onAddMessageKey() {
     return "";
   }
 
-  override get triggerMessageKey() {
+  protected override get triggerMessageKey() {
     return "battlerTags:cursedLapse";
   }
 
-  override getDamageHpRatio() {
+  protected override getDamageHpRatio() {
     return 0.25 as const;
   }
 }
@@ -2484,15 +2493,15 @@ export class NightmareTag extends DamageOverTimeTag {
     return CommonAnim.CURSE as const;
   }
 
-  override get onAddMessageKey() {
+  protected override get onAddMessageKey() {
     return "battlerTags:nightmareOnAdd";
   }
 
-  override get triggerMessageKey() {
+  protected override get triggerMessageKey() {
     return "battlerTags:nightmareLapse";
   }
 
-  override getDamageHpRatio() {
+  protected override getDamageHpRatio() {
     return 0.25 as const;
   }
 
