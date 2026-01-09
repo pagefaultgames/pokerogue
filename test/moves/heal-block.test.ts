@@ -12,7 +12,7 @@ import { GameManager } from "#test/test-utils/game-manager";
 import { toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 // Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/Heal_Block_(move)
 describe("Move - Heal Block", () => {
@@ -23,10 +23,6 @@ describe("Move - Heal Block", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {

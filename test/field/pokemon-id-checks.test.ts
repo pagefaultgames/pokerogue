@@ -7,7 +7,7 @@ import { SpeciesId } from "#enums/species-id";
 import type { Pokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Field - Pokemon ID Checks", () => {
   let phaserGame: Phaser.Game;
@@ -17,10 +17,6 @@ describe("Field - Pokemon ID Checks", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {

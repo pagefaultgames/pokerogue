@@ -2,6 +2,20 @@
 import type { HealBlockTag } from "#data/battler-tags";
 import { MoveId } from "#enums/move-id";
 
+/**
+ * Array containing all move-calling moves, used for DRY when writing move banlists
+ */
+const moveCallingMoves = [
+  MoveId.ASSIST,
+  MoveId.COPYCAT,
+  MoveId.ME_FIRST,
+  MoveId.METRONOME,
+  MoveId.MIRROR_MOVE,
+  MoveId.NATURE_POWER,
+  MoveId.SLEEP_TALK,
+  MoveId.SNATCH,
+] as const;
+
 /** Set of moves that cannot be called by {@linkcode MoveId.METRONOME | Metronome}. */
 export const invalidMetronomeMoves: ReadonlySet<MoveId> = new Set([
   MoveId.AFTER_YOU,
@@ -314,11 +328,72 @@ export const healBlockedMoves: ReadonlySet<MoveId> = new Set([
 
 /** Set of all moves that cannot be locked into by {@linkcode MoveId.ENCORE}. */
 export const invalidEncoreMoves: ReadonlySet<MoveId> = new Set([
-  MoveId.MIMIC,
-  MoveId.MIRROR_MOVE,
+  ...moveCallingMoves,
   MoveId.TRANSFORM,
-  MoveId.STRUGGLE,
+  MoveId.MIMIC,
   MoveId.SKETCH,
+  MoveId.STRUGGLE,
+  MoveId.DYNAMAX_CANNON,
   MoveId.SLEEP_TALK,
   MoveId.ENCORE,
+  // NB: Add Max/G-Max/Z-Move blockage if or when they are implemented
+]);
+
+/** Set of all moves that cannot be repeated by {@linkcode MoveId.INSTRUCT}. */
+export const invalidInstructMoves: ReadonlySet<MoveId> = new Set([
+  // Locking/Continually Executed moves
+  MoveId.OUTRAGE,
+  MoveId.RAGING_FURY,
+  MoveId.ROLLOUT,
+  MoveId.PETAL_DANCE,
+  MoveId.THRASH,
+  MoveId.ICE_BALL,
+  MoveId.UPROAR,
+  // Multi-turn Moves
+  MoveId.BIDE,
+  MoveId.SHELL_TRAP,
+  MoveId.BEAK_BLAST,
+  MoveId.FOCUS_PUNCH,
+  // "First Turn Only" moves
+  MoveId.FAKE_OUT,
+  MoveId.FIRST_IMPRESSION,
+  MoveId.MAT_BLOCK,
+  // Moves with a recharge turn
+  MoveId.HYPER_BEAM,
+  MoveId.ETERNABEAM,
+  MoveId.FRENZY_PLANT,
+  MoveId.BLAST_BURN,
+  MoveId.HYDRO_CANNON,
+  MoveId.GIGA_IMPACT,
+  MoveId.PRISMATIC_LASER,
+  MoveId.ROAR_OF_TIME,
+  MoveId.ROCK_WRECKER,
+  MoveId.METEOR_ASSAULT,
+  // Charging & 2-turn moves
+  MoveId.DIG,
+  MoveId.FLY,
+  MoveId.BOUNCE,
+  MoveId.SHADOW_FORCE,
+  MoveId.PHANTOM_FORCE,
+  MoveId.DIVE,
+  MoveId.ELECTRO_SHOT,
+  MoveId.ICE_BURN,
+  MoveId.GEOMANCY,
+  MoveId.FREEZE_SHOCK,
+  MoveId.SKY_DROP,
+  MoveId.SKY_ATTACK,
+  MoveId.SKULL_BASH,
+  MoveId.SOLAR_BEAM,
+  MoveId.SOLAR_BLADE,
+  MoveId.METEOR_BEAM,
+  // Copying/Move-Calling moves + Instruct
+  ...moveCallingMoves,
+  MoveId.INSTRUCT,
+  // Misc moves
+  MoveId.KINGS_SHIELD,
+  MoveId.SKETCH,
+  MoveId.TRANSFORM,
+  MoveId.MIMIC,
+  MoveId.STRUGGLE,
+  // NB: Add Max/G-Max/Z-Move blockage if or when they are implemented
 ]);
