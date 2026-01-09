@@ -57,7 +57,7 @@ import { addBBCodeTextObject, addTextObject, getTextColor, getTextStyleOptions }
 import { addWindow } from "#ui/ui-theme";
 import { BooleanHolder, getLocalizedSpriteKey, padInt, rgbHexToRgba } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
-import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { getDexNumber, getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
@@ -2401,7 +2401,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     }
 
     if (species && (this.isSeen() || this.isCaught())) {
-      this.pokemonNumberText.setText(padInt(species.speciesId, 4));
+      this.pokemonNumberText.setText(padInt(getDexNumber(species.speciesId), 4));
 
       if (this.isCaught()) {
         const defaultDexAttr = this.getCurrentDexProps(species.speciesId);
@@ -2447,7 +2447,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonSprite.setTint(0x808080);
       }
     } else {
-      this.pokemonNumberText.setText(species ? padInt(species.speciesId, 4) : "");
+      this.pokemonNumberText.setText(species ? padInt(getDexNumber(species.speciesId), 4) : "");
       this.pokemonNameText.setText(species ? "???" : "");
       this.pokemonGrowthRateText.setText("");
       this.pokemonGrowthRateLabelText.setVisible(false);
