@@ -168,7 +168,7 @@ export abstract class Move implements Localizable {
    *   - Counter / Mirror Coat / Metal Burst with no damage taken from enemies this turn
    *   - Last resort's bespoke failure conditions
    *   - Snore while not asleep
-   *   - Sucker punch failling due to the target having already used their selected move or not having selected a damaging move
+   *   - Sucker punch failing due to the target having already used their selected move or not having selected a damaging move
    *   - Magic Coat failing due to being used as the last move in the turn
    *   - Protect-like moves failing due to consecutive use or being the last move in the turn
    *   - First turn moves (e.g. mat block, fake out) failing due to not being used on first turn
@@ -185,7 +185,7 @@ export abstract class Move implements Localizable {
    *   - Poltergeist against a target with no item
    *   - Shell Trap failing due to not being hit by a physical move
    *   - Aurora veil failing due to no hail
-   *   - Clangorous soul and Fillet Awayfailing due to insufficient HP
+   *   - Clangorous soul and Fillet Away failing due to insufficient HP
    *   - Upper hand failing due to the target not selecting a priority move
    *   - (Various moves that fail when used against titans / raid bosses, not listed as pokerogue does not yet implement each)
    *
@@ -472,11 +472,19 @@ export abstract class Move implements Localizable {
    * @param condition - The {@linkcode MoveCondition} or {@linkcode MoveConditionFunc} to add to the conditions array.
    * @param checkSequence - The sequence number where the failure check occurs
    * @returns `this` for method chaining
-   * @param checkSequence - The sequence number where the failure check occurs
-   * @returns `this` for method chaining
    */
   condition(condition: MoveCondition | MoveConditionFunc, checkSequence: 2 | 3 | 4 = 4): this {
-    const conditionsArray = checkSequence === 2 ? this.conditionsSeq2 : this.conditions;
+    let conditionsArray: MoveCondition[];
+    switch (checkSequence) {
+      case 2:
+        conditionsArray = this.conditionsSeq2;
+        break;
+      case 3:
+        conditionsArray = this.conditionsSeq3;
+        break;
+      default:
+        conditionsArray = this.conditions;
+    }
     if (typeof condition === "function") {
       condition = new MoveCondition(condition);
     }
