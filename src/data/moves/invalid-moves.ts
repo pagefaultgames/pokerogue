@@ -267,7 +267,7 @@ export const invalidSketchMoves: ReadonlySet<MoveId> = new Set([
 ]);
 
 /** Set of all moves that cannot be locked into by {@linkcode MoveId.ENCORE | Encore}. */
-// TODO: Check in Pokemon Champions to see if Dynamax Cannon is still blacklisted 
+// TODO: Check in Pokemon Champions to see if Dynamax Cannon is still blacklisted
 export const invalidEncoreMoves: ReadonlySet<MoveId> = new Set([
   ...moveCallingMoves,
   MoveId.TRANSFORM,
