@@ -36,7 +36,7 @@ export function formatChangelog(changelog) {
   for (const pr of changelog) {
     const formattedBody = formatPullRequest(pr);
     if (!formattedBody) {
-      categories.set("Missing", [...(categories.get("Missing") || []), `- #${pr.number}\n`]);
+      categories.set("Unknown", [...(categories.get("Unknown") || []), `- #${pr.number}\n`]);
       continue;
     }
 

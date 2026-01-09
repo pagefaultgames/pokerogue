@@ -10,7 +10,7 @@
  */
 
 /**
- * @typedef {"Bug Fixes" | "Balance" | "Translation" | "Art" | "Miscellaneous" | "Missing" } CategoryName
+ * @typedef {"Bug Fixes" | "Balance" | "Translation" | "Art" | "Miscellaneous" | "Unknown" } CategoryName
  */
 
 /** @typedef {{
@@ -43,7 +43,7 @@ export const CONFIG = {
     // Used for PRs that don't fit any other category
     { name: "Miscellaneous", labels: ["Miscellaneous"] },
     // Used for PRs that don't have a changelog section
-    { name: "Missing", labels: [] },
+    { name: "Unknown", labels: [] },
   ],
 };
 
