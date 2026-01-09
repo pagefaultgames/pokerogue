@@ -2,8 +2,9 @@
  * Contains various move-related banlists and related constants.
  *
  * @remarks
- * Note that most exclusive moves are intentionally omitted from move banlists
- * unless they have some other reason for being excluded.
+ * Note that PokéRogue intentionally diverges from the mainline games in these lists, as follows:
+ * - Signature moves can be called by move-calling moves like Metronome (excluding ones banned due to other traits like charging/recharge status.
+ * - Sketch can Sketch everything except itself and Struggle
  * @module
  */
 
