@@ -134,7 +134,7 @@ jobs:
           forceUpdate: true
 
       - name: Extract coverage percentage
-        run: echo "COVERAGE_PERCENTAGE="$(jq '.total.branches.pct' <<< "${{needs.check-results.outputs.coverage_report}}")""" >> $GITHUB_ENV
+        run: echo "COVERAGE_PERCENTAGE="$(jq '.total.branches.pct' <<< "${{needs.check-results.outputs.coverage_report}}")"" >> $GITHUB_ENV
         if: ${{ needs.check-results.result == 'success' && success()}}
 
       - name: Update coverage README badge
