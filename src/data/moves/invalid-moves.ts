@@ -3,7 +3,7 @@
  *
  * @remarks
  * Note that PokéRogue intentionally diverges from the mainline games in these lists, as follows:
- * - Signature moves can be called by move-calling moves like Metronome (excluding ones banned due to other traits like charging/recharge status.
+ * - Most signature moves can be called by move-calling moves like Metronome.
  * - Sketch can Sketch everything except itself and Struggle
  * @module
  */
